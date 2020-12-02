@@ -32,6 +32,7 @@ export const VMDashboard: React.FC<VMTabProps> = (props) => {
 
   const vm = asVM(objProp) || (isVM(vmProp) && vmProp);
   const vmi = (isVMI(objProp) && objProp) || vmisProp[0];
+  const isVMPage = isVM(objProp);
 
   const vmStatusBundle = getVMStatus({
     vm,
@@ -46,6 +47,7 @@ export const VMDashboard: React.FC<VMTabProps> = (props) => {
   const context = {
     vm,
     vmi,
+    isVMPage,
     pods,
     vmStatusBundle,
   };

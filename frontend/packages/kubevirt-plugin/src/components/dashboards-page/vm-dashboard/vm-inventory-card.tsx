@@ -30,16 +30,16 @@ import { getVmSnapshotVmName } from '../../../selectors/snapshot/snapshot';
 export const VMInventoryCard: React.FC<VMInventoryCardProps> = () => {
   const { t } = useTranslation();
   const vmDashboardContext = React.useContext(VMDashboardContext);
-  const { vm, vmi } = vmDashboardContext;
-  const vmiLike = vm || vmi;
+  const { vm, vmi, isVMPage } = vmDashboardContext;
+  const vmiLike = isVMPage ? vm : vmi;
 
   const isLoading = !vmiLike;
   const name = getName(vmiLike);
   const namespace = getNamespace(vmiLike);
 
   // prefer vmi over vm if available (means: is running)
-  const nicCount = vm ? getNetworks(vm).length : getVMINetworks(vmi).length;
-  const disks = vm ? getDisks(vm) : getVMIDisks(vmi);
+  const nicCount = isVMPage ? getNetworks(vm).length : getVMINetworks(vmi).length;
+  const disks = isVMPage ? getDisks(vm) : getVMIDisks(vmi);
   const diskCount = disks.filter((d) => d?.disk).length;
   const cdromCount = disks.filter((d) => d?.cdrom).length;
   const lunCount = disks.filter((d) => d?.lun).length;
