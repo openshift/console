@@ -9,6 +9,6 @@ type VMDashboardContext = {
   vm?: VMKind;
   vmi?: VMIKind;
   pods?: PodKind[];
-
+  isVMPage?: boolean;
   vmStatusBundle?: VMStatusBundle;
 };
