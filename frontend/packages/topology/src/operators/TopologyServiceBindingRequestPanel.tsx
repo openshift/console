@@ -1,4 +1,7 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
+import { useTranslation } from 'react-i18next';
+import * as UIActions from '@console/internal/actions/ui';
 import {
   ResourceIcon,
   ResourceLink,
@@ -16,14 +19,31 @@ type TopologyServiceBindingRequestPanelProps = {
   edge: OdcBaseEdge;
 };
 
-const TopologyServiceBindingRequestPanel: React.FC<TopologyServiceBindingRequestPanelProps> = ({
-  edge,
-}) => {
+type PropsFromState = {
+  selectedDetailsTab?: any;
+};
+
+type PropsFromDispatch = {
+  onClickTab?: (name: string) => void;
+};
+
+const stateToProps = ({ UI }): PropsFromState => ({
+  selectedDetailsTab: UI.getIn(['overview', 'selectedDetailsTab']),
+});
+
+const dispatchToProps = (dispatch): PropsFromDispatch => ({
+  onClickTab: (name) => dispatch(UIActions.selectOverviewDetailsTab(name)),
+});
+
+const ConnectedTopologyServiceBindingRequestPanel: React.FC<PropsFromState &
+  PropsFromDispatch &
+  TopologyServiceBindingRequestPanelProps> = ({ edge, onClickTab, selectedDetailsTab }) => {
+  const { t } = useTranslation();
   const sbr = edge.getResource();
   const ResourcesSection = () => <TopologyEdgeResourcesPanel edge={edge} />;
   const DetailsSection = () => (
     <div className="overview__sidebar-pane-body">
-      <SectionHeading text="Details" />
+      <SectionHeading text={t('topology~Details')} />
       <ResourceSummary resource={sbr} />
     </div>
   );
@@ -53,9 +73,11 @@ const TopologyServiceBindingRequestPanel: React.FC<TopologyServiceBindingRequest
         </h1>
       </div>
       <SimpleTabNav
+        selectedTab={selectedDetailsTab || t('topology~Resources')}
+        onClickTab={onClickTab}
         tabs={[
-          { name: 'Details', component: DetailsSection },
-          { name: 'Resources', component: ResourcesSection },
+          { name: t('topology~Details'), component: DetailsSection },
+          { name: t('topology~Resources'), component: ResourcesSection },
         ]}
         tabProps={null}
         additionalClassNames="co-m-horizontal-nav__menu--within-sidebar co-m-horizontal-nav__menu--within-overview-sidebar"
@@ -63,5 +85,14 @@ const TopologyServiceBindingRequestPanel: React.FC<TopologyServiceBindingRequest
     </div>
   );
 };
+
+const TopologyServiceBindingRequestPanel = connect<
+  PropsFromState,
+  PropsFromDispatch,
+  TopologyServiceBindingRequestPanelProps
+>(
+  stateToProps,
+  dispatchToProps,
+)(ConnectedTopologyServiceBindingRequestPanel);
 
 export default TopologyServiceBindingRequestPanel;

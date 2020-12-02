@@ -1,10 +1,9 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { Node } from '@patternfly/react-topology';
 import { DataListCell, Tooltip } from '@patternfly/react-core';
 import { Status as TooltipStatus } from '@console/shared';
-// import { Status as TooltipStatus, usePodsWatcher } from '@console/shared';
-// import { getResource } from '../../../utils/topology-utils';
 import { isMobile } from '../list-view-utils';
 
 import './AlertsCell.scss';
@@ -46,6 +45,7 @@ const AlertTooltip = ({ alerts, severity }) => {
 };
 
 const AlertsCell: React.FC<AlertsProps> = ({ item }) => {
+  const { t } = useTranslation();
   const { resources } = item.getData();
   const currentAlerts = resources?.current?.alerts ?? {};
   const previousAlerts = resources?.previous?.alerts ?? {};
@@ -82,7 +82,9 @@ const AlertsCell: React.FC<AlertsProps> = ({ item }) => {
         )}
         {(buildNew || buildPending || buildRunning || buildFailed || buildError) && (
           <div className="odc-topology-list-view__alert-cell__status">
-            <span className="odc-topology-list-view__alert-cell__label">Builds:</span>
+            <span className="odc-topology-list-view__alert-cell__label">
+              {t('topology~Builds:')}
+            </span>
             <AlertTooltip severity="New" alerts={buildNew} />
             <AlertTooltip severity="Pending" alerts={buildPending} />
             <AlertTooltip severity="Running" alerts={buildRunning} />

@@ -1,8 +1,9 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { observer } from '@patternfly/react-topology';
 import { Tooltip, Popover, Button } from '@patternfly/react-core';
 import { ListIcon, TopologyIcon, QuestionCircleIcon } from '@patternfly/react-icons';
-import TopologyShortcuts from '../graph-view/TopologyShortcuts';
+import { getTopologyShortcuts } from '../graph-view/TopologyShortcuts';
 import { ModelContext, ExtensibleModel } from '../../data-transforms/ModelContext';
 import { TopologyViewType } from '../../topology-types';
 
@@ -13,6 +14,7 @@ interface TopologyPageToolbarProps {
 
 const TopologyPageToolbar: React.FC<TopologyPageToolbarProps> = observer(
   ({ viewType, onViewChange }) => {
+    const { t } = useTranslation();
     const showGraphView = viewType === TopologyViewType.graph;
     const dataModelContext = React.useContext<ExtensibleModel>(ModelContext);
     const { namespace, isEmptyModel } = dataModelContext;
@@ -25,8 +27,8 @@ const TopologyPageToolbar: React.FC<TopologyPageToolbarProps> = observer(
       <>
         {showGraphView ? (
           <Popover
-            aria-label="Shortcuts"
-            bodyContent={TopologyShortcuts}
+            aria-label={t('topology~Shortcuts')}
+            bodyContent={getTopologyShortcuts(t)}
             position="left"
             maxWidth="100vw"
           >
@@ -37,11 +39,14 @@ const TopologyPageToolbar: React.FC<TopologyPageToolbarProps> = observer(
               icon={<QuestionCircleIcon />}
               data-test-id="topology-view-shortcuts"
             >
-              View shortcuts
+              {t('topology~View shortcuts')}
             </Button>
           </Popover>
         ) : null}
-        <Tooltip position="left" content={showGraphView ? 'List View' : 'Topology View'}>
+        <Tooltip
+          position="left"
+          content={showGraphView ? t('topology~List View') : t('topology~Topology View')}
+        >
           <Button
             variant="link"
             className="pf-m-plain odc-topology__view-switcher"

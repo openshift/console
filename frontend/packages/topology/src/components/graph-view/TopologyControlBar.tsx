@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
 import { Button, PageHeaderToolsItem, Tooltip } from '@patternfly/react-core';
 import { TopologyIcon } from '@patternfly/react-icons';
 import {
@@ -17,6 +18,7 @@ interface TopologyControlBarProps {
 }
 
 const TopologyControlBar: React.FC<TopologyControlBarProps> = observer(({ visualization }) => {
+  const { t } = useTranslation();
   const layout = visualization.getGraph()?.getLayout() ?? COLA_LAYOUT;
   return (
     <span className="pf-topology-control-bar">
@@ -27,22 +29,30 @@ const TopologyControlBar: React.FC<TopologyControlBarProps> = observer(({ visual
             zoomInCallback: action(() => {
               visualization.getGraph().scaleBy(4 / 3);
             }),
+            zoomInTip: t('topology~Zoom In'),
+            zoomInAriaLabel: t('topology~Zoom In'),
             zoomOutCallback: action(() => {
               visualization.getGraph().scaleBy(0.75);
             }),
+            zoomOutTip: t('topology~Zoom Out'),
+            zoomOutAriaLabel: t('topology~Zoom Out'),
             fitToScreenCallback: action(() => {
               visualization.getGraph().fit(80);
             }),
+            fitToScreenTip: t('topology~Fit to Screen'),
+            fitToScreenAriaLabel: t('topology~Fit to Screen'),
             resetViewCallback: action(() => {
               visualization.getGraph().reset();
               visualization.getGraph().layout();
             }),
+            resetViewTip: t('topology~Reset View'),
+            resetViewAriaLabel: t('topology~Reset View'),
             legend: false,
           }),
         ]}
       >
         <div className="odc-topology__layout-group">
-          <Tooltip content="Layout 1">
+          <Tooltip content={t('topology~Layout 1')}>
             <PageHeaderToolsItem className="odc-topology__layout-button" tabIndex={-1}>
               <Button
                 className={classNames('pf-topology-control-bar__button', {
@@ -54,11 +64,15 @@ const TopologyControlBar: React.FC<TopologyControlBarProps> = observer(({ visual
                   visualization.getGraph().layout();
                 }}
               >
-                <TopologyIcon className="odc-topology__layout-button__icon" aria-label="Layout" />1
+                <TopologyIcon
+                  className="odc-topology__layout-button__icon"
+                  aria-label={t('topology~Layout')}
+                />
+                1
               </Button>
             </PageHeaderToolsItem>
           </Tooltip>
-          <Tooltip content="Layout 2">
+          <Tooltip content={t('topology~Layout 2')}>
             <PageHeaderToolsItem className="odc-topology__layout-button" tabIndex={-1}>
               <Button
                 className={classNames('pf-topology-control-bar__button', {
@@ -70,7 +84,11 @@ const TopologyControlBar: React.FC<TopologyControlBarProps> = observer(({ visual
                   visualization.getGraph().layout();
                 }}
               >
-                <TopologyIcon className="odc-topology__layout-button__icon" aria-label="Layout" />2
+                <TopologyIcon
+                  className="odc-topology__layout-button__icon"
+                  aria-label={t('topology~Layout')}
+                />
+                2
               </Button>
             </PageHeaderToolsItem>
           </Tooltip>

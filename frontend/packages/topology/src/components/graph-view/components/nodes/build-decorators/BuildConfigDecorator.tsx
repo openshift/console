@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { Status, useBuildConfigsWatcher } from '@console/shared';
 import { resourcePathFromModel } from '@console/internal/components/utils';
@@ -15,6 +16,7 @@ type BuildConfigDecoratorProps = {
 };
 
 const BuildConfigDecorator: React.FC<BuildConfigDecoratorProps> = ({ resource, radius, x, y }) => {
+  const { t } = useTranslation();
   const { buildConfigs } = useBuildConfigsWatcher(resource);
   const build = buildConfigs?.[0]?.builds?.[0];
 
@@ -30,7 +32,7 @@ const BuildConfigDecorator: React.FC<BuildConfigDecoratorProps> = ({ resource, r
 
   return (
     <Tooltip
-      content={`Build ${build.status && build.status.phase}`}
+      content={t('topology~Build {{status}}', { status: build.status && build.status.phase })}
       position={TooltipPosition.left}
     >
       <Link to={link} className="odc-decorator__link">

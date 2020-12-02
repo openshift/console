@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import * as UIActions from '@console/internal/actions/ui';
 import { ManagedByOperatorResourceLink } from '@console/internal/components/utils/managed-by';
 import { modelFor, referenceFor, referenceForModel } from '@console/internal/module/k8s';
@@ -48,6 +49,7 @@ type TopologyOperatorBackedPanelProps = {
 const ConnectedTopologyOperatorBackedPanel: React.FC<PropsFromState &
   PropsFromDispatch &
   TopologyOperatorBackedPanelProps> = ({ item, onClickTab, selectedDetailsTab }) => {
+  const { t } = useTranslation();
   const { name, resource } = item;
   const { namespace } = resource.metadata;
   const csvName = resource.metadata.selfLink.split('/').pop();
@@ -81,7 +83,7 @@ const ConnectedTopologyOperatorBackedPanel: React.FC<PropsFromState &
   );
   const DetailsSection = () => (
     <div className="overview__sidebar-pane-body">
-      <SectionHeading text="Operator Details" />
+      <SectionHeading text={t('topology~Operator Details')} />
       <ResourceSummary resource={resource} />
     </div>
   );
@@ -114,11 +116,11 @@ const ConnectedTopologyOperatorBackedPanel: React.FC<PropsFromState &
         label="Operator Details"
       >
         <SimpleTabNav
-          selectedTab={selectedDetailsTab || 'Resources'}
+          selectedTab={selectedDetailsTab || t('topology~Resources')}
           onClickTab={onClickTab}
           tabs={[
-            { name: 'Details', component: DetailsSection },
-            { name: 'Resources', component: ResourcesSection },
+            { name: t('topology~Details'), component: DetailsSection },
+            { name: t('topology~Resources'), component: ResourcesSection },
           ]}
           tabProps={null}
           additionalClassNames="co-m-horizontal-nav__menu--within-sidebar co-m-horizontal-nav__menu--within-overview-sidebar"

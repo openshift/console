@@ -1,3 +1,4 @@
+import i18next from 'i18next';
 import { K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
 import { KebabOption } from '@console/internal/components/utils';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
@@ -85,7 +86,7 @@ export const getAddPageUrl = (
       pageUrl = `/channel/ns/${ns}`;
       break;
     default:
-      throw new Error('Invalid Import option provided');
+      throw new Error(i18next.t('devconsole~Invalid Import option provided'));
   }
   if (hasApplication && appGroup) {
     params.append(QUERY_PROPERTIES.APPLICATION, appGroup);
@@ -96,10 +97,16 @@ export const getAddPageUrl = (
 };
 
 export const getMenuPath = (hasApplication: boolean, connectorSourceContext?: string): string =>
-  connectorSourceContext?.length ? null : hasApplication ? 'Add to Application' : 'Add to Project';
+  // t('devconsole~Add to Application')
+  // t('devconsole~Add to Project')
+  connectorSourceContext?.length
+    ? null
+    : hasApplication
+    ? 'devconsole~Add to Application'
+    : 'devconsole~Add to Project';
 
 type KebabFactory = (
-  label: string,
+  labelKey: string,
   icon: React.ReactNode,
   importType: ImportOptions,
   checkAccess?: string,
@@ -115,7 +122,7 @@ export type KebabAction = (
 
 export type MenuOptions = (KebabAction | KebabOption)[];
 
-export const createKebabAction: KebabFactory = (label, icon, importType, checkAccess) => (
+export const createKebabAction: KebabFactory = (labelKey, icon, importType, checkAccess) => (
   obj: K8sResourceKind,
   namespace: string,
   hasApplication: boolean,
@@ -130,9 +137,9 @@ export const createKebabAction: KebabFactory = (label, icon, importType, checkAc
     : null;
 
   return {
-    label,
+    labelKey,
     icon,
-    path: getMenuPath(hasApplication, connectorSourceContext),
+    pathKey: getMenuPath(hasApplication, connectorSourceContext),
     href: getAddPageUrl(obj, namespace, importType, hasApplication, connectorSourceContext),
   };
 };

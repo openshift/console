@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Firehose } from '@console/internal/components/utils';
 import { ResourceDropdown } from '@console/shared';
 import { useExtensions } from '@console/plugin-sdk/src';
@@ -36,6 +37,7 @@ interface ApplicationDropdownProps {
 }
 
 const ApplicationDropdown: React.FC<ApplicationDropdownProps> = ({ namespace, ...props }) => {
+  const { t } = useTranslation();
   const modelFactories = useExtensions<TopologyDataModelFactory>(isTopologyDataModelFactory);
 
   const resources = React.useMemo(() => {
@@ -59,7 +61,7 @@ const ApplicationDropdown: React.FC<ApplicationDropdownProps> = ({ namespace, ..
     <Firehose resources={resources}>
       <ResourceDropdown
         {...props}
-        placeholder="Select an Application"
+        placeholder={t('topology~Select an Application')}
         dataSelector={['metadata', 'labels', 'app.kubernetes.io/part-of']}
       />
     </Firehose>

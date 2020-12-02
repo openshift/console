@@ -37,7 +37,8 @@ const deleteGroup = (application: TopologyApplicationObject) => {
     ? modelFor(primaryResource.kind)
     : modelFor(referenceFor(primaryResource));
   return {
-    label: 'Delete Application',
+    // t('topology~Delete Application')
+    labelKey: 'topology~Delete Application',
     callback: () => {
       const reqs = [];
       deleteResourceModal({

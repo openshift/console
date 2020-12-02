@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button, Select, SelectOption, SelectVariant } from '@patternfly/react-core';
 import { modelFor } from '@console/internal/module/k8s';
 import { ResourceIcon } from '@console/internal/components/utils';
@@ -19,6 +20,7 @@ const KindFilterDropdown: React.FC<KindFilterDropdownProps> = ({
   onChange,
   opened = false,
 }) => {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = React.useState(opened);
   const onToggle = (open: boolean): void => setIsOpen(open);
   let kindFilters = filters.filter(
@@ -66,7 +68,7 @@ const KindFilterDropdown: React.FC<KindFilterDropdownProps> = ({
     <div className="odc-topology-filter-dropdown__group odc-kind-filter-dropdown">
       <span className="odc-kind-filter-dropdown__clear-button">
         <Button variant="link" onClick={onClearFilters}>
-          Clear all filters
+          {t('topology~Clear all filters')}
         </Button>
       </span>
       {kindFilters.map((filter) => (
@@ -86,7 +88,7 @@ const KindFilterDropdown: React.FC<KindFilterDropdownProps> = ({
       onSelect={onSelect}
       placeholderText={
         <span>
-          Filter by Resource
+          {t('topology~Filter by Resource')}
           {selectedFilterCount ? (
             <span className="odc-kind-filter-dropdown__kind-count">{selectedFilterCount}</span>
           ) : null}

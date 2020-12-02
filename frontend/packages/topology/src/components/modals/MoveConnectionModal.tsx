@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { Trans, useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { FormGroup, Title, Dropdown, DropdownItem, DropdownToggle } from '@patternfly/react-core';
 import { CaretDownIcon } from '@patternfly/react-icons';
 import { Formik, FormikProps, FormikValues } from 'formik';
@@ -37,17 +39,21 @@ const nodeItem = (node: Node) => (
   </span>
 );
 
-const MoveConnectionForm: React.FC<FormikProps<FormikValues> & MoveConnectionModalProps> = ({
+const MoveConnectionForm: React.FC<FormikProps<FormikValues> &
+  MoveConnectionModalProps & { setTranslator: (t: TFunction) => void }> = ({
   handleSubmit,
   isSubmitting,
+  setTranslator,
   cancel,
   values,
   edge,
   availableTargets,
   status,
 }) => {
+  const { t } = useTranslation();
   const [isOpen, setOpen] = React.useState<boolean>(false);
   const isDirty = values.target.getId() !== edge.getTarget().getId();
+  setTranslator(t);
 
   const onToggle = () => {
     setOpen(!isOpen);
@@ -68,14 +74,15 @@ const MoveConnectionForm: React.FC<FormikProps<FormikValues> & MoveConnectionMod
     );
   };
 
+  const sourceLabel = edge.getSource().getLabel();
   return (
     <form onSubmit={handleSubmit} className="modal-content modal-content--no-inner-scroll">
-      <ModalTitle>Move Connector</ModalTitle>
+      <ModalTitle>{t('topology~Move Connector')}</ModalTitle>
       <ModalBody>
         <Title headingLevel="h2" size="md" className="co-m-form-row">
-          Connect
-          <strong>{` ${edge.getSource().getLabel()} `}</strong>
-          to
+          <Trans ns="topology" t={t}>
+            Connect <strong>{{ sourceLabel }}</strong> to
+          </Trans>
         </Title>
         <div className="pf-c-form">
           <FormGroup fieldId="target-node" label="Target">
@@ -94,7 +101,7 @@ const MoveConnectionForm: React.FC<FormikProps<FormikValues> & MoveConnectionMod
         </div>
       </ModalBody>
       <ModalSubmitFooter
-        submitText="Move"
+        submitText={t('topology~Move')}
         submitDisabled={!isDirty}
         cancel={cancel}
         inProgress={isSubmitting}
@@ -108,6 +115,8 @@ class MoveConnectionModal extends PromiseComponent<
   MoveConnectionModalProps,
   MoveConnectionModalState
 > {
+  private t: TFunction;
+
   private onSubmit = (newTarget: Node): Promise<K8sResourceKind[] | K8sResourceKind> => {
     const { edge } = this.props;
     switch (edge.getType()) {
@@ -118,7 +127,13 @@ class MoveConnectionModal extends PromiseComponent<
       case TYPE_EVENT_SOURCE_LINK:
         return createSinkConnection(edge.getSource(), newTarget);
       default:
-        return Promise.reject(new Error(`Unable to move connector of type ${edge.getType()}.`));
+        return Promise.reject(
+          new Error(
+            this.t('topology~Unable to move connector of type {{type}}.', {
+              type: edge.getType(),
+            }),
+          ),
+        );
     }
   };
 
@@ -136,6 +151,10 @@ class MoveConnectionModal extends PromiseComponent<
       });
   };
 
+  private setTranslator = (t: TFunction) => {
+    this.t = t;
+  };
+
   render() {
     const { edge } = this.props;
     const initialValues = {
@@ -143,7 +162,9 @@ class MoveConnectionModal extends PromiseComponent<
     };
     return (
       <Formik initialValues={initialValues} onSubmit={this.handleSubmit}>
-        {(formikProps) => <MoveConnectionForm {...formikProps} {...this.props} />}
+        {(formikProps) => (
+          <MoveConnectionForm setTranslator={this.setTranslator} {...formikProps} {...this.props} />
+        )}
       </Formik>
     );
   }

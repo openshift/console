@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation, Trans } from 'react-i18next';
 import { TextInputTypes } from '@patternfly/react-core';
 import { PromiseComponent, history } from '@console/internal/components/utils';
 import {
@@ -15,7 +16,7 @@ import { InputField } from '../formik-fields';
 type DeleteResourceModalProps = {
   resourceName: string;
   resourceType: string;
-  actionLabel?: string;
+  actionLabelKey?: string;
   redirect?: string;
   onSubmit: (values: FormikValues) => Promise<K8sResourceKind[]>;
   cancel?: () => void;
@@ -31,31 +32,37 @@ const DeleteResourceForm: React.FC<FormikProps<FormikValues> & DeleteResourceMod
   handleSubmit,
   resourceName,
   resourceType,
-  actionLabel = 'Delete',
+  // t('console-shared~Delete')
+  actionLabelKey = 'console-shared~Delete',
   isSubmitting,
   cancel,
   values,
   status,
 }) => {
+  const { t } = useTranslation();
   const isValid = values.resourceName === resourceName;
+  const submitLabel = t(actionLabelKey);
   return (
     <form onSubmit={handleSubmit} className="modal-content modal-content--no-inner-scroll">
       <ModalTitle>
-        <YellowExclamationTriangleIcon className="co-icon-space-r" /> {actionLabel} {resourceType}?
+        <YellowExclamationTriangleIcon className="co-icon-space-r" /> {submitLabel} {resourceType}?
       </ModalTitle>
       <ModalBody>
         <p>
-          This action cannot be undone. All associated Deployments, Routes, Builds, Pipelines,
-          Storage/PVC&#39;s, secrets, and configmaps will be deleted.
+          {t(
+            `console-shared~This action cannot be undone. All associated Deployments, Routes, Builds, Pipelines, Storage/PVC's, secrets, and configmaps will be deleted.`,
+          )}
         </p>
         <p>
-          Confirm deletion by typing <strong className="co-break-word">{resourceName}</strong>{' '}
-          below:
+          <Trans ns="console-shared">
+            Confirm deletion by typing <strong className="co-break-word">{{ resourceName }}</strong>{' '}
+            below:
+          </Trans>
         </p>
         <InputField type={TextInputTypes.text} name="resourceName" />
       </ModalBody>
       <ModalSubmitFooter
-        submitText={actionLabel}
+        submitText={submitLabel}
         submitDisabled={(status && !!status.submitError) || !isValid}
         cancel={cancel}
         inProgress={isSubmitting}

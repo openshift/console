@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import {
   navFactory,
   ResourceIcon,
@@ -43,6 +44,7 @@ export const ConnectedTopologyHelmReleasePanel: React.FC<TopologyHelmReleasePane
   selectedDetailsTab,
   onClickTab,
 }: TopologyHelmReleasePanelProps) => {
+  const { t } = useTranslation();
   const secret = helmRelease.getData().resources.obj;
   const { manifestResources, releaseNotes } = helmRelease.getData().data;
   const name = helmRelease.getLabel();
@@ -52,7 +54,11 @@ export const ConnectedTopologyHelmReleasePanel: React.FC<TopologyHelmReleasePane
     ? () => (
         <StatusBox
           loaded
-          loadError={{ message: `Unable to find resource for ${helmRelease.getLabel()}` }}
+          loadError={{
+            message: t('topology~Unable to find resource for {{helmLabel}}', {
+              helmLabel: helmRelease.getLabel(),
+            }),
+          }}
         />
       )
     : navFactory.details(HelmReleaseOverview).component;
@@ -93,12 +99,12 @@ export const ConnectedTopologyHelmReleasePanel: React.FC<TopologyHelmReleasePane
         </h1>
       </div>
       <SimpleTabNav
-        selectedTab={selectedDetailsTab || 'Resources'}
+        selectedTab={selectedDetailsTab || t('topology~Resources')}
         onClickTab={onClickTab}
         tabs={[
-          { name: 'Details', component: detailsComponent },
-          { name: 'Resources', component: resourcesComponent },
-          { name: 'Release Notes', component: releaseNotesComponent },
+          { name: t('topology~Details'), component: detailsComponent },
+          { name: t('topology~Resources'), component: resourcesComponent },
+          { name: t('topology~Release Notes'), component: releaseNotesComponent },
         ]}
         tabProps={{ obj: secret }}
         additionalClassNames="co-m-horizontal-nav__menu--within-sidebar co-m-horizontal-nav__menu--within-overview-sidebar"

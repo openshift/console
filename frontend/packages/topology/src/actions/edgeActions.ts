@@ -20,7 +20,8 @@ const moveConnection = (edge: Edge, availableTargets: Node[]) => {
   const resourceModel = modelFor(referenceFor(resourceObj));
 
   return {
-    label: 'Move Connector',
+    // t('topology~Move Connector')
+    labelKey: 'topology~Move Connector',
     callback: () => {
       moveConnectionModal({ edge, availableTargets });
     },
@@ -33,7 +34,8 @@ const deleteConnection = (edge: Edge) => {
   const resourceObj = getResource(edge.getSource());
   const resourceModel = modelFor(referenceFor(resourceObj));
   return {
-    label: 'Delete Connector',
+    // t('topology~Delete Connector')
+    labelKey: 'topology~Delete Connector',
     callback: () => {
       removeConnection(edge);
     },

@@ -32,8 +32,8 @@ const getTopologyData = (mockData: TopologyDataResources, name: string) => {
 
 describe('addResourceMenuUtils: ', () => {
   it('should give proper menu item path based on the application', () => {
-    expect(getMenuPath(true)).toEqual('Add to Application');
-    expect(getMenuPath(false)).toEqual('Add to Project');
+    expect(getMenuPath(true)).toEqual('devconsole~Add to Application');
+    expect(getMenuPath(false)).toEqual('devconsole~Add to Project');
   });
 
   it('should return the page url with proper queryparams for git import flow', async () => {
@@ -139,9 +139,9 @@ describe('addResourceMenuUtils: ', () => {
     const connectorSourceObj = await getTopologyData(MockResources, 'nodejs');
     const icon = <GitAltIcon />;
     const hasApplication = true;
-    const label = 'From Git';
+    const labelKey = 'devconsole~From Git';
 
-    const kebabAction: KebabAction = createKebabAction(label, icon, ImportOptions.GIT);
+    const kebabAction: KebabAction = createKebabAction(labelKey, icon, ImportOptions.GIT);
     const kebabOption: KebabOption = kebabAction(
       primaryObj,
       '',
@@ -152,9 +152,9 @@ describe('addResourceMenuUtils: ', () => {
       connectorSourceObj?.metadata?.name
     }`;
 
-    expect(kebabOption.label).toEqual(label);
+    expect(kebabOption.labelKey).toEqual(labelKey);
     expect(kebabOption.icon).toEqual(icon);
-    expect(kebabOption.path).toEqual(null);
+    expect(kebabOption.path).toBeFalsy();
     expect(kebabOption.href).toEqual(
       getAddPageUrl(primaryObj, '', ImportOptions.GIT, hasApplication, contextSource),
     );
@@ -164,14 +164,14 @@ describe('addResourceMenuUtils: ', () => {
     const primaryObj = await getTopologyData(MockResources, 'analytics-deployment');
     const icon = <GitAltIcon />;
     const hasApplication = true;
-    const label = 'From Git';
+    const labelKey = 'devconsole~From Git';
 
-    const kebabAction: KebabAction = createKebabAction(label, icon, ImportOptions.GIT);
+    const kebabAction: KebabAction = createKebabAction(labelKey, icon, ImportOptions.GIT);
     const kebabOption: KebabOption = kebabAction(primaryObj, '', hasApplication);
 
-    expect(kebabOption.label).toEqual(label);
+    expect(kebabOption.labelKey).toEqual(labelKey);
     expect(kebabOption.icon).toEqual(icon);
-    expect(kebabOption.path).toEqual('Add to Application');
+    expect(kebabOption.pathKey).toEqual('devconsole~Add to Application');
     expect(kebabOption.href).toEqual(
       getAddPageUrl(primaryObj, '', ImportOptions.GIT, hasApplication),
     );

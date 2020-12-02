@@ -8,11 +8,7 @@ import { RootState } from '@console/internal/redux';
 import { connect } from 'react-redux';
 import { ALL_APPLICATIONS_KEY, usePostFormSubmitAction } from '@console/shared';
 import { useExtensions, Perspective, isPerspective } from '@console/plugin-sdk';
-import {
-  UNASSIGNED_KEY,
-  UNASSIGNED_LABEL,
-  ALLOW_SERVICE_BINDING_FLAG,
-} from '@console/topology/src/const';
+import { UNASSIGNED_KEY, ALLOW_SERVICE_BINDING_FLAG } from '@console/topology/src/const';
 import { sanitizeApplicationValue } from '@console/topology/src/utils/application-utils';
 import { NormalizedBuilderImages, normalizeBuilderImages } from '../../utils/imagestream-utils';
 import { GitImportFormData, FirehoseList, ImportData, Resources } from './import-types';
@@ -59,7 +55,10 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
     application: {
       initial: sanitizeApplicationValue(activeApplication),
       name: sanitizeApplicationValue(activeApplication),
-      selectedKey: activeApplication === UNASSIGNED_LABEL ? UNASSIGNED_KEY : activeApplication,
+      selectedKey:
+        activeApplication === t('devconsole~no application group')
+          ? UNASSIGNED_KEY
+          : activeApplication,
       isInContext: !!sanitizeApplicationValue(activeApplication),
     },
     git: {

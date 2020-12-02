@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   DataListCell,
   DataListContent,
@@ -7,7 +8,6 @@ import {
   DataListItemRow,
 } from '@patternfly/react-core';
 import { Node, observer } from '@patternfly/react-topology';
-import { UNASSIGNED_LABEL } from '../../const';
 import { getChildKinds } from './list-view-utils';
 import TopologyListViewKindGroup from './TopologyListViewKindGroup';
 
@@ -24,6 +24,7 @@ const TopologyListViewUnassignedGroup: React.FC<TopologyListViewUnassignedGroupP
   selectedIds,
   onSelect,
 }) => {
+  const { t } = useTranslation();
   if (!items?.length) {
     return null;
   }
@@ -55,7 +56,7 @@ const TopologyListViewUnassignedGroup: React.FC<TopologyListViewUnassignedGroupP
       className="odc-topology-list-view__unassigned-label"
       id="unassigned_label"
     >
-      {UNASSIGNED_LABEL}
+      {t('topology~no application group')}
     </DataListCell>,
   );
 

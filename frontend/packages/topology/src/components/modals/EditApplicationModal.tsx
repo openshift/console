@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { Trans, useTranslation } from 'react-i18next';
 import { Title } from '@patternfly/react-core';
 import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { PromiseComponent } from '@console/internal/components/utils';
@@ -39,22 +40,24 @@ const EditApplicationForm: React.FC<FormikProps<FormikValues> & EditApplicationF
   initialApplication,
   status,
 }) => {
+  const { t } = useTranslation();
   const dirty = _.get(values, 'application.selectedKey') !== initialApplication;
   return (
     <form onSubmit={handleSubmit} className="modal-content modal-content--no-inner-scroll">
-      <ModalTitle>Edit Application Grouping</ModalTitle>
+      <ModalTitle>{t('topology~Edit Application Grouping')}</ModalTitle>
       <ModalBody>
         <Title headingLevel="h2" size="md" className="co-m-form-row">
-          Select an application group to add the component
-          <strong>{` ${resource.metadata.name} `}</strong>
-          to
+          <Trans ns="topology">
+            Select an application group to add the component{' '}
+            <strong>{resource.metadata.name}</strong> to
+          </Trans>
         </Title>
         <div className="pf-c-form">
           <ApplicationSelector namespace={resource.metadata.namespace} />
         </div>
       </ModalBody>
       <ModalSubmitFooter
-        submitText="Save"
+        submitText={t('topology~Save')}
         submitDisabled={!dirty}
         cancel={cancel}
         inProgress={isSubmitting}

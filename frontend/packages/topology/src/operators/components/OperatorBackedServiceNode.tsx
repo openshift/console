@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
 import { Tooltip } from '@patternfly/react-core';
 import {
   observer,
@@ -39,6 +40,7 @@ const OperatorBackedServiceNode: React.FC<OperatorBackedServiceNodeProps> = ({
   canDrop,
   dropTarget,
 }) => {
+  const { t } = useTranslation();
   const [hover, hoverRef] = useHover();
   const [{ dragging }, dragNodeRef] = useDragNode(noRegroupDragSourceSpec);
   const refs = useCombineRefs<SVGRectElement>(hoverRef, dragNodeRef, dndDropRef);
@@ -57,7 +59,7 @@ const OperatorBackedServiceNode: React.FC<OperatorBackedServiceNodeProps> = ({
 
   return (
     <Tooltip
-      content="Create a binding connector"
+      content={t('topology~Create a binding connector')}
       trigger="manual"
       isVisible={dropTarget && canDrop}
       animationDuration={0}

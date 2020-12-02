@@ -15,7 +15,8 @@ const EventSourceIcon: React.FC = () => {
 };
 
 export const addEventSource: KebabAction = createKebabAction(
-  'Event Source',
+  // t('knative-plugin~Event Source')
+  'knative-plugin~Event Source',
   <EventSourceIcon />,
   ImportOptions.EVENTSOURCE,
 );

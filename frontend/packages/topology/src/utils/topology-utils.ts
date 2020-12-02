@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import GitUrlParse from 'git-url-parse';
+import i18next from 'i18next';
 import {
   K8sResourceKind,
   K8sResourceKindReference,
@@ -121,7 +122,11 @@ export const updateTopologyResourceApplication = (
     const resourceKind = modelFor(referenceFor(nextResource));
     if (!resourceKind) {
       return Promise.reject(
-        new Error(`Unable to update application, invalid resource type: ${nextResource.kind}`),
+        new Error(
+          i18next.t('topology~Unable to update application, invalid resource type: {{kind}}', {
+            kind: nextResource.kind,
+          }),
+        ),
       );
     }
     updates.push(updateResourceApplication(resourceKind, nextResource, application));
@@ -136,7 +141,9 @@ export const createTopologyResourceConnection = (
   replaceTarget: K8sResourceKind = null,
 ): Promise<K8sResourceKind[] | K8sResourceKind> => {
   if (!source || !target || source === target) {
-    return Promise.reject(new Error('Can not create a connection from a node to itself.'));
+    return Promise.reject(
+      new Error(i18next.t('topology~Can not create a connection from a node to itself.')),
+    );
   }
 
   return createResourceConnection(source, target, replaceTarget);

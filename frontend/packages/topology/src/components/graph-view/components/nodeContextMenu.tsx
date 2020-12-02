@@ -1,4 +1,5 @@
 import * as React from 'react';
+import i18next from 'i18next';
 import {
   ContextMenuItem,
   ContextSubMenuItem,
@@ -36,7 +37,10 @@ const onKebabOptionClick = (option: KebabOption) => {
 export const createMenuItems = (actions: KebabMenuOption[]) =>
   actions.map((option: KebabMenuOption, index) =>
     isKebabSubMenu(option) ? (
-      <ContextSubMenuItem label={option.label} key={option.label}>
+      <ContextSubMenuItem
+        label={option.labelKey ? i18next.t(option.labelKey) : option.label}
+        key={option.labelKey || option.label}
+      >
         {createMenuItems(option.children)}
       </ContextSubMenuItem>
     ) : (

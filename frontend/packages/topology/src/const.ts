@@ -30,6 +30,3 @@ export const GROUP_PADDING = [DEFAULT_GROUP_PAD];
 
 export const CREATE_APPLICATION_KEY = '#CREATE_APPLICATION_KEY#';
 export const UNASSIGNED_KEY = '#UNASSIGNED_APP#';
-
-export const CREATE_APPLICATION_LABEL = 'Create Application';
-export const UNASSIGNED_LABEL = 'no application group';

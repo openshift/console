@@ -1,19 +1,18 @@
 import * as React from 'react';
+import { TFunction } from 'i18next';
 import { Shortcut, ShortcutTable } from '@console/shared';
 
-const TopologyShortcuts: React.ReactElement = (
+export const getTopologyShortcuts = (t: TFunction): React.ReactElement => (
   <ShortcutTable>
-    <Shortcut drag>Move</Shortcut>
+    <Shortcut drag>{t('topology~Move')}</Shortcut>
     <Shortcut shift drag>
-      Edit application grouping
+      {t('topology~Edit application grouping')}
     </Shortcut>
-    <Shortcut rightClick>Access context menu</Shortcut>
-    <Shortcut click>View details in side panel</Shortcut>
-    <Shortcut hover>Access create connector handle</Shortcut>
+    <Shortcut rightClick>{t('topology~Access context menu')}</Shortcut>
+    <Shortcut click>{t('topology~View details in side panel')}</Shortcut>
+    <Shortcut hover>{t('topology~Access create connector handle')}</Shortcut>
     <Shortcut ctrl keyName="Spacebar">
-      Open quick search modal
+      {t('topology~Open quick search modal')}
     </Shortcut>
   </ShortcutTable>
 );
-
-export default TopologyShortcuts;

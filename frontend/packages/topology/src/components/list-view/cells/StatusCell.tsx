@@ -1,6 +1,7 @@
 import { Node } from '@patternfly/react-topology';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { DataListCell } from '@patternfly/react-core';
 import { usePodsWatcher, PodRCData } from '@console/shared';
 import { resourceObjPath } from '@console/internal/components/utils';
@@ -21,10 +22,11 @@ const StatusCellResourceLink: React.FC<StatusCellResourceLinkProps> = ({
   ready = 0,
   resource,
 }) => {
+  const { t } = useTranslation();
   const href = `${resourceObjPath(resource, resource.kind)}/pods`;
   return (
     <Link to={href}>
-      {ready} of {desired} pods
+      {t('topology~{{ready, number}} of {{count, number}} pod', { ready, count: desired })}
     </Link>
   );
 };
@@ -35,6 +37,7 @@ interface StatusCellResourceStatus {
 }
 
 const StatusCellResourceStatus: React.FC<StatusCellResourceStatus> = ({ obj, podData }) => {
+  const { t } = useTranslation();
   if (obj.kind === DaemonSetModel.kind) {
     return (
       <StatusCellResourceLink
@@ -50,11 +53,11 @@ const StatusCellResourceStatus: React.FC<StatusCellResourceStatus> = ({ obj, pod
     if (!filteredPods.length) {
       return null;
     }
-    return <Link to={href}>{filteredPods.length} pods</Link>;
+    return <Link to={href}>{t('topology~{{length}} pods', { length: filteredPods.length })}</Link>;
   }
 
   return podData.isRollingOut ? (
-    <span className="text-muted">Rollout in progress...</span>
+    <span className="text-muted">{t('topology~Rollout in progress...')}</span>
   ) : (
     <StatusCellResourceLink
       desired={obj.spec.replicas}

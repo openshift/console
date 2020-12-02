@@ -1,4 +1,6 @@
 {
+  "Add Health Checks": "Add Health Checks",
+  "Edit Health Checks": "Edit Health Checks",
   "Clone": "Clone",
   "Name": "Name",
   "Clone PVC": "Clone PVC",

@@ -23,7 +23,8 @@ export const getTopologyFilters = () => {
     {
       type: TopologyDisplayFilterType.expand,
       id: EXPAND_KNATIVE_SERVICES_FILTER_ID,
-      label: 'Knative Services',
+      // t('knative-plugin~Knative Services')
+      labelKey: 'knative-plugin~Knative Services',
       priority: 400,
       value: true,
     },

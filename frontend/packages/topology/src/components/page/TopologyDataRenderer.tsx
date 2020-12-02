@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { observer } from '@patternfly/react-topology';
 import { HintBlock, StatusBox } from '@console/internal/components/utils';
 import EmptyState from '@console/dev-console/src/components/EmptyState';
@@ -14,22 +15,24 @@ interface TopologyDataRendererProps {
 
 const TopologyDataRenderer: React.FC<TopologyDataRendererProps> = observer(
   ({ viewType, title }) => {
+    const { t } = useTranslation();
     const { namespace, model, loaded, loadError } = React.useContext<ExtensibleModel>(ModelContext);
     const EmptyMsg = React.useCallback(
       () => (
         <EmptyState
           title={title}
           hintBlock={
-            <HintBlock title="No resources found">
+            <HintBlock title={t('topology~No resources found')}>
               <p>
-                To add content to your project, create an application, component or service using
-                one of these options.
+                {t(
+                  'topology~To add content to your project, create an application, component or service using one of these options.',
+                )}
               </p>
             </HintBlock>
           }
         />
       ),
-      [title],
+      [t, title],
     );
 
     return (
@@ -45,7 +48,7 @@ const TopologyDataRenderer: React.FC<TopologyDataRendererProps> = observer(
           )
         }
         data={model ? model.nodes : null}
-        label="Topology"
+        label={t('topology~Topology')}
         loaded={loaded}
         loadError={loadError}
         EmptyMsg={EmptyMsg}
