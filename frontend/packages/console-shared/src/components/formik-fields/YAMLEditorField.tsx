@@ -5,31 +5,58 @@ import { FormikValues, useField, useFormikContext } from 'formik';
 import { Button } from '@patternfly/react-core';
 import { InfoCircleIcon } from '@patternfly/react-icons';
 import { AsyncComponent } from '@console/internal/components/utils';
-import { definitionFor } from '@console/internal/module/k8s';
+import { definitionFor, K8sResourceCommon, referenceForModel } from '@console/internal/module/k8s';
 import { YAMLEditorFieldProps } from './field-types';
 
 import './YAMLEditorField.scss';
+import {
+  useK8sWatchResource,
+  WatchK8sResource,
+} from '@console/internal/components/utils/k8s-watch-hook';
+import { ConsoleYAMLSampleModel } from '@console/internal/models';
+import { getResourceSidebarSamples } from '../../utils';
+
+const SampleResource: WatchK8sResource = {
+  kind: referenceForModel(ConsoleYAMLSampleModel),
+  isList: true,
+};
 
 const YAMLEditorField: React.FC<YAMLEditorFieldProps> = ({
   name,
-  onSave,
+  label,
+  model,
   schema,
-  schemaModel,
-  schemaLabel,
+  onSave,
 }) => {
   const [field] = useField(name);
   const { setFieldValue } = useFormikContext<FormikValues>();
   const { t } = useTranslation();
+  const editorRef = React.useRef();
 
   const [sidebarOpen, setSidebarOpen] = React.useState<boolean>(true);
-  const definition = schemaModel ? definitionFor(schemaModel) : { properties: [] };
-  const showSchema = schema || (definition && !isEmpty(definition.properties));
+
+  const [sampleResources, loaded, loadError] = useK8sWatchResource<K8sResourceCommon[]>(
+    SampleResource,
+  );
+
+  const { samples, snippets } = model
+    ? getResourceSidebarSamples(model, {
+        data: sampleResources,
+        loaded,
+        loadError,
+      })
+    : { samples: [], snippets: [] };
+
+  const definition = model ? definitionFor(model) : { properties: [] };
+  const hasSchema = !!schema || (!!definition && !isEmpty(definition.properties));
+  const hasSidebarContent = hasSchema || !isEmpty(samples) || !isEmpty(snippets);
 
   return (
     <div className="osc-yaml-editor">
       <div className="osc-yaml-editor__editor">
         <AsyncComponent
           loader={() => import('../editor/YAMLEditor').then((c) => c.default)}
+          forwardRef={editorRef}
           value={field.value}
           minHeight="200px"
           onChange={(yaml: string) => setFieldValue(name, yaml)}
@@ -37,7 +64,7 @@ const YAMLEditorField: React.FC<YAMLEditorFieldProps> = ({
           showShortcuts
           toolbarLinks={
             !sidebarOpen &&
-            showSchema && [
+            hasSidebarContent && [
               <Button isInline variant="link" onClick={() => setSidebarOpen(true)}>
                 <InfoCircleIcon className="co-icon-space-r co-p-has-sidebar__sidebar-link-icon" />
                 {t('console-shared~View sidebar')}
@@ -46,20 +73,17 @@ const YAMLEditorField: React.FC<YAMLEditorFieldProps> = ({
           }
         />
       </div>
-      {sidebarOpen && showSchema && (
+      {sidebarOpen && hasSidebarContent && (
         <div className="osc-yaml-editor__sidebar">
           <AsyncComponent
-            loader={() =>
-              import('@console/internal/components/sidebars/resource-sidebar').then(
-                (c) => c.ResourceSidebar,
-              )
-            }
-            kindObj={schemaModel}
+            loader={() => import('../editor/YAMLEditorSidebar').then((c) => c.default)}
+            editorRef={editorRef}
+            model={model}
             schema={schema}
-            sidebarLabel={schemaLabel}
-            showSidebar={sidebarOpen}
+            samples={samples}
+            snippets={snippets}
+            sidebarLabel={label}
             toggleSidebar={() => setSidebarOpen(!sidebarOpen)}
-            showSchema={showSchema}
           />
         </div>
       )}

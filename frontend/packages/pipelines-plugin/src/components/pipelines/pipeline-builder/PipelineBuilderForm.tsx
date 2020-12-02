@@ -113,7 +113,7 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
   );
 
   const yamlEditor = (
-    <YAMLEditorField name="yamlData" onSave={handleSubmit} schemaModel={PipelineModel} />
+    <YAMLEditorField name="yamlData" model={PipelineModel} onSave={handleSubmit} />
   );
 
   const sanitizeToForm = (newFormData: Pipeline) => {

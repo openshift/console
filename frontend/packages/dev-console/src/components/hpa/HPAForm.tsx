@@ -29,11 +29,7 @@ const HPAForm: React.FC<FormikProps<HPAFormValues> & HPAFormProps> = ({
   const isForm = values.editorType === EditorType.Form;
   const formEditor = <HPADetailsForm />;
   const yamlEditor = (
-    <YAMLEditorField
-      name="yamlData"
-      onSave={handleSubmit}
-      schemaModel={HorizontalPodAutoscalerModel}
-    />
+    <YAMLEditorField name="yamlData" model={HorizontalPodAutoscalerModel} onSave={handleSubmit} />
   );
   const customMetrics = false;
 

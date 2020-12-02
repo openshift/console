@@ -28,13 +28,16 @@ const YAMLEditor = React.forwardRef<MonacoEditor, YAMLEditorProps>((props, ref) 
     onSave,
   } = props;
 
-  const editorDidMount = (editor, monaco) => {
-    editor.layout();
-    editor.focus();
-    registerYAMLinMonaco(monaco);
-    monaco.editor.getModels()[0].updateOptions({ tabSize: 2 });
-    onSave && editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S, onSave); // eslint-disable-line no-bitwise
-  };
+  const editorDidMount = React.useCallback(
+    (editor, monaco) => {
+      editor.layout();
+      editor.focus();
+      registerYAMLinMonaco(monaco);
+      monaco.editor.getModels()[0].updateOptions({ tabSize: 2 });
+      onSave && editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S, onSave); // eslint-disable-line no-bitwise
+    },
+    [onSave],
+  );
 
   return (
     <>

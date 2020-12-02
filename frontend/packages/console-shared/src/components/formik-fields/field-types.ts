@@ -1,3 +1,4 @@
+import { JSONSchema6 } from 'json-schema';
 import { ValidatedOptions, TextInputTypes, gridItemSpanValueShape } from '@patternfly/react-core';
 import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 
@@ -84,11 +85,10 @@ export interface MultiColumnFieldProps extends FieldProps {
 }
 
 export interface YAMLEditorFieldProps extends FieldProps {
+  model?: K8sKind;
+  schema?: JSONSchema6;
   onChange?: (value: string) => void;
   onSave?: () => void;
-  schemaModel?: K8sKind;
-  schemaLabel?: string;
-  schema?: any;
 }
 
 export interface NameValuePair {
