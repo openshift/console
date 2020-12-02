@@ -29,9 +29,12 @@ const makeLocalVolumeSetCall = (
   const requestData = getLocalVolumeSetRequestData(state, ns);
   k8sCreate(LocalVolumeSetModel, requestData)
     .then(() => {
+      dispatch({
+        type: 'setStorageClassName',
+        name: state.storageClassName || state.volumeSetName,
+      });
       state.onNextClick();
       setInProgress(false);
-      dispatch({ type: 'setFinalStep', value: true });
     })
     .catch((err) => {
       setErrorMessage(err.message);

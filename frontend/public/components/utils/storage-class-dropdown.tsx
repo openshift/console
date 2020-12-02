@@ -79,7 +79,7 @@ export class StorageClassDropdownInner extends React.Component<
       unorderedItems[''] = { kindLabel: '', name: noStorageClass };
     }
 
-    if (!this.props.loaded || !selectedKey) {
+    if (!this.props.loaded || !selectedKey || !unorderedItems[selectedKey || state.defaultClass]) {
       state.title = <span className="text-muted">Select storage class</span>;
     }
 
@@ -98,7 +98,9 @@ export class StorageClassDropdownInner extends React.Component<
 
   componentDidUpdate() {
     const { defaultClass, selectedKey } = this.state;
-    if (!selectedKey && defaultClass) {
+    if (selectedKey) {
+      this.onChange(selectedKey);
+    } else if (defaultClass) {
       this.onChange(defaultClass);
     }
   }
