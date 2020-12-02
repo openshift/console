@@ -14,10 +14,16 @@ import (
 	"os"
 	"strings"
 
+	"github.com/containous/alice"
 	"github.com/coreos/pkg/capnslog"
 	"github.com/coreos/pkg/flagutil"
+	"gopkg.in/yaml.v2"
 
 	"github.com/openshift/console/pkg/auth"
+	"github.com/openshift/console/pkg/backend"
+	"github.com/openshift/console/pkg/hypercloud/middlewares/stripprefix"
+
+	// "github.com/openshift/console/pkg/backend"
 	"github.com/openshift/console/pkg/bridge"
 	"github.com/openshift/console/pkg/crypto"
 	"github.com/openshift/console/pkg/helm/chartproxy"
@@ -25,6 +31,8 @@ import (
 	"github.com/openshift/console/pkg/proxy"
 	"github.com/openshift/console/pkg/server"
 	"github.com/openshift/console/pkg/serverconfig"
+
+	pConfig "github.com/openshift/console/pkg/hypercloud/config"
 )
 
 var (
@@ -54,6 +62,29 @@ const (
 	// Well-known location of metering service for OpenShift. This is only accessible in-cluster.
 	openshiftMeteringHost = "reporting-operator.openshift-metering.svc:8080"
 )
+
+type ProxyFlag struct {
+	Names []string
+}
+
+func (s *ProxyFlag) GetNames() []string {
+	return s.Names
+}
+
+func (s *ProxyFlag) String() string {
+	return fmt.Sprint(s.Names)
+}
+
+func (s *ProxyFlag) Set(v string) error {
+	if len(s.Names) > 0 {
+		return fmt.Errorf("Cammpt name ")
+	}
+	names := strings.Split(v, ",")
+	for _, item := range names {
+		s.Names = append(s.Names, item)
+	}
+	return nil
+}
 
 func main() {
 	rl := capnslog.MustRepoLogger("github.com/openshift/console")
@@ -93,7 +124,7 @@ func main() {
 	fPublicDir := fs.String("public-dir", "./frontend/public/dist", "directory containing static web assets.")
 	fTlSCertFile := fs.String("tls-cert-file", "", "TLS certificate. If the certificate is signed by a certificate authority, the certFile should be the concatenation of the server's certificate followed by the CA's certificate.")
 	fTlSKeyFile := fs.String("tls-key-file", "", "The TLS certificate key.")
-	fCAFile := fs.String("ca-file", "", "PEM File containing trusted certificates of trusted CAs. If not present, the system's Root CAs will be used.")
+	fCAFile := fs.String("ca-file", "", "P)EM File containing trusted certificates of trusted CAs. If not present, the system's Root CAs will be used.")
 	fDexClientCertFile := fs.String("dex-client-cert-file", "", "PEM File containing certificates of dex client.")
 	fDexClientKeyFile := fs.String("dex-client-key-file", "", "PEM File containing certificate key of the dex client.")
 	fDexClientCAFile := fs.String("dex-client-ca-file", "", "PEM File containing trusted CAs for Dex client configuration. If blank, defaults to value of ca-file argument")
@@ -119,10 +150,39 @@ func main() {
 
 	helmConfig := chartproxy.RegisterFlags(fs)
 
+	// proxy config 경로 획득 20/11/19 jinsoo
+	fProxyConfig := fs.String("proxyConfig", "", "The YAML proxy config file.")
+
 	if err := fs.Parse(os.Args[1:]); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
 	}
+
+	// proxy config 획득 20/11/19 jinsoo
+	// config := serverconfig.Config{}
+	// proxyConfig := []serverconfig.ProxyInfo{}
+	// if *fProxyConfig != "" {
+	// 	content, err := ioutil.ReadFile(*fProxyConfig)
+	// 	if err != nil {
+	// 		log.Error("ReadFile error occur")
+	// 	}
+
+	// 	err = yaml.Unmarshal(content, &config)
+	// 	if err != nil {
+	// 		log.Error("unmarshal error occur ")
+	// 	}
+	// 	proxyConfig = append(proxyConfig, config.ProxyInfo...)
+	// }
+	// log.Info(config.ProxyInfo)
+	// log.Info(proxyConfig)
+
+	// // proxyConfig[0].Name
+	// proxyBackend, _ := backend.NewBackend(proxyConfig[0].Name, proxyConfig[0].Server)
+	// proxyBackend.Rule = proxyConfig[0].Rule
+	// proxyBackend.ServerURL = proxyConfig[0].Name
+
+	// routerR, _ := backend.NewRouter()
+	// routerR.AddRoute(proxyConfig[0].Rule, 0, proxyBackend.Handler)
 
 	if err := flagutil.SetFlagsFromEnv(fs, "BRIDGE"); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
@@ -408,6 +468,14 @@ func main() {
 		bridge.FlagFatalf("k8s-mode", "must be one of: in-cluster, off-cluster")
 	}
 
+	// log.Infof("fproxy test")
+	// if len(fProxys.GetNames()) != 0 {
+	// 	for _, item := range fProxys.GetNames() {
+	// 		new, _ := backend.NewBackend("test", item)
+	// 		srv.DynamicProxyConfig = append(srv.DynamicProxyConfig, new)
+	// 	}
+	// }
+	// log.Info(name)
 	apiServerEndpoint := *fK8sPublicEndpoint
 	if apiServerEndpoint == "" {
 		apiServerEndpoint = srv.K8sProxyConfig.Endpoint.String()
@@ -615,6 +683,78 @@ func main() {
 		}()
 	}
 
+	// Add proxy Server
+	log.Info("starting proxy server")
+	if *fProxyConfig != "" {
+		go func() {
+
+			config := serverconfig.Config{}
+			proxyConfig := []serverconfig.ProxyInfo{}
+
+			content, err := ioutil.ReadFile(*fProxyConfig)
+			if err != nil {
+				log.Error("ReadFile error occur")
+			}
+
+			err = yaml.Unmarshal(content, &config)
+			if err != nil {
+				log.Error("unmarshal error occur ")
+			}
+			proxyConfig = append(proxyConfig, config.ProxyInfo...)
+
+			router, err := backend.NewRouter()
+			if err != nil {
+				log.Error("Failed to create router", err)
+			}
+
+			log.Info(proxyConfig)
+			for i := range proxyConfig {
+				proxyBackend, err := backend.NewBackend(proxyConfig[i].Name, proxyConfig[i].Server)
+				if err != nil {
+					log.Error("Failed to parse url", err)
+				}
+				proxyBackend.Rule = proxyConfig[i].Rule
+				proxyBackend.ServerURL = proxyConfig[i].Server
+
+				chain := alice.New()
+
+				if proxyConfig[i].Path != "" {
+					handlerConfig := &pConfig.StripPrefix{
+						Prefixes: []string{proxyConfig[i].Path},
+					}
+					chain.Append(func(next http.Handler) http.Handler {
+						handler, err := stripprefix.New(context.TODO(), proxyBackend.Handler, *handlerConfig, "stripPrefix")
+						if err != nil {
+							log.Error("Failed to create stripprefix handler", err)
+						}
+						return handler
+					})
+
+					router.AddRoute(proxyBackend.Rule, 0, chain.Then(proxyBackend.Handler))
+				}
+				router.AddRoute(proxyBackend.Rule, 0, proxyBackend.Handler)
+			}
+
+			// r := mux.NewRouter()
+			// for i := range proxyConfig {
+			// 	server, err := url.Parse(proxyConfig[i].Server)
+			// 	if err != nil {
+			// 		log.Error("Failed to parse url", err)
+			// 	}
+			// 	proxy := httputil.NewSingleHostReverseProxy(server)
+			// 	// r.NewRoute().Subrouter().Host(proxyConfig[i].Host).PathPrefix(proxyConfig[i].Path).Handler(http.StripPrefix(proxyConfig[i].Path, proxy))
+			// 	r.NewRoute().Subrouter().PathPrefix(proxyConfig[i].Path).Handler(http.StripPrefix(proxyConfig[i].Path, proxy))
+			// }
+
+			pServer := http.Server{
+				Addr:    "192.168.8.62:9988",
+				Handler: router.Router,
+			}
+			log.Info("using proxy server: ", pServer.Addr)
+			log.Fatal(pServer.ListenAndServe())
+		}()
+	}
+
 	log.Infof("Binding to %s...", httpsrv.Addr)
 	if listenURL.Scheme == "https" {
 		log.Info("using TLS")
@@ -623,4 +763,5 @@ func main() {
 		log.Info("not using TLS")
 		log.Fatal(httpsrv.ListenAndServe())
 	}
+
 }

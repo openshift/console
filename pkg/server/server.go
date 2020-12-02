@@ -15,11 +15,14 @@ import (
 	"github.com/coreos/pkg/health"
 
 	"github.com/openshift/console/pkg/auth"
+	"github.com/openshift/console/pkg/backend"
 	helmhandlerspkg "github.com/openshift/console/pkg/helm/handlers"
 	"github.com/openshift/console/pkg/proxy"
 	"github.com/openshift/console/pkg/serverutils"
 	"github.com/openshift/console/pkg/terminal"
 	"github.com/openshift/console/pkg/version"
+
+	gmux "github.com/gorilla/mux"
 )
 
 const (
@@ -111,6 +114,9 @@ type Server struct {
 	GrafanaPublicURL      *url.URL
 	PrometheusPublicURL   *url.URL
 	ThanosPublicURL       *url.URL
+
+	// Dynamic reverse proxy config
+	DynamicProxyConfig []*backend.Backend
 }
 
 func (s *Server) authDisabled() bool {
@@ -129,8 +135,15 @@ func (s *Server) meteringProxyEnabled() bool {
 	return s.MeteringProxyConfig != nil
 }
 
+func (s *Server) dynamicProxyEnabled() bool {
+	return len(s.DynamicProxyConfig) != 0
+}
+
 func (s *Server) HTTPHandler() http.Handler {
 	mux := http.NewServeMux()
+
+	// te:=gmux.NewRouter()
+	// mux.Handle("/test/test",http.Handler(te))
 
 	if len(s.BaseURL.Scheme) > 0 && len(s.BaseURL.Host) > 0 {
 		s.K8sProxyConfig.Origin = fmt.Sprintf("%s://%s", s.BaseURL.Scheme, s.BaseURL.Host)
@@ -322,6 +335,27 @@ func (s *Server) HTTPHandler() http.Handler {
 		)
 	}
 
+	// Add dynamic Proxy (ongoing test) by Jinsoo youn
+	dynamicProxyEndpoint := "/api/dynamic/"
+	// r := gmux.NewRouter()
+	// b := &backend.Router{}
+	// r.HandleFunc(dynamicProxyEndpoint+"/{id}", b.ProxyHandler().ServeHTTP)
+
+	if s.dynamicProxyEnabled() {
+		handle(dynamicProxyEndpoint,
+			// http.StripPrefix(
+			// proxy.SingleJoiningSlash(s.BaseURL.Path, dynamicProxyEndpoint),
+			http.Handler(s.ProxyHandler()),
+
+		// http.Handler(r.ProxyHandler()),
+		// http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// 	// test.HandleFunc("/test/",dProxy.ServeHTTP()).s
+		// 	s.DynamicProxyConfig.Handler.ServeHTTP(w, r)
+		// })
+		// ),
+		)
+	}
+
 	handle("/api/console/monitoring-dashboard-config", authHandler(s.handleMonitoringDashboardConfigmaps))
 	handle("/api/console/knative-event-sources", authHandler(s.handleKnativeEventSourceCRDs))
 	handle("/api/console/version", authHandler(s.versionHandler))
@@ -474,4 +508,33 @@ func (s *Server) handleOpenShiftTokenDeletion(user *auth.User, w http.ResponseWr
 	w.WriteHeader(resp.StatusCode)
 	io.Copy(w, resp.Body)
 	resp.Body.Close()
+}
+
+func (s *Server) ProxyHandler() http.Handler {
+	plog.Info("is it working?")
+	mux := gmux.NewRouter()
+	mux.Path("/api/dynamic/test/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		plog.Info("is it a matching algorithm working?")
+		w.Write([]byte("OK it is work"))
+	})
+
+	return http.Handler(mux)
+	// mux.HandleFunc("/{name}", func(w http.ResponseWriter, r *http.Request) {
+	// 	var proxy *backend.Backend
+	// 	// params := gmux.Vars(r)
+	// 	// name := params["name"]
+
+	// 	for _, val := range s.DynamicProxyConfig {
+	// 		if val.Name == "test" {
+	// 			proxy = val
+	// 			plog.Info("is it matching?")
+	// 			break
+	// 		} else {
+	// 			continue
+	// 		}
+	// 	}
+	// 	proxy.Handler.ServeHTTP(w, r)
+	// })
+
+	// return http.Handler(mux)
 }
