@@ -107,7 +107,8 @@ export const VMInventoryCard: React.FC<VMInventoryCardProps> = () => {
         {nicCount > 0 && (
           <InventoryItem
             isLoading={isLoading}
-            title={t('kubevirt-plugin~NIC')}
+            title={t('kubevirt-plugin~NIC', { count: nicCount })}
+            titlePlural={t('kubevirt-plugin~NIC', { count: nicCount })}
             count={nicCount}
             TitleComponent={NicsTitle}
             key="nic-inventory-item"
@@ -116,7 +117,8 @@ export const VMInventoryCard: React.FC<VMInventoryCardProps> = () => {
         {diskCount > 0 && (
           <InventoryItem
             isLoading={isLoading}
-            title={DiskType.DISK.toString()}
+            title={t('kubevirt-plugin~Disk', { count: diskCount })}
+            titlePlural={t('kubevirt-plugin~Disk', { count: diskCount })}
             count={diskCount}
             TitleComponent={DisksTitle}
             key="disk-inventory-item"
@@ -125,7 +127,8 @@ export const VMInventoryCard: React.FC<VMInventoryCardProps> = () => {
         {cdromCount > 0 && (
           <InventoryItem
             isLoading={isLoading}
-            title={DiskType.CDROM.toString()}
+            title={t('kubevirt-plugin~CD-ROM', { count: cdromCount })}
+            titlePlural={t('kubevirt-plugin~CD-ROM', { count: cdromCount })}
             count={cdromCount}
             TitleComponent={CDROMTitle}
             key="cdrom-inventory-item"
@@ -134,7 +137,8 @@ export const VMInventoryCard: React.FC<VMInventoryCardProps> = () => {
         {lunCount > 0 && (
           <InventoryItem
             isLoading={isLoading}
-            title={DiskType.LUN.toString()}
+            title={t('kubevirt-plugin~LUN', { count: lunCount })}
+            titlePlural={t('kubevirt-plugin~LUN', { count: lunCount })}
             count={lunCount}
             TitleComponent={LUNTitle}
             key="lun-inventory-item"
@@ -144,7 +148,8 @@ export const VMInventoryCard: React.FC<VMInventoryCardProps> = () => {
           <InventoryItem
             isLoading={isLoading || !snapshotsLoaded}
             error={snapshotsError}
-            title={t('kubevirt-plugin~Snapshot')}
+            title={t('kubevirt-plugin~Snapshot', { count: filteredSnapshots.length })}
+            titlePlural={t('kubevirt-plugin~Snapshot', { count: filteredSnapshots.length })}
             count={filteredSnapshots.length}
             TitleComponent={SnapshotsTitle}
             key="snapshots-inventory-item"

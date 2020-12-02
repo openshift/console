@@ -38,20 +38,6 @@ export const breadcrumbsForVMTemplatePage = (t: TFunction, match: VMTemplateMatc
   },
 ];
 
-const nicsPage = {
-  href: 'nics',
-  name: 'Network Interfaces',
-  component: VMNics,
-};
-
-const disksPage = {
-  href: 'disks',
-  name: 'Disks',
-  component: VMDisksFirehose,
-};
-
-const pages = [navFactory.details(VMTemplateDetails), navFactory.editYaml(), nicsPage, disksPage];
-
 export const VMTemplateDetailsPage: React.FC<VMTemplateDetailsPageProps> = (props) => {
   const { t } = useTranslation();
   const { name } = props.match.params;
@@ -94,6 +80,20 @@ export const VMTemplateDetailsPage: React.FC<VMTemplateDetailsPageProps> = (prop
   const withSupportModal = useSupportModal();
   const sourceLoaded = dvLoaded && podsLoaded && pvcsLoaded && templateLoaded && imagesLoaded;
   const sourceLoadError = dvError || podsError || pvcsError || templateError || error;
+
+  const nicsPage = {
+    href: 'nics',
+    name: t('kubevirt-plugin~Network Interfaces'),
+    component: VMNics,
+  };
+
+  const disksPage = {
+    href: 'disks',
+    name: t('kubevirt-plugin~Disks'),
+    component: VMDisksFirehose,
+  };
+
+  const pages = [navFactory.details(VMTemplateDetails), navFactory.editYaml(), nicsPage, disksPage];
 
   return (
     <DetailsPage
