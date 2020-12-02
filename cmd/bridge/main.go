@@ -14,14 +14,15 @@ import (
 	"os"
 	"strings"
 
-	"github.com/containous/alice"
 	"github.com/coreos/pkg/capnslog"
 	"github.com/coreos/pkg/flagutil"
+	"github.com/urfave/negroni"
 	"gopkg.in/yaml.v2"
 
 	"github.com/openshift/console/pkg/auth"
-	"github.com/openshift/console/pkg/backend"
+	"github.com/openshift/console/pkg/hypercloud/backend"
 	"github.com/openshift/console/pkg/hypercloud/middlewares/stripprefix"
+	"github.com/openshift/console/pkg/hypercloud/router"
 
 	// "github.com/openshift/console/pkg/backend"
 	"github.com/openshift/console/pkg/bridge"
@@ -654,6 +655,9 @@ func main() {
 
 	helmConfig.Configure(srv)
 
+	// n := negroni.Classic()
+	// n.UseHandler(srv.HTTPHandler())
+
 	httpsrv := &http.Server{
 		Addr:    listenURL.Host,
 		Handler: srv.HTTPHandler(),
@@ -702,7 +706,7 @@ func main() {
 			}
 			proxyConfig = append(proxyConfig, config.ProxyInfo...)
 
-			router, err := backend.NewRouter()
+			router, err := router.NewRouter()
 			if err != nil {
 				log.Error("Failed to create router", err)
 			}
@@ -716,21 +720,18 @@ func main() {
 				proxyBackend.Rule = proxyConfig[i].Rule
 				proxyBackend.ServerURL = proxyConfig[i].Server
 
-				chain := alice.New()
-
 				if proxyConfig[i].Path != "" {
+					log.Info("checking calling ", proxyConfig[i].Path)
 					handlerConfig := &pConfig.StripPrefix{
 						Prefixes: []string{proxyConfig[i].Path},
 					}
-					chain.Append(func(next http.Handler) http.Handler {
-						handler, err := stripprefix.New(context.TODO(), proxyBackend.Handler, *handlerConfig, "stripPrefix")
-						if err != nil {
-							log.Error("Failed to create stripprefix handler", err)
-						}
-						return handler
-					})
+					// chain.Append(func(next http.Handler) http.Handler {
+					prefixHandler, err := stripprefix.New(context.TODO(), proxyBackend.Handler, *handlerConfig, "stripPrefix")
+					if err != nil {
+						log.Error("Failed to create stripprefix handler", err)
+					}
 
-					router.AddRoute(proxyBackend.Rule, 0, chain.Then(proxyBackend.Handler))
+					router.AddRoute(proxyBackend.Rule, 0, prefixHandler)
 				}
 				router.AddRoute(proxyBackend.Rule, 0, proxyBackend.Handler)
 			}
@@ -745,10 +746,11 @@ func main() {
 			// 	// r.NewRoute().Subrouter().Host(proxyConfig[i].Host).PathPrefix(proxyConfig[i].Path).Handler(http.StripPrefix(proxyConfig[i].Path, proxy))
 			// 	r.NewRoute().Subrouter().PathPrefix(proxyConfig[i].Path).Handler(http.StripPrefix(proxyConfig[i].Path, proxy))
 			// }
-
+			n := negroni.Classic()
+			n.UseHandler(router.Router)
 			pServer := http.Server{
 				Addr:    "192.168.8.62:9988",
-				Handler: router.Router,
+				Handler: n,
 			}
 			log.Info("using proxy server: ", pServer.Addr)
 			log.Fatal(pServer.ListenAndServe())

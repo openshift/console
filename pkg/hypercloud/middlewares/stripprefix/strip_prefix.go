@@ -22,7 +22,7 @@ type stripPrefix struct {
 }
 
 func New(ctx context.Context, next http.Handler, config config.StripPrefix, name string) (http.Handler, error) {
-	log.Infof("Creating stripPrefix middleware")
+	log.Info("Creating stripPrefix middleware", config)
 	return &stripPrefix{
 		next:     next,
 		prefixes: config.Prefixes,
@@ -37,7 +37,7 @@ func (s *stripPrefix) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 			if req.URL.RawPath != "" {
 				req.URL.RawPath = s.getPrefixStripped(req.URL.RawPath, prefix)
 			}
-			req.Header.Add(ForwardedPrefixHeader, prefix)
+			req.Header.Add(ForwardedPrefixHeader, strings.TrimSpace(prefix))
 			req.RequestURI = req.URL.RequestURI()
 			s.next.ServeHTTP(w, req)
 			return

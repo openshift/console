@@ -4,8 +4,6 @@ import (
 	"net/http"
 
 	"github.com/codegangsta/negroni"
-	"github.com/openshift/console/pkg/hypercloud/config"
-	"github.com/openshift/console/pkg/hypercloud/middlewares/stripprefix"
 	"golang.org/x/net/context"
 )
 
@@ -19,17 +17,17 @@ func (b *Builder) BuilderChain(ctx context.Context, middlewares []string) *negro
 	n := negroni.Classic()
 	n.Use(negroni.NewRecovery())
 
-	// for _, name := range middlewares {
-	// 	n.Use()
+	// // for _, name := range middlewares {
+	// // 	n.Use()
+	// // }
+
+	// con := &config.StripPrefix{
+	// 	Prefixes: []string{"/test/"},
 	// }
 
-	con := &config.StripPrefix{
-		Prefixes: []string{"/test/"},
-	}
-
-	pre, _ := stripprefix.New(ctx, *con, "tata")
-	n.Use(pre)
-	// chain2.UseHandler()
+	// pre, _ := stripprefix.New(ctx, *con, "tata")
+	// n.Use(pre)
+	// // chain2.UseHandler()
 
 	return n
 }
