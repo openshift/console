@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 import { Alert, FormGroup, Stack, StackItem, TextInput } from '@patternfly/react-core';
 import { withHandlePromise, HandlePromiseProps } from '@console/internal/components/utils';
 import {
@@ -26,6 +27,7 @@ export type StartNodeMaintenanceModalProps = HandlePromiseProps &
   };
 
 const StartNodeMaintenanceModal = withHandlePromise<StartNodeMaintenanceModalProps>((props) => {
+  const { t } = useTranslation();
   const { nodeName, inProgress, errorMessage, handlePromise, close, cancel } = props;
   const [, model] = useMaintenanceCapability();
 
@@ -41,19 +43,22 @@ const StartNodeMaintenanceModal = withHandlePromise<StartNodeMaintenanceModalPro
   const cephCluster = cephClusters?.[0];
   const cephClusterHealthy = !cephCluster || cephCluster?.status?.health === 'OK';
 
-  const action = 'Start Maintenance';
+  const action = t('metal3-plugin~Start Maintenance');
   return (
     <form onSubmit={submit} name="form" className="modal-content">
       <ModalTitle>{action}</ModalTitle>
       <ModalBody>
         <Stack hasGutter>
           <StackItem>
-            All managed workloads will be moved off of this node. New workloads and data will not be
-            added to this node until maintenance is stopped.
+            {t(
+              'metal3-plugin~All managed workloads will be moved off of this node. New workloads and data will not be added to this node until maintenance is stopped.',
+            )}
           </StackItem>
           <StackItem>
-            If the node does not exit maintenance within <strong>30 minutes</strong>, the cluster
-            will automatically rebuild the node&apos;s data using replicated copies
+            <Trans ns="metal3-plugin">
+              If the node does not exit maintenance within <strong>30 minutes</strong>, the cluster
+              will automatically rebuild the node&apos;s data using replicated copies
+            </Trans>
           </StackItem>
           <StackItem>
             <FormGroup label="Reason" fieldId="node-maintenance-reason">
@@ -69,11 +74,12 @@ const StartNodeMaintenanceModal = withHandlePromise<StartNodeMaintenanceModalPro
             <StackItem>
               <Alert
                 variant="warning"
-                title="The Ceph storage cluster is not in a healthy state."
+                title={t('metal3-plugin~The Ceph storage cluster is not in a healthy state.')}
                 isInline
               >
-                Maintenance should not be started until the health of the storage cluster is
-                restored.
+                {t(
+                  'metal3-plugin~Maintenance should not be started until the health of the storage cluster is restored.',
+                )}
               </Alert>
             </StackItem>
           )}

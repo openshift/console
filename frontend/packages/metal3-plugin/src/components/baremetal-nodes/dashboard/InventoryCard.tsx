@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
@@ -15,6 +16,7 @@ import { BareMetalNodeDashboardContext } from './BareMetalNodeDashboardContext';
 import { getHostStorage, getHostNICs, getHostCPU } from '../../../selectors';
 
 const InventoryCard: React.FC = () => {
+  const { t } = useTranslation();
   const { obj } = React.useContext(NodeDashboardContext);
   const { host } = React.useContext(BareMetalNodeDashboardContext);
 
@@ -35,7 +37,7 @@ const InventoryCard: React.FC = () => {
   return (
     <DashboardCard data-test-id="inventory-card">
       <DashboardCardHeader>
-        <DashboardCardTitle>Inventory</DashboardCardTitle>
+        <DashboardCardTitle>{t('metal3-plugin~Inventory')}</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody>
         <NodeInventoryItem
@@ -45,24 +47,28 @@ const InventoryCard: React.FC = () => {
         />
         <InventoryItem
           isLoading={!obj}
-          title="Image"
-          titlePlural="Images"
+          title={t('metal3-plugin~Image')}
+          titlePlural={t('metal3-plugin~Images')}
           count={obj.status?.images?.length}
           error={!obj.status?.images}
         />
         <InventoryItem
-          title="Disk"
+          title={t('metal3-plugin~Disk')}
           isLoading={!obj}
           count={getHostStorage(host).length}
           TitleComponent={DiskTitleComponent}
         />
         <InventoryItem
-          title="NIC"
+          title={t('metal3-plugin~NIC')}
           isLoading={!obj}
           count={getHostNICs(host).length}
           TitleComponent={NICTitleComponent}
         />
-        <InventoryItem title="CPU" isLoading={!obj} count={getHostCPU(host).count} />
+        <InventoryItem
+          title={t('metal3-plugin~CPU')}
+          isLoading={!obj}
+          count={getHostCPU(host).count}
+        />
       </DashboardCardBody>
     </DashboardCard>
   );

@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { Gallery, GalleryItem, Stack, StackItem } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
@@ -22,54 +24,60 @@ import { hasPowerManagement } from '../../../selectors';
 import { BareMetalHostModel } from '../../../models';
 import { BareMetalHostKind } from '../../../types';
 
-const POWER_MGMT_MSG =
-  'Power operations cannot be performed on this host until Baseboard Management Controller (BMC) credentials are provided for the underlying host.';
-
-const POWER_MGMT_ALERT = (host: BareMetalHostKind) => ({
-  title: 'Power management not available',
-  message: (
-    <Stack hasGutter>
-      <StackItem>{POWER_MGMT_MSG}</StackItem>
-      <StackItem>
-        <Link
-          to={`${resourcePathFromModel(
-            BareMetalHostModel,
-            host.metadata.name,
-            host.metadata.namespace,
-          )}/edit?powerMgmt`}
-        >
-          Add credentials
-        </Link>
-      </StackItem>
-    </Stack>
-  ),
-});
-
-const BMO_DISABLED_ALERT = {
-  title: 'Bare Metal Operator not available',
-  message: 'The Bare Metal Operator that enables this capability is not available or disabled.',
-};
-
-const getDisabledAlert = (bmoEnabled: boolean, hasPowerMgmt: boolean, host: BareMetalHostKind) => {
+const getDisabledAlert = (
+  bmoEnabled: boolean,
+  host: BareMetalHostKind,
+  hasPowerMgmt: boolean,
+  t: TFunction,
+) => {
   if (!bmoEnabled) {
-    return BMO_DISABLED_ALERT;
+    return {
+      title: t('metal3-plugin~Bare Metal Operator not available'),
+      message: t(
+        'metal3-plugin~The Bare Metal Operator that enables this capability is not available or disabled.',
+      ),
+    };
   }
   if (host && !hasPowerMgmt) {
-    return POWER_MGMT_ALERT(host);
+    return {
+      title: t('metal3-plugin~Power management not available'),
+      message: (
+        <Stack hasGutter>
+          <StackItem>
+            {t(
+              'metal3-plugin~Power operations cannot be performed on this host until Baseboard Management Controller (BMC) credentials are provided for the underlying host.',
+            )}
+          </StackItem>
+          <StackItem>
+            <Link
+              to={`${resourcePathFromModel(
+                BareMetalHostModel,
+                host.metadata.name,
+                host.metadata.namespace,
+              )}/edit?powerMgmt`}
+            >
+              {t('metal3-plugin~Add credentials')}
+            </Link>
+          </StackItem>
+        </Stack>
+      ),
+    };
   }
   return undefined;
 };
 
 const StatusCard: React.FC = () => {
+  const { t } = useTranslation();
   const { obj } = React.useContext(NodeDashboardContext);
   const { nodeMaintenance, csr, host } = React.useContext(BareMetalNodeDashboardContext);
   const bmoEnabled = useFlag(BMO_ENABLED_FLAG);
   const status = bareMetalNodeStatus({ node: obj, nodeMaintenance, csr });
   const hasPowerMgmt = hasPowerManagement(host);
+
   return (
     <DashboardCard gradient data-test-id="status-card">
       <DashboardCardHeader>
-        <DashboardCardTitle>Status</DashboardCardTitle>
+        <DashboardCardTitle>{t('metal3-plugin~Status')}</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody isLoading={!obj}>
         <HealthBody>
@@ -83,13 +91,20 @@ const StatusCard: React.FC = () => {
               />
             </GalleryItem>
             <GalleryItem>
-              <HealthChecksItem disabledAlert={getDisabledAlert(bmoEnabled, hasPowerMgmt, host)} />
+              <HealthChecksItem
+                disabledAlert={getDisabledAlert(bmoEnabled, host, hasPowerMgmt, t)}
+              />
             </GalleryItem>
           </Gallery>
         </HealthBody>
         <NodeAlerts>
           {host && !hasPowerMgmt && (
-            <StatusItem Icon={BlueInfoCircleIcon} message={POWER_MGMT_MSG}>
+            <StatusItem
+              Icon={BlueInfoCircleIcon}
+              message={t(
+                'metal3-plugin~Power operations cannot be performed on this host until Baseboard Management Controller (BMC) credentials are provided for the underlying host.',
+              )}
+            >
               <Link
                 to={`${resourcePathFromModel(
                   BareMetalHostModel,
@@ -97,7 +112,7 @@ const StatusCard: React.FC = () => {
                   host.metadata.namespace,
                 )}/edit?powerMgmt`}
               >
-                Add credentials
+                {t('metal3-plugin~Add credentials')}
               </Link>
             </StatusItem>
           )}

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import Helmet from 'react-helmet';
 import { navFactory, FirehoseResource } from '@console/internal/components/utils';
 import { PodsPage } from '@console/internal/components/pod';
@@ -16,30 +17,32 @@ import { useMaintenanceCapability } from '../../hooks/useMaintenanceCapability';
 
 const { editYaml, events, pods } = navFactory;
 
-const pages = [
-  {
-    href: '',
-    name: 'Overview',
-    component: BareMetalNodeDashboard,
-  },
-  {
-    href: 'details',
-    name: 'Details',
-    component: BareMetalNodeDetails,
-  },
-  editYaml(),
-  pods(({ obj }) => (
-    <PodsPage showTitle={false} fieldSelector={`spec.nodeName=${obj.metadata.name}`} />
-  )),
-  events(ResourceEventStream),
-];
-
 type BareMetalNodeDetailsPageProps = ResourceDetailsPageProps & {
   plural: string;
 };
 
 const BareMetalNodeDetailsPage = connectToPlural((props: BareMetalNodeDetailsPageProps) => {
+  const { t } = useTranslation();
   const [hasNodeMaintenanceCapability, maintenanceModel] = useMaintenanceCapability();
+
+  const pages = [
+    {
+      href: '',
+      name: t('metal3-plugin~Overview'),
+      component: BareMetalNodeDashboard,
+    },
+    {
+      href: 'details',
+      name: t('metal3-plugin~Details'),
+      component: BareMetalNodeDetails,
+    },
+    editYaml(),
+    pods(({ obj }) => (
+      <PodsPage showTitle={false} fieldSelector={`spec.nodeName=${obj.metadata.name}`} />
+    )),
+    events(ResourceEventStream),
+  ];
+
   const resources: FirehoseResource[] = [
     {
       kind: referenceForModel(MachineModel),
@@ -76,7 +79,7 @@ const BareMetalNodeDetailsPage = connectToPlural((props: BareMetalNodeDetailsPag
   return (
     <>
       <Helmet>
-        <title>{`${name} · Details`}</title>
+        <title>{t('metal3-plugin~{{name}} · Details', { name })}</title>
       </Helmet>
       <DetailsPage
         {...props}
@@ -85,13 +88,16 @@ const BareMetalNodeDetailsPage = connectToPlural((props: BareMetalNodeDetailsPag
         pages={pages}
         resources={resources}
         kind={modelRef}
-        customData={{ hasNodeMaintenanceCapability, maintenanceModel }}
+        customData={{ hasNodeMaintenanceCapability, maintenanceModel, t }}
         breadcrumbsFor={() => [
           {
             name: `${kindObj.labelPlural}`,
             path: `/k8s/cluster/${plural}`,
           },
-          { name: `${kindObj.label} Details`, path: `${match.url}` },
+          {
+            name: t('metal3-plugin~{{name}} Details', { name: kindObj.label }),
+            path: `${match.url}`,
+          },
         ]}
       />
     </>

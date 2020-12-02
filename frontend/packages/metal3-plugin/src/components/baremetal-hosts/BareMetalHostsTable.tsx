@@ -84,6 +84,7 @@ const HostsTableRow: React.FC<RowFunctionArgs<BareMetalHostBundle>> = ({
   key,
   style,
 }) => {
+  const { t } = useTranslation();
   const [hasNodeMaintenanceCapability, maintenanceModel] = useMaintenanceCapability();
   const bmoEnabled = useFlag(BMO_ENABLED_FLAG);
   const name = getName(host);
@@ -126,6 +127,7 @@ const HostsTableRow: React.FC<RowFunctionArgs<BareMetalHostBundle>> = ({
               status,
               bmoEnabled,
               maintenanceModel,
+              t,
             }),
           )}
           key={`kebab-for-${uid}`}

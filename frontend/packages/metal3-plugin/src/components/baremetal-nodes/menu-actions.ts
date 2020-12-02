@@ -18,23 +18,25 @@ import { findNodeMaintenance } from '../../selectors';
 import { confirmModal } from '@console/internal/components/modals/confirm-modal';
 import { CertificateSigningRequestModel } from '@console/internal/models';
 import { CertificateSigningRequestKind } from '../../types';
+import { TFunction } from 'i18next';
 
 type ActionArgs = {
   nodeMaintenance?: K8sResourceKind;
   hasNodeMaintenanceCapability?: boolean;
   maintenanceModel: K8sKind;
+  t: TFunction;
 };
 
 export const SetNodeMaintenance = (
   kindObj: K8sKind,
   node: NodeKind,
   resources: {},
-  { hasNodeMaintenanceCapability, nodeMaintenance }: ActionArgs,
+  { hasNodeMaintenanceCapability, nodeMaintenance, t }: ActionArgs,
 ): KebabOption => {
   const nodeName = getName(node);
   return {
     hidden: !nodeName || !hasNodeMaintenanceCapability || !!nodeMaintenance,
-    label: 'Start Maintenance',
+    label: t('metal3-plugin~Start Maintenance'),
     callback: () => startNodeMaintenanceModal({ nodeName }),
   };
 };
@@ -43,13 +45,13 @@ export const RemoveNodeMaintenance = (
   kindObj: K8sKind,
   node: NodeKind,
   resources: {},
-  { hasNodeMaintenanceCapability, nodeMaintenance, maintenanceModel }: ActionArgs,
+  { hasNodeMaintenanceCapability, nodeMaintenance, maintenanceModel, t }: ActionArgs,
 ): KebabOption => {
   const nodeName = getName(node);
   return {
     hidden: !nodeName || !hasNodeMaintenanceCapability || !nodeMaintenance,
-    label: 'Stop Maintenance',
-    callback: () => stopNodeMaintenanceModal(nodeMaintenance),
+    label: t('metal3-plugin~Stop Maintenance'),
+    callback: () => stopNodeMaintenanceModal(nodeMaintenance, t),
     accessReview: nodeMaintenance && asAccessReview(maintenanceModel, nodeMaintenance, 'delete'),
   };
 };
@@ -90,17 +92,20 @@ export const ApproveServerCSR = (
   kindObj: K8sKind,
   node: NodeKind,
   resources: { csr: CertificateSigningRequestKind },
+  { t }: ActionArgs,
 ): KebabOption => ({
-  label: 'Approve Server CSR',
+  label: t('metal3-plugin~Approve Server CSR'),
   hidden: !resources?.csr,
   callback: () =>
     confirmModal({
-      title: 'Approve Node Server CSR',
-      message: `Are you sure you want to approve server CSR for ${node.metadata.name} ?`,
+      title: t('metal3-plugin~Approve Node Server CSR'),
+      message: t('metal3-plugin~Are you sure you want to approve server CSR for {{name}}?', {
+        name: node.metadata.name,
+      }),
       cancel: () => {},
       close: () => {},
       executeFn: () => approveCSR(resources.csr),
-      btnText: 'Approve',
+      btnText: t('metal3-plugin~Approve'),
     }),
 });
 
@@ -127,7 +132,7 @@ export const menuActionsCreator = (
   kindObj: K8sKind,
   node: NodeKind,
   { nodeMaintenances }: ExtraResources,
-  { hasNodeMaintenanceCapability, maintenanceModel },
+  { hasNodeMaintenanceCapability, maintenanceModel, t },
 ) => {
   const nodeMaintenance = findNodeMaintenance(nodeMaintenances, getName(node));
   return menuActions.map((action) => {
@@ -135,6 +140,7 @@ export const menuActionsCreator = (
       hasNodeMaintenanceCapability,
       nodeMaintenance,
       maintenanceModel,
+      t,
     });
   });
 };

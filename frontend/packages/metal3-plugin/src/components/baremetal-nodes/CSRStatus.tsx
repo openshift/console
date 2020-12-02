@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button, Alert } from '@patternfly/react-core';
 import { AddCircleOIcon } from '@patternfly/react-icons';
 import { PopoverStatus, StatusIconAndText, SecondaryStatus } from '@console/shared';
@@ -8,12 +9,6 @@ import { CertificateSigningRequestModel } from '@console/internal/models';
 import { approveCSR, denyCSR } from './menu-actions';
 import { CertificateSigningRequestKind } from '../../types';
 
-const CLIENT_CSR_DESC =
-  'This node has requested to join the cluster. After approving its certificate signing request the node will begin running workloads.';
-
-const SERVER_CSR_DESC =
-  'This node has a pending server certificate signing request. Approve the request to enable all networking functionality on this node.';
-
 type CSRStatusProps = {
   csr: CertificateSigningRequestKind;
   title: string;
@@ -21,6 +16,7 @@ type CSRStatusProps = {
 };
 
 const CSRStatus: React.FC<CSRStatusProps> = ({ csr, title, serverCSR }) => {
+  const { t } = useTranslation();
   const [inProgress, setInProgress] = React.useState(false);
   const [error, setError] = React.useState<string>();
   const updateCSR = async (approve: boolean) => {
@@ -34,19 +30,28 @@ const CSRStatus: React.FC<CSRStatusProps> = ({ csr, title, serverCSR }) => {
       setInProgress(false);
     }
   };
+
+  const clientCSRDesc = t(
+    'metal3-plugin~This node has requested to join the cluster. After approving its certificate signing request the node will begin running workloads.',
+  );
+
+  const ServerCSRDesc = t(
+    'metal3-plugin~This node has a pending server certificate signing request. Approve the request to enable all networking functionality on this node.',
+  );
+
   return (
     <>
       <PopoverStatus
-        title="Certificate approval required"
+        title={t('metal3-plugin~Certificate approval required')}
         statusBody={<StatusIconAndText title={title} icon={<AddCircleOIcon />} />}
       >
-        <div>{serverCSR ? SERVER_CSR_DESC : CLIENT_CSR_DESC}</div>
+        <div>{serverCSR ? ServerCSRDesc : clientCSRDesc}</div>
         <dl className="bmh-csr-section">
-          <dt>Request</dt>
+          <dt>{t('metal3-plugin~Request')}</dt>
           <dd>
             <ResourceLink kind={CertificateSigningRequestModel.kind} name={csr.metadata.name} />
           </dd>
-          <dt>Created</dt>
+          <dt>{t('metal3-plugin~Created')}</dt>
           <dd>
             <Timestamp timestamp={csr.metadata.creationTimestamp} />
           </dd>
@@ -67,7 +72,7 @@ const CSRStatus: React.FC<CSRStatusProps> = ({ csr, title, serverCSR }) => {
             isDisabled={inProgress}
             isInline
           >
-            Deny
+            {t('metal3-plugin~Deny')}
           </Button>
         </div>
         {error && (

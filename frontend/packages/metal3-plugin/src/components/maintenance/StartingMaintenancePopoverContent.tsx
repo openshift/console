@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { Timestamp } from '@console/internal/components/utils';
 import { Progress, ProgressSize, Alert, ExpandableSection, Button } from '@patternfly/react-core';
@@ -19,6 +20,7 @@ type StartingMaintenancePopoverContentProps = {
 const StartingMaintenancePopoverContent: React.FC<StartingMaintenancePopoverContentProps> = ({
   nodeMaintenance,
 }) => {
+  const { t } = useTranslation();
   const reason = getNodeMaintenanceReason(nodeMaintenance);
   const creationTimestamp = getNodeMaintenanceCreationTimestamp(nodeMaintenance);
   const lastError = getNodeMaintenanceLastError(nodeMaintenance);
@@ -27,13 +29,14 @@ const StartingMaintenancePopoverContent: React.FC<StartingMaintenancePopoverCont
   return (
     <>
       <p>
-        Node is entering maintenance. The cluster will automatically rebuild node&apos;s data 30
-        minutes after entering maintenance.
+        {t(
+          'metal3-plugin~Node is entering maintenance. The cluster will automatically rebuild node&apos;s data 30 minutes after entering maintenance.',
+        )}
       </p>
       <dl>
-        <dt>Maintenance reason:</dt>
+        <dt>{t('metal3-plugin~Maintenance reason:')}</dt>
         <dd>{reason}</dd>
-        <dt>Requested:</dt>
+        <dt>{t('metal3-plugin~Requested:')}</dt>
         <dd>
           <Timestamp timestamp={creationTimestamp} />
         </dd>
@@ -41,7 +44,7 @@ const StartingMaintenancePopoverContent: React.FC<StartingMaintenancePopoverCont
       <br />
       {lastError && (
         <>
-          <Alert variant="warning" title="Workloads failing to move" isInline>
+          <Alert variant="warning" title={t('metal3-plugin~Workloads failing to move')} isInline>
             {lastError}
           </Alert>
           <br />
@@ -49,16 +52,20 @@ const StartingMaintenancePopoverContent: React.FC<StartingMaintenancePopoverCont
       )}
       <Progress
         value={getNodeMaintenanceProgressPercent(nodeMaintenance)}
-        title="Moving workloads"
+        title={t('metal3-plugin~Moving workloads')}
         size={ProgressSize.sm}
       />
       <br />
-      <ExpandableSection toggleText={`Show remaining workloads (${pendingPods.length})`}>
+      <ExpandableSection
+        toggleText={t('metal3-plugin~Show remaining workloads ({{listLength}})', {
+          listLength: pendingPods.length,
+        })}
+      >
         <MaintenancePopoverPodList pods={pendingPods} />
       </ExpandableSection>
       <br />
-      <Button variant="link" onClick={() => stopNodeMaintenanceModal(nodeMaintenance)} isInline>
-        Stop
+      <Button variant="link" onClick={() => stopNodeMaintenanceModal(nodeMaintenance, t)} isInline>
+        {t('metal3-plugin~Stop')}
       </Button>
     </>
   );

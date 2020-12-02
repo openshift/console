@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { NodeKind, referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import {
   useAccessReview,
@@ -40,6 +41,7 @@ const BareMetalNodeDetailsOverview: React.FC<BareMetalNodeDetailsOverview> = ({
   nodeMaintenance,
   csr,
 }) => {
+  const { t } = useTranslation();
   const status = bareMetalNodeStatus({ node, nodeMaintenance, csr });
   const machine = getNodeMachineNameAndNamespace(node);
   const canUpdate = useAccessReview({
@@ -51,27 +53,27 @@ const BareMetalNodeDetailsOverview: React.FC<BareMetalNodeDetailsOverview> = ({
   });
   return (
     <div className="co-m-pane__body">
-      <SectionHeading text="Node Details" />
+      <SectionHeading text={t('metal3-plugin~Node Details')} />
       <div className="row">
         <div className="col-md-6 col-xs-12">
           <dl className="co-m-pane__details">
-            <dt>Node Name</dt>
+            <dt>{t('metal3-plugin~Node Name')}</dt>
             <dd>{node.metadata.name || DASH}</dd>
-            <dt>Status</dt>
+            <dt>{t('metal3-plugin~Status')}</dt>
             <dd>
               <BareMetalNodeStatus {...status} nodeMaintenance={nodeMaintenance} csr={csr} />
             </dd>
-            <dt>External ID</dt>
+            <dt>{t('metal3-plugin~External ID')}</dt>
             <dd>{_.get(node, 'spec.externalID', DASH)}</dd>
-            <dt>Node Addresses</dt>
+            <dt>{t('metal3-plugin~Node Addresses')}</dt>
             <dd>
               <NodeIPList ips={getNodeAddresses(node)} expand />
             </dd>
-            <dt>Node Labels</dt>
+            <dt>{t('metal3-plugin~Node Labels')}</dt>
             <dd>
               <LabelList kind="Node" labels={node.metadata.labels} />
             </dd>
-            <dt>Taints</dt>
+            <dt>{t('metal3-plugin~Taints')}</dt>
             <dd>
               {canUpdate ? (
                 <Button
@@ -87,7 +89,7 @@ const BareMetalNodeDetailsOverview: React.FC<BareMetalNodeDetailsOverview> = ({
                 pluralize(_.size(node.spec.taints), 'Taint')
               )}
             </dd>
-            <dt>Annotations</dt>
+            <dt>{t('metal3-plugin~Annotations')}</dt>
             <dd>
               {canUpdate ? (
                 <Button
@@ -105,7 +107,7 @@ const BareMetalNodeDetailsOverview: React.FC<BareMetalNodeDetailsOverview> = ({
             </dd>
             {machine.name && (
               <>
-                <dt>Machine</dt>
+                <dt>{t('metal3-plugin~Machine')}</dt>
                 <dd>
                   <ResourceLink
                     kind={referenceForModel(MachineModel)}
@@ -117,7 +119,7 @@ const BareMetalNodeDetailsOverview: React.FC<BareMetalNodeDetailsOverview> = ({
             )}
             {host && (
               <>
-                <dt>Bare Metal Host</dt>
+                <dt>{t('metal3-plugin~Bare Metal Host')}</dt>
                 <dd>
                   <ResourceLink
                     kind={referenceForModel(BareMetalHostModel)}
@@ -127,7 +129,7 @@ const BareMetalNodeDetailsOverview: React.FC<BareMetalNodeDetailsOverview> = ({
                 </dd>
               </>
             )}
-            <dt>Provider ID</dt>
+            <dt>{t('metal3-plugin~Provider ID')}</dt>
             <dd>{cloudProviderNames([cloudProviderID(node)])}</dd>
             {_.has(node, 'spec.unschedulable') && <dt>Unschedulable</dt>}
             {_.has(node, 'spec.unschedulable') && (
@@ -135,7 +137,7 @@ const BareMetalNodeDetailsOverview: React.FC<BareMetalNodeDetailsOverview> = ({
                 {_.get(node, 'spec.unschedulable', DASH).toString()}
               </dd>
             )}
-            <dt>Created</dt>
+            <dt>{t('metal3-plugin~Created')}</dt>
             <dd>
               <Timestamp timestamp={node.metadata.creationTimestamp} />
             </dd>
@@ -143,23 +145,23 @@ const BareMetalNodeDetailsOverview: React.FC<BareMetalNodeDetailsOverview> = ({
         </div>
         <div className="col-md-6 col-xs-12">
           <dl className="co-m-pane__details">
-            <dt>Operating System</dt>
+            <dt>{t('metal3-plugin~Operating System')}</dt>
             <dd className="text-capitalize">
               {_.get(node, 'status.nodeInfo.operatingSystem', DASH)}
             </dd>
-            <dt>OS Image</dt>
+            <dt>{t('metal3-plugin~OS Image')}</dt>
             <dd>{_.get(node, 'status.nodeInfo.osImage', DASH)}</dd>
-            <dt>Architecture</dt>
+            <dt>{t('metal3-plugin~Architecture')}</dt>
             <dd className="text-uppercase">{_.get(node, 'status.nodeInfo.architecture', DASH)}</dd>
-            <dt>Kernel Version</dt>
+            <dt>{t('metal3-plugin~Kernel Version')}</dt>
             <dd>{_.get(node, 'status.nodeInfo.kernelVersion', DASH)}</dd>
-            <dt>Boot ID</dt>
+            <dt>{t('metal3-plugin~Boot ID')}</dt>
             <dd>{_.get(node, 'status.nodeInfo.bootID', DASH)}</dd>
-            <dt>Container Runtime</dt>
+            <dt>{t('metal3-plugin~Container Runtime')}</dt>
             <dd>{_.get(node, 'status.nodeInfo.containerRuntimeVersion', DASH)}</dd>
-            <dt>Kubelet Version</dt>
+            <dt>{t('metal3-plugin~Kubelet Version')}</dt>
             <dd>{_.get(node, 'status.nodeInfo.kubeletVersion', DASH)}</dd>
-            <dt>Kube-Proxy Version</dt>
+            <dt>{t('metal3-plugin~Kube-Proxy Version')}</dt>
             <dd>{_.get(node, 'status.nodeInfo.kubeProxyVersion', DASH)}</dd>
           </dl>
         </div>
