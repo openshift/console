@@ -11,8 +11,6 @@ import { useUserSettingsLocalStorage } from './useUserSettingsLocalStorage';
 import {
   createConfigMap,
   deseralizeData,
-  getProject,
-  createProject,
   seralizeData,
   updateConfigMap,
   USER_SETTING_CONFIGMAP_NAMESPACE,
@@ -48,25 +46,10 @@ export const useUserSettings = <T>(
   );
 
   React.useEffect(() => {
-    if (cfLoadError || (!cfData && cfLoaded)) {
+    if (!fallbackLocalStorage && (cfLoadError || (!cfData && cfLoaded))) {
       (async () => {
-        // this would be replaced with proxy endpoint to create ConfigMap
         try {
-          const projectExists = await getProject();
-          if (!projectExists) await createProject();
-          await createConfigMap({
-            apiVersion: ConfigMapModel.apiVersion,
-            kind: ConfigMapModel.kind,
-            metadata: {
-              name: `user-settings-${userUid}`,
-              namespace: USER_SETTING_CONFIGMAP_NAMESPACE,
-            },
-            data: {
-              ...(defaultValueRef.current !== undefined && {
-                [keyRef.current]: seralizeData(defaultValueRef.current),
-              }),
-            },
-          });
+          await createConfigMap();
         } catch (err) {
           if (err?.response?.status === 403) {
             setFallbackLocalStorage(true);
