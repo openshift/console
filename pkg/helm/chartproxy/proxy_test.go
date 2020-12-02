@@ -1,14 +1,14 @@
 package chartproxy
 
 import (
-	"golang.org/x/net/context"
-	"helm.sh/helm/v3/pkg/repo"
 	"io/ioutil"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"reflect"
 	"testing"
 
+	"golang.org/x/net/context"
+	"helm.sh/helm/v3/pkg/repo"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/client-go/rest"
 
 	"github.com/openshift/console/pkg/helm/actions/fake"
@@ -16,15 +16,66 @@ import (
 
 func TestProxy_IndexFile(t *testing.T) {
 	tests := []struct {
-		name       string
-		indexFiles []string
-		mergedFile string
-		helmCRS    []*unstructured.Unstructured
+		name           string
+		indexFiles     []string
+		mergedFile     string
+		kubeVersion    string
+		helmCRS        []*unstructured.Unstructured
+		onlyCompatible bool
 	}{
 		{
 			name:       "returned index file for configured helm repo",
 			indexFiles: []string{"testdata/sampleRepoIndex.yaml"},
 			mergedFile: "testdata/mergedSampleRepoIndex2.yaml",
+		},
+		{
+			name:           "returned index file for configured helm repo contains only charts compatible for given cluster v1.16.0",
+			indexFiles:     []string{"testdata/sampleRepoIndex3.yaml"},
+			mergedFile:     "testdata/sampleRepoIndex3FilteredKube1-16-0.yaml",
+			kubeVersion:    "v1.16.0",
+			onlyCompatible: true,
+		},
+		{
+			name:           "returned index file for configured helm repo contains only charts compatible for given cluster v1.15.0",
+			indexFiles:     []string{"testdata/sampleRepoIndex3.yaml"},
+			mergedFile:     "testdata/sampleRepoIndexFilteredKube1-15-0.yaml",
+			kubeVersion:    "v1.15.0",
+			onlyCompatible: true,
+		},
+		{
+			name:           "returned index file for configured helm repo contains only charts compatible for given cluster v1.14.0",
+			indexFiles:     []string{"testdata/sampleRepoIndex3.yaml"},
+			mergedFile:     "testdata/sampleRepoIndexFilteredKube1-14-0.yaml",
+			kubeVersion:    "v1.14.0",
+			onlyCompatible: true,
+		},
+		{
+			name:           "return empty index file if not charts are compatible with given cluster",
+			indexFiles:     []string{"testdata/incompatibleRepoIndex.yaml"},
+			mergedFile:     "",
+			kubeVersion:    "v1.15.0",
+			onlyCompatible: true,
+		},
+		{
+			name:           "returned index file for configured helm repo contains only charts compatible for given pre-release cluster v1.20.0-beta2",
+			indexFiles:     []string{"testdata/RepoIndexPreRelease.yaml"},
+			mergedFile:     "testdata/mergedRepoIndexPreReleaseV1-20-0-beta2.yaml",
+			kubeVersion:    "v1.20.0-beta.2",
+			onlyCompatible: true,
+		},
+		{
+			name:           "returned index file for configured helm repo contains only charts compatible for given pre-release cluster v1.20.0-alpha2",
+			indexFiles:     []string{"testdata/RepoIndexPreRelease.yaml"},
+			mergedFile:     "testdata/mergedRepoIndexPreReleaseV1-20-0-alpha2.yaml",
+			kubeVersion:    "v1.20.0-alpha.2",
+			onlyCompatible: true,
+		},
+		{
+			name:           "returned index file for configured helm repo contains only charts compatible for given pre-release cluster v1.20.0-beta.2",
+			indexFiles:     []string{"testdata/sampleRepoIndex3.yaml"},
+			mergedFile:     "testdata/mergedRepoIndexPreReleaseV1-20-0-0.yaml",
+			kubeVersion:    "v1.20.0-beta.2",
+			onlyCompatible: true,
 		},
 		{
 			name:       "returned merged index file for configured helm repos",
@@ -82,18 +133,19 @@ func TestProxy_IndexFile(t *testing.T) {
 					t.Error(err)
 				}
 			}
+
 			fakeProxyOption := func(p *proxy) error {
 				p.dynamicClient = dynamicClient
 				return nil
 			}
 			p, err := New(func() (r *rest.Config, err error) {
 				return &rest.Config{}, nil
-			}, fakeProxyOption)
+			}, tt.kubeVersion, fakeProxyOption)
 			if err != nil {
 				t.Error(err)
 			}
 
-			indexFile, err := p.IndexFile()
+			indexFile, err := p.IndexFile(tt.onlyCompatible)
 			if err != nil {
 				t.Error(err)
 			}
