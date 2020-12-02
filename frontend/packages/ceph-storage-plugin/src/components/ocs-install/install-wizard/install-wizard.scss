@@ -69,6 +69,10 @@
     padding: var(--pf-global--spacer--md);
   }
 
+  &__form-body--small-padding {
+    padding: var(--pf-global--spacer--md) var(--pf-global--spacer--md) var(--pf-global--spacer--md) 0;
+  }
+
   &__form-alert {
     margin: var(--pf-global--spacer--md);
   }

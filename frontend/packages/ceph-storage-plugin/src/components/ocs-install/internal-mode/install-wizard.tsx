@@ -13,7 +13,7 @@ import {
 } from '@patternfly/react-core';
 import { history } from '@console/internal/components/utils';
 import { setFlag } from '@console/internal/actions/features';
-import { k8sCreate, referenceForModel } from '@console/internal/module/k8s';
+import { k8sCreate, referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { getName } from '@console/shared';
 import { OCSServiceModel } from '../../../models';
 import { OCS_CONVERGED_FLAG, OCS_INDEPENDENT_FLAG, OCS_FLAG } from '../../../features';
@@ -22,6 +22,8 @@ import { StorageClusterKind } from '../../../types';
 import { labelNodes, getOCSRequestData } from '../ocs-request-data';
 import { SelectCapacityAndNodes, Configure, ReviewAndCreate } from './install-wizard-steps';
 import { initialState, reducer, InternalClusterState } from './reducer';
+import '../install-wizard/install-wizard.scss';
+import { createKmsResources } from '../../kms-config/utils';
 import { NetworkType } from '../types';
 
 const makeOCSRequest = (state: InternalClusterState): Promise<StorageClusterKind> => {
@@ -33,6 +35,7 @@ const makeOCSRequest = (state: InternalClusterState): Promise<StorageClusterKind
     publicNetwork,
     clusterNetwork,
     encryption,
+    kms,
   } = state;
   const storageCluster: StorageClusterKind = getOCSRequestData(
     storageClass,
@@ -41,9 +44,13 @@ const makeOCSRequest = (state: InternalClusterState): Promise<StorageClusterKind
     enableMinimal,
     publicNetwork,
     clusterNetwork,
+    kms.hasHandled && encryption.advanced,
   );
-
-  return Promise.all(labelNodes(nodes)).then(() => k8sCreate(OCSServiceModel, storageCluster));
+  const promises: Promise<K8sResourceKind>[] = [...labelNodes(nodes)];
+  if (encryption.advanced && kms.hasHandled) {
+    promises.push(...createKmsResources(kms));
+  }
+  return Promise.all(promises).then(() => k8sCreate(OCSServiceModel, storageCluster));
 };
 
 export const CreateInternalCluster: React.FC<CreateInternalClusterProps> = ({ match, mode }) => {
@@ -59,7 +66,8 @@ export const CreateInternalCluster: React.FC<CreateInternalClusterProps> = ({ ma
   const hasConfiguredNetwork =
     state.networkType === NetworkType.MULTUS ? !!state.publicNetwork : true;
   const hasEnabledCreateStep =
-    !!(state.nodes.length >= MINIMUM_NODES && scName) && hasConfiguredNetwork;
+    !!(state.nodes.length >= MINIMUM_NODES && scName && state.kms.hasHandled) &&
+    hasConfiguredNetwork;
 
   const steps: WizardStep[] = [
     {
@@ -71,7 +79,7 @@ export const CreateInternalCluster: React.FC<CreateInternalClusterProps> = ({ ma
       name: 'Configure',
       id: CreateStepsSC.CONFIGURE,
       component: <Configure state={state} dispatch={dispatch} mode={mode} />,
-      enableNext: state.encryption.hasHandled && hasConfiguredNetwork,
+      enableNext: state.encryption.hasHandled && hasConfiguredNetwork && state.kms.hasHandled,
     },
     {
       name: 'Review and create',

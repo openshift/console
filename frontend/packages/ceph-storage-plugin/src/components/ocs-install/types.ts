@@ -1,5 +1,5 @@
 import { IRow } from '@patternfly/react-table';
-import { NodeKind } from '@console/internal/module/k8s';
+import { NodeKind, SecretKind } from '@console/internal/module/k8s';
 import { TableProps } from '@console/internal/components/factory';
 
 type NodeTableRow = {
@@ -48,7 +48,31 @@ export type EncryptionType = {
 };
 
 export type KMSConfig = {
-  name: string;
+  name: {
+    value: string;
+    valid: boolean;
+  };
+  token: {
+    value: string;
+    valid: boolean;
+  };
+  address: {
+    value: string;
+    valid: boolean;
+  };
+  port: {
+    value: string;
+    valid: boolean;
+  };
+  backend: string;
+  caCert: SecretKind;
+  caCertFile: string;
+  tls: string;
+  clientCert: SecretKind;
+  clientCertFile: string;
+  clientKey: SecretKind;
+  clientKeyFile: string;
+  providerNamespace: string;
   hasHandled: boolean;
 };
 
@@ -56,3 +80,13 @@ export enum NetworkType {
   DEFAULT = 'DEFAULT',
   MULTUS = 'MULTUS',
 }
+export type KMSConfigMap = {
+  KMS_PROVIDER: string;
+  VAULT_ADDR: string; // address + port
+  VAULT_BACKEND_PATH: string;
+  VAULT_CACERT: string;
+  VAULT_TLS_SERVER_NAME: string;
+  VAULT_CLIENT_CERT: string;
+  VAULT_CLIENT_KEY: string;
+  VAULT_NAMESPACE: string;
+};

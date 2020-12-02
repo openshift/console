@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import * as cx from 'classnames';
 import {
   Alert,
@@ -16,11 +15,9 @@ import { NodeModel } from '@console/internal/models';
 import { FieldLevelHelp } from '@console/internal/components/utils';
 import { OCSStorageClassDropdown } from '../components/modals/storage-class-dropdown';
 import { StorageClassResourceKind } from '@console/internal/module/k8s/types';
-import { MODES } from '../constants';
-import { Action } from '../components/ocs-install/attached-devices/create-sc/state';
-import { InternalClusterAction } from '../components/ocs-install/internal-mode/reducer';
 import { storageClassTooltip, CreateStepsSC } from '../constants/ocs-install';
 import '../components/ocs-install/ocs-install.scss';
+import { EncryptionType } from '../components/ocs-install/types';
 
 export type Validation = {
   title: React.ReactNode;
@@ -147,16 +144,14 @@ type ValidationMessageProps = {
   validation: Validation;
 };
 
-export const setDispatch = (
-  keyType: any,
-  valueType: any,
-  mode: string,
-  dispatch: React.Dispatch<Action | InternalClusterAction>,
-) => {
-  const stateType = mode === MODES.ATTACHED_DEVICES ? _.camelCase(keyType) : keyType;
-  const stateValue =
-    mode === MODES.ATTACHED_DEVICES ? { value: valueType } : { payload: valueType };
-  dispatch({ type: stateType, ...stateValue });
+export const getEncryptionLevel = (obj: EncryptionType) => {
+  if (obj.clusterWide && obj.storageClass) {
+    return 'Cluster-Wide and Storage Class';
+  }
+  if (obj.clusterWide) {
+    return 'Cluster-Wide';
+  }
+  return 'Storage Class';
 };
 
 export const OCSAlert = () => (

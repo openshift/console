@@ -61,6 +61,7 @@ import { OCS_CONVERGED_FLAG, OCS_INDEPENDENT_FLAG, OCS_FLAG } from '../../../../
 import { ReviewAndCreate } from './wizard-pages/review-and-create-step';
 import { Configure } from './wizard-pages/configure-step';
 import '../../install-wizard/install-wizard.scss';
+import { createKmsResources } from '../../../kms-config/utils';
 
 const makeAutoDiscoveryCall = (
   onNext: OnNextClick,
@@ -220,10 +221,10 @@ const CreateSC: React.FC<CreateSCProps> = ({ match, hasNoProvSC, mode, lsoNs }) 
         return (
           state.nodes.length < MINIMUM_NODES ||
           !getName(state.storageClass) ||
-          !state.encryption.hasHandled
+          !state.kms.hasHandled
         );
       case CreateStepsSC.CONFIGURE:
-        return !state.encryption.hasHandled;
+        return !state.encryption.hasHandled || !state.kms.hasHandled;
       default:
         return false;
     }
@@ -233,14 +234,21 @@ const CreateSC: React.FC<CreateSCProps> = ({ match, hasNoProvSC, mode, lsoNs }) 
     const { appName, ns } = match.params;
     try {
       setInProgress(true);
-      const { storageClass, encryption, nodes, enableMinimal } = state;
+      const { storageClass, encryption, nodes, enableMinimal, kms } = state;
       const storageCluster: StorageClusterKind = getOCSRequestData(
         storageClass,
         defaultRequestSize.BAREMETAL,
         encryption.clusterWide,
         enableMinimal,
+        '',
+        '',
+        kms.hasHandled && encryption.advanced,
       );
-      await Promise.all(labelNodes(nodes)).then(() => k8sCreate(OCSServiceModel, storageCluster));
+      const promises: Promise<K8sResourceKind>[] = [...labelNodes(nodes)];
+      if (encryption.advanced && kms.hasHandled) {
+        promises.push(...createKmsResources(kms));
+      }
+      await Promise.all(promises).then(() => k8sCreate(OCSServiceModel, storageCluster));
       flagDispatcher(setFlag(OCS_ATTACHED_DEVICES_FLAG, true));
       flagDispatcher(setFlag(OCS_CONVERGED_FLAG, true));
       flagDispatcher(setFlag(OCS_INDEPENDENT_FLAG, false));

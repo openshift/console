@@ -8,16 +8,12 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import { InternalClusterState, InternalClusterAction, ActionType } from '../internal-mode/reducer';
 import { State, Action } from '../attached-devices/create-sc/state';
 import { KMSConfigure } from '../../kms-config/kms-config';
-import {
-  Validation,
-  ValidationMessage,
-  VALIDATIONS,
-  setDispatch,
-} from '../../../utils/common-ocs-install-el';
 import { NetworkType } from '../types';
 import { encryptionTooltip } from '../../../constants/ocs-install';
 import './install-wizard.scss';
 import './_configure.scss';
+import { Validation, ValidationMessage, VALIDATIONS } from '../../../utils/common-ocs-install-el';
+import { setEncryptionDispatch } from '../../kms-config/utils';
 
 const StorageClassEncryptionLabel: React.FC = () => (
   <div className="ocs-install-encryption__pv-title">
@@ -58,25 +54,37 @@ export const EncryptionFormGroup: React.FC<EncryptionFormGroupProps> = ({
   React.useEffect(() => {
     // To add validation message for encryption
     if (!encryption.clusterWide && !encryption.storageClass && encryptionChecked) {
-      setDispatch(
-        ActionType.SET_ENCRYPTION,
-        { ...encryption, hasHandled: false, advanced: false },
-        mode,
-        dispatch,
-      );
+      setEncryptionDispatch(ActionType.SET_ENCRYPTION, mode, dispatch, {
+        ...encryption,
+        hasHandled: false,
+        advanced: false,
+      });
+      setEncryptionDispatch(ActionType.CLEAR_KMS_STATE, mode, dispatch);
     } else {
-      setDispatch(ActionType.SET_ENCRYPTION, { ...encryption, hasHandled: true }, mode, dispatch);
+      setEncryptionDispatch(ActionType.SET_ENCRYPTION, mode, dispatch, {
+        ...encryption,
+        hasHandled: true,
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [encryption.clusterWide, encryption.storageClass, encryptionChecked]);
 
   const toggleEncryption = (checked: boolean) => {
-    setDispatch(ActionType.SET_ENCRYPTION, { ...encryption, clusterWide: checked }, mode, dispatch);
+    setEncryptionDispatch(ActionType.SET_ENCRYPTION, mode, dispatch, {
+      ...encryption,
+      clusterWide: checked,
+    });
     setEncryptionChecked(checked);
+    if (!checked) {
+      setEncryptionDispatch(ActionType.CLEAR_KMS_STATE, mode, dispatch);
+    }
   };
 
   const toggleClusterWideEncryption = (checked: boolean) => {
-    setDispatch(ActionType.SET_ENCRYPTION, { ...encryption, clusterWide: checked }, mode, dispatch);
+    setEncryptionDispatch(ActionType.SET_ENCRYPTION, mode, dispatch, {
+      ...encryption,
+      clusterWide: checked,
+    });
   };
 
   const toggleStorageClassEncryption = (checked: boolean) => {
@@ -87,11 +95,17 @@ export const EncryptionFormGroup: React.FC<EncryptionFormGroupProps> = ({
     if (checked) {
       encryptOj.advanced = true;
     }
-    setDispatch(ActionType.SET_ENCRYPTION, encryptOj, mode, dispatch);
+    setEncryptionDispatch(ActionType.SET_ENCRYPTION, mode, dispatch, encryptOj);
   };
 
   const toggleAdvancedEncryption = (checked: boolean) => {
-    setDispatch(ActionType.SET_ENCRYPTION, { ...encryption, advanced: checked }, mode, dispatch);
+    setEncryptionDispatch(ActionType.SET_ENCRYPTION, mode, dispatch, {
+      ...encryption,
+      advanced: checked,
+    });
+    if (!checked) {
+      setEncryptionDispatch(ActionType.CLEAR_KMS_STATE, mode, dispatch);
+    }
   };
 
   return (

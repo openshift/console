@@ -103,6 +103,7 @@ export const getOCSRequestData = (
   isMinimal: boolean,
   publicNetwork?: string,
   clusterNetwork?: string,
+  kmsEnable?: boolean,
 ): StorageClusterKind => {
   const scName: string = getName(storageClass);
   const isNoProvisioner: boolean = storageClass.provisioner === NO_PROVISIONER;
@@ -120,6 +121,7 @@ export const getOCSRequestData = (
       resources: isMinimal ? MIN_SPEC_RESOURCES : {},
       encryption: {
         enable: encrypted,
+        kms: Object.assign(kmsEnable ? { enable: true } : {}),
       },
       storageDeviceSets: [
         createDeviceSet(scName, storage, isPortable, isMinimal ? MIN_DEVICESET_RESOURCES : {}),
