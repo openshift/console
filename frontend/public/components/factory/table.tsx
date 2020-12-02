@@ -18,7 +18,6 @@ import {
   snapshotSource,
   ALL_NAMESPACES_KEY,
   getName,
-  ANNOTATIONS,
 } from '@console/shared';
 import * as UIActions from '../../actions/ui';
 import {
@@ -173,9 +172,6 @@ const sorts = {
   volumeSnapshotSource: (snapshot: VolumeSnapshotKind): string => snapshotSource(snapshot),
   snapshotLastRestore: (snapshot: K8sResourceKind, { restores }) =>
     restores[getName(snapshot)]?.status?.restoreTime,
-  vmTemplateName: (template) =>
-    template?.variants?.[0]?.metadata?.annotations?.[ANNOTATIONS.displayName] ??
-    template?.metadata?.name,
 };
 
 const stateToProps = (

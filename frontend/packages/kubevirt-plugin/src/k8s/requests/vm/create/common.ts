@@ -3,7 +3,6 @@ import { getName, getNamespace, getAnnotations } from '@console/shared/src';
 import { VMSettingsField } from '../../../../components/create-vm-wizard/types';
 import {
   ANNOTATION_DESCRIPTION,
-  ANNOTATION_USER_PROVIDER,
   APP,
   ANNOTATION_VALIDATIONS,
   LABEL_USED_TEMPLATE_NAME,
@@ -17,6 +16,8 @@ import {
   TEMPLATE_TYPE_LABEL,
   TEMPLATE_TYPE_VM,
   ANNOTATION_ICON,
+  TEMPLATE_PROVIDER_ANNOTATION,
+  TEMPLATE_SUPPORT_LEVEL,
 } from '../../../../constants/vm';
 import { VMWrapper } from '../../../wrapper/vm/vm-wrapper';
 import { VMTemplateWrapper } from '../../../wrapper/vm/vm-template-wrapper';
@@ -28,6 +29,7 @@ export const initializeCommonMetadata = (
     [VMSettingsField.FLAVOR]: string;
     [VMSettingsField.WORKLOAD_PROFILE]: string;
     [VMSettingsField.TEMPLATE_PROVIDER]: string;
+    [VMSettingsField.TEMPLATE_SUPPORTED]: boolean;
     osID: string;
     osName: string;
   },
@@ -41,7 +43,10 @@ export const initializeCommonMetadata = (
   }
 
   if (settings[VMSettingsField.TEMPLATE_PROVIDER]) {
-    entity.addAnotation(ANNOTATION_USER_PROVIDER, settings[VMSettingsField.TEMPLATE_PROVIDER]);
+    entity.addAnotation(TEMPLATE_PROVIDER_ANNOTATION, settings[VMSettingsField.TEMPLATE_PROVIDER]);
+  }
+  if (settings[VMSettingsField.TEMPLATE_PROVIDER]) {
+    entity.addAnotation(TEMPLATE_SUPPORT_LEVEL, 'Full');
   }
 
   entity.addLabel(`${TEMPLATE_OS_LABEL}/${settings.osID}`, 'true');

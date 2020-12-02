@@ -8,7 +8,8 @@ import {
   TEMPLATE_TYPE_LABEL,
   TEMPLATE_TYPE_BASE,
   TEMPLATE_TYPE_VM,
-  ANNOTATION_USER_PROVIDER,
+  TEMPLATE_PROVIDER_ANNOTATION,
+  TEMPLATE_SUPPORT_LEVEL,
 } from '../../constants';
 import { TemplateItem } from '../../types/template';
 
@@ -23,9 +24,8 @@ export const getTemplateName = (template: TemplateKind): string =>
 export const isCommonTemplate = (template: TemplateKind): boolean =>
   template?.metadata?.labels?.[TEMPLATE_TYPE_LABEL] === TEMPLATE_TYPE_BASE;
 
-export const isTemplateSupported = (template: TemplateKind): boolean =>
-  isCommonTemplate(template) &&
-  (template.metadata.name.startsWith('rhel') || template.metadata.name.startsWith('win'));
+export const getTemplateSupport = (template: TemplateKind): string =>
+  getAnnotation(template, TEMPLATE_SUPPORT_LEVEL);
 
 export const getTemplateType = (
   template: TemplateItem,
@@ -37,12 +37,7 @@ export const getTemplateProvider = (
   template: TemplateKind,
   withProviderPrefix = false,
 ): string => {
-  if (isCommonTemplate(template)) {
-    return withProviderPrefix
-      ? t('kubevirt-plugin~Provided by Red Hat')
-      : t('kubevirt-plugin~Red Hat');
-  }
-  const provider = getAnnotation(template, ANNOTATION_USER_PROVIDER);
+  const provider = getAnnotation(template, TEMPLATE_PROVIDER_ANNOTATION);
   if (provider) {
     return withProviderPrefix
       ? t('kubevirt-plugin~Provided by {{provider}} (User)', { provider })
@@ -53,19 +48,20 @@ export const getTemplateProvider = (
 
 export const templateProviders = (t: TFunction): { id: ProvidedType; title: string }[] => [
   { id: 'supported', title: t('kubevirt-plugin~Red Hat Supported') },
+  { id: 'user-supported', title: t('kubevirt-plugin~User Supported') },
   { id: 'provided', title: t('kubevirt-plugin~Red Hat Provided') },
   { id: 'user', title: t('kubevirt-plugin~User Provided') },
 ];
 
-export type ProvidedType = 'supported' | 'provided' | 'user';
+export type ProvidedType = 'supported' | 'provided' | 'user' | 'user-supported';
 
-export const getTemplateProviderType = (templateItem: TemplateItem): ProvidedType => {
-  const [template] = templateItem.variants;
-  if (isTemplateSupported(template)) {
-    return 'supported';
+export const getTemplateKindProviderType = (template: TemplateKind): ProvidedType => {
+  const isCommon = isCommonTemplate(template);
+  if (getTemplateSupport(template)) {
+    return isCommon ? 'supported' : 'user-supported';
   }
-  if (isCommonTemplate(template)) {
-    return 'provided';
-  }
-  return 'user';
+  return isCommon ? 'provided' : 'user';
 };
+
+export const getTemplateProviderType = (templateItem: TemplateItem): ProvidedType =>
+  getTemplateKindProviderType(templateItem?.variants?.[0]);

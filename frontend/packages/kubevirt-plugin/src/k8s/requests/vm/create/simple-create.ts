@@ -8,6 +8,7 @@ import {
   ROOT_DISK_NAME,
   TEMPLATE_PARAM_VM_NAME,
   VolumeType,
+  ANNOTATION_SOURCE_PROVIDER,
 } from '../../../../constants';
 import { initializeCommonMetadata, initializeCommonVMMetadata } from './common';
 import { DiskWrapper } from '../../../wrapper/vm/disk-wrapper';
@@ -45,6 +46,7 @@ type GetRootDataVolume = (args: {
   container?: string;
   cdRom: boolean;
   accessMode: string;
+  provider?: string;
 }) => DataVolumeWrapper;
 
 export const getRootDataVolume: GetRootDataVolume = ({
@@ -60,6 +62,7 @@ export const getRootDataVolume: GetRootDataVolume = ({
   container,
   cdRom,
   accessMode,
+  provider,
 }) => {
   const provisionSource = ProvisionSource.fromString(dataSource);
   const size = provisionSource === ProvisionSource.DISK ? pvcSize : `${sizeValue}${sizeUnit}`;
@@ -78,6 +81,9 @@ export const getRootDataVolume: GetRootDataVolume = ({
   });
   if (cdRom) {
     dataVolume.addLabel(LABEL_CDROM_SOURCE, 'true');
+  }
+  if (provider) {
+    dataVolume.addAnotation(ANNOTATION_SOURCE_PROVIDER, provider);
   }
   return dataVolume;
 };
@@ -183,6 +189,7 @@ export const createVM = async (
     [VMSettingsField.FLAVOR]: getFlavor(template),
     [VMSettingsField.WORKLOAD_PROFILE]: getWorkloadProfile(template),
     [VMSettingsField.TEMPLATE_PROVIDER]: null,
+    [VMSettingsField.TEMPLATE_SUPPORTED]: null,
     osID: os?.id,
     osName: os?.name,
   };

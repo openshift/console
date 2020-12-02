@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Form, TextArea, TextInput } from '@patternfly/react-core';
+import { Checkbox, Form, TextArea, TextInput } from '@patternfly/react-core';
 import { connect } from 'react-redux';
 import { iGet, iGetIn } from '../../../../utils/immutable';
 import { FormFieldMemoRow } from '../../form/form-field-row';
@@ -28,6 +28,7 @@ import { URLSource } from './url-source';
 
 import '../../create-vm-wizard-footer.scss';
 import './vm-settings-tab.scss';
+import { getFieldId } from '../../utils/renderable-field-utils';
 
 export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
   iUserTemplate,
@@ -72,6 +73,18 @@ export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
         <div className="pf-c-form__helper-text" aria-live="polite">
           example: your company name
         </div>
+      </FormFieldMemoRow>
+      <FormFieldMemoRow
+        className="kv-create-vm__input-checkbox"
+        field={getField(VMSettingsField.TEMPLATE_SUPPORTED)}
+        fieldType={FormFieldType.INLINE_CHECKBOX}
+      >
+        <FormField>
+          <Checkbox
+            id={getFieldId(VMSettingsField.TEMPLATE_SUPPORTED)}
+            onChange={onChange(VMSettingsField.TEMPLATE_SUPPORTED)}
+          />
+        </FormField>
       </FormFieldMemoRow>
       <FormFieldMemoRow
         field={getField(VMSettingsField.DESCRIPTION)}

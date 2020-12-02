@@ -50,7 +50,7 @@ import {
 import { TemplateItem } from '../../../types/template';
 import { isTemplateSourceError, TemplateSourceStatus } from '../../../statuses/template/types';
 import { usePinnedTemplates } from '../../../hooks/use-pinned-templates';
-import { BOOT_SOURCE_COMMUNITY, BOOT_SOURCE_USER, BOOT_SOURCE_REQUIRED } from '../../../constants';
+import { BOOT_SOURCE_AVAILABLE, BOOT_SOURCE_REQUIRED } from '../../../constants';
 import { FormPFSelect } from '../../form/form-pf-select';
 import { VMTemplateSupport } from '../../vm-templates/vm-template';
 
@@ -370,8 +370,7 @@ export const SelectTemplate: React.FC<SelectTemplateProps> = ({
                           }
                           className="kv-select-template__filter"
                         >
-                          <SelectOption value={BOOT_SOURCE_COMMUNITY} />
-                          <SelectOption value={BOOT_SOURCE_USER} />
+                          <SelectOption value={BOOT_SOURCE_AVAILABLE} />
                           <SelectOption value={BOOT_SOURCE_REQUIRED} />
                         </FormPFSelect>
                       </ToolbarFilter>

@@ -1,6 +1,5 @@
 import { PersistentVolumeClaimKind, PodKind, TemplateKind } from '@console/internal/module/k8s';
 import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
-import { BOOT_SOURCE_COMMUNITY, BOOT_SOURCE_USER } from '../../constants';
 
 export enum SOURCE_TYPE {
   BASE_IMAGE = 'BASE_IMAGE',
@@ -29,7 +28,7 @@ export type TemplateSourceStatusError = {
 export type TemplateSourceStatusBundle = {
   isReady: boolean;
   source: SOURCE_TYPE;
-  provider: typeof BOOT_SOURCE_COMMUNITY | typeof BOOT_SOURCE_USER;
+  provider: string;
   isCDRom: boolean;
   pod?: PodKind;
   dataVolume?: V1alpha1DataVolume;
