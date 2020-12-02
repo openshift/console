@@ -3,6 +3,7 @@ import { Alert, ActionGroup, Button, TextArea, TextInput, Tooltip } from '@patte
 import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
+import { Trans, useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
@@ -28,6 +29,8 @@ const formatDate = (d: Date): string =>
   )}:${pad(d.getSeconds())}`;
 
 const DatetimeTextInput = (props) => {
+  const { t } = useTranslation();
+
   const pattern =
     '\\d{4}/(0?[1-9]|1[012])/(0?[1-9]|[12]\\d|3[01]) (0?\\d|1\\d|2[0-3]):[0-5]\\d(:[0-5]\\d)?';
   const isValid = new RegExp(`^${pattern}$`).test(props.value);
@@ -37,13 +40,13 @@ const DatetimeTextInput = (props) => {
       <Tooltip
         content={[
           <span className="co-nowrap" key="co-timestamp">
-            {isValid ? new Date(props.value).toISOString() : 'Invalid date / time'}
+            {isValid ? new Date(props.value).toISOString() : t('monitoring~Invalid date / time')}
           </span>,
         ]}
       >
         <TextInput
           {...props}
-          aria-label="Datetime"
+          aria-label={t('monitoring~Datetime')}
           data-test-id="datetime"
           validated={isValid || !!props.isDisabled ? 'default' : 'error'}
           pattern={pattern}
@@ -59,6 +62,8 @@ const durations = [durationOff, '30m', '1h', '2h', '6h', '12h', '1d', '2d', '1w'
 const durationItems = _.zipObject(durations, durations);
 
 const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => {
+  const { t } = useTranslation();
+
   const now = new Date();
 
   // Default to starting now if we have no default start time or if the default start time is in the
@@ -170,9 +175,9 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
       <div className="co-m-nav-title co-m-nav-title--detail">
         <h1 className="co-m-pane__heading">{title}</h1>
         <p className="co-m-pane__explanation">
-          Silences temporarily mute alerts based on a set of label selectors that you define.
-          Notifications will not be sent for alerts that match all the listed values or regular
-          expressions.
+          {t(
+            'monitoring~Silences temporarily mute alerts based on a set of label selectors that you define. Notifications will not be sent for alerts that match all the listed values or regular expressions.',
+          )}
         </p>
       </div>
 
@@ -181,12 +186,12 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
       <div className="co-m-pane__body">
         <form onSubmit={onSubmit} className="monitoring-silence-alert">
           <div className="co-m-pane__body-group">
-            <SectionHeading text="Duration" />
+            <SectionHeading text={t('monitoring~Duration')} />
             <div className="row">
               <div className="form-group col-sm-4 col-md-5">
-                <label>Silence alert from...</label>
+                <label>{t('monitoring~Silence alert from...')}</label>
                 {isStartNow ? (
-                  <DatetimeTextInput isDisabled data-test="from" value="Now" />
+                  <DatetimeTextInput isDisabled data-test="from" value={t('monitoring~Now')} />
                 ) : (
                   <DatetimeTextInput
                     data-test="from"
@@ -197,7 +202,7 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
                 )}
               </div>
               <div className="form-group col-sm-4 col-md-2">
-                <label>For...</label>
+                <label>{t('monitoring~For...')}</label>
                 <Dropdown
                   dropDownClassName="dropdown--full-width"
                   items={durationItems}
@@ -206,7 +211,7 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
                 />
               </div>
               <div className="form-group col-sm-4 col-md-5">
-                <label>Until...</label>
+                <label>{t('monitoring~Until...')}</label>
                 {duration === durationOff ? (
                   <DatetimeTextInput
                     data-test="until"
@@ -218,7 +223,11 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
                   <DatetimeTextInput
                     data-test="until"
                     isDisabled
-                    value={isStartNow ? `${duration} from now` : getEndsAtValue()}
+                    value={
+                      isStartNow
+                        ? t('monitoring~{{duration}} from now', { duration })
+                        : getEndsAtValue()
+                    }
                   />
                 )}
               </div>
@@ -231,41 +240,43 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
                   onChange={(e) => setIsStartNow(e.currentTarget.checked)}
                   type="checkbox"
                 />
-                &nbsp; Start Immediately
+                &nbsp; {t('monitoring~Start immediately')}
               </label>
             </div>
           </div>
 
           <div className="co-m-pane__body-group">
-            <SectionHeading text="Alert Labels" />
+            <SectionHeading text={t('monitoring~Alert labels')} />
             <p className="co-help-text">
-              Alerts with labels that match these selectors will be silenced instead of firing.
-              Label values can be matched exactly or with a{' '}
-              <ExternalLink
-                href="https://github.com/google/re2/wiki/Syntax"
-                text="regular expression"
-              />
+              <Trans i18nKey="silence-matchers-description" ns="monitoring">
+                Alerts with labels that match these selectors will be silenced instead of firing.
+                Label values can be matched exactly or with a{' '}
+                <ExternalLink
+                  href="https://github.com/google/re2/wiki/Syntax"
+                  text={t('monitoring~regular expression')}
+                />
+              </Trans>
             </p>
 
             {_.map(matchers, (matcher, i: number) => (
               <div className="row" key={i}>
                 <div className="form-group col-sm-4">
-                  <label>Label name</label>
+                  <label>{t('monitoring~Label name')}</label>
                   <TextInput
-                    aria-label="Label name"
+                    aria-label={t('monitoring~Label name')}
                     isRequired
                     onChange={(v: string) => setMatcherField(i, 'name', v)}
-                    placeholder="Name"
+                    placeholder={t('monitoring~Name')}
                     value={matcher.name}
                   />
                 </div>
                 <div className="form-group col-sm-4">
-                  <label>Label value</label>
+                  <label>{t('monitoring~Label value')}</label>
                   <TextInput
-                    aria-label="Label value"
+                    aria-label={t('monitoring~Label value')}
                     isRequired
                     onChange={(v: string) => setMatcherField(i, 'value', v)}
-                    placeholder="Value"
+                    placeholder={t('monitoring~Value')}
                     value={matcher.value}
                   />
                 </div>
@@ -277,13 +288,13 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
                         onChange={(e) => setMatcherField(i, 'isRegex', e.currentTarget.checked)}
                         checked={matcher.isRegex}
                       />
-                      &nbsp; Use RegEx
+                      &nbsp; {t('monitoring~Use RegEx')}
                     </label>
-                    <Tooltip content="Remove">
+                    <Tooltip content={t('monitoring~Remove')}>
                       <Button
                         type="button"
                         onClick={() => removeMatcher(i)}
-                        aria-label="Remove"
+                        aria-label={t('monitoring~Remove')}
                         variant="plain"
                       >
                         <MinusCircleIcon />
@@ -302,25 +313,25 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
                 variant="link"
               >
                 <PlusCircleIcon className="co-icon-space-r" />
-                Add Label
+                {t('monitoring~Add label')}
               </Button>
             </div>
           </div>
 
           <div className="co-m-pane__body-group">
-            <SectionHeading text="Info" />
+            <SectionHeading text={t('monitoring~Info')} />
             <div className="form-group">
-              <label>Creator</label>
+              <label>{t('monitoring~Creator')}</label>
               <TextInput
-                aria-label="Creator"
+                aria-label={t('monitoring~Creator')}
                 onChange={(v: string) => setCreatedBy(v)}
                 value={createdBy}
               />
             </div>
             <div className="form-group">
-              <label className="co-required">Comment</label>
+              <label className="co-required">{t('monitoring~Comment')}</label>
               <TextArea
-                aria-label="Comment"
+                aria-label={t('monitoring~Comment')}
                 isRequired
                 onChange={(v: string) => setComment(v)}
                 data-test="silence-comment"
@@ -330,10 +341,10 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
             <ButtonBar errorMessage={error} inProgress={inProgress}>
               <ActionGroup className="pf-c-form">
                 <Button type="submit" variant="primary">
-                  Silence
+                  {t('monitoring~Silence')}
                 </Button>
                 <Button onClick={history.goBack} variant="secondary">
-                  Cancel
+                  {t('monitoring~Cancel')}
                 </Button>
               </ActionGroup>
             </ButtonBar>
@@ -345,14 +356,26 @@ const SilenceForm_: React.FC<SilenceFormProps> = ({ defaults, Info, title }) => 
 };
 const SilenceForm = withFallback(SilenceForm_);
 
-const EditInfo = () => (
-  <Alert isInline className="co-alert" variant="info" title="Overwriting current silence">
-    When changes are saved, the currently existing silence will be expired and a new silence with
-    the new configuration will take its place.
-  </Alert>
-);
+const EditInfo = () => {
+  const { t } = useTranslation();
+
+  return (
+    <Alert
+      className="co-alert"
+      isInline
+      title={t('monitoring~Overwriting current silence')}
+      variant="info"
+    >
+      {t(
+        'monitoring~When changes are saved, the currently existing silence will be expired and a new silence with the new configuration will take its place.',
+      )}
+    </Alert>
+  );
+};
 
 export const EditSilence = connect(silenceParamToProps)(({ loaded, loadError, silence }) => {
+  const { t } = useTranslation();
+
   const isExpired = silenceState(silence) === SilenceStates.Expired;
   const defaults = _.pick(silence, [
     'comment',
@@ -364,23 +387,27 @@ export const EditSilence = connect(silenceParamToProps)(({ loaded, loadError, si
   ]);
   defaults.startsAt = isExpired ? undefined : formatDate(new Date(defaults.startsAt));
   defaults.endsAt = isExpired ? undefined : formatDate(new Date(defaults.endsAt));
+
   return (
     <StatusBox data={silence} label={SilenceResource.label} loaded={loaded} loadError={loadError}>
       <SilenceForm
         defaults={defaults}
         Info={isExpired ? undefined : EditInfo}
-        title={isExpired ? 'Recreate Silence' : 'Edit Silence'}
+        title={isExpired ? t('monitoring~Recreate silence') : t('monitoring~Edit silence')}
       />
     </StatusBox>
   );
 });
 
 const CreateSilence_ = ({ createdBy }) => {
+  const { t } = useTranslation();
+
   const matchers = _.map(getURLSearchParams(), (value, name) => ({ name, value, isRegex: false }));
+
   return _.isEmpty(matchers) ? (
-    <SilenceForm defaults={{ createdBy }} title="Create Silence" />
+    <SilenceForm defaults={{ createdBy }} title={t('monitoring~Create silence')} />
   ) : (
-    <SilenceForm defaults={{ createdBy, matchers }} title="Silence Alert" />
+    <SilenceForm defaults={{ createdBy, matchers }} title={t('monitoring~Silence alert')} />
   );
 };
 const createSilenceStateToProps = ({ UI }: RootState) => ({
