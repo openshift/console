@@ -144,6 +144,7 @@ const StatusCard: React.FC<DashboardItemProps> = ({
 
   const MCGState = getNooBaaState(
     [{ response: healthStatusResult, error: healthStatusError }],
+    null,
     noobaa,
   );
 

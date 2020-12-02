@@ -7,6 +7,7 @@ import {
   GrayUnknownIcon,
 } from '@console/shared/src/components/status/icons';
 import { InProgressIcon } from '@patternfly/react-icons';
+import { TFunction } from 'i18next';
 
 export enum HealthState {
   OK = 'OK',
@@ -19,6 +20,29 @@ export enum HealthState {
   NOT_AVAILABLE = 'NOT_AVAILABLE',
 }
 
+export const healthStateMessage = (state: keyof typeof HealthState, t: TFunction): string => {
+  switch (state) {
+    case HealthState.OK:
+      return '';
+    case HealthState.UNKNOWN:
+      return t('dashboard~Unknown');
+    case HealthState.PROGRESS:
+      return t('dashboard~Pending');
+    case HealthState.UPDATING:
+      return t('dashboard~Updating');
+    case HealthState.WARNING:
+      return t('dashboard~Degraded');
+    case HealthState.ERROR:
+      return t('dashboard~Degraded');
+    case HealthState.LOADING:
+      return t('dashboard~Loading');
+    case HealthState.NOT_AVAILABLE:
+      return t('dashboard~Not available');
+    default:
+      return t('dashboard~Unknown');
+  }
+};
+
 export const healthStateMapping: { [key in HealthState]: HealthStateMappingValues } = {
   [HealthState.OK]: {
     priority: 0,
@@ -29,49 +53,41 @@ export const healthStateMapping: { [key in HealthState]: HealthStateMappingValue
     priority: 1,
     health: HealthState.UNKNOWN,
     icon: <GrayUnknownIcon title="Unknown" />,
-    message: 'Unknown',
   },
   [HealthState.PROGRESS]: {
     priority: 2,
     health: HealthState.PROGRESS,
     icon: <InProgressIcon title="In progress" />,
-    message: 'Pending',
   },
   [HealthState.UPDATING]: {
     priority: 3,
     health: HealthState.UPDATING,
     icon: <BlueSyncIcon title="Updating" />,
-    message: 'Updating',
   },
   [HealthState.WARNING]: {
     priority: 4,
     health: HealthState.WARNING,
     icon: <YellowExclamationTriangleIcon title="Warning" />,
-    message: 'Degraded',
   },
   [HealthState.ERROR]: {
     priority: 5,
     health: HealthState.ERROR,
     icon: <RedExclamationCircleIcon title="Error" />,
-    message: 'Degraded',
   },
   [HealthState.LOADING]: {
     priority: 6,
     health: HealthState.LOADING,
     icon: <div className="skeleton-health" />,
-    message: 'Loading',
   },
   [HealthState.NOT_AVAILABLE]: {
     priority: 7,
     health: HealthState.NOT_AVAILABLE,
     icon: <GrayUnknownIcon title="Not available" />,
-    message: 'Not available',
   },
 };
 
 export type HealthStateMappingValues = {
   icon: React.ReactNode;
-  message?: string;
   priority: number;
   health: HealthState;
 };

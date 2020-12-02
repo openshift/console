@@ -95,7 +95,7 @@ export const OperatorHealthItem = withDashboardResources<OperatorHealthItemProps
       };
     });
 
-    const operatorsHealth = getOperatorsHealthState(healthStatuses);
+    const operatorsHealth = getOperatorsHealthState(healthStatuses, t);
 
     return (
       <HealthItem
@@ -175,6 +175,8 @@ export const PrometheusHealthItem = withDashboardResources<PrometheusHealthItemP
     subsystem,
     models,
   }) => {
+    const { t } = useTranslation();
+
     const modelExists =
       subsystem.additionalResource && !!models.get(subsystem.additionalResource.kind);
     React.useEffect(() => {
@@ -211,7 +213,7 @@ export const PrometheusHealthItem = withDashboardResources<PrometheusHealthItemP
     const k8sResult = subsystem.additionalResource
       ? resources[subsystem.additionalResource.prop]
       : null;
-    const healthState = subsystem.healthHandler(queryResults, k8sResult);
+    const healthState = subsystem.healthHandler(queryResults, t, k8sResult);
 
     return (
       <HealthItem

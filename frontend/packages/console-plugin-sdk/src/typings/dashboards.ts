@@ -1,3 +1,4 @@
+import { TFunction } from 'i18next';
 import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
 import { GridPosition } from '@console/shared/src/components/dashboard/DashboardGrid';
 import {
@@ -383,6 +384,7 @@ export type PrometheusHealthPopupProps = {
 
 export type PrometheusHealthHandler = (
   responses: { response: PrometheusResponse; error: any }[],
+  t?: TFunction,
   additionalResource?: FirehoseResult<K8sResourceKind | K8sResourceKind[]>,
 ) => SubsystemHealth;
 
@@ -393,7 +395,7 @@ export type ResourceHealthHandler<R extends ResourcesObject> = (
 export type OperatorHealthHandler = (resources: FirehoseResourcesResult) => OperatorHealth;
 
 export type OperatorHealth = {
-  health: HealthState;
+  health: keyof typeof HealthState;
   count?: number;
 };
 
@@ -414,7 +416,7 @@ export type OperatorStatusPriority = {
   title: string;
   priority: number;
   icon: React.ReactNode;
-  health: HealthState;
+  health: keyof typeof HealthState;
 };
 
 export type OperatorRowProps<R extends K8sResourceCommon = K8sResourceCommon> = {

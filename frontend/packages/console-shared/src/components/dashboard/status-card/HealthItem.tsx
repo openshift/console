@@ -1,7 +1,8 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import classNames from 'classnames';
 import { DashboardCardPopupLink } from '../dashboard-card/DashboardCardLink';
-import { HealthState, healthStateMapping } from './states';
+import { HealthState, healthStateMapping, healthStateMessage } from './states';
 import { SecondaryStatus } from '../../status';
 
 const HealthItemIcon: React.FC<HealthItemIconProps> = ({ state }) => (
@@ -12,8 +13,10 @@ const HealthItemIcon: React.FC<HealthItemIconProps> = ({ state }) => (
 
 const HealthItem: React.FC<HealthItemProps> = React.memo(
   ({ className, state, title, details, popupTitle, noIcon = false, children }) => {
-    const detailMessage =
-      details || (healthStateMapping[state] || healthStateMapping[HealthState.UNKNOWN]).message;
+    const { t } = useTranslation();
+
+    const detailMessage = details || healthStateMessage(state, t);
+
     return (
       <div className={classNames('co-status-card__health-item', className)}>
         {state === HealthState.LOADING ? (
