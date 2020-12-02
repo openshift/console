@@ -38,6 +38,7 @@ const (
 type helmRepo struct {
 	Name            string
 	URL             *url.URL
+	Disabled        bool
 	TLSClientConfig *tls.Config
 }
 
@@ -101,6 +102,13 @@ type helmRepoGetter struct {
 
 func (b helmRepoGetter) unmarshallConfig(repo unstructured.Unstructured) (*helmRepo, error) {
 	h := &helmRepo{}
+
+	disabled, _, err := unstructured.NestedBool(repo.Object, "spec", "disabled")
+	if err != nil {
+		return nil, err
+	}
+	h.Disabled = disabled
+
 	urlValue, _, err := unstructured.NestedString(repo.Object, "spec", "connectionConfig", "url")
 	if err != nil {
 		return nil, err
