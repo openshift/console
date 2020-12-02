@@ -9,6 +9,7 @@ export * from './select-list';
 export * from './useBuildConfigsWatcher';
 export * from './useJobsForCronJobWatcher';
 export * from './usePodsWatcher';
+export * from './useReplicationControllersWatcher';
 export * from './useRoutesWatcher';
 export * from './useServicesWatcher';
 export * from './useQueryParams';

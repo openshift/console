@@ -3,7 +3,16 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Node } from '@patternfly/react-topology';
 import { DataListCell, Tooltip } from '@patternfly/react-core';
-import { Status as TooltipStatus } from '@console/shared';
+import {
+  Status as TooltipStatus,
+  useBuildConfigsWatcher,
+  getBuildAlerts,
+  getResourcePausedAlert,
+  usePodsWatcher,
+  useReplicationControllersWatcher,
+  getReplicationControllerAlerts,
+} from '@console/shared';
+import { getResource } from '../../../utils';
 import { isMobile } from '../list-view-utils';
 
 import './AlertsCell.scss';
@@ -46,15 +55,47 @@ const AlertTooltip = ({ alerts, severity }) => {
 
 const AlertsCell: React.FC<AlertsProps> = ({ item }) => {
   const { t } = useTranslation();
-  const { resources } = item.getData();
-  const currentAlerts = resources?.current?.alerts ?? {};
-  const previousAlerts = resources?.previous?.alerts ?? {};
-  const itemAlerts = resources?.alerts;
+  const resource = getResource(item);
+  const { podData, loaded } = usePodsWatcher(resource);
+  const { buildConfigs, loaded: buildConfigsLoaded } = useBuildConfigsWatcher(resource);
+  const { loaded: rcsLoaded, mostRecentRC } = useReplicationControllersWatcher(resource);
+
+  const currentAlerts = React.useMemo(() => {
+    if (loaded && podData.current) {
+      return podData.current.alerts;
+    }
+    return {};
+  }, [loaded, podData]);
+
+  const previousAlerts = React.useMemo(() => {
+    if (loaded && podData.previous) {
+      return podData.current.alerts;
+    }
+    return {};
+  }, [loaded, podData]);
+
+  const buildConfigAlerts = React.useMemo(() => {
+    if (buildConfigsLoaded && buildConfigs) {
+      return getBuildAlerts(buildConfigs);
+    }
+    return {};
+  }, [buildConfigsLoaded, buildConfigs]);
+
+  const rollOutAlerts = React.useMemo(() => {
+    if (rcsLoaded && mostRecentRC) {
+      return getReplicationControllerAlerts(mostRecentRC);
+    }
+    return {};
+  }, [mostRecentRC, rcsLoaded]);
+
   const alerts = {
-    ...itemAlerts,
+    ...getResourcePausedAlert(resource),
+    ...rollOutAlerts,
+    ...buildConfigAlerts,
     ...currentAlerts,
     ...previousAlerts,
   };
+
   if (alerts?.length) {
     return null;
   }
