@@ -138,7 +138,7 @@ export const subscriptionFor = (allSubscriptions: SubscriptionKind[] = []) => (
       allGroups.some(
         (og) =>
           og.metadata.namespace === sub.metadata.namespace &&
-          (isGlobal(og) || _.get(og.status, 'namespaces', [] as string[]).includes(ns)),
+          (isGlobal(og) || og.status?.namespaces?.includes(ns)),
       ),
     );
 };
