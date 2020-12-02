@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { CatalogItem } from '@console/plugin-sdk';
 import { PropertiesSidePanel, PropertyItem } from '@patternfly/react-catalog-view-extension';
 import { ExternalLink, SectionHeading, Timestamp } from '@console/internal/components/utils';
+import { Stack, StackItem } from '@patternfly/react-core';
 
 type CatalogDetailsPanelProps = {
   item: CatalogItem;
@@ -46,14 +47,16 @@ const CatalogDetailsPanel: React.FC<CatalogDetailsPanelProps> = ({ item }) => {
               )}
             </PropertiesSidePanel>
             <div className="co-catalog-page__overlay-description">
-              <SectionHeading text={t('devconsole~Description')} />
-              {!details?.descriptions?.length && description && <p>{description}</p>}
-              {details?.descriptions?.map((desc, index) => (
-                <React.Fragment key={index}>
-                  {desc.label && <SectionHeading text={desc.label} />}
-                  {desc.value}
-                </React.Fragment>
-              ))}
+              <Stack hasGutter>
+                <SectionHeading text={t('devconsole~Description')} />
+                {!details?.descriptions?.length && description && <p>{description}</p>}
+                {details?.descriptions?.map((desc, index) => (
+                  <StackItem key={index}>
+                    {desc.label && <SectionHeading text={desc.label} />}
+                    {desc.value}
+                  </StackItem>
+                ))}
+              </Stack>
             </div>
           </div>
         </div>

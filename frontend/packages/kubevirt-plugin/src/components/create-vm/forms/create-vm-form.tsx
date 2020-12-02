@@ -72,6 +72,9 @@ export type CreateVMFormProps = {
   customSource?: BootSourceState;
   state: FormState;
   dispatch: React.Dispatch<FormAction>;
+  showCreateInfo?: boolean;
+  showProjectDropdown?: boolean;
+  cdRomText?: string;
 };
 
 export const CreateVMForm: React.FC<CreateVMFormProps> = ({
@@ -80,6 +83,9 @@ export const CreateVMForm: React.FC<CreateVMFormProps> = ({
   state,
   dispatch,
   customSource,
+  cdRomText,
+  showCreateInfo = true,
+  showProjectDropdown = true,
 }) => {
   const { t } = useTranslation();
   const { name, nameValidation, namespace, startVM, template } = state;
@@ -187,7 +193,7 @@ export const CreateVMForm: React.FC<CreateVMFormProps> = ({
         break;
     }
   } else if (!isTemplateSourceError(sourceStatus)) {
-    cdRom = sourceStatus.isCDRom;
+    cdRom = sourceStatus?.isCDRom;
     source = (
       <SourceDescription sourceStatus={sourceStatus} template={selectedTemplate.variants[0]} />
     );
@@ -195,20 +201,24 @@ export const CreateVMForm: React.FC<CreateVMFormProps> = ({
 
   return (
     <Stack hasGutter>
-      <StackItem>
-        <Trans t={t} ns="kubevirt-plugin">
-          You are creating a virtual machine from the <b>{getTemplateName(template)}</b> template.
-        </Trans>
-      </StackItem>
+      {showCreateInfo && (
+        <StackItem>
+          <Trans t={t} ns="kubevirt-plugin">
+            You are creating a virtual machine from the <b>{getTemplateName(template)}</b> template.
+          </Trans>
+        </StackItem>
+      )}
       <StackItem>
         <Form onSubmit={preventDefault}>
-          <FormRow
-            fieldId="vm-namespace"
-            title={useProjects ? t('kubevirt-plugin~Project') : t('kubevirt-plugin~Namespace')}
-            isRequired
-          >
-            <ProjectDropdown onChange={onNamespaceChange} project={namespace} />
-          </FormRow>
+          {showProjectDropdown && (
+            <FormRow
+              fieldId="vm-namespace"
+              title={useProjects ? t('kubevirt-plugin~Project') : t('kubevirt-plugin~Namespace')}
+              isRequired
+            >
+              <ProjectDropdown onChange={onNamespaceChange} project={namespace} />
+            </FormRow>
+          )}
           <FormRow
             fieldId="vm-name"
             title={t('kubevirt-plugin~Virtual Machine Name')}
@@ -266,9 +276,10 @@ export const CreateVMForm: React.FC<CreateVMFormProps> = ({
                     <Stack>
                       <StackItem>
                         <BlueInfoCircleIcon className="co-icon-space-r" />
-                        {t(
-                          'kubevirt-plugin~A new disk has been added to support this ISO source. Edit this disk by customizing the virtual machine.',
-                        )}
+                        {cdRomText ||
+                          t(
+                            'kubevirt-plugin~A new disk has been added to support this ISO source. Edit this disk by customizing the virtual machine.',
+                          )}
                       </StackItem>
                       <StackItem>
                         <ExpandableSection toggleText={t('kubevirt-plugin~Disk details')}>
