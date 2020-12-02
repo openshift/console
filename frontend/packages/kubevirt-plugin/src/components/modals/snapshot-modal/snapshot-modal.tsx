@@ -1,8 +1,21 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, AlertVariant, Form, TextArea, TextInput } from '@patternfly/react-core';
-import { buildOwnerReference, prefixedID } from '../../../utils';
-import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
+import {
+  Alert,
+  AlertVariant,
+  ExpandableSection,
+  Form,
+  Stack,
+  StackItem,
+  TextArea,
+  Checkbox,
+  TextInput,
+} from '@patternfly/react-core';
+import {
+  ExternalLink,
+  HandlePromiseProps,
+  withHandlePromise,
+} from '@console/internal/components/utils';
 import { getName, getNamespace } from '@console/shared';
 import {
   createModalLauncher,
@@ -11,10 +24,15 @@ import {
   ModalTitle,
 } from '@console/internal/components/factory';
 import { k8sCreate } from '@console/internal/module/k8s';
+import { buildOwnerReference, prefixedID } from '../../../utils';
 import { VMLikeEntityKind } from '../../../types/vmLike';
 import { FormRow } from '../../form/form-row';
 import { ModalFooter } from '../modal/modal-footer';
 import { VMSnapshotWrapper } from '../../../k8s/wrapper/vm/vm-snapshot-wrapper';
+import { asVM, getVolumeSnapshotStatuses } from '../../../selectors/vm';
+import { SNAPSHOT_SUPPORT_URL } from '../../../constants';
+
+import './snapshot-modal.scss';
 
 const getSnapshotName = (vmName: string) => {
   const date = new Date();
@@ -27,7 +45,13 @@ const SnapshotsModal = withHandlePromise((props: SnapshotsModalProps) => {
   const vmName = getName(vmLikeEntity);
   const [name, setName] = React.useState(getSnapshotName(vmName));
   const [description, setDescription] = React.useState('');
+  const [approveUnsupported, setApproveUnsupported] = React.useState(false);
   const asId = prefixedID.bind(null, 'snapshot');
+
+  const volumeSnapshotStatuses = getVolumeSnapshotStatuses(asVM(vmLikeEntity)) || [];
+  const supportedVolumes = volumeSnapshotStatuses.filter((status) => status?.enabled);
+  const unsupportedVolumes = volumeSnapshotStatuses.filter((status) => !status?.enabled);
+  const hasUnsupportedVolumes = unsupportedVolumes.length > 0;
 
   const submit = async (e) => {
     e.preventDefault();
@@ -72,13 +96,80 @@ const SnapshotsModal = withHandlePromise((props: SnapshotsModalProps) => {
               aria-label={t('kubevirt-plugin~description text area')}
             />
           </FormRow>
+          <FormRow fieldId="supported-volumes">
+            <Stack hasGutter>
+              {supportedVolumes.length > 0 && (
+                <StackItem>
+                  <ExpandableSection
+                    toggleText={t('kubevirt-plugin~Disks included in this Snapshot ({{count}})', {
+                      count: supportedVolumes?.length,
+                    })}
+                  >
+                    <Stack>
+                      {supportedVolumes?.map((vol) => (
+                        <StackItem key={vol.name}>{vol.name}</StackItem>
+                      ))}
+                    </Stack>
+                  </ExpandableSection>
+                </StackItem>
+              )}
+              {hasUnsupportedVolumes && (
+                <StackItem>
+                  <Alert
+                    variant={AlertVariant.warning}
+                    isInline
+                    title={t(
+                      'kubevirt-plugin~The following disk will not be included in the snapshot',
+                      { count: unsupportedVolumes?.length },
+                    )}
+                  >
+                    <Stack hasGutter>
+                      <StackItem>
+                        <Stack>
+                          {unsupportedVolumes?.map((vol) => (
+                            <StackItem>
+                              <strong>{vol.name}</strong> - {vol.reason}
+                            </StackItem>
+                          ))}
+                        </Stack>
+                      </StackItem>
+                      <StackItem>
+                        {t(
+                          'kubevirt-plugin~Edit the disk or contact your cluster admin for further details.',
+                          { count: unsupportedVolumes?.length },
+                        )}
+                      </StackItem>
+                      <StackItem>
+                        <ExternalLink
+                          additionalClassName="kv-snapshot-modal__link"
+                          text={<div>{t('kubevirt-plugin~Learn more about snapshots')}</div>}
+                          href={SNAPSHOT_SUPPORT_URL}
+                        />
+                      </StackItem>
+                    </Stack>
+                  </Alert>
+                </StackItem>
+              )}
+            </Stack>
+          </FormRow>
+          {hasUnsupportedVolumes && (
+            <FormRow fieldId="unsupported-approve-checkbox">
+              <Checkbox
+                id="approve-checkbox"
+                isChecked={approveUnsupported}
+                aria-label={t('kubevirt-plugin~unsupported approve checkbox')}
+                description={t('kubevirt-plugin~I am aware of this warning and wish to proceed')}
+                onChange={setApproveUnsupported}
+              />
+            </FormRow>
+          )}
         </Form>
       </ModalBody>
       <ModalFooter
         id="snapshot"
         submitButtonText={t('kubevirt-plugin~Save')}
         errorMessage={errorMessage}
-        isDisabled={inProgress}
+        isDisabled={inProgress || (hasUnsupportedVolumes && !approveUnsupported)}
         inProgress={inProgress}
         onSubmit={submit}
         onCancel={(e) => {

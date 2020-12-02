@@ -182,3 +182,5 @@ export const getIsGraphicsConsoleAttached = (vm: VMKind) =>
 
 export const getIsSerialConsoleAttached = (vm: VMKind) =>
   vm?.spec?.template?.spec?.domain?.devices?.autoattachSerialConsole;
+
+export const getVolumeSnapshotStatuses = (vm: VMKind) => vm?.status?.volumeSnapshotStatuses;
