@@ -192,14 +192,14 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'NavItem/Href',
     properties: {
-      id: 'applicationstages',
+      id: 'environments',
       perspective: 'dev',
       section: 'resources',
       componentProps: {
-        // t('devconsole~Application Stages')
-        name: '%devconsole~Application Stages%',
-        href: '/applicationstages',
-        testID: 'application-stages-header',
+        // t('devconsole~Environments')
+        name: '%devconsole~Environments%',
+        href: '/environments',
+        testID: 'environments-header',
       },
     },
     flags: {
@@ -331,7 +331,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Page/Route',
     properties: {
       exact: true,
-      path: '/applicationstages',
+      path: '/environments',
       loader: async () =>
         (
           await import(
@@ -344,7 +344,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Page/Route',
     properties: {
       exact: true,
-      path: '/applicationstages/:appName',
+      path: '/environments/:appName',
       loader: async () =>
         (
           await import(

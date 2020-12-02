@@ -13,7 +13,7 @@ interface GitOpsListItemProps {
 const GitOpsListItem: React.FC<GitOpsListItemProps> = ({ appGroup }) => {
   const { t } = useTranslation();
   const handleCardClick = () => {
-    history.push(`/applicationstages/${appGroup.name}?url=${appGroup.repo_url}`);
+    history.push(`/environments/${appGroup.name}?url=${appGroup.repo_url}`);
   };
 
   return (
