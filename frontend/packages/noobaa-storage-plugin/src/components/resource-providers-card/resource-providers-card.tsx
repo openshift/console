@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
@@ -45,6 +46,7 @@ const ResourceProviders: React.FC<DashboardItemProps> = ({
   stopWatchPrometheusQuery,
   prometheusResults,
 }) => {
+  const { t } = useTranslation();
   React.useEffect(() => {
     watchPrometheus(RESOURCE_PROVIDERS_QUERY.PROVIDERS_TYPES);
     watchPrometheus(RESOURCE_PROVIDERS_QUERY.UNHEALTHY_PROVIDERS_TYPES);
@@ -96,11 +98,11 @@ const ResourceProviders: React.FC<DashboardItemProps> = ({
   return (
     <DashboardCard>
       <DashboardCardHeader>
-        <DashboardCardTitle>Resource Providers</DashboardCardTitle>
+        <DashboardCardTitle>{t('noobaa-storage-plugin~Resource Providers')}</DashboardCardTitle>
         <FieldLevelHelp>
-          A list of all MCG (Multicloud Object Gateway) resources that are currently in use. Those
-          resources are used to store data according to the buckets policies and can be a
-          cloud-based resource or a bare metal resource.
+          {t(
+            'noobaa-storage-plugin~A list of all MCG (Multicloud Object Gateway) resources that are currently in use. Those resources are used to store data according to the buckets policies and can be a cloud-based resource or a bare metal resource.',
+          )}
         </FieldLevelHelp>
       </DashboardCardHeader>
       <DashboardCardBody>

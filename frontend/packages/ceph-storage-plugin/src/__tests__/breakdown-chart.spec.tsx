@@ -16,6 +16,14 @@ import { Link } from 'react-router-dom';
 import { Chart, ChartBar } from '@patternfly/react-charts';
 import { Tooltip } from '@patternfly/react-core';
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
+});
+
 const stackData = getStackChartStats(breakdownData.top5, breakdownData.humanize);
 
 const chartData = addAvailable(
@@ -23,6 +31,7 @@ const chartData = addAvailable(
   breakdownData.capacityAvailable,
   breakdownData.metricTotal,
   breakdownData.humanize,
+  (key) => key,
 );
 
 const legends = getLegends(chartData);

@@ -218,6 +218,8 @@ const config: Configuration = {
     new CopyWebpackPlugin([{ from: './packages/pipelines-plugin/locales', to: 'locales' }]),
     new CopyWebpackPlugin([{ from: './packages/topology/locales', to: 'locales' }]),
     new CopyWebpackPlugin([{ from: './packages/kubevirt-plugin/locales', to: 'locales' }]),
+    new CopyWebpackPlugin([{ from: './packages/ceph-storage-plugin/locales', to: 'locales' }]),
+    new CopyWebpackPlugin([{ from: './packages/noobaa-storage-plugin/locales', to: 'locales' }]),
     new MomentLocalesPlugin({
       localesToKeep: ['en', 'ja', 'ko'],
     }),

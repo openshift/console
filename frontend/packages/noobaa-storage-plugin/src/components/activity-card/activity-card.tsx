@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
@@ -144,18 +145,22 @@ const OngoingActivity = withDashboardResources(
   },
 );
 
-const ActivityCard: React.FC<{}> = () => (
-  <DashboardCard gradient>
-    <DashboardCardHeader>
-      <DashboardCardTitle>Activity</DashboardCardTitle>
-    </DashboardCardHeader>
-    <DashboardCardBody>
-      <ActivityBody className="nb-activity-card__body">
-        <OngoingActivity />
-        <RecentEvent />
-      </ActivityBody>
-    </DashboardCardBody>
-  </DashboardCard>
-);
+const ActivityCard: React.FC<{}> = () => {
+  const { t } = useTranslation();
+
+  return (
+    <DashboardCard gradient>
+      <DashboardCardHeader>
+        <DashboardCardTitle>{t('noobaa-storage-plugin~Activity')}</DashboardCardTitle>
+      </DashboardCardHeader>
+      <DashboardCardBody>
+        <ActivityBody className="nb-activity-card__body">
+          <OngoingActivity />
+          <RecentEvent />
+        </ActivityBody>
+      </DashboardCardBody>
+    </DashboardCard>
+  );
+};
 
 export default ActivityCard;

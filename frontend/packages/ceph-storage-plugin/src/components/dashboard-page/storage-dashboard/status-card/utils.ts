@@ -1,23 +1,35 @@
-import { PrometheusHealthHandler, ResourceHealthHandler } from '@console/plugin-sdk';
+import { TFunction } from 'i18next';
+import {
+  PrometheusHealthHandler,
+  ResourceHealthHandler,
+  SubsystemHealth,
+} from '@console/plugin-sdk';
 import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
 import { getResiliencyProgress } from '../../../../utils';
 import { WatchCephResource } from '../../../../types';
 
-const CephHealthStatus = {
-  HEALTH_OK: {
-    state: HealthState.OK,
-  },
-  HEALTH_WARN: {
-    state: HealthState.WARNING,
-    message: 'Warning',
-  },
-  HEALTH_ERR: {
-    state: HealthState.ERROR,
-    message: 'Error',
-  },
+const CephHealthStatus = (status: string, t: TFunction): SubsystemHealth => {
+  switch (status) {
+    case 'HEALTH_OK':
+      return {
+        state: HealthState.OK,
+      };
+    case 'HEALTH_WARN':
+      return {
+        state: HealthState.WARNING,
+        message: t('ceph-storage-plugin~Warning'),
+      };
+    case 'HEALTH_ERR':
+      return {
+        state: HealthState.ERROR,
+        message: t('ceph-storage-plugin~Error'),
+      };
+    default:
+      return { state: HealthState.UNKNOWN };
+  }
 };
 
-export const getCephHealthState: ResourceHealthHandler<WatchCephResource> = ({ ceph }) => {
+export const getCephHealthState: ResourceHealthHandler<WatchCephResource> = ({ ceph }, t) => {
   const { data, loaded, loadError } = ceph;
   const status = data?.[0]?.status?.ceph?.health;
 
@@ -30,10 +42,10 @@ export const getCephHealthState: ResourceHealthHandler<WatchCephResource> = ({ c
   if (data.length === 0) {
     return { state: HealthState.NOT_AVAILABLE };
   }
-  return CephHealthStatus[status] || { state: HealthState.UNKNOWN };
+  return CephHealthStatus(status, t);
 };
 
-export const getDataResiliencyState: PrometheusHealthHandler = (responses) => {
+export const getDataResiliencyState: PrometheusHealthHandler = (responses, t) => {
   const progress: number = getResiliencyProgress(responses[0].response);
   if (responses[0].error) {
     return { state: HealthState.NOT_AVAILABLE };
@@ -45,7 +57,7 @@ export const getDataResiliencyState: PrometheusHealthHandler = (responses) => {
     return { state: HealthState.UNKNOWN };
   }
   if (progress < 1) {
-    return { state: HealthState.PROGRESS, message: 'Progressing' };
+    return { state: HealthState.PROGRESS, message: t('ceph-storage-plugin~Progressing') };
   }
   return { state: HealthState.OK };
 };

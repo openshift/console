@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
@@ -48,6 +49,8 @@ const ObjectDashboardBucketsCard: React.FC<DashboardItemProps> = ({
   prometheusResults,
   resources,
 }) => {
+  const { t } = useTranslation();
+
   React.useEffect(() => {
     watchK8sResource(objectBucketClaimsResource);
     watchK8sResource(objectBucketResource);
@@ -96,13 +99,13 @@ const ObjectDashboardBucketsCard: React.FC<DashboardItemProps> = ({
   return (
     <DashboardCard>
       <DashboardCardHeader>
-        <DashboardCardTitle>Buckets</DashboardCardTitle>
+        <DashboardCardTitle>{t('noobaa-storage-plugin~Buckets')}</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody>
         <InventoryItem
           isLoading={!(noobaaCount && unhealthyNoobaaBuckets)}
           error={!!(noobaaCountError || unhealthyNoobaaBucketsError)}
-          title="NooBaa Bucket"
+          title={t('noobaa-storage-plugin~NooBaa Bucket')}
           count={Number(getGaugeValue(noobaaCount))}
           TitleComponent={React.useCallback(
             (props) => (

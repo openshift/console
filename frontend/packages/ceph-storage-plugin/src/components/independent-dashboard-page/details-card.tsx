@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { SubscriptionModel } from '@console/operator-lifecycle-manager';
 import {
@@ -38,6 +39,8 @@ export const DetailsCard: React.FC<DashboardItemProps> = ({
   stopWatchK8sResource,
   resources,
 }) => {
+  const { t } = useTranslation();
+
   React.useEffect(() => {
     k8sResources.forEach((r) => watchK8sResource(r));
     return () => {
@@ -62,12 +65,14 @@ export const DetailsCard: React.FC<DashboardItemProps> = ({
   return (
     <DashboardCard>
       <DashboardCardHeader>
-        <DashboardCardTitle>Details</DashboardCardTitle>
+        <DashboardCardTitle>{t('ceph-storage-plugin~Details')}</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody>
-        <DetailItem title="Service Name">OpenShift Container Storage</DetailItem>
+        <DetailItem title={t('ceph-storage-plugin~Service Name')}>
+          OpenShift Container Storage
+        </DetailItem>
         <DetailItem
-          title="Cluster Name"
+          title={t('ceph-storage-plugin~Cluster Name')}
           error={!!ocsError}
           isLoading={!ocsLoaded}
           data-test-id="cluster-name"
@@ -75,15 +80,15 @@ export const DetailsCard: React.FC<DashboardItemProps> = ({
           {ocsName}
         </DetailItem>
         <DetailItem
-          title="Provider"
+          title={t('ceph-storage-plugin~Provider')}
           error={!!infrastructureError || (infrastructure && !infrastructurePlatform)}
           isLoading={!infrastructureLoaded}
         >
           {infrastructurePlatform}
         </DetailItem>
-        <DetailItem title="Mode">External</DetailItem>
+        <DetailItem title={t('ceph-storage-plugin~Mode')}>External</DetailItem>
         <DetailItem
-          title="Version"
+          title={t('ceph-storage-plugin~Version')}
           isLoading={!subscriptionLoaded}
           error={!!subscriptionError}
           data-test-id="cluster-subscription"

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Select, SelectProps } from '@patternfly/react-core';
 import { humanizeBinaryBytes } from '@console/internal/components/utils';
 import {
@@ -11,7 +12,7 @@ import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboa
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
 import { breakdownIndependentQueryMap } from '../../constants/queries';
-import { PROJECTS } from '../../constants';
+import { PROJECTS, STORAGE_CLASSES, PODS } from '../../constants';
 import {
   sortInstantVectorStats,
   getStackChartStats,
@@ -20,14 +21,12 @@ import { BreakdownCardBody } from '../dashboard-page/storage-dashboard/breakdown
 import { getSelectOptions } from '../dashboard-page/storage-dashboard/breakdown-card/breakdown-dropdown';
 import '../dashboard-page/storage-dashboard/capacity-breakdown/capacity-breakdown-card.scss';
 
-const keys = Object.keys(breakdownIndependentQueryMap);
-const breakdownSelectItems = getSelectOptions(keys);
-
 export const BreakdownCard: React.FC<DashboardItemProps> = ({
   watchPrometheus,
   stopWatchPrometheusQuery,
   prometheusResults,
 }) => {
+  const { t } = useTranslation();
   const [metricType, setMetricType] = React.useState(PROJECTS);
   const [isOpenBreakdownSelect, setBreakdownSelect] = React.useState(false);
   const { queries, model, metric } = breakdownIndependentQueryMap[metricType];
@@ -56,10 +55,27 @@ export const BreakdownCard: React.FC<DashboardItemProps> = ({
     setBreakdownSelect(!isOpenBreakdownSelect);
   };
 
+  const dropdownOptions = [
+    {
+      name: t('ceph-storage-plugin~Projects'),
+      id: PROJECTS,
+    },
+    {
+      name: t('ceph-storage-plugin~Storage Classes'),
+      id: STORAGE_CLASSES,
+    },
+    {
+      name: t('ceph-storage-plugin~Pods'),
+      id: PODS,
+    },
+  ];
+
+  const breakdownSelectItems = getSelectOptions(dropdownOptions);
+
   return (
     <DashboardCard>
       <DashboardCardHeader>
-        <DashboardCardTitle>Capacity breakdown</DashboardCardTitle>
+        <DashboardCardTitle>{t('ceph-storage-plugin~Capacity breakdown')}</DashboardCardTitle>
         <div className="ceph-capacity-breakdown-card__header">
           <Select
             className="ceph-capacity-breakdown-card-header__dropdown"
@@ -67,8 +83,8 @@ export const BreakdownCard: React.FC<DashboardItemProps> = ({
             onSelect={handleMetricsChange}
             onToggle={() => setBreakdownSelect(!isOpenBreakdownSelect)}
             isOpen={isOpenBreakdownSelect}
-            selections={[metricType]}
-            placeholderText={metricType}
+            selections={[t('ceph-storage-plugin~{{metricType}}', { metricType })]}
+            placeholderText={t('ceph-storage-plugin~{{metricType}}', { metricType })}
             aria-label="Break By Dropdown"
             isCheckboxSelectionBadgeHidden
           >

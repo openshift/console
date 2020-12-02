@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { GalleryItem, Gallery } from '@patternfly/react-core';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
@@ -13,21 +14,22 @@ import { getCephHealthState } from '../dashboard-page/storage-dashboard/status-c
 import { cephClusterResource } from '../../constants/resources';
 
 export const StatusCard: React.FC<DashboardItemProps> = () => {
+  const { t } = useTranslation();
   const [data, loaded, loadError] = useK8sWatchResource<K8sResourceKind[]>(cephClusterResource);
 
-  const cephHealth = getCephHealthState({ ceph: { data, loaded, loadError } });
+  const cephHealth = getCephHealthState({ ceph: { data, loaded, loadError } }, t);
 
   return (
     <DashboardCard gradient>
       <DashboardCardHeader>
-        <DashboardCardTitle>Status</DashboardCardTitle>
+        <DashboardCardTitle>{t('ceph-storage-plugin~Status')}</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody>
         <HealthBody>
           <Gallery className="co-overview-status__health" hasGutter>
             <GalleryItem>
               <HealthItem
-                title="OCS Cluster"
+                title={t('ceph-storage-plugin~OCS Cluster')}
                 state={cephHealth.state}
                 details={cephHealth.message}
               />

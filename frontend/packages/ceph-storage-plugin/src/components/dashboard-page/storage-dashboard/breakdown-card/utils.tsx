@@ -1,7 +1,8 @@
 import * as _ from 'lodash';
+import { TFunction } from 'i18next';
 import { DataPoint } from '@console/internal/components/graphs';
 import { Humanize } from '@console/internal/components/utils';
-import { Colors, COLORMAP, OTHER_TOOLTIP } from './consts';
+import { Colors, COLORMAP } from './consts';
 
 const getTotal = (stats: StackDataPoint[]) =>
   stats.reduce((total, dataPoint) => total + dataPoint.y, 0);
@@ -10,17 +11,20 @@ const addOthers = (
   stats: StackDataPoint[],
   metricTotal: string,
   humanize: Humanize,
+  t: TFunction,
 ): StackDataPoint => {
   const top5Total = getTotal(stats);
   const others = Number(metricTotal) - top5Total;
   const othersData = {
     x: '0',
     y: others,
-    name: 'Other',
+    name: t('ceph-storage-plugin~Other'),
     color: Colors.OTHER,
     label: humanize(others).string,
     fill: 'rgb(96, 98, 103)',
-    link: OTHER_TOOLTIP,
+    link: t(
+      'ceph-storage-plugin~All other capacity usage that are not a part of the top 5 consumers.',
+    ),
     id: 6,
     ns: '',
   };
@@ -32,12 +36,13 @@ export const addAvailable = (
   capacityAvailable: string,
   metricTotal: string,
   humanize: Humanize,
+  t: TFunction,
 ) => {
   let othersData: StackDataPoint;
   let availableData: StackDataPoint;
   let newChartData: StackDataPoint[] = [...stats];
   if (stats.length === 5) {
-    othersData = addOthers(stats, metricTotal, humanize);
+    othersData = addOthers(stats, metricTotal, humanize, t);
     newChartData = [...stats, othersData] as StackDataPoint[];
   }
   if (capacityAvailable) {
@@ -45,7 +50,7 @@ export const addAvailable = (
     availableData = {
       x: '0',
       y: availableInBytes,
-      name: 'Available',
+      name: t('ceph-storage-plugin~Available'),
       link: '',
       color: '',
       label: humanize(availableInBytes).string,

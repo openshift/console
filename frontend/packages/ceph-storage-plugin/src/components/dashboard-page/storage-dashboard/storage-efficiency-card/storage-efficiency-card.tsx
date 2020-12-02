@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
@@ -24,6 +25,8 @@ const StorageEfficiencyCard: React.FC<DashboardItemProps> = ({
   stopWatchPrometheusQuery,
   prometheusResults,
 }) => {
+  const { t } = useTranslation();
+
   React.useEffect(() => {
     Object.keys(POOL_STORAGE_EFFICIENCY_QUERIES).forEach((key) =>
       watchPrometheus(POOL_STORAGE_EFFICIENCY_QUERIES[key]),
@@ -59,7 +62,9 @@ const StorageEfficiencyCard: React.FC<DashboardItemProps> = ({
 
   const compressionStats = () => {
     const capacityRatio = Number(ratio);
-    return `${Math.round(capacityRatio)}:1`;
+    return t('ceph-storage-plugin~{{capacityRatio, number}}:1', {
+      capacityRatio: Math.round(capacityRatio),
+    });
   };
 
   const savingStats = () => {
@@ -72,9 +77,10 @@ const StorageEfficiencyCard: React.FC<DashboardItemProps> = ({
     stats: Number(ratio),
     isLoading: !poolCapacityRatioResult && !poolCapacityRatioResultError,
     error: !!poolCapacityRatioResultError || !ratio,
-    title: 'Compression ratio',
-    infoText:
-      'The ratio of the data physical stored (after compression), compared to the size of the data received from the client.',
+    title: t('ceph-storage-plugin~Compression ratio'),
+    infoText: t(
+      'ceph-storage-plugin~ The ratio of the data physical stored (after compression) compared to the size of the data received from the client.',
+    ),
     getStats: compressionStats,
   };
 
@@ -82,15 +88,17 @@ const StorageEfficiencyCard: React.FC<DashboardItemProps> = ({
     stats: Number(saved),
     isLoading: !poolSavedResult && !poolSavedResultError,
     error: !!poolSavedResultError || !saved,
-    title: 'Savings',
-    infoText: 'The amount of physical storage saved after applying compression.',
+    title: t('ceph-storage-plugin~Savings'),
+    infoText: t(
+      'ceph-storage-plugin~The amount of physical storage saved after applying compression.',
+    ),
     getStats: savingStats,
   };
 
   return (
     <DashboardCard>
       <DashboardCardHeader>
-        <DashboardCardTitle>Storage Efficiency</DashboardCardTitle>
+        <DashboardCardTitle>{t('ceph-storage-plugin~Storage Efficiency')}</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody className="co-dashboard-card__body--no-padding">
         <EfficiencyItemBody {...compressionRatioProps} />

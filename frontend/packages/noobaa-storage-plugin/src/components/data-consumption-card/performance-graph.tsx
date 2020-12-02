@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import {
   humanizeDecimalBytesPerSec,
   useRefWidth,
@@ -38,6 +39,7 @@ const PerformanceGraph: React.FC<PerformanceGraphProps> = ({
   loadError,
   metricType,
 }) => {
+  const { t } = useTranslation();
   const [getDataArray, putDataArray] = dataPoints;
   const [containerRef, width] = useRefWidth();
   const humanize = metricType === Metrics.BANDWIDTH ? humanizeDecimalBytesPerSec : humanizeSeconds;
@@ -46,7 +48,10 @@ const PerformanceGraph: React.FC<PerformanceGraphProps> = ({
   const PUTLatestValue = humanize(getLatestValue(putData)).string;
   const GETLatestValue = humanize(getLatestValue(getData)).string;
 
-  const legends = [{ name: `GET ${GETLatestValue}` }, { name: `PUT ${PUTLatestValue}` }];
+  const legends = [
+    { name: t('noobaa-storage-plugin~GET {{GETLatestValue}}', { GETLatestValue }) },
+    { name: t('noobaa-storage-plugin~PUT {{PUTLatestValue}}', { PUTLatestValue }) },
+  ];
 
   const emptyData = dataPoints.some(_.isEmpty);
 
@@ -57,7 +62,7 @@ const PerformanceGraph: React.FC<PerformanceGraphProps> = ({
     return (
       <>
         <div className="nb-data-consumption-card__chart-label text-secondary">
-          {CHART_LABELS[metricType]}
+          {CHART_LABELS(metricType, t)}
         </div>
         <PrometheusGraph
           ref={containerRef}

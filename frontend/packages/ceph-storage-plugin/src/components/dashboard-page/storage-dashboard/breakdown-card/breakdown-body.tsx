@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Grid, GridItem } from '@patternfly/react-core';
 import { Humanize } from '@console/internal/components/utils';
 import { K8sKind } from '@console/internal/module/k8s';
@@ -19,20 +20,19 @@ export const BreakdownCardBody: React.FC<BreakdownBodyProps> = ({
   ocsVersion = '',
   labelPadding,
 }) => {
+  const { t } = useTranslation();
+
   if (isLoading && !hasLoadError) {
     return <BreakdownChartLoading />;
   }
   if (!capacityUsed || !top5MetricsStats.length || hasLoadError) {
-    return <div className="text-secondary">Not available</div>;
+    return <div className="text-secondary">{t('dashboard~Not available')}</div>;
   }
   if (capacityUsed === '0') {
-    return <div className="text-secondary">Not enough usage data</div>;
+    return <div className="text-secondary">{t('ceph-storage-plugin~Not enough usage data')}</div>;
   }
 
-  const usedCapacity = `${humanize(capacityUsed).string} used`;
-  const availableCapacity = `${humanize(capacityAvailable).string} available`;
-
-  const chartData = addAvailable(top5MetricsStats, capacityAvailable, metricTotal, humanize);
+  const chartData = addAvailable(top5MetricsStats, capacityAvailable, metricTotal, humanize, t);
 
   const legends = getLegends(chartData);
 
@@ -44,13 +44,17 @@ export const BreakdownCardBody: React.FC<BreakdownBodyProps> = ({
   return (
     <Grid>
       <GridItem span={4}>
-        <TotalCapacityBody value={usedCapacity} />
+        <TotalCapacityBody
+          capacity={humanize(capacityUsed).string}
+          suffix={t('ceph-storage-plugin~used')}
+        />
       </GridItem>
       <GridItem span={4} />
       <GridItem span={4}>
         {capacityAvailable && (
           <TotalCapacityBody
-            value={availableCapacity}
+            capacity={humanize(capacityAvailable).string}
+            suffix={t('ceph-storage-plugin~available')}
             className="capacity-breakdown-card__available-body text-secondary"
           />
         )}

@@ -10,7 +10,7 @@ import {
 } from '@console/shared/src/components/dashboard/status-card/states';
 import { SubsystemHealth } from '@console/plugin-sdk';
 import { getWorstStatus } from '@console/app/src/components/dashboards-page/status';
-import { StatusType, healthString, dataResiliency } from '../../constants';
+import { StatusType } from '../../constants';
 
 type ObjectServiceStatusProps = {
   RGWMetrics: SubsystemHealth;
@@ -26,8 +26,14 @@ export const ObjectServiceStatus: React.FC<ObjectServiceStatusProps> = ({
   const { t } = useTranslation();
 
   const isMissing = !(RGWMetrics && MCGMetrics);
-  const title = statusType === StatusType.HEALTH ? 'Object Service' : 'Data Resiliency';
-  const popupTitle = statusType === StatusType.HEALTH ? 'Object Service Status' : 'Data Resiliency';
+  const title =
+    statusType === StatusType.HEALTH
+      ? t('noobaa-storage-plugin~Object Service')
+      : t('noobaa-storage-plugin~Data Resiliency');
+  const popupTitle =
+    statusType === StatusType.HEALTH
+      ? t('noobaa-storage-plugin~Object Service Status')
+      : t('noobaa-storage-plugin~Data Resiliency');
   const { state = HealthState.LOADING, message = '' } = !isMissing
     ? getWorstStatus([RGWMetrics, MCGMetrics], t)
     : {};
@@ -39,10 +45,15 @@ export const ObjectServiceStatus: React.FC<ObjectServiceStatusProps> = ({
     />
   ) : (
     <HealthItem title={title} state={state} details={message} popupTitle={popupTitle}>
-      {statusType === StatusType.HEALTH ? healthString : dataResiliency}
-      <StatusPopupSection firstColumn="Services" secondColumn="Status">
+      {statusType === StatusType.HEALTH
+        ? t('noobaa-storage-plugin~The object service includes 2 services.')
+        : t('noobaa-storage-plugin~The data resiliency includes 2 services')}
+      <StatusPopupSection
+        firstColumn={t('noobaa-storage-plugin~Services')}
+        secondColumn={t('noobaa-storage-plugin~Status')}
+      >
         <Status icon={healthStateMapping[MCGMetrics.state]?.icon}>Multicloud Object Gateway</Status>
-        <Status icon={healthStateMapping[RGWMetrics.state]?.icon}>Object Gateway (RGW) </Status>
+        <Status icon={healthStateMapping[RGWMetrics.state]?.icon}>Object Gateway (RGW)</Status>
       </StatusPopupSection>
     </HealthItem>
   );

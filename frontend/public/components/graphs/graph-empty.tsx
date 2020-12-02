@@ -1,24 +1,29 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 
-export const GraphEmpty: React.FC<GraphEmptyProps> = ({ height = 180, loading = false }) => (
-  <div
-    style={{
-      alignItems: 'center',
-      display: 'flex',
-      height,
-      justifyContent: 'center',
-      padding: '5px',
-      width: '100%',
-      flexGrow: 1,
-    }}
-  >
-    {loading ? (
-      <div className="skeleton-chart" />
-    ) : (
-      <div className="text-secondary">No datapoints found.</div>
-    )}
-  </div>
-);
+export const GraphEmpty: React.FC<GraphEmptyProps> = ({ height = 180, loading = false }) => {
+  const { t } = useTranslation();
+
+  return (
+    <div
+      style={{
+        alignItems: 'center',
+        display: 'flex',
+        height,
+        justifyContent: 'center',
+        padding: '5px',
+        width: '100%',
+        flexGrow: 1,
+      }}
+    >
+      {loading ? (
+        <div className="skeleton-chart" />
+      ) : (
+        <div className="text-secondary">{t('monitoring~No datapoints found.')}</div>
+      )}
+    </div>
+  );
+};
 
 type GraphEmptyProps = {
   height?: number | string;

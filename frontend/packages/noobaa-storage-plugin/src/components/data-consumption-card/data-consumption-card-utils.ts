@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { TFunction } from 'i18next';
 import {
   Humanize,
   humanizeBinaryBytes,
@@ -21,11 +22,17 @@ export const DataConsumersSortByValue = {
 };
 
 /* utility mapper to convert number in words */
-export const numberInWords: { [k: string]: string } = {
-  '': '',
-  k: 'thousands',
-  m: 'millions',
-  b: 'billions',
+export const numberInWords = (unit: string, t: TFunction): string => {
+  switch (unit) {
+    case 'k':
+      return t('noobaa-storage-plugin~thousands');
+    case 'm':
+      return t('noobaa-storage-plugin~millions');
+    case 'b':
+      return t('noobaa-storage-plugin~billions');
+    default:
+      return '';
+  }
 };
 
 const getMaxVal: GetMaxVal = (response, humanize) => {
@@ -61,6 +68,7 @@ export const getDataConsumptionChartData: GetDataConsumptionChartData = (
   result,
   metric,
   dropdownValue,
+  t,
 ) => {
   let chartData: ChartData;
   let legendData: LegendData;
@@ -78,8 +86,16 @@ export const getDataConsumptionChartData: GetDataConsumptionChartData = (
         getChartData(result.write, metric, humanizeNumber, max.unit, 'Total Writes'),
       ];
       legendData = [
-        { name: `Total Reads ${getLegendData(result.totalRead, humanizeNumber)}` },
-        { name: `Total Writes ${getLegendData(result.totalWrite, humanizeNumber)}` },
+        {
+          name: t('noobaa-storage-plugin~Total Reads {{totalRead}}', {
+            totalRead: getLegendData(result.totalRead, humanizeNumber),
+          }),
+        },
+        {
+          name: t('noobaa-storage-plugin~Total Writes {{totalWrite}}', {
+            totalWrite: getLegendData(result.totalWrite, humanizeNumber),
+          }),
+        },
       ];
       break;
     case Metrics.LOGICAL:
@@ -95,10 +111,9 @@ export const getDataConsumptionChartData: GetDataConsumptionChartData = (
       ];
       legendData = [
         {
-          name: `Total Logical Used Capacity ${getLegendData(
-            result.totalLogicalUsage,
-            humanizeBinaryBytes,
-          )}`,
+          name: t('noobaa-storage-plugin~Total Logical Used Capacity {{logicalCapacity}}', {
+            logicalCapacity: getLegendData(result.totalLogicalUsage, humanizeBinaryBytes),
+          }),
         },
       ];
       break;
@@ -124,16 +139,14 @@ export const getDataConsumptionChartData: GetDataConsumptionChartData = (
       ];
       legendData = [
         {
-          name: `Total Logical Used Capacity ${getLegendData(
-            result.totalLogicalUsage,
-            humanizeBinaryBytes,
-          )}`,
+          name: t('noobaa-storage-plugin~Total Logical Used Capacity {{logicalCapacity}}', {
+            logicalCapacity: getLegendData(result.totalLogicalUsage, humanizeBinaryBytes),
+          }),
         },
         {
-          name: `Total Physical Used Capacity ${getLegendData(
-            result.totalPhysicalUsage,
-            humanizeBinaryBytes,
-          )}`,
+          name: t('noobaa-storage-plugin~Total Physical Used Capacity {{physicalcapacity}}', {
+            physicalcapacity: getLegendData(result.totalPhysicalUsage, humanizeBinaryBytes),
+          }),
         },
       ];
       break;
@@ -177,6 +190,7 @@ type GetDataConsumptionChartData = (
   result: { [key: string]: PrometheusResponse },
   metric: string,
   dropdownValue: Metrics,
+  t: TFunction,
 ) => {
   chartData: ChartData;
   legendData: LegendData;

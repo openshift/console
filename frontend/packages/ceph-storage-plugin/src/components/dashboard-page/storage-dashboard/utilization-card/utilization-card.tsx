@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
@@ -23,30 +24,31 @@ import {
 import { humanizeIOPS, humanizeLatency } from './utils';
 
 const UtilizationCard: React.FC = () => {
+  const { t } = useTranslation();
   const [duration, setDuration] = useMetricDuration();
   const [timestamps, setTimestamps] = React.useState<Date[]>();
 
   const storagePopover = React.useCallback(
     ({ current }) => (
       <ConsumerPopover
-        title="Used Capacity"
+        title={t('ceph-storage-plugin~Used Capacity')}
         current={current}
         consumers={utilizationPopoverQueryMap}
         humanize={humanizeBinaryBytes}
       />
     ),
-    [],
+    [t],
   );
 
   return (
     <DashboardCard>
       <DashboardCardHeader>
-        <DashboardCardTitle>Utilization</DashboardCardTitle>
+        <DashboardCardTitle>{t('ceph-storage-plugin~Utilization')}</DashboardCardTitle>
         <Dropdown items={Duration} onChange={setDuration} selectedKey={duration} title={duration} />
       </DashboardCardHeader>
       <UtilizationBody timestamps={timestamps}>
         <PrometheusUtilizationItem
-          title="Used Capacity"
+          title={t('ceph-storage-plugin~Used Capacity')}
           utilizationQuery={UTILIZATION_QUERY[StorageDashboardQuery.CEPH_CAPACITY_USED]}
           duration={duration}
           humanizeValue={humanizeBinaryBytes}
@@ -55,25 +57,25 @@ const UtilizationCard: React.FC = () => {
           TopConsumerPopover={storagePopover}
         />
         <PrometheusUtilizationItem
-          title="IOPS"
+          title={t('ceph-storage-plugin~IOPS')}
           utilizationQuery={UTILIZATION_QUERY[StorageDashboardQuery.UTILIZATION_IOPS_QUERY]}
           duration={duration}
           humanizeValue={humanizeIOPS}
         />
         <PrometheusUtilizationItem
-          title="Latency"
+          title={t('ceph-storage-plugin~Latency')}
           utilizationQuery={UTILIZATION_QUERY[StorageDashboardQuery.UTILIZATION_LATENCY_QUERY]}
           duration={duration}
           humanizeValue={humanizeLatency}
         />
         <PrometheusUtilizationItem
-          title="Throughput"
+          title={t('ceph-storage-plugin~Throughput')}
           utilizationQuery={UTILIZATION_QUERY[StorageDashboardQuery.UTILIZATION_THROUGHPUT_QUERY]}
           duration={duration}
           humanizeValue={humanizeDecimalBytesPerSec}
         />
         <PrometheusUtilizationItem
-          title="Recovery"
+          title={t('ceph-storage-plugin~Recovery')}
           utilizationQuery={
             UTILIZATION_QUERY[StorageDashboardQuery.UTILIZATION_RECOVERY_RATE_QUERY]
           }

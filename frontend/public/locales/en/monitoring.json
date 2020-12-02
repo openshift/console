@@ -1,4 +1,5 @@
 {
+  "No datapoints found.": "No datapoints found.",
   "View in Metrics": "View in Metrics",
   "Name": "Name",
   "Firing alerts": "Firing alerts",
@@ -33,6 +34,5 @@
   "Alerting": "Alerting",
   "Show graph": "Show graph",
   "Hide graph": "Hide graph",
-  "No datapoints found.": "No datapoints found.",
   "Reset zoom": "Reset zoom"
 }

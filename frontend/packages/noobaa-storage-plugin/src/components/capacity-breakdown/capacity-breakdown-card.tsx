@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import { Select, SelectGroup, SelectOption, SelectProps } from '@patternfly/react-core';
 import { FirehoseResource, humanizeBinaryBytes } from '@console/internal/components/utils';
@@ -9,11 +10,7 @@ import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboa
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import { SubscriptionModel, SubscriptionKind } from '@console/operator-lifecycle-manager/src';
 import { BreakdownCardBody } from '@console/ceph-storage-plugin/src/components/dashboard-page/storage-dashboard/breakdown-card/breakdown-body';
-import {
-  CLUSTERWIDE,
-  CLUSTERWIDE_TOOLTIP,
-  Colors,
-} from '@console/ceph-storage-plugin/src/components/dashboard-page/storage-dashboard/breakdown-card/consts';
+import { Colors } from '@console/ceph-storage-plugin/src/components/dashboard-page/storage-dashboard/breakdown-card/consts';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { usePrometheusQueries } from '@console/shared/src/components/dashboard/utilization-card/prometheus-hook';
 import { OCS_OPERATOR } from '@console/ceph-storage-plugin/src/constants';
@@ -39,28 +36,25 @@ type DropdownItems = {
   group: string;
   items: {
     name: string;
+    id: string;
     disabled: boolean;
   }[];
 }[];
 
-const ServiceItems = [
-  {
-    group: Groups.SERVICE,
-    items: [ServiceType.ALL, ServiceType.MCG, ServiceType.RGW],
-  },
-];
-
 const getDisableableSelectOptions = (dropdownItems: DropdownItems) => {
   return dropdownItems.map(({ group, items }) => (
     <SelectGroup key={group} label={group} className="co-filter-dropdown-group">
-      {items.map(({ name, disabled }) => (
-        <SelectOption key={name} value={name} disabled={disabled} />
+      {items.map(({ name, id, disabled }) => (
+        <SelectOption key={id} value={id} disabled={disabled}>
+          {name}
+        </SelectOption>
       ))}
     </SelectGroup>
   ));
 };
 
 const BreakdownCard: React.FC = () => {
+  const { t } = useTranslation();
   const [serviceType, setServiceType] = React.useState(ServiceType.MCG);
   const [metricType, setMetricType] = React.useState(
     CapacityBreakdown.defaultMetrics[ServiceType.MCG],
@@ -113,14 +107,37 @@ const BreakdownCard: React.FC = () => {
       {
         group: Groups.BREAKDOWN,
         items: [
-          { name: CapacityBreakdown.Metrics.TOTAL, disabled: false },
-          { name: CapacityBreakdown.Metrics.PROJECTS, disabled: serviceType !== ServiceType.MCG },
-          { name: CapacityBreakdown.Metrics.BC, disabled: serviceType !== ServiceType.MCG },
+          {
+            id: CapacityBreakdown.Metrics.TOTAL,
+            name: t('noobaa-storage-plugin~Total'),
+            disabled: false,
+          },
+          {
+            id: CapacityBreakdown.Metrics.PROJECTS,
+            name: t('noobaa-storage-plugin~Projects'),
+            disabled: serviceType !== ServiceType.MCG,
+          },
+          {
+            id: CapacityBreakdown.Metrics.BC,
+            name: t('noobaa-storage-plugin~Bucket Classes'),
+            disabled: serviceType !== ServiceType.MCG,
+          },
         ],
       },
     ],
-    [serviceType],
+    [serviceType, t],
   );
+
+  const ServiceItems = [
+    {
+      group: t('noobaa-storage-plugin~Service Type'),
+      items: [
+        { name: t('noobaa-storage-plugin~All'), id: ServiceType.ALL },
+        { name: ServiceType.MCG, id: ServiceType.MCG },
+        { name: ServiceType.RGW, id: ServiceType.RGW },
+      ],
+    },
+  ];
 
   const serviceSelectItems = getGroupedSelectOptions(ServiceItems);
   const breakdownSelectItems = getDisableableSelectOptions(breakdownItems);
@@ -164,15 +181,17 @@ const BreakdownCard: React.FC = () => {
 
   const ind = top5MetricsStats.findIndex((v) => v.name === 'Others');
   if (ind !== -1) {
-    top5MetricsStats[ind].name = CLUSTERWIDE;
-    top5MetricsStats[ind].link = CLUSTERWIDE_TOOLTIP;
+    top5MetricsStats[ind].name = t('noobaa-storage-plugin~Cluster-wide');
+    top5MetricsStats[ind].link = t(
+      'noobaa-storage-plugin~Any NON Object bucket claims that were created via an S3 client or via the NooBaa UI system.',
+    );
     top5MetricsStats[ind].color = Colors.OTHER;
   }
 
   return (
     <DashboardCard>
       <DashboardCardHeader>
-        <DashboardCardTitle>Capacity breakdown</DashboardCardTitle>
+        <DashboardCardTitle>{t('noobaa-storage-plugin~Capacity breakdown')}</DashboardCardTitle>
         <div className="nb-capacity-breakdown-card__header">
           {isRGWSupported && (
             <Select
@@ -183,9 +202,11 @@ const BreakdownCard: React.FC = () => {
               isOpen={isOpenServiceSelect}
               selections={[serviceType]}
               isGrouped
-              placeholderText={`Type: ${serviceType}`}
-              aria-label="Service Type Dropdown"
-              toggleAriaLabel="Service Type Dropdown Toggle"
+              placeholderText={t('noobaa-storage-plugin~Type: {{serviceType}}', {
+                serviceType,
+              })}
+              aria-label={t('noobaa-storage-plugin~Service Type Dropdown')}
+              toggleAriaLabel={t('noobaa-storage-plugin~Service Type Dropdown Toggle')}
               isCheckboxSelectionBadgeHidden
             >
               {serviceSelectItems}
@@ -199,8 +220,10 @@ const BreakdownCard: React.FC = () => {
             isOpen={isOpenBreakdownSelect}
             selections={[metricType]}
             isGrouped
-            placeholderText={`By: ${serviceType}`}
-            aria-label="Break By Dropdown"
+            placeholderText={t('noobaa-storage-plugin~By: {{serviceType}}', {
+              serviceType,
+            })}
+            aria-label={t('noobaa-storage-plugin~Break By Dropdown')}
             isCheckboxSelectionBadgeHidden
           >
             {breakdownSelectItems}

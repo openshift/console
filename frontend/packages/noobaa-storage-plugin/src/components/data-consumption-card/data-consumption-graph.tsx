@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import {
   Chart,
@@ -32,6 +33,8 @@ const DataConsumptionGraph: React.FC<DataConsumptionGraphProps> = ({
   loading,
   loadError,
 }) => {
+  const { t } = useTranslation();
+
   let padding: number;
   let suffixLabel = '';
   let maxVal: number;
@@ -52,6 +55,7 @@ const DataConsumptionGraph: React.FC<DataConsumptionGraphProps> = ({
     resultsWithKeys,
     mcgBreakdown,
     metric,
+    t,
   );
 
   const emptyData = chartData.some(_.isEmpty);
@@ -64,10 +68,10 @@ const DataConsumptionGraph: React.FC<DataConsumptionGraphProps> = ({
     maxUnit = max.unit;
     suffixLabel = maxUnit;
     if (metric === Metrics.IOPS) {
-      suffixLabel = numberInWords[maxUnit];
+      suffixLabel = numberInWords(maxUnit, t);
     }
     // if suffixLabel is a non-empty string, show it in expected form
-    if (suffixLabel) suffixLabel = `(in ${suffixLabel})`;
+    if (suffixLabel) suffixLabel = t('noobaa-storage-plugin~(in {{suffixLabel}})', { suffixLabel });
   }
 
   if (loadError || emptyData) {
@@ -77,7 +81,7 @@ const DataConsumptionGraph: React.FC<DataConsumptionGraphProps> = ({
     return (
       <>
         <div className="nb-data-consumption-card__chart-label text-secondary">
-          {CHART_LABELS[metric]} {suffixLabel}
+          {`${CHART_LABELS(metric, t)} ${suffixLabel}`}
         </div>
         <Chart
           containerComponent={

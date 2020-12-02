@@ -235,7 +235,10 @@ export const PrometheusHealthItem = withDashboardResources<PrometheusHealthItemP
 );
 
 export const ResourceHealthItem: React.FC<ResourceHealthItemProps> = ({ subsystem, namespace }) => {
+  const { t } = useTranslation();
+
   const { title, resources, healthHandler, popupComponent, popupTitle } = subsystem;
+
   const resourcesWithNamespace: WatchK8sResources<ResourcesObject> = React.useMemo(() => {
     return {
       ...resources,
@@ -248,7 +251,7 @@ export const ResourceHealthItem: React.FC<ResourceHealthItemProps> = ({ subsyste
   const resourcesResult: WatchK8sResults<ResourcesObject> = useK8sWatchResources(
     resourcesWithNamespace,
   );
-  const healthState: SubsystemHealth = healthHandler(resourcesResult);
+  const healthState: SubsystemHealth = healthHandler(resourcesResult, t);
 
   return (
     <HealthItem
