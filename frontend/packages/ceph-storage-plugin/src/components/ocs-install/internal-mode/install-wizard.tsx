@@ -74,6 +74,7 @@ export const CreateInternalCluster: React.FC<CreateInternalClusterProps> = ({ ma
       name: 'Select capacity and nodes',
       id: CreateStepsSC.STORAGEANDNODES,
       component: <SelectCapacityAndNodes state={state} dispatch={dispatch} />,
+      enableNext: !!(state.nodes.length >= MINIMUM_NODES && scName),
     },
     {
       name: 'Configure',

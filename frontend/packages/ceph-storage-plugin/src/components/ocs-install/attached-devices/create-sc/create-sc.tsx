@@ -217,6 +217,8 @@ const CreateSC: React.FC<CreateSCProps> = ({ match, hasNoProvSC, mode, lsoNs }) 
         if (!state.volumeSetName.trim().length) return true;
         if (state.filteredNodes.length < MINIMUM_NODES) return true;
         return !state.volumeSetName.trim().length;
+      case CreateStepsSC.STORAGEANDNODES:
+        return state.nodes.length < MINIMUM_NODES || !getName(state.storageClass);
       case CreateStepsSC.REVIEWANDCREATE:
         return (
           state.nodes.length < MINIMUM_NODES ||
