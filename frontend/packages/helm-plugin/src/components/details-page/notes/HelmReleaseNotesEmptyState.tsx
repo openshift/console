@@ -15,10 +15,10 @@ const HelmReleaseNotesEmptyState: React.FC = () => {
     <EmptyState variant={EmptyStateVariant.full}>
       <EmptyStateIcon icon={InfoCircleIcon} />
       <Title headingLevel="h2" size="md">
-        {t('devconsole~No release notes available')}
+        {t('helm-plugin~No release notes available')}
       </Title>
       <EmptyStateBody>
-        {t('devconsole~Release notes are not available for this Helm Chart.')}
+        {t('helm-plugin~Release notes are not available for this Helm Chart.')}
       </EmptyStateBody>
     </EmptyState>
   );

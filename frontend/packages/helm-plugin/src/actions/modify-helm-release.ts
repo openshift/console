@@ -4,14 +4,15 @@ import { history } from '@console/internal/components/utils';
 
 export const deleteHelmRelease = (releaseName: string, namespace: string, redirect?: string) => {
   return {
-    label: 'Uninstall Helm Release',
+    // t('helm-plugin~Uninstall Helm Release')
+    labelKey: 'helm-plugin~Uninstall Helm Release',
     callback: () => {
       deleteResourceModal({
         blocking: true,
         resourceName: releaseName,
         resourceType: 'Helm Release',
-        // t('devconsole~Uninstall')
-        actionLabelKey: 'devconsole~Uninstall',
+        // t('helm-plugin~Uninstall')
+        actionLabelKey: 'helm-plugin~Uninstall',
         redirect,
         onSubmit: () => {
           return coFetchJSON.delete(
@@ -31,7 +32,8 @@ export const upgradeHelmRelease = (
   namespace: string,
   actionOrigin: string,
 ) => ({
-  label: 'Upgrade',
+  // t('helm-plugin~Upgrade')
+  labelKey: 'helm-plugin~Upgrade',
   callback: () => {
     history.push(
       `/helm-releases/ns/${namespace}/${releaseName}/upgrade?actionOrigin=${actionOrigin}`,
@@ -44,7 +46,8 @@ export const rollbackHelmRelease = (
   namespace: string,
   actionOrigin: string,
 ) => ({
-  label: 'Rollback',
+  // t('helm-plugin~Rollback')
+  labelKey: 'helm-plugin~Rollback',
   callback: () => {
     history.push(
       `/helm-releases/ns/${namespace}/${releaseName}/rollback?actionOrigin=${actionOrigin}`,

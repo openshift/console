@@ -28,15 +28,15 @@ const HelmChartSummary: React.FC<HelmChartSummaryProps> = ({ obj, helmRelease })
 
   return (
     <dl className="co-m-pane__details">
-      <dt>{t('devconsole~Chart name')}</dt>
+      <dt>{t('helm-plugin~Chart name')}</dt>
       <dd>{chartName}</dd>
-      <dt>{t('devconsole~Chart version')}</dt>
+      <dt>{t('helm-plugin~Chart version')}</dt>
       <dd>{chartVersion}</dd>
-      <dt>{t('devconsole~App version')}</dt>
+      <dt>{t('helm-plugin~App version')}</dt>
       <dd>{appVersion || '-'}</dd>
-      <dt>{t('devconsole~Revision')}</dt>
+      <dt>{t('helm-plugin~Revision')}</dt>
       <dd>{revision}</dd>
-      <dt>{t('devconsole~Updated')}</dt>
+      <dt>{t('helm-plugin~Updated')}</dt>
       <dd>
         <Timestamp timestamp={updated} />
       </dd>

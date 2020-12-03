@@ -76,13 +76,13 @@ describe('Helm Releases Utils', () => {
     const chartVersions = getChartVersions(mockHelmChartData, t);
     expect(chartVersions).toEqual({
       '1.0.1--ibm-helm-repo':
-        '1.0.1devconsole~ / App Version {{appVersion}}devconsole~ (Provided by {{chartRepoName}})',
+        '1.0.1helm-plugin~ / App Version {{appVersion}}helm-plugin~ (Provided by {{chartRepoName}})',
       '1.0.1--redhat-helm-repo':
-        '1.0.1devconsole~ / App Version {{appVersion}}devconsole~ (Provided by {{chartRepoName}})',
-      '1.0.2--ibm-helm-repo': '1.0.2devconsole~ (Provided by {{chartRepoName}})',
-      '1.0.2--redhat-helm-repo': '1.0.2devconsole~ (Provided by {{chartRepoName}})',
+        '1.0.1helm-plugin~ / App Version {{appVersion}}helm-plugin~ (Provided by {{chartRepoName}})',
+      '1.0.2--ibm-helm-repo': '1.0.2helm-plugin~ (Provided by {{chartRepoName}})',
+      '1.0.2--redhat-helm-repo': '1.0.2helm-plugin~ (Provided by {{chartRepoName}})',
       '1.0.3--ibm-helm-repo':
-        '1.0.3devconsole~ / App Version {{appVersion}}devconsole~ (Provided by {{chartRepoName}})',
+        '1.0.3helm-plugin~ / App Version {{appVersion}}helm-plugin~ (Provided by {{chartRepoName}})',
     });
   });
 

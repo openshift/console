@@ -36,10 +36,10 @@ describe('HelmResourcesList', () => {
 
   it('should render the proper Headers in the Resources tab', () => {
     const expectedHelmResourcesHeader: string[] = [
-      'devconsole~Name',
-      'devconsole~Type',
-      'devconsole~Status',
-      'devconsole~Created',
+      'helm-plugin~Name',
+      'helm-plugin~Type',
+      'helm-plugin~Status',
+      'helm-plugin~Created',
     ];
 
     const headers = helmResourcesList

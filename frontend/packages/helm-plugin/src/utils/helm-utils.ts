@@ -129,10 +129,10 @@ export const concatVersions = (
 ): string => {
   let title = chartVersion.split('--')[0];
   if (appVersion) {
-    title += t('devconsole~ / App Version {{appVersion}}', { appVersion });
+    title += t('helm-plugin~ / App Version {{appVersion}}', { appVersion });
   }
   if (chartRepoName) {
-    title += t('devconsole~ (Provided by {{chartRepoName}})', {
+    title += t('helm-plugin~ (Provided by {{chartRepoName}})', {
       chartRepoName: toTitleCase(chartRepoName),
     });
   }
@@ -185,13 +185,13 @@ export const getHelmActionConfig = (
     case HelmActionType.Install:
       return {
         type: HelmActionType.Install,
-        title: t('devconsole~Install Helm Chart'),
+        title: t('helm-plugin~Install Helm Chart'),
         subTitle: {
           form: t(
-            'devconsole~The Helm Chart can be installed by completing the form. Default values may be provided by the Helm chart authors.',
+            'helm-plugin~The Helm Chart can be installed by completing the form. Default values may be provided by the Helm chart authors.',
           ),
           yaml: t(
-            'devconsole~The Helm Chart can be installed by manually entering YAML or JSON definitions.',
+            'helm-plugin~The Helm Chart can be installed by manually entering YAML or JSON definitions.',
           ),
         },
         helmReleaseApi: `/api/helm/chart?url=${chartURL}`,
@@ -201,12 +201,14 @@ export const getHelmActionConfig = (
     case HelmActionType.Upgrade:
       return {
         type: HelmActionType.Upgrade,
-        title: t('devconsole~Upgrade Helm Release'),
+        title: t('helm-plugin~Upgrade Helm Release'),
         subTitle: {
           form: t(
-            'devconsole~Upgrade by selecting a new chart version or manually changing the form values.',
+            'helm-plugin~Upgrade by selecting a new chart version or manually changing the form values.',
           ),
-          yaml: t('devconsole~Upgrade by selecting a new chart version or manually changing YAML.'),
+          yaml: t(
+            'helm-plugin~Upgrade by selecting a new chart version or manually changing YAML.',
+          ),
         },
         helmReleaseApi: `/api/helm/release?ns=${namespace}&name=${releaseName}`,
         fetch: coFetchJSON.put,
@@ -216,7 +218,7 @@ export const getHelmActionConfig = (
     case HelmActionType.Rollback:
       return {
         type: HelmActionType.Rollback,
-        title: t('devconsole~Rollback Helm Release'),
+        title: t('helm-plugin~Rollback Helm Release'),
         subTitle: ``,
         helmReleaseApi: `/api/helm/release/history?ns=${namespace}&name=${releaseName}`,
         fetch: coFetchJSON.patch,
@@ -258,7 +260,7 @@ export const getChartReadme = (chart: HelmChart): string => {
 };
 
 export const helmActionString = (t: TFunction) => ({
-  Install: t('devconsole~Install'),
-  Upgrade: t('devconsole~Upgrade'),
-  Rollback: t('devconsole~Rollback'),
+  Install: t('helm-plugin~Install'),
+  Upgrade: t('helm-plugin~Upgrade'),
+  Rollback: t('helm-plugin~Rollback'),
 });

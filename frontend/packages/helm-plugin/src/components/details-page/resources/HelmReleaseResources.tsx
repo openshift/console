@@ -41,10 +41,10 @@ const HelmReleaseResources: React.FC<HelmReleaseResourcesProps> = ({ match, cust
   );
   return (
     <MultiListPage
-      filterLabel={t('devconsole~Resources by name')}
+      filterLabel={t('helm-plugin~Resources by name')}
       resources={firehoseResources}
       flatten={flattenReleaseResources}
-      label={t('devconsole~Resources')}
+      label={t('helm-plugin~Resources')}
       ListComponent={HelmReleaseResourcesList}
     />
   );

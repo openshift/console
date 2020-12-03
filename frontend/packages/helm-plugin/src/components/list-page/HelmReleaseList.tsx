@@ -9,6 +9,7 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { SortByDirection } from '@patternfly/react-table';
+import { CustomResourceList } from '@console/shared';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { SecretModel } from '@console/internal/models';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -24,7 +25,6 @@ import HelmReleaseListRow from './HelmReleaseListRow';
 import HelmReleaseListHeader from './HelmReleaseListHeader';
 
 import './HelmReleaseList.scss';
-import { CustomResourceList } from '@console/shared';
 
 interface HelmReleaseListProps {
   namespace: string;
@@ -77,7 +77,7 @@ const HelmReleaseList: React.FC<HelmReleaseListProps> = ({ namespace }) => {
           .catch((err) => {
             if (!destroyed) {
               setReleasesLoaded(true);
-              setLoadError(err.message || t('devconsole~Unable to load Helm Releases'));
+              setLoadError(err.message || t('helm-plugin~Unable to load Helm Releases'));
             }
           });
       }
@@ -93,7 +93,7 @@ const HelmReleaseList: React.FC<HelmReleaseListProps> = ({ namespace }) => {
       <StatusBox
         loaded
         loadError={secretsLoadError || loadError}
-        label={t('devconsole~Helm Releases')}
+        label={t('helm-plugin~Helm Releases')}
       />
     );
   }
@@ -106,16 +106,16 @@ const HelmReleaseList: React.FC<HelmReleaseListProps> = ({ namespace }) => {
         alt=""
       />
     );
-    const installURL = { pathname: `/catalog/ns/${namespace}`, search: '?kind=%5B"HelmChart"%5D' };
+    const installURL = { pathname: `/catalog/ns/${namespace}`, search: '?catalogType=HelmChart' };
     return (
       <EmptyState variant={EmptyStateVariant.full}>
         <EmptyStateIcon variant="container" component={helmImage} />
         <Title headingLevel="h3" size="lg">
-          {t('devconsole~No Helm Releases found')}
+          {t('helm-plugin~No Helm Releases found')}
         </Title>
         <EmptyStateSecondaryActions>
           <Link to={installURL}>
-            {t('devconsole~Install a Helm Chart from the developer catalog')}
+            {t('helm-plugin~Install a Helm Chart from the developer catalog')}
           </Link>
         </EmptyStateSecondaryActions>
       </EmptyState>

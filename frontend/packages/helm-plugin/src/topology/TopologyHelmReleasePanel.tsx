@@ -55,7 +55,7 @@ export const ConnectedTopologyHelmReleasePanel: React.FC<TopologyHelmReleasePane
         <StatusBox
           loaded
           loadError={{
-            message: t('topology~Unable to find resource for {{helmLabel}}', {
+            message: t('helm-plugin~Unable to find resource for {{helmLabel}}', {
               helmLabel: helmRelease.getLabel(),
             }),
           }}
@@ -99,12 +99,12 @@ export const ConnectedTopologyHelmReleasePanel: React.FC<TopologyHelmReleasePane
         </h1>
       </div>
       <SimpleTabNav
-        selectedTab={selectedDetailsTab || t('topology~Resources')}
+        selectedTab={selectedDetailsTab || t('helm-plugin~Resources')}
         onClickTab={onClickTab}
         tabs={[
-          { name: t('topology~Details'), component: detailsComponent },
-          { name: t('topology~Resources'), component: resourcesComponent },
-          { name: t('topology~Release notes'), component: releaseNotesComponent },
+          { name: t('helm-plugin~Details'), component: detailsComponent },
+          { name: t('helm-plugin~Resources'), component: resourcesComponent },
+          { name: t('helm-plugin~Release notes'), component: releaseNotesComponent },
         ]}
         tabProps={{ obj: secret }}
         additionalClassNames="co-m-horizontal-nav__menu--within-sidebar co-m-horizontal-nav__menu--within-overview-sidebar"

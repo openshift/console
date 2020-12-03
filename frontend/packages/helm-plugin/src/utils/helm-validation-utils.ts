@@ -11,7 +11,7 @@ export const getHelmActionValidationSchema = (helmAction: HelmActionType, t: TFu
       });
     case HelmActionType.Upgrade:
       return yup.object().shape({
-        chartVersion: yup.string().required(t('devconsole~Required')),
+        chartVersion: yup.string().required(t('helm-plugin~Required')),
       });
     default:
       return null;

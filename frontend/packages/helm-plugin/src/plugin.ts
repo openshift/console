@@ -1,6 +1,4 @@
 import * as _ from 'lodash';
-import * as models from './models';
-
 import * as helmIcon from '@console/internal/imgs/logos/helm.svg';
 import { AddAction } from '@console/dev-console/src/extensions/add-actions';
 import {
@@ -18,6 +16,7 @@ import {
 import { HelmCatalogConsumedExtensions, helmCatalogPlugin } from './catalog/helm-catalog-plugin';
 import { detectHelmChartRepositories } from './utils/helm-detection-utils';
 import { FLAG_OPENSHIFT_HELM } from './const';
+import * as models from './models';
 
 type ConsumedExtensions =
   | ModelDefinition
@@ -49,8 +48,8 @@ const plugin: Plugin<ConsumedExtensions> = [
       section: 'resources',
       insertBefore: 'project',
       componentProps: {
-        // t('devconsole~Helm')
-        name: '%devconsole~Helm%',
+        // t('helm-plugin~Helm')
+        name: '%helm-plugin~Helm%',
         href: '/helm-releases',
         testID: 'helm-releases-header',
       },
@@ -158,10 +157,10 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       id: 'helm',
       url: '/catalog?catalogType=HelmChart',
-      // t('devconsole~Helm Chart')
-      label: '%devconsole~Helm Chart%',
-      // t('devconsole~Browse the catalog to discover and install Helm Charts')
-      description: '%devconsole~Browse the catalog to discover and install Helm Charts%',
+      // t('helm-plugin~Helm Chart')
+      label: '%helm-plugin~Helm Chart%',
+      // t('helm-plugin~Browse the catalog to discover and install Helm Charts')
+      description: '%helm-plugin~Browse the catalog to discover and install Helm Charts%',
       icon: helmIcon,
     },
   },

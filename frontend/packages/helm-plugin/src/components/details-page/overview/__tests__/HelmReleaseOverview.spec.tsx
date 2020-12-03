@@ -37,7 +37,7 @@ describe('HelmReleaseOverview', () => {
         .find(SectionHeading)
         .at(0)
         .props().text,
-    ).toEqual('devconsole~Helm Release details');
+    ).toEqual('helm-plugin~Helm Release details');
   });
   it('should render the ResourceSummary component', () => {
     const helmReleaseOverview = shallow(<HelmReleaseOverview {...helmReleaseOverviewProps} />);

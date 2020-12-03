@@ -39,7 +39,7 @@ const HelmReleaseHistory: React.FC<HelmReleaseHistoryProps> = ({ match, obj }) =
       .catch((err) => {
         if (!destroyed) {
           setRevisionsLoaded(true);
-          setLoadError(err.message || t('devconsole~Unable to load Helm Release history'));
+          setLoadError(err.message || t('helm-plugin~Unable to load Helm Release history'));
         }
       });
     return () => {
@@ -48,7 +48,7 @@ const HelmReleaseHistory: React.FC<HelmReleaseHistoryProps> = ({ match, obj }) =
   }, [helmReleaseName, namespace, memoizedObj, t]);
 
   if (loadError) {
-    return <StatusBox loaded loadError={loadError} label={t('devconsole~Helm Release history')} />;
+    return <StatusBox loaded loadError={loadError} label={t('helm-plugin~Helm Release history')} />;
   }
 
   return (

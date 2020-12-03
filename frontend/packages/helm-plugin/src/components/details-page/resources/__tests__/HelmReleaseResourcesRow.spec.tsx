@@ -51,6 +51,6 @@ describe('helmReleaseResourcesRow', () => {
       <HelmReleaseResourceStatus resource={rowArgs.obj} />,
     );
     expect(helmReleaseResourceStatus1.find(Link).exists()).toBe(true);
-    expect(helmReleaseResourceStatus1.find(Link).props().title).toEqual('devconsole~Pods');
+    expect(helmReleaseResourceStatus1.find(Link).props().title).toEqual('helm-plugin~Pods');
   });
 });

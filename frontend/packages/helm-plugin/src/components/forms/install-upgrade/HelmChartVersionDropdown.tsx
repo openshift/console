@@ -55,26 +55,26 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
     newVersion: string,
   ) => {
     confirmModal({
-      title: t('devconsole~Change chart version?'),
+      title: t('helm-plugin~Change chart version?'),
       message: (
         <>
           <p>
-            <Trans t={t} ns="devconsole">
+            <Trans t={t} ns="helm-plugin">
               Are you sure you want to change the chart version from{' '}
               <strong>{{ currentVersion }}</strong> to <strong>{{ newVersion }}</strong>?{' '}
             </Trans>
           </p>
           <p>
             <InfoCircleIcon color="var(--pf-global--info-color--100)" />{' '}
-            <Trans t={t} ns="devconsole">
+            <Trans t={t} ns="helm-plugin">
               All data entered for version <strong>{{ currentVersion }}</strong> will be reset
             </Trans>
           </p>
         </>
       ),
       submitDanger: false,
-      btnText: t('devconsole~Proceed'),
-      cancelText: t('devconsole~Cancel'),
+      btnText: t('helm-plugin~Proceed'),
+      cancelText: t('helm-plugin~Cancel'),
       executeFn: () => {
         onAccept();
         return Promise.resolve();
@@ -160,12 +160,12 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
 
   const helpText =
     helmAction === HelmActionType.Install
-      ? t('devconsole~Select the chart version.')
-      : t('devconsole~Select the version to upgrade to.');
+      ? t('helm-plugin~Select the chart version.')
+      : t('helm-plugin~Select the version to upgrade to.');
 
   const title =
     _.isEmpty(helmChartVersions) && !chartVersion
-      ? t('devconsole~No versions available')
+      ? t('helm-plugin~No versions available')
       : helmChartVersions[`${chartVersion}`] ||
         concatVersions(chartVersion, appVersion, t, chartRepoName);
 
@@ -173,7 +173,7 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
     <GridItem span={6}>
       <DropdownField
         name="chartVersion"
-        label={t('devconsole~Chart version')}
+        label={t('helm-plugin~Chart version')}
         items={helmChartVersions}
         helpText={helpText}
         disabled={_.isEmpty(helmChartVersions) || _.keys(helmChartVersions).length === 1}

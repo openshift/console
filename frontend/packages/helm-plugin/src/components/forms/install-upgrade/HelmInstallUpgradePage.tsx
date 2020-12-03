@@ -161,7 +161,7 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
         valuesObj = formData;
       } else {
         actions.setStatus({
-          submitError: t('devconsole~Errors in the Form - {{errorsText}}', {
+          submitError: t('helm-plugin~Errors in the form - {{errorsText}}', {
             errorsText: ajv.errorsText(),
           }),
         });
@@ -171,7 +171,7 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
       try {
         valuesObj = safeLoad(yamlData);
       } catch (err) {
-        actions.setStatus({ submitError: t('devconsole~Invalid YAML - {{err}}', { err }) });
+        actions.setStatus({ submitError: t('helm-plugin~Invalid YAML - {{err}}', { err }) });
         return;
       }
     }

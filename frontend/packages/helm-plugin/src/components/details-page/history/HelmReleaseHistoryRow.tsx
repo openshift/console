@@ -21,7 +21,7 @@ const confirmModalRollbackHelmRelease = (
   t: TFunction,
 ) => {
   const message = (
-    <Trans i18nKey="confirmModalRollbackHelmReleaseKey" ns="devconsole">
+    <Trans i18nKey="confirmModalRollbackHelmReleaseKey" ns="helm-plugin">
       Are you sure you want to rollback <strong>{{ releaseName }}</strong> to{' '}
       <strong>Revision {{ revision }}</strong>?
     </Trans>
@@ -36,11 +36,11 @@ const confirmModalRollbackHelmRelease = (
   const executeFn = () => coFetchJSON.patch('/api/helm/release', payload);
 
   return {
-    label: t('devconsole~Rollback to Revision {{revision}}', { revision }),
+    label: t('helm-plugin~Rollback to Revision {{revision}}', { revision }),
     callback: () => {
       confirmModal({
-        title: t('devconsole~Rollback'),
-        btnText: t('devconsole~Rollback'),
+        title: t('helm-plugin~Rollback'),
+        btnText: t('helm-plugin~Rollback'),
         message,
         executeFn,
       });

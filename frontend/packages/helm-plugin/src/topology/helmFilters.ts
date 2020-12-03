@@ -10,8 +10,8 @@ export const getTopologyFilters = () => {
     {
       type: TopologyDisplayFilterType.expand,
       id: EXPAND_HELM_RELEASE_FILTER,
-      // t('topology~Helm Releases')
-      labelKey: 'topology~Helm Releases',
+      // t('helm-plugin~Helm Releases')
+      labelKey: 'helm-plugin~Helm Releases',
       priority: 300,
       value: true,
     },

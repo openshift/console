@@ -30,7 +30,7 @@ const HelmReadmeLoader: React.FC<HelmReadmeLoaderProps> = ({ chartURL }) => {
 
       if (!unmounted) {
         setLoaded(true);
-        readmeData && setReadme(t('devconsole~## README\n{{readmeData}}', { readmeData }));
+        readmeData && setReadme(t('helm-plugin~## README\n{{readmeData}}', { readmeData }));
       }
     };
 
@@ -43,7 +43,7 @@ const HelmReadmeLoader: React.FC<HelmReadmeLoaderProps> = ({ chartURL }) => {
 
   if (!loaded) return <div className="loading-skeleton--table" />;
 
-  return <SyncMarkdownView content={readme} emptyMsg={t('devconsole~README not available')} />;
+  return <SyncMarkdownView content={readme} emptyMsg={t('helm-plugin~README not available')} />;
 };
 
 export default HelmReadmeLoader;

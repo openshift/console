@@ -126,11 +126,11 @@ describe('HelmInstallUpgradeForm', () => {
     expect(editor.props().formContext.isDisabled).toBe(true);
   });
 
-  it('should have the Release Name field disabled in the Helm Upgrade Form', () => {
+  it('should have the release name field disabled in the Helm Upgrade Form', () => {
     const newProps = _.cloneDeep(props);
     newProps.helmActionConfig.type = HelmActionType.Upgrade;
     const wrapper = shallow(<HelmInstallUpgradeForm {...newProps} />);
-    expect(wrapper.find(InputField).props().label).toBe('devconsole~Release Name');
+    expect(wrapper.find(InputField).props().label).toBe('helm-plugin~Release name');
     expect(wrapper.find(InputField).props().isDisabled).toBe(true);
   });
 
@@ -141,7 +141,7 @@ describe('HelmInstallUpgradeForm', () => {
     expect(wrapper.find(Alert).exists()).toBe(true);
   });
 
-  it('should disable Release Name field and Install button if chart is not reachable', () => {
+  it('should disable release name field and Install button if chart is not reachable', () => {
     const newProps = _.cloneDeep(props);
     newProps.chartError = new Error('Chart not reachable');
     const wrapper = shallow(<HelmInstallUpgradeForm {...newProps} />);

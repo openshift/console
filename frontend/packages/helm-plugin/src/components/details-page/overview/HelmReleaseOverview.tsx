@@ -14,7 +14,7 @@ const HelmReleaseOverview: React.FC<HelmReleaseOverviewProps> = ({ obj, customDa
   const { t } = useTranslation();
   return (
     <div className="co-m-pane__body">
-      <SectionHeading text={t('devconsole~Helm Release details')} />
+      <SectionHeading text={t('helm-plugin~Helm Release details')} />
       <div className="row">
         <div className="col-sm-6">
           <ResourceSummary resource={obj} customPathName={'metadata.labels.name'} />

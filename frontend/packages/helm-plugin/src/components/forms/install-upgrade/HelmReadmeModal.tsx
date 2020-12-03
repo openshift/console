@@ -17,7 +17,7 @@ const HelmReadmeModal: React.FunctionComponent<Props> = ({ readme, close }) => {
   const { t } = useTranslation();
   return (
     <div className="modal-content">
-      <ModalTitle close={close}>{t('devconsole~README')}</ModalTitle>
+      <ModalTitle close={close}>{t('helm-plugin~README')}</ModalTitle>
       <ModalBody>
         <SyncMarkdownView content={readme} />
       </ModalBody>

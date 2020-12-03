@@ -10,11 +10,11 @@ const HelmReleaseResourcesList: React.FC<TableProps> = (props) => {
   return (
     <Table
       {...props}
-      aria-label={t('devconsole~Resources')}
+      aria-label={t('helm-plugin~Resources')}
       defaultSortField="kind"
       Header={HelmReleaseResourcesHeader(t)}
       Row={HelmReleaseResourcesRow}
-      EmptyMsg={() => <MsgBox title={t('devconsole~No resources found')} />}
+      EmptyMsg={() => <MsgBox title={t('helm-plugin~No resources found')} />}
       virtualize
     />
   );

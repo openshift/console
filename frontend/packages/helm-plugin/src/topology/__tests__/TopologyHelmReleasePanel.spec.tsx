@@ -2,11 +2,11 @@ import * as React from 'react';
 import { shallow, mount } from 'enzyme';
 import { SidebarSectionHeading, StatusBox } from '@console/internal/components/utils';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
-import { mockHelmReleaseNode, mockManifest, mockReleaseNotes } from './mockData';
+import TopologyGroupResourcesPanel from '@console/topology/src/components/side-bar/TopologyGroupResourcesPanel';
+import HelmReleaseNotesEmptyState from '../../components/details-page/notes/HelmReleaseNotesEmptyState';
 import TopologyHelmReleaseNotesPanel from '../TopologyHelmReleaseNotesPanel';
 import { ConnectedTopologyHelmReleasePanel } from '../TopologyHelmReleasePanel';
-import HelmReleaseNotesEmptyState from '../../components/details-page/notes/HelmReleaseNotesEmptyState';
-import TopologyGroupResourcesPanel from '@console/topology/src/components/side-bar/TopologyGroupResourcesPanel';
+import { mockHelmReleaseNode, mockManifest, mockReleaseNotes } from './mockData';
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');
@@ -32,7 +32,7 @@ describe('TopologyHelmReleasePanel', () => {
     const component = mount(
       <ConnectedTopologyHelmReleasePanel
         helmRelease={mockHelmReleaseNode}
-        selectedDetailsTab="topology~Details"
+        selectedDetailsTab="helm-plugin~Details"
       />,
     );
     // Status box displayed because there is no mock secret
@@ -43,7 +43,7 @@ describe('TopologyHelmReleasePanel', () => {
     const component = mount(
       <ConnectedTopologyHelmReleasePanel
         helmRelease={mockHelmReleaseNode}
-        selectedDetailsTab="topology~Release notes"
+        selectedDetailsTab="helm-plugin~Release notes"
       />,
     );
     // Status box displayed because there is no mock secret

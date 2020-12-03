@@ -70,7 +70,7 @@ const CustomResourceList: React.FC<CustomResourceListProps> = ({
       <EmptyMsg />
     ) : (
       <EmptyState variant={EmptyStateVariant.full}>
-        <p>{t('devconsole~No resources found')}</p>
+        <p>{t('console-shared~No resources found')}</p>
       </EmptyState>
     );
   }

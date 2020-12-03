@@ -35,7 +35,7 @@ const HelmReleaseRollbackForm: React.FC<Props> = ({
   const { type: helmAction, title } = helmActionConfig;
 
   const formHelpText = (
-    <Trans t={t} ns="devconsole">
+    <Trans t={t} ns="helm-plugin">
       Select the version to rollback <strong style={{ color: '#000' }}>{{ releaseName }}</strong>{' '}
       to, from the table below:
     </Trans>
@@ -44,12 +44,12 @@ const HelmReleaseRollbackForm: React.FC<Props> = ({
   return (
     <Form onSubmit={handleSubmit}>
       <FormHeader title={title} helpText={formHelpText} />
-      <FormGroup fieldId="revision-list-field" label={t('devconsole~Revision history')} isRequired>
+      <FormGroup fieldId="revision-list-field" label={t('helm-plugin~Revision history')} isRequired>
         <Table
           data={releaseHistory}
           defaultSortField="version"
           defaultSortOrder={SortByDirection.desc}
-          aria-label={t('devconsole~CustomResources')}
+          aria-label={t('helm-plugin~CustomResources')}
           Header={RevisionListHeader(t)}
           Row={RevisionListRow}
           loaded={!!releaseHistory}
@@ -62,7 +62,7 @@ const HelmReleaseRollbackForm: React.FC<Props> = ({
         isSubmitting={status?.isSubmitting || isSubmitting}
         submitLabel={helmActionString(t)[helmAction]}
         disableSubmit={status?.isSubmitting || !dirty || !_.isEmpty(errors)}
-        resetLabel={t('devconsole~Cancel')}
+        resetLabel={t('helm-plugin~Cancel')}
         sticky
       />
     </Form>

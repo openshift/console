@@ -11,25 +11,25 @@ export const tableColumnClasses = {
 const HelmReleaseResourcesHeader = (t: TFunction) => () => {
   return [
     {
-      title: t('devconsole~Name'),
+      title: t('helm-plugin~Name'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses.name },
     },
     {
-      title: t('devconsole~Type'),
+      title: t('helm-plugin~Type'),
       sortField: 'kind',
       transforms: [sortable],
       props: { className: tableColumnClasses.type },
     },
     {
-      title: t('devconsole~Status'),
+      title: t('helm-plugin~Status'),
       sortField: 'status.phase',
       transforms: [sortable],
       props: { className: tableColumnClasses.status },
     },
     {
-      title: t('devconsole~Created'),
+      title: t('helm-plugin~Created'),
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: tableColumnClasses.created },

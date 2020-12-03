@@ -21,12 +21,12 @@ const PageContents: React.FC<HelmReleaseListPageProps> = (props) => {
   } = props;
   return namespace ? (
     <div>
-      <PageHeading title={t('devconsole~Helm Releases')} />
+      <PageHeading title={t('helm-plugin~Helm Releases')} />
       <HelmReleaseList namespace={namespace} />
     </div>
   ) : (
-    <CreateProjectListPage title={t('devconsole~Helm Releases')}>
-      {t('devconsole~Select a Project to view the list of Helm Releases')}
+    <CreateProjectListPage title={t('helm-plugin~Helm Releases')}>
+      {t('helm-plugin~Select a Project to view the list of Helm Releases')}
     </CreateProjectListPage>
   );
 };
@@ -38,7 +38,7 @@ export const HelmReleaseListPage: React.FC<HelmReleaseListPageProps> = (props) =
   return (
     <NamespacedPage variant={NamespacedPageVariants.light} hideApplications>
       <Helmet>
-        <title>{t('devconsole~Helm Releases')}</title>
+        <title>{t('helm-plugin~Helm Releases')}</title>
       </Helmet>
       <PageContentsWithStartGuide {...props} />
     </NamespacedPage>

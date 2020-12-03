@@ -94,10 +94,10 @@ export const LoadedHelmReleaseDetails: React.FC<LoadedHelmReleaseDetailsProps> =
       customData={helmReleaseData}
       breadcrumbsFor={() => [
         {
-          name: t('devconsole~Helm Releases'),
+          name: t('helm-plugin~Helm Releases'),
           path: `/helm-releases/ns/${namespace}`,
         },
-        { name: t('devconsole~Helm Release details'), path: `${match.url}` },
+        { name: t('helm-plugin~Helm Release details'), path: `${match.url}` },
       ]}
       title={title}
       kind={SecretReference}
@@ -105,17 +105,17 @@ export const LoadedHelmReleaseDetails: React.FC<LoadedHelmReleaseDetailsProps> =
         navFactory.details(HelmReleaseOverview),
         {
           href: 'resources',
-          name: t('devconsole~Resources'),
+          name: t('helm-plugin~Resources'),
           component: HelmReleaseResources,
         },
         {
           href: 'history',
-          name: t('devconsole~Revision history'),
+          name: t('helm-plugin~Revision history'),
           component: HelmReleaseHistory,
         },
         {
           href: 'releasenotes',
-          name: t('devconsole~Release notes'),
+          name: t('helm-plugin~Release notes'),
           component: HelmReleaseNotes,
         },
       ]}

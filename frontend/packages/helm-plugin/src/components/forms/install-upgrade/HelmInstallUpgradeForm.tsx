@@ -65,7 +65,7 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
   const yamlEditor = chartHasValues && (
     <YAMLEditorField
       name="yamlData"
-      label={t('devconsole~Helm Chart')}
+      label={t('helm-plugin~Helm Chart')}
       schema={formSchema}
       onSave={handleSubmit}
     />
@@ -74,7 +74,7 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
   const formSubTitle = _.isString(subTitle) ? subTitle : subTitle?.[editorType];
 
   const readmeText = chartReadme && (
-    <Trans t={t} ns="devconsole">
+    <Trans t={t} ns="helm-plugin">
       For more information on the chart, refer to this{' '}
       <Button
         type="button"
@@ -104,8 +104,8 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
     <FlexForm onSubmit={handleSubmit}>
       <FormHeader title={title} helpText={formHelpText} marginBottom="lg" />
       {chartError && (
-        <Alert variant="danger" isInline title={t('devconsole~Helm Chart cannot be installed')}>
-          {t('devconsole~The Helm Chart is currently unavailable. {{chartError}}', { chartError })}
+        <Alert variant="danger" isInline title={t('helm-plugin~Helm Chart cannot be installed')}>
+          {t('helm-plugin~The Helm Chart is currently unavailable. {{chartError}}', { chartError })}
         </Alert>
       )}
       <FormSection fullWidth>
@@ -114,8 +114,8 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
             <InputField
               type={TextInputTypes.text}
               name="releaseName"
-              label={t('devconsole~Release Name')}
-              helpText={t('devconsole~A unique name for the Helm Chart release.')}
+              label={t('helm-plugin~Release name')}
+              helpText={t('helm-plugin~A unique name for the Helm Chart release.')}
               required
               isDisabled={!!chartError || helmAction === HelmActionType.Upgrade}
             />
@@ -143,7 +143,7 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
         isSubmitting={status?.isSubmitting || isSubmitting}
         submitLabel={helmActionString(t)[helmAction]}
         disableSubmit={isSubmitDisabled}
-        resetLabel={t('devconsole~Cancel')}
+        resetLabel={t('helm-plugin~Cancel')}
         sticky
       />
     </FlexForm>

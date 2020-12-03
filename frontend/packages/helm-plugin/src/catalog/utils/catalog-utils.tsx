@@ -46,19 +46,19 @@ export const normalizeHelmCharts = (
 
         const detailsProperties = [
           {
-            label: t('devconsole~Chart version'),
+            label: t('helm-plugin~Chart version'),
             value: version,
           },
           {
-            label: t('devconsole~App version'),
+            label: t('helm-plugin~App version'),
             value: appVersion,
           },
           {
-            label: t('devconsole~Home page'),
+            label: t('helm-plugin~Home page'),
             value: homePage,
           },
           {
-            label: t('devconsole~Maintainers'),
+            label: t('helm-plugin~Maintainers'),
             value: maintainers,
           },
         ];
@@ -90,7 +90,7 @@ export const normalizeHelmCharts = (
             url: imgUrl,
           },
           cta: {
-            label: t('devconsole~Install Helm Chart'),
+            label: t('helm-plugin~Install Helm Chart'),
             href,
           },
           details: {

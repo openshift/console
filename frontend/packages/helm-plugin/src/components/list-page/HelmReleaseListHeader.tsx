@@ -16,43 +16,43 @@ export const tableColumnClasses = {
 const HelmReleaseListHeader = (t: TFunction) => () => {
   return [
     {
-      title: t('devconsole~Name'),
+      title: t('helm-plugin~Name'),
       sortField: 'name',
       transforms: [sortable],
       props: { className: tableColumnClasses.name },
     },
     {
-      title: t('devconsole~Revision'),
+      title: t('helm-plugin~Revision'),
       sortField: 'version',
       transforms: [sortable],
       props: { className: tableColumnClasses.revision },
     },
     {
-      title: t('devconsole~Updated'),
+      title: t('helm-plugin~Updated'),
       sortField: 'info.last_deployed',
       transforms: [sortable],
       props: { className: tableColumnClasses.updated },
     },
     {
-      title: t('devconsole~Status'),
+      title: t('helm-plugin~Status'),
       sortField: 'info.status',
       transforms: [sortable],
       props: { className: tableColumnClasses.status },
     },
     {
-      title: t('devconsole~Chart Name'),
+      title: t('helm-plugin~Chart name'),
       sortField: 'chart.metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses.chartName },
     },
     {
-      title: t('devconsole~Chart version'),
+      title: t('helm-plugin~Chart version'),
       sortField: 'chart.metadata.version',
       transforms: [sortable],
       props: { className: tableColumnClasses.chartVersion },
     },
     {
-      title: t('devconsole~App version'),
+      title: t('helm-plugin~App version'),
       sortField: 'chart.metadata.appVersion',
       transforms: [sortable],
       props: { className: tableColumnClasses.appVersion },
