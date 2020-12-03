@@ -1,5 +1,5 @@
-import * as _ from 'lodash';
 import * as React from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { asAccessReview, Kebab, KebabOption } from '@console/internal/components/utils';
 import {
@@ -18,13 +18,13 @@ import {
 } from '../../selectors/vm/selectors';
 import { getMigrationVMIName } from '../../selectors/vmi-migration';
 import { VirtualMachineImportModel, VirtualMachineInstanceMigrationModel } from '../../models';
-import { restartVM, startVM, stopVM, VMActionType } from '../../k8s/requests/vm';
+import { restartVM, startVM, stopVM } from '../../k8s/requests/vm';
 import { startVMIMigration } from '../../k8s/requests/vmi';
 import { cancelMigration } from '../../k8s/requests/vmim';
 import { cloneVMModal } from '../modals/clone-vm-modal';
 import { getVMStatus } from '../../statuses/vm/vm-status';
 import { isVMIPaused } from '../../selectors/vmi';
-import { unpauseVMI, VMIActionType } from '../../k8s/requests/vmi/actions';
+import { unpauseVMI } from '../../k8s/requests/vmi/actions';
 import { VMImportKind } from '../../types/vm-import/ovirt/vm-import';
 import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
 import { VMStatusBundle } from '../../statuses/vm/types';
@@ -34,7 +34,7 @@ import { deleteVMIModal } from '../modals/menu-actions-modals/delete-vmi-modal';
 import { VMImportWrappper } from '../../k8s/wrapper/vm-import/vm-import-wrapper';
 import { StatusGroup } from '../../constants/status-group';
 import { cancelVMImport } from '../../k8s/requests/vmimport';
-import { getActionMessage } from './constants';
+import { ActionMessage } from './constants';
 
 import './menu-actions.scss';
 
@@ -50,36 +50,49 @@ export const menuActionDeleteVMImport = (
   innerArgs?: { vm?: VMKind },
 ): KebabOption => {
   const vmName = new VMImportWrappper(vmimport).getResolvedVMTargetName();
-  const titleText = 'Cancel Import';
-  const title = (
-    <>
-      <YellowExclamationTriangleIcon className="co-icon-space-r" /> {titleText}?
-    </>
-  );
+  const DeleteVMImportTitle: React.FC = () => {
+    const { t } = useTranslation();
+    return (
+      <>
+        <YellowExclamationTriangleIcon className="co-icon-space-r" />{' '}
+        {t('kubevirt-plugin~Cancel Import?')}
+      </>
+    );
+  };
 
   const vmElem = <strong className="co-break-word">{vmName}</strong>;
   const vmImportElem = <strong className="co-break-word">{getName(vmimport)}</strong>;
   const nsElem = <strong className="co-break-word">{getNamespace(vmimport)}</strong>;
 
-  const message = innerArgs?.vm ? (
-    <>
-      Are you sure you want to cancel importing {vmImportElem}? It will also delete the newly
-      created {vmElem} in the {nsElem} namespace?
-    </>
-  ) : (
-    <>
-      Are you sure you want to cancel importing {vmImportElem} in the {nsElem} namespace?
-    </>
-  );
+  const DeleteVMImportMessage: React.FC = () => {
+    const { t } = useTranslation();
+    return innerArgs?.vm ? (
+      <>
+        {t(
+          'kubevirt-plugin~Are you sure you want to cancel importing {{vmImportElem}}? It will also delete the newly created {{vmElem}} in the {{nsElem}} namespace?',
+          { vmImportElem, vmElem, nsElem },
+        )}
+      </>
+    ) : (
+      <>
+        {t(
+          'kubevirt-plugin~Are you sure you want to cancel importing {{vmImportElem}} in the {{nsElem}} namespace?',
+          { vmImportElem, nsElem },
+        )}
+      </>
+    );
+  };
 
   return {
-    label: titleText,
+    // t('kubevirt-plugin~Cancel Import')
+    labelKey: 'kubevirt-plugin~Cancel Import',
     callback: () =>
       confirmModal({
-        title,
-        message,
+        title: <DeleteVMImportTitle />,
+        message: <DeleteVMImportMessage />,
         submitDanger: true,
-        btnText: 'Cancel Import',
+        // t('kubevirt-plugin~Cancel Import')
+        btnTextKey: 'kubevirt-plugin~Cancel Import',
         executeFn: () => cancelVMImport(vmimport, innerArgs?.vm),
       }),
     accessReview: asAccessReview(kindObj, vmimport, 'delete'),
@@ -91,27 +104,35 @@ export const menuActionStart = (
   vm: VMKind,
   { vmStatusBundle }: ActionArgs,
 ): KebabOption => {
-  const title = 'Start Virtual Machine';
+  const StartMessage: React.FC = () => {
+    const name = getName(vm);
+    const namespace = getNamespace(vm);
+    return (
+      <Trans ns="kubevirt-plugin">
+        <p>
+          This virtual machine will start as soon as the import has been completed. If you proceed
+          you will not be able to change this option.
+        </p>
+        Are you sure you want to start <strong>{name}</strong> in namespace{' '}
+        <strong>{namespace}</strong> after it has imported?
+      </Trans>
+    );
+  };
+
   return {
     hidden: vmStatusBundle?.status?.isMigrating() || isVMRunningOrExpectedRunning(vm),
-    label: title,
+    // t('kubevirt-plugin~Start Virtual Machine')
+    labelKey: 'kubevirt-plugin~Start Virtual Machine',
     callback: () => {
       if (!vmStatusBundle?.status?.isImporting()) {
         startVM(vm);
       } else {
         confirmModal({
-          title,
-          message: (
-            <>
-              <p>
-                This virtual machine will start as soon as the import has been completed. If you
-                proceed you will not be able to change this option.
-              </p>
-              Are you sure you want to start <strong>{getName(vm)}</strong> in namespace{' '}
-              <strong>{getNamespace(vm)}</strong> after it has imported?
-            </>
-          ),
-          btnText: _.capitalize(VMActionType.Start),
+          // t('kubevirt-plugin~ Start Virtual Machine')
+          titleKey: 'kubevirt-plugin~ Start Virtual Machine',
+          message: <StartMessage />,
+          // t('kubevirt-plugin~Start')
+          btnTextKey: 'kubevirt-plugin~Start',
           executeFn: () => startVM(vm),
         });
       }
@@ -125,19 +146,23 @@ const menuActionStop = (
   vm: VMKind,
   { vmi, vmStatusBundle }: ActionArgs,
 ): KebabOption => {
-  const title = 'Stop Virtual Machine';
   const isImporting = vmStatusBundle?.status?.isImporting();
   return {
     isDisabled: isImporting,
     hidden: !isImporting && !isVMExpectedRunning(vm),
-    label: title,
+    // t('kubevirt-plugin~Stop Virtual Machine')
+    labelKey: 'kubevirt-plugin~Stop Virtual Machine',
     callback: () =>
       confirmVMIModal({
         vmi,
-        title,
-        alertTitle: 'Stop Virtual Machine alert',
-        message: getActionMessage(vm, VMActionType.Stop),
-        btnText: _.capitalize(VMActionType.Stop),
+        // t('kubevirt-plugin~Stop Virtual Machine')
+        titleKey: 'kubevirt-plugin~Stop Virtual Machine',
+        // t('kubevirt-plugin~Stop Virtual Machine alert')
+        alertTitleKey: 'kubevirt-plugin~Stop Virtual Machine alert',
+        // t('kubevirt-plugin~stop')
+        message: <ActionMessage obj={vm} actionKey="kubevirt-plugin~stop" />,
+        // t('kubevirt-plugin~Stop')
+        btnTextKey: 'kubevirt-plugin~Stop',
         executeFn: () => stopVM(vm),
       }),
     accessReview: asAccessReview(kindObj, vm, 'patch'),
@@ -149,21 +174,25 @@ const menuActionRestart = (
   vm: VMKind,
   { vmi, vmStatusBundle }: ActionArgs,
 ): KebabOption => {
-  const title = 'Restart Virtual Machine';
   return {
     hidden:
       vmStatusBundle?.status?.isImporting() ||
       vmStatusBundle?.status?.isMigrating() ||
       !isVMExpectedRunning(vm) ||
       !isVMCreated(vm),
-    label: title,
+    // t('kubevirt-plugin~Restart Virtual Machine')
+    labelKey: 'kubevirt-plugin~Restart Virtual Machine',
     callback: () =>
       confirmVMIModal({
         vmi,
-        title,
-        alertTitle: 'Restart Virtual Machine alert',
-        message: getActionMessage(vm, VMActionType.Restart),
-        btnText: _.capitalize(VMActionType.Restart),
+        // t('kubevirt-plugin~Restart Virtual Machine')
+        titleKey: 'kubevirt-plugin~Restart Virtual Machine',
+        // t('kubevirt-plugin~Restart Virtual Machine alert')
+        alertTitleKey: 'kubevirt-plugin~Restart Virtual Machine alert',
+        // t('kubevirt-plugin~restart')
+        message: <ActionMessage obj={vm} actionKey="kubevirt-plugin~restart" />,
+        // t('kubevirt-plugin~Restart')
+        btnTextKey: 'kubevirt-plugin~Restart',
         executeFn: () => restartVM(vm),
       }),
     accessReview: asAccessReview(kindObj, vm, 'patch'),
@@ -171,15 +200,18 @@ const menuActionRestart = (
 };
 
 const menuActionUnpause = (kindObj: K8sKind, vm: VMKind, { vmi }: ActionArgs): KebabOption => {
-  const title = 'Unpause Virtual Machine';
   return {
     hidden: !isVMIPaused(vmi),
-    label: title,
+    // t('kubevirt-plugin~Unpause Virtual Machine')
+    labelKey: 'kubevirt-plugin~Unpause Virtual Machine',
     callback: () =>
       confirmModal({
-        title,
-        message: getActionMessage(vmi, VMIActionType.Unpause),
-        btnText: _.capitalize(VMIActionType.Unpause),
+        // t('kubevirt-plugin~Unpause Virtual Machine')
+        titleKey: 'kubevirt-plugin~Unpause Virtual Machine',
+        // t('kubevirt-plugin~unpause')
+        message: <ActionMessage obj={vmi} actionKey="kubevirt-plugin~unpause" />,
+        // t('kubevirt-plugin~Unpause')
+        btnTextKey: 'kubevirt-plugin~Unpause',
         executeFn: () => unpauseVMI(vmi),
       }),
   };
@@ -190,23 +222,30 @@ const menuActionMigrate = (
   vm: VMKind,
   { vmStatusBundle, vmi }: ActionArgs,
 ): KebabOption => {
-  const title = 'Migrate Virtual Machine';
+  const MigrateMessage: React.FC = () => {
+    const name = getName(vmi);
+    return (
+      <Trans ns="kubevirt-plugin">
+        Do you wish to migrate <strong>{name}</strong> vmi to another node?
+      </Trans>
+    );
+  };
+
   return {
     hidden:
       vmStatusBundle?.status?.isImporting() ||
       vmStatusBundle?.status?.isMigrating() ||
       !isVMExpectedRunning(vm) ||
       !isVMCreated(vm),
-    label: title,
+    // t('kubevirt-plugin~Migrate Virtual Machine')
+    labelKey: 'kubevirt-plugin~Migrate Virtual Machine',
     callback: () =>
       confirmModal({
-        title,
-        message: (
-          <>
-            Do you wish to migrate <strong>{getName(vmi)}</strong> vmi to another node?
-          </>
-        ),
-        btnText: 'Migrate',
+        // t('kubevirt-plugin~Migrate Virtual Machine')
+        titleKey: 'kubevirt-plugin~Migrate Virtual Machine',
+        message: <MigrateMessage />,
+        // t('kubevirt-plugin~Migrate')
+        btnTextKey: 'kubevirt-plugin~Migrate',
         executeFn: () => startVMIMigration(vmi),
       }),
   };
@@ -217,21 +256,29 @@ const menuActionCancelMigration = (
   vm: VMKind,
   { vmStatusBundle }: ActionArgs,
 ): KebabOption => {
-  const title = 'Cancel Virtual Machine Migration';
   const migration = vmStatusBundle?.migration;
+  const CancelMigrationMessage: React.FC = () => {
+    const name = getMigrationVMIName(migration);
+    const namespace = getNamespace(migration);
+    return (
+      <Trans ns="kubevirt-plugin">
+        Are you sure you want to cancel <strong>{name}</strong> migration in{' '}
+        <strong>{namespace}</strong> namespace?
+      </Trans>
+    );
+  };
+
   return {
     hidden: !vmStatusBundle?.status?.isMigrating(),
-    label: title,
+    // t('kubevirt-plugin~Cancel Virtual Machine Migration')
+    labelKey: 'kubevirt-plugin~Cancel Virtual Machine Migration',
     callback: () =>
       confirmModal({
-        title,
-        message: (
-          <>
-            Are you sure you want to cancel <strong>{getMigrationVMIName(migration)}</strong>{' '}
-            migration in <strong>{getNamespace(migration)}</strong> namespace?
-          </>
-        ),
-        btnText: 'Cancel Migration',
+        // t('kubevirt-plugin~Cancel Virtual Machine Migration')
+        titleKey: 'kubevirt-plugin~Cancel Virtual Machine Migration',
+        message: <CancelMigrationMessage />,
+        // t('kubevirt-plugin~Cancel Migration')
+        btnTextKey: 'kubevirt-plugin~Cancel Migration',
         executeFn: () => cancelMigration(migration),
       }),
     accessReview:
@@ -246,14 +293,16 @@ const menuActionClone = (
 ): KebabOption => {
   return {
     hidden: vmStatusBundle?.status?.isImporting(),
-    label: 'Clone Virtual Machine',
+    // t('kubevirt-plugin~Clone Virtual Machine')
+    labelKey: 'kubevirt-plugin~Clone Virtual Machine',
     callback: () => cloneVMModal({ vm }),
     accessReview: asAccessReview(kindObj, vm, 'patch'),
   };
 };
 
 export const menuActionDeleteVM = (kindObj: K8sKind, vm: VMKind, vmi: VMIKind): KebabOption => ({
-  label: `Delete ${kindObj.label}`,
+  // t('kubevirt-plugin~Delete Virtual Machine')
+  labelKey: 'kubevirt-plugin~Delete Virtual Machine',
   callback: () =>
     deleteVMModal({
       vm,
@@ -278,7 +327,8 @@ export const menuActionDeleteVMorCancelImport = (
 };
 
 export const menuActionDeleteVMI = (kindObj: K8sKind, vmi: VMIKind): KebabOption => ({
-  label: `Delete ${kindObj.label}`,
+  // t('kubevirt-plugin~Delete Virtual Machine Instance')
+  labelKey: 'kubevirt-plugin~Delete Virtual Machine Instance',
   callback: () =>
     deleteVMIModal({
       vmi,
@@ -286,22 +336,29 @@ export const menuActionDeleteVMI = (kindObj: K8sKind, vmi: VMIKind): KebabOption
   accessReview: asAccessReview(kindObj, vmi, 'delete'),
 });
 
-export const menuActionOpenConsole = (kindObj: K8sKind, vmi: VMIKind): KebabOption => ({
-  label: (
-    <>
-      Open Console
-      <span className="kubevirt-menu-actions__ext-link-icon">
-        <ExternalLinkAltIcon />
-      </span>
-    </>
-  ),
-  callback: () =>
-    window.open(
-      `/k8s/ns/${getNamespace(vmi)}/virtualmachineinstances/${getName(vmi)}/standaloneconsole`,
-      `${getName(vmi)}-console}`,
-      'modal=yes,alwaysRaised=yes,location=yes,width=1024,height=768',
-    ),
-});
+export const menuActionOpenConsole = (kindObj: K8sKind, vmi: VMIKind): KebabOption => {
+  const OpenConsoleLabel: React.FC = () => {
+    const { t } = useTranslation();
+    return (
+      <>
+        {t('kubevirt-plugin~Open Console')}
+        <span className="kubevirt-menu-actions__ext-link-icon">
+          <ExternalLinkAltIcon />
+        </span>
+      </>
+    );
+  };
+
+  return {
+    label: <OpenConsoleLabel />,
+    callback: () =>
+      window.open(
+        `/k8s/ns/${getNamespace(vmi)}/virtualmachineinstances/${getName(vmi)}/standaloneconsole`,
+        `${getName(vmi)}-console}`,
+        'modal=yes,alwaysRaised=yes,location=yes,width=1024,height=768',
+      ),
+  };
+};
 
 export const vmMenuActions = [
   menuActionStart,

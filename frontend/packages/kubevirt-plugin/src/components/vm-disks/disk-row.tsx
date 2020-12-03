@@ -32,7 +32,8 @@ const menuActionEdit = (
   vmLikeEntity: VMLikeEntityKind,
   { withProgress, templateValidations }: VMStorageRowActionOpts,
 ): KebabOption => ({
-  label: 'Edit',
+  // t('kubevirt-plugin~Edit')
+  labelKey: 'kubevirt-plugin~Edit',
   callback: () =>
     withProgress(
       diskModalEnhanced({
@@ -57,7 +58,8 @@ const menuActionDelete = (
   vmLikeEntity: VMLikeEntityKind,
   { withProgress }: VMNicRowActionOpts,
 ): KebabOption => ({
-  label: 'Delete',
+  // t('kubevirt-plugin~Delete')
+  labelKey: 'kubevirt-plugin~Delete',
   callback: () =>
     withProgress(
       deleteDiskModal({

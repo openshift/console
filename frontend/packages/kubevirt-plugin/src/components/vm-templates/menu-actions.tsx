@@ -1,9 +1,9 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Stack, StackItem } from '@patternfly/react-core';
 import { getNamespace } from '@console/shared';
 import { K8sKind, TemplateKind } from '@console/internal/module/k8s';
 import { asAccessReview, Kebab, KebabOption } from '@console/internal/components/utils';
-
 import { VMWizardName, VMWizardMode } from '../../constants/vm';
 import { VirtualMachineModel } from '../../models';
 import { getVMWizardCreateLink } from '../../utils/url';
@@ -29,7 +29,8 @@ type CustomData = {
 type MenuAction = (kind: K8sKind, vmTemplate: TemplateItem, customData?: CustomData) => KebabOption;
 
 const newTemplateFromCommon: MenuAction = (kind, vmTemplate, { namespace }) => ({
-  label: `Create new Template from`,
+  // t('kubevirt-plugin~Create new Template from')
+  labelKey: 'kubevirt-plugin~Create new Template from',
   href: getVMWizardCreateLink({
     namespace: namespace || vmTemplate.variants[0].metadata.namespace,
     wizardName: VMWizardName.WIZARD,
@@ -43,7 +44,8 @@ const vmTemplateCreateVMAction: MenuAction = (
   obj,
   { withSupportModal, sourceStatus, sourceLoaded, sourceLoadError, withCreate },
 ) => ({
-  label: `Create Virtual Machine`,
+  // t('kubevirt-plugin~Create Virtual Machine')
+  label: 'kubevirt-plugin~Create Virtual Machine',
   callback: () => withSupportModal(obj, () => createVMAction(obj, sourceStatus)),
   accessReview: asAccessReview(
     VirtualMachineModel,
@@ -54,18 +56,34 @@ const vmTemplateCreateVMAction: MenuAction = (
   hidden: !withCreate,
 });
 
+const MenuActionDeleteVMTemplateLabelDisabled: React.FC = () => {
+  const { t } = useTranslation();
+  return (
+    <Stack>
+      <StackItem className="text-secondary">{t('kubevirt-plugin~Delete Template')}</StackItem>
+      <StackItem className="text-secondary kv-menu-description">
+        {t('kubevirt-plugin~Red Hat templates cannot be deleted')}
+      </StackItem>
+    </Stack>
+  );
+};
+
+const MenuActionDeleteVMTemplateLabel: React.FC = () => {
+  const { t } = useTranslation();
+  return (
+    <Stack>
+      <StackItem>{t('kubevirt-plugin~Delete Template')}</StackItem>
+    </Stack>
+  );
+};
+
 export const menuActionDeleteVMTemplate: MenuAction = (kindObj, vmTemplate) => {
   const isDisabled = vmTemplate.isCommon;
   return {
-    label: (
-      <Stack>
-        <StackItem className={isDisabled ? 'text-secondary' : undefined}>Delete Template</StackItem>
-        {isDisabled && (
-          <StackItem className="text-secondary kv-menu-description">
-            Red Hat templates cannot be deleted
-          </StackItem>
-        )}
-      </Stack>
+    label: isDisabled ? (
+      <MenuActionDeleteVMTemplateLabelDisabled />
+    ) : (
+      <MenuActionDeleteVMTemplateLabel />
     ),
     isDisabled,
     callback: () =>
@@ -78,13 +96,18 @@ export const menuActionDeleteVMTemplate: MenuAction = (kindObj, vmTemplate) => {
   };
 };
 
-const pinTemplate: MenuAction = (kindObj, vmTemplate, { togglePin, pinned }) => ({
-  label: (
+const PinTemplateLabel: React.FC<{ pinned: boolean }> = ({ pinned }) => {
+  const { t } = useTranslation();
+  return (
     <>
-      {pinned ? 'Unpin template' : 'Pin template'}
+      {pinned ? t('kubevirt-plugin~Unpin template') : t('kubevirt-plugin~Pin template')}
       <PinnedIcon />
     </>
-  ),
+  );
+};
+
+const pinTemplate: MenuAction = (kindObj, vmTemplate, { togglePin, pinned }) => ({
+  label: <PinTemplateLabel pinned={pinned} />,
   callback: () => togglePin(vmTemplate),
 });
 
