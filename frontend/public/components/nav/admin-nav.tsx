@@ -3,10 +3,9 @@ import { connect } from 'react-redux';
 import { NavItemSeparator } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
-import { FLAGS } from '@console/shared';
+import { FLAGS, useActiveNamespace } from '@console/shared';
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils';
 import { featureReducerName } from '../../reducers/features';
-import { LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY } from '@console/shared/src/constants';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
 
 import {
@@ -99,7 +98,7 @@ const MonitoringNavSection_ = ({ canAccess }) => {
 const MonitoringNavSection = connect(monitoringNavSectionStateToProps)(MonitoringNavSection_);
 
 const AdminNav = () => {
-  const lastNamespace = localStorage.getItem(LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY);
+  const lastNamespace = useActiveNamespace()[0];
   // In OpenShift, machines are created in the openshift-machine-api namespace.
   // Switch to that namespace so the list isn't empty.
   // If "all projects" was last selected, however, use "all projects" instead.
