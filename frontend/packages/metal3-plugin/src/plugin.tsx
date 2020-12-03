@@ -16,6 +16,7 @@ import {
   CustomFeatureFlag,
   ResourceTabPage,
 } from '@console/plugin-sdk';
+import '@console/internal/i18n.js';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { MachineModel, NodeModel, CertificateSigningRequestModel } from '@console/internal/models';
 // TODO(jtomasek): change this to '@console/shared/src/utils' once @console/shared/src/utils modules
@@ -95,7 +96,8 @@ const plugin: Plugin<ConsumedExtensions> = [
       id: 'baremetal',
       section: 'compute',
       componentProps: {
-        name: 'Bare Metal Hosts',
+        // t('metal3-plugin~Bare Metal Hosts')
+        name: '%metal3-plugin~Bare Metal Hosts%',
         href: formatNamespacedRouteForResource(
           referenceForModel(BareMetalHostModel),
           'openshift-machine-api',
@@ -316,7 +318,8 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       href: 'nics',
       model: NodeModel,
-      name: 'Network Interfaces',
+      // t('metal3-plugin~Network Interfaces')
+      name: '%metal3-plugin~Network Interfaces%',
       loader: () =>
         import('./components/baremetal-nodes/NICsPage').then(
           (m) => m.default,
@@ -331,7 +334,8 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       href: 'disks',
       model: NodeModel,
-      name: 'Disks',
+      // t('metal3-plugin~Disks')
+      name: '%metal3-plugin~Disks%',
       loader: () =>
         import('./components/baremetal-nodes/DisksPage').then(
           (m) => m.default,
