@@ -1,4 +1,8 @@
 .ocs-install-kms {
+  &__heading {
+    margin-left: var(--pf-global--spacer--md);
+  }
+
   &__form-url {
     display: inline-flex;
     width: 100%;
@@ -10,5 +14,10 @@
 
   &__form-port {
     width: 30%;
+  }
+
+  &__save-button {
+    margin-left: var(--pf-global--spacer--md);
+    margin-bottom: var(--pf-global--spacer--md);
   }
 }

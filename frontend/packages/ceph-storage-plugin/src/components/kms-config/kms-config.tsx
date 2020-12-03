@@ -1,6 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
+
+import * as classNames from 'classnames';
 import {
   FormGroup,
   TextInput,
@@ -22,10 +24,11 @@ import { KMSProviders } from '../../constants/ocs-install';
 import { KMSConfig } from '../ocs-install/types';
 import { State, Action } from '../ocs-install/attached-devices/create-sc/state';
 import { setEncryptionDispatch, parseURL } from './utils';
+import { StorageClassState, StorageClassClusterAction } from '../../utils/storage-pool';
 
 import './kms-config.scss';
 
-export const KMSConfigure: React.FC<KMSConfigureProps> = ({ state, dispatch, mode }) => {
+export const KMSConfigure: React.FC<KMSConfigureProps> = ({ state, dispatch, mode, className }) => {
   const { t } = useTranslation();
   const { kms } = state;
   const [kmsProvider, setKMSProvider] = React.useState<string>(KMSProviders[0].name);
@@ -87,10 +90,11 @@ export const KMSConfigure: React.FC<KMSConfigureProps> = ({ state, dispatch, mod
 
   return (
     <div className="co-m-pane__form">
+      {!mode && <h3 className="ocs-install-kms__heading">Connect to a Key Management Service</h3>}
       <FormGroup
         fieldId="kms-provider"
         label={t('ceph-storage-plugin~Key Management Service Provider')}
-        className="ocs-install-encryption__form-body"
+        className={`${className}__form-body`}
       >
         <FormSelect
           value={kmsProvider}
@@ -108,7 +112,7 @@ export const KMSConfigure: React.FC<KMSConfigureProps> = ({ state, dispatch, mod
       <FormGroup
         fieldId="kms-service-name"
         label={t('ceph-storage-plugin~Service Name')}
-        className="ocs-install-encryption__form-body"
+        className={`${className}__form-body`}
         helperTextInvalid="This is a required field"
         validated={isValid(kms.name.valid)}
         isRequired
@@ -127,7 +131,7 @@ export const KMSConfigure: React.FC<KMSConfigureProps> = ({ state, dispatch, mod
         <FormGroup
           fieldId="kms-address"
           label={t('ceph-storage-plugin~Address')}
-          className="ocs-install-kms__form-address ocs-install-encryption__form-body"
+          className={classNames('ocs-install-kms__form-address', `${className}__form-body`)}
           helperTextInvalid={validateAddressMessage()}
           validated={isValid(kms.address.valid)}
           isRequired
@@ -146,7 +150,10 @@ export const KMSConfigure: React.FC<KMSConfigureProps> = ({ state, dispatch, mod
         <FormGroup
           fieldId="kms-address-port"
           label={t('ceph-storage-plugin~Port')}
-          className="ocs-install-kms__form-port ocs-install-encryption__form-body--small-padding"
+          className={classNames(
+            'ocs-install-kms__form-port',
+            `${className}__form-body--small-padding`,
+          )}
           helperTextInvalid={validatePortMessage()}
           validated={isValid(kms.port.valid)}
           isRequired
@@ -162,29 +169,27 @@ export const KMSConfigure: React.FC<KMSConfigureProps> = ({ state, dispatch, mod
           />
         </FormGroup>
       </div>
-      <FormGroup
-        fieldId="kms-token"
-        label={t('ceph-storage-plugin~Token')}
-        className="ocs-install-encryption__form-body"
-        helperTextInvalid={t('ceph-storage-plugin~This is a required field')}
-        validated={isValid(kms.token.valid)}
-        isRequired
-      >
-        <TextInput
-          value={kms.token.value}
-          onChange={setToken}
-          type="password"
-          id="kms-token"
-          name="kms-token"
-          isRequired
+      {mode && (
+        <FormGroup
+          fieldId="kms-token"
+          label={t('ceph-storage-plugin~Token')}
+          className={`${className}__form-body`}
+          helperTextInvalid={t('ceph-storage-plugin~This is a required field')}
           validated={isValid(kms.token.valid)}
-        />
-      </FormGroup>
-      <Button
-        variant="link"
-        className="ocs-install-encryption__form-body"
-        onClick={openAdvancedModal}
-      >
+          isRequired
+        >
+          <TextInput
+            value={kms.token.value}
+            onChange={setToken}
+            type="password"
+            id="kms-token"
+            name="kms-token"
+            isRequired
+            validated={isValid(kms.token.valid)}
+          />
+        </FormGroup>
+      )}
+      <Button variant="link" className={`${className}__form-body`} onClick={openAdvancedModal}>
         {t('ceph-storage-plugin~Advanced Settings')}{' '}
         {(kms.backend ||
           kms.caCert ||
@@ -200,7 +205,8 @@ export const KMSConfigure: React.FC<KMSConfigureProps> = ({ state, dispatch, mod
 };
 
 type KMSConfigureProps = {
-  state: InternalClusterState | State;
-  dispatch: React.Dispatch<Action | InternalClusterAction>;
+  state: InternalClusterState | State | StorageClassState;
+  dispatch: React.Dispatch<Action | InternalClusterAction | StorageClassClusterAction>;
   mode?: string;
+  className: string;
 };

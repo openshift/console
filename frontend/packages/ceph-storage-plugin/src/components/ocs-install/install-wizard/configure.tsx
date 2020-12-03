@@ -169,9 +169,14 @@ export const EncryptionFormGroup: React.FC<EncryptionFormGroupProps> = ({
             />
           </FormGroup>
           {(encryption.advanced || encryption.storageClass) && (
-            <KMSConfigure state={state} dispatch={dispatch} mode={mode} />
+            <KMSConfigure
+              state={state}
+              dispatch={dispatch}
+              mode={mode}
+              className="ocs-install-encryption"
+            />
           )}
-          {encryption.hasHandled && <ValidationMessage validation={ValidationType.ENCRYPTION} />}
+          {!encryption.hasHandled && <ValidationMessage validation={ValidationType.ENCRYPTION} />}
         </div>
       )}
     </FormGroup>

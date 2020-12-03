@@ -52,7 +52,7 @@ export type KMSConfig = {
     value: string;
     valid: boolean;
   };
-  token: {
+  token?: {
     value: string;
     valid: boolean;
   };
@@ -82,11 +82,16 @@ export enum NetworkType {
 }
 export type KMSConfigMap = {
   KMS_PROVIDER: string;
+  KMS_SERVICE_NAME: string;
   VAULT_ADDR: string; // address + port
   VAULT_BACKEND_PATH: string;
   VAULT_CACERT: string;
+  VAULT_CACERT_FILE?: string;
   VAULT_TLS_SERVER_NAME: string;
   VAULT_CLIENT_CERT: string;
+  VAULT_CLIENT_CERT_FILE?: string;
   VAULT_CLIENT_KEY: string;
+  VAULT_CLIENT_KEY_FILE?: string;
   VAULT_NAMESPACE: string;
+  VAULT_TOKEN_NAME?: string;
 };

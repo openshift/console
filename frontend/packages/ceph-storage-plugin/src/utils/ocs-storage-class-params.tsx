@@ -1,5 +1,9 @@
 import { ExtensionSCProvisionerProp } from '@console/plugin-sdk';
-import { PoolResourceComponent } from '../components/ocs-storage-class-form/ocs-storage-class-form';
+import {
+  PoolResourceComponent,
+  StorageClassEncryption,
+  StorageClassEncryptionKMSID,
+} from '../components/ocs-storage-class-form/ocs-storage-class-form';
 import { CEPH_STORAGE_NAMESPACE } from '../constants';
 
 export const StorageClassFormProvisoners: ExtensionSCProvisionerProp = Object.freeze({
@@ -74,6 +78,16 @@ export const StorageClassFormProvisoners: ExtensionSCProvisionerProp = Object.fr
           hintText: 'The namespace where provisioner secret is created',
           value: CEPH_STORAGE_NAMESPACE,
           visible: () => false,
+        },
+        encrypted: {
+          name: 'Enable Encryption',
+          hintText: 'The namespace where provisioner secret is created',
+          Component: StorageClassEncryption,
+        },
+        encryptionKMSID: {
+          name: 'Encryption ID',
+          hintText: 'A unique ID matching KMS ConfigMap',
+          Component: StorageClassEncryptionKMSID,
         },
       },
     },

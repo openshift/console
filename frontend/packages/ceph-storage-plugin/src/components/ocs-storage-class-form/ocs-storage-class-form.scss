@@ -1,3 +1,36 @@
 .ocs-storageClass__input {
-    margin-bottom: var(--pf-global--spacer--md);
+  margin-bottom: var(--pf-global--spacer--md);
+}
+
+.ocs-storageClass-encryption {
+  &__form-body {
+    padding: var(--pf-global--spacer--md) !important;
+  }
+
+  &__form-body--small-padding {
+    padding: var(--pf-global--spacer--md) var(--pf-global--spacer--md) var(--pf-global--spacer--md) 0 !important;
+  }
+
+  &__card {
+    padding: var(--pf-global--spacer--md) !important; // To override patternfly card class
+    margin: var(--pf-global--spacer--md) !important; // To override patternfly card class
+  }
+
+  &__pv-title {
+    display: inline-block;
+
+    &--padding {
+      padding: var(--pf-global--spacer--sm) var(--pf-global--spacer--sm) var(--pf-global--spacer--sm) 0;
+    }
+  }
+
+  &__details {
+    list-style: none !important; // To override patternfly content class
+    padding: 0 !important; // To override patternfly content class
+    margin: var(--pf-global--spacer--md) 0 !important; // To override patternfly content class
+  }
+
+  &__help-block {
+      display: inline !important; //To override bootstrap help-block
+  }
 }
