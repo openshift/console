@@ -892,6 +892,19 @@ export const InfrastructureModel: K8sKind = {
   crd: true,
 };
 
+export const ConsoleModel: K8sKind = {
+  label: 'Console',
+  labelPlural: 'Consoles',
+  apiVersion: 'v1',
+  apiGroup: 'operator.openshift.io',
+  plural: 'consoles',
+  abbr: 'C',
+  namespaced: false,
+  kind: 'Console',
+  id: 'console',
+  crd: true,
+};
+
 export const ConsoleLinkModel: K8sKind = {
   label: 'Console Link',
   labelPlural: 'Console Links',

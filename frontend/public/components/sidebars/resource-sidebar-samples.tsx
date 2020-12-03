@@ -70,24 +70,32 @@ const PreviewYAML = ({ maxPreviewLines = 20, yaml }) => {
   );
 };
 
-const ResourceSidebarSnippet: React.FC<any> = ({ snippet, insertSnippetYaml }) => {
+interface ResourceSidebarSnippetProps {
+  snippet: Sample;
+  insertSnippetYaml(id: string, yaml: string, reference: string);
+}
+
+const ResourceSidebarSnippet: React.FC<ResourceSidebarSnippetProps> = ({
+  snippet,
+  insertSnippetYaml,
+}) => {
   const [yamlPreviewOpen, setYamlPreviewOpen] = React.useState(false);
   const toggleYamlPreview = () => setYamlPreviewOpen(!yamlPreviewOpen);
 
-  const { highlightText, title, id, yaml, targetResource, description } = snippet;
-  const reference = referenceFor(targetResource);
+  const { highlightText, title, id, yaml, lazyYaml, targetResource, description } = snippet;
+
+  const insertSnippet = () => {
+    const reference = referenceFor(targetResource);
+    insertSnippetYaml(id, typeof lazyYaml === 'function' ? lazyYaml() : yaml, reference);
+  };
+
   return (
     <li className="co-resource-sidebar-item">
       <h3 className="h4">
         <span className="text-uppercase">{highlightText}</span> {title}
       </h3>
       <p>{description}</p>
-      <Button
-        type="button"
-        variant="link"
-        isInline
-        onClick={() => insertSnippetYaml(id, yaml, reference)}
-      >
+      <Button type="button" variant="link" isInline onClick={insertSnippet}>
         <PasteIcon className="co-icon-space-r" />
         Insert Snippet
       </Button>
@@ -110,12 +118,20 @@ const ResourceSidebarSnippet: React.FC<any> = ({ snippet, insertSnippetYaml }) =
           </>
         )}
       </Button>
-      {yamlPreviewOpen && <PreviewYAML yaml={yaml} />}
+      {yamlPreviewOpen && <PreviewYAML yaml={typeof lazyYaml === 'function' ? lazyYaml() : yaml} />}
     </li>
   );
 };
 
-export const ResourceSidebarSnippets = ({ snippets, insertSnippetYaml }) => {
+interface ResourceSidebarSnippetsProps {
+  snippets: Sample[];
+  insertSnippetYaml(id: string, yaml: string, reference: string);
+}
+
+export const ResourceSidebarSnippets: React.FC<ResourceSidebarSnippetsProps> = ({
+  snippets,
+  insertSnippetYaml,
+}) => {
   return (
     <ul className="co-resource-sidebar-list" style={{ listStyle: 'none', paddingLeft: 0 }}>
       {_.map(snippets, (snippet) => (
