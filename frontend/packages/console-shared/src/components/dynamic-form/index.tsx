@@ -50,7 +50,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
         className="co-alert co-break-word"
         variant="info"
         title={t(
-          'console-shared~A form is not available for this resource. Please use the YAML View.',
+          'console-shared~A form is not available for this resource. Please use the YAML view.',
         )}
       />
     );

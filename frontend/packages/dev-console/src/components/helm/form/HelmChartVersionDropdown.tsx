@@ -50,7 +50,7 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
     newVersion: string,
   ) => {
     confirmModal({
-      title: t('devconsole~Change Chart Version?'),
+      title: t('devconsole~Change chart version?'),
       message: (
         <>
           <p>
@@ -155,7 +155,7 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
 
   const helpText =
     helmAction === HelmActionType.Install
-      ? t('devconsole~Select the Chart Version.')
+      ? t('devconsole~Select the chart version.')
       : t('devconsole~Select the version to upgrade to.');
 
   const title =
@@ -168,7 +168,7 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
     <GridItem span={6}>
       <DropdownField
         name="chartVersion"
-        label={t('devconsole~Chart Version')}
+        label={t('devconsole~Chart version')}
         items={helmChartVersions}
         helpText={helpText}
         disabled={_.isEmpty(helmChartVersions) || _.keys(helmChartVersions).length === 1}

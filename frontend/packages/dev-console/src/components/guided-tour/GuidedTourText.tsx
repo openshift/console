@@ -48,7 +48,7 @@ export const SearchTourText: React.FC = () => {
     <>
       <p>
         {t(
-          'devconsole~Search for resources in your project by simply starting to type or scrolling through a list of existing resources.',
+          'devconsole~Search for resources in your Project by simply starting to type or scrolling through a list of existing resources.',
         )}
       </p>
       <p>

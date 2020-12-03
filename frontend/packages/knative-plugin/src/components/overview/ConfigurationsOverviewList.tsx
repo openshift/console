@@ -18,7 +18,7 @@ const ConfigurationsOverviewList: React.FC<ConfigurationsOverviewListProps> = ({
       <SidebarSectionHeading text={t('knative-plugin~Configurations')} />
       {_.isEmpty(configurations) ? (
         <span className="text-muted">
-          {t('knative-plugin~No Configurations found for this resource.')}
+          {t('knative-plugin~No configurations found for this resource.')}
         </span>
       ) : (
         <ul className="list-group">

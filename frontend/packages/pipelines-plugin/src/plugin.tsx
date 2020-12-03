@@ -469,9 +469,9 @@ const plugin: Plugin<ConsumedExtensions> = [
       id: 'pipeline',
       url: `/k8s/ns/:namespace/${referenceForModel(PipelineModel)}/~new/builder`,
       label: 'Pipeline',
-      // t('pipelines-plugin~Create a Tekton Pipeline to automate delivery of your application')
+      // t('pipelines-plugin~Create a Tekton Pipeline to automate delivery of your Application')
       description:
-        '%pipelines-plugin~Create a Tekton Pipeline to automate delivery of your application~',
+        '%pipelines-plugin~Create a Tekton Pipeline to automate delivery of your Application~',
       icon: pipelineIcon,
       accessReview: [
         {

@@ -104,7 +104,7 @@ export const ConnectedTopologyHelmReleasePanel: React.FC<TopologyHelmReleasePane
         tabs={[
           { name: t('topology~Details'), component: detailsComponent },
           { name: t('topology~Resources'), component: resourcesComponent },
-          { name: t('topology~Release Notes'), component: releaseNotesComponent },
+          { name: t('topology~Release notes'), component: releaseNotesComponent },
         ]}
         tabProps={{ obj: secret }}
         additionalClassNames="co-m-horizontal-nav__menu--within-sidebar co-m-horizontal-nav__menu--within-overview-sidebar"

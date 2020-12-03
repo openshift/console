@@ -146,7 +146,7 @@ const CatalogView: React.FC<CatalogViewProps> = ({
   }, []);
 
   const catalogCategories = React.useMemo(() => {
-    const allCategory = { id: DEFAULT_CATEGORY, label: t('devconsole~All Items') };
+    const allCategory = { id: DEFAULT_CATEGORY, label: t('devconsole~All items') };
     const otherCategory = { id: OTHER_CATEGORY, label: t('devconsole~Other') };
 
     return {

@@ -43,7 +43,7 @@ describe('TopologyHelmReleasePanel', () => {
     const component = mount(
       <ConnectedTopologyHelmReleasePanel
         helmRelease={mockHelmReleaseNode}
-        selectedDetailsTab="topology~Release Notes"
+        selectedDetailsTab="topology~Release notes"
       />,
     );
     // Status box displayed because there is no mock secret

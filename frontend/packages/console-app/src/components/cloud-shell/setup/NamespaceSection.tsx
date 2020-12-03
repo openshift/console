@@ -68,7 +68,7 @@ const NamespaceSection: React.FC<NamespaceSectionProps> = ({ flags }) => {
         }
         onLoad={handleOnLoad}
         helpText={t(
-          'cloudshell~This project will be used to initialize your command line terminal',
+          'cloudshell~This Project will be used to initialize your command line terminal',
         )}
       />
       {namespace.value === CREATE_NAMESPACE_KEY && (
@@ -76,7 +76,7 @@ const NamespaceSection: React.FC<NamespaceSectionProps> = ({ flags }) => {
           type={TextInputTypes.text}
           required
           name="newNamespace"
-          label={t('cloudshell~Project Name')}
+          label={t('cloudshell~Project name')}
         />
       )}
     </>

@@ -34,21 +34,21 @@ const KafkaSourceSection: React.FC<KafkaSourceSectionProps> = ({ title, fullWidt
           }))
         : [
             {
-              value: t('knative-plugin~No Bootstrap Servers found'),
+              value: t('knative-plugin~No bootstrap servers found'),
               disabled: true,
             },
           ];
-      placeholder = t('knative-plugin~Add Bootstrap Servers');
+      placeholder = t('knative-plugin~Add bootstrap servers');
     } else if (kafkas.loadError) {
       placeholder = t(
-        'knative-plugin~{{loadErrorMessage}}. Try adding Bootstrap Servers manually.',
+        'knative-plugin~{{loadErrorMessage}}. Try adding bootstrap servers manually.',
         {
           loadErrorMessage: kafkas.loadError?.message,
         },
       );
     } else {
       bootstrapServersOptions = [
-        { value: t('knative-plugin~Loading Bootstrap Servers...'), disabled: true },
+        { value: t('knative-plugin~Loading bootstrap servers...'), disabled: true },
       ];
       placeholder = '...';
     }
@@ -66,17 +66,17 @@ const KafkaSourceSection: React.FC<KafkaSourceSectionProps> = ({ title, fullWidt
           }))
         : [
             {
-              value: t('knative-plugin~No Topics found'),
+              value: t('knative-plugin~No topics found'),
               disabled: true,
             },
           ];
-      placeholder = t('knative-plugin~Add Topics');
+      placeholder = t('knative-plugin~Add topics');
     } else if (kafkatopics.loadError) {
-      placeholder = t('knative-plugin~{{kafkaTopicErrorMessage}}. Try adding Topics manually.', {
+      placeholder = t('knative-plugin~{{kafkaTopicErrorMessage}}. Try adding topics manually.', {
         kafkaTopicErrorMessage: kafkatopics.loadError.message,
       });
     } else {
-      topicsOptions = [{ value: t('knative-plugin~Loading Topics...'), disabled: true }];
+      topicsOptions = [{ value: t('knative-plugin~Loading topics...'), disabled: true }];
       placeholder = '...';
     }
     return [topicsOptions, placeholder];
@@ -87,7 +87,7 @@ const KafkaSourceSection: React.FC<KafkaSourceSectionProps> = ({ title, fullWidt
       <SelectInputField
         data-test-id="kafkasource-bootstrapservers-field"
         name={`formData.data.${EventSources.KafkaSource}.bootstrapServers`}
-        label={t('knative-plugin~Bootstrap Servers')}
+        label={t('knative-plugin~Bootstrap servers')}
         options={bootstrapServers}
         placeholderText={bsPlaceholder}
         helpText={t('knative-plugin~The address of the Kafka broker')}
@@ -110,7 +110,7 @@ const KafkaSourceSection: React.FC<KafkaSourceSectionProps> = ({ title, fullWidt
         data-test-id="kafkasource-consumergroup-field"
         type={TextInputTypes.text}
         name={`formData.data.${EventSources.KafkaSource}.consumerGroup`}
-        label={t('knative-plugin~Consumer Group')}
+        label={t('knative-plugin~Consumer group')}
         helpText={t('knative-plugin~A group that tracks maximum offset consumed')}
         required
       />

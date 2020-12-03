@@ -20,7 +20,7 @@ export const HelmReleaseResourceStatus: React.FC<HelmReleaseResourceStatusProps>
   return resource.status?.replicas ? (
     <Link
       to={`${resourcePath(kind, resource.metadata.name, resource.metadata.namespace)}/pods`}
-      title={t('devconsole~pods')}
+      title={t('devconsole~Pods')}
     >
       {resource.status.replicas || 0} of {resource.spec.replicas} pods
     </Link>

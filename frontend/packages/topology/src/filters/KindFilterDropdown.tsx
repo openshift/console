@@ -88,7 +88,7 @@ const KindFilterDropdown: React.FC<KindFilterDropdownProps> = ({
       onSelect={onSelect}
       placeholderText={
         <span>
-          {t('topology~Filter by Resource')}
+          {t('topology~Filter by resource')}
           {selectedFilterCount ? (
             <span className="odc-kind-filter-dropdown__kind-count">{selectedFilterCount}</span>
           ) : null}

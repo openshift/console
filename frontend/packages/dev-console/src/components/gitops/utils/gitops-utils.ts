@@ -33,7 +33,7 @@ export const fetchAllAppGroups = async (baseURL: string, manifestURLs: string[],
   let allAppGroups: GitOpsAppGroupData[] = null;
   if (baseURL) {
     if (_.isEmpty(manifestURLs)) {
-      emptyMsg = t('devconsole~No GitOps Manifest URLs found');
+      emptyMsg = t('devconsole~No GitOps manifest URLs found');
     } else {
       try {
         allAppGroups = _.sortBy(

@@ -25,10 +25,10 @@ const ProjectsExistWrapper: React.FC<ProjectsExistWrapperProps> = ({
       <ODCEmptyState
         title={title}
         hintBlock={
-          <HintBlock title={t('devconsole~No projects exist')}>
+          <HintBlock title={t('devconsole~No Projects exist')}>
             <p>
               {t(
-                'devconsole~Select one of the following options to create an application, component or service. As part of the creation process a project and application will be created.',
+                'devconsole~Select one of the following options to create an Application, component or service. As part of the creation process a Project and Application will be created.',
               )}
             </p>
           </HintBlock>

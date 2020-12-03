@@ -10,24 +10,24 @@ export const DEFAULT_TOPOLOGY_FILTERS = [
   {
     type: TopologyDisplayFilterType.expand,
     id: SHOW_GROUPS_FILTER_ID,
-    // t('topology~Show Groups')
-    labelKey: 'topology~Show Groups',
+    // t('topology~Show groups')
+    labelKey: 'topology~Show groups',
     priority: 1,
     value: true,
   },
   {
     type: TopologyDisplayFilterType.expand,
     id: EXPAND_GROUPS_FILTER_ID,
-    // t('topology~Expand Groups')
-    labelKey: 'topology~Expand Groups',
+    // t('topology~Expand groups')
+    labelKey: 'topology~Expand groups',
     priority: 1,
     value: true,
   },
   {
     type: TopologyDisplayFilterType.show,
     id: SHOW_POD_COUNT_FILTER_ID,
-    // t('topology~Pod Count')
-    labelKey: 'topology~Pod Count',
+    // t('topology~Pod count')
+    labelKey: 'topology~Pod count',
     priority: 10,
     value: false,
   },
@@ -42,8 +42,8 @@ export const DEFAULT_TOPOLOGY_FILTERS = [
   {
     type: TopologyDisplayFilterType.expand,
     id: EXPAND_APPLICATION_GROUPS_FILTER_ID,
-    // t('topology~Application Groupings')
-    labelKey: 'topology~Application Groupings',
+    // t('topology~Application groupings')
+    labelKey: 'topology~Application groupings',
     priority: 10,
     value: true,
   },

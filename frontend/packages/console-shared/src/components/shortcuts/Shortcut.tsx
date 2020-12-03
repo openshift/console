@@ -66,7 +66,7 @@ const Shortcut: React.FC<ShortcutProps> = ({
         )}
         {rightClick && (
           <Command>
-            <MouseIcon /> {t('console-shared~Right Click')}
+            <MouseIcon /> {t('console-shared~Right click')}
           </Command>
         )}
       </td>

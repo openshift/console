@@ -44,7 +44,7 @@ const SourceSecretSelector: React.FC = () => {
           namespace={values.project.name}
           actionItems={[
             {
-              actionTitle: t('devconsole~Create New Secret'),
+              actionTitle: t('devconsole~Create new Secret'),
               actionKey: CREATE_SOURCE_SECRET,
             },
           ]}

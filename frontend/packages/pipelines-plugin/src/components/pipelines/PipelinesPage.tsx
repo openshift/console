@@ -30,7 +30,7 @@ export const PipelinesPage: React.FC<PipelinesPageProps> = (props) => {
       title={PipelineModel.labelPlural}
       badge={getBadgeFromType(PipelineModel.badge)}
     >
-      {t('pipelines-plugin~Select a project to view the list of {{pipelinesPageTitle}}', {
+      {t('pipelines-plugin~Select a Project to view the list of {{pipelinesPageTitle}}', {
         pipelinesPageTitle: PipelineModel.labelPlural,
       })}
     </CreateProjectListPage>

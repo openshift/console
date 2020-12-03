@@ -89,8 +89,8 @@ export const HTTPRequestTypeForm: React.FC<RequestTypeFormProps> = ({ probeType 
         <NameValueEditor
           nameValuePairs={nameValue}
           valueString={t('devconsole~Value')}
-          nameString={t('devconsole~Header Name')}
-          addString={t('devconsole~Add Header')}
+          nameString={t('devconsole~Header name')}
+          addString={t('devconsole~Add header')}
           readOnly={viewOnly}
           allowSorting={false}
           updateParentData={handleNameValuePairs}
@@ -131,7 +131,7 @@ export const CommandRequestTypeForm: React.FC<RequestTypeFormProps> = ({ probeTy
       label={t('devconsole~Command')}
       addLabel={t('devconsole~Add command')}
       placeholder={t('devconsole~argument')}
-      helpText={t('devconsole~The command to run inside the container.')}
+      helpText={t('devconsole~The command to run inside the Container.')}
       required
       disableDeleteRow={commands.length === 1}
       isReadOnly={viewOnly}

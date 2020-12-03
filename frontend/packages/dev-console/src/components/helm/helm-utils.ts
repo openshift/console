@@ -188,10 +188,10 @@ export const getHelmActionConfig = (
         title: t('devconsole~Install Helm Chart'),
         subTitle: {
           form: t(
-            'devconsole~The Helm chart can be installed by completing the form. Default values may be provided by the Helm chart authors.',
+            'devconsole~The Helm Chart can be installed by completing the form. Default values may be provided by the Helm chart authors.',
           ),
           yaml: t(
-            'devconsole~The Helm chart can be installed by manually entering YAML or JSON definitions.',
+            'devconsole~The Helm Chart can be installed by manually entering YAML or JSON definitions.',
           ),
         },
         helmReleaseApi: `/api/helm/chart?url=${chartURL}`,

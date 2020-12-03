@@ -38,7 +38,7 @@ const TriggerBindingSection: React.FC = () => {
           description={t(
             'pipelines-plugin~Select your Git provider type to be associated with the Trigger',
           )}
-          label={t('pipelines-plugin~Git Provider Type')}
+          label={t('pipelines-plugin~Git Provider type')}
           onChange={updateTriggerBindingVariables}
         />
         {bindingVars && (

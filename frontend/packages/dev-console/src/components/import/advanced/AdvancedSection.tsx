@@ -29,7 +29,7 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({ values, appResources 
     setVisibleItems([...visibleItems, item]);
   };
   return (
-    <FormSection title={t('devconsole~Advanced Options')} fullWidth>
+    <FormSection title={t('devconsole~Advanced options')} fullWidth>
       <RouteCheckbox isDisabled={values.route.disable} />
       <ProgressiveList
         text={t('devconsole~Click on the names to access advanced options for')}
@@ -43,12 +43,12 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({ values, appResources 
             <RouteSection route={values.route} />
           )}
         </ProgressiveListItem>
-        <ProgressiveListItem name={t('devconsole~Health Checks')}>
-          <HealthChecks title={t('devconsole~Health Checks')} resourceType={values.resources} />
+        <ProgressiveListItem name={t('devconsole~Health checks')}>
+          <HealthChecks title={t('devconsole~Health checks')} resourceType={values.resources} />
         </ProgressiveListItem>
         {/* Hide Build for Deploy Image or when a Pipeline is added */}
         {values.isi || values.pipeline.enabled ? null : (
-          <ProgressiveListItem name={t('devconsole~Build Configuration')}>
+          <ProgressiveListItem name={t('devconsole~Build configuration')}>
             <BuildConfigSection
               namespace={values.project.name}
               resource={appResources?.buildConfig?.data}
@@ -68,7 +68,7 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({ values, appResources 
             <ScalingSection />
           )}
         </ProgressiveListItem>
-        <ProgressiveListItem name={t('devconsole~Resource Limits')}>
+        <ProgressiveListItem name={t('devconsole~Resource limits')}>
           <ResourceLimitSection />
         </ProgressiveListItem>
         <ProgressiveListItem name={t('devconsole~Labels')}>

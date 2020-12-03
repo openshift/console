@@ -62,7 +62,7 @@ const BuilderImageTagSelector: React.FC<BuilderImageTagSelectorProps> = ({
     <>
       <DropdownField
         name="image.tag"
-        label={t('devconsole~Builder Image Version')}
+        label={t('devconsole~Builder Image version')}
         items={tagItems}
         title={tagItems[selectedImageTag]}
         fullWidth

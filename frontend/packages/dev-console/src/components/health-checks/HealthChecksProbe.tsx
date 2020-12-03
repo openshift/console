@@ -71,7 +71,7 @@ const HealthCheckProbe: React.FC<HealthCheckProbeProps> = ({ probeType }) => {
           >
             <span className="odc-heath-check-probe__successText">
               <GreenCheckCircleIcon />{' '}
-              {t('devconsole~{{healthCheckProbeAdded}} Added', {
+              {t('devconsole~{{healthCheckProbeAdded}} added', {
                 healthCheckProbeAdded: getHealthChecksProbeConfig(probeType, t).formTitle,
               })}
             </span>

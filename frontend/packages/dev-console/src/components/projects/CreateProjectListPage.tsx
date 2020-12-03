@@ -35,7 +35,7 @@ const CreateProjectListPage: React.FC<CreateProjectListPageProps> = ({
     <ProjectListPage {...props} title={title}>
       {children} {t('devconsole~or')}{' '}
       <Button isInline variant="link" onClick={openProjectModal}>
-        {t('devconsole~create a project')}
+        {t('devconsole~Create a Project')}
       </Button>
     </ProjectListPage>
   );

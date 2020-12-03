@@ -104,7 +104,7 @@ describe('RevisionsOverviewList', () => {
         .find(Button)
         .at(0)
         .props().children,
-    ).toEqual(`${i18nNS}~Set Traffic Distribution`);
+    ).toEqual(`${i18nNS}~Set traffic distribution`);
     expect(
       wrapper
         .find(Button)

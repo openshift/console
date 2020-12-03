@@ -24,7 +24,7 @@ const PageContents: React.FC<HelmReleaseListPageProps> = (props) => {
     </div>
   ) : (
     <CreateProjectListPage title={t('devconsole~Helm Releases')}>
-      {t('devconsole~Select a project to view the list of Helm Releases')}
+      {t('devconsole~Select a Project to view the list of Helm Releases')}
     </CreateProjectListPage>
   );
 };

@@ -426,9 +426,9 @@ const plugin: Plugin<ConsumedExtensions> = [
       url: '/catalog?catalogType=EventSource',
       // t('knative-plugin~Event Source')
       label: '%knative-plugin~Event Source%',
-      // t('knative-plugin~Create an event source to register interest in a class of events from a particular system')
+      // t('knative-plugin~Create an Event source to register interest in a class of events from a particular system')
       description:
-        '%knative-plugin~Create an event source to register interest in a class of events from a particular system%',
+        '%knative-plugin~Create an Event source to register interest in a class of events from a particular system%',
       icon: eventSourceIcon,
     },
   },
@@ -556,7 +556,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Catalog/ItemType',
     properties: {
       type: 'EventSource',
-      // t('knative-plugin~Event sources')
+      // t('knative-plugin~Event Sources')
       title: '%knative-plugin~Event Sources%',
       // t('knative-plugin~Event sources are objects that link to an event producer and an event sink or consumer. Cluster administrators can customize the content made available in the catalog.')
       catalogDescription:

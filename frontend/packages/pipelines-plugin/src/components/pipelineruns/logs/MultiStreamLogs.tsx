@@ -105,7 +105,7 @@ export const MultiStreamLogs: React.FC<MultiStreamLogsProps> = ({
                 isInline
               >
                 <DownloadIcon className="odc-multi-stream-logs__icon" />
-                {downloadAllLabel || t('pipelines-plugin~Download All')}
+                {downloadAllLabel || t('pipelines-plugin~Download all')}
                 {downloadAllStatus && <LoadingInline />}
               </Button>
             </FlexItem>

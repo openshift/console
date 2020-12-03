@@ -39,14 +39,14 @@ const TopologyControlBar: React.FC<TopologyControlBarProps> = observer(({ visual
             fitToScreenCallback: action(() => {
               visualization.getGraph().fit(80);
             }),
-            fitToScreenTip: t('topology~Fit to Screen'),
-            fitToScreenAriaLabel: t('topology~Fit to Screen'),
+            fitToScreenTip: t('topology~Fit to screen'),
+            fitToScreenAriaLabel: t('topology~Fit to screen'),
             resetViewCallback: action(() => {
               visualization.getGraph().reset();
               visualization.getGraph().layout();
             }),
-            resetViewTip: t('topology~Reset View'),
-            resetViewAriaLabel: t('topology~Reset View'),
+            resetViewTip: t('topology~Reset view'),
+            resetViewAriaLabel: t('topology~Reset view'),
             legend: false,
           }),
         ]}

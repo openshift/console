@@ -182,7 +182,7 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample, builderImages }) =>
     }
     if (validated === ValidatedOptions.warning) {
       return t(
-        'devconsole~URL is valid but cannot be reached. If this is a private repository, enter a source secret in Advanced Git Options',
+        'devconsole~URL is valid but cannot be reached. If this is a private repository, enter a source Secret in advanced Git options',
       );
     }
     return '';
@@ -233,14 +233,14 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample, builderImages }) =>
         <>
           <DropdownField
             name="git.type"
-            label={t('devconsole~Git Type')}
+            label={t('devconsole~Git type')}
             items={GitReadableTypes}
             title={GitReadableTypes[values.git.type]}
             fullWidth
             required
           />
           {!gitTypeTouched && values.git.type === GitTypes.unsure && (
-            <Alert isInline variant="info" title={t('devconsole~Defaulting Git Type to Other')}>
+            <Alert isInline variant="info" title={t('devconsole~Defaulting Git type to other')}>
               {t('devconsole~We failed to detect the Git type.')}
             </Alert>
           )}

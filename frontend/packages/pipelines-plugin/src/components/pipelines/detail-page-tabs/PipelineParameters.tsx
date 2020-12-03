@@ -12,7 +12,7 @@ type PipelineParametersProps = {
 const PipelineParameters: React.FC<PipelineParametersProps> = (props) => {
   const { t } = useTranslation();
   const {
-    addLabel = t('pipelines-plugin~Add Pipeline Parameter'),
+    addLabel = t('pipelines-plugin~Add Pipeline parameter'),
     fieldName,
     isReadOnly = false,
   } = props;
@@ -25,7 +25,7 @@ const PipelineParameters: React.FC<PipelineParametersProps> = (props) => {
       headers={[
         t('pipelines-plugin~Name'),
         t('pipelines-plugin~Description'),
-        t('pipelines-plugin~Default Value'),
+        t('pipelines-plugin~Default value'),
       ]}
       emptyValues={{ name: '', description: '', default: '' }}
       emptyMessage={emptyMessage}
@@ -46,7 +46,7 @@ const PipelineParameters: React.FC<PipelineParametersProps> = (props) => {
       <InputField
         name="default"
         type={TextInputTypes.text}
-        placeholder={t('pipelines-plugin~Default Value')}
+        placeholder={t('pipelines-plugin~Default value')}
         isReadOnly={isReadOnly}
       />
     </MultiColumnField>

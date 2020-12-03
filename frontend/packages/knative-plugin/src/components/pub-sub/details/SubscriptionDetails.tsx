@@ -15,7 +15,7 @@ const SubscriptionDetails: React.FC<SubscriptionDetails> = ({ obj: subscription 
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={t('knative-plugin~Subscription Details')} />
+        <SectionHeading text={t('knative-plugin~Subscription details')} />
         <div className="row">
           <div className="col-sm-6">
             <ResourceSummary resource={subscription} />

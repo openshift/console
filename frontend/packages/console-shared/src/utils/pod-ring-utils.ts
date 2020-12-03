@@ -72,7 +72,7 @@ const getTitleAndSubtitle = (
     titlePhrase = isPending ? '0' : t('console-shared~Scaled to 0');
     longTitle = !isPending;
     if (desiredPodCount) {
-      subTitlePhrase = t('console-shared~scaling to {{podSubTitle}}', {
+      subTitlePhrase = t('console-shared~Scaling to {{podSubTitle}}', {
         podSubTitle: desiredPodCount,
       });
       longSubtitle = true;
@@ -85,7 +85,7 @@ const getTitleAndSubtitle = (
     if (currentPodCount === desiredPodCount) {
       subTitlePhrase = podKindString(currentPodCount);
     } else {
-      subTitlePhrase = t('console-shared~scaling to {{podSubTitle}}', {
+      subTitlePhrase = t('console-shared~Scaling to {{podSubTitle}}', {
         podSubTitle: desiredPodCount,
       });
       longSubtitle = true;
@@ -154,7 +154,7 @@ export const podRingLabel = (
       }
       if (isPending) {
         podRingLabelData.title = '0';
-        podRingLabelData.subTitle = t('console-shared~scaling to {{podSubTitle}}', {
+        podRingLabelData.subTitle = t('console-shared~Scaling to {{podSubTitle}}', {
           podSubTitle: desiredPodCount,
         });
       } else {

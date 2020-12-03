@@ -41,7 +41,7 @@ const CatalogDetailsPanel: React.FC<CatalogDetailsPanelProps> = ({ item }) => {
               )}
               {creationTimestamp && (
                 <PropertyItem
-                  label={t('devconsole~Created At')}
+                  label={t('devconsole~Created at')}
                   value={<Timestamp timestamp={creationTimestamp} />}
                 />
               )}

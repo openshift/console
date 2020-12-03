@@ -27,7 +27,7 @@ const QuickStartFooter: React.FC<QuickStartFooterProps> = ({
   const { t } = useTranslation();
 
   const PrimaryButtonText = {
-    START: t('quickstart~Start Tour'),
+    START: t('quickstart~Start tour'),
     NEXT: t('quickstart~Next'),
     CLOSE: t('quickstart~Close'),
   };

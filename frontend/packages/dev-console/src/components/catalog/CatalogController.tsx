@@ -37,7 +37,7 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
 
   const defaultTitle = t('devconsole~Developer Catalog');
   const defaultDescription = t(
-    'devconsole~Add shared applications, services, event sources, or source-to-image builders to your project from the developer catalog. Cluster administrators can customize the content made available in the catalog.',
+    'devconsole~Add shared applications, services, event sources, or source-to-image builders to your Project from the developer catalog. Cluster administrators can customize the content made available in the catalog.',
   );
 
   const typeExtension = React.useMemo(

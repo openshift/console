@@ -15,7 +15,7 @@ type ImageVulnerabilitiesTableProps = {
 const ImageVulnerabilitiesTable: React.FC<ImageVulnerabilitiesTableProps> = (props) => {
   const { t } = useTranslation();
   const EmptyMsg = () => (
-    <MsgBox title={t('container-security~No Image Vulnerabilities Found')} detail="" />
+    <MsgBox title={t('container-security~No Image vulnerabilities found')} detail="" />
   );
   const ImageVulnerabilitiesTableHeader = () => [
     {
@@ -37,13 +37,13 @@ const ImageVulnerabilitiesTable: React.FC<ImageVulnerabilitiesTableProps> = (pro
       props: { className: imageVulnerabilitiesTableColumnClasses[2] },
     },
     {
-      title: t('container-security~Current Version'),
+      title: t('container-security~Current version'),
       transforms: [sortable],
       sortField: 'feature.version',
       props: { className: imageVulnerabilitiesTableColumnClasses[3] },
     },
     {
-      title: t('container-security~Fixed in Version'),
+      title: t('container-security~Fixed in version'),
       transforms: [sortable],
       sortField: 'vulnerability.fixedby',
       props: { className: imageVulnerabilitiesTableColumnClasses[4] },

@@ -33,20 +33,20 @@ const AppSection: React.FC<AppSectionProps> = ({
             type={TextInputTypes.text}
             data-test-id="application-form-project-name"
             name={subPath ? `${subPath}.project.name` : 'project.name'}
-            label={t('devconsole~Project Name')}
-            helpText={t('devconsole~A unique name for the project.')}
+            label={t('devconsole~Project name')}
+            helpText={t('devconsole~A unique name for the Project.')}
             required
           />
           <InputField
             type={TextInputTypes.text}
             data-test-id="application-form-project-display-name"
             name={subPath ? `${subPath}.project.displayName` : 'project.displayName'}
-            label={t('devconsole~Project Display Name')}
+            label={t('devconsole~Project display name')}
           />
           <TextAreaField
             data-test-id="application-form-project-description"
             name={subPath ? `${subPath}.project.description` : 'project.description'}
-            label={t('devconsole~Project Description')}
+            label={t('devconsole~Project description')}
           />
         </>
       )}

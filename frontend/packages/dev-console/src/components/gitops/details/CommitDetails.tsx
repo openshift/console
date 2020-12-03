@@ -81,9 +81,7 @@ const CommitDetails: React.FC<CommitDetailsProps> = ({ imageName }) => {
       {commitData.id ? (
         <>
           <Timestamp timestamp={commitData.timestamp} />
-          {commitData.id}
-          {t('devconsole~ by ')}
-          {commitData.author}
+          {t('devconsole~{{id}} by {{author}}', { id: commitData.id, author: commitData.author })}
         </>
       ) : (
         <span>{t('devconsole~Commit details not available')}</span>

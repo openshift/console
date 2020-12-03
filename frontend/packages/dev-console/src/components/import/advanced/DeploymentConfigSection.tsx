@@ -31,7 +31,7 @@ const DeploymentConfigSection: React.FC<DeploymentConfigSectionProps> = ({
     <FormSection title={t('devconsole~Deployment')} fullWidth>
       <CheckboxField
         name="deployment.triggers.image"
-        label={t('devconsole~Auto deploy when new image is available')}
+        label={t('devconsole~Auto deploy when new Image is available')}
       />
       {resources === Resources.OpenShift && (
         <CheckboxField
@@ -41,7 +41,7 @@ const DeploymentConfigSection: React.FC<DeploymentConfigSectionProps> = ({
       )}
       <EnvironmentField
         name="deployment.env"
-        label={t('devconsole~Environment Variables (Runtime only)')}
+        label={t('devconsole~Environment variables (runtime only)')}
         envs={envs}
         obj={deploymentConfigObj}
         envPath={['spec', 'template', 'spec', 'containers']}

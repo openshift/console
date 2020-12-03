@@ -34,7 +34,7 @@ const SourceSecretDropdown: React.FC<SourceSecretDropdownProps> = (props) => {
     <Firehose resources={resources}>
       <ResourceDropdown
         {...props}
-        placeholder={t('devconsole~Select Secret Name')}
+        placeholder={t('devconsole~Select Secret name')}
         resourceFilter={filterData}
         dataSelector={['metadata', 'name']}
       />

@@ -14,7 +14,7 @@ const HelmReleaseResourcesList: React.FC<TableProps> = (props) => {
       defaultSortField="kind"
       Header={HelmReleaseResourcesHeader(t)}
       Row={HelmReleaseResourcesRow}
-      EmptyMsg={() => <MsgBox title={t('devconsole~No Resources Found')} />}
+      EmptyMsg={() => <MsgBox title={t('devconsole~No resources found')} />}
       virtualize
     />
   );

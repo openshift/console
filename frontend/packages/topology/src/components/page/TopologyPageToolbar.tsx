@@ -45,7 +45,7 @@ const TopologyPageToolbar: React.FC<TopologyPageToolbarProps> = observer(
         ) : null}
         <Tooltip
           position="left"
-          content={showGraphView ? t('topology~List View') : t('topology~Topology View')}
+          content={showGraphView ? t('topology~List view') : t('topology~Topology view')}
         >
           <Button
             variant="link"

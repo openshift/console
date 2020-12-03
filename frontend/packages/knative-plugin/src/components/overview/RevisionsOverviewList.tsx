@@ -69,7 +69,7 @@ const RevisionsOverviewList: React.FC<RevisionsOverviewListProps> = ({ revisions
             onClick={() => setTrafficDistributionModal({ obj: service })}
             isDisabled={!(revisions && revisions.length)}
           >
-            {t('knative-plugin~Set Traffic Distribution')}
+            {t('knative-plugin~Set traffic distribution')}
           </Button>
         )}
       </SidebarSectionHeading>

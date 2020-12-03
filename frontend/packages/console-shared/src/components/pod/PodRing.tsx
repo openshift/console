@@ -111,8 +111,8 @@ const PodRing: React.FC<PodRingProps> = ({
               <Button
                 type="button"
                 variant="plain"
-                aria-label={t('console-shared~Increase the pod count')}
-                title={t('console-shared~Increase the pod count')}
+                aria-label={t('console-shared~Increase the Pod count')}
+                title={t('console-shared~Increase the Pod count')}
                 onClick={() => handleClick(1)}
                 isBlock
               >
@@ -121,8 +121,8 @@ const PodRing: React.FC<PodRingProps> = ({
               <Button
                 type="button"
                 variant="plain"
-                aria-label={t('console-shared~Decrease the pod count')}
-                title={t('console-shared~Decrease the pod count')}
+                aria-label={t('console-shared~Decrease the Pod count')}
+                title={t('console-shared~Decrease the Pod count')}
                 onClick={() => handleClick(-1)}
                 isBlock
                 isDisabled={clickCount <= 0}

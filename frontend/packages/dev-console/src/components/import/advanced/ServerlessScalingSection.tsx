@@ -16,28 +16,28 @@ const ServerlessScalingSection: React.FC = () => {
         name="serverless.scaling.minpods"
         label={t('devconsole~Min Pods')}
         helpText={t(
-          'devconsole~The lower limit for the number of pods that can be set by autoscaler. If not specified defaults to 0.',
+          'devconsole~The lower limit for the number of Pods that can be set by autoscaler. If not specified defaults to 0.',
         )}
       />
       <NumberSpinnerField
         name="serverless.scaling.maxpods"
         label={t('devconsole~Max Pods')}
         helpText={t(
-          'devconsole~The upper limit for the number of pods that can be set by autoscaler.',
+          'devconsole~The upper limit for the number of Pods that can be set by autoscaler.',
         )}
       />
       <NumberSpinnerField
         name="serverless.scaling.concurrencytarget"
-        label={t('devconsole~Concurrency Target')}
+        label={t('devconsole~Concurrency target')}
         helpText={t(
-          'devconsole~Defines how many concurrent requests are wanted per instance of the application at a given time (soft limit) and is the recommended configuration for autoscaling. If not specified, will be defaulted to the value set in the cluster config.',
+          'devconsole~Defines how many concurrent requests are wanted per instance of the Application at a given time (soft limit) and is the recommended configuration for autoscaling. If not specified, will be defaulted to the value set in the Cluster config.',
         )}
       />
       <NumberSpinnerField
         name="serverless.scaling.concurrencylimit"
-        label={t('devconsole~Concurrency Limit')}
+        label={t('devconsole~Concurrency limit')}
         helpText={t(
-          'devconsole~Limits the amount of concurrent requests allowed into one instance of the application at a given time (hard limit), and is configured in the revision template. If not specified, will be defaulted to the value set in the cluster config.',
+          'devconsole~Limits the amount of concurrent requests allowed into one instance of the Application at a given time (hard limit), and is configured in the revision template. If not specified, will be defaulted to the value set in the Cluster config.',
         )}
       />
     </FormSection>

@@ -6,7 +6,7 @@ export const getTopologyShortcuts = (t: TFunction): React.ReactElement => (
   <ShortcutTable>
     <Shortcut drag>{t('topology~Move')}</Shortcut>
     <Shortcut shift drag>
-      {t('topology~Edit application grouping')}
+      {t('topology~Edit Application grouping')}
     </Shortcut>
     <Shortcut rightClick>{t('topology~Access context menu')}</Shortcut>
     <Shortcut click>{t('topology~View details in side panel')}</Shortcut>

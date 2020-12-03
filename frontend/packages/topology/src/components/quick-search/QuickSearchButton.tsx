@@ -12,12 +12,12 @@ const QuickSearchButton: React.FC<QuickSearchButtonProps> = ({ onClick }) => {
   const { t } = useTranslation();
 
   return (
-    <Tooltip position="right" content={t('topology~Add to project')}>
+    <Tooltip position="right" content={t('topology~Add to Project')}>
       <Button
         className="odc-quick-search-button"
         variant="plain"
         onClick={onClick}
-        aria-label={t('topology~Quick Search Button')}
+        aria-label={t('topology~Quick search button')}
       >
         <QuickSearchIcon />
       </Button>

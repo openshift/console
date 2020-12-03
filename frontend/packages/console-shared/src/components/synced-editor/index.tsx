@@ -110,9 +110,9 @@ export const SyncedEditor: React.FC<SyncedEditorProps> = ({
           isInline
           title={t('console-shared~Invalid YAML cannot be persisted')}
         >
-          <p>{t('console-shared~Switching to Form View will delete any invalid YAML.')}</p>
+          <p>{t('console-shared~Switching to form view will delete any invalid YAML.')}</p>
           <Button variant="danger" onClick={onClickYAMLWarningConfirm}>
-            {t('console-shared~Switch and Delete')}
+            {t('console-shared~Switch and delete')}
           </Button>
           &nbsp;
           <Button variant="secondary" onClick={onClickYAMLWarningCancel}>

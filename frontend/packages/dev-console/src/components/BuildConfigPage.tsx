@@ -27,7 +27,7 @@ const BuildConfigPage: React.FC<BuildConfigPageProps> = ({ noProjectsAvailable, 
         </div>
       ) : (
         <CreateProjectListPage title={t('devconsole~Build Configs')}>
-          {t('devconsole~Select a project to view the list of build configs')}
+          {t('devconsole~Select a Project to view the list of BuildConfigs')}
         </CreateProjectListPage>
       )}
     </>

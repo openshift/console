@@ -73,7 +73,7 @@ export const PageContents: React.FC<MonitoringPageProps> = ({ match }) => {
     </>
   ) : (
     <CreateProjectListPage title={t('devconsole~Monitoring')}>
-      {t('devconsole~Select a project to view monitoring metrics')}
+      {t('devconsole~Select a Project to view monitoring metrics')}
     </CreateProjectListPage>
   );
 };

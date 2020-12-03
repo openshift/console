@@ -24,7 +24,7 @@ const PipelineRunHeader = (t: TFunction) => () => {
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: t('pipelines-plugin~Task Status'),
+      title: t('pipelines-plugin~Task status'),
       sortField: 'status.conditions[0].reason',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },

@@ -77,7 +77,7 @@ const PipelineBuilderPage: React.FC<PipelineBuilderPageProps> = (props) => {
   return (
     <div className="odc-pipeline-builder-page">
       <Helmet>
-        <title>{t('pipelines-plugin~Pipeline Builder')}</title>
+        <title>{t('pipelines-plugin~Pipeline builder')}</title>
       </Helmet>
       <Formik
         initialValues={initialValues}

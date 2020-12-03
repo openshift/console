@@ -16,7 +16,7 @@ const DockerSection: React.FC<DockerSectionProps> = ({ buildStrategy }) => {
         <InputField
           type={TextInputTypes.text}
           name="docker.dockerfilePath"
-          label={t('devconsole~Dockerfile Path')}
+          label={t('devconsole~Dockerfile path')}
           helpText={t(
             'devconsole~Allows the builds to use a different path to locate your Dockerfile, relative to the Context Dir field.',
           )}
@@ -24,8 +24,8 @@ const DockerSection: React.FC<DockerSectionProps> = ({ buildStrategy }) => {
         <InputField
           type={TextInputTypes.number}
           name="docker.containerPort"
-          label={t('devconsole~Container Port')}
-          helpText={t('devconsole~Port number the container exposes.')}
+          label={t('devconsole~Container port')}
+          helpText={t('devconsole~Port number the Container exposes.')}
           style={{ maxWidth: '100%' }}
         />
       </FormSection>

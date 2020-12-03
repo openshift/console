@@ -18,7 +18,7 @@ export const MonitoringWorkloadFilter: React.FC<MonitoringWorkloadFilterProps> =
   ({ namespace, name, onChange }) => {
     const { t } = useTranslation();
     const OptionValues = {
-      [OptionTypes.selectAll]: t('devconsole~All Workloads'),
+      [OptionTypes.selectAll]: t('devconsole~All workloads'),
     };
     const selectedTaskRef = React.useRef<string>(name);
     selectedTaskRef.current = name;

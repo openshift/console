@@ -13,7 +13,7 @@ const ResourceLimitSection: React.FC = () => {
     },
   } = useFormikContext<FormikValues>();
   return (
-    <FormSection title={t('devconsole~Resource Limit')}>
+    <FormSection title={t('devconsole~Resource limit')}>
       <div className="co-section-heading-tertiary">{t('devconsole~CPU')}</div>
       <ResourceLimitField
         name="limits.cpu.request"
@@ -21,7 +21,7 @@ const ResourceLimitSection: React.FC = () => {
         unitName="limits.cpu.requestUnit"
         unitOptions={CPUUnits}
         defaultUnitSize={`${cpu.defaultRequestUnit}`}
-        helpText={t('devconsole~The minimum amount of CPU the container is guaranteed.')}
+        helpText={t('devconsole~The minimum amount of CPU the Container is guaranteed.')}
       />
 
       <ResourceLimitField
@@ -31,7 +31,7 @@ const ResourceLimitSection: React.FC = () => {
         unitOptions={CPUUnits}
         defaultUnitSize={`${cpu.defaultLimitUnit}`}
         helpText={t(
-          'devconsole~The maximum amount of CPU the container is allowed to use when running.',
+          'devconsole~The maximum amount of CPU the Container is allowed to use when running.',
         )}
       />
 
@@ -42,7 +42,7 @@ const ResourceLimitSection: React.FC = () => {
         unitName="limits.memory.requestUnit"
         unitOptions={MemoryUnits}
         defaultUnitSize={`${memory.defaultRequestUnit}`}
-        helpText={t('devconsole~The minimum amount of Memory the container is guaranteed.')}
+        helpText={t('devconsole~The minimum amount of Memory the Container is guaranteed.')}
       />
 
       <ResourceLimitField
@@ -52,7 +52,7 @@ const ResourceLimitSection: React.FC = () => {
         unitOptions={MemoryUnits}
         defaultUnitSize={`${memory.defaultLimitUnit}`}
         helpText={t(
-          'devconsole~The maximum amount of Memory the container is allowed to use when running.',
+          'devconsole~The maximum amount of Memory the Container is allowed to use when running.',
         )}
       />
     </FormSection>

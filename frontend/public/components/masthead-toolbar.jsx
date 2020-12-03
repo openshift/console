@@ -302,7 +302,7 @@ class MastheadToolbarContents_ extends React.Component {
       isSection: true,
       actions: [
         {
-          component: <Link to="/quickstart">{t('masthead~Quick starts')}</Link>,
+          component: <Link to="/quickstart">{t('masthead~Quick Starts')}</Link>,
         },
         {
           label: t('masthead~Documentation'),

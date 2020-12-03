@@ -74,7 +74,7 @@ describe('healthChecksValidationSchema', () => {
     await healthChecksValidationSchema(t)
       .validate(mockData)
       .catch((err) =>
-        expect(err.message).toEqual('Failure Threshold must be greater than or equal to 1.'),
+        expect(err.message).toEqual('Failure threshold must be greater than or equal to 1.'),
       );
   });
 
@@ -111,7 +111,7 @@ describe('healthChecksValidationSchema', () => {
     await healthChecksValidationSchema(t)
       .validate(mockData)
       .catch((err) =>
-        expect(err.message).toEqual('Success Threshold must be greater than or equal to 1.'),
+        expect(err.message).toEqual('Success threshold must be greater than or equal to 1.'),
       );
   });
 

@@ -116,7 +116,7 @@ export const ResourceRequirementsField: React.FC<FieldProps> = ({
   const { t } = useTranslation();
   return (
     <FieldSet
-      defaultLabel={name || t('console-shared~Resource Requirements')}
+      defaultLabel={name || t('console-shared~Resource requirements')}
       idSchema={idSchema}
       required={required}
       schema={schema}
@@ -169,7 +169,7 @@ export const UpdateStrategyField: React.FC<FieldProps> = ({
   const description = useSchemaDescription(schema, uiSchema, UPDATE_STRATEGY_DESCRIPTION);
   return (
     <FormField
-      defaultLabel={name || t('console-shared~Update Strategy')}
+      defaultLabel={name || t('console-shared~Update strategy')}
       id={idSchema.$id}
       required={required}
       schema={schema}
@@ -207,7 +207,7 @@ export const NodeAffinityField: React.FC<FieldProps> = ({
   const { t } = useTranslation();
   return (
     <FieldSet
-      defaultLabel={name || t('console-shared~Node Affinity')}
+      defaultLabel={name || t('console-shared~Node affinity')}
       idSchema={idSchema}
       required={required}
       schema={schema}
@@ -233,7 +233,7 @@ export const PodAffinityField: React.FC<FieldProps> = ({
   const { t } = useTranslation();
   return (
     <FieldSet
-      defaultLabel={name || t('console-shared~Pod Affinity')}
+      defaultLabel={name || t('console-shared~Pod affinity')}
       idSchema={idSchema}
       required={required}
       schema={schema}

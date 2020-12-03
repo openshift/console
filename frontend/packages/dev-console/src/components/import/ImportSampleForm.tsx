@@ -48,7 +48,7 @@ const ImportSampleForm: React.FC<Props> = ({
         <InputField
           type={TextInputTypes.text}
           name="git.url"
-          label={t('devconsole~Git Repo URL')}
+          label={t('devconsole~Git repo URL')}
           data-test-id="git-form-input-url"
           isDisabled
         />

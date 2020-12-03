@@ -22,12 +22,12 @@ export const healthChecksValidationSchema = (t: TFunction) =>
         initialDelaySeconds: yup
           .number()
           .integer(t('devconsole~Value must be an integer.'))
-          .min(0, t('devconsole~Initial Delay must be greater than or equal to 0.'))
+          .min(0, t('devconsole~Initial delay must be greater than or equal to 0.'))
           .max(MAX_INT32, t('devconsole~Value is larger than maximum value allowed.')),
         failureThreshold: yup
           .number()
           .integer(t('devconsole~Value must be an integer.'))
-          .min(1, t('devconsole~Failure Threshold must be greater than or equal to 1.')),
+          .min(1, t('devconsole~Failure threshold must be greater than or equal to 1.')),
         timeoutSeconds: yup
           .number()
           .integer(t('devconsole~Value must be an integer.'))
@@ -36,7 +36,7 @@ export const healthChecksValidationSchema = (t: TFunction) =>
         successThreshold: yup
           .number()
           .integer(t('devconsole~Value must be an integer.'))
-          .min(1, t('devconsole~Success Threshold must be greater than or equal to 1.'))
+          .min(1, t('devconsole~Success threshold must be greater than or equal to 1.'))
           .max(MAX_INT32, t('devconsole~Value is larger than maximum value allowed.')),
         requestType: yup.string(),
         httpGet: yup.object().when('requestType', {

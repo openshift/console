@@ -89,10 +89,10 @@ const HealthChecksAlert: React.FC<HealthChecksAlertProps> = ({ resource }) => {
   const alertMessage =
     _.size(containersName) > 1
       ? t(
-          'console-shared~Not all containers have health checks to ensure your application is running correctly.',
+          'console-shared~Not all Containers have health checks to ensure your Application is running correctly.',
         )
       : t(
-          'console-shared~Container {{containersName}} does not have health checks to ensure your application is running correctly.',
+          'console-shared~Container {{containersName}} does not have health checks to ensure your Application is running correctly.',
           { containersName: _.map(containersName) },
         );
 
@@ -102,12 +102,12 @@ const HealthChecksAlert: React.FC<HealthChecksAlertProps> = ({ resource }) => {
         <div className="ocs-health-checks-alert">
           <Alert
             variant="default"
-            title={t('console-shared~Health Checks')}
+            title={t('console-shared~Health checks')}
             actionClose={<AlertActionCloseButton onClose={handleAlertAction} />}
             isInline
           >
             {alertMessage}{' '}
-            <Link to={addHealthChecksLink}>{t('console-shared~Add Health Checks')}</Link>
+            <Link to={addHealthChecksLink}>{t('console-shared~Add health checks')}</Link>
           </Alert>
         </div>
       ) : null}

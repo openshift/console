@@ -92,15 +92,15 @@ const normalizeHelmCharts = (
 
         const detailsProperties = [
           {
-            label: t('devconsole~Chart Version'),
+            label: t('devconsole~Chart version'),
             value: version,
           },
           {
-            label: t('devconsole~App Version'),
+            label: t('devconsole~App version'),
             value: appVersion,
           },
           {
-            label: t('devconsole~Home Page'),
+            label: t('devconsole~Home page'),
             value: homePage,
           },
           {

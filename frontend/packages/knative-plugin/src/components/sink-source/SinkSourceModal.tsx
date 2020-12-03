@@ -34,7 +34,7 @@ const SinkSourceModal: React.FC<Props> = ({
     values?.sink?.name !== initialValues.sink.name || values?.sink?.uri !== initialValues.sink.uri;
   return (
     <form className="modal-content modal-content--no-inner-scroll" onSubmit={handleSubmit}>
-      <ModalTitle>{t('knative-plugin~Move Sink')}</ModalTitle>
+      <ModalTitle>{t('knative-plugin~Move sink')}</ModalTitle>
       <ModalBody>
         <p>
           {t('knative-plugin~Connects')} <strong>{resourceName}</strong> {t('knative-plugin~to')}

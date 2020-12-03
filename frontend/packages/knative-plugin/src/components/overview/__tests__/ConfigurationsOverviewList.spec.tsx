@@ -15,7 +15,7 @@ jest.mock('react-i18next', () => {
 describe('ConfigurationsOverviewList', () => {
   it('should render error Message when configurations array is empty', () => {
     const wrapper = shallow(<ConfigurationsOverviewList configurations={[]} />);
-    expect(wrapper.text().includes('No Configurations found for this resource.')).toBe(true);
+    expect(wrapper.text().includes('No configurations found for this resource.')).toBe(true);
   });
 
   it('should render ConfigurationsOverviewListItem', () => {

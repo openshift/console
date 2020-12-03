@@ -10,8 +10,8 @@ export const getTopologyFilters = () => {
     {
       type: TopologyDisplayFilterType.expand,
       id: EXPAND_OPERATORS_RELEASE_FILTER,
-      // t('topology~Operator Groupings')
-      labelKey: 'topology~Operator Groupings',
+      // t('topology~Operator groupings')
+      labelKey: 'topology~Operator groupings',
       priority: 500,
       value: true,
     },

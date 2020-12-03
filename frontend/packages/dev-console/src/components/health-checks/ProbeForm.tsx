@@ -42,8 +42,8 @@ const ProbeForm: React.FC<ProbeFormProps> = ({ onSubmit, onClose, probeType }) =
   const { viewOnly } = React.useContext(HealthCheckContext);
   const RequestTypeOptions = {
     httpGet: t('devconsole~HTTP GET'),
-    command: t('devconsole~Container Command'),
-    tcpSocket: t('devconsole~TCP Socket'),
+    command: t('devconsole~Container command'),
+    tcpSocket: t('devconsole~TCP socket'),
   };
   return (
     <div className="odc-heath-check-probe-form">
@@ -60,7 +60,7 @@ const ProbeForm: React.FC<ProbeFormProps> = ({ onSubmit, onClose, probeType }) =
         <InputField
           type={TextInputTypes.number}
           name={`healthChecks.${probeType}.data.failureThreshold`}
-          label={t('devconsole~Failure Threshold')}
+          label={t('devconsole~Failure threshold')}
           style={{ maxWidth: '100%' }}
           helpText={t(
             'devconsole~How many times the probe will try starting or restarting before giving up.',
@@ -70,7 +70,7 @@ const ProbeForm: React.FC<ProbeFormProps> = ({ onSubmit, onClose, probeType }) =
         <InputField
           type={TextInputTypes.number}
           name={`healthChecks.${probeType}.data.successThreshold`}
-          label={t('devconsole~Success Threshold')}
+          label={t('devconsole~Success threshold')}
           style={{ maxWidth: '100%' }}
           helpText={t(
             'devconsole~How many consecutive successes for the probe to be considered successful after having failed.',
@@ -80,9 +80,9 @@ const ProbeForm: React.FC<ProbeFormProps> = ({ onSubmit, onClose, probeType }) =
         <InputGroupField
           type={TextInputTypes.number}
           name={`healthChecks.${probeType}.data.initialDelaySeconds`}
-          label={t('devconsole~Initial Delay')}
+          label={t('devconsole~Initial delay')}
           helpText={t(
-            "devconsole~How long to wait after the container starts before checking it's health.",
+            "devconsole~How long to wait after the Container starts before checking it's health.",
           )}
           afterInput={<InputGroupText>{t('devconsole~seconds')}</InputGroupText>}
           style={{ maxWidth: '100%' }}

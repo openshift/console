@@ -70,7 +70,7 @@ describe('ValidationUtils', () => {
         .validate(mockData)
         .catch((err) => {
           expect(err.message).toBe(
-            'devconsole~We failed to detect the git type. Please choose a git type.',
+            'devconsole~We failed to detect the Git type. Please choose a Git type.',
           );
         });
     });
@@ -249,7 +249,7 @@ describe('ValidationUtils', () => {
       await validationSchema(t)
         .validate(mockData)
         .catch((err) => {
-          expect(err.message).toBe('devconsole~Container port should be an Integer');
+          expect(err.message).toBe('devconsole~Container port should be an integer');
         });
     });
 

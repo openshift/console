@@ -58,7 +58,7 @@ const SinkBindingSection: React.FC<SinkBindingSectionProps> = ({ title, fullWidt
         label={t('knative-plugin~Kind')}
         required
       />
-      <FormGroup fieldId={fieldId} label={t('knative-plugin~Match Labels')}>
+      <FormGroup fieldId={fieldId} label={t('knative-plugin~Match labels')}>
         <AsyncComponent
           loader={() =>
             import('@console/internal/components/utils/name-value-editor').then(
@@ -68,7 +68,7 @@ const SinkBindingSection: React.FC<SinkBindingSectionProps> = ({ title, fullWidt
           nameValuePairs={nameValue}
           valueString={t('knative-plugin~Value')}
           nameString={t('knative-plugin~Name')}
-          addLabel={t('knative-plugin~Add Values')}
+          addLabel={t('knative-plugin~Add values')}
           readOnly={false}
           allowSorting={false}
           updateParentData={handleNameValuePairs}

@@ -115,7 +115,7 @@ const ImageStream: React.FC = () => {
         {isNamespaceSelected && isImageStreamSelected && !isTagsAvailable && hasCreateAccess && (
           <div className="odc-imagestream-alert">
             <Alert variant="warning" title={t('devconsole~No Image streams tags found')} isInline>
-              {t('devconsole~No tags are available in image stream {{image}}', {
+              {t('devconsole~No tags are available in Image Stream {{image}}', {
                 image: imageStream.image,
               })}
             </Alert>
@@ -124,7 +124,7 @@ const ImageStream: React.FC = () => {
         {isNamespaceSelected && !loading && !isStreamsAvailable && hasCreateAccess && (
           <div className="odc-imagestream-alert">
             <Alert variant="warning" title={t('devconsole~No Image streams found')} isInline>
-              {t('devconsole~No image streams are available in project {{namespace}}', {
+              {t('devconsole~No Image streams are available in Project {{namespace}}', {
                 namespace: imageStream.namespace,
               })}
             </Alert>
@@ -134,7 +134,7 @@ const ImageStream: React.FC = () => {
           <div className="odc-imagestream-alert">
             <Alert variant="warning" title={t('devconsole~Permission denied')} isInline>
               {t(
-                'devconsole~Service account default does not have authority to pull images from {{namespace}}. Select another project to continue.',
+                'devconsole~Service account default does not have authority to pull Images from {{namespace}}. Select another Project to continue.',
                 { namespace: imageStream.namespace },
               )}
             </Alert>
@@ -145,7 +145,7 @@ const ImageStream: React.FC = () => {
             <CheckboxField
               name="imageStream.grantAccess"
               label={t(
-                'devconsole~Grant service account default authority to pull images from {{namespace}}',
+                'devconsole~Grant service account default authority to pull Images from {{namespace}}',
                 { namespace: imageStream.namespace },
               )}
             />

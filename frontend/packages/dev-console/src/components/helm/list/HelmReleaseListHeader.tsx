@@ -46,13 +46,13 @@ const HelmReleaseListHeader = (t: TFunction) => () => {
       props: { className: tableColumnClasses.chartName },
     },
     {
-      title: t('devconsole~Chart Version'),
+      title: t('devconsole~Chart version'),
       sortField: 'chart.metadata.version',
       transforms: [sortable],
       props: { className: tableColumnClasses.chartVersion },
     },
     {
-      title: t('devconsole~App Version'),
+      title: t('devconsole~App version'),
       sortField: 'chart.metadata.appVersion',
       transforms: [sortable],
       props: { className: tableColumnClasses.appVersion },

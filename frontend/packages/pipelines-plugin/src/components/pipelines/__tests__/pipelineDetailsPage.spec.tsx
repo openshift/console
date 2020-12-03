@@ -84,7 +84,7 @@ describe('PipelineDetailsPage:', () => {
     const menuItems = wrapper.props().menuActions;
     const startLastRun = menuItems.find(
       (menu) =>
-        menu(PipelineModel, mockData.pipeline).labelKey === 'pipelines-plugin~Start Last Run',
+        menu(PipelineModel, mockData.pipeline).labelKey === 'pipelines-plugin~Start last run',
     );
     expect(startLastRun).toBeUndefined();
   });
@@ -95,7 +95,7 @@ describe('PipelineDetailsPage:', () => {
     const menuItems = wrapper.props().menuActions;
     const startLastRun = menuItems.find(
       (menu) =>
-        menu(PipelineModel, mockData.pipeline).labelKey === 'pipelines-plugin~Start Last Run',
+        menu(PipelineModel, mockData.pipeline).labelKey === 'pipelines-plugin~Start last run',
     );
     expect(startLastRun).toBeDefined();
   });

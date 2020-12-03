@@ -22,14 +22,14 @@ const BuildConfigSection: React.FC<BuildConfigSectionProps> = ({ namespace, reso
   const strategyType = getStrategyType(resource?.spec?.strategy?.type);
   const envs = _.get(buildConfigObj, `spec.strategy.${strategyType}.env`, []);
   return (
-    <FormSection title={t('devconsole~Build Configuration')} fullWidth>
+    <FormSection title={t('devconsole~Build configuration')} fullWidth>
       <CheckboxField
         name="build.triggers.webhook"
         label={t('devconsole~Configure a webhook build trigger')}
       />
       <CheckboxField
         name="build.triggers.image"
-        label={t('devconsole~Automatically build a new image when the builder image changes')}
+        label={t('devconsole~Automatically build a new Image when the Builder Image changes')}
       />
       <CheckboxField
         name="build.triggers.config"
@@ -37,7 +37,7 @@ const BuildConfigSection: React.FC<BuildConfigSectionProps> = ({ namespace, reso
       />
       <EnvironmentField
         name="build.env"
-        label={t('devconsole~Environment Variables (Build and Runtime)')}
+        label={t('devconsole~Environment variables (build and runtime)')}
         obj={buildConfigObj}
         envs={envs}
         envPath={['spec', 'strategy']}

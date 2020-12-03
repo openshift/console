@@ -155,8 +155,8 @@ export const rerunPipelineAndStay: KebabAction = (kind: K8sKind, pipelineRun: Pi
 export const rerunPipelineAndRedirect: KebabAction = (kind: K8sKind, pipelineRun: PipelineRun) => {
   return rerunPipeline(kind, pipelineRun, null, {
     onComplete: handlePipelineRunSubmit,
-    // t('pipelines-plugin~Start Last Run')
-    labelKey: 'pipelines-plugin~Start Last Run',
+    // t('pipelines-plugin~Start last run')
+    labelKey: 'pipelines-plugin~Start last run',
   });
 };
 

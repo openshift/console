@@ -123,7 +123,7 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
       this.setState({
         title: (
           <span className="cos-error-title">
-            {this.props.t('console-shared~Error Loading - {{placeholder}}', { placeholder })}
+            {this.props.t('console-shared~Error loading - {{placeholder}}', { placeholder })}
           </span>
         ),
       });

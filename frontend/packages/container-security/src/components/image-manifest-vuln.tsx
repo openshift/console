@@ -60,7 +60,7 @@ export const ImageManifestVulnDetails: React.FC<ImageManifestVulnDetailsProps> =
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={t('container-security~Image Manifest Vuln Details')} />
+        <SectionHeading text={t('container-security~Image Manifest Vulnerabilities details')} />
         <div style={{ display: 'flex' }}>
           <div className="cs-imagemanifestvuln-details__donut">
             <ChartDonut
@@ -240,7 +240,7 @@ export const ImageManifestVulnTableRow: RowFunction<ImageManifestVuln> = ({
 
 export const ImageManifestVulnTableHeader = (t: TFunction) => () => [
   {
-    title: t('container-security~Image Name'),
+    title: t('container-security~Image name'),
     sortField: 'spec.image',
     transforms: [sortable],
     props: { className: tableColumnClasses[0] },
@@ -253,7 +253,7 @@ export const ImageManifestVulnTableHeader = (t: TFunction) => () => [
     id: 'namespace',
   },
   {
-    title: t('container-security~Highest Severity'),
+    title: t('container-security~Highest severity'),
     sortField: 'status.highestSeverity',
     transforms: [sortable],
     props: { className: tableColumnClasses[2] },
@@ -290,7 +290,7 @@ export const ImageManifestVulnList: React.FC<ImageManifestVulnListProps> = (prop
     <EmptyState variant={EmptyStateVariant.large}>
       <Title headingLevel="h4" size="lg">
         <EmptyStateResourceBadge model={ImageManifestVulnModel} />
-        {t('container-security~No Image Vulnerabilities found')}
+        {t('container-security~No Image vulnerabilities found')}
       </Title>
     </EmptyState>
   );
@@ -368,7 +368,7 @@ export const ContainerVulnerabilities: React.FC<ContainerVulnerabilitiesProps> =
           <div className="col-md-4">{t('container-security~Image')}</div>
           <div className="col-md-2">
             <Tooltip content="Results provided by Quay security scanner">
-              <span>{t('container-security~Security Scan')}</span>
+              <span>{t('container-security~Security scan')}</span>
             </Tooltip>
           </div>
         </div>

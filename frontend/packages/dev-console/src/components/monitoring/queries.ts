@@ -19,15 +19,15 @@ export interface MonitoringQuery {
 }
 
 export const metricsQuery = (t: TFunction) => ({
-  PODS_BY_CPU: t('devconsole~CPU Usage'),
-  PODS_BY_MEMORY: t('devconsole~Memory Usage'),
-  PODS_BY_FILESYSTEM: t('devconsole~Filesystem Usage'),
-  PODS_BY_NETWORK_IN: t('devconsole~Receive Bandwidth'),
-  PODS_BY_NETWORK_OUT: t('devconsole~Transmit Bandwidth'),
-  RATE_OF_RECEIVED_PACKETS: t('devconsole~Rate of Received Packets'),
-  RATE_OF_TRANSMITTED_PACKETS: t('devconsole~Rate of Transmitted Packets'),
-  RATE_OF_RECEIVED_PACKETS_DROPPED: t('devconsole~Rate of Received Packets Dropped'),
-  RATE_OF_TRANSMITTED_PACKETS_DROPPED: t('devconsole~Rate of Transmitted Packets Dropped'),
+  PODS_BY_CPU: t('devconsole~CPU usage'),
+  PODS_BY_MEMORY: t('devconsole~Memory usage'),
+  PODS_BY_FILESYSTEM: t('devconsole~Filesystem usage'),
+  PODS_BY_NETWORK_IN: t('devconsole~Receive bandwidth'),
+  PODS_BY_NETWORK_OUT: t('devconsole~Transmit bandwidth'),
+  RATE_OF_RECEIVED_PACKETS: t('devconsole~Rate of received packets'),
+  RATE_OF_TRANSMITTED_PACKETS: t('devconsole~Rate of transmitted packets'),
+  RATE_OF_RECEIVED_PACKETS_DROPPED: t('devconsole~Rate of received packets dropped'),
+  RATE_OF_TRANSMITTED_PACKETS_DROPPED: t('devconsole~Rate of transmitted packets dropped'),
 });
 
 export const monitoringDashboardQueries = (t: TFunction): MonitoringQuery[] => [
@@ -36,7 +36,7 @@ export const monitoringDashboardQueries = (t: TFunction): MonitoringQuery[] => [
       `sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate{cluster="", namespace='<%= namespace %>'}) by (pod)`,
     ),
     chartType: GraphTypes.area,
-    title: t('devconsole~CPU Usage'),
+    title: t('devconsole~CPU usage'),
     humanize: humanizeCpuCores,
     byteDataType: ByteDataTypes.BinaryBytes,
     id: 'cpu_usage',
@@ -46,7 +46,7 @@ export const monitoringDashboardQueries = (t: TFunction): MonitoringQuery[] => [
       `sum(container_memory_working_set_bytes{cluster="", container!="", namespace='<%= namespace %>'}) by (pod)`,
     ),
     chartType: GraphTypes.area,
-    title: t('devconsole~Memory Usage'),
+    title: t('devconsole~Memory usage'),
     humanize: humanizeBinaryBytes,
     byteDataType: ByteDataTypes.BinaryBytes,
     id: 'memory_usage',
@@ -56,7 +56,7 @@ export const monitoringDashboardQueries = (t: TFunction): MonitoringQuery[] => [
       `sum(irate(container_network_receive_bytes_total{cluster="", namespace='<%= namespace %>'}[2h])) by (pod)`,
     ),
     chartType: GraphTypes.area,
-    title: t('devconsole~Receive Bandwidth'),
+    title: t('devconsole~Receive bandwidth'),
     humanize: humanizeDecimalBytesPerSec,
     byteDataType: ByteDataTypes.BinaryBytes,
     id: 'receive_bandwidth',
@@ -66,7 +66,7 @@ export const monitoringDashboardQueries = (t: TFunction): MonitoringQuery[] => [
       `sum(irate(container_network_transmit_bytes_total{cluster="", namespace='<%= namespace %>'}[2h])) by (pod)`,
     ),
     chartType: GraphTypes.area,
-    title: t('devconsole~Transmit Bandwidth'),
+    title: t('devconsole~Transmit bandwidth'),
     humanize: humanizeDecimalBytesPerSec,
     byteDataType: ByteDataTypes.BinaryBytes,
     id: 'transmit_bandwidth',
@@ -76,7 +76,7 @@ export const monitoringDashboardQueries = (t: TFunction): MonitoringQuery[] => [
       `sum(irate(container_network_receive_packets_total{cluster="", namespace='<%= namespace %>'}[2h])) by (pod)`,
     ),
     chartType: GraphTypes.area,
-    title: t('devconsole~Rate of Received Packets'),
+    title: t('devconsole~Rate of received packets'),
     humanize: humanizeDecimalBytesPerSec,
     byteDataType: ByteDataTypes.BinaryBytes,
     id: 'rate_of_received_packets',
@@ -86,7 +86,7 @@ export const monitoringDashboardQueries = (t: TFunction): MonitoringQuery[] => [
       `sum(irate(container_network_transmit_packets_total{cluster="", namespace='<%= namespace %>'}[2h])) by (pod)`,
     ),
     chartType: GraphTypes.area,
-    title: t('devconsole~Rate of Transmitted Packets'),
+    title: t('devconsole~Rate of transmitted packets'),
     humanize: humanizeDecimalBytesPerSec,
     byteDataType: ByteDataTypes.BinaryBytes,
     id: 'rate_of_transmitted_packets',
@@ -96,7 +96,7 @@ export const monitoringDashboardQueries = (t: TFunction): MonitoringQuery[] => [
       `sum(irate(container_network_receive_packets_dropped_total{cluster="", namespace='<%= namespace %>'}[2h])) by (pod)`,
     ),
     chartType: GraphTypes.area,
-    title: t('devconsole~Rate of Received Packets Dropped'),
+    title: t('devconsole~Rate of received packets dropped'),
     humanize: humanizeDecimalBytesPerSec,
     byteDataType: ByteDataTypes.BinaryBytes,
     id: 'rate_of_received_packets_dropped',
@@ -106,7 +106,7 @@ export const monitoringDashboardQueries = (t: TFunction): MonitoringQuery[] => [
       `sum(irate(container_network_transmit_packets_dropped_total{cluster="", namespace='<%= namespace %>'}[2h])) by (pod)`,
     ),
     chartType: GraphTypes.area,
-    title: t('devconsole~Rate of Transmitted Packets Dropped'),
+    title: t('devconsole~Rate of transmitted packets dropped'),
     humanize: humanizeDecimalBytesPerSec,
     byteDataType: ByteDataTypes.BinaryBytes,
     id: 'rate_of_transmitted_packets_dropped',
@@ -115,7 +115,7 @@ export const monitoringDashboardQueries = (t: TFunction): MonitoringQuery[] => [
 
 export const topWorkloadMetricsQueries = (t: TFunction): MonitoringQuery[] => [
   {
-    title: t('devconsole~CPU Usage'),
+    title: t('devconsole~CPU usage'),
     chartType: GraphTypes.area,
     humanize: humanizeCpuCores,
     byteDataType: ByteDataTypes.BinaryBytes,
@@ -126,7 +126,7 @@ export const topWorkloadMetricsQueries = (t: TFunction): MonitoringQuery[] => [
     ),
   },
   {
-    title: t('devconsole~Memory Usage'),
+    title: t('devconsole~Memory usage'),
     chartType: GraphTypes.area,
     humanize: humanizeBinaryBytes,
     byteDataType: ByteDataTypes.BinaryBytes,
@@ -137,7 +137,7 @@ export const topWorkloadMetricsQueries = (t: TFunction): MonitoringQuery[] => [
     ),
   },
   {
-    title: t('devconsole~Receive Bandwidth'),
+    title: t('devconsole~Receive bandwidth'),
     chartType: GraphTypes.area,
     humanize: humanizeDecimalBytesPerSec,
     byteDataType: ByteDataTypes.DecimalBytes,
@@ -151,7 +151,7 @@ export const topWorkloadMetricsQueries = (t: TFunction): MonitoringQuery[] => [
 
 export const workloadMetricsQueries = (t: TFunction): MonitoringQuery[] => [
   {
-    title: t('devconsole~Transmit Bandwidth'),
+    title: t('devconsole~Transmit bandwidth'),
     chartType: GraphTypes.area,
     humanize: humanizeDecimalBytesPerSec,
     byteDataType: ByteDataTypes.DecimalBytes,
@@ -162,7 +162,7 @@ export const workloadMetricsQueries = (t: TFunction): MonitoringQuery[] => [
     ),
   },
   {
-    title: t('devconsole~Rate of Received Packets'),
+    title: t('devconsole~Rate of received packets'),
     chartType: GraphTypes.area,
     humanize: humanizeDecimalBytesPerSec,
     byteDataType: ByteDataTypes.DecimalBytes,
@@ -171,7 +171,7 @@ export const workloadMetricsQueries = (t: TFunction): MonitoringQuery[] => [
     ),
   },
   {
-    title: t('devconsole~Rate of Transmitted Packets'),
+    title: t('devconsole~Rate of transmitted packets'),
     chartType: GraphTypes.area,
     humanize: humanizeDecimalBytesPerSec,
     byteDataType: ByteDataTypes.DecimalBytes,
@@ -180,7 +180,7 @@ export const workloadMetricsQueries = (t: TFunction): MonitoringQuery[] => [
     ),
   },
   {
-    title: t('devconsole~Rate of Received Packets Dropped'),
+    title: t('devconsole~Rate of received packets dropped'),
     chartType: GraphTypes.area,
     humanize: humanizeDecimalBytesPerSec,
     byteDataType: ByteDataTypes.DecimalBytes,
@@ -189,7 +189,7 @@ export const workloadMetricsQueries = (t: TFunction): MonitoringQuery[] => [
     ),
   },
   {
-    title: t('devconsole~Rate of Transmitted Packets Dropped'),
+    title: t('devconsole~Rate of transmitted packets dropped'),
     chartType: GraphTypes.area,
     humanize: humanizeDecimalBytesPerSec,
     byteDataType: ByteDataTypes.DecimalBytes,
@@ -200,7 +200,7 @@ export const workloadMetricsQueries = (t: TFunction): MonitoringQuery[] => [
     ),
   },
   {
-    title: t('devconsole~Average Container Bandwidth by Pod: Received'),
+    title: t('devconsole~Average Container bandwidth by Pod: received'),
     chartType: GraphTypes.area,
     humanize: humanizeDecimalBytesPerSec,
     byteDataType: ByteDataTypes.DecimalBytes,
@@ -209,7 +209,7 @@ export const workloadMetricsQueries = (t: TFunction): MonitoringQuery[] => [
     ),
   },
   {
-    title: t('devconsole~Average Container Bandwidth by Pod: Transmitted'),
+    title: t('devconsole~Average Container bandwidth by Pod: transmitted'),
     chartType: GraphTypes.area,
     humanize: humanizeDecimalBytesPerSec,
     byteDataType: ByteDataTypes.DecimalBytes,

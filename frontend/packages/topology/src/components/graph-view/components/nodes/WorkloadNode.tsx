@@ -93,7 +93,7 @@ const WorkloadPodsNode: React.FC<WorkloadPodsNodeProps> = observer(
               repoIcon && (
                 <Tooltip
                   key="edit"
-                  content={t('topology~Edit Source Code')}
+                  content={t('topology~Edit source code')}
                   position={TooltipPosition.right}
                 >
                   <Decorator

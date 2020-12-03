@@ -86,7 +86,7 @@ const TopologyListViewNode: React.FC<TopologyListViewNodeProps & DispatchProps> 
     alertIndicator = shouldHideMonitoringAlertDecorator(severityAlertType) ? null : (
       <Tooltip
         key="monitoringAlert"
-        content={t('topology~Monitoring Alert')}
+        content={t('topology~Monitoring alert')}
         position={TooltipPosition.right}
       >
         <Button

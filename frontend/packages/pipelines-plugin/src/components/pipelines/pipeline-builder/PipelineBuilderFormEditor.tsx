@@ -53,7 +53,7 @@ const PipelineBuilderFormEditor: React.FC<PipelineBuilderFormEditorProps> = (pro
       <div>
         <h2>{t('pipelines-plugin~Parameters')}</h2>
         <PipelineParameters
-          addLabel={t('pipelines-plugin~Add Parameters')}
+          addLabel={t('pipelines-plugin~Add parameters')}
           fieldName="formData.params"
         />
       </div>
@@ -61,7 +61,7 @@ const PipelineBuilderFormEditor: React.FC<PipelineBuilderFormEditorProps> = (pro
       <div>
         <h2>{t('pipelines-plugin~Resources')}</h2>
         <PipelineResources
-          addLabel={t('pipelines-plugin~Add Resources')}
+          addLabel={t('pipelines-plugin~Add resources')}
           fieldName="formData.resources"
         />
       </div>

@@ -58,7 +58,7 @@ const MonitoringAlertsDecorator: React.FC<MonitoringAlertsDecoratorType> = ({
   return (
     <Tooltip
       key="monitoringAlert"
-      content={t('topology~Monitoring Alert')}
+      content={t('topology~Monitoring alert')}
       position={TooltipPosition.left}
     >
       <Decorator x={x} y={y} radius={radius} onClick={showSidebar}>

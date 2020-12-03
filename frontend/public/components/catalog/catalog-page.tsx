@@ -517,7 +517,7 @@ export const CatalogPage = withStartGuide(({ match, noProjectsAvailable }) => {
         </div>
       ) : (
         <CreateProjectListPage title="Developer Catalog">
-          Select a project to view the Developer Catalog
+          Select a Project to view the developer catalog
         </CreateProjectListPage>
       )}
     </>

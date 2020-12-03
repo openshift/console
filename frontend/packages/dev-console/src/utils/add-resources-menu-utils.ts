@@ -86,7 +86,7 @@ export const getAddPageUrl = (
       pageUrl = `/channel/ns/${ns}`;
       break;
     default:
-      throw new Error(i18next.t('devconsole~Invalid Import option provided'));
+      throw new Error(i18next.t('devconsole~Invalid import option provided'));
   }
   if (hasApplication && appGroup) {
     params.append(QUERY_PROPERTIES.APPLICATION, appGroup);

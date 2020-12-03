@@ -58,7 +58,7 @@ const ContainerSourceSection: React.FC<ContainerSourceSectionProps> = ({ title, 
         type={TextInputTypes.text}
         name={containerPaths.Image}
         label={t('knative-plugin~Image')}
-        helpText={t('knative-plugin~The image to run inside of the container')}
+        helpText={t('knative-plugin~The Image to run inside of the Container')}
         required
         onChange={(e) => {
           setFieldValue(containerPaths.Name, getSuggestedName(e.target.value));
@@ -69,21 +69,21 @@ const ContainerSourceSection: React.FC<ContainerSourceSectionProps> = ({ title, 
         type={TextInputTypes.text}
         name={containerPaths.Name}
         label={t('knative-plugin~Name')}
-        helpText={t('knative-plugin~The name of the image')}
+        helpText={t('knative-plugin~The name of the Image')}
       />
       <TextColumnField
         data-test-id="container-arg-field"
         name={containerPaths.Args}
         label={t('knative-plugin~Arguments')}
-        addLabel={t('knative-plugin~Add Args')}
+        addLabel={t('knative-plugin~Add args')}
         placeholder={t('knative-plugin~argument')}
-        helpText={t('knative-plugin~Arguments passed to the container')}
+        helpText={t('knative-plugin~Arguments passed to the Container')}
         disableDeleteRow={args?.length === 1}
       />
       <FormGroup
         fieldId="containersource-env"
         label={t('knative-plugin~Environment variables')}
-        helperText={t('knative-plugin~The list of variables to set in the container')}
+        helperText={t('knative-plugin~The list of variables to set in the Container')}
       >
         <AsyncComponent
           loader={() =>
@@ -98,7 +98,7 @@ const ContainerSourceSection: React.FC<ContainerSourceSectionProps> = ({ title, 
           readOnly={false}
           allowSorting={false}
           updateParentData={handleNameValuePairs}
-          addLabel={t('knative-plugin~Add More')}
+          addLabel={t('knative-plugin~Add more')}
         />
       </FormGroup>
     </FormSection>

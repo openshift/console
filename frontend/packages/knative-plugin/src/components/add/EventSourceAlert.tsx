@@ -23,13 +23,13 @@ const EventSourceAlert: React.FC<EventSourceAlertProps> = ({
   return showAlert ? (
     <Alert
       variant={showSourceKindAlert ? 'danger' : 'default'}
-      title={t('knative-plugin~Event Source cannot be created')}
+      title={t('knative-plugin~Event source cannot be created')}
       isInline
     >
       {noEventSourceAccess && t('knative-plugin~You do not have write access in this project.')}
       {noEventSources &&
-        t('knative-plugin~Creation of event sources are not currently supported on this cluster.')}
-      {showSourceKindAlert && t('knative-plugin~Event Source is not found on this cluster.')}
+        t('knative-plugin~Creation of Event sources are not currently supported on this Cluster.')}
+      {showSourceKindAlert && t('knative-plugin~Event source is not found on this Cluster.')}
     </Alert>
   ) : null;
 };

@@ -25,7 +25,7 @@ const TopologyDataRenderer: React.FC<TopologyDataRendererProps> = observer(
             <HintBlock title={t('topology~No resources found')}>
               <p>
                 {t(
-                  'topology~To add content to your project, create an application, component or service using one of these options.',
+                  'topology~To add content to your Project, create an Application, component or service using one of these options.',
                 )}
               </p>
             </HintBlock>

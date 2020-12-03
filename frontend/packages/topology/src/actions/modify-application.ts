@@ -7,8 +7,8 @@ import { editApplicationModal } from '@console/topology/src/components/modals';
 
 export const ModifyApplication = (kind: K8sKind, obj: K8sResourceKind): KebabOption => {
   return {
-    // t('topology~Edit Application Grouping')
-    labelKey: 'topology~Edit Application Grouping',
+    // t('topology~Edit Application grouping')
+    labelKey: 'topology~Edit Application grouping',
     callback: () =>
       editApplicationModal({
         resourceKind: kind,

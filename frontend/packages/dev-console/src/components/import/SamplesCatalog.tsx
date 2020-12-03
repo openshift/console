@@ -71,7 +71,7 @@ const SampleCatalog: React.FC<SampleCatalogProps> = ({ match }) => {
           </PageLayout>
         ) : (
           <CreateProjectListPage title={t('devconsole~Samples')}>
-            {t('devconsole~Select a project to view the list of Samples.')}
+            {t('devconsole~Select a Project to view the list of samples.')}
           </CreateProjectListPage>
         )}
       </NamespacedPage>
