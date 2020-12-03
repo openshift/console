@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { getFieldTitle } from '../utils/renderable-field-utils';
+import { getFieldTitleKey } from '../utils/renderable-field-utils';
 import { iGet } from '../../../utils/immutable';
 import { prefixedID } from '../../../utils';
 import { FormFieldType } from './form-field';
 import { getReviewValue } from '../tabs/review-tab/utils';
 
 import './form-field-review-row.scss';
+import { useTranslation } from 'react-i18next';
 
 type FormFieldReviewRowProps = {
   field: any;
@@ -18,16 +19,17 @@ export const FormFieldReviewRow: React.FC<FormFieldReviewRowProps> = ({
   field,
   value = undefined,
 }) => {
+  const { t } = useTranslation();
   const asId = prefixedID.bind(null, 'wizard-review');
   const fieldKey = iGet(field, 'key');
-  const fieldTitle = getFieldTitle(fieldKey);
+  const fieldTitleKey = getFieldTitleKey(fieldKey);
   const reviewValue = value || getReviewValue(field, fieldType) || (
-    <span className="text-secondary">{`No ${fieldTitle.toLowerCase()}`}</span>
+    <span className="text-secondary">{t('kubevirt-plugin~Not defined')}</span>
   );
 
   return (
     <>
-      <dt>{fieldTitle}</dt>
+      <dt>{t(fieldTitleKey)}</dt>
       <dd id={asId(fieldKey.toLowerCase())}>{reviewValue}</dd>
     </>
   );

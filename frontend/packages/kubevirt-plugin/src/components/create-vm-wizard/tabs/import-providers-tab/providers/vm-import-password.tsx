@@ -9,10 +9,6 @@ import { FormFieldRow } from '../../../form/form-field-row';
 import { FormField, FormFieldType } from '../../../form/form-field';
 import { isFieldDisabled } from '../../../selectors/immutable/field';
 import { iGet } from '../../../../../utils/immutable';
-import {
-  PROVIDER_V2V_CHECK_CONNECTION_BTN_DONT_SAVE,
-  PROVIDER_V2V_CHECK_CONNECTION_BTN_SAVE,
-} from '../../../strings/v2v';
 import { getCheckConnectionAction as ovirtGetCheckConnectionAction } from '../../../redux/state-update/providers/ovirt/ovirt-provider-actions';
 import { getCheckConnectionAction as vmwareGetCheckConnectionAction } from '../../../redux/state-update/providers/vmware/vmware-provider-actions';
 import {
@@ -24,6 +20,7 @@ import {
   iGetOvirtFieldAttribute,
   iGetOvirtFieldValue,
 } from '../../../selectors/immutable/provider/ovirt/selectors';
+import { useTranslation } from 'react-i18next';
 
 const VMImportPasswordConnected: React.FC<VMImportPasswordConnectedProps> = React.memo(
   ({
@@ -33,29 +30,30 @@ const VMImportPasswordConnected: React.FC<VMImportPasswordConnectedProps> = Reac
     onPasswordChange,
     hasAllPrerequisiteValuesFiled,
     onCheckConnection,
-  }) => (
-    <FormFieldRow field={passwordField} fieldType={FormFieldType.TEXT}>
-      <Split>
-        <SplitItem isFilled>
-          <FormField>
-            <TextInput onChange={onPasswordChange} type="password" />
-          </FormField>
-        </SplitItem>
-        <SplitItem>
-          <Button
-            id={`provider-${provider.toLowerCase()}-connect`}
-            isDisabled={!hasAllPrerequisiteValuesFiled || isFieldDisabled(passwordField)}
-            onClick={onCheckConnection}
-            variant={ButtonVariant.secondary}
-          >
-            {rememberPassword
-              ? PROVIDER_V2V_CHECK_CONNECTION_BTN_SAVE
-              : PROVIDER_V2V_CHECK_CONNECTION_BTN_DONT_SAVE}
-          </Button>
-        </SplitItem>
-      </Split>
-    </FormFieldRow>
-  ),
+  }) => {
+    const { t } = useTranslation();
+    return (
+      <FormFieldRow field={passwordField} fieldType={FormFieldType.TEXT}>
+        <Split>
+          <SplitItem isFilled>
+            <FormField>
+              <TextInput onChange={onPasswordChange} type="password" />
+            </FormField>
+          </SplitItem>
+          <SplitItem>
+            <Button
+              id={`provider-${provider.toLowerCase()}-connect`}
+              isDisabled={!hasAllPrerequisiteValuesFiled || isFieldDisabled(passwordField)}
+              onClick={onCheckConnection}
+              variant={ButtonVariant.secondary}
+            >
+              {rememberPassword ? t('kubevirt-plugin~Check and Save') : t('kubevirt-plugin~Check')}
+            </Button>
+          </SplitItem>
+        </Split>
+      </FormFieldRow>
+    );
+  },
 );
 
 type VMImportPasswordConnectedProps = {

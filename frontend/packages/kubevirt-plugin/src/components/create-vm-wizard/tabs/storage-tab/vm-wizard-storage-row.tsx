@@ -16,7 +16,8 @@ const menuActionEdit = (
   { wizardReduxID, withProgress, isUpdateDisabled }: VMWizardStorageRowActionOpts,
 ): KebabOption => {
   return {
-    label: 'Edit',
+    // t('kubevirt-plugin~Edit')
+    labelKey: 'kubevirt-plugin~Edit',
     isDisabled: !!isUpdateDisabled,
     callback: () =>
       withProgress(
@@ -34,7 +35,8 @@ const menuActionRemove = (
   { id, type }: VMWizardStorage,
   { withProgress, removeStorage, isDeleteDisabled }: VMWizardStorageRowActionOpts,
 ): KebabOption => ({
-  label: 'Delete',
+  // t('kubevirt-plugin~Delete')
+  labelKey: 'kubevirt-plugin~Delete',
   isDisabled:
     isDeleteDisabled ||
     [

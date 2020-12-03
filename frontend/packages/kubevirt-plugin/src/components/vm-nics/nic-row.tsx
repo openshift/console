@@ -25,7 +25,8 @@ const menuActionEdit = (
   vmLikeEntity: VMLikeEntityKind,
   { withProgress }: VMNicRowActionOpts,
 ): KebabOption => ({
-  label: 'Edit',
+  // t('kubevirt-plugin~Edit')
+  labelKey: 'kubevirt-plugin~Edit',
   callback: () =>
     withProgress(
       nicModalEnhanced({
@@ -49,7 +50,8 @@ const menuActionDelete = (
   vmLikeEntity: VMLikeEntityKind,
   { withProgress }: VMNicRowActionOpts,
 ): KebabOption => ({
-  label: 'Delete',
+  // t('kubevirt-plugin~Delete')
+  labelKey: 'kubevirt-plugin~Delete',
   callback: () => withProgress(deleteNICModal({ nic, vmLikeEntity }).result),
   accessReview: asAccessReview(
     isVM(vmLikeEntity) ? VirtualMachineModel : TemplateModel,

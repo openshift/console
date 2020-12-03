@@ -26,7 +26,6 @@ import { TemplateKind } from '@console/internal/module/k8s';
 import { DataVolumeModel, VirtualMachineModel } from '../../../models';
 import { VMKind } from '../../../types';
 import { validateVmLikeEntityName } from '../../../utils/validations';
-import { VIRTUAL_MACHINE_EXISTS } from '../../../utils/validations/strings';
 import { FormRow } from '../../form/form-row';
 import { ProjectDropdown } from '../../form/project-dropdown';
 import { getTemplateName, selectVM } from '../../../selectors/vm-template/basic';
@@ -37,7 +36,7 @@ import {
   getTemplateSizeRequirement,
 } from '../../../selectors/vm-template/advanced';
 import { VMSettingsField } from '../../create-vm-wizard/types';
-import { helpResolver } from '../../create-vm-wizard/strings/renderable-field';
+import { helpKeyResolver } from '../../create-vm-wizard/strings/renderable-field';
 import { FormAction, FormState, FORM_ACTION_TYPE } from './create-vm-form-reducer';
 import { TemplateItem } from '../../../types/template';
 import { isTemplateSourceError, TemplateSourceStatus } from '../../../statuses/template/types';
@@ -113,16 +112,18 @@ export const CreateVMForm: React.FC<CreateVMFormProps> = ({
 
   const onNameChange = (value: string) => {
     const validation = validateVmLikeEntityName(value, namespace, vms, {
-      existsErrorMessage: VIRTUAL_MACHINE_EXISTS,
-      subject: 'Name',
+      // t('kubevirt-plugin~Name is already used by another virtual machine in this namespace')
+      existsErrorMessage:
+        'kubevirt-plugin~Name is already used by another virtual machine in this namespace',
     });
     dispatch({ type: FORM_ACTION_TYPE.SET_NAME, payload: { value, validation } });
   };
 
   const onNamespaceChange = (value: string) => {
     const validation = validateVmLikeEntityName(value, namespace, vms, {
-      existsErrorMessage: VIRTUAL_MACHINE_EXISTS,
-      subject: 'Name',
+      // t('kubevirt-plugin~Name is already used by another virtual machine in this namespace')
+      existsErrorMessage:
+        'kubevirt-plugin~Name is already used by another virtual machine in this namespace',
     });
     dispatch({ type: FORM_ACTION_TYPE.SET_NAMESPACE, payload: { value, validation } });
   };
@@ -261,7 +262,7 @@ export const CreateVMForm: React.FC<CreateVMFormProps> = ({
               <FormRow
                 fieldId="vm-workload"
                 title={t('kubevirt-plugin~Workload profile')}
-                help={helpResolver[VMSettingsField.WORKLOAD_PROFILE]()}
+                help={t(helpKeyResolver[VMSettingsField.WORKLOAD_PROFILE]())}
               >
                 {getWorkloadProfile(template) || t('kubevirt-plugin~Not available')}
               </FormRow>

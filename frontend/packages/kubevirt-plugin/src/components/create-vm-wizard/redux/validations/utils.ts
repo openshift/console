@@ -1,10 +1,10 @@
 import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash';
 import { ValidationObject, ValidationErrorType } from '@console/shared';
-import { UpdateOptions, ValidationConfig } from '../types';
+import { UpdateOptions, Validation, ValidationConfig } from '../types';
 import { SettingsFieldType } from '../../types';
-import { isFieldRequired } from '../../selectors/immutable/field';
-import { describeFields } from '../../utils/renderable-field-utils';
+import { iGetFieldKey, isFieldRequired } from '../../selectors/immutable/field';
+import { getFieldTitleKey, sortFields } from '../../utils/renderable-field-utils';
 import { BinaryUnit } from '../../../form/size-unit-utils';
 
 export const getValidationUpdate = <FieldType>(
@@ -64,17 +64,37 @@ export const getInvalidFields = (fields) =>
     .filter((field) => field.getIn(['validation', 'type']) === ValidationErrorType.Error)
     .toArray();
 
-export const getFieldsValidity = (fields) => {
-  // check if all required fields are defined
-  const emptyRequiredFields = getEmptyRequiredFields(fields);
-  let error = describeFields('Please fill in', emptyRequiredFields);
-  const hasAllRequiredFilled = emptyRequiredFields.length === 0;
-
-  // check if fields are valid
+export const getFieldsValidity = (fields): Validation => {
   const invalidFields = getInvalidFields(fields);
+  const emptyRequiredFields = getEmptyRequiredFields(fields);
+  let errorKey: string;
+  let fieldKeys: string[];
+  let isValid = true;
+  let hasAllRequiredFilled = true;
   if (invalidFields.length > 0) {
-    error = describeFields('Please correct', invalidFields);
+    isValid = false;
+    // t('kubevirt-plugin~Please correct the following fields:')
+    // t('kubevirt-plugin~Please correct the following field:')
+    errorKey =
+      invalidFields.length > 1
+        ? 'kubevirt-plugin~Please correct the following fields:'
+        : 'kubevirt-plugin~Please correct the following field:';
+    fieldKeys = _.compact(
+      sortFields(invalidFields).map((field) => getFieldTitleKey(iGetFieldKey(field))),
+    );
+  } else if (emptyRequiredFields.length > 0) {
+    hasAllRequiredFilled = false;
+    isValid = false;
+    // t('kubevirt-plugin~Please fill in the following fields:')
+    // t('kubevirt-plugin~Please fill in the following field:')
+    errorKey =
+      emptyRequiredFields.length > 1
+        ? 'kubevirt-plugin~Please fill in the following fields:'
+        : 'kubevirt-plugin~Please fill in the following field:';
+    fieldKeys = _.compact(
+      sortFields(emptyRequiredFields).map((field) => getFieldTitleKey(iGetFieldKey(field))),
+    );
   }
-  const isValid = hasAllRequiredFilled && invalidFields.length === 0;
-  return { error, hasAllRequiredFilled, isValid };
+
+  return { errorKey, fieldKeys, hasAllRequiredFilled, isValid };
 };

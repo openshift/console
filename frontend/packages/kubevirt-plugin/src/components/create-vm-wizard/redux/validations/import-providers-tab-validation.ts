@@ -1,5 +1,5 @@
 import { VMWizardProps, VMWizardTab } from '../../types';
-import { InternalActionType, UpdateOptions } from '../types';
+import { InternalActionType, UpdateOptions, Validation } from '../types';
 import { vmWizardInternalActions } from '../internal-actions';
 import { checkTabValidityChanged, iGetCommonData } from '../../selectors/immutable/selectors';
 import { iGetImportProviders } from '../../selectors/immutable/import-providers';
@@ -18,7 +18,7 @@ export const setImportProvidersTabValidity = (options: UpdateOptions) => {
   const { id, dispatch, getState } = options;
   const state = getState();
   const isProviderImport = iGetCommonData(state, id, VMWizardProps.isProviderImport);
-  let result = { error: null, hasAllRequiredFilled: true, isValid: true };
+  let result: Validation = { errorKey: null, hasAllRequiredFilled: true, isValid: true };
   if (isProviderImport) {
     const importProviders = iGetImportProviders(state, id);
     result = getFieldsValidity(importProviders);
@@ -40,7 +40,8 @@ export const setImportProvidersTabValidity = (options: UpdateOptions) => {
       VMWizardTab.IMPORT_PROVIDERS,
       result.isValid,
       result.hasAllRequiredFilled,
-      result.error,
+      result.errorKey,
+      result.fieldKeys,
     )
   ) {
     dispatch(
@@ -49,7 +50,7 @@ export const setImportProvidersTabValidity = (options: UpdateOptions) => {
         VMWizardTab.IMPORT_PROVIDERS,
         result.isValid,
         result.hasAllRequiredFilled,
-        result.error,
+        result.errorKey,
       ),
     );
   }

@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { FormGroup, Popover, PopoverPosition } from '@patternfly/react-core';
 import { HelpIcon } from '@patternfly/react-icons';
 import { LoadingInline } from '@console/internal/components/utils';
-import { ValidationErrorType } from '@console/shared';
+import { ValidationErrorType, ValidationObject } from '@console/shared';
 
 import { preventDefault } from './utils';
 
@@ -27,7 +27,7 @@ export const FormRow: React.FC<FormRowProps> = ({
     return null;
   }
   const type = (validation && validation.type) || validationType;
-  const message = t((validation && validation.message) || validationMessage);
+  const message = validation?.messageKey ? t(validation.messageKey) : validationMessage;
 
   return (
     <FormGroup
@@ -79,10 +79,7 @@ type FormRowProps = {
   isLoading?: boolean;
   validationMessage?: string;
   validationType?: ValidationErrorType;
-  validation?: {
-    message?: string;
-    type?: ValidationErrorType;
-  };
+  validation?: ValidationObject;
   children?: React.ReactNode;
   className?: string;
 };

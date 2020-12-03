@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { inject } from '@console/internal/components/utils';
 import { ValidationErrorType } from '@console/shared';
-import { getPlaceholder, getFieldId, getFieldTitle } from '../utils/renderable-field-utils';
+import { getPlaceholderKey, getFieldId, getFieldTitleKey } from '../utils/renderable-field-utils';
 import { iGetIn } from '../../../utils/immutable';
 import {
   iGetFieldKey,
@@ -11,6 +11,7 @@ import {
   isFieldRequired,
 } from '../selectors/immutable/field';
 import { FormFieldContext } from './form-field-context';
+import { useTranslation } from 'react-i18next';
 
 export enum FormFieldType {
   TEXT = 'TEXT',
@@ -72,6 +73,7 @@ const setSupported = (fieldType: FormFieldType, supportedTypes: Set<FormFieldTyp
 
 // renders only when props change (shallow compare)
 export const FormField: React.FC<FormFieldProps> = ({ children, isDisabled, value }) => {
+  const { t } = useTranslation();
   return (
     <FormFieldContext.Consumer>
       {({
@@ -97,7 +99,7 @@ export const FormField: React.FC<FormFieldProps> = ({ children, isDisabled, valu
           children,
           _.omitBy(
             {
-              value: hasValue.has(fieldType) ? val || getPlaceholder(key) || '' : undefined,
+              value: hasValue.has(fieldType) ? val || t(getPlaceholderKey(key)) || '' : undefined,
               isChecked: set(hasIsChecked, val),
               isDisabled: set(hasIsDisabled, disabled),
               disabled: set(hasDisabled, disabled),
@@ -105,9 +107,9 @@ export const FormField: React.FC<FormFieldProps> = ({ children, isDisabled, valu
               isValid: set(hasIsValid, isValid),
               validated: set(hasValidated, validated),
               id: getFieldId(key),
-              label: set(hasLabel, getFieldTitle(key)),
+              label: set(hasLabel, t(getFieldTitleKey(key))),
               selections: set(hasSelections, val),
-              placeholderText: set(hasPlaceholderText, getPlaceholder(key)),
+              placeholderText: set(hasPlaceholderText, t(getPlaceholderKey(key))),
               toggleId: set(hasToggleId, getFieldId(key)),
             },
             _.isUndefined,

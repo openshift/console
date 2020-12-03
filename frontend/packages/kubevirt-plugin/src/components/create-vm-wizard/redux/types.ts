@@ -102,7 +102,8 @@ export type WizardInternalAction = {
     deviceID?: string;
     deviceType?: DeviceType;
     bootOrder?: number;
-    error?: string;
+    errorKey?: string;
+    fieldKeys?: string[];
   };
 };
 
@@ -135,4 +136,11 @@ export type ValidationConfig<Field = VMSettingsField> = {
       | ChangedCommonDataProp[];
     validator: Validator<Field>;
   };
+};
+
+export type Validation = {
+  errorKey: string;
+  fieldKeys?: string[];
+  hasAllRequiredFilled: boolean;
+  isValid: boolean;
 };

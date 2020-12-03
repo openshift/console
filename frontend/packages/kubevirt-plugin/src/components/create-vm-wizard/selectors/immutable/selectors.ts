@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { VMWizardInitialData } from '../../../../types/url';
 import { iGetIn, iGetLoadedData, toShallowJS } from '../../../../utils/immutable';
@@ -10,13 +11,15 @@ export const checkTabValidityChanged = (
   tab: VMWizardTab,
   nextIsValid: boolean,
   nextHasAllRequiredFilled: boolean,
-  nextError,
+  nextErrorKey: string,
+  nextFieldKeys: string[],
 ) => {
   const tabs = iGetCreateVMWizardTabs(state, reduxID);
   return (
     !!iGetIn(tabs, [tab, 'isValid']) !== nextIsValid ||
     !!iGetIn(tabs, [tab, 'hasAllRequiredFilled']) !== nextHasAllRequiredFilled ||
-    iGetIn(tabs, [tab, 'error']) !== nextError
+    iGetIn(tabs, [tab, 'errorKey']) !== nextErrorKey ||
+    !_.isEqual(iGetIn(tabs, [tab, 'fieldKeys']), nextFieldKeys)
   );
 };
 

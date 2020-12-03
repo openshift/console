@@ -15,12 +15,9 @@ import { history } from '@console/internal/components/utils';
 import { iGetCommonData } from '../../selectors/immutable/selectors';
 import { VMSettingsField, VMWizardProps } from '../../types';
 import { iGetVmSettingValue } from '../../selectors/immutable/vm-settings';
-import {
-  getVMLikeModelDetailPath,
-  getVMLikeModelListPath,
-  getVMLikeModelName,
-} from '../../../../utils/utils';
+import { getVMLikeModelDetailPath, getVMLikeModelListPath } from '../../../../utils/utils';
 import { isOvirtProvider } from '../../selectors/immutable/provider/ovirt/selectors';
+import { useTranslation } from 'react-i18next';
 
 export const SuccessResultsComponent: React.FC<SuccessResultsProps> = ({
   isCreateTemplate,
@@ -31,7 +28,7 @@ export const SuccessResultsComponent: React.FC<SuccessResultsProps> = ({
   className,
   onClick,
 }) => {
-  const modelName = getVMLikeModelName(isCreateTemplate);
+  const { t } = useTranslation();
   const modelDetailPath = `${getVMLikeModelDetailPath(isCreateTemplate, namespace, name)}`;
   const modelListPath = `${getVMLikeModelListPath(
     isCreateTemplate,
@@ -47,7 +44,9 @@ export const SuccessResultsComponent: React.FC<SuccessResultsProps> = ({
         onClick && onClick();
       }}
     >
-      See {modelName} details
+      {isCreateTemplate
+        ? t('kubevirt-plugin~See virtual machine template details')
+        : t('kubevirt-plugin~See virtual machine details')}
     </Button>
   );
 
@@ -60,21 +59,36 @@ export const SuccessResultsComponent: React.FC<SuccessResultsProps> = ({
         onClick && onClick();
       }}
     >
-      Go to list
+      {t('kubevirt-plugin~Go to list')}
     </Button>
   );
+
+  let title: string;
+  if (isProviderImport) {
+    title = t('kubevirt-plugin~Started import of virtual machine');
+  } else if (isCreateTemplate) {
+    title = t('kubevirt-plugin~Successfully created virtual machine template');
+  } else {
+    title = t('kubevirt-plugin~Successfully created virtual machine');
+  }
+
+  let description: string;
+  if (isCreateTemplate) {
+    description = t(
+      'kubevirt-plugin~You can either go to the details of this virtual machine template or see it in the list of available virtual machine templates.',
+    );
+  } else {
+    description = t(
+      'kubevirt-plugin~You can either go to the details of this virtual machine or see it in the list of available virtual machines.',
+    );
+  }
   return (
     <EmptyState variant={EmptyStateVariant.full} className={className}>
       <EmptyStateIcon icon={CheckIcon} color="#92d400" />
       <Title headingLevel="h5" size="lg" data-test-id="kubevirt-wizard-success-result">
-        {isProviderImport ? `Started import of ${modelName}` : `Successfully created ${modelName}.`}
+        {title}
       </Title>
-      {!isOvirtImportProvider && (
-        <EmptyStateBody key="info">
-          You can either go to the details of this {modelName} or see it in the list of available{' '}
-          {modelName}s.
-        </EmptyStateBody>
-      )}
+      {!isOvirtImportProvider && <EmptyStateBody key="info">{description}</EmptyStateBody>}
       {isOvirtImportProvider ? listButton : detailsButton}
       {!isOvirtImportProvider && (
         <EmptyStateSecondaryActions key="secondary">{listButton}</EmptyStateSecondaryActions>

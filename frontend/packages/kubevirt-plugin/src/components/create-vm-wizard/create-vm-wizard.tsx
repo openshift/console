@@ -41,7 +41,7 @@ import {
   VMWizardTabsMetadata,
   DirectCommonDataProps,
 } from './types';
-import { CREATE_VM, CREATE_VM_TEMPLATE, IMPORT_VM, TabTitleResolver } from './strings/strings';
+import { TabTitleKeyResolver } from './strings/strings';
 import { vmWizardActions } from './redux/actions';
 import { ActionType } from './redux/types';
 import { getResultInitialState } from './redux/initial-state/result-tab-initial-state';
@@ -69,6 +69,7 @@ import { parseVMWizardInitialData } from '../../utils/url';
 import { VMWizardInitialData } from '../../types/url';
 
 import './create-vm-wizard.scss';
+import { useTranslation } from 'react-i18next';
 
 type CreateVMWizardComponentProps = {
   isSimpleView: boolean;
@@ -88,6 +89,7 @@ type CreateVMWizardComponentProps = {
 } & { [k in ChangedCommonDataProp]: any };
 
 const CreateVMWizardComponent: React.FC<CreateVMWizardComponentProps> = (props) => {
+  const { t } = useTranslation();
   const closed = React.useRef(false);
 
   const onClose = React.useCallback(
@@ -154,12 +156,16 @@ const CreateVMWizardComponent: React.FC<CreateVMWizardComponentProps> = (props) 
   const getWizardTitle = () => {
     const { isCreateTemplate, isProviderImport, iUserTemplate } = props;
     if (isCreateTemplate) {
-      return CREATE_VM_TEMPLATE;
+      return t('kubevirt-plugin~Create Virtual Machine template');
     }
     if (isProviderImport) {
-      return IMPORT_VM;
+      return t('kubevirt-plugin~Import Virtual Machine');
     }
-    return iUserTemplate ? `${CREATE_VM} from ${iGetName(iUserTemplate)}` : CREATE_VM;
+    return iUserTemplate
+      ? t('kubevirt-plugin~Create Virtual Machine from {{template}}', {
+          template: iGetName(iUserTemplate),
+        })
+      : t('kubevirt-plugin~Create Virtual Machine');
   };
 
   const goBackToEditingSteps = () =>
@@ -175,7 +181,7 @@ const CreateVMWizardComponent: React.FC<CreateVMWizardComponentProps> = (props) 
   const steps = [
     {
       id: VMWizardTab.IMPORT_PROVIDERS,
-      name: TabTitleResolver[VMWizardTab.IMPORT_PROVIDERS],
+      name: t(TabTitleKeyResolver[VMWizardTab.IMPORT_PROVIDERS]),
       canJumpTo: tabsMetadata[VMWizardTab.IMPORT_PROVIDERS]?.canJumpTo,
       component: (
         <>
@@ -193,7 +199,7 @@ const CreateVMWizardComponent: React.FC<CreateVMWizardComponentProps> = (props) 
     },
     {
       id: VMWizardTab.VM_SETTINGS,
-      name: TabTitleResolver[VMWizardTab.VM_SETTINGS],
+      name: t(TabTitleKeyResolver[VMWizardTab.VM_SETTINGS]),
       canJumpTo: tabsMetadata[VMWizardTab.VM_SETTINGS]?.canJumpTo,
       component: (
         <>
@@ -205,7 +211,7 @@ const CreateVMWizardComponent: React.FC<CreateVMWizardComponentProps> = (props) 
     },
     {
       id: VMWizardTab.NETWORKING,
-      name: TabTitleResolver[VMWizardTab.NETWORKING],
+      name: t(TabTitleKeyResolver[VMWizardTab.NETWORKING]),
       canJumpTo: tabsMetadata[VMWizardTab.NETWORKING]?.canJumpTo,
       component: (
         <>
@@ -217,7 +223,7 @@ const CreateVMWizardComponent: React.FC<CreateVMWizardComponentProps> = (props) 
     },
     {
       id: VMWizardTab.STORAGE,
-      name: TabTitleResolver[VMWizardTab.STORAGE],
+      name: t(TabTitleKeyResolver[VMWizardTab.STORAGE]),
       canJumpTo: tabsMetadata[VMWizardTab.STORAGE]?.canJumpTo,
       component: (
         <>
@@ -229,7 +235,7 @@ const CreateVMWizardComponent: React.FC<CreateVMWizardComponentProps> = (props) 
     },
     {
       id: VMWizardTab.ADVANCED_CLOUD_INIT,
-      name: 'Advanced',
+      name: t(TabTitleKeyResolver[VMWizardTab.ADVANCED_CLOUD_INIT]),
       canJumpTo: tabsMetadata[VMWizardTab.ADVANCED_CLOUD_INIT]?.canJumpTo,
       component: (
         <>
@@ -241,7 +247,7 @@ const CreateVMWizardComponent: React.FC<CreateVMWizardComponentProps> = (props) 
     },
     {
       id: VMWizardTab.REVIEW,
-      name: TabTitleResolver[VMWizardTab.REVIEW],
+      name: t(TabTitleKeyResolver[VMWizardTab.REVIEW]),
       canJumpTo: tabsMetadata[VMWizardTab.REVIEW]?.canJumpTo,
       component: (
         <>
@@ -252,7 +258,7 @@ const CreateVMWizardComponent: React.FC<CreateVMWizardComponentProps> = (props) 
     },
     {
       id: VMWizardTab.RESULT,
-      name: TabTitleResolver[VMWizardTab.RESULT],
+      name: t(TabTitleKeyResolver[VMWizardTab.RESULT]),
       canJumpTo: tabsMetadata[VMWizardTab.RESULT]?.canJumpTo,
       isFinishedStep:
         tabsMetadata[VMWizardTab.RESULT].isPending || tabsMetadata[VMWizardTab.RESULT].isValid,

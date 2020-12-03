@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { AlertVariant } from '@patternfly/react-core';
 import {
   ImportProvidersField,
@@ -24,7 +26,7 @@ import {
 const getDocURL = (providerType: VMImportProvider) =>
   providerType === VMImportProvider.VMWARE ? VMWARE_DOCURL : OVIRT_DOCURL;
 
-const resolveUIMessageTemplating = (message: string, provider: VMImportProvider) => {
+const resolveUIMessageTemplating = (t: TFunction, message: string, provider: VMImportProvider) => {
   if (!message) {
     return message;
   }
@@ -41,7 +43,7 @@ const resolveUIMessageTemplating = (message: string, provider: VMImportProvider)
         return (
           <React.Fragment key={key}>
             {chunk}
-            <ExternalLink text="documentation" href={getDocURL(provider)} />
+            <ExternalLink text={t('kubevirt-plugin~documentation')} href={getDocURL(provider)} />
           </React.Fragment>
         );
       })}
@@ -51,6 +53,7 @@ const resolveUIMessageTemplating = (message: string, provider: VMImportProvider)
 
 const VmImportProviderControllerErrorsComponent: React.FC<VmImportProviderControllerErrorsComponentProps> = React.memo(
   ({ errors, provider }) => {
+    const { t } = useTranslation();
     if (!errors) {
       return null;
     }
@@ -64,9 +67,9 @@ const VmImportProviderControllerErrorsComponent: React.FC<VmImportProviderContro
         <Errors
           errors={[
             {
-              title: resultWrapper.mainError?.title || 'Error',
-              message: resolveUIMessageTemplating(resultWrapper.mainError?.message, provider),
-              detail: resolveUIMessageTemplating(resultWrapper.mainError?.detail, provider),
+              title: resultWrapper.mainError?.title || t('kubevirt-plugin~Error'),
+              message: resolveUIMessageTemplating(t, resultWrapper.mainError?.message, provider),
+              detail: resolveUIMessageTemplating(t, resultWrapper.mainError?.detail, provider),
             },
             ...resultWrapper.errors,
           ].map((error) => ({

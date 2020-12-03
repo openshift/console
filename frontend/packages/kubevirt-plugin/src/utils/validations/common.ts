@@ -1,18 +1,12 @@
 import * as _ from 'lodash';
 import {
-  addMissingSubject,
   getName,
   getNamespace,
   asValidationObject,
-  validateEmptyValue,
   ValidationErrorType,
   ValidationObject,
-  joinGrammaticallyListOfItems,
 } from '@console/shared';
 import { parseURL } from '../url';
-import { END_WHITESPACE_ERROR, START_WHITESPACE_ERROR, URL_INVALID_ERROR } from './strings';
-import { DiskBus } from '../../constants/vm/storage/disk-bus';
-import { UIValidationType, UIValidation } from '../../types/ui/ui';
 
 export const isValidationError = (validationObject: ValidationObject) =>
   !!validationObject && validationObject.type === ValidationErrorType.Error;
@@ -21,7 +15,7 @@ export const getValidationErrorMessage = (validationObject: ValidationObject): s
   return (
     validationObject &&
     validationObject.type === ValidationErrorType.Error &&
-    validationObject.message
+    validationObject.messageKey
   );
 };
 
@@ -31,75 +25,53 @@ export const validateEntityAlreadyExists = (
   name,
   namespace,
   entities,
-  { errorMessage, subject } = { errorMessage: undefined, subject: undefined },
+  { errorMessage } = { errorMessage: undefined },
 ): ValidationObject => {
   const exists =
     entities &&
     entities.some((entity) => getName(entity) === name && getNamespace(entity) === namespace);
-  return exists ? asValidationObject(addMissingSubject(errorMessage, subject)) : null;
+  return exists ? asValidationObject(errorMessage) : null;
 };
 
-export const validatePositiveInteger = (
-  value: string,
-  { subject } = { subject: undefined },
-): ValidationObject => {
-  const emptyError = validateEmptyValue(value, { subject });
-  if (emptyError) {
-    return emptyError;
+export const validateURL = (value: string): ValidationObject => {
+  if (!value) {
+    // t('kubevirt-plugin~URL cannot be empty')
+    return asValidationObject(
+      'kubevirt-plugin~URL cannot be empty',
+      ValidationErrorType.TrivialError,
+    );
   }
-  return isPositiveNumber(value)
-    ? null
-    : asValidationObject(addMissingSubject('must be positive integer', subject));
-};
-
-export const validateTrim = (
-  value: string,
-  { subject }: { subject: string } = { subject: undefined },
-) => {
-  const emptyError = validateEmptyValue(value, { subject });
-  if (emptyError) {
-    return emptyError;
-  }
-
-  let resultErrror;
   if (_.trimStart(value).length !== value.length) {
-    resultErrror = START_WHITESPACE_ERROR;
+    // t('kubevirt-plugin~URL cannot start with whitespace characters')
+    return asValidationObject('kubevirt-plugin~URL cannot start with whitespace characters');
   }
 
   if (_.trimEnd(value).length !== value.length) {
-    resultErrror = END_WHITESPACE_ERROR;
+    // t('kubevirt-plugin~URL cannot end with whitespace characters')
+    return asValidationObject('kubevirt-plugin~URL cannot end with whitespace characters');
   }
 
-  return resultErrror
-    ? asValidationObject(addMissingSubject(resultErrror, subject), ValidationErrorType.Error)
-    : null;
+  // t('kubevirt-plugin~URL has to be a valid URL')
+  return parseURL(value) ? null : asValidationObject('kubevirt-plugin~URL has to be a valid URL');
 };
 
-export const validateURL = (
-  value: string,
-  { subject }: { subject: string } = { subject: undefined },
-) => {
-  const trimError = validateTrim(value, { subject });
-  if (trimError) {
-    return trimError;
-  }
-
-  return parseURL(value) ? null : asValidationObject(addMissingSubject(URL_INVALID_ERROR, subject));
-};
-
-export const validateBus = (value: DiskBus, allowedBuses: Set<DiskBus>): ValidationObject => {
-  if (allowedBuses && !allowedBuses.has(value)) {
+export const validateContainer = (value: string): ValidationObject => {
+  if (!value) {
+    // t('kubevirt-plugin~Container cannot be empty')
     return asValidationObject(
-      `Invalid interface type. Valid types are: ${joinGrammaticallyListOfItems(
-        [...allowedBuses].map((b) => b.toString()),
-      )}`,
-      ValidationErrorType.Error,
+      'kubevirt-plugin~Container cannot be empty',
+      ValidationErrorType.TrivialError,
     );
   }
+  if (_.trimStart(value).length !== value.length) {
+    // t('kubevirt-plugin~Container cannot start with whitespace characters')
+    return asValidationObject('kubevirt-plugin~Container cannot start with whitespace characters');
+  }
+
+  if (_.trimEnd(value).length !== value.length) {
+    // t('kubevirt-plugin~Container cannot end with whitespace characters')
+    return asValidationObject('kubevirt-plugin~Container cannot end with whitespace characters');
+  }
+
   return null;
 };
-
-export const getValidationByType = (
-  validationList: UIValidation[],
-  type: UIValidationType,
-): UIValidation => validationList?.find((val) => val.type === type);

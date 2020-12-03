@@ -76,14 +76,16 @@ export const vmWizardInternalActions: VMWizardInternalActions = {
     tab: VMWizardTab,
     isValid: boolean,
     hasAllRequiredFilled: boolean,
-    error: string,
+    errorKey: string,
+    fieldKeys: string[],
   ) => ({
     payload: {
       id,
       tab,
       isValid,
       hasAllRequiredFilled,
-      error,
+      errorKey,
+      fieldKeys,
     },
     type: InternalActionType.SetTabValidity,
   }),

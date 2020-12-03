@@ -40,9 +40,6 @@ export const wrapWithProgress = (setProgress: (inProgress: boolean) => void) => 
     });
 };
 
-export const getVMLikeModelName = (isCreateTemplate: boolean) =>
-  isCreateTemplate ? 'virtual machine template' : VirtualMachineModel.label.toLowerCase();
-
 export const getVMLikeModelListPath = (isCreateTemplate: boolean, namespace: string) =>
   isCreateTemplate
     ? `/k8s/ns/${namespace}/virtualization/templates`

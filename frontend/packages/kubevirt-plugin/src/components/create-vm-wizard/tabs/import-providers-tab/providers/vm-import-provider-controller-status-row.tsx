@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import { Link } from 'react-router-dom';
 import { Alert, AlertVariant } from '@patternfly/react-core';
@@ -37,14 +38,18 @@ type DeploymentLinkProps = {
   deployment: K8sResourceKind;
 };
 
-const NoDeployment: React.FC<NoDeploymentProps> = ({ provider }) => (
-  <StatusIconAndText
-    spin
-    noTooltip
-    title={`Starting ${getProviderName(provider)} controller`}
-    icon={<InProgressIcon />}
-  />
-);
+const NoDeployment: React.FC<NoDeploymentProps> = ({ provider }) => {
+  const { t } = useTranslation();
+  const providerName = getProviderName(provider);
+  return (
+    <StatusIconAndText
+      spin
+      noTooltip
+      title={t('kubevirt-plugin~Starting {{providerName}} controller)}', { providerName })}
+      icon={<InProgressIcon />}
+    />
+  );
+};
 
 type NoDeploymentProps = {
   id: string;
@@ -57,6 +62,7 @@ const DeploymentProgressing: React.FC<DeploymentProgressingProps> = ({
   deployment,
 }) => {
   const icon = <InProgressIcon />;
+  const { t } = useTranslation();
   // TODO reuse StatusComponent
   return (
     <span id={id} className="co-icon-and-text">
@@ -66,7 +72,12 @@ const DeploymentProgressing: React.FC<DeploymentProgressingProps> = ({
           icon.props.className,
         ),
       })}{' '}
-      Deploying {getProviderName(provider)} controller (<DeploymentLink deployment={deployment} />)
+      {
+        (t('kubevirt-plugin~Deploying {{providerName}} controller'),
+        { providerName: getProviderName(provider) })
+      }{' '}
+      (
+      <DeploymentLink deployment={deployment} />)
     </span>
   );
 };
@@ -84,6 +95,7 @@ const DeploymentFailed: React.FC<DeploymentFailedProps> = ({
   pod,
   message,
 }) => {
+  const { t } = useTranslation();
   let podMessage;
   if (pod) {
     const podName = getName(deployment);
@@ -91,7 +103,9 @@ const DeploymentFailed: React.FC<DeploymentFailedProps> = ({
     podMessage = (
       <>
         {' '}
-        Please inspect a failing pod <Link to={podLink}>{podName}</Link>
+        <Trans t={t} ns="kubevirt-plugin">
+          Please inspect a failing pod <Link to={podLink}>{podName}</Link>
+        </Trans>
       </>
     );
   }
@@ -100,10 +114,10 @@ const DeploymentFailed: React.FC<DeploymentFailedProps> = ({
       id={id}
       variant={AlertVariant.danger}
       title={
-        <>
-          Deployment of {getProviderName(provider)} controller{' '}
+        <Trans t={t} ns="kubevirt-plugin">
+          Deployment of {{ providerName: getProviderName(provider) }} controller{' '}
           <DeploymentLink deployment={deployment} /> failed
-        </>
+        </Trans>
       }
     >
       {message}.{podMessage}

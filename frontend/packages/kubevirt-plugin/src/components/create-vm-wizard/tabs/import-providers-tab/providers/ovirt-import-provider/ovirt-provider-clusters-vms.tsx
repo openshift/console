@@ -2,6 +2,7 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import { FormSelect, FormSelectOption } from '@patternfly/react-core';
 import { connect } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { iGetCommonData } from '../../../../selectors/immutable/selectors';
 import { OvirtProviderField, OvirtProviderProps, VMImportProvider } from '../../../../types';
 import { vmWizardActions } from '../../../../redux/actions';
@@ -10,7 +11,7 @@ import { FormFieldRow } from '../../../../form/form-field-row';
 import { FormField, FormFieldType } from '../../../../form/form-field';
 import { iGet, iGetIn } from '../../../../../../utils/immutable';
 import { FormSelectPlaceholderOption } from '../../../../../form/form-select-placeholder-option';
-import { getPlaceholder } from '../../../../utils/renderable-field-utils';
+import { getPlaceholderKey } from '../../../../utils/renderable-field-utils';
 import { ignoreCaseSort } from '../../../../../../utils/sort';
 import { iGetOvirtField } from '../../../../selectors/immutable/provider/ovirt/selectors';
 import { requestVmDetails } from '../../../../redux/state-update/providers/ovirt/ovirt-provider-actions';
@@ -23,6 +24,7 @@ type VMBundle = {
 
 const OvirtProviderClustersVMsConnected: React.FC<OvirtProviderClustersVMsConnectedProps> = React.memo(
   ({ vmField, clusterField, ovirtProviderCR, onClusterChange, onVMChange }) => {
+    const { t } = useTranslation();
     const iVMs = iGetIn(ovirtProviderCR, ['data', 'spec', 'vms']);
 
     const clusterName = iGet(clusterField, 'value');
@@ -58,7 +60,7 @@ const OvirtProviderClustersVMsConnected: React.FC<OvirtProviderClustersVMsConnec
           <FormField>
             <FormSelect onChange={onClusterChange}>
               <FormSelectPlaceholderOption
-                placeholder={getPlaceholder(OvirtProviderField.CLUSTER)}
+                placeholder={t(getPlaceholderKey(OvirtProviderField.CLUSTER))}
                 isDisabled={!!clusterName}
               />
               {clusters &&
@@ -72,7 +74,7 @@ const OvirtProviderClustersVMsConnected: React.FC<OvirtProviderClustersVMsConnec
           <FormField isDisabled={!clusterName}>
             <FormSelect onChange={onVMChange}>
               <FormSelectPlaceholderOption
-                placeholder={getPlaceholder(OvirtProviderField.VM)}
+                placeholder={t(getPlaceholderKey(OvirtProviderField.VM))}
                 isDisabled={!!iGet(vmField, 'value')}
               />
               {vms &&

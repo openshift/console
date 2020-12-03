@@ -1,6 +1,7 @@
 import { connect } from 'react-redux';
 import * as React from 'react';
 import { FileUpload } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import { ValidationErrorType, ValidationObject } from '@console/shared/src/utils/validation/types';
 import { iGetOvirtField } from '../../../../selectors/immutable/provider/ovirt/selectors';
 import { VMImportProvider, OvirtProviderField } from '../../../../types';
@@ -12,11 +13,10 @@ import { FormFieldRow } from '../../../../form/form-field-row';
 import { getFieldId } from '../../../../utils/renderable-field-utils';
 
 const MAX_CERT_SIZE = 10 * 1024 * 1024;
-const MAX_CERT_SIZE_MSG = 'Maximum allowed size is 10 MiB';
-const READ_FAILED_MSG = 'Read failed';
 
 const OvirtCertificateConnected: React.FC<OvirtCertificateProps> = React.memo(
   ({ certField, onCertChange }) => {
+    const { t } = useTranslation();
     const mounted = React.useRef(true);
     React.useEffect(() => () => (mounted.current = false), []);
 
@@ -24,7 +24,7 @@ const OvirtCertificateConnected: React.FC<OvirtCertificateProps> = React.memo(
     const [lastError, setLastError] = React.useState(null);
 
     const additionalValidation: ValidationObject = lastError
-      ? { message: lastError, type: ValidationErrorType.Error }
+      ? { messageKey: lastError, type: ValidationErrorType.Error }
       : undefined;
 
     const onCertificateChange = React.useCallback(
@@ -53,14 +53,16 @@ const OvirtCertificateConnected: React.FC<OvirtCertificateProps> = React.memo(
     const onCertFileRejected = React.useCallback(() => {
       if (mounted.current) {
         setCertFileLoading(false);
-        setLastError(MAX_CERT_SIZE_MSG);
+        // t('kubevirt-plugin~Maximum allowed size is 10 MiB')
+        setLastError('kubevirt-plugin~Maximum allowed size is 10 MiB');
       }
     }, []);
 
     const onCertFileReadFailed = React.useCallback(() => {
       if (mounted.current) {
         setCertFileLoading(false);
-        setLastError(READ_FAILED_MSG);
+        // t('kubevirt-plugin~Read failed')
+        setLastError('kubevirt-plugin~Read failed');
       }
     }, []);
 
@@ -75,7 +77,7 @@ const OvirtCertificateConnected: React.FC<OvirtCertificateProps> = React.memo(
             target="_blank"
             rel="noopener noreferrer"
           >
-            Obtaining the CA certificate
+            {t('kubevirt-plugin~Obtaining the CA certificate')}
           </a>
         }
       >

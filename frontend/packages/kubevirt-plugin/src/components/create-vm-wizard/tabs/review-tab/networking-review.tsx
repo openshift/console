@@ -5,15 +5,17 @@ import { getNetworks } from '../../selectors/selectors';
 import { NetworkInterfaceWrapper } from '../../../../k8s/wrapper/vm/network-interface-wrapper';
 import { NetworkWrapper } from '../../../../k8s/wrapper/vm/network-wrapper';
 import { Table, TableBody, TableHeader, TableVariant } from '@patternfly/react-table';
+import { useTranslation } from 'react-i18next';
 
 const NetworkingReviewConnected: React.FC<NetworkingTabComponentProps> = ({ networks }) => {
+  const { t } = useTranslation();
   const showNetworks = networks.length > 0;
 
   const headers = [
-    { title: 'Name' },
-    { title: 'Model' },
-    { title: 'Network' },
-    { title: 'MAC Address' },
+    { title: t('kubevirt-plugin~Name') },
+    { title: t('kubevirt-plugin~Model') },
+    { title: t('kubevirt-plugin~Network') },
+    { title: t('kubevirt-plugin~MAC Address') },
   ];
 
   const rows = networks.map(({ networkInterface, network }) => {
@@ -32,7 +34,7 @@ const NetworkingReviewConnected: React.FC<NetworkingTabComponentProps> = ({ netw
     <>
       {showNetworks && (
         <Table
-          aria-label="Network Interfaces"
+          aria-label={t('kubevirt-plugin~Network Interfaces')}
           variant={TableVariant.compact}
           cells={headers}
           rows={rows}
@@ -44,7 +46,7 @@ const NetworkingReviewConnected: React.FC<NetworkingTabComponentProps> = ({ netw
       )}
       {!showNetworks && (
         <p>
-          <strong>No network interfaces found</strong>
+          <strong>{t('kubevirt-plugin~No network interfaces found')}</strong>
         </p>
       )}
     </>

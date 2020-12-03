@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { SelectOption } from '@patternfly/react-core';
 import { ValidationErrorType, asValidationObject } from '@console/shared/src/utils/validation';
+import { useTranslation } from 'react-i18next';
 import {
   iGetIsLoaded,
   iGetLoadedData,
@@ -38,6 +39,7 @@ export const FlavorSelect: React.FC<FlavorProps> = React.memo(
     onChange,
     openshiftFlag,
   }) => {
+    const { t } = useTranslation();
     const flavor = iGetFieldValue(flavorField);
     const isUserTemplateValid = iGetIsLoaded(iUserTemplate) && !iGetLoadError(iUserTemplate);
 
@@ -56,10 +58,10 @@ export const FlavorSelect: React.FC<FlavorProps> = React.memo(
     const defaultTemplate = getOsDefaultTemplate(templates, os);
 
     const flavors = flavorSort(getFlavors(templates, params));
-    const flavorDescriptions = templates.reduce((acc, t) => {
-      acc[getFlavor(t)] = getFlavorText({
-        cpu: getCPU(selectVM(t)),
-        memory: getMemory(selectVM(t)),
+    const flavorDescriptions = templates.reduce((acc, tmp) => {
+      acc[getFlavor(tmp)] = getFlavorText({
+        cpu: getCPU(selectVM(tmp)),
+        memory: getMemory(selectVM(tmp)),
       });
       return acc;
     }, {});
@@ -87,8 +89,9 @@ export const FlavorSelect: React.FC<FlavorProps> = React.memo(
       (!iUserTemplate || isUserTemplateValid) &&
       (flavors.length === 0 || workloadProfiles.length === 0)
     ) {
+      // t('kubevirt-plugin~There is no valid template for this combination. Please install required template or select different os/flavor/workload profile combination.')
       const validation = asValidationObject(
-        'There is no valid template for this combination. Please install required template or select different os/flavor/workload profile combination.',
+        'kubevirt-plugin~There is no valid template for this combination. Please install required template or select different os/flavor/workload profile combination.',
         ValidationErrorType.Info,
       );
       if (!flavorField.get('validation')) {
@@ -121,7 +124,9 @@ export const FlavorSelect: React.FC<FlavorProps> = React.memo(
                     value={f.getValue()}
                     description={f.getDescription()}
                   >
-                    {f.toString().concat(isDefault ? ' (default)' : '')}
+                    {isDefault
+                      ? t('kubevirt-plugin~{{flavor}} (default)', { flavor: f.toString() })
+                      : f.toString()}
                     {flavorDesc && f !== Flavor.CUSTOM && ` - ${flavorDesc}`}
                   </SelectOption>
                 );

@@ -17,15 +17,16 @@ type BootSourceProps = {
 
 export const BootSource: React.FC<BootSourceProps> = ({ template, state, dispatch }) => {
   const { t } = useTranslation();
+  const name = getTemplateName(template?.variants[0]);
   return (
     <Stack hasGutter className="kv-create-tab">
       <StackItem>
         <Title headingLevel="h5" size="lg">
           {t('kubevirt-plugin~Boot source')}
         </Title>
-        <Trans t={t} ns="kubevirt-plugin">
+        <Trans t={t} ns="kubevirt-plugin" values={{ name }}>
           This template does not have a boot source. Provide a custom boot source for this{' '}
-          <b>{getTemplateName(template?.variants[0])}</b> virtual machine.
+          <b>{{ name }}</b> virtual machine.
         </Trans>
       </StackItem>
       <StackItem>

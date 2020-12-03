@@ -668,7 +668,9 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
       <ModalFooter
         id="disk"
         submitButtonText={isEditing ? t('kubevirt-plugin~Save') : t('kubevirt-plugin~Add')}
-        errorMessage={errorMessage || (showUIError ? getDialogUIError(hasAllRequiredFilled) : null)}
+        errorMessage={
+          errorMessage || (showUIError ? getDialogUIError(hasAllRequiredFilled, t) : null)
+        }
         isDisabled={inProgress}
         inProgress={inProgress}
         isSimpleError={showUIError}

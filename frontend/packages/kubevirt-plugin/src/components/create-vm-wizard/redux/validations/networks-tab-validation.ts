@@ -46,7 +46,7 @@ export const setNetworksTabValidity = (options: UpdateOptions) => {
   const { id, dispatch, getState } = options;
   const state = getState();
   const iNetworks = iGetNetworks(state, id);
-  let error = null;
+  let errorKey: string;
 
   let hasAllRequiredFilled = iNetworks.every((iNetwork) =>
     iGetIn(iNetwork, ['validation', 'hasAllRequiredFilled']),
@@ -59,7 +59,8 @@ export const setNetworksTabValidity = (options: UpdateOptions) => {
         iGetIn(networkBundle, ['networkInterface', 'bootOrder']) === 1,
     );
     if (!hasBootSource) {
-      error = 'Please select the boot source.';
+      // t('kubevirt-plugin~Please select the boot source.')
+      errorKey = 'kubevirt-plugin~Please select the boot source.';
       hasAllRequiredFilled = false;
     }
   }
@@ -71,7 +72,15 @@ export const setNetworksTabValidity = (options: UpdateOptions) => {
   }
 
   if (
-    checkTabValidityChanged(state, id, VMWizardTab.NETWORKING, isValid, hasAllRequiredFilled, error)
+    checkTabValidityChanged(
+      state,
+      id,
+      VMWizardTab.NETWORKING,
+      isValid,
+      hasAllRequiredFilled,
+      errorKey,
+      null,
+    )
   ) {
     dispatch(
       vmWizardInternalActions[InternalActionType.SetTabValidity](
@@ -79,7 +88,7 @@ export const setNetworksTabValidity = (options: UpdateOptions) => {
         VMWizardTab.NETWORKING,
         isValid,
         hasAllRequiredFilled,
-        error,
+        errorKey,
       ),
     );
   }

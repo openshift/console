@@ -370,7 +370,8 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
         id="nic"
         submitButtonText={isEditing ? t('kubevirt-plugin~Save') : t('kubevirt-plugin~Add')}
         errorMessage={
-          errorMessage || (!isValid && showUIError ? getDialogUIError(hasAllRequiredFilled) : null)
+          errorMessage ||
+          (!isValid && showUIError ? getDialogUIError(hasAllRequiredFilled, t) : null)
         }
         isDisabled={inProgress}
         isSimpleError={showUIError}

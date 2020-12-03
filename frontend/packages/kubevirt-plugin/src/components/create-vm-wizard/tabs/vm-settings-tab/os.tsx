@@ -17,7 +17,6 @@ import {
   getWorkloadProfiles,
 } from '../../../../selectors/vm-template/combined-dependent';
 import { flavorSort, ignoreCaseSort } from '../../../../utils/sort';
-import { pluralize } from '../../../../utils/strings';
 import { VMSettingsField } from '../../types';
 import { iGetFieldValue } from '../../selectors/immutable/field';
 import { getFieldId } from '../../utils/renderable-field-utils';
@@ -28,15 +27,6 @@ import { iGetAnnotation } from '../../../../selectors/immutable/common';
 import { iGetName, iGetNamespace } from '../../selectors/immutable/selectors';
 import { getPVCUploadURL } from '../../../../constants';
 import {
-  BASE_IMAGE_AND_PVC_SHORT,
-  BASE_IMAGE_AND_PVC_MESSAGE,
-  NO_BASE_IMAGE_SHORT,
-  NO_BASE_IMAGE_AND_NO_PVC_MESSAGE,
-  NO_BASE_IMAGE_AND_NO_PVC_SHORT,
-  BASE_IMAGE_AND_PVC_UPLOADING_SHORT,
-  BASE_IMAGE_UPLOADING_MESSAGE,
-} from '../../strings/strings';
-import {
   CDI_UPLOAD_OS_URL_PARAM,
   CDI_UPLOAD_POD_ANNOTATION,
   CDI_UPLOAD_RUNNING,
@@ -45,6 +35,7 @@ import { getTemplateOperatingSystems } from '../../../../selectors/vm-template/a
 import { FormPFSelect } from '../../../form/form-pf-select';
 import { ResourceLink, useAccessReview } from '@console/internal/components/utils';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
+import { Trans, useTranslation } from 'react-i18next';
 
 export const OS: React.FC<OSProps> = React.memo(
   ({
@@ -60,6 +51,7 @@ export const OS: React.FC<OSProps> = React.memo(
     openshiftFlag,
     goToStorageStep,
   }) => {
+    const { t } = useTranslation();
     const os = iGetFieldValue(operatinSystemField);
     const display = iGet(operatinSystemField, 'display');
     const displayOnly = !!display;
@@ -114,8 +106,9 @@ export const OS: React.FC<OSProps> = React.memo(
       (!iUserTemplate || isUserTemplateValid) &&
       (operatingSystems.length === 0 || flavors.length === 0 || workloadProfiles.length === 0)
     ) {
+      // t('kubevirt-plugin~There is no valid template for this combination. Please install required template or select different os/flavor/workload profile combination.')
       const validation = asValidationObject(
-        'There is no valid template for this combination. Please install required template or select different os/flavor/workload profile combination.',
+        'kubevirt-plugin~There is no valid template for this combination. Please install required template or select different os/flavor/workload profile combination.',
         ValidationErrorType.Info,
       );
       if (!operatinSystemField.get('validation')) {
@@ -153,19 +146,19 @@ export const OS: React.FC<OSProps> = React.memo(
 
         if (!iUserTemplate && !baseImagesLoadError) {
           if (baseImageFoundInCluster && pvcName && pvcNamespace) {
-            osField.longMessage = BASE_IMAGE_AND_PVC_MESSAGE;
             if (isBaseImageUploading) {
-              osField.message = BASE_IMAGE_AND_PVC_UPLOADING_SHORT;
-              osField.checkboxDescription = BASE_IMAGE_UPLOADING_MESSAGE;
+              osField.message = t('kubevirt-plugin~(Source uploading)');
+              osField.checkboxDescription = t(
+                'kubevirt-plugin~The upload process for this Operating system must complete before it can be cloned',
+              );
             } else {
-              osField.message = BASE_IMAGE_AND_PVC_SHORT;
+              osField.message = t('kubevirt-plugin~(Source available)');
               osField.pvcName = pvcName;
               osField.pvcNamespace = pvcNamespace;
             }
           } else if (pvcName && pvcNamespace) {
-            osField.message = NO_BASE_IMAGE_SHORT;
             osField.longMessage = canUploadGoldenImage ? (
-              <>
+              <Trans t={t} ns="kubevirt-plugin">
                 Operating system image not available. You can either{' '}
                 <Link
                   className="co-external-link"
@@ -176,17 +169,18 @@ export const OS: React.FC<OSProps> = React.memo(
                   upload a new disk image
                 </Link>{' '}
                 or define a boot source manually in the boot source dropdown
-              </>
+              </Trans>
             ) : (
               <>
-                Default operating system image not available. Define a boot source manually below or
-                request your administrator to define one for this operating system via the PVC
-                upload form.
+                {t(
+                  'kubevirt-plugin~Default operating system image not available. Define a boot source manually below or rquest your administrator to define one for this operating system via the PVC upload form.',
+                )}
               </>
             );
           } else {
-            osField.message = NO_BASE_IMAGE_AND_NO_PVC_SHORT;
-            osField.longMessage = NO_BASE_IMAGE_AND_NO_PVC_MESSAGE;
+            osField.longMessage = t(
+              'kubevirt-plugin~The Operating System Template is missing disk image definitions, a custom boot source must be defined manually',
+            );
           }
         }
 
@@ -198,22 +192,40 @@ export const OS: React.FC<OSProps> = React.memo(
     const numOfMountedDisks = cloneBaseDiskImage + mountWindowsGuestTools; // using boolean addition operator to count true
     const mountedDisksHelpMsg = numOfMountedDisks > 0 && (
       <Text className="pf-c-form__helper-text kv-create-vm__input-text-help-msg">
-        View the mounted {pluralize(numOfMountedDisks, 'disk')} in the{' '}
-        <Button
-          isDisabled={!goToStorageStep}
-          isInline
-          onClick={goToStorageStep}
-          variant={ButtonVariant.link}
-        >
-          <strong>storage</strong>
-        </Button>{' '}
-        step
+        {numOfMountedDisks === 1 ? (
+          <Trans t={t} ns="kubevirt-plugin">
+            View the mounted disk in the{' '}
+            <Button
+              isDisabled={!goToStorageStep}
+              isInline
+              onClick={goToStorageStep}
+              variant={ButtonVariant.link}
+            >
+              <strong>storage</strong>
+            </Button>{' '}
+            step
+          </Trans>
+        ) : (
+          <Trans t={t} ns="kubevirt-plugin">
+            View the mounted disks in the{' '}
+            <Button
+              isDisabled={!goToStorageStep}
+              isInline
+              onClick={goToStorageStep}
+              variant={ButtonVariant.link}
+            >
+              <strong>storage</strong>
+            </Button>{' '}
+            step
+          </Trans>
+        )}
       </Text>
     );
     const mountedDisksErrorMsg = baseImagesLoadError && (
       <Text className="pf-c-form__helper-text kv-create-vm__input-text-help-msg">
-        Could not access default operating system images. Contact your administrator to gain access
-        to these images. Otherwise provide a manual boot source below.
+        {t(
+          'kubevirt-plugin~Could not access default operating system images. Contact your administrator to gain access to these images. Otherwise provide a manual boot source below.',
+        )}
       </Text>
     );
 

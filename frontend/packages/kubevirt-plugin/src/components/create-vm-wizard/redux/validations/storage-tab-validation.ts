@@ -68,7 +68,7 @@ export const setStoragesTabValidity = (options: UpdateOptions) => {
   const state = getState();
 
   const iStorages = iGetStorages(state, id);
-  let error = null;
+  let errorKey: string;
 
   let hasAllRequiredFilled = iStorages.every((iStorage) =>
     iGetIn(iStorage, ['validation', 'hasAllRequiredFilled']),
@@ -86,7 +86,8 @@ export const setStoragesTabValidity = (options: UpdateOptions) => {
           iGetIn(storageBundle, ['dataVolume', 'spec', 'source', 'http'])),
     );
     if (!hasBootSource) {
-      error = 'Please select a disk with a defined boot source.';
+      // t('kubevirt-plugin~Please select a disk with a defined boot source.')
+      errorKey = 'kubevirt-plugin~Please select a disk with a defined boot source.';
       hasAllRequiredFilled = false;
     }
   }
@@ -98,7 +99,15 @@ export const setStoragesTabValidity = (options: UpdateOptions) => {
   }
 
   if (
-    checkTabValidityChanged(state, id, VMWizardTab.STORAGE, isValid, hasAllRequiredFilled, error)
+    checkTabValidityChanged(
+      state,
+      id,
+      VMWizardTab.STORAGE,
+      isValid,
+      hasAllRequiredFilled,
+      errorKey,
+      null,
+    )
   ) {
     dispatch(
       vmWizardInternalActions[InternalActionType.SetTabValidity](
@@ -106,7 +115,7 @@ export const setStoragesTabValidity = (options: UpdateOptions) => {
         VMWizardTab.STORAGE,
         isValid,
         hasAllRequiredFilled,
-        error,
+        errorKey,
       ),
     );
   }

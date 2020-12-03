@@ -1,117 +1,67 @@
 import * as _ from 'lodash';
-import { addMissingSubject, joinGrammaticallyListOfItems, makeSentence } from '../grammar';
 import { ValidationErrorType, ValidationObject } from './types';
-import {
-  DNS1123_END_ERROR,
-  DNS1123_START_END_ERROR,
-  DNS1123_START_ERROR,
-  EMPTY_ERROR,
-  getStringTooLongErrorMsg,
-  getStringTooShortErrorMsg,
-} from './strings';
 
 const alphanumericRegex = '[a-zA-Z0-9]';
 const alphanumericRegexWithDash = '[-a-zA-Z0-9]';
 
 const DNS1123_MAX_LENGTH = 253;
 
-const DNS_1123_OFFENDING_CHARACTERS = {
-  ',': 'comma',
-  "'": 'apostrophe', // eslint-disable-line quotes
-  _: 'underscore',
+type DNSValidationMsgs = {
+  emptyMsg: string;
+  dashMsg: string;
+  errorMsg: string;
+  uppercaseMsg: string;
+  longMsg: string;
+  shortMsg: string;
 };
 
 export const asValidationObject = (
-  message: string,
+  messageKey: string,
   type: ValidationErrorType = ValidationErrorType.Error,
 ): ValidationObject => ({
-  message,
+  messageKey,
   type,
 });
-
-export const validateEmptyValue = (
-  value: string,
-  { subject } = { subject: 'Value' },
-): ValidationObject => {
-  if (!value) {
-    return asValidationObject(
-      addMissingSubject(makeSentence(EMPTY_ERROR, false), subject),
-      ValidationErrorType.TrivialError,
-    );
-  }
-  return null;
-};
 
 // DNS-1123 subdomain
 export const validateDNS1123SubdomainValue = (
   value: string,
-  { subject, min, max }: { subject: string; min?: number; max?: number } = {
-    subject: 'Name',
+  { emptyMsg, errorMsg, uppercaseMsg, dashMsg, shortMsg, longMsg }: DNSValidationMsgs,
+  { min, max }: { min?: number; max?: number } = {
     min: undefined,
     max: DNS1123_MAX_LENGTH,
   },
 ): ValidationObject => {
   const maxLength = max || DNS1123_MAX_LENGTH;
 
-  const emptyError = validateEmptyValue(value, { subject });
-  if (emptyError) {
-    return emptyError;
+  if (!value) {
+    return asValidationObject(emptyMsg, ValidationErrorType.TrivialError);
   }
 
-  const forbiddenCharacters = new Set<string>();
-  const validationSentences = [];
-
   if (min && value.length < min) {
-    validationSentences.push(getStringTooShortErrorMsg(min));
-  } else if (value.length > maxLength) {
-    validationSentences.push(getStringTooLongErrorMsg(maxLength));
+    return asValidationObject(shortMsg);
+  }
+  if (value.length > maxLength) {
+    return asValidationObject(longMsg);
   }
 
   const startsWithAlphaNumeric = value.charAt(0).match(alphanumericRegex);
   const endsWithAlphaNumeric = value.charAt(value.length - 1).match(alphanumericRegex);
 
-  if (!startsWithAlphaNumeric && !endsWithAlphaNumeric) {
-    validationSentences.push(DNS1123_START_END_ERROR);
-  } else if (!startsWithAlphaNumeric) {
-    validationSentences.push(DNS1123_START_ERROR);
-  } else if (!endsWithAlphaNumeric) {
-    validationSentences.push(DNS1123_END_ERROR);
+  if (!startsWithAlphaNumeric || !endsWithAlphaNumeric) {
+    return asValidationObject(dashMsg);
   }
 
   for (const c of value) {
     if (c.toLowerCase() !== c) {
-      forbiddenCharacters.add('uppercase');
+      return asValidationObject(uppercaseMsg);
     }
 
     if (!c.match(alphanumericRegexWithDash)) {
-      let offender;
-      if (c.match('\\s')) {
-        offender = 'whitespace';
-      } else {
-        offender = DNS_1123_OFFENDING_CHARACTERS[c] || `'${c}'`;
-      }
-
-      forbiddenCharacters.add(offender);
+      return asValidationObject(errorMsg);
     }
   }
-
-  let result = null;
-
-  if (validationSentences.length > 0) {
-    result = makeSentence(joinGrammaticallyListOfItems(validationSentences), false);
-  }
-
-  if (forbiddenCharacters.size > 0) {
-    const forbiddenChars = joinGrammaticallyListOfItems(
-      [...forbiddenCharacters].sort((a, b) => b.length - a.length),
-    );
-    const forbiddenCharsSentence = makeSentence(`${forbiddenChars} characters are not allowed`);
-    result = result ? `${result} ${forbiddenCharsSentence}` : forbiddenCharsSentence;
-  }
-
-  return (
-    result && asValidationObject(addMissingSubject(result, subject), ValidationErrorType.Error)
-  );
+  return null;
 };
 
 export const alignWithDNS1123 = (str) => {

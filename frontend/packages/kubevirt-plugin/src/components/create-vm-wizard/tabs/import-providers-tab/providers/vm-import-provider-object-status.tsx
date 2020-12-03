@@ -1,5 +1,6 @@
 import { Alert, AlertVariant } from '@patternfly/react-core';
 import { InProgressIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
 import StatusIconAndText from '@console/shared/src/components/status/StatusIconAndText';
 import * as React from 'react';
 import { connect } from 'react-redux';
@@ -14,69 +15,98 @@ type StatusProps = {
   provider: VMImportProvider;
 };
 
-const CheckingCredentials: React.FC<StatusProps> = ({ provider }) => (
-  <StatusIconAndText
-    spin
-    noTooltip
-    title={`Checking ${getProviderEndpointName(provider)} credentials`}
-    icon={<InProgressIcon />}
-  />
-);
+const CheckingCredentials: React.FC<StatusProps> = ({ provider }) => {
+  const { t } = useTranslation();
+  return (
+    <StatusIconAndText
+      spin
+      noTooltip
+      title={t('kubevirt-plugin~Checking {{endpoint}} credentials', {
+        endpoint: getProviderEndpointName(provider),
+      })}
+      icon={<InProgressIcon />}
+    />
+  );
+};
 
 const LoadingData: React.FC<StatusProps> = (props) => {
+  const { t } = useTranslation();
   return props.provider === VMImportProvider.OVIRT ? (
     CheckingCredentials(props)
   ) : (
     <StatusIconAndText
       spin
       noTooltip
-      title="Connection successful. Loading data"
+      title={t('kubevirt-plugin~Connection successful. Loading data')}
       icon={<InProgressIcon />}
     />
   );
 };
 
-const ConnectionFailed: React.FC<StatusProps> = ({ provider }) => (
-  <Alert
-    isInline
-    variant={AlertVariant.warning}
-    title={`Could not connect to ${getProviderEndpointName(
-      provider,
-    )} using the provided credentials.`}
-  />
-);
+const ConnectionFailed: React.FC<StatusProps> = ({ provider }) => {
+  const { t } = useTranslation();
+  return (
+    <Alert
+      isInline
+      variant={AlertVariant.warning}
+      title={t(
+        'kubevirt-plugin~Cloud not connect to {{ providerName }} using the provided credentials.',
+        { providerName: getProviderEndpointName(provider) },
+      )}
+    />
+  );
+};
 
-const ConnectionFailedInfra: React.FC<StatusProps> = ({ provider }) => (
-  <Alert
-    isInline
-    variant={AlertVariant.warning}
-    title={`Provided connection information is not correct. Connection to ${getProviderEndpointName(
-      provider,
-    )} failed.`}
-  />
-);
+const ConnectionFailedInfra: React.FC<StatusProps> = ({ provider }) => {
+  const { t } = useTranslation();
+  return (
+    <Alert
+      isInline
+      variant={AlertVariant.warning}
+      title={t(
+        'kubevirt-plugin~Provided connection information is not correct. Connection to {{ providerName }} failed.',
+        { providerName: getProviderEndpointName(provider) },
+      )}
+    />
+  );
+};
 
-const ConnectionSuccessful: React.FC<StatusProps> = () => <>Connection successful</>;
+const ConnectionSuccessful: React.FC<StatusProps> = () => {
+  const { t } = useTranslation();
+  return t('kubevirt-plugin~Connection successful');
+};
 
-const ConnectionUnknown: React.FC<StatusProps> = () => <>Status unknown</>;
+const ConnectionUnknown: React.FC<StatusProps> = () => {
+  const { t } = useTranslation();
+  return t('kubevirt-plugin~Status unknown');
+};
 
-const ReadVmsListFailed: React.FC<StatusProps> = () => (
-  <Alert
-    isInline
-    variant={AlertVariant.warning}
-    title={`Connection failed. Please check your credentials and ensure that the API you're attempting to connect to is operational.`}
-  />
-);
+const ReadVmsListFailed: React.FC<StatusProps> = () => {
+  const { t } = useTranslation();
+  return (
+    <Alert
+      isInline
+      variant={AlertVariant.warning}
+      title={t(
+        "kubevirt-plugin~Connection failed. Please check your credentials and ensure that the API you're attempting to connect to is operational.",
+      )}
+    />
+  );
+};
 
-const ReadVmDetailFailed: React.FC<StatusProps> = ({ provider }) => (
-  <Alert
-    isInline
-    variant={AlertVariant.warning}
-    title={`Connection succeeded but could not read detail of virtual machines from ${getProviderEndpointName(
-      provider,
-    )} instance`}
-  />
-);
+const ReadVmDetailFailed: React.FC<StatusProps> = ({ provider }) => {
+  const { t } = useTranslation();
+  return (
+    <Alert
+      isInline
+      variant={AlertVariant.warning}
+      title={t(
+        'kubevirt-plugin~Connection succeeded but could not read detail of virtual machines from {{providerName}} instance',
+        { providerName: getProviderEndpointName(provider) },
+      )}
+    />
+  );
+};
 
 const vmwareStatusComponentResolver = {
   [V2VProviderStatus.CONNECTING.getValue()]: CheckingCredentials,

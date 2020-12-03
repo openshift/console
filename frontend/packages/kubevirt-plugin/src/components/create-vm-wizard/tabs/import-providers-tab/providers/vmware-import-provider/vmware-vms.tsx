@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { FormSelect, FormSelectOption } from '@patternfly/react-core';
 import { connect } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { iGetCommonData } from '../../../../selectors/immutable/selectors';
 import { VMImportProvider, VMWareProviderField, VMWareProviderProps } from '../../../../types';
 import { iGetVMWareField } from '../../../../selectors/immutable/provider/vmware/selectors';
@@ -10,12 +11,13 @@ import { FormFieldRow } from '../../../../form/form-field-row';
 import { FormField, FormFieldType } from '../../../../form/form-field';
 import { iGet, iGetIn } from '../../../../../../utils/immutable';
 import { FormSelectPlaceholderOption } from '../../../../../form/form-select-placeholder-option';
-import { getPlaceholder } from '../../../../utils/renderable-field-utils';
+import { getPlaceholderKey } from '../../../../utils/renderable-field-utils';
 import { ignoreCaseSort } from '../../../../../../utils/sort';
 import { requestVmDetails } from '../../../../redux/state-update/providers/vmware/vmware-provider-actions';
 
 const VMWareVMsConnected: React.FC<VMWareVMsConnectedProps> = React.memo(
   ({ vmField, v2vvmware, onVMChange }) => {
+    const { t } = useTranslation();
     const iVMs = iGetIn(v2vvmware, ['data', 'spec', 'vms']);
     let vmNames;
     if (iVMs) {
@@ -32,7 +34,7 @@ const VMWareVMsConnected: React.FC<VMWareVMsConnectedProps> = React.memo(
         <FormField>
           <FormSelect onChange={onVMChange}>
             <FormSelectPlaceholderOption
-              placeholder={getPlaceholder(VMWareProviderField.VM)}
+              placeholder={t(getPlaceholderKey(VMWareProviderField.VM))}
               isDisabled={!!iGet(vmField, 'value')}
             />
             {vmNames &&

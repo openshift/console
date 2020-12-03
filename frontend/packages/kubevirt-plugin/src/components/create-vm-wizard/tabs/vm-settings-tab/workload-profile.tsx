@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { SelectOption } from '@patternfly/react-core';
 import {
   iGetLoadedData,
@@ -33,6 +34,7 @@ export const WorkloadSelect: React.FC<WorkloadProps> = React.memo(
     flavor,
     onChange,
   }) => {
+    const { t } = useTranslation();
     const isUserTemplateValid = iGetIsLoaded(iUserTemplate) && !iGetLoadError(iUserTemplate);
 
     const templates = iUserTemplate
@@ -89,7 +91,11 @@ export const WorkloadSelect: React.FC<WorkloadProps> = React.memo(
                       value={workload.getValue()}
                       description={workload.getDescription()}
                     >
-                      {workload.toString().concat(isDefault ? ' (default)' : '')}
+                      {isDefault
+                        ? t('kubevirt-plugin~{{workload}} (default)', {
+                            workload: workload.toString(),
+                          })
+                        : workload.toString()}
                     </SelectOption>
                   );
                 })}

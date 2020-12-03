@@ -1,11 +1,9 @@
 import {
   asValidationObject,
-  makeSentence,
   validateDNS1123SubdomainValue,
   ValidationErrorType,
   ValidationObject,
 } from '@console/shared';
-import { MAC_ADDRESS_INVALID_ERROR, NETWORK_REQUIRED, NIC_NAME_EXISTS } from '../strings';
 import { NetworkInterfaceWrapper } from '../../../k8s/wrapper/vm/network-interface-wrapper';
 import { NetworkWrapper } from '../../../k8s/wrapper/vm/network-wrapper';
 import { isValidMAC } from './validations';
@@ -14,12 +12,25 @@ import { UINetworkInterfaceValidation } from '../../../types/ui/nic';
 export const validateNicName = (
   name: string,
   usedInterfacesNames: Set<string>,
-  { subject } = { subject: 'Name' },
 ): ValidationObject => {
-  let validation = validateDNS1123SubdomainValue(name, { subject });
+  let validation = validateDNS1123SubdomainValue(name, {
+    // t('kubevirt-plugin~NIC name cannot be empty')
+    // t('kubevirt-plugin~NIC name name can contain only alphanumberic characters')
+    // t('kubevirt-plugin~NIC name cannot start/end with dash')
+    // t('kubevirt-plugin~NIC name cannot contain uppercase characters')
+    // t('kubevirt-plugin~NIC name is too long')
+    // t('kubevirt-plugin~NIC name is too short')
+    emptyMsg: 'kubevirt-plugin~NIC name cannot be empty',
+    errorMsg: 'kubevirt-plugin~NIC name name can contain only alphanumberic characters',
+    dashMsg: 'kubevirt-plugin~NIC name cannot start/end with dash',
+    uppercaseMsg: 'kubevirt-plugin~NIC name cannot contain uppercase characters',
+    longMsg: 'kubevirt-plugin~NIC name is too long',
+    shortMsg: 'kubevirt-plugin~NIC name is too short',
+  });
 
   if (!validation && usedInterfacesNames && usedInterfacesNames.has(name)) {
-    validation = asValidationObject(NIC_NAME_EXISTS);
+    // t('kubevirt-plugin~Interface with this name already exists')
+    validation = asValidationObject('kubevirt-plugin~Interface with this name already exists');
   }
 
   return validation;
@@ -27,7 +38,8 @@ export const validateNicName = (
 
 export const validateNetwork = (network: NetworkWrapper): ValidationObject => {
   if (!network.hasType()) {
-    return asValidationObject(NETWORK_REQUIRED, ValidationErrorType.TrivialError);
+    // t('kubevirt-plugin~Network required)
+    return asValidationObject('kubevirt-plugin~Network required', ValidationErrorType.TrivialError);
   }
 
   return null;
@@ -35,7 +47,8 @@ export const validateNetwork = (network: NetworkWrapper): ValidationObject => {
 
 export const validateMACAddress = (mac: string): ValidationObject => {
   const isValid = !mac || isValidMAC(mac);
-  return isValid ? null : asValidationObject(makeSentence(MAC_ADDRESS_INVALID_ERROR));
+  // t('kubevirt-plugin~Invalid MAC address format')
+  return isValid ? null : asValidationObject('kubevirt-plugin~Invalid MAC address format');
 };
 
 export const validateNIC = (

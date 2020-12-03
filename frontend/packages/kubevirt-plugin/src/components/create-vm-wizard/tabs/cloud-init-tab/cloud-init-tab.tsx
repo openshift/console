@@ -15,7 +15,7 @@ import {
 } from '@patternfly/react-core';
 import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { confirmModal } from '@console/internal/components/modals';
-import { joinGrammaticallyListOfItems } from '@console/shared/src';
+import { useTranslation } from 'react-i18next';
 import {
   CloudInitField,
   VMWizardStorage,
@@ -50,7 +50,6 @@ import {
 import '../../create-vm-wizard-footer.scss';
 import './cloud-init-tab.scss';
 import { iGetCommonData } from '../../selectors/immutable/selectors';
-import { V2V_IMPORT_CLOUD_INIT_NOT_AVAILABLE } from '../../../../strings/vm/messages';
 import { CloudInitInfoHelper } from './cloud-init-info-helper';
 
 type CustomScriptProps = {
@@ -85,6 +84,7 @@ const CloudInitFormRows: React.FC<CloudInitFormRowsProps> = ({
   value,
   onEntryChange,
 }) => {
+  const { t } = useTranslation();
   const asId = prefixedID.bind(null, id);
   const data = new CloudInitDataHelper({ userData: value });
   const authKeys = data.get(CloudInitDataFormKeys.SSH_AUTHORIZED_KEYS) || [];
@@ -97,7 +97,7 @@ const CloudInitFormRows: React.FC<CloudInitFormRowsProps> = ({
   }
   return (
     <>
-      <FormRow title="Hostname" fieldId={asId(CloudInitDataFormKeys.HOSTNAME)}>
+      <FormRow title={t('kubevirt-plugin~Hostname')} fieldId={asId(CloudInitDataFormKeys.HOSTNAME)}>
         <TextInput
           id={asId(CloudInitDataFormKeys.HOSTNAME)}
           isDisabled={isDisabled}
@@ -106,7 +106,7 @@ const CloudInitFormRows: React.FC<CloudInitFormRowsProps> = ({
         />
       </FormRow>
       <FormRow
-        title="Authenticated SSH Keys"
+        title={t('kubevirt-plugin~Authenticated SSH Keys')}
         fieldId={asId(CloudInitDataFormKeys.SSH_AUTHORIZED_KEYS)}
       >
         {authKeys.map((authKey, idx) => {
@@ -119,7 +119,7 @@ const CloudInitFormRows: React.FC<CloudInitFormRowsProps> = ({
             >
               <SplitItem isFilled>
                 <label hidden htmlFor={inputID}>
-                  {`SSH Key ${uiIDX}`}
+                  {t('kubevirt-plugin~SSH Key {{uiIDX}}', { uiIDX })}
                 </label>
                 <TextInput
                   isDisabled={isDisabled}
@@ -164,7 +164,7 @@ const CloudInitFormRows: React.FC<CloudInitFormRowsProps> = ({
             onEntryChange(CloudInitDataFormKeys.SSH_AUTHORIZED_KEYS, [...authKeys, '']);
           }}
         >
-          Add SSH Key
+          {t('kubevirt-plugin~Add SSH Key')}
         </Button>
       </FormRow>
     </>
@@ -180,6 +180,7 @@ const CloudInitTabComponent: React.FC<ResultTabComponentProps> = ({
   removeStorage,
   isDisabled,
 }) => {
+  const { t } = useTranslation();
   const asId = prefixedID.bind(null, 'cloudinit');
 
   const [data, isBase64] = CloudInitDataHelper.getUserData(
@@ -264,21 +265,22 @@ const CloudInitTabComponent: React.FC<ResultTabComponentProps> = ({
       } else {
         const persistedKeys = [...formAllowedKeys].filter((key) => cloudInitData.has(key));
         confirmModal({
-          title: 'Data loss confirmation',
+          title: t('kubevirt-plugin~Data loss confirmation'),
           message: (
             <>
-              When using the Cloud-init form, custom values can not be applied and will be
-              discarded.
+              {t(
+                'kubevirt-plugin~When using the Cloud-init form, custom values can not be applied and will be discarded.',
+              )}{' '}
               {persistedKeys.length === 0
                 ? ''
-                : ` The following fields will be kept: ${joinGrammaticallyListOfItems(
-                    persistedKeys,
-                  )}.`}{' '}
+                : t('kubevirt-plugin~The following fields will be kept: {{ keys }}.', {
+                    keys: persistedKeys.join(','),
+                  })}
               <br />
-              Are you sure you want to want to take this action?{' '}
+              {t('kubevirt-plugin~Are you sure you want to want to take this action?')}
             </>
           ),
-          btnText: 'Confirm',
+          btnText: t('kubevirt-plugin~Confirm'),
           executeFn,
         });
       }
@@ -294,7 +296,7 @@ const CloudInitTabComponent: React.FC<ResultTabComponentProps> = ({
           endMargin
           errors={[
             {
-              title: 'Cloud-init volume exists but is not editable.',
+              title: t('kubevirt-plugin~Cloud-init volume exists but is not editable.'),
               variant: AlertVariant.info,
               key: 'not-editable',
             },
@@ -303,28 +305,30 @@ const CloudInitTabComponent: React.FC<ResultTabComponentProps> = ({
       )}
       <Form>
         <Title headingLevel="h5" size="lg">
-          Cloud-init <CloudInitInfoHelper />
+          {t('kubevirt-plugin~Cloud-init')} <CloudInitInfoHelper />
         </Title>
         {isDisabled && isProviderImport && (
           <Alert
-            title="Partial data available prior to the import"
+            title={t('kubevirt-plugin~Partial data available prior to the import')}
             isInline
             variant={AlertVariant.info}
           >
-            {V2V_IMPORT_CLOUD_INIT_NOT_AVAILABLE}
+            {t(
+              'kubevirt-plugin~This wizard shows a partial data set. A complete data set is available for viewing when you complete the import process.',
+            )}
           </Alert>
         )}
         <InlineBooleanRadio
           id="cloud-init-edit-mode"
           isDisabled={!isEditable}
-          firstOptionLabel="Form"
-          secondOptionLabel="Custom script"
+          firstOptionLabel={t('kubevirt-plugin~Form')}
+          secondOptionLabel={t('kubevirt-plugin~Custom script')}
           firstOptionChecked={isForm}
           onChange={onSetIsForm}
         />
         {!isForm && (
           <CustomScript
-            key="custom-data "
+            key="custom-data"
             id="cloudinit-custom"
             isDisabled={!isEditable}
             value={data}
@@ -348,7 +352,7 @@ const CloudInitTabComponent: React.FC<ResultTabComponentProps> = ({
             id={asId('base64')}
             isChecked={isBase64}
             isDisabled={!iCloudInitStorage || !isEditable}
-            label="Base-64 encoded"
+            label={t('kubevirt-plugin~Base-64 encoded')}
             onChange={(checked) => onDataChanged(data, checked)}
           />
         </FormRow>
