@@ -331,7 +331,7 @@ export const DropdownField: React.FC<FieldProps> = ({
   uiSchema = {},
 }) => {
   const { t } = useTranslation();
-  const { items, title } = getUiOptions(uiSchema);
+  const { items, title } = getUiOptions(uiSchema) as { items?: object; title?: string };
   return (
     <Dropdown
       id={idSchema.$id}

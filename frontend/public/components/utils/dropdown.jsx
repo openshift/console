@@ -196,7 +196,6 @@ class DropDownRow extends React.PureComponent {
   }
 }
 
-/** @augments {React.Component<any>} */
 class Dropdown_ extends DropdownMixin {
   constructor(props) {
     super(props);
@@ -600,6 +599,15 @@ Dropdown.propTypes = {
   textFilter: PropTypes.string,
   title: PropTypes.node,
   disabled: PropTypes.bool,
+  id: PropTypes.string,
+  onChange: PropTypes.func,
+  selectedKey: PropTypes.string,
+  titlePrefix: PropTypes.string,
+  ariaLabel: PropTypes.string,
+  name: PropTypes.string,
+  autoSelect: PropTypes.bool,
+  describedBy: PropTypes.string,
+  required: PropTypes.bool,
 };
 
 class ActionsMenuDropdown_ extends DropdownMixin {
