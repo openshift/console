@@ -24,6 +24,7 @@ import {
   PVCDelete,
   CatalogItemProvider,
   CatalogItemType,
+  CatalogItemFilter,
 } from '@console/plugin-sdk';
 import { DashboardsStorageCapacityDropdownItem } from '@console/ceph-storage-plugin';
 import { TemplateModel, PodModel, PersistentVolumeClaimModel } from '@console/internal/models';
@@ -72,7 +73,8 @@ type ConsumedExtensions =
   | PVCDelete
   | AddAction
   | CatalogItemProvider
-  | CatalogItemType;
+  | CatalogItemType
+  | CatalogItemFilter;
 
 export const FLAG_KUBEVIRT = 'KUBEVIRT';
 
@@ -583,6 +585,18 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [FLAG_KUBEVIRT],
+    },
+  },
+
+  {
+    type: 'Catalog/ItemFilter',
+    properties: {
+      type: 'Template',
+      filter: getExecutableCodeRef(() =>
+        import(
+          './components/create-vm/dev-console/dev-catalog-vm-templates-filter' /* webpackChunkName: "kubevirt" */
+        ).then((m) => m.default),
+      ),
     },
   },
 ];

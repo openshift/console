@@ -3,11 +3,7 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import { CatalogExtensionHook, CatalogItem } from '@console/plugin-sdk';
-import {
-  k8sListPartialMetadata,
-  PartialObjectMetadata,
-  TemplateKind,
-} from '@console/internal/module/k8s';
+import { k8sListPartialMetadata, PartialObjectMetadata } from '@console/internal/module/k8s';
 import { TemplateModel } from '@console/internal/models';
 import { ANNOTATIONS, APIError } from '@console/shared';
 import {
@@ -16,11 +12,11 @@ import {
 } from '@console/internal/components/catalog/catalog-item-icon';
 
 const normalizeTemplates = (
-  templates: (TemplateKind | PartialObjectMetadata)[],
+  templates: PartialObjectMetadata[],
   activeNamespace: string = '',
   t: TFunction,
-): CatalogItem[] => {
-  const normalizedTemplates: CatalogItem[] = _.reduce(
+): CatalogItem<PartialObjectMetadata>[] => {
+  const normalizedTemplates: CatalogItem<PartialObjectMetadata>[] = _.reduce(
     templates,
     (acc, template) => {
       const { uid, name, namespace, annotations = {}, creationTimestamp } = template.metadata;
@@ -39,7 +35,7 @@ const normalizeTemplates = (
       const documentationUrl = annotations[ANNOTATIONS.documentationURL];
       const supportUrl = annotations[ANNOTATIONS.supportURL];
 
-      const normalizedTemplate: CatalogItem = {
+      const normalizedTemplate: CatalogItem<PartialObjectMetadata> = {
         uid,
         type: 'Template',
         name: displayName,
@@ -57,6 +53,7 @@ const normalizeTemplates = (
           label: t('devconsole~Instantiate Template'),
           href: `/catalog/instantiate-template?template=${name}&template-ns=${namespace}&preselected-ns=${activeNamespace}`,
         },
+        data: template,
       };
 
       acc.push(normalizedTemplate);
@@ -69,15 +66,15 @@ const normalizeTemplates = (
   return normalizedTemplates;
 };
 
-const useTemplates: CatalogExtensionHook<CatalogItem[]> = ({
+const useTemplates: CatalogExtensionHook<CatalogItem<PartialObjectMetadata>[]> = ({
   namespace,
 }): [CatalogItem[], boolean, any] => {
   const { t } = useTranslation();
-  const [templates, setTemplates] = React.useState<TemplateKind[]>([]);
+  const [templates, setTemplates] = React.useState<PartialObjectMetadata[]>([]);
   const [templatesLoaded, setTemplatesLoaded] = React.useState<boolean>(false);
   const [templatesError, setTemplatesError] = React.useState<APIError>();
 
-  const [projectTemplates, setProjectTemplates] = React.useState<TemplateKind[]>([]);
+  const [projectTemplates, setProjectTemplates] = React.useState<PartialObjectMetadata[]>([]);
   const [projectTemplatesLoaded, setProjectTemplatesLoaded] = React.useState<boolean>(false);
   const [projectTemplatesError, setProjectTemplatesError] = React.useState<APIError>();
 
