@@ -92,7 +92,7 @@ describe('Cluster Dashboard', () => {
         const dockerConfigJSON = JSON.parse(
           Buffer.from(pullSecret.data['.dockerconfigjson'], 'base64').toString(),
         );
-        const token = dockerConfigJSON['auths']['cloud.openshift.com']['auth'];
+        const token = dockerConfigJSON.auths['cloud.openshift.com'].auth;
         const clusterId = JSON.parse(execSync('oc get clusterversion -o json').toString()).items[0]
           .spec.clusterID;
         const options = {
@@ -111,7 +111,7 @@ describe('Cluster Dashboard', () => {
               done();
             });
           },
-        ).on('error', (e) => {
+        ).on('error', () => {
           pending();
         });
       });
