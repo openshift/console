@@ -77,24 +77,26 @@ func (p *proxy) IndexFile(onlyCompatible bool) (*repo.IndexFile, error) {
 
 	indexFile := repo.NewIndexFile()
 	for _, helmRepo := range helmRepos {
-		idxFile, err := helmRepo.IndexFile()
-		if err != nil {
-			klog.Errorf("Error retrieving index file for %v: %v", helmRepo, err)
-			continue
-		}
+		if !helmRepo.Disabled {
+			idxFile, err := helmRepo.IndexFile()
+			if err != nil {
+				klog.Errorf("Error retrieving index file for %v: %v", helmRepo, err)
+				continue
+			}
 
-		for key, entry := range idxFile.Entries {
-			if onlyCompatible {
-				for i := len(entry) - 1; i >= 0; i-- {
-					if entry[i].Metadata.KubeVersion != "" && p.kubeVersion != "" {
-						if !chartutil.IsCompatibleRange(entry[i].Metadata.KubeVersion, p.kubeVersion) {
-							entry = append(entry[:i], entry[i+1:]...)
+			for key, entry := range idxFile.Entries {
+				if onlyCompatible {
+					for i := len(entry) - 1; i >= 0; i-- {
+						if entry[i].Metadata.KubeVersion != "" && p.kubeVersion != "" {
+							if !chartutil.IsCompatibleRange(entry[i].Metadata.KubeVersion, p.kubeVersion) {
+								entry = append(entry[:i], entry[i+1:]...)
+							}
 						}
 					}
 				}
-			}
-			if len(entry) > 0 {
-				indexFile.Entries[key+"--"+helmRepo.Name] = entry
+				if len(entry) > 0 {
+					indexFile.Entries[key+"--"+helmRepo.Name] = entry
+				}
 			}
 		}
 	}

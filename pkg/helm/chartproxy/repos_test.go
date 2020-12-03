@@ -342,3 +342,113 @@ func TestHelmRepo_IndexFile(t *testing.T) {
 		})
 	}
 }
+
+func TestHelmRepoGetter_SkipDisabled(t *testing.T) {
+	tests := []struct {
+		name          string
+		helmCRS       []*unstructured.Unstructured
+		expectedRepos map[string]bool
+		apiErrors     []apiError
+	}{
+		{
+			name: "return only enabled helm repos",
+			helmCRS: []*unstructured.Unstructured{
+				{
+					Object: map[string]interface{}{
+						"apiVersion": "helm.openshift.io/v1beta1",
+						"kind":       "HelmChartRepository",
+						"metadata": map[string]interface{}{
+							"namespace": "",
+							"name":      "repo1",
+						},
+						"spec": map[string]interface{}{
+							"connectionConfig": map[string]interface{}{
+								"url": "http://foo.com/bar",
+							},
+							"disabled": true,
+						},
+					},
+				},
+				{
+					Object: map[string]interface{}{
+						"apiVersion": "helm.openshift.io/v1beta1",
+						"kind":       "HelmChartRepository",
+						"metadata": map[string]interface{}{
+							"namespace": "",
+							"name":      "repo2",
+						},
+						"spec": map[string]interface{}{
+							"connectionConfig": map[string]interface{}{
+								"url": "http://foo2.com/bar",
+							},
+						},
+					},
+				},
+			},
+			expectedRepos: map[string]bool{"repo1": true, "repo2": false},
+		},
+		{
+			name: "return empty list if no helm repos are enabled",
+			helmCRS: []*unstructured.Unstructured{
+				{
+					Object: map[string]interface{}{
+						"apiVersion": "helm.openshift.io/v1beta1",
+						"kind":       "HelmChartRepository",
+						"metadata": map[string]interface{}{
+							"namespace": "",
+							"name":      "repo1",
+						},
+						"spec": map[string]interface{}{
+							"connectionConfig": map[string]interface{}{
+								"url": "http://foo.com/bar",
+							},
+							"disabled": true,
+						},
+					},
+				},
+				{
+					Object: map[string]interface{}{
+						"apiVersion": "helm.openshift.io/v1beta1",
+						"kind":       "HelmChartRepository",
+						"metadata": map[string]interface{}{
+							"namespace": "",
+							"name":      "repo2",
+						},
+						"spec": map[string]interface{}{
+							"connectionConfig": map[string]interface{}{
+								"url": "http://foo2.com/bar",
+							},
+							"disabled": true,
+						},
+					},
+				},
+			},
+			expectedRepos: map[string]bool{"repo1": true, "repo2": true},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			client := fake.K8sDynamicClientFromCRs(tt.helmCRS...)
+			coreClient := k8sfake.NewSimpleClientset()
+			repoGetter := NewRepoGetter(client, coreClient.CoreV1())
+			repos, err := repoGetter.List()
+			if err != nil {
+				t.Error(err)
+			}
+			if len(repos) != len(tt.expectedRepos) {
+				t.Errorf("Expected %v repos, but got %v", len(tt.expectedRepos), len(repos))
+			}
+
+			i := 0
+			for name, disabled := range tt.expectedRepos {
+				if name != repos[i].Name {
+					t.Errorf("Expected %v but got %v", name, repos[i].Name)
+				}
+				if tt.expectedRepos[repos[i].Name] != repos[i].Disabled {
+					t.Errorf("Expected %v but got %v", disabled, repos[i].Disabled)
+				}
+				i++
+			}
+		})
+	}
+}
