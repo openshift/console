@@ -20,7 +20,7 @@ export const VMTemplateLabel: React.FC<VMTemplateLabelProps> = ({ template }) =>
   return (
     !!supportLevel && (
       <Label color={isCommonTemplate(template) ? 'green' : 'blue'}>
-        {(t('kubevirt-plugin~{{provider}} supported'), { provider })}
+        {t('kubevirt-plugin~{{provider}} supported', { provider })}
       </Label>
     )
   );
