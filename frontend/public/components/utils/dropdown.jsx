@@ -562,13 +562,26 @@ export const Dropdown = (props) => {
     [setBookmarks],
   );
 
+  // FIXME: Remove this after latest namespace wasn't fetched from localStorage anymore.
+  const onFavorite = React.useCallback(
+    (key) => {
+      setFavoriteKey(key);
+      if (key) {
+        localStorage.setItem(favoriteStorageKey, key);
+      } else {
+        localStorage.removeItem(favoriteStorageKey);
+      }
+    },
+    [setFavoriteKey, favoriteStorageKey],
+  );
+
   return (
     <Dropdown_
       {...props}
       bookmarks={bookmarks}
       onBookmark={onBookmark}
       favoriteKey={favoriteKey}
-      onFavorite={setFavoriteKey}
+      onFavorite={onFavorite}
     />
   );
 };
