@@ -35,6 +35,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
   widgets = {},
   customUISchema,
   noActions,
+  showAlert = true,
   ...restProps
 }) => {
   const { t } = useTranslation();
@@ -56,14 +57,16 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
   }
   return (
     <>
-      <Alert
-        isInline
-        className="co-alert co-break-word"
-        variant="info"
-        title={t(
-          'console-shared~Note: Some fields may not be represented in this form view. Please select "YAML view" for full control.',
-        )}
-      />
+      {showAlert && (
+        <Alert
+          isInline
+          className="co-alert co-break-word"
+          variant="info"
+          title={t(
+            'console-shared~Note: Some fields may not be represented in this form view. Please select "YAML view" for full control.',
+          )}
+        />
+      )}
       <Accordion asDefinitionList={false} className="co-dynamic-form__accordion">
         <Form
           {...restProps}
@@ -109,6 +112,7 @@ type DynamicFormProps = FormProps<any> & {
   ErrorTemplate?: React.FC<{ errors: string[] }>;
   noActions?: boolean;
   customUISchema?: boolean;
+  showAlert?: boolean;
   onCancel?: () => void;
 };
 

@@ -1,7 +1,10 @@
 import * as React from 'react';
 import { useFormikContext, FormikValues } from 'formik';
 import * as _ from 'lodash';
-import { useFormikValidationFix } from '@console/shared';
+import { JSONSchema6 } from 'json-schema';
+import { TextVariants, Text } from '@patternfly/react-core';
+import { DynamicFormField, useFormikValidationFix } from '@console/shared';
+import { capabilityWidgetMap } from '@console/operator-lifecycle-manager/src/components/descriptors/spec/spec-descriptor-input';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import AppSection from '@console/dev-console/src/components/import/app/AppSection';
@@ -20,18 +23,42 @@ import { isKnownEventSource } from '../../../utils/create-eventsources-utils';
 interface EventSourceSectionProps {
   namespace: string;
   fullWidth?: boolean;
-  catalogFlow?: boolean;
+  kameletSource?: K8sResourceKind;
 }
+
+const getUISchema = (formSchema) => {
+  const uiSchema = {};
+  for (const k in formSchema.properties) {
+    if (formSchema.properties.hasOwnProperty(k)) {
+      uiSchema[k] = {
+        'ui:title': formSchema.properties[k].title,
+        'ui:description': formSchema.properties[k].description,
+        ...(formSchema.properties[k].hasOwnProperty('x-descriptors')
+          ? { 'ui:widget': capabilityWidgetMap.get(formSchema.properties[k]['x-descriptors'][0]) }
+          : {}),
+      };
+    }
+  }
+  return uiSchema;
+};
 
 const EventSourceSection: React.FC<EventSourceSectionProps> = ({
   namespace,
   fullWidth = false,
-  catalogFlow = false,
+  kameletSource,
 }) => {
   const { values } = useFormikContext<FormikValues>();
   const projectResource = { kind: ProjectModel.kind, prop: ProjectModel.id, isList: true };
   const [data, loaded] = useK8sWatchResource<K8sResourceKind[]>(projectResource);
   useFormikValidationFix(values);
+  const formSchema: JSONSchema6 = React.useMemo(
+    () => ({
+      type: 'object',
+      required: kameletSource?.spec?.definition?.required,
+      properties: kameletSource?.spec?.definition?.properties,
+    }),
+    [kameletSource],
+  );
 
   if (!values.formData.type) {
     return null;
@@ -69,13 +96,26 @@ const EventSourceSection: React.FC<EventSourceSectionProps> = ({
     case EventSources.PingSource:
       EventSource = <PingSourceSection title={sectionTitle} fullWidth={fullWidth} />;
       break;
+    case EventSources.KameletBinding:
+      EventSource = kameletSource && (
+        <>
+          <Text component={TextVariants.h2}>{kameletSource.spec?.definition?.title}</Text>
+          <DynamicFormField
+            name="formData.data.KameletBinding.source.properties"
+            schema={formSchema}
+            uiSchema={getUISchema(formSchema)}
+            showAlert={false}
+          />
+        </>
+      );
+      break;
     default:
-      EventSource = !catalogFlow ? <YAMLEditorSection title={sectionTitle} /> : null;
+      EventSource = <YAMLEditorSection title={sectionTitle} />;
   }
   return (
     <>
       {EventSource}
-      {(isKnownEventSource(values.formData.type) || catalogFlow) && defaultFormSection}
+      {isKnownEventSource(values.formData.type) && defaultFormSection}
     </>
   );
 };

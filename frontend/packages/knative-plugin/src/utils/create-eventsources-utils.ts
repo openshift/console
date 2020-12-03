@@ -38,8 +38,9 @@ import {
   EventSourcePingModel,
   EventSourceKafkaModel,
   EventSourceCronJobModel,
+  CamelKameletBindingModel,
 } from '../models';
-import { EVENT_SOURCE_LABEL } from '../const';
+import { CAMEL_APIGROUP, EVENT_SOURCE_LABEL } from '../const';
 
 export const isKnownEventSource = (eventSource: string): boolean =>
   Object.keys(EventSources).includes(eventSource);
@@ -197,6 +198,17 @@ export const getEventSourceData = (source: string) => {
   };
   return eventSourceData[source];
 };
+
+export const getKameletSourceData = (kameletData: K8sResourceKind) => ({
+  source: {
+    ref: {
+      apiVersion: kameletData.apiVersion,
+      kind: kameletData.kind,
+      name: kameletData.metadata.name,
+    },
+    properties: {},
+  },
+});
 
 export const sanitizeKafkaSourceResource = (formData: EventSourceFormData): EventSourceFormData => {
   const formDataActual = formData.data?.[EventSources.KafkaSource] || {};
@@ -397,6 +409,41 @@ export const useEventSourceList = (namespace: string): EventSourceListData => {
   return eventSourceModels.length === 0 && accessData.loaded
     ? { loaded: true, eventSourceList: null }
     : accessData;
+};
+
+export const addCamelKameletSourceList = (
+  sourceList: EventSourceListData,
+  kamelet: K8sResourceKind,
+  loaded: boolean,
+  loadError: string,
+) => {
+  if (loaded && !loadError) {
+    const {
+      metadata: { annotations, name },
+      spec: {
+        definition: { title, description },
+      },
+    } = kamelet;
+    return {
+      ...sourceList,
+      loaded,
+      eventSourceList: {
+        ...sourceList.eventSourceList,
+        [CamelKameletBindingModel.kind]: {
+          name,
+          iconUrl: annotations?.[`${CAMEL_APIGROUP}/kamelet.icon`],
+          displayName: title,
+          title,
+          provider: annotations?.[`${CAMEL_APIGROUP}/provider`] || '',
+          description,
+        },
+      },
+    };
+  }
+  return {
+    ...sourceList,
+    loaded: loaded || !!loadError,
+  };
 };
 
 export const getBootstrapServers = (kafkaResources: K8sResourceKind[]) => {
