@@ -9,6 +9,7 @@ type SpotlightProps = {
 
 const Spotlight: React.FC<SpotlightProps> = ({ selector, interactive }) => {
   const element = React.useMemo(() => document.querySelector(selector), [selector]);
+  if (!element) return null;
   return interactive ? (
     <InteractiveSpotlight element={element} />
   ) : (

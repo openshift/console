@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@patternfly/react-core';
 import { ArrowRightIcon } from '@patternfly/react-icons';
-import { SyncMarkdownView } from '@console/internal/components/markdown-view';
+import QuickStartMarkdownView from '../QuickStartMarkdownView';
 import { QuickStartTask, QuickStartTaskStatus } from '../utils/quick-start-types';
 import TaskHeader from './QuickStartTaskHeader';
 
@@ -37,7 +37,7 @@ const QuickStartConclusion: React.FC<QuickStartConclusionProps> = ({
           onTaskSelect={onTaskSelect}
         />
       ))}
-      <SyncMarkdownView
+      <QuickStartMarkdownView
         content={
           hasFailedTask
             ? t(

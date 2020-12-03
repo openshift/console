@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import { getQuickStartByName } from '../../utils/quick-start-utils';
 import { QuickStartTaskStatus } from '../../utils/quick-start-types';
 import QuickStartTask from '../QuickStartTasks';
 import TaskHeader from '../QuickStartTaskHeader';
 import QuickStartTaskReview from '../QuickStartTaskReview';
+import QuickStartMarkdownView from '../../QuickStartMarkdownView';
 
 type QuickStartTaskProps = React.ComponentProps<typeof QuickStartTask>;
 let wrapper: ShallowWrapper<QuickStartTaskProps>;
@@ -53,21 +53,21 @@ describe('QuickStartTasks', () => {
 
     expect(
       wrapper
-        .find(SyncMarkdownView)
+        .find(QuickStartMarkdownView)
         .at(0)
         .props().content,
     ).toEqual(props.tasks[0].summary.success);
 
     expect(
       wrapper
-        .find(SyncMarkdownView)
+        .find(QuickStartMarkdownView)
         .at(1)
         .props().content,
     ).toEqual(props.tasks[1].summary.failed);
 
     expect(
       wrapper
-        .find(SyncMarkdownView)
+        .find(QuickStartMarkdownView)
         .at(2)
         .props().content,
     ).toEqual(props.tasks[2].description);

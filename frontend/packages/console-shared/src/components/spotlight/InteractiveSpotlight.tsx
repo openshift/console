@@ -34,15 +34,18 @@ const InteractiveSpotlight: React.FC<InteractiveSpotlightProps> = ({ element }) 
   const [clicked, setClicked] = React.useState(false);
 
   React.useEffect(() => {
-    if (!isInViewport(element)) {
-      element.scrollIntoView();
+    if (!clicked) {
+      if (!isInViewport(element)) {
+        element.scrollIntoView();
+      }
+      const handleClick = () => setClicked(true);
+      document.addEventListener('click', handleClick);
+      return () => {
+        document.removeEventListener('click', handleClick);
+      };
     }
-    const handleClick = () => setClicked(true);
-    document.addEventListener('click', handleClick);
-    return () => {
-      document.removeEventListener('click', handleClick);
-    };
-  }, [element]);
+    return () => {};
+  }, [element, clicked]);
 
   if (clicked) return null;
 
