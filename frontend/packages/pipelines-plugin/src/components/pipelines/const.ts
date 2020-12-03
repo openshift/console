@@ -46,3 +46,9 @@ export const SecretAnnotationType = {
 
 export const PIPELINE_SERVICE_ACCOUNT = 'pipeline';
 export const PIPELINE_RUN_AUTO_START_FAILED = `bridge/pipeline-run-auto-start-failed`;
+
+export const DEFAULT_CHART_HEIGHT = 275;
+export const DEFAULT_LEGEND_CHART_HEIGHT = 375;
+export const DEFAULT_TIME_RANGE = '1w';
+export const DEFAULT_REFRESH_INTERVAL = '30s';
+export const DEFAULT_SAMPLES = 60;
