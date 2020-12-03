@@ -5,6 +5,7 @@ import { EyeIcon, EyeSlashIcon } from '@patternfly/react-icons';
 import { Button } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { CopyToClipboard, EmptyBox, SectionHeading } from './utils';
+import { containsNonPrintableCharacters } from './utils/file-input';
 
 export const MaskedData: React.FC<{}> = () => {
   const { t } = useTranslation();
@@ -27,6 +28,21 @@ const downloadBinary = (key, value) => {
   saveAs(blob, key);
 };
 
+const DownloadBinaryButton: React.FC<DownloadBinaryButtonProps> = ({ label, value }) => {
+  const { t } = useTranslation();
+  return (
+    <Button
+      className="pf-m-link--align-left"
+      type="button"
+      onClick={() => downloadBinary(label, value)}
+      variant="link"
+    >
+      {t('public~Save file')}
+    </Button>
+  );
+};
+DownloadBinaryButton.displayName = 'DownloadBinaryButton';
+
 export const ConfigMapBinaryData: React.FC<DownloadValueProps> = ({ data }) => {
   const dl = [];
   const { t } = useTranslation();
@@ -41,14 +57,7 @@ export const ConfigMapBinaryData: React.FC<DownloadValueProps> = ({ data }) => {
       );
       dl.push(
         <dd key={`${k}-v`}>
-          <Button
-            className="pf-m-link--align-left"
-            type="button"
-            onClick={() => downloadBinary(k, value)}
-            variant="link"
-          >
-            {t('public~Save file')}
-          </Button>
+          <DownloadBinaryButton label={k} value={value} />
         </dd>,
       );
     });
@@ -104,7 +113,11 @@ export const SecretData: React.FC<SecretDataProps> = ({ data, title }) => {
       );
       dl.push(
         <dd key={`${k}-v`}>
-          <SecretValue value={data[k]} reveal={reveal} />
+          {containsNonPrintableCharacters(Base64.decode(data[k])) ? (
+            <DownloadBinaryButton label={k} value={data[k]} />
+          ) : (
+            <SecretValue value={data[k]} reveal={reveal} />
+          )}
         </dd>,
       );
     });
@@ -141,6 +154,11 @@ SecretData.displayName = 'SecretData';
 
 type KeyValueData = {
   [key: string]: string;
+};
+
+type DownloadBinaryButtonProps = {
+  value: string;
+  label: string;
 };
 
 type ConfigMapDataProps = {
