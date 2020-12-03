@@ -27,6 +27,8 @@ import {
   withUserSettingsCompatibility,
   COLUMN_MANAGEMENT_CONFIGMAP_KEY,
   COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
+  useActiveNamespace,
+  withLastNamespace,
 } from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 
@@ -533,28 +535,30 @@ const getProjectSelectedColumns = ({ showMetrics, showActions }) => {
 };
 
 const ProjectLink = connect(null, {
-  setActiveNamespace: UIActions.setActiveNamespace,
   filterList: k8sActions.filterList,
-})(({ project, setActiveNamespace, filterList }) => (
-  <span className="co-resource-item co-resource-item--truncate">
-    <ResourceIcon kind="Project" />
-    <Button
-      isInline
-      title={project.metadata.name}
-      type="button"
-      className="co-resource-item__resource-name"
-      onClick={() => {
-        setActiveNamespace(project.metadata.name);
-        removeQueryArgument('project-name');
-        // clear project-name filter when active namespace is changed
-        filterList(referenceForModel(ProjectModel), 'project-name', '');
-      }}
-      variant="link"
-    >
-      {project.metadata.name}
-    </Button>
-  </span>
-));
+})(({ project, filterList }) => {
+  const [, setActiveNamespace] = useActiveNamespace();
+  return (
+    <span className="co-resource-item co-resource-item--truncate">
+      <ResourceIcon kind="Project" />
+      <Button
+        isInline
+        title={project.metadata.name}
+        type="button"
+        className="co-resource-item__resource-name"
+        onClick={() => {
+          setActiveNamespace(project.metadata.name);
+          removeQueryArgument('project-name');
+          // clear project-name filter when active namespace is changed
+          filterList(referenceForModel(ProjectModel), 'project-name', '');
+        }}
+        variant="link"
+      >
+        {project.metadata.name}
+      </Button>
+    </span>
+  );
+});
 const projectHeaderWithoutActions = () =>
   projectTableHeader({ showMetrics: false, showActions: false });
 
@@ -1040,14 +1044,12 @@ const RolesPage = ({ obj: { metadata } }) => (
 const autocompleteFilter = (text, item) => fuzzy(text, item);
 
 const namespaceBarDropdownStateToProps = (state) => {
-  const activeNamespace = state.UI.get('activeNamespace');
   const canListNS = state[featureReducerName].get(FLAGS.CAN_LIST_NS);
   const canCreateProject = state[featureReducerName].get(FLAGS.CAN_CREATE_PROJECT);
 
-  return { activeNamespace, canListNS, canCreateProject };
+  return { canListNS, canCreateProject };
 };
 const namespaceBarDropdownDispatchToProps = (dispatch) => ({
-  setActiveNamespace: (ns) => dispatch(UIActions.setActiveNamespace(ns)),
   showStartGuide: (show) => dispatch(setFlag(FLAGS.SHOW_OPENSHIFT_START_GUIDE, show)),
 });
 
@@ -1157,7 +1159,7 @@ class NamespaceBarDropdowns_ extends React.Component {
 const NamespaceBarDropdownsWithTranslation = connect(
   namespaceBarDropdownStateToProps,
   namespaceBarDropdownDispatchToProps,
-)(withTranslation()(NamespaceBarDropdowns_));
+)(withTranslation()(withLastNamespace(NamespaceBarDropdowns_)));
 
 const NamespaceBarDropdowns = withTranslation()(NamespaceBarDropdownsWithTranslation);
 
