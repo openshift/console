@@ -567,6 +567,9 @@ const plugin: Plugin<ConsumedExtensions> = [
         },
       ],
     },
+    flags: {
+      required: [FLAG_KUBEVIRT],
+    },
   },
   {
     type: 'Catalog/ItemProvider',
@@ -577,6 +580,9 @@ const plugin: Plugin<ConsumedExtensions> = [
           './components/create-vm/dev-console/use-catalog-vm-templates' /* webpackChunkName: "kubevirt" */
         ).then((m) => m.default),
       ),
+    },
+    flags: {
+      required: [FLAG_KUBEVIRT],
     },
   },
 ];
