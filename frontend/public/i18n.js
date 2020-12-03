@@ -86,6 +86,7 @@ i18n
         'limit-range',
         'logs',
         'list-page',
+        'lso-plugin',
         'masthead',
         'machines',
         'machine-autoscalers',

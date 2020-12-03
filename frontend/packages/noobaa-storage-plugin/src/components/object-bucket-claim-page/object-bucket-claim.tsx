@@ -1,4 +1,5 @@
 import * as classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import * as React from 'react';
 import { ResourceEventStream } from '@console/internal/components/events';
@@ -28,8 +29,8 @@ import { Status } from '@console/shared';
 import { sortable } from '@patternfly/react-table';
 import { obcStatusFilter } from '../../table-filters';
 import { isBound, getPhase } from '../../utils';
-import { menuActionCreator, menuActions } from './menu-actions';
 import { GetSecret } from './secret';
+import { menuActionCreator, menuActions } from './menu-actions';
 
 const kind = referenceForModel(NooBaaObjectBucketClaimModel);
 
@@ -44,48 +45,9 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const OBCTableHeader = () => {
-  return [
-    {
-      title: 'Name',
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: 'Namespace',
-      sortField: 'metadata.namespace',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-    },
-    {
-      title: 'Status',
-      sortField: 'status.phase',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: 'Secret',
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
-    },
-    {
-      title: 'Storage Class',
-      sortField: 'spec.storageClassName',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[4] },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses[5] },
-    },
-  ];
-};
-OBCTableHeader.displayName = 'OBCTableHeader';
-
 const OBCTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }) => {
   const storageClassName = _.get(obj, 'spec.storageClassName');
+
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
@@ -129,17 +91,19 @@ const OBCTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }) =
 };
 
 const Details: React.FC<DetailsProps> = ({ obj }) => {
+  const { t } = useTranslation();
   const storageClassName = _.get(obj, 'spec.storageClassName');
+
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Object Bucket Claim Details" />
+        <SectionHeading text={t('noobaa-storage-plugin~Object Bucket Claim Details')} />
         <div className="row">
           <div className="col-sm-6">
             <ResourceSummary resource={obj} />
             {isBound(obj) && (
               <>
-                <dt>Secret</dt>
+                <dt>{t('noobaa-storage-plugin~Secret')}</dt>
                 <dd>
                   <ResourceLink
                     kind="Secret"
@@ -152,11 +116,11 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
             )}
           </div>
           <div className="col-sm-6">
-            <dt>Status</dt>
+            <dt>{t('noobaa-storage-plugin~Status')}</dt>
             <dd>
               <OBCStatus obc={obj} />
             </dd>
-            <dt>Storage Class</dt>
+            <dt>{t('noobaa-storage-plugin~Storage Class')}</dt>
             <dd>
               {storageClassName ? (
                 <ResourceLink kind="StorageClass" name={storageClassName} />
@@ -166,7 +130,7 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
             </dd>
             {isBound(obj) && (
               <>
-                <dt>Object Bucket</dt>
+                <dt>{t('noobaa-storage-plugin~Object Bucket')}</dt>
                 <dd>
                   <ResourceLink
                     kind={referenceForModel(NooBaaObjectBucketModel)}
@@ -183,17 +147,63 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
   );
 };
 
-const ObjectBucketClaimsList: React.FC = (props) => (
-  <Table
-    {...props}
-    aria-label="Object Bucket Claims"
-    Header={OBCTableHeader}
-    Row={OBCTableRow}
-    virtualize
-  />
-);
+const ObjectBucketClaimsList: React.FC = (props) => {
+  const { t } = useTranslation();
+
+  const OBCTableHeader = () => {
+    return [
+      {
+        title: t('noobaa-storage-plugin~Name'),
+        sortField: 'metadata.name',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[0] },
+      },
+      {
+        title: t('noobaa-storage-plugin~Namespace'),
+        sortField: 'metadata.namespace',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[1] },
+      },
+      {
+        title: t('noobaa-storage-plugin~Status'),
+        sortField: 'status.phase',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[2] },
+      },
+      {
+        title: t('noobaa-storage-plugin~Secret'),
+        sortField: 'metadata.name',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[3] },
+      },
+      {
+        title: t('noobaa-storage-plugin~Storage Class'),
+        sortField: 'spec.storageClassName',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[4] },
+      },
+      {
+        title: '',
+        props: { className: tableColumnClasses[5] },
+      },
+    ];
+  };
+  OBCTableHeader.displayName = t('noobaa-storage-plugin~OBCTableHeader');
+
+  return (
+    <Table
+      {...props}
+      aria-label={t('noobaa-storage-plugin~Object Bucket Claims')}
+      Header={OBCTableHeader}
+      Row={OBCTableRow}
+      virtualize
+    />
+  );
+};
 
 export const ObjectBucketClaimsPage: React.FC = (props) => {
+  const { t } = useTranslation();
+
   const createProps = {
     to: `${resourcePathFromModel(
       NooBaaObjectBucketClaimModel,
@@ -204,26 +214,29 @@ export const ObjectBucketClaimsPage: React.FC = (props) => {
   return (
     <ListPage
       {...props}
+      title={t('noobaa-storage-plugin~Object Bucket Claims')}
       ListComponent={ObjectBucketClaimsList}
       kind={referenceForModel(NooBaaObjectBucketClaimModel)}
       canCreate
       createProps={createProps}
-      rowFilters={[obcStatusFilter]}
+      rowFilters={[obcStatusFilter(t)]}
     />
   );
 };
 
-export const ObjectBucketClaimsDetailsPage = (props) => (
-  <DetailsPage
-    {...props}
-    menuActions={menuActionCreator}
-    pages={[
-      navFactory.details(Details),
-      navFactory.editYaml(),
-      navFactory.events(ResourceEventStream),
-    ]}
-  />
-);
+export const ObjectBucketClaimsDetailsPage = (props) => {
+  return (
+    <DetailsPage
+      {...props}
+      menuActions={menuActionCreator}
+      pages={[
+        navFactory.details(Details),
+        navFactory.editYaml(),
+        navFactory.events(ResourceEventStream),
+      ]}
+    />
+  );
+};
 
 type OBCStatusProps = {
   obc: K8sResourceKind;

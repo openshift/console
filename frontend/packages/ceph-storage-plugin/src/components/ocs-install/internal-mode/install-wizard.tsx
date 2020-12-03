@@ -2,6 +2,7 @@ import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import { useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { match as RouteMatch } from 'react-router';
 import {
   Alert,
@@ -54,13 +55,14 @@ const makeOCSRequest = (state: InternalClusterState): Promise<StorageClusterKind
 };
 
 export const CreateInternalCluster: React.FC<CreateInternalClusterProps> = ({ match, mode }) => {
+  const { t } = useTranslation();
   const [state, dispatch] = React.useReducer(reducer, initialState);
   const [showInfoAlert, setShowInfoAlert] = React.useState(true);
   const [inProgress, setInProgress] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');
   const flagDispatcher = useDispatch();
 
-  const title = 'create internal mode storage cluster wizard';
+  const title = t('ceph-storage-plugin~create internal mode storage cluster wizard');
   const scName = getName(state.storageClass);
   // User can't have empty public NAD when using multus
   const hasConfiguredNetwork =
@@ -71,25 +73,25 @@ export const CreateInternalCluster: React.FC<CreateInternalClusterProps> = ({ ma
 
   const steps: WizardStep[] = [
     {
-      name: 'Select capacity and nodes',
+      name: t('ceph-storage-plugin~Select capacity and nodes'),
       id: CreateStepsSC.STORAGEANDNODES,
       component: <SelectCapacityAndNodes state={state} dispatch={dispatch} />,
       enableNext: !!(state.nodes.length >= MINIMUM_NODES && scName),
     },
     {
-      name: 'Configure',
+      name: t('ceph-storage-plugin~Configure'),
       id: CreateStepsSC.CONFIGURE,
       component: <Configure state={state} dispatch={dispatch} mode={mode} />,
       enableNext: state.encryption.hasHandled && hasConfiguredNetwork && state.kms.hasHandled,
     },
     {
-      name: 'Review and create',
+      name: t('ceph-storage-plugin~Review and create'),
       id: CreateStepsSC.REVIEWANDCREATE,
       component: (
         <ReviewAndCreate state={state} errorMessage={errorMessage} inProgress={inProgress} />
       ),
       enableNext: hasEnabledCreateStep,
-      nextButtonText: 'Create',
+      nextButtonText: t('ceph-storage-plugin~Create'),
     },
   ];
 
@@ -125,8 +127,9 @@ export const CreateInternalCluster: React.FC<CreateInternalClusterProps> = ({ ma
             isInline
           >
             <p>
-              This mode supports cloud deployments. As part of the storage cluster creation, a
-              bucket will be created on the default backing store
+              {t(
+                'ceph-storage-plugin~Can be used on any platform, except bare metal. It means that OCS uses an infrastructure storage class, provided by the hosting platform. For example, gp2 on AWS, thin on VMWare, etc.',
+              )}
             </p>
           </Alert>
         )}
@@ -134,8 +137,8 @@ export const CreateInternalCluster: React.FC<CreateInternalClusterProps> = ({ ma
       <StackItem isFilled>
         <Wizard
           className="ocs-install-wizard"
-          navAriaLabel={`${title} steps`}
-          mainAriaLabel={`${title} content`}
+          navAriaLabel={t('ceph-storage-plugin~{{title}} steps', { title })}
+          mainAriaLabel={t('ceph-storage-plugin~{{title}} content', { title })}
           steps={steps}
           onSave={createCluster}
           onClose={() => history.goBack()}

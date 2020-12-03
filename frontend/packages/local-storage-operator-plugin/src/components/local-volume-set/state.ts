@@ -1,11 +1,11 @@
-import { diskTypeDropdownItems, diskModeDropdownItems } from '../../constants';
+import { diskModeDropdownItems } from '../../constants';
 import { HostNamesMap } from '../auto-detect-volume/types';
 
 export const initialState = {
   volumeSetName: '',
   storageClassName: '',
   showNodesListOnLVS: false,
-  diskType: diskTypeDropdownItems.All,
+  diskType: 'All',
   diskMode: diskModeDropdownItems.BLOCK,
   maxDiskLimit: '',
   nodeNames: [],

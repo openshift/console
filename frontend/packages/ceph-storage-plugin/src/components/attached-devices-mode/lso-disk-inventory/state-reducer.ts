@@ -1,3 +1,5 @@
+import { TFunction } from 'i18next';
+
 export enum ActionType {
   SET_ALERTS_MAP = 'SET_ALERTS_MAP',
   SET_TEMPLATES_MAP = 'SET_TEMPLATES_MAP',
@@ -15,6 +17,27 @@ export enum Status {
   ReplacementFailed = 'ReplacementFailed',
   Unknown = 'Unknown',
 }
+
+export const getOCSColumnStatus = (status: keyof typeof Status, t: TFunction) => {
+  switch (status) {
+    case Status.Online:
+      return t('ceph-storage-plugin~Online');
+    case Status.Offline:
+      return t('ceph-storage-plugin~Offline');
+    case Status.NotResponding:
+      return t('ceph-storage-plugin~NotResponding');
+    case Status.PreparingToReplace:
+      return t('ceph-storage-plugin~PreparingToReplace');
+    case Status.ReplacementFailed:
+      return t('ceph-storage-plugin~ReplacementFailed');
+    case Status.ReplacementReady:
+      return t('ceph-storage-plugin~ReplacementReady');
+    case Status.Unknown:
+      return t('ceph-storage-plugin~Unknown');
+    default:
+      return '';
+  }
+};
 
 export const initialState: OCSColumnState = {
   metricsMap: {},

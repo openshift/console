@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@patternfly/react-core';
 import { k8sUpdate } from '@console/internal/module/k8s';
 import {
@@ -30,6 +31,7 @@ import './_bs-modal.scss';
 const BucketClassEditModal = withHandlePromise<
   HandlePromiseProps & BucketClassEditModalProps & ModalComponentProps & CreateModalLauncherProps
 >((props) => {
+  const { t } = useTranslation();
   const { bucketClass, inProgress, errorMessage, handlePromise, close, cancel } = props;
   const [data, loaded, loadError] = useK8sGet(
     NooBaaBackingStoreModel,
@@ -92,12 +94,13 @@ const BucketClassEditModal = withHandlePromise<
   };
   return (
     <>
-      <ModalTitle>Edit Bucket Class Resource</ModalTitle>
+      <ModalTitle>{t('noobaa-storage-plugin~Edit Bucket Class Resource')}</ModalTitle>
       <div className="nb-bc-modal">
         <ModalBody>
           <p className="nb-bc-modal__text">
-            Backing Store represents a storage target to be used as the underlying storage for the
-            data in Multicloud Object Gateway buckets.
+            {t(
+              'noobaa-storage-plugin~Backing Store represents a storage target to be used as the underlying storage for the data in Multicloud Object Gateway buckets.',
+            )}
           </p>
           <BackingStoreSelection
             namespace={bucketClass.metadata.namespace}
@@ -113,17 +116,21 @@ const BucketClassEditModal = withHandlePromise<
       </div>
       <ModalFooter errorMessage={errorMessage} inProgress={inProgress}>
         <ButtonBar>
-          <Button onClick={cancel} aria-label="Cancel" variant="secondary">
-            Cancel
+          <Button
+            onClick={cancel}
+            aria-label={t('noobaa-storage-plugin~Cancel ')}
+            variant="secondary"
+          >
+            {t('noobaa-storage-plugin~Cancel')}
           </Button>
           <Button
             onClick={onSubmit}
-            aria-label="Save"
+            aria-label={t('noobaa-storage-plugin~Save')}
             type="submit"
             className="nb-edit-modal__save-btn"
             isDisabled={!isEnabled}
           >
-            Save
+            {t('noobaa-storage-plugin~Save')}
           </Button>
         </ButtonBar>
       </ModalFooter>

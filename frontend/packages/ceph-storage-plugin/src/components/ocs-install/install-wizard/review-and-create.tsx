@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   TextContent,
   Text,
@@ -19,9 +20,9 @@ import {
 } from '@console/shared';
 import { NodeKind } from '@console/internal/module/k8s';
 import {
-  ActionValidationMessage,
   ValidationMessage,
-  Validation,
+  VALIDATIONS,
+  ValidationType,
 } from '../../../utils/common-ocs-install-el';
 
 const REVIEW_ICON_MAP = {
@@ -49,9 +50,12 @@ export const ReviewListBody: React.FC<ReviewListBodyProps> = ({
   hideIcon = false,
   noValue = undefined,
 }) => {
+  const { t } = useTranslation();
+
+  const alert = VALIDATIONS(validation, t);
   const Icon = noValue
     ? REVIEW_ICON_MAP[AlertVariant.danger]
-    : REVIEW_ICON_MAP[validation?.variant || AlertVariant.success];
+    : REVIEW_ICON_MAP[alert?.variant || AlertVariant.success];
 
   return (
     <dd className="ocs-install-wizard__dd">
@@ -62,13 +66,7 @@ export const ReviewListBody: React.FC<ReviewListBodyProps> = ({
           </SplitItem>
           <SplitItem isFilled>
             {children}
-            {validation?.variant ? (
-              validation?.actionLinkStep ? (
-                <ActionValidationMessage validation={validation} />
-              ) : (
-                <ValidationMessage validation={validation} />
-              )
-            ) : null}
+            {alert?.variant ? <ValidationMessage validation={validation} /> : null}
           </SplitItem>
         </Split>
       ) : (
@@ -82,7 +80,7 @@ type ReviewListBodyProps = {
   children: React.ReactNode;
   hideIcon?: boolean;
   noValue?: boolean;
-  validation?: Validation;
+  validation?: ValidationType;
 };
 
 export const RequestErrors: React.FC<RequestErrorsProps> = ({ errorMessage, inProgress }) => (

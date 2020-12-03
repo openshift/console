@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Grid,
   GridItem,
@@ -22,21 +23,17 @@ import {
   shouldDeployAsMinimal,
   filterSCWithoutNoProv,
 } from '../../../../utils/install';
-import {
-  ValidationMessage,
-  VALIDATIONS,
-  Validation,
-} from '../../../../utils/common-ocs-install-el';
+import { ValidationMessage, ValidationType } from '../../../../utils/common-ocs-install-el';
 import InternalNodeTable from '../../node-list';
 import { SelectNodesText, SelectNodesDetails } from '../../install-wizard/capacity-and-nodes';
 
-const validate = (scName, enableMinimal): Validation[] => {
+const validate = (scName, enableMinimal): ValidationType[] => {
   const validations = [];
   if (enableMinimal) {
-    validations.push(VALIDATIONS.MINIMAL);
+    validations.push(ValidationType.MINIMAL);
   }
   if (!scName) {
-    validations.push(VALIDATIONS.INTERNALSTORAGECLASS);
+    validations.push(ValidationType.INTERNALSTORAGECLASS);
   }
   return validations;
 };
@@ -45,6 +42,7 @@ export const SelectCapacityAndNodes: React.FC<SelectCapacityAndNodesProps> = ({
   state,
   dispatch,
 }) => {
+  const { t } = useTranslation();
   const { nodes: selectedNodes, capacity: selectedCapacity, storageClass, enableMinimal } = state;
   const { cpu, memory, zones } = getNodeInfo(selectedNodes);
   const scName: string = getName(storageClass);
@@ -60,13 +58,13 @@ export const SelectCapacityAndNodes: React.FC<SelectCapacityAndNodesProps> = ({
     <Form>
       <TextContent>
         <Text component={TextVariants.h3} className="ocs-install-wizard__h3">
-          Select Capacity
+          {t('ceph-storage-plugin~Select Capacity')}
         </Text>
       </TextContent>
       <FormGroup
         fieldId="storage-class-dropdown"
-        label="Storage Class"
-        labelIcon={<FieldLevelHelp>{storageClassTooltip}</FieldLevelHelp>}
+        label={t('ceph-storage-plugin~Storage Class')}
+        labelIcon={<FieldLevelHelp>{storageClassTooltip(t)}</FieldLevelHelp>}
       >
         <Grid hasGutter>
           <GridItem span={5}>
@@ -86,8 +84,8 @@ export const SelectCapacityAndNodes: React.FC<SelectCapacityAndNodesProps> = ({
       </FormGroup>
       <FormGroup
         fieldId="requested-capacity-dropdown"
-        label="Requested Capacity"
-        labelIcon={<FieldLevelHelp>{requestedCapacityTooltip}</FieldLevelHelp>}
+        label={t('ceph-storage-plugin~Requested Capacity')}
+        labelIcon={<FieldLevelHelp>{requestedCapacityTooltip(t)}</FieldLevelHelp>}
       >
         <Grid hasGutter>
           <GridItem span={5}>
@@ -106,20 +104,24 @@ export const SelectCapacityAndNodes: React.FC<SelectCapacityAndNodesProps> = ({
       </FormGroup>
       <TextContent>
         <Text id="select-nodes" component={TextVariants.h3} className="ocs-install-wizard__h3">
-          Select Nodes
+          {t('ceph-storage-plugin~Select Nodes')}
         </Text>
       </TextContent>
       <Grid>
         <GridItem span={11}>
-          <SelectNodesText text="Select at least 3 nodes, preferably in 3 different zones. It is recommended to start with at least 14 CPUs and 34 GiB per node." />
+          <SelectNodesText
+            text={t(
+              'ceph-storage-plugin~Select at least 3 nodes preferably in 3 different zones. It is recommended to start with at least 14 CPUs and 34 GiB per node.',
+            )}
+          />
         </GridItem>
         <GridItem span={10} className="ocs-install-wizard__select-nodes">
           <ListPage
             kind={NodeModel.kind}
             showTitle={false}
             ListComponent={InternalNodeTable}
-            nameFilterPlaceholder="Search by node name..."
-            labelFilterPlaceholder="Search by node label..."
+            nameFilterPlaceholder={t('ceph-storage-plugin~Search by node name...')}
+            labelFilterPlaceholder={t('ceph-storage-plugin~Search by node label...')}
             customData={{
               onRowSelected: (nodes: NodeKind[]) =>
                 dispatch({ type: ActionType.SET_NODES, payload: nodes }),

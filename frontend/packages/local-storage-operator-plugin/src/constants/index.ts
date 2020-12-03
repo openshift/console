@@ -1,3 +1,4 @@
+import { TFunction } from 'i18next';
 import { DiskMechanicalProperties } from '../components/local-volume-set/types';
 
 export const diskModeDropdownItems = Object.freeze({
@@ -7,31 +8,23 @@ export const diskModeDropdownItems = Object.freeze({
 
 export const DISK_TYPES: {
   [key: string]: {
-    property?: keyof typeof DiskMechanicalProperties;
-    title: string;
+    property: keyof typeof DiskMechanicalProperties;
   };
 } = {
   SSD: {
     property: 'NonRotational',
-    title: 'SSD / NVMe',
   },
   HDD: {
     property: 'Rotational',
-    title: 'HDD',
-  },
-  All: {
-    title: 'All',
   },
 };
 
-export const diskTypeDropdownItems = Object.freeze({
-  All: 'All',
-  SSD: 'SSD / NVMe',
-  HDD: 'HDD',
-});
-
-export const allNodesSelectorTxt =
-  'Selecting all nodes will use the available disks that match the selected filters on all nodes.';
+export const diskTypeDropdownItems = (t: TFunction) =>
+  Object.freeze({
+    All: t('lso-plugin~All'),
+    SSD: t('lso-plugin~SSD / NVMe'),
+    HDD: t('lso-plugin~HDD'),
+  });
 
 export const AUTO_DISCOVER_ERR_MSG = 'Failed to update the Auto Detect Volume!';
 

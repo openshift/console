@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import * as cx from 'classnames';
 import { Link } from 'react-router-dom';
@@ -27,31 +28,6 @@ import { LocalVolumeDiscovery, LocalVolumeDiscoveryResult } from '../../models';
 import { LABEL_SELECTOR } from '../../constants/disks-list';
 import { DiskMetadata, DiskStates, LocalVolumeDiscoveryResultKind } from './types';
 
-export const diskFilters: RowFilter[] = [
-  {
-    type: 'disk-state',
-    filterGroupName: 'Disk State',
-    reducer: (disk: DiskMetadata) => {
-      return disk?.status?.state;
-    },
-    items: [
-      { id: DiskStates.Available, title: DiskStates.Available },
-      { id: DiskStates.NotAvailable, title: DiskStates.NotAvailable },
-      { id: DiskStates.Unknown, title: DiskStates.Unknown },
-    ],
-    filter: (
-      states: { all: (keyof typeof DiskStates)[]; selected: Set<keyof typeof DiskStates> },
-      disk: DiskMetadata,
-    ) => {
-      if (!states || !states.selected || _.isEmpty(states.selected)) {
-        return true;
-      }
-      const diskState = disk?.status.state;
-      return states.selected.has(diskState) || !_.includes(states.all, diskState);
-    },
-  },
-];
-
 export const tableColumnClasses = [
   '',
   '',
@@ -60,45 +36,6 @@ export const tableColumnClasses = [
   cx('pf-m-hidden', 'pf-m-visible-on-lg'),
   cx('pf-m-hidden', 'pf-m-visible-on-xl'),
   Kebab.columnClass,
-];
-
-const diskHeader = () => [
-  {
-    title: 'Name',
-    sortField: 'path',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[0] },
-  },
-  {
-    title: 'Disk State',
-    sortField: 'status.state',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[1] },
-  },
-  {
-    title: 'Type',
-    sortField: 'type',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[2] },
-  },
-  {
-    title: 'Model',
-    sortField: 'model',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[3] },
-  },
-  {
-    title: 'Capacity',
-    sortField: 'size',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[4] },
-  },
-  {
-    title: 'Filesystem',
-    sortField: 'fstype',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[5] },
-  },
 ];
 
 const diskRow: RowFunction<DiskMetadata> = ({ obj, index, key, style }) => (
@@ -114,21 +51,66 @@ const diskRow: RowFunction<DiskMetadata> = ({ obj, index, key, style }) => (
   </TableRow>
 );
 
-const DisksList: React.FC<TableProps> = (props) => (
-  <Table
-    {...props}
-    aria-label="Disks List"
-    Header={diskHeader}
-    Row={diskRow}
-    NoDataEmptyMsg={props.customData.EmptyMsg} // when no unfilteredData
-    virtualize
-  />
-);
+const DisksList: React.FC<TableProps> = (props) => {
+  const { t } = useTranslation();
+
+  const diskHeader = () => [
+    {
+      title: t('lso-plugin~Name'),
+      sortField: 'path',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[0] },
+    },
+    {
+      title: t('lso-plugin~Disk State'),
+      sortField: 'status.state',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[1] },
+    },
+    {
+      title: t('lso-plugin~Type'),
+      sortField: 'type',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[2] },
+    },
+    {
+      title: t('lso-plugin~Model'),
+      sortField: 'model',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[3] },
+    },
+    {
+      title: t('lso-plugin~Capacity'),
+      sortField: 'size',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[4] },
+    },
+    {
+      title: t('lso-plugin~Filesystem'),
+      sortField: 'fstype',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[5] },
+    },
+  ];
+
+  return (
+    <Table
+      {...props}
+      aria-label={t('lso-plugin~Disks List')}
+      Header={diskHeader}
+      Row={diskRow}
+      NoDataEmptyMsg={props.customData.EmptyMsg} // when no unfilteredData
+      virtualize
+    />
+  );
+};
 
 export const NodesDisksListPage: React.FC<NodesDisksListPageProps> = ({
   obj,
   ListComponent = undefined,
 }) => {
+  const { t } = useTranslation();
+
   const [subscription, subscriptionLoaded] = useK8sWatchResource<SubscriptionKind[]>({
     kind: referenceForModel(SubscriptionModel),
     fieldSelector: 'metadata.name=local-storage-operator',
@@ -147,7 +129,7 @@ export const NodesDisksListPage: React.FC<NodesDisksListPageProps> = ({
         <LoadingInline />
       ) : (
         <>
-          <p>Disks Not Found</p>
+          <p>{t('lso-plugin~Disks Not Found')}</p>
           {csvName && operatorNs && nodeRole !== 'master' && (
             <Link
               className="co-m-primary-action"
@@ -156,7 +138,7 @@ export const NodesDisksListPage: React.FC<NodesDisksListPageProps> = ({
               )}/~new`}
             >
               <Button variant="primary" id="yaml-create" data-test="yaml-create">
-                Discover Disks
+                {t('lso-plugin~Discover Disks')}
               </Button>
             </Link>
           )}
@@ -165,10 +147,35 @@ export const NodesDisksListPage: React.FC<NodesDisksListPageProps> = ({
     </EmptyState>
   );
 
+  const diskFilters: RowFilter[] = [
+    {
+      type: 'disk-state',
+      filterGroupName: t('lso-plugin~Disk State'),
+      reducer: (disk: DiskMetadata) => {
+        return disk?.status?.state;
+      },
+      items: [
+        { id: DiskStates.Available, title: t('lso-plugin~Available') },
+        { id: DiskStates.NotAvailable, title: t('lso-plugin~NotAvailable') },
+        { id: DiskStates.Unknown, title: t('lso-plugin~Unknown') },
+      ],
+      filter: (
+        states: { all: (keyof typeof DiskStates)[]; selected: Set<keyof typeof DiskStates> },
+        disk: DiskMetadata,
+      ) => {
+        if (!states || !states.selected || _.isEmpty(states.selected)) {
+          return true;
+        }
+        const diskState = disk?.status.state;
+        return states.selected.has(diskState) || !_.includes(states.all, diskState);
+      },
+    },
+  ];
+
   return (
     <MultiListPage
       canCreate={false}
-      title="Disks"
+      title={t('lso-plugin~Disks')}
       hideLabelFilter
       textFilter="node-disk-name"
       rowFilters={diskFilters}

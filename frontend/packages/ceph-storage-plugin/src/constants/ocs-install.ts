@@ -1,4 +1,5 @@
 import { Taint } from '@console/internal/module/k8s';
+import { TFunction } from 'i18next';
 import { NetworkType, KMSConfig } from '../components/ocs-install/types';
 
 export const MINIMUM_NODES = 3;
@@ -9,14 +10,14 @@ export const ocsTaint: Taint = {
 };
 Object.freeze(ocsTaint);
 
-export const storageClassTooltip =
-  'The Storage Class will be used to request storage from the underlying infrastructure to create the backing persistent volumes that will be used to provide the OpenShift Container Storage (OCS) service.';
-export const requestedCapacityTooltip =
-  'The backing storage requested will be higher as it will factor in the requested capacity, replica factor, and fault tolerant costs associated with the requested capacity.';
-export const encryptionTooltip =
-  'The storage cluster encryption level can be set to include all components under the cluster (including storage class and PVs) or to include only storage class encryption. PV encryption can use an auth token that will be used with the KMS configuration to allow multi-tenancy.';
-export const vaultNamespaceTooltip =
-  'Vault enterprise namespaces are isolated environments that functionally exist as "Vaults within a Vault". They have separate login paths and support creating and managing data isolated to their namespace.';
+export const storageClassTooltip = (t: TFunction) =>
+  t(
+    'ceph-storage-plugin~The Storage Class will be used to request storage from the underlying infrastructure to create the backing persistent volumes that will be used to provide the OpenShift Container Storage (OCS) service.',
+  );
+export const requestedCapacityTooltip = (t: TFunction) =>
+  t(
+    'ceph-storage-plugin~The backing storage requested will be higher as it will factor in the requested capacity replica factor and fault tolerant costs associated with the requested capacity.',
+  );
 
 export enum defaultRequestSize {
   BAREMETAL = '1',
@@ -35,9 +36,6 @@ export const diskModeDropdownItems = Object.freeze({
   BLOCK: 'Block',
 });
 
-export const allNodesSelectorTxt =
-  'Selecting all nodes will use the available disks that match the selected filters on all nodes selected on previous step.';
-
 export enum IP_FAMILY {
   IPV4 = 'IPV4',
   IPV6 = 'IPV6',
@@ -55,7 +53,6 @@ export const KMSProviders = [
 ];
 
 export const KMSMaxFileUploadSize = 4000000;
-export const KMSFileSizeErrorMsg = 'Maximum file size exceeded. File limit is 4MB.';
 export const KMSConfigMapName = 'ocs-kms-connection-details';
 export const KMSSecretName = 'ocs-kms-token';
 

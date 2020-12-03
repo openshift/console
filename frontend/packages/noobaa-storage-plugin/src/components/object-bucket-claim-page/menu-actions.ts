@@ -3,7 +3,8 @@ import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { attachDeploymentToOBCModal } from './modals/attach-deployment-obc-modal';
 
 const attachDeployment = (kind: K8sKind, resource: K8sResourceKind) => ({
-  label: 'Attach to Deployment',
+  // t('noobaa-storage-plugin~Attach to Deployment')
+  labelKey: 'noobaa-storage-plugin~Attach to Deployment',
   callback: () =>
     attachDeploymentToOBCModal({
       kind,

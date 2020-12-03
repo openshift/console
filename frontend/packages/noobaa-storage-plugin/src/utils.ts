@@ -5,6 +5,7 @@ import { K8sResourceKind } from '@console/internal/module/k8s';
 import { StorageClass } from '@console/internal/components/storage-class-form';
 import { PROVIDERS_NOOBAA_MAP, BUCKET_LABEL_NOOBAA_MAP, BC_PROVIDERS } from './constants';
 import { BackingStoreKind, BucketClassKind, PlacementPolicy } from './types';
+import { TFunction } from 'i18next';
 
 export const filterNooBaaAlerts = (alerts: Alert[]): Alert[] =>
   alerts.filter((alert) => _.get(alert, 'annotations.storage_type') === 'NooBaa');
@@ -73,7 +74,7 @@ export const getBackingStoreNames = (bc: BucketClassKind, tier: 0 | 1): string[]
 export const getBackingStorePolicy = (bc: BucketClassKind, tier: 0 | 1): PlacementPolicy =>
   bc.spec.placementPolicy?.tiers?.[tier]?.placement;
 
-export const getBSLabel = (policy: PlacementPolicy) =>
+export const getBSLabel = (policy: PlacementPolicy, t: TFunction) =>
   policy === PlacementPolicy.Mirror
-    ? 'Select at least 2 Backing Store resources'
-    : 'Select at least 1 Backing Store resource';
+    ? t('noobaa-storage-plugin~Select at least 2 Backing Store resources')
+    : t('noobaa-storage-plugin~Select at least 1 Backing Store resource');

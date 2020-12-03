@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
 import { FirehoseResult, ExternalLink } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
@@ -11,6 +12,7 @@ const BackingStorePage: React.FC<BackingStorePageProps> = React.memo(
     // CR data clones to maintain order and selection state for table rows
     const { tier2Policy, tier1Policy, tier1BackingStore, tier2BackingStore } = state;
     const [showHelp, setShowHelp] = React.useState(true);
+    const { t } = useTranslation();
 
     return (
       <div className="nb-create-bc-step-page">
@@ -19,20 +21,23 @@ const BackingStorePage: React.FC<BackingStorePageProps> = React.memo(
             className="nb-create-bc-step-page__info"
             isInline
             variant="info"
-            title="What is a Backing Store?"
+            title={t('noobaa-storage-plugin~What is a Backing Store?')}
             actionClose={<AlertActionCloseButton onClose={() => setShowHelp(false)} />}
           >
             <p>
-              Backing Store represents a storage target to be used as the underlying storage for the
-              data in MCG buckets.
+              {t(
+                'noobaa-storage-plugin~Backing Store represents a storage target to be used as the underlying storage for the data in {{MCG}} buckets.',
+                { mcg: 'MCG' },
+              )}
             </p>
             <p>
-              Multiple types of backing-stores are supported: asws-s3, s3-compatible,
-              google-cloud-storage, azure-blob, obc, PVC.
+              {t(
+                'noobaa-storage-plugin~Multiple types of backing stores are supported: asws-s3 s3-compatiblegoogle-cloud-storage azure-blob obc PVC.',
+              )}
             </p>
             <ExternalLink
               href="https://github.com/noobaa/noobaa-operator/blob/master/doc/backing-store-crd.md"
-              text="Learn More"
+              text={t('noobaa-storage-plugin~Learn More')}
             />
           </Alert>
         )}

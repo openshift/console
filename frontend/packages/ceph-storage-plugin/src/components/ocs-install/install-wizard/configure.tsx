@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { FormGroup, Checkbox, Radio } from '@patternfly/react-core';
 import { FieldLevelHelp, Firehose } from '@console/internal/components/utils';
 import { TechPreviewBadge, getName, ResourceDropdown } from '@console/shared';
@@ -9,18 +10,23 @@ import { InternalClusterState, InternalClusterAction, ActionType } from '../inte
 import { State, Action } from '../attached-devices/create-sc/state';
 import { KMSConfigure } from '../../kms-config/kms-config';
 import { NetworkType } from '../types';
-import { encryptionTooltip } from '../../../constants/ocs-install';
+import { ValidationMessage, ValidationType } from '../../../utils/common-ocs-install-el';
+import { setEncryptionDispatch } from '../../kms-config/utils';
 import './install-wizard.scss';
 import './_configure.scss';
-import { Validation, ValidationMessage, VALIDATIONS } from '../../../utils/common-ocs-install-el';
-import { setEncryptionDispatch } from '../../kms-config/utils';
 
-const StorageClassEncryptionLabel: React.FC = () => (
-  <div className="ocs-install-encryption__pv-title">
-    <span className="ocs-install-encryption__pv-title--padding">Storage class encryption</span>
-    <TechPreviewBadge />
-  </div>
-);
+const StorageClassEncryptionLabel: React.FC = () => {
+  const { t } = useTranslation();
+
+  return (
+    <div className="ocs-install-encryption__pv-title">
+      <span className="ocs-install-encryption__pv-title--padding">
+        {t('ceph-storage-plugin~Storage class encryption')}
+      </span>
+      <TechPreviewBadge />
+    </div>
+  );
+};
 
 const resources = [
   {
@@ -31,25 +37,20 @@ const resources = [
   },
 ];
 
-const validate = (valid: boolean): Validation => {
-  let validation: Validation;
-  if (!valid) {
-    validation = VALIDATIONS.ENCRYPTION;
-  }
-  return validation;
-};
-
 export const EncryptionFormGroup: React.FC<EncryptionFormGroupProps> = ({
   state,
   dispatch,
   mode,
 }) => {
+  const { t } = useTranslation();
   const { encryption } = state;
-
   const [encryptionChecked, setEncryptionChecked] = React.useState(
     encryption.clusterWide || encryption.storageClass,
   );
-  const validation: Validation = validate(encryption.hasHandled);
+
+  const encryptionTooltip = t(
+    'ceph-storage-plugin~The storage cluster encryption level can be set to include all components under the cluster (including storage class and PVs) or to include only storage class encryption. PV encryption can use an auth token that will be used with the KMS configuration to allow multi-tenancy.',
+  );
 
   React.useEffect(() => {
     // To add validation message for encryption
@@ -113,15 +114,17 @@ export const EncryptionFormGroup: React.FC<EncryptionFormGroupProps> = ({
       <Checkbox
         id="configure-encryption"
         isChecked={encryptionChecked}
-        label="Enable Encryption"
-        description="Data encryption for block and file storage. MultiCloud Object Gateway is always encrypted."
+        label={t('ceph-storage-plugin~Enable Encryption')}
+        description={t(
+          'ceph-storage-plugin~Data encryption for block and file storage. MultiCloud Object Gateway is always encrypted.',
+        )}
         onChange={toggleEncryption}
       />
       {encryptionChecked && (
         <div className="ocs-install-encryption">
           <FormGroup
             fieldId="encryption-options"
-            label="Encryption level"
+            label={t('ceph-storage-plugin~Encryption level')}
             labelIcon={<FieldLevelHelp>{encryptionTooltip}</FieldLevelHelp>}
             className="ocs-install-encryption__form-body"
           >
@@ -130,11 +133,13 @@ export const EncryptionFormGroup: React.FC<EncryptionFormGroupProps> = ({
               isChecked={encryption.clusterWide}
               label={
                 <span className="ocs-install-encryption__pv-title--padding">
-                  Cluster-wide encryption
+                  {t('ceph-storage-plugin~Cluster-wide encryption')}
                 </span>
               }
-              aria-label="Cluster-wide encryption"
-              description="Encryption for the entire cluster (block and file)"
+              aria-label={t('ceph-storage-plugin~Cluster-wide encryption')}
+              description={t(
+                'ceph-storage-plugin~Encryption for the entire cluster (block and file)',
+              )}
               onChange={toggleClusterWideEncryption}
               className="ocs-install-encryption__form-checkbox"
             />
@@ -142,21 +147,23 @@ export const EncryptionFormGroup: React.FC<EncryptionFormGroupProps> = ({
               id="storage-class-encryption"
               isChecked={encryption.storageClass}
               label={<StorageClassEncryptionLabel />}
-              aria-label="Storage class encryption"
-              description="A new storage class will be created with encryption enabled. Encryption key for each Persistent volume (block only) will be generated."
+              aria-label={t('ceph-storage-plugin~Storage class encryption')}
+              description={t(
+                'ceph-storage-plugin~A new storage class will be created with encryption enabled. Encryption key for each Persistent volume (block only) will be generated.',
+              )}
               onChange={toggleStorageClassEncryption}
               className="ocs-install-encryption__form-checkbox"
             />
           </FormGroup>
           <FormGroup
             fieldId="advanced-encryption-options"
-            label="Connection settings"
+            label={t('ceph-storage-plugin~Connection settings')}
             className="ocs-install-encryption__form-body"
           >
             <Checkbox
               id="advanced-encryption"
               isChecked={encryption.advanced}
-              label="Connect to an external key management service"
+              label={t('ceph-storage-plugin~Connect to an external key management service')}
               onChange={toggleAdvancedEncryption}
               isDisabled={encryption.storageClass || !encryption.hasHandled}
             />
@@ -164,7 +171,7 @@ export const EncryptionFormGroup: React.FC<EncryptionFormGroupProps> = ({
           {(encryption.advanced || encryption.storageClass) && (
             <KMSConfigure state={state} dispatch={dispatch} mode={mode} />
           )}
-          {validation && <ValidationMessage validation={validation} />}
+          {encryption.hasHandled && <ValidationMessage validation={ValidationType.ENCRYPTION} />}
         </div>
       )}
     </FormGroup>
@@ -178,6 +185,8 @@ export const NetworkFormGroup: React.FC<NetworkFormGroupProps> = ({
   clusterNetwork,
   setNetwork,
 }) => {
+  const { t } = useTranslation();
+
   const filterForPublicDevices = React.useCallback(
     (device: NetworkAttachmentDefinitionKind) => clusterNetwork !== getName(device),
     [clusterNetwork],
@@ -191,13 +200,13 @@ export const NetworkFormGroup: React.FC<NetworkFormGroupProps> = ({
     <>
       <FormGroup
         fieldId="configure-networking"
-        label="Network"
+        label={t('ceph-storage-plugin~Network')}
         className="ceph__install-radio--inline"
       >
         <Radio
           isChecked={networkType === NetworkType.DEFAULT}
           name="default-network"
-          label="Default (SDN)"
+          label={t('ceph-storage-plugin~Default (SDN)')}
           onChange={() => setNetworkType(NetworkType.DEFAULT)}
           value={NetworkType.DEFAULT}
           id={NetworkType.DEFAULT}
@@ -205,7 +214,7 @@ export const NetworkFormGroup: React.FC<NetworkFormGroupProps> = ({
         <Radio
           isChecked={networkType === NetworkType.MULTUS}
           name="custom-network"
-          label="Custom (Multus)"
+          label={t('ceph-storage-plugin~Custom (Multus)')}
           onChange={() => setNetworkType(NetworkType.MULTUS)}
           value={NetworkType.MULTUS}
           id={NetworkType.MULTUS}
@@ -213,26 +222,33 @@ export const NetworkFormGroup: React.FC<NetworkFormGroupProps> = ({
       </FormGroup>
       {networkType === NetworkType.MULTUS && (
         <>
-          <FormGroup fieldId="configure-multus" label="Public Network Interface" isRequired>
+          <FormGroup
+            fieldId="configure-multus"
+            label={t('ceph-storage-plugin~Public Network Interface')}
+            isRequired
+          >
             <Firehose resources={resources}>
               <ResourceDropdown
                 dropDownClassName="ceph__multus-dropdown"
                 buttonClassName="ceph__multus-dropdown-button"
                 selectedKey={publicNetwork}
-                placeholder="Select a network"
+                placeholder={t('ceph-storage-plugin~Select a network')}
                 dataSelector={['metadata', 'name']}
                 onChange={(key, name) => setNetwork('Public', name)}
                 resourceFilter={filterForPublicDevices}
               />
             </Firehose>
           </FormGroup>
-          <FormGroup fieldId="configure-multus" label="Cluster Network Interface">
+          <FormGroup
+            fieldId="configure-multus"
+            label={t('ceph-storage-plugin~Cluster Network Interface')}
+          >
             <Firehose resources={resources}>
               <ResourceDropdown
                 dropDownClassName="ceph__multus-dropdown"
                 buttonClassName="ceph__multus-dropdown-button"
                 selectedKey={clusterNetwork}
-                placeholder="Select a network"
+                placeholder={t('ceph-storage-plugin~Select a network')}
                 dataSelector={['metadata', 'name']}
                 onChange={(key, name) => setNetwork('Cluster', name)}
                 resourceFilter={filterForClusterDevices}

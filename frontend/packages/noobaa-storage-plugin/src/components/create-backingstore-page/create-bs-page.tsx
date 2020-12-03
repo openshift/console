@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import { RouteComponentProps } from 'react-router';
 import { Alert, AlertActionCloseButton, Title } from '@patternfly/react-core';
@@ -6,11 +7,11 @@ import { history } from '@console/internal/components/utils/router';
 import { BreadCrumbs, resourcePathFromModel } from '@console/internal/components/utils';
 import { k8sGet } from '@console/internal/module/k8s';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
-import { NooBaaBackingStoreModel } from '../../models';
 import CreateBackingStoreForm from './create-bs';
 import './create-bs.scss';
 
 const CreateBackingStoreFormPage: React.FC<CreateBackingStoreFormPageProps> = ({ match }) => {
+  const { t } = useTranslation();
   const [showHelp, setShowHelp] = React.useState(true);
   const [clusterServiceVersion, setClusterServiceVersion] = React.useState(null);
   const { ns, appName } = match.params;
@@ -41,16 +42,18 @@ const CreateBackingStoreFormPage: React.FC<CreateBackingStoreFormPageProps> = ({
                 ),
                 path: resourcePathFromModel(ClusterServiceVersionModel, appName, ns),
               },
-              { name: `Create ${NooBaaBackingStoreModel.label}`, path: match.url },
+              { name: t('noobaa-storage-plugin~Create Backing Store'), path: match.url },
             ]}
           />
         </div>
         <div className="nb-bs-page-title">
           <Title size="2xl" headingLevel="h1" className="nb-bs-page-title__main">
-            Create new Backing Store
+            {t('noobaa-storage-plugin~Create new Backing Store')}
           </Title>
           <p className="nb-bs-page-title__info">
-            Storage targets that are used to store chunks of data on MCG buckets.
+            {t(
+              'noobaa-storage-plugin~Storage targets that are used to store chunks of data on MCG buckets.',
+            )}
           </p>
         </div>
       </div>
@@ -59,14 +62,16 @@ const CreateBackingStoreFormPage: React.FC<CreateBackingStoreFormPageProps> = ({
           <Alert
             isInline
             variant="info"
-            title="What is a Backing Store?"
+            title={t('noobaa-storage-plugin~What is a Backing Store?')}
             actionClose={<AlertActionCloseButton onClose={() => setShowHelp(false)} />}
           >
-            A backing store represents a storage target to be used as the underlying storage layer
-            in MCG buckets.
+            {t(
+              'noobaa-storage-plugin~A backing store represents a storage target to be used as the underlying storage layer in MCG buckets.',
+            )}
             <br />
-            Multiple types of backing stores are supported: AWS S3, S3 Compatible, Google Cloud
-            Storage, Azure Blob, PVC.
+            {t(
+              'noobaa-storage-plugin~Multiple types of backing stores are supported: AWS S3 S3 Compatible Google Cloud Storage Azure Blob PVC.',
+            )}
           </Alert>
         )}
         <CreateBackingStoreForm

@@ -1,6 +1,7 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
-import { Text, pluralize } from '@patternfly/react-core';
+import { Text } from '@patternfly/react-core';
 import * as classNames from 'classnames';
 import { sortable, IRow } from '@patternfly/react-table';
 import { Table } from '@console/internal/components/factory';
@@ -28,31 +29,6 @@ const tableColumnClasses = [
   classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-10-on-sm'),
   classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-10-on-sm'),
   classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-10-on-sm'),
-];
-
-const getColumns = () => [
-  {
-    title: 'Name',
-    sortField: 'metadata.name',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[0] },
-  },
-  {
-    title: 'Role',
-    props: { className: tableColumnClasses[1] },
-  },
-  {
-    title: 'Zone',
-    props: { className: tableColumnClasses[2] },
-  },
-  {
-    title: 'CPU',
-    props: { className: tableColumnClasses[3] },
-  },
-  {
-    title: 'Memory',
-    props: { className: tableColumnClasses[4] },
-  },
 ];
 
 const getRows: GetRows = (
@@ -113,6 +89,7 @@ const getRows: GetRows = (
 };
 
 export const NodesSelectionList: React.FC<NodesSelectionListProps> = (props) => {
+  const { t } = useTranslation();
   const [visibleRows, setVisibleRows] = React.useState<Set<string>>(new Set());
 
   const {
@@ -120,6 +97,31 @@ export const NodesSelectionList: React.FC<NodesSelectionListProps> = (props) => 
     selectedRows: selectedNodes,
     updateSelectedRows: setSelectedNodes,
   } = useSelectList<NodeKind>(props.data, visibleRows, props.customData.onRowSelected);
+
+  const getColumns = () => [
+    {
+      title: t('lso-plugin~Name'),
+      sortField: 'metadata.name',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[0] },
+    },
+    {
+      title: t('lso-plugin~Role'),
+      props: { className: tableColumnClasses[1] },
+    },
+    {
+      title: t('lso-plugin~Zone'),
+      props: { className: tableColumnClasses[2] },
+    },
+    {
+      title: t('lso-plugin~CPU'),
+      props: { className: tableColumnClasses[3] },
+    },
+    {
+      title: t('lso-plugin~Memory'),
+      props: { className: tableColumnClasses[4] },
+    },
+  ];
 
   return (
     <>
@@ -131,7 +133,7 @@ export const NodesSelectionList: React.FC<NodesSelectionListProps> = (props) => 
       >
         <Table
           {...props}
-          aria-label="Select nodes for creating volume filter"
+          aria-label={t('lso-plugin~Select nodes for creating volume filter')}
           data-test-id="create-lvs-form-node-selection-table"
           Header={getColumns}
           Rows={(rowProps) =>
@@ -143,7 +145,11 @@ export const NodesSelectionList: React.FC<NodesSelectionListProps> = (props) => 
         />
       </div>
       <Text data-test-id="create-lvs-form-selected-nodes" component="h6">
-        {pluralize(selectedNodes?.size, 'node')} selected
+        {t('lso-plugin~{{nodeCount, number}} node', {
+          nodeCount: selectedNodes?.size,
+          count: selectedNodes?.size,
+        })}{' '}
+        {t('lso-plugin~selected')}
       </Text>
     </>
   );

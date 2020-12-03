@@ -1,4 +1,5 @@
 import * as classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
 import * as React from 'react';
 import * as _ from 'lodash';
 import {
@@ -64,12 +65,23 @@ const endpointSupported = [BC_PROVIDERS.S3, BC_PROVIDERS.IBM];
  * aws-s3, s3 compatible, IBM COS share the same form
  */
 const S3EndPointType: React.FC<S3EndpointTypeProps> = (props) => {
+  const { t } = useTranslation();
+
   const [showSecret, setShowSecret] = React.useState(true);
   const { provider, namespace, state, dispatch } = props;
 
-  const targetLabel = provider === BC_PROVIDERS.AZURE ? 'Target Blob Container' : 'Target Bucket';
-  const credentialField1Label = provider === BC_PROVIDERS.AZURE ? 'Account Name' : 'Access Key';
-  const credentialField2Label = provider === BC_PROVIDERS.AZURE ? 'Account Key' : 'Secret Key';
+  const targetLabel =
+    provider === BC_PROVIDERS.AZURE
+      ? t('noobaa-storage-plugin~Target Blob Container')
+      : t('noobaa-storage-plugin~Target Bucket');
+  const credentialField1Label =
+    provider === BC_PROVIDERS.AZURE
+      ? t('noobaa-storage-plugin~Account Name')
+      : t('noobaa-storage-plugin~Access Key');
+  const credentialField2Label =
+    provider === BC_PROVIDERS.AZURE
+      ? t('noobaa-storage-plugin~Account Key')
+      : t('noobaa-storage-plugin~Secret Key');
   const resources = [
     {
       isList: true,
@@ -93,7 +105,12 @@ const S3EndPointType: React.FC<S3EndpointTypeProps> = (props) => {
   return (
     <>
       {provider === BC_PROVIDERS.AWS && (
-        <FormGroup label="Region" fieldId="region" className="nb-bs-form-entry" isRequired>
+        <FormGroup
+          label={t('noobaa-storage-plugin~Region')}
+          fieldId="region"
+          className="nb-bs-form-entry"
+          isRequired
+        >
           <Dropdown
             className="nb-bs-form-entry__dropdown"
             menuClassName="nb-bs-form-entry__dropdown--short"
@@ -103,26 +120,31 @@ const S3EndPointType: React.FC<S3EndpointTypeProps> = (props) => {
             }}
             items={awsRegionItems}
             selectedKey={AWS_REGIONS[0]}
-            aria-label="Region Dropdown"
+            aria-label={t('noobaa-storage-plugin~Region Dropdown')}
           />
         </FormGroup>
       )}
 
       {endpointSupported.includes(provider) && (
-        <FormGroup label="Endpoint" fieldId="endpoint" className="nb-bs-form-entry" isRequired>
+        <FormGroup
+          label={t('noobaa-storage-plugin~Endpoint')}
+          fieldId="endpoint"
+          className="nb-bs-form-entry"
+          isRequired
+        >
           <TextInput
             onChange={(e) => {
               dispatch({ type: 'setEndpoint', value: e });
             }}
             value={state.endpoint}
-            aria-label="Endpoint Address"
+            aria-label={t('noobaa-storage-plugin~Endpoint Address')}
           />
         </FormGroup>
       )}
 
       {showSecret ? (
         <FormGroup
-          label="Secret"
+          label={t('noobaa-storage-plugin~Secret')}
           fieldId="secret-dropdown"
           className="nb-bs-form-entry nb-bs-form-entry--full-width"
           isRequired
@@ -131,7 +153,7 @@ const S3EndPointType: React.FC<S3EndpointTypeProps> = (props) => {
             <Firehose resources={resources}>
               <ResourceDropdown
                 selectedKey={state.secretName}
-                placeholder="Select Secret"
+                placeholder={t('noobaa-storage-plugin~Select Secret')}
                 className="nb-bs-form-entry__dropdown nb-bs-form-entry__dropdown--full-width"
                 buttonClassName="nb-bs-form-entry__dropdown"
                 dataSelector={['metadata', 'name']}
@@ -139,7 +161,7 @@ const S3EndPointType: React.FC<S3EndpointTypeProps> = (props) => {
               />
             </Firehose>
             <Button variant="plain" onClick={switchToCredentials}>
-              Switch to Credentials
+              {t('noobaa-storage-plugin~Switch to Credentials')}
             </Button>
           </InputGroup>
         </FormGroup>
@@ -152,10 +174,10 @@ const S3EndPointType: React.FC<S3EndpointTypeProps> = (props) => {
                 onChange={(e) => {
                   dispatch({ type: 'setAccessKey', value: e });
                 }}
-                aria-label="Access Key Field"
+                aria-label={t('noobaa-storage-plugin~Access Key Field')}
               />
               <Button variant="plain" onClick={switchToSecret}>
-                Switch to Secret
+                {t('noobaa-storage-plugin~Switch to Secret')}
               </Button>
             </InputGroup>
           </FormGroup>
@@ -169,7 +191,7 @@ const S3EndPointType: React.FC<S3EndpointTypeProps> = (props) => {
               onChange={(e) => {
                 dispatch({ type: 'setSecretKey', value: e });
               }}
-              aria-label="Secret Key Field"
+              aria-label={t('noobaa-storage-plugin~Secret Key Field')}
               type="password"
             />
           </FormGroup>
@@ -192,6 +214,8 @@ const S3EndPointType: React.FC<S3EndpointTypeProps> = (props) => {
 };
 
 const PVCType: React.FC<PVCTypeProps> = ({ state, dispatch }) => {
+  const { t } = useTranslation();
+
   const [size, setSize] = React.useState('50');
   const [, updateState] = React.useState();
   const units = {
@@ -230,7 +254,7 @@ const PVCType: React.FC<PVCTypeProps> = ({ state, dispatch }) => {
   return (
     <>
       <FormGroup
-        label="Number of Volumes"
+        label={t('noobaa-storage-plugin~Number of Volumes')}
         fieldId="set-volumes"
         className="nb-bs-form-entry nb-bs-form-entry--short"
         isRequired
@@ -239,7 +263,10 @@ const PVCType: React.FC<PVCTypeProps> = ({ state, dispatch }) => {
           <InputGroupText>
             <MinusIcon onClick={substract} />{' '}
           </InputGroupText>
-          <TextInput value={state.numVolumes} aria-label="Number of Volumes" />
+          <TextInput
+            value={state.numVolumes}
+            aria-label={t('noobaa-storage-plugin~Number of Volumes')}
+          />
           <InputGroupText>
             <PlusIcon
               onClick={() => dispatch({ type: 'setVolumes', value: state.numVolumes + 1 })}
@@ -248,13 +275,13 @@ const PVCType: React.FC<PVCTypeProps> = ({ state, dispatch }) => {
         </InputGroup>
       </FormGroup>
       <FormGroup
-        label="Volume Size"
+        label={t('noobaa-storage-plugin~Volume Size')}
         fieldId="volume-size"
         className="nb-bs-form-entry nb-bs-form-entry--short"
         isRequired
       >
         <RequestSizeInput
-          name="Volume Size"
+          name={t('noobaa-storage-plugin~Volume Size')}
           onChange={onChange}
           dropdownUnits={units}
           defaultRequestSizeUnit="GiB"
@@ -274,30 +301,34 @@ const PVCType: React.FC<PVCTypeProps> = ({ state, dispatch }) => {
   );
 };
 
-const gcpHelpText = (
-  <DashboardCardPopupLink
-    linkTitle={
-      <>
-        <HelpIcon /> Where can I find google cloud credentials?
-      </>
-    }
-    popupTitle=" "
-  >
-    <div>
-      Service account keys are needed for Google Cloud Storage authentication. The keys can be found
-      in the service accounts page in the GCP console.
-      <ExternalLink
-        href="https://cloud.google.com/iam/docs/service-accounts#service_account_keys"
-        text="Learn more"
-      />
-    </div>
-  </DashboardCardPopupLink>
-);
-
 const GCPEndpointType: React.FC<GCPEndPointTypeProps> = (props) => {
+  const { t } = useTranslation();
+
   const [fileData, setFileData] = React.useState('');
   const [inputData, setInputData] = React.useState('');
   const { state, dispatch } = props;
+
+  const gcpHelpText = (
+    <DashboardCardPopupLink
+      linkTitle={
+        <>
+          <HelpIcon />
+          {t('noobaa-storage-plugin~Where can I find google cloud credentials?')}
+        </>
+      }
+      popupTitle=" "
+    >
+      <div>
+        {t(
+          'noobaa-storage-plugin~Service account keys are needed for Google Cloud Storage authentication. The keys can be found in the service accounts page in the GCP console.',
+        )}
+        <ExternalLink
+          href="https://cloud.google.com/iam/docs/service-accounts#service_account_keys"
+          text={t('noobaa-storage-plugin~Learn more')}
+        />
+      </div>
+    </DashboardCardPopupLink>
+  );
 
   const onUpload = (event) => {
     event.preventDefault();
@@ -317,7 +348,7 @@ const GCPEndpointType: React.FC<GCPEndPointTypeProps> = (props) => {
       <FormGroup
         className="nb-bs-form-entry"
         helperText="Upload a .json file with the service account keys provided by google cloud storage."
-        label="Secret Key"
+        label={t('noobaa-storage-plugin~Secret Key')}
         fieldId="secret-key"
         isRequired
       >
@@ -326,8 +357,8 @@ const GCPEndpointType: React.FC<GCPEndPointTypeProps> = (props) => {
             isReadOnly
             value={inputData}
             className="nb-bs-form-entry__file-name"
-            placeholder="Upload JSON"
-            aria-label="Uploaded File Name"
+            placeholder={t('noobaa-storage-plugin~Upload JSON')}
+            aria-label={t('noobaa-storage-plugin~Uploaded File Name')}
           />
           <div className="inputbtn nb-bs-form-entry-upload-btn">
             <Button
@@ -335,14 +366,14 @@ const GCPEndpointType: React.FC<GCPEndPointTypeProps> = (props) => {
               variant="secondary"
               className="custom-input-btn nb-bs-form-entry-upload-btn__button"
             >
-              Browse
+              {t('noobaa-storage-plugin~Browse')}
             </Button>
             <input
               type="file"
               id="inputButton"
               className="nb-bs-form-entry-upload-btn__input"
               onChange={onUpload}
-              aria-label="Upload File"
+              aria-label={t('noobaa-storage-plugin~Upload File')}
             />
           </div>
         </InputGroup>
@@ -356,7 +387,7 @@ const GCPEndpointType: React.FC<GCPEndPointTypeProps> = (props) => {
       </FormGroup>
       <FormGroup
         className="nb-bs-form-entry"
-        label="Target Bucket"
+        label={t('noobaa-storage-plugin~Target Bucket')}
         fieldId="target-bucket"
         isRequired
       >
@@ -365,7 +396,7 @@ const GCPEndpointType: React.FC<GCPEndPointTypeProps> = (props) => {
           onChange={(e) => {
             dispatch({ type: 'setTarget', value: e });
           }}
-          aria-label="Target Bucket"
+          aria-label={t('noobaa-storage-plugin~Target Bucket')}
         />
       </FormGroup>
     </>
@@ -501,6 +532,7 @@ const secretPayloadCreator = (
 const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandlePromise<
   CreateBackingStoreFormProps & HandlePromiseProps
 >((props) => {
+  const { t } = useTranslation();
   const [bsName, setBsName] = React.useState('');
   const [provider, setProvider] = React.useState(BC_PROVIDERS.AWS);
   const [providerDataState, providerDataDispatch] = React.useReducer(
@@ -605,21 +637,28 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
   return (
     <Form className={classNames('nb-bs-form', className)} onSubmit={onSubmit}>
       <FormGroup
-        label="Backing Store Name"
+        label={t('noobaa-storage-plugin~Backing Store Name')}
         fieldId="backingstore-name"
         className="nb-bs-form-entry"
-        helperText="A unique name for the Backing Store within the project"
+        helperText={t(
+          'noobaa-storage-plugin~A unique name for the backing store within the project',
+        )}
         isRequired
       >
         <TextInput
           onChange={setBsName}
           value={bsName}
           placeholder="my-backingstore"
-          aria-label="Backing Store Name"
+          aria-label={t('noobaa-storage-plugin~Backing Store Name')}
         />
       </FormGroup>
 
-      <FormGroup label="Provider" fieldId="provider-name" className="nb-bs-form-entry" isRequired>
+      <FormGroup
+        label={t('noobaa-storage-plugin~Provider')}
+        fieldId="provider-name"
+        className="nb-bs-form-entry"
+        isRequired
+      >
         <Dropdown
           className="nb-bs-form-entry__dropdown"
           buttonClassName="nb-bs-form-entry__dropdown"
@@ -648,10 +687,10 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
       <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
         <ActionGroup>
           <Button type="submit" variant="primary">
-            Create Backing Store
+            {t('noobaa-storage-plugin~Create Backing Store')}
           </Button>
           <Button onClick={cancel} variant="secondary">
-            Cancel
+            {t('noobaa-storage-plugin~Cancel')}
           </Button>
         </ActionGroup>
       </ButtonBar>

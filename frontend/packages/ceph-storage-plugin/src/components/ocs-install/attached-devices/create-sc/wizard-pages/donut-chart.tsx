@@ -1,13 +1,10 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@patternfly/react-core';
 import { ChartDonut, ChartLabel } from '@patternfly/react-charts';
 
 import { calculateRadius, Modal } from '@console/shared';
-import {
-  pluralize,
-  convertToBaseValue,
-  humanizeBinaryBytes,
-} from '@console/internal/components/utils/';
+import { convertToBaseValue, humanizeBinaryBytes } from '@console/internal/components/utils/';
 import { NodeModel } from '@console/internal/models';
 import { ListPage } from '@console/internal/components/factory';
 import { getNodes } from '@console/local-storage-operator-plugin/src/utils';
@@ -18,6 +15,8 @@ import AttachedDevicesNodeTable from '../../sc-node-list';
 import '../../attached-devices.scss';
 
 export const DiscoveryDonutChart: React.FC<DiscoveryDonutChartProps> = ({ state, dispatch }) => {
+  const { t } = useTranslation();
+
   const [availableCapacityStr, setAvailableCapacityStr] = React.useState('');
   const donutData = [
     { x: 'Selected', y: state.chartSelectedData },
@@ -75,7 +74,9 @@ export const DiscoveryDonutChart: React.FC<DiscoveryDonutChartProps> = ({ state,
 
   return (
     <div className="ceph-ocs-install__chart-wrapper">
-      <div className="ceph-ocs-install_capacity-header">Selected Capacity</div>
+      <div className="ceph-ocs-install_capacity-header">
+        {t('ceph-storage-plugin~Selected Capacity')}
+      </div>
       <div className="ceph-ocs-install__stats">
         <div>
           {state.filteredNodes.length ? (
@@ -84,10 +85,18 @@ export const DiscoveryDonutChart: React.FC<DiscoveryDonutChartProps> = ({ state,
               onClick={() => dispatch({ type: 'setShowNodeList', value: true })}
               className="ceph-ocs-install__node-list-btn"
             >
-              {pluralize(state.filteredNodes.length, 'Node')}
+              {t('ceph-storage-plugin~{{nodes, number}} Node', {
+                nodes: state.filteredNodes.length,
+                count: state.filteredNodes.length,
+              })}
             </Button>
           ) : (
-            <div>{`${state.filteredNodes.length} Node`}</div>
+            <div>
+              {t('ceph-storage-plugin~{{nodes, number}} Node', {
+                nodes: state.filteredNodes.length,
+                count: state.filteredNodes.length,
+              })}
+            </div>
           )}
         </div>
         <div className="ceph-ocs-install_stats--divider" />
@@ -98,23 +107,34 @@ export const DiscoveryDonutChart: React.FC<DiscoveryDonutChartProps> = ({ state,
               onClick={() => dispatch({ type: 'setShowDiskList', value: true })}
               className="ceph-ocs-install__disk-list-btn"
             >
-              {pluralize(state.filteredDiscoveries.length, 'Disk')}
+              {t('ceph-storage-plugin~{{disks, number}} Disk', {
+                disks: state.filteredDiscoveries.length,
+                count: state.filteredDiscoveries.length,
+              })}
             </Button>
           ) : (
-            <div>{`${state.filteredDiscoveries.length} Disk`}</div>
+            <div>
+              {' '}
+              {t('ceph-storage-plugin~{{disks, number}} Disk', {
+                disks: state.filteredDiscoveries.length,
+                count: state.filteredDiscoveries.length,
+              })}
+            </div>
           )}
         </div>
       </div>
       <ChartDonut
-        ariaDesc="Selected versus Available Capacity"
-        ariaTitle="Selected versus Available Capacity"
+        ariaDesc={t('ceph-storage-plugin~Selected versus Available Capacity')}
+        ariaTitle={t('ceph-storage-plugin~Selected versus Available Capacity')}
         height={220}
         width={220}
         innerRadius={innerRadius}
         radius={radius}
         data={donutData}
         labels={({ datum }) => `${humanizeBinaryBytes(datum.y).string} ${datum.x}`}
-        subTitle={`Out of ${humanizeBinaryBytes(state.chartTotalData).string}`}
+        subTitle={t('ceph-storage-plugin~Out of {{capacity}}', {
+          capacity: humanizeBinaryBytes(state.chartTotalData).string,
+        })}
         title={availableCapacityStr}
         constrainToVisibleArea
         subTitleComponent={
@@ -128,17 +148,19 @@ export const DiscoveryDonutChart: React.FC<DiscoveryDonutChartProps> = ({ state,
 };
 
 const NodeListModal: React.FC<DiscoveryDonutChartProps> = ({ state, dispatch }) => {
+  const { t } = useTranslation();
+
   const cancel = () => dispatch({ type: 'setShowNodeList', value: false });
 
   return (
     <Modal
-      title="Selected Nodes"
+      title={t('ceph-storage-plugin~Selected Nodes')}
       isOpen={state.showNodeList}
       onClose={cancel}
       className="ceph-ocs-install__filtered-modal"
       actions={[
         <Button key="confirm" variant="primary" onClick={cancel}>
-          Close
+          {t('ceph-storage-plugin~Close')}
         </Button>,
       ]}
     >

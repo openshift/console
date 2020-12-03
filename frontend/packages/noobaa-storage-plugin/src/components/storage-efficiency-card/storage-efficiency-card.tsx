@@ -97,7 +97,7 @@ const StorageEfficiencyCard: React.FC<DashboardItemProps> = ({
       !!savingsQueryResultError || !!logicalSavingsQueryResultError || !savings || !logicalSize,
     title: t('noobaa-storage-plugin~Savings'),
     infoText: t(
-      'noobaa-storage-plugin~ Savings shows the uncompressed and non-deduped data that would have been stored without those techniques',
+      'noobaa-storage-plugin~Savings shows the uncompressed and non-deduped data that would have been stored without those techniques',
     ),
     getStats: savingStats,
   };

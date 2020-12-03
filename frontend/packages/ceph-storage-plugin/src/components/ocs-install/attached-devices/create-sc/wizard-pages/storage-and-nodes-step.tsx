@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Grid,
   GridItem,
@@ -26,12 +27,7 @@ import {
   filterSCWithNoProv,
   getAssociatedNodes,
 } from '../../../../../utils/install';
-import {
-  ValidationMessage,
-  ActionValidationMessage,
-  VALIDATIONS,
-  Validation,
-} from '../../../../../utils/common-ocs-install-el';
+import { ValidationMessage, ValidationType } from '../../../../../utils/common-ocs-install-el';
 import { SelectNodesText, SelectNodesDetails } from '../../../install-wizard/capacity-and-nodes';
 import { State, Action } from '../state';
 import AttachedDevicesNodeTable from '../../sc-node-list';
@@ -39,29 +35,31 @@ import { PVsAvailableCapacity } from '../../../pvs-available-capacity';
 import { getSCAvailablePVs } from '../../../../../selectors';
 import { pvResource } from '../../../../../constants/resources';
 
-const validate = (scName: string, enableMinimal: boolean, nodes: NodeKind[]): Validation[] => {
+const validate = (scName: string, enableMinimal: boolean, nodes: NodeKind[]): ValidationType[] => {
   const validations = [];
   if (enableMinimal) {
-    validations.push(VALIDATIONS.MINIMAL);
+    validations.push(ValidationType.MINIMAL);
   }
   if (!scName) {
-    validations.push(VALIDATIONS.BAREMETALSTORAGECLASS);
+    validations.push(ValidationType.BAREMETALSTORAGECLASS);
   }
   if (scName && nodes.length < MINIMUM_NODES) {
-    validations.push(VALIDATIONS.MINIMUMNODES);
+    validations.push(ValidationType.MINIMUMNODES);
   }
   return validations;
 };
 
 export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatch }) => {
+  const { t } = useTranslation();
+
   const [pvData, pvLoaded, pvLoadError] = useK8sWatchResource<K8sResourceKind[]>(pvResource);
 
   const { storageClass, enableMinimal, nodes } = state;
 
   let scNodeNames: string[] = []; // names of the nodes, backing the storage of selected storage class
   const { cpu, memory, zones } = getNodeInfo(nodes);
-  const scName: string = state.storageClassName;
-  const validations: Validation[] = validate(scName, enableMinimal, nodes);
+  const scName: string = getName(storageClass);
+  const validations: ValidationType[] = validate(scName, enableMinimal, nodes);
   const nodesCount: number = nodes.length;
 
   if (!pvLoadError && pvData.length && pvLoaded) {
@@ -86,13 +84,13 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
     <Form>
       <TextContent>
         <Text component={TextVariants.h3} className="ocs-install-wizard__h3">
-          Capacity
+          {t('ceph-storage-plugin~Capacity')}
         </Text>
       </TextContent>
       <FormGroup
         fieldId="storage-class-dropdown"
-        label="Storage Class"
-        labelIcon={<FieldLevelHelp>{storageClassTooltip}</FieldLevelHelp>}
+        label={t('ceph-storage-plugin~Storage Class')}
+        labelIcon={<FieldLevelHelp>{storageClassTooltip(t)}</FieldLevelHelp>}
       >
         <Grid hasGutter>
           <GridItem span={5}>
@@ -115,12 +113,16 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
       </FormGroup>
       <TextContent>
         <Text id="select-nodes" component={TextVariants.h3} className="ocs-install-wizard__h3">
-          Selected Nodes
+          {t('ceph-storage-plugin~Selected Nodes')}
         </Text>
       </TextContent>
       <Grid>
         <GridItem span={11}>
-          <SelectNodesText text="Selected nodes are based on the selected storage class. The selected nodes will preferably be in 3 different zones with a recommended requirement of 14 CPUs and 34 GiB per node." />
+          <SelectNodesText
+            text={t(
+              'ceph-storage-plugin~Selected nodes are based on the selected storage class. The selected nodes will preferably be in 3 different zones with a recommended requirement of 14 CPUs and 34 GiB per node.',
+            )}
+          />
         </GridItem>
         <GridItem span={10} className="ocs-install-wizard__select-nodes">
           <ListPage
@@ -135,13 +137,7 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
             <SelectNodesDetails cpu={cpu} memory={memory} zones={zones.size} nodes={nodesCount} />
           )}
           {!!validations.length &&
-            validations.map((validation) =>
-              validation.actionLinkStep ? (
-                <ActionValidationMessage validation={validation} />
-              ) : (
-                <ValidationMessage validation={validation} />
-              ),
-            )}
+            validations.map((validation) => <ValidationMessage validation={validation} />)}
         </GridItem>
       </Grid>
     </Form>

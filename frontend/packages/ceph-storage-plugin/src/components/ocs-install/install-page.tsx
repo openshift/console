@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { match as RouteMatch } from 'react-router';
 import { k8sGet } from '@console/internal/module/k8s';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
@@ -7,7 +8,6 @@ import { getAnnotations } from '@console/shared/src/selectors/common';
 import { RadioGroup } from '@console/internal/components/radio';
 import { InfrastructureModel } from '@console/internal/models';
 import { getRequiredKeys, createDownloadFile } from '../independent-mode/utils';
-import { OCSServiceModel } from '../../models';
 import CreateExternalCluster from '../independent-mode/install';
 import { CreateInternalCluster } from './internal-mode/install-wizard';
 import { OCS_SUPPORT_ANNOTATION, MODES } from '../../constants';
@@ -21,7 +21,7 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
     params: { ns, appName },
     url,
   } = match;
-
+  const { t } = useTranslation();
   const [isIndependent, setIndependent] = React.useState(false);
   const [isIndepModeSupportedPlatform, setIndepModeSupportedPlatform] = React.useState(false);
   const [independentReqdKeys, setIndependentReqdKeys] = React.useState<{ [key: string]: string[] }>(
@@ -89,15 +89,21 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
                   name: clusterServiceVersion.spec.displayName,
                   path: url.replace('/~new', ''),
                 },
-                { name: `Create ${OCSServiceModel.label}`, path: url },
+                {
+                  name: t('ceph-storage-plugin~Create Storage Cluster'),
+                  path: url,
+                },
               ]}
             />
           )}
         </div>
-        <h1 className="co-create-operand__header-text">Create Storage Cluster</h1>
+        <h1 className="co-create-operand__header-text">
+          {t('ceph-storage-plugin~Create Storage Cluster')}
+        </h1>
         <p className="help-block">
-          OCS runs as a cloud-native service for optimal integration with applications in need of
-          storage, and handles the scenes such as provisioning and management.
+          {t(
+            'ceph-storage-plugin~OCS runs as a cloud-native service for optimal integration with applications in need of storage and handles the scenes such as provisioning and management.',
+          )}
         </p>
       </div>
       <div className="ceph-install__mode-toggle">

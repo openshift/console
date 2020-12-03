@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import * as classNames from 'classnames';
 import {
@@ -28,30 +29,6 @@ const tableColumnClasses = [
 ];
 
 // Same columns are used for attached devices mode tables
-export const getColumns = () => [
-  {
-    title: 'Name',
-    sortField: 'metadata.name',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[0] },
-  },
-  {
-    title: 'Role',
-    props: { className: tableColumnClasses[1] },
-  },
-  {
-    title: 'CPU',
-    props: { className: tableColumnClasses[2] },
-  },
-  {
-    title: 'Memory',
-    props: { className: tableColumnClasses[3] },
-  },
-  {
-    title: 'Zone',
-    props: { className: tableColumnClasses[4] },
-  },
-];
 
 const getRows: GetRows = (
   { componentProps },
@@ -111,6 +88,8 @@ const getRows: GetRows = (
 };
 
 const InternalNodeTable: React.FC<NodeTableProps> = (props) => {
+  const { t } = useTranslation();
+
   const [visibleRows, setVisibleRows] = React.useState<Set<string>>(props.customData.nodes);
   const {
     onSelect,
@@ -118,10 +97,35 @@ const InternalNodeTable: React.FC<NodeTableProps> = (props) => {
     updateSelectedRows: setSelectedNodes,
   } = useSelectList<NodeKind>(props.data, visibleRows, props.customData.onRowSelected);
 
+  const getColumns = () => [
+    {
+      title: t('ceph-storage-plugin~Name'),
+      sortField: 'metadata.name',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[0] },
+    },
+    {
+      title: t('ceph-storage-plugin~Role'),
+      props: { className: tableColumnClasses[1] },
+    },
+    {
+      title: t('ceph-storage-plugin~CPU'),
+      props: { className: tableColumnClasses[2] },
+    },
+    {
+      title: t('ceph-storage-plugin~Memory'),
+      props: { className: tableColumnClasses[3] },
+    },
+    {
+      title: t('ceph-storage-plugin~Zone'),
+      props: { className: tableColumnClasses[4] },
+    },
+  ];
+
   return (
     <div className="ceph-ocs-install__select-nodes-table">
       <Table
-        aria-label="Node Table"
+        aria-label={t('ceph-storage-plugin~Node Table')}
         data-test-id="select-nodes-table"
         {...props}
         Rows={(rowProps) =>

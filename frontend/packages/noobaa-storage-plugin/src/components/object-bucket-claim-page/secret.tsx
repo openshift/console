@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Base64 } from 'js-base64';
 import { SecretValue } from '@console/internal/components/configmap-and-secret-data';
 import { ConfigMapModel, SecretModel } from '@console/internal/models';
@@ -10,6 +11,7 @@ import { Button } from '@patternfly/react-core';
 import { EyeSlashIcon, EyeIcon } from '@patternfly/react-icons';
 
 export const GetSecret: React.FC<GetSecretProps> = ({ obj }) => {
+  const { t } = useTranslation();
   const [reveal, setReveal] = React.useState(false);
 
   const name = getName(obj);
@@ -73,7 +75,7 @@ export const GetSecret: React.FC<GetSecretProps> = ({ obj }) => {
 
   return dl.length ? (
     <div className="co-m-pane__body">
-      <SectionHeading text="Object Bucket Claim Data">
+      <SectionHeading text={t('noobaa-storage-plugin~Object Bucket Claim Data')}>
         {secretValues.length ? (
           <Button
             type="button"
@@ -84,18 +86,22 @@ export const GetSecret: React.FC<GetSecretProps> = ({ obj }) => {
             {reveal ? (
               <>
                 <EyeSlashIcon className="co-icon-space-r" />
-                Hide Values
+                {t('noobaa-storage-plugin~Hide Values')}
               </>
             ) : (
               <>
                 <EyeIcon className="co-icon-space-r" />
-                Reveal Values
+                {t('noobaa-storage-plugin~Reveal Values')}
               </>
             )}
           </Button>
         ) : null}
       </SectionHeading>
-      {dl.length ? <dl className="secret-data">{dl}</dl> : <EmptyBox label="Data" />}
+      {dl.length ? (
+        <dl className="secret-data">{dl}</dl>
+      ) : (
+        <EmptyBox label={t('noobaa-storage-plugin~Data')} />
+      )}
     </div>
   ) : null;
 };

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   FormGroup,
   TextInput,
@@ -7,7 +8,6 @@ import {
   TextInputTypes,
   Text,
   TextVariants,
-  pluralize,
 } from '@patternfly/react-core';
 import { Dropdown } from '@console/internal/components/utils';
 import { ListPage } from '@console/internal/components/factory';
@@ -16,22 +16,19 @@ import { getName } from '@console/shared';
 import { NodeModel } from '@console/internal/models';
 import { NodesSelectionList } from './nodes-selection-list';
 import { State, Action } from './state';
-import {
-  diskModeDropdownItems,
-  diskTypeDropdownItems,
-  diskSizeUnitOptions,
-  allNodesSelectorTxt,
-  DISK_TYPES,
-} from '../../constants';
+import { diskModeDropdownItems, diskTypeDropdownItems, diskSizeUnitOptions } from '../../constants';
 import './create-local-volume-set.scss';
 
 export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = ({
   dispatch,
   state,
-  diskTypeOptions = diskTypeDropdownItems,
   diskModeOptions = diskModeDropdownItems,
-  allNodesHelpTxt = allNodesSelectorTxt,
+  allNodesHelpTxt,
 }) => {
+  const { t } = useTranslation();
+
+  const diskDropdownOptions = diskTypeDropdownItems(t);
+
   React.useEffect(() => {
     if (!state.showNodesListOnLVS) {
       // explicitly needs to set this in order to make the validation works
@@ -59,7 +56,11 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = ({
 
   return (
     <>
-      <FormGroup label="Volume Set Name" isRequired fieldId="create-lvs-volume-set-name">
+      <FormGroup
+        label={t('lso-plugin~Volume Set Name')}
+        isRequired
+        fieldId="create-lvs-volume-set-name"
+      >
         <TextInput
           type={TextInputTypes.text}
           id="create-lvs-volume-set-name"
@@ -68,7 +69,7 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = ({
           isRequired
         />
       </FormGroup>
-      <FormGroup label="Storage Class Name" fieldId="create-lvs-storage-class-name">
+      <FormGroup label={t('lso-plugin~Storage Class Name')} fieldId="create-lvs-storage-class-name">
         <TextInput
           type={TextInputTypes.text}
           id="create-lvs-storage-class-name"
@@ -78,12 +79,25 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = ({
         />
       </FormGroup>
       <Text component={TextVariants.h3} className="lso-create-lvs__filter-volumes-text--margin">
-        Filter Disks
+        {t('lso-plugin~Filter Disks')}
       </Text>
-      <FormGroup label="Node Selector" fieldId="create-lvs-radio-group-node-selector">
+      <FormGroup
+        label={t('lso-plugin~Node Selector')}
+        fieldId="create-lvs-radio-group-node-selector"
+      >
         <div id="create-lvs-radio-group-node-selector">
           <Radio
-            label={`All nodes (${pluralize(state.nodeNamesForLVS.length, 'node')})`}
+            label={
+              <>
+                {t('lso-plugin~All nodes')}
+                {'('}
+                {t('lso-plugin~{{nodes, number}} node', {
+                  nodes: state.nodeNamesForLVS.length,
+                  count: state.nodeNamesForLVS.length,
+                })}
+                {')'}
+              </>
+            }
             name="nodes-selection"
             id="create-lvs-radio-all-nodes"
             className="lso-create-lvs__all-nodes-radio--padding"
@@ -93,12 +107,14 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = ({
             checked={!state.showNodesListOnLVS}
           />
           <Radio
-            label="Select nodes"
+            label={t('lso-plugin~Select nodes')}
             name="nodes-selection"
             id="create-lvs-radio-select-nodes"
             value="selectedNodes"
             onChange={toggleShowNodesList}
-            description="Selecting all nodes will use the available disks that match the selected filters only on selected nodes."
+            description={t(
+              'lso-plugin~Selecting all nodes will use the available disks that match the selected filters only on selected nodes.',
+            )}
             checked={state.showNodesListOnLVS}
           />
         </div>
@@ -118,19 +134,22 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = ({
           }}
         />
       )}
-      <FormGroup label="Disk Type" fieldId="create-lvs-disk-type-dropdown">
+      <FormGroup label={t('lso-plugin~Disk Type')} fieldId="create-lvs-disk-type-dropdown">
         <Dropdown
           id="create-lvs-disk-type-dropdown"
           dropDownClassName="dropdown--full-width"
-          items={diskTypeOptions}
-          title={DISK_TYPES[state.diskType]?.title}
+          items={diskDropdownOptions}
+          title={diskDropdownOptions[state.diskType]}
           selectedKey={state.diskType}
           onChange={(type: string) => dispatch({ type: 'setDiskType', value: type })}
         />
       </FormGroup>
-      <ExpandableSection toggleText="Advanced" data-test-id="create-lvs-form-advanced">
+      <ExpandableSection
+        toggleText={t('lso-plugin~Advanced')}
+        data-test-id="create-lvs-form-advanced"
+      >
         <FormGroup
-          label="Disk Mode"
+          label={t('lso-plugin~Disk Mode')}
           fieldId="create-lso-disk-mode-dropdown"
           className="lso-create-lvs__disk-mode-dropdown--margin"
         >
@@ -146,13 +165,13 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = ({
           />
         </FormGroup>
         <FormGroup
-          label="Disk Size"
+          label={t('lso-plugin~Disk Size')}
           fieldId="create-lvs-disk-size"
           className="lso-create-lvs__disk-size-form-group--margin"
         >
           <div id="create-lvs-disk-size" className="lso-create-lvs__disk-size-form-group-div">
             <FormGroup
-              label="Min"
+              label={t('lso-plugin~Min')}
               fieldId="create-lvs-min-disk-size"
               className="lso-create-lvs__disk-size-form-group-max-min-input"
             >
@@ -167,7 +186,7 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = ({
             </FormGroup>
             <div>-</div>
             <FormGroup
-              label="Max"
+              label={t('lso-plugin~Max')}
               fieldId="create-lvs-max-disk-size"
               className="lso-create-lvs__disk-size-form-group-max-min-input"
             >
@@ -191,17 +210,18 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = ({
             />
           </div>
         </FormGroup>
-        <FormGroup label="Max Disk Limit" fieldId="create-lvs-max-disk-limit">
+        <FormGroup label={t('lso-plugin~Max Disk Limit')} fieldId="create-lvs-max-disk-limit">
           <p className="help-block lso-create-lvs__max-disk-limit-help-text--margin">
-            Disk limit will set the maximum number of PVs to create on a node. If the field is
-            empty, will create PVs for all available disks on the matching nodes.
+            {t(
+              'lso-plugin~Disk limit will set the maximum number of PVs to create on a node. If the field is empty will create PVs for all available disks on the matching nodes.',
+            )}
           </p>
           <TextInput
             type={TextInputTypes.number}
             id="create-lvs-max-disk-limit"
             value={state.maxDiskLimit}
             onChange={(maxLimit) => dispatch({ type: 'setMaxDiskLimit', value: maxLimit })}
-            placeholder="All"
+            placeholder={t('lso-plugin~All')}
           />
         </FormGroup>
       </ExpandableSection>
@@ -212,17 +232,21 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = ({
 type LocalVolumeSetInnerProps = {
   state: State;
   dispatch: React.Dispatch<Action>;
-  diskTypeOptions?: { [key: string]: string };
   diskModeOptions?: { [key: string]: string };
   allNodesHelpTxt?: string;
 };
 
-export const LocalVolumeSetHeader = () => (
-  <>
-    <h1 className="co-create-operand__header-text">Local Volume Set</h1>
-    <p className="help-block">
-      A Local Volume Set allows you to filter a set of storage volumes, group them and create a
-      dedicated storage class to consume storage for them.
-    </p>
-  </>
-);
+export const LocalVolumeSetHeader = () => {
+  const { t } = useTranslation();
+
+  return (
+    <>
+      <h1 className="co-create-operand__header-text">{t('lso-plugin~Local Volume Set')}</h1>
+      <p className="help-block">
+        {t(
+          'lso-plugin~A Local Volume Set allows you to filter a set of storage volumes group them and create a dedicated storage class to consume storage for them.',
+        )}
+      </p>
+    </>
+  );
+};

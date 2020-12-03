@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import * as cx from 'classnames';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
@@ -93,57 +94,6 @@ export const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const diskHeader = () => [
-  {
-    title: 'Name',
-    sortField: 'path',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[0] },
-  },
-  {
-    title: 'Disk State',
-    sortField: 'status.state',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[1] },
-  },
-  {
-    title: 'OCS Status',
-    sortField: '',
-    transforms: [],
-    props: { className: tableColumnClasses[1] },
-  },
-  {
-    title: 'Type',
-    sortField: 'type',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[2] },
-  },
-  {
-    title: 'Model',
-    sortField: 'model',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[3] },
-  },
-  {
-    title: 'Capacity',
-    sortField: 'size',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[4] },
-  },
-  {
-    title: 'Filesystem',
-    sortField: 'fstype',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[5] },
-  },
-  {
-    title: '',
-    sortField: '',
-    transforms: [],
-    props: { className: tableColumnClasses[6] },
-  },
-];
-
 const diskRow: RowFunction<DiskMetadata, OCSMetadata> = ({
   obj,
   index,
@@ -178,6 +128,8 @@ const diskRow: RowFunction<DiskMetadata, OCSMetadata> = ({
 };
 
 const OCSDisksList: React.FC<TableProps> = React.memo((props) => {
+  const { t } = useTranslation();
+
   const [ocsState, dispatch] = React.useReducer(reducer, initialState);
 
   const [cephDiskData, cephDiskLoadError, cephDiskLoading] = usePrometheusPoll({
@@ -252,10 +204,61 @@ const OCSDisksList: React.FC<TableProps> = React.memo((props) => {
     }
   }
 
+  const diskHeader = () => [
+    {
+      title: t('ceph-storage-plugin~Name'),
+      sortField: 'path',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[0] },
+    },
+    {
+      title: t('ceph-storage-plugin~Disk State'),
+      sortField: 'status.state',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[1] },
+    },
+    {
+      title: t('ceph-storage-plugin~OCS Status'),
+      sortField: '',
+      transforms: [],
+      props: { className: tableColumnClasses[1] },
+    },
+    {
+      title: t('ceph-storage-plugin~Type'),
+      sortField: 'type',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[2] },
+    },
+    {
+      title: t('ceph-storage-plugin~Model'),
+      sortField: 'model',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[3] },
+    },
+    {
+      title: t('ceph-storage-plugin~Capacity'),
+      sortField: 'size',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[4] },
+    },
+    {
+      title: t('ceph-storage-plugin~Filesystem'),
+      sortField: 'fstype',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[5] },
+    },
+    {
+      title: '',
+      sortField: '',
+      transforms: [],
+      props: { className: tableColumnClasses[6] },
+    },
+  ];
+
   return (
     <Table
       {...props}
-      aria-label="Disks List"
+      aria-label={t('ceph-storage-plugin~Disks List')}
       Header={diskHeader}
       Row={diskRow}
       customData={{ ocsState, dispatch }}

@@ -1,17 +1,9 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import * as classNames from 'classnames';
 import * as _ from 'lodash';
 import { compose } from 'redux';
-import {
-  Title,
-  Flex,
-  FlexItem,
-  Button,
-  FormGroup,
-  Form,
-  pluralize,
-  Alert,
-} from '@patternfly/react-core';
+import { Title, Flex, FlexItem, Button, FormGroup, Form, Alert } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { IRow, sortable } from '@patternfly/react-table';
 import {
@@ -35,27 +27,6 @@ const tableColumnClasses = [
   classNames('pf-m-hidden', 'pf-m-visible-on-sm'),
   classNames('pf-m-hidden', 'pf-m-visible-on-sm'),
   classNames('pf-m-hidden', 'pf-m-visible-on-sm'),
-];
-
-const getColumns = () => [
-  {
-    title: 'Name',
-    sortField: 'metadata.name',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[0] },
-  },
-  {
-    title: 'Bucket Name',
-    props: { className: tableColumnClasses[1] },
-  },
-  {
-    title: 'Type',
-    props: { className: tableColumnClasses[2] },
-  },
-  {
-    title: 'Region',
-    props: { className: tableColumnClasses[3] },
-  },
 ];
 
 const getRows: GetRows = (rowProps, selectedItems) => {
@@ -97,6 +68,8 @@ const getRows: GetRows = (rowProps, selectedItems) => {
 };
 
 const BackingStoreTable: React.FC<BackingStoreTableProps> = (props) => {
+  const { t } = useTranslation();
+
   const {
     customData: { onRowsSelected, preSelected },
     data,
@@ -120,6 +93,27 @@ const BackingStoreTable: React.FC<BackingStoreTableProps> = (props) => {
     }
   }, [memoizedData, memoizedPreSelected, selectedRows.size, updateSelectedRows]);
 
+  const getColumns = () => [
+    {
+      title: t('noobaa-storage-plugin~Name'),
+      sortField: 'metadata.name',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[0] },
+    },
+    {
+      title: t('noobaa-storage-plugin~Bucket Name'),
+      props: { className: tableColumnClasses[1] },
+    },
+    {
+      title: t('noobaa-storage-plugin~Type'),
+      props: { className: tableColumnClasses[2] },
+    },
+    {
+      title: t('noobaa-storage-plugin~Region'),
+      props: { className: tableColumnClasses[3] },
+    },
+  ];
+
   return (
     <Table
       {...props}
@@ -127,7 +121,7 @@ const BackingStoreTable: React.FC<BackingStoreTableProps> = (props) => {
       virtualize={false}
       Header={getColumns}
       Rows={(rowProps) => getRows(rowProps, selectedRows)}
-      aria-label="Backing Store Table"
+      aria-label={t('noobaa-storage-plugin~Backing Store Table')}
     />
   );
 };
@@ -168,6 +162,8 @@ const BackingStoreSelection: React.FC<BackingStoreSelectionProps> = (props) => {
     hideCreateBackingStore = false,
   } = props;
 
+  const { t } = useTranslation();
+
   const openModal = () => CreateBackingStoreFormModal({ namespace });
   const selectedTierA = props.selectedTierA.map(getUID);
   const selectedTierB = props.selectedTierB.map(getUID);
@@ -183,15 +179,18 @@ const BackingStoreSelection: React.FC<BackingStoreSelectionProps> = (props) => {
           <Alert
             className="co-alert"
             variant="info"
-            title="Each backing store can be used for one tier at a time. Selecting a backing store in one tier will remove the resource from the second tier option and vice versa."
-            aria-label="Bucket created for OCS Service"
+            title={t(
+              'noobaa-storage-plugin~Each backing store can be used for one tier at a time. Selecting a backing store in one tier will remove the resource from the second tier option and vice versa.',
+            )}
+            aria-label={t('noobaa-storage-plugin~Bucket created for OCS Service')}
             isInline
           />
         )}
         <Title headingLevel="h3" size="xl" className="nb-bc-step-page-form__title">
           <Flex justifyContent={{ default: 'justifyContentSpaceBetween' }}>
             <Title headingLevel="h3" size="xl">
-              Tier 1 - Backing Stores {tier1Policy ? `(${tier1Policy})` : ''}
+              {t('noobaa-storage-plugin~Tier 1 - Backing Stores')}{' '}
+              {tier1Policy ? `(${tier1Policy})` : ''}
             </Title>
             {!hideCreateBackingStore && (
               <FlexItem>
@@ -200,7 +199,7 @@ const BackingStoreSelection: React.FC<BackingStoreSelectionProps> = (props) => {
                   onClick={openModal}
                   className="nb-bc-step-page-form__modal-launcher"
                 >
-                  <PlusCircleIcon /> Create Backing Store
+                  <PlusCircleIcon /> {t('noobaa-storage-plugin~Create Backing Store')}
                 </Button>
               </FlexItem>
             )}
@@ -210,40 +209,49 @@ const BackingStoreSelection: React.FC<BackingStoreSelectionProps> = (props) => {
         <FormGroup
           className="nb-bc-step-page-form__element"
           fieldId="bs-1"
-          label={getBSLabel(tier1Policy)}
+          label={getBSLabel(tier1Policy, t)}
           isRequired
         >
           <BackingStoreList
             unselectableItems={selectedTierB}
             onSelectBackingStore={setSelectedTierA}
             preSelected={selectedTierA}
-            name="Tier-1-Table"
+            name={t('noobaa-storage-plugin~Tier-1-Table')}
           />
         </FormGroup>
         <p className="nb-create-bc-step-page-form__element--light-text">
-          {pluralize(selectedTierA.length, 'Backing Store')} selected
+          {t('noobaa-storage-plugin~{{bs, number}} Backing Store', {
+            bs: selectedTierA.length,
+            count: selectedTierA.length,
+          })}{' '}
+          {t('noobaa-storage-plugin~selected')}
         </p>
       </Form>
       {!!tier2Policy && (
         <Form className="nb-bc-step-page-form">
           <Title headingLevel="h3" size="xl">
-            Tier 2 - Backing Stores {tier2Policy ? `(${tier2Policy})` : ''}
+            {t('noobaa-storage-plugin~Tier 2 - Backing Stores')}{' '}
+            {tier2Policy ? `(${tier2Policy})` : ''}
           </Title>
           <FormGroup
             className="nb-bc-step-page-form__element"
             fieldId="bs-2"
-            label={getBSLabel(tier2Policy)}
+            label={getBSLabel(tier2Policy, t)}
             isRequired
           >
             <BackingStoreList
               unselectableItems={selectedTierA}
               onSelectBackingStore={setSelectedTierB}
               preSelected={selectedTierB}
-              name="Tier-2-Table"
+              name={t('noobaa-storage-plugin~Tier-2-Table')}
             />
           </FormGroup>
           <p className="nb-create-bc-step-page-form__element--light-text">
-            {pluralize(selectedTierB.length, 'Backing Store')} selected
+            {t('noobaa-storage-plugin~{{bs, number}} Backing Store', {
+              bs: selectedTierB.length,
+              count: selectedTierB.length,
+            })}{' '}
+            {t('noobaa-storage-plugin~selected')}
           </p>
         </Form>
       )}

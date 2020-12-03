@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { match as RouterMatch } from 'react-router';
 import { ActionGroup, Button, Form } from '@patternfly/react-core';
 import {
@@ -25,12 +26,13 @@ import './create-local-volume-set.scss';
 const CreateLocalVolumeSet: React.FC = withHandlePromise<
   CreateLocalVolumeSetProps & HandlePromiseProps
 >((props) => {
+  const { t } = useTranslation();
+
   const { match, handlePromise, inProgress, errorMessage } = props;
   const [state, dispatch] = React.useReducer(reducer, initialState);
   const [nodeData, nodeLoaded, nodeLoadError] = useK8sWatchResource<NodeKind[]>(nodeResource);
 
   const { appName, ns } = match.params;
-  const modelName = LocalVolumeSetModel.label;
 
   React.useEffect(() => {
     if ((nodeLoadError || nodeData.length === 0) && nodeLoaded) {
@@ -70,10 +72,10 @@ const CreateLocalVolumeSet: React.FC = withHandlePromise<
           <BreadCrumbs
             breadcrumbs={[
               {
-                name: 'Local Storage',
+                name: t('lso-plugin~Local Storage'),
                 path: resourcePathFromModel(ClusterServiceVersionModel, appName, ns),
               },
-              { name: `Create ${modelName}`, path: '' },
+              { name: t('lso-plugin~Create Local Volume Set'), path: '' },
             ]}
           />
         </div>
@@ -88,10 +90,10 @@ const CreateLocalVolumeSet: React.FC = withHandlePromise<
         <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
           <ActionGroup>
             <Button type="submit" variant="primary" isDisabled={getDisabledCondition()}>
-              Create
+              {t('lso-plugin~Create')}
             </Button>
             <Button type="button" variant="secondary" onClick={history.goBack}>
-              Cancel
+              {t('lso-plugin~Cancel')}
             </Button>
           </ActionGroup>
         </ButtonBar>

@@ -1,5 +1,4 @@
 import { HostNamesMap } from '@console/local-storage-operator-plugin/src/components/auto-detect-volume/types';
-import { diskTypeDropdownItems } from '@console/local-storage-operator-plugin/src/constants';
 import { diskModeDropdownItems, KMSEmptyState } from '../../../../constants';
 import { StorageClassResourceKind, NodeKind } from '@console/internal/module/k8s';
 import { EncryptionType, KMSConfig, NetworkType } from '../../types';
@@ -15,7 +14,7 @@ export const initialState: State = {
   volumeSetName: '',
   storageClassName: '',
   showNodesListOnLVS: false,
-  diskType: diskTypeDropdownItems.All,
+  diskType: 'All',
   diskMode: diskModeDropdownItems.BLOCK,
   maxDiskLimit: '',
   nodeNames: [], // nodes selected on the LVS step
