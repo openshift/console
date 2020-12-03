@@ -39,9 +39,10 @@ import { PrometheusEndpoint } from '@console/internal/components/graphs/helpers'
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
 import { usePrometheusPoll } from '@console/internal/components/graphs/prometheus-poll-hook';
 import { getRequestedPVCSize } from '@console/shared/src/selectors';
-import { dropdownUnits, accessModeRadios } from '@console/internal/components/storage/shared';
+import { dropdownUnits } from '@console/internal/components/storage/shared';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { isCephProvisioner } from '@console/shared';
+import { getPVCAccessModes, AccessModeSelector } from '../../access-modes/access-mode';
 
 const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
   const { t } = useTranslation();
@@ -52,17 +53,17 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
 
   const [clonePVCName, setClonePVCName] = React.useState(`${pvcName}-clone`);
   const [requestedSize, setRequestedSize] = React.useState(defaultSize[0] || '');
-  const accessMode = accessModeRadios.find(
-    (mode) => mode.value === resource?.spec?.accessModes?.[0],
-  );
-
+  const [cloneAccessMode, setCloneAccessMode] = React.useState(resource?.spec?.accessModes?.[0]);
   const [requestedUnit, setRequestedUnit] = React.useState(defaultSize[1] || 'Ti');
   const [validSize, setValidSize] = React.useState(true);
+  const pvcAccessMode = getPVCAccessModes(resource, 'title');
 
   const [scResource, scResourceLoaded, scResourceLoadError] = useK8sGet<StorageClassResourceKind>(
     StorageClassModel,
     resource?.spec?.storageClassName,
   );
+
+  const handleAccessMode = (value: string) => setCloneAccessMode(value);
 
   const pvcUsedCapacityQuery: string = `kubelet_volume_stats_used_bytes{persistentvolumeclaim='${pvcName}'}`;
   const [response, error, loading] = usePrometheusPoll({
@@ -107,8 +108,8 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
             storage: `${requestedSize}${requestedUnit}`,
           },
         },
-        accessModes: resource.spec.accessModes,
         volumeMode: resource.spec.volumeMode,
+        accessModes: [cloneAccessMode],
       },
     };
 
@@ -123,7 +124,12 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
       <div className="modal-content modal-content--no-inner-scroll">
         <ModalTitle>{t('console-app~Clone')}</ModalTitle>
         <ModalBody>
-          <FormGroup label={t('console-app~Name')} isRequired fieldId="clone-pvc-modal__name">
+          <FormGroup
+            label={t('console-app~Name')}
+            isRequired
+            fieldId="clone-pvc-modal__name"
+            className="co-clone-pvc-modal__form--space"
+          >
             <TextInput
               type="text"
               className="co-clone-pvc-modal__name--margin"
@@ -132,11 +138,19 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
               aria-label={t('console-app~Clone PVC')}
             />
           </FormGroup>
+          <AccessModeSelector
+            onChange={handleAccessMode}
+            formClassName="co-clone-pvc-modal__form--space"
+            pvcResource={resource}
+            provisioner={scResource?.provisioner}
+            loaded={scResourceLoaded}
+            loadError={scResourceLoadError}
+          />
           <FormGroup
             label={t('console-app~Size')}
             isRequired
             fieldId="clone-pvc-modal__size"
-            className="co-clone-pvc-modal__ocs-size"
+            className="co-clone-pvc-modal__form--space"
             helperTextInvalid={t(
               'console-app~Size should be equal or greater than the requested size of PVC',
             )}
@@ -199,7 +213,7 @@ const ClonePVCModal = withHandlePromise((props: ClonePVCModalProps) => {
               <div>
                 <div>
                   <p className="co-clone-pvc-modal__pvc-details">{t('console-app~Access mode')}</p>
-                  <p>{accessMode.title || '-'}</p>
+                  <p>{pvcAccessMode.join(', ') || '-'}</p>
                 </div>
                 <div>
                   <p className="co-clone-pvc-modal__pvc-details">{t('console-app~Volume mode')}</p>
