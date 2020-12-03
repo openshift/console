@@ -2,16 +2,16 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
-import { Pipeline, PipelineRun } from '@console/pipelines-plugin/src/utils/pipeline-augment';
 import { getLatestPipelineRunStatus } from '@console/pipelines-plugin/src/utils/pipeline-utils';
 import PipelineBuildDecoratorTooltip from '@console/pipelines-plugin/src/topology/build-decorators/PipelineBuildDecoratorTooltip';
-import { Status } from '@console/shared/src';
+import { Status } from '@console/shared';
 import { resourcePathFromModel, useAccessReview } from '@console/internal/components/utils';
-import { PipelineRunModel } from '@console/pipelines-plugin/src/models';
-import BuildDecoratorBubble from './BuildDecoratorBubble';
+import { BuildDecoratorBubble } from '@console/topology/src/components/graph-view';
 import { impersonateStateToProps } from '@console/internal/reducers/ui';
 import { AccessReviewResourceAttributes } from '@console/internal/module/k8s';
-import { startPipelineModal } from '@console/pipelines-plugin/src/components/pipelines/modals';
+import { Pipeline, PipelineRun } from '../../utils/pipeline-augment';
+import { startPipelineModal } from '../../components/pipelines/modals';
+import { PipelineRunModel } from '../../models';
 
 type PipelineRunDecoratorProps = {
   pipeline: Pipeline;

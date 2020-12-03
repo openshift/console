@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { Stack, StackItem } from '@patternfly/react-core';
 import { GraphElement, isGraph, Model, Visualization } from '@patternfly/react-topology';
 import { useDeepCompareMemoize, useQueryParams } from '@console/shared';
-import { useExtensions } from '@console/plugin-sdk';
 import { RootState } from '@console/internal/redux';
 import { selectOverviewDetailsTab } from '@console/internal/actions/ui';
 import { getActiveApplication } from '@console/internal/reducers/ui';
@@ -12,16 +11,18 @@ import { removeQueryArgument, setQueryArgument } from '@console/internal/compone
 import { useAddToProjectAccess } from '@console/dev-console/src/utils/useAddToProjectAccess';
 import { getEventSourceStatus } from '@console/knative-plugin/src/topology/knative-topology-utils';
 import {
-  CreateConnectionGetter,
   GraphData,
-  TopologyApplyDisplayOptions,
+  TopologyDecorator,
+  TopologyDecoratorQuadrant,
   TopologyDisplayFilterType,
   TopologyViewType,
 } from '../../topology-types';
 import {
   isTopologyCreateConnector,
+  isTopologyDecoratorProvider,
   isTopologyDisplayFilter,
   TopologyCreateConnector,
+  TopologyDecoratorProvider,
   TopologyDisplayFilters,
 } from '../../extensions/topology';
 import { getTopologySearchQuery, useAppliedDisplayFilters, useDisplayFilters } from '../../filters';
@@ -33,6 +34,7 @@ import TopologyFilterBar from '../../filters/TopologyFilterBar';
 import { getTopologySideBar } from '../side-bar/TopologySideBar';
 import { FilterContext } from '../../filters/FilterProvider';
 import './TopologyView.scss';
+import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 
 const FILTER_ACTIVE_CLASS = 'odc-m-filter-active';
 
@@ -73,14 +75,18 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
   const applicationRef = React.useRef<string>(null);
   const createResourceAccess: string[] = useAddToProjectAccess(namespace);
   const appliedFilters = useAppliedDisplayFilters();
-  const [displayFilterers, setDisplayFilterers] = React.useState<TopologyApplyDisplayOptions[]>(
-    null,
-  );
-  const displayFilterExtensions = useExtensions<TopologyDisplayFilters>(isTopologyDisplayFilter);
-  const createConnectorExtensions = useExtensions<TopologyCreateConnector>(
-    isTopologyCreateConnector,
-  );
-  const [createConnectors, setCreateConnectors] = React.useState<CreateConnectionGetter[]>(null);
+  const [displayFilterExtensions, displayFilterExtensionsResolved] = useResolvedExtensions<
+    TopologyDisplayFilters
+  >(isTopologyDisplayFilter);
+  const [createConnectors, createConnectorsResolved] = useResolvedExtensions<
+    TopologyCreateConnector
+  >(isTopologyCreateConnector);
+  const [extensionDecorators, extensionDecoratorsResolved] = useResolvedExtensions<
+    TopologyDecoratorProvider
+  >(isTopologyDecoratorProvider);
+  const [topologyDecorators, setTopologyDecorators] = React.useState<{
+    [key: string]: TopologyDecorator[];
+  }>({});
   const [filtersLoaded, setFiltersLoaded] = React.useState<boolean>(false);
   const queryParams = useQueryParams();
   const searchParams = queryParams.get('searchQuery');
@@ -101,9 +107,19 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
       createResourceAccess,
       namespace,
       eventSourceEnabled,
-      createConnectorExtensions: createConnectors,
+      createConnectorExtensions: createConnectorsResolved
+        ? createConnectors.map((creator) => creator.properties.getCreateConnector)
+        : [],
+      decorators: topologyDecorators,
     }),
-    [createConnectors, createResourceAccess, eventSourceEnabled, namespace],
+    [
+      createConnectors,
+      createConnectorsResolved,
+      createResourceAccess,
+      eventSourceEnabled,
+      namespace,
+      topologyDecorators,
+    ],
   );
 
   React.useEffect(() => {
@@ -112,74 +128,59 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
     }
   }, [visualization, graphData]);
 
-  const createConnectorPromises = React.useMemo(
-    () => createConnectorExtensions.map((creator) => creator.properties.getCreateConnector()),
-    [createConnectorExtensions],
-  );
-
   React.useEffect(() => {
-    if (createConnectorPromises) {
-      Promise.all(createConnectorPromises)
-        .then((res) => {
-          setCreateConnectors(res);
-        })
-        .catch(() => {
-          setCreateConnectors([]);
-        });
+    if (extensionDecoratorsResolved) {
+      const allDecorators = extensionDecorators.reduce(
+        (acc, extensionDecorator) => {
+          const decorator: TopologyDecorator = extensionDecorator.properties;
+          if (!acc[decorator.quadrant]) {
+            acc[decorator.quadrant] = [];
+          }
+          acc[decorator.quadrant].push(decorator);
+          return acc;
+        },
+        {
+          [TopologyDecoratorQuadrant.upperLeft]: [],
+          [TopologyDecoratorQuadrant.upperRight]: [],
+          [TopologyDecoratorQuadrant.lowerLeft]: [],
+          [TopologyDecoratorQuadrant.lowerRight]: [],
+        },
+      );
+      Object.keys(allDecorators).forEach((key) =>
+        allDecorators[key].sort((a, b) => a.priority - b.priority),
+      );
+      setTopologyDecorators(allDecorators);
     }
-  }, [createConnectorPromises]);
-
-  const displayFilterPromises = React.useMemo(
-    () => displayFilterExtensions.map((filterer) => filterer.properties.applyDisplayOptions()),
-    [displayFilterExtensions],
-  );
+  }, [extensionDecorators, extensionDecoratorsResolved]);
 
   React.useEffect(() => {
-    if (displayFilterPromises) {
-      Promise.all(displayFilterPromises)
-        .then((res) => {
-          setDisplayFilterers(res);
-        })
-        .catch(() => {
-          setDisplayFilterers([]);
-        });
-    }
-  }, [displayFilterPromises]);
-
-  const topologyFilterPromises = React.useMemo(
-    () => displayFilterExtensions.map((filterer) => filterer.properties.getTopologyFilters()),
-    [displayFilterExtensions],
-  );
-
-  React.useEffect(() => {
-    Promise.all(topologyFilterPromises)
-      .then((res) => {
-        const updateFilters = [...filters];
-        res.forEach((getter) => {
-          const extFilters = getter();
-          extFilters.forEach((filter) => {
-            if (!updateFilters.find((f) => f.id === filter.id)) {
-              if (appliedFilters[filter.id] !== undefined) {
-                filter.value = appliedFilters[filter.id];
-              }
-              updateFilters.push(filters.find((f) => f.id === filter.id) || filter);
+    if (displayFilterExtensionsResolved) {
+      const updateFilters = [...filters];
+      displayFilterExtensions.forEach((extension) => {
+        const extFilters = extension.properties.getTopologyFilters();
+        extFilters.forEach((filter) => {
+          if (!updateFilters.find((f) => f.id === filter.id)) {
+            if (appliedFilters[filter.id] !== undefined) {
+              filter.value = appliedFilters[filter.id];
             }
-          });
+            updateFilters.push(filters.find((f) => f.id === filter.id) || filter);
+          }
         });
         onFiltersChange(updateFilters);
         setFiltersLoaded(true);
-      })
-      .catch(() => {});
+      });
+    }
+    // Only update on extension changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [topologyFilterPromises]);
+  }, [displayFilterExtensionsResolved, displayFilterExtensions]);
 
   React.useEffect(() => {
-    if (displayFilterers && filtersLoaded) {
+    if (filtersLoaded) {
       const newModel = updateModelFromFilters(
         model,
         filters,
         application,
-        displayFilterers,
+        displayFilterExtensions.map((extension) => extension.properties.applyDisplayOptions),
         onSupportedFiltersChange,
         onSupportedKindsChange,
       );
@@ -190,10 +191,10 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
     model,
     filters,
     application,
-    displayFilterers,
     filtersLoaded,
     onSupportedFiltersChange,
     onSupportedKindsChange,
+    displayFilterExtensions,
   ]);
 
   React.useEffect(() => {

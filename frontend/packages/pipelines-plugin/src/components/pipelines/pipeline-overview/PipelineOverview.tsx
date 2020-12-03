@@ -9,18 +9,22 @@ import {
   resourcePath,
 } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { TopologyOverviewItem } from '@console/topology/src/topology-types';
+import { OverviewItem } from '@console/shared';
 import { PipelineRunModel, PipelineModel } from '../../../models';
 import TriggerLastRunButton from './TriggerLastRunButton';
 import PipelineRunItem from './PipelineRunItem';
 import PipelineStartButton from './PipelineStartButton';
 import { isPipelineNotStarted, removePipelineNotStarted } from './pipeline-overview-utils';
 import PipelineOverviewAlert from './PipelineOverviewAlert';
+import { Pipeline, PipelineRun } from '../../../utils/pipeline-augment';
 
 const MAX_VISIBLE = 3;
 
 type PipelinesOverviewProps = {
-  item: TopologyOverviewItem;
+  item: OverviewItem & {
+    pipelines?: Pipeline[];
+    pipelineRuns?: PipelineRun[];
+  };
 };
 
 const PipelinesOverview: React.FC<PipelinesOverviewProps> = ({

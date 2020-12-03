@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { Node, SELECTION_EVENT } from '@patternfly/react-topology';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
-import { Alert } from '@console/internal/components/monitoring/types';
 import { selectOverviewDetailsTab } from '@console/internal/actions/ui';
 import {
   getSeverityAlertType,
@@ -23,8 +22,7 @@ const dispatchToProps = (dispatch: Dispatch): DispatchProps => ({
 });
 
 interface MonitoringAlertsDecoratorProps {
-  monitoringAlerts: Alert[];
-  workload: Node;
+  element: Node;
   radius: number;
   x: number;
   y: number;
@@ -33,24 +31,25 @@ interface MonitoringAlertsDecoratorProps {
 type MonitoringAlertsDecoratorType = MonitoringAlertsDecoratorProps & DispatchProps;
 
 const MonitoringAlertsDecorator: React.FC<MonitoringAlertsDecoratorType> = ({
-  monitoringAlerts,
-  workload,
+  element,
   radius,
   x,
   y,
   showMonitoringOverview,
 }) => {
   const { t } = useTranslation();
+  const workloadData = element.getData().data;
+  const { monitoringAlerts } = workloadData;
   const firingAlerts = getFiringAlerts(monitoringAlerts);
   const severityAlertType = getSeverityAlertType(firingAlerts);
 
   const showSidebar = (e: React.MouseEvent) => {
     e.stopPropagation();
     showMonitoringOverview();
-    workload
+    element
       .getGraph()
       .getController()
-      .fireEvent(SELECTION_EVENT, [workload.getId()]);
+      .fireEvent(SELECTION_EVENT, [element.getId()]);
   };
 
   if (shouldHideMonitoringAlertDecorator(severityAlertType)) return null;
