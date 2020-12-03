@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import { Select, SelectProps } from '@patternfly/react-core';
-import { humanizeBinaryBytes } from '@console/internal/components/utils';
+import { humanizeBinaryBytes, FieldLevelHelp } from '@console/internal/components/utils';
 import {
   DashboardItemProps,
   withDashboardResources,
@@ -48,8 +48,7 @@ const BreakdownCard: React.FC<DashboardItemProps> = ({
   const top5SortedMetricsData = sortInstantVectorStats(top6MetricsData);
   const top5MetricsStats = getStackChartStats(top5SortedMetricsData, humanize);
   const metricTotal = _.get(results[1], 'data.result[0].value[1]');
-  const cephAvailable = _.get(results[2], 'data.result[0].value[1]');
-  const cephUsed = _.get(results[3], 'data.result[0].value[1]');
+  const cephUsed = _.get(results[2], 'data.result[0].value[1]');
 
   const handleMetricsChange: SelectProps['onSelect'] = (_e, breakdown) => {
     setMetricType(breakdown as string);
@@ -75,7 +74,14 @@ const BreakdownCard: React.FC<DashboardItemProps> = ({
   return (
     <DashboardCard>
       <DashboardCardHeader>
-        <DashboardCardTitle>{t('ceph-storage-plugin~Capacity breakdown')}</DashboardCardTitle>
+        <DashboardCardTitle>
+          {t('ceph-storage-plugin~Used Capacity Breakdown')}
+          <FieldLevelHelp>
+            {t(
+              'ceph-storage-plugin~This card shows the used capacity for Usable storage, broken-down by different kubernetes resources. Usable storage is all the data that can be stored in the system after decreasing the replication policies.',
+            )}
+          </FieldLevelHelp>
+        </DashboardCardTitle>
         <div className="ceph-capacity-breakdown-card__header">
           <Select
             className="ceph-capacity-breakdown-card-header__dropdown"
@@ -98,7 +104,6 @@ const BreakdownCard: React.FC<DashboardItemProps> = ({
           hasLoadError={queriesLoadError}
           metricTotal={metricTotal}
           top5MetricsStats={top5MetricsStats}
-          capacityAvailable={cephAvailable}
           capacityUsed={cephUsed}
           metricModel={model}
           humanize={humanize}

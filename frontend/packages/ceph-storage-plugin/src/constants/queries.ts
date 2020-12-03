@@ -27,6 +27,9 @@ export enum StorageDashboardQuery {
   CEPH_CAPACITY_AVAILABLE = 'CEPH_CAPACITY_AVAILABLE',
   POOL_CAPACITY_RATIO = 'POOL_CAPACITY_RATIO',
   POOL_SAVED_CAPACITY = 'POOL_SAVED_CAPACITY',
+  // Capacity Info Card
+  RAW_CAPACITY_TOTAL = 'RAW_TOTAL_CAPACITY',
+  RAW_CAPACITY_USED = 'RAW_CAPACITY_USED',
 }
 
 export const INDEPENDENT_UTILIZATION_QUERIES = {
@@ -70,6 +73,11 @@ export const CAPACITY_USAGE_QUERIES = {
     'sum((kubelet_volume_stats_used_bytes * on (namespace,persistentvolumeclaim) group_right() kube_pod_spec_volumes_persistentvolumeclaims_info) * on (namespace,persistentvolumeclaim) group_left(storageclass, provisioner) (kube_persistentvolumeclaim_info * on (storageclass)  group_left(provisioner) kube_storageclass_info {provisioner=~"(.*rbd.csi.ceph.com)|(.*cephfs.csi.ceph.com)|(ceph.rook.io/block)"}))',
 };
 
+export const CAPACITY_INFO_QUERIES = {
+  [StorageDashboardQuery.RAW_CAPACITY_TOTAL]: 'ceph_cluster_total_bytes',
+  [StorageDashboardQuery.RAW_CAPACITY_USED]: 'ceph_cluster_total_used_raw_bytes',
+};
+
 export const CAPACITY_BREAKDOWN_QUERIES = {
   [StorageDashboardQuery.PROJECTS_TOTAL_USED]:
     'sum(sum(kubelet_volume_stats_used_bytes * on (namespace,persistentvolumeclaim) group_left(storageclass, provisioner) (kube_persistentvolumeclaim_info * on (storageclass)  group_left(provisioner) kube_storageclass_info {provisioner=~"(.*rbd.csi.ceph.com)|(.*cephfs.csi.ceph.com)|(ceph.rook.io/block)"})) by (namespace))',
@@ -107,8 +115,6 @@ export const breakdownQueryMap = {
       })))`,
       [StorageDashboardQuery.PROJECTS_TOTAL_USED]:
         CAPACITY_BREAKDOWN_QUERIES[StorageDashboardQuery.PROJECTS_TOTAL_USED],
-      [StorageDashboardQuery.CEPH_CAPACITY_AVAILABLE]:
-        CAPACITY_BREAKDOWN_QUERIES[StorageDashboardQuery.CEPH_CAPACITY_AVAILABLE],
       [StorageDashboardQuery.CEPH_CAPACITY_USED]:
         CAPACITY_BREAKDOWN_QUERIES[StorageDashboardQuery.CEPH_CAPACITY_USED],
     },
@@ -122,8 +128,6 @@ export const breakdownQueryMap = {
       })))`,
       [StorageDashboardQuery.STORAGE_CLASSES_TOTAL_USED]:
         CAPACITY_BREAKDOWN_QUERIES[StorageDashboardQuery.STORAGE_CLASSES_TOTAL_USED],
-      [StorageDashboardQuery.CEPH_CAPACITY_AVAILABLE]:
-        CAPACITY_BREAKDOWN_QUERIES[StorageDashboardQuery.CEPH_CAPACITY_AVAILABLE],
       [StorageDashboardQuery.CEPH_CAPACITY_USED]:
         CAPACITY_BREAKDOWN_QUERIES[StorageDashboardQuery.CEPH_CAPACITY_USED],
     },
@@ -137,8 +141,6 @@ export const breakdownQueryMap = {
       })))`,
       [StorageDashboardQuery.PODS_TOTAL_USED]:
         CAPACITY_BREAKDOWN_QUERIES[StorageDashboardQuery.PODS_TOTAL_USED],
-      [StorageDashboardQuery.CEPH_CAPACITY_AVAILABLE]:
-        CAPACITY_BREAKDOWN_QUERIES[StorageDashboardQuery.CEPH_CAPACITY_AVAILABLE],
       [StorageDashboardQuery.CEPH_CAPACITY_USED]:
         CAPACITY_BREAKDOWN_QUERIES[StorageDashboardQuery.CEPH_CAPACITY_USED],
     },
