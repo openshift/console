@@ -12,6 +12,7 @@ export const detailsPage = {
       .contains(action)
       .click();
   },
+  isLoaded: () => cy.byTestID('skeleton-detail-view').should('not.exist'),
 };
 
 export namespace DetailsPageSelector {

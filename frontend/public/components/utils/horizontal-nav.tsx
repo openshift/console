@@ -182,7 +182,7 @@ export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
     const content = <Switch> {routes} </Switch>;
 
     const skeletonDetails = (
-      <div className="skeleton-detail-view">
+      <div data-test="skeleton-detail-view" className="skeleton-detail-view">
         <div className="skeleton-detail-view--head" />
         <div className="skeleton-detail-view--grid">
           <div className="skeleton-detail-view--column">

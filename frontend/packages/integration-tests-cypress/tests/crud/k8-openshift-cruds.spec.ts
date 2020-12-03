@@ -118,6 +118,7 @@ describe('Kubernetes resource CRUD operations', () => {
 
       it('displays detail view for newly created resource instance', () => {
         cy.url().should('include', `/${name}`);
+        detailsPage.isLoaded();
         detailsPage.titleShouldContain(name);
         cy.testA11y(`Details page for ${kind}: ${name}`);
       });
