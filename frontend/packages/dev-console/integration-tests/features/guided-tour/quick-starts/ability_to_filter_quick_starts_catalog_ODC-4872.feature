@@ -11,8 +11,8 @@ Background:
 
 @regression
 Scenario: Quick Starts Catalog Page
-   Given user is in Add page
-   When user clicks on "View all Quick Starts" on Quick Starts card
+   Given user is in Add view
+   When user clicks "See all Quick Starts" on quick start card
    Then user can see Quick Starts catalog page 
    And user can see filter toolbar
    And user can see filter by keyword search bar
