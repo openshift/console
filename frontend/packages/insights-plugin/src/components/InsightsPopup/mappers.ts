@@ -48,8 +48,13 @@ export const mapMetrics = (response: PrometheusResponse): Metrics => {
       return null;
     }
     const metricName = response.data?.result?.[i]?.metric?.metric;
-    values[metricName] = parseInt(value, 10);
+    if (values[metricName] === -1 || values[metricName] === undefined) {
+      values[metricName] = parseInt(value, 10);
+    }
   }
 
   return values;
 };
+
+export const isInitState = (values: Metrics) =>
+  Object.values(values).some((cur: number) => cur === -1);

@@ -10,7 +10,10 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Dashboards/Overview/Health/Prometheus',
     properties: {
       title: 'Insights',
-      queries: ["health_statuses_insights{metric=~'low|moderate|important|critical'}"],
+      queries: [
+        "health_statuses_insights{metric=~'low|moderate|important|critical'}",
+        'insightsclient_request_send_total',
+      ],
       healthHandler: getClusterInsightsStatus,
       additionalResource: {
         kind: referenceForModel(ClusterVersionModel),
