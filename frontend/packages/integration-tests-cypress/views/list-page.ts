@@ -57,7 +57,7 @@ export const listPage = {
         .contains(resourceName)
         .click(),
     shouldNotExist: (resourceName: string) =>
-      cy.get(`[data-test-id="${resourceName}"]`, { timeout: 90000 }).should('not.be.visible'),
+      cy.get(`[data-test-id="${resourceName}"]`, { timeout: 90000 }).should('not.exist'),
   },
 };
 

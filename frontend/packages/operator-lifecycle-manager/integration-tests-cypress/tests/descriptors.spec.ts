@@ -70,9 +70,7 @@ describe('Using OLM descriptor components', () => {
     cy.visit(
       `/k8s/ns/${testName}/operators.coreos.com~v1alpha1~ClusterServiceVersion/${testCSV.metadata.name}/${group}~${version}~${kind}/${testCR.metadata.name}`,
     );
-    cy.byLegacyTestID('resource-title')
-      .invoke('text')
-      .should('be', `${testCR.metadata.name}`);
+    cy.byLegacyTestID('resource-title').should('have.text', `${testCR.metadata.name}`);
   });
 
   testCSV.spec.customresourcedefinitions.owned[0].specDescriptors.forEach((descriptor) => {

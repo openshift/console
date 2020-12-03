@@ -3,15 +3,15 @@ import { eventSourcePO } from '../pageObjects/add-flow-po';
 export const modal = {
   clickCancel: () => {
     cy.byLegacyTestID('modal-cancel-action').click();
-    cy.get('form').should('not.be.visible');
+    cy.get('form').should('not.exist');
   },
   clicKSave: () => {
     cy.byTestID('confirm-action').click();
-    cy.get('form').should('not.be.visible');
+    cy.get('form').should('not.exist');
   },
   clicKDelete: () => {
     cy.byTestID('confirm-action').click();
-    cy.get('form').should('not.be.visible');
+    cy.get('form').should('not.exist');
   },
   verifySaveButtonIsDisplayed: () => {
     cy.byTestID('confirm-action').should('be.visible');
@@ -103,7 +103,7 @@ export const deleteApplication = {
     cy.byTestID('confirm-action')
       .should('be.enabled')
       .click();
-    cy.get('form').should('not.be.visible');
+    cy.get('form').should('not.exist');
   },
   deleteApp: () => {
     cy.get('p strong').then((ele) => {

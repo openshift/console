@@ -7,7 +7,7 @@ export const topologyPage = {
     cy.get('h1.ocs-page-layout__title').should('have.text', 'Topology');
   },
   verifyTopologyPage: () => {
-    cy.get('.co-m-loader', { timeout: 40000 }).should('not.be.visible');
+    cy.get('.co-m-loader', { timeout: 40000 }).should('not.exist');
     cy.get(topologyPO.graph.reset).should('be.visible');
   },
   verifyContextMenu: () => cy.get('#popper-container ul').should('be.visible'),

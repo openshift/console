@@ -38,6 +38,8 @@ export const StackChart: React.FC<AreaChartProps> = ({
   query,
   tickCount = DEFAULT_TICK_COUNT,
   title,
+  ariaChartLinkLabel,
+  ariaChartTitle,
   xAxis = true,
   yAxis = true,
   chartStyle,
@@ -110,8 +112,9 @@ export const StackChart: React.FC<AreaChartProps> = ({
   return (
     <PrometheusGraph className={className} ref={containerRef} title={title}>
       {data?.[0]?.length ? (
-        <PrometheusGraphLink query={query}>
+        <PrometheusGraphLink query={query} ariaChartLinkLabel={ariaChartLinkLabel}>
           <Chart
+            ariaTitle={ariaChartTitle || title}
             containerComponent={container}
             domainPadding={{ y: 20 }}
             height={height}

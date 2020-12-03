@@ -16,7 +16,7 @@ Cypress.Commands.overwrite('log', (originalFn, message) => {
 });
 
 before(() => {
-  cy.task('readFileIfExists', 'cypress-a11y-report.json').then((a11yReportOrNull) => {
+  cy.task('readFileIfExists', 'cypress-a11y-report.json').then((a11yReportOrNull: string) => {
     if (a11yReportOrNull !== null) {
       try {
         const a11yReport = JSON.parse(a11yReportOrNull);

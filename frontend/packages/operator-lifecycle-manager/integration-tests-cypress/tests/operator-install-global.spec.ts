@@ -124,7 +124,7 @@ describe(`Interacting with a global install mode Operator (${operatorName})`, ()
     modal.submit(true);
     modal.shouldBeClosed();
     cy.log('verify the Operator is not installed');
-    cy.get('.loading-skeleton--table').should('not.be.visible');
+    cy.get('.loading-skeleton--table').should('not.exist');
     cy.byTestOperatorRow(operatorRow).should('not.exist');
   });
 });
