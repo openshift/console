@@ -2,7 +2,6 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { safeLoad, safeDump } from 'js-yaml';
-import { saveAs } from 'file-saver';
 import { connect } from 'react-redux';
 import { ActionGroup, Alert, Button, Split, SplitItem } from '@patternfly/react-core';
 import { DownloadIcon, InfoCircleIcon } from '@patternfly/react-icons';
@@ -13,8 +12,11 @@ import {
   ALL_NAMESPACES_KEY,
   getBadgeFromType,
   withPostFormSubmissionCallback,
+  getResourceSidebarSamples,
 } from '@console/shared';
 import YAMLEditor from '@console/shared/src/components/editor/YAMLEditor';
+import YAMLEditorSidebar from '@console/shared/src/components/editor/YAMLEditorSidebar';
+import { downloadYaml } from '@console/shared/src/components/editor/yaml-editor-utils';
 import { isYAMLTemplate, withExtensions } from '@console/plugin-sdk';
 
 import { connectToFlags } from '../reducers/features';
@@ -28,8 +30,6 @@ import {
   groupVersionFor,
 } from '../module/k8s';
 import { ConsoleYAMLSampleModel } from '../models';
-import { getResourceSidebarSamples } from './sidebars/resource-sidebar-samples';
-import { ResourceSidebar } from './sidebars/resource-sidebar';
 import { getYAMLTemplates } from '../models/yaml-templates';
 import { findOwner } from '../module/k8s/managed-by';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
@@ -77,7 +77,6 @@ export const EditYAML_ = connect(stateToProps)(
           this.displayedVersion = '0';
           // Default cancel action is browser back navigation
           this.onCancel = 'onCancel' in props ? props.onCancel : history.goBack;
-          this.downloadSampleYaml_ = this.downloadSampleYaml_.bind(this);
           this.updateYAML = this.updateYAML.bind(this);
           this.loadCSVs = this.loadCSVs.bind(this);
 
@@ -212,46 +211,6 @@ export const EditYAML_ = connect(stateToProps)(
           this.displayedVersion = _.get(obj, 'metadata.resourceVersion');
           this.getEditor().setValue(yaml);
           this.setState({ initialized: true, stale: false });
-        }
-
-        addToYAML(id, obj) {
-          const yaml = this.convertObjToYAMLString(obj);
-
-          const selection = this.monacoRef.current.editor.getSelection();
-          const range = new window.monaco.Range(
-            selection.startLineNumber,
-            selection.startColumn,
-            selection.endLineNumber,
-            selection.endColumn,
-          );
-
-          // Grab the current position and indent every row to left-align the text at the same indentation
-          const indentSize = new Array(selection.startColumn).join(' ');
-          const lines = yaml.split('\n');
-          const lineCount = lines.length;
-          const indentedText = lines
-            .map((line, i) => {
-              if (i === 0) {
-                // Already indented, leave it alone
-                return line;
-              }
-              return `${indentSize}${line}`;
-            })
-            .join('\n');
-
-          // Grab the selection size of what we are about to add
-          const newContentSelection = new window.monaco.Selection(
-            selection.startLineNumber,
-            0,
-            selection.startLineNumber + lineCount - 1,
-            lines[lines.length - 1].length,
-          );
-
-          const op = { range, text: indentedText, forceMoveMarkers: true };
-          this.monacoRef.current.editor.executeEdits(id, [op], [newContentSelection]);
-          this.monacoRef.current.editor.focus();
-
-          this.displayedVersion = _.get(obj, 'metadata.resourceVersion');
         }
 
         getEditor() {
@@ -411,18 +370,9 @@ export const EditYAML_ = connect(stateToProps)(
           this.updateYAML(obj, model, newNamespace, newName);
         }
 
-        download(data = this.getEditor().getValue()) {
-          const blob = new Blob([data], { type: 'text/yaml;charset=utf-8' });
-          let filename = 'k8s-object.yaml';
-          try {
-            const obj = safeLoad(data);
-            if (obj.kind) {
-              filename = `${obj.kind.toLowerCase()}-${obj.metadata.name}.yaml`;
-            }
-          } catch (unused) {
-            // unused
-          }
-          saveAs(blob, filename);
+        download() {
+          const data = this.getEditor().getValue();
+          downloadYaml(data);
         }
 
         getYamlContent_(id = 'default', yaml = '', kind = referenceForModel(this.props.model)) {
@@ -449,37 +399,18 @@ export const EditYAML_ = connect(stateToProps)(
           }
         }
 
-        insertYamlContent_ = (id, yaml, kind) => {
-          const content = this.getYamlContent_(id, yaml, kind);
-          this.addToYAML(id, content);
-        };
-
-        replaceYamlContent_ = (id, yaml, kind) => {
-          const content = this.getYamlContent_(id, yaml, kind);
-          this.loadYaml(true, content);
-        };
-
-        downloadSampleYaml_(id = 'default', yaml = '', kind = referenceForModel(this.props.model)) {
-          try {
-            const sampleObj = generateObjToLoad(
-              this.props.templateExtensions,
-              kind,
-              id,
-              yaml,
-              this.props.obj.metadata.namespace,
-            );
-            const data = safeDump(sampleObj);
-            this.download(data);
-          } catch (e) {
-            this.download(yaml);
-          }
-        }
-
         toggleSidebar = () => {
           this.setState((state) => {
             return { showSidebar: !state.showSidebar };
           });
           window.dispatchEvent(new Event('sidebar_toggle'));
+        };
+
+        sanitizeYamlContent = (id, yaml, kind) => {
+          const contentObj = this.getYamlContent_(id, yaml, kind);
+          const sanitizedYaml = this.convertObjToYAMLString(contentObj);
+          this.displayedVersion = _.get(contentObj, 'metadata.resourceVersion');
+          return sanitizedYaml;
         };
 
         render() {
@@ -647,18 +578,14 @@ export const EditYAML_ = connect(stateToProps)(
                       </div>
                     </div>
                   </div>
-                  {hasSidebarContent && (
-                    <ResourceSidebar
-                      isCreateMode={create}
-                      kindObj={model}
-                      loadSampleYaml={this.replaceYamlContent_}
-                      insertSnippetYaml={this.insertYamlContent_}
-                      downloadSampleYaml={this.downloadSampleYaml_}
-                      showSidebar={showSidebar}
-                      toggleSidebar={this.toggleSidebar}
-                      samples={samples}
+                  {hasSidebarContent && showSidebar && (
+                    <YAMLEditorSidebar
+                      editorRef={this.monacoRef}
+                      model={model}
+                      samples={create ? samples : []}
                       snippets={snippets}
-                      showSchema={showSchema}
+                      sanitizeYamlContent={this.sanitizeYamlContent}
+                      toggleSidebar={this.toggleSidebar}
                     />
                   )}
                 </div>

@@ -1,9 +1,10 @@
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import * as React from 'react';
 import { Button } from '@patternfly/react-core';
 import { CloseIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 
+import { definitionFor } from '../../module/k8s';
 import { ResourceSidebarSnippets, ResourceSidebarSamples } from './resource-sidebar-samples';
 import { ExploreType } from './explore-type-sidebar';
 import { SimpleTabNav, Tab } from '../utils';
@@ -14,11 +15,7 @@ const sidebarScrollTop = () => {
 
 const ResourceSidebarWrapper = (props) => {
   const { t } = useTranslation();
-  const { label, children, showSidebar, toggleSidebar } = props;
-
-  if (!showSidebar) {
-    return null;
-  }
+  const { label, children, toggleSidebar } = props;
 
   return (
     <div
@@ -69,12 +66,9 @@ export const ResourceSidebar = (props) => {
     sidebarLabel,
     loadSampleYaml,
     insertSnippetYaml,
-    isCreateMode,
     toggleSidebar,
-    showSidebar,
     samples,
     snippets,
-    showSchema,
   } = props;
   if (!kindObj && !schema) {
     return null;
@@ -82,8 +76,11 @@ export const ResourceSidebar = (props) => {
 
   const { label = sidebarLabel } = kindObj ?? {};
 
-  const showSamples = !_.isEmpty(samples) && isCreateMode;
+  const showSamples = !_.isEmpty(samples);
   const showSnippets = !_.isEmpty(snippets);
+
+  const definition = kindObj ? definitionFor(kindObj) : { properties: [] };
+  const showSchema = schema || (definition && !_.isEmpty(definition.properties));
 
   let tabs: Tab[] = [];
   if (showSamples) {
@@ -109,7 +106,7 @@ export const ResourceSidebar = (props) => {
   }
 
   return (
-    <ResourceSidebarWrapper label={label} showSidebar={showSidebar} toggleSidebar={toggleSidebar}>
+    <ResourceSidebarWrapper label={label} toggleSidebar={toggleSidebar}>
       {tabs.length > 0 ? (
         <SimpleTabNav
           tabs={tabs}
