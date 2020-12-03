@@ -8,9 +8,9 @@ import {
   LaptopCodeIcon,
   BoltIcon,
 } from '@patternfly/react-icons';
+import * as helmIcon from '@console/internal/imgs/logos/helm.svg';
 import { ImportOptions } from '../components/import/import-types';
 import { KebabAction, createKebabAction } from '../utils/add-resources-menu-utils';
-import HelmChartsIcon from '../components/helm/HelmChartsIcon';
 
 export const allImportResourceAccess = 'allImportResourceAccess';
 export const allCatalogImageResourceAccess = 'allCatalogImageResourceAccess';
@@ -72,7 +72,7 @@ export const fromOperatorBacked = createKebabAction(
 export const fromHelmCharts = createKebabAction(
   // t('devconsole~Helm Charts')
   'devconsole~Helm Charts',
-  <HelmChartsIcon style={{ height: '1em', width: '1em' }} />,
+  <img style={{ height: '1em', width: '1em' }} src={helmIcon} alt="Helm Charts Logo" />,
   ImportOptions.HELMCHARTS,
 );
 

@@ -9,7 +9,3 @@ export const builderImageProvider = getExecutableCodeRef(() =>
 export const templateProvider = getExecutableCodeRef(() =>
   import('./useTemplates' /* webpackChunkName: "template-provider" */).then((m) => m.default),
 );
-
-export const helmChartProvider = getExecutableCodeRef(() =>
-  import('./useHelmCharts' /* webpackChunkName: "helm-charts-provider" */).then((m) => m.default),
-);

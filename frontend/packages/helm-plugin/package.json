@@ -1,0 +1,9 @@
+{
+  "name": "@console/helm-plugin",
+  "version": "0.0.0-fixed",
+  "description": "Helm plugin contributes helm related features to Developer Console UI.",
+  "private": true,
+  "consolePlugin": {
+    "entry": "src/plugin.ts"
+  }
+}

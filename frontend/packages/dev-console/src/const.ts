@@ -1,5 +1,4 @@
 export const FLAG_OPENSHIFT_GITOPS = 'OPENSHIFT_GITOPS';
-export const FLAG_OPENSHIFT_HELM = 'OPENSHIFT_HELM';
 
 /** URL query params that adjust scope / purpose of the page */
 export enum QUERY_PROPERTIES {

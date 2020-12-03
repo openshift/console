@@ -29,7 +29,6 @@ import {
 } from '@console/plugin-sdk';
 import { NamespaceRedirect } from '@console/internal/components/utils/namespace-redirect';
 import { FLAGS } from '@console/shared/src/constants';
-import * as helmIcon from '@console/internal/imgs/logos/helm.svg';
 import {
   BuildConfigModel,
   ImageStreamModel,
@@ -43,7 +42,7 @@ import {
 import { doConnectsToBinding } from '@console/topology/src/utils/connector-utils';
 import * as models from './models';
 import { getKebabActionsForKind } from './utils/kebab-actions';
-import { FLAG_OPENSHIFT_GITOPS, INCONTEXT_ACTIONS_CONNECTS_TO, FLAG_OPENSHIFT_HELM } from './const';
+import { FLAG_OPENSHIFT_GITOPS, INCONTEXT_ACTIONS_CONNECTS_TO } from './const';
 import { AddAction } from './extensions/add-actions';
 import * as yamlIcon from './images/yaml.svg';
 import * as importGitIcon from './images/from-git.svg';
@@ -51,7 +50,6 @@ import * as dockerfileIcon from './images/dockerfile.svg';
 import { usePerspectiveDetection } from './utils/usePerspectiveDetection';
 import { getGuidedTour } from './components/guided-tour';
 import { CatalogConsumedExtensions, catalogPlugin } from './components/catalog/catalog-plugin';
-import { detectHelmChartRepositories } from './utils/helm-plugin-utils';
 
 type ConsumedExtensions =
   | ModelDefinition
@@ -100,12 +98,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       id: 'resources',
       perspective: 'dev',
-    },
-  },
-  {
-    type: 'FeatureFlag/Custom',
-    properties: {
-      detect: detectHelmChartRepositories,
     },
   },
   {
@@ -204,23 +196,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [FLAG_OPENSHIFT_GITOPS],
-    },
-  },
-  {
-    type: 'NavItem/Href',
-    properties: {
-      id: 'helm',
-      perspective: 'dev',
-      section: 'resources',
-      componentProps: {
-        // t('devconsole~Helm')
-        name: '%devconsole~Helm%',
-        href: '/helm-releases',
-        testID: 'helm-releases-header',
-      },
-    },
-    flags: {
-      required: [FLAG_OPENSHIFT_HELM],
     },
   },
   {
@@ -443,86 +418,6 @@ const plugin: Plugin<ConsumedExtensions> = [
             './components/import/DeployImagePage' /* webpackChunkName: "dev-console-deployImage" */
           )
         ).default,
-    },
-  },
-  {
-    type: 'Page/Route',
-    properties: {
-      exact: true,
-      path: ['/catalog/helm-install'],
-      loader: async () =>
-        (
-          await import(
-            './components/helm/HelmInstallUpgradePage' /* webpackChunkName: "dev-console-helm-install-upgrade" */
-          )
-        ).default,
-    },
-    flags: {
-      required: [FLAG_OPENSHIFT_HELM],
-    },
-  },
-  {
-    type: 'Page/Route',
-    properties: {
-      exact: true,
-      path: [`/helm-releases/ns/:ns/:releaseName/upgrade`],
-      loader: async () =>
-        (
-          await import(
-            './components/helm/HelmInstallUpgradePage' /* webpackChunkName: "dev-console-helm-install-upgrade" */
-          )
-        ).default,
-    },
-    flags: {
-      required: [FLAG_OPENSHIFT_HELM],
-    },
-  },
-  {
-    type: 'Page/Route',
-    properties: {
-      exact: true,
-      path: [`/helm-releases/ns/:ns/:releaseName/rollback`],
-      loader: async () =>
-        (
-          await import(
-            './components/helm/HelmReleaseRollbackPage' /* webpackChunkName: "dev-console-helm-rollback" */
-          )
-        ).default,
-    },
-    flags: {
-      required: [FLAG_OPENSHIFT_HELM],
-    },
-  },
-  {
-    type: 'Page/Route',
-    properties: {
-      exact: true,
-      path: ['/helm-releases/all-namespaces', '/helm-releases/ns/:ns'],
-      loader: async () =>
-        (
-          await import(
-            './components/helm/HelmReleaseListPage' /* webpackChunkName: "dev-console-helm-releases-list" */
-          )
-        ).default,
-    },
-    flags: {
-      required: [FLAG_OPENSHIFT_HELM],
-    },
-  },
-  {
-    type: 'Page/Route',
-    properties: {
-      path: ['/helm-releases/ns/:ns/release/:name'],
-      exact: false,
-      loader: async () =>
-        (
-          await import(
-            './components/helm/HelmReleaseDetailsPage' /* webpackChunkName: "dev-console-helm-release-details" */
-          )
-        ).default,
-    },
-    flags: {
-      required: [FLAG_OPENSHIFT_HELM],
     },
   },
   {
@@ -782,21 +677,6 @@ const plugin: Plugin<ConsumedExtensions> = [
       description:
         '%devconsole~Browse the catalog to discover and deploy operator managed services%',
       icon: <BoltIcon />,
-    },
-  },
-  {
-    type: 'AddAction',
-    flags: {
-      required: [FLAG_OPENSHIFT_HELM],
-    },
-    properties: {
-      id: 'helm',
-      url: '/catalog?catalogType=HelmChart',
-      // t('devconsole~Helm Chart')
-      label: '%devconsole~Helm Chart%',
-      // t('devconsole~Browse the catalog to discover and install Helm Charts')
-      description: '%devconsole~Browse the catalog to discover and install Helm Charts%',
-      icon: helmIcon,
     },
   },
   {

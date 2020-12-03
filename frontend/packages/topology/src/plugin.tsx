@@ -1,6 +1,5 @@
 import * as _ from 'lodash';
 import { Plugin, ReduxReducer, ModelDefinition, ModelFeatureFlag } from '@console/plugin-sdk';
-import { HelmTopologyConsumedExtensions, helmTopologyPlugin } from './helm/helmTopologyPlugin';
 import {
   OperatorsTopologyConsumedExtensions,
   operatorsTopologyPlugin,
@@ -14,7 +13,6 @@ type ConsumedExtensions =
   | ModelDefinition
   | ModelFeatureFlag
   | ReduxReducer
-  | HelmTopologyConsumedExtensions
   | OperatorsTopologyConsumedExtensions;
 
 const plugin: Plugin<ConsumedExtensions> = [
@@ -38,7 +36,6 @@ const plugin: Plugin<ConsumedExtensions> = [
       reducer,
     },
   },
-  ...helmTopologyPlugin,
   ...operatorsTopologyPlugin,
 ];
 
