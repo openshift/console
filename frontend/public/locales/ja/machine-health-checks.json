@@ -5,7 +5,7 @@
   "MachineHealthChecks": "MachineHealthChecks",
   "Unhealthy conditions": "正常でない状態",
   "Status": "ステータス",
-  "Timeout": "Timeout",
+  "Timeout": "タイムアウト",
   "Type": "タイプ",
   "MachineHealthCheck details": "MachineHealthCheck の詳細",
   "Selector": "セレクター",

@@ -30,7 +30,7 @@
   "Delete": "删除",
   "Expand {{kind}}": "扩展 {{kind}}",
   "Increase the capacity of claim <2>{{resourceName}}.</2> This can be a time-consuming process.": "增加声明的容量<2>{{resourceName}}。</2>这可能是一个耗时的过程。",
-  "Size": "Size",
+  "Size": "大小",
   "requestSize": "requestSize",
   "Expand": "扩展",
   "Edit {{description}}": "编辑 {{description}}",

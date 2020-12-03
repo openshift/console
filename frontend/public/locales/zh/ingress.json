@@ -2,7 +2,7 @@
   "Not configured": "未配置",
   "Host": "主机",
   "Path": "路径",
-  "Service": "Service",
+  "Service": "服务",
   "Service port": "服务端口",
   "Ingress details": "入站详情",
   "TLS certificate": "TLS 证书",
@@ -11,6 +11,6 @@
   "Name": "名称",
   "Namespace": "命名空间",
   "Labels": "标签",
-  "Hosts": "Hosts",
+  "Hosts": "主机",
   "Ingresses": "入站"
 }
