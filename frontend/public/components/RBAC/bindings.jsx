@@ -6,6 +6,7 @@ import * as classNames from 'classnames';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import { FLAGS } from '@console/shared/src/constants';
+import { useActiveNamespace } from '@console/shared';
 import { ClusterRoleBindingModel } from '../../models';
 import { getQN, k8sCreate, k8sPatch, referenceFor } from '../../module/k8s';
 import * as UIActions from '../../actions/ui';
@@ -380,256 +381,255 @@ const Section = ({ label, children }) => (
   </div>
 );
 
-const BaseEditRoleBinding = connect(null, { setActiveNamespace: UIActions.setActiveNamespace })(
-  class BaseEditRoleBinding_ extends React.Component {
-    constructor(props) {
-      super(props);
+class BaseEditRoleBinding extends React.Component {
+  constructor(props) {
+    super(props);
 
-      this.subjectIndex = props.subjectIndex || 0;
+    this.subjectIndex = props.subjectIndex || 0;
 
-      const existingData = _.pick(props.obj, [
-        'metadata.name',
-        'metadata.namespace',
-        'roleRef',
-        'subjects',
-      ]);
-      existingData.kind = props.kind;
-      const data = _.defaultsDeep({}, props.fixed, existingData, {
-        apiVersion: 'rbac.authorization.k8s.io/v1',
-        kind: 'RoleBinding',
-        metadata: {
+    const existingData = _.pick(props.obj, [
+      'metadata.name',
+      'metadata.namespace',
+      'roleRef',
+      'subjects',
+    ]);
+    existingData.kind = props.kind;
+    const data = _.defaultsDeep({}, props.fixed, existingData, {
+      apiVersion: 'rbac.authorization.k8s.io/v1',
+      kind: 'RoleBinding',
+      metadata: {
+        name: '',
+      },
+      roleRef: {
+        apiGroup: 'rbac.authorization.k8s.io',
+      },
+      subjects: [
+        {
+          apiGroup: 'rbac.authorization.k8s.io',
+          kind: 'User',
           name: '',
         },
-        roleRef: {
-          apiGroup: 'rbac.authorization.k8s.io',
-        },
-        subjects: [
-          {
-            apiGroup: 'rbac.authorization.k8s.io',
-            kind: 'User',
-            name: '',
-          },
-        ],
-      });
-      this.state = { data, inProgress: false };
+      ],
+    });
+    this.state = { data, inProgress: false };
 
-      this.setKind = this.setKind.bind(this);
-      this.setSubject = this.setSubject.bind(this);
-      this.save = this.save.bind(this);
+    this.setKind = this.setKind.bind(this);
+    this.setSubject = this.setSubject.bind(this);
+    this.save = this.save.bind(this);
 
-      this.setData = (patch) => this.setState({ data: _.defaultsDeep({}, patch, this.state.data) });
-      this.changeName = (e) => this.setData({ metadata: { name: e.target.value } });
-      this.changeNamespace = (namespace) => this.setData({ metadata: { namespace } });
-      this.changeRoleRef = (name, kindId) => this.setData({ roleRef: { name, kind: kindId } });
-      this.changeSubjectKind = (e) => this.setSubject({ kind: e.target.value });
-      this.changeSubjectName = (e) => this.setSubject({ name: e.target.value });
-      this.changeSubjectNamespace = (namespace) => this.setSubject({ namespace });
+    this.setData = (patch) => this.setState({ data: _.defaultsDeep({}, patch, this.state.data) });
+    this.changeName = (e) => this.setData({ metadata: { name: e.target.value } });
+    this.changeNamespace = (namespace) => this.setData({ metadata: { namespace } });
+    this.changeRoleRef = (name, kindId) => this.setData({ roleRef: { name, kind: kindId } });
+    this.changeSubjectKind = (e) => this.setSubject({ kind: e.target.value });
+    this.changeSubjectName = (e) => this.setSubject({ name: e.target.value });
+    this.changeSubjectNamespace = (namespace) => this.setSubject({ namespace });
+  }
+
+  setKind(e) {
+    const kind = e.target.value;
+    const patch = { kind };
+    if (kind === 'ClusterRoleBinding') {
+      patch.metadata = { namespace: null };
+    }
+    this.setData(patch);
+  }
+
+  getSubject() {
+    return _.get(this.state.data, `subjects[${this.subjectIndex}]`);
+  }
+
+  setSubject(patch) {
+    const { kind, name, namespace } = Object.assign({}, this.getSubject(), patch);
+    const data = Object.assign({}, this.state.data);
+    data.subjects[this.subjectIndex] =
+      kind === 'ServiceAccount'
+        ? { kind, name, namespace }
+        : { apiGroup: 'rbac.authorization.k8s.io', kind, name };
+    this.setState({ data });
+  }
+
+  save(e) {
+    e.preventDefault();
+
+    const { kind, metadata, roleRef } = this.state.data;
+    const subject = this.getSubject();
+
+    if (
+      !kind ||
+      !metadata.name ||
+      !roleRef.kind ||
+      !roleRef.name ||
+      !subject.kind ||
+      !subject.name ||
+      (kind === 'RoleBinding' && !metadata.namespace) ||
+      (subject.kind === 'ServiceAccount' && !subject.namespace)
+    ) {
+      this.setState({ error: 'Please complete all fields.' });
+      return;
     }
 
-    setKind(e) {
-      const kind = e.target.value;
-      const patch = { kind };
-      if (kind === 'ClusterRoleBinding') {
-        patch.metadata = { namespace: null };
-      }
-      this.setData(patch);
-    }
+    this.setState({ inProgress: true });
 
-    getSubject() {
-      return _.get(this.state.data, `subjects[${this.subjectIndex}]`);
-    }
+    const ko = kindObj(kind);
+    (this.props.isCreate
+      ? k8sCreate(ko, this.state.data)
+      : k8sPatch(ko, { metadata }, [
+          { op: 'replace', path: `/subjects/${this.subjectIndex}`, value: subject },
+        ])
+    ).then(
+      (obj) => {
+        this.setState({ inProgress: false });
+        if (metadata.namespace) {
+          this.props.setActiveNamespace(metadata.namespace);
+        }
+        history.push(resourceObjPath(obj, referenceFor(obj)));
+      },
+      (err) => this.setState({ error: err.message, inProgress: false }),
+    );
+  }
 
-    setSubject(patch) {
-      const { kind, name, namespace } = Object.assign({}, this.getSubject(), patch);
-      const data = Object.assign({}, this.state.data);
-      data.subjects[this.subjectIndex] =
-        kind === 'ServiceAccount'
-          ? { kind, name, namespace }
-          : { apiGroup: 'rbac.authorization.k8s.io', kind, name };
-      this.setState({ data });
-    }
+  render() {
+    const { kind, metadata, roleRef } = this.state.data;
+    const subject = this.getSubject();
+    const { fixed, saveButtonText } = this.props;
+    const RoleDropdown = kind === 'RoleBinding' ? NsRoleDropdown : ClusterRoleDropdown;
+    const title = `${this.props.titleVerb} ${kindObj(kind).label}`;
 
-    save(e) {
-      e.preventDefault();
+    return (
+      <div className="co-m-pane__body">
+        <Helmet>
+          <title>{title}</title>
+        </Helmet>
+        <form className="co-m-pane__body-group co-m-pane__form" onSubmit={this.save}>
+          <h1 className="co-m-pane__heading">{title}</h1>
+          <p className="co-m-pane__explanation">
+            Associate a user/group to the selected role to define the type of access and resources
+            that are allowed.
+          </p>
 
-      const { kind, metadata, roleRef } = this.state.data;
-      const subject = this.getSubject();
-
-      if (
-        !kind ||
-        !metadata.name ||
-        !roleRef.kind ||
-        !roleRef.name ||
-        !subject.kind ||
-        !subject.name ||
-        (kind === 'RoleBinding' && !metadata.namespace) ||
-        (subject.kind === 'ServiceAccount' && !subject.namespace)
-      ) {
-        this.setState({ error: 'Please complete all fields.' });
-        return;
-      }
-
-      this.setState({ inProgress: true });
-
-      const ko = kindObj(kind);
-      (this.props.isCreate
-        ? k8sCreate(ko, this.state.data)
-        : k8sPatch(ko, { metadata }, [
-            { op: 'replace', path: `/subjects/${this.subjectIndex}`, value: subject },
-          ])
-      ).then(
-        (obj) => {
-          this.setState({ inProgress: false });
-          if (metadata.namespace) {
-            this.props.setActiveNamespace(metadata.namespace);
-          }
-          history.push(resourceObjPath(obj, referenceFor(obj)));
-        },
-        (err) => this.setState({ error: err.message, inProgress: false }),
-      );
-    }
-
-    render() {
-      const { kind, metadata, roleRef } = this.state.data;
-      const subject = this.getSubject();
-      const { fixed, saveButtonText } = this.props;
-      const RoleDropdown = kind === 'RoleBinding' ? NsRoleDropdown : ClusterRoleDropdown;
-      const title = `${this.props.titleVerb} ${kindObj(kind).label}`;
-
-      return (
-        <div className="co-m-pane__body">
-          <Helmet>
-            <title>{title}</title>
-          </Helmet>
-          <form className="co-m-pane__body-group co-m-pane__form" onSubmit={this.save}>
-            <h1 className="co-m-pane__heading">{title}</h1>
-            <p className="co-m-pane__explanation">
-              Associate a user/group to the selected role to define the type of access and resources
-              that are allowed.
-            </p>
-
-            {!_.get(fixed, 'kind') && (
-              <Section label="Binding Type">
-                <RadioGroup currentValue={kind} items={bindingKinds} onChange={this.setKind} />
-              </Section>
-            )}
-
-            <div className="co-form-section__separator" />
-
-            <Section label="Role Binding">
-              <div className="form-group">
-                <label htmlFor="role-binding-name" className="co-required">
-                  Name
-                </label>
-                {_.get(fixed, 'metadata.name') ? (
-                  <ResourceName kind={kind} name={metadata.name} />
-                ) : (
-                  <input
-                    className="pf-c-form-control"
-                    type="text"
-                    onChange={this.changeName}
-                    placeholder="Role binding name"
-                    value={metadata.name}
-                    required
-                    id="role-binding-name"
-                  />
-                )}
-              </div>
-              {kind === 'RoleBinding' && (
-                <div className="form-group">
-                  <label htmlFor="ns-dropdown" className="co-required">
-                    Namespace
-                  </label>
-                  <NsDropdown
-                    fixed={!!_.get(fixed, 'metadata.namespace')}
-                    selectedKey={metadata.namespace}
-                    onChange={this.changeNamespace}
-                    id="ns-dropdown"
-                  />
-                </div>
-              )}
+          {!_.get(fixed, 'kind') && (
+            <Section label="Binding Type">
+              <RadioGroup currentValue={kind} items={bindingKinds} onChange={this.setKind} />
             </Section>
+          )}
 
-            <div className="co-form-section__separator" />
+          <div className="co-form-section__separator" />
 
-            <Section label="Role">
-              <div className="form-group">
-                <label htmlFor="role-dropdown" className="co-required">
-                  Role Name
-                </label>
-                <RoleDropdown
-                  fixed={!!_.get(fixed, 'roleRef.name')}
-                  namespace={metadata.namespace}
-                  onChange={this.changeRoleRef}
-                  selectedKey={_.get(fixed, 'roleRef.name') || roleRef.name}
-                  selectedKeyKind={_.get(fixed, 'roleRef.kind') || roleRef.kind}
-                  id="role-dropdown"
-                />
-              </div>
-            </Section>
-
-            <div className="co-form-section__separator" />
-
-            <Section label="Subject">
-              <div className="form-group">
-                <RadioGroup
-                  currentValue={subject.kind}
-                  items={subjectKinds}
-                  onChange={this.changeSubjectKind}
-                />
-              </div>
-              {subject.kind === 'ServiceAccount' && (
-                <div className="form-group">
-                  <label htmlFor="subject-namespace" className="co-required">
-                    Subject Namespace
-                  </label>
-                  <NsDropdown
-                    id="subject-namespace"
-                    selectedKey={subject.namespace}
-                    onChange={this.changeSubjectNamespace}
-                  />
-                </div>
-              )}
-              <div className="form-group">
-                <label htmlFor="subject-name" className="co-required">
-                  Subject Name
-                </label>
+          <Section label="Role Binding">
+            <div className="form-group">
+              <label htmlFor="role-binding-name" className="co-required">
+                Name
+              </label>
+              {_.get(fixed, 'metadata.name') ? (
+                <ResourceName kind={kind} name={metadata.name} />
+              ) : (
                 <input
                   className="pf-c-form-control"
                   type="text"
-                  onChange={this.changeSubjectName}
-                  placeholder="Subject name"
-                  value={subject.name}
+                  onChange={this.changeName}
+                  placeholder="Role binding name"
+                  value={metadata.name}
                   required
-                  id="subject-name"
+                  id="role-binding-name"
+                />
+              )}
+            </div>
+            {kind === 'RoleBinding' && (
+              <div className="form-group">
+                <label htmlFor="ns-dropdown" className="co-required">
+                  Namespace
+                </label>
+                <NsDropdown
+                  fixed={!!_.get(fixed, 'metadata.namespace')}
+                  selectedKey={metadata.namespace}
+                  onChange={this.changeNamespace}
+                  id="ns-dropdown"
                 />
               </div>
-            </Section>
+            )}
+          </Section>
 
-            <div className="co-form-section__separator" />
+          <div className="co-form-section__separator" />
 
-            <ButtonBar errorMessage={this.state.error} inProgress={this.state.inProgress}>
-              <ActionGroup className="pf-c-form">
-                <Button type="submit" id="save-changes" variant="primary">
-                  {saveButtonText || 'Create'}
-                </Button>
-                <Button onClick={history.goBack} id="cancel" variant="secondary">
-                  Cancel
-                </Button>
-              </ActionGroup>
-            </ButtonBar>
-          </form>
-        </div>
-      );
-    }
-  },
-);
+          <Section label="Role">
+            <div className="form-group">
+              <label htmlFor="role-dropdown" className="co-required">
+                Role Name
+              </label>
+              <RoleDropdown
+                fixed={!!_.get(fixed, 'roleRef.name')}
+                namespace={metadata.namespace}
+                onChange={this.changeRoleRef}
+                selectedKey={_.get(fixed, 'roleRef.name') || roleRef.name}
+                selectedKeyKind={_.get(fixed, 'roleRef.kind') || roleRef.kind}
+                id="role-dropdown"
+              />
+            </div>
+          </Section>
+
+          <div className="co-form-section__separator" />
+
+          <Section label="Subject">
+            <div className="form-group">
+              <RadioGroup
+                currentValue={subject.kind}
+                items={subjectKinds}
+                onChange={this.changeSubjectKind}
+              />
+            </div>
+            {subject.kind === 'ServiceAccount' && (
+              <div className="form-group">
+                <label htmlFor="subject-namespace" className="co-required">
+                  Subject Namespace
+                </label>
+                <NsDropdown
+                  id="subject-namespace"
+                  selectedKey={subject.namespace}
+                  onChange={this.changeSubjectNamespace}
+                />
+              </div>
+            )}
+            <div className="form-group">
+              <label htmlFor="subject-name" className="co-required">
+                Subject Name
+              </label>
+              <input
+                className="pf-c-form-control"
+                type="text"
+                onChange={this.changeSubjectName}
+                placeholder="Subject name"
+                value={subject.name}
+                required
+                id="subject-name"
+              />
+            </div>
+          </Section>
+
+          <div className="co-form-section__separator" />
+
+          <ButtonBar errorMessage={this.state.error} inProgress={this.state.inProgress}>
+            <ActionGroup className="pf-c-form">
+              <Button type="submit" id="save-changes" variant="primary">
+                {saveButtonText || 'Create'}
+              </Button>
+              <Button onClick={history.goBack} id="cancel" variant="secondary">
+                Cancel
+              </Button>
+            </ActionGroup>
+          </ButtonBar>
+        </form>
+      </div>
+    );
+  }
+}
 
 export const CreateRoleBinding = ({ match: { params }, location }) => {
   const searchParams = new URLSearchParams(location.search);
   const roleKind = searchParams.get('rolekind');
   const roleName = searchParams.get('rolename');
-  const metadata = { namespace: UIActions.getActiveNamespace() };
+  const [namespace, setActiveNamespace] = useActiveNamespace();
+  const metadata = { namespace };
   const clusterAllowed = useAccessReview({
     group: ClusterRoleBindingModel.apiGroup,
     resource: ClusterRoleBindingModel.plural,
@@ -641,7 +641,13 @@ export const CreateRoleBinding = ({ match: { params }, location }) => {
     roleRef: { kind: roleKind, name: roleName },
   };
   return (
-    <BaseEditRoleBinding metadata={metadata} fixed={fixed} isCreate={true} titleVerb="Create" />
+    <BaseEditRoleBinding
+      metadata={metadata}
+      setActiveNamespace={setActiveNamespace}
+      fixed={fixed}
+      isCreate={true}
+      titleVerb="Create"
+    />
   );
 };
 
@@ -651,11 +657,17 @@ const getSubjectIndex = () => {
 };
 
 const BindingLoadingWrapper = (props) => {
+  const [, setActiveNamespace] = useActiveNamespace();
   const fixed = {};
   _.each(props.fixedKeys, (k) => (fixed[k] = _.get(props.obj.data, k)));
   return (
     <StatusBox {...props.obj}>
-      <BaseEditRoleBinding {...props} obj={props.obj.data} fixed={fixed} />
+      <BaseEditRoleBinding
+        {...props}
+        obj={props.obj.data}
+        setActiveNamespace={setActiveNamespace}
+        fixed={fixed}
+      />
     </StatusBox>
   );
 };

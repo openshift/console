@@ -1,7 +1,4 @@
 import * as React from 'react';
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
-import { useDispatch } from 'react-redux';
 import { k8sKill, K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import {
   createModalLauncher,
@@ -11,9 +8,11 @@ import {
   ModalComponentProps,
 } from '@console/internal/components/factory/modal';
 import { history } from '@console/internal/components/utils';
-import { setActiveNamespace } from '@console/internal/actions/ui';
-import { ALL_NAMESPACES_KEY, YellowExclamationTriangleIcon } from '@console/shared';
-import { useActiveNamespace } from '@console/shared/src/hooks/redux-selectors';
+import {
+  ALL_NAMESPACES_KEY,
+  useActiveNamespace,
+  YellowExclamationTriangleIcon,
+} from '@console/shared';
 import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 
 export const DeleteNamespaceModal: React.FC<DeleteNamespaceModalProps> = ({
@@ -22,17 +21,15 @@ export const DeleteNamespaceModal: React.FC<DeleteNamespaceModalProps> = ({
   kind,
   resource,
 }) => {
-  const activeNamespace = useActiveNamespace();
-  const dispatch = useDispatch();
+  const [activeNamespace, setActiveNamespace] = useActiveNamespace();
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
   const [confirmed, setConfirmed] = React.useState(false);
-
   const onSubmit = (event) => {
     event.preventDefault();
     handlePromise(k8sKill(kind, resource))
       .then(() => {
         if (resource.metadata.name === activeNamespace) {
-          dispatch(setActiveNamespace(ALL_NAMESPACES_KEY));
+          setActiveNamespace(ALL_NAMESPACES_KEY);
         }
         close?.();
         history.push(`/k8s/cluster/${kind.plural}`);

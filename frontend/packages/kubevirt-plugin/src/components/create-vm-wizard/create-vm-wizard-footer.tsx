@@ -2,6 +2,10 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { Prompt } from 'react-router';
+import { useTranslation } from 'react-i18next';
+import { useActiveNamespace } from '@console/shared';
+import { getActiveNamespace } from '@console/internal/actions/ui';
 import { css } from '@patternfly/react-styles';
 import styles from '@patternfly/react-styles/css/components/Wizard/wizard';
 import {
@@ -11,7 +15,6 @@ import {
   WizardContextConsumer,
   WizardStep,
 } from '@patternfly/react-core';
-import { Prompt } from 'react-router';
 import { useShowErrorToggler } from '../../hooks/use-show-error-toggler';
 import { getDialogUIError, getSimpleDialogUIError } from '../../utils/strings';
 import {
@@ -27,14 +30,12 @@ import {
   isWizardEmpty as _isWizardEmpty,
 } from './selectors/immutable/wizard-selectors';
 import { iGetCommonData } from './selectors/immutable/selectors';
-import { setActiveNamespace, getActiveNamespace } from '@console/internal/actions/ui';
 import { vmWizardActions } from './redux/actions';
 import { ActionType } from './redux/types';
 import { getGoToStep } from './selectors/selectors';
 import { iGetLoadError, iGetIsLoaded } from '../../utils/immutable';
 
 import './create-vm-wizard-footer.scss';
-import { useTranslation } from 'react-i18next';
 
 type WizardContext = {
   onNext: () => void;
@@ -53,7 +54,6 @@ type CreateVMWizardFooterComponentProps = {
   isSimpleView: boolean;
   isInvalidUserTemplate: boolean;
   onEdit: (activeStepID: VMWizardTab) => void;
-  setActiveNS: (ns: string) => void;
 };
 
 const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps> = ({
@@ -65,13 +65,11 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
   isSimpleView,
   goToStep,
   onEdit,
-  setActiveNS,
   isInvalidUserTemplate,
 }) => {
   const { t } = useTranslation();
   const [showError, setShowError, checkValidity] = useShowErrorToggler();
-  const activeNS = getActiveNamespace();
-
+  const [activeNS, setActiveNS] = useActiveNamespace();
   const prevNamespaceRef = React.useRef('');
   React.useEffect(() => {
     prevNamespaceRef.current = activeNS;
@@ -280,7 +278,6 @@ const stateToProps = (state, { wizardReduxID }) => {
 
 const dispatchToProps = (dispatch, { wizardReduxID }) => ({
   //  no callback like this can be passed through the Wizard component
-  setActiveNS: (ns) => dispatch(setActiveNamespace(ns)),
   onEdit: (activeStepID: VMWizardTab) => {
     dispatch(vmWizardActions[ActionType.OpenDifficultTabs](wizardReduxID));
     dispatch(vmWizardActions[ActionType.SetGoToStep](wizardReduxID, activeStepID)); // keep on the same tab

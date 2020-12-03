@@ -38,6 +38,7 @@ const getEventSourceIconFromKind = (kind: string): string => {
   }
 };
 
+// get icon from metadata or default one's
 export const getEventSourceIcon = (kind: string, obj?: K8sResourceKind) => {
   const objAnnotations = obj?.metadata?.annotations;
   return isValidUrl(objAnnotations?.[EVENT_SOURCE_ICON])

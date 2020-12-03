@@ -1,13 +1,9 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-// FIXME upgrading redux types is causing many errors at this time
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore
-import { useDispatch } from 'react-redux';
 import { Button } from '@patternfly/react-core';
 import { createProjectModal } from '@console/internal/components/modals';
-import { setActiveNamespace } from '@console/internal/actions/ui';
 import { K8sResourceKind } from '@console/internal/module/k8s';
+import { useActiveNamespace } from '@console/shared';
 import ProjectListPage, { ProjectListPageProps } from './ProjectListPage';
 
 export interface CreateProjectListPageProps extends ProjectListPageProps {
@@ -22,10 +18,9 @@ const CreateProjectListPage: React.FC<CreateProjectListPageProps> = ({
   ...props
 }) => {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
-
+  const [, setActiveNamespace] = useActiveNamespace();
   const handleSubmit = (project: K8sResourceKind) => {
-    dispatch(setActiveNamespace(project.metadata?.name));
+    setActiveNamespace(project.metadata?.name);
     onCreate && onCreate(project);
   };
 

@@ -18,7 +18,7 @@ const timestampFor = (mdate: Date, now: Date, omitSuffix: boolean, t: any) => {
   }
   if (Math.sign(timeDifference) !== -1 && timeDifference < 630000) {
     // 10.5 minutes
-    // Show a relative time if within 10.5 minutes in the past from the current time.
+    // Show a relative time if within 10.5 minutes in the past from the current time
     return dateTime.fromNow(mdate);
   }
 

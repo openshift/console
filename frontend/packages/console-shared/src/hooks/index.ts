@@ -23,3 +23,4 @@ export * from './useUserSettingsCompatibility';
 export * from './hpa-hooks';
 export * from './usePinnedResources';
 export * from './useActivePerspective';
+export * from './useActiveNamespace';
