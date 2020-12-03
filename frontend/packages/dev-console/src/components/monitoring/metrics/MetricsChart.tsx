@@ -50,6 +50,7 @@ export const MetricsChart: React.FC<MetricsChartProps> = ({ deleteAll, queries, 
         disabledSeries={disabledSeries}
         namespace={namespace}
         queries={queryStrings}
+        showStackedControl
       />
       <QueryTable index={0} namespace={namespace} />
     </div>

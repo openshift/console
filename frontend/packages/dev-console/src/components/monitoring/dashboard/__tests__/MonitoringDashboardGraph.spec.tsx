@@ -20,7 +20,6 @@ describe('Monitoring Dashboard graph', () => {
       query: query.query({ namespace: 'test-project' }),
       humanize: query.humanize,
       byteDataType: query.byteDataType,
-      patchQuery: jest.fn(),
       timespan: 1800000,
       pollInterval: 30000,
     };

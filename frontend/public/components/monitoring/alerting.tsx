@@ -51,7 +51,7 @@ import { AlertmanagerYAMLEditorWrapper } from '../monitoring/alert-manager-yaml-
 import { AlertmanagerConfigWrapper } from '../monitoring/alert-manager-config';
 import MonitoringDashboardsPage from '../monitoring/dashboards';
 import { QueryBrowserPage, ToggleGraph } from '../monitoring/metrics';
-import { FormatLegendLabel, QueryBrowser, QueryObj } from '../monitoring/query-browser';
+import { FormatLegendLabel, QueryBrowser } from '../monitoring/query-browser';
 import { CreateSilence, EditSilence } from '../monitoring/silence-form';
 import {
   Alert,
@@ -379,24 +379,14 @@ const queryBrowserURL = (query: string, namespace: string) =>
     ? `/dev-monitoring/ns/${namespace}/metrics?query0=${encodeURIComponent(query)}`
     : `/monitoring/query-browser?query0=${encodeURIComponent(query)}`;
 
-const Graph_: React.FC<GraphProps> = ({
-  deleteAll,
+const Graph: React.FC<GraphProps> = ({
   filterLabels = undefined,
   formatLegendLabel,
   namespace,
-  patchQuery,
   query,
   ruleDuration,
 }) => {
   const { t } = useTranslation();
-
-  // Set the query in Redux so that other components like the graph tooltip can access it
-  React.useEffect(() => {
-    patchQuery(0, { query });
-  }, [patchQuery, query]);
-
-  // Clear queries on unmount
-  React.useEffect(() => deleteAll, [deleteAll]);
 
   // 3 times the rule's duration, but not less than 30 minutes
   const timespan = Math.max(3 * ruleDuration, 30 * 60) * 1000;
@@ -417,10 +407,6 @@ const Graph_: React.FC<GraphProps> = ({
     />
   );
 };
-const Graph = connect(null, {
-  deleteAll: UIActions.queryBrowserDeleteAllQueries,
-  patchQuery: UIActions.queryBrowserPatchQuery,
-})(Graph_);
 
 const tableSilenceClasses = [
   classNames('col-sm-5', 'col-xs-8'),
@@ -1696,11 +1682,9 @@ type AlertingPageProps = {
 };
 
 type GraphProps = {
-  deleteAll: () => never;
   filterLabels?: PrometheusLabels;
   formatLegendLabel?: FormatLegendLabel;
   namespace?: string;
-  patchQuery: (index: number, patch: QueryObj) => any;
   query: string;
   ruleDuration: number;
 };

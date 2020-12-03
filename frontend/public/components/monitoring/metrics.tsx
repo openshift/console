@@ -908,6 +908,7 @@ const QueryBrowserWrapper_: React.FC<QueryBrowserWrapperProps> = ({ patchQuery, 
       defaultTimespan={30 * 60 * 1000}
       disabledSeries={disabledSeries}
       queries={queryStrings}
+      showStackedControl
     />
   );
 };
