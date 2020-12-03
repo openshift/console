@@ -18,9 +18,11 @@ import { getRandomChars } from '@console/shared/src/utils';
 import {
   createPipelineForImportFlow,
   createPipelineRunForImportFlow,
+  updatePipelineForImportFlow,
 } from '@console/pipelines-plugin/src/components/import/pipeline/pipeline-template-utils';
 import { Perspective } from '@console/plugin-sdk';
 import { setPipelineNotStarted } from '@console/pipelines-plugin/src/components/pipelines/pipeline-overview/pipeline-overview-utils';
+import { Pipeline } from '@console/pipelines-plugin/src/utils/pipeline-augment';
 import {
   getAppLabels,
   getPodLabels,
@@ -407,6 +409,47 @@ export const createOrUpdateDeploymentConfig = (
     : k8sCreate(DeploymentConfigModel, deploymentConfig, dryRun ? dryRunOpt : {});
 };
 
+export const managePipelineResources = async (
+  formData: GitImportFormData,
+  appResources: AppResources,
+) => {
+  const { name, git, pipeline, project, docker } = formData;
+  let managedPipeline: Pipeline;
+
+  if (!_.isEmpty(appResources?.pipeline?.data)) {
+    managedPipeline = await updatePipelineForImportFlow(
+      appResources?.pipeline?.data,
+      pipeline.template,
+      name,
+      project.name,
+      git.url,
+      git.ref,
+      git.dir,
+      docker.dockerfilePath,
+    );
+  } else if (pipeline.template) {
+    managedPipeline = await createPipelineForImportFlow(
+      name,
+      project.name,
+      git.url,
+      git.ref,
+      git.dir,
+      pipeline,
+      docker.dockerfilePath,
+    );
+  }
+
+  if (_.has(managedPipeline?.metadata?.labels, 'app.kubernetes.io/instance')) {
+    try {
+      await createPipelineRunForImportFlow(managedPipeline);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log(error);
+      setPipelineNotStarted(managedPipeline.metadata.name, managedPipeline.metadata.namespace);
+    }
+  }
+};
+
 export const createOrUpdateResources = async (
   formData: GitImportFormData,
   imageStream: K8sResourceKind,
@@ -457,7 +500,11 @@ export const createOrUpdateResources = async (
       generatedImageStreamName,
     ),
   );
-  if (!pipeline.enabled) {
+  if (pipeline.enabled) {
+    if (!dryRun) {
+      await managePipelineResources(formData, appResources);
+    }
+  } else {
     requests.push(
       createOrUpdateBuildConfig(
         formData,
@@ -468,23 +515,6 @@ export const createOrUpdateResources = async (
         generatedImageStreamName,
       ),
     );
-  } else if (pipeline.template && !dryRun) {
-    const newPipeline = await createPipelineForImportFlow(
-      formData.name,
-      formData.project.name,
-      formData.git.url,
-      formData.git.ref,
-      formData.git.dir,
-      formData.pipeline,
-      formData.docker.dockerfilePath,
-    );
-    try {
-      await createPipelineRunForImportFlow(newPipeline);
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.log(error);
-      setPipelineNotStarted(newPipeline.metadata.name, newPipeline.metadata.namespace);
-    }
   }
 
   verb === 'create' && requests.push(createWebhookSecret(formData, 'generic', dryRun));

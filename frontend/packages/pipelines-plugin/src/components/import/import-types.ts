@@ -1,6 +1,6 @@
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { Pipeline } from '../../utils/pipeline-augment';
 
 export interface PipelineData {
   enabled: boolean;
-  template?: K8sResourceKind;
+  template?: Pipeline;
 }

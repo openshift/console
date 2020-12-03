@@ -5,6 +5,7 @@ import { FormikProps, FormikValues } from 'formik';
 import { Form } from '@patternfly/react-core';
 import { PageHeading } from '@console/internal/components/utils';
 import { FormFooter } from '@console/shared';
+import PipelineSection from '@console/pipelines-plugin/src/components/import/pipeline/PipelineSection';
 import GitSection from '../import/git/GitSection';
 import BuilderSection from '../import/builder/BuilderSection';
 import DockerSection from '../import/git/DockerSection';
@@ -51,6 +52,10 @@ const EditApplicationForm: React.FC<FormikProps<FormikValues> & EditApplicationF
         {createFlowType === CreateApplicationFlow.Container && <ImageSearchSection />}
         {createFlowType === CreateApplicationFlow.Container && <IconSection />}
         <AppSection project={values.project} />
+        <PipelineSection
+          builderImages={builderImages}
+          existingPipeline={appResources?.pipeline?.data}
+        />
         <AdvancedSection values={values} appResources={appResources} />
         <FormFooter
           handleReset={handleReset}

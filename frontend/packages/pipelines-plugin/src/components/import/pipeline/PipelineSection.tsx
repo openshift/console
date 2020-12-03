@@ -10,11 +10,13 @@ import { NormalizedBuilderImages } from '@console/dev-console/src/utils/imagestr
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { PipelineModel, PipelineResourceModel } from '../../../models';
 import { FLAG_OPENSHIFT_PIPELINE, CLUSTER_PIPELINE_NS } from '../../../const';
+import { Pipeline } from '../../../utils/pipeline-augment';
 import PipelineTemplate from './PipelineTemplate';
 
 type PipelineSectionProps = {
   flags: FlagsObject;
   builderImages: NormalizedBuilderImages;
+  existingPipeline?: Pipeline;
 };
 
 const usePipelineAccessReview = (): boolean => {
@@ -42,7 +44,11 @@ const usePipelineAccessReview = (): boolean => {
   return canListPipelines && canCreatePipelines && canCreatePipelineResource;
 };
 
-const PipelineSection: React.FC<PipelineSectionProps> = ({ flags, builderImages }) => {
+const PipelineSection: React.FC<PipelineSectionProps> = ({
+  flags,
+  builderImages,
+  existingPipeline,
+}) => {
   const { t } = useTranslation();
   const { values } = useFormikContext<FormikValues>();
 
@@ -62,7 +68,7 @@ const PipelineSection: React.FC<PipelineSectionProps> = ({ flags, builderImages 
     return (
       <FormSection title={title}>
         {values.image.selected || values.build.strategy === 'Docker' ? (
-          <PipelineTemplate builderImages={builderImages} />
+          <PipelineTemplate builderImages={builderImages} existingPipeline={existingPipeline} />
         ) : (
           <Alert
             isInline

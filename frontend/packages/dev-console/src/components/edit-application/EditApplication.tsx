@@ -81,23 +81,25 @@ const EditApplication: React.FC<EditApplicationProps & StateProps> = ({
       let allBuilderImages: NormalizedBuilderImages = !_.isEmpty(imageStreamsData)
         ? normalizeBuilderImages(imageStreamsData)
         : {};
-      const {
-        name: imageName,
-        namespace: imageNs,
-      } = appResources.buildConfig.data.spec?.strategy.sourceStrategy.from;
-      const selectedImage = imageName?.split(':')[0];
-      const builderImageExists = imageNs === 'openshift' && allBuilderImages?.[selectedImage];
-      if (!builderImageExists) {
-        let newImageStream: K8sResourceKind;
-        try {
-          newImageStream = await k8sGet(ImageStreamModel, selectedImage, imageNs);
-          // eslint-disable-next-line no-empty
-        } catch {}
-        if (ignore) return;
-        allBuilderImages = {
-          ...allBuilderImages,
-          ...(newImageStream ? normalizeBuilderImages(newImageStream) : {}),
-        };
+      if (appResources.buildConfig.loaded) {
+        const {
+          name: imageName,
+          namespace: imageNs,
+        } = appResources.buildConfig.data.spec?.strategy.sourceStrategy.from;
+        const selectedImage = imageName?.split(':')[0];
+        const builderImageExists = imageNs === 'openshift' && allBuilderImages?.[selectedImage];
+        if (!builderImageExists) {
+          let newImageStream: K8sResourceKind;
+          try {
+            newImageStream = await k8sGet(ImageStreamModel, selectedImage, imageNs);
+            // eslint-disable-next-line no-empty
+          } catch {}
+          if (ignore) return;
+          allBuilderImages = {
+            ...allBuilderImages,
+            ...(newImageStream ? normalizeBuilderImages(newImageStream) : {}),
+          };
+        }
       }
       setBuilderImages(!_.isEmpty(allBuilderImages) ? allBuilderImages : null);
     };
@@ -109,7 +111,12 @@ const EditApplication: React.FC<EditApplicationProps & StateProps> = ({
     return () => {
       ignore = true;
     };
-  }, [appResources.buildConfig.data.spec, imageStreamsData, pageHeading]);
+  }, [
+    appResources.buildConfig.data.spec,
+    appResources.buildConfig.loaded,
+    imageStreamsData,
+    pageHeading,
+  ]);
 
   return (
     <Formik

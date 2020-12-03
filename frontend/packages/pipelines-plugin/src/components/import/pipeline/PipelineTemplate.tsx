@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
+import * as _ from 'lodash';
 import { LoadingInline } from '@console/internal/components/utils';
 import { k8sList } from '@console/internal/module/k8s';
 import { useFormikContext, FormikValues } from 'formik';
@@ -8,17 +9,17 @@ import { Alert, ExpandableSection } from '@patternfly/react-core';
 import { CheckboxField } from '@console/shared';
 import { NormalizedBuilderImages } from '@console/dev-console/src/utils/imagestream-utils';
 import { ReadableResourcesNames } from '@console/dev-console/src/components/import/import-types';
-import { CLUSTER_PIPELINE_NS } from '../../../const';
+import { CLUSTER_PIPELINE_NS, PIPELINE_RUNTIME_LABEL } from '../../../const';
 import { PipelineModel } from '../../../models';
 import PipelineVisualization from '../../pipelines/detail-page-tabs/pipeline-details/PipelineVisualization';
 import { Pipeline } from '../../../utils/pipeline-augment';
 
 const labelType = 'pipeline.openshift.io/type';
-const labelRuntime = 'pipeline.openshift.io/runtime';
 const labelDocker = 'pipeline.openshift.io/strategy';
 
 const getAlertText = (
   isDockerStrategy: boolean,
+  isPipelineAttached: boolean,
   builderImage: string,
   resourceType: string,
   t: TFunction,
@@ -26,7 +27,12 @@ const getAlertText = (
   const MISSING_DOCKERFILE_LABEL_TEXT = t(
     'pipelines-plugin~The pipeline template for Dockerfiles is not available at this time.',
   );
+  const UNSUPPORTED_BUILDERIMAGE_TEXT = t(
+    'pipelines-plugin~There are no pipeline templates available for {{builderImage}}, current pipeline will be dissociated from application.',
+    { builderImage },
+  );
   if (isDockerStrategy) return MISSING_DOCKERFILE_LABEL_TEXT;
+  if (isPipelineAttached) return UNSUPPORTED_BUILDERIMAGE_TEXT;
 
   return t(
     'pipelines-plugin~There are no pipeline templates available for {{builderImage}} and {{resourceType}} combination.',
@@ -36,9 +42,10 @@ const getAlertText = (
 
 type PipelineTemplateProps = {
   builderImages: NormalizedBuilderImages;
+  existingPipeline?: Pipeline;
 };
 
-const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages }) => {
+const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages, existingPipeline }) => {
   const { t } = useTranslation();
   const [noTemplateForRuntime, setNoTemplateForRuntime] = React.useState(false);
   const [isExpanded, setIsExpanded] = React.useState(false);
@@ -50,11 +57,12 @@ const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages }) =>
   } = useFormikContext<FormikValues>();
 
   const isDockerStrategy = build.strategy === 'Docker';
+  const isPipelineAttached = !_.isEmpty(existingPipeline);
 
   React.useEffect(() => {
     let ignore = false;
 
-    const builderPipelineLabel = { [labelRuntime]: image.selected };
+    const builderPipelineLabel = { [PIPELINE_RUNTIME_LABEL]: image.selected };
     const dockerPipelineLabel = { [labelDocker]: 'docker' };
 
     const labelSelector = isDockerStrategy ? dockerPipelineLabel : builderPipelineLabel;
@@ -105,14 +113,36 @@ const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages }) =>
       <Alert
         isInline
         variant="info"
-        title={getAlertText(isDockerStrategy, builderImageTitle, resourceName, t)}
+        title={getAlertText(
+          isDockerStrategy,
+          isPipelineAttached,
+          builderImageTitle,
+          resourceName,
+          t,
+        )}
       />
     );
   }
 
+  const changedPipelineWarning =
+    isPipelineAttached &&
+    pipeline.template?.metadata?.labels[PIPELINE_RUNTIME_LABEL] !==
+      existingPipeline?.metadata?.labels[PIPELINE_RUNTIME_LABEL] ? (
+      <Alert
+        isInline
+        variant="info"
+        title={t('pipelines-plugin~Pipeline will be updated to match the builder Image.')}
+      />
+    ) : null;
+
   return pipeline.template ? (
     <>
-      <CheckboxField label={t('pipelines-plugin~Add pipeline')} name="pipeline.enabled" />
+      {changedPipelineWarning}
+      <CheckboxField
+        label={t('pipelines-plugin~Add pipeline')}
+        name="pipeline.enabled"
+        isDisabled={isPipelineAttached}
+      />
       <ExpandableSection
         toggleText={`${isExpanded ? t('pipelines-plugin~Hide') : t('pipelines-plugin~Show')} ${t(
           'pipelines-plugin~pipeline visualization',

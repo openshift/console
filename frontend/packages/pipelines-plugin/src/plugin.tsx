@@ -471,7 +471,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       label: 'Pipeline',
       // t('pipelines-plugin~Create a Tekton Pipeline to automate delivery of your Application')
       description:
-        '%pipelines-plugin~Create a Tekton Pipeline to automate delivery of your Application~',
+        '%pipelines-plugin~Create a Tekton Pipeline to automate delivery of your application%',
       icon: pipelineIcon,
       accessReview: [
         {
