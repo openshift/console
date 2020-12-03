@@ -40,8 +40,8 @@ export const getTemplateProvider = (
   const provider = getAnnotation(template, TEMPLATE_PROVIDER_ANNOTATION);
   if (provider) {
     return withProviderPrefix
-      ? t('kubevirt-plugin~Provided by {{provider}} (User)', { provider })
-      : t('kubevirt-plugin~{{provider}} (User)', { provider });
+      ? t('kubevirt-plugin~Provided by {{provider}}', { provider })
+      : t('kubevirt-plugin~{{provider}}', { provider });
   }
   return withProviderPrefix ? t('kubevirt-plugin~Provided by User') : t('kubevirt-plugin~User');
 };
