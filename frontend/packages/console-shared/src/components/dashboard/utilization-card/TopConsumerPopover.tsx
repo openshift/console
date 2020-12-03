@@ -22,6 +22,7 @@ import { FLAGS } from '@console/shared/src/constants';
 import { getName, getNamespace } from '../../..';
 import { DashboardCardPopupLink } from '../dashboard-card/DashboardCardLink';
 import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '../../status';
+import { useActivePerspective } from '../../../hooks';
 import Status from '../status-card/StatusPopup';
 import { LIMIT_STATE } from './UtilizationItem';
 
@@ -116,9 +117,7 @@ export const PopoverBody = withDashboardResources<DashboardItemProps & PopoverBo
     }) => {
       const { t } = useTranslation();
       const [currentConsumer, setCurrentConsumer] = React.useState(consumers[0]);
-      const activePerspective = useSelector<RootState, string>(({ UI }) =>
-        UI.get('activePerspective'),
-      );
+      const activePerspective = useActivePerspective()[0];
       const canAccessMonitoring = useSelector<RootState, boolean>(
         (state) =>
           !!state[featureReducerName].get(FLAGS.CAN_GET_NS) &&

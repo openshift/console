@@ -3,10 +3,14 @@ import { Formik, FormikProps } from 'formik';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { history, AsyncComponent } from '@console/internal/components/utils';
-import { getActivePerspective, getActiveApplication } from '@console/internal/reducers/ui';
+import { getActiveApplication } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
 import { connect } from 'react-redux';
-import { ALL_APPLICATIONS_KEY, usePostFormSubmitAction } from '@console/shared';
+import {
+  ALL_APPLICATIONS_KEY,
+  useActivePerspective,
+  usePostFormSubmitAction,
+} from '@console/shared';
 import { useExtensions, Perspective, isPerspective } from '@console/plugin-sdk';
 import { UNASSIGNED_KEY, ALLOW_SERVICE_BINDING_FLAG } from '@console/topology/src/const';
 import { sanitizeApplicationValue } from '@console/topology/src/utils/application-utils';
@@ -28,7 +32,6 @@ export interface ImportFormProps {
 }
 
 export interface StateProps {
-  perspective: string;
   activeApplication: string;
   serviceBindingAvailable: boolean;
 }
@@ -38,11 +41,11 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
   imageStreams,
   importData,
   contextualSource,
-  perspective,
   activeApplication,
   projects,
 }) => {
   const { t } = useTranslation();
+  const [perspective] = useActivePerspective();
   const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
   const postFormCallback = usePostFormSubmitAction();
   const initialValues: GitImportFormData = {
@@ -209,10 +212,8 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
 
 type OwnProps = ImportFormProps & { forApplication?: string };
 const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => {
-  const perspective = getActivePerspective(state);
   const activeApplication = ownProps.forApplication || getActiveApplication(state);
   return {
-    perspective,
     activeApplication: activeApplication !== ALL_APPLICATIONS_KEY ? activeApplication : '',
     serviceBindingAvailable: state.FLAGS.get(ALLOW_SERVICE_BINDING_FLAG),
   };

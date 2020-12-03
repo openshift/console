@@ -1,14 +1,11 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import * as _ from 'lodash';
 import { Alert } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
-import { getActivePerspective } from '@console/internal/reducers/ui';
-import { RootState } from '@console/internal/redux';
 import { fromNow } from '@console/internal/components/utils/datetime';
 import { Alert as AlertType } from '@console/internal/components/monitoring/types';
 import { labelsToParams } from '@console/internal/components/monitoring/utils';
-import { sortMonitoringAlerts } from '@console/shared';
+import { sortMonitoringAlerts, useActivePerspective } from '@console/shared';
 import { getAlertType } from './monitoring-overview-alerts-utils';
 import './MonitoringOverviewAlerts.scss';
 
@@ -16,14 +13,8 @@ interface MonitoringOverviewAlertsProps {
   alerts: AlertType[];
 }
 
-interface StateProps {
-  activePerspective?: string;
-}
-
-const MonitoringOverviewAlerts: React.FC<MonitoringOverviewAlertsProps & StateProps> = ({
-  alerts,
-  activePerspective,
-}) => {
+const MonitoringOverviewAlerts: React.FC<MonitoringOverviewAlertsProps> = ({ alerts }) => {
+  const [activePerspective] = useActivePerspective();
   const sortedAlerts = sortMonitoringAlerts(alerts);
 
   return (
@@ -57,9 +48,5 @@ const MonitoringOverviewAlerts: React.FC<MonitoringOverviewAlertsProps & StatePr
   );
 };
 
-const stateToProps = (state: RootState) => ({
-  activePerspective: getActivePerspective(state),
-});
-
 export const InternalMonitoringOverviewAlerts = MonitoringOverviewAlerts;
-export default connect<StateProps>(stateToProps)(MonitoringOverviewAlerts);
+export default MonitoringOverviewAlerts;

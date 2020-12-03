@@ -1,5 +1,5 @@
 import * as _ from 'lodash-es';
-import { ALL_NAMESPACES_KEY, LAST_PERSPECTIVE_LOCAL_STORAGE_KEY } from '@console/shared';
+import { ALL_NAMESPACES_KEY } from '@console/shared';
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils/namespace';
 import '../../__mocks__/localStorage';
 import store from '../../public/redux';
@@ -8,8 +8,6 @@ import * as router from '../../public/components/utils/router';
 import { getActiveNamespace } from '@console/internal/reducers/ui';
 
 const setActiveNamespace = (ns) => store.dispatch(UIActions.setActiveNamespace(ns));
-const setActivePerspective = (perspective) =>
-  store.dispatch(UIActions.setActivePerspective(perspective));
 const getNamespacedRoute = (path) =>
   UIActions.formatNamespaceRoute(getActiveNamespace(store.getState()), path);
 
@@ -115,24 +113,6 @@ describe('ui-actions', () => {
       expect(getNamespacedRoute('/k8s/ns/foo/pods/WACKY_SUFFIX')).toEqual(
         '/k8s/all-namespaces/pods',
       );
-    });
-  });
-
-  describe('setActivePerspective', () => {
-    it('should create setActivePerspective action', () => {
-      expect(UIActions.setActivePerspective('test')).toEqual({
-        type: UIActions.ActionType.SetActivePerspective,
-        payload: {
-          perspective: 'test',
-        },
-        error: undefined,
-        meta: undefined,
-      });
-    });
-
-    it('sets active perspective in localStorage', () => {
-      setActivePerspective('test');
-      expect(localStorage.getItem(LAST_PERSPECTIVE_LOCAL_STORAGE_KEY)).toEqual('test');
     });
   });
 });

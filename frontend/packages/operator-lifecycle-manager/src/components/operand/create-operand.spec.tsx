@@ -23,8 +23,6 @@ import { EditorType } from '@console/shared/src/components/synced-editor/editor-
 
 import Spy = jasmine.Spy;
 
-const activePerspective = 'admin';
-
 xdescribe('[https://issues.redhat.com/browse/CONSOLE-2137] CreateOperand', () => {
   let wrapper: ShallowWrapper<CreateOperandProps>;
 
@@ -38,7 +36,6 @@ xdescribe('[https://issues.redhat.com/browse/CONSOLE-2137] CreateOperand', () =>
     wrapper = shallow(
       <CreateOperand
         initialEditorType={EditorType.YAML}
-        activePerspective={activePerspective}
         model={testModel}
         clusterServiceVersion={{ data: testClusterServiceVersion, loaded: true, loadError: null }}
         customResourceDefinition={{ data: testCRD, loaded: true, loadError: null }}

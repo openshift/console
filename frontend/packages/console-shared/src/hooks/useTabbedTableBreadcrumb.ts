@@ -6,8 +6,9 @@ import { K8sKind } from '@console/internal/module/k8s';
 import { useSelector } from 'react-redux';
 import { getBreadcrumbPath } from '@console/internal/components/utils/breadcrumbs';
 import { RootState } from '@console/internal/redux';
-import { getActivePerspective, getActiveNamespace } from '@console/internal/reducers/ui';
+import { getActiveNamespace } from '@console/internal/reducers/ui';
 import { ALL_NAMESPACES_KEY } from '../constants/common';
+import { useActivePerspective } from './useActivePerspective';
 
 type Match = RMatch<{ url: string }>;
 
@@ -18,8 +19,7 @@ export const useTabbedTableBreadcrumbsFor = (
   subTab: string = null,
 ) => {
   const currentNamespace = useSelector((state: RootState) => getActiveNamespace(state));
-  const isAdminPerspective =
-    useSelector((state: RootState) => getActivePerspective(state)) === 'admin';
+  const isAdminPerspective = useActivePerspective()[0] === 'admin';
   const nsURL =
     ALL_NAMESPACES_KEY === currentNamespace ? 'all-namespaces' : `ns/${currentNamespace}`;
 

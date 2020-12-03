@@ -5,13 +5,10 @@ import { CaretDownIcon } from '@patternfly/react-icons';
 import { Perspective, useExtensions, isPerspective } from '@console/plugin-sdk';
 import { RootState } from '../../redux';
 import { featureReducerName, getFlagsObject, FlagsObject } from '../../reducers/features';
-import { getActivePerspective } from '../../reducers/ui';
-import * as UIActions from '../../actions/ui';
 import { history } from '../utils';
+import { useActivePerspective } from '@console/shared';
 
 type StateProps = {
-  activePerspective: string;
-  setActivePerspective?: (id: string) => void;
   flags: FlagsObject;
 };
 
@@ -19,15 +16,10 @@ export type NavHeaderProps = {
   onPerspectiveSelected: () => void;
 };
 
-const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({
-  setActivePerspective,
-  onPerspectiveSelected,
-  activePerspective,
-  flags,
-}) => {
+const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({ onPerspectiveSelected, flags }) => {
+  const [activePerspective, setActivePerspective] = useActivePerspective();
   const [isPerspectiveDropdownOpen, setPerspectiveDropdownOpen] = React.useState(false);
   const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
-
   const togglePerspectiveOpen = React.useCallback(() => {
     setPerspectiveDropdownOpen(!isPerspectiveDropdownOpen);
   }, [isPerspectiveDropdownOpen]);
@@ -101,17 +93,9 @@ const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({
 };
 
 const mapStateToProps = (state: RootState): StateProps => ({
-  activePerspective: getActivePerspective(state),
   flags: getFlagsObject(state),
 });
 
-export default connect<StateProps, {}, NavHeaderProps, RootState>(
-  mapStateToProps,
-  { setActivePerspective: UIActions.setActivePerspective },
-  null,
-  {
-    areStatesEqual: (next, prev) =>
-      next[featureReducerName] === prev[featureReducerName] &&
-      getActivePerspective(next) === getActivePerspective(prev),
-  },
-)(NavHeader_);
+export default connect<StateProps, {}, NavHeaderProps, RootState>(mapStateToProps, null, null, {
+  areStatesEqual: (next, prev) => next[featureReducerName] === prev[featureReducerName],
+})(NavHeader_);

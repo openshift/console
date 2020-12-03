@@ -2,9 +2,9 @@ import * as React from 'react';
 import { Formik } from 'formik';
 import { connect } from 'react-redux';
 import { history } from '@console/internal/components/utils';
-import { getActiveApplication, getActivePerspective } from '@console/internal/reducers/ui';
+import { getActiveApplication } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
-import { ALL_APPLICATIONS_KEY } from '@console/shared';
+import { ALL_APPLICATIONS_KEY, useActivePerspective } from '@console/shared';
 import { K8sResourceKind, k8sCreate, modelFor, referenceFor } from '@console/internal/module/k8s';
 import { sanitizeApplicationValue } from '@console/topology/src/utils/application-utils';
 import { isPerspective, Perspective, useExtensions } from '@console/plugin-sdk';
@@ -24,12 +24,12 @@ interface ChannelProps {
 
 interface StateProps {
   activeApplication: string;
-  perspective: string;
 }
 
 type Props = ChannelProps & StateProps;
 
-const AddChannel: React.FC<Props> = ({ namespace, channels, activeApplication, perspective }) => {
+const AddChannel: React.FC<Props> = ({ namespace, channels, activeApplication }) => {
+  const [perspective] = useActivePerspective();
   const { t } = useTranslation();
   const initialValues: AddChannelFormData = {
     application: {
@@ -87,10 +87,8 @@ const AddChannel: React.FC<Props> = ({ namespace, channels, activeApplication, p
 
 const mapStateToProps = (state: RootState, ownProps: ChannelProps): StateProps => {
   const activeApplication = ownProps.selectedApplication || getActiveApplication(state);
-  const perspective = getActivePerspective(state);
   return {
     activeApplication: activeApplication !== ALL_APPLICATIONS_KEY ? activeApplication : '',
-    perspective,
   };
 };
 

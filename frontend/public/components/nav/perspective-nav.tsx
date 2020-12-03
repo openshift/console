@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import { NavItemSeparator, NavGroup, Button } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons';
 import {
@@ -12,9 +11,7 @@ import {
   isSeparatorNavItem,
   LoadedExtension,
 } from '@console/plugin-sdk';
-import { usePinnedResources } from '@console/shared';
-import { RootState } from '../../redux';
-import { getActivePerspective } from '../../reducers/ui';
+import { useActivePerspective, usePinnedResources } from '@console/shared';
 import { modelFor, referenceForModel } from '../../module/k8s';
 import confirmNavUnpinModal from './confirmNavUnpinModal';
 import { NavSection } from './section';
@@ -28,10 +25,6 @@ import {
 } from './items';
 
 import './_perspective-nav.scss';
-
-type StateProps = {
-  perspective: string;
-};
 
 const getLabelForResource = (resource: string): string => {
   const model = modelFor(resource);
@@ -125,7 +118,8 @@ export const getSortedNavItems = (
   return sortedItems;
 };
 
-const PerspectiveNav: React.FC<StateProps> = ({ perspective }) => {
+const PerspectiveNav: React.FC<{}> = () => {
+  const [perspective] = useActivePerspective();
   const allItems = useExtensions<PluginNavSection | NavItem | SeparatorNavItem>(
     isNavSection,
     isNavItem,
@@ -220,10 +214,4 @@ const PerspectiveNav: React.FC<StateProps> = ({ perspective }) => {
   );
 };
 
-const mapStateToProps = (state: RootState): StateProps => {
-  return {
-    perspective: getActivePerspective(state),
-  };
-};
-
-export default connect(mapStateToProps)(PerspectiveNav);
+export default PerspectiveNav;

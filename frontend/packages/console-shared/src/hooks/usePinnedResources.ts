@@ -1,11 +1,8 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
-import { useSelector } from 'react-redux';
-import { getActivePerspective } from '@console/internal/reducers/ui';
-import { useUserSettingsCompatibility } from './useUserSettingsCompatibility';
-import { PINNED_RESOURCES_LOCAL_STORAGE_KEY } from '../constants';
 import { useMemo } from 'react';
 import { isPerspective, Perspective, useExtensions } from '@console/plugin-sdk';
+import { useUserSettingsCompatibility } from './useUserSettingsCompatibility';
+import { PINNED_RESOURCES_LOCAL_STORAGE_KEY } from '../constants';
+import { useActivePerspective } from './useActivePerspective';
 
 type PinnedResourcesType = {
   [perspective: string]: string[];
@@ -14,7 +11,7 @@ type PinnedResourcesType = {
 const PINNED_RESOURCES_CONFIG_MAP_KEY = 'console.pinnedResources';
 
 export const usePinnedResources = (): [string[], (pinnedResources: string[]) => void, boolean] => {
-  const activePerspective = useSelector(getActivePerspective);
+  const [activePerspective] = useActivePerspective();
   const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
   const activePerspectiveExtension = perspectiveExtensions.find(
     (p) => p.properties.id === activePerspective,
@@ -27,7 +24,7 @@ export const usePinnedResources = (): [string[], (pinnedResources: string[]) => 
     { [activePerspective]: activePerspectiveExtension.properties.defaultPins },
     true,
   );
-  const pins = useMemo(() => (loaded ? pinnedResources[activePerspective] : []), [
+  const pins = useMemo(() => (loaded ? pinnedResources[activePerspective] ?? [] : []), [
     loaded,
     pinnedResources,
     activePerspective,

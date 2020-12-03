@@ -2,13 +2,25 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import { InternalDetectPerspective } from '../DetectPerspective';
 import PerspectiveDetector from '../PerspectiveDetector';
+import { useValuesForPerspectiveContext } from '../perspective-context';
 
 const MockApp = () => <h1>App</h1>;
 
+jest.mock('../perspective-context', () => ({
+  ...require.requireActual('../perspective-context'),
+  useValuesForPerspectiveContext: jest.fn(),
+}));
+
+const useValuesForPerspectiveContextMock = useValuesForPerspectiveContext as jest.Mock;
+
 describe('DetectPerspective', () => {
+  beforeEach(() => {
+    useValuesForPerspectiveContextMock.mockClear();
+  });
   it('should render children if there is an activePerspective', () => {
+    useValuesForPerspectiveContextMock.mockReturnValue(['dev', () => {}, true]);
     const wrapper = shallow(
-      <InternalDetectPerspective activePerspective="dev" setActivePerspective={() => {}}>
+      <InternalDetectPerspective>
         <MockApp />
       </InternalDetectPerspective>,
     );
@@ -16,8 +28,9 @@ describe('DetectPerspective', () => {
   });
 
   it('should render PerspectiveDetector if there is no activePerspective', () => {
+    useValuesForPerspectiveContextMock.mockReturnValue([undefined, () => {}, true]);
     const wrapper = shallow(
-      <InternalDetectPerspective activePerspective={undefined} setActivePerspective={() => {}}>
+      <InternalDetectPerspective>
         <MockApp />
       </InternalDetectPerspective>,
     );
