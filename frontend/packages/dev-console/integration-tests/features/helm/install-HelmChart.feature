@@ -12,20 +12,23 @@ Scenario: The Helm Chart option on the +Add Page: HR-01-TC01
     Then user can see Helm Chart card on the Add page
 
 
-@regression, @smoke
+@regression, @smoke, @manual
 Scenario: Developer Catalog Page when Helm Charts checkbox is selected: HR-01-TC02, HR-02-TC02
     Given user is at Add page
+    And user has added multiple helm charts repositories
     When user clicks on the Helm Chart card on the Add page
     Then user will get redirected to Developer Catalog page
-    And user is able to see Helm Chart option is selected in Developer Catalog page
-    And user is able to see Helm Charts cards
+    And user will see the list of Chart Repositories
+    And user will see the cards of Helm Charts
+    And user will see Filter by Keyword field
+    And user will see A-Z, Z-A sort by dropdown
 
 
 @regression
 Scenario: Install Helm Chart from Developer Catalog Page using YAML View: HR-03
     Given user is at Add page
     When user clicks on the Developer Catalog card on the Add page
-    And user checks the Helm Charts checkbox
+    And user clicks on Helm Charts 
     And user searches for the "Nodejs Ex K v0.2.0" helm chart
     And user clicks on the "Nodejs Ex K v0.2.0" helm chart card
     And user clicks on the Install Helm Chart button on side bar
