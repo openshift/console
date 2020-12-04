@@ -235,7 +235,13 @@ export class Dropdown extends DropdownMixin {
     this.onKeyDown = (e) => this.onKeyDown_(e);
     this.changeTextFilter = (e) => this.applyTextFilter_(e.target.value, this.props.items);
     const { shortCut } = this.props;
+
     this.globalKeyDown = (e) => {
+      if (e.key === 'Escape' && this.state.active) {
+        this.hide(e);
+        return;
+      }
+
       const { nodeName } = e.target;
 
       if (nodeName === 'INPUT' || nodeName === 'TEXTAREA') {
@@ -302,10 +308,6 @@ export class Dropdown extends DropdownMixin {
 
   onKeyDown_(e) {
     const { key } = e;
-    if (key === 'Escape') {
-      this.hide(e);
-      return;
-    }
 
     if (key !== 'ArrowDown' && key !== 'ArrowUp' && key !== 'Enter') {
       return;
