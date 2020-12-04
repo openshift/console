@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { match as RouterMatch } from 'react-router';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
@@ -121,6 +122,7 @@ const makeAutoDiscoveryCall = (
 };
 
 const CreateSC: React.FC<CreateSCProps> = ({ match, hasNoProvSC, mode, lsoNs }) => {
+  const { t } = useTranslation();
   const [state, dispatch] = React.useReducer(reducer, initialState);
   const [discoveriesData, discoveriesLoaded, discoveriesLoadError] = useK8sWatchResource<
     K8sResourceKind[]
@@ -179,27 +181,27 @@ const CreateSC: React.FC<CreateSCProps> = ({ match, hasNoProvSC, mode, lsoNs }) 
   const steps: WizardStep[] = [
     {
       id: CreateStepsSC.DISCOVER,
-      name: 'Discover Disks',
+      name: t('ceph-storage-plugin~Discover Disks'),
       component: <AutoDetectVolume state={state} dispatch={dispatch} />,
     },
     {
       id: CreateStepsSC.STORAGECLASS,
-      name: 'Create Storage Class',
+      name: t('ceph-storage-plugin~Create Storage Class'),
       component: <CreateLocalVolumeSet dispatch={dispatch} state={state} ns={lsoNs} />,
     },
     {
       id: CreateStepsSC.STORAGEANDNODES,
-      name: 'Storage and Nodes',
+      name: t('ceph-storage-plugin~Storage and Nodes'),
       component: <StorageAndNodes dispatch={dispatch} state={state} />,
     },
     {
       id: CreateStepsSC.CONFIGURE,
-      name: 'Configure',
+      name: t('ceph-storage-plugin~Configure'),
       component: <Configure dispatch={dispatch} state={state} mode={mode} />,
     },
     {
       id: CreateStepsSC.REVIEWANDCREATE,
-      name: 'Review and Create',
+      name: t('ceph-storage-plugin~Review and Create'),
       component: (
         <ReviewAndCreate state={state} inProgress={inProgress} errorMessage={errorMessage} />
       ),
@@ -292,17 +294,19 @@ const CreateSC: React.FC<CreateSCProps> = ({ match, hasNoProvSC, mode, lsoNs }) 
               onClick={() => makeCall(activeStep, onNext)}
               className={state.isLoading || getDisabledCondition(activeStep) ? 'pf-m-disabled' : ''}
             >
-              {activeStep.id === CreateStepsSC.REVIEWANDCREATE ? 'Create' : 'Next'}
+              {activeStep.id === CreateStepsSC.REVIEWANDCREATE
+                ? t('ceph-storage-plugin~Create')
+                : t('ceph-storage-plugin~Next')}
             </Button>
             <Button
               variant="secondary"
               onClick={onBack}
               className={activeStep.id === CreateStepsSC.DISCOVER ? 'pf-m-disabled' : ''}
             >
-              Back
+              {t('ceph-storage-plugin~Back')}
             </Button>
             <Button variant="link" onClick={onClose}>
-              Cancel
+              {t('ceph-storage-plugin~Cancel')}
             </Button>
           </>
         )}
@@ -318,12 +322,20 @@ const CreateSC: React.FC<CreateSCProps> = ({ match, hasNoProvSC, mode, lsoNs }) 
             className="co-alert ocs-install-info-alert"
             variant="info"
             isInline
-            title={!hasNoProvSC ? 'Missing storage class' : 'Internal - Attached devices'}
+            title={
+              !hasNoProvSC
+                ? t('ceph-storage-plugin~Missing storage class')
+                : 'Internal - Attached devices'
+            }
             actionClose={<AlertActionCloseButton onClose={() => setShowInfoAlert(false)} />}
           >
             {!hasNoProvSC
-              ? 'The storage cluster needs to use a storage class to consume the local storage. In order to create one you need to discover the available disks and create a storage class using the filters to select the disks you wish to use'
-              : 'This mode support bare metal and attached devices deployments. As part of the storage cluster creation, a bucket will be created on the default backing store.'}
+              ? t(
+                  'ceph-storage-plugin~The storage cluster needs to use a storage class to consume the local storage. In order to create one you need to discover the available disks and create a storage class using the filters to select the disks you wish to use',
+                )
+              : t(
+                  'ceph-storage-plugin~Can be used on any platform. It means that OCS uses attached disks, via Local Storage Operator. In this case, the infrastructure storage class is actually provided by LSO, on top of attached drives.',
+                )}
           </Alert>
         )}
       </StackItem>

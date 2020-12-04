@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import {
   Alert,
@@ -22,6 +23,8 @@ import { POOL_STATE } from '../../constants/storage-pool-const';
 import './ocs-storage-class-form.scss';
 
 export const PoolResourceComponent: React.FC<ProvisionerProps> = ({ onParamChange }) => {
+  const { t } = useTranslation();
+
   const [poolData, poolDataLoaded, poolDataLoadError] = useK8sWatchResource<StoragePoolKind[]>(
     cephBlockPoolResource,
   );
@@ -52,6 +55,10 @@ export const PoolResourceComponent: React.FC<ProvisionerProps> = ({ onParamChang
   const poolDropdownItems = _.reduce(
     poolData,
     (res, pool: StoragePoolKind) => {
+      const compressionText =
+        pool?.spec?.compressionMode === 'none' || pool?.spec?.compressionMode === ''
+          ? t('ceph-storage-plugin~no compression')
+          : t('ceph-storage-plugin~with compression');
       if (
         pool?.status?.phase === POOL_STATE.READY &&
         cephClusterObj[0]?.status?.phase === CLUSTER_STATUS.READY
@@ -62,11 +69,10 @@ export const PoolResourceComponent: React.FC<ProvisionerProps> = ({ onParamChang
             component="button"
             id={pool?.metadata?.name}
             onClick={handleDropdownChange}
-            description={`Replica ${pool?.spec?.replicated?.size}, ${
-              pool?.spec?.compressionMode === 'none' || pool?.spec?.compressionMode === ''
-                ? 'no compression'
-                : 'with compression'
-            }`}
+            description={t('ceph-storage-plugin~Replica {{poolSize}} {{compressionText}}', {
+              poolSize: pool?.spec?.replicated?.size,
+              compressionText,
+            })}
           >
             {pool?.metadata?.name}
           </DropdownItem>,
@@ -85,7 +91,7 @@ export const PoolResourceComponent: React.FC<ProvisionerProps> = ({ onParamChang
           })
         }
       >
-        Create New Pool
+        {t('ceph-storage-plugin~Create New Pool')}
       </DropdownItem>,
       <DropdownSeparator key="separator" />,
     ],
@@ -97,7 +103,7 @@ export const PoolResourceComponent: React.FC<ProvisionerProps> = ({ onParamChang
         {!poolDataLoadError && cephClusterObj && (
           <div className="form-group">
             <label className="co-required" htmlFor="ocs-storage-pool">
-              Storage Pool
+              {t('ceph-storage-plugin~Storage Pool')}
             </label>
             <Dropdown
               className="dropdown dropdown--full-width"
@@ -107,7 +113,7 @@ export const PoolResourceComponent: React.FC<ProvisionerProps> = ({ onParamChang
                   onToggle={() => setOpen(!isOpen)}
                   toggleIndicator={CaretDownIcon}
                 >
-                  {poolName || 'Select a Pool'}
+                  {poolName || t('ceph-storage-plugin~Select a Pool')}
                 </DropdownToggle>
               }
               isOpen={isOpen}
@@ -115,14 +121,16 @@ export const PoolResourceComponent: React.FC<ProvisionerProps> = ({ onParamChang
               onSelect={() => setOpen(false)}
               id="ocs-storage-pool"
             />
-            <span className="help-block">Storage pool into which volume data shall be stored</span>
+            <span className="help-block">
+              {t('ceph-storage-plugin~Storage pool into which volume data shall be stored')}
+            </span>
           </div>
         )}
         {(poolDataLoadError || loadError) && (
           <Alert
             className="co-alert"
             variant="danger"
-            title="Error retrieving Parameters"
+            title={t('ceph-storage-plugin~Error retrieving Parameters')}
             isInline
           />
         )}
@@ -133,19 +141,21 @@ export const PoolResourceComponent: React.FC<ProvisionerProps> = ({ onParamChang
     return (
       <div className="form-group">
         <label className="co-required" htmlFor="ocs-storage-pool">
-          Storage Pool
+          {t('ceph-storage-plugin~Storage Pool')}
         </label>
         <input
           className="pf-c-form-control"
           type="text"
           onChange={onPoolInput}
-          placeholder="my-storage-pool"
-          aria-describedby="pool-name-help"
+          placeholder={t('ceph-storage-plugin~my-storage-pool')}
+          aria-describedby={t('ceph-storage-plugin~pool-name-help')}
           id="pool-name"
           name="newPoolName"
           required
         />
-        <span className="help-block">Storage pool into which volume data shall be stored</span>
+        <span className="help-block">
+          {t('ceph-storage-plugin~Storage pool into which volume data shall be stored')}
+        </span>
       </div>
     );
   }

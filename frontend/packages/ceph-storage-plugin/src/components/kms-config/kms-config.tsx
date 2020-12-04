@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-
+import { useTranslation } from 'react-i18next';
 import {
   FormGroup,
   TextInput,
@@ -26,6 +26,7 @@ import { setEncryptionDispatch, parseURL } from './utils';
 import './kms-config.scss';
 
 export const KMSConfigure: React.FC<KMSConfigureProps> = ({ state, dispatch, mode }) => {
+  const { t } = useTranslation();
   const { kms } = state;
   const [kmsProvider, setKMSProvider] = React.useState<string>(KMSProviders[0].name);
 
@@ -66,10 +67,14 @@ export const KMSConfigure: React.FC<KMSConfigureProps> = ({ state, dispatch, mod
   };
 
   const validateAddressMessage = () =>
-    kms.address.value === '' ? 'This is a required field' : 'Please enter a URL';
+    kms.address.value === ''
+      ? t('ceph-storage-plugin~This is a required field')
+      : t('ceph-storage-plugin~Please enter a URL');
 
   const validatePortMessage = () =>
-    kms.port.value === '' ? 'This is a required field' : 'Please enter a valid port';
+    kms.port.value === ''
+      ? t('ceph-storage-plugin~This is a required field')
+      : t('ceph-storage-plugin~Please enter a valid port');
 
   const openAdvancedModal = () =>
     advancedKMSModal({
@@ -84,7 +89,7 @@ export const KMSConfigure: React.FC<KMSConfigureProps> = ({ state, dispatch, mod
     <div className="co-m-pane__form">
       <FormGroup
         fieldId="kms-provider"
-        label="Key Management Service Provider"
+        label={t('ceph-storage-plugin~Key Management Service Provider')}
         className="ocs-install-encryption__form-body"
       >
         <FormSelect
@@ -92,7 +97,7 @@ export const KMSConfigure: React.FC<KMSConfigureProps> = ({ state, dispatch, mod
           onChange={setKMSProvider}
           id="kms-provider"
           name="kms-provider-name"
-          aria-label="kms-provider-name"
+          aria-label={t('ceph-storage-plugin~kms-provider-name')}
           isDisabled
         >
           {KMSProviders.map((provider) => (
@@ -102,7 +107,7 @@ export const KMSConfigure: React.FC<KMSConfigureProps> = ({ state, dispatch, mod
       </FormGroup>
       <FormGroup
         fieldId="kms-service-name"
-        label="Service Name"
+        label={t('ceph-storage-plugin~Service Name')}
         className="ocs-install-encryption__form-body"
         helperTextInvalid="This is a required field"
         validated={isValid(kms.name.valid)}
@@ -121,7 +126,7 @@ export const KMSConfigure: React.FC<KMSConfigureProps> = ({ state, dispatch, mod
       <div className="ocs-install-kms__form-url">
         <FormGroup
           fieldId="kms-address"
-          label="Address"
+          label={t('ceph-storage-plugin~Address')}
           className="ocs-install-kms__form-address ocs-install-encryption__form-body"
           helperTextInvalid={validateAddressMessage()}
           validated={isValid(kms.address.valid)}
@@ -140,7 +145,7 @@ export const KMSConfigure: React.FC<KMSConfigureProps> = ({ state, dispatch, mod
         </FormGroup>
         <FormGroup
           fieldId="kms-address-port"
-          label="Port"
+          label={t('ceph-storage-plugin~Port')}
           className="ocs-install-kms__form-port ocs-install-encryption__form-body--small-padding"
           helperTextInvalid={validatePortMessage()}
           validated={isValid(kms.port.valid)}
@@ -159,9 +164,9 @@ export const KMSConfigure: React.FC<KMSConfigureProps> = ({ state, dispatch, mod
       </div>
       <FormGroup
         fieldId="kms-token"
-        label="Token"
+        label={t('ceph-storage-plugin~Token')}
         className="ocs-install-encryption__form-body"
-        helperTextInvalid="This is a required field"
+        helperTextInvalid={t('ceph-storage-plugin~This is a required field')}
         validated={isValid(kms.token.valid)}
         isRequired
       >
@@ -180,7 +185,7 @@ export const KMSConfigure: React.FC<KMSConfigureProps> = ({ state, dispatch, mod
         className="ocs-install-encryption__form-body"
         onClick={openAdvancedModal}
       >
-        Advanced Settings{' '}
+        {t('ceph-storage-plugin~Advanced Settings')}{' '}
         {(kms.backend ||
           kms.caCert ||
           kms.tls ||

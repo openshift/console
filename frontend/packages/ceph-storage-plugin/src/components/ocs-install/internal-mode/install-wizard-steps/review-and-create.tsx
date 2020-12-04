@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { pluralize, TextContent, Text, TextVariants } from '@patternfly/react-core';
+import { Trans, useTranslation } from 'react-i18next';
+import { TextContent, Text, TextVariants } from '@patternfly/react-core';
 import { humanizeBinaryBytes } from '@console/internal/components/utils';
 import { getName } from '@console/shared';
 import { TotalCapacityText, OSD_CAPACITY_SIZES } from '../../../../utils/osd-size-dropdown';
 import {
-  VALIDATIONS,
+  ValidationType,
   ValidationMessage,
   getEncryptionLevel,
 } from '../../../../utils/common-ocs-install-el';
@@ -24,6 +25,8 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({
   errorMessage,
   inProgress,
 }) => {
+  const { t } = useTranslation();
+
   const {
     nodes,
     encryption,
@@ -38,70 +41,100 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({
   const scName = getName(storageClass);
   const emptyRequiredField =
     nodes.length < MINIMUM_NODES && !zones.size && !scName && !memory && !cpu;
+  const osdSize = OSD_CAPACITY_SIZES[capacity];
 
   return (
     <>
       <TextContent className="ocs-install-wizard__text-content">
-        <Text component={TextVariants.h2}>Review storage cluster</Text>
+        <Text component={TextVariants.h2}>{t('ceph-storage-plugin~Review storage cluster')}</Text>
       </TextContent>
       <dl>
-        <ReviewListTitle text="Capacity and nodes" />
+        <ReviewListTitle text={t('ceph-storage-plugin~Capacity and nodes')} />
         <ReviewListBody hideIcon>
-          Requested Cluster Capacity:&nbsp;
-          <span className="text-secondary">
-            {OSD_CAPACITY_SIZES[capacity].title}&nbsp;(
-            <TotalCapacityText capacity={capacity} />)
-          </span>
+          <Trans t={t} ns="ceph-storage-plugin" values={osdSize}>
+            Requested Cluster Capacity:&nbsp;
+            <span className="text-secondary">
+              {{ osdSize }} TiB&nbsp;
+              <TotalCapacityText capacity={capacity} />
+            </span>
+          </Trans>
         </ReviewListBody>
         <ReviewListBody
           noValue={!scName}
-          validation={!scName && !emptyRequiredField && VALIDATIONS.INTERNALSTORAGECLASS}
+          validation={!scName && !emptyRequiredField && ValidationType.INTERNALSTORAGECLASS}
         >
-          Storage Class: <span className="text-secondary">{scName ?? 'None'}</span>
+          {t('ceph-storage-plugin~Storage Class:')}{' '}
+          <span className="text-secondary">{scName ?? t('ceph-storage-plugin~None')}</span>
         </ReviewListBody>
         <ReviewListBody noValue={nodes.length < MINIMUM_NODES}>
           <div>
-            <p>{pluralize(nodes.length, 'node')} selected</p>
+            <p>
+              {t('ceph-storage-plugin~{{nodeCount, number}} node', {
+                nodeCount: nodes.length,
+                count: nodes.length,
+              })}{' '}
+              {t('ceph-storage-plugin~selected')}
+            </p>
             <NodesCard nodes={nodes} />
           </div>
         </ReviewListBody>
         <ReviewListBody
-          validation={enableMinimal && !emptyRequiredField && VALIDATIONS.MINIMAL}
+          validation={enableMinimal && !emptyRequiredField && ValidationType.MINIMAL}
           noValue={!cpu || !memory}
         >
           <p>
-            Total CPU and memory of {cpu} CPU and {humanizeBinaryBytes(memory).string}
+            {t('ceph-storage-plugin~Total CPU and memory of {{cpu, number}} CPU and {{memory}}', {
+              cpu,
+              memory: humanizeBinaryBytes(memory).string,
+            })}
           </p>
         </ReviewListBody>
         <ReviewListBody noValue={!zones.size}>
-          <p>{pluralize(zones.size, 'zone')}</p>
+          <p>
+            {t('ceph-storage-plugin~{{zoneCount, number}} zone', {
+              zoneCount: zones.size,
+              count: zones.size,
+            })}
+          </p>
         </ReviewListBody>
-        {/* @TODO: Update the check from Configure when adding more items */}
-        <ReviewListTitle text="Configure" />
+        <ReviewListTitle text={t('ceph-storage-plugin~Configure')} />
         {(encryption.clusterWide || encryption.storageClass) && (
           <>
-            <ReviewListTitle text="Configure" />
             <ReviewListBody noValue={!kms.hasHandled}>
-              <p className="ocs-install-wizard__review-encryption">Enable Encryption</p>
+              <p className="ocs-install-wizard__review-encryption">
+                {t('ceph-storage-plugin~Enable Encryption')}
+              </p>
               {encryption.advanced && (
                 <p className="ocs-install-wizard__review-encryption">
-                  Connect to external key management service: {kms.name.value}
+                  {t('ceph-storage-plugin~Connect to external key management service: {{name}}', {
+                    name: kms.name.value,
+                  })}
                 </p>
               )}
-              <p>Encryption Level: {getEncryptionLevel(encryption)}</p>
+              <p>
+                {t('ceph-storage-plugin~Encryption Level: {{level}}', {
+                  level: getEncryptionLevel(encryption, t),
+                })}
+              </p>
             </ReviewListBody>
           </>
         )}
         <ReviewListBody
-          validation={networkType === NetworkType.MULTUS && !publicNetwork && VALIDATIONS.NETWORK}
+          validation={
+            networkType === NetworkType.MULTUS && !publicNetwork && ValidationType.NETWORK
+          }
         >
-          <p>Using {NetworkTypeLabels[networkType]}</p>
+          <p>
+            {t('ceph-storage-plugin~Using {{networkLabel}}', {
+              networkLabel: NetworkTypeLabels[networkType],
+            })}
+          </p>
         </ReviewListBody>
       </dl>
       {emptyRequiredField && (
         <ValidationMessage
           className="ocs-install-wizard__review-alert"
-          validation={VALIDATIONS.ALLREQUIREDFIELDS}
+          validation={ValidationType.ALLREQUIREDFIELDS}
         />
       )}
       <RequestErrors errorMessage={errorMessage} inProgress={inProgress} />

@@ -221,6 +221,9 @@ const config: Configuration = {
     new CopyWebpackPlugin([{ from: './packages/ceph-storage-plugin/locales', to: 'locales' }]),
     new CopyWebpackPlugin([{ from: './packages/noobaa-storage-plugin/locales', to: 'locales' }]),
     new CopyWebpackPlugin([{ from: './packages/metal3-plugin/locales', to: 'locales' }]),
+    new CopyWebpackPlugin([
+      { from: './packages/local-storage-operator-plugin/locales', to: 'locales' },
+    ]),
     new MomentLocalesPlugin({
       localesToKeep: ['en', 'ja', 'ko'],
     }),

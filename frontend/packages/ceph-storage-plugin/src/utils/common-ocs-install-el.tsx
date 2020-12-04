@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import * as cx from 'classnames';
 import {
   Alert,
@@ -18,6 +19,7 @@ import { StorageClassResourceKind } from '@console/internal/module/k8s/types';
 import { storageClassTooltip, CreateStepsSC } from '../constants/ocs-install';
 import '../components/ocs-install/ocs-install.scss';
 import { EncryptionType } from '../components/ocs-install/types';
+import { TFunction } from 'i18next';
 
 export type Validation = {
   title: React.ReactNode;
@@ -29,7 +31,7 @@ export type Validation = {
   actionLinkStep?: string;
 };
 
-enum ValidationType {
+export enum ValidationType {
   'MINIMAL' = 'MINIMAL',
   'INTERNALSTORAGECLASS' = 'INTERNALSTORAGECLASS',
   'BAREMETALSTORAGECLASS' = 'BAREMETALSTORAGECLASS',
@@ -40,120 +42,160 @@ enum ValidationType {
   'NETWORK' = 'NETWORK',
 }
 
-export const VALIDATIONS: { [key in ValidationType]: Validation } = {
-  [ValidationType.MINIMAL]: {
-    variant: AlertVariant.warning,
-    title: (
-      <div className="ceph-minimal-deployment-alert__header">
-        A minimal cluster deployment will be performed.
-        <TechPreviewBadge />
-      </div>
-    ),
-    text:
-      'The selected nodes do not match the OCS storage cluster requirement of an aggregated 30 CPUs and 72 GiB of RAM. If the selection cannot be modified, a minimal cluster will be deployed.',
-    actionLinkStep: CreateStepsSC.STORAGEANDNODES,
-    actionLinkText: 'Back to nodes selection',
-  },
-  [ValidationType.INTERNALSTORAGECLASS]: {
-    variant: AlertVariant.danger,
-    title: 'Select a storage class to continue',
-    text: `This is a required field. ${storageClassTooltip}`,
-    link: '/k8s/cluster/storageclasses/~new/form',
-    linkText: 'Create new storage class',
-  },
-  [ValidationType.BAREMETALSTORAGECLASS]: {
-    variant: AlertVariant.danger,
-    title: 'Select a storage class to continue',
-    text: `This is a required field. ${storageClassTooltip}`,
-  },
-  [ValidationType.ALLREQUIREDFIELDS]: {
-    variant: AlertVariant.danger,
-    title: 'All required fields are not set',
-    text:
-      'In order to create the storage cluster, you must set the storage class, select at least 3 nodes (preferably in 3 different zones) and meet the minimum or recommended requirement',
-  },
-  [ValidationType.MINIMUMNODES]: {
-    variant: AlertVariant.danger,
-    title: 'Minimum Node Requirement',
-    text:
-      'The OCS Storage cluster require a minimum of 3 nodes for the initial deployment. Please choose a different storage class or go to create a new volume set that matches the minimum node requirement.',
-    actionLinkText: 'Create new volume set instance',
-    actionLinkStep: CreateStepsSC.DISCOVER,
-  },
-  [ValidationType.ENCRYPTION]: {
-    variant: AlertVariant.danger,
-    title: 'All required fields are not set',
-    text: 'Select at least 1 encryption level or disable encryption.',
-  },
-  [ValidationType.REQUIRED_FIELD_KMS]: {
-    variant: AlertVariant.danger,
-    title: 'Fill out the details in order to connect to key management system',
-    text: 'This is a required field.',
-  },
-  [ValidationType.NETWORK]: {
-    variant: AlertVariant.danger,
-    title: 'Public Network Attachment Definition cannot be empty',
-    text: 'To use Multus networking the public Network Attachment Definition must be selected.',
-  },
+export const VALIDATIONS = (type: keyof typeof ValidationType, t: TFunction): Validation => {
+  switch (type) {
+    case ValidationType.MINIMAL:
+      return {
+        variant: AlertVariant.warning,
+        title: (
+          <div className="ceph-minimal-deployment-alert__header">
+            {t('ceph-storage-plugin~A minimal cluster deployment will be performed.')}
+            <TechPreviewBadge />
+          </div>
+        ),
+        text: t(
+          'ceph-storage-plugin~The selected nodes do not match the OCS storage cluster requirement of an aggregated 30 CPUs and 72 GiB of RAM. If the selection cannot be modified a minimal cluster will be deployed.',
+        ),
+        actionLinkStep: CreateStepsSC.STORAGEANDNODES,
+        actionLinkText: t('ceph-storage-plugin~Back to nodes selection'),
+      };
+    case ValidationType.INTERNALSTORAGECLASS:
+      return {
+        variant: AlertVariant.danger,
+        title: t('ceph-storage-plugin~Select a storage class to continue'),
+        text: t(
+          'ceph-storage-plugin~This is a required field. The Storage Class will be used to request storage from the underlying infrastructure to create the backing persistent volumes that will be used to provide the OpenShift Container Storage (OCS) service.',
+        ),
+        link: '/k8s/cluster/storageclasses/~new/form',
+        linkText: t('ceph-storage-plugin~Create new storage class'),
+      };
+    case ValidationType.BAREMETALSTORAGECLASS:
+      return {
+        variant: AlertVariant.danger,
+        title: t('ceph-storage-plugin~Select a storage class to continue'),
+        text: t(
+          'ceph-storage-plugin~This is a required field. The Storage Class will be used to request storage from the underlying infrastructure to create the backing persistent volumes that will be used to provide the OpenShift Container Storage (OCS) service.',
+        ),
+      };
+    case ValidationType.ALLREQUIREDFIELDS:
+      return {
+        variant: AlertVariant.danger,
+        title: t('ceph-storage-plugin~All required fields are not set'),
+        text: t(
+          'ceph-storage-plugin~In order to create the storage cluster you must set the storage class select at least 3 nodes (preferably in 3 different zones) and meet the minimum or recommended requirement',
+        ),
+      };
+    case ValidationType.MINIMUMNODES:
+      return {
+        variant: AlertVariant.danger,
+        title: t('ceph-storage-plugin~Minimum Node Requirement'),
+        text: t(
+          'ceph-storage-plugin~The OCS Storage cluster require a minimum of 3 nodes for the initial deployment. Please choose a different storage class or go to create a new volume set that matches the minimum node requirement.',
+        ),
+        actionLinkText: t('ceph-storage-plugin~Create new volume set instance'),
+        actionLinkStep: CreateStepsSC.DISCOVER,
+      };
+    case ValidationType.ENCRYPTION:
+      return {
+        variant: AlertVariant.danger,
+        title: t('ceph-storage-plugin~All required fields are not set'),
+        text: t('ceph-storage-plugin~Select at least 1 encryption level or disable encryption.'),
+      };
+    case ValidationType.REQUIRED_FIELD_KMS:
+      return {
+        variant: AlertVariant.danger,
+        title: t(
+          'ceph-storage-plugin~Fill out the details in order to connect to key management system',
+        ),
+        text: t('ceph-storage-plugin~This is a required field.'),
+      };
+    case ValidationType.NETWORK:
+      return {
+        variant: AlertVariant.danger,
+        title: t('ceph-storage-plugin~Public Network Attachment Definition cannot be empty'),
+        text: t(
+          'ceph-storage-plugin~To use Multus networking the public Network Attachment Definition must be selected.',
+        ),
+      };
+    default:
+      return { title: '', text: '' };
+  }
 };
 
-export const ActionValidationMessage: React.FC<ValidationMessageProps> = ({
-  validation,
+export const ActionAlert: React.FC<ActionAlertProps> = ({
+  variant = AlertVariant.info,
+  title,
+  text,
+  actionLinkText,
+  actionLinkStep,
   className,
 }) => (
   <WizardContextConsumer>
-    {({ goToStepById }) => {
-      const {
-        variant = AlertVariant.info,
-        title,
-        text,
-        actionLinkText,
-        actionLinkStep,
-      } = validation;
-      return (
-        <Alert
-          className={cx('co-alert', className)}
-          variant={variant}
-          title={title}
-          isInline
-          actionLinks={
-            <AlertActionLink onClick={() => goToStepById(actionLinkStep)}>
-              {actionLinkText}
-            </AlertActionLink>
-          }
-        >
-          <p>{text}</p>
-        </Alert>
-      );
-    }}
+    {({ goToStepById }) => (
+      <Alert
+        className={cx('co-alert', className)}
+        variant={variant}
+        title={title}
+        isInline
+        actionLinks={
+          <AlertActionLink onClick={() => goToStepById(actionLinkStep)}>
+            {actionLinkText}
+          </AlertActionLink>
+        }
+      >
+        <p>{text}</p>
+      </Alert>
+    )}
   </WizardContextConsumer>
 );
 
+type ActionAlertProps = Validation & {
+  className?: string;
+};
+
 export const ValidationMessage: React.FC<ValidationMessageProps> = ({ className, validation }) => {
-  const { variant = AlertVariant.info, title, text, link, linkText } = validation;
-  return (
+  const { t } = useTranslation();
+  const {
+    variant = AlertVariant.info,
+    title,
+    text,
+    link,
+    linkText,
+    actionLinkStep,
+    actionLinkText,
+  } = VALIDATIONS(validation, t);
+  return actionLinkStep ? (
     <Alert className={cx('co-alert', className)} variant={variant} title={title} isInline>
       <p>{text}</p>
       {link && linkText && <Link to={link}>{linkText}</Link>}
     </Alert>
+  ) : (
+    <ActionAlert
+      title={title}
+      text={text}
+      variant={variant}
+      actionLinkText={actionLinkText}
+      actionLinkStep={actionLinkStep}
+    />
   );
 };
 
 type ValidationMessageProps = {
   className?: string;
-  validation: Validation;
+  validation: keyof typeof ValidationType;
 };
 
-export const getEncryptionLevel = (obj: EncryptionType) => {
+export const getEncryptionLevel = (obj: EncryptionType, t: TFunction) => {
   if (obj.clusterWide && obj.storageClass) {
-    return 'Cluster-Wide and Storage Class';
+    return t('ceph-storage-plugin~Cluster-Wide and Storage Class');
   }
   if (obj.clusterWide) {
-    return 'Cluster-Wide';
+    return t('ceph-storage-plugin~Cluster-Wide');
   }
-  return 'Storage Class';
+  return t('ceph-storage-plugin~Storage Class');
 };
 
+// Outdated
 export const OCSAlert = () => (
   <Alert
     className="co-alert"
@@ -163,6 +205,7 @@ export const OCSAlert = () => (
   />
 );
 
+// Outdated , use VALIDATIONS
 export const MinimalDeploymentAlert = () => (
   <Alert
     className="co-alert"
@@ -180,6 +223,7 @@ export const MinimalDeploymentAlert = () => (
   </Alert>
 );
 
+// Oudated, use SelectNodesText
 export const SelectNodesSection: React.FC<SelectNodesSectionProps> = ({
   table,
   customData,
@@ -210,36 +254,42 @@ export const SelectNodesSection: React.FC<SelectNodesSectionProps> = ({
   </>
 );
 
+// Outdated
 export const StorageClassSection: React.FC<StorageClassSectionProps> = ({
   handleStorageClass,
   filterSC,
   children,
-}) => (
-  <>
-    <h3 className="co-m-pane__heading co-m-pane__heading--baseline ceph-ocs-install__pane--margin">
-      <div className="co-m-pane__name">Capacity</div>
-    </h3>
-    <FormGroup
-      fieldId="select-sc"
-      label={
-        <>
-          Storage Class
-          <FieldLevelHelp>{storageClassTooltip}</FieldLevelHelp>
-        </>
-      }
-    >
-      <div className="ceph-ocs-install__ocs-service-capacity--dropdown">
-        <OCSStorageClassDropdown
-          onChange={handleStorageClass}
-          data-test-id="ocs-dropdown"
-          filter={filterSC}
-        />
-      </div>
-      {children}
-    </FormGroup>
-  </>
-);
+}) => {
+  const { t } = useTranslation();
 
+  return (
+    <>
+      <h3 className="co-m-pane__heading co-m-pane__heading--baseline ceph-ocs-install__pane--margin">
+        <div className="co-m-pane__name">Capacity</div>
+      </h3>
+      <FormGroup
+        fieldId="select-sc"
+        label={
+          <>
+            Storage Class
+            <FieldLevelHelp>{storageClassTooltip(t)}</FieldLevelHelp>
+          </>
+        }
+      >
+        <div className="ceph-ocs-install__ocs-service-capacity--dropdown">
+          <OCSStorageClassDropdown
+            onChange={handleStorageClass}
+            data-test-id="ocs-dropdown"
+            filter={filterSC}
+          />
+        </div>
+        {children}
+      </FormGroup>
+    </>
+  );
+};
+
+// Outdated
 export const EncryptSection: React.FC<EncryptSectionProps> = ({ onToggle, isChecked }) => (
   <>
     <div className="co-m-pane__heading--baseline ceph-ocs-install__pane--margin">

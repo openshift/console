@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 
 import {
@@ -39,8 +40,6 @@ import { PROGRESS_STATUS } from '../../../utils/storage-pool';
 import { SECOND } from '../../../../integration-tests/utils/consts';
 import {
   POOL_STATE,
-  MODAL_TITLE,
-  MODAL_DESC,
   POOL_PROGRESS,
   COMPRESSION_ON,
   ROOK_MODEL,
@@ -49,7 +48,9 @@ import {
 import './storage-pool-modal.scss';
 
 const PoolStatusComponent: React.FC<PoolStatusComponentProps> = ({ status, name, error = '' }) => {
-  const statusObj = PROGRESS_STATUS.find((state) => state.name === status);
+  const { t } = useTranslation();
+
+  const statusObj = PROGRESS_STATUS(t).find((state) => state.name === status);
   return (
     <>
       <EmptyState>
@@ -72,6 +73,8 @@ export const StoragePoolModal = withHandlePromise((props: StoragePoolModalProps)
     errorMessage,
     inProgress,
   } = props;
+  const { t } = useTranslation();
+
   const [newPoolName, setNewPoolName] = React.useState('sc-pool');
   const [isReplicaOpen, setReplicaOpen] = React.useState(false);
   const [replicaSize, setReplicaSize] = React.useState('');
@@ -126,7 +129,7 @@ export const StoragePoolModal = withHandlePromise((props: StoragePoolModalProps)
         data-test-id={replica}
         onClick={(e) => setReplicaSize(e.currentTarget.id)}
       >
-        {`${OCS_DEVICE_REPLICA[replica]} Replication`}
+        {t('ceph-storage-plugin~{{replica}} Replication', { replica: OCS_DEVICE_REPLICA[replica] })}
       </DropdownItem>
     );
   });
@@ -200,6 +203,12 @@ export const StoragePoolModal = withHandlePromise((props: StoragePoolModalProps)
     );
   };
 
+  const MODAL_DESC = t(
+    'ceph-storage-plugin~A Storage pool is a logical entity providing elastic capacity to applications and workloads. Pools provide a means of supporting policies for access data resilience and storage efficiency.',
+  );
+
+  const MODAL_TITLE = t('ceph-storage-plugin~Create New Storage Pool');
+
   if (poolStatus) {
     return (
       <div className="modal-content modal-content--no-inner-scroll" key="progress-modal">
@@ -217,7 +226,7 @@ export const StoragePoolModal = withHandlePromise((props: StoragePoolModalProps)
                 data-test-id="modal-cancel-action"
                 onClick={handleTryAgainButton}
               >
-                Try Again
+                {t('ceph-storage-plugin~Try Again')}
               </Button>
             )}
             <Button
@@ -227,7 +236,7 @@ export const StoragePoolModal = withHandlePromise((props: StoragePoolModalProps)
               id="confirm-action"
               onClick={handleFinishButton}
             >
-              Finish
+              {t('ceph-storage-plugin~Finish')}
             </Button>
           </ActionGroup>
         </ModalFooter>
@@ -248,15 +257,15 @@ export const StoragePoolModal = withHandlePromise((props: StoragePoolModalProps)
           <>
             <div className="form-group ceph-storage-pool__input">
               <label className="control-label co-required" htmlFor="pool-name">
-                Pool Name
+                {t('ceph-storage-plugin~Pool Name')}
               </label>
               <input
                 className="pf-c-form-control"
                 type="text"
                 onChange={(e) => setNewPoolName(e.currentTarget.value)}
                 value={newPoolName}
-                placeholder="my-storage-pool"
-                aria-describedby="pool-name-help"
+                placeholder={t('ceph-storage-plugin~my-storage-pool')}
+                aria-describedby={t('ceph-storage-plugin~pool-name-help')}
                 id="pool-name"
                 name="newPoolName"
                 required
@@ -264,7 +273,7 @@ export const StoragePoolModal = withHandlePromise((props: StoragePoolModalProps)
             </div>
             <div className="form-group ceph-storage-pool__input">
               <label className="control-label co-required" htmlFor="pool-replica-size">
-                Data Protection Policy
+                {t('ceph-storage-plugin~Data Protection Policy')}
               </label>
               <Dropdown
                 className="dropdown dropdown--full-width"
@@ -275,8 +284,10 @@ export const StoragePoolModal = withHandlePromise((props: StoragePoolModalProps)
                     toggleIndicator={CaretDownIcon}
                   >
                     {replicaSize
-                      ? `${OCS_DEVICE_REPLICA[replicaSize]} Replication`
-                      : 'Select Replication'}
+                      ? t('ceph-storage-plugin~{{replica}} Replication', {
+                          replica: OCS_DEVICE_REPLICA[replicaSize],
+                        })
+                      : t('ceph-storage-plugin~Select Replication')}
                   </DropdownToggle>
                 }
                 isOpen={isReplicaOpen}
@@ -287,7 +298,7 @@ export const StoragePoolModal = withHandlePromise((props: StoragePoolModalProps)
             </div>
             <div className="form-group ceph-storage-pool__input">
               <label className="control-label co-required" htmlFor="compression-check">
-                Compression
+                {t('ceph-storage-plugin~Compression')}
               </label>
               <div className="checkbox">
                 <label>
@@ -297,7 +308,7 @@ export const StoragePoolModal = withHandlePromise((props: StoragePoolModalProps)
                     checked={isCompressed}
                     name="compression-check"
                   />
-                  Enable Compression
+                  {t('ceph-storage-plugin~Enable Compression')}
                 </label>
               </div>
             </div>
@@ -332,7 +343,7 @@ export const StoragePoolModal = withHandlePromise((props: StoragePoolModalProps)
       </ModalBody>
       <ModalSubmitFooter
         inProgress={inProgress}
-        submitText="Create"
+        submitText={t('ceph-storage-plugin~Create')}
         cancel={cancel}
         submitDisabled={!newPoolName || !replicaSize}
       />

@@ -1,6 +1,8 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
-import { IRow } from '@patternfly/react-table';
+import { IRow, sortable } from '@patternfly/react-table';
+import * as classNames from 'classnames';
 import {
   getName,
   getNodeRoles,
@@ -11,9 +13,16 @@ import { humanizeCpuCores, ResourceLink } from '@console/internal/components/uti
 import { Table } from '@console/internal/components/factory';
 import { NodeKind } from '@console/internal/module/k8s';
 import { getConvertedUnits } from '../../../utils/install';
-import { getColumns } from '../node-list';
 import { GetRows, NodeTableProps } from '../types';
 import '../ocs-install.scss';
+
+const tableColumnClasses = [
+  classNames('pf-u-w-33-on-md', 'pf-u-w-50-on-sm'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-u-w-inherit-on-lg'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg', 'pf-u-w-inherit-on-lg'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-md', 'pf-u-w-inherit-on-md'),
+  classNames('pf-u-w-inherit'),
+];
 
 const getRows: GetRows = ({ componentProps }) => {
   const { data } = componentProps;
@@ -51,6 +60,8 @@ const getRows: GetRows = ({ componentProps }) => {
 };
 
 const AttachedDevicesNodeTable: React.FC<NodeTableProps> = (props) => {
+  const { t } = useTranslation();
+
   const { data, customData } = props;
   const { filteredNodes, nodes = [], setNodes } = customData;
   const tableData: NodeKind[] = data.filter(
@@ -65,11 +76,36 @@ const AttachedDevicesNodeTable: React.FC<NodeTableProps> = (props) => {
     }
   }, [tableData, setNodes, nodes, filteredNodes]);
 
+  const getColumns = () => [
+    {
+      title: t('ceph-storage-plugin~Name'),
+      sortField: 'metadata.name',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[0] },
+    },
+    {
+      title: t('ceph-storage-plugin~Role'),
+      props: { className: tableColumnClasses[1] },
+    },
+    {
+      title: t('ceph-storage-plugin~CPU'),
+      props: { className: tableColumnClasses[2] },
+    },
+    {
+      title: t('ceph-storage-plugin~Memory'),
+      props: { className: tableColumnClasses[3] },
+    },
+    {
+      title: t('ceph-storage-plugin~Zone'),
+      props: { className: tableColumnClasses[4] },
+    },
+  ];
+
   return (
     <div className="ceph-ocs-install__select-nodes-table">
       <Table
         {...props}
-        aria-label="Node Table"
+        aria-label={t('ceph-storage-plugin~Node Table')}
         data-test-id="attached-devices-nodes-table"
         data={tableData}
         Rows={getRows}

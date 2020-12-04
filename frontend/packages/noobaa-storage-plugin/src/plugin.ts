@@ -230,7 +230,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       id: 'objectbuckets',
       section: 'storage',
       componentProps: {
-        name: 'Object Buckets',
+        name: i18next.t('noobaa-storage-plugin~Object Buckets'),
         resource: models.NooBaaObjectBucketModel.plural,
       },
     },
@@ -264,7 +264,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       id: 'objectbucketclaims',
       section: 'storage',
       componentProps: {
-        name: 'Object Bucket Claims',
+        name: i18next.t('noobaa-storage-plugin~Object Bucket Claims'),
         resource: models.NooBaaObjectBucketClaimModel.plural,
       },
     },
@@ -320,7 +320,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'ClusterServiceVersion/Action',
     properties: {
       kind: models.NooBaaBucketClassModel.kind,
-      label: 'Edit Bucket Class Resources',
+      label: i18next.t('noobaa-storage-plugin~Edit Bucket Class Resources'),
       apiGroup: models.NooBaaBucketClassModel.apiGroup,
       callback: (kind, obj) => () =>
         import('./components/bucket-class/modals/edit-backingstore-modal')

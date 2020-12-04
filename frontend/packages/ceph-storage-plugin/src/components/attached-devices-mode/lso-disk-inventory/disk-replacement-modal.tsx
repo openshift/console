@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Alert } from '@patternfly/react-core';
 import {
@@ -73,6 +74,8 @@ const instantiateTemplate = async (osdId: string, diskName: string) => {
 };
 
 const DiskReplacementAction = (props: DiskReplacementActionProps) => {
+  const { t } = useTranslation();
+
   const { diskName, alertsMap, replacementMap, isRebalancing, dispatch, cancel, close } = props;
 
   const [inProgress, setProgress] = React.useState(false);
@@ -88,7 +91,12 @@ const DiskReplacementAction = (props: DiskReplacementActionProps) => {
         replacementStatus === Status.PreparingToReplace ||
         replacementStatus === Status.ReplacementReady
       )
-        throw new Error(`replacement disallowed: disk "${diskName}" is "${replacementStatus}"`);
+        throw new Error(
+          t(
+            'ceph-storage-plugin~replacement disallowed: disk {{diskName}} is {{replacementStatus}}',
+            { diskName, replacementStatus },
+          ),
+        );
       else {
         instantiateTemplate(osd, diskName);
         dispatch({
@@ -106,29 +114,31 @@ const DiskReplacementAction = (props: DiskReplacementActionProps) => {
 
   return (
     <form onSubmit={handleSubmit} name="form" className="modal-content">
-      <ModalTitle>Disk Replacement</ModalTitle>
+      <ModalTitle>{t('ceph-storage-plugin~Disk Replacement')}</ModalTitle>
       <ModalBody>
-        <p>This action will start preparing the disk for replacement.</p>
+        <p>{t('ceph-storage-plugin~This action will start preparing the disk for replacement.')}</p>
         {isRebalancing && alertsMap[diskName].status !== Status.Offline && (
           <Alert
             variant="info"
             className="co-alert"
-            title="Data rebalancing is in progress"
+            title={t('ceph-storage-plugin~Data rebalancing is in progress')}
             isInline
           >
             <Link onClick={close} to={DASHBOARD_LINK}>
-              See data resiliency status
+              {t('ceph-storage-plugin~See data resiliency status')}
             </Link>
           </Alert>
         )}
         <p>
-          Are you sure you want to replace <strong>{diskName}</strong> ?
+          <Trans t={t} ns="ceph-storage-plugin">
+            Are you sure you want to replace <strong>{{ diskName }}</strong> ?
+          </Trans>
         </p>
       </ModalBody>
       <ModalSubmitFooter
         errorMessage={errorMessage}
         inProgress={inProgress}
-        submitText="Replace"
+        submitText={t('ceph-storage-plugin~Replace')}
         cancel={cancel}
       />
     </form>

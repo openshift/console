@@ -272,7 +272,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'ClusterServiceVersion/Action',
     properties: {
       kind: 'StorageCluster',
-      label: 'Add Capacity',
+      label: i18next.t('ceph-storage-plugin~Add Capacity'),
       apiGroup: models.OCSServiceModel.apiGroup,
       callback: (kind, ocsConfig) => () => {
         const clusterObject = { ocsConfig };
@@ -411,7 +411,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       model: NodeModel,
       page: {
         href: 'disks',
-        name: 'Disks',
+        name: i18next.t('ceph-storage-plugin~Disks'),
       },
       loader: () =>
         import(

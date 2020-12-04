@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   createModalLauncher,
   ModalComponentProps,
@@ -9,13 +10,16 @@ import CreateBackingStoreForm from './create-bs';
 import './create-bs.scss';
 
 const CreateBackingStoreFormModal: React.FC<CreateBackingStoreFormModal> = (props) => {
+  const { t } = useTranslation();
+
   return (
     <div className="nb-create-bs__modal">
-      <ModalTitle>Create new Backing Store</ModalTitle>
+      <ModalTitle>{t('noobaa-storage-plugin~Create new Backing Store')}</ModalTitle>
       <ModalBody>
         <p>
-          Backing Store represents a storage target to be used as the underlying storage for the
-          data in MCG buckets.
+          {t(
+            'noobaa-storage-plugin~Backing Store represents a storage target to be used as the underlying storage for the data in MCG buckets.',
+          )}
         </p>
         <CreateBackingStoreForm {...props} />
       </ModalBody>

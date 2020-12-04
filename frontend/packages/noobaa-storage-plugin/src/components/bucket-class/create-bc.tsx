@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import { RouteComponentProps } from 'react-router';
 import { Title, Wizard } from '@patternfly/react-core';
@@ -18,8 +19,8 @@ import PlacementPolicyPage from './wizard-pages/placement-policy-page';
 import BackingStorePage from './wizard-pages/backingstore-page';
 import ReviewPage from './wizard-pages/review-page';
 import { initialState, reducer } from './state';
-import './create-bc.scss';
 import { PlacementPolicy } from '../../types';
+import './create-bc.scss';
 
 enum CreateStepsBC {
   GENERAL = 'GENERAL',
@@ -29,6 +30,7 @@ enum CreateStepsBC {
 }
 
 const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
+  const { t } = useTranslation();
   const [state, dispatch] = React.useReducer(reducer, initialState);
   const { ns, appName } = match.params;
   const [clusterServiceVersion, setClusterServiceVersion] = React.useState(null);
@@ -102,27 +104,27 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
   const steps = [
     {
       id: CreateStepsBC.GENERAL,
-      name: 'General',
+      name: t('noobaa-storage-plugin~General'),
       component: <GeneralPage dispatch={dispatch} state={state} />,
       enableNext: !!state.bucketClassName.trim().length,
     },
     {
       id: CreateStepsBC.PLACEMENT,
-      name: 'Placement Policy',
+      name: t('noobaa-storage-plugin~Placement Policy'),
       component: <PlacementPolicyPage state={state} dispatch={dispatch} />,
       enableNext: !!state.tier1Policy,
     },
     {
       id: CreateStepsBC.BACKINGSTORE,
-      name: 'Backing Store',
+      name: t('noobaa-storage-plugin~Backing Store'),
       component: <BackingStorePage state={state} dispatcher={dispatch} namespace={ns} />,
       enableNext: backingStoreNextConditions(),
     },
     {
       id: CreateStepsBC.REVIEW,
-      name: 'Review',
+      name: t('noobaa-storage-plugin~Review'),
       component: <ReviewPage state={state} />,
-      nextButtonText: 'Create Bucket Class',
+      nextButtonText: t('noobaa-storage-plugin~Create Bucket Class'),
       enableNext: creationConditionsSatisfied(),
     },
   ];
@@ -141,17 +143,21 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
                 ),
                 path: resourcePathFromModel(ClusterServiceVersionModel, appName, ns),
               },
-              { name: `Create ${NooBaaBucketClassModel.label}`, path: match.url },
+              {
+                name: t('noobaa-storage-plugin~Create Bucket Class'),
+                path: match.url,
+              },
             ]}
           />
         </div>
         <div className="nb-create-bc-header-title">
           <Title size="2xl" headingLevel="h1" className="nb-create-bc-header-title__main">
-            Create new Bucket Class
+            {t('noobaa-storage-plugin~Create new Bucket Class')}
           </Title>
           <p className="nb-create-bc-header-title__info">
-            Bucket Class is a CRD representing a class for buckets that defines tiering policies and
-            data placements for an OBC.
+            {t(
+              'noobaa-storage-plugin~Bucket Class is a CRD representing a class for buckets that defines tiering policies and data placements for an OBC.',
+            )}
           </p>
         </div>
       </div>

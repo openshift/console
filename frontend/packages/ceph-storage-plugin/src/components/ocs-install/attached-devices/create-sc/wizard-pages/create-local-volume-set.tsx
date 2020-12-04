@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Form, Alert, Button, pluralize } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
+import { Form, Alert, Button } from '@patternfly/react-core';
 import { Modal } from '@console/shared';
 import { k8sCreate } from '@console/internal/module/k8s';
 import { LocalVolumeSetModel } from '@console/local-storage-operator-plugin/src/models';
@@ -10,11 +11,7 @@ import {
 import { getLocalVolumeSetRequestData } from '@console/local-storage-operator-plugin/src/components/local-volume-set/local-volume-set-request-data';
 import { State, Action } from '../state';
 import { DiscoveryDonutChart } from './donut-chart';
-import {
-  MINIMUM_NODES,
-  diskModeDropdownItems,
-  allNodesSelectorTxt,
-} from '../../../../../constants';
+import { MINIMUM_NODES, diskModeDropdownItems } from '../../../../../constants';
 import '../../attached-devices.scss';
 import { RequestErrors } from '../../../install-wizard/review-and-create';
 
@@ -47,8 +44,15 @@ export const CreateLocalVolumeSet: React.FC<CreateLocalVolumeSetProps> = ({
   dispatch,
   ns,
 }) => {
+  const { t } = useTranslation();
+
   const [inProgress, setInProgress] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');
+
+  const allNodesSelectorTxt = t(
+    'ceph-storage-plugin~Selecting all nodes will use the available disks that match the selected filters on all nodes selected on previous step.',
+  );
+
   return (
     <>
       <LocalVolumeSetHeader />
@@ -74,12 +78,13 @@ export const CreateLocalVolumeSet: React.FC<CreateLocalVolumeSetProps> = ({
         <Alert
           className="co-alert ceph-ocs-install__wizard-alert"
           variant="danger"
-          title="Minimum Node Requirement"
+          title={t('ceph-storage-plugin~Minimum Node Requirement')}
           isInline
         >
-          The OCS storage cluster require a minimum of 3 nodes for the intial deployment. Only{' '}
-          {pluralize(state.filteredNodes.length, 'node')} match to the selected filters. Please
-          adjust the filters to include more nodes.
+          {t(
+            'ceph-storage-plugin~The OCS storage cluster require a minimum of 3 nodes for the intial deployment. Only {{nodes}} node match to the selected filters. Please adjust the filters to include more nodes.',
+            { nodes: state.filteredNodes.length },
+          )}
         </Alert>
       )}
       <RequestErrors errorMessage={errorMessage} inProgress={inProgress} />
@@ -94,6 +99,8 @@ type CreateLocalVolumeSetProps = {
 };
 
 const ConfirmationModal = ({ state, dispatch, setInProgress, setErrorMessage, ns }) => {
+  const { t } = useTranslation();
+
   const makeLVSCall = () => {
     dispatch({ type: 'setShowConfirmModal', value: false });
     makeLocalVolumeSetCall(state, dispatch, setInProgress, setErrorMessage, ns);
@@ -105,22 +112,22 @@ const ConfirmationModal = ({ state, dispatch, setInProgress, setErrorMessage, ns
 
   return (
     <Modal
-      title="Create Storage Class"
+      title={t('ceph-storage-plugin~Create Storage Class')}
       isOpen={state.showConfirmModal}
       onClose={cancel}
       variant="small"
       actions={[
         <Button key="confirm" variant="primary" onClick={makeLVSCall}>
-          Yes
+          {t('ceph-storage-plugin~Yes')}
         </Button>,
         <Button key="cancel" variant="link" onClick={cancel}>
-          Cancel
+          {t('ceph-storage-plugin~Cancel')}
         </Button>,
       ]}
     >
-      {
-        "After the volume set and storage class are created you won't be able to go back to this step. Are you sure you want to continue?"
-      }
+      {t(
+        'ceph-storage-plugin~After the volume set and storage class are created you wont be able to go back to this step. Are you sure you want to continue?',
+      )}
     </Modal>
   );
 };

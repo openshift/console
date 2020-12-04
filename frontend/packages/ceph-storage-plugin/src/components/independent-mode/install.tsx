@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import { match } from 'react-router';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
@@ -50,6 +51,8 @@ const CreateExternalCluster = withHandlePromise((props: CreateExternalClusterPro
     minRequiredKeys: { configMaps, secrets: encodedKeys, storageClasses },
     downloadFile,
   } = props;
+  const { t } = useTranslation();
+
   const [clusterServiceVersion, setClusterServiceVersion] = React.useState(null);
   const [fileData, setFileData] = React.useState('');
   const [dataError, setDataError] = React.useState('');
@@ -57,6 +60,8 @@ const CreateExternalCluster = withHandlePromise((props: CreateExternalClusterPro
   const dispatch = useDispatch();
 
   const plainKeys = _.concat(configMaps, storageClasses);
+
+  const SCRIPT_NAME = 'ceph-external-cluster-details-exporter.py';
 
   React.useEffect(() => {
     // eslint-disable-next-line promise/catch-or-return
@@ -77,7 +82,7 @@ const CreateExternalCluster = withHandlePromise((props: CreateExternalClusterPro
         setDataError(checkError(data, plainKeys, encodedKeys, ipFamily));
         setFileData(data);
       } else {
-        setDataError('The uploaded file is not a valid JSON file');
+        setDataError(t('ceph-storage-plugin~The uploaded file is not a valid JSON file'));
       }
     };
     reader.readAsText(file);
@@ -149,11 +154,15 @@ const CreateExternalCluster = withHandlePromise((props: CreateExternalClusterPro
       <div className="im-install-page co-m-pane__body co-m-pane__form">
         <div className="im-install-page__sub-header">
           <Title size="lg" headingLevel="h5" className="nb-bs-page-title__main">
-            <div className="im-install-page-sub-header__title">Connect to external cluster</div>
+            <div className="im-install-page-sub-header__title">
+              {t('ceph-storage-plugin~Connect to external cluster')}
+            </div>
           </Title>
           <p className="im--light im-install-page--margin-top">
-            Download <code>ceph-external-cluster-details-exporter.py</code> script and run on the
-            RHCS cluster, then upload the results(JSON) in the External cluster metadata field.{' '}
+            <Trans t={t} ns="ceph-storage-plugin">
+              Download <code>{{ SCRIPT_NAME }}</code> script and run on the RHCS cluster, then
+              upload the results(JSON) in the External cluster metadata field.
+            </Trans>{' '}
             {downloadFile && (
               <a
                 id="downloadAnchorElem"
@@ -163,28 +172,32 @@ const CreateExternalCluster = withHandlePromise((props: CreateExternalClusterPro
                 rel="noopener noreferrer"
                 className=""
               >
-                Download Script
+                {t('ceph-storage-plugin~Download Script')}
               </a>
             )}
           </p>
           <Alert
             className="co-alert"
             variant="info"
-            title="A bucket will be created to provide the OCS Service."
-            aria-label="Bucket created for OCS Service"
+            title={t('ceph-storage-plugin~A bucket will be created to provide the OCS Service.')}
+            aria-label={t('ceph-storage-plugin~Bucket created for OCS Service')}
             isInline
           />
         </div>
         <Form
           className="im-install-page__form"
           onSubmit={onSubmit}
-          aria-label="Create External Storage Cluster"
+          aria-label={t('ceph-storage-plugin~Create External Storage Cluster')}
         >
-          <FormGroup label="External cluster metadata" isRequired fieldId="cluster-metadata">
+          <FormGroup
+            label={t('ceph-storage-plugin~External cluster metadata')}
+            isRequired
+            fieldId="cluster-metadata"
+          >
             <InputGroup>
               <TextInput
-                aria-label="Upload JSON File"
-                value="Upload Credentials file"
+                aria-label={t('ceph-storage-plugin~Upload JSON File')}
+                value={t('ceph-storage-plugin~Upload Credentials file') as string}
                 className="im-install-page__input-box"
                 isDisabled
               />
@@ -196,7 +209,7 @@ const CreateExternalCluster = withHandlePromise((props: CreateExternalClusterPro
               value={prettifyJSON(fileData)}
               className="im-install-page__text-box"
               validated={!dataError ? 'default' : 'error'}
-              aria-label="JSON data"
+              aria-label={t('ceph-storage-plugin~JSON data')}
               disabled
             />
           </FormGroup>
@@ -206,12 +219,16 @@ const CreateExternalCluster = withHandlePromise((props: CreateExternalClusterPro
                 type="submit"
                 variant="primary"
                 isDisabled={_.isEmpty(fileData) || !_.isEmpty(dataError)}
-                aria-label="Create Button"
+                aria-label={t('ceph-storage-plugin~Create Button')}
               >
-                Create
+                {t('ceph-storage-plugin~Create')}
               </Button>
-              <Button onClick={onCancel} variant="secondary" aria-label="Cancel">
-                Cancel
+              <Button
+                onClick={onCancel}
+                variant="secondary"
+                aria-label={t('ceph-storage-plugin~Cancel')}
+              >
+                {t('ceph-storage-plugin~Cancel')}
               </Button>
             </ActionGroup>
           </ButtonBar>

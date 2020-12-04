@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import * as cx from 'classnames';
 import { Table, TableRow, TableData, RowFunction } from '@console/internal/components/factory';
 import { sortable, SortByDirection } from '@patternfly/react-table';
@@ -14,41 +15,6 @@ const tableColumnClasses = [
   cx('pf-m-hidden', 'pf-m-visible-on-2xl'),
   cx('pf-m-hidden', 'pf-m-visible-on-lg'),
 ];
-
-export const DiskHeader = () => {
-  return [
-    {
-      title: 'Name',
-      sortField: 'path',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: 'Node',
-      sortField: 'node',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-    },
-    {
-      title: 'Type',
-      sortField: 'type',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: 'Model',
-      sortField: 'model',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
-    },
-    {
-      title: 'Capacity',
-      sortField: 'size',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[4] },
-    },
-  ];
-};
 
 const DiskRow: RowFunction<Discoveries> = ({ obj, index, key, style }) => {
   return (
@@ -67,19 +33,55 @@ const DiskRow: RowFunction<Discoveries> = ({ obj, index, key, style }) => {
 };
 
 export const DiskListModal: React.FC<DiskListModalProps> = ({ state, dispatch }) => {
+  const { t } = useTranslation();
+
+  const DiskHeader = () => {
+    return [
+      {
+        title: t('ceph-storage-plugin~Name'),
+        sortField: 'path',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[0] },
+      },
+      {
+        title: t('ceph-storage-plugin~Node'),
+        sortField: 'node',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[1] },
+      },
+      {
+        title: t('ceph-storage-plugin~Type'),
+        sortField: 'type',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[2] },
+      },
+      {
+        title: t('ceph-storage-plugin~Model'),
+        sortField: 'model',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[3] },
+      },
+      {
+        title: t('ceph-storage-plugin~Capacity'),
+        sortField: 'size',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[4] },
+      },
+    ];
+  };
   const cancel = () => {
     dispatch({ type: 'setShowDiskList', value: false });
   };
 
   return (
     <Modal
-      title="Selected Disks"
+      title={t('ceph-storage-plugin~Selected Disks')}
       isOpen={state.showDiskList}
       onClose={cancel}
       className="ceph-ocs-install__filtered-modal"
       actions={[
         <Button key="confirm" variant="primary" onClick={cancel}>
-          Close
+          {t('ceph-storage-plugin~Close')}
         </Button>,
       ]}
     >
@@ -87,7 +89,7 @@ export const DiskListModal: React.FC<DiskListModalProps> = ({ state, dispatch })
         data={state.filteredDiscoveries}
         defaultSortField="node"
         defaultSortOrder={SortByDirection.asc}
-        aria-label="Disk List"
+        aria-label={t('ceph-storage-plugin~Disk List')}
         Header={DiskHeader}
         Row={DiskRow}
         loaded={!!state.filteredDiscoveries}

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet';
 import { match } from 'react-router';
 import { Link } from 'react-router-dom';
@@ -28,6 +29,7 @@ import { OCS_NS, NB_PROVISIONER } from '../../constants';
 import './create-obc.scss';
 
 export const CreateOBCPage: React.FC<CreateOBCPageProps> = (props) => {
+  const { t } = useTranslation();
   const [state, dispatch] = React.useReducer(commonReducer, defaultState);
 
   const namespace = props?.match?.params?.ns;
@@ -82,16 +84,18 @@ export const CreateOBCPage: React.FC<CreateOBCPageProps> = (props) => {
   return (
     <div className="co-m-pane__body co-m-pane__form">
       <Helmet>
-        <title>Create Object Bucket Claim</title>
+        <title>{t('noobaa-storage-plugin~Create Object Bucket Claim')}</title>
       </Helmet>
       <h1 className="co-m-pane__heading co-m-pane__heading--baseline">
-        <div className="co-m-pane__name">Create Object Bucket Claim</div>
+        <div className="co-m-pane__name">
+          {t('noobaa-storage-plugin~Create Object Bucket Claim')}
+        </div>
         <div className="co-m-pane__heading-link">
           <Link
             to={`${resourcePathFromModel(NooBaaObjectBucketClaimModel, null, namespace)}/~new`}
             replace
           >
-            Edit YAML
+            {t('noobaa-storage-plugin~Edit YAML')}
           </Link>
         </div>
       </h1>
@@ -99,21 +103,21 @@ export const CreateOBCPage: React.FC<CreateOBCPageProps> = (props) => {
         <div>
           <div className="form-group">
             <label className="control-label" htmlFor="obc-name">
-              Object Bucket Claim Name
+              {t('noobaa-storage-plugin~ Object Bucket Claim Name')}
             </label>
             <div className="form-group">
               <input
                 className="pf-c-form-control"
                 type="text"
                 onChange={(e) => dispatch({ type: 'setName', name: e.currentTarget.value })}
-                placeholder="my-object-bucket"
+                placeholder={t('noobaa-storage-plugin~my-object-bucket')}
                 aria-describedby="obc-name-help"
                 id="obc-name"
                 name="obcName"
                 pattern="[a-z0-9](?:[-a-z0-9]*[a-z0-9])?"
               />
               <p className="help-block" id="obc-name-help">
-                If not provided, a generic name will be generated.
+                {t('noobaa-storage-plugin~If not provided a generic name will be generated.')}
               </p>
             </div>
             <div className="form-group">
@@ -126,13 +130,15 @@ export const CreateOBCPage: React.FC<CreateOBCPageProps> = (props) => {
                 id="sc-dropdown"
               />
               <p className="help-block">
-                Defines the object-store service and the bucket provisioner.
+                {t(
+                  'noobaa-storage-plugin~Defines the object-store service and the bucket provisioner.',
+                )}
               </p>
             </div>
             {isNoobaa && (
               <div className="form-group">
                 <label className="control-label co-required" htmlFor="obc-name">
-                  Bucket Class
+                  {t('noobaa-storage-plugin~Bucket Class')}
                 </label>
                 <Firehose
                   resources={[
@@ -148,7 +154,7 @@ export const CreateOBCPage: React.FC<CreateOBCPageProps> = (props) => {
                     onChange={(sc) => dispatch({ type: 'setBucketClass', name: sc })}
                     dataSelector={['metadata', 'name']}
                     selectedKey={state.bucketClass}
-                    placeholder="Select Bucket Class"
+                    placeholder={t('noobaa-storage-plugin~Select Bucket Class')}
                     dropDownClassName="dropdown--full-width"
                     className="nb-create-obc__bc-dropdown"
                     id="bc-dropdown"
@@ -161,10 +167,10 @@ export const CreateOBCPage: React.FC<CreateOBCPageProps> = (props) => {
         <ButtonBar errorMessage={state.error} inProgress={state.progress}>
           <ActionGroup className="pf-c-form">
             <Button type="submit" variant="primary">
-              Create
+              {t('noobaa-storage-plugin~Create')}
             </Button>
             <Button onClick={history.goBack} type="button" variant="secondary">
-              Cancel
+              {t('noobaa-storage-plugin~Cancel')}
             </Button>
           </ActionGroup>
         </ButtonBar>

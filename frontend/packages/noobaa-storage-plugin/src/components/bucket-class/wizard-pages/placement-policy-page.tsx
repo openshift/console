@@ -1,10 +1,13 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Alert, AlertActionCloseButton, Button, Radio, Title, Form } from '@patternfly/react-core';
 import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { Action, State } from '../state';
 import { PlacementPolicy } from '../../../types';
 
 const PlacementPolicyPage: React.FC<PlacementPolicyPageProps> = ({ dispatch, state }) => {
+  const { t } = useTranslation();
+
   const { tier1Policy, tier2Policy } = state;
   const [showHelp, setShowHelp] = React.useState(true);
   const showTier2 = !!tier2Policy;
@@ -23,54 +26,61 @@ const PlacementPolicyPage: React.FC<PlacementPolicyPageProps> = ({ dispatch, sta
         <Alert
           isInline
           variant="info"
-          title="What is a Placement Policy?"
+          title={t('noobaa-storage-plugin~What is a Placement Policy?')}
           className="nb-create-bc-step-page__info"
           actionClose={<AlertActionCloseButton onClose={() => setShowHelp(false)} />}
         >
           <p>
-            Data placement capabilities are built as a multi-layer structure, here are the layers
-            bottom-up:
+            {t(
+              'noobaa-storage-plugin~Data placement capabilities are built as a multi-layer structure here are the layers bottom-up:',
+            )}
           </p>
           <ul>
             <li>
-              Spread Tier - list of backing-stores, aggregates the storage of multiple stores.
+              {t(
+                'noobaa-storage-plugin~Spread Tier - list of backing stores aggregates the storage of multiple stores.',
+              )}
             </li>
             <li>
-              Mirroring Tier - list of spread-layers, async-mirroring to all mirrors, with locality
-              optimization (will allocate on the closest region to the source endpoint), mirroring
-              requires at least two backing-stores.
+              {t(
+                'noobaa-storage-plugin~Mirroring Tier - list of spread-layers async-mirroring to all mirrors with locality optimization (will allocate on the closest region to the source endpoint) mirroring requires at least two backing stores.',
+              )}
             </li>
           </ul>
-          The number of replicas can be configured via the NooBaa management console.
+          {t(
+            'noobaa-storage-plugin~The number of replicas can be configured via the NooBaa management console.',
+          )}
         </Alert>
       )}
       <Form className="nb-create-bc-step-page-form">
         <Title size="xl" headingLevel="h2" className="nb-bc-step-page-form__title">
-          Tier 1 - Policy Type
+          {t('noobaa-storage-plugin~Tier 1 - Policy Type')}
         </Title>
         <Radio
           value={PlacementPolicy.Spread}
           isChecked={tier1Policy === PlacementPolicy.Spread}
           onChange={onChange}
           id="radio-1"
-          label={PlacementPolicy.Spread}
+          label={t('noobaa-storage-plugin~Spread')}
           name="placement-policy-1"
         />
         <p className="nb-create-bc-step-page-form__element--light-text">
-          Spreading the data across the chosen resources. By default, a replica of one copy is used
-          and does not include failure tolerance in case of resource failure.
+          {t(
+            'noobaa-storage-plugin~Spreading the data across the chosen resources. By default a replica of one copy is used and does not include failure tolerance in case of resource failure.',
+          )}
         </p>
         <Radio
           value={PlacementPolicy.Mirror}
           isChecked={tier1Policy === PlacementPolicy.Mirror}
           onChange={onChange}
           id="radio-2"
-          label={PlacementPolicy.Mirror}
+          label={t('noobaa-storage-plugin~Mirror')}
           name="placement-policy-1"
         />
         <p className="nb-create-bc-step-page-form__element--light-text">
-          Full duplication of the data in each chosen resource, By default, a replica of one copy
-          per location is used. includes failure tolerance in case of resource failure.
+          {t(
+            'noobaa-storage-plugin~Full duplication of the data in each chosen resource By default a replica of one copy per location is used. includes failure tolerance in case of resource failure.',
+          )}
         </p>
       </Form>
       {!showTier2 && (
@@ -83,20 +93,20 @@ const PlacementPolicyPage: React.FC<PlacementPolicyPageProps> = ({ dispatch, sta
           isInline
           data-testid="add-tier-btn"
         >
-          Add Tier
+          {t('noobaa-storage-plugin~Add Tier')}
         </Button>
       )}
       {showTier2 && (
         <Form className="nb-create-bc-step-page-form">
           <Title headingLevel="h2" size="xl" className="nb-bc-step-page-form__title">
-            Tier 2 - Policy type
+            {t('noobaa-storage-plugin~Tier 2 - Policy type')}
             <Button
               variant="link"
               icon={<MinusCircleIcon />}
               onClick={() => dispatch({ type: 'setPlacementPolicyTier2', value: null })}
               isInline
             >
-              Remove Tier
+              {t('noobaa-storage-plugin~Remove Tier')}
             </Button>
           </Title>
           <Radio
@@ -104,24 +114,26 @@ const PlacementPolicyPage: React.FC<PlacementPolicyPageProps> = ({ dispatch, sta
             isChecked={tier2Policy === PlacementPolicy.Spread}
             onChange={onChange}
             id="radio-3"
-            label={PlacementPolicy.Spread}
+            label={t('noobaa-storage-plugin~Spread')}
             name="placement-policy-2"
           />
           <p className="nb-create-bc-step-page-form__element--light-text">
-            Spreading the data across the chosen resources does not includes failure tolerance in
-            case of resource failure.
+            {t(
+              'noobaa-storage-plugin~Spreading the data across the chosen resources does not includes failure tolerance in case of resource failure.',
+            )}
           </p>
           <Radio
             value={PlacementPolicy.Mirror}
             isChecked={tier2Policy === PlacementPolicy.Mirror}
             onChange={onChange}
             id="radio-4"
-            label={PlacementPolicy.Mirror}
+            label={t('noobaa-storage-plugin~Mirror')}
             name="placement-policy-2"
           />
           <p className="nb-create-bc-step-page-form__element--light-text">
-            Full duplication of the data in each chosen resource, includes failure tolerance in
-            cause of resource failure.
+            {t(
+              'noobaa-storage-plugin~Full duplication of the data in each chosen resource includes failure tolerance in cause of resource failure.',
+            )}
           </p>
         </Form>
       )}

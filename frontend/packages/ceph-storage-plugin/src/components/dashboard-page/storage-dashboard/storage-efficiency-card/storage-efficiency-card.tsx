@@ -79,7 +79,7 @@ const StorageEfficiencyCard: React.FC<DashboardItemProps> = ({
     error: !!poolCapacityRatioResultError || !ratio,
     title: t('ceph-storage-plugin~Compression ratio'),
     infoText: t(
-      'ceph-storage-plugin~ The ratio of the data physical stored (after compression) compared to the size of the data received from the client.',
+      'ceph-storage-plugin~The ratio of the data physical stored (after compression) compared to the size of the data received from the client.',
     ),
     getStats: compressionStats,
   };

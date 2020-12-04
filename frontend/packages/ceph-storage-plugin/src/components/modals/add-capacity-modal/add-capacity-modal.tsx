@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 import * as classNames from 'classnames';
 import { FieldLevelHelp, humanizeBinaryBytes } from '@console/internal/components/utils/index';
 import {
@@ -29,6 +30,8 @@ import './_add-capacity-modal.scss';
 const getProvisionedCapacity = (value: number) => (value % 1 ? (value * 3).toFixed(2) : value * 3);
 
 export const AddCapacityModal = (props: AddCapacityModalProps) => {
+  const { t } = useTranslation();
+
   const { ocsConfig, close, cancel } = props;
   const deviceSets: DeviceSet[] = ocsConfig?.spec.storageDeviceSets || [];
 
@@ -42,12 +45,13 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
 
   const cephCapacity: string = response?.data?.result?.[0]?.value[1];
   const osdSizeWithUnit = getRequestedPVCSize(deviceSets[0].dataPVCTemplate);
-  const osdSizeWithoutUnit: number = OSD_CAPACITY_SIZES[osdSizeWithUnit]?.size;
+  const osdSizeWithoutUnit: number = OSD_CAPACITY_SIZES[osdSizeWithUnit];
   const provisionedCapacity = getProvisionedCapacity(osdSizeWithoutUnit);
   const isNoProvionerSC: boolean = storageClass?.provisioner === NO_PROVISIONER;
   const selectedSCName: string = getName(storageClass);
   const deviceSetIndex: number = getCurrentDeviceSetIndex(deviceSets, selectedSCName);
   const replica = OCS_DEVICE_SET_REPLICA;
+  const name = getName(ocsConfig);
 
   let currentCapacity: React.ReactNode;
 
@@ -56,7 +60,7 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
       <div className="skeleton-text ceph-add-capacity__current-capacity--loading" />
     );
   } else if (loadError || !cephCapacity || !osdSizeWithoutUnit || deviceSetIndex === -1) {
-    currentCapacity = <div className="text-muted">Not available</div>;
+    currentCapacity = <div className="text-muted">{t('ceph-storage-plugin~Not available')}</div>;
   } else {
     currentCapacity = (
       <div className="text-muted">
@@ -90,7 +94,7 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
     }
 
     if (!selectedSCName) {
-      setError('No StorageClass selected');
+      setError(t('ceph-storage-plugin~No StorageClass selected'));
       setProgress(false);
     } else {
       k8sPatch(OCSServiceModel, ocsConfig, [patch])
@@ -107,9 +111,11 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
 
   return (
     <form onSubmit={submit} className="modal-content modal-content--no-inner-scroll">
-      <ModalTitle>Add Capacity</ModalTitle>
+      <ModalTitle>{t('ceph-storage-plugin~Add Capacity')}</ModalTitle>
       <ModalBody>
-        Adding capacity for <strong>{getName(ocsConfig)}</strong>, may increase your expenses.
+        <Trans t={t} ns="ceph-storage-plugin" values={{ name }}>
+          Adding capacity for <strong>{{ name }}</strong>, may increase your expenses.
+        </Trans>
         <div className="ceph-add-capacity__modal">
           <div
             className={classNames('ceph-add-capacity__sc-dropdown', {
@@ -117,8 +123,8 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
             })}
           >
             <label className="control-label" htmlFor="storageClass">
-              Storage Class
-              <FieldLevelHelp>{storageClassTooltip}</FieldLevelHelp>
+              {t('ceph-storage-plugin~Storage Class')}
+              <FieldLevelHelp>{storageClassTooltip(t)}</FieldLevelHelp>
             </label>
             <OCSStorageClassDropdown onChange={onChange} />
           </div>
@@ -131,7 +137,7 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
           ) : (
             <div>
               <label className="control-label" htmlFor="requestSize">
-                Raw Capacity
+                {t('ceph-storage-plugin~Raw Capacity')}
                 <FieldLevelHelp>{requestedCapacityTooltip}</FieldLevelHelp>
               </label>
               <div className="ceph-add-capacity__form">
@@ -146,13 +152,15 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
                 />
                 {provisionedCapacity && (
                   <div className="ceph-add-capacity__input--info-text">
-                    x {replica} replicas = <strong>{provisionedCapacity} TiB</strong>
+                    <Trans t={t} ns="ceph-storage-plugin">
+                      x {replica} replicas = <strong>{{ provisionedCapacity }} TiB</strong>
+                    </Trans>
                   </div>
                 )}
               </div>
               <div className="ceph-add-capacity__current-capacity">
                 <div className="text-secondary ceph-add-capacity__current-capacity--text">
-                  <strong>Currently Used:</strong>
+                  <strong>{t('ceph-storage-plugin~Currently Used:')}</strong>
                 </div>
                 {currentCapacity}
               </div>
@@ -163,7 +171,7 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
       <ModalSubmitFooter
         inProgress={inProgress}
         errorMessage={errorMessage}
-        submitText="Add"
+        submitText={t('ceph-storage-plugin~Add')}
         cancel={cancel}
       />
     </form>

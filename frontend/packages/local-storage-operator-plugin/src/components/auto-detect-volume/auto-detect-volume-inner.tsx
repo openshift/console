@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { FormGroup, Radio } from '@patternfly/react-core';
 import { ListPage } from '@console/internal/components/factory';
 import { NodeKind } from '@console/internal/module/k8s';
@@ -15,6 +16,8 @@ export const AutoDetectVolumeInner: React.FC<AutoDetectVolumeInnerProps> = ({
   state,
   dispatch,
 }) => {
+  const { t } = useTranslation();
+
   const [nodeData, nodeLoaded, nodeLoadError] = useK8sWatchResource<NodeKind[]>(nodeResource);
 
   React.useEffect(() => {
@@ -46,25 +49,32 @@ export const AutoDetectVolumeInner: React.FC<AutoDetectVolumeInnerProps> = ({
 
   return (
     <>
-      <FormGroup label="Node Selector" fieldId="auto-detect-volume--radio-group-node-selector">
+      <FormGroup
+        label={t('lso-plugin~Node Selector')}
+        fieldId="auto-detect-volume--radio-group-node-selector"
+      >
         <div id="auto-detect-volume-radio-group-node-selector">
           <Radio
-            label="All nodes"
+            label={t('lso-plugin~All nodes')}
             name="nodes-selection"
             id="auto-detect-volume-radio-all-nodes"
             className="auto-detect-volume__all-nodes-radio--padding"
             value="allNodes"
             onChange={toggleShowNodesList}
-            description="Selecting all nodes will discover for available disks storage on all nodes."
+            description={t(
+              'lso-plugin~Selecting all nodes will discover for available disks storage on all nodes.',
+            )}
             checked={!state.showNodesListOnADV}
           />
           <Radio
-            label="Select nodes"
+            label={t('lso-plugin~Select nodes')}
             name="nodes-selection"
             id="auto-detect-volume-radio-select-nodes"
             value="selectedNodes"
             onChange={toggleShowNodesList}
-            description="Selecting nodes allow you to limit the discovery for available disks to specific nodes."
+            description={t(
+              'lso-plugin~Selecting nodes allow you to limit the discovery for available disks to specific nodes.',
+            )}
             checked={state.showNodesListOnADV}
           />
         </div>
@@ -87,12 +97,18 @@ export const AutoDetectVolumeInner: React.FC<AutoDetectVolumeInnerProps> = ({
   );
 };
 
-export const AutoDetectVolumeHeader = () => (
-  <>
-    <h1 className="co-create-operand__header-text">Auto Detect Volume</h1>
-    <p className="help-block">Allows you to discover the available disks on all available nodes</p>
-  </>
-);
+export const AutoDetectVolumeHeader = () => {
+  const { t } = useTranslation();
+
+  return (
+    <>
+      <h1 className="co-create-operand__header-text">{t('lso-plugin~Auto Detect Volume')}</h1>
+      <p className="help-block">
+        {t('lso-plugin~Allows you to discover the available disks on all available nodes')}
+      </p>
+    </>
+  );
+};
 
 type AutoDetectVolumeInnerProps = {
   state: State;

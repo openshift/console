@@ -1,30 +1,26 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Dropdown } from '@console/internal/components/utils';
 import { OCS_DEVICE_SET_REPLICA } from '../constants';
 
 export const OSD_CAPACITY_SIZES = {
-  '512Gi': {
-    scale: 'SmallScale',
-    size: 0.5,
-    title: '0.5 TiB',
-  },
-  '2Ti': {
-    scale: 'Standard',
-    size: 2,
-    title: '2 TiB',
-  },
-  '4Ti': {
-    scale: 'LargeScale',
-    size: 4,
-    title: '4 TiB',
-  },
+  '512Gi': 0.5,
+  '2Ti': 2,
+  '4Ti': 4,
 };
 
-export const TotalCapacityText: React.FC<TotalCapacityTextProps> = ({ capacity }) => (
-  <span>
-    x {OCS_DEVICE_SET_REPLICA} replicas = {OSD_CAPACITY_SIZES[capacity].size * 3} TiB
-  </span>
-);
+export const TotalCapacityText: React.FC<TotalCapacityTextProps> = ({ capacity }) => {
+  const { t } = useTranslation();
+
+  return (
+    <span>
+      {t('ceph-storage-plugin~x {{replica}} replicas = {{osdSize, number}} TiB', {
+        replica: OCS_DEVICE_SET_REPLICA,
+        osdSize: OSD_CAPACITY_SIZES[capacity] * 3,
+      })}
+    </span>
+  );
+};
 
 type TotalCapacityTextProps = { capacity: string };
 
@@ -45,21 +41,36 @@ const DropdownOptionsItem: React.FC<DropdownOptionsItemProps> = ({ title, scale 
 type DropdownOptionsItemProps = { title: string; scale: string };
 
 export const OSDSizeDropdown: React.FC<OSDSizeDropdownProps> = ({ selectedKey, id, onChange }) => {
-  const dropdownOptionsKeys: string[] = Object.keys(OSD_CAPACITY_SIZES);
-  const dropdownOptions: DropdownOptions = dropdownOptionsKeys.reduce((dropdownObject, key) => {
-    dropdownObject[key] = (
+  const { t } = useTranslation();
+
+  const dropdownOptions: DropdownOptions = {
+    '512Gi': (
       <DropdownOptionsItem
-        title={OSD_CAPACITY_SIZES[key].title}
-        scale={OSD_CAPACITY_SIZES[key].scale}
+        scale={t('ceph-storage-plugin~SmallScale')}
+        title={t('ceph-storage-plugin~0.5 TiB')}
       />
-    );
-    return dropdownObject;
-  }, {});
+    ),
+    '2Ti': (
+      <DropdownOptionsItem
+        scale={t('ceph-storage-plugin~Standard')}
+        title={t('ceph-storage-plugin~2 TiB')}
+      />
+    ),
+    '4Ti': (
+      <DropdownOptionsItem
+        scale={t('ceph-storage-plugin~LargeScale')}
+        title={t('ceph-storage-plugin~4 TiB')}
+      />
+    ),
+  };
+
   return (
     <Dropdown
       id={id}
       items={dropdownOptions}
-      title={OSD_CAPACITY_SIZES[selectedKey].title}
+      title={t('ceph-storage-plugin~{{osdSize, number}} TiB', {
+        osdSize: OSD_CAPACITY_SIZES[selectedKey],
+      })}
       onChange={onChange}
       selectedKey={selectedKey}
       dropDownClassName="dropdown--full-width"

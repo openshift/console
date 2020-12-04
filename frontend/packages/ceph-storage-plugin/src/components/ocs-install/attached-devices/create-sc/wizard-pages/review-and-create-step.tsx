@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { pluralize, TextContent, Text, TextVariants } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
+import { TextContent, Text, TextVariants } from '@patternfly/react-core';
 import { humanizeBinaryBytes } from '@console/internal/components/utils';
 import { getName } from '@console/shared';
 import {
-  VALIDATIONS,
   ValidationMessage,
   getEncryptionLevel,
+  ValidationType,
 } from '../../../../../utils/common-ocs-install-el';
 import { getNodeInfo } from '../../../../../utils/install';
 import { MINIMUM_NODES, NetworkTypeLabels } from '../../../../../constants';
@@ -23,6 +24,8 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({
   errorMessage,
   inProgress,
 }) => {
+  const { t } = useTranslation();
+
   const { nodes, encryption, enableMinimal, storageClass, kms, networkType, publicNetwork } = state;
   const { cpu, memory, zones } = getNodeInfo(state.nodes);
   const scName = getName(storageClass);
@@ -31,54 +34,80 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({
   return (
     <>
       <TextContent className="ocs-install-wizard__text-content">
-        <Text component={TextVariants.h2}>Review storage cluster</Text>
+        <Text component={TextVariants.h2}>{t('ceph-storage-plugin~Review storage cluste')}r</Text>
       </TextContent>
       <dl>
-        <ReviewListTitle text="Storage and nodes" />
+        <ReviewListTitle text={t('ceph-storage-plugin~Storage and nodes')} />
         <ReviewListBody noValue={nodes.length < MINIMUM_NODES || !scName}>
           <div>
             <p>
-              {pluralize(nodes.length, 'node')} selected based on the created storage class:&nbsp;
-              <span className="text-muted">{scName ?? 'None'}</span>
+              {t('ceph-storage-plugin~{{nodeCount, number}} node', {
+                nodeCount: nodes.length,
+                count: nodes.length,
+              })}{' '}
+              {t('ceph-storage-plugin~selected based on the created storage class:')}
+              <span className="text-muted">{scName ?? t('ceph-storage-plugin~None')}</span>
             </p>
             <NodesCard nodes={nodes} />
           </div>
         </ReviewListBody>
         <ReviewListBody
-          validation={enableMinimal && !emptyRequiredField && VALIDATIONS.MINIMAL}
+          validation={enableMinimal && !emptyRequiredField && ValidationType.MINIMAL}
           noValue={!cpu || !memory}
         >
           <p>
-            Total CPU and memory of {cpu} CPU and {humanizeBinaryBytes(memory).string}
+            {t('ceph-storage-plugin~Total CPU and memory of {{cpu, number}} CPU and {{memory}}', {
+              cpu,
+              memory: humanizeBinaryBytes(memory).string,
+            })}{' '}
           </p>
         </ReviewListBody>
         <ReviewListBody noValue={!zones.size}>
-          <p>{pluralize(zones.size, 'zone')}</p>
+          <p>
+            {t('ceph-storage-plugin~{{zoneCount, number}} zone', {
+              zoneCount: zones.size,
+              count: zones.size,
+            })}
+          </p>
         </ReviewListBody>
         {(encryption.clusterWide || encryption.storageClass) && (
           <>
-            <ReviewListTitle text="Configure" />
+            <ReviewListTitle text={t('ceph-storage-plugin~Configure')} />
             <ReviewListBody>
-              <p className="ocs-install-wizard__review-encryption">Enable Encryption</p>
+              <p className="ocs-install-wizard__review-encryption">
+                {t('ceph-storage-plugin~Enable Encryption')}
+              </p>
               {encryption.advanced && (
                 <p className="ocs-install-wizard__review-encryption">
-                  Connect to external key management service: {kms.name.value}
+                  {t('ceph-storage-plugin~Connect to external key management service: {{name}}', {
+                    name: kms.name.value,
+                  })}
                 </p>
               )}
-              <p>Encryption Level: {getEncryptionLevel(encryption)}</p>
+              <p>
+                {t('ceph-storage-plugin~Encryption Level: {{level}}', {
+                  level: getEncryptionLevel(encryption, t),
+                })}
+              </p>
             </ReviewListBody>
           </>
         )}
         <ReviewListBody
-          validation={networkType === NetworkType.MULTUS && !publicNetwork && VALIDATIONS.NETWORK}
+          validation={
+            networkType === NetworkType.MULTUS && !publicNetwork && ValidationType.NETWORK
+          }
         >
-          <p>Using {NetworkTypeLabels[networkType]}</p>
+          <p>
+            {t('ceph-storage-plugin~Using {{networkLabel}}', {
+              networkLabel: NetworkTypeLabels[networkType],
+            })}
+          </p>
         </ReviewListBody>
       </dl>
       {emptyRequiredField && (
         <ValidationMessage
           className="ocs-install-wizard__review-alert"
-          validation={VALIDATIONS.ALLREQUIREDFIELDS}
+          validation={ValidationType.ALLREQUIREDFIELDS}
         />
       )}
       <RequestErrors errorMessage={errorMessage} inProgress={inProgress} />

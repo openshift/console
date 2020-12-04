@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import { match as RouterMatch } from 'react-router';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
@@ -25,6 +26,8 @@ export const CreateAttachedDevicesCluster: React.FC<CreateAttachedDevicesCluster
   match,
   mode,
 }) => {
+  const { t } = useTranslation();
+
   const { appName, ns } = match.params;
   const [hasNoProvSC, setHasNoProvSC] = React.useState(false);
   const [isLsoPresent, setIsLsoPresent] = React.useState(false);
@@ -78,13 +81,16 @@ export const CreateAttachedDevicesCluster: React.FC<CreateAttachedDevicesCluster
       title="Local Storage Operator Not Installed"
       isInline
     >
-      Before we can create a storage cluster, the local storage operator needs to be installed. When
-      installation is finished come back to OpenShift Container Storage to create a storage cluster.
-      <div className="ceph-ocs-install__lso-alert__button">
-        <Button type="button" variant="primary" onClick={goToLSOInstallationPage}>
-          Install
-        </Button>
-      </div>
+      <Trans t={t} ns="ceph-storage-plugin">
+        Before we can create a storage cluster, the local storage operator needs to be installed.
+        When installation is finished come back to OpenShift Container Storage to create a storage
+        cluster.
+        <div className="ceph-ocs-install__lso-alert__button">
+          <Button type="button" variant="primary" onClick={goToLSOInstallationPage}>
+            Install
+          </Button>
+        </div>
+      </Trans>
     </Alert>
   ) : (
     <CreateSC

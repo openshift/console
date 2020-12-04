@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import * as classNames from 'classnames';
 import { Status } from '@console/shared';
@@ -40,34 +41,6 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const OBTableHeader = () => {
-  return [
-    {
-      title: 'Name',
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: 'Status',
-      sortField: 'status.phase',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-    },
-    {
-      title: 'Storage Class',
-      sortField: 'spec.storageClassName',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses[3] },
-    },
-  ];
-};
-OBTableHeader.displayName = 'OBTableHeader';
-
 const OBTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }) => {
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
@@ -93,6 +66,8 @@ const OBTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }) =>
 };
 
 const Details: React.FC<DetailsProps> = ({ obj }) => {
+  const { t } = useTranslation();
+
   const storageClassName = _.get(obj, 'spec.storageClassName');
   const [OBCName, OBCNamespace] = [
     _.get(obj, 'spec.claimRef.name'),
@@ -101,18 +76,18 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Object Bucket Details" />
+        <SectionHeading text={t('noobaa-storage-plugin~Object Bucket Details')} />
         <div className="row">
           <div className="col-sm-6">
             <ResourceSummary resource={obj} />
           </div>
           <div className="col-sm-6">
             <dl>
-              <dt>Status</dt>
+              <dt>{t('noobaa-storage-plugin~Status')}</dt>
               <dd>
                 <OBStatus ob={obj} />
               </dd>
-              <dt>Storage Class</dt>
+              <dt>{t('noobaa-storage-plugin~Storage Class')}</dt>
               <dd>
                 {storageClassName ? (
                   <ResourceLink kind="StorageClass" name={storageClassName} />
@@ -120,7 +95,7 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
                   '-'
                 )}
               </dd>
-              <dt>Object Bucket Claim</dt>
+              <dt>{t('noobaa-storage-plugin~Object Bucket Claim')}</dt>
               <dd>
                 <ResourceLink
                   kind={referenceForModel(NooBaaObjectBucketClaimModel)}
@@ -136,24 +111,61 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
   );
 };
 
-const ObjectBucketsList: React.FC = (props) => (
-  <Table
-    {...props}
-    aria-label="Object Buckets"
-    Header={OBTableHeader}
-    Row={OBTableRow}
-    virtualize
-  />
-);
+const ObjectBucketsList: React.FC = (props) => {
+  const { t } = useTranslation();
 
-export const ObjectBucketsPage: React.FC = (props) => (
-  <ListPage
-    {...props}
-    ListComponent={ObjectBucketsList}
-    kind={kind}
-    rowFilters={[obStatusFilter]}
-  />
-);
+  const OBTableHeader = () => {
+    return [
+      {
+        title: t('noobaa-storage-plugin~Name'),
+        sortField: 'metadata.name',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[0] },
+      },
+      {
+        title: t('noobaa-storage-plugin~Status'),
+        sortField: 'status.phase',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[1] },
+      },
+      {
+        title: t('noobaa-storage-plugin~Storage Class'),
+        sortField: 'spec.storageClassName',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[2] },
+      },
+      {
+        title: '',
+        props: { className: tableColumnClasses[3] },
+      },
+    ];
+  };
+  OBTableHeader.displayName = t('noobaa-storage-plugin~OBTableHeader');
+
+  return (
+    <Table
+      {...props}
+      aria-label={t('noobaa-storage-plugin~Object Buckets')}
+      Header={OBTableHeader}
+      Row={OBTableRow}
+      virtualize
+    />
+  );
+};
+
+export const ObjectBucketsPage: React.FC = (props) => {
+  const { t } = useTranslation();
+
+  return (
+    <ListPage
+      {...props}
+      title={t('noobaa-storage-plugin~Object Buckets')}
+      ListComponent={ObjectBucketsList}
+      kind={kind}
+      rowFilters={[obStatusFilter(t)]}
+    />
+  );
+};
 
 export const ObjectBucketDetailsPage = (props) => (
   <DetailsPage

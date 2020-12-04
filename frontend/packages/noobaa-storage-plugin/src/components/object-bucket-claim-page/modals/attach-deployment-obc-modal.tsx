@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import {
@@ -28,6 +29,7 @@ import {
 import { getName } from '@console/shared';
 
 const AttachDeploymentToOBCModal = withHandlePromise((props: AttachDeploymentToOBCModalProps) => {
+  const { t } = useTranslation();
   const [requestDeployment, setRequestedDeployment] = React.useState({});
   const [deploymentObjects, setDeployments] = React.useState({});
   const [deploymentNames, setDeploymentNames] = React.useState({});
@@ -114,10 +116,10 @@ const AttachDeploymentToOBCModal = withHandlePromise((props: AttachDeploymentToO
 
   return (
     <form onSubmit={submit} name="form" className="modal-content modal-content--no-inner-scroll">
-      <ModalTitle>Attach OBC to a Deployment</ModalTitle>
+      <ModalTitle>{t('noobaa-storage-plugin~Attach OBC to a Deployment')}</ModalTitle>
       <ModalBody>
         <label htmlFor="dropdown-selectbox" className="control-label co-required">
-          Deployment Name
+          {t('noobaa-storage-plugin~Deployment Name')}
         </label>
         <Dropdown
           items={deploymentNames}
@@ -129,7 +131,7 @@ const AttachDeploymentToOBCModal = withHandlePromise((props: AttachDeploymentToO
       <ModalSubmitFooter
         errorMessage={errorMessage}
         inProgress={!inProgress}
-        submitText="Attach"
+        submitText={t('noobaa-storage-plugin~Attach')}
         cancel={cancel}
       />
     </form>

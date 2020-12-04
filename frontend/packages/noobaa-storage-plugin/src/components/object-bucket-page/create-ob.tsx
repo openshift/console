@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import {
@@ -20,6 +21,7 @@ import { ActionGroup, Button } from '@patternfly/react-core';
 import { commonReducer, defaultState } from './state';
 
 export const CreateOBPage: React.FC = () => {
+  const { t } = useTranslation();
   const [state, dispatch] = React.useReducer(commonReducer, defaultState);
 
   React.useEffect(() => {
@@ -56,13 +58,13 @@ export const CreateOBPage: React.FC = () => {
   return (
     <div className="co-m-pane__body co-m-pane__form">
       <Helmet>
-        <title>Create Object Bucket</title>
+        <title>{t('noobaa-storage-plugin~Create Object Bucket')}</title>
       </Helmet>
       <h1 className="co-m-pane__heading co-m-pane__heading--baseline">
-        <div className="co-m-pane__name">Create Object Bucket</div>
+        <div className="co-m-pane__name">{t('noobaa-storage-plugin~Create Object Bucket')}</div>
         <div className="co-m-pane__heading-link">
           <Link to={`${resourcePathFromModel(NooBaaObjectBucketModel)}~new`} replace>
-            Edit YAML
+            {t('noobaa-storage-plugin~Edit YAML')}
           </Link>
         </div>
       </h1>
@@ -70,7 +72,7 @@ export const CreateOBPage: React.FC = () => {
         <div>
           <div className="form-group">
             <label className="control-label co-required" htmlFor="ob-name">
-              Object Bucket Name
+              {t('noobaa-storage-plugin~Object Bucket Name')}
             </label>
             <div className="form-group">
               <input
@@ -79,15 +81,15 @@ export const CreateOBPage: React.FC = () => {
                 onChange={(e) => {
                   dispatch({ type: 'setName', name: e.currentTarget.value });
                 }}
-                placeholder="my-object-bucket"
-                aria-describedby="ob-name-help"
+                placeholder={t('noobaa-storage-plugin~my-object-bucket')}
+                aria-describedby={t('noobaa-storage-plugin~ob-name-help')}
                 id="ob-name"
                 name="obName"
                 pattern="[a-z0-9](?:[-a-z0-9]*[a-z0-9])?"
                 required
               />
               <p className="help-block" id="ob-name-help">
-                If not provided, a generic name will be generated.
+                {t('noobaa-storage-plugin~If not provided a generic name will be generated.')}
               </p>
             </div>
             <div className="form-group">
@@ -97,7 +99,9 @@ export const CreateOBPage: React.FC = () => {
                 name="storageClass"
               />
               <p className="help-block">
-                Defines the object-store service and the bucket provisioner.
+                {t(
+                  'noobaa-storage-plugin~Defines the object-store service and the bucket provisioner.',
+                )}
               </p>
             </div>
           </div>
@@ -105,10 +109,10 @@ export const CreateOBPage: React.FC = () => {
         <ButtonBar errorMessage={state.error} inProgress={state.progress}>
           <ActionGroup className="pf-c-form">
             <Button type="submit" variant="primary">
-              Create
+              {t('noobaa-storage-plugin~Create')}
             </Button>
             <Button onClick={history.goBack} type="button" variant="secondary">
-              Cancel
+              {t('noobaa-storage-plugin~Cancel')}
             </Button>
           </ActionGroup>
         </ButtonBar>

@@ -1,12 +1,13 @@
 import * as _ from 'lodash';
 import { RowFilter } from '@console/internal/components/filter-toolbar';
 import { getPhase } from './utils';
+import { TFunction } from 'i18next';
 
 const allPhases = ['Pending', 'Bound', 'Lost'];
 
-export const obcStatusFilter: RowFilter = {
+export const obcStatusFilter = (t: TFunction): RowFilter => ({
   type: 'obc-status',
-  filterGroupName: 'Status',
+  filterGroupName: t('noobaa-storage-plugin~Status'),
   reducer: getPhase,
   items: _.map(allPhases, (phase) => ({
     id: phase,
@@ -21,11 +22,11 @@ export const obcStatusFilter: RowFilter = {
       phases.selected.has(phase) || !_.includes(phases.all, phase) || _.isEmpty(phases.selected)
     );
   },
-};
+});
 
-export const obStatusFilter: RowFilter = {
+export const obStatusFilter = (t: TFunction): RowFilter => ({
   type: 'ob-status',
-  filterGroupName: 'Status',
+  filterGroupName: t('noobaa-storage-plugin~Status'),
   reducer: getPhase,
   items: _.map(allPhases, (phase) => ({
     id: phase,
@@ -40,4 +41,4 @@ export const obStatusFilter: RowFilter = {
       phases.selected.has(phase) || !_.includes(phases.all, phase) || _.isEmpty(phases.selected)
     );
   },
-};
+});
