@@ -38,6 +38,7 @@ func SetFlagsFromConfig(fs *flag.FlagSet, filename string) (err error) {
 	addProviders(fs, &config.Providers)
 	addMonitoringInfo(fs, &config.MonitoringInfo)
 	addHelmConfig(fs, &config.Helm)
+	// addProxyInfo(fs, &config.ProxyInfo)
 
 	return nil
 }
@@ -175,3 +176,36 @@ func addCustomization(fs *flag.FlagSet, customization *Customization) {
 		fs.Set("custom-logo-file", customization.CustomLogoFile)
 	}
 }
+
+// func addProxyInfo(fs *flag.FlagSet, proxyInfo *[]ProxyInfo) {
+// 	// if proxyInfo == nil {
+// 	// 	return
+// 	// }
+// 	// fs.StringVar()
+// 	proxy := make(map[string]ProxyInfo)
+
+// 	for i := range *proxyInfo {
+// 		name := (*proxyInfo)[i].Name
+// 		proxy[name] = (*proxyInfo)[i]
+// 	}
+
+// (*proxyInfo)[i].Name
+// // for i := range *proxyInfo {
+// // 	fs.Set("name", (*proxyInfo)[i].Name)
+// // 	// name := (*proxyInfo)[i].Name
+// // 	fs.Set("server", (*proxyInfo)[i].Server)
+// // 	// server := (*proxyInfo)[i].Server
+// // 	fs.Set("rule", (*proxyInfo)[i].Rule)
+// // 	// rule := (*proxyInfo)[i].Rule
+// // }
+
+// if proxyInfo.Name != "" {
+// 	fs.Set("name", proxyInfo.Name)
+// }
+// if proxyInfo.Server != "" {
+// 	fs.Set("server", proxyInfo.Server)
+// }
+// if proxyInfo.Rule != "" {
+// 	fs.Set("rule", proxyInfo.Rule)
+// }
+// }

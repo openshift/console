@@ -103,7 +103,7 @@
     "MSG_GNB_SESSION_7": "Allows numbers only.",
     "MSG_GNB_SESSION_8": "Enter the session expiration time.",
     "MSG_GNB_SESSION_9": "Extend Session Timeout",
-    "MSG_GNB_SESSION_10": "You will be automatically logged out after {0} seconds.\nClick the Extend button to stay logged in.",
+    "MSG_GNB_SESSION_10": "You will be automatically logged out after {{count}} seconds.\nClick the Extend button to stay logged in.",
     "MSG_GNB_NOTIFICATIONS_1": "Notifications",
     "MSG_GNB_IMPORTYAML_1": "Import YAML",
     "MSG_GNB_MORE_1": "Documentation",

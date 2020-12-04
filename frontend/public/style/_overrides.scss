@@ -201,19 +201,43 @@ h6 {
     position: absolute;
     right: 0;
     top: 0;
+    color: black !important;
+    background-color: white;
+    border-bottom: 1px solid #c5c7c8;
   }
 
   &__header-brand-link {
     flex: 0 1 auto !important; // so link doesn't grow larger than logo
   }
+  &__header-brand-toggle button {
+    color: white !important;
+  }
 
   &__header-tools {
-    @media (max-width: $grid-float-breakpoint-max) {
-      margin-right: 8px !important;
-    }
+    margin-right: 5px !important;
     .pf-c-dropdown__toggle,
     .pf-c-app-launcher__toggle {
-      font-size: $pf-header-icon-fontsize !important;
+      font-size: 14px !important;
+      color: black !important;
+    }
+    .pf-c-badge {
+      cursor: pointer;
+      background-color: black;
+      font-weight: normal;
+      font-size: 12px;
+      margin: 0 10px;
+    }
+    .pf-c-notification-badge {
+      color: black;
+    }
+    .pf-l-toolbar__group:not(:last-child) {
+      margin-right: 20px;
+    }
+    .pf-l-toolbar__item > nav {
+      padding: 0px 10px;
+    }
+    .pf-l-toolbar__item > button {
+      padding: 0px 10px;
     }
   }
 
@@ -244,6 +268,7 @@ h6 {
   }
 
   .pf-c-page__sidebar {
+    background-color: #28384f;
     --pf-c-page__sidebar--Transition: all 100ms ease;
   }
 }
@@ -280,7 +305,8 @@ h6 {
   .pf-l-stack {
     font-size: $font-size-base;
   }
-  .pf-c-form-control.pf-m-success, .pf-c-form-control[aria-invalid="true"] {
+  .pf-c-form-control.pf-m-success,
+  .pf-c-form-control[aria-invalid='true'] {
     --pf-global--FontSize--md: #{$font-size-base};
   }
   .pf-c-form-control {
@@ -289,7 +315,7 @@ h6 {
       &.pf-m-success {
         -webkit-animation-name: autofill-success;
       }
-      &[aria-invalid="true"] {
+      &[aria-invalid='true'] {
         -webkit-animation-name: autofill-invalid;
       }
     }
@@ -322,9 +348,7 @@ h6 {
   }
 
   &.pf-m-expanded {
-    width: var(
-      --pf-c-page__sidebar--md--Width
-    ) !important; // maintain desktop width so size doesn't animate before hiding when resizing to mobile
+    width: var(--pf-c-page__sidebar--md--Width) !important; // maintain desktop width so size doesn't animate before hiding when resizing to mobile
   }
 
   // Perspective switcher
@@ -344,10 +368,10 @@ h6 {
       --pf-c-nav__simple-list-link--nested--PaddingLeft: var(--pf-global--spacer--xl);
     }
 
-    font-size: $co-side-nav-font-size;
+    font-size: 13px;
 
     .pf-c-nav__simple-list .pf-c-nav__link {
-      font-size: $font-size-base;
+      font-size: 13px;
       // fix bug where nav items retain focus after navigation
       // see https://github.com/patternfly/patternfly-next/issues/2463
       &:focus {
@@ -487,3 +511,29 @@ button.pf-c-dropdown__menu-item.hover {
   background-color: var(--pf-c-dropdown__menu-item--hover--BackgroundColor);
 }
 
+.pf-c-nav.pf-m-dark .pf-c-nav__list > .pf-c-nav__item.pf-m-current,
+.pf-c-nav.pf-m-dark .pf-c-nav__list > .pf-c-nav__item > .pf-c-nav__link.pf-m-current {
+  background-color: #435775 !important;
+}
+
+.pf-c-page__header-brand {
+  height: 100%;
+  width: 290px;
+  background-color: #28384f;
+  background-image: url('../imgs/gnb_logo_bg_mint.png');
+}
+
+.pf-c-nav__simple-list .pf-c-nav__link.pf-m-hover,
+.pf-c-nav__simple-list .pf-c-nav__link:hover {
+  background-color: #566d8e !important;
+}
+
+.pf-c-nav__list .pf-c-nav__link.pf-m-hover::after,
+.pf-c-nav__list .pf-c-nav__link:hover::after {
+  background-color: #0eb6d6;
+}
+
+.pf-c-nav__simple-list .pf-c-nav__link.pf-m-current,
+.pf-c-nav.pf-m-dark .pf-c-nav__item.pf-m-current {
+  background-color: #566d8e !important;
+}

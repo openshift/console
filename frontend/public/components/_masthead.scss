@@ -1,20 +1,37 @@
 .co-masthead-icon {
-  font-size: $pf-header-icon-fontsize;
+  font-size: 14px;
 }
-
+.co-masthead-icon__button {
+  cursor: pointer;
+  padding: 0px 10px;
+}
+.co-masthead__timer__span {
+  font-size: 13px;
+  margin-left: 4px;
+}
+.co-masthead__extend {
+  font-size: 12px;
+}
+.co-masthead__line {
+  border-right: 1px solid #c5c7c8;
+  height: 18px;
+  margin: 0px 10px;
+}
 .co-username {
-  font-size: $pf-header-icon-fontsize; // for cases where there is no user menu
+  font-size: 13px; // for cases where there is no user menu
+  line-height: 24px;
   max-width: 140px !important; // PF4 does not limit username length (upstream bug)
   overflow-x: hidden;
   padding: 0 8px; // so sizing is consistent with .pf-c-dropdown__toggle
   text-overflow: ellipsis;
-  @media(min-width: 855px) {
+  color: black;
+  @media (min-width: 855px) {
     max-width: 225px !important;
   }
-  @media(min-width: $screen-md-min) {
+  @media (min-width: $screen-md-min) {
     max-width: 275px !important;
   }
-  @media(min-width: $screen-lg-min) {
+  @media (min-width: $screen-lg-min) {
     max-width: 300px !important;
   }
 }
