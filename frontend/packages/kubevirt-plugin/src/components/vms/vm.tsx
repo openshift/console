@@ -226,7 +226,7 @@ const VMList: React.FC<React.ComponentProps<typeof Table> & VMListProps> = (prop
       <Table
         {...props}
         EmptyMsg={VMListEmpty}
-        aria-label={VirtualMachineModel.labelPlural}
+        aria-label={t('kubevirt-plugin~Virtual Machines')}
         Header={VMHeader(t)}
         Row={VMRow}
         virtualize

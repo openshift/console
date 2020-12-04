@@ -115,11 +115,13 @@ export const CloneVMModal = withHandlePromise<CloneVMModalProps>((props) => {
 
   const vmRunningWarning =
     isVMExpectedRunning(vm) &&
-    `The VM ${getName(vm)} is still running. It will be powered off while cloning.`;
+    t('kubevirt-plugin~The VM {{vmName}} is still running. It will be powered off while cloning.', {
+      vmName: getName(vm),
+    });
 
   return (
     <div className="modal-content">
-      <ModalTitle>Clone Virtual Machine</ModalTitle>
+      <ModalTitle>{t('kubevirt-plugin~Clone Virtual Machine')}</ModalTitle>
       <ModalBody>
         <Errors
           endMargin
@@ -143,7 +145,7 @@ export const CloneVMModal = withHandlePromise<CloneVMModalProps>((props) => {
         />
         <Form isHorizontal>
           <FormGroup
-            label="Name"
+            label={t('kubevirt-plugin~Name')}
             isRequired
             fieldId={asId('name')}
             validated={
@@ -160,10 +162,10 @@ export const CloneVMModal = withHandlePromise<CloneVMModalProps>((props) => {
               id={asId('name')}
               value={name}
               onChange={(v) => setName(v)}
-              aria-label="new VM name"
+              aria-label={t('kubevirt-plugin~new VM name')}
             />
           </FormGroup>
-          <FormGroup label="Description" fieldId={asId('description')}>
+          <FormGroup label={t('kubevirt-plugin~Description')} fieldId={asId('description')}>
             <TextArea
               id={asId('description')}
               value={description}
@@ -171,7 +173,7 @@ export const CloneVMModal = withHandlePromise<CloneVMModalProps>((props) => {
               className="kubevirt-clone-vm-modal__description"
             />
           </FormGroup>
-          <FormGroup isRequired label="Namespace" fieldId={asId('namespace')}>
+          <FormGroup isRequired label={t('kubevirt-plugin~Namespace')} fieldId={asId('namespace')}>
             <FormSelect
               value={namespace}
               onChange={(v) => onNamespaceChanged(v)}
@@ -197,14 +199,17 @@ export const CloneVMModal = withHandlePromise<CloneVMModalProps>((props) => {
           </FormGroup>
           <FormGroup fieldId={asId('start')}>
             <Checkbox
-              label="Start virtual machine on clone"
+              label={t('kubevirt-plugin~Start virtual machine on clone')}
               id={asId('start')}
               isChecked={startVM}
               onChange={setStartVM}
               className="kubevirt-clone-vm-modal__start_vm_checkbox"
             />
           </FormGroup>
-          <FormGroup label="Configuration" fieldId={asId('configuration-summary')}>
+          <FormGroup
+            label={t('kubevirt-plugin~Configuration')}
+            fieldId={asId('configuration-summary')}
+          >
             <ConfigurationSummary
               id={asId('configuration-summary')}
               vm={vm}
@@ -221,7 +226,7 @@ export const CloneVMModal = withHandlePromise<CloneVMModalProps>((props) => {
         warningMessage={vmRunningWarning}
         inProgress={inProgress}
         isDisabled={!isValid || inProgress}
-        submitButtonText="Clone Virtual Machine"
+        submitButtonText={t('kubevirt-plugin~Clone Virtual Machine')}
         onSubmit={submit}
         onCancel={onCancelClick}
       />

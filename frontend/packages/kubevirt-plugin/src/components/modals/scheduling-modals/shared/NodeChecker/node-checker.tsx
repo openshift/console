@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Alert,
   Popover,
@@ -20,44 +21,43 @@ import {
 import { NodeKind } from '@console/internal/module/k8s';
 import { getName, Status } from '@console/shared';
 import {
-  SCHEDULING_NODES_MATCH_TEXT,
-  SCHEDULING_WITH_PREFERRED_NODES_MATCH_TEXT,
-  SCHEDULING_NO_NODES_MATCH_TEXT,
-  SCHEDULING_NODES_MATCH_BUTTON_TEXT,
-  SCHEDULING_NO_NODES_MATCH_BUTTON_TEXT,
+  getSchedulingNodesMatchMsg,
+  getSchedulingWithPreferredNodesMatchMsg,
+  getSchedulingNodesMatchButtonLabel,
 } from '../consts';
 import './node-checker.scss';
 
 export const NodeChecker: React.FC<NodeCheckerProps> = ({
   qualifiedNodes,
-  qualifiedPerferredNodes,
-  wariningTitle,
+  qualifiedPreferredNodes,
+  warningTitle,
   warningMessage,
 }) => {
+  const { t } = useTranslation();
   const qualifiedNodesSize = qualifiedNodes.length;
   const buttonText = pluralize(qualifiedNodesSize, 'Node');
-  const preferredNodes = new Set(qualifiedPerferredNodes?.map((node) => getName(node)));
+  const preferredNodes = new Set(qualifiedPreferredNodes?.map((node) => getName(node)));
 
   return (
     <Alert
       className="kv-node-checker"
       variant={
-        qualifiedNodesSize > 0 || qualifiedPerferredNodes?.length > 0 ? 'success' : 'warning'
+        qualifiedNodesSize > 0 || qualifiedPreferredNodes?.length > 0 ? 'success' : 'warning'
       }
       isInline
       title={
         qualifiedNodesSize > 0
-          ? qualifiedPerferredNodes?.length > 0
-            ? SCHEDULING_WITH_PREFERRED_NODES_MATCH_TEXT(
+          ? qualifiedPreferredNodes?.length > 0
+            ? getSchedulingWithPreferredNodesMatchMsg(
                 qualifiedNodesSize,
-                qualifiedNodesSize < qualifiedPerferredNodes.length
+                qualifiedNodesSize < qualifiedPreferredNodes.length
                   ? qualifiedNodesSize
-                  : qualifiedPerferredNodes.length,
+                  : qualifiedPreferredNodes.length,
               )
-            : SCHEDULING_NODES_MATCH_TEXT(qualifiedNodesSize)
-          : qualifiedPerferredNodes?.length > 0
-          ? SCHEDULING_NODES_MATCH_TEXT(qualifiedPerferredNodes?.length)
-          : wariningTitle || SCHEDULING_NO_NODES_MATCH_TEXT
+            : getSchedulingNodesMatchMsg(qualifiedNodesSize)
+          : qualifiedPreferredNodes?.length > 0
+          ? getSchedulingNodesMatchMsg(qualifiedPreferredNodes?.length)
+          : warningTitle || t('kubevirt-plugin~No matching nodes found for the labels')
       }
     >
       <Stack>
@@ -81,7 +81,7 @@ export const NodeChecker: React.FC<NodeCheckerProps> = ({
                         </SplitItem>
                       </Split>
                     ))
-                : qualifiedPerferredNodes?.map((node) => (
+                : qualifiedPreferredNodes?.map((node) => (
                     <Split key={getName(node)}>
                       <ExternalLink
                         href={resourcePath('Node', getName(node))}
@@ -98,16 +98,17 @@ export const NodeChecker: React.FC<NodeCheckerProps> = ({
               isInline
               isDisabled={
                 qualifiedNodesSize === 0 &&
-                (!qualifiedPerferredNodes || qualifiedPerferredNodes?.length === 0)
+                (!qualifiedPreferredNodes || qualifiedPreferredNodes?.length === 0)
               }
               variant="link"
             >
               <Text component={TextVariants.h4}>
                 {qualifiedNodesSize > 0
-                  ? SCHEDULING_NODES_MATCH_BUTTON_TEXT(qualifiedNodesSize)
-                  : qualifiedPerferredNodes?.length > 0
-                  ? SCHEDULING_NODES_MATCH_TEXT(qualifiedPerferredNodes?.length)
-                  : warningMessage || SCHEDULING_NO_NODES_MATCH_BUTTON_TEXT}
+                  ? getSchedulingNodesMatchButtonLabel(qualifiedNodesSize)
+                  : qualifiedPreferredNodes?.length > 0
+                  ? getSchedulingNodesMatchMsg(qualifiedPreferredNodes?.length)
+                  : warningMessage ||
+                    t('kubevirt-plugin~Scheduling will not be possible at this state')}
               </Text>
             </Button>
           </Popover>
@@ -119,7 +120,7 @@ export const NodeChecker: React.FC<NodeCheckerProps> = ({
 
 type NodeCheckerProps = {
   qualifiedNodes: NodeKind[];
-  qualifiedPerferredNodes?: NodeKind[];
-  wariningTitle?: string;
+  qualifiedPreferredNodes?: NodeKind[];
+  warningTitle?: string;
   warningMessage?: string;
 };

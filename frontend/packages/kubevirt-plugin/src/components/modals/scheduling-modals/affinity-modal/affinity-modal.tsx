@@ -247,7 +247,7 @@ export const AffinityModal = withHandlePromise<AffinityModalProps>(
                     <StackItem>
                       <NodeChecker
                         qualifiedNodes={qualifiedRequiredNodes}
-                        qualifiedPerferredNodes={qualifiedPreferredNodes}
+                        qualifiedPreferredNodes={qualifiedPreferredNodes}
                       />
                     </StackItem>
                   )}

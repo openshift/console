@@ -44,12 +44,12 @@ const SnapshotDetails: React.FC<DetailsProps> = ({ obj, customData: { restores }
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Snapshot Details" />
+        <SectionHeading text={t('kubevirt-plugin~Snapshot Details')} />
         <div className="row">
           <div className="col-sm-6">
             <ResourceSummary resource={obj} showAnnotations={false}>
               <DetailsItem
-                label="Description"
+                label={t('kubevirt-plugin~Description')}
                 obj={obj}
                 path={'metadata.annotations.description'}
                 canEdit
@@ -66,10 +66,10 @@ const SnapshotDetails: React.FC<DetailsProps> = ({ obj, customData: { restores }
           </div>
           <div className="col-sm-6">
             <dl className="co-m-pane__details">
-              <DetailsItem label="Status" obj={obj} path="status">
+              <DetailsItem label={t('kubevirt-plugin~Status')} obj={obj} path="status">
                 <VMSnapshotStatus snapshot={obj} restore={relevantRestore} />
               </DetailsItem>
-              <dt>Last Restored</dt>
+              <dt>{t('kubevirt-plugin~Last Restored')}</dt>
               <dd>
                 {relevantRestore ? (
                   <Timestamp timestamp={getVmRestoreTime(relevantRestore)} />
@@ -82,7 +82,7 @@ const SnapshotDetails: React.FC<DetailsProps> = ({ obj, customData: { restores }
         </div>
       </div>
       <div className="co-m-pane__body">
-        <SectionHeading text="Conditions" />
+        <SectionHeading text={t('kubevirt-plugin~Conditions')} />
         <Conditions conditions={obj.status?.conditions} />
       </div>
     </>

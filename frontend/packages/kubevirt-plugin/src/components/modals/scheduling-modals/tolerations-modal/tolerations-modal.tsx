@@ -20,11 +20,7 @@ import { NodeChecker } from '../shared/NodeChecker/node-checker';
 import { useNodeQualifier } from '../shared/hooks';
 import { getTolerationsPatch } from '../../../../k8s/patches/vm/vm-scheduling-patches';
 import { LabelsList } from '../../../LabelsList/labels-list';
-import {
-  TOLERATIONS_EFFECTS,
-  SCHEDULING_NO_NODES_TAINTED_MATCH_TEXT,
-  SCHEDULING_NO_NODES_TAINTED_MATCH_BUTTON_TEXT,
-} from '../shared/consts';
+import { TOLERATIONS_EFFECTS } from '../shared/consts';
 import { useIDEntities } from '../../../../hooks/use-id-entities';
 import { useCollisionChecker } from '../../../../hooks/use-collision-checker';
 
@@ -147,8 +143,8 @@ export const TModal = withHandlePromise(
           {tolerationsLabels.length > 0 && isLoaded(nodes) && !inProgress && !loadError && (
             <NodeChecker
               qualifiedNodes={qualifiedNodes}
-              wariningTitle={SCHEDULING_NO_NODES_TAINTED_MATCH_TEXT}
-              warningMessage={SCHEDULING_NO_NODES_TAINTED_MATCH_BUTTON_TEXT}
+              warningTitle={t('kubevirt-plugin~No matching tainted nodes found')}
+              warningMessage={t('kubevirt-plugin~No new nodes will be added to scheduler')}
             />
           )}
         </ModalBody>
