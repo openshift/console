@@ -4,9 +4,9 @@ import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import { history } from '@console/internal/components/utils';
-import { getActiveApplication, getActivePerspective } from '@console/internal/reducers/ui';
+import { getActiveApplication } from '@console/internal/reducers/ui';
 import { RootState } from '@console/internal/redux';
-import { ALL_APPLICATIONS_KEY } from '@console/shared';
+import { ALL_APPLICATIONS_KEY, useActivePerspective } from '@console/shared';
 import {
   K8sResourceKind,
   modelFor,
@@ -48,7 +48,6 @@ interface EventSourceProps {
 
 interface StateProps {
   activeApplication: string;
-  perspective: string;
 }
 
 type Props = EventSourceProps & StateProps;
@@ -58,11 +57,11 @@ export const EventSource: React.FC<Props> = ({
   eventSourceStatus,
   activeApplication,
   contextSource,
-  perspective,
   sourceKind = '',
   kameletSource,
 }) => {
   const perpectiveExtension = useExtensions<Perspective>(isPerspective);
+  const [perspective] = useActivePerspective();
   const { t } = useTranslation();
   let sourceData = {};
   let selApiVersion = '';
@@ -177,11 +176,9 @@ export const EventSource: React.FC<Props> = ({
 };
 
 const mapStateToProps = (state: RootState, ownProps: EventSourceProps): StateProps => {
-  const perspective = getActivePerspective(state);
   const activeApplication = ownProps.selectedApplication || getActiveApplication(state);
   return {
     activeApplication: activeApplication !== ALL_APPLICATIONS_KEY ? activeApplication : '',
-    perspective,
   };
 };
 

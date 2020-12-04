@@ -1,47 +1,25 @@
 import * as React from 'react';
-import { connect, Dispatch } from 'react-redux';
-import { getActivePerspective } from '@console/internal/reducers/ui';
-import { RootState } from '@console/internal/redux';
-import * as UIActions from '@console/internal/actions/ui';
 import PerspectiveDetector from './PerspectiveDetector';
+import { PerpsectiveContext, useValuesForPerspectiveContext } from './perspective-context';
 
-type OwnProps = {
+type DetectPerspectiveProps = {
   children: React.ReactNode;
 };
 
-type StateProps = {
-  activePerspective: string;
+const DetectPerspective: React.FC<DetectPerspectiveProps> = ({ children }) => {
+  const [activePerspective, setActivePerspective, loaded] = useValuesForPerspectiveContext();
+  return loaded ? (
+    activePerspective ? (
+      <PerpsectiveContext.Provider value={{ activePerspective, setActivePerspective }}>
+        {children}
+      </PerpsectiveContext.Provider>
+    ) : (
+      <PerspectiveDetector setActivePerspective={setActivePerspective} />
+    )
+  ) : null;
 };
-
-type DispatchProps = {
-  setActivePerspective: (string) => void;
-};
-
-type DetectPerspectiveProps = OwnProps & StateProps & DispatchProps;
-
-const DetectPerspective: React.FC<DetectPerspectiveProps> = ({
-  activePerspective,
-  children,
-  setActivePerspective,
-}) =>
-  activePerspective ? (
-    <>{children}</>
-  ) : (
-    <PerspectiveDetector setActivePerspective={setActivePerspective} />
-  );
-
-const mapStateToProps = (state: RootState) => ({
-  activePerspective: getActivePerspective(state),
-});
-
-const mapDispatchToProps = (dispatch: Dispatch) => ({
-  setActivePerspective: (perspective) => dispatch(UIActions.setActivePerspective(perspective)),
-});
 
 // For testing
 export const InternalDetectPerspective = DetectPerspective;
 
-export default connect<StateProps, DispatchProps, OwnProps>(
-  mapStateToProps,
-  mapDispatchToProps,
-)(DetectPerspective);
+export default DetectPerspective;

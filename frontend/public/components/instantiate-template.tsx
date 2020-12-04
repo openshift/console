@@ -5,7 +5,7 @@ import { Helmet } from 'react-helmet';
 import * as classNames from 'classnames';
 import { ActionGroup, Button } from '@patternfly/react-core';
 
-import { ANNOTATIONS } from '@console/shared';
+import { ANNOTATIONS, withActivePerspective } from '@console/shared';
 import { isPerspective, Perspective, withExtensions } from '@console/plugin-sdk';
 import * as catalogImg from '../imgs/logos/catalog-icon.svg';
 import {
@@ -30,7 +30,6 @@ import {
   TemplateInstanceKind,
   TemplateParameter,
 } from '../module/k8s';
-import { getActivePerspective } from '../reducers/ui';
 import { RootState } from '../redux';
 
 const TemplateResourceDetails: React.FC<TemplateResourceDetailsProps> = ({ template }) => {
@@ -117,7 +116,6 @@ TemplateInfo.displayName = 'TemplateInfo';
 
 const stateToProps = (state: RootState) => ({
   models: state.k8s.getIn(['RESOURCES', 'models']),
-  activePerspective: getActivePerspective(state),
 });
 
 class TemplateForm_ extends React.Component<TemplateFormProps, TemplateFormState> {
@@ -321,7 +319,9 @@ class TemplateForm_ extends React.Component<TemplateFormProps, TemplateFormState
 }
 
 const TemplateForm = connect(stateToProps)(
-  withExtensions<ExtensionsProps>({ perspectiveExtensions: isPerspective })(TemplateForm_),
+  withExtensions<ExtensionsProps>({ perspectiveExtensions: isPerspective })(
+    withActivePerspective<TemplateFormProps>(TemplateForm_),
+  ),
 );
 
 export const InstantiateTemplatePage: React.FC<{}> = (props) => {

@@ -4,9 +4,9 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
-import { FLAGS } from '@console/shared';
+import { FLAGS, useActivePerspective } from '@console/shared';
 import { featureReducerName } from '../../reducers/features';
-import { getActivePerspective, getActiveNamespace } from '../../reducers/ui';
+import { getActiveNamespace } from '../../reducers/ui';
 import { RootState } from '../../redux';
 
 export const getPrometheusExpressionBrowserURL = (url, queries): string => {
@@ -25,18 +25,17 @@ export const getPrometheusExpressionBrowserURL = (url, queries): string => {
 const mapStateToProps = (state: RootState) => ({
   canAccessMonitoring:
     !!state[featureReducerName].get(FLAGS.CAN_GET_NS) && !!window.SERVER_FLAGS.prometheusBaseURL,
-  perspective: getActivePerspective(state),
   namespace: getActiveNamespace(state),
 });
 
 export const PrometheusGraphLink_: React.FC<PrometheusGraphLinkProps> = ({
   canAccessMonitoring,
   children,
-  perspective,
   query,
   namespace,
   ariaChartLabel,
 }) => {
+  const [perspective] = useActivePerspective();
   if (!query) {
     return <>{children}</>;
   }
@@ -68,7 +67,6 @@ export const PrometheusGraph: React.FC<PrometheusGraphProps> = React.forwardRef(
 
 type PrometheusGraphLinkProps = {
   canAccessMonitoring: boolean;
-  perspective: string;
   query: string;
   namespace?: string;
   ariaChartLabel?: string;

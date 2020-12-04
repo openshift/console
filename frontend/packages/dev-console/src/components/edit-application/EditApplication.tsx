@@ -1,14 +1,12 @@
 import * as React from 'react';
 import { Formik, FormikProps } from 'formik';
 import * as _ from 'lodash';
-import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { getActivePerspective } from '@console/internal/reducers/ui';
-import { RootState } from '@console/internal/redux';
 import { history } from '@console/internal/components/utils';
 import { useExtensions, Perspective, isPerspective } from '@console/plugin-sdk';
 import { k8sGet, K8sResourceKind } from '@console/internal/module/k8s';
 import { ImageStreamModel } from '@console/internal/models';
+import { useActivePerspective } from '@console/shared';
 import { NormalizedBuilderImages, normalizeBuilderImages } from '../../utils/imagestream-utils';
 import {
   createOrUpdateResources as createOrUpdateGitResources,
@@ -25,13 +23,13 @@ export interface StateProps {
   perspective: string;
 }
 
-const EditApplication: React.FC<EditApplicationProps & StateProps> = ({
-  perspective,
+const EditApplication: React.FC<EditApplicationProps> = ({
   namespace,
   appName,
   resources: appResources,
 }) => {
   const { t } = useTranslation();
+  const [perspective] = useActivePerspective();
   const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
   const initialValues = getInitialValues(appResources, appName, namespace);
   const pageHeading = getPageHeading(_.get(initialValues, 'build.strategy', ''));
@@ -140,11 +138,4 @@ const EditApplication: React.FC<EditApplicationProps & StateProps> = ({
   );
 };
 
-const mapStateToProps = (state: RootState) => {
-  const perspective = getActivePerspective(state);
-  return {
-    perspective,
-  };
-};
-
-export default connect(mapStateToProps)(EditApplication);
+export default EditApplication;

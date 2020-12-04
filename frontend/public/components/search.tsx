@@ -1,7 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
-import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import {
   Accordion,
@@ -17,9 +16,7 @@ import {
   ToolbarItem,
 } from '@patternfly/react-core';
 import { PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
-import { getBadgeFromType, usePinnedResources } from '@console/shared';
-import { RootState } from '../redux';
-import { getActivePerspective } from '../reducers/ui';
+import { getBadgeFromType, usePinnedResources, useActivePerspective } from '@console/shared';
 import { connectToModel } from '../kinds';
 import { DefaultPage } from './default-resource';
 import { requirementFromString } from '../module/k8s/selector-requirement';
@@ -70,11 +67,8 @@ const ResourceList = connectToModel(({ kindObj, mock, namespace, selector, nameF
   );
 });
 
-interface StateProps {
-  perspective: string;
-}
-
-const SearchPage_: React.FC<SearchProps & StateProps> = (props) => {
+const SearchPage_: React.FC<SearchProps> = (props) => {
+  const [perspective] = useActivePerspective();
   const [selectedItems, setSelectedItems] = React.useState(new Set<string>([]));
   const [collapsedKinds, setCollapsedKinds] = React.useState(new Set<string>([]));
   const [labelFilter, setLabelFilter] = React.useState([]);
@@ -269,7 +263,7 @@ const SearchPage_: React.FC<SearchProps & StateProps> = (props) => {
                   id={`${resource}-toggle`}
                 >
                   {getToggleText(resource)}
-                  {props.perspective !== 'admin' && pinnedResourcesLoaded && (
+                  {perspective !== 'admin' && pinnedResourcesLoaded && (
                     <Button
                       className="co-search-group__pin-toggle"
                       variant={ButtonVariant.link}
@@ -316,11 +310,7 @@ const SearchPage_: React.FC<SearchProps & StateProps> = (props) => {
   );
 };
 
-const mapStateToProps = (state: RootState): StateProps => ({
-  perspective: getActivePerspective(state),
-});
-
-export const SearchPage = connect(mapStateToProps)(withStartGuide(SearchPage_));
+export const SearchPage = withStartGuide(SearchPage_);
 
 export type SearchProps = {
   location: any;

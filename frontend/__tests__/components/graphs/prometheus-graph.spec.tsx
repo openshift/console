@@ -3,7 +3,7 @@ import { Provider } from 'react-redux';
 import { Link, Router } from 'react-router-dom';
 import { mount, shallow } from 'enzyme';
 
-import { FLAGS } from '@console/shared';
+import { FLAGS, useActivePerspective } from '@console/shared';
 import { setFlag } from '@console/internal/actions/features';
 import * as UIActions from '@console/internal/actions/ui';
 import { history } from '@console/internal/components/utils/router';
@@ -13,6 +13,12 @@ import {
   getPrometheusExpressionBrowserURL,
 } from '@console/internal/components/graphs/prometheus-graph';
 import store from '@console/internal/redux';
+
+jest.mock('@console/shared/src/hooks/useActivePerspective', () => ({
+  useActivePerspective: jest.fn(),
+}));
+
+const useActivePerspectiveMock = useActivePerspective as jest.Mock;
 
 describe('<PrometheusGraph />', () => {
   it('should render a title', () => {
@@ -60,14 +66,15 @@ describe('<PrometheusGraphLink />', () => {
 
     store.dispatch(setFlag(FLAGS.CAN_GET_NS, false));
     store.dispatch(UIActions.setActiveNamespace('default'));
-    store.dispatch(UIActions.setActivePerspective('dev'));
+    useActivePerspectiveMock.mockReturnValue(['dev', () => {}]);
     wrapper = getWrapper('');
     expect(wrapper.find(Link).exists()).toBe(false);
     wrapper = getWrapper('test');
     expect(wrapper.find(Link).exists()).toBe(true);
     expect(wrapper.find(Link).props().to).toEqual('/dev-monitoring/ns/default/metrics?query0=test');
 
-    store.dispatch(UIActions.setActivePerspective('admin'));
+    useActivePerspectiveMock.mockClear();
+    useActivePerspectiveMock.mockReturnValue(['admin', () => {}]);
     wrapper = getWrapper('');
     expect(wrapper.find(Link).exists()).toBe(false);
     wrapper = getWrapper('test');
@@ -75,14 +82,16 @@ describe('<PrometheusGraphLink />', () => {
     expect(wrapper.find(Link).props().to).toEqual('/dev-monitoring/ns/default/metrics?query0=test');
 
     store.dispatch(setFlag(FLAGS.CAN_GET_NS, true));
-    store.dispatch(UIActions.setActivePerspective('dev'));
+    useActivePerspectiveMock.mockClear();
+    useActivePerspectiveMock.mockReturnValue(['dev', () => {}]);
     wrapper = getWrapper('');
     expect(wrapper.find(Link).exists()).toBe(false);
     wrapper = getWrapper('test');
     expect(wrapper.find(Link).exists()).toBe(true);
     expect(wrapper.find(Link).props().to).toEqual('/dev-monitoring/ns/default/metrics?query0=test');
 
-    store.dispatch(UIActions.setActivePerspective('admin'));
+    useActivePerspectiveMock.mockClear();
+    useActivePerspectiveMock.mockReturnValue(['admin', () => {}]);
     wrapper = getWrapper('');
     expect(wrapper.find(Link).exists()).toBe(false);
     wrapper = getWrapper('test');

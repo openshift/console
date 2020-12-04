@@ -22,3 +22,4 @@ export * from './useUserSettings';
 export * from './useUserSettingsCompatibility';
 export * from './hpa-hooks';
 export * from './usePinnedResources';
+export * from './useActivePerspective';

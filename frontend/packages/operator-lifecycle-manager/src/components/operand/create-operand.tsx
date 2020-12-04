@@ -22,9 +22,9 @@ import {
 import { Firehose } from '@console/internal/components/utils/firehose';
 import { RootState } from '@console/internal/redux';
 import { SyncedEditor } from '@console/shared/src/components/synced-editor';
-import { getActivePerspective } from '@console/internal/reducers/ui';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { getBadgeFromType } from '@console/shared/src/components/badges';
+import { useActivePerspective } from '@console/shared';
 import { connect } from 'react-redux';
 import { Helmet } from 'react-helmet';
 import { match as RouterMatch } from 'react-router';
@@ -53,10 +53,10 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
   loadError,
   match,
   model,
-  activePerspective,
 }) => {
   const { data: csv } = clusterServiceVersion;
   const { data: crd } = customResourceDefinition;
+  const [activePerspective] = useActivePerspective();
   const [helpText, setHelpText] = React.useState(FORM_HELP_TEXT);
   const next =
     activePerspective === 'dev'
@@ -153,7 +153,6 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
 
 const stateToProps = (state: RootState, props: Omit<CreateOperandPageProps, 'model'>) => ({
   model: state.k8s.getIn(['RESOURCES', 'models', props.match.params.plural]) as K8sKind,
-  activePerspective: getActivePerspective(state),
 });
 
 export const CreateOperandPage = connect(stateToProps)((props: CreateOperandPageProps) => (
@@ -193,7 +192,6 @@ export const CreateOperandPage = connect(stateToProps)((props: CreateOperandPage
 ));
 
 export type CreateOperandProps = {
-  activePerspective: string;
   clusterServiceVersion: FirehoseResult<ClusterServiceVersionKind>;
   customResourceDefinition?: FirehoseResult<CustomResourceDefinitionKind>;
   initialEditorType: EditorType;
