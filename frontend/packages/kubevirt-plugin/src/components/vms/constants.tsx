@@ -1,12 +1,21 @@
 import * as React from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 import { K8sResourceCommon } from '@console/internal/module/k8s/types';
-import { VMActionType } from '../../k8s/requests/vm/actions';
-import { VMIActionType } from '../../k8s/requests/vmi/actions';
 import { getName, getNamespace } from '@console/shared';
 
-export const getActionMessage = (obj: K8sResourceCommon, action: VMActionType | VMIActionType) => (
-  <>
-    Are you sure you want to {action} <strong>{getName(obj)}</strong> in namespace{' '}
-    <strong>{getNamespace(obj)}</strong>?
-  </>
-);
+export const ActionMessage: React.FC<{
+  obj: K8sResourceCommon;
+  action?: string;
+  actionKey?: string;
+}> = ({ obj, action, actionKey }) => {
+  const { t } = useTranslation();
+  const name = getName(obj);
+  const namespace = getNamespace(obj);
+  const actionLabel = actionKey ? t(actionKey) : action;
+  return (
+    <Trans ns="kubevirt-plugin">
+      Are you sure you want to {actionLabel} <strong>{name}</strong> in namespace{' '}
+      <strong>{namespace}</strong>?
+    </Trans>
+  );
+};

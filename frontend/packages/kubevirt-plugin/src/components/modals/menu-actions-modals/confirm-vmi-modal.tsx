@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
 import {
   createModalLauncher,
@@ -19,14 +20,19 @@ export const ConfirmVMIModal = withHandlePromise((props: ConfirmVMIModalProps) =
     cancel,
     vmi,
     title,
+    titleKey,
     message,
+    messageKey,
     executeFn,
     btnText,
+    btnTextKey,
     cancelText,
+    cancelTextKey,
     alertTitle,
+    alertTitleKey,
     submitDanger,
   } = props;
-
+  const { t } = useTranslation();
   const submit = (e) => {
     e.preventDefault();
 
@@ -35,17 +41,21 @@ export const ConfirmVMIModal = withHandlePromise((props: ConfirmVMIModalProps) =
 
   return (
     <form onSubmit={submit} className="modal-content">
-      <ModalTitle>{title}</ModalTitle>
-      <ModalBody>{message}</ModalBody>
-      <VMIUsersAlert vmi={vmi} cancel={cancel} alertTitle={alertTitle} />
+      <ModalTitle>{titleKey ? t(titleKey) : title}</ModalTitle>
+      <ModalBody>{messageKey ? t(messageKey) : message}</ModalBody>
+      <VMIUsersAlert
+        vmi={vmi}
+        cancel={cancel}
+        alertTitle={alertTitleKey ? t(alertTitleKey) : alertTitle}
+      />
       <ModalSubmitFooter
         errorMessage={errorMessage}
         submitDisabled={inProgress}
         inProgress={inProgress}
-        submitText={btnText || 'Confirm'}
+        submitText={btnTextKey ? t(btnTextKey) : btnText || t('kubevirt-plugin~Confirm')}
         submitDanger={submitDanger}
         cancel={cancel}
-        cancelText={cancelText || 'Cancel'}
+        cancelText={cancelTextKey ? t(cancelTextKey) : cancelText || t('kubevirt-plugin~Cancel')}
       />
     </form>
   );
@@ -53,12 +63,17 @@ export const ConfirmVMIModal = withHandlePromise((props: ConfirmVMIModalProps) =
 
 export type ConfirmVMIModalProps = {
   vmi: VMIKind;
-  message: React.ReactNode | string;
-  title: React.ReactNode | string;
+  message?: React.ReactNode | string;
+  messageKey?: string;
+  title?: React.ReactNode | string;
+  titleKey?: string;
   executeFn: () => Promise<any>;
   btnText?: React.ReactNode | string;
+  btnTextKey?: string;
   cancelText?: React.ReactNode | string;
+  cancelTextKey?: string;
   alertTitle?: string;
+  alertTitleKey?: string;
   submitDanger?: boolean;
 } & ModalComponentProps &
   HandlePromiseProps;
