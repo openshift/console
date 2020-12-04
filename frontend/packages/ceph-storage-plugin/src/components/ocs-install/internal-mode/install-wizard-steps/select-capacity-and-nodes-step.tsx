@@ -27,8 +27,12 @@ import { ValidationMessage, ValidationType } from '../../../../utils/common-ocs-
 import InternalNodeTable from '../../node-list';
 import { SelectNodesText, SelectNodesDetails } from '../../install-wizard/capacity-and-nodes';
 
-const validate = (scName, enableMinimal): ValidationType[] => {
+const validate = (scName, enableMinimal, enableFlexibleScaling): ValidationType[] => {
   const validations = [];
+  if (enableFlexibleScaling) {
+    //  TODO: add check for arbiter
+    validations.push(ValidationType.INTERNAL_FLEXIBLE_SCALING);
+  }
   if (enableMinimal) {
     validations.push(ValidationType.MINIMAL);
   }
@@ -43,16 +47,28 @@ export const SelectCapacityAndNodes: React.FC<SelectCapacityAndNodesProps> = ({
   dispatch,
 }) => {
   const { t } = useTranslation();
-  const { nodes: selectedNodes, capacity: selectedCapacity, storageClass, enableMinimal } = state;
+  const {
+    nodes: selectedNodes,
+    capacity: selectedCapacity,
+    storageClass,
+    enableMinimal,
+    enableFlexibleScaling,
+  } = state;
   const { cpu, memory, zones } = getNodeInfo(selectedNodes);
   const scName: string = getName(storageClass);
   const nodesCount = selectedNodes.length;
-  const validations = validate(scName, enableMinimal);
+  const zonesCount = zones.size;
+  const validations = validate(scName, enableMinimal, enableFlexibleScaling);
 
   React.useEffect(() => {
     const isMinimal = shouldDeployAsMinimal(cpu, memory, nodesCount);
     dispatch({ type: ActionType.SET_ENABLE_MINIMAL, payload: isMinimal });
   }, [cpu, dispatch, memory, nodesCount]);
+
+  React.useEffect(() => {
+    const isFlexibleScaling = nodesCount && zonesCount < 3;
+    dispatch({ type: ActionType.SET_ENABLE_FLEXIBLE_SCALING, payload: isFlexibleScaling });
+  }, [dispatch, zonesCount, nodesCount]);
 
   return (
     <Form>

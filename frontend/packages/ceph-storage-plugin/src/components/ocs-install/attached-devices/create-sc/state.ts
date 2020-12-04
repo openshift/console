@@ -41,6 +41,7 @@ export const initialState: State = {
 
   // states for step 3-5
   enableMinimal: false,
+  enableFlexibleScaling: false,
   storageClass: { provisioner: '', reclaimPolicy: '' },
   nodes: [],
   // Encryption state initialization
@@ -133,6 +134,7 @@ export type State = {
   hostNamesMapForLVS: HostNamesMap;
   showNodeList: boolean;
   enableMinimal: boolean;
+  enableFlexibleScaling: boolean;
   storageClass: StorageClassResourceKind;
   nodes: NodeKind[];
   // Encryption state declare
@@ -176,6 +178,7 @@ export type Action =
   | { type: 'setShowNodeList'; value: boolean }
   | { type: 'setFilteredNodes'; value: string[] }
   | { type: 'setEnableMinimal'; value: boolean }
+  | { type: 'setEnableFlexibleScaling'; value: boolean }
   | { type: 'setStorageClass'; value: StorageClassResourceKind }
   | { type: 'setNodes'; value: NodeKind[] }
   // Encryption state actions
@@ -248,6 +251,8 @@ export const reducer = (state: State, action: Action) => {
       return Object.assign({}, state, { filteredNodes: action.value });
     case 'setEnableMinimal':
       return Object.assign({}, state, { enableMinimal: action.value });
+    case 'setEnableFlexibleScaling':
+      return Object.assign({}, state, { enableFlexibleScaling: action.value });
     case 'setStorageClass':
       return Object.assign({}, state, { storageClass: action.value });
     case 'setNodes':
