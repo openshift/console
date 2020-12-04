@@ -481,3 +481,9 @@ button.pf-c-dropdown__menu-item.pf-m-disabled {
   // enables tooltips for disabled menu items
   pointer-events: auto;
 }
+
+button.pf-c-dropdown__menu-item.hover {
+  color: var(--pf-c-dropdown__menu-item--hover--Color);
+  background-color: var(--pf-c-dropdown__menu-item--hover--BackgroundColor);
+}
+

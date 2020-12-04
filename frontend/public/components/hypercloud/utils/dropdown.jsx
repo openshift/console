@@ -10,13 +10,15 @@ const DropDownRow = React.memo((props) => {
   const {
     itemKey,
     content,
-    onClick
+    onClick,
+    hover,
+    selected
   } = props;
 
   return (
     <li key={itemKey}>
       <button
-        className="pf-c-dropdown__menu-item"
+        className={classNames("pf-c-dropdown__menu-item", {hover, focus: selected})}
         id={`${itemKey}-link`}
         data-test-id="dropdown-menu"
         data-test-dropdown-menu={itemKey}
@@ -49,7 +51,7 @@ const Dropdown_ = (props) => {
   const [title, setTitle] = React.useState(_.get(props.items, selectedKey, props.title));
   const [active, setActive] = React.useState(!!props.active);
   const [items, setItems] = React.useState(Object.assign({}, props.items));
-  const [keyboardHoverKey, setKeyboardHoverKey] = React.useState();
+  const [keyboardHoverKey, setKeyboardHoverKey] = React.useState(selectedKey);
 
 
   const dropdownElement = React.useRef();
