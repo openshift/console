@@ -178,7 +178,7 @@ const BootOrderModalComponent = withHandlePromise(
               .
             </Trans>
           }
-          onSaveAndRestart={() => saveAndRestartModal(vm, vmi, t, saveChanges)}
+          onSaveAndRestart={() => saveAndRestartModal(vm, vmi, saveChanges)}
         />
       </div>
     );

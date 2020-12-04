@@ -83,7 +83,7 @@ const PendingChangesPopoverContent: React.FC<PendingChangesPopoverContentProps> 
         key={`pcRestartBtn-${getName(vm)}`}
         className="co-modal-btn-link--inline"
         variant={ButtonVariant.secondary}
-        onMouseUp={() => saveAndRestartModal(vm, vmi, t)}
+        onMouseUp={() => saveAndRestartModal(vm, vmi)}
       >
         {t('kubevirt-plugin~Restart')}
       </Button>

@@ -50,7 +50,6 @@ import { isVMExpectedRunning } from '../../../selectors/vm/selectors';
 import { isFlavorChanged } from '../../../selectors/vm-like/next-run-changes';
 import { VMWrapper } from '../../../k8s/wrapper/vm/vm-wrapper';
 import { VMIWrapper } from '../../../k8s/wrapper/vm/vmi-wrapper';
-import { useTranslation } from 'react-i18next';
 
 const getId = (field: string) => `vm-flavor-modal-${field}`;
 
@@ -143,7 +142,7 @@ const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
   };
 
   const saveAndRestart = () =>
-    isValid ? saveAndRestartModal(vm, vmi, t, saveChanges) : setShowUIError(true);
+    isValid ? saveAndRestartModal(vm, vmi, saveChanges) : setShowUIError(true);
 
   const submit = (e) => {
     e.preventDefault();
