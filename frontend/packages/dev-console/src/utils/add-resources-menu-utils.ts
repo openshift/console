@@ -52,6 +52,10 @@ export const getAddPageUrl = (
           JSON.stringify({ type: INCONTEXT_ACTIONS_CONNECTS_TO, payload: contextSource }),
         );
       break;
+    case ImportOptions.DEVFILE:
+      pageUrl = `/import/ns/${ns}`;
+      params.append('importType', 'devfile');
+      break;
     case ImportOptions.DATABASE:
       pageUrl = `/catalog/ns/${ns}`;
       params.append('category', 'databases');

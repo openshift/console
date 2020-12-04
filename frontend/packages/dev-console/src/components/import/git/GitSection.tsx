@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { isEmpty } from 'lodash';
 import { useFormikContext, FormikValues, FormikTouched } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { Alert, TextInputTypes, ValidatedOptions } from '@patternfly/react-core';
@@ -24,16 +25,38 @@ import SampleRepo from './SampleRepo';
 import AdvancedGitOptions from './AdvancedGitOptions';
 
 export interface GitSectionProps {
+  defaultSample?: { url: string; ref?: string; dir?: string };
   showSample?: boolean;
+  buildStrategy?: string;
   builderImages: NormalizedBuilderImages;
 }
 
-const GitSection: React.FC<GitSectionProps> = ({ showSample, builderImages }) => {
+const GitSection: React.FC<GitSectionProps> = ({
+  defaultSample,
+  showSample = !!defaultSample,
+  buildStrategy,
+  builderImages,
+}) => {
   const { t } = useTranslation();
   const { values, setFieldValue, setFieldTouched, touched, dirty } = useFormikContext<
     FormikValues
   >();
-  const tag = values.image.tagObj;
+  const { url: defaultSampleURL, dir: defaultSampleDir, ref: defaultSampleRef } =
+    defaultSample || {};
+  const defaultSampleTagObj = React.useMemo(
+    () =>
+      defaultSampleURL
+        ? {
+            annotations: {
+              sampleRepo: defaultSampleURL,
+              sampleContextDir: defaultSampleDir ?? './',
+              sampleRef: defaultSampleRef ?? 'master',
+            },
+          }
+        : null,
+    [defaultSampleURL, defaultSampleDir, defaultSampleRef],
+  );
+  const tag = isEmpty(values.image.tagObj) ? defaultSampleTagObj : values.image.tagObj;
   const sampleRepo = showSample && getSampleRepo(tag);
   const { application = {}, name: nameTouched, git = {}, image = {} } = touched;
   const { type: gitTypeTouched } = git as FormikTouched<{ type: boolean }>;
@@ -57,20 +80,39 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample, builderImages }) =>
 
       const gitService = getGitService({ url, ref }, gitType as GitProvider);
       const isReachable = gitService && (await gitService.isRepoReachable());
-      setFieldValue('git.isUrlValidating', false);
+
       setIsRepoReachable(isReachable);
-      if (isReachable) {
-        setValidated(ValidatedOptions.success);
-        gitRepoName && !values.name && setFieldValue('name', gitRepoName);
-        gitRepoName &&
-          !values.application.name &&
-          values.application.selectedKey !== UNASSIGNED_KEY &&
-          setFieldValue('application.name', `${gitRepoName}-app`);
-      } else {
+      setFieldValue('git.isUrlValidating', false);
+
+      if (!isReachable) {
         setValidated(ValidatedOptions.warning);
+        return;
+      }
+
+      gitRepoName && !values.name && setFieldValue('name', gitRepoName);
+      gitRepoName &&
+        !values.application.name &&
+        values.application.selectedKey !== UNASSIGNED_KEY &&
+        setFieldValue('application.name', `${gitRepoName}-app`);
+
+      if (buildStrategy === 'Devfile') {
+        // No need to check the existence of the file, waste of a call to the gitService for this need
+        const devfileContents = gitService && (await gitService.getDevfileContent());
+        if (!devfileContents) {
+          setFieldValue('devfile.devfileContent', null);
+          setFieldValue('devfile.devfileHasError', true);
+          setValidated(ValidatedOptions.error);
+        } else {
+          setFieldValue('devfile.devfileContent', devfileContents);
+          setFieldValue('devfile.devfileHasError', false);
+          setValidated(ValidatedOptions.success);
+        }
+      } else {
+        setValidated(ValidatedOptions.success);
       }
     },
     [
+      buildStrategy,
       gitTypeTouched,
       setFieldTouched,
       setFieldValue,
@@ -139,27 +181,12 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample, builderImages }) =>
     const url = sampleRepo;
     const ref = getSampleRef(tag);
     const dir = getSampleContextDir(tag);
-    const gitType = detectGitType(url);
-    const name = values.name || values.image.selected;
-    values.name !== name && setFieldValue('name', name);
-    !values.application.name &&
-      values.application.selectedKey !== UNASSIGNED_KEY &&
-      setFieldValue('application.name', `${name}-app`);
     setFieldValue('git.url', url);
     setFieldValue('git.dir', dir);
     setFieldValue('git.ref', ref);
-    setFieldValue('git.type', gitType);
     setFieldTouched('git.url', true);
-  }, [
-    sampleRepo,
-    setFieldTouched,
-    setFieldValue,
-    tag,
-    values.application.name,
-    values.application.selectedKey,
-    values.image.selected,
-    values.name,
-  ]);
+    handleGitUrlChange(url, ref);
+  }, [handleGitUrlChange, sampleRepo, setFieldTouched, setFieldValue, tag]);
 
   React.useEffect(() => {
     values.build.strategy === BuildStrategyType.Source &&
@@ -176,7 +203,9 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample, builderImages }) =>
     if (values.git.isUrlValidating) {
       return `${t('devconsole~Validating')}...`;
     }
-
+    if (buildStrategy === 'Devfile' && validated === ValidatedOptions.error) {
+      return t('devconsole~No Devfile present, unable to continue');
+    }
     if (validated === ValidatedOptions.success) {
       return t('devconsole~Validated');
     }

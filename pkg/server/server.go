@@ -57,6 +57,7 @@ const (
 	customLogoEndpoint               = "/custom-logo"
 	helmChartRepoProxyEndpoint       = "/api/helm/charts/"
 	gitopsEndpoint                   = "/api/gitops/"
+	devfileEndpoint                  = "/api/devfile/"
 
 	sha256Prefix = "sha256~"
 )
@@ -249,6 +250,8 @@ func (s *Server) HTTPHandler() http.Handler {
 			k8sProxy.ServeHTTP(w, r)
 		})),
 	)
+
+	handleFunc(devfileEndpoint, s.devfileHandler)
 
 	terminalProxy := terminal.NewProxy(
 		s.TerminalProxyTLSConfig,

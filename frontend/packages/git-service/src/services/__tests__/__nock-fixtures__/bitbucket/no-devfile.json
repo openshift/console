@@ -1,0 +1,59 @@
+[
+    {
+        "scope": "https://api.bitbucket.org:443",
+        "method": "GET",
+        "path": "/2.0/repositories/akshinde/testgitsource/src/master/devfile.yaml",
+        "body": "",
+        "status": 404,
+        "response": {
+            "type": "error",
+            "error": {
+                "message": "No such file or directory: devfile.yaml"
+            }
+        },
+        "rawHeaders": [
+            "Server",
+            "nginx",
+            "Vary",
+            "Authorization",
+            "Cache-Control",
+            "max-age=900",
+            "Content-Type",
+            "application/json; charset=utf-8",
+            "X-B3-TraceId",
+            "4ce59aa142215672",
+            "Access-Control-Expose-Headers",
+            "Accept-Ranges, Content-Encoding, Content-Length, Content-Type, ETag, Last-Modified",
+            "X-Dc-Location",
+            "ash2",
+            "Strict-Transport-Security",
+            "max-age=31536000; includeSubDomains; preload",
+            "Date",
+            "Tue, 01 Dec 2020 02:59:15 GMT",
+            "X-Served-By",
+            "app-3002",
+            "Access-Control-Allow-Origin",
+            "*",
+            "ETag",
+            "\"8043b1b5523f389c1a24c964653c61c5\"",
+            "X-Static-Version",
+            "ad1eb073189c",
+            "X-Accepted-OAuth-Scopes",
+            "repository",
+            "X-Render-Time",
+            "0.15286397934",
+            "Connection",
+            "Keep-Alive",
+            "X-Request-Count",
+            "863",
+            "X-Frame-Options",
+            "SAMEORIGIN",
+            "X-Version",
+            "ad1eb073189c",
+            "X-Cache-Info",
+            "caching",
+            "Content-Length",
+            "78"
+        ]
+    }
+]

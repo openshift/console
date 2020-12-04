@@ -82,6 +82,20 @@ github.com/deislabs/oras/pkg/auth/docker
 github.com/deislabs/oras/pkg/content
 github.com/deislabs/oras/pkg/context
 github.com/deislabs/oras/pkg/oras
+# github.com/devfile/api v0.0.0-20201103130402-29b8738e196e
+github.com/devfile/api/pkg/apis/workspaces/v1alpha2
+github.com/devfile/api/pkg/devfile
+# github.com/devfile/library v0.0.0-20201125155652-6eabeab3ee52
+github.com/devfile/library/pkg/devfile
+github.com/devfile/library/pkg/devfile/generator
+github.com/devfile/library/pkg/devfile/parser
+github.com/devfile/library/pkg/devfile/parser/context
+github.com/devfile/library/pkg/devfile/parser/data
+github.com/devfile/library/pkg/devfile/parser/data/v2
+github.com/devfile/library/pkg/devfile/parser/data/v2/2.0.0
+github.com/devfile/library/pkg/devfile/parser/data/v2/common
+github.com/devfile/library/pkg/testingutil/filesystem
+github.com/devfile/library/pkg/util
 # github.com/docker/cli v0.0.0-20200130152716-5d0cf8839492
 github.com/docker/cli/cli/config
 github.com/docker/cli/cli/config/configfile
@@ -149,7 +163,7 @@ github.com/evanphx/json-patch
 github.com/exponent-io/jsonpath
 # github.com/fatih/color v1.7.0
 github.com/fatih/color
-# github.com/ghodss/yaml v1.0.0
+# github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32
 github.com/ghodss/yaml
 # github.com/go-openapi/jsonpointer v0.19.3
 github.com/go-openapi/jsonpointer
@@ -191,7 +205,7 @@ github.com/google/go-cmp/cmp/internal/value
 github.com/google/gofuzz
 # github.com/google/uuid v1.1.1
 github.com/google/uuid
-# github.com/googleapis/gnostic v0.2.0
+# github.com/googleapis/gnostic v0.3.1
 github.com/googleapis/gnostic/OpenAPIv2
 github.com/googleapis/gnostic/compiler
 github.com/googleapis/gnostic/extensions
@@ -251,9 +265,9 @@ github.com/liggitt/tabwriter
 github.com/mailru/easyjson/buffer
 github.com/mailru/easyjson/jlexer
 github.com/mailru/easyjson/jwriter
-# github.com/mattn/go-colorable v0.0.9
+# github.com/mattn/go-colorable v0.1.2
 github.com/mattn/go-colorable
-# github.com/mattn/go-isatty v0.0.4
+# github.com/mattn/go-isatty v0.0.12
 github.com/mattn/go-isatty
 # github.com/mattn/go-runewidth v0.0.4
 github.com/mattn/go-runewidth
@@ -263,7 +277,7 @@ github.com/matttproud/golang_protobuf_extensions/pbutil
 github.com/mitchellh/copystructure
 # github.com/mitchellh/go-wordwrap v1.0.0
 github.com/mitchellh/go-wordwrap
-# github.com/mitchellh/reflectwalk v1.0.0
+# github.com/mitchellh/reflectwalk v1.0.1
 github.com/mitchellh/reflectwalk
 # github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd
 github.com/modern-go/concurrent
@@ -279,6 +293,12 @@ github.com/opencontainers/image-spec/specs-go/v1
 # github.com/opencontainers/runc v0.1.1 => github.com/opencontainers/runc v1.0.0-rc8.0.20190926150303-84373aaa560b
 github.com/opencontainers/runc/libcontainer/system
 github.com/opencontainers/runc/libcontainer/user
+# github.com/openshift/api v3.9.0+incompatible
+github.com/openshift/api/build/v1
+github.com/openshift/api/image/docker10
+github.com/openshift/api/image/dockerpre012
+github.com/openshift/api/image/v1
+github.com/openshift/api/route/v1
 # github.com/openshift/library-go v0.0.0-20200424095618-2aeb4725dadf
 github.com/openshift/library-go/pkg/crypto
 # github.com/opentracing/opentracing-go v1.1.0
@@ -316,6 +336,9 @@ github.com/rubenv/sql-migrate/sqlparse
 github.com/russross/blackfriday
 # github.com/sirupsen/logrus v1.4.2
 github.com/sirupsen/logrus
+# github.com/spf13/afero v1.2.2
+github.com/spf13/afero
+github.com/spf13/afero/mem
 # github.com/spf13/cast v1.3.1
 github.com/spf13/cast
 # github.com/spf13/cobra v1.0.0
@@ -326,7 +349,7 @@ github.com/spf13/pflag
 github.com/xeipuuv/gojsonpointer
 # github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415
 github.com/xeipuuv/gojsonreference
-# github.com/xeipuuv/gojsonschema v1.1.0
+# github.com/xeipuuv/gojsonschema v1.2.0
 github.com/xeipuuv/gojsonschema
 # go.opencensus.io v0.22.0
 go.opencensus.io
@@ -367,7 +390,8 @@ golang.org/x/oauth2/internal
 # golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e
 golang.org/x/sync/errgroup
 golang.org/x/sync/semaphore
-# golang.org/x/sys v0.0.0-20200323222414-85ca7c5b95cd
+# golang.org/x/sys v0.0.0-20200509044756-6aff5f38e54f
+golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/unix
 golang.org/x/sys/windows
 # golang.org/x/text v0.3.3
@@ -439,7 +463,7 @@ gopkg.in/inf.v0
 gopkg.in/square/go-jose.v2
 gopkg.in/square/go-jose.v2/cipher
 gopkg.in/square/go-jose.v2/json
-# gopkg.in/yaml.v2 v2.2.8
+# gopkg.in/yaml.v2 v2.3.0
 gopkg.in/yaml.v2
 # helm.sh/helm/v3 v3.2.1
 helm.sh/helm/v3/internal/experimental/registry
@@ -742,6 +766,8 @@ k8s.io/utils/exec
 k8s.io/utils/integer
 k8s.io/utils/pointer
 k8s.io/utils/trace
+# sigs.k8s.io/controller-runtime v0.6.0
+sigs.k8s.io/controller-runtime/pkg/scheme
 # sigs.k8s.io/kustomize v2.0.3+incompatible
 sigs.k8s.io/kustomize/pkg/commands/build
 sigs.k8s.io/kustomize/pkg/constants

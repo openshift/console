@@ -162,11 +162,12 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
     } = values;
 
     const resourceActions = createOrUpdateResources(
+      t,
       values,
       imageStream,
       createNewProject,
       true,
-    ).then(() => createOrUpdateResources(values, imageStream));
+    ).then(() => createOrUpdateResources(t, values, imageStream));
 
     resourceActions
       .then((resources) => {

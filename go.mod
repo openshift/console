@@ -6,8 +6,11 @@ require (
 	github.com/coreos/dex v2.3.0+incompatible
 	github.com/coreos/go-oidc v2.1.0+incompatible
 	github.com/coreos/pkg v0.0.0-20180928190104-399ea9e2e55f
+	github.com/devfile/api v0.0.0-20201103130402-29b8738e196e
+	github.com/devfile/library v0.0.0-20201125155652-6eabeab3ee52
 	github.com/gorilla/websocket v1.4.2
 	github.com/graph-gophers/graphql-go v0.0.0-20200309224638-dae41bde9ef9
+	github.com/openshift/api v3.9.0+incompatible
 	github.com/openshift/library-go v0.0.0-20200424095618-2aeb4725dadf
 	github.com/pquerna/cachecontrol v0.0.0-20180517163645-1555304b9b35 // indirect
 	github.com/rawagner/graphql-transport-ws v0.0.0-20200817140314-dcfbf0388067
@@ -16,7 +19,7 @@ require (
 	golang.org/x/text v0.3.3 // indirect
 	google.golang.org/grpc v1.27.0
 	gopkg.in/square/go-jose.v2 v2.4.1 // indirect
-	gopkg.in/yaml.v2 v2.2.8
+	gopkg.in/yaml.v2 v2.3.0
 	helm.sh/helm/v3 v3.2.1
 	k8s.io/api v0.18.2
 	k8s.io/apiextensions-apiserver v0.18.2

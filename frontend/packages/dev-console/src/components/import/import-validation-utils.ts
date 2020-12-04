@@ -16,6 +16,7 @@ import {
   buildValidationSchema,
   gitUrlRegex,
   resourcesValidationSchema,
+  devfileValidationSchema,
 } from './validation-schema';
 import { healthChecksProbesValidationSchema } from '../health-checks/health-checks-probe-validation-utils';
 
@@ -27,6 +28,7 @@ export const validationSchema = (t: TFunction) =>
     image: imageValidationSchema(t),
     git: gitValidationSchema(t),
     docker: dockerValidationSchema(t),
+    devfile: devfileValidationSchema,
     deployment: deploymentValidationSchema(t),
     serverless: serverlessValidationSchema(t),
     route: routeValidationSchema(t),

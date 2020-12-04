@@ -163,11 +163,12 @@ const ImportSamplePage: React.FC<ImportSamplePageProps> = ({ match }) => {
 
   const handleSubmit = (values, actions) => {
     const resourceActions = createOrUpdateResources(
+      t,
       values,
       imageStream as K8sResourceKind,
       false,
       true,
-    ).then(() => createOrUpdateResources(values, imageStream as K8sResourceKind));
+    ).then(() => createOrUpdateResources(t, values, imageStream as K8sResourceKind));
 
     return resourceActions
       .then(() => {

@@ -67,6 +67,10 @@ export const k8sCreate = (kind, data, opts = {}) => {
   );
 };
 
+export const parseDevfile = async (devfileData) => {
+  return await coFetchJSON.post('/api/devfile/', devfileData);
+};
+
 export const k8sUpdate = (kind, data, ns, name, opts) =>
   coFetchJSON.put(
     resourceURL(kind, {

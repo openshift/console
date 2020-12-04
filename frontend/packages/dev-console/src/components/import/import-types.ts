@@ -51,6 +51,13 @@ export interface GitImportFormProps {
     loaded: boolean;
   };
 }
+export interface DevfileImportFormProps {
+  builderImages?: NormalizedBuilderImages;
+  projects?: {
+    data: [];
+    loaded: boolean;
+  };
+}
 
 export interface FirehoseList {
   data?: K8sResourceKind[];
@@ -95,6 +102,7 @@ export interface GitImportFormData {
   application: ApplicationData;
   git: GitData;
   docker: DockerData;
+  devfile?: DevfileData;
   serverless?: ServerlessData;
   pipeline?: PipelineData;
   image: ImageData;
@@ -154,6 +162,21 @@ export interface DockerData {
   dockerfilePath?: string;
   containerPort?: number;
 }
+
+type DevfileData = {
+  devfilePath?: string;
+  devfileContent?: string;
+  devfileHasError: boolean;
+  devfileSuggestedResources?: DevfileSuggestedResources;
+};
+
+export type DevfileSuggestedResources = {
+  imageStream: K8sResourceKind;
+  buildResource: K8sResourceKind;
+  deployResource: K8sResourceKind;
+  service: K8sResourceKind;
+  route: K8sResourceKind;
+};
 
 export interface RouteData {
   disable?: boolean;
@@ -223,6 +246,7 @@ export const GitReadableTypes = {
 
 export enum ImportTypes {
   git = 'git',
+  devfile = 'devfile',
   docker = 'docker',
   s2i = 's2i',
 }
@@ -292,6 +316,7 @@ export enum ImportOptions {
   CONTAINER = 'CONTAINER',
   CATALOG = 'CATALOG',
   DOCKERFILE = 'DOCKERFILE',
+  DEVFILE = 'DEVFILE',
   DATABASE = 'DATABASE',
   EVENTSOURCE = 'EVENTSOURCE',
   EVENTPUBSUB = 'EVENTPUBSUB',

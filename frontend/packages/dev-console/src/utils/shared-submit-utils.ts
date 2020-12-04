@@ -42,9 +42,18 @@ export const createService = (
     : getCommonAnnotations();
 
   let ports = imagePorts;
-  if (_.get(formData, 'build.strategy') === 'Docker') {
+  const buildStrategy = formData.build?.strategy;
+  if (buildStrategy === 'Docker') {
     const port = { containerPort: _.get(formData, 'docker.containerPort'), protocol: 'TCP' };
     ports = [port];
+  } else if (buildStrategy === 'Devfile' && !_.isEmpty(originalService?.spec?.ports)) {
+    ports = [
+      ...originalService.spec.ports.map((port) => ({
+        name: port.name,
+        containerPort: port.port,
+        protocol: 'TCP',
+      })),
+    ];
   } else if (isDeployImageFormData(formData)) {
     const {
       isi: { ports: isiPorts },
@@ -78,7 +87,7 @@ export const createService = (
         targetPort: port.containerPort,
         protocol: port.protocol,
         // Use the same naming convention as CLI new-app.
-        name: makePortName(port),
+        name: port.name || makePortName(port),
       })),
     },
   };
@@ -119,12 +128,15 @@ export const createRoute = (
   }
 
   let targetPort: string;
-  if (_.get(formData, 'build.strategy') === 'Docker') {
+  const buildStrategy = formData.build?.strategy;
+  if (buildStrategy === 'Docker') {
     const port = _.get(formData, 'docker.containerPort');
     targetPort = makePortName({
       containerPort: _.toInteger(port),
       protocol: 'TCP',
     });
+  } else if (buildStrategy === 'Devfile') {
+    targetPort = originalRoute?.spec?.port?.targetPort;
   } else if (unknownTargetPort) {
     targetPort = makePortName({ containerPort: _.toInteger(unknownTargetPort), protocol: 'TCP' });
   } else {

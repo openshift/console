@@ -46,7 +46,15 @@ const EditApplication: React.FC<EditApplicationProps & StateProps> = ({
     if (values.build.strategy) {
       const imageStream =
         values.image.selected && builderImages ? builderImages[values.image.selected].obj : null;
-      return createOrUpdateGitResources(values, imageStream, false, false, 'update', appResources);
+      return createOrUpdateGitResources(
+        t,
+        values,
+        imageStream,
+        false,
+        false,
+        'update',
+        appResources,
+      );
     }
     return createOrUpdateDeployImageResources(values, false, 'update', appResources);
   };

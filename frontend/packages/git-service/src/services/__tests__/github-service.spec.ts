@@ -162,4 +162,30 @@ describe('Github Service', () => {
       nockDone();
     });
   });
+
+  it('should detect Devfile', () => {
+    const gitSource = { url: 'https://github.com/reginapizza/che' };
+
+    const gitService = new GithubService(gitSource);
+
+    return nockBack('devfile.json').then(async ({ nockDone, context }) => {
+      const isDevfilePresent = await gitService.isDevfilePresent();
+      expect(isDevfilePresent).toBe(true);
+      context.assertScopesFinished();
+      nockDone();
+    });
+  });
+
+  it('should not detect Devfile', () => {
+    const gitSource: GitSource = { url: 'https://github.com/redhat-developer/devconsole-git' };
+
+    const gitService = new GithubService(gitSource);
+
+    return nockBack('no-devfile.json').then(async ({ nockDone, context }) => {
+      const isDevfilePresent = await gitService.isDevfilePresent();
+      expect(isDevfilePresent).toBe(false);
+      context.assertScopesFinished();
+      nockDone();
+    });
+  });
 });
