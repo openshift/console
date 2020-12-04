@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { Trans, useTranslation } from 'react-i18next';
 import { Button, ButtonVariant } from '@patternfly/react-core';
 import { getNamespace, createBasicLookup, getName } from '@console/shared';
 import {
@@ -49,6 +50,7 @@ const BootOrderModalComponent = withHandlePromise(
     vmi: vmiProp,
   }: BootOrderModalProps) => {
     const bootableDevices = getBootableDevices(vmLikeEntity);
+    const { t } = useTranslation();
     const [devices, setDevices] = React.useState<BootableDeviceType[]>(bootableDevices);
     const [initialDeviceList, setInitialDeviceList] = React.useState<BootableDeviceType[]>(
       bootableDevices,
@@ -150,7 +152,7 @@ const BootOrderModalComponent = withHandlePromise(
 
     return (
       <div className="modal-content">
-        <ModalTitle>Virtual machine boot order</ModalTitle>
+        <ModalTitle>{t('kubevirt-plugin~Virtual machine boot order')}</ModalTitle>
         <ModalBody>
           {isVMRunning && <ModalPendingChangesAlert isChanged={isChanged} />}
           <BootOrder devices={devices} setDevices={setDevices} />
@@ -161,10 +163,12 @@ const BootOrderModalComponent = withHandlePromise(
           isSaveAndRestart={isChanged && isVMRunning}
           onSubmit={onSubmit}
           onCancel={() => cancel()}
-          submitButtonText="Save"
-          infoTitle={showUpdatedAlert && 'Boot order has been updated outside this flow.'}
+          submitButtonText={t('kubevirt-plugin~Save')}
+          infoTitle={
+            showUpdatedAlert && t('kubevirt-plugin~Boot order has been updated outside this flow.')
+          }
           infoMessage={
-            <>
+            <Trans t={t} i18nKey="bootOrderModalInfoMessage" ns="kubevirt-plugin">
               Saving these changes will override any boot order previously saved.
               <br />
               To see the updated order{' '}
@@ -172,7 +176,7 @@ const BootOrderModalComponent = withHandlePromise(
                 reload the content
               </Button>
               .
-            </>
+            </Trans>
           }
           onSaveAndRestart={() => saveAndRestartModal(vm, vmi, saveChanges)}
         />

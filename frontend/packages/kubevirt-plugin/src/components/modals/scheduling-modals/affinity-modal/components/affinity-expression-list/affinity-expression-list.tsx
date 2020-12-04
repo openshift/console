@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { GridItem, Text, TextVariants } from '@patternfly/react-core';
 import { LabelsList } from '../../../../../LabelsList/labels-list';
-import { LABEL_KEY } from '../../../../../LabelsList/consts';
 import { AffinityLabel } from '../../types';
 import { AffinityExpressionRow } from './affinity-expression-row';
 
@@ -13,6 +13,7 @@ export const AffinityExpressionList = ({
   onDelete,
   rowID,
 }: AffinityExpressionListProps) => {
+  const { t } = useTranslation();
   return (
     <LabelsList
       isEmpty={expressions.length === 0}
@@ -23,13 +24,13 @@ export const AffinityExpressionList = ({
       {expressions.length > 0 && (
         <>
           <GridItem span={4}>
-            <Text component={TextVariants.h6}>{LABEL_KEY}</Text>
+            <Text component={TextVariants.h6}>{t('kubevirt-plugin~Key')}</Text>
           </GridItem>
           <GridItem span={2}>
-            <Text component={TextVariants.h6}>Operator</Text>
+            <Text component={TextVariants.h6}>{t('kubevirt-plugin~Operator')}</Text>
           </GridItem>
           <GridItem span={6}>
-            <Text component={TextVariants.h6}>Values</Text>
+            <Text component={TextVariants.h6}>{t('kubevirt-plugin~Values')}</Text>
           </GridItem>
           {expressions.map((expression) => (
             <AffinityExpressionRow

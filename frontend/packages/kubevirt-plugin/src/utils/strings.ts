@@ -9,9 +9,6 @@ export const FAILED_TO_CREATE = 'failed to create';
 export const FAILED_TO_PATCH = 'failed to patch';
 export const DYNAMIC = 'Dynamic';
 
-export const EDIT = 'Edit';
-export const SAVE = 'Save';
-export const ADD = 'Add';
 export const READY = 'Ready';
 
 export const EXAMPLE_CONTAINER = 'kubevirt/fedora-cloud-container-disk-demo';

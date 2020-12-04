@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   createModalLauncher,
   ModalBody,
@@ -16,6 +17,7 @@ type DeleteSourceModalProps = ModalComponentProps & {
 };
 
 const DeleteSourceModal: React.FC<DeleteSourceModalProps> = ({ sourceStatus, cancel, close }) => {
+  const { t } = useTranslation();
   const ref = React.useRef(null);
   const [inProgress, setInProgress] = React.useState(false);
   const [error, setError] = React.useState<string>();
@@ -39,18 +41,22 @@ const DeleteSourceModal: React.FC<DeleteSourceModalProps> = ({ sourceStatus, can
       setError(err.message);
     }
   };
+
+  const sourceName = dataVolume?.metadata?.name || pvc?.metadata?.name;
   return (
     <form onSubmit={submit} className="modal-content" ref={ref}>
-      <ModalTitle>Delete source</ModalTitle>
+      <ModalTitle>{t('kubevirt-plugin~Delete source')}</ModalTitle>
       <ModalBody>
-        Deleting {dataVolume?.metadata?.name || pvc?.metadata?.name} from this template will remove
-        it from template for all users.
+        {t(
+          'kubevirt-plugin~Deleting {{sourceName}} from this template will remove it from template for all users.',
+          { sourceName },
+        )}
       </ModalBody>
       <ModalSubmitFooter
         errorMessage={error}
         inProgress={inProgress}
         submitDanger
-        submitText="Delete source"
+        submitText={t('kubevirt-plugin~Delete source')}
         cancel={cancel}
       />
     </form>

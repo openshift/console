@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Alert, AlertVariant, Form, TextArea, TextInput } from '@patternfly/react-core';
 import { buildOwnerReference, prefixedID } from '../../../utils';
 import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
@@ -12,7 +13,6 @@ import {
 import { k8sCreate } from '@console/internal/module/k8s';
 import { VMLikeEntityKind } from '../../../types/vmLike';
 import { FormRow } from '../../form/form-row';
-import { SAVE } from '../../../utils/strings';
 import { ModalFooter } from '../modal/modal-footer';
 import { VMSnapshotWrapper } from '../../../k8s/wrapper/vm/vm-snapshot-wrapper';
 
@@ -23,6 +23,7 @@ const getSnapshotName = (vmName: string) => {
 
 const SnapshotsModal = withHandlePromise((props: SnapshotsModalProps) => {
   const { vmLikeEntity, inProgress, errorMessage, handlePromise, close, cancel } = props;
+  const { t } = useTranslation();
   const vmName = getName(vmLikeEntity);
   const [name, setName] = React.useState(getSnapshotName(vmName));
   const [description, setDescription] = React.useState('');
@@ -44,16 +45,18 @@ const SnapshotsModal = withHandlePromise((props: SnapshotsModalProps) => {
 
   return (
     <div className="modal-content">
-      <ModalTitle>{'Take Snapshot'}</ModalTitle>
+      <ModalTitle>{t('kubevirt-plugin~Take Snapshot')}</ModalTitle>
       <ModalBody>
         <Alert
-          title="Snapshot only includes disks backed by a snapshot supported storage class"
+          title={t(
+            'kubevirt-plugin~Snapshot only includes disks backed by a snapshot supported storage class',
+          )}
           isInline
           variant={AlertVariant.info}
           className="co-m-form-row"
         />
         <Form onSubmit={submit}>
-          <FormRow title="Snapshot Name" fieldId={asId('name')} isRequired>
+          <FormRow title={t('kubevirt-plugin~Snapshot Name')} fieldId={asId('name')} isRequired>
             <TextInput
               autoFocus
               isRequired
@@ -62,18 +65,18 @@ const SnapshotsModal = withHandlePromise((props: SnapshotsModalProps) => {
               onChange={(v) => setName(v)}
             />
           </FormRow>
-          <FormRow title="Description" fieldId={asId('desc')}>
+          <FormRow title={t('kubevirt-plugin~Description')} fieldId={asId('desc')}>
             <TextArea
               value={description}
               onChange={(d) => setDescription(d)}
-              aria-label="description text area"
+              aria-label={t('kubevirt-plugin~description text area')}
             />
           </FormRow>
         </Form>
       </ModalBody>
       <ModalFooter
         id="snapshot"
-        submitButtonText={SAVE}
+        submitButtonText={t('kubevirt-plugin~Save')}
         errorMessage={errorMessage}
         isDisabled={inProgress}
         inProgress={inProgress}

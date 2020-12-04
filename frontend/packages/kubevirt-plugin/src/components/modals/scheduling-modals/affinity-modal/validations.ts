@@ -1,3 +1,4 @@
+import { TFunction } from 'i18next';
 import { AffinityRowData, AffinityLabel, AffinityCondition, AffinityType } from './types';
 
 export const isWeightValid = (focusedAffinity: AffinityRowData) =>
@@ -10,7 +11,10 @@ export const isTermsInvalid = (terms: AffinityLabel[]) =>
       !key || ((operator === 'In' || operator === 'NotIn') && values?.length === 0),
   );
 
-export const getTopologyKeyValidation = ({ type, condition, topologyKey }: AffinityRowData) => {
+export const getTopologyKeyValidation = (
+  { type, condition, topologyKey }: AffinityRowData,
+  t: TFunction,
+) => {
   const topology = {
     isTopologyDisabled: false,
     isTopologyInvalid: false,
@@ -19,14 +23,18 @@ export const getTopologyKeyValidation = ({ type, condition, topologyKey }: Affin
 
   if (condition === AffinityCondition.required) {
     if (type === AffinityType.pod) {
-      topology.topologyValidationMessage = 'Topology key must not be empty';
+      topology.topologyValidationMessage = t('kubevirt-plugin~Topology key must not be empty');
       topology.isTopologyInvalid = !topologyKey;
     } else {
       topology.isTopologyDisabled = true;
-      topology.topologyValidationMessage = 'topologyKey is limited with current config';
+      topology.topologyValidationMessage = t(
+        'kubevirt-plugin~topologyKey is limited with current config',
+      );
     }
   } else if (type === AffinityType.podAnti) {
-    topology.topologyValidationMessage = 'Empty topologyKey is interpreted as “all topologies”';
+    topology.topologyValidationMessage = t(
+      'kubevirt-plugin~Empty topologyKey is interpreted as “all topologies”',
+    );
   }
   return topology;
 };

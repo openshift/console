@@ -45,7 +45,7 @@ const EvictionStrategyModal = withHandlePromise<EvictionStrategyModalWithPromise
           className="kubevirt-scheduling__checkbox"
           isChecked={isCheckedEvictionStrategy}
           onChange={() => setIsCheckedEvictionStrategy((value) => !value)}
-          label="LiveMigrate"
+          label={t('kubevirt-plugin~LiveMigrate')}
         />
         <Text className="kubevirt-scheduling__helper-text" component={TextVariants.small}>
           {t(

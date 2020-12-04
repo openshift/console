@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Alert, Button, pluralize } from '@patternfly/react-core';
+import { Trans, useTranslation } from 'react-i18next';
+import { Alert, Button } from '@patternfly/react-core';
 import { history } from '@console/internal/components/utils';
 import { getName, getNamespace } from '@console/shared/src/selectors/common';
 import { useGuestAgentInfo } from '../../../hooks/use-guest-agent-info';
@@ -21,6 +22,7 @@ export const VMIUsersAlert: React.FC<VMIUsersAlertProps> = ({
   alertTitle,
   alertHref,
 }) => {
+  const { t } = useTranslation();
   const [guestAgentInfoRaw] = useGuestAgentInfo({ vmi });
   const guestAgentInfo = new GuestAgentInfoWrapper(guestAgentInfoRaw);
   const userListLength = guestAgentInfo.getNumLoggedInUsers();
@@ -34,19 +36,24 @@ export const VMIUsersAlert: React.FC<VMIUsersAlertProps> = ({
   };
 
   const alertBody = (
-    <>
+    <Trans
+      t={t}
+      i18nKey="Guest agent logged in users alert"
+      ns="kubevirt-plugin"
+      count={userListLength}
+    >
       <Button variant="link" isInline onClick={onLinkClick}>
-        {pluralize(userListLength, 'User')}
+        {{ count: userListLength }} User
       </Button>{' '}
       currently logged in to this VM. Proceeding with this operation may cause logged in users to
       lose data.
-    </>
+    </Trans>
   );
 
   return (
     userListLength > 0 && (
       <div className="kubevirt-confirm-vmi-model__alert">
-        <Alert isInline variant="warning" title={alertTitle || 'Alert'}>
+        <Alert isInline variant="warning" title={alertTitle || t('kubevirt-plugin~Alert')}>
           {alertBody}
         </Alert>
       </div>

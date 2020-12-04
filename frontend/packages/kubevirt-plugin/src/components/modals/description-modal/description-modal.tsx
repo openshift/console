@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { TextArea } from '@patternfly/react-core';
 import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
 import {
@@ -18,6 +19,7 @@ import './_description-modal.scss';
 const DescriptionModal = withHandlePromise((props: DescriptionModalProps) => {
   const { resource, kind, inProgress, errorMessage, handlePromise, close, cancel } = props;
 
+  const { t } = useTranslation();
   const [description, setDescription] = React.useState(getDescription(resource));
 
   const submit = (e) => {
@@ -34,19 +36,19 @@ const DescriptionModal = withHandlePromise((props: DescriptionModalProps) => {
 
   return (
     <form onSubmit={submit} className="modal-content">
-      <ModalTitle>Edit Description</ModalTitle>
+      <ModalTitle>{t('kubevirt-plugin~Edit Description')}</ModalTitle>
       <ModalBody>
         <TextArea
           className="kubevirt-vm-description-modal__description"
           value={description}
           onChange={(d) => setDescription(d)}
-          aria-label="description text area"
+          aria-label={t('kubevirt-plugin~description text area')}
         />
       </ModalBody>
       <ModalSubmitFooter
         errorMessage={errorMessage}
         inProgress={inProgress}
-        submitText="Save"
+        submitText={t('kubevirt-plugin~Save')}
         cancel={cancel}
       />
     </form>

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
 import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 import { getName, getNamespace } from '@console/shared/src/selectors/common';
@@ -30,6 +31,7 @@ export const DeleteDiskModal = withHandlePromise((props: DeleteDiskModalProps) =
     close,
     cancel,
   } = props;
+  const { t } = useTranslation();
   const [deleteReferencedResource, setDeleteReferencedResource] = React.useState<boolean>(true);
 
   const entityModel = getVMLikeModel(vmLikeEntity);
@@ -67,10 +69,14 @@ export const DeleteDiskModal = withHandlePromise((props: DeleteDiskModalProps) =
   return (
     <form onSubmit={submit} className="modal-content">
       <ModalTitle>
-        <YellowExclamationTriangleIcon className="co-icon-space-r" /> Delete {diskName} disk
+        <YellowExclamationTriangleIcon className="co-icon-space-r" />{' '}
+        {t('kubevirt-plugin~Delete {{diskName}} disk', { diskName })}
       </ModalTitle>
       <ModalBody>
-        Are you sure you want to delete <strong className="co-break-word">{diskName}</strong> disk?
+        <Trans t={t} ns="kubevirt-plugin">
+          Are you sure you want to delete <strong className="co-break-word">{{ diskName }}</strong>{' '}
+          disk?
+        </Trans>
         {ownedResource && (
           <div className="checkbox">
             <label className="control-label">
@@ -79,8 +85,15 @@ export const DeleteDiskModal = withHandlePromise((props: DeleteDiskModalProps) =
                 onChange={() => setDeleteReferencedResource(!deleteReferencedResource)}
                 checked={deleteReferencedResource}
               />
-              Delete {getName(ownedResource.resource)} {ownedResource.model.label}
-              {ownedResource.model === DataVolumeModel && ` and PVC`}
+              {ownedResource.model === DataVolumeModel
+                ? t('kubevirt-plugin~Delete {{ownedResourceName}} {{ownedResourceLabel}} and PVC', {
+                    ownedResourceName: getName(ownedResource.resource),
+                    ownedResourceLabel: ownedResource.model.label,
+                  })
+                : t('kubevirt-plugin~Delete {{ownedResourceName}} {{ownedResourceLabel}}', {
+                    ownedResourceName: getName(ownedResource.resource),
+                    ownedResourceLabel: ownedResource.model.label,
+                  })}
             </label>
           </div>
         )}
@@ -89,7 +102,7 @@ export const DeleteDiskModal = withHandlePromise((props: DeleteDiskModalProps) =
         errorMessage={errorMessage}
         submitDisabled={isInProgress}
         inProgress={isInProgress}
-        submitText="Delete"
+        submitText={t('kubevirt-plugin~Delete')}
         submitDanger
         cancel={cancel}
       />
