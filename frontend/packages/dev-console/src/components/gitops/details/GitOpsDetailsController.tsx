@@ -13,6 +13,7 @@ import GitOpsEmptyState from '../GitOpsEmptyState';
 interface GitOpsDetailsControllerProps {
   envsData: GitOpsEnvironment[];
   emptyStateMsg: string;
+  appName: string;
 }
 
 const getWorkLoad = (resources: GitOpsResource[]) => {
@@ -59,6 +60,7 @@ const getTransformedEnvsData = (originalEnvsData: GitOpsEnvironment[], t: TFunct
 const GitOpsDetailsController: React.FC<GitOpsDetailsControllerProps> = ({
   envsData,
   emptyStateMsg,
+  appName,
 }) => {
   const { t } = useTranslation();
   const envs = React.useMemo(() => getTransformedEnvsData(envsData, t), [envsData, t]);
@@ -66,7 +68,7 @@ const GitOpsDetailsController: React.FC<GitOpsDetailsControllerProps> = ({
   return emptyStateMsg ? (
     <GitOpsEmptyState emptyStateMsg={emptyStateMsg} />
   ) : (
-    <GitOpsDetails envs={envs} />
+    <GitOpsDetails envs={envs} appName={appName} />
   );
 };
 
