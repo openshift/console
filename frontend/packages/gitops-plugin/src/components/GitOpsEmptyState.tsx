@@ -5,7 +5,7 @@ import {
   EmptyStateVariant,
   EmptyStateBody,
 } from '@patternfly/react-core';
-import * as gitopsIcon from '../../images/gitops.svg';
+import * as gitopsIcon from '../images/gitops.svg';
 import './GitOpsEmptyState.scss';
 
 interface GitOpsEmptyStateProps {

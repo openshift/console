@@ -1,5 +1,3 @@
-export const FLAG_OPENSHIFT_GITOPS = 'OPENSHIFT_GITOPS';
-
 /** URL query params that adjust scope / purpose of the page */
 export enum QUERY_PROPERTIES {
   /** For defining a contextual application group (ie, add new workload into this application group) */

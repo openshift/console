@@ -37,7 +37,7 @@ const GitOpsServiceDetailsSection: React.FC<GitOpsServiceDetailsSectionProps> = 
                 </CardTitle>
                 <CardBody>
                   <Label className="co-nowrap" style={{ fontSize: '12px' }} color="cyan">
-                    {service.image || <div>{t('devconsole~Image not available')}</div>}
+                    {service.image || <div>{t('gitops-plugin~Image not available')}</div>}
                   </Label>
                   <Split className="odc-gitops-service__details">
                     <SplitItem>
@@ -60,7 +60,7 @@ const GitOpsServiceDetailsSection: React.FC<GitOpsServiceDetailsSectionProps> = 
                     />
                   ) : (
                     <div className="odc-gitops-service__details">
-                      {t('devconsole~Service source URL not available')}
+                      {t('gitops-plugin~Service source URL not available')}
                     </div>
                   )}
                 </CardBody>

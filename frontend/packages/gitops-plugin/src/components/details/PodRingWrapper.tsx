@@ -53,7 +53,7 @@ const PodRingWrapper: React.FC<PodRingWrapperProps> = ({ workload }) => {
           enableScaling={false}
         />
       ) : (
-        <div style={{ border: '1px solid' }}>{t('devconsole~Pod info not available')}</div>
+        <div style={{ border: '1px solid' }}>{t('gitops-plugin~Pod info not available')}</div>
       )}
     </>
   );

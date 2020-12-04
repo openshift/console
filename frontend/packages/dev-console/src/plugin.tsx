@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import {
   BoltIcon,
   CatalogIcon,
@@ -9,7 +8,6 @@ import {
 } from '@patternfly/react-icons';
 import {
   Plugin,
-  ModelDefinition,
   ModelFeatureFlag,
   KebabActions,
   NavSection,
@@ -41,9 +39,8 @@ import {
   DeploymentModel,
 } from '@console/internal/models';
 import { doConnectsToBinding } from '@console/topology/src/utils/connector-utils';
-import * as models from './models';
 import { getKebabActionsForKind } from './utils/kebab-actions';
-import { FLAG_OPENSHIFT_GITOPS, INCONTEXT_ACTIONS_CONNECTS_TO } from './const';
+import { INCONTEXT_ACTIONS_CONNECTS_TO } from './const';
 import { AddAction } from './extensions/add-actions';
 import * as yamlIcon from './images/yaml.svg';
 import * as importGitIcon from './images/from-git.svg';
@@ -54,7 +51,6 @@ import { getGuidedTour } from './components/guided-tour';
 import { CatalogConsumedExtensions, catalogPlugin } from './components/catalog/catalog-plugin';
 
 type ConsumedExtensions =
-  | ModelDefinition
   | ModelFeatureFlag
   | NavSection
   | CustomFeatureFlag
@@ -75,19 +71,6 @@ type ConsumedExtensions =
   | CatalogConsumedExtensions;
 
 const plugin: Plugin<ConsumedExtensions> = [
-  {
-    type: 'ModelDefinition',
-    properties: {
-      models: _.values(models),
-    },
-  },
-  {
-    type: 'FeatureFlag/Model',
-    properties: {
-      model: models.GitOpsServiceModel,
-      flag: FLAG_OPENSHIFT_GITOPS,
-    },
-  },
   {
     type: 'Nav/Section',
     properties: {
@@ -181,23 +164,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [FLAGS.OPENSHIFT],
-    },
-  },
-  {
-    type: 'NavItem/Href',
-    properties: {
-      id: 'environments',
-      perspective: 'dev',
-      section: 'resources',
-      componentProps: {
-        // t('devconsole~Environments')
-        name: '%devconsole~Environments%',
-        href: '/environments',
-        testID: 'environments-header',
-      },
-    },
-    flags: {
-      required: [FLAG_OPENSHIFT_GITOPS],
     },
   },
   {
@@ -300,32 +266,6 @@ const plugin: Plugin<ConsumedExtensions> = [
         (
           await import(
             './components/catalog/CatalogPage' /* webpackChunkName: "dev-console-extensible-catalog" */
-          )
-        ).default,
-    },
-  },
-  {
-    type: 'Page/Route',
-    properties: {
-      exact: true,
-      path: '/environments',
-      loader: async () =>
-        (
-          await import(
-            './components/gitops/GitOpsListPage' /* webpackChunkName: "dev-console-gitops" */
-          )
-        ).default,
-    },
-  },
-  {
-    type: 'Page/Route',
-    properties: {
-      exact: true,
-      path: '/environments/:appName',
-      loader: async () =>
-        (
-          await import(
-            './components/gitops/GitOpsDetailsPage' /* webpackChunkName: "dev-console-gitops" */
           )
         ).default,
     },

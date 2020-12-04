@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { BreadCrumbs, ResourceIcon } from '@console/internal/components/utils';
 import { Split, SplitItem, Label } from '@patternfly/react-core';
-import { routeDecoratorIcon } from '../../import/render-utils';
+import { routeDecoratorIcon } from '@console/dev-console/src/components/import/render-utils';
 import './GitOpsDetailsPageHeading.scss';
 
 interface GitOpsDetailsPageHeadingProps {
@@ -21,11 +21,11 @@ const GitOpsDetailsPageHeading: React.FC<GitOpsDetailsPageHeadingProps> = ({
   const { t } = useTranslation();
   const breadcrumbs = [
     {
-      name: t('devconsole~Environments'),
+      name: t('gitops-plugin~Environments'),
       path: '/environments',
     },
     {
-      name: t('devconsole~Application environments'),
+      name: t('gitops-plugin~Application environments'),
       path: `${url}`,
     },
   ];
@@ -41,7 +41,7 @@ const GitOpsDetailsPageHeading: React.FC<GitOpsDetailsPageHeadingProps> = ({
         {badge && <span className="co-m-pane__heading-badge">{badge}</span>}
       </h1>
       <Split className="odc-gitops-details-page-heading__repo" hasGutter>
-        <SplitItem>{t('devconsole~Manifest file repo')}:</SplitItem>
+        <SplitItem>{t('gitops-plugin~Manifest file repo')}:</SplitItem>
         <SplitItem isFilled>
           <Label
             style={{ fontSize: '12px' }}

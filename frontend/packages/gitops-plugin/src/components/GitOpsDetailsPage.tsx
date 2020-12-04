@@ -45,7 +45,7 @@ const GitOpsDetailsPage: React.FC<GitOpsDetailsPageProps> = ({ match, location }
       const app = _.find(appGroups, (appObj) => appName === appObj?.name);
       if (!app?.environments) {
         emptyMsg = t(
-          'devconsole~Environment details were not found. Try reloading the page or contacting an administrator.',
+          'gitops-plugin~Environment details were not found. Try reloading the page or contacting an administrator.',
         );
       }
       setEmptyStateMsg(emptyMsg);
@@ -78,7 +78,7 @@ const GitOpsDetailsPage: React.FC<GitOpsDetailsPageProps> = ({ match, location }
   return (
     <>
       <Helmet>
-        <title>{t('devconsole~{{appName}} · Details', { appName })}</title>
+        <title>{t('gitops-plugin~{{appName}} · Details', { appName })}</title>
       </Helmet>
       <GitOpsDetailsPageHeading
         url={match.url}

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { PageHeading, LoadingBox, ExternalLink } from '@console/internal/components/utils';
@@ -10,7 +11,6 @@ import GitOpsList from './list/GitOpsList';
 import { fetchAllAppGroups, getManifestURLs, getPipelinesBaseURI } from './utils/gitops-utils';
 import useDefaultSecret from './utils/useDefaultSecret';
 import { Split, SplitItem } from '@patternfly/react-core';
-import * as _ from 'lodash';
 import './GitOpsListPage.scss';
 
 const projectRes = { isList: true, kind: ProjectModel.kind, optional: true };
@@ -57,15 +57,15 @@ const GitOpsListPage: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>{t('devconsole~Environments')}</title>
+        <title>{t('gitops-plugin~Environments')}</title>
       </Helmet>
       <PageHeading
-        title={t('devconsole~Environments')}
+        title={t('gitops-plugin~Environments')}
         badge={
           <Split className="odc-gitops-list-page-heading" hasGutter>
             <SplitItem>
               {argocdLink && (
-                <ExternalLink href={argocdLink.spec.href} text={t('devconsole~Argo CD')} />
+                <ExternalLink href={argocdLink.spec.href} text={t('gitops-plugin~Argo CD')} />
               )}
             </SplitItem>
             <SplitItem>

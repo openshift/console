@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import * as _ from 'lodash';
 import GitOpsDetails from './GitOpsDetails';
-import { routeDecoratorIcon } from '../../import/render-utils';
+import { routeDecoratorIcon } from '@console/dev-console/src/components/import/render-utils';
 import PodRingWrapper from './PodRingWrapper';
 import TimestampWrapper from './TimestampWrapper';
 import { WORKLOAD_KINDS, GitOpsResource, GitOpsEnvironment } from '../utils/gitops-types';
