@@ -147,6 +147,7 @@ export const ModalSubmitFooter: React.SFC<ModalSubmitFooterProps> = ({
           variant="secondary"
           data-test-id="modal-cancel-action"
           onClick={onCancelClick}
+          aria-label="Cancel"
         >
           {cancelText || t('public~Cancel')}
         </Button>

@@ -148,7 +148,7 @@ xdescribe('Monitoring: Alerts', () => {
     cy.log('expires the Silence');
     detailsPage.clickPageActionFromDropdown('Expire Silence');
     modal.shouldBeOpened();
-    cy.testA11y('Expire Silence modal');
+    cy.testA11y('Expire Silence modal', '#modal-container');
     modal.submit();
     modal.shouldBeClosed();
     cy.get(errorMessage).should('not.exist');
