@@ -2,11 +2,11 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import * as cx from 'classnames';
 import { VerticalTabs, VerticalTabsTab } from '@patternfly/react-catalog-view-extension';
-import { CatalogCategories } from '../utils/types';
+import { CatalogCategory } from '../utils/types';
 import { hasActiveDescendant, isActiveTab } from '../utils/category-utils';
 
 type CatalogCategoriesProp = {
-  categories: CatalogCategories;
+  categories: CatalogCategory[];
   categorizedIds: Record<string, string[]>;
   selectedCategory: string;
   onSelectCategory: (category: string) => void;
@@ -20,12 +20,15 @@ const CatalogCategories: React.FC<CatalogCategoriesProp> = ({
 }) => {
   const activeTab = _.has(categories, selectedCategory);
 
-  const renderTabs = (category, selectedCategoryId) => {
+  const renderTabs = (
+    category: CatalogCategory & { numItems?: number },
+    selectedCategoryID: string,
+    toplevelCategory: boolean,
+  ) => {
     if (!categorizedIds[category.id]) return null;
 
     const { id, label, subcategories, numItems } = category;
     const active = id === selectedCategory;
-    const shown = _.has(categories, id);
 
     const tabClasses = cx('text-capitalize', { 'co-catalog-tab__empty': !numItems });
 
@@ -37,11 +40,13 @@ const CatalogCategories: React.FC<CatalogCategoriesProp> = ({
         className={tabClasses}
         onActivate={() => onSelectCategory(id)}
         hasActiveDescendant={hasActiveDescendant(selectedCategory, category)}
-        shown={shown}
+        shown={toplevelCategory}
       >
         {subcategories && (
-          <VerticalTabs restrictTabs activeTab={isActiveTab(selectedCategoryId, category)}>
-            {_.map(subcategories, (subcategory) => renderTabs(subcategory, selectedCategoryId))}
+          <VerticalTabs restrictTabs activeTab={isActiveTab(selectedCategoryID, category)}>
+            {_.map(subcategories, (subcategory) =>
+              renderTabs(subcategory, selectedCategoryID, false),
+            )}
           </VerticalTabs>
         )}
       </VerticalTabsTab>
@@ -50,7 +55,7 @@ const CatalogCategories: React.FC<CatalogCategoriesProp> = ({
 
   return (
     <VerticalTabs restrictTabs activeTab={activeTab}>
-      {_.map(categories, (category) => renderTabs(category, selectedCategory))}
+      {_.map(categories, (category) => renderTabs(category, selectedCategory, true))}
     </VerticalTabs>
   );
 };

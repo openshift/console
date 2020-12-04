@@ -1,14 +1,51 @@
 package serverconfig
 
 import (
+	"encoding/json"
 	"errors"
 	"flag"
 	"fmt"
 	"io/ioutil"
 	"strconv"
 
+	"github.com/coreos/pkg/flagutil"
 	"gopkg.in/yaml.v2"
+	"k8s.io/klog"
 )
+
+// Parse configuration from
+// 1. Config file
+// 2. Environment variables (overrides config file)
+// 3. Commandline arguments (overrides config file and environment varibles)
+//
+// Because the config filename could be defined as commandline argument or
+// environment variable, we need to parse these inputs before reading the
+// config file and need to override the config values after this again.
+func Parse(fs *flag.FlagSet, args []string, envPrefix string) error {
+	if err := flagutil.SetFlagsFromEnv(fs, envPrefix); err != nil {
+		return err
+	}
+	if err := fs.Parse(args); err != nil {
+		return err
+	}
+
+	configFile := fs.Lookup("config").Value.String()
+
+	if configFile != "" {
+		if err := SetFlagsFromConfig(fs, configFile); err != nil {
+			klog.Fatalf("Failed to load config: %v", err)
+			return err
+		}
+		if err := flagutil.SetFlagsFromEnv(fs, envPrefix); err != nil {
+			return err
+		}
+		if err := fs.Parse(args); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
 
 // SetFlagsFromConfig sets flag values based on a YAML config file.
 func SetFlagsFromConfig(fs *flag.FlagSet, filename string) (err error) {
@@ -116,9 +153,14 @@ func addClusterInfo(fs *flag.FlagSet, clusterInfo *ClusterInfo) {
 }
 
 func addAuth(fs *flag.FlagSet, auth *Auth) {
-	// Assume "openshift" if config file is used.
-	fs.Set("k8s-auth", "openshift")
-	fs.Set("user-auth", "openshift")
+	// Assume "openshift" if config file is used and it is not set already
+	// by a command-line argument or environment variable.
+	if !isAlreadySet(fs, "k8s-auth") {
+		fs.Set("k8s-auth", "openshift")
+	}
+	if !isAlreadySet(fs, "user-auth") {
+		fs.Set("user-auth", "openshift")
+	}
 
 	if auth.ClientID != "" {
 		fs.Set("user-auth-oidc-client-id", auth.ClientID)
@@ -178,4 +220,23 @@ func addCustomization(fs *flag.FlagSet, customization *Customization) {
 	if customization.CustomLogoFile != "" {
 		fs.Set("custom-logo-file", customization.CustomLogoFile)
 	}
+
+	if customization.DeveloperCatalog.Categories != nil {
+		categories, err := json.Marshal(customization.DeveloperCatalog.Categories)
+		if err == nil {
+			fs.Set("developer-catalog-categories", string(categories))
+		} else {
+			klog.Fatalf("Could not marshal ConsoleConfig customization.developerCatalog.categories field: %v", err)
+		}
+	}
+}
+
+func isAlreadySet(fs *flag.FlagSet, name string) bool {
+	alreadySet := false
+	fs.Visit(func(f *flag.Flag) {
+		if f.Name == name {
+			alreadySet = true
+		}
+	})
+	return alreadySet
 }

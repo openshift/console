@@ -14,7 +14,6 @@ import (
 	"os"
 	"strings"
 
-	"github.com/coreos/pkg/flagutil"
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/bridge"
 	"github.com/openshift/console/pkg/knative"
@@ -61,11 +60,13 @@ func main() {
 	klog.InitFlags(fs)
 	defer klog.Flush()
 
+	// Define commandline / env / config options
+	fs.String("config", "", "The YAML config file.")
+
 	fListen := fs.String("listen", "http://0.0.0.0:9000", "")
 
 	fBaseAddress := fs.String("base-address", "", "Format: <http | https>://domainOrIPAddress[:port]. Example: https://openshift.example.com.")
 	fBasePath := fs.String("base-path", "/", "")
-	fConfig := fs.String("config", "", "The YAML config file.")
 
 	// See https://github.com/openshift/service-serving-cert-signer
 	fServiceCAFile := fs.String("service-ca-file", "", "CA bundle for OpenShift services signed with the service signing certificates.")
@@ -121,20 +122,15 @@ func main() {
 
 	fLoadTestFactor := fs.Int("load-test-factor", 0, "DEV ONLY. The factor used to multiply k8s API list responses for load testing purposes.")
 
-	if err := fs.Parse(os.Args[1:]); err != nil {
+	fDevCatalogCategories := fs.String("developer-catalog-categories", "", "Allow catalog categories customization. (JSON as string)")
+
+	if err := serverconfig.Parse(fs, os.Args[1:], "BRIDGE"); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
 	}
-
-	if err := flagutil.SetFlagsFromEnv(fs, "BRIDGE"); err != nil {
+	if err := serverconfig.Validate(fs); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
-	}
-
-	if *fConfig != "" {
-		if err := serverconfig.SetFlagsFromConfig(fs, *fConfig); err != nil {
-			klog.Fatalf("Failed to load config: %v", err)
-		}
 	}
 
 	baseURL := &url.URL{}
@@ -232,6 +228,7 @@ func main() {
 		ThanosPublicURL:       thanosPublicURL,
 		LoadTestFactor:        *fLoadTestFactor,
 		InactivityTimeout:     *fInactivityTimeout,
+		DevCatalogCategories:  *fDevCatalogCategories,
 	}
 
 	// if !in-cluster (dev) we should not pass these values to the frontend

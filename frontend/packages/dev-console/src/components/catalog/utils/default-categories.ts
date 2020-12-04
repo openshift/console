@@ -1,83 +1,71 @@
-import { CatalogCategories } from './types';
+import { CatalogCategory } from './types';
 
-export const defaultCatalogCategories: CatalogCategories = {
-  cicd: {
+export const defaultCatalogCategories: CatalogCategory[] = [
+  {
     id: 'cicd',
     label: 'CI/CD',
-    field: 'tags',
-    subcategories: {
-      jenkins: { id: 'jenkins', label: 'Jenkins', field: 'tags', values: ['jenkins'] },
-      pipelines: { id: 'pipelines', label: 'Pipelines', field: 'tags', values: ['pipelines'] },
-    },
+    subcategories: [
+      { id: 'jenkins', label: 'Jenkins', tags: ['jenkins'] },
+      { id: 'pipelines', label: 'Pipelines', tags: ['pipelines'] },
+    ],
   },
-  databases: {
+  {
     id: 'databases',
     label: 'Databases',
-    field: 'tags',
-    subcategories: {
-      mariadb: { id: 'mariadb', label: 'MariaDB', field: 'tags', values: ['mariadb'] },
-      mongodb: { id: 'mongodb', label: 'Mongo', field: 'tags', values: ['mongodb'] },
-      mysql: { id: 'mysql', label: 'MySQL', field: 'tags', values: ['mysql'] },
-      postgresql: { id: 'postgresql', label: 'Postgres', field: 'tags', values: ['postgresql'] },
-    },
+    subcategories: [
+      { id: 'mariadb', label: 'MariaDB', tags: ['mariadb'] },
+      { id: 'mongodb', label: 'Mongo', tags: ['mongodb'] },
+      { id: 'mysql', label: 'MySQL', tags: ['mysql'] },
+      { id: 'postgresql', label: 'Postgres', tags: ['postgresql'] },
+    ],
   },
-  languages: {
+  {
     id: 'languages',
     label: 'Languages',
-    field: 'tags',
-    subcategories: {
-      dotnet: { id: 'dotnet', label: '.NET', field: 'tags', values: ['dotnet'] },
-      golang: { id: 'golang', label: 'Go', field: 'tags', values: ['golang', 'go'] },
-      java: { id: 'java', label: 'Java', values: ['java'] },
-      javascript: {
+    subcategories: [
+      { id: 'dotnet', label: '.NET', tags: ['dotnet'] },
+      { id: 'golang', label: 'Go', tags: ['golang', 'go'] },
+      { id: 'java', label: 'Java', tags: ['java'] },
+      {
         id: 'javascript',
         label: 'JavaScript',
-        field: 'tags',
-        values: ['javascript', 'nodejs', 'js'],
+        tags: ['javascript', 'nodejs', 'js'],
       },
-      perl: { id: 'perl', label: 'Perl', field: 'tags', values: ['perl'] },
-      php: { id: 'php', label: 'PHP', field: 'tags', values: ['php'] },
-      python: { id: 'python', label: 'Python', field: 'tags', values: ['python'] },
-      ruby: { id: 'ruby', label: 'Ruby', field: 'tags', values: ['ruby'] },
-    },
+      { id: 'perl', label: 'Perl', tags: ['perl'] },
+      { id: 'php', label: 'PHP', tags: ['php'] },
+      { id: 'python', label: 'Python', tags: ['python'] },
+      { id: 'ruby', label: 'Ruby', tags: ['ruby'] },
+    ],
   },
-  middleware: {
+  {
     id: 'middleware',
     label: 'Middleware',
-    field: 'tags',
-    subcategories: {
-      analyticsData: {
+    subcategories: [
+      {
         id: 'analyticsData',
         label: 'Analytics & Data',
-        field: 'tags',
-        values: ['datagrid', 'datavirt'],
+        tags: ['datagrid', 'datavirt'],
       },
-      integration: {
+      {
         id: 'integration',
         label: 'Integration',
-        field: 'tags',
-        values: ['amq', 'fuse', 'jboss-fuse', 'sso', '3scale'],
+        tags: ['amq', 'fuse', 'jboss-fuse', 'sso', '3scale'],
       },
-      processAutomation: {
+      {
         id: 'processAutomation',
         label: 'Process Automation',
-        field: 'tags',
-        values: ['decisionserver', 'processserver'],
+        tags: ['decisionserver', 'processserver'],
       },
-      runtimes: {
+      {
         id: 'runtimes',
         label: 'Runtimes & Frameworks',
-        field: 'tags',
-        values: ['eap', 'httpd', 'tomcat'],
+        tags: ['eap', 'httpd', 'tomcat'],
       },
-    },
+    ],
   },
-  virtualization: {
+  {
     id: 'virtualization',
     label: 'Virtualization',
-    field: 'tags',
-    subcategories: {
-      vms: { id: 'vms', label: 'Virtual Machines', field: 'tags', values: ['virtualmachine'] },
-    },
+    subcategories: [{ id: 'vms', label: 'Virtual Machines', tags: ['virtualmachine'] }],
   },
-};
+];

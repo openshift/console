@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { SearchInput } from '@patternfly/react-core';
 import { Dropdown } from '@console/internal/components/utils';
 import { CatalogSortOrder, CatalogStringMap } from '../utils/types';
-import { NO_GROUPING } from '../utils/catalog-utils';
+import { NO_GROUPING } from '../utils/category-utils';
 
 type CatalogToolbarProps = {
   title: string;

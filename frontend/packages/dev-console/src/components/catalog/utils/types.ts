@@ -37,16 +37,12 @@ export type CatalogType = {
 export type CatalogCategory = {
   id: string;
   label: string;
-  field?: string;
-  values?: string[];
-  subcategories?: Record<string, CatalogSubcategory>;
+  tags?: string[];
+  subcategories?: CatalogSubcategory[];
 };
 
 export type CatalogSubcategory = {
   id: string;
   label: string;
-  field?: string;
-  values?: string[];
+  tags?: string[];
 };
-
-export type CatalogCategories = Record<string, CatalogCategory>;
