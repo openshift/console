@@ -153,6 +153,8 @@ describe(ColumnManagementModal.displayName, () => {
             ),
             type: columnManagementType,
           }}
+          userSettingState={null}
+          setUserSettingState={jest.fn()}
         />
       </Provider>,
     );
@@ -195,6 +197,8 @@ describe(ColumnManagementModal.displayName, () => {
             ),
             type: columnManagementType,
           }}
+          userSettingState={null}
+          setUserSettingState={jest.fn()}
         />
       </Provider>,
     );

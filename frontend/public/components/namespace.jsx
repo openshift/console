@@ -5,7 +5,7 @@ import { sortable } from '@patternfly/react-table';
 // FIXME upgrading redux types is causing many errors at this time
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
-import { connect, useSelector } from 'react-redux';
+import { connect } from 'react-redux';
 import { Tooltip, Button } from '@patternfly/react-core';
 import { useTranslation, withTranslation } from 'react-i18next';
 import i18next from 'i18next';
@@ -23,6 +23,9 @@ import {
   FLAGS,
   GreenCheckCircleIcon,
   getName,
+  withUserSettingsCompatibility,
+  COLUMN_MANAGEMENT_CONFIGMAP_KEY,
+  COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
 } from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 
@@ -264,93 +267,100 @@ const getNamespacesSelectedColumns = () => {
 
 const namespacesRowStateToProps = ({ UI }) => ({
   metrics: UI.getIn(['metrics', 'namespace']),
-  selectedColumns: UI.getIn(['columnManagement']),
 });
 
 const NamespacesTableRow = connect(namespacesRowStateToProps)(
-  withTranslation()(({ obj: ns, index, key, style, metrics, selectedColumns, t }) => {
-    const name = getName(ns);
-    const requester = getRequester(ns);
-    const bytes = metrics?.memory?.[name];
-    const cores = metrics?.cpu?.[name];
-    const description = getDescription(ns);
-    const labels = ns.metadata.labels;
-    const columns = new Set(
-      selectedColumns?.get(NamespacesColumnManagementID) || getNamespacesSelectedColumns(),
-    );
-    return (
-      <TableRow id={ns.metadata.uid} index={index} trKey={key} style={style}>
-        <TableData className={namespaceColumnInfo.name.classes}>
-          <ResourceLink kind="Namespace" name={ns.metadata.name} title={ns.metadata.uid} />
-        </TableData>
-        <TableData
-          className={namespaceColumnInfo.displayName.classes}
-          columns={columns}
-          columnID={namespaceColumnInfo.displayName.id}
-        >
-          <span className="co-break-word co-line-clamp">
-            {getDisplayName(ns) || (
-              <span className="text-muted">{t('namespace~No display name')}</span>
-            )}
-          </span>
-        </TableData>
-        <TableData
-          className={classNames(namespaceColumnInfo.status.classes, 'co-break-word')}
-          columns={columns}
-          columnID={namespaceColumnInfo.status.id}
-        >
-          <Status status={ns.status.phase} />
-        </TableData>
-        <TableData
-          className={classNames(namespaceColumnInfo.requester.classes, 'co-break-word')}
-          columns={columns}
-          columnID={namespaceColumnInfo.requester.id}
-        >
-          {requester || <span className="text-muted">{t('namespace~No requester')}</span>}
-        </TableData>
-        <TableData
-          className={namespaceColumnInfo.memory.classes}
-          columns={columns}
-          columnID={namespaceColumnInfo.memory.id}
-        >
-          {bytes ? `${formatBytesAsMiB(bytes)} MiB` : '-'}
-        </TableData>
-        <TableData
-          className={namespaceColumnInfo.cpu.classes}
-          columns={columns}
-          columnID={namespaceColumnInfo.cpu.id}
-        >
-          {cores ? t('namespace~{{cores}} cores', { cores: formatCores(cores) }) : '-'}
-        </TableData>
-        <TableData
-          className={namespaceColumnInfo.created.classes}
-          columns={columns}
-          columnID={namespaceColumnInfo.created.id}
-        >
-          <Timestamp timestamp={ns.metadata.creationTimestamp} />
-        </TableData>
-        <TableData
-          className={namespaceColumnInfo.description.classes}
-          columns={columns}
-          columnID={namespaceColumnInfo.description.id}
-        >
-          <span className="co-break-word co-line-clamp">
-            {description || <span className="text-muted">{t('namespace~No description')}</span>}
-          </span>
-        </TableData>
-        <TableData
-          className={namespaceColumnInfo.labels.classes}
-          columns={columns}
-          columnID={namespaceColumnInfo.labels.id}
-        >
-          <LabelList kind="Namespace" labels={labels} />
-        </TableData>
-        <TableData className={Kebab.columnClass}>
-          <ResourceKebab actions={nsMenuActions} kind="Namespace" resource={ns} />
-        </TableData>
-      </TableRow>
-    );
-  }),
+  withTranslation()(
+    withUserSettingsCompatibility(
+      COLUMN_MANAGEMENT_CONFIGMAP_KEY,
+      COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
+      undefined,
+      true,
+    )(({ obj: ns, index, key, style, metrics, t, userSettingState: tableColumns }) => {
+      const name = getName(ns);
+      const requester = getRequester(ns);
+      const bytes = metrics?.memory?.[name];
+      const cores = metrics?.cpu?.[name];
+      const description = getDescription(ns);
+      const labels = ns.metadata.labels;
+      const columns =
+        tableColumns?.[NamespacesColumnManagementID]?.length > 0
+          ? new Set(tableColumns[NamespacesColumnManagementID])
+          : getNamespacesSelectedColumns();
+      return (
+        <TableRow id={ns.metadata.uid} index={index} trKey={key} style={style}>
+          <TableData className={namespaceColumnInfo.name.classes}>
+            <ResourceLink kind="Namespace" name={ns.metadata.name} title={ns.metadata.uid} />
+          </TableData>
+          <TableData
+            className={namespaceColumnInfo.displayName.classes}
+            columns={columns}
+            columnID={namespaceColumnInfo.displayName.id}
+          >
+            <span className="co-break-word co-line-clamp">
+              {getDisplayName(ns) || (
+                <span className="text-muted">{t('namespace~No display name')}</span>
+              )}
+            </span>
+          </TableData>
+          <TableData
+            className={classNames(namespaceColumnInfo.status.classes, 'co-break-word')}
+            columns={columns}
+            columnID={namespaceColumnInfo.status.id}
+          >
+            <Status status={ns.status.phase} />
+          </TableData>
+          <TableData
+            className={classNames(namespaceColumnInfo.requester.classes, 'co-break-word')}
+            columns={columns}
+            columnID={namespaceColumnInfo.requester.id}
+          >
+            {requester || <span className="text-muted">{t('namespace~No requester')}</span>}
+          </TableData>
+          <TableData
+            className={namespaceColumnInfo.memory.classes}
+            columns={columns}
+            columnID={namespaceColumnInfo.memory.id}
+          >
+            {bytes ? `${formatBytesAsMiB(bytes)} MiB` : '-'}
+          </TableData>
+          <TableData
+            className={namespaceColumnInfo.cpu.classes}
+            columns={columns}
+            columnID={namespaceColumnInfo.cpu.id}
+          >
+            {cores ? t('namespace~{{cores}} cores', { cores: formatCores(cores) }) : '-'}
+          </TableData>
+          <TableData
+            className={namespaceColumnInfo.created.classes}
+            columns={columns}
+            columnID={namespaceColumnInfo.created.id}
+          >
+            <Timestamp timestamp={ns.metadata.creationTimestamp} />
+          </TableData>
+          <TableData
+            className={namespaceColumnInfo.description.classes}
+            columns={columns}
+            columnID={namespaceColumnInfo.description.id}
+          >
+            <span className="co-break-word co-line-clamp">
+              {description || <span className="text-muted">{t('namespace~No description')}</span>}
+            </span>
+          </TableData>
+          <TableData
+            className={namespaceColumnInfo.labels.classes}
+            columns={columns}
+            columnID={namespaceColumnInfo.labels.id}
+          >
+            <LabelList kind="Namespace" labels={labels} />
+          </TableData>
+          <TableData className={Kebab.columnClass}>
+            <ResourceKebab actions={nsMenuActions} kind="Namespace" resource={ns} />
+          </TableData>
+        </TableRow>
+      );
+    }),
+  ),
 );
 
 const NamespacesRow = (rowArgs) => (
@@ -369,35 +379,50 @@ const mapDispatchToProps = (dispatch) => ({
 export const NamespacesList = connect(
   null,
   mapDispatchToProps,
-)((props) => {
-  const { setNamespaceMetrics } = props;
-  React.useEffect(() => {
-    const updateMetrics = () => fetchNamespaceMetrics().then(setNamespaceMetrics);
-    updateMetrics();
-    const id = setInterval(updateMetrics, 30 * 1000);
-    return () => clearInterval(id);
-  }, [setNamespaceMetrics]);
-  const { t } = useTranslation();
-  return (
-    <Table
-      {...props}
-      columnManagementID={NamespacesColumnManagementID}
-      aria-label={t('namespace~Namespaces')}
-      Header={NamespacesTableHeader}
-      Row={NamespacesRow}
-      virtualize
-    />
-  );
-});
+)(
+  withUserSettingsCompatibility(
+    COLUMN_MANAGEMENT_CONFIGMAP_KEY,
+    COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
+    undefined,
+    true,
+  )(({ userSettingState: tableColumns, ...props }) => {
+    const { setNamespaceMetrics } = props;
+    React.useEffect(() => {
+      const updateMetrics = () => fetchNamespaceMetrics().then(setNamespaceMetrics);
+      updateMetrics();
+      const id = setInterval(updateMetrics, 30 * 1000);
+      return () => clearInterval(id);
+    }, [setNamespaceMetrics]);
+    const { t } = useTranslation();
+    const selectedColumns =
+      tableColumns?.[NamespacesColumnManagementID]?.length > 0
+        ? new Set(tableColumns[NamespacesColumnManagementID])
+        : null;
+    return (
+      <Table
+        {...props}
+        activeColumns={selectedColumns}
+        columnManagementID={NamespacesColumnManagementID}
+        aria-label={t('namespace~Namespaces')}
+        Header={NamespacesTableHeader}
+        Row={NamespacesRow}
+        virtualize
+      />
+    );
+  }),
+);
 
-export const NamespacesPage = (props) => {
-  let selectedColumns = new Set(
-    useSelector(({ UI }) => UI.getIn(['columnManagement', NamespacesColumnManagementID])),
-  );
+export const NamespacesPage = withUserSettingsCompatibility(
+  COLUMN_MANAGEMENT_CONFIGMAP_KEY,
+  COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
+  undefined,
+  true,
+)(({ userSettingState: tableColumns, ...props }) => {
   const { t } = useTranslation();
-  if (_.isEmpty(selectedColumns)) {
-    selectedColumns = getNamespacesSelectedColumns();
-  }
+  const selectedColumns =
+    tableColumns?.[NamespacesColumnManagementID]?.length > 0
+      ? new Set(tableColumns[NamespacesColumnManagementID])
+      : getNamespacesSelectedColumns();
   return (
     <ListPage
       {...props}
@@ -414,7 +439,7 @@ export const NamespacesPage = (props) => {
       }}
     />
   );
-};
+});
 
 export const projectMenuActions = [Kebab.factory.Edit, deleteModal];
 
@@ -534,126 +559,140 @@ const projectHeaderWithoutActions = () =>
 
 const projectRowStateToProps = ({ UI }) => ({
   metrics: UI.getIn(['metrics', 'namespace']),
-  selectedColumns: UI.getIn(['columnManagement']),
 });
 
 const ProjectTableRow = connect(projectRowStateToProps)(
   withTranslation()(
-    ({ obj: project, index, rowKey, style, customData = {}, metrics, selectedColumns, t }) => {
-      const name = getName(project);
-      const requester = getRequester(project);
-      const {
-        ProjectLinkComponent,
-        actionsEnabled = true,
-        showMetrics,
-        showActions,
-        isColumnManagementEnabled = true,
-      } = customData;
-      const bytes = metrics?.memory?.[name];
-      const cores = metrics?.cpu?.[name];
-      const description = getDescription(project);
-      const labels = project.metadata.labels;
-      const columns = isColumnManagementEnabled
-        ? new Set(
-            selectedColumns?.get(projectColumnManagementID) ||
-              getProjectSelectedColumns({ showMetrics, showActions }),
-          )
-        : null;
-      return (
-        <TableRow id={project.metadata.uid} index={index} trKey={rowKey} style={style}>
-          <TableData className={namespaceColumnInfo.name.classes}>
-            {customData && ProjectLinkComponent ? (
-              <ProjectLinkComponent project={project} />
-            ) : (
-              <span className="co-resource-item">
-                <ResourceLink
-                  kind="Project"
-                  name={project.metadata.name}
-                  title={project.metadata.uid}
-                />
-              </span>
-            )}
-          </TableData>
-          <TableData
-            className={namespaceColumnInfo.displayName.classes}
-            columns={columns}
-            columnID={namespaceColumnInfo.displayName.id}
-          >
-            <span className="co-break-word co-line-clamp">
-              {getDisplayName(project) || (
-                <span className="text-muted">{t('namespace~No display name')}</span>
-              )}
-            </span>
-          </TableData>
-          <TableData
-            className={namespaceColumnInfo.status.classes}
-            columns={columns}
-            columnID={namespaceColumnInfo.status.id}
-          >
-            <Status status={project.status.phase} />
-          </TableData>
-          <TableData
-            className={classNames(namespaceColumnInfo.requester.classes, 'co-break-word')}
-            columns={columns}
-            columnID={namespaceColumnInfo.requester.id}
-          >
-            {requester || <span className="text-muted">{t('namespace~No requester')}</span>}
-          </TableData>
-          {showMetrics && (
-            <>
-              <TableData
-                className={namespaceColumnInfo.memory.classes}
-                columns={columns}
-                columnID={namespaceColumnInfo.memory.id}
-              >
-                {bytes ? `${formatBytesAsMiB(bytes)} MiB` : '-'}
-              </TableData>
-              <TableData
-                className={namespaceColumnInfo.cpu.classes}
-                columns={columns}
-                columnID={namespaceColumnInfo.cpu.id}
-              >
-                {cores ? t('namespace~{{cores}} cores', { cores: formatCores(cores) }) : '-'}
-              </TableData>
-            </>
-          )}
-          <TableData
-            className={namespaceColumnInfo.created.classes}
-            columns={columns}
-            columnID={namespaceColumnInfo.created.id}
-          >
-            <Timestamp timestamp={project.metadata.creationTimestamp} />
-          </TableData>
-          {isColumnManagementEnabled && (
-            <>
-              <TableData
-                className={namespaceColumnInfo.description.classes}
-                columns={columns}
-                columnID={namespaceColumnInfo.description.id}
-              >
-                <span className="co-break-word co-line-clamp">
-                  {description || (
-                    <span className="text-muted">{t('namespace~No description')}</span>
-                  )}
+    withUserSettingsCompatibility(
+      COLUMN_MANAGEMENT_CONFIGMAP_KEY,
+      COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
+      undefined,
+      true,
+    )(
+      ({
+        obj: project,
+        index,
+        rowKey,
+        style,
+        customData = {},
+        metrics,
+        t,
+        userSettingState: tableColumns,
+      }) => {
+        const name = getName(project);
+        const requester = getRequester(project);
+        const {
+          ProjectLinkComponent,
+          actionsEnabled = true,
+          showMetrics,
+          showActions,
+          isColumnManagementEnabled = true,
+        } = customData;
+        const bytes = metrics?.memory?.[name];
+        const cores = metrics?.cpu?.[name];
+        const description = getDescription(project);
+        const labels = project.metadata.labels;
+        const columns = isColumnManagementEnabled
+          ? tableColumns?.[projectColumnManagementID]?.length > 0
+            ? new Set(tableColumns[projectColumnManagementID])
+            : getProjectSelectedColumns({ showMetrics, showActions })
+          : null;
+        return (
+          <TableRow id={project.metadata.uid} index={index} trKey={rowKey} style={style}>
+            <TableData className={namespaceColumnInfo.name.classes}>
+              {customData && ProjectLinkComponent ? (
+                <ProjectLinkComponent project={project} />
+              ) : (
+                <span className="co-resource-item">
+                  <ResourceLink
+                    kind="Project"
+                    name={project.metadata.name}
+                    title={project.metadata.uid}
+                  />
                 </span>
-              </TableData>
-              <TableData
-                className={namespaceColumnInfo.labels.classes}
-                columns={columns}
-                columnID={namespaceColumnInfo.labels.id}
-              >
-                <LabelList labels={labels} kind="Project" />
-              </TableData>
-            </>
-          )}
-          {actionsEnabled && (
-            <TableData className={Kebab.columnClass}>
-              <ResourceKebab actions={projectMenuActions} kind="Project" resource={project} />
+              )}
             </TableData>
-          )}
-        </TableRow>
-      );
-    },
+            <TableData
+              className={namespaceColumnInfo.displayName.classes}
+              columns={columns}
+              columnID={namespaceColumnInfo.displayName.id}
+            >
+              <span className="co-break-word co-line-clamp">
+                {getDisplayName(project) || (
+                  <span className="text-muted">{t('namespace~No display name')}</span>
+                )}
+              </span>
+            </TableData>
+            <TableData
+              className={namespaceColumnInfo.status.classes}
+              columns={columns}
+              columnID={namespaceColumnInfo.status.id}
+            >
+              <Status status={project.status.phase} />
+            </TableData>
+            <TableData
+              className={classNames(namespaceColumnInfo.requester.classes, 'co-break-word')}
+              columns={columns}
+              columnID={namespaceColumnInfo.requester.id}
+            >
+              {requester || <span className="text-muted">{t('namespace~No requester')}</span>}
+            </TableData>
+            {showMetrics && (
+              <>
+                <TableData
+                  className={namespaceColumnInfo.memory.classes}
+                  columns={columns}
+                  columnID={namespaceColumnInfo.memory.id}
+                >
+                  {bytes ? `${formatBytesAsMiB(bytes)} MiB` : '-'}
+                </TableData>
+                <TableData
+                  className={namespaceColumnInfo.cpu.classes}
+                  columns={columns}
+                  columnID={namespaceColumnInfo.cpu.id}
+                >
+                  {cores ? t('namespace~{{cores}} cores', { cores: formatCores(cores) }) : '-'}
+                </TableData>
+              </>
+            )}
+            <TableData
+              className={namespaceColumnInfo.created.classes}
+              columns={columns}
+              columnID={namespaceColumnInfo.created.id}
+            >
+              <Timestamp timestamp={project.metadata.creationTimestamp} />
+            </TableData>
+            {isColumnManagementEnabled && (
+              <>
+                <TableData
+                  className={namespaceColumnInfo.description.classes}
+                  columns={columns}
+                  columnID={namespaceColumnInfo.description.id}
+                >
+                  <span className="co-break-word co-line-clamp">
+                    {description || (
+                      <span className="text-muted">{t('namespace~No description')}</span>
+                    )}
+                  </span>
+                </TableData>
+                <TableData
+                  className={namespaceColumnInfo.labels.classes}
+                  columns={columns}
+                  columnID={namespaceColumnInfo.labels.id}
+                >
+                  <LabelList labels={labels} kind="Project" />
+                </TableData>
+              </>
+            )}
+            {actionsEnabled && (
+              <TableData className={Kebab.columnClass}>
+                <ResourceKebab actions={projectMenuActions} kind="Project" resource={project} />
+              </TableData>
+            )}
+          </TableRow>
+        );
+      },
+    ),
   ),
 );
 ProjectTableRow.displayName = 'ProjectTableRow';
@@ -691,48 +730,60 @@ const headerNoMetrics = () => projectTableHeader({ showMetrics: false, showActio
 const ProjectList_ = connectToFlags(
   FLAGS.CAN_CREATE_PROJECT,
   FLAGS.CAN_GET_NS,
-)(({ data, flags, setNamespaceMetrics, ...tableProps }) => {
-  const canGetNS = flags[FLAGS.CAN_GET_NS];
-  const showMetrics = PROMETHEUS_BASE_PATH && canGetNS && window.screen.width >= 1200;
-  /* eslint-disable react-hooks/exhaustive-deps */
-  React.useEffect(() => {
-    if (showMetrics) {
-      const updateMetrics = () => fetchNamespaceMetrics().then(setNamespaceMetrics);
-      updateMetrics();
-      const id = setInterval(updateMetrics, 30 * 1000);
-      return () => clearInterval(id);
+)(
+  withUserSettingsCompatibility(
+    COLUMN_MANAGEMENT_CONFIGMAP_KEY,
+    COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
+    undefined,
+    true,
+  )(({ data, flags, setNamespaceMetrics, userSettingState: tableColumns, ...tableProps }) => {
+    const canGetNS = flags[FLAGS.CAN_GET_NS];
+    const showMetrics = PROMETHEUS_BASE_PATH && canGetNS && window.screen.width >= 1200;
+    /* eslint-disable react-hooks/exhaustive-deps */
+    React.useEffect(() => {
+      if (showMetrics) {
+        const updateMetrics = () => fetchNamespaceMetrics().then(setNamespaceMetrics);
+        updateMetrics();
+        const id = setInterval(updateMetrics, 30 * 1000);
+        return () => clearInterval(id);
+      }
+    }, [showMetrics]);
+    /* eslint-enable react-hooks/exhaustive-deps */
+    const { t } = useTranslation();
+    const selectedColumns =
+      tableColumns?.[projectColumnManagementID]?.length > 0
+        ? new Set(tableColumns[projectColumnManagementID])
+        : null;
+
+    // Don't render the table until we know whether we can get metrics. It's
+    // not possible to change the table headers once the component is mounted.
+    if (flagPending(canGetNS)) {
+      return null;
     }
-  }, [showMetrics]);
-  /* eslint-enable react-hooks/exhaustive-deps */
-  const { t } = useTranslation();
 
-  // Don't render the table until we know whether we can get metrics. It's
-  // not possible to change the table headers once the component is mounted.
-  if (flagPending(canGetNS)) {
-    return null;
-  }
-
-  const ProjectEmptyMessage = () => (
-    <MsgBox
-      title={t('namespace~Welcome to OpenShift')}
-      detail={<OpenShiftGettingStarted canCreateProject={flags[FLAGS.CAN_CREATE_PROJECT]} />}
-    />
-  );
-  const ProjectNotFoundMessage = () => <MsgBox title={t('namespace~No projects found')} />;
-  return (
-    <Table
-      {...tableProps}
-      columnManagementID={projectColumnManagementID}
-      aria-label={t('namespace~Projects')}
-      data={data}
-      Header={showMetrics ? headerWithMetrics : headerNoMetrics}
-      Row={ProjectRow}
-      EmptyMsg={data.length > 0 ? ProjectNotFoundMessage : ProjectEmptyMessage}
-      customData={{ showMetrics }}
-      virtualize
-    />
-  );
-});
+    const ProjectEmptyMessage = () => (
+      <MsgBox
+        title={t('namespace~Welcome to OpenShift')}
+        detail={<OpenShiftGettingStarted canCreateProject={flags[FLAGS.CAN_CREATE_PROJECT]} />}
+      />
+    );
+    const ProjectNotFoundMessage = () => <MsgBox title={t('namespace~No projects found')} />;
+    return (
+      <Table
+        {...tableProps}
+        activeColumns={selectedColumns}
+        columnManagementID={projectColumnManagementID}
+        aria-label={t('namespace~Projects')}
+        data={data}
+        Header={showMetrics ? headerWithMetrics : headerNoMetrics}
+        Row={ProjectRow}
+        EmptyMsg={data.length > 0 ? ProjectNotFoundMessage : ProjectEmptyMessage}
+        customData={{ showMetrics }}
+        virtualize
+      />
+    );
+  }),
+);
 export const ProjectList = connect(
   null,
   mapDispatchToProps,
@@ -741,37 +792,44 @@ export const ProjectList = connect(
 export const ProjectsPage = connectToFlags(
   FLAGS.CAN_CREATE_PROJECT,
   FLAGS.CAN_GET_NS,
-)(({ flags, ...rest }) => {
-  // Skip self-subject access review for projects since they use a special project request API.
-  // `FLAGS.CAN_CREATE_PROJECT` determines if the user can create projects.
-  const canGetNS = flags[FLAGS.CAN_GET_NS];
-  const showMetrics = PROMETHEUS_BASE_PATH && canGetNS && window.screen.width >= 1200;
-  const showActions = showMetrics;
-  const selectedColumns = new Set(
-    useSelector(({ UI }) => UI.getIn(['columnManagement', projectColumnManagementID])),
-  );
-  const { t } = useTranslation();
-  return (
-    <ListPage
-      {...rest}
-      ListComponent={ProjectList}
-      canCreate={flags[FLAGS.CAN_CREATE_PROJECT]}
-      createHandler={() => createProjectModal({ blocking: true })}
-      filterLabel={t('namespace~by name or display name')}
-      skipAccessReview
-      textFilter="project-name"
-      kind="Project"
-      columnLayout={{
-        columns: projectTableHeader({ showMetrics, showActions }).map((column) =>
-          _.pick(column, ['title', 'additional', 'id']),
-        ),
-        id: projectColumnManagementID,
-        selectedColumns,
-        type: 'Project',
-      }}
-    />
-  );
-});
+)(
+  withUserSettingsCompatibility(
+    COLUMN_MANAGEMENT_CONFIGMAP_KEY,
+    COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
+    undefined,
+    true,
+  )(({ flags, userSettingState: tableColumns, ...rest }) => {
+    // Skip self-subject access review for projects since they use a special project request API.
+    // `FLAGS.CAN_CREATE_PROJECT` determines if the user can create projects.
+    const canGetNS = flags[FLAGS.CAN_GET_NS];
+    const showMetrics = PROMETHEUS_BASE_PATH && canGetNS && window.screen.width >= 1200;
+    const showActions = showMetrics;
+    const { t } = useTranslation();
+    return (
+      <ListPage
+        {...rest}
+        ListComponent={ProjectList}
+        canCreate={flags[FLAGS.CAN_CREATE_PROJECT]}
+        createHandler={() => createProjectModal({ blocking: true })}
+        filterLabel={t('namespace~by name or display name')}
+        skipAccessReview
+        textFilter="project-name"
+        kind="Project"
+        columnLayout={{
+          columns: projectTableHeader({ showMetrics, showActions }).map((column) =>
+            _.pick(column, ['title', 'additional', 'id']),
+          ),
+          id: projectColumnManagementID,
+          selectedColumns:
+            tableColumns?.[projectColumnManagementID]?.length > 0
+              ? new Set(tableColumns[projectColumnManagementID])
+              : null,
+          type: 'Project',
+        }}
+      />
+    );
+  }),
+);
 
 /** @type {React.SFC<{namespace: K8sResourceKind}>} */
 export const PullSecret = (props) => {

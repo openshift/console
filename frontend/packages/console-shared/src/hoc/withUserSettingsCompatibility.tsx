@@ -13,6 +13,7 @@ export const withUserSettingsCompatibility = <
   configStorageKey: string,
   localStoragekey: string,
   defaultvalue?: T,
+  sync: boolean = false,
 ) => (
   WrappedComponent: React.ComponentType<Props>,
 ): React.FC<Omit<Props, keyof WithUserSettingsCompatibilityProps<T>>> => (props: Props) => {
@@ -20,6 +21,7 @@ export const withUserSettingsCompatibility = <
     configStorageKey,
     localStoragekey,
     defaultvalue,
+    sync,
   );
   return loaded ? (
     <WrappedComponent {...props} userSettingState={state} setUserSettingState={setState} />
