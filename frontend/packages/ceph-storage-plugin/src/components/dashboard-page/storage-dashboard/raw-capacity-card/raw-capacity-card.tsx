@@ -20,7 +20,8 @@ const colorScale = ['#0166cc', '#d6d6d6'];
 const parser = compose((val) => val?.[0]?.y, getInstantVectorStats);
 
 const RawCapacityCard: React.FC = React.memo(() => {
-  const [values, loading, loadError] = usePrometheusQueries(queries, parser as any);
+  const [values, loading] = usePrometheusQueries(queries, parser as any);
+  const loadError = values.every((item) => typeof item === 'undefined');
   const { t } = useTranslation();
 
   const totalCapacityMetric = values?.[0];
@@ -78,7 +79,7 @@ const RawCapacityCard: React.FC = React.memo(() => {
                 labels={({ datum }) => `${datum.string}`}
                 title={usedCapacityAdjusted.string}
                 subTitle={t('ceph-storage-plugin~Used of {{capacity}}', {
-                  capacity: totalCapacity,
+                  capacity: totalCapacity.string,
                 })}
                 colorScale={colorScale}
                 padding={{ top: 0, bottom: 0, left: 0, right: 0 }}
@@ -90,8 +91,8 @@ const RawCapacityCard: React.FC = React.memo(() => {
             </div>
           </>
         )}
-        {!loadError && loading && <LoadingCardBody />}
-        {loadError && !loading && <ErrorCardBody />}
+        {loading && !loadError && <LoadingCardBody />}
+        {loadError && <ErrorCardBody />}
       </DashboardCardBody>
     </DashboardCard>
   );
