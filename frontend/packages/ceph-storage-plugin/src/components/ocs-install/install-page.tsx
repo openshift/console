@@ -1,16 +1,22 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { match as RouteMatch } from 'react-router';
-import { k8sGet } from '@console/internal/module/k8s';
-import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
+import { referenceForModel } from '@console/internal/module/k8s';
+import {
+  ClusterServiceVersionModel,
+  ClusterServiceVersionKind,
+} from '@console/operator-lifecycle-manager';
 import { BreadCrumbs } from '@console/internal/components/utils';
 import { getAnnotations } from '@console/shared/src/selectors/common';
 import { RadioGroup } from '@console/internal/components/radio';
 import { InfrastructureModel } from '@console/internal/models';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { useDeepCompareMemoize } from '@console/shared';
+import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { getRequiredKeys, createDownloadFile } from '../independent-mode/utils';
 import CreateExternalCluster from '../independent-mode/install';
 import { CreateInternalCluster } from './internal-mode/install-wizard';
-import { OCS_SUPPORT_ANNOTATION, MODES } from '../../constants';
+import { MODES } from '../../constants';
 import { CreateAttachedDevicesCluster } from './attached-devices/install';
 import './install-page.scss';
 
@@ -22,7 +28,6 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
     url,
   } = match;
   const { t } = useTranslation();
-  const [isIndependent, setIndependent] = React.useState(false);
   const [isIndepModeSupportedPlatform, setIndepModeSupportedPlatform] = React.useState(false);
   const [independentReqdKeys, setIndependentReqdKeys] = React.useState<{ [key: string]: string[] }>(
     null,
@@ -36,47 +41,37 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
     setMode(value as MODES);
   };
 
-  React.useEffect(() => {
-    k8sGet(ClusterServiceVersionModel, appName, ns)
-      .then((clusterServiceVersionObj) => {
-        // Todo(bipuladh): Remove this check in 4.7
-        const isIndependentSupported = getAnnotations(clusterServiceVersionObj)[
-          OCS_SUPPORT_ANNOTATION
-        ].includes('external');
-        if (isIndependentSupported) {
-          setIndependent(true);
-          const { configMaps = [], secrets = [], storageClasses = [] } = getRequiredKeys(
-            clusterServiceVersionObj,
-          );
-          setIndependentReqdKeys({ configMaps, secrets, storageClasses });
-          setDownloadFile(
-            createDownloadFile(
-              getAnnotations(clusterServiceVersionObj)?.[
-                'external.features.ocs.openshift.io/export-script'
-              ],
-            ),
-          );
-        }
+  const csvResource = {
+    kind: referenceForModel(ClusterServiceVersionModel),
+    name: appName,
+    namespace: ns,
+    isList: false,
+  };
 
-        try {
-          setClusterServiceVersion(clusterServiceVersionObj);
-        } catch (e) {
-          setClusterServiceVersion(null);
-        }
-      })
-      .catch(() => setClusterServiceVersion(null));
-  }, [appName, ns]);
+  const [csv, csvLoaded, csvError] = useK8sWatchResource<ClusterServiceVersionKind>(csvResource);
+  const [infra, infraLoaded, infraError] = useK8sGet<any>(InfrastructureModel, 'cluster');
+
+  const memoizedCSV = useDeepCompareMemoize(csv, true);
 
   React.useEffect(() => {
-    // eslint-disable-next-line promise/catch-or-return
-    k8sGet(InfrastructureModel, 'cluster')
-      // Todo(bipuladh): Add type for InfraObject
-      .then((infraObj) => {
-        if (INDEP_MODE_SUPPORTED_PLATFORMS.includes(infraObj?.spec?.platformSpec?.type)) {
-          setIndepModeSupportedPlatform(true);
-        }
-      });
-  }, []);
+    if (csvLoaded && !csvError) {
+      const { configMaps = [], secrets = [], storageClasses = [] } = getRequiredKeys(memoizedCSV);
+      setIndependentReqdKeys({ configMaps, secrets, storageClasses });
+      const file = createDownloadFile(
+        getAnnotations(memoizedCSV)?.['external.features.ocs.openshift.io/export-script'],
+      );
+      setDownloadFile(file);
+      setClusterServiceVersion(memoizedCSV);
+    }
+  }, [memoizedCSV, csvLoaded, csvError]);
+
+  React.useEffect(() => {
+    if (infraLoaded && !infraError) {
+      const infraType = infra?.spec?.platformSpec?.type;
+      const supportsExternal = INDEP_MODE_SUPPORTED_PLATFORMS.includes(infraType);
+      setIndepModeSupportedPlatform(supportsExternal);
+    }
+  }, [infra, infraLoaded, infraError]);
 
   return (
     <>
@@ -106,6 +101,7 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
           )}
         </p>
       </div>
+
       <div className="ceph-install__mode-toggle">
         <RadioGroup
           label="Select Mode:"
@@ -123,7 +119,7 @@ const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
             {
               value: MODES.EXTERNAL,
               title: MODES.EXTERNAL,
-              disabled: !isIndependent || !isIndepModeSupportedPlatform,
+              disabled: !isIndepModeSupportedPlatform,
             },
           ]}
           onChange={handleModeChange}

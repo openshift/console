@@ -16,11 +16,10 @@ import { filterSCWithNoProv } from '../../../utils/install';
 import CreateSC from './create-sc/create-sc';
 import './attached-devices.scss';
 
-const goToLSOInstallationPage = () => {
+const goToLSOInstallationPage = () =>
   history.push(
     '/operatorhub/all-namespaces?details-item=local-storage-operator-redhat-operators-openshift-marketplace',
   );
-};
 
 export const CreateAttachedDevicesCluster: React.FC<CreateAttachedDevicesClusterProps> = ({
   match,

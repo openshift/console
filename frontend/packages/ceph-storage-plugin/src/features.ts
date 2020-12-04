@@ -32,11 +32,10 @@ export const LSO_FLAG = 'LSO';
 
 export const RGW_FLAG = 'RGW';
 
-/* Key and Value should be same value received in CSV  */
+/* Key should be same as values received from the CSV 
+  Values should be formatted as OCS_<Console-Flag-Name> */
 export const OCS_SUPPORT_FLAGS = {
-  EXTERNAL: 'EXTERNAL',
-  MINIMAL_DEPLOYMENT: 'MINIMAL_DEPLOYMENT',
-  ENCRYPTION: 'ENCRYPTION',
+  MULTUS: 'OCS_MULTUS',
 };
 
 const handleError = (res: any, flags: string[], dispatch: Dispatch, cb: FeatureDetector) => {
@@ -99,14 +98,14 @@ export const detectOCSSupportedFeatures: FeatureDetector = async (dispatch) => {
     );
     const ocsCSV = csvList.items.find((obj) => _.startsWith(getName(obj), OCS_OPERATOR));
 
-    const support = getAnnotations(ocsCSV)[OCS_SUPPORT_ANNOTATION];
+    const support = JSON.parse(getAnnotations(ocsCSV)[OCS_SUPPORT_ANNOTATION]);
     _.keys(OCS_SUPPORT_FLAGS).forEach((feature) => {
-      dispatch(setFlag(feature, support.includes(feature.toLowerCase())));
+      dispatch(setFlag(OCS_SUPPORT_FLAGS[feature], support.includes(feature.toLowerCase())));
     });
   } catch (error) {
     error?.response?.status === 404
       ? _.keys(OCS_SUPPORT_FLAGS).forEach((feature) => {
-          dispatch(setFlag(feature, false));
+          dispatch(setFlag(OCS_SUPPORT_FLAGS[feature], false));
         })
       : handleError(error, _.keys(OCS_SUPPORT_FLAGS), dispatch, detectOCSSupportedFeatures);
   }
