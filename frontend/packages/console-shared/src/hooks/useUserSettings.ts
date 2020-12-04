@@ -16,12 +16,25 @@ import {
   USER_SETTING_CONFIGMAP_NAMESPACE,
 } from '../utils/user-settings';
 
+const useCounterRef = (initialValue: number = 0): [boolean, () => void, () => void] => {
+  const counterRef = React.useRef<number>(initialValue);
+  const increment = React.useCallback(() => {
+    counterRef.current += 1;
+  }, []);
+  const decrement = React.useCallback(() => {
+    counterRef.current -= 1;
+  }, []);
+  return [counterRef.current !== initialValue, increment, decrement];
+};
+
 export const useUserSettings = <T>(
   key: string,
   defaultValue?: T,
+  sync: boolean = false,
 ): [T, React.Dispatch<React.SetStateAction<T>>, boolean] => {
   const defaultValueRef = React.useRef<T>(defaultValue);
   const keyRef = React.useRef<string>(key);
+  const [isRequestPending, increaseRequest, decreaseRequest] = useCounterRef();
   const userUid = useSelector(
     (state: RootState) => state.UI.get('user')?.metadata?.uid ?? 'kubeadmin',
   );
@@ -36,6 +49,8 @@ export const useUserSettings = <T>(
   );
   const [cfData, cfLoaded, cfLoadError] = useK8sWatchResource<K8sResourceKind>(configMapResource);
   const [settings, setSettings] = React.useState<T>();
+  const settingsRef = React.useRef<T>(settings);
+  settingsRef.current = settings;
   const [loaded, setLoaded] = React.useState(false);
 
   const [fallbackLocalStorage, setFallbackLocalStorage] = React.useState<boolean>(false);
@@ -60,13 +75,29 @@ export const useUserSettings = <T>(
         }
       })();
     } else if (
+      /**
+       * update settings if key is present in config map but data is not equal to settings
+       */
       !fallbackLocalStorage &&
       cfData &&
       cfLoaded &&
-      (!cfData.data?.hasOwnProperty(keyRef.current) ||
-        seralizeData(settings) !== cfData.data?.[keyRef.current])
+      cfData.data?.hasOwnProperty(keyRef.current) &&
+      seralizeData(settings) !== cfData.data[keyRef.current]
     ) {
-      setSettings(deseralizeData(cfData.data?.[keyRef.current]) ?? defaultValueRef.current);
+      setSettings(deseralizeData(cfData.data[keyRef.current]));
+      setLoaded(true);
+    } else if (
+      /**
+       * if key doesn't exist in config map send patch request to add the key with default value
+       */
+      !fallbackLocalStorage &&
+      defaultValueRef.current !== undefined &&
+      cfData &&
+      cfLoaded &&
+      !cfData.data?.hasOwnProperty(keyRef.current)
+    ) {
+      updateConfigMap(cfData, keyRef.current, seralizeData(defaultValueRef.current));
+      setSettings(defaultValueRef.current);
       setLoaded(true);
     } else if (!fallbackLocalStorage && cfLoaded) {
       setSettings(defaultValueRef.current);
@@ -76,16 +107,54 @@ export const useUserSettings = <T>(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cfLoadError, cfLoaded, fallbackLocalStorage]);
 
-  React.useEffect(() => {
-    if (cfData && cfLoaded && settings !== undefined) {
-      const value = seralizeData(settings);
-      if (value !== cfData.data?.[key]) {
-        updateConfigMap(cfData, keyRef.current, value);
+  const callback = React.useCallback<React.Dispatch<React.SetStateAction<T>>>(
+    (action: React.SetStateAction<T>) => {
+      const previousSettings = settingsRef.current;
+      const newState =
+        typeof action === 'function' ? (action as (prevState: T) => T)(previousSettings) : action;
+      setSettings(newState);
+      if (cfLoaded) {
+        increaseRequest();
+        updateConfigMap(cfData, keyRef.current, seralizeData(newState))
+          .then(() => {
+            decreaseRequest();
+          })
+          .catch(() => {
+            decreaseRequest();
+            setSettings(previousSettings);
+          });
       }
-    }
-    // This effect should only be run on change of settings state.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [settings]);
+    },
+    [cfData, cfLoaded, decreaseRequest, increaseRequest],
+  );
 
-  return fallbackLocalStorage ? [lsData, setLsDataCallback, true] : [settings, setSettings, loaded];
+  const resultedSettings = React.useMemo(() => {
+    /**
+     * If key is deleted from the config map then return default value
+     */
+    if (
+      sync &&
+      cfLoaded &&
+      cfData &&
+      !cfData.data?.hasOwnProperty(keyRef.current) &&
+      settings !== undefined &&
+      !isRequestPending
+    ) {
+      return defaultValueRef.current;
+    }
+    if (
+      sync &&
+      !isRequestPending &&
+      cfLoaded &&
+      cfData &&
+      seralizeData(settingsRef.current) !== cfData?.data?.[keyRef.current]
+    ) {
+      return deseralizeData(cfData?.data?.[keyRef.current]);
+    }
+    return settings;
+  }, [sync, isRequestPending, cfData, cfLoaded, settings]);
+
+  return fallbackLocalStorage
+    ? [lsData, setLsDataCallback, true]
+    : [resultedSettings, callback, loaded];
 };

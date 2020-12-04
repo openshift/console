@@ -1,7 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
-import { connect, Dispatch } from 'react-redux';
+import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import {
   Accordion,
@@ -17,10 +17,9 @@ import {
   ToolbarItem,
 } from '@patternfly/react-core';
 import { PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
-import { getBadgeFromType } from '@console/shared';
+import { getBadgeFromType, usePinnedResources } from '@console/shared';
 import { RootState } from '../redux';
-import { getActivePerspective, getPinnedResources } from '../reducers/ui';
-import { setPinnedResources } from '../actions/ui';
+import { getActivePerspective } from '../reducers/ui';
 import { connectToModel } from '../kinds';
 import { DefaultPage } from './default-resource';
 import { requirementFromString } from '../module/k8s/selector-requirement';
@@ -73,20 +72,16 @@ const ResourceList = connectToModel(({ kindObj, mock, namespace, selector, nameF
 
 interface StateProps {
   perspective: string;
-  pinnedResources: string[];
 }
 
-interface DispatchProps {
-  onPinnedResourcesChange: (searches: string[]) => void;
-}
-
-const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = (props) => {
+const SearchPage_: React.FC<SearchProps & StateProps> = (props) => {
   const [selectedItems, setSelectedItems] = React.useState(new Set<string>([]));
   const [collapsedKinds, setCollapsedKinds] = React.useState(new Set<string>([]));
   const [labelFilter, setLabelFilter] = React.useState([]);
   const [labelFilterInput, setLabelFilterInput] = React.useState('');
   const [typeaheadNameFilter, setTypeaheadNameFilter] = React.useState('');
-  const { namespace, noProjectsAvailable, pinnedResources } = props;
+  const [pinnedResources, setPinnedResources, pinnedResourcesLoaded] = usePinnedResources();
+  const { namespace, noProjectsAvailable } = props;
   const { t } = useTranslation();
   // Set state variables from the URL
   React.useEffect(() => {
@@ -147,13 +142,12 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = (props) 
   const pinToggle = (e: React.MouseEvent<HTMLElement>, resource: string) => {
     e.preventDefault();
     e.stopPropagation();
-
-    const index = props.pinnedResources.indexOf(resource);
+    const index = pinnedResources.indexOf(resource);
     if (index >= 0) {
-      confirmNavUnpinModal(resource, pinnedResources, props.onPinnedResourcesChange);
+      confirmNavUnpinModal(resource, pinnedResources, setPinnedResources);
       return;
     }
-    props.onPinnedResourcesChange([...pinnedResources, resource]);
+    setPinnedResources([...pinnedResources, resource]);
   };
 
   const toggleKindExpanded = (kindView: string) => {
@@ -275,7 +269,7 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = (props) 
                   id={`${resource}-toggle`}
                 >
                   {getToggleText(resource)}
-                  {props.perspective !== 'admin' && (
+                  {props.perspective !== 'admin' && pinnedResourcesLoaded && (
                     <Button
                       className="co-search-group__pin-toggle"
                       variant={ButtonVariant.link}
@@ -324,16 +318,9 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = (props) 
 
 const mapStateToProps = (state: RootState): StateProps => ({
   perspective: getActivePerspective(state),
-  pinnedResources: getPinnedResources(state),
 });
 
-const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => ({
-  onPinnedResourcesChange: (searches: string[]) => {
-    dispatch(setPinnedResources(searches));
-  },
-});
-
-export const SearchPage = connect(mapStateToProps, mapDispatchToProps)(withStartGuide(SearchPage_));
+export const SearchPage = connect(mapStateToProps)(withStartGuide(SearchPage_));
 
 export type SearchProps = {
   location: any;

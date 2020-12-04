@@ -68,7 +68,6 @@ export enum ActionType {
   SetNamespaceMetrics = 'setNamespaceMetrics',
   SetNodeMetrics = 'setNodeMetrics',
   SetPVCMetrics = 'setPVCMetrics',
-  SetPinnedResources = 'setPinnedResources',
 }
 
 type MetricValuesByName = {
@@ -220,10 +219,6 @@ export const setActivePerspective = (perspective: string) => {
   // selected when returning to the console
   localStorage.setItem(LAST_PERSPECTIVE_LOCAL_STORAGE_KEY, perspective);
   return action(ActionType.SetActivePerspective, { perspective });
-};
-
-export const setPinnedResources = (resources: string[]) => {
-  return action(ActionType.SetPinnedResources, { resources });
 };
 
 export const beginImpersonate = (kind: string, name: string, subprotocols: string[]) =>
@@ -459,7 +454,6 @@ const uiActions = {
   setNodeMetrics,
   setPVCMetrics,
   notificationDrawerToggleExpanded,
-  setPinnedResources,
 };
 
 export type UIAction = Action<typeof uiActions>;
