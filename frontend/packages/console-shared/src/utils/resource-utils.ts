@@ -58,6 +58,57 @@ type ResourceItem = {
 
 export type ResourceUtil = (obj: K8sResourceKind, props: any) => ResourceItem | undefined;
 
+export const getResourcePausedAlert = (resource: K8sResourceKind): OverviewItemAlerts => {
+  if (!resource.spec.paused) {
+    return {};
+  }
+  return {
+    [`${resource.metadata.uid}--Paused`]: {
+      severity: 'info',
+      message: `${resource.metadata.name} is paused.`,
+    },
+  };
+};
+
+export const getBuildAlerts = (buildConfigs: BuildConfigOverviewItem[]): OverviewItemAlerts => {
+  const buildAlerts = {};
+  const addAlert = (build: K8sResourceKind, buildPhase: string) =>
+    _.set(buildAlerts, `${build.metadata.uid}--build${buildPhase}`, {
+      severity: `build${buildPhase}`,
+      message: _.get(build, ['status', 'message'], buildPhase),
+    });
+
+  _.each(buildConfigs, (bc) => {
+    let seenComplete = false;
+    // Requires builds to be sorted by most recent first.
+    _.each(bc.builds, (build: K8sResourceKind) => {
+      const buildPhase = _.get(build, ['status', 'phase']);
+      switch (buildPhase) {
+        case 'Complete':
+          seenComplete = true;
+          break;
+        case 'Failed':
+        case 'Error':
+          if (!seenComplete) {
+            // show failure/error
+            addAlert(build, buildPhase);
+          }
+          break;
+        case 'New':
+        case 'Pending':
+        case 'Running':
+          // show new/pending/running
+          addAlert(build, buildPhase);
+          break;
+        default:
+          break;
+      }
+    });
+  });
+
+  return buildAlerts;
+};
+
 export const getOwnedResources = <T extends K8sResourceKind>(
   obj: K8sResourceKind,
   resources: T[],
