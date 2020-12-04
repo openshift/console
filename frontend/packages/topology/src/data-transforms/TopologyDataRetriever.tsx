@@ -20,8 +20,8 @@ const TopologyDataRetriever: React.FC<TopologyDataRetrieverProps> = ({ trafficDa
   const filters = useDisplayFilters();
   const showGroups = getFilterById(SHOW_GROUPS_FILTER_ID, filters)?.value ?? true;
   const resourcesList = React.useMemo<WatchK8sResources<any>>(
-    () => (dataModelContext.extensionsLoaded ? dataModelContext.watchedResources : {}),
-    [dataModelContext.extensionsLoaded, dataModelContext.watchedResources],
+    () => (namespace && dataModelContext.extensionsLoaded ? dataModelContext.watchedResources : {}),
+    [dataModelContext.extensionsLoaded, dataModelContext.watchedResources, namespace],
   );
 
   const resources = useK8sWatchResources<TopologyResourcesObject>(resourcesList);
