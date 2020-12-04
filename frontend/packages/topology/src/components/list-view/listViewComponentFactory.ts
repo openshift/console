@@ -7,8 +7,8 @@ import { TYPE_WORKLOAD } from '../../const';
 import TopologyListViewNode from './TopologyListViewNode';
 import { TYPE_OPERATOR_BACKED_SERVICE } from '../../operators/components/const';
 import OperatorGroupListViewNode from '../../operators/listView/OperatorGroupListViewNode';
-import { TYPE_HELM_RELEASE } from '../../helm/components/const';
-import HelmReleaseListViewNode from '../../helm/listView/HelmReleaseListViewNode';
+import { TYPE_HELM_RELEASE } from '@console/helm-plugin/src/topology/components/const';
+import HelmReleaseListViewNode from '@console/helm-plugin/src/topology/listView/HelmReleaseListViewNode';
 
 export const listViewNodeComponentFactory = (
   type,

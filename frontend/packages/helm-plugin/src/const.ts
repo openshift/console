@@ -1,0 +1,1 @@
+export const FLAG_OPENSHIFT_HELM = 'OPENSHIFT_HELM';

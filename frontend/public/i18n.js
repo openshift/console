@@ -73,6 +73,7 @@ i18n
         'git-service',
         'global-config',
         'google-idp-form',
+        'helm-plugin',
         'htpasswd-idp-form',
         'idp-cafile-input',
         'idp-name-input',

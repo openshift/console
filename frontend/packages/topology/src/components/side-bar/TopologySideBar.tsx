@@ -18,19 +18,22 @@ import {
 } from '@console/knative-plugin/src/topology/const';
 import KnativeResourceOverviewPage from '@console/knative-plugin/src/components/overview/KnativeResourceOverviewPage';
 import KnativeTopologyEdgePanel from '@console/knative-plugin/src/components/overview/KnativeTopologyEdgePanel';
+import TopologyHelmReleasePanel from '@console/helm-plugin/src/topology/TopologyHelmReleasePanel';
+import {
+  TYPE_HELM_RELEASE,
+  TYPE_HELM_WORKLOAD,
+} from '@console/helm-plugin/src/topology/components/const';
 import { TopologyDataObject } from '../../topology-types';
 import { TYPE_APPLICATION_GROUP, TYPE_SERVICE_BINDING } from '../../const';
 import { OdcBaseEdge } from '../../elements';
 import ConnectedTopologyEdgePanel from './TopologyEdgePanel';
 import TopologyApplicationPanel from '../application-panel/TopologyApplicationPanel';
-import { TYPE_HELM_RELEASE, TYPE_HELM_WORKLOAD } from '../../helm/components/const';
-import TopologyHelmReleasePanel from '../../helm/TopologyHelmReleasePanel';
-import TopologyHelmWorkloadPanel from '../../helm/TopologyHelmWorkloadPanel';
 import { TYPE_OPERATOR_BACKED_SERVICE } from '../../operators/components/const';
 import { OperatorGroupData } from '../../operators/operator-topology-types';
 import TopologyServiceBindingRequestPanel from '../../operators/TopologyServiceBindingRequestPanel';
 import TopologyOperatorBackedPanel from '../../operators/TopologyOperatorBackedPanel';
 import TopologyResourcePanel from './TopologyResourcePanel';
+import TopologyHelmWorkloadPanel from '@console/helm-plugin/src/topology/TopologyHelmWorkloadPanel';
 
 type TopologySideBarProps = {
   show: boolean;
