@@ -22,7 +22,7 @@ const GitOpsList: React.FC<GitOpsListProps> = ({ appGroups, emptyStateMsg }) => 
             <Split>
               <SplitItem isFilled />
               <SplitItem>
-                {t('devconsole~{{count, number}} item', {
+                {t('gitops-plugin~{{count, number}} item', {
                   count: _.size(appGroups),
                 })}
               </SplitItem>

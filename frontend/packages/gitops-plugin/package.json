@@ -1,0 +1,14 @@
+{
+  "name": "@console/gitops-plugin",
+  "version": "0.0.0-fixed",
+  "description": "Gitops plugin contributes gitops environments UI to Developer Console.",
+  "private": true,
+  "scripts": {
+    "coverage": "yarn test --coverage --collectCoverageFrom='[\"packages/gitops-plugin/src/**\",\"!**/__tests__/**\",\"!packages/gitops-plugin/src/test/**\"]'",
+    "lint": "yarn --cwd ../.. eslint packages/gitops-plugin",
+    "test": "yarn --cwd ../.. test packages/gitops-plugin"
+  },
+  "consolePlugin": {
+    "entry": "src/plugin.ts"
+  }
+}

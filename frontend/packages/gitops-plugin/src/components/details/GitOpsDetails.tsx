@@ -73,7 +73,7 @@ const GitOpsDetails: React.FC<GitOpsDetailsProps> = ({ envs, appName }) => {
                           />
                         ) : (
                           <div className="odc-gitops-details__env-section__url-empty-state">
-                            {t('devconsole~Cluster URL not available')}
+                            {t('gitops-plugin~Cluster URL not available')}
                           </div>
                         )}
                       </StackItem>

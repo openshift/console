@@ -57,7 +57,7 @@ const TimestampWrapper: React.FC<TimestampWrapperProps> = ({ resModels }) => {
       {lastUpdatedTimestamp ? (
         <Timestamp timestamp={lastUpdatedTimestamp} />
       ) : (
-        <div>{t('devconsole~Info not available')}</div>
+        <div>{t('gitops-plugin~Info not available')}</div>
       )}
     </>
   );

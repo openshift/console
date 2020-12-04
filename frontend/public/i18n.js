@@ -71,6 +71,7 @@ i18n
         'github-idp-form',
         'gitlab-idp-form',
         'git-service',
+        'gitops-plugin',
         'global-config',
         'google-idp-form',
         'helm-plugin',

@@ -1,0 +1,21 @@
+{
+  "{{id}} by {{author}}": "{{id}} by {{author}}",
+  "Commit details not available": "Commit details not available",
+  "Cluster URL not available": "Cluster URL not available",
+  "Environments": "Environments",
+  "Application environments": "Application environments",
+  "Manifest file repo": "Manifest file repo",
+  "Image not available": "Image not available",
+  "Service source URL not available": "Service source URL not available",
+  "Pod info not available": "Pod info not available",
+  "Info not available": "Info not available",
+  "Environment details were not found. Try reloading the page or contacting an administrator.": "Environment details were not found. Try reloading the page or contacting an administrator.",
+  "{{appName}} · Details": "{{appName}} · Details",
+  "Argo CD": "Argo CD",
+  "{{count, number}} item": "{{count, number}} item",
+  "{{count, number}} item_plural": "{{count, number}} items",
+  "{{count, number}} Environment": "{{count, number}} Environment",
+  "{{count, number}} Environment_plural": "{{count, number}} Environments",
+  "No GitOps manifest URLs found": "No GitOps manifest URLs found",
+  "No Application groups found": "No Application groups found"
+}

@@ -24,7 +24,7 @@ const GitOpsListItem: React.FC<GitOpsListItemProps> = ({ appGroup }) => {
             <ResourceLink kind="application" name={appGroup.name} linkTo={false} />
           </GridItem>
           <GridItem lg={6} md={6} sm={6}>
-            {t('devconsole~{{count, number}} Environment', {
+            {t('gitops-plugin~{{count, number}} Environment', {
               count: _.size(appGroup.environments),
             })}
           </GridItem>
