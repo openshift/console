@@ -332,6 +332,7 @@ export const ImageManifestVulnPage: React.FC<ImageManifestVulnPageProps> = (prop
       textFilter="image-name"
       canCreate={false}
       showTitle={showTitle}
+      nameFilterPlaceholder={t('container-security~Search by image name...')}
       hideNameLabelFilters={hideNameLabelFilters}
       ListComponent={ImageManifestVulnList}
     />

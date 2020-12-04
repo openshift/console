@@ -28,7 +28,7 @@ describe('ImageVulnerabilitiesTable', () => {
 
   it('should render the proper header', () => {
     const expectedImageVulnerabilitiesTableHeader: string[] = [
-      'container-security~Vulnerability',
+      'container-security~Name',
       'container-security~Severity',
       'container-security~Package',
       'container-security~Current version',
