@@ -207,6 +207,12 @@ h6 {
 .pf-c-chip-group.pf-m-toolbar {
   margin-bottom: var(--pf-global--spacer--xs);
 }
+
+//set pf datalist item background to transparent
+.pf-c-data-list__item--transparent-bg {
+  --pf-c-data-list__item--BackgroundColor: transparent;
+}
+
 // PF components that calculate their correct height based on --pf-global--FontSize--md: 1rem
 .pf-c-modal-box,
 .pf-c-switch {
