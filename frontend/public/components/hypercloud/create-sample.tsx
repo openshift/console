@@ -82,12 +82,14 @@ const CreateSampleComponent: React.FC<SampleFormProps> = props => {
         <Dropdown
           name="dropdown1"
           className="btn-group"
-          items={dropdownUnits}
+          items={dropdownUnits} // (필수)
           required={true}
+          buttonClassName="dropdown-btn" // 선택된 아이템 보여주는 button (title) 부분 className
+          itemClassName="dropdown-item" // 드롭다운 아이템 리스트 전체의 className - 각 row를 의미하는 것은 아님
         />
         <ContainerDropdown
           name="containerDropdown1"
-          containers={containers}
+          containers={containers} // (필수)
           initContainers={initContainers}
         />
       </Section>
