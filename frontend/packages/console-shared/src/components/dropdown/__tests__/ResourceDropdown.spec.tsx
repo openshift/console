@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { shallow } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 import ResourceDropdown from '../ResourceDropdown';
 import { mockDropdownData } from '../__mocks__/dropdown-data-mock';
 
@@ -11,6 +11,12 @@ jest.mock('react-i18next', () => {
       Component.defaultProps = { ...Component.defaultProps, t: (s) => s };
       return Component;
     },
+  };
+});
+
+jest.mock('@console/shared/src/hooks/useUserSettingsCompatibility', () => {
+  return {
+    useUserSettingsCompatibility: () => ['', () => {}],
   };
 });
 
@@ -141,7 +147,7 @@ describe('ResourceDropdown test suite', () => {
     const spy = jest.fn();
     const preventDefault = jest.fn();
     const stopPropagation = jest.fn();
-    const component = shallow(
+    const component = mount(
       componentFactory({ onChange: spy, selectedKey: 'app-group-1', id: 'dropdown1' }),
     );
     component.setProps({ resources: mockDropdownData, selectedKey: 'app-group-2' });
@@ -149,16 +155,13 @@ describe('ResourceDropdown test suite', () => {
       expect(spy).toHaveBeenCalledWith('app-group-2', 'app-group-2', mockDropdownData[0].data[1]);
     }, 0);
 
-    const dropdownComponent = component.find('Dropdown#dropdown1').shallow();
-    const dropdownBtn = dropdownComponent.find('button#dropdown1');
+    const dropdownBtn = component.find('button#dropdown1');
     dropdownBtn.simulate('click', { preventDefault });
 
-    const dropdownItem = dropdownComponent
-      .find('DropDownRow')
-      .last()
-      .shallow()
-      .find('#app-group-3-link');
+    const dropdownRows = component.find('DropDownRow');
+    const dropdownItem = dropdownRows.last().find('#app-group-3-link');
     dropdownItem.simulate('click', { preventDefault, stopPropagation });
+
     expect(component.state('title')).toEqual('app-group-3');
   });
 
