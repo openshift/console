@@ -46,8 +46,8 @@ const CreateSampleComponent: React.FC<SampleFormProps> = props => {
     Gi: 'GiB',
     Ti: 'TiB',
   };
-  const containers = {test:  {name: "test", order: 0}, sidecar: {name: "sidecar"}, sidecar2: {name: "sidecar2"}};
-  const initContainers = {initupload: {name: "initupload", order: 0}, ["place-entrypoint"]: {name: "place-entrypoint"}, ["place-entrypoint2"]: {name: "place-entrypoint2"}};
+  const containers = { test: { name: "test", order: 0 }, sidecar: { name: "sidecar" }, sidecar2: { name: "sidecar2" } };
+  const initContainers = { initupload: { name: "initupload", order: 0 }, ["place-entrypoint"]: { name: "place-entrypoint" }, ["place-entrypoint2"]: { name: "place-entrypoint2" } };
 
   return (
     <div>
@@ -79,7 +79,12 @@ const CreateSampleComponent: React.FC<SampleFormProps> = props => {
             inline={false} // inline속성 먹일거면 true, 아니면 빼면 됨 (선택)
           />
         </Section>
-        <Dropdown name="dropdown1" className="btn-group" items={dropdownUnits} required={true}/>
+        <Dropdown
+          name="dropdown1"
+          className="btn-group"
+          items={dropdownUnits}
+          required={true}
+        />
         <ContainerDropdown
           name="containerDropdown1"
           containers={containers}
