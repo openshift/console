@@ -8,11 +8,13 @@ import { withUserSettingsCompatibility, WithUserSettingsCompatibilityProps } fro
 import CloudshellExec from './CloudShellExec';
 import TerminalLoadingBox from './TerminalLoadingBox';
 import { TerminalInitData, initTerminal } from './cloud-shell-utils';
-import CloudShellSetup from './setup/CloudShellSetup';
 import useCloudShellWorkspace from './useCloudShellWorkspace';
 import { CLOUD_SHELL_NAMESPACE, CLOUD_SHELL_NAMESPACE_CONFIG_STORAGE_KEY } from './const';
 
 import './CloudShellTerminal.scss';
+import CloudShellAdminSetup from './setup/CloudShellAdminSetup';
+import CloudShellDeveloperSetup from './setup/CloudShellDeveloperSetup';
+import { useAccessReview2 } from '@console/internal/components/utils/rbac';
 
 type StateProps = {
   user: UserKind;
@@ -33,8 +35,12 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps &
 }) => {
   const [initData, setInitData] = React.useState<TerminalInitData>();
   const [initError, setInitError] = React.useState<string>();
-
-  const [workspace, loaded, loadError] = useCloudShellWorkspace(user, namespace);
+  const [isAdmin, isAdminCheckLoading] = useAccessReview2({
+    namespace: 'openshift-terminal',
+    verb: 'create',
+    resource: 'pods',
+  });
+  const [workspace, loaded, loadError] = useCloudShellWorkspace(user, isAdmin, namespace);
 
   const workspacePhase = workspace?.status?.phase;
   const workspaceName = workspace?.metadata?.name;
@@ -113,7 +119,7 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps &
   }
 
   // loading the workspace resource
-  if (!loaded) {
+  if (!loaded || isAdminCheckLoading) {
     return <TerminalLoadingBox message="" />;
   }
 
@@ -138,9 +144,19 @@ const CloudShellTerminal: React.FC<CloudShellTerminalProps &
     );
   }
 
+  if (isAdmin) {
+    return (
+      <CloudShellAdminSetup
+        onInitialize={(ns: string) => {
+          setNamespace(ns);
+        }}
+      />
+    );
+  }
+
   // show the form to let the user create a new workspace
   return (
-    <CloudShellSetup
+    <CloudShellDeveloperSetup
       onCancel={onCancel}
       onSubmit={(ns: string) => {
         setNamespace(ns);
