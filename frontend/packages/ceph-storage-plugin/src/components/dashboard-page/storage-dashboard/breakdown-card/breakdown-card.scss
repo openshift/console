@@ -11,14 +11,19 @@
 }
 
 .capacity-breakdown-card__header-link {
-  padding: var(--pf-global--spacer--xs);;
-  margin-right:  var(--pf-global--spacer--md);;
+  padding: var(--pf-global--spacer--xs);
+  margin-right: var(--pf-global--spacer--md);
 }
 
 .capacity-breakdown-card__legend-link {
   &:link {
-    text-decoration: none; 
+    text-decoration: none;
   }
+}
+
+.capacity-breakdown-card--error {
+  width: 100%;
+  text-align: center;
 }
 
 .skeleton-activity {
@@ -30,7 +35,7 @@
   height: 30px;
   &::after {
     background-repeat: no-repeat;
-    content: "";
+    content: '';
     display: block;
     height: 100%;
     width: 100%;
@@ -38,11 +43,11 @@
 }
 
 .skeleton-stack-no-show {
-  background-color:  var(--pf-global--BackgroundColor--100);
-  animation: none; 
+  background-color: var(--pf-global--BackgroundColor--100);
+  animation: none;
 }
 
-.skeleton-stack-bar{
+.skeleton-stack-bar {
   margin: 0.2rem 0.7em 0.2rem 0.7em;
 }
 

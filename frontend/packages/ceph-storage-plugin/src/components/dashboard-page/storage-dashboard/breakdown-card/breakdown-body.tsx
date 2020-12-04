@@ -26,10 +26,18 @@ export const BreakdownCardBody: React.FC<BreakdownBodyProps> = ({
     return <BreakdownChartLoading />;
   }
   if (!capacityUsed || !top5MetricsStats.length || hasLoadError) {
-    return <div className="text-secondary">{t('dashboard~Not available')}</div>;
+    return (
+      <div className="text-secondary capacity-breakdown-card--error">
+        {t('dashboard~Not available')}
+      </div>
+    );
   }
   if (capacityUsed === '0') {
-    return <div className="text-secondary">{t('ceph-storage-plugin~Not enough usage data')}</div>;
+    return (
+      <div className="text-secondary capacity-breakdown-card--error">
+        {t('ceph-storage-plugin~Not enough usage data')}
+      </div>
+    );
   }
 
   const chartData = addAvailable(top5MetricsStats, capacityAvailable, metricTotal, humanize, t);
