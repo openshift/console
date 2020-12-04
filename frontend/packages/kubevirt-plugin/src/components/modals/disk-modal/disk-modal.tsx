@@ -380,7 +380,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
             <FormPFSelect
               menuAppendTo={() => document.body}
               isDisabled={isDisabled('source', !source.canBeChangedToThisSource(type))}
-              selections={asFormSelectValue(source.toString())}
+              selections={asFormSelectValue(t(source.toString()))}
               onSelect={onSourceChanged}
               toggleId={asId('select-source')}
             >
@@ -396,9 +396,9 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                     <SelectOption
                       key={uiType.getValue()}
                       value={uiType.getValue()}
-                      description={uiType.getDescription()}
+                      description={t(uiType.getDescriptionKey())}
                     >
-                      {uiType.toString()}
+                      {t(uiType.toString())}
                     </SelectOption>
                   );
                 })}
@@ -531,7 +531,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
             <FormPFSelect
               menuAppendTo={() => document.body}
               isDisabled={isDisabled('interface')}
-              selections={asFormSelectValue(bus.toString())}
+              selections={asFormSelectValue(t(bus.toString()))}
               onSelect={React.useCallback(
                 (e, diskBus) => setBus(DiskBus.fromString(diskBus.toString())),
                 [setBus],
@@ -542,9 +542,9 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                 <SelectOption
                   key={b.getValue()}
                   value={b.getValue()}
-                  description={b.getDescription()}
+                  description={t(b.getDescriptionKey())}
                 >
-                  {b.toString()}
+                  {t(b.toString())}
                   {recommendedBuses.size !== validAllowedBuses.size && recommendedBuses.has(b)
                     ? t('kubevirt-plugin~ --- Recommended ---')
                     : ''}

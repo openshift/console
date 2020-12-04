@@ -301,9 +301,9 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
                     <SelectOption
                       key={ifaceModel.getValue()}
                       value={ifaceModel.getValue()}
-                      description={ifaceModel.getDescription()}
+                      description={t(ifaceModel.getDescriptionKey())}
                     >
-                      {ifaceModel.toString()}
+                      {t(ifaceModel.toString())}
                     </SelectOption>
                   );
                 })}
@@ -344,9 +344,9 @@ export const NICModal = withHandlePromise((props: NICModalProps) => {
                 <SelectOption
                   key={iType.getValue()}
                   value={iType.getValue()}
-                  description={iType.getDescription()}
+                  description={t(iType.getDescriptionKey())}
                 >
-                  {iType.toString()}
+                  {t(iType.toString())}
                 </SelectOption>
               ))}
             </FormPFSelect>

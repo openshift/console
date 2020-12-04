@@ -5,11 +5,6 @@ import { DataVolumeSourceType, DiskType } from '../../../constants/vm/storage';
 import { getStringEnumValues } from '../../../utils/types';
 import { BinaryUnit } from '../../form/size-unit-utils';
 import {
-  UI_SOURCE_ATTACH_DISK_DESC,
-  UI_SOURCE_CONTAINER_EPHEMERAL_DESC,
-  UI_SOURCE_IMPORT_DISK_DESC,
-} from '../../../utils/strings';
-import {
   SelectDropdownData,
   SelectDropdownObjectEnum,
 } from '../../../constants/select-dropdown-object-enum';
@@ -25,7 +20,11 @@ export class StorageUISource extends SelectDropdownObjectEnum<string> {
       volumeType: VolumeType.CONTAINER_DISK,
     },
     {
-      description: UI_SOURCE_CONTAINER_EPHEMERAL_DESC,
+      // t('kubevirt-plugin~Container (ephemeral)')
+      labelKey: 'kubevirt-plugin~Container (ephemeral)',
+      // t('kubevirt-plugin~Upload content from a container located in a registry accessible from the cluster. The container disk is meant to be used only for read-only filesystems such as CD-ROMs or for small short-lived throw-away VMs.')
+      descriptionKey: `kubevirt-plugin~Upload content from a container located in a registry accessible from the cluster. The container disk is meant to be used only for read-only filesystems such
+      as CD-ROMs or for small short-lived throw-away VMs.`,
       order: 7,
     },
   );
@@ -35,8 +34,11 @@ export class StorageUISource extends SelectDropdownObjectEnum<string> {
       volumeType: VolumeType.PERSISTENT_VOLUME_CLAIM,
     },
     {
-      label: 'Use an existing PVC',
-      description: UI_SOURCE_ATTACH_DISK_DESC,
+      // t('kubevirt-plugin~Use an existing PVC')
+      labelKey: 'kubevirt-plugin~Use an existing PVC',
+      // t('kubevirt-plugin~Use a persistent volume claim (PVC) already available on the cluster')
+      descriptionKey:
+        'kubevirt-plugin~Use a persistent volume claim (PVC) already available on the cluster',
       order: 3,
     },
   );
@@ -47,13 +49,20 @@ export class StorageUISource extends SelectDropdownObjectEnum<string> {
       hasNewPVC: true,
     },
     {
-      label: 'Import an existing PVC',
-      description: UI_SOURCE_IMPORT_DISK_DESC,
+      // t('kubevirt-plugin~Import an existing PVC')
+      labelKey: 'kubevirt-plugin~Import an existing PVC',
       order: 8,
     },
   );
 
-  static readonly OTHER = new StorageUISource('Other');
+  static readonly OTHER = new StorageUISource(
+    'Other',
+    {},
+    {
+      // t('kubevirt-plugin~Other')
+      labelKey: 'kubevirt-plugin~Other',
+    },
+  );
 
   private readonly volumeType: VolumeType;
   private readonly dataVolumeSourceType: DataVolumeSourceType;
@@ -76,8 +85,8 @@ export class StorageUISource extends SelectDropdownObjectEnum<string> {
       dvType.getValue(),
       { volumeType: VolumeType.DATA_VOLUME, dataVolumeSourceType: dvType },
       {
-        description: dvType.getDescription(),
-        label: dvType.toString(),
+        descriptionKey: dvType.getDescriptionKey(),
+        labelKey: dvType.toString(),
         order,
       },
     );
@@ -94,7 +103,7 @@ export class StorageUISource extends SelectDropdownObjectEnum<string> {
       dataVolumeSourceType?: DataVolumeSourceType;
       hasNewPVC?: boolean;
     } = {},
-    selectData: SelectDropdownData = {},
+    selectData: SelectDropdownData,
   ) {
     super(value, selectData);
     this.volumeType = volumeType;

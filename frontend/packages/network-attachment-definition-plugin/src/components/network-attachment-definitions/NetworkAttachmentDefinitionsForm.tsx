@@ -123,20 +123,21 @@ const handleNameChange = (enteredName, fieldErrors, setName, setFieldErrors) => 
   delete fieldErrorsUpdate.nameValidationMsg;
 
   const nameValidation = validateDNS1123SubdomainValue(enteredName, {
-    // t('kubevirt-plugin~Network attachement definition name cannot be empty')
-    // t('kubevirt-plugin~Network attachement definition name name can contain only alphanumberic characters')
-    // t('kubevirt-plugin~Network attachement definition name cannot start/end with dash')
-    // t('kubevirt-plugin~Network attachement definition name cannot contain uppercase characters')
-    // t('kubevirt-plugin~Network attachement definition name is too long')
-    // t('kubevirt-plugin~Network attachement definition name is too short')
-    emptyMsg: 'kubevirt-plugin~Network attachement definition name cannot be empty',
+    // t('kubevirt-plugin~Network attachment definition name cannot be empty')
+    // t('kubevirt-plugin~Network attachment definition name name can contain only alphanumberic characters')
+    // t('kubevirt-plugin~Network attachment definition name must start/end with alphanumberic character')
+    // t('kubevirt-plugin~Network attachment definition name cannot contain uppercase characters')
+    // t('kubevirt-plugin~Network attachment definition name is too long')
+    // t('kubevirt-plugin~Network attachment definition name is too short')
+    emptyMsg: 'kubevirt-plugin~Network attachment definition name cannot be empty',
     errorMsg:
-      'kubevirt-plugin~Network attachement definition name can contain only alphanumberic characters',
-    dashMsg: 'kubevirt-plugin~Network attachement definition name cannot start/end with dash',
+      'kubevirt-plugin~Network attachment definition name can contain only alphanumberic characters',
+    startEndAlphanumbericMsg:
+      'kubevirt-plugin~Network attachment definition name must start/end with alphanumberic character',
     uppercaseMsg:
-      'kubevirt-plugin~Network attachement definition name cannot contain uppercase characters',
-    longMsg: 'kubevirt-plugin~Network attachement definition name is too long',
-    shortMsg: 'kubevirt-plugin~Network attachement definition name is too short',
+      'kubevirt-plugin~Network attachment definition name cannot contain uppercase characters',
+    longMsg: 'kubevirt-plugin~Network attachment definition name is too long',
+    shortMsg: 'kubevirt-plugin~Network attachment definition name is too short',
   });
   if (_.get(nameValidation, 'type', null) === ValidationErrorType.Error) {
     fieldErrorsUpdate.nameValidationMsg = nameValidation.messageKey;

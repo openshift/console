@@ -118,8 +118,9 @@ const ProvisionSourceNetHelpMsg: React.FC<ProvisionSourceNetHelpMsgProps> = ({
 
 export const ProvisionSourceComponent: React.FC<ProvisionSourceComponentProps> = React.memo(
   ({ provisionSourceField, onChange, goToStorageStep, goToNetworkingStep }) => {
+    const { t } = useTranslation();
     const provisionSourceValue = iGetFieldValue(provisionSourceField);
-    const sources = iGet(provisionSourceField, 'sources');
+    const sources: string[] = iGet(provisionSourceField, 'sources');
     const validationType = iGetIn(provisionSourceField, ['validation', 'type']);
 
     return (
@@ -137,9 +138,9 @@ export const ProvisionSourceComponent: React.FC<ProvisionSourceComponentProps> =
                 <SelectOption
                   key={source.getValue()}
                   value={source.getValue()}
-                  description={source.getDescription()}
+                  description={t(source.getDescriptionKey())}
                 >
-                  {source.toString()}
+                  {t(source.toString())}
                 </SelectOption>
               ))}
           </FormPFSelect>

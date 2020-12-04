@@ -15,7 +15,6 @@ import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
 import { DataVolumeWrapper } from '../../k8s/wrapper/vm/data-volume-wrapper';
 import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
 import { DataVolumeSourceType, VolumeType } from './storage';
-import { PROVISION_SOURCE_PXE_DESC } from '../../utils/strings';
 import { SelectDropdownObjectEnum } from '../select-dropdown-object-enum';
 
 type ProvisionSourceDetails = {
@@ -30,19 +29,23 @@ export class ProvisionSource extends SelectDropdownObjectEnum<string> {
   static readonly DISK = ProvisionSource.fromDataVolume(DataVolumeSourceType.PVC, 3);
   static readonly CONTAINER = ProvisionSource.fromDataVolume(DataVolumeSourceType.REGISTRY, 4);
   static readonly CONTAINER_EPHEMERAL = new ProvisionSource('CONTAINER-EPHEMERAL', {
-    label: 'Container (ephemeral)',
+    // t('kubevirt-plugin~Container (ephemeral)')
+    labelKey: 'kubevirt-plugin~Container (ephemeral)',
     order: 5,
   });
   static readonly PXE = new ProvisionSource('PXE', {
-    label: 'PXE (network boot - adds network interface)',
-    description: PROVISION_SOURCE_PXE_DESC,
+    // t('kubevirt-plugin~PXE (network boot - adds network interface)')
+    labelKey: 'kubevirt-plugin~PXE (network boot - adds network interface)',
+    // t('kubevirt-plugin~Boot an operating system from a server on a network. Requires a PXE bootable network attachment definition')
+    descriptionKey:
+      'kubevirt-plugin~Boot an operating system from a server on a network. Requires a PXE bootable network attachment definition',
     order: 6,
   });
 
   private static fromDataVolume(dvType: DataVolumeSourceType, order: number) {
     return new ProvisionSource(dvType.getValue(), {
-      description: dvType.getDescription(),
-      label: dvType.toString(),
+      descriptionKey: dvType.getDescriptionKey(),
+      labelKey: dvType.toString(),
       order,
     });
   }
