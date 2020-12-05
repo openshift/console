@@ -20,7 +20,7 @@ export const catalogPage = {
     cy.get(catalogPO.sidePane.instantiateTemplate).click({ force: true });
   },
   clickOnCancelButton: () => cy.byButtonText('Cancel').click(),
-  selectCatalogTypeCheckBox: (type: string | catalogTypes) => {
+  selectCatalogType: (type: string | catalogTypes) => {
     switch (type) {
       case catalogTypes.OperatorBacked:
       case 'Operator Backed': {
@@ -33,12 +33,12 @@ export const catalogPage = {
         break;
       }
       case catalogTypes.BuilderImage:
-      case 'Builder Image': {
+      case 'Builder Images': {
         cy.get(catalogPO.catalogTypes.builderImage).check();
         break;
       }
       case catalogTypes.Template:
-      case 'Template': {
+      case 'Templates': {
         cy.get(catalogPO.catalogTypes.template).check();
         break;
       }
