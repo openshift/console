@@ -341,7 +341,7 @@ export const SelectTemplate: React.FC<SelectTemplateProps> = ({
                       name="textFilter"
                       id="textFilter"
                       type="search"
-                      aria-label="text filter"
+                      aria-label={t('kubevirt-plugin~text filter')}
                       onChange={(text) => onSelect('text', text)}
                       value={filters.text || ''}
                       placeholder={t('kubevirt-plugin~Search by name, OS ...')}

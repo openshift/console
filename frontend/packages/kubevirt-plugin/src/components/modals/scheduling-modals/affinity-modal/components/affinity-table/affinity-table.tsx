@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Table, RowFunction } from '@console/internal/components/factory';
 import { dimensifyHeader } from '@console/shared';
 import { sortable } from '@patternfly/react-table';
@@ -17,9 +18,10 @@ export const AffinityTable: React.FC<AffinityTableProps> = ({
   row: Row,
   columnClasses,
 }) => {
+  const { t } = useTranslation();
   return (
     <Table
-      aria-label="Affinity List"
+      aria-label={t('kubevirt-plugin~Affinity List')}
       data={data}
       Header={() =>
         dimensifyHeader(

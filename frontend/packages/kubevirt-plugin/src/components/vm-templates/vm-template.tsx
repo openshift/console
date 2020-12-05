@@ -41,7 +41,7 @@ import {
 } from '@patternfly/react-core';
 import { getActiveNamespace } from '@console/internal/actions/ui';
 
-import { SUPPORT_URL, VM_TEMPLATE_LABEL_PLURAL } from '../../constants/vm-templates';
+import { SUPPORT_URL } from '../../constants/vm-templates';
 import { getLoadedData } from '../../utils';
 import { TEMPLATE_TYPE_LABEL, TEMPLATE_TYPE_BASE, TEMPLATE_TYPE_VM } from '../../constants/vm';
 import { DataVolumeModel } from '../../models';
@@ -309,7 +309,7 @@ const VirtualMachineTemplates: React.FC<VirtualMachineTemplatesProps> = (props) 
       <StackItem>
         <Table
           {...props}
-          aria-label={VM_TEMPLATE_LABEL_PLURAL}
+          aria-label={t('kubevirt-plugin~Virtual Machine Templates')}
           Header={() => VMTemplateTableHeader(!namespace, t)}
           Row={(rowProps) => <VMTemplateTableRow {...rowProps} />}
           virtualize
@@ -411,12 +411,12 @@ const VirtualMachineTemplatesPage: React.FC<VirtualMachineTemplatesPageProps &
       {...modifiedProps}
       createAccessReview={createAccessReview}
       createButtonText={t('kubevirt-plugin~Create')}
-      title={VM_TEMPLATE_LABEL_PLURAL}
+      title={t('kubevirt-plugin~Virtual Machine Templates')}
       showTitle={showTitle}
       ListComponent={VirtualMachineTemplates}
       resources={resources}
       flatten={flatten}
-      label={VM_TEMPLATE_LABEL_PLURAL}
+      label={t('kubevirt-plugin~Virtual Machine Templates')}
       rowFilters={filters(t)}
     />
   );

@@ -122,7 +122,7 @@ export const FileSystemsList: React.FC<FileSystemsListProps> = ({ vmi, vmStatusB
       <h3 id="file-systems-header">
         {t('kubevirt-plugin~File Systems')}
         <Popover
-          aria-label="File systems description"
+          aria-label={t('kubevirt-plugin~File systems description')}
           position="top"
           bodyContent={
             <>

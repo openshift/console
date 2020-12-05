@@ -1,5 +1,6 @@
-import * as _ from 'lodash';
 import * as React from 'react';
+import * as _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import cx from 'classnames';
 import { Helmet } from 'react-helmet';
@@ -111,6 +112,7 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
   setDisableFormSubmit,
   ...props
 }) => {
+  const { t } = useTranslation();
   const operatingSystems = getTemplateOperatingSystems(commonTemplates);
   const operatingSystemHaveDV = operatingSystems.find(
     (os) => os?.baseImageName && os?.baseImageNamespace,
@@ -187,8 +189,8 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
     // setting message to display for various modes when a storage class of a know provisioner is selected
     const displayMessage =
       provisionerAccessModeMapping[provisioner] || isCephProvisioner(provisioner)
-        ? 'Access mode is set by storage class and cannot be changed'
-        : 'Permissions to the mounted drive';
+        ? t('kubevirt-plugin~Access mode is set by storage class and cannot be changed')
+        : t('kubevirt-plugin~Permissions to the mounted drive');
     setAccessMode('ReadWriteOnce');
     setAccessModeHelp(displayMessage);
     // setting accessMode to default with the change to Storage Class selection
@@ -260,13 +262,14 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
   return (
     <div>
       <div className="form-group">
-        <Alert title="Persistent volume creation" variant="info" isInline>
-          This Persistent Volume Claim will be created using a DataVolume through Containerized Data
-          Importer (CDI)
+        <Alert title={t('kubevirt-plugin~Persistent volume creation')} variant="info" isInline>
+          {t(
+            'kubevirt-plugin~This Persistent Volume Claim will be created using a DataVolume through Containerized Data Importer (CDI)',
+          )}
         </Alert>
       </div>
       <label className="control-label co-required" htmlFor="file-upload">
-        Upload Data
+        {t('kubevirt-plugin~Upload Data')}
       </label>
       <div className="form-group">
         <FileUpload
@@ -287,7 +290,7 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
           <Checkbox
             id="golden-os-switch"
             className="kv--create-upload__golden-switch"
-            label="Attach this data to a Virtual Machine operating system"
+            label={t('kubevirt-plugin~Attach this data to a Virtual Machine operating system')}
             isChecked={isGolden}
             onChange={handleGoldenCheckbox}
             isDisabled={isLoading}
@@ -297,7 +300,7 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
       {isGolden && (
         <>
           <label className="control-label co-required" htmlFor="golden-os">
-            Operating System
+            {t('kubevirt-plugin~Operating System')}
           </label>
           <div className="form-group">
             <FormSelect
@@ -308,7 +311,7 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
               isRequired
             >
               <FormSelectPlaceholderOption
-                placeholder="--- Pick an Operating system ---"
+                placeholder={t('kubevirt-plugin~--- Pick an Operating system ---')}
                 isDisabled={!!os}
               />
               {operatingSystems.map(({ id, name, baseImageName, baseImageNamespace }) =>
@@ -319,14 +322,19 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
                   <FormSelectOption
                     key={id}
                     value={id}
-                    label={`${name || id} - Default data image already exists`}
+                    label={t('kubevirt-plugin~{{nameOrId}} - Default data image already exists', {
+                      nameOrId: name || id,
+                    })}
                   />
                 ) : !baseImageName ? (
                   <FormSelectOption
                     isDisabled
                     key={id}
                     value={id}
-                    label={`${name || id} - Template missing data image definition`}
+                    label={t(
+                      'kubevirt-plugin~{{nameOrId}} - Template missing data image definition',
+                      { nameOrId: name || id },
+                    )}
                   />
                 ) : (
                   <FormSelectOption key={id} value={id} label={name || id} />
@@ -336,9 +344,15 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
           </div>
           {osImageExists && (
             <div className="form-group">
-              <Alert isInline variant="danger" title="Operating system source already defined">
-                In order to add a new source for {os?.name} you will need to delete the following
-                PVC:{' '}
+              <Alert
+                isInline
+                variant="danger"
+                title={t('kubevirt-plugin~Operating system source already defined')}
+              >
+                {t(
+                  'kubevirt-plugin~In order to add a new source for {{osName}} you will need to delete the following PVC:',
+                  { osName: os?.name },
+                )}{' '}
                 <ResourceLink
                   hideIcon
                   inline
@@ -350,7 +364,7 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
             </div>
           )}
           <label className="control-label co-required" htmlFor="pvc-namespace">
-            Namespace
+            {t('kubevirt-plugin~Namespace')}
           </label>
           <div className="form-group">
             <input
@@ -363,13 +377,13 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
               required
             />
             <p className="help-block" id="pvc-namespace-help">
-              A unique namespace for the storage claim within the project
+              {t('kubevirt-plugin~A unique namespace for the storage claim within the project')}
             </p>
           </div>
         </>
       )}
       <label className="control-label co-required" htmlFor="pvc-name">
-        Persistent Volume Claim Name
+        {t('kubevirt-plugin~Persistent Volume Claim Name')}
       </label>
       <div className="form-group">
         <input
@@ -377,14 +391,18 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
           className="pf-c-form-control"
           type="text"
           onChange={handlePvcName}
-          placeholder={isGolden ? 'pick an operating system' : 'my-storage-claim'}
+          placeholder={
+            isGolden
+              ? t('kubevirt-plugin~pick an operating system')
+              : t('kubevirt-plugin~my-storage-claim')
+          }
           aria-describedby="pvc-name-help"
           id="pvc-name"
           value={pvcName || ''}
           required
         />
         <p className="help-block" id="pvc-name-help">
-          A unique name for the storage claim within the project
+          {t('kubevirt-plugin~A unique name for the storage claim within the project')}
         </p>
       </div>
       <div className="form-group">
@@ -402,7 +420,7 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
           </SplitItem>
           <SplitItem className="kv--create-upload__flexitem">
             <label className="control-label co-required" htmlFor="request-size-input">
-              Size
+              {t('kubevirt-plugin~Size')}
             </label>
             <RequestSizeInput
               name="requestSize"
@@ -415,14 +433,15 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
               inputID="request-size-input"
             />
             <p className="help-block" id="request-size-help">
-              Ensure your PVC size covers the requirements of the uncompressed image and any other
-              space requirements.
+              {t(
+                'kubevirt-plugin~Ensure your PVC size covers the requirements of the uncompressed image and any other space requirements.',
+              )}
             </p>
           </SplitItem>
         </Split>
       </div>
       <label className="control-label co-required" htmlFor="access-mode">
-        Access Mode
+        {t('kubevirt-plugin~Access Mode')}
       </label>
       <div className="form-group">
         {accessModeRadios.map((radio) => {
@@ -456,6 +475,7 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
 };
 
 export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
+  const { t } = useTranslation();
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [isCheckingCertificate, setCheckingCertificate] = React.useState(false);
   const [disableFormSubmit, setDisableFormSubmit] = React.useState(false);
@@ -475,7 +495,10 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
   const namespace = getNamespace(dvObj) || initialNamespace;
   const urlParams = new URLSearchParams(window.location.search);
   const osParam = urlParams.get(CDI_UPLOAD_OS_URL_PARAM);
-  const title = 'Upload Data to Persistent Volume Claim';
+  const title = t('kubevirt-plugin~Upload Data to Persistent Volume Claim');
+  const fileNameExtText = fileNameExtension
+    ? t('kubevirt-plugin~detected file extension is {{fileNameExtension}}', { fileNameExtension })
+    : t('kubevirt-plugin~no file extention detected');
 
   const save = (e: React.FormEvent<EventTarget>) => {
     e.preventDefault();
@@ -567,18 +590,16 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
             errorMessage={errorMessage}
           >
             {isFileRejected && (
-              <Alert variant="warning" isInline title="File type extension">
+              <Alert variant="warning" isInline title={t('kubevirt-plugin~File type extension')}>
                 <p>
-                  Based on the file extension it seems like you are trying to upload a file which is
-                  not supported (
-                  {fileNameExtension
-                    ? `detected file extension is '${fileNameExtension}'`
-                    : 'no file extention detected'}
-                  ).
+                  {t(
+                    'kubevirt-plugin~Based on the file extension it seems like you are trying to upload a file which is not supported ({{fileNameExtText}}).',
+                    { fileNameExtText },
+                  )}
                 </p>
                 <p>
                   <ExternalLink
-                    text="Learn more about supported formats"
+                    text={t('kubevirt-plugin~Learn more about supported formats')}
                     href={CDI_UPLOAD_SUPPORTED_TYPES_URL}
                   />
                 </p>
@@ -591,10 +612,10 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
                 type="submit"
                 variant="primary"
               >
-                Upload
+                {t('kubevirt-plugin~Upload')}
               </Button>
               <Button onClick={history.goBack} type="button" variant="secondary">
-                Cancel
+                {t('kubevirt-plugin~Cancel')}
               </Button>
             </ActionGroup>
           </ButtonBar>
