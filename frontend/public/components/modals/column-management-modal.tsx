@@ -29,7 +29,11 @@ const DataListRow: React.FC<DataListRowProps> = ({
   onChange,
   disableUncheckedRow,
 }) => (
-  <DataListItem aria-labelledby={`table-column-management-item-${column.id}`} key={column.id}>
+  <DataListItem
+    aria-labelledby={`table-column-management-item-${column.id}`}
+    key={column.id}
+    className="pf-c-data-list__item--transparent-bg"
+  >
     <DataListItemRow>
       <DataListCheck
         isDisabled={
