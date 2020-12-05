@@ -50,6 +50,7 @@ interface ResourceDropdownProps {
   title?: React.ReactNode;
   titlePrefix?: string;
   allApplicationsKey?: string;
+  userSettingsPrefix?: string;
   storageKey?: string;
   disabled?: boolean;
   allSelectorItem?: {
@@ -287,6 +288,7 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
         selectedKey={this.props.selectedKey}
         title={this.props.title || this.state.title}
         autocompletePlaceholder={this.props.placeholder}
+        userSettingsPrefix={this.props.userSettingsPrefix}
         storageKey={this.props.storageKey}
         disabled={this.props.disabled}
       />

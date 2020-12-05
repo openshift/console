@@ -15,6 +15,7 @@ interface ApplicationDropdownProps {
   title?: React.ReactNode;
   titlePrefix?: string;
   allApplicationsKey?: string;
+  userSettingsPrefix?: string;
   storageKey?: string;
   disabled?: boolean;
   allSelectorItem?: {

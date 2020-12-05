@@ -664,7 +664,7 @@ export const AlternateServicesGroup: React.FC<AlternateServiceEntryGroupProps> =
           dropDownClassName="dropdown--full-width"
           id={`${index}-alt-service`}
           onChange={onServiceChange}
-          describedby={`${index}-alt-service-help`}
+          describedBy={`${index}-alt-service-help`}
         />
         <div className="help-block" id={`${index}-alt-service-help`}>
           <p>Alternate service to route to.</p>

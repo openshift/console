@@ -5,6 +5,7 @@ import {
   ALL_NAMESPACES_KEY,
   ALL_APPLICATIONS_KEY,
   UNASSIGNED_APPLICATIONS_KEY,
+  APPLICATION_USERSETTINGS_PREFIX,
   APPLICATION_LOCAL_STORAGE_KEY,
 } from '@console/shared';
 import { setActiveApplication } from '@console/internal/actions/ui';
@@ -72,6 +73,7 @@ const NamespaceBarApplicationSelector: React.FC<Props> = ({
       }}
       selectedKey={application || ALL_APPLICATIONS_KEY}
       onChange={onApplicationChange}
+      userSettingsPrefix={APPLICATION_USERSETTINGS_PREFIX}
       storageKey={APPLICATION_LOCAL_STORAGE_KEY}
       disabled={disabled}
     />

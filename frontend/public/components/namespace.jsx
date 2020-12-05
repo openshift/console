@@ -19,6 +19,7 @@ import {
   getDescription,
   ALL_NAMESPACES_KEY,
   KEYBOARD_SHORTCUTS,
+  NAMESPACE_USERSETTINGS_PREFIX,
   NAMESPACE_LOCAL_STORAGE_KEY,
   FLAGS,
   GreenCheckCircleIcon,
@@ -1038,8 +1039,6 @@ const RolesPage = ({ obj: { metadata } }) => (
 
 const autocompleteFilter = (text, item) => fuzzy(text, item);
 
-const defaultBookmarks = {};
-
 const namespaceBarDropdownStateToProps = (state) => {
   const activeNamespace = state.UI.get('activeNamespace');
   const canListNS = state[featureReducerName].get(FLAGS.CAN_LIST_NS);
@@ -1145,7 +1144,7 @@ class NamespaceBarDropdowns_ extends React.Component {
               ? t('dropdown~Select Project...')
               : t('dropdown~Select Namespace...')
           }
-          defaultBookmarks={defaultBookmarks}
+          userSettingsPrefix={NAMESPACE_USERSETTINGS_PREFIX}
           storageKey={NAMESPACE_LOCAL_STORAGE_KEY}
           shortCut={KEYBOARD_SHORTCUTS.focusNamespaceDropdown}
         />
