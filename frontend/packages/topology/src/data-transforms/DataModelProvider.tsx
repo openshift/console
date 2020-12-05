@@ -21,10 +21,11 @@ const DataModelProvider: React.FC<DataModelProviderProps> = ({ namespace, childr
 
   return (
     <ModelContext.Provider value={model}>
-      {modelFactories.map((factory) => (
-        <DataModelExtension key={factory.properties.id} dataModelFactory={factory} />
-      ))}
-      <TopologyDataRetriever />
+      {namespace &&
+        modelFactories.map((factory) => (
+          <DataModelExtension key={factory.properties.id} dataModelFactory={factory} />
+        ))}
+      {namespace && <TopologyDataRetriever />}
       {children}
     </ModelContext.Provider>
   );
