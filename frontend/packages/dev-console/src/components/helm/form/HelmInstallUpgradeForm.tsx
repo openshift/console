@@ -59,7 +59,14 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
     />
   );
 
-  const yamlEditor = chartHasValues && <YAMLEditorField name="yamlData" onSave={handleSubmit} />;
+  const yamlEditor = chartHasValues && (
+    <YAMLEditorField
+      schema={formSchema}
+      name="yamlData"
+      schemaLabel="Helm Chart"
+      onSave={handleSubmit}
+    />
+  );
 
   const formSubTitle = _.isString(subTitle) ? subTitle : subTitle?.[editorType];
 
