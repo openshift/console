@@ -50,6 +50,7 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
   const isNoProvionerSC: boolean = storageClass?.provisioner === NO_PROVISIONER;
   const selectedSCName: string = getName(storageClass);
   const deviceSetIndex: number = getCurrentDeviceSetIndex(deviceSets, selectedSCName);
+  const hasFlexibleScaling = ocsConfig?.spec?.flexibleScaling;
   const replica = OCS_DEVICE_SET_REPLICA;
   const name = getName(ocsConfig);
 
@@ -81,12 +82,25 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
       path: '',
       value: null,
     };
-    const portable = !isNoProvionerSC;
     const osdSize = isNoProvionerSC ? defaultRequestSize.BAREMETAL : osdSizeWithUnit;
+    let portable = !isNoProvionerSC;
+    let deviceSetReplica = replica;
+    let deviceSetCount = 1;
+    if (hasFlexibleScaling) {
+      portable = false;
+      deviceSetReplica = 1;
+      deviceSetCount = 3;
+    }
     if (deviceSetIndex === -1) {
       patch.op = 'add';
       patch.path = `/spec/storageDeviceSets/-`;
-      patch.value = createDeviceSet(selectedSCName, osdSize, portable);
+      patch.value = createDeviceSet(
+        selectedSCName,
+        osdSize,
+        portable,
+        deviceSetReplica,
+        deviceSetCount,
+      );
     } else {
       patch.op = 'replace';
       patch.path = `/spec/storageDeviceSets/${deviceSetIndex}/count`;

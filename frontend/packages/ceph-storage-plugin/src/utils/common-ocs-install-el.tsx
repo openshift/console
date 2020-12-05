@@ -23,7 +23,7 @@ import { TFunction } from 'i18next';
 
 export type Validation = {
   title: React.ReactNode;
-  text: string;
+  text?: string;
   variant?: keyof typeof AlertVariant;
   link?: string;
   linkText?: string;
@@ -40,6 +40,8 @@ export enum ValidationType {
   'ENCRYPTION' = 'ENCRYPTION',
   'REQUIRED_FIELD_KMS' = 'REQUIRED_FIELD_KMS',
   'NETWORK' = 'NETWORK',
+  'INTERNAL_FLEXIBLE_SCALING' = 'INTERNAL_FLEXIBLE_SCALING',
+  'BAREMETAL_FLEXIBLE_SCALING' = 'BAREMETAL_FLEXIBLE_SCALING',
 }
 
 export const VALIDATIONS = (type: keyof typeof ValidationType, t: TFunction): Validation => {
@@ -116,6 +118,18 @@ export const VALIDATIONS = (type: keyof typeof ValidationType, t: TFunction): Va
         text: t(
           'ceph-storage-plugin~To use Multus networking the public Network Attachment Definition must be selected.',
         ),
+      };
+    case ValidationType.INTERNAL_FLEXIBLE_SCALING:
+      return {
+        variant: AlertVariant.warning,
+        title:
+          'The number of selected zones is less than the minimum requirement of 3. If not modified, a host-based failure domain deployment will be enforced.',
+      };
+    case ValidationType.BAREMETAL_FLEXIBLE_SCALING:
+      return {
+        variant: AlertVariant.info,
+        title:
+          'When all the selected nodes in the storage class are in a single zone, the cluster will be using a host-based failure domain.',
       };
     default:
       return { title: '', text: '' };

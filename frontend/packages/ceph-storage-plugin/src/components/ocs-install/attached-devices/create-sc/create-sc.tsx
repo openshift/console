@@ -243,17 +243,20 @@ const CreateSC: React.FC<CreateSCProps> = ({ match, hasNoProvSC, mode, lsoNs }) 
         encryption,
         nodes,
         enableMinimal,
+        enableFlexibleScaling,
         kms,
         publicNetwork,
         clusterNetwork,
         selectedArbiterZone,
         stretchClusterChecked,
       } = state;
+
       const storageCluster: StorageClusterKind = getOCSRequestData(
         storageClass,
         defaultRequestSize.BAREMETAL,
         encryption.clusterWide,
         enableMinimal,
+        enableFlexibleScaling,
         publicNetwork,
         clusterNetwork,
         kms.hasHandled && encryption.advanced,

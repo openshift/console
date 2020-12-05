@@ -33,6 +33,7 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({
     kms,
     capacity,
     enableMinimal,
+    enableFlexibleScaling,
     storageClass,
     networkType,
     publicNetwork,
@@ -89,7 +90,9 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({
             })}
           </p>
         </ReviewListBody>
-        <ReviewListBody noValue={!zones.size}>
+        <ReviewListBody
+          validation={enableFlexibleScaling && ValidationType.INTERNAL_FLEXIBLE_SCALING}
+        >
           <p>
             {t('ceph-storage-plugin~{{zoneCount, number}} zone', {
               zoneCount: zones.size,

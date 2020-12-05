@@ -75,11 +75,12 @@ export const createDeviceSet = (
   scName: string,
   osdSize: string,
   portable: boolean,
+  replica: number,
+  count: number,
   resources?: ResourceConstraints,
-  replica?: number,
 ): DeviceSet => ({
   name: `ocs-deviceset-${scName}`,
-  count: 1,
+  count,
   portable,
   replica,
   resources: resources ?? {},
@@ -103,6 +104,7 @@ export const getOCSRequestData = (
   storage: string,
   encrypted: boolean,
   isMinimal: boolean,
+  flexibleScaling = false,
   publicNetwork?: string,
   clusterNetwork?: string,
   kmsEnable?: boolean,
@@ -111,10 +113,18 @@ export const getOCSRequestData = (
 ): StorageClusterKind => {
   const scName: string = getName(storageClass);
   const isNoProvisioner: boolean = storageClass.provisioner === NO_PROVISIONER;
-  const isPortable: boolean = !isNoProvisioner;
-  const replica: number = stretchClusterChecked
-    ? OCS_DEVICE_SET_ARBITER_REPLICA
-    : OCS_DEVICE_SET_REPLICA;
+  let isPortable: boolean = !isNoProvisioner;
+  let deviceSetReplica: number = OCS_DEVICE_SET_REPLICA;
+  let deviceSetCount: number = 1;
+
+  if (stretchClusterChecked) {
+    deviceSetReplica = OCS_DEVICE_SET_ARBITER_REPLICA;
+  }
+  if (flexibleScaling) {
+    deviceSetReplica = 1;
+    deviceSetCount = 3;
+    isPortable = false;
+  }
 
   const requestData: StorageClusterKind = {
     apiVersion: 'ocs.openshift.io/v1',
@@ -126,6 +136,7 @@ export const getOCSRequestData = (
     spec: {
       manageNodes: false,
       resources: isMinimal ? MIN_SPEC_RESOURCES : {},
+      flexibleScaling,
       encryption: {
         enable: encrypted,
         kms: Object.assign(kmsEnable ? { enable: true } : {}),
@@ -139,8 +150,9 @@ export const getOCSRequestData = (
           scName,
           storage,
           isPortable,
+          deviceSetReplica,
+          deviceSetCount,
           isMinimal ? MIN_DEVICESET_RESOURCES : {},
-          replica,
         ),
       ],
       ...Object.assign(

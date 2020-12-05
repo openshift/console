@@ -25,10 +25,12 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({
   inProgress,
 }) => {
   const { t } = useTranslation();
+
   const {
     nodes,
     encryption,
     enableMinimal,
+    enableFlexibleScaling,
     storageClass,
     kms,
     networkType,
@@ -81,7 +83,10 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({
             })}{' '}
           </p>
         </ReviewListBody>
-        <ReviewListBody noValue={!zones.size}>
+        <ReviewListBody
+          noValue={!zones.size}
+          validation={enableFlexibleScaling && ValidationType.BAREMETAL_FLEXIBLE_SCALING}
+        >
           <p>
             {t('ceph-storage-plugin~{{zoneCount, number}} zone', {
               zoneCount: zones.size,

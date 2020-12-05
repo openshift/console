@@ -7,6 +7,7 @@ export type InternalClusterState = {
   capacity: string;
   nodes: NodeKind[];
   enableMinimal: boolean;
+  enableFlexibleScaling: boolean;
   // Encryption state declare
   encryption: EncryptionType;
   kms: KMSConfig;
@@ -20,11 +21,13 @@ export enum ActionType {
   SET_CAPACITY = 'SET_CAPACITY',
   SET_NODES = 'SET_NODES',
   SET_ENABLE_MINIMAL = 'SET_ENABLE_MINIMAL',
-  SET_ENABLE_ENCRYPTION = 'SET_ENABLE_ENCRYPTION',
+  SET_ENABLE_FLEXIBLE_SCALING = 'SET_ENABLE_FLEXIBLE_SCALING',
   // Encryption state actions
+  SET_ENABLE_ENCRYPTION = 'SET_ENABLE_ENCRYPTION',
   SET_ENCRYPTION = 'SET_ENCRYPTION',
   SET_KMS_ENCRYPTION = 'SET_KMS_ENCRYPTION',
   CLEAR_KMS_STATE = 'CLEAR_KMS_STATE',
+  // Network state actions
   SET_NETWORK_TYPE = 'SET_NETWORK_TYPE',
   SET_PUBLIC_NETWORK = 'SET_PUBLIC_NETWORK',
   SET_CLUSTER_NETWORK = 'SET_CLUSTER_NETWORK',
@@ -35,6 +38,7 @@ export type InternalClusterAction =
   | { type: ActionType.SET_CAPACITY; payload: string }
   | { type: ActionType.SET_NODES; payload: NodeKind[] }
   | { type: ActionType.SET_ENABLE_MINIMAL; payload: boolean }
+  | { type: ActionType.SET_ENABLE_FLEXIBLE_SCALING; payload: boolean }
   // Encryption actions
   | { type: ActionType.SET_ENCRYPTION; payload: EncryptionType }
   // KMS action
@@ -51,6 +55,7 @@ export const initialState: InternalClusterState = {
   capacity: defaultRequestSize.NON_BAREMETAL,
   nodes: [],
   enableMinimal: false,
+  enableFlexibleScaling: false,
   // Encryption state initialization
   encryption: {
     clusterWide: false,
@@ -116,6 +121,12 @@ export const reducer = (state: InternalClusterState, action: InternalClusterActi
       return {
         ...state,
         enableMinimal: action.payload,
+      };
+    }
+    case ActionType.SET_ENABLE_FLEXIBLE_SCALING: {
+      return {
+        ...state,
+        enableFlexibleScaling: action.payload,
       };
     }
     // Encryption state reducer

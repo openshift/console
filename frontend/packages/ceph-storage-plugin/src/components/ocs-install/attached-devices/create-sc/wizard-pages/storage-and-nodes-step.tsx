@@ -50,8 +50,13 @@ const validate = (
   enableMinimal: boolean,
   nodes: NodeKind[],
   stretchClusterChecked: boolean,
+  enableFlexibleScaling: boolean,
 ): ValidationType[] => {
   const validations = [];
+  if (enableFlexibleScaling) {
+    //  TODO: add check for arbiter
+    validations.push(ValidationType.BAREMETAL_FLEXIBLE_SCALING);
+  }
   if (enableMinimal) {
     validations.push(ValidationType.MINIMAL);
   }
@@ -70,9 +75,16 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
   const [pvData, pvLoaded, pvLoadError] = useK8sWatchResource<K8sResourceKind[]>(pvResource);
   const [nodesData, nodesLoaded, nodesError] = useK8sWatchResource<NodeKind[]>(nodeResource);
 
-  const { storageClass, enableMinimal, nodes, stretchClusterChecked } = state;
+  const {
+    storageClass,
+    enableMinimal,
+    nodes,
+    stretchClusterChecked,
+    enableFlexibleScaling,
+  } = state;
 
   let scNodeNames: string[] = []; // names of the nodes, backing the storage of selected storage class
+  const scNodeNamesLength = scNodeNames.length;
   const { cpu, memory, zones } = getNodeInfo(nodes);
   const scName: string = state.storageClassName;
   const validations: ValidationType[] = validate(
@@ -80,8 +92,11 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
     enableMinimal,
     nodes,
     stretchClusterChecked,
+    enableFlexibleScaling,
   );
   const nodesCount: number = nodes.length;
+
+  const zonesCount: number = zones.size;
 
   if (!pvLoadError && pvData.length && pvLoaded) {
     const pvs: K8sResourceKind[] = getSCAvailablePVs(pvData, scName);
@@ -92,6 +107,11 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
     const isMinimal: boolean = shouldDeployAsMinimal(cpu, memory, nodesCount);
     dispatch({ type: 'setEnableMinimal', value: isMinimal });
   }, [cpu, dispatch, memory, nodesCount]);
+
+  React.useEffect(() => {
+    const isFlexibleScaling: boolean = scNodeNamesLength && zonesCount < 3;
+    dispatch({ type: 'setEnableFlexibleScaling', value: isFlexibleScaling });
+  }, [dispatch, zonesCount, scNodeNamesLength]);
 
   const handleStorageClass = (sc: StorageClassResourceKind) => {
     dispatch({ type: 'setStorageClass', value: sc });
