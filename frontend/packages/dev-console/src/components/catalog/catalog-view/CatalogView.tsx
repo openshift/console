@@ -6,15 +6,14 @@ import { CatalogItem } from '@console/plugin-sdk';
 import { isModalOpen } from '@console/internal/components/modals';
 import { useQueryParams } from '@console/shared';
 
-import { categorize, findActiveCategory } from '../utils/category-utils';
 import {
-  setURLParams,
-  updateURLParams,
-  NO_GROUPING,
-  getCatalogTypeCounts,
-  DEFAULT_CATEGORY,
+  categorize,
+  findActiveCategory,
+  ALL_CATEGORY,
   OTHER_CATEGORY,
-} from '../utils/catalog-utils';
+  NO_GROUPING,
+} from '../utils/category-utils';
+import { setURLParams, updateURLParams, getCatalogTypeCounts } from '../utils/catalog-utils';
 import {
   filterByAttributes,
   filterByCategory,
@@ -25,7 +24,7 @@ import {
 } from '../utils/filter-utils';
 
 import {
-  CatalogCategories as CategoriesType,
+  CatalogCategory,
   CatalogFilterCounts,
   CatalogFilters as FiltersType,
   CatalogQueryParams,
@@ -46,7 +45,7 @@ type CatalogViewProps = {
   items: CatalogItem[];
   catalogType: string;
   catalogTypes: CatalogType[];
-  categories: CategoriesType;
+  categories: CatalogCategory[];
   filters: FiltersType;
   filterGroups: string[];
   filterGroupNameMap: CatalogStringMap;
@@ -67,7 +66,7 @@ const CatalogView: React.FC<CatalogViewProps> = ({
 }) => {
   const { t } = useTranslation();
   const queryParams = useQueryParams();
-  const activeCategoryId = queryParams.get(CatalogQueryParams.CATEGORY) ?? DEFAULT_CATEGORY;
+  const activeCategoryId = queryParams.get(CatalogQueryParams.CATEGORY) ?? ALL_CATEGORY;
   const activeSearchKeyword = queryParams.get(CatalogQueryParams.KEYWORD) ?? '';
   const activeGrouping = queryParams.get(CatalogQueryParams.GROUPING) ?? NO_GROUPING;
   const sortOrder =
@@ -145,15 +144,10 @@ const CatalogView: React.FC<CatalogViewProps> = ({
     });
   }, []);
 
-  const catalogCategories = React.useMemo(() => {
-    const allCategory = { id: DEFAULT_CATEGORY, label: t('devconsole~All items') };
+  const catalogCategories = React.useMemo<CatalogCategory[]>(() => {
+    const allCategory = { id: ALL_CATEGORY, label: t('devconsole~All items') };
     const otherCategory = { id: OTHER_CATEGORY, label: t('devconsole~Other') };
-
-    return {
-      all: allCategory,
-      ...categories,
-      other: otherCategory,
-    };
+    return [allCategory, ...categories, otherCategory];
   }, [categories, t]);
 
   const categorizedIds = React.useMemo(() => categorize(items, catalogCategories), [
@@ -164,7 +158,7 @@ const CatalogView: React.FC<CatalogViewProps> = ({
   const activeCategory = React.useMemo(
     () =>
       findActiveCategory(activeCategoryId, catalogCategories) ||
-      findActiveCategory(DEFAULT_CATEGORY, catalogCategories),
+      findActiveCategory(ALL_CATEGORY, catalogCategories),
     [activeCategoryId, catalogCategories],
   );
 

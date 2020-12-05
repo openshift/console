@@ -4,12 +4,6 @@ import { CatalogItem } from '@console/plugin-sdk';
 import * as catalogImg from '@console/internal/imgs/logos/catalog-icon.svg';
 import { CatalogType, CatalogTypeCounts } from './types';
 
-export const NO_GROUPING = 'none';
-
-export const DEFAULT_CATEGORY = 'all';
-
-export const OTHER_CATEGORY = 'other';
-
 export const keywordCompare = (filterString: string, item: CatalogItem): boolean => {
   if (!filterString) {
     return true;

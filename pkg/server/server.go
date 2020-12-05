@@ -93,6 +93,7 @@ type jsGlobals struct {
 	GOARCH                   string `json:"GOARCH"`
 	GOOS                     string `json:"GOOS"`
 	GraphQLBaseURL           string `json:"graphqlBaseURL"`
+	DevCatalogCategories     string `json:"developerCatalogCategories"`
 }
 
 type Server struct {
@@ -135,6 +136,7 @@ type Server struct {
 	GrafanaPublicURL      *url.URL
 	PrometheusPublicURL   *url.URL
 	ThanosPublicURL       *url.URL
+	DevCatalogCategories  string
 }
 
 func (s *Server) authDisabled() bool {
@@ -500,6 +502,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		GOOS:                  s.GOOS,
 		LoadTestFactor:        s.LoadTestFactor,
 		GraphQLBaseURL:        proxy.SingleJoiningSlash(s.BaseURL.Path, graphQLEndpoint),
+		DevCatalogCategories:  s.DevCatalogCategories,
 	}
 
 	if !s.authDisabled() {

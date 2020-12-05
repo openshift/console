@@ -40,6 +40,7 @@ declare interface Window {
     GOARCH: string;
     GOOS: string;
     graphqlBaseURL: string;
+    developerCatalogCategories: string;
   };
   windowError?: string;
   __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: Function;
