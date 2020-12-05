@@ -14,8 +14,6 @@ import {
   HandlePromiseProps,
   withHandlePromise,
 } from '@console/internal/components/utils/promise-component';
-import { SecretModel } from '@console/internal/models';
-import { SecretKind } from '@console/internal/module/k8s/types';
 
 import { State, Action } from '../../ocs-install/attached-devices/create-sc/state';
 import {
@@ -23,27 +21,35 @@ import {
   InternalClusterAction,
   ActionType,
 } from '../../ocs-install/internal-mode/reducer';
-import { KMSMaxFileUploadSize, CEPH_STORAGE_NAMESPACE } from '../../../constants';
-import { setEncryptionDispatch } from '../../kms-config/utils';
+import { KMSMaxFileUploadSize } from '../../../constants';
+import {
+  setEncryptionDispatch,
+  generateCASecret,
+  generateClientSecret,
+  generateClientKeySecret,
+} from '../../kms-config/utils';
+import { StorageClassState, StorageClassClusterAction } from '../../../utils/storage-pool';
 import './advanced-kms-modal.scss';
 
 export const AdvancedKMSModal = withHandlePromise((props: AdvancedKMSModalProps) => {
   const { close, cancel, errorMessage, inProgress, state, dispatch, mode } = props;
   const { kms } = state;
   const { t } = useTranslation();
-  const [backendPath, setBackendPath] = React.useState(kms.backend || '');
-  const [tlsName, setTLSName] = React.useState(kms.tls || '');
-  const [caCertificate, setCACertificate] = React.useState(kms.caCert?.stringData['ca.cert'] || '');
-  const [caCertificateFile, setCACertificateFile] = React.useState(kms.caCertFile || '');
+  const [backendPath, setBackendPath] = React.useState(kms?.backend || '');
+  const [tlsName, setTLSName] = React.useState(kms?.tls || '');
+  const [caCertificate, setCACertificate] = React.useState(
+    kms?.caCert?.stringData['ca.cert'] || '',
+  );
+  const [caCertificateFile, setCACertificateFile] = React.useState(kms?.caCertFile || '');
   const [clientCertificate, setClientCertificate] = React.useState(
-    kms.clientCert?.stringData['tls.cert'] || '',
+    kms?.clientCert?.stringData['tls.cert'] || '',
   );
   const [clientCertificateFile, setClientCertificateFile] = React.useState(
-    kms.clientCertFile || '',
+    kms?.clientCertFile || '',
   );
-  const [clientKey, setClientKey] = React.useState(kms.clientCert?.stringData['tls.key'] || '');
-  const [clientKeyFile, setClientKeyFile] = React.useState(kms.clientKeyFile || '');
-  const [providerNS, setProvideNS] = React.useState(kms.providerNamespace || '');
+  const [clientKey, setClientKey] = React.useState(kms?.clientCert?.stringData['tls.key'] || '');
+  const [clientKeyFile, setClientKeyFile] = React.useState(kms?.clientKeyFile || '');
+  const [providerNS, setProvideNS] = React.useState(kms?.providerNamespace || '');
   const [error, setError] = React.useState('');
 
   const vaultNamespaceTooltip = t(
@@ -56,41 +62,6 @@ export const AdvancedKMSModal = withHandlePromise((props: AdvancedKMSModalProps)
 
   const submit = (event: React.FormEvent<EventTarget>) => {
     event.preventDefault();
-    const caSecret: SecretKind = {
-      apiVersion: SecretModel.apiVersion,
-      kind: SecretModel.kind,
-      metadata: {
-        name: 'ocs-kms-ca',
-        namespace: CEPH_STORAGE_NAMESPACE,
-      },
-      stringData: {
-        'ca.cert': caCertificate,
-      },
-    };
-
-    const clientCertSecret: SecretKind = {
-      apiVersion: SecretModel.apiVersion,
-      kind: SecretModel.kind,
-      metadata: {
-        name: 'ocs-kms-client-cert',
-        namespace: CEPH_STORAGE_NAMESPACE,
-      },
-      stringData: {
-        'tls.cert': clientCertificate,
-      },
-    };
-
-    const clientKeySecret: SecretKind = {
-      apiVersion: SecretModel.apiVersion,
-      kind: SecretModel.kind,
-      metadata: {
-        name: 'ocs-kms-client-key',
-        namespace: CEPH_STORAGE_NAMESPACE,
-      },
-      stringData: {
-        'tls.key': clientKey,
-      },
-    };
 
     const kmsAdvanced = {
       ...kms,
@@ -103,13 +74,13 @@ export const AdvancedKMSModal = withHandlePromise((props: AdvancedKMSModalProps)
     };
 
     caCertificate && caCertificate !== ''
-      ? (kmsAdvanced.caCert = caSecret)
+      ? (kmsAdvanced.caCert = generateCASecret(caCertificate))
       : (kmsAdvanced.caCert = null);
     clientCertificate && clientCertificate !== ''
-      ? (kmsAdvanced.clientCert = clientCertSecret)
+      ? (kmsAdvanced.clientCert = generateClientSecret(clientCertificate))
       : (kmsAdvanced.clientCert = null);
     clientKey && clientCertificate !== ''
-      ? (kmsAdvanced.clientKey = clientKeySecret)
+      ? (kmsAdvanced.clientKey = generateClientKeySecret(clientKey))
       : (kmsAdvanced.clientKey = null);
 
     setEncryptionDispatch(ActionType.SET_KMS_ENCRYPTION, mode, dispatch, kmsAdvanced);
@@ -269,8 +240,8 @@ export const AdvancedKMSModal = withHandlePromise((props: AdvancedKMSModalProps)
 });
 
 export type AdvancedKMSModalProps = {
-  state: State | InternalClusterState;
-  dispatch: React.Dispatch<Action | InternalClusterAction>;
+  state: InternalClusterState | State | StorageClassState;
+  dispatch: React.Dispatch<Action | InternalClusterAction | StorageClassClusterAction>;
   mode?: string;
 } & HandlePromiseProps &
   ModalComponentProps;
