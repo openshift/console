@@ -23,6 +23,8 @@ export const addPage = {
       case 'Import from Dockerfile':
       case addOptions.DockerFile:
         cy.byLegacyTestID('import-from-dockerfile').click();
+        // Bug: 1890678 is created related to Accesibiity violation - Until bug fix, below line is commented to execute the scripts in CI
+        // cy.testA11y('Import from Docker file');
         detailsPage.titleShouldContain(pageTitle.DockerFile);
         break;
       case 'Developer Catalog':

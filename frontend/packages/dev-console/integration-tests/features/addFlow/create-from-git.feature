@@ -7,7 +7,7 @@ Feature: Create Application from git form
       And user has created namespace starts with "aut-addflow-git"
 
 
-   @smoke
+   @addFlow-git, @smoke
    Scenario Outline: Add new git workload with new application for resoruce type "<resource_type>" : A-04-TC02, A-04-TC13
       Given user is at Import from git page
       When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
@@ -24,7 +24,7 @@ Feature: Create Application from git form
          | dancer-ex-git-1 | Deployment Config |
 
 
-   @regression
+   @addFlow-git, @regression
    Scenario: Add new git workload to the existing application : A-04-TC03
       Given user has created workload "nodejs-ex-git" with resource type "Deployment"
       And user is at Add page
@@ -38,7 +38,7 @@ Feature: Create Application from git form
       And user can see the created workload "dancer-ex.git" is linked to existing application "nodejs-ex-git-app"
 
 
-   @regression
+   @addFlow-git, @regression
    Scenario: Cancel the git workload creation : A-04-TC04
       Given user is at Import from git page
       When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
@@ -46,7 +46,7 @@ Feature: Create Application from git form
       Then user will be redirected to Add page
 
 
-   @regression
+   @addFlow-git, @regression
    Scenario: Create workload without application route : A-04-TC05
       Given user is at Import from git page
       When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
@@ -58,7 +58,7 @@ Feature: Create Application from git form
       And public url is not created for node "name-no-route" in the workload sidebar
 
 
-   @regression
+   @addFlow-git, @regression
    Scenario: Create a git workload with advanced option "Routing" : A-04-TC06
       Given user is at Import from git page
       When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
@@ -88,7 +88,7 @@ Feature: Create Application from git form
       And build does not get started for "nodejs-ex-git"
 
 
-   @regression
+   @addFlow-git, @regression
    Scenario: Create a git workload with advanced option "Deployment" : A-04-TC08
       Given user is at Import from git page
       When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
@@ -101,7 +101,7 @@ Feature: Create Application from git form
       Then user will be redirected to Topology page
 
 
-   @regression
+   @addFlow-git, @regression
    Scenario: Create a git workload with advanced option "Resource Limits" : A-04-TC09
       Given user is at Import from git page
       When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
@@ -115,7 +115,7 @@ Feature: Create Application from git form
       Then user will be redirected to Topology page
 
 
-   @regression
+   @addFlow-git, @regression
    Scenario: Create a git workload with advanced option "Scaling" : A-04-TC10
       Given user is at Import from git page
       When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
@@ -126,7 +126,7 @@ Feature: Create Application from git form
       Then user will be redirected to Topology page
 
 
-   @regression
+   @addFlow-git, @regression
    Scenario: Create a git workload with advanced option "Labels" : A-04-TC11
       Given user is at Import from git page
       When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
@@ -138,7 +138,7 @@ Feature: Create Application from git form
       And verify the label "app=frontend" in side bar of application node "nodejs-ex-git"
 
 
-   @regression
+   @addFlow-git, @regression
    Scenario: Create a git workload with advanced option "Health Checks" : A-04-TC12
       Given user is at Import from git page
       When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
@@ -151,6 +151,7 @@ Feature: Create Application from git form
       Then user will be redirected to Topology page
 
 
+   @addFlow-git
    Scenario Outline: Builder iamge detected for git url "<git_url>" : A-04-TC01
       Given user is at Import from git page
       When user enters Git Repo url as "<git_url>"
