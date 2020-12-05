@@ -2,21 +2,23 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
-import { Status, useBuildConfigsWatcher } from '@console/shared';
-import { resourcePathFromModel } from '@console/internal/components/utils';
+import { Node } from '@patternfly/react-topology';
 import { BuildModel } from '@console/internal/models';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { resourcePathFromModel } from '@console/internal/components/utils';
+import { Status, useBuildConfigsWatcher } from '@console/shared';
+import { getResource } from '../../../../../utils';
 import BuildDecoratorBubble from './BuildDecoratorBubble';
 
-type BuildConfigDecoratorProps = {
-  resource: K8sResourceKind;
+interface BuildDecoratorProps {
+  element: Node;
   radius: number;
   x: number;
   y: number;
-};
+}
 
-const BuildConfigDecorator: React.FC<BuildConfigDecoratorProps> = ({ resource, radius, x, y }) => {
+const BuildDecorator: React.FC<BuildDecoratorProps> = ({ element, radius, x, y }) => {
   const { t } = useTranslation();
+  const resource = getResource(element);
   const { buildConfigs } = useBuildConfigsWatcher(resource);
   const build = buildConfigs?.[0]?.builds?.[0];
 
@@ -44,4 +46,4 @@ const BuildConfigDecorator: React.FC<BuildConfigDecoratorProps> = ({ resource, r
   );
 };
 
-export default BuildConfigDecorator;
+export default BuildDecorator;

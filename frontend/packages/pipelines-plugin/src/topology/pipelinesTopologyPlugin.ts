@@ -1,14 +1,18 @@
 import { Plugin } from '@console/plugin-sdk';
-import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
-import { TopologyDataModelFactory } from '@console/topology/src/extensions/topology';
-import { tknPipelineAndPipelineRunsWatchResources } from '../utils/pipeline-plugin-utils';
+import { getExecutableCodeRef } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-utils';
+import {
+  TopologyDecoratorProvider,
+  TopologyDataModelFactory,
+} from '@console/topology/src/extensions/topology';
+import { TopologyDecoratorQuadrant } from '@console/topology/src/topology-types';
 import { FLAG_OPENSHIFT_PIPELINE } from '../const';
+import { tknPipelineAndPipelineRunsWatchResources } from '../utils/pipeline-plugin-utils';
+import { getPipelineRunDecorator } from './build-decorators';
+import { getDataModelReconciler } from './index';
 
-export type PipelineTopologyConsumedExtensions = TopologyDataModelFactory;
-
-const getPipelineWatchedResources = (namespace: string): WatchK8sResources<any> => {
-  return tknPipelineAndPipelineRunsWatchResources(namespace);
-};
+export type PipelineTopologyConsumedExtensions =
+  | TopologyDecoratorProvider
+  | TopologyDataModelFactory;
 
 export const pipelinesTopologyPlugin: Plugin<PipelineTopologyConsumedExtensions> = [
   {
@@ -16,7 +20,20 @@ export const pipelinesTopologyPlugin: Plugin<PipelineTopologyConsumedExtensions>
     properties: {
       id: 'pipeline-topology-model-factory',
       priority: 800,
-      resources: getPipelineWatchedResources,
+      resources: tknPipelineAndPipelineRunsWatchResources,
+      getDataModelReconciler,
+    },
+    flags: {
+      required: [FLAG_OPENSHIFT_PIPELINE],
+    },
+  },
+  {
+    type: 'Topology/Decorator',
+    properties: {
+      id: 'pipeline-run-decorator',
+      priority: 100,
+      quadrant: TopologyDecoratorQuadrant.lowerLeft,
+      decorator: getExecutableCodeRef(getPipelineRunDecorator),
     },
     flags: {
       required: [FLAG_OPENSHIFT_PIPELINE],

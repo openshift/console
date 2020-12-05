@@ -814,18 +814,6 @@ export const sampleServices: FirehoseResult = {
   ],
 };
 
-export const samplePipeline: FirehoseResult = {
-  loaded: true,
-  loadError: '',
-  data: [],
-};
-
-export const samplePipelineRun: FirehoseResult = {
-  loaded: true,
-  loadError: '',
-  data: [],
-};
-
 export const sampleClusterServiceVersions: FirehoseResult = {
   loaded: true,
   loadError: '',
@@ -1067,8 +1055,6 @@ export const MockKnativeResources: TopologyDataResources = {
   ksroutes: sampleKnativeRoutes,
   configurations: sampleKnativeConfigurations,
   revisions: sampleKnativeRevisions,
-  pipelines: samplePipeline,
-  pipelineRuns: samplePipelineRun,
   [referenceForModel(EventSourceCronJobModel)]: getEventSourceResponse(EventSourceCronJobModel),
   [referenceForModel(EventSourceContainerModel)]: getEventSourceResponse(EventSourceContainerModel),
   [referenceForModel(EventSourceCamelModel)]: getEventSourceResponse(EventSourceCamelModel),

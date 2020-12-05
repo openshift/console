@@ -55,8 +55,6 @@ export const resources: TopologyDataResources = {
   builds: { loaded: true, loadError: '', data: [] },
   daemonSets: { loaded: true, loadError: '', data: [] },
   statefulSets: { loaded: true, loadError: '', data: [] },
-  pipelineRuns: { loaded: true, loadError: '', data: [] },
-  pipelines: { loaded: true, loadError: '', data: [] },
   events: { loaded: true, loadError: '', data: [] },
 };
 

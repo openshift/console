@@ -9,7 +9,7 @@ import {
   referenceFor,
 } from '@console/internal/module/k8s';
 import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
-import { isKnativeServing } from '@console/shared';
+import { isKnativeServing, OverviewItem } from '@console/shared';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import {
   TYPE_EVENT_SOURCE,
@@ -18,7 +18,6 @@ import {
 import { ConnectsToData, edgesFromAnnotations } from '../utils/connector-utils';
 import {
   TopologyDataObject,
-  TopologyOverviewItem,
   TopologyDataResources,
   TopologyDataModelDepicted,
   OdcNodeModel,
@@ -52,12 +51,12 @@ export const dataObjectFromModel = (node: OdcNodeModel): TopologyDataObject => {
  */
 export const createTopologyNodeData = (
   resource: K8sResourceKind,
-  overviewItem: TopologyOverviewItem,
+  overviewItem: OverviewItem,
   type: string,
   defaultIcon: string,
   operatorBackedService: boolean = false,
 ): TopologyDataObject => {
-  const { pipelines = [], pipelineRuns = [], monitoringAlerts = [] } = overviewItem;
+  const { monitoringAlerts = [] } = overviewItem;
   const dcUID = _.get(resource, 'metadata.uid');
   const deploymentsLabels = _.get(resource, 'metadata.labels', {});
   const deploymentsAnnotations = _.get(resource, 'metadata.annotations', {});
@@ -82,10 +81,6 @@ export const createTopologyNodeData = (
         type && (type === TYPE_EVENT_SOURCE || type === TYPE_KNATIVE_REVISION)
           ? true
           : isKnativeServing(resource, 'metadata.labels'),
-      connectedPipeline: {
-        pipeline: pipelines[0],
-        pipelineRuns,
-      },
     },
   };
 };

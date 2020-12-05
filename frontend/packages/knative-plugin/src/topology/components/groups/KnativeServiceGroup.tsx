@@ -1,8 +1,7 @@
 import * as React from 'react';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
-import { TooltipPosition, Tooltip } from '@patternfly/react-core';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { Tooltip } from '@patternfly/react-core';
 import {
   Node,
   AnchorEnd,
@@ -24,8 +23,6 @@ import {
   NODE_SHADOW_FILTER_ID,
   NODE_SHADOW_FILTER_ID_HOVER,
   nodeDragSourceSpec,
-  Decorator,
-  BuildDecorator,
 } from '@console/topology/src/components/graph-view';
 import {
   useSearchFilter,
@@ -37,6 +34,7 @@ import {
 import SvgBoxedText from '@console/topology/src/components/svg/SvgBoxedText';
 import { TYPE_KNATIVE_SERVICE, EVENT_MARKER_RADIUS } from '../../const';
 import RevisionTrafficSourceAnchor from '../anchors/RevisionTrafficSourceAnchor';
+import { getNodeDecorators } from '@console/topology/src/components/graph-view/components/nodes/decorators/getNodeDecorators';
 
 export type KnativeServiceGroupProps = {
   element: Node;
@@ -81,7 +79,7 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
   );
   const nodeRefs = useCombineRefs(innerHoverRef, dragNodeRef);
   const hasChildren = element.getChildren()?.length > 0;
-  const { data, resource } = element.getData();
+  const { data } = element.getData();
   const hasDataUrl = !!data.url;
   useAnchor(
     React.useCallback(
@@ -109,6 +107,17 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
       }
     }
   }, [editAccess, innerHover, onShowCreateConnector, onHideCreateConnector, allowEdgeCreation]);
+
+  const decorators = getNodeDecorators(
+    element,
+    element.getGraph().getData().decorators,
+    x + width / 2,
+    y + height / 2,
+    -1,
+    DECORATOR_RADIUS,
+    width,
+    height,
+  );
 
   return (
     <Tooltip
@@ -165,22 +174,7 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
             )}
           </g>
         </Layer>
-        {hasDataUrl && (
-          <Tooltip key="route" content="Open URL" position={TooltipPosition.right}>
-            <Decorator x={x + width} y={y} radius={DECORATOR_RADIUS} href={data.url} external>
-              <g transform="translate(-6.5, -6.5)">
-                <ExternalLinkAltIcon style={{ fontSize: DECORATOR_RADIUS }} title="Open URL" />
-              </g>
-            </Decorator>
-          </Tooltip>
-        )}
-        <BuildDecorator
-          x={x}
-          y={y + height}
-          radius={DECORATOR_RADIUS}
-          workloadData={data}
-          resource={resource}
-        />
+        {decorators}
         {showLabels && (data.kind || element.getLabel()) && (
           <SvgBoxedText
             className="odc-knative-service__label odc-base-node__label"

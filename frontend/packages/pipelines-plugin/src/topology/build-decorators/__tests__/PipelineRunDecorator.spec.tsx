@@ -2,9 +2,9 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import { Link } from 'react-router-dom';
 import * as utils from '@console/internal/components/utils';
+import { BuildDecoratorBubble } from '@console/topology/src/components/graph-view';
 import { ConnectedPipelineRunDecorator } from '../PipelineRunDecorator';
-import { noPipelineData, pipelineData } from './decorator-data';
-import BuildDecoratorBubble from '../BuildDecoratorBubble';
+import { connectedPipelineOne } from './decorator-data';
 
 describe('PipelineRunDecorator renders', () => {
   let spyUseAccessReview;
@@ -16,8 +16,8 @@ describe('PipelineRunDecorator renders', () => {
   it('expect a log link when it contains at least one PipelineRun', () => {
     const decoratorComp = shallow(
       <ConnectedPipelineRunDecorator
-        pipeline={pipelineData.connectedPipeline.pipeline}
-        pipelineRuns={pipelineData.connectedPipeline.pipelineRuns}
+        pipeline={connectedPipelineOne.pipeline}
+        pipelineRuns={connectedPipelineOne.pipelineRuns}
         radius={0}
         x={0}
         y={0}
@@ -30,8 +30,8 @@ describe('PipelineRunDecorator renders', () => {
   it('expect not to find a Link component when there is no PipelineRuns associated', () => {
     const decoratorComp = shallow(
       <ConnectedPipelineRunDecorator
-        pipeline={pipelineData.connectedPipeline.pipeline}
-        pipelineRuns={noPipelineData.connectedPipeline.pipelineRuns}
+        pipeline={connectedPipelineOne.pipeline}
+        pipelineRuns={[]}
         radius={0}
         x={0}
         y={0}
@@ -45,8 +45,8 @@ describe('PipelineRunDecorator renders', () => {
     spyUseAccessReview.mockReturnValue(false);
     const decoratorComp = shallow(
       <ConnectedPipelineRunDecorator
-        pipeline={pipelineData.connectedPipeline.pipeline}
-        pipelineRuns={noPipelineData.connectedPipeline.pipelineRuns}
+        pipeline={connectedPipelineOne.pipeline}
+        pipelineRuns={[]}
         radius={0}
         x={0}
         y={0}

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Decorator from '../Decorator';
+import Decorator from './Decorator';
 
 type BuildDecoratorBubbleProps = React.ComponentProps<typeof Decorator> & {
   children: React.ReactNode;

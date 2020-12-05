@@ -1,10 +1,13 @@
 import { Plugin } from '@console/plugin-sdk';
+import { getExecutableCodeRef } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-utils';
 import {
   TopologyComponentFactory,
   TopologyDataModelFactory,
   TopologyDisplayFilters,
   TopologyCreateConnector,
+  TopologyDecoratorProvider,
 } from '@console/topology/src/extensions';
+import { TopologyDecoratorQuadrant } from '@console/topology/src/topology-types';
 import {
   getIsKnativeResource,
   getKnativeComponentFactory,
@@ -38,6 +41,7 @@ import {
   fetchEventSourcesCrd,
   fetchChannelsCrd,
 } from '../utils/fetch-dynamic-eventsources-utils';
+import { getServiceRouteDecorator } from './components/decorators';
 
 // Added it to perform discovery of Dynamic event sources on cluster on app load as kebab option needed models upfront
 fetchEventSourcesCrd();
@@ -63,7 +67,8 @@ export type TopologyConsumedExtensions =
   | TopologyComponentFactory
   | TopologyDataModelFactory
   | TopologyDisplayFilters
-  | TopologyCreateConnector;
+  | TopologyCreateConnector
+  | TopologyDecoratorProvider;
 
 export const topologyPlugin: Plugin<TopologyConsumedExtensions> = [
   {
@@ -106,17 +111,36 @@ export const topologyPlugin: Plugin<TopologyConsumedExtensions> = [
   {
     type: 'Topology/DisplayFilters',
     properties: {
-      getTopologyFilters,
-      applyDisplayOptions,
+      getTopologyFilters: getExecutableCodeRef(getTopologyFilters),
+      applyDisplayOptions: getExecutableCodeRef(applyDisplayOptions),
     },
   },
   {
     type: 'Topology/CreateConnector',
     properties: {
-      getCreateConnector,
+      getCreateConnector: getExecutableCodeRef(getCreateConnector),
     },
     flags: {
       required: [FLAG_KNATIVE_EVENTING],
+    },
+  },
+  {
+    type: 'Topology/Decorator',
+    properties: {
+      id: 'knative-service-route-decorator',
+      priority: 100,
+      quadrant: TopologyDecoratorQuadrant.upperRight,
+      decorator: getExecutableCodeRef(getServiceRouteDecorator),
+    },
+    flags: {
+      required: [
+        FLAG_KNATIVE_SERVING_CONFIGURATION,
+        FLAG_KNATIVE_SERVING,
+        FLAG_KNATIVE_SERVING_REVISION,
+        FLAG_KNATIVE_SERVING_ROUTE,
+        FLAG_KNATIVE_SERVING_SERVICE,
+        FLAG_KNATIVE_EVENTING,
+      ],
     },
   },
 ];

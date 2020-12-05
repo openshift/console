@@ -1,4 +1,4 @@
-import { Extension } from '@console/plugin-sdk/src/typings/base';
+import { Extension, CodeRef } from '@console/plugin-sdk/src/typings/base';
 import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
 import {
   TopologyApplyDisplayOptions,
@@ -8,6 +8,8 @@ import {
   CreateConnectionGetter,
   ViewComponentFactory,
   TopologyDataModelReconciler,
+  TopologyDecoratorQuadrant,
+  TopologyDecoratorGetter,
 } from '../topology-types';
 
 namespace ExtensionProperties {
@@ -44,6 +46,13 @@ namespace ExtensionProperties {
     // Function to apply filters to the model
     applyDisplayOptions: () => Promise<TopologyApplyDisplayOptions>;
   }
+
+  export interface TopologyDecoratorProvider {
+    id: string;
+    priority: number;
+    quadrant: TopologyDecoratorQuadrant;
+    decorator: CodeRef<TopologyDecoratorGetter>;
+  }
 }
 
 export interface TopologyComponentFactory
@@ -66,6 +75,11 @@ export interface TopologyDisplayFilters
   type: 'Topology/DisplayFilters';
 }
 
+export interface TopologyDecoratorProvider
+  extends Extension<ExtensionProperties.TopologyDecoratorProvider> {
+  type: 'Topology/Decorator';
+}
+
 export const isTopologyComponentFactory = (e: Extension): e is TopologyComponentFactory => {
   return e.type === 'Topology/ComponentFactory';
 };
@@ -80,4 +94,8 @@ export const isTopologyCreateConnector = (e: Extension): e is TopologyCreateConn
 
 export const isTopologyDisplayFilter = (e: Extension): e is TopologyDisplayFilters => {
   return e.type === 'Topology/DisplayFilters';
+};
+
+export const isTopologyDecoratorProvider = (e: Extension): e is TopologyDecoratorProvider => {
+  return e.type === 'Topology/Decorator';
 };

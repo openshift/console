@@ -1,4 +1,5 @@
 import { Plugin } from '@console/plugin-sdk';
+import { getExecutableCodeRef } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-utils';
 import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
 import {
   TopologyComponentFactory,
@@ -49,8 +50,8 @@ export const helmTopologyPlugin: Plugin<HelmTopologyConsumedExtensions> = [
   {
     type: 'Topology/DisplayFilters',
     properties: {
-      getTopologyFilters,
-      applyDisplayOptions,
+      getTopologyFilters: getExecutableCodeRef(getTopologyFilters),
+      applyDisplayOptions: getExecutableCodeRef(applyDisplayOptions),
     },
   },
 ];

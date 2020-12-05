@@ -1,5 +1,4 @@
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
-import { FirehoseResource } from '@console/internal/components/utils';
 import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { PipelineRunModel, PipelineModel } from '../models';
 import { Pipeline, PipelineRun } from './pipeline-augment';
@@ -24,26 +23,6 @@ export const tknPipelineAndPipelineRunsWatchResources = (
       optional: true,
     },
   };
-};
-
-export const tknPipelineAndPipelineRunsResources = (namespace: string): FirehoseResource[] => {
-  const resources = [
-    {
-      isList: true,
-      kind: referenceForModel(PipelineRunModel),
-      namespace,
-      prop: 'pipelineRuns',
-      optional: true,
-    },
-    {
-      isList: true,
-      kind: referenceForModel(PipelineModel),
-      namespace,
-      prop: 'pipelines',
-      optional: true,
-    },
-  ];
-  return resources;
 };
 
 type PipelineItem = {

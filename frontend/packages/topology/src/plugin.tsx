@@ -8,11 +8,14 @@ import reducer from './utils/reducer';
 import * as models from './models';
 import { ServiceBindingModel } from './models/service-binding';
 import { ALLOW_SERVICE_BINDING_FLAG } from './const';
+import { defaultDecoratorsPlugin } from './components/graph-view/components/nodes/decorators/defaultDecoratorsPlugin';
+import { TopologyDecoratorProvider } from './extensions';
 
 type ConsumedExtensions =
   | ModelDefinition
   | ModelFeatureFlag
   | ReduxReducer
+  | TopologyDecoratorProvider
   | OperatorsTopologyConsumedExtensions;
 
 const plugin: Plugin<ConsumedExtensions> = [
@@ -37,6 +40,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   ...operatorsTopologyPlugin,
+  ...defaultDecoratorsPlugin,
 ];
 
 export default plugin;

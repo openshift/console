@@ -7,13 +7,9 @@ import {
   k8sUpdate,
   kindForReference,
 } from '@console/internal/module/k8s';
-import { getOwnedResources } from '@console/shared';
+import { getOwnedResources, OverviewItem } from '@console/shared';
 import { Edge, EdgeModel, Model, Node, NodeModel, NodeShape } from '@patternfly/react-topology';
-import {
-  TopologyDataResources,
-  TopologyDataObject,
-  TopologyOverviewItem,
-} from '@console/topology/src/topology-types';
+import { TopologyDataResources, TopologyDataObject } from '@console/topology/src/topology-types';
 import { NODE_WIDTH, NODE_HEIGHT, NODE_PADDING } from '@console/topology/src/const';
 import {
   getTopologyGroupItems,
@@ -862,10 +858,9 @@ export const getTrafficTopologyEdgeItems = (resource: K8sResourceKind, { data })
  */
 export const createTopologyServiceNodeData = (
   resource: K8sResourceKind,
-  svcRes: TopologyOverviewItem,
+  svcRes: OverviewItem,
   type: string,
 ): TopologyDataObject => {
-  const { pipelines = [], pipelineRuns = [] } = svcRes;
   const { obj: knativeSvc } = svcRes;
   const uid = _.get(knativeSvc, 'metadata.uid');
   const labels = _.get(knativeSvc, 'metadata.labels', {});
@@ -882,17 +877,13 @@ export const createTopologyServiceNodeData = (
       editURL: annotations['app.openshift.io/edit-url'],
       vcsURI: annotations['app.openshift.io/vcs-uri'],
       isKnativeResource: true,
-      connectedPipeline: {
-        pipeline: pipelines[0],
-        pipelineRuns,
-      },
     },
   };
 };
 
 export const createTopologyPubSubNodeData = (
   resource: K8sResourceKind,
-  res: TopologyOverviewItem,
+  res: OverviewItem,
   type: string,
 ): TopologyDataObject => {
   const {
@@ -1034,10 +1025,9 @@ export const getRevisionsData = (
   _.forEach(knResourcesData, (res) => {
     const { uid } = res.metadata;
     const item = createKnativeDeploymentItems(res, resources, utils);
-    const revisionItem = _.omit(item, ['pipelines', 'pipelineRuns', 'buildConfigs']);
     revisionData[uid] = createTopologyNodeData(
       res,
-      revisionItem,
+      item,
       NodeType.Revision,
       getImageForIconClass(`icon-openshift`),
     );

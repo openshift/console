@@ -1,7 +1,7 @@
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { KnativeItem } from '../utils/get-knative-resources';
 import { OverviewItem, PodControllerOverviewItem } from '@console/shared/src';
-import { TopologyDataObject, TopologyOverviewItem } from '@console/topology/src/topology-types';
+import { TopologyDataObject } from '@console/topology/src/topology-types';
 
 export enum NodeType {
   EventSource = 'event-source',
@@ -50,7 +50,7 @@ export type KnativeServiceOverviewItem = OverviewItem &
     isRollingOut?: boolean;
   };
 
-export type KnativeDeploymentOverviewItem = TopologyOverviewItem & {
+export type KnativeDeploymentOverviewItem = OverviewItem & {
   associatedDeployment: K8sResourceKind;
 };
 

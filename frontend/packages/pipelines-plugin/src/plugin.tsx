@@ -29,8 +29,10 @@ import {
 } from './templates';
 import * as models from './models';
 import * as pipelineIcon from './images/pipeline.svg';
-import { pipelinesTopologyPlugin } from './topology/pipelinesTopologyPlugin';
-import { TopologyDataModelFactory } from '@console/topology/src/extensions/topology';
+import {
+  pipelinesTopologyPlugin,
+  PipelineTopologyConsumedExtensions,
+} from './topology/pipelinesTopologyPlugin';
 
 const {
   PipelineModel,
@@ -61,7 +63,7 @@ type ConsumedExtensions =
   | YAMLTemplate
   | OverviewTabSection
   | AddAction
-  | TopologyDataModelFactory;
+  | PipelineTopologyConsumedExtensions;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {

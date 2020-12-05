@@ -12,7 +12,6 @@ import {
   GraphElement,
 } from '@patternfly/react-topology';
 import { WatchK8sResults } from '@console/internal/components/utils/k8s-watch-hook';
-import { Pipeline, PipelineRun } from '@console/pipelines-plugin/src/utils/pipeline-augment';
 
 export type Point = [number, number];
 
@@ -77,9 +76,25 @@ export type DisplayFilters = TopologyDisplayOption[];
 // Applies the filters on the model and returns the ids of filters that were relevant
 export type TopologyApplyDisplayOptions = (model: Model, filters: DisplayFilters) => string[];
 
-export type TopologyOverviewItem = OverviewItem & {
-  pipelines?: Pipeline[];
-  pipelineRuns?: PipelineRun[];
+export enum TopologyDecoratorQuadrant {
+  upperLeft = 'upperLeft',
+  upperRight = 'upperRight',
+  lowerLeft = 'lowerLeft',
+  lowerRight = 'lowerRight',
+}
+
+export type TopologyDecoratorGetter = (
+  element: Node,
+  radius: number,
+  centerX: number,
+  centerY: number,
+) => React.ReactElement;
+
+export type TopologyDecorator = {
+  id: string;
+  priority: number;
+  quadrant: TopologyDecoratorQuadrant;
+  decorator: TopologyDecoratorGetter;
 };
 
 export interface TopologyDataObject<D = {}> {
@@ -99,11 +114,6 @@ export interface TopologyApplicationObject {
   resources: OdcNodeModel[];
 }
 
-export interface ConnectedWorkloadPipeline {
-  pipeline: Pipeline;
-  pipelineRuns: PipelineRun[];
-}
-
 export interface WorkloadData {
   editURL?: string;
   vcsURI?: string;
@@ -111,7 +121,6 @@ export interface WorkloadData {
   builderImage?: string;
   kind?: string;
   isKnativeResource?: boolean;
-  connectedPipeline: ConnectedWorkloadPipeline;
 }
 
 export type TrafficData = {
@@ -146,6 +155,7 @@ export type GraphData = {
   createResourceAccess: string[];
   eventSourceEnabled: boolean;
   createConnectorExtensions?: CreateConnectionGetter[];
+  decorators?: { [key: string]: TopologyDecorator[] };
 };
 
 export const SHOW_GROUPING_HINT_EVENT = 'show-regroup-hint';

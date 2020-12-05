@@ -3,7 +3,6 @@ import { createOverviewItemForType } from '@console/shared';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { Alerts } from '@console/internal/components/monitoring/types';
-import { getPipelinesAndPipelineRunsForResource } from '@console/pipelines-plugin/src/utils/pipeline-plugin-utils';
 import {
   TopologyDataResources,
   TrafficData,
@@ -76,10 +75,9 @@ const getBaseTopologyDataModel = (
       resources[key].data.forEach((resource) => {
         const item = createOverviewItemForType(key, resource, resources);
         if (item) {
-          const pipelineData = getPipelinesAndPipelineRunsForResource(resource, resources);
           const data = createTopologyNodeData(
             resource,
-            { ...item, ...pipelineData },
+            item,
             TYPE_WORKLOAD,
             getImageForIconClass(`icon-openshift`),
           );
