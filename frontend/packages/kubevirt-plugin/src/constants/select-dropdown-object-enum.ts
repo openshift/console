@@ -1,28 +1,28 @@
 import { ObjectEnum } from '@console/shared/src/constants/object-enum';
 
 export type SelectDropdownData = {
-  description?: string;
-  label?: string;
+  descriptionKey?: string;
+  labelKey: string;
   order?: number;
 };
 
 export abstract class SelectDropdownObjectEnum<T> extends ObjectEnum<T> {
-  private readonly label: string;
+  private readonly labelKey: string;
 
-  private readonly description: string;
+  private readonly descriptionKey: string;
 
   private readonly order: number;
 
-  protected constructor(value: T, { description, label, order }: SelectDropdownData = {}) {
+  protected constructor(value: T, { descriptionKey, labelKey, order }: SelectDropdownData) {
     super(value);
-    this.label = label;
-    this.description = description;
+    this.labelKey = labelKey;
+    this.descriptionKey = descriptionKey;
     this.order = order;
   }
 
-  toString = () => this.label || super.toString();
+  toString = () => this.labelKey;
 
-  getDescription = () => this.description;
+  getDescriptionKey = () => this.descriptionKey;
 
   getOrder = () => this.order;
 }

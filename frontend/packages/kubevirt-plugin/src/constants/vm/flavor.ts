@@ -1,37 +1,33 @@
 /* eslint-disable lines-between-class-members */
 import { ObjectEnum } from '@console/shared/src/constants/object-enum';
 import { SelectDropdownObjectEnum } from '../select-dropdown-object-enum';
-import {
-  FLAVOR_TINY_DESC,
-  FLAVOR_SMALL_DESC,
-  FLAVOR_MEDIUM_DESC,
-  FLAVOR_LARGE_DESC,
-  FLAVOR_CUSTOM_DESC,
-} from '../../utils/strings';
 
 export class Flavor extends SelectDropdownObjectEnum<string> {
   static readonly TINY = new Flavor('tiny', {
-    label: 'Tiny',
-    description: FLAVOR_TINY_DESC,
+    // t('kubevirt-plugin~Tiny')
+    labelKey: 'kubevirt-plugin~Tiny',
     order: 1,
   });
   static readonly SMALL = new Flavor('small', {
-    label: 'Small',
-    description: FLAVOR_SMALL_DESC,
+    // t('kubevirt-plugin~Small')
+    labelKey: 'kubevirt-plugin~Small',
     order: 2,
   });
   static readonly MEDIUM = new Flavor('medium', {
-    label: 'Medium',
-    description: FLAVOR_MEDIUM_DESC,
+    // t('kubevirt-plugin~Medium')
+    labelKey: 'kubevirt-plugin~Medium',
     order: 3,
   });
   static readonly LARGE = new Flavor('large', {
-    label: 'Large',
-    description: FLAVOR_LARGE_DESC,
+    // t('kubevirt-plugin~Large')
+    labelKey: 'kubevirt-plugin~Large',
     order: 4,
   });
   static readonly CUSTOM = new Flavor('Custom', {
-    description: FLAVOR_CUSTOM_DESC,
+    // t('kubevirt-plugin~Custom')
+    labelKey: 'kubevirt-plugin~Custom',
+    // t('kubevirt-plugin~Enter CPU and Memory values')
+    descriptionKey: 'kubevirt-plugin~Enter CPU and Memory values',
     order: 5,
   });
 

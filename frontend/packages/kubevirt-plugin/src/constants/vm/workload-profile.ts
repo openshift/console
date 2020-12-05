@@ -1,26 +1,29 @@
 /* eslint-disable lines-between-class-members */
 import { ObjectEnum } from '@console/shared/src/constants/object-enum';
 import { SelectDropdownObjectEnum } from '../select-dropdown-object-enum';
-import {
-  WORKLOAD_PROFILE_DESKTOP_DESC,
-  WORKLOAD_PROFILE_SERVER_DESC,
-  WORKLOAD_PROFILE_HIGH_PERFORMANCE_DESC,
-} from '../../utils/strings';
 
 export class WorkloadProfile extends SelectDropdownObjectEnum<string> {
   static readonly DESKTOP = new WorkloadProfile('desktop', {
-    label: 'Desktop',
-    description: WORKLOAD_PROFILE_DESKTOP_DESC,
+    // t('kubevirt-plugin~Desktop')
+    labelKey: 'kubevirt-plugin~Desktop',
+    // t('kubevirt-plugin~Small scale consumption, recommended for using the graphical console')
+    descriptionKey:
+      'kubevirt-plugin~Small scale consumption, recommended for using the graphical console',
     order: 1,
   });
   static readonly SERVER = new WorkloadProfile('server', {
-    label: 'Server',
-    description: WORKLOAD_PROFILE_SERVER_DESC,
+    // t('kubevirt-plugin~Server')
+    labelKey: 'kubevirt-plugin~Server',
+    // t('kubevirt-plugin~Balances performance, compatible with a broad range of workloads')
+    descriptionKey:
+      'kubevirt-plugin~Balances performance, compatible with a broad range of workloads',
     order: 2,
   });
   static readonly HIGH_PERFORMANCE = new WorkloadProfile('highperformance', {
-    label: 'High-performance',
-    description: WORKLOAD_PROFILE_HIGH_PERFORMANCE_DESC,
+    // t('kubevirt-plugin~High-performance')
+    labelKey: 'kubevirt-plugin~High-performance',
+    // t('kubevirt-plugin~Optimized for High resource consumption workloads')
+    descriptionKey: 'kubevirt-plugin~Optimized for High resource consumption workloads',
     order: 3,
   });
 

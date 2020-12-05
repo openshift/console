@@ -89,13 +89,13 @@ export const WorkloadSelect: React.FC<WorkloadProps> = React.memo(
                     <SelectOption
                       key={workload.getValue()}
                       value={workload.getValue()}
-                      description={workload.getDescription()}
+                      description={t(workload.getDescriptionKey())}
                     >
                       {isDefault
                         ? t('kubevirt-plugin~{{workload}} (default)', {
-                            workload: workload.toString(),
+                            workload: t(workload.toString()),
                           })
-                        : workload.toString()}
+                        : t(workload.toString())}
                     </SelectOption>
                   );
                 })}

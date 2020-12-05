@@ -16,13 +16,14 @@ export const validateNicName = (
   let validation = validateDNS1123SubdomainValue(name, {
     // t('kubevirt-plugin~NIC name cannot be empty')
     // t('kubevirt-plugin~NIC name name can contain only alphanumberic characters')
-    // t('kubevirt-plugin~NIC name cannot start/end with dash')
+    // t('kubevirt-plugin~NIC name must start/end with alphanumberic character')
     // t('kubevirt-plugin~NIC name cannot contain uppercase characters')
     // t('kubevirt-plugin~NIC name is too long')
     // t('kubevirt-plugin~NIC name is too short')
     emptyMsg: 'kubevirt-plugin~NIC name cannot be empty',
     errorMsg: 'kubevirt-plugin~NIC name name can contain only alphanumberic characters',
-    dashMsg: 'kubevirt-plugin~NIC name cannot start/end with dash',
+    startEndAlphanumbericMsg:
+      'kubevirt-plugin~NIC name must start/end with alphanumberic character',
     uppercaseMsg: 'kubevirt-plugin~NIC name cannot contain uppercase characters',
     longMsg: 'kubevirt-plugin~NIC name is too long',
     shortMsg: 'kubevirt-plugin~NIC name is too short',

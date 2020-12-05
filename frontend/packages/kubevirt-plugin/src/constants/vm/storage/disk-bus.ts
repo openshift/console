@@ -1,21 +1,28 @@
 /* eslint-disable lines-between-class-members */
 import { ObjectEnum } from '@console/shared/src/constants/object-enum';
 import { SelectDropdownObjectEnum } from '../../select-dropdown-object-enum';
-import {
-  DISK_TYPE_SATA_DESC,
-  DISK_TYPE_VIRTIO_DESC,
-  DISK_TYPE_SCSI_DESC,
-} from '../../../utils/strings';
 
 export class DiskBus extends SelectDropdownObjectEnum<string> {
   static readonly VIRTIO = new DiskBus('virtio', {
-    description: DISK_TYPE_VIRTIO_DESC,
+    // t('kubevirt-plugin~virtio')
+    labelKey: 'kubevirt-plugin~virtio',
+    // t('kubevirt-plugin~Optimized for best performance. Supported by most Linux distributions. Windows requires additional drivers to use this model')
+    descriptionKey:
+      'kubevirt-plugin~Optimized for best performance. Supported by most Linux distributions. Windows requires additional drivers to use this model',
   });
   static readonly SATA = new DiskBus('sata', {
-    description: DISK_TYPE_SATA_DESC,
+    // t('kubevirt-plugin~sata')
+    labelKey: 'kubevirt-plugin~sata',
+    // t('kubevirt-plugin~Supported by most operating systems including Windows out of the box. Offers lower performance compared to virtio. Consider using it for CD-ROM devices')
+    descriptionKey:
+      'kubevirt-plugin~Supported by most operating systems including Windows out of the box. Offers lower performance compared to virtio. Consider using it for CD-ROM devices',
   });
   static readonly SCSI = new DiskBus('scsi', {
-    description: DISK_TYPE_SCSI_DESC,
+    // t('kubevirt-plugin~scsi')
+    labelKey: 'kubevirt-plugin~scsi',
+    // t('kubevirt-plugin~Useful when the VM wants to interact with the device using direct scsi commands. Supported by most operating systems including Windows out of the box. Offers lower performance compared to virtio')
+    descriptionKey:
+      'kubevirt-plugin~Useful when the VM wants to interact with the device using direct scsi commands. Supported by most operating systems including Windows out of the box. Offers lower performance compared to virtio',
   });
 
   private static readonly ALL = Object.freeze(

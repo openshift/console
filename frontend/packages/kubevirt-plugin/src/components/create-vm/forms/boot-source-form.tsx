@@ -98,7 +98,9 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({ state, dispatch,
           )
             .sort((a, b) => a.getOrder() - b.getOrder())
             .map((ds) => (
-              <SelectOption key={ds.getValue()} value={ds} description={ds.getDescription()} />
+              <SelectOption key={ds.getValue()} value={ds} description={t(ds.getDescriptionKey())}>
+                {t(ds.toString())}
+              </SelectOption>
             ))}
         </FormPFSelect>
       </FormRow>

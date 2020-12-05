@@ -8,7 +8,7 @@ const DNS1123_MAX_LENGTH = 253;
 
 type DNSValidationMsgs = {
   emptyMsg: string;
-  dashMsg: string;
+  startEndAlphanumbericMsg: string;
   errorMsg: string;
   uppercaseMsg: string;
   longMsg: string;
@@ -26,7 +26,14 @@ export const asValidationObject = (
 // DNS-1123 subdomain
 export const validateDNS1123SubdomainValue = (
   value: string,
-  { emptyMsg, errorMsg, uppercaseMsg, dashMsg, shortMsg, longMsg }: DNSValidationMsgs,
+  {
+    emptyMsg,
+    errorMsg,
+    uppercaseMsg,
+    startEndAlphanumbericMsg,
+    shortMsg,
+    longMsg,
+  }: DNSValidationMsgs,
   { min, max }: { min?: number; max?: number } = {
     min: undefined,
     max: DNS1123_MAX_LENGTH,
@@ -49,7 +56,7 @@ export const validateDNS1123SubdomainValue = (
   const endsWithAlphaNumeric = value.charAt(value.length - 1).match(alphanumericRegex);
 
   if (!startsWithAlphaNumeric || !endsWithAlphaNumeric) {
-    return asValidationObject(dashMsg);
+    return asValidationObject(startEndAlphanumbericMsg);
   }
 
   for (const c of value) {

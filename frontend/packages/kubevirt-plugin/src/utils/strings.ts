@@ -19,56 +19,6 @@ export const CLOUD_INIT_MISSING_USERNAME =
   'No username set, see operating system documentation for the default username.';
 export const CLOUD_INIT_DOC_LINK = 'https://cloudinit.readthedocs.io/en/latest/index.html';
 
-// storage ui sources descriptions
-export const UI_SOURCE_CONTAINER_EPHEMERAL_DESC = `Upload content from a container located in a registry accessible from the cluster. The container disk is meant to be used only for read-only filesystems such
-as CD-ROMs or for small short-lived throw-away VMs.`;
-export const UI_SOURCE_ATTACH_DISK_DESC =
-  'Use a persistent volume claim (PVC) already available on the cluster';
-export const UI_SOURCE_IMPORT_DISK_DESC = 'TBD';
-
-// provision sources descriptions
-export const PROVISION_SOURCE_PXE_DESC =
-  'Boot an operating system from a server on a network. Requires a PXE bootable network attachment definition';
-
-// nics descriptions
-export const NIC_MODEL_E1000E_DESC =
-  'Supported by most operating systems including Windows out of the box. Offers lower performance compared to virtio.';
-export const NIC_TYPE_MASQUERADE_DESC =
-  'Put the VM behind a NAT Proxy for high compability with different network providers. The VMs IP will differ from the IP seen on the pod network';
-export const NIC_TYPE_BRIDGE_DESC =
-  'The VM will be bridged to the selected network, ideal for L2 devices';
-export const NIC_TYPE_SRIOV_DESC =
-  'Attach a virtual function network device to the VM for high performance';
-
-// disk interface descriptions
-export const DISK_TYPE_VIRTIO_DESC =
-  'Optimized for best performance. Supported by most Linux distributions. Windows requires additional drivers to use this model';
-
-export const DISK_TYPE_SATA_DESC =
-  'Supported by most operating systems including Windows out of the box. Offers lower performance compared to virtio. Consider using it for CD-ROM devices';
-
-export const DISK_TYPE_SCSI_DESC =
-  'Useful when the VM wants to interact with the device using direct scsi commands. Supported by most operating systems including Windows out of the box. Offers lower performance compared to virtio';
-
-// workload descriptions
-export const WORKLOAD_PROFILE_DESKTOP_DESC =
-  'Small scale consumption, recommended for using the graphical console';
-export const WORKLOAD_PROFILE_SERVER_DESC =
-  'Balances performance, compatible with a broad range of workloads';
-export const WORKLOAD_PROFILE_HIGH_PERFORMANCE_DESC =
-  'Optimized for High resource consumption workloads';
-
-// flavor descriptions
-export const FLAVOR_TINY_DESC =
-  'Minimum resources required to operate both the OS and the workload type selected';
-export const FLAVOR_SMALL_DESC =
-  'Sufficient resources required to operate both the OS and the workload type selected';
-export const FLAVOR_MEDIUM_DESC =
-  'Recommended resources required to operate both the OS and the workload type selected';
-export const FLAVOR_LARGE_DESC =
-  'Headroomed resources required to operate both the OS and the workload type selected';
-export const FLAVOR_CUSTOM_DESC = 'Enter CPU and Memory values';
-
 export const getDialogUIError = (hasAllRequiredFilled, t: TFunction) =>
   hasAllRequiredFilled
     ? t('kubevirt-plugin~Please correct the invalid fields.')

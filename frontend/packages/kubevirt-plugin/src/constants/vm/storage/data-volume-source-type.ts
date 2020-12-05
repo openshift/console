@@ -4,29 +4,42 @@ import { SelectDropdownObjectEnum } from '../../select-dropdown-object-enum';
 
 export class DataVolumeSourceType extends SelectDropdownObjectEnum<string> {
   static readonly BLANK = new DataVolumeSourceType('blank', {
-    label: 'Blank (creates PVC)',
-    description: 'Create an empty disk.',
+    // t('kubevirt-plugin~Blank (creates PVC)')
+    labelKey: 'kubevirt-plugin~Blank (creates PVC)',
+    // t('kubevirt-plugin~Create an empty disk.')
+    descriptionKey: 'kubevirt-plugin~Create an empty disk.',
   });
   static readonly HTTP = new DataVolumeSourceType('http', {
-    label: 'Import via URL (creates PVC)',
-    description: 'Import content via URL (HTTP or S3 endpoint).',
+    // t('kubevirt-plugin~Import via URL (creates PVC)')
+    labelKey: 'kubevirt-plugin~Import via URL (creates PVC)',
+    // t('kubevirt-plugin~Import content via URL (HTTP or S3 endpoint).')
+    descriptionKey: 'kubevirt-plugin~Import content via URL (HTTP or S3 endpoint).',
   });
   static readonly PVC = new DataVolumeSourceType('pvc', {
-    label: 'Clone existing PVC (creates PVC)',
-    description:
-      'Select an existing persistent volume claim already available on the cluster and clone it.',
+    // t('kubevirt-plugin~Clone existing PVC (creates PVC)')
+    labelKey: 'kubevirt-plugin~Clone existing PVC (creates PVC)',
+    // t('kubevirt-plugin~Select an existing persistent volume claim already available on the cluster and clone it.')
+    descriptionKey:
+      'kubevirt-plugin~Select an existing persistent volume claim already available on the cluster and clone it.',
   });
   static readonly REGISTRY = new DataVolumeSourceType('registry', {
-    label: 'Import via Registry (creates PVC)',
-    description: 'Import content via container registry.',
+    // t('kubevirt-plugin~Import via Registry (creates PVC)')
+    labelKey: 'kubevirt-plugin~Import via Registry (creates PVC)',
+    // t('kubevirt-plugin~Import content via container registry.')
+    descriptionKey: 'kubevirt-plugin~Import content via container registry.',
   });
   static readonly S3 = new DataVolumeSourceType('s3', {
-    label: 'Import via S3 URL (creates PVC)',
-    description: 'Import content via URL (S3 endpoint).',
+    // t('kubevirt-plugin~Import via S3 URL (creates PVC)')
+    labelKey: 'kubevirt-plugin~Import via S3 URL (creates PVC)',
+    // t('kubevirt-plugin~Import content via URL (S3 endpoint).')
+    descriptionKey: 'kubevirt-plugin~Import content via URL (S3 endpoint).',
   });
   static readonly UPLOAD = new DataVolumeSourceType('upload', {
-    label: 'Upload local file (creates PVC)',
-    description: 'Upload file from your local device (supported types - gz, xz, tar, qcow2).',
+    // t('kubevirt-plugin~Upload local file (creates PVC)')
+    labelKey: 'kubevirt-plugin~Upload local file (creates PVC)',
+    // t('kubevirt-plugin~Upload file from your local device (supported types - gz, xz, tar, qcow2).')
+    descriptionKey:
+      'kubevirt-plugin~Upload file from your local device (supported types - gz, xz, tar, qcow2).',
   });
 
   private static readonly ALL = Object.freeze(

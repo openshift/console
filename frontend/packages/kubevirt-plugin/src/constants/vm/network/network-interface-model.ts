@@ -1,7 +1,5 @@
 /* eslint-disable lines-between-class-members */
 import { ObjectEnum } from '@console/shared/src/constants/object-enum';
-import { READABLE_VIRTIO } from '../constants';
-import { NIC_MODEL_E1000E_DESC, DISK_TYPE_VIRTIO_DESC } from '../../../utils/strings';
 import { SelectDropdownObjectEnum, SelectDropdownData } from '../../select-dropdown-object-enum';
 
 export class NetworkInterfaceModel extends SelectDropdownObjectEnum<string> {
@@ -9,8 +7,11 @@ export class NetworkInterfaceModel extends SelectDropdownObjectEnum<string> {
     'virtio',
     { isSupported: true },
     {
-      label: READABLE_VIRTIO,
-      description: DISK_TYPE_VIRTIO_DESC,
+      // t('kubevirt-plugin~virtio')
+      labelKey: 'kubevirt-plugin~virtio',
+      // t('kubevirt-plugin~Optimized for best performance. Supported by most Linux distributions. Windows requires additional drivers to use this model')
+      descriptionKey:
+        'kubevirt-plugin~Optimized for best performance. Supported by most Linux distributions. Windows requires additional drivers to use this model',
       order: 1,
     },
   );
@@ -18,7 +19,8 @@ export class NetworkInterfaceModel extends SelectDropdownObjectEnum<string> {
     'e1000',
     { isSupported: false },
     {
-      label: 'E1000',
+      // t('kubevirt-plugin~E1000')
+      labelKey: 'kubevirt-plugin~E1000',
       order: 2,
     },
   );
@@ -26,15 +28,20 @@ export class NetworkInterfaceModel extends SelectDropdownObjectEnum<string> {
     'e1000e',
     { isSupported: true },
     {
-      label: 'e1000e',
+      // t('kubevirt-plugin~e1000e')
+      labelKey: 'kubevirt-plugin~e1000e',
       order: 3,
-      description: NIC_MODEL_E1000E_DESC,
+      // t('kubevirt-plugin~Supported by most operating systems including Windows out of the box. Offers lower performance compared to virtio.')
+      descriptionKey:
+        'kubevirt-plugin~Supported by most operating systems including Windows out of the box. Offers lower performance compared to virtio.',
     },
   );
   static readonly NE2kPCI = new NetworkInterfaceModel(
     'ne2kPCI',
     { isSupported: false },
     {
+      // t('kubevirt-plugin~ne2kPCI')
+      labelKey: 'kubevirt-plugin~ne2kPCI',
       order: 4,
     },
   );
@@ -42,7 +49,8 @@ export class NetworkInterfaceModel extends SelectDropdownObjectEnum<string> {
     'pcnet',
     { isSupported: false },
     {
-      label: 'PCnet',
+      // t('kubevirt-plugin~PCnet')
+      labelKey: 'kubevirt-plugin~PCnet',
       order: 5,
     },
   );
@@ -50,7 +58,8 @@ export class NetworkInterfaceModel extends SelectDropdownObjectEnum<string> {
     'rtl8139',
     { isSupported: false },
     {
-      label: 'RTL8139',
+      // t('kubevirt-plugin~RTL8139')
+      labelKey: 'kubevirt-plugin~RTL8139',
       order: 6,
     },
   );
@@ -60,7 +69,7 @@ export class NetworkInterfaceModel extends SelectDropdownObjectEnum<string> {
   protected constructor(
     value: string,
     { isSupported = true }: NetworkInterfaceModelConstructorOpts = {},
-    selectData: SelectDropdownData = {},
+    selectData: SelectDropdownData,
   ) {
     super(value, selectData);
     this.supported = isSupported;

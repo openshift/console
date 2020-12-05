@@ -122,11 +122,11 @@ export const FlavorSelect: React.FC<FlavorProps> = React.memo(
                   <SelectOption
                     key={f.getValue()}
                     value={f.getValue()}
-                    description={f.getDescription()}
+                    description={t(f.getDescriptionKey())}
                   >
                     {isDefault
-                      ? t('kubevirt-plugin~{{flavor}} (default)', { flavor: f.toString() })
-                      : f.toString()}
+                      ? t('kubevirt-plugin~{{flavor}} (default)', { flavor: t(f.toString()) })
+                      : t(f.toString())}
                     {flavorDesc && f !== Flavor.CUSTOM && ` - ${flavorDesc}`}
                   </SelectOption>
                 );
