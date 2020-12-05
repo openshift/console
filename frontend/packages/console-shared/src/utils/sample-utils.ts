@@ -1,7 +1,13 @@
 import { Map as ImmutableMap } from 'immutable';
+import * as _ from 'lodash';
+import YAML from 'js-yaml';
+
+import { defaultCatalogCategories } from '@console/dev-console/src/components/catalog/utils/default-categories';
+
 import {
   BuildConfigModel,
   ClusterRoleModel,
+  ConsoleModel,
   ConsoleLinkModel,
   NetworkPolicyModel,
   ResourceQuotaModel,
@@ -23,7 +29,6 @@ import * as webAllowExternalImg from '@console/internal/imgs/network-policy-samp
 import * as webDbAllowAllNsImg from '@console/internal/imgs/network-policy-samples/6-web-db-allow-all-ns.svg';
 import * as webAllowProductionImg from '@console/internal/imgs/network-policy-samples/7-web-allow-production.svg';
 import { FirehoseResult } from '@console/internal/components/utils';
-import * as _ from 'lodash';
 
 export type Sample = {
   highlightText?: string;
@@ -32,6 +37,7 @@ export type Sample = {
   description: string;
   id: string;
   yaml?: string;
+  lazyYaml?: () => string;
   snippet?: boolean;
   targetResource: {
     apiVersion: string;
@@ -227,16 +233,30 @@ const defaultSamples = ImmutableMap<GroupVersionKind, Sample[]>()
       {
         title: 'Add a link to the application menu',
         description:
-          'The application menu appears in the masthead below the 9x9 grid icon.  Application menu links can include an optional image and section heading.',
+          'The application menu appears in the masthead below the 9x9 grid icon. Application menu links can include an optional image and section heading.',
         id: 'cl-application-menu',
         targetResource: getTargetResource(ConsoleLinkModel),
       },
       {
         title: 'Add a link to the namespace dashboard',
         description:
-          'Namespace dashboard links appear on the project dashboard and namespace details pages in a section called "Launcher".  Namespace dashboard links can optionally be restricted to a specific namespace or namespaces.',
+          'Namespace dashboard links appear on the project dashboard and namespace details pages in a section called "Launcher". Namespace dashboard links can optionally be restricted to a specific namespace or namespaces.',
         id: 'cl-namespace-dashboard',
         targetResource: getTargetResource(ConsoleLinkModel),
+      },
+    ],
+  )
+  .setIn(
+    [referenceForModel(ConsoleModel)],
+    [
+      {
+        title: 'Add catalog categories',
+        description:
+          'Provides a list of default categories which are shown in the Developer Catalog. The categories must be added below customization developerCatalog.',
+        id: 'devcatalog-categories',
+        snippet: true,
+        lazyYaml: () => YAML.dump(defaultCatalogCategories),
+        targetResource: getTargetResource(ConsoleModel),
       },
     ],
   );
