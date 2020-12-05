@@ -82,6 +82,8 @@ export const initialState: State = {
   networkType: NetworkType.DEFAULT,
   clusterNetwork: '',
   publicNetwork: '',
+  stretchClusterChecked: false,
+  selectedArbiterZone: '',
 };
 
 export type Discoveries = {
@@ -139,6 +141,8 @@ export type State = {
   networkType: NetworkType;
   clusterNetwork: string;
   publicNetwork: string;
+  stretchClusterChecked: boolean;
+  selectedArbiterZone: string;
 };
 
 export type Action =
@@ -180,7 +184,9 @@ export type Action =
   | { type: 'clearKmsState' }
   | { type: 'setNetworkType'; value: NetworkType }
   | { type: 'setClusterNetwork'; value: string }
-  | { type: 'setPublicNetwork'; value: string };
+  | { type: 'setPublicNetwork'; value: string }
+  | { type: 'setStretchClusterChecked'; value: boolean }
+  | { type: 'setSelectedArbiterZone'; value: string };
 
 export const reducer = (state: State, action: Action) => {
   switch (action.type) {
@@ -260,6 +266,11 @@ export const reducer = (state: State, action: Action) => {
       return Object.assign({}, state, { clusterNetwork: action.value });
     case 'setPublicNetwork':
       return Object.assign({}, state, { publicNetwork: action.value });
+    // Arbiter state reducer
+    case 'setStretchClusterChecked':
+      return Object.assign({}, state, { stretchClusterChecked: action.value });
+    case 'setSelectedArbiterZone':
+      return Object.assign({}, state, { selectedArbiterZone: action.value });
     default:
       return initialState;
   }

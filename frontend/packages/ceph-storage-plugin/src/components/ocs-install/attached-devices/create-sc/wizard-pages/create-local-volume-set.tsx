@@ -11,7 +11,7 @@ import {
 import { getLocalVolumeSetRequestData } from '@console/local-storage-operator-plugin/src/components/local-volume-set/local-volume-set-request-data';
 import { State, Action } from '../state';
 import { DiscoveryDonutChart } from './donut-chart';
-import { MINIMUM_NODES, diskModeDropdownItems } from '../../../../../constants';
+import { MINIMUM_NODES, diskModeDropdownItems, arbiterText } from '../../../../../constants';
 import '../../attached-devices.scss';
 import { RequestErrors } from '../../../install-wizard/review-and-create';
 
@@ -110,6 +110,20 @@ const ConfirmationModal = ({ state, dispatch, setInProgress, setErrorMessage, ns
     dispatch({ type: 'setShowConfirmModal', value: false });
   };
 
+  const description = (
+    <>
+      <span>
+        {t(
+          'ceph-storage-plugin~After the volume set and storage class are created you wont be able to go back to this step.',
+        )}
+      </span>
+      <p className="pf-u-pt-sm">
+        <strong>{t('ceph-storage-plugin~Note:')} </strong>
+        {arbiterText(t)}
+      </p>
+    </>
+  );
+
   return (
     <Modal
       title={t('ceph-storage-plugin~Create Storage Class')}
@@ -124,10 +138,9 @@ const ConfirmationModal = ({ state, dispatch, setInProgress, setErrorMessage, ns
           {t('ceph-storage-plugin~Cancel')}
         </Button>,
       ]}
+      description={description}
     >
-      {t(
-        'ceph-storage-plugin~After the volume set and storage class are created you wont be able to go back to this step. Are you sure you want to continue?',
-      )}
+      <p>{t('ceph-storage-plugin~Are you sure you want to continue ?')}</p>
     </Modal>
   );
 };

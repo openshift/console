@@ -25,8 +25,17 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({
   inProgress,
 }) => {
   const { t } = useTranslation();
-
-  const { nodes, encryption, enableMinimal, storageClass, kms, networkType, publicNetwork } = state;
+  const {
+    nodes,
+    encryption,
+    enableMinimal,
+    storageClass,
+    kms,
+    networkType,
+    publicNetwork,
+    stretchClusterChecked,
+    selectedArbiterZone,
+  } = state;
   const { cpu, memory, zones } = getNodeInfo(state.nodes);
   const scName = getName(storageClass);
   const emptyRequiredField = nodes.length < MINIMUM_NODES && !scName && !memory && !cpu;
@@ -34,10 +43,20 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({
   return (
     <>
       <TextContent className="ocs-install-wizard__text-content">
-        <Text component={TextVariants.h2}>{t('ceph-storage-plugin~Review storage cluste')}r</Text>
+        <Text component={TextVariants.h2}>{t('ceph-storage-plugin~Review storage cluster')}</Text>
       </TextContent>
       <dl>
         <ReviewListTitle text={t('ceph-storage-plugin~Storage and nodes')} />
+        {stretchClusterChecked && (
+          <ReviewListBody noValue={!selectedArbiterZone}>
+            <p>
+              {t('ceph-storage-plugin~Arbiter zone:')}&nbsp;
+              <span className="text-muted">
+                {selectedArbiterZone ?? t('ceph-storage-plugin~None')}
+              </span>
+            </p>
+          </ReviewListBody>
+        )}
         <ReviewListBody noValue={nodes.length < MINIMUM_NODES || !scName}>
           <div>
             <p>

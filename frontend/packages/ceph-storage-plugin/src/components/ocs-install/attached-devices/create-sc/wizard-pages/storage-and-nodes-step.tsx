@@ -16,26 +16,41 @@ import { ListPage } from '@console/internal/components/factory';
 import { NodeModel } from '@console/internal/models';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { getName } from '@console/shared';
+
 import {
   storageClassTooltip,
   OCS_DEVICE_SET_REPLICA,
   MINIMUM_NODES,
+  attachDevicesWithArbiter,
+  attachDevices,
+  OCS_DEVICE_SET_ARBITER_REPLICA,
 } from '../../../../../constants';
 import {
   getNodeInfo,
   shouldDeployAsMinimal,
   filterSCWithNoProv,
   getAssociatedNodes,
+  nodesWithoutTaints,
+  isArbiterSC,
 } from '../../../../../utils/install';
 import { ValidationMessage, ValidationType } from '../../../../../utils/common-ocs-install-el';
-import { SelectNodesText, SelectNodesDetails } from '../../../install-wizard/capacity-and-nodes';
+import {
+  SelectNodesText,
+  SelectNodesDetails,
+  StretchClusterFormGroup,
+} from '../../../install-wizard/capacity-and-nodes';
 import { State, Action } from '../state';
 import AttachedDevicesNodeTable from '../../sc-node-list';
 import { PVsAvailableCapacity } from '../../../pvs-available-capacity';
 import { getSCAvailablePVs } from '../../../../../selectors';
-import { pvResource } from '../../../../../constants/resources';
+import { nodeResource, pvResource } from '../../../../../constants/resources';
 
-const validate = (scName: string, enableMinimal: boolean, nodes: NodeKind[]): ValidationType[] => {
+const validate = (
+  scName: string,
+  enableMinimal: boolean,
+  nodes: NodeKind[],
+  stretchClusterChecked: boolean,
+): ValidationType[] => {
   const validations = [];
   if (enableMinimal) {
     validations.push(ValidationType.MINIMAL);
@@ -43,7 +58,7 @@ const validate = (scName: string, enableMinimal: boolean, nodes: NodeKind[]): Va
   if (!scName) {
     validations.push(ValidationType.BAREMETALSTORAGECLASS);
   }
-  if (scName && nodes.length < MINIMUM_NODES) {
+  if (scName && !stretchClusterChecked && nodes.length < MINIMUM_NODES) {
     validations.push(ValidationType.MINIMUMNODES);
   }
   return validations;
@@ -53,13 +68,19 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
   const { t } = useTranslation();
 
   const [pvData, pvLoaded, pvLoadError] = useK8sWatchResource<K8sResourceKind[]>(pvResource);
+  const [nodesData, nodesLoaded, nodesError] = useK8sWatchResource<NodeKind[]>(nodeResource);
 
-  const { storageClass, enableMinimal, nodes } = state;
+  const { storageClass, enableMinimal, nodes, stretchClusterChecked } = state;
 
   let scNodeNames: string[] = []; // names of the nodes, backing the storage of selected storage class
   const { cpu, memory, zones } = getNodeInfo(nodes);
-  const scName: string = getName(storageClass);
-  const validations: ValidationType[] = validate(scName, enableMinimal, nodes);
+  const scName: string = state.storageClassName;
+  const validations: ValidationType[] = validate(
+    scName,
+    enableMinimal,
+    nodes,
+    stretchClusterChecked,
+  );
   const nodesCount: number = nodes.length;
 
   if (!pvLoadError && pvData.length && pvLoaded) {
@@ -80,6 +101,14 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
   const setNodes = (filteredData: NodeKind[]) =>
     dispatch({ type: 'setNodes', value: filteredData });
 
+  const filterSC = ({ resource }): boolean => {
+    const noProvSC = filterSCWithNoProv(resource);
+    if (stretchClusterChecked && noProvSC && !nodesError && nodesData.length && nodesLoaded) {
+      return isArbiterSC(resource, pvData, nodesData);
+    }
+    return noProvSC;
+  };
+
   return (
     <Form>
       <TextContent>
@@ -87,6 +116,12 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
           {t('ceph-storage-plugin~Capacity')}
         </Text>
       </TextContent>
+      <StretchClusterFormGroup
+        state={state}
+        dispatch={dispatch}
+        pvData={pvData}
+        nodesData={nodesWithoutTaints(nodesData)}
+      />
       <FormGroup
         fieldId="storage-class-dropdown"
         label={t('ceph-storage-plugin~Storage Class')}
@@ -97,13 +132,15 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
             <StorageClassDropdown
               id="storage-class-dropdown"
               onChange={handleStorageClass}
-              filter={filterSCWithNoProv}
               selectedKey={state.storageClassName}
+              filter={filterSC}
               noSelection
               hideClassName="ocs-install-wizard__storage-class-label"
             />
             <PVsAvailableCapacity /* @TODO(refactor): Pv data can be passed directly to this component */
-              replica={OCS_DEVICE_SET_REPLICA}
+              replica={
+                stretchClusterChecked ? OCS_DEVICE_SET_ARBITER_REPLICA : OCS_DEVICE_SET_REPLICA
+              }
               data-test-id="ceph-ocs-install-pvs-available-capacity"
               storageClass={storageClass}
             />
@@ -119,9 +156,10 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
       <Grid>
         <GridItem span={11}>
           <SelectNodesText
-            text={t(
-              'ceph-storage-plugin~Selected nodes are based on the selected storage class. The selected nodes will preferably be in 3 different zones with a recommended requirement of 14 CPUs and 34 GiB per node.',
-            )}
+            text={stretchClusterChecked ? attachDevicesWithArbiter(t) : attachDevices(t)}
+            replica={
+              stretchClusterChecked ? OCS_DEVICE_SET_ARBITER_REPLICA : OCS_DEVICE_SET_REPLICA
+            }
           />
         </GridItem>
         <GridItem span={10} className="ocs-install-wizard__select-nodes">

@@ -20,6 +20,10 @@
   margin: var(--pf-c-wizard__main-body--PaddingTop) var(--pf-c-wizard__main-body--PaddingRight)
     var(--pf-c-wizard__main-body--PaddingBottom) var(--pf-c-wizard__main-body--PaddingLeft);
 }
+.ceph-ocs-install__select-arbiter-zone {
+  padding-left: var(--pf-global--spacer--lg);
+  padding-top: var(--pf-global--spacer--md);
+}
 
 .ceph-ocs-install__create-sc-form {
   width: 80%;

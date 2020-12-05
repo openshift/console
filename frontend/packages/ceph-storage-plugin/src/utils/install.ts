@@ -11,9 +11,10 @@ import {
   humanizeCpuCores,
 } from '@console/internal/components/utils';
 import { HOSTNAME_LABEL_KEY } from '@console/local-storage-operator-plugin/src/constants';
-import { getNodeCPUCapacity, getNodeAllocatableMemory } from '@console/shared';
+import { getNodeCPUCapacity, getNodeAllocatableMemory, getName } from '@console/shared';
 import { ocsTaint, NO_PROVISIONER, AVAILABLE, MINIMUM_NODES, ZONE_LABELS } from '../constants';
 import { Discoveries } from '../components/ocs-install/attached-devices/create-sc/state';
+import { getSCAvailablePVs } from '../selectors';
 
 export const hasNoTaints = (node: NodeKind) => {
   return _.isEmpty(node.spec?.taints);
@@ -33,6 +34,9 @@ export const filterSCWithNoProv = (sc: StorageClassResourceKind) =>
 
 export const filterSCWithoutNoProv = (sc: StorageClassResourceKind) =>
   sc?.provisioner !== NO_PROVISIONER;
+
+export const getZone = (node: NodeKind) =>
+  node.metadata.labels?.[ZONE_LABELS[0]] || node.metadata.labels?.[ZONE_LABELS[1]];
 
 export const getTotalDeviceCapacity = (list: Discoveries[]): number =>
   list.reduce((res, device) => {
@@ -60,7 +64,7 @@ export const getNodeInfo = (nodes: NodeKind[]) =>
       const cpus = humanizeCpuCores(Number(getNodeCPUCapacity(node))).value;
       const memoryRaw = getNodeAllocatableMemory(node);
       const memory = convertToBaseValue(memoryRaw);
-      const zone = node.metadata.labels?.[ZONE_LABELS[0]] || node.metadata.labels?.[ZONE_LABELS[1]];
+      const zone = getZone(node);
       data.cpu += cpus;
       data.memory += memory;
       if (zone && hasNoTaints(node)) data.zones.add(zone);
@@ -79,4 +83,35 @@ export const shouldDeployAsMinimal = (cpu: number, memory: number, nodesCount: n
     return cpu < 30 || humanizedMem < 72;
   }
   return false;
+};
+
+export const countNodesPerZone = (nodes: NodeKind[]) =>
+  nodes.reduce((acc, curr) => {
+    const zone = getZone(curr);
+    acc.hasOwnProperty(zone) ? (acc[zone] += 1) : (acc[zone] = 1);
+    return acc;
+  }, {});
+
+export const nodesWithoutTaints = (nodes: NodeKind[]) =>
+  nodes.filter((node: NodeKind) => hasOCSTaint(node) || hasNoTaints(node));
+
+export const isArbiterSC = (
+  sc: StorageClassResourceKind,
+  pvData: K8sResourceKind[],
+  nodesData: NodeKind[],
+): boolean => {
+  const pvs: K8sResourceKind[] = getSCAvailablePVs(pvData, getName(sc));
+  const scNodeNames = getAssociatedNodes(pvs);
+  const filteredNodes: NodeKind[] = nodesWithoutTaints(nodesData);
+  const tableData: NodeKind[] = filteredNodes.filter(
+    (node: NodeKind) =>
+      scNodeNames.includes(getName(node)) ||
+      scNodeNames.includes(node.metadata.labels?.['kubernetes.io/hostname']),
+  );
+  const uniqZones: Set<string> = new Set(filteredNodes.map((node) => getZone(node)));
+  const uniqSelectedNodesZones: Set<string> = new Set(tableData.map((node) => getZone(node)));
+  if (uniqZones.size < 3) return false;
+  if (uniqSelectedNodesZones.size !== 2) return false;
+  const zonePerNode = countNodesPerZone(tableData);
+  return Object.keys(zonePerNode).every((zone) => zonePerNode[zone] >= 2);
 };
