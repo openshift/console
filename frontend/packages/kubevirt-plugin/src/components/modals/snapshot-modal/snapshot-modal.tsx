@@ -158,7 +158,7 @@ const SnapshotsModal = withHandlePromise((props: SnapshotsModalProps) => {
                 id="approve-checkbox"
                 isChecked={approveUnsupported}
                 aria-label={t('kubevirt-plugin~unsupported approve checkbox')}
-                description={t('kubevirt-plugin~I am aware of this warning and wish to proceed')}
+                label={t('kubevirt-plugin~I am aware of this warning and wish to proceed')}
                 onChange={setApproveUnsupported}
               />
             </FormRow>
