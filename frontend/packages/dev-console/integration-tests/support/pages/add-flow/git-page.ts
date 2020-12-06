@@ -13,6 +13,9 @@ export const gitPage = {
       .should('be.visible');
     cy.get(gitPO.pipeline.infoMessage).should('have.text', message);
   },
+  verifyPipelineInfoMessage: (message: string) => {
+    cy.get(gitPO.pipeline.infoMessage).should('contain.text', message);
+  },
   enterGitUrl: (gitUrl: string) =>
     cy
       .get(gitPO.gitRepoUrl)

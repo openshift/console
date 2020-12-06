@@ -2,8 +2,9 @@ import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { topologyPage } from '../../pages/topology/topology-page';
 import { naviagteTo } from '../../pages/app';
 import { devNavigationMenu } from '../../constants/global';
+import { topologySidePane } from '../../pages/topology/topology-side-pane-page';
 
-Given('user is at Topology page', () => {
+Given('user is at the Topology page', () => {
   naviagteTo(devNavigationMenu.Topology);
   topologyPage.verifyTopologyPage();
 });
@@ -22,4 +23,17 @@ Then('user is able to see workload {string} in topology page', (workloadName: st
 
 Then('user will be redirected to Topology page', () => {
   topologyPage.verifyTopologyPage();
+});
+
+When('user clicks on workload {string}', (workloadName: string) => {
+  topologyPage.componentNode(workloadName).click({ force: true });
+});
+
+Then('user can see sidebar opens with Resources tab selected by default', () => {
+  topologySidePane.verifySelectedTab('Resources');
+});
+
+Then('side bar is displayed with the pipelines section', () => {
+  topologySidePane.verifyTab('Resources');
+  topologySidePane.verifySection('Pipeline Runs');
 });

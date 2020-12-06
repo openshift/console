@@ -7,11 +7,15 @@ export const createGitWorkload = (
   componentName: string = 'nodejs-ex-git',
   resourceType: string = 'Deployment',
   appName: string = 'nodejs-ex-git-app',
+  isPipelineSelected: boolean = false,
 ) => {
   addPage.selectCardFromOptions(addOptions.Git);
   gitPage.enterGitUrl(gitUrl);
   gitPage.enterAppName(appName);
   gitPage.enterComponentName(componentName);
   gitPage.selectResource(resourceType);
+  if (isPipelineSelected === true) {
+    gitPage.selectAddPipeline();
+  }
   gitPage.clickCreate();
 };
