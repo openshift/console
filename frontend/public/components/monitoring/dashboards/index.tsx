@@ -2,6 +2,7 @@ import * as _ from 'lodash-es';
 import { Dropdown, DropdownToggle, DropdownItem } from '@patternfly/react-core';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
+import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
 
@@ -70,6 +71,8 @@ const VariableDropdown: React.FC<VariableDropdownProps> = ({
   onChange,
   selectedKey,
 }) => {
+  const { t } = useTranslation();
+
   const [isOpen, toggleIsOpen, , setClosed] = useBoolean(false);
 
   return (
@@ -79,7 +82,7 @@ const VariableDropdown: React.FC<VariableDropdownProps> = ({
         <Dropdown
           toggle={
             <DropdownToggle className="monitoring-dashboards__dropdown-button" isDisabled={true}>
-              <RedExclamationCircleIcon /> Error loading options
+              <RedExclamationCircleIcon /> {t('monitoring~Error loading options')}
             </DropdownToggle>
           }
         />
@@ -201,29 +204,31 @@ const AllVariableDropdowns = connect(({ UI }: RootState) => ({
   variables: UI.getIn(['monitoringDashboards', 'variables']),
 }))(AllVariableDropdowns_);
 
-const timespanOptions = {
-  '5m': '5 minutes',
-  '15m': '15 minutes',
-  '30m': '30 minutes',
-  '1h': '1 hour',
-  '2h': '2 hours',
-  '6h': '6 hours',
-  '12h': '12 hours',
-  '1d': '1 day',
-  '2d': '2 days',
-  '1w': '1 week',
-  '2w': '2 weeks',
-};
-
 const TimespanDropdown_: React.FC<TimespanDropdownProps> = ({ timespan, setTimespan }) => {
+  const { t } = useTranslation();
+
   const onChange = React.useCallback((v: string) => setTimespan(parsePrometheusDuration(v)), [
     setTimespan,
   ]);
 
+  const timespanOptions = {
+    '5m': t('monitoring~{{count}} minute', { count: 5 }),
+    '15m': t('monitoring~{{count}} minute', { count: 15 }),
+    '30m': t('monitoring~{{count}} minute', { count: 30 }),
+    '1h': t('monitoring~{{count}} hour', { count: 1 }),
+    '2h': t('monitoring~{{count}} hour', { count: 2 }),
+    '6h': t('monitoring~{{count}} hour', { count: 6 }),
+    '12h': t('monitoring~{{count}} hour', { count: 12 }),
+    '1d': t('monitoring~{{count}} day', { count: 1 }),
+    '2d': t('monitoring~{{count}} day', { count: 2 }),
+    '1w': t('monitoring~{{count}} week', { count: 1 }),
+    '2w': t('monitoring~{{count}} week', { count: 2 }),
+  };
+
   return (
     <VariableDropdown
       items={timespanOptions}
-      label="Time Range"
+      label={t('monitoring~Time range')}
       onChange={onChange}
       selectedKey={formatPrometheusDuration(timespan)}
     />
@@ -239,12 +244,18 @@ export const TimespanDropdown = connect(
   },
 )(TimespanDropdown_);
 
-const PollIntervalDropdown_ = ({ interval, setInterval }) => (
-  <div className="form-group monitoring-dashboards__dropdown-wrap">
-    <label className="monitoring-dashboards__dropdown-title">Refresh Interval</label>
-    <IntervalDropdown interval={interval} setInterval={setInterval} />
-  </div>
-);
+const PollIntervalDropdown_ = ({ interval, setInterval }) => {
+  const { t } = useTranslation();
+
+  return (
+    <div className="form-group monitoring-dashboards__dropdown-wrap">
+      <label className="monitoring-dashboards__dropdown-title">
+        {t('monitoring~Refresh interval')}
+      </label>
+      <IntervalDropdown interval={interval} setInterval={setInterval} />
+    </div>
+  );
+};
 
 export const PollIntervalDropdown = connect(
   ({ UI }: RootState) => ({
@@ -405,6 +416,8 @@ const MonitoringDashboardsPage_: React.FC<MonitoringDashboardsPageProps> = ({
   match,
   patchAllVariables,
 }) => {
+  const { t } = useTranslation();
+
   const [board, setBoard] = React.useState<string>();
   const [boards, setBoards] = React.useState<Board[]>([]);
   const [error, setError] = React.useState<string>();
@@ -428,7 +441,11 @@ const MonitoringDashboardsPage_: React.FC<MonitoringDashboardsPageProps> = ({
               name: item.metadata.name,
             };
           } catch (e) {
-            setError(`Could not parse JSON data for dashboard "${item.metadata.name}"`);
+            setError(
+              t('monitoring~Could not parse JSON data for dashboard "{{dashboard}}"', {
+                dashboard: item.metadata.name,
+              }),
+            );
           }
         };
 
@@ -443,7 +460,7 @@ const MonitoringDashboardsPage_: React.FC<MonitoringDashboardsPageProps> = ({
           setError(_.get(err, 'json.error', err.message));
         }
       });
-  }, [safeFetch, setLoaded]);
+  }, [safeFetch, setLoaded, t]);
 
   const boardItems = React.useMemo(() => _.mapValues(_.mapKeys(boards, 'name'), 'data.title'), [
     boards,
@@ -492,13 +509,13 @@ const MonitoringDashboardsPage_: React.FC<MonitoringDashboardsPageProps> = ({
   return (
     <>
       <Helmet>
-        <title>Metrics Dashboards</title>
+        <title>{t('monitoring~Metrics dashboards')}</title>
       </Helmet>
       <div className="co-m-nav-title co-m-nav-title--detail">
         <div className="monitoring-dashboards__header">
           <h1 className="co-m-pane__heading">
             <span>
-              Dashboards <GrafanaLink />
+              {t('monitoring~Dashboards')} <GrafanaLink />
             </span>
           </h1>
           <div className="monitoring-dashboards__options">
@@ -510,7 +527,7 @@ const MonitoringDashboardsPage_: React.FC<MonitoringDashboardsPageProps> = ({
           {!_.isEmpty(boardItems) && (
             <VariableDropdown
               items={boardItems}
-              label="Dashboard"
+              label={t('monitoring~Dashboard')}
               onChange={changeBoard}
               selectedKey={board}
             />
