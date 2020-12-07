@@ -42,10 +42,4 @@ describe('Localization', () => {
     cy.visit('/dashboards?pseudolocalization=true&lng=en');
     cy.byTestID('utilization-card-item-text').isPseudoLocalized();
   });
-
-  it('pseudolocalizes timestamps', () => {
-    cy.log('test timestamps');
-    cy.visit('/k8s/all-namespaces/events?pseudolocalization=true&lng=en');
-    cy.byTestID('timestamp').isPseudoLocalized();
-  });
 });

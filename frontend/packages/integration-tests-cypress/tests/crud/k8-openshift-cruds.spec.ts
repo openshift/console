@@ -137,14 +137,11 @@ describe('Kubernetes resource CRUD operations', () => {
           detailsPage.titleShouldContain(name);
           cy.testA11y(`Details page for ${kind}: ${name}`);
           if (testI18n) {
-            cy.testI18n(
-              [
-                DetailsPageSelector.horizontalNavTabs,
-                DetailsPageSelector.sectionHeadings,
-                DetailsPageSelector.itemLabels,
-              ],
-              ['timestamp'],
-            );
+            cy.testI18n([
+              DetailsPageSelector.horizontalNavTabs,
+              DetailsPageSelector.sectionHeadings,
+              DetailsPageSelector.itemLabels,
+            ]);
           }
         });
 
