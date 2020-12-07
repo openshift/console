@@ -42,11 +42,11 @@ const newTemplateFromCommon: MenuAction = (kind, vmTemplate, { namespace }) => (
 const vmTemplateCreateVMAction: MenuAction = (
   kind,
   obj,
-  { withSupportModal, sourceStatus, sourceLoaded, sourceLoadError, withCreate },
+  { withSupportModal, sourceStatus, sourceLoaded, sourceLoadError, withCreate, namespace },
 ) => ({
   // t('kubevirt-plugin~Create Virtual Machine')
   label: 'kubevirt-plugin~Create Virtual Machine',
-  callback: () => withSupportModal(obj, () => createVMAction(obj, sourceStatus)),
+  callback: () => withSupportModal(obj, () => createVMAction(obj, sourceStatus, namespace)),
   accessReview: asAccessReview(
     VirtualMachineModel,
     { metadata: { namespace: getNamespace(obj) } },
