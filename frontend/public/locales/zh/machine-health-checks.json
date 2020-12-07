@@ -5,7 +5,7 @@
   "MachineHealthChecks": "MachineHealthChecks",
   "Unhealthy conditions": "不健康条件",
   "Status": "状态",
-  "Timeout": "timeout",
+  "Timeout": "超时",
   "Type": "类型",
   "MachineHealthCheck details": "MachineHealthCheck",
   "Selector": "选择器",

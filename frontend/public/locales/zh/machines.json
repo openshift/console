@@ -11,7 +11,7 @@
   "Conditions": "条件",
   "Name": "名称",
   "Namespace": "命名空间",
-  "Machines": "Machine",
+  "Machines": "机器",
   "by machine or node name": "根据机器或节点名称",
   "Provisioned as node": "置备为节点"
 }

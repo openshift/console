@@ -20,9 +20,9 @@
   "MachineConfigPool details": "MachineConfigPool 详情",
   "Conditions": "条件",
   "Name": "名称",
-  "Configuration": "Configuration",
+  "Configuration": "配置",
   "Updated": "已更新",
   "Updating": "更新中",
-  "Degraded": "Degraded",
+  "Degraded": " 降级",
   "MachineConfigPools": "MachineConfigPools"
 }
