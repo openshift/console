@@ -58,7 +58,11 @@ export const filterTemplates = (
   return [...userTemplateItems, ...Object.values(commonTemplateItems)];
 };
 
-export const createVMAction = (template: TemplateItem, sourceStatus: TemplateSourceStatus) => {
+export const createVMAction = (
+  template: TemplateItem,
+  sourceStatus: TemplateSourceStatus,
+  namespace: string,
+) => {
   if (isTemplateSourceError(sourceStatus)) {
     sourceErrorModal({ sourceStatus });
   } else if (!sourceStatus || sourceStatus.isReady) {
@@ -66,6 +70,7 @@ export const createVMAction = (template: TemplateItem, sourceStatus: TemplateSou
       getVMWizardCreateLink({
         wizardName: VMWizardName.BASIC,
         template: template.variants[0],
+        namespace,
       }),
     );
   } else {
