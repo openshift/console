@@ -19,6 +19,9 @@ const PipelineVisualization: React.FC<PipelineTopologyVisualizationProps> = ({
   pipelineRun,
 }) => {
   const { t } = useTranslation();
+  if (!pipeline) {
+    return null;
+  }
   const { nodes, edges } = getTopologyNodesEdges(pipeline, pipelineRun);
   let content: React.ReactElement;
   if (hasInlineTaskSpec(pipeline.spec.tasks)) {

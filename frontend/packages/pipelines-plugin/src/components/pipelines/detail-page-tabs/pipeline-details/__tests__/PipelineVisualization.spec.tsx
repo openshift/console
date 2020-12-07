@@ -20,6 +20,13 @@ describe('Pipeline Visualization', () => {
     wrapper = shallow(<PipelineVisualization pipeline={mockPipelinesJSON[2]} />);
   });
 
+  it('Should not render the component if null value is passed to the pipeline ', () => {
+    wrapper = shallow(<PipelineVisualization pipeline={null} />);
+    const alert = wrapper.find(Alert);
+    const PipelineTopologyGraphComponent = wrapper.find(PipelineTopologyGraph);
+    expect(alert).toHaveLength(0);
+    expect(PipelineTopologyGraphComponent).toHaveLength(0);
+  });
   it('Should render a Alert message if the pipeline has inline taskSpec ', () => {
     const alert = wrapper.find(Alert);
     expect(alert).toHaveLength(1);
