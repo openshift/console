@@ -42,6 +42,7 @@ i18n
         'alert-manager-receiver-forms',
         'alert-manager-yaml-editor',
         'alert-routing-modal',
+        'api-explorer',
         'badge',
         'build',
         'build-config',
