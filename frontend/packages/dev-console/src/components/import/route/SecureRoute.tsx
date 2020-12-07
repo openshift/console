@@ -59,21 +59,21 @@ const SecureRoute: React.FC = () => {
                 name="route.tls.certificate"
                 label={t('devconsole~Certificate')}
                 helpText={t(
-                  'devconsole~The PEM format certificate. Upload file by dragging &amp; dropping, selecting it, or pasting from the clipboard.',
+                  'devconsole~The PEM format certificate. Upload file by dragging & dropping, selecting it, or pasting from the clipboard.',
                 )}
               />
               <DroppableFileInputField
                 name="route.tls.privateKey"
                 label={t('devconsole~Private Key')}
                 helpText={t(
-                  'devconsole~The PEM format key. Upload file by dragging &amp; dropping, selecting it, or pasting from the clipboard.',
+                  'devconsole~The PEM format key. Upload file by dragging & dropping, selecting it, or pasting from the clipboard.',
                 )}
               />
               <DroppableFileInputField
                 name="route.tls.caCertificate"
                 label={t('devconsole~CA certificate')}
                 helpText={t(
-                  'devconsole~The PEM format CA certificate chain. Upload file by dragging &amp; dropping, selecting it, or pasting from the clipboard.',
+                  'devconsole~The PEM format CA certificate chain. Upload file by dragging & dropping, selecting it, or pasting from the clipboard.',
                 )}
               />
               {tls.termination === 'reencrypt' && (
@@ -81,7 +81,7 @@ const SecureRoute: React.FC = () => {
                   name="route.tls.destinationCaCertificate"
                   label={t('devconsole~Destination CA Certificate')}
                   helpText={t(
-                    'devconsole~The PEM format CA certificate chain to validate the endpoint certificate for re-encrypt termination. Upload file by dragging &amp; dropping, selecting it, or pasting from the clipboard.',
+                    'devconsole~The PEM format CA certificate chain to validate the endpoint certificate for re-encrypt termination. Upload file by dragging & dropping, selecting it, or pasting from the clipboard.',
                   )}
                 />
               )}
