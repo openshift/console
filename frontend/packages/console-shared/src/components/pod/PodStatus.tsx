@@ -10,6 +10,7 @@ import { podColor, AllPodStatus } from '../../constants';
 import './PodStatus.scss';
 
 const ANIMATION_DURATION = 350;
+const MAX_POD_TITLE_LENGTH = 14;
 
 type PodData = {
   x: string;
@@ -100,10 +101,10 @@ const PodStatus: React.FC<PodStatusProps> = ({
         data={vData}
         height={size}
         width={size}
-        title={title}
+        title={_.truncate(title, { length: MAX_POD_TITLE_LENGTH })}
         titleComponent={titleComponent}
         subTitleComponent={subTitleComponent}
-        subTitle={subTitle}
+        subTitle={_.truncate(subTitle, { length: MAX_POD_TITLE_LENGTH })}
         allowTooltip={false}
         labels={() => null}
         /*
