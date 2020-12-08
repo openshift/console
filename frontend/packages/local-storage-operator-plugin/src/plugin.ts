@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-import i18next from 'i18next';
 import {
   AlertAction,
   CustomFeatureFlag,
@@ -75,7 +74,8 @@ const plugin: Plugin<ConsumedExtensions> = [
       model: NodeModel,
       page: {
         href: 'disks',
-        name: i18next.t('lso-plugin~Disks'),
+        // t('lso-plugin~Disks')
+        name: '%lso-plugin~Disks%',
       },
       loader: () =>
         import(

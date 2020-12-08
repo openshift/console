@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-import i18next from 'i18next';
 import {
   DashboardsCard,
   DashboardsTab,
@@ -106,7 +105,8 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Dashboards/Tab',
     properties: {
       id: 'object-service',
-      title: i18next.t('noobaa-storage-plugin~Object Service'),
+      // t('noobaa-storage-plugin~Object Service')
+      title: '%noobaa-storage-plugin~Object Service%',
     },
     flags: {
       required: [NOOBAA_FLAG, OCS_FLAG],
@@ -230,7 +230,8 @@ const plugin: Plugin<ConsumedExtensions> = [
       id: 'objectbuckets',
       section: 'storage',
       componentProps: {
-        name: i18next.t('noobaa-storage-plugin~Object Buckets'),
+        // t('noobaa-storage-plugin~Object Buckets')
+        name: '%noobaa-storage-plugin~Object Buckets%',
         resource: models.NooBaaObjectBucketModel.plural,
       },
     },
@@ -264,7 +265,8 @@ const plugin: Plugin<ConsumedExtensions> = [
       id: 'objectbucketclaims',
       section: 'storage',
       componentProps: {
-        name: i18next.t('noobaa-storage-plugin~Object Bucket Claims'),
+        // t('noobaa-storage-plugin~Object Bucket Claims')
+        name: '%noobaa-storage-plugin~Object Bucket Claims%',
         resource: models.NooBaaObjectBucketClaimModel.plural,
       },
     },
@@ -320,7 +322,8 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'ClusterServiceVersion/Action',
     properties: {
       kind: models.NooBaaBucketClassModel.kind,
-      label: i18next.t('noobaa-storage-plugin~Edit Bucket Class Resources'),
+      // t('noobaa-storage-plugin~Edit Bucket Class Resources')
+      label: '%noobaa-storage-plugin~Edit Bucket Class Resources%',
       apiGroup: models.NooBaaBucketClassModel.apiGroup,
       callback: (kind, obj) => () =>
         import('./components/bucket-class/modals/edit-backingstore-modal')
