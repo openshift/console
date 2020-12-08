@@ -15,12 +15,16 @@ const mapCardsToGrid = (
   keyPrefix: string,
   ignoreCardSpan: boolean = false,
 ): React.ReactNode[] =>
-  cards.map(({ Card, span = 12 }, index) => (
-    // eslint-disable-next-line react/no-array-index-key
-    <GridItem key={`${keyPrefix}-${index}`} span={ignoreCardSpan ? 12 : span}>
-      <Card />
-    </GridItem>
-  ));
+  cards.map(({ Card, span = 12, loaded = true }, index) => {
+    return (
+      loaded && (
+        // eslint-disable-next-line react/no-array-index-key
+        <GridItem key={`${keyPrefix}-${index}`} span={ignoreCardSpan ? 12 : span}>
+          <Card />
+        </GridItem>
+      )
+    );
+  });
 
 const DashboardGrid: React.FC<DashboardGridProps> = ({ mainCards, leftCards, rightCards }) => {
   const [containerRef, width] = useRefWidth();
@@ -75,6 +79,7 @@ export default DashboardGrid;
 export type GridDashboardCard = {
   Card: React.ComponentType<any>;
   span?: DashboardCardSpan;
+  loaded?: boolean;
 };
 
 type DashboardGridProps = {

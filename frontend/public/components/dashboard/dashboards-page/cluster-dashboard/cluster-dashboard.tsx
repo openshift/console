@@ -17,7 +17,6 @@ import { ClusterDashboardContext } from './context';
 
 const mainCards = [{ Card: StatusCard }, { Card: UtilizationCard }];
 const leftCards = [{ Card: DetailsCard }, { Card: InventoryCard }];
-const rightCards = [{ Card: ActivityCard }];
 
 const HIDE_QUICK_START_DASHBOARD_TILE_USER_SETTINGS_KEY = 'console.dashboard.quickStartTile';
 
@@ -26,35 +25,42 @@ export const ClusterDashboard: React.FC<{}> = () => {
     InfrastructureModel,
     'cluster',
   );
-  // [TODO](sahil143): use sync capability here
+
+  const [hasQuickStarts, setHasQuickStarts] = React.useState<boolean>(true);
+
   const [showQuickStartsCatalogCard, , loaded] = useUserSettings(
     HIDE_QUICK_START_DASHBOARD_TILE_USER_SETTINGS_KEY,
     true,
+    true,
   );
 
-  const rc = React.useMemo(
-    () =>
-      loaded && showQuickStartsCatalogCard
-        ? [
-            {
-              Card: () => (
-                <QuickStartsLoader>
-                  {(quickStarts) => (
-                    <QuickStartsCatalogCard
-                      quickStarts={quickStarts}
-                      storageKey={HIDE_QUICK_START_DASHBOARD_TILE_STORAGE_KEY}
-                      userSettingsKey={HIDE_QUICK_START_DASHBOARD_TILE_USER_SETTINGS_KEY}
-                    />
-                  )}
-                </QuickStartsLoader>
-              ),
-            },
-            ...rightCards,
-          ]
-        : rightCards,
-    [showQuickStartsCatalogCard, loaded],
+  const rightCards = React.useMemo(
+    () => [
+      {
+        loaded: loaded && showQuickStartsCatalogCard && hasQuickStarts,
+        Card: () => (
+          <QuickStartsLoader>
+            {(quickStarts, quickStartsLoaded) => {
+              if (quickStartsLoaded && quickStarts.length === 0 && hasQuickStarts === true) {
+                setHasQuickStarts(false);
+              } else if (quickStartsLoaded && quickStarts.length > 0 && hasQuickStarts === false) {
+                setHasQuickStarts(true);
+              }
+              return (
+                <QuickStartsCatalogCard
+                  quickStarts={quickStarts}
+                  storageKey={HIDE_QUICK_START_DASHBOARD_TILE_STORAGE_KEY}
+                  userSettingsKey={HIDE_QUICK_START_DASHBOARD_TILE_USER_SETTINGS_KEY}
+                />
+              );
+            }}
+          </QuickStartsLoader>
+        ),
+      },
+      { Card: ActivityCard },
+    ],
+    [showQuickStartsCatalogCard, loaded, hasQuickStarts],
   );
-
   const context = {
     infrastructure,
     infrastructureLoaded,
@@ -64,7 +70,7 @@ export const ClusterDashboard: React.FC<{}> = () => {
   return (
     <ClusterDashboardContext.Provider value={context}>
       <Dashboard>
-        <DashboardGrid mainCards={mainCards} leftCards={leftCards} rightCards={rc} />
+        <DashboardGrid mainCards={mainCards} leftCards={leftCards} rightCards={rightCards} />
       </Dashboard>
     </ClusterDashboardContext.Provider>
   );
