@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-import i18next from 'i18next';
 import * as models from './models';
 import {
   AlertAction,
@@ -105,7 +104,8 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Dashboards/Tab',
     properties: {
       id: 'persistent-storage',
-      title: i18next.t('ceph-storage-plugin~Persistent Storage'),
+      // t('ceph-storage-plugin~Persistent Storage')
+      title: '%ceph-storage-plugin~Persistent Storage%',
     },
     flags: {
       required: [OCS_CONVERGED_FLAG],
@@ -254,7 +254,8 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Dashboards/Overview/Health/Resource',
     properties: {
-      title: i18next.t('ceph-storage-plugin~Storage'),
+      // t('ceph-storage-plugin~Storage')
+      title: '%ceph-storage-plugin~Storage%',
       resources: {
         ceph: {
           kind: referenceForModel(models.CephClusterModel),
@@ -272,7 +273,8 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'ClusterServiceVersion/Action',
     properties: {
       kind: 'StorageCluster',
-      label: i18next.t('ceph-storage-plugin~Add Capacity'),
+      // t('ceph-storage-plugin~Add Capacity')
+      label: '%ceph-storage-plugin~Add Capacity%',
       apiGroup: models.OCSServiceModel.apiGroup,
       callback: (kind, ocsConfig) => () => {
         const clusterObject = { ocsConfig };
@@ -293,7 +295,8 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Dashboards/Tab',
     properties: {
       id: 'independent-dashboard',
-      title: i18next.t('ceph-storage-plugin~Persistent Storage'),
+      // t('ceph-storage-plugin~Persistent Storage')
+      title: '%ceph-storage-plugin~Persistent Storage%',
     },
     flags: {
       required: [OCS_INDEPENDENT_FLAG],
@@ -411,7 +414,8 @@ const plugin: Plugin<ConsumedExtensions> = [
       model: NodeModel,
       page: {
         href: 'disks',
-        name: i18next.t('ceph-storage-plugin~Disks'),
+        // t('ceph-storage-plugin~Disks')
+        name: '%ceph-storage-plugin~Disks%',
       },
       loader: () =>
         import(
@@ -426,7 +430,8 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'AlertAction',
     properties: {
       alert: OSD_DOWN_ALERT,
-      text: i18next.t('ceph-storage-plugin~Troubleshoot'),
+      // t('ceph-storage-plugin~Troubleshoot')
+      text: '%ceph-storage-plugin~Troubleshoot%',
       path: getAlertActionPath,
     },
     flags: {
@@ -437,7 +442,8 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'AlertAction',
     properties: {
       alert: OSD_DOWN_AND_OUT_ALERT,
-      text: i18next.t('ceph-storage-plugin~Troubleshoot'),
+      // t('ceph-storage-plugin~Troubleshoot')
+      text: '%ceph-storage-plugin~Troubleshoot%',
       path: getAlertActionPath,
     },
     flags: {
