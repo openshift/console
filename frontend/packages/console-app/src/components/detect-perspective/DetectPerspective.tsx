@@ -1,6 +1,7 @@
 import * as React from 'react';
 import PerspectiveDetector from './PerspectiveDetector';
-import { PerpsectiveContext, useValuesForPerspectiveContext } from './perspective-context';
+import { PerpsectiveContext } from './perspective-context';
+import { useValuesForPerspectiveContext } from './useValuesForPerspectiveContext';
 
 type DetectPerspectiveProps = {
   children: React.ReactNode;
