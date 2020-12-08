@@ -15,6 +15,7 @@ const LanguagePreferencesModal = (props: LanguagePreferencesModalProps) => {
   const { i18n, t } = useTranslation();
   const supportedLocales = {
     en: 'English',
+    zh: '中文',
     ja: '日本語',
   };
   const langOptions = Object.keys(supportedLocales).map((lang) => ({

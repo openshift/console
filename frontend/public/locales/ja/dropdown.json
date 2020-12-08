@@ -1,0 +1,13 @@
+{
+  "All Projects": "すべてのプロジェクト",
+  "All Namespaces": "すべての namespace",
+  "Create Project": "プロジェクトの作成",
+  "Create Namespace": "namespace の作成",
+  "Project": "プロジェクト",
+  "Namespace": "namespace",
+  "Select Project...": "プロジェクトの選択...",
+  "Select Namespace...": "namespace の選択...",
+  "Actions": "アクション",
+  "Containers": "コンテナー",
+  "Init containers": "Init コンテナー"
+}

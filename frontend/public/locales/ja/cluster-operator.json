@@ -3,8 +3,8 @@
   "Status": "ステータス",
   "Version": "バージョン",
   "Message": "メッセージ",
-  "{{resource}} details": "{{resource}} 詳細",
+  "{{resource}} details": "{{resource}} の詳細",
   "Conditions": "条件",
-  "Operand versions": "オペランドバージョン",
+  "Operand versions": "オペランドのバージョン",
   "Related objects": "関連オブジェクト"
 }

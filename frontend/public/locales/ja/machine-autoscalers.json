@@ -1,0 +1,11 @@
+{
+  "Name": "名前",
+  "Namespace": "namespace",
+  "Scale target": "スケーリングターゲット",
+  "Min": "最小",
+  "Max": "最大",
+  "Machine autoscalers": "Machine Autoscaler",
+  "MachineAutoscaler details": "MachineAutoscaler details",
+  "Min replicas": "最小レプリカ",
+  "Max replicas": "最大レプリカ"
+}
