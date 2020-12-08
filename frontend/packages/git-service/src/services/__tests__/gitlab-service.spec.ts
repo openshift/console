@@ -21,6 +21,7 @@ describe('Gitlab Service', () => {
       host: 'https://gitlab.com',
       defaultBranch: 'master',
       fullName: 'jpratik999/devconsole-git',
+      contextDir: '',
     });
 
     return nockBack('repo.json').then(async ({ nockDone, context }) => {
@@ -43,6 +44,7 @@ describe('Gitlab Service', () => {
       host: 'https://gitlab.com',
       defaultBranch: 'master',
       fullName: 'jpratik99/devconsole-git',
+      contextDir: '',
     });
 
     return nockBack('repo-not-reachable.json').then(async ({ nockDone, context }) => {
@@ -65,6 +67,7 @@ describe('Gitlab Service', () => {
       host: 'https://version.helsinki.fi',
       defaultBranch: 'master',
       fullName: 'random-user/public-project',
+      contextDir: '',
     });
 
     return nockBack('custom-domain-with-subdomain.json').then(async ({ nockDone, context }) => {
@@ -109,6 +112,23 @@ describe('Gitlab Service', () => {
       const buildTypes: BuildType[] = await gitService.detectBuildTypes();
       expect(buildTypes.length).toBeGreaterThanOrEqual(1);
       expect(buildTypes[0].buildType).toBe('golang');
+      context.assertScopesFinished();
+      nockDone();
+    });
+  });
+
+  it('should detect DotNet build type inside context directory', () => {
+    const gitSource: GitSource = {
+      url: 'https://gitlab.com/rottencandy/s2i-dotnetcore-ex',
+      contextDir: 'app',
+    };
+
+    const gitService = new GitlabService(gitSource);
+
+    return nockBack('files-dotnet.json').then(async ({ nockDone, context }) => {
+      const buildTypes: BuildType[] = await gitService.detectBuildTypes();
+      expect(buildTypes.length).toBeGreaterThanOrEqual(1);
+      expect(buildTypes[0].buildType).toBe('dotnet');
       context.assertScopesFinished();
       nockDone();
     });
@@ -170,7 +190,7 @@ describe('Gitlab Service', () => {
     });
   });
 
-  xit('should detect Devfile', () => {
+  it('should detect Devfile', () => {
     const gitSource = { url: 'https://gitlab.com/aballant/nodejs-starter-devfile' };
 
     const gitService = new GitlabService(gitSource);

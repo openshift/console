@@ -99,6 +99,24 @@ describe('Bitbucket Service', () => {
     });
   });
 
+  it('should detect DotNet build type inside context directory', () => {
+    const gitSource: GitSource = {
+      url: 'https://bitbucket.org/rottencandy/s2i-dotnetcore-ex',
+      ref: 'dotnetcore-3.1',
+      contextDir: 'app',
+    };
+
+    const gitService = new BitbucketService(gitSource);
+
+    return nockBack('files-dotnet.json').then(async ({ nockDone, context }) => {
+      const buildTypes: BuildType[] = await gitService.detectBuildTypes();
+      expect(buildTypes.length).toBeGreaterThanOrEqual(1);
+      expect(buildTypes[0].buildType).toBe('dotnet');
+      context.assertScopesFinished();
+      nockDone();
+    });
+  });
+
   it('should detect no build type', () => {
     const gitSource: GitSource = { url: 'https://bitbucket.org/akshinde/testgitsource' };
 

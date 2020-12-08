@@ -35,7 +35,14 @@ export class BitbucketService extends BaseService {
 
   getRepoMetadata = (): RepoMetadata => {
     const { name, owner, host, branch } = ParseBitbucketUrl(this.gitsource.url);
-    return { repoName: name, owner, host, defaultBranch: this.gitsource.ref || branch };
+    const contextDir = this.gitsource.contextDir?.replace(/\/$/, '') || '';
+    return {
+      repoName: name,
+      owner,
+      host,
+      defaultBranch: this.gitsource.ref || branch,
+      contextDir,
+    };
   };
 
   isRepoReachable = async (): Promise<boolean> => {
@@ -60,10 +67,10 @@ export class BitbucketService extends BaseService {
   };
 
   getRepoFileList = async (): Promise<RepoFileList> => {
-    const url = `${this.baseURL}/repositories/${this.metadata.owner}/${this.metadata.repoName}/src/${this.metadata.defaultBranch}/?pagelen=50`;
+    const url = `${this.baseURL}/repositories/${this.metadata.owner}/${this.metadata.repoName}/src/${this.metadata.defaultBranch}/${this.metadata.contextDir}?pagelen=50`;
     try {
       const data = await coFetchJSON(url);
-      const files = data.values.map((f) => f.path);
+      const files = data.values?.map((f) => f.path) || [];
       return { files };
     } catch (e) {
       return { files: [] };
@@ -81,7 +88,7 @@ export class BitbucketService extends BaseService {
   };
 
   isDockerfilePresent = async (): Promise<boolean> => {
-    const url = `${this.baseURL}/repositories/${this.metadata.owner}/${this.metadata.repoName}/src/${this.metadata.defaultBranch}/Dockerfile`;
+    const url = `${this.baseURL}/repositories/${this.metadata.owner}/${this.metadata.repoName}/src/${this.metadata.defaultBranch}/${this.metadata.contextDir}/Dockerfile`;
     try {
       await coFetchJSON(url);
       return true;
@@ -91,7 +98,7 @@ export class BitbucketService extends BaseService {
   };
 
   getDockerfileContent = async (): Promise<string | null> => {
-    const url = `${this.baseURL}/repositories/${this.metadata.owner}/${this.metadata.repoName}/src/${this.metadata.defaultBranch}/Dockerfile`;
+    const url = `${this.baseURL}/repositories/${this.metadata.owner}/${this.metadata.repoName}/src/${this.metadata.defaultBranch}/${this.metadata.contextDir}/Dockerfile`;
     try {
       const data = await coFetchJSON(url);
       return data as string;
@@ -121,7 +128,7 @@ export class BitbucketService extends BaseService {
   };
 
   getPackageJsonContent = async (): Promise<string | null> => {
-    const url = `${this.baseURL}/repositories/${this.metadata.owner}/${this.metadata.repoName}/src/${this.metadata.defaultBranch}/package.json`;
+    const url = `${this.baseURL}/repositories/${this.metadata.owner}/${this.metadata.repoName}/src/${this.metadata.defaultBranch}/${this.metadata.contextDir}/package.json`;
     try {
       const data = await coFetchJSON(url);
       return data as string;

@@ -1,13 +1,20 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useFormikContext, FormikValues } from 'formik';
 import { ExpandCollapse } from '@console/internal/components/utils';
 import { TextInputTypes } from '@patternfly/react-core';
-import { InputField } from '@console/shared';
+import { InputField, useDebounceCallback } from '@console/shared';
 import FormSection from '../section/FormSection';
 import SourceSecretSelector from './SourceSecretSelector';
 
 const AdvancedGitOptions: React.FC = () => {
   const { t } = useTranslation();
+  const { setFieldValue } = useFormikContext<FormikValues>();
+  const handleGitDirChange = useDebounceCallback(
+    (e: React.SyntheticEvent) => setFieldValue('git.dir', (e.target as HTMLInputElement).value),
+    [setFieldValue],
+  );
+
   return (
     <ExpandCollapse
       textExpanded={t('devconsole~Hide advanced Git options')}
@@ -27,6 +34,7 @@ const AdvancedGitOptions: React.FC = () => {
           helpText={t(
             'devconsole~Optional subdirectory for the Application source code, used as a context directory for build.',
           )}
+          onChange={handleGitDirChange}
         />
         <SourceSecretSelector />
       </FormSection>

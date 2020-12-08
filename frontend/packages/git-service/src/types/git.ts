@@ -11,6 +11,7 @@ export interface GitSource {
   secretType?: SecretType;
   secretContent?: any;
   ref?: string;
+  contextDir?: string;
 }
 
 export enum GitProvider {
