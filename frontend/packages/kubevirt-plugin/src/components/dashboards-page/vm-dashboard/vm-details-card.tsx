@@ -140,7 +140,10 @@ export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
             errorMessage={guestAgentFieldNotAvailMsg}
           >
             {numLoggedInUsers != null && numLoggedInUsers > 0 ? (
-              <Link to={`/k8s/ns/${namespace}/virtualmachines/${name}/details#logged-in-users`}>
+              <Link
+                to={`/k8s/ns/${namespace}/virtualmachines/${name}/details#logged-in-users`}
+                id="num-active-users-message"
+              >
                 {numLoggedInUsersMsg}
               </Link>
             ) : (

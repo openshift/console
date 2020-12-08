@@ -108,7 +108,7 @@ describe('Tests involving guest agent', () => {
       await vmLinux.navigateToOverview();
       expect(dashboardView.vmDetailsHostname.getText()).toContain(VM_LINUX_NAME);
       expect(dashboardView.vmDetailsTZ.getText()).toContain('UTC');
-      expect(vmView.vmLoggedInUsers.getText()).toEqual('1 user');
+      expect(dashboardView.vmDetailsNumActiveUsersMsg.getText()).toEqual('1 user');
     });
 
     it('ID(CNV-5320) Displays guest agent data in Disks tab', async () => {
