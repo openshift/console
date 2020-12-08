@@ -136,7 +136,7 @@ export const mockIBMHelmChartData: HelmChartMetaData[] = [
       'https://raw.githubusercontent.com/IBM/charts/master/repo/community/hazelcast-enterprise-1.0.3.tgz',
     ],
     version: '1.0.3',
-    repoName: 'ibm-helm-repo',
+    repoName: 'IBM Helm Repo',
   },
   {
     apiVersion: 'v1',
@@ -146,7 +146,7 @@ export const mockIBMHelmChartData: HelmChartMetaData[] = [
       'https://raw.githubusercontent.com/IBM/charts/master/repo/community/hazelcast-enterprise-1.0.2.tgz',
     ],
     version: '1.0.2',
-    repoName: 'ibm-helm-repo',
+    repoName: 'IBM Helm Repo',
   },
   {
     appVersion: '3.10.5',
@@ -157,7 +157,7 @@ export const mockIBMHelmChartData: HelmChartMetaData[] = [
       'https://raw.githubusercontent.com/IBM/charts/master/repo/community/hazelcast-enterprise-1.0.1.tgz',
     ],
     version: '1.0.1',
-    repoName: 'ibm-helm-repo',
+    repoName: 'IBM Helm Repo',
   },
 ];
 
@@ -170,7 +170,7 @@ export const mockRedhatHelmChartData: HelmChartMetaData[] = [
       'https://raw.githubusercontent.com/redhat-helm-charts/master/repo/stable/hazelcast-enterprise-1.0.2.tgz',
     ],
     version: '1.0.2',
-    repoName: 'redhat-helm-repo',
+    repoName: 'Red Hat Helm Repo',
   },
   {
     appVersion: '3.10.5',
@@ -181,7 +181,36 @@ export const mockRedhatHelmChartData: HelmChartMetaData[] = [
       'https://raw.githubusercontent.com/redhat-helm-charts/master/repo/stable/hazelcast-enterprise-1.0.1.tgz',
     ],
     version: '1.0.1',
-    repoName: 'redhat-helm-repo',
+    repoName: 'Red Hat Helm Repo',
+  },
+];
+
+export const mockHelmChartRepositories: K8sResourceKind[] = [
+  {
+    apiVersion: 'helm.openshift.io/v1beta1',
+    kind: 'HelmChartRepository',
+    metadata: {
+      name: 'ibm-helm-repo',
+    },
+    spec: {
+      connectionConfig: {
+        url: 'https://raw.githubusercontent.com/IBM/charts/master/repo/community',
+      },
+      name: 'IBM Helm Repo',
+    },
+  },
+  {
+    apiVersion: 'helm.openshift.io/v1beta1',
+    kind: 'HelmChartRepository',
+    metadata: {
+      name: 'redhat-helm-repo',
+    },
+    spec: {
+      connectionConfig: {
+        url: 'https://redhat-developer.github.io/redhat-helm-charts',
+      },
+      name: 'Red Hat Helm Repo',
+    },
   },
 ];
 
