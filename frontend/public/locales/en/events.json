@@ -11,7 +11,7 @@
   "Resource": "Resource",
   "All": "All",
   "Close": "Close",
-  "No events in the past hour": "No events in the past hour",
+  "No events": "No events",
   "No matching events": "No matching events",
   "{{allCount}}+ events exist, but none match the current filter": "{{allCount}}+ events exist, but none match the current filter",
   "{{allCount}} events exist, but none match the current filter": "{{allCount}} events exist, but none match the current filter",
@@ -27,5 +27,5 @@
   "Showing {{count}} event": "Showing {{count}} event",
   "Showing {{count}} event_plural": "Showing {{count}} events",
   "Showing {{messageCount}} of {{allCount}}+ events": "Showing {{messageCount}} of {{allCount}}+ events",
-  "There are no events before <1></1>": "There are no events before <1></1>"
+  "Older events are not stored.": "Older events are not stored."
 }

@@ -265,9 +265,7 @@ export const NoEvents = () => {
   const { t } = useTranslation();
   return (
     <Box className="co-sysevent-stream__status-box-empty">
-      <div className="text-center cos-status-box__detail">
-        {t('events~No events in the past hour')}
-      </div>
+      <div className="text-center cos-status-box__detail">{t('events~No events')}</div>
     </Box>
   );
 };
@@ -328,7 +326,6 @@ class EventStream extends React.Component {
       filteredEvents: [],
       error: null,
       loading: true,
-      oldestTimestamp: new Date(),
     };
     this.toggleStream = this.toggleStream_.bind(this);
   }
@@ -469,13 +466,8 @@ class EventStream extends React.Component {
   // update an instance variable, and throttle the actual UI update (see constructor)
   flushMessages() {
     const sorted = sortEvents(this.messages);
-    const oldestTimestamp = _.min([
-      this.state.oldestTimestamp,
-      getLastTime(new Date(_.last(sorted))),
-    ]);
     sorted.splice(maxMessages);
     this.setState({
-      oldestTimestamp,
       sortedMessages: sorted,
       filteredEvents: EventStream.filterEvents(sorted, this.props),
     });
@@ -554,9 +546,7 @@ class EventStream extends React.Component {
               className="co-sysevent-stream__timeline__btn"
             />
             <div className="co-sysevent-stream__timeline__end-message">
-              <Trans ns="events">
-                There are no events before <Timestamp timestamp={this.state.oldestTimestamp} />
-              </Trans>
+              {t('events~Older events are not stored.')}
             </div>
           </div>
           {count > 0 && <EventStreamList events={filteredEvents} EventComponent={Inner} />}
