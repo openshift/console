@@ -127,7 +127,7 @@ const SnapshotsModal = withHandlePromise((props: SnapshotsModalProps) => {
                       <StackItem>
                         <Stack>
                           {unsupportedVolumes?.map((vol) => (
-                            <StackItem>
+                            <StackItem key={vol.name}>
                               <strong>{vol.name}</strong> - {vol.reason}
                             </StackItem>
                           ))}
@@ -159,7 +159,7 @@ const SnapshotsModal = withHandlePromise((props: SnapshotsModalProps) => {
                 isChecked={approveUnsupported}
                 aria-label={t('kubevirt-plugin~unsupported approve checkbox')}
                 label={t('kubevirt-plugin~I am aware of this warning and wish to proceed')}
-                onChange={setApproveUnsupported}
+                onChange={(v) => setApproveUnsupported(v)}
               />
             </FormRow>
           )}
