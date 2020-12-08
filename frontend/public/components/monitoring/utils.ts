@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
 import { murmur3 } from 'murmurhash-js';
+import { getActiveNamespace } from '../../reducers/ui';
 
 import { RootState } from '../../redux';
 import { PrometheusLabels } from '../graphs';
@@ -80,7 +81,7 @@ export const rulesToProps = (state: RootState, perspective?: string) => {
 export const silencesToProps = ({ UI }) => UI.getIn(['monitoring', 'silences']) || {};
 
 export const silenceParamToProps = (state: RootState, { match }) => {
-  const namespace = match.params?.ns;
+  const namespace = getActiveNamespace(state);
   const { data: silences, loaded, loadError }: Silences = silencesToProps(state);
   const { loaded: alertsLoaded }: Alerts = alertsToProps(state);
   const silence = _.find(silences, { id: _.get(match, 'params.id') });

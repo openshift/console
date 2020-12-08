@@ -21,6 +21,7 @@ import {
   RedExclamationCircleIcon,
   YellowExclamationTriangleIcon,
 } from '@console/shared';
+import { useActivePerspective } from '@console/shared/src/hooks/useActivePerspective';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import * as UIActions from '../../actions/ui';
 import { coFetchJSON } from '../../co-fetch';
@@ -1011,6 +1012,7 @@ const SilencesDetailsPage = withFallback(
       startsAt = '',
       updatedAt = '',
     } = silence || {};
+    const [activePerspective] = useActivePerspective();
     const { t } = useTranslation();
 
     return (
@@ -1028,10 +1030,12 @@ const SilencesDetailsPage = withFallback(
             <BreadCrumbs
               breadcrumbs={[
                 {
-                  name: t('monitoring~Silences'),
-                  path: namespace
-                    ? `/dev-monitoring/ns/${namespace}/silences`
-                    : '/monitoring/silences',
+                  name:
+                    activePerspective === 'dev' ? t('monitoring~Alerts') : t('monitoring~Silences'),
+                  path:
+                    activePerspective === 'dev'
+                      ? `/dev-monitoring/ns/${namespace}/alerts`
+                      : '/monitoring/silences',
                 },
                 { name: t('monitoring~Silence details'), path: undefined },
               ]}
