@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import { TFunction } from 'i18next';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { DeploymentConfigModel } from '@console/internal/models';
+import { DeploymentConfigModel, PodModel } from '@console/internal/models';
 import { RevisionModel } from '@console/knative-plugin';
 import * as utils from '../pod-utils';
 import { usePodScalingAccessStatus, podRingLabel, getFailedPods } from '../pod-ring-utils';
@@ -195,6 +195,14 @@ describe('usePodScalingAccessStatus', () => {
     obj.kind = 'Revision';
     testHook(() => {
       expect(usePodScalingAccessStatus(obj, RevisionModel, [], true)).toBe(false);
+      done();
+    });
+  });
+
+  it('should return false for pods', (done) => {
+    obj.kind = 'Pod';
+    testHook(() => {
+      expect(usePodScalingAccessStatus(obj, PodModel, [], true)).toBe(false);
       done();
     });
   });
