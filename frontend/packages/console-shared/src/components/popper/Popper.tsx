@@ -217,7 +217,11 @@ const Popper: React.FC<PopperProps> = ({
 
   return isOpen ? (
     <Portal container={container}>
-      <div ref={nodeRefCallback} className={className} style={{ zIndex }}>
+      <div
+        ref={nodeRefCallback}
+        className={className}
+        style={{ zIndex, position: 'absolute', top: 0, left: 0 }}
+      >
         {children}
       </div>
     </Portal>
