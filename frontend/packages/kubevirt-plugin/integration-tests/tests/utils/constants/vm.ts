@@ -7,6 +7,7 @@ export enum TAB {
   NetworkInterfaces = 'Network Interfaces',
   Yaml = 'YAML',
   Environment = 'Environment',
+  Snapshots = 'Snapshots',
 }
 
 export enum VM_ACTION {

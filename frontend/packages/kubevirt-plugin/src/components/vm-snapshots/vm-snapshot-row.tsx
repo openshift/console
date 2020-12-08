@@ -53,14 +53,15 @@ export const VMSnapshotSimpleRow: React.FC<VMSnapshotSimpleRowProps> = ({
       <TableData className={dimensify()}>
         <Timestamp timestamp={getCreationTimestamp(snapshot)} />
       </TableData>
-      <TableData className={dimensify()}>
+      <TableData id={`${snapshotName}-snapshot-status`} className={dimensify()}>
         <VMSnapshotStatus snapshot={snapshot} restore={relevantRestore} />
       </TableData>
-      <TableData className={dimensify()}>
+      <TableData id={`${snapshotName}-restore-time`} className={dimensify()}>
         {relevantRestore ? <Timestamp timestamp={getVmRestoreTime(relevantRestore)} /> : DASH}
       </TableData>
       <TableData className={dimensify()}>
         <Button
+          id={`${snapshotName}-restore-btn`}
           variant="secondary"
           onClick={() => snapshotRestoreModal({ snapshot })}
           isDisabled={

@@ -120,6 +120,11 @@ export class KubevirtUIResource<T extends BaseVMBuilderData> extends UIResource 
     await isLoaded();
   }
 
+  async navigateToSnapshots() {
+    await this.navigateToTab(TAB.Snapshots);
+    await isLoaded();
+  }
+
   async navigateToDisks() {
     await this.navigateToTab(TAB.Disks);
     await isLoaded();
