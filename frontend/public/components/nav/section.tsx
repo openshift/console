@@ -15,7 +15,7 @@ import { RootState } from '../../redux';
 import { featureReducerName, flagPending, FeatureState } from '../../reducers/features';
 import { stripBasePath } from '../utils';
 import { stripNS, createLink } from './items';
-import { getSortedNavItems } from './navSortUtils';
+import { sortExtensionItems } from './navSortUtils';
 
 const navSectionStateToProps = (
   state: RootState,
@@ -30,6 +30,37 @@ const navSectionStateToProps = (
     activeNamespace: state.UI.get('activeNamespace'),
     location: state.UI.get('location'),
   };
+};
+
+const findChildIndex = (id: string, Children: React.ReactElement[]) =>
+  Children.findIndex((c) => c.props.id === id);
+
+const mergePluginChild = (
+  Children: React.ReactElement[],
+  pluginChild: React.ReactElement,
+  insertBefore?: string | string[],
+  insertAfter?: string | string[],
+) => {
+  let index = -1;
+  const before = Array.isArray(insertBefore) ? insertBefore : [insertBefore];
+  const after = Array.isArray(insertAfter) ? insertAfter : [insertAfter];
+  let count = 0;
+  while (count < before.length && index < 0) {
+    index = findChildIndex(before[count++], Children);
+  }
+  count = 0;
+  while (count < after.length && index < 0) {
+    index = findChildIndex(after[count++], Children);
+    if (index >= 0) {
+      index += 1;
+    }
+  }
+
+  if (index >= 0) {
+    Children.splice(index, 0, pluginChild);
+  } else {
+    Children.push(pluginChild);
+  }
 };
 
 export const NavSection = connect(navSectionStateToProps)(
@@ -158,11 +189,18 @@ export const NavSection = connect(navSectionStateToProps)(
         getChildren() {
           const { id, title, children, activePerspective: perspective } = this.props;
           const Children = React.Children.map(children, this.mapChild) || [];
-          const childItems = getSortedNavItems(this.getNavItemExtensions(perspective, title, id));
+          const childItems = sortExtensionItems(this.getNavItemExtensions(perspective, title, id));
 
           childItems.forEach((item) => {
             const pluginChild = this.mapChild(createLink(item as NavItem));
-            Children.push(pluginChild);
+            if (pluginChild) {
+              mergePluginChild(
+                Children,
+                pluginChild,
+                item.properties.insertBefore,
+                item.properties.insertAfter,
+              );
+            }
           });
 
           return Children;
