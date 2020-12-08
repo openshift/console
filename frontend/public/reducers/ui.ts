@@ -2,14 +2,9 @@ import * as _ from 'lodash-es';
 import { List as ImmutableList, Map as ImmutableMap } from 'immutable';
 
 import { ActionType, UIAction } from '../actions/ui';
-import {
-  ALL_NAMESPACES_KEY,
-  ALL_APPLICATIONS_KEY,
-  LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
-  NAMESPACE_LOCAL_STORAGE_KEY,
-} from '@console/shared/src/constants';
+import { ALL_APPLICATIONS_KEY, ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
 import { isSilenced } from '../reducers/monitoring';
-import { legalNamePattern, getNamespace } from '../components/utils/link';
+import { getNamespace } from '../components/utils/link';
 import { OverviewSpecialGroup } from '../components/overview/constants';
 import { RootState } from '../redux';
 import { Alert, AlertStates, RuleStates, SilenceStates } from '../components/monitoring/types';
@@ -52,24 +47,10 @@ export const silenceFiringAlerts = (firingAlerts, silences) => {
 export default (state: UIState, action: UIAction): UIState => {
   if (!state) {
     const { pathname } = window.location;
-
-    let activeNamespace = getNamespace(pathname);
-    if (!activeNamespace) {
-      const parsedFavorite = localStorage.getItem(NAMESPACE_LOCAL_STORAGE_KEY);
-      if (
-        _.isString(parsedFavorite) &&
-        (parsedFavorite.match(legalNamePattern) || parsedFavorite === ALL_NAMESPACES_KEY)
-      ) {
-        activeNamespace = parsedFavorite;
-      } else {
-        activeNamespace = localStorage.getItem(LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY);
-      }
-    }
-
     return ImmutableMap({
       activeNavSectionId: 'workloads',
       location: pathname,
-      activeNamespace: activeNamespace || ALL_NAMESPACES_KEY,
+      activeNamespace: ALL_NAMESPACES_KEY,
       activeApplication: ALL_APPLICATIONS_KEY,
       createProjectMessage: '',
       overview: ImmutableMap({

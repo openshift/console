@@ -25,6 +25,7 @@ import { initConsolePlugins } from '../plugins';
 import CloudShell from '@console/app/src/components/cloud-shell/CloudShell';
 import CloudShellTab from '@console/app/src/components/cloud-shell/CloudShellTab';
 import DetectPerspective from '@console/app/src/components/detect-perspective/DetectPerspective';
+import DetectNamespace from '@console/app/src/components/detect-namespace/DetectNamespace';
 import { withExtensions, isContextProvider } from '@console/plugin-sdk';
 import { GuidedTour } from '@console/app/src/components/tour';
 
@@ -182,14 +183,16 @@ class App_ extends React.PureComponent {
 
     return (
       <DetectPerspective>
-        {contextProviderExtensions.reduce(
-          (children, e) => (
-            <EnhancedProvider key={e.uid} {...e.properties}>
-              {children}
-            </EnhancedProvider>
-          ),
-          content,
-        )}
+        <DetectNamespace>
+          {contextProviderExtensions.reduce(
+            (children, e) => (
+              <EnhancedProvider key={e.uid} {...e.properties}>
+                {children}
+              </EnhancedProvider>
+            ),
+            content,
+          )}
+        </DetectNamespace>
       </DetectPerspective>
     );
   }
