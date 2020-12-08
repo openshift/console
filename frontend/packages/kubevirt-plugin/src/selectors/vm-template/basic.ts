@@ -24,8 +24,23 @@ export const getTemplateName = (template: TemplateKind): string =>
 export const isCommonTemplate = (template: TemplateKind): boolean =>
   template?.metadata?.labels?.[TEMPLATE_TYPE_LABEL] === TEMPLATE_TYPE_BASE;
 
-export const getTemplateSupport = (template: TemplateKind): string =>
-  getAnnotation(template, TEMPLATE_SUPPORT_LEVEL);
+export const getTemplateSupport = (template: TemplateKind): string => {
+  const isUpstream = window.SERVER_FLAGS.branding === 'okd';
+  if (isUpstream) {
+    return undefined;
+  }
+  const support = getAnnotation(template, TEMPLATE_SUPPORT_LEVEL);
+  if (support) {
+    return support;
+  }
+  if (
+    isCommonTemplate(template) &&
+    (template.metadata.name.startsWith('win') || template.metadata.name.startsWith('rhel'))
+  ) {
+    return 'Full';
+  }
+  return undefined;
+};
 
 export const getTemplateType = (
   template: TemplateItem,
@@ -43,15 +58,33 @@ export const getTemplateProvider = (
       ? t('kubevirt-plugin~Provided by {{provider}}', { provider })
       : t('kubevirt-plugin~{{provider}}', { provider });
   }
+  if (isCommonTemplate(template)) {
+    const isUpstream = window.SERVER_FLAGS.branding === 'okd';
+    return isUpstream ? 'KubeVirt' : 'Red Hat';
+  }
   return withProviderPrefix ? t('kubevirt-plugin~Provided by User') : t('kubevirt-plugin~User');
 };
 
-export const templateProviders = (t: TFunction): { id: ProvidedType; title: string }[] => [
-  { id: 'supported', title: t('kubevirt-plugin~Red Hat Supported') },
-  { id: 'user-supported', title: t('kubevirt-plugin~User Supported') },
-  { id: 'provided', title: t('kubevirt-plugin~Red Hat Provided') },
-  { id: 'user', title: t('kubevirt-plugin~User Provided') },
-];
+export const templateProviders = (t: TFunction): { id: ProvidedType; title: string }[] => {
+  const isUpstream = window.SERVER_FLAGS.branding === 'okd';
+  const providers: { id: ProvidedType; title: string }[] = [
+    { id: 'user-supported', title: t('kubevirt-plugin~User Supported') },
+    {
+      id: 'provided',
+      title: isUpstream
+        ? t('kubevirt-plugin~KubeVirt Provided')
+        : t('kubevirt-plugin~Red Hat Provided'),
+    },
+    { id: 'user', title: t('kubevirt-plugin~User Provided') },
+  ];
+  if (!isUpstream) {
+    providers.unshift({
+      id: 'supported',
+      title: t('kubevirt-plugin~Red Hat Supported'),
+    });
+  }
+  return providers;
+};
 
 export type ProvidedType = 'supported' | 'provided' | 'user' | 'user-supported';
 

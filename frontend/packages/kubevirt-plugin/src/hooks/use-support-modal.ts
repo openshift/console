@@ -11,7 +11,8 @@ export const useSupportModal = (): SupportModalFunction => {
   const [warnSupport, setWarnSupport] = useLocalStorage(TEMPLATE_WARN_SUPPORT);
   return React.useCallback<SupportModalFunction>(
     (template, onConfirm) => {
-      const showSupportModal = template && !getTemplateSupport(template.variants[0]);
+      const isUpstream = window.SERVER_FLAGS.branding === 'okd';
+      const showSupportModal = !isUpstream && template && !getTemplateSupport(template.variants[0]);
       const onModalConfirm = (disable: boolean) => {
         if (disable) {
           setWarnSupport('false');

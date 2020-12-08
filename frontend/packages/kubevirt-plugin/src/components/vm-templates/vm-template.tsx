@@ -269,14 +269,17 @@ type VirtualMachineTemplatesProps = React.ComponentProps<typeof Table> & {
 
 export const VMTemplateSupport: React.FC = () => {
   const { t } = useTranslation();
+  const isUpstream = window.SERVER_FLAGS.branding === 'okd';
   return (
-    <div>
-      {t('kubevirt-plugin~See template details for support.')}{' '}
-      <ExternalLink
-        href={SUPPORT_URL}
-        text={t('kubevirt-plugin~Learn more about Red Hat support')}
-      />
-    </div>
+    !isUpstream && (
+      <div>
+        {t('kubevirt-plugin~See template details for support.')}{' '}
+        <ExternalLink
+          href={SUPPORT_URL}
+          text={t('kubevirt-plugin~Learn more about Red Hat support')}
+        />
+      </div>
+    )
   );
 };
 
