@@ -149,7 +149,7 @@ export const getPodsDataForResource = (
         obj: resource,
         current: undefined,
         previous: undefined,
-        isRollingOut: undefined,
+        isRollingOut: true,
         pods: [resource as PodKind],
       };
     default:

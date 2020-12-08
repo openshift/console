@@ -1,7 +1,12 @@
 import * as React from 'react';
 import { K8sResourceCommon, K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
-import { getReplicationControllersForResource, PodRCData } from '@console/shared/src';
+import {
+  getReplicationControllersForResource,
+  PodRCData,
+  useDebounceCallback,
+  useDeepCompareMemoize,
+} from '@console/shared';
 import { VMIKind } from '../types/vm';
 import { findVMIPod } from '../selectors/pod/selectors';
 import * as models from '../models';
@@ -13,6 +18,8 @@ export const usePodsForVm = (
   const [loaded, setLoaded] = React.useState<boolean>(false);
   const [loadError, setLoadError] = React.useState<string>('');
   const [podData, setPodData] = React.useState<PodRCData>();
+  const vmName = vm.metadata.name;
+  const vmRef = React.useRef<K8sResourceKind>(vm);
 
   const watchedResources = React.useMemo(
     () => ({
@@ -38,34 +45,47 @@ export const usePodsForVm = (
 
   const resources = useK8sWatchResources<{ [key: string]: K8sResourceCommon[] }>(watchedResources);
 
-  React.useEffect(() => {
-    const errorKey = Object.keys(resources).find((key) => resources[key].loadError);
-    if (errorKey) {
-      setLoadError(resources[errorKey].loadError);
-      return;
-    }
-    if (
-      Object.keys(resources).length > 0 &&
-      Object.keys(resources).every((key) => resources[key].loaded)
-    ) {
-      const { name } = vm.metadata;
-      const vmis = resources.virtualmachineinstances.data;
-      const vmi = vmis.find((instance) => instance.metadata.name === name) as VMIKind;
-      const { visibleReplicationControllers } = getReplicationControllersForResource(vm, resources);
-      const [current, previous] = visibleReplicationControllers;
-      const launcherPod = findVMIPod(vmi, resources.pods.data as PodKind[]);
-      const podRCData: PodRCData = {
-        current,
-        previous,
-        isRollingOut: false,
-        pods: launcherPod ? [launcherPod] : [],
-        obj: vm,
-      };
-      setLoaded(true);
-      setLoadError(null);
-      setPodData(podRCData);
-    }
-  }, [resources, vm]);
+  const updateResults = React.useCallback(
+    (updatedResources) => {
+      const errorKey = Object.keys(updatedResources).find((key) => updatedResources[key].loadError);
+      if (errorKey) {
+        setLoadError(updatedResources[errorKey].loadError);
+        return;
+      }
+      if (
+        Object.keys(updatedResources).length > 0 &&
+        Object.keys(updatedResources).every((key) => updatedResources[key].loaded)
+      ) {
+        const vmis = updatedResources.virtualmachineinstances.data;
+        const vmi = vmis.find((instance) => instance.metadata.name === vmName) as VMIKind;
+        const { visibleReplicationControllers } = getReplicationControllersForResource(
+          vmRef.current,
+          updatedResources,
+        );
+        const [current, previous] = visibleReplicationControllers;
+        const launcherPod = findVMIPod(vmi, updatedResources.pods.data as PodKind[]);
+        const podRCData: PodRCData = {
+          current,
+          previous,
+          isRollingOut: false,
+          pods: launcherPod ? [launcherPod] : [],
+          obj: vm,
+        };
+        setLoaded(true);
+        setLoadError(null);
+        setPodData(podRCData);
+      }
+    },
+    // Don't update on a resource change, we want the debounce callback to be consistent
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [vmName],
+  );
 
-  return { loaded, loadError, podData };
+  const debouncedUpdateResources = useDebounceCallback<any>(updateResults, [updateResults], 250);
+
+  React.useEffect(() => {
+    debouncedUpdateResources(resources);
+  }, [debouncedUpdateResources, resources]);
+
+  return useDeepCompareMemoize({ loaded, loadError, podData });
 };
