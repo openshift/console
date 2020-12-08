@@ -14,7 +14,7 @@ import { OCS_SUPPORT_ANNOTATION, MODES } from '../../constants';
 import { CreateAttachedDevicesCluster } from './attached-devices/install';
 import './install-page.scss';
 
-const INDEP_MODE_SUPPORTED_PLATFORMS = ['Baremetal', 'None', 'VSphere', 'OpenStack', 'oVirt'];
+const INDEP_MODE_SUPPORTED_PLATFORMS = ['BareMetal', 'None', 'VSphere', 'OpenStack', 'oVirt'];
 
 const InstallCluster: React.FC<InstallClusterProps> = ({ match }) => {
   const {
