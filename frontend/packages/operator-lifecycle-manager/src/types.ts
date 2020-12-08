@@ -210,6 +210,7 @@ export type CatalogSourceKind = {
     description?: string;
     publisher?: string;
     icon?: { mediatype: string; data: string };
+    updateStrategy?: { registryPoll: { interval: string } };
   };
 } & K8sResourceKind;
 

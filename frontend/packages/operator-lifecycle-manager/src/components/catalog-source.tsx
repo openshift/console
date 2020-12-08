@@ -101,10 +101,14 @@ const DefaultSourceKebab: React.FC<DefaultSourceKebabProps> = ({
   operatorHub,
   sourceName,
   sourceDisabled,
+  source,
 }) => {
   const options = sourceDisabled
     ? [enableSource(kind, operatorHub, sourceName)]
-    : [disableSourceModal(kind, operatorHub, sourceName)];
+    : [
+        disableSourceModal(kind, operatorHub, sourceName),
+        ...(source ? [Kebab.factory.Edit(CatalogSourceModel, source)] : []),
+      ];
   return <Kebab options={options} />;
 };
 
@@ -248,11 +252,13 @@ export const CreateSubscriptionYAML: React.FC<CreateSubscriptionYAMLProps> = (pr
 };
 
 const tableColumnClasses = [
-  classNames('col-lg-3', 'col-md-3', 'col-sm-4', 'col-xs-6'),
-  classNames('col-lg-2', 'col-md-3', 'col-sm-4', 'col-xs-6'),
-  classNames('col-lg-2', 'col-md-3', 'col-sm-4', 'hidden-xs'),
-  classNames('col-lg-3', 'col-md-3', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
+  '',
+  classNames('pf-m-hidden', 'pf-m-visible-on-sm'),
+  '',
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
   Kebab.columnClass,
 ];
 
@@ -290,6 +296,8 @@ const CatalogSourceTableRow: RowFunction<CatalogSourceTableRowObj> = ({
     operatorCount = 0,
     operatorHub,
     publisher = '-',
+    registryPollInterval = '-',
+    status = '',
     source,
   },
   index,
@@ -315,21 +323,29 @@ const CatalogSourceTableRow: RowFunction<CatalogSourceTableRowObj> = ({
         name
       )}
     </TableData>
-    <TableData className={tableColumnClasses[1]}>{publisher}</TableData>
-    <TableData className={tableColumnClasses[2]}>{availability}</TableData>
-    <TableData className={tableColumnClasses[3]}>{endpoint}</TableData>
-    <TableData className={tableColumnClasses[4]}>{operatorCount || '-'}</TableData>
-    <TableData className={tableColumnClasses[5]}>
+    <TableData className={tableColumnClasses[1]}>{status}</TableData>
+    <TableData className={tableColumnClasses[2]}>{publisher}</TableData>
+    <TableData className={tableColumnClasses[3]}>{availability}</TableData>
+    <TableData className={tableColumnClasses[4]}>{endpoint}</TableData>
+    <TableData className={tableColumnClasses[5]}>{registryPollInterval}</TableData>
+    <TableData className={tableColumnClasses[6]}>{operatorCount || '-'}</TableData>
+    <TableData className={tableColumnClasses[7]}>
       {isDefault ? (
         <DefaultSourceKebab
           kind={OperatorHubModel}
           operatorHub={operatorHub}
           sourceName={name}
           sourceDisabled={disabled}
+          source={source}
         />
       ) : (
         <ResourceKebab
-          actions={[Kebab.factory.Edit, deleteModal]}
+          actions={[
+            Kebab.factory.ModifyLabels,
+            Kebab.factory.ModifyAnnotations,
+            Kebab.factory.Edit,
+            deleteModal,
+          ]}
           kind={catalogSourceModelReference}
           resource={source}
         />
@@ -349,32 +365,44 @@ const CatalogSourceList: React.FC<TableProps> = (props) => {
         props: { className: tableColumnClasses[0] },
       },
       {
+        title: t('catalog-source~Status'),
+        sortField: 'status',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[1] },
+      },
+      {
         title: t('catalog-source~Publisher'),
         sortField: 'publisher',
         transforms: [sortable],
-        props: { className: tableColumnClasses[1] },
+        props: { className: tableColumnClasses[2] },
       },
       {
         title: t('catalog-source~Availability'),
         sortField: 'availabilitySort',
         transforms: [sortable],
-        props: { className: tableColumnClasses[2] },
+        props: { className: tableColumnClasses[3] },
       },
       {
         title: t('catalog-source~Endpoint'),
         sortField: 'endpoint',
         transforms: [sortable],
-        props: { className: tableColumnClasses[3] },
+        props: { className: tableColumnClasses[4] },
+      },
+      {
+        title: t('catalog-source~Registry poll interval'),
+        sortField: 'registryPollInterval',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[5] },
       },
       {
         title: t('catalog-source~# of Operators'),
         sortField: 'operatorCount',
         transforms: [sortable],
-        props: { className: tableColumnClasses[4] },
+        props: { className: tableColumnClasses[6] },
       },
       {
         title: '',
-        props: { className: tableColumnClasses[5] },
+        props: { className: tableColumnClasses[7] },
       },
     ];
   };
@@ -420,6 +448,10 @@ const DisabledPopover: React.FC<DisabledPopoverProps> = ({ operatorHub, sourceNa
   );
 };
 
+const getRegistryPollInterval = (catalogSource: CatalogSourceKind): string => {
+  return catalogSource.spec?.updateStrategy?.registryPoll?.interval;
+};
+
 const flatten = ({
   catalogSources,
   operatorHub,
@@ -450,6 +482,8 @@ const flatten = ({
           endpoint: getEndpoint(catalogSource),
           operatorCount: getOperatorCount(catalogSource, packageManifests.data),
           publisher: catalogSource.spec.publisher,
+          registryPollInterval: getRegistryPollInterval(catalogSource),
+          status: catalogSource.status.connectionState.lastObservedState,
         }),
       };
     },
@@ -466,6 +500,8 @@ const flatten = ({
     operatorCount: getOperatorCount(source, packageManifests.data),
     operatorHub,
     publisher: source.spec.publisher,
+    registryPollInterval: getRegistryPollInterval(source),
+    status: source.status.connectionState.lastObservedState,
     source,
   }));
 
@@ -514,9 +550,11 @@ type CatalogSourceTableRowObj = {
   isDefault?: boolean;
   name: string;
   namespace: string;
-  publisher?: string;
   operatorCount?: number;
   operatorHub: OperatorHubKind;
+  publisher?: string;
+  registryPollInterval?: string;
+  status?: string;
   source?: CatalogSourceKind;
 };
 
@@ -525,6 +563,7 @@ type DefaultSourceKebabProps = {
   operatorHub: OperatorHubKind;
   sourceName: string;
   sourceDisabled: boolean;
+  source?: CatalogSourceKind;
 };
 
 type DisabledPopoverProps = {
