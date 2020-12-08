@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
+import { useTranslation } from 'react-i18next';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
@@ -10,10 +11,11 @@ import { ProjectDashboardContext } from './project-dashboard-context';
 
 export const LauncherCard: React.FC = () => {
   const { namespaceLinks } = React.useContext(ProjectDashboardContext);
+  const { t } = useTranslation();
   return (
     <DashboardCard data-test-id="launcher-card">
       <DashboardCardHeader>
-        <DashboardCardTitle>Launcher</DashboardCardTitle>
+        <DashboardCardTitle>{t('namespace~Launcher')}</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody>
         <LauncherBody>

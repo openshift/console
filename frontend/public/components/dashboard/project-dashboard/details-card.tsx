@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import cx from 'classnames';
+import { useTranslation } from 'react-i18next';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
@@ -21,39 +22,42 @@ export const DetailsCard: React.FC = () => {
   const description = obj.metadata.annotations?.['openshift.io/description'];
   const detailsLink = `${resourcePathFromModel(ProjectModel, obj.metadata.name)}/details`;
   const serviceMeshEnabled = obj.metadata?.labels?.['maistra.io/member-of'];
+  const { t } = useTranslation();
   return (
     <DashboardCard data-test-id="details-card">
       <DashboardCardHeader>
-        <DashboardCardTitle>Details</DashboardCardTitle>
-        <DashboardCardLink to={detailsLink}>View all</DashboardCardLink>
+        <DashboardCardTitle>{t('namespace~Details')}</DashboardCardTitle>
+        <DashboardCardLink to={detailsLink}>{t('namespace~View all')}</DashboardCardLink>
       </DashboardCardHeader>
       <DashboardCardBody>
         <DetailsBody>
-          <DetailItem isLoading={!obj} title="Name">
+          <DetailItem isLoading={!obj} title={t('namespace~Name')}>
             {getName(obj)}
           </DetailItem>
-          <DetailItem isLoading={!obj} title="Requester">
-            {getRequester(obj) || <span className="text-muted">No requester</span>}
+          <DetailItem isLoading={!obj} title={t('namespace~Requester')}>
+            {getRequester(obj) || <span className="text-muted">{t('namespace~No requester')}</span>}
           </DetailItem>
-          <DetailItem isLoading={!obj} title="Labels">
+          <DetailItem isLoading={!obj} title={t('namespace~Labels')}>
             <div className="co-project-dashboard__details-labels">
               <LabelList kind={ProjectModel.kind} labels={firstThreelabels} />
-              {keys.length > 3 && <DashboardCardLink to={detailsLink}>View all</DashboardCardLink>}
+              {keys.length > 3 && (
+                <DashboardCardLink to={detailsLink}>{t('namespace~View all')}</DashboardCardLink>
+              )}
             </div>
           </DetailItem>
-          <DetailItem isLoading={!obj} title="Description">
+          <DetailItem isLoading={!obj} title={t('namespace~Description')}>
             <span
               className={cx({
                 'text-muted': !description,
                 'co-project-dashboard-details-card__description': description,
               })}
             >
-              {description || 'No description'}
+              {description || t('namespace~No description')}
             </span>
           </DetailItem>
           {serviceMeshEnabled && (
-            <DetailItem isLoading={!obj} title="Service Mesh">
-              <GreenCheckCircleIcon /> Service Mesh Enabled
+            <DetailItem isLoading={!obj} title={t('namespace~Service mesh')}>
+              <GreenCheckCircleIcon /> {t('namespace~Service mesh enabled')}
             </DetailItem>
           )}
         </DetailsBody>

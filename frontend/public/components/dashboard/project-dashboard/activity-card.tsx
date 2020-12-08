@@ -24,6 +24,7 @@ import { uniqueResource } from '../dashboards-page/cluster-dashboard/utils';
 import { RootState } from '../../../redux';
 import { ProjectDashboardContext } from './project-dashboard-context';
 import { getName } from '@console/shared';
+import { useTranslation } from 'react-i18next';
 
 const getEventsResource = (projectName: string): FirehoseResource => ({
   isList: true,
@@ -136,11 +137,12 @@ export const ActivityCard: React.FC = () => {
   const { obj } = React.useContext(ProjectDashboardContext);
   const projectName = getName(obj);
   const viewEvents = `/k8s/ns/${projectName}/events`;
+  const { t } = useTranslation();
   return (
     <DashboardCard gradient data-test-id="activity-card">
       <DashboardCardHeader>
-        <DashboardCardTitle>Activity</DashboardCardTitle>
-        <DashboardCardLink to={viewEvents}>View events</DashboardCardLink>
+        <DashboardCardTitle>{t('namespace~Activity')}</DashboardCardTitle>
+        <DashboardCardLink to={viewEvents}>{t('namespace~View events')}</DashboardCardLink>
       </DashboardCardHeader>
       <DashboardCardBody>
         <ActivityBody className="co-project-dashboard__activity-body">

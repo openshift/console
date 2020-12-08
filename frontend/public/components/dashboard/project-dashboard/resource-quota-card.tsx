@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
+import { useTranslation } from 'react-i18next';
 
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
@@ -32,11 +33,12 @@ export const ResourceQuotaCard = withDashboardResources(
     const quotas = _.get(resources.resourceQuotas, 'data', []) as FirehoseResult['data'];
     const loaded = _.get(resources.resourceQuotas, 'loaded');
     const error = _.get(resources.resourceQuotas, 'loadError');
+    const { t } = useTranslation();
 
     return (
       <DashboardCard data-test-id="resource-quotas-card">
         <DashboardCardHeader>
-          <DashboardCardTitle>Resource Quotas</DashboardCardTitle>
+          <DashboardCardTitle>{t('namespace~Resource quotas')}</DashboardCardTitle>
         </DashboardCardHeader>
         <DashboardCardBody>
           <ResourceQuotaBody error={!!error} isLoading={!loaded}>
