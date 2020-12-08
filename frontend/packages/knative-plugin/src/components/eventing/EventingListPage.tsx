@@ -23,7 +23,7 @@ const EventingListPage: React.FC<EventingListPageProps> = ({ match }) => {
   const menuActions: MenuActions = {
     eventSource: {
       label: t('knative-plugin~Event Source'),
-      onSelection: () => `/event-source/ns/${namespace}`,
+      onSelection: () => `/catalog/ns/${namespace}?catalogType=EventSource`,
     },
     channels: { label: t('knative-plugin~Channel'), onSelection: () => `/channel/ns/${namespace}` },
   };
