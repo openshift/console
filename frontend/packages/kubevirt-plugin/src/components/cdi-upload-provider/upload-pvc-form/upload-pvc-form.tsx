@@ -521,7 +521,7 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
           setError('');
           setIsAllocating(true);
           setIsSubmitting(true);
-          return createUploadPVC(dvObj);
+          return createUploadPVC(dvObj, t);
         })
         .then(({ token }) => {
           setIsAllocating(false);

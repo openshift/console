@@ -715,6 +715,7 @@
   "Balances performance, compatible with a broad range of workloads": "Balances performance, compatible with a broad range of workloads",
   "High-performance": "High-performance",
   "Optimized for High resource consumption workloads": "Optimized for High resource consumption workloads",
+  "Data Volume failed to initiate upload, and has been deleted.": "Data Volume failed to initiate upload, and has been deleted.",
   "Create a Virtual Machine from a template": "Create a Virtual Machine from a template",
   "Browse for charts that help manage complex installations and upgrades. Cluster administrators can customize the content made available in the catalog.": "Browse for charts that help manage complex installations and upgrades. Cluster administrators can customize the content made available in the catalog.",
   "**Virtual Machines** are packages for deploying an application or components of a larger application.": "**Virtual Machines** are packages for deploying an application or components of a larger application.",
