@@ -55,7 +55,7 @@ type FooterProps = WizardContextType & {
   onCustomize: VoidFunction;
   customSource: BootSourceState;
   isCreating: boolean;
-  createError: string;
+  createError: React.ReactNode;
   cleanError: VoidFunction;
   customBootSource: boolean;
   templateIsReady: boolean;

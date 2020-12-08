@@ -11,6 +11,8 @@ import {
 } from '@console/internal/components/factory';
 import { Alert, Button, ActionGroup, Stack, StackItem } from '@patternfly/react-core';
 import { useAccessReview2, LoadingBox } from '@console/internal/components/utils';
+import { coFetch } from '@console/internal/co-fetch';
+
 import { UploadPVCFormStatus } from '../../cdi-upload-provider/upload-pvc-form/upload-pvc-form-status';
 import { createUploadPVC } from '../../../k8s/requests/cdi-upload/cdi-upload-requests';
 import {
@@ -25,6 +27,11 @@ import { BootSourceForm } from '../../create-vm/forms/boot-source-form';
 import { getRootDataVolume } from '../../../k8s/requests/vm/create/simple-create';
 import { ProvisionSource } from '../../../constants/vm/provision-source';
 import { useErrorTranslation } from '../../../hooks/use-error-translation';
+import { CDI_UPLOAD_URL_BUILDER } from '../../cdi-upload-provider/consts';
+import {
+  uploadErrorMessage,
+  uploadErrorType,
+} from '../../cdi-upload-provider/upload-pvc-form/upload-pvc-form';
 
 const getAction = (t: TFunction, dataSource: string): string => {
   switch (ProvisionSource.fromString(dataSource)) {
@@ -67,7 +74,14 @@ type AddTemplateSourceModalProps = CDIUploadContextProps & {
 };
 
 export const AddTemplateSourceModal: React.FC<ModalComponentProps &
-  AddTemplateSourceModalProps> = ({ cancel, uploadData, close, template, uploads }) => {
+  AddTemplateSourceModalProps> = ({
+  cancel,
+  uploadData,
+  close,
+  template,
+  uploads,
+  uploadProxyURL,
+}) => {
   const { t } = useTranslation();
   const baseImageName = getParameterValue(template, TEMPLATE_BASE_IMAGE_NAME_PARAMETER);
   const baseImageNamespace = getParameterValue(template, TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER);
@@ -76,6 +90,7 @@ export const AddTemplateSourceModal: React.FC<ModalComponentProps &
   );
   const [isAllocating, setAllocating] = React.useState(false);
   const [isSubmitting, setSubmitting] = React.useState(false);
+  const [isCheckingCert, setCheckingCert] = React.useState(false);
   const [error, setError, setErrorKey, resetError] = useErrorTranslation();
   const [state, dispatch] = React.useReducer(bootFormReducer, initBootFormState);
 
@@ -89,8 +104,6 @@ export const AddTemplateSourceModal: React.FC<ModalComponentProps &
 
   const onSubmit = async () => {
     resetError();
-    setAllocating(true);
-    setSubmitting(true);
     const dvObj = getRootDataVolume({
       name: baseImageName,
       pvcSize: state.pvcSize?.value,
@@ -108,8 +121,31 @@ export const AddTemplateSourceModal: React.FC<ModalComponentProps &
     })
       .setNamespace(baseImageNamespace)
       .asResource();
-    try {
-      if (dataSource?.value === ProvisionSource.DISK.getValue()) {
+
+    // t('kubevirt-plugin~Could not create Persistent volume claim')
+    const handleCreateError = (err) =>
+      err?.message
+        ? setError(err.message)
+        : setErrorKey('kubevirt-plugin~Could not create Persistent volume claim');
+
+    if (dataSource?.value === ProvisionSource.UPLOAD.getValue()) {
+      try {
+        setCheckingCert(true);
+        await coFetch(CDI_UPLOAD_URL_BUILDER(uploadProxyURL));
+        setCheckingCert(false);
+      } catch (err) {
+        if (err?.response === undefined) {
+          // the GET request will return an error everytime, but it will be undefined only if the certificate is invalid.
+          const certError = uploadErrorMessage(t)[uploadErrorType.CERT];
+          setError(certError(uploadProxyURL));
+          return;
+        }
+      } finally {
+        setCheckingCert(false);
+      }
+      try {
+        setAllocating(true);
+        setSubmitting(true);
         const { token } = await createUploadPVC(dvObj);
         setAllocating(false);
         uploadData({
@@ -118,18 +154,25 @@ export const AddTemplateSourceModal: React.FC<ModalComponentProps &
           pvcName: dvObj.metadata.name,
           namespace: dvObj.metadata.namespace,
         });
-      } else {
-        await k8sCreate(DataVolumeModel, dvObj);
+        close();
+      } catch (err) {
+        handleCreateError(err);
+      } finally {
+        setAllocating(false);
+        setSubmitting(false);
       }
-      close();
-    } catch (err) {
-      // t('kubevirt-plugin~Could not create Persistent volume claim')
-      err?.message
-        ? setError(err.message)
-        : setErrorKey('kubevirt-plugin~Could not create Persistent volume claim');
-    } finally {
-      setAllocating(false);
-      setSubmitting(false);
+    } else {
+      try {
+        setAllocating(true);
+        setSubmitting(true);
+        await k8sCreate(DataVolumeModel, dvObj);
+        close();
+      } catch (err) {
+        handleCreateError(err);
+      } finally {
+        setAllocating(false);
+        setSubmitting(false);
+      }
     }
   };
 
@@ -151,7 +194,12 @@ export const AddTemplateSourceModal: React.FC<ModalComponentProps &
                   </Trans>
                 </StackItem>
                 <StackItem>
-                  <BootSourceForm state={state} dispatch={dispatch} withUpload />
+                  <BootSourceForm
+                    state={state}
+                    dispatch={dispatch}
+                    withUpload
+                    disabled={isCheckingCert}
+                  />
                 </StackItem>
               </Stack>
             )}
@@ -166,7 +214,7 @@ export const AddTemplateSourceModal: React.FC<ModalComponentProps &
               }}
             />
           </ModalBody>
-          <ModalFooter errorMessage={error} inProgress={false}>
+          <ModalFooter errorMessage={error} inProgress={isCheckingCert}>
             <ActionGroup className="pf-c-form pf-c-form__actions--right pf-c-form__group--no-top-margin">
               <Button
                 type="button"
@@ -178,7 +226,7 @@ export const AddTemplateSourceModal: React.FC<ModalComponentProps &
               </Button>
               <Button
                 variant="primary"
-                isDisabled={!isValid || isSubmitting}
+                isDisabled={!isValid || isSubmitting || isCheckingCert}
                 data-test="confirm-action"
                 id="confirm-action"
                 onClick={onSubmit}

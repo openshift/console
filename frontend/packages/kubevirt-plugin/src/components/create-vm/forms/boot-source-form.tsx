@@ -38,9 +38,15 @@ type BootSourceFormProps = {
   state: BootSourceState;
   dispatch: React.Dispatch<BootSourceAction>;
   withUpload?: boolean;
+  disabled?: boolean;
 };
 
-export const BootSourceForm: React.FC<BootSourceFormProps> = ({ state, dispatch, withUpload }) => {
+export const BootSourceForm: React.FC<BootSourceFormProps> = ({
+  state,
+  dispatch,
+  withUpload,
+  disabled,
+}) => {
   const { t } = useTranslation();
   const [storageClasses, scLoaded] = useK8sWatchResource<StorageClassResourceKind[]>({
     kind: StorageClassModel.kind,
@@ -91,6 +97,7 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({ state, dispatch,
             })
           }
           selections={ProvisionSource.fromString(state.dataSource?.value)}
+          isDisabled={disabled}
         >
           {(withUpload
             ? ProvisionSource.getVMTemplateBaseImageSources()
@@ -118,6 +125,7 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({ state, dispatch,
             }
             hideDefaultPreview
             isRequired
+            isDisabled={disabled}
           />
         </FormRow>
       )}
@@ -133,6 +141,7 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({ state, dispatch,
             type="text"
             onChange={(payload) => dispatch({ type: BOOT_ACTION_TYPE.SET_URL, payload })}
             aria-label={t('kubevirt-plugin~Import URL')}
+            isDisabled={disabled}
           />
           <URLSourceHelp />
         </FormRow>
@@ -149,6 +158,7 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({ state, dispatch,
             type="text"
             onChange={(payload) => dispatch({ type: BOOT_ACTION_TYPE.SET_CONTAINER, payload })}
             aria-label={t('kubevirt-plugin~Container image')}
+            isDisabled={disabled}
           />
           <ContainerSourceHelp />
         </FormRow>
@@ -167,6 +177,7 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({ state, dispatch,
               }}
               project={state.pvcNamespace?.value}
               placeholder={PersistentVolumeClaimModel.label}
+              disabled={disabled}
             />
           </FormRow>
           {state.pvcNamespace?.value && (
@@ -191,6 +202,7 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({ state, dispatch,
                 }}
                 placeholder={t('kubevirt-plugin~--- Select Persistent Volume Claim ---')}
                 desc={PersistentVolumeClaimModel.label}
+                disabled={disabled}
               />
             </FormRow>
           )}
@@ -200,6 +212,7 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({ state, dispatch,
         <Checkbox
           isChecked={state.cdRom?.value}
           onChange={(payload) => dispatch({ type: BOOT_ACTION_TYPE.SET_CD_ROM, payload })}
+          isDisabled={disabled}
           label={
             <>
               {t('kubevirt-plugin~Mount this source as CD-ROM')}
@@ -234,6 +247,7 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({ state, dispatch,
           validation={state.size?.validation}
         >
           <RequestSizeInput
+            isInputDisabled={disabled}
             name="requestSize"
             required
             onChange={(payload) => dispatch({ type: BOOT_ACTION_TYPE.SET_SIZE, payload })}
@@ -254,6 +268,7 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({ state, dispatch,
       {withUpload && (
         <FormRow fieldId="form-ds-provider" title={t('kubevirt-plugin~Source provider')}>
           <TextInput
+            isDisabled={disabled}
             value={state.provider?.value}
             type="text"
             onChange={(payload) => dispatch({ type: BOOT_ACTION_TYPE.SET_PROVIDER, payload })}
@@ -276,7 +291,7 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({ state, dispatch,
             id="vm-select-sc"
             name="vm-select-sc"
             aria-label={t('kubevirt-plugin~Select Storage Class')}
-            isDisabled={!scLoaded}
+            isDisabled={!scLoaded || disabled}
           >
             {storageClasses.map((sc) => (
               <FormSelectOption
@@ -294,6 +309,7 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({ state, dispatch,
         </FormRow>
         <FormRow fieldId="form-ds-access-mode" title={t('kubevirt-plugin~Access mode')} isRequired>
           <FormPFSelect
+            isDisabled={disabled}
             aria-label={t('kubevirt-plugin~Select access mode')}
             onSelect={(e, value: AccessMode) =>
               dispatch({

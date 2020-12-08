@@ -192,6 +192,7 @@ ListDropdown.propTypes = {
   placeholder: PropTypes.string,
   onChange: PropTypes.func,
   id: PropTypes.string,
+  disabled: PropTypes.bool,
 };
 
 const useProjectOrNamespaceModel = () => {

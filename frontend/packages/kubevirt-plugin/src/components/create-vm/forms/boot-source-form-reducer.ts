@@ -112,9 +112,9 @@ export const bootFormReducer = (
   let isValid: boolean;
   // t('kubevirt-plugin~Size cannot not be empty')
   // t('kubevirt-plugin~Size must be positive integer')
-  const sizeValidation = newState.size?.value.value
+  const sizeValidation = !newState.size?.value.value
     ? asValidationObject('kubevirt-plugin~Size cannot not be empty')
-    : isPositiveNumber(newState.size?.value.value)
+    : isPositiveNumber(newState.size.value.value)
     ? null
     : asValidationObject('kubevirt-plugin~Size must be positive integer');
   newState.size.validation = sizeValidation;

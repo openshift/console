@@ -8,12 +8,14 @@ type ProjectDropdownProps = {
   onChange: (project: string) => void;
   project: string;
   placeholder?: string;
+  disabled?: boolean;
 };
 
 export const ProjectDropdown: React.FC<ProjectDropdownProps> = ({
   onChange,
   project,
   placeholder,
+  disabled,
 }) => {
   const useProjects = useFlag(FLAGS.OPENSHIFT);
   const kind = useProjects ? ProjectModel.kind : NamespaceModel.kind;
@@ -30,6 +32,7 @@ export const ProjectDropdown: React.FC<ProjectDropdownProps> = ({
       } ---`}
       selectedKey={project}
       selectedKeyKind={kind}
+      disabled={disabled}
     />
   );
 };
