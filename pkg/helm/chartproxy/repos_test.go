@@ -438,16 +438,14 @@ func TestHelmRepoGetter_SkipDisabled(t *testing.T) {
 			if len(repos) != len(tt.expectedRepos) {
 				t.Errorf("Expected %v repos, but got %v", len(tt.expectedRepos), len(repos))
 			}
-
-			i := 0
-			for name, disabled := range tt.expectedRepos {
-				if name != repos[i].Name {
-					t.Errorf("Expected %v but got %v", name, repos[i].Name)
+			for _, helmRepo := range repos {
+				disabled, exist := tt.expectedRepos[helmRepo.Name]
+				if !exist {
+					t.Errorf("Specified repo should not exist in the response: %s", helmRepo.Name)
 				}
-				if tt.expectedRepos[repos[i].Name] != repos[i].Disabled {
-					t.Errorf("Expected %v but got %v", disabled, repos[i].Disabled)
+				if disabled != helmRepo.Disabled {
+					t.Errorf("Expected %v but got %v", disabled, helmRepo.Disabled)
 				}
-				i++
 			}
 		})
 	}
