@@ -75,8 +75,6 @@ export const vmDetailstatusButton = (namespace, name) =>
 
 export const vmDetailService = (serviceName) => $(`[data-test-id="${serviceName}"]`);
 
-export const vmLoggedInUsers = element(by.xpath('//a[contains(@href,"logged-in-users")]'));
-
 // Scheduling view
 export const vmDetailDedicatedResources = (namespace, vmName) =>
   $(vmDetailItemId(namespace, vmName, 'dedicated-resources'));

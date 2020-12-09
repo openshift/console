@@ -9,8 +9,10 @@ export const vmDetailsNode = vmDetails.get(4);
 export const vmDetailsIPAddress = vmDetails.get(5);
 export const vmDetailsOS = vmDetails.get(6);
 export const vmDetailsTZ = vmDetails.get(7);
-export const vmDetailsLoggedInUsers = vmDetails.get(8);
+export const vmDetailsActiveUsers = vmDetails.get(8); // Exception messages only (GA not available, VM off, etc)
 export const vmDetailsViewAll = $$('.co-dashboard-card__link').get(0);
+
+export const vmDetailsNumActiveUsersMsg = $('#num-active-users-message'); // GA available and at least 1 active user
 
 export const vmStatus = $('.co-status-card__health-body > span');
 export const vmStatusAlert = $('.co-status-card__alert-item');
