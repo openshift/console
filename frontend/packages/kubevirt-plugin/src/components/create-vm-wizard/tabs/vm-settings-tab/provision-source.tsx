@@ -22,7 +22,7 @@ const ProvisionSourceDiskHelpMsg: React.FC<ProvisionSourceDiskHelpMsgProps> = ({
           <TextContent>
             <div className="pf-c-form__helper-text" aria-live="polite">
               <Trans ns="kubevirt-plugin" t={t}>
-                Enter URL here or edit the rootdisk in the{' '}
+                Enter URL below or edit the rootdisk in the{' '}
                 <strong>
                   <Button
                     isDisabled={!goToStorageStep}
@@ -38,7 +38,7 @@ const ProvisionSourceDiskHelpMsg: React.FC<ProvisionSourceDiskHelpMsgProps> = ({
             </div>
             <div className="pf-c-form__helper-text" aria-live="polite">
               {t(
-                'kubevirt-plugin~To boot this source from a CD-ROM edit the disk in the storage step and change to type: CD-ROM',
+                'kubevirt-plugin~To boot this source from a CD-ROM, edit the disk in the storage step and change to type: CD-ROM',
               )}
             </div>
           </TextContent>
@@ -48,7 +48,7 @@ const ProvisionSourceDiskHelpMsg: React.FC<ProvisionSourceDiskHelpMsgProps> = ({
         return (
           <Text>
             <Trans ns="kubevirt-plugin" t={t}>
-              Enter container image here or edit the rootdisk in the{' '}
+              Enter container image below or edit the rootdisk in the{' '}
               <strong>
                 <Button
                   isDisabled={!goToStorageStep}
