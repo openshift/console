@@ -29,6 +29,7 @@
   }
   &__tasklist {
     max-width: 30%;
+    min-width: 208px;
     margin-top: var(--pf-global--spacer--lg);
   }
   &__container {
