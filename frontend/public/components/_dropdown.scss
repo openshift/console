@@ -235,7 +235,6 @@ $dropdown-background--hover: $color-pf-black-200; // pf-c-dropdown__menu-item--h
 }
 
 .pf-c-dropdown__menu {
-  border-width: 0 !important; // TEMP fix until https://github.com/patternfly/patternfly-next/issues/2019 is fixed upstream
   list-style: none;
   -webkit-overflow-scrolling: touch;
   @media (min-width: $pf-global--breakpoint--md) {
