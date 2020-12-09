@@ -40,11 +40,15 @@ const YAMLEditorField: React.FC<YAMLEditorFieldProps> = ({
   );
 
   const { samples, snippets } = model
-    ? getResourceSidebarSamples(model, {
-        data: sampleResources,
-        loaded,
-        loadError,
-      })
+    ? getResourceSidebarSamples(
+        model,
+        {
+          data: sampleResources,
+          loaded,
+          loadError,
+        },
+        t,
+      )
     : { samples: [], snippets: [] };
 
   const definition = model ? definitionFor(model) : { properties: [] };
