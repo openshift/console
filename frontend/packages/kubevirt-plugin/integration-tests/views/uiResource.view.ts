@@ -10,6 +10,7 @@ export const resourceHorizontalTab = (model: K8sKind) =>
   $(`[data-test-id="horizontal-link-${model.labelPlural}"]`);
 
 export const modalDialog = $('.pf-c-modal-box__footer');
+export const modalOverlay = $('.co-overlay');
 export const cancelDialog = modalDialog.element(by.buttonText('Cancel'));
 
 export const getClusterNamespace = async (): Promise<string> => {

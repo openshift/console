@@ -61,7 +61,7 @@ export const buildConfigObj = {
 
   // Count for Rows in Environment Variables section
   envRows: element.all(by.css('div.row.pairs-list__row')),
-  deleteRowButton: element(by.css('button[data-test-id="pairs-list__delete-btn"]')),
+  deleteRowButton: element(by.css('button[data-test="delete-button"]')),
 
   // Add from Config Map or Secret
   addFromConfigMap: element(by.buttonText('Add from Config Map or Secret')),
@@ -77,7 +77,7 @@ export const deploymentObj = {
 
   // Count for Rows in Environment Variables section
   envRows: element.all(by.css('div.row.pairs-list__row')),
-  deleteRowButton: element(by.css('button[data-test-id="pairs-list__delete-btn"]')),
+  deleteRowButton: element(by.css('button[data-test="delete-button"]')),
 
   // Add from Config Map or Secret
   addFromConfigMap: element(by.buttonText('Add from Config Map or Secret')),

@@ -3,8 +3,8 @@ import { browser, ExpectedConditions as until } from 'protractor';
 import { cloneDeepWithEnum } from '@console/shared/src/constants/object-enum';
 import { click, waitForStringNotInElement } from '@console/shared/src/test-utils/utils';
 import { detailViewAction, listViewAction } from '@console/shared/src/test-utils/actions.view';
+import { modalOverlay } from '@console/kubevirt-plugin/integration-tests/views/uiResource.view';
 import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
-import { annotationDialogOverlay } from '@console/internal-integration-tests/views/modal-annotations.view';
 import * as vmView from '../../views/virtualMachine.view';
 import {
   PAGE_LOAD_TIMEOUT_SECS,
@@ -90,7 +90,7 @@ export class VirtualMachine extends BaseVirtualMachine {
         throw Error(UNEXPECTED_ACTION_ERROR);
     }
     await click(saveButton);
-    await browser.wait(until.invisibilityOf(annotationDialogOverlay), PAGE_LOAD_TIMEOUT_SECS);
+    await browser.wait(until.invisibilityOf(modalOverlay), PAGE_LOAD_TIMEOUT_SECS);
   }
 
   async tolerationsAction(action: string, labels: MatchLabels) {
@@ -108,7 +108,7 @@ export class VirtualMachine extends BaseVirtualMachine {
         throw Error(UNEXPECTED_ACTION_ERROR);
     }
     await click(saveButton);
-    await browser.wait(until.invisibilityOf(annotationDialogOverlay), PAGE_LOAD_TIMEOUT_SECS);
+    await browser.wait(until.invisibilityOf(modalOverlay), PAGE_LOAD_TIMEOUT_SECS);
   }
 
   async start(waitForAction = true) {

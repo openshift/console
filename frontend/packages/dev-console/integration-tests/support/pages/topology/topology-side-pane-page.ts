@@ -74,7 +74,7 @@ export const topologySidePane = {
     cy.get('form').should('not.be.visible');
   },
   verifyAnnotaiton: (annotationName: string) => {
-    cy.byLegacyTestID('edit-annotations').click();
+    cy.byTestID('edit-annotations').click();
     cy.byTestID('label-list')
       .find('a')
       .contains(annotationName)

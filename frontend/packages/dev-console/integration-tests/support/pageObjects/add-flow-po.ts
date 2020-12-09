@@ -50,7 +50,7 @@ export const gitPO = {
       envValue: 'input[placeholder="value"]',
       // Count for Rows in Environment Variables section
       envRows: 'div.row.pairs-list__row',
-      deleteRowButton: 'button[data-test-id="pairs-list__delete-btn"]',
+      deleteRowButton: 'button[data-test="delete-button"]',
     },
     deployment: {
       deploymentTriggerImage: 'input#form-checkbox-deployment-triggers-image-field',
@@ -59,7 +59,7 @@ export const gitPO = {
       envValue: 'input[placeholder="value"]',
       // Count for Rows in Environment Variables section
       envRows: 'div.row.pairs-list__row',
-      deleteRowButton: 'button[data-test-id="pairs-list__delete-btn"]',
+      deleteRowButton: 'button[data-test="delete-button"]',
     },
     scaling: {
       decrement: 'button[aria-label="Decrement"]',

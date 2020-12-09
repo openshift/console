@@ -5,7 +5,7 @@ const BROWSER_TIMEOUT = 15000;
 const inputs = $$('.pf-c-form-control');
 export const rowsKey = $('[placeholder="Name"]');
 export const rowsValue = $('[placeholder="Value"]');
-export const deleteBtn = $$('[data-test-id="pairs-list__delete-btn"]').first();
+export const deleteBtn = $$('[data-test="delete-button"]').first();
 export const deleteFromBtn = $('[data-test-id="pairs-list__delete-from-btn"]');
 export const saveBtn = element(by.cssContainingText('.pf-m-primary', 'Save'));
 
