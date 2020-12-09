@@ -2,6 +2,7 @@ import {
   getRolesWithNameChange,
   getNewRoles,
   getRemovedRoles,
+  getGroupedRole,
 } from '../project-access-form-submit-utils';
 import {
   roleBindingsToBeCreated1,
@@ -12,7 +13,10 @@ import {
   rolesBindingsToBeRemoved,
   formValues2,
   roleBindingsToBeCreated2,
+  roleBindingsWithRequiredRoles,
+  getGroupedRoleResult,
 } from './project-access-form-data';
+import { UserRoleBinding } from '../project-access-form-utils-types';
 
 describe('Project Access handleSubmit Utils', () => {
   it('should get roles removed by the user', async () => {
@@ -31,5 +35,15 @@ describe('Project Access handleSubmit Utils', () => {
       rolesBindingsToBeRemoved1,
     );
     expect(rolesWithNameChange).toEqual(rolesWithNameChangeResult);
+  });
+
+  it('should remove user belonging to grouped subjects in a Role Binding', async () => {
+    const role: UserRoleBinding = {
+      role: 'admin',
+      roleBindingName: 'check-view',
+      user: 'mno',
+    };
+    const groupedRole = getGroupedRole(role, roleBindingsWithRequiredRoles);
+    expect(groupedRole).toEqual(getGroupedRoleResult);
   });
 });
