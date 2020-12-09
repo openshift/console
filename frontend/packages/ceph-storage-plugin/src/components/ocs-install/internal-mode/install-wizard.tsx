@@ -23,9 +23,9 @@ import { StorageClusterKind } from '../../../types';
 import { labelNodes, getOCSRequestData } from '../ocs-request-data';
 import { SelectCapacityAndNodes, Configure, ReviewAndCreate } from './install-wizard-steps';
 import { initialState, reducer, InternalClusterState } from './reducer';
-import '../install-wizard/install-wizard.scss';
 import { createKmsResources } from '../../kms-config/utils';
 import { NetworkType } from '../types';
+import '../install-wizard/install-wizard.scss';
 
 const makeOCSRequest = (state: InternalClusterState): Promise<StorageClusterKind> => {
   const {

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { TextContent, Text, TextVariants } from '@patternfly/react-core';
 import { humanizeBinaryBytes } from '@console/internal/components/utils';
-import { getName } from '@console/shared';
+import { getName, useFlag } from '@console/shared';
 import { TotalCapacityText, OSD_CAPACITY_SIZES } from '../../../../utils/osd-size-dropdown';
 import {
   ValidationType,
@@ -19,6 +19,7 @@ import {
   RequestErrors,
 } from '../../install-wizard/review-and-create';
 import { NetworkType } from '../../types';
+import { OCS_SUPPORT_FLAGS } from '../../../../features';
 
 export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({
   state,
@@ -43,6 +44,7 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({
   const emptyRequiredField =
     nodes.length < MINIMUM_NODES && !zones.size && !scName && !memory && !cpu;
   const osdSize = OSD_CAPACITY_SIZES[capacity];
+  const isMultusSupported = useFlag(OCS_SUPPORT_FLAGS.MULTUS);
 
   return (
     <>
@@ -100,9 +102,10 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({
             })}
           </p>
         </ReviewListBody>
-        <ReviewListTitle text={t('ceph-storage-plugin~Configure')} />
+        {/* @TODO: Update the check from Configure when adding more items */}
         {(encryption.clusterWide || encryption.storageClass) && (
           <>
+            <ReviewListTitle text={t('ceph-storage-plugin~Configure')} />
             <ReviewListBody noValue={!kms.hasHandled}>
               <p className="ocs-install-wizard__review-encryption">
                 {t('ceph-storage-plugin~Enable Encryption')}
@@ -122,17 +125,19 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({
             </ReviewListBody>
           </>
         )}
-        <ReviewListBody
-          validation={
-            networkType === NetworkType.MULTUS && !publicNetwork && ValidationType.NETWORK
-          }
-        >
-          <p>
-            {t('ceph-storage-plugin~Using {{networkLabel}}', {
-              networkLabel: NetworkTypeLabels[networkType],
-            })}
-          </p>
-        </ReviewListBody>
+        {isMultusSupported && (
+          <ReviewListBody
+            validation={
+              networkType === NetworkType.MULTUS && !publicNetwork && ValidationType.NETWORK
+            }
+          >
+            <p>
+              {t('ceph-storage-plugin~Using {{networkLabel}}', {
+                networkLabel: NetworkTypeLabels[networkType],
+              })}
+            </p>
+          </ReviewListBody>
+        )}
       </dl>
       {emptyRequiredField && (
         <ValidationMessage

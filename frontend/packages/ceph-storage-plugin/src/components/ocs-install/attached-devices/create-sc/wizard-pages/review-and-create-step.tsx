@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { TextContent, Text, TextVariants } from '@patternfly/react-core';
 import { humanizeBinaryBytes } from '@console/internal/components/utils';
-import { getName } from '@console/shared';
+import { getName, useFlag } from '@console/shared';
 import {
   ValidationMessage,
   getEncryptionLevel,
@@ -18,6 +18,7 @@ import {
   RequestErrors,
 } from '../../../install-wizard/review-and-create';
 import { NetworkType } from '../../../types';
+import { OCS_SUPPORT_FLAGS } from '../../../../../features';
 
 export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({
   state,
@@ -41,6 +42,7 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({
   const { cpu, memory, zones } = getNodeInfo(state.nodes);
   const scName = getName(storageClass);
   const emptyRequiredField = nodes.length < MINIMUM_NODES && !scName && !memory && !cpu;
+  const isMultusSupported = useFlag(OCS_SUPPORT_FLAGS.MULTUS);
 
   return (
     <>
@@ -116,17 +118,19 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({
             </ReviewListBody>
           </>
         )}
-        <ReviewListBody
-          validation={
-            networkType === NetworkType.MULTUS && !publicNetwork && ValidationType.NETWORK
-          }
-        >
-          <p>
-            {t('ceph-storage-plugin~Using {{networkLabel}}', {
-              networkLabel: NetworkTypeLabels[networkType],
-            })}
-          </p>
-        </ReviewListBody>
+        {isMultusSupported && (
+          <ReviewListBody
+            validation={
+              networkType === NetworkType.MULTUS && !publicNetwork && ValidationType.NETWORK
+            }
+          >
+            <p>
+              {t('ceph-storage-plugin~Using {{networkLabel}}', {
+                networkLabel: NetworkTypeLabels[networkType],
+              })}
+            </p>
+          </ReviewListBody>
+        )}
       </dl>
       {emptyRequiredField && (
         <ValidationMessage
