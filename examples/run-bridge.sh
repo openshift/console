@@ -24,5 +24,4 @@ PROM_PORT='9090'
     --k8s-mode-off-cluster-prometheus=http://$k8sIP:$PROM_PORT/api  \
     --k8s-mode-off-cluster-alertmanager=http://$k8sIP:$PROM_PORT/api \
     --k8s-mode-off-cluster-thanos=http://$k8sIP:$PROM_PORT/api \
-    --proxyConfig=examples/config.yaml \
-    
+    # --proxyConfig=examples/pconfig.yaml \

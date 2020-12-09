@@ -1,0 +1,14 @@
+proxyInfo: 
+  - name: show
+    server: "http://192.168.8.62:9002/"
+    rule: "Host(`console`) && PathPrefix(`/console/`)"
+    path: "/console/"
+  - name: cpd
+    server: "http://cpdch.org/"
+    rule: "Host(`cpdch.org`) && PathPrefix(`/test/`)"
+    # host: "cpdch.org"
+    path: "/test/"
+  - name: eto
+    server: "http://www.etoland.co.kr/"
+    rule: "Host(`etoland.co.kr`) && PathPrefix(`/eto/`)"
+    path: "/eto/"
