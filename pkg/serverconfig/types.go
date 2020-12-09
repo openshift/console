@@ -15,16 +15,15 @@ type Config struct {
 	Providers      `yaml:"providers"`
 	Helm           `yaml:"helm"`
 	MonitoringInfo `yaml:"monitoringInfo,omitempty"`
-	ProxyInfo      []ProxyInfo `yaml:"proxyInfo,omitempty"`
+	// ProxyInfo      []ProxyInfo `yaml:"proxyInfo,omitempty"`
 }
 
-type ProxyInfo struct {
-	Name   string `yaml:"name"`
-	Server string `yaml:"server"`
-	Rule   string `yaml:"rule"`
-	// Host   string `yaml:"host"`
-	Path string `yaml:"path"`
-}
+// type ProxyInfo struct {
+// 	Name   string `yaml:"name"`
+// 	Server string `yaml:"server"`
+// 	Rule   string `yaml:"rule"`
+// 	Path   string `yaml:"path"`
+// }
 
 // ServingInfo holds configuration for serving HTTP.
 type ServingInfo struct {

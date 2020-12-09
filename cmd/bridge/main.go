@@ -17,12 +17,8 @@ import (
 	"github.com/coreos/pkg/capnslog"
 	"github.com/coreos/pkg/flagutil"
 	"github.com/urfave/negroni"
-	"gopkg.in/yaml.v2"
 
 	"github.com/openshift/console/pkg/auth"
-	"github.com/openshift/console/pkg/hypercloud/backend"
-	"github.com/openshift/console/pkg/hypercloud/middlewares/stripprefix"
-	"github.com/openshift/console/pkg/hypercloud/router"
 
 	// "github.com/openshift/console/pkg/backend"
 	"github.com/openshift/console/pkg/bridge"
@@ -33,7 +29,7 @@ import (
 	"github.com/openshift/console/pkg/server"
 	"github.com/openshift/console/pkg/serverconfig"
 
-	pConfig "github.com/openshift/console/pkg/hypercloud/config"
+	pServer "github.com/openshift/console/pkg/hypercloud/server"
 )
 
 var (
@@ -158,32 +154,6 @@ func main() {
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
 	}
-
-	// proxy config 획득 20/11/19 jinsoo
-	// config := serverconfig.Config{}
-	// proxyConfig := []serverconfig.ProxyInfo{}
-	// if *fProxyConfig != "" {
-	// 	content, err := ioutil.ReadFile(*fProxyConfig)
-	// 	if err != nil {
-	// 		log.Error("ReadFile error occur")
-	// 	}
-
-	// 	err = yaml.Unmarshal(content, &config)
-	// 	if err != nil {
-	// 		log.Error("unmarshal error occur ")
-	// 	}
-	// 	proxyConfig = append(proxyConfig, config.ProxyInfo...)
-	// }
-	// log.Info(config.ProxyInfo)
-	// log.Info(proxyConfig)
-
-	// // proxyConfig[0].Name
-	// proxyBackend, _ := backend.NewBackend(proxyConfig[0].Name, proxyConfig[0].Server)
-	// proxyBackend.Rule = proxyConfig[0].Rule
-	// proxyBackend.ServerURL = proxyConfig[0].Name
-
-	// routerR, _ := backend.NewRouter()
-	// routerR.AddRoute(proxyConfig[0].Rule, 0, proxyBackend.Handler)
 
 	if err := flagutil.SetFlagsFromEnv(fs, "BRIDGE"); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
@@ -655,18 +625,48 @@ func main() {
 
 	helmConfig.Configure(srv)
 
-	// n := negroni.Classic()
-	// n.UseHandler(srv.HTTPHandler())
+	pSrv := &pServer.Server{}
+	if *fProxyConfig != "" {
+		if err := pSrv.SetFlagsFromConfig(*fProxyConfig); err != nil {
+			log.Fatalf("Failed to load proxy config: %v", err)
+		}
+		log.Info(pSrv)
+		for i, val := range pSrv.ProxyInfo {
+			log.Infof("test", i, val)
+		}
+
+	}
+	router := pSrv.ProxyRouter()
+	router.AddRoute("PathPrefix(`/`)", 1, srv.HTTPHandler())
+	n := negroni.Classic()
+	n.UseHandler(router.Router)
 
 	httpsrv := &http.Server{
 		Addr:    listenURL.Host,
-		Handler: srv.HTTPHandler(),
+		Handler: n,
 		// Disable HTTP/2, which breaks WebSockets.
 		TLSNextProto: make(map[string]func(*http.Server, *tls.Conn, http.Handler)),
 		TLSConfig: &tls.Config{
 			CipherSuites: crypto.DefaultCiphers(),
 		},
 	}
+	log.Infof("Binding to %s...", httpsrv.Addr)
+	if listenURL.Scheme == "https" {
+		log.Info("using TLS")
+		log.Fatal(httpsrv.ListenAndServeTLS(*fTlSCertFile, *fTlSKeyFile))
+	} else {
+		log.Info("not using TLS")
+		log.Fatal(httpsrv.ListenAndServe())
+	}
+	// httpsrv := &http.Server{
+	// 	Addr:    listenURL.Host,
+	// 	Handler: srv.HTTPHandler(),
+	// 	// Disable HTTP/2, which breaks WebSockets.
+	// 	TLSNextProto: make(map[string]func(*http.Server, *tls.Conn, http.Handler)),
+	// 	TLSConfig: &tls.Config{
+	// 		CipherSuites: crypto.DefaultCiphers(),
+	// 	},
+	// }
 
 	if *fRedirectPort != 0 {
 		go func() {
@@ -687,83 +687,74 @@ func main() {
 		}()
 	}
 
-	// Add proxy Server
-	log.Info("starting proxy server")
-	if *fProxyConfig != "" {
-		go func() {
+	// // // Add proxy Server
+	// // log.Info("starting proxy server")
+	// // if *fProxyConfig != "" {
+	// // 	go func() {
 
-			config := serverconfig.Config{}
-			proxyConfig := []serverconfig.ProxyInfo{}
+	// // 		config := serverconfig.Config{}
+	// // 		proxyConfig := []serverconfig.ProxyInfo{}
 
-			content, err := ioutil.ReadFile(*fProxyConfig)
-			if err != nil {
-				log.Error("ReadFile error occur")
-			}
+	// // 		content, err := ioutil.ReadFile(*fProxyConfig)
+	// // 		if err != nil {
+	// // 			log.Error("ReadFile error occur")
+	// // 		}
 
-			err = yaml.Unmarshal(content, &config)
-			if err != nil {
-				log.Error("unmarshal error occur ")
-			}
-			proxyConfig = append(proxyConfig, config.ProxyInfo...)
+	// // 		err = yaml.Unmarshal(content, &config)
+	// // 		if err != nil {
+	// // 			log.Error("unmarshal error occur ")
+	// // 		}
+	// // 		proxyConfig = append(proxyConfig, config.ProxyInfo...)
 
-			router, err := router.NewRouter()
-			if err != nil {
-				log.Error("Failed to create router", err)
-			}
+	// // 		router, err := router.NewRouter()
+	// // 		if err != nil {
+	// // 			log.Error("Failed to create router", err)
+	// // 		}
 
-			log.Info(proxyConfig)
-			for i := range proxyConfig {
-				proxyBackend, err := backend.NewBackend(proxyConfig[i].Name, proxyConfig[i].Server)
-				if err != nil {
-					log.Error("Failed to parse url", err)
-				}
-				proxyBackend.Rule = proxyConfig[i].Rule
-				proxyBackend.ServerURL = proxyConfig[i].Server
+	// // 		log.Info(proxyConfig)
+	// // 		for i := range proxyConfig {
+	// // 			proxyBackend, err := backend.NewBackend(proxyConfig[i].Name, proxyConfig[i].Server)
+	// // 			if err != nil {
+	// // 				log.Error("Failed to parse url", err)
+	// // 			}
+	// // 			proxyBackend.Rule = proxyConfig[i].Rule
+	// // 			proxyBackend.ServerURL = proxyConfig[i].Server
 
-				if proxyConfig[i].Path != "" {
-					log.Info("checking calling ", proxyConfig[i].Path)
-					handlerConfig := &pConfig.StripPrefix{
-						Prefixes: []string{proxyConfig[i].Path},
-					}
-					// chain.Append(func(next http.Handler) http.Handler {
-					prefixHandler, err := stripprefix.New(context.TODO(), proxyBackend.Handler, *handlerConfig, "stripPrefix")
-					if err != nil {
-						log.Error("Failed to create stripprefix handler", err)
-					}
+	// // 			if proxyConfig[i].Path != "" {
+	// // 				log.Info("checking calling ", proxyConfig[i].Path)
+	// // 				handlerConfig := &pConfig.StripPrefix{
+	// // 					Prefixes: []string{proxyConfig[i].Path},
+	// // 				}
+	// // 				// chain.Append(func(next http.Handler) http.Handler {
+	// // 				prefixHandler, err := stripprefix.New(context.TODO(), proxyBackend.Handler, *handlerConfig, "stripPrefix")
+	// // 				if err != nil {
+	// // 					log.Error("Failed to create stripprefix handler", err)
+	// // 				}
 
-					router.AddRoute(proxyBackend.Rule, 0, prefixHandler)
-				}
-				router.AddRoute(proxyBackend.Rule, 0, proxyBackend.Handler)
-			}
+	// // 				router.AddRoute(proxyBackend.Rule, 0, prefixHandler)
+	// // 			}
+	// // 			router.AddRoute(proxyBackend.Rule, 0, proxyBackend.Handler)
+	// // 		}
 
-			// r := mux.NewRouter()
-			// for i := range proxyConfig {
-			// 	server, err := url.Parse(proxyConfig[i].Server)
-			// 	if err != nil {
-			// 		log.Error("Failed to parse url", err)
-			// 	}
-			// 	proxy := httputil.NewSingleHostReverseProxy(server)
-			// 	// r.NewRoute().Subrouter().Host(proxyConfig[i].Host).PathPrefix(proxyConfig[i].Path).Handler(http.StripPrefix(proxyConfig[i].Path, proxy))
-			// 	r.NewRoute().Subrouter().PathPrefix(proxyConfig[i].Path).Handler(http.StripPrefix(proxyConfig[i].Path, proxy))
-			// }
-			n := negroni.Classic()
-			n.UseHandler(router.Router)
-			pServer := http.Server{
-				Addr:    "192.168.8.62:9988",
-				Handler: n,
-			}
-			log.Info("using proxy server: ", pServer.Addr)
-			log.Fatal(pServer.ListenAndServe())
-		}()
-	}
-
-	log.Infof("Binding to %s...", httpsrv.Addr)
-	if listenURL.Scheme == "https" {
-		log.Info("using TLS")
-		log.Fatal(httpsrv.ListenAndServeTLS(*fTlSCertFile, *fTlSKeyFile))
-	} else {
-		log.Info("not using TLS")
-		log.Fatal(httpsrv.ListenAndServe())
-	}
+	// // 		// r := mux.NewRouter()
+	// // 		// for i := range proxyConfig {
+	// // 		// 	server, err := url.Parse(proxyConfig[i].Server)
+	// // 		// 	if err != nil {
+	// // 		// 		log.Error("Failed to parse url", err)
+	// // 		// 	}
+	// // 		// 	proxy := httputil.NewSingleHostReverseProxy(server)
+	// // 		// 	// r.NewRoute().Subrouter().Host(proxyConfig[i].Host).PathPrefix(proxyConfig[i].Path).Handler(http.StripPrefix(proxyConfig[i].Path, proxy))
+	// // 		// 	r.NewRoute().Subrouter().PathPrefix(proxyConfig[i].Path).Handler(http.StripPrefix(proxyConfig[i].Path, proxy))
+	// // 		// }
+	// // 		n := negroni.Classic()
+	// // 		n.UseHandler(router.Router)
+	// // 		pServer := http.Server{
+	// // 			Addr:    "172.24.1.225:9988",
+	// // 			Handler: n,
+	// // 		}
+	// // 		log.Info("using proxy server: ", pServer.Addr)
+	// // 		log.Fatal(pServer.ListenAndServe())
+	// // 	}()
+	// // }
 
 }

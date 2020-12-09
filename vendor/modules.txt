@@ -65,8 +65,6 @@ github.com/containerd/containerd/sys
 github.com/containerd/containerd/version
 # github.com/containerd/continuity v0.0.0-20200107194136-26c1120b8d41
 github.com/containerd/continuity/pathdriver
-# github.com/containous/alice v0.0.0-20171023064455-03f45bd4b7da
-github.com/containous/alice
 # github.com/coreos/dex v2.3.0+incompatible
 github.com/coreos/dex/api
 # github.com/coreos/go-oidc v2.1.0+incompatible

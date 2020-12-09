@@ -335,27 +335,6 @@ func (s *Server) HTTPHandler() http.Handler {
 		)
 	}
 
-	// Add dynamic Proxy (ongoing test) by Jinsoo youn
-	dynamicProxyEndpoint := "/api/dynamic/"
-	// r := gmux.NewRouter()
-	// b := &backend.Router{}
-	// r.HandleFunc(dynamicProxyEndpoint+"/{id}", b.ProxyHandler().ServeHTTP)
-
-	if s.dynamicProxyEnabled() {
-		handle(dynamicProxyEndpoint,
-			// http.StripPrefix(
-			// proxy.SingleJoiningSlash(s.BaseURL.Path, dynamicProxyEndpoint),
-			http.Handler(s.ProxyHandler()),
-
-		// http.Handler(r.ProxyHandler()),
-		// http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// 	// test.HandleFunc("/test/",dProxy.ServeHTTP()).s
-		// 	s.DynamicProxyConfig.Handler.ServeHTTP(w, r)
-		// })
-		// ),
-		)
-	}
-
 	handle("/api/console/monitoring-dashboard-config", authHandler(s.handleMonitoringDashboardConfigmaps))
 	handle("/api/console/knative-event-sources", authHandler(s.handleKnativeEventSourceCRDs))
 	handle("/api/console/version", authHandler(s.versionHandler))
@@ -519,22 +498,4 @@ func (s *Server) ProxyHandler() http.Handler {
 	})
 
 	return http.Handler(mux)
-	// mux.HandleFunc("/{name}", func(w http.ResponseWriter, r *http.Request) {
-	// 	var proxy *backend.Backend
-	// 	// params := gmux.Vars(r)
-	// 	// name := params["name"]
-
-	// 	for _, val := range s.DynamicProxyConfig {
-	// 		if val.Name == "test" {
-	// 			proxy = val
-	// 			plog.Info("is it matching?")
-	// 			break
-	// 		} else {
-	// 			continue
-	// 		}
-	// 	}
-	// 	proxy.Handler.ServeHTTP(w, r)
-	// })
-
-	// return http.Handler(mux)
 }

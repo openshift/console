@@ -4,7 +4,6 @@ go 1.13
 
 require (
 	github.com/codegangsta/negroni v1.0.0
-	github.com/containous/alice v0.0.0-20171023064455-03f45bd4b7da
 	github.com/coreos/dex v2.3.0+incompatible
 	github.com/coreos/go-oidc v2.1.0+incompatible
 	github.com/coreos/go-systemd v0.0.0-20190719114852-fd7a80b32e1f // indirect
