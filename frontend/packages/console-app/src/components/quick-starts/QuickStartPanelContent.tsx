@@ -37,7 +37,7 @@ const QuickStartPanelContent: React.FC<QuickStartPanelContentProps> = ({
   });
 
   return quickStart ? (
-    <DrawerPanelContent onScroll={handleScrollCallback}>
+    <DrawerPanelContent className="co-quick-start-panel-content" onScroll={handleScrollCallback}>
       <div className={headerClasses}>
         <DrawerHead>
           <div className="co-quick-start-panel-content__title">
