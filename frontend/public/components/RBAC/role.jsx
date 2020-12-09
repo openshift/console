@@ -33,9 +33,12 @@ const menuActions = [
   (kind, role) => ({
     label: 'Add Role Binding',
     href: `/k8s/${
-      role.metadata.namespace ? `ns/${role.metadata.namespace}` : 'cluster'
-    }/rolebindings/~new?rolekind=${roleKind(role)}&rolename=${role.metadata.name}${role.metadata
-      .namespace && `&namespace=${role.metadata.namespace}`}`,
+      role.metadata.namespace
+        ? `ns/${role.metadata.namespace}/rolebindings/~new?rolekind=${roleKind(role)}&rolename=${
+            role.metadata.name
+          }&namespace=${role.metadata.namespace}`
+        : `cluster/rolebindings/~new?rolekind=${roleKind(role)}&rolename=${role.metadata.name}`
+    }`,
   }),
   Kebab.factory.Edit,
   Kebab.factory.Delete,
