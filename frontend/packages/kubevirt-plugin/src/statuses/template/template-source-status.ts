@@ -19,6 +19,7 @@ import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
 import { GetTemplateSourceStatus, SOURCE_TYPE } from './types';
 import { NetworkWrapper } from '../../k8s/wrapper/vm/network-wrapper';
 import { DVStatusType, getDVStatus } from '../dv/dv-status';
+import { getCreationTimestamp } from '@console/shared';
 
 const supportedDVSources = [
   DataVolumeSourceType.HTTP,
@@ -66,6 +67,8 @@ export const getTemplateSourceStatus: GetTemplateSourceStatus = ({
       ({ metadata }) => metadata.name === podName && metadata.namespace === pvc.metadata.namespace,
     );
 
+    const addedOn = getCreationTimestamp(dataVolume);
+
     if (dataVolume && pod) {
       const dvStatus = getDVStatus({ dataVolume, pod });
       if (dvStatus?.type === DVStatusType.ERROR) {
@@ -75,6 +78,7 @@ export const getTemplateSourceStatus: GetTemplateSourceStatus = ({
           alert: true,
           pvc,
           dataVolume,
+          addedOn,
         };
       }
     }
@@ -87,6 +91,7 @@ export const getTemplateSourceStatus: GetTemplateSourceStatus = ({
       dataVolume,
       pod,
       isCDRom: isCDRom(dataVolume, pvc),
+      addedOn,
     };
   }
 
@@ -109,6 +114,7 @@ export const getTemplateSourceStatus: GetTemplateSourceStatus = ({
           isReady: true,
           isCDRom: false,
           pxe: wrapper.getMultusNetworkName(),
+          addedOn: getCreationTimestamp(template),
         }
       : {
           error: 'No bootable network interface found.',
@@ -146,6 +152,7 @@ export const getTemplateSourceStatus: GetTemplateSourceStatus = ({
             isReady: true,
             dvTemplate: dataVolumeWrapper.asResource(),
             isCDRom: isCDRom(dataVolumeWrapper.asResource(), null),
+            addedOn: getCreationTimestamp(template),
           }
         : {
             error: 'Source not supported.',
@@ -174,6 +181,7 @@ export const getTemplateSourceStatus: GetTemplateSourceStatus = ({
       dataVolume,
       pvc,
       isCDRom: isCDRom(dataVolume, pvc),
+      addedOn: getCreationTimestamp(dataVolume),
     };
   }
 
@@ -196,6 +204,7 @@ export const getTemplateSourceStatus: GetTemplateSourceStatus = ({
       isReady: true,
       pvc,
       isCDRom: isCDRom(null, pvc),
+      addedOn: getCreationTimestamp(pvc),
     };
   }
 
@@ -206,6 +215,7 @@ export const getTemplateSourceStatus: GetTemplateSourceStatus = ({
       container: volumeWrapper.getContainerImage(),
       isReady: true,
       isCDRom: false,
+      addedOn: getCreationTimestamp(template),
     };
   }
 

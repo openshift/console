@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { PlusCircleIcon, InProgressIcon } from '@patternfly/react-icons';
 import { referenceForModel, TemplateKind } from '@console/internal/module/k8s';
 import { Alert, Button, ButtonVariant, Label, Stack, StackItem } from '@patternfly/react-core';
@@ -27,10 +28,9 @@ import {
   TemplateSourceStatusError,
 } from '../../statuses/template/types';
 import { DataVolumeWrapper } from '../../k8s/wrapper/vm/data-volume-wrapper';
-import { DataVolumeSourceType } from '../../constants';
+import { BOOT_SOURCE_AVAILABLE, DataVolumeSourceType } from '../../constants';
 
 import './vm-template-source.scss';
-import { useTranslation } from 'react-i18next';
 
 type SourceStatusErrorBodyProps = {
   sourceStatus: TemplateSourceStatusError;
@@ -309,14 +309,29 @@ export const TemplateSource: React.FC<TemplateSourceProps> = ({
     );
   }
 
-  const { isReady, dataVolume, pod } = sourceStatus;
+  const { isReady, dataVolume, pod, addedOn, provider } = sourceStatus;
 
   if (isReady) {
-    // t('kubevirt-plugin~User defined')
-    // t('kubevirt-plugin~Community defined')
+    // t('kubevirt-plugin~Available')
+    // t('kubevirt-plugin~{{provider}} defined')
     return (
-      <SuccessStatus title={t('kubevirt-plugin~{{provider}}', { provider: sourceStatus.provider })}>
+      <SuccessStatus
+        popoverTitle={
+          provider === BOOT_SOURCE_AVAILABLE
+            ? t('kubevirt-plugin~Available')
+            : t('kubevirt-plugin~{{provider}} defined', { provider })
+        }
+        title={provider === BOOT_SOURCE_AVAILABLE ? t('kubevirt-plugin~Available') : provider}
+      >
         <Stack hasGutter>
+          <StackItem className="text-secondary">
+            {t(
+              'kubevirt-plugin~This operating system boot source was added to the cluster by user on {{date}}',
+              {
+                date: new Date(addedOn).toLocaleDateString(),
+              },
+            )}
+          </StackItem>
           <StackItem>
             <SourceDescription template={template} sourceStatus={sourceStatus} />
           </StackItem>
