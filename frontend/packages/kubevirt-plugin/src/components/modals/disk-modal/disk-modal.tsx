@@ -142,13 +142,12 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
   const [name, setName] = React.useState<string>(
     disk.getName() || getSequenceName('disk', usedDiskNames),
   );
+
+  const allowedBuses = [...validAllowedBuses].filter((b) => type.isBusSupported(b));
+
   const [bus, setBus] = React.useState<DiskBus>(
     disk.getDiskBus() ||
-      (isEditing
-        ? null
-        : validAllowedBuses.has(DiskBus.VIRTIO)
-        ? DiskBus.VIRTIO
-        : [...validAllowedBuses][0]),
+      (isEditing ? null : validAllowedBuses.has(DiskBus.VIRTIO) ? DiskBus.VIRTIO : allowedBuses[0]),
   );
   const [storageClassName, setStorageClassName] = React.useState<string>(
     combinedDisk.getStorageClassName() || '',
@@ -357,6 +356,9 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     if (newType === DiskType.CDROM && source === StorageUISource.BLANK) {
       onSourceChanged(null, StorageUISource.URL.getValue());
     }
+    if (newType === DiskType.CDROM && bus === DiskBus.VIRTIO) {
+      setBus(DiskBus.SATA);
+    }
   };
 
   const isStorageClassDataLoading = !isLoaded(storageClasses) || !isLoaded(_storageClassConfigMap);
@@ -523,36 +525,6 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
             </FormRow>
           )}
           <FormRow
-            title={t('kubevirt-plugin~Interface')}
-            fieldId={asId('interface')}
-            isRequired
-            validation={busValidation}
-          >
-            <FormPFSelect
-              menuAppendTo={() => document.body}
-              isDisabled={isDisabled('interface')}
-              selections={asFormSelectValue(t(bus.toString()))}
-              onSelect={React.useCallback(
-                (e, diskBus) => setBus(DiskBus.fromString(diskBus.toString())),
-                [setBus],
-              )}
-              toggleId={asId('select-interface')}
-            >
-              {[...validAllowedBuses].map((b) => (
-                <SelectOption
-                  key={b.getValue()}
-                  value={b.getValue()}
-                  description={t(b.getDescriptionKey())}
-                >
-                  {t(b.toString())}
-                  {recommendedBuses.size !== validAllowedBuses.size && recommendedBuses.has(b)
-                    ? t('kubevirt-plugin~ --- Recommended ---')
-                    : ''}
-                </SelectOption>
-              ))}
-            </FormPFSelect>
-          </FormRow>
-          <FormRow
             title={t('kubevirt-plugin~Type')}
             fieldId={asId('type')}
             validation={typeValidation}
@@ -578,6 +550,36 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                   />
                 ))}
             </FormSelect>
+          </FormRow>
+          <FormRow
+            title={t('kubevirt-plugin~Interface')}
+            fieldId={asId('interface')}
+            isRequired
+            validation={busValidation}
+          >
+            <FormPFSelect
+              menuAppendTo={() => document.body}
+              isDisabled={isDisabled('interface')}
+              selections={asFormSelectValue(t(bus.toString()))}
+              onSelect={React.useCallback(
+                (e, diskBus) => setBus(DiskBus.fromString(diskBus.toString())),
+                [setBus],
+              )}
+              toggleId={asId('select-interface')}
+            >
+              {allowedBuses.map((b) => (
+                <SelectOption
+                  key={b.getValue()}
+                  value={b.getValue()}
+                  description={t(b.getDescriptionKey())}
+                >
+                  {t(b.toString())}
+                  {recommendedBuses.size !== validAllowedBuses.size && recommendedBuses.has(b)
+                    ? t('kubevirt-plugin~ --- Recommended ---')
+                    : ''}
+                </SelectOption>
+              ))}
+            </FormPFSelect>
           </FormRow>
           {source.requiresStorageClass() && (
             <K8sResourceSelectRow
