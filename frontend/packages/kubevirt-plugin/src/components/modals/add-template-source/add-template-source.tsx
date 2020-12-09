@@ -176,69 +176,92 @@ export const AddTemplateSourceModal: React.FC<ModalComponentProps &
     }
   };
 
+  let body: React.ReactNode;
+
+  if (!baseImageName || !baseImageNamespace) {
+    body = (
+      <>
+        <ModalBody>
+          <Alert variant="danger" isInline title={t('kubevirt-plugin~No base image specified')}>
+            {t(
+              'kubevirt-plugin~You cannot add source to this template because it is missing base image specification.',
+            )}
+          </Alert>
+        </ModalBody>
+        <ModalFooter inProgress={false}>
+          <Button type="button" data-test-id="modal-close-action" onClick={close}>
+            {t('kubevirt-plugin~Close')}
+          </Button>
+        </ModalFooter>
+      </>
+    );
+  } else if (uploadAllowedLoading) {
+    body = <LoadingBox />;
+  } else if (!uploadAllowed) {
+    body = <PermissionsError close={close} />;
+  } else {
+    body = (
+      <>
+        <ModalBody>
+          {!isSubmitting && (
+            <Stack hasGutter>
+              <StackItem>
+                <Trans t={t} ns="kubevirt-plugin">
+                  This data can be found in{' '}
+                  <b>Storage &gt; Persistent volume claims &gt; {baseImageName}</b> under the{' '}
+                  <b>{baseImageNamespace}</b> project.
+                </Trans>
+              </StackItem>
+              <StackItem>
+                <BootSourceForm
+                  state={state}
+                  dispatch={dispatch}
+                  withUpload
+                  disabled={isCheckingCert}
+                />
+              </StackItem>
+            </Stack>
+          )}
+          <UploadPVCFormStatus
+            upload={upload}
+            isSubmitting={isSubmitting}
+            isAllocating={isAllocating}
+            allocateError={undefined}
+            onErrorClick={() => {
+              setSubmitting(false);
+              resetError();
+            }}
+          />
+        </ModalBody>
+        <ModalFooter errorMessage={error} inProgress={false}>
+          <ActionGroup className="pf-c-form pf-c-form__actions--right pf-c-form__group--no-top-margin">
+            <Button
+              type="button"
+              variant="secondary"
+              data-test-id="modal-cancel-action"
+              onClick={cancel}
+            >
+              {t('kubevirt-plugin~Close')}
+            </Button>
+            <Button
+              variant="primary"
+              isDisabled={!isValid || isSubmitting}
+              data-test="confirm-action"
+              id="confirm-action"
+              onClick={onSubmit}
+            >
+              {getAction(t, dataSource?.value)}
+            </Button>
+          </ActionGroup>
+        </ModalFooter>
+      </>
+    );
+  }
+
   return (
     <div className="modal-content modal-content--no-inner-scroll">
       <ModalTitle>{t('kubevirt-plugin~Add boot source to template')}</ModalTitle>
-      {uploadAllowedLoading ? (
-        <LoadingBox />
-      ) : uploadAllowed ? (
-        <>
-          <ModalBody>
-            {!isSubmitting && (
-              <Stack hasGutter>
-                <StackItem>
-                  <Trans t={t} ns="kubevirt-plugin">
-                    This data can be found in{' '}
-                    <b>Storage &gt; Persistent volume claims &gt; {baseImageName}</b> under the{' '}
-                    <b>{baseImageNamespace}</b> project.
-                  </Trans>
-                </StackItem>
-                <StackItem>
-                  <BootSourceForm
-                    state={state}
-                    dispatch={dispatch}
-                    withUpload
-                    disabled={isCheckingCert}
-                  />
-                </StackItem>
-              </Stack>
-            )}
-            <UploadPVCFormStatus
-              upload={upload}
-              isSubmitting={isSubmitting}
-              isAllocating={isAllocating}
-              allocateError={undefined}
-              onErrorClick={() => {
-                setSubmitting(false);
-                resetError();
-              }}
-            />
-          </ModalBody>
-          <ModalFooter errorMessage={error} inProgress={isCheckingCert}>
-            <ActionGroup className="pf-c-form pf-c-form__actions--right pf-c-form__group--no-top-margin">
-              <Button
-                type="button"
-                variant="secondary"
-                data-test-id="modal-cancel-action"
-                onClick={cancel}
-              >
-                {t('kubevirt-plugin~Close')}
-              </Button>
-              <Button
-                variant="primary"
-                isDisabled={!isValid || isSubmitting || isCheckingCert}
-                data-test="confirm-action"
-                id="confirm-action"
-                onClick={onSubmit}
-              >
-                {getAction(t, dataSource?.value)}
-              </Button>
-            </ActionGroup>
-          </ModalFooter>
-        </>
-      ) : (
-        <PermissionsError close={close} />
-      )}
+      {body}
     </div>
   );
 };

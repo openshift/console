@@ -59,9 +59,9 @@ const validateVm: Validator = (field, options) => {
 export const validateCPU: Validator = (field) => {
   const cpu = iGetFieldValue(field);
   if (!cpu) {
-    // t('kubevirt-plugin~CPU cannot not be empty')
+    // t('kubevirt-plugin~CPU can not be empty')
     return asValidationObject(
-      'kubevirt-plugin~CPU cannot not be empty',
+      'kubevirt-plugin~CPU can not be empty',
       ValidationErrorType.TrivialError,
     );
   }
@@ -95,11 +95,11 @@ export const validateOperatingSystem: Validator = (field) => {
 const memoryValidation: Validator = (field, options): ValidationObject => {
   const memValue = iGetFieldValue(field);
   if (memValue == null || memValue === '' || BinaryUnit[memValue]) {
-    // t('kubevirt-plugin~Memory cannot not be empty')
+    // t('kubevirt-plugin~Memory can not be empty')
     return memValue
       ? null
       : asValidationObject(
-          'kubevirt-plugin~Memory cannot not be empty',
+          'kubevirt-plugin~Memory can not be empty',
           ValidationErrorType.TrivialError,
         );
   }
