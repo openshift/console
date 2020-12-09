@@ -41,7 +41,7 @@ export enum SecretAnnotationId {
 
 export const SecretAnnotationType = {
   [SecretAnnotationId.Git]: 'Git Server',
-  [SecretAnnotationId.Image]: 'Docker Registry',
+  [SecretAnnotationId.Image]: 'Image Registry',
 };
 
 export const PIPELINE_SERVICE_ACCOUNT = 'pipeline';
