@@ -35,7 +35,7 @@ export const getClusterInsightsComponentStatus = (
   return { state: HealthState.OK, message: issueStr };
 };
 
-export const getClusterInsightsStatus: PrometheusHealthHandler = (responses, cluster) => {
+export const getClusterInsightsStatus: PrometheusHealthHandler = (responses, t, cluster) => {
   const componentHealth = getClusterInsightsComponentStatus(
     responses[0].response,
     responses[0].error,
