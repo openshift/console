@@ -26,18 +26,13 @@ import {
   getCloudInitVolume,
   getCPU,
   getDataVolumeTemplates,
-  getDisks,
   getFlavor,
   getMemory,
 } from '../vm/selectors';
 import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
 import { compareVersions, removeOSDups } from '../../utils/sort';
 import { selectVM, isCommonTemplate } from './basic';
-import {
-  convertToBaseValue,
-  pluralize,
-  humanizeBinaryBytes,
-} from '@console/internal/components/utils';
+import { convertToBaseValue, humanizeBinaryBytes } from '@console/internal/components/utils';
 import { isTemplateSourceError, TemplateSourceStatus } from '../../statuses/template/types';
 import { vCPUCount } from '../vm/cpu';
 import { BootSourceState } from '../../components/create-vm/forms/boot-source-form-reducer';
@@ -162,13 +157,9 @@ export const getTemplateSizeRequirement = (
     sourceSize = convertToBaseValue(getDataVolumeStorageSize(templateSource.dvTemplate));
   }
 
-  return `${pluralize(
-    getDisks(vm).length + (isCDRom ? 1 : 0) + (isWindowsTemplate(template) ? 1 : 0),
-    'Disk',
-  )} | ${
-    humanizeBinaryBytes(templatesSize + sourceSize + (isCDRom ? convertToBaseValue('20Gi') : 0))
-      .string
-  }`;
+  return humanizeBinaryBytes(
+    templatesSize + sourceSize + (isCDRom ? convertToBaseValue('20Gi') : 0),
+  ).string;
 };
 
 export const getTemplateMemory = (template: TemplateKind): string => {
