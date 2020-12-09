@@ -57,7 +57,7 @@ const makeOCSRequest = (
   isEncrypted: boolean,
   isMinimal: boolean,
 ): Promise<any> => {
-  const promises = labelNodes(selectedNodes);
+  const promises: Promise<K8sResourceKind>[] = [...labelNodes(selectedNodes)];
   const ocsObj = getOCSRequestData(
     storageClass,
     defaultRequestSize.BAREMETAL,
