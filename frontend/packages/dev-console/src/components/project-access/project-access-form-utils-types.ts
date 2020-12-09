@@ -1,3 +1,5 @@
+import { K8sResourceCommon } from '@console/internal/module/k8s';
+
 export enum Verb {
   Create = 'Create',
   Remove = 'Remove',
@@ -10,27 +12,24 @@ export enum Roles {
   edit = 'edit',
 }
 
-export interface UserRole {
-  metadata: {
-    name: string;
-  };
-  roleRef: {
-    name: string;
-  };
-  subjects: [
-    {
-      name: string;
-    },
-  ];
-}
-
 export interface UserRoleBinding {
   roleBindingName?: string;
   user: string;
   role: string;
 }
 
-export const roleBinding = {
+type ApiGroupType = {
+  apiGroup: string;
+  kind: string;
+  name: string;
+};
+
+export type RoleBinding = K8sResourceCommon & {
+  roleRef: ApiGroupType;
+  subjects: ApiGroupType[];
+};
+
+export const roleBinding: RoleBinding = {
   apiVersion: 'rbac.authorization.k8s.io/v1',
   kind: 'RoleBinding',
   metadata: {
