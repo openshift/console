@@ -137,13 +137,9 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
 
   const renderTile = React.useCallback(
     (item: CatalogItem) => (
-      <CatalogTile
-        item={item}
-        onClick={openDetailsPanel}
-        catalogTypes={!type ? catalogTypes : []}
-      />
+      <CatalogTile item={item} onClick={openDetailsPanel} catalogTypes={catalogTypes} />
     ),
-    [catalogTypes, openDetailsPanel, type],
+    [catalogTypes, openDetailsPanel],
   );
 
   return (
