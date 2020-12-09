@@ -6,6 +6,14 @@ import ProjectAccessForm from '../ProjectAccessForm';
 type ProjectAccessFormProps = React.ComponentProps<typeof ProjectAccessForm>;
 let formProps: ProjectAccessFormProps;
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key.split('~')[1] }),
+  };
+});
+
 describe('Project Access Form', () => {
   const projectAccessForm = shallow(<ProjectAccessForm {...formProps} />);
   beforeEach(() => {
@@ -109,6 +117,6 @@ describe('Project Access Form', () => {
         .children()
         .at(1)
         .props().items,
-    ).toEqual({ '': 'Select a role', admin: 'Admin', view: 'View', edit: 'Edit' });
+    ).toEqual({ admin: 'Admin', view: 'View', edit: 'Edit' });
   });
 });
