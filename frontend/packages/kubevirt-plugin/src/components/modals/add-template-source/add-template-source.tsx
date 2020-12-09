@@ -146,7 +146,7 @@ export const AddTemplateSourceModal: React.FC<ModalComponentProps &
       try {
         setAllocating(true);
         setSubmitting(true);
-        const { token } = await createUploadPVC(dvObj);
+        const { token } = await createUploadPVC(dvObj, t);
         setAllocating(false);
         uploadData({
           file: file.value?.value,
