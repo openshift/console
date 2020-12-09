@@ -7,17 +7,11 @@ import { K8sResourceKind } from '@console/internal/module/k8s';
 import { FormFooter, SyncedEditorField, YAMLEditorField, FlexForm } from '@console/shared';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
-import { CREATE_APPLICATION_KEY } from '@console/topology/src/const';
 import EventSourceSection from './event-sources/EventSourceSection';
-import {
-  EventSourceListData,
-  SinkType,
-  EventSourceSyncFormData,
-  EventSources,
-} from './import-types';
+import { EventSourceListData, EventSourceSyncFormData } from './import-types';
 import {
   getCatalogEventSourceResource,
-  sanitizeKafkaSourceResource,
+  sanitizeSourceToForm,
 } from '../../utils/create-eventsources-utils';
 import { isDynamicEventSourceKind } from '../../utils/fetch-dynamic-eventsources-utils';
 
@@ -25,7 +19,7 @@ interface OwnProps {
   namespace: string;
   eventSourceStatus: EventSourceListData | null;
   eventSourceMetaDescription: React.ReactNode;
-  kameletSource: K8sResourceKind;
+  kameletSource?: K8sResourceKind;
 }
 
 const EventSourceForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
@@ -44,55 +38,6 @@ const EventSourceForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
 }) => {
   const { t } = useTranslation();
   const yamlEditor = <YAMLEditorField name="yamlData" onSave={handleSubmit} />;
-
-  const sanitizeToForm = (newFormData: K8sResourceKind) => {
-    const specData = newFormData.spec;
-    const appGroupName = newFormData.metadata?.labels?.['app.kubernetes.io/part-of'];
-    const formData = {
-      ...values.formData,
-      application: {
-        ...values.formData.application,
-        ...(appGroupName &&
-          appGroupName !== values.formData.application.name && {
-            name: appGroupName,
-            selectedKey: values.formData.application.selectedKey ? CREATE_APPLICATION_KEY : '',
-          }),
-        ...(appGroupName === undefined && {
-          name: 'no application group',
-          selectedKey: '#UNASSIGNED_APP#',
-        }),
-      },
-      name: newFormData.metadata?.name,
-      sinkType: specData?.sink?.ref ? SinkType.Resource : SinkType.Uri,
-      sink: {
-        apiVersion: specData?.sink?.ref?.apiVersion,
-        kind: specData?.sink?.ref?.kind,
-        name: specData?.sink?.ref?.name,
-        key: `${specData?.sink?.ref?.kind}-${specData?.sink?.ref?.name}`,
-        uri: specData?.sink?.uri || '',
-      },
-      data: {
-        [values.formData.type]: {
-          ..._.omit(specData, 'sink'),
-        },
-        ...(kameletSource && {
-          [values.formData.type]: {
-            source: {
-              ref: {
-                apiVersion: kameletSource.apiVersion,
-                kind: kameletSource.kind,
-                name: kameletSource.metadata.name,
-              },
-              properties: specData?.source?.properties,
-            },
-          },
-        }),
-      },
-    };
-    return values.formData.type === EventSources.KafkaSource
-      ? sanitizeKafkaSourceResource(formData)
-      : formData;
-  };
 
   const sanitizeToYaml = () =>
     safeJSToYAML(getCatalogEventSourceResource(values as EventSourceSyncFormData), 'yamlData', {
@@ -136,7 +81,8 @@ const EventSourceForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
           formContext={{
             name: 'formData',
             editor: formEditor,
-            sanitizeTo: sanitizeToForm,
+            sanitizeTo: (newFormData: K8sResourceKind) =>
+              sanitizeSourceToForm(newFormData, values.formData, kameletSource),
           }}
           yamlContext={{ name: 'yamlData', editor: yamlEditor, sanitizeTo: sanitizeToYaml }}
         />

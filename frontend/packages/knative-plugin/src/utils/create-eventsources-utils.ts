@@ -10,6 +10,8 @@ import {
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { checkAccess, history } from '@console/internal/components/utils';
 import { safeYAMLToJS } from '@console/shared/src/utils/yaml';
+import { UNASSIGNED_APPLICATIONS_KEY } from '@console/shared/src/constants';
+import { CREATE_APPLICATION_KEY } from '@console/topology/src/const';
 import { parseALMExamples, ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
 import {
   getAppLabels,
@@ -465,4 +467,57 @@ export const handleRedirect = (
   const perspectiveData = perspectiveExtensions.find((item) => item.properties.id === perspective);
   const redirectURL = perspectiveData.properties.getImportRedirectURL(project);
   history.push(redirectURL);
+};
+
+export const sanitizeSourceToForm = (
+  newFormData: K8sResourceKind,
+  formDataValues: EventSourceFormData,
+  kameletSource?: K8sResourceKind,
+) => {
+  const specData = newFormData.spec;
+  const appGroupName = newFormData.metadata?.labels?.['app.kubernetes.io/part-of'];
+  const formData = {
+    ...formDataValues,
+    application: {
+      ...formDataValues.application,
+      ...(appGroupName &&
+        appGroupName !== formDataValues.application.name && {
+          name: appGroupName,
+          selectedKey: formDataValues.application.selectedKey ? CREATE_APPLICATION_KEY : '',
+        }),
+      ...(!appGroupName && {
+        name: '',
+        selectedKey: UNASSIGNED_APPLICATIONS_KEY,
+      }),
+    },
+    name: newFormData.metadata?.name,
+    sinkType: specData?.sink?.ref ? SinkType.Resource : SinkType.Uri,
+    sink: {
+      apiVersion: specData?.sink?.ref?.apiVersion,
+      kind: specData?.sink?.ref?.kind,
+      name: specData?.sink?.ref?.name,
+      key: `${specData?.sink?.ref?.kind}-${specData?.sink?.ref?.name}`,
+      uri: specData?.sink?.uri || '',
+    },
+    data: {
+      [formDataValues.type]: {
+        ..._.omit(specData, 'sink'),
+      },
+      ...(kameletSource && {
+        [formDataValues.type]: {
+          source: {
+            ref: {
+              apiVersion: kameletSource.apiVersion,
+              kind: kameletSource.kind,
+              name: kameletSource.metadata.name,
+            },
+            properties: specData?.source?.properties,
+          },
+        },
+      }),
+    },
+  };
+  return formDataValues.type === EventSources.KafkaSource
+    ? sanitizeKafkaSourceResource(formData)
+    : formData;
 };
