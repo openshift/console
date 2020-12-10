@@ -149,7 +149,7 @@
   "cloud-init is already configured in cloud images of Fedora and RHEL": "cloud-init is already configured in cloud images of Fedora and RHEL",
   "Learn more": "Learn more",
   "Hostname": "Hostname",
-  "Authenticated SSH Keys": "Authenticated SSH Keys",
+  "Authorized SSH Keys": "Authorized SSH Keys",
   "SSH Key {{uiIDX}}": "SSH Key {{uiIDX}}",
   "Add SSH Key": "Add SSH Key",
   "Data loss confirmation": "Data loss confirmation",
