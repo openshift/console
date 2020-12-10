@@ -1,4 +1,4 @@
-import { Taint } from '@console/internal/module/k8s';
+import { Taint, Toleration } from '@console/internal/module/k8s';
 import { TFunction } from 'i18next';
 import { NetworkType, KMSConfig } from '../components/ocs-install/types';
 
@@ -9,6 +9,8 @@ export const ocsTaint: Taint = {
   effect: 'NoSchedule',
 };
 Object.freeze(ocsTaint);
+
+export const OCS_TOLERATION: Toleration = { ...ocsTaint, operator: 'Equal' };
 
 export const storageClassTooltip = (t: TFunction) =>
   t(

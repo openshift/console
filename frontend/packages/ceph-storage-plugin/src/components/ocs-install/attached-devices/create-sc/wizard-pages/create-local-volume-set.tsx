@@ -9,11 +9,17 @@ import {
   LocalVolumeSetHeader,
 } from '@console/local-storage-operator-plugin/src/components/local-volume-set/local-volume-set-inner';
 import { getLocalVolumeSetRequestData } from '@console/local-storage-operator-plugin/src/components/local-volume-set/local-volume-set-request-data';
+import { hasOCSTaint } from '../../../../../utils/install';
+import {
+  MINIMUM_NODES,
+  diskModeDropdownItems,
+  arbiterText,
+  OCS_TOLERATION,
+} from '../../../../../constants';
+import { RequestErrors } from '../../../install-wizard/review-and-create';
+import '../../attached-devices.scss';
 import { State, Action } from '../state';
 import { DiscoveryDonutChart } from './donut-chart';
-import { MINIMUM_NODES, diskModeDropdownItems, arbiterText } from '../../../../../constants';
-import '../../attached-devices.scss';
-import { RequestErrors } from '../../../install-wizard/review-and-create';
 
 const makeLocalVolumeSetCall = (
   state: State,
@@ -23,7 +29,8 @@ const makeLocalVolumeSetCall = (
   ns: string,
 ) => {
   setInProgress(true);
-  const requestData = getLocalVolumeSetRequestData(state, ns);
+
+  const requestData = getLocalVolumeSetRequestData(state, ns, OCS_TOLERATION);
   k8sCreate(LocalVolumeSetModel, requestData)
     .then(() => {
       dispatch({
@@ -63,6 +70,7 @@ export const CreateLocalVolumeSet: React.FC<CreateLocalVolumeSetProps> = ({
             dispatch={dispatch}
             diskModeOptions={diskModeDropdownItems}
             allNodesHelpTxt={allNodesSelectorTxt}
+            taintsFilter={hasOCSTaint}
           />
         </Form>
         <DiscoveryDonutChart state={state} dispatch={dispatch} />

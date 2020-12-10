@@ -51,6 +51,7 @@ import {
   MINIMUM_NODES,
   defaultRequestSize,
   OCS_INTERNAL_CR_NAME,
+  OCS_TOLERATION,
 } from '../../../../constants';
 import { StorageAndNodes } from './wizard-pages/storage-and-nodes-step';
 import '../attached-devices.scss';
@@ -107,7 +108,7 @@ const makeAutoDiscoveryCall = (
       if (err.message === AUTO_DISCOVER_ERR_MSG) {
         throw err;
       }
-      const requestData = getDiscoveryRequestData({ ...state, ns });
+      const requestData = getDiscoveryRequestData({ ...state, ns, toleration: OCS_TOLERATION });
       return k8sCreate(LocalVolumeDiscovery, requestData);
     })
     .then(() => {
