@@ -571,6 +571,7 @@
   "This virtual machine has some pending changes that will apply after it is restarted.": "This virtual machine has some pending changes that will apply after it is restarted.",
   "View Details": "View Details",
   "{{provider}} supported": "{{provider}} supported",
+  "provider}} supported": "provider}} supported",
   "Create new Template from": "Create new Template from",
   "Delete Template": "Delete Template",
   "Red Hat templates cannot be deleted": "Red Hat templates cannot be deleted",

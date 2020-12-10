@@ -16,6 +16,7 @@ import {
   getTemplateSupport,
   templateProviders,
   isCommonTemplate,
+  getTemplateParentProvider,
 } from '../../../selectors/vm-template/basic';
 import {
   getTemplateFlavorDesc,
@@ -144,10 +145,31 @@ const normalizeVmTemplates = (
         ),
       },
     ];
+
+    const templateSupport = getTemplateSupport(tmp);
+    const parentProvider = getTemplateParentProvider(tmp);
+    let support: React.ReactNode = '-';
+    if (templateSupport.parent && parentProvider && templateSupport.provider && provider) {
+      support = (
+        <>
+          <div>
+            {parentProvider} - {templateSupport.parent}
+          </div>
+          <div>
+            {provider} - {templateSupport.provider}
+          </div>
+        </>
+      );
+    } else if (templateSupport.parent && parentProvider) {
+      support = `${parentProvider} - ${templateSupport.parent}`;
+    } else if (templateSupport.provider && provider) {
+      support = templateSupport.provider;
+    }
+
     const detailsProperties = [
       {
         label: t('kubevirt-plugin~Support'),
-        value: getTemplateSupport(tmp) || '-',
+        value: support,
       },
     ];
 
