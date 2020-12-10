@@ -183,7 +183,13 @@ const VMTemplateTableRow: RowFunction<TemplateItem, VMTemplateTableRowProps> = (
   const withSupportModal = useSupportModal();
 
   return (
-    <TableRow id={template.metadata.uid} index={index} trKey={key} style={style}>
+    <TableRow
+      className="kv-vm-template__row"
+      id={template.metadata.uid}
+      index={index}
+      trKey={key}
+      style={style}
+    >
       <TableData className={dimensify()}>
         <img src={getTemplateOSIcon(template)} alt="" className="kubevirt-vm-template-logo" />
         <Link
