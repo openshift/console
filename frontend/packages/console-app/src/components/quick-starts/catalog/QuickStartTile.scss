@@ -4,4 +4,8 @@
     display: block;
     -webkit-line-clamp: unset;
   }
+
+  & .catalog-tile-pf-icon {
+    display: flex;
+  }
 }
