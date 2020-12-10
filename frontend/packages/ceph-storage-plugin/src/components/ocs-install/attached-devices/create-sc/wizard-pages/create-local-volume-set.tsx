@@ -8,18 +8,20 @@ import {
   LocalVolumeSetHeader,
 } from '@console/local-storage-operator-plugin/src/components/local-volume-set/local-volume-set-inner';
 import { getLocalVolumeSetRequestData } from '@console/local-storage-operator-plugin/src/components/local-volume-set/local-volume-set-request-data';
+import { hasOCSTaint } from '../../../../../utils/install';
+import '../../attached-devices.scss';
 import { State, Action } from '../state';
 import { DiscoveryDonutChart } from './donut-chart';
 import {
   minSelectedNode,
   diskModeDropdownItems,
   allNodesSelectorTxt,
+  OCS_TOLERATION,
 } from '../../../../../constants';
-import '../../attached-devices.scss';
 
 const makeLocalVolumeSetCall = (state: State, dispatch: React.Dispatch<Action>, ns: string) => {
   dispatch({ type: 'setIsLoading', value: true });
-  const requestData = getLocalVolumeSetRequestData(state, ns);
+  const requestData = getLocalVolumeSetRequestData(state, ns, OCS_TOLERATION);
   k8sCreate(LocalVolumeSetModel, requestData)
     .then(() => {
       state.onNextClick();
@@ -47,6 +49,7 @@ export const CreateLocalVolumeSet: React.FC<CreateLocalVolumeSetProps> = ({
             dispatch={dispatch}
             diskModeOptions={diskModeDropdownItems}
             allNodesHelpTxt={allNodesSelectorTxt}
+            taintsFilter={hasOCSTaint}
           />
         </Form>
         <DiscoveryDonutChart state={state} dispatch={dispatch} />

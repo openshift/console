@@ -31,7 +31,7 @@ import { AutoDetectVolume } from './wizard-pages/auto-detect-volume';
 import { CreateLocalVolumeSet } from './wizard-pages/create-local-volume-set';
 import { nodesDiscoveriesResource } from '../../../../constants/resources';
 import { getTotalDeviceCapacity } from '../../../../utils/install';
-import { AVAILABLE, CreateStepsSC, minSelectedNode } from '../../../../constants';
+import { AVAILABLE, CreateStepsSC, minSelectedNode, OCS_TOLERATION } from '../../../../constants';
 import { CreateOCS } from '../install-lso-sc';
 import '../attached-devices.scss';
 
@@ -78,7 +78,7 @@ const makeAutoDiscoveryCall = (
       if (err.message === AUTO_DISCOVER_ERR_MSG) {
         throw err;
       }
-      const requestData = getDiscoveryRequestData({ ...state, ns });
+      const requestData = getDiscoveryRequestData({ ...state, ns, toleration: OCS_TOLERATION });
       return k8sCreate(LocalVolumeDiscovery, requestData);
     })
     .then(() => {

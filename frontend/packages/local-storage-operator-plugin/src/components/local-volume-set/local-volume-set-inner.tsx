@@ -29,6 +29,7 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = ({
   dispatch,
   state,
   diskTypeOptions = diskTypeDropdownItems,
+  taintsFilter,
   diskModeOptions = diskModeDropdownItems,
   allNodesHelpTxt = allNodesSelectorTxt,
 }) => {
@@ -115,6 +116,7 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = ({
             },
             filteredNodes: state.nodeNamesForLVS,
             preSelected: state.nodeNames,
+            taintsFilter,
           }}
         />
       )}
@@ -215,6 +217,7 @@ type LocalVolumeSetInnerProps = {
   diskTypeOptions?: { [key: string]: string };
   diskModeOptions?: { [key: string]: string };
   allNodesHelpTxt?: string;
+  taintsFilter?: (node: NodeKind) => boolean;
 };
 
 export const LocalVolumeSetHeader = () => (

@@ -1,4 +1,4 @@
-import { Taint } from '@console/internal/module/k8s';
+import { Taint, Toleration } from '@console/internal/module/k8s';
 
 export const minSelectedNode = 3;
 export const ocsTaint: Taint = {
@@ -7,6 +7,8 @@ export const ocsTaint: Taint = {
   effect: 'NoSchedule',
 };
 Object.freeze(ocsTaint);
+
+export const OCS_TOLERATION: Toleration = { ...ocsTaint, operator: 'Equal' };
 
 export const storageClassTooltip =
   'The Storage Class will be used to request storage from the underlying infrastructure to create the backing persistent volumes that will be used to provide the OpenShift Container Storage (OCS) service.';
