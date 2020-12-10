@@ -248,10 +248,16 @@ $co-channel-height: 60px;
     &--divided {
       border-top: 1px solid $color-pf-black-200;
       padding-top: var(--pf-global--spacer--lg);
+
+      // only add border and padding to first instance
+      & ~ & {
+        border-top: 0;
+        padding-top: 0;
+      }
     }
   }
 
-  &__updates-progress {
+  &__updates-progress:not(:empty) {
     padding: var(--pf-global--spacer--sm) var(--pf-global--spacer--lg) 0 0;
   }
 
