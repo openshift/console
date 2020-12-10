@@ -56,7 +56,7 @@ import { StorageAndNodes } from './wizard-pages/storage-and-nodes-step';
 import '../attached-devices.scss';
 import { getName } from '@console/shared';
 import { StorageClusterKind } from '../../../../types';
-import { getOCSRequestData, labelNodes } from '../../ocs-request-data';
+import { getOCSRequestData, labelNodes, labelOCSNamespace } from '../../ocs-request-data';
 import { OCSServiceModel } from '../../../../models';
 import { OCS_CONVERGED_FLAG, OCS_INDEPENDENT_FLAG, OCS_FLAG } from '../../../../features';
 import { ReviewAndCreate } from './wizard-pages/review-and-create-step';
@@ -263,7 +263,7 @@ const CreateSC: React.FC<CreateSCProps> = ({ match, hasNoProvSC, mode, lsoNs }) 
         selectedArbiterZone,
         stretchClusterChecked,
       );
-      const promises: Promise<K8sResourceKind>[] = [...labelNodes(nodes)];
+      const promises: Promise<K8sResourceKind>[] = [...labelNodes(nodes), labelOCSNamespace()];
       if (encryption.advanced && kms.hasHandled) {
         promises.push(...createKmsResources(kms));
       }

@@ -20,7 +20,7 @@ import { OCSServiceModel } from '../../../models';
 import { OCS_CONVERGED_FLAG, OCS_INDEPENDENT_FLAG, OCS_FLAG } from '../../../features';
 import { OCS_INTERNAL_CR_NAME, MINIMUM_NODES, CreateStepsSC } from '../../../constants';
 import { StorageClusterKind } from '../../../types';
-import { labelNodes, getOCSRequestData } from '../ocs-request-data';
+import { labelNodes, getOCSRequestData, labelOCSNamespace } from '../ocs-request-data';
 import { SelectCapacityAndNodes, Configure, ReviewAndCreate } from './install-wizard-steps';
 import { initialState, reducer, InternalClusterState } from './reducer';
 import { createKmsResources } from '../../kms-config/utils';
@@ -49,7 +49,7 @@ const makeOCSRequest = (state: InternalClusterState): Promise<StorageClusterKind
     clusterNetwork,
     kms.hasHandled && encryption.advanced,
   );
-  const promises: Promise<K8sResourceKind>[] = [...labelNodes(nodes)];
+  const promises: Promise<K8sResourceKind>[] = [...labelNodes(nodes), labelOCSNamespace()];
   if (encryption.advanced && kms.hasHandled) {
     promises.push(...createKmsResources(kms));
   }

@@ -1,6 +1,11 @@
 import * as _ from 'lodash';
-import { k8sPatch, NodeKind, StorageClassResourceKind } from '@console/internal/module/k8s';
-import { NodeModel } from '@console/internal/models';
+import {
+  k8sPatch,
+  NodeKind,
+  StorageClassResourceKind,
+  K8sKind,
+} from '@console/internal/module/k8s';
+import { NodeModel, NamespaceModel } from '@console/internal/models';
 import {
   NO_PROVISIONER,
   OCS_INTERNAL_CR_NAME,
@@ -70,6 +75,21 @@ export const labelNodes = (selectedNodes: NodeKind[]): Promise<NodeKind>[] => {
     [],
   );
 };
+
+export const labelOCSNamespace = (): Promise<K8sKind> =>
+  k8sPatch(
+    NamespaceModel,
+    {
+      metadata: {
+        name: CEPH_STORAGE_NAMESPACE,
+      },
+    },
+    {
+      op: 'add',
+      path: '/metadata/labels',
+      value: { 'openshift.io/cluster-monitoring': 'true' },
+    },
+  );
 
 export const createDeviceSet = (
   scName: string,
