@@ -100,7 +100,7 @@ const PinTemplateLabel: React.FC<{ pinned: boolean }> = ({ pinned }) => {
   const { t } = useTranslation();
   return (
     <>
-      {pinned ? t('kubevirt-plugin~Unpin template') : t('kubevirt-plugin~Pin template')}
+      {pinned ? t('kubevirt-plugin~Unfavorite template') : t('kubevirt-plugin~Favorite template')}
       <PinnedIcon />
     </>
   );
