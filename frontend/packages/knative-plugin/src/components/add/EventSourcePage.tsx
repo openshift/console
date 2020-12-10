@@ -1,14 +1,13 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { RouteComponentProps } from 'react-router';
-import { PageBody, getBadgeFromType } from '@console/shared';
+import { PageBody } from '@console/shared';
 import { PageHeading } from '@console/internal/components/utils';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
 import { QUERY_PROPERTIES } from '@console/dev-console/src/const';
 import ConnectedEventSource from './EventSource';
-import { KnativeEventingModel } from '../../models';
 import EventSourceAlert from './EventSourceAlert';
 import { useEventSourceList } from '../../utils/create-eventsources-utils';
 
@@ -23,7 +22,7 @@ const EventSourcePage: React.FC<EventSourcePageProps> = ({ match, location }) =>
       <Helmet>
         <title>Event Sources</title>
       </Helmet>
-      <PageHeading badge={getBadgeFromType(KnativeEventingModel.badge)} title="Event Sources">
+      <PageHeading title="Event Sources">
         Create an event source to register interest in a class of events from a particular system
       </PageHeading>
       <PageBody flexLayout>
