@@ -122,14 +122,16 @@ export const VALIDATIONS = (type: keyof typeof ValidationType, t: TFunction): Va
     case ValidationType.INTERNAL_FLEXIBLE_SCALING:
       return {
         variant: AlertVariant.warning,
-        title:
-          'The number of selected zones is less than the minimum requirement of 3. If not modified, a host-based failure domain deployment will be enforced.',
+        title: t(
+          'ceph-storage-plugin~The number of selected zones is less than the minimum requirement of 3. If not modified a host-based failure domain deployment will be enforced.',
+        ),
       };
     case ValidationType.BAREMETAL_FLEXIBLE_SCALING:
       return {
         variant: AlertVariant.info,
-        title:
-          'When all the selected nodes in the storage class are in a single zone, the cluster will be using a host-based failure domain.',
+        title: t(
+          'ceph-storage-plugin~When all the selected nodes in the storage class are in a single zone the cluster will be using a host-based failure domain.',
+        ),
       };
     default:
       return { title: '', text: '' };
