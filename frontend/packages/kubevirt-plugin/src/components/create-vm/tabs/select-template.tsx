@@ -86,7 +86,10 @@ export const TemplateTile: React.FC<TemplateTileProps> = ({
         'pf-m-selectable pf-m-selected': isSelected,
       })}
       icon={<img src={getTemplateOSIcon(template)} alt="" />}
-      badges={[isPinned && <PinnedIcon />, <VMTemplateLabel template={template} />]}
+      badges={[
+        isPinned && <PinnedIcon />,
+        <VMTemplateLabel template={template} className="kv-select-template__support-label" />,
+      ]}
       title={
         <Stack>
           <StackItem>

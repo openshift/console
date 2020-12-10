@@ -12,7 +12,9 @@ export const useSupportModal = (): SupportModalFunction => {
   return React.useCallback<SupportModalFunction>(
     (template, onConfirm) => {
       const isUpstream = window.SERVER_FLAGS.branding === 'okd';
-      const showSupportModal = !isUpstream && template && !getTemplateSupport(template.variants[0]);
+      const templateSupport = getTemplateSupport(template.variants[0]);
+      const showSupportModal =
+        !isUpstream && template && !templateSupport.provider && !templateSupport.parent;
       const onModalConfirm = (disable: boolean) => {
         if (disable) {
           setWarnSupport('false');
