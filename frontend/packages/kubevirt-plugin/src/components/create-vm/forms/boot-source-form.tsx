@@ -29,7 +29,7 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { FormRow } from '../../form/form-row';
 import { ProjectDropdown } from '../../form/project-dropdown';
 import { BootSourceAction, BootSourceState, BOOT_ACTION_TYPE } from './boot-source-form-reducer';
-import { AccessMode, VolumeMode } from '../../../constants';
+import { AccessMode, VolumeMode, ANNOTATION_SOURCE_PROVIDER } from '../../../constants';
 import { FormPFSelect } from '../../form/form-pf-select';
 import { preventDefault } from '../../form/utils';
 import { ProvisionSource } from '../../../constants/vm/provision-source';
@@ -41,6 +41,7 @@ import {
   getDefaultSCVolumeMode,
   getDefaultStorageClass,
 } from '../../../selectors/config-map/sc-defaults';
+import { getAnnotation } from '../../../selectors/selectors';
 
 type AdvancedSectionProps = {
   state: BootSourceState;
@@ -305,6 +306,13 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({
                     type: BOOT_ACTION_TYPE.SET_PVC_SIZE,
                     payload: pvc.spec.resources.requests.storage,
                   });
+                  const pvcProvider = getAnnotation(pvc, ANNOTATION_SOURCE_PROVIDER);
+                  if (pvcProvider) {
+                    dispatch({
+                      type: BOOT_ACTION_TYPE.SET_PROVIDER,
+                      payload: pvcProvider,
+                    });
+                  }
                 }}
                 placeholder={t('kubevirt-plugin~--- Select Persistent Volume Claim ---')}
                 desc={PersistentVolumeClaimModel.label}

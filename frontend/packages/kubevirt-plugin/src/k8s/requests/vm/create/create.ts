@@ -80,7 +80,7 @@ export const createVMTemplate = async (params: CreateVMParams) => {
   });
 
   initializeCommonMetadata(combinedSimpleSettings, finalTemplate, template.asResource());
-  initializeCommonTemplateMetadata(finalTemplate, template.asResource());
+  initializeCommonTemplateMetadata(combinedSimpleSettings, finalTemplate, template.asResource());
 
   const templateResult = await k8sWrapperCreate(finalTemplate);
 
