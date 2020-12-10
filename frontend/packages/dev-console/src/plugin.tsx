@@ -38,6 +38,7 @@ import {
   ConfigMapModel,
   DeploymentModel,
 } from '@console/internal/models';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { doConnectsToBinding } from '@console/topology/src/utils/connector-utils';
 import { getKebabActionsForKind } from './utils/kebab-actions';
 import { INCONTEXT_ACTIONS_CONNECTS_TO } from './const';
@@ -202,7 +203,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       // t('devconsole~Developer')
       name: '%devconsole~Developer%',
       icon: <CodeIcon />,
-      defaultPins: [ConfigMapModel.kind, SecretModel.kind],
+      defaultPins: [referenceForModel(ConfigMapModel), referenceForModel(SecretModel)],
       getLandingPageURL: () => '/topology',
       getK8sLandingPageURL: () => '/add',
       getImportRedirectURL: (project) => `/topology/ns/${project}`,
