@@ -14,7 +14,7 @@ import KnativeRevisionResources from './KnativeRevisionResources';
 import RevisionsOverviewList from './RevisionsOverviewList';
 import KSRoutesOverviewList from './RoutesOverviewList';
 import ConfigurationsOverviewList from './ConfigurationsOverviewList';
-import EventSinkServicesOverviewList from './EventSinkServicesOverviewList';
+import EventSourceResources from './EventSourceResources';
 import {
   isDynamicEventResourceKind,
   isEventingChannelResourceKind,
@@ -27,9 +27,9 @@ type OverviewDetailsResourcesTabProps = {
 };
 
 const getSidebarResources = (item: KnativeServiceOverviewItem) => {
-  const { obj, ksroutes, revisions, configurations } = item;
+  const { obj, ksroutes, revisions, configurations, eventSources } = item;
   if (isDynamicEventResourceKind(referenceFor(obj))) {
-    return <EventSinkServicesOverviewList obj={obj} />;
+    return <EventSourceResources obj={obj} ownedSources={eventSources} />;
   }
   if (isEventingChannelResourceKind(referenceFor(obj))) {
     return <EventPubSubResources item={item} />;
@@ -42,7 +42,7 @@ const getSidebarResources = (item: KnativeServiceOverviewItem) => {
     case ServiceModel.kind:
       return <KnativeServiceResources item={item} />;
     case CamelKameletBindingModel.kind:
-      return <EventSinkServicesOverviewList obj={obj} />;
+      return <EventSourceResources obj={obj} ownedSources={eventSources} />;
     case EventingBrokerModel.kind:
     case EventingTriggerModel.kind:
     case EventingSubscriptionModel.kind:

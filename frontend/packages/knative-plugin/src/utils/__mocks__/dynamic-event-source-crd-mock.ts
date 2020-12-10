@@ -3,7 +3,7 @@ export const mockEventSourcCRDData = {
   apiVersion: 'apiextensions.k8s.io/v1',
   metadata: {
     selfLink: '/apis/apiextensions.k8s.io/v1/customresourcedefinitions',
-    resourceVersion: '300390',
+    resourceVersion: '471070',
   },
   items: [
     {
@@ -11,7 +11,7 @@ export const mockEventSourcCRDData = {
         name: 'apiserversources.sources.knative.dev',
         labels: {
           'duck.knative.dev/source': 'true',
-          'eventing.knative.dev/release': 'v0.16.1',
+          'eventing.knative.dev/release': 'v0.17.2',
           'eventing.knative.dev/source': 'true',
           'knative.dev/crd-install': 'true',
         },
@@ -23,11 +23,12 @@ export const mockEventSourcCRDData = {
           singular: 'apiserversource',
           kind: 'ApiServerSource',
           listKind: 'ApiServerSourceList',
-          categories: ['all', 'knative', 'eventing', 'sources'],
+          categories: ['all', 'knative', 'sources'],
         },
         versions: [
           { name: 'v1alpha1', served: true, storage: true },
           { name: 'v1alpha2', served: true, storage: false },
+          { name: 'v1beta1', served: true, storage: false },
         ],
       },
     },
@@ -59,7 +60,7 @@ export const mockEventSourcCRDData = {
         name: 'containersources.sources.knative.dev',
         labels: {
           'duck.knative.dev/source': 'true',
-          'eventing.knative.dev/release': 'v0.16.1',
+          'eventing.knative.dev/release': 'v0.17.2',
           'eventing.knative.dev/source': 'true',
           'knative.dev/crd-install': 'true',
         },
@@ -71,32 +72,10 @@ export const mockEventSourcCRDData = {
           singular: 'containersource',
           kind: 'ContainerSource',
           listKind: 'ContainerSourceList',
-          categories: ['all', 'knative', 'eventing', 'sources'],
-        },
-        versions: [{ name: 'v1alpha2', served: true, storage: true }],
-      },
-    },
-    {
-      metadata: {
-        name: 'kafkasources.sources.knative.dev',
-        labels: {
-          'contrib.eventing.knative.dev/release': 'devel',
-          'duck.knative.dev/source': 'true',
-          'eventing.knative.dev/source': 'true',
-          'knative.dev/crd-install': 'true',
-        },
-      },
-      spec: {
-        group: 'sources.knative.dev',
-        names: {
-          plural: 'kafkasources',
-          singular: 'kafkasource',
-          kind: 'KafkaSource',
-          listKind: 'KafkaSourceList',
-          categories: ['all', 'knative', 'eventing', 'sources'],
+          categories: ['all', 'knative', 'sources'],
         },
         versions: [
-          { name: 'v1alpha1', served: true, storage: true },
+          { name: 'v1alpha2', served: true, storage: true },
           { name: 'v1beta1', served: true, storage: false },
         ],
       },
@@ -106,7 +85,7 @@ export const mockEventSourcCRDData = {
         name: 'pingsources.sources.knative.dev',
         labels: {
           'duck.knative.dev/source': 'true',
-          'eventing.knative.dev/release': 'v0.16.1',
+          'eventing.knative.dev/release': 'v0.17.2',
           'eventing.knative.dev/source': 'true',
           'knative.dev/crd-install': 'true',
         },
@@ -118,11 +97,11 @@ export const mockEventSourcCRDData = {
           singular: 'pingsource',
           kind: 'PingSource',
           listKind: 'PingSourceList',
-          categories: ['all', 'knative', 'eventing', 'sources'],
+          categories: ['all', 'knative', 'sources'],
         },
         versions: [
-          { name: 'v1alpha1', served: false, storage: false },
           { name: 'v1alpha2', served: true, storage: true },
+          { name: 'v1beta1', served: true, storage: false },
         ],
       },
     },
@@ -132,7 +111,7 @@ export const mockEventSourcCRDData = {
         labels: {
           'duck.knative.dev/binding': 'true',
           'duck.knative.dev/source': 'true',
-          'eventing.knative.dev/release': 'v0.16.1',
+          'eventing.knative.dev/release': 'v0.17.2',
           'eventing.knative.dev/source': 'true',
           'knative.dev/crd-install': 'true',
         },
@@ -144,11 +123,12 @@ export const mockEventSourcCRDData = {
           singular: 'sinkbinding',
           kind: 'SinkBinding',
           listKind: 'SinkBindingList',
-          categories: ['all', 'knative', 'eventing', 'sources', 'bindings'],
+          categories: ['all', 'knative', 'sources', 'bindings'],
         },
         versions: [
           { name: 'v1alpha1', served: true, storage: true },
           { name: 'v1alpha2', served: true, storage: false },
+          { name: 'v1beta1', served: true, storage: false },
         ],
       },
     },

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import * as _ from 'lodash';
-import { referenceForModel } from '@console/internal/module/k8s';
+import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { usePodsWatcher } from '@console/shared';
 import { PodsOverview } from '@console/internal/components/overview/pods-overview';
 import {
@@ -15,8 +15,11 @@ import {
   EventSourceApiServerModel,
   EventSourceCamelModel,
   EventingIMCModel,
+  EventSourceContainerModel,
+  EventSourceSinkBindingModel,
 } from '../../../models';
-import EventSinkServicesOverviewList from '../EventSinkServicesOverviewList';
+import EventSourceResources from '../EventSourceResources';
+import EventSourceOwnedList from '../EventSourceOwnedList';
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');
@@ -137,16 +140,14 @@ describe('EventSinkServicesOverviewList', () => {
       'spec',
       'status',
     ]);
-    const wrapper = shallow(<EventSinkServicesOverviewList obj={mockData} />);
+    const wrapper = shallow(<EventSourceResources obj={mockData} />);
     expect(wrapper.find('span').text()).toBe(`${i18nNS}~No sink found for this resource.`);
   });
 
   it('should have ResourceLink with proper kind for sink to knSvc', () => {
     podData = noPodData;
     const wrapper = shallow(
-      <EventSinkServicesOverviewList
-        obj={getEventSourceResponse(EventSourceApiServerModel).data[0]}
-      />,
+      <EventSourceResources obj={getEventSourceResponse(EventSourceApiServerModel).data[0]} />,
     );
     const findResourceLink = wrapper.find(ResourceLink);
     expect(findResourceLink).toHaveLength(1);
@@ -166,7 +167,7 @@ describe('EventSinkServicesOverviewList', () => {
       ...{ spec: sinkData },
     };
     podData = noPodData;
-    const wrapper = shallow(<EventSinkServicesOverviewList obj={sinkChannelData} />);
+    const wrapper = shallow(<EventSourceResources obj={sinkChannelData} />);
     const findResourceLink = wrapper.find(ResourceLink);
     expect(findResourceLink).toHaveLength(1);
     expect(findResourceLink.at(0).props().kind).toEqual(referenceForModel(EventingIMCModel));
@@ -180,16 +181,14 @@ describe('EventSinkServicesOverviewList', () => {
       },
     };
     podData = noPodData;
-    const wrapper = shallow(<EventSinkServicesOverviewList obj={mockData} />);
+    const wrapper = shallow(<EventSourceResources obj={mockData} />);
     expect(wrapper.find(ExternalLink)).toHaveLength(1);
     expect(wrapper.find(ResourceLink)).toHaveLength(0);
   });
 
   it('should have ExternalLink when sinkUri is present', () => {
     const wrapper = shallow(
-      <EventSinkServicesOverviewList
-        obj={getEventSourceResponse(EventSourceApiServerModel).data[0]}
-      />,
+      <EventSourceResources obj={getEventSourceResponse(EventSourceApiServerModel).data[0]} />,
     );
     expect(wrapper.find(ExternalLink)).toHaveLength(1);
   });
@@ -199,15 +198,13 @@ describe('EventSinkServicesOverviewList', () => {
       getEventSourceResponse(EventSourceApiServerModel).data[0],
       'status',
     );
-    const wrapper = shallow(<EventSinkServicesOverviewList obj={mockEventSourceDataNoURI} />);
+    const wrapper = shallow(<EventSourceResources obj={mockEventSourceDataNoURI} />);
     expect(wrapper.find(ExternalLink)).toHaveLength(0);
   });
 
   it('should show Deployment if present', () => {
     const wrapper = shallow(
-      <EventSinkServicesOverviewList
-        obj={getEventSourceResponse(EventSourceApiServerModel).data[0]}
-      />,
+      <EventSourceResources obj={getEventSourceResponse(EventSourceApiServerModel).data[0]} />,
     );
     const findResourceLink = wrapper.find(ResourceLink);
     const findSidebarSectionHeading = wrapper.find(SidebarSectionHeading);
@@ -219,9 +216,7 @@ describe('EventSinkServicesOverviewList', () => {
 
   it('should show pods if present', () => {
     const wrapper = shallow(
-      <EventSinkServicesOverviewList
-        obj={getEventSourceResponse(EventSourceApiServerModel).data[0]}
-      />,
+      <EventSourceResources obj={getEventSourceResponse(EventSourceApiServerModel).data[0]} />,
     );
     expect(wrapper.find(PodsOverview)).toHaveLength(1);
     expect(wrapper.find(PodsOverview).props().allPodsLink).toEqual(
@@ -229,13 +224,46 @@ describe('EventSinkServicesOverviewList', () => {
     );
   });
 
-  it('should not show pods if not present', () => {
+  it('should not show owned source if not present', () => {
     podData = noPodData;
     const wrapper = shallow(
-      <EventSinkServicesOverviewList
-        obj={getEventSourceResponse(EventSourceApiServerModel).data[0]}
+      <EventSourceResources obj={getEventSourceResponse(EventSourceApiServerModel).data[0]} />,
+    );
+    expect(wrapper.find(EventSourceOwnedList)).toHaveLength(0);
+  });
+
+  it('should show owned source if present', () => {
+    const sourceData = getEventSourceResponse(EventSourceSinkBindingModel).data[0];
+    const ownSourceData: K8sResourceKind[] = [
+      {
+        ...sourceData,
+        metadata: {
+          name: 'overlayimage-sbs',
+          namespace: 'testproject3',
+          uid: '1317f615-9636-11e9-b134-06a61d886b689_2',
+          ownerReferences: [
+            {
+              apiVersion: 'sources.knative.dev/v1beta1',
+              blockOwnerDeletion: true,
+              controller: true,
+              kind: 'ContainerSource',
+              name: 'overlayimage',
+              uid: '1317f615-9636-11e9-b134-06a61d886b689_1',
+            },
+          ],
+        },
+      },
+    ];
+    const wrapper = shallow(
+      <EventSourceResources
+        obj={getEventSourceResponse(EventSourceContainerModel).data[0]}
+        ownedSources={ownSourceData}
       />,
     );
-    expect(wrapper.find(PodsOverview)).toHaveLength(0);
+    const findOwnedSourcesList = wrapper.find(EventSourceOwnedList);
+    expect(findOwnedSourcesList).toHaveLength(1);
+    expect(findOwnedSourcesList.at(0).props().source.kind).toEqual(
+      EventSourceSinkBindingModel.kind,
+    );
   });
 });
