@@ -483,7 +483,7 @@ const flatten = ({
           operatorCount: getOperatorCount(catalogSource, packageManifests.data),
           publisher: catalogSource.spec.publisher,
           registryPollInterval: getRegistryPollInterval(catalogSource),
-          status: catalogSource.status.connectionState.lastObservedState,
+          status: catalogSource.status?.connectionState?.lastObservedState,
         }),
       };
     },
@@ -501,7 +501,7 @@ const flatten = ({
     operatorHub,
     publisher: source.spec.publisher,
     registryPollInterval: getRegistryPollInterval(source),
-    status: source.status.connectionState.lastObservedState,
+    status: source.status?.connectionState?.lastObservedState,
     source,
   }));
 
