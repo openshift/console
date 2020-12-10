@@ -3,7 +3,11 @@ import { Button } from '@patternfly/react-core';
 import { ChartDonut, ChartLabel } from '@patternfly/react-charts';
 
 import { calculateRadius, Modal } from '@console/shared';
-import { pluralize, convertToBaseValue } from '@console/internal/components/utils/';
+import {
+  pluralize,
+  convertToBaseValue,
+  humanizeBinaryBytes,
+} from '@console/internal/components/utils/';
 import { NodeModel } from '@console/internal/models';
 import { ListPage } from '@console/internal/components/factory';
 import { getNodes } from '@console/local-storage-operator-plugin/src/utils';
@@ -44,7 +48,7 @@ export const DiscoveryDonutChart: React.FC<DiscoveryDonutChartProps> = ({ state,
         return false;
       });
       const capacity = getTotalDeviceCapacity(filteredDiscoveries);
-      dispatch({ type: 'setChartSelectedData', value: capacity?.value });
+      dispatch({ type: 'setChartSelectedData', value: capacity });
       dispatch({ type: 'setFilteredDiscoveries', value: filteredDiscoveries });
     };
 
@@ -65,9 +69,9 @@ export const DiscoveryDonutChart: React.FC<DiscoveryDonutChartProps> = ({ state,
   }, [state.filteredDiscoveries, dispatch]);
 
   React.useEffect(() => {
-    const str = `${Number(state.chartSelectedData).toFixed(1)} ${state.chartDataUnit}`;
+    const str = humanizeBinaryBytes(state.chartSelectedData).string;
     setAvailableCapacityStr(str);
-  }, [state.chartSelectedData, state.chartDataUnit]);
+  }, [state.chartSelectedData]);
 
   return (
     <div className="ceph-ocs-install__chart-wrapper">
@@ -109,8 +113,8 @@ export const DiscoveryDonutChart: React.FC<DiscoveryDonutChartProps> = ({ state,
         innerRadius={innerRadius}
         radius={radius}
         data={donutData}
-        labels={({ datum }) => `${datum.y} ${state.chartDataUnit} ${datum.x}`}
-        subTitle={`Out of ${Number(state.chartTotalData).toFixed(1)} ${state.chartDataUnit}`}
+        labels={({ datum }) => `${humanizeBinaryBytes(datum.y).string} ${datum.x}`}
+        subTitle={`Out of ${humanizeBinaryBytes(state.chartTotalData).string}`}
         title={availableCapacityStr}
         constrainToVisibleArea
         subTitleComponent={

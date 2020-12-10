@@ -34,16 +34,13 @@ export const filterSCWithNoProv = (sc: StorageClassResourceKind) =>
 export const filterSCWithoutNoProv = (sc: StorageClassResourceKind) =>
   sc?.provisioner !== NO_PROVISIONER;
 
-export const getTotalDeviceCapacity = (list: Discoveries[]) => {
-  const totalCapacity = list.reduce((res, device) => {
+export const getTotalDeviceCapacity = (list: Discoveries[]): number =>
+  list.reduce((res, device) => {
     if (device?.status?.state === AVAILABLE) {
       return res + device.size;
     }
     return res;
   }, 0);
-
-  return humanizeBinaryBytes(totalCapacity);
-};
 
 export const getAssociatedNodes = (pvs: K8sResourceKind[]): string[] => {
   const nodes = pvs.reduce((res, pv) => {
