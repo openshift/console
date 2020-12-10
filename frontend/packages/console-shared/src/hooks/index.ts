@@ -24,3 +24,4 @@ export * from './hpa-hooks';
 export * from './usePinnedResources';
 export * from './useActivePerspective';
 export * from './useActiveNamespace';
+export * from './useIsMobile';

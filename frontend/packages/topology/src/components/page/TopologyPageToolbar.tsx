@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { observer } from '@patternfly/react-topology';
 import { Tooltip, Popover, Button } from '@patternfly/react-core';
 import { ListIcon, TopologyIcon, QuestionCircleIcon } from '@patternfly/react-icons';
+import { useIsMobile } from '@console/shared';
 import { getTopologyShortcuts } from '../graph-view/TopologyShortcuts';
 import { ModelContext, ExtensibleModel } from '../../data-transforms/ModelContext';
 import { TopologyViewType } from '../../topology-types';
@@ -15,6 +16,7 @@ interface TopologyPageToolbarProps {
 const TopologyPageToolbar: React.FC<TopologyPageToolbarProps> = observer(
   ({ viewType, onViewChange }) => {
     const { t } = useTranslation();
+    const isMobile = useIsMobile();
     const showGraphView = viewType === TopologyViewType.graph;
     const dataModelContext = React.useContext<ExtensibleModel>(ModelContext);
     const { namespace, isEmptyModel } = dataModelContext;
@@ -25,7 +27,7 @@ const TopologyPageToolbar: React.FC<TopologyPageToolbarProps> = observer(
 
     return (
       <>
-        {showGraphView ? (
+        {showGraphView && !isMobile ? (
           <Popover
             aria-label={t('topology~Shortcuts')}
             bodyContent={getTopologyShortcuts(t)}
