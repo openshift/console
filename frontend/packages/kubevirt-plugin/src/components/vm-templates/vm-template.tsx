@@ -30,15 +30,7 @@ import {
 } from '@console/internal/models';
 import { TemplateKind, PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
 import { dimensifyHeader, dimensifyRow, ALL_NAMESPACES_KEY } from '@console/shared';
-import {
-  Button,
-  Popover,
-  PopoverPosition,
-  TextContent,
-  Text,
-  Stack,
-  StackItem,
-} from '@patternfly/react-core';
+import { Button, Popover, PopoverPosition, Stack, StackItem } from '@patternfly/react-core';
 import { getActiveNamespace } from '@console/internal/actions/ui';
 
 import { SUPPORT_URL } from '../../constants/vm-templates';
@@ -54,7 +46,7 @@ import {
   getTemplateMemory,
 } from '../../selectors/vm-template/advanced';
 import { useBaseImages } from '../../hooks/use-base-images';
-import { getWorkloadProfile, getCPU, vCPUCount } from '../../selectors/vm';
+import { getWorkloadProfile, getCPU, vCPUCount, getOperatingSystemName } from '../../selectors/vm';
 import {
   selectVM,
   getTemplateName,
@@ -126,40 +118,40 @@ const VMTemplateDetailsBody: React.FC<VMTemplateDetailsBodyProps> = ({
   sourceStatus,
 }) => {
   const { t } = useTranslation();
+  const osName = getOperatingSystemName(template);
   return (
     <Stack hasGutter>
       <StackItem>
         <VMTemplateLabel template={template} />
       </StackItem>
+      {osName && <StackItem>{osName}</StackItem>}
       <StackItem>
-        <TextContent>
-          <Text>
-            <div className="kubevirt-vm-template-popover">
-              <div>{t('kubevirt-plugin~Storage')}</div>
-              <div>{getTemplateSizeRequirement(template, sourceStatus)}</div>
-            </div>
-            <div className="kubevirt-vm-template-popover">
-              <div>{t('kubevirt-plugin~Memory')}</div>
-              <div>{getTemplateMemory(template)}</div>
-            </div>
-            <div className="kubevirt-vm-template-popover">
-              <div>{t('kubevirt-plugin~CPU')}</div>
-              <div>{vCPUCount(getCPU(selectVM(template)))}</div>
-            </div>
-            <div className="kubevirt-vm-template-popover">
-              <div>{t('kubevirt-plugin~Workload profile')}</div>
-              <div>{getWorkloadProfile(template)}</div>
-            </div>
-          </Text>
-          <Link
-            to={`/k8s/ns/${template.metadata.namespace}/vmtemplates/${template.metadata.name}`}
-            title={template.metadata.uid}
-            data-test-id={template.metadata.name}
-            className="co-resource-item__resource-name"
-          >
-            {t('kubevirt-plugin~View full details')}
-          </Link>
-        </TextContent>
+        <div className="kubevirt-vm-template-popover">
+          <div>{t('kubevirt-plugin~Storage')}</div>
+          <div>{getTemplateSizeRequirement(template, sourceStatus)}</div>
+        </div>
+        <div className="kubevirt-vm-template-popover">
+          <div>{t('kubevirt-plugin~Memory')}</div>
+          <div>{getTemplateMemory(template)}</div>
+        </div>
+        <div className="kubevirt-vm-template-popover">
+          <div>{t('kubevirt-plugin~CPU')}</div>
+          <div>{vCPUCount(getCPU(selectVM(template)))}</div>
+        </div>
+        <div className="kubevirt-vm-template-popover">
+          <div>{t('kubevirt-plugin~Workload profile')}</div>
+          <div>{getWorkloadProfile(template) ?? t('kubevirt-plugin~Not available')}</div>
+        </div>
+      </StackItem>
+      <StackItem>
+        <Link
+          to={`/k8s/ns/${template.metadata.namespace}/vmtemplates/${template.metadata.name}`}
+          title={template.metadata.uid}
+          data-test-id={template.metadata.name}
+          className="co-resource-item__resource-name"
+        >
+          {t('kubevirt-plugin~View full details')}
+        </Link>
       </StackItem>
     </Stack>
   );
