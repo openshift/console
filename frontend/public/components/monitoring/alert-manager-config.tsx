@@ -385,9 +385,6 @@ const Receivers = () => {
   const numOfIncompleteReceivers = numberOfIncompleteReceivers();
   const { t } = useTranslation();
   const receiverString = t('alert-manager-config~receiver', { count: numOfIncompleteReceivers });
-  const thisString = t('alert-manager-config~this', {
-    count: numOfIncompleteReceivers,
-  });
   return (
     <div className="co-m-pane__body">
       <SectionHeading text={t('alert-manager-config~Receivers')} />
@@ -415,8 +412,8 @@ const Receivers = () => {
         >
           <div className="co-pre-line">
             {t(
-              'alert-manager-config~Configure {{thisString}} {{receiverString}} to ensure that you learn about important issues with your cluster.',
-              { thisString, receiverString },
+              'alert-manager-config~Configure the {{receiverString}} to ensure that you learn about important issues with your cluster.',
+              { receiverString },
             )}
           </div>
         </Alert>
