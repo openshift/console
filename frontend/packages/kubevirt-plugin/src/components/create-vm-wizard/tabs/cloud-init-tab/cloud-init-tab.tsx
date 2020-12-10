@@ -106,7 +106,7 @@ const CloudInitFormRows: React.FC<CloudInitFormRowsProps> = ({
         />
       </FormRow>
       <FormRow
-        title={t('kubevirt-plugin~Authenticated SSH Keys')}
+        title={t('kubevirt-plugin~Authorized SSH Keys')}
         fieldId={asId(CloudInitDataFormKeys.SSH_AUTHORIZED_KEYS)}
       >
         {authKeys.map((authKey, idx) => {
