@@ -17,7 +17,7 @@ trap copyArtifacts EXIT
 
 # don't log kubeadmin-password
 set +x
-BRIDGE_KUBEADMIN_PASSWORD="$(cat "${INSTALLER_DIR}/auth/kubeadmin-password")"
+BRIDGE_KUBEADMIN_PASSWORD="$(cat "${KUBEADMIN_PASSWORD_FILE:-${INSTALLER_DIR}/auth/kubeadmin-password}")"
 export BRIDGE_KUBEADMIN_PASSWORD
 set -x
 BRIDGE_BASE_ADDRESS="$(oc get consoles.config.openshift.io cluster -o jsonpath='{.status.consoleURL}')"
