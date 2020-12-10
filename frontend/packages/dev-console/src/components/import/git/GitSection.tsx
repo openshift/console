@@ -20,6 +20,7 @@ import FormSection from '../section/FormSection';
 import SampleRepo from './SampleRepo';
 import AdvancedGitOptions from './AdvancedGitOptions';
 import { UNASSIGNED_KEY, CREATE_APPLICATION_KEY } from '../../../const';
+import { BuildStrategyType } from '@console/internal/components/build';
 
 export interface GitSectionProps {
   showSample?: boolean;
@@ -37,6 +38,7 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample, builderImages }) =>
   const { name: applicationNameTouched } = application as FormikTouched<{ name: boolean }>;
   const { selected: imageSelectorTouched } = image as FormikTouched<{ selected: boolean }>;
   const [validated, setValidated] = React.useState<ValidatedOptions>(ValidatedOptions.default);
+  const [isRepoReachable, setIsRepoReachable] = React.useState<boolean>(false);
 
   const handleGitUrlChange = React.useCallback(
     async (url: string, ref: string) => {
@@ -54,6 +56,7 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample, builderImages }) =>
       const gitService = getGitService({ url, ref }, gitType as GitProvider);
       const isReachable = gitService && (await gitService.isRepoReachable());
       setFieldValue('git.isUrlValidating', false);
+      setIsRepoReachable(isReachable);
       if (isReachable) {
         setValidated(ValidatedOptions.success);
         gitRepoName && !values.name && setFieldValue('name', gitRepoName);
@@ -61,30 +64,11 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample, builderImages }) =>
           !values.application.name &&
           values.application.selectedKey !== UNASSIGNED_KEY &&
           setFieldValue('application.name', `${gitRepoName}-app`);
-        if (builderImages) {
-          setFieldValue('image.isRecommending', true);
-          const buildTools: BuildType[] = await gitService.detectBuildTypes();
-          setFieldValue('image.isRecommending', false);
-          const buildTool = buildTools.find(
-            ({ buildType: recommended }) =>
-              recommended && builderImages.hasOwnProperty(recommended),
-          );
-          if (buildTool && buildTool.buildType) {
-            setFieldValue('image.couldNotRecommend', false);
-            setFieldValue('image.recommended', buildTool.buildType);
-          } else {
-            setFieldValue('image.couldNotRecommend', true);
-            setFieldValue('image.recommended', '');
-          }
-        }
       } else {
-        setFieldValue('image.recommended', '');
-        setFieldValue('image.couldNotRecommend', false);
         setValidated(ValidatedOptions.warning);
       }
     },
     [
-      builderImages,
       gitTypeTouched,
       setFieldTouched,
       setFieldValue,
@@ -94,6 +78,40 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample, builderImages }) =>
       values.name,
     ],
   );
+
+  const handleBuilderImageRecommendation = React.useCallback(async () => {
+    const gitType = gitTypeTouched ? values.git.type : detectGitType(values.git.url);
+    const gitService = getGitService(
+      { url: values.git.url, ref: values.git.ref },
+      gitType as GitProvider,
+    );
+    if (isRepoReachable && builderImages) {
+      setFieldValue('image.isRecommending', true);
+      const buildTools: BuildType[] = gitService && (await gitService.detectBuildTypes());
+      setFieldValue('image.isRecommending', false);
+      const buildTool = buildTools?.find(
+        ({ buildType: recommended }) => recommended && builderImages.hasOwnProperty(recommended),
+      );
+      if (buildTool && buildTool.buildType) {
+        setFieldValue('image.couldNotRecommend', false);
+        setFieldValue('image.recommended', buildTool.buildType);
+      } else {
+        setFieldValue('image.couldNotRecommend', true);
+        setFieldValue('image.recommended', '');
+      }
+    } else {
+      setFieldValue('image.recommended', '');
+      setFieldValue('image.couldNotRecommend', false);
+    }
+  }, [
+    builderImages,
+    gitTypeTouched,
+    isRepoReachable,
+    setFieldValue,
+    values.git.ref,
+    values.git.type,
+    values.git.url,
+  ]);
 
   const debouncedHandleGitUrlChange = useDebounceCallback(handleGitUrlChange, [handleGitUrlChange]);
 
@@ -140,6 +158,12 @@ const GitSection: React.FC<GitSectionProps> = ({ showSample, builderImages }) =>
     values.image.selected,
     values.name,
   ]);
+
+  React.useEffect(() => {
+    values.build.strategy === BuildStrategyType.Source &&
+      values.git.url &&
+      handleBuilderImageRecommendation();
+  }, [handleBuilderImageRecommendation, values.build.strategy, values.git.url]);
 
   React.useEffect(() => {
     const { url, ref } = values.git;
