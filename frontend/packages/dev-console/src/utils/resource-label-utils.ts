@@ -96,8 +96,8 @@ export const mergeData = (originalResource: K8sResourceKind, newResource: K8sRes
   if (mergedData.spec?.template?.spec?.containers) {
     mergedData.spec.template.spec.containers = newResource.spec.template.spec.containers;
   }
-  if (mergedData?.spec?.strategy) {
-    mergedData.spec.strategy = newResource.spec.strategy;
+  if (mergedData?.spec?.hasOwnProperty('strategy')) {
+    mergedData.spec.strategy = newResource.spec?.strategy ?? originalResource?.spec?.strategy;
   }
   if (mergedData.spec?.triggers) {
     mergedData.spec.triggers = newResource.spec.triggers;
