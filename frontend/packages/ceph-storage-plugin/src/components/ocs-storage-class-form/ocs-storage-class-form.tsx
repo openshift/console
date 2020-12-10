@@ -188,14 +188,84 @@ export const PoolResourceComponent: React.FC<ProvisionerProps> = ({ onParamChang
   return <>{(!loaded || !poolDataLoaded) && <LoadingInline />}</>;
 };
 
-const StorageClassEncryptionLabel: React.FC = () => (
-  <div className="ocs-storageClass-encryption__pv-title">
-    <span className="ocs-storageClass-encryption__pv-title--padding">Enable Encryption</span>
-    <TechPreviewBadge />
-  </div>
-);
+const StorageClassEncryptionLabel: React.FC = () => {
+  const { t } = useTranslation();
+
+  return (
+    <div className="ocs-storageClass-encryption__pv-title">
+      <span className="ocs-storageClass-encryption__pv-title--padding">
+        {t('ceph-storage-plugin~Enable Encryption')}
+      </span>
+      <TechPreviewBadge />
+    </div>
+  );
+};
+
+const KMSDetails: React.FC<KMSDetailsProps> = ({ setEditKMS, currentKMS }) => {
+  const { t } = useTranslation();
+
+  return (
+    <div>
+      <h3 className="help-block">
+        {t('ceph-storage-plugin~Connection details')}{' '}
+        <Button
+          variant="link"
+          onClick={() => {
+            setEditKMS(true);
+          }}
+        >
+          {t('ceph-storage-plugin~Change connection details')}
+        </Button>
+      </h3>
+      <TextContent>
+        <TextList component={TextListVariants.ul} className="ocs-storageClass-encryption__details">
+          {currentKMS?.VAULT_NAMESPACE && (
+            <TextListItem>
+              {t('ceph-storage-plugin~Vault Enterprise Namespace:')}{' '}
+              <span className="help-block ocs-storageClass-encryption__help-block">
+                {currentKMS?.VAULT_NAMESPACE}
+              </span>
+            </TextListItem>
+          )}
+          <TextListItem>
+            {t('ceph-storage-plugin~Key management service name:')}{' '}
+            <span className="help-block ocs-storageClass-encryption__help-block">
+              {currentKMS?.KMS_SERVICE_NAME}
+            </span>
+          </TextListItem>
+          <TextListItem>
+            {t('ceph-storage-plugin~Provider:')}{' '}
+            <span className="help-block ocs-storageClass-encryption__help-block">
+              {currentKMS?.KMS_PROVIDER}
+            </span>
+          </TextListItem>
+          <TextListItem>
+            {t('ceph-storage-plugin~Address and Port:')}{' '}
+            <span className="help-block ocs-storageClass-encryption__help-block">
+              {currentKMS?.VAULT_ADDR}
+            </span>
+          </TextListItem>
+          {currentKMS?.VAULT_CACERT && (
+            <TextListItem>
+              {t('ceph-storage-plugin~CA certificate:')}{' '}
+              <span className="help-block ocs-storageClass-encryption__help-block">
+                {t('ceph-storage-plugin~Provided')}
+              </span>
+            </TextListItem>
+          )}
+        </TextList>
+      </TextContent>
+    </div>
+  );
+};
+
+type KMSDetailsProps = {
+  currentKMS: KMSConfigMap;
+  setEditKMS: React.Dispatch<React.SetStateAction<boolean>>;
+};
 
 export const StorageClassEncryption: React.FC<ProvisionerProps> = ({ onParamChange }) => {
+  const { t } = useTranslation();
   const [state, dispatch] = React.useReducer(scReducer, scInitialState);
   const [checked, isChecked] = React.useState(false);
   const [editKMS, setEditKMS] = React.useState(false);
@@ -296,7 +366,11 @@ export const StorageClassEncryption: React.FC<ProvisionerProps> = ({ onParamChan
         setInProgress(false);
       }
     } else {
-      setErrorMessage(`KMS service ${state.kms.name.value} already exist`);
+      setErrorMessage(
+        t('ceph-storage-plugin~KMS service {{value}} already exist', {
+          value: state.kms.name.value,
+        }),
+      );
     }
   };
 
@@ -306,71 +380,21 @@ export const StorageClassEncryption: React.FC<ProvisionerProps> = ({ onParamChan
     setValidSave(true);
   };
 
-  const KMSDetails: React.FC = () => (
-    <div>
-      <h3 className="help-block">
-        Connection details{' '}
-        <Button
-          variant="link"
-          onClick={() => {
-            setEditKMS(true);
-          }}
-        >
-          Change connection details
-        </Button>
-      </h3>
-      <TextContent>
-        <TextList component={TextListVariants.ul} className="ocs-storageClass-encryption__details">
-          {currentKMS?.VAULT_NAMESPACE && (
-            <TextListItem>
-              Vault Enterprise Namespace:{' '}
-              <span className="help-block ocs-storageClass-encryption__help-block">
-                {currentKMS?.VAULT_NAMESPACE}
-              </span>
-            </TextListItem>
-          )}
-          <TextListItem>
-            Key management service name:{' '}
-            <span className="help-block ocs-storageClass-encryption__help-block">
-              {currentKMS?.KMS_SERVICE_NAME}
-            </span>
-          </TextListItem>
-          <TextListItem>
-            Provider:{' '}
-            <span className="help-block ocs-storageClass-encryption__help-block">
-              {currentKMS?.KMS_PROVIDER}
-            </span>
-          </TextListItem>
-          <TextListItem>
-            Address and Port:{' '}
-            <span className="help-block ocs-storageClass-encryption__help-block">
-              {currentKMS?.VAULT_ADDR}
-            </span>
-          </TextListItem>
-          {currentKMS?.VAULT_CACERT && (
-            <TextListItem>
-              CA certificate:{' '}
-              <span className="help-block ocs-storageClass-encryption__help-block">Provided</span>
-            </TextListItem>
-          )}
-        </TextList>
-      </TextContent>
-    </div>
-  );
-
   return (
     <Form>
       <FormGroup
         fieldId="storage-class-encryption"
-        helperTextInvalid="This is a required field"
+        helperTextInvalid={t('ceph-storage-plugin~This is a required field')}
         isRequired
       >
         <Checkbox
           id="storage-class-encryption"
           isChecked={checked}
           label={<StorageClassEncryptionLabel />}
-          aria-label="Storage class encryption"
-          description="An encryption key for each Persistent volume (block only) will be generated."
+          aria-label={t('ceph-storage-plugin~Storage class encryption')}
+          description={t(
+            'ceph-storage-plugin~An encryption key for each Persistent volume (block only) will be generated.',
+          )}
           onChange={setChecked}
           className="ocs-storageClass-encryption__form-checkbox"
         />
@@ -380,7 +404,7 @@ export const StorageClassEncryption: React.FC<ProvisionerProps> = ({ onParamChan
             <Card isFlat className="ocs-storageClass-encryption__card">
               {(!csiConfigMapLoaded || progress) && <LoadingInline />}
               {csiConfigMapLoaded && csiConfigMap && !editKMS && !csiConfigMapLoadError ? (
-                <KMSDetails />
+                <KMSDetails currentKMS={currentKMS} setEditKMS={setEditKMS} />
               ) : (
                 <>
                   <KMSConfigure
@@ -392,10 +416,10 @@ export const StorageClassEncryption: React.FC<ProvisionerProps> = ({ onParamChan
                     <ButtonBar errorMessage={errorMessage} inProgress={progress}>
                       <ActionGroup>
                         <Button variant="secondary" onClick={updateKMS} isDisabled={!validSave}>
-                          Save
+                          {t('ceph-storage-plugin~Save')}
                         </Button>
                         <Button variant="plain" onClick={cancelKMSUpdate}>
-                          Cancel
+                          {t('ceph-storage-plugin~Cancel')}
                         </Button>
                       </ActionGroup>
                     </ButtonBar>
@@ -406,8 +430,10 @@ export const StorageClassEncryption: React.FC<ProvisionerProps> = ({ onParamChan
             <Alert
               className="co-alert"
               variant="warning"
-              title="Encrypted PVs cannot be cloned, expanded or create snapshots."
-              aria-label="The last saved values will be updated"
+              title={t(
+                'ceph-storage-plugin~Encrypted PVs cannot be cloned expanded or create snapshots.',
+              )}
+              aria-label={t('ceph-storage-plugin~The last saved values will be updated')}
               isInline
             />
           </>
