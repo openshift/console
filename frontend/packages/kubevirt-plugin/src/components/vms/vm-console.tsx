@@ -39,6 +39,7 @@ import { ConsoleType } from '../../constants/vm/console-type';
 import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
 import { CloudInitDataHelper } from '../../k8s/wrapper/vm/cloud-init-data-helper';
 import { CLOUD_INIT_MISSING_USERNAME } from '../../utils/strings';
+import { useRenderVNCConsole } from '../../hooks/use-render-vnc-console';
 
 const VMIsDown: React.FC = () => (
   <div className="co-m-pane__body">
@@ -75,11 +76,12 @@ const VMConsoles: React.FC<VMConsolesProps> = ({
   LoadingComponent,
   type,
   showOpenInNewWindow = true,
+  renderVNCConsole,
 }) => {
   const { t } = useTranslation();
   const [showAlert, setShowAlert] = React.useState(true);
   const [showPassword, setShowPassword] = React.useState(false);
-  const showVNCOption = getIsGraphicsConsoleAttached(vm) !== false;
+  const showVNCOption = getIsGraphicsConsoleAttached(vm) !== false && renderVNCConsole;
   const showSerialOption = getIsSerialConsoleAttached(vm) !== false;
   const cloudInitVolume = getCloudInitVolume(vm);
   const data = new VolumeWrapper(cloudInitVolume).getCloudInitNoCloud();
@@ -102,8 +104,8 @@ const VMConsoles: React.FC<VMConsolesProps> = ({
   const vncServiceManual = (vnc && vnc.manual) || undefined;
   const rdpServiceManual = (rdp && rdp.manual) || undefined;
 
-  const vmName = getName(vm);
-  const namespace = getNamespace(vm);
+  const vmName = getName(vm) || getName(vmi);
+  const namespace = getNamespace(vm) || getNamespace(vmi);
   const typeNotSupported =
     (!showVNCOption && type === ConsoleType.VNC) ||
     (!showSerialOption && type === ConsoleType.SERIAL);
@@ -129,7 +131,6 @@ const VMConsoles: React.FC<VMConsolesProps> = ({
       guestAgent={isGuestAgentConnected(vmi)}
     />
   ) : null;
-
   return (
     <Stack hasGutter>
       {showOpenInNewWindow && consoleType && (
@@ -190,6 +191,15 @@ const VMConsoles: React.FC<VMConsolesProps> = ({
           />
         </StackItem>
       )}
+      {!renderVNCConsole && (
+        <StackItem>
+          <Alert
+            isInline
+            variant="danger"
+            title={t('kubevirt-plugin~Console is open on another tab/window')}
+          />
+        </StackItem>
+      )}
       <StackItem>
         <AccessConsoles
           preselectedType={consoleType?.toPatternflyLabel()}
@@ -205,7 +215,15 @@ const VMConsoles: React.FC<VMConsolesProps> = ({
 };
 
 export const VMConsolesWrapper: React.FC<VMConsolesWrapperProps> = (props) => {
-  const { vm: vmProp, vmi, pods, vmStatusBundle, type, showOpenInNewWindow } = props;
+  const {
+    vm: vmProp,
+    vmi,
+    pods,
+    vmStatusBundle,
+    type,
+    showOpenInNewWindow,
+    renderVNCConsole,
+  } = props;
   const vm = asVM(vmProp);
   const services = getLoadedData(props.services);
 
@@ -227,6 +245,7 @@ export const VMConsolesWrapper: React.FC<VMConsolesWrapperProps> = (props) => {
       LoadingComponent={LoadingInline}
       type={type}
       showOpenInNewWindow={showOpenInNewWindow}
+      renderVNCConsole={renderVNCConsole}
     />
   );
 };
@@ -248,7 +267,10 @@ export const VMConsoleFirehose: React.FC<VMTabProps> = ({
   const params = new URLSearchParams(window.location.search);
   const type = ConsoleType.fromString(params.get('type'));
   const namespace = getNamespace(vm);
-
+  const renderVNCConsole = useRenderVNCConsole({
+    vmName: getName(objProp),
+    shouldBeFullScreen: false,
+  });
   const resources = [
     // We probably can not simply match on labels but on Service's spec.selector.[kubevirt/vm] to achieve robust pairing VM-Service.
     // So read all services and filter on frontend.
@@ -275,6 +297,7 @@ export const VMConsoleFirehose: React.FC<VMTabProps> = ({
           pods={pods}
           type={type}
           showOpenInNewWindow={showOpenInNewWindow}
+          renderVNCConsole={renderVNCConsole}
         />
       </Firehose>
     </div>
@@ -289,6 +312,7 @@ type VMConsolesWrapperProps = {
   vmStatusBundle: VMStatusBundle;
   type?: ConsoleType;
   showOpenInNewWindow?: boolean;
+  renderVNCConsole?: boolean;
 };
 
 type VMConsolesProps = {
@@ -301,6 +325,7 @@ type VMConsolesProps = {
   vmStatusBundle: VMStatusBundle;
   type?: ConsoleType;
   showOpenInNewWindow?: boolean;
+  renderVNCConsole?: boolean;
 };
 
 type VMIsStartingProps = {

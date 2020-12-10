@@ -2,6 +2,7 @@ import * as React from 'react';
 import { K8sResourceKind, PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
 import { PersistentVolumeClaimModel, PodModel, ServiceModel } from '@console/internal/models';
 import { getVMStatus } from '../../statuses/vm/vm-status';
+import { getName } from '@console/shared';
 import { VMImportKind } from '../../types/vm-import/ovirt/vm-import';
 import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
 import {
@@ -17,6 +18,8 @@ import { VMConsolesWrapper } from '../vms/vm-console';
 import { getLoadedData } from '../../utils';
 import { ConsoleEmptyState } from './vm-console-empty-state';
 import { ConsoleType } from '../../constants/vm/console-type';
+import { useEventListener } from '../../hooks/use-event-listener';
+import { useRenderVNCConsole } from '../../hooks/use-render-vnc-console';
 
 const ConnectedVMConsole: React.FC<ConnectedVMConsoleProps> = ({
   type,
@@ -36,6 +39,15 @@ const ConnectedVMConsole: React.FC<ConnectedVMConsoleProps> = ({
   const loadedDataVolumes = getLoadedData(dataVolumes);
   const loadedImports = getLoadedData(vmImports);
   const vmi = loadedVMIs?.[0];
+  const vmName = getName(loadedVM) || getName(vmi);
+  useEventListener(window, 'beforeunload', () =>
+    localStorage.removeItem(`isFullScreenVNC-${vmName}`),
+  );
+  const renderVNCConsole = useRenderVNCConsole({
+    vmName,
+    shouldBeFullScreen: true,
+    initValue: true,
+  });
 
   const vmStatusBundle = getVMStatus({
     vm: loadedVM,
@@ -54,6 +66,7 @@ const ConnectedVMConsole: React.FC<ConnectedVMConsoleProps> = ({
       vmStatusBundle={vmStatusBundle}
       pods={loadedPods}
       type={type}
+      renderVNCConsole={renderVNCConsole}
       showOpenInNewWindow={false}
     />
   );
