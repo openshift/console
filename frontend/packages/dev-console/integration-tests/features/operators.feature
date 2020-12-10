@@ -126,3 +126,25 @@ Scenario: Install Web Terminal operator from Operator Hub page
    And user installs the Web Terminal operator with default values
    Then user will see a modal with title "Web Terminal"
    And user will see a View Operator button
+
+
+@regression, @smoke
+Scenario: Install Red Hat Integration - Camel K Operator
+   Given user has installed OpenShift Serverless Operator
+   And user is at Operator Hub page with the header name "OperatorHub"
+   When user searches and installs the Red Hat Integration - Camel K Operator with default values
+   Then user will see a modal with title "Red Hat Integration - Camel K"
+   And user will see a View Operator button
+
+
+@regression, @smoke
+Scenario: Create Integration Platform CR
+   Given user has installed OpenShift Serverless Operator
+   And user has installed Red Hat Integration - Camel K Operator
+   And user has selected "aut-test-kamelets" namespace
+   And user is on Installed Operator page
+   When user clicks on Integration Platform link
+   And user clicks on Create IntegrationPlatform button
+   And user clicks on Create button
+   Then user will be redirected to Integration Platform tab with header "IntegrationPlatforms"
+   And user will see Integration Platform created with name example
