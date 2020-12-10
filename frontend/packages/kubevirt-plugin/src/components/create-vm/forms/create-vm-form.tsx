@@ -285,7 +285,7 @@ export const CreateVMForm: React.FC<CreateVMFormProps> = ({
                       <StackItem>
                         <ExpandableSection toggleText={t('kubevirt-plugin~Disk details')}>
                           {ROOT_DISK_INSTALL_NAME} - {t('kubevirt-plugin~Blank')} - 20GiB -{' '}
-                          {getDefaultDiskBus(template).toString()} -{' '}
+                          {t(getDefaultDiskBus(template).toString())} -{' '}
                           {t('kubevirt-plugin~default Storage class')}
                         </ExpandableSection>
                       </StackItem>

@@ -9,6 +9,8 @@ import {
   TEMPLATE_PARAM_VM_NAME,
   VolumeType,
   ANNOTATION_SOURCE_PROVIDER,
+  VolumeMode,
+  DiskBus,
 } from '../../../../constants';
 import { initializeCommonMetadata, initializeCommonVMMetadata } from './common';
 import { DiskWrapper } from '../../../wrapper/vm/disk-wrapper';
@@ -47,6 +49,7 @@ type GetRootDataVolume = (args: {
   cdRom: boolean;
   accessMode: string;
   provider?: string;
+  volumeMode: string;
 }) => DataVolumeWrapper;
 
 export const getRootDataVolume: GetRootDataVolume = ({
@@ -63,6 +66,7 @@ export const getRootDataVolume: GetRootDataVolume = ({
   cdRom,
   accessMode,
   provider,
+  volumeMode,
 }) => {
   const provisionSource = ProvisionSource.fromString(dataSource);
   const size = provisionSource === ProvisionSource.DISK ? pvcSize : `${sizeValue}${sizeUnit}`;
@@ -73,7 +77,8 @@ export const getRootDataVolume: GetRootDataVolume = ({
       size,
       unit: '',
     })
-    .setAccessModes([AccessMode.fromString(accessMode) || AccessMode.READ_WRITE_ONCE]);
+    .setAccessModes([AccessMode.fromString(accessMode) || AccessMode.READ_WRITE_ONCE])
+    .setVolumeMode(VolumeMode.fromString(volumeMode));
   dataVolume.setType(DataVolumeSourceType.fromString(provisionSource.getValue()), {
     url: provisionSource === ProvisionSource.CONTAINER ? container : url,
     name: pvcName,
@@ -142,11 +147,12 @@ export const createVM = async (
         pvcSize: customSource.pvcSize?.value,
         sizeValue: customSource.size?.value.value,
         sizeUnit: customSource.size?.value.unit,
-        storageClass: customSource.storageClass.value,
+        storageClass: customSource.storageClass?.value,
         url: customSource.url?.value,
+        volumeMode: customSource.volumeMode.value,
       });
     } else if (!isTemplateSourceError(sourceStatus)) {
-      const { accessModes, resources, storageClassName } = sourceStatus.pvc.spec;
+      const { accessModes, resources, storageClassName, volumeMode } = sourceStatus.pvc.spec;
       isCDRom = sourceStatus.isCDRom;
       rootDataVolume = getRootDataVolume({
         name: rootVolume.getDataVolumeName(),
@@ -157,12 +163,16 @@ export const createVM = async (
         dataSource: ProvisionSource.DISK.getValue(),
         pvcSize: resources.requests.storage,
         storageClass: storageClassName,
+        volumeMode,
       });
     }
 
     if (isCDRom) {
-      rootDisk.setType(DiskType.CDROM, { bus: rootDisk.getDiskBus() });
-      vmWrapper.prependStorage(getEmptyInstallStorage(scConfigMap, rootDisk.getDiskBus(), name));
+      const rootDiskBus = rootDisk.getDiskBus();
+      rootDisk.setType(DiskType.CDROM, {
+        bus: rootDiskBus === DiskBus.VIRTIO ? DiskBus.SATA : rootDiskBus,
+      });
+      vmWrapper.prependStorage(getEmptyInstallStorage(scConfigMap, rootDiskBus, name));
       vmWrapper.addAnotation(ANNOTATION_FIRST_BOOT, `${!startVM}`);
     }
     vmWrapper.removeStorage(ROOT_DISK_NAME);
