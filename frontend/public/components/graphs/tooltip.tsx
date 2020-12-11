@@ -43,7 +43,8 @@ export const ChartLegendTooltipContent: React.FunctionComponent<ChartLegendToolt
   theme = getTheme(themeColor, themeVariant),
   ...rest
 }) => {
-  const pointerLength = theme && theme.tooltip ? (theme.tooltip.pointerLength as number) : 10;
+  const pointerLength =
+    theme && theme.tooltip ? Helpers.evaluateProp(theme.tooltip.pointerLength) : 10;
   const legendProps = getLegendTooltipDataProps(legendComponent.props);
   const visibleLegendData = getLegendTooltipVisibleData({
     activePoints,
@@ -231,7 +232,8 @@ export const ChartLegendTooltip: React.FunctionComponent<ChartLegendTooltipProps
   stack,
   ...rest
 }) => {
-  const pointerLength = theme && theme.tooltip ? (theme.tooltip.pointerLength as number) : 10;
+  const pointerLength =
+    theme && theme.tooltip ? Helpers.evaluateProp(theme.tooltip.pointerLength) : 10;
   const ap = stack ? activePoints : activePoints.slice(1);
   const legendTooltipProps = {
     legendData: getLegendTooltipVisibleData({ activePoints: ap, legendData, text, theme }),
