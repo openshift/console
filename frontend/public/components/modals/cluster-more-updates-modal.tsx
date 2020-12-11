@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { ActionGroup, Button } from '@patternfly/react-core';
 
 import {
@@ -20,16 +21,17 @@ export const ClusterMoreUpdatesModal: React.FC<ClusterMoreUpdatesModalProps> = (
   const availableUpdates = getSortedUpdates(cv);
   const moreAvailableUpdates = availableUpdates.slice(1).reverse();
   const releaseNotes = showReleaseNotes();
+  const { t } = useTranslation();
 
   return (
     <div className="modal-content">
-      <ModalTitle>Other Available Paths</ModalTitle>
+      <ModalTitle>{t('modal~Other available paths')}</ModalTitle>
       <ModalBody>
         <table className="table">
           <thead>
             <tr>
-              <th>Version</th>
-              {releaseNotes && <th>Release Notes</th>}
+              <th>{t('modal~Version')}</th>
+              {releaseNotes && <th>{t('modal~Release notes')}</th>}
             </tr>
           </thead>
           <tbody>
@@ -55,7 +57,7 @@ export const ClusterMoreUpdatesModal: React.FC<ClusterMoreUpdatesModalProps> = (
       <ModalFooter inProgress={false}>
         <ActionGroup className="pf-c-form pf-c-form__actions--right pf-c-form__group--no-top-margin">
           <Button type="button" variant="primary" onClick={cancel}>
-            Close
+            {t('Close')}
           </Button>
         </ActionGroup>
       </ModalFooter>
