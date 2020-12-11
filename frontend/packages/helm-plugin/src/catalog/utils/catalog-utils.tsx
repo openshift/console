@@ -5,27 +5,31 @@ import { CatalogItem } from '@console/plugin-sdk';
 import { toTitleCase } from '@console/shared';
 import { ExternalLink } from '@console/internal/components/utils';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { HelmChartEntries, HelmChartMetaData } from '../../types/helm-types';
+import { getChartRepositoryTitle } from '../../utils/helm-utils';
 import HelmReadmeLoader from '../components/HelmReadmeLoader';
 
 export const normalizeHelmCharts = (
   chartEntries: HelmChartEntries,
+  chartRepositories: K8sResourceKind[],
   activeNamespace: string = '',
   t: TFunction,
 ): CatalogItem[] => {
   return _.reduce(
     chartEntries,
     (normalizedCharts, charts, key) => {
-      const chartRepositoryName = key.split('--').pop();
+      const chartRepoName = key.split('--').pop();
+      const chartRepositoryTitle = getChartRepositoryTitle(chartRepositories, chartRepoName);
+
       charts.forEach((chart: HelmChartMetaData) => {
         const { name, digest, created, version, appVersion, description, keywords } = chart;
 
         const displayName = `${toTitleCase(name)} v${version}`;
-        const provider = toTitleCase(chartRepositoryName);
         const imgUrl = chart.icon || getImageForIconClass('icon-helm');
         const chartURL = chart.urls[0];
         const encodedChartURL = encodeURIComponent(chartURL);
-        const href = `/catalog/helm-install?chartName=${name}&chartRepoName=${chartRepositoryName}&chartURL=${encodedChartURL}&preselected-ns=${activeNamespace}`;
+        const href = `/catalog/helm-install?chartName=${name}&chartRepoName=${chartRepoName}&chartURL=${encodedChartURL}&preselected-ns=${activeNamespace}`;
 
         const maintainers = chart.maintainers?.length > 0 && (
           <>
@@ -77,12 +81,12 @@ export const normalizeHelmCharts = (
           type: 'HelmChart',
           name: displayName,
           description,
-          provider,
+          provider: chartRepositoryTitle,
           tags: keywords,
           creationTimestamp: created,
           attributes: {
             name,
-            chartRepositoryName,
+            chartRepositoryTitle,
             version,
           },
           icon: {
@@ -103,7 +107,7 @@ export const normalizeHelmCharts = (
         const existingChartIndex = normalizedCharts.findIndex((currentChart) => {
           return (
             currentChart.attributes?.name === name &&
-            currentChart.attributes?.chartRepositoryName === chartRepositoryName
+            currentChart.attributes?.chartRepositoryTitle === chartRepositoryTitle
           );
         });
 

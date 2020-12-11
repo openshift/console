@@ -92,16 +92,26 @@ export const getChartURL = (
   return chartData?.urls[0];
 };
 
+export const getChartRepositoryTitle = (
+  chartRepositories: K8sResourceKind[],
+  chartRepoName: string,
+) => {
+  const chartRepository = chartRepositories?.find((repo) => repo.metadata.name === chartRepoName);
+  return chartRepository?.spec?.name || toTitleCase(chartRepoName);
+};
+
 export const getChartEntriesByName = (
   chartEntries: HelmChartEntries,
   chartName: string,
   chartRepoName?: string,
+  chartRepositories?: K8sResourceKind[],
 ): HelmChartMetaData[] => {
   if (chartName && chartRepoName) {
+    const chartRepositoryTitle = getChartRepositoryTitle(chartRepositories, chartRepoName);
     return (
       chartEntries?.[`${chartName}--${chartRepoName}`]?.map((e) => ({
         ...e,
-        repoName: chartRepoName,
+        repoName: chartRepositoryTitle,
       })) ?? []
     );
   }
@@ -109,9 +119,10 @@ export const getChartEntriesByName = (
     chartEntries,
     (acc, charts, key) => {
       const repoName = key.split('--').pop();
+      const chartRepositoryTitle = getChartRepositoryTitle(chartRepositories, repoName);
       charts.forEach((chart: HelmChartMetaData) => {
         if (chart.name === chartName) {
-          acc.push({ ...chart, repoName });
+          acc.push({ ...chart, repoName: chartRepositoryTitle });
         }
       });
       return acc;

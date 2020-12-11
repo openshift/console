@@ -20,7 +20,7 @@ export const helmCatalogPlugin: Plugin<HelmCatalogConsumedExtensions> = [
       filters: [
         {
           label: 'Chart Repositories',
-          attribute: 'chartRepositoryName',
+          attribute: 'chartRepositoryTitle',
         },
       ],
     },

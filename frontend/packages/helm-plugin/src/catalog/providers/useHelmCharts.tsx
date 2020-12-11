@@ -4,8 +4,14 @@ import { safeLoad } from 'js-yaml';
 import { coFetch } from '@console/internal/co-fetch';
 import { APIError } from '@console/shared';
 import { CatalogExtensionHook, CatalogItem } from '@console/plugin-sdk';
+import {
+  useK8sWatchResource,
+  WatchK8sResource,
+} from '@console/internal/components/utils/k8s-watch-hook';
+import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { HelmChartEntries } from '../../types/helm-types';
 import { normalizeHelmCharts } from '../utils/catalog-utils';
+import { HelmChartRepositoryModel } from '../../models';
 
 const useHelmCharts: CatalogExtensionHook<CatalogItem[]> = ({
   namespace,
@@ -13,6 +19,15 @@ const useHelmCharts: CatalogExtensionHook<CatalogItem[]> = ({
   const { t } = useTranslation();
   const [helmCharts, setHelmCharts] = React.useState<HelmChartEntries>();
   const [loadedError, setLoadedError] = React.useState<APIError>();
+
+  const resourceSelector: WatchK8sResource = {
+    isList: true,
+    kind: referenceForModel(HelmChartRepositoryModel),
+  };
+
+  const [chartRepositories, chartRepositoriesLoaded] = useK8sWatchResource<K8sResourceKind[]>(
+    resourceSelector,
+  );
 
   React.useEffect(() => {
     coFetch('/api/helm/charts/index.yaml')
@@ -25,11 +40,11 @@ const useHelmCharts: CatalogExtensionHook<CatalogItem[]> = ({
   }, []);
 
   const normalizedHelmCharts: CatalogItem[] = React.useMemo(
-    () => normalizeHelmCharts(helmCharts, namespace, t),
-    [helmCharts, namespace, t],
+    () => normalizeHelmCharts(helmCharts, chartRepositories, namespace, t),
+    [chartRepositories, helmCharts, namespace, t],
   );
 
-  const loaded = !!helmCharts;
+  const loaded = !!helmCharts && chartRepositoriesLoaded;
 
   return [normalizedHelmCharts, loaded, loadedError];
 };

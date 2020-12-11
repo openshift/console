@@ -10,6 +10,11 @@ import { DropdownField } from '@console/shared';
 import { confirmModal } from '@console/internal/components/modals/confirm-modal';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import {
+  useK8sWatchResource,
+  WatchK8sResource,
+} from '@console/internal/components/utils/k8s-watch-hook';
+import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import {
   HelmChartMetaData,
   HelmChart,
   HelmActionType,
@@ -22,7 +27,9 @@ import {
   getChartReadme,
   concatVersions,
   getChartEntriesByName,
+  getChartRepositoryTitle,
 } from '../../../utils/helm-utils';
+import { HelmChartRepositoryModel } from '../../../models';
 
 export type HelmChartVersionDropdownProps = {
   chartVersion: string;
@@ -48,6 +55,12 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
   const [helmChartEntries, setHelmChartEntries] = React.useState<HelmChartMetaData[]>([]);
   const [initialYamlData, setInitialYamlData] = React.useState<string>('');
   const [initialFormData, setInitialFormData] = React.useState<object>();
+
+  const resourceSelector: WatchK8sResource = {
+    isList: true,
+    kind: referenceForModel(HelmChartRepositoryModel),
+  };
+  const [chartRepositories] = useK8sWatchResource<K8sResourceKind[]>(resourceSelector);
 
   const warnOnChartVersionChange = (
     onAccept: ModalCallback,
@@ -106,7 +119,12 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
         if (ignore) return;
       }
       if (ignore) return;
-      const chartEntries = getChartEntriesByName(json?.entries, chartName, chartRepoName);
+      const chartEntries = getChartEntriesByName(
+        json?.entries,
+        chartName,
+        chartRepoName,
+        chartRepositories,
+      );
       setHelmChartEntries(chartEntries);
       setHelmChartVersions(getChartVersions(chartEntries, t));
     };
@@ -114,7 +132,7 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
     return () => {
       ignore = true;
     };
-  }, [chartName, chartRepoName, t]);
+  }, [chartName, chartRepoName, chartRepositories, t]);
 
   const onChartVersionChange = (value: string) => {
     const [version, repoName] = value.split('--');
@@ -167,7 +185,12 @@ const HelmChartVersionDropdown: React.FunctionComponent<HelmChartVersionDropdown
     _.isEmpty(helmChartVersions) && !chartVersion
       ? t('helm-plugin~No versions available')
       : helmChartVersions[`${chartVersion}`] ||
-        concatVersions(chartVersion, appVersion, t, chartRepoName);
+        concatVersions(
+          chartVersion,
+          appVersion,
+          t,
+          getChartRepositoryTitle(chartRepositories, chartRepoName),
+        );
 
   return (
     <GridItem span={6}>

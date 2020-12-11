@@ -19,6 +19,7 @@ import {
   flattenedMockReleaseResources,
   mockChartEntries,
   mockRedhatHelmChartData,
+  mockHelmChartRepositories,
 } from '../../components/__tests__/helm-release-mock-data';
 
 const t = (key: TFunction) => key;
@@ -56,7 +57,7 @@ describe('Helm Releases Utils', () => {
 
   it('should return the helm chart url from ibm repo', () => {
     const chartVersion = '1.0.2';
-    const chartRepoName = 'ibm-helm-repo';
+    const chartRepoName = 'IBM Helm Repo';
     const chartURL = getChartURL(mockHelmChartData, chartVersion, chartRepoName);
     expect(chartURL).toBe(
       'https://raw.githubusercontent.com/IBM/charts/master/repo/community/hazelcast-enterprise-1.0.2.tgz',
@@ -65,7 +66,7 @@ describe('Helm Releases Utils', () => {
 
   it('should return the helm chart url from redhat repo', () => {
     const chartVersion = '1.0.1';
-    const chartRepoName = 'redhat-helm-repo';
+    const chartRepoName = 'Red Hat Helm Repo';
     const chartURL = getChartURL(mockHelmChartData, chartVersion, chartRepoName);
     expect(chartURL).toBe(
       'https://raw.githubusercontent.com/redhat-helm-charts/master/repo/stable/hazelcast-enterprise-1.0.1.tgz',
@@ -75,13 +76,13 @@ describe('Helm Releases Utils', () => {
   it('should return the chart versions, concatenated with the App Version, available for the helm chart', () => {
     const chartVersions = getChartVersions(mockHelmChartData, t);
     expect(chartVersions).toEqual({
-      '1.0.1--ibm-helm-repo':
+      '1.0.1--IBM Helm Repo':
         '1.0.1helm-plugin~ / App Version {{appVersion}}helm-plugin~ (Provided by {{chartRepoName}})',
-      '1.0.1--redhat-helm-repo':
+      '1.0.1--Red Hat Helm Repo':
         '1.0.1helm-plugin~ / App Version {{appVersion}}helm-plugin~ (Provided by {{chartRepoName}})',
-      '1.0.2--ibm-helm-repo': '1.0.2helm-plugin~ (Provided by {{chartRepoName}})',
-      '1.0.2--redhat-helm-repo': '1.0.2helm-plugin~ (Provided by {{chartRepoName}})',
-      '1.0.3--ibm-helm-repo':
+      '1.0.2--IBM Helm Repo': '1.0.2helm-plugin~ (Provided by {{chartRepoName}})',
+      '1.0.2--Red Hat Helm Repo': '1.0.2helm-plugin~ (Provided by {{chartRepoName}})',
+      '1.0.3--IBM Helm Repo':
         '1.0.3helm-plugin~ / App Version {{appVersion}}helm-plugin~ (Provided by {{chartRepoName}})',
     });
   });
@@ -91,20 +92,38 @@ describe('Helm Releases Utils', () => {
       mockChartEntries,
       'hazelcast-enterprise',
       'redhat-helm-repo',
+      mockHelmChartRepositories,
     );
     expect(chartEntries).toEqual(mockRedhatHelmChartData);
   });
 
   it('should return chart entries by name from all repos if repo name not provided', () => {
-    const chartEntries = getChartEntriesByName(mockChartEntries, 'hazelcast-enterprise');
+    const chartEntries = getChartEntriesByName(
+      mockChartEntries,
+      'hazelcast-enterprise',
+      '',
+      mockHelmChartRepositories,
+    );
     expect(chartEntries).toEqual(mockHelmChartData);
   });
 
   it('should return empty array if wrong chart name or repo name provided', () => {
     expect(
-      getChartEntriesByName(mockChartEntries, 'hazelcast-enterprise', 'stable-helm-repo'),
+      getChartEntriesByName(
+        mockChartEntries,
+        'hazelcast-enterprise',
+        'stable-helm-repo',
+        mockHelmChartRepositories,
+      ),
     ).toEqual([]);
-    expect(getChartEntriesByName(mockChartEntries, 'hazelcast-enterprise-prod')).toEqual([]);
+    expect(
+      getChartEntriesByName(
+        mockChartEntries,
+        'hazelcast-enterprise-prod',
+        '',
+        mockHelmChartRepositories,
+      ),
+    ).toEqual([]);
   });
 
   it('should omit resources with no data and flatten them', () => {
