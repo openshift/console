@@ -95,6 +95,19 @@ kubectl create secret generic helm-tls-configs \
   -n openshift-config
 ```
 
+### Disable Helm chart repository
+
+We can disable listing helm charts in the catalog by adding `disabled` flag.
+
+```yaml
+spec:
+  connectionConfig:
+    url: https://my-private-repo.foo.local
+  disabled: true
+```
+
+By adding `disabled` flag in the CR, we are disabling helm chart listing from `https://my-private-repo.foo.local` repository. 
+
 ### Multiple Chart Repository Support
 
 Adding multiple instances of `HelmChartRepository` is supported. As the result, `/api/helm/charts/index.yaml`
