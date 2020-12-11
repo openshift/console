@@ -104,15 +104,16 @@ type Install struct {
 
 // ChartPathOptions captures common options used for controlling chart paths
 type ChartPathOptions struct {
-	CaFile   string // --ca-file
-	CertFile string // --cert-file
-	KeyFile  string // --key-file
-	Keyring  string // --keyring
-	Password string // --password
-	RepoURL  string // --repo
-	Username string // --username
-	Verify   bool   // --verify
-	Version  string // --version
+	CaFile                string // --ca-file
+	CertFile              string // --cert-file
+	KeyFile               string // --key-file
+	InsecureSkipTLSverify bool   // --insecure-skip-verify
+	Keyring               string // --keyring
+	Password              string // --password
+	RepoURL               string // --repo
+	Username              string // --username
+	Verify                bool   // --verify
+	Version               string // --version
 }
 
 // NewInstall creates a new Install object with the given configuration.
@@ -644,6 +645,7 @@ func (c *ChartPathOptions) LocateChart(name string, settings *cli.EnvSettings) (
 		Options: []getter.Option{
 			getter.WithBasicAuth(c.Username, c.Password),
 			getter.WithTLSClientConfig(c.CertFile, c.KeyFile, c.CaFile),
+			getter.WithInsecureSkipVerifyTLS(c.InsecureSkipTLSverify),
 		},
 		RepositoryConfig: settings.RepositoryConfig,
 		RepositoryCache:  settings.RepositoryCache,
@@ -652,8 +654,8 @@ func (c *ChartPathOptions) LocateChart(name string, settings *cli.EnvSettings) (
 		dl.Verify = downloader.VerifyAlways
 	}
 	if c.RepoURL != "" {
-		chartURL, err := repo.FindChartInAuthRepoURL(c.RepoURL, c.Username, c.Password, name, version,
-			c.CertFile, c.KeyFile, c.CaFile, getter.All(settings))
+		chartURL, err := repo.FindChartInAuthAndTLSRepoURL(c.RepoURL, c.Username, c.Password, name, version,
+			c.CertFile, c.KeyFile, c.CaFile, c.InsecureSkipTLSverify, getter.All(settings))
 		if err != nil {
 			return "", err
 		}
@@ -675,5 +677,9 @@ func (c *ChartPathOptions) LocateChart(name string, settings *cli.EnvSettings) (
 		return filename, err
 	}
 
-	return filename, errors.Errorf("failed to download %q (hint: running `helm repo update` may help)", name)
+	atVersion := ""
+	if version != "" {
+		atVersion = fmt.Sprintf(" at version %q", version)
+	}
+	return filename, errors.Errorf("failed to download %q%s (hint: running `helm repo update` may help)", name, atVersion)
 }

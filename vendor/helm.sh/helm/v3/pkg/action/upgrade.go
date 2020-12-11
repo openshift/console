@@ -115,7 +115,7 @@ func (u *Upgrade) Run(name string, chart *chart.Chart, vals map[string]interface
 	// the user doesn't have to specify both
 	u.Wait = u.Wait || u.Atomic
 
-	if err := validateReleaseName(name); err != nil {
+	if err := chartutil.ValidateReleaseName(name); err != nil {
 		return nil, errors.Errorf("release name is invalid: %s", name)
 	}
 	u.cfg.Log("preparing upgrade for %s", name)
@@ -142,18 +142,6 @@ func (u *Upgrade) Run(name string, chart *chart.Chart, vals map[string]interface
 	return res, nil
 }
 
-func validateReleaseName(releaseName string) error {
-	if releaseName == "" {
-		return errMissingRelease
-	}
-
-	if !ValidName.MatchString(releaseName) || (len(releaseName) > releaseNameMaxLen) {
-		return errInvalidName
-	}
-
-	return nil
-}
-
 // prepareUpgrade builds an upgraded release for an upgrade operation.
 func (u *Upgrade) prepareUpgrade(name string, chart *chart.Chart, vals map[string]interface{}) (*release.Release, *release.Release, error) {
 	if chart == nil {
@@ -168,6 +156,11 @@ func (u *Upgrade) prepareUpgrade(name string, chart *chart.Chart, vals map[strin
 			return nil, nil, driver.NewErrNoDeployedReleases(name)
 		}
 		return nil, nil, err
+	}
+
+	// Concurrent `helm upgrade`s will either fail here with `errPending` or when creating the release with "already exists". This should act as a pessimistic lock.
+	if lastRelease.Info.Status.IsPending() {
+		return nil, nil, errPending
 	}
 
 	var currentRelease *release.Release

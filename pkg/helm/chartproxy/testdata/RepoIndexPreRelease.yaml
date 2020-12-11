@@ -39,7 +39,7 @@ entries:
       maintainers:
         - name: IBM
       name: ibm-cpq-prod
-      response:
+      urls:
         - https://redhat-developer.github.com/redhat-helm-charts/charts/ibm-cpq-prod-2.0.0.tgz
       version: 2.0.0
   ibm-operator-catalog-enablement:
@@ -72,7 +72,7 @@ entries:
         - name: IBM
       name: ibm-operator-catalog-enablement
       type: application
-      response:
+      urls:
         - https://redhat-developer.github.com/redhat-helm-charts/charts/ibm-operator-catalog-enablement-1.0.0.tgz
       version: 1.0.0
 generated: "2020-03-30T16:27:13.4275217-05:00"
