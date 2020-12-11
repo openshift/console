@@ -279,7 +279,7 @@ export const CreateVMForm: React.FC<CreateVMFormProps> = ({
                         <BlueInfoCircleIcon className="co-icon-space-r" />
                         {cdRomText ||
                           t(
-                            'kubevirt-plugin~A new disk has been added to support this ISO source. Edit this disk by customizing the virtual machine.',
+                            'kubevirt-plugin~A new disk has been added to support the CD-ROM boot source. Edit this disk by customizing the virtual machine.',
                           )}
                       </StackItem>
                       <StackItem>

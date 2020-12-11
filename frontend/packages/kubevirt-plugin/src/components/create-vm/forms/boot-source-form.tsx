@@ -321,7 +321,7 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({
           isDisabled={disabled}
           label={
             <>
-              {t('kubevirt-plugin~Mount this source as CD-ROM')}
+              {t('kubevirt-plugin~Mount this as a CD-ROM boot source')}
               <Popover
                 position={PopoverPosition.top}
                 aria-label={t('kubevirt-plugin~CDROM help')}
