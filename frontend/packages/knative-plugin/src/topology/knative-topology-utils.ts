@@ -576,8 +576,9 @@ export const createPubSubDataItems = (
           kind: trigger?.spec?.subscriber?.ref?.kind,
         });
         const knServiceAdded =
-          tData.ksservices.filter((ksvc) => ksvc.metadata.name === knService.metadata.name).length >
-          0;
+          knService &&
+          tData.ksservices?.filter((ksvc) => ksvc.metadata.name === knService.metadata.name)
+            .length > 0;
         if (name === brokerName) {
           tData.triggers = [...tData.triggers, trigger];
           tData.ksservices =
@@ -750,7 +751,7 @@ export const getTriggerTopologyEdgeItems = (broker: K8sResourceKind, resources):
   _.forEach(triggers?.data, (trigger) => {
     const brokerName = trigger?.spec?.broker;
     const connectedService = trigger.spec?.subscriber?.ref?.name;
-    if (name === brokerName && ksservices) {
+    if (name === brokerName && ksservices?.data.length > 0) {
       const knativeService = _.find(ksservices.data as K8sResourceKind[], {
         metadata: { name: connectedService },
       });
@@ -791,10 +792,10 @@ export const getSubscriptionTopologyEdgeItems = (
   const edges = [];
   _.forEach(eventingsubscription?.data, (subRes) => {
     const channelData = subRes?.spec?.channel;
-    if (name === channelData?.name && kind === channelData?.kind && ksservices) {
+    if (name === channelData?.name && kind === channelData?.kind && ksservices?.data.length > 0) {
       const svcData = subRes?.spec?.subscriber?.ref;
       svcData &&
-        _.forEach(ksservices?.data, (res) => {
+        _.forEach(ksservices.data, (res) => {
           const {
             metadata: { uid: resUid, name: resName },
           } = res;
