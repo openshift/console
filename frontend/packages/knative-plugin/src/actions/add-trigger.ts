@@ -5,6 +5,7 @@ import { addPubSubConnectionModal } from '../components/pub-sub/PubSubModalLaunc
 
 export const addTrigger = (model: K8sKind, source: K8sResourceKind): KebabOption => {
   return {
+    // t('knative-plugin~Add Trigger')
     labelKey: 'knative-plugin~Add Trigger',
     callback: () =>
       addPubSubConnectionModal({

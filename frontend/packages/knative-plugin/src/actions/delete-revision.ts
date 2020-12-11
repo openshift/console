@@ -4,6 +4,7 @@ import { deleteRevisionModal } from '../components/modals';
 
 export const deleteRevision = (model: K8sKind, revision: K8sResourceKind): KebabOption => {
   return {
+    // t('knative-plugin~Delete Revision')
     labelKey: 'knative-plugin~Delete Revision',
     callback: () =>
       deleteRevisionModal({

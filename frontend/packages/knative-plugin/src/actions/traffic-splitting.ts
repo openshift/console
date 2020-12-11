@@ -4,6 +4,7 @@ import { setTrafficDistributionModal } from '../components/modals';
 
 export const setTrafficDistribution = (model: K8sKind, obj: K8sResourceKind): KebabOption => {
   return {
+    // t('knative-plugin~Set traffic distribution')
     labelKey: 'knative-plugin~Set traffic distribution',
     callback: () =>
       setTrafficDistributionModal({
