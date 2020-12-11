@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
+import * as classnames from 'classnames';
+import { Trans, useTranslation } from 'react-i18next';
 import * as fuzzy from 'fuzzysearch';
 import { PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
 import { CatalogTile } from '@patternfly/react-catalog-view-extension';
@@ -80,8 +81,10 @@ export const TemplateTile: React.FC<TemplateTileProps> = ({
 
   return (
     <CatalogTile
-      featured={isSelected}
-      className="kv-select-template__tile"
+      featured={false}
+      className={classnames('kv-select-template__tile', {
+        'pf-m-selectable pf-m-selected': isSelected,
+      })}
       icon={<img src={getTemplateOSIcon(template)} alt="" />}
       badges={[isPinned && <PinnedIcon />, <VMTemplateLabel template={template} />]}
       title={
@@ -97,30 +100,28 @@ export const TemplateTile: React.FC<TemplateTileProps> = ({
         <TemplateSource loadError={false} loaded template={template} sourceStatus={sourceStatus} />
       }
     >
-      <Stack>
+      <Stack hasGutter className="kv-select-template__tile-desc">
+        {osName && <StackItem>{osName}</StackItem>}
         <StackItem>
-          {t('kubevirt-plugin~Project: {{ namespace }}', {
-            namespace: template.metadata.namespace,
-          })}
+          <Stack>
+            <StackItem>
+              <b>{t('kubevirt-plugin~Project ')}</b>
+              {template.metadata.namespace}
+            </StackItem>
+            <StackItem>
+              <b>{t('kubevirt-plugin~Type ')}</b>
+              {workloadProfile}
+            </StackItem>
+            <StackItem>
+              <b>{t('kubevirt-plugin~Flavor ')}</b>
+              {getTemplateFlavorDesc(template)}
+            </StackItem>
+            <StackItem>
+              <b>{t('kubevirt-plugin~Storage ')}</b>
+              {getTemplateSizeRequirement(template, sourceStatus)}
+            </StackItem>
+          </Stack>
         </StackItem>
-        <StackItem>{t('kubevirt-plugin~Type: {{workloadProfile}}', { workloadProfile })}</StackItem>
-        <StackItem>
-          {t('kubevirt-plugin~Flavor: {{ flavor }}', {
-            flavor: getTemplateFlavorDesc(template),
-          })}
-        </StackItem>
-        <StackItem>
-          {t('kubevirt-plugin~Storage: {{ storage }}', {
-            storage: getTemplateSizeRequirement(template, sourceStatus),
-          })}
-        </StackItem>
-        {osName && (
-          <StackItem>
-            {t('kubevirt-plugin~OS: {{ osName }}', {
-              osName,
-            })}
-          </StackItem>
-        )}
       </Stack>
     </CatalogTile>
   );
@@ -237,10 +238,15 @@ export const SelectTemplate: React.FC<SelectTemplateProps> = ({
             </Title>
           </StackItem>
           <StackItem>
-            {t(
-              'kubevirt-plugin~Only templates with valid boot source will be shown. The virtual machine can be customized from the review step.',
-            )}
+            <div>
+              <Trans t={t} ns="kubevirt-plugin">
+                The virtual machine can be customized from the <b>review and create</b> step.
+              </Trans>
+            </div>
             <VMTemplateSupport />
+            <div>
+              <b>{t('kubevirt-plugin~Only templates with a valid boot source will be shown.')}</b>
+            </div>
           </StackItem>
           {templatePreselectError && (
             <StackItem>
@@ -248,11 +254,7 @@ export const SelectTemplate: React.FC<SelectTemplateProps> = ({
             </StackItem>
           )}
           <StackItem>
-            <Toolbar
-              className="kv-select-template__toolbar"
-              collapseListedFiltersBreakpoint="xl"
-              clearAllFilters={clearFilter}
-            >
+            <Toolbar collapseListedFiltersBreakpoint="xl" clearAllFilters={clearFilter}>
               <ToolbarContent>
                 <ToolbarGroup variant="filter-group">
                   <Split hasGutter>
@@ -367,6 +369,7 @@ export const SelectTemplate: React.FC<SelectTemplateProps> = ({
           label={t('kubevirt-plugin~Resources')}
         >
           <VirtualizedGrid
+            className="kv-select-template__grid"
             items={filteredItems}
             renderCell={renderTile}
             cellWidth={300}

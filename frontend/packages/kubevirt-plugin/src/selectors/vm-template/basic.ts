@@ -52,15 +52,15 @@ export const getTemplateProvider = (
   template: TemplateKind,
   withProviderPrefix = false,
 ): string => {
-  const provider = getAnnotation(template, TEMPLATE_PROVIDER_ANNOTATION);
+  let provider = getAnnotation(template, TEMPLATE_PROVIDER_ANNOTATION);
+  if (!provider && isCommonTemplate(template)) {
+    const isUpstream = window.SERVER_FLAGS.branding === 'okd';
+    provider = isUpstream ? 'KubeVirt' : 'Red Hat';
+  }
   if (provider) {
     return withProviderPrefix
       ? t('kubevirt-plugin~Provided by {{provider}}', { provider })
       : t('kubevirt-plugin~{{provider}}', { provider });
-  }
-  if (isCommonTemplate(template)) {
-    const isUpstream = window.SERVER_FLAGS.branding === 'okd';
-    return isUpstream ? 'KubeVirt' : 'Red Hat';
   }
   return withProviderPrefix ? t('kubevirt-plugin~Provided by User') : t('kubevirt-plugin~User');
 };
