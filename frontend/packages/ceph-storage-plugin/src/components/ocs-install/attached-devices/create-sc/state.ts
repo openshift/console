@@ -1,5 +1,6 @@
 import { HostNamesMap } from '@console/local-storage-operator-plugin/src/components/auto-detect-volume/types';
-import { diskTypeDropdownItems, diskModeDropdownItems } from '../../../../constants';
+import { diskModeDropdownItems } from '../../../../constants';
+import { diskTypeDropdownItems } from '@console/local-storage-operator-plugin/src/constants';
 
 export const initialState: State = {
   // states for step 1
@@ -12,7 +13,7 @@ export const initialState: State = {
   volumeSetName: '',
   storageClassName: '',
   showNodesListOnLVS: false,
-  diskType: diskTypeDropdownItems.SSD,
+  diskType: diskTypeDropdownItems.All,
   diskMode: diskModeDropdownItems.BLOCK,
   maxDiskLimit: '',
   nodeNames: [], // nodes selected on the LVS step

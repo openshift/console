@@ -1,8 +1,8 @@
 import { apiVersionForModel } from '@console/internal/module/k8s';
 import { LocalVolumeSetModel } from '../../models';
-import { LocalVolumeSetKind, DiskType, DiskMechanicalProperties } from './types';
+import { LocalVolumeSetKind, DiskType } from './types';
 import { State } from './state';
-import { HOSTNAME_LABEL_KEY, LABEL_OPERATOR } from '../../constants';
+import { DISK_TYPES, HOSTNAME_LABEL_KEY, LABEL_OPERATOR } from '../../constants';
 import { getNodes, getHostNames } from '../../utils';
 
 export const getLocalVolumeSetRequestData = (state: State, ns: string): LocalVolumeSetKind => {
@@ -16,10 +16,6 @@ export const getLocalVolumeSetRequestData = (state: State, ns: string): LocalVol
       volumeMode: state.diskMode,
       deviceInclusionSpec: {
         deviceTypes: [DiskType.RawDisk, DiskType.Partition],
-        deviceMechanicalProperties:
-          state.diskType === 'HDD'
-            ? [DiskMechanicalProperties[state.diskType]]
-            : [DiskMechanicalProperties.SSD],
       },
       nodeSelector: {
         nodeSelectorTerms: [
@@ -42,6 +38,11 @@ export const getLocalVolumeSetRequestData = (state: State, ns: string): LocalVol
     requestData.spec.deviceInclusionSpec.minSize = `${state.minDiskSize}${state.diskSizeUnit}`;
   if (state.maxDiskSize)
     requestData.spec.deviceInclusionSpec.maxSize = `${state.maxDiskSize}${state.diskSizeUnit}`;
+  if (DISK_TYPES[state.diskType]?.property) {
+    requestData.spec.deviceInclusionSpec.deviceMechanicalProperties = [
+      DISK_TYPES[state.diskType].property,
+    ];
+  }
 
   return requestData;
 };
