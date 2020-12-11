@@ -7,8 +7,8 @@ import { usePrometheusRulesPoll } from '@console/internal/components/graphs/prom
 import { getAlertsAndRules } from '@console/internal/components/monitoring/utils';
 import { TopologyResourcesObject, TrafficData } from '../topology-types';
 import { ModelContext, ExtensibleModel } from './ModelContext';
-import { baseDataModelGetter } from './data-transformer';
 import { getFilterById, SHOW_GROUPS_FILTER_ID, useDisplayFilters } from '../filters';
+import { updateTopologyDataModel } from './updateTopologyDataModel';
 
 type TopologyDataRetrieverProps = {
   trafficData?: TrafficData;
@@ -54,43 +54,13 @@ const TopologyDataRetriever: React.FC<TopologyDataRetrieverProps> = ({ trafficDa
   }, [namespace]);
 
   React.useEffect(() => {
-    const { extensionsLoaded, watchedResources } = dataModelContext;
-    if (!extensionsLoaded) {
-      return;
-    }
-
-    if (!Object.keys(resources).every((key) => resources[key].loaded)) {
-      return;
-    }
-
-    const loadErrorKey = Object.keys(resources).find(
-      (key) => resources[key].loadError && !watchedResources[key].optional,
-    );
-    dataModelContext.loadError = loadErrorKey && resources[loadErrorKey].loadError;
-    if (loadErrorKey) {
-      return;
-    }
-
-    // Get Workload objects from extensions
-    const workloadResources = dataModelContext.getWorkloadResources(resources);
-
-    // Get model from each extension
-    const depicters = dataModelContext.dataModelDepicters;
-    dataModelContext
-      .getExtensionModels(resources)
-      .then((extensionsModel) => {
-        const fullModel = baseDataModelGetter(
-          extensionsModel,
-          dataModelContext.namespace,
-          resources,
-          workloadResources,
-          showGroups ? depicters : [],
-          trafficData,
-          monitoringAlerts,
-        );
-        dataModelContext.reconcileModel(fullModel, resources);
-        dataModelContext.loaded = true;
-        dataModelContext.model = fullModel;
+    updateTopologyDataModel(dataModelContext, resources, showGroups, trafficData, monitoringAlerts)
+      .then((res) => {
+        dataModelContext.loadError = res.loadError;
+        if (res.loaded) {
+          dataModelContext.loaded = true;
+          dataModelContext.model = res.model;
+        }
       })
       .catch(() => {});
   }, [resources, trafficData, dataModelContext, monitoringAlerts, showGroups]);
