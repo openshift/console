@@ -21,6 +21,7 @@ import { useUserSettingsCompatibility } from '@console/shared/src/hooks/useUserS
 import { TourActions, TOUR_LOCAL_STORAGE_KEY } from './const';
 import { filterTourBasedonPermissionAndFlag } from './utils';
 import { TourDataType, Step } from './type';
+import { useActivePerspective } from '@console/shared/src/hooks/useActivePerspective';
 
 type TourStateAction = { type: TourActions; payload?: { completed?: boolean } };
 export const tourReducer = (state: TourState, action: TourStateAction) => {
@@ -120,7 +121,7 @@ export const useTourValuesForContext = (): TourContextType => {
   // declaring a method for the perspective instead of using getActivePerspective
   // because importing getActivePerspective in this file throws error
   // Uncaught ReferenceError: Cannot access 'allModels' before initialization and this hook is used in plugin extension for ContextProvider
-  const activePerspective = useSelector(({ UI }: RootState): string => UI.get('activePerspective'));
+  const [activePerspective] = useActivePerspective();
   const [perspective, setPerspective] = useState<string>(activePerspective);
   const tourExtension = useExtensions<GuidedTour>(isGuidedTour);
   const tour = tourExtension.find(({ properties }) => properties.perspective === perspective);

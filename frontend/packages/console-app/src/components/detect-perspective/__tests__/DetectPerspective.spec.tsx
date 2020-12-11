@@ -2,12 +2,11 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import { InternalDetectPerspective } from '../DetectPerspective';
 import PerspectiveDetector from '../PerspectiveDetector';
-import { useValuesForPerspectiveContext } from '../perspective-context';
+import { useValuesForPerspectiveContext } from '../useValuesForPerspectiveContext';
 
 const MockApp = () => <h1>App</h1>;
 
-jest.mock('../perspective-context', () => ({
-  ...require.requireActual('../perspective-context'),
+jest.mock('../useValuesForPerspectiveContext', () => ({
   useValuesForPerspectiveContext: jest.fn(),
 }));
 

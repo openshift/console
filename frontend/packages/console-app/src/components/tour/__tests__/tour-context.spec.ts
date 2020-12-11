@@ -6,6 +6,10 @@ import * as TourModule from '../tour-context';
 import { TourActions } from '../const';
 import { TourDataType } from '../type';
 
+jest.mock('@console/shared/src/hooks/useActivePerspective', () => ({
+  useActivePerspective: () => ['dev', jest.fn()],
+}));
+
 const { tourReducer, useTourValuesForContext, useTourStateForPerspective } = TourModule;
 
 describe('guided-tour-context', () => {
@@ -69,10 +73,13 @@ describe('guided-tour-context', () => {
     });
 
     it('should return context values from the hook', () => {
-      spyOn(redux, 'useSelector').and.returnValues('dev', { A: true, B: false }, 'dev', {
-        A: true,
-        B: false,
-      });
+      spyOn(redux, 'useSelector').and.returnValues(
+        { A: true, B: false },
+        {
+          A: true,
+          B: false,
+        },
+      );
       spyOn(plugins, 'useExtensions').and.returnValue(mockTourExtension);
       spyOn(TourModule, 'useTourStateForPerspective').and.returnValue([
         { completed: false },
@@ -96,10 +103,13 @@ describe('guided-tour-context', () => {
     });
 
     it('should return tour null from the hook', () => {
-      spyOn(redux, 'useSelector').and.returnValues('dev', { A: true, B: false }, 'dev', {
-        A: true,
-        B: false,
-      });
+      spyOn(redux, 'useSelector').and.returnValues(
+        { A: true, B: false },
+        {
+          A: true,
+          B: false,
+        },
+      );
       spyOn(plugins, 'useExtensions').and.returnValue([]);
       spyOn(TourModule, 'useTourStateForPerspective').and.returnValue([
         { completed: false },
@@ -116,10 +126,13 @@ describe('guided-tour-context', () => {
     });
 
     it('should return null from the hook if tour is available but data isnot loaded', () => {
-      spyOn(redux, 'useSelector').and.returnValues('dev', { A: true, B: false }, 'dev', {
-        A: true,
-        B: false,
-      });
+      spyOn(redux, 'useSelector').and.returnValues(
+        { A: true, B: false },
+        {
+          A: true,
+          B: false,
+        },
+      );
       spyOn(plugins, 'useExtensions').and.returnValue(mockTourExtension);
       spyOn(TourModule, 'useTourStateForPerspective').and.returnValue([
         { completed: false },

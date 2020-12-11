@@ -22,6 +22,9 @@ const popperOptions: PopperOptions = {
     preventOverflow: {
       enabled: false,
     },
+    flip: {
+      enabled: false,
+    },
   },
 };
 
@@ -36,7 +39,7 @@ const InteractiveSpotlight: React.FC<InteractiveSpotlightProps> = ({ element }) 
   React.useEffect(() => {
     if (!clicked) {
       if (!isInViewport(element)) {
-        element.scrollIntoView();
+        element.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
       }
       const handleClick = () => setClicked(true);
       document.addEventListener('click', handleClick);
