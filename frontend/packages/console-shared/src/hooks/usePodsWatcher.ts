@@ -2,7 +2,9 @@ import * as React from 'react';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { getPodsDataForResource, getResourcesToWatchForPods } from '../utils';
+import { useDeepCompareMemoize } from './deep-compare-memoize';
 import { PodRCData } from '../types';
+import { useDebounceCallback } from './debounce';
 
 export const usePodsWatcher = (
   resource: K8sResourceKind,
@@ -21,22 +23,33 @@ export const usePodsWatcher = (
 
   const resources = useK8sWatchResources(watchedResources);
 
-  React.useEffect(() => {
-    const errorKey = Object.keys(resources).find((key) => resources[key].loadError);
-    if (errorKey) {
-      setLoadError(resources[errorKey].loadError);
-      return;
-    }
-    setLoadError('');
-    if (
-      Object.keys(resources).length > 0 &&
-      Object.keys(resources).every((key) => resources[key].loaded)
-    ) {
-      const updatedPods = getPodsDataForResource(resource, watchKind, resources);
-      setPodData(updatedPods);
-      setLoaded(true);
-    }
-  }, [watchKind, resource, resources]);
+  const updateResults = React.useCallback(
+    (updatedResources) => {
+      const errorKey = Object.keys(updatedResources).find((key) => updatedResources[key].loadError);
+      if (errorKey) {
+        setLoadError(updatedResources[errorKey].loadError);
+        return;
+      }
+      setLoadError('');
+      if (
+        Object.keys(updatedResources).length > 0 &&
+        Object.keys(updatedResources).every((key) => updatedResources[key].loaded)
+      ) {
+        const updatedPods = getPodsDataForResource(resource, watchKind, updatedResources);
+        setPodData(updatedPods);
+        setLoaded(true);
+      }
+    },
+    // Don't update on a resource change, we want the debounce callback to be consistent
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [watchKind],
+  );
 
-  return { loaded, loadError, podData };
+  const debouncedUpdateResources = useDebounceCallback<any>(updateResults, [updateResults], 250);
+
+  React.useEffect(() => {
+    debouncedUpdateResources(resources);
+  }, [debouncedUpdateResources, resources, updateResults]);
+
+  return useDeepCompareMemoize({ loaded, loadError, podData });
 };

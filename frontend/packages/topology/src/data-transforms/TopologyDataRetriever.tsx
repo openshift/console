@@ -2,12 +2,13 @@ import * as React from 'react';
 import {
   useK8sWatchResources,
   WatchK8sResources,
+  WatchK8sResults,
 } from '@console/internal/components/utils/k8s-watch-hook';
-import { usePrometheusRulesPoll } from '@console/internal/components/graphs/prometheus-rules-hook';
-import { getAlertsAndRules } from '@console/internal/components/monitoring/utils';
+import { useDebounceCallback } from '@console/shared';
 import { TopologyResourcesObject, TrafficData } from '../topology-types';
 import { ModelContext, ExtensibleModel } from './ModelContext';
 import { getFilterById, SHOW_GROUPS_FILTER_ID, useDisplayFilters } from '../filters';
+import { useMonitoringAlerts } from './useMonitoringAlerts';
 import { updateTopologyDataModel } from './updateTopologyDataModel';
 
 type TopologyDataRetrieverProps = {
@@ -18,34 +19,21 @@ const TopologyDataRetriever: React.FC<TopologyDataRetrieverProps> = ({ trafficDa
   const dataModelContext = React.useContext<ExtensibleModel>(ModelContext);
   const { namespace } = dataModelContext;
   const filters = useDisplayFilters();
+  const [resources, setResources] = React.useState<WatchK8sResults<TopologyResourcesObject>>();
+  const monitoringAlerts = useMonitoringAlerts(namespace);
   const showGroups = getFilterById(SHOW_GROUPS_FILTER_ID, filters)?.value ?? true;
   const resourcesList = React.useMemo<WatchK8sResources<any>>(
     () => (namespace && dataModelContext.extensionsLoaded ? dataModelContext.watchedResources : {}),
     [dataModelContext.extensionsLoaded, dataModelContext.watchedResources, namespace],
   );
 
-  const resources = useK8sWatchResources<TopologyResourcesObject>(resourcesList);
-  const [alertsResponse, alertsError, alertsLoading] = usePrometheusRulesPoll({ namespace });
-  const monitoringAlerts = React.useMemo(() => {
-    let alertData;
-    if (!alertsLoading && !alertsError) {
-      alertData = getAlertsAndRules(alertsResponse?.data).alerts;
+  const debouncedUpdateResources = useDebounceCallback<any>(setResources, [setResources], 250);
 
-      // Don't update due to time changes
-      alertData.forEach((alert) => {
-        delete alert.activeAt;
-        if (alert.rule) {
-          delete alert.rule.evaluationTime;
-          delete alert.rule.lastEvaluation;
-          alert.rule.alerts &&
-            alert.rule.alerts.forEach((ruleAlert) => {
-              delete ruleAlert.activeAt;
-            });
-        }
-      });
-    }
-    return { data: alertData, loaded: !alertsLoading, loadError: alertsError };
-  }, [alertsError, alertsLoading, alertsResponse]);
+  const updatedResources = useK8sWatchResources<TopologyResourcesObject>(resourcesList);
+  React.useEffect(() => debouncedUpdateResources(updatedResources), [
+    debouncedUpdateResources,
+    updatedResources,
+  ]);
 
   // Wipe the current model on a namespace change
   React.useEffect(() => {
