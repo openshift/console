@@ -12,7 +12,7 @@ import {
 import { AsyncComponent } from '@console/internal/components/utils';
 import { useScrollDirection, ScrollDirection } from '@console/shared/';
 import { QuickStart } from './utils/quick-start-types';
-import './QuickStartDrawer.scss';
+import './QuickStartPanelContent.scss';
 
 type HandleClose = () => void;
 
