@@ -103,6 +103,7 @@
     "ajv": "^6.12.3",
     "apollo-cache-inmemory": "^1.6.5",
     "apollo-client": "^2.6.8",
+    "apollo-link-http": "^1.0.20",
     "apollo-link-ws": "^1.0.20",
     "axios": "^0.19.2",
     "classnames": "2.x",
