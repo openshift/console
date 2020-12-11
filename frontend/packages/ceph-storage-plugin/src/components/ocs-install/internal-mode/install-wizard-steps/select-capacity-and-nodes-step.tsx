@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import {
   Grid,
@@ -8,29 +9,45 @@ import {
   Text,
   TextVariants,
   TextContent,
+  Checkbox,
+  Alert,
+  AlertActionCloseButton,
 } from '@patternfly/react-core';
-import { FieldLevelHelp } from '@console/internal/components/utils';
+import { Dropdown, FieldLevelHelp } from '@console/internal/components/utils';
 import { StorageClassResourceKind, NodeKind } from '@console/internal/module/k8s';
 import { StorageClassDropdown } from '@console/internal/components/utils/storage-class-dropdown';
 import { ListPage } from '@console/internal/components/factory';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { NodeModel } from '@console/internal/models';
-import { getName, getUID } from '@console/shared';
-import { storageClassTooltip, requestedCapacityTooltip } from '../../../../constants';
+import { getName, getUID, useDeepCompareMemoize } from '@console/shared';
+import { storageClassTooltip, requestedCapacityTooltip, arbiterText } from '../../../../constants';
 import { OSDSizeDropdown, TotalCapacityText } from '../../../../utils/osd-size-dropdown';
 import { InternalClusterState, InternalClusterAction, ActionType } from '../reducer';
 import {
   getNodeInfo,
   shouldDeployAsMinimal,
   filterSCWithoutNoProv,
+  nodesWithoutTaints,
+  countNodesPerZone,
+  getZone,
 } from '../../../../utils/install';
 import { ValidationMessage, ValidationType } from '../../../../utils/common-ocs-install-el';
 import InternalNodeTable from '../../node-list';
 import { SelectNodesText, SelectNodesDetails } from '../../install-wizard/capacity-and-nodes';
+import { nodeResource } from '../../../../constants/resources';
 
-const validate = (scName, enableMinimal, enableFlexibleScaling): ValidationType[] => {
+const validate = (
+  scName,
+  enableMinimal,
+  enableFlexibleScaling,
+  enableStretchCluster,
+  isArbiterValid,
+): ValidationType[] => {
   const validations = [];
-  if (enableFlexibleScaling) {
-    //  TODO: add check for arbiter
+  if (enableStretchCluster && isArbiterValid) {
+    validations.push(ValidationType.INTERNAL_STRETCH_CLUSTER);
+  }
+  if (!enableStretchCluster && enableFlexibleScaling) {
     validations.push(ValidationType.INTERNAL_FLEXIBLE_SCALING);
   }
   if (enableMinimal) {
@@ -40,6 +57,108 @@ const validate = (scName, enableMinimal, enableFlexibleScaling): ValidationType[
     validations.push(ValidationType.INTERNALSTORAGECLASS);
   }
   return validations;
+};
+
+const isArbiterDisabled = (nodesData: NodeKind[], validateSelectedNodes?: boolean) => {
+  const validation = {
+    nodesLength: validateSelectedNodes ? 4 : 5,
+    zoneLength: validateSelectedNodes ? 2 : 3,
+  };
+  if (nodesData.length < validation.nodesLength) return true;
+  const uniqZones: Set<string> = new Set(nodesData.map(getZone));
+  if (uniqZones.size !== validation.zoneLength) return true;
+  const nodesPerZone = countNodesPerZone(nodesData);
+  let count = 0;
+  Object.keys(nodesPerZone).forEach((zone) => {
+    if (nodesPerZone[zone] >= 2) count += 1;
+  });
+  return count < 2;
+};
+
+export const StretchClusterFormGroup: React.FC<stretchClusterFormGroupProps> = ({
+  state,
+  dispatch,
+}) => {
+  const { t } = useTranslation();
+  const { enableStretchCluster, selectedArbiterZone, nodes } = state;
+  const [zonesOption, setZonesOptions] = React.useState({});
+  const [showInfoAlert, setShowInfoAlert] = React.useState(true);
+  const [nodesData, nodesLoaded] = useK8sWatchResource<NodeKind[]>(nodeResource);
+  const nodesDataMemoized: NodeKind[] = useDeepCompareMemoize(nodesWithoutTaints(nodesData), true);
+  const uniqZones: Set<string> = new Set(nodesDataMemoized.map(getZone));
+
+  React.useEffect(() => {
+    dispatch({
+      type: ActionType.SET_ARBITER_VALID,
+      payload: enableStretchCluster && isArbiterDisabled(nodes, true),
+    });
+    if (nodesLoaded && isArbiterDisabled(nodesDataMemoized)) {
+      dispatch({ type: ActionType.SET_ENABLE_STRETCH_CLUSTER, payload: false });
+    }
+  }, [dispatch, enableStretchCluster, nodesDataMemoized, nodes, nodesLoaded]);
+
+  React.useEffect(() => {
+    if (nodesLoaded && enableStretchCluster) {
+      setZonesOptions(_.zipObject([...uniqZones], [...uniqZones]));
+      dispatch({ type: ActionType.SET_ARBITER_ZONE, payload: [...uniqZones]?.[0] });
+    }
+  }, [dispatch, enableStretchCluster, nodesLoaded, uniqZones]);
+  return (
+    <FormGroup fieldId="arbiter-cluster" label={t('ceph-storage-plugin~Stretch Cluster')}>
+      <Checkbox
+        id="arbiter-cluster"
+        isChecked={enableStretchCluster}
+        label={t('ceph-storage-plugin~Enable arbiter')}
+        description={t(
+          'ceph-storage-plugin~To support high availability when two data centers can be used, enable arbiter to get the valid quorum between two data centers.',
+        )}
+        isDisabled={isArbiterDisabled(nodesDataMemoized)}
+        onChange={(isChecked: boolean) =>
+          dispatch({ type: ActionType.SET_ENABLE_STRETCH_CLUSTER, payload: isChecked })
+        }
+      />
+      {showInfoAlert && (
+        <Alert
+          aria-label={t('ceph-storage-plugin~Arbiter minimum requirements')}
+          className="co-alert ceph-ocs-install__lso-install-alert"
+          variant="info"
+          title={t('ceph-storage-plugin~Arbiter minimum requirements')}
+          isInline
+          actionClose={<AlertActionCloseButton onClose={() => setShowInfoAlert(false)} />}
+        >
+          {arbiterText(t)}
+        </Alert>
+      )}
+      {enableStretchCluster && (
+        <Grid hasGutter>
+          <GridItem span={5}>
+            <FormGroup
+              label={t('ceph-storage-plugin~Select an arbiter zone')}
+              fieldId="arbiter-zone-dropdown"
+              className="ceph-ocs-install__select-arbiter-zone"
+            >
+              <Dropdown
+                aria-label={t('ceph-storage-plugin~Arbiter zone selection')}
+                id="arbiter-zone-dropdown"
+                dropDownClassName="dropdown dropdown--full-width"
+                items={zonesOption}
+                title={selectedArbiterZone}
+                selectedKey={selectedArbiterZone}
+                onChange={(type: string) =>
+                  dispatch({ type: ActionType.SET_ARBITER_ZONE, payload: zonesOption[type] })
+                }
+              />
+            </FormGroup>
+          </GridItem>
+        </Grid>
+      )}
+    </FormGroup>
+  );
+};
+
+type stretchClusterFormGroupProps = {
+  state: InternalClusterState;
+  dispatch: React.Dispatch<InternalClusterAction>;
 };
 
 export const SelectCapacityAndNodes: React.FC<SelectCapacityAndNodesProps> = ({
@@ -53,12 +172,21 @@ export const SelectCapacityAndNodes: React.FC<SelectCapacityAndNodesProps> = ({
     storageClass,
     enableMinimal,
     enableFlexibleScaling,
+    enableStretchCluster,
+    isArbiterValid,
+    selectedArbiterZone,
   } = state;
   const { cpu, memory, zones } = getNodeInfo(selectedNodes);
   const scName: string = getName(storageClass);
   const nodesCount = selectedNodes.length;
   const zonesCount = zones.size;
-  const validations = validate(scName, enableMinimal, enableFlexibleScaling);
+  const validations = validate(
+    scName,
+    enableMinimal,
+    enableFlexibleScaling,
+    enableStretchCluster,
+    isArbiterValid,
+  );
 
   React.useEffect(() => {
     const isMinimal = shouldDeployAsMinimal(cpu, memory, nodesCount);
@@ -77,6 +205,7 @@ export const SelectCapacityAndNodes: React.FC<SelectCapacityAndNodesProps> = ({
           {t('ceph-storage-plugin~Select Capacity')}
         </Text>
       </TextContent>
+      <StretchClusterFormGroup state={state} dispatch={dispatch} />
       <FormGroup
         fieldId="storage-class-dropdown"
         label={t('ceph-storage-plugin~Storage Class')}
@@ -126,9 +255,15 @@ export const SelectCapacityAndNodes: React.FC<SelectCapacityAndNodesProps> = ({
       <Grid>
         <GridItem span={11}>
           <SelectNodesText
-            text={t(
-              'ceph-storage-plugin~Select at least 3 nodes preferably in 3 different zones. It is recommended to start with at least 14 CPUs and 34 GiB per node.',
-            )}
+            text={
+              enableStretchCluster
+                ? t(
+                    'ceph-storage-plugin~Select at least 2 nodes preferably in 2 different zones (in additional to the selected Arbiter Zone). It is recommended to start with at least 14 CPUs and 34 GiB per node.',
+                  )
+                : t(
+                    'ceph-storage-plugin~Select at least 3 nodes preferably in 3 different zones. It is recommended to start with at least 14 CPUs and 34 GiB per node.',
+                  )
+            }
           />
         </GridItem>
         <GridItem span={10} className="ocs-install-wizard__select-nodes">
@@ -142,6 +277,8 @@ export const SelectCapacityAndNodes: React.FC<SelectCapacityAndNodesProps> = ({
               onRowSelected: (nodes: NodeKind[]) =>
                 dispatch({ type: ActionType.SET_NODES, payload: nodes }),
               nodes: new Set(state.nodes.map(getUID)),
+              enableStretchCluster,
+              selectedArbiterZone,
             }}
           />
           {!!nodesCount && (

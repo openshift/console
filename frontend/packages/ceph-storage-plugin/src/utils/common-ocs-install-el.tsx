@@ -42,10 +42,19 @@ export enum ValidationType {
   'NETWORK' = 'NETWORK',
   'INTERNAL_FLEXIBLE_SCALING' = 'INTERNAL_FLEXIBLE_SCALING',
   'BAREMETAL_FLEXIBLE_SCALING' = 'BAREMETAL_FLEXIBLE_SCALING',
+  'INTERNAL_STRETCH_CLUSTER' = 'INTERNAL_STRETCH_CLUSTER',
 }
 
 export const VALIDATIONS = (type: keyof typeof ValidationType, t: TFunction): Validation => {
   switch (type) {
+    case ValidationType.INTERNAL_STRETCH_CLUSTER:
+      return {
+        variant: AlertVariant.danger,
+        title: t('ceph-storage-plugin~Stretch Cluster Requirement'),
+        text: t(
+          'ceph-storage-plugin~When Arbiter is enabled, a minimum of 2 nodes on 2 different zones(in addition to chosen Arbiter zone) must be selected',
+        ),
+      };
     case ValidationType.MINIMAL:
       return {
         variant: AlertVariant.warning,

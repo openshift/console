@@ -71,14 +71,15 @@ export const CreateInternalCluster: React.FC<CreateInternalClusterProps> = ({ ma
     state.networkType === NetworkType.MULTUS ? !!state.publicNetwork : true;
   const hasEnabledCreateStep =
     !!(state.nodes.length >= MINIMUM_NODES && scName && state.kms.hasHandled) &&
-    hasConfiguredNetwork;
+    hasConfiguredNetwork &&
+    !state.isArbiterValid;
 
   const steps: WizardStep[] = [
     {
       name: t('ceph-storage-plugin~Select capacity and nodes'),
       id: CreateStepsSC.STORAGEANDNODES,
       component: <SelectCapacityAndNodes state={state} dispatch={dispatch} />,
-      enableNext: !!(state.nodes.length >= MINIMUM_NODES && scName),
+      enableNext: !!(state.nodes.length >= MINIMUM_NODES && scName && !state.isArbiterValid),
     },
     {
       name: t('ceph-storage-plugin~Configure'),

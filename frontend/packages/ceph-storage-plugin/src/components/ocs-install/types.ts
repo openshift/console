@@ -27,6 +27,8 @@ export type GetRows = (
   setVisibleRows?: React.Dispatch<React.SetStateAction<Set<string>>>,
   selectedNodes?: Set<string>,
   setSelectedNodes?: (nodes: NodeKind[]) => void,
+  enableStretchCluster?: boolean,
+  selectedArbiterZone?: string,
 ) => NodeTableRow[];
 
 export type NodeTableProps = TableProps & {
@@ -36,6 +38,8 @@ export type NodeTableProps = TableProps & {
     nodes?: NodeKind[];
     filteredNodes?: string[];
     setNodes?: (nodes: NodeKind[]) => void;
+    enableStretchCluster?: boolean;
+    selectedArbiterZone?: string;
   };
   filters: { name: string; label: { all: string[] } };
 };

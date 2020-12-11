@@ -14,7 +14,7 @@ import { humanizeCpuCores, ResourceLink } from '@console/internal/components/uti
 import { NodeKind } from '@console/internal/module/k8s';
 import { Table } from '@console/internal/components/factory';
 import { IRow, sortable } from '@patternfly/react-table';
-import { getConvertedUnits, nodesWithoutTaints } from '../../utils/install';
+import { getConvertedUnits, nodesWithoutTaints, getZone } from '../../utils/install';
 import { cephStorageLabel } from '../../selectors';
 import { ZONE_LABELS } from '../../constants';
 import { GetRows, NodeTableProps } from './types';
@@ -36,10 +36,16 @@ const getRows: GetRows = (
   setVisibleRows,
   selectedNodes,
   setSelectedNodes,
+  enableStretchCluster,
+  selectedArbiterZone,
 ) => {
   const { data } = componentProps;
 
-  const filteredData = nodesWithoutTaints(data);
+  const filteredData = nodesWithoutTaints(data).filter((filteredNode) =>
+    enableStretchCluster && selectedArbiterZone
+      ? getZone(filteredNode) !== selectedArbiterZone
+      : true,
+  );
 
   const rows = filteredData.map((node: NodeKind) => {
     const roles = getNodeRoles(node).sort();
@@ -129,7 +135,15 @@ const InternalNodeTable: React.FC<NodeTableProps> = (props) => {
         data-test-id="select-nodes-table"
         {...props}
         Rows={(rowProps) =>
-          getRows(rowProps, visibleRows, setVisibleRows, selectedNodes, setSelectedNodes)
+          getRows(
+            rowProps,
+            visibleRows,
+            setVisibleRows,
+            selectedNodes,
+            setSelectedNodes,
+            props.customData.enableStretchCluster,
+            props.customData.selectedArbiterZone,
+          )
         }
         Header={getColumns}
         virtualize={false}

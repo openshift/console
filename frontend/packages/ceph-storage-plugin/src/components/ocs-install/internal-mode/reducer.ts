@@ -8,6 +8,10 @@ export type InternalClusterState = {
   nodes: NodeKind[];
   enableMinimal: boolean;
   enableFlexibleScaling: boolean;
+  // Arbiter State
+  enableStretchCluster: boolean;
+  selectedArbiterZone: string;
+  isArbiterValid: boolean;
   // Encryption state declare
   encryption: EncryptionType;
   kms: KMSConfig;
@@ -22,6 +26,10 @@ export enum ActionType {
   SET_NODES = 'SET_NODES',
   SET_ENABLE_MINIMAL = 'SET_ENABLE_MINIMAL',
   SET_ENABLE_FLEXIBLE_SCALING = 'SET_ENABLE_FLEXIBLE_SCALING',
+  // Arbiter State
+  SET_ENABLE_STRETCH_CLUSTER = 'SET_ENABLE_STRETCH_CLUSTER',
+  SET_ARBITER_ZONE = 'SET_ARBITER_ZONE',
+  SET_ARBITER_VALID = 'SET_ARBITER_VALID',
   // Encryption state actions
   SET_ENABLE_ENCRYPTION = 'SET_ENABLE_ENCRYPTION',
   SET_ENCRYPTION = 'SET_ENCRYPTION',
@@ -39,6 +47,10 @@ export type InternalClusterAction =
   | { type: ActionType.SET_NODES; payload: NodeKind[] }
   | { type: ActionType.SET_ENABLE_MINIMAL; payload: boolean }
   | { type: ActionType.SET_ENABLE_FLEXIBLE_SCALING; payload: boolean }
+  // Arbiter State
+  | { type: ActionType.SET_ENABLE_STRETCH_CLUSTER; payload: boolean }
+  | { type: ActionType.SET_ARBITER_ZONE; payload: string }
+  | { type: ActionType.SET_ARBITER_VALID; payload: boolean }
   // Encryption actions
   | { type: ActionType.SET_ENCRYPTION; payload: EncryptionType }
   // KMS action
@@ -56,6 +68,10 @@ export const initialState: InternalClusterState = {
   nodes: [],
   enableMinimal: false,
   enableFlexibleScaling: false,
+  // Arbiter State
+  enableStretchCluster: false,
+  selectedArbiterZone: '',
+  isArbiterValid: false,
   // Encryption state initialization
   encryption: {
     clusterWide: false,
@@ -127,6 +143,25 @@ export const reducer = (state: InternalClusterState, action: InternalClusterActi
       return {
         ...state,
         enableFlexibleScaling: action.payload,
+      };
+    }
+    // Arbiter State
+    case ActionType.SET_ENABLE_STRETCH_CLUSTER: {
+      return {
+        ...state,
+        enableStretchCluster: action.payload,
+      };
+    }
+    case ActionType.SET_ARBITER_ZONE: {
+      return {
+        ...state,
+        selectedArbiterZone: action.payload,
+      };
+    }
+    case ActionType.SET_ARBITER_VALID: {
+      return {
+        ...state,
+        isArbiterValid: action.payload,
       };
     }
     // Encryption state reducer

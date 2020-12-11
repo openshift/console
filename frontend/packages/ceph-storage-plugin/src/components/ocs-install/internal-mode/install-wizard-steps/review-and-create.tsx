@@ -38,6 +38,9 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({
     storageClass,
     networkType,
     publicNetwork,
+    enableStretchCluster,
+    selectedArbiterZone,
+    isArbiterValid,
   } = state;
   const { cpu, memory, zones } = getNodeInfo(state.nodes);
   const scName = getName(storageClass);
@@ -57,11 +60,22 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({
           <Trans t={t} ns="ceph-storage-plugin" values={osdSize}>
             Requested Cluster Capacity:&nbsp;
             <span className="text-secondary">
-              {{ osdSize }} TiB&nbsp;
+              {osdSize.toString()} TiB&nbsp;
               <TotalCapacityText capacity={capacity} />
             </span>
           </Trans>
         </ReviewListBody>
+        {enableStretchCluster && (
+          <ReviewListBody
+            noValue={isArbiterValid}
+            validation={isArbiterValid && ValidationType.INTERNAL_STRETCH_CLUSTER}
+          >
+            {t('ceph-storage-plugin~Arbiter zone:')}&nbsp;
+            <span className="text-muted">
+              {selectedArbiterZone ?? t('ceph-storage-plugin~None')}
+            </span>
+          </ReviewListBody>
+        )}
         <ReviewListBody
           noValue={!scName}
           validation={!scName && !emptyRequiredField && ValidationType.INTERNALSTORAGECLASS}
