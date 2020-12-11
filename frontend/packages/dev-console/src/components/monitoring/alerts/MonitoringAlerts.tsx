@@ -13,7 +13,7 @@ import { getAlertsAndRules } from '@console/internal/components/monitoring/utils
 import { monitoringSetRules, monitoringLoaded, sortList } from '@console/internal/actions/ui';
 import { Rule } from '@console/internal/components/monitoring/types';
 import { RootState } from '@console/internal/redux';
-import { getURLSearchParams } from '@console/internal/components/utils';
+import { getURLSearchParams, EmptyBox, LoadingBox } from '@console/internal/components/utils';
 import { getFilteredRows } from '@console/internal/components/factory';
 import { alertingRuleStateOrder } from '@console/internal/reducers/monitoring';
 import { usePrometheusRulesPoll } from '@console/internal/components/graphs/prometheus-rules-hook';
@@ -107,6 +107,13 @@ export const MonitoringAlerts: React.FC<props> = ({ match, rules, filters, listS
     );
     setSortBy({ index, direction });
   };
+
+  if (loading && !loadError) {
+    return <LoadingBox />;
+  }
+  if (_.isEmpty(response?.data?.groups)) {
+    return <EmptyBox label={t('devconsole~Alerts')} />;
+  }
 
   return (
     <>
