@@ -1,8 +1,9 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Base64 } from 'js-base64';
+import { withTranslation } from 'react-i18next';
 import { ExpandIcon } from '@patternfly/react-icons';
-import { Button } from '@patternfly/react-core';
+import { Button, Alert, AlertActionLink } from '@patternfly/react-core';
 
 import store from '../redux';
 import { LoadingBox, LoadingInline, Dropdown, ResourceIcon } from './utils';
@@ -31,7 +32,7 @@ const nameWithIcon = (name) => (
 const NO_SH =
   'starting container process caused "exec: \\"sh\\": executable file not found in $PATH"';
 
-export const PodExec = connectToFlags(FLAGS.OPENSHIFT)(
+const PodExec_ = connectToFlags(FLAGS.OPENSHIFT)(
   class PodExec extends React.PureComponent {
     constructor(props) {
       super(props);
@@ -173,14 +174,21 @@ export const PodExec = connectToFlags(FLAGS.OPENSHIFT)(
 
     render() {
       const { containers, activeContainer, open, error } = this.state;
-      const { message } = this.props;
+      const { message, t, obj } = this.props;
 
       let contents = <LoadingBox />;
       if (error) {
-        contents = <div className="text-center cos-error-title">{error}</div>;
+        contents = <Terminal onResize={() => {}} onData={() => {}} ref={this.terminal} />;
       } else if (open) {
         contents = <Terminal onResize={this.onResize} onData={this.onData} ref={this.terminal} />;
       }
+
+      const reconnectAction =
+        obj.status.phase === 'Running' ? (
+          <AlertActionLink onClick={() => this.connect_()}>
+            {t('workload~Reconnect')}
+          </AlertActionLink>
+        ) : null;
 
       return (
         <div>
@@ -211,6 +219,9 @@ export const PodExec = connectToFlags(FLAGS.OPENSHIFT)(
               </div>
             )}
           </div>
+          {error && (
+            <Alert variant="warning" title={error} actionLinks={reconnectAction} isInline />
+          )}
           {message}
           {contents}
         </div>
@@ -218,3 +229,5 @@ export const PodExec = connectToFlags(FLAGS.OPENSHIFT)(
     }
   },
 );
+
+export const PodExec = withTranslation()(PodExec_);

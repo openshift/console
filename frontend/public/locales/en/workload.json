@@ -84,6 +84,7 @@
   "Active pods": "Active pods",
   "Failed pods": "Failed pods",
   "Completions": "Completions",
+  "Reconnect": "Reconnect",
   "Ready": "Ready",
   "Restarts": "Restarts",
   "Owner": "Owner",
