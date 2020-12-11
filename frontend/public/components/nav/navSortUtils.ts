@@ -84,3 +84,30 @@ export const getSortedNavItems = (navItems: (PluginNavSection | NavItem | Separa
   insertPositionedItems(positionedItems, sortedItems);
   return sortedItems;
 };
+
+export const sortExtensionItems = (
+  extensionItems: (PluginNavSection | NavItem | SeparatorNavItem)[],
+) => {
+  // Mapped by item id
+  const mappedIds = extensionItems.reduce((mem, i) => {
+    mem[i.properties.id] = i;
+    return mem;
+  }, {});
+
+  // determine all dependencies for a given id
+  const dependencies = (i) => {
+    const { insertBefore, insertAfter } = mappedIds[i].properties;
+    const before = Array.isArray(insertBefore) ? insertBefore : [insertBefore];
+    const after = Array.isArray(insertAfter) ? insertAfter : [insertAfter];
+    const dependencyIds = [...before, ...after];
+    return dependencyIds.reduce((acc, index) => {
+      if (index) {
+        // Add this dependency and its dependencies
+        return [...acc, index, ...dependencies(index)];
+      }
+      return acc;
+    }, []);
+  };
+
+  return extensionItems.sort((a, b) => dependencies(b.properties.id).indexOf(a.properties.id) * -1);
+};
