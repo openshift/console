@@ -39,7 +39,7 @@ entries:
       maintainers:
         - name: IBM
       name: ibm-cpq-prod
-      response:
+      urls:
         - https://redhat-developer.github.com/redhat-helm-charts/charts/ibm-cpq-prod-2.0.0.tgz
       version: 2.0.0
   ibm-object-storage-plugin:
@@ -74,7 +74,7 @@ entries:
         - email: contsto2@in.ibm.com
           name: IBM
       name: ibm-object-storage-plugin
-      response:
+      urls:
         - https://redhat-developer.github.com/redhat-helm-charts/charts/ibm-object-storage-plugin-2.0.0.tgz
       version: 2.0.0
   ibm-oms-ent-prod:
@@ -112,7 +112,7 @@ entries:
         - name: IBM
       name: ibm-oms-ent-prod
       type: application
-      response:
+      urls:
         - https://redhat-developer.github.com/redhat-helm-charts/charts/ibm-oms-ent-prod-5.0.0.tgz
       version: 5.0.0
   ibm-oms-pro-prod:
@@ -150,7 +150,7 @@ entries:
         - name: IBM
       name: ibm-oms-pro-prod
       type: application
-      response:
+      urls:
         - https://redhat-developer.github.com/redhat-helm-charts/charts/ibm-oms-pro-prod-5.0.0.tgz
       version: 5.0.0
   ibm-operator-catalog-enablement:
@@ -183,7 +183,7 @@ entries:
         - name: IBM
       name: ibm-operator-catalog-enablement
       type: application
-      response:
+      urls:
         - https://redhat-developer.github.com/redhat-helm-charts/charts/ibm-operator-catalog-enablement-1.0.0.tgz
       version: 1.0.0
   nodejs-ex-k:
@@ -194,7 +194,7 @@ entries:
       digest: 9f8eca455f8379baddd6ab61bd5517373514bb99bedbbddffb98ad88ac9841cc
       name: nodejs-ex-k
       type: application
-      response:
+      urls:
         - https://redhat-developer.github.com/redhat-helm-charts/charts/nodejs-ex-k-0.2.0.tgz
       version: 0.2.0
     - apiVersion: v2
@@ -204,7 +204,7 @@ entries:
       digest: 64b36fee719567e2aae8cb6186ba02a56dc62a90df71af7f90cc1d9d2cd1fb25
       name: nodejs-ex-k
       type: application
-      response:
+      urls:
         - https://redhat-developer.github.com/redhat-helm-charts/charts/nodejs-ex-k-0.1.1.tgz
       version: 0.1.1
 generated: "2020-07-15T16:32:34.538582491+05:30"

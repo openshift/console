@@ -33,7 +33,7 @@ entries:
           name: IBM
       name: ibm-object-storage-plugin
       kubeVersion: '>=1.15.0'
-      response:
+      urls:
         - https://redhat-developer.github.com/redhat-helm-charts/charts/ibm-object-storage-plugin-2.0.1.tgz
       version: 2.0.0
   ibm-oms-ent-prod--sample-repo-1:
@@ -71,7 +71,7 @@ entries:
         - name: IBM
       name: ibm-oms-ent-prod
       type: application
-      response:
+      urls:
         - https://redhat-developer.github.com/redhat-helm-charts/charts/ibm-oms-ent-prod-5.0.0.tgz
       version: 5.0.0
 generated: "2020-07-15T16:32:34.538582491+05:30"
