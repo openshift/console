@@ -118,7 +118,7 @@ export const getClusterOperatorStatusPriority: GetOperatorStatusPriority<Cluster
   if (status === OperatorStatus.Unknown) {
     return { ...healthStateMapping[HealthState.UNKNOWN], title: status };
   }
-  if (status === OperatorStatus.Updating) {
+  if (status === OperatorStatus.Progressing) {
     return { ...healthStateMapping[HealthState.UPDATING], title: status };
   }
   return { ...healthStateMapping[HealthState.OK], title: status };
