@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Tooltip } from '@patternfly/react-core';
 import { truncateMiddle } from '@console/internal/components/utils';
-import { isMobile } from '../list-view-utils';
+import { useIsMobile } from '@console/shared';
 
 type MetricsTooltipProps = {
   metricLabel: string;
@@ -16,6 +16,14 @@ type MetricsTooltipProps = {
 
 const MetricsTooltip: React.FC<MetricsTooltipProps> = ({ metricLabel, byPod, children }) => {
   const { t } = useTranslation();
+  const isMobile = useIsMobile();
+
+  // Disable the tooltip on mobile since a touch also opens the sidebar, which
+  // immediately covers the tooltip content.
+  if (isMobile) {
+    return <>{children}</>;
+  }
+
   const sortedMetrics = _.orderBy(byPod, ['value', 'name'], ['desc', 'asc']);
   const content: any[] = _.isEmpty(sortedMetrics)
     ? [
@@ -51,11 +59,6 @@ const MetricsTooltip: React.FC<MetricsTooltipProps> = ({ metricLabel, byPod, chi
     );
   }
 
-  // Disable the tooltip on mobile since a touch also opens the sidebar, which
-  // immediately covers the tooltip content.
-  if (isMobile()) {
-    return <>{children}</>;
-  }
   return (
     <Tooltip content={content} distance={15}>
       <>{children}</>

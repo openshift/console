@@ -11,9 +11,6 @@ export const labelForNodeKind = (kindString: string) => {
   return _.startCase(kindString);
 };
 
-// Consider this mobile if the device screen width is less than 768. (This value shouldn't change.)
-export const isMobile = () => window.screen.width < 768;
-
 export const getChildKinds = (children: GraphElement[]) => {
   const childNodes = children.filter((n) => isNode(n)) as Node[];
   const kindsMap = childNodes.reduce((acc, n) => {

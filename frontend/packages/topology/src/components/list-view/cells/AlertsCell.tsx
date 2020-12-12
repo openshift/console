@@ -11,9 +11,9 @@ import {
   usePodsWatcher,
   useReplicationControllersWatcher,
   getReplicationControllerAlerts,
+  useIsMobile,
 } from '@console/shared';
 import { getResource } from '../../../utils';
-import { isMobile } from '../list-view-utils';
 
 import './AlertsCell.scss';
 
@@ -21,7 +21,7 @@ type AlertsProps = {
   item: Node;
 };
 
-const AlertTooltip = ({ alerts, severity }) => {
+const AlertTooltip = ({ alerts, severity, isMobile }) => {
   if (!alerts) {
     return null;
   }
@@ -37,7 +37,7 @@ const AlertTooltip = ({ alerts, severity }) => {
 
   // No tooltip on mobile since a touch also opens the sidebar, which
   // immediately covers the tooltip content.
-  if (isMobile()) {
+  if (isMobile) {
     return status;
   }
 
@@ -55,6 +55,7 @@ const AlertTooltip = ({ alerts, severity }) => {
 
 const AlertsCell: React.FC<AlertsProps> = ({ item }) => {
   const { t } = useTranslation();
+  const isMobile = useIsMobile();
   const resource = getResource(item);
   const { podData, loaded } = usePodsWatcher(resource);
   const { buildConfigs, loaded: buildConfigsLoaded } = useBuildConfigsWatcher(resource);
@@ -116,9 +117,9 @@ const AlertsCell: React.FC<AlertsProps> = ({ item }) => {
         {(error || warning || info) && (
           <div className="odc-topology-list-view__alert-cell__status">
             <span className="odc-topology-list-view__alert-cell__label">Alerts:</span>
-            <AlertTooltip severity="Error" alerts={error} />
-            <AlertTooltip severity="Warning" alerts={warning} />
-            <AlertTooltip severity="Info" alerts={info} />
+            <AlertTooltip severity="Error" alerts={error} isMobile={isMobile} />
+            <AlertTooltip severity="Warning" alerts={warning} isMobile={isMobile} />
+            <AlertTooltip severity="Info" alerts={info} isMobile={isMobile} />
           </div>
         )}
         {(buildNew || buildPending || buildRunning || buildFailed || buildError) && (
@@ -126,11 +127,11 @@ const AlertsCell: React.FC<AlertsProps> = ({ item }) => {
             <span className="odc-topology-list-view__alert-cell__label">
               {t('topology~Builds:')}
             </span>
-            <AlertTooltip severity="New" alerts={buildNew} />
-            <AlertTooltip severity="Pending" alerts={buildPending} />
-            <AlertTooltip severity="Running" alerts={buildRunning} />
-            <AlertTooltip severity="Failed" alerts={buildFailed} />
-            <AlertTooltip severity="Error" alerts={buildError} />
+            <AlertTooltip severity="New" alerts={buildNew} isMobile={isMobile} />
+            <AlertTooltip severity="Pending" alerts={buildPending} isMobile={isMobile} />
+            <AlertTooltip severity="Running" alerts={buildRunning} isMobile={isMobile} />
+            <AlertTooltip severity="Failed" alerts={buildFailed} isMobile={isMobile} />
+            <AlertTooltip severity="Error" alerts={buildError} isMobile={isMobile} />
           </div>
         )}
       </div>
