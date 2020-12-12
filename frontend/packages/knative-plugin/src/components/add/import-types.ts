@@ -48,7 +48,6 @@ export interface SinkResourceData {
 }
 
 export interface EventSourceFormData {
-  editorType?: string;
   project: ProjectData;
   application: ApplicationData;
   name: string;
@@ -57,7 +56,6 @@ export interface EventSourceFormData {
   sinkType: string;
   sink: SinkResourceData;
   data?: EventSourceData;
-  yamlData?: string;
 }
 
 export interface EventSourceSyncFormData {

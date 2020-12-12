@@ -2,11 +2,13 @@ import * as _ from 'lodash';
 import { safeDump } from 'js-yaml';
 import * as k8sModels from '@console/internal/module/k8s';
 import * as utils from '@console/internal/components/utils';
+import { CREATE_APPLICATION_KEY, UNASSIGNED_KEY } from '@console/topology/src/const';
 import {
   EventSourceCronJobModel,
   EventSourceSinkBindingModel,
   EventSourceKafkaModel,
   EventSourceCamelModel,
+  EventSourcePingModel,
 } from '../../models';
 import {
   getBootstrapServers,
@@ -17,6 +19,7 @@ import {
   getEventSourceList,
   getEventSourceData,
   sanitizeKafkaSourceResource,
+  sanitizeSourceToForm,
 } from '../create-eventsources-utils';
 import {
   getDefaultEventingData,
@@ -24,7 +27,8 @@ import {
   eventSourcesObj,
   camelCsvData,
 } from './knative-serving-data';
-import { EventSources } from '../../components/add/import-types';
+import { EventSourceFormData, EventSources } from '../../components/add/import-types';
+import { MockKnativeResources } from '../../topology/__tests__/topology-knative-test-data';
 
 describe('Create knative Utils', () => {
   it('should return bootstrapServers', () => {
@@ -257,5 +261,71 @@ describe('Create knative Utils', () => {
       sanitizeKafkaSourceResource(KafkaSourceData.formData).data[EventSources.KafkaSource].net.tls
         .key,
     ).toEqual({ secretKeyRef: { name: 'key', key: 'key1' } });
+  });
+});
+
+describe('sanitizeSourceToForm always returns valid Event Source', () => {
+  const formDataValues: EventSourceFormData = {
+    project: { name: 'demo-sources', displayName: '', description: '' },
+    application: { initial: '', name: 'event-sources-app', selectedKey: 'event-sources-app' },
+    name: 'ping-source',
+    apiVersion: 'sources.knative.dev/v1beta1',
+    sinkType: 'resource',
+    sink: {
+      apiVersion: 'serving.knative.dev/v1',
+      kind: 'Service',
+      name: 'event-display',
+      key: 'Service-event-display',
+      uri: '',
+    },
+    type: 'PingSource',
+    data: { PingSource: { jsonData: '', schedule: '' } },
+  };
+
+  it('expect an empty form to return a EventSource data with updated properties', () => {
+    const pingSourceData: k8sModels.K8sResourceKind =
+      MockKnativeResources[k8sModels.referenceForModel(EventSourcePingModel)].data[0];
+    const newFormDataValue = {
+      ...pingSourceData,
+      spec: {
+        schedule: '@daily',
+        data: 'test1',
+      },
+    };
+    const formData = sanitizeSourceToForm(newFormDataValue, formDataValues);
+    expect(formData).toBeTruthy();
+    expect(formData.type).toBe(EventSourcePingModel.kind);
+    expect(formData.data[EventSourcePingModel.kind].jsonData).toBeUndefined();
+    expect(formData.data[EventSourcePingModel.kind].schedule).toEqual('@daily');
+    expect(formData.data[EventSourcePingModel.kind].data).toEqual('test1');
+  });
+
+  it('expect an empty form to return a EventSource data with proper application group if partof added', () => {
+    const pingSourceData: k8sModels.K8sResourceKind =
+      MockKnativeResources[k8sModels.referenceForModel(EventSourcePingModel)].data[0];
+    const newFormDataValue = {
+      ...pingSourceData,
+      metadata: {
+        ...pingSourceData.metadata,
+        labels: {
+          'app.kubernetes.io/part-of': 'test-app',
+        },
+      },
+    };
+    const formData = sanitizeSourceToForm(newFormDataValue, formDataValues);
+    expect(formData).toBeTruthy();
+    expect(formData.type).toBe(EventSourcePingModel.kind);
+    expect(formData.application.name).toEqual('test-app');
+    expect(formData.application.selectedKey).toEqual(CREATE_APPLICATION_KEY);
+  });
+
+  it('expect an empty form to return a EventSource data with proper application group if partof not added', () => {
+    const pingSourceData: k8sModels.K8sResourceKind =
+      MockKnativeResources[k8sModels.referenceForModel(EventSourcePingModel)].data[0];
+    const formData = sanitizeSourceToForm(pingSourceData, formDataValues);
+    expect(formData).toBeTruthy();
+    expect(formData.type).toBe(EventSourcePingModel.kind);
+    expect(formData.application.name).toEqual('');
+    expect(formData.application.selectedKey).toEqual(UNASSIGNED_KEY);
   });
 });
