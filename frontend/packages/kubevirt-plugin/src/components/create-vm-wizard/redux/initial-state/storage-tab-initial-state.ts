@@ -293,19 +293,14 @@ export const getNewProvisionSourceStorage = (state: any, id: string): VMWizardSt
 
     return getBaseImageStorage(toShallowJS(iStorageClassConfigMap), pvcName, pvcNamespace, pvcSize);
   }
-  if (
-    provisionSource === ProvisionSource.DISK &&
-    !iUserTemplate &&
-    source?.pvcName &&
-    source?.pvcNamespace
-  ) {
+  if (provisionSource === ProvisionSource.DISK && !iUserTemplate) {
     return getPVCStorage(
       storageClassConfigMap,
-      source.cdRom ? DiskType.CDROM : DiskType.DISK,
+      source?.cdRom ? DiskType.CDROM : DiskType.DISK,
       diskBus,
-      source.size,
-      source.pvcName,
-      source.pvcNamespace,
+      source?.size,
+      source?.pvcName,
+      source?.pvcNamespace,
     );
   }
   return null;

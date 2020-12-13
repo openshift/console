@@ -77,6 +77,8 @@ export enum VMSettingsField {
   START_VM = 'START_VM',
   TEMPLATE_PROVIDER = 'TEMPLATE_PROVIDER',
   TEMPLATE_SUPPORTED = 'TEMPLATE_SUPPORTED',
+  CLONE_PVC_NS = 'CLONE_PVC_NS',
+  CLONE_PVC_NAME = 'CLONE_PVC_NAME',
 }
 
 export enum ImportProvidersField {

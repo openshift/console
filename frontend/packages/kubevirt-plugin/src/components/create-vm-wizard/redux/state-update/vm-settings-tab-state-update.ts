@@ -260,6 +260,7 @@ const provisioningSourceUpdater = ({ id, prevState, dispatch, getState }: Update
     source,
   );
   const isUrl = source === ProvisionSource.URL;
+  const isPvc = source === ProvisionSource.DISK;
 
   dispatch(
     vmWizardInternalActions[InternalActionType.UpdateVmSettings](id, {
@@ -268,6 +269,9 @@ const provisioningSourceUpdater = ({ id, prevState, dispatch, getState }: Update
       },
       [VMSettingsField.IMAGE_URL]: {
         isHidden: asHidden(!isUrl, VMSettingsField.PROVISION_SOURCE_TYPE),
+      },
+      [VMSettingsField.CLONE_PVC_NS]: {
+        isHidden: asHidden(!isPvc, VMSettingsField.PROVISION_SOURCE_TYPE),
       },
     }),
   );
@@ -314,6 +318,30 @@ const flavorUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => 
   );
 };
 
+const cloneSourceUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
+  const state = getState();
+  if (
+    !hasVmSettingsChanged(
+      prevState,
+      state,
+      id,
+      VMSettingsField.CLONE_PVC_NS,
+      VMSettingsField.CLONE_PVC_NAME,
+    )
+  ) {
+    return;
+  }
+  const pvcNS = iGetVmSettingValue(state, id, VMSettingsField.CLONE_PVC_NS);
+
+  dispatch(
+    vmWizardInternalActions[InternalActionType.UpdateVmSettings](id, {
+      [VMSettingsField.CLONE_PVC_NAME]: {
+        isHidden: asHidden(!pvcNS, VMSettingsField.CLONE_PVC_NS),
+      },
+    }),
+  );
+};
+
 export const updateVmSettingsState = (options: UpdateOptions) =>
   [
     selectTemplateOnLoadedUpdater,
@@ -325,6 +353,7 @@ export const updateVmSettingsState = (options: UpdateOptions) =>
     nativeK8sUpdater,
     flavorUpdater,
     commonTemplatesUpdater,
+    cloneSourceUpdater,
   ].forEach((updater) => {
     updater && updater(options);
   });
