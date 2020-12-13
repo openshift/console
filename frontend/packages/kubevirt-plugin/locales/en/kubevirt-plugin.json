@@ -69,6 +69,7 @@
   "Please wait for a VM to load.": "Please wait for a VM to load.",
   "Please select a VM to import.": "Please select a VM to import.",
   "Hostname must not contain white spaces": "Hostname must not contain white spaces",
+  "Hostname must not contain https prefix": "Hostname must not contain https prefix",
   "VM has unsupported firmware: {{firmware}}": "VM has unsupported firmware: {{firmware}}",
   "Please select a valid VM.": "Please select a valid VM.",
   "Please select a disk with a defined boot source.": "Please select a disk with a defined boot source.",
