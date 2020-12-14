@@ -24,6 +24,10 @@ const validationConfig: ValidationConfig<VMWareProviderField> = {
         // t('kubevirt-plugin~Hostname must not contain white spaces')
         return asValidationObject('kubevirt-plugin~Hostname must not contain white spaces');
       }
+      if (hostname?.startsWith('https://')) {
+        // t('kubevirt-plugin~Hostname must not contain https prefix')
+        return asValidationObject('kubevirt-plugin~Hostname must not contain https prefix');
+      }
       return null;
     },
   },
