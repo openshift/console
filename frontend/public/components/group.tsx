@@ -168,6 +168,8 @@ const RoleBindingsTab: React.FC<RoleBindingsTabProps> = ({ obj }) => (
   <RoleBindingsPage
     showTitle={false}
     staticFilters={[{ 'role-binding-group': obj.metadata.name }]}
+    name={obj.metadata.name}
+    kind={obj.kind}
   />
 );
 
