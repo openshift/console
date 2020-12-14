@@ -265,13 +265,19 @@ type VirtualMachineTemplatesProps = React.ComponentProps<typeof Table> & {
   };
 };
 
-export const VMTemplateSupport: React.FC = () => {
+type VMTemplateSupportProps = {
+  details?: boolean;
+};
+
+export const VMTemplateSupport: React.FC<VMTemplateSupportProps> = ({ details }) => {
   const { t } = useTranslation();
   const isUpstream = window.SERVER_FLAGS.branding === 'okd';
   return (
     !isUpstream && (
       <div>
-        {t('kubevirt-plugin~See template details for support.')}{' '}
+        {details
+          ? t('kubevirt-plugin~See template details for support.')
+          : t('kubevirt-plugin~Supported operating systems are labeled below.')}{' '}
         <ExternalLink
           href={SUPPORT_URL}
           text={t('kubevirt-plugin~Learn more about Red Hat support')}

@@ -1,11 +1,9 @@
 .kv-select-template {
-  background-color: var(--pf-global--palette--black-150);
   padding-bottom: 5rem;
 }
 
-.kv-select-template__toolbar {
-  --pf-c-toolbar--BackgroundColor: var(--pf-global--palette--black-150);
-  padding-bottom: 0;
+.kv-select-template__grid {
+  background-color: var(--pf-global--palette--black-150);
 }
 
 .kv-select-template__title {
@@ -36,4 +34,8 @@
   .pf-c-check__description {
     white-space: nowrap;
   }
+}
+
+.kv-select-template__tile-desc {
+  --pf-l-stack--m-gutter--MarginBottom: var(--pf-global--spacer--sm)
 }
