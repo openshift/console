@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { TemplateKind } from '@console/internal/module/k8s';
-import { ThumbtackIcon } from '@patternfly/react-icons';
+import { StarIcon } from '@patternfly/react-icons';
 
 import { ANNOTATION_ICON } from '../../constants';
 
@@ -34,4 +34,4 @@ export const getTemplateOSIcon = (template: TemplateKind): string => {
   return iconMap[icon] || iconMap['icon-other'];
 };
 
-export const PinnedIcon = () => <ThumbtackIcon className="kv-pin-icon" />;
+export const PinnedIcon = () => <StarIcon className="kv-pin-icon" />;
