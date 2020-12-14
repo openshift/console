@@ -92,9 +92,9 @@ const PodSet: React.FC<PodSetProps> = React.memo(({ size, data, x = 0, y = 0, sh
         outerRadius={podStatusOuterRadius}
         data={completedDeploymentData}
         size={size}
-        subTitle={showPodCount && subTitle}
-        title={showPodCount && title}
-        titleComponent={showPodCount && titleComponent}
+        subTitle={showPodCount ? subTitle : undefined}
+        title={showPodCount ? title : undefined}
+        titleComponent={showPodCount ? titleComponent : undefined}
       />
       {inProgressDeploymentData && (
         <PodStatus

@@ -51,8 +51,8 @@ const PodStatus: React.FC<PodStatusProps> = ({
   size = 130,
   standalone = false,
   showTooltip = true,
-  title = '',
-  subTitle = '',
+  title,
+  subTitle,
   titleComponent,
   subTitleComponent,
   data,
@@ -86,7 +86,10 @@ const PodStatus: React.FC<PodStatusProps> = ({
     return prevVData.current;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
-
+  const truncTitle = title ? _.truncate(title, { length: MAX_POD_TITLE_LENGTH }) : undefined;
+  const truncSubTitle = subTitle
+    ? _.truncate(subTitle, { length: MAX_POD_TITLE_LENGTH })
+    : undefined;
   const chartDonut = React.useMemo(() => {
     return (
       <ChartDonut
@@ -101,13 +104,13 @@ const PodStatus: React.FC<PodStatusProps> = ({
         data={vData}
         height={size}
         width={size}
-        title={_.truncate(title, { length: MAX_POD_TITLE_LENGTH })}
+        title={truncTitle}
         titleComponent={titleComponent}
         subTitleComponent={subTitleComponent}
-        subTitle={_.truncate(subTitle, { length: MAX_POD_TITLE_LENGTH })}
+        subTitle={truncSubTitle}
         allowTooltip={false}
         labels={() => null}
-        /*
+        /* 
             // @ts-ignore */
         padAngle={({ datum }) => (datum.y > 0 ? 2 : 0)}
         style={{
@@ -126,9 +129,9 @@ const PodStatus: React.FC<PodStatusProps> = ({
     outerRadius,
     size,
     standalone,
-    subTitle,
+    truncSubTitle,
     subTitleComponent,
-    title,
+    truncTitle,
     titleComponent,
     updateOnEnd,
     vData,
