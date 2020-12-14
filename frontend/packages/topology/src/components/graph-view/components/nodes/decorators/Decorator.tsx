@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Link } from 'react-router-dom';
 import { createSvgIdUrl, useHover } from '@patternfly/react-topology';
 import SvgDropShadowFilter from '../../../../svg/SvgDropShadowFilter';
 
@@ -32,8 +33,10 @@ const Decorator: React.FunctionComponent<DecoratorTypes> = ({
     <g
       className="odc-decorator"
       onClick={(e) => {
-        e.stopPropagation();
-        onClick && onClick(e);
+        if (onClick) {
+          e.stopPropagation();
+          onClick(e);
+        }
       }}
       ref={hoverRef}
     >
@@ -51,13 +54,25 @@ const Decorator: React.FunctionComponent<DecoratorTypes> = ({
     </g>
   );
   if (href) {
-    return (
+    return external ? (
       /*
       // @ts-ignore */
       // eslint-disable-next-line jsx-a11y/anchor-is-valid
-      <a className="odc-decorator__link" xlinkHref={href} target={external ? '_blank' : null}>
+      <a
+        className="odc-decorator__link"
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+      >
         {decorator}
       </a>
+    ) : (
+      <Link className="odc-decorator__link" to={href}>
+        {decorator}
+      </Link>
     );
   }
   return decorator;

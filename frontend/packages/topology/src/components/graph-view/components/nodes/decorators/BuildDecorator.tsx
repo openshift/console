@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { Node } from '@patternfly/react-topology';
@@ -37,11 +36,9 @@ const BuildDecorator: React.FC<BuildDecoratorProps> = ({ element, radius, x, y }
       content={t('topology~Build {{status}}', { status: build.status && build.status.phase })}
       position={TooltipPosition.left}
     >
-      <Link to={link} className="odc-decorator__link">
-        <BuildDecoratorBubble x={x} y={y} radius={radius}>
-          <Status status={build.status.phase} iconOnly noTooltip />
-        </BuildDecoratorBubble>
-      </Link>
+      <BuildDecoratorBubble x={x} y={y} radius={radius} href={link}>
+        <Status status={build.status.phase} iconOnly noTooltip />
+      </BuildDecoratorBubble>
     </Tooltip>
   );
 };
