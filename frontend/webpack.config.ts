@@ -227,7 +227,7 @@ const config: Configuration = {
       { from: './packages/local-storage-operator-plugin/locales', to: 'locales' },
     ]),
     new MomentLocalesPlugin({
-      localesToKeep: ['en', 'ja', 'ko'],
+      localesToKeep: ['en', 'zh-cn', 'ja', 'ko'],
     }),
     extractCSS,
     virtualModules,
