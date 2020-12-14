@@ -29,3 +29,7 @@
 .kv-vm-template__support {
   font-size: var(--pf-global--FontSize--sm);
 }
+
+.kv-vm-template__row > td{
+  vertical-align: baseline !important;
+}
