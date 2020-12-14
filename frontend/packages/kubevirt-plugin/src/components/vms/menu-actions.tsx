@@ -233,10 +233,10 @@ const menuActionMigrate = (
 
   return {
     hidden:
-      vmStatusBundle?.status?.isImporting() ||
       vmStatusBundle?.status?.isMigrating() ||
-      !isVMExpectedRunning(vm) ||
-      !isVMCreated(vm),
+      vmStatusBundle?.status?.isError() ||
+      vmStatusBundle?.status?.isInProgress() ||
+      !isVMRunningOrExpectedRunning(vm),
     // t('kubevirt-plugin~Migrate Virtual Machine')
     labelKey: 'kubevirt-plugin~Migrate Virtual Machine',
     callback: () =>
