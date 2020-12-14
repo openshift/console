@@ -22,3 +22,4 @@
 /frontend/@types
 /frontend/package-lock.json
 /frontend/po-files
+/frontend/packages/cnv-ui-tests
