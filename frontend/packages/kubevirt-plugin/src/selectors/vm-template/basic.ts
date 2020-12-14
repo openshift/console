@@ -60,7 +60,7 @@ export const getTemplateProvider = (
   if (provider) {
     return withProviderPrefix
       ? t('kubevirt-plugin~Provided by {{provider}}', { provider })
-      : t('kubevirt-plugin~{{provider}}', { provider });
+      : provider;
   }
   return withProviderPrefix ? t('kubevirt-plugin~Provided by User') : t('kubevirt-plugin~User');
 };

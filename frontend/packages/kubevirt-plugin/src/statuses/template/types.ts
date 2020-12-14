@@ -36,6 +36,7 @@ export type TemplateSourceStatusBundle = {
   container?: string;
   dvTemplate?: V1alpha1DataVolume;
   pxe?: string;
+  addedOn: string;
 };
 
 export type TemplateSourceStatus = TemplateSourceStatusError | TemplateSourceStatusBundle;

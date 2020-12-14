@@ -3,4 +3,5 @@ export type StatusComponentProps = {
   iconOnly?: boolean;
   noTooltip?: boolean;
   className?: string;
+  popoverTitle?: string;
 };
