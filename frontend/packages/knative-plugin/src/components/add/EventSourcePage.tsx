@@ -4,41 +4,33 @@ import { RouteComponentProps } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { PageBody } from '@console/shared';
 import { LoadingInline, PageHeading } from '@console/internal/components/utils';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
 import { QUERY_PROPERTIES } from '@console/dev-console/src/const';
 import ConnectedEventSource from './EventSource';
 import EventSourceAlert from './EventSourceAlert';
-import {
-  addCamelKameletSourceList,
-  useEventSourceList,
-} from '../../utils/create-eventsources-utils';
-import { isDynamicEventSourceKind } from '../../utils/fetch-dynamic-eventsources-utils';
-import { CamelKameletBindingModel, CamelKameletModel } from '../../models';
+import { CamelKameletBindingModel } from '../../models';
+import { useEventSourceStatus } from '../../hooks';
 
 type EventSourcePageProps = RouteComponentProps<{ ns?: string }>;
 
 const EventSourcePage: React.FC<EventSourcePageProps> = ({ match, location }) => {
   const { t } = useTranslation();
   const namespace = match.params.ns;
-  const eventSourceList = useEventSourceList(namespace);
   const searchParams = new URLSearchParams(location.search);
   const sourceKindProp = searchParams.get('sourceKind');
   const kameletName = sourceKindProp && searchParams.get('name');
-  const [kamelet, kameletLoaded, kameletLoadError] = useK8sGet<K8sResourceKind>(
-    CamelKameletModel,
-    kameletName,
-    namespace,
-  );
   const isKameletSource = kameletName && sourceKindProp === CamelKameletBindingModel.kind;
-  const isSourceKindPresent =
-    (sourceKindProp && isDynamicEventSourceKind(sourceKindProp)) || isKameletSource;
-  const eventSourceStatus = isKameletSource
-    ? addCamelKameletSourceList(eventSourceList, kamelet, kameletLoaded, kameletLoadError)
-    : eventSourceList;
+  const {
+    isValidSource,
+    createSourceAccessLoading,
+    createSourceAccess,
+    loaded,
+    normalizedSource,
+    kamelet,
+  } = useEventSourceStatus(namespace, sourceKindProp, kameletName);
+
   return (
     <NamespacedPage disabled variant={NamespacedPageVariants.light}>
       <Helmet>
@@ -50,21 +42,24 @@ const EventSourcePage: React.FC<EventSourcePageProps> = ({ match, location }) =>
         )}
       </PageHeading>
       <PageBody flexLayout>
-        <EventSourceAlert
-          eventSourceStatus={eventSourceStatus}
-          showSourceKindAlert={!isSourceKindPresent || (isKameletSource && kameletLoadError)}
-        />
-        {eventSourceStatus?.loaded ? (
-          <ConnectedEventSource
-            namespace={namespace}
-            eventSourceStatus={eventSourceStatus}
-            selectedApplication={searchParams.get(QUERY_PROPERTIES.APPLICATION)}
-            contextSource={searchParams.get(QUERY_PROPERTIES.CONTEXT_SOURCE)}
-            sourceKind={searchParams.get('sourceKind')}
-            kameletSource={isKameletSource && kamelet}
+        {loaded ? (
+          <EventSourceAlert
+            isValidSource={isValidSource}
+            createSourceAccessLoading={createSourceAccessLoading}
+            createSourceAccess={createSourceAccess}
           />
         ) : (
           <LoadingInline />
+        )}
+        {loaded && isValidSource && !createSourceAccessLoading && createSourceAccess && (
+          <ConnectedEventSource
+            namespace={namespace}
+            normalizedSource={normalizedSource}
+            selectedApplication={searchParams.get(QUERY_PROPERTIES.APPLICATION)}
+            contextSource={searchParams.get(QUERY_PROPERTIES.CONTEXT_SOURCE)}
+            sourceKind={sourceKindProp}
+            kameletSource={isKameletSource && kamelet}
+          />
         )}
       </PageBody>
     </NamespacedPage>

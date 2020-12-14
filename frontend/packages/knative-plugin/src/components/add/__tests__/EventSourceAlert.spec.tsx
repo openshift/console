@@ -1,10 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { Alert } from '@patternfly/react-core';
-import { referenceForModel } from '@console/internal/module/k8s';
 import EventSourceAlert from '../EventSourceAlert';
-import { getEventSourceIcon } from '../../../utils/get-knative-icon';
-import { EventSourceContainerModel } from '../../../models';
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');
@@ -15,39 +12,32 @@ jest.mock('react-i18next', () => {
 });
 
 describe('EventSourceAlert', () => {
-  const eventSourceStatusData = {
-    loaded: true,
-    eventSourceList: {
-      [EventSourceContainerModel.kind]: {
-        name: EventSourceContainerModel.kind,
-        title: EventSourceContainerModel.kind,
-        iconUrl: getEventSourceIcon(referenceForModel(EventSourceContainerModel)),
-        displayName: EventSourceContainerModel.kind,
-      },
-    },
-  };
-
   it('should not alert if eventSources are there', () => {
-    const wrapper = shallow(<EventSourceAlert eventSourceStatus={eventSourceStatusData} />);
+    const wrapper = shallow(
+      <EventSourceAlert isValidSource createSourceAccessLoading={false} createSourceAccess />,
+    );
     expect(wrapper.find(Alert).exists()).toBe(false);
   });
 
-  it('should show alert if eventSources is null', () => {
+  it('should show alert if eventSource is present but do not have create access', () => {
     const wrapper = shallow(
-      <EventSourceAlert eventSourceStatus={{ loaded: true, eventSourceList: null }} />,
+      <EventSourceAlert
+        isValidSource
+        createSourceAccessLoading={false}
+        createSourceAccess={false}
+      />,
     );
     expect(wrapper.find(Alert).exists()).toBe(true);
   });
 
-  it('should show alert if eventSources has loaded with no data', () => {
-    const eventSourceStatus = { loaded: true, eventSourceList: {} };
-    const wrapper = shallow(<EventSourceAlert eventSourceStatus={eventSourceStatus} />);
+  it('should show alert if eventSource is not present', () => {
+    const wrapper = shallow(
+      <EventSourceAlert
+        isValidSource={false}
+        createSourceAccessLoading={false}
+        createSourceAccess={false}
+      />,
+    );
     expect(wrapper.find(Alert).exists()).toBe(true);
-  });
-
-  it('should not alert if  eventSources has not loaded', () => {
-    const eventSourceStatus = { loaded: false, eventSourceList: {} };
-    const wrapper = shallow(<EventSourceAlert eventSourceStatus={eventSourceStatus} />);
-    expect(wrapper.find(Alert).exists()).toBe(false);
   });
 });

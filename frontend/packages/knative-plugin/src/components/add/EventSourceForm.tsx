@@ -8,16 +8,14 @@ import { FormFooter, SyncedEditorField, YAMLEditorField, FlexForm } from '@conso
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
 import EventSourceSection from './event-sources/EventSourceSection';
-import { EventSourceListData, EventSourceSyncFormData } from './import-types';
+import { EventSourceSyncFormData } from './import-types';
 import {
   getCatalogEventSourceResource,
   sanitizeSourceToForm,
 } from '../../utils/create-eventsources-utils';
-import { isDynamicEventSourceKind } from '../../utils/fetch-dynamic-eventsources-utils';
 
 interface OwnProps {
   namespace: string;
-  eventSourceStatus: EventSourceListData | null;
   eventSourceMetaDescription: React.ReactNode;
   kameletSource?: K8sResourceKind;
 }
@@ -32,7 +30,6 @@ const EventSourceForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
   isSubmitting,
   dirty,
   namespace,
-  eventSourceStatus,
   eventSourceMetaDescription,
   kameletSource,
 }) => {
@@ -46,47 +43,41 @@ const EventSourceForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
     });
 
   const formEditor = (
-    <>
-      {eventSourceStatus && !_.isEmpty(eventSourceStatus.eventSourceList) && (
-        <div className="row">
-          <div className="col-sm-12 col-md-4 col-md-push-8 col-lg-5 col-lg-push-7">
-            {eventSourceMetaDescription}
-          </div>
-          <div className="col-sm-12 col-md-8 col-md-pull-4 col-lg-7 col-lg-pull-5">
-            {values.showCanUseYAMLMessage && (
-              <Alert
-                actionClose={
-                  <AlertActionCloseButton
-                    onClose={() => setFieldValue('showCanUseYAMLMessage', false)}
-                  />
-                }
-                isInline
-                title={t(
-                  'knative-plugin~Note: Some fields may not be represented in this form view. Please select "YAML view" for full control of object creation.',
-                )}
-                variant="info"
+    <div className="row">
+      <div className="col-sm-12 col-md-4 col-md-push-8 col-lg-5 col-lg-push-7">
+        {eventSourceMetaDescription}
+      </div>
+      <div className="col-sm-12 col-md-8 col-md-pull-4 col-lg-7 col-lg-pull-5">
+        {values.showCanUseYAMLMessage && (
+          <Alert
+            actionClose={
+              <AlertActionCloseButton
+                onClose={() => setFieldValue('showCanUseYAMLMessage', false)}
               />
+            }
+            isInline
+            title={t(
+              'knative-plugin~Note: Some fields may not be represented in this form view. Please select "YAML view" for full control of object creation.',
             )}
-            <EventSourceSection namespace={namespace} kameletSource={kameletSource} fullWidth />{' '}
-          </div>
-        </div>
-      )}
-    </>
+            variant="info"
+          />
+        )}
+        <EventSourceSection namespace={namespace} kameletSource={kameletSource} fullWidth />{' '}
+      </div>
+    </div>
   );
   return (
     <FlexForm onSubmit={handleSubmit}>
-      {(isDynamicEventSourceKind(values.formData.type) || kameletSource) && (
-        <SyncedEditorField
-          name="editorType"
-          formContext={{
-            name: 'formData',
-            editor: formEditor,
-            sanitizeTo: (newFormData: K8sResourceKind) =>
-              sanitizeSourceToForm(newFormData, values.formData, kameletSource),
-          }}
-          yamlContext={{ name: 'yamlData', editor: yamlEditor, sanitizeTo: sanitizeToYaml }}
-        />
-      )}
+      <SyncedEditorField
+        name="editorType"
+        formContext={{
+          name: 'formData',
+          editor: formEditor,
+          sanitizeTo: (newFormData: K8sResourceKind) =>
+            sanitizeSourceToForm(newFormData, values.formData, kameletSource),
+        }}
+        yamlContext={{ name: 'yamlData', editor: yamlEditor, sanitizeTo: sanitizeToYaml }}
+      />
       <FormFooter
         handleReset={handleReset}
         errorMessage={status && status.submitError}
