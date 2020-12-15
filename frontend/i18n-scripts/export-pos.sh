@@ -5,7 +5,7 @@ set -exuo pipefail
 for f in public/locales/en/* ; do
   yarn i18n-to-po -f $(basename "$f" .json) -l zh
   yarn i18n-to-po -f $(basename "$f" .json) -l ja
-  yarn i18n-to-po -f $(basename "#f" .json) -l ko
+  yarn i18n-to-po -f $(basename "$f" .json) -l ko
 done
 
 cd packages
