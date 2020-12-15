@@ -1,9 +1,9 @@
 import * as _ from 'lodash';
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { ListPageWrapper_ as ListPageWrapper } from '@console/internal/components/factory';
-import { Firehose } from '@console/internal/components/utils';
+import { EmptyBox, Firehose, LoadingBox } from '@console/internal/components/utils';
 import { Resource, getResources } from '../../../utils/pipeline-augment';
-import { PipelineModel } from '../../../models';
 import PipelineAugmentRuns, { filters } from './PipelineAugmentRuns';
 import PipelineList from './PipelineList';
 
@@ -14,13 +14,15 @@ interface PipelineAugmentRunsWrapperProps {
 }
 
 const PipelineAugmentRunsWrapper: React.FC<PipelineAugmentRunsWrapperProps> = (props) => {
+  const { t } = useTranslation();
   const pipelineData = _.get(props.pipeline, 'data', []);
-  if (pipelineData.length < 1) {
-    return (
-      <div className="cos-status-box">
-        <div className="text-center">No {PipelineModel.labelPlural} Found</div>
-      </div>
-    );
+
+  if (!props.pipeline.loaded) {
+    return <LoadingBox />;
+  }
+
+  if (pipelineData.length === 0) {
+    return <EmptyBox label={t('pipelines-plugin~Pipelines')} />;
   }
   const firehoseResources: Resource = getResources(props.pipeline.data);
   return (
