@@ -55,3 +55,14 @@ Feature: Developer Catalog Page
         And user will see the cards of Helm Charts
         And user will see Filter by Keyword field
         And user will see A-Z, Z-A sort by dropdown
+
+
+    @smoke, @manual
+    Scenario: Helm Charts filter specific to helm chart type
+        Given user has added multiple helm charts repositories
+        And user is at Developer Catalog page
+        When user clicks on Helm Charts type
+        And user selects Red Hat Helm Charts from the list of Chart Repositories
+        Then user will see the cards of Helm Charts from Red Hat Helm Charts
+        And user will see Filter by Keyword field
+        And user will see A-Z, Z-A sort by dropdown
