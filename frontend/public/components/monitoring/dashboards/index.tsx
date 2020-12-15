@@ -103,6 +103,7 @@ const VariableDropdown: React.FC<VariableDropdownProps> = ({
               {items[selectedKey]}
             </DropdownToggle>
           }
+          className="monitoring-dashboards__variable-dropdown"
         />
       )}
     </div>

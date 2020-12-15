@@ -205,6 +205,11 @@ $screen-phone-landscape-min-width: 567px;
   overflow-x: auto;
 }
 
+.monitoring-dashboards__variable-dropdown .pf-c-dropdown__menu {
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
 .monitoring-dashboards__variables {
   display: flex;
   flex-wrap: wrap;
