@@ -75,8 +75,6 @@ export const useK8sWatchResource = <R extends K8sResourceCommon | K8sResourceCom
 
   const reduxID = React.useMemo(() => getIDAndDispatch(resource, k8sModel), [k8sModel, resource]);
 
-  const prevReduxID = usePrevious(reduxID);
-
   const dispatch = useDispatch();
 
   React.useEffect(() => {
@@ -100,7 +98,7 @@ export const useK8sWatchResource = <R extends K8sResourceCommon | K8sResourceCom
     }
     if (!resourceK8s) {
       const data = resource?.isList ? [] : {};
-      return modelsLoaded && !k8sModel && prevReduxID === reduxID
+      return modelsLoaded && !k8sModel
         ? [data, true, new NoModelError()]
         : [data, false, undefined];
     }
@@ -109,7 +107,7 @@ export const useK8sWatchResource = <R extends K8sResourceCommon | K8sResourceCom
     const loaded = resourceK8s.get('loaded');
     const loadError = resourceK8s.get('loadError');
     return [data, loaded, loadError];
-  }, [resource, resourceK8s, modelsLoaded, k8sModel, prevReduxID, reduxID]);
+  }, [resource, resourceK8s, modelsLoaded, k8sModel]);
 };
 
 export const useK8sWatchResources = <R extends ResourcesObject>(
@@ -117,59 +115,66 @@ export const useK8sWatchResources = <R extends ResourcesObject>(
 ): WatchK8sResults<R> => {
   const resources = useDeepCompareMemoize(initResources, true);
   const modelsLoaded = useModelsLoaded();
-  const k8sModelSelectorCreator = React.useMemo(
-    () =>
-      createSelectorCreator(
-        //specifying createSelectorCreator<ImmutableMap<string, any>> throws type error
-        defaultMemoize as any,
-        (oldModels: ImmutableMap<string, any>, newModels: ImmutableMap<string, any>) =>
-          Object.values(resources).every(({ kind }) => oldModels.get(kind) === newModels.get(kind)),
-      ),
-    [resources],
+
+  const allK8sModels = useSelector<RootState, ImmutableMap<string, K8sKind>>((state: RootState) =>
+    state.k8s.getIn(['RESOURCES', 'models']),
   );
 
-  const k8sModelSelector = React.useMemo(
-    () =>
-      k8sModelSelectorCreator(
-        (state: RootState) => state.k8s.getIn(['RESOURCES', 'models']),
-        (models) => {
-          const requiredModels = Object.values(resources).map((r) => r.kind);
-          return models.filter((model, key) => requiredModels.includes(key));
-        },
-      ),
-    [k8sModelSelectorCreator, resources],
-  );
+  const prevK8sModels = usePrevious(allK8sModels);
+  const prevResources = usePrevious(resources);
 
-  const k8sModels = useSelector<RootState, ImmutableMap<string, any>>(k8sModelSelector);
-  const hasAllModelsLoaded = React.useMemo(
-    () => modelsLoaded || Object.values(resources).every((r) => k8sModels.includes(r.kind)),
-    [k8sModels, modelsLoaded, resources],
-  );
+  const k8sModelsRef = React.useRef<ImmutableMap<string, K8sKind>>(ImmutableMap());
 
-  const reduxIDs = React.useMemo(
+  if (
+    prevResources !== resources ||
+    (prevK8sModels !== allK8sModels &&
+      Object.values(resources).some(
+        ({ kind }) => prevK8sModels?.get(kind) !== allK8sModels.get(kind),
+      ))
+  ) {
+    const requiredModels = Object.values(resources).map((r) => r.kind);
+    k8sModelsRef.current = allK8sModels.filter((model, key) => requiredModels.includes(key));
+  }
+
+  const k8sModels = k8sModelsRef.current;
+
+  const reduxIDs = React.useMemo<{
+    [key: string]: ReturnType<GetIDAndDispatch> & { noModel: boolean };
+  }>(
     () =>
-      hasAllModelsLoaded
+      modelsLoaded
         ? Object.keys(resources).reduce((ids, key) => {
-            const idAndDispatch = getIDAndDispatch(
-              resources[key],
-              k8sModels.get(resources[key].kind),
-            );
-            if (idAndDispatch) {
-              ids[key] = idAndDispatch;
+            const resourceModel = k8sModels.get(resources[key].kind);
+            if (!resourceModel) {
+              ids[key] = {
+                noModel: true,
+              };
+            } else {
+              const idAndDispatch = getIDAndDispatch(resources[key], resourceModel);
+              if (idAndDispatch) {
+                ids[key] = idAndDispatch;
+              }
             }
             return ids;
           }, {})
-        : {},
-    [resources, k8sModels, hasAllModelsLoaded],
+        : null,
+    [k8sModels, modelsLoaded, resources],
   );
-
-  const prevReduxIDs = usePrevious(reduxIDs);
 
   const dispatch = useDispatch();
   React.useEffect(() => {
-    Object.keys(reduxIDs).forEach((k) => dispatch(reduxIDs[k].dispatch));
+    const reduxIDKeys = Object.keys(reduxIDs || {});
+    reduxIDKeys.forEach((k) => {
+      if (reduxIDs[k].dispatch) {
+        dispatch(reduxIDs[k].dispatch);
+      }
+    });
     return () => {
-      Object.keys(reduxIDs).forEach((k) => dispatch(k8sActions.stopK8sWatch(reduxIDs[k].id)));
+      reduxIDKeys.forEach((k) => {
+        if (reduxIDs[k].dispatch) {
+          dispatch(k8sActions.stopK8sWatch(reduxIDs[k].id));
+        }
+      });
     };
   }, [dispatch, reduxIDs]);
 
@@ -179,9 +184,9 @@ export const useK8sWatchResources = <R extends ResourcesObject>(
         //specifying createSelectorCreator<ImmutableMap<string, K8sKind>> throws type error
         defaultMemoize as any,
         (oldK8s: ImmutableMap<string, K8sKind>, newK8s: ImmutableMap<string, K8sKind>) =>
-          Object.keys(reduxIDs).every(
-            (k) => oldK8s.get(reduxIDs[k].id) === newK8s.get(reduxIDs[k].id),
-          ),
+          Object.keys(reduxIDs || {})
+            .filter((k) => !reduxIDs[k].noModel)
+            .every((k) => oldK8s.get(reduxIDs[k].id) === newK8s.get(reduxIDs[k].id)),
       ),
     [reduxIDs],
   );
@@ -196,36 +201,32 @@ export const useK8sWatchResources = <R extends ResourcesObject>(
   );
 
   const resourceK8s = useSelector<RootState, K8sState>(resourceK8sSelector);
-  const noModels = modelsLoaded && !Object.keys(reduxIDs).length;
 
-  const results = React.useMemo<WatchK8sResults<R>>(() => {
-    if (Object.keys(reduxIDs).length) {
-      return Object.keys(resources).reduce((acc, key) => {
-        if (reduxIDs[key] && resourceK8s.has(reduxIDs[key].id)) {
+  const results = React.useMemo<WatchK8sResults<R>>(
+    () =>
+      Object.keys(resources).reduce((acc, key) => {
+        if (reduxIDs?.[key].noModel) {
+          acc[key] = {
+            data: resources[key].isList ? [] : {},
+            loaded: true,
+            loadError: new NoModelError(),
+          };
+        } else if (resourceK8s.has(reduxIDs?.[key].id)) {
           const data = getReduxData(resourceK8s.getIn([reduxIDs[key].id, 'data']), resources[key]);
           const loaded = resourceK8s.getIn([reduxIDs[key].id, 'loaded']);
           const loadError = resourceK8s.getIn([reduxIDs[key].id, 'loadError']);
           acc[key] = { data, loaded, loadError };
         } else {
-          const loaded = hasAllModelsLoaded && prevReduxIDs === reduxIDs;
           acc[key] = {
             data: resources[key].isList ? [] : {},
-            loaded,
-            loadError: !loaded ? undefined : new NoModelError(),
+            loaded: false,
+            loadError: undefined,
           };
         }
         return acc;
-      }, {} as any);
-    }
-    return Object.keys(resources).reduce((acc, key) => {
-      const data = resources[key].isList ? [] : {};
-      acc[key] = noModels
-        ? { data, loaded: true, loadError: new NoModelError() }
-        : { data, loaded: false, loadError: undefined };
-      return acc;
-    }, {});
-  }, [reduxIDs, resources, resourceK8s, noModels, prevReduxIDs, hasAllModelsLoaded]);
-
+      }, {} as any),
+    [resources, reduxIDs, resourceK8s],
+  );
   return results;
 };
 
