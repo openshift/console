@@ -1,0 +1,20 @@
+reviewers:
+  - abhi-kn
+  - andrewballantyne
+  - abhinandan13jan
+  - debsmita1
+  - divyanshiGupta
+  - christianvogt
+  - invincibleJai
+  - karthikjeeyar
+  - nemesis09
+  - rohitkrai03
+  - sahil143
+  - vikram-raj
+approvers:
+  - andrewballantyne
+  - christianvogt
+  - invincibleJai
+  - rohitkrai03
+labels:
+  - component/hc-console

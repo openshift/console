@@ -1,0 +1,29 @@
+.odc-resource-kinds-info {
+  padding: var(--pf-global--spacer--md) var(--pf-global--spacer--md) var(--pf-global--spacer--md) 0;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+
+  &__table {
+    width: 100%;
+    td {
+      padding-bottom: var(--pf-global--spacer--sm);
+      padding-right: var(--pf-global--spacer--sm);
+      &:last-of-type {
+        padding-right: 0;
+      }
+    }
+  }
+
+  &__resource-icon {
+    width: 1%;
+    .co-m-resource-icon {
+      font-size: 80%;
+      margin-right: 0;
+    }
+  }
+  &__count {
+    text-align: end;
+    width: 1%;
+  }
+}

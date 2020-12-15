@@ -1,0 +1,76 @@
+.odc-topology {
+  display: grid;
+  height: 100%;
+
+  .pf-topology-container__with-sidebar .pf-topology-content {
+    position: relative;
+  }
+
+  &__hint-container {
+    align-items: center;
+    background: var(--pf-global--Color--light-100);
+    border: 1px solid var(--pf-global--BorderColor--light-100);
+    border-radius: 8px;
+    display: flex;
+    padding: var(--pf-global--spacer--xs) var(--pf-global--spacer--sm);
+    pointer-events: none;
+    position: absolute;
+    top: var(--pf-global--spacer--sm);
+  }
+
+  &__layout-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin: 0 var(--pf-global--spacer--sm);
+  }
+
+  &__layout-button {
+    .pf-topology-control-bar__button.pf-c-button {
+      border-radius: 0;
+      margin-right: 0;
+
+      &:focus {
+        z-index: 10;
+        color: var(--pf-global--active-color--400);
+      }
+
+      &.pf-m-active {
+        background-color: var(--pf-global--Color--light-300);
+        color: var(--pf-global--icon--Color--dark);
+      }
+
+      &:hover {
+        z-index: 20;
+        color: var(--pf-global--active-color--400);
+        &.pf-m-active {
+          color: var(--pf-global--icon--Color--dark);
+        }
+      }
+    }
+
+    &:first-of-type {
+      .pf-topology-control-bar__button.pf-c-button {
+        border-radius: var(--pf-global--BorderRadius--sm) 0 0 var(--pf-global--BorderRadius--sm);
+      }
+    }
+
+    &:last-of-type {
+      .pf-topology-control-bar__button.pf-c-button {
+        border-radius: 0 var(--pf-global--BorderRadius--sm) var(--pf-global--BorderRadius--sm) 0;
+      }
+    }
+
+    &__icon {
+      margin-right: var(--pf-global--spacer--xs);
+    }
+  }
+
+  &__shortcuts-button {
+    margin-right: var(--pf-global--spacer--2xl);
+  }
+
+  .pf-topology-container {
+    display: flex;
+  }
+}

@@ -1,0 +1,15 @@
+.odc-pipeline-build-decorator-tooltip {
+  min-width: 135px;
+
+  &__title, &__status-bars-title, &__status-breakdown {
+    text-align: left;
+  }
+
+  &__title {
+    padding-bottom: 1rem;
+  }
+
+  &__status-bars-wrapper {
+    padding-bottom: 0.5rem;
+  }
+}

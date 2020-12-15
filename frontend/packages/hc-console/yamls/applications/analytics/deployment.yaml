@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: analytics-deployment
+  labels: 
+    app.kubernetes.io/part-of: application-1
+    app.kubernetes.io/name: python
+    app.kubernetes.io/component: backend
+    app.kubernetes.io/instance: user-analytics
+    app.kubernetes.io/version: "1.0"
+  annotations:
+    app.openshift.io/connects-to: '["wit"]'
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/part-of: application-1
+      app.kubernetes.io/name: python
+      app.kubernetes.io/component: backend
+      app.kubernetes.io/instance: user-analytics
+      app.kubernetes.io/version: "1.0"
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/part-of: application-1
+        app.kubernetes.io/name: python
+        app.kubernetes.io/component: backend
+        app.kubernetes.io/instance: user-analytics
+        app.kubernetes.io/version: "1.0"
+    spec:
+      containers:
+        - name: analytics
+          image: nginx:1.7.9
+          ports:
+            - containerPort: 80

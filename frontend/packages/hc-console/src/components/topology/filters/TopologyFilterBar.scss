@@ -1,0 +1,17 @@
+.odc-topology-filter-bar {
+  background-color: var(--pf-chart-global--Fill--Color--white);
+  padding-top: 6px;
+  padding-bottom: 6px;
+
+  &__search {
+    margin-left: auto;
+  }
+  &__info-icon {
+    margin-left: var(--pf-global--spacer--sm);
+  }
+
+  // TODO: Remove when https://github.com/patternfly/patternfly-react/pull/3976 is available
+  .pf-c-select__toggle-badge {
+    display: none;
+  }
+}

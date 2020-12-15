@@ -1,0 +1,2163 @@
+apiVersion: tekton.dev/v1alpha1
+kind: TaskRun
+metadata:
+  creationTimestamp: 2018-12-11T18:14:29Z
+  generation: 1
+  name: build-docker-image-from-git-source-task-run
+  resourceVersion: "6733537"
+  uid: 99d297fd-fd70-11e8-9129-42010a8a0fdc
+spec:
+  generation: 1
+  inputs:
+    params:
+      - name: pathToDockerFile
+        value: Dockerfile
+      - name: pathToContext
+        value: /workspace/git-source/examples/microservices/leeroy-web #configure: may change depending on your source
+    resources:
+      - name: git-source
+        paths: null
+        resourceRef:
+          name: skaffold-git
+  outputs:
+    resources:
+      - name: builtImage
+        paths: null
+        resourceRef:
+          name: skaffold-image-leeroy-web
+  taskRef:
+    name: build-docker-image-from-git-source
+  taskSpec: null
+  trigger:
+    type: manual
+status:
+  conditions:
+    - lastTransitionTime: 2018-12-11T18:15:09Z
+      status: "True"
+      type: Succeeded
+  podName: build-docker-image-from-git-source-task-run-pod-24d414
+  startTime: 2018-12-11T18:14:29Z
+  steps:
+    - terminated:
+        containerID: docker://138ce30c722eed....c830c9d9005a0542
+        exitCode: 0
+        finishedAt: 2018-12-11T18:14:47Z
+        reason: Completed
+        startedAt: 2018-12-11T18:14:47Z
+    - terminated:
+        containerID: docker://4a75136c029fb1....4c94b348d4f67744
+        exitCode: 0
+        finishedAt: 2018-12-11T18:14:48Z
+        reason: Completed
+        startedAt: 2018-12-11T18:14:48Z
+---
+apiVersion: v1
+items:
+- apiVersion: tekton.dev/v1alpha1
+  kind: TaskRun
+  metadata:
+    creationTimestamp: 2019-05-07T19:05:17Z
+    generation: 1
+    labels:
+      tekton.dev/pipeline: voting-deploy-pipeline
+      tekton.dev/pipelineRun: voting-pipelinerun-8cxhf
+      tekton.dev/task: static-analysis
+    name: voting-pipelinerun-8cxhf-analyse-code-worker-ss62x
+    ownerReferences:
+    - apiVersion: tekton.dev/v1alpha1
+      blockOwnerDeletion: true
+      controller: true
+      kind: PipelineRun
+      name: voting-pipelinerun-8cxhf
+      uid: 63294921-70fa-11e9-b4a5-1295abd4b972
+    resourceVersion: "27368868"
+    uid: 0d19ffe0-70fb-11e9-b31a-02bc1876876c
+  spec:
+    Status: ""
+    inputs:
+      params:
+      - name: folder
+        value: /workspace/vote/worker/
+      resources:
+      - name: workspace-git
+        paths:
+        - /pvc/build-worker/workspace-git
+        resourceRef:
+          name: samples-git
+        resourceSpec: null
+    outputs: {}
+    serviceAccount: pipeline
+    taskRef:
+      kind: Task
+      name: static-analysis
+    trigger:
+      type: ""
+  status:
+    completionTime: 2019-05-07T19:06:39Z
+    conditions:
+    - lastTransitionTime: 2019-05-07T19:06:39Z
+      status: "True"
+      type: Succeeded
+    podName: voting-pipelinerun-8cxhf-analyse-code-worker-ss62x-pod-b60e59
+    startTime: 2019-05-07T19:05:17Z
+    steps:
+    - name: create-dir-workspace-git-vnt68
+      terminated:
+        containerID: cri-o://c9eed621ebf59457b3050109ebedb6018e03cbe38028ee19f1ce59a388175412
+        exitCode: 0
+        finishedAt: 2019-05-07T19:06:34Z
+        reason: Completed
+        startedAt: 2019-05-07T19:06:34Z
+    - name: pmd
+      terminated:
+        containerID: cri-o://cf1033559b4c7f7f9fa2f78578debf178075a6d337682ca7b794438f0a7e50d1
+        exitCode: 0
+        finishedAt: 2019-05-07T19:06:37Z
+        reason: Completed
+        startedAt: 2019-05-07T19:06:36Z
+    - name: sonar
+      terminated:
+        containerID: cri-o://b4c6eed5ddf41fc69c9c2051fc799431fd0832b1c7c5b250d908bc4fe2cf332c
+        exitCode: 0
+        finishedAt: 2019-05-07T19:06:38Z
+        reason: Completed
+        startedAt: 2019-05-07T19:06:37Z
+    - name: source-copy-workspace-git-rwpmw
+      terminated:
+        containerID: cri-o://c46eca5506c8d4c73db91c1209a3c273c7f2631eb2e7ae07382b87a3e0c54b87
+        exitCode: 0
+        finishedAt: 2019-05-07T19:06:36Z
+        reason: Completed
+        startedAt: 2019-05-07T19:06:34Z
+    - name: nop
+      terminated:
+        containerID: cri-o://d43e2d16b5693549c5b0bc4484f7e3000ebdff9141ef76e318d8202b1c117a55
+        exitCode: 0
+        finishedAt: 2019-05-07T19:06:38Z
+        reason: Completed
+        startedAt: 2019-05-07T19:06:37Z
+- apiVersion: tekton.dev/v1alpha1
+  kind: TaskRun
+  metadata:
+    creationTimestamp: 2019-05-07T19:00:31Z
+    generation: 1
+    labels:
+      tekton.dev/pipeline: voting-deploy-pipeline
+      tekton.dev/pipelineRun: voting-pipelinerun-8cxhf
+      tekton.dev/task: buildah
+    name: voting-pipelinerun-8cxhf-build-result-image-f8nmn
+    ownerReferences:
+    - apiVersion: tekton.dev/v1alpha1
+      blockOwnerDeletion: true
+      controller: true
+      kind: PipelineRun
+      name: voting-pipelinerun-8cxhf
+      uid: 63294921-70fa-11e9-b4a5-1295abd4b972
+    resourceVersion: "27365894"
+    uid: 6333731a-70fa-11e9-b31a-02bc1876876c
+  spec:
+    Status: ""
+    inputs:
+      params:
+      - name: contextFolder
+        value: ./vote/result/
+      - name: verifyTLS
+        value: "false"
+      resources:
+      - name: workspace-git
+        paths: null
+        resourceRef:
+          name: samples-git
+        resourceSpec: null
+    outputs:
+      resources:
+      - name: image
+        paths:
+        - /pvc/build-result-image/image
+        resourceRef:
+          name: voting-result-image
+        resourceSpec: null
+    serviceAccount: pipeline
+    taskRef:
+      kind: Task
+      name: buildah
+    trigger:
+      type: ""
+  status:
+    completionTime: 2019-05-07T19:02:37Z
+    conditions:
+    - lastTransitionTime: 2019-05-07T19:02:37Z
+      status: "True"
+      type: Succeeded
+    podName: voting-pipelinerun-8cxhf-build-result-image-f8nmn-pod-66c2a9
+    startTime: 2019-05-07T19:00:33Z
+    steps:
+    - name: build
+      terminated:
+        containerID: cri-o://a092c3dbc5c733936cffa7027b191b67d861d728cf4a2f7b19256335a6147fc4
+        exitCode: 0
+        finishedAt: 2019-05-07T19:02:28Z
+        reason: Completed
+        startedAt: 2019-05-07T19:01:04Z
+    - name: git-source-samples-git-gg9df
+      terminated:
+        containerID: cri-o://1208048eee2352b368395c9ce832cf9573a5b621e9fa87eda79d1fad2fc1706e
+        exitCode: 0
+        finishedAt: 2019-05-07T19:01:05Z
+        reason: Completed
+        startedAt: 2019-05-07T19:01:03Z
+    - name: push
+      terminated:
+        containerID: cri-o://c0af6eb3da956622e1fd8181547aa7185ed41f0d3b16d6ef7a2339678a91c05a
+        exitCode: 0
+        finishedAt: 2019-05-07T19:02:37Z
+        reason: Completed
+        startedAt: 2019-05-07T19:01:05Z
+    - name: nop
+      terminated:
+        containerID: cri-o://3a849003e71dc8d8e7223be6f1d23f4fe7f9627ff811bfeed04ae11ce6dcf36c
+        exitCode: 0
+        finishedAt: 2019-05-07T19:02:37Z
+        reason: Completed
+        startedAt: 2019-05-07T19:01:05Z
+- apiVersion: tekton.dev/v1alpha1
+  kind: TaskRun
+  metadata:
+    creationTimestamp: 2019-05-07T19:00:31Z
+    generation: 1
+    labels:
+      tekton.dev/pipeline: voting-deploy-pipeline
+      tekton.dev/pipelineRun: voting-pipelinerun-8cxhf
+      tekton.dev/task: buildah
+    name: voting-pipelinerun-8cxhf-build-vote-image-d77nq
+    ownerReferences:
+    - apiVersion: tekton.dev/v1alpha1
+      blockOwnerDeletion: true
+      controller: true
+      kind: PipelineRun
+      name: voting-pipelinerun-8cxhf
+      uid: 63294921-70fa-11e9-b4a5-1295abd4b972
+    resourceVersion: "27365437"
+    uid: 6332056e-70fa-11e9-b31a-02bc1876876c
+  spec:
+    Status: ""
+    inputs:
+      params:
+      - name: contextFolder
+        value: ./vote/vote/
+      - name: verifyTLS
+        value: "false"
+      resources:
+      - name: workspace-git
+        paths: null
+        resourceRef:
+          name: samples-git
+        resourceSpec: null
+    outputs:
+      resources:
+      - name: image
+        paths:
+        - /pvc/build-vote-image/image
+        resourceRef:
+          name: voting-vote-image
+        resourceSpec: null
+    serviceAccount: pipeline
+    taskRef:
+      kind: Task
+      name: buildah
+    trigger:
+      type: ""
+  status:
+    completionTime: 2019-05-07T19:02:01Z
+    conditions:
+    - lastTransitionTime: 2019-05-07T19:02:01Z
+      status: "True"
+      type: Succeeded
+    podName: voting-pipelinerun-8cxhf-build-vote-image-d77nq-pod-559de4
+    startTime: 2019-05-07T19:00:32Z
+    steps:
+    - name: build
+      terminated:
+        containerID: cri-o://ccc36ce361fa7160628afd2bebbf26bb2fde954c1c0d703e506cd7785c6ca3b4
+        exitCode: 0
+        finishedAt: 2019-05-07T19:01:51Z
+        reason: OOMKilled
+        startedAt: 2019-05-07T19:01:04Z
+    - name: git-source-samples-git-r7vl9
+      terminated:
+        containerID: cri-o://30d5b9fb249d1cf42d0207073820f7bdcfcd61fcf809b62ac936ad8744b60a22
+        exitCode: 0
+        finishedAt: 2019-05-07T19:01:05Z
+        reason: Completed
+        startedAt: 2019-05-07T19:01:03Z
+    - name: push
+      terminated:
+        containerID: cri-o://8cbb111f72e047c2bbd126e8c7c954e868b1d986f0613244ebd589c076de1d9b
+        exitCode: 0
+        finishedAt: 2019-05-07T19:01:59Z
+        reason: Completed
+        startedAt: 2019-05-07T19:01:04Z
+    - name: nop
+      terminated:
+        containerID: cri-o://795dd37a03fec1978f310b0318fb0864e2619469632f0ce294a45e40a1e6f683
+        exitCode: 0
+        finishedAt: 2019-05-07T19:02:00Z
+        reason: Completed
+        startedAt: 2019-05-07T19:01:05Z
+- apiVersion: tekton.dev/v1alpha1
+  kind: TaskRun
+  metadata:
+    creationTimestamp: 2019-05-07T19:00:31Z
+    generation: 1
+    labels:
+      tekton.dev/pipeline: voting-deploy-pipeline
+      tekton.dev/pipelineRun: voting-pipelinerun-8cxhf
+      tekton.dev/task: mvn-build
+    name: voting-pipelinerun-8cxhf-build-worker-8v54p
+    ownerReferences:
+    - apiVersion: tekton.dev/v1alpha1
+      blockOwnerDeletion: true
+      controller: true
+      kind: PipelineRun
+      name: voting-pipelinerun-8cxhf
+      uid: 63294921-70fa-11e9-b4a5-1295abd4b972
+    resourceVersion: "27367805"
+    uid: 6330fe49-70fa-11e9-b31a-02bc1876876c
+  spec:
+    Status: ""
+    inputs:
+      params:
+      - name: folder
+        value: /workspace/vote/worker/
+      resources:
+      - name: workspace-git
+        paths: null
+        resourceRef:
+          name: samples-git
+        resourceSpec: null
+    outputs:
+      resources:
+      - name: workspace-git
+        paths:
+        - /pvc/build-worker/workspace-git
+        resourceRef:
+          name: samples-git
+        resourceSpec: null
+    serviceAccount: pipeline
+    taskRef:
+      kind: Task
+      name: mvn-build
+    trigger:
+      type: ""
+  status:
+    completionTime: 2019-05-07T19:05:17Z
+    conditions:
+    - lastTransitionTime: 2019-05-07T19:05:17Z
+      status: "True"
+      type: Succeeded
+    podName: voting-pipelinerun-8cxhf-build-worker-8v54p-pod-8bee3c
+    startTime: 2019-05-07T19:00:31Z
+    steps:
+    - name: build
+      terminated:
+        containerID: cri-o://8f3dff7dae4c19547f599d72e3a89dc2af483d56f950f55ff57a2af4c8171f60
+        exitCode: 0
+        finishedAt: 2019-05-07T19:05:14Z
+        reason: Completed
+        startedAt: 2019-05-07T19:04:56Z
+    - name: git-source-samples-git-hq4sg
+      terminated:
+        containerID: cri-o://beec097b87169ad0a0044c74b1ec4d6859b6a4b1fd4e47480012efea697a6347
+        exitCode: 0
+        finishedAt: 2019-05-07T19:04:56Z
+        reason: Completed
+        startedAt: 2019-05-07T19:04:56Z
+    - name: source-copy-samples-git-j9gjb
+      terminated:
+        containerID: cri-o://c52fa112f8cc58d04c5c0b18497e3f96b154cc138330b0f8d1eed79e8f2e4121
+        exitCode: 0
+        finishedAt: 2019-05-07T19:05:16Z
+        reason: Completed
+        startedAt: 2019-05-07T19:04:56Z
+    - name: source-mkdir-samples-git-2hfkl
+      terminated:
+        containerID: cri-o://bcab024f8c18a84de4b74d210e05960b6e2b0c1104b4abd3451252253c1c91c3
+        exitCode: 0
+        finishedAt: 2019-05-07T19:05:15Z
+        reason: Completed
+        startedAt: 2019-05-07T19:04:56Z
+    - name: nop
+      terminated:
+        containerID: cri-o://28888000cd2dce23a0c7ab390b1776e7749f91ed68747263e70ddd4e5636de6a
+        exitCode: 0
+        finishedAt: 2019-05-07T19:05:16Z
+        reason: Completed
+        startedAt: 2019-05-07T19:04:57Z
+- apiVersion: tekton.dev/v1alpha1
+  kind: TaskRun
+  metadata:
+    creationTimestamp: 2019-05-07T19:06:39Z
+    generation: 1
+    labels:
+      tekton.dev/pipeline: voting-deploy-pipeline
+      tekton.dev/pipelineRun: voting-pipelinerun-8cxhf
+      tekton.dev/task: buildah
+    name: voting-pipelinerun-8cxhf-build-worker-image-jmqsv
+    ownerReferences:
+    - apiVersion: tekton.dev/v1alpha1
+      blockOwnerDeletion: true
+      controller: true
+      kind: PipelineRun
+      name: voting-pipelinerun-8cxhf
+      uid: 63294921-70fa-11e9-b4a5-1295abd4b972
+    resourceVersion: "27369401"
+    uid: 3e177444-70fb-11e9-b31a-02bc1876876c
+  spec:
+    Status: ""
+    inputs:
+      params:
+      - name: dockerfile
+        value: Dockerfile
+      - name: contextFolder
+        value: ./vote/worker/
+      - name: verifyTLS
+        value: "false"
+      resources:
+      - name: workspace-git
+        paths:
+        - /pvc/build-worker/workspace-git
+        resourceRef:
+          name: samples-git
+        resourceSpec: null
+    outputs:
+      resources:
+      - name: image
+        paths:
+        - /pvc/build-worker-image/image
+        resourceRef:
+          name: voting-worker-image
+        resourceSpec: null
+    serviceAccount: pipeline
+    taskRef:
+      kind: Task
+      name: buildah
+    trigger:
+      type: ""
+  status:
+    completionTime: 2019-05-07T19:07:18Z
+    conditions:
+    - lastTransitionTime: 2019-05-07T19:07:18Z
+      status: "True"
+      type: Succeeded
+    podName: voting-pipelinerun-8cxhf-build-worker-image-jmqsv-pod-0d8a61
+    startTime: 2019-05-07T19:06:39Z
+    steps:
+    - name: build
+      terminated:
+        containerID: cri-o://cb82d280482a55b14da2421f1ca22afd16347c56ff8e9e42b63289486dbdda87
+        exitCode: 0
+        finishedAt: 2019-05-07T19:07:06Z
+        reason: Completed
+        startedAt: 2019-05-07T19:06:56Z
+    - name: create-dir-workspace-git-kkb7m
+      terminated:
+        containerID: cri-o://f02f45e17908d424da6d6350e54258f7e2542604e7594c406b806de006ebc659
+        exitCode: 0
+        finishedAt: 2019-05-07T19:06:54Z
+        reason: Completed
+        startedAt: 2019-05-07T19:06:54Z
+    - name: push
+      terminated:
+        containerID: cri-o://772c5d3a6f89c520fd7545b0c7d27a4e40e58fa0713afccf1fbb1dccffc0bc40
+        exitCode: 0
+        finishedAt: 2019-05-07T19:07:17Z
+        reason: Completed
+        startedAt: 2019-05-07T19:06:56Z
+    - name: source-copy-workspace-git-kp89d
+      terminated:
+        containerID: cri-o://4ee8e78358c7bf216782d2f3a89679dd0f64af52597417685ac2485cc02a0258
+        exitCode: 0
+        finishedAt: 2019-05-07T19:06:57Z
+        reason: Completed
+        startedAt: 2019-05-07T19:06:55Z
+    - name: nop
+      terminated:
+        containerID: cri-o://94c1df19105f686ebd1967a1ceacb10680e42a63994413ea4a1047035a94a7af
+        exitCode: 0
+        finishedAt: 2019-05-07T19:07:17Z
+        reason: Completed
+        startedAt: 2019-05-07T19:06:56Z
+- apiVersion: tekton.dev/v1alpha1
+  kind: TaskRun
+  metadata:
+    creationTimestamp: 2019-05-07T19:00:31Z
+    generation: 1
+    labels:
+      tekton.dev/pipeline: voting-deploy-pipeline
+      tekton.dev/pipelineRun: voting-pipelinerun-8cxhf
+      tekton.dev/task: openshift-cli-apply
+    name: voting-pipelinerun-8cxhf-create-apps-n7ctf
+    ownerReferences:
+    - apiVersion: tekton.dev/v1alpha1
+      blockOwnerDeletion: true
+      controller: true
+      kind: PipelineRun
+      name: voting-pipelinerun-8cxhf
+      uid: 63294921-70fa-11e9-b4a5-1295abd4b972
+    resourceVersion: "27364433"
+    uid: 632f7fc9-70fa-11e9-b31a-02bc1876876c
+  spec:
+    Status: ""
+    inputs:
+      params:
+      - name: yamls
+        value: /workspace/vote/apps
+      resources:
+      - name: workspace-git
+        paths: null
+        resourceRef:
+          name: samples-git
+        resourceSpec: null
+    outputs: {}
+    serviceAccount: pipeline
+    taskRef:
+      kind: Task
+      name: openshift-cli-apply
+    trigger:
+      type: ""
+  status:
+    completionTime: 2019-05-07T19:00:44Z
+    conditions:
+    - lastTransitionTime: 2019-05-07T19:00:44Z
+      status: "True"
+      type: Succeeded
+    podName: voting-pipelinerun-8cxhf-create-apps-n7ctf-pod-b17905
+    startTime: 2019-05-07T19:00:31Z
+    steps:
+    - name: git-source-samples-git-lmqzw
+      terminated:
+        containerID: cri-o://f8ebfd1e125915fcb98057907549ed1525897bce0efa999483bd8c079bbcb75e
+        exitCode: 0
+        finishedAt: 2019-05-07T19:00:42Z
+        reason: Completed
+        startedAt: 2019-05-07T19:00:41Z
+    - name: oc
+      terminated:
+        containerID: cri-o://0d965f65398c98899965df7862d0f57cfb82d81c5f58edfccf4a579120264315
+        exitCode: 0
+        finishedAt: 2019-05-07T19:00:44Z
+        reason: Completed
+        startedAt: 2019-05-07T19:00:42Z
+    - name: nop
+      terminated:
+        containerID: cri-o://4d8755520503dda845ac30a4740bb50a19725009f3725627a25a2ebdcc4fddd7
+        exitCode: 0
+        finishedAt: 2019-05-07T19:00:44Z
+        reason: Completed
+        startedAt: 2019-05-07T19:00:42Z
+- apiVersion: tekton.dev/v1alpha1
+  kind: TaskRun
+  metadata:
+    creationTimestamp: 2019-05-07T19:02:37Z
+    generation: 1
+    labels:
+      tekton.dev/pipeline: voting-deploy-pipeline
+      tekton.dev/pipelineRun: voting-pipelinerun-8cxhf
+      tekton.dev/task: openshift-cli-rollout
+    name: voting-pipelinerun-8cxhf-deploy-result-9j699
+    ownerReferences:
+    - apiVersion: tekton.dev/v1alpha1
+      blockOwnerDeletion: true
+      controller: true
+      kind: PipelineRun
+      name: voting-pipelinerun-8cxhf
+      uid: 63294921-70fa-11e9-b4a5-1295abd4b972
+    resourceVersion: "27366050"
+    uid: ae2ebe00-70fa-11e9-b31a-02bc1876876c
+  spec:
+    Status: ""
+    inputs:
+      params:
+      - name: app
+        value: voting-result
+    outputs: {}
+    serviceAccount: pipeline
+    taskRef:
+      kind: Task
+      name: openshift-cli-rollout
+    trigger:
+      type: ""
+  status:
+    completionTime: 2019-05-07T19:02:50Z
+    conditions:
+    - lastTransitionTime: 2019-05-07T19:02:50Z
+      status: "True"
+      type: Succeeded
+    podName: voting-pipelinerun-8cxhf-deploy-result-9j699-pod-788821
+    startTime: 2019-05-07T19:02:37Z
+    steps:
+    - name: rollout
+      terminated:
+        containerID: cri-o://4d985502674578a0cf576a4dcddd317ff9b668ff2f004b8c4ffadbfb364a2b67
+        exitCode: 0
+        finishedAt: 2019-05-07T19:02:49Z
+        reason: Completed
+        startedAt: 2019-05-07T19:02:48Z
+    - name: nop
+      terminated:
+        containerID: cri-o://62a63a2e8b5340c8868d4346c4e560509622a9ec0608e2884164d6843447371f
+        exitCode: 0
+        finishedAt: 2019-05-07T19:02:50Z
+        reason: Completed
+        startedAt: 2019-05-07T19:02:49Z
+- apiVersion: tekton.dev/v1alpha1
+  kind: TaskRun
+  metadata:
+    creationTimestamp: 2019-05-07T19:02:01Z
+    generation: 1
+    labels:
+      tekton.dev/pipeline: voting-deploy-pipeline
+      tekton.dev/pipelineRun: voting-pipelinerun-8cxhf
+      tekton.dev/task: openshift-cli-rollout
+    name: voting-pipelinerun-8cxhf-deploy-vote-sfhd6
+    ownerReferences:
+    - apiVersion: tekton.dev/v1alpha1
+      blockOwnerDeletion: true
+      controller: true
+      kind: PipelineRun
+      name: voting-pipelinerun-8cxhf
+      uid: 63294921-70fa-11e9-b4a5-1295abd4b972
+    resourceVersion: "27365642"
+    uid: 9873a94e-70fa-11e9-b31a-02bc1876876c
+  spec:
+    Status: ""
+    inputs:
+      params:
+      - name: app
+        value: voting-vote
+    outputs: {}
+    serviceAccount: pipeline
+    taskRef:
+      kind: Task
+      name: openshift-cli-rollout
+    trigger:
+      type: ""
+  status:
+    completionTime: 2019-05-07T19:02:12Z
+    conditions:
+    - lastTransitionTime: 2019-05-07T19:02:12Z
+      status: "True"
+      type: Succeeded
+    podName: voting-pipelinerun-8cxhf-deploy-vote-sfhd6-pod-0caf6c
+    startTime: 2019-05-07T19:02:01Z
+    steps:
+    - name: rollout
+      terminated:
+        containerID: cri-o://a2fc98a2f8ecd62ee06d9a8728f73717abc0e0c87d797b751e67ca4d8ebbc4d6
+        exitCode: 0
+        finishedAt: 2019-05-07T19:02:11Z
+        reason: Completed
+        startedAt: 2019-05-07T19:02:11Z
+    - name: nop
+      terminated:
+        containerID: cri-o://f786d0542c1b5ab22d0c3e7f0459317d0821542e2d05a881cb4e20f729aac71c
+        exitCode: 0
+        finishedAt: 2019-05-07T19:02:12Z
+        reason: Completed
+        startedAt: 2019-05-07T19:02:11Z
+- apiVersion: tekton.dev/v1alpha1
+  kind: TaskRun
+  metadata:
+    creationTimestamp: 2019-05-07T19:07:18Z
+    generation: 1
+    labels:
+      tekton.dev/pipeline: voting-deploy-pipeline
+      tekton.dev/pipelineRun: voting-pipelinerun-8cxhf
+      tekton.dev/task: openshift-cli-rollout
+    name: voting-pipelinerun-8cxhf-deploy-worker-45q5g
+    ownerReferences:
+    - apiVersion: tekton.dev/v1alpha1
+      blockOwnerDeletion: true
+      controller: true
+      kind: PipelineRun
+      name: voting-pipelinerun-8cxhf
+      uid: 63294921-70fa-11e9-b4a5-1295abd4b972
+    resourceVersion: "27369609"
+    uid: 557dd22d-70fb-11e9-b31a-02bc1876876c
+  spec:
+    Status: ""
+    inputs:
+      params:
+      - name: app
+        value: voting-worker
+    outputs: {}
+    serviceAccount: pipeline
+    taskRef:
+      kind: Task
+      name: openshift-cli-rollout
+    trigger:
+      type: ""
+  status:
+    completionTime: 2019-05-07T19:07:31Z
+    conditions:
+    - lastTransitionTime: 2019-05-07T19:07:31Z
+      status: "True"
+      type: Succeeded
+    podName: voting-pipelinerun-8cxhf-deploy-worker-45q5g-pod-9952f1
+    startTime: 2019-05-07T19:07:18Z
+    steps:
+    - name: rollout
+      terminated:
+        containerID: cri-o://24f40cc1527cb1997bf8c513e1d4cabd4ab7e5de2a27b740a8d15bb503cbf261
+        exitCode: 0
+        finishedAt: 2019-05-07T19:07:30Z
+        reason: Completed
+        startedAt: 2019-05-07T19:07:30Z
+    - name: nop
+      terminated:
+        containerID: cri-o://9c84572f67486badce4656f3be049153f33bcd820ecff68eb0b4bd0ae1fa25ac
+        exitCode: 0
+        finishedAt: 2019-05-07T19:07:31Z
+        reason: Completed
+        startedAt: 2019-05-07T19:07:30Z
+- apiVersion: tekton.dev/v1alpha1
+  kind: TaskRun
+  metadata:
+    creationTimestamp: 2019-05-07T19:05:17Z
+    generation: 1
+    labels:
+      tekton.dev/pipeline: voting-deploy-pipeline
+      tekton.dev/pipelineRun: voting-pipelinerun-8cxhf
+      tekton.dev/task: mvn-test
+    name: voting-pipelinerun-8cxhf-test-worker-zxk55
+    ownerReferences:
+    - apiVersion: tekton.dev/v1alpha1
+      blockOwnerDeletion: true
+      controller: true
+      kind: PipelineRun
+      name: voting-pipelinerun-8cxhf
+      uid: 63294921-70fa-11e9-b4a5-1295abd4b972
+    resourceVersion: "27368250"
+    uid: 0d18451e-70fb-11e9-b31a-02bc1876876c
+  spec:
+    Status: ""
+    inputs:
+      params:
+      - name: folder
+        value: /workspace/vote/worker/
+      resources:
+      - name: workspace-git
+        paths:
+        - /pvc/build-worker/workspace-git
+        resourceRef:
+          name: samples-git
+        resourceSpec: null
+    outputs: {}
+    serviceAccount: pipeline
+    taskRef:
+      kind: Task
+      name: mvn-test
+    trigger:
+      type: ""
+  status:
+    completionTime: 2019-05-07T19:05:49Z
+    conditions:
+    - lastTransitionTime: 2019-05-07T19:05:49Z
+      status: "True"
+      type: Succeeded
+    podName: voting-pipelinerun-8cxhf-test-worker-zxk55-pod-e190b0
+    startTime: 2019-05-07T19:05:17Z
+    steps:
+    - name: build
+      terminated:
+        containerID: cri-o://7f54d5ee15dbb2b57254912fa26095e4002fd05534761fd02c8cb45bab120fb5
+        exitCode: 0
+        finishedAt: 2019-05-07T19:05:40Z
+        reason: Completed
+        startedAt: 2019-05-07T19:05:32Z
+    - name: create-dir-workspace-git-qfnq2
+      terminated:
+        containerID: cri-o://b34f74a615fd45d5d750f6162b5eab3191af57234254dea010150e8425962a4c
+        exitCode: 0
+        finishedAt: 2019-05-07T19:05:32Z
+        reason: Completed
+        startedAt: 2019-05-07T19:05:32Z
+    - name: source-copy-workspace-git-7wmdq
+      terminated:
+        containerID: cri-o://a6078e3a697580b90bc80c5291a68343848a266d22261021b4bed10353c213f9
+        exitCode: 0
+        finishedAt: 2019-05-07T19:05:33Z
+        reason: Completed
+        startedAt: 2019-05-07T19:05:32Z
+    - name: test
+      terminated:
+        containerID: cri-o://ababecae77a65781a26dc97a3181f886e65086d2894d1810f4f299502022fff0
+        exitCode: 0
+        finishedAt: 2019-05-07T19:05:48Z
+        reason: Completed
+        startedAt: 2019-05-07T19:05:33Z
+    - name: nop
+      terminated:
+        containerID: cri-o://8d3954d4a0bf3116f7bba7abc4076ca9b47c87c63403aa83a3129ec5feca13b2
+        exitCode: 0
+        finishedAt: 2019-05-07T19:05:48Z
+        reason: Completed
+        startedAt: 2019-05-07T19:05:33Z
+- apiVersion: tekton.dev/v1alpha1
+  kind: TaskRun
+  metadata:
+    creationTimestamp: 2019-05-08T22:13:36Z
+    generation: 1
+    labels:
+      tekton.dev/pipeline: voting-deploy-pipeline
+      tekton.dev/pipelineRun: voting-pipelinerun-jvt7b
+      tekton.dev/task: static-analysis
+    name: voting-pipelinerun-jvt7b-analyse-code-worker-qs6wx
+    ownerReferences:
+    - apiVersion: tekton.dev/v1alpha1
+      blockOwnerDeletion: true
+      controller: true
+      kind: PipelineRun
+      name: voting-pipelinerun-jvt7b
+      uid: dc3a96d0-71dd-11e9-952f-1295abd4b972
+    resourceVersion: "28558377"
+    uid: 86c0b232-71de-11e9-ac60-02bc1876876c
+  spec:
+    Status: ""
+    inputs:
+      params:
+      - name: folder
+        value: /workspace/vote/worker/
+      resources:
+      - name: workspace-git
+        paths:
+        - /pvc/build-worker/workspace-git
+        resourceRef:
+          apiVersion: tekton.dev/v1alpha1
+          name: samples-git
+        resourceSpec: null
+    outputs: {}
+    serviceAccount: pipeline
+    taskRef:
+      kind: Task
+      name: static-analysis
+    trigger:
+      type: ""
+  status:
+    completionTime: 2019-05-08T22:14:07Z
+    conditions:
+    - lastTransitionTime: 2019-05-08T22:14:07Z
+      status: "True"
+      type: Succeeded
+    podName: voting-pipelinerun-jvt7b-analyse-code-worker-qs6wx-pod-f4c280
+    startTime: 2019-05-08T22:13:36Z
+    steps:
+    - name: create-dir-workspace-git-d7f5s
+      terminated:
+        containerID: cri-o://c610cd27994b0d7764e138c4c688dfc661585b918c8d156da3f97efe48e38d4e
+        exitCode: 0
+        finishedAt: 2019-05-08T22:13:58Z
+        reason: Completed
+        startedAt: 2019-05-08T22:13:58Z
+    - name: pmd
+      terminated:
+        containerID: cri-o://dc6e28f7b21c830b3f4d52d719aea6d376abeafedb1946fff517e0f86f49ed1c
+        exitCode: 0
+        finishedAt: 2019-05-08T22:14:04Z
+        reason: Completed
+        startedAt: 2019-05-08T22:14:04Z
+    - name: sonar
+      terminated:
+        containerID: cri-o://7239caac7015316b910b0b2164c84e254188f7da1d94aa42c110d419225dc4e8
+        exitCode: 0
+        finishedAt: 2019-05-08T22:14:05Z
+        reason: Completed
+        startedAt: 2019-05-08T22:14:05Z
+    - name: source-copy-workspace-git-ggw9h
+      terminated:
+        containerID: cri-o://a24efe9da165244963871f91c7aa8646c37cab51fb864b1f9ef45e925259fb19
+        exitCode: 0
+        finishedAt: 2019-05-08T22:13:59Z
+        reason: Completed
+        startedAt: 2019-05-08T22:13:58Z
+    - name: nop
+      terminated:
+        containerID: cri-o://ae6d90dfea0e13fd193eb20e76ba3fcadd1f960d8a3804c6802ea1a2c07ae642
+        exitCode: 0
+        finishedAt: 2019-05-08T22:14:05Z
+        reason: Completed
+        startedAt: 2019-05-08T22:14:05Z
+- apiVersion: tekton.dev/v1alpha1
+  kind: TaskRun
+  metadata:
+    creationTimestamp: 2019-05-08T22:08:50Z
+    generation: 1
+    labels:
+      tekton.dev/pipeline: voting-deploy-pipeline
+      tekton.dev/pipelineRun: voting-pipelinerun-jvt7b
+      tekton.dev/task: buildah
+    ownerReferences:
+    - apiVersion: tekton.dev/v1alpha1
+      blockOwnerDeletion: true
+      controller: true
+      kind: PipelineRun
+      name: voting-pipelinerun-jvt7b
+      uid: dc3a96d0-71dd-11e9-952f-1295abd4b972
+    resourceVersion: "28555752"
+    uid: dc46a5ab-71dd-11e9-ac60-02bc1876876c
+  spec:
+    Status: ""
+    inputs:
+      params:
+      - name: contextFolder
+        value: ./vote/result/
+      - name: verifyTLS
+        value: "false"
+      resources:
+      - name: workspace-git
+        paths: null
+        resourceRef:
+          apiVersion: tekton.dev/v1alpha1
+          name: samples-git
+        resourceSpec: null
+    outputs:
+      resources:
+      - name: image
+        paths:
+        - /pvc/build-result-image/image
+        resourceRef:
+          apiVersion: tekton.dev/v1alpha1
+          name: voting-result-image
+        resourceSpec: null
+    serviceAccount: pipeline
+    taskRef:
+      kind: Task
+      name: buildah
+    trigger:
+      type: ""
+  status:
+    completionTime: 2019-05-08T22:10:52Z
+    conditions:
+    - lastTransitionTime: 2019-05-08T22:10:52Z
+      status: "True"
+      type: Succeeded
+    podName: voting-pipelinerun-jvt7b-build-result-image-7ccdk-pod-680859
+    startTime: 2019-05-08T22:08:52Z
+    steps:
+    - name: build
+      terminated:
+        containerID: cri-o://c013dde6cb33afd7645aa0bca94aa08cc195b41796e4ebc8a38a69126584887b
+        exitCode: 0
+        finishedAt: 2019-05-08T22:10:43Z
+        reason: Completed
+        startedAt: 2019-05-08T22:09:24Z
+    - name: git-source-samples-git-6wbd4
+      terminated:
+        containerID: cri-o://9808eb63bfb69d19ca012b591cf61240cc1a5e36ff16ca7030447b58fc2c00d0
+        exitCode: 0
+        finishedAt: 2019-05-08T22:09:24Z
+        reason: Completed
+        startedAt: 2019-05-08T22:09:23Z
+    - name: push
+      terminated:
+        containerID: cri-o://761a85677a58450ee76f320af3869963083c777504e36e0fdc62165ac6e99ee2
+        exitCode: 0
+        finishedAt: 2019-05-08T22:10:52Z
+        reason: Completed
+        startedAt: 2019-05-08T22:09:24Z
+    - name: nop
+      terminated:
+        containerID: cri-o://ac478dd70054eeff1782806628b653e0a22eab94bd6cf57583b61dc67171924d
+        exitCode: 0
+        finishedAt: 2019-05-08T22:10:52Z
+        reason: Completed
+        startedAt: 2019-05-08T22:09:25Z
+- apiVersion: tekton.dev/v1alpha1
+  kind: TaskRun
+  metadata:
+    creationTimestamp: 2019-05-08T22:08:50Z
+    generation: 1
+    labels:
+      tekton.dev/pipeline: voting-deploy-pipeline
+      tekton.dev/pipelineRun: voting-pipelinerun-jvt7b
+      tekton.dev/task: buildah
+    name: voting-pipelinerun-jvt7b-build-vote-image-2lgbl
+    ownerReferences:
+    - apiVersion: tekton.dev/v1alpha1
+      blockOwnerDeletion: true
+      controller: true
+      kind: PipelineRun
+      name: voting-pipelinerun-jvt7b
+      uid: dc3a96d0-71dd-11e9-952f-1295abd4b972
+    resourceVersion: "28555299"
+    uid: dc45464d-71dd-11e9-ac60-02bc1876876c
+  spec:
+    Status: ""
+    inputs:
+      params:
+      - name: contextFolder
+        value: ./vote/vote/
+      - name: verifyTLS
+        value: "false"
+      resources:
+      - name: workspace-git
+        paths: null
+        resourceRef:
+          apiVersion: tekton.dev/v1alpha1
+          name: samples-git
+        resourceSpec: null
+    outputs:
+      resources:
+      - name: image
+        paths:
+        - /pvc/build-vote-image/image
+        resourceRef:
+          apiVersion: tekton.dev/v1alpha1
+          name: voting-vote-image
+        resourceSpec: null
+    serviceAccount: pipeline
+    taskRef:
+      kind: Task
+      name: buildah
+    trigger:
+      type: ""
+  status:
+    completionTime: 2019-05-08T22:10:23Z
+    conditions:
+    - lastTransitionTime: 2019-05-08T22:10:23Z
+      status: "True"
+      type: Succeeded
+    podName: voting-pipelinerun-jvt7b-build-vote-image-2lgbl-pod-21f53b
+    startTime: 2019-05-08T22:08:50Z
+    steps:
+    - name: build
+      terminated:
+        containerID: cri-o://3608703e67f888d573543b62331af9616606aad2d2343eed2af9ea8699507cf0
+        exitCode: 0
+        finishedAt: 2019-05-08T22:10:08Z
+        reason: Completed
+        startedAt: 2019-05-08T22:09:23Z
+    - name: git-source-samples-git-lwcwz
+      terminated:
+        containerID: cri-o://67388cc89a96810d54974c3646f947e7c02b7531b24068f96d850cc45a20d3fa
+        exitCode: 0
+        finishedAt: 2019-05-08T22:09:23Z
+        reason: Completed
+        startedAt: 2019-05-08T22:09:22Z
+    - name: push
+      terminated:
+        containerID: cri-o://c84e646155714ee2f6478ce4f44f3ce09d1f6fac56fbb69772f63a17836e7b06
+        exitCode: 0
+        finishedAt: 2019-05-08T22:10:22Z
+        reason: Completed
+        startedAt: 2019-05-08T22:09:23Z
+    - name: nop
+      terminated:
+        containerID: cri-o://a97f892783985931bd78a166da29f3d6d70887c7022fc122eaca0273096b68f3
+        exitCode: 0
+        finishedAt: 2019-05-08T22:10:22Z
+        reason: Completed
+        startedAt: 2019-05-08T22:09:24Z
+- apiVersion: tekton.dev/v1alpha1
+  kind: TaskRun
+  metadata:
+    creationTimestamp: 2019-05-08T22:08:50Z
+    generation: 1
+    labels:
+      tekton.dev/pipeline: voting-deploy-pipeline
+      tekton.dev/pipelineRun: voting-pipelinerun-jvt7b
+      tekton.dev/task: mvn-build
+    name: voting-pipelinerun-jvt7b-build-worker-789v8
+    ownerReferences:
+    - apiVersion: tekton.dev/v1alpha1
+      blockOwnerDeletion: true
+      controller: true
+      kind: PipelineRun
+      name: voting-pipelinerun-jvt7b
+      uid: dc3a96d0-71dd-11e9-952f-1295abd4b972
+    resourceVersion: "28557950"
+    uid: dc43c755-71dd-11e9-ac60-02bc1876876c
+  spec:
+    Status: ""
+    inputs:
+      params:
+      - name: folder
+        value: /workspace/vote/worker/
+      resources:
+      - name: workspace-git
+        paths: null
+        resourceRef:
+          apiVersion: tekton.dev/v1alpha1
+          name: samples-git
+        resourceSpec: null
+    outputs:
+      resources:
+      - name: workspace-git
+        paths:
+        - /pvc/build-worker/workspace-git
+        resourceRef:
+          apiVersion: tekton.dev/v1alpha1
+          name: samples-git
+        resourceSpec: null
+    serviceAccount: pipeline
+    taskRef:
+      kind: Task
+      name: mvn-build
+    trigger:
+      type: ""
+  status:
+    completionTime: 2019-05-08T22:13:36Z
+    conditions:
+    - lastTransitionTime: 2019-05-08T22:13:36Z
+      status: "True"
+      type: Succeeded
+    podName: voting-pipelinerun-jvt7b-build-worker-789v8-pod-5d3451
+    startTime: 2019-05-08T22:08:50Z
+    steps:
+    - name: build
+      terminated:
+        containerID: cri-o://0e7180b19b312c0e15428d36a11df1c43d2e34063ad8a716acb785dfa8599cee
+        exitCode: 0
+        finishedAt: 2019-05-08T22:13:35Z
+        reason: Completed
+        startedAt: 2019-05-08T22:13:14Z
+    - name: git-source-samples-git-wc2dx
+      terminated:
+        containerID: cri-o://c493d898338dfcdec256e3b29b18379245610091a591591cb0e8c5a1b4b6485e
+        exitCode: 0
+        finishedAt: 2019-05-08T22:13:15Z
+        reason: Completed
+        startedAt: 2019-05-08T22:13:14Z
+    - name: source-copy-samples-git-csltk
+      terminated:
+        containerID: cri-o://c8af47f5287bb53171b3e1623ca6769b50e77c7b4d9438363536194c40709df9
+        exitCode: 0
+        finishedAt: 2019-05-08T22:13:35Z
+        reason: Completed
+        startedAt: 2019-05-08T22:13:15Z
+    - name: source-mkdir-samples-git-5742s
+      terminated:
+        containerID: cri-o://15416a65de647f40d1bb1ade758b70740c5ff16356e0d3c8be8e04b54bad542f
+        exitCode: 0
+        finishedAt: 2019-05-08T22:13:35Z
+        reason: Completed
+        startedAt: 2019-05-08T22:13:15Z
+    - name: nop
+      terminated:
+        containerID: cri-o://7cdd17bf3085246018b139d7efe35cbe70454eec799a0230ea3a003c418c367a
+        exitCode: 0
+        finishedAt: 2019-05-08T22:13:35Z
+        reason: Completed
+        startedAt: 2019-05-08T22:13:15Z
+- apiVersion: tekton.dev/v1alpha1
+  kind: TaskRun
+  metadata:
+    creationTimestamp: 2019-05-08T22:15:12Z
+    generation: 1
+    labels:
+      tekton.dev/pipeline: voting-deploy-pipeline
+      tekton.dev/pipelineRun: voting-pipelinerun-jvt7b
+      tekton.dev/task: buildah
+    name: voting-pipelinerun-jvt7b-build-worker-image-bb784
+    ownerReferences:
+    - apiVersion: tekton.dev/v1alpha1
+      blockOwnerDeletion: true
+      controller: true
+      kind: PipelineRun
+      name: voting-pipelinerun-jvt7b
+      uid: dc3a96d0-71dd-11e9-952f-1295abd4b972
+    resourceVersion: "28559779"
+    uid: bfaa9ae1-71de-11e9-ac60-02bc1876876c
+  spec:
+    Status: ""
+    inputs:
+      params:
+      - name: dockerfile
+        value: Dockerfile
+      - name: contextFolder
+        value: ./vote/worker/
+      - name: verifyTLS
+        value: "false"
+      resources:
+      - name: workspace-git
+        paths:
+        - /pvc/build-worker/workspace-git
+        resourceRef:
+          apiVersion: tekton.dev/v1alpha1
+          name: samples-git
+        resourceSpec: null
+    outputs:
+      resources:
+      - name: image
+        paths:
+        - /pvc/build-worker-image/image
+        resourceRef:
+          apiVersion: tekton.dev/v1alpha1
+          name: voting-worker-image
+        resourceSpec: null
+    serviceAccount: pipeline
+    taskRef:
+      kind: Task
+      name: buildah
+    trigger:
+      type: ""
+  status:
+    completionTime: 2019-05-08T22:15:54Z
+    conditions:
+    - lastTransitionTime: 2019-05-08T22:15:54Z
+      status: "True"
+      type: Succeeded
+    podName: voting-pipelinerun-jvt7b-build-worker-image-bb784-pod-7169c1
+    startTime: 2019-05-08T22:15:12Z
+    steps:
+    - name: build
+      terminated:
+        containerID: cri-o://47642067d23c107b6c65f68c7c15d5cc98a1e12608c82563d9905d21b9fe6d1b
+        exitCode: 0
+        finishedAt: 2019-05-08T22:15:45Z
+        reason: Completed
+        startedAt: 2019-05-08T22:15:33Z
+    - name: create-dir-workspace-git-r5zkg
+      terminated:
+        containerID: cri-o://e1c10648560c35f086b28df3ec59b076dc2bebb919df294f67bd828c82493f23
+        exitCode: 0
+        finishedAt: 2019-05-08T22:15:32Z
+        reason: Completed
+        startedAt: 2019-05-08T22:15:32Z
+    - name: push
+      terminated:
+        containerID: cri-o://68f4237d36fafba46a3ca01417ccc9e3326f0ecb1127ef2528a154d25b1ad2d0
+        exitCode: 0
+        finishedAt: 2019-05-08T22:15:52Z
+        reason: Completed
+        startedAt: 2019-05-08T22:15:34Z
+    - name: source-copy-workspace-git-2l477
+      terminated:
+        containerID: cri-o://519a1c6da8bc12445afa2004ac6cca51987dd3335c61fd8683c956bca14e21de
+        exitCode: 0
+        finishedAt: 2019-05-08T22:15:34Z
+        reason: Completed
+        startedAt: 2019-05-08T22:15:33Z
+    - name: nop
+      terminated:
+        containerID: cri-o://2287ffeca95ac87adfb08d5a5b76fc8481a7870e943f1899b29fdb38245fa539
+        exitCode: 0
+        finishedAt: 2019-05-08T22:15:53Z
+        reason: Completed
+        startedAt: 2019-05-08T22:15:34Z
+- apiVersion: tekton.dev/v1alpha1
+  kind: TaskRun
+  metadata:
+    creationTimestamp: 2019-05-08T22:08:50Z
+    generation: 1
+    labels:
+      tekton.dev/pipeline: voting-deploy-pipeline
+      tekton.dev/pipelineRun: voting-pipelinerun-jvt7b
+      tekton.dev/task: openshift-cli-apply
+    name: voting-pipelinerun-jvt7b-create-apps-zrfbm
+    ownerReferences:
+    - apiVersion: tekton.dev/v1alpha1
+      blockOwnerDeletion: true
+      controller: true
+      kind: PipelineRun
+      name: voting-pipelinerun-jvt7b
+      uid: dc3a96d0-71dd-11e9-952f-1295abd4b972
+    resourceVersion: "28554268"
+    uid: dc41ba9c-71dd-11e9-ac60-02bc1876876c
+  spec:
+    Status: ""
+    inputs:
+      params:
+      - name: yamls
+        value: /workspace/vote/apps
+      resources:
+      - name: workspace-git
+        paths: null
+        resourceRef:
+          apiVersion: tekton.dev/v1alpha1
+          name: samples-git
+        resourceSpec: null
+    outputs: {}
+    serviceAccount: pipeline
+    taskRef:
+      kind: Task
+      name: openshift-cli-apply
+    trigger:
+      type: ""
+  status:
+    completionTime: 2019-05-08T22:09:06Z
+    conditions:
+    - lastTransitionTime: 2019-05-08T22:09:06Z
+      status: "True"
+      type: Succeeded
+    podName: voting-pipelinerun-jvt7b-create-apps-zrfbm-pod-224852
+    startTime: 2019-05-08T22:08:50Z
+    steps:
+    - name: git-source-samples-git-8trvf
+      terminated:
+        containerID: cri-o://5595e783fa0bcb9b0f597506aed1adb498a5c15f924a224eba243bc30c278439
+        exitCode: 0
+        finishedAt: 2019-05-08T22:09:03Z
+        reason: Completed
+        startedAt: 2019-05-08T22:09:01Z
+    - name: oc
+      terminated:
+        containerID: cri-o://2286110816e235893278d21396a1faa6920c82425cda94015ac55eea807222ba
+        exitCode: 0
+        finishedAt: 2019-05-08T22:09:04Z
+        reason: Completed
+        startedAt: 2019-05-08T22:09:01Z
+    - name: nop
+      terminated:
+        containerID: cri-o://134d8559cf2611b128834e64045ab3a12432c94a03c15387e22f5362f20bce40
+        exitCode: 0
+        finishedAt: 2019-05-08T22:09:05Z
+        reason: Completed
+        startedAt: 2019-05-08T22:09:02Z
+- apiVersion: tekton.dev/v1alpha1
+  kind: TaskRun
+  metadata:
+    creationTimestamp: 2019-05-08T22:10:52Z
+    generation: 1
+    labels:
+      tekton.dev/pipeline: voting-deploy-pipeline
+      tekton.dev/pipelineRun: voting-pipelinerun-jvt7b
+      tekton.dev/task: openshift-cli-rollout
+    name: voting-pipelinerun-jvt7b-deploy-result-4jmdk
+    ownerReferences:
+    - apiVersion: tekton.dev/v1alpha1
+      blockOwnerDeletion: true
+      controller: true
+      kind: PipelineRun
+      name: voting-pipelinerun-jvt7b
+      uid: dc3a96d0-71dd-11e9-952f-1295abd4b972
+    resourceVersion: "28555983"
+    uid: 24ebe316-71de-11e9-ac60-02bc1876876c
+  spec:
+    Status: ""
+    inputs:
+      params:
+      - name: app
+        value: voting-result
+    outputs: {}
+    serviceAccount: pipeline
+    taskRef:
+      kind: Task
+      name: openshift-cli-rollout
+    trigger:
+      type: ""
+  status:
+    completionTime: 2019-05-08T22:11:04Z
+    conditions:
+    - lastTransitionTime: 2019-05-08T22:11:04Z
+      status: "True"
+      type: Succeeded
+    podName: voting-pipelinerun-jvt7b-deploy-result-4jmdk-pod-51fd3d
+    startTime: 2019-05-08T22:10:52Z
+    steps:
+    - name: rollout
+      terminated:
+        containerID: cri-o://f9488eec1ee5c9f6b4644effb3a19c76113f08430266409b8b081cc7d6306087
+        exitCode: 0
+        finishedAt: 2019-05-08T22:11:03Z
+        reason: Completed
+        startedAt: 2019-05-08T22:11:03Z
+    - name: nop
+      terminated:
+        containerID: cri-o://34a1af28c140db2ea792e94fb4aae5a7d6c581d93971893171cd8e83d7ec9f66
+        exitCode: 0
+        finishedAt: 2019-05-08T22:11:04Z
+        reason: Completed
+        startedAt: 2019-05-08T22:11:03Z
+- apiVersion: tekton.dev/v1alpha1
+  kind: TaskRun
+  metadata:
+    creationTimestamp: 2019-05-08T22:10:23Z
+    generation: 1
+    labels:
+      tekton.dev/pipeline: voting-deploy-pipeline
+      tekton.dev/pipelineRun: voting-pipelinerun-jvt7b
+      tekton.dev/task: openshift-cli-rollout
+    name: voting-pipelinerun-jvt7b-deploy-vote-4zf6x
+    ownerReferences:
+    - apiVersion: tekton.dev/v1alpha1
+      blockOwnerDeletion: true
+      controller: true
+      kind: PipelineRun
+      name: voting-pipelinerun-jvt7b
+      uid: dc3a96d0-71dd-11e9-952f-1295abd4b972
+    resourceVersion: "28555501"
+    uid: 1367c9b2-71de-11e9-ac60-02bc1876876c
+  spec:
+    Status: ""
+    inputs:
+      params:
+      - name: app
+        value: voting-vote
+    outputs: {}
+    serviceAccount: pipeline
+    taskRef:
+      kind: Task
+      name: openshift-cli-rollout
+    trigger:
+      type: ""
+  status:
+    completionTime: 2019-05-08T22:10:35Z
+    conditions:
+    - lastTransitionTime: 2019-05-08T22:10:35Z
+      status: "True"
+      type: Succeeded
+    podName: voting-pipelinerun-jvt7b-deploy-vote-4zf6x-pod-c34d73
+    startTime: 2019-05-08T22:10:23Z
+    steps:
+    - name: rollout
+      terminated:
+        containerID: cri-o://6bce9d6bc0a60af5bdb216e5b8bd3240e25f881e916a4f428187aca422a6cb3e
+        exitCode: 0
+        finishedAt: 2019-05-08T22:10:34Z
+        reason: Completed
+        startedAt: 2019-05-08T22:10:33Z
+    - name: nop
+      terminated:
+        containerID: cri-o://103480b9f487e3d351c6ae8ea92866a3b4d65cedaac59bf8b56260c0f2d2e010
+        exitCode: 0
+        finishedAt: 2019-05-08T22:10:35Z
+        reason: Completed
+        startedAt: 2019-05-08T22:10:34Z
+- apiVersion: tekton.dev/v1alpha1
+  kind: TaskRun
+  metadata:
+    creationTimestamp: 2019-05-08T22:15:54Z
+    generation: 1
+    labels:
+      tekton.dev/pipeline: voting-deploy-pipeline
+      tekton.dev/pipelineRun: voting-pipelinerun-jvt7b
+      tekton.dev/task: openshift-cli-rollout
+    name: voting-pipelinerun-jvt7b-deploy-worker-f8lkn
+    ownerReferences:
+    - apiVersion: tekton.dev/v1alpha1
+      blockOwnerDeletion: true
+      controller: true
+      kind: PipelineRun
+      name: voting-pipelinerun-jvt7b
+      uid: dc3a96d0-71dd-11e9-952f-1295abd4b972
+    resourceVersion: "28559960"
+    uid: d8d51fc8-71de-11e9-ac60-02bc1876876c
+  spec:
+    Status: ""
+    inputs:
+      params:
+      - name: app
+        value: voting-worker
+    outputs: {}
+    serviceAccount: pipeline
+    taskRef:
+      kind: Task
+      name: openshift-cli-rollout
+    trigger:
+      type: ""
+  status:
+    completionTime: 2019-05-08T22:16:06Z
+    conditions:
+    - lastTransitionTime: 2019-05-08T22:16:06Z
+      status: "True"
+      type: Succeeded
+    podName: voting-pipelinerun-jvt7b-deploy-worker-f8lkn-pod-4d4c92
+    startTime: 2019-05-08T22:15:54Z
+    steps:
+    - name: rollout
+      terminated:
+        containerID: cri-o://52d98b069a9ffbc9dce67f413f5acd5e70373cb518f235d59cd998a63f286e35
+        exitCode: 0
+        finishedAt: 2019-05-08T22:16:04Z
+        reason: Completed
+        startedAt: 2019-05-08T22:16:04Z
+    - name: nop
+      terminated:
+        containerID: cri-o://6076f3dc3922db75eda0e3241ce53c206ffab256daf84f63208d88c5f8334c0b
+        exitCode: 0
+        finishedAt: 2019-05-08T22:16:05Z
+        reason: Completed
+        startedAt: 2019-05-08T22:16:04Z
+- apiVersion: tekton.dev/v1alpha1
+  kind: TaskRun
+  metadata:
+    creationTimestamp: 2019-05-08T22:13:36Z
+    generation: 1
+    labels:
+      tekton.dev/pipeline: voting-deploy-pipeline
+      tekton.dev/pipelineRun: voting-pipelinerun-jvt7b
+      tekton.dev/task: mvn-test
+    name: voting-pipelinerun-jvt7b-test-worker-ckdxr
+    ownerReferences:
+    - apiVersion: tekton.dev/v1alpha1
+      blockOwnerDeletion: true
+      controller: true
+      kind: PipelineRun
+      name: voting-pipelinerun-jvt7b
+      uid: dc3a96d0-71dd-11e9-952f-1295abd4b972
+    resourceVersion: "28559233"
+    uid: 86bebd66-71de-11e9-ac60-02bc1876876c
+  spec:
+    Status: ""
+    inputs:
+      params:
+      - name: folder
+        value: /workspace/vote/worker/
+      resources:
+      - name: workspace-git
+        paths:
+        - /pvc/build-worker/workspace-git
+        resourceRef:
+          apiVersion: tekton.dev/v1alpha1
+          name: samples-git
+        resourceSpec: null
+    outputs: {}
+    serviceAccount: pipeline
+    taskRef:
+      kind: Task
+      name: mvn-test
+    trigger:
+      type: ""
+  status:
+    completionTime: 2019-05-08T22:15:12Z
+    conditions:
+    - lastTransitionTime: 2019-05-08T22:15:12Z
+      status: "True"
+      type: Succeeded
+    podName: voting-pipelinerun-jvt7b-test-worker-ckdxr-pod-289411
+    startTime: 2019-05-08T22:13:36Z
+    steps:
+    - name: build
+      terminated:
+        containerID: cri-o://1a3f2b2f299902c5df5bdc1159b10b01c3554844c7b0daca2b8df6a9d0d49d56
+        exitCode: 0
+        finishedAt: 2019-05-08T22:15:02Z
+        reason: Completed
+        startedAt: 2019-05-08T22:14:53Z
+    - name: create-dir-workspace-git-7zftp
+      terminated:
+        containerID: cri-o://ee04c9de835809054b00a6ff9a5162ebd658352e11657ec6f301015c2a1d2eae
+        exitCode: 0
+        finishedAt: 2019-05-08T22:14:53Z
+        reason: Completed
+        startedAt: 2019-05-08T22:14:53Z
+    - name: source-copy-workspace-git-jp578
+      terminated:
+        containerID: cri-o://e38bad757c4f3c4d8b0213843ee2de40c165d66f0c6872259fbcbcd1a34aef00
+        exitCode: 0
+        finishedAt: 2019-05-08T22:14:54Z
+        reason: Completed
+        startedAt: 2019-05-08T22:14:53Z
+    - name: test
+      terminated:
+        containerID: cri-o://e86de2471b53c0508a93d06ce2161ff2d40475da5dc273681a7ee8cc1c43c489
+        exitCode: 0
+        finishedAt: 2019-05-08T22:15:10Z
+        reason: Completed
+        startedAt: 2019-05-08T22:14:54Z
+    - name: nop
+      terminated:
+        containerID: cri-o://ea139df9551a116f3bc112e4eeed6b3c0a04889c47bfe7c4633ed4bd015a97fd
+        exitCode: 0
+        finishedAt: 2019-05-08T22:15:11Z
+        reason: OOMKilled
+        startedAt: 2019-05-08T22:14:54Z
+- apiVersion: tekton.dev/v1alpha1
+  kind: TaskRun
+  metadata:
+    creationTimestamp: 2019-05-07T18:53:29Z
+    generation: 1
+    labels:
+      tekton.dev/pipeline: voting-deploy-pipeline
+      tekton.dev/pipelineRun: voting-pipelinerun-s7j59
+      tekton.dev/task: static-analysis
+    name: voting-pipelinerun-s7j59-analyse-code-worker-lvnc8
+    ownerReferences:
+    - apiVersion: tekton.dev/v1alpha1
+      blockOwnerDeletion: true
+      controller: true
+      kind: PipelineRun
+      name: voting-pipelinerun-s7j59
+      uid: ca25f7e2-70f8-11e9-b4a5-1295abd4b972
+    resourceVersion: "27360532"
+    uid: 6752e509-70f9-11e9-b31a-02bc1876876c
+  spec:
+    Status: ""
+    inputs:
+      params:
+      - name: folder
+        value: /workspace/vote/worker/
+      resources:
+      - name: workspace-git
+        paths:
+        - /pvc/build-worker/workspace-git
+        resourceRef:
+          name: samples-git
+        resourceSpec: null
+    outputs: {}
+    serviceAccount: pipeline
+    taskRef:
+      kind: Task
+      name: static-analysis
+    trigger:
+      type: ""
+  status:
+    completionTime: 2019-05-07T18:55:44Z
+    conditions:
+    - lastTransitionTime: 2019-05-07T18:55:44Z
+      status: "True"
+      type: Succeeded
+    podName: voting-pipelinerun-s7j59-analyse-code-worker-lvnc8-pod-ec916f
+    startTime: 2019-05-07T18:53:29Z
+    steps:
+    - name: create-dir-workspace-git-n59k4
+      terminated:
+        containerID: cri-o://c185402d583d4bd70a0318a168876ffcad09cced870deee07e5c0d42ecb2d473
+        exitCode: 0
+        finishedAt: 2019-05-07T18:55:36Z
+        reason: Completed
+        startedAt: 2019-05-07T18:55:36Z
+    - name: pmd
+      terminated:
+        containerID: cri-o://13b8017b6a762cc909f14db0cec2a4bacb22c76f21986235b1635ddfb88d91bb
+        exitCode: 0
+        finishedAt: 2019-05-07T18:55:43Z
+        reason: Completed
+        startedAt: 2019-05-07T18:55:39Z
+    - name: sonar
+      terminated:
+        containerID: cri-o://04333ba354eba8c2e571f771bac5e1f134a60dc40f18fe897121ea777f29cd6d
+        exitCode: 0
+        finishedAt: 2019-05-07T18:55:43Z
+        reason: Completed
+        startedAt: 2019-05-07T18:55:40Z
+    - name: source-copy-workspace-git-ppg6q
+      terminated:
+        containerID: cri-o://3be3377d5bf1d66e80045ebd1bacd6952b3225ac54693178d17e7b69198a14e6
+        exitCode: 0
+        finishedAt: 2019-05-07T18:55:43Z
+        reason: Completed
+        startedAt: 2019-05-07T18:55:38Z
+    - name: nop
+      terminated:
+        containerID: cri-o://ee19bbbf87beb12c3ab2b790a0a4ea56b2c64610c2411021496410b7818226ce
+        exitCode: 0
+        finishedAt: 2019-05-07T18:55:43Z
+        reason: Completed
+        startedAt: 2019-05-07T18:55:41Z
+- apiVersion: tekton.dev/v1alpha1
+  kind: TaskRun
+  metadata:
+    creationTimestamp: 2019-05-07T18:49:05Z
+    generation: 1
+    labels:
+      tekton.dev/pipeline: voting-deploy-pipeline
+      tekton.dev/pipelineRun: voting-pipelinerun-s7j59
+      tekton.dev/task: buildah
+    name: voting-pipelinerun-s7j59-build-result-image-6l6rg
+    ownerReferences:
+    - apiVersion: tekton.dev/v1alpha1
+      blockOwnerDeletion: true
+      controller: true
+      kind: PipelineRun
+      name: voting-pipelinerun-s7j59
+      uid: ca25f7e2-70f8-11e9-b4a5-1295abd4b972
+    resourceVersion: "27361538"
+    uid: ca33c431-70f8-11e9-b31a-02bc1876876c
+  spec:
+    Status: ""
+    inputs:
+      params:
+      - name: contextFolder
+        value: ./vote/result/
+      - name: verifyTLS
+        value: "false"
+      resources:
+      - name: workspace-git
+        paths: null
+        resourceRef:
+          name: samples-git
+        resourceSpec: null
+    outputs:
+      resources:
+      - name: image
+        paths:
+        - /pvc/build-result-image/image
+        resourceRef:
+          name: voting-result-image
+        resourceSpec: null
+    serviceAccount: pipeline
+    taskRef:
+      kind: Task
+      name: buildah
+    trigger:
+      type: ""
+  status:
+    completionTime: 2019-05-07T18:57:04Z
+    conditions:
+    - lastTransitionTime: 2019-05-07T18:57:04Z
+      message: '"build-step-push" exited with code 1 (image: "quay.io/openshift-pipeline/buildah@sha256:bb206e487604d2772751f55a0984ba73977317df45246f5a17fe6dccb1369003");
+        for logs run: kubectl -n pipeline-demo logs voting-pipelinerun-s7j59-build-result-image-6l6rg-pod-709a9b
+        -c build-step-push'
+      status: "False"
+      type: Succeeded
+    podName: voting-pipelinerun-s7j59-build-result-image-6l6rg-pod-709a9b
+    startTime: 2019-05-07T18:49:07Z
+    steps:
+    - name: build
+      terminated:
+        containerID: cri-o://2defd8cdd9efc739daec200ec8e2892eb1700dcf3c23bf3ead129befbd3b8d84
+        exitCode: 0
+        finishedAt: 2019-05-07T18:57:01Z
+        reason: Completed
+        startedAt: 2019-05-07T18:55:34Z
+    - name: git-source-samples-git-ftcd5
+      terminated:
+        containerID: cri-o://370ab172038adf2c706ff446740b611b4327fb77a8e2f466202cdd158a6adb9b
+        exitCode: 0
+        finishedAt: 2019-05-07T18:55:34Z
+        reason: Completed
+        startedAt: 2019-05-07T18:55:34Z
+    - name: push
+      terminated:
+        containerID: cri-o://cf6e02d08f56a9f23b99c3bf4e950f64d96c17916b3745d81f3a1243413e5eb5
+        exitCode: 1
+        finishedAt: 2019-05-07T18:57:02Z
+        reason: Error
+        startedAt: 2019-05-07T18:55:35Z
+    - name: nop
+      terminated:
+        containerID: cri-o://141c06e1cba56a2628d8256928f881025ff1d18499099a6c710c2591f23adc92
+        exitCode: 0
+        finishedAt: 2019-05-07T18:57:03Z
+        reason: Completed
+        startedAt: 2019-05-07T18:55:35Z
+- apiVersion: tekton.dev/v1alpha1
+  kind: TaskRun
+  metadata:
+    creationTimestamp: 2019-05-07T18:49:05Z
+    generation: 1
+    labels:
+      tekton.dev/pipeline: voting-deploy-pipeline
+      tekton.dev/pipelineRun: voting-pipelinerun-s7j59
+      tekton.dev/task: buildah
+    name: voting-pipelinerun-s7j59-build-vote-image-mrmxl
+    ownerReferences:
+    - apiVersion: tekton.dev/v1alpha1
+      blockOwnerDeletion: true
+      controller: true
+      kind: PipelineRun
+      name: voting-pipelinerun-s7j59
+      uid: ca25f7e2-70f8-11e9-b4a5-1295abd4b972
+    resourceVersion: "27361119"
+    uid: ca325817-70f8-11e9-b31a-02bc1876876c
+  spec:
+    Status: ""
+    inputs:
+      params:
+      - name: contextFolder
+        value: ./vote/vote/
+      - name: verifyTLS
+        value: "false"
+      resources:
+      - name: workspace-git
+        paths: null
+        resourceRef:
+          name: samples-git
+        resourceSpec: null
+    outputs:
+      resources:
+      - name: image
+        paths:
+        - /pvc/build-vote-image/image
+        resourceRef:
+          name: voting-vote-image
+        resourceSpec: null
+    serviceAccount: pipeline
+    taskRef:
+      kind: Task
+      name: buildah
+    trigger:
+      type: ""
+  status:
+    completionTime: 2019-05-07T18:56:31Z
+    conditions:
+    - lastTransitionTime: 2019-05-07T18:56:31Z
+      message: '"build-step-push" exited with code 1 (image: "quay.io/openshift-pipeline/buildah@sha256:bb206e487604d2772751f55a0984ba73977317df45246f5a17fe6dccb1369003");
+        for logs run: kubectl -n pipeline-demo logs voting-pipelinerun-s7j59-build-vote-image-mrmxl-pod-3b61c9
+        -c build-step-push'
+      status: "False"
+      type: Succeeded
+    podName: voting-pipelinerun-s7j59-build-vote-image-mrmxl-pod-3b61c9
+    startTime: 2019-05-07T18:49:05Z
+    steps:
+    - name: build
+      terminated:
+        containerID: cri-o://c2325a4332adfb768b55fccea5210ddd48054bae7f8b833c35e8e89ace066010
+        exitCode: 0
+        finishedAt: 2019-05-07T18:56:30Z
+        reason: Completed
+        startedAt: 2019-05-07T18:55:34Z
+    - name: git-source-samples-git-9gtxs
+      terminated:
+        containerID: cri-o://5c0b74c0436bb43e87ed82be106286233a93920484fdd641eccf393f44724bc2
+        exitCode: 0
+        finishedAt: 2019-05-07T18:55:34Z
+        reason: Completed
+        startedAt: 2019-05-07T18:55:33Z
+    - name: push
+      terminated:
+        containerID: cri-o://37e6114aa83e61016796ebce9c6318af80d04eca3cb5349a282dc0033e780958
+        exitCode: 1
+        finishedAt: 2019-05-07T18:56:30Z
+        reason: Error
+        startedAt: 2019-05-07T18:55:34Z
+    - name: nop
+      terminated:
+        containerID: cri-o://b6dbaae91748fbe94d38e94da6e05d126f90cf46b8ce40ff5bbe8e13241b8471
+        exitCode: 0
+        finishedAt: 2019-05-07T18:56:31Z
+        reason: Completed
+        startedAt: 2019-05-07T18:55:35Z
+- apiVersion: tekton.dev/v1alpha1
+  kind: TaskRun
+  metadata:
+    creationTimestamp: 2019-05-07T18:49:05Z
+    generation: 1
+    labels:
+      tekton.dev/pipeline: voting-deploy-pipeline
+      tekton.dev/pipelineRun: voting-pipelinerun-s7j59
+      tekton.dev/task: mvn-build
+    name: voting-pipelinerun-s7j59-build-worker-6sxcd
+    ownerReferences:
+    - apiVersion: tekton.dev/v1alpha1
+      blockOwnerDeletion: true
+      controller: true
+      kind: PipelineRun
+      name: voting-pipelinerun-s7j59
+      uid: ca25f7e2-70f8-11e9-b4a5-1295abd4b972
+    resourceVersion: "27358657"
+    uid: ca31218d-70f8-11e9-b31a-02bc1876876c
+  spec:
+    Status: ""
+    inputs:
+      params:
+      - name: folder
+        value: /workspace/vote/worker/
+      resources:
+      - name: workspace-git
+        paths: null
+        resourceRef:
+          name: samples-git
+        resourceSpec: null
+    outputs:
+      resources:
+      - name: workspace-git
+        paths:
+        - /pvc/build-worker/workspace-git
+        resourceRef:
+          name: samples-git
+        resourceSpec: null
+    serviceAccount: pipeline
+    taskRef:
+      kind: Task
+      name: mvn-build
+    trigger:
+      type: ""
+  status:
+    completionTime: 2019-05-07T18:53:29Z
+    conditions:
+    - lastTransitionTime: 2019-05-07T18:53:29Z
+      status: "True"
+      type: Succeeded
+    podName: voting-pipelinerun-s7j59-build-worker-6sxcd-pod-9890c9
+    startTime: 2019-05-07T18:49:05Z
+    steps:
+    - name: build
+      terminated:
+        containerID: cri-o://763f98f5b792e0d237d3558395818a7749ac357f2b3de59e6245b39947ef1cf7
+        exitCode: 0
+        finishedAt: 2019-05-07T18:53:27Z
+        reason: Completed
+        startedAt: 2019-05-07T18:50:45Z
+    - name: git-source-samples-git-kwcm9
+      terminated:
+        containerID: cri-o://4b2837710a45bab5ce3a8feb2f8ea602beaed7aa879a61aa482caf5cd7b557c1
+        exitCode: 0
+        finishedAt: 2019-05-07T18:49:58Z
+        reason: Completed
+        startedAt: 2019-05-07T18:49:57Z
+    - name: source-copy-samples-git-md4vt
+      terminated:
+        containerID: cri-o://ce1274b5f4d909460dd4f60d7bd05576533ecf5b80f6d59dfde8b285fca899d2
+        exitCode: 0
+        finishedAt: 2019-05-07T18:53:28Z
+        reason: Completed
+        startedAt: 2019-05-07T18:50:49Z
+    - name: source-mkdir-samples-git-44wnf
+      terminated:
+        containerID: cri-o://5414c3ea7f90d8167039f1e91408d1166aee70076e25eaa01d7b35202126cbf2
+        exitCode: 0
+        finishedAt: 2019-05-07T18:53:27Z
+        reason: Completed
+        startedAt: 2019-05-07T18:50:48Z
+    - name: nop
+      terminated:
+        containerID: cri-o://90e53f78d09199dc918197274d7c206c69a1842ed33907fd1d4346a83c0c9533
+        exitCode: 0
+        finishedAt: 2019-05-07T18:53:28Z
+        reason: Completed
+        startedAt: 2019-05-07T18:50:49Z
+- apiVersion: tekton.dev/v1alpha1
+  kind: TaskRun
+  metadata:
+    creationTimestamp: 2019-05-07T18:55:44Z
+    generation: 1
+    labels:
+      tekton.dev/pipeline: voting-deploy-pipeline
+      tekton.dev/pipelineRun: voting-pipelinerun-s7j59
+      tekton.dev/task: buildah
+    name: voting-pipelinerun-s7j59-build-worker-image-wdh9m
+    ownerReferences:
+    - apiVersion: tekton.dev/v1alpha1
+      blockOwnerDeletion: true
+      controller: true
+      kind: PipelineRun
+      name: voting-pipelinerun-s7j59
+      uid: ca25f7e2-70f8-11e9-b4a5-1295abd4b972
+    resourceVersion: "27361001"
+    uid: b7a81c7e-70f9-11e9-b31a-02bc1876876c
+  spec:
+    Status: ""
+    inputs:
+      params:
+      - name: dockerfile
+        value: Dockerfile
+      - name: contextFolder
+        value: ./vote/worker/
+      - name: verifyTLS
+        value: "false"
+      resources:
+      - name: workspace-git
+        paths:
+        - /pvc/build-worker/workspace-git
+        resourceRef:
+          name: samples-git
+        resourceSpec: null
+    outputs:
+      resources:
+      - name: image
+        paths:
+        - /pvc/build-worker-image/image
+        resourceRef:
+          name: voting-worker-image
+        resourceSpec: null
+    serviceAccount: pipeline
+    taskRef:
+      kind: Task
+      name: buildah
+    trigger:
+      type: ""
+  status:
+    completionTime: 2019-05-07T18:56:19Z
+    conditions:
+    - lastTransitionTime: 2019-05-07T18:56:19Z
+      message: '"build-step-push" exited with code 1 (image: "quay.io/openshift-pipeline/buildah@sha256:bb206e487604d2772751f55a0984ba73977317df45246f5a17fe6dccb1369003");
+        for logs run: kubectl -n pipeline-demo logs voting-pipelinerun-s7j59-build-worker-image-wdh9m-pod-631756
+        -c build-step-push'
+      status: "False"
+      type: Succeeded
+    podName: voting-pipelinerun-s7j59-build-worker-image-wdh9m-pod-631756
+    startTime: 2019-05-07T18:55:44Z
+    steps:
+    - name: build
+      terminated:
+        containerID: cri-o://95a1cace54d4d2c93cc09ce987ba1c920e1b35636449d44f8d06b0c9670da1fc
+        exitCode: 0
+        finishedAt: 2019-05-07T18:56:17Z
+        reason: Completed
+        startedAt: 2019-05-07T18:55:57Z
+    - name: create-dir-workspace-git-7mxgz
+      terminated:
+        containerID: cri-o://f7c6c44ea51e03c2a6cb1f38d7c67e0a134d5aeeea30d8dadf7d0e4b4bfb55eb
+        exitCode: 0
+        finishedAt: 2019-05-07T18:55:56Z
+        reason: Completed
+        startedAt: 2019-05-07T18:55:56Z
+    - name: push
+      terminated:
+        containerID: cri-o://5e1d8b95b876bf1463e9f8936df470b49d80b89e028ecb8f1401d8e00361dae1
+        exitCode: 1
+        finishedAt: 2019-05-07T18:56:18Z
+        reason: Error
+        startedAt: 2019-05-07T18:55:58Z
+    - name: source-copy-workspace-git-5fk87
+      terminated:
+        containerID: cri-o://507da9896c8d8e8217aa8ecee4bcfebe8beaef4c86e9eb53ec51ab684db5b3ef
+        exitCode: 0
+        finishedAt: 2019-05-07T18:55:57Z
+        reason: Completed
+        startedAt: 2019-05-07T18:55:57Z
+    - name: nop
+      terminated:
+        containerID: cri-o://ef0116a958af18370a22bc620befea9078f5e058c3aa0ea28b1daa6037bed6fd
+        exitCode: 0
+        finishedAt: 2019-05-07T18:56:18Z
+        reason: Completed
+        startedAt: 2019-05-07T18:55:59Z
+- apiVersion: tekton.dev/v1alpha1
+  kind: TaskRun
+  metadata:
+    creationTimestamp: 2019-05-07T18:49:05Z
+    generation: 1
+    labels:
+      tekton.dev/pipeline: voting-deploy-pipeline
+      tekton.dev/pipelineRun: voting-pipelinerun-s7j59
+      tekton.dev/task: openshift-cli-apply
+    name: voting-pipelinerun-s7j59-create-apps-s2wss
+    ownerReferences:
+    - apiVersion: tekton.dev/v1alpha1
+      blockOwnerDeletion: true
+      controller: true
+      kind: PipelineRun
+      name: voting-pipelinerun-s7j59
+      uid: ca25f7e2-70f8-11e9-b4a5-1295abd4b972
+    resourceVersion: "27355978"
+    uid: ca2f8ab3-70f8-11e9-b31a-02bc1876876c
+  spec:
+    Status: ""
+    inputs:
+      params:
+      - name: yamls
+        value: /workspace/vote/apps
+      resources:
+      - name: workspace-git
+        paths: null
+        resourceRef:
+          name: samples-git
+        resourceSpec: null
+    outputs: {}
+    serviceAccount: pipeline
+    taskRef:
+      kind: Task
+      name: openshift-cli-apply
+    trigger:
+      type: ""
+  status:
+    completionTime: 2019-05-07T18:49:26Z
+    conditions:
+    - lastTransitionTime: 2019-05-07T18:49:26Z
+      status: "True"
+      type: Succeeded
+    podName: voting-pipelinerun-s7j59-create-apps-s2wss-pod-aeea5a
+    startTime: 2019-05-07T18:49:05Z
+    steps:
+    - name: git-source-samples-git-v99m8
+      terminated:
+        containerID: cri-o://f5670a34ca608466318a0bc8aa55f28eb8f1b6cfa735054d83417ac0454d3219
+        exitCode: 0
+        finishedAt: 2019-05-07T18:49:22Z
+        reason: Completed
+        startedAt: 2019-05-07T18:49:20Z
+    - name: oc
+      terminated:
+        containerID: cri-o://7b3372e14f3dd98d66615b6d1dace7ea99a3e1253f57c27a8591d28339ddc753
+        exitCode: 0
+        finishedAt: 2019-05-07T18:49:25Z
+        reason: Completed
+        startedAt: 2019-05-07T18:49:22Z
+    - name: nop
+      terminated:
+        containerID: cri-o://a90ba5cd2e2efe9d0ca2d3519f38aa48160b7404de25cc3b6248a9cfdc054597
+        exitCode: 0
+        finishedAt: 2019-05-07T18:49:25Z
+        reason: Completed
+        startedAt: 2019-05-07T18:49:23Z
+- apiVersion: tekton.dev/v1alpha1
+  kind: TaskRun
+  metadata:
+    creationTimestamp: 2019-05-07T18:53:29Z
+    generation: 1
+    labels:
+      tekton.dev/pipeline: voting-deploy-pipeline
+      tekton.dev/pipelineRun: voting-pipelinerun-s7j59
+      tekton.dev/task: mvn-test
+    ownerReferences:
+    - apiVersion: tekton.dev/v1alpha1
+      blockOwnerDeletion: true
+      controller: true
+      kind: PipelineRun
+      name: voting-pipelinerun-s7j59
+      uid: ca25f7e2-70f8-11e9-b4a5-1295abd4b972
+    resourceVersion: "27359242"
+    uid: 675084a3-70f9-11e9-b31a-02bc1876876c
+  spec:
+    Status: ""
+    inputs:
+      params:
+      - name: folder
+        value: /workspace/vote/worker/
+      resources:
+      - name: workspace-git
+        paths:
+        - /pvc/build-worker/workspace-git
+        resourceRef:
+          name: samples-git
+        resourceSpec: null
+    outputs: {}
+    serviceAccount: pipeline
+    taskRef:
+      kind: Task
+      name: mvn-test
+    trigger:
+      type: ""
+  status:
+    completionTime: 2019-05-07T18:54:12Z
+    conditions:
+    - lastTransitionTime: 2019-05-07T18:54:12Z
+      status: "True"
+      type: Succeeded
+    podName: voting-pipelinerun-s7j59-test-worker-swhm9-pod-ed3230
+    startTime: 2019-05-07T18:53:29Z
+    steps:
+    - name: build
+      terminated:
+        containerID: cri-o://d97ca4aea1108bc3949ce2bd793e3b00a7254d2586dc763ab83952dcb5939bc6
+        exitCode: 0
+        finishedAt: 2019-05-07T18:54:05Z
+        reason: Completed
+        startedAt: 2019-05-07T18:53:57Z
+    - name: create-dir-workspace-git-gz5nq
+      terminated:
+        containerID: cri-o://467b7948a7d4ef1953454cd1cef5b4cfaec3ff18c4fed7abdea063b9db4dcce8
+        exitCode: 0
+        finishedAt: 2019-05-07T18:53:56Z
+        reason: Completed
+        startedAt: 2019-05-07T18:53:56Z
+    - name: source-copy-workspace-git-b8wm8
+      terminated:
+        containerID: cri-o://83ce49e3180af35f64f1ebe99334c2518e1099ec806f719d83252ecda2282476
+        exitCode: 0
+        finishedAt: 2019-05-07T18:53:58Z
+        reason: Completed
+        startedAt: 2019-05-07T18:53:56Z
+    - name: test
+      terminated:
+        containerID: cri-o://7c021a5ef8277da0563fed7d861cb2ac12e597fcdfb2e7f9cfe5af2c4d879b73
+        exitCode: 0
+        finishedAt: 2019-05-07T18:54:12Z
+        reason: Completed
+        startedAt: 2019-05-07T18:53:57Z
+    - name: nop
+      terminated:
+        containerID: cri-o://26b7c2520e23632aeba77bcf95461d5b87c07b0ae927be915ff6d79b27673c9a
+        exitCode: 0
+        finishedAt: 2019-05-07T18:54:12Z
+        reason: Completed
+        startedAt: 2019-05-07T18:53:57Z
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""
+  

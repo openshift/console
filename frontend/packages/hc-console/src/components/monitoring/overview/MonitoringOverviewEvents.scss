@@ -1,0 +1,14 @@
+.odc-monitoring-events {
+  &__event-item {
+    margin-bottom: var(--pf-global--spacer--md);
+  }
+  &__warning-icon {
+    font-size: var(--pf-global--FontSize--xl);
+  }
+  &__event-message {
+    font-size: var(--pf-global--FontSize--sm);
+    color: var(--pf-global--Color--100);
+    margin-top: var(--pf-global--spacer--sm);
+    word-wrap: break-word;
+  }
+}

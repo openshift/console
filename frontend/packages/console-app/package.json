@@ -21,7 +21,8 @@
     "@console/operator-lifecycle-manager": "0.0.0-fixed",
     "@console/patternfly": "0.0.0-fixed",
     "@console/plugin-sdk": "0.0.0-fixed",
-    "@console/shared": "0.0.0-fixed"
+    "@console/shared": "0.0.0-fixed",
+    "@console/hc-console": "0.0.0-fixed"
   },
   "consolePlugin": {
     "entry": "src/plugin.tsx"

@@ -1,0 +1,127 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Shared submit utils Create Route should match the previous snapshot deploy image data 1`] = `
+Object {
+  "apiVersion": "route.openshift.io/v1",
+  "kind": "Route",
+  "metadata": Object {
+    "defaultAnnotations": Object {
+      "openshift.io/generated-by": "OpenShiftWebConsole",
+    },
+    "labels": Object {
+      "app": "test-app",
+      "app.kubernetes.io/component": "test-app",
+      "app.kubernetes.io/instance": "test-app",
+      "app.kubernetes.io/part-of": "mock-app",
+      "app.openshift.io/runtime-version": "latest",
+    },
+    "name": "test-app",
+    "namespace": "mock-project",
+  },
+  "spec": Object {
+    "host": "",
+    "path": "",
+    "port": Object {
+      "targetPort": "8080-tcp",
+    },
+    "to": Object {
+      "kind": "Service",
+      "name": "test-app",
+    },
+    "wildcardPolicy": "None",
+  },
+}
+`;
+
+exports[`Shared submit utils Create Route should match the previous snapshot with git import data 1`] = `
+Object {
+  "apiVersion": "route.openshift.io/v1",
+  "kind": "Route",
+  "metadata": Object {
+    "defaultAnnotations": Object {
+      "app.openshift.io/vcs-ref": "master",
+      "app.openshift.io/vcs-uri": "https://github.com/test/repo",
+      "openshift.io/generated-by": "OpenShiftWebConsole",
+    },
+    "labels": Object {
+      "app": "test-app",
+      "app.kubernetes.io/component": "test-app",
+      "app.kubernetes.io/instance": "test-app",
+      "app.kubernetes.io/part-of": "mock-app",
+      "app.openshift.io/runtime-version": "latest",
+    },
+    "name": "test-app",
+    "namespace": "mock-project",
+  },
+  "spec": Object {
+    "host": "",
+    "path": "",
+    "port": Object {
+      "targetPort": "8081-tcp",
+    },
+    "to": Object {
+      "kind": "Service",
+      "name": "test-app",
+    },
+    "wildcardPolicy": "None",
+  },
+}
+`;
+
+exports[`Shared submit utils Create Service should match the previous snapshot created with deploy image data 1`] = `
+Object {
+  "apiVersion": "v1",
+  "kind": "Service",
+  "metadata": Object {
+    "annotations": Object {
+      "openshift.io/generated-by": "OpenShiftWebConsole",
+    },
+    "labels": Object {
+      "app": "test-app",
+      "app.kubernetes.io/component": "test-app",
+      "app.kubernetes.io/instance": "test-app",
+      "app.kubernetes.io/part-of": "mock-app",
+      "app.openshift.io/runtime-version": "latest",
+    },
+    "name": "test-app",
+    "namespace": "mock-project",
+  },
+  "spec": Object {
+    "ports": Array [],
+    "selector": Object {
+      "app": "test-app",
+      "deploymentconfig": "test-app",
+    },
+  },
+}
+`;
+
+exports[`Shared submit utils Create Service should match the previous snapshot created with git import data 1`] = `
+Object {
+  "apiVersion": "v1",
+  "kind": "Service",
+  "metadata": Object {
+    "annotations": Object {
+      "app.openshift.io/vcs-ref": "master",
+      "app.openshift.io/vcs-uri": "https://github.com/test/repo",
+      "openshift.io/generated-by": "OpenShiftWebConsole",
+    },
+    "labels": Object {
+      "app": "test-app",
+      "app.kubernetes.io/component": "test-app",
+      "app.kubernetes.io/instance": "test-app",
+      "app.kubernetes.io/part-of": "mock-app",
+      "app.openshift.io/runtime-version": "latest",
+    },
+    "name": "test-app",
+    "namespace": "mock-project",
+  },
+  "spec": Object {
+    "ports": Array [],
+    "selector": Object {
+      "app": "test-app",
+      "deploymentconfig": "test-app",
+    },
+  },
+}
+`;
