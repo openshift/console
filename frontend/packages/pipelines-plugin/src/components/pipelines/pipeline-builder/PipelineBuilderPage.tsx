@@ -49,6 +49,9 @@ const PipelineBuilderPage: React.FC<PipelineBuilderPageProps> = (props) => {
     if (values.editorType === EditorType.YAML) {
       try {
         pipeline = safeLoad(values.yamlData);
+        if (!pipeline.metadata?.namespace) {
+          pipeline.metadata.namespace = ns;
+        }
       } catch (err) {
         actions.setStatus({ submitError: `Invalid YAML - ${err}` });
         return null;
