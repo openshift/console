@@ -2,6 +2,7 @@
 
 .co-quick-start-content {
   @media (min-width: $screen-lg-min) {
-    min-height: calc(100vh - (var(--pf-global--spacer--4xl) + var(--pf-global--spacer--3xl)));
+    max-height: calc(100vh - 4 * var(--pf-global--spacer--2xl));
+    overflow-y: auto;
   }
 }
