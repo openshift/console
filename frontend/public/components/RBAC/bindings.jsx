@@ -289,8 +289,12 @@ export const RoleBindingsPage = ({
   showTitle = true,
   mock = false,
   staticFilters = undefined,
-  createPath = `/k8s/${namespace ? `ns/${namespace}` : 'cluster'}/rolebindings/~new${
-    namespace ? `?namespace=${namespace}` : ''
+  name,
+  kind,
+  createPath = `/k8s/${
+    namespace
+      ? `ns/${namespace}/rolebindings/~new?namespace=${namespace}`
+      : `cluster/rolebindings/~new?subjectName=${name}&subjectKind=${kind}`
   }`,
 }) => (
   <MultiListPage
@@ -394,6 +398,7 @@ class BaseEditRoleBinding extends React.Component {
       'subjects',
     ]);
     existingData.kind = props.kind;
+    const { subjectKind, subjectName } = this.props.fixed.subjectRef;
     const data = _.defaultsDeep({}, props.fixed, existingData, {
       apiVersion: 'rbac.authorization.k8s.io/v1',
       kind: 'RoleBinding',
@@ -406,8 +411,8 @@ class BaseEditRoleBinding extends React.Component {
       subjects: [
         {
           apiGroup: 'rbac.authorization.k8s.io',
-          kind: 'User',
-          name: '',
+          kind: subjectKind || 'User',
+          name: subjectName || '',
         },
       ],
     });
@@ -602,6 +607,7 @@ class BaseEditRoleBinding extends React.Component {
                 value={subject.name}
                 required
                 id="subject-name"
+                disabled={fixed.subjectRef.subjectName ? true : false}
               />
             </div>
           </Section>
@@ -628,6 +634,8 @@ export const CreateRoleBinding = ({ match: { params }, location }) => {
   const searchParams = new URLSearchParams(location.search);
   const roleKind = searchParams.get('rolekind');
   const roleName = searchParams.get('rolename');
+  const subjectName = searchParams.get('subjectName');
+  const subjectKind = searchParams.get('subjectKind');
   const [namespace, setActiveNamespace] = useActiveNamespace();
   const metadata = { namespace };
   const clusterAllowed = useAccessReview({
@@ -639,6 +647,7 @@ export const CreateRoleBinding = ({ match: { params }, location }) => {
     kind: params.ns || roleKind === 'Role' || !clusterAllowed ? 'RoleBinding' : undefined,
     metadata: { namespace: params.ns },
     roleRef: { kind: roleKind, name: roleName },
+    subjectRef: { subjectName, subjectKind },
   };
   return (
     <BaseEditRoleBinding
