@@ -145,4 +145,24 @@ describe('perspective-nav insertPositionedItems', () => {
     // test7 depends on test1
     expect(indexOfId('test7', sortedItems)).toBeGreaterThan(indexOfId('test1', sortedItems));
   });
+
+  it('should handle circular dependencies fairly well', () => {
+    mockNavItems.forEach((i) => {
+      delete i.properties.insertAfter;
+      delete i.properties.insertBefore;
+    });
+    mockNavItems[0].properties.insertAfter = 'test4';
+    mockNavItems[2].properties.insertAfter = 'test5';
+    // Circular dependency
+    mockNavItems[5].properties.insertAfter = 'test7';
+    mockNavItems[6].properties.insertBefore = 'test6';
+
+    const sortedItems = sortExtensionItems(mockNavItems);
+    // test1 depends on test4
+    expect(indexOfId('test1', sortedItems)).toBeGreaterThan(indexOfId('test4', sortedItems));
+    // test3 depends on test5
+    expect(indexOfId('test3', sortedItems)).toBeGreaterThan(indexOfId('test5', sortedItems));
+    // test7 depends on test1
+    expect(indexOfId('test7', sortedItems)).toBeGreaterThan(indexOfId('test1', sortedItems));
+  });
 });
