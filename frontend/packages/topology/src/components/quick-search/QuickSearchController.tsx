@@ -5,12 +5,14 @@ import QuickSearchModal from './QuickSearchModal';
 
 type QuickSearchControllerProps = CatalogService & {
   namespace: string;
+  viewContainer?: HTMLElement;
 };
 
 const QuickSearchController: React.FC<QuickSearchControllerProps> = ({
   namespace,
   searchCatalog,
   loaded,
+  viewContainer,
 }) => {
   const [isQuickSearchActive, setIsQuickSearchActive] = React.useState<boolean>(false);
 
@@ -43,6 +45,7 @@ const QuickSearchController: React.FC<QuickSearchControllerProps> = ({
         namespace={namespace}
         allCatalogItemsLoaded={loaded}
         searchCatalog={searchCatalog}
+        viewContainer={viewContainer}
       />
     </>
   );
