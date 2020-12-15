@@ -1,5 +1,9 @@
 package v1alpha2
 
+import (
+	attributes "github.com/devfile/api/pkg/attributes"
+)
+
 // +devfile:jsonschema:generate
 type PluginOverrides struct {
 	OverridesBase `json:",inline"`
@@ -27,7 +31,11 @@ type ComponentPluginOverride struct {
 	// Mandatory name that allows referencing the component
 	// from other elements (such as commands) or from an external
 	// devfile that may reference this component through a parent or a plugin.
-	Name                         string `json:"name"`
+	Name string `json:"name"`
+
+	// Map of implementation-dependant free-form YAML attributes.
+	// +optional
+	Attributes                   attributes.Attributes `json:"attributes,omitempty"`
 	ComponentUnionPluginOverride `json:",inline"`
 }
 
@@ -36,7 +44,11 @@ type CommandPluginOverride struct {
 	// Mandatory identifier that allows referencing
 	// this command in composite commands, from
 	// a parent, or in events.
-	Id                         string `json:"id"`
+	Id string `json:"id"`
+
+	// Map of implementation-dependant free-form YAML attributes.
+	// +optional
+	Attributes                 attributes.Attributes `json:"attributes,omitempty"`
 	CommandUnionPluginOverride `json:",inline"`
 }
 
@@ -334,7 +346,7 @@ type EndpointPluginOverride struct {
 	//
 	// - type: "terminal" / "ide" / "ide-dev",
 	// +optional
-	Attributes map[string]string `json:"attributes,omitempty"`
+	Attributes attributes.Attributes `json:"attributes,omitempty"`
 }
 
 type K8sLikeComponentPluginOverride struct {
@@ -371,9 +383,6 @@ type BaseCommandPluginOverride struct {
 	// +optional
 	// Defines the group this command is part of
 	Group *CommandGroupPluginOverride `json:"group,omitempty"`
-
-	// Optional map of free-form additional command attributes
-	Attributes map[string]string `json:"attributes,omitempty"`
 }
 
 // +union

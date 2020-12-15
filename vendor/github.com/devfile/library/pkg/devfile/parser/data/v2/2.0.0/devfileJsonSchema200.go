@@ -52,13 +52,6 @@ const JsonSchema200 = `{
               "component"
             ],
             "properties": {
-              "attributes": {
-                "description": "Optional map of free-form additional command attributes",
-                "type": "object",
-                "additionalProperties": {
-                  "type": "string"
-                }
-              },
               "component": {
                 "description": "Describes component that will be applied",
                 "type": "string"
@@ -94,17 +87,15 @@ const JsonSchema200 = `{
             },
             "additionalProperties": false
           },
+          "attributes": {
+            "description": "Map of implementation-dependant free-form YAML attributes.",
+            "type": "object",
+            "additionalProperties": true
+          },
           "composite": {
             "description": "Composite command that allows executing several sub-commands either sequentially or concurrently",
             "type": "object",
             "properties": {
-              "attributes": {
-                "description": "Optional map of free-form additional command attributes",
-                "type": "object",
-                "additionalProperties": {
-                  "type": "string"
-                }
-              },
               "commands": {
                 "description": "The commands that comprise this composite command",
                 "type": "array",
@@ -155,13 +146,6 @@ const JsonSchema200 = `{
               "component"
             ],
             "properties": {
-              "attributes": {
-                "description": "Optional map of free-form additional command attributes",
-                "type": "object",
-                "additionalProperties": {
-                  "type": "string"
-                }
-              },
               "commandLine": {
                 "description": "The actual command-line string\n\nSpecial variables that can be used:\n\n - '$PROJECTS_ROOT': A path where projects sources are mounted as defined by container component's sourceMapping.\n\n - '$PROJECT_SOURCE': A path to a project source ($PROJECTS_ROOT/\u003cproject-name\u003e). If there are multiple projects, this will point to the directory of the first one.",
                 "type": "string"
@@ -249,13 +233,6 @@ const JsonSchema200 = `{
               }
             ],
             "properties": {
-              "attributes": {
-                "description": "Optional map of free-form additional command attributes",
-                "type": "object",
-                "additionalProperties": {
-                  "type": "string"
-                }
-              },
               "group": {
                 "description": "Defines the group this command is part of",
                 "type": "object",
@@ -307,13 +284,6 @@ const JsonSchema200 = `{
               }
             ],
             "properties": {
-              "attributes": {
-                "description": "Optional map of free-form additional command attributes",
-                "type": "object",
-                "additionalProperties": {
-                  "type": "string"
-                }
-              },
               "group": {
                 "description": "Defines the group this command is part of",
                 "type": "object",
@@ -389,6 +359,11 @@ const JsonSchema200 = `{
           }
         ],
         "properties": {
+          "attributes": {
+            "description": "Map of implementation-dependant free-form YAML attributes.",
+            "type": "object",
+            "additionalProperties": true
+          },
           "container": {
             "description": "Allows adding and configuring workspace-related containers",
             "type": "object",
@@ -426,9 +401,7 @@ const JsonSchema200 = `{
                     "attributes": {
                       "description": "Map of implementation-dependant string-based free-form attributes.\n\nExamples of Che-specific attributes:\n- cookiesAuthEnabled: \"true\" / \"false\",\n- type: \"terminal\" / \"ide\" / \"ide-dev\",",
                       "type": "object",
-                      "additionalProperties": {
-                        "type": "string"
-                      }
+                      "additionalProperties": true
                     },
                     "exposure": {
                       "description": "Describes how the endpoint should be exposed on the network.\n- 'public' means that the endpoint will be exposed on the public network, typically through a K8S ingress or an OpenShift route.\n- 'internal' means that the endpoint will be exposed internally outside of the main workspace POD, typically by K8S services, to be consumed by other elements running on the same cloud internal network.\n- 'none' means that the endpoint will not be exposed and will only be accessible inside the main workspace POD, on a local address.\n\nDefault value is 'public'",
@@ -450,7 +423,13 @@ const JsonSchema200 = `{
                     "protocol": {
                       "description": "Describes the application and transport protocols of the traffic that will go through this endpoint.\n- 'http': Endpoint will have 'http' traffic, typically on a TCP connection. It will be automaticaly promoted to 'https' when the 'secure' field is set to 'true'.\n- 'https': Endpoint will have 'https' traffic, typically on a TCP connection.\n- 'ws': Endpoint will have 'ws' traffic, typically on a TCP connection. It will be automaticaly promoted to 'wss' when the 'secure' field is set to 'true'.\n- 'wss': Endpoint will have 'wss' traffic, typically on a TCP connection.\n- 'tcp': Endpoint will have traffic on a TCP connection, without specifying an application protocol.\n- 'udp': Endpoint will have traffic on an UDP connection, without specifying an application protocol.\n\nDefault value is 'http'",
                       "type": "string",
-                      "default": "http"
+                      "default": "http",
+                      "enum": [
+                        "http",
+                        "ws",
+                        "tcp",
+                        "udp"
+                      ]
                     },
                     "secure": {
                       "description": "Describes whether the endpoint should be secured and protected by some authentication process",
@@ -551,9 +530,7 @@ const JsonSchema200 = `{
                     "attributes": {
                       "description": "Map of implementation-dependant string-based free-form attributes.\n\nExamples of Che-specific attributes:\n- cookiesAuthEnabled: \"true\" / \"false\",\n- type: \"terminal\" / \"ide\" / \"ide-dev\",",
                       "type": "object",
-                      "additionalProperties": {
-                        "type": "string"
-                      }
+                      "additionalProperties": true
                     },
                     "exposure": {
                       "description": "Describes how the endpoint should be exposed on the network.\n- 'public' means that the endpoint will be exposed on the public network, typically through a K8S ingress or an OpenShift route.\n- 'internal' means that the endpoint will be exposed internally outside of the main workspace POD, typically by K8S services, to be consumed by other elements running on the same cloud internal network.\n- 'none' means that the endpoint will not be exposed and will only be accessible inside the main workspace POD, on a local address.\n\nDefault value is 'public'",
@@ -575,7 +552,13 @@ const JsonSchema200 = `{
                     "protocol": {
                       "description": "Describes the application and transport protocols of the traffic that will go through this endpoint.\n- 'http': Endpoint will have 'http' traffic, typically on a TCP connection. It will be automaticaly promoted to 'https' when the 'secure' field is set to 'true'.\n- 'https': Endpoint will have 'https' traffic, typically on a TCP connection.\n- 'ws': Endpoint will have 'ws' traffic, typically on a TCP connection. It will be automaticaly promoted to 'wss' when the 'secure' field is set to 'true'.\n- 'wss': Endpoint will have 'wss' traffic, typically on a TCP connection.\n- 'tcp': Endpoint will have traffic on a TCP connection, without specifying an application protocol.\n- 'udp': Endpoint will have traffic on an UDP connection, without specifying an application protocol.\n\nDefault value is 'http'",
                       "type": "string",
-                      "default": "http"
+                      "default": "http",
+                      "enum": [
+                        "http",
+                        "ws",
+                        "tcp",
+                        "udp"
+                      ]
                     },
                     "secure": {
                       "description": "Describes whether the endpoint should be secured and protected by some authentication process",
@@ -631,9 +614,7 @@ const JsonSchema200 = `{
                     "attributes": {
                       "description": "Map of implementation-dependant string-based free-form attributes.\n\nExamples of Che-specific attributes:\n- cookiesAuthEnabled: \"true\" / \"false\",\n- type: \"terminal\" / \"ide\" / \"ide-dev\",",
                       "type": "object",
-                      "additionalProperties": {
-                        "type": "string"
-                      }
+                      "additionalProperties": true
                     },
                     "exposure": {
                       "description": "Describes how the endpoint should be exposed on the network.\n- 'public' means that the endpoint will be exposed on the public network, typically through a K8S ingress or an OpenShift route.\n- 'internal' means that the endpoint will be exposed internally outside of the main workspace POD, typically by K8S services, to be consumed by other elements running on the same cloud internal network.\n- 'none' means that the endpoint will not be exposed and will only be accessible inside the main workspace POD, on a local address.\n\nDefault value is 'public'",
@@ -655,7 +636,13 @@ const JsonSchema200 = `{
                     "protocol": {
                       "description": "Describes the application and transport protocols of the traffic that will go through this endpoint.\n- 'http': Endpoint will have 'http' traffic, typically on a TCP connection. It will be automaticaly promoted to 'https' when the 'secure' field is set to 'true'.\n- 'https': Endpoint will have 'https' traffic, typically on a TCP connection.\n- 'ws': Endpoint will have 'ws' traffic, typically on a TCP connection. It will be automaticaly promoted to 'wss' when the 'secure' field is set to 'true'.\n- 'wss': Endpoint will have 'wss' traffic, typically on a TCP connection.\n- 'tcp': Endpoint will have traffic on a TCP connection, without specifying an application protocol.\n- 'udp': Endpoint will have traffic on an UDP connection, without specifying an application protocol.\n\nDefault value is 'http'",
                       "type": "string",
-                      "default": "http"
+                      "default": "http",
+                      "enum": [
+                        "http",
+                        "ws",
+                        "tcp",
+                        "udp"
+                      ]
                     },
                     "secure": {
                       "description": "Describes whether the endpoint should be secured and protected by some authentication process",
@@ -740,13 +727,6 @@ const JsonSchema200 = `{
                       "description": "Command that consists in applying a given component definition, typically bound to a workspace event.\n\nFor example, when an 'apply' command is bound to a 'preStart' event, and references a 'container' component, it will start the container as a K8S initContainer in the workspace POD, unless the component has its 'dedicatedPod' field set to 'true'.\n\nWhen no 'apply' command exist for a given component, it is assumed the component will be applied at workspace start by default.",
                       "type": "object",
                       "properties": {
-                        "attributes": {
-                          "description": "Optional map of free-form additional command attributes",
-                          "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
-                          }
-                        },
                         "component": {
                           "description": "Describes component that will be applied",
                           "type": "string"
@@ -779,17 +759,15 @@ const JsonSchema200 = `{
                       },
                       "additionalProperties": false
                     },
+                    "attributes": {
+                      "description": "Map of implementation-dependant free-form YAML attributes.",
+                      "type": "object",
+                      "additionalProperties": true
+                    },
                     "composite": {
                       "description": "Composite command that allows executing several sub-commands either sequentially or concurrently",
                       "type": "object",
                       "properties": {
-                        "attributes": {
-                          "description": "Optional map of free-form additional command attributes",
-                          "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
-                          }
-                        },
                         "commands": {
                           "description": "The commands that comprise this composite command",
                           "type": "array",
@@ -833,13 +811,6 @@ const JsonSchema200 = `{
                       "description": "CLI Command executed in an existing component container",
                       "type": "object",
                       "properties": {
-                        "attributes": {
-                          "description": "Optional map of free-form additional command attributes",
-                          "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
-                          }
-                        },
                         "commandLine": {
                           "description": "The actual command-line string\n\nSpecial variables that can be used:\n\n - '$PROJECTS_ROOT': A path where projects sources are mounted as defined by container component's sourceMapping.\n\n - '$PROJECT_SOURCE': A path to a project source ($PROJECTS_ROOT/\u003cproject-name\u003e). If there are multiple projects, this will point to the directory of the first one.",
                           "type": "string"
@@ -923,13 +894,6 @@ const JsonSchema200 = `{
                         }
                       ],
                       "properties": {
-                        "attributes": {
-                          "description": "Optional map of free-form additional command attributes",
-                          "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
-                          }
-                        },
                         "group": {
                           "description": "Defines the group this command is part of",
                           "type": "object",
@@ -978,13 +942,6 @@ const JsonSchema200 = `{
                         }
                       ],
                       "properties": {
-                        "attributes": {
-                          "description": "Optional map of free-form additional command attributes",
-                          "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
-                          }
-                        },
                         "group": {
                           "description": "Defines the group this command is part of",
                           "type": "object",
@@ -1052,6 +1009,11 @@ const JsonSchema200 = `{
                     }
                   ],
                   "properties": {
+                    "attributes": {
+                      "description": "Map of implementation-dependant free-form YAML attributes.",
+                      "type": "object",
+                      "additionalProperties": true
+                    },
                     "container": {
                       "description": "Allows adding and configuring workspace-related containers",
                       "type": "object",
@@ -1085,9 +1047,7 @@ const JsonSchema200 = `{
                               "attributes": {
                                 "description": "Map of implementation-dependant string-based free-form attributes.\n\nExamples of Che-specific attributes:\n- cookiesAuthEnabled: \"true\" / \"false\",\n- type: \"terminal\" / \"ide\" / \"ide-dev\",",
                                 "type": "object",
-                                "additionalProperties": {
-                                  "type": "string"
-                                }
+                                "additionalProperties": true
                               },
                               "exposure": {
                                 "description": "Describes how the endpoint should be exposed on the network.\n- 'public' means that the endpoint will be exposed on the public network, typically through a K8S ingress or an OpenShift route.\n- 'internal' means that the endpoint will be exposed internally outside of the main workspace POD, typically by K8S services, to be consumed by other elements running on the same cloud internal network.\n- 'none' means that the endpoint will not be exposed and will only be accessible inside the main workspace POD, on a local address.\n\nDefault value is 'public'",
@@ -1107,7 +1067,13 @@ const JsonSchema200 = `{
                               },
                               "protocol": {
                                 "description": "Describes the application and transport protocols of the traffic that will go through this endpoint.\n- 'http': Endpoint will have 'http' traffic, typically on a TCP connection. It will be automaticaly promoted to 'https' when the 'secure' field is set to 'true'.\n- 'https': Endpoint will have 'https' traffic, typically on a TCP connection.\n- 'ws': Endpoint will have 'ws' traffic, typically on a TCP connection. It will be automaticaly promoted to 'wss' when the 'secure' field is set to 'true'.\n- 'wss': Endpoint will have 'wss' traffic, typically on a TCP connection.\n- 'tcp': Endpoint will have traffic on a TCP connection, without specifying an application protocol.\n- 'udp': Endpoint will have traffic on an UDP connection, without specifying an application protocol.\n\nDefault value is 'http'",
-                                "type": "string"
+                                "type": "string",
+                                "enum": [
+                                  "http",
+                                  "ws",
+                                  "tcp",
+                                  "udp"
+                                ]
                               },
                               "secure": {
                                 "description": "Describes whether the endpoint should be secured and protected by some authentication process",
@@ -1205,9 +1171,7 @@ const JsonSchema200 = `{
                               "attributes": {
                                 "description": "Map of implementation-dependant string-based free-form attributes.\n\nExamples of Che-specific attributes:\n- cookiesAuthEnabled: \"true\" / \"false\",\n- type: \"terminal\" / \"ide\" / \"ide-dev\",",
                                 "type": "object",
-                                "additionalProperties": {
-                                  "type": "string"
-                                }
+                                "additionalProperties": true
                               },
                               "exposure": {
                                 "description": "Describes how the endpoint should be exposed on the network.\n- 'public' means that the endpoint will be exposed on the public network, typically through a K8S ingress or an OpenShift route.\n- 'internal' means that the endpoint will be exposed internally outside of the main workspace POD, typically by K8S services, to be consumed by other elements running on the same cloud internal network.\n- 'none' means that the endpoint will not be exposed and will only be accessible inside the main workspace POD, on a local address.\n\nDefault value is 'public'",
@@ -1227,7 +1191,13 @@ const JsonSchema200 = `{
                               },
                               "protocol": {
                                 "description": "Describes the application and transport protocols of the traffic that will go through this endpoint.\n- 'http': Endpoint will have 'http' traffic, typically on a TCP connection. It will be automaticaly promoted to 'https' when the 'secure' field is set to 'true'.\n- 'https': Endpoint will have 'https' traffic, typically on a TCP connection.\n- 'ws': Endpoint will have 'ws' traffic, typically on a TCP connection. It will be automaticaly promoted to 'wss' when the 'secure' field is set to 'true'.\n- 'wss': Endpoint will have 'wss' traffic, typically on a TCP connection.\n- 'tcp': Endpoint will have traffic on a TCP connection, without specifying an application protocol.\n- 'udp': Endpoint will have traffic on an UDP connection, without specifying an application protocol.\n\nDefault value is 'http'",
-                                "type": "string"
+                                "type": "string",
+                                "enum": [
+                                  "http",
+                                  "ws",
+                                  "tcp",
+                                  "udp"
+                                ]
                               },
                               "secure": {
                                 "description": "Describes whether the endpoint should be secured and protected by some authentication process",
@@ -1282,9 +1252,7 @@ const JsonSchema200 = `{
                               "attributes": {
                                 "description": "Map of implementation-dependant string-based free-form attributes.\n\nExamples of Che-specific attributes:\n- cookiesAuthEnabled: \"true\" / \"false\",\n- type: \"terminal\" / \"ide\" / \"ide-dev\",",
                                 "type": "object",
-                                "additionalProperties": {
-                                  "type": "string"
-                                }
+                                "additionalProperties": true
                               },
                               "exposure": {
                                 "description": "Describes how the endpoint should be exposed on the network.\n- 'public' means that the endpoint will be exposed on the public network, typically through a K8S ingress or an OpenShift route.\n- 'internal' means that the endpoint will be exposed internally outside of the main workspace POD, typically by K8S services, to be consumed by other elements running on the same cloud internal network.\n- 'none' means that the endpoint will not be exposed and will only be accessible inside the main workspace POD, on a local address.\n\nDefault value is 'public'",
@@ -1304,7 +1272,13 @@ const JsonSchema200 = `{
                               },
                               "protocol": {
                                 "description": "Describes the application and transport protocols of the traffic that will go through this endpoint.\n- 'http': Endpoint will have 'http' traffic, typically on a TCP connection. It will be automaticaly promoted to 'https' when the 'secure' field is set to 'true'.\n- 'https': Endpoint will have 'https' traffic, typically on a TCP connection.\n- 'ws': Endpoint will have 'ws' traffic, typically on a TCP connection. It will be automaticaly promoted to 'wss' when the 'secure' field is set to 'true'.\n- 'wss': Endpoint will have 'wss' traffic, typically on a TCP connection.\n- 'tcp': Endpoint will have traffic on a TCP connection, without specifying an application protocol.\n- 'udp': Endpoint will have traffic on an UDP connection, without specifying an application protocol.\n\nDefault value is 'http'",
-                                "type": "string"
+                                "type": "string",
+                                "enum": [
+                                  "http",
+                                  "ws",
+                                  "tcp",
+                                  "udp"
+                                ]
                               },
                               "secure": {
                                 "description": "Describes whether the endpoint should be secured and protected by some authentication process",
@@ -1393,28 +1367,28 @@ const JsonSchema200 = `{
       "type": "object",
       "properties": {
         "postStart": {
-          "description": "Names of commands that should be executed after the workspace is completely started. In the case of Che-Theia, these commands should be executed after all plugins and extensions have started, including project cloning. This means that those commands are not triggered until the user opens the IDE in his browser.",
+          "description": "IDs of commands that should be executed after the workspace is completely started. In the case of Che-Theia, these commands should be executed after all plugins and extensions have started, including project cloning. This means that those commands are not triggered until the user opens the IDE in his browser.",
           "type": "array",
           "items": {
             "type": "string"
           }
         },
         "postStop": {
-          "description": "Names of commands that should be executed after stopping the workspace.",
+          "description": "IDs of commands that should be executed after stopping the workspace.",
           "type": "array",
           "items": {
             "type": "string"
           }
         },
         "preStart": {
-          "description": "Names of commands that should be executed before the workspace start. Kubernetes-wise, these commands would typically be executed in init containers of the workspace POD.",
+          "description": "IDs of commands that should be executed before the workspace start. Kubernetes-wise, these commands would typically be executed in init containers of the workspace POD.",
           "type": "array",
           "items": {
             "type": "string"
           }
         },
         "preStop": {
-          "description": "Names of commands that should be executed before stopping the workspace.",
+          "description": "IDs of commands that should be executed before stopping the workspace.",
           "type": "array",
           "items": {
             "type": "string"
@@ -1427,6 +1401,11 @@ const JsonSchema200 = `{
       "description": "Optional metadata",
       "type": "object",
       "properties": {
+        "attributes": {
+          "description": "Map of implementation-dependant free-form YAML attributes.",
+          "type": "object",
+          "additionalProperties": true
+        },
         "name": {
           "description": "Optional devfile name",
           "type": "string"
@@ -1500,13 +1479,6 @@ const JsonSchema200 = `{
                 "description": "Command that consists in applying a given component definition, typically bound to a workspace event.\n\nFor example, when an 'apply' command is bound to a 'preStart' event, and references a 'container' component, it will start the container as a K8S initContainer in the workspace POD, unless the component has its 'dedicatedPod' field set to 'true'.\n\nWhen no 'apply' command exist for a given component, it is assumed the component will be applied at workspace start by default.",
                 "type": "object",
                 "properties": {
-                  "attributes": {
-                    "description": "Optional map of free-form additional command attributes",
-                    "type": "object",
-                    "additionalProperties": {
-                      "type": "string"
-                    }
-                  },
                   "component": {
                     "description": "Describes component that will be applied",
                     "type": "string"
@@ -1539,17 +1511,15 @@ const JsonSchema200 = `{
                 },
                 "additionalProperties": false
               },
+              "attributes": {
+                "description": "Map of implementation-dependant free-form YAML attributes.",
+                "type": "object",
+                "additionalProperties": true
+              },
               "composite": {
                 "description": "Composite command that allows executing several sub-commands either sequentially or concurrently",
                 "type": "object",
                 "properties": {
-                  "attributes": {
-                    "description": "Optional map of free-form additional command attributes",
-                    "type": "object",
-                    "additionalProperties": {
-                      "type": "string"
-                    }
-                  },
                   "commands": {
                     "description": "The commands that comprise this composite command",
                     "type": "array",
@@ -1593,13 +1563,6 @@ const JsonSchema200 = `{
                 "description": "CLI Command executed in an existing component container",
                 "type": "object",
                 "properties": {
-                  "attributes": {
-                    "description": "Optional map of free-form additional command attributes",
-                    "type": "object",
-                    "additionalProperties": {
-                      "type": "string"
-                    }
-                  },
                   "commandLine": {
                     "description": "The actual command-line string\n\nSpecial variables that can be used:\n\n - '$PROJECTS_ROOT': A path where projects sources are mounted as defined by container component's sourceMapping.\n\n - '$PROJECT_SOURCE': A path to a project source ($PROJECTS_ROOT/\u003cproject-name\u003e). If there are multiple projects, this will point to the directory of the first one.",
                     "type": "string"
@@ -1683,13 +1646,6 @@ const JsonSchema200 = `{
                   }
                 ],
                 "properties": {
-                  "attributes": {
-                    "description": "Optional map of free-form additional command attributes",
-                    "type": "object",
-                    "additionalProperties": {
-                      "type": "string"
-                    }
-                  },
                   "group": {
                     "description": "Defines the group this command is part of",
                     "type": "object",
@@ -1738,13 +1694,6 @@ const JsonSchema200 = `{
                   }
                 ],
                 "properties": {
-                  "attributes": {
-                    "description": "Optional map of free-form additional command attributes",
-                    "type": "object",
-                    "additionalProperties": {
-                      "type": "string"
-                    }
-                  },
                   "group": {
                     "description": "Defines the group this command is part of",
                     "type": "object",
@@ -1817,6 +1766,11 @@ const JsonSchema200 = `{
               }
             ],
             "properties": {
+              "attributes": {
+                "description": "Map of implementation-dependant free-form YAML attributes.",
+                "type": "object",
+                "additionalProperties": true
+              },
               "container": {
                 "description": "Allows adding and configuring workspace-related containers",
                 "type": "object",
@@ -1850,9 +1804,7 @@ const JsonSchema200 = `{
                         "attributes": {
                           "description": "Map of implementation-dependant string-based free-form attributes.\n\nExamples of Che-specific attributes:\n- cookiesAuthEnabled: \"true\" / \"false\",\n- type: \"terminal\" / \"ide\" / \"ide-dev\",",
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
-                          }
+                          "additionalProperties": true
                         },
                         "exposure": {
                           "description": "Describes how the endpoint should be exposed on the network.\n- 'public' means that the endpoint will be exposed on the public network, typically through a K8S ingress or an OpenShift route.\n- 'internal' means that the endpoint will be exposed internally outside of the main workspace POD, typically by K8S services, to be consumed by other elements running on the same cloud internal network.\n- 'none' means that the endpoint will not be exposed and will only be accessible inside the main workspace POD, on a local address.\n\nDefault value is 'public'",
@@ -1872,7 +1824,13 @@ const JsonSchema200 = `{
                         },
                         "protocol": {
                           "description": "Describes the application and transport protocols of the traffic that will go through this endpoint.\n- 'http': Endpoint will have 'http' traffic, typically on a TCP connection. It will be automaticaly promoted to 'https' when the 'secure' field is set to 'true'.\n- 'https': Endpoint will have 'https' traffic, typically on a TCP connection.\n- 'ws': Endpoint will have 'ws' traffic, typically on a TCP connection. It will be automaticaly promoted to 'wss' when the 'secure' field is set to 'true'.\n- 'wss': Endpoint will have 'wss' traffic, typically on a TCP connection.\n- 'tcp': Endpoint will have traffic on a TCP connection, without specifying an application protocol.\n- 'udp': Endpoint will have traffic on an UDP connection, without specifying an application protocol.\n\nDefault value is 'http'",
-                          "type": "string"
+                          "type": "string",
+                          "enum": [
+                            "http",
+                            "ws",
+                            "tcp",
+                            "udp"
+                          ]
                         },
                         "secure": {
                           "description": "Describes whether the endpoint should be secured and protected by some authentication process",
@@ -1970,9 +1928,7 @@ const JsonSchema200 = `{
                         "attributes": {
                           "description": "Map of implementation-dependant string-based free-form attributes.\n\nExamples of Che-specific attributes:\n- cookiesAuthEnabled: \"true\" / \"false\",\n- type: \"terminal\" / \"ide\" / \"ide-dev\",",
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
-                          }
+                          "additionalProperties": true
                         },
                         "exposure": {
                           "description": "Describes how the endpoint should be exposed on the network.\n- 'public' means that the endpoint will be exposed on the public network, typically through a K8S ingress or an OpenShift route.\n- 'internal' means that the endpoint will be exposed internally outside of the main workspace POD, typically by K8S services, to be consumed by other elements running on the same cloud internal network.\n- 'none' means that the endpoint will not be exposed and will only be accessible inside the main workspace POD, on a local address.\n\nDefault value is 'public'",
@@ -1992,7 +1948,13 @@ const JsonSchema200 = `{
                         },
                         "protocol": {
                           "description": "Describes the application and transport protocols of the traffic that will go through this endpoint.\n- 'http': Endpoint will have 'http' traffic, typically on a TCP connection. It will be automaticaly promoted to 'https' when the 'secure' field is set to 'true'.\n- 'https': Endpoint will have 'https' traffic, typically on a TCP connection.\n- 'ws': Endpoint will have 'ws' traffic, typically on a TCP connection. It will be automaticaly promoted to 'wss' when the 'secure' field is set to 'true'.\n- 'wss': Endpoint will have 'wss' traffic, typically on a TCP connection.\n- 'tcp': Endpoint will have traffic on a TCP connection, without specifying an application protocol.\n- 'udp': Endpoint will have traffic on an UDP connection, without specifying an application protocol.\n\nDefault value is 'http'",
-                          "type": "string"
+                          "type": "string",
+                          "enum": [
+                            "http",
+                            "ws",
+                            "tcp",
+                            "udp"
+                          ]
                         },
                         "secure": {
                           "description": "Describes whether the endpoint should be secured and protected by some authentication process",
@@ -2047,9 +2009,7 @@ const JsonSchema200 = `{
                         "attributes": {
                           "description": "Map of implementation-dependant string-based free-form attributes.\n\nExamples of Che-specific attributes:\n- cookiesAuthEnabled: \"true\" / \"false\",\n- type: \"terminal\" / \"ide\" / \"ide-dev\",",
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
-                          }
+                          "additionalProperties": true
                         },
                         "exposure": {
                           "description": "Describes how the endpoint should be exposed on the network.\n- 'public' means that the endpoint will be exposed on the public network, typically through a K8S ingress or an OpenShift route.\n- 'internal' means that the endpoint will be exposed internally outside of the main workspace POD, typically by K8S services, to be consumed by other elements running on the same cloud internal network.\n- 'none' means that the endpoint will not be exposed and will only be accessible inside the main workspace POD, on a local address.\n\nDefault value is 'public'",
@@ -2069,7 +2029,13 @@ const JsonSchema200 = `{
                         },
                         "protocol": {
                           "description": "Describes the application and transport protocols of the traffic that will go through this endpoint.\n- 'http': Endpoint will have 'http' traffic, typically on a TCP connection. It will be automaticaly promoted to 'https' when the 'secure' field is set to 'true'.\n- 'https': Endpoint will have 'https' traffic, typically on a TCP connection.\n- 'ws': Endpoint will have 'ws' traffic, typically on a TCP connection. It will be automaticaly promoted to 'wss' when the 'secure' field is set to 'true'.\n- 'wss': Endpoint will have 'wss' traffic, typically on a TCP connection.\n- 'tcp': Endpoint will have traffic on a TCP connection, without specifying an application protocol.\n- 'udp': Endpoint will have traffic on an UDP connection, without specifying an application protocol.\n\nDefault value is 'http'",
-                          "type": "string"
+                          "type": "string",
+                          "enum": [
+                            "http",
+                            "ws",
+                            "tcp",
+                            "udp"
+                          ]
                         },
                         "secure": {
                           "description": "Describes whether the endpoint should be secured and protected by some authentication process",
@@ -2154,13 +2120,6 @@ const JsonSchema200 = `{
                           "description": "Command that consists in applying a given component definition, typically bound to a workspace event.\n\nFor example, when an 'apply' command is bound to a 'preStart' event, and references a 'container' component, it will start the container as a K8S initContainer in the workspace POD, unless the component has its 'dedicatedPod' field set to 'true'.\n\nWhen no 'apply' command exist for a given component, it is assumed the component will be applied at workspace start by default.",
                           "type": "object",
                           "properties": {
-                            "attributes": {
-                              "description": "Optional map of free-form additional command attributes",
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            },
                             "component": {
                               "description": "Describes component that will be applied",
                               "type": "string"
@@ -2193,17 +2152,15 @@ const JsonSchema200 = `{
                           },
                           "additionalProperties": false
                         },
+                        "attributes": {
+                          "description": "Map of implementation-dependant free-form YAML attributes.",
+                          "type": "object",
+                          "additionalProperties": true
+                        },
                         "composite": {
                           "description": "Composite command that allows executing several sub-commands either sequentially or concurrently",
                           "type": "object",
                           "properties": {
-                            "attributes": {
-                              "description": "Optional map of free-form additional command attributes",
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            },
                             "commands": {
                               "description": "The commands that comprise this composite command",
                               "type": "array",
@@ -2247,13 +2204,6 @@ const JsonSchema200 = `{
                           "description": "CLI Command executed in an existing component container",
                           "type": "object",
                           "properties": {
-                            "attributes": {
-                              "description": "Optional map of free-form additional command attributes",
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            },
                             "commandLine": {
                               "description": "The actual command-line string\n\nSpecial variables that can be used:\n\n - '$PROJECTS_ROOT': A path where projects sources are mounted as defined by container component's sourceMapping.\n\n - '$PROJECT_SOURCE': A path to a project source ($PROJECTS_ROOT/\u003cproject-name\u003e). If there are multiple projects, this will point to the directory of the first one.",
                               "type": "string"
@@ -2337,13 +2287,6 @@ const JsonSchema200 = `{
                             }
                           ],
                           "properties": {
-                            "attributes": {
-                              "description": "Optional map of free-form additional command attributes",
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            },
                             "group": {
                               "description": "Defines the group this command is part of",
                               "type": "object",
@@ -2392,13 +2335,6 @@ const JsonSchema200 = `{
                             }
                           ],
                           "properties": {
-                            "attributes": {
-                              "description": "Optional map of free-form additional command attributes",
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            },
                             "group": {
                               "description": "Defines the group this command is part of",
                               "type": "object",
@@ -2466,6 +2402,11 @@ const JsonSchema200 = `{
                         }
                       ],
                       "properties": {
+                        "attributes": {
+                          "description": "Map of implementation-dependant free-form YAML attributes.",
+                          "type": "object",
+                          "additionalProperties": true
+                        },
                         "container": {
                           "description": "Allows adding and configuring workspace-related containers",
                           "type": "object",
@@ -2499,9 +2440,7 @@ const JsonSchema200 = `{
                                   "attributes": {
                                     "description": "Map of implementation-dependant string-based free-form attributes.\n\nExamples of Che-specific attributes:\n- cookiesAuthEnabled: \"true\" / \"false\",\n- type: \"terminal\" / \"ide\" / \"ide-dev\",",
                                     "type": "object",
-                                    "additionalProperties": {
-                                      "type": "string"
-                                    }
+                                    "additionalProperties": true
                                   },
                                   "exposure": {
                                     "description": "Describes how the endpoint should be exposed on the network.\n- 'public' means that the endpoint will be exposed on the public network, typically through a K8S ingress or an OpenShift route.\n- 'internal' means that the endpoint will be exposed internally outside of the main workspace POD, typically by K8S services, to be consumed by other elements running on the same cloud internal network.\n- 'none' means that the endpoint will not be exposed and will only be accessible inside the main workspace POD, on a local address.\n\nDefault value is 'public'",
@@ -2521,7 +2460,13 @@ const JsonSchema200 = `{
                                   },
                                   "protocol": {
                                     "description": "Describes the application and transport protocols of the traffic that will go through this endpoint.\n- 'http': Endpoint will have 'http' traffic, typically on a TCP connection. It will be automaticaly promoted to 'https' when the 'secure' field is set to 'true'.\n- 'https': Endpoint will have 'https' traffic, typically on a TCP connection.\n- 'ws': Endpoint will have 'ws' traffic, typically on a TCP connection. It will be automaticaly promoted to 'wss' when the 'secure' field is set to 'true'.\n- 'wss': Endpoint will have 'wss' traffic, typically on a TCP connection.\n- 'tcp': Endpoint will have traffic on a TCP connection, without specifying an application protocol.\n- 'udp': Endpoint will have traffic on an UDP connection, without specifying an application protocol.\n\nDefault value is 'http'",
-                                    "type": "string"
+                                    "type": "string",
+                                    "enum": [
+                                      "http",
+                                      "ws",
+                                      "tcp",
+                                      "udp"
+                                    ]
                                   },
                                   "secure": {
                                     "description": "Describes whether the endpoint should be secured and protected by some authentication process",
@@ -2619,9 +2564,7 @@ const JsonSchema200 = `{
                                   "attributes": {
                                     "description": "Map of implementation-dependant string-based free-form attributes.\n\nExamples of Che-specific attributes:\n- cookiesAuthEnabled: \"true\" / \"false\",\n- type: \"terminal\" / \"ide\" / \"ide-dev\",",
                                     "type": "object",
-                                    "additionalProperties": {
-                                      "type": "string"
-                                    }
+                                    "additionalProperties": true
                                   },
                                   "exposure": {
                                     "description": "Describes how the endpoint should be exposed on the network.\n- 'public' means that the endpoint will be exposed on the public network, typically through a K8S ingress or an OpenShift route.\n- 'internal' means that the endpoint will be exposed internally outside of the main workspace POD, typically by K8S services, to be consumed by other elements running on the same cloud internal network.\n- 'none' means that the endpoint will not be exposed and will only be accessible inside the main workspace POD, on a local address.\n\nDefault value is 'public'",
@@ -2641,7 +2584,13 @@ const JsonSchema200 = `{
                                   },
                                   "protocol": {
                                     "description": "Describes the application and transport protocols of the traffic that will go through this endpoint.\n- 'http': Endpoint will have 'http' traffic, typically on a TCP connection. It will be automaticaly promoted to 'https' when the 'secure' field is set to 'true'.\n- 'https': Endpoint will have 'https' traffic, typically on a TCP connection.\n- 'ws': Endpoint will have 'ws' traffic, typically on a TCP connection. It will be automaticaly promoted to 'wss' when the 'secure' field is set to 'true'.\n- 'wss': Endpoint will have 'wss' traffic, typically on a TCP connection.\n- 'tcp': Endpoint will have traffic on a TCP connection, without specifying an application protocol.\n- 'udp': Endpoint will have traffic on an UDP connection, without specifying an application protocol.\n\nDefault value is 'http'",
-                                    "type": "string"
+                                    "type": "string",
+                                    "enum": [
+                                      "http",
+                                      "ws",
+                                      "tcp",
+                                      "udp"
+                                    ]
                                   },
                                   "secure": {
                                     "description": "Describes whether the endpoint should be secured and protected by some authentication process",
@@ -2696,9 +2645,7 @@ const JsonSchema200 = `{
                                   "attributes": {
                                     "description": "Map of implementation-dependant string-based free-form attributes.\n\nExamples of Che-specific attributes:\n- cookiesAuthEnabled: \"true\" / \"false\",\n- type: \"terminal\" / \"ide\" / \"ide-dev\",",
                                     "type": "object",
-                                    "additionalProperties": {
-                                      "type": "string"
-                                    }
+                                    "additionalProperties": true
                                   },
                                   "exposure": {
                                     "description": "Describes how the endpoint should be exposed on the network.\n- 'public' means that the endpoint will be exposed on the public network, typically through a K8S ingress or an OpenShift route.\n- 'internal' means that the endpoint will be exposed internally outside of the main workspace POD, typically by K8S services, to be consumed by other elements running on the same cloud internal network.\n- 'none' means that the endpoint will not be exposed and will only be accessible inside the main workspace POD, on a local address.\n\nDefault value is 'public'",
@@ -2718,7 +2665,13 @@ const JsonSchema200 = `{
                                   },
                                   "protocol": {
                                     "description": "Describes the application and transport protocols of the traffic that will go through this endpoint.\n- 'http': Endpoint will have 'http' traffic, typically on a TCP connection. It will be automaticaly promoted to 'https' when the 'secure' field is set to 'true'.\n- 'https': Endpoint will have 'https' traffic, typically on a TCP connection.\n- 'ws': Endpoint will have 'ws' traffic, typically on a TCP connection. It will be automaticaly promoted to 'wss' when the 'secure' field is set to 'true'.\n- 'wss': Endpoint will have 'wss' traffic, typically on a TCP connection.\n- 'tcp': Endpoint will have traffic on a TCP connection, without specifying an application protocol.\n- 'udp': Endpoint will have traffic on an UDP connection, without specifying an application protocol.\n\nDefault value is 'http'",
-                                    "type": "string"
+                                    "type": "string",
+                                    "enum": [
+                                      "http",
+                                      "ws",
+                                      "tcp",
+                                      "udp"
+                                    ]
                                   },
                                   "secure": {
                                     "description": "Describes whether the endpoint should be secured and protected by some authentication process",
@@ -2845,6 +2798,11 @@ const JsonSchema200 = `{
               }
             ],
             "properties": {
+              "attributes": {
+                "description": "Map of implementation-dependant free-form YAML attributes.",
+                "type": "object",
+                "additionalProperties": true
+              },
               "clonePath": {
                 "description": "Path relative to the root of the projects to which this project should be cloned into. This is a unix-style relative path (i.e. uses forward slashes). The path is invalid if it is absolute or tries to escape the project root through the usage of '..'. If not specified, defaults to the project name.",
                 "type": "string"
@@ -2962,6 +2920,11 @@ const JsonSchema200 = `{
               }
             ],
             "properties": {
+              "attributes": {
+                "description": "Map of implementation-dependant free-form YAML attributes.",
+                "type": "object",
+                "additionalProperties": true
+              },
               "description": {
                 "description": "Description of a starter project",
                 "type": "string"
@@ -3080,6 +3043,11 @@ const JsonSchema200 = `{
           }
         ],
         "properties": {
+          "attributes": {
+            "description": "Map of implementation-dependant free-form YAML attributes.",
+            "type": "object",
+            "additionalProperties": true
+          },
           "clonePath": {
             "description": "Path relative to the root of the projects to which this project should be cloned into. This is a unix-style relative path (i.e. uses forward slashes). The path is invalid if it is absolute or tries to escape the project root through the usage of '..'. If not specified, defaults to the project name.",
             "type": "string"
@@ -3205,6 +3173,11 @@ const JsonSchema200 = `{
           }
         ],
         "properties": {
+          "attributes": {
+            "description": "Map of implementation-dependant free-form YAML attributes.",
+            "type": "object",
+            "additionalProperties": true
+          },
           "description": {
             "description": "Description of a starter project",
             "type": "string"

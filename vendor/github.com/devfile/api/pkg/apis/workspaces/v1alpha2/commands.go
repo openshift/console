@@ -1,6 +1,9 @@
 package v1alpha2
 
-import runtime "k8s.io/apimachinery/pkg/runtime"
+import (
+	attributes "github.com/devfile/api/pkg/attributes"
+	runtime "k8s.io/apimachinery/pkg/runtime"
+)
 
 // CommandType describes the type of command.
 // Only one of the following command type may be specified.
@@ -40,9 +43,6 @@ type BaseCommand struct {
 	// +optional
 	// Defines the group this command is part of
 	Group *CommandGroup `json:"group,omitempty"`
-
-	// Optional map of free-form additional command attributes
-	Attributes map[string]string `json:"attributes,omitempty"`
 }
 
 type LabeledCommand struct {
@@ -58,7 +58,10 @@ type Command struct {
 	// Mandatory identifier that allows referencing
 	// this command in composite commands, from
 	// a parent, or in events.
-	Id           string `json:"id"`
+	Id string `json:"id"`
+	// Map of implementation-dependant free-form YAML attributes.
+	// +optional
+	Attributes   attributes.Attributes `json:"attributes,omitempty"`
 	CommandUnion `json:",inline"`
 }
 
