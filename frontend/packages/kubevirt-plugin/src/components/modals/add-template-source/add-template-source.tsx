@@ -13,7 +13,10 @@ import { Alert, Button, ActionGroup, Stack, StackItem } from '@patternfly/react-
 import { useAccessReview2, LoadingBox } from '@console/internal/components/utils';
 import { coFetch } from '@console/internal/co-fetch';
 
-import { UploadPVCFormStatus } from '../../cdi-upload-provider/upload-pvc-form/upload-pvc-form-status';
+import {
+  UploadPVCFormStatus,
+  uploadErrorType,
+} from '../../cdi-upload-provider/upload-pvc-form/upload-pvc-form-status';
 import { createUploadPVC } from '../../../k8s/requests/cdi-upload/cdi-upload-requests';
 import {
   TEMPLATE_BASE_IMAGE_NAME_PARAMETER,
@@ -28,10 +31,7 @@ import { getRootDataVolume } from '../../../k8s/requests/vm/create/simple-create
 import { ProvisionSource } from '../../../constants/vm/provision-source';
 import { useErrorTranslation } from '../../../hooks/use-error-translation';
 import { CDI_UPLOAD_URL_BUILDER } from '../../cdi-upload-provider/consts';
-import {
-  uploadErrorMessage,
-  uploadErrorType,
-} from '../../cdi-upload-provider/upload-pvc-form/upload-pvc-form';
+import { uploadErrorMessage } from '../../cdi-upload-provider/upload-pvc-form/upload-pvc-form';
 
 const getAction = (t: TFunction, dataSource: string): string => {
   switch (ProvisionSource.fromString(dataSource)) {
@@ -147,7 +147,7 @@ export const AddTemplateSourceModal: React.FC<ModalComponentProps &
       try {
         setAllocating(true);
         setSubmitting(true);
-        const { token } = await createUploadPVC(dvObj, t);
+        const { token } = await createUploadPVC(dvObj);
         setAllocating(false);
         uploadData({
           file: file.value?.value,

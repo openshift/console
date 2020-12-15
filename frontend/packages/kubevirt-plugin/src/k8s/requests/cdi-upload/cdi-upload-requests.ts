@@ -1,5 +1,4 @@
 /* eslint-disable camelcase, @typescript-eslint/camelcase,no-await-in-loop */
-import { TFunction } from 'i18next';
 import { getName, getNamespace } from '@console/shared';
 import { DataVolumeModel, UploadTokenRequestModel } from '@console/kubevirt-plugin/src/models';
 import { V1alpha1DataVolume } from '@console/kubevirt-plugin/src/types/vm/disk/V1alpha1DataVolume';
@@ -18,7 +17,7 @@ const UPLOAD_STATES = {
   READY: 'UploadReady',
 };
 
-class PVCInitError extends Error {
+export class PVCInitError extends Error {
   constructor() {
     // t('kubevirt-plugin~Data Volume failed to initiate upload, and has been deleted.')
     super('kubevirt-plugin~Data Volume failed to initiate upload, and has been deleted.');
@@ -65,7 +64,7 @@ const createUploadToken = async (pvcName: string, namespace: string): Promise<st
   }
 };
 
-export const createUploadPVC = async (dataVolume: V1alpha1DataVolume, t: TFunction) => {
+export const createUploadPVC = async (dataVolume: V1alpha1DataVolume) => {
   const dataVolumeName = getName(dataVolume);
   const namespace = getNamespace(dataVolume);
 
@@ -77,8 +76,7 @@ export const createUploadPVC = async (dataVolume: V1alpha1DataVolume, t: TFuncti
     return { token };
   } catch (error) {
     if (error instanceof PVCInitError) {
-      await killUploadPVC(dataVolumeName, namespace);
-      throw new Error(t(error.message));
+      throw new PVCInitError();
     }
     throw new Error(error.message);
   }
