@@ -13,9 +13,7 @@ import {
   getTemplateName,
   getTemplateProvider,
   getTemplateKindProviderType,
-  getTemplateSupport,
   templateProviders,
-  getTemplateParentProvider,
 } from '../../../selectors/vm-template/basic';
 import {
   getTemplateFlavorDesc,
@@ -28,7 +26,9 @@ import { filterTemplates } from '../../vm-templates/utils';
 import { getTemplateSourceStatus } from '../../../statuses/template/template-source-status';
 import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
 import { TemplateItem } from '../../../types/template';
+import { VMTemplateSupportDescription } from '../../vm-templates/vm-template-resource';
 import { getDescription } from '../../../selectors/selectors';
+
 import './create-vm-side-drawer.scss';
 
 const normalizeVmTemplates = (
@@ -151,30 +151,10 @@ const normalizeVmTemplates = (
       },
     ];
 
-    const templateSupport = getTemplateSupport(tmp);
-    const parentProvider = getTemplateParentProvider(tmp);
-    let support: React.ReactNode = '-';
-    if (templateSupport.parent && parentProvider && templateSupport.provider && provider) {
-      support = (
-        <>
-          <div>
-            {parentProvider} - {templateSupport.parent}
-          </div>
-          <div>
-            {provider} - {templateSupport.provider}
-          </div>
-        </>
-      );
-    } else if (templateSupport.parent && parentProvider) {
-      support = `${parentProvider} - ${templateSupport.parent}`;
-    } else if (templateSupport.provider && provider) {
-      support = templateSupport.provider;
-    }
-
     const detailsProperties = [
       {
         label: t('kubevirt-plugin~Support'),
-        value: support,
+        value: <VMTemplateSupportDescription template={tmp} />,
       },
     ];
 
