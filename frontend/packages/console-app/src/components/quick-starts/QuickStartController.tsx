@@ -17,25 +17,16 @@ const QuickStartController: React.FC<QuickStartControllerProps> = ({ quickStart 
   const {
     activeQuickStartState,
     setActiveQuickStart,
-    setQuickStartStatus,
     setQuickStartTaskNumber,
     setQuickStartTaskStatus,
+    nextStep,
+    previousStep,
   } = React.useContext<QuickStartContextValues>(QuickStartContext);
   const status = activeQuickStartState?.status as QuickStartStatus;
   const taskNumber = activeQuickStartState?.taskNumber as number;
   const allTaskStatuses = tasks.map(
     (task, index) => activeQuickStartState[`taskStatus${index}`],
   ) as QuickStartTaskStatus[];
-  const taskStatus = allTaskStatuses[taskNumber];
-  const startQuickStart = React.useCallback(
-    () => setQuickStartStatus(name, QuickStartStatus.IN_PROGRESS),
-    [name, setQuickStartStatus],
-  );
-
-  const completeQuickStart = React.useCallback(
-    () => setQuickStartStatus(name, QuickStartStatus.COMPLETE),
-    [name, setQuickStartStatus],
-  );
 
   const handleQuickStartChange = React.useCallback(
     (quickStartId: string) => setActiveQuickStart(quickStartId),
@@ -48,48 +39,21 @@ const QuickStartController: React.FC<QuickStartControllerProps> = ({ quickStart 
   );
 
   const handleNext = React.useCallback(() => {
-    if (status === QuickStartStatus.NOT_STARTED) startQuickStart();
     if (status === QuickStartStatus.COMPLETE && taskNumber === totalTasks)
       return handleQuickStartChange('');
 
-    if (
-      status === QuickStartStatus.IN_PROGRESS &&
-      taskStatus !== QuickStartTaskStatus.INIT &&
-      taskNumber === totalTasks - 1
-    )
-      completeQuickStart();
-
-    if (taskStatus === QuickStartTaskStatus.INIT)
-      return handleTaskStatusChange(QuickStartTaskStatus.REVIEW);
-
-    if (taskNumber < totalTasks) return setQuickStartTaskNumber(name, taskNumber + 1);
-
-    return null;
-  }, [
-    completeQuickStart,
-    handleQuickStartChange,
-    handleTaskStatusChange,
-    name,
-    setQuickStartTaskNumber,
-    startQuickStart,
-    status,
-    taskNumber,
-    taskStatus,
-    totalTasks,
-  ]);
+    return nextStep(totalTasks);
+  }, [handleQuickStartChange, nextStep, status, taskNumber, totalTasks]);
 
   const handleBack = React.useCallback(() => {
-    if (taskNumber > -1) return setQuickStartTaskNumber(name, taskNumber - 1);
-
-    return null;
-  }, [name, setQuickStartTaskNumber, taskNumber]);
+    return previousStep();
+  }, [previousStep]);
 
   const handleTaskSelect = React.useCallback(
     (selectedTaskNumber: number) => {
       setQuickStartTaskNumber(name, selectedTaskNumber);
-      startQuickStart();
     },
-    [name, setQuickStartTaskNumber, startQuickStart],
+    [name, setQuickStartTaskNumber],
   );
 
   return (

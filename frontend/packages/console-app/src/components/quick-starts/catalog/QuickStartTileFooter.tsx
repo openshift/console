@@ -16,36 +16,33 @@ const QuickStartTileFooter: React.FC<QuickStartTileFooterProps> = ({
   totalTasks,
 }) => {
   const { t } = useTranslation();
-  const {
-    activeQuickStartID,
-    setActiveQuickStart,
-    setQuickStartStatus,
-    resetQuickStart,
-  } = React.useContext<QuickStartContextValues>(QuickStartContext);
-  const startQuickStart = React.useCallback(
+  const { activeQuickStartID, startQuickStart, restartQuickStart } = React.useContext<
+    QuickStartContextValues
+  >(QuickStartContext);
+
+  const start = React.useCallback(
     (e: React.SyntheticEvent) => {
       e.preventDefault();
       e.stopPropagation();
-      if (!activeQuickStartID || activeQuickStartID !== quickStartId)
-        setActiveQuickStart(quickStartId, totalTasks);
-      setQuickStartStatus(quickStartId, QuickStartStatus.IN_PROGRESS);
+      startQuickStart(quickStartId, totalTasks);
     },
-    [activeQuickStartID, quickStartId, setActiveQuickStart, setQuickStartStatus, totalTasks],
+    [quickStartId, startQuickStart, totalTasks],
   );
 
-  const restartQuickStart = React.useCallback(
+  const restart = React.useCallback(
     (e: React.SyntheticEvent) => {
-      resetQuickStart(quickStartId, totalTasks);
-      startQuickStart(e);
+      e.preventDefault();
+      e.stopPropagation();
+      restartQuickStart(quickStartId, totalTasks);
     },
-    [quickStartId, resetQuickStart, startQuickStart, totalTasks],
+    [quickStartId, restartQuickStart, totalTasks],
   );
 
   return (
     <Flex justifyContent={{ default: 'justifyContentSpaceBetween' }}>
       {status === QuickStartStatus.NOT_STARTED && (
         <FlexItem>
-          <Button onClick={startQuickStart} variant="link" isInline>
+          <Button onClick={start} variant="link" isInline>
             {t('quickstart~Start the tour')}
           </Button>
         </FlexItem>
@@ -59,14 +56,14 @@ const QuickStartTileFooter: React.FC<QuickStartTileFooterProps> = ({
       )}
       {status === QuickStartStatus.COMPLETE && (
         <FlexItem>
-          <Button onClick={restartQuickStart} variant="link" isInline>
+          <Button onClick={restart} variant="link" isInline>
             {t('quickstart~Start the tour')}
           </Button>
         </FlexItem>
       )}
       {status === QuickStartStatus.IN_PROGRESS && (
         <FlexItem>
-          <Button onClick={restartQuickStart} variant="link" isInline>
+          <Button onClick={restart} variant="link" isInline>
             {t('quickstart~Restart the tour')}
           </Button>
         </FlexItem>
