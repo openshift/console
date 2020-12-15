@@ -155,11 +155,14 @@ export const createOrUpdateBuildConfig = (
   const defaultAnnotations = { ...getGitAnnotations(repository, ref), ...getCommonAnnotations() };
   let buildStrategyData;
 
+  let desiredContextDir = contextDir;
+
   switch (buildStrategy) {
     case 'Devfile':
-      buildStrategyData = originalBuildConfig?.spec?.stategy || {
+      buildStrategyData = originalBuildConfig?.spec?.strategy || {
         dockerStrategy: { env, dockerfilePath },
       };
+      desiredContextDir = originalBuildConfig?.spec?.source?.contextDir || contextDir;
       break;
     case 'Docker':
       buildStrategyData = {
@@ -204,7 +207,7 @@ export const createOrUpdateBuildConfig = (
         },
       },
       source: {
-        contextDir,
+        contextDir: desiredContextDir,
         git: {
           uri: repository,
           ref,
