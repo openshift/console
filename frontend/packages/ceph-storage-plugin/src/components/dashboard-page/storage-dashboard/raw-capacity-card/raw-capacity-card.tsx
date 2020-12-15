@@ -21,7 +21,7 @@ const parser = compose((val) => val?.[0]?.y, getInstantVectorStats);
 
 const RawCapacityCard: React.FC = React.memo(() => {
   const [values, loading] = usePrometheusQueries(queries, parser as any);
-  const loadError = values.every((item) => typeof item === 'undefined');
+  const loadError = values.every((item) => typeof item === 'undefined' || item === 0);
   const { t } = useTranslation();
 
   const totalCapacityMetric = values?.[0];

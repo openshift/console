@@ -21,6 +21,7 @@ import { State, Action } from '../attached-devices/create-sc/state';
 import { scResource } from '../../../constants/resources';
 import { arbiterText } from '../../../constants';
 import { getZone, isArbiterSC } from '../../../utils/install';
+import { AdvancedSubscription } from '../subscription-icon';
 
 export const SelectNodesText: React.FC<SelectNodesTextProps> = React.memo(({ text, replica }) => {
   const { t } = useTranslation();
@@ -113,7 +114,7 @@ export const StretchClusterFormGroup: React.FC<stretchClusterFormGroupProps> = (
         aria-label={t('ceph-storage-plugin~Enable Arbiter')}
         id="arbiter-cluster"
         isChecked={stretchClusterChecked}
-        label={t('ceph-storage-plugin~Enable arbiter')}
+        label={<AdvancedSubscription prefix={t('ceph-storage-plugin~Enable arbiter')} />}
         description={t(
           'ceph-storage-plugin~To support high availability when two data centers can be used, enable arbiter to get the valid quorum between two data centers.',
         )}

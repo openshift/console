@@ -12,6 +12,7 @@ import { KMSConfigure } from '../../kms-config/kms-config';
 import { NetworkType } from '../types';
 import { ValidationMessage, ValidationType } from '../../../utils/common-ocs-install-el';
 import { setEncryptionDispatch } from '../../kms-config/utils';
+import { AdvancedSubscription } from '../subscription-icon';
 import './install-wizard.scss';
 import './_configure.scss';
 
@@ -24,6 +25,7 @@ const StorageClassEncryptionLabel: React.FC = () => {
         {t('ceph-storage-plugin~Storage class encryption')}
       </span>
       <TechPreviewBadge />
+      <AdvancedSubscription />
     </div>
   );
 };
