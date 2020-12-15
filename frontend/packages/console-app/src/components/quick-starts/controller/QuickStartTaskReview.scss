@@ -5,6 +5,7 @@
   &__actions {
     display: flex;
     align-items: flex-start;
+    margin-bottom: var(--pf-global--spacer--sm);
     input[type='radio'] {
       margin-top: 0;
       margin-right: 0;
