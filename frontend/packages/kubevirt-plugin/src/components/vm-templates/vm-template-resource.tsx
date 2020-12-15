@@ -31,6 +31,11 @@ import { getFlavorText } from '../../selectors/vm/flavor-text';
 import { TemplateSourceStatus } from '../../statuses/template/types';
 
 import './_vm-template-resource.scss';
+import {
+  getTemplateParentProvider,
+  getTemplateProvider,
+  getTemplateSupport,
+} from '../../selectors/vm-template/basic';
 
 export const VMTemplateResourceSummary: React.FC<VMTemplateResourceSummaryProps> = ({
   template,
@@ -90,6 +95,36 @@ export const VMTemplateResourceSummary: React.FC<VMTemplateResourceSummaryProps>
   );
 };
 
+type VMTemplateSupportDescriptionProps = {
+  template: TemplateKind;
+};
+
+export const VMTemplateSupportDescription: React.FC<VMTemplateSupportDescriptionProps> = ({
+  template,
+}) => {
+  const { t } = useTranslation();
+  const provider = getTemplateProvider(t, template);
+  const templateSupport = getTemplateSupport(template);
+  const parentProvider = getTemplateParentProvider(template);
+  if ((templateSupport.parent && parentProvider) || (templateSupport.provider && provider)) {
+    return (
+      <>
+        {templateSupport.parent && parentProvider && (
+          <div>
+            {parentProvider} - {templateSupport.parent}
+          </div>
+        )}
+        {templateSupport.provider && provider && (
+          <div>
+            {provider} - {templateSupport.provider}
+          </div>
+        )}
+      </>
+    );
+  }
+  return <>-</>;
+};
+
 export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
   template,
   sourceStatus,
@@ -123,6 +158,12 @@ export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
           sourceStatus={sourceStatus}
           detailed
         />
+      </VMDetailsItem>
+      <VMDetailsItem title={t('kubevirt-plugin~Provider')}>
+        {getTemplateProvider(t, template) || '-'}
+      </VMDetailsItem>
+      <VMDetailsItem title={t('kubevirt-plugin~Support')}>
+        <VMTemplateSupportDescription template={template} />
       </VMDetailsItem>
     </dl>
   );
