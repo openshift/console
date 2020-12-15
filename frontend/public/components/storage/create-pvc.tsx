@@ -2,8 +2,9 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
-import { ActionGroup, Button } from '@patternfly/react-core';
-import { isCephProvisioner, isObjectSC } from '@console/shared/src/utils';
+import { ActionGroup, Button, Tooltip } from '@patternfly/react-core';
+import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
+import { isCephProvisioner, isObjectSC, cephStorageProvisioners } from '@console/shared/src/utils';
 import { k8sCreate, K8sResourceKind, referenceFor } from '../../module/k8s';
 import { AsyncComponent, ButtonBar, RequestSizeInput, history, resourceObjPath } from '../utils';
 import { StorageClassDropdown } from '../utils/storage-class-dropdown';
@@ -20,6 +21,15 @@ import {
   dropdownUnits,
   getAccessModeForProvisioner,
 } from './shared';
+
+const InfoToolTip = () => (
+  <Tooltip
+    position="bottom"
+    content={<div>Only filesystem volume mode is available for cephfs</div>}
+  >
+    <OutlinedQuestionCircleIcon />
+  </Tooltip>
+);
 
 const NameValueEditorComponent = (props) => (
   <AsyncComponent
@@ -135,6 +145,9 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
     setAllowedAccessModes(modes);
     setStorageClass(updatedStorageClass?.metadata?.name);
     setStorageProvisioner(provisioner);
+    if (storageProvisioner.includes(cephStorageProvisioners[1])) {
+      setVolumeMode('Filesystem');
+    }
   };
 
   const handleRequestSizeInputChange = (obj) => {
@@ -266,16 +279,22 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
         Volume Mode
       </label>
       <div className="form-group">
-        {volumeModeRadios.map((radio) => (
-          <RadioInput
-            {...radio}
-            key={radio.value}
-            onChange={handleVolumeMode}
-            inline
-            checked={radio.value === volumeMode}
-            name="volumeMode"
-          />
-        ))}
+        {storageProvisioner.includes(cephStorageProvisioners[1]) ? (
+          <>
+            Filesystem <InfoToolTip />
+          </>
+        ) : (
+          volumeModeRadios.map((radio) => (
+            <RadioInput
+              {...radio}
+              key={radio.value}
+              onChange={handleVolumeMode}
+              inline
+              checked={radio.value === volumeMode}
+              name="volumeMode"
+            />
+          ))
+        )}
       </div>
     </div>
   );
