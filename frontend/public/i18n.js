@@ -5,10 +5,10 @@ import httpBackend from 'i18next-http-backend';
 import Pseudo from 'i18next-pseudo';
 
 // Load moment.js locales (en is default and always loaded)
-import 'moment/locale/zh-cn';
-import 'moment/locale/ja';
 import 'moment/locale/en-gb';
+import 'moment/locale/ja';
 import 'moment/locale/ko';
+import 'moment/locale/zh-cn';
 import moment from 'moment';
 
 const params = new URLSearchParams(window.location.search);
@@ -165,11 +165,15 @@ i18n
     },
     () => {
       moment.locale(i18n.language === 'zh' ? 'zh-cn' : i18n.language);
+      // set default in case the i18n.language isn't a language we currently support -- otherwise Moment.js will default to the last region import
+      moment.locale() !== i18n.language && i18n.language !== 'zh' && moment.locale('en');
     },
   );
 
 i18n.on('languageChanged', function(lng) {
   moment.locale(lng === 'zh' ? 'zh-cn' : lng);
+  // set default in case the i18n.language isn't a language we currently support -- otherwise Moment.js will default to the last region import
+  moment.locale() !== lng && lng !== 'zh' && moment.locale('en');
 });
 
 export default i18n;
