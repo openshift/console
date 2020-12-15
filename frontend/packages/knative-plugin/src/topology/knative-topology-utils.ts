@@ -42,6 +42,7 @@ import {
   EventSourceCamelModel,
   EventingTriggerModel,
   CamelKameletBindingModel,
+  EventSourceSinkBindingModel,
 } from '../models';
 import {
   NodeType,
@@ -918,6 +919,27 @@ export const getRouteData = (resource: K8sResourceKind, ksroutes: K8sResourceKin
   return null;
 };
 
+const getOwnedEventSourceData = (
+  resource: K8sResourceKind,
+  data: TopologyDataObject,
+  resources,
+) => {
+  const eventSourceProps = [...getDynamicEventSourcesModelRefs(), CamelKameletBindingModel.plural];
+  const eventSourcesData = getKnativeDynamicResources(resources, eventSourceProps);
+  let ownedSourceData = getOwnedResources(resource, eventSourcesData);
+  if (resource.kind === CamelKameletBindingModel.kind && resources.integrations?.data?.length > 0) {
+    const ownedIntegrationData = getOwnedResources(resource, resources.integrations.data);
+    ownedSourceData = ownedIntegrationData?.reduce((acc, res) => {
+      const ownRes = getOwnedResources(res, eventSourcesData);
+      return [...acc, ...ownRes];
+    }, []);
+  }
+  return {
+    ...data,
+    resources: { ...data.resources, eventSources: ownedSourceData },
+  };
+};
+
 export const transformKnNodeData = (
   knResourcesData: K8sResourceKind[],
   type: string,
@@ -936,49 +958,52 @@ export const transformKnNodeData = (
           type,
           getImageForIconClass(`icon-openshift`),
         );
-        knDataModel.nodes.push(...getKnativeTopologyNodeItems(res, type, data, resources));
-        knDataModel.edges.push(...getEventTopologyEdgeItems(res, resources.ksservices));
-        // form node data for sink uri
-        const sinkUri = res.spec?.sink?.uri;
-        let sinkTargetUid = getSinkTargetUid(knDataModel.nodes, sinkUri);
-        if (sinkUri) {
-          if (!sinkTargetUid) {
-            sinkTargetUid = encodeURIComponent(sinkUri);
-            const eventSourcesData = getEventSourcesData(sinkUri, resources);
-            const sinkUriObj = {
-              metadata: {
-                uid: sinkTargetUid,
-                namespace: data.resources.obj.metadata.namespace || '',
-              },
-              spec: { sinkUri },
-              type: { nodeType: NodeType.SinkUri },
-              kind: 'URI',
-            };
-            const sinkData: KnativeTopologyDataObject<KnativeServiceOverviewItem> = {
-              id: sinkTargetUid,
-              name: 'URI',
-              type: NodeType.SinkUri,
-              resources: { ...data.resources, obj: sinkUriObj, eventSources: eventSourcesData },
-              data: { ...data.data, sinkUri },
-              resource: sinkUriObj,
-            };
-            knDataModel.nodes.push(
-              ...getSinkUriTopologyNodeItems(NodeType.SinkUri, sinkTargetUid, sinkData),
-            );
+        if (!(res.kind === EventSourceSinkBindingModel.kind && res.metadata?.ownerReferences)) {
+          const itemData = getOwnedEventSourceData(res, data, resources);
+          knDataModel.nodes.push(...getKnativeTopologyNodeItems(res, type, itemData, resources));
+          knDataModel.edges.push(...getEventTopologyEdgeItems(res, resources.ksservices));
+          // form node data for sink uri
+          const sinkUri = res.spec?.sink?.uri;
+          let sinkTargetUid = getSinkTargetUid(knDataModel.nodes, sinkUri);
+          if (sinkUri) {
+            if (!sinkTargetUid) {
+              sinkTargetUid = encodeURIComponent(sinkUri);
+              const eventSourcesData = getEventSourcesData(sinkUri, resources);
+              const sinkUriObj = {
+                metadata: {
+                  uid: sinkTargetUid,
+                  namespace: data.resources.obj.metadata.namespace || '',
+                },
+                spec: { sinkUri },
+                type: { nodeType: NodeType.SinkUri },
+                kind: 'URI',
+              };
+              const sinkData: KnativeTopologyDataObject<KnativeServiceOverviewItem> = {
+                id: sinkTargetUid,
+                name: 'URI',
+                type: NodeType.SinkUri,
+                resources: { ...data.resources, obj: sinkUriObj, eventSources: eventSourcesData },
+                data: { ...data.data, sinkUri },
+                resource: sinkUriObj,
+              };
+              knDataModel.nodes.push(
+                ...getSinkUriTopologyNodeItems(NodeType.SinkUri, sinkTargetUid, sinkData),
+              );
+            }
+            knDataModel.edges.push(...getSinkUriTopologyEdgeItems(res, sinkTargetUid));
           }
-          knDataModel.edges.push(...getSinkUriTopologyEdgeItems(res, sinkTargetUid));
+          // form connections for channels
+          if (!isInternalResource(res)) {
+            const channelResourceProps = getDynamicChannelModelRefs();
+            _.forEach(channelResourceProps, (currentProp) => {
+              resources[currentProp] &&
+                knDataModel.edges.push(...getEventTopologyEdgeItems(res, resources[currentProp]));
+            });
+          }
+          knDataModel.edges.push(...getEventTopologyEdgeItems(res, resources.brokers));
+          const newGroup = getTopologyGroupItems(res);
+          mergeGroup(newGroup, knDataModel.nodes);
         }
-        // form connections for channels
-        if (!isInternalResource(res)) {
-          const channelResourceProps = getDynamicChannelModelRefs();
-          _.forEach(channelResourceProps, (currentProp) => {
-            resources[currentProp] &&
-              knDataModel.edges.push(...getEventTopologyEdgeItems(res, resources[currentProp]));
-          });
-        }
-        knDataModel.edges.push(...getEventTopologyEdgeItems(res, resources.brokers));
-        const newGroup = getTopologyGroupItems(res);
-        mergeGroup(newGroup, knDataModel.nodes);
         break;
       }
       case NodeType.KnService: {

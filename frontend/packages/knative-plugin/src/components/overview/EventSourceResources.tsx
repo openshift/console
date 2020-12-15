@@ -14,12 +14,14 @@ import {
 } from '@console/internal/components/utils';
 import { PodModel } from '@console/internal/models';
 import { PodsOverview } from '@console/internal/components/overview/pods-overview';
+import EventSourceOwnedList from './EventSourceOwnedList';
 
-export type EventSinkServicesOverviewListProps = {
+type EventSourceResourcesProps = {
   obj: K8sResourceKind;
+  ownedSources?: K8sResourceKind[];
 };
 
-const EventSinkServicesOverviewList: React.FC<EventSinkServicesOverviewListProps> = ({ obj }) => {
+const EventSourceResources: React.FC<EventSourceResourcesProps> = ({ obj, ownedSources }) => {
   const { t } = useTranslation();
   const {
     kind,
@@ -83,8 +85,12 @@ const EventSinkServicesOverviewList: React.FC<EventSinkServicesOverviewListProps
           </ul>
         </>
       )}
+      {ownedSources?.length > 0 &&
+        ownedSources.map((source) => (
+          <EventSourceOwnedList key={source.metadata.uid} source={source} />
+        ))}
     </>
   );
 };
 
-export default EventSinkServicesOverviewList;
+export default EventSourceResources;

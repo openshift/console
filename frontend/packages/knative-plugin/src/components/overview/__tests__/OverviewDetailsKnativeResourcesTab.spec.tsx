@@ -8,7 +8,7 @@ import KnativeRevisionResources from '../KnativeRevisionResources';
 import RevisionsOverviewList from '../RevisionsOverviewList';
 import KSRoutesOverviewList from '../RoutesOverviewList';
 import ConfigurationsOverviewList from '../ConfigurationsOverviewList';
-import EventSinkServicesOverviewList from '../EventSinkServicesOverviewList';
+import EventSourceResources from '../EventSourceResources';
 import EventPubSubResources from '../EventPubSubResources';
 import {
   MockKnativeResources,
@@ -49,7 +49,7 @@ describe('OverviewDetailsKnativeResourcesTab', () => {
     expect(wrapper.find(KnativeRevisionResources)).toHaveLength(1);
   });
 
-  it('should render EventSinkServicesOverviewList on sidebar', () => {
+  it('should render EventSourceResources on sidebar', () => {
     jest
       .spyOn(fetchDynamicEventSources, 'isDynamicEventResourceKind')
       .mockImplementationOnce(() => true);
@@ -58,10 +58,10 @@ describe('OverviewDetailsKnativeResourcesTab', () => {
       ...{ obj: getEventSourceResponse(EventSourceCronJobModel).data[0] },
     };
     const wrapper = shallow(<OverviewDetailsKnativeResourcesTab {...knItem} />);
-    expect(wrapper.find(EventSinkServicesOverviewList)).toHaveLength(1);
+    expect(wrapper.find(EventSourceResources)).toHaveLength(1);
   });
 
-  it('should render EventSinkServicesOverviewList on sidebar for sinkBinding', () => {
+  it('should render EventSourceResources on sidebar for sinkBinding', () => {
     jest
       .spyOn(fetchDynamicEventSources, 'isDynamicEventResourceKind')
       .mockImplementationOnce(() => true);
@@ -70,7 +70,7 @@ describe('OverviewDetailsKnativeResourcesTab', () => {
       ...{ obj: sampleEventSourceSinkbinding.data[0] },
     };
     const wrapper = shallow(<OverviewDetailsKnativeResourcesTab {...knItem} />);
-    expect(wrapper.find(EventSinkServicesOverviewList)).toHaveLength(1);
+    expect(wrapper.find(EventSourceResources)).toHaveLength(1);
   });
 
   it('should render OperatorBackedOwnerReferences with proper props', () => {
@@ -116,12 +116,12 @@ describe('OverviewDetailsKnativeResourcesTab', () => {
     expect(wrapper.find(EventPubSubResources)).toHaveLength(1);
   });
 
-  it('should render EventSinkServicesOverviewList on sidebar for KameletBinding', () => {
+  it('should render EventSourceResources on sidebar for KameletBinding', () => {
     knItem.item = {
       ...knItem.item,
       ...{ obj: sampleSourceKameletBinding.data[0] },
     };
     const wrapper = shallow(<OverviewDetailsKnativeResourcesTab {...knItem} />);
-    expect(wrapper.find(EventSinkServicesOverviewList)).toHaveLength(1);
+    expect(wrapper.find(EventSourceResources)).toHaveLength(1);
   });
 });
