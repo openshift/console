@@ -444,7 +444,7 @@ export const EditYAML_ = connect(stateToProps)(
           const options = { readOnly, scrollBeyondLastLine: false };
           const model = this.getModel(obj);
           const { samples, snippets } = model
-            ? getResourceSidebarSamples(model, yamlSamplesList)
+            ? getResourceSidebarSamples(model, yamlSamplesList, t)
             : { samples: [], snippets: [] };
           const definition = model ? definitionFor(model) : { properties: [] };
           const showSchema = definition && !_.isEmpty(definition.properties);
