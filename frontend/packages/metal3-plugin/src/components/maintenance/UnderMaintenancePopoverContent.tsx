@@ -21,7 +21,7 @@ const UnderMaintenancePopoverContent: React.FC<UnderMaintenancePopoverContentPro
     <>
       <p>
         {t(
-          'metal3-plugin~Node is under maintenance. The cluster will automatically rebuild node&apos;s data 30 minutes after entering maintenance.',
+          "metal3-plugin~Node is under maintenance. The cluster will automatically rebuild node's data 30 minutes after entering maintenance.",
         )}
       </p>
       <dl>
