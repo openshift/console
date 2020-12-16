@@ -126,7 +126,11 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
                   </Trans>
                 }
               >
-                <Button variant="link" className="odc-topology-filter-bar__info-icon">
+                <Button
+                  variant="link"
+                  className="odc-topology-filter-bar__info-icon"
+                  aria-label={t('topology~Find by name')}
+                >
                   <InfoCircleIcon />
                 </Button>
               </Popover>

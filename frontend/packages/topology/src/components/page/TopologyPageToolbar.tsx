@@ -20,6 +20,9 @@ const TopologyPageToolbar: React.FC<TopologyPageToolbarProps> = observer(
     const showGraphView = viewType === TopologyViewType.graph;
     const dataModelContext = React.useContext<ExtensibleModel>(ModelContext);
     const { namespace, isEmptyModel } = dataModelContext;
+    const viewChangeTooltipContent = showGraphView
+      ? t('topology~List view')
+      : t('topology~Topology view');
 
     if (!namespace || isEmptyModel) {
       return null;
@@ -45,12 +48,10 @@ const TopologyPageToolbar: React.FC<TopologyPageToolbarProps> = observer(
             </Button>
           </Popover>
         ) : null}
-        <Tooltip
-          position="left"
-          content={showGraphView ? t('topology~List view') : t('topology~Topology view')}
-        >
+        <Tooltip position="left" content={viewChangeTooltipContent}>
           <Button
             variant="link"
+            aria-label={viewChangeTooltipContent}
             className="pf-m-plain odc-topology__view-switcher"
             data-test-id="topology-switcher-view"
             onClick={() =>
