@@ -9,17 +9,42 @@ import {
 
 export const pipelineDetailsPage = {
   verifyTitle: (pipelineName: string) => detailsPage.titleShouldContain(pipelineName),
+
   clickActionMenu: () => cy.byLegacyTestID('actions-menu-button').click(),
+
   selectFromActionsDropdown: (action: string) => {
     cy.get(pipelineDetailsPO.actionsMenu)
       .should('be.enabled')
       .click();
     cy.byTestActionID(action).click();
   },
+
   verifyTriggerTemplateSection: () =>
     cy.get(pipelineDetailsPO.details.triggerTemplateSection).should('be.visible'),
   verifyPage: () =>
     cy.get(pipelineDetailsPO.title).should('contain.text', pageTitle.PipelineDetails),
+
+  verifyTabs: () => {
+    cy.byLegacyTestID('horizontal-link-details-page~Details').should('be.visible');
+    cy.byLegacyTestID('horizontal-link-Metrics').should('be.visible');
+    cy.byLegacyTestID('horizontal-link-details-page~YAML').should('be.visible');
+    cy.byLegacyTestID('horizontal-link-Pipeline Runs').should('be.visible');
+    cy.byLegacyTestID('horizontal-link-Parameters').should('be.visible');
+    cy.byLegacyTestID('horizontal-link-Resources').should('be.visible');
+  },
+
+  verifyFieldsInDetailsTab: () => {
+    cy.byTestID('Name').should('be.visible');
+    cy.byTestID('Namespace').should('be.visible');
+    cy.byTestID('Labels').should('be.visible');
+    cy.byTestID('Annotations').should('be.visible');
+    cy.byTestID('Created at').should('be.visible');
+    cy.byTestID('Owner').should('be.visible');
+    cy.get('.odc-dynamic-resource-link-list--addSpaceBelow')
+      .find('dl dt')
+      .should('contain.text', 'Tasks');
+  },
+
   selectTriggerTemplateLink: () => cy.get(pipelineDetailsPO.details.triggerTemplateLink).click(),
 };
 

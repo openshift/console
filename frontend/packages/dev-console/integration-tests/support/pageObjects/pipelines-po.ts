@@ -132,6 +132,7 @@ export const pipelinesPO = {
   },
   editPipeline: {
     title: 'h1.odc-pipeline-builder-header__title',
+    save: '[data-test-id="submit-button"]',
   },
   removeTrigger: {
     triggerTemplate: '#form-dropdown-selectedTrigger-field',
