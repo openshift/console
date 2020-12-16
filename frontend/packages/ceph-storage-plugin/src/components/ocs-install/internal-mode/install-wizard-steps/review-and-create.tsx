@@ -43,7 +43,6 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({
   const scName = getName(storageClass);
   const emptyRequiredField =
     nodes.length < MINIMUM_NODES && !zones.size && !scName && !memory && !cpu;
-  const osdSize = OSD_CAPACITY_SIZES[capacity];
   const isMultusSupported = useFlag(OCS_SUPPORT_FLAGS.MULTUS);
 
   return (
@@ -54,10 +53,10 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({
       <dl>
         <ReviewListTitle text={t('ceph-storage-plugin~Capacity and nodes')} />
         <ReviewListBody hideIcon>
-          <Trans t={t} ns="ceph-storage-plugin" values={osdSize}>
+          <Trans t={t} ns="ceph-storage-plugin">
             Requested Cluster Capacity:&nbsp;
             <span className="text-secondary">
-              {{ osdSize }} TiB&nbsp;
+              {{ number: OSD_CAPACITY_SIZES[capacity] }} TiB&nbsp;
               <TotalCapacityText capacity={capacity} />
             </span>
           </Trans>

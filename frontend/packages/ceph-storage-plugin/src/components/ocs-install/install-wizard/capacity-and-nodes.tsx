@@ -25,7 +25,6 @@ import { AdvancedSubscription } from '../subscription-icon';
 
 export const SelectNodesText: React.FC<SelectNodesTextProps> = React.memo(({ text, replica }) => {
   const { t } = useTranslation();
-
   return (
     <TextContent>
       <Text>{text}</Text>
@@ -42,7 +41,7 @@ export const SelectNodesText: React.FC<SelectNodesTextProps> = React.memo(({ tex
   );
 });
 
-type SelectNodesTextProps = { text: string; replica?: number };
+type SelectNodesTextProps = { text: string; replica: number };
 
 export const SelectNodesDetails: React.FC<SelectNodesDetailsProps> = React.memo(
   ({ nodes, cpu, zones, memory }) => {
