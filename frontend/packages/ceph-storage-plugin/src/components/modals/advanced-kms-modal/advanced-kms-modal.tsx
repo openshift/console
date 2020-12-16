@@ -60,6 +60,22 @@ export const AdvancedKMSModal = withHandlePromise((props: AdvancedKMSModalProps)
     'ceph-storage-plugin~Maximum file size exceeded. File limit is 4MB.',
   );
 
+  const vaultCACertTooltip = t(
+    `ceph-storage-plugin~A PEM-encoded CA certificate file used to verify the Vault server's SSL certificate.`,
+  );
+
+  const vaultClientCertTooltip = t(
+    `ceph-storage-plugin~A PEM-encoded client certificate. This certificate is used for TLS communication with the Vault server.`,
+  );
+
+  const vaultClientKeyTooltip = t(
+    `ceph-storage-plugin~An unencrypted, PEM-encoded private key which corresponds to the matching client certificate provided with VAULT_CLIENT_CERT.`,
+  );
+
+  const vaultTLSTooltip = t(
+    `ceph-storage-plugin~The name to use as the SNI host when OpenShift Container Storage connecting via TLS to the Vault server`,
+  );
+
   const submit = (event: React.FormEvent<EventTarget>) => {
     event.preventDefault();
 
@@ -139,6 +155,11 @@ export const AdvancedKMSModal = withHandlePromise((props: AdvancedKMSModalProps)
             fieldId="kms-service-tls"
             label={t('ceph-storage-plugin~TLS Server Name')}
             className="ceph-advanced-kms__form-body"
+            labelIcon={
+              <Tooltip position="top" content={vaultTLSTooltip}>
+                <QuestionCircleIcon />
+              </Tooltip>
+            }
           >
             <TextInput
               value={tlsName}
@@ -174,6 +195,11 @@ export const AdvancedKMSModal = withHandlePromise((props: AdvancedKMSModalProps)
             fieldId="kms-service-ca-cert"
             label={t('ceph-storage-plugin~CA Certificate')}
             className="ceph-advanced-kms__form-body"
+            labelIcon={
+              <Tooltip position="top" content={vaultCACertTooltip}>
+                <QuestionCircleIcon />
+              </Tooltip>
+            }
           >
             <FileUpload
               id="kms-service-ca-cert"
@@ -193,6 +219,11 @@ export const AdvancedKMSModal = withHandlePromise((props: AdvancedKMSModalProps)
             fieldId="kms-service-cert"
             label={t('ceph-storage-plugin~Client Certificate')}
             className="ceph-advanced-kms__form-body"
+            labelIcon={
+              <Tooltip position="top" content={vaultClientCertTooltip}>
+                <QuestionCircleIcon />
+              </Tooltip>
+            }
           >
             <FileUpload
               id="kms-service-cert"
@@ -212,6 +243,11 @@ export const AdvancedKMSModal = withHandlePromise((props: AdvancedKMSModalProps)
             fieldId="kms-service-key"
             label={t('ceph-storage-plugin~Client Private Key')}
             className="ceph-advanced-kms__form-body"
+            labelIcon={
+              <Tooltip position="top" content={vaultClientKeyTooltip}>
+                <QuestionCircleIcon />
+              </Tooltip>
+            }
           >
             <FileUpload
               id="kms-service-key"

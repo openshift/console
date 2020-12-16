@@ -76,7 +76,7 @@ export const createKmsResources = (kms: KMSConfig, update = false, previousData?
         namespace: CEPH_STORAGE_NAMESPACE,
       },
       stringData: {
-        data: kms.token.value,
+        token: kms.token.value,
       },
     };
   }
@@ -110,7 +110,7 @@ export const createKmsResources = (kms: KMSConfig, update = false, previousData?
   };
 
   const csiConfigData: KMSConfigMap = {
-    KMS_PROVIDER: 'vault',
+    KMS_PROVIDER: 'vaulttokens',
     KMS_SERVICE_NAME: kms.name.value,
     VAULT_ADDR: `${`${parsedAddress.protocol}//${parsedAddress.hostname}`}:${kms.port.value}`,
     VAULT_BACKEND_PATH: kms.backend,
