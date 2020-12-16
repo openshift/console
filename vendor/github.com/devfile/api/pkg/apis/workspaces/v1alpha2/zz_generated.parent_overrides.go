@@ -1,5 +1,9 @@
 package v1alpha2
 
+import (
+	attributes "github.com/devfile/api/pkg/attributes"
+)
+
 // +devfile:jsonschema:generate
 type ParentOverrides struct {
 	OverridesBase `json:",inline"`
@@ -43,7 +47,11 @@ type ComponentParentOverride struct {
 	// Mandatory name that allows referencing the component
 	// from other elements (such as commands) or from an external
 	// devfile that may reference this component through a parent or a plugin.
-	Name                         string `json:"name"`
+	Name string `json:"name"`
+
+	// Map of implementation-dependant free-form YAML attributes.
+	// +optional
+	Attributes                   attributes.Attributes `json:"attributes,omitempty"`
 	ComponentUnionParentOverride `json:",inline"`
 }
 
@@ -51,6 +59,10 @@ type ProjectParentOverride struct {
 
 	// Project name
 	Name string `json:"name"`
+
+	// Map of implementation-dependant free-form YAML attributes.
+	// +optional
+	Attributes attributes.Attributes `json:"attributes,omitempty"`
 
 	// Path relative to the root of the projects to which this project should be cloned into. This is a unix-style relative path (i.e. uses forward slashes). The path is invalid if it is absolute or tries to escape the project root through the usage of '..'. If not specified, defaults to the project name.
 	// +optional
@@ -68,6 +80,10 @@ type StarterProjectParentOverride struct {
 	// Project name
 	Name string `json:"name"`
 
+	// Map of implementation-dependant free-form YAML attributes.
+	// +optional
+	Attributes attributes.Attributes `json:"attributes,omitempty"`
+
 	// Description of a starter project
 	// +optional
 	Description string `json:"description,omitempty"`
@@ -84,7 +100,11 @@ type CommandParentOverride struct {
 	// Mandatory identifier that allows referencing
 	// this command in composite commands, from
 	// a parent, or in events.
-	Id                         string `json:"id"`
+	Id string `json:"id"`
+
+	// Map of implementation-dependant free-form YAML attributes.
+	// +optional
+	Attributes                 attributes.Attributes `json:"attributes,omitempty"`
 	CommandUnionParentOverride `json:",inline"`
 }
 
@@ -443,7 +463,7 @@ type EndpointParentOverride struct {
 	//
 	// - type: "terminal" / "ide" / "ide-dev",
 	// +optional
-	Attributes map[string]string `json:"attributes,omitempty"`
+	Attributes attributes.Attributes `json:"attributes,omitempty"`
 }
 
 type K8sLikeComponentParentOverride struct {
@@ -522,9 +542,6 @@ type BaseCommandParentOverride struct {
 	// +optional
 	// Defines the group this command is part of
 	Group *CommandGroupParentOverride `json:"group,omitempty"`
-
-	// Optional map of free-form additional command attributes
-	Attributes map[string]string `json:"attributes,omitempty"`
 }
 
 // +union
@@ -624,7 +641,11 @@ type ComponentPluginOverrideParentOverride struct {
 	// Mandatory name that allows referencing the component
 	// from other elements (such as commands) or from an external
 	// devfile that may reference this component through a parent or a plugin.
-	Name                                       string `json:"name"`
+	Name string `json:"name"`
+
+	// Map of implementation-dependant free-form YAML attributes.
+	// +optional
+	Attributes                                 attributes.Attributes `json:"attributes,omitempty"`
 	ComponentUnionPluginOverrideParentOverride `json:",inline"`
 }
 
@@ -633,7 +654,11 @@ type CommandPluginOverrideParentOverride struct {
 	// Mandatory identifier that allows referencing
 	// this command in composite commands, from
 	// a parent, or in events.
-	Id                                       string `json:"id"`
+	Id string `json:"id"`
+
+	// Map of implementation-dependant free-form YAML attributes.
+	// +optional
+	Attributes                               attributes.Attributes `json:"attributes,omitempty"`
 	CommandUnionPluginOverrideParentOverride `json:",inline"`
 }
 
@@ -982,7 +1007,7 @@ type EndpointPluginOverrideParentOverride struct {
 	//
 	// - type: "terminal" / "ide" / "ide-dev",
 	// +optional
-	Attributes map[string]string `json:"attributes,omitempty"`
+	Attributes attributes.Attributes `json:"attributes,omitempty"`
 }
 
 type K8sLikeComponentPluginOverrideParentOverride struct {
@@ -1020,9 +1045,6 @@ type BaseCommandPluginOverrideParentOverride struct {
 	// +optional
 	// Defines the group this command is part of
 	Group *CommandGroupPluginOverrideParentOverride `json:"group,omitempty"`
-
-	// Optional map of free-form additional command attributes
-	Attributes map[string]string `json:"attributes,omitempty"`
 }
 
 // +union

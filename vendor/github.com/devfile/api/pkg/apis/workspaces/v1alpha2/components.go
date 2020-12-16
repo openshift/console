@@ -1,6 +1,9 @@
 package v1alpha2
 
-import runtime "k8s.io/apimachinery/pkg/runtime"
+import (
+	attributes "github.com/devfile/api/pkg/attributes"
+	runtime "k8s.io/apimachinery/pkg/runtime"
+)
 
 // ComponentType describes the type of component.
 // Only one of the following component type may be specified.
@@ -26,7 +29,10 @@ type Component struct {
 	// Mandatory name that allows referencing the component
 	// from other elements (such as commands) or from an external
 	// devfile that may reference this component through a parent or a plugin.
-	Name           string `json:"name"`
+	Name string `json:"name"`
+	// Map of implementation-dependant free-form YAML attributes.
+	// +optional
+	Attributes     attributes.Attributes `json:"attributes,omitempty"`
 	ComponentUnion `json:",inline"`
 }
 

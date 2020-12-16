@@ -1,10 +1,17 @@
 package v1alpha2
 
-import runtime "k8s.io/apimachinery/pkg/runtime"
+import (
+	attributes "github.com/devfile/api/pkg/attributes"
+	runtime "k8s.io/apimachinery/pkg/runtime"
+)
 
 type Project struct {
 	// Project name
 	Name string `json:"name"`
+
+	// Map of implementation-dependant free-form YAML attributes.
+	// +optional
+	Attributes attributes.Attributes `json:"attributes,omitempty"`
 
 	// Path relative to the root of the projects to which this project should be cloned into. This is a unix-style relative path (i.e. uses forward slashes). The path is invalid if it is absolute or tries to escape the project root through the usage of '..'. If not specified, defaults to the project name.
 	// +optional
@@ -20,6 +27,10 @@ type Project struct {
 type StarterProject struct {
 	// Project name
 	Name string `json:"name"`
+
+	// Map of implementation-dependant free-form YAML attributes.
+	// +optional
+	Attributes attributes.Attributes `json:"attributes,omitempty"`
 
 	// Description of a starter project
 	// +optional

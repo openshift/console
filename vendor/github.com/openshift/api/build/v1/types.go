@@ -16,14 +16,14 @@ import (
 // Build encapsulates the inputs needed to produce a new deployable image, as well as
 // the status of the execution and a reference to the Pod which executed the build.
 type Build struct {
-	metav1.TypeMeta `json:",inline"`
-	// Standard object's metadata.
+	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty" protobuf:"bytes,1,opt,name=metadata"`
 
 	// spec is all the inputs used to execute the build.
 	Spec BuildSpec `json:"spec,omitempty" protobuf:"bytes,2,opt,name=spec"`
 
 	// status is the current status of the build.
+	// +optional
 	Status BuildStatus `json:"status,omitempty" protobuf:"bytes,3,opt,name=status"`
 }
 
@@ -35,7 +35,7 @@ type BuildSpec struct {
 
 	// triggeredBy describes which triggers started the most recent update to the
 	// build configuration and contains information about those triggers.
-	TriggeredBy []BuildTriggerCause `json:"triggeredBy" protobuf:"bytes,2,rep,name=triggeredBy"`
+	TriggeredBy []BuildTriggerCause `json:"triggeredBy,omitempty" protobuf:"bytes,2,rep,name=triggeredBy"`
 }
 
 // OptionalNodeSelector is a map that may also be left nil to distinguish between set and unset.
@@ -64,7 +64,7 @@ type CommonSpec struct {
 	// strategy defines how to perform a build.
 	Strategy BuildStrategy `json:"strategy" protobuf:"bytes,4,opt,name=strategy"`
 
-	// output describes the Docker image the Strategy should produce.
+	// output describes the container image the Strategy should produce.
 	Output BuildOutput `json:"output,omitempty" protobuf:"bytes,5,opt,name=output"`
 
 	// resources computes resource requirements to execute the build.
@@ -84,6 +84,7 @@ type CommonSpec struct {
 	// If nil, it can be overridden by default build nodeselector values for the cluster.
 	// If set to an empty map or a map with any values, default build nodeselector values
 	// are ignored.
+	// +optional
 	NodeSelector OptionalNodeSelector `json:"nodeSelector" protobuf:"bytes,9,name=nodeSelector"`
 }
 
@@ -200,7 +201,7 @@ type BuildStatus struct {
 	// duration contains time.Duration object describing build time.
 	Duration time.Duration `json:"duration,omitempty" protobuf:"varint,7,opt,name=duration,casttype=time.Duration"`
 
-	// outputDockerImageReference contains a reference to the Docker image that
+	// outputDockerImageReference contains a reference to the container image that
 	// will be built by this build. Its value is computed from
 	// Build.Spec.Output.To, and should include the registry address, so that
 	// it can be used to push and pull the image.
@@ -209,7 +210,7 @@ type BuildStatus struct {
 	// config is an ObjectReference to the BuildConfig this Build is based on.
 	Config *corev1.ObjectReference `json:"config,omitempty" protobuf:"bytes,9,opt,name=config"`
 
-	// output describes the Docker image the build has produced.
+	// output describes the container image the build has produced.
 	Output BuildStatusOutput `json:"output,omitempty" protobuf:"bytes,10,opt,name=output"`
 
 	// stages contains details about each stage that occurs during the build
@@ -219,6 +220,11 @@ type BuildStatus struct {
 
 	// logSnippet is the last few lines of the build log.  This value is only set for builds that failed.
 	LogSnippet string `json:"logSnippet,omitempty" protobuf:"bytes,12,opt,name=logSnippet"`
+
+	// Conditions represents the latest available observations of a build's current state.
+	// +patchMergeKey=type
+	// +patchStrategy=merge
+	Conditions []BuildCondition `json:"conditions,omitempty" patchStrategy:"merge" patchMergeKey:"type" protobuf:"bytes,13,rep,name=conditions"`
 }
 
 // StageInfo contains details about a build stage.
@@ -297,10 +303,10 @@ const (
 	// StepPushImage pushes an image to the registry.
 	StepPushImage StepName = "PushImage"
 
-	// StepPushDockerImage pushes a docker image to the registry.
+	// StepPushDockerImage pushes a container image to the registry.
 	StepPushDockerImage StepName = "PushDockerImage"
 
-	//StepDockerBuild performs the docker build
+	//StepDockerBuild performs the container image build
 	StepDockerBuild StepName = "DockerBuild"
 )
 
@@ -332,6 +338,24 @@ const (
 	BuildPhaseCancelled BuildPhase = "Cancelled"
 )
 
+type BuildConditionType string
+
+// BuildCondition describes the state of a build at a certain point.
+type BuildCondition struct {
+	// Type of build condition.
+	Type BuildConditionType `json:"type" protobuf:"bytes,1,opt,name=type,casttype=BuildConditionType"`
+	// Status of the condition, one of True, False, Unknown.
+	Status corev1.ConditionStatus `json:"status" protobuf:"bytes,2,opt,name=status,casttype=k8s.io/kubernetes/pkg/api/v1.ConditionStatus"`
+	// The last time this condition was updated.
+	LastUpdateTime metav1.Time `json:"lastUpdateTime,omitempty" protobuf:"bytes,6,opt,name=lastUpdateTime"`
+	// The last time the condition transitioned from one status to another.
+	LastTransitionTime metav1.Time `json:"lastTransitionTime,omitempty" protobuf:"bytes,3,opt,name=lastTransitionTime"`
+	// The reason for the condition's last transition.
+	Reason string `json:"reason,omitempty" protobuf:"bytes,4,opt,name=reason"`
+	// A human readable message indicating details about the transition.
+	Message string `json:"message,omitempty" protobuf:"bytes,5,opt,name=message"`
+}
+
 // StatusReason is a brief CamelCase string that describes a temporary or
 // permanent build error condition, meant for machine parsing and tidy display
 // in the CLI.
@@ -346,7 +370,7 @@ type BuildStatusOutput struct {
 // BuildStatusOutputTo describes the status of the built image with regards to
 // image registry to which it was supposed to be pushed.
 type BuildStatusOutputTo struct {
-	// imageDigest is the digest of the built Docker image. The digest uniquely
+	// imageDigest is the digest of the built container image. The digest uniquely
 	// identifies the image in the registry to which it was pushed.
 	//
 	// Please note that this field may not always be set even if the push
@@ -379,10 +403,10 @@ type BuildSource struct {
 	Type BuildSourceType `json:"type" protobuf:"bytes,1,opt,name=type,casttype=BuildSourceType"`
 
 	// binary builds accept a binary as their input. The binary is generally assumed to be a tar,
-	// gzipped tar, or zip file depending on the strategy. For Docker builds, this is the build
+	// gzipped tar, or zip file depending on the strategy. For container image builds, this is the build
 	// context and an optional Dockerfile may be specified to override any Dockerfile in the
 	// build context. For Source builds, this is assumed to be an archive as described above. For
-	// Source and Docker builds, if binary.asFile is set the build will receive a directory with
+	// Source and container image builds, if binary.asFile is set the build will receive a directory with
 	// a single file. contextDir may be used when an archive is provided. Custom builds will
 	// receive this binary as input on STDIN.
 	Binary *BinaryBuildSource `json:"binary,omitempty" protobuf:"bytes,2,opt,name=binary"`
@@ -416,20 +440,37 @@ type BuildSource struct {
 	// secrets represents a list of secrets and their destinations that will
 	// be used only for the build.
 	Secrets []SecretBuildSource `json:"secrets,omitempty" protobuf:"bytes,8,rep,name=secrets"`
+
+	// configMaps represents a list of configMaps and their destinations that will
+	// be used for the build.
+	ConfigMaps []ConfigMapBuildSource `json:"configMaps,omitempty" protobuf:"bytes,9,rep,name=configMaps"`
 }
 
-// ImageSource is used to describe build source that will be extracted from an image. A reference of
-// type ImageStreamTag, ImageStreamImage or DockerImage may be used. A pull secret can be specified
-// to pull the image from an external registry or override the default service account secret if pulling
-// from the internal registry. A list of paths to copy from the image and their respective destination
-// within the build directory must be specified in the paths array.
+// ImageSource is used to describe build source that will be extracted from an image or used during a
+// multi stage build. A reference of type ImageStreamTag, ImageStreamImage or DockerImage may be used.
+// A pull secret can be specified to pull the image from an external registry or override the default
+// service account secret if pulling from the internal registry. Image sources can either be used to
+// extract content from an image and place it into the build context along with the repository source,
+// or used directly during a multi-stage container image build to allow content to be copied without overwriting
+// the contents of the repository source (see the 'paths' and 'as' fields).
 type ImageSource struct {
 	// from is a reference to an ImageStreamTag, ImageStreamImage, or DockerImage to
 	// copy source from.
 	From corev1.ObjectReference `json:"from" protobuf:"bytes,1,opt,name=from"`
 
-	// paths is a list of source and destination paths to copy from the image.
-	Paths []ImageSourcePath `json:"paths" protobuf:"bytes,2,rep,name=paths"`
+	// A list of image names that this source will be used in place of during a multi-stage container image
+	// build. For instance, a Dockerfile that uses "COPY --from=nginx:latest" will first check for an image
+	// source that has "nginx:latest" in this field before attempting to pull directly. If the Dockerfile
+	// does not reference an image source it is ignored. This field and paths may both be set, in which case
+	// the contents will be used twice.
+	// +optional
+	As []string `json:"as,omitempty" protobuf:"bytes,4,rep,name=as"`
+
+	// paths is a list of source and destination paths to copy from the image. This content will be copied
+	// into the build context prior to starting the build. If no paths are set, the build context will
+	// not be altered.
+	// +optional
+	Paths []ImageSourcePath `json:"paths,omitempty" protobuf:"bytes,2,rep,name=paths"`
 
 	// pullSecret is a reference to a secret to be used to pull the image from a registry
 	// If the image is pulled from the OpenShift registry, this field does not need to be set.
@@ -462,9 +503,27 @@ type SecretBuildSource struct {
 	// For the Source build strategy, these will be injected into a container
 	// where the assemble script runs. Later, when the script finishes, all files
 	// injected will be truncated to zero length.
-	// For the Docker build strategy, these will be copied into the build
+	// For the container image build strategy, these will be copied into the build
 	// directory, where the Dockerfile is located, so users can ADD or COPY them
-	// during docker build.
+	// during container image build.
+	DestinationDir string `json:"destinationDir,omitempty" protobuf:"bytes,2,opt,name=destinationDir"`
+}
+
+// ConfigMapBuildSource describes a configmap and its destination directory that will be
+// used only at the build time. The content of the configmap referenced here will
+// be copied into the destination directory instead of mounting.
+type ConfigMapBuildSource struct {
+	// configMap is a reference to an existing configmap that you want to use in your
+	// build.
+	ConfigMap corev1.LocalObjectReference `json:"configMap" protobuf:"bytes,1,opt,name=configMap"`
+
+	// destinationDir is the directory where the files from the configmap should be
+	// available for the build time.
+	// For the Source build strategy, these will be injected into a container
+	// where the assemble script runs.
+	// For the container image build strategy, these will be copied into the build
+	// directory, where the Dockerfile is located, so users can ADD or COPY them
+	// during container image build.
 	DestinationDir string `json:"destinationDir,omitempty" protobuf:"bytes,2,opt,name=destinationDir"`
 }
 
@@ -526,7 +585,8 @@ type GitBuildSource struct {
 	// ref is the branch/tag/ref to build.
 	Ref string `json:"ref,omitempty" protobuf:"bytes,2,opt,name=ref"`
 
-	// proxyConfig defines the proxies to use for the git clone operation
+	// proxyConfig defines the proxies to use for the git clone operation. Values
+	// not set here are inherited from cluster-wide build git proxy settings.
 	ProxyConfig `json:",inline" protobuf:"bytes,3,opt,name=proxyConfig"`
 }
 
@@ -545,7 +605,7 @@ type BuildStrategy struct {
 	// +k8s:conversion-gen=false
 	Type BuildStrategyType `json:"type" protobuf:"bytes,1,opt,name=type,casttype=BuildStrategyType"`
 
-	// dockerStrategy holds the parameters to the Docker build strategy.
+	// dockerStrategy holds the parameters to the container image build strategy.
 	DockerStrategy *DockerBuildStrategy `json:"dockerStrategy,omitempty" protobuf:"bytes,2,opt,name=dockerStrategy"`
 
 	// sourceStrategy holds the parameters to the Source build strategy.
@@ -555,6 +615,7 @@ type BuildStrategy struct {
 	CustomStrategy *CustomBuildStrategy `json:"customStrategy,omitempty" protobuf:"bytes,4,opt,name=customStrategy"`
 
 	// JenkinsPipelineStrategy holds the parameters to the Jenkins Pipeline build strategy.
+	// Deprecated: use OpenShift Pipelines
 	JenkinsPipelineStrategy *JenkinsPipelineBuildStrategy `json:"jenkinsPipelineStrategy,omitempty" protobuf:"bytes,5,opt,name=jenkinsPipelineStrategy"`
 }
 
@@ -570,7 +631,7 @@ const (
 	// and a builder image.
 	SourceBuildStrategyType BuildStrategyType = "Source"
 
-	// CustomBuildStrategyType performs builds using custom builder Docker image.
+	// CustomBuildStrategyType performs builds using custom builder container image.
 	CustomBuildStrategyType BuildStrategyType = "Custom"
 
 	// JenkinsPipelineBuildStrategyType indicates the build will run via Jenkine Pipeline.
@@ -580,19 +641,19 @@ const (
 // CustomBuildStrategy defines input parameters specific to Custom build.
 type CustomBuildStrategy struct {
 	// from is reference to an DockerImage, ImageStreamTag, or ImageStreamImage from which
-	// the docker image should be pulled
+	// the container image should be pulled
 	From corev1.ObjectReference `json:"from" protobuf:"bytes,1,opt,name=from"`
 
 	// pullSecret is the name of a Secret that would be used for setting up
-	// the authentication for pulling the Docker images from the private Docker
+	// the authentication for pulling the container images from the private Docker
 	// registries
 	PullSecret *corev1.LocalObjectReference `json:"pullSecret,omitempty" protobuf:"bytes,2,opt,name=pullSecret"`
 
 	// env contains additional environment variables you want to pass into a builder container.
 	Env []corev1.EnvVar `json:"env,omitempty" protobuf:"bytes,3,rep,name=env"`
 
-	// exposeDockerSocket will allow running Docker commands (and build Docker images) from
-	// inside the Docker container.
+	// exposeDockerSocket will allow running Docker commands (and build container images) from
+	// inside the container.
 	// TODO: Allow admins to enforce 'false' for this option
 	ExposeDockerSocket bool `json:"exposeDockerSocket,omitempty" protobuf:"varint,4,opt,name=exposeDockerSocket"`
 
@@ -611,8 +672,8 @@ type CustomBuildStrategy struct {
 type ImageOptimizationPolicy string
 
 const (
-	// ImageOptimizationNone will generate a canonical Docker image as produced by the
-	// `docker build` command.
+	// ImageOptimizationNone will generate a canonical container image as produced by the
+	// `container image build` command.
 	ImageOptimizationNone ImageOptimizationPolicy = "None"
 
 	// ImageOptimizationSkipLayers is an experimental policy and will avoid creating
@@ -628,19 +689,19 @@ const (
 	ImageOptimizationSkipLayersAndWarn ImageOptimizationPolicy = "SkipLayersAndWarn"
 )
 
-// DockerBuildStrategy defines input parameters specific to Docker build.
+// DockerBuildStrategy defines input parameters specific to container image build.
 type DockerBuildStrategy struct {
-	// from is reference to an DockerImage, ImageStreamTag, or ImageStreamImage from which
-	// the docker image should be pulled
-	// the resulting image will be used in the FROM line of the Dockerfile for this build.
+	// from is a reference to an DockerImage, ImageStreamTag, or ImageStreamImage which overrides
+	// the FROM image in the Dockerfile for the build. If the Dockerfile uses multi-stage builds,
+	// this will replace the image in the last FROM directive of the file.
 	From *corev1.ObjectReference `json:"from,omitempty" protobuf:"bytes,1,opt,name=from"`
 
 	// pullSecret is the name of a Secret that would be used for setting up
-	// the authentication for pulling the Docker images from the private Docker
+	// the authentication for pulling the container images from the private Docker
 	// registries
 	PullSecret *corev1.LocalObjectReference `json:"pullSecret,omitempty" protobuf:"bytes,2,opt,name=pullSecret"`
 
-	// noCache if set to true indicates that the docker build must be executed with the
+	// noCache if set to true indicates that the container image build must be executed with the
 	// --no-cache=true flag
 	NoCache bool `json:"noCache,omitempty" protobuf:"varint,3,opt,name=noCache"`
 
@@ -650,8 +711,9 @@ type DockerBuildStrategy struct {
 	// forcePull describes if the builder should pull the images from registry prior to building.
 	ForcePull bool `json:"forcePull,omitempty" protobuf:"varint,5,opt,name=forcePull"`
 
-	// dockerfilePath is the path of the Dockerfile that will be used to build the Docker image,
+	// dockerfilePath is the path of the Dockerfile that will be used to build the container image,
 	// relative to the root of the context (contextDir).
+	// Defaults to `Dockerfile` if unset.
 	DockerfilePath string `json:"dockerfilePath,omitempty" protobuf:"bytes,6,opt,name=dockerfilePath"`
 
 	// buildArgs contains build arguments that will be resolved in the Dockerfile.  See
@@ -660,7 +722,7 @@ type DockerBuildStrategy struct {
 
 	// imageOptimizationPolicy describes what optimizations the system can use when building images
 	// to reduce the final size or time spent building the image. The default policy is 'None' which
-	// means the final build image will be equivalent to an image created by the Docker build API.
+	// means the final build image will be equivalent to an image created by the container image build API.
 	// The experimental policy 'SkipLayers' will avoid commiting new layers in between each
 	// image step, and will fail if the Dockerfile cannot provide compatibility with the 'None'
 	// policy. An additional experimental policy 'SkipLayersAndWarn' is the same as
@@ -671,11 +733,11 @@ type DockerBuildStrategy struct {
 // SourceBuildStrategy defines input parameters specific to an Source build.
 type SourceBuildStrategy struct {
 	// from is reference to an DockerImage, ImageStreamTag, or ImageStreamImage from which
-	// the docker image should be pulled
+	// the container image should be pulled
 	From corev1.ObjectReference `json:"from" protobuf:"bytes,1,opt,name=from"`
 
 	// pullSecret is the name of a Secret that would be used for setting up
-	// the authentication for pulling the Docker images from the private Docker
+	// the authentication for pulling the container images from the private Docker
 	// registries
 	PullSecret *corev1.LocalObjectReference `json:"pullSecret,omitempty" protobuf:"bytes,2,opt,name=pullSecret"`
 
@@ -700,6 +762,7 @@ type SourceBuildStrategy struct {
 }
 
 // JenkinsPipelineBuildStrategy holds parameters specific to a Jenkins Pipeline build.
+// Deprecated: use OpenShift Pipelines
 type JenkinsPipelineBuildStrategy struct {
 	// JenkinsfilePath is the optional path of the Jenkinsfile that will be used to configure the pipeline
 	// relative to the root of the context (contextDir). If both JenkinsfilePath & Jenkinsfile are
@@ -785,7 +848,7 @@ type BuildPostCommitSpec struct {
 	// more convenient.
 	Command []string `json:"command,omitempty" protobuf:"bytes,1,rep,name=command"`
 	// args is a list of arguments that are provided to either Command,
-	// Script or the Docker image's default entrypoint. The arguments are
+	// Script or the container image's default entrypoint. The arguments are
 	// placed immediately after the command to be run.
 	Args []string `json:"args,omitempty" protobuf:"bytes,2,rep,name=args"`
 	// script is a shell script to be run with `/bin/sh -ic`. It may not be
@@ -801,12 +864,12 @@ type BuildPostCommitSpec struct {
 	Script string `json:"script,omitempty" protobuf:"bytes,3,opt,name=script"`
 }
 
-// BuildOutput is input to a build strategy and describes the Docker image that the strategy
+// BuildOutput is input to a build strategy and describes the container image that the strategy
 // should produce.
 type BuildOutput struct {
 	// to defines an optional location to push the output of this build to.
 	// Kind must be one of 'ImageStreamTag' or 'DockerImage'.
-	// This value will be used to look up a Docker image repository to push to.
+	// This value will be used to look up a container image repository to push to.
 	// In the case of an ImageStreamTag, the ImageStreamTag will be looked for in the namespace of
 	// the build unless Namespace is specified.
 	To *corev1.ObjectReference `json:"to,omitempty" protobuf:"bytes,1,opt,name=to"`
@@ -834,18 +897,18 @@ type ImageLabel struct {
 // +genclient:method=Instantiate,verb=create,subresource=instantiate,input=BuildRequest,result=Build
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
-// Build configurations define a build process for new Docker images. There are three types of builds possible - a Docker build using a Dockerfile, a Source-to-Image build that uses a specially prepared base image that accepts source code that it can make runnable, and a custom build that can run // arbitrary Docker images as a base and accept the build parameters. Builds run on the cluster and on completion are pushed to the Docker registry specified in the "output" section. A build can be triggered via a webhook, when the base image changes, or when a user manually requests a new build be // created.
+// Build configurations define a build process for new container images. There are three types of builds possible - a container image build using a Dockerfile, a Source-to-Image build that uses a specially prepared base image that accepts source code that it can make runnable, and a custom build that can run // arbitrary container images as a base and accept the build parameters. Builds run on the cluster and on completion are pushed to the container image registry specified in the "output" section. A build can be triggered via a webhook, when the base image changes, or when a user manually requests a new build be // created.
 //
 // Each build created by a build configuration is numbered and refers back to its parent configuration. Multiple builds can be triggered at once. Builds that do not have "output" set can be used to test code or run a verification build.
 type BuildConfig struct {
-	metav1.TypeMeta `json:",inline"`
-	// metadata for BuildConfig.
+	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty" protobuf:"bytes,1,opt,name=metadata"`
 
 	// spec holds all the input necessary to produce a new build, and the conditions when
 	// to trigger them.
 	Spec BuildConfigSpec `json:"spec" protobuf:"bytes,2,opt,name=spec"`
 	// status holds any relevant information about a build config
+	// +optional
 	Status BuildConfigStatus `json:"status" protobuf:"bytes,3,opt,name=status"`
 }
 
@@ -855,7 +918,8 @@ type BuildConfigSpec struct {
 	//triggers determine how new Builds can be launched from a BuildConfig. If
 	//no triggers are defined, a new build can only occur as a result of an
 	//explicit client build creation.
-	Triggers []BuildTriggerPolicy `json:"triggers" protobuf:"bytes,1,rep,name=triggers"`
+	// +optional
+	Triggers []BuildTriggerPolicy `json:"triggers,omitempty" protobuf:"bytes,1,rep,name=triggers"`
 
 	// RunPolicy describes how the new build created from this build
 	// configuration will be scheduled for execution.
@@ -866,11 +930,13 @@ type BuildConfigSpec struct {
 	CommonSpec `json:",inline" protobuf:"bytes,3,opt,name=commonSpec"`
 
 	// successfulBuildsHistoryLimit is the number of old successful builds to retain.
-	// If not specified, all successful builds are retained.
+	// When a BuildConfig is created, the 5 most recent successful builds are retained unless this value is set.
+	// If removed after the BuildConfig has been created, all successful builds are retained.
 	SuccessfulBuildsHistoryLimit *int32 `json:"successfulBuildsHistoryLimit,omitempty" protobuf:"varint,4,opt,name=successfulBuildsHistoryLimit"`
 
 	// failedBuildsHistoryLimit is the number of old failed builds to retain.
-	// If not specified, all failed builds are retained.
+	// When a BuildConfig is created, the 5 most recent failed builds are retained unless this value is set.
+	// If removed after the BuildConfig has been created, all failed builds are retained.
 	FailedBuildsHistoryLimit *int32 `json:"failedBuildsHistoryLimit,omitempty" protobuf:"varint,5,opt,name=failedBuildsHistoryLimit"`
 }
 
@@ -933,6 +999,9 @@ type ImageChangeTrigger struct {
 	// will be used. Only one ImageChangeTrigger with an empty From reference is allowed in
 	// a build configuration.
 	From *corev1.ObjectReference `json:"from,omitempty" protobuf:"bytes,2,opt,name=from"`
+
+	// paused is true if this trigger is temporarily disabled. Optional.
+	Paused bool `json:"paused,omitempty" protobuf:"varint,3,opt,name=paused"`
 }
 
 // BuildTriggerPolicy describes a policy for a single trigger that results in a new Build.
@@ -994,7 +1063,6 @@ const (
 // BuildList is a collection of Builds.
 type BuildList struct {
 	metav1.TypeMeta `json:",inline"`
-	// metadata for BuildList.
 	metav1.ListMeta `json:"metadata,omitempty" protobuf:"bytes,1,opt,name=metadata"`
 
 	// items is a list of builds
@@ -1006,7 +1074,6 @@ type BuildList struct {
 // BuildConfigList is a collection of BuildConfigs.
 type BuildConfigList struct {
 	metav1.TypeMeta `json:",inline"`
-	// metadata for BuildConfigList.
 	metav1.ListMeta `json:"metadata,omitempty" protobuf:"bytes,1,opt,name=metadata"`
 
 	// items is a list of build configs
@@ -1034,6 +1101,17 @@ type GenericWebHookEvent struct {
 type GitInfo struct {
 	GitBuildSource    `json:",inline" protobuf:"bytes,1,opt,name=gitBuildSource"`
 	GitSourceRevision `json:",inline" protobuf:"bytes,2,opt,name=gitSourceRevision"`
+
+	// Refs is a list of GitRefs for the provided repo - generally sent
+	// when used from a post-receive hook. This field is optional and is
+	// used when sending multiple refs
+	Refs []GitRefInfo `json:"refs" protobuf:"bytes,3,rep,name=refs"`
+}
+
+// GitRefInfo is a single ref
+type GitRefInfo struct {
+	GitBuildSource    `json:",inline" protobuf:"bytes,1,opt,name=gitBuildSource"`
+	GitSourceRevision `json:",inline" protobuf:"bytes,2,opt,name=gitSourceRevision"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
@@ -1043,7 +1121,7 @@ type BuildLog struct {
 	metav1.TypeMeta `json:",inline"`
 }
 
-// DockerStrategyOptions contains extra strategy options for Docker builds
+// DockerStrategyOptions contains extra strategy options for container image builds
 type DockerStrategyOptions struct {
 	// Args contains any build arguments that are to be passed to Docker.  See
 	// https://docs.docker.com/engine/reference/builder/#/arg for more details
@@ -1063,8 +1141,7 @@ type SourceStrategyOptions struct {
 
 // BuildRequest is the resource used to pass parameters to build generator
 type BuildRequest struct {
-	metav1.TypeMeta `json:",inline"`
-	// metadata for BuildRequest.
+	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty" protobuf:"bytes,1,opt,name=metadata"`
 
 	// revision is the information from the source for a specific repo snapshot.
@@ -1089,7 +1166,7 @@ type BuildRequest struct {
 
 	// triggeredBy describes which triggers started the most recent update to the
 	// build configuration and contains information about those triggers.
-	TriggeredBy []BuildTriggerCause `json:"triggeredBy" protobuf:"bytes,8,rep,name=triggeredBy"`
+	TriggeredBy []BuildTriggerCause `json:"triggeredBy,omitempty" protobuf:"bytes,8,rep,name=triggeredBy"`
 
 	// DockerStrategyOptions contains additional docker-strategy specific options for the build
 	DockerStrategyOptions *DockerStrategyOptions `json:"dockerStrategyOptions,omitempty" protobuf:"bytes,9,opt,name=dockerStrategyOptions"`
@@ -1102,8 +1179,7 @@ type BuildRequest struct {
 
 // BinaryBuildRequestOptions are the options required to fully speficy a binary build request
 type BinaryBuildRequestOptions struct {
-	metav1.TypeMeta `json:",inline"`
-	// metadata for BinaryBuildRequestOptions.
+	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty" protobuf:"bytes,1,opt,name=metadata"`
 
 	// asFile determines if the binary should be created as a file within the source rather than extracted as an archive
@@ -1171,6 +1247,15 @@ type BuildLogOptions struct {
 
 	// version of the build for which to view logs.
 	Version *int64 `json:"version,omitempty" protobuf:"varint,10,opt,name=version"`
+
+	// insecureSkipTLSVerifyBackend indicates that the apiserver should not confirm the validity of the
+	// serving certificate of the backend it is connecting to.  This will make the HTTPS connection between the apiserver
+	// and the backend insecure. This means the apiserver cannot verify the log data it is receiving came from the real
+	// kubelet.  If the kubelet is configured to verify the apiserver's TLS credentials, it does not mean the
+	// connection to the real kubelet is vulnerable to a man in the middle attack (e.g. an attacker could not intercept
+	// the actual log data coming from the real kubelet).
+	// +optional
+	InsecureSkipTLSVerifyBackend bool `json:"insecureSkipTLSVerifyBackend,omitempty" protobuf:"varint,11,opt,name=insecureSkipTLSVerifyBackend"`
 }
 
 // SecretSpec specifies a secret to be included in a build pod and its corresponding mount point
