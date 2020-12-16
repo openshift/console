@@ -1,0 +1,9 @@
+.odc-helm-release__empty-list {
+  &__title {
+    font-size: var(--pf-global--FontSize--lg);
+  }
+  &__image {
+    height: var(--pf-c-empty-state__icon--FontSize);
+    max-width: 100%;
+  }
+}

@@ -1,0 +1,42 @@
+.odc-pipeline-run-logs {
+  display: flex;
+  flex: 1;
+  width: 100%;
+  padding: var(--pf-global--spacer--xl) 0;
+  &__nav {
+    list-style-type: none;
+  }
+  &__nav .pf-c-nav__link {
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+  &__nav .co-icon-and-text {
+    position: relative;
+    top: 0.35em;
+  }
+  &__namespan {
+    margin-left: var(--pf-global--spacer--sm);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  &__log {
+    margin-top: var(--pf-global--spacer--lg);
+    background: #030303; // pod log background color
+    color: var(--pf-global--BackgroundColor--100);
+  }
+  &__tasklist {
+    max-width: 30%;
+    margin-top: var(--pf-global--spacer--lg);
+    padding: 0px;
+    padding-left: var(--pf-global--spacer--xl);
+  }
+  &__container {
+    flex: 1;
+    padding-left: var(--pf-global--spacer--xl);
+    padding-right: var(--pf-global--spacer--xl);
+  }
+  &__container .co-m-pane__body {
+    padding: 0px;
+  }
+}

@@ -1,0 +1,15 @@
+.odc-resource-section {
+  &__badge-wrapper {
+    margin-left: var(--pf-global--spacer--md);
+    position: relative;
+  }
+
+  &__inline-badge {
+    bottom: -25%;
+    position: absolute;
+  }
+
+  &__help-text {
+    padding-bottom: var(--pf-global--spacer--xs);
+  }
+}

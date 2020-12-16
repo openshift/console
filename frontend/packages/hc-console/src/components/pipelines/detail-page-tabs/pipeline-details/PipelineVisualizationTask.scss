@@ -1,0 +1,67 @@
+@import '../../../topology/topology-utils.scss';
+
+$border-color: var(--pf-global--BorderColor--light-100);
+.odc-pipeline-vis-task {
+  position: relative;
+  width: 10em;
+
+  &__content {
+    width: inherit;
+    height: 2.5em;
+    white-space: normal;
+    border: 1px solid $border-color;
+    border-radius: 20px;
+    color: black;
+    background-color: white;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    &:hover {
+      box-shadow: 0 0 16px rgba(0, 0, 0, 0.12);
+    }
+
+    &.is-selected {
+      border: 2px solid $interactive-stroke-color;
+    }
+  }
+  &:not(:first-child) {
+    margin-top: 1.5em;
+  }
+
+  &__stepcount {
+    margin: 0 4px;
+    white-space: nowrap;
+  }
+
+  &__status {
+    margin: 0 3px 0 7px;
+    width: 1.5em;
+    height: 1.5em;
+    flex-grow: 0;
+    flex-shrink: 0;
+    order: -1;
+  }
+
+  &__title-wrapper {
+    flex: 0 0 75px;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    &:hover {
+      cursor: pointer;
+    }
+    &.is-text-center {
+      text-align: center;
+      margin: 0 auto;
+      flex: 0 0 100px;
+    }
+  }
+
+  &__title {
+    flex: 0 0 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}

@@ -11,6 +11,8 @@ import { modelFor, referenceForModel } from '../../module/k8s';
 import confirmNavUnpinModal from './confirmNavUnpinModal';
 import { NavSection } from './section';
 import AdminNav from './admin-nav';
+import HyperCloudNav from './hypercloud-nav';
+
 import {
   createLink,
   NavLinkComponent,
@@ -58,6 +60,10 @@ const PerspectiveNav: React.FC<StateProps & DispatchProps> = ({
   // Until admin perspective is contributed through extensions, simply render static `AdminNav`
   if (perspective === 'admin') {
     return <AdminNav />;
+  }
+
+  else if (perspective === 'hc'){
+    return <HyperCloudNav />;
   }
 
   const activePerspective = perspectives.find((p) => p.properties.id === perspective);

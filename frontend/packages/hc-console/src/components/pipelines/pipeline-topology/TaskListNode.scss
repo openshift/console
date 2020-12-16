@@ -1,0 +1,25 @@
+.odc-task-list-node {
+  border: 1px solid var(--pf-global--BorderColor--light-100);
+
+  &__label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  &__trigger-background {
+    background: var(--pf-global--BackgroundColor--light-100);
+  }
+  &__trigger {
+    padding: var(--pf-global--spacer--xs) var(--pf-global--spacer--md);
+    width: 100%;
+  }
+  &__list-items {
+    max-height: 350px;
+    overflow: auto;
+  }
+  &__divider {
+    border-color: var(--pf-global--BorderColor--100);
+    margin: 0;
+  }
+}
+
