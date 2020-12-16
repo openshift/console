@@ -294,7 +294,7 @@ export const RoleBindingsPage = ({
   createPath = `/k8s/${
     namespace
       ? `ns/${namespace}/rolebindings/~new?namespace=${namespace}`
-      : `cluster/rolebindings/~new?subjectName=${name}&subjectKind=${kind}`
+      : `cluster/rolebindings/~new${name && kind ? `?subjectName=${name}&subjectKind=${kind}` : ''}`
   }`,
 }) => (
   <MultiListPage
