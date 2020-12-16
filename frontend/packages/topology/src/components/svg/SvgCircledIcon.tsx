@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useSize, createSvgIdUrl } from '@patternfly/react-topology';
-import { isValidUrl } from '@console/shared';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import SvgDropShadowFilter from './SvgDropShadowFilter';
 
@@ -45,7 +44,7 @@ const CircledIcon: React.FC<SvgTypedIconProps> = (
           y={y}
           width={width}
           height={height}
-          xlinkHref={isValidUrl(iconClass) ? iconClass : getImageForIconClass(iconClass)}
+          xlinkHref={getImageForIconClass(iconClass) || iconClass}
           filter={createSvgIdUrl(FILTER_ID)}
         />
       </g>
