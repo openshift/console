@@ -1,34 +1,30 @@
-import { NavSection as PluginNavSection, NavItem, SeparatorNavItem } from '@console/plugin-sdk';
+import {
+  NavSection as PluginNavSection,
+  NavItem as PluginNavItem,
+  SeparatorNavItem,
+} from '@console/plugin-sdk';
 
-const itemDependsOnItem = (
-  s1: PluginNavSection | NavItem | SeparatorNavItem,
-  s2: PluginNavSection | NavItem | SeparatorNavItem,
-) => {
+const toArray = (val) => (val ? (Array.isArray(val) ? val : [val]) : []);
+
+type NavItem = PluginNavSection | PluginNavItem | SeparatorNavItem;
+
+const itemDependsOnItem = (s1: NavItem, s2: NavItem): boolean => {
   if (!s1.properties.insertBefore && !s1.properties.insertAfter) {
     return false;
   }
-  const before = Array.isArray(s1.properties.insertBefore)
-    ? s1.properties.insertBefore
-    : [s1.properties.insertBefore];
-  const after = Array.isArray(s1.properties.insertAfter)
-    ? s1.properties.insertAfter
-    : [s1.properties.insertAfter];
+  const before = toArray(s1.properties.insertBefore);
+  const after = toArray(s1.properties.insertAfter);
   return before.includes(s2.properties.id) || after.includes(s2.properties.id);
 };
 
-const isPositioned = (
-  item: PluginNavSection | NavItem | SeparatorNavItem,
-  allItems: (PluginNavSection | NavItem | SeparatorNavItem)[],
-) => !!allItems.find((i) => itemDependsOnItem(item, i));
+const isPositioned = (item: NavItem, allItems: NavItem[]): boolean =>
+  !!allItems.find((i) => itemDependsOnItem(item, i));
 
-const findIndexForItem = (
-  item: PluginNavSection | NavItem | SeparatorNavItem,
-  currentItems: (PluginNavSection | NavItem | SeparatorNavItem)[],
-) => {
+const findIndexForItem = (item: NavItem, currentItems: NavItem[]): number => {
   const { insertBefore, insertAfter } = item.properties;
   let index = -1;
-  const before = Array.isArray(insertBefore) ? insertBefore : [insertBefore];
-  const after = Array.isArray(insertAfter) ? insertAfter : [insertAfter];
+  const before = toArray(insertBefore);
+  const after = toArray(insertAfter);
   let count = 0;
   while (count < before.length && index < 0) {
     index = currentItems.findIndex((i) => i.properties.id === before[count]);
@@ -45,10 +41,7 @@ const findIndexForItem = (
   return index;
 };
 
-const insertItem = (
-  item: PluginNavSection | NavItem | SeparatorNavItem,
-  currentItems: (PluginNavSection | NavItem | SeparatorNavItem)[],
-) => {
+const insertItem = (item: NavItem, currentItems: NavItem[]): void => {
   const index = findIndexForItem(item, currentItems);
   if (index >= 0) {
     currentItems.splice(index, 0, item);
@@ -57,10 +50,7 @@ const insertItem = (
   }
 };
 
-const insertPositionedItems = (
-  insertItems: (PluginNavSection | NavItem | SeparatorNavItem)[],
-  currentItems: (PluginNavSection | NavItem | SeparatorNavItem)[],
-) => {
+const insertPositionedItems = (insertItems: NavItem[], currentItems: NavItem[]): void => {
   if (insertItems.length === 0) {
     return;
   }
@@ -78,16 +68,14 @@ const insertPositionedItems = (
   insertPositionedItems(positionedItems, currentItems);
 };
 
-export const getSortedNavItems = (navItems: (PluginNavSection | NavItem | SeparatorNavItem)[]) => {
+export const getSortedNavItems = (navItems: NavItem[]): NavItem[] => {
   const sortedItems = navItems.filter((item) => !isPositioned(item, navItems));
   const positionedItems = navItems.filter((item) => isPositioned(item, navItems));
   insertPositionedItems(positionedItems, sortedItems);
   return sortedItems;
 };
 
-export const sortExtensionItems = (
-  extensionItems: (PluginNavSection | NavItem | SeparatorNavItem)[],
-) => {
+export const sortExtensionItems = (extensionItems: NavItem[]): NavItem[] => {
   // Mapped by item id
   const mappedIds = extensionItems.reduce((mem, i) => {
     mem[i.properties.id] = i;
@@ -95,19 +83,58 @@ export const sortExtensionItems = (
   }, {});
 
   // determine all dependencies for a given id
-  const dependencies = (i) => {
-    const { insertBefore, insertAfter } = mappedIds[i].properties;
-    const before = Array.isArray(insertBefore) ? insertBefore : [insertBefore];
-    const after = Array.isArray(insertAfter) ? insertAfter : [insertAfter];
-    const dependencyIds = [...before, ...after];
-    return dependencyIds.reduce((acc, index) => {
-      if (index) {
+  const dependencies = (id: string, currentDependencies: string[] = []): string[] => {
+    if (currentDependencies.includes(id)) {
+      return [];
+    }
+    const { insertBefore, insertAfter } = mappedIds[id].properties;
+    const before = toArray(insertBefore);
+    const after = toArray(insertAfter);
+    const dependencyIds = [...before, ...after].filter(
+      (i) => i !== id && !currentDependencies.includes(i),
+    );
+    return dependencyIds.reduce((acc, dependencyId) => {
+      if (dependencyId) {
         // Add this dependency and its dependencies
-        return [...acc, index, ...dependencies(index)];
+        acc = [...acc, dependencyId, ...dependencies(dependencyId, [...acc, dependencyId])];
       }
       return acc;
     }, []);
   };
 
-  return extensionItems.sort((a, b) => dependencies(b.properties.id).indexOf(a.properties.id) * -1);
+  const sortItems = (preSorted: NavItem[], itemsToSort: NavItem[]): NavItem[] => {
+    if (itemsToSort.length < 2) {
+      preSorted.push(...itemsToSort);
+      return;
+    }
+
+    let sortedItem = false;
+    const remainingItems = [];
+    itemsToSort.forEach((item) => {
+      const deps = dependencies(item.properties.id);
+      // If not dependant on any items to be sorted, ok to add it in
+      if (!deps.find((id) => itemsToSort.find((i) => i.properties.id === id))) {
+        sortedItem = true;
+        preSorted.push(item);
+      } else {
+        // Still has a dependency
+        remainingItems.push(item);
+      }
+    });
+
+    if (remainingItems.length) {
+      // If nothing changed, just add the remaining items
+      if (!sortedItem) {
+        preSorted.push(...remainingItems);
+        return;
+      }
+      // Sort the remaining items
+      sortItems(preSorted, remainingItems);
+    }
+  };
+
+  const sortedItems = [];
+  sortItems(sortedItems, extensionItems);
+
+  return sortedItems;
 };
