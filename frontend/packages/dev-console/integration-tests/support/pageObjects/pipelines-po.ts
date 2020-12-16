@@ -1,6 +1,6 @@
 export const pipelineBuilderPO = {
   title: '.odc-pipeline-builder-header h1',
-  name: '#form-input-name-field',
+  name: '#form-input-formData-name-field',
   taskDropdown: 'foreignObject button',
   task: 'foreignObject div.odc-pipeline-vis-task__title',
   sectionTitle: '.odc-pipeline-builder-page h2',
@@ -13,8 +13,8 @@ export const pipelineBuilderPO = {
     defaultValue: '#form-input-params-0-default-field',
   },
   addResources: {
-    name: '#form-input-resources-0-name-field',
-    resourceType: '#form-dropdown-resources-0-type-field',
+    name: '#form-input-formData-resources-0-name-field',
+    resourceType: '#form-dropdown-formData-resources-0-type-field',
   },
   switchToYamlEditorAlert: {
     alertDialog: 'form[name="form"]',
