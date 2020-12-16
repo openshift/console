@@ -18,14 +18,14 @@ export const pipelineBuilderPage = {
       .get(pipelineBuilderPO.task)
       .contains(taskName)
       .click(),
-  seelctParallelTask: (taskName: string) => {
+  selectParallelTask: (taskName: string) => {
     cy.mouseHover('.odc-pipeline-vis-task__content');
     cy.get('g.odc-plus-node-decorator')
       .eq(2)
       .click();
     pipelineBuilderPage.selectTask(taskName);
   },
-  seelctSeriesTask: (taskName: string) => {
+  selectSeriesTask: (taskName: string) => {
     cy.mouseHover('.odc-pipeline-vis-task__content');
     cy.get('g.odc-plus-node-decorator')
       .eq(0)

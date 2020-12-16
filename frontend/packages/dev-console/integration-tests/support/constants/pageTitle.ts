@@ -19,4 +19,8 @@ export const pageTitle = {
   ConfigMaps: 'Config Maps',
   Secrets: 'Secrets',
   PipelineRunDetails: 'Pipeline Run details',
+  PipelineDetails: 'Pipeline details',
+  TriggerTemplateDetails: 'Trigger Template details',
+  EventListenerDetails: 'EventListener details',
+  ClusterTriggerTemplateDetails: 'ClusterTriggerBinding Details',
 };
