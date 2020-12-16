@@ -7,7 +7,7 @@ import { FLAGS } from '@console/shared';
 import { connectToFlags, flagPending, FlagsObject } from '../reducers/features';
 import { GlobalNotifications } from './global-notifications';
 import { NamespaceBar } from './namespace';
-import { SearchPage } from './search';
+import { SearchPage } from './hypercloud/search';
 import { ResourceDetailsPage, ResourceListPage } from './resource-list';
 import { AsyncComponent, LoadingBox } from './utils';
 import { namespacedPrefixes } from './utils/link';
