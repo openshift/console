@@ -4,13 +4,17 @@ import {
   Taint,
   StorageClassResourceKind,
   K8sResourceKind,
+  MatchExpression,
 } from '@console/internal/module/k8s';
 import {
   humanizeBinaryBytes,
   convertToBaseValue,
   humanizeCpuCores,
 } from '@console/internal/components/utils';
-import { HOSTNAME_LABEL_KEY } from '@console/local-storage-operator-plugin/src/constants';
+import {
+  HOSTNAME_LABEL_KEY,
+  LABEL_OPERATOR,
+} from '@console/local-storage-operator-plugin/src/constants';
 import { getNodeCPUCapacity, getNodeAllocatableMemory, getName } from '@console/shared';
 import { ocsTaint, NO_PROVISIONER, AVAILABLE, MINIMUM_NODES, ZONE_LABELS } from '../constants';
 import { Discoveries } from '../components/ocs-install/attached-devices/create-sc/state';
@@ -48,10 +52,13 @@ export const getTotalDeviceCapacity = (list: Discoveries[]): number =>
 
 export const getAssociatedNodes = (pvs: K8sResourceKind[]): string[] => {
   const nodes = pvs.reduce((res, pv) => {
-    const nodeName = pv?.metadata?.labels?.[HOSTNAME_LABEL_KEY];
-    if (nodeName) {
-      res.add(nodeName);
-    }
+    const matchExpressions: MatchExpression[] =
+      pv?.spec?.nodeAffinity?.required?.nodeSelectorTerms?.[0]?.matchExpressions;
+    matchExpressions.forEach(({ key, operator, values }) => {
+      if (key === HOSTNAME_LABEL_KEY && operator === LABEL_OPERATOR) {
+        values.forEach((value) => res.add(value));
+      }
+    });
     return res;
   }, new Set<string>());
 
