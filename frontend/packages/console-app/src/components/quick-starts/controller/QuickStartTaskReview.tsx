@@ -61,7 +61,7 @@ const QuickStartTaskReview: React.FC<QuickStartTaskReviewProps> = ({
         />
       </span>
       {taskStatus === QuickStartTaskStatus.FAILED && taskHelp && (
-        <QuickStartMarkdownView content={taskHelp} />
+        <QuickStartMarkdownView content={taskHelp} exactHeight />
       )}
     </Alert>
   );

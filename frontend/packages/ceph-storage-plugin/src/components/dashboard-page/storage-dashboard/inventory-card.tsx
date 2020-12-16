@@ -92,6 +92,7 @@ const InventoryCard: React.FC<DashboardItemProps> = ({
       </DashboardCardHeader>
       <DashboardCardBody>
         <ResourceInventoryItem
+          dataTest="inventory-nodes"
           isLoading={!nodesLoaded}
           error={!!nodesLoadError}
           kind={NodeModel}
@@ -100,6 +101,7 @@ const InventoryCard: React.FC<DashboardItemProps> = ({
           basePath={ocsNodesHref}
         />
         <ResourceInventoryItem
+          dataTest="inventory-pvc"
           isLoading={!pvcsLoaded}
           error={!!pvcsLoadError}
           kind={PersistentVolumeClaimModel}
@@ -109,6 +111,7 @@ const InventoryCard: React.FC<DashboardItemProps> = ({
           showLink={false}
         />
         <ResourceInventoryItem
+          dataTest="inventory-pv"
           isLoading={!pvsLoaded}
           error={!!pvsLoadError}
           kind={PersistentVolumeModel}

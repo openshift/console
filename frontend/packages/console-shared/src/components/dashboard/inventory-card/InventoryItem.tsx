@@ -66,6 +66,7 @@ export const InventoryItem: React.FC<InventoryItemProps> = React.memo(
     error = false,
     TitleComponent,
     ExpandedComponent,
+    dataTest,
   }) => {
     const { t } = useTranslation();
     const [expanded, setExpanded] = React.useState(false);
@@ -85,7 +86,10 @@ export const InventoryItem: React.FC<InventoryItemProps> = React.memo(
             className="co-inventory-card__accordion-toggle"
           >
             <div className="co-inventory-card__item">
-              <div className="co-inventory-card__item-title">
+              <div
+                className="co-inventory-card__item-title"
+                data-test={!TitleComponent ? dataTest : null}
+              >
                 {isLoading && !error && <div className="skeleton-inventory" />}
                 {TitleComponent ? <TitleComponent>{titleMessage}</TitleComponent> : titleMessage}
               </div>
@@ -109,7 +113,10 @@ export const InventoryItem: React.FC<InventoryItemProps> = React.memo(
       </Accordion>
     ) : (
       <div className="co-inventory-card__item">
-        <div className="co-inventory-card__item-title">
+        <div
+          className="co-inventory-card__item-title"
+          data-test={!TitleComponent ? dataTest : null}
+        >
           {isLoading && !error && <div className="skeleton-inventory" />}
           {TitleComponent ? <TitleComponent>{titleMessage}</TitleComponent> : titleMessage}
         </div>
@@ -194,7 +201,12 @@ const ResourceTitleComponent: React.FC<ResourceTitleComponentComponent> = ({
   namespace,
   children,
   basePath,
-}) => <Link to={basePath || resourcePathFromModel(kind, null, namespace)}>{children}</Link>;
+  dataTest,
+}) => (
+  <Link to={basePath || resourcePathFromModel(kind, null, namespace)} data-test={dataTest}>
+    {children}
+  </Link>
+);
 
 export const ResourceInventoryItem: React.FC<ResourceInventoryItemProps> = ({
   kind,
@@ -209,12 +221,19 @@ export const ResourceInventoryItem: React.FC<ResourceInventoryItemProps> = ({
   showLink = true,
   ExpandedComponent,
   basePath,
+  dataTest,
 }) => {
   let Title: React.ComponentType = React.useCallback(
     (props) => (
-      <ResourceTitleComponent kind={kind} namespace={namespace} basePath={basePath} {...props} />
+      <ResourceTitleComponent
+        kind={kind}
+        namespace={namespace}
+        basePath={basePath}
+        dataTest={dataTest}
+        {...props}
+      />
     ),
-    [kind, namespace, basePath],
+    [kind, namespace, basePath, dataTest],
   );
 
   if (TitleComponent) Title = TitleComponent;
@@ -256,6 +275,7 @@ export const ResourceInventoryItem: React.FC<ResourceInventoryItemProps> = ({
       error={error}
       TitleComponent={showLink ? Title : null}
       ExpandedComponent={ExpandedComponent}
+      dataTest={dataTest}
     >
       {top3Groups.map((key) =>
         showLink ? (
@@ -301,6 +321,7 @@ type InventoryItemProps = {
   error?: boolean;
   TitleComponent?: React.ComponentType<{}>;
   ExpandedComponent?: React.ComponentType<{}>;
+  dataTest?: string;
 };
 
 type StatusProps = {
@@ -334,10 +355,12 @@ type ResourceInventoryItemProps = {
   TitleComponent?: React.ComponentType<{}>;
   ExpandedComponent?: React.ComponentType<{}>;
   basePath?: string;
+  dataTest?: string;
 };
 
 type ResourceTitleComponentComponent = {
   kind: K8sKind;
   namespace: string;
   basePath?: string;
+  dataTest?: string;
 };

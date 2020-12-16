@@ -20,12 +20,17 @@ extension(EXTENSION_NAME, () => {
 
 type QuickStartMarkdownViewProps = {
   content: string;
+  exactHeight?: boolean;
 };
 
-const QuickStartMarkdownView: React.FC<QuickStartMarkdownViewProps> = ({ content }) => {
+const QuickStartMarkdownView: React.FC<QuickStartMarkdownViewProps> = ({
+  content,
+  exactHeight,
+}) => {
   return (
     <SyncMarkdownView
       content={content}
+      exactHeight={exactHeight}
       extensions={[EXTENSION_NAME]}
       renderExtension={(docContext) => (
         <MarkdownHighlightExtension key={content} docContext={docContext} />

@@ -18,7 +18,8 @@ const ExpandPVCModal = withHandlePromise((props: ExpandPVCModalProps) => {
   const defaultSize = validate.split(getRequestedPVCSize(props.resource));
   const [requestSizeValue, setRequestSizeValue] = React.useState(defaultSize[0] || '');
   const [requestSizeUnit, setRequestSizeUnit] = React.useState(defaultSize[1] || 'Gi');
-  const [errorMessage] = React.useState<string>();
+  const [errorMessage, setErrorMessage] = React.useState<string>();
+  const [inProgress, setInProgress] = React.useState(false);
 
   const { t } = useTranslation();
 
@@ -36,11 +37,17 @@ const ExpandPVCModal = withHandlePromise((props: ExpandPVCModalProps) => {
         value: { storage: `${requestSizeValue}${requestSizeUnit}` },
       },
     ];
-    props.handlePromise(k8sPatch(props.kind, props.resource, patch), (resource) => {
-      props.close();
-      // redirected to the details page for persitent volume claim
-      history.push(resourceObjPath(resource, referenceFor(resource)));
-    });
+    setInProgress(true);
+    k8sPatch(props.kind, props.resource, patch)
+      .then((resource) => {
+        setInProgress(false);
+        props.close();
+        history.push(resourceObjPath(resource, referenceFor(resource)));
+      })
+      .catch((err) => {
+        setErrorMessage(err.message);
+        setInProgress(false);
+      });
   };
 
   const { kind, resource } = props;
@@ -70,11 +77,12 @@ const ExpandPVCModal = withHandlePromise((props: ExpandPVCModalProps) => {
           defaultRequestSizeUnit={requestSizeUnit}
           defaultRequestSizeValue={requestSizeValue}
           dropdownUnits={dropdownUnits}
+          testID="pvc-expand-size-input"
         />
       </ModalBody>
       <ModalSubmitFooter
         errorMessage={errorMessage}
-        inProgress={false}
+        inProgress={inProgress}
         submitText={t('modal~Expand')}
         cancel={props.cancel}
       />

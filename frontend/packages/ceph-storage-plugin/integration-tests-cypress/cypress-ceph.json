@@ -7,7 +7,7 @@
   "reporterOptions": {
     "configFile": "reporter-config.json"
   },
-  "supportFile": "../../integration-tests-cypress/support/index.ts",
+  "supportFile": "./support/index.ts",
   "pluginsFile": "../../integration-tests-cypress/plugins/index.js",
   "fixturesFolder": false,
   "defaultCommandTimeout": 30000,
