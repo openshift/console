@@ -19,12 +19,12 @@ const HyperCloudNav = () => (
   <Translation>
     {t => (
       <>
-        <NavSection title={t('COMMON:MSG_LNB_MENU_1')}>
+        <NavSection title="Home">
           <HrefLink href="/dashboards" activePath="/dashboards/" name="Status" />
           <HrefLink href="/search" name="Search" startsWith={searchStartsWith} />
-          <ResourceNSLink resource="audits" name="감사로그" />
+          <ResourceNSLink resource="audits" name="Audit" />
           <ResourceNSLink resource="events" name="Events" />
-          <HrefLink href="/grafana" name="그라파나" />
+          <HrefLink href="/grafana" name="Grafana" />
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_10')}>
           <ResourceNSLink resource="servicebrokers" name="Service Broker" />
@@ -54,16 +54,16 @@ const HyperCloudNav = () => (
           <ResourceNSLink resource="cronjobs" name="Cron Jobs" />
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_35')}>
-          <ResourceNSLink resource="horizontalpodautoscalers" name="Horizontal Pod Autoscalers" />
-          <ResourceNSLink resource="daemonsets" name="Daemon Sets" />
-          <ResourceNSLink resource="statefulsets" name="Stateful Sets" />
-          <ResourceNSLink resource="virtualmachines" name="Virtual Machine" />
-          <ResourceNSLink resource="virtualmachineinstances" name="Virtual Machine Instance" />
-          <ResourceNSLink resource="configmaps" name="Config Maps" />
-          <ResourceNSLink resource="secrets" name="Secrets" />
-          <ResourceNSLink resource="jobs" name="Jobs" />
-          <ResourceNSLink resource="cronjobs" name="Cron Jobs" />
-          <HrefLink href="/kiali" name="키알리" />
+          <ResourceNSLink resource="virtualservices" name="Virtual Services" />
+          <ResourceNSLink resource="destinationrules" name="Destination Rules" />
+          <ResourceNSLink resource="envoyfilters" name="Envoy Filters" />
+          <ResourceNSLink resource="gateways" name="Gateways" />
+          <ResourceNSLink resource="sidecars" name="Sidecars" />
+          <ResourceNSLink resource="serviceentries" name="Service Entries" />
+          <ResourceNSLink resource="requestauthentications" name="Request Authentications" />
+          <ResourceNSLink resource="peerauthentications" name="Peer Authentications" />
+          <ResourceNSLink resource="authorizationpolicies" name="Authorization Policies" />
+          <HrefLink href="/kiali" name="Kiali" />
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_46')}>
           <ResourceNSLink resource="ingresses" name="Ingresses" />
@@ -92,11 +92,11 @@ const HyperCloudNav = () => (
           <ResourceNSLink resource="workflowtemplates" name='WorkflowTemplate' />
           <ResourceNSLink resource="workflows" name='Workflow' />
         </NavSection>
-        <NavSection title="보안">
+        <NavSection title="Security">
           <ResourceClusterLink resource="podsecuritypolicies" name='PodSecurityPolicy' />
           <ResourceNSLink resource="networkpolicies" name="Network Policies" />
         </NavSection>
-        <NavSection title="이미지">
+        <NavSection title="Image">
           <ResourceNSLink resource="registries" name="Registry" />
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_79')}>
