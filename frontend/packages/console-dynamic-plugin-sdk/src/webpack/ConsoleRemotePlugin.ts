@@ -75,6 +75,7 @@ export class ConsoleRemotePlugin {
     });
 
     // Skip processing config.entry option if it's missing or empty
+    // TODO(vojtech): latest webpack 5 allows `entry: {}` so use that & remove following code
     if (_.isPlainObject(compiler.options.entry) && _.isEmpty(compiler.options.entry)) {
       compiler.hooks.entryOption.tap(ConsoleRemotePlugin.name, () => {
         return true;

@@ -24,7 +24,6 @@ const emitJSON = (compilation: webpack.Compilation, filename: string, data: any)
   // we just provide the content (source) and its length (size).
 
   // TODO(vojtech): revisit after bumping webpack 5 to latest stable version
-
   // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
   // @ts-ignore
   compilation.emitAsset(filename, {
@@ -51,7 +50,18 @@ export class ConsoleAssetPlugin {
   }
 
   apply(compiler: webpack.Compiler) {
-    compiler.hooks.shouldEmit.tap(ConsoleAssetPlugin.name, (compilation) => {
+    const errors: string[] = [];
+
+    const addErrorsToCompilation = (compilation: webpack.Compilation) => {
+      errors.forEach((e) => {
+        // TODO(vojtech): revisit after bumping webpack 5 to latest stable version
+        // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+        // @ts-ignore
+        compilation.errors.push(new Error(e));
+      });
+    };
+
+    compiler.hooks.afterCompile.tap(ConsoleAssetPlugin.name, (compilation) => {
       const result = new ExtensionValidator(extensionsFile).validate(
         compilation,
         this.manifest.extensions,
@@ -59,12 +69,13 @@ export class ConsoleAssetPlugin {
       );
 
       if (result.hasErrors()) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-        // @ts-ignore
-        compilation.errors.push(new Error(result.formatErrors()));
+        errors.push(result.formatErrors());
       }
+    });
 
-      return result.hasErrors();
+    compiler.hooks.shouldEmit.tap(ConsoleAssetPlugin.name, (compilation) => {
+      addErrorsToCompilation(compilation);
+      return errors.length === 0;
     });
 
     compiler.hooks.emit.tap(ConsoleAssetPlugin.name, (compilation) => {
