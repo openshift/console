@@ -58,6 +58,10 @@
   margin-bottom: var(--pf-global--spacer--lg);
 }
 
+.nb-bc-step-page-form__title {
+  margin-bottom: var(--pf-global--spacer--md);
+}
+
 .nb-create-bc-header-title__main {
   margin-bottom: var(--pf-global--spacer--sm);
 }
@@ -72,4 +76,9 @@
 
 .nb-create-bc-wizard {
   overflow-y: auto;
+}
+
+.nb-bc-create-review__selected-stores {
+  padding-top: var(--pf-global--spacer--sm);
+  padding-bottom: var(--pf-global--spacer--sm);
 }
