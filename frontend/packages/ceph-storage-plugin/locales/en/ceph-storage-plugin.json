@@ -103,7 +103,7 @@
   "Add Capacity": "Add Capacity",
   "Adding capacity for <1>{{name}}</1>, may increase your expenses.": "Adding capacity for <1>{{name}}</1>, may increase your expenses.",
   "Storage Class": "Storage Class",
-  "x {replica} replicas = <3>{{provisionedCapacity}} TiB</3>": "x {replica} replicas = <3>{{provisionedCapacity}} TiB</3>",
+  "x {replica} replicas = <4>{{provisionedCapacity}} TiB</4>": "x {replica} replicas = <4>{{provisionedCapacity}} TiB</4>",
   "Currently Used:": "Currently Used:",
   "Add": "Add",
   "Vault enterprise namespaces are isolated environments that functionally exist as Vaults within a Vault. They have separate login paths and support creating and managing data isolated to their namespace.": "Vault enterprise namespaces are isolated environments that functionally exist as Vaults within a Vault. They have separate login paths and support creating and managing data isolated to their namespace.",

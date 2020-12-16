@@ -171,6 +171,7 @@ export class StorageClassDropdownInner extends React.Component<
               title={this.state.title}
               onChange={this.onChange}
               id={id}
+              dataTest={this.props?.['data-test']}
               noSelection={noSelection}
               menuClassName="dropdown-menu--text-wrap"
             />

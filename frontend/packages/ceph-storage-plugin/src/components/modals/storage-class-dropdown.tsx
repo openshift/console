@@ -26,7 +26,13 @@ const StorageClassDropdown = (props: any) => {
     scConfig.resources.StorageClass.data = filteredSCData;
   }
 
-  return <StorageClassDropdownInner {...scConfig} id="ceph-sc-dropdown" />;
+  return (
+    <StorageClassDropdownInner
+      {...scConfig}
+      id="ceph-sc-dropdown"
+      data-test={props?.['data-test']}
+    />
+  );
 };
 
 export const OCSStorageClassDropdown: React.FC<OCSStorageClassDropdownProps> = (props) => {
@@ -42,6 +48,7 @@ export const OCSStorageClassDropdown: React.FC<OCSStorageClassDropdownProps> = (
           hideClassName="ceph-sc-dropdown__hide-default"
           filter={filter}
           required
+          data-test={props?.['data-test']}
         />
       </Firehose>
     </>
@@ -52,4 +59,5 @@ type OCSStorageClassDropdownProps = {
   onChange: (sc: StorageClassResourceKind) => void;
   defaultClass?: string;
   filter?: (sc: StorageClassResourceKind) => boolean;
+  'data-test'?: string;
 };

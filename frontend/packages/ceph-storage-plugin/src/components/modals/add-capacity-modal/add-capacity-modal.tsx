@@ -140,7 +140,7 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
               {t('ceph-storage-plugin~Storage Class')}
               <FieldLevelHelp>{storageClassTooltip(t)}</FieldLevelHelp>
             </label>
-            <OCSStorageClassDropdown onChange={onChange} />
+            <OCSStorageClassDropdown onChange={onChange} data-test="add-cap-sc-dropdown" />
           </div>
           {isNoProvionerSC ? (
             <PVsAvailableCapacity
@@ -167,7 +167,10 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
                 {provisionedCapacity && (
                   <div className="ceph-add-capacity__input--info-text">
                     <Trans t={t} ns="ceph-storage-plugin">
-                      x {replica} replicas = <strong>{{ provisionedCapacity }} TiB</strong>
+                      x {replica} replicas ={' '}
+                      <strong data-test="provisioned-capacity">
+                        {{ provisionedCapacity }} TiB
+                      </strong>
                     </Trans>
                   </div>
                 )}

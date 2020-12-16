@@ -621,6 +621,7 @@ Dropdown.propTypes = {
   autoSelect: PropTypes.bool,
   describedBy: PropTypes.string,
   required: PropTypes.bool,
+  dataTest: PropTypes.string,
 };
 
 class ActionsMenuDropdown_ extends DropdownMixin {
