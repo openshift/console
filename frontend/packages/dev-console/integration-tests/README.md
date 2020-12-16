@@ -13,8 +13,13 @@ frontend/packages/dev-console/integration-tests/
 |   ├── pageObjects         <--- helper objects
 |   |   └── add-fow-po.ts   <--- helper objects related to add page - git, catalog, container
 |   ├── constants           <--- enums required for dev-console scripts
+|   |   |   └──static-text
+|   |   |       └── add-fow-text.ts <--- enums required for dev-console scripts
 │   |   └── add.ts
 |   |   └── global.ts
+|   ├── pageObjects         <--- Object Repository [Going forward will publish it as npm module]
+│   |   ├── add-flow-po.ts  <--- Add flow related page objects
+|   |   └── helm-po.ts      <--- Helm related page objects
 |   ├── pages               <--- page functions
 │   |   ├── add-flow        <--- Add flow related helper objects and page functions
 |   |   |   └──add-page.ts
@@ -79,3 +84,5 @@ frontend/packages/dev-console/integration-tests/
 1. Don't use static sleep statements (browser.sleep)
 2. Comments should be included wherever required
 3. Don't inlcude console.log statements while raising PR
+4. .gherkin-lintrc configuration file present in frontend folder is used to set Gherkin standards
+5. Execute the "yarn run gherkin-lint" command for every QE pr
