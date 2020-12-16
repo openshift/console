@@ -13,6 +13,8 @@ import { FLAG_OPENSHIFT_PIPELINE, CLUSTER_PIPELINE_NS } from '../../../const';
 import { Pipeline } from '../../../utils/pipeline-augment';
 import PipelineTemplate from './PipelineTemplate';
 
+import './PipelineSection.scss';
+
 type PipelineSectionProps = {
   flags: FlagsObject;
   builderImages: NormalizedBuilderImages;
@@ -56,7 +58,7 @@ const PipelineSection: React.FC<PipelineSectionProps> = ({
 
   if (flags[FLAG_OPENSHIFT_PIPELINE] && hasCreatePipelineAccess) {
     const title = (
-      <Split hasGutter>
+      <Split className="odc-form-section-pipeline" hasGutter>
         <SplitItem className="odc-form-section__heading">
           {t('pipelines-plugin~Pipelines')}
         </SplitItem>
