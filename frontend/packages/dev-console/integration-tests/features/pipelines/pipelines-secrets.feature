@@ -7,7 +7,7 @@ Background:
     And user is at pipelines page
 
 
-@regression, @smoke
+@pipelines, @smoke
 Scenario: Add Secrets : P-11-TC01
    Given user has created pipeline "pipe-task-with-resource" with git resources
    When user selects "Start" option from kebab menu for pipeline "pipe-task-with-resource"
@@ -17,7 +17,7 @@ Scenario: Add Secrets : P-11-TC01
    And user is able to see Secret Name, Access to, Server UrL fields and authernication type fields
 
 
-@regression, @smoke
+@pipelines, @smoke
 Scenario Outline: Add secret to pipeline with authentication type as Basic Authentication : P-11-TC02
    Given user has created pipeline "pipe-task-with-resource-1" with git resources
    And user is at Start Pipeline modal
@@ -35,7 +35,7 @@ Examples:
 | https://github.com/sclorg/nodejs-ex.git | secret-basic | aaa      | aaa      |
 
 
-@regression
+@pipelines, @regression
 Scenario Outline: Add secret to pipeline with authentication type as SSH Key : P-11-TC04   
    Given user has created pipeline "pipe-task-with-resource-1" with git resources
    And user is at Start Pipeline modal
@@ -53,7 +53,7 @@ Examples:
 | https://github.com/sclorg/nodejs-ex.git | secret-sshkey | aaa     |
 
 
-@regression
+@pipelines, @regression
 Scenario Outline: Add secret to pipeline with authentication type as Image Registry Credentials : P-11-TC03
    Given user has created pipeline "pipe-task-with-resource-2" with git resources
    And user is at Start Pipeline modal
