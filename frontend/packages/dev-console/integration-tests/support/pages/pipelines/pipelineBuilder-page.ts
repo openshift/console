@@ -85,7 +85,7 @@ export const pipelineBuilderPage = {
     cy.get(pipelineBuilderPO.yamlCreatePipeline.helpText).should('contain.text', 'YAML or JSON');
     cy.get(pipelineBuilderPO.yamlCreatePipeline.create).click();
   },
-  createPipelineWithGitresources: (
+  createPipelineWithGitResources: (
     pipelineName: string = 'git-pipeline',
     taskName: string = 'openshift-client',
     resourceName: string = 'git resource',

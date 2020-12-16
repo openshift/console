@@ -3,7 +3,7 @@ import { pipelineActions } from '../../constants/pipelines';
 import { pipelinesPO } from '../../pageObjects/pipelines-po';
 
 export const pipelinesPage = {
-  clickOncreatePipeline: () => cy.get(pipelinesPO.createPipeline).click(),
+  clickOnCreatePipeline: () => cy.get(pipelinesPO.createPipeline).click(),
 
   selectKebabMenu: (pipelineName: string) => {
     cy.get(pipelinesPO.pipelinesTable.table).should('exist');
@@ -86,7 +86,7 @@ export const pipelinesPage = {
 
   selectPipeline: (pipelineName: string) => cy.byLegacyTestID(pipelineName).click(),
 
-  seelctPipelineRun: (pipelineName: string) => {
+  selectPipelineRun: (pipelineName: string) => {
     cy.get(pipelinesPO.pipelinesTable.table, { timeout: 30000 }).should('exist');
     cy.get(pipelinesPO.pipelinesTable.pipelineName).each(($el, index) => {
       if ($el.text().includes(pipelineName)) {
@@ -148,8 +148,8 @@ export const pipelinesPage = {
   },
 };
 
-export const startPipelineInPipelinsPage = {
-  clicKCancel: () => cy.byLegacyTestID('modal-cancel-action').click(),
+export const startPipelineInPipelinesPage = {
+  clickCancel: () => cy.byLegacyTestID('modal-cancel-action').click(),
   verifySections: () => {
     cy.get(pipelinesPO.startPipeline.sectionTitle).as('sectionTitle');
     cy.get('@sectionTitle')
@@ -197,7 +197,7 @@ export const startPipelineInPipelinsPage = {
     cy.get(pipelinesPO.startPipeline.advancedOptions.userName).type(userName);
     cy.get(pipelinesPO.startPipeline.advancedOptions.password).type(password);
     cy.get(pipelinesPO.startPipeline.advancedOptions.tickIcon).click();
-    startPipelineInPipelinsPage.clickStart();
+    startPipelineInPipelinesPage.clickStart();
   },
   verifyCreateSourceSecretSection: () =>
     cy.get(pipelinesPO.startPipeline.advancedOptions.secretFormTitle).should('be.visible'),

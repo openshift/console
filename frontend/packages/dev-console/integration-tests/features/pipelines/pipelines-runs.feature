@@ -1,3 +1,4 @@
+@pipelines
 Feature: Pipeline Runs
     As a user, I want to start pipeline, rerun, delete pipeline run
 
@@ -19,7 +20,7 @@ Examples:
 | pipeline-with-resoruce | openshift-client |
 
 
-@regression, @smoke
+@smoke
 Scenario Outline: Start the pipeline with one resource : P-04-TC03
     Given pipeline "<pipeline_name>" consists of task "<task_name>" with one git resource
     When user selects "Start" option from kebab menu for pipeline "<pipeline_name>"
@@ -33,7 +34,7 @@ Examples:
 | pipe-task     | openshift-client |
 
 
-@regression, @smoke
+ @smoke
 Scenario Outline: Last Run Status of pipeline in pipelines page after starting pipeline Run : P-05-TC01
     Given pipeline run is displayed for "<pipeline_name>" with resource
     When user navigates to Pipelines page
@@ -44,7 +45,7 @@ Examples:
 | pipe-task     |
 
 
-@regression, @smoke
+@smoke
 Scenario Outline: Pipeline Run Details page for pipeline without resource : P-06-TC03
     Given pipeline run is displayed for "<pipeline_name>" without resource
     When user clicks Last Run value of "<pipeline_name>"
@@ -76,7 +77,7 @@ Examples:
 | pipeline-with-resoruce |
 
 
-@regression, @smoke
+@smoke
 Scenario Outline: Rerun the Pipeline Run from pipeline runs page : P-06-TC02
     Given pipeline run is displayed for "<pipeline_name>" without resource
     When user selects the Pipeline Run for "<pipeline_name>"
@@ -88,7 +89,7 @@ Examples:
 | pipeline-with-resoruce |
 
 
-@regression, @smoke
+@smoke
 Scenario Outline: Pipeline Run Details page for a pipeline with resource : P-06-TC04
     Given pipeline run is displayed for "<pipeline_name>" with resource
     When user clicks Last Run value of the pipeline "<pipeline_name>"
@@ -100,18 +101,18 @@ Examples:
 | pipeline-with-resoruce |
 
 
-@regression, @smoke
+@smoke
 Scenario Outline: Filter the pipeline runs based on status : P-06-TC07
     Given pipeline "<pipeline_name>" is executed for 3 times
     When user filters the pipeline runs of pipeline "<pipeline_name>" based on the "<status>"
-    Then user is able to see the pipelineruns with "<status>"
+    Then user is able to see the pipelineRuns with status as "<status>"
 
 Examples:
 | pipeline_name             | status    |
 | pipeline-without-resoruce | Succeeded |
 
 
-@regression, @smoke
+@smoke
 Scenario: Start the pipeline from Pipeline Details page : P-04-TC04
     Given pipeline "pipeline-one" is available in pipelines page
     When user selects "Start" option from pipeline Details Actions menu
@@ -172,6 +173,7 @@ Scenario: Maximum pipeline runs display in topology page: P-05-TC05
     And 3 pipeline runs are displayed under pipelines section of topology page
 
 
+@pipelines
 Scenario: Start the pipeline with cancelled tasks: P-07-TC04
     Given user is at the Pipeline Details page
     And pipeline run is available with cancelled tasks for pipeline "pipeline-one"
@@ -180,6 +182,7 @@ Scenario: Start the pipeline with cancelled tasks: P-07-TC04
     And Pipeline run status displays as "Running"
 
 
+@pipelines
 Scenario: Start the pipeline with failed tasks: P-07-TC05
     Given user is at the Pipeline Details page
     And pipeline run is available with failed tasks for pipeline "pipeline-one"
@@ -188,6 +191,7 @@ Scenario: Start the pipeline with failed tasks: P-07-TC05
     And Pipeline run status displays as "Running"
 
 
+@pipelines
 Scenario: Start the pipeline with successful tasks: P-07-TC06
     Given user is at the Pipeline Details page
     And pipeline run is available with failed tasks for pipeline "pipeline-one"
@@ -196,7 +200,7 @@ Scenario: Start the pipeline with successful tasks: P-07-TC06
     And Pipeline run status displays as "Running"
 
 
-@regression, @smoke
+@smoke
 Scenario Outline: Pipeline status display in topology side bar : P-05-TC02
     Given pipeline "<pipeline_name>" is created from git page
     And pipeline run is displayed for "<pipeline_name>" in pipelines page
