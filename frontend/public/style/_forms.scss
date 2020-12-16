@@ -12,16 +12,16 @@
   flex-flow: row-reverse;
 }
 
-.co-required {
-  position: relative;
-  &:after {
-    color: $color-pf-red-200;
-    content: '*';
-    font-size: $font-size-base;
-    padding-left: 3px;
-    position: absolute;
-    top: 0;
-  }
+.co-required > * {
+  display: inline-block;
+}
+
+.co-required:after {
+  color: $color-pf-red-200;
+  content: '*';
+  font-size: $font-size-base;
+  padding-left: 3px;
+  vertical-align: top;
 }
 
 .co-form-heading__popover {
