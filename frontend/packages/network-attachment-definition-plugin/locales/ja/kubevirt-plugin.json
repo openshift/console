@@ -1,0 +1,8 @@
+{
+  "Network attachement definition name cannot be empty": "ネットワーク割り当て定義名は空にできません",
+  "Network attachement definition name name can contain only alphanumberic characters": "ネットワーク割り当て定義名には、英数字のみを含めることができます",
+  "Network attachement definition name cannot start/end with dash": "ネットワーク割り当て定義名はダッシュで開始または終了できません",
+  "Network attachement definition name cannot contain uppercase characters": "ネットワーク割り当て定義名に大文字は使用できません",
+  "Network attachement definition name is too long": "ネットワーク割り当て定義名が長すぎます",
+  "Network attachement definition name is too short": "ネットワーク割り当て定義名が短すぎます"
+}

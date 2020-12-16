@@ -11,7 +11,7 @@
   "HTPasswd": "HTPasswd",
   "Keystone": "Keystone",
   "LDAP": "LDAP",
-  "OpenID Connect": "OpenID Connect",
+  "OpenID Connect": "OpenID 连接",
   "Request Header": "请求标头",
   "{{resource}} details": "{{resource}}详情",
   "Access token max age": "访问令牌的最大年龄",

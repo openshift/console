@@ -1,6 +1,6 @@
 {
   "Integration type": "集成类型",
-  "Events API v2": "Events API v2",
+  "Events API v2": "事件 API v2",
   "Prometheus": "Prometheus",
   "Routing key": "路由密钥",
   "Service key": "服务密钥",
@@ -18,7 +18,7 @@
   "A backlink to the sender of the notification.": "到通知发送者的反向链接。",
   "Incident details": "事故详情",
   "Description": "描述",
-  "Description of the incident.": "警报的描述",
+  "Description of the incident.": "事件的描述",
   "Severity": "严重性",
   "Severity of the incident.": "事件的严重性。"
 }

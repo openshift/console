@@ -1,4 +1,5 @@
 {
+  "No datapoints found.": "找不到数据点。",
   "View in Metrics": "在指标中查看",
   "Name": "名称",
   "Firing alerts": "发出警报",
@@ -33,6 +34,5 @@
   "Alerting": "警报",
   "Show graph": "显示图",
   "Hide graph": "隐藏图",
-  "No datapoints found.": "找不到数据点。",
   "Reset zoom": "重设缩放"
 }

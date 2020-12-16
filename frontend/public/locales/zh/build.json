@@ -7,7 +7,7 @@
   "View logs": "查看日志",
   "Memory usage": "内存用量",
   "CPU usage": "CPU 用量",
-  "Filesystem": "Filesystem",
+  "Filesystem": "文件系统",
   "Pipeline build strategy deprecation": "管道构建策略过时",
   "pipelineBuildStrategyAlert": "pipelineBuildStrategyAlert",
   "OpenShift Pipelines based on Tekton": "基于 Tekton 的 OpenShift Pipelines",
@@ -23,5 +23,5 @@
   "Name": "名称",
   "Namespace": "命名空间",
   "Created": "创建的",
-  "Builds": "Builds"
+  "Builds": "构建"
 }

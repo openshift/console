@@ -1,5 +1,5 @@
 {
-  "operator_0": "operator",
+  "operator_0": "Operator",
   "Installation namespace <1>{{namespace}}</1> contains <4></4> installed with manual approval, and all operators installed in the same namespace will function as manual approval strategy. To allow automatic approval, all operators installed in the namespace must use automatic approval strategy.": "インストール namespace <1>{{namespace}}</1> には、手動の承認でインストールされた <4></4> が含まれ、同じ namespace にインストールされたすべての operator は手動の承認ストラテジーとして機能します。自動承認を許可するには、namespace にインストールされるすべての Operator が自動承認ストラテジーを使用する必要があります。",
   "Will function as manual approval strategy": "手動の承認ストラテジーとして機能します。",
   "Manual approval applies to all operators in a namespace": "手動の承認は namespace のすべての Operator に適用されます",

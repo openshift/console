@@ -1,8 +1,10 @@
 {
+  "Add Health Checks": "添加健康检查",
+  "Edit Health Checks": "编辑健康检查",
   "Clone": "克隆",
   "Name": "名称",
   "Clone PVC": "克隆 PVC",
-  "Size": "Size",
+  "Size": "大小",
   "Size should be equal or greater than the requested size of PVC": "大小应等于或大于要求的 PVC 大小",
   "PVC details": "PVC 详情",
   "Namespace": "命名空间",

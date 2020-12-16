@@ -1,0 +1,11 @@
+{
+  "Operator Backed": "Operator 提供",
+  "Browse for a variety of managed services that are installed by cluster administrators. Cluster administrators can customize the content made available in the catalog.": "クラスター管理者がインストールされるさまざまな管理サービスを参照します。クラスター管理者はカタログで利用可能なコンテンツをカスタマイズできます。",
+  "**Operator backed** includes a variety of services managed by Kubernetes controllers.": "**Operator 提供** には、Kubernetes コントローラーによって管理される各種サービスが含まれます。",
+  "Hide operator description": "Operator の説明の非表示",
+  "Show operator description": "Operator の説明の表示",
+  "## Operator Description\n{{csvDescription}}": "## Operator の説明\n{{csvDescription}}",
+  "This resource is provided by {{operatorName}}, a Kubernetes Operator enabled by the Operator Lifecycle Manager.": "このリソースは、{{operatorName}} (Operator Lifecycle Manager によって有効にされる Kubernetes Operator) によって提供されます。",
+  "Capability Level": "機能レベル",
+  "Create": "作成"
+}

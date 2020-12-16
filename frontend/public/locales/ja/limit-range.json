@@ -1,7 +1,7 @@
 {
   "Name": "名前",
-  "Namespace": "Namespace",
-  "Created": "Created",
+  "Namespace": "namespace",
+  "Created": "作成",
   "Limits": "制限",
   "Type": "タイプ",
   "Resource": "リソース",

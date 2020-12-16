@@ -1,0 +1,4 @@
+{
+  "Unable to find repository": "リポジトリーが見つかりません",
+  "Repository path {{path}} does not match expected name {{name}}": "リポジトリーパス {{path}} は、予想される名前  {{name}} に一致しません。"
+}

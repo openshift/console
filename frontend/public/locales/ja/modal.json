@@ -4,7 +4,7 @@
   "OpenShift version": "OpenShift バージョン",
   "Kubernetes version": "Kubernetes バージョン",
   "Channel": "チャネル",
-  "Cluster ID": "クラスター",
+  "Cluster ID": "クラスター ID ",
   "API server": "API サーバー",
   "OpenShift is Red Hat's container application platform that allows developers to quickly develop, host, and scale applications in a cloud environment.": "OpenShiftは、開発者がクラウド環境でアプリケーションを迅速に開発し、ホストし、スケーリングできるようにする Red Hat のコンテナーアプリケーションプラットフォームです。",
   "Manage columns": "列の管理",

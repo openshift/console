@@ -1,0 +1,11 @@
+{
+  "Operator Backed": "由 Operator 支持",
+  "Browse for a variety of managed services that are installed by cluster administrators. Cluster administrators can customize the content made available in the catalog.": "查看集群管理员安装的各种受管服务。集群管理员可以自定义目录中提供的内容。",
+  "**Operator backed** includes a variety of services managed by Kubernetes controllers.": "**由 Ooperator 支持** 包括由 Kubernetes 控制器管理的各种服务。",
+  "Hide operator description": "隐藏 Operator 描述",
+  "Show operator description": "显示 Operator 描述",
+  "## Operator Description\n{{csvDescription}}": "## Operator 描述\n{{csvDescription}}",
+  "This resource is provided by {{operatorName}}, a Kubernetes Operator enabled by the Operator Lifecycle Manager.": "此资源由 Operator Lifecycle Manager 启用的一个 Kubernetes Operator {{operatorName}} 提供。",
+  "Capability Level": "能力级别",
+  "Create": "创建"
+}
