@@ -3,8 +3,24 @@ import { apiVersionForModel, Toleration } from '@console/internal/module/k8s';
 import { LocalVolumeSetModel } from '../../models';
 import { LocalVolumeSetKind, DiskType } from './types';
 import { State } from './state';
-import { DISK_TYPES, HOSTNAME_LABEL_KEY, LABEL_OPERATOR } from '../../constants';
 import { getNodes, getHostNames } from '../../utils';
+import {
+  DISK_TYPES,
+  HOSTNAME_LABEL_KEY,
+  LABEL_OPERATOR,
+  deviceTypeDropdownItems,
+} from '../../constants';
+
+const getDeviceTypes = (deviceType: string[]) => {
+  const { DISK, PART } = deviceTypeDropdownItems;
+  if ((deviceType.includes(DISK) && deviceType.includes(PART)) || deviceType.length === 0) {
+    return [DiskType.RawDisk, DiskType.Partition];
+  }
+  if (deviceType.includes(PART)) {
+    return [DiskType.Partition];
+  }
+  return [DiskType.RawDisk];
+};
 
 export const getLocalVolumeSetRequestData = (
   state: State,
@@ -12,6 +28,7 @@ export const getLocalVolumeSetRequestData = (
   toleration?: Toleration,
 ): LocalVolumeSetKind => {
   const nodes = getNodes(state.showNodesListOnLVS, state.nodeNamesForLVS, state.nodeNames);
+  const deviceTypes = getDeviceTypes(state.deviceType);
   const requestData = {
     apiVersion: apiVersionForModel(LocalVolumeSetModel),
     kind: LocalVolumeSetModel.kind,
@@ -20,7 +37,7 @@ export const getLocalVolumeSetRequestData = (
       storageClassName: state.storageClassName || state.volumeSetName,
       volumeMode: state.diskMode,
       deviceInclusionSpec: {
-        deviceTypes: [DiskType.RawDisk, DiskType.Partition],
+        deviceTypes,
       },
       nodeSelector: {
         nodeSelectorTerms: [

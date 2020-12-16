@@ -12,11 +12,16 @@ import {
 import { Dropdown } from '@console/internal/components/utils';
 import { ListPage } from '@console/internal/components/factory';
 import { NodeKind } from '@console/internal/module/k8s';
-import { getName } from '@console/shared';
+import { getName, MultiSelectDropdown } from '@console/shared';
 import { NodeModel } from '@console/internal/models';
 import { NodesSelectionList } from './nodes-selection-list';
 import { State, Action } from './state';
-import { diskModeDropdownItems, diskTypeDropdownItems, diskSizeUnitOptions } from '../../constants';
+import {
+  diskModeDropdownItems,
+  diskTypeDropdownItems,
+  diskSizeUnitOptions,
+  deviceTypeDropdownItems,
+} from '../../constants';
 import './create-local-volume-set.scss';
 
 export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = ({
@@ -25,6 +30,7 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = ({
   taintsFilter,
   diskModeOptions = diskModeDropdownItems,
   allNodesHelpTxt,
+  deviceTypeOptions = deviceTypeDropdownItems,
 }) => {
   const { t } = useTranslation();
 
@@ -54,7 +60,6 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = ({
     }
     dispatch({ type: 'setMaxDiskSize', value: size });
   };
-
   return (
     <>
       <FormGroup
@@ -167,6 +172,21 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = ({
           />
         </FormGroup>
         <FormGroup
+          label="Device Type"
+          fieldId="create-lso-device-type-dropdown"
+          className="lso-create-lvs__device-type-dropdown--margin"
+        >
+          <MultiSelectDropdown
+            id="create-lso-device-type-dropdown"
+            options={[deviceTypeOptions.DISK, deviceTypeOptions.PART]}
+            placeholder="Select disk types"
+            onChange={(selectedValues: string[]) => {
+              dispatch({ type: 'setDeviceType', value: selectedValues });
+            }}
+            defaultSelected={[deviceTypeOptions.DISK, deviceTypeOptions.PART]}
+          />
+        </FormGroup>
+        <FormGroup
           label={t('lso-plugin~Disk Size')}
           fieldId="create-lvs-disk-size"
           className="lso-create-lvs__disk-size-form-group--margin"
@@ -235,6 +255,7 @@ type LocalVolumeSetInnerProps = {
   state: State;
   dispatch: React.Dispatch<Action>;
   diskModeOptions?: { [key: string]: string };
+  deviceTypeOptions?: { [key: string]: string };
   allNodesHelpTxt?: string;
   taintsFilter?: (node: NodeKind) => boolean;
 };
