@@ -10,7 +10,7 @@ import { getActivePerspective, getPinnedResources } from '../../reducers/ui';
 import { modelFor, referenceForModel } from '../../module/k8s';
 import confirmNavUnpinModal from './confirmNavUnpinModal';
 import { NavSection } from './section';
-import AdminNav from './admin-nav';
+import MulticlusterNav from '../hypercloud/nav/multicluster-nav';
 import HyperCloudNav from './hypercloud-nav';
 
 import {
@@ -59,7 +59,7 @@ const PerspectiveNav: React.FC<StateProps & DispatchProps> = ({
 
   // Until admin perspective is contributed through extensions, simply render static `AdminNav`
   if (perspective === 'admin') {
-    return <AdminNav />;
+    return <MulticlusterNav />;
   }
 
   else if (perspective === 'hc'){
