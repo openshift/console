@@ -7,6 +7,8 @@ export const pipelineBuilderPO = {
   create: '[data-test-id="submit-button"]',
   cancel: '[data-test-id="reset-button"]',
   add: 'button.pf-c-button.pf-m-link.pf-m-inline',
+  yamlView: '#form-radiobutton-editorType-yaml-field',
+  pipelineBuilderView: '#form-radiobutton-editorType-form-field',
   addParams: {
     name: '#form-input-formData-params-0-name-field',
     description: '#form-input-formData-params-0-description-field',
@@ -24,8 +26,20 @@ export const pipelineBuilderPO = {
   },
   yamlCreatePipeline: {
     helpText: 'p.help-block',
-    create: '[data-test="save-changes"]',
-    cancel: '#cancel',
+    create: '[data-test-id="submit-button"]',
+    cancel: '[data-test-id="reset-button"]',
+    yamlEditor: '[data-mode-id="yaml"]',
+    samples: {
+      s2iPipelineWithWorkspace:
+        'div.osc-yaml-editor__sidebar ol li:nth-child(3) > button:nth-child(3)',
+      dockerPipelineWithResource:
+        'div.osc-yaml-editor__sidebar ol li:nth-child(2) > button:nth-child(3)',
+      dockerBuildAndDeployPipeline:
+        'div.osc-yaml-editor__sidebar ol li:nth-child(1) > button:nth-child(3)',
+      simplePipeline: 'div.osc-yaml-editor__sidebar ol li:nth-child(4) > button:nth-child(3)',
+      s2iPipelineWithResource:
+        'div.osc-yaml-editor__sidebar ol li:nth-child(5) > button:nth-child(3)',
+    },
   },
   sidePane: {
     dialog: 'div.odc-sidebar',

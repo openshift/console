@@ -215,4 +215,23 @@ export const startPipelineInPipelinesPage = {
       .scrollIntoView()
       .should('be.visible');
   },
+  selectWorkSpace: (option: string) => {
+    cy.get(pipelinesPO.startPipeline.sharedWorkspace).click();
+    switch (option) {
+      case 'Empty Directory':
+        cy.byTestDropDownMenu('EmptyDirectory').click();
+        break;
+      case 'Config Map':
+        cy.byTestDropDownMenu('ConfigMap').click();
+        break;
+      case 'Secret':
+        cy.byTestDropDownMenu('Secret').click();
+        break;
+      case 'PVC':
+        cy.byTestDropDownMenu('PVC').click();
+        break;
+      default:
+        break;
+    }
+  },
 };
