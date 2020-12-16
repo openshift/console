@@ -66,6 +66,7 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
   onSupportedFiltersChange,
   onSupportedKindsChange,
 }) => {
+  const [viewContainer, setViewContainer] = React.useState<HTMLElement>(null);
   const { setTopologyFilters: onFiltersChange } = React.useContext(FilterContext);
   const [filteredModel, setFilteredModel] = React.useState<Model>();
   const [selectedEntity, setSelectedEntity] = React.useState<GraphElement>(null);
@@ -236,11 +237,6 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
     [filteredModel, namespace, onSelect, viewType],
   );
 
-  const topologyFilterBar = React.useMemo(
-    () => <TopologyFilterBar viewType={viewType} visualization={visualization} />,
-    [viewType, visualization],
-  );
-
   const topologySideBar = React.useMemo(
     () => getTopologySideBar(visualization, selectedEntity, () => onSelect()),
     [onSelect, selectedEntity, visualization],
@@ -258,9 +254,17 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
   return (
     <div className="odc-topology">
       <Stack>
-        <StackItem isFilled={false}>{topologyFilterBar}</StackItem>
+        <StackItem isFilled={false}>
+          <TopologyFilterBar
+            viewType={viewType}
+            visualization={visualization}
+            viewContainer={viewContainer}
+          />
+        </StackItem>
         <StackItem isFilled className={containerClasses}>
-          <div className="pf-topology-content">{viewContent}</div>
+          <div ref={setViewContainer} className="pf-topology-content">
+            {viewContent}
+          </div>
           {topologySideBar.sidebar}
         </StackItem>
       </Stack>

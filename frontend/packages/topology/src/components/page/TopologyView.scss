@@ -15,7 +15,7 @@
     left: 0;
     right: 0;
   }
-  &__hint-background{
+  &__hint-background {
     background: var(--pf-global--Color--light-100);
     border: 1px solid var(--pf-global--BorderColor--light-100);
     border-radius: 8px;
@@ -98,5 +98,10 @@
     .overview__sidebar-pane-body {
       min-height: initial;
     }
+  }
+
+  .pf-c-backdrop {
+    position: absolute;
+    background: none;
   }
 }

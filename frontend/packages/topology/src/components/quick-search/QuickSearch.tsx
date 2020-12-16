@@ -6,16 +6,19 @@ import QuickSearchController from './QuickSearchController';
 
 interface QuickSearchProps {
   namespace: string;
+  viewContainer?: HTMLElement;
 }
 
-const QuickSearch: React.FC<QuickSearchProps> = ({ namespace }) => {
-  return (
-    <CatalogServiceProvider namespace={namespace}>
-      {(catalogService: CatalogService) => (
-        <QuickSearchController {...catalogService} namespace={namespace} />
-      )}
-    </CatalogServiceProvider>
-  );
-};
+const QuickSearch: React.FC<QuickSearchProps> = ({ namespace, viewContainer }) => (
+  <CatalogServiceProvider namespace={namespace}>
+    {(catalogService: CatalogService) => (
+      <QuickSearchController
+        {...catalogService}
+        namespace={namespace}
+        viewContainer={viewContainer}
+      />
+    )}
+  </CatalogServiceProvider>
+);
 
-export default QuickSearch;
+export default React.memo(QuickSearch);

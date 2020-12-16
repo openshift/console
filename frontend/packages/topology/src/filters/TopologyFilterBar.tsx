@@ -43,6 +43,7 @@ type StateProps = {
 type OwnProps = {
   visualization?: Visualization;
   viewType: TopologyViewType;
+  viewContainer?: HTMLElement;
 };
 
 type TopologyFilterBarProps = StateProps & OwnProps;
@@ -53,6 +54,7 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
   visualization,
   viewType,
   namespace,
+  viewContainer,
 }) => {
   const { t } = useTranslation();
   const { filters, setTopologyFilters: onFiltersChange } = React.useContext(FilterContext);
@@ -74,7 +76,7 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
     <Toolbar className="co-namespace-bar odc-topology-filter-bar">
       <ToolbarContent>
         <ToolbarItem>
-          <QuickSearch namespace={namespace} />
+          <QuickSearch namespace={namespace} viewContainer={viewContainer} />
         </ToolbarItem>
         <ToolbarGroup variant={ToolbarGroupVariant['filter-group']}>
           <ToolbarItem>

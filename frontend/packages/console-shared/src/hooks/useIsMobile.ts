@@ -13,10 +13,21 @@ export const useIsMobile = () => {
       setIsMobile(e.matches);
     };
 
-    mobileResolutionMatch.addEventListener('change', updateIsMobile);
+    // support safari with fallback to addListener / removeListener
+    if (mobileResolutionMatch.addEventListener) {
+      mobileResolutionMatch.addEventListener('change', updateIsMobile);
+    } else {
+      mobileResolutionMatch.addListener(updateIsMobile);
+    }
 
     // Remove event listener on cleanup
-    return () => mobileResolutionMatch.removeEventListener('change', updateIsMobile);
+    return () => {
+      if (mobileResolutionMatch.removeEventListener) {
+        mobileResolutionMatch.removeEventListener('change', updateIsMobile);
+      } else {
+        mobileResolutionMatch.removeListener(updateIsMobile);
+      }
+    };
   }, []); // Empty array ensures that effect is only run on mount
 
   return isMobile;
