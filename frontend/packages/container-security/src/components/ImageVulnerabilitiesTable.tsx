@@ -19,7 +19,7 @@ const ImageVulnerabilitiesTable: React.FC<ImageVulnerabilitiesTableProps> = (pro
   );
   const ImageVulnerabilitiesTableHeader = () => [
     {
-      title: t('container-security~Vulnerability'),
+      title: t('container-security~Name'),
       transforms: [sortable],
       sortField: 'vulnerability.name',
       props: { className: imageVulnerabilitiesTableColumnClasses[0] },
