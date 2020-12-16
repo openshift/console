@@ -40,7 +40,6 @@ fi
 
 if [ -n "${headless-}" ] && [ -z "${pkg-}" ]; then
   yarn run test-cypress-console-headless
-  yarn run test-cypress-olm-headless
   yarn run test-cypress-devconsole-headless
   exit;
 fi

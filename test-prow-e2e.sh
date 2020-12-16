@@ -34,7 +34,7 @@ export DBUS_SESSION_BUS_ADDRESS
 
 SCENARIO="${1:-e2e}"
 
-if [ "$SCENARIO" != "login" ] && [ "$SCENARIO" != "olmFull" ] && ["$SCENARIO" != "ceph"]; then
+if [ "$SCENARIO" != "login" ] && [ "$SCENARIO" != "olmFull" ] && [ "$SCENARIO" != "ceph" ]; then
   CHROME_VERSION=$(google-chrome --version) ./test-protractor.sh "$SCENARIO"
 fi
 
