@@ -11,7 +11,7 @@ import { modelFor, referenceForModel } from '../../module/k8s';
 import confirmNavUnpinModal from './confirmNavUnpinModal';
 import { NavSection } from './section';
 import MulticlusterNav from '../hypercloud/nav/multicluster-nav';
-import HyperCloudNav from './hypercloud-nav';
+import HyperCloudNav from '../hypercloud/nav/hypercloud-nav';
 
 import {
   createLink,
