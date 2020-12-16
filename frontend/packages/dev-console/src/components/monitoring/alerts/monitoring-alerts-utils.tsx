@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { Link } from 'react-router-dom';
-import { SortByDirection, ITransform, IFormatter } from '@patternfly/react-table';
+import { SortByDirection } from '@patternfly/react-table';
 import {
   StateCounts,
   Severity,
@@ -26,14 +26,6 @@ const viewAlertRule = (rule: Rule, ns: string) => ({
   label: 'View Alerting Rule',
   href: `/dev-monitoring/ns/${ns}/rules/${rule.id}`,
 });
-
-export type MonitoringAlertColumn = {
-  title: string;
-  cellFormatters?: IFormatter[];
-  transforms?: ITransform[];
-  fieldName?: string;
-  sortFunc?: string;
-};
 
 export const monitoringAlertRows = (
   alertrules: Rule[],
