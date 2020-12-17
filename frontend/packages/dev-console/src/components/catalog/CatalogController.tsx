@@ -149,7 +149,7 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
       </Helmet>
       <div className="co-m-page__body">
         <div className="co-catalog">
-          <PageHeading title={title} breadcrumbs={type && items?.length > 0 ? breadcrumbs : null} />
+          <PageHeading title={title} breadcrumbs={type ? breadcrumbs : null} />
           <p className="co-catalog-page__description">{description}</p>
           <div className="co-catalog__body">
             <StatusBox
