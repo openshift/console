@@ -1,10 +1,9 @@
 import Keycloak from 'keycloak-js';
 
 const keycloak = new Keycloak({
-    // TODO: 변수 처리
-    realm: "tmax",
-    url: "https://172.22.6.11/auth/",
-    clientId: "hypercloud4",
+    realm: window.SERVER_FLAGS.KeycloakRealm,
+    url: window.SERVER_FLAGS.KeycloakAuthURL,
+    clientId: window.SERVER_FLAGS.KeycloakClientId,
 });
 
 keycloak.logout = keycloak.logout.bind(keycloak, { redirectUri: document.location.origin });
