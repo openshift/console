@@ -17,11 +17,7 @@ import { getNamespace, getUID } from '@console/shared';
 import { isTemplateSourceError } from '../../../statuses/template/types';
 import { getTemplateSourceStatus } from '../../../statuses/template/template-source-status';
 import { filterTemplates } from '../../vm-templates/utils';
-import {
-  getTemplateName,
-  getTemplateProvider,
-  isCommonTemplate,
-} from '../../../selectors/vm-template/basic';
+import { getTemplateName, getTemplateProvider } from '../../../selectors/vm-template/basic';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '../../../../../dev-console/src/components/NamespacedPage';
@@ -32,6 +28,7 @@ import { formReducer, initFormState } from '../forms/create-vm-form-reducer';
 import { useStorageClassConfigMap } from '../../../hooks/storage-class-config-map';
 import { SUPPORT_URL } from '../../../constants/vm-templates';
 import { useVmTemplatesResources } from '../hooks/use-vm-templates-resources';
+import { getDescription } from '../../../selectors/selectors';
 
 const DevConsoleCreateVmFormEmptyState: React.FC<{ templateParam: string; t: TFunction }> = ({
   templateParam,
@@ -94,6 +91,8 @@ export const DevConsoleCreateVmForm: React.FC<RouteComponentProps> = () => {
   const [createError, setCreateError] = React.useState<string>();
   const [scConfigMap, scLoaded, scError] = useStorageClassConfigMap();
   const template = selectedTemplate?.variants?.[0];
+  const provider = getTemplateProvider(t, template);
+  const templateDescription = getDescription(template);
   const sourceStatus = getTemplateSourceStatus({
     pvcs,
     pods,
@@ -145,14 +144,19 @@ export const DevConsoleCreateVmForm: React.FC<RouteComponentProps> = () => {
                       </div>
                     </div>
                     <p className="co-catalog-item-details__description">
-                      {isCommonTemplate(template)
-                        ? t(
-                            'kubevirt-plugin~This template is {{providerParam}}. The Boot source is also maintained by Red Hat.',
-                            { providerParam: getTemplateProvider(t, template, true) },
-                          )
-                        : t('kubevirt-plugin~This template is {{providerParam}}', {
-                            providerParam: getTemplateProvider(t, template, true),
-                          })}
+                      <Stack hasGutter>
+                        {templateDescription && <StackItem>{templateDescription}</StackItem>}
+                        {provider && (
+                          <StackItem>
+                            {t(
+                              "kubevirt-plugin~This template's boot source is defined by {{providerParam}}",
+                              {
+                                providerParam: provider,
+                              },
+                            )}
+                          </StackItem>
+                        )}
+                      </Stack>
                     </p>
                     <>
                       <hr />
