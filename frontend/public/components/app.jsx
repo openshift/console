@@ -219,7 +219,7 @@ const eventLogger = (event, error) => {
 };
 
 render(
-  <ReactKeycloakProvider authClient={keycloak} initOptinitOptions={{ onLoad: 'check-sso' }} LoadingComponent={<LoadingBox />} onEvent={eventLogger}>
+  <ReactKeycloakProvider authClient={keycloak} initOptions={{ onLoad: 'check-sso', checkLoginIframe : false }} LoadingComponent={<LoadingBox />} onEvent={eventLogger}>
     <Provider store={store}>
       <Router history={history} basename={window.SERVER_FLAGS.basePath}>
         <Switch>

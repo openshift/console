@@ -93,12 +93,7 @@ const HyperCloudNav = () => (
           <ResourceNSLink resource="inferenceservices" name='InferenceService' />
           <ResourceNSLink resource="workflowtemplates" name='WorkflowTemplate' />
           <ResourceNSLink resource="workflows" name='Workflow' />
-        </NavSection>
-    */}
-        <NavSection title="Security">
-          <ResourceClusterLink resource="podsecuritypolicies" name="PodSecurityPolicy" />
-          <ResourceNSLink resource="networkpolicies" name="Network Policies" />
-        </NavSection>
+        </NavSection> */}
         <NavSection title="Image">
           <ResourceNSLink resource="registries" name="Registry" />
           <ResourceNSLink resource="imagesigners" name="Image Signer" />
