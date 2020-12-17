@@ -48,7 +48,6 @@ const HyperCloudNav = () => (
           <ResourceNSLink resource="statefulsets" name="Stateful Sets" />
           <ResourceNSLink resource="virtualmachines" name="Virtual Machine" />
           <ResourceNSLink resource="virtualmachineinstances" name="Virtual Machine Instance" />
-          <ResourceNSLink resource="vmirs" name="VMIRS" />
           <ResourceNSLink resource="configmaps" name="Config Maps" />
           <ResourceNSLink resource="secrets" name="Secrets" />
           <ResourceNSLink resource="jobs" name="Jobs" />
