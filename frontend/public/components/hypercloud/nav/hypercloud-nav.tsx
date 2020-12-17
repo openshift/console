@@ -48,6 +48,7 @@ const HyperCloudNav = () => (
           <ResourceNSLink resource="statefulsets" name="Stateful Sets" />
           <ResourceNSLink resource="virtualmachines" name="Virtual Machine" />
           <ResourceNSLink resource="virtualmachineinstances" name="Virtual Machine Instance" />
+          <ResourceNSLink resource="vmirs" name="VMIRS" />
           <ResourceNSLink resource="configmaps" name="Config Maps" />
           <ResourceNSLink resource="secrets" name="Secrets" />
           <ResourceNSLink resource="jobs" name="Jobs" />
@@ -66,8 +67,9 @@ const HyperCloudNav = () => (
           <HrefLink href="/kiali" name="Kiali" />
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_46')}>
-          <ResourceNSLink resource="ingresses" name="Ingresses" />
           <ResourceNSLink resource="services" name="Services" />
+          <ResourceNSLink resource="ingresses" name="Ingresses" />
+          <ResourceNSLink resource="networkpolicies" name="Network Policies" />
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_50')}>
           <ResourceClusterLink resource="storageclasses" name="Storage Classes" />
@@ -80,24 +82,23 @@ const HyperCloudNav = () => (
           <ResourceNSLink resource="taskruns" name='TaskRun' />
           <ResourceNSLink resource="pipelines" name='Pipeline' />
           <ResourceNSLink resource="pipelineruns" name='PipelineRun' />
-          <ResourceNSLink resource="pipelineresources" name='PipelineResource' />
           <ResourceNSLink resource="approvals" name='Approval' />
+          <ResourceNSLink resource="pipelineresources" name='PipelineResource' />
           <ResourceNSLink resource="conditions" name='Condition' />
         </NavSection>
-        <NavSection title="AI DevOps">
+        {/* <NavSection title="AI DevOps">
           <ResourceNSLink resource="notebooks" name='Notebook' />
           <ResourceNSLink resource="experiments" name='Experiment' />
           <ResourceNSLink resource="trainingjobs" name='TrainingJob' />
           <ResourceNSLink resource="inferenceservices" name='InferenceService' />
           <ResourceNSLink resource="workflowtemplates" name='WorkflowTemplate' />
           <ResourceNSLink resource="workflows" name='Workflow' />
-        </NavSection>
-        <NavSection title="Security">
-          <ResourceClusterLink resource="podsecuritypolicies" name='PodSecurityPolicy' />
-          <ResourceNSLink resource="networkpolicies" name="Network Policies" />
-        </NavSection>
+        </NavSection> */}
         <NavSection title="Image">
           <ResourceNSLink resource="registries" name="Registry" />
+          <ResourceNSLink resource="imagesigners" name="Image Signer" />
+          <ResourceNSLink resource="imagesignrequests" name="Image Sign Request" />
+          <ResourceNSLink resource="imagetransfers" name="Image Transfer" />
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_79')}>
           <ResourceClusterLink resource="namespaces" name="Namespaces" required={FLAGS.CAN_LIST_NS} />
@@ -114,10 +115,10 @@ const HyperCloudNav = () => (
           <ResourceNSLink resource="roles" name="Roles" startsWith={rolesStartsWith} />
           <ResourceNSLink resource="rolebindings" name="Role Bindings" startsWith={rolebindingsStartsWith} />
           <ResourceNSLink resource="rolebindingclaims" name="Role Binding Claims" startsWith={rolebindingsStartsWith} />
+          <ResourceNSLink resource="serviceaccounts" name="Service Accounts" />
+          <ResourceClusterLink resource="podsecuritypolicies" name='PodSecurityPolicy' />
           <ResourceClusterLink resource={referenceForModel(UserModel)} name="Users" required={[FLAGS.OPENSHIFT, FLAGS.CAN_LIST_USERS]} />
           <ResourceClusterLink resource={referenceForModel(GroupModel)} name="User Groups" required={[FLAGS.OPENSHIFT, FLAGS.CAN_LIST_GROUPS]} />
-          <ResourceClusterLink resource="usersecuritypolicies" name="User Security Policy" />
-          <ResourceNSLink resource="serviceaccounts" name="Service Accounts" />
         </NavSection>
       </>
     )}

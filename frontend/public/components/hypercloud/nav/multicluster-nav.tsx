@@ -35,6 +35,11 @@ const MulticlusterNav = () => (
       <Separator name="NetworksSeparator" />
       <h3 style={{ paddingLeft: '28px' }}>Management</h3>
       <ResourceClusterLink resource="federatednamespaces" name="Namespaces" />
+      <h3 style={{ paddingLeft: '28px' }}>Image</h3>
+      <ResourceClusterLink resource="federatedregistries" name="Registry" />
+      <ResourceClusterLink resource="federatedimagesigners" name="Image Signer" />
+      <ResourceClusterLink resource="federatedimagesignrequests" name="Image Sign Request" />
+      <ResourceClusterLink resource="federatedimagetransfers" name="Image Transfer" />
     </NavSection>
   </>
 );
