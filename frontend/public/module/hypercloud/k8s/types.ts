@@ -5,6 +5,12 @@ export type ApprovalKind = K8sResourceCommon & {
   apiGroup?: string;
 };
 
+export type ServiceBrokerKind = K8sResourceCommon & {
+  spec: {
+    url?: string;
+  };
+};
+
 // export type K8sResourceCommon = {
 //     apiVersion?: string;
 //     kind?: string;
