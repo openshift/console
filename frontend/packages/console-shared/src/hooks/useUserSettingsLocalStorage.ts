@@ -11,7 +11,7 @@ const CONFIGMAP_LS_KEY = 'console-user-settings';
 export const useUserSettingsLocalStorage = <T>(
   key: string,
   defaultValue: T,
-  watch: boolean = true,
+  sync: boolean = false,
 ): [T, React.Dispatch<React.SetStateAction<T>>] => {
   const keyRef = React.useRef(key);
   const defaultValueRef = React.useRef(defaultValue);
@@ -32,30 +32,27 @@ export const useUserSettingsLocalStorage = <T>(
   lsDataRef.current = lsData;
 
   const localStorageUpdated = React.useCallback(
-    (ev: StorageEvent) => {
-      if (ev.key === storageConfigNameRef.current) {
-        const lsConfigMapData = deseralizeData(localStorage.getItem(storageConfigNameRef.current));
-        if (
-          lsData !== undefined &&
-          lsConfigMapData?.[keyRef.current] &&
-          seralizeData(lsConfigMapData[keyRef.current]) !== seralizeData(lsData)
-        ) {
-          setLsData(lsConfigMapData[keyRef.current]);
+    (event: StorageEvent) => {
+      if (event.key === storageConfigNameRef.current) {
+        const lsConfigMapData = deseralizeData(event.newValue);
+        const newData = lsConfigMapData?.[keyRef.current];
+        if (newData && seralizeData(newData) !== seralizeData(lsData)) {
+          setTimeout(() => setLsData(newData), 100);
         }
       }
     },
     [lsData],
   );
   React.useEffect(() => {
-    if (watch) {
+    if (sync) {
       window.addEventListener('storage', localStorageUpdated);
     }
     return () => {
-      if (watch) {
+      if (sync) {
         window.removeEventListener('storage', localStorageUpdated);
       }
     };
-  }, [localStorageUpdated, watch]);
+  }, [localStorageUpdated, sync]);
 
   const updateLsData = React.useCallback<React.Dispatch<React.SetStateAction<T>>>(
     (action: React.SetStateAction<T>) => {

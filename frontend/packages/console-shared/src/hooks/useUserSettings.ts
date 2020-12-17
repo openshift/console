@@ -68,7 +68,7 @@ export const useUserSettings = <T>(
   const [lsData, setLsDataCallback] = useUserSettingsLocalStorage(
     keyRef.current,
     defaultValueRef.current,
-    fallbackLocalStorage,
+    fallbackLocalStorage && sync,
   );
 
   React.useEffect(() => {
