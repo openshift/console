@@ -18,6 +18,7 @@ import { NamespaceRedirect } from './utils/namespace-redirect';
 import { getActivePerspective } from '../reducers/ui';
 import { RootState } from '../redux';
 import { pluralToKind } from './hypercloud/form';
+import { getPerspectives } from '../hypercloud/perspectives';
 
 //PF4 Imports
 import { PageSection, PageSectionVariants } from '@patternfly/react-core';
@@ -59,15 +60,13 @@ const DefaultPage_: React.FC<DefaultPageProps> = ({ flags, activePerspective }) 
   // support redirecting to perspective landing page
   return flags[FLAGS.OPENSHIFT] ? (
     <Redirect
-      to={plugins.registry
-        .getPerspectives()
+      to={getPerspectives()
         .find(p => p.properties.id === activePerspective)
         .properties.getLandingPageURL(flags)}
     />
   ) : (
     <Redirect
-      to={plugins.registry
-        .getPerspectives()
+      to={getPerspectives()
         .find(p => p.properties.id === activePerspective)
         .properties.getK8sLandingPageURL(flags)}
     />

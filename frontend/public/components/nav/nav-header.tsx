@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Dropdown, DropdownItem, DropdownToggle, Title } from '@patternfly/react-core';
 import { CaretDownIcon } from '@patternfly/react-icons';
 import { Perspective } from '@console/plugin-sdk';
-import * as plugins from '../../plugins';
+import { getPerspectives } from '../../hypercloud/perspectives';
 import { RootState } from '../../redux';
 import { featureReducerName, getFlagsObject, FlagsObject } from '../../reducers/features';
 import { getActivePerspective } from '../../reducers/ui';
@@ -84,7 +84,7 @@ const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({
     [activePerspective, onPerspectiveSelect],
   );
 
-  const perspectives = React.useMemo(() => plugins.registry.getPerspectives(), []);
+  const perspectives = React.useMemo(() => getPerspectives(), []);
   const { icon, name } = React.useMemo(
     () => perspectives.find((p) => p.properties.id === activePerspective).properties,
     [activePerspective, perspectives],
