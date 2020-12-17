@@ -1,6 +1,6 @@
 import { createContext, useCallback } from 'react';
 import { useUserSettings } from '@console/shared/src/hooks/useUserSettings';
-import { QUICK_START_REDUX_STATE_LOCAL_STORAGE_KEY } from '../../../redux/reducers/quick-start-reducer';
+import { QUICKSTART_REDUX_STATE_LOCAL_STORAGE_KEY } from './const';
 import {
   AllQuickStartStates,
   QuickStartState,
@@ -13,23 +13,25 @@ export type QuickStartContextValues = {
   allQuickStartStates?: AllQuickStartStates;
   activeQuickStartState?: QuickStartState;
   setActiveQuickStart?: (quickStartId: string, totalTasks?: number) => void;
-  setQuickStartStatus?: (quickStartId: string, status: QuickStartStatus) => void;
+  startQuickStart?: (quickStartId: string, totalTasks: number) => void;
+  restartQuickStart?: (quickStartId: string, totalTasks: number) => void;
+  nextStep?: (totalTasks: number) => void;
+  previousStep?: () => void;
   setQuickStartTaskNumber?: (quickStartId: string, taskNumber: number) => void;
   setQuickStartTaskStatus?: (taskStatus: QuickStartTaskStatus) => void;
-  resetQuickStart?: (quickStartId: string, totalTasks: number) => void;
   getQuickStartForId?: (id: string) => QuickStartState;
 };
 
 export const QuickStartContext = createContext<QuickStartContextValues>({ activeQuickStartID: '' });
 
 const getInitialState = () =>
-  localStorage.getItem(QUICK_START_REDUX_STATE_LOCAL_STORAGE_KEY)
-    ? JSON.parse(localStorage.getItem(QUICK_START_REDUX_STATE_LOCAL_STORAGE_KEY))
+  localStorage.getItem(QUICKSTART_REDUX_STATE_LOCAL_STORAGE_KEY)
+    ? JSON.parse(localStorage.getItem(QUICKSTART_REDUX_STATE_LOCAL_STORAGE_KEY))
     : {};
 
-const getDefaultQuickStartState = (totalTasks: number) => {
+const getDefaultQuickStartState = (totalTasks: number, initialStatus?: QuickStartStatus) => {
   const defaultQuickStartState = {
-    status: QuickStartStatus.NOT_STARTED,
+    status: initialStatus || QuickStartStatus.NOT_STARTED,
     taskNumber: -1,
   };
   if (totalTasks) {
@@ -47,7 +49,7 @@ const ALL_QUICK_START_STATE_KEY = `${QUICK_START_KEY}.allStates`;
 const useActiveQuickStartId = () =>
   useUserSettings<string>(ACTIVE_QUICK_START_ID_KEY, getInitialState()?.activeQuickStartId ?? '');
 const useAllQuickStartStates = () =>
-  useUserSettings(ALL_QUICK_START_STATE_KEY, getInitialState()?.allQuickStartStates ?? {});
+  useUserSettings(ALL_QUICK_START_STATE_KEY, getInitialState()?.allQuickStartStates ?? {}, true);
 
 export const useValuesForQuickStartContext = (): QuickStartContextValues => {
   const [activeQuickStartID, setActiveQuickStartID] = useActiveQuickStartId();
@@ -65,26 +67,124 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
     [setActiveQuickStartID, setAllQuickStartStates],
   );
 
-  const setQuickStartStatus = useCallback(
-    (quickStartId: string, status: QuickStartStatus) => {
+  const startQuickStart = useCallback(
+    (quickStartId: string, totalTasks?: number) => {
+      setActiveQuickStartID((id) => {
+        if (!id || id !== quickStartId) {
+          return quickStartId;
+        }
+        return id;
+      });
       setAllQuickStartStates((qs) => {
-        const quickStart = qs[quickStartId];
-        const updatedQuickStart = { ...quickStart, status };
-        return { ...qs, [quickStartId]: updatedQuickStart };
+        if (qs.hasOwnProperty(quickStartId)) {
+          return {
+            ...qs,
+            [quickStartId]: { ...qs[quickStartId], status: QuickStartStatus.IN_PROGRESS },
+          };
+        }
+        return {
+          ...qs,
+          [quickStartId]: getDefaultQuickStartState(totalTasks, QuickStartStatus.IN_PROGRESS),
+        };
       });
     },
-    [setAllQuickStartStates],
+    [setActiveQuickStartID, setAllQuickStartStates],
   );
+
+  const restartQuickStart = useCallback(
+    (quickStartId: string, totalTasks: number) => {
+      setActiveQuickStartID((id) => {
+        if (!id || id !== quickStartId) {
+          return quickStartId;
+        }
+        return id;
+      });
+      setAllQuickStartStates((qs) => ({
+        ...qs,
+        [quickStartId]: getDefaultQuickStartState(totalTasks, QuickStartStatus.IN_PROGRESS),
+      }));
+    },
+    [setActiveQuickStartID, setAllQuickStartStates],
+  );
+
+  const nextStep = useCallback(
+    (totalTasks: number) => {
+      if (!activeQuickStartID) return;
+
+      setAllQuickStartStates((qs) => {
+        const quickStart = qs[activeQuickStartID];
+        const status = quickStart?.status;
+        const taskNumber = quickStart?.taskNumber;
+        const taskStatus = quickStart[`taskStatus${taskNumber}`];
+
+        let updatedStatus;
+        let updatedTaskNumber;
+        let updatedTaskStatus;
+
+        if (status === QuickStartStatus.NOT_STARTED) {
+          updatedStatus = QuickStartStatus.IN_PROGRESS;
+        } else if (
+          status === QuickStartStatus.IN_PROGRESS &&
+          taskStatus !== QuickStartTaskStatus.INIT &&
+          taskNumber === totalTasks - 1
+        ) {
+          updatedStatus = QuickStartStatus.COMPLETE;
+        }
+
+        if (taskStatus === QuickStartTaskStatus.INIT) {
+          updatedTaskStatus = QuickStartTaskStatus.REVIEW;
+        }
+
+        if (taskNumber < totalTasks && !updatedTaskStatus) {
+          updatedTaskNumber = taskNumber + 1;
+        }
+
+        const newState = {
+          ...qs,
+          [activeQuickStartID]: {
+            ...quickStart,
+            ...(updatedStatus ? { status: updatedStatus } : {}),
+            ...(updatedTaskNumber > -1 ? { taskNumber: updatedTaskNumber } : {}),
+            ...(updatedTaskStatus ? { [`taskStatus${taskNumber}`]: updatedTaskStatus } : {}),
+          },
+        };
+        return newState;
+      });
+    },
+    [activeQuickStartID, setAllQuickStartStates],
+  );
+
+  const previousStep = useCallback(() => {
+    setAllQuickStartStates((qs) => {
+      const quickStart = qs[activeQuickStartID];
+      const taskNumber = quickStart?.taskNumber;
+
+      if (taskNumber < 0) return qs;
+
+      return { ...qs, [activeQuickStartID]: { ...quickStart, taskNumber: taskNumber - 1 } };
+    });
+  }, [activeQuickStartID, setAllQuickStartStates]);
+
   const setQuickStartTaskNumber = useCallback(
     (quickStartId: string, taskNumber: number) => {
       setAllQuickStartStates((qs) => {
         const quickStart = qs[quickStartId];
-        const updatedQuickStart = { ...quickStart, taskNumber };
+        const status = quickStart?.status;
+        let updatedStatus;
+        if (taskNumber > -1 && status === QuickStartStatus.NOT_STARTED) {
+          updatedStatus = QuickStartStatus.IN_PROGRESS;
+        }
+        const updatedQuickStart = {
+          ...quickStart,
+          ...(updatedStatus ? { status: updatedStatus } : {}),
+          taskNumber,
+        };
         return { ...qs, [quickStartId]: updatedQuickStart };
       });
     },
     [setAllQuickStartStates],
   );
+
   const setQuickStartTaskStatus = useCallback(
     (taskStatus: QuickStartTaskStatus) => {
       const quickStart = allQuickStartStates[activeQuickStartID];
@@ -94,28 +194,24 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
     },
     [allQuickStartStates, activeQuickStartID, setAllQuickStartStates],
   );
-  const resetQuickStart = useCallback(
-    (quickStartId: string, totalTasks: number) => {
-      setAllQuickStartStates((qs) => ({
-        ...qs,
-        [quickStartId]: getDefaultQuickStartState(totalTasks),
-      }));
-    },
-    [setAllQuickStartStates],
-  );
+
   const activeQuickStartState = allQuickStartStates?.[activeQuickStartID] ?? {};
+
   const getQuickStartForId = useCallback((id: string) => allQuickStartStates[id], [
     allQuickStartStates,
   ]);
+
   return {
     activeQuickStartID,
     activeQuickStartState,
     allQuickStartStates,
     setActiveQuickStart,
-    setQuickStartStatus,
+    startQuickStart,
+    restartQuickStart,
+    nextStep,
+    previousStep,
     setQuickStartTaskNumber,
     setQuickStartTaskStatus,
-    resetQuickStart,
     getQuickStartForId,
   };
 };

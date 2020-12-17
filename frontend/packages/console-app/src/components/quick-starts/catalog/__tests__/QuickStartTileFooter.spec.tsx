@@ -26,9 +26,8 @@ describe('QuickStartTileFooter', () => {
   beforeEach(() => {
     spyOn(React, 'useContext').and.returnValue({
       activeQuickStartID: '',
-      setActiveQuickStart: () => {},
-      setQuickStartStatus: () => {},
-      resetQuickStart: () => {},
+      startQuickStart: () => {},
+      restartQuickStart: () => {},
     });
   });
   it('should load proper footer links for completed tours', () => {
