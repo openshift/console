@@ -176,6 +176,7 @@ export const PopoverBody = withDashboardResources<DashboardItemProps & PopoverBo
         [consumers],
       );
 
+       /* TODO: perspective admin을 사용하지 않기 때문에 추후 확인 필요 */
       const monitoringURL =
         canAccessMonitoring && activePerspective === 'admin'
           ? `/monitoring/query-browser?${monitoringParams.toString()}`
