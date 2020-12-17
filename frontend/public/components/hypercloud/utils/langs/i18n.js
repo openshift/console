@@ -24,8 +24,8 @@ const resource = {
 i18n
   .use(initReactI18next) // passes i18n down to react-i18next
   .init({
-    //lng: 'en',
-    lng: window.localStorage.getItem('i18nextLng') || navigator.language || 'ko',
+    lng: 'en',
+    //lng: window.localStorage.getItem('i18nextLng') || navigator.language || 'ko',
     debug: true,
     detection: options,
     resources: resource,
