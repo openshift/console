@@ -31,18 +31,16 @@ export const useUserSettingsLocalStorage = <T>(
   const lsDataRef = React.useRef<T>(lsData);
   lsDataRef.current = lsData;
 
-  const localStorageUpdated = React.useCallback(
-    (event: StorageEvent) => {
-      if (event.key === storageConfigNameRef.current) {
-        const lsConfigMapData = deseralizeData(event.newValue);
-        const newData = lsConfigMapData?.[keyRef.current];
-        if (newData && seralizeData(newData) !== seralizeData(lsData)) {
-          setTimeout(() => setLsData(newData), 100);
-        }
+  const localStorageUpdated = React.useCallback((event: StorageEvent) => {
+    if (event.key === storageConfigNameRef.current) {
+      const lsConfigMapData = deseralizeData(event.newValue);
+      const newData = lsConfigMapData?.[keyRef.current];
+      if (newData && seralizeData(newData) !== seralizeData(lsDataRef.current)) {
+        setLsData(newData);
       }
-    },
-    [lsData],
-  );
+    }
+  }, []);
+
   React.useEffect(() => {
     if (sync) {
       window.addEventListener('storage', localStorageUpdated);
@@ -72,7 +70,23 @@ export const useUserSettingsLocalStorage = <T>(
             [keyRef.current]: data,
           },
         };
-        localStorage.setItem(storageConfigNameRef.current, seralizeData(dataToUpdate));
+        const newValue = seralizeData(dataToUpdate);
+
+        // create a storage event to dispatch locally since browser windows do not fire the
+        // storage event if the change originated from the current window
+        const event = new StorageEvent('storage', {
+          storageArea: localStorage,
+          key: storageConfigNameRef.current,
+          newValue,
+          oldValue: localStorage.getItem(storageConfigNameRef.current),
+          url: window.location.toString(),
+        });
+
+        // update local storage
+        localStorage.setItem(storageConfigNameRef.current, newValue);
+
+        // dispatch local event
+        window.dispatchEvent(event);
       }
     },
     [],
