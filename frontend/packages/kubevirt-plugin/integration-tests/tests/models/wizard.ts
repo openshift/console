@@ -1,6 +1,6 @@
 /* eslint-disable no-await-in-loop */
 import { browser, ExpectedConditions as until } from 'protractor';
-import { createItemButton, isLoaded } from '@console/internal-integration-tests/views/crud.view';
+import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
 import { clickNavLink } from '@console/internal-integration-tests/views/sidenav.view';
 import { click, fillInput, asyncForEach } from '@console/shared/src/test-utils/utils';
 import { K8sKind } from '@console/internal/module/k8s';
@@ -52,7 +52,7 @@ export class Wizard {
       await isLoaded();
     }
 
-    await click(createItemButton);
+    await click(view.createItemButton);
     await click(view.createWithWizardButton);
     await view.waitForNoLoaders();
   }
@@ -86,6 +86,10 @@ export class Wizard {
     }
   }
 
+  async selectTemplate(name: string) {
+    await click(view.templateByName(name));
+  }
+
   async fillName(name: string) {
     await fillInput(view.nameInput, name);
     return checkForError(view.vmNameHelper);
@@ -100,7 +104,7 @@ export class Wizard {
   }
 
   async selectFlavor(flavor: FlavorConfig) {
-    await selectItemFromDropdown(view.flavorSelect, dropDownItemMain(flavor.flavor));
+    await selectItemFromDropdown(view.flavorSelect, dropDownItem(flavor.flavor));
     if (flavor.flavor === Flavor.CUSTOM && (!flavor.memory || !flavor.cpu)) {
       throw Error('Custom Flavor requires memory and cpu values.');
     }
@@ -237,6 +241,24 @@ export class Wizard {
     );
   }
 
+  async processSelectTemplate(data: VMBuilderData, ignoreWarnings: boolean = false) {
+    const { commonTemplate } = data;
+    if (commonTemplate) {
+      await this.selectTemplate(commonTemplate.name);
+    }
+    await this.next(ignoreWarnings);
+  }
+
+  async processBootSource(data: VMBuilderData, ignoreWarnings: boolean = false) {
+    // TODO: add processStep for bootsource
+    await this.next(ignoreWarnings);
+  }
+
+  async processReviewAndCreate(data: VMBuilderData, ignoreWarnings: boolean = false) {
+    // TODO: add processStep for review and create
+    await this.next(ignoreWarnings);
+  }
+
   async processGeneralStep(data: VMBuilderData, ignoreWarnings: boolean = false) {
     const { name, description, provisionSource, os, flavor, workload } = data;
     if (name) {
@@ -322,15 +344,19 @@ export class Wizard {
   }
 
   async processWizard(data: VMBuilderData) {
-    await this.processGeneralStep(data);
-    await this.processNetworkStep(data);
-    await this.processStorageStep(data);
-    await this.processAdvanceStep(data);
-    await this.processReviewStep(data);
+    await this.processSelectTemplate(data);
+    const { customize } = data;
+    if (customize) {
+      await click(view.customizeButton);
+      await this.processGeneralStep(data);
+      await this.processNetworkStep(data);
+      await this.processStorageStep(data);
+      await this.processAdvanceStep(data);
+      await this.processReviewStep(data);
 
-    // Create
-    await this.confirmAndCreate();
-    await this.waitForCreation();
-    // TODO check for error and in case of error throw Error
+      // Create
+      await this.confirmAndCreate();
+      await this.waitForCreation();
+    }
   }
 }

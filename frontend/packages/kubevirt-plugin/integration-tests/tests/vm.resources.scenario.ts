@@ -126,6 +126,7 @@ describe('Test network type presets and options', () => {
 
   const vm = new VMBuilder(getBasicVMBuilder())
     .setProvisionSource(ProvisionSource.CONTAINER)
+    .setCustomize(true)
     .build();
 
   beforeAll(async () => {

@@ -10,6 +10,7 @@ import {
   containerRootDisk,
   flavorConfigs,
   getDiskToCloneFrom,
+  basicCommonTemplate,
 } from './mocks';
 import { VirtualMachine } from '../models/virtualMachine';
 import { VMTemplateBuilder } from '../models/vmtemplateBuilder';
@@ -91,6 +92,7 @@ export const getBasicVMBuilder = () =>
   new VMBuilder()
     .setNamespace(testName)
     .setDescription('Default vm description')
+    .setCommonTemplate(basicCommonTemplate)
     .setFlavor(flavorConfigs.Tiny)
     .setOS(OperatingSystem.RHEL7)
     .setWorkload(Workload.DESKTOP)

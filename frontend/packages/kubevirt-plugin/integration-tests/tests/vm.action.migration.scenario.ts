@@ -22,6 +22,7 @@ describe('Test VM Migration', () => {
   const vm = new VMBuilder(getBasicVMBuilder())
     .setProvisionSource(ProvisionSource.URL)
     .setDisks([rwxRootDisk])
+    .setCustomize(true)
     .generateNameForPrefix('vm-for-migration-test')
     .build();
 

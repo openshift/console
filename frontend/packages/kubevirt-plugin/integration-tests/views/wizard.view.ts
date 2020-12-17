@@ -5,13 +5,19 @@ import { click } from '@console/shared/src/test-utils/utils';
 import { ProvisionSource } from '../tests/utils/constants/enums/provisionSource';
 
 // Wizard Common
-export const createWithWizardButton = $('#wizard-link');
-export const createWithYAMLButton = $('#yaml-link');
+export const createItemButton = $('[data-test-id="item-create"]');
+export const createWithWizardButton = $('[data-test-id="vm-wizard"]');
+export const createWithYAMLButton = $('[data-test-id="vm-yaml]');
 export const backButton = element(by.buttonText('Back'));
 export const cancelButton = element(by.buttonText('Cancel'));
 export const nextButton = element(by.buttonText('Next'));
+export const customizeButton = $('[data-test-id="wizard-customize"]');
 export const createVirtualMachineButton = element(by.partialButtonText('Create Virtual Machine'));
 export const modalCancelButton = $('.modal-content').element(by.buttonText('Cancel'));
+
+// Template
+export const templateByName = (name: string) =>
+  element(by.cssContainingText('.catalog-tile-pf-title', name));
 
 // Errors
 export const footerError = $('div[aria-label="Danger Alert"]');

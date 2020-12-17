@@ -243,6 +243,7 @@ describe('Test clone VM.', () => {
         .setDisks([rootDisk])
         .setCloudInit(cloudInitCustomScriptConfig)
         .setWaitForImport(true)
+        .setCustomize(true)
         .build();
       await vm.create();
       clonedVM = await vm.clone();

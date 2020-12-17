@@ -15,7 +15,7 @@ import {
   resolveStorageDataAttribute,
   deepFreeze,
 } from '../utils/utils';
-import { Flavor } from '../utils/constants/wizard';
+import { Flavor, TemplateByName } from '../utils/constants/wizard';
 import {
   NIC_MODEL,
   NIC_TYPE,
@@ -480,3 +480,7 @@ export const v2vUIDeployment = {
   },
 };
 deepFreeze(v2vUIDeployment);
+
+export const basicCommonTemplate = {
+  name: TemplateByName.RHEL7,
+};

@@ -29,6 +29,7 @@ describe('Kubevirt create VM using cloud-init', () => {
     const vm = new VMBuilder(getBasicVMBuilder())
       .setProvisionSource(ProvisionSource.CONTAINER)
       .setCloudInit(cloudinitConfig)
+      .setCustomize(true)
       .build();
 
     await vm.create();
@@ -47,6 +48,7 @@ describe('Kubevirt create VM using cloud-init', () => {
     const vm = new VMBuilder(getBasicVMBuilder())
       .setProvisionSource(ProvisionSource.CONTAINER)
       .setCloudInit(customScript)
+      .setCustomize(true)
       .build();
 
     await vm.create();

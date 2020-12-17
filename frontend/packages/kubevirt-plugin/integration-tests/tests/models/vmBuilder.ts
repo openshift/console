@@ -18,6 +18,11 @@ export class VMBuilder extends BaseVMBuilder<VMBuilderData> {
     return this;
   }
 
+  public setCustomize(customize: boolean) {
+    this.data.customize = customize;
+    return this;
+  }
+
   build() {
     if (!this.getData().name) {
       super.generateName();
