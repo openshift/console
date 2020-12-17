@@ -19,7 +19,7 @@ const HyperCloudNav = () => (
   <Translation>
     {t => (
       <>
-        <NavSection title="Home">
+        <NavSection title={t('COMMON:MSG_LNB_MENU_1')}>
           <HrefLink href="/dashboards" activePath="/dashboards/" name="Status" />
           <HrefLink href="/search" name="Search" startsWith={searchStartsWith} />
           <ResourceNSLink resource="audits" name="Audit" />
