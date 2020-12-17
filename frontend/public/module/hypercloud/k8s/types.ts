@@ -10,6 +10,11 @@ export type NamespaceClaimKind = K8sResourceCommon & {
   apiGroup?: string;
 };
 
+export type ResourceQuotaClaimKind = K8sResourceCommon & {
+  namespace?: string;
+  apiGroup?: string;
+};
+
 // export type K8sResourceCommon = {
 //     apiVersion?: string;
 //     kind?: string;

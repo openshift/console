@@ -24,3 +24,15 @@ export const NamespaceClaimModel: K8sKind = {
   id: 'namespaceclaim',
   namespaced: true,
 };
+
+export const ResourceQuotaClaimModel: K8sKind = {
+  label: 'ResourceQuotaClaim',
+  labelPlural: 'ResourceQuotaClaims',
+  apiVersion: 'v1',
+  apiGroup: 'tmax.io',
+  plural: 'resourcequotaclaims',
+  abbr: 'RQC',
+  kind: 'ResourceQuotaClaim',
+  id: 'resourcequotaclaim',
+  namespaced: true,
+};
