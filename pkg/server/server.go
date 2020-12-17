@@ -76,6 +76,10 @@ type jsGlobals struct {
 	LoadTestFactor           int    `json:"loadTestFactor"`
 	GOARCH                   string `json:"GOARCH"`
 	GOOS                     string `json:"GOOS"`
+
+	KeycloakRealm    string `json:keycloakRealm`
+	KeycloakAuthURL  string `json:keycloakAuthURL`
+	KeycloakClientId string `json:keycloakClientId`
 }
 
 type Server struct {
@@ -114,6 +118,11 @@ type Server struct {
 	GrafanaPublicURL      *url.URL
 	PrometheusPublicURL   *url.URL
 	ThanosPublicURL       *url.URL
+
+	// Add keycloak info for auth
+	KeycloakRealm    string
+	KeycloakAuthURL  string
+	KeycloakClientId string
 
 	// Dynamic reverse proxy config
 	DynamicProxyConfig []*backend.Backend
@@ -407,6 +416,11 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		GOARCH:                s.GOARCH,
 		GOOS:                  s.GOOS,
 		LoadTestFactor:        s.LoadTestFactor,
+
+		// return ekycloak info
+		KeycloakRealm:    s.KeycloakRealm,
+		KeycloakAuthURL:  s.KeycloakAuthURL,
+		KeycloakClientId: s.KeycloakClientId,
 	}
 
 	if !s.authDisabled() {
