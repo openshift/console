@@ -82,7 +82,8 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
   }, [selectedItem, namespace, searchTerm]);
 
   const selectPrevious = React.useCallback(() => {
-    const index = getIndexOfSelectedItem();
+    let index = getIndexOfSelectedItem();
+    if (index === 0) index = listCatalogItems?.length;
     setSelectedItemId(listCatalogItems?.[index - 1]?.uid);
     setSelectedItem(listCatalogItems?.[index - 1]);
   }, [listCatalogItems, getIndexOfSelectedItem]);
@@ -101,10 +102,12 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
           break;
         }
         case 'ArrowUp': {
+          e.preventDefault();
           selectPrevious();
           break;
         }
         case 'ArrowDown': {
+          e.preventDefault();
           selectNext();
           break;
         }
