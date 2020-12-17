@@ -1,5 +1,6 @@
 import { podPhaseFilterReducer } from '@console/internal/module/k8s';
 import { nodeStatus } from '@console/app/src/status/node';
+import { volumeSnapshotStatus } from '@console/app/src/status/snapshot';
 import { StatusGroupMapper } from './InventoryItem';
 import { InventoryStatusGroup } from './status-group';
 
@@ -25,6 +26,12 @@ const PV_STATUS_GROUP_MAPPING = {
 const NODE_STATUS_GROUP_MAPPING = {
   [InventoryStatusGroup.NOT_MAPPED]: ['Ready'],
   [InventoryStatusGroup.PROGRESS]: ['Not Ready'],
+};
+
+const VS_STATUS_GROUP_MAPPING = {
+  [InventoryStatusGroup.NOT_MAPPED]: ['Ready'],
+  [InventoryStatusGroup.PROGRESS]: ['Pending'],
+  [InventoryStatusGroup.ERROR]: ['Error'],
 };
 
 export const getStatusGroups = (resources, mapping, mapper, filterType) => {
@@ -61,3 +68,5 @@ export const getPVCStatusGroups: StatusGroupMapper = (resources) =>
   getStatusGroups(resources, PVC_STATUS_GROUP_MAPPING, (pvc) => pvc.status.phase, 'pvc-status');
 export const getPVStatusGroups: StatusGroupMapper = (resources) =>
   getStatusGroups(resources, PV_STATUS_GROUP_MAPPING, (pv) => pv.status.phase, 'pv-status');
+export const getVSStatusGroups: StatusGroupMapper = (resources) =>
+  getStatusGroups(resources, VS_STATUS_GROUP_MAPPING, volumeSnapshotStatus, 'snapshot-status');

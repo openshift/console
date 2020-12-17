@@ -15,6 +15,7 @@ import {
   RouteModel,
   ConfigMapModel,
   SecretModel,
+  VolumeSnapshotModel,
 } from '../../../models';
 import {
   ResourceInventoryItem,
@@ -23,6 +24,7 @@ import {
 import {
   getPodStatusGroups,
   getPVCStatusGroups,
+  getVSStatusGroups,
 } from '@console/shared/src/components/dashboard/inventory-card/utils';
 import { FirehoseResult, FirehoseResource, useAccessReview } from '../../utils';
 import { K8sKind, referenceForModel } from '../../../module/k8s';
@@ -151,6 +153,11 @@ export const InventoryCard = () => {
             useAbbr={item.properties.useAbbr}
           />
         ))}
+        <ProjectInventoryItem
+          projectName={projectName}
+          model={VolumeSnapshotModel}
+          mapper={getVSStatusGroups}
+        />
       </DashboardCardBody>
     </DashboardCard>
   );
