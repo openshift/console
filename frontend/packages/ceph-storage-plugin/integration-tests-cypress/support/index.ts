@@ -58,8 +58,8 @@ Cypress.Commands.add('install', (mode: 'Internal' | 'Attached' = 'Internal', enc
 
       // Step 1
       // Select all worker Nodes
-      commonFlows.checkAll.check();
-      commonFlows.checkAll.should('be.checked');
+      commonFlows.checkAll().check();
+      commonFlows.checkAll().should('be.checked');
       // Two dropdowns in the same page.
       // (Todo: )make dropdown data-test-id be something that can be passed as a prop
       cy.byLegacyTestID('dropdown-button')
