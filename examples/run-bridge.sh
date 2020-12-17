@@ -10,8 +10,8 @@ BRIDGE_K8S_AUTH_BEARER_TOKEN=$(ssh root@$k8sIP "secretname=\$(kubectl get servic
 PROM_PORT='9090'
 
 ./bin/bridge \
-    --listen=http://$myIP:9002 \
-    --base-address=http://$myIP:9002 \
+    --listen=https://$myIP:9002 \
+    --base-address=https://$myIP:9002 \
     --tls-cert-file=tls/tls.crt \
     --tls-key-file=tls/tls.key \
     --k8s-mode=off-cluster \
@@ -24,4 +24,7 @@ PROM_PORT='9090'
     --k8s-mode-off-cluster-prometheus=http://$k8sIP:$PROM_PORT/api  \
     --k8s-mode-off-cluster-alertmanager=http://$k8sIP:$PROM_PORT/api \
     --k8s-mode-off-cluster-thanos=http://$k8sIP:$PROM_PORT/api \
-    # --proxyConfig=examples/pconfig.yaml \
+    --keycloak-realm=tmax \
+    --keycloak-auth-url=https://172.22.6.11/auth \
+    --keycloak-client-id=hypercloud4 \
+    --proxyConfig=examples/pconfig.yaml \

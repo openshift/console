@@ -150,6 +150,11 @@ func main() {
 	// proxy config 경로 획득 20/11/19 jinsoo
 	fProxyConfig := fs.String("proxyConfig", "", "The YAML proxy config file.")
 
+	// NOTE: Keycloak 연동 추가 // 최여진 -> 윤진수 // 20.12.17
+	fKeycloakRealm := fs.String("keycloak-realm", "", "Keycloak Realm Name")
+	fKeycloakAuthURL := fs.String("keycloak-auth-url", "", "URL of the Keycloak Auth server.")
+	fKeycloakClientId := fs.String("keycloak-client-id", "", "Keycloak Client Id")
+
 	if err := fs.Parse(os.Args[1:]); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
@@ -250,6 +255,11 @@ func main() {
 		PrometheusPublicURL:   prometheusPublicURL,
 		ThanosPublicURL:       thanosPublicURL,
 		LoadTestFactor:        *fLoadTestFactor,
+
+		// NOTE: return keycloak infor
+		KeycloakRealm:    *fKeycloakRealm,
+		KeycloakAuthURL:  *fKeycloakAuthURL,
+		KeycloakClientId: *fKeycloakClientId,
 	}
 
 	// if !in-cluster (dev) we should not pass these values to the frontend
