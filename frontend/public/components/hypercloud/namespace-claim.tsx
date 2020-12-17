@@ -3,9 +3,7 @@ import * as classNames from 'classnames';
 
 import { sortable } from '@patternfly/react-table';
 import { fromNow } from '@console/internal/components/utils/datetime';
-import { K8sResourceKind } from '../../module/k8s';
-import { NamespaceClaimKind } from '../../module/k8s';
-import { modelFor } from '@console/internal/module/k8s';
+import { K8sResourceCommon, K8sClaimResourceKind, modelFor } from '../../module/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from '../factory';
 import { Kebab, navFactory, ResourceSummary, SectionHeading, ResourceLink, ResourceKebab } from '../utils';
 // import { WorkloadTableRow, WorkloadTableHeader } from '../workload-table';
@@ -58,15 +56,14 @@ const NamespaceClaimTableHeader = () => {
 };
 NamespaceClaimTableHeader.displayName = 'NamespaceClaimTableHeader';
 
-const NamespaceClaimTableRow: RowFunction<K8sResourceKind> = ({ obj: namespaceclaims, index, key, style }) => {
+const NamespaceClaimTableRow: RowFunction<K8sClaimResourceKind> = ({ obj: namespaceclaims, index, key, style }) => {
   return (
     <TableRow id={namespaceclaims.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink kind={kind} name={namespaceclaims.metadata.name} namespace={namespaceclaims.metadata.namespace} title={namespaceclaims.metadata.uid} />
       </TableData>
       <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
-        type을 어떻게 정해야할지.. metadata, spec, status안에 없음.
-        {/* <ResourceLink kind="Namespace" name={namespaceclaims?.resourceName} title={namespaceclaims?.resourceName} /> */}
+        <ResourceLink kind="Namespace" name={namespaceclaims?.resourceName} title={namespaceclaims?.resourceName} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>{namespaceclaims?.status?.status}</TableData>
       <TableData className={tableColumnClasses[3]}>{namespaceclaims.metadata?.annotations?.owner}</TableData>
@@ -106,7 +103,7 @@ export const NamespaceClaimsDetailsPage: React.FC<NamespaceClaimsDetailsPageProp
 NamespaceClaimsDetailsPage.displayName = 'NamespaceClaimsDetailsPage';
 
 type NamespaceClaimDetailsProps = {
-  obj: NamespaceClaimKind;
+  obj: K8sResourceCommon;
 };
 
 type NamespaceClaimsPageProps = {

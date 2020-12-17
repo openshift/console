@@ -1,14 +1,11 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 
-import { K8sResourceKind } from '../../module/k8s';
+import { K8sResourceCommon, K8sClaimResourceKind, modelFor } from '../../module/k8s';
 import { fromNow } from '@console/internal/components/utils/datetime';
 import { sortable } from '@patternfly/react-table';
-import { ResourceQuotaClaimKind } from '../../module/k8s';
-import { modelFor } from '@console/internal/module/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from '../factory';
 import { Kebab, navFactory, ResourceSummary, SectionHeading, ResourceLink, ResourceKebab } from '../utils';
-// import { WorkloadTableRow, WorkloadTableHeader } from '../workload-table';
 
 const { common } = Kebab.factory;
 
@@ -58,7 +55,7 @@ const ResourceQuotaClaimTableHeader = () => {
 };
 ResourceQuotaClaimTableHeader.displayName = 'ResourceQuotaClaimTableHeader';
 
-const ResourceQuotaClaimTableRow: RowFunction<K8sResourceKind> = ({ obj: resourcequotaclaims, index, key, style }) => {
+const ResourceQuotaClaimTableRow: RowFunction<K8sClaimResourceKind> = ({ obj: resourcequotaclaims, index, key, style }) => {
   return (
     <TableRow id={resourcequotaclaims.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
@@ -68,10 +65,7 @@ const ResourceQuotaClaimTableRow: RowFunction<K8sResourceKind> = ({ obj: resourc
         <ResourceLink kind="Namespace" name={resourcequotaclaims.metadata.namespace} title={resourcequotaclaims.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>{resourcequotaclaims?.status?.status}</TableData>
-      <TableData className={tableColumnClasses[3]}>
-        {/* {resourcequotaclaims.resourceName} */}
-        type을 어떻게 정해야할지.. metadata, spec, status안에 없음.
-      </TableData>
+      <TableData className={tableColumnClasses[3]}>{resourcequotaclaims.resourceName}</TableData>
       <TableData className={tableColumnClasses[4]}>{fromNow(resourcequotaclaims?.metadata?.creationTimestamp)}</TableData>
       <TableData className={tableColumnClasses[5]}>
         <ResourceKebab actions={menuActions} kind={kind} resource={resourcequotaclaims} />
@@ -107,7 +101,7 @@ export const ResourceQuotaClaimsDetailsPage: React.FC<ResourceQuotaClaimsDetails
 ResourceQuotaClaimsDetailsPage.displayName = 'ResourceQuotaClaimsDetailsPage';
 
 type ResourceQuotaClaimDetailsProps = {
-  obj: ResourceQuotaClaimKind;
+  obj: K8sResourceCommon;
 };
 
 type ResourceQuotaClaimsPageProps = {
