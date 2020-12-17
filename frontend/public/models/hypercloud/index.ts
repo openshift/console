@@ -36,3 +36,15 @@ export const ResourceQuotaClaimModel: K8sKind = {
   id: 'resourcequotaclaim',
   namespaced: true,
 };
+
+export const RoleBindingClaimModel: K8sKind = {
+  label: 'RoleBindingClaim',
+  labelPlural: 'RoleBindingClaims',
+  apiVersion: 'v1',
+  apiGroup: 'tmax.io',
+  plural: 'rolebindingclaims',
+  abbr: 'RBC',
+  kind: 'RoleBindingClaim',
+  id: 'rolebindingclaim',
+  namespaced: true,
+};
