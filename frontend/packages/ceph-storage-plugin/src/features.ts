@@ -17,6 +17,7 @@ import {
   RGW_PROVISIONER,
   SECOND,
   OCS_OPERATOR,
+  NOOBAA_PROVISIONER,
 } from './constants';
 import { StorageClusterKind } from './types';
 
@@ -39,54 +40,90 @@ export const OCS_SUPPORT_FLAGS = {
 };
 
 const handleError = (res: any, flags: string[], dispatch: Dispatch, cb: FeatureDetector) => {
-  const status = res?.response?.status;
-  if (_.includes([403, 502], status)) {
+  if (res?.response instanceof Response) {
+    const status = res?.response?.status;
+    if (_.includes([403, 502], status)) {
+      flags.forEach((feature) => {
+        dispatch(setFlag(feature, undefined));
+      });
+    }
+    if (!_.includes([401, 403, 500], status)) {
+      setTimeout(() => cb(dispatch), 15000);
+    }
+  } else {
     flags.forEach((feature) => {
       dispatch(setFlag(feature, undefined));
     });
   }
-  if (!_.includes([401, 403, 500], status)) {
-    setTimeout(() => cb(dispatch), 15000);
-  }
 };
 
+// To be Run only once the Storage Cluster is Installed
+// RGW storageClass should init. first => Noobaa consumes RGW to create a backingStore
+// Stops polling when either the RGW storageClass or the Noobaa Storage Class comes up
 export const detectRGW: FeatureDetector = async (dispatch) => {
   let id = null;
+  let isInitial = true;
   const logicHandler = () =>
     k8sList(StorageClassModel)
       .then((data: StorageClassResourceKind[]) => {
         const isRGWPresent = data.some((sc) => sc.provisioner === RGW_PROVISIONER);
+        const isNooBaaPresent = data.some((sc) => sc.provisioner === NOOBAA_PROVISIONER);
         if (isRGWPresent) {
           dispatch(setFlag(RGW_FLAG, true));
           clearInterval(id);
         } else {
-          dispatch(setFlag(RGW_FLAG, false));
+          if (isInitial === true) {
+            dispatch(setFlag(RGW_FLAG, false));
+            isInitial = false;
+          }
+          // If Noobaa already has come up; Platform doesn't support RGW; stop polling
+          if (isNooBaaPresent) {
+            clearInterval(id);
+          }
         }
       })
-      .catch(() => {
-        clearInterval(id);
+      .catch((error) => {
+        if (error?.response instanceof Response) {
+          const status = error?.response?.status;
+          if (_.includes([403, 502], status)) {
+            dispatch(setFlag(RGW_FLAG, false));
+            clearInterval(id);
+          }
+          if (!_.includes([401, 403, 500], status) && isInitial === true) {
+            dispatch(setFlag(RGW_FLAG, false));
+            isInitial = false;
+          }
+        } else {
+          clearInterval(id);
+        }
       });
-  id = setInterval(logicHandler, 10 * SECOND);
+  id = setInterval(logicHandler, 15 * SECOND);
 };
 
 export const detectOCS: FeatureDetector = async (dispatch) => {
   try {
     const storageClusters = await k8sList(OCSServiceModel, { ns: CEPH_STORAGE_NAMESPACE });
-    const storageCluster = storageClusters.find(
-      (sc: StorageClusterKind) => sc.status.phase !== 'Ignored',
-    );
-    const isInternal = _.isEmpty(storageCluster.spec.externalStorage);
-    dispatch(setFlag(OCS_FLAG, true));
-    dispatch(setFlag(OCS_CONVERGED_FLAG, isInternal));
-    dispatch(setFlag(OCS_INDEPENDENT_FLAG, !isInternal));
-  } catch (e) {
-    if (e?.response?.status !== 404)
-      handleError(e, [OCS_CONVERGED_FLAG, OCS_INDEPENDENT_FLAG], dispatch, detectOCS);
-    else {
-      dispatch(setFlag(OCS_CONVERGED_FLAG, false));
-      dispatch(setFlag(OCS_INDEPENDENT_FLAG, false));
+    if (storageClusters?.length > 0) {
+      const storageCluster = storageClusters.find(
+        (sc: StorageClusterKind) => sc.status.phase !== 'Ignored',
+      );
+      const isInternal = _.isEmpty(storageCluster?.spec?.externalStorage);
+      dispatch(setFlag(OCS_FLAG, true));
+      dispatch(setFlag(OCS_CONVERGED_FLAG, isInternal));
+      dispatch(setFlag(OCS_INDEPENDENT_FLAG, !isInternal));
     }
+  } catch (error) {
+    dispatch(setFlag(OCS_CONVERGED_FLAG, false));
+    dispatch(setFlag(OCS_INDEPENDENT_FLAG, false));
+    dispatch(setFlag(OCS_FLAG, false));
   }
+};
+
+const detectFeatures = (dispatch, csv: ClusterServiceVersionKind) => {
+  const support = JSON.parse(getAnnotations(csv)?.[OCS_SUPPORT_ANNOTATION]);
+  _.keys(OCS_SUPPORT_FLAGS).forEach((feature) => {
+    dispatch(setFlag(OCS_SUPPORT_FLAGS[feature], support.includes(feature.toLowerCase())));
+  });
 };
 
 export const detectOCSSupportedFeatures: FeatureDetector = async (dispatch) => {
@@ -97,16 +134,13 @@ export const detectOCSSupportedFeatures: FeatureDetector = async (dispatch) => {
       CEPH_STORAGE_NAMESPACE,
     );
     const ocsCSV = csvList.items.find((obj) => _.startsWith(getName(obj), OCS_OPERATOR));
-
-    const support = JSON.parse(getAnnotations(ocsCSV)[OCS_SUPPORT_ANNOTATION]);
-    _.keys(OCS_SUPPORT_FLAGS).forEach((feature) => {
-      dispatch(setFlag(OCS_SUPPORT_FLAGS[feature], support.includes(feature.toLowerCase())));
-    });
+    if (ocsCSV) {
+      detectFeatures(dispatch, ocsCSV);
+    } else {
+      // If OCS CSV is not present then poll
+      setTimeout(() => detectOCSSupportedFeatures(dispatch), 15 * SECOND);
+    }
   } catch (error) {
-    error?.response?.status === 404
-      ? _.keys(OCS_SUPPORT_FLAGS).forEach((feature) => {
-          dispatch(setFlag(OCS_SUPPORT_FLAGS[feature], false));
-        })
-      : handleError(error, _.keys(OCS_SUPPORT_FLAGS), dispatch, detectOCSSupportedFeatures);
+    handleError(error, _.keys(OCS_SUPPORT_FLAGS), dispatch, detectOCSSupportedFeatures);
   }
 };

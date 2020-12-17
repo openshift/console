@@ -3,7 +3,7 @@ import * as _ from 'lodash-es';
 import { ActionType as Action, action } from 'typesafe-actions';
 
 import { FLAGS } from '@console/shared/src/constants/common';
-import { isCustomFeatureFlag } from '@console/plugin-sdk/src/typings';
+import { isCustomFeatureFlag, CustomFeatureFlag } from '@console/plugin-sdk/src/typings';
 import {
   subscribeToExtensions,
   extensionDiffListener,
@@ -12,7 +12,6 @@ import store from '../redux';
 import { GroupModel, UserModel, VolumeSnapshotContentModel } from '../models';
 import { ClusterVersionKind } from '../module/k8s';
 import { receivedResources } from './k8s';
-import { pluginStore } from '../plugins';
 import { setClusterID, setCreateProjectMessage, setUser } from './common';
 import client, { fetchURL } from '../graphql/client';
 import { SSARQuery } from './features.gql';
@@ -247,18 +246,27 @@ const ssarCheckActions = ssarChecks.map(({ flag, resourceAttributes, after }) =>
   return fn;
 });
 
-export const detectFeatures = () => (dispatch: Dispatch) =>
+export const detectFeatures = () => (dispatch: Dispatch) => {
+  const customFeatureDetectors: CustomFeatureFlag[] = [];
+  subscribeToExtensions<CustomFeatureFlag>(
+    extensionDiffListener((added) => {
+      added.forEach((e) => {
+        if (!customFeatureDetectors.includes(e)) {
+          customFeatureDetectors.push(e);
+        }
+      });
+    }),
+    isCustomFeatureFlag,
+  );
   [
     detectOpenShift,
     detectCanCreateProject,
     detectClusterVersion,
     detectUser,
     ...ssarCheckActions,
-    ...pluginStore
-      .getAllExtensions()
-      .filter(isCustomFeatureFlag)
-      .map((ff) => ff.properties.detect),
+    ...customFeatureDetectors.map((ff) => ff.properties.detect),
   ].forEach((detect) => detect(dispatch));
+};
 
 const featureFlagController: SetFeatureFlag = (flag, enabled) => {
   store.dispatch(setFlag(flag, enabled));
