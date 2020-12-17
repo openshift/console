@@ -29,13 +29,13 @@ const TopologyControlBar: React.FC<TopologyControlBarProps> = observer(({ visual
             zoomInCallback: action(() => {
               visualization.getGraph().scaleBy(4 / 3);
             }),
-            zoomInTip: t('topology~Zoom In'),
-            zoomInAriaLabel: t('topology~Zoom In'),
+            zoomInTip: t('topology~Zoom in'),
+            zoomInAriaLabel: t('topology~Zoom in'),
             zoomOutCallback: action(() => {
               visualization.getGraph().scaleBy(0.75);
             }),
-            zoomOutTip: t('topology~Zoom Out'),
-            zoomOutAriaLabel: t('topology~Zoom Out'),
+            zoomOutTip: t('topology~Zoom out'),
+            zoomOutAriaLabel: t('topology~Zoom out'),
             fitToScreenCallback: action(() => {
               visualization.getGraph().fit(80);
             }),
