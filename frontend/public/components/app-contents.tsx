@@ -164,6 +164,10 @@ const AppContents_: React.FC<AppContentsProps> = ({ activePerspective, flags }) 
             // <LazyRoute path="/k8s/ns/:ns/roles/:name/:rule/edit" exact loader={() => import('./RBAC' /* webpackChunkName: "rbac" */).then(m => m.EditRulePage)} />
           }
           {/*Create Form */}
+          <LazyRoute path="/k8s/ns/:ns/:plural/~new" exact loader={() => import('./hypercloud/crd/create-default-resource').then(m => m.CreateDefaultPage)} />
+          <LazyRoute path="/k8s/cluster/:plural/~new" exact loader={() => import('./hypercloud/crd/create-default-resource').then(m => m.CreateDefaultPage)} />
+          <LazyRoute path="/k8s/ns/:ns/customresourcedefinitions/:plural/~new" kind="CustomResourceDefinition" exact loader={() => import('./hypercloud/crd/create-custom-resource-definition').then(m => m.CreateCRDPage)} />
+          <LazyRoute path="/k8s/cluster/customresourcedefinitions/:plural/~new" kind="CustomResourceDefinition" exact loader={() => import('./hypercloud/crd/create-custom-resource-definition').then(m => m.CreateCRDPage)} />
           <LazyRoute path="/k8s/ns/:ns/routes/~new/form" exact kind="Route" loader={() => import('./routes/create-route' /* webpackChunkName: "create-route" */).then(m => m.CreateRoute)} />
           <LazyRoute path="/k8s/cluster/rolebindings/~new" exact loader={() => import('./RBAC' /* webpackChunkName: "rbac" */).then(m => m.CreateRoleBinding)} kind="RoleBinding" />
           <LazyRoute path="/k8s/ns/:ns/rolebindings/~new" exact loader={() => import('./RBAC' /* webpackChunkName: "rbac" */).then(m => m.CreateRoleBinding)} kind="RoleBinding" />
