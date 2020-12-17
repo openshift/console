@@ -181,7 +181,7 @@ export const PodsOverviewContent: React.SFC<PodsOverviewContentProps> = ({
         </Alert>
       ) : null}
       {_.isEmpty(filteredPods) ? (
-        <span className="text-muted">{loadError || (loaded ? emptyMessage : <LoadingBox />)}</span>
+        <span className="text-muted">{loaded || !!loadError ? emptyMessage : <LoadingBox />}</span>
       ) : (
         <PodsOverviewList pods={_.take(filteredPods, podsShown)} />
       )}

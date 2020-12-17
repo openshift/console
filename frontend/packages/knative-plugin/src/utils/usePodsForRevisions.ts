@@ -49,7 +49,7 @@ export const usePodsForRevisions = (
     (updatedResources) => {
       const errorKey = Object.keys(updatedResources).find((key) => updatedResources[key].loadError);
       if (errorKey) {
-        setLoadError(updatedResources[errorKey].loadError);
+        setLoadError(updatedResources[errorKey].loadError?.message);
         return;
       }
       if (
