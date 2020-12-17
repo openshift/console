@@ -12,3 +12,15 @@ export const ApprovalModel: K8sKind = {
   id: 'approval',
   namespaced: true,
 };
+
+export const NamespaceClaimModel: K8sKind = {
+  label: 'NamespaceClaim',
+  labelPlural: 'NamespaceClaims',
+  apiVersion: 'v1',
+  apiGroup: 'tmax.io',
+  plural: 'namespaceclaims',
+  abbr: 'NSC',
+  kind: 'NamespaceClaim',
+  id: 'namespaceclaim',
+  namespaced: true,
+};
