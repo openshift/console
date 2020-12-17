@@ -22,7 +22,7 @@ import {
 } from './items';
 
 import './_perspective-nav.scss';
-import * as plugins from '../../plugins';
+import { getPerspectives } from '../../hypercloud/perspectives';
 
 type StateProps = {
   perspective: string;
@@ -44,7 +44,7 @@ const PerspectiveNav: React.FC<StateProps & DispatchProps> = ({
   onPinnedResourcesChange,
 }) => {
   const navItemExtensions = useExtensions<NavItem>(isNavItem);
-  const perspectives = React.useMemo(() => plugins.registry.getPerspectives(), []);
+  const perspectives = React.useMemo(() => getPerspectives(), []);
 
   const matchingNavItems = React.useMemo(
     () => navItemExtensions.filter((item) => item.properties.perspective === perspective),
@@ -57,8 +57,8 @@ const PerspectiveNav: React.FC<StateProps & DispatchProps> = ({
     confirmNavUnpinModal(resource, pinnedResources, onPinnedResourcesChange);
   };
 
-  // Until admin perspective is contributed through extensions, simply render static `AdminNav`
-  if (perspective === 'admin') {
+  // Until mc perspective is contributed through extensions, simply render static `MulticlusterNav`
+  if (perspective === 'mc') {
     return <MulticlusterNav />;
   }
 
