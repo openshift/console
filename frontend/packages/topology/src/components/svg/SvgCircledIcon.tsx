@@ -33,6 +33,7 @@ const CircledIcon: React.FC<SvgTypedIconProps> = (
     <g className={className}>
       <SvgDropShadowFilter id={FILTER_ID} />
       <circle
+        key={`circle-${FILTER_ID}`}
         ref={circleRef}
         filter={createSvgIdUrl(FILTER_ID)}
         cx={x - iconWidth / 2}
@@ -41,6 +42,7 @@ const CircledIcon: React.FC<SvgTypedIconProps> = (
       />
       <g ref={typedIconRef}>
         <image
+          key={`image-${FILTER_ID}`}
           x={x - iconWidth}
           y={y}
           width={width}

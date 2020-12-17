@@ -133,6 +133,7 @@ const EventingPubSubNode: React.FC<EventingPubSubNodeProps> = ({
       >
         <NodeShadows />
         <rect
+          key={hover || dragging || contextMenuOpen || dropTarget ? 'rect-hover' : 'rect'}
           className="odc-eventing-pubsub__bg"
           x={0}
           y={0}

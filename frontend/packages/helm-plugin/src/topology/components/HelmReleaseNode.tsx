@@ -67,6 +67,7 @@ const HelmReleaseNode: React.FC<HelmReleaseNodeProps> = ({
     >
       <NodeShadows />
       <rect
+        key={hover || contextMenuOpen || dragging ? 'rect-hover' : 'rect'}
         filter={createSvgIdUrl(
           hover || contextMenuOpen || dragging
             ? NODE_SHADOW_FILTER_ID_HOVER

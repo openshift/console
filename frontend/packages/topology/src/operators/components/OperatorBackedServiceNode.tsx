@@ -78,6 +78,7 @@ const OperatorBackedServiceNode: React.FC<OperatorBackedServiceNodeProps> = ({
       >
         <NodeShadows />
         <rect
+          key={hover || dragging ? 'rect-hover' : 'rect'}
           className="odc-operator-backed-service__bg"
           filter={createSvgIdUrl(
             hover || dragging ? NODE_SHADOW_FILTER_ID_HOVER : NODE_SHADOW_FILTER_ID,

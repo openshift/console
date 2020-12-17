@@ -153,6 +153,11 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
             })}
           >
             <rect
+              key={
+                hover || innerHover || dragging || labelDragging || contextMenuOpen || dropTarget
+                  ? 'rect-hover'
+                  : 'rect'
+              }
               ref={dndDropRef}
               className="odc-knative-service__bg"
               x={x}

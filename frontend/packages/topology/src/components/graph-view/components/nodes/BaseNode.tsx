@@ -121,6 +121,11 @@ const BaseNode: React.FC<BaseNodeProps> = ({
         ref={refs}
       >
         <circle
+          key={
+            hover || dragging || edgeDragging || dropTarget || contextMenuOpen
+              ? 'circle-hover'
+              : 'circle'
+          }
           className="odc-base-node__bg"
           ref={dndDropRef}
           cx={cx}

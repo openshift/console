@@ -34,6 +34,7 @@ const KnativeIcon: React.FC<KnativeIconProps> = ({ x, y, width, height }) => (
       </filter>
     </SVGDefs>
     <image
+      key={`image-${FILTER_ID}`}
       x={x}
       y={y}
       width={width}

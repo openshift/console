@@ -75,6 +75,11 @@ const HelmReleaseGroup: React.FC<HelmReleaseGroupProps> = ({
           })}
         >
           <rect
+            key={
+              hover || innerHover || contextMenuOpen || dragging || labelDragging
+                ? 'rect-hover'
+                : 'rect'
+            }
             ref={dndDropRef}
             className="odc-helm-release__bg"
             x={x}

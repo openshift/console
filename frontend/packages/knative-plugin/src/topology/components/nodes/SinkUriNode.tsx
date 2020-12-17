@@ -89,6 +89,7 @@ const SinkUriNode: React.FC<SinkUriNodeProps> = ({
           ref={groupRefs}
         >
           <circle
+            key={hover || dragging || contextMenuOpen ? 'circle-hover' : 'circle'}
             className="odc-sink-uri__bg"
             ref={dndDropRef}
             cx={cx}

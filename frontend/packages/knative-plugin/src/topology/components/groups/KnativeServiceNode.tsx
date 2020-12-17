@@ -98,6 +98,7 @@ const KnativeServiceNode: React.FC<KnativeServiceNodeProps> = ({
     >
       <NodeShadows />
       <rect
+        key={hover || dragging || contextMenuOpen || dropTarget ? 'rect-hover' : 'rect'}
         ref={dndDropRef}
         className="odc-knative-service__bg"
         filter={createSvgIdUrl(

@@ -153,6 +153,11 @@ const ApplicationGroup: React.FC<ApplicationGroupProps> = ({
           })}
         >
           <path
+            key={
+              hover || labelHover || dragging || contextMenuOpen || dropTarget
+                ? 'group-path-hover'
+                : 'group-path'
+            }
             ref={dndDropRef}
             className="odc-application-group__bg"
             filter={createSvgIdUrl(
