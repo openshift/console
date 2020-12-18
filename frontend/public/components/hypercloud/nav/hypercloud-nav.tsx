@@ -6,6 +6,7 @@ import { GroupModel, UserModel } from '../../../models';
 
 import { referenceForModel } from '../../../module/k8s';
 import { HrefLink, ResourceNSLink, ResourceClusterLink } from '../../nav/items';
+import { AuthAdminLink } from './items';
 import { NavSection } from '../../nav/section';
 
 // Wrap `NavItemSeparator` so we can use `required` without prop type errors.
@@ -117,8 +118,8 @@ const HyperCloudNav = () => (
           <ResourceNSLink resource="rolebindingclaims" name="Role Binding Claims" startsWith={rolebindingsStartsWith} />
           <ResourceNSLink resource="serviceaccounts" name="Service Accounts" />
           <ResourceClusterLink resource="podsecuritypolicies" name="PodSecurityPolicy" />
-          <ResourceClusterLink resource={referenceForModel(UserModel)} name="Users" required={[FLAGS.OPENSHIFT, FLAGS.CAN_LIST_USERS]} />
-          <ResourceClusterLink resource={referenceForModel(GroupModel)} name="User Groups" required={[FLAGS.OPENSHIFT, FLAGS.CAN_LIST_GROUPS]} />
+          <AuthAdminLink resource={referenceForModel(UserModel)} name="Users" />
+          <AuthAdminLink resource={referenceForModel(GroupModel)} name="User Groups" />
         </NavSection>
       </>
     )}
