@@ -39,11 +39,13 @@ const getRows: GetRows = (
   setSelectedNodes,
 ) => {
   const { data } = componentProps;
-  const { filteredNodes, preSelected } = customData;
+  const { filteredNodes, preSelected, taintsFilter } = customData;
 
   const nodeList = filteredNodes?.length ? filteredNodes : data.map(getName);
-  const filteredData = data.filter(
-    (node: NodeKind) => hasNoTaints(node) && nodeList.includes(getName(node)),
+  const filteredData = data.filter((node: NodeKind) =>
+    taintsFilter
+      ? (taintsFilter(node) || hasNoTaints(node)) && nodeList.includes(getName(node))
+      : hasNoTaints(node) && nodeList.includes(getName(node)),
   );
 
   const rows = filteredData.map((node: NodeKind) => {
