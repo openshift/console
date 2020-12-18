@@ -145,7 +145,8 @@ export const MultiStreamLogs: React.FC<MultiStreamLogsProps> = ({
       >
         <div className="odc-multi-stream-logs__container__logs" ref={scrollPane}>
           {containers.map((container, idx) => {
-            const resourceStatus = containerToLogSourceStatus(containerStatus[idx]);
+            const statusIndex = containerStatus.findIndex((c) => c.name === container.name);
+            const resourceStatus = containerToLogSourceStatus(containerStatus[statusIndex]);
             return (
               resourceStatus !== LOG_SOURCE_WAITING && (
                 <Logs
