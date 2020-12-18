@@ -117,6 +117,7 @@
   "No sink found for this resource.": "No sink found for this resource.",
   "Filter": "Filter",
   "Autoscaled to 0": "Autoscaled to 0",
+  "All Revisions are autoscaled to 0": "All Revisions are autoscaled to 0",
   "Location:": "Location:",
   "Revisions": "Revisions",
   "View all ({{revLength}})": "View all ({{revLength}})",

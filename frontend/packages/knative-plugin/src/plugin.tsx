@@ -338,7 +338,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       component: NamespaceRedirect,
     },
     flags: {
-      required: [FLAG_KNATIVE_EVENTING],
+      required: [FLAG_KNATIVE_EVENTING, FLAG_KNATIVE_EVENTING_CHANNEL],
     },
   },
   {
@@ -354,7 +354,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         ).default,
     },
     flags: {
-      required: [FLAG_KNATIVE_EVENTING],
+      required: [FLAG_KNATIVE_EVENTING, FLAG_KNATIVE_EVENTING_CHANNEL],
     },
   },
   {
@@ -430,7 +430,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'AddAction',
     flags: {
-      required: [FLAG_KNATIVE_EVENTING],
+      required: [FLAG_KNATIVE_EVENTING, FLAG_KNATIVE_EVENTING_CHANNEL],
     },
     properties: {
       id: 'knative-eventing-channel',

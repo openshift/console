@@ -17,8 +17,6 @@ import KSRoutesOverviewList from './RoutesOverviewList';
 import { PubSubResourceOverviewList } from './EventPubSubResources';
 import PubSubSubscribers from './EventPubSubSubscribers';
 
-const REVISIONS_AUTOSCALED = 'All Revisions are autoscaled to 0';
-
 type KnativeServiceResourceProps = {
   item: KnativeServiceOverviewItem;
 };
@@ -59,7 +57,7 @@ const KnativeServiceResources: React.FC<KnativeServiceResourceProps> = ({ item }
         pods={servicePods}
         loaded={loaded}
         loadError={loadError}
-        emptyText={REVISIONS_AUTOSCALED}
+        emptyText={t('knative-plugin~All Revisions are autoscaled to 0')}
         allPodsLink={linkUrl}
       />
       <RevisionsOverviewList revisions={revisions} service={obj} />
