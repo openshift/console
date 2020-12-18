@@ -66,6 +66,7 @@ const useBoolean = (initialValue: boolean): [boolean, () => void, () => void, ()
 };
 
 const VariableDropdown: React.FC<VariableDropdownProps> = ({
+  id,
   isError = false,
   items,
   label,
@@ -78,11 +79,17 @@ const VariableDropdown: React.FC<VariableDropdownProps> = ({
 
   return (
     <div className="form-group monitoring-dashboards__dropdown-wrap">
-      <label className="monitoring-dashboards__dropdown-title">{label}</label>
+      <label htmlFor={`${id}-dropdown`} className="monitoring-dashboards__dropdown-title">
+        {label}
+      </label>
       {isError ? (
         <Dropdown
           toggle={
-            <DropdownToggle className="monitoring-dashboards__dropdown-button" isDisabled={true}>
+            <DropdownToggle
+              className="monitoring-dashboards__dropdown-button"
+              id={`${id}-dropdown`}
+              isDisabled={true}
+            >
               <RedExclamationCircleIcon /> {t('monitoring~Error loading options')}
             </DropdownToggle>
           }
@@ -99,6 +106,7 @@ const VariableDropdown: React.FC<VariableDropdownProps> = ({
           toggle={
             <DropdownToggle
               className="monitoring-dashboards__dropdown-button"
+              id={`${id}-dropdown`}
               onToggle={toggleIsOpen}
             >
               {items[selectedKey]}
@@ -112,6 +120,7 @@ const VariableDropdown: React.FC<VariableDropdownProps> = ({
 };
 
 const SingleVariableDropdown_: React.FC<SingleVariableDropdownProps> = ({
+  id,
   isHidden,
   name,
   options,
@@ -168,6 +177,7 @@ const SingleVariableDropdown_: React.FC<SingleVariableDropdownProps> = ({
 
   return (
     <VariableDropdown
+      id={id}
       isError={isError}
       items={_.zipObject(options, options)}
       label={name}
@@ -198,7 +208,7 @@ const SingleVariableDropdown = connect(
 const AllVariableDropdowns_: React.FC<AllVariableDropdownsProps> = ({ variables }) => (
   <>
     {variables.keySeq().map((name) => (
-      <SingleVariableDropdown key={name} name={name} />
+      <SingleVariableDropdown key={name} id={name} name={name} />
     ))}
   </>
 );
@@ -229,6 +239,7 @@ const TimespanDropdown_: React.FC<TimespanDropdownProps> = ({ timespan, setTimes
 
   return (
     <VariableDropdown
+      id="monitoring-time-range-dropdown"
       items={timespanOptions}
       label={t('monitoring~Time range')}
       onChange={onChange}
@@ -251,10 +262,14 @@ const PollIntervalDropdown_ = ({ interval, setInterval }) => {
 
   return (
     <div className="form-group monitoring-dashboards__dropdown-wrap">
-      <label className="monitoring-dashboards__dropdown-title">
+      <label htmlFor="refresh-interval-dropdown" className="monitoring-dashboards__dropdown-title">
         {t('monitoring~Refresh interval')}
       </label>
-      <IntervalDropdown interval={interval} setInterval={setInterval} />
+      <IntervalDropdown
+        interval={interval}
+        setInterval={setInterval}
+        id="refresh-interval-dropdown"
+      />
     </div>
   );
 };
@@ -528,6 +543,7 @@ const MonitoringDashboardsPage_: React.FC<MonitoringDashboardsPageProps> = ({
         <div className="monitoring-dashboards__variables">
           {!_.isEmpty(boardItems) && (
             <VariableDropdown
+              id="monitoring-board-dropdown"
               items={boardItems}
               label={t('monitoring~Dashboard')}
               onChange={changeBoard}
@@ -581,6 +597,7 @@ type Variable = {
 type VariablesMap = { [key: string]: Variable };
 
 type VariableDropdownProps = {
+  id: string;
   isError?: boolean;
   items: { [key: string]: string };
   label: string;
@@ -589,6 +606,7 @@ type VariableDropdownProps = {
 };
 
 type SingleVariableDropdownProps = {
+  id: string;
   isHidden: boolean;
   name: string;
   options?: string[];

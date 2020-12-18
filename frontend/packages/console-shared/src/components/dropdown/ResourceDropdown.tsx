@@ -43,6 +43,7 @@ export interface ResourceDropdownItems {
 
 interface ResourceDropdownProps {
   id?: string;
+  ariaLabel?: string;
   className?: string;
   dropDownClassName?: string;
   menuClassName?: string;
@@ -276,6 +277,7 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
     return (
       <Dropdown
         id={this.props.id}
+        ariaLabel={this.props.ariaLabel}
         className={this.props.className}
         dropDownClassName={this.props.dropDownClassName}
         menuClassName={this.props.menuClassName}

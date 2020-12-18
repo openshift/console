@@ -432,6 +432,7 @@ class Dropdown_ extends DropdownMixin {
             )}
           >
             <button
+              aria-label={ariaLabel}
               aria-haspopup="true"
               onClick={this.toggle}
               onKeyDown={this.onKeyDown}
