@@ -180,3 +180,29 @@ export const FederatedCronJobModel: K8sKind = {
   id: 'federatedcronjob',
   namespaced: true,
 };
+
+export const RegistryModel: K8sKind = {
+  kind: 'Registry',
+  namespaced: true,
+  label: 'Registry',
+  plural: 'registries',
+  apiVersion: 'v1',
+  abbr: 'RG',
+  apiGroup: 'tmax.io',
+  labelPlural: 'Registries',
+  id: 'registry',
+  crd: false,
+};
+
+export const ImageModel: K8sKind = {
+  label: 'Image',
+  apiVersion: 'v1',
+  apiGroup: 'tmax.io',
+  plural: 'images',
+  abbr: 'I',
+  namespaced: true,
+  kind: 'Image',
+  id: 'image',
+  labelPlural: 'Images',
+  crd: false,
+};
