@@ -88,9 +88,26 @@ Scenario: Add Paramters to the pipeline in pipeline builder page : P-03-TC04
 
 
 @regression, @manual
+Scenario: Switching from Pipeline builder view to YAML view to see yaml data
+    Given user is at Pipeline Builder page
+    When user adds "git clone" task
+    And user clicks YAML view
+    Then user can see "git clone" task present in the YAML view with param values
+
+
+@regression, @manual
+Scenario: Switching from YAML view to Pipeline builder view to see builder data
+    Given user is at Pipeline YAML view 
+    When user adds "- name: git-clone" under tasks
+    And user adds "name: git-clone" and "kind: ClusterTask" under taskRef in tasks section 
+    And user clicks Pipeline Builder radio button 
+    Then user can see "git clone" tasks present in the Pipeline builder view
+
+
+@regression, @manual
 Scenario: Create the pipeline from yaml editor : P-07-TC01
     Given user is at Pipeline Builder page
-    When user clicks Edit YAML button
+    When user clicks YAML view
     And user clicks Continue on Switch to YAML editor
     And user clicks Create button on Pipeline Yaml page
     Then user will be redirected to Pipeline Details page with header name "new-pipeline"
