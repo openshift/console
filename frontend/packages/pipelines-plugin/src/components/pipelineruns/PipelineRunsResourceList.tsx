@@ -18,7 +18,7 @@ const PipelineRunsResourceList: React.FC<Omit<
   return (
     <ListPage
       {...props}
-      canCreate={false}
+      canCreate
       kind={referenceForModel(PipelineRunModel)}
       ListComponent={PipelineRunsList}
       rowFilters={runFilters}
