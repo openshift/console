@@ -31,7 +31,8 @@ const SinkSourceModal: React.FC<Props> = ({
 }) => {
   const { t } = useTranslation();
   const dirty =
-    values?.sink?.name !== initialValues.sink.name || values?.sink?.uri !== initialValues.sink.uri;
+    values?.formData?.sink?.name !== initialValues.formData.sink.name ||
+    values?.formData?.sink?.uri !== initialValues.formData.sink.uri;
   return (
     <form className="modal-content modal-content--no-inner-scroll" onSubmit={handleSubmit}>
       <ModalTitle>{t('knative-plugin~Move sink')}</ModalTitle>

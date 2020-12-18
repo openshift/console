@@ -10,7 +10,7 @@ import { EditorType } from '@console/shared/src/components/synced-editor/editor-
 import { EventSources, SinkType } from './import-types';
 import { isDefaultChannel, getChannelKind } from '../../utils/create-channel-utils';
 
-export const sinkTypeUriValidatiuon = (t) =>
+export const sinkTypeUriValidation = (t: TFunction) =>
   yup.object().shape({
     uri: yup
       .string()
@@ -32,7 +32,7 @@ const sinkServiceSchema = (t: TFunction) =>
     })
     .when('sinkType', {
       is: SinkType.Uri,
-      then: sinkTypeUriValidatiuon(t),
+      then: sinkTypeUriValidation(t),
     });
 
 export const sourceDataSpecSchema = (t: TFunction) =>
