@@ -1,6 +1,9 @@
 {
   "Add Health Checks": "Add Health Checks",
   "Edit Health Checks": "Edit Health Checks",
+  "Add HorizontalPodAutoscaler": "Add HorizontalPodAutoscaler",
+  "Edit HorizontalPodAutoscaler": "Edit HorizontalPodAutoscaler",
+  "Remove HorizontalPodAutoscaler": "Remove HorizontalPodAutoscaler",
   "Clone": "Clone",
   "Name": "Name",
   "Clone PVC": "Clone PVC",

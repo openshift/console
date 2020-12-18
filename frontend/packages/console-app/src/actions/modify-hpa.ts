@@ -32,7 +32,8 @@ export const AddHorizontalPodAutoScaler: KebabAction = (
   resources: RelatedResources,
   customData?: { [key: string]: any },
 ) => ({
-  label: `Add ${HorizontalPodAutoscalerModel.label}`,
+  // t('console-app~Add HorizontalPodAutoscaler')
+  labelKey: 'console-app~Add HorizontalPodAutoscaler',
   href: hpaRoute(obj, kind),
   hidden: hasHPAs(resources) || shouldHideHPA(obj, customData),
   accessReview: {
@@ -49,7 +50,8 @@ export const EditHorizontalPodAutoScaler: KebabAction = (
   resources: RelatedResources,
   customData?: { [key: string]: any },
 ) => ({
-  label: `Edit ${HorizontalPodAutoscalerModel.label}`,
+  // t('console-app~Edit HorizontalPodAutoscaler')
+  labelKey: 'console-app~Edit HorizontalPodAutoscaler',
   href: hpaRoute(obj, kind),
   hidden: !hasHPAs(resources) || shouldHideHPA(obj, customData),
   accessReview: {
@@ -66,7 +68,8 @@ export const DeleteHorizontalPodAutoScaler: KebabAction = (
   resources: RelatedResources,
   customData?: { [key: string]: any },
 ) => ({
-  label: `Remove ${HorizontalPodAutoscalerModel.label}`,
+  // t('console-app~Remove HorizontalPodAutoscaler')
+  labelKey: 'console-app~Remove HorizontalPodAutoscaler',
   callback: () => {
     deleteHPAModal({
       workload: obj,
