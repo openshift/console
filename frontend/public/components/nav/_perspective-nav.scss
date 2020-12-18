@@ -27,6 +27,7 @@
     white-space: nowrap;
 
     &:hover, &:focus {
+      padding-right: 30px;
       .oc-nav-pinned-item__unpin-button {
         .oc-nav-pinned-item__icon {
           opacity: 1;
