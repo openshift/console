@@ -206,3 +206,16 @@ Scenario Outline: Pipeline status display in topology side bar : P-05-TC02
 Examples:
 | pipeline_name          |
 | pipeline-with-resoruce |
+
+
+@regression, @manual
+Scenario: Editing a pipeline structure should not affect the previously executed pipeline runs
+    Given user has pipeline with two tasks
+    And user is at the Pipeline Details page
+    And pipeline run is present
+    When user clicks Edit Pipeline from Actions menu
+    And user adds a new task in series to the last task present
+    And user clicks on save 
+    And user starts the pipeline
+    Then newly created pipeline run contains the new pipeline graph
+    And existing pipeline runs contains the old pipeline graph
