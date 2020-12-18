@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { MultiListPage } from '@console/internal/components/factory';
 import { RowFilter } from '@console/internal/components/filter-toolbar';
 import { K8sResourceKind, referenceFor, referenceForModel } from '@console/internal/module/k8s';
@@ -9,6 +10,7 @@ import {
 import ChannelList from './ChannelList';
 
 const ChannelListPage: React.FC<React.ComponentProps<typeof MultiListPage>> = (props) => {
+  const { t } = useTranslation();
   const { loaded: modelsLoaded, eventSourceChannels } = useChannelModels();
   const flatten = (resources) =>
     modelsLoaded
@@ -59,6 +61,7 @@ const ChannelListPage: React.FC<React.ComponentProps<typeof MultiListPage>> = (p
   return (
     <MultiListPage
       {...props}
+      label={t('knative-plugin~Channels')}
       flatten={flatten}
       resources={resources}
       rowFilters={channelRowFilter}

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { MultiListPage } from '@console/internal/components/factory';
 import { K8sResourceKind, referenceFor, referenceForModel } from '@console/internal/module/k8s';
 import { RowFilter } from '@console/internal/components/filter-toolbar';
@@ -9,6 +10,7 @@ import {
 } from '../../../utils/fetch-dynamic-eventsources-utils';
 
 const EventSourceListPage: React.FC<React.ComponentProps<typeof MultiListPage>> = (props) => {
+  const { t } = useTranslation();
   const { loaded: modelsLoaded, eventSourceModels } = useEventSourceModels();
   const flatten = (resources) =>
     modelsLoaded
@@ -58,6 +60,7 @@ const EventSourceListPage: React.FC<React.ComponentProps<typeof MultiListPage>> 
   return (
     <MultiListPage
       {...props}
+      label={t('knative-plugin~Event Sources')}
       rowFilters={eventSourceRowFilters}
       flatten={flatten}
       resources={resources}
