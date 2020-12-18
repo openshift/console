@@ -264,7 +264,7 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = (props) 
                   id={`${resource}-toggle`}
                 >
                   {getToggleText(resource)}
-                  {props.perspective !== 'admin' && (
+                  {props.perspective !== 'admin' && pinnedResources && (
                     <a
                       className="pf-c-button pf-m-link co-search-group__pin-toggle"
                       onClick={(e) => pinToggle(e, resource)}
