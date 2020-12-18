@@ -11,6 +11,14 @@ export type ServiceBrokerKind = K8sResourceCommon & {
   };
 };
 
+export type ServiceClassKind = K8sResourceCommon & {
+  spec: {
+    bindable?: boolean;
+    externalName?: string;
+    serviceBrokerName?: string;
+  };
+};
+
 // export type K8sResourceCommon = {
 //     apiVersion?: string;
 //     kind?: string;

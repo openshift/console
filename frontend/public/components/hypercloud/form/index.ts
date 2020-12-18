@@ -3,6 +3,7 @@ export const pluralToKind = (plural) => {
     secrets: 'Secret',
     namespaces: 'Namespace',
     servicebrokers: 'ServiceBroker',
+    serviceclasses: 'ServiceClass',
   };
   return convertKind[plural];
 }

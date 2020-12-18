@@ -24,3 +24,15 @@ export const ServiceBrokerModel: K8sKind = {
   id: 'servicebroker',
   namespaced: true,
 };
+
+export const ServiceClassModel: K8sKind = {
+  label: 'Service Class',
+  labelPlural: 'Service Classes',
+  apiVersion: 'v1beta1',
+  apiGroup: 'servicecatalog.k8s.io',
+  plural: 'serviceclasses',
+  abbr: 'SC',
+  kind: 'ServiceClass',
+  id: 'serviceclass',
+  namespaced: true,
+};
