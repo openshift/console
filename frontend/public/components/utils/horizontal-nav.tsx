@@ -6,6 +6,7 @@ import { Route, Switch, Link, withRouter, match, matchPath } from 'react-router-
 
 import { EmptyBox, StatusBox } from './status-box';
 import { PodsPage } from '../pod';
+import NodesPage from '@console/app/src/components/nodes/NodesPage';
 import { AsyncComponent } from './async';
 import { K8sResourceKind, K8sResourceCommon } from '../../module/k8s';
 import { referenceForModel, referenceFor } from '../../module/k8s/k8s';
@@ -22,6 +23,11 @@ export const viewYamlComponent = (props) => (
   />
 );
 
+export class NodesComponent extends React.PureComponent<NodesComponentProps> {
+  render() {
+    return <NodesPage />;
+  }
+}
 export class PodsComponent extends React.PureComponent<PodsComponentProps> {
   render() {
     const {
@@ -82,6 +88,11 @@ export const navFactory: NavFactory = {
     href: 'pods',
     name: 'Pods',
     component: component || PodsComponent,
+  }),
+  nodes: component => ({
+    href: 'nodes',
+    name: 'Nodes',
+    component: component || NodesComponent,
   }),
   roles: (component) => ({
     href: 'roles',
@@ -264,6 +275,11 @@ export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
 }, _.isEqual);
 
 export type PodsComponentProps = {
+  obj: K8sResourceKind;
+  customData?: any;
+};
+
+export type NodesComponentProps = {
   obj: K8sResourceKind;
   customData?: any;
 };
