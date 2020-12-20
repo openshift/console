@@ -43,12 +43,11 @@ const getDisksDescription = (
     const volume = volumes.find((v) => v.name === disk.name);
     if (volume) {
       if (volume.dataVolume) {
-        let dataVolume = dataVolumeTemplates.find((dv) => getName(dv) === volume.dataVolume.name);
-        if (!dataVolume) {
-          dataVolume = dataVolumes.find(
+        const dataVolume =
+          dataVolumeTemplates.find((dv) => getName(dv) === volume.dataVolume.name) ||
+          dataVolumes.find(
             (dv) => getName(dv) === volume.dataVolume.name && getNamespace(dv) === getNamespace(vm),
           );
-        }
         description.push(
           getStorageSize(getDataVolumeResources(dataVolume)),
           getDataVolumeStorageClassName(dataVolume),

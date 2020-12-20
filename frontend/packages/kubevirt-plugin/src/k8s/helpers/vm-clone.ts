@@ -1,6 +1,7 @@
+import * as _ from 'lodash';
 import { K8sResourceKind, PersistentVolumeClaimKind } from '@console/internal/module/k8s';
 import { createBasicLookup, getName, getNamespace } from '@console/shared';
-import { VMKind } from '../../types/vm';
+import { V1DataVolumeTemplateSpec, VMKind } from '../../types/vm';
 import { generateDataVolumeName, getBasicID } from '../../utils';
 import {
   getPvcAccessModes,
@@ -8,7 +9,6 @@ import {
   getPvcStorageSize,
   getPvcVolumeMode,
 } from '../../selectors/pvc/selectors';
-import { DataVolumeTemplate } from '../objects/vm/datavolume-template';
 import {
   getOperatingSystem,
   getOperatingSystemName,
@@ -102,15 +102,29 @@ export class VMClone {
         const pvc = pvcLookup[`${this.oldVMNamespace}-${pvcName}`];
 
         if (pvc) {
-          const clonedDVTemplate = new DataVolumeTemplate({
-            name: generateDataVolumeName(name, volume.name),
-            pvcSourceName: pvcName,
-            pvcSourceNamespace: this.oldVMNamespace,
-            accessModes: getPvcAccessModes(pvc),
-            volumeMode: getPvcVolumeMode(pvc),
-            size: getPvcStorageSize(pvc),
-            storageClassName: getPvcStorageClassName(pvc),
-          }).build();
+          const clonedDVTemplate: V1DataVolumeTemplateSpec = {
+            metadata: {
+              name: generateDataVolumeName(name, volume.name),
+            },
+            spec: {
+              pvc: {
+                accessModes: _.cloneDeep(getPvcAccessModes(pvc)),
+                volumeMode: getPvcVolumeMode(pvc),
+                resources: {
+                  requests: {
+                    storage: getPvcStorageSize(pvc),
+                  },
+                },
+                storageClassName: getPvcStorageClassName(pvc),
+              },
+              source: {
+                pvc: {
+                  name: pvcName,
+                  namespace: this.oldVMNamespace,
+                },
+              },
+            },
+          };
 
           this.vm.ensureDataVolumeTemplates().push(clonedDVTemplate);
 
@@ -134,15 +148,29 @@ export class VMClone {
         const dataVolume = dvLookup[`${this.oldVMNamespace}-${dvName}`];
 
         if (dataVolume) {
-          const clonedDVTemplate = new DataVolumeTemplate({
-            name: generateDataVolumeName(name, volume.name),
-            pvcSourceName: dvName,
-            pvcSourceNamespace: this.oldVMNamespace,
-            accessModes: getDataVolumeAccessModes(dataVolume),
-            volumeMode: getDataVolumeVolumeMode(dataVolume),
-            size: getDataVolumeStorageSize(dataVolume),
-            storageClassName: getDataVolumeStorageClassName(dataVolume),
-          }).build();
+          const clonedDVTemplate: V1DataVolumeTemplateSpec = {
+            metadata: {
+              name: generateDataVolumeName(name, volume.name),
+            },
+            spec: {
+              pvc: {
+                accessModes: _.cloneDeep(getDataVolumeAccessModes(dataVolume)),
+                volumeMode: getDataVolumeVolumeMode(dataVolume),
+                resources: {
+                  requests: {
+                    storage: getDataVolumeStorageSize(dataVolume),
+                  },
+                },
+                storageClassName: getDataVolumeStorageClassName(dataVolume),
+              },
+              source: {
+                pvc: {
+                  name: dvName,
+                  namespace: this.oldVMNamespace,
+                },
+              },
+            },
+          };
 
           this.vm.ensureDataVolumeTemplates().push(clonedDVTemplate);
 

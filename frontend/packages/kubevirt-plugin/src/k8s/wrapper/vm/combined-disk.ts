@@ -3,6 +3,7 @@ import { K8sResourceKind } from '@console/internal/module/k8s/types';
 import { apiVersionForModel } from '@console/internal/module/k8s/k8s';
 import { createBasicLookup, getName, getNamespace, getOwnerReferences } from '@console/shared/src';
 import { FirehoseResult } from '@console/internal/components/utils';
+import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
 import { V1Disk } from '../../../types/vm/disk/V1Disk';
 import { V1Volume } from '../../../types/vm/disk/V1Volume';
 import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
@@ -20,7 +21,7 @@ import { PersistentVolumeClaimWrapper } from './persistent-volume-claim-wrapper'
 import { asVMILikeWrapper } from '../utils/convert';
 import { V1PersistentVolumeClaim } from '../../../types/vm/disk/V1PersistentVolumeClaim';
 import { DataVolumeModel } from '../../../models';
-import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
+import { V1DataVolumeTemplateSpec } from '../../../types';
 
 export class CombinedDisk {
   private readonly dataVolumesLoading: boolean;
@@ -245,7 +246,7 @@ export class CombinedDiskFactory {
 
   private readonly volumes: V1Volume[];
 
-  private readonly dataVolumeTemplates: V1alpha1DataVolume[];
+  private readonly dataVolumeTemplates: V1DataVolumeTemplateSpec[];
 
   private readonly dataVolumes: V1alpha1DataVolume[];
 
@@ -286,7 +287,7 @@ export class CombinedDiskFactory {
   }: {
     disks: V1Disk[];
     volumes: V1Volume[];
-    dataVolumeTemplates?: V1alpha1DataVolume[];
+    dataVolumeTemplates?: V1DataVolumeTemplateSpec[];
     dataVolumes?: V1alpha1DataVolume[];
     dataVolumesLoading?: boolean;
     pvcs?: K8sResourceKind[];
@@ -323,8 +324,8 @@ export class CombinedDiskFactory {
       const volume = volumeLookup[diskWrapper.getName()];
       const volumeWrapper = new VolumeWrapper(volume);
       let dataVolumeName: string;
-      let dataVolume;
-      let dataVolumeTemplate;
+      let dataVolume: V1alpha1DataVolume | V1DataVolumeTemplateSpec;
+      let dataVolumeTemplate: V1DataVolumeTemplateSpec;
       let pvc;
 
       switch (volumeWrapper.getType()) {

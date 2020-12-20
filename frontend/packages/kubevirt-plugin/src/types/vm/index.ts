@@ -3,7 +3,16 @@ import {
   K8sResourceKind,
   ObjectMetadata,
 } from '@console/internal/module/k8s';
-import { V1alpha1DataVolume } from './disk/V1alpha1DataVolume';
+import { V1alpha1DataVolumeSpec } from './disk/V1alpha1DataVolumeSpec';
+import { V1alpha1DataVolumeStatus } from './disk/V1alpha1DataVolumeStatus';
+import { V1ObjectMeta } from './disk/V1ObjectMeta';
+
+// https://kubevirt.io/api-reference/master/definitions.html#_v1_datavolumetemplatespec
+export interface V1DataVolumeTemplateSpec {
+  metadata?: V1ObjectMeta;
+  spec: V1alpha1DataVolumeSpec;
+  status?: V1alpha1DataVolumeStatus;
+}
 
 // https://kubevirt.io/api-reference/master/definitions.html#_v1_virtualmachineinstancespec
 export type VMISpec = {
@@ -48,7 +57,7 @@ export type VMSpec = {
   template: VMITemplate;
   running?: boolean;
   runStrategy?: string;
-  dataVolumeTemplates?: V1alpha1DataVolume[];
+  dataVolumeTemplates?: V1DataVolumeTemplateSpec[];
 };
 
 export type VMStatus = {
