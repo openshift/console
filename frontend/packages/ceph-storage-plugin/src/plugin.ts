@@ -36,7 +36,6 @@ import {
   CEPH_FLAG,
   OCS_INDEPENDENT_FLAG,
   OCS_CONVERGED_FLAG,
-  OCS_FLAG,
 } from './features';
 import { getAlertActionPath } from './utils/alert-action-path';
 import { OSD_DOWN_ALERT, OSD_DOWN_AND_OUT_ALERT } from './constants';
@@ -82,27 +81,18 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       detect: detectOCSSupportedFeatures,
     },
-    flags: {
-      required: [CEPH_FLAG],
-    },
   },
   {
     type: 'FeatureFlag/Custom',
     properties: {
       detect: detectOCS,
     },
-    flags: {
-      required: [CEPH_FLAG],
-    },
   },
-  // Detect RGW to be run only when OCS Storage Cluster is created
+  // Todo(bipuladh): Detect RGW to be run only when OCS Storage Cluster is created
   {
     type: 'FeatureFlag/Custom',
     properties: {
       detect: detectRGW,
-    },
-    flags: {
-      required: [OCS_FLAG],
     },
   },
   {
