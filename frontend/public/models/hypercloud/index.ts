@@ -1,17 +1,17 @@
 import { K8sKind } from '../../module/k8s';
 
 // 추가
-export const ApprovalModel: K8sKind = {
-  label: 'Approval',
-  labelPlural: 'Approvals',
-  apiVersion: 'v1',
-  apiGroup: 'tmax.io',
-  plural: 'approvals',
-  abbr: 'A',
-  kind: 'Approval',
-  id: 'approval',
-  namespaced: true,
-};
+// export const ApprovalModel: K8sKind = {
+//   label: 'Approval',
+//   labelPlural: 'Approvals',
+//   apiVersion: 'v1',
+//   apiGroup: 'tmax.io',
+//   plural: 'approvals',
+//   abbr: 'A',
+//   kind: 'Approval',
+//   id: 'approval',
+//   namespaced: true,
+// };
 
 export const HyperClusterResourceModel: K8sKind = {
   label: 'Cluster',
@@ -179,4 +179,120 @@ export const FederatedCronJobModel: K8sKind = {
   kind: 'FederatedCronJob',
   id: 'federatedcronjob',
   namespaced: true,
+};
+
+export const RegistryModel: K8sKind = {
+  kind: 'Registry',
+  namespaced: true,
+  label: 'Registry',
+  plural: 'registries',
+  apiVersion: 'v1',
+  abbr: 'RG',
+  apiGroup: 'tmax.io',
+  labelPlural: 'Registries',
+  id: 'registry',
+  crd: false,
+};
+
+export const ImageModel: K8sKind = {
+  label: 'Image',
+  apiVersion: 'v1',
+  apiGroup: 'tmax.io',
+  plural: 'images',
+  abbr: 'I',
+  namespaced: true,
+  kind: 'Image',
+  id: 'image',
+  labelPlural: 'Images',
+  crd: false,
+};
+
+export const TaskModel: K8sKind = {
+  kind: 'Task',
+  namespaced: true,
+  label: 'Task',
+  plural: 'tasks',
+  apiVersion: 'v1beta1',
+  abbr: 'TK',
+  apiGroup: 'tekton.dev',
+  labelPlural: 'Tasks',
+  id: 'task',
+  crd: false,
+};
+
+export const TaskRunModel: K8sKind = {
+  kind: 'TaskRun',
+  namespaced: true,
+  label: 'Task Run',
+  plural: 'taskruns',
+  apiVersion: 'v1beta1',
+  abbr: 'TR',
+  apiGroup: 'tekton.dev',
+  labelPlural: 'Task Runs',
+  id: 'taskrun',
+  crd: false,
+};
+
+export const PipelineModel: K8sKind = {
+  kind: 'Pipeline',
+  namespaced: true,
+  label: 'Pipeline',
+  plural: 'pipelines',
+  apiVersion: 'v1beta1',
+  abbr: 'P',
+  apiGroup: 'tekton.dev',
+  labelPlural: 'Pipelines',
+  id: 'pipeline',
+  crd: false,
+};
+export const PipelineRunModel: K8sKind = {
+  kind: 'PipelineRun',
+  namespaced: true,
+  label: 'Pipeline Run',
+  plural: 'pipelineruns',
+  apiVersion: 'v1beta1',
+  abbr: 'PR',
+  apiGroup: 'tekton.dev',
+  labelPlural: 'Pipeline Runs',
+  id: 'pipelinerun',
+  crd: false,
+};
+
+export const ApprovalModel: K8sKind = {
+  kind: 'Approval',
+  namespaced: true,
+  label: 'Approval',
+  plural: 'approvals',
+  apiVersion: 'v1',
+  abbr: 'PA',
+  apiGroup: 'tmax.io',
+  labelPlural: 'Pipeline Approvals',
+  id: 'approval',
+  crd: false,
+};
+
+export const PipelineResourceModel: K8sKind = {
+  kind: 'PipelineResource',
+  namespaced: true,
+  label: 'Pipeline Resource',
+  plural: 'pipelineresources',
+  apiVersion: 'v1alpha1',
+  abbr: 'PRS',
+  apiGroup: 'tekton.dev',
+  labelPlural: 'Pipeline Resources',
+  id: 'pipelineresource',
+  crd: false,
+};
+
+export const ConditionModel: K8sKind = {
+  kind: 'Condition',
+  namespaced: true,
+  label: 'Condition',
+  plural: 'conditions',
+  apiVersion: 'v1alpha1',
+  abbr: 'PC',
+  apiGroup: 'tekton.dev',
+  labelPlural: 'Pipeline Conditions',
+  id: 'condition',
+  crd: false,
 };
