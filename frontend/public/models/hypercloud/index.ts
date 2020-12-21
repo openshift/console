@@ -36,3 +36,15 @@ export const ServiceClassModel: K8sKind = {
   id: 'serviceclass',
   namespaced: true,
 };
+
+export const ServicePlanModel: K8sKind = {
+  label: 'Service Plan',
+  labelPlural: 'Service Plans',
+  apiVersion: 'v1beta1',
+  apiGroup: 'servicecatalog.k8s.io',
+  plural: 'serviceplans',
+  abbr: 'SP',
+  kind: 'ServicePlan',
+  id: 'serviceplan',
+  namespaced: true,
+};

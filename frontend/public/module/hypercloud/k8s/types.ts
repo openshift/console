@@ -19,6 +19,16 @@ export type ServiceClassKind = K8sResourceCommon & {
   };
 };
 
+export type ServicePlanKind = K8sResourceCommon & {
+  spec: {
+    bindable?: boolean;
+    externalName?: string;
+    serviceBrokerName?: string;
+    serviceClassRef: {
+      name?: string;
+    };
+  };
+};
 // export type K8sResourceCommon = {
 //     apiVersion?: string;
 //     kind?: string;
