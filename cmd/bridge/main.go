@@ -453,7 +453,7 @@ func main() {
 	// NOTE: grafanaEndpoint 추가 // 윤진수
 	grafanaEndpoint := bridge.ValidateFlagIsURL("grafana-endpoint", *fGrafanaEndpoint)
 	srv.GrafanaProxyConfig = &hproxy.Config{
-		HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+		HeaderBlacklist: []string{"X-CSRFToken"},
 		Endpoint:        grafanaEndpoint,
 		Origin:          "http://localhost",
 	}
