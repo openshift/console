@@ -148,15 +148,11 @@ export const CloneVMModal = withHandlePromise<CloneVMModalProps>((props) => {
             label={t('kubevirt-plugin~Name')}
             isRequired
             fieldId={asId('name')}
-            validated={
-              !(nameError && nameError.type === ValidationErrorType.Error) ? 'default' : 'error'
-            }
-            helperTextInvalid={t(nameError.messageKey)}
+            validated={!(nameError?.type === ValidationErrorType.Error) ? 'default' : 'error'}
+            helperTextInvalid={nameError && t(nameError?.messageKey)}
           >
             <TextInput
-              validated={
-                !(nameError && nameError.type === ValidationErrorType.Error) ? 'default' : 'error'
-              }
+              validated={!(nameError?.type === ValidationErrorType.Error) ? 'default' : 'error'}
               isRequired
               type="text"
               id={asId('name')}
