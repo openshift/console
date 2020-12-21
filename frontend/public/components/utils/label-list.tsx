@@ -2,6 +2,9 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
+/* eslint-disable import/named */
+import { withTranslation, WithTranslation } from 'react-i18next';
+/* eslint-enable import/named */
 import { K8sResourceKindReference, kindForReference } from '../../module/k8s';
 
 export const Label: React.SFC<LabelProps> = ({ kind, name, value, expand }) => {
@@ -19,13 +22,13 @@ export const Label: React.SFC<LabelProps> = ({ kind, name, value, expand }) => {
   );
 };
 
-export class LabelList extends React.Component<LabelListProps> {
+class TranslatedLabelList extends React.Component<LabelListProps> {
   shouldComponentUpdate(nextProps) {
     return !_.isEqual(nextProps, this.props);
   }
 
   render() {
-    const { labels, kind, expand = true } = this.props;
+    const { labels, kind, t, expand = true } = this.props;
     let list = _.map(labels, (label, key) => (
       <Label key={key} kind={kind} name={key} value={label} expand={expand} />
     ));
@@ -33,7 +36,7 @@ export class LabelList extends React.Component<LabelListProps> {
     if (_.isEmpty(list)) {
       list = [
         <div className="text-muted" key="0">
-          No labels
+          {t('details-page~No labels')}
         </div>,
       ];
     }
@@ -46,6 +49,8 @@ export class LabelList extends React.Component<LabelListProps> {
   }
 }
 
+export const LabelList = withTranslation()(TranslatedLabelList);
+
 export type LabelProps = {
   kind: K8sResourceKindReference;
   name: string;
@@ -53,7 +58,7 @@ export type LabelProps = {
   expand: boolean;
 };
 
-export type LabelListProps = {
+export type LabelListProps = WithTranslation & {
   labels: { [key: string]: string };
   kind: K8sResourceKindReference;
   expand?: boolean;

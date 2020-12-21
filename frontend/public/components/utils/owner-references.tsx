@@ -1,9 +1,11 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
+import { useTranslation } from 'react-i18next';
 import { K8sResourceKind, OwnerReference, referenceForOwnerRef } from '../../module/k8s';
 import { ResourceLink } from './resource-link';
 
 export const OwnerReferences: React.FC<OwnerReferencesProps> = ({ resource }) => {
+  const { t } = useTranslation();
   const owners = (_.get(resource.metadata, 'ownerReferences') || []).map((o: OwnerReference) => (
     <ResourceLink
       key={o.uid}
@@ -12,7 +14,11 @@ export const OwnerReferences: React.FC<OwnerReferencesProps> = ({ resource }) =>
       namespace={resource.metadata.namespace}
     />
   ));
-  return owners.length ? <>{owners}</> : <span className="text-muted">No owner</span>;
+  return owners.length ? (
+    <>{owners}</>
+  ) : (
+    <span className="text-muted">{t('details-page~No owner')}</span>
+  );
 };
 
 type OwnerReferencesProps = {

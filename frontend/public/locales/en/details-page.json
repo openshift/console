@@ -55,5 +55,7 @@
   "Create snapshot": "Create snapshot",
   "Clone PVC": "Clone PVC",
   "Restore as new PVC": "Restore as new PVC",
-  "Managed by": "Managed by"
+  "No labels": "No labels",
+  "Managed by": "Managed by",
+  "No owner": "No owner"
 }
