@@ -379,7 +379,9 @@ const CatalogSourceTableRow: RowFunction<CatalogSourceTableRowObj> = ({
         name
       )}
     </TableData>
-    <TableData className={tableColumnClasses[1]}>{status}</TableData>
+    <TableData className={tableColumnClasses[1]} data-test={`${source?.metadata.name}-status`}>
+      {status}
+    </TableData>
     <TableData className={tableColumnClasses[2]}>{publisher}</TableData>
     <TableData className={tableColumnClasses[3]}>{availability}</TableData>
     <TableData className={tableColumnClasses[4]}>{endpoint}</TableData>

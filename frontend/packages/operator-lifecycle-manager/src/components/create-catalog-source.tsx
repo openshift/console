@@ -88,7 +88,9 @@ export const CreateCatalogSource: React.FC<CreateCatalogSourceProps> = withHandl
         <Helmet>
           <title>{title}</title>
         </Helmet>
-        <h1 className="co-m-pane__heading">{title}</h1>
+        <h1 className="co-m-pane__heading" data-test="create-catalogsource-title">
+          {title}
+        </h1>
         <p className="co-m-pane__explanation">
           {t('olm~Create a CatalogSource in order to make operators available in OperatorHub.')}
         </p>
@@ -108,6 +110,7 @@ export const CreateCatalogSource: React.FC<CreateCatalogSourceProps> = withHandl
               placeholder="e.g. custom-catalog-source"
               type="text"
               value={name}
+              data-test="catalog-source-name"
             />
           </FormGroup>
           <FormGroup fieldId="catalog-source-display-name" label={t('olm~Display name')}>
@@ -146,6 +149,7 @@ export const CreateCatalogSource: React.FC<CreateCatalogSourceProps> = withHandl
               onChange={setImage}
               placeholder="e.g. quay.io/johndoe/catalog-registry:latest"
               value={image}
+              data-test="catalog-source-image"
             />
           </FormGroup>
           <FormGroup fieldId="catalog-source-availability" label={t('olm~Availability')}>
@@ -166,7 +170,7 @@ export const CreateCatalogSource: React.FC<CreateCatalogSourceProps> = withHandl
           )}
           <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
             <ActionGroup className="pf-c-form__group--no-top-margin">
-              <Button type="submit" variant="primary" id="save-changes">
+              <Button type="submit" variant="primary" id="save-changes" data-test="save-changes">
                 {t('olm~Create')}
               </Button>
               <Button type="button" variant="secondary" id="cancel" onClick={history.goBack}>
