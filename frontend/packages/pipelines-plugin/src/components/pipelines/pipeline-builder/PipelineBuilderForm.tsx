@@ -126,9 +126,13 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
   };
 
   const sanitizeToYaml = () =>
-    safeJSToYAML(convertBuilderFormToPipeline(values.formData, namespace), 'yamlData', {
-      skipInvalid: true,
-    });
+    safeJSToYAML(
+      convertBuilderFormToPipeline(values.formData, namespace, existingPipeline),
+      'yamlData',
+      {
+        skipInvalid: true,
+      },
+    );
 
   return (
     <>
