@@ -26,6 +26,7 @@ const HyperCloudNav = () => (
           <ResourceNSLink resource="events" name="Events" />
           <HrefLink href="/grafana" name="Grafana" />
         </NavSection>
+        <NavSection title="Operators" />
         <NavSection title={t('COMMON:MSG_LNB_MENU_10')}>
           <ResourceNSLink resource="servicebrokers" name="Service Broker" />
           <ResourceNSLink resource="serviceclasses" name="Service Class" />
