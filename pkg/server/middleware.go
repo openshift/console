@@ -96,7 +96,7 @@ func securityHeadersMiddleware(hdlr http.Handler) http.HandlerFunc {
 		// Ancient weak protection against reflected XSS (equivalent to CSP no unsafe-inline)
 		w.Header().Set("X-XSS-Protection", "1; mode=block")
 		// Prevent clickjacking attacks involving iframes
-		w.Header().Set("X-Frame-Options", "DENY")
+		w.Header().Set("X-Frame-Options", "allowall")
 		// Less information leakage about what domains we link to
 		w.Header().Set("X-DNS-Prefetch-Control", "off")
 		// Less information leakage about what domains we link to
