@@ -3,8 +3,18 @@
 set -exuo pipefail
 
 myIP=$(hostname -I | awk '{print $1}')
+<<<<<<< HEAD
 k8sIP='172.22.6.2'
 BRIDGE_K8S_AUTH_BEARER_TOKEN=$(ssh root@$k8sIP "secretname=\$(kubectl get serviceaccount default --namespace=kube-system -o jsonpath='{.secrets[0].name}'); kubectl get secret "\$secretname" --namespace=kube-system -o template --template='{{.data.token}}' | base64 --decode; ")
+=======
+# k8sIP='172.22.6.2'
+# BRIDGE_K8S_AUTH_BEARER_TOKEN=$(ssh root@$k8sIP "secretname=\$(kubectl get serviceaccount default --namespace=kube-system -o jsonpath='{.secrets[0].name}'); kubectl get secret "\$secretname" --namespace=kube-system -o template --template='{{.data.token}}' | base64 --decode; ")
+
+k8sIP='kubernetes.docker.internal'
+secretname=$(kubectl get serviceaccount default -n kube-system -o jsonpath='{.secrets[0].name}')
+echo secretname
+BRIDGE_K8S_AUTH_BEARER_TOKEN=$(kubectl get secret $secretname -n kube-system  -o template --template='{{.data.token}}' | base64 --decode )
+>>>>>>> feature/add-hypercloud-menu-gj
 
 # k8sIP='kubernetes.docker.internal'
 # secretname=$(kubectl get serviceaccount default -n kube-system -o jsonpath='{.secrets[0].name}')

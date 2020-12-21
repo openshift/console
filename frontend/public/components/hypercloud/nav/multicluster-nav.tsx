@@ -18,7 +18,7 @@ const MulticlusterNav = () => (
     <ResourceClusterLink resource="clustergroups" name="Cluster Groups" />
     <NavSection title="Federation">
       <h3 style={{ paddingLeft: '28px' }}>Workloads</h3>
-      <ResourceClusterLink  resource="federatedpods" name="Pods" />
+      <ResourceClusterLink resource="federatedpods" name="Pods" />
       <ResourceClusterLink resource="federateddeployments" name="Deployments" />
       <ResourceClusterLink resource="federatedreplicasets" name="Replica Sets" />
       <ResourceClusterLink resource="federatedhorizontalpodautoscalers" name="Horizontal Pod Autoscalers" />
