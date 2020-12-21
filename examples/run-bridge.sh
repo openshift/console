@@ -3,9 +3,13 @@
 set -exuo pipefail
 
 myIP=$(hostname -I | awk '{print $1}')
-k8sIP='172.22.6.2'
+# k8sIP='172.22.6.2'
+# BRIDGE_K8S_AUTH_BEARER_TOKEN=$(ssh root@$k8sIP "secretname=\$(kubectl get serviceaccount default --namespace=kube-system -o jsonpath='{.secrets[0].name}'); kubectl get secret "\$secretname" --namespace=kube-system -o template --template='{{.data.token}}' | base64 --decode; ")
 
-BRIDGE_K8S_AUTH_BEARER_TOKEN=$(ssh root@$k8sIP "secretname=\$(kubectl get serviceaccount default --namespace=kube-system -o jsonpath='{.secrets[0].name}'); kubectl get secret "\$secretname" --namespace=kube-system -o template --template='{{.data.token}}' | base64 --decode; ")
+k8sIP='kubernetes.docker.internal'
+secretname=$(kubectl get serviceaccount default -n kube-system -o jsonpath='{.secrets[0].name}')
+echo secretname
+BRIDGE_K8S_AUTH_BEARER_TOKEN=$(kubectl get secret $secretname -n kube-system  -o template --template='{{.data.token}}' | base64 --decode )
 
 PROM_PORT='9090'
 
@@ -27,4 +31,6 @@ PROM_PORT='9090'
     --keycloak-realm=tmax \
     --keycloak-auth-url=https://172.22.6.11/auth \
     --keycloak-client-id=hypercloud4 \
+    --grafana-endpoint=http://$k8sIP:$GRAFANA_PORT \
+    --kiali-endpoint=https://172.22.6.22/api/kiali/ \
     --proxyConfig=examples/pconfig.yaml \
