@@ -3,7 +3,7 @@ import { modal } from '../../../integration-tests-cypress/views/modal';
 
 const operatorName = '3scale Operator';
 
-describe(`Interacting with a single namespace install mode Operator (${operatorName})`, () => {
+xdescribe(`Interacting with a single namespace install mode Operator (${operatorName})`, () => {
   before(() => {
     cy.login();
     cy.createProject(testName);

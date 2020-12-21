@@ -4,7 +4,7 @@ import { detailsPage } from '../../../integration-tests-cypress/views/details-pa
 
 const operatorName = 'Portworx Essentials';
 
-describe(`Interacting with a global install mode Operator (${operatorName})`, () => {
+xdescribe(`Interacting with a global install mode Operator (${operatorName})`, () => {
   before(() => {
     cy.login();
   });
