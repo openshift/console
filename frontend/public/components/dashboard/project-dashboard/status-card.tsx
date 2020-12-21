@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
@@ -34,11 +35,12 @@ export const StatusCard: React.FC = () => {
   const {
     metadata: { name: namespace },
   } = obj;
+  const { t } = useTranslation();
 
   return (
     <DashboardCard gradient data-test-id="status-card">
       <DashboardCardHeader>
-        <DashboardCardTitle>Status</DashboardCardTitle>
+        <DashboardCardTitle>{t('namespace~Status')}</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody isLoading={!obj}>
         <HealthBody>

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
+import { useTranslation } from 'react-i18next';
 import { DashboardItemProps, withDashboardResources } from '../with-dashboard-resources';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
@@ -118,11 +119,12 @@ export const InventoryCard = () => {
     namespace: projectName,
     verb: 'list',
   });
+  const { t } = useTranslation();
 
   return (
     <DashboardCard data-test-id="inventory-card">
       <DashboardCardHeader>
-        <DashboardCardTitle>Inventory</DashboardCardTitle>
+        <DashboardCardTitle>{t('namespace~Inventory')}</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody>
         <ProjectInventoryItem projectName={projectName} model={DeploymentModel} />

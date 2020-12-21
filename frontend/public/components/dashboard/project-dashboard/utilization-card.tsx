@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
@@ -39,11 +40,12 @@ export const UtilizationCard: React.FC = () => {
   const projectName = getName(obj);
   const queries = React.useMemo(() => getUtilizationQueries(projectName), [projectName]);
   const multilineQueries = React.useMemo(() => getMultilineQueries(projectName), [projectName]);
+  const { t } = useTranslation();
 
   const cpuPopover = React.useCallback(
     React.memo<TopConsumerPopoverProp>(({ current }) => (
       <ConsumerPopover
-        title="CPU"
+        title={t('namespace~CPU')}
         current={current}
         consumers={[
           {
@@ -63,7 +65,7 @@ export const UtilizationCard: React.FC = () => {
   const memPopover = React.useCallback(
     React.memo<TopConsumerPopoverProp>(({ current }) => (
       <ConsumerPopover
-        title="Memory"
+        title={t('namespace~Memory')}
         current={current}
         consumers={[
           {
@@ -83,7 +85,7 @@ export const UtilizationCard: React.FC = () => {
   const filesystemPopover = React.useCallback(
     React.memo<TopConsumerPopoverProp>(({ current }) => (
       <ConsumerPopover
-        title="Filesystem"
+        title={t('namespace~Filesystem')}
         current={current}
         consumers={[
           {
@@ -103,7 +105,7 @@ export const UtilizationCard: React.FC = () => {
   const networkPopoverIn = React.useCallback(
     React.memo<TopConsumerPopoverProp>(({ current }) => (
       <ConsumerPopover
-        title="Network In"
+        title={t('namespace~Network in')}
         current={current}
         consumers={[
           {
@@ -123,7 +125,7 @@ export const UtilizationCard: React.FC = () => {
   const networkPopoverOut = React.useCallback(
     React.memo<TopConsumerPopoverProp>(({ current }) => (
       <ConsumerPopover
-        title="Network Out"
+        title={t('namespace~Network out')}
         current={current}
         consumers={[
           {
@@ -148,12 +150,12 @@ export const UtilizationCard: React.FC = () => {
   return (
     <DashboardCard data-test-id="utilization-card">
       <DashboardCardHeader>
-        <DashboardCardTitle>Utilization</DashboardCardTitle>
+        <DashboardCardTitle>{t('namespace~Utilization')}</DashboardCardTitle>
         <Dropdown items={Duration} onChange={setDuration} selectedKey={duration} title={duration} />
       </DashboardCardHeader>
       <UtilizationBody timestamps={timestamps}>
         <PrometheusUtilizationItem
-          title="CPU"
+          title={t('namespace~CPU')}
           humanizeValue={humanizeCpuCores}
           utilizationQuery={queries[ProjectQueries.CPU_USAGE]}
           TopConsumerPopover={cpuPopover}
@@ -162,7 +164,7 @@ export const UtilizationCard: React.FC = () => {
           namespace={projectName}
         />
         <PrometheusUtilizationItem
-          title="Memory"
+          title={t('namespace~Memory')}
           humanizeValue={humanizeBinaryBytes}
           utilizationQuery={queries[ProjectQueries.MEMORY_USAGE]}
           byteDataType={ByteDataTypes.BinaryBytes}
@@ -171,7 +173,7 @@ export const UtilizationCard: React.FC = () => {
           namespace={projectName}
         />
         <PrometheusUtilizationItem
-          title="Filesystem"
+          title={t('namespace~Filesystem')}
           humanizeValue={humanizeBinaryBytes}
           utilizationQuery={queries[ProjectQueries.FILESYSTEM_USAGE]}
           byteDataType={ByteDataTypes.BinaryBytes}
@@ -180,7 +182,7 @@ export const UtilizationCard: React.FC = () => {
           namespace={projectName}
         />
         <PrometheusMultilineUtilizationItem
-          title="Network Transfer"
+          title={t('namespace~Network transfer')}
           humanizeValue={humanizeDecimalBytesPerSec}
           queries={multilineQueries[ProjectQueries.NETWORK_UTILIZATION]}
           TopConsumerPopovers={networkPopovers}
@@ -188,7 +190,7 @@ export const UtilizationCard: React.FC = () => {
           namespace={projectName}
         />
         <PrometheusUtilizationItem
-          title="Pod count"
+          title={t('namespace~Pod count')}
           humanizeValue={humanizeNumber}
           utilizationQuery={queries[ProjectQueries.POD_COUNT]}
           duration={duration}
