@@ -84,11 +84,13 @@ export const labelOCSNamespace = (): Promise<K8sKind> =>
         name: CEPH_STORAGE_NAMESPACE,
       },
     },
-    {
-      op: 'add',
-      path: '/metadata/labels',
-      value: { 'openshift.io/cluster-monitoring': 'true' },
-    },
+    [
+      {
+        op: 'add',
+        path: '/metadata/labels',
+        value: { 'openshift.io/cluster-monitoring': 'true' },
+      },
+    ],
   );
 
 export const createDeviceSet = (
