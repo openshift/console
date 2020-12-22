@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-import { checkErrors } from '../../../integration-tests-cypress/support';
 import { modal } from '../../../integration-tests-cypress/views/modal';
 import { CLUSTER_STATUS } from '../../integration-tests/utils/consts';
 import {
@@ -25,10 +24,6 @@ describe('OCS Operator Expansion of Storage Class Test', () => {
 
   beforeEach(() => {
     cy.visit('/');
-  });
-
-  afterEach(() => {
-    checkErrors();
   });
 
   after(() => {
