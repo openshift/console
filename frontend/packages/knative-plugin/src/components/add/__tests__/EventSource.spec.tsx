@@ -1,7 +1,10 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { Formik } from 'formik';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { EventSource } from '../EventSource';
+import { getEventSourceIcon } from '../../../utils/get-knative-icon';
+import { EventSourceContainerModel } from '../../../models';
 
 type EventSourceProps = React.ComponentProps<typeof EventSource>;
 
@@ -17,13 +20,27 @@ describe('EventSourceSpec', () => {
   let wrapper: ShallowWrapper<EventSourceProps>;
   const namespaceName = 'myApp';
   const activeApplicationName = 'appGroup';
-  const eventSourceStatusData = { loaded: true, eventSourceList: null };
+  const eventSourceStatusData = {
+    loaded: true,
+    eventSource: {
+      uid: EventSourceContainerModel.kind,
+      name: EventSourceContainerModel.kind,
+      description: '',
+      icon: {
+        url: getEventSourceIcon(referenceForModel(EventSourceContainerModel)),
+        class: null,
+      },
+      type: 'EventSource',
+      provider: 'Red hat',
+      cta: { label: 'knative-plugin~Create Event Source', href: '/' },
+    },
+  };
 
   it('should render form with proper initialvalues if contextSource is not passed', () => {
     wrapper = shallow(
       <EventSource
         namespace={namespaceName}
-        eventSourceStatus={eventSourceStatusData}
+        normalizedSource={eventSourceStatusData.eventSource}
         activeApplication={activeApplicationName}
       />,
     );
@@ -40,7 +57,7 @@ describe('EventSourceSpec', () => {
     wrapper = shallow(
       <EventSource
         namespace={namespaceName}
-        eventSourceStatus={eventSourceStatusData}
+        normalizedSource={eventSourceStatusData.eventSource}
         contextSource={contextSourceData}
         activeApplication={activeApplicationName}
       />,

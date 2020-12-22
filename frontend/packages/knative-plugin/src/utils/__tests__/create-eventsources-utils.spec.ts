@@ -14,19 +14,12 @@ import {
   getBootstrapServers,
   loadYamlData,
   getEventSourcesDepResource,
-  sortSourcesData,
-  getEventSourceConnectorList,
-  getEventSourceList,
+  getEventSourceModelsWithAccess,
   getEventSourceData,
   sanitizeKafkaSourceResource,
   sanitizeSourceToForm,
 } from '../create-eventsources-utils';
-import {
-  getDefaultEventingData,
-  Kafkas,
-  eventSourcesObj,
-  camelCsvData,
-} from './knative-serving-data';
+import { getDefaultEventingData, Kafkas } from './knative-serving-data';
 import { EventSourceFormData, EventSources } from '../../components/add/import-types';
 import { MockKnativeResources } from '../../topology/__tests__/topology-knative-test-data';
 
@@ -71,19 +64,7 @@ describe('Create knative Utils', () => {
     expect(knEventingResource.metadata?.namespace).toEqual('mock-project');
   });
 
-  it('expect sortSourcesData to sort based on builtinSources, followed by camel, follwed by camelConnectors and dynamic sourced', () => {
-    const sortedSourcesData = sortSourcesData(eventSourcesObj);
-
-    expect(Object.keys(sortedSourcesData)).toEqual([
-      'ApiServerSource',
-      'PingSource',
-      'CamelSource',
-      'jira',
-      'GitHubSource',
-    ]);
-  });
-
-  it('expect getEventSourceList to return proper builtinSources', (done) => {
+  it('expect getEventSourceModelsWithAccess to return proper builtinSources', (done) => {
     const eventSourcesModel: k8sModels.K8sKind[] = [
       EventSourceCronJobModel,
       EventSourceSinkBindingModel,
@@ -91,22 +72,10 @@ describe('Create knative Utils', () => {
       EventSourceCamelModel,
     ];
     spyOn(utils, 'checkAccess').and.callFake(() => Promise.resolve({ status: { allowed: true } }));
-    const eventSourceData = getEventSourceList('my-app', eventSourcesModel);
+    const eventSourceData = getEventSourceModelsWithAccess('my-app', eventSourcesModel);
     Promise.all(eventSourceData)
       .then((results) => {
         expect(results).toHaveLength(4);
-        done();
-      })
-      // eslint-disable-next-line no-console
-      .catch((err) => console.warn(err.message));
-  });
-
-  it('expect getEventSourceConnectorList to return 5 camelK connector', (done) => {
-    spyOn(utils, 'checkAccess').and.callFake(() => Promise.resolve({ status: { allowed: true } }));
-    const eventSourceConnectorData = getEventSourceConnectorList('my-app', camelCsvData);
-    Promise.all(eventSourceConnectorData)
-      .then((results) => {
-        expect(results).toHaveLength(5);
         done();
       })
       // eslint-disable-next-line no-console

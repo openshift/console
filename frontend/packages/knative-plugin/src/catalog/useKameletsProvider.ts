@@ -7,11 +7,10 @@ import {
   useK8sWatchResource,
   WatchK8sResource,
 } from '@console/internal/components/utils/k8s-watch-hook';
+import { useAccessReview } from '@console/internal/components/utils/rbac';
 import { CamelKameletBindingModel, CamelKameletModel } from '../models';
 import { getEventSourceIcon } from '../utils/get-knative-icon';
-import { CAMEL_APIGROUP } from '../const';
-
-const CAMEL_K_PROVIDER_ANNOTATION = `${CAMEL_APIGROUP}/provider`;
+import { CAMEL_K_PROVIDER_ANNOTATION } from '../const';
 
 const normalizeKamelets = (
   kamelets: K8sResourceKind[],
@@ -45,6 +44,12 @@ const normalizeKamelets = (
 
 const useKameletsProvider = ({ namespace }): [CatalogItem[], boolean, any] => {
   const { t } = useTranslation();
+  const canCreateKameletBinding = useAccessReview({
+    group: CamelKameletBindingModel.apiGroup,
+    resource: CamelKameletBindingModel.plural,
+    verb: 'create',
+    namespace,
+  });
   const resource: WatchK8sResource = React.useMemo(
     () => ({ kind: referenceForModel(CamelKameletModel), isList: true, namespace, optional: true }),
     [namespace],
@@ -53,8 +58,9 @@ const useKameletsProvider = ({ namespace }): [CatalogItem[], boolean, any] => {
     resource,
   );
   const normalizedSource = React.useMemo(
-    () => (kameletsLoaded ? normalizeKamelets(kamelets, namespace, t) : []),
-    [kameletsLoaded, kamelets, namespace, t],
+    () =>
+      kameletsLoaded && canCreateKameletBinding ? normalizeKamelets(kamelets, namespace, t) : [],
+    [kameletsLoaded, kamelets, namespace, canCreateKameletBinding, t],
   );
   return [normalizedSource, kameletsLoaded, kameletsLoadError];
 };

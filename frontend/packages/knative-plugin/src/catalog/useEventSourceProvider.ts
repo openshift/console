@@ -3,9 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import { CatalogItem, CatalogExtensionHook } from '@console/plugin-sdk';
 import { K8sKind, referenceForModel } from '@console/internal/module/k8s';
-import { useEventSourceModels } from '../utils/fetch-dynamic-eventsources-utils';
 import { getEventSourceIcon } from '../utils/get-knative-icon';
 import { getEventSourceCatalogProviderData } from './event-source-data';
+import { useEventSourceModelsWithAccess } from '../hooks';
 
 const normalizeEventSources = (
   eventSources: K8sKind[],
@@ -33,7 +33,9 @@ const useEventSourceProvider: CatalogExtensionHook<CatalogItem[]> = ({
   namespace,
 }): [CatalogItem[], boolean, any] => {
   const { t } = useTranslation();
-  const { loaded, eventSourceModels } = useEventSourceModels();
+  const { loaded, eventSourceModelsList: eventSourceModels } = useEventSourceModelsWithAccess(
+    namespace,
+  );
   const normalizedSources = React.useMemo(
     () => (loaded ? normalizeEventSources(eventSourceModels, namespace, t) : []),
 

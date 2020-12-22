@@ -1,3 +1,4 @@
+import { CatalogItem } from '@console/plugin-sdk';
 import {
   EventSourceApiServerModel,
   EventSourceContainerModel,
@@ -65,21 +66,15 @@ export interface EventSourceSyncFormData {
   yamlData?: string;
 }
 
-export interface EventSourceList {
-  title: string;
-  iconUrl: string;
+export interface EventSourceMetaData {
   name: string;
-  displayName: string;
-  [x: string]: any;
+  description?: string;
+  provider?: string;
+  iconUrl?: string;
 }
-
-export interface NormalizedEventSources {
-  [eventSourceName: string]: EventSourceList;
-}
-
 export interface EventSourceListData {
   loaded: boolean;
-  eventSourceList: NormalizedEventSources;
+  eventSourceList: CatalogItem[];
 }
 
 export enum SinkType {
