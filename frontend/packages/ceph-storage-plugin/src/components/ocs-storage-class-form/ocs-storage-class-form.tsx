@@ -235,9 +235,7 @@ const KMSDetails: React.FC<KMSDetailsProps> = ({ setEditKMS, currentKMS }) => {
           </TextListItem>
           <TextListItem>
             {t('ceph-storage-plugin~Provider:')}{' '}
-            <span className="help-block ocs-storageClass-encryption__help-block">
-              {currentKMS?.KMS_PROVIDER}
-            </span>
+            <span className="help-block ocs-storageClass-encryption__help-block">Vault</span>
           </TextListItem>
           <TextListItem>
             {t('ceph-storage-plugin~Address and Port:')}{' '}
@@ -317,6 +315,8 @@ export const StorageClassEncryption: React.FC<ProvisionerProps> = ({ onParamChan
         hasHandled: true,
       };
       setEncryptionDispatch(SCActionType.SET_KMS_ENCRYPTION, '', dispatch, kmsObj);
+    } else {
+      setInProgress(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [csiConfigMap, editKMS]);
