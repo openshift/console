@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, Title, List, ListItem } from '@patternfly/react-core';
 import { LoadingInline } from '@console/internal/components/utils';
+import { getName } from '@console/shared';
 import { State } from '../state';
 
 const ReviewPage: React.FC<ReviewPageProps> = ({ state }) => {
@@ -47,7 +48,7 @@ const ReviewPage: React.FC<ReviewPageProps> = ({ state }) => {
             <p data-testid="tier1-stores">{t('noobaa-storage-plugin~Selected Backing Store:')} </p>
             <List>
               {tier1BackingStore.map((item) => (
-                <ListItem>{item}</ListItem>
+                <ListItem>{getName(item)}</ListItem>
               ))}
             </List>
           </div>
@@ -63,7 +64,7 @@ const ReviewPage: React.FC<ReviewPageProps> = ({ state }) => {
               </p>
               <List>
                 {tier2BackingStore.map((item) => (
-                  <ListItem>{item}</ListItem>
+                  <ListItem>{getName(item)}</ListItem>
                 ))}
               </List>
             </div>
