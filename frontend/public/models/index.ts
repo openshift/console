@@ -209,30 +209,32 @@ export const BuildModel: K8sKind = {
   labelPlural: 'Builds',
 };
 
-export const TemplateModel: K8sKind = {
-  label: 'Template',
-  apiVersion: 'v1',
-  apiGroup: 'template.openshift.io',
-  plural: 'templates',
-  abbr: 'T',
-  namespaced: true,
-  propagationPolicy: 'Foreground',
-  kind: 'Template',
-  id: 'template',
-  labelPlural: 'Templates',
-};
+/* Moved to hypercloud models */
 
-export const TemplateInstanceModel: K8sKind = {
-  label: 'Template Instance',
-  apiVersion: 'v1',
-  apiGroup: 'template.openshift.io',
-  plural: 'templateinstances',
-  abbr: 'TI',
-  namespaced: true,
-  kind: 'TemplateInstance',
-  id: 'templateinstance',
-  labelPlural: 'Template Instances',
-};
+// export const TemplateModel: K8sKind = {
+//   label: 'Template',
+//   apiVersion: 'v1',
+//   apiGroup: 'template.openshift.io',
+//   plural: 'templates',
+//   abbr: 'T',
+//   namespaced: true,
+//   propagationPolicy: 'Foreground',
+//   kind: 'Template',
+//   id: 'template',
+//   labelPlural: 'Templates',
+// };
+
+// export const TemplateInstanceModel: K8sKind = {
+//   label: 'Template Instance',
+//   apiVersion: 'v1',
+//   apiGroup: 'template.openshift.io',
+//   plural: 'templateinstances',
+//   abbr: 'TI',
+//   namespaced: true,
+//   kind: 'TemplateInstance',
+//   id: 'templateinstance',
+//   labelPlural: 'Template Instances',
+// };
 
 export const ImageStreamModel: K8sKind = {
   label: 'Image Stream',
@@ -594,70 +596,72 @@ export const StorageClassModel: K8sKind = {
   id: 'storageclass',
 };
 
-export const ClusterServiceBrokerModel: K8sKind = {
-  label: 'Cluster Service Broker',
-  labelPlural: 'Cluster Service Brokers',
-  apiVersion: 'v1beta1',
-  apiGroup: 'servicecatalog.k8s.io',
-  plural: 'clusterservicebrokers',
-  abbr: 'CSB',
-  namespaced: false,
-  kind: 'ClusterServiceBroker',
-  id: 'clusterservicebroker',
-  crd: true,
-};
+/* Moved to hypercloud models */
 
-export const ClusterServiceClassModel: K8sKind = {
-  label: 'Cluster Service Class',
-  labelPlural: 'Cluster Service Classes',
-  apiVersion: 'v1beta1',
-  apiGroup: 'servicecatalog.k8s.io',
-  plural: 'clusterserviceclasses',
-  abbr: 'CSC',
-  namespaced: false,
-  kind: 'ClusterServiceClass',
-  id: 'clusterserviceclass',
-  crd: true,
-};
+// export const ClusterServiceBrokerModel: K8sKind = {
+//   label: 'Cluster Service Broker',
+//   labelPlural: 'Cluster Service Brokers',
+//   apiVersion: 'v1beta1',
+//   apiGroup: 'servicecatalog.k8s.io',
+//   plural: 'clusterservicebrokers',
+//   abbr: 'CSB',
+//   namespaced: false,
+//   kind: 'ClusterServiceBroker',
+//   id: 'clusterservicebroker',
+//   crd: true,
+// };
 
-export const ClusterServicePlanModel: K8sKind = {
-  label: 'Cluster Service Plan',
-  labelPlural: 'Cluster Service Plans',
-  apiVersion: 'v1beta1',
-  apiGroup: 'servicecatalog.k8s.io',
-  plural: 'clusterserviceplans',
-  abbr: 'CSP',
-  namespaced: false,
-  kind: 'ClusterServicePlan',
-  id: 'clusterserviceplan',
-  crd: true,
-};
+// export const ClusterServiceClassModel: K8sKind = {
+//   label: 'Cluster Service Class',
+//   labelPlural: 'Cluster Service Classes',
+//   apiVersion: 'v1beta1',
+//   apiGroup: 'servicecatalog.k8s.io',
+//   plural: 'clusterserviceclasses',
+//   abbr: 'CSC',
+//   namespaced: false,
+//   kind: 'ClusterServiceClass',
+//   id: 'clusterserviceclass',
+//   crd: true,
+// };
 
-export const ServiceInstanceModel: K8sKind = {
-  label: 'Service Instance',
-  labelPlural: 'Service Instances',
-  apiVersion: 'v1beta1',
-  apiGroup: 'servicecatalog.k8s.io',
-  plural: 'serviceinstances',
-  abbr: 'SI',
-  namespaced: true,
-  kind: 'ServiceInstance',
-  id: 'serviceinstance',
-  crd: true,
-};
+// export const ClusterServicePlanModel: K8sKind = {
+//   label: 'Cluster Service Plan',
+//   labelPlural: 'Cluster Service Plans',
+//   apiVersion: 'v1beta1',
+//   apiGroup: 'servicecatalog.k8s.io',
+//   plural: 'clusterserviceplans',
+//   abbr: 'CSP',
+//   namespaced: false,
+//   kind: 'ClusterServicePlan',
+//   id: 'clusterserviceplan',
+//   crd: true,
+// };
 
-export const ServiceBindingModel: K8sKind = {
-  label: 'Service Binding',
-  labelPlural: 'Service Bindings',
-  apiVersion: 'v1beta1',
-  apiGroup: 'servicecatalog.k8s.io',
-  plural: 'servicebindings',
-  abbr: 'SB',
-  namespaced: true,
-  kind: 'ServiceBinding',
-  id: 'servicebinding',
-  crd: true,
-};
+// export const ServiceInstanceModel: K8sKind = {
+//   label: 'Service Instance',
+//   labelPlural: 'Service Instances',
+//   apiVersion: 'v1beta1',
+//   apiGroup: 'servicecatalog.k8s.io',
+//   plural: 'serviceinstances',
+//   abbr: 'SI',
+//   namespaced: true,
+//   kind: 'ServiceInstance',
+//   id: 'serviceinstance',
+//   crd: true,
+// };
+
+// export const ServiceBindingModel: K8sKind = {
+//   label: 'Service Binding',
+//   labelPlural: 'Service Bindings',
+//   apiVersion: 'v1beta1',
+//   apiGroup: 'servicecatalog.k8s.io',
+//   plural: 'servicebindings',
+//   abbr: 'SB',
+//   namespaced: true,
+//   kind: 'ServiceBinding',
+//   id: 'servicebinding',
+//   crd: true,
+// };
 
 export const LimitRangeModel: K8sKind = {
   label: 'Limit Range',

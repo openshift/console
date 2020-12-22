@@ -31,6 +31,17 @@ import {
   PeerAuthenticationModel,
   AuthorizationPolicyModel,
   DataVolumeModel,
+  ServiceBrokerModel,
+  ServiceClassModel,
+  ServicePlanModel,
+  ClusterServiceBrokerModel,
+  ClusterServiceClassModel,
+  ClusterServicePlanModel,
+  ServiceInstanceModel,
+  ServiceBindingModel,
+  CatalogServiceClaimModel,
+  TemplateModel,
+  TemplateInstanceModel,
 } from '../../models';
 
 type ResourceMapKey = GroupVersionKind | string;
@@ -66,7 +77,18 @@ export const hyperCloudDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapVa
   .set(referenceForModel(RequestAuthenticationModel), () => import('./request-authentication' /* webpackChunkName: "request-authentication" */).then(m => m.RequestAuthenticationsDetailsPage))
   .set(referenceForModel(PeerAuthenticationModel), () => import('./peer-authentication' /* webpackChunkName: "peer-authentication" */).then(m => m.PeerAuthenticationsDetailsPage))
   .set(referenceForModel(AuthorizationPolicyModel), () => import('./authentication-policy' /* webpackChunkName: "authentication-policy" */).then(m => m.AuthorizationPoliciesDetailsPage))
-  .set(referenceForModel(DataVolumeModel), () => import('./data-volume' /* webpackChunkName: "data-volume" */).then(m => m.DataVolumesDetailsPage));
+  .set(referenceForModel(DataVolumeModel), () => import('./data-volume' /* webpackChunkName: "data-volume" */).then(m => m.DataVolumesDetailsPage))
+  .set(referenceForModel(ServiceBrokerModel), () => import('./service-broker' /* webpackChunkName: "servicebroker" */).then(m => m.ServiceBrokersPage))
+  .set(referenceForModel(ServiceClassModel), () => import('./service-class' /* webpackChunkName: "serviceclass" */).then(m => m.ServiceClassesPage))
+  .set(referenceForModel(ServicePlanModel), () => import('./service-plan' /* webpackChunkName: "serviceplan" */).then(m => m.ServicePlansPage))
+  .set(referenceForModel(ClusterServiceBrokerModel), () => import('./cluster-service-broker' /* webpackChunkName: "clusterservicebroker" */).then(m => m.ClusterServiceBrokersPage))
+  .set(referenceForModel(ClusterServiceClassModel), () => import('./cluster-service-class' /* webpackChunkName: "clusterserviceclass" */).then(m => m.ClusterServiceClassesPage))
+  .set(referenceForModel(ClusterServicePlanModel), () => import('./cluster-service-plan' /* webpackChunkName: "clusterserviceplan" */).then(m => m.ClusterServicePlansPage))
+  .set(referenceForModel(ServiceInstanceModel), () => import('./service-instance' /* webpackChunkName: "serviceinstance" */).then(m => m.ServiceInstancesPage))
+  .set(referenceForModel(ServiceBindingModel), () => import('./service-binding' /* webpackChunkName: "servicebinding" */).then(m => m.ServiceBindingsPage))
+  .set(referenceForModel(CatalogServiceClaimModel), () => import('./catalog-service-claim' /* webpackChunkName: "catalogserviceclaim" */).then(m => m.CatalogServiceClaimsPage))
+  .set(referenceForModel(TemplateModel), () => import('./template' /* webpackChunkName: "template" */).then(m => m.TemplatesPage))
+  .set(referenceForModel(TemplateInstanceModel), () => import('./template-instance' /* webpackChunkName: "templateinstance" */).then(m => m.TemplateInstancesPage));
 
 export const hyperCloudListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
   .set(referenceForModel(ApprovalModel), () => import('./approval' /* webpackChunkName: "approval" */).then(m => m.ApprovalsPage))
@@ -99,4 +121,15 @@ export const hyperCloudListPages = ImmutableMap<ResourceMapKey, ResourceMapValue
   .set(referenceForModel(ApprovalModel), () => import('./approval' /* webpackChunkName: "approval" */).then(m => m.ApprovalsPage))
   .set(referenceForModel(ResourceQuotaClaimModel), () => import('./resource-quota-claim' /* webpackChunkName: "resourcequotaclaim" */).then(m => m.ResourceQuotaClaimsPage))
   .set(referenceForModel(RoleBindingClaimModel), () => import('./role-binding-claim' /* webpackChunkName: "rolebindingclaim" */).then(m => m.RoleBindingClaimsPage))
-  .set(referenceForModel(NamespaceClaimModel), () => import('./namespace-claim' /* webpackChunkName: "namespaceclaim" */).then(m => m.NamespaceClaimsPage));
+  .set(referenceForModel(NamespaceClaimModel), () => import('./namespace-claim' /* webpackChunkName: "namespaceclaim" */).then(m => m.NamespaceClaimsPage))
+  .set(referenceForModel(ServiceBrokerModel), () => import('./service-broker' /* webpackChunkName: "servicebroker" */).then(m => m.ServiceBrokersPage))
+  .set(referenceForModel(ServiceClassModel), () => import('./service-class' /* webpackChunkName: "serviceclass" */).then(m => m.ServiceClassesPage))
+  .set(referenceForModel(ServicePlanModel), () => import('./service-plan' /* webpackChunkName: "serviceplan" */).then(m => m.ServicePlansPage))
+  .set(referenceForModel(ClusterServiceBrokerModel), () => import('./cluster-service-broker' /* webpackChunkName: "clusterservicebroker" */).then(m => m.ClusterServiceBrokersPage))
+  .set(referenceForModel(ClusterServiceClassModel), () => import('./cluster-service-class' /* webpackChunkName: "clusterserviceclass" */).then(m => m.ClusterServiceClassesPage))
+  .set(referenceForModel(ClusterServicePlanModel), () => import('./cluster-service-plan' /* webpackChunkName: "clusterserviceplan" */).then(m => m.ClusterServicePlansPage))
+  .set(referenceForModel(ServiceInstanceModel), () => import('./service-instance' /* webpackChunkName: "serviceinstance" */).then(m => m.ServiceInstancesPage))
+  .set(referenceForModel(ServiceBindingModel), () => import('./service-binding' /* webpackChunkName: "servicebinding" */).then(m => m.ServiceBindingsPage))
+  .set(referenceForModel(CatalogServiceClaimModel), () => import('./catalog-service-claim' /* webpackChunkName: "catalogserviceclaim" */).then(m => m.CatalogServiceClaimsPage))
+  .set(referenceForModel(TemplateModel), () => import('./template' /* webpackChunkName: "template" */).then(m => m.TemplatesPage))
+  .set(referenceForModel(TemplateInstanceModel), () => import('./template-instance' /* webpackChunkName: "templateinstance" */).then(m => m.TemplateInstancesPage));
