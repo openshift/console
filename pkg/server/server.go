@@ -45,6 +45,7 @@ const (
 
 	grafanaProxyEndpoint = "/api/grafana/"
 	kialiProxyEndpoint   = "/api/kiali/"
+	webhookEndpoint      = "/api/webhook/"
 )
 
 var (
@@ -131,6 +132,7 @@ type Server struct {
 	// Add proxy config
 	GrafanaProxyConfig *hproxy.Config
 	KialiProxyConfig   *hproxy.Config
+	WebhookProxyConfig *hproxy.Config
 }
 
 func (s *Server) authDisabled() bool {
@@ -155,6 +157,10 @@ func (s *Server) grafanaEnable() bool {
 
 func (s *Server) kialiEnable() bool {
 	return s.KialiProxyConfig != nil
+}
+
+func (s *Server) webhookEnable() bool {
+	return s.WebhookProxyConfig != nil
 }
 
 // func (s *Server) dynamicProxyEnabled() bool {
@@ -378,6 +384,18 @@ func (s *Server) HTTPHandler() http.Handler {
 			proxy.SingleJoiningSlash(s.BaseURL.Path, kialiProxyAPIPath),
 			http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				kialiProxy.ServeHTTP(w, r)
+			})),
+		)
+	}
+
+	// NOTE: webhook proxy
+	if s.webhookEnable() {
+		webhookProxyAPIPath := webhookEndpoint
+		webhookProxy := hproxy.NewProxy(s.WebhookProxyConfig)
+		handle(webhookProxyAPIPath, http.StripPrefix(
+			proxy.SingleJoiningSlash(s.BaseURL.Path, webhookProxyAPIPath),
+			http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				webhookProxy.ServeHTTP(w, r)
 			})),
 		)
 	}

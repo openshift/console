@@ -136,6 +136,8 @@ func main() {
 	//NOTE: proxy config // jinsoo
 	fGrafanaEndpoint := fs.String("grafana-endpoint", "", "URL of the Grafana API server.")
 	fKialiEndpoint := fs.String("kiali-endpoint", "", "URL of the KIALI Portal")
+	// NOTE: webhook 연동 추가
+	fwebhookEndpoint := fs.String("webhook-endpoint", "", "URL of the hypercloud webhook endpoint")
 
 	if err := fs.Parse(os.Args[1:]); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
@@ -464,6 +466,15 @@ func main() {
 			InsecureSkipVerify: true,
 		},
 		Endpoint: kialiEndpoint,
+		Origin:   "http://localhost",
+	}
+	webhookEndpoint := bridge.ValidateFlagIsURL("webhook-endpoint", *fwebhookEndpoint)
+	srv.WebhookProxyConfig = &hproxy.Config{
+		HeaderBlacklist: []string{"X-CSRFToken"},
+		TLSClientConfig: &tls.Config{
+			InsecureSkipVerify: true,
+		},
+		Endpoint: webhookEndpoint,
 		Origin:   "http://localhost",
 	}
 
