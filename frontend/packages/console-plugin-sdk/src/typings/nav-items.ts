@@ -15,7 +15,10 @@ namespace ExtensionProperties {
     /** Nav section to which this item belongs to. If not specified, render item as top-level link. */
     section?: string;
     /** Props to pass to the corresponding `NavLink` component. */
-    componentProps: Pick<NavLinkProps, 'name' | 'startsWith' | 'testID' | 'data-tour-id'>;
+    componentProps: Pick<
+      NavLinkProps,
+      'name' | 'startsWith' | 'testID' | 'data-tour-id' | 'data-quickstart-id'
+    >;
     /*
      * TODO: Resolve issue of extensions adding optional sections
      * Providing insertBefore and mergeAfter capability to handles simple cases where extensions

@@ -211,7 +211,7 @@ export const NavSection = connect(navSectionStateToProps)(
             return null;
           }
 
-          const { title, isGrouped } = this.props;
+          const { title, isGrouped, 'data-quickstart-id': dataQuickStartId } = this.props;
           const { isOpen, activeChild } = this.state;
           const isActive = !!activeChild;
           const children = this.getChildren();
@@ -222,7 +222,7 @@ export const NavSection = connect(navSectionStateToProps)(
 
           if (isGrouped) {
             return (
-              <NavGroup className="oc-nav-group" title="">
+              <NavGroup className="oc-nav-group" title="" data-quickstart-id={dataQuickStartId}>
                 {children}
               </NavGroup>
             );
@@ -235,6 +235,7 @@ export const NavSection = connect(navSectionStateToProps)(
               isExpanded={isOpen}
               onExpand={this.toggle}
               data-test="nav"
+              data-quickstart-id={dataQuickStartId}
             >
               {children}
             </NavExpandable>
@@ -276,6 +277,7 @@ type NavSectionProps = {
   isGrouped?: boolean;
   required?: string;
   activePerspective?: string;
+  'data-quickstart-id'?: string;
 };
 
 type Props = NavSectionProps & NavSectionStateProps & NavSectionExtensionProps;

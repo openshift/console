@@ -77,6 +77,7 @@ class NavLink<P extends NavLinkProps> extends React.PureComponent<P> {
       children,
       className,
       'data-tour-id': dataTourId,
+      'data-quickstart-id': dataQuickStartId,
     } = this.props;
 
     // onClick is now handled globally by the Nav's onSelect,
@@ -93,6 +94,7 @@ class NavLink<P extends NavLinkProps> extends React.PureComponent<P> {
           onClick={onClick}
           title={tipText}
           data-tour-id={dataTourId}
+          data-quickstart-id={dataQuickStartId}
           data-test="nav"
         >
           {name}
@@ -157,6 +159,7 @@ export type NavLinkProps = {
   tipText?: string;
   testID?: string;
   'data-tour-id'?: string;
+  'data-quickstart-id'?: string;
 };
 
 export type ResourceNSLinkProps = NavLinkProps & {

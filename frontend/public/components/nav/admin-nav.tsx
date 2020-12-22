@@ -68,7 +68,7 @@ const MonitoringNavSection_ = ({ canAccess }) => {
   const canAccessPrometheus = canAccess && !!window.SERVER_FLAGS.prometheusBaseURL;
   const showSilences = canAccess && !!window.SERVER_FLAGS.alertManagerBaseURL;
   return canAccessPrometheus || showSilences ? (
-    <NavSection id="monitoring" title={t('nav~Monitoring')}>
+    <NavSection id="monitoring" title={t('nav~Monitoring')} data-quickstart-id="qs-nav-monitoring">
       {canAccessPrometheus && (
         <HrefLink
           id="monitoringalerts"
@@ -106,7 +106,7 @@ const AdminNav = () => {
   const { t } = useTranslation();
   return (
     <>
-      <NavSection id="home" title={t('nav~Home')}>
+      <NavSection id="home" title={t('nav~Home')} data-quickstart-id="qs-nav-home">
         <HrefLink
           id="dashboards"
           href="/dashboards"
@@ -130,9 +130,9 @@ const AdminNav = () => {
         <ResourceNSLink id="events" resource="events" name={t('nav~Events')} />
       </NavSection>
 
-      <NavSection id="operators" title={t('nav~Operators')} />
+      <NavSection id="operators" title={t('nav~Operators')} data-quickstart-id="qs-nav-operators" />
 
-      <NavSection id="workloads" title={t('nav~Workloads')}>
+      <NavSection id="workloads" title={t('nav~Workloads')} data-quickstart-id="qs-nav-workloads">
         <ResourceNSLink id="pods" resource="pods" name={t('nav~Pods')} />
         <ResourceNSLink id="deployments" resource="deployments" name={t('nav~Deployments')} />
         <ResourceNSLink
@@ -163,9 +163,17 @@ const AdminNav = () => {
 
       {/* Temporary addition of Knative Serverless section until extensibility allows for section ordering
           and admin-nav gets contributed through extensions. */}
-      <NavSection id="serverless" title={t('nav~Serverless')} />
+      <NavSection
+        id="serverless"
+        title={t('nav~Serverless')}
+        data-quickstart-id="qs-nav-serverless"
+      />
 
-      <NavSection id="networking" title={t('nav~Networking')}>
+      <NavSection
+        id="networking"
+        title={t('nav~Networking')}
+        data-quickstart-id="qs-nav-networking"
+      >
         <ResourceNSLink id="services" resource="services" name={t('nav~Services')} />
         <ResourceNSLink
           id="routes"
@@ -181,7 +189,7 @@ const AdminNav = () => {
         />
       </NavSection>
 
-      <NavSection id="storage" title={t('nav~Storage')}>
+      <NavSection id="storage" title={t('nav~Storage')} data-quickstart-id="qs-nav-storage">
         <ResourceClusterLink
           id="networkpolicies"
           resource="persistentvolumes"
@@ -210,7 +218,12 @@ const AdminNav = () => {
         />
       </NavSection>
 
-      <NavSection id="builds" title={t('nav~Builds')} required={FLAGS.OPENSHIFT}>
+      <NavSection
+        id="builds"
+        title={t('nav~Builds')}
+        required={FLAGS.OPENSHIFT}
+        data-quickstart-id="qs-nav-builds"
+      >
         <ResourceNSLink id="buildconfigs" resource="buildconfigs" name={t('nav~Build Configs')} />
         <ResourceNSLink id="builds" resource="builds" name={t('nav~Builds')} />
         <ResourceNSLink
@@ -223,12 +236,13 @@ const AdminNav = () => {
 
       {/* Temporary addition of Tekton Pipelines section until extensibility allows for section ordering
           and admin-nav gets contributed through extensions. */}
-      <NavSection id="pipelines" title={t('nav~Pipelines')} />
+      <NavSection id="pipelines" title={t('nav~Pipelines')} data-quickstart-id="qs-nav-pipelines" />
 
       <NavSection
         id="servicecatalog"
         title={t('nav~Service Catalog')}
         required={FLAGS.SERVICE_CATALOG}
+        data-quickstart-id="qs-nav-servicecatalog"
       >
         <HrefLink
           id="provisionedservices"
@@ -248,7 +262,12 @@ const AdminNav = () => {
 
       <MonitoringNavSection />
 
-      <NavSection id="compute" title={t('nav~Compute')} required={FLAGS.CAN_LIST_NODE}>
+      <NavSection
+        id="compute"
+        title={t('nav~Compute')}
+        required={FLAGS.CAN_LIST_NODE}
+        data-quickstart-id="qs-nav-compute"
+      >
         <ResourceClusterLink id="nodes" resource="nodes" name={t('nav~Nodes')} />
         <HrefLink
           id="machines"
@@ -299,7 +318,11 @@ const AdminNav = () => {
         />
       </NavSection>
 
-      <NavSection id="usermanagement" title={t('nav~User Management')}>
+      <NavSection
+        id="usermanagement"
+        title={t('nav~User Management')}
+        data-quickstart-id="qs-nav-usermanagement"
+      >
         <ResourceClusterLink
           id="users"
           resource={referenceForModel(UserModel)}
@@ -331,7 +354,11 @@ const AdminNav = () => {
         />
       </NavSection>
 
-      <NavSection id="administration" title={t('nav~Administration')}>
+      <NavSection
+        id="administration"
+        title={t('nav~Administration')}
+        data-quickstart-id="qs-nav-administration"
+      >
         <HrefLink
           id="clustersettings"
           href="/settings/cluster"

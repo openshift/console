@@ -16,7 +16,7 @@ const MarkdownHighlightExtension: React.FC<MarkdownHighlightExtensionProps> = ({
       }
       setSelector(null);
       timeoutId = setTimeout(() => {
-        setSelector(`[data-tour-id="${highlightId}"]`);
+        setSelector(`[data-quickstart-id="${highlightId}"]`);
       }, 0);
     }
     elements && elements.forEach((elm) => elm.addEventListener('click', startHighlight));

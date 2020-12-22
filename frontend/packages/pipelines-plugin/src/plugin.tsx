@@ -91,6 +91,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         name: '%pipelines-plugin~Pipelines%',
         resource: referenceForModel(PipelineModel),
         testID: 'pipeline-header',
+        'data-quickstart-id': 'qs-nav-pipelines',
       },
     },
     flags: {
@@ -107,6 +108,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         // t('pipelines-plugin~Pipelines')
         name: '%pipelines-plugin~Pipelines%',
         href: '/pipelines',
+        'data-quickstart-id': 'qs-nav-pipelines',
       },
     },
     flags: {

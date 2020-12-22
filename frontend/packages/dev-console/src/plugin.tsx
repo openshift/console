@@ -97,6 +97,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         name: '%devconsole~+Add%',
         href: '/add',
         testID: '+Add-header',
+        'data-quickstart-id': 'qs-nav-add',
       },
     },
   },
@@ -111,6 +112,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         name: '%devconsole~Topology%',
         href: '/topology',
         testID: 'topology-header',
+        'data-quickstart-id': 'qs-nav-topology',
       },
     },
     flags: {
@@ -129,6 +131,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         href: '/dev-monitoring',
         testID: 'monitoring-header',
         'data-tour-id': 'tour-monitoring-nav',
+        'data-quickstart-id': 'qs-nav-monitoring',
       },
     },
     flags: {
@@ -147,6 +150,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         href: '/search',
         testID: 'search-header',
         'data-tour-id': 'tour-search-nav',
+        'data-quickstart-id': 'qs-nav-search',
       },
     },
   },
@@ -161,6 +165,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         name: '%devconsole~Builds%',
         resource: 'buildconfigs',
         testID: 'build-header',
+        'data-quickstart-id': 'qs-nav-builds',
       },
     },
     flags: {
@@ -178,6 +183,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         name: '%devconsole~Project%',
         href: '/project-details',
         testID: 'project-details-header',
+        'data-quickstart-id': 'qs-nav-project',
       },
     },
     flags: {
