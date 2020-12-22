@@ -78,11 +78,11 @@ export const navFactory: NavFactory = {
     nameKey: 'details-page~Logs',
     component,
   }),
-  editYaml: (component = editYamlComponent) => ({
+  editYaml: (component) => ({
     href: 'yaml',
     // t('details-page~YAML')
     nameKey: 'details-page~YAML',
-    component,
+    component: component || editYamlComponent,
   }),
   pods: (component) => ({
     href: 'pods',
