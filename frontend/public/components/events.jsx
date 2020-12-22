@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { Button, Chip, ChipGroup } from '@patternfly/react-core';
 import { CloseIcon } from '@patternfly/react-icons';
+import { Trans, useTranslation, withTranslation } from 'react-i18next';
 
 import { namespaceProptype } from '../propTypes';
 import { ResourceListDropdown } from './resource-dropdown';
@@ -27,7 +28,6 @@ import {
   Dropdown,
   Loading,
   PageHeading,
-  pluralize,
   ResourceIcon,
   ResourceLink,
   resourcePathFromModel,
@@ -83,207 +83,240 @@ const kindFilter = (reference, { involvedObject }) => {
   });
 };
 
-const Inner = connectToFlags(FLAGS.CAN_LIST_NODE)(
-  class Inner extends React.PureComponent {
-    render() {
-      const { event, flags } = this.props;
-      const { involvedObject: obj, source, message, reason, series } = event;
-      const tooltipMsg = `${reason} (${obj.kind})`;
-      const isWarning = typeFilter('warning', event);
-      const firstTime = getFirstTime(event);
-      const lastTime = getLastTime(event);
-      const count = series ? series.count : event.count;
-
-      return (
-        <div className={classNames('co-sysevent', { 'co-sysevent--warning': isWarning })}>
-          <div className="co-sysevent__icon-box">
-            <i className="co-sysevent-icon" title={tooltipMsg} />
-            <div className="co-sysevent__icon-line" />
-          </div>
-          <div className="co-sysevent__box" role="gridcell">
-            <div className="co-sysevent__header">
-              <div className="co-sysevent__subheader">
-                <ResourceLink
-                  className="co-sysevent__resourcelink"
-                  kind={referenceFor(obj)}
-                  namespace={obj.namespace}
-                  name={obj.name}
-                />
-                {obj.namespace && (
-                  <ResourceLink
-                    className="co-sysevent__resourcelink hidden-xs"
-                    kind="Namespace"
-                    name={obj.namespace}
-                  />
-                )}
-                {lastTime && <Timestamp className="co-sysevent__timestamp" timestamp={lastTime} />}
-              </div>
-              <div className="co-sysevent__details">
-                <small className="co-sysevent__source">
-                  Generated from <span>{source.component}</span>
-                  {source.component === 'kubelet' && (
-                    <span>
-                      {' '}
-                      on{' '}
-                      {flags[FLAGS.CAN_LIST_NODE] ? (
-                        <Link to={resourcePathFromModel(NodeModel, source.host)}>
-                          {source.host}
-                        </Link>
-                      ) : (
-                        <>{source.host}</>
-                      )}
-                    </span>
-                  )}
-                </small>
-                {count > 1 && (
-                  <small className="co-sysevent__count text-secondary">
-                    {count} times
-                    {firstTime && (
-                      <>
-                        {' '}
-                        in the last{' '}
-                        <Timestamp timestamp={firstTime} simple={true} omitSuffix={true} />
-                      </>
-                    )}
-                  </small>
-                )}
-              </div>
+const Inner = withTranslation()(
+  connectToFlags(FLAGS.CAN_LIST_NODE)(
+    class Inner extends React.PureComponent {
+      render() {
+        const { event, flags, t } = this.props;
+        const { involvedObject: obj, source, message, reason, series } = event;
+        const tooltipMsg = `${reason} (${obj.kind})`;
+        const isWarning = typeFilter('warning', event);
+        const firstTime = getFirstTime(event);
+        const lastTime = getLastTime(event);
+        const count = series ? series.count : event.count;
+        return (
+          <div className={classNames('co-sysevent', { 'co-sysevent--warning': isWarning })}>
+            <div className="co-sysevent__icon-box">
+              <i className="co-sysevent-icon" title={tooltipMsg} />
+              <div className="co-sysevent__icon-line" />
             </div>
-
-            <div className="co-sysevent__message">{message}</div>
+            <div className="co-sysevent__box" role="gridcell">
+              <div className="co-sysevent__header">
+                <div className="co-sysevent__subheader">
+                  <ResourceLink
+                    className="co-sysevent__resourcelink"
+                    kind={referenceFor(obj)}
+                    namespace={obj.namespace}
+                    name={obj.name}
+                  />
+                  {obj.namespace && (
+                    <ResourceLink
+                      className="co-sysevent__resourcelink hidden-xs"
+                      kind="Namespace"
+                      name={obj.namespace}
+                    />
+                  )}
+                  {lastTime && (
+                    <Timestamp className="co-sysevent__timestamp" timestamp={lastTime} />
+                  )}
+                </div>
+                <div className="co-sysevent__details">
+                  <small className="co-sysevent__source">
+                    {source.component !== 'kubelet' &&
+                      t('events~Generated from {{ sourceComponent }}', {
+                        sourceComponent: source.component,
+                      })}
+                    {source.component === 'kubelet' && flags[FLAGS.CAN_LIST_NODE] && (
+                      <Trans ns="events">
+                        Generated from {{ sourceComponent: source.component }} on{' '}
+                        <Link to={resourcePathFromModel(NodeModel, source.host)}>
+                          {{ sourceHost: source.host }}
+                        </Link>
+                      </Trans>
+                    )}
+                    {source.component === 'kubelet' &&
+                      !flags[FLAGS.CAN_LIST_NODE] &&
+                      t('events~Generated from {{ sourceComponent }} on {{ sourceHost }}', {
+                        sourceComponent: source.component,
+                        sourceHost: source.host,
+                      })}
+                  </small>
+                  {count > 1 && firstTime && (
+                    <Trans ns="events">
+                      <small className="co-sysevent__count text-secondary">
+                        {{ eventCount: count }} times in the last{' '}
+                        <Timestamp timestamp={firstTime} simple={true} omitSuffix={true} />
+                      </small>
+                    </Trans>
+                  )}
+                  {count > 1 && !firstTime && (
+                    <Trans ns="events">
+                      <small className="co-sysevent__count text-secondary">
+                        {{ eventCount: count }} times
+                      </small>
+                    </Trans>
+                  )}
+                </div>
+              </div>
+              <div className="co-sysevent__message">{message}</div>
+            </div>
           </div>
-        </div>
-      );
-    }
-  },
+        );
+      }
+    },
+  ),
 );
 
-const eventTypes = { all: 'All Types', normal: 'Normal', warning: 'Warning' };
+export const EventsList = (props) => {
+  const { t } = useTranslation();
+  const [type, setType] = React.useState('all');
+  const [textFilter, setTextFilter] = React.useState('');
+  const resourceTypeAll = 'all';
+  const [selected, setSelected] = React.useState(new Set([resourceTypeAll]));
+  const eventTypes = {
+    all: t('events~All types'),
+    normal: t('events~Normal'),
+    warning: t('events~Warning'),
+  };
 
-export class EventsList extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      type: 'all',
-      textFilter: '',
-      selected: new Set(['All']),
-    };
-  }
-
-  toggleSelected = (selection) => {
-    if (this.state.selected.has('All') || selection === 'All') {
-      this.setState({ selected: new Set([selection]) });
+  const toggleSelected = (selection) => {
+    if (selected.has(resourceTypeAll) || selection === resourceTypeAll) {
+      setSelected(new Set([selection]));
     } else {
-      const updateItems = new Set(this.state.selected);
+      const updateItems = new Set(selected);
       updateItems.has(selection) ? updateItems.delete(selection) : updateItems.add(selection);
-      this.setState({ selected: updateItems });
+      setSelected(updateItems);
     }
   };
 
-  removeResource = (selection) => {
-    const updateItems = new Set(this.state.selected);
+  const removeResource = (selection) => {
+    const updateItems = new Set(selected);
     updateItems.delete(selection);
-    this.setState({ selected: updateItems });
+    setSelected(updateItems);
   };
 
-  clearSelection = () => {
-    this.setState({ selected: new Set() });
+  const clearSelection = () => {
+    setSelected(new Set());
   };
 
-  render() {
-    const { type, selected, textFilter } = this.state;
-    const { autoFocus = true } = this.props;
-
-    return (
-      <>
-        <PageHeading detail={true} title={this.props.title}>
-          <div className="co-search-group">
-            <ResourceListDropdown
-              onChange={this.toggleSelected}
-              selected={Array.from(selected)}
-              clearSelection={this.clearSelection}
-              className="co-search-group__resource"
-            />
-            <Dropdown
-              className="btn-group co-search-group__resource"
-              items={eventTypes}
-              onChange={(v) => this.setState({ type: v })}
-              selectedKey={type}
-              title="All Types"
-            />
-            <TextFilter
-              autoFocus={autoFocus}
-              label="Events by name or message"
-              onChange={(val) => this.setState({ textFilter: val || '' })}
-            />
-          </div>
-          <div className="form-group">
-            {selected.size > 0 && (
-              <ChipGroup key="resources-category" categoryName="Resource" defaultIsOpen={false}>
-                {[...selected].map((chip) => (
-                  <Chip key={chip} onClick={() => this.removeResource(chip)}>
-                    <ResourceIcon kind={chip} />
-                    {kindForReference(chip)}
+  return (
+    <>
+      <PageHeading detail={true} title={props.title}>
+        <div className="co-search-group">
+          <ResourceListDropdown
+            onChange={toggleSelected}
+            selected={Array.from(selected)}
+            clearSelection={clearSelection}
+            className="co-search-group__resource"
+          />
+          <Dropdown
+            className="btn-group co-search-group__resource"
+            items={eventTypes}
+            onChange={(v) => setType(v)}
+            selectedKey={type}
+            title={t('events~All types')}
+          />
+          <TextFilter
+            autoFocus={props.autoFocus}
+            label={t('events~Events by name or message')}
+            onChange={(val) => setTextFilter(val || '')}
+          />
+        </div>
+        <div className="form-group">
+          {selected.size > 0 && (
+            <ChipGroup
+              key="resources-category"
+              categoryName={t('events~Resource')}
+              defaultIsOpen={false}
+            >
+              {[...selected].map((chip) => {
+                const chipString = chip === resourceTypeAll ? t('events~All') : chip;
+                return (
+                  <Chip key={chip} onClick={() => removeResource(chip)}>
+                    <ResourceIcon kind={chipString} />
+                    {kindForReference(chipString)}
                   </Chip>
-                ))}
-                <Button variant="plain" aria-label="Close" onClick={this.clearSelection}>
-                  <CloseIcon />
-                </Button>
-              </ChipGroup>
-            )}
-          </div>
-        </PageHeading>
-        <EventStream
-          {...this.props}
-          key={[...selected].join(',')}
-          type={type}
-          kind={selected.has('All') || selected.size === 0 ? 'all' : [...selected].join(',')}
-          mock={this.props.mock}
-          textFilter={textFilter}
-        />
-      </>
-    );
-  }
-}
+                );
+              })}
+              <Button variant="plain" aria-label={t('events~Close')} onClick={clearSelection}>
+                <CloseIcon />
+              </Button>
+            </ChipGroup>
+          )}
+        </div>
+      </PageHeading>
+      <EventStreamWithTranslation
+        {...props}
+        key={[...selected].join(',')}
+        type={type}
+        kind={
+          selected.has(resourceTypeAll) || selected.size === 0
+            ? resourceTypeAll
+            : [...selected].join(',')
+        }
+        mock={props.mock}
+        textFilter={textFilter}
+      />
+    </>
+  );
+};
 
-export const NoEvents = () => (
-  <Box className="co-sysevent-stream__status-box-empty">
-    <div className="text-center cos-status-box__detail">No events in the past hour</div>
-  </Box>
-);
+export const NoEvents = () => {
+  const { t } = useTranslation();
+  return (
+    <Box className="co-sysevent-stream__status-box-empty">
+      <div className="text-center cos-status-box__detail">
+        {t('events~No events in the past hour')}
+      </div>
+    </Box>
+  );
+};
 
-export const NoMatchingEvents = ({ allCount }) => (
-  <Box className="co-sysevent-stream__status-box-empty">
-    <div className="cos-status-box__title">No matching events</div>
-    <div className="text-center cos-status-box__detail">
-      {allCount}
-      {allCount >= maxMessages && '+'} events exist, but none match the current filter
-    </div>
-  </Box>
-);
+export const NoMatchingEvents = ({ allCount }) => {
+  const { t } = useTranslation();
+  return (
+    <Box className="co-sysevent-stream__status-box-empty">
+      <div className="cos-status-box__title">{t('events~No matching events')}</div>
+      <div className="text-center cos-status-box__detail">
+        {allCount >= maxMessages
+          ? t('events~{{allCount}}+ events exist, but none match the current filter', { allCount })
+          : t('events~{{allCount}} events exist, but none match the current filter', { allCount })}
+      </div>
+    </Box>
+  );
+};
 
-export const ErrorLoadingEvents = () => (
-  <Box>
-    <div className="cos-status-box__title cos-error-title">Error loading events</div>
-    <div className="cos-status-box__detail text-center">
-      An error occurred during event retrieval. Attempting to reconnect...
-    </div>
-  </Box>
-);
+export const ErrorLoadingEvents = () => {
+  const { t } = useTranslation();
+  return (
+    <Box>
+      <div className="cos-status-box__title cos-error-title">
+        {t('events~Error loading events')}
+      </div>
+      <div className="cos-status-box__detail text-center">
+        {t('events~An error occurred during event retrieval. Attempting to reconnect...')}
+      </div>
+    </Box>
+  );
+};
 
-export const EventStreamPage = withStartGuide(({ noProjectsAvailable, ...rest }) => (
-  <>
-    <Helmet>
-      <title>Events</title>
-    </Helmet>
-    <EventsList
-      {...rest}
-      autoFocus={!noProjectsAvailable}
-      mock={noProjectsAvailable}
-      title="Events"
-    />
-  </>
-));
+export const EventStreamPage = withStartGuide(({ noProjectsAvailable, ...rest }) => {
+  const { t } = useTranslation();
+  const title = t('events~Events');
+  return (
+    <>
+      <Helmet>
+        <title>{title}</title>
+      </Helmet>
+      <EventsList
+        {...rest}
+        autoFocus={!noProjectsAvailable}
+        mock={noProjectsAvailable}
+        title={title}
+      />
+    </>
+  );
+});
 
 class EventStream extends React.Component {
   constructor(props) {
@@ -301,7 +334,7 @@ class EventStream extends React.Component {
   }
 
   wsInit(ns) {
-    const { fieldSelector } = this.props;
+    const { fieldSelector, t } = this.props;
     const params = { ns };
     if (fieldSelector) {
       params.queryParams = { fieldSelector: encodeURIComponent(fieldSelector) };
@@ -344,7 +377,7 @@ class EventStream extends React.Component {
       })
       .onclose((evt) => {
         if (evt && evt.wasClean === false) {
-          this.setState({ error: evt.reason || 'Connection did not close cleanly.' });
+          this.setState({ error: evt.reason || t('events~Connection did not close cleanly.') });
         }
       })
       .onerror(() => {
@@ -462,7 +495,7 @@ class EventStream extends React.Component {
   }
 
   render() {
-    const { mock, resourceEventStream } = this.props;
+    const { mock, resourceEventStream, t } = this.props;
     const { active, error, loading, filteredEvents, sortedMessages } = this.state;
     const count = filteredEvents.length;
     const allCount = sortedMessages.length;
@@ -474,23 +507,25 @@ class EventStream extends React.Component {
       sysEventStatus = <NoEvents />;
     }
     if (noMatches && !resourceEventStream) {
-      sysEventStatus = <NoMatchingEvents />;
+      sysEventStatus = <NoMatchingEvents allCount={allCount} />;
     }
 
     if (error) {
       statusBtnTxt = (
         <span className="co-sysevent-stream__connection-error">
-          Error connecting to event stream{_.isString(error) && `: ${error}`}
+          {_.isString(error)
+            ? t('events~Error connecting to event stream: { error }', { error })
+            : t('events~Error connecting to event stream')}
         </span>
       );
       sysEventStatus = <ErrorLoadingEvents />;
     } else if (loading) {
-      statusBtnTxt = <span>Loading events...</span>;
+      statusBtnTxt = <span>{t('events~Loading events...')}</span>;
       sysEventStatus = <Loading />;
     } else if (active) {
-      statusBtnTxt = <span>Streaming events...</span>;
+      statusBtnTxt = <span>{t('events~Streaming events...')}</span>;
     } else {
-      statusBtnTxt = <span>Event stream is paused.</span>;
+      statusBtnTxt = <span>{t('events~Event stream is paused.')}</span>;
     }
 
     const klass = classNames('co-sysevent-stream__timeline', {
@@ -498,8 +533,11 @@ class EventStream extends React.Component {
     });
     const messageCount =
       count < maxMessages
-        ? `Showing ${pluralize(count, 'event')}`
-        : `Showing ${count} of ${allCount}+ events`;
+        ? t('events~Showing {{count}} event', { count })
+        : t('events~Showing {{messageCount}} of {{allCount}}+ events', {
+            messageCount: count,
+            allCount,
+          });
 
     return (
       <div className="co-m-pane__body">
@@ -516,7 +554,9 @@ class EventStream extends React.Component {
               className="co-sysevent-stream__timeline__btn"
             />
             <div className="co-sysevent-stream__timeline__end-message">
-              There are no events before <Timestamp timestamp={this.state.oldestTimestamp} />
+              <Trans ns="events">
+                There are no events before <Timestamp timestamp={this.state.oldestTimestamp} />
+              </Trans>
             </div>
           </div>
           {count > 0 && <EventStreamList events={filteredEvents} EventComponent={Inner} />}
@@ -543,13 +583,14 @@ EventStream.propTypes = {
   textFilter: PropTypes.string,
 };
 
+const EventStreamWithTranslation = withTranslation()(EventStream);
 export const ResourceEventStream = ({
   obj: {
     kind,
     metadata: { name, namespace, uid },
   },
 }) => (
-  <EventStream
+  <EventStreamWithTranslation
     fieldSelector={`involvedObject.uid=${uid},involvedObject.name=${name},involvedObject.kind=${kind}`}
     namespace={namespace}
     resourceEventStream
@@ -557,5 +598,5 @@ export const ResourceEventStream = ({
 );
 
 export const ResourcesEventStream = ({ filters, namespace }) => (
-  <EventStream filter={filters} resourceEventStream namespace={namespace} />
+  <EventStreamWithTranslation filter={filters} resourceEventStream namespace={namespace} />
 );
