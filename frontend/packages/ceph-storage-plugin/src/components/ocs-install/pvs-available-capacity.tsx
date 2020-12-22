@@ -22,11 +22,7 @@ export const PVsAvailableCapacity: React.FC<PVAvaialbleCapacityProps> = ({
     <div className="skeleton-text ceph-pvs-available-capacity__current-capacity--loading" />
   );
 
-  if ((loadError || data.length === 0 || !storageClass) && loaded) {
-    availableStatusElement = (
-      <div className="text-muted">{t('ceph-storage-plugin~Not Available')}</div>
-    );
-  } else if (loaded) {
+  if (loaded && !!getName(storageClass) && !loadError) {
     const pvs = getSCAvailablePVs(data, getName(storageClass));
     availableCapacity = humanizeBinaryBytes(calcPVsCapacity(pvs)).string;
     availableStatusElement = (
@@ -36,6 +32,10 @@ export const PVsAvailableCapacity: React.FC<PVAvaialbleCapacityProps> = ({
           replica,
         })}
       </div>
+    );
+  } else if (loaded || loadError) {
+    availableStatusElement = (
+      <div className="text-muted">{t('ceph-storage-plugin~Not Available')}</div>
     );
   }
 
