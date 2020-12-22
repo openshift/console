@@ -25,6 +25,7 @@ import {
   useK8sWatchResource,
   WatchK8sResource,
 } from '@console/internal/components/utils/k8s-watch-hook';
+import { useFlag } from '@console/shared/src/hooks/flag';
 import { ProvisionerProps } from '@console/plugin-sdk';
 import TechPreviewBadge from '@console/shared/src/components/badges/TechPreviewBadge';
 import { ConfigMapKind, K8sResourceKind } from '@console/internal/module/k8s/types';
@@ -47,6 +48,7 @@ import { scReducer, scInitialState, SCActionType } from '../../utils/storage-poo
 import { KMSConfig, KMSConfigMap } from '../ocs-install/types';
 import { createKmsResources, setEncryptionDispatch, parseURL } from '../kms-config/utils';
 import './ocs-storage-class-form.scss';
+import { GUARDED_FEATURES } from '../../features';
 
 export const PoolResourceComponent: React.FC<ProvisionerProps> = ({ onParamChange }) => {
   const { t } = useTranslation();
@@ -264,6 +266,7 @@ type KMSDetailsProps = {
 
 export const StorageClassEncryption: React.FC<ProvisionerProps> = ({ onParamChange }) => {
   const { t } = useTranslation();
+  const isKmsSupported = useFlag(GUARDED_FEATURES.OCS_KMS);
   const [state, dispatch] = React.useReducer(scReducer, scInitialState);
   const [checked, isChecked] = React.useState(false);
   const [editKMS, setEditKMS] = React.useState(false);
@@ -285,7 +288,7 @@ export const StorageClassEncryption: React.FC<ProvisionerProps> = ({ onParamChan
   >(csiCMWatchResource);
 
   React.useEffect(() => {
-    if (!_.isEmpty(csiConfigMap)) {
+    if (isKmsSupported && !_.isEmpty(csiConfigMap)) {
       const serviceNames = Object.keys(csiConfigMap?.data);
       const kmsData = JSON.parse(csiConfigMap?.data[serviceNames[serviceNames.length - 1]]);
       setCurrentKMS(kmsData);
@@ -319,10 +322,10 @@ export const StorageClassEncryption: React.FC<ProvisionerProps> = ({ onParamChan
       setInProgress(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [csiConfigMap, editKMS]);
+  }, [csiConfigMap, editKMS, isKmsSupported]);
 
   React.useEffect(() => {
-    if (editKMS) {
+    if (isKmsSupported && editKMS) {
       if (state.kms.name.valid && state.kms.address.valid && state.kms.port.valid) {
         setValidSave(true);
       } else {
@@ -338,6 +341,7 @@ export const StorageClassEncryption: React.FC<ProvisionerProps> = ({ onParamChan
     state.kms.name.valid,
     state.kms.address.valid,
     state.kms.port.valid,
+    isKmsSupported,
   ]);
 
   const setChecked = (value: boolean) => {
@@ -381,69 +385,73 @@ export const StorageClassEncryption: React.FC<ProvisionerProps> = ({ onParamChan
   };
 
   return (
-    <Form>
-      <FormGroup
-        fieldId="storage-class-encryption"
-        helperTextInvalid={t('ceph-storage-plugin~This is a required field')}
-        isRequired
-      >
-        <Checkbox
-          id="storage-class-encryption"
-          isChecked={checked}
-          label={<StorageClassEncryptionLabel />}
-          aria-label={t('ceph-storage-plugin~Storage class encryption')}
-          description={t(
-            'ceph-storage-plugin~An encryption key for each Persistent volume (block only) will be generated.',
-          )}
-          onChange={setChecked}
-          className="ocs-storageClass-encryption__form-checkbox"
-        />
+    isKmsSupported && (
+      <Form>
+        <FormGroup
+          fieldId="storage-class-encryption"
+          helperTextInvalid={t('ceph-storage-plugin~This is a required field')}
+          isRequired
+        >
+          <Checkbox
+            id="storage-class-encryption"
+            isChecked={checked}
+            label={<StorageClassEncryptionLabel />}
+            aria-label={t('ceph-storage-plugin~Storage class encryption')}
+            description={t(
+              'ceph-storage-plugin~An encryption key for each Persistent volume (block only) will be generated.',
+            )}
+            onChange={setChecked}
+            className="ocs-storageClass-encryption__form-checkbox"
+          />
 
-        {checked && (
-          <>
-            <Card isFlat className="ocs-storageClass-encryption__card">
-              {(!csiConfigMapLoaded || progress) && <LoadingInline />}
-              {csiConfigMapLoaded && csiConfigMap && !editKMS && !csiConfigMapLoadError ? (
-                <KMSDetails currentKMS={currentKMS} setEditKMS={setEditKMS} />
-              ) : (
-                <>
-                  <KMSConfigure
-                    state={state}
-                    dispatch={dispatch}
-                    className="ocs-storageClass-encryption"
-                  />
-                  <div className="ocs-install-kms__save-button">
-                    <ButtonBar errorMessage={errorMessage} inProgress={progress}>
-                      <ActionGroup>
-                        <Button variant="secondary" onClick={updateKMS} isDisabled={!validSave}>
-                          {t('ceph-storage-plugin~Save')}
-                        </Button>
-                        <Button variant="plain" onClick={cancelKMSUpdate}>
-                          {t('ceph-storage-plugin~Cancel')}
-                        </Button>
-                      </ActionGroup>
-                    </ButtonBar>
-                  </div>
-                </>
-              )}
-            </Card>
-            <Alert
-              className="co-alert"
-              variant="warning"
-              title={t(
-                'ceph-storage-plugin~Encrypted PVs cannot be cloned expanded or create snapshots.',
-              )}
-              aria-label={t('ceph-storage-plugin~The last saved values will be updated')}
-              isInline
-            />
-          </>
-        )}
-      </FormGroup>
-    </Form>
+          {checked && (
+            <>
+              <Card isFlat className="ocs-storageClass-encryption__card">
+                {((!csiConfigMapLoaded && !csiConfigMapLoadError) || progress) && <LoadingInline />}
+                {csiConfigMapLoaded && csiConfigMap && !editKMS && !csiConfigMapLoadError ? (
+                  <KMSDetails currentKMS={currentKMS} setEditKMS={setEditKMS} />
+                ) : (
+                  <>
+                    <KMSConfigure
+                      state={state}
+                      dispatch={dispatch}
+                      className="ocs-storageClass-encryption"
+                    />
+                    <div className="ocs-install-kms__save-button">
+                      <ButtonBar errorMessage={errorMessage} inProgress={progress}>
+                        <ActionGroup>
+                          <Button variant="secondary" onClick={updateKMS} isDisabled={!validSave}>
+                            {t('ceph-storage-plugin~Save')}
+                          </Button>
+                          <Button variant="plain" onClick={cancelKMSUpdate}>
+                            {t('ceph-storage-plugin~Cancel')}
+                          </Button>
+                        </ActionGroup>
+                      </ButtonBar>
+                    </div>
+                  </>
+                )}
+              </Card>
+              <Alert
+                className="co-alert"
+                variant="warning"
+                title={t(
+                  'ceph-storage-plugin~Encrypted PVs cannot be cloned expanded or create snapshots.',
+                )}
+                aria-label={t('ceph-storage-plugin~The last saved values will be updated')}
+                isInline
+              />
+            </>
+          )}
+        </FormGroup>
+      </Form>
+    )
   );
 };
 
 export const StorageClassEncryptionKMSID: React.FC<ProvisionerProps> = ({ onParamChange }) => {
+  const isKmsSupported = useFlag(GUARDED_FEATURES.OCS_KMS);
+
   const csiCMWatchResource: WatchK8sResource = {
     kind: ConfigMapModel.kind,
     namespaced: true,
@@ -455,7 +463,7 @@ export const StorageClassEncryptionKMSID: React.FC<ProvisionerProps> = ({ onPara
   const [csiConfigMap, csiConfigMapLoaded] = useK8sWatchResource<ConfigMapKind>(csiCMWatchResource);
 
   React.useEffect(() => {
-    if (csiConfigMapLoaded && csiConfigMap) {
+    if (isKmsSupported && csiConfigMapLoaded && csiConfigMap) {
       const serviceNames: string[] = Object.keys(csiConfigMap?.data);
       const targetServiceName: string = serviceNames[serviceNames.length - 1];
       onParamChange(targetServiceName);

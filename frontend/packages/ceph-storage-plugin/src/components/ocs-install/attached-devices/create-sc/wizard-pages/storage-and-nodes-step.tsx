@@ -15,8 +15,7 @@ import { StorageClassDropdown } from '@console/internal/components/utils/storage
 import { ListPage } from '@console/internal/components/factory';
 import { NodeModel } from '@console/internal/models';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { getName } from '@console/shared';
-
+import { getName, useFlag } from '@console/shared';
 import {
   storageClassTooltip,
   OCS_DEVICE_SET_REPLICA,
@@ -45,16 +44,17 @@ import AttachedDevicesNodeTable from '../../sc-node-list';
 import { PVsAvailableCapacity } from '../../../pvs-available-capacity';
 import { getSCAvailablePVs } from '../../../../../selectors';
 import { nodeResource, pvResource } from '../../../../../constants/resources';
+import { GUARDED_FEATURES } from '../../../../../features';
 
 const validate = (
   scName: string,
   enableMinimal: boolean,
   nodes: NodeKind[],
-  stretchClusterChecked: boolean,
+  enableStretchCluster: boolean,
   enableFlexibleScaling: boolean,
 ): ValidationType[] => {
   const validations = [];
-  if (!stretchClusterChecked && enableFlexibleScaling) {
+  if (!enableStretchCluster && enableFlexibleScaling) {
     validations.push(ValidationType.BAREMETAL_FLEXIBLE_SCALING);
   }
   if (enableMinimal) {
@@ -63,7 +63,7 @@ const validate = (
   if (!scName) {
     validations.push(ValidationType.BAREMETALSTORAGECLASS);
   }
-  if (scName && !stretchClusterChecked && nodes.length < MINIMUM_NODES) {
+  if (scName && !enableStretchCluster && nodes.length < MINIMUM_NODES) {
     validations.push(ValidationType.MINIMUMNODES);
   }
   return validations;
@@ -71,12 +71,14 @@ const validate = (
 
 export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatch }) => {
   const { t } = useTranslation();
-
+  const isFlexibleScalingSupported = useFlag(GUARDED_FEATURES.OCS_FLEXIBLE_SCALING);
+  const isArbiterSupported = useFlag(GUARDED_FEATURES.OCS_ARBITER);
   const [pvData, pvLoaded, pvLoadError] = useK8sWatchResource<K8sResourceKind[]>(pvResource);
   const [nodesData, nodesLoaded, nodesError] = useK8sWatchResource<NodeKind[]>(nodeResource);
 
   const {
     storageClass,
+    storageClassName: scName,
     enableMinimal,
     nodes,
     stretchClusterChecked,
@@ -84,18 +86,20 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
   } = state;
 
   let scNodeNames: string[] = []; // names of the nodes, backing the storage of selected storage class
+
   const { cpu, memory, zones } = getNodeInfo(nodes);
-  const scName: string = state.storageClassName;
+  const nodesCount: number = nodes.length;
+  const zonesCount: number = zones.size;
+
+  const hasStretchClusterChecked = isArbiterSupported && stretchClusterChecked;
+
   const validations: ValidationType[] = validate(
     scName,
     enableMinimal,
     nodes,
-    stretchClusterChecked,
-    enableFlexibleScaling,
+    hasStretchClusterChecked,
+    isFlexibleScalingSupported && enableFlexibleScaling,
   );
-  const nodesCount: number = nodes.length;
-
-  const zonesCount: number = zones.size;
 
   if (!pvLoadError && pvData.length && pvLoaded) {
     const pvs: K8sResourceKind[] = getSCAvailablePVs(pvData, scName);
@@ -108,13 +112,13 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
   }, [cpu, dispatch, memory, nodesCount]);
 
   React.useEffect(() => {
-    if (!stretchClusterChecked) {
+    if (isFlexibleScalingSupported && !stretchClusterChecked) {
       dispatch({
         type: 'setEnableFlexibleScaling',
         value: isFlexibleScaling(nodesCount, zonesCount),
       });
     }
-  }, [dispatch, zonesCount, nodesCount, stretchClusterChecked]);
+  }, [dispatch, zonesCount, nodesCount, stretchClusterChecked, isFlexibleScalingSupported]);
 
   const handleStorageClass = (sc: StorageClassResourceKind) => {
     dispatch({ type: 'setStorageClass', value: sc });
@@ -126,7 +130,7 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
 
   const filterSC = ({ resource }): boolean => {
     const noProvSC = filterSCWithNoProv(resource);
-    if (stretchClusterChecked && noProvSC && !nodesError && nodesData.length && nodesLoaded) {
+    if (hasStretchClusterChecked && noProvSC && !nodesError && nodesData.length && nodesLoaded) {
       return isArbiterSC(resource, pvData, nodesData);
     }
     return noProvSC;
@@ -139,12 +143,14 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
           {t('ceph-storage-plugin~Capacity')}
         </Text>
       </TextContent>
-      <StretchClusterFormGroup
-        state={state}
-        dispatch={dispatch}
-        pvData={pvData}
-        nodesData={nodesWithoutTaints(nodesData)}
-      />
+      {isArbiterSupported && (
+        <StretchClusterFormGroup
+          state={state}
+          dispatch={dispatch}
+          pvData={pvData}
+          nodesData={nodesWithoutTaints(nodesData)}
+        />
+      )}
       <FormGroup
         fieldId="storage-class-dropdown"
         label={t('ceph-storage-plugin~Storage Class')}
@@ -162,7 +168,7 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
             />
             <PVsAvailableCapacity /* @TODO(refactor): Pv data can be passed directly to this component */
               replica={
-                stretchClusterChecked ? OCS_DEVICE_SET_ARBITER_REPLICA : OCS_DEVICE_SET_REPLICA
+                hasStretchClusterChecked ? OCS_DEVICE_SET_ARBITER_REPLICA : OCS_DEVICE_SET_REPLICA
               }
               data-test-id="ceph-ocs-install-pvs-available-capacity"
               storageClass={storageClass}
@@ -179,9 +185,9 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
       <Grid>
         <GridItem span={11}>
           <SelectNodesText
-            text={stretchClusterChecked ? attachDevicesWithArbiter(t) : attachDevices(t)}
+            text={hasStretchClusterChecked ? attachDevicesWithArbiter(t) : attachDevices(t)}
             replica={
-              stretchClusterChecked ? OCS_DEVICE_SET_ARBITER_REPLICA : OCS_DEVICE_SET_REPLICA
+              hasStretchClusterChecked ? OCS_DEVICE_SET_ARBITER_REPLICA : OCS_DEVICE_SET_REPLICA
             }
           />
         </GridItem>

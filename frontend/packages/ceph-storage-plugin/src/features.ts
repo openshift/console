@@ -33,10 +33,20 @@ export const LSO_FLAG = 'LSO';
 
 export const RGW_FLAG = 'RGW';
 
-/* Key should be same as values received from the CSV 
-  Values should be formatted as OCS_<Console-Flag-Name> */
-export const OCS_SUPPORT_FLAGS = {
-  MULTUS: 'OCS_MULTUS',
+export enum GUARDED_FEATURES {
+  // Flag names to be prefixed with "OCS_" so as to seperate from console flags
+  OCS_MULTUS = 'OCS_MULTUS',
+  OCS_ARBITER = 'OCS_ARBITER',
+  OCS_KMS = 'OCS_KMS',
+  OCS_FLEXIBLE_SCALING = 'OCS_FLEXIBLE_SCALING',
+}
+
+const OCS_FEATURE_FLAGS = {
+  // [flag name]: <value of flag in csv annotation>
+  [GUARDED_FEATURES.OCS_MULTUS]: 'multus',
+  [GUARDED_FEATURES.OCS_ARBITER]: 'arbiter',
+  [GUARDED_FEATURES.OCS_KMS]: 'kms',
+  [GUARDED_FEATURES.OCS_FLEXIBLE_SCALING]: 'flexible-scaling',
 };
 
 const handleError = (res: any, flags: string[], dispatch: Dispatch, cb: FeatureDetector) => {
@@ -121,8 +131,8 @@ export const detectOCS: FeatureDetector = async (dispatch) => {
 
 const detectFeatures = (dispatch, csv: ClusterServiceVersionKind) => {
   const support = JSON.parse(getAnnotations(csv)?.[OCS_SUPPORT_ANNOTATION]);
-  _.keys(OCS_SUPPORT_FLAGS).forEach((feature) => {
-    dispatch(setFlag(OCS_SUPPORT_FLAGS[feature], support.includes(feature.toLowerCase())));
+  _.keys(OCS_FEATURE_FLAGS).forEach((feature) => {
+    dispatch(setFlag(feature, support.includes(OCS_FEATURE_FLAGS[feature])));
   });
 };
 
@@ -141,6 +151,6 @@ export const detectOCSSupportedFeatures: FeatureDetector = async (dispatch) => {
       setTimeout(() => detectOCSSupportedFeatures(dispatch), 15 * SECOND);
     }
   } catch (error) {
-    handleError(error, _.keys(OCS_SUPPORT_FLAGS), dispatch, detectOCSSupportedFeatures);
+    handleError(error, _.keys(OCS_FEATURE_FLAGS), dispatch, detectOCSSupportedFeatures);
   }
 };

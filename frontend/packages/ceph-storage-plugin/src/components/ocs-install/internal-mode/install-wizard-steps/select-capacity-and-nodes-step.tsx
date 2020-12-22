@@ -14,7 +14,7 @@ import { StorageClassResourceKind, NodeKind } from '@console/internal/module/k8s
 import { StorageClassDropdown } from '@console/internal/components/utils/storage-class-dropdown';
 import { ListPage } from '@console/internal/components/factory';
 import { NodeModel } from '@console/internal/models';
-import { getName, getUID } from '@console/shared';
+import { getName, getUID, useFlag } from '@console/shared';
 import {
   storageClassTooltip,
   requestedCapacityTooltip,
@@ -31,6 +31,7 @@ import {
 import { ValidationMessage, ValidationType } from '../../../../utils/common-ocs-install-el';
 import InternalNodeTable from '../../node-list';
 import { SelectNodesText, SelectNodesDetails } from '../../install-wizard/capacity-and-nodes';
+import { GUARDED_FEATURES } from '../../../../features';
 
 const validate = (scName, enableMinimal, enableFlexibleScaling): ValidationType[] => {
   const validations = [];
@@ -59,11 +60,17 @@ export const SelectCapacityAndNodes: React.FC<SelectCapacityAndNodesProps> = ({
     enableMinimal,
     enableFlexibleScaling,
   } = state;
+  const isFlexibleScalingSupported = useFlag(GUARDED_FEATURES.OCS_FLEXIBLE_SCALING);
+
   const { cpu, memory, zones } = getNodeInfo(selectedNodes);
   const scName: string = getName(storageClass);
   const nodesCount = selectedNodes.length;
   const zonesCount = zones.size;
-  const validations = validate(scName, enableMinimal, enableFlexibleScaling);
+  const validations = validate(
+    scName,
+    enableMinimal,
+    isFlexibleScalingSupported && enableFlexibleScaling,
+  );
 
   React.useEffect(() => {
     const isMinimal = shouldDeployAsMinimal(cpu, memory, nodesCount);
@@ -71,11 +78,13 @@ export const SelectCapacityAndNodes: React.FC<SelectCapacityAndNodesProps> = ({
   }, [cpu, dispatch, memory, nodesCount]);
 
   React.useEffect(() => {
-    dispatch({
-      type: ActionType.SET_ENABLE_FLEXIBLE_SCALING,
-      payload: isFlexibleScaling(nodesCount, zonesCount),
-    });
-  }, [dispatch, zonesCount, nodesCount]);
+    if (isFlexibleScalingSupported) {
+      dispatch({
+        type: ActionType.SET_ENABLE_FLEXIBLE_SCALING,
+        payload: isFlexibleScaling(nodesCount, zonesCount),
+      });
+    }
+  }, [dispatch, zonesCount, nodesCount, isFlexibleScalingSupported]);
 
   return (
     <Form>

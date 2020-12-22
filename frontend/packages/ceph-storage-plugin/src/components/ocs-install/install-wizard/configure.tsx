@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { FormGroup, Checkbox, Radio } from '@patternfly/react-core';
 import { FieldLevelHelp, Firehose } from '@console/internal/components/utils';
-import { TechPreviewBadge, getName, ResourceDropdown } from '@console/shared';
+import { TechPreviewBadge, getName, ResourceDropdown, useFlag } from '@console/shared';
 import { NetworkAttachmentDefinitionKind } from '@console/network-attachment-definition-plugin/src/types';
 import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
 import { referenceForModel } from '@console/internal/module/k8s';
@@ -11,6 +11,7 @@ import { State, Action } from '../attached-devices/create-sc/state';
 import { KMSConfigure } from '../../kms-config/kms-config';
 import { NetworkType } from '../types';
 import { ValidationMessage, ValidationType } from '../../../utils/common-ocs-install-el';
+import { GUARDED_FEATURES } from '../../../features';
 import { setEncryptionDispatch } from '../../kms-config/utils';
 import { AdvancedSubscription } from '../subscription-icon';
 import './install-wizard.scss';
@@ -45,6 +46,8 @@ export const EncryptionFormGroup: React.FC<EncryptionFormGroupProps> = ({
   mode,
 }) => {
   const { t } = useTranslation();
+  const isKmsSupported = useFlag(GUARDED_FEATURES.OCS_KMS);
+
   const { encryption } = state;
   const [encryptionChecked, setEncryptionChecked] = React.useState(
     encryption.clusterWide || encryption.storageClass,
@@ -123,7 +126,7 @@ export const EncryptionFormGroup: React.FC<EncryptionFormGroupProps> = ({
         )}
         onChange={toggleEncryption}
       />
-      {encryptionChecked && (
+      {isKmsSupported && encryptionChecked && (
         <div className="ocs-install-encryption">
           <FormGroup
             fieldId="encryption-options"

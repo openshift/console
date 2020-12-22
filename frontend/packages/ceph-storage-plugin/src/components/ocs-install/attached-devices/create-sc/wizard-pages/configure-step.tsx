@@ -4,11 +4,12 @@ import { useFlag } from '@console/shared';
 import { State, Action } from '../state';
 import { EncryptionFormGroup, NetworkFormGroup } from '../../../install-wizard/configure';
 import { NetworkType } from '../../../types';
-import { OCS_SUPPORT_FLAGS } from '../../../../../features';
+import { GUARDED_FEATURES } from '../../../../../features';
 
 export const Configure: React.FC<ConfigureProps> = ({ state, dispatch, mode }) => {
+  const isMultusSupported = useFlag(GUARDED_FEATURES.OCS_MULTUS);
+
   const { networkType: nwType, clusterNetwork, publicNetwork } = state;
-  const isMultusSupported = useFlag(OCS_SUPPORT_FLAGS.MULTUS);
 
   const setNetworkType = (networkType: NetworkType) => {
     dispatch({ type: 'setNetworkType', value: networkType });
