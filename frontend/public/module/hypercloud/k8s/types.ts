@@ -1,4 +1,4 @@
-import { K8sResourceCommon } from '../../k8s';
+import { K8sResourceCommon, K8sResourceKind } from '../../k8s';
 
 export type ApprovalKind = K8sResourceCommon & {
   namespace?: string;
@@ -84,8 +84,12 @@ export type CatalogServiceClaimKind = K8sResourceCommon & {
 // }
 
 // export type TemplateInstanceKind = K8sResourceCommon & {
-  
+
 // }
+
+export type K8sClaimResourceKind = K8sResourceKind & {
+  resourceName?: string;
+};
 
 // export type K8sResourceCommon = {
 //     apiVersion?: string;

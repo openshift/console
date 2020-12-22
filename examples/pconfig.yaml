@@ -8,7 +8,7 @@ proxyInfo:
     rule: "Host(`cpdch.org`) && PathPrefix(`/test/`)"
     # host: "cpdch.org"
     path: "/test/"
-  - name: eto
-    server: "http://www.etoland.co.kr/"
-    rule: "Host(`etoland.co.kr`) && PathPrefix(`/eto/`)"
-    path: "/eto/"
+  - name: naver
+    server: "https://www.naver.com/"
+    rule: "Host(`naver.com`) && PathPrefix(`/naver/`)"
+    path: "/naver/"

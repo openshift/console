@@ -6,6 +6,7 @@ import { GroupModel, UserModel } from '../../../models';
 
 import { referenceForModel } from '../../../module/k8s';
 import { HrefLink, ResourceNSLink, ResourceClusterLink } from '../../nav/items';
+import { AuthAdminLink } from './items';
 import { NavSection } from '../../nav/section';
 
 // Wrap `NavItemSeparator` so we can use `required` without prop type errors.
@@ -19,13 +20,14 @@ const HyperCloudNav = () => (
   <Translation>
     {t => (
       <>
-        <NavSection title={t('COMMON:MSG_LNB_MENU_1')}>
+        <NavSection title="Home">
           <HrefLink href="/dashboards" activePath="/dashboards/" name="Status" />
           <HrefLink href="/search" name="Search" startsWith={searchStartsWith} />
           <ResourceNSLink resource="audits" name="Audit" />
           <ResourceNSLink resource="events" name="Events" />
           <HrefLink href="/grafana" name="Grafana" />
         </NavSection>
+        <NavSection title="Operators" />
         <NavSection title={t('COMMON:MSG_LNB_MENU_10')}>
           <ResourceNSLink resource="servicebrokers" name="Service Broker" />
           <ResourceNSLink resource="serviceclasses" name="Service Class" />
@@ -48,7 +50,6 @@ const HyperCloudNav = () => (
           <ResourceNSLink resource="statefulsets" name="Stateful Sets" />
           <ResourceNSLink resource="virtualmachines" name="Virtual Machine" />
           <ResourceNSLink resource="virtualmachineinstances" name="Virtual Machine Instance" />
-          <ResourceNSLink resource="vmirs" name="VMIRS" />
           <ResourceNSLink resource="configmaps" name="Config Maps" />
           <ResourceNSLink resource="secrets" name="Secrets" />
           <ResourceNSLink resource="jobs" name="Jobs" />
@@ -78,13 +79,13 @@ const HyperCloudNav = () => (
           <ResourceClusterLink resource="persistentvolumes" name="Persistent Volumes" required={FLAGS.CAN_LIST_PV} />
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_56')}>
-          <ResourceNSLink resource="tasks" name='Task' />
-          <ResourceNSLink resource="taskruns" name='TaskRun' />
-          <ResourceNSLink resource="pipelines" name='Pipeline' />
-          <ResourceNSLink resource="pipelineruns" name='PipelineRun' />
-          <ResourceNSLink resource="approvals" name='Approval' />
-          <ResourceNSLink resource="pipelineresources" name='PipelineResource' />
-          <ResourceNSLink resource="conditions" name='Condition' />
+          <ResourceNSLink resource="tasks" name="Task" />
+          <ResourceNSLink resource="taskruns" name="TaskRun" />
+          <ResourceNSLink resource="pipelines" name="Pipeline" />
+          <ResourceNSLink resource="pipelineruns" name="PipelineRun" />
+          <ResourceNSLink resource="approvals" name="Approval" />
+          <ResourceNSLink resource="pipelineresources" name="PipelineResource" />
+          <ResourceNSLink resource="conditions" name="Condition" />
         </NavSection>
         {/* <NavSection title="AI DevOps">
           <ResourceNSLink resource="notebooks" name='Notebook' />
@@ -116,9 +117,9 @@ const HyperCloudNav = () => (
           <ResourceNSLink resource="rolebindings" name="Role Bindings" startsWith={rolebindingsStartsWith} />
           <ResourceNSLink resource="rolebindingclaims" name="Role Binding Claims" startsWith={rolebindingsStartsWith} />
           <ResourceNSLink resource="serviceaccounts" name="Service Accounts" />
-          <ResourceClusterLink resource="podsecuritypolicies" name='PodSecurityPolicy' />
-          <ResourceClusterLink resource={referenceForModel(UserModel)} name="Users" required={[FLAGS.OPENSHIFT, FLAGS.CAN_LIST_USERS]} />
-          <ResourceClusterLink resource={referenceForModel(GroupModel)} name="User Groups" required={[FLAGS.OPENSHIFT, FLAGS.CAN_LIST_GROUPS]} />
+          <ResourceClusterLink resource="podsecuritypolicies" name="PodSecurityPolicy" />
+          <AuthAdminLink resource={referenceForModel(UserModel)} name="Users" />
+          <AuthAdminLink resource={referenceForModel(GroupModel)} name="User Groups" />
         </NavSection>
       </>
     )}

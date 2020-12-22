@@ -13,6 +13,11 @@ export const pluralToKind = plural => {
     catalogserviceclaims: 'CatalogServiceClaim',
     templates: 'Template',
     templateinstances: 'TemplateInstance',
+    namespaceclaims: 'NamespaceClaim',
+    rolebindingclaims: 'RoleBindingClaim',
+    resourcequotaclaims: 'ResourceQuotaClaim',
   };
   return convertKind[plural];
 };
+
+export const crd = ['namespaceclaims', 'rolebindingclaims', 'resourcequotaclaims'];

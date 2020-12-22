@@ -347,9 +347,7 @@ export const ListPage = withFallback((props) => {
   if (ko.crd) {
     try {
       const ref = referenceForModel(ko);
-      href = usedNamespace
-        ? `/k8s/ns/${usedNamespace || 'default'}/${ref}/~new`
-        : `/k8s/cluster/${ref}/~new`;
+      href = usedNamespace ? `/k8s/ns/${usedNamespace || 'default'}/customresourcedefinitions/${ref}/~new` : `/k8s/cluster/customresourcedefinitions/${ref}/~new`;
     } catch (unused) {
       /**/
     }
