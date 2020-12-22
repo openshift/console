@@ -7,7 +7,7 @@
  */
 import * as _ from 'lodash';
 import { alignWithDNS1123 } from '@console/shared/src';
-import { ConfigMapKind } from '@console/internal/module/k8s';
+import { ConfigMapKind, StorageClassResourceKind } from '@console/internal/module/k8s';
 import { InternalActionType, UpdateOptions } from '../../../types';
 import { iGetVMWareFieldAttribute } from '../../../../selectors/immutable/provider/vmware/selectors';
 import {
@@ -77,7 +77,11 @@ export const getNics = (parsedVm): VMWizardNetwork[] => {
   });
 };
 
-export const getDisks = (parsedVm, storageClassConfigMap: ConfigMapKind): VMWizardStorage[] => {
+export const getDisks = (
+  parsedVm,
+  storageClassConfigMap: ConfigMapKind,
+  defaultSC?: StorageClassResourceKind,
+): VMWizardStorage[] => {
   const devices = _.get(parsedVm, ['Config', 'Hardware', 'Device']);
 
   // if the device is a disk, it has "capacityInKB" present
@@ -121,6 +125,7 @@ export const getDisks = (parsedVm, storageClassConfigMap: ConfigMapKind): VMWiza
           size: size.value,
           unit: size.unit,
         })
+        .setStorageClassName(defaultSC?.metadata?.name || '')
         .setVolumeMode(getDefaultSCVolumeMode(storageClassConfigMap))
         .setAccessModes(getDefaultSCAccessModes(storageClassConfigMap))
         .asResource(),
@@ -134,7 +139,10 @@ export const getDisks = (parsedVm, storageClassConfigMap: ConfigMapKind): VMWiza
 };
 
 // update checks done in vmWareStateUpdate
-export const prefillUpdateCreator = (options: UpdateOptions) => {
+export const prefillUpdateCreator = (
+  options: UpdateOptions,
+  defaultSC: StorageClassResourceKind,
+) => {
   const { id, dispatch, getState } = options;
   const state = getState();
   const vm = iGetVMWareFieldAttribute(state, id, VMWareProviderField.VM, 'vm');
@@ -195,7 +203,7 @@ export const prefillUpdateCreator = (options: UpdateOptions) => {
   dispatch(
     vmWizardInternalActions[InternalActionType.SetStorages](
       id,
-      getDisks(parsedVm, storageClassConfigMap),
+      getDisks(parsedVm, storageClassConfigMap, defaultSC),
     ),
   );
 };

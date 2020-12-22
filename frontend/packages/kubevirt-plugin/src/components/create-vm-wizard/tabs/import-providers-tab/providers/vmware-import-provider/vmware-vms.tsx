@@ -3,6 +3,10 @@ import { FormSelect, FormSelectOption } from '@patternfly/react-core';
 import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { iGetCommonData } from '../../../../selectors/immutable/selectors';
+import { useAccessReview2 } from '@console/internal/components/utils';
+import { StorageClassResourceKind } from '@console/internal/module/k8s';
+import { StorageClassModel } from '@console/internal/models';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { VMImportProvider, VMWareProviderField, VMWareProviderProps } from '../../../../types';
 import { iGetVMWareField } from '../../../../selectors/immutable/provider/vmware/selectors';
 import { vmWizardActions } from '../../../../redux/actions';
@@ -14,6 +18,7 @@ import { FormSelectPlaceholderOption } from '../../../../../form/form-select-pla
 import { getPlaceholderKey } from '../../../../utils/renderable-field-utils';
 import { ignoreCaseSort } from '../../../../../../utils/sort';
 import { requestVmDetails } from '../../../../redux/state-update/providers/vmware/vmware-provider-actions';
+import { getDefaultStorageClass } from '../../../../../../selectors/config-map/sc-defaults';
 
 const VMWareVMsConnected: React.FC<VMWareVMsConnectedProps> = React.memo(
   ({ vmField, v2vvmware, onVMChange }) => {
@@ -29,10 +34,27 @@ const VMWareVMsConnected: React.FC<VMWareVMsConnectedProps> = React.memo(
       );
     }
 
+    const [scAllowed] = useAccessReview2({
+      group: StorageClassModel.apiGroup,
+      resource: StorageClassModel.plural,
+      verb: 'list',
+    });
+    const [storageClasses] = useK8sWatchResource<StorageClassResourceKind[]>(
+      scAllowed
+        ? {
+            kind: StorageClassModel.kind,
+            isList: true,
+            namespaced: false,
+          }
+        : null,
+    );
+
+    const defaultStorageClass = scAllowed && getDefaultStorageClass(storageClasses);
+
     return (
       <FormFieldRow field={vmField} fieldType={FormFieldType.SELECT}>
         <FormField>
-          <FormSelect onChange={onVMChange}>
+          <FormSelect onChange={(v) => onVMChange(v, defaultStorageClass)}>
             <FormSelectPlaceholderOption
               placeholder={t(getPlaceholderKey(VMWareProviderField.VM))}
               isDisabled={!!iGet(vmField, 'value')}
@@ -51,7 +73,7 @@ const VMWareVMsConnected: React.FC<VMWareVMsConnectedProps> = React.memo(
 type VMWareVMsConnectedProps = {
   vmField: any;
   v2vvmware: any;
-  onVMChange: (vm: string) => void;
+  onVMChange: (vm: string, defaultSC: StorageClassResourceKind) => void;
 };
 
 const stateToProps = (state, { wizardReduxID }) => {
@@ -62,13 +84,13 @@ const stateToProps = (state, { wizardReduxID }) => {
 };
 
 const dispatchToProps = (dispatch, { wizardReduxID }) => ({
-  onVMChange: (vm) => {
+  onVMChange: (vm, defaultSC) => {
     dispatch(
       vmWizardActions[ActionType.UpdateImportProviderField](
         wizardReduxID,
         VMImportProvider.VMWARE,
         VMWareProviderField.VM,
-        { value: vm, vm: null },
+        { value: vm, vm: null, sc: defaultSC },
       ),
     );
     dispatch(requestVmDetails(wizardReduxID, vm));
