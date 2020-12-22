@@ -80,7 +80,7 @@ const VirtualMachineInstanceDetails: React.FC<VirtualMachineInstanceDetailsProps
 const { details, editYaml } = navFactory;
 export const VirtualMachineInstances: React.FC = props => <Table {...props} aria-label="Virtual Machine Instances" Header={VirtualMachineInstanceTableHeader} Row={VirtualMachineInstanceTableRow} virtualize />;
 
-export const VirtualMachineInstancesPage: React.FC<VirtualMachineInstancesPageProps> = props => <ListPage canCreate={true} ListComponent={VirtualMachineInstances} kind={kind} {...props} />;
+export const VirtualMachineInstancesPage: React.FC<VirtualMachineInstancesPageProps> = props => <ListPage canCreate={false} ListComponent={VirtualMachineInstances} kind={kind} {...props} />;
 
 export const VirtualMachineInstancesDetailsPage: React.FC<VirtualMachineInstancesDetailsPageProps> = props => <DetailsPage {...props} kind={kind} menuActions={menuActions} pages={[details(detailsPage(VirtualMachineInstanceDetails)), editYaml()]} />;
 
