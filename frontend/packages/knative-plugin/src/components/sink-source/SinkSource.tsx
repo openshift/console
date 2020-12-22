@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Formik, FormikValues, FormikHelpers } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { K8sResourceKind, k8sUpdate, referenceFor, modelFor } from '@console/internal/module/k8s';
-import { sinkTypeUriValidatiuon } from '../add/eventSource-validation-utils';
+import { sinkTypeUriValidation } from '../add/eventSource-validation-utils';
 import SinkSourceModal from './SinkSourceModal';
 import { SinkType } from '../add/import-types';
 
@@ -23,32 +23,39 @@ const SinkSource: React.FC<SinkSourceProps> = ({ source, cancel, close }) => {
   const { name: sinkName = '', apiVersion = '', kind = '', uri = '' } = isSinkRef
     ? spec?.sink?.ref
     : spec?.sink || {};
+  const sinkKey = sinkName && kind ? `${kind}-${sinkName}` : '';
   const initialValues = {
-    sinkType: uri ? SinkType.Uri : SinkType.Resource,
-    sink: {
-      apiVersion,
-      kind,
-      name: sinkName,
-      uri,
+    formData: {
+      sinkType: uri ? SinkType.Uri : SinkType.Resource,
+      sink: {
+        apiVersion,
+        kind,
+        name: sinkName,
+        key: sinkKey,
+        uri,
+      },
     },
   };
   const handleSubmit = (values: FormikValues, action: FormikHelpers<FormikValues>) => {
+    const {
+      formData: { sinkType, sink },
+    } = values;
     const updatePayload = {
       ...source,
-      ...(SinkType.Uri !== values?.sinkType
+      ...(SinkType.Uri !== sinkType
         ? {
             spec: {
               ...source.spec,
               sink: {
                 ref: {
-                  apiVersion: values?.sink?.apiVersion,
-                  kind: values?.sink?.kind,
-                  name: values?.sink?.name,
+                  apiVersion: sink?.apiVersion,
+                  kind: sink?.kind,
+                  name: sink?.name,
                 },
               },
             },
           }
-        : { spec: { ...source.spec, sink: { uri: values?.sink?.uri } } }),
+        : { spec: { ...source.spec, sink: { uri: sink?.uri } } }),
     };
     k8sUpdate(modelFor(referenceFor(source)), updatePayload)
       .then(() => {
@@ -70,9 +77,11 @@ const SinkSource: React.FC<SinkSourceProps> = ({ source, cancel, close }) => {
       initialStatus={{ error: '' }}
       validationSchema={() =>
         yup.object().shape({
-          sink: yup.object().when('sinkType', {
-            is: SinkType.Uri,
-            then: sinkTypeUriValidatiuon(t),
+          formData: yup.object().shape({
+            sink: yup.object().when('sinkType', {
+              is: SinkType.Uri,
+              then: sinkTypeUriValidation(t),
+            }),
           }),
         })
       }

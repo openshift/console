@@ -24,10 +24,12 @@ describe('SinkSourceModal Form', () => {
   let formProps: SinkSourceModalProps;
   let sinkSourceModalWrapper: ShallowWrapper<SinkSourceModalProps>;
   const formValues = {
-    sink: {
-      apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
-      kind: ServiceModel.kind,
-      name: 'event-greeter',
+    formData: {
+      sink: {
+        apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
+        kind: ServiceModel.kind,
+        name: 'event-greeter',
+      },
     },
   };
   beforeEach(() => {
@@ -65,10 +67,12 @@ describe('SinkSourceModal Form', () => {
 
   it('Save should be enabled if value is  changed', () => {
     const sinkValues = {
-      sink: {
-        apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
-        kind: ServiceModel.kind,
-        name: 'event-greeter-new',
+      formData: {
+        sink: {
+          apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
+          kind: ServiceModel.kind,
+          name: 'event-greeter-new',
+        },
       },
     };
     formProps = {

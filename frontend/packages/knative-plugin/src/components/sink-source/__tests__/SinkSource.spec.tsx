@@ -22,7 +22,7 @@ describe('SinkSource', () => {
   it('should render Formik with proper initial values', () => {
     const formikForm = eventSourceForm.find(Formik);
     expect(formikForm).toHaveLength(1);
-    expect(formikForm.get(0).props.initialValues.sink.name).toBe('wss-event-display');
+    expect(formikForm.get(0).props.initialValues.formData.sink.name).toBe('wss-event-display');
   });
 
   it('should render Formik child with proper props', () => {
