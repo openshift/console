@@ -133,7 +133,7 @@ const ServiceBrokersList: React.FC = props => <Table {...props} aria-label="Serv
 ServiceBrokersList.displayName = 'ServiceBrokersList';
 
 const ServiceBrokersPage: React.FC<ServiceBrokersPageProps> = props => {
-  return <ListPage canCreate={false} kind={serviceBrokerReference} ListComponent={ServiceBrokersList} {...props} />;
+  return <ListPage canCreate={true} kind={serviceBrokerReference} ListComponent={ServiceBrokersList} {...props} />;
 };
 ServiceBrokersPage.displayName = 'ServiceBrokersPage';
 

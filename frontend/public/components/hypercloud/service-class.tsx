@@ -44,10 +44,10 @@ ServiceClassesDetailsPage.displayName = 'ServiceClassesDetailsPage';
 const tableColumnClasses = [
   '', // NAME
   '', //NAMESPACE
-  '', //BINDABLE
-  '', //EXTERNAL NAME
-  '', // SERVICE BROKER
-  '', // CREATED
+  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'), //BINDABLE
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg'), //EXTERNAL NAME
+  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'), // SERVICE BROKER
+  classNames('pf-m-hidden', 'pf-m-visible-on-xl'), // CREATED
 ];
 
 const ServiceClassTableRow = ({ obj, index, key, style }) => {
@@ -118,7 +118,7 @@ const ServiceClassesList: React.FC = props => <Table {...props} aria-label="Serv
 ServiceClassesList.displayName = 'ServiceClassesList';
 
 const ServiceClassesPage: React.FC<ServiceClassesPageProps> = props => {
-  return <ListPage canCreate={false} kind={serviceClassReference} ListComponent={ServiceClassesList} {...props} />;
+  return <ListPage canCreate={true} kind={serviceClassReference} ListComponent={ServiceClassesList} {...props} />;
 };
 ServiceClassesPage.displayName = 'ServiceClassesPage';
 

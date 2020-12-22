@@ -6,13 +6,13 @@ import { ServicePlanKind, K8sResourceKindReference } from '../../module/k8s';
 import { DetailsPage, ListPage, Table, TableData, TableRow } from '../factory';
 import { navFactory, SectionHeading, ResourceSummary, ResourceLink, Timestamp } from '../utils';
 
-const servicePlanReference: K8sResourceKindReference = 'servicePlanReference';
+const servicePlanReference: K8sResourceKindReference = 'ServicePlan';
 
 const ServicePlanDetails: React.FC<ServicePlanDetailsProps> = ({ obj: servicePlan }) => {
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Service Broker Details" />
+        <SectionHeading text="Service Plan Details" />
         <div className="row">
           <div className="col-md-6">
             <ResourceSummary resource={servicePlan} showPodSelector showNodeSelector></ResourceSummary>
@@ -45,12 +45,12 @@ ServicePlansDetailsPage.displayName = 'ServicePlansDetailsPage';
 
 const tableColumnClasses = [
   '', // NAME
-  '', //NAMESPACE
-  '', //BINDABLE
-  '', //EXTERNAL NAME
-  '', // SERVICE BROKER
-  '', // SERVICE CLASS
-  '', // CREATED
+  '', // NAMESPACE
+  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'), // BINDABLE
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg'), // EXTERNAL NAME
+  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'), // SERVICE BROKER
+  classNames('pf-m-hidden', 'pf-m-visible-on-xl'), // SERVICE CLASS
+  classNames('pf-m-hidden', 'pf-m-visible-on-xl'), // CREATED
 ];
 
 const ServicePlanTableRow = ({ obj, index, key, style }) => {
@@ -129,7 +129,7 @@ const ServicePlansList: React.FC = props => <Table {...props} aria-label="Servic
 ServicePlansList.displayName = 'ServicePlansList';
 
 const ServicePlansPage: React.FC<ServicePlansPageProps> = props => {
-  return <ListPage canCreate={false} kind={servicePlanReference} ListComponent={ServicePlansList} {...props} />;
+  return <ListPage canCreate={true} kind={servicePlanReference} ListComponent={ServicePlansList} {...props} />;
 };
 ServicePlansPage.displayName = 'ServicePlansPage';
 
