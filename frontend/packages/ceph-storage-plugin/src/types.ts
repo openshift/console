@@ -52,8 +52,10 @@ export type StorageClusterKind = K8sResourceCommon & {
       };
     };
     arbiter: {
-      enabled: boolean;
-      zone: string;
+      enable: boolean;
+    };
+    nodeTopologies: {
+      arbiterLocation: string;
     };
     flexibleScaling?: boolean;
     monDataDirHostPath?: string;

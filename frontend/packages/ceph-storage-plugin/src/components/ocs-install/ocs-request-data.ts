@@ -162,8 +162,10 @@ export const getOCSRequestData = (
         kms: Object.assign(kmsEnable ? { enable: true } : {}),
       },
       arbiter: {
-        enabled: stretchClusterChecked,
-        zone: selectedArbiterZone,
+        enable: stretchClusterChecked,
+      },
+      nodeTopologies: {
+        arbiterLocation: selectedArbiterZone,
       },
       storageDeviceSets: [
         createDeviceSet(
