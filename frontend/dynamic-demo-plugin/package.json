@@ -5,7 +5,7 @@
   "scripts": {
     "clean": "rm -rf ./dist",
     "build": "yarn clean && yarn ts-node ./node_modules/.bin/webpack",
-    "http-server": "http-server ./dist -p 9001 -c-1 --cors",
+    "http-server": "./http-server.sh ./dist",
     "ts-node": "ts-node -O '{\"module\":\"commonjs\"}' -I '/node_modules/(?!(@console)/)/'"
   },
   "dependencies": {
