@@ -21,6 +21,7 @@ import { InternalClusterState, InternalClusterAction, ActionType } from '../redu
 import {
   getNodeInfo,
   shouldDeployAsMinimal,
+  isFlexibleScaling,
   filterSCWithoutNoProv,
 } from '../../../../utils/install';
 import { ValidationMessage, ValidationType } from '../../../../utils/common-ocs-install-el';
@@ -66,8 +67,10 @@ export const SelectCapacityAndNodes: React.FC<SelectCapacityAndNodesProps> = ({
   }, [cpu, dispatch, memory, nodesCount]);
 
   React.useEffect(() => {
-    const isFlexibleScaling = nodesCount && zonesCount < 3;
-    dispatch({ type: ActionType.SET_ENABLE_FLEXIBLE_SCALING, payload: isFlexibleScaling });
+    dispatch({
+      type: ActionType.SET_ENABLE_FLEXIBLE_SCALING,
+      payload: isFlexibleScaling(nodesCount, zonesCount),
+    });
   }, [dispatch, zonesCount, nodesCount]);
 
   return (

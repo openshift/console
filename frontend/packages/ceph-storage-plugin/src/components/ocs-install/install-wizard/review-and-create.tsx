@@ -59,7 +59,7 @@ export const ReviewListBody: React.FC<ReviewListBodyProps> = ({
 
   return (
     <dd className="ocs-install-wizard__dd">
-      {!hideIcon ? (
+      {alert?.variant || !hideIcon ? (
         <Split>
           <SplitItem>
             <Icon className="ocs-install-wizard__icon" />

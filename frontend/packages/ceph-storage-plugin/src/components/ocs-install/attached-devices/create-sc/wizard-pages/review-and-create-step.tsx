@@ -86,7 +86,7 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({
           </p>
         </ReviewListBody>
         <ReviewListBody
-          noValue={!zones.size}
+          hideIcon={!enableFlexibleScaling || !stretchClusterChecked}
           validation={enableFlexibleScaling && ValidationType.BAREMETAL_FLEXIBLE_SCALING}
         >
           <p>
