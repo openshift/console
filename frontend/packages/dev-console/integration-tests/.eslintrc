@@ -10,6 +10,8 @@
     "no-namespace": "off",
     "no-redeclare": "off",
     "promise/catch-or-return": "off",
-    "promise/no-nesting": "off"
+    "promise/no-nesting": "off",
+    "@typescript-eslint/ban-ts-ignore": "off",
+    "cypress/no-unnecessary-waiting": "off"
   }
 }

@@ -6,6 +6,7 @@ export const pageTitle = {
   DeveloperCatalog: 'Developer Catalog',
   DevFile: 'Import from Devfile',
   Pipelines: 'Pipelines',
+  PipelineBuilder: 'Pipeline builder',
   EventSource: 'Event Sources',
   helmReleaseDetails: 'Helm Release Details',
   upgradeHelmRelease: 'Upgrade Helm Release',
@@ -29,5 +30,4 @@ export const pageTitle = {
   HelmCharts: 'Helm Charts',
   InstallHelmCharts: 'Install Helm Chart',
   OperatorBacked: 'Operator Backed',
-  PipelineBuilder: 'Pipeline Builder',
 };

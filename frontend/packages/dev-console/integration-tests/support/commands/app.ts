@@ -33,11 +33,9 @@ afterEach(() => {
 
 Cypress.Commands.add('selectByDropDownText', (selector: string, dropdownText: string) => {
   cy.get(selector).click();
-  cy.get('ul.pf-c-dropdown__menu li button').each(($el) => {
-    if ($el.text().includes(dropdownText)) {
-      $el.click();
-    }
-  });
+  cy.get('ul.pf-c-dropdown__menu li button')
+    .contains(dropdownText)
+    .click({ force: true });
 });
 
 Cypress.Commands.add('mouseHover', (selector: string) => {

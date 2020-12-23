@@ -208,7 +208,7 @@ Then('Add Parameters, Add Resources, Task should be displayed', () => {
   cy.get(pipelineBuilderPO.add)
     .eq(1)
     .should('be.enabled');
-  cy.get(pipelineBuilderPO.task).should('be.visible');
+  cy.get(pipelineBuilderPO.formView.task).should('be.visible');
 });
 
 Then('{string} is not displayed on Pipelines page', (pipelineName: string) => {
