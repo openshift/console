@@ -1,33 +1,35 @@
+import { pageTitle } from '../../constants/pageTitle';
+import { pipelineBuilder } from '../../constants/staticText/pipeline-text';
 import { pipelineBuilderPO, pipelineDetailsPO } from '../../pageObjects/pipelines-po';
 import { pipelineDetailsPage } from './pipelineDetails-page';
 
 export const pipelineBuilderPage = {
-  verifyTitle: () => cy.get(pipelineBuilderPO.title).should('have.text', 'Pipeline Builder'),
-  verifyDefaultPipelineName: (pipelineName: string = 'new-pipeline') =>
-    cy.get(pipelineBuilderPO.name).should('have.value', pipelineName),
+  verifyTitle: () => cy.get(pipelineBuilderPO.title).should('have.text', pageTitle.PipelineBuilder),
+  verifyDefaultPipelineName: (pipelineName: string = pipelineBuilder.pipelineName) =>
+    cy.get(pipelineBuilderPO.formView.name).should('have.value', pipelineName),
   enterPipelineName: (pipelineName: string) => {
-    cy.get(pipelineBuilderPO.name).clear();
-    cy.get(pipelineBuilderPO.name).type(pipelineName);
+    cy.get(pipelineBuilderPO.formView.name).clear();
+    cy.get(pipelineBuilderPO.formView.name).type(pipelineName);
   },
   selectTask: (taskName: string = 'kn') => {
-    cy.get(pipelineBuilderPO.taskDropdown).click();
+    cy.get(pipelineBuilderPO.formView.taskDropdown).click();
     cy.byTestActionID(taskName).click();
   },
   clickOnTask: (taskName: string) =>
     cy
-      .get(pipelineBuilderPO.task)
+      .get(pipelineBuilderPO.formView.task)
       .contains(taskName)
       .click(),
   seelctParallelTask: (taskName: string) => {
-    cy.mouseHover('.odc-pipeline-vis-task__content');
-    cy.get('g.odc-plus-node-decorator')
+    cy.mouseHover(pipelineBuilderPO.formView.task);
+    cy.get(pipelineBuilderPO.formView.plusTaskIcon)
       .eq(2)
       .click();
     pipelineBuilderPage.selectTask(taskName);
   },
   seelctSeriesTask: (taskName: string) => {
-    cy.mouseHover('.odc-pipeline-vis-task__content');
-    cy.get('g.odc-plus-node-decorator')
+    cy.mouseHover(pipelineBuilderPO.formView.task);
+    cy.get(pipelineBuilderPO.formView.plusTaskIcon)
       .eq(0)
       .click();
     pipelineBuilderPage.selectTask(taskName);
@@ -38,19 +40,19 @@ export const pipelineBuilderPage = {
     defaultValue: string = 'value1',
   ) => {
     cy.byButtonText('Add Parameters').click();
-    cy.get(pipelineBuilderPO.addParams.name).type(paramName);
-    cy.get(pipelineBuilderPO.addParams.description).type(description);
-    cy.get(pipelineBuilderPO.addParams.defaultValue).type(defaultValue);
+    cy.get(pipelineBuilderPO.formView.addParams.name).type(paramName);
+    cy.get(pipelineBuilderPO.formView.addParams.description).type(description);
+    cy.get(pipelineBuilderPO.formView.addParams.defaultValue).type(defaultValue);
   },
   addResource: (resourceName: string, resourceType: string = 'Git') => {
     cy.get('div.pf-c-form__group button[type="button"]')
       .eq(1)
       .click();
-    cy.get(pipelineBuilderPO.addResources.name).type(resourceName);
-    cy.selectByDropDownText(pipelineBuilderPO.addResources.resourceType, resourceType);
+    cy.get(pipelineBuilderPO.formView.addResources.name).type(resourceName);
+    cy.selectByDropDownText(pipelineBuilderPO.formView.addResources.resourceType, resourceType);
   },
   verifySection: () => {
-    cy.get(pipelineBuilderPO.sectionTitle).as('sectionTitle');
+    cy.get(pipelineBuilderPO.formView.sectionTitle).as('sectionTitle');
     cy.get('@sectionTitle')
       .eq(0)
       .should('have.text', 'Tasks');
@@ -63,10 +65,11 @@ export const pipelineBuilderPage = {
   },
   clickCreateButton: () => cy.get(pipelineBuilderPO.create).click(),
   editYaml: () => {
-    cy.byButtonText('Edit YAML').click();
-    cy.get('form[name="form"]').should('be.visible');
-    cy.byTestID('confirm-action').click();
-    cy.get('[data-mode-id="yaml"]').should('be.visible');
+    cy.get(pipelineBuilderPO.configureVia.yamlView).click();
+    // Modal is removed - so commented the below code
+    // cy.get('form[name="form"]').should('be.visible');
+    // cy.byTestID('confirm-action').click();
+    // cy.get('[data-mode-id="yaml"]').should('be.visible');
   },
   createPipelineFromBuilderPage: (pipelineName: string, taskName: string = 'kn') => {
     pipelineBuilderPage.enterPipelineName(pipelineName);
@@ -76,14 +79,15 @@ export const pipelineBuilderPage = {
   },
   createPipelineFromYamlPage: () => {
     pipelineBuilderPage.editYaml();
-    cy.get(pipelineBuilderPO.switchToYamlEditorAlert.alertDialog).should('be.visible');
-    cy.get(pipelineBuilderPO.switchToYamlEditorAlert.title).should(
-      'contain.text',
-      'Switch to YAML Editor?',
-    );
-    cy.get(pipelineBuilderPO.switchToYamlEditorAlert.continue).click();
-    cy.get(pipelineBuilderPO.yamlCreatePipeline.helpText).should('contain.text', 'YAML or JSON');
-    cy.get(pipelineBuilderPO.yamlCreatePipeline.create).click();
+    // Modal is removed - so commented the below code
+    // cy.get(pipelineBuilderPO.switchToYamlEditorAlert.alertDialog).should('be.visible');
+    // cy.get(pipelineBuilderPO.switchToYamlEditorAlert.title).should(
+    //   'contain.text',
+    //   'Switch to YAML Editor?',
+    // );
+    // cy.get(pipelineBuilderPO.switchToYamlEditorAlert.continue).click();
+    // cy.get(pipelineBuilderPO.yamlCreatePipeline.helpText).should('contain.text', 'YAML or JSON');
+    cy.get(pipelineBuilderPO.create).click();
   },
   createPipelineWithGitresources: (
     pipelineName: string = 'git-pipeline',
@@ -94,7 +98,7 @@ export const pipelineBuilderPage = {
     pipelineBuilderPage.selectTask(taskName);
     pipelineBuilderPage.addResource(resourceName);
     pipelineBuilderPage.clickOnTask(taskName);
-    cy.get(pipelineBuilderPO.sidePane.inputResource).click();
+    cy.get(pipelineBuilderPO.formView.sidePane.inputResource).click();
     cy.byTestDropDownMenu(resourceName).click();
     pipelineBuilderPage.clickCreateButton();
     pipelineDetailsPage.verifyTitle(pipelineName);

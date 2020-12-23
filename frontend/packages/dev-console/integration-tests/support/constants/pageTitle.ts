@@ -5,6 +5,7 @@ export const pageTitle = {
   YAML: 'Import YAML',
   DeveloperCatalog: 'Developer Catalog',
   Pipelines: 'Pipelines',
+  PipelineBuilder: 'Pipeline builder',
   EventSource: 'Event Sources',
   helmReleaseDetails: 'Helm Release Details',
   upgradeHelmRelease: 'Upgrade Helm Release',
