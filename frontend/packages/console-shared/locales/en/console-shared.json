@@ -21,7 +21,7 @@
   "Remove {{singularLabel}}": "Remove {{singularLabel}}",
   "Add {{singularLabel}}": "Add {{singularLabel}}",
   "Error": "Error",
-  "Fix the above errors:": "Fix the above errors:",
+  "Fix the following errors:": "Fix the following errors:",
   "Select {{label}}": "Select {{label}}",
   "Cluster does not have resource {{groupVersionKind}}": "Cluster does not have resource {{groupVersionKind}}",
   "You made changes to this page.": "You made changes to this page.",
