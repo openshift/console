@@ -1,18 +1,5 @@
 import { K8sKind } from '../../module/k8s';
 
-// 추가
-// export const ApprovalModel: K8sKind = {
-//   label: 'Approval',
-//   labelPlural: 'Approvals',
-//   apiVersion: 'v1',
-//   apiGroup: 'tmax.io',
-//   plural: 'approvals',
-//   abbr: 'A',
-//   kind: 'Approval',
-//   id: 'approval',
-//   namespaced: true,
-// };
-
 export const HyperClusterResourceModel: K8sKind = {
   label: 'Cluster',
   labelPlural: 'Clusters',
@@ -245,6 +232,7 @@ export const PipelineModel: K8sKind = {
   id: 'pipeline',
   crd: false,
 };
+
 export const PipelineRunModel: K8sKind = {
   kind: 'PipelineRun',
   namespaced: true,
@@ -265,7 +253,7 @@ export const ApprovalModel: K8sKind = {
   plural: 'approvals',
   apiVersion: 'v1',
   abbr: 'PA',
-  apiGroup: 'tmax.io',
+  apiGroup: 'cicd.tmax.io',
   labelPlural: 'Pipeline Approvals',
   id: 'approval',
   crd: false,
@@ -281,18 +269,5 @@ export const PipelineResourceModel: K8sKind = {
   apiGroup: 'tekton.dev',
   labelPlural: 'Pipeline Resources',
   id: 'pipelineresource',
-  crd: false,
-};
-
-export const ConditionModel: K8sKind = {
-  kind: 'Condition',
-  namespaced: true,
-  label: 'Condition',
-  plural: 'conditions',
-  apiVersion: 'v1alpha1',
-  abbr: 'PC',
-  apiGroup: 'tekton.dev',
-  labelPlural: 'Pipeline Conditions',
-  id: 'condition',
   crd: false,
 };
