@@ -3,12 +3,13 @@ import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { ServiceInstanceModel } from '../../models';
-import { ServiceInstanceKind, K8sResourceKindReference } from '../../module/k8s';
+import { K8sResourceKind } from '../../module/k8s';
 import { DetailsPage, ListPage, Table, TableData, TableRow } from '../factory';
 import { Kebab, ResourceKebab, navFactory, SectionHeading, ResourceSummary, ResourceLink, Timestamp } from '../utils';
 
-const serviceInstanceReference: K8sResourceKindReference = 'ServiceInstance';
 const { common } = Kebab.factory;
+
+const kind = ServiceInstanceModel.kind;
 
 export const serviceInstanceMenuActions = [...Kebab.getExtensionsActionsForKind(ServiceInstanceModel), ...common];
 
@@ -36,14 +37,13 @@ const ServiceInstanceDetails: React.FC<ServiceInstanceDetailsProps> = ({ obj: se
 };
 
 type ServiceInstanceDetailsProps = {
-  obj: ServiceInstanceKind;
+  obj: K8sResourceKind;
 };
 
 const { details, editYaml } = navFactory;
-const ServiceInstancesDetailsPage: React.FC<ServiceInstancesDetailsPageProps> = props => <DetailsPage {...props} kind={serviceInstanceReference} menuActions={serviceInstanceMenuActions} pages={[details(ServiceInstanceDetails), editYaml()]} />;
+const ServiceInstancesDetailsPage: React.FC<ServiceInstancesDetailsPageProps> = props => <DetailsPage {...props} kind={kind} menuActions={serviceInstanceMenuActions} pages={[details(ServiceInstanceDetails), editYaml()]} />;
 ServiceInstancesDetailsPage.displayName = 'ServiceInstancesDetailsPage';
 
-const kind = 'ServiceInstance';
 const tableColumnClasses = [
   '', // NAME
   '', // NAMESPACE
@@ -57,7 +57,7 @@ const ServiceInstanceTableRow = ({ obj, index, key, style }) => {
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink kind={serviceInstanceReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
+        <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
       </TableData>
       <TableData className={classNames(tableColumnClasses[1])}>
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} title={obj.metadata.namespace} />
@@ -123,7 +123,7 @@ const ServiceInstancesList: React.FC = props => <Table {...props} aria-label="Se
 ServiceInstancesList.displayName = 'ServiceInstancesList';
 
 const ServiceInstancesPage: React.FC<ServiceInstancesPageProps> = props => {
-  return <ListPage canCreate={true} kind={serviceInstanceReference} ListComponent={ServiceInstancesList} {...props} />;
+  return <ListPage canCreate={true} kind={kind} ListComponent={ServiceInstancesList} {...props} />;
 };
 ServiceInstancesPage.displayName = 'ServiceInstancesPage';
 

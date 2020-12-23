@@ -3,12 +3,12 @@ import * as _ from 'lodash-es';
 import { Status } from '@console/shared';
 import { sortable } from '@patternfly/react-table';
 import { ClusterServiceBrokerModel } from '../../models';
-import { ClusterServiceBrokerKind, K8sResourceKindReference } from '../../module/k8s';
+import { K8sResourceKind } from '../../module/k8s';
 import { DetailsPage, ListPage, Table, TableData, TableRow } from '../factory';
 import { DetailsItem, Kebab, navFactory, SectionHeading, ResourceSummary, ResourceLink, ResourceKebab, Timestamp } from '../utils';
 
-const clusterServiceBrokerReference: K8sResourceKindReference = 'ClusterServiceBroker';
 const { common } = Kebab.factory;
+const kind = ClusterServiceBrokerModel.kind;
 
 export const clusterServiceBrokerMenuActions = [...Kebab.getExtensionsActionsForKind(ClusterServiceBrokerModel), ...common];
 const ClusterServiceBrokerDetails: React.FC<ClusterServiceBrokerDetailsProps> = ({ obj: clusterServiceBroker }) => {
@@ -36,14 +36,13 @@ const ClusterServiceBrokerDetails: React.FC<ClusterServiceBrokerDetailsProps> = 
 };
 
 type ClusterServiceBrokerDetailsProps = {
-  obj: ClusterServiceBrokerKind;
+  obj: K8sResourceKind;
 };
 
 const { details, editYaml } = navFactory;
-const ClusterServiceBrokersDetailsPage: React.FC<ClusterServiceBrokersDetailsPageProps> = props => <DetailsPage {...props} kind={clusterServiceBrokerReference} menuActions={clusterServiceBrokerMenuActions} pages={[details(ClusterServiceBrokerDetails), editYaml()]} />;
+const ClusterServiceBrokersDetailsPage: React.FC<ClusterServiceBrokersDetailsPageProps> = props => <DetailsPage {...props} kind={kind} menuActions={clusterServiceBrokerMenuActions} pages={[details(ClusterServiceBrokerDetails), editYaml()]} />;
 ClusterServiceBrokersDetailsPage.displayName = 'ClusterServiceBrokersDetailsPage';
 
-const kind = 'ClusterServiceBroker';
 const tableColumnClasses = ['', '', '', '', ''];
 
 const ClusterServiceBrokerPhase = instance => {
@@ -67,7 +66,7 @@ const ClusterServiceBrokerTableRow = ({ obj, index, key, style }) => {
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink kind={clusterServiceBrokerReference} name={obj.metadata.name} title={obj.metadata.name} />
+        <ResourceLink kind={kind} name={obj.metadata.name} title={obj.metadata.name} />
       </TableData>
       <TableData className={tableColumnClasses[1]}>{obj.spec.url}</TableData>
       <TableData className={tableColumnClasses[2]}>
@@ -121,7 +120,7 @@ const ClusterServiceBrokersList: React.FC = props => <Table {...props} aria-labe
 ClusterServiceBrokersList.displayName = 'ClusterServiceBrokersList';
 
 const ClusterServiceBrokersPage: React.FC<ClusterServiceBrokersPage> = props => {
-  return <ListPage canCreate={true} kind={clusterServiceBrokerReference} ListComponent={ClusterServiceBrokersList} {...props} />;
+  return <ListPage canCreate={true} kind={kind} ListComponent={ClusterServiceBrokersList} {...props} />;
 };
 ClusterServiceBrokersPage.displayName = 'ClusterServiceBrokersPage';
 

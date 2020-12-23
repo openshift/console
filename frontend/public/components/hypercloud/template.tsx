@@ -3,12 +3,12 @@ import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { TemplateModel } from '../../models';
-import { TemplateKind, K8sResourceKindReference } from '../../module/k8s';
+import { K8sResourceKind } from '../../module/k8s';
 import { DetailsPage, ListPage, Table, TableData, TableRow } from '../factory';
 import { Kebab, navFactory, SectionHeading, ResourceSummary, ResourceLink, ResourceKebab, Timestamp } from '../utils';
 
-const templateReference: K8sResourceKindReference = 'Template';
 const { common } = Kebab.factory;
+const kind = TemplateModel.kind;
 
 export const templateMenuActions = [...Kebab.getExtensionsActionsForKind(TemplateModel), ...common];
 
@@ -28,14 +28,13 @@ const TemplateDetails: React.FC<TemplateDetailsProps> = ({ obj: template }) => {
 };
 
 type TemplateDetailsProps = {
-  obj: TemplateKind;
+  obj: K8sResourceKind;
 };
 
 const { details, editYaml } = navFactory;
-const TemplatesDetailsPage: React.FC<TemplatesDetailsPageProps> = props => <DetailsPage {...props} kind={templateReference} menuActions={templateMenuActions} pages={[details(TemplateDetails), editYaml()]} />;
+const TemplatesDetailsPage: React.FC<TemplatesDetailsPageProps> = props => <DetailsPage {...props} kind={kind} menuActions={templateMenuActions} pages={[details(TemplateDetails), editYaml()]} />;
 TemplatesDetailsPage.displayName = 'TemplatesDetailsPage';
 
-const kind = 'Template';
 const tableColumnClasses = [
   '', // NAME
   '', // NAMESPACE
@@ -48,7 +47,7 @@ const TemplateTableRow = ({ obj, index, key, style }) => {
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink kind={templateReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
+        <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
       </TableData>
       <TableData className={classNames(tableColumnClasses[1])}>
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} title={obj.metadata.namespace} />
@@ -103,7 +102,7 @@ const TemplatesList: React.FC = props => <Table {...props} aria-label="Template"
 TemplatesList.displayName = 'TemplatesList';
 
 const TemplatesPage: React.FC<TemplatesPageProps> = props => {
-  return <ListPage canCreate={true} kind={templateReference} ListComponent={TemplatesList} {...props} />;
+  return <ListPage canCreate={true} kind={kind} ListComponent={TemplatesList} {...props} />;
 };
 TemplatesPage.displayName = 'TemplatesPage';
 
