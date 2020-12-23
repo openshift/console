@@ -64,7 +64,7 @@ export const VirtualMachineInstanceMigrationModel: K8sKind = {
 export const DataVolumeModel: K8sKind = {
   label: 'Data Volume',
   labelPlural: 'Data Volumes',
-  apiVersion: 'v1alpha1',
+  apiVersion: 'v1beta1',
   apiGroup: 'cdi.kubevirt.io',
   plural: 'datavolumes',
   abbr: 'DV',
@@ -112,7 +112,7 @@ export const VirtualMachineImportModel: K8sKind = {
 export const UploadTokenRequestModel: K8sKind = {
   label: 'Upload Token Request',
   labelPlural: 'Upload Token Requests',
-  apiVersion: 'v1alpha1',
+  apiVersion: 'v1beta1',
   apiGroup: 'upload.cdi.kubevirt.io',
   namespaced: true,
   plural: 'uploadtokenrequests',
@@ -124,7 +124,7 @@ export const UploadTokenRequestModel: K8sKind = {
 export const CDIConfigModel: K8sKind = {
   label: 'CDI Config',
   labelPlural: 'CDI Configs',
-  apiVersion: 'v1alpha1',
+  apiVersion: 'v1beta1',
   apiGroup: 'cdi.kubevirt.io',
   namespaced: false,
   plural: 'cdiconfigs',
