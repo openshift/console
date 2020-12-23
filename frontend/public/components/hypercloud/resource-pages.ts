@@ -1,12 +1,11 @@
 import { Map as ImmutableMap } from 'immutable';
 import { referenceForModel, GroupVersionKind } from '../../module/k8s';
-import { ApprovalModel, HyperClusterResourceModel, FederatedConfigMapModel,FederatedDeploymentModel, FederatedIngressModel, FederatedNamespaceModel, FederatedJobModel, FederatedReplicaSetModel, FederatedSecretModel, FederatedServiceModel, FederatedPodModel, FederatedHPAModel, FederatedDaemonSetModel, FederatedStatefulSetModel, FederatedCronJobModel } from '../../models';
+import { HyperClusterResourceModel, FederatedConfigMapModel,FederatedDeploymentModel, FederatedIngressModel, FederatedNamespaceModel, FederatedJobModel, FederatedReplicaSetModel, FederatedSecretModel, FederatedServiceModel, FederatedPodModel, FederatedHPAModel, FederatedDaemonSetModel, FederatedStatefulSetModel, FederatedCronJobModel, TaskModel, TaskRunModel, PipelineModel, PipelineRunModel, ApprovalModel, PipelineResourceModel } from '../../models';
 
 type ResourceMapKey = GroupVersionKind | string;
 type ResourceMapValue = () => Promise<React.ComponentType<any>>;
 
 export const hyperCloudDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
-  .set(referenceForModel(ApprovalModel), () => import('./approval' /* webpackChunkName: "approval" */).then(m => m.ApprovalsDetailsPage))
   .set(referenceForModel(HyperClusterResourceModel), () => import('./cluster' /* webpackChunkName: "cluster" */).then(m => m.ClustersDetailsPage))
   .set(referenceForModel(FederatedConfigMapModel), () => import('./federated-config-map' /* webpackChunkName: "configmap" */).then(m => m.FederatedConfigMapsDetailsPage))
   .set(referenceForModel(FederatedDeploymentModel), () => import('./federated-deployment' /* webpackChunkName: "deployment" */).then(m => m.FederatedDeploymentsDetailsPage))
@@ -20,10 +19,15 @@ export const hyperCloudDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapVa
   .set(referenceForModel(FederatedHPAModel), () => import('./federated-horizontalpodautoscaler' /* webpackChunkName: "horizontalpodautoscaler" */).then((m) => m.FederatedHPAsDetailsPage))
   .set(referenceForModel(FederatedDaemonSetModel), () => import('./federated-daemonset' /* webpackChunkName: "daemonset" */).then((m) => m.FederatedDaemonSetsDetailsPage))
   .set(referenceForModel(FederatedStatefulSetModel), () => import('./federated-statefulset' /* webpackChunkName: "statefulset" */).then((m) => m.FederatedStatefulSetsDetailsPage))
-  .set(referenceForModel(FederatedCronJobModel), () => import('./federated-cronjob' /* webpackChunkName: "cronjob" */).then((m) => m.FederatedCronJobsDetailsPage));
+  .set(referenceForModel(FederatedCronJobModel), () => import('./federated-cronjob' /* webpackChunkName: "cronjob" */).then((m) => m.FederatedCronJobsDetailsPage))
+  .set(referenceForModel(TaskModel), () => import('./task' /* webpackChunkName: "task" */).then((m) => m.TasksDetailsPage))
+  .set(referenceForModel(TaskRunModel), () => import('./task-run' /* webpackChunkName: "task-run" */).then((m) => m.TaskRunsDetailsPage))
+  .set(referenceForModel(PipelineModel), () => import('./pipeline' /* webpackChunkName: "pipeline" */).then((m) => m.PipelinesDetailsPage))
+  .set(referenceForModel(PipelineRunModel), () => import('./pipeline-run' /* webpackChunkName: "pipeline-run" */).then((m) => m.PipelineRunsDetailsPage))
+  .set(referenceForModel(ApprovalModel), () => import('./pipeline-approval' /* webpackChunkName: "pipeline-approval" */).then((m) => m.PipelineApprovalsDetailsPage));
+  // .set(referenceForModel(PipelineResourceModel), () => import('./pipeline-resource' /* webpackChunkName: "pipeline-resource" */).then((m) => m.PipelineResourcesDetailsPage));
 
 export const hyperCloudListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
-  .set(referenceForModel(ApprovalModel), () => import('./approval' /* webpackChunkName: "approval" */).then(m => m.ApprovalsPage))
   .set(referenceForModel(HyperClusterResourceModel), () => import('./cluster' /* webpackChunkName: "cluster" */).then(m => m.ClustersPage))
   .set(referenceForModel(FederatedConfigMapModel), () => import('./federated-config-map' /* webpackChunkName: "configmap" */).then(m => m.FederatedConfigMapsPage))
   .set(referenceForModel(FederatedDeploymentModel), () => import('./federated-deployment' /* webpackChunkName: "deployment" */).then(m => m.FederatedDeploymentsPage))
@@ -37,4 +41,10 @@ export const hyperCloudListPages = ImmutableMap<ResourceMapKey, ResourceMapValue
   .set(referenceForModel(FederatedHPAModel), () => import('./federated-horizontalpodautoscaler' /* webpackChunkName: "horizontalpodautoscaler" */).then((m) => m.FederatedHPAsPage))
   .set(referenceForModel(FederatedDaemonSetModel), () => import('./federated-daemonset' /* webpackChunkName: "daemonset" */).then((m) => m.FederatedDaemonSetsPage))
   .set(referenceForModel(FederatedStatefulSetModel), () => import('./federated-statefulset' /* webpackChunkName: "statefulset" */).then((m) => m.FederatedStatefulSetsPage))
-  .set(referenceForModel(FederatedCronJobModel), () => import('./federated-cronjob' /* webpackChunkName: "cronjob" */).then((m) => m.FederatedCronJobsPage));
+  .set(referenceForModel(FederatedCronJobModel), () => import('./federated-cronjob' /* webpackChunkName: "cronjob" */).then((m) => m.FederatedCronJobsPage))
+  .set(referenceForModel(TaskModel), () => import('./task' /* webpackChunkName: "task" */).then((m) => m.TasksPage))
+  .set(referenceForModel(TaskRunModel), () => import('./task-run' /* webpackChunkName: "task-run" */).then((m) => m.TaskRunsPage))
+  .set(referenceForModel(PipelineModel), () => import('./pipeline' /* webpackChunkName: "pipeline" */).then((m) => m.PipelinesPage))
+  .set(referenceForModel(PipelineRunModel), () => import('./pipeline-run' /* webpackChunkName: "pipeline-run" */).then((m) => m.PipelineRunsPage))
+  .set(referenceForModel(ApprovalModel), () => import('./pipeline-approval' /* webpackChunkName: "pipeline-approval" */).then((m) => m.PipelineApprovalsPage))
+  .set(referenceForModel(PipelineResourceModel), () => import('./pipeline-resource' /* webpackChunkName: "pipeline-resource" */).then((m) => m.PipelineResourcesPage));

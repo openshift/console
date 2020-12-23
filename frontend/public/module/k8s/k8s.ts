@@ -19,7 +19,12 @@ export const k8sBasePath = `${window.SERVER_FLAGS.basePath}api/kubernetes`;
 // TODO(alecmerdler): Replace all manual string building with this function
 export const referenceForGroupVersionKind = (group: string) => (version: string) => (
   kind: string,
-) => [group, version, kind].join('~');
+) => {
+  if(kind === 'PipelineResource') {
+    return kind;
+  }
+  return [group, version, kind].join('~')
+}; 
 
 export const getGroupVersionKind = (
   ref: GroupVersionKind | string,
