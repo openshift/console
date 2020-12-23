@@ -143,6 +143,7 @@ class AuditPage_ extends React.Component {
       quotaspecs: 'quotaspecs',
       rules: 'rules',
       templates: 'templates',
+      clustertemplates: 'clustertemplates',
       ingresses: 'ingresses',
       kubevirts: 'kubevirts',
       virtualmachineinstancemigrations: 'virtualmachineinstancemigrations',
