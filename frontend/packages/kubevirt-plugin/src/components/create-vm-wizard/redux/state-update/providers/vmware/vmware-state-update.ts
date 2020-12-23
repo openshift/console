@@ -124,6 +124,7 @@ const v2vVmWareUpdater = (options: UpdateOptions) => {
 
   const selectedVmName = iGetVMWareFieldValue(state, id, VMWareProviderField.VM);
   const vm = getLoadedVm(v2vvmware, selectedVmName);
+  const defaultSC = toShallowJS(iGetVMWareFieldAttribute(state, id, VMWareProviderField.VM, 'sc'));
 
   const vmWareStatus = getSimpleV2VPRoviderStatus(v2vvmware, { requestsVM: selectedVmName && !vm }); // hack around unresponsiveness of v2vvmware
 
@@ -188,7 +189,7 @@ const v2vVmWareUpdater = (options: UpdateOptions) => {
     return;
   }
 
-  prefillUpdateCreator(options);
+  prefillUpdateCreator(options, defaultSC);
 };
 
 const vmChangedUpdater = (options: UpdateOptions) => {
