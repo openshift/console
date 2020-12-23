@@ -118,6 +118,18 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
     return this;
   };
 
+  getDiskByPVC = (PVCName: string): string => {
+    const dataVolumeByPVCName = this.getDataVolumeTemplates().find(
+      (dataVolumeTemplate) => dataVolumeTemplate?.spec?.source?.pvc?.name === PVCName,
+    );
+
+    const diskByPVCName = this.getDisks().find(
+      (d) => d.name === dataVolumeByPVCName?.metadata?.name,
+    );
+
+    return diskByPVCName?.disk?.bus;
+  };
+
   addTemplateAnnotation = (key: string, value: string) => {
     if (key) {
       this.ensurePath('spec.template.metadata.annotations');
@@ -210,6 +222,32 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
     }
 
     this.ensureStorageConsistency();
+    return this;
+  };
+
+  removeDiskByPVC = (nameParam: string, namespaceParam: string) => {
+    this.ensurePath('spec.template.spec.domain.devices', {});
+    const metaDataNames: string[] = [];
+
+    this.data.spec.dataVolumeTemplates = this.data.spec.dataVolumeTemplates.filter((dataVolume) => {
+      const { name, namespace } = dataVolume?.spec?.source?.pvc;
+      if (name === nameParam && namespace === namespaceParam) {
+        metaDataNames.push(dataVolume?.metadata?.name);
+        return false;
+      }
+      return true;
+    });
+
+    this.data.spec.template.spec.volumes = this.data.spec.template.spec.volumes.filter((volume) => {
+      return !metaDataNames.find((metaDataName) => volume.name === metaDataName);
+    });
+
+    this.data.spec.template.spec.domain.devices.disks = this.data.spec.template.spec.domain.devices.disks.filter(
+      (disk) => !disk.name || !metaDataNames.find((metaDataName) => disk.name === metaDataName),
+    );
+
+    this.ensureStorageConsistency();
+
     return this;
   };
 
