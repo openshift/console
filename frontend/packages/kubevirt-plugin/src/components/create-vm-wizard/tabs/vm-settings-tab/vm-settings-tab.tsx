@@ -26,10 +26,11 @@ import { MemoryCPU } from './memory-cpu';
 import { ContainerSource } from './container-source';
 import { ProvisionSourceComponent } from './provision-source';
 import { URLSource } from './url-source';
+import { getFieldId } from '../../utils/renderable-field-utils';
+import { ClonePVCSource } from './clone-pvc-source';
 
 import '../../create-vm-wizard-footer.scss';
 import './vm-settings-tab.scss';
-import { getFieldId } from '../../utils/renderable-field-utils';
 
 export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
   iUserTemplate,
@@ -130,6 +131,13 @@ export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
         field={getField(VMSettingsField.IMAGE_URL)}
         onProvisionSourceStorageChange={updateStorage}
         provisionSourceStorage={provisionSourceStorage}
+      />
+      <ClonePVCSource
+        nsField={getField(VMSettingsField.CLONE_PVC_NS)}
+        nameField={getField(VMSettingsField.CLONE_PVC_NAME)}
+        provisionSourceStorage={provisionSourceStorage}
+        onProvisionSourceStorageChange={updateStorage}
+        onChange={onFieldChange}
       />
       <FlavorSelect
         iUserTemplate={iUserTemplate}

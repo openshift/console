@@ -64,22 +64,7 @@ const ProvisionSourceDiskHelpMsg: React.FC<ProvisionSourceDiskHelpMsgProps> = ({
           </Text>
         );
       case ProvisionSource.DISK:
-        return (
-          <Trans ns="kubevirt-plugin" t={t}>
-            Choose PVC to clone by editing the rootdisk in the{' '}
-            <strong>
-              <Button
-                isDisabled={!goToStorageStep}
-                isInline
-                onClick={goToStorageStep}
-                variant={ButtonVariant.link}
-              >
-                Storage
-              </Button>
-            </strong>{' '}
-            step.
-          </Trans>
-        );
+        return t('kubevirt-plugin~Choose PVC to clone below');
       default:
         return null;
     }

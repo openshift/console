@@ -22,6 +22,7 @@ export enum FormFieldType {
   INLINE_CHECKBOX = 'INLINE_CHECKBOX',
   FILE_UPLOAD = 'FILE_UPLOAD',
   CUSTOM = 'CUSTOM',
+  DROPDOWN = 'DROPDOWN',
 }
 
 const hasValue = new Set([
@@ -39,7 +40,7 @@ const hasIsDisabled = new Set([
   FormFieldType.CUSTOM,
   FormFieldType.PF_SELECT,
 ]);
-const hasDisabled = new Set([FormFieldType.TEXT_AREA]);
+const hasDisabled = new Set([FormFieldType.TEXT_AREA, FormFieldType.DROPDOWN]);
 const hasIsChecked = new Set([FormFieldType.CHECKBOX, FormFieldType.INLINE_CHECKBOX]);
 const hasValidated = new Set([
   FormFieldType.TEXT,

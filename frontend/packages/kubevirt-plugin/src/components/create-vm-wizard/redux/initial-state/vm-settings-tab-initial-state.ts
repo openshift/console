@@ -73,6 +73,10 @@ export const getInitialVmSettings = (data: CommonData): VMSettings => {
       value: !!initialData.startVM,
       isHidden: hiddenByProviderOrTemplate,
     },
+    [VMSettingsField.CLONE_PVC_NS]: {
+      isHidden: hiddenByProviderOrCloneCommonBaseDiskImage,
+    },
+    [VMSettingsField.CLONE_PVC_NAME]: {},
   };
 
   Object.keys(fields).forEach((k) => {

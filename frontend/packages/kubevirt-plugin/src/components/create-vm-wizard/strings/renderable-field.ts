@@ -71,6 +71,10 @@ export const titleKeyResolver: RenderableFieldResolver = {
   [VMSettingsField.TEMPLATE_PROVIDER]: 'kubevirt-plugin~Template provider',
   // t('kubevirt-plugin~Add support label to this template')
   [VMSettingsField.TEMPLATE_SUPPORTED]: 'kubevirt-plugin~Add support label to this template',
+  // t('kubevirt-plugin~Persistent Volume Claim project')
+  [VMSettingsField.CLONE_PVC_NS]: 'kubevirt-plugin~Persistent Volume Claim project',
+  // t('kubevirt-plugin~Persistent Volume Claim name')
+  [VMSettingsField.CLONE_PVC_NAME]: 'kubevirt-plugin~Persistent Volume Claim name',
 };
 
 export const placeholderKeyResolver = {

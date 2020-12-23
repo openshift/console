@@ -39,14 +39,16 @@ const renderableFieldOrder: { [key in RenderableField]: number } = {
   [VMSettingsField.OPERATING_SYSTEM]: 22,
   [VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE]: 23,
   [VMSettingsField.MOUNT_WINDOWS_GUEST_TOOLS]: 24,
-  [VMSettingsField.FLAVOR]: 25,
-  [VMSettingsField.MEMORY]: 26,
-  [VMSettingsField.CPU]: 27,
-  [VMSettingsField.WORKLOAD_PROFILE]: 28,
-  [VMSettingsField.PROVISION_SOURCE_TYPE]: 29,
-  [VMSettingsField.CONTAINER_IMAGE]: 30,
-  [VMSettingsField.IMAGE_URL]: 31,
-  [VMSettingsField.START_VM]: 32,
+  [VMSettingsField.CLONE_PVC_NS]: 25,
+  [VMSettingsField.CLONE_PVC_NAME]: 26,
+  [VMSettingsField.FLAVOR]: 27,
+  [VMSettingsField.MEMORY]: 28,
+  [VMSettingsField.CPU]: 29,
+  [VMSettingsField.WORKLOAD_PROFILE]: 30,
+  [VMSettingsField.PROVISION_SOURCE_TYPE]: 31,
+  [VMSettingsField.CONTAINER_IMAGE]: 32,
+  [VMSettingsField.IMAGE_URL]: 33,
+  [VMSettingsField.START_VM]: 34,
 };
 
 const idResolver: RenderableFieldResolver = {
@@ -82,6 +84,8 @@ const idResolver: RenderableFieldResolver = {
   [VMSettingsField.START_VM]: 'start-vm',
   [VMSettingsField.TEMPLATE_PROVIDER]: 'template-provider',
   [VMSettingsField.TEMPLATE_SUPPORTED]: 'template-supported',
+  [VMSettingsField.CLONE_PVC_NS]: 'clone-pvc-ns',
+  [VMSettingsField.CLONE_PVC_NAME]: 'clone-pvc-name',
 };
 
 export const getFieldId = (key: RenderableField) => idResolver[key];
