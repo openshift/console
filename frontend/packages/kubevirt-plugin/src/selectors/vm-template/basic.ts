@@ -10,6 +10,8 @@ import {
   TEMPLATE_TYPE_VM,
   TEMPLATE_PROVIDER_ANNOTATION,
   TEMPLATE_SUPPORT_LEVEL,
+  TEMPLATE_PARENT_SUPPORT_LEVEL,
+  TEMPLATE_PARENT_PROVIDER_ANNOTATION,
 } from '../../constants';
 import { TemplateItem } from '../../types/template';
 
@@ -24,22 +26,29 @@ export const getTemplateName = (template: TemplateKind): string =>
 export const isCommonTemplate = (template: TemplateKind): boolean =>
   template?.metadata?.labels?.[TEMPLATE_TYPE_LABEL] === TEMPLATE_TYPE_BASE;
 
-export const getTemplateSupport = (template: TemplateKind): string => {
+export const getTemplateSupport = (
+  template: TemplateKind,
+): { provider: string; parent: string } => {
+  const support = {
+    provider: getAnnotation(template, TEMPLATE_SUPPORT_LEVEL),
+    parent: undefined,
+  };
+
   const isUpstream = window.SERVER_FLAGS.branding === 'okd';
   if (isUpstream) {
-    return undefined;
-  }
-  const support = getAnnotation(template, TEMPLATE_SUPPORT_LEVEL);
-  if (support) {
     return support;
   }
+
   if (
+    !support.provider &&
     isCommonTemplate(template) &&
     (template.metadata.name.startsWith('win') || template.metadata.name.startsWith('rhel'))
   ) {
-    return 'Full';
+    support.provider = 'Full';
   }
-  return undefined;
+
+  support.parent = getAnnotation(template, TEMPLATE_PARENT_SUPPORT_LEVEL);
+  return support;
 };
 
 export const getTemplateType = (
@@ -64,6 +73,9 @@ export const getTemplateProvider = (
   }
   return withProviderPrefix ? t('kubevirt-plugin~Provided by User') : t('kubevirt-plugin~User');
 };
+
+export const getTemplateParentProvider = (template: TemplateKind): string =>
+  getAnnotation(template, TEMPLATE_PARENT_PROVIDER_ANNOTATION);
 
 export const templateProviders = (t: TFunction): { id: ProvidedType; title: string }[] => {
   const isUpstream = window.SERVER_FLAGS.branding === 'okd';
@@ -90,7 +102,8 @@ export type ProvidedType = 'supported' | 'provided' | 'user' | 'user-supported';
 
 export const getTemplateKindProviderType = (template: TemplateKind): ProvidedType => {
   const isCommon = isCommonTemplate(template);
-  if (getTemplateSupport(template)) {
+  const support = getTemplateSupport(template);
+  if (support.parent || support.provider) {
     return isCommon ? 'supported' : 'user-supported';
   }
   return isCommon ? 'provided' : 'user';

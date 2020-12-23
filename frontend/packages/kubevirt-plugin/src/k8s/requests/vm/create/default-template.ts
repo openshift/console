@@ -94,20 +94,18 @@ export const resolveDefaultVMTemplate = (params: DefaultVMLikeEntityParams): Tem
     `${TEMPLATE_OS_NAME_ANNOTATION}/${osID}`,
   );
 
-  initializeCommonMetadata(
-    {
-      [VMSettingsField.DESCRIPTION]: 'VM template example',
-      [VMSettingsField.FLAVOR]: getFlavor(commonTemplate),
-      [VMSettingsField.WORKLOAD_PROFILE]: getWorkloadProfile(commonTemplate),
-      [VMSettingsField.TEMPLATE_PROVIDER]: null,
-      [VMSettingsField.TEMPLATE_SUPPORTED]: false,
-      osID,
-      osName,
-    },
-    finalTemplate,
-    commonTemplate,
-  );
-  initializeCommonTemplateMetadata(finalTemplate, commonTemplate);
+  const settings = {
+    [VMSettingsField.DESCRIPTION]: 'VM template example',
+    [VMSettingsField.FLAVOR]: getFlavor(commonTemplate),
+    [VMSettingsField.WORKLOAD_PROFILE]: getWorkloadProfile(commonTemplate),
+    [VMSettingsField.TEMPLATE_PROVIDER]: null,
+    [VMSettingsField.TEMPLATE_SUPPORTED]: false,
+    osID,
+    osName,
+  };
+
+  initializeCommonMetadata(settings, finalTemplate, commonTemplate);
+  initializeCommonTemplateMetadata(settings, finalTemplate, commonTemplate);
 
   return finalTemplate.asResource();
 };
