@@ -29,7 +29,7 @@ export const AccessModeSelector: React.FC<AccessModeSelectorProps> = (props) => 
   const pvcInitialAccessMode = pvcResource ? getPVCAccessModes(pvcResource, 'value') : '';
 
   const [allowedAccessModes, setAllowedAccessModes] = React.useState<string[]>();
-  const [accessMode, setAccessMode] = React.useState(pvcInitialAccessMode);
+  const [accessMode, setAccessMode] = React.useState<string>('');
 
   const updateAllowedAccessModes = (scProvisioner: string) =>
     provisionerAccessModeMapping[scProvisioner] ?? getAccessModeForProvisioner('');
@@ -43,6 +43,21 @@ export const AccessModeSelector: React.FC<AccessModeSelectorProps> = (props) => 
       setAllowedAccessModes(currentModes);
     }
   }, [loaded, provisioner, pvcResource]);
+
+  React.useEffect(() => {
+    // Makesure the default or already checked radio button value is from any one of allowed the access mode
+    if (allowedAccessModes) {
+      if (accessMode === '' && allowedAccessModes.includes(pvcInitialAccessMode[0])) {
+        // To view the same access mode value of pvc
+        setAccessMode(pvcInitialAccessMode[0]);
+        onChange(pvcInitialAccessMode[0]);
+      } else if (!allowedAccessModes.includes(accessMode)) {
+        // Old access mode will be disabled
+        setAccessMode(allowedAccessModes[0]);
+        onChange(allowedAccessModes[0]);
+      }
+    }
+  }, [accessMode, allowedAccessModes, onChange, pvcInitialAccessMode]);
 
   const onAccessModeChange: React.ReactEventHandler<HTMLInputElement> = (event) => {
     setAccessMode(event.currentTarget.value);
@@ -58,7 +73,7 @@ export const AccessModeSelector: React.FC<AccessModeSelectorProps> = (props) => 
           const disabled = !allowedAccessModes.includes(radio.value);
           allowedAccessModes.forEach((mode) => {
             const checked =
-              !disabled && !loadError ? radio.value === accessMode[0] : radio.value === mode;
+              !disabled && !loadError ? radio.value === accessMode : radio.value === mode;
             radioObj = (
               <RadioInput
                 {...radio}

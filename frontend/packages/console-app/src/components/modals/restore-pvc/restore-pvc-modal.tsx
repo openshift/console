@@ -194,6 +194,7 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
               provisioner={updatedProvisioner}
               loaded={pvcResourceLoaded}
               loadError={pvcResourceLoadError}
+              pvcResource={pvcResource}
             />
             <FormGroup
               label={t('console-app~Size')}
