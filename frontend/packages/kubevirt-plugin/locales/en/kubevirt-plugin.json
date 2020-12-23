@@ -652,6 +652,7 @@
   "Hide password": "Hide password",
   "Show password": "Show password",
   "Selected type {{typeName}} is unsupported, falling back to a supported type": "Selected type {{typeName}} is unsupported, falling back to a supported type",
+  "Console is open on another tab/window": "Console is open on another tab/window",
   "Overview": "Overview",
   "Console": "Console",
   "Environment": "Environment",
