@@ -4,12 +4,13 @@ import * as classNames from 'classnames';
 import { Status } from '@console/shared';
 import { sortable } from '@patternfly/react-table';
 import { TemplateInstanceModel } from '../../models';
-import { TemplateInstanceKind, K8sResourceKindReference } from '../../module/k8s';
+import { K8sResourceKind } from '../../module/k8s';
 import { DetailsPage, ListPage, Table, TableData, TableRow } from '../factory';
 import { DetailsItem, Kebab, navFactory, SectionHeading, ResourceSummary, ResourceLink, ResourceKebab, Timestamp } from '../utils';
 
-const templateInstanceReference: K8sResourceKindReference = 'TemplateInstance';
 const { common } = Kebab.factory;
+
+const kind = TemplateInstanceModel.kind;
 
 export const templateInstanceMenuActions = [...Kebab.getExtensionsActionsForKind(TemplateInstanceModel), ...common];
 
@@ -49,14 +50,13 @@ const TemplateInstanceDetails: React.FC<TemplateInstanceDetailsProps> = ({ obj: 
 };
 
 type TemplateInstanceDetailsProps = {
-  obj: TemplateInstanceKind;
+  obj: K8sResourceKind;
 };
 
 const { details, editYaml } = navFactory;
-const TemplateInstancesDetailsPage: React.FC<TemplateInstancesDetailsPageProps> = props => <DetailsPage {...props} kind={templateInstanceReference} menuActions={templateInstanceMenuActions} pages={[details(TemplateInstanceDetails), editYaml()]} />;
+const TemplateInstancesDetailsPage: React.FC<TemplateInstancesDetailsPageProps> = props => <DetailsPage {...props} kind={kind} menuActions={templateInstanceMenuActions} pages={[details(TemplateInstanceDetails), editYaml()]} />;
 TemplateInstancesDetailsPage.displayName = 'TemplateInstancesDetailsPage';
 
-const kind = 'TemplateInstance';
 const tableColumnClasses = [
   '', // NAME
   '', // NAMESPACE
@@ -72,7 +72,7 @@ const TemplateInstanceTableRow = ({ obj, index, key, style }) => {
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink kind={templateInstanceReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
+        <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
       </TableData>
       <TableData className={classNames(tableColumnClasses[1])}>
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} title={obj.metadata.namespace} />
@@ -135,7 +135,7 @@ const TemplateInstancesList: React.FC = props => <Table {...props} aria-label="T
 TemplateInstancesList.displayName = 'TemplateInstancesList';
 
 const TemplateInstancesPage: React.FC<TemplateInstancesPageProps> = props => {
-  return <ListPage canCreate={true} kind={templateInstanceReference} ListComponent={TemplateInstancesList} {...props} />;
+  return <ListPage canCreate={true} kind={kind} ListComponent={TemplateInstancesList} {...props} />;
 };
 TemplateInstancesPage.displayName = 'TemplateInstancesPage';
 

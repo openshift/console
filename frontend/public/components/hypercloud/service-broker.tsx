@@ -4,12 +4,13 @@ import * as classNames from 'classnames';
 import { Status } from '@console/shared';
 import { sortable } from '@patternfly/react-table';
 import { ServiceBrokerModel } from '../../models';
-import { ServiceBrokerKind, K8sResourceKindReference } from '../../module/k8s';
+import { K8sResourceKind } from '../../module/k8s';
 import { DetailsPage, ListPage, Table, TableData, TableRow } from '../factory';
 import { DetailsItem, Kebab, navFactory, SectionHeading, ResourceSummary, ResourceLink, ResourceKebab, Timestamp } from '../utils';
 
-const serviceBrokerReference: K8sResourceKindReference = 'ServiceBroker';
 const { common } = Kebab.factory;
+
+const kind = ServiceBrokerModel.kind;
 
 export const serviceBrokerMenuActions = [...Kebab.getExtensionsActionsForKind(ServiceBrokerModel), ...common];
 
@@ -38,14 +39,13 @@ const ServiceBrokerDetails: React.FC<ServiceBrokerDetailsProps> = ({ obj: servic
 };
 
 type ServiceBrokerDetailsProps = {
-  obj: ServiceBrokerKind;
+  obj: K8sResourceKind;
 };
 
 const { details, editYaml } = navFactory;
-const ServiceBrokersDetailsPage: React.FC<ServiceBrokersDetailsPageProps> = props => <DetailsPage {...props} kind={serviceBrokerReference} menuActions={serviceBrokerMenuActions} pages={[details(ServiceBrokerDetails), editYaml()]} />;
+const ServiceBrokersDetailsPage: React.FC<ServiceBrokersDetailsPageProps> = props => <DetailsPage {...props} kind={kind} menuActions={serviceBrokerMenuActions} pages={[details(ServiceBrokerDetails), editYaml()]} />;
 ServiceBrokersDetailsPage.displayName = 'ServiceBrokersDetailsPage';
 
-const kind = 'ServiceBroker';
 const tableColumnClasses = ['', '', classNames('pf-m-hidden', 'pf-m-visible-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-xl'), Kebab.columnClass];
 
 const ServiceBrokerPhase = instance => {
@@ -69,7 +69,7 @@ const ServiceBrokerTableRow = ({ obj, index, key, style }) => {
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink kind={serviceBrokerReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
+        <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
       </TableData>
       <TableData className={classNames(tableColumnClasses[1])}>
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} title={obj.metadata.namespace} />
@@ -133,7 +133,7 @@ const ServiceBrokersList: React.FC = props => <Table {...props} aria-label="Serv
 ServiceBrokersList.displayName = 'ServiceBrokersList';
 
 const ServiceBrokersPage: React.FC<ServiceBrokersPageProps> = props => {
-  return <ListPage canCreate={true} kind={serviceBrokerReference} ListComponent={ServiceBrokersList} {...props} />;
+  return <ListPage canCreate={true} kind={kind} ListComponent={ServiceBrokersList} {...props} />;
 };
 ServiceBrokersPage.displayName = 'ServiceBrokersPage';
 

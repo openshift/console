@@ -2,11 +2,12 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-import { ClusterServicePlanKind, K8sResourceKindReference } from '../../module/k8s';
+import { ClusterServicePlanModel } from '../../models';
+import { K8sResourceKind } from '../../module/k8s';
 import { DetailsPage, ListPage, Table, TableData, TableRow } from '../factory';
 import { navFactory, SectionHeading, ResourceSummary, ResourceLink, Timestamp } from '../utils';
 
-const clusterServicePlanReference: K8sResourceKindReference = 'ClusterServicePlan';
+const kind = ClusterServicePlanModel.kind;
 
 const ClusterServicePlanDetails: React.FC<ClusterServicePlanDetailsProps> = ({ obj: clusterServicePlan }) => {
   return (
@@ -36,11 +37,11 @@ const ClusterServicePlanDetails: React.FC<ClusterServicePlanDetailsProps> = ({ o
 };
 
 type ClusterServicePlanDetailsProps = {
-  obj: ClusterServicePlanKind;
+  obj: K8sResourceKind;
 };
 
 const { details } = navFactory;
-const ClusterServicePlansDetailsPage: React.FC<ClusterServicePlansDetailsPageProps> = props => <DetailsPage {...props} kind={clusterServicePlanReference} pages={[details(ClusterServicePlanDetails)]} />;
+const ClusterServicePlansDetailsPage: React.FC<ClusterServicePlansDetailsPageProps> = props => <DetailsPage {...props} kind={kind} pages={[details(ClusterServicePlanDetails)]} />;
 ClusterServicePlansDetailsPage.displayName = 'ClusterServicePlansDetailsPage';
 
 const tableColumnClasses = [
@@ -56,7 +57,7 @@ const ClusterServicePlanTableRow = ({ obj, index, key, style }) => {
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink kind={clusterServicePlanReference} name={obj.metadata.name} title={obj.metadata.name} />
+        <ResourceLink kind={kind} name={obj.metadata.name} title={obj.metadata.name} />
       </TableData>
       <TableData className={tableColumnClasses[1]}>{obj.spec.bindable ? 'True' : 'False'}</TableData>
       <TableData className={tableColumnClasses[2]}>{obj.spec.externalName}</TableData>
@@ -119,7 +120,7 @@ const ClusterServicePlansList: React.FC = props => <Table {...props} aria-label=
 ClusterServicePlansList.displayName = 'ClusterServicePlansList';
 
 const ClusterServicePlansPage: React.FC<ClusterServicePlansPageProps> = props => {
-  return <ListPage canCreate={true} kind={clusterServicePlanReference} ListComponent={ClusterServicePlansList} {...props} />;
+  return <ListPage canCreate={true} kind={kind} ListComponent={ClusterServicePlansList} {...props} />;
 };
 ClusterServicePlansPage.displayName = 'ClusterServicePlansPage';
 
