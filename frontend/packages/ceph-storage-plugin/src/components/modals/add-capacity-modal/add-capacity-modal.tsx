@@ -14,7 +14,11 @@ import { getName, getRequestedPVCSize } from '@console/shared';
 import { OCSServiceModel } from '../../../models';
 import { getCurrentDeviceSetIndex } from '../../../utils/add-capacity';
 import { OSD_CAPACITY_SIZES } from '../../../utils/osd-size-dropdown';
-import { NO_PROVISIONER, OCS_DEVICE_SET_REPLICA } from '../../../constants';
+import {
+  NO_PROVISIONER,
+  OCS_DEVICE_SET_ARBITER_REPLICA,
+  OCS_DEVICE_SET_REPLICA,
+} from '../../../constants';
 import {
   requestedCapacityTooltip,
   storageClassTooltip,
@@ -51,7 +55,8 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
   const selectedSCName: string = getName(storageClass);
   const deviceSetIndex: number = getCurrentDeviceSetIndex(deviceSets, selectedSCName);
   const hasFlexibleScaling = ocsConfig?.spec?.flexibleScaling;
-  const replica = OCS_DEVICE_SET_REPLICA;
+  const isArbiterEnabled: boolean = ocsConfig?.spec?.arbiter?.enable;
+  const replica = isArbiterEnabled ? OCS_DEVICE_SET_ARBITER_REPLICA : OCS_DEVICE_SET_REPLICA;
   const name = getName(ocsConfig);
 
   let currentCapacity: React.ReactNode;
@@ -85,7 +90,7 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
     const osdSize = isNoProvionerSC ? defaultRequestSize.BAREMETAL : osdSizeWithUnit;
     let portable = !isNoProvionerSC;
     let deviceSetReplica = replica;
-    let deviceSetCount = 1;
+    let deviceSetCount = isArbiterEnabled ? 2 : 1;
     if (hasFlexibleScaling) {
       portable = false;
       deviceSetReplica = 1;
@@ -104,7 +109,7 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
     } else {
       patch.op = 'replace';
       patch.path = `/spec/storageDeviceSets/${deviceSetIndex}/count`;
-      patch.value = deviceSets[deviceSetIndex].count + 1;
+      patch.value = deviceSets[deviceSetIndex].count + deviceSetCount;
     }
 
     if (!selectedSCName) {
