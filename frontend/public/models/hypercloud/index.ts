@@ -595,3 +595,15 @@ export const TemplateInstanceModel: K8sKind = {
   id: 'templateinstance',
   namespaced: true,
 };
+
+export const ClusterTemplateModel: K8sKind = {
+  label: 'Cluster Template',
+  labelPlural: 'Cluster Templates',
+  apiVersion: 'v1',
+  apiGroup: 'tmax.io',
+  plural: 'clustertemplates',
+  abbr: 'CT',
+  kind: 'ClusterTemplate',
+  id: 'clustertemplate',
+  namespaced: false,
+};

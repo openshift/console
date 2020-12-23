@@ -119,14 +119,14 @@ ClusterServiceBrokerTableHeader.displayName = 'ClusterServiceBrokerTableHeader';
 const ClusterServiceBrokersList: React.FC = props => <Table {...props} aria-label="Cluster Service Broker" Header={ClusterServiceBrokerTableHeader} Row={ClusterServiceBrokerTableRow} virtualize />;
 ClusterServiceBrokersList.displayName = 'ClusterServiceBrokersList';
 
-const ClusterServiceBrokersPage: React.FC<ClusterServiceBrokersPage> = props => {
+const ClusterServiceBrokersPage: React.FC<ClusterServiceBrokersPageProps> = props => {
   return <ListPage canCreate={true} kind={kind} ListComponent={ClusterServiceBrokersList} {...props} />;
 };
 ClusterServiceBrokersPage.displayName = 'ClusterServiceBrokersPage';
 
 export { ClusterServiceBrokersList, ClusterServiceBrokersPage, ClusterServiceBrokersDetailsPage };
 
-type ClusterServiceBrokersPage = {};
+type ClusterServiceBrokersPageProps = {};
 
 type ClusterServiceBrokersDetailsPageProps = {
   match: any;

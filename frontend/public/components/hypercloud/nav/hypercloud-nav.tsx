@@ -39,6 +39,7 @@ const HyperCloudNav = () => (
           <ResourceNSLink resource="servicebindings" name="Service Binding" />
           <ResourceNSLink resource="catalogserviceclaims" name="Catalog Service Claim" />
           <ResourceNSLink resource="templates" name="Template" />
+          <ResourceClusterLink resource="clustertemplates" name="Cluster Template" />
           <ResourceNSLink resource="templateinstances" name="Template Instance" />
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_22')}>
@@ -79,12 +80,12 @@ const HyperCloudNav = () => (
           <ResourceClusterLink resource="persistentvolumes" name="Persistent Volumes" required={FLAGS.CAN_LIST_PV} />
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_56')}>
-          <ResourceNSLink resource="tasks" name='Task' />
-          <ResourceNSLink resource="taskruns" name='TaskRun' />
-          <ResourceNSLink resource="pipelines" name='Pipeline' />
-          <ResourceNSLink resource="pipelineruns" name='PipelineRun' />
-          <ResourceNSLink resource="approvals" name='Approval' />
-          <ResourceNSLink resource="pipelineresources" name='PipelineResource' />
+          <ResourceNSLink resource="tasks" name="Task" />
+          <ResourceNSLink resource="taskruns" name="TaskRun" />
+          <ResourceNSLink resource="pipelines" name="Pipeline" />
+          <ResourceNSLink resource="pipelineruns" name="PipelineRun" />
+          <ResourceNSLink resource="approvals" name="Approval" />
+          <ResourceNSLink resource="pipelineresources" name="PipelineResource" />
         </NavSection>
         {/* <NavSection title="AI DevOps">
           <ResourceNSLink resource="notebooks" name='Notebook' />
