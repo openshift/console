@@ -38,8 +38,8 @@ const DataListRow: React.FC<DataListRowProps> = ({
       aria-labelledby={`table-column-management-item-${column.id}`}
       key={column.id}
       className="pf-c-data-list__item--transparent-bg"
-      id={isColumnIdDisabled(column.id) ? '' : column.id}
-      onClick={onClick}
+      id={column.id}
+      onClick={isColumnIdDisabled(column.id) ? undefined : onClick}
     >
       <DataListItemRow>
         <DataListCheck
@@ -80,9 +80,6 @@ export const ColumnManagementModal: React.FC<ColumnManagementModalProps &
 
   const onRowClick = (event: React.SyntheticEvent): void => {
     const selectedId = event?.currentTarget?.id;
-    if (!selectedId) {
-      return;
-    }
     const updatedCheckedColumns = new Set<string>(checkedColumns);
     updatedCheckedColumns.has(selectedId)
       ? updatedCheckedColumns.delete(selectedId)
