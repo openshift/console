@@ -79,13 +79,12 @@ const HyperCloudNav = () => (
           <ResourceClusterLink resource="persistentvolumes" name="Persistent Volumes" required={FLAGS.CAN_LIST_PV} />
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_56')}>
-          <ResourceNSLink resource="tasks" name="Task" />
-          <ResourceNSLink resource="taskruns" name="TaskRun" />
-          <ResourceNSLink resource="pipelines" name="Pipeline" />
-          <ResourceNSLink resource="pipelineruns" name="PipelineRun" />
-          <ResourceNSLink resource="approvals" name="Approval" />
-          <ResourceNSLink resource="pipelineresources" name="PipelineResource" />
-          <ResourceNSLink resource="conditions" name="Condition" />
+          <ResourceNSLink resource="tasks" name='Task' />
+          <ResourceNSLink resource="taskruns" name='TaskRun' />
+          <ResourceNSLink resource="pipelines" name='Pipeline' />
+          <ResourceNSLink resource="pipelineruns" name='PipelineRun' />
+          <ResourceNSLink resource="approvals" name='Approval' />
+          <ResourceNSLink resource="pipelineresources" name='PipelineResource' />
         </NavSection>
         {/* <NavSection title="AI DevOps">
           <ResourceNSLink resource="notebooks" name='Notebook' />
