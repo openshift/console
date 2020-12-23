@@ -15,7 +15,6 @@ import {
   getTemplateKindProviderType,
   getTemplateSupport,
   templateProviders,
-  isCommonTemplate,
   getTemplateParentProvider,
 } from '../../../selectors/vm-template/basic';
 import {
@@ -29,6 +28,7 @@ import { filterTemplates } from '../../vm-templates/utils';
 import { getTemplateSourceStatus } from '../../../statuses/template/template-source-status';
 import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
 import { TemplateItem } from '../../../types/template';
+import { getDescription } from '../../../selectors/selectors';
 import './create-vm-side-drawer.scss';
 
 const normalizeVmTemplates = (
@@ -56,6 +56,7 @@ const normalizeVmTemplates = (
     const flavor = getTemplateFlavorDesc(tmp, false);
     const storage = getTemplateSizeRequirement(tmp, sourceStatus);
     const providerType = getTemplateKindProviderType(tmp);
+    const templateDescription = getDescription(tmp);
 
     const params = new URLSearchParams();
     params.set('template', tmp?.metadata?.name);
@@ -78,14 +79,18 @@ const normalizeVmTemplates = (
 
     const detailsDescription = [
       {
-        value: isCommonTemplate(tmp)
-          ? t(
-              'kubevirt-plugin~This template is {{providerParam}}. The Boot source is also maintained by Red Hat.',
-              { providerParam: getTemplateProvider(t, tmp, true) },
-            )
-          : t('kubevirt-plugin~This template is {{providerParam}}', {
-              providerParam: getTemplateProvider(t, tmp, true),
-            }),
+        value: (
+          <Stack hasGutter>
+            {templateDescription && <StackItem>{templateDescription}</StackItem>}
+            {provider && (
+              <StackItem>
+                {t("kubevirt-plugin~This template's boot source is defined by {{providerParam}}", {
+                  providerParam: provider,
+                })}
+              </StackItem>
+            )}
+          </Stack>
+        ),
       },
       {
         value: (
