@@ -69,6 +69,7 @@ const ApplicationNode: React.FC<ApplicationGroupProps> = ({
     >
       <NodeShadows />
       <rect
+        key={hover || dragging || contextMenuOpen || dropTarget ? 'rect-hover' : 'rect'}
         ref={dndDropRef}
         filter={createSvgIdUrl(
           hover || dragging || contextMenuOpen || dropTarget

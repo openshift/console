@@ -93,6 +93,7 @@ const OperatorBackedServiceGroup: React.FC<OperatorBackedServiceGroupProps> = ({
             })}
           >
             <rect
+              key={hover || innerHover || dragging || labelDragging ? 'rect-hover' : 'rect'}
               ref={dndDropRef}
               className="odc-operator-backed-service__bg"
               x={x}

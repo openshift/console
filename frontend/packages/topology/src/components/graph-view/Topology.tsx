@@ -1,7 +1,7 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import { connect } from 'react-redux';
 import { action } from 'mobx';
-import { debounce } from '@patternfly/react-core';
 import {
   ComponentFactory,
   Visualization,
@@ -147,7 +147,7 @@ const Topology: React.FC<TopologyProps &
     newVisualization.registerElementFactory(odcElementFactory);
     newVisualization.registerLayoutFactory(layoutFactory);
 
-    const onCurrentGraphModelChange = debounce(() => {
+    const onCurrentGraphModelChange = _.debounce(() => {
       const visModel = newVisualization.toModel();
       const saveGraphModel = {
         id: visModel.graph.id,
@@ -160,7 +160,7 @@ const Topology: React.FC<TopologyProps &
       onGraphModelChange(namespace, saveGraphModel);
     }, 200);
 
-    const onVisualizationLayoutChange = debounce(() => {
+    const onVisualizationLayoutChange = _.debounce(() => {
       const visModel = newVisualization.toModel();
       const updatedLayoutData = setTopologyLayout(namespace, visModel.nodes, visModel.graph.layout);
       setTopologyLayoutData((prevState) => {

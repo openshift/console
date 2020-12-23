@@ -199,6 +199,11 @@ const ObservedVmNode: React.FC<VmNodeProps> = ({
             ref={refs}
           >
             <rect
+              key={
+                hover || dragging || edgeDragging || dropTarget || contextMenuOpen
+                  ? 'rect-hover'
+                  : 'rect'
+              }
               className="odc-base-node__bg"
               ref={dndDropRef}
               x={0}

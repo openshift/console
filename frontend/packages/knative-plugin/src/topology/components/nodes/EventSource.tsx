@@ -73,6 +73,7 @@ const EventSource: React.FC<EventSourceProps> = ({
     >
       <NodeShadows />
       <polygon
+        key={hover || dragging || contextMenuOpen ? 'polygon-hover' : 'polygon'}
         className="odc-event-source__bg"
         ref={svgAnchorRef}
         filter={createSvgIdUrl(

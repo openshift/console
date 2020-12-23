@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import {
   useK8sWatchResources,
   WatchK8sResources,
@@ -42,15 +43,23 @@ const TopologyDataRetriever: React.FC<TopologyDataRetrieverProps> = ({ trafficDa
   }, [namespace]);
 
   React.useEffect(() => {
-    updateTopologyDataModel(dataModelContext, resources, showGroups, trafficData, monitoringAlerts)
-      .then((res) => {
-        dataModelContext.loadError = res.loadError;
-        if (res.loaded) {
-          dataModelContext.loaded = true;
-          dataModelContext.model = res.model;
-        }
-      })
-      .catch(() => {});
+    if (!_.isEmpty(resources)) {
+      updateTopologyDataModel(
+        dataModelContext,
+        resources,
+        showGroups,
+        trafficData,
+        monitoringAlerts,
+      )
+        .then((res) => {
+          dataModelContext.loadError = res.loadError;
+          if (res.loaded) {
+            dataModelContext.loaded = true;
+            dataModelContext.model = res.model;
+          }
+        })
+        .catch(() => {});
+    }
   }, [resources, trafficData, dataModelContext, monitoringAlerts, showGroups]);
 
   return null;

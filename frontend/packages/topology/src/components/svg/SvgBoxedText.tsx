@@ -65,6 +65,7 @@ const SvgBoxedText: React.FC<SvgBoxedTextProps> = ({
       <SvgDropShadowFilter id={FILTER_ID} />
       {textSize && (
         <rect
+          key={`rect-${FILTER_ID}`}
           filter={createSvgIdUrl(FILTER_ID)}
           x={midX - paddingX - textSize.width / 2 - iconSpace / 2 - (typeIconClass ? 10 : 0)}
           width={textSize.width + paddingX * 2 + iconSpace + (typeIconClass ? 10 : 0)}
