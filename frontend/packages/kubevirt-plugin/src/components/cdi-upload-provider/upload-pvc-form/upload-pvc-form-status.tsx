@@ -14,15 +14,30 @@ import {
   Alert,
   AlertVariant,
   Spinner,
+  Checkbox,
+  Split,
+  SplitItem,
 } from '@patternfly/react-core';
 import { ErrorCircleOIcon, InProgressIcon } from '@patternfly/react-icons';
+import { history, resourcePath } from '@console/internal/components/utils';
+import { getName, getNamespace } from '@console/shared';
+import { PodModel } from '@console/internal/models';
 import { DataUpload } from '../cdi-upload-provider';
 import { getProgressVariant } from '../upload-pvc-popover';
 import { killUploadPVC } from '../../../k8s/requests/cdi-upload/cdi-upload-requests';
+import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
 import { UPLOAD_STATUS } from '../consts';
+
+export enum uploadErrorType {
+  MISSING = 'missing',
+  ALLOCATE = 'allocate',
+  CERT = 'cert',
+  CDI_INIT = 'cdi_init',
+}
 
 export const UploadPVCFormStatus: React.FC<UploadPVCFormStatusProps> = ({
   upload,
+  dataVolume,
   isSubmitting,
   isAllocating,
   allocateError,
@@ -53,6 +68,7 @@ export const UploadPVCFormStatus: React.FC<UploadPVCFormStatusProps> = ({
       <EmptyState>
         <DataUploadStatus
           upload={upload}
+          dataVolume={dataVolume}
           error={error}
           isAllocating={isAllocating}
           onErrorClick={onErrorClick}
@@ -66,13 +82,23 @@ export const UploadPVCFormStatus: React.FC<UploadPVCFormStatusProps> = ({
 
 const DataUploadStatus: React.FC<DataUploadStatus> = ({
   upload,
+  dataVolume,
   error,
   onErrorClick,
   isAllocating,
   onSuccessClick,
   onCancelClick,
 }) => {
-  if (error) return <ErrorStatus error={error} onErrorClick={onErrorClick} />;
+  if (error)
+    return error === uploadErrorType.CDI_INIT ? (
+      <CDIInitErrorStatus
+        onErrorClick={onErrorClick}
+        pvcName={getName(dataVolume)}
+        namespace={getNamespace(dataVolume)}
+      />
+    ) : (
+      <ErrorStatus error={error} onErrorClick={onErrorClick} />
+    );
   if (isAllocating) return <AllocatingStatus />;
   if (upload?.uploadStatus === UPLOAD_STATUS.CANCELED) return <CancellingStatus />;
   return (
@@ -119,6 +145,69 @@ const ErrorStatus: React.FC<ErrorStatusProps> = ({ error, onErrorClick }) => (
     </Button>
   </>
 );
+
+const CDIInitErrorStatus: React.FC<CDIInitErrorStatus> = ({ onErrorClick, pvcName, namespace }) => {
+  const [shouldKillDv, setShouldKillDv] = React.useState(true);
+  return (
+    <>
+      <EmptyStateIcon icon={ErrorCircleOIcon} color="#cf1010" />
+      <Title headingLevel="h4" size="lg">
+        CDI Error: Could not initiate Data Volume
+      </Title>
+      <EmptyStateBody>
+        <Stack hasGutter>
+          <StackItem>
+            Data Volume failed to initiate upload, you can either delete the Data Volume and try
+            again, or check logs
+          </StackItem>
+          <StackItem>
+            <Split>
+              <SplitItem isFilled />
+              <Checkbox
+                id="approve-checkbox"
+                isChecked={shouldKillDv}
+                aria-label="kill datavolume checkbox"
+                label={`Delete Data Volume: ${pvcName}`}
+                onChange={(v) => setShouldKillDv(v)}
+              />
+              <SplitItem isFilled />
+            </Split>
+          </StackItem>
+        </Stack>
+      </EmptyStateBody>
+      <Button
+        id="cdi-upload-error-btn"
+        variant="primary"
+        onClick={
+          shouldKillDv
+            ? () => {
+                killUploadPVC(pvcName, namespace)
+                  .then(() => {
+                    onErrorClick();
+                  })
+                  .catch(() => {
+                    onErrorClick();
+                  });
+              }
+            : onErrorClick
+        }
+      >
+        Back to Form {shouldKillDv && '(Deletes DV)'}
+      </Button>
+      <EmptyStateSecondaryActions>
+        <Button
+          id="cdi-upload-check-logs"
+          onClick={() =>
+            history.push(`${resourcePath(PodModel.kind, `cdi-upload-${pvcName}`, namespace)}/logs`)
+          }
+          variant="link"
+        >
+          Check Logs
+        </Button>
+      </EmptyStateSecondaryActions>
+    </>
+  );
+};
 
 const UploadingStatus: React.FC<UploadingStatusProps> = ({
   upload,
@@ -170,6 +259,7 @@ const UploadingStatus: React.FC<UploadingStatusProps> = ({
 
 type UploadingStatusProps = {
   upload: DataUpload;
+  dataVolume?: V1alpha1DataVolume;
   onSuccessClick?: () => void;
   onCancelClick?: () => void;
 };
@@ -177,13 +267,19 @@ type UploadingStatusProps = {
 export type UploadPVCFormStatusProps = UploadingStatusProps & {
   isSubmitting: boolean;
   isAllocating: boolean;
-  allocateError: React.ReactNode;
+  allocateError: any;
   onErrorClick: () => void;
 };
 
 type ErrorStatusProps = {
   error: any;
   onErrorClick: () => void;
+};
+
+type CDIInitErrorStatus = {
+  onErrorClick: () => void;
+  pvcName: string;
+  namespace: string;
 };
 
 export type DataUploadStatus = UploadingStatusProps &

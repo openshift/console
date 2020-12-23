@@ -49,9 +49,12 @@ import {
 } from '@console/internal/components/utils/k8s-watch-hook';
 import { useBaseImages } from '../../../hooks/use-base-images';
 import { DataVolumeModel } from '../../../models';
-import { createUploadPVC } from '../../../k8s/requests/cdi-upload/cdi-upload-requests';
+import {
+  createUploadPVC,
+  PVCInitError,
+} from '../../../k8s/requests/cdi-upload/cdi-upload-requests';
 import { CDIUploadContext } from '../cdi-upload-provider';
-import { UploadPVCFormStatus } from './upload-pvc-form-status';
+import { UploadPVCFormStatus, uploadErrorType } from './upload-pvc-form-status';
 import { PersistentVolumeClaimModel, TemplateModel } from '@console/internal/models';
 import { getName, getNamespace } from '@console/shared';
 import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
@@ -79,12 +82,6 @@ const templatesResource: WatchK8sResource = {
     matchLabels: { [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_BASE },
   },
 };
-
-export enum uploadErrorType {
-  MISSING = 'missing',
-  ALLOCATE = 'allocate',
-  CERT = 'cert',
-}
 
 export const uploadErrorMessage = (t: TFunction) => ({
   [uploadErrorType.MISSING]: t('kubevirt-plugin~File input is missing'),
@@ -521,7 +518,7 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
           setError('');
           setIsAllocating(true);
           setIsSubmitting(true);
-          return createUploadPVC(dvObj, t);
+          return createUploadPVC(dvObj);
         })
         .then(({ token }) => {
           setIsAllocating(false);
@@ -532,9 +529,11 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
             namespace,
           });
         })
-        .catch(({ message }: { message: string }) => {
+        .catch((err) => {
           setIsAllocating(false);
-          setError(message || uploadErrorType.ALLOCATE);
+          err instanceof PVCInitError
+            ? setError(uploadErrorType.CDI_INIT)
+            : setError(err?.message || uploadErrorType.ALLOCATE);
         });
     }
   };
@@ -626,9 +625,10 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
         upload={uploads.find(
           (upl) => upl.pvcName === getName(dvObj) && upl.namespace === namespace,
         )}
+        dataVolume={dvObj}
         isSubmitting={isSubmitting}
         isAllocating={isAllocating}
-        allocateError={errorMessage}
+        allocateError={error}
         onErrorClick={() => {
           setIsSubmitting(false);
           setError('');
