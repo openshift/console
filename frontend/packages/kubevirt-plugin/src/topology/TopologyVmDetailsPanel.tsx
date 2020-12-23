@@ -15,6 +15,8 @@ import { TEMPLATE_TYPE_LABEL, TEMPLATE_TYPE_VM } from '../constants/vm';
 import { VMDetailsList, VMResourceSummary } from '../components/vms/vm-resource';
 import { VMNode } from './types';
 import { VMKind } from '../types/vm';
+import { PodKind } from '@console/internal/module/k8s/types';
+import { usePodsForVm } from '../utils/usePodsForVm';
 
 type TopologyVmDetailsPanelProps = {
   vmNode: VMNode;
@@ -28,8 +30,8 @@ type LoadedTopologyVmDetailsPanelProps = TopologyVmDetailsPanelProps & {
 const LoadedTopologyVmDetailsPanel: React.FC<LoadedTopologyVmDetailsPanelProps> = observer(
   ({ loaded, vmNode, templates }) => {
     const vmData = vmNode.getData();
-    const { pod } = vmData.data.vmStatusBundle;
     const vmObj = vmData.resource as VMKind;
+    const { podData: { pods = [] } = {} } = usePodsForVm(vmObj);
     const { vmi, vmStatusBundle } = vmData.data;
     const canUpdate =
       useAccessReview(asAccessReview(VirtualMachineModel, vmObj || {}, 'patch')) && !!vmObj;
@@ -53,7 +55,7 @@ const LoadedTopologyVmDetailsPanel: React.FC<LoadedTopologyVmDetailsPanelProps> 
             canUpdateVM={canUpdate}
             vm={vmObj}
             vmi={vmi}
-            pods={[pod]}
+            pods={pods as PodKind[]}
             kindObj={VirtualMachineModel}
             vmStatusBundle={vmStatusBundle}
           />
