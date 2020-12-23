@@ -1,6 +1,8 @@
 import * as _ from 'lodash';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { getStorageSize } from '../selectors';
+import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
+import { V1DataVolumeTemplateSpec } from '../../types';
 
 export const getDataVolumeResources = (dataVolume: K8sResourceKind) =>
   _.get(dataVolume, 'spec.pvc.resources');
@@ -14,3 +16,13 @@ export const getDataVolumeVolumeMode = (dataVolume: K8sResourceKind) =>
   _.get(dataVolume, 'spec.pvc.volumeMode');
 export const getDataVolumeStorageClassName = (dataVolume: K8sResourceKind): string =>
   _.get(dataVolume, 'spec.pvc.storageClassName');
+
+export const toDataVolumeTemplateSpec = (
+  dataVolume: V1alpha1DataVolume,
+): V1DataVolumeTemplateSpec =>
+  dataVolume
+    ? {
+        metadata: _.get(dataVolume, 'metadata'),
+        spec: _.get(dataVolume, 'spec'),
+      }
+    : null;

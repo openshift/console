@@ -11,6 +11,7 @@ import {
 import { getVMLikePatches } from '../vm-template';
 import { VMLikeEntityKind } from '../../../types/vmLike';
 import { getSimpleName } from '../../../selectors/utils';
+import { toDataVolumeTemplateSpec } from '../../../selectors/dv/selectors';
 import { DiskWrapper } from '../../wrapper/vm/disk-wrapper';
 import { V1Disk } from '../../../types/vm/disk/V1Disk';
 import { V1Volume } from '../../../types/vm/disk/V1Volume';
@@ -99,7 +100,7 @@ export const getUpdateDiskPatches = (
       dataVolume &&
         new PatchBuilder('/spec/dataVolumeTemplates')
           .setListUpdate(
-            dataVolume,
+            toDataVolumeTemplateSpec(dataVolume),
             dataVolumeTemplates,
             (other) => getName(other) === oldDataVolumeName,
           )

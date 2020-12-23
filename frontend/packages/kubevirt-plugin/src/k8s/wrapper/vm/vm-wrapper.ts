@@ -3,7 +3,13 @@ import * as _ from 'lodash';
 import { getLabels } from '@console/shared/src/selectors/common';
 import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
 import { K8sResourceWrapper } from '../common/k8s-resource-wrapper';
-import { CPURaw, V1NetworkInterface, VMISpec, VMKind } from '../../../types';
+import {
+  CPURaw,
+  V1DataVolumeTemplateSpec,
+  V1NetworkInterface,
+  VMISpec,
+  VMKind,
+} from '../../../types';
 import {
   getCloudInitVolume,
   getDataVolumeTemplates,
@@ -32,6 +38,7 @@ import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
 import { VirtualMachineImportModel, VirtualMachineModel } from '../../../models';
 import { buildOwnerReferenceForModel } from '../../../utils';
 import { transformDevices } from '../../../selectors/vm/devices';
+import { toDataVolumeTemplateSpec } from '../../../selectors/dv/selectors';
 
 export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements VMILikeMethods {
   constructor(vm?: VMKind | VMWrapper | any, copy = false) {
@@ -219,11 +226,12 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
   setWizardStorages = (storages: VMWizardStorage[]) => {
     this.ensurePath('spec.template.spec.domain.devices');
     this.data.spec.template.spec.domain.devices.disks = _.compact(
-      storages.map((storage) => storage.disk),
+      storages.map((storage) => (storage.disk?.name ? storage.disk : null)),
     );
     this.data.spec.template.spec.volumes = _.compact(storages.map((storage) => storage.volume));
-    this.data.spec.dataVolumeTemplates = _.compact(storages.map((storage) => storage.dataVolume));
-
+    this.data.spec.dataVolumeTemplates = _.compact(
+      storages.map((storage) => toDataVolumeTemplateSpec(storage.dataVolume)),
+    );
     this.ensureStorageConsistency();
     return this;
   };
@@ -240,7 +248,8 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
     return this;
   };
 
-  ensureDataVolumeTemplates = () => this.ensurePath('spec.dataVolumeTemplates', []);
+  ensureDataVolumeTemplates = (): V1DataVolumeTemplateSpec[] =>
+    this.ensurePath('spec.dataVolumeTemplates', []);
 
   private ensureStorages = () => {
     this.ensurePath('spec.template.spec.domain.devices.disks', []);
