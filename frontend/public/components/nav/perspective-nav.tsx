@@ -13,13 +13,7 @@ import { NavSection } from './section';
 import MulticlusterNav from '../hypercloud/nav/multicluster-nav';
 import HyperCloudNav from '../hypercloud/nav/hypercloud-nav';
 
-import {
-  createLink,
-  NavLinkComponent,
-  ResourceClusterLink,
-  ResourceNSLink,
-  RootNavLink,
-} from './items';
+import { createLink, NavLinkComponent, ResourceClusterLink, ResourceNSLink, RootNavLink } from './items';
 
 import './_perspective-nav.scss';
 import { getPerspectives } from '../../hypercloud/perspectives';
@@ -38,18 +32,11 @@ const getLabelForResource = (resource: string): string => {
   return model ? model.labelPlural : '';
 };
 
-const PerspectiveNav: React.FC<StateProps & DispatchProps> = ({
-  perspective,
-  pinnedResources,
-  onPinnedResourcesChange,
-}) => {
+const PerspectiveNav: React.FC<StateProps & DispatchProps> = ({ perspective, pinnedResources, onPinnedResourcesChange }) => {
   const navItemExtensions = useExtensions<NavItem>(isNavItem);
   const perspectives = React.useMemo(() => getPerspectives(), []);
 
-  const matchingNavItems = React.useMemo(
-    () => navItemExtensions.filter((item) => item.properties.perspective === perspective),
-    [navItemExtensions, perspective],
-  );
+  const matchingNavItems = React.useMemo(() => navItemExtensions.filter(item => item.properties.perspective === perspective), [navItemExtensions, perspective]);
 
   const unPin = (e: React.MouseEvent<HTMLButtonElement>, resource: string) => {
     e.preventDefault();
@@ -60,27 +47,24 @@ const PerspectiveNav: React.FC<StateProps & DispatchProps> = ({
   // Until mc perspective is contributed through extensions, simply render static `MulticlusterNav`
   if (perspective === 'mc') {
     return <MulticlusterNav />;
-  }
-
-  else if (perspective === 'hc'){
+  } else if (perspective === 'hc') {
     return <HyperCloudNav />;
   }
 
-  const activePerspective = perspectives.find((p) => p.properties.id === perspective);
+  const activePerspective = perspectives.find(p => p.properties.id === perspective);
   if (!pinnedResources && activePerspective.properties.defaultPins) {
     onPinnedResourcesChange(activePerspective.properties.defaultPins);
   }
 
   const getPinnedItems = (rootNavLink: boolean = false): React.ReactElement[] =>
     pinnedResources
-      .map((resource) => {
+      .map(resource => {
         const model = modelFor(resource);
         if (!model) {
           return null;
         }
         const { labelPlural, apiVersion, apiGroup, namespaced, crd, plural } = model;
-        const duplicates =
-          pinnedResources.filter((res) => getLabelForResource(res) === labelPlural).length > 1;
+        const duplicates = pinnedResources.filter(res => getLabelForResource(res) === labelPlural).length > 1;
         const props = {
           key: `pinned-${resource}`,
           name: labelPlural,
@@ -90,23 +74,13 @@ const PerspectiveNav: React.FC<StateProps & DispatchProps> = ({
         };
         const Component: NavLinkComponent = namespaced ? ResourceNSLink : ResourceClusterLink;
         const removeButton = (
-          <Button
-            className="oc-nav-pinned-item__unpin-button"
-            variant="link"
-            aria-label="Unpin"
-            onClick={(e) => unPin(e, resource)}
-          >
+          <Button className="oc-nav-pinned-item__unpin-button" variant="link" aria-label="Unpin" onClick={e => unPin(e, resource)}>
             <MinusCircleIcon className="oc-nav-pinned-item__icon" />
           </Button>
         );
 
         return rootNavLink ? (
-          <RootNavLink
-            key={resource}
-            className="oc-nav-pinned-item"
-            component={Component}
-            {...props}
-          >
+          <RootNavLink key={resource} className="oc-nav-pinned-item" component={Component} {...props}>
             {removeButton}
           </RootNavLink>
         ) : (
@@ -115,7 +89,7 @@ const PerspectiveNav: React.FC<StateProps & DispatchProps> = ({
           </Component>
         );
       })
-      .filter((p) => p !== null);
+      .filter(p => p !== null);
 
   // track sections so that we do not create duplicates
   const renderedSections: string[] = [];

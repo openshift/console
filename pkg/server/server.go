@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"io"
 	"net/http"
+	"net/http/httputil"
 	"net/url"
 	"os"
 	"path"
@@ -15,14 +16,14 @@ import (
 	"github.com/coreos/pkg/health"
 
 	"github.com/openshift/console/pkg/auth"
-	"github.com/openshift/console/pkg/backend"
+	// "github.com/openshift/console/pkg/backend"
 	helmhandlerspkg "github.com/openshift/console/pkg/helm/handlers"
 	"github.com/openshift/console/pkg/proxy"
 	"github.com/openshift/console/pkg/serverutils"
 	"github.com/openshift/console/pkg/terminal"
 	"github.com/openshift/console/pkg/version"
 
-	gmux "github.com/gorilla/mux"
+	hproxy "github.com/openshift/console/pkg/hypercloud/proxy"
 )
 
 const (
@@ -41,6 +42,10 @@ const (
 	meteringProxyEndpoint          = "/api/metering"
 	customLogoEndpoint             = "/custom-logo"
 	helmChartRepoProxyEndpoint     = "/api/helm/charts/"
+
+	grafanaProxyEndpoint = "/api/grafana/"
+	kialiProxyEndpoint   = "/api/kiali/"
+	webhookEndpoint      = "/api/webhook/"
 )
 
 var (
@@ -124,8 +129,10 @@ type Server struct {
 	KeycloakAuthURL  string
 	KeycloakClientId string
 
-	// Dynamic reverse proxy config
-	DynamicProxyConfig []*backend.Backend
+	// Add proxy config
+	GrafanaProxyConfig *hproxy.Config
+	KialiProxyConfig   *hproxy.Config
+	WebhookProxyConfig *hproxy.Config
 }
 
 func (s *Server) authDisabled() bool {
@@ -144,9 +151,21 @@ func (s *Server) meteringProxyEnabled() bool {
 	return s.MeteringProxyConfig != nil
 }
 
-func (s *Server) dynamicProxyEnabled() bool {
-	return len(s.DynamicProxyConfig) != 0
+func (s *Server) grafanaEnable() bool {
+	return s.GrafanaProxyConfig != nil
 }
+
+func (s *Server) kialiEnable() bool {
+	return s.KialiProxyConfig != nil
+}
+
+func (s *Server) webhookEnable() bool {
+	return s.WebhookProxyConfig != nil
+}
+
+// func (s *Server) dynamicProxyEnabled() bool {
+// 	return len(s.DynamicProxyConfig) != 0
+// }
 
 func (s *Server) HTTPHandler() http.Handler {
 	mux := http.NewServeMux()
@@ -344,6 +363,43 @@ func (s *Server) HTTPHandler() http.Handler {
 		)
 	}
 
+	// NOTE: grafa proxy
+	if s.grafanaEnable() {
+		grafanaProxyAPIPath := grafanaProxyEndpoint
+		grafanaProxy := httputil.NewSingleHostReverseProxy(s.GrafanaProxyConfig.Endpoint)
+		handle(grafanaProxyAPIPath, http.StripPrefix(
+			proxy.SingleJoiningSlash(s.BaseURL.Path, grafanaProxyAPIPath),
+			http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				grafanaProxy.ServeHTTP(w, r)
+			})),
+		)
+	}
+
+	// NOTE: kiali proxy
+	if s.kialiEnable() {
+		kialiProxyAPIPath := kialiProxyEndpoint
+		// kialiProxy := httputil.NewSingleHostReverseProxy(s.KialiProxyConfig.Endpoint)
+		kialiProxy := hproxy.NewProxy(s.KialiProxyConfig)
+		handle(kialiProxyAPIPath, http.StripPrefix(
+			proxy.SingleJoiningSlash(s.BaseURL.Path, kialiProxyAPIPath),
+			http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				kialiProxy.ServeHTTP(w, r)
+			})),
+		)
+	}
+
+	// NOTE: webhook proxy
+	if s.webhookEnable() {
+		webhookProxyAPIPath := webhookEndpoint
+		webhookProxy := hproxy.NewProxy(s.WebhookProxyConfig)
+		handle(webhookProxyAPIPath, http.StripPrefix(
+			proxy.SingleJoiningSlash(s.BaseURL.Path, webhookProxyAPIPath),
+			http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				webhookProxy.ServeHTTP(w, r)
+			})),
+		)
+	}
+
 	handle("/api/console/monitoring-dashboard-config", authHandler(s.handleMonitoringDashboardConfigmaps))
 	handle("/api/console/knative-event-sources", authHandler(s.handleKnativeEventSourceCRDs))
 	handle("/api/console/version", authHandler(s.versionHandler))
@@ -503,13 +559,13 @@ func (s *Server) handleOpenShiftTokenDeletion(user *auth.User, w http.ResponseWr
 	resp.Body.Close()
 }
 
-func (s *Server) ProxyHandler() http.Handler {
-	plog.Info("is it working?")
-	mux := gmux.NewRouter()
-	mux.Path("/api/dynamic/test/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		plog.Info("is it a matching algorithm working?")
-		w.Write([]byte("OK it is work"))
-	})
+// func (s *Server) ProxyHandler() http.Handler {
+// 	plog.Info("is it working?")
+// 	mux := gmux.NewRouter()
+// 	mux.Path("/api/dynamic/test/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+// 		plog.Info("is it a matching algorithm working?")
+// 		w.Write([]byte("OK it is work"))
+// 	})
 
-	return http.Handler(mux)
-}
+// 	return http.Handler(mux)
+// }

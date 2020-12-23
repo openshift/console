@@ -7,15 +7,15 @@ import { FLAGS } from '@console/shared';
 import { connectToFlags, flagPending, FlagsObject } from '../reducers/features';
 import { GlobalNotifications } from './global-notifications';
 import { NamespaceBar } from './namespace';
-import { SearchPage } from './search';
+import { SearchPage } from './hypercloud/search';
 import { ResourceDetailsPage, ResourceListPage } from './resource-list';
 import { AsyncComponent, LoadingBox } from './utils';
 import { namespacedPrefixes } from './utils/link';
 import { AlertmanagerModel } from '../models';
 import { referenceForModel } from '../module/k8s';
 import * as plugins from '../plugins';
-import { NamespaceRedirect } from './utils/namespace-redirect';
 import { getActivePerspective } from '../reducers/ui';
+import { NamespaceRedirect } from './utils/namespace-redirect';
 import { RootState } from '../redux';
 import { pluralToKind } from './hypercloud/form';
 import { getPerspectives } from '../hypercloud/perspectives';
@@ -40,6 +40,17 @@ function NamespaceFromURL(Component) {
   }
   return C;
 }
+const ActiveNamespaceRedirect = ({ location }) => {
+  const activeNamespace = localStorage.getItem('bridge/last-namespace-name');
+  let to;
+  if (activeNamespace === '#ALL_NS#') {
+    to = `${location.pathname}/all-namespaces`;
+  } else if (activeNamespace) {
+    to = `${location.pathname}/ns/${activeNamespace}`;
+  }
+  to += location.search;
+  return <Redirect to={to} />;
+};
 
 const namespacedRoutes = [];
 _.each(namespacedPrefixes, p => {
@@ -151,6 +162,11 @@ const AppContents_: React.FC<AppContentsProps> = ({ activePerspective, flags }) 
           <Route path="/search/all-namespaces" exact component={NamespaceFromURL(SearchPage)} />
           <Route path="/search/ns/:ns" exact component={NamespaceFromURL(SearchPage)} />
           <Route path="/search" exact component={NamespaceRedirect} />
+
+          <LazyRoute path="/kiali/all-namespaces" exact loader={() => import('./hypercloud/kiali' /* webpackChunkName: "kiali" */).then(m => NamespaceFromURL(m.KialiPage))} />
+          <LazyRoute path="/kiali/ns/:ns" exact loader={() => import('./hypercloud/kiali' /* webpackChunkName: "kiali" */).then(m => NamespaceFromURL(m.KialiPage))} />
+          <Route path="/kiali" exact component={NamespaceRedirect} />
+
           <LazyRoute path="/k8s/all-namespaces/import" exact loader={() => import('./import-yaml' /* webpackChunkName: "import-yaml" */).then(m => NamespaceFromURL(m.ImportYamlPage))} />
           <LazyRoute path="/k8s/ns/:ns/import/" exact loader={() => import('./import-yaml' /* webpackChunkName: "import-yaml" */).then(m => NamespaceFromURL(m.ImportYamlPage))} />
           {
@@ -162,7 +178,17 @@ const AppContents_: React.FC<AppContentsProps> = ({ activePerspective, flags }) 
             // <LazyRoute path="/k8s/ns/:ns/roles/:name/add-rule" exact loader={() => import('./RBAC' /* webpackChunkName: "rbac" */).then(m => m.EditRulePage)} />
             // <LazyRoute path="/k8s/ns/:ns/roles/:name/:rule/edit" exact loader={() => import('./RBAC' /* webpackChunkName: "rbac" */).then(m => m.EditRulePage)} />
           }
+          <LazyRoute path="/k8s/ns/:ns/audits" exact loader={() => import('./hypercloud/audit').then(m => NamespaceFromURL(m.AuditPage))} />
+          <LazyRoute path="/k8s/all-namespaces/audits" exact loader={() => import('./hypercloud/audit').then(m => NamespaceFromURL(m.AuditPage))} />
+          <Route path="/grafana" exact component={ActiveNamespaceRedirect} />
+          <LazyRoute path="/grafana/all-namespaces" exact loader={() => import('./hypercloud/grafana').then(m => NamespaceFromURL(m.GrafanaPage))} />
+          <LazyRoute path="/grafana/ns/:ns" exact loader={() => import('./hypercloud/grafana').then(m => NamespaceFromURL(m.GrafanaPage))} />
+
           {/*Create Form */}
+          <LazyRoute path="/k8s/ns/:ns/:plural/~new" exact loader={() => import('./hypercloud/crd/create-pinned-custom-resource').then(m => m.CreateDefaultPage)} />
+          <LazyRoute path="/k8s/cluster/:plural/~new" exact loader={() => import('./hypercloud/crd/create-pinned-custom-resource').then(m => m.CreateDefaultPage)} />
+          <LazyRoute path="/k8s/ns/:ns/customresourcedefinitions/:plural/~new" kind="CustomResourceDefinition" exact loader={() => import('./hypercloud/crd/create-custom-resource-definition').then(m => m.CreateCRDPage)} />
+          <LazyRoute path="/k8s/cluster/customresourcedefinitions/:plural/~new" kind="CustomResourceDefinition" exact loader={() => import('./hypercloud/crd/create-custom-resource-definition').then(m => m.CreateCRDPage)} />
           <LazyRoute path="/k8s/ns/:ns/routes/~new/form" exact kind="Route" loader={() => import('./routes/create-route' /* webpackChunkName: "create-route" */).then(m => m.CreateRoute)} />
           <LazyRoute path="/k8s/cluster/rolebindings/~new" exact loader={() => import('./RBAC' /* webpackChunkName: "rbac" */).then(m => m.CreateRoleBinding)} kind="RoleBinding" />
           <LazyRoute path="/k8s/ns/:ns/rolebindings/~new" exact loader={() => import('./RBAC' /* webpackChunkName: "rbac" */).then(m => m.CreateRoleBinding)} kind="RoleBinding" />

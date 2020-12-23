@@ -155,108 +155,108 @@ const plugin: Plugin<ConsumedExtensions> = [
       templateName: 'vm-template',
     },
   },
-  {
-    type: 'Page/Route',
-    properties: {
-      exact: true,
-      path: ['/k8s/ns/:ns/virtualization/~new'],
-      loader: () =>
-        import('./components/vms/vm-create-yaml' /* webpackChunkName: "kubevirt" */).then(
-          (m) => m.VMCreateYAML,
-        ),
-      required: FLAG_KUBEVIRT,
-    },
-  },
-  {
-    type: 'Page/Route',
-    properties: {
-      exact: true,
-      path: ['/k8s/ns/:ns/virtualization/~new-wizard'],
-      loader: () =>
-        import(
-          './components/create-vm-wizard' /* webpackChunkName: "kubevirt-create-vm-wizard" */
-        ).then((m) => m.CreateVMWizardPage),
-      required: FLAG_KUBEVIRT,
-    },
-  },
-  {
-    type: 'Page/Route',
-    properties: {
-      path: '/k8s/ns/:ns/virtualmachines/:name',
-      loader: () =>
-        import('./components/vms/vm-details-page' /* webpackChunkName: "kubevirt" */).then(
-          (m) => m.VirtualMachinesDetailsPage,
-        ),
-    },
-  },
-  {
-    type: 'Page/Route',
-    properties: {
-      path: '/k8s/ns/:ns/virtualmachineinstances/:name',
-      loader: () =>
-        import('./components/vms/vmi-details-page' /* webpackChunkName: "kubevirt" */).then(
-          (m) => m.VirtualMachinesInstanceDetailsPage,
-        ),
-    },
-  },
-  {
-    type: 'Page/Route',
-    properties: {
-      path: ['/k8s/ns/:ns/virtualization', '/k8s/all-namespaces/virtualization'],
-      loader: () =>
-        import('./components/vms/virtualization' /* webpackChunkName: "kubevirt" */).then(
-          (m) => m.VirtualizationPage,
-        ),
-      required: FLAG_KUBEVIRT,
-    },
-  },
-  {
-    type: 'Page/Route',
-    properties: {
-      exact: true,
-      path: ['/k8s/ns/:ns/virtualmachines', '/k8s/all-namespaces/virtualmachines'],
-      loader: () =>
-        import('./components/vms/virtualization' /* webpackChunkName: "kubevirt" */).then(
-          (m) => m.RedirectToVirtualizationPage,
-        ),
-      required: FLAG_KUBEVIRT,
-    },
-  },
-  {
-    type: 'Page/Route',
-    properties: {
-      exact: true,
-      path: ['/k8s/ns/:ns/vmtemplates', '/k8s/all-namespaces/vmtemplates'],
-      loader: () =>
-        import('./components/vms/virtualization' /* webpackChunkName: "kubevirt" */).then(
-          (m) => m.RedirectToVirtualizationTemplatePage,
-        ),
-      required: FLAG_KUBEVIRT,
-    },
-  },
-  {
-    type: 'Page/Route',
-    properties: {
-      path: '/k8s/ns/:ns/vmtemplates/:name',
-      loader: () =>
-        import(
-          './components/vm-templates/vm-template-details-page' /* webpackChunkName: "kubevirt" */
-        ).then((m) => m.VMTemplateDetailsPage),
-      required: FLAG_KUBEVIRT,
-    },
-  },
-  {
-    type: 'Page/Route',
-    properties: {
-      exact: true,
-      path: ['/k8s/ns/:ns/vmtemplates', '/k8s/all-namespaces/vmtemplates'],
-      loader: () =>
-        import('./components/vm-templates/vm-template' /* webpackChunkName: "kubevirt" */).then(
-          (m) => m.VirtualMachineTemplatesPage,
-        ),
-      required: FLAG_KUBEVIRT,
-    },
-  },
+  // {
+  //   type: 'Page/Route',
+  //   properties: {
+  //     exact: true,
+  //     path: ['/k8s/ns/:ns/virtualization/~new'],
+  //     loader: () =>
+  //       import('./components/vms/vm-create-yaml' /* webpackChunkName: "kubevirt" */).then(
+  //         (m) => m.VMCreateYAML,
+  //       ),
+  //     required: FLAG_KUBEVIRT,
+  //   },
+  // },
+  // {
+  //   type: 'Page/Route',
+  //   properties: {
+  //     exact: true,
+  //     path: ['/k8s/ns/:ns/virtualization/~new-wizard'],
+  //     loader: () =>
+  //       import(
+  //         './components/create-vm-wizard' /* webpackChunkName: "kubevirt-create-vm-wizard" */
+  //       ).then((m) => m.CreateVMWizardPage),
+  //     required: FLAG_KUBEVIRT,
+  //   },
+  // },
+  // {
+  //   type: 'Page/Route',
+  //   properties: {
+  //     path: '/k8s/ns/:ns/virtualmachines/:name',
+  //     loader: () =>
+  //       import('./components/vms/vm-details-page' /* webpackChunkName: "kubevirt" */).then(
+  //         (m) => m.VirtualMachinesDetailsPage,
+  //       ),
+  //   },
+  // },
+  // {
+  //   type: 'Page/Route',
+  //   properties: {
+  //     path: '/k8s/ns/:ns/virtualmachineinstances/:name',
+  //     loader: () =>
+  //       import('./components/vms/vmi-details-page' /* webpackChunkName: "kubevirt" */).then(
+  //         (m) => m.VirtualMachinesInstanceDetailsPage,
+  //       ),
+  //   },
+  // },
+  // {
+  //   type: 'Page/Route',
+  //   properties: {
+  //     path: ['/k8s/ns/:ns/virtualization', '/k8s/all-namespaces/virtualization'],
+  //     loader: () =>
+  //       import('./components/vms/virtualization' /* webpackChunkName: "kubevirt" */).then(
+  //         (m) => m.VirtualizationPage,
+  //       ),
+  //     required: FLAG_KUBEVIRT,
+  //   },
+  // },
+  // {
+  //   type: 'Page/Route',
+  //   properties: {
+  //     exact: true,
+  //     path: ['/k8s/ns/:ns/virtualmachines', '/k8s/all-namespaces/virtualmachines'],
+  //     loader: () =>
+  //       import('./components/vms/virtualization' /* webpackChunkName: "kubevirt" */).then(
+  //         (m) => m.RedirectToVirtualizationPage,
+  //       ),
+  //     required: FLAG_KUBEVIRT,
+  //   },
+  // },
+  // {
+  //   type: 'Page/Route',
+  //   properties: {
+  //     exact: true,
+  //     path: ['/k8s/ns/:ns/vmtemplates', '/k8s/all-namespaces/vmtemplates'],
+  //     loader: () =>
+  //       import('./components/vms/virtualization' /* webpackChunkName: "kubevirt" */).then(
+  //         (m) => m.RedirectToVirtualizationTemplatePage,
+  //       ),
+  //     required: FLAG_KUBEVIRT,
+  //   },
+  // },
+  // {
+  //   type: 'Page/Route',
+  //   properties: {
+  //     path: '/k8s/ns/:ns/vmtemplates/:name',
+  //     loader: () =>
+  //       import(
+  //         './components/vm-templates/vm-template-details-page' /* webpackChunkName: "kubevirt" */
+  //       ).then((m) => m.VMTemplateDetailsPage),
+  //     required: FLAG_KUBEVIRT,
+  //   },
+  // },
+  // {
+  //   type: 'Page/Route',
+  //   properties: {
+  //     exact: true,
+  //     path: ['/k8s/ns/:ns/vmtemplates', '/k8s/all-namespaces/vmtemplates'],
+  //     loader: () =>
+  //       import('./components/vm-templates/vm-template' /* webpackChunkName: "kubevirt" */).then(
+  //         (m) => m.VirtualMachineTemplatesPage,
+  //       ),
+  //     required: FLAG_KUBEVIRT,
+  //   },
+  // },
   {
     type: 'Dashboards/Overview/Health/URL',
     properties: {

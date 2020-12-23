@@ -122,18 +122,18 @@ export const NavSection = connect(navSectionStateToProps)(
       };
 
       getNavItemExtensions = (perspective: string, section: string) => {
-        const { navItemExtensions, perspectiveExtensions } = this.props;
+        const { navItemExtensions /*, perspectiveExtensions*/ } = this.props;
 
-        const defaultPerspective = _.find(perspectiveExtensions, (p) => p.properties.default);
-        const isDefaultPerspective =
-          defaultPerspective && perspective === defaultPerspective.properties.id;
+        // const defaultPerspective = _.find(perspectiveExtensions, (p) => p.properties.default);
+        // const isDefaultPerspective =
+        //   defaultPerspective && perspective === defaultPerspective.properties.id;
 
         return navItemExtensions.filter(
           (item) =>
             // check if the item is contributed to the current perspective,
             // or if no perspective specified, are we in the default perspective
-            (item.properties.perspective === perspective ||
-              (!item.properties.perspective && isDefaultPerspective)) &&
+            // (item.properties.perspective === perspective ||
+            //   (!item.properties.perspective && isDefaultPerspective)) &&
             item.properties.section === section,
         );
       };

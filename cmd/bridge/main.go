@@ -29,6 +29,7 @@ import (
 	"github.com/openshift/console/pkg/server"
 	"github.com/openshift/console/pkg/serverconfig"
 
+	hproxy "github.com/openshift/console/pkg/hypercloud/proxy"
 	pServer "github.com/openshift/console/pkg/hypercloud/server"
 )
 
@@ -59,29 +60,6 @@ const (
 	// Well-known location of metering service for OpenShift. This is only accessible in-cluster.
 	openshiftMeteringHost = "reporting-operator.openshift-metering.svc:8080"
 )
-
-type ProxyFlag struct {
-	Names []string
-}
-
-func (s *ProxyFlag) GetNames() []string {
-	return s.Names
-}
-
-func (s *ProxyFlag) String() string {
-	return fmt.Sprint(s.Names)
-}
-
-func (s *ProxyFlag) Set(v string) error {
-	if len(s.Names) > 0 {
-		return fmt.Errorf("Cammpt name ")
-	}
-	names := strings.Split(v, ",")
-	for _, item := range names {
-		s.Names = append(s.Names, item)
-	}
-	return nil
-}
 
 func main() {
 	rl := capnslog.MustRepoLogger("github.com/openshift/console")
@@ -147,13 +125,19 @@ func main() {
 
 	helmConfig := chartproxy.RegisterFlags(fs)
 
-	// proxy config 경로 획득 20/11/19 jinsoo
+	// multi proxy config 경로 획득 20/11/19 jinsoo
 	fProxyConfig := fs.String("proxyConfig", "", "The YAML proxy config file.")
 
 	// NOTE: Keycloak 연동 추가 // 최여진 -> 윤진수 // 20.12.17
 	fKeycloakRealm := fs.String("keycloak-realm", "", "Keycloak Realm Name")
 	fKeycloakAuthURL := fs.String("keycloak-auth-url", "", "URL of the Keycloak Auth server.")
 	fKeycloakClientId := fs.String("keycloak-client-id", "", "Keycloak Client Id")
+
+	//NOTE: proxy config // jinsoo
+	fGrafanaEndpoint := fs.String("grafana-endpoint", "", "URL of the Grafana API server.")
+	fKialiEndpoint := fs.String("kiali-endpoint", "", "URL of the KIALI Portal")
+	// NOTE: webhook 연동 추가
+	fwebhookEndpoint := fs.String("webhook-endpoint", "", "URL of the hypercloud webhook endpoint")
 
 	if err := fs.Parse(os.Args[1:]); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
@@ -386,6 +370,24 @@ func main() {
 				Endpoint:        &url.URL{Scheme: "https", Host: openshiftMeteringHost, Path: "/api"},
 			}
 			srv.TerminalProxyTLSConfig = serviceProxyTLSConfig
+
+			// NOTE: grafanaEndpoint 추가 // 윤진수
+			grafanaEndpoint := bridge.ValidateFlagIsURL("grafana-endpoint", *fGrafanaEndpoint)
+			srv.GrafanaProxyConfig = &hproxy.Config{
+				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+				Endpoint:        grafanaEndpoint,
+				Origin:          "http://localhost",
+			}
+			kialiEndpoint := bridge.ValidateFlagIsURL("kiali-endpoint", *fKialiEndpoint)
+			srv.KialiProxyConfig = &hproxy.Config{
+				HeaderBlacklist: []string{"X-CSRFToken"},
+				TLSClientConfig: &tls.Config{
+					InsecureSkipVerify: true,
+				},
+				Endpoint: kialiEndpoint,
+				Origin:   "http://localhost",
+			}
+
 		}
 
 	case "off-cluster":
@@ -449,14 +451,33 @@ func main() {
 		bridge.FlagFatalf("k8s-mode", "must be one of: in-cluster, off-cluster")
 	}
 
-	// log.Infof("fproxy test")
-	// if len(fProxys.GetNames()) != 0 {
-	// 	for _, item := range fProxys.GetNames() {
-	// 		new, _ := backend.NewBackend("test", item)
-	// 		srv.DynamicProxyConfig = append(srv.DynamicProxyConfig, new)
-	// 	}
-	// }
-	// log.Info(name)
+	// ADD proxy in,out cluster
+	// NOTE: grafanaEndpoint 추가 // 윤진수
+	grafanaEndpoint := bridge.ValidateFlagIsURL("grafana-endpoint", *fGrafanaEndpoint)
+	srv.GrafanaProxyConfig = &hproxy.Config{
+		HeaderBlacklist: []string{"X-CSRFToken"},
+		Endpoint:        grafanaEndpoint,
+		Origin:          "http://localhost",
+	}
+	kialiEndpoint := bridge.ValidateFlagIsURL("kiali-endpoint", *fKialiEndpoint)
+	srv.KialiProxyConfig = &hproxy.Config{
+		HeaderBlacklist: []string{"X-CSRFToken"},
+		TLSClientConfig: &tls.Config{
+			InsecureSkipVerify: true,
+		},
+		Endpoint: kialiEndpoint,
+		Origin:   "http://localhost",
+	}
+	webhookEndpoint := bridge.ValidateFlagIsURL("webhook-endpoint", *fwebhookEndpoint)
+	srv.WebhookProxyConfig = &hproxy.Config{
+		HeaderBlacklist: []string{"X-CSRFToken"},
+		TLSClientConfig: &tls.Config{
+			InsecureSkipVerify: true,
+		},
+		Endpoint: webhookEndpoint,
+		Origin:   "http://localhost",
+	}
+
 	apiServerEndpoint := *fK8sPublicEndpoint
 	if apiServerEndpoint == "" {
 		apiServerEndpoint = srv.K8sProxyConfig.Endpoint.String()
@@ -635,7 +656,7 @@ func main() {
 
 	helmConfig.Configure(srv)
 
-	pSrv := &pServer.Server{}
+	pSrv := &pServer.Proxy{}
 	if *fProxyConfig != "" {
 		if err := pSrv.SetFlagsFromConfig(*fProxyConfig); err != nil {
 			log.Fatalf("Failed to load proxy config: %v", err)

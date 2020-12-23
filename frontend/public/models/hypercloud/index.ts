@@ -271,3 +271,327 @@ export const PipelineResourceModel: K8sKind = {
   id: 'pipelineresource',
   crd: false,
 };
+
+export const ConditionModel: K8sKind = {
+  kind: 'Condition',
+  namespaced: true,
+  label: 'Condition',
+  plural: 'conditions',
+  apiVersion: 'v1alpha1',
+  abbr: 'PC',
+  apiGroup: 'tekton.dev',
+  labelPlural: 'Pipeline Conditions',
+  id: 'condition',
+  crd: false,
+};
+
+export const VirtualMachineModel: K8sKind = {
+  label: 'VirtualMachine',
+  labelPlural: 'VirtualMachines',
+  apiVersion: 'v1alpha3',
+  apiGroup: 'kubevirt.io',
+  plural: 'virtualmachines',
+  abbr: 'vm',
+  kind: 'VirtualMachine',
+  id: 'virtualmachine',
+  namespaced: true,
+};
+
+export const VirtualMachineInstanceModel: K8sKind = {
+  label: 'VirtualMachineInstance',
+  labelPlural: 'VirtualMachineInstances',
+  apiVersion: 'v1alpha3',
+  apiGroup: 'kubevirt.io',
+  plural: 'virtualmachineinstances',
+  abbr: 'vmi',
+  kind: 'VirtualMachineInstance',
+  id: 'virtualmachineinstance',
+  namespaced: true,
+};
+
+export const VirtualServiceModel: K8sKind = {
+  label: 'Virtual Service',
+  labelPlural: 'Virtual Services',
+  apiVersion: 'v1alpha3',
+  apiGroup: 'networking.istio.io',
+  plural: 'virtualservices',
+  abbr: 'vs',
+  kind: 'VirtualService',
+  id: 'virtualservice',
+  namespaced: true,
+};
+
+export const DestinationRuleModel: K8sKind = {
+  label: 'Destination Rule',
+  labelPlural: 'Destination Rules',
+  apiVersion: 'v1alpha3',
+  apiGroup: 'networking.istio.io',
+  plural: 'destinationrules',
+  abbr: 'dr',
+  kind: 'DestinationRule',
+  id: 'destinationrule',
+  namespaced: true,
+};
+
+export const EnvoyFilterModel: K8sKind = {
+  label: 'Envoy Filter',
+  labelPlural: 'Envoy Filters',
+  apiVersion: 'v1alpha3',
+  apiGroup: 'networking.istio.io',
+  plural: 'envoyfilters',
+  abbr: 'ef',
+  kind: 'EnvoyFilter',
+  id: 'envoyfilter',
+  namespaced: true,
+};
+
+export const GatewayModel: K8sKind = {
+  label: 'Gateway',
+  labelPlural: 'Gateways',
+  apiVersion: 'v1alpha3',
+  apiGroup: 'networking.istio.io',
+  plural: 'gateways',
+  abbr: 'g',
+  kind: 'Gateway',
+  id: 'gateway',
+  namespaced: true,
+};
+
+export const SidecarModel: K8sKind = {
+  label: 'Sidecar',
+  labelPlural: 'Sidecars',
+  apiVersion: 'v1alpha3',
+  apiGroup: 'networking.istio.io',
+  plural: 'sidecars',
+  abbr: 'sc',
+  kind: 'Sidecar',
+  id: 'sidecar',
+  namespaced: true,
+};
+
+export const ServiceEntryModel: K8sKind = {
+  label: 'Service Entry',
+  labelPlural: 'Service Entries',
+  apiVersion: 'v1alpha3',
+  apiGroup: 'networking.istio.io',
+  plural: 'serviceentries',
+  abbr: 'se',
+  kind: 'ServiceEntry',
+  id: 'serviceentry',
+  namespaced: true,
+};
+
+export const RequestAuthenticationModel: K8sKind = {
+  label: 'Request Authentication',
+  labelPlural: 'Request Authentications',
+  apiVersion: 'v1beta1',
+  apiGroup: 'security.istio.io',
+  plural: 'requestauthentications',
+  abbr: 'ra',
+  kind: 'RequestAuthentication',
+  id: 'requestauthentication',
+  namespaced: true,
+};
+
+export const PeerAuthenticationModel: K8sKind = {
+  label: 'Peer Authentication',
+  labelPlural: 'Peer Authentications',
+  apiVersion: 'v1beta1',
+  apiGroup: 'security.istio.io',
+  plural: 'peerauthentications',
+  abbr: 'pa',
+  kind: 'PeerAuthentication',
+  id: 'peerauthentication',
+  namespaced: true,
+};
+
+export const AuthorizationPolicyModel: K8sKind = {
+  label: 'Authorization Policy',
+  labelPlural: 'Authorization Policies',
+  apiVersion: 'v1beta1',
+  apiGroup: 'security.istio.io',
+  plural: 'authorizationpolicies',
+  abbr: 'ap',
+  namespaced: true,
+  kind: 'AuthorizationPolicy',
+  id: 'authorizationpolicy',
+};
+
+export const DataVolumeModel: K8sKind = {
+  label: 'Data Volume',
+  labelPlural: 'Data Volumes',
+  apiVersion: 'v1alpha1',
+  apiGroup: 'cdi.kubevirt.io',
+  plural: 'datavolumes',
+  abbr: 'dv',
+  kind: 'DataVolume',
+  id: 'datavolume',
+  namespaced: true,
+};
+export const NamespaceClaimModel: K8sKind = {
+  label: 'NamespaceClaim',
+  labelPlural: 'NamespaceClaims',
+  apiVersion: 'v1',
+  apiGroup: 'tmax.io',
+  plural: 'namespaceclaims',
+  abbr: 'NSC',
+  kind: 'NamespaceClaim',
+  id: 'namespaceclaim',
+  namespaced: true,
+};
+
+export const ResourceQuotaClaimModel: K8sKind = {
+  label: 'ResourceQuotaClaim',
+  labelPlural: 'ResourceQuotaClaims',
+  apiVersion: 'v1',
+  apiGroup: 'tmax.io',
+  plural: 'resourcequotaclaims',
+  abbr: 'RQC',
+  kind: 'ResourceQuotaClaim',
+  id: 'resourcequotaclaim',
+  namespaced: true,
+};
+
+export const RoleBindingClaimModel: K8sKind = {
+  label: 'RoleBindingClaim',
+  labelPlural: 'RoleBindingClaims',
+  apiVersion: 'v1',
+  apiGroup: 'tmax.io',
+  plural: 'rolebindingclaims',
+  abbr: 'RBC',
+  kind: 'RoleBindingClaim',
+  id: 'rolebindingclaim',
+  namespaced: true,
+};
+
+export const ServiceBrokerModel: K8sKind = {
+  label: 'Service Broker',
+  labelPlural: 'Service Brokers',
+  apiVersion: 'v1beta1',
+  apiGroup: 'servicecatalog.k8s.io',
+  plural: 'servicebrokers',
+  abbr: 'SB',
+  kind: 'ServiceBroker',
+  id: 'servicebroker',
+  namespaced: true,
+};
+
+export const ServiceClassModel: K8sKind = {
+  label: 'Service Class',
+  labelPlural: 'Service Classes',
+  apiVersion: 'v1beta1',
+  apiGroup: 'servicecatalog.k8s.io',
+  plural: 'serviceclasses',
+  abbr: 'SC',
+  kind: 'ServiceClass',
+  id: 'serviceclass',
+  namespaced: true,
+};
+
+export const ServicePlanModel: K8sKind = {
+  label: 'Service Plan',
+  labelPlural: 'Service Plans',
+  apiVersion: 'v1beta1',
+  apiGroup: 'servicecatalog.k8s.io',
+  plural: 'serviceplans',
+  abbr: 'SP',
+  kind: 'ServicePlan',
+  id: 'serviceplan',
+  namespaced: true,
+};
+
+export const ClusterServiceBrokerModel: K8sKind = {
+  label: 'Cluster Service Broker',
+  labelPlural: 'Cluster Service Brokers',
+  apiVersion: 'v1beta1',
+  apiGroup: 'servicecatalog.k8s.io',
+  plural: 'clusterservicebrokers',
+  abbr: 'CSB',
+  kind: 'ClusterServiceBroker',
+  id: 'clusterservicebroker',
+  namespaced: false,
+};
+
+export const ClusterServiceClassModel: K8sKind = {
+  label: 'Cluster Service Class',
+  labelPlural: 'Cluster Service Classes',
+  apiVersion: 'v1beta1',
+  apiGroup: 'servicecatalog.k8s.io',
+  plural: 'clusterserviceclasses',
+  abbr: 'CSC',
+  kind: 'ClusterServiceClass',
+  id: 'clusterserviceclass',
+  namespaced: false,
+};
+
+export const ClusterServicePlanModel: K8sKind = {
+  label: 'Cluster Service Plan',
+  labelPlural: 'Cluster Service Plans',
+  apiVersion: 'v1beta1',
+  apiGroup: 'servicecatalog.k8s.io',
+  plural: 'clusterserviceplans',
+  abbr: 'CSP',
+  kind: 'ClusterServicePlan',
+  id: 'clusterserviceplan',
+  namespaced: false,
+};
+
+export const ServiceInstanceModel: K8sKind = {
+  label: 'Service Instance',
+  labelPlural: 'Service Instances',
+  apiVersion: 'v1beta1',
+  apiGroup: 'servicecatalog.k8s.io',
+  plural: 'serviceinstances',
+  abbr: 'SI',
+  kind: 'ServiceInstance',
+  id: 'serviceinstance',
+  namespaced: true,
+};
+
+export const ServiceBindingModel: K8sKind = {
+  label: 'Service Binding',
+  labelPlural: 'Service Bindings',
+  apiVersion: 'v1beta1',
+  apiGroup: 'servicecatalog.k8s.io',
+  plural: 'servicebindings',
+  abbr: 'SB',
+  kind: 'ServiceBinding',
+  id: 'servicebinding',
+  namespaced: true,
+};
+
+export const CatalogServiceClaimModel: K8sKind = {
+  label: 'CatalogServiceClaim',
+  labelPlural: 'Catalog Service Claim',
+  apiVersion: 'v1',
+  apiGroup: 'tmax.io',
+  plural: 'catalogserviceclaims',
+  abbr: 'CSC',
+  kind: 'CatalogServiceClaim',
+  id: 'catalogserviceclaim',
+  namespaced: true,
+};
+
+export const TemplateModel: K8sKind = {
+  label: 'Template',
+  labelPlural: 'Templates',
+  apiVersion: 'v1',
+  apiGroup: 'tmax.io',
+  plural: 'templates',
+  abbr: 'T',
+  kind: 'Template',
+  id: 'template',
+  namespaced: true,
+};
+
+export const TemplateInstanceModel: K8sKind = {
+  label: 'Template Instance',
+  labelPlural: 'Template Instances',
+  apiVersion: 'v1',
+  apiGroup: 'tmax.io',
+  plural: 'templateinstances',
+  abbr: 'TI',
+  kind: 'TemplateInstance',
+  id: 'templateinstance',
+  namespaced: true,
+};
