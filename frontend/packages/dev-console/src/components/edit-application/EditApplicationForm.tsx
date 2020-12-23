@@ -44,7 +44,11 @@ const EditApplicationForm: React.FC<FormikProps<FormikValues> & EditApplicationF
           <GitSection builderImages={builderImages} />
         )}
         {createFlowType === CreateApplicationFlow.Git && (
-          <BuilderSection image={values.image} builderImages={builderImages} />
+          <BuilderSection
+            image={values.image}
+            builderImages={builderImages}
+            existingPipeline={appResources?.pipeline?.data}
+          />
         )}
         {createFlowType === CreateApplicationFlow.Dockerfile && (
           <DockerSection buildStrategy={values.build.strategy} />

@@ -20,6 +20,9 @@ jest.mock('formik', () => ({
         isRecommending: false,
         couldNotRecommend: false,
       },
+      pipeline: {
+        template: '',
+      },
     },
   })),
   getFieldId: jest.fn(),
