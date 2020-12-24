@@ -34,16 +34,17 @@ const evaluateTemplate = (s: string, variables: VariablesMap, timespan: number):
   if (_.isEmpty(s)) {
     return undefined;
   }
-  let result = s;
-  // Handle the special `$__interval` variable.
-  // https://grafana.com/docs/grafana/latest/reference/templating/#the-interval-variable
+
+  // Handle the special `$__interval` and `$__rate_interval` variables
   const intervalMS = timespan / NUM_SAMPLES;
   const intervalMinutes = Math.floor(intervalMS / 1000 / 60);
-  // Use a minimum of 5m to make sure we have enough data to perform `irate`
-  // calculations, which require 2 data points each. Otherwise, there could be
-  // gaps in the graph.
-  const __interval: Variable = { value: `${Math.max(intervalMinutes, 5)}m` };
-  _.each({ ...variables, __interval }, (v, k) => {
+  // Use a minimum of 5m to make sure we have enough data to perform `irate` calculations, which
+  // require 2 data points each. Otherwise, there could be gaps in the graph.
+  const interval: Variable = { value: `${Math.max(intervalMinutes, 5)}m` };
+
+  let result = s;
+  // eslint-disable-next-line camelcase
+  _.each({ ...variables, __interval: interval, __rate_interval: interval }, (v, k) => {
     const re = new RegExp(`\\$${k}`, 'g');
     if (result.match(re)) {
       if (v.isLoading) {
