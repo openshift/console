@@ -52,6 +52,7 @@ const GeneralPage: React.FC<GeneralPageProps> = ({ dispatch, state }) => {
           )}
         >
           <TextInput
+            data-test="bucket-class-name"
             placeholder={t('noobaa-storage-plugin~my-multi-cloud-mirror')}
             type="text"
             value={state.bucketClassName}
@@ -65,6 +66,7 @@ const GeneralPage: React.FC<GeneralPageProps> = ({ dispatch, state }) => {
           label={t('noobaa-storage-plugin~Description(Optional)')}
         >
           <TextArea
+            data-test="bucket-class-description"
             value={state.description}
             onChange={(data) => dispatch({ type: 'setDescription', value: data })}
             aria-label={t('noobaa-storage-plugin~Description of bucket class')}

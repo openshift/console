@@ -26,14 +26,18 @@ const ReviewPage: React.FC<ReviewPageProps> = ({ state }) => {
         <Title size="lg" headingLevel="h4" className="nb-create-bc-step-page-review__item-header">
           {t('noobaa-storage-plugin~Bucket Class name')}
         </Title>
-        <p data-testid="bc-name">{bucketClassName}</p>
+        <p data-test="bc-name" data-testid="bc-name">
+          {bucketClassName}
+        </p>
       </div>
       {description && (
         <div className="nb-create-bc-step-page-review__item">
           <Title size="lg" headingLevel="h4" className="nb-create-bc-step-page-review__item-header">
             {t('noobaa-storage-plugin~Description')}
           </Title>
-          <p data-testid="bc-desc">{description}</p>
+          <p data-test="bc-desc" data-testid="bc-desc">
+            {description}
+          </p>
         </div>
       )}
       <div className="nb-create-bc-step-page-review__item">
@@ -41,7 +45,7 @@ const ReviewPage: React.FC<ReviewPageProps> = ({ state }) => {
           {t('noobaa-storage-plugin~Placement Policy Details')}
         </Title>
         <div className="co-nobaa-create-bc-step-page-review__item-tier1">
-          <Title size="md" headingLevel="h5" data-testid="tier1-policy">
+          <Title size="md" headingLevel="h5" data-test="tier1" data-testid="tier1-policy">
             {t('noobaa-storage-plugin~Tier 1: {{tier1Policy}}', { tier1Policy })}
           </Title>
           <div className="nb-bc-create-review__selected-stores" data-testid="tier1-stores">
@@ -55,7 +59,7 @@ const ReviewPage: React.FC<ReviewPageProps> = ({ state }) => {
         </div>
         {tier2Policy && (
           <>
-            <Title size="md" headingLevel="h5" data-testid="tier2-policy">
+            <Title size="md" headingLevel="h5" data-test="tier2" data-testid="tier2-policy">
               {t('noobaa-storage-plugin~Tier 2:')} {tier2Policy}
             </Title>
             <div className="nb-bc-create-review__selected-stores" data-testid="tier2-stores">
