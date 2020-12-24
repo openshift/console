@@ -34,6 +34,11 @@ import { windowsToolsStorage } from '../../../../components/create-vm-wizard/red
 import { getEmptyInstallStorage } from '../../../../utils/storage';
 import { ignoreCaseSort } from '../../../../utils/sort';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
+import { getParameterValue } from '../../../../selectors/selectors';
+import {
+  TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER,
+  TEMPLATE_BASE_IMAGE_NAME_PARAMETER,
+} from '../../../../constants/vm';
 
 type GetRootDataVolume = (args: {
   name: string;
@@ -113,6 +118,8 @@ export const createVM = async (
       ),
     );
   const processedTemplate = await k8sCreate(ProcessedTemplatesModel, templateWrapper.asResource());
+  const nameParam = getParameterValue(template, TEMPLATE_BASE_IMAGE_NAME_PARAMETER);
+  const namespaceParam = getParameterValue(template, TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER);
   const vmWrapper = new VMWrapper(selectVM(processedTemplate))
     .setNamespace(namespace)
     .setHostname(name);
@@ -127,9 +134,16 @@ export const createVM = async (
     });
 
     const rootDisk = new DiskWrapper(
-      vmWrapper.getDisks().find((d) => d.name === ROOT_DISK_NAME),
+      vmWrapper.getDisks().find((d) => d.name === ROOT_DISK_NAME) || {
+        name: ROOT_DISK_NAME,
+        disk: {
+          bus: vmWrapper.getDiskByPVC(nameParam) || DiskBus.VIRTIO.getValue(),
+        },
+      },
       true,
     ).setBootOrder(1);
+
+    vmWrapper.removeDiskByPVC(nameParam, namespaceParam);
 
     let rootDataVolume;
     let isCDRom: boolean;

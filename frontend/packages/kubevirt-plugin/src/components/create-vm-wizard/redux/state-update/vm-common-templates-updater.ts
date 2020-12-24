@@ -8,6 +8,7 @@ import { iGetCommonData, iGetLoadedCommonData } from '../../selectors/immutable/
 import {
   iGetCommonTemplateCloudInit,
   iGetRelevantTemplate,
+  iGetCommonTemplateDiskBus,
 } from '../../../../selectors/immutable/template/combined';
 import { CLOUDINIT_DISK, DiskType, DiskBus, VolumeType } from '../../../../constants/vm';
 import { vmWizardInternalActions } from '../internal-actions';
@@ -76,7 +77,11 @@ export const commonTemplatesUpdater = ({ id, prevState, dispatch, getState }: Up
           .init({
             name: CLOUDINIT_DISK,
           })
-          .setType(DiskType.DISK, { bus: DiskBus.VIRTIO })
+          .setType(DiskType.DISK, {
+            bus:
+              DiskBus.fromString(iGetCommonTemplateDiskBus(iTemplate, 'cloudinitdisk')) ||
+              DiskBus.VIRTIO,
+          })
           .asResource(),
         volume: new VolumeWrapper()
           .init({ name: CLOUDINIT_DISK })

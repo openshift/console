@@ -105,6 +105,19 @@ export const iGetCommonTemplateCloudInit = (tmp: ITemplate) => {
   return iGet(iCloudInitStorage, 'cloudInitNoCloud');
 };
 
+export const iGetCommonTemplateDiskBus = (tmp: ITemplate, diskName: string) => {
+  const cloudDisk = iGetIn(iSelectVM(tmp), [
+    'spec',
+    'template',
+    'spec',
+    'domain',
+    'devices',
+    'disks',
+  ])?.find((disk) => iGetIn(disk, ['name']) === diskName);
+
+  return iGetIn(cloudDisk, ['disk', 'bus']);
+};
+
 export const iGetDefaultTemplate = (
   iCommonTemplates: ImmutableMap<string, ITemplate>,
   os: string,
