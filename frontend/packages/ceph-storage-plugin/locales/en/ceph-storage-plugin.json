@@ -211,7 +211,7 @@
   "Select a network": "Select a network",
   "Cluster Network Interface": "Cluster Network Interface",
   "Capacity and nodes": "Capacity and nodes",
-  "Requested Cluster Capacity:&nbsp;<1>{{osdSize}} TiB&nbsp;<2></2></1>": "Requested Cluster Capacity:&nbsp;<1>{{osdSize}} TiB&nbsp;<2></2></1>",
+  "Requested Cluster Capacity:&nbsp;<1>{{number}} TiB&nbsp;<2></2></1>": "Requested Cluster Capacity:&nbsp;<1>{{number}} TiB&nbsp;<2></2></1>",
   "Storage Class:": "Storage Class:",
   "selected": "selected",
   "Select Capacity": "Select Capacity",

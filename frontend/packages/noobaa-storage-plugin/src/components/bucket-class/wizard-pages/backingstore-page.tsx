@@ -26,8 +26,7 @@ const BackingStorePage: React.FC<BackingStorePageProps> = React.memo(
           >
             <p>
               {t(
-                'noobaa-storage-plugin~Backing Store represents a storage target to be used as the underlying storage for the data in {{MCG}} buckets.',
-                { mcg: 'MCG' },
+                'noobaa-storage-plugin~Backing Store represents a storage target to be used as the underlying storage for the data in MCG buckets.',
               )}
             </p>
             <p>
