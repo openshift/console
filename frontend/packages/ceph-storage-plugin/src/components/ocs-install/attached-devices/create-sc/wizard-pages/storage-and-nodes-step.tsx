@@ -28,6 +28,7 @@ import {
 import {
   getNodeInfo,
   shouldDeployAsMinimal,
+  isFlexibleScaling,
   filterSCWithNoProv,
   getAssociatedNodes,
   nodesWithoutTaints,
@@ -53,8 +54,7 @@ const validate = (
   enableFlexibleScaling: boolean,
 ): ValidationType[] => {
   const validations = [];
-  if (enableFlexibleScaling) {
-    //  TODO: add check for arbiter
+  if (!stretchClusterChecked && enableFlexibleScaling) {
     validations.push(ValidationType.BAREMETAL_FLEXIBLE_SCALING);
   }
   if (enableMinimal) {
@@ -84,7 +84,6 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
   } = state;
 
   let scNodeNames: string[] = []; // names of the nodes, backing the storage of selected storage class
-  const scNodeNamesLength = scNodeNames.length;
   const { cpu, memory, zones } = getNodeInfo(nodes);
   const scName: string = state.storageClassName;
   const validations: ValidationType[] = validate(
@@ -109,9 +108,13 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
   }, [cpu, dispatch, memory, nodesCount]);
 
   React.useEffect(() => {
-    const isFlexibleScaling: boolean = scNodeNamesLength && zonesCount < 3;
-    dispatch({ type: 'setEnableFlexibleScaling', value: isFlexibleScaling });
-  }, [dispatch, zonesCount, scNodeNamesLength]);
+    if (!stretchClusterChecked) {
+      dispatch({
+        type: 'setEnableFlexibleScaling',
+        value: isFlexibleScaling(nodesCount, zonesCount),
+      });
+    }
+  }, [dispatch, zonesCount, nodesCount, stretchClusterChecked]);
 
   const handleStorageClass = (sc: StorageClassResourceKind) => {
     dispatch({ type: 'setStorageClass', value: sc });

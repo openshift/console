@@ -92,6 +92,8 @@ export const shouldDeployAsMinimal = (cpu: number, memory: number, nodesCount: n
   return false;
 };
 
+export const isFlexibleScaling = (nodes, zones): boolean => !!(nodes >= MINIMUM_NODES && zones < 3);
+
 export const countNodesPerZone = (nodes: NodeKind[]) =>
   nodes.reduce((acc, curr) => {
     const zone = getZone(curr);

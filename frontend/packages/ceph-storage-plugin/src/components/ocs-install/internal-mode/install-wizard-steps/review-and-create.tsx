@@ -93,6 +93,7 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({
           </p>
         </ReviewListBody>
         <ReviewListBody
+          hideIcon={!enableFlexibleScaling}
           validation={enableFlexibleScaling && ValidationType.INTERNAL_FLEXIBLE_SCALING}
         >
           <p>
