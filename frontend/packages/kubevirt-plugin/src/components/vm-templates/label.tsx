@@ -34,7 +34,7 @@ export const VMTemplateLabel: React.FC<VMTemplateLabelProps> = ({ template, clas
         </Tooltip>
       )}
       {templateSupport.provider && provider && (
-        <Tooltip content={t('kubevirt-plugin~provider}} supported', { provider })}>
+        <Tooltip content={t('kubevirt-plugin~{{provider}} supported', { provider })}>
           <Label
             color={isCommonTemplate(template) ? 'green' : 'blue'}
             className={hasParentProvider ? 'kv-template-support__label' : undefined}

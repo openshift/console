@@ -18,7 +18,11 @@ import {
 } from './vm-template-resource';
 import { HashAnchor } from '../hash-anchor/hash-anchor';
 import { TemplateSourceStatus } from '../../statuses/template/types';
-import { getTemplateName, isCommonTemplate } from '../../selectors/vm-template/basic';
+import {
+  getTemplateName,
+  getTemplateProvider,
+  isCommonTemplate,
+} from '../../selectors/vm-template/basic';
 import { getVMWizardCreateLink } from '../../utils/url';
 import { VMWizardMode, VMWizardName } from '../../constants';
 
@@ -31,6 +35,8 @@ export const VMTemplateDetails: React.FC<VMTemplateDetailsProps> = ({
     useAccessReview(asAccessReview(TemplateModel, template, 'patch')) &&
     !isCommonTemplate(template);
 
+  const provider = getTemplateProvider(t, template);
+
   return (
     <>
       <ScrollToTopOnMount />
@@ -41,7 +47,9 @@ export const VMTemplateDetails: React.FC<VMTemplateDetailsProps> = ({
               <Alert
                 variant="info"
                 isInline
-                title={t('kubevirt-plugin~Red Hat provided templates can not be edited')}
+                title={t('kubevirt-plugin~{{provider}} provided templates can not be edited', {
+                  provider,
+                })}
                 actionLinks={
                   <>
                     <AlertActionLink
@@ -69,7 +77,8 @@ export const VMTemplateDetails: React.FC<VMTemplateDetailsProps> = ({
                   </StackItem>
                   <StackItem>
                     {t(
-                      'kubevirt-plugin~We suggest you create a custom Template from this Red Hat template.',
+                      'kubevirt-plugin~We suggest you create a custom Template from this {{provider}} template.',
+                      { provider },
                     )}
                   </StackItem>
                 </Stack>
