@@ -1,3 +1,4 @@
+import { TFunction } from 'i18next';
 import {
   chart_color_green_400 as successColor,
   chart_color_blue_300 as runningColor,
@@ -429,31 +430,31 @@ export enum runStatus {
   Idle = 'Idle',
 }
 
-export const getRunStatusColor = (status: string): StatusMessage => {
+export const getRunStatusColor = (status: string, t: TFunction): StatusMessage => {
   switch (status) {
     case runStatus.Succeeded:
-      return { message: 'Succeeded', pftoken: successColor };
+      return { message: t('pipelines-plugin~Succeeded'), pftoken: successColor };
     case runStatus.Failed:
-      return { message: 'Failed', pftoken: failureColor };
+      return { message: t('pipelines-plugin~Failed'), pftoken: failureColor };
     case runStatus.FailedToStart:
       return {
-        message: 'PipelineRun failed to start',
+        message: t('pipelines-plugin~PipelineRun failed to start'),
         pftoken: failureColor,
       };
     case runStatus.Running:
-      return { message: 'Running', pftoken: runningColor };
+      return { message: t('pipelines-plugin~Running'), pftoken: runningColor };
     case runStatus['In Progress']:
-      return { message: 'Running', pftoken: runningColor };
+      return { message: t('pipelines-plugin~Running'), pftoken: runningColor };
 
     case runStatus.Skipped:
-      return { message: 'Skipped', pftoken: skippedColor };
+      return { message: t('pipelines-plugin~Skipped'), pftoken: skippedColor };
     case runStatus.Cancelled:
-      return { message: 'Cancelled', pftoken: cancelledColor };
+      return { message: t('pipelines-plugin~Cancelled'), pftoken: cancelledColor };
     case runStatus.Idle:
     case runStatus.Pending:
-      return { message: 'Pending', pftoken: pendingColor };
+      return { message: t('pipelines-plugin~Pending'), pftoken: pendingColor };
     default:
-      return { message: 'PipelineRun not started yet', pftoken: pendingColor };
+      return { message: t('pipelines-plugin~PipelineRun not started yet'), pftoken: pendingColor };
   }
 };
 

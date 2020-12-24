@@ -1,5 +1,6 @@
 import * as React from 'react';
 import classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
 import { getRunStatusColor, runStatus } from '../../../../utils/pipeline-augment';
 import { StatusIcon } from './StatusIcon';
 import { StepStatus } from './pipeline-step-utils';
@@ -13,6 +14,7 @@ export interface PipelineVisualizationStepListProps {
 }
 
 const TooltipColoredStatusIcon = ({ status }) => {
+  const { t } = useTranslation();
   const size = 18;
   const sharedProps = {
     height: size,
@@ -25,7 +27,7 @@ const TooltipColoredStatusIcon = ({ status }) => {
     // Succeeded and Failed icons have transparent centers shapes - in tooltips, this becomes an undesired black
     // This will simply wrap the icon and place a white backdrop
     return (
-      <div style={{ color: getRunStatusColor(status).pftoken.value }}>
+      <div style={{ color: getRunStatusColor(status, t).pftoken.value }}>
         <svg {...sharedProps}>
           <circle
             className="odc-pipeline-vis-steps-list__icon-backdrop"

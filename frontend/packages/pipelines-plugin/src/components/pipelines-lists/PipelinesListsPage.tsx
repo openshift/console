@@ -40,24 +40,24 @@ const PipelinesListPage: React.FC<PipelinesListPageProps> = ({ match }) => {
   const pages: Page[] = [
     {
       href: '',
-      name: PipelineModel.labelPlural,
+      name: t('pipelines-plugin~Pipelines'),
       component: PipelinesList,
     },
     {
       href: 'pipeline-runs',
-      name: PipelineRunModel.labelPlural,
+      name: t('pipelines-plugin~Pipeline Runs'),
       component: PipelineRunsResourceList,
       pageData: { showTitle, hideBadge },
     },
     {
       href: 'pipeline-resources',
-      name: PipelineResourceModel.labelPlural,
+      name: t('pipelines-plugin~Pipeline Resources'),
       component: PipelineResourcesListPage,
       pageData: { showTitle, hideBadge },
     },
     {
       href: 'conditions',
-      name: ConditionModel.labelPlural,
+      name: t('pipelines-plugin~Conditions'),
       component: DefaultPage,
       pageData: {
         kind: referenceForModel(ConditionModel),

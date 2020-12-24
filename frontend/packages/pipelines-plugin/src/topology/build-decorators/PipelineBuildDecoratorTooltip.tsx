@@ -30,7 +30,7 @@ const PipelineBuildDecoratorTooltip: React.FC<PipelineBuildDecoratorTooltipProps
       height="1em"
       inline
       values={Object.keys(runStatus).map((rStatus) => ({
-        color: getRunStatusColor(runStatus[rStatus]).pftoken.value,
+        color: getRunStatusColor(runStatus[rStatus], t).pftoken.value,
         name: rStatus,
         size: taskStatus[runStatus[rStatus]],
       }))}

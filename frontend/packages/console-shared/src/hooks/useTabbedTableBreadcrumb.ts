@@ -1,4 +1,5 @@
 import { match as RMatch } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { K8sKind } from '@console/internal/module/k8s';
 // FIXME upgrading redux types is causing many errors at this time
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
@@ -18,6 +19,7 @@ export const useTabbedTableBreadcrumbsFor = (
   navOption: string,
   subTab: string = null,
 ) => {
+  const { t } = useTranslation();
   const currentNamespace = useSelector((state: RootState) => getActiveNamespace(state));
   const isAdminPerspective = useActivePerspective()[0] === 'admin';
   const nsURL =
@@ -32,6 +34,6 @@ export const useTabbedTableBreadcrumbsFor = (
       name: kindObj.labelPlural,
       path: isAdminPerspective ? `/${navOption}/${nsURL}/${subTab}` : getBreadcrumbPath(match),
     },
-    { name: `${kindObj.label} Details`, path: match.url },
+    { name: t('console-shared~{{label}} Details', { label: kindObj.label }), path: match.url },
   ];
 };

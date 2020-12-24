@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   AngleDoubleRightIcon,
   BanIcon,
@@ -44,12 +45,13 @@ export const StatusIcon: React.FC<StatusIconProps> = ({ status, ...props }) => {
 };
 
 export const ColoredStatusIcon: React.FC<StatusIconProps> = ({ status, ...others }) => {
+  const { t } = useTranslation();
   return (
     <div
       style={{
         color: status
-          ? getRunStatusColor(status).pftoken.value
-          : getRunStatusColor(runStatus.Cancelled).pftoken.value,
+          ? getRunStatusColor(status, t).pftoken.value
+          : getRunStatusColor(runStatus.Cancelled, t).pftoken.value,
       }}
     >
       <StatusIcon status={status} {...others} />

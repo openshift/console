@@ -32,7 +32,7 @@ const PipelinesResourceList: React.FC<PipelinesResourceListProps> = (props) => {
     <FireMan
       {...props}
       canCreate
-      createButtonText={t('pipelines-plugin~Create {{PipelineModel.label}}', {
+      createButtonText={t('pipelines-plugin~Create {{pipeline}}', {
         pipeline: PipelineModel.label,
       })}
       createProps={{
