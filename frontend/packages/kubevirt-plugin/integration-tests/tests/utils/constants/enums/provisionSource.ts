@@ -3,19 +3,19 @@ import { ObjectEnum } from '@console/shared/src/constants/object-enum';
 export class ProvisionSource extends ObjectEnum<string> {
   static readonly URL = new ProvisionSource(
     'URL',
-    'URL (adds disk)',
+    'Import via URL (creates PVC)',
     'https://download.cirros-cloud.net/0.4.0/cirros-0.4.0-x86_64-disk.img',
   );
 
   static readonly CONTAINER = new ProvisionSource(
     'Container',
-    'Container',
+    'Import via Registry (creates PVC)',
     'kubevirt/fedora-cloud-container-disk-demo:latest',
   );
 
   static readonly PXE = new ProvisionSource('PXE', 'PXE (network boot - adds network interface)');
 
-  static readonly DISK = new ProvisionSource('Disk', 'Existing PVC (adds disk)');
+  static readonly DISK = new ProvisionSource('Disk', 'Clone existing PVC (creates PVC)');
 
   private readonly description: string;
 

@@ -145,12 +145,14 @@ describe('KubeVirt Auto Clone', () => {
           .setOS(rhel7PVC.os)
           .generateNameForPrefix('auto-clone-vm1')
           .setStartOnCreation(true)
+          .setCustomize(true)
           .build();
 
         const vm2 = new VMBuilder(getBasicVMBuilder())
           .setOS(rhel7PVC.os)
           .generateNameForPrefix('auto-clone-vm2')
           .setStartOnCreation(true)
+          .setCustomize(true)
           .build();
 
         await withResources(
@@ -175,6 +177,7 @@ describe('KubeVirt Auto Clone', () => {
           .setOS(fedoraPVC.os)
           .generateNameForPrefix('auto-clone-vm-with-pvc-deleted')
           .setStartOnCreation(false)
+          .setCustomize(true)
           .build();
 
         await withResources(
@@ -202,6 +205,7 @@ describe('KubeVirt Auto Clone', () => {
           .setFlavor(flavorConfigs.Medium)
           .generateNameForPrefix('auto-clone-win10-vm')
           .setStartOnCreation(true)
+          .setCustomize(true)
           .build();
 
         await withResources(

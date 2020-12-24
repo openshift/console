@@ -144,3 +144,9 @@ export const VirtualMachineTemplateModel: K8sKind = {
   kind: 'Template',
   id: 'template',
 };
+
+export type DiskAdvance = {
+  StorageClass?: string;
+  AccessMode?: string;
+  VolumeMode?: string;
+};

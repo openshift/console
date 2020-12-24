@@ -93,6 +93,7 @@ describe('Kubevirt create VM using wizard', () => {
     const vm = new VMBuilder(getBasicVMBuilder())
       .setProvisionSource(ProvisionSource.CONTAINER)
       .setDisks([cdGuestTools])
+      .setCustomize(true)
       .build();
 
     await withResource(leakedResources, vm.asResource(), async () => {
@@ -110,6 +111,7 @@ describe('Kubevirt create VM using wizard', () => {
         .setOS(OperatingSystem.WINDOWS_10)
         .setFlavor(flavorConfigs.Medium)
         .setWorkload(Workload.DESKTOP)
+        .setCustomize(true)
         .setDisks([hddDisk]);
       const vm = builder.build();
       const osID = builder.getOSID();
@@ -151,6 +153,7 @@ describe('Kubevirt create VM using wizard', () => {
       const vm = new VMBuilder(getBasicVMBuilder())
         .setProvisionSource(ProvisionSource.URL)
         .setDisks([rootDisk])
+        .setCustomize(true)
         .build();
       await withResource(leakedResources, vm.asResource(), async () => {
         await vm.create();
@@ -185,6 +188,7 @@ describe('Kubevirt create VM using wizard', () => {
       const vm = new VMBuilder(getBasicVMBuilder())
         .setProvisionSource(ProvisionSource.URL)
         .setDisks([customAccessVolumeRootDisk])
+        .setCustomize(true)
         .build();
       await withResource(leakedResources, vm.asResource(), async () => {
         await vm.create();
@@ -202,6 +206,7 @@ describe('Kubevirt create VM using wizard', () => {
       const vm1 = new VMBuilder(getBasicVMBuilder())
         .setProvisionSource(ProvisionSource.DISK)
         .setDisks([getDiskToCloneFrom()])
+        .setCustomize(true)
         .generateNameForPrefix('vm1')
         .build();
 
@@ -210,6 +215,7 @@ describe('Kubevirt create VM using wizard', () => {
         .setDisks([getDiskToCloneFrom()])
         .setStartOnCreation(true)
         .setWaitForImport(true)
+        .setCustomize(true)
         .generateNameForPrefix('vm2')
         .build();
 
@@ -242,6 +248,7 @@ describe('Kubevirt create VM using wizard', () => {
       .setOS(OperatingSystem.FEDORA)
       .setProvisionSource(ProvisionSource.PXE)
       .setWorkload(Workload.DESKTOP)
+      .setCustomize(true)
       .build();
     const wizard = new Wizard();
     await vm.navigateToListView();

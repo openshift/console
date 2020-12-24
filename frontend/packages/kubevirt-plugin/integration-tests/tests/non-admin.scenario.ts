@@ -65,6 +65,7 @@ describe('Kubevirt non-admin Flow', () => {
       .setNamespace(testNonAdminNamespace)
       .setProvisionSource(ProvisionSource.URL)
       .setDisks([rootDisk])
+      .setCustomize(true)
       .build();
 
     it(
@@ -94,6 +95,7 @@ describe('Kubevirt non-admin Flow', () => {
       .setNamespace(testNonAdminNamespace)
       .setOS(pvc.os)
       .setStartOnCreation(true)
+      .setCustomize(true)
       .generateNameForPrefix('auto-clone-vm-with-normal-user')
       .build();
 
