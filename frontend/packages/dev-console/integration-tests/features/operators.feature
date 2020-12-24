@@ -160,3 +160,40 @@ Feature: Operators
       And user clicks on Create button
       Then user will be redirected to Integration Platform tab with header "IntegrationPlatforms"
       And user will see Integration Platform created with name example
+
+
+   @regression, @smoke
+   Scenario: Install Sealed Secrets Operator
+      Given user has created namespace "cicd"
+      And user is at Operator Hub page with the header name "OperatorHub"
+      When user searches for "Sealed Secrets Operator"
+      And user clicks on the Sealed Secrets Operator card
+      And user clicks install button present on the right side bar
+      And user installs the Sealed Secrets Operator with default values
+      Then user will see a modal with title "Sealed Secrets Operator"
+      And user will see a View Operator button
+
+   
+   @regression, @smoke
+   Scenario: Create SealedSecretController CR
+      Given user has installed Sealed Secrets Operator
+      And user has selected "cicd" namespace
+      And user is on Installed Operator page
+      When user clicks on SealedSecretController link
+      And user clicks on Create SealedSecretController button
+      And user enters name "sealedsecretcontroller"
+      And user clicks on Create button
+      Then user will be redirected to Sealed Secrets Controller tab with header "SealedSecretControllers"
+      And user will see sealedsecretcontroller created with name sealedsecretcontroller
+
+   
+   @regression, @smoke
+   Scenario: Install Argo CD Operator
+      Given user has created namespace "argocd"
+      And user is at Operator Hub page with the header name "OperatorHub"
+      When user searches for "Argo CD"
+      And user clicks on the Argo CD card
+      And user clicks install button present on the right side bar
+      And user installs the Argo CD Operator with default values
+      Then user will see a modal with title "Argo CD Operator"
+      And user will see a View Operator button
