@@ -240,6 +240,7 @@ export const CreateVMForm: React.FC<CreateVMFormProps> = ({
           </FormRow>
           <FormRow fieldId="vm-flavor" title={t('kubevirt-plugin~Flavor')} isRequired>
             <FormPFSelect
+              toggleId="vm-flavor-select"
               variant={SelectVariant.single}
               selections={[getTemplateFlavorDesc(template)]}
               onSelect={(e, f: string) =>
