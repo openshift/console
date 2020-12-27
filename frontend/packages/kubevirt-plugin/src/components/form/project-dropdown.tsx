@@ -9,6 +9,7 @@ type ProjectDropdownProps = {
   project: string;
   placeholder?: string;
   disabled?: boolean;
+  id?: string;
 };
 
 export const ProjectDropdown: React.FC<ProjectDropdownProps> = ({
@@ -16,6 +17,7 @@ export const ProjectDropdown: React.FC<ProjectDropdownProps> = ({
   project,
   placeholder,
   disabled,
+  id,
 }) => {
   const useProjects = useFlag(FLAGS.OPENSHIFT);
   const kind = useProjects ? ProjectModel.kind : NamespaceModel.kind;
@@ -33,6 +35,7 @@ export const ProjectDropdown: React.FC<ProjectDropdownProps> = ({
       selectedKey={project}
       selectedKeyKind={kind}
       disabled={disabled}
+      id={id}
     />
   );
 };

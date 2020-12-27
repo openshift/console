@@ -42,6 +42,8 @@ import {
   getDefaultStorageClass,
 } from '../../../selectors/config-map/sc-defaults';
 import { getAnnotation } from '../../../selectors/selectors';
+import { getFieldId } from '../../create-vm-wizard/utils/renderable-field-utils';
+import { VMSettingsField } from '../../create-vm-wizard/types';
 
 type AdvancedSectionProps = {
   state: BootSourceState;
@@ -127,6 +129,7 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({ state, dispatch, disa
             aria-label={t('kubevirt-plugin~Select Storage Class')}
             selections={[state.storageClass?.value]}
             isDisabled={disabled}
+            toggleId="form-ds-sc-select"
           >
             {storageClasses?.map((sc) => (
               <SelectOption key={sc.metadata.uid} value={sc.metadata.name}>
@@ -149,6 +152,7 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({ state, dispatch, disa
           }
           selections={AccessMode.fromString(state.accessMode?.value)}
           isDisabled={!scAllowed || disabled}
+          toggleId="form-ds-access-mode-select"
         >
           {accessModes.map((am) => {
             const accessMode = AccessMode.fromString(am);
@@ -167,6 +171,7 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({ state, dispatch, disa
           }
           selections={VolumeMode.fromString(state.volumeMode?.value)}
           isDisabled={disabled}
+          toggleId="form-ds-volume-mode-select"
         >
           {VolumeMode.getAll().map((vm) => (
             <SelectOption key={vm.getValue()} value={vm} />
@@ -205,6 +210,7 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({
           }
           selections={ProvisionSource.fromString(state.dataSource?.value)}
           isDisabled={disabled}
+          toggleId={getFieldId(VMSettingsField.PROVISION_SOURCE_TYPE)}
         >
           {(withUpload
             ? ProvisionSource.getVMTemplateBaseImageSources()
@@ -249,6 +255,7 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({
             onChange={(payload) => dispatch({ type: BOOT_ACTION_TYPE.SET_URL, payload })}
             aria-label={t('kubevirt-plugin~Import URL')}
             isDisabled={disabled}
+            id={getFieldId(VMSettingsField.IMAGE_URL)}
           />
           <URLSourceHelp />
         </FormRow>
@@ -266,6 +273,7 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({
             onChange={(payload) => dispatch({ type: BOOT_ACTION_TYPE.SET_CONTAINER, payload })}
             aria-label={t('kubevirt-plugin~Container image')}
             isDisabled={disabled}
+            id={getFieldId(VMSettingsField.CONTAINER_IMAGE)}
           />
           <ContainerSourceHelp />
         </FormRow>
@@ -285,6 +293,7 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({
               project={state.pvcNamespace?.value}
               placeholder={PersistentVolumeClaimModel.label}
               disabled={disabled}
+              id="pvc-ns-dropdown"
             />
           </FormRow>
           {state.pvcNamespace?.value && (
@@ -317,6 +326,7 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({
                 placeholder={t('kubevirt-plugin~--- Select Persistent Volume Claim ---')}
                 desc={PersistentVolumeClaimModel.label}
                 disabled={disabled}
+                id="pvc-name-dropdown"
               />
             </FormRow>
           )}
@@ -387,6 +397,7 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({
             type="text"
             onChange={(payload) => dispatch({ type: BOOT_ACTION_TYPE.SET_PROVIDER, payload })}
             aria-label={t('kubevirt-plugin~Source provider')}
+            id="form-ds-provider-input"
           />
           <div className="pf-c-form__helper-text" aria-live="polite">
             {t('kubevirt-plugin~Example: your company name')}
