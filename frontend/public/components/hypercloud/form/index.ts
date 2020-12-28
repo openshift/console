@@ -12,6 +12,7 @@ export const pluralToKind = plural => {
     servicebindings: 'ServiceBinding',
     catalogserviceclaims: 'CatalogServiceClaim',
     templates: 'Template',
+    clustertemplates: 'ClusterTemplate',
     templateinstances: 'TemplateInstance',
     namespaceclaims: 'NamespaceClaim',
     rolebindingclaims: 'RoleBindingClaim',
