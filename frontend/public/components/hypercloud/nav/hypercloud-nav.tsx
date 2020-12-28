@@ -39,6 +39,7 @@ const HyperCloudNav = () => (
           <ResourceNSLink resource="servicebindings" name="Service Binding" />
           <ResourceNSLink resource="catalogserviceclaims" name="Catalog Service Claim" />
           <ResourceNSLink resource="templates" name="Template" />
+          <ResourceClusterLink resource="clustertemplates" name="Cluster Template" />
           <ResourceNSLink resource="templateinstances" name="Template Instance" />
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_22')}>
@@ -85,7 +86,6 @@ const HyperCloudNav = () => (
           <ResourceNSLink resource="pipelineruns" name="PipelineRun" />
           <ResourceNSLink resource="approvals" name="Approval" />
           <ResourceNSLink resource="pipelineresources" name="PipelineResource" />
-          <ResourceNSLink resource="conditions" name="Condition" />
         </NavSection>
         {/* <NavSection title="AI DevOps">
           <ResourceNSLink resource="notebooks" name='Notebook' />

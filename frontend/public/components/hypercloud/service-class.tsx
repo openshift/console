@@ -2,11 +2,12 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-import { ServiceClassKind, K8sResourceKindReference } from '../../module/k8s';
+import { ServiceClassModel } from '../../models';
+import { K8sResourceKind } from '../../module/k8s';
 import { DetailsPage, ListPage, Table, TableData, TableRow } from '../factory';
 import { navFactory, SectionHeading, ResourceSummary, ResourceLink, Timestamp } from '../utils';
 
-const serviceClassReference: K8sResourceKindReference = 'ServiceClass';
+const kind = ServiceClassModel.kind;
 
 const ServiceClassDetails: React.FC<ServiceClassDetailsProps> = ({ obj: serviceClass }) => {
   return (
@@ -34,11 +35,11 @@ const ServiceClassDetails: React.FC<ServiceClassDetailsProps> = ({ obj: serviceC
 };
 
 type ServiceClassDetailsProps = {
-  obj: ServiceClassKind;
+  obj: K8sResourceKind;
 };
 
 const { details } = navFactory;
-const ServiceClassesDetailsPage: React.FC<ServiceClassesDetailsPageProps> = props => <DetailsPage {...props} kind={serviceClassReference} pages={[details(ServiceClassDetails)]} />;
+const ServiceClassesDetailsPage: React.FC<ServiceClassesDetailsPageProps> = props => <DetailsPage {...props} kind={kind} pages={[details(ServiceClassDetails)]} />;
 ServiceClassesDetailsPage.displayName = 'ServiceClassesDetailsPage';
 
 const tableColumnClasses = [
@@ -54,7 +55,7 @@ const ServiceClassTableRow = ({ obj, index, key, style }) => {
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink kind={serviceClassReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
+        <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
       </TableData>
       <TableData className={classNames(tableColumnClasses[1])}>
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} title={obj.metadata.namespace} />
@@ -118,7 +119,7 @@ const ServiceClassesList: React.FC = props => <Table {...props} aria-label="Serv
 ServiceClassesList.displayName = 'ServiceClassesList';
 
 const ServiceClassesPage: React.FC<ServiceClassesPageProps> = props => {
-  return <ListPage canCreate={true} kind={serviceClassReference} ListComponent={ServiceClassesList} {...props} />;
+  return <ListPage canCreate={true} kind={kind} ListComponent={ServiceClassesList} {...props} />;
 };
 ServiceClassesPage.displayName = 'ServiceClassesPage';
 
