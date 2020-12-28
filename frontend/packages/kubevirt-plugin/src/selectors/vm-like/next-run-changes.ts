@@ -20,11 +20,15 @@ export const isFlavorChanged = (vm: VMWrapper, vmi: VMIWrapper): boolean => {
 
   const vmCPU = _.omit(vm.getCPU(), cpuOmitPaths);
   const vmiCPU = _.omit(vmi.getCPU(), cpuOmitPaths);
+  const vmMemory = vm.getMemory();
+  const vmiMemory = vmi.getMemory();
+  const vmFlavor = vm.getFlavor();
+  const vmiFlvor = vmi.getFlavor();
 
   return (
-    vm.getFlavor() !== vmi.getFlavor() ||
-    !_.isEqual(vm.getMemory(), vmi.getMemory()) ||
-    !_.isEqual(vmCPU, vmiCPU)
+    (vmFlavor && !_.isEqual(vmFlavor, vmiFlvor)) ||
+    (vmMemory && !_.isEqual(vmMemory, vmiMemory)) ||
+    (!_.isEmpty(vmCPU) && !_.isEqual(vmCPU, vmiCPU))
   );
 };
 
