@@ -96,11 +96,10 @@ const LazyRoute = props => {
   if (kind === 'form') {
     plural = kind === 'form' && props.computedMatch.params.plural;
     // type = kind === 'form' && props.computedMatch.params.type;
-    kind = pluralToKind(plural);
-    let loader = () =>
+    kind = pluralToKind.get(plural)['kind'];
+    const loader = () =>
       // import(`./${plural}/create-${kind.toLowerCase()}` /* webpackChunkName: "create-secret" */).then(
       import(`./hypercloud/form/${plural}/create-${kind.toLowerCase()}` /* webpackChunkName: "create-secret" */).then(m => m[`Create${kind}`]);
-
     return <Route {...props} component={undefined} render={componentProps => <AsyncComponent loader={loader} kind={kind} {...componentProps} />} />;
   }
   return <Route {...props} component={undefined} render={componentProps => <AsyncComponent loader={props.loader} kind={kind} {...componentProps} />} />;

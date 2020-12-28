@@ -73,13 +73,7 @@ const stateToProps = (state: RootState, props) => {
 };
 
 export const CreateDefaultPage = connect(stateToProps)((props: CreateDefaultPageProps) => {
-  return (
-    <>
-      <Helmet>
-        <title>{`Create ${kindForReference(props.match.params.plural)}`}</title>
-      </Helmet>
-      <Firehose
-        resources={[
+  const type = pluralToKind.get(props.match.params.plural)['type'];
           {
             kind: props.model.kind,
             isList: false,

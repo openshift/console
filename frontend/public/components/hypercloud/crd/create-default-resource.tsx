@@ -72,7 +72,7 @@ const stateToProps = (state: RootState) => ({
 });
 
 export const CreateDefaultPage = connect(stateToProps)((props: CreateDefaultPageProps) => {
-  let model = modelFor(pluralToKind(props.match.params.plural));
+  let model = modelFor(pluralToKind.get(props.match.params.plural)['kind']);
   return (
     <>
       <Helmet>
