@@ -26,6 +26,7 @@ Cypress.Commands.add('install', (mode: 'Internal' | 'Attached' = 'Internal', enc
       cy.log('Subscribe to OCS Operator');
       cy.byLegacyTestID('operator-install-btn').click({ force: true });
       cy.byTestID('Operator recommended namespace:-radio-input').should('be.checked');
+      cy.byTestID('enable-monitoring').click();
       cy.byTestID('install-operator').click();
       cy.byTestID('success-icon', { timeout: 180000 }).should('be.visible');
       cy.exec('oc get project openshift-storage -o json').then((res) => {
@@ -49,9 +50,9 @@ Cypress.Commands.add('install', (mode: 'Internal' | 'Attached' = 'Internal', enc
 
       // Make changes to this once we add annotation
       cy.log(`Install OCS in ${mode} Mode`);
-      commonFlows.navigateToOCS();
+      commonFlows.navigateToOCS(true);
       cy.byLegacyTestID('horizontal-link-Storage Cluster').click();
-      cy.byTestID('yaml-create').click();
+      cy.byTestID('item-create').click();
 
       cy.log(`Select ${mode}`);
       cy.byTestID('Internal-radio-input').should('be.checked');
@@ -73,6 +74,7 @@ Cypress.Commands.add('install', (mode: 'Internal' | 'Attached' = 'Internal', enc
         cy.log('Enabling Encryption');
         cy.byTestID('encryption-checkbox').click();
       }
+      wizard.next();
 
       // Final Step
       wizard.create();
@@ -94,7 +96,8 @@ Cypress.Commands.add('install', (mode: 'Internal' | 'Attached' = 'Internal', enc
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(10000);
       cy.byTestID('resource-status').contains('Ready', { timeout: 900000 });
+    } else {
+      cy.log('OCS Storage Cluster is already Installed. Proceeding without installation');
     }
-    cy.log('OCS Storage Cluster is already Installed. Proceeding without installation');
   });
 });

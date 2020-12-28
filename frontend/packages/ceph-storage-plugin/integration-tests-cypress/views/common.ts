@@ -1,7 +1,8 @@
 export const commonFlows = {
-  navigateToOCS: () => {
-    cy.clickNavLink(['Operators', 'Installed Operators']);
-    cy.byLegacyTestID('item-filter').type('ocs-operator');
+  navigateToOCS: (isOperatorsOpen = false) => {
+    const path = isOperatorsOpen ? ['Installed Operators'] : ['Operators', 'Installed Operators'];
+    cy.clickNavLink(path);
+    cy.byLegacyTestID('item-filter').type('ocs');
     cy.byTestOperatorRow('OpenShift Container Storage').click();
   },
   checkAll: () => cy.get('input[name=check-all]'),

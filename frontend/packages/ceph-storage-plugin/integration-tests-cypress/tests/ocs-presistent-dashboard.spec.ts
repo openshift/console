@@ -35,6 +35,7 @@ describe('Check OCS Dashboards', () => {
 
   it('Check Inventory card is correct', () => {
     cy.log('Check the total number of OCS nodes');
+    cy.get('.skeleton-activity').should('not.exist');
     cy.byTestID('inventory-nodes')
       .invoke('text')
       .then((text) => {
