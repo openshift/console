@@ -106,16 +106,16 @@ export const iGetCommonTemplateCloudInit = (tmp: ITemplate) => {
 };
 
 export const iGetCommonTemplateDiskBus = (tmp: ITemplate, diskName: string) => {
-  const cloudDisk = iGetIn(iSelectVM(tmp), [
+  const disk = iGetIn(iSelectVM(tmp), [
     'spec',
     'template',
     'spec',
     'domain',
     'devices',
     'disks',
-  ])?.find((disk) => iGetIn(disk, ['name']) === diskName);
+  ])?.find((d) => iGetIn(d, ['name']) === diskName);
 
-  return iGetIn(cloudDisk, ['disk', 'bus']);
+  return iGetIn(disk, ['disk', 'bus']);
 };
 
 export const iGetDefaultTemplate = (
