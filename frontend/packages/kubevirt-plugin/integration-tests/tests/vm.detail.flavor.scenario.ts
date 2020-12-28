@@ -17,7 +17,6 @@ describe('KubeVirt VM detail - edit flavor', () => {
   const leakedResources = new Set<string>();
   const vm = new VMBuilder(getBasicVMBuilder())
     .setProvisionSource(ProvisionSource.CONTAINER)
-    .setCustomize(true)
     .build();
 
   afterEach(() => {
@@ -38,7 +37,7 @@ describe('KubeVirt VM detail - edit flavor', () => {
       expect(getMemory(vm.getResource())).toEqual('3Gi');
       expect(
         (await virtualMachineView.vmDetailLabelValue('vm.kubevirt.io/template')).startsWith(
-          'rhel7-desktop-tiny-', // template is not changed (might be in the future)
+          'rhel7-highperformance-large-', // template is not changed (might be in the future)
         ),
       ).toBeTruthy();
     });

@@ -12,8 +12,10 @@ export const backButton = element(by.buttonText('Back'));
 export const cancelButton = element(by.buttonText('Cancel'));
 export const nextButton = element(by.buttonText('Next'));
 export const customizeButton = $('[data-test-id="wizard-customize"]');
-export const createVirtualMachineButton = element(by.partialButtonText('Create Virtual Machine'));
+export const createVirtualMachineButton = element(by.partialButtonText('Create'));
 export const modalCancelButton = $('.modal-content').element(by.buttonText('Cancel'));
+export const stepTitle = $('.pf-c-title.pf-m-lg');
+export const wizardBody = $('.pf-c-wizard__main-body');
 
 // Template
 export const templateByName = (name: string) =>

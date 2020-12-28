@@ -2,10 +2,14 @@
 import { browser, ExpectedConditions as until } from 'protractor';
 import { cloneDeepWithEnum } from '@console/shared/src/constants/object-enum';
 import { click, waitForStringNotInElement } from '@console/shared/src/test-utils/utils';
+import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
 import { detailViewAction, listViewAction } from '@console/shared/src/test-utils/actions.view';
 import { modalOverlay } from '@console/kubevirt-plugin/integration-tests/views/uiResource.view';
 import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
 import * as vmView from '../../views/virtualMachine.view';
+import { vmtLinkByName } from '../../views/template.view';
+import { resourceHorizontalTab } from '../../views/uiResource.view';
+import { saveButton } from '../../views/kubevirtUIResource.view';
 import {
   PAGE_LOAD_TIMEOUT_SECS,
   UNEXPECTED_ACTION_ERROR,
@@ -14,8 +18,8 @@ import {
 } from '../utils/constants/common';
 import { BaseVirtualMachine } from './baseVirtualMachine';
 import { AddDialog } from '../dialogs/schedulingDialog';
-import { saveButton } from '../../views/kubevirtUIResource.view';
 import { VMBuilderData } from '../types/vm';
+import { VirtualMachineTemplateModel } from '../types/types';
 import { VM_ACTION, TAB, VM_STATUS } from '../utils/constants/vm';
 
 import { MatchLabels } from 'public/module/k8s';
@@ -154,13 +158,24 @@ export class VirtualMachine extends BaseVirtualMachine {
     return new VirtualMachine(builderData);
   }
 
+  async getVmtResourceName(vmtName: string): Promise<string> {
+    await this.navigateToListView();
+    await click(resourceHorizontalTab(VirtualMachineTemplateModel));
+    await click(vmtLinkByName(vmtName));
+    await isLoaded();
+    return this.getResourceTitle();
+  }
+
   async create() {
     const wizard = new Wizard();
-    const { template } = this.getData();
+    const { template, templateNamespace } = this.getData();
+
     await this.navigateToListView();
 
     if (template) {
-      await wizard.openVMFromTemplateWizard(template, this.namespace);
+      const templateSourceName = await this.getVmtResourceName(template);
+      await this.navigateToListView();
+      await wizard.openVMFromTemplateWizard(templateSourceName, templateNamespace);
     } else {
       await wizard.openWizard(VirtualMachineModel);
     }
