@@ -229,20 +229,24 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
     this.ensurePath('spec.template.spec.domain.devices', {});
     const metaDataNames: string[] = [];
 
-    this.data.spec.dataVolumeTemplates = this.data.spec.dataVolumeTemplates.filter((dataVolume) => {
-      const { name, namespace } = dataVolume?.spec?.source?.pvc;
-      if (name === nameParam && namespace === namespaceParam) {
-        metaDataNames.push(dataVolume?.metadata?.name);
-        return false;
-      }
-      return true;
-    });
+    this.data.spec.dataVolumeTemplates = this.data?.spec?.dataVolumeTemplates?.filter(
+      (dataVolume) => {
+        const { name, namespace } = dataVolume?.spec?.source?.pvc;
+        if (name === nameParam && namespace === namespaceParam) {
+          metaDataNames.push(dataVolume?.metadata?.name);
+          return false;
+        }
+        return true;
+      },
+    );
 
-    this.data.spec.template.spec.volumes = this.data.spec.template.spec.volumes.filter((volume) => {
-      return !metaDataNames.find((metaDataName) => volume.name === metaDataName);
-    });
+    this.data.spec.template.spec.volumes = this.data?.spec?.template?.spec?.volumes.filter(
+      (volume) => {
+        return !metaDataNames.find((metaDataName) => volume.name === metaDataName);
+      },
+    );
 
-    this.data.spec.template.spec.domain.devices.disks = this.data.spec.template.spec.domain.devices.disks.filter(
+    this.data.spec.template.spec.domain.devices.disks = this.data?.spec?.template?.spec?.domain?.devices?.disks?.filter(
       (disk) => !disk.name || !metaDataNames.find((metaDataName) => disk.name === metaDataName),
     );
 
