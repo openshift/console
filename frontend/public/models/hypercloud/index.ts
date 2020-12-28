@@ -1,18 +1,5 @@
 import { K8sKind } from '../../module/k8s';
 
-// 추가
-// export const ApprovalModel: K8sKind = {
-//   label: 'Approval',
-//   labelPlural: 'Approvals',
-//   apiVersion: 'v1',
-//   apiGroup: 'tmax.io',
-//   plural: 'approvals',
-//   abbr: 'A',
-//   kind: 'Approval',
-//   id: 'approval',
-//   namespaced: true,
-// };
-
 export const HyperClusterResourceModel: K8sKind = {
   label: 'Cluster',
   labelPlural: 'Clusters',
@@ -245,6 +232,7 @@ export const PipelineModel: K8sKind = {
   id: 'pipeline',
   crd: false,
 };
+
 export const PipelineRunModel: K8sKind = {
   kind: 'PipelineRun',
   namespaced: true,
@@ -265,7 +253,7 @@ export const ApprovalModel: K8sKind = {
   plural: 'approvals',
   apiVersion: 'v1',
   abbr: 'PA',
-  apiGroup: 'tmax.io',
+  apiGroup: 'cicd.tmax.io',
   labelPlural: 'Pipeline Approvals',
   id: 'approval',
   crd: false,
@@ -606,4 +594,16 @@ export const TemplateInstanceModel: K8sKind = {
   kind: 'TemplateInstance',
   id: 'templateinstance',
   namespaced: true,
+};
+
+export const ClusterTemplateModel: K8sKind = {
+  label: 'Cluster Template',
+  labelPlural: 'Cluster Templates',
+  apiVersion: 'v1',
+  apiGroup: 'tmax.io',
+  plural: 'clustertemplates',
+  abbr: 'CT',
+  kind: 'ClusterTemplate',
+  id: 'clustertemplate',
+  namespaced: false,
 };

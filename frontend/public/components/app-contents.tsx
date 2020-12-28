@@ -19,7 +19,7 @@ import { NamespaceRedirect } from './utils/namespace-redirect';
 import { RootState } from '../redux';
 import { pluralToKind } from './hypercloud/form';
 import { getPerspectives } from '../hypercloud/perspectives';
-import { AuditPage } from './hypercloud/audit';
+// import { AuditPage } from './hypercloud/audit';
 // import { GrafanaPage } from './hypercloud/grafana';
 
 //PF4 Imports
@@ -180,7 +180,8 @@ const AppContents_: React.FC<AppContentsProps> = ({ activePerspective, flags }) 
             // <LazyRoute path="/k8s/ns/:ns/roles/:name/add-rule" exact loader={() => import('./RBAC' /* webpackChunkName: "rbac" */).then(m => m.EditRulePage)} />
             // <LazyRoute path="/k8s/ns/:ns/roles/:name/:rule/edit" exact loader={() => import('./RBAC' /* webpackChunkName: "rbac" */).then(m => m.EditRulePage)} />
           }
-          <Route path="/k8s/ns/:ns/audits" exact component={AuditPage} />
+          <LazyRoute path="/k8s/ns/:ns/audits" exact loader={() => import('./hypercloud/audit').then(m => NamespaceFromURL(m.AuditPage))} />
+          <LazyRoute path="/k8s/all-namespaces/audits" exact loader={() => import('./hypercloud/audit').then(m => NamespaceFromURL(m.AuditPage))} />
           <Route path="/grafana" exact component={ActiveNamespaceRedirect} />
           <LazyRoute path="/grafana/all-namespaces" exact loader={() => import('./hypercloud/grafana').then(m => NamespaceFromURL(m.GrafanaPage))} />
           <LazyRoute path="/grafana/ns/:ns" exact loader={() => import('./hypercloud/grafana').then(m => NamespaceFromURL(m.GrafanaPage))} />
