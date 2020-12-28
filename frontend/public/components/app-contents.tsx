@@ -19,7 +19,6 @@ import { NamespaceRedirect } from './utils/namespace-redirect';
 import { RootState } from '../redux';
 import { pluralToKind } from './hypercloud/form';
 import { getPerspectives } from '../hypercloud/perspectives';
-// import { AuditPage } from './hypercloud/audit';
 // import { GrafanaPage } from './hypercloud/grafana';
 
 //PF4 Imports
@@ -186,8 +185,8 @@ const AppContents_: React.FC<AppContentsProps> = ({ activePerspective, flags }) 
           <LazyRoute path="/grafana/ns/:ns" exact loader={() => import('./hypercloud/grafana').then(m => NamespaceFromURL(m.GrafanaPage))} />
 
           {/*Create Form */}
-          <LazyRoute path="/k8s/ns/:ns/:plural/~new" exact loader={() => import('./hypercloud/crd/create-pinned-custom-resource').then(m => m.CreateDefaultPage)} />
-          <LazyRoute path="/k8s/cluster/:plural/~new" exact loader={() => import('./hypercloud/crd/create-pinned-custom-resource').then(m => m.CreateDefaultPage)} />
+          <LazyRoute path="/k8s/ns/:ns/:plural/~new" kind="CustomResourceDefinition" exact loader={() => import('./hypercloud/crd/create-pinned-resource').then(m => m.CreateDefaultPage)} />
+          <LazyRoute path="/k8s/cluster/:plural/~new" kind="CustomResourceDefinition" exact loader={() => import('./hypercloud/crd/create-pinned-resource').then(m => m.CreateDefaultPage)} />
           <LazyRoute path="/k8s/ns/:ns/customresourcedefinitions/:plural/~new" kind="CustomResourceDefinition" exact loader={() => import('./hypercloud/crd/create-custom-resource-definition').then(m => m.CreateCRDPage)} />
           <LazyRoute path="/k8s/cluster/customresourcedefinitions/:plural/~new" kind="CustomResourceDefinition" exact loader={() => import('./hypercloud/crd/create-custom-resource-definition').then(m => m.CreateCRDPage)} />
           <LazyRoute path="/k8s/ns/:ns/routes/~new/form" exact kind="Route" loader={() => import('./routes/create-route' /* webpackChunkName: "create-route" */).then(m => m.CreateRoute)} />
