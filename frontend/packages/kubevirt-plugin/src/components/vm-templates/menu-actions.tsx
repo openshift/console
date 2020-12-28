@@ -45,7 +45,7 @@ const vmTemplateCreateVMAction: MenuAction = (
   { withSupportModal, sourceStatus, sourceLoaded, sourceLoadError, withCreate, namespace },
 ) => ({
   // t('kubevirt-plugin~Create Virtual Machine')
-  label: 'kubevirt-plugin~Create Virtual Machine',
+  labelKey: 'kubevirt-plugin~Create Virtual Machine',
   callback: () => withSupportModal(obj, () => createVMAction(obj, sourceStatus, namespace)),
   accessReview: asAccessReview(
     VirtualMachineModel,
