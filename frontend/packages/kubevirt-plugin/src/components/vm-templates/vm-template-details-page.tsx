@@ -29,7 +29,7 @@ export const breadcrumbsForVMTemplatePage = (t: TFunction, match: VMTemplateMatc
     path: `/k8s/ns/${match.params.ns || 'default'}/virtualization`,
   },
   {
-    name: t('kubevirt-plugin~Virtual Machines Templates'),
+    name: t('kubevirt-plugin~Templates'),
     path: `/k8s/ns/${match.params.ns || 'default'}/virtualization/templates`,
   },
   {
