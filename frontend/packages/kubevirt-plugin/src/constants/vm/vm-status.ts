@@ -6,6 +6,33 @@ import { getStringEnumValues } from '../../utils/types';
 import { StatusSimpleLabel } from '../status-constants';
 import { StatusGroup } from '../status-group';
 
+export const VMStatusMigrationPhases = {
+  Pending: {
+    // t('kubevirt-plugin~Migration - Pending')
+    labelKey: 'kubevirt-plugin~Migration - Pending',
+  },
+  Scheduling: {
+    // t('kubevirt-plugin~Migration - Scheduling')
+    labelKey: 'kubevirt-plugin~Migration - Scheduling',
+  },
+  PreparingTarget: {
+    // t('kubevirt-plugin~Migration - Preparing Target')
+    labelKey: 'kubevirt-plugin~Migration - Preparing Target',
+  },
+  Scheduled: {
+    // t('kubevirt-plugin~Migration - Scheduled')
+    labelKey: 'kubevirt-plugin~Migration - Scheduled',
+  },
+  TargetReady: {
+    // t('kubevirt-plugin~Migration - Target Ready')
+    labelKey: 'kubevirt-plugin~Migration - Target Ready',
+  },
+  Running: {
+    // t('kubevirt-plugin~Migration - Running')
+    labelKey: 'kubevirt-plugin~Migration - Running',
+  },
+};
+
 export enum VMStatusSimpleLabel {
   Starting = 'Starting',
   Paused = 'Paused',
@@ -47,8 +74,12 @@ export class VMStatus extends StatusEnum<VMStatusSimpleLabel | StatusSimpleLabel
   static readonly DELETING = new VMStatus('VMStatus_DELETING', VMStatusSimpleLabel.Deleting, {
     isInProgress: true,
   });
-  static readonly VM_ERROR = new VMStatus('VMStatus_VM_ERROR', 'VM error', { isError: true });
-  static readonly VMI_ERROR = new VMStatus('VMStatus_VMI_ERROR', 'VMI error', { isError: true });
+  static readonly VM_ERROR = new VMStatus('VMStatus_VM_ERROR', 'VM error', {
+    isError: true,
+  });
+  static readonly VMI_ERROR = new VMStatus('VMStatus_VMI_ERROR', 'VMI error', {
+    isError: true,
+  });
   static readonly LAUNCHER_POD_ERROR = new VMStatus(
     'VMStatus_LAUNCHER_POD_ERROR',
     'Launcher pod error',
@@ -78,6 +109,17 @@ export class VMStatus extends StatusEnum<VMStatusSimpleLabel | StatusSimpleLabel
   static readonly MIGRATING = new VMStatus('VMStatus_MIGRATING', VMStatusSimpleLabel.Migrating, {
     isMigrating: true,
   });
+
+  static readonly getMigrationStatus = (phase = 'Pending') =>
+    new VMStatus(
+      'VMStatus_MIGRATING',
+      VMStatusSimpleLabel.Migrating,
+      {
+        isMigrating: true,
+      },
+      VMStatusMigrationPhases[phase].labelKey,
+    );
+
   static readonly V2V_CONVERSION_ERROR = new VMStatus(
     'VMStatus_V2V_CONVERSION_ERROR',
     'Import error',
@@ -123,11 +165,17 @@ export class VMStatus extends StatusEnum<VMStatusSimpleLabel | StatusSimpleLabel
     value: string,
     label: string,
     { isMigrating, ...metadata }: VMStatusMetadata = {},
+    labelKey?: string,
   ) {
-    super(value, label, {
-      ...metadata,
-      isInProgress: isMigrating || metadata.isInProgress,
-    });
+    super(
+      value,
+      label,
+      {
+        ...metadata,
+        isInProgress: isMigrating || metadata.isInProgress,
+      },
+      labelKey,
+    );
 
     this._isMigrating = isMigrating || false;
   }

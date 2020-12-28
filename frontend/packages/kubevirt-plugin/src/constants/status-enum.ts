@@ -23,6 +23,7 @@ export abstract class StatusEnum<SIMPLE_LABEL = StatusSimpleLabel> extends Objec
 
   protected readonly group: StatusGroup;
   protected readonly label: string;
+  protected readonly labelKey: string;
   protected readonly simpleLabel: SIMPLE_LABEL | StatusSimpleLabel; // cache resolveSimpleLabel call
 
   protected constructor(
@@ -37,6 +38,7 @@ export abstract class StatusEnum<SIMPLE_LABEL = StatusSimpleLabel> extends Objec
       isUnknown,
       group,
     }: StatusMetadata = {},
+    labelKey?: string,
   ) {
     super(value);
     if (label == null) {
@@ -48,7 +50,6 @@ export abstract class StatusEnum<SIMPLE_LABEL = StatusSimpleLabel> extends Objec
     this._isPending = isPending || false;
     this._isImporting = isImporting || false;
     this._isInProgress = this._isPending || this._isImporting || isInProgress || false; // pending means expected progress
-
     const isKnown = isError || isCompleted || isPending || isImporting || isInProgress;
 
     if (isUnknown && isKnown) {
@@ -59,6 +60,7 @@ export abstract class StatusEnum<SIMPLE_LABEL = StatusSimpleLabel> extends Objec
 
     this.group = group;
     this.label = label;
+    this.labelKey = labelKey;
     this.simpleLabel = this.resolveSimpleLabel();
   }
 
@@ -86,6 +88,8 @@ export abstract class StatusEnum<SIMPLE_LABEL = StatusSimpleLabel> extends Objec
     } as any);
 
   getLabel = () => this.label;
+
+  getLabelKey = () => this.labelKey;
 
   getGroup = () => this.group;
 
