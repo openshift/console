@@ -9,8 +9,11 @@ import {
   TextInput,
   ExpandableSection,
   SelectOption,
+  Stack,
+  StackItem,
 } from '@patternfly/react-core';
 import {
+  ExternalLink,
   FirehoseResult,
   HandlePromiseProps,
   withHandlePromise,
@@ -34,8 +37,14 @@ import {
   getDefaultSCAccessModes,
   getDefaultSCVolumeMode,
   getDefaultStorageClass,
+  isConfigMapContainsScModes,
 } from '../../../selectors/config-map/sc-defaults';
-import { DYNAMIC, getDialogUIError, getSequenceName } from '../../../utils/strings';
+import {
+  DYNAMIC,
+  getDialogUIError,
+  getSequenceName,
+  STORAGE_CLASS_SUPPORTED_MATRIX_DOC_LINK,
+} from '../../../utils/strings';
 import { ModalFooter } from '../modal/modal-footer';
 import { useShowErrorToggler } from '../../../hooks/use-show-error-toggler';
 import { DiskWrapper } from '../../../k8s/wrapper/vm/disk-wrapper';
@@ -170,8 +179,16 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     (isEditing && combinedDisk.getVolumeMode()) || null,
   );
 
+  const [defaultAccessMode, defaultVolumeMode, isScModesKnown] = React.useMemo(() => {
+    return [
+      getDefaultSCAccessModes(storageClassConfigMap, storageClassName)?.[0],
+      getDefaultSCVolumeMode(storageClassConfigMap, storageClassName),
+      isConfigMapContainsScModes(storageClassConfigMap, storageClassName),
+    ];
+  }, [storageClassConfigMap, storageClassName]);
+
   React.useEffect(() => {
-    if (!isEditing && isLoaded(_storageClassConfigMap) && isLoaded(storageClasses)) {
+    if (!isEditing) {
       let defaultStorageClass = null;
 
       if (!storageClassName) {
@@ -182,23 +199,16 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
         }
       }
 
-      if (source.requiresVolumeMode()) {
-        setVolumeMode(
-          getDefaultSCVolumeMode(storageClassConfigMap, storageClassName || defaultStorageClass),
-        );
+      if (defaultAccessMode) {
+        setVolumeMode(defaultVolumeMode);
       }
-      if (source.requiresAccessModes()) {
-        setAccessMode(
-          getDefaultSCAccessModes(
-            storageClassConfigMap,
-            storageClassName || defaultStorageClass,
-          )[0],
-        );
+
+      if (defaultVolumeMode) {
+        setAccessMode(defaultAccessMode);
       }
     }
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoaded(_storageClassConfigMap), isLoaded(storageClasses)]);
+  }, [defaultAccessMode, defaultVolumeMode, storageClassName, storageClasses]);
 
   const resultDisk = DiskWrapper.initializeFromSimpleData({
     name,
@@ -615,54 +625,108 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
               onToggle={onToggleAdvancedDrawer}
               className="disk-advanced-drawer"
             >
-              {source.requiresVolumeMode() && (
-                <FormRow title={t('kubevirt-plugin~Volume Mode')} fieldId={asId('volume-mode')}>
-                  <FormSelect
-                    onChange={(vMode) => setVolumeMode(VolumeMode.fromString(vMode))}
-                    value={asFormSelectValue(volumeMode?.getValue())}
-                    id={asId('volume-mode')}
-                    isDisabled={isDisabled('volumeMode') || isStorageClassDataLoading}
-                  >
-                    <FormSelectPlaceholderOption
-                      isDisabled={inProgress}
-                      placeholder={t('kubevirt-plugin~--- Select Volume Mode ---')}
-                    />
-                    {VolumeMode.getAll().map((v) => (
-                      <FormSelectOption
-                        key={v.getValue()}
-                        value={v.getValue()}
-                        label={`${v.toString()}`}
+              <Stack hasGutter>
+                <StackItem>
+                  {source.requiresVolumeMode() && (
+                    <FormRow title={t('kubevirt-plugin~Volume Mode')} fieldId={asId('volume-mode')}>
+                      <FormSelect
+                        onChange={(vMode) => setVolumeMode(VolumeMode.fromString(vMode))}
+                        value={asFormSelectValue(volumeMode?.getValue())}
+                        id={asId('volume-mode')}
+                        isDisabled={isDisabled('volumeMode') || isStorageClassDataLoading}
+                      >
+                        <FormSelectPlaceholderOption
+                          isDisabled={inProgress}
+                          placeholder={t('kubevirt-plugin~--- Select Volume Mode ---')}
+                        />
+                        {VolumeMode.getAll().map((v) => (
+                          <FormSelectOption
+                            key={v.getValue()}
+                            value={v.getValue()}
+                            label={v.toString().concat(
+                              v.getValue() !== defaultVolumeMode.getValue() && isScModesKnown
+                                ? t(
+                                    'kubevirt-plugin~ - Not recommended for {{storageClassName}} storage class',
+                                    {
+                                      storageClassName,
+                                    },
+                                  )
+                                : '',
+                            )}
+                          />
+                        ))}
+                      </FormSelect>
+                    </FormRow>
+                  )}
+                  {source.requiresAccessModes() && (
+                    <FormRow
+                      title={t('kubevirt-plugin~Access Mode')}
+                      fieldId={asId('access-mode')}
+                      className="disk-access-mode"
+                    >
+                      <FormSelect
+                        onChange={(aMode) => setAccessMode(AccessMode.fromString(aMode))}
+                        value={asFormSelectValue(accessMode?.getValue())}
+                        id={asId('access-mode')}
+                        isDisabled={isDisabled('accessMode') || isStorageClassDataLoading}
+                      >
+                        <FormSelectPlaceholderOption
+                          isDisabled={inProgress}
+                          placeholder={t('kubevirt-plugin~--- Select Access Mode ---')}
+                        />
+                        {AccessMode.getAll().map((a) => (
+                          <FormSelectOption
+                            key={a.getValue()}
+                            value={a.getValue()}
+                            label={a.toString().concat(
+                              a.getValue() !== defaultAccessMode.getValue() && isScModesKnown
+                                ? t(
+                                    'kubevirt-plugin~ - Not recommended for {{storageClassName}} storage class',
+                                    {
+                                      storageClassName,
+                                    },
+                                  )
+                                : '',
+                            )}
+                          />
+                        ))}
+                      </FormSelect>
+                    </FormRow>
+                  )}
+                </StackItem>
+                <StackItem>
+                  {isScModesKnown ? (
+                    <Alert
+                      variant="info"
+                      isInline
+                      title={t(
+                        'kubevirt-plugin~Access and Volume modes should follow storage feature matrix',
+                      )}
+                    >
+                      <ExternalLink
+                        text={t('kubevirt-plugin~Learn more')}
+                        href={STORAGE_CLASS_SUPPORTED_MATRIX_DOC_LINK}
                       />
-                    ))}
-                  </FormSelect>
-                </FormRow>
-              )}
-              {source.requiresAccessModes() && (
-                <FormRow
-                  title={t('kubevirt-plugin~Access Mode')}
-                  fieldId={asId('access-mode')}
-                  className="disk-access-mode"
-                >
-                  <FormSelect
-                    onChange={(aMode) => setAccessMode(AccessMode.fromString(aMode))}
-                    value={asFormSelectValue(accessMode?.getValue())}
-                    id={asId('access-mode')}
-                    isDisabled={isDisabled('accessMode') || isStorageClassDataLoading}
-                  >
-                    <FormSelectPlaceholderOption
-                      isDisabled={inProgress}
-                      placeholder={t('kubevirt-plugin~--- Select Access Mode ---')}
-                    />
-                    {AccessMode.getAll().map((a) => (
-                      <FormSelectOption
-                        key={a.getValue()}
-                        value={a.getValue()}
-                        label={a.toString()}
-                      />
-                    ))}
-                  </FormSelect>
-                </FormRow>
-              )}
+                    </Alert>
+                  ) : (
+                    <Alert variant="warning" isInline title={t('kubevirt-plugin~Warning')}>
+                      <Stack hasGutter>
+                        <StackItem>
+                          {t(
+                            'kubevirt-plugin~Config map does not contain suggested access and volume modes for the selected storage class',
+                          )}
+                        </StackItem>
+                        <StackItem>
+                          <ExternalLink
+                            text={t('kubevirt-plugin~Learn more')}
+                            href={STORAGE_CLASS_SUPPORTED_MATRIX_DOC_LINK}
+                          />
+                        </StackItem>
+                      </Stack>
+                    </Alert>
+                  )}
+                </StackItem>
+              </Stack>
             </ExpandableSection>
           )}
         </Form>

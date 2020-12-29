@@ -51,6 +51,13 @@ export const getDefaultSCAccessModes = (
   return accessMode ? [accessMode] : [AccessMode.READ_WRITE_ONCE];
 };
 
+export const isConfigMapContainsScModes = (
+  storageClassConfigMap: ConfigMapKind,
+  storageClassName?: string,
+) =>
+  _.has(storageClassConfigMap, ['data', `${storageClassName}.accessMode`]) &&
+  _.has(storageClassConfigMap, ['data', `${storageClassName}.volumeMode`]);
+
 export const getDefaultStorageClass = (
   storageClasses: StorageClassResourceKind[],
 ): StorageClassResourceKind =>
