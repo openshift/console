@@ -139,10 +139,11 @@ const isBeingMigrated = (
 
   const migration = findVMIMigration(name, namespace, migrations);
   if (isMigrating(migration)) {
+    const phase = getMigrationStatusPhase(migration);
     return {
-      status: VMStatus.MIGRATING,
+      status: VMStatus.getMigrationStatus(phase),
       migration,
-      detailedMessage: getMigrationStatusPhase(migration),
+      detailedMessage: phase,
     };
   }
   return null;

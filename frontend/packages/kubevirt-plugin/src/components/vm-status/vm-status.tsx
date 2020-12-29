@@ -160,10 +160,11 @@ export const VMStatus: React.FC<VMStatusProps> = ({
   vmStatusBundle,
   arePendingChanges,
 }) => {
+  const { t } = useTranslation();
   const vmiLike = vm || vmi;
 
   const { status, pod, progress, importerPodsStatuses } = vmStatusBundle;
-  const title = status.toString(); // TODO status.toVerboseString() should be called to pass to popup header
+  const title = t(status.getLabelKey()) || status.toString() || t('kubevirt-plugin~Unknown'); // TODO status.toVerboseString() should be called to pass to popup header
   const popoverTitle = arePendingChanges ? 'Pending Changes' : null;
   const message = vmStatusBundle.message || vmStatusBundle.detailedMessage;
   const detailedMessage = vmStatusBundle.message ? vmStatusBundle.detailedMessage : null;
@@ -201,11 +202,7 @@ export const VMStatus: React.FC<VMStatusProps> = ({
   }
 
   return (
-    <GenericStatus
-      title={title || VMStatusEnum.UNKNOWN.toString()}
-      Icon={icon}
-      popoverTitle={popoverTitle}
-    >
+    <GenericStatus title={title} Icon={icon} popoverTitle={popoverTitle}>
       {(message || isPaused) && (
         <VMStatusPopoverContent key="popover" message={message} links={links} progress={progress}>
           {isPaused && (
