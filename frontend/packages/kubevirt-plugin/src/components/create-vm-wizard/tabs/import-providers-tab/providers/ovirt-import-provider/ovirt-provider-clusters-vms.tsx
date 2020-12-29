@@ -3,6 +3,10 @@ import * as React from 'react';
 import { FormSelect, FormSelectOption } from '@patternfly/react-core';
 import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { useAccessReview2 } from '@console/internal/components/utils';
+import { StorageClassResourceKind } from '@console/internal/module/k8s';
+import { StorageClassModel } from '@console/internal/models';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { iGetCommonData } from '../../../../selectors/immutable/selectors';
 import { OvirtProviderField, OvirtProviderProps, VMImportProvider } from '../../../../types';
 import { vmWizardActions } from '../../../../redux/actions';
@@ -15,6 +19,7 @@ import { getPlaceholderKey } from '../../../../utils/renderable-field-utils';
 import { ignoreCaseSort } from '../../../../../../utils/sort';
 import { iGetOvirtField } from '../../../../selectors/immutable/provider/ovirt/selectors';
 import { requestVmDetails } from '../../../../redux/state-update/providers/ovirt/ovirt-provider-actions';
+import { getDefaultStorageClass } from '../../../../../../selectors/config-map/sc-defaults';
 
 type VMBundle = {
   vmID: string;
@@ -54,6 +59,23 @@ const OvirtProviderClustersVMsConnected: React.FC<OvirtProviderClustersVMsConnec
       }
     }
 
+    const [scAllowed] = useAccessReview2({
+      group: StorageClassModel.apiGroup,
+      resource: StorageClassModel.plural,
+      verb: 'list',
+    });
+    const [storageClasses] = useK8sWatchResource<StorageClassResourceKind[]>(
+      scAllowed
+        ? {
+            kind: StorageClassModel.kind,
+            isList: true,
+            namespaced: false,
+          }
+        : null,
+    );
+
+    const defaultStorageClass = scAllowed && getDefaultStorageClass(storageClasses);
+
     return (
       <>
         <FormFieldRow field={clusterField} fieldType={FormFieldType.SELECT}>
@@ -72,7 +94,7 @@ const OvirtProviderClustersVMsConnected: React.FC<OvirtProviderClustersVMsConnec
         </FormFieldRow>
         <FormFieldRow field={vmField} fieldType={FormFieldType.SELECT}>
           <FormField isDisabled={!clusterName}>
-            <FormSelect onChange={onVMChange}>
+            <FormSelect onChange={(v) => onVMChange(v, defaultStorageClass)}>
               <FormSelectPlaceholderOption
                 placeholder={t(getPlaceholderKey(OvirtProviderField.VM))}
                 isDisabled={!!iGet(vmField, 'value')}
@@ -93,7 +115,7 @@ type OvirtProviderClustersVMsConnectedProps = {
   vmField: any;
   clusterField: any;
   ovirtProviderCR: any;
-  onVMChange: (vmID: string) => void;
+  onVMChange: (vmID: string, defaultSC: StorageClassResourceKind) => void;
   onClusterChange: (clusterID: string) => void;
 };
 
@@ -106,20 +128,20 @@ const stateToProps = (state, { wizardReduxID }) => {
 };
 
 const dispatchToProps = (dispatch, { wizardReduxID }) => {
-  const onVM = (vmID) => {
+  const onVM = (vmID, defaultSC) => {
     dispatch(
       vmWizardActions[ActionType.UpdateImportProviderField](
         wizardReduxID,
         VMImportProvider.OVIRT,
         OvirtProviderField.VM,
-        { value: vmID, vm: null },
+        { value: vmID, vm: null, sc: defaultSC },
       ),
     );
   };
 
   return {
     onClusterChange: (clusterName) => {
-      onVM(null);
+      onVM(null, null);
       dispatch(
         vmWizardActions[ActionType.UpdateImportProviderField](
           wizardReduxID,
@@ -130,8 +152,8 @@ const dispatchToProps = (dispatch, { wizardReduxID }) => {
       );
     },
 
-    onVMChange: (vmID) => {
-      onVM(vmID);
+    onVMChange: (vmID, defaultSC) => {
+      onVM(vmID, defaultSC);
       dispatch(requestVmDetails(wizardReduxID, vmID));
     },
   };
