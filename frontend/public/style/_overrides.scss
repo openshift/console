@@ -537,3 +537,37 @@ button.pf-c-dropdown__menu-item.hover {
 .pf-c-nav.pf-m-dark .pf-c-nav__item.pf-m-current {
   background-color: #566d8e !important;
 }
+.pagination-div {
+  text-align: center;
+  position: absolute;
+  margin: 20px auto;
+  width: 1425.45px;
+}
+
+.pagination {
+  display: inline-block;
+  padding-left: 15px;
+  padding-right: 15px;
+  margin: 15px auto;
+  // display: flex;
+  list-style: none;
+  outline: none;
+}
+
+.pagination li {
+  display: inline-block;
+}
+
+.pagination > li > a {
+  padding: 5px 10px;
+  outline: none;
+  cursor: pointer;
+}
+
+.pagination .active {
+  font-weight: bold;
+}
+
+.pagination .disabled {
+  cursor: initial;
+}

@@ -6,7 +6,7 @@ import ReactPaginate from 'react-paginate';
 import * as PropTypes from 'prop-types';
 import * as _ from 'lodash-es';
 import DatePicker from 'react-datepicker';
-// import 'react-datepicker/dist/react-datepicker.css';
+import 'react-datepicker/dist/react-datepicker.css';
 import { SafetyFirst } from '../safety-first';
 import { TextFilter } from '../factory';
 import { Dropdown, Box, Timestamp } from '../utils';
