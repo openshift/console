@@ -27,7 +27,11 @@ import { NetworkInterfaceWrapper } from '../../../../../../k8s/wrapper/vm/networ
 import { BinaryUnit, convertToHighestUnit } from '../../../../../form/size-unit-utils';
 import { OvirtVM } from '../../../../../../types/vm-import/ovirt/ovirt-vm';
 import { iGetOvirtFieldAttribute } from '../../../../selectors/immutable/provider/ovirt/selectors';
-import { ConfigMapKind, K8sResourceKind } from '@console/internal/module/k8s';
+import {
+  ConfigMapKind,
+  K8sResourceKind,
+  StorageClassResourceKind,
+} from '@console/internal/module/k8s';
 import { DiskWrapper } from '../../../../../../k8s/wrapper/vm/disk-wrapper';
 import { VolumeWrapper } from '../../../../../../k8s/wrapper/vm/volume-wrapper';
 import {
@@ -41,7 +45,11 @@ import { OvirtNetworkInterfaceModel } from '../../../../../../constants/v2v-impo
 import { createUniqueNameResolver } from '../../../../../../utils/strings';
 import { PersistentVolumeClaimWrapper } from '../../../../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
 
-export const getDisks = (vm: OvirtVM, storageClassConfigMap: ConfigMapKind): VMWizardStorage[] => {
+export const getDisks = (
+  vm: OvirtVM,
+  storageClassConfigMap: ConfigMapKind,
+  defaultSC: StorageClassResourceKind,
+): VMWizardStorage[] => {
   const { boot, disks } = vm;
   let bootOrder = 0;
   const getUniqueName = createUniqueNameResolver(disks);
@@ -75,6 +83,7 @@ export const getDisks = (vm: OvirtVM, storageClassConfigMap: ConfigMapKind): VMW
           size: size.value,
           unit: size.unit,
         })
+        .setStorageClassName(defaultSC?.metadata?.name || '')
         .setVolumeMode(getDefaultSCVolumeMode(storageClassConfigMap))
         .setAccessModes(accessMode ? [accessMode] : getDefaultSCAccessModes(storageClassConfigMap))
         .asResource(),
@@ -190,7 +199,10 @@ const getOS = (vm: OvirtVM) => {
 };
 
 // update checks done in ovirt-state-update
-export const prefillUpdateCreator = (options: UpdateOptions) => {
+export const prefillUpdateCreator = (
+  options: UpdateOptions,
+  defaultSC: StorageClassResourceKind,
+) => {
   const { id, dispatch, getState } = options;
   const state = getState();
   const iVM = iGetOvirtFieldAttribute(state, id, OvirtProviderField.VM, 'vm');
@@ -238,7 +250,7 @@ export const prefillUpdateCreator = (options: UpdateOptions) => {
   dispatch(
     vmWizardInternalActions[InternalActionType.SetStorages](
       id,
-      getDisks(vm, storageClassConfigMap),
+      getDisks(vm, storageClassConfigMap, defaultSC),
     ),
   );
 };

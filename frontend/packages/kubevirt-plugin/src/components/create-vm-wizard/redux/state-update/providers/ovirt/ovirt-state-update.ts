@@ -145,6 +145,7 @@ const ovirtProviderCRUpdater = (options: UpdateOptions) => {
 
   const selectedVMID = iGetOvirtFieldValue(state, id, OvirtProviderField.VM);
   const vm = getLoadedVm(ovirtProviderCR, selectedVMID);
+  const defaultSC = toShallowJS(iGetOvirtFieldAttribute(state, id, OvirtProviderField.VM, 'sc'));
 
   const status = getSimpleV2VPRoviderStatus(ovirtProviderCR, { requestsVM: selectedVMID && !vm }); // hack around unresponsiveness of ovirtProvider
 
@@ -212,7 +213,7 @@ const ovirtProviderCRUpdater = (options: UpdateOptions) => {
     return;
   }
 
-  prefillUpdateCreator(options);
+  prefillUpdateCreator(options, defaultSC);
 };
 
 const vmOrClusterChangedUpdater = (options: UpdateOptions) => {
