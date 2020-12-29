@@ -217,6 +217,9 @@ const cloneCommonBaseDiskImageUpdater = ({ id, prevState, dispatch, getState }: 
       [VMSettingsField.IMAGE_URL]: {
         isHidden: asHidden(cloneCommonBaseDiskImage, VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE),
       },
+      [VMSettingsField.CLONE_PVC_NS]: {
+        isHidden: asHidden(cloneCommonBaseDiskImage, VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE),
+      },
     }),
   );
 };
