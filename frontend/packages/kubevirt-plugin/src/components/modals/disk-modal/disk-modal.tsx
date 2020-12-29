@@ -111,9 +111,6 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
   const dataVolume = props.dataVolume || new DataVolumeWrapper();
   const tValidations = templateValidations || new TemplateValidations();
 
-  const validAllowedBuses = tValidations.getAllowedBuses(disk.getType());
-  const recommendedBuses = tValidations.getRecommendedBuses(disk.getType());
-
   const combinedDisk = new CombinedDisk({
     diskWrapper: disk,
     volumeWrapper: volume,
@@ -143,6 +140,12 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     disk.getName() || getSequenceName('disk', usedDiskNames),
   );
 
+  const validAllowedBuses = tValidations.getAllowedBuses(
+    isEditing ? DiskType.DISK : disk.getType(),
+  );
+  const recommendedBuses = tValidations.getRecommendedBuses(
+    isEditing ? DiskType.DISK : disk.getType(),
+  );
   const allowedBuses = [...validAllowedBuses].filter((b) => type.isBusSupported(b));
 
   const [bus, setBus] = React.useState<DiskBus>(
