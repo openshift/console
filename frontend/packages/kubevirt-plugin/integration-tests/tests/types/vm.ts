@@ -20,19 +20,12 @@ export type TestDisk = {
   pvc?: V1PersistentVolumeClaim;
 };
 
-export type CommonTemplate = {
-  name?: string;
-  bootSourceAvailable?: boolean;
-  bootSource?: ProvisionSource;
-  diskAdvance?: DiskAdvance;
-};
-
 export type BaseVMBuilderData = {
-  commonTemplate?: CommonTemplate;
   name?: string;
   description?: string;
   namespace?: string;
   template?: string;
+  templateNamespace?: string;
   flavor?: FlavorConfig;
   workload?: Workload;
   os?: OperatingSystem;
@@ -43,10 +36,14 @@ export type BaseVMBuilderData = {
 };
 
 export type VMBuilderData = BaseVMBuilderData & {
+  selectTemplateName?: string;
   waitForDiskImport?: boolean;
   startOnCreation?: boolean;
   template?: string;
+  pvcSize?: string;
   customize?: boolean;
+  mountAsCDROM?: boolean;
+  diskAdvance?: DiskAdvance;
 };
 
 export type KubevirtResourceConfig = {

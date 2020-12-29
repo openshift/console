@@ -1,7 +1,7 @@
 import { cloneDeepWithEnum } from '@console/shared/src/constants/object-enum';
 import { OperatingSystem, Workload, OSIDLookup } from '../utils/constants/wizard';
 import { FlavorConfig, Disk, Network, CloudInitConfig } from '../types/types';
-import { BaseVMBuilderData, CommonTemplate } from '../types/vm';
+import { BaseVMBuilderData } from '../types/vm';
 import { K8sKind } from '@console/internal/module/k8s';
 import { getRandStr } from '../utils/utils';
 import { ProvisionSource } from '../utils/constants/enums/provisionSource';
@@ -61,8 +61,8 @@ export abstract class BaseVMBuilder<T extends BaseVMBuilderData> {
     return this;
   }
 
-  public setCommonTemplate(commonTemplate: CommonTemplate) {
-    this.data.commonTemplate = commonTemplate;
+  public setTemplateNamespace(namespace: string) {
+    this.data.templateNamespace = namespace;
     return this;
   }
 

@@ -277,3 +277,15 @@ export async function checkForError(ErrorElement) {
   }
   return Error(await ErrorElement.getText());
 }
+
+export function uploadOSImage(
+  dv: string,
+  ns: string,
+  imagePath: string,
+  accessMode: string,
+  volumeMode: boolean,
+) {
+  execSync(
+    `virtctl image-upload dv ${dv} --image-path=${imagePath} --size=10Gi --storage-class=${STORAGE_CLASS} --access-mode=${accessMode} --block-volume=${volumeMode} -n ${ns} --insecure`,
+  );
+}

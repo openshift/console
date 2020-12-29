@@ -3,15 +3,18 @@ import { execSync } from 'child_process';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { browser, ExpectedConditions as until } from 'protractor';
 import {
+  click,
   removeLeakedResources,
   withResource,
   withResources,
 } from '@console/shared/src/test-utils/utils';
-import { errorMessage } from '@console/internal-integration-tests/views/crud.view';
+import { errorMessage, isLoaded } from '@console/internal-integration-tests/views/crud.view';
 import { warnMessage } from '../views/pvc.view';
+import { bootSource, vmtLinkByName } from '../views/template.view';
 import {
   CLONE_VM_TIMEOUT_SECS,
   CDI_UPLOAD_TIMEOUT_SECS,
+  PAGE_LOAD_TIMEOUT_SECS,
   VM_BOOTUP_TIMEOUT_SECS,
   STORAGE_CLASS,
   CIRROS_IMAGE,
@@ -19,20 +22,24 @@ import {
   RHEL7_IMAGE,
   WIN10_IMAGE,
 } from './utils/constants/common';
-import { VM_STATUS } from './utils/constants/vm';
 import {
+  GOLDEN_OS_IMAGES_NS,
   CIRROS_PVC,
   LOCAL_CIRROS_IMAGE,
   FEDORA_PVC,
   RHEL7_PVC,
   WIN10_PVC,
 } from './utils/constants/pvc';
+import { VM_STATUS } from './utils/constants/vm';
+import { TemplateByName } from './utils/constants/wizard';
 import { PVCData } from './types/pvc';
 import { UploadForm } from './models/pvcUploadForm';
 import { PVC } from './models/pvc';
 import { VMBuilder } from './models/vmBuilder';
-import { getBasicVMBuilder } from './mocks/vmBuilderPresets';
+import { VMTemplateBuilder } from './models/vmtemplateBuilder';
+import { getBasicVMBuilder, getBasicVMTBuilder } from './mocks/vmBuilderPresets';
 import { flavorConfigs } from './mocks/mocks';
+import { uploadOSImage } from './utils/utils';
 
 function imagePull(src, dest) {
   if (src === CIRROS_IMAGE) {
@@ -219,6 +226,61 @@ describe('KubeVirt Auto Clone', () => {
         );
       },
       VM_BOOTUP_TIMEOUT_SECS + CLONE_VM_TIMEOUT_SECS,
+    );
+  });
+
+  describe('Auto-clone from cli', () => {
+    const vmTemplate = new VMTemplateBuilder(getBasicVMTBuilder())
+      .setName(TemplateByName.RHEL8)
+      .build();
+
+    beforeAll(async () => {
+      uploadOSImage('rhel8', GOLDEN_OS_IMAGES_NS, cirrosPVC.image, 'ReadWriteMany', true);
+    });
+
+    afterAll(async () => {
+      execSync(`kubectl delete dv rhel8 --ignore-not-found -n ${GOLDEN_OS_IMAGES_NS}`);
+    });
+
+    it(
+      'ID(CNV-5044) Verify boot source available for the template RHEL8',
+      async () => {
+        await vmTemplate.navigateToListView();
+        await click(vmtLinkByName(vmTemplate.name));
+        await isLoaded();
+        await browser.wait(until.presenceOf(bootSource), PAGE_LOAD_TIMEOUT_SECS);
+        await browser.wait(until.textToBePresentInElement(bootSource, 'Available'));
+      },
+      PAGE_LOAD_TIMEOUT_SECS,
+    );
+
+    it(
+      'ID(CNV-5597) Create RHEL8 VM from golden os template upload via CLI',
+      async () => {
+        const rhel8 = new VMBuilder(getBasicVMBuilder())
+          .setSelectTemplateName(TemplateByName.RHEL8)
+          .setStartOnCreation(true)
+          .build();
+
+        await withResource(leakedResources, rhel8.asResource(), async () => {
+          await rhel8.create();
+          await rhel8.navigateToDetail();
+        });
+      },
+      VM_BOOTUP_TIMEOUT_SECS + CLONE_VM_TIMEOUT_SECS,
+    );
+
+    it(
+      'ID(CNV-5598) Delete RHEL8 DV from CLI',
+      async () => {
+        execSync(`kubectl delete dv rhel8 -n ${GOLDEN_OS_IMAGES_NS}`);
+
+        await vmTemplate.navigateToListView();
+        await click(vmtLinkByName(vmTemplate.name));
+        await isLoaded();
+        await browser.wait(until.stalenessOf(bootSource), PAGE_LOAD_TIMEOUT_SECS);
+      },
+      PAGE_LOAD_TIMEOUT_SECS,
     );
   });
 });

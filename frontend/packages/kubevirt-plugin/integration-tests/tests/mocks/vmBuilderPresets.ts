@@ -1,7 +1,7 @@
 import { deepFreeze } from '../utils/utils';
 import { VMBuilder } from '../models/vmBuilder';
 import * as Combinatorics from 'js-combinatorics';
-import { Flavor, Workload, OperatingSystem } from '../utils/constants/wizard';
+import { Flavor, Workload, OperatingSystem, TemplateByName } from '../utils/constants/wizard';
 import { VMBuilderDataGenerationConfig, VMBuilderData } from '../types/vm';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import {
@@ -10,7 +10,6 @@ import {
   containerRootDisk,
   flavorConfigs,
   getDiskToCloneFrom,
-  basicCommonTemplate,
 } from './mocks';
 import { VirtualMachine } from '../models/virtualMachine';
 import { VMTemplateBuilder } from '../models/vmtemplateBuilder';
@@ -92,7 +91,7 @@ export const getBasicVMBuilder = () =>
   new VMBuilder()
     .setNamespace(testName)
     .setDescription('Default vm description')
-    .setCommonTemplate(basicCommonTemplate)
+    .setSelectTemplateName(TemplateByName.RHEL7)
     .setFlavor(flavorConfigs.Tiny)
     .setOS(OperatingSystem.RHEL7)
     .setWorkload(Workload.DESKTOP)

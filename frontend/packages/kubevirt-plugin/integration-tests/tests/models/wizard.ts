@@ -28,15 +28,15 @@ import {
 } from '../utils/constants/common';
 import { NetworkInterfaceDialog } from '../dialogs/networkInterfaceDialog';
 import { DiskDialog } from '../dialogs/diskDialog';
-import { Flavor } from '../utils/constants/wizard';
+import { Flavor, StepTitle } from '../utils/constants/wizard';
 import * as view from '../../views/wizard.view';
 import { resourceHorizontalTab, dropDownItem, dropDownItemMain } from '../../views/uiResource.view';
 import { confirmActionButton } from '../../views/importWizard.view';
 import { virtualizationTitle } from '../../views/vms.list.view';
+import { templateCreateVMLink } from '../../views/template.view';
 import { VMBuilderData } from '../types/vm';
 import { ProvisionSource } from '../utils/constants/enums/provisionSource';
 import { TemplateModel } from '@console/internal/models';
-import { templateCreateVMLink } from '../../views/template.view';
 
 export class Wizard {
   async openWizard(model: K8sKind = null) {
@@ -57,10 +57,10 @@ export class Wizard {
     await view.waitForNoLoaders();
   }
 
-  async openVMFromTemplateWizard(templateName: string, namespace: string) {
+  async openVMFromTemplateWizard(templateSourceName: string, namespace: string) {
     await click(resourceHorizontalTab(VirtualMachineTemplateModel));
     await isLoaded();
-    const uid = getResourceUID(TemplateModel.kind, templateName, namespace);
+    const uid = getResourceUID(TemplateModel.kind, templateSourceName, namespace);
     await click(templateCreateVMLink(uid));
   }
 
@@ -148,7 +148,9 @@ export class Wizard {
   }
 
   async startOnCreation() {
-    await click(view.startVMOnCreation);
+    if (!view.startVMOnCreation.isSelected()) {
+      await click(view.startVMOnCreation);
+    }
   }
 
   async configureCloudInit(cloudInitOptions: CloudInitConfig) {
@@ -242,21 +244,30 @@ export class Wizard {
   }
 
   async processSelectTemplate(data: VMBuilderData, ignoreWarnings: boolean = false) {
-    const { commonTemplate } = data;
-    if (commonTemplate) {
-      await this.selectTemplate(commonTemplate.name);
-    }
+    const { selectTemplateName } = data;
+    await this.selectTemplate(selectTemplateName);
     await this.next(ignoreWarnings);
   }
 
   async processBootSource(data: VMBuilderData, ignoreWarnings: boolean = false) {
-    // TODO: add processStep for bootsource
+    const { provisionSource } = data;
+    if (provisionSource) {
+      await this.selectProvisionSource(provisionSource);
+    } else {
+      throw Error('Provision souce not defined');
+    }
     await this.next(ignoreWarnings);
   }
 
-  async processReviewAndCreate(data: VMBuilderData, ignoreWarnings: boolean = false) {
-    // TODO: add processStep for review and create
-    await this.next(ignoreWarnings);
+  async processReviewAndCreate(data: VMBuilderData) {
+    const { name, startOnCreation } = data;
+    if (name) {
+      await this.fillName(name);
+    }
+    if (startOnCreation) {
+      await this.startOnCreation();
+    }
+    await this.confirmAndCreate();
   }
 
   async processGeneralStep(data: VMBuilderData, ignoreWarnings: boolean = false) {
@@ -344,7 +355,11 @@ export class Wizard {
   }
 
   async processWizard(data: VMBuilderData) {
-    await this.processSelectTemplate(data);
+    await browser.wait(until.presenceOf(view.wizardBody), 5 * SEC);
+
+    if ((await view.stepTitle.getText()) === StepTitle.SelectATemplate) {
+      await this.processSelectTemplate(data);
+    }
     const { customize } = data;
     if (customize) {
       await click(view.customizeButton);
@@ -356,6 +371,13 @@ export class Wizard {
 
       // Create
       await this.confirmAndCreate();
+      await this.waitForCreation();
+    }
+    if ((await view.stepTitle.getText()) === StepTitle.BootSource) {
+      await this.processBootSource(data);
+    }
+    if ((await view.stepTitle.getText()) === StepTitle.ReviewAndCreate) {
+      await this.processReviewAndCreate(data);
       await this.waitForCreation();
     }
   }

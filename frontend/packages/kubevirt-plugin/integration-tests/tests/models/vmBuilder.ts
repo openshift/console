@@ -1,5 +1,6 @@
 import { BaseVMBuilder } from './baseVMBuilder';
 import { VMBuilderData } from '../types/vm';
+import { DiskAdvance } from '../types/types';
 import { VirtualMachineModel } from '../../../src/models/index';
 import { VirtualMachine } from './virtualMachine';
 
@@ -20,6 +21,26 @@ export class VMBuilder extends BaseVMBuilder<VMBuilderData> {
 
   public setCustomize(customize: boolean) {
     this.data.customize = customize;
+    return this;
+  }
+
+  public setMountAsCDROM(mountAsCDROM: boolean) {
+    this.data.mountAsCDROM = mountAsCDROM;
+    return this;
+  }
+
+  public setPVCSize(pvcSize: string) {
+    this.data.pvcSize = pvcSize;
+    return this;
+  }
+
+  public setDiskAdvance(diskAdvance: DiskAdvance) {
+    this.data.diskAdvance = diskAdvance;
+    return this;
+  }
+
+  public setSelectTemplateName(selectTemplateName: string) {
+    this.data.selectTemplateName = selectTemplateName;
     return this;
   }
 

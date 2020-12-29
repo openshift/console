@@ -1,12 +1,13 @@
 /* eslint-disable no-await-in-loop */
 import { click } from '@console/shared/src/test-utils/utils';
 import { cloneDeepWithEnum } from '@console/shared/src/constants/object-enum';
+import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
 import { detailViewAction, listViewAction } from '@console/shared/src/test-utils/actions.view';
 import { VirtualMachineTemplateModel } from '../types/types';
 import { getResourceUID } from '../utils/utils';
 import { KubevirtUIResource } from './kubevirtUIResource';
 import { VMT_ACTION } from '../utils/constants/vm';
-import { templateCreateVMLink } from '../../views/template.view';
+import { templateCreateVMLink, vmtLinkByName } from '../../views/template.view';
 import { VMTemplateBuilderData } from '../types/vm';
 import { Wizard } from './wizard';
 
@@ -31,9 +32,17 @@ export class VirtualMachineTemplate extends KubevirtUIResource<VMTemplateBuilder
     await listViewAction(this.name)(action, confirmedActions.includes(action));
   }
 
+  async getResourceName(): Promise<string> {
+    await this.navigateToListView();
+    await click(vmtLinkByName(this.name));
+    await isLoaded();
+    return this.getResourceTitle();
+  }
+
   async createVMFromRowLink() {
     await this.navigateToListView();
-    const uid = getResourceUID(this.model.kind, this.name, this.namespace);
+    const templateName = await this.getResourceName();
+    const uid = getResourceUID(this.model.kind, templateName, this.namespace);
     await click(templateCreateVMLink(uid));
   }
 

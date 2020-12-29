@@ -37,3 +37,9 @@ export enum TemplateByName {
   FEDORA = 'Fedora 31+ VM',
   WINDOWS_10 = 'Microsoft Windows 10 VM',
 }
+
+export enum StepTitle {
+  SelectATemplate = 'Select a template',
+  BootSource = 'Boot source',
+  ReviewAndCreate = 'Review and create',
+}
