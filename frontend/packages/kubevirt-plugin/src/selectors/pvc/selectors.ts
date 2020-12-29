@@ -35,4 +35,5 @@ export const isPvcUploading = (pvc: PersistentVolumeClaimKind) =>
 export const isPvcBoundToCDI = (pvc: PersistentVolumeClaimKind) =>
   getAnnotation(pvc, CDI_BOUND_PVC_ANNOTATION) === 'true' ||
   getAnnotation(pvc, CDI_PHASE_PVC_ANNOTATION) === 'Succeeded' ||
-  getAnnotation(pvc, CDI_PHASE_PVC_ANNOTATION) === 'Running';
+  getAnnotation(pvc, CDI_PHASE_PVC_ANNOTATION) === 'Running' ||
+  getAnnotation(pvc, CDI_PHASE_PVC_ANNOTATION) === 'WaitForFirstConsumer';
