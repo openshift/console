@@ -243,7 +243,7 @@ export const SelectTemplate: React.FC<SelectTemplateProps> = ({
           <StackItem>
             <div>
               <Trans t={t} ns="kubevirt-plugin">
-                The virtual machine can be customized from the <b>review and create</b> step.
+                The virtual machine can be customized in the next step.
               </Trans>
             </div>
             <VMTemplateSupport />

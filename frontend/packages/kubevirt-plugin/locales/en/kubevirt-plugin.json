@@ -319,7 +319,7 @@
   "Storage ": "Storage ",
   "All projects": "All projects",
   "Select a template": "Select a template",
-  "The virtual machine can be customized from the <1>review and create</1> step.": "The virtual machine can be customized from the <1>review and create</1> step.",
+  "The virtual machine can be customized in the next step.": "The virtual machine can be customized in the next step.",
   "Only templates with a valid boot source will be shown.": "Only templates with a valid boot source will be shown.",
   "All template providers": "All template providers",
   "All boot sources": "All boot sources",
