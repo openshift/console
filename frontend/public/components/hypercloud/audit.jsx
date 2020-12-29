@@ -33,7 +33,7 @@ class Inner extends React.PureComponent {
   }
 
   render() {
-    const { klass, status, verb, objectRef, user, stageTimestamp, responseStatus, t } = this.props;
+    const { klass, status, verb, objectRef, user, stageTimestamp, responseStatus } = this.props;
     let timestamp = Date.parse(stageTimestamp);
     // timestamp -= 9 * 60 * 60 * 1000;
     timestamp = new Date(timestamp).toISOString();
@@ -47,7 +47,7 @@ class Inner extends React.PureComponent {
         <div className="co-sysevent__box">
           <div className="co-sysevent__header">
             <div className="co-sysevent__subheader">
-              {objectRef.resource}
+              {objectRef.Resource}
               <Timestamp timestamp={timestamp} />
             </div>
             <div
@@ -79,8 +79,8 @@ class SysEvent extends React.Component {
   }
 
   render() {
-    const { verb, objectRef, user, responseStatus, stageTimestamp } = this.props;
-    const klass = classNames('co-sysevent', { 'co-sysevent--error': this.props.responseStatus.code === 400 || this.props.responseStatus.code === 500 || this.props.responseStatus.status === 'Failure' });
+    const { Verb, ObjectRef, User, ResponseStatus, StageTimestamp } = this.props;
+    const klass = classNames('co-sysevent', { 'co-sysevent--error': this.props.ResponseStatus.code === 400 || this.props.ResponseStatus.code === 500 || this.props.ResponseStatus.status === 'Failure' });
     // console.log(this.props);
     const style = {
       height: 110,
@@ -93,7 +93,7 @@ class SysEvent extends React.Component {
     return (
       <div style={style}>
         <CSSTransition mountOnEnter={true} appear={true} in exit={false} timeout={timeout} classNames="slide">
-          {status => <Inner klass={klass} status={status} verb={verb} objectRef={objectRef} responseStatus={responseStatus} user={user} stageTimestamp={stageTimestamp} width={style.width} />}
+          {status => <Inner klass={klass} status={status} verb={Verb} objectRef={ObjectRef} responseStatus={ResponseStatus} user={User} stageTimestamp={StageTimestamp} width={style.width} />}
         </CSSTransition>
       </div>
     );
@@ -106,10 +106,8 @@ class AuditPage_ extends React.Component {
     let date = new Date();
     date.setDate(date.getDate() - 7);
 
-    const { t } = props;
-
     this.codeList = { all: 'All Codes', 100: '100 (Informational)', 200: '200 (Successful)', 300: '300 (Redirection)', 400: '400 (Client error)', 500: '500 (Server error)' };
-    this.statuslist = { all: 'All Status', success: 'Success', failure: 'Failure' };
+    this.statuslist = { all: 'All Status', Success: 'Success', Failure: 'Failure' };
     this.resourcelist = {
       all: 'All Resource Types',
       mutatingwebhookconfigurations: 'mutatingwebhookconfigurations',
@@ -252,7 +250,7 @@ class AuditPage_ extends React.Component {
       });
     }
 
-    let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=0&startTime=${this.state.start.getTime()}&endTime=${this.state.end.getTime()}`;
+    let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=0&startTime=${this.state.start.getTime() / 1000}&endTime=${this.state.end.getTime() / 1000}`;
     if (e !== 'all') {
       uri += `&resource=${e}`;
     }
@@ -269,8 +267,8 @@ class AuditPage_ extends React.Component {
     coFetchJSON(uri).then(response => {
       // console.log(response.items);
       this.setState({
-        data: response.items,
-        pages: Math.ceil(response.totalNum / 100),
+        data: response.eventList.Items,
+        pages: Math.ceil(response.rowsCount / 100),
       });
     });
   }
@@ -288,7 +286,7 @@ class AuditPage_ extends React.Component {
 
     this.setState({ offset: 0 });
 
-    let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=0&startTime=${this.state.start.getTime()}&endTime=${this.state.end.getTime()}`;
+    let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=0&startTime=${this.state.start.getTime() / 1000}&endTime=${this.state.end.getTime() / 1000}`;
     if (value !== 'all') {
       uri += `&verb=${value}`;
     }
@@ -308,8 +306,8 @@ class AuditPage_ extends React.Component {
       .then(response => {
         // console.log(response);
         this.setState({
-          data: response.items,
-          pages: Math.ceil(response.totalNum / 100),
+          data: response.eventList.Items,
+          pages: Math.ceil(response.rowsCount / 100),
         });
       })
       .catch(error => {
@@ -330,7 +328,7 @@ class AuditPage_ extends React.Component {
 
     this.setState({ offset: 0 });
 
-    let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=0&startTime=${this.state.start.getTime()}&endTime=${this.state.end.getTime()}`;
+    let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=0&startTime=${this.state.start.getTime() / 1000}&endTime=${this.state.end.getTime() / 1000}`;
     if (value !== 'all') {
       uri += `&status=${value}`;
     }
@@ -350,8 +348,8 @@ class AuditPage_ extends React.Component {
     coFetchJSON(uri).then(response => {
       // console.log(response.items);
       this.setState({
-        data: response.items,
-        pages: Math.ceil(response.totalNum / 100),
+        data: response.eventList.Items,
+        pages: Math.ceil(response.rowsCount / 100),
       });
     });
   }
@@ -369,7 +367,7 @@ class AuditPage_ extends React.Component {
 
     this.setState({ offset: 0 });
 
-    let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=0&startTime=${this.state.start.getTime()}&endTime=${this.state.end.getTime()}`;
+    let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=0&startTime=${this.state.start.getTime() / 1000}&endTime=${this.state.end.getTime() / 1000}`;
     if (value !== 'all') {
       uri += `&code=${value}`;
     }
@@ -388,8 +386,8 @@ class AuditPage_ extends React.Component {
     coFetchJSON(uri).then(response => {
       // console.log(response.items);
       this.setState({
-        data: response.items,
-        pages: Math.ceil(response.totalNum / 100),
+        data: response.eventList.Items,
+        pages: Math.ceil(response.rowsCount / 100),
       });
     });
   }
@@ -403,16 +401,16 @@ class AuditPage_ extends React.Component {
 
     this.setState({ offset: 0 });
 
-    let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=0&startTime=${date.getTime()}`;
+    let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=0&startTime=${date.getTime() / 1000}`;
 
     date_.setDate(date_.getDate() + 7);
     if (date_ < this.state.end || date > this.state.end) {
       this.setState({
         end: date_,
       });
-      uri += `&endTime=${date_.getTime()}`;
+      uri += `&endTime=${date_.getTime() / 1000}`;
     } else {
-      uri += `&endTime=${this.state.end.getTime()}`;
+      uri += `&endTime=${this.state.end.getTime() / 1000}`;
     }
 
     if (this.state.resourceType !== this.resourcelist.all) {
@@ -433,8 +431,8 @@ class AuditPage_ extends React.Component {
     coFetchJSON(uri).then(response => {
       // console.log(response.items);
       this.setState({
-        data: response.items,
-        pages: Math.ceil(response.totalNum / 100),
+        data: response.eventList.Items,
+        pages: Math.ceil(response.rowsCount / 100),
       });
     });
   }
@@ -448,16 +446,16 @@ class AuditPage_ extends React.Component {
 
     this.setState({ offset: 0 });
 
-    let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=0&endTime=${date.getTime()}`;
+    let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=0&endTime=${date.getTime() / 1000}`;
 
     date_.setDate(date_.getDate() - 7);
     if (date_ <= this.state.start) {
-      uri += `&startTime=${this.state.start.getTime()}`;
+      uri += `&startTime=${this.state.start.getTime() / 1000}`;
     } else {
       this.setState({
         start: date_,
       });
-      uri += `&startTime=${date_.getTime()}`;
+      uri += `&startTime=${date_.getTime() / 1000}`;
     }
 
     if (this.state.resourceType !== this.resourcelist.all) {
@@ -478,8 +476,8 @@ class AuditPage_ extends React.Component {
     coFetchJSON(uri).then(response => {
       // console.log(response.items);
       this.setState({
-        data: response.items,
-        pages: Math.ceil(response.totalNum / 100),
+        data: response.eventList.Items,
+        pages: Math.ceil(response.rowsCount / 100),
       });
     });
   }
@@ -491,7 +489,8 @@ class AuditPage_ extends React.Component {
       textFilter: '',
     });
 
-    let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=${e.selected * 100}&startTime=${this.state.start.getTime()}&endTime=${this.state.end.getTime()}`;
+    // let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=${e.selected * 100}&startTime=${this.state.start.getTime() / 1000}&endTime=${this.state.end.getTime() / 1000}`;
+    let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=${e.selected * 100}`;
 
     if (this.state.action !== this.state.actionList.all) {
       uri += `&verb=${this.state.action}`;
@@ -511,8 +510,8 @@ class AuditPage_ extends React.Component {
     coFetchJSON(uri).then(response => {
       // console.log(response.items);
       this.setState({
-        data: response.items,
-        pages: Math.ceil(response.totalNum / 100),
+        data: response.eventList.Items,
+        pages: Math.ceil(response.rowsCount / 100),
       });
     });
   }
@@ -526,7 +525,7 @@ class AuditPage_ extends React.Component {
       offset: 0,
     });
 
-    let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=0&startTime=${this.state.start.getTime()}&endTime=${this.state.end.getTime()}&message=${e.target.value}`;
+    let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=0&startTime=${this.state.start.getTime() / 1000}&endTime=${this.state.end.getTime() / 1000}&message=${e.target.value}`;
 
     if (this.state.action !== this.state.actionList.all) {
       uri += `&verb=${this.state.action}`;
@@ -546,8 +545,8 @@ class AuditPage_ extends React.Component {
     coFetchJSON(uri).then(response => {
       // console.log(response.items);
       this.setState({
-        data: response.items,
-        pages: Math.ceil(response.totalNum / 100),
+        data: response.eventList.Items,
+        pages: Math.ceil(response.rowsCount / 100),
       });
     });
   }
@@ -565,15 +564,14 @@ class AuditPage_ extends React.Component {
       status: this.statuslist.all,
       code: this.codeList.all,
     });
-    // let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=0&startTime=${this.state.start.getTime()}&endTime=${this.state.end.getTime()}`;
-    let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=0`;
+    let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=0&startTime=${this.state.start.getTime() / 1000}&endTime=${this.state.end.getTime() / 1000}`;
     if (namespace === undefined) {
       // all namespace
       coFetchJSON(uri).then(response => {
         // console.log(response.items);
         this.setState({
-          data: response.items,
-          pages: Math.ceil(response.totalNum / 100),
+          data: response.eventList.Items,
+          pages: Math.ceil(response.rowsCount / 100),
         });
       });
     } else {
@@ -581,8 +579,8 @@ class AuditPage_ extends React.Component {
       coFetchJSON(uri).then(response => {
         // console.log(response.items);
         this.setState({
-          data: response.items,
-          pages: Math.ceil(response.totalNum / 100),
+          data: response.eventList.Items,
+          pages: Math.ceil(response.rowsCount / 100),
         });
       });
     }
@@ -592,16 +590,15 @@ class AuditPage_ extends React.Component {
     const namespace = _.get(this.props, 'match.params.ns');
     this.setState({ namespace: namespace });
     this.setState({ action: this.state.actionList.all });
-    // let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=${this.state.offset}&startTime=${this.state.start.getTime()}&endTime=${this.state.end.getTime()}`;
-    let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=${this.state.offset}`;
+    let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=${this.state.offset}&startTime=${this.state.start.getTime() / 1000}&endTime=${this.state.end.getTime() / 1000}`;
 
     if (namespace === undefined) {
       // all namespace
       coFetchJSON(uri).then(response => {
         // console.log(response.items);
         this.setState({
-          data: response.items,
-          pages: Math.ceil(response.totalNum / 100),
+          data: response.eventList.Items,
+          pages: Math.ceil(response.rowsCount / 100),
         });
       });
     } else {
@@ -609,8 +606,8 @@ class AuditPage_ extends React.Component {
       coFetchJSON(uri).then(response => {
         // console.log(response.items);
         this.setState({
-          data: response.items,
-          pages: Math.ceil(response.totalNum / 100),
+          data: response.eventList.Items,
+          pages: Math.ceil(response.rowsCount / 100),
         });
       });
     }
@@ -618,7 +615,6 @@ class AuditPage_ extends React.Component {
 
   render() {
     const { data, start, end, textFilter, actionList } = this.state;
-    const { t } = this.props;
 
     return (
       <React.Fragment>
@@ -663,8 +659,7 @@ class AuditList extends React.Component {
 
     this.rowRenderer = function rowRenderer({ index, style, key }) {
       const event = this.state.filteredEvents[index];
-      const t = this.props.t;
-      return <SysEvent {...event} key={key} style={style} index={index} t={t} />;
+      return <SysEvent {...event} key={key} style={style} index={index} />;
     }.bind(this);
   }
 
@@ -701,7 +696,7 @@ class AuditList extends React.Component {
 
     return {
       filteredEvents: AuditList.filterEvents(nextProps.data, nextProps),
-      items: AuditList.filterEvents(nextProps.data, nextProps).map((item, index) => <SysEvent {...item} key={index} index={index} t={nextProps.t} />),
+      items: AuditList.filterEvents(nextProps.data, nextProps).map((item, index) => <SysEvent {...item} key={index} index={index} />),
       textFilter: nextProps.textFilter,
     };
   }
