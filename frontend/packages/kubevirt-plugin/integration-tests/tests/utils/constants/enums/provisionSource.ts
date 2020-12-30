@@ -10,7 +10,7 @@ export class ProvisionSource extends ObjectEnum<string> {
   static readonly CONTAINER = new ProvisionSource(
     'Container',
     'Import via Registry (creates PVC)',
-    'kubevirt/fedora-cloud-container-disk-demo:latest',
+    'quay.io/kubevirt/fedora-cloud-container-disk-demo:latest',
   );
 
   static readonly PXE = new ProvisionSource('PXE', 'PXE (network boot - adds network interface)');

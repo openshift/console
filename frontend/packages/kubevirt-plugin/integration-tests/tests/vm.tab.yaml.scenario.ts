@@ -2,8 +2,6 @@ import { browser, ExpectedConditions as until } from 'protractor';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import {
   isLoaded,
-  createItemButton,
-  createYAMLLink,
   resourceTitle,
   errorMessage,
 } from '@console/internal-integration-tests/views/crud.view';
@@ -29,6 +27,7 @@ import {
 } from './utils/constants/common';
 import { getVMManifest, multusNAD } from './mocks/mocks';
 import { virtualizationTitle } from '../views/vms.list.view';
+import { createItemButton, createWithYAMLButton } from '../views/wizard.view';
 import { activeTab } from '../views/uiResource.view';
 import { VM_ACTION } from './utils/constants/vm';
 import { ProvisionSource } from './utils/constants/enums/provisionSource';
@@ -48,7 +47,7 @@ describe('Test VM creation from YAML', () => {
     await clickNavLink(['Workloads', 'Virtualization']);
     await isLoaded();
     await click(createItemButton);
-    await click(createYAMLLink);
+    await click(createWithYAMLButton);
     await yamlPageIsLoaded();
   });
 

@@ -2,9 +2,9 @@
 import * as _ from 'lodash';
 import { browser, ExpectedConditions as until } from 'protractor';
 import { appHost, testName } from '@console/internal-integration-tests/protractor.conf';
-import { click, waitForCount } from '@console/shared/src/test-utils/utils';
+import { click } from '@console/shared/src/test-utils/utils';
 import { confirmAction } from '@console/shared/src/test-utils/actions.view';
-import { resourceRows, isLoaded } from '@console/internal-integration-tests/views/crud.view';
+import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
 import { clickHorizontalTab } from '@console/internal-integration-tests/views/horizontal-nav.view';
 import { clickNavLink } from '@console/internal-integration-tests/views/sidenav.view';
 import { PAGE_LOAD_TIMEOUT_SECS } from '../utils/constants/common';
@@ -138,6 +138,7 @@ export class KubevirtUIResource<T extends BaseVMBuilderData> extends UIResource 
 
   async getAttachedDisks(): Promise<Disk[]> {
     await this.navigateToTab(TAB.Disks);
+    await browser.wait(until.presenceOf(disksView.diskRows));
     const rows = await kubevirtDetailView.tableRows();
     return rows.map((row: string) => {
       const newRow = row.replace('(pending restart)\n', ''); // if disk added when VM was up
@@ -170,40 +171,42 @@ export class KubevirtUIResource<T extends BaseVMBuilderData> extends UIResource 
 
   async addDisk(disk: Disk) {
     await this.navigateToTab(TAB.Disks);
-    const count = await resourceRows.count();
     await click(kubevirtDetailView.createDiskButton);
     const dialog = new DiskDialog();
     await dialog.create(disk);
     await isLoaded();
-    await browser.wait(until.and(waitForCount(resourceRows, count + 1)), PAGE_LOAD_TIMEOUT_SECS);
+    await browser.wait(
+      until.presenceOf(kubevirtDetailView.dataID(disk.name)),
+      PAGE_LOAD_TIMEOUT_SECS,
+    );
   }
 
   async removeDisk(name: string) {
     await this.navigateToTab(TAB.Disks);
-    const count = await resourceRows.count();
     await kubevirtDetailView.selectKebabOption(name, 'Delete');
     await confirmAction();
     await isLoaded();
-    await browser.wait(until.and(waitForCount(resourceRows, count - 1)), PAGE_LOAD_TIMEOUT_SECS);
+    await browser.wait(until.stalenessOf(kubevirtDetailView.dataID(name)), PAGE_LOAD_TIMEOUT_SECS);
   }
 
   async addNIC(nic: Network) {
     await this.navigateToTab(TAB.NetworkInterfaces);
-    const count = await resourceRows.count();
     await click(kubevirtDetailView.createNICButton);
     const dialog = new NetworkInterfaceDialog();
     await dialog.create(nic);
     await isLoaded();
-    await browser.wait(until.and(waitForCount(resourceRows, count + 1)), PAGE_LOAD_TIMEOUT_SECS);
+    await browser.wait(
+      until.presenceOf(kubevirtDetailView.dataID(nic.name)),
+      PAGE_LOAD_TIMEOUT_SECS,
+    );
   }
 
   async removeNIC(name: string) {
     await this.navigateToTab(TAB.NetworkInterfaces);
-    const count = await resourceRows.count();
     await kubevirtDetailView.selectKebabOption(name, 'Delete');
     await confirmAction();
     await isLoaded();
-    await browser.wait(until.and(waitForCount(resourceRows, count - 1)), PAGE_LOAD_TIMEOUT_SECS);
+    await browser.wait(until.stalenessOf(kubevirtDetailView.dataID(name)), PAGE_LOAD_TIMEOUT_SECS);
   }
 
   async modalEditFlavor() {

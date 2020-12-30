@@ -30,7 +30,6 @@ import {
   RHEL7_PVC,
   WIN10_PVC,
 } from './utils/constants/pvc';
-import { VM_STATUS } from './utils/constants/vm';
 import { TemplateByName } from './utils/constants/wizard';
 import { PVCData } from './types/pvc';
 import { UploadForm } from './models/pvcUploadForm';
@@ -77,20 +76,15 @@ describe('KubeVirt Auto Clone', () => {
   describe('KubeVirt CDI Upload', () => {
     const uploadForm = new UploadForm();
 
-    it(
-      'ID(CNV-4778) Images with supported format can be uploaded',
-      async () => {
-        for (const img of imageFormats) {
-          CIRROS_PVC.pvcName = `pvc-image-with-suffix-${img.split('.').pop()}`;
-          CIRROS_PVC.image = img;
-          const pvc = new PVC(CIRROS_PVC);
-          await withResource(leakedResources, pvc.getDVResource(), async () => {
-            await pvc.create();
-          });
-        }
-      },
-      4 * CDI_UPLOAD_TIMEOUT_SECS,
-    );
+    it('ID(CNV-4778) NO warning message shows image is supported', async () => {
+      for (const img of imageFormats) {
+        CIRROS_PVC.pvcName = `pvc-image-with-suffix-${img.split('.').pop()}`;
+        CIRROS_PVC.image = img;
+        await uploadForm.openForm();
+        await uploadForm.fillAll(CIRROS_PVC);
+        await browser.wait(until.stalenessOf(warnMessage));
+      }
+    });
 
     it('ID(CNV-4891) It shows a warning message when image format is not supported', async () => {
       const pvc: PVCData = {
@@ -193,7 +187,7 @@ describe('KubeVirt Auto Clone', () => {
           async () => {
             await fedoraPVC.create();
             await fedora.create();
-            await fedora.waitForStatus(VM_STATUS.Off);
+            await fedora.stop();
             await fedoraPVC.delete();
             await fedora.start();
             await fedora.navigateToDetail();

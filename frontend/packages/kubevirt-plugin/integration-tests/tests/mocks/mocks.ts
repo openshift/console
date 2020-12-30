@@ -23,6 +23,7 @@ import {
   DISK_SOURCE,
   DISK_DRIVE,
   diskAccessMode,
+  diskVolumeMode,
 } from '../utils/constants/vm';
 import { ProvisionSource } from '../utils/constants/enums/provisionSource';
 
@@ -156,6 +157,7 @@ export const rwxRootDisk = {
   storageClass: `${STORAGE_CLASS}`,
   advanced: {
     accessMode: diskAccessMode.ReadWriteMany.value,
+    volumeMode: diskVolumeMode.Block,
   },
 };
 deepFreeze(rootDisk);
