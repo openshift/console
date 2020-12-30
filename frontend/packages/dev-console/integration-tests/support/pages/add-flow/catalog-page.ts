@@ -1,8 +1,13 @@
 import { cardTitle, catalogPO } from '../../pageObjects/add-flow-po';
-import { catalogCards, catalogTypes } from '../../constants/add';
 import { pageTitle } from '../../constants/pageTitle';
+import { addPage } from './add-page';
+import { addOptions, catalogCards, catalogTypes } from '../../constants/add';
+import { topologyHelper } from '../topology/topology-helper-page';
+import { devNavigationMenuPO } from '../../pageObjects/global-po';
 
 export const catalogPage = {
+  verifyTitle: () => cy.pageTitleShouldContain('Developer Catalog'),
+  verifyPageTitle: (page: string) => cy.pageTitleShouldContain(page),
   isCheckBoxSelected: (type: string) => cy.get(`input[title="${type}"]`).should('be.checked'),
   isCardsDisplayed: () => cy.get(catalogPO.card).should('be.visible'),
   search: (keyword: string) =>
@@ -94,5 +99,46 @@ export const catalogPage = {
   },
   verifyCardName: (partialCardName: string) => {
     cy.get(cardTitle).contains(partialCardName, { matchCase: false });
+  },
+  createHelmChartFromAddPage: (
+    releaseName: string = 'nodejs-ex-k',
+    helmChartName: string = 'Nodejs Ex K v0.2.1',
+  ) => {
+    cy.document()
+      .its('readyState')
+      .should('eq', 'complete');
+    addPage.selectCardFromOptions(addOptions.HelmChart);
+    catalogPage.verifyPageTitle('Helm Charts');
+    catalogPage.isCardsDisplayed();
+    catalogPage.search(helmChartName);
+    catalogPage.selectHelmChartCard(helmChartName);
+    catalogPage.verifyDialog();
+    catalogPage.clickButtonOnCatalogPageSidePane();
+    catalogPage.verifyInstallHelmChartPage();
+    catalogPage.enterReleaseName(releaseName);
+    catalogPage.clickOnInstallButton();
+    cy.document()
+      .its('readyState')
+      .should('eq', 'complete');
+    topologyHelper.verifyWorkloadInTopologyPage(releaseName);
+  },
+};
+
+export const catalogInstallPageObj = {
+  installHelmChart: {
+    install: '[data-test-id="submit-button"]',
+    chartVersion: '#form-dropdown-chartVersion-field',
+    yamlView: '#form-radiobutton-editorType-yaml-field',
+  },
+  selectHelmChartVersion: (version: string) =>
+    cy.selectByDropDownText(devNavigationMenuPO.dropdownButton, version),
+  verifyChartVersionDropdownAvailable: () =>
+    cy.verifyDropdownselected(devNavigationMenuPO.dropdownButton),
+  selectChangeOfChartVersionDialog: (option: string) => {
+    if (option === 'Proceed') {
+      cy.get('#confirm-action').click();
+    } else {
+      cy.byLegacyTestID('modal-cancel-action').click();
+    }
   },
 };

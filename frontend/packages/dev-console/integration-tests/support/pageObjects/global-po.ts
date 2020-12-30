@@ -11,4 +11,5 @@ export const devNavigationMenuPO = {
   project: '[data-test-id="project-details-header"]',
   configMaps: '#ConfigMap',
   secret: '#Secret',
+  dropdownButton: '[data-test-id="dropdown-button"]',
 };

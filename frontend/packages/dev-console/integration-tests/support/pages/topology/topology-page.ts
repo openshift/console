@@ -2,6 +2,13 @@ import { displayOptions, nodeActions } from '../../constants/topology';
 import { topologyPO } from '../../pageObjects/topology-po';
 import { createHelmRelease } from '../functions/createHelmRelease';
 import { sideBarTabs } from '../../constants/staticText/topology-text';
+import { topologyHelper } from './topology-helper-page';
+
+export const topologyObj = {
+  sidePane: {
+    dialog: '[role="dialog"]',
+  },
+};
 
 export const topologyPage = {
   verifyTitle: () => {
@@ -16,18 +23,13 @@ export const topologyPage = {
   },
   verifyContextMenu: () => cy.get(topologyPO.graph.contextMenu).should('be.visible'),
   verifyNoWorkLoadsText: (text: string) =>
-    cy.get(topologyPO.noWorkLoadsText).should('contain.text', text),
-  verifyWorkLoads: () => cy.get(topologyPO.graph.workloads).should('be.visible'),
-  search: (name: string) =>
-    cy
-      .byLegacyTestID('item-filter')
-      .clear()
-      .type(name),
+    cy.get('h2.co-hint-block__title').should('contain.text', text),
+  verifyWorkLoads: () => cy.get('g[data-surface="true"]').should('be.visible'),
+  search: (name: string) => {
+    topologyHelper.search(name);
+  },
   verifyWorkloadInTopologyPage: (appName: string) => {
-    cy.get(topologyPO.switcher).click({ force: true });
-    topologyPage.search(appName);
-    cy.get('div.is-filtered').should('be.visible');
-    cy.get(topologyPO.switcher).click({ force: true });
+    topologyHelper.verifyWorkloadInTopologyPage(appName);
   },
   clickDisplayOptionDropdown: () =>
     cy
@@ -76,7 +78,7 @@ export const topologyPage = {
       .find('span.co-icon-and-text span')
       .should('have.text', status),
   searchHelmRelease: (name: string) => {
-    topologyPage.search(name);
+    topologyHelper.search(name);
     cy.get('[data-kind="node"]').then(($el) => {
       if ($el.find('g.is-filtered').length === 0) {
         createHelmRelease(name);
@@ -240,4 +242,8 @@ export const topologyPage = {
       clickOnSave: () => cy.get(topologyPO.revisionDetails.yaml.save).click(),
     },
   },
+};
+
+export const topologySidePane = {
+  verify: () => cy.get(topologyObj.sidePane.dialog).should('be.visible'),
 };

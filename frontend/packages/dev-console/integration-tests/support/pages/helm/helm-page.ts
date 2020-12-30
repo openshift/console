@@ -1,6 +1,21 @@
 import { helmPO } from '../../pageObjects/helm-po';
 import { messages } from '../../constants/staticText/helm-text';
 
+export const helmPageObj = {
+  upgradeHelmRelease: {
+    chartVersion: '#form-dropdown-chartVersion-field',
+    upgrade: '[data-test-id="submit-button"]',
+  },
+  rollBackHelmRelease: {
+    revision1: '#form-radiobutton-revision-1-field',
+    rollBack: '[data-test-id="submit-button"]',
+    cancel: '[data-test-id="reset-button"]',
+  },
+  uninstallHelmRelease: {
+    releaseName: '#form-input-resourceName-field',
+  },
+};
+
 export const helmPage = {
   verifyMessage: () =>
     cy.get(helmPO.noHelmReleasesMessage).should('contain.text', messages.noHelmReleasesFound),
@@ -54,4 +69,49 @@ export const helmPage = {
     cy.get(helmPO.table).should('exist');
     cy.byLegacyTestID('kebab-button').click();
   },
+};
+
+export const upgradeHelmRelease = {
+  verifyTitle: () =>
+    cy
+      .get('h1')
+      .contains('Upgrade Helm Release')
+      .should('be.visible'),
+  upgradeChartVersion: (yamlView: boolean = false) => {
+    cy.get(helmPageObj.upgradeHelmRelease.chartVersion).click();
+    cy.byLegacyTestID('dropdown-menu').then((listing) => {
+      const count = Cypress.$(listing).length;
+      const randNum = Math.floor(Math.random() * count);
+      cy.byLegacyTestID('dropdown-menu')
+        .eq(randNum)
+        .click();
+    });
+    if (yamlView === true) {
+      cy.alertTitleShouldContain('Change Chart Version?');
+      cy.byTestID('confirm-action').click();
+    }
+  },
+  clickOnUpgrade: () => {
+    cy.get(helmPageObj.upgradeHelmRelease.upgrade).click();
+    cy.get('.co-m-loader', { timeout: 40000 }).should('not.exist');
+  },
+};
+
+export const helmDetailsPage = {
+  uninstallHelmRelease: () => {
+    cy.alertTitleShouldContain('Uninstall Helm Release?');
+    cy.byTestID('confirm-action')
+      .should('be.enabled')
+      .click();
+  },
+  enterReleaseNameInUninstallPopup: (releaseName: string = 'nodejs-ex-k') => {
+    cy.alertTitleShouldContain('Uninstall Helm Release?');
+    cy.get('form strong').should('have.text', releaseName);
+    cy.get(helmPageObj.uninstallHelmRelease.releaseName).type(releaseName);
+  },
+};
+
+export const rollBackHelmRelease = {
+  selectRevision: () => cy.get(helmPageObj.rollBackHelmRelease.revision1).check(),
+  clickOnRollBack: () => cy.get(helmPageObj.rollBackHelmRelease.rollBack).click(),
 };

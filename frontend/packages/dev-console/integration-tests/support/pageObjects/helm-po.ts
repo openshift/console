@@ -24,4 +24,7 @@ export const helmPO = {
   uninstallHelmRelease: {
     releaseName: '#form-input-resourceName-field',
   },
+  sidebarPage: {
+    chartVersion: '.properties-side-panel-pf-property-value',
+  },
 };
