@@ -3,6 +3,7 @@ import { topologyPage } from '../../pages/topology/topology-page';
 import { navigateTo } from '../../pages/app';
 import { devNavigationMenu } from '../../constants/global';
 import { topologySidePane } from '../../pages/topology/topology-side-pane-page';
+import { topologyHelper } from '../../pages/topology/topology-helper-page';
 
 Given('user is at the Topology page', () => {
   navigateTo(devNavigationMenu.Topology);
@@ -14,11 +15,11 @@ When('user navigates to Topology page', () => {
 });
 
 Then('user is able to see workload {string} in topology page list view', (workloadName: string) => {
-  topologyPage.verifyWorkloadInTopologyPage(workloadName);
+  topologyHelper.verifyWorkloadInTopologyPage(workloadName);
 });
 
 Then('user is able to see workload {string} in topology page', (workloadName: string) => {
-  topologyPage.verifyWorkloadInTopologyPage(workloadName);
+  topologyHelper.verifyWorkloadInTopologyPage(workloadName);
 });
 
 Then('user will be redirected to Topology page', () => {
