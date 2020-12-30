@@ -13,6 +13,10 @@ Given('user is at Add page', () => {
   navigateTo(devNavigationMenu.Add);
 });
 
+Given('user is at Topology page', () => {
+  navigateTo(devNavigationMenu.Topology);
+});
+
 Given(
   'user has created workload {string} with resource type {string}',
   (componentName: string, resourceType: string = 'Deployment') => {
@@ -34,10 +38,6 @@ When('user clicks Instantiate Template button on side bar', () => {
   catalogPage.clickButtonOnCatalogPageSidePane();
 });
 
-Given('user is at Developer Catalog page', () => {
-  addPage.selectCardFromOptions(addOptions.DeveloperCatalog);
-});
-
 Given('user is at DevFile page', () => {
   addPage.selectCardFromOptions(addOptions.DevFile);
 });
@@ -57,4 +57,12 @@ Then('user will be redirected to Add page', () => {
 
 When('user clicks Cancel button on Add page', () => {
   gitPage.clickCancel();
+});
+
+Then('user can see {string} card on the Add page', (cardName: string) => {
+  addPage.verifyCard(cardName);
+});
+
+When('user selects {string} card from add page', (cardName: string) => {
+  addPage.selectCardFromOptions(cardName);
 });

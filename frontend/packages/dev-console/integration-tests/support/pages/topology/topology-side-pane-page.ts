@@ -2,6 +2,7 @@ import { topologyPO } from '../../pageObjects/topology-po';
 import { topologyActions } from './topology-actions-page';
 import { nodeActions } from '../../constants/topology';
 import { modal } from '../../../../../integration-tests-cypress/views/modal';
+import { resources } from '../../constants/global';
 
 export const topologySidePane = {
   verify: () => cy.get(topologyPO.sidePane.dialog).should('be.visible'),
@@ -100,5 +101,38 @@ export const topologySidePane = {
   },
   verifyPipelineRuns: () => {
     cy.get('li.odc-pipeline-run-item').should('be.visible');
+  },
+  selectResource: (opt: resources | string) => {
+    const namespace = Cypress.env('namespace');
+    switch (opt) {
+      case 'Deployment Configs':
+      case resources.deploymentconfigs: {
+        cy.get(`[href="/k8s/ns/${namespace}/deploymentconfigs/nodejs-example"]`).click();
+        break;
+      }
+      case 'Build Configs':
+      case resources.buildconfigs: {
+        cy.get(`[href="/k8s/ns/${namespace}/buildconfigs/nodejs-example"]`).click();
+        break;
+      }
+      case 'Services':
+      case resources.services: {
+        cy.get(`[href="/k8s/ns/${namespace}/services/nodejs-example"]`).click();
+        break;
+      }
+      case 'Image Streams':
+      case resources.imagestreams: {
+        cy.get(`[href="/k8s/ns/${namespace}/imagestreams/nodejs-example"]`).click();
+        break;
+      }
+      case 'Routes':
+      case resources.routes: {
+        cy.get(`[href="/k8s/ns/${namespace}/routes/nodejs-example"]`).click();
+        break;
+      }
+      default: {
+        throw new Error('resource is not available');
+      }
+    }
   },
 };

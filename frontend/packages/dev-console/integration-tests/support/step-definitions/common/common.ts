@@ -30,6 +30,7 @@ Given('user has created namespace starts with {string}', (projectName: string) =
 Given('user has created or selected namespace {string}', (projectName: string) => {
   projectNameSpace.selectOrCreateProject(`${projectName}`);
   cy.log(`User has selected namespace "${projectName}"`);
+  Cypress.env('namespace', `${projectName}`);
 });
 
 Given('user is at pipelines page', () => {

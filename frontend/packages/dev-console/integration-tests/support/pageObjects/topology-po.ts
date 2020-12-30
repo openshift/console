@@ -69,4 +69,5 @@ export const topologyPO = {
       cancel: '[data-test="cancel"]',
     },
   },
+  search: 'g.is-filtered',
 };

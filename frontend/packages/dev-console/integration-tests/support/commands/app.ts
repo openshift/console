@@ -4,6 +4,9 @@ export {}; // needed in files which don't have an import to trigger ES6 module u
 declare global {
   namespace Cypress {
     interface Chainable<Subject> {
+      pageTitleShouldContain(title: string): Chainable<Element>;
+      alertTitleShouldContain(title: string): Chainable<Element>;
+      clickNavLink(path: [string, string]): Chainable<Element>;
       selectByDropDownText(selector: string, dropdownText: string): Chainable<Element>;
       mouseHover(selector: string): Chainable<Element>;
       selectValueFromAutoCompleteDropDown(
@@ -29,6 +32,25 @@ after(() => {
 
 afterEach(() => {
   // checkErrors();
+});
+
+Cypress.Commands.add('pageTitleShouldContain', (title: string) => {
+  cy.get('[data-test-id ="resource-title"]')
+    .should('be.visible')
+    .and('contain.text', title);
+});
+
+Cypress.Commands.add('alertTitleShouldContain', (alertTitle: string) => {
+  cy.byLegacyTestID('modal-title').should('contain.text', alertTitle);
+});
+
+Cypress.Commands.add('clickNavLink', (path: [string, string]) => {
+  cy.get(`[data-component="pf-nav-expandable"]`) // this assumes all top level menu items are expandable
+    .contains(path[0])
+    .click(); // open top, expandable menu
+  cy.get('#page-sidebar')
+    .contains(path[1])
+    .click();
 });
 
 Cypress.Commands.add('selectByDropDownText', (selector: string, dropdownText: string) => {
