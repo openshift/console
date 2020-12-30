@@ -1,9 +1,13 @@
 import { When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { catalogPage, catalogInstallPageObj } from '../../pages/add-flow/catalog-page';
+import { catalogPO } from '../../pageObjects/add-flow-po';
 import { topologyHelper } from '../../pages/topology/topology-helper-page';
 
 When('user selects YAML view', () => {
-  cy.get(catalogInstallPageObj.installHelmChart.yamlView).click();
+  cy.document()
+    .its('readyState')
+    .should('eq', 'complete');
+  cy.get(catalogPO.installHelmChart.yamlView).click();
 });
 
 When('user selects the Chart Version {string}', (chartVersion: string) => {

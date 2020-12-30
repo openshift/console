@@ -34,6 +34,9 @@ export const addPage = {
       case 'From Catalog':
       case addOptions.DeveloperCatalog:
         cy.byLegacyTestID('dev-catalog').click();
+        cy.document()
+          .its('readyState')
+          .should('eq', 'complete');
         detailsPage.titleShouldContain(pageTitle.DeveloperCatalog);
         break;
       case 'Database':
@@ -77,6 +80,7 @@ export const addPage = {
   verifyCard: (cardName: string) =>
     cy
       .get(cardTitle)
-      .contains(cardName)
+      .parent('div')
+      .should('contain.text', cardName)
       .should('be.visible'),
 };
