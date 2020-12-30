@@ -27,6 +27,7 @@ import {
 import { iGetCommonData, iGetLoadedCommonData } from '../../selectors/immutable/selectors';
 import { toShallowJS } from '../../../../utils/immutable';
 import { getEmptyInstallStorage } from '../../../../utils/storage';
+import { getDataVolumeStorageClassName } from '../../../../selectors/dv/selectors';
 
 export const prefillInitialDiskUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
   const state = getState();
@@ -200,9 +201,46 @@ export const internalStorageDiskBusUpdater = ({
   }
 };
 
+const initialStorageClassUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
+  const state = getState();
+
+  if (
+    !hasVMSettingsValueChanged(prevState, state, id, VMSettingsField.DEFAULT_STORAGE_CLASS) &&
+    !hasStoragesChanged(prevState, state, id)
+  ) {
+    return;
+  }
+  const storageClassName = iGetVmSettingValue(state, id, VMSettingsField.DEFAULT_STORAGE_CLASS);
+
+  if (storageClassName) {
+    const iProvisionSourceStorage = iGetProvisionSourceStorage(state, id);
+    const provisionSourceStorage: VMWizardStorage =
+      iProvisionSourceStorage && iProvisionSourceStorage.toJSON();
+
+    if (
+      provisionSourceStorage &&
+      !getDataVolumeStorageClassName(provisionSourceStorage?.dataVolume)
+    ) {
+      const updatedStorage = new DataVolumeWrapper(provisionSourceStorage.dataVolume)
+        .setStorageClassName(storageClassName)
+        .asResource();
+
+      dispatch(
+        vmWizardInternalActions[InternalActionType.UpdateStorage](id, {
+          ...provisionSourceStorage,
+          dataVolume: updatedStorage,
+        }),
+      );
+    }
+  }
+};
+
 export const updateStorageTabState = (options: UpdateOptions) =>
-  [prefillInitialDiskUpdater, windowsToolsUpdater, internalStorageDiskBusUpdater].forEach(
-    (updater) => {
-      updater && updater(options);
-    },
-  );
+  [
+    prefillInitialDiskUpdater,
+    windowsToolsUpdater,
+    internalStorageDiskBusUpdater,
+    initialStorageClassUpdater,
+  ].forEach((updater) => {
+    updater && updater(options);
+  });
