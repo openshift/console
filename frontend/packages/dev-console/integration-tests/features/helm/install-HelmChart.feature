@@ -2,14 +2,14 @@ Feature: Install the Helm Release
     As a user, I want to install the helm release
 
     Background:
-        Given user is at developer perspecitve
+        Given user is at developer perspective
         And user has selected namespace "aut-helm-installation"
 
 
     @regression, @smoke
     Scenario: The Helm Chart option on the +Add Page: HR-01-TC01
         Given user is at Add page
-        Then user can see Helm Chart card on the Add page
+        Then user can see "Helm Chart" card on the Add page
 
 
     @regression, @smoke, @manual
