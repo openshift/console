@@ -14,12 +14,14 @@ import {
   validateImportProviderTab,
 } from './validations/import-providers-tab-validation';
 import { finalizeImportProviderStateUpdate } from './finalize-state-update/import-provider-finalize-state-update';
+import { setAdvancedTabValidity } from './validations/advanced-tab-validation';
 
 const UPDATE_TABS = [
   VMWizardTab.IMPORT_PROVIDERS,
   VMWizardTab.VM_SETTINGS,
   VMWizardTab.NETWORKING,
   VMWizardTab.STORAGE,
+  VMWizardTab.ADVANCED_CLOUD_INIT,
 ];
 
 const updaterResolver = {
@@ -40,6 +42,7 @@ const isTabValidResolver = {
   [VMWizardTab.VM_SETTINGS]: setVmSettingsTabValidity,
   [VMWizardTab.NETWORKING]: setNetworksTabValidity,
   [VMWizardTab.STORAGE]: setStoragesTabValidity,
+  [VMWizardTab.ADVANCED_CLOUD_INIT]: setAdvancedTabValidity,
 };
 
 const finalizeTabResolver = {

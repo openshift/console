@@ -26,3 +26,7 @@
     color: var(--pf-global--disabled-color--200) !important;
   }
 }
+
+.kubevirt-create-vm-modal__cloud-init-help-link {
+  padding-left: var(--pf-global--spacer--xs);
+}

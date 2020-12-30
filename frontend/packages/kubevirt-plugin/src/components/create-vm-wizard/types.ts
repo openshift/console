@@ -145,6 +145,7 @@ export enum OvirtProviderField {
 
 export enum CloudInitField {
   IS_FORM = 'IS_FORM',
+  AUTH_KEYS = 'AUTH_KEYS',
 }
 
 export type VMSettingsRenderableField = Exclude<VMSettingsField, VMSettingsField.HOSTNAME>;
