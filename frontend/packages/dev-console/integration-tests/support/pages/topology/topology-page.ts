@@ -94,8 +94,10 @@ export const topologyPage = {
       .should('contain.text', sideBarTabs.details);
     cy.get(topologyPO.sidePane.tabName)
       .eq(1)
-      .should('contain.text', sideBarTabs.resources);
-    cy.get(topologyPO.sidePane.tabName).should('contain.text', sideBarTabs.releaseNotes);
+      .should('contain.text', 'Resources');
+    cy.get(topologyPO.sidePane.tabs)
+      .eq(2)
+      .should('contain.text', 'Release notes');
   },
   appNode: (appName: string) => {
     return cy.get(`[data-id="group:${appName}"] g.odc-resource-icon text`).contains('A');

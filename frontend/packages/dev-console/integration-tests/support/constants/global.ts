@@ -25,3 +25,11 @@ export enum operators {
   KnativeCamelOperator = 'Knative Apache Camel K',
   EclipseCheOperator = 'Eclipse Che',
 }
+
+export enum resources {
+  Deploymentconfigs = 'Deployment Configs',
+  Buildconfigs = 'Build Configs',
+  Services = 'Services',
+  Imagestreams = 'Image Streams',
+  Routes = 'Routes',
+}

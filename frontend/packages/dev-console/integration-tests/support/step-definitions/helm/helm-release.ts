@@ -97,9 +97,37 @@ When('user clicks on the Uninstall button', () => {
 });
 
 Then('user will be redirected to Topology page with no workloads', () => {
-  cy.document()
-    .its('readyState')
-    .should('eq', 'complete');
   topologyPage.verifyTitle();
   topologyPage.verifyNoWorkLoadsText('No resources found');
+});
+
+When('user clicks on the helm release {string}', (helmReleaseName: string) => {
+  topologyPage.clickOnNode(helmReleaseName);
+});
+
+Then('user will see the sidebar for the helm release', () => {
+  topologySidePane.verify();
+});
+
+Then('user will see the Details, Resources, Release notes tabs', () => {
+  topologyPage.verifyHelmReleaseSidePaneTabs();
+});
+
+Given('user is on the topology sidebar of the helm release {string}', (helmReleaseName: string) => {
+  cy.get('g.odc-base-node__label')
+    .should('be.visible')
+    .contains(helmReleaseName)
+    .click({ force: true });
+  topologySidePane.verify();
+});
+
+Then('user will see the {string} action item', (actionItem: string) => {
+  cy.byTestActionID(actionItem).should('be.visible');
+});
+
+Then('user is redirected to the {string} Details page for the helm release', (resource: string) => {
+  cy.get(`[data-test-section-heading="${resource} details"]`).should(
+    'contain.text',
+    `${resource} details`,
+  );
 });
