@@ -16,8 +16,8 @@ PROM_PORT='9090'
 GRAFANA_PORT='32430'
 
 ./bin/bridge \
-    --listen=https://$myIP:9000 \
-    --base-address=https://$myIP:9000 \
+    --listen=https://$myIP:9001 \
+    --base-address=https://$myIP:9001 \
     --tls-cert-file=tls/tls.crt \
     --tls-key-file=tls/tls.key \
     --k8s-mode=off-cluster \
@@ -36,4 +36,4 @@ GRAFANA_PORT='32430'
     --grafana-endpoint=http://$k8sIP:$GRAFANA_PORT/ \
     --kiali-endpoint=https://172.22.6.22/api/kiali/ \
     --webhook-endpoint=https://$k8sIP:31317/api/webhook/ \
-    --proxyConfig=examples/pconfig.yaml \
+    # --proxyConfig=examples/pconfig.yaml \

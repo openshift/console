@@ -8,13 +8,14 @@ import (
 	"github.com/openshift/console/pkg/backend"
 	"github.com/openshift/console/pkg/hypercloud/middlewares/stripprefix"
 	"github.com/openshift/console/pkg/hypercloud/router"
+	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
 
 	pConfig "github.com/openshift/console/pkg/hypercloud/config"
 )
 
 var (
-	log = capnslog.NewPackageLogger("github.com/tmax-cloud/hypercloud-console", "server")
+	olog = capnslog.NewPackageLogger("github.com/tmax-cloud/hypercloud-console", "server")
 )
 
 type Proxy struct {
@@ -32,15 +33,15 @@ func (p *Proxy) ProxyRouter() *router.Router {
 
 	router, err := router.NewRouter()
 	if err != nil {
-		log.Error("Failed to create router", err)
+		olog.Error("Failed to create router", err)
 	}
 
 	for _, proxy := range p.ProxyInfo {
 		proxy := proxy
-		log.Info(proxy)
+		olog.Info(proxy)
 		proxyBackend, err := backend.NewBackend(proxy.Name, proxy.Server)
 		if err != nil {
-			log.Error("Failed to parse url", err)
+			olog.Error("Failed to parse url", err)
 		}
 		proxyBackend.Rule = proxy.Rule
 		proxyBackend.ServerURL = proxy.Server
@@ -51,11 +52,17 @@ func (p *Proxy) ProxyRouter() *router.Router {
 			}
 			prefixHandler, err := stripprefix.New(context.TODO(), proxyBackend.Handler, *handlerConfig, "stripPrefix")
 			if err != nil {
-				log.Error("Failed to create stripprefix handler", err)
+				olog.Error("Failed to create stripprefix handler", err)
 			}
-			router.AddRoute(proxyBackend.Rule, 0, prefixHandler)
+			err = router.AddRoute(proxyBackend.Rule, 0, prefixHandler)
+			if err != nil {
+				log.Info("failed to put proxy handler into Router ", err)
+			}
 		}
-		router.AddRoute(proxyBackend.Rule, 0, proxyBackend.Handler)
+		err = router.AddRoute(proxyBackend.Rule, 0, proxyBackend.Handler)
+		if err != nil {
+			log.Info("failed to put proxy handler into Router ", err)
+		}
 	}
 
 	return router
