@@ -25,6 +25,12 @@ $color-dark-border: #ddd;
   position: absolute;
   top: 35px;
 }
+.co-sysevent-audit__timeline {
+  margin-left: 0;
+  bottom: 203px;
+  position: absolute;
+  top: 26px;
+}
 
 .co-sysevent-stream__status {
   display: flex;
@@ -33,7 +39,7 @@ $color-dark-border: #ddd;
   top: 9px;
   left: 40px;
   right: 4px;
-  @media(min-width: $screen-sm-min) {
+  @media (min-width: $screen-sm-min) {
     padding-left: 25px;
     left: 45px;
     right: 0;
@@ -86,6 +92,9 @@ $color-dark-border: #ddd;
   display: flex;
   justify-content: space-between;
 }
+.co-sysevent__details__alignRight {
+  justify-content: flex-end;
+}
 
 .co-sysevent__resourcelink {
   display: block;
@@ -126,7 +135,6 @@ $color-dark-border: #ddd;
   position: relative;
 }
 
-
 .co-sysevent__icon-box {
   flex: 0 0 100px;
   display: none;
@@ -148,7 +156,7 @@ $color-dark-border: #ddd;
   width: 50%;
 }
 
-@media(min-width: $grid-float-breakpoint) {
+@media (min-width: $grid-float-breakpoint) {
   .co-sysevent {
     flex-wrap: nowrap;
     margin-left: -40px;
@@ -181,6 +189,9 @@ $color-dark-border: #ddd;
   .co-sysevent-stream__timeline__btn {
     transform: translate(-50%, -100%);
     margin-left: -2px;
+  }
+  .co-sysevent-audit {
+    padding-top: 10px;
   }
 
   .co-sysevent-stream__timeline__end-message {

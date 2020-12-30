@@ -1,26 +1,3 @@
-// export const pluralToKind = plural => {
-//   const convertKind = {
-//     secrets: 'Secret',
-//     namespaces: 'Namespace',
-//     servicebrokers: 'ServiceBroker',
-//     serviceclasses: 'ServiceClass',
-//     serviceplans: 'ServicePlan',
-//     clusterservicebrokers: 'ClusterServiceBroker',
-//     clusterserviceclasses: 'ClusterServiceClass',
-//     clusterserviceplans: 'ClusterServicePlan',
-//     serviceinstances: 'ServiceInstance',
-//     servicebindings: 'ServiceBinding',
-//     catalogserviceclaims: 'CatalogServiceClaim',
-//     templates: 'Template',
-//     templateinstances: 'TemplateInstance',
-//     namespaceclaims: 'NamespaceClaim',
-//     rolebindingclaims: 'RoleBindingClaim',
-//     resourcequotaclaims: 'ResourceQuotaClaim',
-//     deployments: 'Deployment',
-//   };
-//   return convertKind[plural];
-// };
-
 export const pluralToKind = new Map([
   ['deployments', { kind: 'Deployment', type: 'VanilaObject' }],
   ['namespaceclaims', { kind: 'NamespaceClaim', type: 'CustomResourceDefinition' }],
