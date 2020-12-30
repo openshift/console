@@ -1,4 +1,4 @@
-export const cardTitle = 'div.catalog-tile-pf-title';
+export const cardTitle = '.catalog-tile-pf-title';
 
 export const gitPO = {
   noWorkLoadsText: 'h2.co-hint-block__title',
@@ -128,6 +128,7 @@ export const catalogPO = {
     yamlView: '#form-radiobutton-editorType-yaml-field',
     formView: '#form-radiobutton-editorType-form-field',
     cancel: '[data-test-id="reset-button"]',
+    chartVersion: '#form-dropdown-chartVersion-field',
   },
   s2I: {
     gitRepoUrl: '[data-test-id="git-form-input-url"]',

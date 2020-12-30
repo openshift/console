@@ -1,6 +1,7 @@
 import { cardTitle, catalogPO } from '../../pageObjects/add-flow-po';
 import { catalogCards, catalogTypes } from '../../constants/add';
 import { pageTitle } from '../../constants/pageTitle';
+import { helmPO } from '../../pageObjects/helm-po';
 
 export const catalogPage = {
   isCheckBoxSelected: (type: string) => cy.get(`input[title="${type}"]`).should('be.checked'),
@@ -95,4 +96,25 @@ export const catalogPage = {
   verifyCardName: (partialCardName: string) => {
     cy.get(cardTitle).contains(partialCardName, { matchCase: false });
   },
+};
+
+export const catalogInstallPageObj = {
+  selectHelmChartVersion: (version: string) => cy.dropdownSwitchTo(version),
+  verifyChartVersionDropdownAvailable: () => cy.isDropdownVisible(),
+  selectChangeOfChartVersionDialog: (option: string) => {
+    if (option === 'Proceed') {
+      cy.get('#confirm-action').click();
+    } else {
+      cy.byLegacyTestID('modal-cancel-action').click();
+    }
+  },
+  selectHelmChartCard: (cardName: string) => cy.dropdownSwitchTo(cardName),
+};
+
+export const sidePaneObj = {
+  verifyChartVersion: () =>
+    cy
+      .get(helmPO.sidePane.chartVersion)
+      .eq(0)
+      .should('have.text', '0.2.1'),
 };

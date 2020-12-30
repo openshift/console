@@ -12,7 +12,7 @@ Feature: Install the Helm Release
         Then user can see "Helm Chart" card on the Add page
 
 
-    @smoke
+    @smoke, @manual
     Scenario: Developer Catalog Page when Helm Charts checkbox is selected: HR-01-TC02, HR-02-TC02
         Given user is at Add page
         And user has added multiple helm charts repositories
@@ -57,7 +57,7 @@ Feature: Install the Helm Release
     @regression
     Scenario: Chart versions drop down menu
         Given user is at Add page
-        And user is at the developer catalog page
+        And user is at Developer Catalog page
         And user searches 'Nodejs Ex K v0.2.1' card from catalog page
         And user selects "Nodejs Ex K v0.2.1" helm chart from catalog page
         And user will see the information of all the chart versions together
@@ -76,7 +76,7 @@ Feature: Install the Helm Release
         And modal will have the warning of data lost
 
 
-    @regression
+    @regression, @manual
     Scenario: README should be updated when chart version is updated
         Given user is at Install Helm Chart page
         Then user will see the chart version dropdown
