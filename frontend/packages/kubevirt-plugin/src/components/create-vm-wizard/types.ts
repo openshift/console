@@ -79,6 +79,7 @@ export enum VMSettingsField {
   TEMPLATE_SUPPORTED = 'TEMPLATE_SUPPORTED',
   CLONE_PVC_NS = 'CLONE_PVC_NS',
   CLONE_PVC_NAME = 'CLONE_PVC_NAME',
+  DEFAULT_STORAGE_CLASS = 'DEFAULT_STORAGE_CLASS',
 }
 
 export enum ImportProvidersField {
@@ -147,7 +148,14 @@ export enum CloudInitField {
   IS_FORM = 'IS_FORM',
 }
 
-export type VMSettingsRenderableField = Exclude<VMSettingsField, VMSettingsField.HOSTNAME>;
+export type VMSettingsFieldAttribute =
+  | VMSettingsField.HOSTNAME
+  | VMSettingsField.DEFAULT_STORAGE_CLASS;
+
+export type VMSettingsRenderableField = Exclude<
+  VMSettingsField,
+  VMSettingsField.HOSTNAME | VMSettingsField.DEFAULT_STORAGE_CLASS
+>;
 
 export type ImportProviderRenderableField = Exclude<
   ImportProvidersField,

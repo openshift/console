@@ -2,12 +2,17 @@ import * as React from 'react';
 import { Checkbox, Form, TextArea, TextInput } from '@patternfly/react-core';
 import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { useAccessReview2 } from '@console/internal/components/utils';
+import { StorageClassResourceKind } from '@console/internal/module/k8s';
+import { StorageClassModel } from '@console/internal/models';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { iGet, iGetIn } from '../../../../utils/immutable';
 import { FormFieldMemoRow } from '../../form/form-field-row';
 import { FormField, FormFieldType } from '../../form/form-field';
 import { vmWizardActions } from '../../redux/actions';
 import {
   VMSettingsField,
+  VMSettingsFieldAttribute,
   VMSettingsRenderableField,
   VMWizardProps,
   VMWizardStorage,
@@ -28,6 +33,7 @@ import { ProvisionSourceComponent } from './provision-source';
 import { URLSource } from './url-source';
 import { getFieldId } from '../../utils/renderable-field-utils';
 import { ClonePVCSource } from './clone-pvc-source';
+import { getDefaultStorageClass } from '../../../../selectors/config-map/sc-defaults';
 
 import '../../create-vm-wizard-footer.scss';
 import './vm-settings-tab.scss';
@@ -44,6 +50,7 @@ export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
   goToStep,
   vmSettings,
   onFieldChange,
+  onFieldAttributeChange,
 }) => {
   const { t } = useTranslation();
   const getField = React.useCallback((key: VMSettingsField) => iGet(vmSettings, key), [vmSettings]);
@@ -55,9 +62,36 @@ export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
     (key: VMSettingsRenderableField) => (value) => onFieldChange(key, value),
     [onFieldChange],
   );
+  const onAttributeChange = React.useCallback(
+    (key: VMSettingsFieldAttribute) => (value) => onFieldAttributeChange(key, value),
+    [onFieldAttributeChange],
+  );
 
   const goToStorageStep = React.useCallback(() => goToStep(VMWizardTab.STORAGE), [goToStep]);
   const goToNetworkingStep = React.useCallback(() => goToStep(VMWizardTab.NETWORKING), [goToStep]);
+
+  const [scAllowed] = useAccessReview2({
+    group: StorageClassModel.apiGroup,
+    resource: StorageClassModel.plural,
+    verb: 'list',
+  });
+  const [storageClasses] = useK8sWatchResource<StorageClassResourceKind[]>(
+    scAllowed
+      ? {
+          kind: StorageClassModel.kind,
+          isList: true,
+          namespaced: false,
+        }
+      : null,
+  );
+
+  const defaultStorageClass = scAllowed && getDefaultStorageClass(storageClasses);
+
+  React.useEffect(() => {
+    if (defaultStorageClass) {
+      onAttributeChange(VMSettingsField.DEFAULT_STORAGE_CLASS)(defaultStorageClass?.metadata?.name);
+    }
+  }, [defaultStorageClass, onAttributeChange]);
 
   return (
     <Form className="co-m-pane__body co-m-pane__form kubevirt-create-vm-modal__form">
@@ -181,6 +215,7 @@ const stateToProps = (state, { wizardReduxID }) => ({
 
 type VMSettingsTabComponentProps = {
   onFieldChange: (key: VMSettingsRenderableField, value: string) => void;
+  onFieldAttributeChange: (key: VMSettingsFieldAttribute, value: string) => void;
   updateStorage: (storage: VMWizardStorage) => void;
   vmSettings: any;
   provisionSourceStorage: VMWizardStorage;
@@ -196,6 +231,8 @@ type VMSettingsTabComponentProps = {
 
 const dispatchToProps = (dispatch, props) => ({
   onFieldChange: (key, value) =>
+    dispatch(vmWizardActions[ActionType.SetVmSettingsFieldValue](props.wizardReduxID, key, value)),
+  onFieldAttributeChange: (key, value) =>
     dispatch(vmWizardActions[ActionType.SetVmSettingsFieldValue](props.wizardReduxID, key, value)),
   updateStorage: (storage: VMWizardStorage) => {
     dispatch(vmWizardActions[ActionType.UpdateStorage](props.wizardReduxID, storage));
