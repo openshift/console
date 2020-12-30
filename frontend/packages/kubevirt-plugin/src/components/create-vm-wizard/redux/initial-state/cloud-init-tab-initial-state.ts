@@ -6,6 +6,9 @@ export const getCloudInitInitialState: InitialStepStateGetter = (data: CommonDat
     [CloudInitField.IS_FORM]: {
       value: true,
     },
+    [CloudInitField.AUTH_KEYS]: {
+      value: [],
+    },
   },
   error: null,
   isValid: true,

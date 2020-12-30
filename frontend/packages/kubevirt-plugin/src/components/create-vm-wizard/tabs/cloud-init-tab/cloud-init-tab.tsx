@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import {
   AlertVariant,
@@ -15,7 +16,8 @@ import {
 } from '@patternfly/react-core';
 import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { confirmModal } from '@console/internal/components/modals';
-import { useTranslation } from 'react-i18next';
+import { asValidationObject } from '@console/shared';
+import { ExternalLink } from '@console/internal/components/utils';
 import {
   CloudInitField,
   VMWizardStorage,
@@ -46,11 +48,12 @@ import {
   hasStepDeleteDisabled,
   hasStepUpdateDisabled,
 } from '../../selectors/immutable/wizard-selectors';
+import { iGetCommonData } from '../../selectors/immutable/selectors';
+import { getAuthKeyError } from '../../redux/validations/advanced-tab-validation';
+import { CloudInitInfoHelper } from './cloud-init-info-helper';
 
 import '../../create-vm-wizard-footer.scss';
 import './cloud-init-tab.scss';
-import { iGetCommonData } from '../../selectors/immutable/selectors';
-import { CloudInitInfoHelper } from './cloud-init-info-helper';
 
 type CustomScriptProps = {
   id: string;
@@ -71,11 +74,29 @@ const CustomScript: React.FC<CustomScriptProps> = ({ id, isDisabled, value, onCh
   </FormRow>
 );
 
+const CloudInitAuthKeyHelp: React.FC = () => {
+  const { t } = useTranslation();
+
+  return (
+    <div className="pf-c-form__helper-text" aria-live="polite">
+      <Trans t={t} ns="kubevirt-plugin">
+        Authorized keys must folow the SSH Pulic key format,
+        <ExternalLink
+          additionalClassName="kubevirt-create-vm-modal__cloud-init-help-link"
+          text={t('kubevirt-plugin~Learn more')}
+          href={'https://www.redhat.com/sysadmin/configure-ssh-keygen'}
+        />
+      </Trans>
+    </div>
+  );
+};
+
 type CloudInitFormRowsProps = {
   id: string;
   isDisabled?: boolean;
   value: string;
   onEntryChange: (key: string, value: any) => void;
+  setAuthKeys: (authKeys: string[]) => void;
 };
 
 const CloudInitFormRows: React.FC<CloudInitFormRowsProps> = ({
@@ -83,12 +104,19 @@ const CloudInitFormRows: React.FC<CloudInitFormRowsProps> = ({
   isDisabled,
   value,
   onEntryChange,
+  setAuthKeys,
 }) => {
   const { t } = useTranslation();
   const asId = prefixedID.bind(null, id);
   const data = new CloudInitDataHelper({ userData: value });
   const authKeys = data.get(CloudInitDataFormKeys.SSH_AUTHORIZED_KEYS) || [];
   const areAuthKeysOriginallyEmpty = authKeys.length === 0;
+
+  // t('kubevirt-plugin~Invalid SSH public key format.')
+  const authKeyvalidation =
+    getAuthKeyError(true, authKeys) &&
+    asValidationObject('kubevirt-plugin~Invalid SSH public key format.');
+  setAuthKeys(authKeys);
 
   const areAuthKeysEmpty = (keys) => keys.length === 0 || (keys.length === 1 && !keys[0]);
 
@@ -108,6 +136,7 @@ const CloudInitFormRows: React.FC<CloudInitFormRowsProps> = ({
       <FormRow
         title={t('kubevirt-plugin~Authorized SSH Keys')}
         fieldId={asId(CloudInitDataFormKeys.SSH_AUTHORIZED_KEYS)}
+        validation={authKeyvalidation}
       >
         {authKeys.map((authKey, idx) => {
           const uiIDX = idx + 1;
@@ -154,6 +183,7 @@ const CloudInitFormRows: React.FC<CloudInitFormRowsProps> = ({
             </Split>
           );
         })}
+        <CloudInitAuthKeyHelp />
         <Button
           id={asId(joinIDs(CloudInitDataFormKeys.SSH_AUTHORIZED_KEYS, 'add'))}
           icon={<PlusCircleIcon />}
@@ -176,6 +206,7 @@ const CloudInitTabComponent: React.FC<ResultTabComponentProps> = ({
   isForm,
   isProviderImport,
   setIsForm,
+  setAuthKeys,
   updateStorage,
   removeStorage,
   isDisabled,
@@ -344,6 +375,7 @@ const CloudInitTabComponent: React.FC<ResultTabComponentProps> = ({
             onEntryChange={(key: string, value: string) =>
               onFormValueChanged(data, key, value, isBase64)
             }
+            setAuthKeys={setAuthKeys}
           />
         )}
         <FormRow fieldId={asId('base64')}>
@@ -370,6 +402,7 @@ type ResultTabComponentProps = {
   removeStorage: (storageId: string) => void;
   isForm: boolean;
   setIsForm: (isForm: boolean) => void;
+  setAuthKeys: (authKeys: string[]) => void;
 };
 
 const stateToProps = (state, { wizardReduxID }) => {
@@ -398,6 +431,15 @@ const dispatchToProps = (dispatch, props) => ({
         props.wizardReduxID,
         CloudInitField.IS_FORM,
         isForm,
+      ),
+    );
+  },
+  setAuthKeys: (authKeys: string[]) => {
+    dispatch(
+      vmWizardActions[ActionType.SetCloudInitFieldValue](
+        props.wizardReduxID,
+        CloudInitField.AUTH_KEYS,
+        authKeys,
       ),
     );
   },
