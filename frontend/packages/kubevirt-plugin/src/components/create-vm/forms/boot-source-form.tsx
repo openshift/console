@@ -10,10 +10,14 @@ import {
   ExpandableSection,
   Popover,
   PopoverPosition,
+  Alert,
+  Stack,
+  StackItem,
 } from '@patternfly/react-core';
 import { HelpIcon } from '@patternfly/react-icons';
 import { PersistentVolumeClaimModel, StorageClassModel } from '@console/internal/models';
 import {
+  ExternalLink,
   ListDropdown,
   LoadingInline,
   RequestSizeInput,
@@ -40,10 +44,12 @@ import {
   getDefaultSCAccessModes,
   getDefaultSCVolumeMode,
   getDefaultStorageClass,
+  isConfigMapContainsScModes,
 } from '../../../selectors/config-map/sc-defaults';
 import { getAnnotation } from '../../../selectors/selectors';
 import { getFieldId } from '../../create-vm-wizard/utils/renderable-field-utils';
 import { VMSettingsField } from '../../create-vm-wizard/types';
+import { STORAGE_CLASS_SUPPORTED_MATRIX_DOC_LINK } from '../../../utils/strings';
 
 type AdvancedSectionProps = {
   state: BootSourceState;
@@ -74,6 +80,7 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({ state, dispatch, disa
   const updatedStorageClass = storageClasses?.find(
     (sc) => sc.metadata.name === state.storageClass?.value,
   );
+  const storageClassName = updatedStorageClass?.metadata?.name;
   const provisioner = updatedStorageClass?.provisioner || '';
   let accessModes: string[] =
     provisionerAccessModeMapping[provisioner] || getAccessModeForProvisioner(provisioner);
@@ -82,12 +89,16 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({ state, dispatch, disa
     accessModes = getDefaultSCAccessModes(scConfigMap).map((am) => am.getValue());
   }
 
+  const [defaultAccessMode, defaultVolumeMode, isScModesKnown] = React.useMemo(() => {
+    return [
+      getDefaultSCAccessModes(scConfigMap, storageClassName)?.[0],
+      getDefaultSCVolumeMode(scConfigMap, storageClassName),
+      isConfigMapContainsScModes(scConfigMap, storageClassName),
+    ];
+  }, [scConfigMap, storageClassName]);
+
   const handleStorageClass = React.useCallback(
     (scName: string) => {
-      dispatch({
-        type: BOOT_ACTION_TYPE.SET_ACCESS_MODE,
-        payload: AccessMode.READ_WRITE_ONCE.getValue(),
-      });
       dispatch({
         type: BOOT_ACTION_TYPE.SET_STORAGE_CLASS,
         payload: scName,
@@ -101,24 +112,37 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({ state, dispatch, disa
       if (!state.storageClass?.value && defaultSCName) {
         handleStorageClass(defaultSCName);
       }
-      if (!state.volumeMode?.value) {
-        dispatch({
-          type: BOOT_ACTION_TYPE.SET_VOLUME_MODE,
-          payload: getDefaultSCVolumeMode(scConfigMap).getValue(),
-        });
-      }
     }
   }, [
     defaultSCName,
     handleStorageClass,
     scLoaded,
     state.storageClass,
-    state.volumeMode,
     dispatch,
     scConfigMap,
     cmLoaded,
     scAllowedLoading,
   ]);
+
+  React.useEffect(() => {
+    if (state.storageClass?.value) {
+      if (defaultAccessMode.getValue() !== state?.accessMode?.value) {
+        dispatch({
+          type: BOOT_ACTION_TYPE.SET_ACCESS_MODE,
+          payload: defaultAccessMode.getValue(),
+        });
+      }
+
+      if (defaultVolumeMode.getValue() !== state?.volumeMode?.value) {
+        dispatch({
+          type: BOOT_ACTION_TYPE.SET_VOLUME_MODE,
+          payload: defaultVolumeMode.getValue(),
+        });
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [defaultAccessMode, defaultVolumeMode]);
+
   return cmLoaded && scLoaded && !scAllowedLoading ? (
     <Form>
       {scAllowed && (
@@ -156,7 +180,20 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({ state, dispatch, disa
         >
           {accessModes.map((am) => {
             const accessMode = AccessMode.fromString(am);
-            return <SelectOption key={accessMode.getValue()} value={accessMode} />;
+            return (
+              <SelectOption key={accessMode.getValue()} value={accessMode}>
+                {accessMode.toString().concat(
+                  accessMode.getValue() !== defaultAccessMode.getValue() && isScModesKnown
+                    ? t(
+                        'kubevirt-plugin~ - Not recommended for {{storageClassName}} storage class',
+                        {
+                          storageClassName,
+                        },
+                      )
+                    : '',
+                )}
+              </SelectOption>
+            );
           })}
         </FormPFSelect>
       </FormRow>
@@ -174,9 +211,49 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({ state, dispatch, disa
           toggleId="form-ds-volume-mode-select"
         >
           {VolumeMode.getAll().map((vm) => (
-            <SelectOption key={vm.getValue()} value={vm} />
+            <SelectOption key={vm.getValue()} value={vm}>
+              {vm.toString().concat(
+                vm.getValue() !== defaultVolumeMode.getValue() && isScModesKnown
+                  ? t('kubevirt-plugin~ - Not recommended for {{storageClassName}} storage class', {
+                      storageClassName,
+                    })
+                  : '',
+              )}
+            </SelectOption>
           ))}
         </FormPFSelect>
+      </FormRow>
+      <FormRow fieldId="form-sc-alert">
+        {isScModesKnown ? (
+          <Alert
+            variant="info"
+            isInline
+            title={t(
+              'kubevirt-plugin~Access and Volume modes should follow storage feature matrix',
+            )}
+          >
+            <ExternalLink
+              text={t('kubevirt-plugin~Learn more')}
+              href={STORAGE_CLASS_SUPPORTED_MATRIX_DOC_LINK}
+            />
+          </Alert>
+        ) : (
+          <Alert variant="warning" isInline title={t('kubevirt-plugin~Warning')}>
+            <Stack hasGutter>
+              <StackItem>
+                {t(
+                  'kubevirt-plugin~Config map does not contain suggested access and volume modes for the selected storage class',
+                )}
+              </StackItem>
+              <StackItem>
+                <ExternalLink
+                  text={t('kubevirt-plugin~Learn more')}
+                  href={STORAGE_CLASS_SUPPORTED_MATRIX_DOC_LINK}
+                />
+              </StackItem>
+            </Stack>
+          </Alert>
+        )}
       </FormRow>
     </Form>
   ) : (
