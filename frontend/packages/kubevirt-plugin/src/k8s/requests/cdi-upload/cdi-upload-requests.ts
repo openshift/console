@@ -19,8 +19,8 @@ const UPLOAD_STATES = {
 
 export class PVCInitError extends Error {
   constructor() {
-    // t('kubevirt-plugin~Data Volume failed to initiate upload, and has been deleted.')
-    super('kubevirt-plugin~Data Volume failed to initiate upload, and has been deleted.');
+    // t('kubevirt-plugin~Data Volume failed to initiate upload.')
+    super('kubevirt-plugin~Data Volume failed to initiate upload.');
   }
 }
 

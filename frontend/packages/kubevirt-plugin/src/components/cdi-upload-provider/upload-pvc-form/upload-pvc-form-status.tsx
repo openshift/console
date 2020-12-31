@@ -1,5 +1,4 @@
 import * as React from 'react';
-import cx from 'classnames';
 import {
   Title,
   Button,
@@ -60,11 +59,7 @@ export const UploadPVCFormStatus: React.FC<UploadPVCFormStatusProps> = ({
   };
 
   return (
-    <Bullseye
-      className={cx({
-        'kv--create-upload__hide': !isSubmitting,
-      })}
-    >
+    <Bullseye className={!isSubmitting && 'kv--create-upload__hide'}>
       <EmptyState>
         <DataUploadStatus
           upload={upload}
