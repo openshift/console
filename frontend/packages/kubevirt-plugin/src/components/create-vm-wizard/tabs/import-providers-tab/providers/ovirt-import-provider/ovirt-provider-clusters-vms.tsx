@@ -74,7 +74,8 @@ const OvirtProviderClustersVMsConnected: React.FC<OvirtProviderClustersVMsConnec
         : null,
     );
 
-    const defaultStorageClass = scAllowed && getDefaultStorageClass(storageClasses);
+    const defaultStorageClass =
+      scAllowed && (getDefaultStorageClass(storageClasses) || storageClasses?.[0]);
 
     return (
       <>

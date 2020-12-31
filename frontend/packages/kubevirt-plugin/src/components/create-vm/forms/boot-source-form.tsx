@@ -108,9 +108,11 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({ state, dispatch, disa
   );
 
   React.useEffect(() => {
-    if (!scAllowedLoading && scLoaded && cmLoaded) {
-      if (!state.storageClass?.value && defaultSCName) {
+    if (!scAllowedLoading && scLoaded && cmLoaded && !state.storageClass?.value) {
+      if (defaultSCName) {
         handleStorageClass(defaultSCName);
+      } else {
+        handleStorageClass(storageClasses?.[0]?.metadata?.name);
       }
     }
   }, [
@@ -122,6 +124,7 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({ state, dispatch, disa
     scConfigMap,
     cmLoaded,
     scAllowedLoading,
+    storageClasses,
   ]);
 
   React.useEffect(() => {

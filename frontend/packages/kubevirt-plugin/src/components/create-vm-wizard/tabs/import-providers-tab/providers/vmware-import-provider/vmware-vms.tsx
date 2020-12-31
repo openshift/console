@@ -49,7 +49,8 @@ const VMWareVMsConnected: React.FC<VMWareVMsConnectedProps> = React.memo(
         : null,
     );
 
-    const defaultStorageClass = scAllowed && getDefaultStorageClass(storageClasses);
+    const defaultStorageClass =
+      scAllowed && (getDefaultStorageClass(storageClasses) || storageClasses?.[0]);
 
     return (
       <FormFieldRow field={vmField} fieldType={FormFieldType.SELECT}>

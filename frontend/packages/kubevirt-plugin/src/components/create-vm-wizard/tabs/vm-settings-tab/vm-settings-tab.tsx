@@ -85,7 +85,8 @@ export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
       : null,
   );
 
-  const defaultStorageClass = scAllowed && getDefaultStorageClass(storageClasses);
+  const defaultStorageClass =
+    scAllowed && (getDefaultStorageClass(storageClasses) || storageClasses?.[0]);
 
   React.useEffect(() => {
     if (defaultStorageClass) {
