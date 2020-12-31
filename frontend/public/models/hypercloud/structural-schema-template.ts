@@ -15100,7 +15100,7 @@ metadata:
     type: 'object',
     $schema: 'http://json-schema.org/schema#',
   })
-  .setIn([referenceForModel(k8sModels.PodModel), 'default'], {
+  .setIn([referenceForModel(k8sModels.DaemonSetModel), 'default'], {
     description: 'DaemonSetSpec is the specification of a daemon set.',
     properties: {
       minReadySeconds: {
