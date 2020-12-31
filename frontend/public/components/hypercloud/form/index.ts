@@ -28,6 +28,7 @@ export const pluralToKind = new Map([
   ['clusterservicebrokers', { kind: 'ClusterServiceBroker', type: 'CustomResourceDefinition' }],
   ['clusterserviceclasses', { kind: 'ClusterServiceClass', type: 'CustomResourceDefinition' }],
   ['clusterserviceplans', { kind: 'ClusterServicePlan', type: 'CustomResourceDefinition' }],
+  ['clustertemplates', { kind: 'ClusterTemplate', type: 'CustomResourceDefinition' }],
   ['serviceinstances', { kind: 'ServiceInstance', type: 'CustomResourceDefinition' }],
   ['servicebindings', { kind: 'ServiceBinding', type: 'CustomResourceDefinition' }],
   ['catalogserviceclaims', { kind: 'CatalogServiceClaim', type: 'CustomResourceDefinition' }],
