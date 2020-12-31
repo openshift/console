@@ -112,10 +112,12 @@ const CloudInitFormRows: React.FC<CloudInitFormRowsProps> = ({
   const authKeys = data.get(CloudInitDataFormKeys.SSH_AUTHORIZED_KEYS) || [];
   const areAuthKeysOriginallyEmpty = authKeys.length === 0;
 
-  // t('kubevirt-plugin~Invalid SSH public key format.')
+  // t('kubevirt-plugin~Invalid SSH public key format (use rfc4253 ssh-rsa format).')
   const authKeyvalidation =
     getAuthKeyError(true, authKeys) &&
-    asValidationObject('kubevirt-plugin~Invalid SSH public key format.');
+    asValidationObject(
+      'kubevirt-plugin~Invalid SSH public key format (use rfc4253 ssh-rsa format).',
+    );
   setAuthKeys(authKeys);
 
   const areAuthKeysEmpty = (keys) => keys.length === 0 || (keys.length === 1 && !keys[0]);
