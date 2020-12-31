@@ -1,0 +1,16 @@
+FROM quay.io/coreos/tectonic-console-builder:v16 AS build
+
+RUN mkdir -p /go/src/github.com/openshift/console/
+ADD . /go/src/github.com/openshift/console/
+WORKDIR /go/src/github.com/openshift/console/
+RUN ./script-linux/build-linux.sh
+
+FROM openshift/origin-base
+
+COPY --from=build /go/src/github.com/openshift/console/frontend/public/dist /opt/bridge/static
+COPY --from=build /go/src/github.com/openshift/console/bin/bridge /opt/bridge/bin/bridge
+
+# doesn't require a root user. 
+USER 1001 
+
+CMD [ "/opt/bridge/bin/bridge", "--public-dir=/opt/bridge/static" ]
