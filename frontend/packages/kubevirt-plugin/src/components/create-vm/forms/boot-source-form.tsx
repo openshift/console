@@ -144,7 +144,7 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({ state, dispatch, disa
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [defaultAccessMode, defaultVolumeMode]);
+  }, [defaultAccessMode, defaultVolumeMode, state.storageClass]);
 
   return cmLoaded && scLoaded && !scAllowedLoading ? (
     <Form>
