@@ -13,7 +13,6 @@ import {
   StackItem,
 } from '@patternfly/react-core';
 import {
-  ExternalLink,
   FirehoseResult,
   HandlePromiseProps,
   withHandlePromise,
@@ -39,12 +38,7 @@ import {
   getDefaultStorageClass,
   isConfigMapContainsScModes,
 } from '../../../selectors/config-map/sc-defaults';
-import {
-  DYNAMIC,
-  getDialogUIError,
-  getSequenceName,
-  STORAGE_CLASS_SUPPORTED_MATRIX_DOC_LINK,
-} from '../../../utils/strings';
+import { DYNAMIC, getDialogUIError, getSequenceName } from '../../../utils/strings';
 import { ModalFooter } from '../modal/modal-footer';
 import { useShowErrorToggler } from '../../../hooks/use-show-error-toggler';
 import { DiskWrapper } from '../../../k8s/wrapper/vm/disk-wrapper';
@@ -80,6 +74,7 @@ import { FormPFSelect } from '../../form/form-pf-select';
 import './disk-modal.scss';
 import { URLSourceHelp } from '../../form/helper/url-source-help';
 import { ContainerSourceHelp } from '../../form/helper/container-source-help';
+import { ConfigMapDefaultModesAlert } from '../../Alerts/ConfigMapDefaultModesAlert';
 
 export const DiskModal = withHandlePromise((props: DiskModalProps) => {
   const {
@@ -698,36 +693,7 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                   )}
                 </StackItem>
                 <StackItem>
-                  {isScModesKnown ? (
-                    <Alert
-                      variant="info"
-                      isInline
-                      title={t(
-                        'kubevirt-plugin~Access and Volume modes should follow storage feature matrix',
-                      )}
-                    >
-                      <ExternalLink
-                        text={t('kubevirt-plugin~Learn more')}
-                        href={STORAGE_CLASS_SUPPORTED_MATRIX_DOC_LINK}
-                      />
-                    </Alert>
-                  ) : (
-                    <Alert variant="warning" isInline title={t('kubevirt-plugin~Warning')}>
-                      <Stack hasGutter>
-                        <StackItem>
-                          {t(
-                            'kubevirt-plugin~Config map does not contain suggested access and volume modes for the selected storage class',
-                          )}
-                        </StackItem>
-                        <StackItem>
-                          <ExternalLink
-                            text={t('kubevirt-plugin~Learn more')}
-                            href={STORAGE_CLASS_SUPPORTED_MATRIX_DOC_LINK}
-                          />
-                        </StackItem>
-                      </Stack>
-                    </Alert>
-                  )}
+                  <ConfigMapDefaultModesAlert isScModesKnown={isScModesKnown} />
                 </StackItem>
               </Stack>
             </ExpandableSection>

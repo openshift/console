@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import axios from 'axios';
 import cx from 'classnames';
 import { Helmet } from 'react-helmet';
@@ -16,13 +15,15 @@ import {
   FormSelectOption,
   Split,
   SplitItem,
+  SelectOption,
 } from '@patternfly/react-core';
-import { isCephProvisioner, isObjectSC } from '@console/shared/src/utils';
 import {
   K8sResourceKind,
   apiVersionForModel,
   TemplateKind,
   PersistentVolumeClaimKind,
+  ConfigMapKind,
+  StorageClassResourceKind,
 } from '@console/internal/module/k8s';
 import {
   ButtonBar,
@@ -31,15 +32,10 @@ import {
   resourcePath,
   ExternalLink,
   ResourceLink,
+  useAccessReview2,
 } from '@console/internal/components/utils';
-import { StorageClassDropdown } from '@console/internal/components/utils/storage-class-dropdown';
-import { RadioInput } from '@console/internal/components/radio';
-import { StorageClass } from '@console/internal/components/storage-class-form';
 import {
-  cephRBDProvisionerSuffix,
   provisionerAccessModeMapping,
-  initialAccessModes,
-  accessModeRadios,
   dropdownUnits,
   getAccessModeForProvisioner,
 } from '@console/internal/components/storage/shared';
@@ -55,15 +51,21 @@ import {
 } from '../../../k8s/requests/cdi-upload/cdi-upload-requests';
 import { CDIUploadContext } from '../cdi-upload-provider';
 import { UploadPVCFormStatus, uploadErrorType } from './upload-pvc-form-status';
-import { PersistentVolumeClaimModel, TemplateModel } from '@console/internal/models';
+import {
+  PersistentVolumeClaimModel,
+  StorageClassModel,
+  TemplateModel,
+} from '@console/internal/models';
 import { getName, getNamespace } from '@console/shared';
 import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
 import { getTemplateOperatingSystems } from '../../../selectors/vm-template/advanced';
 import { FormSelectPlaceholderOption } from '../../form/form-select-placeholder-option';
 import {
+  AccessMode,
   TEMPLATE_TYPE_BASE,
   TEMPLATE_TYPE_LABEL,
   TEMPLATE_VM_COMMON_NAMESPACE,
+  VolumeMode,
 } from '../../../constants';
 import {
   CDI_UPLOAD_OS_URL_PARAM,
@@ -71,6 +73,15 @@ import {
   CDI_UPLOAD_URL_BUILDER,
 } from '../consts';
 import { OperatingSystemRecord } from '../../../types';
+import { useStorageClassConfigMap } from '../../../hooks/storage-class-config-map';
+import { FormPFSelect } from '../../form/form-pf-select';
+import {
+  getDefaultSCAccessModes,
+  getDefaultSCVolumeMode,
+  getDefaultStorageClass,
+  isConfigMapContainsScModes,
+} from '../../../selectors/config-map/sc-defaults';
+import { ConfigMapDefaultModesAlert } from '../../Alerts/ConfigMapDefaultModesAlert';
 import './upload-pvc-form.scss';
 
 const templatesResource: WatchK8sResource = {
@@ -108,6 +119,8 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
   isLoading,
   setIsFileRejected,
   setDisableFormSubmit,
+  scConfigMap,
+  storageClasses,
   ...props
 }) => {
   const { t } = useTranslation();
@@ -115,18 +128,56 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
   const operatingSystemHaveDV = operatingSystems.find(
     (os) => os?.baseImageName && os?.baseImageNamespace,
   );
-  const [accessModeHelp, setAccessModeHelp] = React.useState('Permissions to the mounted drive.');
-  const [allowedAccessModes, setAllowedAccessModes] = React.useState(initialAccessModes);
-  const [storageClass, setStorageClass] = React.useState('');
+  const [storageClassName, setStorageClass] = React.useState('');
   const [pvcName, setPvcName] = React.useState('');
   const [namespace, setNamespace] = React.useState(props.namespace);
-  const [accessMode, setAccessMode] = React.useState('ReadWriteOnce');
+  const [accessMode, setAccessMode] = React.useState('');
+  const [volumeMode, setVolumeMode] = React.useState('');
   const [requestSizeValue, setRequestSizeValue] = React.useState('');
   const [requestSizeUnit, setRequestSizeUnit] = React.useState('Gi');
-  const [storageProvisioner, setStorageProvisioner] = React.useState('');
   const [isGolden, setIsGolden] = React.useState(!!osParam);
   const [os, setOs] = React.useState<OperatingSystemRecord>();
   const [osImageExists, setOsImageExists] = React.useState(false);
+  const defaultSCName = getDefaultStorageClass(storageClasses)?.metadata.name;
+  const updatedStorageClass = storageClasses?.find((sc) => sc.metadata.name === storageClassName);
+  const provisioner = updatedStorageClass?.provisioner || '';
+  let accessModes: string[] =
+    provisionerAccessModeMapping[provisioner] || getAccessModeForProvisioner(provisioner);
+
+  if (storageClasses?.length === 0 && scConfigMap) {
+    accessModes = getDefaultSCAccessModes(scConfigMap).map((am) => am.getValue());
+  }
+
+  const [defaultAccessMode, defaultVolumeMode, isScModesKnown] = React.useMemo(() => {
+    return [
+      getDefaultSCAccessModes(scConfigMap, storageClassName)?.[0],
+      getDefaultSCVolumeMode(scConfigMap, storageClassName),
+      isConfigMapContainsScModes(scConfigMap, storageClassName),
+    ];
+  }, [scConfigMap, storageClassName]);
+
+  React.useEffect(() => {
+    if (!storageClassName) {
+      if (defaultSCName) {
+        setStorageClass(defaultSCName);
+      } else {
+        setStorageClass(storageClasses?.[0]?.metadata?.name);
+      }
+    }
+  }, [defaultSCName, storageClassName, storageClasses]);
+
+  React.useEffect(() => {
+    if (storageClassName) {
+      if (defaultAccessMode.getValue() !== accessMode) {
+        setAccessMode(defaultAccessMode.getValue());
+      }
+
+      if (defaultVolumeMode.getValue() !== volumeMode) {
+        setVolumeMode(defaultVolumeMode.getValue());
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [defaultAccessMode, defaultVolumeMode, storageClassName]);
 
   React.useEffect(() => {
     const updateDV = (): K8sResourceKind => {
@@ -142,7 +193,9 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
             upload: {},
           },
           pvc: {
+            storageClassName,
             accessModes: [accessMode],
+            volumeMode,
             resources: {
               requests: {
                 storage: `${requestSizeValue}${requestSizeUnit}`,
@@ -152,50 +205,19 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
         },
       };
 
-      if (storageClass) {
-        obj.spec.pvc.storageClassName = storageClass;
-
-        // should set block only for RBD + RWX
-        if (
-          _.endsWith(storageProvisioner, cephRBDProvisionerSuffix) &&
-          accessMode === 'ReadWriteMany'
-        ) {
-          obj.spec.volumeMode = 'Block';
-        }
-      }
-
       return obj;
     };
     onChange(updateDV);
   }, [
     accessMode,
+    volumeMode,
     namespace,
     pvcName,
     onChange,
-    storageClass,
+    storageClassName,
     requestSizeValue,
     requestSizeUnit,
-    storageProvisioner,
   ]);
-
-  const handleStorageClass = (updatedStorageClass) => {
-    const provisioner: string = updatedStorageClass?.provisioner || '';
-    // if the provisioner is unknown or no storage class selected, user should be able to set any access mode
-    const modes = provisionerAccessModeMapping[provisioner]
-      ? provisionerAccessModeMapping[provisioner]
-      : getAccessModeForProvisioner(provisioner);
-    // setting message to display for various modes when a storage class of a know provisioner is selected
-    const displayMessage =
-      provisionerAccessModeMapping[provisioner] || isCephProvisioner(provisioner)
-        ? t('kubevirt-plugin~Access mode is set by storage class and cannot be changed')
-        : t('kubevirt-plugin~Permissions to the mounted drive');
-    setAccessMode('ReadWriteOnce');
-    setAccessModeHelp(displayMessage);
-    // setting accessMode to default with the change to Storage Class selection
-    setAllowedAccessModes(modes);
-    setStorageClass(updatedStorageClass?.metadata?.name);
-    setStorageProvisioner(provisioner);
-  };
 
   const handleRequestSizeInputChange = (obj) => {
     setRequestSizeValue(obj.value);
@@ -204,10 +226,6 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
 
   const handlePvcName: React.ReactEventHandler<HTMLInputElement> = (event) => {
     setPvcName(event.currentTarget.value);
-  };
-
-  const handleAccessMode: React.ReactEventHandler<HTMLInputElement> = (event) => {
-    setAccessMode(event.currentTarget.value);
   };
 
   const handleGoldenCheckbox = (checked) => {
@@ -233,8 +251,6 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
       setNamespace(operatingSystem.baseImageNamespace);
     }
   };
-
-  const onlyPvcSCs = React.useCallback((sc: StorageClass) => !isObjectSC(sc), []);
 
   React.useEffect(() => {
     if (!isLoading && osParam) {
@@ -406,15 +422,25 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
       <div className="form-group">
         <Split hasGutter>
           <SplitItem className="kv--create-upload__flexitem">
-            <StorageClassDropdown
+            <label className="control-label co-required" htmlFor="upload-form-ds-sc-select">
+              {t('kubevirt-plugin~Storage Class')}
+            </label>
+            <FormPFSelect
+              value={storageClassName}
+              onSelect={(e, value: string) => setStorageClass(value)}
+              aria-label={t('kubevirt-plugin~Select Storage Class')}
+              selections={[storageClassName]}
               isDisabled={isLoading}
-              onChange={handleStorageClass}
-              id="storageclass-dropdown"
-              describedBy="storageclass-dropdown-help"
-              required={false}
-              name="storageClass"
-              filter={onlyPvcSCs}
-            />
+              toggleId="upload-form-ds-sc-select"
+            >
+              {storageClasses?.map((sc) => (
+                <SelectOption key={sc.metadata.uid} value={sc.metadata.name}>
+                  {defaultSCName === sc.metadata.name
+                    ? t('kubevirt-plugin~{{name}} (default)', { name: sc.metadata.name })
+                    : sc.metadata.name}
+                </SelectOption>
+              ))}
+            </FormPFSelect>
           </SplitItem>
           <SplitItem className="kv--create-upload__flexitem">
             <label className="control-label co-required" htmlFor="request-size-input">
@@ -438,35 +464,62 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
           </SplitItem>
         </Split>
       </div>
-      <label className="control-label co-required" htmlFor="access-mode">
+      <label className="control-label co-required" htmlFor="upload-form-ds-access-mode-select">
         {t('kubevirt-plugin~Access Mode')}
       </label>
       <div className="form-group">
-        {accessModeRadios.map((radio) => {
-          let radioObj = null;
-          const disabled = !allowedAccessModes.includes(radio.value);
-
-          allowedAccessModes.forEach((mode) => {
-            const checked = !disabled ? radio.value === accessMode : radio.value === mode;
-            radioObj = (
-              <RadioInput
-                {...radio}
-                key={radio.value}
-                onChange={handleAccessMode}
-                inline
-                disabled={disabled}
-                checked={checked}
-                aria-describedby="access-mode-help"
-                name="accessMode"
-              />
+        <FormPFSelect
+          aria-label={t('kubevirt-plugin~Select access mode')}
+          onSelect={(e, value: AccessMode) => setAccessMode(value.getValue())}
+          selections={AccessMode.fromString(accessMode)}
+          isDisabled={isLoading}
+          toggleId="upload-form-ds-access-mode-select"
+        >
+          {accessModes.map((am) => {
+            const aMode = AccessMode.fromString(am);
+            return (
+              <SelectOption key={aMode.getValue()} value={aMode}>
+                {aMode.toString().concat(
+                  aMode.getValue() !== defaultAccessMode.getValue() && isScModesKnown
+                    ? t(
+                        'kubevirt-plugin~ - Not recommended for {{storageClassName}} storage class',
+                        {
+                          storageClassName,
+                        },
+                      )
+                    : '',
+                )}
+              </SelectOption>
             );
-          });
-
-          return radioObj;
-        })}
-        <p className="help-block" id="access-mode-help">
-          {accessModeHelp}
-        </p>
+          })}
+        </FormPFSelect>
+      </div>
+      <label className="control-label co-required" htmlFor="upload-form-ds-volume-mode-select">
+        {t('kubevirt-plugin~Volume Mode')}
+      </label>
+      <div className="form-group">
+        <FormPFSelect
+          aria-label={t('kubevirt-plugin~Select volume mode')}
+          onSelect={(e, value: VolumeMode) => setVolumeMode(value.getValue())}
+          selections={VolumeMode.fromString(volumeMode)}
+          isDisabled={isLoading}
+          toggleId="upload-form-ds-volume-mode-select"
+        >
+          {VolumeMode.getAll().map((vm) => (
+            <SelectOption key={vm.getValue()} value={vm}>
+              {vm.toString().concat(
+                vm.getValue() !== defaultVolumeMode.getValue() && isScModesKnown
+                  ? t('kubevirt-plugin~ - Not recommended for {{storageClassName}} storage class', {
+                      storageClassName,
+                    })
+                  : '',
+              )}
+            </SelectOption>
+          ))}
+        </FormPFSelect>
+      </div>
+      <div className="form-group">
+        <ConfigMapDefaultModesAlert isScModesKnown={isScModesKnown} />
       </div>
     </div>
   );
@@ -489,6 +542,22 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
   );
   const [goldenPvcs, loadedPvcs, errorPvcs] = useBaseImages(commonTemplates);
   const { uploads, uploadData, uploadProxyURL } = React.useContext(CDIUploadContext);
+  const [scConfigMap, cmLoaded] = useStorageClassConfigMap();
+  const [scAllowed, scAllowedLoading] = useAccessReview2({
+    group: StorageClassModel.apiGroup,
+    resource: StorageClassModel.plural,
+    verb: 'list',
+  });
+  const [storageClasses, scLoaded] = useK8sWatchResource<StorageClassResourceKind[]>(
+    scAllowed
+      ? {
+          kind: StorageClassModel.kind,
+          isList: true,
+          namespaced: false,
+        }
+      : null,
+  );
+
   const initialNamespace = props?.match?.params?.ns;
   const namespace = getNamespace(dvObj) || initialNamespace;
   const urlParams = new URLSearchParams(window.location.search);
@@ -584,9 +653,18 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
             osParam={osParam}
             isLoading={!loadedTemplates}
             setDisableFormSubmit={setDisableFormSubmit}
+            scConfigMap={scConfigMap}
+            storageClasses={storageClasses}
           />
           <ButtonBar
-            inProgress={!loadedTemplates || !loadedPvcs || isCheckingCertificate}
+            inProgress={
+              scAllowedLoading ||
+              !scLoaded ||
+              !cmLoaded ||
+              !loadedTemplates ||
+              !loadedPvcs ||
+              isCheckingCertificate
+            }
             errorMessage={errorMessage}
           >
             {isFileRejected && (
@@ -652,6 +730,8 @@ export type UploadPVCFormProps = {
   commonTemplates: TemplateKind[];
   goldenPvcs: PersistentVolumeClaimKind[];
   setIsFileRejected: React.Dispatch<React.SetStateAction<boolean>>;
+  scConfigMap: ConfigMapKind;
+  storageClasses: StorageClassResourceKind[];
   onChange: (K8sResourceKind) => void;
   handleFileChange: (value, filename, event) => void;
 };
