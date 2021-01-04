@@ -13,11 +13,13 @@ const options = {
 const resource = {
   en: {
     COMMON: en.COMMON,
-    GENERAL: en.GENERAL,
+    SINGLE: en.SINGLE,
+    MULTI: en.MULTI,
   },
   ko: {
     COMMON: ko.COMMON,
-    GENERAL: ko.GENERAL,
+    SINGLE: ko.SINGLE,
+    MULTI: ko.MULTI,
   },
 };
 
