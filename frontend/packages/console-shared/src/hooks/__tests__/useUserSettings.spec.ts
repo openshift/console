@@ -262,4 +262,34 @@ describe('useUserSettings', () => {
     expect(createConfigMapMock).toHaveBeenCalledWith();
     expect(updateConfigMapMock).toHaveBeenCalledTimes(0);
   });
+
+  it('should fallback to localStorage if creation fails with 404 (must not call updateConfigMap)', async () => {
+    // Mock loading
+    useK8sWatchResourceMock.mockReturnValue([null, false, null]);
+
+    const { result, rerender } = testHook(() => useUserSettings('console.key', 'default value'));
+
+    // Expect loading data
+    expect(result.current).toEqual([undefined, expect.any(Function), false]);
+
+    // Mock that createConfigMap is 404 API not found.
+    await act(async () => {
+      createConfigMapMock.mockImplementation(async () => {
+        const error: Error & { response?: any } = new Error('Not Found');
+        error.response = {
+          ok: false,
+          status: 404,
+        };
+        throw error;
+      });
+      useK8sWatchResourceMock.mockReturnValue([null, false, new Error('ConfigMap not found')]);
+      rerender();
+    });
+
+    // Should call createConfigMap, but not updateConfigMap
+    expect(result.current).toEqual(['default value', expect.any(Function), true]);
+    expect(createConfigMapMock).toHaveBeenCalledTimes(1);
+    expect(createConfigMapMock).toHaveBeenCalledWith();
+    expect(updateConfigMapMock).toHaveBeenCalledTimes(0);
+  });
 });
