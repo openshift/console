@@ -4,10 +4,9 @@ import {
   CDI_UPLOAD_RUNNING,
   CDI_UPLOAD_POD_ANNOTATION,
   CDI_UPLOAD_POD_NAME_ANNOTATION,
-  CDI_PHASE_PVC_ANNOTATION,
-  CDI_BOUND_PVC_ANNOTATION,
 } from '../../components/cdi-upload-provider/consts';
-import { STORAGE_IMPORT_POD_LABEL } from '../../constants';
+import { CDI_KUBEVIRT_IO, STORAGE_IMPORT_POD_LABEL } from '../../constants';
+import { DataVolumeModel } from '../../models';
 
 export const getPvcResources = (pvc: PersistentVolumeClaimKind) => pvc?.spec?.resources;
 
@@ -33,7 +32,9 @@ export const isPvcUploading = (pvc: PersistentVolumeClaimKind) =>
   getPvcUploadPodName(pvc) && getPvcUploadPhase(pvc) === CDI_UPLOAD_RUNNING;
 
 export const isPvcBoundToCDI = (pvc: PersistentVolumeClaimKind) =>
-  getAnnotation(pvc, CDI_BOUND_PVC_ANNOTATION) === 'true' ||
-  getAnnotation(pvc, CDI_PHASE_PVC_ANNOTATION) === 'Succeeded' ||
-  getAnnotation(pvc, CDI_PHASE_PVC_ANNOTATION) === 'Running' ||
-  getAnnotation(pvc, CDI_PHASE_PVC_ANNOTATION) === 'WaitForFirstConsumer';
+  pvc?.metadata?.ownerReferences?.some(
+    (or) =>
+      or.apiVersion.startsWith(CDI_KUBEVIRT_IO) &&
+      or.kind === DataVolumeModel.kind &&
+      or.name === pvc?.metadata?.name,
+  );
