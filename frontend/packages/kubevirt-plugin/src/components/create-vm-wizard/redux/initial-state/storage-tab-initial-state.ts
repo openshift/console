@@ -42,7 +42,10 @@ import {
   iGetCommonData,
   getInitialData,
 } from '../../selectors/immutable/selectors';
-import { iGetRelevantTemplate } from '../../../../selectors/immutable/template/combined';
+import {
+  iGetCommonTemplateDiskBus,
+  iGetRelevantTemplate,
+} from '../../../../selectors/immutable/template/combined';
 import { iGetPrameterValue } from '../../../../selectors/immutable/common';
 import { getStorages } from '../../selectors/selectors';
 
@@ -106,6 +109,7 @@ export const getBaseImageStorage = (
   pvcName,
   pvcNamespace,
   pvcSize = '15Gi',
+  diskBus: DiskBus,
 ) => {
   const dataVolumeName = generateDataVolumeName(DUMMY_VM_NAME, ROOT_DISK_NAME);
   const [size, unit] = stringValueUnitSplit(pvcSize);
@@ -115,7 +119,7 @@ export const getBaseImageStorage = (
     disk: DiskWrapper.initializeFromSimpleData({
       name: ROOT_DISK_NAME,
       type: DiskType.DISK,
-      bus: DiskBus.VIRTIO,
+      bus: diskBus || DiskBus.VIRTIO,
       bootOrder: 1,
     }).asResource(),
     volume: VolumeWrapper.initializeFromSimpleData({
@@ -285,13 +289,21 @@ export const getNewProvisionSourceStorage = (state: any, id: string): VMWizardSt
     const iTemplate = iCommonTemplates && iGetRelevantTemplate(iCommonTemplates, relevantOptions);
     const pvcName = iGetPrameterValue(iTemplate, TEMPLATE_BASE_IMAGE_NAME_PARAMETER);
     const pvcNamespace = iGetPrameterValue(iTemplate, TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER);
+    // eslint-disable-next-line no-template-curly-in-string
+    const tmpDiskBus = DiskBus.fromString(iGetCommonTemplateDiskBus(iTemplate, '${NAME}'));
 
     const iBaseImage = iGetLoadedCommonData(state, id, VMWizardProps.openshiftCNVBaseImages)
       .valueSeq()
       .find((iPVC) => iGetName(iPVC) === pvcName);
     const pvcSize = iGetIn(iBaseImage, ['spec', `resources`, `requests`, `storage`]);
 
-    return getBaseImageStorage(toShallowJS(iStorageClassConfigMap), pvcName, pvcNamespace, pvcSize);
+    return getBaseImageStorage(
+      toShallowJS(iStorageClassConfigMap),
+      pvcName,
+      pvcNamespace,
+      pvcSize,
+      tmpDiskBus,
+    );
   }
   if (provisionSource === ProvisionSource.DISK && !iUserTemplate) {
     return getPVCStorage(
