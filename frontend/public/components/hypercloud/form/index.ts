@@ -66,4 +66,7 @@ export const pluralToKind = new Map([
   ['authorizationpolicies', { kind: 'AuthorizationPolicy', type: 'CustomResourceDefinition' }],
   ['datavolumes', { kind: 'DataVolume', type: 'CustomResourceDefinition' }],
   ['virtualmachines', { kind: 'VirtualMachine', type: 'CustomResourceDefinition' }],
+  ['registries', { kind: 'Registry', type: 'CustomResourceDefinition' }],
+  ['imagesigners', { kind: 'ImageSigner', type: 'CustomResourceDefinition' }],
+  ['imagesignrequests', { kind: 'ImageSignRequest', type: 'CustomResourceDefinition' }]
 ]);
