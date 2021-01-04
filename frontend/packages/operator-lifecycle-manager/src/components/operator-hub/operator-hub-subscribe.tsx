@@ -41,7 +41,7 @@ import {
 } from '../../types';
 import {
   ClusterServiceVersionLogo,
-  defaultChannelFor,
+  defaultChannelNameFor,
   getManualSubscriptionsInNamespace,
   iconFor,
   NamespaceIncludesManualApproval,
@@ -85,7 +85,8 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
     )}-${new URLSearchParams(window.location.search).get('catalogNamespace')}`,
   });
 
-  const selectedUpdateChannel = updateChannel || defaultChannelFor(props.packageManifest.data[0]);
+  const selectedUpdateChannel =
+    updateChannel || defaultChannelNameFor(props.packageManifest.data[0]);
   const selectedInstallMode =
     installMode ||
     supportedInstallModesFor(props.packageManifest.data[0])(selectedUpdateChannel).reduce(

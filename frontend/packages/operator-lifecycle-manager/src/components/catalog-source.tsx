@@ -25,6 +25,8 @@ import {
   SectionHeading,
   asAccessReview,
   KebabOption,
+  ResourceSummary,
+  DetailsItem,
 } from '@console/internal/components/utils';
 import {
   DetailsPage,
@@ -44,17 +46,14 @@ import {
   OperatorGroupModel,
   OperatorHubModel,
 } from '../models';
-import {
-  CatalogSourceKind,
-  SubscriptionKind,
-  PackageManifestKind,
-  OperatorGroupKind,
-} from '../types';
+import { CatalogSourceKind, PackageManifestKind, OperatorGroupKind } from '../types';
 import { requireOperatorGroup } from './operator-group';
-import { PackageManifestList } from './package-manifest';
 import { deleteCatalogSourceModal } from './modals/delete-catalog-source-modal';
 import { disableDefaultSourceModal } from './modals/disable-default-source-modal';
 import { OperatorHubKind } from './operator-hub';
+import { editRegitryPollInterval } from './modals/edit-registry-poll-interval-modal';
+import { PackageManifestsPage } from './package-manifest';
+import useOperatorHubConfig from '../utils/useOperatorHubConfig';
 
 const DEFAULT_SOURCE_NAMESPACE = 'openshift-marketplace';
 const catalogSourceModelReference = referenceForModel(CatalogSourceModel);
@@ -112,39 +111,96 @@ const DefaultSourceKebab: React.FC<DefaultSourceKebabProps> = ({
   return <Kebab options={options} />;
 };
 
+const getOperatorCount = (
+  catalogSource: CatalogSourceKind,
+  packageManifests: PackageManifestKind[],
+): number =>
+  packageManifests.filter(
+    (p) =>
+      p.status?.catalogSource === catalogSource.metadata.name &&
+      p.status?.catalogSourceNamespace === catalogSource.metadata.namespace,
+  ).length;
+
+const getEndpoint = (catalogSource: CatalogSourceKind): React.ReactNode => {
+  if (catalogSource.spec.configmap) {
+    return (
+      <ResourceLink
+        kind={referenceForModel(ConfigMapModel)}
+        name={catalogSource.spec.configmap}
+        namespace={catalogSource.metadata.namespace}
+      />
+    );
+  }
+  return catalogSource.spec.image || catalogSource.spec.address;
+};
+
 export const CatalogSourceDetails: React.FC<CatalogSourceDetailsProps> = ({
-  obj,
+  obj: catalogSource,
   packageManifests,
-  subscriptions,
-  operatorGroups,
 }) => {
-  const toData = <T extends K8sResourceKind>(data: T[]) => ({ loaded: true, data });
   const { t } = useTranslation();
 
-  return !_.isEmpty(obj) ? (
-    <div className="co-catalog-details co-m-pane">
-      <div className="co-m-pane__body">
-        <div className="col-xs-4">
-          <dl className="co-m-pane__details">
-            <dt>{t('catalog-source~Name')}</dt>
-            <dd data-test-id="catalog-source-name">{obj.spec.displayName}</dd>
-          </dl>
+  const operatorCount = getOperatorCount(catalogSource, packageManifests);
+
+  const catsrcNamespace =
+    catalogSource.metadata.namespace === DEFAULT_SOURCE_NAMESPACE
+      ? 'Cluster wide'
+      : catalogSource.metadata.namespace;
+
+  return !_.isEmpty(catalogSource) ? (
+    <div className="co-m-pane__body">
+      <SectionHeading
+        text={t('catalog-source~CatalogSource details', {
+          resource: CatalogSourceModel.label,
+        })}
+      />
+      <div className="row">
+        <div className="col-sm-6 col-xs-12">
+          <ResourceSummary resource={catalogSource} />
         </div>
-        <div className="col-xs-4">
-          <dl className="co-m-pane__details">
-            <dt>{t('catalog-source~Publisher')}</dt>
-            <dd data-test-id="catalog-source-publisher">{obj.spec.publisher}</dd>
-          </dl>
+        <div className="col-sm-6 col-xs-12">
+          <div className="co-m-pane__body">
+            <DetailsItem
+              editAsGroup
+              label="Status"
+              obj={catalogSource}
+              path="status.connectionState.lastObservedState"
+            />
+            <DetailsItem label="Display Name" obj={catalogSource} path="spec.displayName" />
+            <DetailsItem label="Publisher" obj={catalogSource} path="spec.publisher" />
+            <DetailsItem
+              label="Availability"
+              obj={catalogSource}
+              description="Denotes whether this CatalogSource provides operators to a specific namespace, or the entire cluster."
+              path=""
+            >
+              {catsrcNamespace}
+            </DetailsItem>
+            <DetailsItem
+              label="Endpoint"
+              obj={catalogSource}
+              description="The ConfigMap, image, or address for this CatalogSource's registry."
+              path=""
+            >
+              {getEndpoint(catalogSource)}
+            </DetailsItem>
+            <DetailsItem
+              label="Registry Poll Interval"
+              obj={catalogSource}
+              path="spec.updateStrategy.registryPoll.interval"
+              canEdit={!_.isEmpty(catalogSource.spec.updateStrategy)}
+              onEdit={() => editRegitryPollInterval({ catalogSource })}
+            />
+            <DetailsItem
+              label="Number of Operators"
+              obj={catalogSource}
+              description="The number of packages this CatalogSource provides."
+              path=""
+            >
+              {operatorCount}
+            </DetailsItem>
+          </div>
         </div>
-      </div>
-      <div className="co-m-pane__body">
-        <SectionHeading text={t('catalog-source~Packages')} />
-        <PackageManifestList
-          loaded
-          data={packageManifests}
-          operatorGroup={toData(operatorGroups)}
-          subscription={toData(subscriptions)}
-        />
       </div>
     </div>
   ) : (
@@ -152,37 +208,55 @@ export const CatalogSourceDetails: React.FC<CatalogSourceDetailsProps> = ({
   );
 };
 
-export const CatalogSourceDetailsPage: React.FC<CatalogSourceDetailsPageProps> = (props) => (
-  <DetailsPage
-    {...props}
-    namespace={props.match.params.ns}
-    kind={referenceForModel(CatalogSourceModel)}
-    name={props.match.params.name}
-    pages={[navFactory.details(CatalogSourceDetails), navFactory.editYaml()]}
-    menuActions={Kebab.factory.common}
-    resources={[
-      {
-        kind: referenceForModel(PackageManifestModel),
-        isList: true,
-        namespace: props.match.params.ns,
-        selector: { matchLabels: { catalog: props.match.params.name } },
-        prop: 'packageManifests',
-      },
-      {
-        kind: referenceForModel(SubscriptionModel),
-        isList: true,
-        namespace: props.match.params.ns,
-        prop: 'subscriptions',
-      },
-      {
-        kind: referenceForModel(OperatorGroupModel),
-        isList: true,
-        namespace: props.match.params.ns,
-        prop: 'operatorGroups',
-      },
-    ]}
-  />
-);
+export const CatalogSourceOperatorsPage: React.FC<CatalogSourceOperatorsPageProps> = (props) => {
+  return <PackageManifestsPage catalogSource={props.obj} showTitle={false} {...props} />;
+};
+
+export const CatalogSourceDetailsPage: React.FC<CatalogSourceDetailsPageProps> = (props) => {
+  const [operatorHub, operatorHubLoaded, operatorHubLoadError] = useOperatorHubConfig();
+
+  const isDefaultSource = React.useMemo(
+    () =>
+      DEFAULT_SOURCE_NAMESPACE === props.match.params.ns &&
+      operatorHub?.status?.sources?.some((source) => source.name === props.match.params.name),
+    [operatorHub, props.match.params.name, props.match.params.ns],
+  );
+
+  const menuActions = isDefaultSource
+    ? [
+        Kebab.factory.Edit,
+        () => disableSourceModal(OperatorHubModel, operatorHub, props.match.params.name),
+      ]
+    : Kebab.factory.common;
+
+  return (
+    <DetailsPage
+      {...props}
+      namespace={props.match.params.ns}
+      kind={referenceForModel(CatalogSourceModel)}
+      name={props.match.params.name}
+      pages={[
+        navFactory.details(CatalogSourceDetails),
+        navFactory.editYaml(),
+        {
+          href: 'operators',
+          // t('catalog-source~Operators')
+          nameKey: 'catalog-source~Operators',
+          component: CatalogSourceOperatorsPage,
+        },
+      ]}
+      menuActions={operatorHubLoaded && !operatorHubLoadError ? menuActions : []}
+      resources={[
+        {
+          kind: referenceForModel(PackageManifestModel),
+          isList: true,
+          namespace: props.match.params.ns,
+          prop: 'packageManifests',
+        },
+      ]}
+    />
+  );
+};
 
 export const CreateSubscriptionYAML: React.FC<CreateSubscriptionYAMLProps> = (props) => {
   type CreateProps = {
@@ -261,30 +335,6 @@ const tableColumnClasses = [
   classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
   Kebab.columnClass,
 ];
-
-const getEndpoint = (catalogSource: CatalogSourceKind): React.ReactNode => {
-  if (catalogSource.spec.configmap) {
-    return (
-      <ResourceLink
-        kind={referenceForModel(ConfigMapModel)}
-        name={catalogSource.spec.configmap}
-        namespace={catalogSource.metadata.namespace}
-      />
-    );
-  }
-  return catalogSource.spec.image || catalogSource.spec.address;
-};
-
-const getOperatorCount = (
-  catalogSource: CatalogSourceKind,
-  packageManifests: PackageManifestKind[],
-): number =>
-  _.filter(packageManifests, {
-    status: {
-      catalogSource: catalogSource.metadata.name,
-      catalogSourceNamespace: catalogSource.metadata.namespace,
-    },
-  } as any).length; // Type inferred to prevent Lodash TypeScript error.
 
 const CatalogSourceTableRow: RowFunction<CatalogSourceTableRowObj> = ({
   obj: {
@@ -579,9 +629,7 @@ type FlattenArgType = {
 
 export type CatalogSourceDetailsProps = {
   obj: CatalogSourceKind;
-  subscriptions: SubscriptionKind[];
   packageManifests: PackageManifestKind[];
-  operatorGroups: OperatorGroupKind[];
 };
 
 export type CatalogSourceDetailsPageProps = {
@@ -596,6 +644,10 @@ export type CreateSubscriptionYAMLProps = {
   match: match<{ ns: string; pkgName: string }>;
   location: Location;
 };
+
+export type CatalogSourceOperatorsPageProps = {
+  obj: CatalogSourceKind;
+} & ListPageProps;
 
 CatalogSourceDetails.displayName = 'CatalogSourceDetails';
 CatalogSourceDetailsPage.displayName = 'CatalogSourceDetailPage';

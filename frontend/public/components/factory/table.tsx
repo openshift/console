@@ -72,6 +72,8 @@ import {
 } from '@patternfly/react-virtualized-extension';
 
 import { tableFilters } from './table-filters';
+import { PackageManifestKind } from '@console/operator-lifecycle-manager/src/types';
+import { defaultChannelFor } from '@console/operator-lifecycle-manager/src/components';
 
 const rowFiltersToFilterFuncs = (rowFilters) => {
   return (rowFilters || [])
@@ -172,6 +174,10 @@ const sorts = {
   volumeSnapshotSource: (snapshot: VolumeSnapshotKind): string => snapshotSource(snapshot),
   snapshotLastRestore: (snapshot: K8sResourceKind, { restores }) =>
     restores[getName(snapshot)]?.status?.restoreTime,
+  sortPackageManifestByDefaultChannelName: (packageManifest: PackageManifestKind): string => {
+    const channel = defaultChannelFor(packageManifest);
+    return channel?.currentCSVDesc?.displayName;
+  },
 };
 
 const stateToProps = (
