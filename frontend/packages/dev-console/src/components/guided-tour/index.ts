@@ -10,7 +10,7 @@ const getSelector = (id: string): string => `[data-tour-id="${id}"]`;
 
 export const getGuidedTour = (): TourDataType => ({
   intro: {
-    heading: 'Welcome to Dev Perspective!',
+    heading: 'Welcome to the Developer Perspective!',
     content: devPerspectiveTourText,
   },
   steps: [
