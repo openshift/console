@@ -32,8 +32,38 @@ const mockPipelineRuns = [
     },
   },
   { status: { conditions: [{ status: 'Unknown', type: 'Succeeded' }] } },
-  { status: { conditions: [{ reason: 'PipelineRunCancelled' }] } },
-  { status: { conditions: [{ reason: 'TaskRunCancelled' }] } },
+  {
+    status: {
+      conditions: [{ type: 'Succeeded', status: 'Unknown', reason: 'PipelineRunCancelled' }],
+    },
+  },
+  {
+    status: { conditions: [{ type: 'Succeeded', status: 'Unknown', reason: 'TaskRunCancelled' }] },
+  },
+];
+
+const mockPipelineRunReasons = [
+  {
+    status: {
+      conditions: [{ type: 'Succeeded', status: 'Unknown', reason: 'PipelineRunStopping' }],
+    },
+  },
+  { status: { conditions: [{ type: 'Succeeded', status: 'Unknown', reason: 'TaskRunStopping' }] } },
+  {
+    status: {
+      conditions: [{ type: 'Succeeded', status: 'Unknown', reason: 'CreateContainerConfigError' }],
+    },
+  },
+  {
+    status: {
+      conditions: [{ type: 'Succeeded', status: 'Unknown', reason: 'ExceededNodeResources' }],
+    },
+  },
+  {
+    status: {
+      conditions: [{ type: 'Succeeded', status: 'Unknown', reason: 'ExceededResourceQuota' }],
+    },
+  },
 ];
 
 describe('Check PipelineRun Status | Filter Reducer applied to the following:', () => {
@@ -92,5 +122,14 @@ describe('Check PipelineRun Status | Filter Reducer applied to the following:', 
   it('Pipelinerun with first element of condition array with type as "Succeeded" & status as "Unknown"', () => {
     const reducerOutput = pipelineRunStatus(mockPipelineRuns[10]);
     expect(reducerOutput).toBe('Cancelled');
+  });
+  it('Pipelinerun with first element of condition array with type as "Succeeded" & Failing condition', () => {
+    expect(pipelineRunStatus(mockPipelineRunReasons[0])).toBe('Failed');
+    expect(pipelineRunStatus(mockPipelineRunReasons[1])).toBe('Failed');
+  });
+  it('Pipelinerun with first element of condition array with type as "Succeeded" & Pending condition', () => {
+    expect(pipelineRunStatus(mockPipelineRunReasons[2])).toBe('Pending');
+    expect(pipelineRunStatus(mockPipelineRunReasons[3])).toBe('Pending');
+    expect(pipelineRunStatus(mockPipelineRunReasons[4])).toBe('Pending');
   });
 });
