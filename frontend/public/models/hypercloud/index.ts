@@ -194,6 +194,32 @@ export const ImageModel: K8sKind = {
   crd: false,
 };
 
+export const ImageSignerModel: K8sKind = {
+  label: 'Image Signer',
+  apiVersion: 'v1',
+  apiGroup: 'tmax.io',
+  plural: 'imagesigners',
+  abbr: 'IS',
+  namespaced: false,
+  kind: 'ImageSigner',
+  id: 'imagesigner',
+  labelPlural: 'Image Signers',
+  crd: false,
+};
+
+export const ImageSignRequestModel: K8sKind = {
+  label: 'Image Sign Request',
+  apiVersion: 'v1',
+  apiGroup: 'tmax.io',
+  plural: 'imagesignrequests',
+  abbr: 'ISR',
+  namespaced: true,
+  kind: 'ImageSignRequest',
+  id: 'imagesignrequest',
+  labelPlural: 'Image Sign Requests',
+  crd: false,
+};
+
 export const TaskModel: K8sKind = {
   kind: 'Task',
   namespaced: true,
