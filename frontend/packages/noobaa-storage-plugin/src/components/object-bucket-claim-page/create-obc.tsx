@@ -110,6 +110,7 @@ export const CreateOBCPage: React.FC<CreateOBCPageProps> = (props) => {
                 className="pf-c-form-control"
                 type="text"
                 onChange={(e) => dispatch({ type: 'setName', name: e.currentTarget.value.trim() })}
+                value={state.name}
                 placeholder={t('noobaa-storage-plugin~my-object-bucket')}
                 aria-describedby="obc-name-help"
                 id="obc-name"
