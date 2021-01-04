@@ -10,6 +10,7 @@ import {
   WithContextMenuProps,
 } from '@patternfly/react-topology';
 import { Tooltip } from '@patternfly/react-core';
+import { PodKind } from '@console/internal/module/k8s';
 import { calculateRadius, usePodsWatcher, PodRCData } from '@console/shared';
 import PodSet, { podSetInnerRadius } from './PodSet';
 import BaseNode from './BaseNode';
@@ -83,7 +84,7 @@ const WorkloadPodsNode: React.FC<WorkloadPodsNodeProps> = observer(
   },
 );
 
-const WorkloadNode: React.FC<WorkloadNodeProps> = observer(({ element, ...rest }) => {
+const WatchedWorkloadNode: React.FC<WorkloadNodeProps> = observer(({ element, ...rest }) => {
   const resource = getTopologyResourceObject(element.getData());
   const { podData, loadError, loaded } = usePodsWatcher(
     resource,
@@ -97,6 +98,21 @@ const WorkloadNode: React.FC<WorkloadNodeProps> = observer(({ element, ...rest }
       {...rest}
     />
   );
+});
+
+const WorkloadNode: React.FC<WorkloadNodeProps> = observer(({ element, ...rest }) => {
+  const resource = getTopologyResourceObject(element.getData());
+  if (resource.kind === 'Pod') {
+    const podData = {
+      obj: resource,
+      current: undefined,
+      previous: undefined,
+      isRollingOut: true,
+      pods: [resource as PodKind],
+    };
+    return <WorkloadPodsNode element={element} donutStatus={podData} {...rest} />;
+  }
+  return <WatchedWorkloadNode element={element} {...rest} />;
 });
 
 export { WorkloadNode, WorkloadPodsNode };
