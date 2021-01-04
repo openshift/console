@@ -41,7 +41,7 @@
     "cypress-generate": "marge -o ./gui_test_screenshots/ -f cypress-report -t 'OpenShift Console Cypress Test Results' -p 'OpenShift Cypress Test Results' --showPassed false --assetsDir ./gui_test_screenshots/cypress/assets ./gui_test_screenshots/cypress.json",
     "cypress-a11y-report": "echo '\nA11y Test Results:' && mv packages/integration-tests-cypress/cypress-a11y-report.json ./gui_test_screenshots/ && node -e \"console.table(JSON.parse(require('fs').readFileSync(process.argv[1])));\" ./gui_test_screenshots/cypress-a11y-report.json",
     "cypress-postreport": "yarn cypress-merge && yarn cypress-generate",
-    "analyze": "NODE_ENV=production NODE_OPTIONS=--max-old-space-size=8192 yarn ts-node ./node_modules/.bin/webpack --mode=production --profile --json | sed '0,/^{/s/^[^{].*//g' > public/dist/stats.json && yarn ts-node ./node_modules/.bin/webpack-bundle-analyzer --mode static -r public/dist/report.html public/dist/stats.json",
+    "analyze": "NODE_ENV=production NODE_OPTIONS=--max-old-space-size=4096 yarn ts-node ./node_modules/.bin/webpack --mode=production --profile --json | sed '0,/^{/s/^[^{].*//g' > public/dist/stats.json && NODE_OPTIONS=--max-old-space-size=4096 yarn ts-node ./node_modules/.bin/webpack-bundle-analyzer --mode static -r public/dist/report.html public/dist/stats.json",
     "prettier-all": "prettier --write '**/*.{js,jsx,ts,tsx,json}'",
     "ts-node": "ts-node -O '{\"module\":\"commonjs\"}'",
     "generate": "yarn generate-gql && yarn generate-plugin-assets",
