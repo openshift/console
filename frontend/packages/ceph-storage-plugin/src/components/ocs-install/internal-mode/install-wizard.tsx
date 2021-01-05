@@ -12,10 +12,11 @@ import {
   StackItem,
   WizardStep,
 } from '@patternfly/react-core';
-import { history } from '@console/internal/components/utils';
+import { history, resourcePathFromModel } from '@console/internal/components/utils';
 import { setFlag } from '@console/internal/actions/features';
 import { k8sCreate, referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { getName } from '@console/shared';
+import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
 import { OCSServiceModel } from '../../../models';
 import { OCS_CONVERGED_FLAG, OCS_INDEPENDENT_FLAG, OCS_FLAG } from '../../../features';
 import { OCS_INTERNAL_CR_NAME, MINIMUM_NODES, CreateStepsSC } from '../../../constants';
@@ -58,6 +59,7 @@ const makeOCSRequest = (state: InternalClusterState): Promise<StorageClusterKind
 
 export const CreateInternalCluster: React.FC<CreateInternalClusterProps> = ({ match, mode }) => {
   const { t } = useTranslation();
+  const { appName, ns } = match.params;
   const [state, dispatch] = React.useReducer(reducer, initialState);
   const [showInfoAlert, setShowInfoAlert] = React.useState(true);
   const [inProgress, setInProgress] = React.useState(false);
@@ -98,7 +100,6 @@ export const CreateInternalCluster: React.FC<CreateInternalClusterProps> = ({ ma
   ];
 
   const createCluster = async () => {
-    const { appName, ns } = match.params;
     try {
       setInProgress(true);
       await makeOCSRequest(state);
@@ -143,7 +144,9 @@ export const CreateInternalCluster: React.FC<CreateInternalClusterProps> = ({ ma
           mainAriaLabel={t('ceph-storage-plugin~{{title}} content', { title })}
           steps={steps}
           onSave={createCluster}
-          onClose={() => history.goBack()}
+          onClose={() =>
+            history.push(resourcePathFromModel(ClusterServiceVersionModel, appName, ns))
+          }
         />
       </StackItem>
     </Stack>
