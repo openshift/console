@@ -34,8 +34,8 @@
   "No": "No",
   "{{index, number}} of {{tasks, number}}": "{{index, number}} of {{tasks, number}}",
   "Learn how to create, import, and run applications on OpenShift with step-by-step instructions and tasks.": "Learn how to create, import, and run applications on OpenShift with step-by-step instructions and tasks.",
-  "Are you sure you want to leave the tour?": "Are you sure you want to leave the tour?",
+  "Leave quick start?": "Leave quick start?",
   "Cancel": "Cancel",
   "Leave": "Leave",
-  "Any progress you've made will be saved.": "Any progress you've made will be saved."
+  "Your progress will be saved.": "Your progress will be saved."
 }
