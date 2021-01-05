@@ -308,7 +308,9 @@ describe('CRD extensions', () => {
 
     it(`does not display the ${crd} instance on the test pod`, async () => {
       await browser.get(`${appHost}/k8s/ns/${testName}/pods/${podName}/logs`);
-      await crudView.isLoaded();
+      // Don't use `crudView.isLoaded` here since it will block until the log
+      // content itself is loaded and sometimes time out.
+      await browser.wait(crudView.untilLoadingBoxLoaded);
       expect(cell.isPresent()).toBe(false);
     });
 
