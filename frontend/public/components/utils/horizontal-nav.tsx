@@ -73,10 +73,10 @@ export const navFactory: NavFactory = {
     name: 'Logs',
     component,
   }),
-  editYaml: (component = editYamlComponent) => ({
+  editYaml: (component) => ({
     href: 'yaml',
     name: 'YAML',
-    component,
+    component: component || editYamlComponent,
   }),
   pods: (component) => ({
     href: 'pods',
