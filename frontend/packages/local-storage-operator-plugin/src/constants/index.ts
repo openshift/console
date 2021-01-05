@@ -18,6 +18,10 @@ export const DISK_TYPES: {
     property: 'Rotational',
   },
 };
+export const deviceTypeDropdownItems = Object.freeze({
+  DISK: 'Disk',
+  PART: 'Part',
+});
 
 export const diskTypeDropdownItems = (t: TFunction) =>
   Object.freeze({
