@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Title,
   Button,
@@ -18,9 +19,11 @@ import {
   SplitItem,
 } from '@patternfly/react-core';
 import { ErrorCircleOIcon, InProgressIcon } from '@patternfly/react-icons';
+import { PodKind } from '@console/internal/module/k8s';
 import { history, resourcePath } from '@console/internal/components/utils';
 import { getName, getNamespace } from '@console/shared';
 import { PodModel } from '@console/internal/models';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { DataUpload } from '../cdi-upload-provider';
 import { getProgressVariant } from '../upload-pvc-popover';
 import { killUploadPVC } from '../../../k8s/requests/cdi-upload/cdi-upload-requests';
@@ -142,7 +145,14 @@ const ErrorStatus: React.FC<ErrorStatusProps> = ({ error, onErrorClick }) => (
 );
 
 const CDIInitErrorStatus: React.FC<CDIInitErrorStatus> = ({ onErrorClick, pvcName, namespace }) => {
+  const { t } = useTranslation();
   const [shouldKillDv, setShouldKillDv] = React.useState(true);
+  const [pod, podLoaded, podError] = useK8sWatchResource<PodKind>({
+    kind: PodModel.kind,
+    namespace,
+    name: `cdi-upload-${pvcName}`,
+  });
+
   return (
     <>
       <EmptyStateIcon icon={ErrorCircleOIcon} color="#cf1010" />
@@ -189,17 +199,19 @@ const CDIInitErrorStatus: React.FC<CDIInitErrorStatus> = ({ onErrorClick, pvcNam
       >
         Back to Form {shouldKillDv && '(Deletes DV)'}
       </Button>
-      <EmptyStateSecondaryActions>
-        <Button
-          id="cdi-upload-check-logs"
-          onClick={() =>
-            history.push(`${resourcePath(PodModel.kind, `cdi-upload-${pvcName}`, namespace)}/logs`)
-          }
-          variant="link"
-        >
-          Check Logs
-        </Button>
-      </EmptyStateSecondaryActions>
+      {podLoaded && !podError && pod && (
+        <EmptyStateSecondaryActions>
+          <Button
+            id="cdi-upload-check-logs"
+            onClick={() =>
+              history.push(`${resourcePath(PodModel.kind, pod?.metadata?.name, namespace)}/logs`)
+            }
+            variant="link"
+          >
+            {t('kubevirt-plugin~Check Logs')}
+          </Button>
+        </EmptyStateSecondaryActions>
+      )}
     </>
   );
 };
