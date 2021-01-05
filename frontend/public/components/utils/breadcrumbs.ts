@@ -1,10 +1,10 @@
 import i18next from 'i18next';
 import { K8sKind } from '../../module/k8s';
+import { LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY } from '@console/shared/src/constants';
 import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants/common';
-import { getActiveNamespace } from '../../actions/ui';
 
 export const getBreadcrumbPath = (match: any, customPlural?: string) => {
-  const lastNamespace = getActiveNamespace();
+  const lastNamespace = sessionStorage.getItem(LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY);
   if (match.params.ns) {
     return lastNamespace === ALL_NAMESPACES_KEY
       ? `/k8s/all-namespaces/${customPlural || match.params.plural}`

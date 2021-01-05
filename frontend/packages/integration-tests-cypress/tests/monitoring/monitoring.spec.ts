@@ -2,6 +2,7 @@ import { checkErrors, testName } from '../../support';
 import { submitButton, errorMessage } from '../../views/form';
 import { listPage } from '../../views/list-page';
 import { detailsPage } from '../../views/details-page';
+import { projectDropdown } from '../../views/common';
 import { modal } from '../../views/modal';
 import { nav } from '../../views/nav';
 
@@ -43,7 +44,7 @@ xdescribe('Monitoring: Alerts', () => {
     nav.sidenav.clickNavLink(['Monitoring', 'Alerting']);
     // TODO, switch to 'listPage.titleShouldHaveText('Alerting');', when we switch to new test id
     cy.byLegacyTestID('resource-title').should('have.text', 'Alerting');
-    listPage.projectDropdownShouldNotExist();
+    projectDropdown.shouldNotExist();
     listPage.rows.shouldBeLoaded();
     cy.testA11y('Monitor Alerting list page');
 

@@ -5,6 +5,7 @@ import * as _ from 'lodash';
 import { testName, editKind, deleteKind, checkErrors } from '../../support';
 import { listPage, ListPageSelector } from '../../views/list-page';
 import { detailsPage, DetailsPageSelector } from '../../views/details-page';
+import { projectDropdown } from '../../views/common';
 import { modal } from '../../views/modal';
 import * as yamlEditor from '../../views/yaml-editor';
 import { errorMessage } from '../../views/form';
@@ -151,11 +152,11 @@ describe('Kubernetes resource CRUD operations', () => {
           );
           if (namespaced) {
             // should have a namespace dropdown for namespaced objects');
-            listPage.projectDropdownShouldExist();
-            listPage.projectDropdownShouldContain(testName);
+            projectDropdown.shouldExist();
+            projectDropdown.shouldContain(testName);
           } else {
             // should not have a namespace dropdown for non-namespaced objects');
-            listPage.projectDropdownShouldNotExist();
+            projectDropdown.shouldNotExist();
           }
           listPage.rows.shouldBeLoaded();
           cy.testA11y(`List page for ${kind}: ${name}`);

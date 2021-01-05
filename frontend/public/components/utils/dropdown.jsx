@@ -181,6 +181,7 @@ class DropDownRow extends React.PureComponent {
           href="#"
           ref={this.link}
           id={`${itemKey}-link`}
+          data-test="dropdown-menu-item-link"
           className={classNames('pf-c-dropdown__menu-item', {
             'next-to-bookmark': !!prefix,
             hover,

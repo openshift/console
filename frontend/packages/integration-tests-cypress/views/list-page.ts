@@ -1,11 +1,6 @@
 export const listPage = {
   titleShouldHaveText: (title: string) =>
     cy.byLegacyTestID('resource-title').should('have.text', title),
-  projectDropdownShouldExist: () => cy.byLegacyTestID('namespace-bar-dropdown').should('exist'),
-  projectDropdownShouldContain: (name: string) =>
-    cy.byLegacyTestID('namespace-bar-dropdown').contains(name),
-  projectDropdownShouldNotExist: () =>
-    cy.byLegacyTestID('namespace-bar-dropdown').should('not.exist'),
   clickCreateYAMLdropdownButton: () => {
     cy.byTestID('item-create')
       .click()

@@ -12,7 +12,11 @@ declare global {
 Cypress.Commands.add('clickNavLink', (path: string[]) => {
   cy.get('#page-sidebar')
     .contains(path[0])
-    .click();
+    .then(($navItem) => {
+      if ($navItem.attr('aria-expanded') !== 'true') {
+        cy.wrap($navItem).click();
+      }
+    });
   if (path.length === 2) {
     cy.get('#page-sidebar')
       .contains(path[1])
