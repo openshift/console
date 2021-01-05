@@ -9,6 +9,14 @@ import { UninstallOperatorModal, UninstallOperatorModalProps } from './uninstall
 
 import Spy = jasmine.Spy;
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
+});
+
 describe(UninstallOperatorModal.name, () => {
   let wrapper: ShallowWrapper<UninstallOperatorModalProps>;
   let k8sKill: Spy;
@@ -43,13 +51,13 @@ describe(UninstallOperatorModal.name, () => {
         close={close}
         cancel={cancel}
       />,
-    ).dive();
+    );
   });
 
   it('renders a modal form', () => {
     expect(wrapper.find('form').props().name).toEqual('form');
     expect(wrapper.find(ModalTitle).exists()).toBe(true);
-    expect(wrapper.find(ModalSubmitFooter).props().submitText).toEqual('Uninstall');
+    expect(wrapper.find(ModalSubmitFooter).props().submitText).toEqual('olm~Uninstall');
   });
 
   it('calls `props.k8sKill` to delete the subscription when form is submitted', (done) => {

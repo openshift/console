@@ -1,110 +1,113 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import {
   createModalLauncher,
   ModalTitle,
   ModalBody,
   ModalSubmitFooter,
 } from '@console/internal/components/factory/modal';
-import {
-  history,
-  resourceListPathFromModel,
-  withHandlePromise,
-} from '@console/internal/components/utils';
+import { history, resourceListPathFromModel } from '@console/internal/components/utils';
 import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { getActiveNamespace } from '@console/internal/actions/ui';
 import { YellowExclamationTriangleIcon } from '@console/shared';
 import { ClusterServiceVersionKind, SubscriptionKind } from '../../types';
 import { ClusterServiceVersionModel, SubscriptionModel } from '../../models';
+import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
+import { Trans, useTranslation } from 'react-i18next';
+import { GLOBAL_OPERATOR_NAMESPACE, OPERATOR_UNINSTALL_MESSAGE_ANNOTATION } from '../../const';
 
-export const UninstallOperatorModal = withHandlePromise((props: UninstallOperatorModalProps) => {
-  const submit = (event) => {
-    event.preventDefault();
+export const UninstallOperatorModal: React.FC<UninstallOperatorModalProps> = ({
+  cancel,
+  close,
+  csv,
+  k8sKill,
+  subscription,
+}) => {
+  const { t } = useTranslation();
+  const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
+  const submit = React.useCallback(
+    (event: React.FormEvent<HTMLFormElement>): void => {
+      event.preventDefault();
+      const deleteOptions = {
+        kind: 'DeleteOptions',
+        apiVersion: 'v1',
+        propagationPolicy: 'Foreground',
+      };
+      handlePromise(
+        Promise.all([
+          k8sKill(SubscriptionModel, subscription, {}, deleteOptions),
+          ...(subscription?.status?.installedCSV
+            ? [
+                k8sKill(
+                  ClusterServiceVersionModel,
+                  {
+                    metadata: {
+                      name: subscription.status.installedCSV,
+                      namespace: subscription.metadata.namespace,
+                    },
+                  },
+                  {},
+                  deleteOptions,
+                ).catch(() => Promise.resolve()),
+              ]
+            : []),
+        ]),
+      )
+        .then(() => {
+          close();
+          if (
+            window.location.pathname.split('/').includes(subscription.metadata.name) ||
+            window.location.pathname.split('/').includes(subscription.status.installedCSV)
+          ) {
+            history.push(
+              resourceListPathFromModel(ClusterServiceVersionModel, getActiveNamespace()),
+            );
+          }
+        })
+        .catch(() => {});
+    },
+    [close, handlePromise, k8sKill, subscription],
+  );
 
-    const { subscription, k8sKill } = props;
-    const deleteOptions = {
-      kind: 'DeleteOptions',
-      apiVersion: 'v1',
-      propagationPolicy: 'Foreground',
-    };
-    const promises = [k8sKill(SubscriptionModel, subscription, {}, deleteOptions)].concat(
-      _.get(subscription, 'status.installedCSV')
-        ? k8sKill(
-            ClusterServiceVersionModel,
-            {
-              metadata: {
-                name: subscription.status.installedCSV,
-                namespace: subscription.metadata.namespace,
-              },
-            },
-            {},
-            deleteOptions,
-          ).catch(() => Promise.resolve())
-        : [],
-    );
-
-    props.handlePromise(Promise.all(promises), () => {
-      props.close();
-
-      if (
-        window.location.pathname.split('/').includes(subscription.metadata.name) ||
-        window.location.pathname.split('/').includes(subscription.status.installedCSV)
-      ) {
-        history.push(resourceListPathFromModel(ClusterServiceVersionModel, getActiveNamespace()));
-      }
-    });
-  };
-
-  const name = _.get(props.csv, 'spec.displayName') || props.subscription.spec.name;
-  const context =
-    props.subscription.metadata.namespace === 'openshift-operators' ? (
-      <strong>all namespaces</strong>
-    ) : (
-      <>
-        namespace <strong>{props.subscription.metadata.namespace}</strong>
-      </>
-    );
-  const uninstallMessage =
-    props.csv?.metadata?.annotations['operator.openshift.io/uninstall-message'];
-
+  const name = csv?.spec?.displayName || subscription?.spec?.name;
+  const namespace =
+    subscription.metadata.namespace === GLOBAL_OPERATOR_NAMESPACE
+      ? 'all-namespaces'
+      : subscription.metadata.namespace;
+  const uninstallMessage = csv?.metadata?.annotations?.[OPERATOR_UNINSTALL_MESSAGE_ANNOTATION];
   return (
     <form onSubmit={submit} name="form" className="modal-content co-catalog-install-modal">
       <ModalTitle className="modal-header">
-        <YellowExclamationTriangleIcon className="co-icon-space-r" /> Uninstall Operator?
+        <YellowExclamationTriangleIcon className="co-icon-space-r" /> {t('olm~Uninstall Operator?')}
       </ModalTitle>
       <ModalBody>
-        This will remove operator <strong>{name}</strong> from {context}. Removing the operator will
-        not remove any of its custom resource definitions or managed resources. If your operator has
-        deployed applications on the cluster or configured off-cluster resources, these will
-        continue to run and need to be cleaned up manually.
+        <Trans t={t} ns="olm">
+          This will remove Operator <strong>{{ name }}</strong> from{' '}
+          <strong>{{ namespace }}</strong>. Removing the Operator will not remove any of its custom
+          resource definitions or managed resources. If your Operator has deployed applications on
+          the cluster or configured off-cluster resources, these will continue to run and need to be
+          cleaned up manually.
+        </Trans>
         {uninstallMessage && (
           <>
-            <h2>Message from operator developer</h2>
+            <h2>{t('olm~Message from Operator developer')}</h2>
             <p>{uninstallMessage}</p>
           </>
         )}
       </ModalBody>
       <ModalSubmitFooter
-        inProgress={props.inProgress}
-        errorMessage={props.errorMessage}
-        cancel={props.cancel}
+        inProgress={inProgress}
+        errorMessage={errorMessage}
+        cancel={cancel}
         submitDanger
-        submitText="Uninstall"
+        submitText={t('olm~Uninstall')}
       />
     </form>
   );
-});
+};
 
 export const createUninstallOperatorModal = createModalLauncher(UninstallOperatorModal);
 
 export type UninstallOperatorModalProps = {
-  handlePromise: <T>(
-    promise: Promise<T>,
-    onFulfill?: (res) => void,
-    onError?: (errorMsg: string) => void,
-  ) => void;
-  inProgress: boolean;
-  errorMessage: string;
   cancel?: () => void;
   close?: () => void;
   k8sKill: (kind: K8sKind, resource: K8sResourceKind, options: any, json: any) => Promise<any>;

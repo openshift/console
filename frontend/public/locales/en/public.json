@@ -13,5 +13,9 @@
   "Pause": "Pause",
   "Warning": "Warning",
   "Not available": "Not available",
-  "Resource": "Resource"
+  "Resource": "Resource",
+  "Delete": "Delete",
+  "Disable": "Disable",
+  "default": "default",
+  "OK": "OK"
 }

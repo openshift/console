@@ -11,6 +11,7 @@ import {
 import { YellowExclamationTriangleIcon } from '@console/shared';
 import { withHandlePromise, HandlePromiseProps } from '@console/internal/components/utils';
 import { OperatorHubKind } from '../operator-hub';
+import { useTranslation } from 'react-i18next';
 
 const DisableDefaultSourceModal: React.FC<DisableSourceModalProps> = ({
   kind,
@@ -22,6 +23,7 @@ const DisableDefaultSourceModal: React.FC<DisableSourceModalProps> = ({
   errorMessage,
   handlePromise,
 }) => {
+  const { t } = useTranslation();
   const submit = React.useCallback(
     (event: React.FormEvent<EventTarget>): void => {
       event.preventDefault();
@@ -47,16 +49,16 @@ const DisableDefaultSourceModal: React.FC<DisableSourceModalProps> = ({
   return (
     <form onSubmit={submit} name="form" className="modal-content ">
       <ModalTitle>
-        <YellowExclamationTriangleIcon className="co-icon-space-r" /> Disable Catalog Source?
+        <YellowExclamationTriangleIcon className="co-icon-space-r" />{' '}
+        {t('olm~Disable CatalogSource?')}
       </ModalTitle>
       <ModalBody>
-        By disabling a default source, the operators it provides will no longer appear in
-        OperatorHub and any operator that has been installed from this source will no longer receive
-        updates until the source is re-enabled. Disabling the source will also remove the
-        corresponding OperatorSource and CatalogSource resources from the cluster.
+        {t(
+          'olm~By disabling a default source, the operators it provides will no longer appear in OperatorHub and any operator that has been installed from this source will no longer receive updates until the source is re-enabled. Disabling the source will also remove the corresponding OperatorSource and CatalogSource resources from the cluster.',
+        )}
       </ModalBody>
       <ModalSubmitFooter
-        submitText="Disable"
+        submitText={t('public~Disable')}
         cancel={cancel}
         errorMessage={errorMessage}
         inProgress={inProgress}

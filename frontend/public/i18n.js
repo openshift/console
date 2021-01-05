@@ -109,6 +109,7 @@ i18n
         'nodes',
         'noobaa-storage-plugin',
         'oauth',
+        'olm',
         'openid-idp-form',
         'operator-hub-details',
         'operator-hub-subscribe',
