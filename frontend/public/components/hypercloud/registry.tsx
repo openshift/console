@@ -13,9 +13,11 @@ export const menuActions: KebabAction[] = [...Kebab.getExtensionsActionsForKind(
 const kind = RegistryModel.kind;
 
 const tableColumnClasses = [
-    classNames('col-xs-6', 'col-sm-4'),
-    classNames('col-xs-6', 'col-sm-4'),
-    classNames('col-sm-4', 'hidden-xs'),
+    classNames('col-xs-2', 'col-sm-2'),
+    classNames('col-xs-2', 'col-sm-2'),
+    classNames('col-sm-2', 'hidden-xs'),
+    classNames('col-xs-2', 'col-sm-2'),
+    classNames('col-sm-2', 'hidden-xs'),
     Kebab.columnClass,
   ];
 
@@ -35,14 +37,26 @@ const RegistryTableHeader = () => {
         props: { className: tableColumnClasses[1] },
       },
       {
-        title: 'Created',
-        sortField: 'metadata.creationTimestamp',
+        title: 'Image',
+        sortField: 'spec.image',
         transforms: [sortable],
         props: { className: tableColumnClasses[2] },
       },
       {
-        title: '',
+        title: 'Status',
+        sortField: 'status.phase',
+        transforms: [sortable],
         props: { className: tableColumnClasses[3] },
+      },
+      {
+        title: 'Created',
+        sortField: 'metadata.creationTimestamp',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[4] },
+      },
+      {
+        title: '',
+        props: { className: tableColumnClasses[5] },
       },
     ];
   };
@@ -60,9 +74,15 @@ const RegistryTableRow: RowFunction<K8sResourceKind> = ({ obj: registry, index, 
             <ResourceLink kind="Namespace" name={registry.metadata.namespace} title={registry.metadata.namespace} />
         </TableData>
         <TableData className={tableColumnClasses[2]}>
-          <Timestamp timestamp={registry.metadata.creationTimestamp} />
+          {registry.spec.image}
         </TableData>
         <TableData className={tableColumnClasses[3]}>
+          {registry.status.phase}
+        </TableData>
+        <TableData className={tableColumnClasses[4]}>
+          <Timestamp timestamp={registry.metadata.creationTimestamp} />
+        </TableData>
+        <TableData className={tableColumnClasses[5]}>
         <ResourceKebab actions={menuActions} kind={kind} resource={registry} />
       </TableData>
       </TableRow>
@@ -80,7 +100,7 @@ const RegistryTableRow: RowFunction<K8sResourceKind> = ({ obj: registry, index, 
 const RegistryDetails: React.FC<RegistryDetailsProps> = ({ obj: task }) => (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Federated Job Details" />
+        <SectionHeading text="Registry Details" />
         <div className="row">
           <div className="col-lg-6">
             <ResourceSummary resource={task} showPodSelector showNodeSelector showTolerations />
