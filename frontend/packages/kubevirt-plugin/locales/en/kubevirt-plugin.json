@@ -277,7 +277,7 @@
   "Virtual Machine Template": "Virtual Machine Template",
   "Learn more about operating system support": "Learn more about operating system support",
   "This template's boot source is defined by {{providerParam}}": "This template's boot source is defined by {{providerParam}}",
-  "The following resources will be created": "The following resources will be created",
+  "<0>The following resources will be created:</0>": "<0>The following resources will be created:</0>",
   "Virtual machine": "Virtual machine",
   "A new disk has been added to support the CD-ROM boot source.": "A new disk has been added to support the CD-ROM boot source.",
   "Not available": "Not available",

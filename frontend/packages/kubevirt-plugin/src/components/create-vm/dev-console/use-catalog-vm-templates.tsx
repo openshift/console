@@ -28,6 +28,7 @@ import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
 import { TemplateItem } from '../../../types/template';
 import { VMTemplateSupportDescription } from '../../vm-templates/vm-template-resource';
 import { getDescription } from '../../../selectors/selectors';
+import { BOOT_SOURCE_AVAILABLE } from '../../../constants';
 
 import './create-vm-side-drawer.scss';
 
@@ -50,7 +51,8 @@ const normalizeVmTemplates = (
       template: tmp,
     });
     const displayName = getTemplateName(tmp) || tmp.kind;
-    const provider = getTemplateProvider(t, tmp);
+    const templateProvider = getTemplateProvider(t, tmp);
+    const sourceProvider = !isTemplateSourceError(sourceStatus) && sourceStatus?.provider;
     const imgUrl = getTemplateOSIcon(tmp);
     const workloadType = getWorkloadProfile(tmp) || t('kubevirt-plugin~Not available');
     const flavor = getTemplateFlavorDesc(tmp, false);
@@ -82,10 +84,10 @@ const normalizeVmTemplates = (
         value: (
           <Stack hasGutter>
             {templateDescription && <StackItem>{templateDescription}</StackItem>}
-            {provider && (
+            {sourceProvider && sourceProvider !== BOOT_SOURCE_AVAILABLE && (
               <StackItem>
                 {t("kubevirt-plugin~This template's boot source is defined by {{providerParam}}", {
-                  providerParam: provider,
+                  providerParam: sourceProvider,
                 })}
               </StackItem>
             )}
@@ -163,7 +165,7 @@ const normalizeVmTemplates = (
       type: 'VmTemplate',
       name: displayName,
       description: cardDescription,
-      provider,
+      provider: templateProvider,
       creationTimestamp: tmp?.metadata?.creationTimestamp,
       attributes: {
         name: tmp?.metadata?.name,
