@@ -25,9 +25,9 @@ import {
   VolumeSnapshotClassKind,
   StorageClassResourceKind,
   PersistentVolumeClaimKind,
-  k8sGet,
   VolumeSnapshotKind,
   apiVersionForModel,
+  ListKind,
 } from '@console/internal/module/k8s';
 import { connectToPlural } from '@console/internal/kinds';
 import {
@@ -38,11 +38,11 @@ import {
   NamespaceModel,
 } from '@console/internal/models';
 import { accessModeRadios } from '@console/internal/components/storage/shared';
+import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { PVCDropdown } from '@console/internal/components/utils/pvc-dropdown';
-import { getName, getNamespace } from '@console/shared';
+import { getName, getNamespace, getAnnotations } from '@console/shared';
 import { PVCStatus } from '@console/internal/components/persistent-volume-claim';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-
 import './_create-volume-snapshot.scss';
 
 const LoadingComponent: React.FC = () => (
@@ -59,32 +59,9 @@ const LoadingComponent: React.FC = () => (
 );
 
 const SnapshotClassDropdown: React.FC<SnapshotClassDropdownProps> = (props) => {
-  const { selectedKey, pvcSC } = props;
+  const { selectedKey, filter } = props;
   const kind = referenceForModel(VolumeSnapshotClassModel);
   const resources = [{ kind }];
-  const [scObj, setSCObj] = React.useState<StorageClassResourceKind>(null);
-  const [scError, setError] = React.useState('');
-
-  React.useEffect(() => {
-    k8sGet(StorageClassModel, pvcSC)
-      .then(setSCObj)
-      .catch((error) => setError(error));
-  }, [pvcSC]);
-
-  const filter = (snapshotClass: VolumeSnapshotClassKind) =>
-    !scObj || !scObj.provisioner ? false : scObj?.provisioner.includes(snapshotClass?.driver);
-
-  if (scError) {
-    return (
-      <Alert
-        className="co-alert co-volume-snapshot__alert-body"
-        variant="danger"
-        title="Error fetching info on claim's provisioner"
-        isInline
-      />
-    );
-  }
-
   return (
     <ListDropdown
       {...props}
@@ -141,6 +118,12 @@ const PVCSummary: React.FC<PVCSummaryProps> = ({ persistentVolumeClaim }) => {
   );
 };
 
+const defaultSnapshotClassAnnotation: string = 'snapshot.storage.kubernetes.io/is-default-class';
+const isDefaultSnapshotClass = (volumeSnapshotClass: VolumeSnapshotClassKind) =>
+  getAnnotations(volumeSnapshotClass, { defaultSnapshotClassAnnotation: 'false' })[
+    defaultSnapshotClassAnnotation
+  ] === 'true';
+
 const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
   const {
     resourceName,
@@ -156,8 +139,13 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
   const [pvcObj, setPVCObj] = React.useState<PersistentVolumeClaimKind>(null);
   const [snapshotName, setSnapshotName] = React.useState(`${pvcName || 'pvc'}-snapshot`);
   const [snapshotClassName, setSnapshotClassName] = React.useState('');
+  const [vscObj, vscLoaded, vscErr] = useK8sGet<ListKind<VolumeSnapshotClassKind>>(
+    VolumeSnapshotClassModel,
+  );
+  const [scObjList, scObjListLoaded, scObjListErr] = useK8sGet<ListKind<StorageClassResourceKind>>(
+    StorageClassModel,
+  );
   const title = 'Create VolumeSnapshot';
-
   const resourceWatch = React.useMemo(() => {
     return Object.assign(
       {
@@ -170,11 +158,30 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
   }, [namespace, pvcName]);
 
   const [data, loaded, loadError] = useK8sWatchResource<PersistentVolumeClaimKind[]>(resourceWatch);
+  const scList = scObjListLoaded ? scObjList.items : [];
+  const provisioner = scList.find((sc) => sc.metadata.name === pvcObj?.spec?.storageClassName)
+    ?.provisioner;
+  const snapshotClassFilter = React.useCallback(
+    (snapshotClass: VolumeSnapshotClassKind) => provisioner?.includes(snapshotClass?.driver),
+    [provisioner],
+  );
+  const vscList = vscLoaded ? vscObj.items : [];
+  const getDefaultItem = React.useCallback(
+    (snapFilter) => {
+      const filteredVSC = vscList.filter(snapFilter);
+      const defaultFilteredVSC = filteredVSC.filter(isDefaultSnapshotClass);
+      const defaultItem = getName(defaultFilteredVSC?.[0]) || getName(filteredVSC?.[0]);
+
+      return defaultItem;
+    },
+    [vscList],
+  );
 
   React.useEffect(() => {
     const currentPVC = data.find((pvc) => pvc.metadata.name === pvcName);
     setPVCObj(currentPVC);
-  }, [data, pvcName, namespace, loadError]);
+    setSnapshotClassName(getDefaultItem(snapshotClassFilter));
+  }, [data, pvcName, namespace, loadError, snapshotClassFilter, getDefaultItem]);
 
   const handleSnapshotName: React.ReactEventHandler<HTMLInputElement> = (event) =>
     setSnapshotName(event.currentTarget.value);
@@ -270,12 +277,21 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
               <label className="control-label co-required" htmlFor="snapshot-class">
                 Snapshot Class
               </label>
-              <SnapshotClassDropdown
-                onChange={setSnapshotClassName}
-                dataTest="snapshot-dropdown"
-                selectedKey={snapshotClassName}
-                pvcSC={pvcObj?.spec?.storageClassName}
-              />
+              {vscErr || scObjListErr ? (
+                <Alert
+                  className="co-alert co-volume-snapshot__alert-body"
+                  variant="danger"
+                  title="Error fetching info on claim's provisioner"
+                  isInline
+                />
+              ) : (
+                <SnapshotClassDropdown
+                  filter={snapshotClassFilter}
+                  onChange={setSnapshotClassName}
+                  dataTest="snapshot-dropdown"
+                  selectedKey={snapshotClassName}
+                />
+              )}
             </div>
           )}
           <ButtonBar errorMessage={errorMessage || loadError} inProgress={inProgress}>
@@ -332,9 +348,9 @@ export const VolumeSnapshot = connectToPlural(VolumeSnapshotComponent);
 
 type SnapshotClassDropdownProps = {
   selectedKey: string;
+  filter: (obj) => boolean;
   onChange: (string) => void;
   id?: string;
-  pvcSC: string;
   dataTest?: string;
 };
 
