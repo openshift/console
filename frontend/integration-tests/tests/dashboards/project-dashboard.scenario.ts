@@ -21,7 +21,7 @@ const inventoryItems = [
   { title: 'Secret', link: `/k8s/ns/${testName}/secrets` },
 ];
 
-const utilizationItems = ['CPU', 'Memory', 'Filesystem', 'Network Transfer', 'Pod count'];
+const utilizationItems = ['CPU', 'Memory', 'Filesystem', 'Network transfer', 'Pod count'];
 
 const launcherLink = {
   apiVersion: 'console.openshift.io/v1',
