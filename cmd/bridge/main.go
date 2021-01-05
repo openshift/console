@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/tls"
 	"crypto/x509"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"runtime"
@@ -16,21 +17,26 @@ import (
 
 	"github.com/coreos/pkg/capnslog"
 	"github.com/coreos/pkg/flagutil"
-	"github.com/urfave/negroni"
+	"github.com/traefik/traefik/v2/pkg/safe"
 
 	"github.com/openshift/console/pkg/auth"
+	"github.com/openshift/console/pkg/backend"
+	"github.com/openshift/console/pkg/config/dynamic"
+	"github.com/openshift/console/pkg/provider/file"
 
 	// "github.com/openshift/console/pkg/backend"
 	"github.com/openshift/console/pkg/bridge"
 	"github.com/openshift/console/pkg/crypto"
 	"github.com/openshift/console/pkg/helm/chartproxy"
+	pConfig "github.com/openshift/console/pkg/hypercloud/config"
+	"github.com/openshift/console/pkg/hypercloud/middlewares/stripprefix"
+	hproxy "github.com/openshift/console/pkg/hypercloud/proxy"
+	"github.com/openshift/console/pkg/hypercloud/router"
+	pServer "github.com/openshift/console/pkg/hypercloud/server"
 	"github.com/openshift/console/pkg/knative"
 	"github.com/openshift/console/pkg/proxy"
 	"github.com/openshift/console/pkg/server"
 	"github.com/openshift/console/pkg/serverconfig"
-
-	hproxy "github.com/openshift/console/pkg/hypercloud/proxy"
-	pServer "github.com/openshift/console/pkg/hypercloud/server"
 )
 
 var (
@@ -125,8 +131,8 @@ func main() {
 
 	helmConfig := chartproxy.RegisterFlags(fs)
 
-	// multi proxy config 경로 획득 20/11/19 jinsoo
-	fProxyConfig := fs.String("proxyConfig", "", "The YAML proxy config file.")
+	// dynamic multi proxy config  2021/01/05 jinsoo
+	fDynamicConfig := fs.String("dynamic-config", "configs/dynamic-config.yaml", "The YAML proxy dynamic config file. (default file name: configs/dynamic-config.yaml")
 
 	// NOTE: Keycloak 연동 추가 // 최여진 -> 윤진수 // 20.12.17
 	fKeycloakRealm := fs.String("keycloak-realm", "", "Keycloak Realm Name")
@@ -656,48 +662,21 @@ func main() {
 
 	helmConfig.Configure(srv)
 
-	pSrv := &pServer.Proxy{}
-	if *fProxyConfig != "" {
-		if err := pSrv.SetFlagsFromConfig(*fProxyConfig); err != nil {
-			log.Fatalf("Failed to load proxy config: %v", err)
-		}
-		log.Info(pSrv)
-		for i, val := range pSrv.ProxyInfo {
-			log.Infof("test", i, val)
-		}
+	//TODO: Porxy Server Start
+	proxyServer, err := pServer.NewServer(srv, fTlSCertFile, fTlSKeyFile)
+	if err != nil {
+		log.Errorf("Failed to get proxyserver from pServer.NewServer() %v \n", err)
+	}
 
-	}
-	router := pSrv.ProxyRouter()
-	router.AddRoute("PathPrefix(`/`)", 1, srv.HTTPHandler())
-	n := negroni.Classic()
-	n.UseHandler(router.Router)
+	// pvd := &file.Provider{Filename: "/home/jinsoo/hypercloud-console5.0/examples/pconfig.yaml", Watch: true}
+	pvd := &file.Provider{Filename: *fDynamicConfig, Watch: true}
+	routinesPool := safe.NewPool(context.Background())
+	watcher := pServer.NewWatcher(pvd, routinesPool)
+	watcher.AddListener(switchRouter(srv, proxyServer))
 
-	httpsrv := &http.Server{
-		Addr:    listenURL.Host,
-		Handler: n,
-		// Disable HTTP/2, which breaks WebSockets.
-		TLSNextProto: make(map[string]func(*http.Server, *tls.Conn, http.Handler)),
-		TLSConfig: &tls.Config{
-			CipherSuites: crypto.DefaultCiphers(),
-		},
-	}
-	log.Infof("Binding to %s...", httpsrv.Addr)
-	if listenURL.Scheme == "https" {
-		log.Info("using TLS")
-		log.Fatal(httpsrv.ListenAndServeTLS(*fTlSCertFile, *fTlSKeyFile))
-	} else {
-		log.Info("not using TLS")
-		log.Fatal(httpsrv.ListenAndServe())
-	}
-	// httpsrv := &http.Server{
-	// 	Addr:    listenURL.Host,
-	// 	Handler: srv.HTTPHandler(),
-	// 	// Disable HTTP/2, which breaks WebSockets.
-	// 	TLSNextProto: make(map[string]func(*http.Server, *tls.Conn, http.Handler)),
-	// 	TLSConfig: &tls.Config{
-	// 		CipherSuites: crypto.DefaultCiphers(),
-	// 	},
-	// }
+	proxyServer.Start(context.Background())
+	watcher.Start()
+	// Proxy Server End
 
 	if *fRedirectPort != 0 {
 		go func() {
@@ -717,75 +696,77 @@ func main() {
 			log.Fatal(http.ListenAndServe(redirectPort, redirectServer))
 		}()
 	}
+	end := make(chan bool)
+	<-end
+}
 
-	// // // Add proxy Server
-	// // log.Info("starting proxy server")
-	// // if *fProxyConfig != "" {
-	// // 	go func() {
+// Create Router when changing proxy config
+func switchRouter(hyperCloudSrv *server.Server, proxySrv *pServer.HttpServer) func(config dynamic.Configuration) {
+	return func(config dynamic.Configuration) {
+		log.Info("===Starting SwitchRouter====")
+		// config := config.DeepCopy()
 
-	// // 		config := serverconfig.Config{}
-	// // 		proxyConfig := []serverconfig.ProxyInfo{}
+		routerTemp, err := router.NewRouter()
+		if err != nil {
+			log.Info("Failed to create router ", err)
+			// return nil, err
+		}
+		log.Infof("buildHandler : %v  \n", config.Routers)
+		for name, value := range config.Routers {
+			log.Infof("Creating proxy backend based on %v : %v  \n", name, value)
+			proxyBackend, err := backend.NewBackend(name, value.Server)
+			if err != nil {
+				log.Error("Failed to parse url of server")
+				// return nil, err
+			}
+			proxyBackend.Rule = value.Rule
+			proxyBackend.ServerURL = value.Server
+			if value.Path != "" {
+				handlerConfig := &pConfig.StripPrefix{
+					Prefixes: []string{value.Path},
+				}
+				prefixHandler, err := stripprefix.New(context.TODO(), proxyBackend.Handler, *handlerConfig, "stripPrefix")
+				if err != nil {
+					log.Error("Failed to create stripPrefix handler", err)
+					// return nil, err
+				}
+				err = routerTemp.AddRoute(proxyBackend.Rule, 0, prefixHandler)
+				if err != nil {
+					log.Error("failed to put proxy handler into Router", err)
+					// return nil, err
+				}
+			}
+			err = routerTemp.AddRoute(proxyBackend.Rule, 0, proxyBackend.Handler)
+			if err != nil {
+				log.Error("failed to put proxy handler into Router ", err)
+				// return nil, err
+			}
+		}
 
-	// // 		content, err := ioutil.ReadFile(*fProxyConfig)
-	// // 		if err != nil {
-	// // 			log.Error("ReadFile error occur")
-	// // 		}
+		err = routerTemp.AddRoute("PathPrefix(`/api/k8sAll`)", 0, http.HandlerFunc(
+			func(rw http.ResponseWriter, r *http.Request) {
+				rw.Header().Set("Content-Type", "application/json")
+				err := json.NewEncoder(rw).Encode(config)
+				if err != nil {
+					http.NotFound(rw, r)
+					return
+				}
+			},
+		))
+		if err != nil {
+			log.Error("/api/k8sAll/ has a problem", err)
+		}
 
-	// // 		err = yaml.Unmarshal(content, &config)
-	// // 		if err != nil {
-	// // 			log.Error("unmarshal error occur ")
-	// // 		}
-	// // 		proxyConfig = append(proxyConfig, config.ProxyInfo...)
+		routerTemp.AddRoute("PathPrefix(`/`)", 0, hyperCloudSrv.HTTPHandler())
+		log.Info("===End SwitchRouter ===")
+		log.Info("Call updateHandler --> routerTemp.Router")
+		// olderSrv:=proxySrv.Handler.Switcher.GetHandler()
 
-	// // 		router, err := router.NewRouter()
-	// // 		if err != nil {
-	// // 			log.Error("Failed to create router", err)
-	// // 		}
+		if proxySrv.Switcher.GetHandler() == nil {
+			proxySrv.Switcher.UpdateHandler(http.NotFoundHandler())
+		}
 
-	// // 		log.Info(proxyConfig)
-	// // 		for i := range proxyConfig {
-	// // 			proxyBackend, err := backend.NewBackend(proxyConfig[i].Name, proxyConfig[i].Server)
-	// // 			if err != nil {
-	// // 				log.Error("Failed to parse url", err)
-	// // 			}
-	// // 			proxyBackend.Rule = proxyConfig[i].Rule
-	// // 			proxyBackend.ServerURL = proxyConfig[i].Server
+		proxySrv.Switcher.UpdateHandler(routerTemp)
 
-	// // 			if proxyConfig[i].Path != "" {
-	// // 				log.Info("checking calling ", proxyConfig[i].Path)
-	// // 				handlerConfig := &pConfig.StripPrefix{
-	// // 					Prefixes: []string{proxyConfig[i].Path},
-	// // 				}
-	// // 				// chain.Append(func(next http.Handler) http.Handler {
-	// // 				prefixHandler, err := stripprefix.New(context.TODO(), proxyBackend.Handler, *handlerConfig, "stripPrefix")
-	// // 				if err != nil {
-	// // 					log.Error("Failed to create stripprefix handler", err)
-	// // 				}
-
-	// // 				router.AddRoute(proxyBackend.Rule, 0, prefixHandler)
-	// // 			}
-	// // 			router.AddRoute(proxyBackend.Rule, 0, proxyBackend.Handler)
-	// // 		}
-
-	// // 		// r := mux.NewRouter()
-	// // 		// for i := range proxyConfig {
-	// // 		// 	server, err := url.Parse(proxyConfig[i].Server)
-	// // 		// 	if err != nil {
-	// // 		// 		log.Error("Failed to parse url", err)
-	// // 		// 	}
-	// // 		// 	proxy := httputil.NewSingleHostReverseProxy(server)
-	// // 		// 	// r.NewRoute().Subrouter().Host(proxyConfig[i].Host).PathPrefix(proxyConfig[i].Path).Handler(http.StripPrefix(proxyConfig[i].Path, proxy))
-	// // 		// 	r.NewRoute().Subrouter().PathPrefix(proxyConfig[i].Path).Handler(http.StripPrefix(proxyConfig[i].Path, proxy))
-	// // 		// }
-	// // 		n := negroni.Classic()
-	// // 		n.UseHandler(router.Router)
-	// // 		pServer := http.Server{
-	// // 			Addr:    "172.24.1.225:9988",
-	// // 			Handler: n,
-	// // 		}
-	// // 		log.Info("using proxy server: ", pServer.Addr)
-	// // 		log.Fatal(pServer.ListenAndServe())
-	// // 	}()
-	// // }
-
+	}
 }

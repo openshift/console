@@ -1,0 +1,9 @@
+routers:
+  router0:
+    server: "http://172.23.0.2"
+    rule: "test"
+    path: "test"
+  router1:
+    server: "https://172.23.3.2/rule"
+    rule: "test2"
+    path: "test2"

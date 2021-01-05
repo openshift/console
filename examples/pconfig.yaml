@@ -1,14 +1,44 @@
-proxyInfo: 
-  - name: show
+routers:
+  show:
     server: "http://192.168.8.62:9002/"
     rule: "Host(`console`) && PathPrefix(`/console/`)"
     path: "/console/"
-  - name: cpd
+  cpd:
     server: "http://cpdch.org/"
-    rule: "Host(`cpdch.org`) && PathPrefix(`/test/`)"
-    # host: "cpdch.org"
-    path: "/test/"
-  - name: naver
+    rule: "Host(`cpdch.org`) && PathPrefix(`/cpd/`)"
+    path: "/cpd/"
+  naver:
     server: "https://www.naver.com/"
     rule: "Host(`naver.com`) && PathPrefix(`/naver/`)"
     path: "/naver/"
+  daum:
+    server: "https://www.daum.com/"
+    rule: "Host(`daum.com`) && PathPrefix(`/daum/`)"
+    path: "/daum/"
+  google:
+    server: "https://google.com/"
+    rule: "Host(`google.com`) && PathPrefix(`/google/`)"
+    path: "/google/"
+
+
+
+
+
+
+
+# proxyInfo: 
+#   - name: show
+#     server: "http://192.168.8.62:9002/"
+#     rule: "Host(`console`) && PathPrefix(`/console/`)"
+#     path: "/console/"
+#   - name: cpd
+#     server: "http://cpdch.org/"
+#     rule: "Host(`cpdch.org`) && PathPrefix(`/test/`)"
+#     # host: "cpdch.org"
+#     path: "/test/"
+#   - name: naver
+#     server: "https://www.naver.com/"
+#     rule: "Host(`naver.com`) && PathPrefix(`/naver/`)"
+#     path: "/naver/"
+
+

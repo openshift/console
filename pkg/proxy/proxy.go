@@ -143,32 +143,33 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			for _, protocol := range strings.Split(protocols, ",") {
 				protocol = strings.TrimSpace(protocol)
 				// TODO: secure by stripping newlines & other invalid stuff
+				// TODO: proxy header에 필요 없는 헤더 내용 주석처리
 				// "Impersonate-User" and "Impersonate-Group" and bridge specific (not a k8s thing)
-				if strings.HasPrefix(protocol, "Impersonate-User.") {
-					encodedProtocol := strings.TrimPrefix(protocol, "Impersonate-User.")
-					decodedProtocol, err := decodeSubprotocol(encodedProtocol)
-					if err != nil {
-						errMsg := fmt.Sprintf("Error decoding Impersonate-User subprotocol: %v", err)
-						http.Error(w, errMsg, http.StatusBadRequest)
-						return
-					}
-					proxiedHeader.Set("Impersonate-User", decodedProtocol)
-					subProtocol = protocol
-				} else if strings.HasPrefix(protocol, "Impersonate-Group.") {
-					encodedProtocol := strings.TrimPrefix(protocol, "Impersonate-Group.")
-					decodedProtocol, err := decodeSubprotocol(encodedProtocol)
-					if err != nil {
-						errMsg := fmt.Sprintf("Error decoding Impersonate-Group subprotocol: %v", err)
-						http.Error(w, errMsg, http.StatusBadRequest)
-						return
-					}
-					proxiedHeader.Set("Impersonate-User", string(decodedProtocol))
-					proxiedHeader.Set("Impersonate-Group", string(decodedProtocol))
-					subProtocol = protocol
-				} else {
-					proxiedHeader.Set("Sec-Websocket-Protocol", protocol)
-					subProtocol = protocol
-				}
+				// if strings.HasPrefix(protocol, "Impersonate-User.") {
+				// 	encodedProtocol := strings.TrimPrefix(protocol, "Impersonate-User.")
+				// 	decodedProtocol, err := decodeSubprotocol(encodedProtocol)
+				// 	if err != nil {
+				// 		errMsg := fmt.Sprintf("Error decoding Impersonate-User subprotocol: %v", err)
+				// 		http.Error(w, errMsg, http.StatusBadRequest)
+				// 		return
+				// 	}
+				// 	proxiedHeader.Set("Impersonate-User", decodedProtocol)
+				// 	subProtocol = protocol
+				// } else if strings.HasPrefix(protocol, "Impersonate-Group.") {
+				// 	encodedProtocol := strings.TrimPrefix(protocol, "Impersonate-Group.")
+				// 	decodedProtocol, err := decodeSubprotocol(encodedProtocol)
+				// 	if err != nil {
+				// 		errMsg := fmt.Sprintf("Error decoding Impersonate-Group subprotocol: %v", err)
+				// 		http.Error(w, errMsg, http.StatusBadRequest)
+				// 		return
+				// 	}
+				// 	proxiedHeader.Set("Impersonate-User", string(decodedProtocol))
+				// 	proxiedHeader.Set("Impersonate-Group", string(decodedProtocol))
+				// 	subProtocol = protocol
+				// } else {
+				proxiedHeader.Set("Sec-Websocket-Protocol", protocol)
+				subProtocol = protocol
+				// }
 			}
 		}
 	}
@@ -189,6 +190,13 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// NOTE (ericchiang): K8s might not enforce this but websockets requests are
 	// required to supply an origin.
 	proxiedHeader.Add("Origin", "http://localhost")
+
+	// NOTE: bearer token 넣어보기 위해 Authorization 추가 // 정동민
+	token, ok := r.URL.Query()["token"]
+	if ok && len(token[0]) > 0 {
+		proxiedHeader.Add("Authorization", "Bearer "+string(token[0]))
+	}
+	// NOTE: 여기까지
 
 	dialer := &websocket.Dialer{
 		TLSClientConfig: p.config.TLSClientConfig,

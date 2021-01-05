@@ -1,0 +1,23 @@
+routers:
+  router0:
+    service: "jinsoo"
+    rule: "jinsoo"
+    middlewares: 
+    - "jinsoo"
+    - "jinsoo"
+  router1:
+    service: "jinsoo"
+    rule: "jinsoo"
+    middlewares: 
+    - "jinsoo"
+    - "jinsoo"
+  router2:
+    service: "zjinsoo"
+    rule: "zjinsoo"
+    middlewares: 
+    - "jinsoo"
+    - "jinsoo"
+
+
+
+

@@ -1,0 +1,13 @@
+routers:
+  k8s1:
+    server: "https://172.22.6.2:6443/"
+    rule: "PathPrefix(`/api/k8s1/`)"
+    path: "/api/k8s1/"
+  k8s2:
+    server: "http://172.23.4.201:6443/"
+    rule: "PathPrefix(`/api/k8s2/`)"
+    path: "/api/k8s2/"
+  google:
+    server: "https://google.com/"
+    rule: "Host(`google.com`) && PathPrefix(`/google/`)"
+    path: "/google/"
