@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { match as Rmatch } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import {
   history,
@@ -26,6 +27,7 @@ const MultiTabListPage: React.FC<MultiTabListPageProps> = ({
   menuActions,
   match,
 }) => {
+  const { t } = useTranslation();
   const {
     params: { ns },
   } = match;
@@ -51,7 +53,7 @@ const MultiTabListPage: React.FC<MultiTabListPageProps> = ({
         <Dropdown
           buttonClassName="pf-m-primary"
           menuClassName="pf-m-align-right-on-md"
-          title="Create"
+          title={t('console-shared~Create')}
           noSelection
           items={_.mapValues(
             menuActions,

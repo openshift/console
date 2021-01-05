@@ -13,9 +13,9 @@ export const catalogPlugin: Plugin<CatalogConsumedExtensions> = [
       // t('devconsole~Browse for container images that support a particular language or framework. Cluster administrators can customize the content made available in the catalog.')
       catalogDescription:
         '%devconsole~Browse for container images that support a particular language or framework. Cluster administrators can customize the content made available in the catalog.%',
-      // t('devconsole~**Builder Images** are container images that build source code for a  particular language or framework.')
+      // t('devconsole~**Builder Images** are container images that build source code for a particular language or framework.')
       typeDescription:
-        '%devconsole~**Builder Images** are container images that build source code for a  particular language or framework.%',
+        '%devconsole~**Builder Images** are container images that build source code for a particular language or framework.%',
     },
     flags: {
       required: ['OPENSHIFT'],
