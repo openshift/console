@@ -91,22 +91,21 @@ const RegistryTableRow: RowFunction<K8sResourceKind> = ({ obj: registry, index, 
 
   export const RegistryDetailsList: React.FC<RegistryDetailsListProps> = ({ ds }) => (
     <dl className="co-m-pane__details">
-      <DetailsItem label="Current Count" obj={ds} path="status.currentNumberScheduled" />
-      <DetailsItem label="Desired Count" obj={ds} path="status.desiredNumberScheduled" />
+      <DetailsItem label="Status" obj={ds} path="status.phase" />
     </dl>
   );
 
   
-const RegistryDetails: React.FC<RegistryDetailsProps> = ({ obj: task }) => (
+const RegistryDetails: React.FC<RegistryDetailsProps> = ({ obj: registry }) => (
     <>
       <div className="co-m-pane__body">
         <SectionHeading text="Registry Details" />
         <div className="row">
           <div className="col-lg-6">
-            <ResourceSummary resource={task} showPodSelector showNodeSelector showTolerations />
+            <ResourceSummary resource={registry} showPodSelector showNodeSelector showTolerations />
           </div>
           <div className="col-lg-6">
-            <RegistryDetailsList ds={task} />
+            <RegistryDetailsList ds={registry} />
           </div>
         </div>
       </div>
