@@ -30,12 +30,16 @@ const PipelinesListPage: React.FC<PipelinesListPageProps> = ({ match }) => {
   const [showTitle, hideBadge, canCreate] = [false, true, false];
   const menuActions: MenuActions = {
     pipeline: {
+      label: t('pipelines-plugin~Pipeline'),
       model: PipelineModel,
       onSelection: (key: string, action: MenuAction, url: string) => `${url}/builder`,
     },
-    pipelineRun: { model: PipelineRunModel },
-    pipelineResource: { model: PipelineResourceModel },
-    condition: { model: ConditionModel },
+    pipelineRun: { label: t('pipelines-plugin~Pipeline Run'), model: PipelineRunModel },
+    pipelineResource: {
+      label: t('pipelines-plugin~Pipeline Resource'),
+      model: PipelineResourceModel,
+    },
+    condition: { label: t('pipelines-plugin~Condition'), model: ConditionModel },
   };
   const pages: Page[] = [
     {

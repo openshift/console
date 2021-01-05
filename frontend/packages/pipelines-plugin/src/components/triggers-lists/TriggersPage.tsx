@@ -26,15 +26,18 @@ const TriggersPage: React.FC<TriggersPageProps> = ({ match }) => {
   } = match;
   const [showTitle, canCreate] = [false, false];
   const menuActions = {
-    eventListener: { model: EventListenerModel },
-    triggerTemplate: { model: TriggerTemplateModel },
-    triggerBinding: { model: TriggerBindingModel },
-    culsterTriggerBinding: { model: ClusterTriggerBindingModel },
+    eventListener: { label: t('pipelines-plugin~Event Listener'), model: EventListenerModel },
+    triggerTemplate: { label: t('pipelines-plugin~Trigger Template'), model: TriggerTemplateModel },
+    triggerBinding: { label: t('pipelines-plugin~Trigger Binding'), model: TriggerBindingModel },
+    culsterTriggerBinding: {
+      label: t('pipelines-plugin~Cluster Trigger Binding'),
+      model: ClusterTriggerBindingModel,
+    },
   };
   const pages: Page[] = [
     {
       href: '',
-      name: EventListenerModel.labelPlural,
+      name: t('pipelines-plugin~Event Listeners'),
       component: DefaultPage,
       pageData: {
         kind: referenceForModel(EventListenerModel),
@@ -45,7 +48,7 @@ const TriggersPage: React.FC<TriggersPageProps> = ({ match }) => {
     },
     {
       href: 'trigger-templates',
-      name: TriggerTemplateModel.labelPlural,
+      name: t('pipelines-plugin~Trigger Templates'),
       component: DefaultPage,
       pageData: {
         kind: referenceForModel(TriggerTemplateModel),
@@ -56,7 +59,7 @@ const TriggersPage: React.FC<TriggersPageProps> = ({ match }) => {
     },
     {
       href: 'trigger-bindings',
-      name: TriggerBindingModel.labelPlural,
+      name: t('pipelines-plugin~Trigger Bindings'),
       component: DefaultPage,
       pageData: {
         kind: referenceForModel(TriggerBindingModel),
@@ -67,7 +70,7 @@ const TriggersPage: React.FC<TriggersPageProps> = ({ match }) => {
     },
     {
       href: 'cluster-trigger-bindings',
-      name: ClusterTriggerBindingModel.labelPlural,
+      name: t('pipelines-plugin~Cluster Trigger Bindings'),
       component: DefaultPage,
       pageData: {
         kind: referenceForModel(ClusterTriggerBindingModel),

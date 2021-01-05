@@ -22,14 +22,14 @@ const TasksListsPage: React.FC<TasksListsPageProps> = ({ match }) => {
   } = match;
   const [showTitle, canCreate, hideBadge] = [false, false, true];
   const menuActions: MenuActions = {
-    tasks: { model: TaskModel },
-    taskRun: { model: TaskRunModel },
-    clusterTask: { model: ClusterTaskModel },
+    tasks: { label: t('pipelines-plugin~Task'), model: TaskModel },
+    taskRun: { label: t('pipelines-plugin~Task Run'), model: TaskRunModel },
+    clusterTask: { label: t('pipelines-plugin~Cluster Task'), model: ClusterTaskModel },
   };
   const pages: Page[] = [
     {
       href: '',
-      name: TaskModel.labelPlural,
+      name: t('pipelines-plugin~Tasks'),
       component: DefaultPage,
       pageData: {
         kind: referenceForModel(TaskModel),
@@ -40,7 +40,7 @@ const TasksListsPage: React.FC<TasksListsPageProps> = ({ match }) => {
     },
     {
       href: 'task-runs',
-      name: TaskRunModel.labelPlural,
+      name: t('pipelines-plugin~Task Runs'),
       component: TaskRunsListPage,
       pageData: {
         hideBadge,
@@ -49,7 +49,7 @@ const TasksListsPage: React.FC<TasksListsPageProps> = ({ match }) => {
     },
     {
       href: 'cluster-tasks',
-      name: ClusterTaskModel.labelPlural,
+      name: t('pipelines-plugin~Cluster Tasks'),
       component: DefaultPage,
       pageData: {
         kind: referenceForModel(ClusterTaskModel),
