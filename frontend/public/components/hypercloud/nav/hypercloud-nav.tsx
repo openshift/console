@@ -86,6 +86,8 @@ const HyperCloudNav = () => (
           <ResourceNSLink resource="pipelineruns" name="PipelineRun" />
           <ResourceNSLink resource="approvals" name="Approval" />
           <ResourceNSLink resource="pipelineresources" name="PipelineResource" />
+          <ResourceNSLink resource="integrationjobs" name="IntegrationJob" />
+          <ResourceNSLink resource="integrationconfigs" name="IntegrationConfig" />
         </NavSection>
         {/* <NavSection title="AI DevOps">
           <ResourceNSLink resource="notebooks" name='Notebook' />

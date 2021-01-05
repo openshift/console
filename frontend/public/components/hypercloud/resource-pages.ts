@@ -50,7 +50,8 @@ import {
   PipelineResourceModel,
   RegistryModel,
   ImageSignerModel,
-  ImageSignRequestModel
+  ImageSignRequestModel,
+  IntegrationConfigModel
 } from '../../models';
 
 type ResourceMapKey = GroupVersionKind | string;
@@ -80,6 +81,7 @@ export const hyperCloudDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapVa
   .set(referenceForModel(PipelineRunModel), () => import('./pipeline-run' /* webpackChunkName: "pipeline-run" */).then(m => m.PipelineRunsDetailsPage))
   .set(referenceForModel(ApprovalModel), () => import('./pipeline-approval' /* webpackChunkName: "pipeline-approval" */).then(m => m.PipelineApprovalsDetailsPage))
   .set(referenceForModel(PipelineResourceModel), () => import('./pipeline-resource' /* webpackChunkName: "pipeline-resource" */).then(m => m.PipelineResourcesDetailsPage))
+  .set(referenceForModel(IntegrationConfigModel), () => import('./integration-config' /* webpackChunkName: "pipeline-resource" */).then(m => m.IntegrationConfigsDetailsPage))
   .set(referenceForModel(VirtualMachineModel), () => import('./virtual-machine' /* webpackChunkName: "virtual-machine" */).then(m => m.VirtualMachinesDetailsPage))
   .set(referenceForModel(VirtualMachineInstanceModel), () => import('./virtual-machine-instance' /* webpackChunkName: "virtual-machine-instance" */).then(m => m.VirtualMachineInstancesDetailsPage))
   .set(referenceForModel(VirtualServiceModel), () => import('./virtual-service' /* webpackChunkName: "virtual-service" */).then(m => m.VirtualServicesDetailsPage))
@@ -129,6 +131,7 @@ export const hyperCloudListPages = ImmutableMap<ResourceMapKey, ResourceMapValue
   .set(referenceForModel(PipelineRunModel), () => import('./pipeline-run' /* webpackChunkName: "pipeline-run" */).then(m => m.PipelineRunsPage))
   .set(referenceForModel(ApprovalModel), () => import('./pipeline-approval' /* webpackChunkName: "pipeline-approval" */).then(m => m.PipelineApprovalsPage))
   .set(referenceForModel(PipelineResourceModel), () => import('./pipeline-resource' /* webpackChunkName: "pipeline-resource" */).then(m => m.PipelineResourcesPage))
+  .set(referenceForModel(IntegrationConfigModel), () => import('./integration-config' /* webpackChunkName: "pipeline-resource" */).then(m => m.IntegrationConfigsPage))
   .set(referenceForModel(VirtualMachineModel), () => import('./virtual-machine' /* webpackChunkName: "virtual-machine" */).then(m => m.VirtualMachinesPage))
   .set(referenceForModel(VirtualMachineInstanceModel), () => import('./virtual-machine-instance' /* webpackChunkName: "virtual-machine-instance" */).then(m => m.VirtualMachineInstancesPage))
   .set(referenceForModel(VirtualServiceModel), () => import('./virtual-service' /* webpackChunkName: "virtual-service" */).then(m => m.VirtualServicesPage))

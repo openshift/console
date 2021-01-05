@@ -2,15 +2,15 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-import { Status } from '@console/shared';
+
 import { K8sResourceKind } from '../../module/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from '../factory';
-import { DetailsItem, Kebab, KebabAction, detailsPage, Timestamp, navFactory, ResourceKebab, ResourceLink, ResourceSummary, SectionHeading } from '../utils';
-import { RegistryModel } from '../../models/hypercloud';
+import { Kebab, KebabAction, detailsPage, Timestamp, navFactory, ResourceKebab, ResourceLink, ResourceSummary, SectionHeading } from '../utils';
+import { IntegrationConfigModel } from '../../models/hypercloud';
 
-export const menuActions: KebabAction[] = [...Kebab.getExtensionsActionsForKind(RegistryModel), ...Kebab.factory.common];
+export const menuActions: KebabAction[] = [...Kebab.getExtensionsActionsForKind(IntegrationConfigModel), ...Kebab.factory.common];
 
-const kind = RegistryModel.kind;
+const kind = IntegrationConfigModel.kind;
 
 const tableColumnClasses = [
     classNames('col-xs-2', 'col-sm-2'),
@@ -22,7 +22,7 @@ const tableColumnClasses = [
   ];
 
 
-const RegistryTableHeader = () => {
+const IntegrationConfigTableHeader = () => {
     return [
       {
         title: 'Name',
@@ -61,10 +61,10 @@ const RegistryTableHeader = () => {
     ];
   };
 
-  RegistryTableHeader.displayName = 'RegistryTableHeader';
+  IntegrationConfigTableHeader.displayName = 'IntegrationConfigTableHeader';
 
   
-const RegistryTableRow: RowFunction<K8sResourceKind> = ({ obj: registry, index, key, style }) => {
+const IntegrationConfigTableRow: RowFunction<K8sResourceKind> = ({ obj: registry, index, key, style }) => {
     return (
       <TableRow id={registry.metadata.uid} index={index} trKey={key} style={style}>
         <TableData className={tableColumnClasses[0]}>
@@ -76,8 +76,8 @@ const RegistryTableRow: RowFunction<K8sResourceKind> = ({ obj: registry, index, 
         <TableData className={tableColumnClasses[2]}>
           {registry.spec.image}
         </TableData>
-        <TableData className={classNames(tableColumnClasses[3], 'co-break-word')}>
-          <Status status={registry.status.phase} />
+        <TableData className={tableColumnClasses[3]}>
+          {registry.status.phase}
         </TableData>
         <TableData className={tableColumnClasses[4]}>
           <Timestamp timestamp={registry.metadata.creationTimestamp} />
@@ -88,24 +88,14 @@ const RegistryTableRow: RowFunction<K8sResourceKind> = ({ obj: registry, index, 
       </TableRow>
     );
   };
-
-  export const RegistryDetailsList: React.FC<RegistryDetailsListProps> = ({ ds }) => (
-    <dl className="co-m-pane__details">
-      <DetailsItem label="Status" obj={ds} path="status.phase" />
-    </dl>
-  );
-
   
-const RegistryDetails: React.FC<RegistryDetailsProps> = ({ obj: registry }) => (
+const IntegrationConfigDetails: React.FC<IntegrationConfigDetailsProps> = ({ obj: registry }) => (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Registry Details" />
+        <SectionHeading text="IntegrationConfig Details" />
         <div className="row">
           <div className="col-lg-6">
             <ResourceSummary resource={registry} showPodSelector showNodeSelector showTolerations />
-          </div>
-          <div className="col-lg-6">
-            <RegistryDetailsList ds={registry} />
           </div>
         </div>
       </div>
@@ -118,28 +108,23 @@ const RegistryDetails: React.FC<RegistryDetailsProps> = ({ obj: registry }) => (
   
 const { details, editYaml } = navFactory;
 
-export const Registries: React.FC = props => <Table {...props} aria-label="Registries" Header={RegistryTableHeader} Row={RegistryTableRow} virtualize />;
+export const IntegrationConfigs: React.FC = props => <Table {...props} aria-label="IntegrationConfigs" Header={IntegrationConfigTableHeader} Row={IntegrationConfigTableRow} virtualize />;
 
 
-export const RegistriesPage: React.FC<RegistriesPageProps> = props => <ListPage canCreate={true} ListComponent={Registries} kind={kind} {...props} />;
+export const IntegrationConfigsPage: React.FC<IntegrationConfigsPageProps> = props => <ListPage canCreate={true} ListComponent={IntegrationConfigs} kind={kind} {...props} />;
 
-export const RegistriesDetailsPage: React.FC<RegistriesDetailsPageProps> = props => <DetailsPage {...props} kind={kind} menuActions={menuActions} pages={[details(detailsPage(RegistryDetails)), editYaml()]} />;
+export const IntegrationConfigsDetailsPage: React.FC<IntegrationConfigsDetailsPageProps> = props => <DetailsPage {...props} kind={kind} menuActions={menuActions} pages={[details(detailsPage(IntegrationConfigDetails)), editYaml()]} />;
 
-
-  type RegistryDetailsListProps = {
-    ds: K8sResourceKind;
-  };
-
-  type RegistriesPageProps = {
+  type IntegrationConfigsPageProps = {
     showTitle?: boolean;
     namespace?: string;
     selector?: any;
   };
 
-  type RegistryDetailsProps = {
+  type IntegrationConfigDetailsProps = {
     obj: K8sResourceKind;
   };
 
-  type RegistriesDetailsPageProps = {
+  type IntegrationConfigsDetailsPageProps = {
     match: any;
   };
