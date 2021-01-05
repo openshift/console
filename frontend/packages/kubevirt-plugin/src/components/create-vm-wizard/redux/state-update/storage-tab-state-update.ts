@@ -205,8 +205,11 @@ const initialStorageClassUpdater = ({ id, prevState, dispatch, getState }: Updat
   const state = getState();
 
   if (
-    !hasVMSettingsValueChanged(prevState, state, id, VMSettingsField.DEFAULT_STORAGE_CLASS) &&
-    !hasStoragesChanged(prevState, state, id)
+    iGetCommonData(state, id, VMWizardProps.isCreateTemplate) ||
+    !(
+      hasVMSettingsValueChanged(prevState, state, id, VMSettingsField.DEFAULT_STORAGE_CLASS) ||
+      hasStoragesChanged(prevState, state, id)
+    )
   ) {
     return;
   }

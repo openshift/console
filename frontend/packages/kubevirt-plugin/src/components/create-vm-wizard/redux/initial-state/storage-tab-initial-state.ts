@@ -53,6 +53,7 @@ const WINTOOLS_DISK_NAME = 'windows-guest-tools';
 
 const getContainerStorage = (
   storageClassConfigMap: ConfigMapKind,
+  defaultStorageClassName: string,
   diskType = DiskType.DISK,
   bus = DiskBus.VIRTIO,
   url = '',
@@ -77,8 +78,9 @@ const getContainerStorage = (
         unit: '',
       })
       .setType(DataVolumeSourceType.REGISTRY, { url })
-      .setVolumeMode(getDefaultSCVolumeMode(storageClassConfigMap))
-      .setAccessModes(getDefaultSCAccessModes(storageClassConfigMap))
+      .setStorageClassName(defaultStorageClassName)
+      .setVolumeMode(getDefaultSCVolumeMode(storageClassConfigMap, defaultStorageClassName))
+      .setAccessModes(getDefaultSCAccessModes(storageClassConfigMap, defaultStorageClassName))
       .asResource(),
     editConfig: {
       isFieldEditableOverride: {
@@ -106,6 +108,7 @@ export const windowsToolsStorage: VMWizardStorage = {
 
 export const getBaseImageStorage = (
   storageClassConfigMap: ConfigMapKind,
+  defaultStorageClassName: string,
   pvcName,
   pvcNamespace,
   pvcSize = '15Gi',
@@ -134,8 +137,9 @@ export const getBaseImageStorage = (
         unit,
       })
       .setType(DataVolumeSourceType.PVC, { name: pvcName, namespace: pvcNamespace })
-      .setVolumeMode(getDefaultSCVolumeMode(storageClassConfigMap))
-      .setAccessModes(getDefaultSCAccessModes(storageClassConfigMap))
+      .setStorageClassName(defaultStorageClassName)
+      .setVolumeMode(getDefaultSCVolumeMode(storageClassConfigMap, defaultStorageClassName))
+      .setAccessModes(getDefaultSCAccessModes(storageClassConfigMap, defaultStorageClassName))
       .asResource(),
     editConfig: {
       isFieldEditableOverride: {
@@ -147,6 +151,7 @@ export const getBaseImageStorage = (
 
 const getUrlStorage = (
   storageClassConfigMap: ConfigMapKind,
+  defaultStorageClassName: string,
   diskType = DiskType.DISK,
   bus = DiskBus.VIRTIO,
   url = '',
@@ -174,8 +179,9 @@ const getUrlStorage = (
         unit: '',
       })
       .setType(DataVolumeSourceType.HTTP, { url })
-      .setVolumeMode(getDefaultSCVolumeMode(storageClassConfigMap))
-      .setAccessModes(getDefaultSCAccessModes(storageClassConfigMap))
+      .setStorageClassName(defaultStorageClassName)
+      .setVolumeMode(getDefaultSCVolumeMode(storageClassConfigMap, defaultStorageClassName))
+      .setAccessModes(getDefaultSCAccessModes(storageClassConfigMap, defaultStorageClassName))
       .asResource(),
     editConfig: {
       isFieldEditableOverride: {
@@ -187,6 +193,7 @@ const getUrlStorage = (
 
 const getPVCStorage = (
   storageClassConfigMap: ConfigMapKind,
+  defaultStorageClassName: string,
   diskType = DiskType.DISK,
   bus = DiskBus.VIRTIO,
   size = '15Gi',
@@ -215,8 +222,9 @@ const getPVCStorage = (
         unit: '',
       })
       .setType(DataVolumeSourceType.PVC, { name: pvcName, namespace: pvcNamespace })
-      .setVolumeMode(getDefaultSCVolumeMode(storageClassConfigMap))
-      .setAccessModes(getDefaultSCAccessModes(storageClassConfigMap))
+      .setStorageClassName(defaultStorageClassName)
+      .setVolumeMode(getDefaultSCVolumeMode(storageClassConfigMap, defaultStorageClassName))
+      .setAccessModes(getDefaultSCAccessModes(storageClassConfigMap, defaultStorageClassName))
       .asResource(),
     editConfig: {
       isFieldEditableOverride: {
@@ -234,6 +242,11 @@ export const getNewProvisionSourceStorage = (state: any, id: string): VMWizardSt
     state,
     id,
     VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE,
+  );
+  const defaultStorageClassName = iGetVmSettingValue(
+    state,
+    id,
+    VMSettingsField.DEFAULT_STORAGE_CLASS,
   );
   const iUserTemplate = iGetCommonData(state, id, VMWizardProps.userTemplate);
 
@@ -253,25 +266,27 @@ export const getNewProvisionSourceStorage = (state: any, id: string): VMWizardSt
     if (source?.url) {
       return getUrlStorage(
         storageClassConfigMap,
+        defaultStorageClassName,
         source.cdRom ? DiskType.CDROM : DiskType.DISK,
         diskBus,
         source.url,
         source.size,
       );
     }
-    return getUrlStorage(storageClassConfigMap);
+    return getUrlStorage(storageClassConfigMap, defaultStorageClassName);
   }
   if (provisionSource === ProvisionSource.CONTAINER) {
     if (source?.container) {
       return getContainerStorage(
         storageClassConfigMap,
+        defaultStorageClassName,
         source.cdRom ? DiskType.CDROM : DiskType.DISK,
         diskBus,
         source.container,
         source.size,
       );
     }
-    return getContainerStorage(storageClassConfigMap);
+    return getContainerStorage(storageClassConfigMap, defaultStorageClassName);
   }
   if (provisionSource === ProvisionSource.DISK && !iUserTemplate && cloneCommonBaseDiskImage) {
     const iStorageClassConfigMap = iGetLoadedCommonData(
@@ -299,6 +314,7 @@ export const getNewProvisionSourceStorage = (state: any, id: string): VMWizardSt
 
     return getBaseImageStorage(
       toShallowJS(iStorageClassConfigMap),
+      defaultStorageClassName,
       pvcName,
       pvcNamespace,
       pvcSize,
@@ -308,6 +324,7 @@ export const getNewProvisionSourceStorage = (state: any, id: string): VMWizardSt
   if (provisionSource === ProvisionSource.DISK && !iUserTemplate) {
     return getPVCStorage(
       storageClassConfigMap,
+      defaultStorageClassName,
       source?.cdRom ? DiskType.CDROM : DiskType.DISK,
       diskBus,
       source?.size,
