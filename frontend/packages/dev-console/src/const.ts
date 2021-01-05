@@ -16,3 +16,5 @@ export enum CONNECTOR_INCONTEXT_ACTIONS {
   /** connects to action for resources */
   connectsTo = 'connectsTo',
 }
+
+export const SERVICE_BINDING_ENABLED = 'SERVICE_BINDING_ENABLED';

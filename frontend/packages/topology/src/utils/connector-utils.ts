@@ -259,7 +259,7 @@ const getSourceAndTargetForBinding = async (
     referenceForModel(DeploymentModel),
   ];
   let target;
-  if (serviceBindingAvailable) {
+  if (serviceBindingAvailable || !Array.isArray(resources)) {
     target = resources;
   } else {
     target = (resources as K8sResourceKind[]).find((resource) =>

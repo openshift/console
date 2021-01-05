@@ -7,6 +7,7 @@ import {
   QUERY_PROPERTIES,
   INCONTEXT_ACTIONS_CONNECTS_TO,
   INCONTEXT_ACTIONS_SERVICE_BINDING,
+  SERVICE_BINDING_ENABLED,
 } from '../const';
 
 const PART_OF = 'app.kubernetes.io/part-of';
@@ -17,6 +18,7 @@ export const getAddPageUrl = (
   type: string,
   hasApplication: boolean,
   contextSource?: string,
+  serviceBindingEnabled?: boolean,
 ): string => {
   let pageUrl = '';
   const params = new URLSearchParams();
@@ -74,7 +76,9 @@ export const getAddPageUrl = (
         params.append(
           QUERY_PROPERTIES.CONTEXT_ACTION,
           JSON.stringify({
-            type: INCONTEXT_ACTIONS_SERVICE_BINDING,
+            type: serviceBindingEnabled
+              ? INCONTEXT_ACTIONS_SERVICE_BINDING
+              : INCONTEXT_ACTIONS_CONNECTS_TO,
             payload: contextSource,
           }),
         );
@@ -144,6 +148,13 @@ export const createKebabAction: KebabFactory = (labelKey, icon, importType, chec
     labelKey,
     icon,
     pathKey: getMenuPath(hasApplication, connectorSourceContext),
-    href: getAddPageUrl(obj, namespace, importType, hasApplication, connectorSourceContext),
+    href: getAddPageUrl(
+      obj,
+      namespace,
+      importType,
+      hasApplication,
+      connectorSourceContext,
+      accessData.includes(SERVICE_BINDING_ENABLED),
+    ),
   };
 };

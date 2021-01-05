@@ -12,11 +12,8 @@ import {
   ServiceModel,
 } from '@console/internal/models';
 import { ALLOW_SERVICE_BINDING_FLAG } from '@console/topology/src/const';
-import {
-  allCatalogImageResourceAccess,
-  allImportResourceAccess,
-  serviceBindingAvailable,
-} from '../actions/add-resources';
+import { allCatalogImageResourceAccess, allImportResourceAccess } from '../actions/add-resources';
+import { SERVICE_BINDING_ENABLED } from '../const';
 
 const resourceAttributes = (model: K8sKind, namespace: string): AccessReviewResourceAttributes => {
   return {
@@ -58,7 +55,7 @@ export const useAddToProjectAccess = (activeNamespace: string): string[] => {
       }
     }
     if (serviceBindingEnabled) {
-      createResourceAccess.push(serviceBindingAvailable);
+      createResourceAccess.push(SERVICE_BINDING_ENABLED);
     }
     return createResourceAccess;
   }, [
