@@ -41,8 +41,6 @@ export const CreateDefault: React.FC<CreateDefaultProps> = ({ customResourceDefi
 
   if (customResourceDefinition) {
     definition = customResourceDefinition.data;
-  } else {
-    loaded = true;
   }
 
   const [schema, FormComponent] = React.useMemo(() => {
@@ -60,7 +58,7 @@ export const CreateDefault: React.FC<CreateDefaultProps> = ({ customResourceDefi
 
   return (
     <StatusBox loaded={loaded} loadError={loadError} data={customResourceDefinition || data}>
-      {loaded ? (
+      {loaded || !customResourceDefinition ? (
         <>
           <div className="co-create-operand__header">
             <div className="co-create-operand__header-buttons">

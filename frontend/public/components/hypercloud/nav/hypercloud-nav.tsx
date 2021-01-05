@@ -2,11 +2,11 @@ import * as React from 'react';
 
 import { FLAGS } from '@console/shared';
 import { Translation } from 'react-i18next';
-import { GroupModel, UserModel } from '../../../models';
+// import { GroupModel, UserModel } from '../../../models';
 
-import { referenceForModel } from '../../../module/k8s';
+// import { referenceForModel } from '../../../module/k8s';
 import { HrefLink, ResourceNSLink, ResourceClusterLink } from '../../nav/items';
-import { AuthAdminLink } from './items';
+// import { AuthAdminLink } from './items';
 import { NavSection } from '../../nav/section';
 
 // Wrap `NavItemSeparator` so we can use `required` without prop type errors.
@@ -117,9 +117,9 @@ const HyperCloudNav = () => (
           <ResourceNSLink resource="rolebindings" name="Role Bindings" startsWith={rolebindingsStartsWith} />
           <ResourceNSLink resource="rolebindingclaims" name="Role Binding Claims" startsWith={rolebindingsStartsWith} />
           <ResourceNSLink resource="serviceaccounts" name="Service Accounts" />
-          <ResourceClusterLink resource="podsecuritypolicies" name="PodSecurityPolicy" />
-          <AuthAdminLink resource={referenceForModel(UserModel)} name="Users" />
-          <AuthAdminLink resource={referenceForModel(GroupModel)} name="User Groups" />
+          {/* <ResourceClusterLink resource="podsecuritypolicies" name="PodSecurityPolicy" /> */}
+          {/* <AuthAdminLink resource={referenceForModel(UserModel)} name="Users" />
+          <AuthAdminLink resource={referenceForModel(GroupModel)} name="User Groups" /> */}
         </NavSection>
       </>
     )}
