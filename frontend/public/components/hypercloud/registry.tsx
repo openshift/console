@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-
+import { Status } from '@console/shared';
 import { K8sResourceKind } from '../../module/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from '../factory';
 import { DetailsItem, Kebab, KebabAction, detailsPage, Timestamp, navFactory, ResourceKebab, ResourceLink, ResourceSummary, SectionHeading } from '../utils';
@@ -76,8 +76,8 @@ const RegistryTableRow: RowFunction<K8sResourceKind> = ({ obj: registry, index, 
         <TableData className={tableColumnClasses[2]}>
           {registry.spec.image}
         </TableData>
-        <TableData className={tableColumnClasses[3]}>
-          {registry.status.phase}
+        <TableData className={classNames(tableColumnClasses[3], 'co-break-word')}>
+          <Status status={registry.status.phase} />
         </TableData>
         <TableData className={tableColumnClasses[4]}>
           <Timestamp timestamp={registry.metadata.creationTimestamp} />
