@@ -7,7 +7,7 @@ import { ProvisionSource } from '../tests/utils/constants/enums/provisionSource'
 // Wizard Common
 export const createItemButton = $('[data-test-id="item-create"]');
 export const createWithWizardButton = $('[data-test-id="vm-wizard"]');
-export const createWithYAMLButton = $('[data-test-id="vm-yaml]');
+export const createWithYAMLButton = $('[data-test-id="vm-yaml"]');
 export const backButton = element(by.buttonText('Back'));
 export const cancelButton = element(by.buttonText('Cancel'));
 export const nextButton = element(by.buttonText('Next'));
@@ -31,7 +31,7 @@ export const vmNameHelper = $('#vm-name-helper');
 // Basic Settings tab
 export const templateSelect = $('#template-dropdown');
 export const provisionSourceSelect = $('#image-source-type-dropdown');
-export const goldenImageCloneCheckbox = $('#clone-common-base-image-checkbox');
+export const goldenImageCloneCheckbox = $$('#clone-common-base-image-checkbox').get(0);
 export const provisionSourceInputs = {
   [ProvisionSource.URL.getValue()]: $('#provision-source-url'),
   [ProvisionSource.CONTAINER.getValue()]: $('#provision-source-container'),

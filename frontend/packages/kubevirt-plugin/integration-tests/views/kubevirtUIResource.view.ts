@@ -32,3 +32,5 @@ export const selectKebabOption = async (name: string, option: string) => {
   await click(kebabForName(name)); // open kebab dropdown
   await click($(`[data-test-action="${option}"]`));
 };
+
+export const dataID = (name: string) => $(`[data-id="${name}"]`);

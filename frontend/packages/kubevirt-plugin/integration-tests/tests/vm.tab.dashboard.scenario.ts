@@ -38,9 +38,6 @@ describe('Kubevirt VM dashboard tab', () => {
       new RegExp(`.*/k8s/ns/${vm.namespace}/${VirtualMachineModel.plural}/${vm.name}/nics`),
     );
     expect(dashboardView.vmInventoryDisks.getText()).toEqual('2 Disks');
-    expect(dashboardView.vmInventoryDisks.$('a').getAttribute('href')).toMatch(
-      new RegExp(`.*/k8s/ns/${vm.namespace}/${VirtualMachineModel.plural}/${vm.name}/disks`),
-    );
 
     await vm.addDisk(hddDisk);
     await vm.addNIC(multusNetworkInterface);

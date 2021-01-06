@@ -95,7 +95,7 @@ export const getBasicVMBuilder = () =>
     .setFlavor(flavorConfigs.Tiny)
     .setOS(OperatingSystem.RHEL7)
     .setWorkload(Workload.DESKTOP)
-    .setStartOnCreation(false);
+    .setStartOnCreation(true);
 
 export const getBasicVMTBuilder = () =>
   new VMTemplateBuilder()

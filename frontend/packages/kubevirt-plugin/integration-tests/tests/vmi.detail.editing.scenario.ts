@@ -1,3 +1,4 @@
+import { browser, ExpectedConditions as until } from 'protractor';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { createResource, deleteResource } from '@console/shared/src/test-utils/utils';
 import { VM_CREATE_AND_EDIT_TIMEOUT_SECS } from './utils/constants/common';
@@ -6,6 +7,7 @@ import { resourceRows } from '@console/internal-integration-tests/views/crud.vie
 import { vmDetailBootOrderEditButton } from '../views/virtualMachine.view';
 import { VirtualMachineInstance } from './models/virtualMachineInstance';
 import * as kubevirtDetailView from '../views/kubevirtUIResource.view';
+import * as disksView from '../views/vm.disks.view';
 import { VM_STATUS, TAB } from './utils/constants/vm';
 import { ProvisionSource } from './utils/constants/enums/provisionSource';
 
@@ -74,10 +76,11 @@ describe('KubeVirt VMI detail - editing', () => {
     'ID(CNV-3694) disk row kebab button is disabled',
     async () => {
       await vmi.navigateToTab(TAB.Disks);
+      await browser.wait(until.presenceOf(disksView.diskRows));
       expect(
         resourceRows
           .first()
-          .$('[data-test-id=kebab-button]')
+          .$('[data-test-id="kebab-button"]')
           .isEnabled(),
       ).toBe(false);
     },

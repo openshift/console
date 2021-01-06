@@ -42,7 +42,7 @@ export enum VM_STATUS {
   Other = 'Other',
   Starting = 'Starting',
   Paused = 'Paused',
-  Migrating = 'Migrating',
+  Migrating = 'Migration',
   Stopping = 'Stopping',
   Running = 'Running',
   Off = 'Off',

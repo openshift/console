@@ -1,10 +1,9 @@
 import { execSync } from 'child_process';
 import { browser, ExpectedConditions as until, Key } from 'protractor';
 import { click, createResources, deleteResources } from '@console/shared/src/test-utils/utils';
-import { createExampleVMViaYAML } from './utils/utils';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
-import { getSecret, getConfigMap, getServiceAccount } from './mocks/mocks';
+import { getVMManifest, getSecret, getConfigMap, getServiceAccount } from './mocks/mocks';
 import { saveButton } from '../views/kubevirtUIResource.view';
 import * as vmEnv from '../views/vm.environment.view';
 import { addVariableFrom } from '@console/internal-integration-tests/views/environment.view';
@@ -15,6 +14,7 @@ import {
 } from './utils/constants/common';
 import { VirtualMachine } from './models/virtualMachine';
 import { VM_ACTION } from './utils/constants/vm';
+import { ProvisionSource } from './utils/constants/enums/provisionSource';
 
 const environmentExpecScriptPath = `${KUBEVIRT_SCRIPTS_PATH}/expect-vm-env-readable.sh`;
 const configmapName = 'configmap-mock';
@@ -25,12 +25,13 @@ describe('Test VM enviromnet tab', () => {
   const secret = getSecret(testName, secretName);
   const configMap = getConfigMap(testName, configmapName);
   const serviceAccount = getServiceAccount(testName, serviceAccountName);
-  let vm: VirtualMachine;
+
+  const cloudInit = `#cloud-config\nuser: fedora\npassword: fedora\nchpasswd: {expire: False}`;
+  const testVM = getVMManifest(ProvisionSource.CONTAINER, testName, null, cloudInit);
+  const vm = new VirtualMachine(testVM.metadata);
 
   beforeAll(async () => {
-    createResources([secret, configMap, serviceAccount]);
-    const vmObj = await createExampleVMViaYAML(true);
-    vm = new VirtualMachine(vmObj.metadata);
+    createResources([testVM, secret, configMap, serviceAccount]);
   });
 
   afterAll(() => {

@@ -1,8 +1,9 @@
-import {
-  COMMON_TEMPLATES_NAMESPACE,
-  COMMON_TEMPLATES_REVISION,
-  commonTemplateVersion,
-} from '../constants/common';
+import { execSync } from 'child_process';
+import { COMMON_TEMPLATES_NAMESPACE, COMMON_TEMPLATES_REVISION } from '../constants/common';
+
+const commonTemplateVersion = execSync(
+  "kubectl get template -n openshift | grep windows2k12r2-server-large | awk -F '-| ' '{print $4}'",
+).toString();
 
 export const getFakeWindowsVM = ({ name, networkName, vmIP }) => `
 apiVersion: kubevirt.io/v1alpha3
@@ -11,15 +12,15 @@ metadata:
   annotations:
     kubevirt.io/latest-observed-api-version: v1alpha3
     kubevirt.io/storage-observed-api-version: v1alpha3
-    name.os.template.kubevirt.io/win2k16: Microsoft Windows Server 2016
+    name.os.template.kubevirt.io/win2k12r2: Microsoft Windows Server 2012 R2
   name: ${name}
   labels:
     app: ${name}
-    os.template.kubevirt.io/win2k16: 'true'
-    vm.kubevirt.io/template: win2k12r2-server-large-${commonTemplateVersion()}
+    os.template.kubevirt.io/win2k12r2: 'true'
+    vm.kubevirt.io/template: win2k12r2-server-large-${commonTemplateVersion}
     vm.kubevirt.io/template.namespace: ${COMMON_TEMPLATES_NAMESPACE}
     vm.kubevirt.io/template.revision: '${COMMON_TEMPLATES_REVISION}'
-    vm.kubevirt.io/template.version: ${commonTemplateVersion()}
+    vm.kubevirt.io/template.version: ${commonTemplateVersion}
     workload.template.kubevirt.io/server: 'true'
 spec:
   running: true
@@ -29,7 +30,7 @@ spec:
       labels:
         kubevirt.io/domain: ${name}
         kubevirt.io/size: large
-        os.template.kubevirt.io/win2k16: 'true'
+        os.template.kubevirt.io/win2k12r2: 'true'
         vm.kubevirt.io/name: ${name}
         workload.template.kubevirt.io/server: 'true'
     spec:
@@ -95,7 +96,7 @@ spec:
       terminationGracePeriodSeconds: 0
       volumes:
         - containerDisk:
-            image: 'kubevirt/fedora-cloud-container-disk-demo:latest'
+            image: 'quay.io/kubevirt/fedora-cloud-container-disk-demo:latest'
           name: rootdisk
         - containerDisk:
             image: kubevirt/virtio-container-disk

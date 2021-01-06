@@ -5,11 +5,9 @@ import { $, $$, browser, by, ExpectedConditions as until } from 'protractor';
 import { testName, appHost } from '@console/internal-integration-tests/protractor.conf';
 import { safeLoad } from 'js-yaml';
 import {
-  isLoaded,
   createYAMLButton,
+  isLoaded,
   rowForName,
-  createItemButton,
-  createYAMLLink,
   resourceTitle,
 } from '@console/internal-integration-tests/views/crud.view';
 import { clickNavLink } from '@console/internal-integration-tests/views/sidenav.view';
@@ -22,6 +20,7 @@ import {
 import { STORAGE_CLASS, PAGE_LOAD_TIMEOUT_SECS, SEC } from './constants/common';
 import { NodePortService, Status } from '../types/types';
 import { filterCount } from '../../views/vms.list.view';
+import { createItemButton, createWithYAMLButton } from '../../views/wizard.view';
 import { diskVolumeMode, diskAccessMode } from './constants/vm';
 import { MatchLabels } from '@console/internal/module/k8s';
 
@@ -62,7 +61,7 @@ export async function createExampleVMViaYAML(getVMObj?: boolean) {
   await isLoaded();
 
   await click(createItemButton);
-  await click(createYAMLLink);
+  await click(createWithYAMLButton);
   await yamlPageIsLoaded();
   if (getVMObj) {
     try {

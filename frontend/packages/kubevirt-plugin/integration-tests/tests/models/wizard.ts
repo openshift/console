@@ -147,9 +147,16 @@ export class Wizard {
     }
   }
 
-  async startOnCreation() {
-    if (!view.startVMOnCreation.isSelected()) {
-      await click(view.startVMOnCreation);
+  async startOnCreation(startOnCreation: boolean) {
+    if (startOnCreation) {
+      if (!view.startVMOnCreation.isSelected()) {
+        await click(view.startVMOnCreation);
+      }
+    }
+    if (!startOnCreation) {
+      if (view.startVMOnCreation.isSelected()) {
+        await click(view.startVMOnCreation);
+      }
     }
   }
 
@@ -264,9 +271,8 @@ export class Wizard {
     if (name) {
       await this.fillName(name);
     }
-    if (startOnCreation) {
-      await this.startOnCreation();
-    }
+
+    await this.startOnCreation(startOnCreation);
     await this.confirmAndCreate();
   }
 
@@ -348,9 +354,7 @@ export class Wizard {
 
   async processReviewStep(data: VMBuilderData) {
     const { startOnCreation } = data;
-    if (startOnCreation) {
-      await this.startOnCreation();
-    }
+    await this.startOnCreation(startOnCreation);
     await this.validateReviewTab(data);
   }
 
