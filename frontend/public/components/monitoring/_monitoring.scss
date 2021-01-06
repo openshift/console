@@ -58,18 +58,6 @@ $tooltip-background-color: #151515;
     }
   }
 
-  // Move tooltip above cursor to work around bug where the legend is visible through the tooltip
-  .query-browser__tooltip-arrow {
-    border-bottom: none;
-    border-top: 12px solid $tooltip-background-color;
-  }
-  .query-browser__tooltip-svg-wrap {
-    transform: translate(0, -500px);
-  }
-  .query-browser__tooltip-wrap {
-    flex-direction: column-reverse;
-  }
-
   .query-browser__wrapper {
     border: 0;
     margin: 0;
@@ -299,6 +287,10 @@ $monitoring-line-height: 18px;
   justify-content: space-between;
   margin-bottom: 15px;
   width: 100%;
+
+  .pf-c-check__input {
+    margin-top: 0;
+  }
 }
 
 .query-browser__controls--left {
@@ -323,10 +315,6 @@ $monitoring-line-height: 18px;
 .query-browser__expand-icon {
   font-size: 30px;
   vertical-align: middle;
-}
-
-.query-browser__graph-container {
-  z-index: 1;
 }
 
 .query-browser__inline-control {
@@ -453,14 +441,13 @@ $monitoring-line-height: 18px;
   color: #eee;
   font-size: 12px;
   overflow-y: auto;
-  padding: 15px;
-  width: 100%;
+  padding: 10px;
 }
 
 .query-browser__tooltip-arrow {
-  border-bottom: 12px solid $tooltip-background-color;
-  border-left: 12px solid transparent;
-  border-right: 12px solid transparent;
+  border-bottom: 12px solid transparent;
+  border-right: 12px solid $tooltip-background-color;
+  border-top: 12px solid transparent;
   height: 0;
   width: 0;
 }
@@ -468,30 +455,42 @@ $monitoring-line-height: 18px;
 .query-browser__tooltip-group {
   align-items: stretch;
   display: flex;
-  margin-bottom: 15px;
+
+  .query-browser__series-btn {
+    flex: 0 0 12px;
+    height: 12px;
+    margin-top: 4px;
+    margin-right: 3px;
+  }
 }
 
-.query-browser__tooltip-label-key {
+.query-browser__tooltip-line {
+  stroke: $tooltip-background-color;
+}
+
+.query-browser__tooltip-time {
   font-weight: var(--pf-global--FontWeight--bold);
-  text-transform: uppercase;
 }
 
-.query-browser__tooltip-time,
 .query-browser__tooltip-value {
+  font-weight: var(--pf-global--FontWeight--bold);
   margin-left: auto;
-  padding-left: 15px;
-}
-
-.query-browser__tooltip-value {
-  font-weight: var(--pf-global--FontWeight--bold);
+  padding-left: 10px;
 }
 
 .query-browser__tooltip-wrap {
   align-items: center;
   display: flex;
-  flex-direction: column;
   height: 100%;
-  width: 100%;
+
+  &--left {
+    flex-direction: row-reverse;
+
+    .query-browser__tooltip-arrow {
+      border-left: 12px solid $tooltip-background-color;
+      border-right: none;
+    }
+  }
 }
 
 .query-browser__wrapper {

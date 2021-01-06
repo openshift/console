@@ -17,6 +17,7 @@ import {
 import {
   Alert,
   Button,
+  Checkbox,
   EmptyState,
   EmptyStateBody,
   EmptyStateIcon,
@@ -137,118 +138,85 @@ const SpanControls: React.FC<SpanControlsProps> = React.memo(
   },
 );
 
-const tooltipStateToProps = ({ UI }: RootState, { seriesIndex }) => {
-  let remaining = seriesIndex;
-  let props = {};
-  UI.getIn(['queryBrowser', 'queries'])
-    .filter((q) => q.get('isEnabled') && q.get('query'))
-    .forEach((q) => {
-      const series = q.get('series') || [];
-      if (series.length > remaining) {
-        props = { labels: series[remaining], query: q.get('query') };
-        return false;
-      }
-      remaining -= series.length;
-    });
-  return props;
-};
-
-const TOOLTIP_WIDTH = 240;
-const TOOLTIP_MAX_HEIGHT = 500;
-const TOOLTIP_MIN_X = -80;
-// Offset relative to the graph width
-const TOOLTIP_MAX_X_OFFSET = 40 - TOOLTIP_WIDTH;
-
-const TooltipInner_: React.FC<TooltipInnerProps> = ({
-  datumX,
-  datumY,
-  labels,
-  query,
-  seriesIndex,
-  width,
-  x,
-  y,
-}) => {
-  if (!query && !labels) {
-    return null;
-  }
-
-  // Constrain the tooltip so it doesn't stick out on the left or right side of the graph frame
-  const tooltipX = x - TOOLTIP_WIDTH / 2;
-  const constraintedX = _.clamp(tooltipX, TOOLTIP_MIN_X, width + TOOLTIP_MAX_X_OFFSET);
-  const arrowStyle =
-    tooltipX === constraintedX ? undefined : { marginLeft: 2 * (tooltipX - constraintedX) };
-
-  return (
-    <foreignObject
-      className="query-browser__tooltip-svg-wrap"
-      height={TOOLTIP_MAX_HEIGHT}
-      width={TOOLTIP_WIDTH}
-      x={constraintedX}
-      y={y}
-    >
-      <div className="query-browser__tooltip-wrap">
-        <div className="query-browser__tooltip-arrow" style={arrowStyle} />
-        <div className="query-browser__tooltip">
-          <div className="query-browser__tooltip-group">
-            <div
-              className="query-browser__series-btn"
-              style={{ backgroundColor: colors[seriesIndex % colors.length] }}
-            />
-            {datumX && (
-              <div className="query-browser__tooltip-time">{twentyFourHourTime(datumX, true)}</div>
-            )}
-          </div>
-          <div className="query-browser__tooltip-group">
-            <div className="co-nowrap co-truncate">{query}</div>
-            <div className="query-browser__tooltip-value">{formatValue(datumY)}</div>
-          </div>
-          {_.map(labels, (v, k) => (
-            <div className="co-nowrap co-truncate" key={k}>
-              <span className="query-browser__tooltip-label-key">
-                {k === '__name__' ? 'name' : k}
-              </span>{' '}
-              {v}
-            </div>
-          ))}
-        </div>
-      </div>
-    </foreignObject>
-  );
-};
-const TooltipInner = withFallback(connect(tooltipStateToProps)(TooltipInner_));
+const TOOLTIP_MAX_ENTRIES = 20;
+const TOOLTIP_MAX_WIDTH = 300;
+const TOOLTIP_MAX_HEIGHT = 400;
 
 // For performance, use this instead of PatternFly's ChartTooltip or Victory VictoryTooltip
-const Tooltip: React.FC<TooltipProps> = ({ active, datum, width, x, y }) => {
-  if (!active || !datum || !_.isFinite(datum.y) || !_.isFinite(x) || !_.isFinite(y)) {
+const Tooltip_: React.FC<TooltipProps> = ({ activePoints, center, height, style, width, x }) => {
+  const time = activePoints?.[0]?.x;
+
+  if (!_.isDate(time) || !_.isFinite(x)) {
     return null;
   }
 
+  // Don't show the tooltip if the cursor is too far from the active points (can happen when the
+  // graph's timespan includes a range with no data)
+  if (Math.abs(x - center.x) > width / 15) {
+    return null;
+  }
+
+  // Pick tooltip width and location (left or right of the cursor) to maximize its available space
+  const tooltipMaxWidth = Math.min(width / 2 + 60, TOOLTIP_MAX_WIDTH);
+  const isOnLeft = x > (width - 40) / 2;
+
+  const allSeries = activePoints
+    .map((point, i) => ({
+      color: style[i]?.fill,
+      name: style[i]?.name,
+      value: point._y1 ?? point.y,
+    }))
+    // For stacked graphs, this filters out data series that have no data for this timestamp
+    .filter(({ value }) => value !== null)
+    .sort((a, b) => b.value - a.value)
+    .slice(0, TOOLTIP_MAX_ENTRIES);
+
   return (
-    <VictoryPortal>
-      <TooltipInner
-        datumX={datum.x}
-        datumY={datum.y}
-        seriesIndex={datum._stack - 1}
-        width={width}
-        x={x}
-        y={y}
-      />
-    </VictoryPortal>
+    <>
+      <VictoryPortal>
+        <foreignObject
+          className="query-browser__tooltip-svg-wrap"
+          height={TOOLTIP_MAX_HEIGHT}
+          width={tooltipMaxWidth}
+          x={isOnLeft ? x - tooltipMaxWidth : x}
+          y={center.y - TOOLTIP_MAX_HEIGHT / 2}
+        >
+          <div
+            className={classNames('query-browser__tooltip-wrap', {
+              'query-browser__tooltip-wrap--left': isOnLeft,
+            })}
+          >
+            <div className="query-browser__tooltip-arrow" />
+            <div className="query-browser__tooltip">
+              <div className="query-browser__tooltip-group">
+                <div className="query-browser__tooltip-time">{twentyFourHourTime(time, true)}</div>
+              </div>
+              {allSeries.map((s, i) => (
+                <div className="query-browser__tooltip-group" key={i}>
+                  <div className="query-browser__series-btn" style={{ backgroundColor: s.color }} />
+                  <div className="co-nowrap co-truncate">{s.name}</div>
+                  <div className="query-browser__tooltip-value">{formatValue(s.value)}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </foreignObject>
+      </VictoryPortal>
+      <line className="query-browser__tooltip-line" x1={x} x2={x} y1="0" y2={height} />
+    </>
   );
 };
-
-const tooltipComponent = <Tooltip />;
-
-// We don't use this result, but we need to return a string so that the label (tooltip) is rendered
-const tooltipLabels = () => ' ';
+const Tooltip = withFallback(Tooltip_);
 
 const graphContainer = (
   // Set activateData to false to work around VictoryVoronoiContainer crash (see
   // https://github.com/FormidableLabs/victory/issues/1314)
   <ChartVoronoiContainer
     activateData={false}
-    className="query-browser__graph-container"
+    labelComponent={<Tooltip />}
+    labels={() => ' '}
+    mouseFollowTooltips={true}
+    voronoiDimension="x"
     voronoiPadding={0}
   />
 );
@@ -268,15 +236,31 @@ const LegendContainer = ({ children }: { children?: React.ReactNode }) => {
 const Null = () => null;
 const nullComponent = <Null />;
 
+const formatLabels = (labels: PrometheusLabels) => {
+  const name = labels?.__name__ ?? '';
+  const otherLabels = _.omit(labels, '__name__');
+  return `${name}{${_.map(otherLabels, (v, k) => `${k}=${v}`).join(',')}}`;
+};
+
 type GraphSeries = GraphDataPoint[] | null;
 
 const Graph: React.FC<GraphProps> = React.memo(
   ({ allSeries, disabledSeries, formatLegendLabel, isStack, span, width, xDomain }) => {
-    // Remove any disabled series
     const data: GraphSeries[] = [];
+    const tooltipSeriesNames: string[] = [];
+    const legendData: { name: string }[] = [];
+
     _.each(allSeries, (series, i) => {
       _.each(series, ([metric, values]) => {
+        // Ignore any disabled series
         data.push(_.some(disabledSeries[i], (s) => _.isEqual(s, metric)) ? null : values);
+        if (formatLegendLabel) {
+          const name = formatLegendLabel(metric, i);
+          legendData.push({ name });
+          tooltipSeriesNames.push(name);
+        } else {
+          tooltipSeriesNames.push(formatLabels(metric));
+        }
       });
     });
 
@@ -326,11 +310,8 @@ const Graph: React.FC<GraphProps> = React.memo(
       };
     }
 
-    const legendData = formatLegendLabel
-      ? _.flatMap(allSeries, (series, i) =>
-          _.map(series, (s) => ({ name: formatLegendLabel(s[0], i) })),
-        )
-      : undefined;
+    const GroupComponent = isStack ? ChartStack : ChartGroup;
+    const ChartComponent = isStack ? ChartArea : ChartLine;
 
     return (
       <Chart
@@ -350,36 +331,20 @@ const Graph: React.FC<GraphProps> = React.memo(
           tickCount={6}
           tickFormat={yTickFormat}
         />
-        {isStack ? (
-          <ChartStack>
-            {data.map((values, i) => (
-              <ChartArea
-                key={i}
-                data={values}
-                groupComponent={<g />}
-                labelComponent={tooltipComponent}
-                labels={tooltipLabels}
-              />
-            ))}
-          </ChartStack>
-        ) : (
-          <ChartGroup>
-            {data.map((values, i) =>
-              values === null ? (
-                <ChartLine key={i} groupComponent={<g />} />
-              ) : (
-                <ChartLine
-                  key={i}
-                  data={values}
-                  groupComponent={<g />}
-                  labelComponent={tooltipComponent}
-                  labels={tooltipLabels}
-                />
-              ),
-            )}
-          </ChartGroup>
-        )}
-        {legendData && (
+        <GroupComponent>
+          {data.map((values, i) => {
+            if (values === null) {
+              return null;
+            }
+            const color = colors[i % colors.length];
+            const style = {
+              data: { [isStack ? 'fill' : 'stroke']: color },
+              labels: { fill: color, name: tooltipSeriesNames[i] },
+            };
+            return <ChartComponent data={values} groupComponent={<g />} key={i} style={style} />;
+          })}
+        </GroupComponent>
+        {!_.isEmpty(legendData) && (
           <ChartLegend
             data={legendData}
             groupComponent={<LegendContainer />}
@@ -436,7 +401,7 @@ const minSamples = 10;
 const maxSamples = 300;
 
 // Fall back to a line chart for performance if there are too many series
-const maxStacks = 20;
+const maxStacks = 50;
 
 // We don't want to refresh all the graph data for just a small adjustment in the number of samples,
 // so don't update unless the number of samples would change by at least this proportion
@@ -557,6 +522,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   namespace,
   patchQuery,
   queries,
+  showStackedControl = false,
   tickInterval,
   timespan,
 }) => {
@@ -583,7 +549,9 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
 
   const safeFetch = useSafeFetch();
 
-  const stack = isStack && _.sumBy(graphData, 'length') <= maxStacks;
+  const [isStacked, setIsStacked] = React.useState(isStack);
+
+  const canStack = _.sumBy(graphData, 'length') <= maxStacks;
 
   // If provided, `timespan` overrides any existing span setting
   React.useEffect(() => {
@@ -760,11 +728,17 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
             <SpanControls defaultSpanText={defaultSpanText} onChange={onSpanChange} span={span} />
             {updating && <Loading />}
           </div>
-          {GraphLink && (
-            <div className="query-browser__controls--right">
-              <GraphLink />
-            </div>
-          )}
+          <div className="query-browser__controls--right">
+            {GraphLink && <GraphLink />}
+            {canStack && showStackedControl && (
+              <Checkbox
+                id="stacked"
+                isChecked={isStacked}
+                label="Stacked"
+                onChange={(v) => setIsStacked(v)}
+              />
+            )}
+          </div>
         </div>
       )}
       {error && <Error error={error} />}
@@ -792,7 +766,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
                       allSeries={graphData}
                       disabledSeries={disabledSeries}
                       formatLegendLabel={formatLegendLabel}
-                      isStack={stack}
+                      isStack={canStack && isStacked}
                       span={span}
                       width={width}
                       xDomain={xDomain}
@@ -802,7 +776,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
                       allSeries={graphData}
                       disabledSeries={disabledSeries}
                       formatLegendLabel={formatLegendLabel}
-                      isStack={stack}
+                      isStack={canStack && isStacked}
                       onZoom={onZoom}
                       span={span}
                       width={width}
@@ -849,7 +823,7 @@ export type QueryObj = {
   text?: string;
 };
 
-export type FormatLegendLabel = (labels: PrometheusLabels, i: number) => string;
+export type FormatLegendLabel = (labels: PrometheusLabels, i?: number) => string;
 
 export type PatchQuery = (index: number, patch: QueryObj) => any;
 
@@ -890,6 +864,7 @@ export type QueryBrowserProps = {
   patchQuery: PatchQuery;
   pollInterval?: number;
   queries: string[];
+  showStackedControl?: boolean;
   tickInterval: number;
   timespan?: number;
 };
@@ -900,23 +875,11 @@ type SpanControlsProps = {
   span: number;
 };
 
-type TooltipDatum = { _stack: number; x: Date; y: number };
-
-type TooltipInnerProps = {
-  datumX: Date;
-  datumY: number;
-  labels?: PrometheusLabels;
-  query?: string;
-  seriesIndex: number;
-  width: number;
-  x: number;
-  y: number;
-};
-
 type TooltipProps = {
-  active?: boolean;
-  datum?: TooltipDatum;
+  activePoints?: { x: number; y: number; _y1?: number }[];
+  center?: { x: number; y: number };
+  height?: number;
+  style?: { fill: string };
   width?: number;
   x?: number;
-  y?: number;
 };
