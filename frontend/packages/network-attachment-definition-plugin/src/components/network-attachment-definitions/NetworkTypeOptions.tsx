@@ -72,6 +72,7 @@ export default (props) => {
               className={classNames('control-label', {
                 'co-required': parameter.required,
               })}
+              id={`network-type-params-${key}-label`}
             >
               {_.get(parameter, 'name', key)}
             </label>
@@ -87,6 +88,7 @@ export default (props) => {
                   typeParamsData,
                 )
               }
+              id={`network-type-params-${key}-textarea`}
             />
             {validationMsg && <div className="text-secondary">{validationMsg}</div>}
           </>
@@ -96,7 +98,7 @@ export default (props) => {
         children = (
           <>
             <div className="checkbox">
-              <label>
+              <label id={`network-type-params-${key}-label`}>
                 <input
                   type="checkbox"
                   className="create-storage-class-form__checkbox"
@@ -123,7 +125,10 @@ export default (props) => {
       case ELEMENT_TYPES.DROPDOWN:
         children = (
           <>
-            <label className={classNames('control-label', { 'co-required': parameter.required })}>
+            <label
+              className={classNames('control-label', { 'co-required': parameter.required })}
+              id={`network-type-params-${key}-label`}
+            >
               {_.get(parameter, 'name', key)}
             </label>
             <Dropdown
@@ -141,6 +146,7 @@ export default (props) => {
                   typeParamsData,
                 )
               }
+              id={`network-type-params-${key}-dropdown`}
             />
             {validationMsg && <div className="text-secondary">{validationMsg}</div>}
           </>
@@ -154,6 +160,7 @@ export default (props) => {
               className={classNames('control-label', {
                 'co-required': parameter.required,
               })}
+              id={`network-type-params-${key}-label`}
             >
               {_.get(parameter, 'name', key)}
             </label>
@@ -170,6 +177,7 @@ export default (props) => {
                   typeParamsData,
                 )
               }
+              id={`network-type-params-${key}-text`}
             />
             {validationMsg && <div className="text-secondary">{validationMsg}</div>}
           </>
