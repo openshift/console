@@ -14,13 +14,14 @@ import {
 } from '../factory';
 import { k8sKill, PersistentVolumeClaimKind } from '@console/internal/module/k8s';
 import { PersistentVolumeClaimModel } from '../../models';
+import { isPVCDelete, PVCDelete, useExtensions } from '@console/plugin-sdk';
+import { useTranslation, Trans } from 'react-i18next';
 
 const DeletePVCModal = withHandlePromise<DeletePVCModalProps>((props) => {
   const { pvc, inProgress, errorMessage, handlePromise, close, cancel } = props;
   const [pvcDeleteExtensions] = useResolvedExtensions<PVCDelete>(isPVCDelete);
   const pvcName = getName(pvc);
   const { t } = useTranslation();
-  const pvcMetadata = { metadata: { ...pvc?.metadata } };
 
   const submit = (e) => {
     e.preventDefault();
@@ -46,15 +47,15 @@ const DeletePVCModal = withHandlePromise<DeletePVCModalProps>((props) => {
     <form onSubmit={submit} className="modal-content">
       <ModalTitle>
         <YellowExclamationTriangleIcon className="co-icon-space-r" />{' '}
-        {t('public~Delete PersistentVolumeClaim')}
+        {t('modal~Delete Persistent Volume Claim')}
       </ModalTitle>
       <ModalBody>
         <Stack hasGutter>
           {alertComponents}
           <StackItem>
-            <Trans t={t} ns="public">
+            <Trans i18nKey="modal~deletePVCConfirm">
               Are you sure you want to delete{' '}
-              <strong className="co-break-word">{{ pvcName }}</strong> PersistentVolumeClaim?
+              <strong className="co-break-word">{{ pvcName }}</strong> Persistent Volume Claim?
             </Trans>
           </StackItem>
         </Stack>
@@ -62,7 +63,7 @@ const DeletePVCModal = withHandlePromise<DeletePVCModalProps>((props) => {
       <ModalSubmitFooter
         errorMessage={errorMessage}
         inProgress={inProgress}
-        submitText={t('public~Delete')}
+        submitText={t('modal~Delete')}
         submitDanger
         cancel={cancel}
       />

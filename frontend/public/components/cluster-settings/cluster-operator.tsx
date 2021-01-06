@@ -190,7 +190,7 @@ export const ClusterOperatorPage: React.FC<ClusterOperatorPageProps> = (props) =
 const OperandVersions: React.FC<OperandVersionsProps> = ({ versions }) => {
   const { t } = useTranslation();
   return _.isEmpty(versions) ? (
-    <EmptyBox label="Versions" />
+    <EmptyBox label={t('cluster-operator~versions')} />
   ) : (
     <div className="co-table-container">
       <table className="table">

@@ -7,13 +7,15 @@ import { DeploymentModel, DeploymentConfigModel, StatefulSetModel } from '../../
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { Dropdown, history, ResourceIcon, ResourceName, resourcePathFromModel } from '../utils';
 import { RadioInput } from '../radio';
+/* eslint-disable import/named */
+import { Trans, withTranslation, WithTranslation } from 'react-i18next';
 
 const workloadResourceModels = [DeploymentModel, DeploymentConfigModel, StatefulSetModel];
 const getContainers = (workload: K8sResourceKind) =>
   _.get(workload, 'spec.template.spec.containers') || [];
 
-export class AddSecretToWorkloadModal extends React.Component<
-  AddSecretToWorkloadModalProps,
+export class AddSecretToWorkloadModalWithTrans extends React.Component<
+  AddSecretToWorkloadModalProps & WithTranslation,
   AddSecretToWorkloadModalState
 > {
   state = {
@@ -167,11 +169,12 @@ export class AddSecretToWorkloadModal extends React.Component<
   };
 
   render() {
+    const { t } = this.props;
     const { secretName } = this.props;
     const { addAs, workloadOptions, selectedWorkloadUID } = this.state;
     const addAsEnvironment = addAs === 'environment';
     const addAsVolume = addAs === 'volume';
-    const selectWorkloadPlaceholder = 'Select a workload';
+    const selectWorkloadPlaceholder = t('modal~Select a workload');
 
     return (
       <form
@@ -179,18 +182,20 @@ export class AddSecretToWorkloadModal extends React.Component<
         name="co-add-secret-to-workload"
         className="co-add-secret-to-workload modal-content"
       >
-        <ModalTitle>Add Secret to Workload</ModalTitle>
+        <ModalTitle>{t('modal~Add Secret to Workload')}</ModalTitle>
         <ModalBody>
           <p>
-            Add all values from <ResourceIcon kind="Secret" />
-            {secretName} to a workload as environment variables or a volume.
+            <Trans i18nKey="modal~addSecretDescription">
+              Add all values from <ResourceIcon kind="Secret" />
+              {{ secretName }} to a workload as environment variables or a volume.
+            </Trans>
           </p>
           <div className="form-group">
             <label
               className="control-label co-required"
               htmlFor="co-add-secret-to-workload__workload"
             >
-              Add this secret to workload
+              {t('modal~Add this secret to workload')}
             </label>
             <Dropdown
               items={workloadOptions}
@@ -203,9 +208,9 @@ export class AddSecretToWorkloadModal extends React.Component<
             />
           </div>
           <fieldset>
-            <legend className="co-legend co-required">Add secret as</legend>
+            <legend className="co-legend co-required">{t('modal~Add secret as')}</legend>
             <RadioInput
-              title="Environment Variables"
+              title={t('modal~Environment Variables')}
               name="co-add-secret-to-workload__add-as"
               id="co-add-secret-to-workload__envvars"
               value="environment"
@@ -215,7 +220,7 @@ export class AddSecretToWorkloadModal extends React.Component<
             {addAsEnvironment && (
               <div className="co-m-radio-desc">
                 <div className="form-group">
-                  <label htmlFor="co-add-secret-to-workload__prefix">Prefix</label>
+                  <label htmlFor="co-add-secret-to-workload__prefix">{t('modal~Prefix')}</label>
                   <input
                     className="pf-c-form-control"
                     name="prefix"
@@ -228,7 +233,7 @@ export class AddSecretToWorkloadModal extends React.Component<
               </div>
             )}
             <RadioInput
-              title="Volume"
+              title={t('modal~Volume')}
               name="co-add-secret-to-workload__add-as"
               id="co-add-secret-to-workload__volume"
               value="volume"
@@ -239,7 +244,7 @@ export class AddSecretToWorkloadModal extends React.Component<
               <div className="co-m-radio-desc">
                 <div className="form-group">
                   <label htmlFor="co-add-secret-to-workload__mountpath" className="co-required">
-                    Mount Path
+                    {t('modal~Mount Path')}
                   </label>
                   <input
                     className="pf-c-form-control"
@@ -257,13 +262,15 @@ export class AddSecretToWorkloadModal extends React.Component<
         <ModalSubmitFooter
           errorMessage={this.state.errorMessage}
           inProgress={this.state.inProgress}
-          submitText="Save"
+          submitText={t('modal~Save')}
           cancel={this.props.cancel}
         />
       </form>
     );
   }
 }
+
+const AddSecretToWorkloadModal = withTranslation()(AddSecretToWorkloadModalWithTrans);
 
 export const configureAddSecretToWorkloadModal = createModalLauncher<AddSecretToWorkloadModalProps>(
   AddSecretToWorkloadModal,

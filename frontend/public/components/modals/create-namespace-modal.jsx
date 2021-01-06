@@ -10,6 +10,7 @@ import { NamespaceModel, ProjectRequestModel, NetworkPolicyModel } from '../../m
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { Dropdown, history, PromiseComponent, resourceObjPath, SelectorInput } from '../utils';
 import { setFlag } from '../../actions/features';
+import { withTranslation } from 'react-i18next';
 
 const allow = 'allow';
 const deny = 'deny';
@@ -26,7 +27,7 @@ const mapDispatchToProps = (dispatch) => ({
   hideStartGuide: () => setFlag(dispatch, FLAGS.SHOW_OPENSHIFT_START_GUIDE, false),
 });
 
-const CreateNamespaceModalWithTranslation = connect(
+const CreateNamespaceModalWithTrans = connect(
   null,
   mapDispatchToProps,
 )(
@@ -112,26 +113,10 @@ const CreateNamespaceModalWithTranslation = connect(
 
     render() {
       const { t } = this.props;
+      const label = this.props.createProject ? t('modal~Project') : t('modal~Namespace');
       const defaultNetworkPolicies = {
-        [allow]: t('public~No restrictions'),
-        [deny]: t('public~Deny all inbound traffic'),
-      };
-
-      const popoverText = () => {
-        const type = this.props.createProject ? t('public~Project') : t('public~Namespace');
-        const nameFormat = t(
-          "public~A {{type}} name must consist of lower case alphanumeric characters or '-', and must start and end with an alphanumeric character (e.g. 'my-name' or '123-abc').",
-          { type },
-        );
-        const createNamespace = t(
-          "public~You must create a Namespace to be able to create projects that begin with 'openshift-', 'kubernetes-', or 'kube-'.",
-        );
-        return (
-          <>
-            <p>{nameFormat}</p>
-            {this.props.createProject ? <p>{createNamespace}</p> : null}
-          </>
-        );
+        [allow]: t('modal~No restrictions'),
+        [deny]: t('modal~Deny all inbound traffic'),
       };
       return (
         <form
@@ -139,19 +124,12 @@ const CreateNamespaceModalWithTranslation = connect(
           name="form"
           className="modal-content modal-content--no-inner-scroll"
         >
-          <ModalTitle>
-            {this.props.createProject ? t('public~Create Project') : t('public~Create Namespace')}
-          </ModalTitle>
+          <ModalTitle>{t('modal~Create {{label}}', { label })}</ModalTitle>
           <ModalBody>
             <div className="form-group">
               <label htmlFor="input-name" className="control-label co-required">
-                {t('public~Name')}
-              </label>{' '}
-              <Popover aria-label="Naming information" bodyContent={popoverText}>
-                <Button variant="plain" aria-label="View naming information">
-                  <OutlinedQuestionCircleIcon />
-                </Button>
-              </Popover>
+                {t('modal~Name')}
+              </label>
               <div className="modal-body__field">
                 <input
                   id="input-name"
@@ -169,7 +147,7 @@ const CreateNamespaceModalWithTranslation = connect(
             {this.props.createProject && (
               <div className="form-group">
                 <label htmlFor="input-display-name" className="control-label">
-                  {t('public~Display name')}
+                  {t('modal~Display Name')}
                 </label>
                 <div className="modal-body__field">
                   <input
@@ -186,7 +164,7 @@ const CreateNamespaceModalWithTranslation = connect(
             {this.props.createProject && (
               <div className="form-group">
                 <label htmlFor="input-description" className="control-label">
-                  {t('public~Description')}
+                  {t('modal~Description')}
                 </label>
                 <div className="modal-body__field">
                   <textarea
@@ -202,7 +180,7 @@ const CreateNamespaceModalWithTranslation = connect(
             {!this.props.createProject && (
               <div className="form-group">
                 <label htmlFor="tags-input" className="control-label">
-                  {t('public~Labels')}
+                  {t('modal~Labels')}
                 </label>
                 <div className="modal-body__field">
                   <SelectorInput
@@ -216,7 +194,7 @@ const CreateNamespaceModalWithTranslation = connect(
             {!this.props.createProject && (
               <div className="form-group">
                 <label htmlFor="network-policy" className="control-label">
-                  {t('public~Default network policy')}
+                  {t('modal~Default Network Policy')}
                 </label>
                 <div className="modal-body__field ">
                   <Dropdown
@@ -233,7 +211,7 @@ const CreateNamespaceModalWithTranslation = connect(
           <ModalSubmitFooter
             errorMessage={this.state.errorMessage}
             inProgress={this.state.inProgress}
-            submitText={t('public~Create')}
+            submitText={t('modal~Create')}
             cancel={this.props.cancel.bind(this)}
           />
         </form>
@@ -242,7 +220,7 @@ const CreateNamespaceModalWithTranslation = connect(
   },
 );
 
-const CreateNamespaceModal = withTranslation()(CreateNamespaceModalWithTranslation);
+const CreateNamespaceModal = withTranslation()(CreateNamespaceModalWithTrans);
 
 export const createNamespaceModal = createModalLauncher(CreateNamespaceModal);
 export const createProjectModal = createModalLauncher((props) => (
