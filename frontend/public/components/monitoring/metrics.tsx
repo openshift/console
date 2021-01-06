@@ -870,7 +870,11 @@ const Query = connect(
   queryDispatchToProps,
 )(Query_);
 
-const QueryBrowserWrapper_: React.FC<QueryBrowserWrapperProps> = ({ patchQuery, queriesList }) => {
+const QueryBrowserWrapper_: React.FC<QueryBrowserWrapperProps> = ({
+  hideGraphs,
+  patchQuery,
+  queriesList,
+}) => {
   const { t } = useTranslation();
 
   const queries = queriesList.toJS();
@@ -904,6 +908,10 @@ const QueryBrowserWrapper_: React.FC<QueryBrowserWrapperProps> = ({ patchQuery, 
     setAllQueryArguments(newParams);
   }, [queryStrings]);
 
+  if (hideGraphs) {
+    return null;
+  }
+
   const insertExampleQuery = () => {
     const focusedIndex = focusedQuery?.index ?? 0;
     const index = queries[focusedIndex] ? focusedIndex : 0;
@@ -911,22 +919,26 @@ const QueryBrowserWrapper_: React.FC<QueryBrowserWrapperProps> = ({ patchQuery, 
     patchQuery(index, { isEnabled: true, query: text, text });
   };
 
-  return queryStrings.join('') === '' ? (
-    <div className="query-browser__wrapper graph-empty-state">
-      <EmptyState variant={EmptyStateVariant.full}>
-        <EmptyStateIcon icon={ChartLineIcon} />
-        <Title headingLevel="h2" size="md">
-          {t('monitoring~No query entered')}
-        </Title>
-        <EmptyStateBody>
-          {t('monitoring~Enter a query in the box below to explore metrics for this cluster.')}
-        </EmptyStateBody>
-        <Button onClick={insertExampleQuery} variant="primary">
-          {t('monitoring~Insert example query')}
-        </Button>
-      </EmptyState>
-    </div>
-  ) : (
+  if (queryStrings.join('') === '') {
+    return (
+      <div className="query-browser__wrapper graph-empty-state">
+        <EmptyState variant={EmptyStateVariant.full}>
+          <EmptyStateIcon icon={ChartLineIcon} />
+          <Title headingLevel="h2" size="md">
+            {t('monitoring~No query entered')}
+          </Title>
+          <EmptyStateBody>
+            {t('monitoring~Enter a query in the box below to explore metrics for this cluster.')}
+          </EmptyStateBody>
+          <Button onClick={insertExampleQuery} variant="primary">
+            {t('monitoring~Insert example query')}
+          </Button>
+        </EmptyState>
+      </div>
+    );
+  }
+
+  return (
     <QueryBrowser
       defaultTimespan={30 * 60 * 1000}
       disabledSeries={disabledSeries}
@@ -936,7 +948,10 @@ const QueryBrowserWrapper_: React.FC<QueryBrowserWrapperProps> = ({ patchQuery, 
   );
 };
 const QueryBrowserWrapper = connect(
-  ({ UI }: RootState) => ({ queriesList: UI.getIn(['queryBrowser', 'queries']) }),
+  ({ UI }: RootState) => ({
+    hideGraphs: !!UI.getIn(['monitoring', 'hideGraphs']),
+    queriesList: UI.getIn(['queryBrowser', 'queries']),
+  }),
   { patchQuery: UIActions.queryBrowserPatchQuery },
 )(QueryBrowserWrapper_);
 
@@ -1064,6 +1079,7 @@ type QueryBrowserPageProps = {
 };
 
 type QueryBrowserWrapperProps = {
+  hideGraphs: boolean;
   patchQuery: (index: number, patch: QueryObj) => any;
   queriesList: ImmutableList<QueryObj>;
 };
