@@ -2,6 +2,7 @@ import { Map as ImmutableMap } from 'immutable';
 
 import { GroupVersionKind, referenceForModel } from '../module/k8s';
 import * as k8sModels from '../models';
+import * as appModels from '@console/app/src/models/';
 import { YAMLTemplate } from '@console/plugin-sdk';
 
 /**
@@ -1234,6 +1235,58 @@ metadata:
 spec:
   hrefTemplate: 'https://example.com/logs?resourceName=\${resourceName}&containerName=\${containerName}&resourceNamespace=\${resourceNamespace}&podLabels=\${podLabels}'
   text: Example Logs
+`,
+  )
+  .setIn(
+    [referenceForModel(appModels.QuickStartModel), 'default'],
+    `
+apiVersion: console.openshift.io/v1
+kind: ConsoleQuickStart
+metadata:
+  name: example
+spec:
+  displayName: Deploy image
+  tags:
+  - example
+  - image
+  - deployment
+  durationMinutes: 5
+  description: Deploy an example application from an image.
+  introduction: |-
+    ### In this example quick start, you'll deploy an existing image to OpenShift. For more information on writing quick starts, see our [quick start guidelines.](http://openshift.github.io/openshift-origin-design/conventions/documentation/quick-starts.html)
+  tasks:
+    - title: Deploy an existing image from an image registry
+      description: |-
+        ### To deploy the **hello-openshift** image, follow these steps:
+        1. Enter the developer perspective: In the main navigation menu, click the [dropdown menu]{{highlight tour-perspective-dropdown}} and select **Developer**.
+        2. In the main navigation menu, click **Add.**
+        3. Using the project dropdown menu, select the project you would like to deploy the image in.
+        4. Click the **Container Image** tile.
+        5. In the **Image name from external registry** field, enter **openshift/hello-openshift**.
+        6. Fill in the remaining image deployment details, and then click **Create.**
+        The **Topology** view will load with your **hello-openshift-app** application. The outer rim of the larger circle represents your application, and the small circle represents the deployment.
+      review:
+        instructions: |-
+          #### Verify the image was successfully deployed:
+          Do you see a **hello-openshift** deployment?
+        failedTaskHelp: This task isn’t verified yet. Try the task again.
+      summary:
+        success: Great work! You deployed an example application using the **openshift/hello-openshift** image.
+        failed: Try the steps again.
+    - title: Run the deployed application
+      description: |-
+        ### To run the **hello-openshift** deployment application, follow these steps:
+        1. In the **Topology** view, click the **hello-openshift** deployment circle.
+        2. In the panel that slides out, click the link in the **Routes** section. This opens the URL and runs the application.
+      review:
+        instructions: |-
+          #### Verify your application is running:
+          In the new tab, do you see **Hello OpenShift!** ?
+        failedTaskHelp: This task isn’t verified yet. Try the task again.
+      summary:
+        success: Great work! You deployed the **hello-openshift** image.
+        failed: Try the steps again.
+  conclusion: Your example **hello-openshift-app** application, using the **hello-openshift** image, is deployed and ready.
 `,
   )
   .setIn(
