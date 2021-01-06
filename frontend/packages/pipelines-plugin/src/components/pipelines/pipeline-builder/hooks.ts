@@ -92,10 +92,10 @@ export const useNodes = (
   const { clusterTasks, namespacedTasks, errorMsg } = useTasks(namespace);
 
   const getTask = (taskRef: PipelineTaskRef) => {
-    if (taskRef.kind === ClusterTaskModel.kind) {
-      return clusterTasks?.find((task) => task.metadata.name === taskRef.name);
+    if (taskRef?.kind === ClusterTaskModel.kind) {
+      return clusterTasks?.find((task) => task.metadata.name === taskRef?.name);
     }
-    return namespacedTasks?.find((task) => task.metadata.name === taskRef.name);
+    return namespacedTasks?.find((task) => task.metadata.name === taskRef?.name);
   };
 
   const taskGroupRef = React.useRef(taskGroup);

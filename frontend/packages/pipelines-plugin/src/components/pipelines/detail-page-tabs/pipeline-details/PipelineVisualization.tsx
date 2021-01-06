@@ -19,7 +19,6 @@ const PipelineVisualization: React.FC<PipelineTopologyVisualizationProps> = ({
   pipelineRun,
 }) => {
   const { t } = useTranslation();
-  const { nodes, edges } = getTopologyNodesEdges(pipeline, pipelineRun);
   let content: React.ReactElement;
   if (hasInlineTaskSpec(pipeline.spec.tasks)) {
     // TODO: Inline taskSpec is not yet supported feature
@@ -32,7 +31,12 @@ const PipelineVisualization: React.FC<PipelineTopologyVisualizationProps> = ({
         )}
       />
     );
-  } else if (nodes.length === 0 && edges.length === 0) {
+    return <div className="odc-pipeline-visualization">{content}</div>;
+  }
+
+  const { nodes, edges } = getTopologyNodesEdges(pipeline, pipelineRun);
+
+  if (nodes.length === 0 && edges.length === 0) {
     // Nothing to render
     // TODO: Confirm wording with UX; ODC-1860
     content = (
