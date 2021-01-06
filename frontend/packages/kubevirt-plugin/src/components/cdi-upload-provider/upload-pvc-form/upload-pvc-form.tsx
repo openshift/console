@@ -24,6 +24,7 @@ import {
   PersistentVolumeClaimKind,
   ConfigMapKind,
   StorageClassResourceKind,
+  K8sVerb,
 } from '@console/internal/module/k8s';
 import {
   ButtonBar,
@@ -33,6 +34,7 @@ import {
   ExternalLink,
   ResourceLink,
   useAccessReview2,
+  useMultipleAccessReviews,
 } from '@console/internal/components/utils';
 import {
   provisionerAccessModeMapping,
@@ -62,6 +64,7 @@ import { getTemplateOperatingSystems } from '../../../selectors/vm-template/adva
 import { FormSelectPlaceholderOption } from '../../form/form-select-placeholder-option';
 import {
   AccessMode,
+  TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER,
   TEMPLATE_TYPE_BASE,
   TEMPLATE_TYPE_LABEL,
   TEMPLATE_VM_COMMON_NAMESPACE,
@@ -82,6 +85,7 @@ import {
   isConfigMapContainsScModes,
 } from '../../../selectors/config-map/sc-defaults';
 import { ConfigMapDefaultModesAlert } from '../../Alerts/ConfigMapDefaultModesAlert';
+import { getParameterValue } from '../../../selectors/selectors';
 import './upload-pvc-form.scss';
 
 const templatesResource: WatchK8sResource = {
@@ -540,7 +544,35 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
   const [commonTemplates, loadedTemplates, errorTemplates] = useK8sWatchResource<TemplateKind[]>(
     templatesResource,
   );
-  const [goldenPvcs, loadedPvcs, errorPvcs] = useBaseImages(commonTemplates);
+
+  const goldenNamespacesResources = React.useMemo(() => {
+    const goldenNamespaces = [
+      ...new Set(
+        (commonTemplates || [])
+          .map((template) => getParameterValue(template, TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER))
+          .filter((ns) => !!ns),
+      ),
+    ];
+
+    return goldenNamespaces.map((ns) => ({
+      group: DataVolumeModel.apiGroup,
+      resource: DataVolumeModel.plural,
+      verb: 'create' as K8sVerb,
+      namespace: ns,
+    }));
+  }, [commonTemplates]);
+
+  const [goldenAccessReviews, rbacLoading] = useMultipleAccessReviews(goldenNamespacesResources);
+  const allowedTemplates = commonTemplates.filter((tmp) =>
+    goldenAccessReviews.some(
+      (accessReview) =>
+        accessReview.allowed &&
+        accessReview.resourceAttributes.namespace ===
+          getParameterValue(tmp, TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER),
+    ),
+  );
+
+  const [goldenPvcs, loadedPvcs, errorPvcs] = useBaseImages(allowedTemplates);
   const { uploads, uploadData, uploadProxyURL } = React.useContext(CDIUploadContext);
   const [scConfigMap, cmLoaded] = useStorageClassConfigMap();
   const [scAllowed, scAllowedLoading] = useAccessReview2({
@@ -648,7 +680,7 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
             fileName={fileName}
             handleFileChange={handleFileChange}
             setIsFileRejected={setIsFileRejected}
-            commonTemplates={commonTemplates}
+            commonTemplates={allowedTemplates}
             goldenPvcs={goldenPvcs}
             osParam={osParam}
             isLoading={!loadedTemplates}
@@ -658,6 +690,7 @@ export const UploadPVCPage: React.FC<UploadPVCPageProps> = (props) => {
           />
           <ButtonBar
             inProgress={
+              rbacLoading ||
               scAllowedLoading ||
               !scLoaded ||
               !cmLoaded ||

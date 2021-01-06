@@ -124,6 +124,37 @@ export const useAccessReview2 = (
   return [isAllowed, loading];
 };
 
+export const useMultipleAccessReviews = (
+  multipleResourceAttributes: AccessReviewResourceAttributes[],
+  impersonate?: boolean,
+): [AccessReviewsResult[], boolean] => {
+  const [loading, setLoading] = React.useState(true);
+  const [allowedArr, setAllowedArr] = React.useState<AccessReviewsResult[]>([]);
+
+  React.useEffect(() => {
+    const promises = multipleResourceAttributes.map((resourceAttributes) =>
+      checkAccess(resourceAttributes, impersonate),
+    );
+
+    Promise.all(promises)
+      .then((values) => {
+        setLoading(false);
+        const updatedAllowedArr = values.map<AccessReviewsResult>((result) => ({
+          resourceAttributes: result.spec.resourceAttributes,
+          allowed: result.status.allowed,
+        }));
+        setAllowedArr(updatedAllowedArr);
+      })
+      .catch((e) => {
+        // eslint-disable-next-line no-console
+        console.warn('SelfSubjectAccessReview failed', e);
+        setLoading(false);
+      });
+  }, [impersonate, multipleResourceAttributes]);
+
+  return [allowedArr, loading];
+};
+
 export const useAccessReview = (
   resourceAttributes: AccessReviewResourceAttributes,
   impersonate?,
@@ -154,6 +185,11 @@ type RequireCreatePermissionProps = {
   namespace?: string;
   impersonate?: string;
   children: React.ReactNode;
+};
+
+type AccessReviewsResult = {
+  resourceAttributes: AccessReviewResourceAttributes;
+  allowed: boolean;
 };
 
 export const asAccessReview = (
