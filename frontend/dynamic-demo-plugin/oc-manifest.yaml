@@ -75,7 +75,7 @@ spec:
   type: ClusterIP
   sessionAffinity: None
 ---
-apiVersion: console.openshift.io/v1
+apiVersion: console.openshift.io/v1alpha1
 kind: ConsolePlugin
 metadata:
   name: console-demo-plugin
