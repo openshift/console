@@ -31,7 +31,7 @@
   "Not configured": "未設定",
   "CPU": "CPU",
   "Memory": "メモリー",
-  "Filesystem": "Filesystem",
+  "Filesystem": "ファイルシステム",
   "Network in": "ネットワーク IN",
   "Network out": "ネットワーク OUT",
   "Utilization": "使用状況",
@@ -74,9 +74,9 @@
   "Worker": "ワーカー",
   "This node's {{conditionDescription}}. Performance may be degraded.": "このノードの {{conditionDescription}} です。パフォーマンスが低下する可能性があります。",
   "host binaries": "ホストバイナリー",
-  "The debug pod failed. ": "デバッグ pod は失敗しました。 ",
+  "The debug pod failed. ": "デバッグ Pod は失敗しました。 ",
   "An error occurred. Please try again": "エラーが発生しました。再試行してください。",
   "Scheduling disabled": "スケジュールの無効化",
-  "No new Pods or workloads will be placed on this Node until it&apos;s marked as schedulable.": "スケジュール対象としてマークされるまで、新規 Pod またはワークロードはこのノードに配置されません。",
+  "No new Pods or workloads will be placed on this Node until it's marked as schedulable.": "スケジュール対象としてマークされるまで、新規 Pod またはワークロードはこのノードに配置されません。",
   "Mark as schedulable": "スケジュール対象としてマーク"
 }

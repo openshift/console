@@ -2,7 +2,7 @@
   "Name": "名前",
   "Namespace": "namespace",
   "Created": "作成",
-  "MachineHealthChecks": "MachineHealthChecks",
+  "MachineHealthChecks": "MachineHealthCheck",
   "Unhealthy conditions": "正常でない状態",
   "Status": "ステータス",
   "Timeout": "タイムアウト",

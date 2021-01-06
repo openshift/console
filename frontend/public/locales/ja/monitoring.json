@@ -1,4 +1,5 @@
 {
+  "No datapoints found.": "データポイントが見つかりません。",
   "View in Metrics": "メトリクスでの表示",
   "Name": "名前",
   "Firing alerts": "アラートの実行",
@@ -33,6 +34,5 @@
   "Alerting": "アラート",
   "Show graph": "グラフの表示",
   "Hide graph": "グラフの非表示",
-  "No datapoints found.": "データポイントが見つかりません。",
   "Reset zoom": "ズームのリセット"
 }

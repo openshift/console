@@ -1,11 +1,11 @@
 {
   "Name": "名前",
-  "Namespace": "Namespace",
+  "Namespace": "namespace",
   "Pod selector": "Pod セレクター",
   "Network policies": "ネットワークポリシー",
   "Target pods": "ターゲットプール",
   "From": "起点: ",
-  "To ports": "ポートまで:",
+  "To ports": "宛先ポート:",
   "NS selector": "NS セレクター",
   "Network policy details": "ネットワークポリシーの詳細",
   "Ingress rules": "Ingress ルール",

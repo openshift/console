@@ -1,5 +1,5 @@
 {
-  "Cluster-wide {{resource}}": "クラスター全体の {{resource}}",
+  "Cluster-wide {{resource}}": "クラスター全体 {{resource}}",
   "Catalog will be available in all namespaces": "カタログはすべての namespace で利用可能になります",
   "Namespace {{resource}}": "namespace {{resource}}",
   "Catalog will only be available in a single namespace": "カタログは単一の namespace でのみ利用可能になります",

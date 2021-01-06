@@ -4,7 +4,7 @@
   "Name": "名前",
   "Namespace": "namespace",
   "Labels": "ラベル",
-  "Created": "作成:",
+  "Created": "作成",
   "Build Configs": "ビルドの設定",
   "Build strategy": "ビルドストラテジー"
 }

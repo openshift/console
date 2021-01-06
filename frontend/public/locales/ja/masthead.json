@@ -2,7 +2,7 @@
   "System status": "システムステータス",
   "Red Hat applications": "Red Hat アプリケーション",
   "OpenShift Cluster Manager": "OpenShift Cluster Manager",
-  "Quick starts": "クイックスタート",
+  "Quick Starts": "クイックスタート",
   "Documentation": "ドキュメント",
   "Command line tools": "コマンドラインツール",
   "About": "概要",
@@ -13,5 +13,6 @@
   "Utility menu": "ユーティリティーメニュー",
   "User menu": "ユーザーメニュー",
   "Notification drawer": "通知ドロワー",
-  "Help menu": "ヘルプメニュー"
+  "Help menu": "ヘルプメニュー",
+  "Quick starts": "クイックスタート"
 }

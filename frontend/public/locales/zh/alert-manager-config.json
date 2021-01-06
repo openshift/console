@@ -18,7 +18,7 @@
   "Create a receiver to get OpenShift alerts through other services such as email or a chat platform. The first receiver you create will become the default receiver and will automatically receive all alerts from this cluster. Subsequent receivers can have specific sets of alerts routed to them.": "创建一个接收者来通过其他服务（如电子邮件或聊天平台）获取 OpenShift 警报。第一个创建的接收者将成为默认接收者，并将自动从该群集接收所有警报。后续的接收者可以用来专门接收特定的警报。",
   "receiver_0": "接收者",
   "this_0": "这个",
-  "Receivers by name": "接收者（姓名）",
+  "Receivers by name": "接收者（按姓名）",
   "Create Receiver": "创建接收者",
   "Incomplete alert {{receiverString}}": "警报 {{receiverString}} 不完整",
   "Configure {{thisString}} {{receiverString}} to ensure that you learn about important issues with your cluster.": "配置 {{thisString}} {{receiverString}} 以确保可以了解与您的集群相关的重要问题。",

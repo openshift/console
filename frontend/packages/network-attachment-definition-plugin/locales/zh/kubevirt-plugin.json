@@ -1,0 +1,8 @@
+{
+  "Network attachement definition name cannot be empty": "网络附加定义名称不能为空",
+  "Network attachement definition name name can contain only alphanumberic characters": "网络附加定义名称只能包含字母数字字符",
+  "Network attachement definition name cannot start/end with dash": "网络附加定义名称无法使用 dash 启动/结束",
+  "Network attachement definition name cannot contain uppercase characters": "网络附加定义名称不能包含大写字符",
+  "Network attachement definition name is too long": "网络附加定义名称太长",
+  "Network attachement definition name is too short": "网络附加定义名称太短"
+}

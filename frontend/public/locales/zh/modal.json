@@ -5,7 +5,7 @@
   "Kubernetes version": "Kubernetes 版本",
   "Channel": "频道",
   "Cluster ID": "集群 ID",
-  "API server": "API Server",
+  "API server": "API 服务器",
   "OpenShift is Red Hat's container application platform that allows developers to quickly develop, host, and scale applications in a cloud environment.": "OpenShift 是红帽的容器应用程序平台，开发人员可以在云环境中快速开发，部署和扩展应用程序。",
   "Manage columns": "管理列",
   "Selected columns will appear in the table.": "选定的列将出现在表中。",

@@ -18,11 +18,11 @@
   "Total number of unavailable (non-ready) machines targeted by the pool. A node is marked unavailable if it is in updating state or NodeReady condition is false.": "プールがターゲットとする利用不可の (準備状態にない) マシンの合計数。ノードは更新中であるか、または NodeReady 状態が false の場合には unavailable (利用不可) とマークされます。",
   "MachineConfig selector": "MachineConfig セレクター",
   "MachineConfigPool details": "MachineConfigPool の詳細",
-  "Conditions": "条件",
+  "Conditions": "状態",
   "Name": "名前",
   "Configuration": "設定",
   "Updated": "更新済み",
   "Updating": "更新中",
   "Degraded": "低下",
-  "MachineConfigPools": "MachineConfigPools"
+  "MachineConfigPools": "MachineConfigPool"
 }

@@ -11,7 +11,7 @@
   "Any scopes to request in addition to the standard openid scope.": "標準の openid スコープに加えて要求するスコープ。",
   "Name": "名前",
   "The list of claims whose values should be used as the display name.": "表示名として使用する必要がある値の要求の一覧。",
-  "Email": "Email",
+  "Email": "メール",
   "The list of claims whose values should be used as the email address.": "メールアドレスとして使用する必要がある値の要求の一覧。リスト。",
   "Extra scopes": "追加のスコープ"
 }

@@ -1,4 +1,6 @@
 {
+  "Add Health Checks": "ヘルスチェックの追加",
+  "Edit Health Checks": "ヘルスチェックの編集",
   "Clone": "クローン",
   "Name": "名前",
   "Clone PVC": "PVC のクローン",
@@ -8,7 +10,7 @@
   "Namespace": "namespace",
   "Storage Class": "ストレージクラス",
   "Requested capacity": "要求された容量",
-  "Used capacity": "使用された容量",
+  "Used capacity": "使用済み容量",
   "Access mode": "アクセスモード",
   "Volume mode": "ボリュームモード",
   "Restore as new PVC": "新規 PVC として復元",

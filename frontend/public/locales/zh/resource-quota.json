@@ -1,6 +1,6 @@
 {
   "No quota": "没有配额",
-  "CPU request": "CPU 要求",
+  "CPU request": "CPU 请求",
   "CPU limit": "CPU 限制",
   "Memory request": "内存请求",
   "Memory limit": "内存限制",
