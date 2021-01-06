@@ -52,23 +52,30 @@ const BareMetalHostStatus: React.FC<BareMetalHostStatusProps> = ({
   descriptionKey,
   host,
   nodeMaintenance,
+  className,
 }) => {
   const { t } = useTranslation();
   const statusTitle = t(titleKey) || status;
   const action = hostStatusActions(t)[status]?.(host);
   switch (true) {
     case [NODE_STATUS_STARTING_MAINTENANCE, NODE_STATUS_UNDER_MAINTENANCE].includes(status):
-      return <MaintenancePopover title={statusTitle} nodeMaintenance={nodeMaintenance} />;
+      return (
+        <MaintenancePopover
+          title={statusTitle}
+          nodeMaintenance={nodeMaintenance}
+          className={className}
+        />
+      );
     case [NODE_STATUS_STOPPING_MAINTENANCE, ...HOST_PROGRESS_STATES].includes(status):
       return (
-        <ProgressStatus title={statusTitle}>
-          {t(descriptionKey)}
+        <ProgressStatus title={statusTitle} className={className}>
+          {descriptionKey && t(descriptionKey)}
           {action}
         </ProgressStatus>
       );
     case HOST_ERROR_STATES.includes(status):
       return (
-        <ErrorStatus title={statusTitle}>
+        <ErrorStatus title={statusTitle} className={className}>
           <p>{t(descriptionKey)}</p>
           <p>{getHostErrorMessage(host)}</p>
           {action}
@@ -76,24 +83,24 @@ const BareMetalHostStatus: React.FC<BareMetalHostStatusProps> = ({
       );
     case HOST_SUCCESS_STATES.includes(status):
       return (
-        <SuccessStatus title={statusTitle}>
-          {t(descriptionKey)}
+        <SuccessStatus title={statusTitle} className={className}>
+          {descriptionKey && t(descriptionKey)}
           {action}
         </SuccessStatus>
       );
     case HOST_INFO_STATES.includes(status):
       return (
-        <InfoStatus title={statusTitle}>
-          {t(descriptionKey)}
+        <InfoStatus title={statusTitle} className={className}>
+          {descriptionKey && t(descriptionKey)}
           {action}
         </InfoStatus>
       );
     default: {
-      const statusBody = <Status status={status} title={statusTitle} />;
+      const statusBody = <Status status={status} title={statusTitle} className={className} />;
 
       return descriptionKey || action ? (
         <PopoverStatus title={statusTitle} statusBody={statusBody}>
-          {t(descriptionKey)}
+          {descriptionKey && t(descriptionKey)}
           {action}
         </PopoverStatus>
       ) : (
@@ -106,6 +113,7 @@ const BareMetalHostStatus: React.FC<BareMetalHostStatusProps> = ({
 type BareMetalHostStatusProps = StatusProps & {
   host?: BareMetalHostKind;
   nodeMaintenance?: K8sResourceKind;
+  className?: string;
 };
 
 export default BareMetalHostStatus;
