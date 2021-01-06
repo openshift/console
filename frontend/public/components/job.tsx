@@ -85,7 +85,8 @@ const JobTableRow: RowFunction<JobKind> = ({ obj: job, index, key, style }) => {
       </TableData>
       <TableData className={tableColumnClasses[3]}>
         <Link to={`/k8s/ns/${job.metadata.namespace}/jobs/${job.metadata.name}/pods`} title="pods">
-          {job.status.succeeded || 0} of {completions}
+          <div>Desired {completions}</div>
+          <div>Succeeded {job.status.succeeded || 0}</div>
         </Link>
       </TableData>
       <TableData className={tableColumnClasses[4]}>{type}</TableData>
