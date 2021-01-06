@@ -112,10 +112,10 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
   }, [cpu, dispatch, memory, nodesCount]);
 
   React.useEffect(() => {
-    if (isFlexibleScalingSupported && !stretchClusterChecked) {
+    if (isFlexibleScalingSupported) {
       dispatch({
         type: 'setEnableFlexibleScaling',
-        value: isFlexibleScaling(nodesCount, zonesCount),
+        value: !stretchClusterChecked && isFlexibleScaling(nodesCount, zonesCount),
       });
     }
   }, [dispatch, zonesCount, nodesCount, stretchClusterChecked, isFlexibleScalingSupported]);
