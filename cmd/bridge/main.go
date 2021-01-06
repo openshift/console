@@ -702,7 +702,7 @@ func main() {
 	if *fOperator {
 
 		go func() {
-			cmd := exec.Command("./bin/manager")
+			cmd := exec.Command("./tools/crd-operator")
 			log.Info("Running crd watcher operator")
 			cmd.Stdout = os.Stdout
 			cmd.Stderr = os.Stderr
