@@ -47,7 +47,7 @@ export const VMTemplateDetails: React.FC<VMTemplateDetailsProps> = ({
               <Alert
                 variant="info"
                 isInline
-                title={t('kubevirt-plugin~{{provider}} provided templates can not be edited', {
+                title={t('kubevirt-plugin~Templates provided by {{provider}} are not editable.', {
                   provider,
                 })}
                 actionLinks={
