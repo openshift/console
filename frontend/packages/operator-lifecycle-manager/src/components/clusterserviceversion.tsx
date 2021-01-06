@@ -37,8 +37,6 @@ import {
   referenceForModel,
   referenceFor,
   groupVersionFor,
-  GroupVersionKind,
-  K8sKind,
   k8sKill,
   k8sPatch,
   k8sGet,
@@ -90,9 +88,8 @@ import {
   PackageManifestKind,
   SubscriptionKind,
 } from '../types';
-import { operatorTypeAnnotation, nonStandaloneAnnotationValue } from '../const';
+import { OPERATOR_TYPE_ANNOTATION, NON_STANDALONE_ANNOTATION_VALUE } from '../const';
 import { subscriptionForCSV, getSubscriptionStatus } from '../status/csv-status';
-import { getInternalObjects, isInternalObject } from '../utils';
 import { ProvidedAPIsPage, ProvidedAPIPage } from './operand';
 import { createUninstallOperatorModal } from './modals/uninstall-operator-modal';
 import { operatorGroupFor, operatorNamespaceFor } from './operator-group';
@@ -103,9 +100,10 @@ import {
   UpgradeApprovalLink,
 } from './subscription';
 import { RedExclamationCircleIcon } from '@console/shared/src/components/status/icons';
-import { ClusterServiceVersionLogo, referenceForProvidedAPI, providedAPIsFor } from './index';
+import { ClusterServiceVersionLogo, referenceForProvidedAPI, providedAPIsForCSV } from './index';
 import { getBreadcrumbPath } from '@console/internal/components/utils/breadcrumbs';
 import { CreateInitializationResourceButton } from './operator-install-page';
+import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 
 const clusterServiceVersionStateToProps = (state: RootState): ClusterServiceVersionStateProps => {
   return {
@@ -317,11 +315,7 @@ export const NamespacedClusterServiceVersionTableRow = withFallback<
   const [icon] = _.get(obj, 'spec.icon', []);
   const route = resourceObjPath(obj, referenceFor(obj));
   const uid = getUID(obj);
-  const internalObjects = getInternalObjects(obj);
-  const providedAPIs = providedAPIsFor(obj).filter(
-    (desc) => !isInternalObject(internalObjects, desc.name),
-  );
-
+  const providedAPIs = providedAPIsForCSV(obj);
   return (
     <TableRow id={uid} trKey={rowKey} index={index} style={style}>
       {/* Name */}
@@ -380,8 +374,8 @@ export const NamespacedClusterServiceVersionTableRow = withFallback<
             ))
           : '-'}
         {providedAPIs.length > 4 && (
-          <Link to={route} title={`View ${providedAPIsFor(obj).length - 4} more...`}>
-            {`View ${providedAPIsFor(obj).length - 4} more...`}
+          <Link to={route} title={`View ${providedAPIs.length - 4} more...`}>
+            {`View ${providedAPIs.length - 4} more...`}
           </Link>
         )}
       </TableData>
@@ -541,7 +535,8 @@ export const NamespacedClusterServiceVersionList: React.SFC<ClusterServiceVersio
 
   const isStandaloneCSV = (operator: ClusterServiceVersionKind) => {
     return (
-      operator.metadata.annotations?.[operatorTypeAnnotation] !== nonStandaloneAnnotationValue ||
+      operator.metadata.annotations?.[OPERATOR_TYPE_ANNOTATION] !==
+        NON_STANDALONE_ANNOTATION_VALUE ||
       operator.status?.phase === ClusterServiceVersionPhase.CSVPhaseFailed
     );
   };
@@ -708,12 +703,17 @@ export const MarkdownView = (props: {
   );
 };
 
-export const CRDCard: React.FC<CRDCardProps> = (props) => {
-  const { csv, crd, canCreate, required = false } = props;
+export const CRDCard: React.FC<CRDCardProps> = ({ csv, crd, required, ...rest }) => {
   const reference = referenceForProvidedAPI(crd);
-  const model = modelFor(reference);
-  const createRoute = () =>
-    `/k8s/ns/${csv.metadata.namespace}/${ClusterServiceVersionModel.plural}/${csv.metadata.name}/${reference}/~new`;
+  const [model] = useK8sModel(reference);
+  const canCreate = rest.canCreate ?? model?.verbs?.includes?.('create');
+  const createRoute = React.useMemo(
+    () =>
+      csv
+        ? `/k8s/ns/${csv.metadata.namespace}/${ClusterServiceVersionModel.plural}/${csv.metadata.name}/${reference}/~new`
+        : null,
+    [csv, reference],
+  );
 
   return (
     <Card>
@@ -735,10 +735,10 @@ export const CRDCard: React.FC<CRDCardProps> = (props) => {
       <CardBody>
         <MarkdownView content={crd.description} truncateContent />
       </CardBody>
-      {canCreate && (
+      {canCreate && createRoute && (
         <RequireCreatePermission model={model} namespace={csv.metadata.namespace}>
           <CardFooter>
-            <Link to={createRoute()}>
+            <Link to={createRoute}>
               <AddCircleOIcon className="co-icon-space-r" />
               Create Instance
             </Link>
@@ -749,37 +749,19 @@ export const CRDCard: React.FC<CRDCardProps> = (props) => {
   );
 };
 
-const crdCardRowStateToProps = ({ k8s }, { crdDescs }) => {
-  const models: K8sKind[] = _.compact(
-    crdDescs.map((desc) => k8s.getIn(['RESOURCES', 'models', referenceForProvidedAPI(desc)])),
-  );
-  return {
-    createable: models
-      .filter((m) => (m.verbs || []).includes('create'))
-      .map((m) => referenceForModel(m)),
-  };
-};
-
-export const CRDCardRow = connect(crdCardRowStateToProps)((props: CRDCardRowProps) => {
-  const internalObjects = getInternalObjects(props.csv);
-  const crds = props.crdDescs?.filter(({ name }) => !isInternalObject(internalObjects, name));
+export const CRDCardRow = ({ csv, providedAPIs }: CRDCardRowProps) => {
   return (
     <div className="co-crd-card-row">
-      {_.isEmpty(crds) ? (
-        <span className="text-muted">No Kubernetes APIs are being provided by this Operator.</span>
-      ) : (
-        crds.map((crd) => (
-          <CRDCard
-            key={referenceForProvidedAPI(crd)}
-            crd={crd}
-            csv={props.csv}
-            canCreate={props.createable.includes(referenceForProvidedAPI(crd))}
-          />
+      {providedAPIs.length ? (
+        providedAPIs.map((crd) => (
+          <CRDCard key={referenceForProvidedAPI(crd)} crd={crd} csv={csv} />
         ))
+      ) : (
+        <span className="text-muted">No Kubernetes APIs are being provided by this Operator.</span>
       )}
     </div>
   );
-});
+};
 
 const InitializationResourceAlert: React.FC<InitializationResourceAlertProps> = (props) => {
   const { initializationResource, csv } = props;
@@ -829,7 +811,7 @@ const InitializationResourceAlert: React.FC<InitializationResourceAlertProps> = 
   return null;
 };
 
-export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetailsProps> = (
+export const ClusterServiceVersionDetails: React.FC<ClusterServiceVersionDetailsProps> = (
   props,
 ) => {
   const { spec, metadata, status } = props.obj;
@@ -860,6 +842,7 @@ export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetail
       console.error(error.message);
     }
   }
+  const providedAPIs = providedAPIsForCSV(props.obj);
 
   return (
     <>
@@ -884,7 +867,7 @@ export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetail
                 />
               )}
               <SectionHeading text="Provided APIs" />
-              <CRDCardRow csv={props.obj} crdDescs={providedAPIsFor(props.obj)} />
+              <CRDCardRow csv={props.obj} providedAPIs={providedAPIs} />
               <SectionHeading text="Description" />
               <MarkdownView content={spec.description || 'Not available'} />
             </div>
@@ -1060,43 +1043,16 @@ export const CSVSubscription: React.FC<CSVSubscriptionProps> = ({
   );
 };
 
+const subscriptionPage = { href: 'subscription', name: 'Subscription', component: CSVSubscription };
+const allInstancesPage: Page = {
+  href: 'instances',
+  name: 'All Instances',
+  component: ProvidedAPIsPage,
+};
+
 export const ClusterServiceVersionsDetailsPage: React.FC<ClusterServiceVersionsDetailsPageProps> = (
   props,
 ) => {
-  const instancePagesFor = (obj: ClusterServiceVersionKind) => {
-    const internalObjects = getInternalObjects(obj);
-    const allInstancesPage: Page = {
-      href: 'instances',
-      name: 'All Instances',
-      component: ProvidedAPIsPage,
-    };
-
-    return (providedAPIsFor(obj).length > 1 ? [allInstancesPage] : ([] as Page[])).concat(
-      providedAPIsFor(obj).reduce(
-        (acc, desc: CRDDescription) =>
-          !isInternalObject(internalObjects, desc.name)
-            ? [
-                ...acc,
-                {
-                  href: referenceForProvidedAPI(desc),
-                  name: ['Details', 'YAML', 'Subscription', 'Events'].includes(desc.displayName)
-                    ? `${desc.displayName} Operand`
-                    : desc.displayName || desc.kind,
-                  component: ProvidedAPIPage,
-                  pageData: {
-                    csv: obj,
-                    kind: referenceForProvidedAPI(desc),
-                    namespace: obj.metadata.namespace,
-                  },
-                },
-              ]
-            : acc,
-        [],
-      ),
-    );
-  };
-
-  type ExtraResources = { subscriptions: SubscriptionKind[] };
   const menuActions = (
     model,
     obj: ClusterServiceVersionKind,
@@ -1117,16 +1073,28 @@ export const ClusterServiceVersionsDetailsPage: React.FC<ClusterServiceVersionsD
   });
 
   const pagesFor = React.useCallback(
-    (obj: ClusterServiceVersionKind) =>
-      _.compact([
+    (obj: ClusterServiceVersionKind) => {
+      const providedAPIs = providedAPIsForCSV(obj);
+      return [
         navFactory.details(ClusterServiceVersionDetails),
         navFactory.editYaml(),
-        canListSubscriptions
-          ? { href: 'subscription', name: 'Subscription', component: CSVSubscription }
-          : null,
+        ...(canListSubscriptions ? [subscriptionPage] : []),
         navFactory.events(ResourceEventStream),
-        ...instancePagesFor(obj),
-      ]),
+        ...(providedAPIs.length > 1 ? [allInstancesPage] : []),
+        ...providedAPIs.map((api: CRDDescription) => ({
+          href: referenceForProvidedAPI(api),
+          name: ['Details', 'YAML', 'Subscription', 'Events'].includes(api.displayName)
+            ? `${api.displayName} Operand`
+            : api.displayName || api.kind,
+          component: ProvidedAPIPage,
+          pageData: {
+            csv: obj,
+            kind: referenceForProvidedAPI(api),
+            namespace: obj.metadata.namespace,
+          },
+        })),
+      ];
+    },
     [canListSubscriptions],
   );
 
@@ -1163,6 +1131,8 @@ export const ClusterServiceVersionsDetailsPage: React.FC<ClusterServiceVersionsD
   );
 };
 
+type ExtraResources = { subscriptions: SubscriptionKind[] };
+
 type ClusterServiceVersionStatusProps = {
   obj: ClusterServiceVersionKind;
   subscription: SubscriptionKind;
@@ -1184,16 +1154,15 @@ export type ClusterServiceVersionListProps = {
 };
 
 export type CRDCardProps = {
+  canCreate?: boolean;
   crd: CRDDescription | APIServiceDefinition;
-  csv: ClusterServiceVersionKind;
-  canCreate: boolean;
+  csv?: ClusterServiceVersionKind;
   required?: boolean;
 };
 
 export type CRDCardRowProps = {
-  crdDescs: (CRDDescription | APIServiceDefinition)[];
+  providedAPIs: (CRDDescription | APIServiceDefinition)[];
   csv: ClusterServiceVersionKind;
-  createable: GroupVersionKind[];
 };
 
 export type CRDCardRowState = {

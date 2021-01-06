@@ -13,8 +13,7 @@ import {
   ClusterServiceVersionKind,
   ClusterServiceVersionModel,
   CRDDescription,
-  providedAPIsFor,
-  referenceForProvidedAPI,
+  providedAPIForReference,
 } from '@console/operator-lifecycle-manager/src';
 import {
   flattenCsvResources,
@@ -74,9 +73,7 @@ const OperatorResourcesGetter: React.FC<OperatorResourcesGetterProps> = ({
   namespace,
   flatten,
 }) => {
-  const providedAPI = providedAPIsFor(csv).find(
-    (desc) => referenceForProvidedAPI(desc) === modelReference,
-  );
+  const providedAPI = providedAPIForReference(csv, modelReference);
   const linkForResource = (obj: K8sResourceKind) => {
     return linkForCsvResource(obj, providedAPI, csv.metadata.name);
   };

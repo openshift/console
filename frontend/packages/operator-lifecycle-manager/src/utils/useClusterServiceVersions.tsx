@@ -10,8 +10,7 @@ import { ExpandCollapse } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ClusterServiceVersionModel } from '../models';
 import { ClusterServiceVersionKind } from '../types';
-import { providedAPIsFor, referenceForProvidedAPI } from '../components';
-import { isInternal } from '../dev-catalog';
+import { providedAPIsForCSV, referenceForProvidedAPI } from '../components';
 
 type ExpandCollapseDescriptionProps = {
   children: React.ReactNode;
@@ -45,7 +44,7 @@ const normalizeClusterServiceVersions = (
     t('operator-lifecycle-manager~## Operator Description\n{{csvDescription}}', { csvDescription });
 
   const operatorProvidedAPIs: CatalogItem[] = _.flatten(
-    clusterServiceVersions.map((csv) => providedAPIsFor(csv).map((desc) => ({ ...desc, csv }))),
+    clusterServiceVersions.map((csv) => providedAPIsForCSV(csv).map((desc) => ({ ...desc, csv }))),
   )
     .reduce(
       (all, cur) =>
@@ -54,8 +53,6 @@ const normalizeClusterServiceVersions = (
           : all.concat([cur]),
       [],
     )
-    // remove internal CRDs
-    .filter((crd) => !isInternal(crd))
     .map((desc) => {
       const { creationTimestamp } = desc.csv.metadata;
       const uid = `${desc.csv.metadata.uid}-${desc.displayName}`;

@@ -8,7 +8,6 @@ import {
   RouteKind,
   apiVersionForModel,
   K8sKind,
-  ObjectMetadata,
   JobKind,
 } from '@console/internal/module/k8s';
 import {
@@ -164,22 +163,6 @@ const getAnnotation = (obj: K8sResourceKind, annotation: string): string => {
   return _.get(obj, ['metadata', 'annotations', annotation]);
 };
 
-export const parseJSONAnnotation = (
-  annotations: ObjectMetadata['annotations'],
-  annotationKey: string,
-  onError?: (err: Error) => void,
-  defaultReturn?: any,
-): any => {
-  try {
-    return annotations?.[annotationKey] ? JSON.parse(annotations?.[annotationKey]) : defaultReturn;
-  } catch (e) {
-    onError && onError(e);
-    // eslint-disable-next-line no-console
-    console.warn(`Could not parse annotation ${annotationKey} as JSON: `, e);
-    return defaultReturn;
-  }
-};
-
 const getDeploymentRevision = (obj: K8sResourceKind): number => {
   const revision = getAnnotation(obj, DEPLOYMENT_REVISION_ANNOTATION);
   return revision && parseInt(revision, 10);
@@ -264,7 +247,7 @@ const getPodAlerts = (pod: K8sResourceKind): OverviewItemAlerts => {
     const { type, status, reason, message } = condition;
     if (type === 'PodScheduled' && status === 'False' && reason === 'Unschedulable') {
       // eslint-disable-next-line
-      const key = podAlertKey(reason, pod, name);
+      const key = podAlertKey(reason, pod);
       alerts[key] = {
         severity: 'error',
         message: `${reason}: ${message}`,

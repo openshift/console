@@ -27,6 +27,7 @@ import {
   testPackageManifest,
   testCatalogSource,
   testInstallPlan,
+  testModel,
 } from '../../mocks';
 import { ClusterServiceVersionModel } from '../models';
 import { ClusterServiceVersionKind, ClusterServiceVersionPhase } from '../types';
@@ -54,6 +55,10 @@ import {
 } from '.';
 
 const i18nNS = 'details-page';
+
+jest.mock('@console/shared/src/hooks/useK8sModel', () => ({
+  useK8sModel: () => [testModel],
+}));
 
 describe('SingleProjectTableHeader.displayName', () => {
   it('returns single project column header definition for cluster service version table header', () => {
@@ -195,8 +200,7 @@ describe(ClusterServiceVersionLogo.displayName, () => {
   });
 
   it('renders logo image from given base64 encoded image string', () => {
-    const image: ReactWrapper<React.ImgHTMLAttributes<any>> = wrapper.find('img');
-
+    const image = wrapper.find('img');
     expect(image.props().src).toEqual(
       `data:${testClusterServiceVersion.spec.icon[0].mediatype};base64,${testClusterServiceVersion.spec.icon[0].base64data}`,
     );
@@ -204,8 +208,7 @@ describe(ClusterServiceVersionLogo.displayName, () => {
 
   it('renders fallback image if given icon is invalid', () => {
     wrapper.setProps({ icon: null });
-    const fallbackImg: ReactWrapper<React.ImgHTMLAttributes<any>> = wrapper.find('img');
-
+    const fallbackImg = wrapper.find('img');
     expect(fallbackImg.props().src).toEqual(operatorLogo);
   });
 
@@ -286,7 +289,7 @@ describe(ClusterServiceVersionDetails.displayName, () => {
 
   it('renders row of cards for each "owned" CRD for the given `ClusterServiceVersion`', () => {
     expect(wrapper.find(CRDCardRow).props().csv).toEqual(testClusterServiceVersion);
-    expect(wrapper.find(CRDCardRow).props().crdDescs).toEqual(
+    expect(wrapper.find(CRDCardRow).props().providedAPIs).toEqual(
       testClusterServiceVersion.spec.customresourcedefinitions.owned,
     );
   });
@@ -526,7 +529,7 @@ describe(ClusterServiceVersionsDetailsPage.displayName, () => {
 
     const csv = _.cloneDeep(testClusterServiceVersion);
     csv.spec.customresourcedefinitions.owned = csv.spec.customresourcedefinitions.owned.concat([
-      { name: 'e.example.com', kind: 'E', version: 'v1', displayName: 'E' },
+      { name: 'e.example.com', kind: 'E', version: 'v1alpha1', displayName: 'E' },
     ]);
 
     expect(detailsPage.props().pagesFor(csv)[4].name).toEqual('All Instances');
