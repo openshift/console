@@ -1,10 +1,15 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Alert, FormGroup, ValidatedOptions } from '@patternfly/react-core';
+import {
+  Alert,
+  ClipboardCopy,
+  ClipboardCopyVariant,
+  FormGroup,
+  ValidatedOptions,
+} from '@patternfly/react-core';
 import { ExclamationCircleIcon } from '@patternfly/react-icons';
 import { useFormikContext, FormikValues } from 'formik';
-import { CheckboxField } from '@console/shared';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   RegistryType,
@@ -20,24 +25,18 @@ import ImageStreamTagDropdown from './ImageStreamTagDropdown';
 import './ImageStream.scss';
 
 export const initialState: ImageStreamState = {
-  hasAccessToPullImage: true,
   loading: false,
   accessLoading: false,
-  hasCreateAccess: false,
   selectedImageStream: {},
 };
 
 export const ImageStreamReducer = (state: ImageStreamState, action: ImageStreamAction) => {
   const { value } = action;
   switch (action.type) {
-    case ImageStreamActions.setHasAccessToPullImage:
-      return { ...state, hasAccessToPullImage: value };
     case ImageStreamActions.setLoading:
       return { ...state, loading: value };
     case ImageStreamActions.setAccessLoading:
       return { ...state, accessLoading: value };
-    case ImageStreamActions.setHasCreateAccess:
-      return { ...state, hasCreateAccess: value };
     case ImageStreamActions.setSelectedImageStream:
       return { ...state, selectedImageStream: value };
     default:
@@ -49,38 +48,23 @@ const ImageStream: React.FC = () => {
   const { t } = useTranslation();
   const {
     values: { imageStream, project, registry, isi },
-    setFieldValue,
   } = useFormikContext<FormikValues>();
   const [validated, setValidated] = React.useState<ValidatedOptions>(ValidatedOptions.default);
   const [state, dispatch] = React.useReducer(ImageStreamReducer, initialState);
   const [hasImageStreams, setHasImageStreams] = React.useState(false);
-  const {
-    hasAccessToPullImage,
-    loading,
-    accessLoading,
-    hasCreateAccess,
-    selectedImageStream,
-  } = state;
+  const { loading, accessLoading, selectedImageStream } = state;
 
-  React.useEffect(() => {
-    if (imageStream.namespace !== BuilderImagesNamespace.Openshift) {
-      setFieldValue('imageStream.grantAccess', true);
-    }
-  }, [imageStream.namespace, setFieldValue]);
   const imageStreamTagList = getImageStreamTags(selectedImageStream as K8sResourceKind);
   const isNamespaceSelected = imageStream.namespace !== '' && !accessLoading;
   const isStreamsAvailable = isNamespaceSelected && hasImageStreams && !loading;
   const isTagsAvailable = isStreamsAvailable && !_.isEmpty(imageStreamTagList);
   const isImageStreamSelected = imageStream.image !== '';
-  const canGrantAccess =
-    hasCreateAccess &&
-    isStreamsAvailable &&
-    isTagsAvailable &&
-    !hasAccessToPullImage &&
-    isNamespaceSelected &&
-    registry === RegistryType.Internal &&
+  const showCommandLineAlert =
+    project.name !== imageStream.namespace &&
     imageStream.namespace !== BuilderImagesNamespace.Openshift &&
-    project.name !== imageStream.namespace;
+    registry === RegistryType.Internal &&
+    isStreamsAvailable &&
+    isTagsAvailable;
   const helperTextInvalid = validated === ValidatedOptions.error && isi.status?.message && (
     <>
       <ExclamationCircleIcon />
@@ -112,7 +96,7 @@ const ImageStream: React.FC = () => {
             </div>
           </div>
         </FormGroup>
-        {isNamespaceSelected && isImageStreamSelected && !isTagsAvailable && hasCreateAccess && (
+        {isNamespaceSelected && isImageStreamSelected && !isTagsAvailable && (
           <div className="odc-imagestream-alert">
             <Alert variant="warning" title={t('devconsole~No Image streams tags found')} isInline>
               {t('devconsole~No tags are available in Image Stream {{image}}', {
@@ -121,7 +105,7 @@ const ImageStream: React.FC = () => {
             </Alert>
           </div>
         )}
-        {isNamespaceSelected && !loading && !isStreamsAvailable && hasCreateAccess && (
+        {isNamespaceSelected && !loading && !isStreamsAvailable && (
           <div className="odc-imagestream-alert">
             <Alert variant="warning" title={t('devconsole~No Image streams found')} isInline>
               {t('devconsole~No Image streams are available in Project {{namespace}}', {
@@ -130,25 +114,23 @@ const ImageStream: React.FC = () => {
             </Alert>
           </div>
         )}
-        {isNamespaceSelected && !accessLoading && !hasCreateAccess && (
+        {isNamespaceSelected && !accessLoading && showCommandLineAlert && (
           <div className="odc-imagestream-alert">
-            <Alert variant="warning" title={t('devconsole~Permission denied')} isInline>
-              {t(
-                'devconsole~Service account default does not have authority to pull Images from {{namespace}}. Select another Project to continue.',
+            <Alert
+              variant="warning"
+              isInline
+              title={t(
+                'devconsole~Service account default will need pull authority to deploy Images from {{namespace}}',
                 { namespace: imageStream.namespace },
               )}
+            >
+              {t('devconsole~You can grant authority with the command')}{' '}
+              <ClipboardCopy
+                className="odc-imagestream-clipboard"
+                variant={ClipboardCopyVariant.expansion}
+                isReadOnly
+              >{`oc policy add-role-to-user system:image-puller system:serviceaccount:${project.name}:default --namespace=${imageStream.namespace}`}</ClipboardCopy>
             </Alert>
-          </div>
-        )}
-        {canGrantAccess && (
-          <div className="odc-imagestream-alert">
-            <CheckboxField
-              name="imageStream.grantAccess"
-              label={t(
-                'devconsole~Grant service account default authority to pull Images from {{namespace}}',
-                { namespace: imageStream.namespace },
-              )}
-            />
           </div>
         )}
       </ImageStreamContext.Provider>

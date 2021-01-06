@@ -621,7 +621,7 @@ export const externalImageValues: DeployImageFormData = {
   searchTerm: undefined,
   registry: 'external',
   allowInsecureRegistry: false,
-  imageStream: { image: '', tag: '', namespace: '', grantAccess: true },
+  imageStream: { image: '', tag: '', namespace: '' },
   isi: {
     name: '',
     image: {},
@@ -747,7 +747,7 @@ export const knExternalImageValues: DeployImageFormData = {
   deployment: { env: [], replicas: 1, triggers: { image: false } },
   formType: 'edit',
   image: { image: {}, name: '', ports: [], status: { metadata: {}, status: '' }, tag: '' },
-  imageStream: { grantAccess: true, image: '', namespace: '', tag: '' },
+  imageStream: { image: '', namespace: '', tag: '' },
   isSearchingForImage: false,
   isi: { image: {}, name: '', ports: [], status: { metadata: {}, status: '' }, tag: '' },
   labels: {},

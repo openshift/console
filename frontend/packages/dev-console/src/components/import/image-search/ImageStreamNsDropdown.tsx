@@ -1,9 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFormikContext, FormikValues } from 'formik';
-import { k8sGet } from '@console/internal/module/k8s';
-import { RoleBindingModel } from '@console/internal/models';
-import { checkAccess } from '@console/internal/components/utils';
 import { ResourceDropdownField } from '@console/shared';
 import { getProjectResource, BuilderImagesNamespace } from '../../../utils/imagestream-utils';
 import { ImageStreamActions as Action } from '../import-types';
@@ -13,57 +10,18 @@ const ImageStreamNsDropdown: React.FC = () => {
   const { t } = useTranslation();
   const { values, setFieldValue, initialValues } = useFormikContext<FormikValues>();
   const { dispatch } = React.useContext(ImageStreamContext);
-  const onDropdownChange = React.useCallback(
-    (selectedProject: string) => {
-      const promiseArr = [];
-      setFieldValue('imageStream.image', initialValues.imageStream.image);
-      setFieldValue('imageStream.tag', initialValues.imageStream.tag);
-      setFieldValue('isi', initialValues.isi);
-      dispatch({ type: Action.setLoading, value: true });
-      dispatch({ type: Action.setAccessLoading, value: true });
-      if (selectedProject === BuilderImagesNamespace.Openshift) {
-        dispatch({ type: Action.setHasCreateAccess, value: true });
-        dispatch({ type: Action.setHasAccessToPullImage, value: true });
-        setFieldValue('imageStream.grantAccess', false);
-      } else {
-        promiseArr.push(
-          checkAccess({
-            group: RoleBindingModel.apiGroup,
-            resource: RoleBindingModel.plural,
-            verb: 'create',
-            name: 'system:image-puller',
-            namespace: values.project.name,
-          })
-            .then((resp) =>
-              dispatch({ type: Action.setHasCreateAccess, value: resp.status.allowed }),
-            )
-            .catch(() => dispatch({ type: Action.setHasAccessToPullImage, value: false })),
-        );
-        promiseArr.push(
-          k8sGet(RoleBindingModel, `system:image-puller-${selectedProject}`, values.project.name)
-            .then(() => {
-              dispatch({
-                type: Action.setHasAccessToPullImage,
-                value: true,
-              });
-              setFieldValue('imageStream.grantAccess', false);
-            })
-            .catch(() => dispatch({ type: Action.setHasAccessToPullImage, value: false })),
-        );
-      }
-      return Promise.all(promiseArr).then(() =>
-        dispatch({ type: Action.setAccessLoading, value: false }),
-      );
-    },
-    [
-      dispatch,
-      initialValues.imageStream.image,
-      initialValues.imageStream.tag,
-      initialValues.isi,
-      setFieldValue,
-      values.project.name,
-    ],
-  );
+  const onDropdownChange = React.useCallback(() => {
+    setFieldValue('imageStream.image', initialValues.imageStream.image);
+    setFieldValue('imageStream.tag', initialValues.imageStream.tag);
+    setFieldValue('isi', initialValues.isi);
+    dispatch({ type: Action.setLoading, value: true });
+  }, [
+    dispatch,
+    initialValues.imageStream.image,
+    initialValues.imageStream.tag,
+    initialValues.isi,
+    setFieldValue,
+  ]);
 
   React.useEffect(() => {
     if (
@@ -72,7 +30,7 @@ const ImageStreamNsDropdown: React.FC = () => {
     ) {
       initialValues.imageStream.image = values.imageStream.image;
     }
-    values.imageStream.namespace && onDropdownChange(values.imageStream.namespace);
+    values.imageStream.namespace && onDropdownChange();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onDropdownChange, values.imageStream.namespace]);
 

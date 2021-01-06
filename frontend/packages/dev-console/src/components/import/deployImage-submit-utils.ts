@@ -5,7 +5,6 @@ import {
   ImageStreamModel,
   ServiceModel,
   RouteModel,
-  RoleBindingModel,
 } from '@console/internal/models';
 import {
   K8sResourceKind,
@@ -32,34 +31,6 @@ import { DeployImageFormData, Resources } from './import-types';
 
 const WAIT_FOR_IMAGESTREAM_UPDATE_TIMEOUT = 5000;
 const WAIT_FOR_IMAGESTREAM_GENERATION = 2;
-
-export const createSystemImagePullerRoleBinding = (
-  formData: DeployImageFormData,
-  dryRun: boolean,
-): Promise<K8sResourceKind> => {
-  const { imageStream } = formData;
-  const roleBinding = {
-    kind: RoleBindingModel.kind,
-    apiVersion: `${RoleBindingModel.apiGroup}/${RoleBindingModel.apiVersion}`,
-    metadata: {
-      name: `system:image-puller-${imageStream.namespace}`,
-      namespace: formData.project.name,
-    },
-    subjects: [
-      {
-        kind: 'ServiceAccount',
-        name: 'default',
-        namespace: imageStream.namespace,
-      },
-    ],
-    roleRef: {
-      apiGroup: RoleBindingModel.apiGroup,
-      kind: 'ClusterRole',
-      name: 'system:image-puller',
-    },
-  };
-  return k8sCreate(RoleBindingModel, roleBinding, dryRun ? dryRunOpt : {});
-};
 
 export const createOrUpdateImageStream = async (
   formData: DeployImageFormData,
@@ -395,10 +366,7 @@ export const createOrUpdateDeployImageResources = async (
   } = formData;
   const internalImageName = getRuntime(image.metadata?.labels);
   const requests: Promise<K8sResourceKind>[] = [];
-  if (registry === RegistryType.Internal) {
-    formData.imageStream.grantAccess &&
-      requests.push(createSystemImagePullerRoleBinding(formData, dryRun));
-  }
+
   const imageStreamList = appResources?.imageStream?.data;
   const imageStreamData = _.orderBy(imageStreamList, ['metadata.resourceVersion'], ['desc']);
   const originalImageStream = (imageStreamData.length && imageStreamData[0]) || {};
