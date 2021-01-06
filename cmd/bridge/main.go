@@ -18,7 +18,7 @@ import (
 
 	"github.com/coreos/pkg/capnslog"
 	"github.com/coreos/pkg/flagutil"
-	"github.com/traefik/traefik/v2/pkg/safe"
+	"github.com/openshift/console/pkg/hypercloud/safe"
 
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/backend"

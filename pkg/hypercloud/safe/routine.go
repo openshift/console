@@ -7,7 +7,7 @@ import (
 	"sync"
 
 	"github.com/cenkalti/backoff/v4"
-	"github.com/traefik/traefik/v2/pkg/log"
+	log "github.com/sirupsen/logrus"
 )
 
 type routineCtx func(ctx context.Context)
@@ -61,7 +61,7 @@ func GoWithRecover(goroutine func(), customRecover func(err interface{})) {
 }
 
 func defaultRecoverGoroutine(err interface{}) {
-	logger := log.WithoutContext()
+	logger := log.WithContext(context.Background())
 	logger.Errorf("Error in Go routine: %s", err)
 	logger.Errorf("Stack: %s", debug.Stack())
 }
