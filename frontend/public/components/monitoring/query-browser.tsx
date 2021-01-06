@@ -541,6 +541,8 @@ const Loading = () => (
   </div>
 );
 
+const getMaxSamplesForSpan = (span) => _.clamp(Math.round(span / minStep), minSamples, maxSamples);
+
 const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   defaultSamples,
   defaultTimespan = parsePrometheusDuration('30m'),
@@ -566,8 +568,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   const [span, setSpan] = React.useState(timespan || parsePrometheusDuration(defaultSpanText));
 
   // Limit the number of samples so that the step size doesn't fall below minStep
-  const maxSamplesForSpan =
-    defaultSamples || _.clamp(Math.round(span / minStep), minSamples, maxSamples);
+  const maxSamplesForSpan = defaultSamples || getMaxSamplesForSpan(span);
 
   const [xDomain, setXDomain] = React.useState<AxisDomain>();
   const [error, setError] = React.useState<PrometheusAPIError>();
@@ -588,8 +589,9 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   React.useEffect(() => {
     if (timespan) {
       setSpan(timespan);
+      setSamples(defaultSamples || getMaxSamplesForSpan(timespan));
     }
-  }, [timespan]);
+  }, [defaultSamples, timespan]);
 
   // Clear any existing series data when the namespace is changed
   React.useEffect(() => {
@@ -690,10 +692,14 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
 
   React.useLayoutEffect(() => setUpdating(true), [endTime, namespace, queriesKey, samples, span]);
 
-  const onSpanChange = React.useCallback((newSpan: number) => {
-    setXDomain(undefined);
-    setSpan(newSpan);
-  }, []);
+  const onSpanChange = React.useCallback(
+    (newSpan: number) => {
+      setXDomain(undefined);
+      setSpan(newSpan);
+      setSamples(defaultSamples || getMaxSamplesForSpan(newSpan));
+    },
+    [defaultSamples],
+  );
 
   const isRangeVector = _.get(error, 'json.error', '').match(
     /invalid expression type "range vector"/,
@@ -734,6 +740,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   const onZoom = (from: number, to: number) => {
     setXDomain([from, to]);
     setSpan(to - from);
+    setSamples(defaultSamples || getMaxSamplesForSpan(to - from));
   };
 
   const isGraphDataEmpty = !graphData || graphData.every((d) => d.length === 0);
