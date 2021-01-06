@@ -15,6 +15,7 @@
   "VM Boot Order List": "VM Boot Order List",
   "Hide default boot disks": "Hide default boot disks",
   "Show default boot disks": "Show default boot disks",
+  "Check Logs": "Check Logs",
   "File input is missing": "File input is missing",
   "Could not create persistent volume claim": "Could not create persistent volume claim",
   "It seems that your browser does not trust the certificate of the upload proxy. Please <2>approve this certificate</2> and try again": "It seems that your browser does not trust the certificate of the upload proxy. Please <2>approve this certificate</2> and try again",
