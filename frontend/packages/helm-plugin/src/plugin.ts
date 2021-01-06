@@ -52,6 +52,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         name: '%helm-plugin~Helm%',
         href: '/helm-releases',
         testID: 'helm-releases-header',
+        'data-quickstart-id': 'qs-nav-helm',
       },
     },
     flags: {

@@ -75,6 +75,7 @@ const ClouldShellMastheadButton: React.FC<Props> = ({ flags, onClick, open }) =>
           onClick={toggleTerminal}
           className={open ? 'pf-m-selected' : undefined}
           data-tour-id="tour-cloud-shell-button"
+          data-quickstart-id="qs-masthead-cloudshell"
         >
           <TerminalIcon className="co-masthead-icon" />
         </Button>

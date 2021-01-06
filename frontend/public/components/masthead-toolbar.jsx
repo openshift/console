@@ -506,6 +506,7 @@ class MastheadToolbarContents_ extends React.Component {
           isOpen={isKebabDropdownOpen}
           items={this._renderApplicationItems(actions)}
           position="right"
+          data-quickstart-id="qs-masthead-utilitymenu"
           toggleIcon={<EllipsisVIcon />}
           isGrouped
         />
@@ -530,6 +531,7 @@ class MastheadToolbarContents_ extends React.Component {
         onToggle={this._onUserDropdownToggle}
         isOpen={isUserDropdownOpen}
         items={this._renderApplicationItems(actions)}
+        data-quickstart-id="qs-masthead-usermenu"
         position="right"
         toggleIcon={userToggle}
         isGrouped
@@ -563,6 +565,7 @@ class MastheadToolbarContents_ extends React.Component {
                   onToggle={this._onApplicationLauncherDropdownToggle}
                   isOpen={isApplicationLauncherDropdownOpen}
                   items={this._renderApplicationItems(this._launchActions())}
+                  data-quickstart-id="qs-masthead-applications"
                   position="right"
                   isGrouped
                 />
@@ -576,6 +579,7 @@ class MastheadToolbarContents_ extends React.Component {
                   onClick={drawerToggle}
                   isRead
                   count={notificationAlerts?.data?.length || 0}
+                  data-quickstart-id="qs-masthead-notifications"
                 >
                   <BellIcon alt="" />
                 </NotificationBadge>
@@ -587,6 +591,7 @@ class MastheadToolbarContents_ extends React.Component {
                   to={this._getImportYAMLPath()}
                   className="pf-c-button pf-m-plain"
                   aria-label={t('masthead~Import YAML')}
+                  data-quickstart-id="qs-masthead-import"
                 >
                   <PlusCircleIcon className="co-masthead-icon" alt="" />
                 </Link>
@@ -599,6 +604,7 @@ class MastheadToolbarContents_ extends React.Component {
                 className="co-app-launcher"
                 data-test="help-dropdown-toggle"
                 data-tour-id="tour-help-button"
+                data-quickstart-id="qs-masthead-help"
                 onSelect={this._onHelpDropdownSelect}
                 onToggle={this._onHelpDropdownToggle}
                 isOpen={isHelpDropdownOpen}
@@ -624,6 +630,7 @@ class MastheadToolbarContents_ extends React.Component {
                   onClick={drawerToggle}
                   isRead
                   count={notificationAlerts?.data?.length}
+                  data-quickstart-id="qs-masthead-notifications"
                 >
                   <BellIcon />
                 </NotificationBadge>
