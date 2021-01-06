@@ -585,7 +585,7 @@
   "Virtualization": "Virtualization",
   "Templates": "Templates",
   "{{name}} Details": "{{name}} Details",
-  "{{provider}} provided templates can not be edited": "{{provider}} provided templates can not be edited",
+  "Templates provided by {{provider}} are not editable.": "Templates provided by {{provider}} are not editable.",
   "Create a new custom template": "Create a new custom template",
   "{{ name }} can not be edited because it is provided by the Red Hat OpenShift Virtualization Operator.": "{{ name }} can not be edited because it is provided by the Red Hat OpenShift Virtualization Operator.",
   "We suggest you create a custom Template from this {{provider}} template.": "We suggest you create a custom Template from this {{provider}} template.",
