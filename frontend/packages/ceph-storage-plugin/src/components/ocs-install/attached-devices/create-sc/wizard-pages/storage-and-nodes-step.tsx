@@ -30,7 +30,6 @@ import {
   isFlexibleScaling,
   filterSCWithNoProv,
   getAssociatedNodes,
-  nodesWithoutTaints,
   isArbiterSC,
 } from '../../../../../utils/install';
 import { ValidationMessage, ValidationType } from '../../../../../utils/common-ocs-install-el';
@@ -148,7 +147,7 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
           state={state}
           dispatch={dispatch}
           pvData={pvData}
-          nodesData={nodesWithoutTaints(nodesData)}
+          nodesData={nodesData}
         />
       )}
       <FormGroup
