@@ -3,6 +3,7 @@ import { ObjectEnum } from '@console/shared/src/constants/object-enum';
 
 export class VMImportType extends ObjectEnum<string> {
   static readonly OVIRT = new VMImportType('ovirt');
+  static readonly VMWARE = new VMImportType('vmware');
 
   private static readonly ALL = Object.freeze(
     ObjectEnum.getAllClassEnumProperties<VMImportType>(VMImportType),

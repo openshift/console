@@ -573,6 +573,8 @@
   "VM Snapshots List": "VM Snapshots List",
   "Snapshots": "Snapshots",
   "Last restored": "Last restored",
+  "RHV": "RHV",
+  "VMware": "VMware",
   "This virtual machine has some pending changes that will apply after it is restarted.": "This virtual machine has some pending changes that will apply after it is restarted.",
   "View Details": "View Details",
   "Unknown": "Unknown",

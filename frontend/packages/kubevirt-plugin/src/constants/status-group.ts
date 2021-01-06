@@ -2,21 +2,16 @@
 import { ObjectEnum } from '@console/shared/src/constants/object-enum';
 
 export class StatusGroup extends ObjectEnum<string> {
-  static readonly RHV = new StatusGroup('RHV', 'RHV', 'Red Hat Virtualization');
-  static readonly CDI = new StatusGroup('CDI', 'CDI', 'Containerized Data Importer');
-  static readonly VMWARE = new StatusGroup('VMWARE', 'VMware', 'VMware');
+  static readonly VMIMPORT = new StatusGroup('VMIMPORT', 'VM Import');
+  static readonly CDI = new StatusGroup('CDI', 'CDI');
+  static readonly VMWARE = new StatusGroup('VMWARE', 'VMware');
 
   private readonly name: string;
 
-  private readonly verboseName: string;
-
-  protected constructor(value: string, name: string, verboseName: string) {
+  protected constructor(value: string, name: string) {
     super(value);
     this.name = name;
-    this.verboseName = verboseName;
   }
-
-  getVerboseName = () => this.verboseName;
 
   toString() {
     return this.name || super.toString();
