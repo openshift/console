@@ -13,7 +13,7 @@ export const updateTopologyDataModel = (
   monitoringAlerts: Alerts,
 ): Promise<{ loaded: boolean; loadError: string; model: Model }> => {
   const { extensionsLoaded, watchedResources } = dataModelContext;
-  if (!extensionsLoaded || !resources) {
+  if (!extensionsLoaded || !resources || !Object.keys(resources).length) {
     return Promise.resolve({ loaded: false, loadError: '', model: null });
   }
 
