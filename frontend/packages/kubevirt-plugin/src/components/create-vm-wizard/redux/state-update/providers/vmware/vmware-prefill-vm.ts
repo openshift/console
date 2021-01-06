@@ -71,7 +71,7 @@ export const getNics = (parsedVm): VMWizardNetwork[] => {
           model: NetworkInterfaceModel.VIRTIO,
           macAddress,
         })
-        .setType(NetworkInterfaceType.BRIDGE)
+        .setType(networkWrapper.getType()?.getDefaultInterfaceType() || NetworkInterfaceType.BRIDGE)
         .asResource(),
     };
   });
