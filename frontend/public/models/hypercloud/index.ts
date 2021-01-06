@@ -298,16 +298,29 @@ export const PipelineResourceModel: K8sKind = {
   crd: false,
 };
 
-export const ConditionModel: K8sKind = {
-  kind: 'Condition',
+export const IntegrationJobModel: K8sKind = {
+  kind: 'IntegrationJob',
   namespaced: true,
-  label: 'Condition',
-  plural: 'conditions',
-  apiVersion: 'v1alpha1',
-  abbr: 'PC',
-  apiGroup: 'tekton.dev',
-  labelPlural: 'Pipeline Conditions',
-  id: 'condition',
+  label: 'Integration Job',
+  plural: 'integrationjobs',
+  apiVersion: 'v1',
+  abbr: 'IJ',
+  apiGroup: 'cicd.tmax.io',
+  labelPlural: 'Integration Jobs',
+  id: 'integrationjob',
+  crd: false,
+};
+
+export const IntegrationConfigModel: K8sKind = {
+  kind: 'IntegrationConfig',
+  namespaced: true,
+  label: 'Integration Config',
+  plural: 'integrationconfigs',
+  apiVersion: 'v1',
+  abbr: 'IC',
+  apiGroup: 'cicd.tmax.io',
+  labelPlural: 'Integration Configs',
+  id: 'integrationconfig',
   crd: false,
 };
 

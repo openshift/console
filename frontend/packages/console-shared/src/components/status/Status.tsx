@@ -34,6 +34,7 @@ export const Status: React.FC<StatusProps> = ({
       return <StatusIconAndText {...statusProps} icon={<ClipboardListIcon />} />;
 
     case 'ContainerCreating':
+    case 'Creating':
     case 'UpgradePending':
       return <ProgressStatus {...statusProps} />;
 
@@ -50,6 +51,7 @@ export const Status: React.FC<StatusProps> = ({
     case 'Deleting':
     case 'Expired':
     case 'Not Ready':
+    case 'NotReady':
     case 'Terminating':
       return <StatusIconAndText {...statusProps} icon={<BanIcon />} />;
 
