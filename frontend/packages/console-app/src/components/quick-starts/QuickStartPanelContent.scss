@@ -1,4 +1,9 @@
 .co-quick-start-panel-content {
+  @media (min-width: 769px) and (max-width: 1600px) {
+    &.pf-c-drawer__panel {
+      flex-basis: 275px;
+    }
+  }
   &-head {
     position: sticky;
     top: 0px;
