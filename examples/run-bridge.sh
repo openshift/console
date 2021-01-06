@@ -36,4 +36,5 @@ GRAFANA_PORT='32430'
     --grafana-endpoint=http://$k8sIP:$GRAFANA_PORT/ \
     --kiali-endpoint=https://172.22.6.22/api/kiali/ \
     --webhook-endpoint=https://$k8sIP:31317/api/webhook/ \
+    # --operator=true \
     # --proxyConfig=examples/pconfig.yaml \
