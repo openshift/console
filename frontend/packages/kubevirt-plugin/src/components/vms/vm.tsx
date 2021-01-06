@@ -6,8 +6,15 @@ import { TFunction } from 'i18next';
 import { match } from 'react-router';
 import { Link, useLocation } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
-import { Button, EmptyState, EmptyStateBody, EmptyStateIcon, Title } from '@patternfly/react-core';
-import { VirtualMachineIcon } from '@patternfly/react-icons';
+import {
+  Button,
+  EmptyState,
+  EmptyStateBody,
+  EmptyStateIcon,
+  EmptyStateSecondaryActions,
+  Title,
+} from '@patternfly/react-core';
+import { VirtualMachineIcon, RocketIcon } from '@patternfly/react-icons';
 import {
   createLookup,
   dimensifyHeader,
@@ -215,6 +222,16 @@ const VMListEmpty: React.FC = () => {
       >
         {t('kubevirt-plugin~Create virtual machine')}
       </Button>
+      <EmptyStateSecondaryActions>
+        <Button
+          data-test-id="vm-quickstart"
+          variant="secondary"
+          onClick={() => history.push('/quickstart?keyword=virtual+machine')}
+        >
+          <RocketIcon className="kv-vm-quickstart-icon" />
+          {t('kubevirt-plugin~View virtualization quick starts')}
+        </Button>
+      </EmptyStateSecondaryActions>
     </EmptyState>
   );
 };
