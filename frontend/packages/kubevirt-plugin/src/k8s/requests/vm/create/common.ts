@@ -20,6 +20,8 @@ import {
   TEMPLATE_SUPPORT_LEVEL,
   TEMPLATE_PARENT_PROVIDER_ANNOTATION,
   TEMPLATE_PARENT_SUPPORT_LEVEL,
+  TEMPLATE_PARENT_PROVIDER_URL,
+  TEMPLATE_PROVIDER_URL,
 } from '../../../../constants/vm';
 import { VMWrapper } from '../../../wrapper/vm/vm-wrapper';
 import { VMTemplateWrapper } from '../../../wrapper/vm/vm-template-wrapper';
@@ -143,6 +145,10 @@ export const initializeCommonTemplateMetadata = (
   if (provider && supportLevel) {
     entity.addAnotation(TEMPLATE_PARENT_SUPPORT_LEVEL, supportLevel);
     entity.addAnotation(TEMPLATE_PARENT_PROVIDER_ANNOTATION, provider);
+    const providerURL = annotations?.[TEMPLATE_PROVIDER_URL];
+    if (providerURL) {
+      entity.addAnotation(TEMPLATE_PARENT_PROVIDER_URL, providerURL);
+    }
   }
 
   if (settings[VMSettingsField.TEMPLATE_PROVIDER]) {

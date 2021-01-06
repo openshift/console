@@ -15,9 +15,10 @@ import { BlueInfoCircleIcon } from '@console/shared';
 
 type SupportModalProps = ModalComponentProps & {
   onConfirm: (disable: boolean) => void;
+  communityURL?: string;
 };
 
-const SupportModal: React.FC<SupportModalProps> = ({ onConfirm, close }) => {
+const SupportModal: React.FC<SupportModalProps> = ({ onConfirm, close, communityURL }) => {
   const { t } = useTranslation();
   const [doNotShow, setDoNotShow] = React.useState(false);
   return (
@@ -28,15 +29,33 @@ const SupportModal: React.FC<SupportModalProps> = ({ onConfirm, close }) => {
       </ModalTitle>
       <ModalBody>
         <Stack hasGutter>
-          <StackItem>
-            {t('kubevirt-plugin~This template is not fully supported by Red Hat.')}
-          </StackItem>
-          <StackItem>
-            <ExternalLink
-              href={SUPPORT_URL}
-              text={t("kubevirt-plugin~Learn more about Red Hat's third party support policy")}
-            />
-          </StackItem>
+          {communityURL ? (
+            <>
+              <StackItem>
+                {t(
+                  'kubevirt-plugin~Support for this template is provided by the OS community Red Hat participates in and contributes to.',
+                )}
+              </StackItem>
+              <StackItem>
+                <ExternalLink
+                  href={communityURL}
+                  text={t('kubevirt-plugin~Learn more about the community')}
+                />
+              </StackItem>
+            </>
+          ) : (
+            <>
+              <StackItem>
+                {t('kubevirt-plugin~This template is not fully supported by Red Hat.')}
+              </StackItem>
+              <StackItem>
+                <ExternalLink
+                  href={SUPPORT_URL}
+                  text={t("kubevirt-plugin~Learn more about Red Hat's third party support policy")}
+                />
+              </StackItem>
+            </>
+          )}
           <StackItem>
             <Checkbox
               id="support-warning"
