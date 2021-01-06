@@ -4,6 +4,7 @@ import { setSinkSourceModal } from '../components/modals';
 
 export const setSinkSource = (model: K8sKind, source: K8sResourceKind): KebabOption => {
   return {
+    // t('knative-plugin~Move sink')
     labelKey: 'knative-plugin~Move sink',
     callback: () =>
       setSinkSourceModal({

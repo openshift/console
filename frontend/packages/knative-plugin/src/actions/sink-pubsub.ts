@@ -4,7 +4,11 @@ import { setSinkPubsubModal } from '../components/modals';
 
 export const setSinkPubsub = (model: K8sKind, source: K8sResourceKind): KebabOption => {
   return {
-    label: `Move ${model.kind}`,
+    // t('knative-plugin~Move {{kind}}')
+    labelKey: 'knative-plugin~Move {{kind}}',
+    labelKind: {
+      kind: model.kind,
+    },
     callback: () =>
       setSinkPubsubModal({
         source,

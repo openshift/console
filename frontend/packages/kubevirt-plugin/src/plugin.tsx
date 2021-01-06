@@ -541,9 +541,9 @@ const plugin: Plugin<ConsumedExtensions> = [
       id: 'dev-catalog-virtualization',
       url: '/catalog?catalogType=VmTemplate',
       // t('kubevirt-plugin~Virtual Machines')
-      label: '%kubevirt~Virtual Machines%',
+      label: '%kubevirt-plugin~Virtual Machines%',
       // t('kubevirt-plugin~Create a Virtual Machine from a template')
-      description: '%kubevirt~Create a Virtual Machine from a template%',
+      description: '%kubevirt-plugin~Create a Virtual Machine from a template%',
       icon: <VirtualMachineIcon />,
     },
     flags: {
@@ -555,16 +555,16 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       type: 'VmTemplate',
       // t('kubevirt-plugin~Virtual Machines')
-      title: '%kubevirt~Virtual Machines%',
-      // t('kubevirt-plugin~Browse for charts that help manage complex installations and upgrades. Cluster administrators can customize the content made available in the catalog.')
-      catalogDescription: '%kubevirt~Quickly create a virtual machine from a template.%',
-      // t('kubevirt-plugin~**Virtual Machines** are packages for deploying an application or components of a larger application.')
+      title: '%kubevirt-plugin~Virtual Machines%',
+      // t('kubevirt-plugin~Quickly create a virtual machine from a template.')
+      catalogDescription: '%kubevirt-plugin~Quickly create a virtual machine from a template.%',
+      // t('kubevirt-plugin~**Virtual Machines** are templates for quickly creating a virtual machine.')
       typeDescription:
-        '%kubevirt~**Virtual Machines** are templates for quickly creating a virtual machine.%',
+        '%kubevirt-plugin~**Virtual Machines** are templates for quickly creating a virtual machine.%',
       filters: [
         {
           // t('kubevirt-plugin~Template Providers')
-          label: '%kubevirt~Template Providers%',
+          label: '%kubevirt-plugin~Template Providers%',
           attribute: 'templateProvider',
         },
       ],

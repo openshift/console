@@ -8,6 +8,7 @@ export const editSinkUri = (
   resources: K8sResourceKind[],
 ): KebabOption => {
   return {
+    // t('knative-plugin~Edit URI')
     labelKey: 'knative-plugin~Edit URI',
     callback: () =>
       editSinkUriModal({
