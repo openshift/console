@@ -22,6 +22,9 @@ import { pluralToKind } from '../form';
 // eslint-disable-next-line @typescript-eslint/camelcase
 
 export const CreateDefault: React.FC<CreateDefaultProps> = ({ customResourceDefinition, initialEditorType, loaded, loadError, match, model, activePerspective }) => {
+  if (!model) {
+    return null;
+  }
   const template = schemaTemplates.getIn([referenceForModel(model), 'default']);
   const data = {
     spec: {
@@ -85,12 +88,20 @@ export const CreateDefault: React.FC<CreateDefaultProps> = ({ customResourceDefi
   );
 };
 
-const stateToProps = (state: RootState, props) => ({ model: modelFor(pluralToKind.get(props.match.params.plural)['kind']) as K8sKind, activePerspective: getActivePerspective(state) });
+const stateToProps = (state: RootState, props: Omit<CreateDefaultPageProps, 'model'>) => {
+  let plural;
+  let model;
+  if (modelFor(pluralToKind.get(props.match.params.plural)['kind'])) {
+    model = modelFor(pluralToKind.get(props.match.params.plural)['kind']);
+    plural = model.apiGroup + '~' + model.apiVersion + '~' + model.kind;
+  }
+  return { model: state.k8s.getIn(['RESOURCES', 'models', plural]) || (state.k8s.getIn(['RESOURCES', 'models', model.kind]) as K8sKind), activePerspective: getActivePerspective(state) };
+};
 
 export const CreateDefaultPage = connect(stateToProps)((props: CreateDefaultPageProps) => {
   const type = pluralToKind.get(props.match.params.plural)['type'];
   const resources =
-    type === 'CustomResourceDefinition'
+    type === 'CustomResourceDefinition' && props.model
       ? [
           {
             kind: CustomResourceDefinitionModel.kind,
@@ -101,6 +112,15 @@ export const CreateDefaultPage = connect(stateToProps)((props: CreateDefaultPage
           },
         ]
       : [];
+  // const isLoaded = async () => {
+  //   console.log(_.has(localStorage, 'bridge/api-discovery-resources'));
+  //   if (_.has(localStorage, 'bridge/api-discovery-resources')) {
+  //     console.log('있음!!!');
+  //   } else {
+  //     console.log('없음!!');
+  //   }
+  // };
+  // isLoaded();
   return (
     <>
       <Helmet>
