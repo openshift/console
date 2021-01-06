@@ -2,14 +2,14 @@ Feature: Perform Actions on Helm Releases
     As a user, I want to perform the actions on the helm releases in topology page
 
 Background:
-    Given user is at developer perspecitve
+    Given user is at developer perspective
     And user has selected namespace "aut-actions-helm"
     And helm release "nodejs-ex-k" is present in topology page
 
 
 @regression, @smoke
 Scenario: Context menu options of helm release: HR-07-TC01
-    Given user is on topology page
+    Given user is at topology page
     When user right clicks on the helm release "nodejs-ex-k"
     Then user is able to see the context menu with actions Upgrade, Rollback and Uninstall Helm Release
 

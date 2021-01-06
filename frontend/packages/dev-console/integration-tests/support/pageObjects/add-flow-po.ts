@@ -1,5 +1,7 @@
-export const cardTitle = 'div.catalog-tile-pf-title';
-
+export const cardTitle = 'a div.catalog-tile-pf-title';
+export const addPO = {
+  card: 'a.pf-c-card',
+};
 export const gitPO = {
   noWorkLoadsText: 'h2.co-hint-block__title',
   sectionTitle: '.odc-form-section__heading',
@@ -82,8 +84,8 @@ export const gitPO = {
 
 export const catalogPO = {
   search: 'input[placeholder="Filter by keyword..."]',
-  card: 'a.pf-c-card',
   groupBy: '[data-test-id="dropdown-button"]',
+  card: 'a.pf-c-card',
   aToz: '[data-test-dropdown-menu="desc"]',
   zToA: '[data-test-dropdown-menu="asc"]',
   cardType: 'span.pf-c-badge',
@@ -91,32 +93,32 @@ export const catalogPO = {
   cancel: '[data-test-id="reset-button"]',
   catalogTypes: {
     operatorBacked: '[data-test="kind-cluster-service-version"]',
-    helmCharts: '[data-test="kind-helm-chart"]',
-    builderImage: '[data-test="kind-image-stream"]',
-    template: '[data-test="kind-template"]',
+    helmCharts: 'a[href="/?catalogType=HelmChart"]',
+    builderImage: 'a[href="/?catalogType=BuilderImage"]',
+    template: 'a[href="/?catalogType=Template"]',
     serviceClass: '[data-test="kind-cluster-service-class"]',
   },
   cards: {
-    mariaDBTemplate: '[data-test="Template-mariadb-persistent"]',
-    phpCakeTemplate: '[data-test="Template-cakephp-mysql-persistent"]',
-    nodeJsBuilderImage: '[data-test="ImageStream-nodejs"]',
+    mariaDBTemplate: 'a[data-test="Template-MariaDB"] .catalog-tile-pf-title',
+    phpCakeTemplate: '[data-test="Template-CakePHP + MySQL"] .catalog-tile-pf-title',
+    nodeJsBuilderImage: 'a[data-test="BuilderImage-Node.js"] .catalog-tile-pf-title',
   },
   sidePane: {
     dialog: '[role="dialog"]',
     instantiateTemplate: '[role="dialog"] .pf-m-primary',
     create: 'a[title="Create"]',
     installHelmChart: 'a[title="Install Helm Chart"]',
-    createApplication: 'a[title="Create Application"]',
+    createApplication: '[role="dialog"] a[role="button"]',
   },
   mariaDBTemplate: {
     namespace: '#namespace',
     title: 'h1.co-m-pane__heading',
     memoryLimit: '#MEMORY_LIMIT',
-    imageSrreamNameSpace: '#NAMESPACE',
+    imageStreamNameSpace: '#NAMESPACE',
     databaseServiceName: '#DATABASE_SERVICE_NAME',
     mariaDBConnectionUserName: '#MYSQL_USER',
   },
-  createknativeServing: {
+  createKnativeServing: {
     logo: 'h1.co-clusterserviceversion-logo__name__clusterserviceversion',
     name: '#root_metadata_name',
     labels: 'input[placeholder="app=frontend"]',

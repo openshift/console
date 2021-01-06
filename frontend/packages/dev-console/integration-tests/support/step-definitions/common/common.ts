@@ -1,5 +1,5 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { perspective, projectNameSpace, naviagteTo } from '../../pages/app';
+import { perspective, projectNameSpace, navigateTo } from '../../pages/app';
 import { switchPerspective, devNavigationMenu } from '../../constants/global';
 import { guidedTour } from '../../../../../integration-tests-cypress/views/guided-tour';
 import { nav } from '../../../../../integration-tests-cypress/views/nav';
@@ -9,11 +9,11 @@ import { adminNavigationMenu, perspectiveName } from '../../constants/staticText
 
 Given('user is at developer perspective', () => {
   perspective.switchTo(switchPerspective.Developer);
-  // Bug: 1890676 is created related to Accesibiity violation - Until bug fix, below line is commented to execute the scripts in CI
+  // Bug: 1890676 is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
   // cy.testA11y('Developer perspective with guider tour modal');
   guidedTour.close();
   nav.sidenav.switcher.shouldHaveText(perspectiveName.developer);
-  // Bug: 1890678 is created related to Accesibiity violation - Until bug fix, below line is commented to execute the scripts in CI
+  // Bug: 1890678 is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
   // cy.testA11y('Developer perspective');
 });
 
@@ -23,7 +23,7 @@ Given('user has created namespace starts with {string}', (projectName: string) =
   const d = new Date();
   const timestamp = d.getTime();
   projectNameSpace.selectOrCreateProject(`${projectName}-${timestamp}-ns`);
-  // Bug: 1890678 is created related to Accesibiity violation - Until bug fix, below line is commented to execute the scripts in CI
+  // Bug: 1890678 is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
   // cy.testA11y('Developer perspective display after creating or selecting project');
   cy.log(`User has selected namespace "${projectName}-${timestamp}-ns"`);
 });
@@ -36,11 +36,11 @@ Given('user has created or selected namespace {string}', (projectName: string) =
 });
 
 Given('user is at pipelines page', () => {
-  naviagteTo(devNavigationMenu.Pipelines);
+  navigateTo(devNavigationMenu.Pipelines);
 });
 
 Given('user is at Monitoring page', () => {
-  naviagteTo(devNavigationMenu.Monitoring);
+  navigateTo(devNavigationMenu.Monitoring);
 });
 
 Given('user is at namespace {string}', (projectName: string) => {

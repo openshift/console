@@ -3,7 +3,7 @@ Feature: Perform actions on knative revision
 
    Background:
       Given user has installed Openshift Serverless operator
-      And user is at developer perspecitve
+      And user is at developer perspective
       And user has selected namespace "aut-knative-actions-revision"
 
 

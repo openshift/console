@@ -2,7 +2,7 @@ Feature: Connecting nodes
 	As a user, I want to connect two application   
 
 Background:
-    Given user is at developer perspecitve
+    Given user is at developer perspective
     And user has selected namespace "aut-topology-connecting-nodes"
 
 

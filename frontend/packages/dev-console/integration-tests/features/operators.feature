@@ -36,11 +36,11 @@ Feature: Operators
    Scenario: Install the knative eventing operator : Kn-07-TC01, Kn-07-TC02
       Given user has installed OpenShift Serverless Operator
       And user is on the knative-eventing namespace
-      When user navigates to installed operators page in Admin perspecitve
+      When user navigates to installed operators page in Admin perspective
       And user clicks knative eventing provided api pressent in knative serverless operator
       And user clicks Create knative Eventing button present in knative Eventing tab
       And user clicks create button
-      Then Event sources card display in Add page in dev perspecitve
+      Then Event sources card display in Add page in dev perspective
 
 
    @regression, @smoke

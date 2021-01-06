@@ -23,13 +23,13 @@ Then('user can see the image name gets Validated', () => {
 });
 
 Then('application name displays as {string}', (appName: string) => {
-  gitPage.veirfyAppName(appName);
+  gitPage.verifyAppName(appName);
 });
 
 Then(
   'name field auto populates with value {string} in Import from Docker file page',
   (nodeName: string) => {
-    gitPage.veirfyNodeName(nodeName);
+    gitPage.verifyNodeName(nodeName);
     gitPage.clickCancel();
   },
 );

@@ -1,6 +1,6 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { gitPage } from '../../pages/add-flow/git-page';
-import { naviagteTo } from '../../pages/app';
+import { navigateTo } from '../../pages/app';
 import { devNavigationMenu as menu } from '../../constants/global';
 import { addOptions } from '../../constants/add';
 import { topologyPage } from '../../pages/topology/topology-page';
@@ -14,7 +14,7 @@ import { pipelineRunDetailsPO } from '../../pageObjects/pipelines-po';
 import { createGitWorkload } from '../../pages/functions/createGitWorkload';
 
 Given('user is at Add page', () => {
-  naviagteTo(menu.Add);
+  navigateTo(menu.Add);
 });
 
 When('user clicks From Git card on the Add page', () => {
@@ -131,7 +131,7 @@ Then('pipeline {string} is displayed in pipelines page', (pipelineName: string) 
 });
 
 Given('workload {string} is created from add page with pipeline', (pipelineName: string) => {
-  naviagteTo(menu.Add);
+  navigateTo(menu.Add);
   addPage.selectCardFromOptions(addOptions.Git);
   gitPage.enterGitUrl('https://github.com/sclorg/nodejs-ex.git');
   gitPage.enterComponentName(pipelineName);

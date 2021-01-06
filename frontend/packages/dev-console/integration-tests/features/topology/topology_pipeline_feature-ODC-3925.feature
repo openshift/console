@@ -10,7 +10,7 @@ Background:
 @regression
 Scenario Outline: Import flows should create pipeline instead of build config
    Given user created workload "<workload_name>" with resource type "<resource_type>" with pipeline 
-   And pipeline has autostarted
+   And pipeline has autoStarted
    When user clicks on workload "<workload_name>"
    Then user can see Pipeline Runs section
    And user can not see Buildconfig Runs section   
@@ -24,7 +24,7 @@ Examples:
 @regression
 Scenario Outline: Add flow should finish even if the Pipeline Run cannot be created for the added Pipeline
    Given user created workload "<workload_name>" with resource type "<resource_type>" and builder image "<builder_image>" with pipeline 
-   And pipeline has not autostarted
+   And pipeline has not autoStarted
    When user clicks on workload "<workload_name>"
    Then user can see an alert "Pipeline could not be started automatically" in the Pipeline Runs section of the sidebar  
    And user is able to see Start button to start a pipeline run

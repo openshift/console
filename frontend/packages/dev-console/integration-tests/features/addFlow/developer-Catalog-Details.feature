@@ -1,12 +1,14 @@
+@add-flow
 Feature: Developer Catalog Page
     As a user, I should be able to use Developer Catalog page to deploy application
 
 
     Background:
         Given user is at developer perspective
+        And user has created or selected namespace "aut-developer-catalog"
 
 
-    @smoke
+    @smoke, @ToDo
     Scenario: Developer Catalog page - Default view
         Given user is at Add page
         When user clicks on From Catalog card
@@ -17,7 +19,7 @@ Feature: Developer Catalog Page
         And user will see A-Z, Z-A sort by dropdown
 
 
-    @smoke
+    @smoke, @ToDo
     Scenario: Event Sources on default Developer Catalog
         Given user is at Developer Catalog page
         When user clicks on Event Sources type
@@ -37,7 +39,7 @@ Feature: Developer Catalog Page
         And user will see A-Z, Z-A sort by dropdown
 
 
-    @smoke
+    @smoke, @ToDo
     Scenario: Helm Charts on default Developer Catalog
         Given user is at Developer Catalog page
         When user clicks on Helm Charts type
@@ -93,7 +95,7 @@ Feature: Developer Catalog Page
         And user clicks on Snippets on the sidebar
         And user removes "[]" in front of spec.customization.developerCatalog.categories
         And user clicks on Insert Snippet link on the sidebar
-        And user removes Languages Catagory
+        And user removes Languages Category
         And user clicks on Save button
         And user clicks on Reload button 
         Then user will see all the categories except Languages added under spec.customization.developerCatalog.categories

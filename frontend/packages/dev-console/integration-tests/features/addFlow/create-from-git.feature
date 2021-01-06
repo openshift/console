@@ -1,13 +1,14 @@
+@add-flow
 Feature: Create Application from git form
    As a user, I want to create the application, component or service from Add options
 
    Background:
       Given user is at developer perspective
       And user is at Add page
-      And user has created namespace starts with "aut-addflow-git"
+      And user has created or selected namespace "aut-addflow-git"
 
 
-   @addFlow-git, @smoke
+   @smoke
    Scenario Outline: Add new git workload with new application for resoruce type "<resource_type>" : A-04-TC02, A-04-TC13
       Given user is at Import from git page
       When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
@@ -24,21 +25,21 @@ Feature: Create Application from git form
          | dancer-ex-git-1 | Deployment Config |
 
 
-   @addFlow-git, @regression
+   @regression
    Scenario: Add new git workload to the existing application : A-04-TC03
       Given user has created workload "nodejs-ex-git" with resource type "Deployment"
       And user is at Add page
       And user is at Import from git page
       When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
       And user enters Application name as "nodejs-ex-git-app"
-      And user enters Name as "dancer-ex.git"
+      And user enters Name as "dancer-ex-git-1"
       And user selects resource type as "Deployment Config"
       And user clicks Create button on Add page
       Then user will be redirected to Topology page
-      And user can see the created workload "dancer-ex.git" is linked to existing application "nodejs-ex-git-app"
+      And user can see the created workload "dancer-ex-git" is linked to existing application "nodejs-ex-git-app"
 
 
-   @addFlow-git, @regression
+   @regression
    Scenario: Cancel the git workload creation : A-04-TC04
       Given user is at Import from git page
       When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
@@ -46,7 +47,7 @@ Feature: Create Application from git form
       Then user will be redirected to Add page
 
 
-   @addFlow-git, @regression
+   @regression
    Scenario: Create workload without application route : A-04-TC05
       Given user is at Import from git page
       When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
@@ -58,7 +59,7 @@ Feature: Create Application from git form
       And public url is not created for node "name-no-route" in the workload sidebar
 
 
-   @addFlow-git, @regression
+   @regression
    Scenario: Create a git workload with advanced option "Routing" : A-04-TC06
       Given user is at Import from git page
       When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
@@ -88,7 +89,7 @@ Feature: Create Application from git form
       And build does not get started for "nodejs-ex-git"
 
 
-   @addFlow-git, @regression
+   @regression
    Scenario: Create a git workload with advanced option "Deployment" : A-04-TC08
       Given user is at Import from git page
       When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
@@ -101,7 +102,7 @@ Feature: Create Application from git form
       Then user will be redirected to Topology page
 
 
-   @addFlow-git, @regression
+   @regression
    Scenario: Create a git workload with advanced option "Resource Limits" : A-04-TC09
       Given user is at Import from git page
       When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
@@ -115,7 +116,7 @@ Feature: Create Application from git form
       Then user will be redirected to Topology page
 
 
-   @addFlow-git, @regression
+   @regression
    Scenario: Create a git workload with advanced option "Scaling" : A-04-TC10
       Given user is at Import from git page
       When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
@@ -126,7 +127,7 @@ Feature: Create Application from git form
       Then user will be redirected to Topology page
 
 
-   @addFlow-git, @regression
+   @regression
    Scenario: Create a git workload with advanced option "Labels" : A-04-TC11
       Given user is at Import from git page
       When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
@@ -138,7 +139,7 @@ Feature: Create Application from git form
       And verify the label "app=frontend" in side bar of application node "nodejs-ex-git"
 
 
-   @addFlow-git, @regression
+   @regression
    Scenario: Create a git workload with advanced option "Health Checks" : A-04-TC12
       Given user is at Import from git page
       When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
@@ -151,7 +152,6 @@ Feature: Create Application from git form
       Then user will be redirected to Topology page
 
 
-   @addFlow-git
    Scenario Outline: Builder iamge detected for git url "<git_url>" : A-04-TC01
       Given user is at Import from git page
       When user enters Git Repo url as "<git_url>"

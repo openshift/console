@@ -1,16 +1,15 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { gitPage } from '../../pages/add-flow/git-page';
-import { naviagteTo } from '../../pages/app';
+import { navigateTo } from '../../pages/app';
 import { addPage } from '../../pages/add-flow/add-page';
 import { topologyPage } from '../../pages/topology/topology-page';
 import { addOptions } from '../../constants/add';
 import { createGitWorkload } from '../../pages/functions/createGitWorkload';
 import { devNavigationMenu } from '../../constants/global';
-import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
-import { pageTitle } from '../../constants/pageTitle';
+import { catalogPage } from '../../pages/add-flow/catalog-page';
 
 Given('user is at Add page', () => {
-  naviagteTo(devNavigationMenu.Add);
+  navigateTo(devNavigationMenu.Add);
 });
 
 Given(
@@ -26,12 +25,20 @@ Given(
   },
 );
 
-Given('user is at Developer Catlog page', () => {
+When('user clicks Instantiate Template button on side bar', () => {
+  catalogPage.clickButtonOnCatalogPageSidePane();
+});
+
+Given('user is at Developer Catalog page', () => {
   addPage.selectCardFromOptions(addOptions.DeveloperCatalog);
 });
 
+Given('user is at DevFile page', () => {
+  addPage.selectCardFromOptions(addOptions.DevFile);
+});
+
 When('user navigates to Add page', () => {
-  naviagteTo(devNavigationMenu.Add);
+  navigateTo(devNavigationMenu.Add);
 });
 
 When('user clicks Create button on Add page', () => {
@@ -39,7 +46,7 @@ When('user clicks Create button on Add page', () => {
 });
 
 Then('user will be redirected to Add page', () => {
-  detailsPage.titleShouldContain(pageTitle.Add);
+  cy.url().should('include', 'add');
 });
 
 When('user clicks Cancel button on Add page', () => {

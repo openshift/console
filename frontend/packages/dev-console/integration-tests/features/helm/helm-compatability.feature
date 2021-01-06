@@ -4,19 +4,19 @@ Feature: Helm Chart
 
 Background:
     Given user logged into the openshift application
-    And user is at developer perspecitve
+    And user is at developer perspective
 
 
 @regression, @smoke, @manual
 Scenario: Compatible helm charts
-    Given user is at +Add page
+    Given user is at Add page
     When user clicks on the Helm Chart card on the +Add page
     Then user sees the helm charts compatible with the kubernetes version of the cluster on the developer catalog page
 
 
 @regression, @smoke, @manual
 Scenario: Check the meta data for the importing helm charts from index.yaml
-    Given user is at +Add page
+    Given user is at Add page
     When user opens the Network tab
     And user clicks on the Helm Chart card on the +Add page
     And user clicks on the index.yaml on the Network tab

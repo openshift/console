@@ -3,7 +3,7 @@ Feature: Workload Groupings in Topology
 
 
 Background:
-    Given user is at developer perspecitve
+    Given user is at developer perspective
 
 
 @regression

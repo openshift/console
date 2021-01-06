@@ -3,7 +3,7 @@ Feature: Feature flag for Helm
 
 
     Background:
-        Given user is at developer perspecitve
+        Given user is at developer perspective
         And user has selected namespace "aut-helm-feature-flag"
 
 

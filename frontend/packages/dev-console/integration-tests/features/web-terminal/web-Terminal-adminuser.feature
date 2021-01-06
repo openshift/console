@@ -5,7 +5,7 @@ Feature: Web Terminal for Admin user
 Background:
     Given user has logged in as admin user
     And user has installed Web Terminal operator
-    And user is at developer perspecitve
+    And user is at developer perspective
 
 
 @regression, @smoke

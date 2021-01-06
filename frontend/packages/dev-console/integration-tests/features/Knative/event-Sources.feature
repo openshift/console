@@ -5,7 +5,7 @@ Feature: Event Sources actions
         Given user has installed OpenShift Serverless Operator
         And user has installed Knative Apache CamelK Operator
         And user has installed Knative Apache Kafka Operator
-        And user is at developer perspecitve
+        And user is at developer perspective
         And user is at Add page
         And user has selected namespace "aut-create-knative-event-source"
 

@@ -2,11 +2,11 @@ Feature: Import an application and associate a pipeline with it tour
 	As a user, I want to take a guided tour of import an application and associate a pipeline with it feature   
 
 Background:
-    Given user is in developer perspective
+    Given user is at developer perspective
 
 @regression
 Scenario: Starting tour from the +Add page 
-   Given user is in +Add page 
+   Given user is at Add page 
    And user sees quick tour card 
    When user clicks on the "Import an application and associate a pipeline with it" link on the card
    And user sees the tour will start as a sidescreen with close button

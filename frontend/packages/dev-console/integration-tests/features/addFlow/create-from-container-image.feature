@@ -1,13 +1,14 @@
+@add-flow
 Feature: Create Application from Container image file
    As a user, I want to create the application, component or service from Add Flow Container image
 
    Background:
       Given user is at developer perspective
-      And user has created namespace starts with "aut-addflow-containerimage"
+      And user has created or selected namespace "aut-addflow-containerimage"
       And user is at Add page
 
 
-   @addFlow-Container, @regression
+   @regression
    Scenario: Deploy image page details on entering external registry image name : A-05-TC01
       Given user is at Deploy Image page
       When user enters Image name from external registry as "openshift/hello-openshift"
@@ -17,7 +18,7 @@ Feature: Create Application from Container image file
       And advanced option Create a route to the application is selected
 
 
-   @addFlow-Container, @smoke
+   @smoke
    Scenario: Create the container image with extrenal registry : A-05-TC02
       Given user is at Deploy Image page
       When user enters Image name from external registry as "openshift/hello-openshift"
@@ -26,7 +27,7 @@ Feature: Create Application from Container image file
       And node is displayed with name "hello-openshift"
 
 
-   @addFlow-Container, @regression
+   @regression
    Scenario: Create the container image with internal registry : A-05-TC03
       Given user is at Deploy Image page
       When user selects Image stream tag from internal registry
@@ -38,7 +39,7 @@ Feature: Create Application from Container image file
       And node is displayed with name "golang"
 
 
-   @addFlow-Container, @regression
+   @regression
    Scenario: Perform cancel operation on Container image form : A-05-TC04
       Given user is at Deploy Image page
       When user selects Image stream tag from internal registry

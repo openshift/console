@@ -2,7 +2,7 @@ Feature: Application groupings in topology
 	As a user, I want to check application groupings  
 
 Background:
-    Given user is at developer perspecitve
+    Given user is at developer perspective
     And user has selected namespace "aut-topology-grouping"
    #  And user is at the Topolgy page
     
