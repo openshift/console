@@ -2,7 +2,7 @@ import * as React from 'react';
 import { TFunction } from 'i18next';
 import Helmet from 'react-helmet';
 import { RouteComponentProps } from 'react-router';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import {
   ActionGroup,
   Button,
@@ -17,7 +17,7 @@ import { getNamespace, getUID } from '@console/shared';
 import { isTemplateSourceError } from '../../../statuses/template/types';
 import { getTemplateSourceStatus } from '../../../statuses/template/template-source-status';
 import { filterTemplates } from '../../vm-templates/utils';
-import { getTemplateName, getTemplateProvider } from '../../../selectors/vm-template/basic';
+import { getTemplateName } from '../../../selectors/vm-template/basic';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '../../../../../dev-console/src/components/NamespacedPage';
@@ -26,7 +26,7 @@ import { CreateVMForm } from '../forms/create-vm-form';
 import { getTemplateOSIcon } from '../../vm-templates/os-icons';
 import { formReducer, initFormState } from '../forms/create-vm-form-reducer';
 import { useStorageClassConfigMap } from '../../../hooks/storage-class-config-map';
-import { SUPPORT_URL } from '../../../constants/vm-templates';
+import { BOOT_SOURCE_AVAILABLE, SUPPORT_URL } from '../../../constants/vm-templates';
 import { useVmTemplatesResources } from '../hooks/use-vm-templates-resources';
 import { getDescription } from '../../../selectors/selectors';
 
@@ -91,7 +91,6 @@ export const DevConsoleCreateVmForm: React.FC<RouteComponentProps> = () => {
   const [createError, setCreateError] = React.useState<string>();
   const [scConfigMap, scLoaded, scError] = useStorageClassConfigMap();
   const template = selectedTemplate?.variants?.[0];
-  const provider = getTemplateProvider(t, template);
   const templateDescription = getDescription(template);
   const sourceStatus = getTemplateSourceStatus({
     pvcs,
@@ -99,6 +98,7 @@ export const DevConsoleCreateVmForm: React.FC<RouteComponentProps> = () => {
     dataVolumes,
     template,
   });
+  const sourceProvider = !isTemplateSourceError(sourceStatus) && sourceStatus?.provider;
 
   return (
     <NamespacedPage hideApplications disabled variant={NamespacedPageVariants.light}>
@@ -146,12 +146,12 @@ export const DevConsoleCreateVmForm: React.FC<RouteComponentProps> = () => {
                     <p className="co-catalog-item-details__description">
                       <Stack hasGutter>
                         {templateDescription && <StackItem>{templateDescription}</StackItem>}
-                        {provider && (
+                        {sourceProvider && sourceProvider !== BOOT_SOURCE_AVAILABLE && (
                           <StackItem>
                             {t(
                               "kubevirt-plugin~This template's boot source is defined by {{providerParam}}",
                               {
-                                providerParam: provider,
+                                providerParam: sourceProvider,
                               },
                             )}
                           </StackItem>
@@ -160,7 +160,9 @@ export const DevConsoleCreateVmForm: React.FC<RouteComponentProps> = () => {
                     </p>
                     <>
                       <hr />
-                      <p>{t('kubevirt-plugin~The following resources will be created')}:</p>
+                      <Trans t={t} ns="kubevirt-plugin">
+                        <p>The following resources will be created:</p>
+                      </Trans>
                       <ul>
                         <li key="virtual-machine">{t('kubevirt-plugin~Virtual machine')}</li>
                       </ul>
