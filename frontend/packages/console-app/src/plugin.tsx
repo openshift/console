@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { CogsIcon } from '@patternfly/react-icons';
-import i18next from 'i18next';
 import { FLAGS } from '@console/shared/src/constants';
 import {
   Plugin,
@@ -82,7 +81,8 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Perspective',
     properties: {
       id: 'admin',
-      name: i18next.t('console-app~Administrator'),
+      // t('console-app~Administrator')
+      name: '%console-app~Administrator%',
       icon: <CogsIcon />,
       default: true,
       getLandingPageURL: (flags) =>
