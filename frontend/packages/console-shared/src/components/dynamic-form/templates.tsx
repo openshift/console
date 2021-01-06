@@ -168,7 +168,7 @@ export const ErrorTemplate: React.FC<{ errors: string[] }> = ({ errors }) => {
       variant="danger"
       title={t('console-shared~Error')}
     >
-      {t('console-shared~Fix the above errors:')}
+      {t('console-shared~Fix the following errors:')}
       <ul>
         {_.map(errors, (error) => (
           <li key={error}>{error}</li>
