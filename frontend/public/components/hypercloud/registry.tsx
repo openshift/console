@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-
+import { Status } from '@console/shared';
 import { K8sResourceKind } from '../../module/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from '../factory';
 import { DetailsItem, Kebab, KebabAction, detailsPage, Timestamp, navFactory, ResourceKebab, ResourceLink, ResourceSummary, SectionHeading } from '../utils';
@@ -13,9 +13,11 @@ export const menuActions: KebabAction[] = [...Kebab.getExtensionsActionsForKind(
 const kind = RegistryModel.kind;
 
 const tableColumnClasses = [
-    classNames('col-xs-6', 'col-sm-4'),
-    classNames('col-xs-6', 'col-sm-4'),
-    classNames('col-sm-4', 'hidden-xs'),
+    classNames('col-xs-2', 'col-sm-2'),
+    classNames('col-xs-2', 'col-sm-2'),
+    classNames('col-sm-2', 'hidden-xs'),
+    classNames('col-xs-2', 'col-sm-2'),
+    classNames('col-sm-2', 'hidden-xs'),
     Kebab.columnClass,
   ];
 
@@ -35,14 +37,26 @@ const RegistryTableHeader = () => {
         props: { className: tableColumnClasses[1] },
       },
       {
-        title: 'Created',
-        sortField: 'metadata.creationTimestamp',
+        title: 'Image',
+        sortField: 'spec.image',
         transforms: [sortable],
         props: { className: tableColumnClasses[2] },
       },
       {
-        title: '',
+        title: 'Status',
+        sortField: 'status.phase',
+        transforms: [sortable],
         props: { className: tableColumnClasses[3] },
+      },
+      {
+        title: 'Created',
+        sortField: 'metadata.creationTimestamp',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[4] },
+      },
+      {
+        title: '',
+        props: { className: tableColumnClasses[5] },
       },
     ];
   };
@@ -60,9 +74,15 @@ const RegistryTableRow: RowFunction<K8sResourceKind> = ({ obj: registry, index, 
             <ResourceLink kind="Namespace" name={registry.metadata.namespace} title={registry.metadata.namespace} />
         </TableData>
         <TableData className={tableColumnClasses[2]}>
+          {registry.spec.image}
+        </TableData>
+        <TableData className={classNames(tableColumnClasses[3], 'co-break-word')}>
+          <Status status={registry.status.phase} />
+        </TableData>
+        <TableData className={tableColumnClasses[4]}>
           <Timestamp timestamp={registry.metadata.creationTimestamp} />
         </TableData>
-        <TableData className={tableColumnClasses[3]}>
+        <TableData className={tableColumnClasses[5]}>
         <ResourceKebab actions={menuActions} kind={kind} resource={registry} />
       </TableData>
       </TableRow>
@@ -71,22 +91,21 @@ const RegistryTableRow: RowFunction<K8sResourceKind> = ({ obj: registry, index, 
 
   export const RegistryDetailsList: React.FC<RegistryDetailsListProps> = ({ ds }) => (
     <dl className="co-m-pane__details">
-      <DetailsItem label="Current Count" obj={ds} path="status.currentNumberScheduled" />
-      <DetailsItem label="Desired Count" obj={ds} path="status.desiredNumberScheduled" />
+      <DetailsItem label="Status" obj={ds} path="status.phase" />
     </dl>
   );
 
   
-const RegistryDetails: React.FC<RegistryDetailsProps> = ({ obj: task }) => (
+const RegistryDetails: React.FC<RegistryDetailsProps> = ({ obj: registry }) => (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Federated Job Details" />
+        <SectionHeading text="Registry Details" />
         <div className="row">
           <div className="col-lg-6">
-            <ResourceSummary resource={task} showPodSelector showNodeSelector showTolerations />
+            <ResourceSummary resource={registry} showPodSelector showNodeSelector showTolerations />
           </div>
           <div className="col-lg-6">
-            <RegistryDetailsList ds={task} />
+            <RegistryDetailsList ds={registry} />
           </div>
         </div>
       </div>

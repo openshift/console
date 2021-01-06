@@ -34,6 +34,10 @@ func NewRouter() (*Router, error) {
 	}, nil
 }
 
+// func (r *Router) Start() {
+
+// }
+
 // AddRoute add a new route to the router.
 func (r *Router) AddRoute(rule string, priority int, handler http.Handler) error {
 	parse, err := r.parser.Parse(rule)
