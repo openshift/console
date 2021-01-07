@@ -21,7 +21,7 @@ const QuickStartCloseModal: React.FC<QuickStartCloseModalProps> = ({
       isOpen={isOpen}
       variant={ModalVariant.small}
       showClose={false}
-      title={t('quickstart~Are you sure you want to leave the tour?')}
+      title={t('quickstart~Leave quick start?')}
       footer={
         <Flex>
           <FlexItem align={{ default: 'alignRight' }}>
@@ -38,7 +38,7 @@ const QuickStartCloseModal: React.FC<QuickStartCloseModalProps> = ({
       }
       isFullScreen
     >
-      {t("quickstart~Any progress you've made will be saved.")}
+      {t('quickstart~Your progress will be saved.')}
     </Modal>
   );
 };
