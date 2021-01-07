@@ -220,7 +220,7 @@ const AttachStorage: React.FC<AttachStorageFormProps> = (props) => {
     );
   };
 
-  const title = t('storage~Add Storage');
+  const title = t('storage~Add storage');
   return (
     <div className="co-m-pane__body">
       <Helmet>
