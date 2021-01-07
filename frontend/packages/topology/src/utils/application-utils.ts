@@ -136,31 +136,31 @@ const safeKill = async (model: K8sKind, obj: K8sResourceKind) => {
   return null;
 };
 
-const deleteWebhooks = (
+const deleteWebhooks = async (
   resource: K8sResourceKind,
   buildConfigs: K8sResourceKind[],
   isKnativeResource: boolean,
 ) => {
   const deploymentsAnnotations = resource.metadata?.annotations ?? {};
   const gitType = detectGitType(deploymentsAnnotations['app.openshift.io/vcs-uri']);
+  const secretList = await k8sList(SecretModel, {
+    ns: resource.metadata.namespace,
+  });
   return buildConfigs?.reduce((requests, bc) => {
     const triggers = bc.spec?.triggers ?? [];
     const reqs = triggers.reduce((a, t) => {
-      let obj: K8sResourceKind;
+      let secretResource: K8sResourceKind;
       const webhookType = t.generic ? 'generic' : gitType;
       const webhookTypeObj = t.generic || (!isKnativeResource && t[gitType]);
       if (webhookTypeObj) {
-        obj = {
-          ...resource,
-          metadata: {
-            name:
-              webhookTypeObj.secretReference?.name ??
-              `${resource.metadata.name}-${webhookType}-webhook-secret`,
-            namespace: resource.metadata.namespace,
-          },
-        };
+        const secretName =
+          webhookTypeObj.secretReference?.name ??
+          `${resource.metadata.name}-${webhookType}-webhook-secret`;
+        secretResource = secretList.find(
+          (secret: K8sResourceKind) => secret.metadata.name === secretName,
+        );
       }
-      return obj ? [...a, safeKill(SecretModel, obj)] : a;
+      return secretResource ? [...a, safeKill(SecretModel, secretResource)] : a;
     }, []);
     return [...requests, ...reqs];
   }, []);

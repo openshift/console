@@ -13,6 +13,7 @@ import {
   MockResources,
   sampleBuildConfigs,
   sampleBuilds,
+  sampleSecrets,
 } from '@console/shared/src/utils/__tests__/test-resource-data';
 import { OdcNodeModel, TopologyDataResources } from '../../topology-types';
 import { WORKLOAD_TYPES } from '../topology-utils';
@@ -45,6 +46,7 @@ describe('ApplicationUtils ', () => {
   let spyK8sGet;
   let mockBuilds = [];
   let mockBuildConfigs = [];
+  let mockSecrets = [];
 
   beforeEach(() => {
     spy = spyOn(k8s, 'k8sKill');
@@ -60,6 +62,9 @@ describe('ApplicationUtils ', () => {
       if (model.kind === 'BuildConfig') {
         return Promise.resolve(mockBuildConfigs);
       }
+      if (model.kind === 'Secret') {
+        return Promise.resolve(mockSecrets);
+      }
       return Promise.resolve([]);
     });
   });
@@ -68,18 +73,19 @@ describe('ApplicationUtils ', () => {
     const nodeModel = await getTopologyData(MockResources, 'nodejs');
     mockBuilds = sampleBuilds.data;
     mockBuildConfigs = sampleBuildConfigs.data;
+    mockSecrets = sampleSecrets;
     cleanUpWorkload(nodeModel.resource, false)
       .then(() => {
         const allArgs = spy.calls.allArgs();
         const removedModels = allArgs.map((arg) => arg[0]);
 
-        expect(spy.calls.count()).toEqual(7);
+        expect(spy.calls.count()).toEqual(6);
         expect(removedModels).toContain(DeploymentConfigModel);
         expect(removedModels).toContain(ImageStreamModel);
         expect(removedModels).toContain(ServiceModel);
         expect(removedModels).toContain(RouteModel);
         expect(removedModels).toContain(BuildConfigModel);
-        expect(removedModels.filter((model) => model.kind === 'Secret')).toHaveLength(2);
+        expect(removedModels.filter((model) => model.kind === 'Secret')).toHaveLength(1);
         done();
       })
       .catch((err) => fail(err));

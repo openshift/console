@@ -1,5 +1,10 @@
 import { FirehoseResult } from '@console/internal/components/utils';
-import { DeploymentKind, PodKind, ImagePullPolicy } from '@console/internal/module/k8s';
+import {
+  DeploymentKind,
+  PodKind,
+  ImagePullPolicy,
+  K8sResourceKind,
+} from '@console/internal/module/k8s';
 
 export const sampleDeploymentConfigs: FirehoseResult = {
   loaded: true,
@@ -3305,6 +3310,57 @@ export const sampleClusterServiceVersions: FirehoseResult = {
   loadError: '',
   loaded: true,
 };
+
+export const sampleSecrets: K8sResourceKind[] = [
+  {
+    kind: 'Secret',
+    metadata: {
+      name: 'secret-1',
+      namespace: 'ns',
+      uid: '3d7aeb10-c568-4aa5-b1c6-90500a6d50a6',
+      resourceVersion: '102027',
+      creationTimestamp: '2019-04-26T10:23:41Z',
+      annotations: {
+        'kubernetes.io/service-account.name': 'builder',
+        'kubernetes.io/service-account.uid': '150b818b-2081-46a4-a563-17ee5d29035a',
+        'openshift.io/token-secret.name': 'builder-token-tnrj6',
+        'openshift.io/token-secret.value': 'eyJhbGciOiJSUzI1NiIsImtpZCI6IjJ3enFHdFZPTlkyOElFT21K',
+      },
+    },
+  },
+  {
+    kind: 'Secret',
+    metadata: {
+      name: 'secret-2',
+      namespace: 'ns',
+      uid: '3d7aeb10-c568-4aa5-b1c6-90500a6d50a6',
+      resourceVersion: '102027',
+      creationTimestamp: '2019-04-26T10:23:41Z',
+      annotations: {
+        'kubernetes.io/service-account.name': 'builder',
+        'kubernetes.io/service-account.uid': '150b818b-2081-46a4-a563-17ee5d29035a',
+        'openshift.io/token-secret.name': 'builder-token-tnrj6',
+        'openshift.io/token-secret.value': 'eyJhbGciOiJSUzI1NiIsImtpZCI6IjJ3enFHdFZPTlkyOElFT21K',
+      },
+    },
+  },
+  {
+    kind: 'Secret',
+    metadata: {
+      name: 'nodejs-generic-webhook-secret',
+      namespace: 'ns',
+      uid: '3d7aeb10-c568-4aa5-b1c6-90500a6d50a6',
+      resourceVersion: '102027',
+      creationTimestamp: '2019-04-26T10:23:41Z',
+      annotations: {
+        'kubernetes.io/service-account.name': 'builder',
+        'kubernetes.io/service-account.uid': '150b818b-2081-46a4-a563-17ee5d29035a',
+        'openshift.io/token-secret.name': 'builder-token-tnrj6',
+        'openshift.io/token-secret.value': 'eyJhbGciOiJSUzI1NiIsImtpZCI6IjJ3enFHdFZPTlkyOElFT21K',
+      },
+    },
+  },
+];
 
 export const MockResources = {
   deployments: sampleDeployments,
