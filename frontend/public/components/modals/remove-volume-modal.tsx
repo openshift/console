@@ -83,7 +83,7 @@ export const RemoveVolumeModal: React.FC<RemoveVolumeModalProps> = (props) => {
   return (
     <form onSubmit={submit} className="modal-content">
       <ModalTitle>
-        <YellowExclamationTriangleIcon className="co-icon-space-r" /> {t('modal~Remove Volume?')}
+        <YellowExclamationTriangleIcon className="co-icon-space-r" /> {t('modal~Remove volume?')}
       </ModalTitle>
       <ModalBody className="modal-body">
         <div>
