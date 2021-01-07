@@ -2,6 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
+import { Translation } from 'react-i18next';
 
 import { K8sResourceKind } from '../../module/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from '../factory';
@@ -14,34 +15,6 @@ export const menuActions: KebabAction[] = [...Kebab.getExtensionsActionsForKind(
 const kind = DataVolumeModel.kind;
 
 const tableColumnClasses = ['', '', classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'), Kebab.columnClass];
-
-const DataVolumeTableHeader = () => {
-  return [
-    {
-      title: 'Name',
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: 'Namespace',
-      sortFunc: 'metadata.namespace',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-    },
-    {
-      title: 'Created',
-      sortField: 'metadata.creationTimestamp',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses[3] },
-    },
-  ];
-};
-DataVolumeTableHeader.displayName = 'DataVolumeTableHeader';
 
 const DataVolumeTableRow: RowFunction<K8sResourceKind> = ({ obj: datavolume, index, key, style }) => {
   return (
@@ -78,7 +51,33 @@ const DataVolumeDetails: React.FC<DataVolumeDetailsProps> = ({ obj: datavolume }
 );
 
 const { details, editYaml } = navFactory;
-export const DataVolumes: React.FC = props => <Table {...props} aria-label="Data Volumes" Header={DataVolumeTableHeader} Row={DataVolumeTableRow} virtualize />;
+export const DataVolumes: React.FC = props =>
+  <Translation>{
+    (t) => <Table {...props} aria-label="Data Volumes" Header={() => [
+      {
+        title: t('COMMON:MSG_MAIN_TABLEHEADER_1'),
+        sortField: 'metadata.name',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[0] },
+      },
+      {
+        title: t('COMMON:MSG_MAIN_TABLEHEADER_2'),
+        sortFunc: 'metadata.namespace',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[1] },
+      },
+      {
+        title: t('COMMON:MSG_MAIN_TABLEHEADER_12'),
+        sortField: 'metadata.creationTimestamp',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[2] },
+      },
+      {
+        title: '',
+        props: { className: tableColumnClasses[3] },
+      },
+    ]} Row={DataVolumeTableRow} virtualize />
+  }</Translation>;
 
 export const DataVolumesPage: React.FC<DataVolumesPageProps> = props => <ListPage canCreate={true} ListComponent={DataVolumes} kind={kind} {...props} />;
 
