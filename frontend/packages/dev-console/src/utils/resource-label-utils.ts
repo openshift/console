@@ -81,9 +81,16 @@ export const getPodLabels = (name: string) => {
 
 export const mergeData = (originalResource: K8sResourceKind, newResource: K8sResourceKind) => {
   const mergedData = _.merge({}, originalResource || {}, newResource);
-  mergedData.metadata.labels = newResource.metadata.labels;
+  const isDevfileResource = originalResource?.metadata?.annotations?.isFromDevfile;
+  mergedData.metadata.labels = {
+    ...newResource.metadata.labels,
+    ...(isDevfileResource ? originalResource?.metadata?.labels : {}),
+  };
   if (mergedData.metadata.annotations) {
-    mergedData.metadata.annotations = newResource.metadata.annotations;
+    mergedData.metadata.annotations = {
+      ...newResource.metadata.annotations,
+      ...(isDevfileResource ? originalResource?.metadata?.annotations : {}),
+    };
   }
   if (mergedData.spec?.template?.metadata?.labels) {
     mergedData.spec.template.metadata.labels = newResource.spec?.template?.metadata?.labels;

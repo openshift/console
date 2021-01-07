@@ -471,16 +471,8 @@ export const createDevfileResources = async (
   const {
     name,
     project: { name: namespace },
-    application: { name: applicationName },
-    git: { url: repository, ref = 'master' },
     devfile: { devfileSuggestedResources },
   } = formData;
-
-  const defaultLabels = getAppLabels({ name, applicationName });
-  const defaultAnnotations = {
-    ...getGitAnnotations(repository, ref),
-    isFromDevfile: 'true',
-  };
 
   const devfileResourceObjects: DevfileSuggestedResources = Object.keys(
     devfileSuggestedResources,
@@ -493,13 +485,12 @@ export const createDevfileResources = async (
         metadata: {
           ...resource.metadata,
           annotations: {
-            ...defaultAnnotations,
             ...resource.metadata?.annotations,
+            isFromDevfile: 'true',
           },
           name,
           namespace,
           labels: {
-            ...defaultLabels,
             ...resource.metadata?.labels,
           },
         },
