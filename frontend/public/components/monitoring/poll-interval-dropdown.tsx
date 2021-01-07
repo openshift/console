@@ -9,9 +9,10 @@ const OFF_KEY = 'OFF_KEY';
 type Props = {
   interval: number;
   setInterval: (v: number) => never;
+  id?: string;
 };
 
-const IntervalDropdown: React.FC<Props> = ({ interval, setInterval }) => {
+const IntervalDropdown: React.FC<Props> = ({ interval, setInterval, id }) => {
   const { t } = useTranslation();
 
   const onChange = React.useCallback(
@@ -34,6 +35,7 @@ const IntervalDropdown: React.FC<Props> = ({ interval, setInterval }) => {
 
   return (
     <Dropdown
+      id={id}
       items={intervalOptions}
       onChange={onChange}
       selectedKey={interval === null ? OFF_KEY : formatPrometheusDuration(interval)}

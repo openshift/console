@@ -39,6 +39,7 @@ export const MonitoringWorkloadFilter: React.FC<MonitoringWorkloadFilterProps> =
         <ResourceDropdown
           id="odc-monitoring-dashboard-workload-filter"
           data-test="odc-monitoring-dashboard-workload-filter"
+          ariaLabel={t('devconsole~Filter by workload')}
           dataSelector={['metadata', 'name']}
           selectedKey={selectedTaskRef.current}
           placeholder={t('devconsole~Filter by workload')}
