@@ -111,14 +111,13 @@ export const isArbiterSC = (
 ): boolean => {
   const pvs: K8sResourceKind[] = getSCAvailablePVs(pvData, getName(sc));
   const scNodeNames = getAssociatedNodes(pvs);
-  const filteredNodes: NodeKind[] = nodesWithoutTaints(nodesData);
-  const tableData: NodeKind[] = filteredNodes.filter(
+  const tableData: NodeKind[] = nodesData.filter(
     (node: NodeKind) =>
       scNodeNames.includes(getName(node)) ||
       scNodeNames.includes(node.metadata.labels?.['kubernetes.io/hostname']),
   );
-  const uniqZones: Set<string> = new Set(filteredNodes.map((node) => getZone(node)));
-  const uniqSelectedNodesZones: Set<string> = new Set(tableData.map((node) => getZone(node)));
+  const uniqZones: Set<string> = new Set(nodesData.map(getZone));
+  const uniqSelectedNodesZones: Set<string> = new Set(tableData.map(getZone));
   if (uniqZones.size < 3) return false;
   if (uniqSelectedNodesZones.size !== 2) return false;
   const zonePerNode = countNodesPerZone(tableData);

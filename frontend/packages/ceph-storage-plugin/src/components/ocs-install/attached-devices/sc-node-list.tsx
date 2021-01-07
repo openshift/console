@@ -12,7 +12,7 @@ import {
 import { humanizeCpuCores, ResourceLink } from '@console/internal/components/utils/';
 import { Table } from '@console/internal/components/factory';
 import { NodeKind } from '@console/internal/module/k8s';
-import { getConvertedUnits } from '../../../utils/install';
+import { getConvertedUnits, getZone } from '../../../utils/install';
 import { GetRows, NodeTableProps } from '../types';
 import '../ocs-install.scss';
 
@@ -45,7 +45,7 @@ const getRows: GetRows = ({ componentProps }) => {
         title: `${getConvertedUnits(memSpec)}`,
       },
       {
-        title: node.metadata.labels?.['failure-domain.beta.kubernetes.io/zone'] || '-',
+        title: getZone(node) || '-',
       },
     ];
     return {
