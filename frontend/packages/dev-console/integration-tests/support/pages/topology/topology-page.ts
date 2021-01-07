@@ -1,6 +1,7 @@
 import { displayOptions, nodeActions } from '../../constants/topology';
 import { topologyPO } from '../../pageObjects/topology-po';
 import { createHelmRelease } from '../functions/createHelmRelease';
+import { topologyHelper } from './topology-helper-page';
 
 export const topologyPage = {
   verifyTitle: () => {
@@ -14,17 +15,6 @@ export const topologyPage = {
   verifyNoWorkLoadsText: (text: string) =>
     cy.get('h2.co-hint-block__title').should('contain.text', text),
   verifyWorkLoads: () => cy.get('g[data-surface="true"]').should('be.visible'),
-  search: (name: string) =>
-    cy
-      .byLegacyTestID('item-filter')
-      .clear()
-      .type(name),
-  verifyWorkloadInTopologyPage: (appName: string) => {
-    cy.get(topologyPO.switcher).click();
-    topologyPage.search(appName);
-    cy.get('div.is-filtered').should('be.visible');
-    cy.get(topologyPO.switcher).click();
-  },
   clicKDisplayOptionDropdown: () =>
     cy
       .get('[id^=pf-select-toggle-id]')
@@ -60,7 +50,7 @@ export const topologyPage = {
       .find('span.co-icon-and-text span')
       .should('have.text', status),
   searchHelmRelease: (name: string) => {
-    topologyPage.search(name);
+    topologyHelper.search(name);
     cy.get('[data-kind="node"]').then(($el) => {
       if ($el.find('g.is-filtered').length === 0) {
         createHelmRelease(name);

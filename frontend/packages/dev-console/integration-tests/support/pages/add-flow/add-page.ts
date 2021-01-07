@@ -45,9 +45,8 @@ export const addPage = {
         break;
       case 'Helm Chart':
       case addOptions.HelmChart:
-        cy.byLegacyTestID('helm').click();
-        detailsPage.titleShouldContain(pageTitle.DeveloperCatalog);
-        cy.byTestID('kind-helm-chart').should('be.checked');
+        cy.byLegacyTestID('helm').click({ force: true });
+        detailsPage.titleShouldContain(pageTitle.HelmCharts);
         break;
       case 'Operator Backed':
       case addOptions.OperatorBacked:

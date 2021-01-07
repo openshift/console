@@ -1,5 +1,27 @@
 import { catalogPO } from '../../pageObjects/add-flow-po';
 import { catalogCards, catalogTypes } from '../../constants/add';
+import { controls } from '../helm/controls';
+
+export const catalogPageObj = {
+  installHelmChart: {
+    releaseName: '#form-input-releaseName-field',
+    cancel: '[data-test-id="reset-button"]',
+  },
+};
+
+export const catalogPageObj = {
+  installHelmChart: {
+    releaseName: '#form-input-releaseName-field',
+    cancel: '[data-test-id="reset-button"]',
+  },
+};
+
+export const catalogPageObj = {
+  installHelmChart: {
+    releaseName: '#form-input-releaseName-field',
+    cancel: '[data-test-id="reset-button"]',
+  },
+};
 
 export const catalogPage = {
   isCheckBoxSelected: (type: string) => cy.get(`input[title="${type}"]`).should('be.checked'),
@@ -29,7 +51,7 @@ export const catalogPage = {
       }
       case catalogTypes.HelmCharts:
       case 'Helm Charts': {
-        cy.get(catalogPO.catalogTypes.helmCharts).check();
+        cy.get(catalogPO.catalogTypes.helmCharts).click();
         break;
       }
       case catalogTypes.BuilderImage:
@@ -96,4 +118,22 @@ export const catalogPage = {
       .find('div.catalog-tile-pf-title')
       .should('contain.text', partialCardName);
   },
+};
+
+export const catalogInstallPageObj = {
+  installHelmChart: {
+    install: '[data-test-id="submit-button"]',
+    chartVersion: '#form-dropdown-chartVersion-field',
+    yamlView: '#form-radiobutton-editorType-yaml-field',
+  },
+  selectHelmChartVersion: (version: string) => controls.dropdown.switchTo(version),
+  verifyChartVersionDropdownAvailable: () => controls.dropdown.verifyVisibility(),
+  selectChangeOfChartVersionDialog: (option: string) => {
+    if (option === 'Proceed') {
+      cy.get('#confirm-action').click();
+    } else {
+      cy.byLegacyTestID('modal-cancel-action').click();
+    }
+  },
+  selectHelmChartCard: (cardName: string) => controls.dropdown.switchTo(cardName),
 };

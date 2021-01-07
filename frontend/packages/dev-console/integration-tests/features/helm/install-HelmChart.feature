@@ -12,12 +12,12 @@ Feature: Install the Helm Release
         Then user can see "Helm Chart" card on the Add page
 
 
-    @regression, @smoke, @manual
+    @regression, @smoke
     Scenario: Developer Catalog Page when Helm Charts checkbox is selected: HR-01-TC02, HR-02-TC02
         Given user is at Add page
         And user has added multiple helm charts repositories
-        When user clicks on the Helm Chart card on the Add page
-        Then user will get redirected to Developer Catalog page
+        When user selects "Helm Chart" card from add page
+        Then user will get redirected to Helm Charts page
         And user will see the list of Chart Repositories
         And user will see the cards of Helm Charts
         And user will see Filter by Keyword field
@@ -74,11 +74,11 @@ Feature: Install the Helm Release
         And modal will have the warning of data lost
 
 
-    @regression, @manual
+    @regression
     Scenario: README should be updated when chart version is updated
-        Given user is at the Install Helm Chart page
-        When user clicks on the Chart Version dropdown menu
-        And user selects the different chart version
-        And modal will get popped up
-        And user clicks on yes to update the chart version
-        Then user will see that the README is also updated with new chart version
+        Given user is at Install Helm Chart page
+        Then user will see the chart version dropdown
+        When user selects YAML view
+        When user selects the Chart Version "0.2.0 / App Version 1.16.0 (Provided by Red Hat Helm Charts)"
+        When user selects "Proceed" button from Change Chart version confirmation dialog
+        Then user will see that the README is also updated with new chart version "0.2.0 / App Version 1.16.0 (Provided by Red Hat Helm Charts)"

@@ -91,7 +91,7 @@ export const catalogPO = {
   cancel: '[data-test-id="reset-button"]',
   catalogTypes: {
     operatorBacked: '[data-test="kind-cluster-service-version"]',
-    helmCharts: '[data-test="kind-helm-chart"]',
+    helmCharts: '[href="/?catalogType=HelmChart"]',
     builderImage: '[data-test="kind-image-stream"]',
     template: '[data-test="kind-template"]',
     serviceClass: '[data-test="kind-cluster-service-class"]',

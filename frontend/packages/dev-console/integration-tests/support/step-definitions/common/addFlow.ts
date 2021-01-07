@@ -26,7 +26,7 @@ Given(
   },
 );
 
-Given('user is at Developer Catlog page', () => {
+Given('user is at the developer catalog page', () => {
   addPage.selectCardFromOptions(addOptions.DeveloperCatalog);
 });
 
@@ -44,4 +44,12 @@ Then('user will be redirected to Add page', () => {
 
 When('user clicks Cancel button on Add page', () => {
   gitPage.clickCancel();
+});
+
+Then('user can see {string} card on the Add page', (cardName: string) => {
+  addPage.verifyCard(cardName);
+});
+
+When('user selects {string} card from add page', (cardName: string) => {
+  addPage.selectCardFromOptions(cardName);
 });

@@ -130,13 +130,19 @@ export const projectNameSpace = {
     // Bug: ODC-5129 - is created related to Accesibiity violation - Until bug fix, below line is commented to execute the scripts in CI
     // cy.testA11y('Create Project modal');
     cy.byLegacyTestID('dropdown-text-filter').type(projectName);
+    cy.document()
+      .its('readyState')
+      .should('eq', 'complete');
     cy.get('[role="listbox"]').then(($el) => {
       if ($el.find('li[role="option"]').length === 0) {
         cy.byTestDropDownMenu('#CREATE_RESOURCE_ACTION#').click();
         cy.byTestID('input-name').type(projectName);
         modal.submit();
       } else {
-        cy.get(`[id="${projectName}-link"]`).click();
+        cy.get(`[id="${projectName}-link"]`).click({ force: true });
+        cy.document()
+          .its('readyState')
+          .should('eq', 'complete');
       }
     });
   },
