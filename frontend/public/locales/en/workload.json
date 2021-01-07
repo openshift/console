@@ -102,6 +102,7 @@
   "Filesystem": "Filesystem",
   "Network in": "Network in",
   "Network out": "Network out",
+  "Pod unschedulable": "Pod unschedulable",
   "Restart policy": "Restart policy",
   "Pod IP": "Pod IP",
   "Pod details": "Pod details",

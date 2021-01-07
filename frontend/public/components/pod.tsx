@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
+import { Button, Popover } from '@patternfly/react-core';
 import { Status, TableColumnsType } from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import {
@@ -352,7 +353,7 @@ const PodTableRow = connect<PodTableRowPropsFromState, null, PodTableRowProps>(p
             columns={columns}
             columnID={podColumnInfo.status.id}
           >
-            <Status status={phase} />
+            <PodStatus pod={pod} />
           </TableData>
           <TableData
             className={podColumnInfo.ready.classes}
@@ -571,7 +572,53 @@ const PodGraphs = requirePrometheus(({ pod }) => {
   );
 });
 
-export const PodStatus: React.FC<PodStatusProps> = ({ pod }) => <Status status={podPhase(pod)} />;
+const PodStatusPopover: React.FC<PodStatusPopoverProps> = ({
+  bodyContent,
+  headerContent,
+  status,
+}) => {
+  return (
+    <Popover headerContent={headerContent} bodyContent={bodyContent}>
+      <Button variant="link" isInline>
+        <Status status={status} />
+      </Button>
+    </Popover>
+  );
+};
+
+export const PodStatus: React.FC<PodStatusProps> = ({ pod }) => {
+  const status = podPhase(pod);
+  const unschedulableCondition = pod.status?.conditions?.find(
+    (condition) => condition.reason === 'Unschedulable' && condition.status === 'False',
+  );
+  const containerStatusStateWaiting = pod.status?.containerStatuses?.find(
+    (cs) => cs.state?.waiting,
+  );
+  const { t } = useTranslation();
+
+  if (status === 'Pending' && unschedulableCondition) {
+    return (
+      <PodStatusPopover
+        bodyContent={unschedulableCondition.message}
+        headerContent={t('workload~Pod unschedulable')}
+        status={status}
+      />
+    );
+  }
+  if (
+    (status === 'CrashLoopBackOff' || status === 'ErrImagePull' || status === 'ImagePullBackOff') &&
+    containerStatusStateWaiting
+  ) {
+    return (
+      <PodStatusPopover
+        bodyContent={containerStatusStateWaiting.state.waiting.message}
+        status={status}
+      />
+    );
+  }
+
+  return <Status status={status} />;
+};
 
 export const PodDetailsList: React.FC<PodDetailsListProps> = ({ pod }) => {
   const { t } = useTranslation();
@@ -881,6 +928,12 @@ type PodContainerTableProps = {
   heading: string;
   containers: ContainerSpec[];
   pod: PodKind;
+};
+
+type PodStatusPopoverProps = {
+  bodyContent: string;
+  headerContent?: string;
+  status: string;
 };
 
 type PodStatusProps = {
