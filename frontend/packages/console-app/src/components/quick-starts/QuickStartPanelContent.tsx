@@ -10,7 +10,7 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { AsyncComponent } from '@console/internal/components/utils';
-import { useScrollDirection, ScrollDirection } from '@console/shared/';
+import { useScrollShadows, Shadows } from '@console/shared';
 import { QuickStart } from './utils/quick-start-types';
 import './QuickStartPanelContent.scss';
 
@@ -27,18 +27,23 @@ const QuickStartPanelContent: React.FC<QuickStartPanelContentProps> = ({
   handleClose,
   activeQuickStartID,
 }) => {
-  const [scrollDirection, handleScrollCallback] = useScrollDirection();
   const { t } = useTranslation();
+  const [contentRef, setContentRef] = React.useState<HTMLDivElement>();
+  const shadows = useScrollShadows(contentRef);
+
   const quickStart = quickStarts.find((qs) => qs.metadata.name === activeQuickStartID);
 
-  const headerClasses = classNames('co-quick-start-panel-content-head', {
-    'pf-u-box-shadow-sm-bottom':
-      scrollDirection && scrollDirection !== ScrollDirection.scrolledToTop,
+  const headerClasses = classNames({
+    'pf-u-box-shadow-sm-bottom': shadows === Shadows.top || shadows === Shadows.both,
+  });
+
+  const footerClass = classNames({
+    'pf-u-box-shadow-sm-top': shadows === Shadows.bottom || shadows === Shadows.both,
   });
 
   return quickStart ? (
-    <DrawerPanelContent className="co-quick-start-panel-content" onScroll={handleScrollCallback}>
-      <div className={headerClasses}>
+    <DrawerPanelContent className="co-quick-start-panel-content">
+      <div className={`co-quick-start-panel-content-head ${headerClasses}`}>
         <DrawerHead>
           <div className="co-quick-start-panel-content__title">
             <Title
@@ -59,10 +64,12 @@ const QuickStartPanelContent: React.FC<QuickStartPanelContentProps> = ({
           </DrawerActions>
         </DrawerHead>
       </div>
-      <DrawerPanelBody>
+      <DrawerPanelBody hasNoPadding className="co-quick-start-panel-content__body">
         <AsyncComponent
           loader={() => import('./QuickStartController').then((c) => c.default)}
           quickStart={quickStart}
+          footerClass={footerClass}
+          contentRef={setContentRef}
         />
       </DrawerPanelBody>
     </DrawerPanelContent>
