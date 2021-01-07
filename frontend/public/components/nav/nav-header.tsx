@@ -6,24 +6,32 @@ import { Perspective } from '@console/plugin-sdk';
 import { getPerspectives } from '../../hypercloud/perspectives';
 import { RootState } from '../../redux';
 import { featureReducerName, getFlagsObject, FlagsObject } from '../../reducers/features';
-import { getActivePerspective } from '../../reducers/ui';
+import { getActivePerspective, getConsoleMode } from '../../reducers/ui';
 import * as UIActions from '../../actions/ui';
 import { history } from '../utils';
+import ClusterDropdown from '../hypercloud/nav/cluster-dropdown';
+import { RadioGroup } from '@console/internal/components/radio'; // 임시 - single only mode 보여주기용
 
 type StateProps = {
   activePerspective: string;
   setActivePerspective?: (id: string) => void;
+  consoleMode: string;
+  setConsoleMode?: (mode: string) => void;
   flags: FlagsObject;
 };
 
 export type NavHeaderProps = {
   onPerspectiveSelected: () => void;
+  onClusterSelected: () => void;
 };
 
 const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({
   setActivePerspective,
   onPerspectiveSelected,
   activePerspective,
+  onClusterSelected,
+  consoleMode,
+  setConsoleMode,
   flags,
 }) => {
   const [isPerspectiveDropdownOpen, setPerspectiveDropdownOpen] = React.useState(false);
@@ -91,29 +99,58 @@ const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({
   );
 
   return (
-    <div className="oc-nav-header">
-      <Dropdown
-        isOpen={isPerspectiveDropdownOpen}
-        toggle={renderToggle(icon, name)}
-        dropdownItems={getPerspectiveItems(perspectives)}
-        data-test-id="perspective-switcher-menu"
+    <>
+      <RadioGroup
+        label="Console Mode:"
+        currentValue={consoleMode}
+        items={[
+          {
+            value: 'mc',
+            title: 'Multi Cluster Mode',
+          },
+          {
+            value: 'hc',
+            title: 'Single Cluster Mode',
+          },
+        ]}
+        onChange={({ currentTarget }) => { setConsoleMode(currentTarget.value); setActivePerspective(currentTarget.value) }}
       />
-    </div>
+      {consoleMode === "mc" && (
+        <div className="oc-nav-header">
+          <h4>Application</h4>
+          <Dropdown
+            isOpen={isPerspectiveDropdownOpen}
+            toggle={renderToggle(icon, name)}
+            dropdownItems={getPerspectiveItems(perspectives)}
+            data-test-id="perspective-switcher-menu"
+          />
+          {activePerspective == "hc" &&
+            <>
+              <h4>Cluster</h4>
+              <ClusterDropdown onClusterSelected={onClusterSelected} />
+            </>
+          }
+        </div>
+      )
+      }
+    </>
   );
 };
 
 const mapStateToProps = (state: RootState): StateProps => ({
   activePerspective: getActivePerspective(state),
+  consoleMode: getConsoleMode(state),
   flags: getFlagsObject(state),
 });
 
 export default connect<StateProps, {}, NavHeaderProps, RootState>(
   mapStateToProps,
-  { setActivePerspective: UIActions.setActivePerspective },
+  { setActivePerspective: UIActions.setActivePerspective, setConsoleMode: UIActions.setConsoleMode },
   null,
   {
     areStatesEqual: (next, prev) =>
       next[featureReducerName] === prev[featureReducerName] &&
-      getActivePerspective(next) === getActivePerspective(prev),
+      getActivePerspective(next) === getActivePerspective(prev) &&
+      getConsoleMode(next) === getConsoleMode(prev),
   },
 )(NavHeader_);
