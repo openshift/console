@@ -278,7 +278,7 @@ const AttachStorage: React.FC<AttachStorageFormProps> = (props) => {
         {claimVolumeMode === 'Block' ? (
           <div className="form-group">
             <label className="control-label co-required" htmlFor="device-path">
-              {t('storage~Device Path')}
+              {t('storage~Device path')}
             </label>
             <div>
               <input
