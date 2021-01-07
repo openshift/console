@@ -27,15 +27,17 @@ export const perspective = {
   },
 };
 
-export const naviagteTo = (opt: devNavigationMenu) => {
+export const navigateTo = (opt: devNavigationMenu) => {
   switch (opt) {
     case devNavigationMenu.Add: {
       cy.get(devNavigationMenuPO.add)
         .click()
         .then(() => {
           cy.url().should('include', 'add');
-          app.waitForLoad();
-          // Bug: ODC-5119 is created related to Accesibiity violation - Until bug fix, below line is commented to execute the scripts in CI
+          cy.document()
+            .its('readyState')
+            .should('eq', 'complete');
+          // Bug: ODC-5119 is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
           // cy.testA11y('Add Page in dev perspective');
         });
       break;
@@ -43,7 +45,7 @@ export const naviagteTo = (opt: devNavigationMenu) => {
     case devNavigationMenu.Topology: {
       cy.get(devNavigationMenuPO.topology).click();
       cy.url().should('include', 'topology');
-      // Bug: ODC-5119 is created related to Accesibiity violation - Until bug fix, below line is commented to execute the scripts in CI
+      // Bug: ODC-5119 is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
       // cy.testA11y('Topology Page in dev perspective');
       break;
     }
@@ -68,7 +70,7 @@ export const naviagteTo = (opt: devNavigationMenu) => {
     case devNavigationMenu.Pipelines: {
       cy.get(devNavigationMenuPO.pipelines).click();
       detailsPage.titleShouldContain(pageTitle.Pipelines);
-      // Bug: ODC-5119 is created related to Accesibiity violation - Until bug fix, below line is commented to execute the scripts in CI
+      // Bug: ODC-5119 is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
       // cy.testA11y('Pipelines Page in dev perspective');
       break;
     }
@@ -131,7 +133,7 @@ export const projectNameSpace = {
       .find('button')
       .eq(0)
       .click();
-    // Bug: ODC-5129 - is created related to Accesibiity violation - Until bug fix, below line is commented to execute the scripts in CI
+    // Bug: ODC-5129 - is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
     // cy.testA11y('Create Project modal');
     cy.byLegacyTestID('dropdown-text-filter').type(projectName);
     cy.get('[role="listbox"]').then(($el) => {

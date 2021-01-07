@@ -3,7 +3,7 @@ Feature: Perform Actions on created VM
 
 
     Background:
-        Given user is at developer perspecitve
+        Given user is at developer perspective
         And user has selected namespace "aut-vm-actions"
         And user has created VM "fedora-test-vm"
         And user is at the Topolgy page

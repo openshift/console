@@ -1,9 +1,10 @@
+@add-flow
 Feature: Create Application from Database
     As a user, I want to create the application, component or service from Database using Add Flow
 
     Background:
         Given user is at developer perspective
-        And user has created namespace starts with "aut-addflow-database"
+        And user has created or selected namespace "aut-addflow-database"
 
 
     @smoke

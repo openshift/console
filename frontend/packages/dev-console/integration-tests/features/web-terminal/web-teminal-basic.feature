@@ -3,7 +3,7 @@ Feature: Web Terminal
 
 
 Background:
-    Given user is at developer perspecitve
+    Given user is at developer perspective
     And user has installed Web Terminal operator
     And user has selected namespace "aut-terminal-basic"
 

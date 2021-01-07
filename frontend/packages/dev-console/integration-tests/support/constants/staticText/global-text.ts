@@ -1,6 +1,6 @@
 export const perspectiveName = {
   developer: 'Developer',
-  adminstrator: 'Administrator',
+  administrator: 'Administrator',
 };
 
 export const adminNavigationMenu = {

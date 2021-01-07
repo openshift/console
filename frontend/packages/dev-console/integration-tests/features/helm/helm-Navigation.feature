@@ -2,13 +2,13 @@ Feature: Navigations on Helm Chart
     As a user, I want to navigate to different pages related to Helm Charts
 
 Background:
-    Given user is at developer perspecitve
+    Given user is at developer perspective
     And user has selected namespace "aut-helm-navigation"
 
 
 @regression, @smoke
 Scenario: Open the Helm tab on the navigation bar when helm charts are absent: HR-11-TC02
-    Given user is at developer perspecitve
+    Given user is at developer perspective
     When user clicks on the Helm tab
     Then user will be redirected to Helm releases page
     And user is able to see the message as no helm charts present

@@ -2,7 +2,7 @@ Feature: Sidebar in topology
 	As a user, I want to check sidebar of workloads
 
 Background:
-    Given user is at developer perspecitve
+    Given user is at developer perspective
     And user has selected namespace "aut-topology-sidebar"
 
 

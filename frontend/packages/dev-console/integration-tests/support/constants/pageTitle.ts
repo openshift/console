@@ -2,6 +2,7 @@ export const pageTitle = {
   Git: 'Import from Git',
   ContainerImage: 'Deploy Image',
   DockerFile: 'Import from Dockerfile',
+  DevFile: 'Import from Devfile',
   YAML: 'Import YAML',
   DeveloperCatalog: 'Developer Catalog',
   Pipelines: 'Pipelines',
@@ -18,4 +19,10 @@ export const pageTitle = {
   Project: 'Project Details',
   ConfigMaps: 'Config Maps',
   Secrets: 'Secrets',
+  Templates: 'Templates',
+  BuilderImages: 'Builder Images',
+  HelmCharts: 'Helm Charts',
+  installHelmCharts: 'Install Helm Chart',
+  operatorBacked: 'Operator Backed',
+  pipelineBuilder: 'Pipeline Builder',
 };

@@ -3,7 +3,7 @@ Feature: Event Sources actions
 
    Background:
       Given user has installed OpenShift Serverless Operator
-      And user is at developer perspecitve
+      And user is at developer perspective
       And user is at Add page
       And user has selected namespace "aut-create-knative-event-source"
 

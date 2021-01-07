@@ -19,7 +19,7 @@ Then('modal will get closed', () => {
 
 Then('topology page displays with message {string}', (message: string) => {
   projectNameSpace.verifyMessage(message);
-  // Bug: 1890678 is created related to Accesibiity violation - Until bug fix, below line is commented to execute the scripts in CI
+  // Bug: 1890678 is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
   // cy.testA11y('Topology Page with cards');
 });
 
@@ -29,6 +29,6 @@ Then('topology page have cards from Add page', () => {
 
 When('user selects the Create Project option from Projects dropdown on top navigation bar', () => {
   projectNameSpace.selectCreateProjectOption();
-  // Bug: 1890678 is created related to Accesibiity violation - Until bug fix, below line is commented to execute the scripts in CI
+  // Bug: 1890678 is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
   // cy.testA11y('Create Project Modal');
 });

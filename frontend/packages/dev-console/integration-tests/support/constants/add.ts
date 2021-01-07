@@ -9,6 +9,7 @@ export enum addOptions {
   HelmChart = 'Helm Chart',
   Pipeline = 'Pipeline',
   EventSource = 'Event Source',
+  DevFile = 'Import from Devfile',
 }
 
 export enum buildConfigOptions {

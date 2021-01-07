@@ -7,7 +7,9 @@ export const topologyPage = {
     cy.get('h1.ocs-page-layout__title').should('have.text', 'Topology');
   },
   verifyTopologyPage: () => {
-    cy.get('.co-m-loader', { timeout: 40000 }).should('not.exist');
+    cy.document()
+      .its('readyState')
+      .should('eq', 'complete');
     cy.get(topologyPO.graph.reset).should('be.visible');
   },
   verifyContextMenu: () => cy.get('#popper-container ul').should('be.visible'),
@@ -25,13 +27,13 @@ export const topologyPage = {
     cy.get('div.is-filtered').should('be.visible');
     cy.get(topologyPO.switcher).click();
   },
-  clicKDisplayOptionDropdown: () =>
+  clickDisplayOptionDropdown: () =>
     cy
       .get('[id^=pf-select-toggle-id]')
       .contains('Display Options')
       .click(),
   selectDisplayOption: (opt: displayOptions) => {
-    topologyPage.clicKDisplayOptionDropdown();
+    topologyPage.clickDisplayOptionDropdown();
     switch (opt) {
       case displayOptions.PodCount:
         cy.get('#pf-random-id-1-show-pod-count').check();

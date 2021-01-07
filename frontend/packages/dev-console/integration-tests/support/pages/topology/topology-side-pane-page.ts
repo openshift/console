@@ -39,7 +39,7 @@ export const topologySidePane = {
       .get('button[aria-label="Close"]')
       .scrollIntoView()
       .click(),
-  verifyFieldinDetailsTab: (fieldName: string) =>
+  verifyFieldInDetailsTab: (fieldName: string) =>
     cy.get(`[data-test-selector="details-item-label__${fieldName}"]`).should('be.visible'),
   verifyWorkload: () =>
     cy
@@ -73,7 +73,7 @@ export const topologySidePane = {
     cy.byLegacyTestID('modal-cancel-action').click();
     cy.get('form').should('not.exist');
   },
-  verifyAnnotaiton: (annotationName: string) => {
+  verifyAnnotation: (annotationName: string) => {
     cy.byTestID('edit-annotations').click();
     cy.byTestID('label-list')
       .find('a')

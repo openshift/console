@@ -2,7 +2,7 @@ Feature: Actions on Helm release in topology page
     User will be able to open the context menu and side bar for the helm releases
 
 Background:
-    Given user is at developer perspecitve
+    Given user is at developer perspective
     And user has selected namespace "aut-helm-sidebar"
     And helm release "nodejs-ex-k" is present in topology page
 

@@ -2,7 +2,7 @@ Feature: Editing an application
 	As a user, I want to edit an application   
 
 Background:
-   Given user is at developer perspecitve
+   Given user is at developer perspective
    And user has selected namespace "aut-topology-editing-app-node"
 
 

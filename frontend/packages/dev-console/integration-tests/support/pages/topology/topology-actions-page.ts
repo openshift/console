@@ -5,7 +5,7 @@ export const topologyActions = {
   selectAction: (action: nodeActions | string) => {
     switch (action) {
       case 'Edit Application Grouping':
-      case nodeActions.EditApplicatoinGrouping: {
+      case nodeActions.EditApplicationGrouping: {
         cy.byTestActionID(action)
           .should('be.visible')
           .click();

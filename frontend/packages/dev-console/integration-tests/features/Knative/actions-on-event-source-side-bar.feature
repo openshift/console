@@ -3,7 +3,7 @@ Feature: Event Sources actions
 
    Background:
       Given user has installed Openshift Serverless operator
-      And user is at developer perspecitve
+      And user is at developer perspective
       And user has selected namespace "aut-knative-event-source-actions"
       And user has created knative service "nodejs-ex-git-1"
       And user has created "sink-binding" event source
