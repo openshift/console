@@ -231,7 +231,7 @@ const AttachStorage: React.FC<AttachStorageFormProps> = (props) => {
         {kindObj && (
           <div className="co-m-pane__explanation">
             <Trans i18nKey="storage~addVolumeTo">
-              Add a persistent volume claim to{' '}
+              Add a PersistentVolumeClaim to{' '}
               <ResourceLink inline kind={kindObj.kind} name={resourceName} namespace={namespace} />
             </Trans>
           </div>
