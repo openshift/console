@@ -142,6 +142,18 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({ state, dispatch, disa
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [defaultAccessMode, defaultVolumeMode, state.storageClass]);
 
+  React.useEffect(() => {
+    const isPVC = state.dataSource?.value === ProvisionSource.DISK.getValue();
+    dispatch({
+      type: BOOT_ACTION_TYPE.SET_VOLUME_MODE,
+      payload: isPVC ? state.pvcVolumeMode?.value : defaultVolumeMode.getValue(),
+    });
+    dispatch({
+      type: BOOT_ACTION_TYPE.SET_VOLUME_MODE_FLAG,
+      payload: isPVC,
+    });
+  }, [state.pvcVolumeMode, state.dataSource, dispatch, defaultVolumeMode]);
+
   return cmLoaded && scLoaded && !scAllowedLoading ? (
     <Form>
       {scAllowed && (
@@ -206,7 +218,7 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({ state, dispatch, disa
             })
           }
           selections={VolumeMode.fromString(state.volumeMode?.value)}
-          isDisabled={disabled}
+          isDisabled={disabled || state.volumeModeFlag.value}
           toggleId="form-ds-volume-mode-select"
         >
           {VolumeMode.getAll().map((vm) => (
@@ -221,6 +233,11 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({ state, dispatch, disa
             </SelectOption>
           ))}
         </FormPFSelect>
+        {state.volumeModeFlag.value && (
+          <div className="pf-c-form__helper-text" aria-live="polite">
+            {t('kubevirt-plugin~Volume Mode is set by Source PVC')}
+          </div>
+        )}
       </FormRow>
       <FormRow fieldId="form-sc-alert">
         <ConfigMapDefaultModesAlert isScModesKnown={isScModesKnown} />
@@ -358,6 +375,10 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({
                 ]}
                 onChange={(val, kind, pvc: PersistentVolumeClaimKind) => {
                   dispatch({ type: BOOT_ACTION_TYPE.SET_PVC_NAME, payload: pvc.metadata.name });
+                  dispatch({
+                    type: BOOT_ACTION_TYPE.SET_PVC_VOLUME_MODE,
+                    payload: pvc?.spec?.volumeMode,
+                  });
                   dispatch({
                     type: BOOT_ACTION_TYPE.SET_PVC_SIZE,
                     payload: pvc.spec.resources.requests.storage,

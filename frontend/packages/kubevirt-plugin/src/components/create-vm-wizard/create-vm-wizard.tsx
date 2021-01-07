@@ -69,6 +69,7 @@ import { FirehoseResourceEnhanced } from '../../types/custom';
 import { parseVMWizardInitialData } from '../../utils/url';
 import { VMWizardInitialData } from '../../types/url';
 import { getTemplateName } from '../../selectors/vm-template/basic';
+import { useUpdateStorages } from '../../hooks/use-update-data-volume';
 
 import './create-vm-wizard.scss';
 
@@ -478,6 +479,7 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
     [commonTemplates, userMode],
   );
 
+  useUpdateStorages(reduxID);
   const openshiftCNVBaseImagesListResult = useBaseImages(loadedCommonTemplates);
   // TODO integrate the list of watches into the redux store to prevent unnecessary copying of data
   const openshiftCNVBaseImages = React.useMemo(
