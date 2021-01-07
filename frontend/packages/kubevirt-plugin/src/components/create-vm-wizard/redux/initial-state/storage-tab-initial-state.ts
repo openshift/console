@@ -53,8 +53,8 @@ const WINTOOLS_DISK_NAME = 'windows-guest-tools';
 
 const getContainerStorage = (
   storageClassConfigMap: ConfigMapKind,
-  diskType = DiskType.DISK,
   bus = DiskBus.VIRTIO,
+  diskType = DiskType.DISK,
   url = '',
   size = '15Gi',
 ): VMWizardStorage => {
@@ -147,8 +147,8 @@ export const getBaseImageStorage = (
 
 const getUrlStorage = (
   storageClassConfigMap: ConfigMapKind,
-  diskType = DiskType.DISK,
   bus = DiskBus.VIRTIO,
+  diskType = DiskType.DISK,
   url = '',
   size = '15Gi',
 ): VMWizardStorage => {
@@ -235,13 +235,19 @@ export const getNewProvisionSourceStorage = (state: any, id: string): VMWizardSt
     id,
     VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE,
   );
+
+  const relevantOptions = iGetRelevantTemplateSelectors(state, id);
   const iUserTemplate = iGetCommonData(state, id, VMWizardProps.userTemplate);
+  const iCommonTemplates = iGetLoadedCommonData(state, id, VMWizardProps.commonTemplates);
+  const iTemplate = iCommonTemplates && iGetRelevantTemplate(iCommonTemplates, relevantOptions);
+  // eslint-disable-next-line no-template-curly-in-string
+  const tmpDiskBus = DiskBus.fromString(iGetCommonTemplateDiskBus(iTemplate, '${NAME}'));
 
   const initialData = getInitialData(state, id);
   const { source } = initialData;
   const storagesUpdate = getStorages(state, id);
   const rootStorage = storagesUpdate.find((s) => s.disk.bootOrder === 1) || storagesUpdate[0];
-  const diskBus = new DiskWrapper(rootStorage?.disk).getDiskBus();
+  const diskBus = tmpDiskBus || new DiskWrapper(rootStorage?.disk).getDiskBus();
 
   const storageClassConfigMap = toShallowJS(
     iGetLoadedCommonData(state, id, VMWizardProps.storageClassConfigMap),
@@ -253,25 +259,25 @@ export const getNewProvisionSourceStorage = (state: any, id: string): VMWizardSt
     if (source?.url) {
       return getUrlStorage(
         storageClassConfigMap,
-        source.cdRom ? DiskType.CDROM : DiskType.DISK,
         diskBus,
+        source.cdRom ? DiskType.CDROM : DiskType.DISK,
         source.url,
         source.size,
       );
     }
-    return getUrlStorage(storageClassConfigMap);
+    return getUrlStorage(storageClassConfigMap, diskBus);
   }
   if (provisionSource === ProvisionSource.CONTAINER) {
     if (source?.container) {
       return getContainerStorage(
         storageClassConfigMap,
-        source.cdRom ? DiskType.CDROM : DiskType.DISK,
         diskBus,
+        source.cdRom ? DiskType.CDROM : DiskType.DISK,
         source.container,
         source.size,
       );
     }
-    return getContainerStorage(storageClassConfigMap);
+    return getContainerStorage(storageClassConfigMap, diskBus);
   }
   if (provisionSource === ProvisionSource.DISK && !iUserTemplate && cloneCommonBaseDiskImage) {
     const iStorageClassConfigMap = iGetLoadedCommonData(
@@ -280,17 +286,8 @@ export const getNewProvisionSourceStorage = (state: any, id: string): VMWizardSt
       VMWizardProps.storageClassConfigMap,
     );
 
-    const relevantOptions = iGetRelevantTemplateSelectors(state, id);
-    if (!relevantOptions.os) {
-      return null;
-    }
-
-    const iCommonTemplates = iGetLoadedCommonData(state, id, VMWizardProps.commonTemplates);
-    const iTemplate = iCommonTemplates && iGetRelevantTemplate(iCommonTemplates, relevantOptions);
     const pvcName = iGetPrameterValue(iTemplate, TEMPLATE_BASE_IMAGE_NAME_PARAMETER);
     const pvcNamespace = iGetPrameterValue(iTemplate, TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER);
-    // eslint-disable-next-line no-template-curly-in-string
-    const tmpDiskBus = DiskBus.fromString(iGetCommonTemplateDiskBus(iTemplate, '${NAME}'));
 
     const iBaseImage = iGetLoadedCommonData(state, id, VMWizardProps.openshiftCNVBaseImages)
       .valueSeq()
@@ -302,7 +299,7 @@ export const getNewProvisionSourceStorage = (state: any, id: string): VMWizardSt
       pvcName,
       pvcNamespace,
       pvcSize,
-      tmpDiskBus,
+      diskBus,
     );
   }
   if (provisionSource === ProvisionSource.DISK && !iUserTemplate) {
