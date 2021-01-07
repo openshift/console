@@ -9,10 +9,7 @@ import { appHost, testName, checkLogs, checkErrors } from '../protractor.conf';
 import * as crudView from '../views/crud.view';
 import * as yamlView from '../views/yaml.view';
 
-const K8S_CREATION_TIMEOUT = 15000;
-
 describe('Kubernetes resource CRUD operations', () => {
-  const testLabel = 'automatedTestName';
   const leakedResources = new Set<string>();
 
   afterEach(() => {
@@ -38,96 +35,6 @@ describe('Kubernetes resource CRUD operations', () => {
           console.error(`Failed to delete ${plural} ${name}:\n${error}`);
         }
       });
-  });
-
-  describe('CustomResourceDefinitions', () => {
-    const plural = `crd${testName}`;
-    const group = 'test.example.com';
-    const name = `${plural}.${group}`;
-    const crd = {
-      apiVersion: 'apiextensions.k8s.io/v1',
-      kind: 'CustomResourceDefinition',
-      metadata: {
-        name,
-        labels: { [testLabel]: testName },
-      },
-      spec: {
-        group,
-        versions: [
-          {
-            name: 'v1',
-            served: true,
-            storage: true,
-            schema: {
-              openAPIV3Schema: {
-                type: 'object',
-                properties: {
-                  spec: {
-                    type: 'object',
-                    properties: {
-                      cronSpec: {
-                        type: 'string',
-                      },
-                      image: {
-                        type: 'string',
-                      },
-                      replicas: {
-                        type: 'integer',
-                      },
-                    },
-                  },
-                },
-              },
-            },
-          },
-        ],
-        scope: 'Namespaced',
-        names: {
-          plural,
-          singular: `crd${testName}`,
-          kind: `CRD${testName}`,
-          shortNames: [testName],
-        },
-      },
-    };
-
-    it('displays `CustomResourceDefinitions` list view', async () => {
-      await browser.get(`${appHost}/k8s/cluster/customresourcedefinitions`);
-      await crudView.isLoaded();
-      expect(crudView.resourceRows.count()).not.toEqual(0);
-    });
-
-    it('displays a YAML editor for creating a new custom resource definition', async () => {
-      await crudView.createYAMLButton.click();
-      await yamlView.isLoaded();
-      await yamlView.setEditorContent(safeDump(crd));
-      await yamlView.saveButton.click();
-      await browser.wait(until.urlContains(name), K8S_CREATION_TIMEOUT);
-      expect(crudView.errorMessage.isPresent()).toBe(false);
-    });
-
-    it('displays YAML editor for creating a new custom resource instance', async () => {
-      await browser.get(`${appHost}/k8s/cluster/customresourcedefinitions?name=${name}`);
-      await crudView.isLoaded();
-      await crudView.clickKebabAction(crd.spec.names.kind, 'View instances');
-      await crudView.isLoaded();
-      await crudView.createYAMLButton.click();
-      await yamlView.isLoaded();
-      expect(yamlView.getEditorContent()).toContain(`kind: CRD${testName}`);
-    });
-
-    it('creates a new custom resource instance', async () => {
-      leakedResources.add(JSON.stringify({ name, plural: 'customresourcedefinitions' }));
-      await yamlView.saveButton.click();
-      expect(crudView.errorMessage.isPresent()).toBe(false);
-    });
-
-    it('deletes the `CustomResourceDefinition`', async () => {
-      await browser.get(`${appHost}/k8s/cluster/customresourcedefinitions?name=${name}`);
-      await crudView.resourceRowsPresent();
-      await crudView.deleteRow('CustomResourceDefinition', true)(crd.spec.names.kind);
-      leakedResources.delete(JSON.stringify({ name, plural: 'customresourcedefinitions' }));
-    });
   });
 
   describe('Editing labels', () => {
