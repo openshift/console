@@ -236,7 +236,7 @@ const AttachStorage: React.FC<AttachStorageFormProps> = (props) => {
             </Trans>
           </div>
         )}
-        <label className="control-label co-required">{t('storage~Persistent Volume Claim')}</label>
+        <label className="control-label co-required">{t('storage~PersistentVolumeClaim')}</label>
         <div className="form-group">
           <RadioInput
             title={t('storage~Use existing claim')}
