@@ -83,9 +83,11 @@ export const getTemplateSourceStatus: GetTemplateSourceStatus = ({
       }
     }
 
+    const provider = getProvider(pvc);
+
     return {
       source: SOURCE_TYPE.BASE_IMAGE,
-      provider: getProvider(pvc),
+      provider: provider === BOOT_SOURCE_AVAILABLE ? getProvider(dataVolume) : provider,
       isReady: !dataVolume || dataVolume.status?.phase === 'Succeeded',
       pvc,
       dataVolume,
