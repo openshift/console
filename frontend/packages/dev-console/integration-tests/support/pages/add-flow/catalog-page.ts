@@ -5,6 +5,13 @@ import { addOptions, catalogCards, catalogTypes } from '../../constants/add';
 import { topologyHelper } from '../topology/topology-helper-page';
 import { devNavigationMenuPO } from '../../pageObjects/global-po';
 
+export const catalogPageObj = {
+  installHelmChart: {
+    releaseName: '#form-input-releaseName-field',
+    cancel: '[data-test-id="reset-button"]',
+  },
+};
+
 export const catalogPage = {
   verifyTitle: () => cy.pageTitleShouldContain('Developer Catalog'),
   verifyPageTitle: (page: string) => cy.pageTitleShouldContain(page),
