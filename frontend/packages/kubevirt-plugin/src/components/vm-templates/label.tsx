@@ -26,14 +26,14 @@ export const VMTemplateLabel: React.FC<VMTemplateLabelProps> = ({ template, clas
   const hasParentProvider = templateSupport.parent && parentProvider;
   return (
     <div className={className}>
-      {templateSupport.parent && parentProvider && (
+      {templateSupport.parent === 'Full' && parentProvider && (
         <Tooltip
           content={t('kubevirt-plugin~{{provider}} supported', { provider: parentProvider })}
         >
           <Label color="green">{parentProvider}</Label>
         </Tooltip>
       )}
-      {templateSupport.provider && provider && (
+      {templateSupport.provider === 'Full' && provider && (
         <Tooltip content={t('kubevirt-plugin~{{provider}} supported', { provider })}>
           <Label
             color={isCommonTemplate(template) ? 'green' : 'blue'}
