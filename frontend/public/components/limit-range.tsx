@@ -5,6 +5,7 @@ import { sortable } from '@patternfly/react-table';
 import { K8sResourceKindReference, K8sResourceKind } from '../module/k8s';
 import { LimitRangeModel } from '../models';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
+import { Kebab, navFactory, SectionHeading, ResourceKebab, ResourceLink, ResourceSummary, Timestamp } from './utils';
 import {
   Kebab,
   navFactory,
@@ -20,29 +21,16 @@ const menuActions = [...Kebab.getExtensionsActionsForKind(LimitRangeModel), ...c
 
 const LimitRangeReference: K8sResourceKindReference = LimitRangeModel.kind;
 
-const tableColumnClasses = [
-  classNames('col-sm-4', 'col-xs-6'),
-  classNames('col-sm-4', 'col-xs-6'),
-  classNames('col-sm-4', 'hidden-xs'),
-  Kebab.columnClass,
-];
+const tableColumnClasses = [classNames('col-sm-4', 'col-xs-6'), classNames('col-sm-4', 'col-xs-6'), classNames('col-sm-4', 'hidden-xs'), Kebab.columnClass];
 
 export const LimitRangeTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }) => {
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink
-          kind={LimitRangeReference}
-          name={obj.metadata.name}
-          namespace={obj.metadata.namespace}
-        />
+        <ResourceLink kind={LimitRangeReference} name={obj.metadata.name} namespace={obj.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[1]}>
-        <ResourceLink
-          kind="Namespace"
-          name={obj.metadata.namespace}
-          title={obj.metadata.namespace}
-        />
+        <ResourceLink kind="Namespace" name={obj.metadata.namespace} title={obj.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
         <Timestamp timestamp={obj.metadata.creationTimestamp} />
@@ -82,31 +70,11 @@ export const LimitRangeTableHeader = () => {
 };
 LimitRangeTableHeader.displayName = 'LimitRangeTableHeader';
 
-export const LimitRangeList: React.SFC = (props) => (
-  <Table
-    {...props}
-    aria-label="Limit Ranges"
-    Header={LimitRangeTableHeader}
-    Row={LimitRangeTableRow}
-    virtualize
-  />
-);
+export const LimitRangeList: React.SFC = props => <Table {...props} aria-label="Limit Ranges" Header={LimitRangeTableHeader} Row={LimitRangeTableRow} virtualize />;
 
-export const LimitRangeListPage: React.SFC<LimitRangeListPageProps> = (props) => (
-  <ListPage
-    {...props}
-    title="Limit Ranges"
-    kind={LimitRangeReference}
-    ListComponent={LimitRangeList}
-    canCreate={true}
-  />
-);
+export const LimitRangeListPage: React.SFC<LimitRangeListPageProps> = props => <ListPage {...props} title="Limit Ranges" kind={LimitRangeReference} ListComponent={LimitRangeList} canCreate={true} />;
 
-export const LimitRangeDetailsRow: React.SFC<LimitRangeDetailsRowProps> = ({
-  limitType,
-  resource,
-  limit,
-}) => {
+export const LimitRangeDetailsRow: React.SFC<LimitRangeDetailsRowProps> = ({ limitType, resource, limit }) => {
   return (
     <tr className="co-resource-list__item">
       <td>{limitType}</td>
@@ -123,25 +91,20 @@ export const LimitRangeDetailsRow: React.SFC<LimitRangeDetailsRowProps> = ({
 const LimitRangeDetailsRows: React.SFC<LimitRangeDetailsRowsProps> = ({ limit }) => {
   const properties = ['max', 'min', 'default', 'defaultRequest', 'maxLimitRequestRatio'];
   const resources = {};
-  _.each(properties, (property) => {
+  _.each(properties, property => {
     _.each(limit[property], (value, resource) => _.set(resources, [resource, property], value));
   });
 
   return (
     <>
       {_.map(resources, (resourceLimit, resource) => (
-        <LimitRangeDetailsRow
-          key={resource}
-          limitType={limit.type}
-          resource={resource}
-          limit={resourceLimit}
-        />
+        <LimitRangeDetailsRow key={resource} limitType={limit.type} resource={resource} limit={resourceLimit} />
       ))}
     </>
   );
 };
 
-export const LimitRangeDetailsList = (resource) => {
+export const LimitRangeDetailsList = resource => {
   return (
     <div className="co-m-pane__body">
       <SectionHeading text="Limits" />
@@ -179,13 +142,7 @@ const Details = ({ obj: rq }) => (
   </>
 );
 
-export const LimitRangeDetailsPage = (props) => (
-  <DetailsPage
-    {...props}
-    menuActions={menuActions}
-    pages={[navFactory.details(Details), navFactory.editYaml()]}
-  />
-);
+export const LimitRangeDetailsPage = props => <DetailsPage {...props} menuActions={menuActions} pages={[navFactory.details(Details), navFactory.editYaml()]} />;
 
 export type LimitRangeProps = {
   obj: any;
