@@ -75,8 +75,10 @@ export const useBaseImages = (
     const dvValues = Object.values(dvs);
     const podValues = Object.values(pods);
 
-    const loaded = [...pvcValues, ...dvValues, ...podValues].every((value) => value.loaded);
-    const loadError = [...pvcValues, ...dvValues, ...podValues].find((value) => value.loadError);
+    const loaded = [...pvcValues, ...dvValues, ...podValues].every(
+      (value) => value.loaded || !!value.loadError,
+    );
+    const loadError = pvcValues.find((value) => value.loadError);
     const pvcData = pvcValues.reduce<PersistentVolumeClaimKind[]>(
       (acc, pvc) => acc.concat(pvc.data),
       [],
