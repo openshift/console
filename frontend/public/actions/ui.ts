@@ -10,6 +10,7 @@ import {
   ALL_NAMESPACES_KEY,
   LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
   LAST_PERSPECTIVE_LOCAL_STORAGE_KEY,
+  LAST_CLUSTER_LOCAL_STORAGE_KEY,
 } from '@console/shared/src/constants';
 import { K8sResourceKind, PodKind, NodeKind } from '../module/k8s';
 import { allModels } from '../module/k8s/k8s-models';
@@ -64,6 +65,9 @@ export enum ActionType {
   SetNamespaceMetrics = 'setNamespaceMetrics',
   SetNodeMetrics = 'setNodeMetrics',
   SetPinnedResources = 'setPinnedResources',
+  SetActiveCluster = "setActiveCluster",
+  SetActiveClusterPath = "setActiveClusterPath",
+  SetConsoleMode = "setConsoleMode",
 }
 
 type MetricValuesByName = {
@@ -194,11 +198,32 @@ export const setActiveNamespace = (namespace: string = '') => {
   return action(ActionType.SetActiveNamespace, { namespace });
 };
 
+export const getActivePerspective = (): string => store.getState().UI.get('activePerspective');
+
 export const setActivePerspective = (perspective: string) => {
   // remember the most recently-viewed perspective, which is automatically
   // selected when returning to the console
   localStorage.setItem(LAST_PERSPECTIVE_LOCAL_STORAGE_KEY, perspective);
   return action(ActionType.SetActivePerspective, { perspective });
+};
+
+export const getActiveCluster = (): string => store.getState().UI.get('activeCluster');
+
+export const getActiveClusterPath = (): string => store.getState().UI.get('activeClusterPath');
+
+export const setActiveCluster = (cluster: string) => {
+  localStorage.setItem(LAST_CLUSTER_LOCAL_STORAGE_KEY, cluster);
+  return action(ActionType.SetActiveCluster, { cluster });
+};
+
+export const setActiveClusterPath = (clusterPath: string) => {
+  return action(ActionType.SetActiveClusterPath, { clusterPath });
+};
+
+export const getConsoleMode = (): string => store.getState().UI.get('consoleMode');
+
+export const setConsoleMode = (mode: string) => {
+  return action(ActionType.SetConsoleMode, { mode });
 };
 
 export const setPinnedResources = (resources: string[]) => {
@@ -399,6 +424,9 @@ const uiActions = {
   notificationDrawerToggleExpanded,
   notificationDrawerToggleRead,
   setPinnedResources,
+  setActiveCluster,
+  setActiveClusterPath,
+  setConsoleMode,
 };
 
 export type UIAction = Action<typeof uiActions>;
