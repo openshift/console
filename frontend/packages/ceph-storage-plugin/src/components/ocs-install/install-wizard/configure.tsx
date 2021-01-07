@@ -76,14 +76,17 @@ export const EncryptionFormGroup: React.FC<EncryptionFormGroupProps> = ({
   }, [encryption.clusterWide, encryption.storageClass, encryptionChecked]);
 
   const toggleEncryption = (checked: boolean) => {
-    setEncryptionDispatch(ActionType.SET_ENCRYPTION, mode, dispatch, {
+    const payload = {
       ...encryption,
       clusterWide: checked,
-    });
-    setEncryptionChecked(checked);
+    };
     if (!checked) {
+      payload.advanced = false;
+      payload.storageClass = false;
       setEncryptionDispatch(ActionType.CLEAR_KMS_STATE, mode, dispatch);
     }
+    setEncryptionDispatch(ActionType.SET_ENCRYPTION, mode, dispatch, payload);
+    setEncryptionChecked(checked);
   };
 
   const toggleClusterWideEncryption = (checked: boolean) => {
