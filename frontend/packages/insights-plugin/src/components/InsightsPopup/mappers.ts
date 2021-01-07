@@ -56,5 +56,9 @@ export const mapMetrics = (response: PrometheusResponse): Metrics => {
   return values;
 };
 
-export const isInitState = (values: Metrics) =>
+// Insights Operator is either not initialized, disabled or an error occurred
+export const isUnavailable = (values: Metrics) => _.isEmpty(values);
+
+// Insights Operator has been just initialized
+export const isInitialized = (values: Metrics) =>
   Object.values(values).some((cur: number) => cur === -1);

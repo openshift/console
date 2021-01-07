@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { ChartDonut, ChartLegend, ChartLabel } from '@patternfly/react-charts';
+
 import {
   riskIcons,
   colorScale,
   legendColorScale,
   riskSorting,
   mapMetrics,
-  isInitState,
+  isInitialized,
 } from './mappers';
 import { PrometheusHealthPopupProps } from '@console/plugin-sdk';
 import { K8sResourceKind } from '@console/internal/module/k8s';
@@ -19,14 +20,14 @@ const DataComponent: React.FC<DataComponentProps> = ({ x, y, datum }) => {
 };
 
 export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses, k8sResult }) => {
-  const resource = mapMetrics(responses[0].response);
+  const metrics = mapMetrics(responses[0].response);
   const clusterID = (k8sResult as K8sResourceKind)?.data?.spec?.clusterID || '';
-  const riskEntries = Object.entries(resource).sort(
+  const riskEntries = Object.entries(metrics).sort(
     ([k1], [k2]) => riskSorting[k1] - riskSorting[k2],
   );
-  const numberOfIssues = Object.values(resource).reduce((acc, cur) => acc + cur, 0);
+  const numberOfIssues = Object.values(metrics).reduce((acc, cur) => acc + cur, 0);
   const hasIssues = riskEntries.length > 0 && numberOfIssues > 0;
-  const isInit = isInitState(resource);
+  const isInit = isInitialized(metrics);
 
   return (
     <div className="co-insights__box">
@@ -53,7 +54,7 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
               }))}
               title={`${numberOfIssues}`}
               subTitle={`Total ${numberOfIssues === 1 ? 'issue' : 'issues'}`}
-              legendData={Object.entries(resource).map(([k, v]) => ({ name: `${k}: ${v}` }))}
+              legendData={Object.entries(metrics).map(([k, v]) => ({ name: `${k}: ${v}` }))}
               legendOrientation="vertical"
               width={304}
               height={152}
@@ -101,7 +102,7 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
         {isInit && (
           <div>
             <ExternalLink
-              href={`https://cloud.redhat.com/openshift/details/${clusterID}`}
+              href={`https://cloud.redhat.com/openshift/details/${clusterID}#insights`}
               text="Go to OpenShift Cluster Manager"
             />
           </div>
