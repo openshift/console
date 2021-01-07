@@ -5,7 +5,7 @@ import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '.
 import { PromiseComponent, history, resourceListPathFromModel } from '../utils';
 import { k8sKill } from '../../module/k8s/';
 import { YellowExclamationTriangleIcon } from '@console/shared';
-import { Translation } from 'react-i18next';
+import { withTranslation } from 'react-i18next';
 //Modal for resource deletion and allows cascading deletes if propagationPolicy is provided for the enum
 class DeleteModal extends PromiseComponent {
   constructor(props) {
@@ -42,43 +42,39 @@ class DeleteModal extends PromiseComponent {
   }
 
   render() {
-    const { kind, resource, message } = this.props;
+    const { kind, resource, message, t } = this.props;
     const resourceUpperCase = kind.label.toUpperCase();
     return (
-      <Translation>
-        {t => (
-          <form onSubmit={this._submit} name="form" className="modal-content ">
-            <ModalTitle>
-              <YellowExclamationTriangleIcon className="co-icon-space-r" />
-              {t('COMMON:MSG_MAIN_ACTIONBUTTON_16', { something: t(resourceUpperCase) })}?
-            </ModalTitle>
-            <ModalBody className="modal-body">
-              {message}
-              <div>
-                Are you sure you want to delete <strong className="co-break-word">{resource.metadata.name}</strong>
-                {_.has(resource.metadata, 'namespace') && (
-                  <span>
-                    {' '}
-                    in namespace <strong>{resource.metadata.namespace}</strong>
-                  </span>
-                )}
-                ?
-                {_.has(kind, 'propagationPolicy') && (
-                  <div className="checkbox">
-                    <label className="control-label">
-                      <input type="checkbox" onChange={() => this.setState({ isChecked: !this.state.isChecked })} checked={!!this.state.isChecked} />
-                      Delete dependent objects of this resource
-                    </label>
-                  </div>
-                )}
+      <form onSubmit={this._submit} name="form" className="modal-content ">
+        <ModalTitle>
+          <YellowExclamationTriangleIcon className="co-icon-space-r" />
+          {t('COMMON:MSG_MAIN_ACTIONBUTTON_16', { 0: t(resourceUpperCase) })}?
+        </ModalTitle>
+        <ModalBody className="modal-body">
+          {message}
+          <div>
+            Are you sure you want to delete <strong className="co-break-word">{resource.metadata.name}</strong>
+            {_.has(resource.metadata, 'namespace') && (
+              <span>
+                {' '}
+                in namespace <strong>{resource.metadata.namespace}</strong>
+              </span>
+            )}
+            ?
+            {_.has(kind, 'propagationPolicy') && (
+              <div className="checkbox">
+                <label className="control-label">
+                  <input type="checkbox" onChange={() => this.setState({ isChecked: !this.state.isChecked })} checked={!!this.state.isChecked} />
+                  Delete dependent objects of this resource
+                </label>
               </div>
-            </ModalBody>
-            <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitDanger submitText={this.props.btnText || `${t('DELETE')}`} cancel={this._cancel} />
-          </form>
-        )}
-      </Translation>
+            )}
+          </div>
+        </ModalBody>
+        <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitDanger submitText={this.props.btnText || `${t('DELETE')}`} cancel={this._cancel} />
+      </form>
     );
   }
 }
 
-export const deleteModal = createModalLauncher(DeleteModal);
+export const deleteModal = createModalLauncher(withTranslation()(DeleteModal));
