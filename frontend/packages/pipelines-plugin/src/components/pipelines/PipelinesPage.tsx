@@ -22,17 +22,15 @@ export const PipelinesPage: React.FC<PipelinesPageProps> = (props) => {
         {...props}
         badge={getBadgeFromType(PipelineModel.badge)}
         namespace={namespace}
-        title={PipelineModel.labelPlural}
+        title={t('pipelines-plugin~Pipelines')}
       />
     </div>
   ) : (
     <CreateProjectListPage
-      title={PipelineModel.labelPlural}
+      title={t('pipelines-plugin~Pipelines')}
       badge={getBadgeFromType(PipelineModel.badge)}
     >
-      {t('pipelines-plugin~Select a Project to view the list of {{pipelinesPageTitle}}', {
-        pipelinesPageTitle: PipelineModel.labelPlural,
-      })}
+      {t('pipelines-plugin~Select a Project to view the list of Pipelines')}
     </CreateProjectListPage>
   );
 };
