@@ -1,25 +1,28 @@
 import * as _ from 'lodash-es';
+import i18next from 'i18next';
 
 import { ContainerSpec, ContainerStatus, PodKind } from './';
 
 const PullPolicy = {
   Always: {
     id: 'Always',
-    label: 'Always Pull',
-    description: 'Pull down a new copy of the container image whenever a new pod is created.',
+    label: i18next.t('public~Always pull'),
+    description: i18next.t(
+      'public~Pull down a new copy of the container image whenever a new pod is created.',
+    ),
     default: true,
   },
   IfNotPresent: {
     id: 'IfNotPresent',
-    label: 'Pull If Needed',
-    description: 'If the container isn’t available locally, pull it down.',
+    label: i18next.t('public~Pull if needed'),
+    description: i18next.t('public~If the container isn’t available locally, pull it down.'),
   },
   Never: {
     id: 'Never',
-    label: 'Never Pull',
-    description:
-      "Don't pull down a container image. " +
-      "If the correct container image doesn't exist locally, the pod will fail to start correctly.",
+    label: i18next.t('public~Never pull'),
+    description: i18next.t(
+      "public~Don't pull down a container image. If the correct container image doesn't exist locally, the pod will fail to start correctly.",
+    ),
   },
 };
 
