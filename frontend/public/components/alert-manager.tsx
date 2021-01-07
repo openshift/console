@@ -1,5 +1,7 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
+import i18next from 'i18next';
+import { useTranslation } from 'react-i18next';
 import { sortable } from '@patternfly/react-table';
 import { Button } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons';
@@ -19,11 +21,12 @@ const Details: React.SFC<DetailsProps> = (props) => {
     event.target.blur();
     configureReplicaCountModal({ resourceKind: AlertmanagerModel, resource: alertManager });
   };
+  const { t } = useTranslation();
 
   return (
     <div>
       <div className="co-m-pane__body">
-        <SectionHeading text="Alert Manager Details" />
+        <SectionHeading text={t('public~Alertmanager details')} />
         <div className="row">
           <div className="col-sm-6 col-xs-12">
             <dl className="co-m-pane__details">
@@ -33,7 +36,7 @@ const Details: React.SFC<DetailsProps> = (props) => {
               <dd>
                 <LabelList kind="Alertmanager" labels={metadata.labels} />
               </dd>
-              {spec.nodeSelector && <dt>Alert Manager Node Selector</dt>}
+              {spec.nodeSelector && <dt>{t('public~Alertmanager node selector')}</dt>}
               {spec.nodeSelector && (
                 <dd>
                   <Selector selector={spec.nodeSelector} kind="Node" />
@@ -108,31 +111,31 @@ const AlertManagerTableRow: RowFunction<K8sResourceKind> = ({
 const AlertManagerTableHeader = () => {
   return [
     {
-      title: 'Name',
+      title: i18next.t('public~Name'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: 'Namespace',
+      title: i18next.t('public~Namespace'),
       sortField: 'metadata.namespace',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Labels',
+      title: i18next.t('public~Labels'),
       sortField: 'metadata.labels',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'Version',
+      title: i18next.t('public~Version'),
       sortField: 'spec.version',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
     },
     {
-      title: 'Node Selector',
+      title: i18next.t('public~Node selector'),
       sortField: 'spec.nodeSelector',
       transforms: [sortable],
       props: { className: tableColumnClasses[4] },
@@ -141,15 +144,18 @@ const AlertManagerTableHeader = () => {
 };
 AlertManagerTableHeader.displayName = 'AlertManagerTableHeader';
 
-const AlertManagersList = (props) => (
-  <Table
-    {...props}
-    aria-label="Alert Managers"
-    Header={AlertManagerTableHeader}
-    Row={AlertManagerTableRow}
-    virtualize
-  />
-);
+const AlertManagersList = (props) => {
+  const { t } = useTranslation();
+  return (
+    <Table
+      {...props}
+      aria-label={t('public~Alertmanagers')}
+      Header={AlertManagerTableHeader}
+      Row={AlertManagerTableRow}
+      virtualize
+    />
+  );
+};
 
 export const AlertManagersPage = (props) => (
   <ListPage
