@@ -30,9 +30,11 @@ export const TEMPLATE_VM_DOMAIN_LABEL = 'kubevirt.io/domain';
 export const TEMPLATE_VM_SIZE_LABEL = 'kubevirt.io/size';
 export const TEMPLATE_VM_COMMON_NAMESPACE = 'openshift';
 export const TEMPLATE_PROVIDER_ANNOTATION = 'template.kubevirt.io/provider';
+export const TEMPLATE_PROVIDER_URL = 'template.kubevirt.io/provider-url';
 export const TEMPLATE_SUPPORT_LEVEL = 'template.kubevirt.io/provider-support-level';
 export const TEMPLATE_PARENT_PROVIDER_ANNOTATION = 'template.kubevirt.ui/parent-provider';
 export const TEMPLATE_PARENT_SUPPORT_LEVEL = 'template.kubevirt.ui/parent-support-level';
+export const TEMPLATE_PARENT_PROVIDER_URL = 'template.kubevirt.ui/parent-provider-url';
 
 export const LABEL_USED_TEMPLATE_NAME = 'vm.kubevirt.io/template';
 export const LABEL_USED_TEMPLATE_NAMESPACE = 'vm.kubevirt.io/template.namespace';

@@ -14,7 +14,10 @@ export const useSupportModal = (): SupportModalFunction => {
       const isUpstream = window.SERVER_FLAGS.branding === 'okd';
       const templateSupport = getTemplateSupport(template.variants[0]);
       const showSupportModal =
-        !isUpstream && template && !templateSupport.provider && !templateSupport.parent;
+        !isUpstream &&
+        template &&
+        templateSupport.provider !== 'Full' &&
+        templateSupport.parent !== 'Full';
       const onModalConfirm = (disable: boolean) => {
         if (disable) {
           setWarnSupport('false');
@@ -23,7 +26,10 @@ export const useSupportModal = (): SupportModalFunction => {
       };
       return warnSupport === 'false' || !showSupportModal
         ? onConfirm()
-        : createSupportModal({ onConfirm: onModalConfirm });
+        : createSupportModal({
+            onConfirm: onModalConfirm,
+            communityURL: templateSupport.providerURL || templateSupport.parentURL,
+          });
     },
     [setWarnSupport, warnSupport],
   );

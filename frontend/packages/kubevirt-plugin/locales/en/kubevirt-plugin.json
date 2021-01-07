@@ -532,6 +532,8 @@
   "Are you sure you want to restore <1>{snapshotName}</1> snapshot?": "Are you sure you want to restore <1>{snapshotName}</1> snapshot?",
   "Restore": "Restore",
   "Template support": "Template support",
+  "Support for this template is provided by the OS community Red Hat participates in and contributes to.": "Support for this template is provided by the OS community Red Hat participates in and contributes to.",
+  "Learn more about the community": "Learn more about the community",
   "This template is not fully supported by Red Hat.": "This template is not fully supported by Red Hat.",
   "Learn more about Red Hat's third party support policy": "Learn more about Red Hat's third party support policy",
   "Do not show this warning again": "Do not show this warning again",

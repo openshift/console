@@ -12,6 +12,8 @@ import {
   TEMPLATE_SUPPORT_LEVEL,
   TEMPLATE_PARENT_SUPPORT_LEVEL,
   TEMPLATE_PARENT_PROVIDER_ANNOTATION,
+  TEMPLATE_PROVIDER_URL,
+  TEMPLATE_PARENT_PROVIDER_URL,
 } from '../../constants';
 import { TemplateItem } from '../../types/template';
 
@@ -28,10 +30,12 @@ export const isCommonTemplate = (template: TemplateKind): boolean =>
 
 export const getTemplateSupport = (
   template: TemplateKind,
-): { provider: string; parent: string } => {
+): { provider: string; providerURL: string; parent: string; parentURL: string } => {
   const support = {
     provider: getAnnotation(template, TEMPLATE_SUPPORT_LEVEL),
+    providerURL: getAnnotation(template, TEMPLATE_PROVIDER_URL),
     parent: undefined,
+    parentURL: undefined,
   };
 
   const isUpstream = window.SERVER_FLAGS.branding === 'okd';
@@ -48,6 +52,7 @@ export const getTemplateSupport = (
   }
 
   support.parent = getAnnotation(template, TEMPLATE_PARENT_SUPPORT_LEVEL);
+  support.parentURL = getAnnotation(template, TEMPLATE_PARENT_PROVIDER_URL);
   return support;
 };
 
