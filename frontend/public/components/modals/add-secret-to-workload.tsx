@@ -182,7 +182,7 @@ export class AddSecretToWorkloadModalWithTrans extends React.Component<
         name="co-add-secret-to-workload"
         className="co-add-secret-to-workload modal-content"
       >
-        <ModalTitle>{t('modal~Add Secret to Workload')}</ModalTitle>
+        <ModalTitle>{t('modal~Add Secret to workload')}</ModalTitle>
         <ModalBody>
           <p>
             <Trans i18nKey="modal~addSecretDescription">
@@ -210,7 +210,7 @@ export class AddSecretToWorkloadModalWithTrans extends React.Component<
           <fieldset>
             <legend className="co-legend co-required">{t('modal~Add secret as')}</legend>
             <RadioInput
-              title={t('modal~Environment Variables')}
+              title={t('modal~Environment variables')}
               name="co-add-secret-to-workload__add-as"
               id="co-add-secret-to-workload__envvars"
               value="environment"
@@ -244,7 +244,7 @@ export class AddSecretToWorkloadModalWithTrans extends React.Component<
               <div className="co-m-radio-desc">
                 <div className="form-group">
                   <label htmlFor="co-add-secret-to-workload__mountpath" className="co-required">
-                    {t('modal~Mount Path')}
+                    {t('modal~Mount path')}
                   </label>
                   <input
                     className="pf-c-form-control"

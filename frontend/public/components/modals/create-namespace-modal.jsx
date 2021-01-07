@@ -147,7 +147,7 @@ const CreateNamespaceModalWithTrans = connect(
             {this.props.createProject && (
               <div className="form-group">
                 <label htmlFor="input-display-name" className="control-label">
-                  {t('modal~Display Name')}
+                  {t('modal~Display name')}
                 </label>
                 <div className="modal-body__field">
                   <input
@@ -194,7 +194,7 @@ const CreateNamespaceModalWithTrans = connect(
             {!this.props.createProject && (
               <div className="form-group">
                 <label htmlFor="network-policy" className="control-label">
-                  {t('modal~Default Network Policy')}
+                  {t('modal~Default NetworkPolicy')}
                 </label>
                 <div className="modal-body__field ">
                   <Dropdown

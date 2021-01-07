@@ -76,8 +76,8 @@ export const DeleteNamespaceModal: React.FC<DeleteNamespaceModalProps> = ({
       <ModalBody>
         <p>
           <Trans i18nKey="modal~deleteNSWarning">
-            This action cannot be undone. It will destroy all pods, services and other objects in
-            the namespace <strong className="co-break-word">{{ name }}</strong>.
+            This action cannot be undone. It will destroy all Pods, Services and other objects in
+            the Namespace <strong className="co-break-word">{{ name }}</strong>.
           </Trans>
         </p>
         <p>

@@ -17,6 +17,7 @@ import { YellowExclamationTriangleIcon } from '@console/shared';
 import { Trans, useTranslation } from 'react-i18next';
 
 export const RemoveVolumeModal: React.FC<RemoveVolumeModalProps> = (props) => {
+  const { t } = useTranslation();
   const [inProgress, setInProgress] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');
 
@@ -75,7 +76,6 @@ export const RemoveVolumeModal: React.FC<RemoveVolumeModalProps> = (props) => {
   const { t } = useTranslation();
   const { kind, resource, volume } = props;
   const type: string = _.get(getVolumeType(volume.volumeDetail), 'id', '');
-  const { t } = useTranslation();
   const volumeName = volume.name;
   const { label } = kind;
   const { name } = resource.metadata;
@@ -108,7 +108,7 @@ export const RemoveVolumeModal: React.FC<RemoveVolumeModalProps> = (props) => {
         errorMessage={errorMessage}
         inProgress={inProgress}
         submitDanger
-        submitText={t('modal~Remove Volume')}
+        submitText={t('modal~Remove volume')}
         cancel={props.cancel}
       />
     </form>

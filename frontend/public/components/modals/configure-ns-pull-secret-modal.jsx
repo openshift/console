@@ -193,11 +193,11 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
 
     return (
       <form onSubmit={this._submit} name="form" className="modal-content">
-        <ModalTitle>{t('modal~Default Pull Secret')}</ModalTitle>
+        <ModalTitle>{t('modal~Default pull Secret')}</ModalTitle>
         <ModalBody>
           <p>
             {t(
-              'modal~Specify default credentials to be used to authenticate and download containers within this namespace. These credentials will be the default unless a pod references a specific pull secret.',
+              'modal~Specify default credentials to be used to authenticate and download containers within this namespace. These credentials will be the default unless a pod references a specific pull Secret.',
             )}
           </p>
 
@@ -206,10 +206,10 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
               isInline
               className="co-alert"
               variant="danger"
-              title={t('modal~Overwriting default pull secret')}
+              title={t('modal~Overwriting default pull Secret')}
             >
               {t(
-                "modal~A default pull secret exists, but can't be parsed. Saving this will overwrite it.",
+                "modal~A default pull Secret exists, but can't be parsed. Saving this will overwrite it.",
               )}
             </Alert>
           )}
@@ -225,7 +225,7 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
 
           <div className="row co-m-form-row">
             <div className="col-xs-3">
-              <label htmlFor="namespace-pull-secret-name">{t('modal~Secret Name')}</label>
+              <label htmlFor="namespace-pull-secret-name">{t('modal~Secret name')}</label>
             </div>
             {pullSecret ? (
               <div className="col-xs-9">
@@ -262,7 +262,7 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
                     onChange={this._onMethodChange}
                     value="form"
                   />
-                  {t('modal~Enter Username/Password')}
+                  {t('modal~Enter username/password')}
                 </label>
               </div>
               <div className="radio">
@@ -285,7 +285,7 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
               <div className="row co-m-form-row">
                 <div className="col-xs-3">
                   <label htmlFor="namespace-pull-secret-address">
-                    {t('modal~Registry Address')}
+                    {t('modal~Registry address')}
                   </label>
                 </div>
                 <div className="col-xs-9">
@@ -301,7 +301,7 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
               </div>
               <div className="row co-m-form-row">
                 <div className="col-xs-3">
-                  <label htmlFor="namespace-pull-secret-email">{t('modal~Email Address')}</label>
+                  <label htmlFor="namespace-pull-secret-email">{t('modal~Email address')}</label>
                 </div>
                 <div className="col-xs-9">
                   <input
@@ -351,7 +351,7 @@ class ConfigureNamespacePullSecretWithTranslation extends PromiseComponent {
             <div>
               <div className="row co-m-form-row">
                 <div className="col-xs-3">
-                  <label htmlFor="namespace-pull-secret-file">{t('modal~File Upload')}</label>
+                  <label htmlFor="namespace-pull-secret-file">{t('modal~File upload')}</label>
                 </div>
                 <div className="col-xs-9">
                   <input

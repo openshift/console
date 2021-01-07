@@ -47,7 +47,7 @@ const DeletePVCModal = withHandlePromise<DeletePVCModalProps>((props) => {
     <form onSubmit={submit} className="modal-content">
       <ModalTitle>
         <YellowExclamationTriangleIcon className="co-icon-space-r" />{' '}
-        {t('modal~Delete Persistent Volume Claim')}
+        {t('modal~Delete PersistentVolumeClaim')}
       </ModalTitle>
       <ModalBody>
         <Stack hasGutter>
@@ -55,7 +55,7 @@ const DeletePVCModal = withHandlePromise<DeletePVCModalProps>((props) => {
           <StackItem>
             <Trans i18nKey="modal~deletePVCConfirm">
               Are you sure you want to delete{' '}
-              <strong className="co-break-word">{{ pvcName }}</strong> Persistent Volume Claim?
+              <strong className="co-break-word">{{ pvcName }}</strong> PersistentVolumeClaim?
             </Trans>
           </StackItem>
         </Stack>
