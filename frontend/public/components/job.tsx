@@ -117,7 +117,7 @@ export const JobDetails: React.FC<JobsDetailsProps> = ({ obj: job }) => {
                 path="spec.activeDeadlineSeconds"
               >
                 {job.spec.activeDeadlineSeconds
-                  ? t('workload~second', { count: job.spec.activeDeadlineSeconds })
+                  ? t('workload~{{count}} second', { count: job.spec.activeDeadlineSeconds })
                   : t('workload~Not configured')}
               </DetailsItem>
             </ResourceSummary>

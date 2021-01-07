@@ -637,7 +637,7 @@ export const PodDetailsList: React.FC<PodDetailsListProps> = ({ pod }) => {
         path="spec.activeDeadlineSeconds"
       >
         {pod.spec.activeDeadlineSeconds
-          ? t('workload~second', { count: pod.spec.activeDeadlineSeconds })
+          ? t('workload~{{count}} second', { count: pod.spec.activeDeadlineSeconds })
           : t('workload~Not configured')}
       </DetailsItem>
       <DetailsItem label={t('workload~Pod IP')} obj={pod} path="status.podIP" />

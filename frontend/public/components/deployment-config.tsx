@@ -123,7 +123,7 @@ export const DeploymentConfigDetailsList = ({ dc }) => {
             path="spec.strategy.rollingParams.timeoutSeconds"
             hideEmpty
           >
-            {t('workload~second', { count: timeout })}
+            {t('workload~{{count}} second', { count: timeout })}
           </DetailsItem>
           <DetailsItem
             label={t('workload~Update period')}
@@ -131,7 +131,7 @@ export const DeploymentConfigDetailsList = ({ dc }) => {
             path="spec.strategy.rollingParams.updatePeriodSeconds"
             hideEmpty
           >
-            {t('workload~second', { count: updatePeriod })}
+            {t('workload~{{count}} second', { count: updatePeriod })}
           </DetailsItem>
           <DetailsItem
             label={t('workload~Interval')}
@@ -139,7 +139,7 @@ export const DeploymentConfigDetailsList = ({ dc }) => {
             path="spec.strategy.rollingParams.intervalSeconds"
             hideEmpty
           >
-            {t('workload~second', { count: interval })}
+            {t('workload~{{count}} second', { count: interval })}
           </DetailsItem>
           <DetailsItem
             label={t('workload~Max unavailable')}
@@ -165,7 +165,7 @@ export const DeploymentConfigDetailsList = ({ dc }) => {
       )}
       <DetailsItem label={t('workload~Min ready seconds')} obj={dc} path="spec.minReadySeconds">
         {dc.spec.minReadySeconds
-          ? t('workload~second', { count: dc.spec.minReadySeconds })
+          ? t('workload~{{count}} second', { count: dc.spec.minReadySeconds })
           : t('workload~Not configured')}
       </DetailsItem>
       <DetailsItem label={t('workload~Triggers')} obj={dc} path="spec.triggers" hideEmpty>
