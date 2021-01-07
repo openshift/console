@@ -5,20 +5,16 @@ import {
   EmptyStateVariant,
   EmptyStateBody,
 } from '@patternfly/react-core';
-import * as gitopsIcon from '../images/gitops.svg';
+import { CubesIcon } from '@patternfly/react-icons';
 import './GitOpsEmptyState.scss';
 
 interface GitOpsEmptyStateProps {
   emptyStateMsg: string;
 }
 
-const gitopsImage = () => (
-  <img className="odc-gitops-empty-state__icon" src={gitopsIcon} alt="GitOps" />
-);
-
 const GitOpsEmptyState: React.FC<GitOpsEmptyStateProps> = ({ emptyStateMsg }) => (
   <EmptyState variant={EmptyStateVariant.full}>
-    <EmptyStateIcon variant="container" component={gitopsImage} />
+    <EmptyStateIcon variant="container" component={CubesIcon} />
     <EmptyStateBody>{emptyStateMsg}</EmptyStateBody>
   </EmptyState>
 );
