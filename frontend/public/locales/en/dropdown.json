@@ -7,6 +7,10 @@
   "Namespace": "Namespace",
   "Select Project...": "Select Project...",
   "Select Namespace...": "Select Namespace...",
+  "Remove bookmark {{content}}": "Remove bookmark {{content}}",
+  "Add bookmark {{content}}": "Add bookmark {{content}}",
+  "Remove favorite {{content}}": "Remove favorite {{content}}",
+  "Add favorite {{content}}": "Add favorite {{content}}",
   "Actions": "Actions",
   "Containers": "Containers",
   "Init containers": "Init containers"

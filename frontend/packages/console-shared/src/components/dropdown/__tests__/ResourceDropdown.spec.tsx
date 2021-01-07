@@ -158,7 +158,7 @@ describe('ResourceDropdown test suite', () => {
     const dropdownBtn = component.find('button#dropdown1');
     dropdownBtn.simulate('click', { preventDefault });
 
-    const dropdownRows = component.find('DropDownRow');
+    const dropdownRows = component.find('DropDownRowWithTranslation');
     const dropdownItem = dropdownRows.last().find('#app-group-3-link');
     dropdownItem.simulate('click', { preventDefault, stopPropagation });
 

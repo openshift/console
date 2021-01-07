@@ -105,7 +105,7 @@ class DropdownMixin extends React.PureComponent {
   }
 }
 
-class DropDownRow extends React.PureComponent {
+class DropDownRowWithTranslation extends React.PureComponent {
   render() {
     const {
       itemKey,
@@ -120,9 +120,11 @@ class DropDownRow extends React.PureComponent {
       favoriteKey,
       canFavorite,
       onFavorite,
+      t,
     } = this.props;
 
     let prefix;
+    const contentString = _.isString(content) ? content : '';
 
     if (!autocompleteFilter && !onBookmark) {
       //use pf4 markup if not using the autocomplete dropdown
@@ -150,6 +152,11 @@ class DropDownRow extends React.PureComponent {
             e.stopPropagation();
             onBookmark(itemKey, !isBookmarked);
           }}
+          aria-label={
+            isBookmarked
+              ? t('dropdown~Remove bookmark {{content}}', { content: contentString })
+              : t('dropdown~Add bookmark {{content}}', { content: contentString })
+          }
         >
           {isBookmarked ? <MinusCircleIcon /> : <PlusCircleIcon />}
         </a>
@@ -168,6 +175,11 @@ class DropDownRow extends React.PureComponent {
             e.stopPropagation();
             onFavorite(isFavorite ? null : itemKey);
           }}
+          aria-label={
+            isFavorite
+              ? t('dropdown~Remove favorite {{content}}', { content: contentString })
+              : t('dropdown~Add favorite {{content}}', { content: contentString })
+          }
         >
           <StarIcon className={classNames({ favorite: isFavorite })} />
         </a>
@@ -195,6 +207,8 @@ class DropDownRow extends React.PureComponent {
     );
   }
 }
+
+const DropDownRow = withTranslation()(DropDownRowWithTranslation);
 
 class Dropdown_ extends DropdownMixin {
   constructor(props) {
