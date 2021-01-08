@@ -18,7 +18,6 @@ import {
   resourceObjPath,
   StatusBox,
 } from '@console/internal/components/utils';
-import * as rbac from '@console/internal/components/utils/rbac';
 import { referenceForModel } from '@console/internal/module/k8s';
 import * as operatorLogo from '@console/internal/imgs/operator.svg';
 import {
@@ -36,16 +35,13 @@ import {
   ClusterServiceVersionsDetailsPageProps,
   ClusterServiceVersionDetails,
   ClusterServiceVersionDetailsProps,
-  NamespacedClusterServiceVersionList,
   ClusterServiceVersionTableRow,
-  NamespacedClusterServiceVersionTableRow,
   ClusterServiceVersionTableRowProps,
   CRDCard,
   CRDCardRow,
   CSVSubscription,
   CSVSubscriptionProps,
-  SingleProjectTableHeader,
-  AllProjectsTableHeader,
+  ClusterServiceVersionList,
 } from './clusterserviceversion';
 import { SubscriptionUpdates, SubscriptionDetails } from './subscription';
 import {
@@ -53,32 +49,35 @@ import {
   ClusterServiceVersionLogoProps,
   referenceForProvidedAPI,
 } from '.';
-
-const i18nNS = 'details-page';
+import { useActiveNamespace } from '@console/shared/src/hooks/redux-selectors';
 
 jest.mock('@console/shared/src/hooks/useK8sModel', () => ({
   useK8sModel: () => [testModel],
 }));
 
-describe('SingleProjectTableHeader.displayName', () => {
-  it('returns single project column header definition for cluster service version table header', () => {
-    expect(Array.isArray(SingleProjectTableHeader()));
-  });
+jest.mock('@console/internal/components/utils/rbac', () => ({
+  useAccessReview: () => true,
+}));
+
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
 });
 
-describe('AllProjectsTableHeader.displayName', () => {
-  it('returns all projects column header definition for cluster service version table header', () => {
-    expect(Array.isArray(AllProjectsTableHeader()));
-  });
+jest.mock('@console/shared/src/hooks/redux-selectors', () => {
+  return {
+    useActiveNamespace: jest.fn(),
+  };
 });
 
 describe(ClusterServiceVersionTableRow.displayName, () => {
   let wrapper: ShallowWrapper<ClusterServiceVersionTableRowProps>;
-
   beforeEach(() => {
     wrapper = shallow(
-      <NamespacedClusterServiceVersionTableRow
-        activeNamespace="test"
+      <ClusterServiceVersionTableRow
         catalogSourceMissing={false}
         obj={testClusterServiceVersion}
         subscription={testSubscription}
@@ -93,7 +92,7 @@ describe(ClusterServiceVersionTableRow.displayName, () => {
 
   it('renders a component wrapped in an `ErrorBoundary', () => {
     wrapper = shallow(
-      <NamespacedClusterServiceVersionTableRow
+      <ClusterServiceVersionTableRow
         catalogSourceMissing={false}
         obj={testClusterServiceVersion}
         subscription={testSubscription}
@@ -201,6 +200,7 @@ describe(ClusterServiceVersionLogo.displayName, () => {
 
   it('renders logo image from given base64 encoded image string', () => {
     const image = wrapper.find('img');
+
     expect(image.props().src).toEqual(
       `data:${testClusterServiceVersion.spec.icon[0].mediatype};base64,${testClusterServiceVersion.spec.icon[0].base64data}`,
     );
@@ -209,6 +209,7 @@ describe(ClusterServiceVersionLogo.displayName, () => {
   it('renders fallback image if given icon is invalid', () => {
     wrapper.setProps({ icon: null });
     const fallbackImg = wrapper.find('img');
+
     expect(fallbackImg.props().src).toEqual(operatorLogo);
   });
 
@@ -218,19 +219,47 @@ describe(ClusterServiceVersionLogo.displayName, () => {
   });
 });
 
-describe(NamespacedClusterServiceVersionList.displayName, () => {
-  it('renders `List` with correct props', () => {
+describe(ClusterServiceVersionList.displayName, () => {
+  it('renders `List` with SingleProjectTableHeader for namespace scoped CSV', () => {
+    (useActiveNamespace as jest.Mock).mockImplementation(() => 'test');
     const wrapper = shallow(
-      <NamespacedClusterServiceVersionList
-        activeNamespace="test"
+      <ClusterServiceVersionList
         data={[]}
         subscriptions={{ loaded: true, data: [testSubscription], loadError: null }}
         catalogSources={{ loaded: true, data: [testCatalogSource], loadError: null }}
         loaded
       />,
     );
-
-    expect(wrapper.find<TableInnerProps>(Table).props().Header).toEqual(SingleProjectTableHeader);
+    const header = wrapper.find<TableInnerProps>(Table).props().Header;
+    expect(header.name).toEqual('SingleProjectTableHeader');
+    const headerColumns = header();
+    expect(headerColumns[0].title).toEqual('olm~Name');
+    expect(headerColumns[1].title).toEqual('olm~Managed Namespaces');
+    expect(headerColumns[2].title).toEqual('olm~Status');
+    expect(headerColumns[3].title).toEqual('olm~Last updated');
+    expect(headerColumns[4].title).toEqual('olm~Provided APIs');
+    expect(headerColumns[5].title).toEqual('');
+  });
+  it('renders `List` with AllProjectTableHeader for all-namespaces scoped CSV', () => {
+    (useActiveNamespace as jest.Mock).mockImplementation(() => '#ALL_NS#');
+    const wrapper = shallow(
+      <ClusterServiceVersionList
+        data={[]}
+        subscriptions={{ loaded: true, data: [testSubscription], loadError: null }}
+        catalogSources={{ loaded: true, data: [testCatalogSource], loadError: null }}
+        loaded
+      />,
+    );
+    const header = wrapper.find<TableInnerProps>(Table).props().Header;
+    expect(header.name).toEqual('AllProjectsTableHeader');
+    const headerColumns = header();
+    expect(headerColumns[0].title).toEqual('olm~Name');
+    expect(headerColumns[1].title).toEqual('olm~Namespace');
+    expect(headerColumns[2].title).toEqual('olm~Managed Namespaces');
+    expect(headerColumns[3].title).toEqual('olm~Status');
+    expect(headerColumns[4].title).toEqual('olm~Last updated');
+    expect(headerColumns[5].title).toEqual('olm~Provided APIs');
+    expect(headerColumns[6].title).toEqual('');
   });
 });
 
@@ -302,7 +331,7 @@ describe(ClusterServiceVersionDetails.displayName, () => {
         .find(SectionHeading)
         .at(1)
         .props().text,
-    ).toEqual('Description');
+    ).toEqual('olm~Description');
   });
 
   it('renders creation date from ClusterServiceVersion', () => {
@@ -313,7 +342,7 @@ describe(ClusterServiceVersionDetails.displayName, () => {
 
   it('renders list of maintainers from ClusterServiceVersion', () => {
     const maintainers = wrapper
-      .findWhere((node) => node.equals(<dt>Maintainers</dt>))
+      .findWhere((node) => node.equals(<dt>olm~Maintainers</dt>))
       .parents()
       .at(0)
       .find('dd');
@@ -339,7 +368,7 @@ describe(ClusterServiceVersionDetails.displayName, () => {
 
   it('renders important links from ClusterServiceVersion', () => {
     const links = wrapper
-      .findWhere((node) => node.equals(<dt>Links</dt>))
+      .findWhere((node) => node.equals(<dt>olm~Links</dt>))
       .parents()
       .at(0)
       .find('dd');
@@ -358,25 +387,25 @@ describe(ClusterServiceVersionDetails.displayName, () => {
     wrapper.setProps({ obj: emptyClusterServiceVersion });
 
     const provider = wrapper
-      .findWhere((node) => node.equals(<dt>Provider</dt>))
+      .findWhere((node) => node.equals(<dt>olm~Provider</dt>))
       .parents()
       .at(0)
       .find('dd')
       .at(0);
     const links = wrapper
-      .findWhere((node) => node.equals(<dt>Links</dt>))
+      .findWhere((node) => node.equals(<dt>olm~Links</dt>))
       .parents()
       .at(0)
       .find('dd');
     const maintainers = wrapper
-      .findWhere((node) => node.equals(<dt>Maintainers</dt>))
+      .findWhere((node) => node.equals(<dt>olm~Maintainers</dt>))
       .parents()
       .at(0)
       .find('dd');
 
-    expect(provider.text()).toEqual('Not available');
-    expect(links.text()).toEqual('Not available');
-    expect(maintainers.text()).toEqual('Not available');
+    expect(provider.text()).toEqual('olm~Not available');
+    expect(links.text()).toEqual('olm~Not available');
+    expect(maintainers.text()).toEqual('olm~Not available');
   });
 
   it('renders info section for ClusterServiceVersion', () => {
@@ -386,7 +415,7 @@ describe(ClusterServiceVersionDetails.displayName, () => {
         .at(1)
         .find(SectionHeading)
         .props().text,
-    ).toEqual('ClusterServiceVersion Details');
+    ).toEqual('olm~ClusterServiceVersion details');
   });
 
   it('renders conditions section for ClusterServiceVersion', () => {
@@ -396,7 +425,7 @@ describe(ClusterServiceVersionDetails.displayName, () => {
         .at(2)
         .find(SectionHeading)
         .props().text,
-    ).toEqual('Conditions');
+    ).toEqual('olm~Conditions');
   });
 });
 
@@ -487,7 +516,6 @@ describe(ClusterServiceVersionsDetailsPage.displayName, () => {
   const ns = 'default';
 
   beforeEach(() => {
-    spyOn(rbac, 'useAccessReview').and.returnValue(true);
     wrapper = shallow(
       <ClusterServiceVersionsDetailsPage
         match={{ params: { ns, name }, isExact: true, url: '', path: '' }}
@@ -506,20 +534,22 @@ describe(ClusterServiceVersionsDetailsPage.displayName, () => {
   it('renders a `DetailsPage` with the correct subpages', () => {
     const detailsPage = wrapper.find(DetailsPage);
     expect(detailsPage.props().pagesFor(testClusterServiceVersion)[0].nameKey).toEqual(
-      `${i18nNS}~Details`,
+      'details-page~Details',
     );
     expect(detailsPage.props().pagesFor(testClusterServiceVersion)[0].href).toEqual('');
     expect(detailsPage.props().pagesFor(testClusterServiceVersion)[0].component).toEqual(
       ClusterServiceVersionDetails,
     );
     expect(detailsPage.props().pagesFor(testClusterServiceVersion)[1].nameKey).toEqual(
-      `${i18nNS}~YAML`,
+      `details-page~YAML`,
     );
     expect(detailsPage.props().pagesFor(testClusterServiceVersion)[1].href).toEqual('yaml');
-    expect(detailsPage.props().pagesFor(testClusterServiceVersion)[2].name).toEqual('Subscription');
+    expect(detailsPage.props().pagesFor(testClusterServiceVersion)[2].nameKey).toEqual(
+      'olm~Subscription',
+    );
     expect(detailsPage.props().pagesFor(testClusterServiceVersion)[2].href).toEqual('subscription');
     expect(detailsPage.props().pagesFor(testClusterServiceVersion)[3].nameKey).toEqual(
-      `${i18nNS}~Events`,
+      `details-page~Events`,
     );
     expect(detailsPage.props().pagesFor(testClusterServiceVersion)[3].href).toEqual('events');
   });
@@ -532,7 +562,7 @@ describe(ClusterServiceVersionsDetailsPage.displayName, () => {
       { name: 'e.example.com', kind: 'E', version: 'v1alpha1', displayName: 'E' },
     ]);
 
-    expect(detailsPage.props().pagesFor(csv)[4].name).toEqual('All Instances');
+    expect(detailsPage.props().pagesFor(csv)[4].nameKey).toEqual('olm~All instances');
     expect(detailsPage.props().pagesFor(csv)[4].href).toEqual('instances');
     csv.spec.customresourcedefinitions.owned.forEach((desc, i) => {
       expect(detailsPage.props().pagesFor(csv)[5 + i].name).toEqual(desc.displayName);

@@ -48,7 +48,7 @@ describe('Create namespace from install operators', () => {
     // verify operator began installation
     cy.byTestID('view-installed-operators-btn').should(
       'contain',
-      `View Installed Operators in namespace ${nsName}`,
+      `View installed Operators in Namespace ${nsName}`,
     );
 
     // Verify namespace was created successfully

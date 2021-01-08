@@ -66,21 +66,21 @@ export const CreateCatalogSource: React.FC<CreateCatalogSourceProps> = withHandl
     const availabilityKinds = [
       {
         value: AvailabilityValue.ALL_NAMESPACES,
-        title: t('create-catalog-source~Cluster-wide {{resource}}', {
+        title: t('olm~Cluster-wide {{resource}}', {
           resource: CatalogSourceModel.label,
         }),
-        desc: t('create-catalog-source~Catalog will be available in all namespaces'),
+        desc: t('olm~Catalog will be available in all namespaces'),
       },
       {
         value: AvailabilityValue.SINGLE_NAMESPACE,
-        title: t('create-catalog-source~Namespace {{resource}}', {
+        title: t('olm~Namespace {{resource}}', {
           resource: CatalogSourceModel.label,
         }),
-        desc: t('create-catalog-source~Catalog will only be available in a single namespace'),
+        desc: t('olm~Catalog will only be available in a single namespace'),
       },
     ];
 
-    const title = t('create-catalog-source~Create {{resource}}', {
+    const title = t('olm~Create {{resource}}', {
       resource: CatalogSourceModel.label,
     });
     return (
@@ -90,16 +90,13 @@ export const CreateCatalogSource: React.FC<CreateCatalogSourceProps> = withHandl
         </Helmet>
         <h1 className="co-m-pane__heading">{title}</h1>
         <p className="co-m-pane__explanation">
-          {t(
-            'create-catalog-source~Create a {{resource}} in order to make operators available in OperatorHub.',
-            { resource: CatalogSourceModel.label },
-          )}
+          {t('olm~Create a CatalogSource in order to make operators available in OperatorHub.')}
         </p>
         <Form onSubmit={onSave}>
           <FormGroup
             fieldId="catalog-source-name"
             isRequired
-            label={t('create-catalog-source~{{resource}} name', {
+            label={t('olm~{{resource}} name', {
               resource: CatalogSourceModel.label,
             })}
           >
@@ -113,10 +110,7 @@ export const CreateCatalogSource: React.FC<CreateCatalogSourceProps> = withHandl
               value={name}
             />
           </FormGroup>
-          <FormGroup
-            fieldId="catalog-source-display-name"
-            label={t('create-catalog-source~Display name')}
-          >
+          <FormGroup fieldId="catalog-source-display-name" label={t('olm~Display name')}>
             <TextInput
               id="catalog-source-display-name"
               name="caltalog-source-display-name"
@@ -126,10 +120,7 @@ export const CreateCatalogSource: React.FC<CreateCatalogSourceProps> = withHandl
               value={displayName}
             />
           </FormGroup>
-          <FormGroup
-            fieldId="catalog-source-publisher"
-            label={t('create-catalog-source~Publisher name')}
-          >
+          <FormGroup fieldId="catalog-source-publisher" label={t('olm~Publisher name')}>
             <TextInput
               id="catalog-source-publisher"
               isRequired
@@ -141,10 +132,10 @@ export const CreateCatalogSource: React.FC<CreateCatalogSourceProps> = withHandl
             />
           </FormGroup>
           <FormGroup
-            label={t('create-catalog-source~Image (URL of container image)')}
+            label={t('olm~Image (URL of container image)')}
             isRequired
             fieldId="catalog-source-image"
-            helperText={t('create-catalog-source~URL of container image hosted on a registry')}
+            helperText={t('olm~URL of container image hosted on a registry')}
           >
             <TextInput
               aria-describedby="catalog-source-image-helper"
@@ -157,10 +148,7 @@ export const CreateCatalogSource: React.FC<CreateCatalogSourceProps> = withHandl
               value={image}
             />
           </FormGroup>
-          <FormGroup
-            fieldId="catalog-source-availability"
-            label={t('create-catalog-source~Availability')}
-          >
+          <FormGroup fieldId="catalog-source-availability" label={t('olm~Availability')}>
             <RadioGroup
               currentValue={availability}
               items={availabilityKinds}
@@ -168,11 +156,7 @@ export const CreateCatalogSource: React.FC<CreateCatalogSourceProps> = withHandl
             />
           </FormGroup>
           {availability === AvailabilityValue.SINGLE_NAMESPACE && (
-            <FormGroup
-              fieldId="catalog-source-namespace"
-              label={t('create-catalog-source~Namespace')}
-              isRequired
-            >
+            <FormGroup fieldId="catalog-source-namespace" label={t('olm~Namespace')} isRequired>
               <NsDropdown
                 selectedKey={namespace}
                 onChange={onNamespaceChange}
@@ -183,10 +167,10 @@ export const CreateCatalogSource: React.FC<CreateCatalogSourceProps> = withHandl
           <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
             <ActionGroup className="pf-c-form__group--no-top-margin">
               <Button type="submit" variant="primary" id="save-changes">
-                {t('create-catalog-source~Create')}
+                {t('olm~Create')}
               </Button>
               <Button type="button" variant="secondary" id="cancel" onClick={history.goBack}>
-                {t('create-catalog-source~Cancel')}
+                {t('olm~Cancel')}
               </Button>
             </ActionGroup>
           </ButtonBar>

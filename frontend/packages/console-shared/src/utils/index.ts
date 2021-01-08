@@ -17,3 +17,4 @@ export * from './helm-utils';
 export * from './hpa-utils';
 export * from './sample-utils';
 export * from './multiselectdropdown';
+export * from './annotations';

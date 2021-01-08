@@ -66,6 +66,7 @@ export const getURLSearchParams = () => {
 };
 
 export const ExternalLink: React.FC<ExternalLinkProps> = ({
+  children,
   href,
   text,
   additionalClassName = '',
@@ -78,7 +79,7 @@ export const ExternalLink: React.FC<ExternalLinkProps> = ({
     rel="noopener noreferrer"
     data-test-id={dataTestID}
   >
-    {text}
+    {children || text}
   </a>
 );
 
@@ -90,7 +91,7 @@ LinkifyExternal.displayName = 'LinkifyExternal';
 
 type ExternalLinkProps = {
   href: string;
-  text: React.ReactNode;
+  text?: React.ReactNode;
   additionalClassName?: string;
   dataTestID?: string;
 };

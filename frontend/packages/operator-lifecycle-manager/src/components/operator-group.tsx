@@ -12,56 +12,61 @@ import { AsyncComponent } from '@console/internal/components/utils/async';
 import { getActiveNamespace } from '@console/internal/actions/ui';
 import { OperatorGroupModel } from '../models';
 import { OperatorGroupKind, SubscriptionKind, InstallModeType } from '../types';
+import { useTranslation } from 'react-i18next';
 
 export const targetNamespacesFor = (obj: K8sResourceKind) =>
-  _.get(obj, ['metadata', 'annotations', 'olm.targetNamespaces']);
+  obj?.metadata?.annotations?.['olm.targetNamespaces'];
 export const operatorNamespaceFor = (obj: K8sResourceKind) =>
-  _.get(obj, ['metadata', 'annotations', 'olm.operatorNamespace']);
+  obj?.metadata?.annotations?.['olm.operatorNamespace'];
 export const operatorGroupFor = (obj: K8sResourceKind) =>
-  _.get(obj, ['metadata', 'annotations', 'olm.operatorGroup']);
+  obj?.metadata?.annotations?.['olm.operatorGroup'];
 
-export const NoOperatorGroupMsg: React.SFC = () => (
-  <MsgBox
-    title="Namespace Not Enabled"
-    detail={
-      <p>
-        The Operator Lifecycle Manager will not watch this namespace because it is not configured
-        with an OperatorGroup.{' '}
-        <Link to={`/ns/${getActiveNamespace()}/${referenceForModel(OperatorGroupModel)}/~new`}>
-          Create one here.
-        </Link>
-      </p>
-    }
-  />
-);
-
-type RequireOperatorGroupProps = {
-  operatorGroup: { loaded: boolean; data?: OperatorGroupKind[] };
+export const NoOperatorGroupMsg: React.FC = () => {
+  const { t } = useTranslation();
+  return (
+    <MsgBox
+      title="Namespace Not Enabled"
+      detail={
+        <p>
+          {t(
+            'olm~The Operator Lifecycle Manager will not watch this Namespace because it is not configured with an OperatorGroup.',
+          )}
+          &nbsp;
+          <Link to={`/ns/${getActiveNamespace()}/${referenceForModel(OperatorGroupModel)}/~new`}>
+            {t('olm~Create one here.')}
+          </Link>
+        </p>
+      }
+    />
+  );
 };
 
-export const OperatorGroupSelector: React.SFC<OperatorGroupSelectorProps> = (props) => (
-  <AsyncComponent
-    loader={() =>
-      import('@console/internal/components/utils/list-dropdown').then((m) => m.ListDropdown)
-    }
-    onChange={
-      props.onChange ||
-      function() {
-        return null;
+export const OperatorGroupSelector: React.FC<OperatorGroupSelectorProps> = (props) => {
+  const { t } = useTranslation();
+  return (
+    <AsyncComponent
+      loader={() =>
+        import('@console/internal/components/utils/list-dropdown').then((m) => m.ListDropdown)
       }
-    }
-    desc="Operator Groups"
-    placeholder="Select Operator Group"
-    selectedKeyKind={referenceForModel(OperatorGroupModel)}
-    dataFilter={props.dataFilter}
-    resources={[
-      {
-        kind: referenceForModel(OperatorGroupModel),
-        fieldSelector: `metadata.name!=${props.excludeName}`,
-      },
-    ]}
-  />
-);
+      onChange={
+        props.onChange ||
+        function() {
+          return null;
+        }
+      }
+      desc={OperatorGroupModel.plural}
+      placeholder={t('olm~Select OperatorGroup')}
+      selectedKeyKind={referenceForModel(OperatorGroupModel)}
+      dataFilter={props.dataFilter}
+      resources={[
+        {
+          kind: referenceForModel(OperatorGroupModel),
+          fieldSelector: `metadata.name!=${props.excludeName}`,
+        },
+      ]}
+    />
+  );
+};
 
 export const requireOperatorGroup = <P extends RequireOperatorGroupProps>(
   Component: React.ComponentType<P>,
@@ -84,7 +89,7 @@ export type InstallModeSet = { type: InstallModeType; supported: boolean }[];
  * Logic consistent with https://github.com/operator-framework/operator-lifecycle-manager/blob/4ef074e4207f5518d95ddf8c378036dfc4270dda/pkg/api/apis/operators/v1alpha1/clusterserviceversion.go#L165.
  */
 export const supports = (set: InstallModeSet) => (obj: OperatorGroupKind) => {
-  const namespaces = _.get(obj.status, 'namespaces') || [];
+  const namespaces = obj?.status?.namespaces ?? [];
   const supportedModes = set.filter(({ supported }) => supported).map(({ type }) => type);
 
   if (namespaces.length === 0) {
@@ -150,7 +155,7 @@ export const installedFor = (allSubscriptions: SubscriptionKind[] = []) => (
 };
 
 export const providedAPIsForOperatorGroup = (og: OperatorGroupKind) =>
-  _.get(og.metadata.annotations, 'olm.providedAPIs', '')
+  (og?.metadata?.annotations?.['olm.providedAPIs'] ?? '')
     .split(',')
     .map((api) => ({
       group: api
@@ -161,6 +166,10 @@ export const providedAPIsForOperatorGroup = (og: OperatorGroupKind) =>
       kind: api.split('.')[0],
     }))
     .map(({ group, version, kind }) => referenceForGroupVersionKind(group)(version)(kind));
+
+type RequireOperatorGroupProps = {
+  operatorGroup: { loaded: boolean; data?: OperatorGroupKind[] };
+};
 
 export type OperatorGroupSelectorProps = {
   onChange?: (name: string, kind: GroupVersionKind) => void;

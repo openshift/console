@@ -140,7 +140,7 @@ export type DetailsItemProps = {
   labelClassName?: string;
   obj: K8sResourceKind;
   onEdit?: (e: React.MouseEvent<HTMLButtonElement>) => void;
-  path: string | string[];
+  path?: string | string[];
   valueClassName?: string;
 };
 

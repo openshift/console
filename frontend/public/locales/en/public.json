@@ -14,8 +14,13 @@
   "Warning": "Warning",
   "Not available": "Not available",
   "Resource": "Resource",
+  "Status": "Status",
+  "Display name": "Display name",
+  "Name": "Name",
   "Delete": "Delete",
   "Disable": "Disable",
   "default": "default",
-  "OK": "OK"
+  "OK": "OK",
+  "Latest version": "Latest version",
+  "Created": "Created"
 }

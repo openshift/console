@@ -3,8 +3,7 @@ import * as _ from 'lodash';
 import { match, Link } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
-import { withTranslation } from 'react-i18next';
-import { TFunction } from 'i18next';
+import { useTranslation } from 'react-i18next';
 import { Alert, Button, Popover } from '@patternfly/react-core';
 import { InProgressIcon, PencilAltIcon } from '@patternfly/react-icons';
 import { Conditions } from '@console/internal/components/conditions';
@@ -14,7 +13,7 @@ import {
   Table,
   TableRow,
   TableData,
-  RowFunction,
+  RowFunctionArgs,
 } from '@console/internal/components/factory';
 import {
   Kebab,
@@ -76,47 +75,35 @@ export const catalogSourceForSubscription = (
   catalogSources: CatalogSourceKind[] = [],
   subscription: SubscriptionKind,
 ): CatalogSourceKind =>
-  _.find(catalogSources, {
-    metadata: {
-      name: _.get(subscription, 'spec.source'),
-      namespace: _.get(subscription, 'spec.sourceNamespace'),
-    },
-  });
+  catalogSources.find(
+    (source) =>
+      source?.metadata?.name === subscription?.spec?.source &&
+      source?.metadata?.namespace === subscription?.spec?.sourceNamespace,
+  );
 
 export const installedCSVForSubscription = (
   clusterServiceVersions: ClusterServiceVersionKind[] = [],
   subscription: SubscriptionKind,
 ): ClusterServiceVersionKind =>
-  _.find(clusterServiceVersions, {
-    metadata: {
-      name: _.get(subscription, 'status.installedCSV'),
-    },
-  });
+  clusterServiceVersions.find((csv) => csv?.metadata?.name === subscription?.status?.installedCSV);
 
 export const packageForSubscription = (
   packageManifests: PackageManifestKind[] = [],
   subscription: SubscriptionKind,
 ): PackageManifestKind =>
-  _.find(packageManifests, {
-    metadata: {
-      name: _.get(subscription, 'spec.name'),
-    },
-    status: {
-      packageName: _.get(subscription, 'spec.name'),
-      catalogSource: _.get(subscription, 'spec.source'),
-      catalogSourceNamespace: _.get(subscription, 'spec.sourceNamespace'),
-    },
-  });
+  packageManifests.find(
+    (pkg) =>
+      pkg?.metadata?.name === subscription?.spec?.name &&
+      pkg?.status?.packageName === subscription?.spec?.name &&
+      pkg?.status?.catalogSource === subscription?.spec?.source &&
+      pkg?.status?.catalogSourceNamespace === subscription?.spec?.sourceNamespace,
+  );
 
 export const installPlanForSubscription = (
   installPlans: InstallPlanKind[] = [],
   subscription: SubscriptionKind,
 ): InstallPlanKind =>
-  _.find(installPlans, {
-    metadata: {
-      name: _.get(subscription, 'status.installplan.name'),
-    },
-  });
+  installPlans.find((ip) => ip?.metadata?.name === subscription?.status?.installPlan?.name);
 
 export const upgradeRequiresApproval = (subscription: SubscriptionKind): boolean =>
   subscription?.status?.state === SubscriptionState.SubscriptionStateUpgradePending &&
@@ -133,43 +120,10 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-export const SubscriptionTableHeader = () => {
-  return [
-    {
-      title: 'Name',
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: 'Namespace',
-      sortField: 'metadata.namespace',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-    },
-    {
-      title: 'Status',
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: 'Channel',
-      props: { className: tableColumnClasses[3] },
-    },
-    {
-      title: 'Approval Strategy',
-      props: { className: tableColumnClasses[4] },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses[5] },
-    },
-  ];
-};
-SubscriptionTableHeader.displayName = 'SubscriptionTableHeader';
-
 export const UpgradeApprovalLink: React.FC<{ subscription: SubscriptionKind }> = ({
   subscription,
 }) => {
+  const { t } = useTranslation();
   const to = resourcePathFromModel(
     InstallPlanModel,
     subscription.status.installplan.name,
@@ -178,7 +132,7 @@ export const UpgradeApprovalLink: React.FC<{ subscription: SubscriptionKind }> =
   return (
     <span className="co-icon-and-text">
       <Link to={to}>
-        <BlueArrowCircleUpIcon /> Upgrade available
+        <BlueArrowCircleUpIcon /> {t('olm~Upgrade available')}
       </Link>
     </span>
   );
@@ -187,11 +141,12 @@ export const UpgradeApprovalLink: React.FC<{ subscription: SubscriptionKind }> =
 export const SubscriptionStatus: React.FC<{ subscription: SubscriptionKind }> = ({
   subscription,
 }) => {
+  const { t } = useTranslation();
   switch (subscription.status.state) {
     case SubscriptionState.SubscriptionStateUpgradeAvailable:
       return (
         <span>
-          <YellowExclamationTriangleIcon /> Upgrade available
+          <YellowExclamationTriangleIcon /> {t('olm~Upgrade available')}
         </span>
       );
     case SubscriptionState.SubscriptionStateUpgradePending:
@@ -199,19 +154,19 @@ export const SubscriptionStatus: React.FC<{ subscription: SubscriptionKind }> = 
         <UpgradeApprovalLink subscription={subscription} />
       ) : (
         <span>
-          <InProgressIcon className="text-primary" /> Upgrading
+          <InProgressIcon className="text-primary" /> {t('olm~Upgrading')}
         </span>
       );
     case SubscriptionState.SubscriptionStateAtLatest:
       return (
         <span>
-          <GreenCheckCircleIcon /> Up to date
+          <GreenCheckCircleIcon /> {t('olm~Up to date')}
         </span>
       );
     default:
       return (
         <span className={_.isEmpty(subscription.status.state) ? 'text-muted' : ''}>
-          {subscription.status.state || 'Unknown failure'}
+          {subscription.status.state || t('olm~Unknown failure')}
         </span>
       );
   }
@@ -220,7 +175,8 @@ export const SubscriptionStatus: React.FC<{ subscription: SubscriptionKind }> = 
 const menuActions = [
   Kebab.factory.Edit,
   (kind, obj) => ({
-    label: 'Remove Subscription',
+    // t('olm~Remove Subscription')
+    labelKey: 'olm~Remove Subscription',
     callback: () => createUninstallOperatorModal({ k8sKill, k8sGet, k8sPatch, subscription: obj }),
     accessReview: {
       group: kind.apiGroup,
@@ -233,14 +189,16 @@ const menuActions = [
   (kind, obj) => {
     const installedCSV = _.get(obj, 'status.installedCSV');
     return {
-      label: `View ${ClusterServiceVersionModel.kind}...`,
+      // t('olm~View ClusterServiceVersion...')
+      labelKey: 'olm~View ClusterServiceVersion...',
       href: `/k8s/ns/${obj.metadata.namespace}/${ClusterServiceVersionModel.plural}/${installedCSV}`,
       hidden: !installedCSV,
     };
   },
 ];
 
-export const SubscriptionTableRow: RowFunction<SubscriptionKind> = ({ obj, index, key, style }) => {
+export const SubscriptionTableRow: React.FC<RowFunctionArgs> = ({ obj, index, key, style }) => {
+  const { t } = useTranslation();
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
@@ -266,7 +224,7 @@ export const SubscriptionTableRow: RowFunction<SubscriptionKind> = ({ obj, index
         {obj.spec.channel || 'default'}
       </TableData>
       <TableData className={tableColumnClasses[4]}>
-        {obj.spec.installPlanApproval || 'Automatic'}
+        {obj.spec.installPlanApproval || t('olm~Automatic')}
       </TableData>
       <TableData className={tableColumnClasses[5]}>
         <ResourceKebab
@@ -279,23 +237,61 @@ export const SubscriptionTableRow: RowFunction<SubscriptionKind> = ({ obj, index
   );
 };
 
-export const SubscriptionsList = requireOperatorGroup((props: SubscriptionsListProps) => (
-  <Table
-    {...props}
-    aria-label="Operator Subscriptions"
-    Header={SubscriptionTableHeader}
-    Row={SubscriptionTableRow}
-    EmptyMsg={() => (
-      <MsgBox
-        title="No Subscriptions Found"
-        detail="Each namespace can subscribe to a single channel of a package for automatic updates."
-      />
-    )}
-    virtualize
-  />
-));
+export const SubscriptionsList = requireOperatorGroup((props: SubscriptionsListProps) => {
+  const { t } = useTranslation();
+  const SubscriptionTableHeader = () => {
+    return [
+      {
+        title: t('olm~Name'),
+        sortField: 'metadata.name',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[0] },
+      },
+      {
+        title: t('olm~Namespace'),
+        sortField: 'metadata.namespace',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[1] },
+      },
+      {
+        title: t('olm~Status'),
+        props: { className: tableColumnClasses[2] },
+      },
+      {
+        title: t('olm~Channel'),
+        props: { className: tableColumnClasses[3] },
+      },
+      {
+        title: t('olm~Approval strategy'),
+        props: { className: tableColumnClasses[4] },
+      },
+      {
+        title: '',
+        props: { className: tableColumnClasses[5] },
+      },
+    ];
+  };
+  return (
+    <Table
+      {...props}
+      aria-label={t('olm~Operator Subscriptions')}
+      Header={SubscriptionTableHeader}
+      Row={(rowArgs) => <SubscriptionTableRow {...rowArgs} />}
+      EmptyMsg={() => (
+        <MsgBox
+          title={t('olm~No Subscriptions found')}
+          detail={t(
+            'olm~Each Namespace can subscribe to a single channel of a package for automatic updates.',
+          )}
+        />
+      )}
+      virtualize
+    />
+  );
+});
 
-export const SubscriptionsPage: React.SFC<SubscriptionsPageProps> = (props) => {
+export const SubscriptionsPage: React.FC<SubscriptionsPageProps> = (props) => {
+  const { t } = useTranslation();
   return (
     <MultiListPage
       {...props}
@@ -314,12 +310,12 @@ export const SubscriptionsPage: React.SFC<SubscriptionsPageProps> = (props) => {
         },
       ]}
       flatten={(resources) => _.get(resources.subscription, 'data', [])}
-      title="Subscriptions"
+      title={t('olm~Subscriptions')}
       canCreate
       createProps={{ to: '/operatorhub' }}
-      createButtonText="Create Subscription"
+      createButtonText={t('olm~Create Subscription')}
       ListComponent={SubscriptionsList}
-      filterLabel="Subscriptions by package"
+      filterLabel={t('olm~Subscriptions by package')}
     />
   );
 };
@@ -332,6 +328,7 @@ export const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
   packageManifests = [],
   subscriptions = [],
 }) => {
+  const { t } = useTranslation();
   const catalogSource = catalogSourceForSubscription(catalogSources, obj);
   const catalogSourceName = getName(catalogSource);
   const catalogSourceHealthy = obj?.status?.catalogHealth?.find(
@@ -344,7 +341,7 @@ export const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
     ({ type, status }) => type === 'Installed' && status === 'False',
   );
   const installFailedMessage =
-    installFailedCondition?.message || installFailedCondition?.reason || 'Install plan failed';
+    installFailedCondition?.message || installFailedCondition?.reason || t('olm~InstalPlan failed');
 
   const pkg = packageForSubscription(packageManifests, obj);
   if (new URLSearchParams(window.location.search).has('showDelete')) {
@@ -357,9 +354,15 @@ export const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
     <>
       <div className="co-m-pane__body">
         {!catalogSource && (
-          <Alert isInline className="co-alert" variant="warning" title="Catalog Source Removed">
-            The catalog source for this operator has been removed. The catalog source must be added
-            back in order for this operator to receive any updates.
+          <Alert
+            isInline
+            className="co-alert"
+            variant="warning"
+            title={t('olm~CatalogSource removed')}
+          >
+            {t(
+              'olm~The CatalogSource for this Operator has been removed. The CatalogSource must be added back in order for this Operator to receive any updates.',
+            )}
           </Alert>
         )}
         {installStatusPhase === InstallPlanPhase.InstallPlanPhaseFailed && (
@@ -372,7 +375,7 @@ export const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
             {installFailedMessage}
           </Alert>
         )}
-        <SectionHeading text="Subscription Details" />
+        <SectionHeading text={t('olm~Subscription details')} />
         <div className="co-m-pane__body-group">
           <SubscriptionUpdates
             catalogSource={catalogSource}
@@ -390,7 +393,7 @@ export const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
             </div>
             <div className="col-sm-6">
               <dl className="co-m-pane__details">
-                <dt>Installed Version</dt>
+                <dt>{t('olm~Installed version')}</dt>
                 <dd>
                   {installedCSV ? (
                     <ResourceLink
@@ -400,12 +403,12 @@ export const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
                       title={getName(installedCSV)}
                     />
                   ) : (
-                    'None'
+                    t('olm~None')
                   )}
                 </dd>
-                <dt>Starting Version</dt>
-                <dd>{obj.spec.startingCSV || 'None'}</dd>
-                <dt>Catalog Source</dt>
+                <dt>{t('olm~Starting version')}</dt>
+                <dd>{obj.spec.startingCSV || t('olm~None')}</dd>
+                <dt>{t('olm~CatalogSource')}</dt>
                 <dd>
                   {catalogSource ? (
                     <ResourceLink
@@ -428,10 +431,10 @@ export const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
                       )}
                     </ResourceLink>
                   ) : (
-                    'None'
+                    t('olm~None')
                   )}
                 </dd>
-                <dt>Install Plan</dt>
+                <dt>{t('olm~InstallPlan')}</dt>
                 <dd>
                   {installPlan ? (
                     <ResourceLink
@@ -441,7 +444,7 @@ export const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
                       title={getName(installPlan)}
                     />
                   ) : (
-                    'None'
+                    t('olm~None')
                   )}
                 </dd>
               </dl>
@@ -450,183 +453,175 @@ export const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
         </div>
       </div>
       <div className="co-m-pane__body">
-        <SectionHeading text="Conditions" />
+        <SectionHeading text={t('olm~Conditions')} />
         <Conditions conditions={obj?.status?.conditions} />
       </div>
     </>
   );
 };
 
-class SubscriptionUpdatesWithTranslation extends React.Component<
-  SubscriptionUpdatesProps,
-  SubscriptionUpdatesState
-> {
-  constructor(props) {
-    super(props);
-    this.state = {
-      waitingForUpdate: false,
-      installPlanApproval: _.get(props.obj, 'spec.installPlanApproval'),
-      channel: _.get(props.obj, 'spec.channel'),
-    };
-  }
+export const SubscriptionUpdates: React.FC<SubscriptionUpdatesProps> = ({
+  catalogSource,
+  installedCSV,
+  installPlan,
+  obj,
+  pkg,
+  subscriptions,
+}) => {
+  const { t } = useTranslation();
+  const prevInstallPlanApproval = React.useRef(obj?.spec?.installPlanApproval);
+  const prevChannel = React.useRef(obj?.spec?.channel);
+  const [waitingForUpdate, setWaitingForUpdate] = React.useState(false);
 
-  static getDerivedStateFromProps(nextProps, prevState) {
+  React.useEffect(() => {
     const stillWaiting =
-      prevState.waitingForUpdate &&
-      _.get(nextProps, 'obj.spec.channel') === prevState.channel &&
-      _.get(nextProps, 'obj.spec.installPlanApproval') === prevState.installPlanApproval;
+      waitingForUpdate &&
+      obj?.spec?.channel === prevChannel.current &&
+      obj?.spec?.installPlanApproval === prevInstallPlanApproval.current;
 
-    return stillWaiting
-      ? null
-      : {
-          waitingForUpdate: false,
-          channel: _.get(nextProps, 'obj.spec.channel'),
-          installPlanApproval: _.get(nextProps, 'obj.spec.installPlanApproval'),
-        };
-  }
+    if (!stillWaiting) {
+      setWaitingForUpdate(false);
+      prevChannel.current = obj?.spec?.channel;
+      prevInstallPlanApproval.current = obj?.spec?.installPlanApproval;
+    }
+  }, [obj, waitingForUpdate]);
 
-  render() {
-    const { catalogSource, installedCSV, obj, pkg, subscriptions, t } = this.props;
-
-    const k8sUpdateAndWait = (...args) =>
-      k8sUpdate(...args).then(() => this.setState({ waitingForUpdate: true }));
-    const channelModal = () =>
-      createSubscriptionChannelModal({ subscription: obj, pkg, k8sUpdate: k8sUpdateAndWait });
-    const approvalModal = () =>
-      createInstallPlanApprovalModal({ obj, k8sUpdate: k8sUpdateAndWait });
-    const installPlanPhase = (installPlan: InstallPlanKind) => {
-      switch (_.get(installPlan, 'status.phase') as InstallPlanPhase) {
+  const k8sUpdateAndWait = (...args) => k8sUpdate(...args).then(() => setWaitingForUpdate(true));
+  const channelModal = () =>
+    createSubscriptionChannelModal({ subscription: obj, pkg, k8sUpdate: k8sUpdateAndWait });
+  const approvalModal = () => createInstallPlanApprovalModal({ obj, k8sUpdate: k8sUpdateAndWait });
+  const installPlanPhase = React.useMemo(() => {
+    if (installPlan) {
+      switch (installPlan.status?.phase as InstallPlanPhase) {
         case InstallPlanPhase.InstallPlanPhaseRequiresApproval:
-          return '1 requires approval';
+          return t('olm~1 requires approval');
         case InstallPlanPhase.InstallPlanPhaseFailed:
-          return '1 failed';
+          return t('olm~1 failed');
         default:
-          return '1 installing';
+          return t('olm~1 installing');
       }
-    };
-    const manualSubscriptionsInNamespace = getManualSubscriptionsInNamespace(
-      subscriptions,
-      obj.metadata.namespace,
-    );
+    }
+    return null;
+  }, [installPlan, t]);
+  const manualSubscriptionsInNamespace = getManualSubscriptionsInNamespace(
+    subscriptions,
+    obj.metadata.namespace,
+  );
 
-    return (
-      <div className="co-detail-table">
-        <div className="co-detail-table__row row">
-          <div className="co-detail-table__section col-sm-3">
-            <dl className="co-m-pane__details">
-              <dt className="co-detail-table__section-header">Channel</dt>
-              <dd>
-                {this.state.waitingForUpdate ? (
-                  <LoadingInline />
-                ) : (
-                  <Button
-                    type="button"
-                    isInline
-                    onClick={channelModal}
-                    variant="link"
-                    isDisabled={!pkg}
-                  >
-                    {obj.spec.channel || 'default'}
-                    {pkg && <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />}
-                  </Button>
-                )}
-              </dd>
-            </dl>
-          </div>
-          <div className="co-detail-table__section col-sm-3">
-            <dl className="co-m-pane__details">
-              <dt className="co-detail-table__section-header">Approval</dt>
-              <dd>
-                {this.state.waitingForUpdate ? (
-                  <LoadingInline />
-                ) : (
-                  <>
-                    <div>
-                      <Button type="button" isInline onClick={approvalModal} variant="link">
-                        {obj.spec.installPlanApproval || 'Automatic'}
-                        <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
-                      </Button>
-                    </div>
-                    {obj.spec.installPlanApproval === InstallPlanApproval.Automatic &&
-                      manualSubscriptionsInNamespace?.length > 0 && (
-                        <div>
-                          <Popover
-                            headerContent={
-                              <>{t('subscription~Functioning as manual approval strategy')}</>
-                            }
-                            bodyContent={
-                              <NamespaceIncludesManualApproval
-                                subscriptions={manualSubscriptionsInNamespace}
-                                namespace={obj.metadata.namespace}
-                              />
-                            }
-                          >
-                            <Button type="button" isInline variant="link">
-                              <BlueInfoCircleIcon className="co-icon-space-r" />
-                              {t('subscription~Functioning as manual')}
-                            </Button>
-                          </Popover>
-                        </div>
-                      )}
-                  </>
-                )}
-              </dd>
-            </dl>
-          </div>
-          <div className="co-detail-table__section co-detail-table__section--last col-sm-6">
-            <dl className="co-m-pane__details">
-              <dt className="co-detail-table__section-header">Upgrade Status</dt>
-              {catalogSource ? (
-                <dd>
-                  <SubscriptionStatus subscription={obj} />
-                </dd>
+  return (
+    <div className="co-detail-table">
+      <div className="co-detail-table__row row">
+        <div className="co-detail-table__section col-sm-3">
+          <dl className="co-m-pane__details">
+            <dt className="co-detail-table__section-header">{t('olm~Channel')}</dt>
+            <dd>
+              {waitingForUpdate ? (
+                <LoadingInline />
               ) : (
-                <dd>
-                  <WarningStatus title="Cannot update" />
-                  <span className="text-muted">Catalog source was removed</span>
-                </dd>
+                <Button
+                  type="button"
+                  isInline
+                  onClick={channelModal}
+                  variant="link"
+                  isDisabled={!pkg}
+                >
+                  {obj.spec.channel || 'default'}
+                  {pkg && <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />}
+                </Button>
               )}
-            </dl>
-            {catalogSource && (
-              <>
-                <div className="co-detail-table__bracket" />
-                <div className="co-detail-table__breakdown">
-                  {_.get(obj.status, 'installedCSV') && installedCSV ? (
-                    <Link
-                      to={`/k8s/ns/${obj.metadata.namespace}/${referenceForModel(
-                        ClusterServiceVersionModel,
-                      )}/${_.get(obj.status, 'installedCSV')}`}
-                    >
-                      1 installed
-                    </Link>
-                  ) : (
-                    <span>0 installed</span>
-                  )}
-                  {_.get(obj.status, 'state') ===
-                    SubscriptionState.SubscriptionStateUpgradePending &&
-                  _.get(obj.status, 'installplan') &&
-                  this.props.installPlan ? (
-                    <Link
-                      to={`/k8s/ns/${obj.metadata.namespace}/${referenceForModel(
-                        InstallPlanModel,
-                      )}/${_.get(obj.status, 'installplan.name')}`}
-                    >
-                      <span>{installPlanPhase(this.props.installPlan)}</span>
-                    </Link>
-                  ) : (
-                    <span>0 installing</span>
-                  )}
-                </div>
-              </>
+            </dd>
+          </dl>
+        </div>
+        <div className="co-detail-table__section col-sm-3">
+          <dl className="co-m-pane__details">
+            <dt className="co-detail-table__section-header">{t('olm~Approval')}</dt>
+            <dd>
+              {waitingForUpdate ? (
+                <LoadingInline />
+              ) : (
+                <>
+                  <div>
+                    <Button type="button" isInline onClick={approvalModal} variant="link">
+                      {obj.spec.installPlanApproval || 'Automatic'}
+                      <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
+                    </Button>
+                  </div>
+                  {obj.spec.installPlanApproval === InstallPlanApproval.Automatic &&
+                    manualSubscriptionsInNamespace?.length > 0 && (
+                      <div>
+                        <Popover
+                          headerContent={
+                            <>{t('subscription~Functioning as manual approval strategy')}</>
+                          }
+                          bodyContent={
+                            <NamespaceIncludesManualApproval
+                              subscriptions={manualSubscriptionsInNamespace}
+                              namespace={obj.metadata.namespace}
+                            />
+                          }
+                        >
+                          <Button type="button" isInline variant="link">
+                            <BlueInfoCircleIcon className="co-icon-space-r" />
+                            {t('subscription~Functioning as manual')}
+                          </Button>
+                        </Popover>
+                      </div>
+                    )}
+                </>
+              )}
+            </dd>
+          </dl>
+        </div>
+        <div className="co-detail-table__section co-detail-table__section--last col-sm-6">
+          <dl className="co-m-pane__details">
+            <dt className="co-detail-table__section-header">{t('olm~Upgrade status')}</dt>
+            {catalogSource ? (
+              <dd>
+                <SubscriptionStatus subscription={obj} />
+              </dd>
+            ) : (
+              <dd>
+                <WarningStatus title={t('olm~Cannot update')} />
+                <span className="text-muted">{t('olm~CatalogSource was removed')}</span>
+              </dd>
             )}
-          </div>
+          </dl>
+          {catalogSource && (
+            <>
+              <div className="co-detail-table__bracket" />
+              <div className="co-detail-table__breakdown">
+                {obj?.status?.installedCSV && installedCSV ? (
+                  <Link
+                    to={`/k8s/ns/${obj.metadata.namespace}/${referenceForModel(
+                      ClusterServiceVersionModel,
+                    )}/${obj.status.installedCSV}`}
+                  >
+                    {t('olm~1 installed')}
+                  </Link>
+                ) : (
+                  <span>{t('olm~0 installed')}</span>
+                )}
+                {obj?.status?.state === SubscriptionState.SubscriptionStateUpgradePending &&
+                obj?.status?.installplan &&
+                installPlan ? (
+                  <Link
+                    to={`/k8s/ns/${obj.metadata.namespace}/${referenceForModel(InstallPlanModel)}/${
+                      obj.status.installplan.name
+                    }`}
+                  >
+                    <span>{installPlanPhase}</span>
+                  </Link>
+                ) : (
+                  <span>{t('olm~0 installing')}</span>
+                )}
+              </div>
+            </>
+          )}
         </div>
       </div>
-    );
-  }
-}
-
-export const SubscriptionUpdates = withTranslation()(SubscriptionUpdatesWithTranslation);
+    </div>
+  );
+};
 
 export const SubscriptionDetailsPage: React.FC<SubscriptionDetailsPageProps> = (props) => (
   <DetailsPage
@@ -689,7 +684,6 @@ export type SubscriptionUpdatesProps = {
   installedCSV?: ClusterServiceVersionKind;
   installPlan?: InstallPlanKind;
   subscriptions: SubscriptionKind[];
-  t: TFunction;
 };
 
 export type SubscriptionUpdatesState = {
@@ -712,7 +706,6 @@ export type SubscriptionDetailsPageProps = {
   namespace: string;
 };
 
-SubscriptionsList.displayName = 'SubscriptionsList';
 SubscriptionsPage.displayName = 'SubscriptionsPage';
 SubscriptionDetails.displayName = 'SubscriptionDetails';
 SubscriptionDetailsPage.displayName = 'SubscriptionDetailsPage';

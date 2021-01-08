@@ -54,6 +54,7 @@ import { OperatorHubKind } from './operator-hub';
 import { editRegitryPollInterval } from './modals/edit-registry-poll-interval-modal';
 import { PackageManifestsPage } from './package-manifest';
 import useOperatorHubConfig from '../utils/useOperatorHubConfig';
+import i18n from '@console/internal/i18n';
 
 const DEFAULT_SOURCE_NAMESPACE = 'openshift-marketplace';
 const catalogSourceModelReference = referenceForModel(CatalogSourceModel);
@@ -68,8 +69,8 @@ const disableSourceModal = (
   operatorHub: OperatorHubKind,
   sourceName: string,
 ): KebabOption => ({
-  // t('catalog-source~Disable')
-  labelKey: 'catalog-source~Disable',
+  // t('olm~Disable')
+  labelKey: 'olm~Disable',
   callback: () => disableDefaultSourceModal({ kind, operatorHub, sourceName }),
   accessReview: asAccessReview(kind, operatorHub, 'patch'),
 });
@@ -79,8 +80,8 @@ const enableSource = (
   operatorHub: OperatorHubKind,
   sourceName: string,
 ): KebabOption => ({
-  // t('catalog-source~Enable')
-  labelKey: 'catalog-source~Enable',
+  // t('olm~Enable')
+  labelKey: 'olm~Enable',
   callback: () => {
     const currentSources = _.get(operatorHub, 'spec.sources', []);
     const patch = [
@@ -150,7 +151,7 @@ export const CatalogSourceDetails: React.FC<CatalogSourceDetailsProps> = ({
   return !_.isEmpty(catalogSource) ? (
     <div className="co-m-pane__body">
       <SectionHeading
-        text={t('catalog-source~CatalogSource details', {
+        text={t('olm~CatalogSource details', {
           resource: CatalogSourceModel.label,
         })}
       />
@@ -162,40 +163,45 @@ export const CatalogSourceDetails: React.FC<CatalogSourceDetailsProps> = ({
           <div className="co-m-pane__body">
             <DetailsItem
               editAsGroup
-              label="Status"
+              label={t('public~Status')}
               obj={catalogSource}
               path="status.connectionState.lastObservedState"
             />
-            <DetailsItem label="Display Name" obj={catalogSource} path="spec.displayName" />
-            <DetailsItem label="Publisher" obj={catalogSource} path="spec.publisher" />
             <DetailsItem
-              label="Availability"
+              label={t('public~Display name')}
               obj={catalogSource}
-              description="Denotes whether this CatalogSource provides operators to a specific namespace, or the entire cluster."
-              path=""
+              path="spec.displayName"
+            />
+            <DetailsItem label={t('olm~Publisher')} obj={catalogSource} path="spec.publisher" />
+            <DetailsItem
+              label={t('olm~Availability')}
+              obj={catalogSource}
+              description={t(
+                'olm~Denotes whether this CatalogSource provides operators to a specific namespace, or the entire cluster.',
+              )}
             >
               {catsrcNamespace}
             </DetailsItem>
             <DetailsItem
               label="Endpoint"
               obj={catalogSource}
-              description="The ConfigMap, image, or address for this CatalogSource's registry."
-              path=""
+              description={t(
+                "olm~The ConfigMap, image, or address for this CatalogSource's registry.",
+              )}
             >
               {getEndpoint(catalogSource)}
             </DetailsItem>
             <DetailsItem
-              label="Registry Poll Interval"
+              label={t('olm~Registry poll interval')}
               obj={catalogSource}
               path="spec.updateStrategy.registryPoll.interval"
               canEdit={!_.isEmpty(catalogSource.spec.updateStrategy)}
               onEdit={() => editRegitryPollInterval({ catalogSource })}
             />
             <DetailsItem
-              label="Number of Operators"
+              label={t('olm~Number of Operators')}
               obj={catalogSource}
-              description="The number of packages this CatalogSource provides."
-              path=""
+              description={t('olm~The number of packages this CatalogSource provides.')}
             >
               {operatorCount}
             </DetailsItem>
@@ -240,8 +246,8 @@ export const CatalogSourceDetailsPage: React.FC<CatalogSourceDetailsPageProps> =
         navFactory.editYaml(),
         {
           href: 'operators',
-          // t('catalog-source~Operators')
-          nameKey: 'catalog-source~Operators',
+          // t('olm~Operators')
+          nameKey: 'olm~Operators',
           component: CatalogSourceOperatorsPage,
         },
       ]}
@@ -294,8 +300,8 @@ export const CreateSubscriptionYAML: React.FC<CreateSubscriptionYAMLProps> = (pr
       },
       () => (
         <MsgBox
-          title={t('catalog-source~Package not found')}
-          detail={t('catalog-source~Cannot create a Subscription to a non-existent package.')}
+          title={t('olm~Package not found')}
+          detail={t('olm~Cannot create a Subscription to a non-existent package.')}
         />
       ),
     ),
@@ -409,43 +415,43 @@ const CatalogSourceList: React.FC<TableProps> = (props) => {
   const CatalogSourceHeader = () => {
     return [
       {
-        title: t('catalog-source~Name'),
+        title: t('public~Name'),
         sortField: 'name',
         transforms: [sortable],
         props: { className: tableColumnClasses[0] },
       },
       {
-        title: t('catalog-source~Status'),
+        title: t('public~Status'),
         sortField: 'status',
         transforms: [sortable],
         props: { className: tableColumnClasses[1] },
       },
       {
-        title: t('catalog-source~Publisher'),
+        title: t('olm~Publisher'),
         sortField: 'publisher',
         transforms: [sortable],
         props: { className: tableColumnClasses[2] },
       },
       {
-        title: t('catalog-source~Availability'),
+        title: t('olm~Availability'),
         sortField: 'availabilitySort',
         transforms: [sortable],
         props: { className: tableColumnClasses[3] },
       },
       {
-        title: t('catalog-source~Endpoint'),
+        title: t('olm~Endpoint'),
         sortField: 'endpoint',
         transforms: [sortable],
         props: { className: tableColumnClasses[4] },
       },
       {
-        title: t('catalog-source~Registry poll interval'),
+        title: t('olm~Registry poll interval'),
         sortField: 'registryPollInterval',
         transforms: [sortable],
         props: { className: tableColumnClasses[5] },
       },
       {
-        title: t('catalog-source~# of Operators'),
+        title: t('olm~# of Operators'),
         sortField: 'operatorCount',
         transforms: [sortable],
         props: { className: tableColumnClasses[6] },
@@ -481,18 +487,18 @@ const DisabledPopover: React.FC<DisabledPopoverProps> = ({ operatorHub, sourceNa
   const { t } = useTranslation();
   return (
     <PopoverStatus
-      title={t('catalog-source~Disabled')}
+      title={t('olm~Disabled')}
       isVisible={visible}
       shouldClose={close}
-      statusBody={<StatusIconAndText title={t('catalog-source~Disabled')} />}
+      statusBody={<StatusIconAndText title={t('olm~Disabled')} />}
     >
       <p>
         {t(
-          'catalog-source~Operators provided by this source will not appear in OperatorHub and any operators installed from this source will not receive updates until this source is re-enabled.',
+          'olm~Operators provided by this source will not appear in OperatorHub and any operators installed from this source will not receive updates until this source is re-enabled.',
         )}
       </p>
       <Button isInline variant="link" onClick={onClickEnable}>
-        {t('catalog-source~Enable source')}
+        {t('olm~Enable source')}
       </Button>
     </PopoverStatus>
   );
@@ -516,7 +522,7 @@ const flatten = ({
       const catalogSourceExists = !_.isEmpty(catalogSource);
       return {
         availability: catalogSourceExists ? (
-          'Cluster wide'
+          i18n.t('olm~Cluster wide')
         ) : (
           <DisabledPopover operatorHub={operatorHub} sourceName={defaultSource.name} />
         ),
@@ -542,7 +548,7 @@ const flatten = ({
   const customSources: CatalogSourceTableRowObj[] = _.map(catalogSources.data, (source) => ({
     availability:
       source.metadata.namespace === DEFAULT_SOURCE_NAMESPACE
-        ? 'Cluster wide'
+        ? i18n.t('olm~Cluster wide')
         : source.metadata.namespace,
     endpoint: getEndpoint(source),
     name: source.metadata.name,
@@ -569,8 +575,8 @@ export const CatalogSourceListPage: React.FC<CatalogSourceListPageProps> = (prop
       {...props}
       canCreate
       createAccessReview={{ model: CatalogSourceModel }}
-      createButtonText={t('catalog-source~Create {{resource}}', {
-        resource: CatalogSourceModel.label,
+      createButtonText={t('olm~Create {{item}}', {
+        item: CatalogSourceModel.label,
       })}
       createProps={{ to: `/k8s/cluster/${referenceForModel(CatalogSourceModel)}/~new` }}
       flatten={(data) => flatten({ operatorHub: props.obj, ...data })}
