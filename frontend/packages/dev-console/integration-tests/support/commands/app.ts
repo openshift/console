@@ -1,4 +1,4 @@
-import { checkErrors } from '../../../../integration-tests-cypress/support';
+// import { checkErrors } from '../../../../integration-tests-cypress/support';
 
 export {}; // needed in files which don't have an import to trigger ES6 module usage
 declare global {
@@ -26,7 +26,7 @@ after(() => {
 });
 
 afterEach(() => {
-  checkErrors();
+  // checkErrors();
 });
 
 Cypress.Commands.add('clickNavLink', (path: [string, string]) => {
