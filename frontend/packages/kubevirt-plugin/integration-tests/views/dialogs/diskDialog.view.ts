@@ -12,6 +12,5 @@ export const diskStorageClass = $('#disk-storage-class');
 export const advancedDrawerToggle = $('.modal-body').element(by.buttonText('Advanced'));
 export const diskVolumeMode = $('#disk-volume-mode');
 export const diskAccessMode = $('#disk-access-mode');
-export const diskInterfaceHelper = $('#disk-interface-helper');
 export const diskDropDownItem = (text) =>
   element(by.cssContainingText('.pf-c-select__menu-item-main', text));

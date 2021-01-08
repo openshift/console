@@ -1,6 +1,5 @@
 import { BaseVMBuilder } from './baseVMBuilder';
 import { VMBuilderData } from '../types/vm';
-import { DiskAdvance } from '../types/types';
 import { VirtualMachineModel } from '../../../src/models/index';
 import { VirtualMachine } from './virtualMachine';
 
@@ -34,8 +33,8 @@ export class VMBuilder extends BaseVMBuilder<VMBuilderData> {
     return this;
   }
 
-  public setDiskAdvance(diskAdvance: DiskAdvance) {
-    this.data.diskAdvance = diskAdvance;
+  public setPVCName(pvcName: string) {
+    this.data.pvcName = pvcName;
     return this;
   }
 

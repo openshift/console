@@ -23,8 +23,8 @@ export type Disk = {
   name?: string;
   size?: string;
   storageClass?: string;
-  interface: string;
-  drive: DISK_DRIVE;
+  interface?: string;
+  drive?: DISK_DRIVE;
   advanced?: {
     volumeMode?: string;
     accessMode?: string;
@@ -143,10 +143,4 @@ export const VirtualMachineTemplateModel: K8sKind = {
   namespaced: true,
   kind: 'Template',
   id: 'template',
-};
-
-export type DiskAdvance = {
-  StorageClass?: string;
-  AccessMode?: string;
-  VolumeMode?: string;
 };

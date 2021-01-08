@@ -1,6 +1,7 @@
 import { click, fillInput } from '@console/shared/src/test-utils/utils';
 import {
   selectOptionByText,
+  selectOptionByOptionValue,
   getSelectedOptionText,
   getSelectOptions,
   selectItemFromDropdown,
@@ -9,7 +10,10 @@ import {
 import * as view from '../../views/dialogs/diskDialog.view';
 import { modalSubmitButton, saveButton } from '../../views/kubevirtUIResource.view';
 import { Disk, DiskSourceConfig } from '../types/types';
-import { diskAccessMode, DISK_SOURCE } from '../utils/constants/vm';
+import { DISK_SOURCE } from '../utils/constants/vm';
+import { STORAGE_CLASS } from '../utils/constants/common';
+import { AccessMode, VolumeMode } from '../mocks/mocks';
+import { ProvisionSource } from '../utils/constants/enums/provisionSource';
 import { waitForNoLoaders, modalCancelButton, errorHelper } from '../../views/wizard.view';
 import { browser, ExpectedConditions as until, $ } from 'protractor';
 
@@ -18,6 +22,7 @@ export class DiskDialog {
     [DISK_SOURCE.AttachClonedDisk]: DiskDialog.selectSourceAttachClonedDisk,
     [DISK_SOURCE.AttachDisk]: DiskDialog.selectSourceAttachDisk,
     [DISK_SOURCE.Container]: DiskDialog.fillContainer,
+    [DISK_SOURCE.EphemeralContainer]: DiskDialog.fillContainer,
     [DISK_SOURCE.Url]: DiskDialog.fillURL,
   };
 
@@ -31,11 +36,19 @@ export class DiskDialog {
   }
 
   static async fillContainer(sourceConfig: DiskSourceConfig) {
-    await fillInput(view.diskContainer, sourceConfig.container);
+    if (sourceConfig === undefined) {
+      await fillInput(view.diskContainer, ProvisionSource.CONTAINER.getSource());
+    } else {
+      await fillInput(view.diskContainer, sourceConfig.container);
+    }
   }
 
   static async fillURL(sourceConfig: DiskSourceConfig) {
-    await fillInput(view.diskURL, sourceConfig.URL);
+    if (sourceConfig === undefined) {
+      await fillInput(view.diskContainer, ProvisionSource.URL.getSource());
+    } else {
+      await fillInput(view.diskContainer, sourceConfig.URL);
+    }
   }
 
   async fillName(name: string) {
@@ -59,20 +72,6 @@ export class DiskDialog {
     }
   }
 
-  async selectAdvancedOptions(advancedOptions) {
-    if (advancedOptions) {
-      await this.openAdvancedSettingsDrawer();
-
-      if (advancedOptions.accessMode) {
-        await this.selectAccessMode(advancedOptions.accessMode);
-      }
-
-      if (advancedOptions.volumeMode) {
-        await this.selectVolumeMode(advancedOptions.volumeMode);
-      }
-    }
-  }
-
   async openAdvancedSettingsDrawer() {
     if (await view.advancedDrawerToggle.isPresent()) {
       if ((await view.advancedDrawerToggle.getAttribute('aria-expanded')) === 'false') {
@@ -83,15 +82,18 @@ export class DiskDialog {
   }
 
   async selectVolumeMode(volumeMode: string) {
-    if (await view.diskVolumeMode.isPresent()) {
-      await selectOptionByText(view.diskVolumeMode, volumeMode);
-    }
+    await selectOptionByText(view.diskVolumeMode, volumeMode);
   }
 
   async selectAccessMode(accessMode: string) {
-    if (await view.diskAccessMode.isPresent()) {
-      await selectOptionByText(view.diskAccessMode, diskAccessMode[accessMode].label);
-    }
+    await selectOptionByOptionValue(view.diskAccessMode, accessMode);
+  }
+
+  async selectStorageOptions() {
+    await this.selectStorageClass(STORAGE_CLASS);
+    await this.openAdvancedSettingsDrawer();
+    await this.selectVolumeMode(VolumeMode);
+    await this.selectAccessMode(AccessMode);
   }
 
   async getDiskSource() {
@@ -119,21 +121,33 @@ export class DiskDialog {
     if (disk.size) {
       await this.fillSize(disk.size);
     }
+    if (disk.interface) {
+      await this.selectInterface(disk.interface);
+    }
 
-    await this.selectInterface(disk.interface);
-    await this.selectStorageClass(disk.storageClass);
+    if (await view.diskStorageClass.isPresent()) {
+      await this.selectStorageOptions();
+    }
+
     await click(modalSubmitButton);
     await waitForNoLoaders();
   }
 
   async edit(disk: Disk) {
-    await this.fillName(disk.name);
-    await this.selectInterface(disk.interface);
-    await this.selectStorageClass(disk.storageClass);
+    if (disk.name) {
+      await this.fillName(disk.name);
+    }
     if (disk.size) {
       await this.fillSize(disk.size);
     }
-    await this.selectAdvancedOptions(disk.advanced);
+    if (disk.interface) {
+      await this.selectInterface(disk.interface);
+    }
+
+    if (await view.diskStorageClass.isPresent()) {
+      await this.selectStorageOptions();
+    }
+
     await click(saveButton);
     await waitForNoLoaders();
   }

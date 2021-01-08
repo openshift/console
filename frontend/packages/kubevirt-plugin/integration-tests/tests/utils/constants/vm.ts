@@ -72,10 +72,11 @@ Object.freeze(networkTabCol);
 // Storage
 export enum DISK_SOURCE {
   AttachDisk = 'Use an existing PVC',
-  AttachClonedDisk = 'Clone an existing PVC',
+  AttachClonedDisk = 'Clone existing PVC',
   Blank = 'Blank',
-  Container = 'Container',
-  Url = 'Upload via URL',
+  Container = 'Import via Registry (creates PVC)',
+  EphemeralContainer = 'Container (ephemeral)',
+  Url = 'Import via URL',
 }
 
 export enum DISK_DRIVE {
