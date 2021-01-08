@@ -5,6 +5,7 @@ import {
   LOG_SOURCE_RUNNING,
   LOG_SOURCE_TERMINATED,
 } from '@console/internal/components/utils';
+import * as k8s from '@console/internal/module/k8s';
 import { ContainerStatus } from '@console/internal/module/k8s';
 import { SecretAnnotationId } from '../../components/pipelines/const';
 import { runStatus } from '../pipeline-augment';
@@ -18,12 +19,18 @@ import {
   calculateRelativeTime,
   hasInlineTaskSpec,
   LatestPipelineRunStatus,
+  updateServiceAccount,
 } from '../pipeline-utils';
 import {
   constructPipelineData,
   mockPipelinesJSON,
   mockRunDurationTest,
 } from './pipeline-test-data';
+import { mockPipelineServiceAccount } from './pipeline-serviceaccount-test-data';
+
+beforeAll(() => {
+  jest.spyOn(k8s, 'k8sUpdate').mockImplementation((model, data) => data);
+});
 
 describe('pipeline-utils ', () => {
   it('For first pipeline there should be 1 stages of length 2', () => {
@@ -166,5 +173,31 @@ describe('pipeline-utils ', () => {
   it('expect pipeline without inline task spec to return false', () => {
     const hasSpec = hasInlineTaskSpec(mockPipelinesJSON[0].spec.tasks);
     expect(hasSpec).toBe(false);
+  });
+
+  it('expect service account to have secret name available only in secrets property', async () => {
+    const gitSecretName = 'git-secret';
+    const serviceAccount = await updateServiceAccount(
+      gitSecretName,
+      mockPipelineServiceAccount,
+      false,
+    );
+    expect(serviceAccount.secrets.find((s) => s.name === gitSecretName)).toBeDefined();
+    expect(serviceAccount.imagePullSecrets.find((s) => s.name === gitSecretName)).toBeUndefined();
+    expect(serviceAccount.secrets).toHaveLength(2);
+    expect(serviceAccount.imagePullSecrets).toHaveLength(1);
+  });
+
+  it('expect service account to have secret name available in secrets and imagePullSecrets properties', async () => {
+    const imageSecretName = 'image-secret';
+    const serviceAccount = await updateServiceAccount(
+      imageSecretName,
+      mockPipelineServiceAccount,
+      true,
+    );
+    expect(serviceAccount.secrets.find((s) => s.name === imageSecretName)).toBeDefined();
+    expect(serviceAccount.imagePullSecrets.find((s) => s.name === imageSecretName)).toBeDefined();
+    expect(serviceAccount.secrets).toHaveLength(2);
+    expect(serviceAccount.imagePullSecrets).toHaveLength(2);
   });
 });
