@@ -120,7 +120,7 @@ const HyperCloudNav = () => (
           <ResourceNSLink resource="rolebindings" name="Role Bindings" startsWith={rolebindingsStartsWith} />
           <ResourceNSLink resource="rolebindingclaims" name="Role Binding Claims" startsWith={rolebindingsStartsWith} />
           <ResourceNSLink resource="serviceaccounts" name="Service Accounts" />
-          {/* <ResourceClusterLink resource="podsecuritypolicies" name="PodSecurityPolicy" /> */}
+          <ResourceClusterLink resource="podsecuritypolicies" name="PodSecurityPolicy" />
           {/* <AuthAdminLink resource={referenceForModel(UserModel)} name="Users" />
           <AuthAdminLink resource={referenceForModel(GroupModel)} name="User Groups" /> */}
         </NavSection>
