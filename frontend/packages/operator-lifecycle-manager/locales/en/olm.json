@@ -17,5 +17,21 @@
   "Uninstall Operator?": "Uninstall Operator?",
   "This will remove Operator <1>{{name}}</1> from <4>{{namespace}}</4>. Removing the Operator will not remove any of its custom resource definitions or managed resources. If your Operator has deployed applications on the cluster or configured off-cluster resources, these will continue to run and need to be cleaned up manually.": "This will remove Operator <1>{{name}}</1> from <4>{{namespace}}</4>. Removing the Operator will not remove any of its custom resource definitions or managed resources. If your Operator has deployed applications on the cluster or configured off-cluster resources, these will continue to run and need to be cleaned up manually.",
   "Message from Operator developer": "Message from Operator developer",
-  "Uninstall": "Uninstall"
+  "Uninstall": "Uninstall",
+  "Operator description": "Operator description",
+  "This resource is provided by {{displayName}}, a Kubernetes Operator enabled by the Operator Lifecycle Manager.": "This resource is provided by {{displayName}}, a Kubernetes Operator enabled by the Operator Lifecycle Manager.",
+  "Operator Backed": "Operator Backed",
+  "Browse for a variety of managed services that are installed by cluster administrators. Cluster administrators can customize the content made available in the catalog.": "Browse for a variety of managed services that are installed by cluster administrators. Cluster administrators can customize the content made available in the catalog.",
+  "**Operator backed** includes a variety of services managed by Kubernetes controllers.": "**Operator backed** includes a variety of services managed by Kubernetes controllers.",
+  "Pending": "Pending",
+  "OK": "OK",
+  "Failed": "Failed",
+  "Unknown": "Unknown",
+  "Upgrade available": "Upgrade available",
+  "Upgrading": "Upgrading",
+  "Up to date": "Up to date",
+  "Hide operator description": "Hide operator description",
+  "Show operator description": "Show operator description",
+  "This resource is provided by {{operatorName}}, a Kubernetes Operator enabled by the Operator Lifecycle Manager.": "This resource is provided by {{operatorName}}, a Kubernetes Operator enabled by the Operator Lifecycle Manager.",
+  "Capability level": "Capability level"
 }

@@ -149,6 +149,8 @@ export type StepResource = {
   kind: string;
   name: string;
   manifest?: string;
+  sourceName?: string;
+  sourceNamespace?: string;
 };
 
 export type Step = {
@@ -235,6 +237,7 @@ export type PackageManifestKind = {
         description?: string;
         displayName: string;
         icon: { mediatype: string; base64data: string }[];
+        keywords?: string[];
         version: string;
         provider: {
           name: string;

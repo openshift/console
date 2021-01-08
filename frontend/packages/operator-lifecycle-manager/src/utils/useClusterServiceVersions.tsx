@@ -26,8 +26,8 @@ export const ExpandCollapseDescription: React.FC<ExpandCollapseDescriptionProps>
   };
   return (
     <ExpandCollapse
-      textExpanded={t('operator-lifecycle-manager~Hide operator description')}
-      textCollapsed={t('operator-lifecycle-manager~Show operator description')}
+      textExpanded={t('olm~Hide operator description')}
+      textCollapsed={t('olm~Show operator description')}
       onToggle={toggle}
     >
       {/** used an empty Fragment here because Expandable always expects a children, using null throws react warning */}
@@ -41,7 +41,7 @@ const normalizeClusterServiceVersions = (
   t: TFunction,
 ): CatalogItem[] => {
   const formatTileDescription = (csvDescription: string): string =>
-    t('operator-lifecycle-manager~## Operator Description\n{{csvDescription}}', { csvDescription });
+    `## ${t('olm~Operator description')}\n${csvDescription}`;
 
   const operatorProvidedAPIs: CatalogItem[] = _.flatten(
     clusterServiceVersions.map((csv) => providedAPIsForCSV(csv).map((desc) => ({ ...desc, csv }))),
@@ -63,7 +63,7 @@ const normalizeClusterServiceVersions = (
         desc.csv.metadata.annotations?.['marketplace.openshift.io/support-workflow'];
       const markdownDescription = formatTileDescription(desc.csv.spec.description);
       const longDescription = t(
-        'operator-lifecycle-manager~This resource is provided by {{operatorName}}, a Kubernetes Operator enabled by the Operator Lifecycle Manager.',
+        'olm~This resource is provided by {{operatorName}}, a Kubernetes Operator enabled by the Operator Lifecycle Manager.',
         { operatorName },
       );
       const documentationUrl = _.get(
@@ -76,7 +76,7 @@ const normalizeClusterServiceVersions = (
 
       const detailsProperties = [
         {
-          label: t('operator-lifecycle-manager~Capability Level'),
+          label: t('olm~Capability level'),
           value: capabilityLevel,
         },
       ];
@@ -118,7 +118,7 @@ const normalizeClusterServiceVersions = (
           url: getImageForCSVIcon(desc.csv.spec.icon?.[0]),
         },
         cta: {
-          label: t('operator-lifecycle-manager~Create'),
+          label: t('public~Create'),
           href: `/k8s/ns/${desc.csv.metadata.namespace}/clusterserviceversions/${
             desc.csv.metadata.name
           }/${referenceForProvidedAPI(desc)}/~new`,

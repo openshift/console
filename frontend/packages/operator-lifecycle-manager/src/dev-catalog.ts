@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import i18n from '@console/internal/i18n';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { ClusterServiceVersionKind } from './types';
 import { referenceForProvidedAPI, providedAPIsForCSV } from './components';
@@ -8,14 +9,12 @@ export const normalizeClusterServiceVersions = (
   clusterServiceVersions: ClusterServiceVersionKind[],
 ): K8sResourceKind[] => {
   const imgFor = (desc) =>
-    _.get(desc.csv, 'spec.icon')
-      ? `data:${_.get(desc.csv, 'spec.icon', [])[0].mediatype};base64,${
-          _.get(desc.csv, 'spec.icon', [])[0].base64data
-        }`
+    desc.csv?.spec?.icon?.[0]
+      ? `data:${desc.csv.spec.icon[0].mediatype};base64,${desc.csv.spec.icon[0].base64data}`
       : operatorLogo;
 
   const formatTileDescription = (csvDescription: string): string =>
-    `## Operator Description\n${csvDescription}`;
+    `## ${i18n.t('olm~Operator description')}\n${csvDescription}`;
 
   const operatorProvidedAPIs: K8sResourceKind[] = _.flatten(
     clusterServiceVersions.map((csv) => providedAPIsForCSV(csv).map((desc) => ({ ...desc, csv }))),
@@ -39,7 +38,7 @@ export const normalizeClusterServiceVersions = (
       kind: 'InstalledOperator',
       tileName: desc.displayName || desc.kind,
       tileIconClass: null,
-      capabilityLevel: _.get(desc, ['csv', 'metadata', 'annotations', 'capabilities'], '')
+      capabilityLevel: (desc?.csv?.metadata?.annotations?.capabilities ?? '')
         .toLowerCase()
         .replace(/\s/g, ''),
       tileImgUrl: imgFor(desc),
@@ -47,16 +46,19 @@ export const normalizeClusterServiceVersions = (
       markdownDescription: formatTileDescription(desc.csv.spec.description),
       tileProvider: desc.csv.spec.provider.name,
       tags: desc.csv.spec.keywords,
-      createLabel: 'Create',
+      createLabel: i18n.t('public~Create'),
       href: `/k8s/ns/${desc.csv.metadata.namespace}/clusterserviceversions/${
         desc.csv.metadata.name
       }/${referenceForProvidedAPI(desc)}/~new`,
       supportUrl: desc.csv.metadata.annotations?.['marketplace.openshift.io/support-workflow'],
-      longDescription: `This resource is provided by ${desc.csv.spec.displayName}, a Kubernetes Operator enabled by the Operator Lifecycle Manager.`,
-      documentationUrl: _.get(
-        (desc.csv.spec.links || []).find(({ name }) => name === 'Documentation'),
-        'url',
+      longDescription: i18n.t(
+        'olm~This resource is provided by {{displayName}}, a Kubernetes Operator enabled by the Operator Lifecycle Manager.',
+        {
+          displayName: desc.csv.spec.displayName,
+        },
       ),
+      documentationUrl: (desc.csv.spec.links || []).find(({ name }) => name === 'Documentation')
+        ?.url,
     }));
 
   return operatorProvidedAPIs;
