@@ -184,7 +184,7 @@ spec:
     sourceStrategy:
       from:
         kind: ImageStreamTag
-        name: ruby:2.4
+        name: ruby:2.7
         namespace: openshift
       env: []
   triggers:
