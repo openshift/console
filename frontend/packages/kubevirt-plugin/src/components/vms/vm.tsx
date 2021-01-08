@@ -229,7 +229,7 @@ const VMListEmpty: React.FC = () => {
           onClick={() => history.push('/quickstart?keyword=virtual+machine')}
         >
           <RocketIcon className="kv-vm-quickstart-icon" />
-          {t('kubevirt-plugin~View virtualization quick starts')}
+          {t('kubevirt-plugin~Learn how to use virtual machines')}
         </Button>
       </EmptyStateSecondaryActions>
     </EmptyState>

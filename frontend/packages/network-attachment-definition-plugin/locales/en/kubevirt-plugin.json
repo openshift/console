@@ -1,4 +1,7 @@
 {
+  "No network attachment definitions found": "No network attachment definitions found",
+  "Create network attachment definition": "Create network attachment definition",
+  "Learn how to use network attachment definitions": "Learn how to use network attachment definitions",
   "Network attachment definition name cannot be empty": "Network attachment definition name cannot be empty",
   "Network attachment definition name name can contain only alphanumberic characters": "Network attachment definition name name can contain only alphanumberic characters",
   "Network attachment definition name must start/end with alphanumberic character": "Network attachment definition name must start/end with alphanumberic character",

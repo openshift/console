@@ -243,12 +243,14 @@ export const SelectTemplate: React.FC<SelectTemplateProps> = ({
           <StackItem>
             <div>
               <Trans t={t} ns="kubevirt-plugin">
-                The virtual machine can be customized in the next step.
+                The virtual machine can be <b>customized</b> in the next step.
               </Trans>
             </div>
             <VMTemplateSupport />
             <div>
-              <b>{t('kubevirt-plugin~Only templates with a valid boot source will be shown.')}</b>
+              <Trans t={t} ns="kubevirt-plugin">
+                Templates that are in an <b>error</b> or <b>in-progress</b> state will not be shown.
+              </Trans>
             </div>
           </StackItem>
           {templatePreselectError && (

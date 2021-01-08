@@ -46,12 +46,13 @@ const SupportModal: React.FC<SupportModalProps> = ({ onConfirm, close, community
           ) : (
             <>
               <StackItem>
-                {t('kubevirt-plugin~This template is not fully supported by Red Hat.')}
+                {t('kubevirt-plugin~This template does not have a support statement defined.')}
               </StackItem>
               <StackItem>
+                {t("kubevirt-plugin~The support will be provided in accordance with Red Hat's ")}
                 <ExternalLink
                   href={SUPPORT_URL}
-                  text={t("kubevirt-plugin~Learn more about Red Hat's third party support policy")}
+                  text={t('kubevirt-plugin~third party support policy')}
                 />
               </StackItem>
             </>
