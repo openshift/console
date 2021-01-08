@@ -43,6 +43,7 @@ import {
   TemplateModel,
   TemplateInstanceModel,
   TaskModel,
+  ClusterTaskModel,
   TaskRunModel,
   PipelineModel,
   PipelineRunModel,
@@ -76,6 +77,7 @@ export const hyperCloudDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapVa
   .set(referenceForModel(FederatedStatefulSetModel), () => import('./federated-statefulset' /* webpackChunkName: "statefulset" */).then(m => m.FederatedStatefulSetsDetailsPage))
   .set(referenceForModel(FederatedCronJobModel), () => import('./federated-cronjob' /* webpackChunkName: "cronjob" */).then(m => m.FederatedCronJobsDetailsPage))
   .set(referenceForModel(TaskModel), () => import('./task' /* webpackChunkName: "task" */).then(m => m.TasksDetailsPage))
+  .set(referenceForModel(ClusterTaskModel), () => import('./cluster-task' /* webpackChunkName: "cluster-task" */).then(m => m.ClusterTasksDetailsPage))
   .set(referenceForModel(TaskRunModel), () => import('./task-run' /* webpackChunkName: "task-run" */).then(m => m.TaskRunsDetailsPage))
   .set(referenceForModel(PipelineModel), () => import('./pipeline' /* webpackChunkName: "pipeline" */).then(m => m.PipelinesDetailsPage))
   .set(referenceForModel(PipelineRunModel), () => import('./pipeline-run' /* webpackChunkName: "pipeline-run" */).then(m => m.PipelineRunsDetailsPage))
@@ -126,6 +128,7 @@ export const hyperCloudListPages = ImmutableMap<ResourceMapKey, ResourceMapValue
   .set(referenceForModel(FederatedStatefulSetModel), () => import('./federated-statefulset' /* webpackChunkName: "statefulset" */).then(m => m.FederatedStatefulSetsPage))
   .set(referenceForModel(FederatedCronJobModel), () => import('./federated-cronjob' /* webpackChunkName: "cronjob" */).then(m => m.FederatedCronJobsPage))
   .set(referenceForModel(TaskModel), () => import('./task' /* webpackChunkName: "task" */).then(m => m.TasksPage))
+  .set(referenceForModel(ClusterTaskModel), () => import('./cluster-task' /* webpackChunkName: "cluster-task" */).then(m => m.ClusterTasksPage))
   .set(referenceForModel(TaskRunModel), () => import('./task-run' /* webpackChunkName: "task-run" */).then(m => m.TaskRunsPage))
   .set(referenceForModel(PipelineModel), () => import('./pipeline' /* webpackChunkName: "pipeline" */).then(m => m.PipelinesPage))
   .set(referenceForModel(PipelineRunModel), () => import('./pipeline-run' /* webpackChunkName: "pipeline-run" */).then(m => m.PipelineRunsPage))

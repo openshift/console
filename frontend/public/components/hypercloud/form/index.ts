@@ -37,6 +37,7 @@ export const pluralToKind = new Map([
   ['rolebindingclaims', { kind: 'RoleBindingClaim', type: 'CustomResourceDefinition' }],
   ['resourcequotaclaims', { kind: 'ResourceQuotaClaim', type: 'CustomResourceDefinition' }],
   ['tasks', { kind: 'Task', type: 'CustomResourceDefinition' }],
+  ['clustertasks', { kind: 'ClusterTask', type: 'CustomResourceDefinition' }],
   ['taskruns', { kind: 'TaskRun', type: 'CustomResourceDefinition' }],
   ['pipelines', { kind: 'Pipeline', type: 'CustomResourceDefinition' }],
   ['pipelineruns', { kind: 'PipelineRun', type: 'CustomResourceDefinition' }],

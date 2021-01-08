@@ -81,6 +81,7 @@ const HyperCloudNav = () => (
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_56')}>
           <ResourceNSLink resource="tasks" name={t('COMMON:MSG_LNB_MENU_57')} />
+          <ResourceNSLink resource="clustertasks" name="Cluster Tasks" />
           <ResourceNSLink resource="taskruns" name={t('COMMON:MSG_LNB_MENU_58')} />
           <ResourceNSLink resource="pipelines" name={t('COMMON:MSG_LNB_MENU_59')} />
           <ResourceNSLink resource="pipelineruns" name={t('COMMON:MSG_LNB_MENU_60')} />

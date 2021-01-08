@@ -233,6 +233,19 @@ export const TaskModel: K8sKind = {
   crd: false,
 };
 
+export const ClusterTaskModel: K8sKind = {
+  kind: 'ClusterTask',
+  namespaced: false,
+  label: 'ClusterTask',
+  plural: 'clustertasks',
+  apiVersion: 'v1beta1',
+  abbr: 'CTK',
+  apiGroup: 'tekton.dev',
+  labelPlural: 'Cluster Tasks',
+  id: 'clustertask',
+  crd: false,
+};
+
 export const TaskRunModel: K8sKind = {
   kind: 'TaskRun',
   namespaced: true,
