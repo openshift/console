@@ -90,18 +90,15 @@ const DefaultPage = connect((state: RootState) => ({
 }))(connectToFlags(FLAGS.OPENSHIFT, FLAGS.CAN_LIST_NS)(DefaultPage_));
 
 const LazyRoute = props => {
-  let kind = props.kind;
-  let plural;
+  let { kind, loader } = props;
+  let plural = props.computedMatch.params.plural;
   if (kind === 'form') {
-    plural = kind === 'form' && props.computedMatch.params.plural;
-    // type = kind === 'form' && props.computedMatch.params.type;
     kind = pluralToKind.get(plural)['kind'];
-    const loader = () =>
-      // import(`./${plural}/create-${kind.toLowerCase()}` /* webpackChunkName: "create-secret" */).then(
-      import(`./hypercloud/form/${plural}/create-${kind.toLowerCase()}` /* webpackChunkName: "create-secret" */).then(m => m[`Create${kind}`]);
-    return <Route {...props} component={undefined} render={componentProps => <AsyncComponent loader={loader} kind={kind} {...componentProps} />} />;
+    loader = () => import(`./hypercloud/form/${plural}/create-${kind.toLowerCase()}` /* webpackChunkName: "create-secret" */).then(m => m[`Create${kind}`]);
+  } else if (kind === 'CustomResourceDefinition' && props.computedMatch.params.plural === 'customresourcedefinitions') {
+    loader = () => import('./create-yaml' /* webpackChunkName: "create-yaml" */).then(m => m.CreateYAML);
   }
-  return <Route {...props} component={undefined} render={componentProps => <AsyncComponent loader={props.loader} kind={kind} {...componentProps} />} />;
+  return <Route {...props} component={undefined} render={componentProps => <AsyncComponent loader={loader} kind={kind} {...componentProps} />} />;
 };
 
 const getPluginPageRoutes = (activePerspective: string, flags: FlagsObject) =>

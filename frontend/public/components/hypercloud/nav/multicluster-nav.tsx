@@ -36,12 +36,12 @@ const MulticlusterNav = () => (
       <h3 style={{ paddingLeft: '28px' }}>Management</h3>
       <ResourceClusterLink resource="federatednamespaces" name="Namespaces" />
     </NavSection>
-    <NavSection title="Image">
+    {/* <NavSection title="Image">
       <ResourceClusterLink resource="federatedregistries" name="Registry" />
       <ResourceClusterLink resource="federatedimagesigners" name="Image Signer" />
       <ResourceClusterLink resource="federatedimagesignrequests" name="Image Sign Request" />
       <ResourceClusterLink resource="federatedimagetransfers" name="Image Transfer" />
-    </NavSection>
+    </NavSection> */}
   </>
 );
 

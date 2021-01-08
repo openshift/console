@@ -80,12 +80,12 @@ const HyperCloudNav = () => (
           <ResourceClusterLink resource="persistentvolumes" name="Persistent Volumes" required={FLAGS.CAN_LIST_PV} />
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_56')}>
-          <ResourceNSLink resource="tasks" name="Task" />
-          <ResourceNSLink resource="taskruns" name="TaskRun" />
-          <ResourceNSLink resource="pipelines" name="Pipeline" />
-          <ResourceNSLink resource="pipelineruns" name="PipelineRun" />
-          <ResourceNSLink resource="approvals" name="Approval" />
-          <ResourceNSLink resource="pipelineresources" name="PipelineResource" />
+          <ResourceNSLink resource="tasks" name={t('COMMON:MSG_LNB_MENU_57')} />
+          <ResourceNSLink resource="taskruns" name={t('COMMON:MSG_LNB_MENU_58')} />
+          <ResourceNSLink resource="pipelines" name={t('COMMON:MSG_LNB_MENU_59')} />
+          <ResourceNSLink resource="pipelineruns" name={t('COMMON:MSG_LNB_MENU_60')} />
+          <ResourceNSLink resource="approvals" name={t('COMMON:MSG_LNB_MENU_61')} />
+          <ResourceNSLink resource="pipelineresources" name={t('COMMON:MSG_LNB_MENU_62')} />
           <ResourceNSLink resource="integrationjobs" name="IntegrationJob" />
           <ResourceNSLink resource="integrationconfigs" name="IntegrationConfig" />
         </NavSection>
@@ -98,10 +98,11 @@ const HyperCloudNav = () => (
           <ResourceNSLink resource="workflows" name='Workflow' />
         </NavSection> */}
         <NavSection title="Image">
-          <ResourceNSLink resource="registries" name="Registry" />
+          <ResourceNSLink resource="registries" name={t('COMMON:MSG_LNB_MENU_71')} />
           <ResourceNSLink resource="imagesigners" name="Image Signer" />
           <ResourceNSLink resource="imagesignrequests" name="Image Sign Request" />
-          <ResourceNSLink resource="imagetransfers" name="Image Transfer" />
+          <ResourceNSLink resource="imagescannings" name="Image Scanning" />
+          {/* <ResourceNSLink resource="imagetransfers" name="Image Transfer" /> */}
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_79')}>
           <ResourceClusterLink resource="namespaces" name="Namespaces" required={FLAGS.CAN_LIST_NS} />
@@ -119,7 +120,7 @@ const HyperCloudNav = () => (
           <ResourceNSLink resource="rolebindings" name="Role Bindings" startsWith={rolebindingsStartsWith} />
           <ResourceNSLink resource="rolebindingclaims" name="Role Binding Claims" startsWith={rolebindingsStartsWith} />
           <ResourceNSLink resource="serviceaccounts" name="Service Accounts" />
-          {/* <ResourceClusterLink resource="podsecuritypolicies" name="PodSecurityPolicy" /> */}
+          <ResourceClusterLink resource="podsecuritypolicies" name="PodSecurityPolicy" />
           {/* <AuthAdminLink resource={referenceForModel(UserModel)} name="Users" />
           <AuthAdminLink resource={referenceForModel(GroupModel)} name="User Groups" /> */}
         </NavSection>
