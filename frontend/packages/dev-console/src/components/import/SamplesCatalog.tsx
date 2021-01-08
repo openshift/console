@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import Helmet from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router';
@@ -33,7 +34,9 @@ const SampleCatalog: React.FC<SampleCatalogProps> = ({ match }) => {
 
   if (!imageStreamsloaded) return <LoadingBox />;
 
-  const galleryItems = Object.values(builderImages).map((builderImage) => {
+  const sampleBuilderImages = _.sortBy(Object.values(builderImages), 'name');
+
+  const galleryItems = sampleBuilderImages.map((builderImage) => {
     const { name, title, description, iconUrl, imageStreamNamespace } = builderImage;
     const url = `/samples/ns/${namespace}/${name}/${imageStreamNamespace}`;
     const handleClick = (e: React.SyntheticEvent) => {
