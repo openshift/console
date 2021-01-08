@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { getName } from '@console/shared';
 import { withHandlePromise } from '@console/internal/components/utils';
 import {
   createModalLauncher,
@@ -10,10 +9,10 @@ import {
 } from '@console/internal/components/factory';
 import { BareMetalHostKind } from '../../types';
 import { restartHost } from '../../k8s/requests/bare-metal-host';
+import { PowerOffWarning } from './PowerOffHostModal';
 
 export type RestartHostModalProps = {
   host: BareMetalHostKind;
-  nodeName: string;
   handlePromise: <T>(promise: Promise<T>) => Promise<T>;
   inProgress: boolean;
   errorMessage: string;
@@ -23,7 +22,6 @@ export type RestartHostModalProps = {
 
 const RestartHostModal = ({
   host,
-  nodeName,
   inProgress,
   errorMessage,
   handlePromise,
@@ -41,19 +39,13 @@ const RestartHostModal = ({
     [host, close, handlePromise],
   );
 
-  const text = nodeName
-    ? t(
-        'metal3-plugin~The bare metal host {{name}} will be restarted gracefully after all managed workloads are moved.',
-        { name: getName(host) },
-      )
-    : t('metal3-plugin~The bare metal host {{name}} will be restarted gracefully.', {
-        name: getName(host),
-      });
-
   return (
     <form onSubmit={onSubmit} name="form" className="modal-content">
       <ModalTitle>{t('metal3-plugin~Restart Bare Metal Host')}</ModalTitle>
-      <ModalBody>{text}</ModalBody>
+      <ModalBody>
+        <p>{t('metal3-plugin~The host will be powered off and on again.')}</p>
+        <PowerOffWarning restart />
+      </ModalBody>
       <ModalSubmitFooter
         cancel={cancel}
         errorMessage={errorMessage}
