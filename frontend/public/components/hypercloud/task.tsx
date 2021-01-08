@@ -80,7 +80,7 @@ const TaskTableRow: RowFunction<K8sResourceKind> = ({ obj: task, index, key, sty
 const TaskDetails: React.FC<TaskDetailsProps> = ({ obj: task }) => (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Federated Job Details" />
+        <SectionHeading text="Task Details" />
         <div className="row">
           <div className="col-lg-6">
             <ResourceSummary resource={task} showPodSelector showNodeSelector showTolerations />
