@@ -7,6 +7,8 @@ import { K8sResourceKind } from '../../module/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from '../factory';
 import { DetailsItem, Kebab, KebabAction, detailsPage, Timestamp, navFactory, ResourceKebab, ResourceLink, ResourceSummary, SectionHeading } from '../utils';
 import { RegistryModel } from '../../models/hypercloud';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 
 export const menuActions: KebabAction[] = [...Kebab.getExtensionsActionsForKind(RegistryModel), ...Kebab.factory.common];
 
@@ -22,34 +24,34 @@ const tableColumnClasses = [
   ];
 
 
-const RegistryTableHeader = () => {
+const RegistryTableHeader = (t?: TFunction) => {
     return [
       {
-        title: 'Name',
+        title: t('COMMON:MSG_MAIN_TABLEHEADER_1'),
         sortField: 'metadata.name',
         transforms: [sortable],
         props: { className: tableColumnClasses[0] },
       },
       {
-        title: 'Namespace',
+        title: t('COMMON:MSG_MAIN_TABLEHEADER_2'),
         sortField: 'metadata.namespace',
         transforms: [sortable],
         props: { className: tableColumnClasses[1] },
       },
       {
-        title: 'Image',
+        title: t('COMMON:MSG_DETAILS_TABDETAILS_CONTAINERS_TABLEHEADER_3'),
         sortField: 'spec.image',
         transforms: [sortable],
         props: { className: tableColumnClasses[2] },
       },
       {
-        title: 'Status',
+        title: t('COMMON:MSG_MAIN_TABLEHEADER_3'),
         sortField: 'status.phase',
         transforms: [sortable],
         props: { className: tableColumnClasses[3] },
       },
       {
-        title: 'Created',
+        title: t('COMMON:MSG_MAIN_TABLEHEADER_12'),
         sortField: 'metadata.creationTimestamp',
         transforms: [sortable],
         props: { className: tableColumnClasses[4] },
@@ -91,7 +93,9 @@ const RegistryTableRow: RowFunction<K8sResourceKind> = ({ obj: registry, index, 
 
   export const RegistryDetailsList: React.FC<RegistryDetailsListProps> = ({ ds }) => (
     <dl className="co-m-pane__details">
-      <DetailsItem label="Status" obj={ds} path="status.phase" />
+      <DetailsItem label="Status" obj={ds} path="status.phase">
+        <Status status={ds.status.phase} />
+      </DetailsItem>
     </dl>
   );
 
@@ -102,7 +106,7 @@ const RegistryDetails: React.FC<RegistryDetailsProps> = ({ obj: registry }) => (
         <SectionHeading text="Registry Details" />
         <div className="row">
           <div className="col-lg-6">
-            <ResourceSummary resource={registry} showPodSelector showNodeSelector showTolerations />
+            <ResourceSummary resource={registry} />
           </div>
           <div className="col-lg-6">
             <RegistryDetailsList ds={registry} />
@@ -118,7 +122,10 @@ const RegistryDetails: React.FC<RegistryDetailsProps> = ({ obj: registry }) => (
   
 const { details, editYaml } = navFactory;
 
-export const Registries: React.FC = props => <Table {...props} aria-label="Registries" Header={RegistryTableHeader} Row={RegistryTableRow} virtualize />;
+export const Registries: React.FC = props => {
+  const { t } = useTranslation();
+ return <Table {...props} aria-label="Registries" Header={RegistryTableHeader.bind(null, t)} Row={RegistryTableRow} virtualize />
+};
 
 
 export const RegistriesPage: React.FC<RegistriesPageProps> = props => <ListPage canCreate={true} ListComponent={Registries} kind={kind} {...props} />;

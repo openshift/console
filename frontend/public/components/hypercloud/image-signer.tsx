@@ -7,6 +7,8 @@ import { K8sResourceKind } from '../../module/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from '../factory';
 import { DetailsItem, Kebab, KebabAction, detailsPage, Timestamp, navFactory, ResourceKebab, ResourceLink, ResourceSummary, SectionHeading } from '../utils';
 import { ImageSignerModel } from '../../models';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 
 export const menuActions: KebabAction[] = [...Kebab.getExtensionsActionsForKind(ImageSignerModel), ...Kebab.factory.common];
 
@@ -20,22 +22,22 @@ const tableColumnClasses = [
   ];
 
 
-const ImageSignerTableHeader = () => {
+const ImageSignerTableHeader = (t?: TFunction) => {
     return [
       {
-        title: 'Name',
+        title: t('COMMON:MSG_MAIN_TABLEHEADER_1'),
         sortField: 'metadata.name',
         transforms: [sortable],
         props: { className: tableColumnClasses[0] },
       },
       {
-        title: 'Namespace',
+        title: t('COMMON:MSG_MAIN_TABLEHEADER_2'),
         sortField: 'metadata.namespace',
         transforms: [sortable],
         props: { className: tableColumnClasses[1] },
       },
       {
-        title: 'Created',
+        title: t('COMMON:MSG_MAIN_TABLEHEADER_12'),
         sortField: 'metadata.creationTimestamp',
         transforms: [sortable],
         props: { className: tableColumnClasses[2] },
@@ -99,7 +101,10 @@ const ImageSignerDetails: React.FC<ImageSignerDetailsProps> = ({ obj: task }) =>
   
 const { details, editYaml } = navFactory;
 
-export const ImageSigners: React.FC = props => <Table {...props} aria-label="ImageSigners" Header={ImageSignerTableHeader} Row={ImageSignerTableRow} virtualize />;
+export const ImageSigners: React.FC = props => {
+  const { t } = useTranslation();
+  return <Table {...props} aria-label="ImageSigners" Header={ImageSignerTableHeader.bind(null, t)} Row={ImageSignerTableRow} virtualize />
+};
 
 
 export const ImageSignersPage: React.FC<ImageSignersPageProps> = props => <ListPage canCreate={true} ListComponent={ImageSigners} kind={kind} {...props} />;
