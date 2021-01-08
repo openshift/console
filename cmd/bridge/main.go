@@ -745,14 +745,15 @@ func main() {
 	srv.McModeOperator = *fMcModeOperator
 	if *fMcModeOperator {
 		go func() {
-			cmd := exec.Command("./tool/crd-operator")
+			// cm := "-dynamic-config " + pvd.Filename
+			cmd := exec.Command("./tools/crd-operator", "-dynamic-config", pvd.Filename)
 			log.Info("Running crd watcher operator")
 			cmd.Stdout = os.Stdout
 			cmd.Stderr = os.Stderr
 
 			err = cmd.Start()
 			if err != nil {
-				log.Fatal("Error when running cmd")
+				log.Fatal("Error when running cmd", err)
 			}
 		}()
 	}
