@@ -6,15 +6,8 @@ import { K8sResourceKindReference, K8sResourceKind } from '../module/k8s';
 import { LimitRangeModel } from '../models';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
 import { Kebab, navFactory, SectionHeading, ResourceKebab, ResourceLink, ResourceSummary, Timestamp } from './utils';
-import {
-  Kebab,
-  navFactory,
-  SectionHeading,
-  ResourceKebab,
-  ResourceLink,
-  ResourceSummary,
-  Timestamp,
-} from './utils';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 
 const { common } = Kebab.factory;
 const menuActions = [...Kebab.getExtensionsActionsForKind(LimitRangeModel), ...common];
@@ -42,7 +35,8 @@ export const LimitRangeTableRow: RowFunction<K8sResourceKind> = ({ obj, index, k
   );
 };
 
-export const LimitRangeTableHeader = () => {
+export const LimitRangeTableHeader = (t?: TFunction) => {
+  console.log(t('COMMON:MSG_MAIN_TABLEHEADER_12'));
   return [
     {
       title: 'Name',
@@ -70,7 +64,10 @@ export const LimitRangeTableHeader = () => {
 };
 LimitRangeTableHeader.displayName = 'LimitRangeTableHeader';
 
-export const LimitRangeList: React.SFC = props => <Table {...props} aria-label="Limit Ranges" Header={LimitRangeTableHeader} Row={LimitRangeTableRow} virtualize />;
+export const LimitRangeList: React.SFC = props => {
+  const { t } = useTranslation();
+  return <Table {...props} aria-label="Limit Ranges" Header={LimitRangeTableHeader.bind(null, t)} Row={LimitRangeTableRow} virtualize />;
+};
 
 export const LimitRangeListPage: React.SFC<LimitRangeListPageProps> = props => <ListPage {...props} title="Limit Ranges" kind={LimitRangeReference} ListComponent={LimitRangeList} canCreate={true} />;
 
