@@ -98,7 +98,9 @@ export const NodesCard: React.FC<NodeCardProps> = ({ nodes }) =>
       <CardBody isFilled className="ocs-install-wizard__card-body">
         <TextContent>
           {nodes.map((node) => (
-            <Text component={TextVariants.small}>{node.metadata.name}</Text>
+            <Text key={node.metadata.name} component={TextVariants.small}>
+              {node.metadata.name}
+            </Text>
           ))}
         </TextContent>
       </CardBody>
