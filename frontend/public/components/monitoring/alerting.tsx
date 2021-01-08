@@ -1,4 +1,5 @@
 import * as classNames from 'classnames';
+import i18next from 'i18next';
 import * as _ from 'lodash-es';
 import { Button, Popover } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
@@ -102,26 +103,29 @@ const pollerTimeouts = {};
 
 const silenceAlert = (alert: Alert) => ({
   callback: () => history.replace(`${SilenceResource.plural}/~new?${labelsToParams(alert.labels)}`),
-  label: 'Silence Alert',
+  label: i18next.t('monitoring~Silence alert'),
 });
 
 const viewAlertRule = (alert: Alert) => ({
-  label: 'View Alerting Rule',
+  label: i18next.t('monitoring~View alerting rule'),
   href: ruleURL(alert.rule),
 });
 
 const editSilence = (silence: Silence) => ({
-  label: silenceState(silence) === SilenceStates.Expired ? 'Recreate Silence' : 'Edit Silence',
+  label:
+    silenceState(silence) === SilenceStates.Expired
+      ? i18next.t('monitoring~Recreate silence')
+      : i18next.t('monitoring~Edit silence'),
   href: `${SilenceResource.plural}/${silence.id}/edit`,
 });
 
 const cancelSilence = (silence: Silence) => ({
-  label: 'Expire Silence',
+  label: i18next.t('monitoring~Expire silence'),
   callback: () =>
     confirmModal({
-      title: 'Expire Silence',
-      message: 'Are you sure you want to expire this silence?',
-      btnText: 'Expire Silence',
+      title: i18next.t('monitoring~Expire silence'),
+      message: i18next.t('monitoring~Are you sure you want to expire this silence?'),
+      btnText: i18next.t('monitoring~Expire silence'),
       executeFn: () =>
         coFetchJSON
           .delete(`${window.SERVER_FLAGS.alertManagerBaseURL}/api/v2/silence/${silence.id}`)
@@ -135,12 +139,6 @@ const silenceMenuActions = (silence: Silence) =>
     : [editSilence(silence), cancelSilence(silence)];
 
 const SilenceKebab = ({ silence }) => <Kebab options={silenceMenuActions(silence)} />;
-
-const SilenceActionsMenu = ({ silence }) => (
-  <div className="co-actions" data-test-id="details-actions">
-    <ActionsMenu actions={silenceMenuActions(silence)} />
-  </div>
-);
 
 const MonitoringResourceIcon: React.FC<MonitoringResourceIconProps> = ({ className, resource }) => (
   <span
@@ -587,6 +585,7 @@ export const AlertsDetailsPage = withFallback(
   connect(alertStateToProps)((props: AlertsDetailsPageProps) => {
     const { alert, loaded, loadError, namespace, rule, silencesLoaded } = props;
     const state = alertState(alert);
+
     const { t } = useTranslation();
 
     const silencesTableHeader = () =>
@@ -816,6 +815,7 @@ export const AlertRulesDetailsPage = withFallback(
     const { loaded, loadError, namespace, rule } = props;
     const { alerts = [], annotations, duration, labels, name = '', query = '' } = rule || {};
     const severity = labels?.severity;
+
     const { t } = useTranslation();
 
     const formatLegendLabel = (alertLabels) => {
@@ -998,8 +998,8 @@ const SilencesDetailsPage = withFallback(
       startsAt = '',
       updatedAt = '',
     } = silence || {};
-    const [activePerspective] = useActivePerspective();
     const { t } = useTranslation();
+    const [activePerspective] = useActivePerspective();
 
     return (
       <>
@@ -1034,7 +1034,9 @@ const SilencesDetailsPage = withFallback(
                 />
                 {name}
               </div>
-              <SilenceActionsMenu silence={silence} />
+              <div className="co-actions" data-test-id="details-actions">
+                {silence && <ActionsMenu actions={silenceMenuActions(silence)} />}
+              </div>
             </h1>
           </div>
           <div className="co-m-pane__body">
@@ -1079,7 +1081,7 @@ const SilencesDetailsPage = withFallback(
                     </dd>
                     <dt>{t('monitoring~Created by')}</dt>
                     <dd>{createdBy || '-'}</dd>
-                    <dt>{t('monitoring~Comments')}</dt>
+                    <dt>{t('monitoring~Comment')}</dt>
                     <dd>{comment || '-'}</dd>
                     <dt>{t('monitoring~Firing alerts')}</dt>
                     <dd>
@@ -1459,6 +1461,7 @@ const silencesRowFilters: RowFilter[] = [
 
 const CreateButton = () => {
   const { t } = useTranslation();
+
   return (
     <Link className="co-m-primary-action" to="/monitoring/silences/~new">
       <Button variant="primary">{t('monitoring~Create silence')}</Button>
@@ -1536,6 +1539,8 @@ const Tab: React.FC<{ active: boolean; children: React.ReactNode }> = ({ active,
 );
 
 const AlertingPage: React.FC<AlertingPageProps> = ({ match }) => {
+  const { t } = useTranslation();
+
   const alertsPath = '/monitoring/alerts';
   const rulesPath = '/monitoring/alertrules';
   const silencesPath = '/monitoring/silences';
@@ -1544,8 +1549,6 @@ const AlertingPage: React.FC<AlertingPageProps> = ({ match }) => {
 
   const { url } = match;
   const isAlertmanager = url === configPath || url === YAMLPath;
-
-  const { t } = useTranslation();
 
   return (
     <>

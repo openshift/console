@@ -82,7 +82,7 @@ describe('Monitoring: Alerts', () => {
 
     cy.log('silence Watchdog alert');
     // After creating the Silence, should be redirected to its details page
-    detailsPage.clickPageActionButton('Silence Alert');
+    detailsPage.clickPageActionButton('Silence alert');
     // launches page form
     cy.byTestID('start-immediately').should('be.checked');
     cy.byTestID('from').should('have.value', 'Now');
@@ -124,7 +124,7 @@ describe('Monitoring: Alerts', () => {
     cy.byTestID('until').should('have.value', '2h from now');
     // add comment and submit
     cy.byTestID('silence-comment').type('test comment');
-    cy.testA11y('Silence Alert form');
+    cy.testA11y('Silence alert form');
     cy.get(submitButton).click();
     cy.get(errorMessage).should('not.exist');
     shouldBeWatchdogSilencePage();
@@ -146,9 +146,9 @@ describe('Monitoring: Alerts', () => {
     shouldBeWatchdogSilencePage();
 
     cy.log('expires the Silence');
-    detailsPage.clickPageActionFromDropdown('Expire Silence');
+    detailsPage.clickPageActionFromDropdown('Expire silence');
     modal.shouldBeOpened();
-    cy.testA11y('Expire Silence modal', '#modal-container');
+    cy.testA11y('Expire silence modal', '#modal-container');
     modal.submit();
     modal.shouldBeClosed();
     cy.get(errorMessage).should('not.exist');
