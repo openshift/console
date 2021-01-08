@@ -149,7 +149,9 @@ func main() {
 
 	// NOTE: Multi Cluster(MC) Mode flags //jinsoo
 	fMcMode := fs.Bool("mc-mode", false, "Multi Cluster => true | Single Cluster => false")
-	fMcModeFile := fs.String("mc-mode-file", "configs/dynamic-config.yaml", "The YAML proxy config file")
+	dir, _ := os.Getwd()
+	dir = dir + "/configs/dynamic-config.yaml"
+	fMcModeFile := fs.String("mc-mode-file", dir, "The YAML proxy config file")
 	fMcModeOperator := fs.Bool("mc-mode-operator", false, "Using operator which watch crd = true, disable = false")
 
 	if err := fs.Parse(os.Args[1:]); err != nil {
@@ -745,12 +747,10 @@ func main() {
 	srv.McModeOperator = *fMcModeOperator
 	if *fMcModeOperator {
 		go func() {
-			// cm := "-dynamic-config " + pvd.Filename
 			cmd := exec.Command("./tools/crd-operator", "-dynamic-config", pvd.Filename)
 			log.Info("Running crd watcher operator")
 			cmd.Stdout = os.Stdout
 			cmd.Stderr = os.Stderr
-
 			err = cmd.Start()
 			if err != nil {
 				log.Fatal("Error when running cmd", err)

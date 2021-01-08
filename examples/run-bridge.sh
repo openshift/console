@@ -37,5 +37,5 @@ GRAFANA_PORT='32430'
     --kiali-endpoint=https://172.22.6.22/api/kiali/ \
     --webhook-endpoint=https://$k8sIP:31317/api/webhook/ \
     --mc-mode=true  \
+    --mc-mode-operator=true \
     # --mc-mode-file="$HOME/dynamic-config.yaml" \
-    # --mc-mode-operator=true \
