@@ -119,7 +119,7 @@ export const DeploymentDetailsList: React.FC<DeploymentDetailsListProps> = ({ de
         path="spec.progressDeadlineSeconds"
       >
         {deployment.spec.progressDeadlineSeconds
-          ? t('workload~second', { count: deployment.spec.progressDeadlineSeconds })
+          ? t('workload~{{count}} second', { count: deployment.spec.progressDeadlineSeconds })
           : t('workload~Not configured')}
       </DetailsItem>
       <DetailsItem
@@ -128,7 +128,7 @@ export const DeploymentDetailsList: React.FC<DeploymentDetailsListProps> = ({ de
         path="spec.minReadySeconds"
       >
         {deployment.spec.minReadySeconds
-          ? t('workload~second', { count: deployment.spec.minReadySeconds })
+          ? t('workload~{{count}} second', { count: deployment.spec.minReadySeconds })
           : t('workload~Not configured')}
       </DetailsItem>
     </dl>

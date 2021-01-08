@@ -102,7 +102,7 @@ const CronJobDetails: React.FC<CronJobDetailsProps> = ({ obj: cronjob }) => {
                 path="spec.startingDeadlineSeconds"
               >
                 {cronjob.spec.startingDeadlineSeconds
-                  ? t('workload~second', { count: cronjob.spec.startingDeadlineSeconds })
+                  ? t('workload~{{count}} second', { count: cronjob.spec.startingDeadlineSeconds })
                   : t('workload~Not configured')}
               </DetailsItem>
               <DetailsItem
@@ -133,7 +133,7 @@ const CronJobDetails: React.FC<CronJobDetailsProps> = ({ obj: cronjob }) => {
                 path="spec.jobTemplate.spec.activeDeadlineSeconds"
               >
                 {job.spec.activeDeadlineSeconds
-                  ? t('workload~second', { count: job.spec.activeDeadlineSeconds })
+                  ? t('workload~{{count}} second', { count: job.spec.activeDeadlineSeconds })
                   : t('workload~Not configured')}
               </DetailsItem>
             </dl>
