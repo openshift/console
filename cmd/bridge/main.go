@@ -133,8 +133,8 @@ func main() {
 	helmConfig := chartproxy.RegisterFlags(fs)
 
 	// dynamic multi proxy config  2021/01/05 jinsoo
-	fDynamicConfig := fs.String("dynamic-config", "configs/dynamic-config.yaml", "The YAML proxy dynamic config file. (default file name: configs/dynamic-config.yaml)")
-	fOperator := fs.Bool("operator", false, "Choose whether using CRD (console) operator, true | false ")
+	// fDynamicConfig := fs.String("dynamic-config", "configs/dynamic-config.yaml", "The YAML proxy dynamic config file. (default file name: configs/dynamic-config.yaml)")
+	// fOperator := fs.Bool("operator", false, "Choose whether using CRD (console) operator, true | false ")
 
 	// NOTE: Keycloak 연동 추가 // 최여진 -> 윤진수 // 20.12.17
 	fKeycloakRealm := fs.String("keycloak-realm", "", "Keycloak Realm Name")
@@ -146,6 +146,11 @@ func main() {
 	fKialiEndpoint := fs.String("kiali-endpoint", "", "URL of the KIALI Portal")
 	// NOTE: webhook 연동 추가
 	fwebhookEndpoint := fs.String("webhook-endpoint", "", "URL of the hypercloud webhook endpoint")
+
+	// NOTE: Multi Cluster(MC) Mode flags //jinsoo
+	fMcMode := fs.Bool("mc-mode", false, "Multi Cluster => true | Single Cluster => false")
+	fMcModeFile := fs.String("mc-mode-file", "configs/dynamic-config.yaml", "The YAML proxy config file")
+	fMcModeOperator := fs.Bool("mc-mode-operator", false, "Using operator which watch crd = true, disable = false")
 
 	if err := fs.Parse(os.Args[1:]); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
@@ -664,22 +669,6 @@ func main() {
 
 	helmConfig.Configure(srv)
 
-	//TODO: Porxy Server Start
-	proxyServer, err := pServer.NewServer(srv, fTlSCertFile, fTlSKeyFile)
-	if err != nil {
-		log.Errorf("Failed to get proxyserver from pServer.NewServer() %v \n", err)
-	}
-
-	// pvd := &file.Provider{Filename: "/home/jinsoo/hypercloud-console5.0/examples/pconfig.yaml", Watch: true}
-	pvd := &file.Provider{Filename: *fDynamicConfig, Watch: true}
-	routinesPool := safe.NewPool(context.Background())
-	watcher := pServer.NewWatcher(pvd, routinesPool)
-	watcher.AddListener(switchRouter(srv, proxyServer))
-
-	proxyServer.Start(context.Background())
-	watcher.Start()
-	// Proxy Server End
-
 	if *fRedirectPort != 0 {
 		go func() {
 			// Listen on passed port number to be redirected to the console
@@ -699,10 +688,64 @@ func main() {
 		}()
 	}
 
-	if *fOperator {
+	//TODO: Porxy Server Start
+	srv.McMode = *fMcMode
+	proxyServer, err := pServer.NewServer(srv, fTlSCertFile, fTlSKeyFile)
+	if err != nil {
+		log.Errorf("Failed to get proxyserver from pServer.NewServer() %v \n", err)
+	}
 
+	var pvd = new(file.Provider)
+	pvd.Watch = true
+	if *fMcModeFile != "configs/dynamic-config.yaml" {
+		filename := *fMcModeFile
+		if _, err := os.Stat(filename); os.IsNotExist(err) {
+			log.Infof("does not exist file : %s", filename)
+			log.Infof("Create file : %s ", filename)
+			var pwd, err = os.Create(filename)
+			if err != nil {
+				log.Fatalf("filed to create config filed : %v", err)
+				return
+			}
+			defer pwd.Close()
+		}
+		pvd.Filename = filename
+	} else {
+		// log.Infof("Using default config directory : %s", *fMcModeFile)
+		filename := *fMcModeFile
+		if _, err := os.Stat(filename); os.IsNotExist(err) {
+			log.Infof("does not exist file : %s", filename)
+			log.Infof("Create file : %s ", filename)
+			var pwd, err = os.Create(filename)
+			if err != nil {
+				log.Fatalf("filed to create config filed : %v", err)
+				return
+			}
+			defer pwd.Close()
+		}
+		pvd.Filename = filename
+	}
+	srv.McModeFile = pvd.Filename
+
+	routinesPool := safe.NewPool(context.Background())
+	watcher := pServer.NewWatcher(pvd, routinesPool)
+	watcher.AddListener(switchRouter(srv, proxyServer))
+	watcher.Start()
+
+	if *fMcMode {
+		log.Info("Start Multi Cluster Console")
+		log.Infof("Address : %s \n", srv.BaseURL.String())
+	} else {
+		log.Info("Start Single Cluster Console")
+		log.Infof("Address: %s \n", srv.BaseURL.String())
+	}
+	proxyServer.Start(context.Background())
+	// Proxy Server End
+
+	srv.McModeOperator = *fMcModeOperator
+	if *fMcModeOperator {
 		go func() {
-			cmd := exec.Command("./tools/crd-operator")
+			cmd := exec.Command("./tool/crd-operator")
 			log.Info("Running crd watcher operator")
 			cmd.Stdout = os.Stdout
 			cmd.Stderr = os.Stderr
