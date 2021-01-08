@@ -36,7 +36,7 @@ const DevfileImportForm: React.FC<FormikProps<FormikValues> & DevfileImportFormP
       <GitSection
         buildStrategy="Devfile"
         builderImages={builderImages}
-        defaultSample={{ url: 'https://github.com/maysunfaisal/node-bulletin-board' }}
+        defaultSample={{ url: 'https://github.com/redhat-developer/devfile-sample' }}
       />
       <AppSection
         project={values.project}
