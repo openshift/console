@@ -4,6 +4,7 @@ export interface RepoMetadata {
   host: string;
   defaultBranch: string;
   fullName?: string;
+  contextDir?: string;
 }
 
 export interface BranchList {

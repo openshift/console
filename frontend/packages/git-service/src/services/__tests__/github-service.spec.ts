@@ -122,6 +122,23 @@ describe('Github Service', () => {
     });
   });
 
+  it('should detect DotNet build type inside context directory', () => {
+    const gitSource: GitSource = {
+      url: 'https://github.com/redhat-developer/s2i-dotnetcore-ex',
+      contextDir: 'app',
+    };
+
+    const gitService = new GithubService(gitSource);
+
+    return nockBack('files-dotnet.json').then(async ({ nockDone, context }) => {
+      const buildTypes: BuildType[] = await gitService.detectBuildTypes();
+      expect(buildTypes.length).toBeGreaterThanOrEqual(1);
+      expect(buildTypes[0].buildType).toBe('dotnet');
+      context.assertScopesFinished();
+      nockDone();
+    });
+  });
+
   it('should detect Dockerfile', () => {
     const gitSource = { url: 'https://github.com/mikesparr/tutorial-react-docker' };
 

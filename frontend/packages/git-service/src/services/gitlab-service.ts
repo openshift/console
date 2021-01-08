@@ -58,6 +58,7 @@ export class GitlabService extends BaseService {
     const { name, owner, protocol, resource, full_name: fullName } = GitUrlParse(
       this.gitsource.url,
     );
+    const contextDir = this.gitsource.contextDir?.replace(/\/$/, '') || '';
     const host = `${protocol}://${resource}`;
     return {
       repoName: name,
@@ -65,6 +66,7 @@ export class GitlabService extends BaseService {
       host,
       defaultBranch: this.gitsource.ref || 'master',
       fullName,
+      contextDir,
     };
   }
 
@@ -109,7 +111,9 @@ export class GitlabService extends BaseService {
   getRepoFileList = async (): Promise<RepoFileList> => {
     try {
       const projectID = await this.getProjectId();
-      const resp = await this.client.Repositories.tree(projectID);
+      const resp = await this.client.Repositories.tree(projectID, {
+        path: this.metadata.contextDir,
+      });
       const files = resp.reduce((acc, file) => {
         if (file.type === 'blob') acc.push(file.path);
         return acc;
@@ -131,13 +135,12 @@ export class GitlabService extends BaseService {
   };
 
   isDockerfilePresent = async (): Promise<boolean> => {
+    const filePath = this.metadata.contextDir
+      ? `${this.metadata.contextDir}/Dockerfile`
+      : 'Dockerfile';
     try {
       const projectID = await this.getProjectId();
-      await this.client.RepositoryFiles.showRaw(
-        projectID,
-        'Dockerfile',
-        this.metadata.defaultBranch,
-      );
+      await this.client.RepositoryFiles.showRaw(projectID, filePath, this.metadata.defaultBranch);
       return true;
     } catch (e) {
       return false;
@@ -145,11 +148,14 @@ export class GitlabService extends BaseService {
   };
 
   getDockerfileContent = async (): Promise<string | null> => {
+    const filePath = this.metadata.contextDir
+      ? `${this.metadata.contextDir}/Dockerfile`
+      : 'Dockerfile';
     try {
       const projectID = await this.getProjectId();
       return await this.client.RepositoryFiles.showRaw(
         projectID,
-        'Dockerfile',
+        filePath,
         this.metadata.defaultBranch,
       );
     } catch (e) {
@@ -185,11 +191,14 @@ export class GitlabService extends BaseService {
   };
 
   getPackageJsonContent = async (): Promise<string | null> => {
+    const filePath = this.metadata.contextDir
+      ? `${this.metadata.contextDir}/package.json`
+      : 'package.json';
     try {
       const projectID = await this.getProjectId();
       return await this.client.RepositoryFiles.showRaw(
         projectID,
-        'package.json',
+        filePath,
         this.metadata.defaultBranch,
       );
     } catch (e) {

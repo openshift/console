@@ -126,7 +126,7 @@ const GitSection: React.FC<GitSectionProps> = ({
   const handleBuilderImageRecommendation = React.useCallback(async () => {
     const gitType = gitTypeTouched ? values.git.type : detectGitType(values.git.url);
     const gitService = getGitService(
-      { url: values.git.url, ref: values.git.ref },
+      { url: values.git.url, ref: values.git.ref, contextDir: values.git.dir },
       gitType as GitProvider,
     );
     if (isRepoReachable && builderImages) {
@@ -155,6 +155,7 @@ const GitSection: React.FC<GitSectionProps> = ({
     values.git.ref,
     values.git.type,
     values.git.url,
+    values.git.dir,
   ]);
 
   const debouncedHandleGitUrlChange = useDebounceCallback(handleGitUrlChange, [handleGitUrlChange]);
