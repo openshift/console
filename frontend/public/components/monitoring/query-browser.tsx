@@ -164,11 +164,12 @@ const Tooltip_: React.FC<TooltipProps> = ({ activePoints, center, height, style,
     .map((point, i) => ({
       color: style[i]?.fill,
       name: style[i]?.name,
-      value: point._y1 ?? point.y,
+      total: point._y1 ?? point.y,
+      value: point.y,
     }))
     // For stacked graphs, this filters out data series that have no data for this timestamp
     .filter(({ value }) => value !== null)
-    .sort((a, b) => b.value - a.value)
+    .sort((a, b) => b.total - a.total)
     .slice(0, TOOLTIP_MAX_ENTRIES);
 
   return (
@@ -879,7 +880,7 @@ type TooltipProps = {
   activePoints?: { x: number; y: number; _y1?: number }[];
   center?: { x: number; y: number };
   height?: number;
-  style?: { fill: string };
+  style?: { fill: string; name: string };
   width?: number;
   x?: number;
 };
