@@ -170,7 +170,6 @@ export const defaultData: GitImportFormData = {
   },
   docker: {
     dockerfilePath: 'Dockerfile',
-    containerPort: 8080,
   },
   pipeline: {
     enabled: false,

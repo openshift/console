@@ -21,13 +21,6 @@ const DockerSection: React.FC<DockerSectionProps> = ({ buildStrategy }) => {
             'devconsole~Allows the builds to use a different path to locate your Dockerfile, relative to the Context Dir field.',
           )}
         />
-        <InputField
-          type={TextInputTypes.number}
-          name="docker.containerPort"
-          label={t('devconsole~Container port')}
-          helpText={t('devconsole~Port number the Container exposes.')}
-          style={{ maxWidth: '100%' }}
-        />
       </FormSection>
     )
   );

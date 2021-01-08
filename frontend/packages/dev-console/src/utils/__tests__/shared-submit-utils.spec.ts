@@ -13,7 +13,7 @@ describe('Shared submit utils', () => {
       let serviceObj;
 
       mockData.build.strategy = 'Docker';
-      mockData.docker.containerPort = 8080;
+      mockData.route.unknownTargetPort = '8080';
       serviceObj = createService(mockData);
       expect(serviceObj.spec.ports[0].port).toEqual(8080);
 
@@ -42,7 +42,7 @@ describe('Shared submit utils', () => {
       let routeObj;
 
       mockData.build.strategy = 'Docker';
-      mockData.docker.containerPort = 8080;
+      mockData.route.unknownTargetPort = '8080';
       routeObj = createRoute(mockData);
       expect(routeObj.spec.port.targetPort).toEqual('8080-tcp');
 

@@ -43,8 +43,8 @@ export const createService = (
 
   let ports = imagePorts;
   const buildStrategy = formData.build?.strategy;
-  if (buildStrategy === 'Docker') {
-    const port = { containerPort: _.get(formData, 'docker.containerPort'), protocol: 'TCP' };
+  if (buildStrategy === 'Docker' && unknownTargetPort) {
+    const port = { containerPort: _.toInteger(unknownTargetPort), protocol: 'TCP' };
     ports = [port];
   } else if (buildStrategy === 'Devfile' && !_.isEmpty(originalService?.spec?.ports)) {
     ports = [
@@ -129,10 +129,9 @@ export const createRoute = (
 
   let targetPort: string;
   const buildStrategy = formData.build?.strategy;
-  if (buildStrategy === 'Docker') {
-    const port = _.get(formData, 'docker.containerPort');
+  if (buildStrategy === 'Docker' && unknownTargetPort) {
     targetPort = makePortName({
-      containerPort: _.toInteger(port),
+      containerPort: _.toInteger(unknownTargetPort),
       protocol: 'TCP',
     });
   } else if (buildStrategy === 'Devfile') {
