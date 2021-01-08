@@ -29,8 +29,8 @@ export const SelectNodesText: React.FC<SelectNodesTextProps> = React.memo(({ tex
     <TextContent>
       <Text>{text}</Text>
       <Text>
-        <Trans t={t} ns="ceph-storage-plugin">
-          The selected nodes will be labeled with &nbsp;
+        <Trans t={t} ns="ceph-storage-plugin" i18nKey="nodesText">
+          The selected nodes will be labeled with&nbsp;
           <Label color="blue">cluster.ocs.openshift.io/openshift-storage=&quot;&quot;</Label>
           &nbsp;(unless they are already labeled). {{ replica }} of the selected nodes will be used
           for initial deployment. The remaining nodes will be used by OpenShift as scheduling

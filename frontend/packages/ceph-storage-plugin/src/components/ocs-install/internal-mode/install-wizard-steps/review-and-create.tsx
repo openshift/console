@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { TextContent, Text, TextVariants } from '@patternfly/react-core';
 import { humanizeBinaryBytes } from '@console/internal/components/utils';
 import { getName, useFlag } from '@console/shared';
@@ -53,13 +53,11 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({
       <dl>
         <ReviewListTitle text={t('ceph-storage-plugin~Capacity and nodes')} />
         <ReviewListBody hideIcon>
-          <Trans t={t} ns="ceph-storage-plugin">
-            Requested Cluster Capacity:&nbsp;
-            <span className="text-secondary">
-              {{ number: OSD_CAPACITY_SIZES[capacity] }} TiB&nbsp;
-              <TotalCapacityText capacity={capacity} />
-            </span>
-          </Trans>
+          <span>{t('ceph-storage-plugin~Requested Cluster Capacity:')}</span>&nbsp;
+          <span className="text-secondary">
+            {OSD_CAPACITY_SIZES[capacity]} TiB&nbsp;
+            <TotalCapacityText capacity={capacity} />
+          </span>
         </ReviewListBody>
         <ReviewListBody
           noValue={!scName}

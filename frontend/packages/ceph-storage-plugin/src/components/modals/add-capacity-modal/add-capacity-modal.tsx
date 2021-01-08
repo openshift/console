@@ -171,12 +171,8 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
                 />
                 {provisionedCapacity && (
                   <div className="ceph-add-capacity__input--info-text">
-                    <Trans t={t} ns="ceph-storage-plugin">
-                      x {replica} replicas ={' '}
-                      <strong data-test="provisioned-capacity">
-                        {{ provisionedCapacity }} TiB
-                      </strong>
-                    </Trans>
+                    {t('ceph-storage-plugin~x {{ replica, number }} replicas =', { replica })}{' '}
+                    <strong data-test="provisioned-capacity">{provisionedCapacity} TiB</strong>
                   </div>
                 )}
               </div>

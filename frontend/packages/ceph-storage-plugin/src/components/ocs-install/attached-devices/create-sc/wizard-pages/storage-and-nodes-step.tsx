@@ -203,7 +203,9 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
             <SelectNodesDetails cpu={cpu} memory={memory} zones={zones.size} nodes={nodesCount} />
           )}
           {!!validations.length &&
-            validations.map((validation) => <ValidationMessage validation={validation} />)}
+            validations.map((validation) => (
+              <ValidationMessage key={validation} validation={validation} />
+            ))}
         </GridItem>
       </Grid>
     </Form>
