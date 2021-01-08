@@ -1,5 +1,5 @@
 import { IRow } from '@patternfly/react-table';
-import { NodeKind, K8sResourceCommon } from '@console/internal/module/k8s';
+import { NodeKind, K8sResourceCommon, Toleration } from '@console/internal/module/k8s';
 
 export type NodeTableRow = {
   cells: IRow['cells'];
@@ -35,6 +35,7 @@ export type LocalVolumeSetKind = K8sResourceCommon & {
       }[];
     };
     maxDeviceCount?: number;
+    tolerations?: Toleration[];
   };
 };
 
@@ -47,6 +48,7 @@ export type GetRows = (
     customData?: {
       filteredNodes: string[];
       preSelected?: string[];
+      taintsFilter?: (node: NodeKind) => boolean;
     };
   },
   visibleRows: Set<string>,

@@ -14,6 +14,7 @@ import './auto-detect-volume.scss';
 export const AutoDetectVolumeInner: React.FC<AutoDetectVolumeInnerProps> = ({
   state,
   dispatch,
+  taintsFilter,
 }) => {
   const [nodeData, nodeLoaded, nodeLoadError] = useK8sWatchResource<NodeKind[]>(nodeResource);
 
@@ -21,12 +22,15 @@ export const AutoDetectVolumeInner: React.FC<AutoDetectVolumeInnerProps> = ({
     if ((nodeLoadError || nodeData.length === 0) && nodeLoaded) {
       dispatch({ type: 'setAllNodeNamesOnADV', value: [] });
     } else if (nodeLoaded) {
-      const names = nodeData.filter((node) => !hasTaints(node)).map((node) => getName(node));
+      const filteredNodes = taintsFilter
+        ? nodeData.filter((node) => taintsFilter(node) || !hasTaints(node))
+        : nodeData.filter((node) => !hasTaints(node));
+      const names = filteredNodes.map(getName);
       const hostNames = createMapForHostNames(nodeData);
       dispatch({ type: 'setAllNodeNamesOnADV', value: names });
       dispatch({ type: 'setHostNamesMapForADV', value: hostNames });
     }
-  }, [dispatch, nodeData, nodeLoaded, nodeLoadError]);
+  }, [dispatch, nodeData, nodeLoaded, nodeLoadError, taintsFilter]);
 
   React.useEffect(() => {
     if (!state.showNodesListOnADV) {
@@ -80,6 +84,7 @@ export const AutoDetectVolumeInner: React.FC<AutoDetectVolumeInnerProps> = ({
               dispatch({ type: 'setNodeNamesForLVS', value: nodes });
             },
             preSelected: state.nodeNamesForLVS,
+            taintsFilter,
           }}
         />
       )}
@@ -97,4 +102,5 @@ export const AutoDetectVolumeHeader = () => (
 type AutoDetectVolumeInnerProps = {
   state: State;
   dispatch: React.Dispatch<Action>;
+  taintsFilter?: (node: NodeKind) => boolean;
 };

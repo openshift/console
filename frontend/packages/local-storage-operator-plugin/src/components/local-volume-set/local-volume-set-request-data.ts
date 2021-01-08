@@ -1,11 +1,16 @@
-import { apiVersionForModel } from '@console/internal/module/k8s';
+import * as _ from 'lodash';
+import { apiVersionForModel, Toleration } from '@console/internal/module/k8s';
 import { LocalVolumeSetModel } from '../../models';
 import { LocalVolumeSetKind, DiskType } from './types';
 import { State } from './state';
 import { DISK_TYPES, HOSTNAME_LABEL_KEY, LABEL_OPERATOR } from '../../constants';
 import { getNodes, getHostNames } from '../../utils';
 
-export const getLocalVolumeSetRequestData = (state: State, ns: string): LocalVolumeSetKind => {
+export const getLocalVolumeSetRequestData = (
+  state: State,
+  ns: string,
+  toleration?: Toleration,
+): LocalVolumeSetKind => {
   const nodes = getNodes(state.showNodesListOnLVS, state.nodeNamesForLVS, state.nodeNames);
   const requestData = {
     apiVersion: apiVersionForModel(LocalVolumeSetModel),
@@ -33,6 +38,7 @@ export const getLocalVolumeSetRequestData = (state: State, ns: string): LocalVol
     },
   } as LocalVolumeSetKind;
 
+  if (!_.isEmpty(toleration)) requestData.spec.tolerations = [toleration];
   if (state.maxDiskLimit) requestData.spec.maxDeviceCount = +state.maxDiskLimit;
   if (state.minDiskSize)
     requestData.spec.deviceInclusionSpec.minSize = `${state.minDiskSize}${state.diskSizeUnit}`;
