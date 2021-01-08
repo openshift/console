@@ -20,7 +20,7 @@ export const NumberSpinner: React.FC<NumberSpinnerProps> = ({
         aria-label="Decrement"
         className="co-m-number-spinner__button"
       >
-        <MinusSquareIcon className="co-m-number-spinner__down-icon" />
+        <MinusSquareIcon className="co-m-number-spinner__down-icon" noVerticalAlign />
       </Button>
       <input
         type="number"
@@ -34,7 +34,7 @@ export const NumberSpinner: React.FC<NumberSpinnerProps> = ({
         aria-label="Increment"
         className="co-m-number-spinner__button"
       >
-        <PlusSquareIcon className="co-m-number-spinner__up-icon" />
+        <PlusSquareIcon className="co-m-number-spinner__up-icon" noVerticalAlign />
       </Button>
     </div>
   );
