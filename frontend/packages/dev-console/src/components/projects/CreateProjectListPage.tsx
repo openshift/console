@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { Button } from '@patternfly/react-core';
 import { createProjectModal } from '@console/internal/components/modals';
 import { K8sResourceKind } from '@console/internal/module/k8s';
@@ -27,12 +27,14 @@ const CreateProjectListPage: React.FC<CreateProjectListPageProps> = ({
   const openProjectModal = () => createProjectModal({ blocking: true, onSubmit: handleSubmit });
 
   return (
-    <ProjectListPage {...props} title={title}>
-      {children} {t('devconsole~or')}{' '}
-      <Button isInline variant="link" onClick={openProjectModal}>
-        {t('devconsole~Create a Project')}
-      </Button>
-    </ProjectListPage>
+    <Trans t={t} ns="devconsole">
+      <ProjectListPage {...props} title={title}>
+        {children} {'or '}
+        <Button isInline variant="link" onClick={openProjectModal}>
+          {'create a Project.'}
+        </Button>
+      </ProjectListPage>
+    </Trans>
   );
 };
 
