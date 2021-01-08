@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/openshift/console/pkg/config/dynamic"
-	"github.com/traefik/traefik/v2/pkg/safe"
+	"github.com/openshift/console/pkg/hypercloud/safe"
 )
 
 type mockProvider struct {

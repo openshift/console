@@ -1,13 +1,17 @@
 routers:
-  k8s1:
-    server: "https://172.22.6.2:6443/"
-    rule: "PathPrefix(`/api/k8s1/`)"
-    path: "/api/k8s1/"
-  k8s2:
-    server: "http://172.23.4.201:6443/"
-    rule: "PathPrefix(`/api/k8s2/`)"
-    path: "/api/k8s2/"
+  daum:
+    server: https://www.daum.com/
+    rule: Host(`daum.com`) && PathPrefix(`/daum/`)
+    path: /daum/
   google:
-    server: "https://google.com/"
-    rule: "Host(`google.com`) && PathPrefix(`/google/`)"
-    path: "/google/"
+    server: https://google.com/
+    rule: Host(`google.com`) && PathPrefix(`/google/`)
+    path: /google/
+  naver:
+    server: https://www.naver.com/
+    rule: Host(`naver.com`) && PathPrefix(`/naver/`)
+    path: /naver/
+  show:
+    server: http://192.168.8.62:9002/
+    rule: Host(`console`) && PathPrefix(`/console/`)
+    path: /console/

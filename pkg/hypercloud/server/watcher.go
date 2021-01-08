@@ -7,10 +7,10 @@ import (
 
 	"github.com/eapache/channels"
 	"github.com/openshift/console/pkg/config/dynamic"
+	"github.com/openshift/console/pkg/hypercloud/safe"
 	"github.com/openshift/console/pkg/provider"
 	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
-	"github.com/traefik/traefik/v2/pkg/safe"
 )
 
 type ConfigWatcher struct {

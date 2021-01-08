@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"os/exec"
 	"runtime"
 
 	"io/ioutil"
@@ -17,7 +18,7 @@ import (
 
 	"github.com/coreos/pkg/capnslog"
 	"github.com/coreos/pkg/flagutil"
-	"github.com/traefik/traefik/v2/pkg/safe"
+	"github.com/openshift/console/pkg/hypercloud/safe"
 
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/backend"
@@ -132,7 +133,8 @@ func main() {
 	helmConfig := chartproxy.RegisterFlags(fs)
 
 	// dynamic multi proxy config  2021/01/05 jinsoo
-	fDynamicConfig := fs.String("dynamic-config", "configs/dynamic-config.yaml", "The YAML proxy dynamic config file. (default file name: configs/dynamic-config.yaml")
+	fDynamicConfig := fs.String("dynamic-config", "configs/dynamic-config.yaml", "The YAML proxy dynamic config file. (default file name: configs/dynamic-config.yaml)")
+	fOperator := fs.Bool("operator", false, "Choose whether using CRD (console) operator, true | false ")
 
 	// NOTE: Keycloak 연동 추가 // 최여진 -> 윤진수 // 20.12.17
 	fKeycloakRealm := fs.String("keycloak-realm", "", "Keycloak Realm Name")
@@ -696,6 +698,22 @@ func main() {
 			log.Fatal(http.ListenAndServe(redirectPort, redirectServer))
 		}()
 	}
+
+	if *fOperator {
+
+		go func() {
+			cmd := exec.Command("./tools/crd-operator")
+			log.Info("Running crd watcher operator")
+			cmd.Stdout = os.Stdout
+			cmd.Stderr = os.Stderr
+
+			err = cmd.Start()
+			if err != nil {
+				log.Fatal("Error when running cmd")
+			}
+		}()
+	}
+
 	end := make(chan bool)
 	<-end
 }
