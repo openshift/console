@@ -1,6 +1,5 @@
-import { browser } from 'protractor';
-import { appHost, testName } from '@console/internal-integration-tests/protractor.conf';
 import { clickHorizontalTab } from '@console/internal-integration-tests/views/horizontal-nav.view';
+import { clickNavLink } from '@console/internal-integration-tests/views/sidenav.view';
 import { createYAMLLink, isLoaded } from '@console/internal-integration-tests/views/crud.view';
 import { isLoaded as yamlPageIsLoaded } from '@console/internal-integration-tests/views/yaml.view';
 import { click } from '@console/shared/src/test-utils/utils';
@@ -26,15 +25,8 @@ export class NADDetail {
   }
 
   async navigateToListView() {
-    const nadsListURL = (namespace) =>
-      `${appHost}/k8s/${
-        namespace === 'all-namespaces' ? '' : 'ns/'
-      }${namespace}/k8s.cni.cncf.io~v1~NetworkAttachmentDefinition/`;
-    const currentURL = await browser.getCurrentUrl();
-    if (![nadsListURL(testName), nadsListURL('all-namespaces')].includes(currentURL)) {
-      await browser.get(nadsListURL(this.namespace));
-      await isLoaded();
-    }
+    await clickNavLink(['Networking', 'Network Attachment Definitions']);
+    await isLoaded();
   }
 
   async navigateToDetail() {
