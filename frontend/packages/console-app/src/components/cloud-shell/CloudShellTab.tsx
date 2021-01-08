@@ -1,11 +1,17 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { InlineTechPreviewBadge } from '@console/shared';
+import { Redirect } from 'react-router';
+import { InlineTechPreviewBadge, useFlag } from '@console/shared';
+import { FLAG_DEVWORKSPACE } from '../../consts';
 import CloudShellTerminal from './CloudShellTerminal';
 import './CloudShellTab.scss';
 
 const CloudShellTab: React.FC = () => {
   const { t } = useTranslation();
+  const devWorkspaceFlag = useFlag(FLAG_DEVWORKSPACE);
+
+  if (!devWorkspaceFlag) return <Redirect to="/" />;
+
   return (
     <>
       <div className="co-cloud-shell-tab__header">
