@@ -22,6 +22,7 @@ import {
   iGetRelevantTemplate,
   getITemplateDefaultFlavor,
   getITemplateDefaultWorkload,
+  iGetTemplateGuestToolsDisk,
 } from '../../../../selectors/immutable/template/combined';
 import {
   CUSTOM_FLAVOR,
@@ -93,11 +94,14 @@ const osUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
   const os = iGetVmSettingValue(state, id, VMSettingsField.OPERATING_SYSTEM);
   const isWindows = os?.startsWith('win');
 
+  const iUserTemplate = iGetLoadedCommonData(state, id, VMWizardProps.userTemplate);
+  const mountTools = isWindows && (!iUserTemplate || !!iGetTemplateGuestToolsDisk(iUserTemplate));
+
   dispatch(
     vmWizardInternalActions[InternalActionType.UpdateVmSettingsField](
       id,
       VMSettingsField.MOUNT_WINDOWS_GUEST_TOOLS,
-      { isHidden: asHidden(!isWindows, VMSettingsField.OPERATING_SYSTEM), value: isWindows },
+      { isHidden: asHidden(!isWindows, VMSettingsField.OPERATING_SYSTEM), value: mountTools },
     ),
   );
 

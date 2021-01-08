@@ -15,6 +15,7 @@ import { iGet, iGetIn } from '../../../utils/immutable';
 import { VirtualMachineModel } from '../../../models';
 import { Flavor } from '../../../constants/vm/flavor';
 import { WorkloadProfile } from '../../../constants/vm/workload-profile';
+import { isWinToolsImage } from '../../vm';
 
 type FindTemplateOptions = {
   workload?: string;
@@ -137,4 +138,9 @@ export const getITemplateDefaultWorkload = (template: ITemplate): WorkloadProfil
   template &&
   WorkloadProfile.getAll().find(
     (w) => iGetLabels(template).get(`${TEMPLATE_WORKLOAD_LABEL}/${w.getValue()}`) === 'true',
+  );
+
+export const iGetTemplateGuestToolsDisk = (tmp: ITemplate) =>
+  iGetIn(iSelectVM(tmp), ['spec', 'template', 'spec', 'volumes'])?.find((v) =>
+    isWinToolsImage(iGetIn(v, ['containerDisk', 'image'])),
   );
