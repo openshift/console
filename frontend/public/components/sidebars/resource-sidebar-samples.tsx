@@ -123,7 +123,7 @@ const ResourceSidebarSnippet: React.FC<ResourceSidebarSnippetProps> = ({
       <p>{description}</p>
       <Button type="button" variant="link" isInline onClick={insertSnippet}>
         <PasteIcon className="co-icon-space-r" />
-        {t('sidebar~Insert Snippet')}
+        {t('sidebar~Insert snippet')}
       </Button>
       <Button
         type="button"
