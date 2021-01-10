@@ -15,6 +15,7 @@ import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrappe
 import { PersistentVolumeClaimWrapper } from '../../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
 import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
 import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
+import { VM_TEMPLATE_NAME_PARAMETER } from '../../../../constants';
 
 export const validateStorages = (options: UpdateOptions) => {
   const { id, prevState, dispatch, getState } = options;
@@ -67,7 +68,9 @@ export const setStoragesTabValidity = (options: UpdateOptions) => {
   const { id, dispatch, getState } = options;
   const state = getState();
 
-  const iStorages = iGetStorages(state, id);
+  const iStorages = iGetStorages(state, id).filter(
+    (iStorage) => iGetIn(iStorage, ['disk', 'name']) !== VM_TEMPLATE_NAME_PARAMETER,
+  );
   let errorKey: string;
 
   let hasAllRequiredFilled = iStorages.every((iStorage) =>
