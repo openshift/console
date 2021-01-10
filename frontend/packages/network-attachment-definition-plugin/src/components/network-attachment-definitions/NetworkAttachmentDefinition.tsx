@@ -1,6 +1,9 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
+import { RocketIcon } from '@patternfly/react-icons';
+import { Button, EmptyState, EmptyStateSecondaryActions, Title } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import {
   ListPage,
   Table,
@@ -8,14 +11,24 @@ import {
   TableRow,
   RowFunction,
 } from '@console/internal/components/factory';
-import { Kebab, ResourceKebab, ResourceLink } from '@console/internal/components/utils';
+import { history, Kebab, ResourceKebab, ResourceLink } from '@console/internal/components/utils';
 import { NamespaceModel } from '@console/internal/models';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { dimensifyHeader, dimensifyRow, getName, getNamespace, getUID } from '@console/shared';
+import {
+  ALL_NAMESPACES_KEY,
+  dimensifyHeader,
+  dimensifyRow,
+  getName,
+  getNamespace,
+  getUID,
+  useActiveNamespace,
+} from '@console/shared';
 import { NetworkAttachmentDefinitionModel } from '../../models';
 import { getConfigAsJSON, getType } from '../../selectors';
 import { NetworkAttachmentDefinitionKind } from '../../types';
 import { NetAttachDefBundle, NetworkAttachmentDefinitionsPageProps } from './types';
+
+import './NetworkAttachmentDefinition.scss';
 
 const { common } = Kebab.factory;
 const menuActions = [...common];
@@ -103,6 +116,42 @@ const getNetAttachDefsData = (nadList: NetworkAttachmentDefinitionKind[]): NetAt
     : [];
 };
 
+const getCreateLink = (namespace: string): string =>
+  `/k8s/ns/${namespace || 'default'}/${referenceForModel(
+    NetworkAttachmentDefinitionModel,
+  )}/~new/form`;
+
+const NADListEmpty: React.FC = () => {
+  const { t } = useTranslation();
+  const [namespace] = useActiveNamespace();
+  return (
+    <EmptyState>
+      <Title headingLevel="h4" size="lg">
+        {t('kubevirt-plugin~No network attachment definitions found')}
+      </Title>
+      <Button
+        data-test-id="create-nad-empty"
+        variant="primary"
+        onClick={() =>
+          history.push(getCreateLink(namespace === ALL_NAMESPACES_KEY ? undefined : namespace))
+        }
+      >
+        {t('kubevirt-plugin~Create network attachment definition')}
+      </Button>
+      <EmptyStateSecondaryActions>
+        <Button
+          data-test-id="nad-quickstart"
+          variant="secondary"
+          onClick={() => history.push('/quickstart?keyword=network+attachment+definition')}
+        >
+          <RocketIcon className="nad-quickstart-icon" />
+          {t('kubevirt-plugin~Learn how to use network attachment definitions')}
+        </Button>
+      </EmptyStateSecondaryActions>
+    </EmptyState>
+  );
+};
+
 export const NetworkAttachmentDefinitionsList: React.FC<React.ComponentProps<typeof Table>> = (
   props,
 ) => {
@@ -115,6 +164,7 @@ export const NetworkAttachmentDefinitionsList: React.FC<React.ComponentProps<typ
       virtualize
       loaded={props.loaded}
       label={props.label}
+      EmptyMsg={NADListEmpty}
     />
   );
 };
@@ -123,9 +173,9 @@ NetworkAttachmentDefinitionsList.displayName = 'NetworkAttachmentDefinitionsList
 export const NetworkAttachmentDefinitionsPage: React.FC<NetworkAttachmentDefinitionsPageProps> = (
   props,
 ) => {
-  const namespace = props.namespace || props.match?.params?.ns || 'default';
+  const namespace = props.namespace || props.match?.params?.ns;
   const createProps = {
-    to: `/k8s/ns/${namespace}/${referenceForModel(NetworkAttachmentDefinitionModel)}/~new/form`,
+    to: getCreateLink(namespace),
   };
 
   return (
