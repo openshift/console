@@ -35,7 +35,7 @@ export enum SecretTypeAbstraction {
 const secretDisplayType = (isCreate: boolean, abstraction: SecretTypeAbstraction, t: TFunction) => {
   switch (abstraction) {
     case 'generic':
-      return i18next.t('secret~Key/Value');
+      return i18next.t('secret~Key/value');
     case 'image':
       return i18next.t('secret~Image Pull');
     default:
