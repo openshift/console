@@ -145,7 +145,7 @@ export const getTemplateSizeRequirement = (
     sourceSize =
       customSource.dataSource?.value === DataVolumeSourceType.PVC.getValue()
         ? convertToBaseValue(customSource.pvcSize?.value)
-        : convertToBaseValue(`${customSource.size?.value}${customSource.size?.value.unit}`);
+        : convertToBaseValue(`${customSource.size?.value.value}${customSource.size?.value.unit}`);
     isCDRom = customSource.cdRom?.value;
   } else if (!isTemplateSourceError(templateSource) && templateSource?.pvc) {
     sourceSize = convertToBaseValue(templateSource.pvc.spec.resources.requests.storage);
