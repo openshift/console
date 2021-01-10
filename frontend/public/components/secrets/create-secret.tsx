@@ -398,7 +398,6 @@ class ImageSecretFormWithTrans extends React.Component<
             onChange={this.onDataChanged}
             stringData={data}
             onDisable={this.onFormDisable}
-            t={this.props.t}
           />
         )}
       </>
@@ -422,14 +421,13 @@ type ConfigEntryFormProps = {
   id: number;
   entry: Object;
   onChange: Function;
-  t: TFunction;
 };
 
-class ConfigEntryFormWithTranslation extends React.Component<
-  ConfigEntryFormProps & WithT,
+class ConfigEntryFormWithTrans extends React.Component<
+  ConfigEntryFormProps & WithTranslation,
   ConfigEntryFormState
 > {
-  constructor(props) {
+  constructor(props: ConfigEntryFormProps & WithTranslation) {
     super(props);
     this.state = {
       address: _.get(this.props.entry, 'address'),
@@ -551,6 +549,7 @@ class ConfigEntryFormWithTranslation extends React.Component<
     );
   }
 }
+const ConfigEntryForm = withTranslation()(ConfigEntryFormWithTrans);
 
 export const ConfigEntryForm = withTranslation()(ConfigEntryFormWithTranslation);
 
@@ -686,12 +685,7 @@ class CreateConfigSubformWithTrans extends React.Component<
               </Button>
             </div>
           )}
-          <ConfigEntryForm
-            id={index}
-            entry={entryData.entry}
-            onChange={this.onDataChanged}
-            t={this.props.t}
-          />
+          <ConfigEntryForm id={index} entry={entryData.entry} onChange={this.onDataChanged} />
         </div>
       );
     });
@@ -713,10 +707,8 @@ class CreateConfigSubformWithTrans extends React.Component<
 }
 export const CreateConfigSubform = withTranslation()(CreateConfigSubformWithTrans);
 
-export const CreateConfigSubform = withTranslation()(CreateConfigSubformWithTranslation);
-
-class UploadConfigSubformWithTranslation extends React.Component<
-  UploadConfigSubformProps & WithT,
+class UploadConfigSubformWithTrans extends React.Component<
+  UploadConfigSubformProps,
   UploadConfigSubformState
 > {
   constructor(props) {
@@ -770,6 +762,7 @@ class UploadConfigSubformWithTranslation extends React.Component<
     );
   }
 }
+const UploadConfigSubform = withTranslation()(UploadConfigSubformWithTrans);
 
 class WebHookSecretFormWithTrans extends React.Component<
   WebHookSecretFormProps,
