@@ -37,7 +37,7 @@ const secretDisplayType = (isCreate: boolean, abstraction: SecretTypeAbstraction
     case 'generic':
       return i18next.t('secret~Key/value');
     case 'image':
-      return i18next.t('secret~Image Pull');
+      return i18next.t('secret~Image pull');
     default:
       return isCreate
         ? t('public~Create {{secretType}} secret', { secretType: abstraction })
@@ -64,16 +64,16 @@ export type BasicAuthSubformState = {
 
 const secretFormExplanation = {
   [SecretTypeAbstraction.generic]: i18next.t(
-    'secret~Key/value secrets let you inject sensitive data into your application as files or environment variables.',
+    'secret~Key/value Secrets let you inject sensitive data into your application as files or environment variables.',
   ),
   [SecretTypeAbstraction.source]: i18next.t(
-    'secret~Source secrets let you authenticate against a Git server.',
+    'secret~Source Secrets let you authenticate against a Git server.',
   ),
   [SecretTypeAbstraction.image]: i18next.t(
-    'secret~Image pull secrets let you authenticate against a private image registry.',
+    'secret~Image pull Secrets let you authenticate against a private image registry.',
   ),
   [SecretTypeAbstraction.webhook]: i18next.t(
-    'secret~Webhook secrets let you authenticate a webhook trigger.',
+    'secret~Webhook Secrets let you authenticate a webhook trigger.',
   ),
 };
 
@@ -226,7 +226,7 @@ export const withSecretForm = (SubForm, modal?: boolean) =>
             <fieldset disabled={!this.props.isCreate}>
               <div className="form-group">
                 <label className="control-label co-required" htmlFor="secret-name">
-                  {t('secret~Secret Name')}
+                  {t('secret~Secret name')}
                 </label>
                 <div>
                   <input
@@ -239,7 +239,7 @@ export const withSecretForm = (SubForm, modal?: boolean) =>
                     required
                   />
                   <p className="help-block" id="secret-name-help">
-                    {t('secret~Unique name of the new secret.')}
+                    {t('secret~Unique name of the new Secret.')}
                   </p>
                 </div>
               </div>
@@ -333,7 +333,7 @@ class ImageSecretFormWithTrans extends React.Component<
     try {
       parsedData = _.mapValues(data, JSON.parse);
     } catch (err) {
-      this.props.onError(t("secret~Error parsing secret's data: {{message}}", err));
+      this.props.onError(t("secret~Error parsing Secret's data: {{message}}", err));
       parsedData = { '.dockerconfigjson': {} };
     }
     this.state = {
@@ -369,8 +369,8 @@ class ImageSecretFormWithTrans extends React.Component<
   render() {
     const { t } = this.props;
     const authTypes = {
-      credentials: t('secret~Image Registry Credentials'),
-      'config-file': t('secret~Upload Configuration File'),
+      credentials: t('secret~Image registry credentials'),
+      'config-file': t('secret~Upload configuration file'),
     };
     const data = _.get(this.state.stringData, this.state.dataKey);
     return (
@@ -378,7 +378,7 @@ class ImageSecretFormWithTrans extends React.Component<
         {this.props.isCreate && (
           <div className="form-group">
             <label className="control-label" htmlFor="secret-type">
-              {t('secret~Authentication Type')}
+              {t('secret~Authentication type')}
             </label>
             <div className="co-create-secret__dropdown">
               <Dropdown
@@ -482,7 +482,7 @@ class ConfigEntryFormWithTranslation extends React.Component<
       <div className="co-m-pane__body-group" data-test-id="create-image-secret-form">
         <div className="form-group">
           <label className="control-label co-required" htmlFor={`${this.props.id}-address`}>
-            {t('secret~Registry Server Address')}
+            {t('secret~Registry server address')}
           </label>
           <div>
             <input
@@ -682,7 +682,7 @@ class CreateConfigSubformWithTrans extends React.Component<
             <div className="co-add-remove-form__link--remove-entry">
               <Button onClick={() => this.removeEntry(index)} type="button" variant="link">
                 <MinusCircleIcon className="co-icon-space-r" />
-                {t('secret~Remove Credentials')}
+                {t('secret~Remove credentials')}
               </Button>
             </div>
           )}
@@ -705,7 +705,7 @@ class CreateConfigSubformWithTrans extends React.Component<
           variant="link"
         >
           <PlusCircleIcon className="co-icon-space-r" />
-          {t('secret~Add Credentials')}
+          {t('secret~Add credentials')}
         </Button>
       </>
     );
@@ -754,7 +754,7 @@ class UploadConfigSubformWithTranslation extends React.Component<
           onChange={this.onFileChange}
           inputFileData={this.state.configFile}
           id="docker-config"
-          label={t('secret~Configuration File')}
+          label={t('secret~Configuration file')}
           inputFieldHelpText={t('secret~Upload a .dockercfg or .docker/config.json file.')}
           textareaFieldHelpText={t(
             'secret~File with credentials and other configuration for connecting to a secured image registry.',
@@ -804,7 +804,7 @@ class WebHookSecretFormWithTrans extends React.Component<
     return (
       <div className="form-group">
         <label className="control-label co-required" htmlFor="webhook-secret-key">
-          {t('secret~Webhook Secret Key')}
+          {t('secret~Webhook Secret key')}
         </label>
         <div className="pf-c-input-group">
           <input
@@ -826,7 +826,7 @@ class WebHookSecretFormWithTrans extends React.Component<
           </button>
         </div>
         <p className="help-block" id="webhook-secret-help">
-          {t('secret~Value of the secret will be supplied when invoking the webhook.')}
+          {t('secret~Value of the Secret will be supplied when invoking the webhook.')}
         </p>
       </div>
     );
@@ -867,15 +867,15 @@ class SourceSecretFormWithTrans extends React.Component<
   render() {
     const { t } = this.props;
     const authTypes = {
-      [SecretType.basicAuth]: t('secret~Basic Authentication'),
-      [SecretType.sshAuth]: t('secret~SSH Key'),
+      [SecretType.basicAuth]: t('secret~Basic authentication'),
+      [SecretType.sshAuth]: t('secret~SSH key'),
     };
     return (
       <>
         {this.props.isCreate ? (
           <div className="form-group">
             <label className="control-label" htmlFor="secret-type">
-              {t('secret~Authentication Type')}
+              {t('secret~Authentication type')}
             </label>
             <div className="co-create-secret__dropdown">
               <Dropdown
@@ -944,7 +944,7 @@ class BasicAuthSubformWithTrans extends React.Component<
         </div>
         <div className="form-group">
           <label className="control-label co-required" htmlFor="password">
-            {t('secret~Password or Token')}
+            {t('secret~Password or token')}
           </label>
           <div>
             <input
@@ -1013,7 +1013,7 @@ class SSHAuthSubformWithTrans extends React.Component<SSHAuthSubformProps, SSHAu
         onChange={this.onFileChange}
         inputFileData={this.state['ssh-privatekey']}
         id="ssh-privatekey"
-        label={t('secret~SSH Private Key')}
+        label={t('secret~SSH private key')}
         inputFieldHelpText={t(
           'secret~Drag and drop file with your private SSH key here or browse to upload it.',
         )}
@@ -1144,7 +1144,7 @@ class GenericSecretFormWithTrans extends React.Component<
             <div className="co-add-remove-form__link--remove-entry">
               <Button type="button" onClick={() => this.removeEntry(index)} variant="link">
                 <MinusCircleIcon className="co-icon-space-r" />
-                {t('secret~Remove Key/Value')}
+                {t('secret~Remove key/value')}
               </Button>
             </div>
           )}
@@ -1167,7 +1167,7 @@ class GenericSecretFormWithTrans extends React.Component<
           variant="link"
         >
           <PlusCircleIcon className="co-icon-space-r" />
-          {t('secret~Add Key/Value')}
+          {t('secret~Add key/value')}
         </Button>
       </>
     );
