@@ -55,6 +55,7 @@ export const pxeBootSourceSelect = $('#pxe-bootsource');
 // Storage tab
 export const addDiskButton = $('#add-disk');
 export const storageBootSourceSelect = $('#storage-bootsource');
+export const storageBootsourceHelper = $('#storage-bootsource-helper');
 export const diskWarning = (resourceName) =>
   $(`[data-id="${resourceName}"]`).$('.kv-validation-cell__cell--warning');
 
@@ -99,3 +100,17 @@ export const tableRowAttribute = async (name: string, columnIndex: number): Prom
 };
 
 export const uploadLink = element(by.linkText('upload a new disk image'));
+
+// pvc dropdown button on customize wizard
+export const selectPVCNS = $('#clone-pvc-ns');
+export const selectPVCName = element(by.partialButtonText('Select Persistent Volume Claim'));
+
+// wizard boot source
+export const pvcNSButton = $('#pvc-ns-dropdown');
+export const pvcNameButton = $('#pvc-name-dropdown');
+export const pvcNS = (name: string) => $(`#${name}-Project-link`);
+export const pvcName = (name: string) => $(`#${name}-PersistentVolumeClaim-link`);
+export const diskAdvance = element(by.buttonText('Advanced'));
+export const selectSCButton = $('#form-ds-sc-select');
+export const selectAccessModeButton = $('#form-ds-access-mode-select');
+export const selectVolumeModeButton = $('#form-ds-volume-mode-select');

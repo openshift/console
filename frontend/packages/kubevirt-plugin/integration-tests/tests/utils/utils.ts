@@ -200,6 +200,12 @@ export const selectNonDefaultAccessMode = (defaultAccessMode) => {
   return diskAccessMode[accessModeKeys[0]];
 };
 
+export const selectAccessModeFromCM = (accessMode) => {
+  const accessModeKeys = _.keys(diskAccessMode);
+  const key = accessModeKeys.filter((k) => k === accessMode);
+  return diskAccessMode[key[0]];
+};
+
 export const selectNonDefaultVolumeMode = (defaultVolumeMode) => {
   const volumeModeKeys = _.keys(diskVolumeMode);
   volumeModeKeys.filter((k) => k !== defaultVolumeMode);

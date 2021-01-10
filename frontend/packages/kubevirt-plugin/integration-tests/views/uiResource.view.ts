@@ -27,3 +27,5 @@ export const dropDownItem = (text) =>
 export const dropDownItemMain = (text) =>
   element(by.cssContainingText('.pf-c-select__menu-item-main', text));
 export const dropDownList = $$('.pf-c-select__menu-item-main');
+
+export const confirmButton = $('#confirm-action');

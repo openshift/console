@@ -57,6 +57,7 @@ export const VIRTUALIZATION_TITLE = 'Virtualization';
 // Wizard strings
 export const IMPORT_WIZARD_CONN_TO_NEW_INSTANCE = 'Connect to New Instance';
 export const NOT_RECOMMENDED_BUS_TYPE_WARN = 'Not recommended bus type';
+export const RECOMMENDED = 'Recommended';
 // Some times we need to use existing VMWare instance, which name always starts from 'administrator'
 export const IMPORT_WIZARD_CONN_NAME_PREFIX = 'admin';
 export const RHV_PROVIDER = 'Red Hat Virtualization (RHV)';
