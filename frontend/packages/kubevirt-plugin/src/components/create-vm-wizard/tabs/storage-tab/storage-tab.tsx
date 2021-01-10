@@ -215,7 +215,7 @@ const stateToProps = (state, { wizardReduxID }) => ({
   isUpdateDisabled: hasStepUpdateDisabled(state, wizardReduxID, VMWizardTab.STORAGE),
   isDeleteDisabled: hasStepDeleteDisabled(state, wizardReduxID, VMWizardTab.STORAGE),
   storages: getStorages(state, wizardReduxID),
-  isBootDiskRequired: iGetProvisionSource(state, wizardReduxID) === ProvisionSource.DISK,
+  isBootDiskRequired: iGetProvisionSource(state, wizardReduxID) !== ProvisionSource.PXE,
 });
 
 const dispatchToProps = (dispatch, { wizardReduxID }) => ({

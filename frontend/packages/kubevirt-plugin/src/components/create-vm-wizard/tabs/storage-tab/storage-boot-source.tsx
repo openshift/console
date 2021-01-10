@@ -34,7 +34,7 @@ export const StorageBootSource: React.FC<StorageBootOrderProps> = ({
   const isBootSourceValid =
     new VolumeWrapper(selectedStorage?.volume).getType() === VolumeType.PERSISTENT_VOLUME_CLAIM ||
     new VolumeWrapper(selectedStorage?.volume).getType() === VolumeType.CONTAINER_DISK ||
-    [DataVolumeSourceType.PVC, DataVolumeSourceType.HTTP].includes(
+    [DataVolumeSourceType.PVC, DataVolumeSourceType.HTTP, DataVolumeSourceType.REGISTRY].includes(
       new DataVolumeWrapper(selectedStorage?.dataVolume).getType(),
     );
 
