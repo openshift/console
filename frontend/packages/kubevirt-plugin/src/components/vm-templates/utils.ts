@@ -30,7 +30,16 @@ export const filterTemplates = (
     const name = getTemplateName(t);
     if (acc[name]) {
       const isRecommended = t.metadata.labels?.[DEFAULT_OS_VARIANT] === 'true';
-      isRecommended ? acc[name].variants.unshift(t) : acc[name].variants.push(t);
+      if (isRecommended) {
+        acc[name].metadata = {
+          name: t.metadata.name,
+          uid: t.metadata.uid,
+          namespace: t.metadata.namespace,
+        };
+        acc[name].variants.unshift(t);
+      } else {
+        acc[name].variants.push(t);
+      }
     } else {
       acc[name] = {
         metadata: {
