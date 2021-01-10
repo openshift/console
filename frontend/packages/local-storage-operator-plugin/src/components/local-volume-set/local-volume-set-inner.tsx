@@ -8,6 +8,7 @@ import {
   TextInputTypes,
   Text,
   TextVariants,
+  Tooltip,
 } from '@patternfly/react-core';
 import { Dropdown } from '@console/internal/components/utils';
 import { ListPage } from '@console/internal/components/factory';
@@ -52,14 +53,9 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = ({
     dispatch({ type: 'setShowNodesListOnLVS', value: !state.showNodesListOnLVS });
   };
 
-  const onMaxSizeChange = (size: string) => {
-    if (size && (Number.isNaN(Number(size)) || Number(size) < Number(state.minDiskSize))) {
-      dispatch({ type: 'setIsValidMaxSize', value: false });
-    } else {
-      dispatch({ type: 'setIsValidMaxSize', value: true });
-    }
-    dispatch({ type: 'setMaxDiskSize', value: size });
-  };
+  const validMaxDiskSize = /^\+?([1-9]\d*)$/.test(state.maxDiskSize || '1');
+  const validMaxDiskLimit = /^\+?([1-9]\d*)$/.test(state.maxDiskLimit || '1');
+
   return (
     <>
       <FormGroup
@@ -212,14 +208,20 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = ({
               fieldId="create-lvs-max-disk-size"
               className="lso-create-lvs__disk-size-form-group-max-min-input"
             >
-              <TextInput
-                type={TextInputTypes.text}
-                id="create-lvs-max-disk-size"
-                value={state.maxDiskSize}
-                validated={state.isValidMaxSize ? 'default' : 'error'}
-                className="lso-create-lvs__disk-size-form-group-max-input"
-                onChange={onMaxSizeChange}
-              />
+              <Tooltip
+                content="Please enter a positive Integer"
+                isVisible={!validMaxDiskSize}
+                trigger="manual"
+              >
+                <TextInput
+                  type={TextInputTypes.number}
+                  id="create-lvs-max-disk-size"
+                  value={state.maxDiskSize}
+                  validated={validMaxDiskSize ? 'default' : 'error'}
+                  className="lso-create-lvs__disk-size-form-group-max-input"
+                  onChange={(value) => dispatch({ type: 'setMaxDiskSize', value })}
+                />
+              </Tooltip>
             </FormGroup>
             <Dropdown
               id="create-lvs-disk-size-unit-dropdown"
@@ -238,13 +240,20 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = ({
               'lso-plugin~Disk limit will set the maximum number of PVs to create on a node. If the field is empty will create PVs for all available disks on the matching nodes.',
             )}
           </p>
-          <TextInput
-            type={TextInputTypes.number}
-            id="create-lvs-max-disk-limit"
-            value={state.maxDiskLimit}
-            onChange={(maxLimit) => dispatch({ type: 'setMaxDiskLimit', value: maxLimit })}
-            placeholder={t('lso-plugin~All')}
-          />
+          <Tooltip
+            content="Please enter a positive Integer"
+            isVisible={!validMaxDiskLimit}
+            trigger="manual"
+          >
+            <TextInput
+              type={TextInputTypes.number}
+              id="create-lvs-max-disk-limit"
+              value={state.maxDiskLimit}
+              validated={validMaxDiskLimit ? 'default' : 'error'}
+              onChange={(maxLimit) => dispatch({ type: 'setMaxDiskLimit', value: maxLimit })}
+              placeholder={t('lso-plugin~All')}
+            />
+          </Tooltip>
         </FormGroup>
       </ExpandableSection>
     </>
