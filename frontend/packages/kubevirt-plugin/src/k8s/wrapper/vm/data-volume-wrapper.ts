@@ -49,9 +49,9 @@ export class DataVolumeWrapper extends K8sResourceObjectWithTypePropertyWrapper<
 
   getStorageClassName = () => getDataVolumeStorageClassName(this.data as any);
 
-  getPesistentVolumeClaimName = () => this.getIn(['spec', 'source', 'pvc', 'name']);
+  getPersistentVolumeClaimName = () => this.getIn(['spec', 'source', 'pvc', 'name']);
 
-  getPesistentVolumeClaimNamespace = () => this.getIn(['spec', 'source', 'pvc', 'namespace']);
+  getPersistentVolumeClaimNamespace = () => this.getIn(['spec', 'source', 'pvc', 'namespace']);
 
   getURL = () => this.getIn(['spec', 'source', 'http', 'url']);
 

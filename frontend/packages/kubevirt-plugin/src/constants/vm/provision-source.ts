@@ -165,7 +165,7 @@ export class ProvisionSource extends SelectDropdownObjectEnum<string> {
         case StorageUISource.ATTACH_CLONED_DISK:
           return {
             type: ProvisionSource.DISK,
-            source: `${dataVolumeWrapper.getPesistentVolumeClaimNamespace()}/${dataVolumeWrapper.getPesistentVolumeClaimName()}`,
+            source: `${dataVolumeWrapper.getPersistentVolumeClaimNamespace()}/${dataVolumeWrapper.getPersistentVolumeClaimName()}`,
           };
         case StorageUISource.ATTACH_DISK:
           return {

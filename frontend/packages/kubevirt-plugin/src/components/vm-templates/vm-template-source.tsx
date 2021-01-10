@@ -228,8 +228,8 @@ export const SourceDescription: React.FC<SourceDescriptionProps> = ({ sourceStat
         case DataVolumeSourceType.PVC:
           return (
             <PVCSource
-              name={dvWrapper.getPesistentVolumeClaimName()}
-              namespace={dvWrapper.getPesistentVolumeClaimNamespace()}
+              name={dvWrapper.getPersistentVolumeClaimName()}
+              namespace={dvWrapper.getPersistentVolumeClaimNamespace()}
               isCDRom={isCDRom}
               clone
             />

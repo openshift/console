@@ -177,6 +177,18 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     (isEditing && combinedDisk.getVolumeMode()) || null,
   );
 
+  React.useEffect(() => {
+    if (source.requiresPVC()) {
+      const pvcNameDataVolume = dataVolume.getPersistentVolumeClaimName();
+      const pvcNamespaceDataVolume = dataVolume.getPersistentVolumeClaimNamespace();
+      const pvc = persistentVolumeClaims?.data.find(
+        ({ metadata }) =>
+          metadata?.name === pvcNameDataVolume && metadata?.namespace === pvcNamespaceDataVolume,
+      );
+      setVolumeMode((value) => VolumeMode.fromString(pvc?.spec?.volumeMode) || value);
+    }
+  }, [dataVolume, persistentVolumeClaims, source]);
+
   const [defaultAccessMode, defaultVolumeMode, isScModesKnown] = React.useMemo(() => {
     return [
       getDefaultSCAccessModes(storageClassConfigMap, storageClassName)?.[0],
@@ -631,7 +643,11 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                         onChange={(vMode) => setVolumeMode(VolumeMode.fromString(vMode))}
                         value={asFormSelectValue(volumeMode?.getValue())}
                         id={asId('volume-mode')}
-                        isDisabled={isDisabled('volumeMode') || isStorageClassDataLoading}
+                        isDisabled={
+                          isDisabled('volumeMode') ||
+                          isStorageClassDataLoading ||
+                          source.requiresPVC()
+                        }
                       >
                         <FormSelectPlaceholderOption
                           isDisabled={inProgress}
@@ -654,6 +670,11 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
                           />
                         ))}
                       </FormSelect>
+                      {source.requiresPVC() && (
+                        <div className="pf-c-form__helper-text" aria-live="polite">
+                          {t('kubevirt-plugin~Volume Mode is set by Source PVC')}
+                        </div>
+                      )}
                     </FormRow>
                   )}
                   {source.requiresAccessModes() && (

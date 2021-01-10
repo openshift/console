@@ -106,7 +106,7 @@ const DiskModalFirehose: React.FC<DiskModalFirehoseProps> = (props) => {
   const vmNamespace = getNamespace(vmLikeEntity);
 
   const [namespace, setNamespace] = React.useState<string>(
-    new DataVolumeWrapper(props.dataVolume).getPesistentVolumeClaimNamespace() || vmNamespace,
+    new DataVolumeWrapper(props.dataVolume).getPersistentVolumeClaimNamespace() || vmNamespace,
   );
 
   const resources = [

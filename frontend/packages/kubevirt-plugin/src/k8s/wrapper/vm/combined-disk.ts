@@ -163,7 +163,7 @@ export class CombinedDisk {
       return this.volumeWrapper?.getPersistentVolumeClaimName();
     }
     if (source === StorageUISource.ATTACH_CLONED_DISK) {
-      return this.dataVolumeWrapper?.getPesistentVolumeClaimName();
+      return this.dataVolumeWrapper?.getPersistentVolumeClaimName();
     }
 
     return null;

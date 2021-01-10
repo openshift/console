@@ -293,6 +293,7 @@
   "Storage class": "Storage class",
   "Access mode": "Access mode",
   "Volume mode": "Volume mode",
+  "Volume Mode is set by Source PVC": "Volume Mode is set by Source PVC",
   "Boot source type": "Boot source type",
   "--- Select boot source ---": "--- Select boot source ---",
   "Select boot source": "Select boot source",
