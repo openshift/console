@@ -26,7 +26,7 @@ import {
 } from '@patternfly/react-core';
 import { SearchIcon } from '@patternfly/react-icons';
 import { FLAGS, VirtualizedGrid } from '@console/shared';
-import { StatusBox, ResourceName } from '@console/internal/components/utils';
+import { StatusBox, ResourceName, humanizeBinaryBytes } from '@console/internal/components/utils';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { ProjectModel } from '@console/internal/models';
 
@@ -45,7 +45,7 @@ import { getWorkloadProfile } from '../../../selectors/vm';
 import {
   getTemplateFlavorDesc,
   getTemplateOperatingSystems,
-  getTemplateSizeRequirement,
+  getTemplateSizeRequirementInBytes,
 } from '../../../selectors/vm-template/advanced';
 import { TemplateItem } from '../../../types/template';
 import { isTemplateSourceError, TemplateSourceStatus } from '../../../statuses/template/types';
@@ -78,6 +78,10 @@ export const TemplateTile: React.FC<TemplateTileProps> = ({
   const osName = getTemplateOperatingSystems(templateItem.variants)?.[0]?.name;
   const workloadProfile = getWorkloadProfile(template) || t('kubevirt-plugin~Not available');
   const provider = getTemplateProvider(t, template, true);
+  const storage = getTemplateSizeRequirementInBytes(template, sourceStatus);
+  const storageLable = storage
+    ? humanizeBinaryBytes(storage).string
+    : t('kubevirt-plugin~Not available');
 
   return (
     <CatalogTile
@@ -121,7 +125,7 @@ export const TemplateTile: React.FC<TemplateTileProps> = ({
             </StackItem>
             <StackItem>
               <b>{t('kubevirt-plugin~Storage ')}</b>
-              {getTemplateSizeRequirement(template, sourceStatus)}
+              {storageLable}
             </StackItem>
           </Stack>
         </StackItem>

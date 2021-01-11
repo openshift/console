@@ -21,6 +21,7 @@ import {
   ResourceLink,
   FirehoseResult,
   ExternalLink,
+  humanizeBinaryBytes,
 } from '@console/internal/components/utils';
 import {
   TemplateModel,
@@ -42,7 +43,7 @@ import { menuActionsCreator } from './menu-actions';
 import { TemplateSource } from './vm-template-source';
 import { getTemplateOSIcon, PinnedIcon } from './os-icons';
 import {
-  getTemplateSizeRequirement,
+  getTemplateSizeRequirementInBytes,
   getTemplateMemory,
 } from '../../selectors/vm-template/advanced';
 import { useBaseImages } from '../../hooks/use-base-images';
@@ -119,6 +120,7 @@ const VMTemplateDetailsBody: React.FC<VMTemplateDetailsBodyProps> = ({
 }) => {
   const { t } = useTranslation();
   const osName = getOperatingSystemName(template);
+  const storage = getTemplateSizeRequirementInBytes(template, sourceStatus);
   return (
     <Stack hasGutter>
       <StackItem>
@@ -128,7 +130,9 @@ const VMTemplateDetailsBody: React.FC<VMTemplateDetailsBodyProps> = ({
       <StackItem>
         <div className="kubevirt-vm-template-popover">
           <div>{t('kubevirt-plugin~Storage')}</div>
-          <div>{getTemplateSizeRequirement(template, sourceStatus)}</div>
+          <div>
+            {storage ? humanizeBinaryBytes(storage).string : t('kubevirt-plugin~Not available')}
+          </div>
         </div>
         <div className="kubevirt-vm-template-popover">
           <div>{t('kubevirt-plugin~Memory')}</div>

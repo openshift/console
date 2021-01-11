@@ -16,6 +16,7 @@ import {
 } from '@patternfly/react-core';
 import {
   convertToBaseValue,
+  humanizeBinaryBytes,
   LoadingBox,
   useAccessReview2,
 } from '@console/internal/components/utils';
@@ -33,7 +34,7 @@ import {
   getDefaultDiskBus,
   getTemplateFlavorDesc,
   getTemplateMemory,
-  getTemplateSizeRequirement,
+  getTemplateSizeRequirementInBytes,
 } from '../../../selectors/vm-template/advanced';
 import { VMSettingsField } from '../../create-vm-wizard/types';
 import { helpKeyResolver } from '../../create-vm-wizard/strings/renderable-field';
@@ -200,6 +201,8 @@ export const CreateVMForm: React.FC<CreateVMFormProps> = ({
     );
   }
 
+  const storage = getTemplateSizeRequirementInBytes(template, sourceStatus, customSource);
+
   return (
     <Stack hasGutter>
       {showCreateInfo && (
@@ -256,7 +259,7 @@ export const CreateVMForm: React.FC<CreateVMFormProps> = ({
           <Split hasGutter className="kubevirt-create-vm-desc">
             <SplitItem>
               <FormRow fieldId="vm-storage" title={t('kubevirt-plugin~Storage')}>
-                {getTemplateSizeRequirement(template, sourceStatus, customSource)}
+                {storage ? humanizeBinaryBytes(storage).string : t('kubevirt-plugin~Not available')}
               </FormRow>
             </SplitItem>
             <SplitItem>

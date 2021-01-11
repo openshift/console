@@ -4,7 +4,7 @@ import { TFunction } from 'i18next';
 import { Form, Stack, StackItem } from '@patternfly/react-core';
 import { getNamespace } from '@console/shared';
 import { CatalogExtensionHook, CatalogItem } from '@console/plugin-sdk';
-import { SectionHeading } from '@console/internal/components/utils';
+import { humanizeBinaryBytes, SectionHeading } from '@console/internal/components/utils';
 import { PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
 import { FormRow } from '../../form/form-row';
 import { getOperatingSystemName, getWorkloadProfile } from '../../../selectors/vm';
@@ -17,7 +17,7 @@ import {
 } from '../../../selectors/vm-template/basic';
 import {
   getTemplateFlavorDesc,
-  getTemplateSizeRequirement,
+  getTemplateSizeRequirementInBytes,
 } from '../../../selectors/vm-template/advanced';
 import { isTemplateSourceError } from '../../../statuses/template/types';
 import { SourceDescription } from '../../vm-templates/vm-template-source';
@@ -56,7 +56,10 @@ const normalizeVmTemplates = (
     const imgUrl = getTemplateOSIcon(tmp);
     const workloadType = getWorkloadProfile(tmp) || t('kubevirt-plugin~Not available');
     const flavor = getTemplateFlavorDesc(tmp, false);
-    const storage = getTemplateSizeRequirement(tmp, sourceStatus);
+    const storage = getTemplateSizeRequirementInBytes(tmp, sourceStatus);
+    const storageLabel = storage
+      ? humanizeBinaryBytes(storage).string
+      : t('kubevirt-plugin~Not available');
     const providerType = getTemplateKindProviderType(tmp);
     const templateDescription = getDescription(tmp);
 
@@ -74,7 +77,8 @@ const normalizeVmTemplates = (
           <strong>{t('kubevirt-plugin~Flavor')}:</strong> {flavor}
         </StackItem>
         <StackItem>
-          <strong>{t('kubevirt-plugin~Storage')}:</strong> {storage}
+          <strong>{t('kubevirt-plugin~Storage')}:</strong>
+          {storageLabel}
         </StackItem>
       </Stack>
     );
@@ -121,7 +125,7 @@ const normalizeVmTemplates = (
                 title={t('kubevirt-plugin~Storage')}
                 fieldId="dev-console-vm-storage"
               >
-                {getTemplateSizeRequirement(tmp, sourceStatus)}
+                {storageLabel}
               </FormRow>
               <FormRow
                 className="vm-side-drawer-form-row"
