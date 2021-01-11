@@ -34,7 +34,7 @@ export const useValuesForNamespaceContext = () => {
     FAVORITE_NAMESPACE_NAME_USERSETTINGS_KEY,
     FAVORITE_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
   );
-  const [lastNamespace, setLastnameNamespace, lastNamespaceLoaded] = useUserSettingsCompatibility<
+  const [lastNamespace, setLastNamespace, lastNamespaceLoaded] = useUserSettingsCompatibility<
     string
   >(LAST_NAMESPACE_NAME_USER_SETTINGS_KEY, LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY);
 
@@ -42,26 +42,24 @@ export const useValuesForNamespaceContext = () => {
   const setNamespace = React.useCallback(
     (namespace: string) => {
       dispatch(setActiveNamespace(namespace));
-      setLastnameNamespace(namespace);
+      setLastNamespace(namespace);
     },
-    [dispatch, setLastnameNamespace],
+    [dispatch, setLastNamespace],
   );
 
-  // Keep namespace in sync with redux
+  // Keep namespace in sync with redux.
+  // Automatically sets favorited or latest namespace as soon as
+  // both informations are loaded from user settings.
   React.useEffect(() => {
-    // Url namespace overrides everything. We don't need to wait for loaded
-    if (urlNamespace) {
-      dispatch(setActiveNamespace(urlNamespace));
-    } else if (favoriteLoaded && lastNamespaceLoaded) {
-      // Calculate namespace after loading: favorite > last used namespace > all
+    if (!urlNamespace && favoriteLoaded && lastNamespaceLoaded) {
       dispatch(setActiveNamespace(favoritedNamespace || lastNamespace || ALL_NAMESPACES_KEY));
     }
-    // only run this hook when favorite and last namespace is loaded from user settings
+    // Only run this hook after favorite and last namespace are loaded.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [urlNamespace, favoriteLoaded, lastNamespaceLoaded]);
+  }, [favoriteLoaded, lastNamespaceLoaded]);
 
   return {
-    namespace: urlNamespace || lastNamespace || favoritedNamespace || ALL_NAMESPACES_KEY,
+    namespace: urlNamespace || favoritedNamespace || lastNamespace || ALL_NAMESPACES_KEY,
     setNamespace,
     loaded: favoriteLoaded && lastNamespaceLoaded,
   };
