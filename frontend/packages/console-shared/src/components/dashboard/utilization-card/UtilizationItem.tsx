@@ -98,6 +98,16 @@ export const MultilineUtilizationItem: React.FC<MultilineUtilizationItemProps> =
   },
 );
 
+// TODO (jon) Fix PrometheusMultilineUtilization so that x-values returned from multiple prometheus
+// queries are "synced" on the x-axis (same number of points with the same x-values). In order to do
+// so, we have to make sure that the same end time, samples, and duration are used across all
+// queries. This is a temporary work around. See https://issues.redhat.com/browse/CONSOLE-2424
+export const trimSecondsXMutator = (x) => {
+  const d = new Date(x * 1000);
+  d.setSeconds(0, 0);
+  return d;
+};
+
 export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
   ({
     title,
@@ -115,7 +125,12 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
     setTimestamps,
   }) => {
     const { t } = useTranslation();
-    const { data, chartStyle } = mapLimitsRequests(utilization, limit, requested);
+    const { data, chartStyle } = mapLimitsRequests(
+      utilization,
+      limit,
+      requested,
+      trimSecondsXMutator,
+    );
     const [utilizationData, limitData, requestedData] = data;
     setTimestamps &&
       utilizationData &&

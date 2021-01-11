@@ -3,7 +3,9 @@ import { QueryWithDescription } from '@console/shared/src/components/dashboard/u
 
 export enum ProjectQueries {
   CPU_USAGE = 'CPU_USAGE',
+  CPU_REQUESTS = 'CPU_REQUESTS',
   MEMORY_USAGE = 'MEMORY_USAGE',
+  MEMORY_REQUESTS = 'MEMORY_REQUESTS',
   POD_COUNT = 'POD_COUNT',
   PODS_BY_CPU = 'PODS_BY_CPU',
   PODS_BY_MEMORY = 'PODS_BY_MEMORY',
@@ -20,8 +22,14 @@ const queries = {
   [ProjectQueries.CPU_USAGE]: _.template(
     `namespace:container_cpu_usage:sum{namespace='<%= project %>'}`,
   ),
+  [ProjectQueries.CPU_REQUESTS]: _.template(
+    `sum(kube_pod_resource_request{resource="cpu", exported_namespace="<%= project %>"}) by (exported_namespace)`,
+  ),
   [ProjectQueries.MEMORY_USAGE]: _.template(
     `sum(container_memory_working_set_bytes{namespace='<%= project %>',container="",pod!=""}) BY (namespace)`,
+  ),
+  [ProjectQueries.MEMORY_REQUESTS]: _.template(
+    `sum(kube_pod_resource_request{resource="memory", exported_namespace="<%= project %>"}) by (exported_namespace)`,
   ),
   [ProjectQueries.POD_COUNT]: _.template(
     `count(kube_pod_info{namespace='<%= project %>'}) BY (namespace)`,
@@ -72,7 +80,9 @@ export const getMultilineQueries = (
 
 export const getUtilizationQueries = (project: string) => ({
   [ProjectQueries.CPU_USAGE]: queries[ProjectQueries.CPU_USAGE]({ project }),
+  [ProjectQueries.CPU_REQUESTS]: queries[ProjectQueries.CPU_REQUESTS]({ project }),
   [ProjectQueries.MEMORY_USAGE]: queries[ProjectQueries.MEMORY_USAGE]({ project }),
+  [ProjectQueries.MEMORY_REQUESTS]: queries[ProjectQueries.MEMORY_REQUESTS]({ project }),
   [ProjectQueries.POD_COUNT]: queries[ProjectQueries.POD_COUNT]({ project }),
   [ProjectQueries.FILESYSTEM_USAGE]: queries[ProjectQueries.FILESYSTEM_USAGE]({
     project,

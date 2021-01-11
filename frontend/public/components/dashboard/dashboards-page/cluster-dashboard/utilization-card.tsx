@@ -9,6 +9,7 @@ import UtilizationItem, {
   MultilineUtilizationItem,
   QueryWithDescription,
   LimitRequested,
+  trimSecondsXMutator,
 } from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
 import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
 import ConsumerPopover from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
@@ -146,16 +147,6 @@ const networkOutQueriesPopup = [
     metric: 'instance',
   },
 ];
-
-// TODO (jon) Fix PrometheusMultilineUtilization so that x-values returned from multiple prometheus
-// queries are "synced" on the x-axis (same number of points with the same x-values). In order to do
-// so, we have to make sure that the same end time, samples, and duration are used across all
-// queries. This is a temporary work around. See https://issues.redhat.com/browse/CONSOLE-2424
-const trimSecondsXMutator = (x) => {
-  const d = new Date(x * 1000);
-  d.setSeconds(0, 0);
-  return d;
-};
 
 export const PrometheusUtilizationItem = withDashboardResources<PrometheusUtilizationItemProps>(
   ({
@@ -449,6 +440,7 @@ export const UtilizationCard = () => {
           title={t('dashboard~CPU')}
           utilizationQuery={queries[OverviewQuery.CPU_UTILIZATION].utilization}
           totalQuery={queries[OverviewQuery.CPU_UTILIZATION].total}
+          requestQuery={queries[OverviewQuery.CPU_UTILIZATION].requests}
           TopConsumerPopover={cpuPopover}
           duration={duration}
           humanizeValue={humanizeCpuCores}
@@ -458,6 +450,7 @@ export const UtilizationCard = () => {
           title={t('dashboard~Memory')}
           utilizationQuery={queries[OverviewQuery.MEMORY_UTILIZATION].utilization}
           totalQuery={queries[OverviewQuery.MEMORY_UTILIZATION].total}
+          requestQuery={queries[OverviewQuery.MEMORY_UTILIZATION].requests}
           TopConsumerPopover={memPopover}
           duration={duration}
           humanizeValue={humanizeBinaryBytes}

@@ -158,6 +158,7 @@ export const UtilizationCard: React.FC = () => {
           title={t('namespace~CPU')}
           humanizeValue={humanizeCpuCores}
           utilizationQuery={queries[ProjectQueries.CPU_USAGE]}
+          requestQuery={queries[ProjectQueries.CPU_REQUESTS]}
           TopConsumerPopover={cpuPopover}
           duration={duration}
           setTimestamps={setTimestamps}
@@ -167,6 +168,7 @@ export const UtilizationCard: React.FC = () => {
           title={t('namespace~Memory')}
           humanizeValue={humanizeBinaryBytes}
           utilizationQuery={queries[ProjectQueries.MEMORY_USAGE]}
+          requestQuery={queries[ProjectQueries.MEMORY_REQUESTS]}
           byteDataType={ByteDataTypes.BinaryBytes}
           TopConsumerPopover={memPopover}
           duration={duration}
