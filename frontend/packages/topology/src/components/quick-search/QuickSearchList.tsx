@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import cx from 'classnames';
-import { history, removeQueryArgument } from '@console/internal/components/utils';
+import { history } from '@console/internal/components/utils';
 import { CatalogItem } from '@console/plugin-sdk';
 import {
   DataList,
@@ -42,12 +42,10 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
 
   const openForm = (e: React.SyntheticEvent, item: CatalogItem) => {
     e.preventDefault();
-    removeQueryArgument('catalogSearch');
     history.push(item.cta.href);
   };
 
   const goToCatalogPage = React.useCallback(() => {
-    removeQueryArgument('catalogSearch');
     history.push(`/catalog/ns/${namespace}?keyword=${searchTerm}`);
   }, [namespace, searchTerm]);
 

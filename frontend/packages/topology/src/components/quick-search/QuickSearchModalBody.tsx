@@ -47,7 +47,13 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
   const onSearch = React.useCallback(
     (value: string) => {
       setSearchTerm(value);
-      setCatalogItems(value ? searchCatalog(value) : null);
+      if (value) {
+        setCatalogItems(searchCatalog(value));
+        setQueryArgument('catalogSearch', value);
+      } else {
+        setCatalogItems(null);
+        removeQueryArgument('catalogSearch');
+      }
       setSelectedItemId('');
       setSelectedItem(null);
     },
@@ -61,7 +67,6 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
       onSearch('');
     } else {
       closeModal();
-      removeQueryArgument('catalogSearch');
     }
   }, [closeModal, onSearch]);
 
@@ -73,7 +78,6 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
   const onEnter = React.useCallback(() => {
     const viewAllLink = document.getElementById('viewAll');
     const { activeElement } = document;
-    removeQueryArgument('catalogSearch');
     if (activeElement === viewAllLink) {
       history.push(`/catalog/ns/${namespace}?keyword=${searchTerm}`);
     } else if (selectedItem) {
@@ -120,13 +124,7 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
     };
 
     const onOutsideClick = (e: MouseEvent) => {
-      const searchInput = ref.current?.firstElementChild?.children?.[1] as HTMLInputElement;
       if (!ref.current?.contains(e.target as Node)) {
-        if (searchInput?.value) {
-          setQueryArgument('catalogSearch', searchInput.value);
-        } else {
-          removeQueryArgument('catalogSearch');
-        }
         closeModal();
       }
     };

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { history, removeQueryArgument } from '@console/internal/components/utils';
+import { history } from '@console/internal/components/utils';
 import { CatalogItem } from '@console/plugin-sdk';
 import {
   Button,
@@ -31,7 +31,6 @@ const QuickSearchDetails: React.FC<QuickSearchDetailsProps> = ({ selectedItem })
         variant={ButtonVariant.primary}
         className="odc-quick-search-details__form-button"
         onClick={() => {
-          removeQueryArgument('catalogSearch');
           history.push(selectedItem.cta.href);
         }}
       >

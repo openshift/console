@@ -1,5 +1,6 @@
-import { CatalogService } from '@console/dev-console/src/components/catalog/service/CatalogServiceProvider';
 import * as React from 'react';
+import { CatalogService } from '@console/dev-console/src/components/catalog/service/CatalogServiceProvider';
+import { getQueryArgument } from '@console/internal/components/utils';
 import QuickSearchButton from './QuickSearchButton';
 import QuickSearchModal from './QuickSearchModal';
 
@@ -14,7 +15,9 @@ const QuickSearchController: React.FC<QuickSearchControllerProps> = ({
   loaded,
   viewContainer,
 }) => {
-  const [isQuickSearchActive, setIsQuickSearchActive] = React.useState<boolean>(false);
+  const [isQuickSearchActive, setIsQuickSearchActive] = React.useState<boolean>(
+    !!getQueryArgument('catalogSearch'),
+  );
 
   React.useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
