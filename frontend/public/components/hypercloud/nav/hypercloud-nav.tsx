@@ -5,8 +5,9 @@ import { Translation } from 'react-i18next';
 // import { GroupModel, UserModel } from '../../../models';
 
 // import { referenceForModel } from '../../../module/k8s';
-import { HrefLink, ResourceNSLink, ResourceClusterLink } from '../../nav/items';
+// import { HrefLink, ResourceNSLink, ResourceClusterLink } from '../../nav/items';
 // import { AuthAdminLink } from './items';
+import { HrefLink, ResourceNSLink, ResourceClusterLink } from './items';
 import { NavSection } from '../../nav/section';
 
 // Wrap `NavItemSeparator` so we can use `required` without prop type errors.

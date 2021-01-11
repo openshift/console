@@ -85,7 +85,7 @@ export default (state: UIState, action: UIAction): UIState => {
     const storedPins = localStorage.getItem(PINNED_RESOURCES_LOCAL_STORAGE_KEY);
     const pinnedResources = storedPins ? JSON.parse(storedPins) : {};
 
-    const activeCluster = localStorage.getItem(LAST_CLUSTER_LOCAL_STORAGE_KEY);
+    const activeCluster = window.SERVER_FLAGS.McMode ? localStorage.getItem(LAST_CLUSTER_LOCAL_STORAGE_KEY) : '';
 
     return ImmutableMap({
       activeNavSectionId: 'workloads',

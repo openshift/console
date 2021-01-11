@@ -210,8 +210,41 @@ export const getActiveCluster = (): string => store.getState().UI.get('activeClu
 
 export const getActiveClusterPath = (): string => store.getState().UI.get('activeClusterPath');
 
+export const formatClusterRoute = (activeCluster, originalPath, location?) => {
+  let path = originalPath.substr(window.SERVER_FLAGS.basePath.length);
+
+  let parts = path.split('/').filter((p) => p);
+  const prefix = parts.shift();
+
+  if (parts[0] === 'cl') {
+    parts.shift();
+    parts.shift();
+  }
+
+  const clusterPrefix = `cl/${activeCluster}`;
+
+  path = `/${prefix}/${clusterPrefix}`;
+  if (parts.length) {
+    path += `/${parts.join('/')}`;
+  }
+
+  if (location) {
+    path += `${location.search}${location.hash}`;
+  }
+
+  return path;
+};
+
 export const setActiveCluster = (cluster: string) => {
-  localStorage.setItem(LAST_CLUSTER_LOCAL_STORAGE_KEY, cluster);
+  if (cluster !== getActiveCluster()) {
+    const oldPath = window.location.pathname;
+    const newPath = formatClusterRoute(cluster, oldPath, window.location);
+    if (newPath !== oldPath) {
+      history.pushPath(newPath);
+    }
+
+    localStorage.setItem(LAST_CLUSTER_LOCAL_STORAGE_KEY, cluster);
+  }
   return action(ActionType.SetActiveCluster, { cluster });
 };
 

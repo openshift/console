@@ -3,11 +3,29 @@ import { coFetchJSON } from '../../co-fetch';
 import { k8sBasePath } from './k8s';
 import { selectorToString } from './selector';
 import { WSFactory } from '../ws-factory';
+import { getActivePerspective, getActiveCluster, getActiveClusterPath } from '../../actions/ui';
 
 /** @type {(model: K8sKind) => string} */
 const getK8sAPIPath = ({ apiGroup = 'core', apiVersion }) => {
   const isLegacy = apiGroup === 'core' && apiVersion === 'v1';
-  let p = k8sBasePath;
+    
+  let p;
+
+  const cluster = window.SERVER_FLAGS.McMode && getActivePerspective() == "hc" && getActiveCluster();
+
+  if (cluster) {
+    let activeClusterPath = getActiveClusterPath();
+    if (activeClusterPath?.startsWith('/')) {
+      activeClusterPath = activeClusterPath.slice(1);
+    }
+    if (activeClusterPath?.endsWith('/')) {
+      activeClusterPath = activeClusterPath.slice(0, -1);
+    }
+    p = `${window.SERVER_FLAGS.basePath}${activeClusterPath}`;
+  }
+  else {
+    p = k8sBasePath; // TODO: cluster list로 전달받은 path로 넣기...
+  }
 
   if (isLegacy) {
     p += '/api/';
