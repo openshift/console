@@ -1,6 +1,7 @@
 package actions
 
 import (
+	"fmt"
 	"io/ioutil"
 	"testing"
 
@@ -58,7 +59,7 @@ func TestGetReleaseHistory(t *testing.T) {
 			}
 
 			if len(tt.versions) != len(resp) {
-				t.Error("Total no of versions should be " + string(len(tt.versions)))
+				t.Error("Total no of versions should be " + fmt.Sprint(len(tt.versions)))
 			}
 			for _, history := range resp {
 				if history.Name != tt.release.Name {
@@ -105,7 +106,7 @@ func TestNonExistGetReleaseHistory(t *testing.T) {
 				t.Error(err)
 			}
 			if tt.noOfVersions != len(resp) {
-				t.Error("Total no of versions should be " + string(tt.noOfVersions))
+				t.Error("Total no of versions should be " + fmt.Sprint(tt.noOfVersions))
 			}
 		})
 	}
