@@ -187,7 +187,7 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = props =>
                 deleteChip={updateNewItems}
                 categoryName="Resource"
               >
-                <ResourceListDropdown selected={[...selectedItems]} onChange={updateSelectedItems} />
+                <ResourceListDropdown selected={[...selectedItems]} onChange={updateSelectedItems} type="multiple"/>
               </DataToolbarFilter>
             </DataToolbarItem>
             <DataToolbarItem className="co-search-group__filter">
