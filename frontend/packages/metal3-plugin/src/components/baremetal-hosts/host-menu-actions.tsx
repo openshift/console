@@ -180,7 +180,7 @@ export const PowerOff = (
 export const Restart = (
   kindObj: K8sKind,
   host: BareMetalHostKind,
-  { nodeName, bmoEnabled, t }: ActionArgs,
+  { bmoEnabled, t }: ActionArgs,
 ) => ({
   hidden:
     [HOST_POWER_STATUS_POWERED_OFF, HOST_POWER_STATUS_POWERING_OFF].includes(
@@ -190,7 +190,7 @@ export const Restart = (
     !hasPowerManagement(host) ||
     !bmoEnabled,
   label: t('metal3-plugin~Restart'),
-  callback: () => restartHostModal({ host, nodeName }),
+  callback: () => restartHostModal({ host }),
   accessReview: host && asAccessReview(BareMetalHostModel, host, 'update'),
 });
 

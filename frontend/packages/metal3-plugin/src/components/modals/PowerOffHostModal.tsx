@@ -30,6 +30,29 @@ import { StatusProps } from '../types';
 import { StatusValidations, getStaticPods, getDaemonSetsOfPods } from './PowerOffStatusValidations';
 import { useMaintenanceCapability } from '../../hooks/useMaintenanceCapability';
 
+type PowerOffWarning = {
+  restart?: boolean;
+};
+
+export const PowerOffWarning: React.FC<PowerOffWarning> = ({ restart }) => {
+  const { t } = useTranslation();
+  return (
+    <Alert
+      variant="warning"
+      title={t('metal3-plugin~Applications may be temporarily disrupted.')}
+      isInline
+    >
+      {restart
+        ? t(
+            'metal3-plugin~Workloads currently running on this host will not be moved before restarting. This may cause service disruptions.',
+          )
+        : t(
+            'metal3-plugin~Workloads currently running on this host will not be moved before powering off. This may cause service disruptions.',
+          )}
+    </Alert>
+  );
+};
+
 const getPowerOffMessage = (t: TFunction, pods: PodKind[]) => {
   const staticPods = getStaticPods(pods);
   const daemonSets = getDaemonSetsOfPods(pods);
@@ -131,19 +154,7 @@ const ForcePowerOffDialog: React.FC<ForcePowerOffDialogProps> = ({
         />
         <div className="text-secondary">{helpText}</div>
       </StackItem>
-      <StackItem>
-        {forceOff && (
-          <Alert
-            variant="warning"
-            title={t('metal3-plugin~Applications may be temporarily disrupted.')}
-            isInline
-          >
-            {t(
-              'metal3-plugin~Workloads currently running on this host will not be moved before powering off. This may cause service disruptions.',
-            )}
-          </Alert>
-        )}
-      </StackItem>
+      <StackItem>{forceOff && <PowerOffWarning />}</StackItem>
     </Stack>
   );
 };
