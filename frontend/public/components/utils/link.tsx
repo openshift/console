@@ -71,6 +71,7 @@ export const ExternalLink: React.FC<ExternalLinkProps> = ({
   text,
   additionalClassName = '',
   dataTestID,
+  stopPropagation,
 }) => (
   <a
     className={classNames('co-external-link', additionalClassName)}
@@ -78,6 +79,7 @@ export const ExternalLink: React.FC<ExternalLinkProps> = ({
     target="_blank"
     rel="noopener noreferrer"
     data-test-id={dataTestID}
+    {...(stopPropagation ? { onClick: (e) => e.stopPropagation() } : {})}
   >
     {children || text}
   </a>
@@ -94,4 +96,5 @@ type ExternalLinkProps = {
   text?: React.ReactNode;
   additionalClassName?: string;
   dataTestID?: string;
+  stopPropagation?: boolean;
 };
