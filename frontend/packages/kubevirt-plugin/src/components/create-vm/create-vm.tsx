@@ -127,7 +127,7 @@ const Footer: React.FC<FooterProps> = ({
         >
           {isReview ? t('kubevirt-plugin~Create virtual machine') : t('kubevirt-plugin~Next')}
         </Button>
-        {(isReview || isCustomSource) && (
+        {isReview && (
           <Button
             variant="secondary"
             onClick={onCustomize}
