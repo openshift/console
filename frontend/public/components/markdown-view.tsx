@@ -156,7 +156,7 @@ export class SyncMarkdownView extends React.Component<SyncMarkdownProps, State> 
     return (
       <>
         <iframe
-          sandbox="allow-popups allow-same-origin"
+          sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin"
           srcDoc={contents}
           style={{ border: '0px', display: 'block', width: '100%', height: '0' }}
           ref={(r) => (this.frame = r)}
