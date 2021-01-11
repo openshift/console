@@ -1,0 +1,14 @@
+.bmh-health__status {
+  height: 100%;
+  align-items: center;
+  .co-icon-and-text__icon {
+    margin-right: var(--pf-global--spacer--md);
+    top: 0;
+    font-size: 1.2rem;
+  }
+}
+
+.bmh-health__status-item {
+  display: flex;
+}
+  

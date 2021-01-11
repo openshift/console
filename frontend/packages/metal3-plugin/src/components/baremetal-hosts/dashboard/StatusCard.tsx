@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import { Gallery, GalleryItem } from '@patternfly/react-core';
+import { RebootingIcon } from '@patternfly/react-icons';
 import { Link } from 'react-router-dom';
 import {
   DashboardItemProps,
@@ -17,47 +18,31 @@ import { HealthState } from '@console/shared/src/components/dashboard/status-car
 import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
 import { Alert } from '@console/internal/components/monitoring/types';
 import { alertURL } from '@console/internal/components/monitoring/utils';
-import { BlueInfoCircleIcon } from '@console/shared';
+import { BlueInfoCircleIcon, StatusIconAndText } from '@console/shared';
 import AlertItem, {
   StatusItem,
 } from '@console/shared/src/components/dashboard/status-card/AlertItem';
 import { resourcePathFromModel } from '@console/internal/components/utils';
-import { getBareMetalHostStatus } from '../../../status/host-status';
+import { getBareMetalHostStatus, getHostStatus } from '../../../status/host-status';
 import {
   HOST_STATUS_DESCRIPTION_KEYS,
-  HOST_SUCCESS_STATES,
-  HOST_ERROR_STATES,
-  HOST_PROGRESS_STATES,
   HOST_HARDWARE_ERROR_STATES,
   HOST_STATUS_UNMANAGED,
-  HOST_INFO_STATES,
+  HOST_REGISTERING_STATES,
 } from '../../../constants';
 import { BareMetalHostKind } from '../../../types';
 import { BareMetalHostDashboardContext } from './BareMetalHostDashboardContext';
 import { BareMetalHostModel } from '../../../models';
-import { hasPowerManagement } from '../../../selectors';
+import {
+  getHostPowerStatus,
+  getHostProvisioningState,
+  hasPowerManagement,
+  isHostScheduledForRestart,
+} from '../../../selectors';
+import BareMetalHostStatus from '../BareMetalHostStatus';
 
-const getHostHealthState = (obj: BareMetalHostKind): HostHealthState => {
-  const { status, titleKey } = getBareMetalHostStatus(obj);
-  let state: HealthState = HealthState.UNKNOWN;
-
-  if ([...HOST_SUCCESS_STATES, ...HOST_INFO_STATES].includes(status)) {
-    state = HealthState.OK;
-  }
-
-  if (HOST_ERROR_STATES.includes(status)) {
-    state = HealthState.ERROR;
-  }
-
-  if (HOST_PROGRESS_STATES.includes(status)) {
-    state = HealthState.PROGRESS;
-  }
-
-  return {
-    titleKey,
-    state,
-  };
-};
+import './status.scss';
+import BareMetalHostPowerStatusIcon from '../BareMetalHostPowerStatusIcon';
 
 const getHostHardwareHealthState = (obj): HostHealthState => {
   const { status, titleKey } = getBareMetalHostStatus(obj);
@@ -82,18 +67,24 @@ const HealthCard: React.FC<HealthCardProps> = ({
   notificationAlerts,
 }) => {
   const { t } = useTranslation();
-  const { obj } = React.useContext(BareMetalHostDashboardContext);
+  const { obj, machine, node, nodeMaintenance } = React.useContext(BareMetalHostDashboardContext);
 
   React.useEffect(() => {
     watchAlerts();
     return () => stopWatchAlerts();
   }, [watchAlerts, stopWatchAlerts]);
 
-  const health = getHostHealthState(obj);
+  const status = getHostStatus({ host: obj, machine, node, nodeMaintenance });
+
   const hwHealth = getHostHardwareHealthState(obj);
 
   const { data, loaded, loadError } = notificationAlerts || {};
   const alerts = React.useMemo(() => filterAlerts(data), [data]);
+
+  const hasPowerMgmt = hasPowerManagement(obj);
+  const provisioningState = getHostProvisioningState(obj);
+  const powerStatus = getHostPowerStatus(obj);
+  const restartScheduled = isHostScheduledForRestart(obj);
 
   return (
     <DashboardCard gradient>
@@ -103,8 +94,13 @@ const HealthCard: React.FC<HealthCardProps> = ({
       <DashboardCardBody>
         <HealthBody>
           <Gallery className="co-overview-status__health" hasGutter>
-            <GalleryItem>
-              <HealthItem title={t(health.titleKey)} state={health.state} />
+            <GalleryItem className="bmh-health__status-item">
+              <BareMetalHostStatus
+                {...status}
+                nodeMaintenance={nodeMaintenance}
+                host={obj}
+                className="bmh-health__status"
+              />
             </GalleryItem>
             <GalleryItem>
               <HealthItem
@@ -113,10 +109,32 @@ const HealthCard: React.FC<HealthCardProps> = ({
                 details={t(hwHealth.titleKey)}
               />
             </GalleryItem>
+            {!HOST_REGISTERING_STATES.includes(provisioningState) && (
+              <GalleryItem>
+                {!hasPowerMgmt ? (
+                  <HealthItem
+                    title={t('metal3-plugin~No power management')}
+                    state={HealthState.NOT_AVAILABLE}
+                  />
+                ) : (
+                  <StatusIconAndText
+                    title={restartScheduled ? t('metal3-plugin~Restart pending') : powerStatus}
+                    icon={
+                      restartScheduled ? (
+                        <RebootingIcon />
+                      ) : (
+                        <BareMetalHostPowerStatusIcon powerStatus={powerStatus} />
+                      )
+                    }
+                    className="bmh-health__status"
+                  />
+                )}
+              </GalleryItem>
+            )}
           </Gallery>
         </HealthBody>
         <AlertsBody error={!_.isEmpty(loadError)}>
-          {!hasPowerManagement(obj) && (
+          {!hasPowerMgmt && (
             <StatusItem
               Icon={BlueInfoCircleIcon}
               message={t(HOST_STATUS_DESCRIPTION_KEYS[HOST_STATUS_UNMANAGED])}
