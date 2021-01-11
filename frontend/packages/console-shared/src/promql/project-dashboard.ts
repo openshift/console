@@ -24,7 +24,7 @@ const queries = {
     `sum(container_memory_working_set_bytes{namespace='<%= project %>',container="",pod!=""}) BY (namespace)`,
   ),
   [ProjectQueries.POD_COUNT]: _.template(
-    `count(kube_pod_info{namespace='<%= project %>'}) BY (namespace)`,
+    `count(kube_running_pod_ready{namespace='<%= project %>'}) BY (namespace)`,
   ),
   [ProjectQueries.FILESYSTEM_USAGE]: _.template(
     `sum(pod:container_fs_usage_bytes:sum{container="",pod!="",namespace='<%= project %>'}) BY (namespace)`,

@@ -58,7 +58,7 @@ const top25Queries = {
   [OverviewQuery.PROJECTS_BY_STORAGE]:
     'topk(25, sort_desc(sum(avg_over_time(pod:container_fs_usage_bytes:sum{container="", pod!=""}[5m])) BY (namespace)))',
   [OverviewQuery.PROJECTS_BY_PODS]:
-    'topk(25, sort_desc(sum(avg_over_time(kube_pod_info[5m])) BY (namespace)))',
+    'topk(25, sort_desc(count(count_over_time(kube_running_pod_ready[5m])) BY (namespace)))',
   [OverviewQuery.PROJECTS_BY_NETWORK_IN]:
     'topk(25, sort_desc(sum(rate(container_network_receive_bytes_total{ container="POD", pod!= ""}[5m])) BY (namespace)))',
   [OverviewQuery.PROJECTS_BY_NETWORK_OUT]:
@@ -76,7 +76,7 @@ const overviewQueries = {
   [OverviewQuery.STORAGE_UTILIZATION]:
     '(sum(node_filesystem_size_bytes{mountpoint="/"}) - sum(node_filesystem_free_bytes{mountpoint="/"}))',
   [OverviewQuery.STORAGE_TOTAL]: 'sum(node_filesystem_size_bytes{mountpoint="/"})',
-  [OverviewQuery.POD_UTILIZATION]: 'count(kube_pod_info)',
+  [OverviewQuery.POD_UTILIZATION]: 'count(kube_running_pod_ready)',
   [OverviewQuery.NETWORK_IN_UTILIZATION]:
     'sum(instance:node_network_receive_bytes_excluding_lo:rate1m)',
   [OverviewQuery.NETWORK_OUT_UTILIZATION]:
