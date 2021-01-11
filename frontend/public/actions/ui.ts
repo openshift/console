@@ -67,7 +67,6 @@ export enum ActionType {
   SetPinnedResources = 'setPinnedResources',
   SetActiveCluster = "setActiveCluster",
   SetActiveClusterPath = "setActiveClusterPath",
-  SetConsoleMode = "setConsoleMode",
 }
 
 type MetricValuesByName = {
@@ -218,12 +217,6 @@ export const setActiveCluster = (cluster: string) => {
 
 export const setActiveClusterPath = (clusterPath: string) => {
   return action(ActionType.SetActiveClusterPath, { clusterPath });
-};
-
-export const getConsoleMode = (): string => store.getState().UI.get('consoleMode');
-
-export const setConsoleMode = (mode: string) => {
-  return action(ActionType.SetConsoleMode, { mode });
 };
 
 export const setPinnedResources = (resources: string[]) => {
@@ -426,7 +419,6 @@ const uiActions = {
   setPinnedResources,
   setActiveCluster,
   setActiveClusterPath,
-  setConsoleMode,
 };
 
 export type UIAction = Action<typeof uiActions>;

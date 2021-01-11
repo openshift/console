@@ -6,17 +6,14 @@ import { Perspective } from '@console/plugin-sdk';
 import { getPerspectives } from '../../hypercloud/perspectives';
 import { RootState } from '../../redux';
 import { featureReducerName, getFlagsObject, FlagsObject } from '../../reducers/features';
-import { getActivePerspective, getConsoleMode } from '../../reducers/ui';
+import { getActivePerspective } from '../../reducers/ui';
 import * as UIActions from '../../actions/ui';
 import { history } from '../utils';
 import ClusterDropdown from '../hypercloud/nav/cluster-dropdown';
-import { RadioGroup } from '@console/internal/components/radio'; // 임시 - single only mode 보여주기용
 
 type StateProps = {
   activePerspective: string;
   setActivePerspective?: (id: string) => void;
-  consoleMode: string;
-  setConsoleMode?: (mode: string) => void;
   flags: FlagsObject;
 };
 
@@ -30,8 +27,6 @@ const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({
   onPerspectiveSelected,
   activePerspective,
   onClusterSelected,
-  consoleMode,
-  setConsoleMode,
   flags,
 }) => {
   const [isPerspectiveDropdownOpen, setPerspectiveDropdownOpen] = React.useState(false);
@@ -100,22 +95,7 @@ const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({
 
   return (
     <>
-      <RadioGroup
-        label="Console Mode:"
-        currentValue={consoleMode}
-        items={[
-          {
-            value: 'mc',
-            title: 'Multi Cluster Mode',
-          },
-          {
-            value: 'hc',
-            title: 'Single Cluster Mode',
-          },
-        ]}
-        onChange={({ currentTarget }) => { setConsoleMode(currentTarget.value); setActivePerspective(currentTarget.value) }}
-      />
-      {consoleMode === "mc" && (
+      {window.SERVER_FLAGS.McMode && (
         <div className="oc-nav-header">
           <h4>Application</h4>
           <Dropdown
@@ -139,18 +119,16 @@ const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({
 
 const mapStateToProps = (state: RootState): StateProps => ({
   activePerspective: getActivePerspective(state),
-  consoleMode: getConsoleMode(state),
   flags: getFlagsObject(state),
 });
 
 export default connect<StateProps, {}, NavHeaderProps, RootState>(
   mapStateToProps,
-  { setActivePerspective: UIActions.setActivePerspective, setConsoleMode: UIActions.setConsoleMode },
+  { setActivePerspective: UIActions.setActivePerspective },
   null,
   {
     areStatesEqual: (next, prev) =>
       next[featureReducerName] === prev[featureReducerName] &&
-      getActivePerspective(next) === getActivePerspective(prev) &&
-      getConsoleMode(next) === getConsoleMode(prev),
+      getActivePerspective(next) === getActivePerspective(prev),
   },
 )(NavHeader_);

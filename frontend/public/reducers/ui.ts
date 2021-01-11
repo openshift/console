@@ -117,7 +117,6 @@ export default (state: UIState, action: UIAction): UIState => {
       pinnedResources,
       activeCluster,
       activeClusterPath: '',
-      consoleMode: 'mc',
     });
   }
 
@@ -378,9 +377,6 @@ export default (state: UIState, action: UIAction): UIState => {
     case ActionType.SetActiveClusterPath:
       return state.set('activeClusterPath', action.payload.clusterPath);
 
-    case ActionType.SetConsoleMode:
-      return state.set('consoleMode', action.payload.mode);
-
     default:
       break;
   }
@@ -411,8 +407,6 @@ export const getPinnedResources = (rootState: RootState): string[] =>
 export const getActiveCluster = ({ UI }: RootState): string => UI.get('activeCluster');
 
 export const getActiveClusterPath = ({ UI }: RootState): string => UI.get('activeClusterPath');
-
-export const getConsoleMode = ({ UI }: RootState): string => UI.get('consoleMode');
 
 export type NotificationAlerts = {
   data: Alert[];
