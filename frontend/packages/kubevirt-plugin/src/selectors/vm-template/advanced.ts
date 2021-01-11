@@ -125,7 +125,7 @@ export const getTemplateWorkloadProfiles = (templates: TemplateKind[]) =>
 export const isWindowsTemplate = (template: TemplateKind): boolean =>
   getTemplateOperatingSystems([template])?.some((os) => os.id.startsWith(OS_WINDOWS_PREFIX));
 
-export const getTemplateSizeRequirement = (
+export const getTemplateSizeRequirementInBytes = (
   template: TemplateKind,
   templateSource: TemplateSourceStatus,
   customSource?: BootSourceState,
@@ -157,9 +157,7 @@ export const getTemplateSizeRequirement = (
     sourceSize = convertToBaseValue(getDataVolumeStorageSize(templateSource.dvTemplate));
   }
 
-  return humanizeBinaryBytes(
-    templatesSize + sourceSize + (isCDRom ? convertToBaseValue('20Gi') : 0),
-  ).string;
+  return templatesSize + sourceSize + (isCDRom ? convertToBaseValue('20Gi') : 0);
 };
 
 export const getTemplateMemory = (template: TemplateKind): string => {
