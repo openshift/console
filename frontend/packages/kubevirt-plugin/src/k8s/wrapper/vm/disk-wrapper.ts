@@ -52,7 +52,7 @@ export class DiskWrapper extends ObjectWithTypePropertyWrapper<
 
   getReadableDiskBus = () => {
     const diskBus = this.getDiskBus();
-    return diskBus && diskBus.toString();
+    return diskBus && diskBus.getValue();
   };
 
   getBootOrder = () => this.get('bootOrder');

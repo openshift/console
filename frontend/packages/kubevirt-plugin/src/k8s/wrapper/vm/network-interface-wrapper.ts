@@ -46,7 +46,7 @@ export class NetworkInterfaceWrapper extends ObjectWithTypePropertyWrapper<
 
   getReadableModel = () => {
     const model = this.getModel();
-    return model && model.toString();
+    return model && model.getValue();
   };
 
   getMACAddress = () => this.data?.macAddress;
