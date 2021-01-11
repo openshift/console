@@ -16,6 +16,7 @@ export const ClonePVCSource: React.FC<ClonePVCSourceProps> = React.memo(
     const { t } = useTranslation();
     const storage: VMWizardStorage = toShallowJS(provisionSourceStorage);
     const pvcNamespace = iGetFieldValue(nsField, '');
+    const pvcName = iGetFieldValue(nameField, '');
 
     return (
       <>
@@ -49,6 +50,8 @@ export const ClonePVCSource: React.FC<ClonePVCSourceProps> = React.memo(
                   .asResource(),
               });
             }}
+            selectedKey={pvcName}
+            selectedKeyKind={PersistentVolumeClaimModel.kind}
             placeholder={t('kubevirt-plugin~--- Select Persistent Volume Claim ---')}
             desc={PersistentVolumeClaimModel.label}
           />
