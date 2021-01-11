@@ -9,11 +9,10 @@ import {
 
 export const humanizeIOPS: Humanize = (value) => {
   const humanizedNumber = humanizeNumber(value);
-  const unit = 'IOPS';
   return {
     ...humanizedNumber,
-    string: `${humanizedNumber.value} ${unit}`,
-    unit,
+    string: `${humanizedNumber.string} IOPS`,
+    unit: `${humanizedNumber.unit} IOPS`,
   };
 };
 
