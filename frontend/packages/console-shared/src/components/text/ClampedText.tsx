@@ -14,7 +14,6 @@ const ClampedText: React.FC<ClampedTextProps> = ({ children, lineClamp = 1 }) =>
   const debouncedSetContentClamped = useDebounceCallback(
     ({ scroll: { height: scrollHeight }, offset: { height: offsetHeight } }) =>
       setContentClamped(scrollHeight > offsetHeight),
-    [setContentClamped],
   );
   const style = { '--ocs-clamped-text--line-clamp': lineClamp } as React.CSSProperties;
 

@@ -83,7 +83,7 @@ export const usePodsForRevisions = (
     [revisions],
   );
 
-  const debouncedUpdateResources = useDebounceCallback<any>(updateResults, [updateResults], 250);
+  const debouncedUpdateResources = useDebounceCallback(updateResults, 250);
 
   React.useEffect(() => {
     debouncedUpdateResources(resources);

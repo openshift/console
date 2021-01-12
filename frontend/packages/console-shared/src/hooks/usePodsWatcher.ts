@@ -24,7 +24,7 @@ export const usePodsWatcher = (
   const resources = useK8sWatchResources(watchedResources);
 
   const updateResults = React.useCallback(
-    (updatedResources) => {
+    (watchedResource, updatedResources) => {
       const errorKey = Object.keys(updatedResources).find((key) => updatedResources[key].loadError);
       if (errorKey) {
         setLoadError(updatedResources[errorKey].loadError);
@@ -35,21 +35,19 @@ export const usePodsWatcher = (
         Object.keys(updatedResources).length > 0 &&
         Object.keys(updatedResources).every((key) => updatedResources[key].loaded)
       ) {
-        const updatedPods = getPodsDataForResource(resource, watchKind, updatedResources);
+        const updatedPods = getPodsDataForResource(watchedResource, watchKind, updatedResources);
         setPodData(updatedPods);
         setLoaded(true);
       }
     },
-    // Don't update on a resource change, we want the debounce callback to be consistent
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [watchKind],
   );
 
-  const debouncedUpdateResources = useDebounceCallback<any>(updateResults, [updateResults], 250);
+  const debouncedUpdateResources = useDebounceCallback(updateResults, 250);
 
   React.useEffect(() => {
-    debouncedUpdateResources(resources);
-  }, [debouncedUpdateResources, resources, updateResults]);
+    debouncedUpdateResources(resource, resources);
+  }, [debouncedUpdateResources, resources, resource]);
 
   return useDeepCompareMemoize({ loaded, loadError, podData });
 };

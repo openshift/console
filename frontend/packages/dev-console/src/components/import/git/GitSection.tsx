@@ -158,7 +158,7 @@ const GitSection: React.FC<GitSectionProps> = ({
     values.git.dir,
   ]);
 
-  const debouncedHandleGitUrlChange = useDebounceCallback(handleGitUrlChange, [handleGitUrlChange]);
+  const debouncedHandleGitUrlChange = useDebounceCallback(handleGitUrlChange);
 
   const handleGitUrlBlur = React.useCallback(() => {
     const { url } = values.git;
