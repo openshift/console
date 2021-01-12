@@ -52,20 +52,20 @@ const ImageSignerTableHeader = (t?: TFunction) => {
   ImageSignerTableHeader.displayName = 'ImageSignerTableHeader';
 
   
-const ImageSignerTableRow: RowFunction<K8sResourceKind> = ({ obj: task, index, key, style }) => {
+const ImageSignerTableRow: RowFunction<K8sResourceKind> = ({ obj: imageSigner, index, key, style }) => {
     return (
-      <TableRow id={task.metadata.uid} index={index} trKey={key} style={style}>
+      <TableRow id={imageSigner.metadata.uid} index={index} trKey={key} style={style}>
         <TableData className={tableColumnClasses[0]}>
-          <ResourceLink kind={kind} name={task.metadata.name} namespace={task.metadata.namespace} title={task.metadata.uid} />
+          <ResourceLink kind={kind} name={imageSigner.metadata.name} namespace={imageSigner.metadata.namespace} title={imageSigner.metadata.uid} />
         </TableData>
         <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
-            <ResourceLink kind="Namespace" name={task.metadata.namespace} title={task.metadata.namespace} />
+            <ResourceLink kind="Namespace" name={imageSigner.metadata.namespace} title={imageSigner.metadata.namespace} />
         </TableData>
         <TableData className={tableColumnClasses[2]}>
-          <Timestamp timestamp={task.metadata.creationTimestamp} />
+          <Timestamp timestamp={imageSigner.metadata.creationTimestamp} />
         </TableData>
         <TableData className={tableColumnClasses[3]}>
-        <ResourceKebab actions={menuActions} kind={kind} resource={task} />
+        <ResourceKebab actions={menuActions} kind={kind} resource={imageSigner} />
       </TableData>
       </TableRow>
     );
@@ -79,16 +79,16 @@ const ImageSignerTableRow: RowFunction<K8sResourceKind> = ({ obj: task, index, k
   );
 
   
-const ImageSignerDetails: React.FC<ImageSignerDetailsProps> = ({ obj: task }) => (
+const ImageSignerDetails: React.FC<ImageSignerDetailsProps> = ({ obj: imageSigner }) => (
     <>
       <div className="co-m-pane__body">
         <SectionHeading text="Image Signer Details" />
         <div className="row">
           <div className="col-lg-6">
-            <ResourceSummary resource={task} showPodSelector showNodeSelector showTolerations />
+            <ResourceSummary resource={imageSigner} showPodSelector showNodeSelector showTolerations />
           </div>
           <div className="col-lg-6">
-            <ImageSignerDetailsList ds={task} />
+            <ImageSignerDetailsList ds={imageSigner} />
           </div>
         </div>
       </div>
