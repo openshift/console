@@ -89,7 +89,7 @@ const CatalogServiceProvider: React.FC<CatalogServiceProviderProps> = ({
     items: catalogItems,
     itemsMap: catalogItemsMap,
     loaded,
-    loadError,
+    loadError: loaded && catalogItems.length < 1 ? loadError : null,
     searchCatalog,
     catalogExtensions: catalogTypeExtensions,
   };

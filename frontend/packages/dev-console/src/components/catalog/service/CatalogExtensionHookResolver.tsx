@@ -22,11 +22,13 @@ const CatalogExtensionHookResolver: React.FC<CatalogExtensionHookResolverProps> 
 }) => {
   const [value, loaded, loadError] = useValue(options);
 
-  if (loadError) onValueError(loadError);
-
   React.useEffect(() => {
     if (loaded) onValueResolved(value, id);
   }, [id, loaded, onValueResolved, value]);
+
+  React.useEffect(() => {
+    if (loadError) onValueError(loadError);
+  }, [loadError, onValueError]);
 
   return null;
 };
