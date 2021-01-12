@@ -66,7 +66,7 @@ const GitSection: React.FC<GitSectionProps> = ({
   const [isRepoReachable, setIsRepoReachable] = React.useState<boolean>(false);
 
   const handleGitUrlChange = React.useCallback(
-    async (url: string, ref: string) => {
+    async (url: string, ref: string, dir: string) => {
       setFieldValue('git.isUrlValidating', true);
       setValidated(ValidatedOptions.default);
 
@@ -78,7 +78,7 @@ const GitSection: React.FC<GitSectionProps> = ({
       setFieldValue('git.showGitType', showGitType);
       showGitType && setFieldTouched('git.type', false);
 
-      const gitService = getGitService({ url, ref }, gitType as GitProvider);
+      const gitService = getGitService({ url, ref, contextDir: dir }, gitType as GitProvider);
       const isReachable = gitService && (await gitService.isRepoReachable());
 
       setIsRepoReachable(isReachable);
@@ -186,7 +186,7 @@ const GitSection: React.FC<GitSectionProps> = ({
     setFieldValue('git.dir', dir);
     setFieldValue('git.ref', ref);
     setFieldTouched('git.url', true);
-    handleGitUrlChange(url, ref);
+    handleGitUrlChange(url, ref, dir);
   }, [handleGitUrlChange, sampleRepo, setFieldTouched, setFieldValue, tag]);
 
   React.useEffect(() => {
@@ -196,8 +196,8 @@ const GitSection: React.FC<GitSectionProps> = ({
   }, [handleBuilderImageRecommendation, values.build.strategy, values.git.url]);
 
   React.useEffect(() => {
-    const { url, ref } = values.git;
-    (!dirty || gitTypeTouched) && values.git.url && handleGitUrlChange(url, ref);
+    const { url, ref, dir } = values.git;
+    (!dirty || gitTypeTouched) && values.git.url && handleGitUrlChange(url, ref, dir);
   }, [dirty, gitTypeTouched, handleGitUrlChange, values.git]);
 
   const getHelpText = () => {
@@ -252,7 +252,11 @@ const GitSection: React.FC<GitSectionProps> = ({
         onChange={(e: React.SyntheticEvent) => {
           resetFields();
           setValidated(ValidatedOptions.default);
-          debouncedHandleGitUrlChange((e.target as HTMLInputElement).value, values.git.ref);
+          debouncedHandleGitUrlChange(
+            (e.target as HTMLInputElement).value,
+            values.git.ref,
+            values.git.dir,
+          );
         }}
         onBlur={handleGitUrlBlur}
         data-test-id="git-form-input-url"

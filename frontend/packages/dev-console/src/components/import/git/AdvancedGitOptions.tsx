@@ -10,6 +10,12 @@ import SourceSecretSelector from './SourceSecretSelector';
 const AdvancedGitOptions: React.FC = () => {
   const { t } = useTranslation();
   const { setFieldValue } = useFormikContext<FormikValues>();
+
+  const handleGitRefChange = useDebounceCallback(
+    (e: React.SyntheticEvent) => setFieldValue('git.ref', (e.target as HTMLInputElement).value),
+    [setFieldValue],
+  );
+
   const handleGitDirChange = useDebounceCallback(
     (e: React.SyntheticEvent) => setFieldValue('git.dir', (e.target as HTMLInputElement).value),
     [setFieldValue],
@@ -26,6 +32,7 @@ const AdvancedGitOptions: React.FC = () => {
           name="git.ref"
           label={t('devconsole~Git reference')}
           helpText={t('devconsole~Optional branch, tag, or commit.')}
+          onChange={handleGitRefChange}
         />
         <InputField
           type={TextInputTypes.text}
