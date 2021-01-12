@@ -75,7 +75,6 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
     },
     docker: {
       dockerfilePath: 'Dockerfile',
-      containerPort: 8080,
     },
     image: {
       selected: '',

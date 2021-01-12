@@ -202,8 +202,6 @@
   "Dockerfile": "Dockerfile",
   "Dockerfile path": "Dockerfile path",
   "Allows the builds to use a different path to locate your Dockerfile, relative to the Context Dir field.": "Allows the builds to use a different path to locate your Dockerfile, relative to the Context Dir field.",
-  "Container port": "Container port",
-  "Port number the Container exposes.": "Port number the Container exposes.",
   "Validating": "Validating",
   "No Devfile present, unable to continue": "No Devfile present, unable to continue",
   "Validated": "Validated",

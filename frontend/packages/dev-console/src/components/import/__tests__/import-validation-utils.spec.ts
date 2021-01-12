@@ -242,14 +242,14 @@ describe('ValidationUtils', () => {
     it('should throw an error if containerPort is not an integer', async () => {
       const mockData = cloneDeep(mockFormData);
       mockData.build.strategy = 'Docker';
-      mockData.docker.containerPort = 808.5;
+      mockData.route.unknownTargetPort = '808.5';
       await validationSchema(t)
         .isValid(mockData)
         .then((valid) => expect(valid).toEqual(false));
       await validationSchema(t)
         .validate(mockData)
         .catch((err) => {
-          expect(err.message).toBe('devconsole~Container port should be an integer');
+          expect(err.message).toBe('devconsole~Port must be an Integer.');
         });
     });
 

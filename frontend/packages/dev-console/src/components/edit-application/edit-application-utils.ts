@@ -314,7 +314,6 @@ export const getIconInitialValues = (editAppResource: K8sResourceKind) => {
 export const getGitAndDockerfileInitialValues = (
   buildConfig: K8sResourceKind,
   pipeline: Pipeline,
-  route: K8sResourceKind,
 ) => {
   if (_.isEmpty(buildConfig) && _.isEmpty(pipeline)) {
     return {};
@@ -331,7 +330,6 @@ export const getGitAndDockerfileInitialValues = (
         buildConfig?.spec?.strategy?.dockerStrategy?.dockerfilePath ||
         pipeline?.spec?.params?.find((param) => param?.name === 'DOCKERFILE')?.default ||
         'Dockerfile',
-      containerPort: parseInt(_.split(_.get(route, 'spec.port.targetPort'), '-')[0], 10),
     },
     image: {
       selected:
@@ -454,11 +452,7 @@ export const getInitialValues = (
     appName,
     namespace,
   );
-  const gitDockerValues = getGitAndDockerfileInitialValues(
-    buildConfigData,
-    pipelineData,
-    routeData,
-  );
+  const gitDockerValues = getGitAndDockerfileInitialValues(buildConfigData, pipelineData);
 
   let iconValues = {};
   let externalImageValues = {};

@@ -155,7 +155,6 @@ export interface GitData {
 
 export interface DockerData {
   dockerfilePath?: string;
-  containerPort?: number;
 }
 
 type DevfileData = {

@@ -546,7 +546,7 @@ export const gitImportInitialValues: GitImportFormData = {
     secret: '',
     isUrlValidating: false,
   },
-  docker: { dockerfilePath: 'Dockerfile', containerPort: 8080 },
+  docker: { dockerfilePath: 'Dockerfile' },
   image: {
     selected: 'python',
     recommended: '',
