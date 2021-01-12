@@ -2,7 +2,11 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import { Select, SelectGroup, SelectOption, SelectProps } from '@patternfly/react-core';
-import { FirehoseResource, humanizeBinaryBytes } from '@console/internal/components/utils';
+import {
+  FirehoseResource,
+  humanizeBinaryBytes,
+  FieldLevelHelp,
+} from '@console/internal/components/utils';
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
@@ -191,7 +195,14 @@ const BreakdownCard: React.FC = () => {
   return (
     <DashboardCard>
       <DashboardCardHeader>
-        <DashboardCardTitle>{t('noobaa-storage-plugin~Capacity breakdown')}</DashboardCardTitle>
+        <DashboardCardTitle>
+          {t('noobaa-storage-plugin~Capacity breakdown')}
+          <FieldLevelHelp>
+            {t(
+              'noobaa-storage-plugin~This card shows used capacity by different resources. The available capacity is based on cloud services therefore it cannot be shown.',
+            )}
+          </FieldLevelHelp>
+        </DashboardCardTitle>
         <div className="nb-capacity-breakdown-card__header">
           {isRGWSupported && (
             <Select

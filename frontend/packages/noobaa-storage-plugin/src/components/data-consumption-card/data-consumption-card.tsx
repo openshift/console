@@ -18,6 +18,7 @@ import {
 import { RGW_FLAG } from '@console/ceph-storage-plugin/src/features';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { CEPH_STORAGE_NAMESPACE, OCS_OPERATOR } from '@console/ceph-storage-plugin/src/constants';
+import { FieldLevelHelp } from '@console/internal/components/utils';
 import { Breakdown, Metrics, ServiceType } from '../../constants';
 import { DataConsumptionDropdown } from './data-consumption-card-dropdown';
 import { DATA_CONSUMPTION_QUERIES } from '../../queries';
@@ -79,7 +80,14 @@ const DataConsumptionCard: React.FC = () => {
   return (
     <DashboardCard>
       <DashboardCardHeader>
-        <DashboardCardTitle>{t('noobaa-storage-plugin~Performance')}</DashboardCardTitle>
+        <DashboardCardTitle>
+          {t('noobaa-storage-plugin~Performance')}
+          <FieldLevelHelp>
+            {t(
+              'noobaa-storage-plugin~Shows an overview of the data consumption per provider or per account collected from the day of the entity creation.',
+            )}
+          </FieldLevelHelp>
+        </DashboardCardTitle>
         <DataConsumptionDropdown
           selectedService={serviceType}
           setSelectedService={setServiceType}
