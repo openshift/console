@@ -56,7 +56,6 @@ const DeployImage: React.FC<Props> = ({
       image: '',
       tag: '',
       namespace: namespace || '',
-      grantAccess: true,
     },
     isi: {
       name: '',

@@ -15,18 +15,14 @@ export interface DeployImageFormProps {
 export type ImageStreamPayload = boolean | K8sResourceKind;
 
 export type ImageStreamState = {
-  hasAccessToPullImage: ImageStreamPayload;
   accessLoading: ImageStreamPayload;
   loading: ImageStreamPayload;
-  hasCreateAccess: ImageStreamPayload;
   selectedImageStream: ImageStreamPayload;
 };
 export enum ImageStreamActions {
   setAccessLoading = 'setAccessLoading',
   setLoading = 'setLoading',
   setSelectedImageStream = 'setSelectedImageStream',
-  setHasAccessToPullImage = 'setHasAccessToPullImage',
-  setHasCreateAccess = 'setHasCreateAccess',
 }
 export type ImageStreamAction = { type: ImageStreamActions; value: ImageStreamPayload };
 export interface ImageStreamContextProps {
@@ -76,7 +72,6 @@ export interface DeployImageFormData {
     image: string;
     tag: string;
     namespace: string;
-    grantAccess?: boolean;
   };
   isi: ImageStreamImageData;
   image: ImageStreamImageData;
