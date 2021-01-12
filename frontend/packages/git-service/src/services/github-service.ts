@@ -107,12 +107,12 @@ export class GithubService extends BaseService {
     }
   };
 
-  isDockerfilePresent = async (): Promise<boolean> => {
+  isFilePresent = async (path: string): Promise<boolean> => {
     try {
       const resp = await this.client.repos.getContents({
         owner: this.metadata.owner,
         repo: this.metadata.repoName,
-        path: `${this.metadata.contextDir}/Dockerfile`,
+        path,
       });
       return resp.status === 200;
     } catch (e) {
@@ -120,12 +120,12 @@ export class GithubService extends BaseService {
     }
   };
 
-  getDockerfileContent = async (): Promise<string | null> => {
+  getFileContent = async (path: string): Promise<string | null> => {
     try {
       const resp = await this.client.repos.getContents({
         owner: this.metadata.owner,
         repo: this.metadata.repoName,
-        path: `${this.metadata.contextDir}/Dockerfile`,
+        path,
       });
       if (resp.status === 200) {
         // eslint-disable-next-line dot-notation
@@ -137,50 +137,13 @@ export class GithubService extends BaseService {
     }
   };
 
-  isDevfilePresent = async (): Promise<boolean> => {
-    try {
-      const resp = await this.client.repos.getContents({
-        owner: this.metadata.owner,
-        repo: this.metadata.repoName,
-        path: 'devfile.yaml',
-      });
-      return resp.status === 200;
-    } catch (e) {
-      return false;
-    }
-  };
+  isDockerfilePresent = () => this.isFilePresent(`${this.metadata.contextDir}/Dockerfile`);
 
-  getDevfileContent = async (): Promise<string | null> => {
-    try {
-      const resp = await this.client.repos.getContents({
-        owner: this.metadata.owner,
-        repo: this.metadata.repoName,
-        path: 'devfile.yaml',
-      });
-      if (resp.status === 200) {
-        // eslint-disable-next-line dot-notation
-        return Buffer.from(resp.data['content'], 'base64').toString();
-      }
-      return null;
-    } catch (e) {
-      return null;
-    }
-  };
+  getDockerfileContent = () => this.getFileContent(`${this.metadata.contextDir}/Dockerfile`);
 
-  getPackageJsonContent = async (): Promise<string | null> => {
-    try {
-      const resp = await this.client.repos.getContents({
-        owner: this.metadata.owner,
-        repo: this.metadata.repoName,
-        path: `${this.metadata.contextDir}/package.json`,
-      });
-      if (resp.status === 200) {
-        // eslint-disable-next-line dot-notation
-        return Buffer.from(resp.data['content'], 'base64').toString();
-      }
-      return null;
-    } catch (e) {
-      return null;
-    }
-  };
+  isDevfilePresent = () => this.isFilePresent(`${this.metadata.contextDir}/devfile.yaml`);
+
+  getDevfileContent = () => this.getFileContent(`${this.metadata.contextDir}/devfile.yaml`);
+
+  getPackageJsonContent = () => this.getFileContent(`${this.metadata.contextDir}/package.json`);
 }
