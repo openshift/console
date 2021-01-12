@@ -90,6 +90,7 @@ type jsGlobals struct {
 	GOOS                     string `json:"GOOS"`
 	GraphQLBaseURL           string `json:"graphqlBaseURL"`
 	DevCatalogCategories     string `json:"developerCatalogCategories"`
+	UserSettingsLocation     string `json:"userSettingsLocation"`
 }
 
 type Server struct {
@@ -134,6 +135,7 @@ type Server struct {
 	PrometheusPublicURL   *url.URL
 	ThanosPublicURL       *url.URL
 	DevCatalogCategories  string
+	UserSettingsLocation  string
 }
 
 func (s *Server) authDisabled() bool {
@@ -489,6 +491,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		LoadTestFactor:        s.LoadTestFactor,
 		GraphQLBaseURL:        proxy.SingleJoiningSlash(s.BaseURL.Path, graphQLEndpoint),
 		DevCatalogCategories:  s.DevCatalogCategories,
+		UserSettingsLocation:  s.UserSettingsLocation,
 	}
 
 	if !s.authDisabled() {
