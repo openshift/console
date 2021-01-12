@@ -3,21 +3,23 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"strconv"
+
 	"helm.sh/helm/v3/pkg/action"
 	"helm.sh/helm/v3/pkg/chart"
 	"helm.sh/helm/v3/pkg/release"
 	"k8s.io/client-go/rest"
-	"net/http"
 	"sigs.k8s.io/yaml"
-	"strconv"
 
 	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/helm/actions"
 	"github.com/openshift/console/pkg/helm/chartproxy"
 	"github.com/openshift/console/pkg/serverutils"
+	"github.com/openshift/console/pkg/version"
 )
 
-func New(apiUrl string, transport http.RoundTripper, kubeversion string) *helmHandlers {
+func New(apiUrl string, transport http.RoundTripper, kubeversionGetter version.KubeVersionGetter) *helmHandlers {
 	h := &helmHandlers{
 		ApiServerHost:           apiUrl,
 		Transport:               transport,
@@ -36,7 +38,7 @@ func New(apiUrl string, transport http.RoundTripper, kubeversion string) *helmHa
 	h.newProxy = func(bearerToken string) (getter chartproxy.Proxy, err error) {
 		return chartproxy.New(func() (*rest.Config, error) {
 			return h.restConfig(bearerToken), nil
-		}, kubeversion)
+		}, kubeversionGetter)
 	}
 
 	return h

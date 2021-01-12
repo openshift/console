@@ -8,6 +8,8 @@ import (
 	v1 "k8s.io/client-go/kubernetes/typed/core/v1"
 	"k8s.io/client-go/rest"
 	"k8s.io/klog"
+
+	"github.com/openshift/console/pkg/version"
 )
 
 type proxy struct {
@@ -46,7 +48,7 @@ func coreClientProvider(p *proxy) error {
 
 var defaultOptions = []ProxyOption{dynamicKubeClientProvider, coreClientProvider}
 
-func New(k8sConfig RestConfigProvider, kubeVersion string, opts ...ProxyOption) (Proxy, error) {
+func New(k8sConfig RestConfigProvider, kubeVersionGetter version.KubeVersionGetter, opts ...ProxyOption) (Proxy, error) {
 	config, err := k8sConfig()
 
 	if err != nil {
@@ -55,7 +57,7 @@ func New(k8sConfig RestConfigProvider, kubeVersion string, opts ...ProxyOption) 
 
 	p := &proxy{
 		config:      config,
-		kubeVersion: kubeVersion,
+		kubeVersion: kubeVersionGetter.GetKubeVersion(),
 	}
 
 	if len(opts) == 0 {
