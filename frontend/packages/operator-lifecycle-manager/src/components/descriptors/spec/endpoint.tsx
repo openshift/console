@@ -1,14 +1,14 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import { ResourceIcon } from '@console/internal/components/utils';
+import { useTranslation } from 'react-i18next';
 
-export const EndpointRow: React.SFC<EndpointRowProps> = ({ endpoint }) => {
+export const EndpointRow: React.FC<EndpointRowProps> = ({ endpoint }) => {
   const detail = ['scheme', 'honorLabels', 'targetPort'].reduce(
     (element, field) =>
-      _.get(endpoint, field) ? (
+      endpoint?.[field] ? (
         <span>
           <span className="text-muted">{field}:</span>
-          {_.get(endpoint, field)}
+          {endpoint[field]}
         </span>
       ) : (
         element
@@ -34,22 +34,25 @@ export const EndpointRow: React.SFC<EndpointRowProps> = ({ endpoint }) => {
   );
 };
 
-export const EndpointList: React.SFC<EndpointListProps> = (props) => (
-  <div className="service-ips">
-    <div className="row co-ip-header">
-      <div className="col-xs-6">Port</div>
-      <div className="col-xs-2">Interval</div>
-      <div className="col-xs-4" />
+export const EndpointList: React.FC<EndpointListProps> = (props) => {
+  const { t } = useTranslation();
+  return (
+    <div className="service-ips">
+      <div className="row co-ip-header">
+        <div className="col-xs-6">{t('olm~Port')}</div>
+        <div className="col-xs-2">{t('olm~Interval')}</div>
+        <div className="col-xs-4" />
+      </div>
+      <div className="rows">
+        {props.endpoints ? (
+          props.endpoints.map((e) => <EndpointRow endpoint={e} key={e.port} />)
+        ) : (
+          <span className="text-muted">{t('olm~No endpoints')}</span>
+        )}
+      </div>
     </div>
-    <div className="rows">
-      {props.endpoints ? (
-        props.endpoints.map((e) => <EndpointRow endpoint={e} key={e.port} />)
-      ) : (
-        <span className="text-muted">No endpoints</span>
-      )}
-    </div>
-  </div>
-);
+  );
+};
 
 /**
  * Taken from https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#endpoint
