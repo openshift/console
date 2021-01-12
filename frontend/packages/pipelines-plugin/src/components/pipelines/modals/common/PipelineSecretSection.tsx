@@ -51,7 +51,11 @@ const PipelineSecretSection: React.FC<PipelineSecretSectionProps> = ({ namespace
       .then((resp) => {
         actions.setSubmitting(false);
         setFieldValue(secretOpenField.name, false);
-        associateServiceAccountToSecret(resp, namespace);
+        associateServiceAccountToSecret(
+          resp,
+          namespace,
+          values.annotations.key === SecretAnnotationId.Image,
+        );
       })
       .catch((err) => {
         actions.setSubmitting(false);

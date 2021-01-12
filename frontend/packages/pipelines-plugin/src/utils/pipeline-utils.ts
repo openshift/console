@@ -55,8 +55,14 @@ interface Resource {
   resource?: string;
   from?: string[];
 }
+
+interface ServiceAccountSecretNames {
+  [name: string]: string;
+}
+
 export type ServiceAccountType = {
-  secrets: { [name: string]: string }[];
+  secrets: ServiceAccountSecretNames[];
+  imagePullSecrets: ServiceAccountSecretNames[];
 } & K8sResourceCommon;
 
 export interface PipelineVisualizationTaskItem {
@@ -381,17 +387,28 @@ export const pipelineRunDuration = (run: PipelineRun | TaskRunKind): string => {
 export const updateServiceAccount = (
   secretName: string,
   originalServiceAccount: ServiceAccountType,
+  updateImagePullSecrets: boolean,
 ): Promise<ServiceAccountType> => {
   const updatedServiceAccount = _.cloneDeep(originalServiceAccount);
   updatedServiceAccount.secrets = [...updatedServiceAccount.secrets, { name: secretName }];
+  if (updateImagePullSecrets) {
+    updatedServiceAccount.imagePullSecrets = [
+      ...updatedServiceAccount.imagePullSecrets,
+      { name: secretName },
+    ];
+  }
   return k8sUpdate(ServiceAccountModel, updatedServiceAccount);
 };
 
-export const associateServiceAccountToSecret = (secret: SecretKind, namespace: string) => {
+export const associateServiceAccountToSecret = (
+  secret: SecretKind,
+  namespace: string,
+  isImageSecret: boolean,
+) => {
   k8sGet(ServiceAccountModel, PIPELINE_SERVICE_ACCOUNT, namespace)
     .then((serviceAccount) => {
       if (_.find(serviceAccount.secrets, (s) => s.name === secret.metadata.name) === undefined) {
-        updateServiceAccount(secret.metadata.name, serviceAccount);
+        updateServiceAccount(secret.metadata.name, serviceAccount, isImageSecret);
       }
     })
     .catch((err) => {
