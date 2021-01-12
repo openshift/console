@@ -13,7 +13,6 @@ export const initialState = {
   minDiskSize: '0',
   maxDiskSize: '',
   diskSizeUnit: 'Ti',
-  isValidMaxSize: true,
   nodeNamesForLVS: [],
   hostNamesMapForLVS: {},
 };
@@ -30,7 +29,6 @@ export type State = {
   minDiskSize: string;
   maxDiskSize: string;
   diskSizeUnit: string;
-  isValidMaxSize: boolean;
   nodeNamesForLVS: string[];
   hostNamesMapForLVS: HostNamesMap;
 };
@@ -46,7 +44,6 @@ export type Action =
   | { type: 'setMinDiskSize'; value: string }
   | { type: 'setMaxDiskSize'; value: string }
   | { type: 'setDiskSizeUnit'; value: string }
-  | { type: 'setIsValidMaxSize'; value: boolean }
   | { type: 'setNodeNamesForLVS'; value: string[] }
   | { type: 'setHostNamesMapForLVS'; value: HostNamesMap }
   | { type: 'setDeviceType'; value: string[] };
@@ -75,8 +72,6 @@ export const reducer = (state: State, action: Action) => {
       return Object.assign({}, state, { maxDiskSize: action.value });
     case 'setDiskSizeUnit':
       return Object.assign({}, state, { diskSizeUnit: action.value });
-    case 'setIsValidMaxSize':
-      return Object.assign({}, state, { isValidMaxSize: action.value });
     case 'setNodeNamesForLVS':
       return Object.assign({}, state, { nodeNamesForLVS: action.value });
     case 'setHostNamesMapForLVS':
