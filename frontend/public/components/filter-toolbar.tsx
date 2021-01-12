@@ -298,6 +298,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
   const dropdownItems = getDropdownItems(rowFilters, selectedRowFilters, data, props);
   return (
     <Toolbar
+      data-test="filter-toolbar"
       id="filter-toolbar"
       clearAllFilters={clearAll}
       clearFiltersButtonText={t('filter-toolbar~Clear all filters')}

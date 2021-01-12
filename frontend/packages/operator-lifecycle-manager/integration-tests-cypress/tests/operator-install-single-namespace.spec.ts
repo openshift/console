@@ -1,12 +1,21 @@
 import { checkErrors, testName } from '../../../integration-tests-cypress/support';
 import { modal } from '../../../integration-tests-cypress/views/modal';
+import { createCatalogSource, deleteCatalogSource } from '../views/catalog-source.view';
 
-const operatorName = '3scale Operator';
+const operatorName = 'Couchbase Operator';
+const catalogSourceName = 'console-e2e';
+const operatorID = 'couchbase-enterprise-console-e2e-openshift-marketplace';
+const operatorRow = 'Couchbase Operator';
+const operatorPkgName = 'couchbase-enterprise';
+const operatorInstallFormURL = `/operatorhub/subscribe?pkg=${operatorPkgName}&catalog=${catalogSourceName}&catalogNamespace=openshift-marketplace&targetNamespace=${testName}`;
+const operatorInstance = 'CouchbaseCluster';
+const operandLink = 'cb-example';
 
-xdescribe(`Interacting with a single namespace install mode Operator (${operatorName})`, () => {
+describe(`Interacting with a single namespace install mode Operator (${operatorName})`, () => {
   before(() => {
     cy.login();
     cy.createProject(testName);
+    createCatalogSource(operatorName, catalogSourceName);
   });
 
   afterEach(() => {
@@ -15,25 +24,15 @@ xdescribe(`Interacting with a single namespace install mode Operator (${operator
 
   after(() => {
     cy.deleteProject(testName);
+    deleteCatalogSource(catalogSourceName);
     cy.logout();
   });
 
-  const operatorPkgName = '3scale-community-operator';
-  const operatorID = '3scale-community-operator-community-operators-openshift-marketplace';
-  const operatorRow = '3scale API Management';
-  const operatorInstallFormURL = `/operatorhub/subscribe?pkg=${operatorPkgName}&catalog=community-operators&catalogNamespace=openshift-marketplace&targetNamespace=${testName}`;
-  const operatorInstance = 'APIManagerBackup';
-  const operandLink = 'example-apimanagerbackup';
-
   it(`displays subscription creation form for ${operatorName}`, () => {
-    cy.log('navigate to the operator install form from OperatorHub');
+    cy.log('navigate to the Operator install form from OperatorHub');
     cy.visit(`/operatorhub/ns/${testName}`);
     cy.byTestID('search-operatorhub').type(operatorName);
     cy.byTestID(operatorID).click();
-    cy.log('dismiss Show Community Operator modal');
-    modal.shouldBeOpened();
-    modal.submit();
-    modal.shouldBeClosed();
     cy.log('go to the install form');
     cy.byLegacyTestID('operator-install-btn').click({ force: true });
     cy.url().should('include', operatorInstallFormURL);
@@ -41,12 +40,12 @@ xdescribe(`Interacting with a single namespace install mode Operator (${operator
 
   it(`creates the single namespace install mode ClusterServiceVersion for ${operatorName}`, () => {
     cy.visit(operatorInstallFormURL);
-    cy.log('configure operator install form for single namespace');
+    cy.log('configure Operator install form for single namespace');
     cy.byTestID('A specific namespace on the cluster-radio-input').check();
     cy.log(`verify the dropdown selection shows the ${testName} namespace`);
     cy.byTestID('dropdown-selectbox').should('contain', `${testName}`);
     cy.byTestID('install-operator').click();
-    cy.log('verify operator began installation');
+    cy.log('verify Operator began installation');
     cy.byTestID('view-installed-operators-btn').should(
       'contain',
       `View Installed Operators in namespace ${testName}`,
@@ -54,7 +53,7 @@ xdescribe(`Interacting with a single namespace install mode Operator (${operator
     cy.log('view the ClusterServiceVersion list page');
     cy.byTestID('view-installed-operators-btn').click();
     cy.log(`verify the ClusterServiceVersion row for ${operatorRow} exists`);
-    cy.byTestOperatorRow(operatorRow).should('exist');
+    cy.byTestOperatorRow(operatorRow, { timeout: 60000 }).should('exist');
   });
 
   it(`displays details about ${operatorName} ClusterServiceVersion on the "Details" tab`, () => {
@@ -79,7 +78,7 @@ xdescribe(`Interacting with a single namespace install mode Operator (${operator
     cy.log('navigate to the form');
     cy.byLegacyTestID('dropdown-button')
       .click()
-      .get('[data-test-dropdown-menu="apimanagerbackups.apps.3scale.net"]')
+      .get('[data-test-dropdown-menu="couchbaseclusters.couchbase.com"]')
       .click();
     cy.byLegacyTestID('resource-title').should('contain', `Create ${operatorInstance}`);
   });
@@ -93,19 +92,15 @@ xdescribe(`Interacting with a single namespace install mode Operator (${operator
   it(`displays details about ${operatorName} ${operatorInstance} instance on the "Details" tab`, () => {
     cy.log(`navigate to the "Details" tab`);
     cy.byTestOperandLink(operandLink).click();
-    cy.byTestSectionHeading('APIManagerBackup Overview').should('exist');
+    cy.byTestSectionHeading('Couchbase Cluster Overview').should('exist');
   });
 
-  it(`uninstalls the operator from ${testName} namespace`, () => {
-    cy.log('navigate to the operator uninstall modal in OperatorHub');
+  it(`uninstalls the Operator from ${testName} namespace`, () => {
+    cy.log('navigate to the Operator uninstall modal in OperatorHub');
     cy.visit(`/operatorhub/ns/${testName}`);
     cy.byTestID('search-operatorhub').type(operatorName);
     cy.byTestID(operatorID).click();
-    cy.log('dismiss Show Community Operator modal');
-    modal.shouldBeOpened();
-    modal.submit();
-    modal.shouldBeClosed();
-    cy.log('uninstall the operator');
+    cy.log('uninstall the Operator');
     cy.byLegacyTestID('operator-uninstall-btn').click({ force: true });
     cy.url().should(
       'include',
@@ -119,7 +114,7 @@ xdescribe(`Interacting with a single namespace install mode Operator (${operator
       'include',
       `/k8s/ns/${testName}/operators.coreos.com~v1alpha1~ClusterServiceVersion`,
     );
-    cy.log(`verify the operator is not installed in namespace ${testName}`);
+    cy.log(`verify the Operator is not installed in namespace ${testName}`);
     cy.get('.loading-skeleton--table').should('not.be.visible');
     cy.byTestOperatorRow(operatorRow).should('not.exist');
   });
