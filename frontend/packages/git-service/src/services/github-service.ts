@@ -42,7 +42,7 @@ export class GithubService extends BaseService {
       repoName: name,
       owner,
       host: source,
-      defaultBranch: this.gitsource.ref || 'master',
+      defaultBranch: this.gitsource.ref,
       contextDir,
     };
   };
@@ -79,8 +79,8 @@ export class GithubService extends BaseService {
       const resp = await this.client.repos.getContents({
         owner: this.metadata.owner,
         repo: this.metadata.repoName,
-        ref: this.metadata.defaultBranch,
         path: this.metadata.contextDir,
+        ...(this.metadata.defaultBranch ? { ref: this.metadata.defaultBranch } : {}),
       });
       let files = [];
       if (resp.status === 200 && Array.isArray(resp.data)) {
@@ -113,6 +113,7 @@ export class GithubService extends BaseService {
         owner: this.metadata.owner,
         repo: this.metadata.repoName,
         path,
+        ...(this.metadata.defaultBranch ? { ref: this.metadata.defaultBranch } : {}),
       });
       return resp.status === 200;
     } catch (e) {
@@ -126,6 +127,7 @@ export class GithubService extends BaseService {
         owner: this.metadata.owner,
         repo: this.metadata.repoName,
         path,
+        ...(this.metadata.defaultBranch ? { ref: this.metadata.defaultBranch } : {}),
       });
       if (resp.status === 200) {
         // eslint-disable-next-line dot-notation
