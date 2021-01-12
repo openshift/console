@@ -249,7 +249,7 @@ export const usePodScalingAccessStatus = (
 
   React.useEffect(() => {
     if (isScalingAllowed) {
-      checkPodEditAccess(obj, resourceKind, impersonate)
+      checkPodEditAccess(obj, resourceKind, impersonate, 'scale')
         .then((resp: SelfSubjectAccessReviewKind) =>
           setEditable(_.get(resp, 'status.allowed', false)),
         )
