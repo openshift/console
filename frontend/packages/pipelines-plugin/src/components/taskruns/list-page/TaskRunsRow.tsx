@@ -5,7 +5,7 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import { TaskRunKind, getModelReferenceFromTaskKind } from '../../../utils/pipeline-augment';
 import { TaskRunModel, PipelineModel } from '../../../models';
 import { tableColumnClasses } from './taskruns-table';
-import { pipelineRunFilterReducer as taskRunFilterReducer } from '../../../utils/pipeline-filter-reducer';
+import { taskRunFilterReducer } from '../../../utils/pipeline-filter-reducer';
 import { TektonResourceLabel } from '../../pipelines/const';
 import TaskRunStatus from '../status/TaskRunStatus';
 
