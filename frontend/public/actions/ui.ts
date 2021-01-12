@@ -6,7 +6,10 @@ import * as _ from 'lodash-es';
 import store from '../redux';
 import { history } from '../components/utils/router';
 import { OverviewItem } from '@console/shared';
-import { ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
+import {
+  ALL_NAMESPACES_KEY,
+  LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
+} from '@console/shared/src/constants';
 import { K8sResourceKind, PodKind, NodeKind } from '../module/k8s';
 import { allModels } from '../module/k8s/k8s-models';
 import { detectFeatures, clearSSARFlags } from './features';
@@ -199,8 +202,10 @@ export const setActiveNamespace = (namespace: string = '') => {
     if (newPath !== oldPath) {
       history.pushPath(newPath);
     }
-    // remember the most recently-viewed project, which is automatically
-    // selected when returning to the console
+    // save last namespace in session storage (persisted only for current browser tab). Used to remember/restore if
+    // "All Projects" was selected when returning to the list view (typically from details view) via breadcrumb or
+    // sidebar navigation
+    sessionStorage.setItem(LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY, namespace);
   }
 
   return action(ActionType.SetActiveNamespace, { namespace });

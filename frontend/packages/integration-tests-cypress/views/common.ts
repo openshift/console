@@ -8,3 +8,19 @@ export const selectActionsMenuOption = (actionsMenuOption: string) => {
     .should('be.visible')
     .click();
 };
+
+export const projectDropdown = {
+  shouldExist: () => cy.byLegacyTestID('namespace-bar-dropdown').should('exist'),
+  selectProject: (projectName: string) => {
+    cy.byLegacyTestID('namespace-bar-dropdown')
+      .contains('Project:')
+      .click();
+    cy.byTestID('dropdown-menu-item-link')
+      .contains(projectName)
+      .click();
+  },
+  shouldContain: (name: string) => cy.byLegacyTestID('namespace-bar-dropdown').contains(name),
+  shouldNotContain: (name: string) =>
+    cy.byLegacyTestID('namespace-bar-dropdown').should('not.contain', name),
+  shouldNotExist: () => cy.byLegacyTestID('namespace-bar-dropdown').should('not.exist'),
+};

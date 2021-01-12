@@ -1,6 +1,8 @@
 import { checkErrors, testName } from '../../support';
 import { listPage } from '../../views/list-page';
 import { modal } from '../../views/modal';
+import { nav } from '../../views/nav';
+import { projectDropdown } from '../../views/common';
 
 describe('Namespace', () => {
   before(() => {
@@ -47,5 +49,58 @@ describe('Namespace', () => {
     modal.submit();
     modal.shouldBeClosed();
     cy.resourceShouldBeDeleted(testName, 'namespaces', newName);
+  });
+
+  it('nav and breadcrumbs restores last selected "All Projects" when navigating from details to list view', () => {
+    nav.sidenav.clickNavLink(['Workloads', 'Secrets']);
+    projectDropdown.selectProject('All Projects');
+    projectDropdown.shouldContain('All Projects');
+    cy.log(
+      'Nav from list page to details page should change Project from "All Projects" to resource specific project',
+    );
+    cy.get(`[data-test-rows="resource-row"]`)
+      .first()
+      .find('a')
+      .first()
+      .click();
+    projectDropdown.shouldNotContain('All Projects'); // after drilldown to Details page, project should be specific to resource
+    cy.log(
+      'Nav back to list page from details page via sidebar nav menu should change Project back to "All Projects"',
+    );
+    nav.sidenav.clickNavLink(['Workloads', 'Secrets']);
+    projectDropdown.shouldContain('All Projects');
+    cy.log(
+      'Nav back to list page from details page via sidebar nav menu should change Project back to "All Projects"',
+    );
+    cy.get(`[data-test-rows="resource-row"]`)
+      .first()
+      .find('a')
+      .first()
+      .click();
+    projectDropdown.shouldNotContain('All Projects'); // after drilldown to Details page, project should be specific to resource
+    cy.byLegacyTestID('breadcrumb-link-0').click();
+    projectDropdown.shouldContain('All Projects');
+  });
+
+  it('nav and breadcrumbs restores last selected Project when navigating from details to list view', () => {
+    nav.sidenav.clickNavLink(['Workloads', 'Secrets']);
+    projectDropdown.selectProject('default');
+    projectDropdown.shouldContain('default');
+    cy.get(`[data-test-rows="resource-row"]`)
+      .first()
+      .find('a')
+      .first()
+      .click();
+    projectDropdown.shouldContain('default');
+    nav.sidenav.clickNavLink(['Workloads', 'Secrets']);
+    projectDropdown.shouldContain('default');
+    cy.get(`[data-test-rows="resource-row"]`)
+      .first()
+      .find('a')
+      .first()
+      .click();
+    projectDropdown.shouldContain('default');
+    cy.byLegacyTestID('breadcrumb-link-0').click();
+    projectDropdown.shouldContain('default');
   });
 });
