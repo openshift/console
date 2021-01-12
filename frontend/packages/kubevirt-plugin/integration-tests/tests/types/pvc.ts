@@ -6,7 +6,8 @@ export type PVCData = {
   os?: OperatingSystem;
   pvcName?: string;
   pvcSize: string;
-  pvcSizeUnits: string;
+  pvcSizeUnits?: string;
   storageClass: string;
   accessMode?: string;
+  volumeMode?: string;
 };

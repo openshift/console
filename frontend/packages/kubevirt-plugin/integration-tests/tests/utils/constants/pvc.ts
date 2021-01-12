@@ -21,7 +21,6 @@ export const CIRROS_PVC: PVCData = {
   image: LOCAL_CIRROS_IMAGE,
   pvcName: `test-upload-pvc-${testName}`,
   pvcSize: '1',
-  pvcSizeUnits: 'Gi',
   storageClass: STORAGE_CLASS,
 };
 
@@ -31,7 +30,6 @@ export const FEDORA_PVC: PVCData = {
   os: OperatingSystem.FEDORA,
   pvcName: GOLDEN_OS_PVC_NAME.FEDORA,
   pvcSize: '10',
-  pvcSizeUnits: 'Gi',
   storageClass: STORAGE_CLASS,
 };
 
@@ -41,7 +39,6 @@ export const RHEL7_PVC: PVCData = {
   os: OperatingSystem.RHEL7,
   pvcName: GOLDEN_OS_PVC_NAME.RHEL7,
   pvcSize: '10',
-  pvcSizeUnits: 'Gi',
   storageClass: STORAGE_CLASS,
 };
 
@@ -51,6 +48,5 @@ export const WIN10_PVC: PVCData = {
   os: OperatingSystem.WINDOWS_10,
   pvcName: GOLDEN_OS_PVC_NAME.WIN10,
   pvcSize: '10',
-  pvcSizeUnits: 'Gi',
   storageClass: STORAGE_CLASS,
 };

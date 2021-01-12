@@ -9,7 +9,7 @@ import {
   withResources,
 } from '@console/shared/src/test-utils/utils';
 import { errorMessage, isLoaded } from '@console/internal-integration-tests/views/crud.view';
-import { warnMessage } from '../views/pvc.view';
+import { typeWarnMessage } from '../views/pvc.view';
 import { bootSource, vmtLinkByName } from '../views/template.view';
 import {
   CLONE_VM_TIMEOUT_SECS,
@@ -82,7 +82,7 @@ describe('KubeVirt Auto Clone', () => {
         CIRROS_PVC.image = img;
         await uploadForm.openForm();
         await uploadForm.fillAll(CIRROS_PVC);
-        await browser.wait(until.stalenessOf(warnMessage));
+        await browser.wait(until.stalenessOf(typeWarnMessage));
       }
     });
 
@@ -91,14 +91,12 @@ describe('KubeVirt Auto Clone', () => {
         image: invalidImage,
         pvcName: `upload-pvc-${testName}-invalid`,
         pvcSize: '1',
-        pvcSizeUnits: 'Gi',
         storageClass: STORAGE_CLASS,
       };
 
       await uploadForm.openForm();
       await uploadForm.fillAll(pvc);
-      await browser.wait(until.presenceOf(warnMessage));
-      expect(warnMessage.getText()).toContain('not supported');
+      await browser.wait(until.presenceOf(typeWarnMessage));
     });
 
     it(
