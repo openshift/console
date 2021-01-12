@@ -147,6 +147,7 @@ describe('addResourceMenuUtils: ', () => {
       '',
       hasApplication,
       connectorSourceObj,
+      [],
     );
     const contextSource: string = `${referenceFor(connectorSourceObj)}/${
       connectorSourceObj?.metadata?.name
@@ -167,7 +168,7 @@ describe('addResourceMenuUtils: ', () => {
     const labelKey = 'devconsole~From Git';
 
     const kebabAction: KebabAction = createKebabAction(labelKey, icon, ImportOptions.GIT);
-    const kebabOption: KebabOption = kebabAction(primaryObj, '', hasApplication);
+    const kebabOption: KebabOption = kebabAction(primaryObj, '', hasApplication, undefined, []);
 
     expect(kebabOption.labelKey).toEqual(labelKey);
     expect(kebabOption.icon).toEqual(icon);
@@ -184,7 +185,7 @@ describe('addResourceMenuUtils: ', () => {
     const label = 'From Git';
 
     const kebabAction: KebabAction = createKebabAction(label, icon, ImportOptions.GIT);
-    const kebabOption: KebabOption = kebabAction(primaryObj, null, hasApplication);
+    const kebabOption: KebabOption = kebabAction(primaryObj, null, hasApplication, undefined, []);
 
     expect(kebabOption.accessReview).toBe(undefined);
   });

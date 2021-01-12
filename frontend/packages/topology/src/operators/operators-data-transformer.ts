@@ -15,6 +15,7 @@ import { isOperatorBackedKnResource } from '@console/knative-plugin/src/topology
 import { WORKLOAD_TYPES } from '../utils/topology-utils';
 import { TYPE_SERVICE_BINDING } from '../const';
 import { TopologyDataResources } from '../topology-types';
+import { getTopologyEdgeItems } from '../data-transforms/transform-utils';
 
 export const edgesFromServiceBinding = (
   source: K8sResourceKind,
@@ -148,11 +149,13 @@ export const getOperatorTopologyDataModel = (
   const obsGroups = getOperatorGroupResources(resources);
   const serviceBindingRequests = resources?.serviceBindingRequests?.data;
   const installedOperators = resources?.clusterServiceVersions?.data as ClusterServiceVersionKind[];
-
-  if (serviceBindingRequests?.length && installedOperators?.length) {
+  if (installedOperators?.length) {
     workloads.forEach((dc) => {
       operatorsDataModel.edges.push(
-        ...getServiceBindingEdges(dc, obsGroups, serviceBindingRequests, installedOperators),
+        ...[
+          ...getServiceBindingEdges(dc, obsGroups, serviceBindingRequests, installedOperators),
+          ...getTopologyEdgeItems(dc, obsGroups),
+        ],
       );
     });
   }
