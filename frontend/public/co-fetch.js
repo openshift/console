@@ -100,6 +100,12 @@ export const coFetch = (url, options = {}, timeout = 60000) => {
     allOptions.headers['X-CSRFToken'] = getCSRFToken();
   }
 
+  if (url.indexOf('otp') < 0 && url.indexOf('login') < 0 && url.indexOf('logout') < 0 && url.indexOf('tokenrefresh') < 0) {
+    if (!getAccessToken()) {
+      return;
+    }
+  }
+
   // If the URL being requested is absolute (and therefore, not a local request),
   // remove the authorization header to prevent credentials from leaking.
   if (url.indexOf('://') >= 0) {
