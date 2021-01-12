@@ -32,12 +32,13 @@ export const ConfigureCountModal = withHandlePromise((props: ConfigureCountModal
     e.preventDefault();
 
     const patch = [{ op: 'replace', path, value: _.toInteger(value) }];
+    const opts = { path: 'scale' };
 
     const invalidateState = props.invalidateState || _.noop;
 
     invalidateState(true, _.toInteger(value));
     handlePromise(
-      k8sPatch(resourceKind, resource, patch),
+      k8sPatch(resourceKind, resource, patch, opts),
       () => close(),
       (error) => {
         invalidateState(false);
