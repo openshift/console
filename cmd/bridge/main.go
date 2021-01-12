@@ -386,22 +386,22 @@ func main() {
 			}
 			srv.TerminalProxyTLSConfig = serviceProxyTLSConfig
 
-			// NOTE: grafanaEndpoint 추가 // 윤진수
-			grafanaEndpoint := bridge.ValidateFlagIsURL("grafana-endpoint", *fGrafanaEndpoint)
-			srv.GrafanaProxyConfig = &hproxy.Config{
-				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
-				Endpoint:        grafanaEndpoint,
-				Origin:          "http://localhost",
-			}
-			kialiEndpoint := bridge.ValidateFlagIsURL("kiali-endpoint", *fKialiEndpoint)
-			srv.KialiProxyConfig = &hproxy.Config{
-				HeaderBlacklist: []string{"X-CSRFToken"},
-				TLSClientConfig: &tls.Config{
-					InsecureSkipVerify: true,
-				},
-				Endpoint: kialiEndpoint,
-				Origin:   "http://localhost",
-			}
+			// // NOTE: grafanaEndpoint 추가 // 윤진수
+			// grafanaEndpoint := bridge.ValidateFlagIsURL("grafana-endpoint", *fGrafanaEndpoint)
+			// srv.GrafanaProxyConfig = &hproxy.Config{
+			// 	HeaderBlacklist: []string{"X-CSRFToken"},
+			// 	Endpoint:        grafanaEndpoint,
+			// 	Origin:          "http://localhost",
+			// }
+			// kialiEndpoint := bridge.ValidateFlagIsURL("kiali-endpoint", *fKialiEndpoint)
+			// srv.KialiProxyConfig = &hproxy.Config{
+			// 	HeaderBlacklist: []string{"X-CSRFToken"},
+			// 	TLSClientConfig: &tls.Config{
+			// 		InsecureSkipVerify: true,
+			// 	},
+			// 	Endpoint: kialiEndpoint,
+			// 	Origin:   "http://localhost",
+			// }
 
 		}
 
