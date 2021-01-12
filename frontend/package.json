@@ -275,7 +275,7 @@
     "monaco-editor-webpack-plugin": "^1.9.0",
     "node-sass": "^5.0.0",
     "prettier": "1.19.1",
-    "protractor": "5.4.x",
+    "protractor": "^5.4.4",
     "protractor-fail-fast": "3.x",
     "protractor-jasmine2-screenshot-reporter": "0.5.x",
     "react-refresh": "^0.8.3",
