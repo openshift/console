@@ -1,11 +1,13 @@
 export enum OverviewQuery {
   MEMORY_TOTAL = 'MEMORY_TOTAL',
   MEMORY_UTILIZATION = 'MEMORY_UTILIZATION',
+  MEMORY_REQUESTS = 'MEMORY_REQUESTS',
   NETWORK_UTILIZATION = 'NETWORK_UTILIZATION',
   NETWORK_IN_UTILIZATION = 'NETWORK_IN_UTILIZATION',
   NETWORK_OUT_UTILIZATION = 'NETWORK_OUT_UTILIZATION',
   CPU_UTILIZATION = 'CPU_UTILIZATION',
   CPU_TOTAL = 'CPU_TOTAL',
+  CPU_REQUESTS = 'CPU_REQUESTS',
   STORAGE_UTILIZATION = 'STORAGE_UTILIZATION',
   STORAGE_TOTAL = 'STORAGE_TOTAL',
   PODS_BY_CPU = 'PODS_BY_CPU',
@@ -69,10 +71,12 @@ const overviewQueries = {
   [OverviewQuery.MEMORY_TOTAL]: 'sum(node_memory_MemTotal_bytes)',
   [OverviewQuery.MEMORY_UTILIZATION]:
     'sum(node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes)',
+  [OverviewQuery.MEMORY_REQUESTS]: 'sum(kube_pod_resource_request{resource="memory"})',
   [OverviewQuery.NETWORK_UTILIZATION]:
     'sum(instance:node_network_transmit_bytes_excluding_lo:rate1m+instance:node_network_receive_bytes_excluding_lo:rate1m)',
   [OverviewQuery.CPU_UTILIZATION]: 'cluster:cpu_usage_cores:sum',
   [OverviewQuery.CPU_TOTAL]: 'sum(cluster:capacity_cpu_cores:sum)',
+  [OverviewQuery.CPU_REQUESTS]: 'sum(kube_pod_resource_request{resource="cpu"})',
   [OverviewQuery.STORAGE_UTILIZATION]:
     '(sum(node_filesystem_size_bytes{mountpoint="/"}) - sum(node_filesystem_free_bytes{mountpoint="/"}))',
   [OverviewQuery.STORAGE_TOTAL]: 'sum(node_filesystem_size_bytes{mountpoint="/"})',
@@ -87,10 +91,12 @@ export const utilizationQueries = {
   [OverviewQuery.CPU_UTILIZATION]: {
     utilization: overviewQueries[OverviewQuery.CPU_UTILIZATION],
     total: overviewQueries[OverviewQuery.CPU_TOTAL],
+    requests: overviewQueries[OverviewQuery.CPU_REQUESTS],
   },
   [OverviewQuery.MEMORY_UTILIZATION]: {
     utilization: overviewQueries[OverviewQuery.MEMORY_UTILIZATION],
     total: overviewQueries[OverviewQuery.MEMORY_TOTAL],
+    requests: overviewQueries[OverviewQuery.MEMORY_REQUESTS],
   },
   [OverviewQuery.STORAGE_UTILIZATION]: {
     utilization: overviewQueries[OverviewQuery.STORAGE_UTILIZATION],
