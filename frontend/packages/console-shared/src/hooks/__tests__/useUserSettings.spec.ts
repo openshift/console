@@ -251,13 +251,12 @@ describe('useUserSettings', () => {
     // Expect new value and API update
     expect(result.current).toEqual(['new value', expect.any(Function), true]);
     expect(createConfigMapMock).toHaveBeenCalledTimes(0);
-    // FIXME
-    // expect(updateConfigMapMock).toHaveBeenCalledTimes(1);
-    // expect(updateConfigMapMock).toHaveBeenCalledWith(
-    //   { ...emptyConfigMap, data: { 'console.key': 'saved value' } },
-    //   'console.key',
-    //   'new value',
-    // );
+    expect(updateConfigMapMock).toHaveBeenCalledTimes(2);
+    expect(updateConfigMapMock).toHaveBeenLastCalledWith(
+      emptyConfigMap,
+      'console.key',
+      'new value',
+    );
   });
 
   it('should provide the default value for user settings with sync and setter if there is no old value', async () => {
@@ -285,13 +284,12 @@ describe('useUserSettings', () => {
     // Expect new value and API update
     expect(result.current).toEqual(['new value', expect.any(Function), true]);
     expect(createConfigMapMock).toHaveBeenCalledTimes(0);
-    // FIXME
-    // expect(updateConfigMapMock).toHaveBeenCalledTimes(1);
-    // expect(updateConfigMapMock).toHaveBeenCalledWith(
-    //   { ...emptyConfigMap, data: { 'console.key': 'saved value' } },
-    //   'console.key',
-    //   'new value',
-    // );
+    expect(updateConfigMapMock).toHaveBeenCalledTimes(2);
+    expect(updateConfigMapMock).toHaveBeenLastCalledWith(
+      emptyConfigMap,
+      'console.key',
+      'new value',
+    );
   });
 
   it('should provide the old value for user settings without sync and setter if there is an old value', async () => {
@@ -436,8 +434,7 @@ describe('useUserSettings', () => {
     await act(async () => {
       const [, setSettings] = result.current;
       setSettings((oldValue) => {
-        // FIXME
-        // expect(oldValue).toEqual('magically changed value');
+        expect(oldValue).toEqual('magically changed value');
         return 'new value';
       });
       rerender();

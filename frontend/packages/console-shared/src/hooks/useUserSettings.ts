@@ -155,6 +155,7 @@ export const useUserSettings = <T>(
     }
     return settings;
   }, [sync, isRequestPending, cfData, cfLoaded, settings]);
+  settingsRef.current = resultedSettings;
 
   return fallbackLocalStorage
     ? [lsData, setLsDataCallback, true]
