@@ -4,7 +4,7 @@ set -exuo pipefail
 
 myIP=$(hostname -I | awk '{print $1}')
 
-k8sIP='172.23.4.201'
+k8sIP='192.168.6.197'
 BRIDGE_K8S_AUTH_BEARER_TOKEN=$(ssh root@$k8sIP "secretname=\$(kubectl get serviceaccount default --namespace=kube-system -o jsonpath='{.secrets[0].name}'); kubectl get secret "\$secretname" --namespace=kube-system -o template --template='{{.data.token}}' | base64 --decode; ")
 
 # k8sIP='kubernetes.docker.internal'
@@ -36,5 +36,6 @@ GRAFANA_PORT='32430'
     --grafana-endpoint=http://$k8sIP:$GRAFANA_PORT/ \
     --kiali-endpoint=https://172.22.6.22/api/kiali/ \
     --webhook-endpoint=https://$k8sIP:31317/api/webhook/ \
-    --operator=true \
-    # --proxyConfig=examples/pconfig.yaml \
+    # --mc-mode=true  \
+    # --mc-mode-operator=true \
+    # --mc-mode-file="$HOME/dynamic-config.yaml" \

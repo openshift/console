@@ -12,6 +12,19 @@ export const HyperClusterResourceModel: K8sKind = {
   namespaced: false,
 };
 
+export const PodSecurityPolicyModel: K8sKind = {
+  kind: 'PodSecurityPolicy',
+  namespaced: false,
+  label: 'Pod Security Policy',
+  plural: 'podsecuritypolicies',
+  apiVersion: 'v1beta1',
+  abbr: 'PSP',
+  apiGroup: 'policy',
+  labelPlural: 'Pod Security Policies',
+  id: 'podsecuritypolicie',
+  crd: false,
+};
+
 export const FederatedConfigMapModel: K8sKind = {
   label: 'Federated Config Map',
   labelPlural: 'Federated Config Maps',

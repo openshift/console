@@ -85,6 +85,10 @@ type jsGlobals struct {
 	KeycloakRealm    string `json:keycloakRealm`
 	KeycloakAuthURL  string `json:keycloakAuthURL`
 	KeycloakClientId string `json:keycloakClientId`
+
+	McMode         bool   `json:mcMode`
+	McModeFile     string `json:mcModeFile`
+	McModeOperator bool   `json:mcModeOperator`
 }
 
 type Server struct {
@@ -133,6 +137,10 @@ type Server struct {
 	GrafanaProxyConfig *hproxy.Config
 	KialiProxyConfig   *hproxy.Config
 	WebhookProxyConfig *hproxy.Config
+
+	McMode         bool
+	McModeFile     string
+	McModeOperator bool
 }
 
 func (s *Server) authDisabled() bool {
@@ -477,6 +485,10 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		KeycloakRealm:    s.KeycloakRealm,
 		KeycloakAuthURL:  s.KeycloakAuthURL,
 		KeycloakClientId: s.KeycloakClientId,
+
+		McMode:         s.McMode,
+		McModeFile:     s.McModeFile,
+		McModeOperator: s.McModeOperator,
 	}
 
 	if !s.authDisabled() {

@@ -4,7 +4,7 @@ set -e
 DOCKER_REGISTRY="tmaxcloudck"
 PRODUCT="hypercloud-console"
 MAJOR_VERSION="0"
-MINOR_VERSION="0"
+MINOR_VERSION="5"
 PATCH_VERSION="0"
 HOTFIX_VERSION="0"
 
