@@ -69,8 +69,8 @@ export const titleKeyResolver: RenderableFieldResolver = {
   [VMSettingsField.START_VM]: 'kubevirt-plugin~Start virtual machine on creation',
   // t('kubevirt-plugin~Template provider')
   [VMSettingsField.TEMPLATE_PROVIDER]: 'kubevirt-plugin~Template provider',
-  // t('kubevirt-plugin~Add support label to this template')
-  [VMSettingsField.TEMPLATE_SUPPORTED]: 'kubevirt-plugin~Add support label to this template',
+  // t('kubevirt-plugin~Template support')
+  [VMSettingsField.TEMPLATE_SUPPORTED]: 'kubevirt-plugin~Template support',
   // t('kubevirt-plugin~Persistent Volume Claim project')
   [VMSettingsField.CLONE_PVC_NS]: 'kubevirt-plugin~Persistent Volume Claim project',
   // t('kubevirt-plugin~Persistent Volume Claim name')
@@ -147,4 +147,7 @@ export const helpKeyResolver = {
   // t('kubevirt-plugin~Clarifies who created this template on the cluster')
   [VMSettingsField.TEMPLATE_PROVIDER]: () =>
     'kubevirt-plugin~Clarifies who created this template on the cluster',
+  // t('kubevirt-plugin~Clarifies who supports this template on the cluster')
+  [VMSettingsField.TEMPLATE_SUPPORTED]: () =>
+    'kubevirt-plugin~Clarifies who supports this template on the cluster',
 };

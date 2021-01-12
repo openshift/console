@@ -46,6 +46,7 @@ export const customFlavorMemoryHintBlock = $('#resources-memory-helper');
 
 export const nameInput = $('#vm-name');
 export const descriptionInput = $('#vm-description');
+export const providerInput = $('#template-provider');
 export const startVMOnCreation = $('#start-vm');
 
 // Networking tab

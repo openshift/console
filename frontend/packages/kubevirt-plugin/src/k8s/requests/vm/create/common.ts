@@ -27,6 +27,7 @@ import { VMWrapper } from '../../../wrapper/vm/vm-wrapper';
 import { VMTemplateWrapper } from '../../../wrapper/vm/vm-template-wrapper';
 import { isCustomFlavor } from '../../../../selectors/vm-like/flavor';
 import { isCommonTemplate } from '../../../../selectors/vm-template/basic';
+import { TemplateSupport } from '../../../../constants/vm-templates/support';
 
 export const initializeCommonMetadata = (
   settings: {
@@ -34,7 +35,7 @@ export const initializeCommonMetadata = (
     [VMSettingsField.FLAVOR]: string;
     [VMSettingsField.WORKLOAD_PROFILE]: string;
     [VMSettingsField.TEMPLATE_PROVIDER]: string;
-    [VMSettingsField.TEMPLATE_SUPPORTED]: boolean;
+    [VMSettingsField.TEMPLATE_SUPPORTED]: string;
     osID: string;
     osName: string;
   },
@@ -111,7 +112,7 @@ export const initializeCommonTemplateMetadata = (
     [VMSettingsField.FLAVOR]: string;
     [VMSettingsField.WORKLOAD_PROFILE]: string;
     [VMSettingsField.TEMPLATE_PROVIDER]: string;
-    [VMSettingsField.TEMPLATE_SUPPORTED]: boolean;
+    [VMSettingsField.TEMPLATE_SUPPORTED]: string;
     osID: string;
     osName: string;
   },
@@ -154,7 +155,10 @@ export const initializeCommonTemplateMetadata = (
   if (settings[VMSettingsField.TEMPLATE_PROVIDER]) {
     entity.addAnotation(TEMPLATE_PROVIDER_ANNOTATION, settings[VMSettingsField.TEMPLATE_PROVIDER]);
   }
-  if (settings[VMSettingsField.TEMPLATE_SUPPORTED]) {
-    entity.addAnotation(TEMPLATE_SUPPORT_LEVEL, 'Full');
+  if (
+    TemplateSupport.fromString(settings[VMSettingsField.TEMPLATE_SUPPORTED]) ===
+    TemplateSupport.FULL_SUPPORT
+  ) {
+    entity.addAnotation(TEMPLATE_SUPPORT_LEVEL, TemplateSupport.FULL_SUPPORT.getValue());
   }
 };

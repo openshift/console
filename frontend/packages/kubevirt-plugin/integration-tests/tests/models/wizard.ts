@@ -113,6 +113,10 @@ export class Wizard {
     await fillInput(view.descriptionInput, description);
   }
 
+  async fillProvider(provider: string) {
+    await fillInput(view.providerInput, provider);
+  }
+
   async selectOperatingSystem(operatingSystem: string) {
     await selectItemFromDropdown(view.operatingSystemSelect, dropDownItem(operatingSystem));
   }
@@ -321,6 +325,9 @@ export class Wizard {
     }
     if (description) {
       await this.fillDescription(description);
+    }
+    if ('provider' in data) {
+      await this.fillProvider(data.provider);
     }
     if ((await browser.getCurrentUrl()).match(/\?template=.+$/)) {
       // We are creating a VM from template via its action button
