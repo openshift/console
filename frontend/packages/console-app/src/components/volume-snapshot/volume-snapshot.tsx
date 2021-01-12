@@ -30,15 +30,7 @@ import {
   VolumeSnapshotClassModel,
   VolumeSnapshotContentModel,
 } from '@console/internal/models';
-import {
-  Status,
-  getBadgeFromType,
-  BadgeType,
-  getName,
-  getNamespace,
-  snapshotSource,
-  FLAGS,
-} from '@console/shared';
+import { Status, getName, getNamespace, snapshotSource, FLAGS } from '@console/shared';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { snapshotStatusFilters, volumeSnapshotStatus } from '../../status';
 
@@ -209,7 +201,6 @@ const VolumeSnapshotPage: React.FC<VolumeSnapshotPageProps> = (props) => {
       rowFilters={snapshotStatusFilters}
       canCreate
       createProps={createProps}
-      badge={getBadgeFromType(BadgeType.TECH)}
       customData={{ disableItems: { 'Snapshot Content': !canListVSC } }}
     />
   );
