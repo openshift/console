@@ -54,7 +54,8 @@ const PodRing: React.FC<PodRingProps> = ({
   const handleScaling = _.debounce(
     (operation: number) => {
       const patch = [{ op: 'replace', path, value: operation }];
-      const promise: Promise<K8sResourceKind> = k8sPatch(resourceKind, obj, patch);
+      const opts = { path: 'scale' };
+      const promise: Promise<K8sResourceKind> = k8sPatch(resourceKind, obj, patch, opts);
       promise.catch((error) => {
         throw error;
       });

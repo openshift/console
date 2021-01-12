@@ -113,6 +113,7 @@ export const checkPodEditAccess = (
   resource: K8sResourceKind,
   resourceKind: K8sKind,
   impersonate: string,
+  subresource?: string,
 ): Promise<SelfSubjectAccessReviewKind> => {
   if (_.isEmpty(resource) || !resourceKind) {
     return Promise.resolve(null);
@@ -121,6 +122,7 @@ export const checkPodEditAccess = (
   const resourceAttributes: AccessReviewResourceAttributes = {
     group: resourceKind.apiGroup,
     resource: resourceKind.plural,
+    subresource,
     verb: 'patch',
     name,
     namespace,
