@@ -50,7 +50,7 @@ if (Cypress.env('BRIDGE_AWS')) {
       modal.submit();
       cy.location('pathname').should(
         'include',
-        `snapshot.storage.k8s.io~v1beta1~VolumeSnapshot/${PVC.metadata.name}-snapshot`,
+        `snapshot.storage.k8s.io~v1~VolumeSnapshot/${PVC.metadata.name}-snapshot`,
       );
       detailsPage.titleShouldContain(PVC.metadata.name);
       resourceStatusShouldContain('Ready', { timeout: 40000 });

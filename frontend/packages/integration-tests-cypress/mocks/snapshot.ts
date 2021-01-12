@@ -74,7 +74,7 @@ export const PVC = {
 };
 
 export const SnapshotClass = {
-  apiVersion: 'snapshot.storage.k8s.io/v1beta1',
+  apiVersion: 'snapshot.storage.k8s.io/v1',
   kind: 'VolumeSnapshotClass',
   metadata: {
     name: 'csi-hostpath-snapclass',
