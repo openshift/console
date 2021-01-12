@@ -1,4 +1,4 @@
-import { UserRoleBinding } from '../project-access-form-utils-types';
+import { UserRoleBinding, RoleBinding } from '../project-access-form-utils-types';
 
 export const mockProjectAccessData = {
   projectAccess: [
@@ -9,64 +9,62 @@ export const mockProjectAccessData = {
   ],
 };
 
-export const roleBindingsResourceData = {
-  data: [
-    {
-      metadata: {
-        name: 'admin',
-        namespace: 'xyz',
-      },
-      roleRef: {
-        apiGroup: 'rbac.authorization.k8s.io',
-        kind: 'ClusterRole',
-        name: 'admin',
-      },
-      subjects: [
-        {
-          apiGroup: 'rbac.authorization.k8s.io',
-          kind: 'User',
-          name: 'kube:admin',
-        },
-      ],
+export const roleBindingsResourceData: RoleBinding[] = [
+  {
+    metadata: {
+      name: 'admin',
+      namespace: 'xyz',
     },
-    {
-      metadata: {
-        name: 'view',
-        namespace: 'xyz',
-      },
-      roleRef: {
-        apiGroup: 'rbac.authorization.k8s.io',
-        kind: 'ClusterRole',
-        name: 'view',
-      },
-      subjects: [
-        {
-          apiGroup: 'rbac.authorization.k8s.io',
-          kind: 'User',
-          name: 'abc',
-        },
-      ],
+    roleRef: {
+      apiGroup: 'rbac.authorization.k8s.io',
+      kind: 'ClusterRole',
+      name: 'admin',
     },
-    {
-      metadata: {
-        name: 'example',
-        namespace: 'xyz',
-      },
-      roleRef: {
+    subjects: [
+      {
         apiGroup: 'rbac.authorization.k8s.io',
-        kind: 'ClusterRole',
-        name: 'example-role',
+        kind: 'User',
+        name: 'kube:admin',
       },
-      subjects: [
-        {
-          apiGroup: 'rbac.authorization.k8s.io',
-          kind: 'User',
-          name: 'check-role',
-        },
-      ],
+    ],
+  },
+  {
+    metadata: {
+      name: 'view',
+      namespace: 'xyz',
     },
-  ],
-};
+    roleRef: {
+      apiGroup: 'rbac.authorization.k8s.io',
+      kind: 'ClusterRole',
+      name: 'view',
+    },
+    subjects: [
+      {
+        apiGroup: 'rbac.authorization.k8s.io',
+        kind: 'User',
+        name: 'abc',
+      },
+    ],
+  },
+  {
+    metadata: {
+      name: 'example',
+      namespace: 'xyz',
+    },
+    roleRef: {
+      apiGroup: 'rbac.authorization.k8s.io',
+      kind: 'ClusterRole',
+      name: 'example-role',
+    },
+    subjects: [
+      {
+        apiGroup: 'rbac.authorization.k8s.io',
+        kind: 'User',
+        name: 'check-role',
+      },
+    ],
+  },
+];
 
 export const roleBindingsWithRequiredRolesResult = [
   {
@@ -142,6 +140,11 @@ export const roleBindingsWithRequiredRoles = [
         kind: 'User',
         name: 'abc',
       },
+      {
+        apiGroup: 'rbac.authorization.k8s.io',
+        kind: 'User',
+        name: 'mno',
+      },
     ],
   },
 ];
@@ -155,6 +158,11 @@ export const roleBindingsWithRequiredAttributes = [
   {
     roleBindingName: 'check-view',
     user: 'abc',
+    role: 'view',
+  },
+  {
+    roleBindingName: 'check-view',
+    user: 'mno',
     role: 'view',
   },
 ];
@@ -332,3 +340,22 @@ export const displayRoleBindings: UserRoleBinding[] = [
     role: 'admin',
   },
 ];
+
+export const getGroupedRoleResult = {
+  metadata: {
+    name: 'check-view',
+    namespace: 'xyz',
+  },
+  roleRef: {
+    apiGroup: 'rbac.authorization.k8s.io',
+    kind: 'ClusterRole',
+    name: 'view',
+  },
+  subjects: [
+    {
+      apiGroup: 'rbac.authorization.k8s.io',
+      kind: 'User',
+      name: 'abc',
+    },
+  ],
+};
