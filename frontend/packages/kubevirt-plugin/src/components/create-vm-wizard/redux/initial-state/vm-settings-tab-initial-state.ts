@@ -3,6 +3,7 @@ import { CommonData, VMSettingsField, VMWizardProps } from '../../types';
 import { asHidden, asRequired, asDisabled } from '../../utils/utils';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { InitialStepStateGetter, VMSettings } from './types';
+import { TemplateSupport } from '../../../../constants/vm-templates/support';
 
 export const getInitialVmSettings = (data: CommonData): VMSettings => {
   const {
@@ -27,10 +28,12 @@ export const getInitialVmSettings = (data: CommonData): VMSettings => {
     [VMSettingsField.HOSTNAME]: {},
     [VMSettingsField.DESCRIPTION]: {},
     [VMSettingsField.TEMPLATE_PROVIDER]: {
+      isRequired: asRequired(true),
       isHidden: asHidden(!isCreateTemplate),
     },
     [VMSettingsField.TEMPLATE_SUPPORTED]: {
       isHidden: asHidden(!isCreateTemplate),
+      value: TemplateSupport.NO_SUPPORT.getValue(),
     },
     [VMSettingsField.OPERATING_SYSTEM]: {
       isRequired: asRequired(true),

@@ -100,6 +100,7 @@ export const getBasicVMBuilder = () =>
 export const getBasicVMTBuilder = () =>
   new VMTemplateBuilder()
     .setNamespace(testName)
+    .setProvider('test provider')
     .setDescription('Default vmt description')
     .setFlavor(flavorConfigs.Tiny)
     .setOS(OperatingSystem.RHEL7)

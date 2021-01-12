@@ -8,6 +8,11 @@ export class VMTemplateBuilder extends BaseVMBuilder<VMTemplateBuilderData> {
     super(TemplateModel, builder);
   }
 
+  setProvider(provider: string) {
+    this.data.provider = provider;
+    return this;
+  }
+
   build() {
     if (!this.getData().name) {
       super.generateName();

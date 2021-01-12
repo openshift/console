@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Checkbox, Form, TextArea, TextInput } from '@patternfly/react-core';
+import { Form, SelectOption, TextArea, TextInput } from '@patternfly/react-core';
 import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { useAccessReview2 } from '@console/internal/components/utils';
@@ -34,6 +34,8 @@ import { URLSource } from './url-source';
 import { getFieldId } from '../../utils/renderable-field-utils';
 import { ClonePVCSource } from './clone-pvc-source';
 import { getDefaultStorageClass } from '../../../../selectors/config-map/sc-defaults';
+import { FormPFSelect } from '../../../form/form-pf-select';
+import { TemplateSupport } from '../../../../constants/vm-templates/support';
 
 import '../../create-vm-wizard-footer.scss';
 import './vm-settings-tab.scss';
@@ -115,13 +117,21 @@ export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
       <FormFieldMemoRow
         className="kv-create-vm__input-checkbox"
         field={getField(VMSettingsField.TEMPLATE_SUPPORTED)}
-        fieldType={FormFieldType.INLINE_CHECKBOX}
+        fieldType={FormFieldType.PF_SELECT}
       >
         <FormField>
-          <Checkbox
+          <FormPFSelect
             id={getFieldId(VMSettingsField.TEMPLATE_SUPPORTED)}
-            onChange={onChange(VMSettingsField.TEMPLATE_SUPPORTED)}
-          />
+            onSelect={(e, v) => {
+              onChange(VMSettingsField.TEMPLATE_SUPPORTED)(v.toString());
+            }}
+          >
+            {TemplateSupport.getAll().map((templateSupport) => (
+              <SelectOption key={templateSupport.getValue()} value={templateSupport.getValue()}>
+                {t(templateSupport.toString())}
+              </SelectOption>
+            ))}
+          </FormPFSelect>
         </FormField>
       </FormFieldMemoRow>
       <FormFieldMemoRow

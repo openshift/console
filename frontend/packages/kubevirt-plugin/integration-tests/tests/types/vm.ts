@@ -35,7 +35,7 @@ export type BaseVMBuilderData = {
   cloudInit?: CloudInitConfig;
 };
 
-export type VMBuilderData = BaseVMBuilderData & {
+export type VMBuilderData = (BaseVMBuilderData | VMTemplateBuilderData) & {
   selectTemplateName?: string;
   waitForDiskImport?: boolean;
   startOnCreation?: boolean;
@@ -63,7 +63,7 @@ export type KubevirtResourceConfig = {
   bootableDevice?: string;
 };
 
-export type VMTemplateBuilderData = BaseVMBuilderData;
+export type VMTemplateBuilderData = BaseVMBuilderData & { provider: string };
 
 export type VMBuilderDataGenerationConfig = {
   flavor?: FlavorConfig[];
