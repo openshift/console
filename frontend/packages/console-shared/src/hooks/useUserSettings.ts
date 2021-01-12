@@ -66,6 +66,7 @@ export const useUserSettings = <T>(
     alwaysUseFallbackLocalStorage,
   );
   const [lsData, setLsDataCallback] = useUserSettingsLocalStorage(
+    alwaysUseFallbackLocalStorage ? 'console-user-settings' : `console-user-settings-${userUid}`,
     keyRef.current,
     defaultValueRef.current,
     fallbackLocalStorage && sync,

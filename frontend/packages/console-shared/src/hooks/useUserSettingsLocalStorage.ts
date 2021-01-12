@@ -1,28 +1,18 @@
 import * as React from 'react';
-// FIXME upgrading redux types is causing many errors at this time
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore
-import { useSelector } from 'react-redux';
-import { RootState } from '@console/internal/redux';
 import { deseralizeData, seralizeData } from '../utils/user-settings';
 
-const CONFIGMAP_LS_KEY = 'console-user-settings';
-
 export const useUserSettingsLocalStorage = <T>(
-  key: string,
+  localStorageKey: string,
+  userSettingsKey: string,
   defaultValue: T,
   sync: boolean = false,
 ): [T, React.Dispatch<React.SetStateAction<T>>] => {
-  const keyRef = React.useRef(key);
+  const keyRef = React.useRef(userSettingsKey);
   const defaultValueRef = React.useRef(defaultValue);
-  const userUid = useSelector(
-    (state: RootState) => state.UI.get('user')?.metadata?.uid ?? 'kubeadmin',
-  );
-  const storageConfigNameRef = React.useRef(`${CONFIGMAP_LS_KEY}-${userUid}`);
   const [lsData, setLsData] = React.useState(() => {
     const valueInLocalStorage =
-      localStorage.getItem(storageConfigNameRef.current) !== null &&
-      deseralizeData(localStorage.getItem(storageConfigNameRef.current));
+      localStorage.getItem(localStorageKey) !== null &&
+      deseralizeData(localStorage.getItem(localStorageKey));
     return valueInLocalStorage?.hasOwnProperty(keyRef.current) &&
       valueInLocalStorage[keyRef.current]
       ? valueInLocalStorage[keyRef.current]
@@ -31,15 +21,19 @@ export const useUserSettingsLocalStorage = <T>(
   const lsDataRef = React.useRef<T>(lsData);
   lsDataRef.current = lsData;
 
-  const localStorageUpdated = React.useCallback((event: StorageEvent) => {
-    if (event.key === storageConfigNameRef.current) {
-      const lsConfigMapData = deseralizeData(event.newValue);
-      const newData = lsConfigMapData?.[keyRef.current];
-      if (newData && seralizeData(newData) !== seralizeData(lsDataRef.current)) {
-        setLsData(newData);
+  const localStorageUpdated = React.useCallback(
+    (event: StorageEvent) => {
+      if (event.key === localStorageKey) {
+        const lsConfigMapData = deseralizeData(event.newValue);
+        const newData = lsConfigMapData?.[keyRef.current];
+
+        if (newData && seralizeData(newData) !== seralizeData(lsDataRef.current)) {
+          setLsData(newData);
+        }
       }
-    }
-  }, []);
+    },
+    [localStorageKey],
+  );
 
   React.useEffect(() => {
     if (sync) {
@@ -57,8 +51,7 @@ export const useUserSettingsLocalStorage = <T>(
       const previousData = lsDataRef.current;
       const data =
         typeof action === 'function' ? (action as (prevState: T) => T)(previousData) : action;
-      const lsConfigMapData =
-        deseralizeData(localStorage.getItem(storageConfigNameRef.current)) ?? {};
+      const lsConfigMapData = deseralizeData(localStorage.getItem(localStorageKey)) ?? {};
       if (
         data !== undefined &&
         seralizeData(data) !== seralizeData(lsConfigMapData?.[keyRef.current])
@@ -76,20 +69,20 @@ export const useUserSettingsLocalStorage = <T>(
         // storage event if the change originated from the current window
         const event = new StorageEvent('storage', {
           storageArea: localStorage,
-          key: storageConfigNameRef.current,
+          key: localStorageKey,
           newValue,
-          oldValue: localStorage.getItem(storageConfigNameRef.current),
+          oldValue: localStorage.getItem(localStorageKey),
           url: window.location.toString(),
         });
 
         // update local storage
-        localStorage.setItem(storageConfigNameRef.current, newValue);
+        localStorage.setItem(localStorageKey, newValue);
 
         // dispatch local event
         window.dispatchEvent(event);
       }
     },
-    [],
+    [localStorageKey],
   );
 
   return [lsData, updateLsData];
