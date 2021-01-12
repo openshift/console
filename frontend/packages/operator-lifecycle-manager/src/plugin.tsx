@@ -106,7 +106,8 @@ const plugin: Plugin<ConsumedExtensions> = [
       id: 'operatorhub',
       section: 'operators',
       componentProps: {
-        name: 'OperatorHub',
+        // t('olm~OperatorHub')
+        name: '%olm~OperatorHub%',
         href: '/operatorhub',
       },
     },
@@ -120,7 +121,8 @@ const plugin: Plugin<ConsumedExtensions> = [
       id: 'operators',
       section: 'operators',
       componentProps: {
-        name: 'Installed Operators',
+        // t('olm~Installed Operators')
+        name: '%olm~Installed Operators%',
         resource: referenceForModel(models.ClusterServiceVersionModel),
         startsWith: [
           models.ClusterServiceVersionModel.apiGroup,
