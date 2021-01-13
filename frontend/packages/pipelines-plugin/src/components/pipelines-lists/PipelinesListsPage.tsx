@@ -30,34 +30,38 @@ const PipelinesListPage: React.FC<PipelinesListPageProps> = ({ match }) => {
   const [showTitle, hideBadge, canCreate] = [false, true, false];
   const menuActions: MenuActions = {
     pipeline: {
+      label: t('pipelines-plugin~Pipeline'),
       model: PipelineModel,
       onSelection: (key: string, action: MenuAction, url: string) => `${url}/builder`,
     },
-    pipelineRun: { model: PipelineRunModel },
-    pipelineResource: { model: PipelineResourceModel },
-    condition: { model: ConditionModel },
+    pipelineRun: { label: t('pipelines-plugin~Pipeline Run'), model: PipelineRunModel },
+    pipelineResource: {
+      label: t('pipelines-plugin~Pipeline Resource'),
+      model: PipelineResourceModel,
+    },
+    condition: { label: t('pipelines-plugin~Condition'), model: ConditionModel },
   };
   const pages: Page[] = [
     {
       href: '',
-      name: PipelineModel.labelPlural,
+      name: t('pipelines-plugin~Pipelines'),
       component: PipelinesList,
     },
     {
       href: 'pipeline-runs',
-      name: PipelineRunModel.labelPlural,
+      name: t('pipelines-plugin~Pipeline Runs'),
       component: PipelineRunsResourceList,
       pageData: { showTitle, hideBadge },
     },
     {
       href: 'pipeline-resources',
-      name: PipelineResourceModel.labelPlural,
+      name: t('pipelines-plugin~Pipeline Resources'),
       component: PipelineResourcesListPage,
       pageData: { showTitle, hideBadge },
     },
     {
       href: 'conditions',
-      name: ConditionModel.labelPlural,
+      name: t('pipelines-plugin~Conditions'),
       component: DefaultPage,
       pageData: {
         kind: referenceForModel(ConditionModel),

@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { TFunction } from 'i18next';
 import { referenceForModel, apiVersionForModel } from '@console/internal/module/k8s';
 import { pipelineTestData, DataState, PipelineExampleNames } from '../../test-data/pipeline-data';
 import {
@@ -15,6 +16,8 @@ import {
 } from '../pipeline-augment';
 import { ClusterTaskModel, PipelineRunModel, TaskModel, PipelineModel } from '../../models';
 import { testData } from './pipeline-augment-test-data';
+
+const t = (key): TFunction => key;
 
 describe('PipelineAugment test getResources create correct resources for firehose', () => {
   it('expect resources to be null for no data', () => {
@@ -81,14 +84,14 @@ describe('PipelineAugment test getRunStatusColor handles all runStatus values', 
   it('expect all but PipelineNotStarted to produce a non-default result', () => {
     // Verify that we cover colour states for all the runStatus values
     const failCase = 'PipelineNotStarted';
-    const defaultCase = getRunStatusColor(runStatus[failCase]);
+    const defaultCase = getRunStatusColor(runStatus[failCase], t);
     const allOtherStatuses = Object.keys(runStatus)
       .filter((status) => status !== failCase)
       .map((status) => runStatus[status]);
 
     expect(allOtherStatuses).not.toHaveLength(0);
     allOtherStatuses.forEach((statusValue) => {
-      const { message } = getRunStatusColor(statusValue);
+      const { message } = getRunStatusColor(statusValue, t);
 
       expect(defaultCase.message).not.toEqual(message);
     });
@@ -99,7 +102,7 @@ describe('PipelineAugment test getRunStatusColor handles all runStatus values', 
 
     expect(runStates).not.toHaveLength(0);
     runStates.forEach((statusValue) => {
-      const { message } = getRunStatusColor(statusValue);
+      const { message } = getRunStatusColor(statusValue, t);
 
       expect(message).not.toHaveLength(0);
     });

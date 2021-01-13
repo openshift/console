@@ -32,9 +32,7 @@ const PipelinesResourceList: React.FC<PipelinesResourceListProps> = (props) => {
     <FireMan
       {...props}
       canCreate
-      createButtonText={t('pipelines-plugin~Create {{PipelineModel.label}}', {
-        pipeline: PipelineModel.label,
-      })}
+      createButtonText={t('pipelines-plugin~Create Pipeline')}
       createProps={{
         to: namespace
           ? `/k8s/ns/${namespace}/${referenceForModel(PipelineModel)}/~new/builder`
@@ -44,7 +42,7 @@ const PipelinesResourceList: React.FC<PipelinesResourceListProps> = (props) => {
       filterLabel={t('pipelines-plugin~by name')}
       textFilter="name"
       resources={resources}
-      title={showTitle ? PipelineModel.labelPlural : null}
+      title={showTitle ? t('pipelines-plugin~Pipelines') : null}
       badge={getBadgeFromType(PipelineModel.badge)}
     >
       <Firehose resources={resources}>

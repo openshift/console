@@ -29,7 +29,10 @@ const TaskRunDetails: React.FC<TaskRunDetailsProps> = ({ obj: taskRun }) => {
           <dl>
             <dt>{t('pipelines-plugin~Status')}</dt>
             <dd>
-              <Status status={taskRunFilterReducer(taskRun)} />
+              <Status
+                status={taskRunFilterReducer(taskRun)}
+                title={taskRunFilterReducer(taskRun, t)}
+              />
             </dd>
           </dl>
           <RunDetailsErrorLog

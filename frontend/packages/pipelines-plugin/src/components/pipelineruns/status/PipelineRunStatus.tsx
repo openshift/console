@@ -12,11 +12,12 @@ import StatusPopoverContent from './StatusPopoverContent';
 type PipelineRunStatusProps = {
   status: string;
   pipelineRun: PipelineRun;
+  title?: string;
 };
-const PipelineRunStatus: React.FC<PipelineRunStatusProps> = ({ status, pipelineRun }) => {
+const PipelineRunStatus: React.FC<PipelineRunStatusProps> = ({ status, pipelineRun, title }) => {
   const { t } = useTranslation();
   return pipelineRun ? (
-    <PipelineResourceStatus status={status}>
+    <PipelineResourceStatus status={status} title={title}>
       <StatusPopoverContent
         logDetails={getPLRLogSnippet(pipelineRun, t)}
         namespace={pipelineRun.metadata.namespace}

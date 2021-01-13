@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { TaskRunKind } from '../../../utils/pipeline-augment';
+import { taskRunFilterReducer } from '../../../utils/pipeline-filter-reducer';
 import { TaskRunModel } from '../../../models';
 import PipelineResourceStatus from '../../pipelineruns/status/PipelineResourceStatus';
 import { getTRLogSnippet } from '../logs/taskRunLogSnippet';
@@ -15,7 +16,7 @@ type TaskRunStatusProps = {
 const TaskRunStatus: React.FC<TaskRunStatusProps> = ({ status, taskRun }) => {
   const { t } = useTranslation();
   return (
-    <PipelineResourceStatus status={status}>
+    <PipelineResourceStatus status={status} title={taskRunFilterReducer(taskRun, t)}>
       <StatusPopoverContent
         logDetails={getTRLogSnippet(taskRun, t)}
         namespace={taskRun.metadata.namespace}
