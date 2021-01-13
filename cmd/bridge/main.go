@@ -609,13 +609,15 @@ func main() {
 		switch *fK8sMode {
 		case "in-cluster":
 			srv.StaticUser = &auth.User{
-				Token: k8sAuthServiceAccountBearerToken,
+				Username: "hypercloud",
+				Token:    k8sAuthServiceAccountBearerToken,
 			}
 			resourceListerToken = k8sAuthServiceAccountBearerToken
 		case "off-cluster":
 			bridge.ValidateFlagNotEmpty("k8s-auth-bearer-token", *fK8sAuthBearerToken)
 			srv.StaticUser = &auth.User{
-				Token: *fK8sAuthBearerToken,
+				Username: "hypercloud",
+				Token:    *fK8sAuthBearerToken,
 			}
 			resourceListerToken = *fK8sAuthBearerToken
 		default:

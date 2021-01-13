@@ -225,15 +225,17 @@ func (s *Server) HTTPHandler() http.Handler {
 		}
 		authHandlerWithUser = func(hf func(*auth.User, http.ResponseWriter, *http.Request)) http.Handler {
 			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				if token := r.Header.Clone().Get("Authorization"); token != "" {
-					temp := strings.Split(token, "Bearer ")
-					if len(temp) > 1 {
-						token = temp[1]
-					} else {
-						token = temp[0]
+				if s.StaticUser.Username == "hypercloud" {
+					if token := r.Header.Clone().Get("Authorization"); token != "" {
+						temp := strings.Split(token, "Bearer ")
+						if len(temp) > 1 {
+							token = temp[1]
+						} else {
+							token = temp[0]
+						}
+						// plog.Infof("check token is on : %v", token)
+						s.StaticUser.Token = token
 					}
-					// plog.Infof("check token is on : %v", token)
-					s.StaticUser.Token = token
 				}
 
 				hf(s.StaticUser, w, r)
@@ -455,9 +457,9 @@ func (s *Server) HTTPHandler() http.Handler {
 		http.HandlerFunc(helmChartRepoProxy.ServeHTTP)))
 
 	mux.HandleFunc(s.BaseURL.Path, s.indexHandler)
-
-	n := negroni.New(negroni.NewLogger(), negroni.NewRecovery())
+	n := negroni.New(negroni.NewLogger())
 	n.UseHandler(mux)
+
 	// return http.Handler(n)
 	return securityHeadersMiddleware(http.Handler(n))
 	// return securityHeadersMiddleware(http.Handler(mux))
