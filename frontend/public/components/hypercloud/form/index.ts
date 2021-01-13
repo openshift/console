@@ -22,6 +22,7 @@ export const pluralToKind = new Map([
   ['roles', { kind: 'Role', type: 'VanilaObject' }],
   ['rolebindings', { kind: 'RoleBinding', type: 'VanilaObject' }],
   ['serviceaccounts', { kind: 'ServiceAccount', type: 'VanilaObject' }],
+  ['customresourcedefinitions', { kind: 'CustomResourceDefinition', type: 'VanilaObject' }],
   ['namespaceclaims', { kind: 'NamespaceClaim', type: 'CustomResourceDefinition' }],
   ['servicebrokers', { kind: 'ServiceBroker', type: 'CustomResourceDefinition' }],
   ['serviceclasses', { kind: 'ServiceClass', type: 'CustomResourceDefinition' }],
