@@ -29,6 +29,12 @@ const RedirectComponent = props => {
   return <Redirect to={to} />;
 };
 
+// const RedirectClusterComponent = props => {
+  
+//   const to = `/k8s/`
+//   return <Redirect to={to} />;
+// }
+
 // Ensure a *const* function wrapper for each namespaced Component so that react router doesn't recreate them
 const Memoized = new Map();
 function NamespaceFromURL(Component) {
@@ -131,7 +137,9 @@ const AppContents_: React.FC<AppContentsProps> = ({ activePerspective, activeClu
         <Switch>
           {getPluginPageRoutes(activePerspective, flags)}
           <Route path={['/all-namespaces', '/ns/:ns']} component={RedirectComponent} />
+          {/* <Route path={['/k8s']} render={() => <RedirectClusterComponent activeCluster/>} /> */}
           <LazyRoute path="/dashboards" loader={() => import('./dashboard/dashboards-page/dashboards' /* webpackChunkName: "dashboards" */).then(m => m.DashboardsPage)} />
+          <LazyRoute path="/cl/:cl/dashboards" loader={() => import('./dashboard/dashboards-page/dashboards' /* webpackChunkName: "dashboards" */).then(m => m.DashboardsPage)} />
           {/* Redirect legacy routes to avoid breaking links */}
           <Redirect from="/cluster-status" to="/dashboards" />
           <Redirect from="/status/all-namespaces" to="/dashboards" />

@@ -13,7 +13,7 @@ const getK8sAPIPath = ({ apiGroup = 'core', apiVersion }) => {
 
   const cluster = window.SERVER_FLAGS.McMode && getActivePerspective() == "hc" && getActiveCluster();
 
-  if (cluster) {
+  if (cluster && cluster !== "#MASTER_CLUSTER#") {
     const activeClusterPath = getActiveClusterPath();
     p = `${window.SERVER_FLAGS.basePath}${activeClusterPath}`;
   }
