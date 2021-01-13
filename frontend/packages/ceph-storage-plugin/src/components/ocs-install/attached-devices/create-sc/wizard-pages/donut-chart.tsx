@@ -12,6 +12,7 @@ import { DiskListModal } from './disk-list';
 import { State, Action, Discoveries } from '../state';
 import { getTotalDeviceCapacity } from '../../../../../utils/install';
 import AttachedDevicesNodeTable from '../../sc-node-list';
+import { DISK_TYPES } from '@console/local-storage-operator-plugin/src/constants';
 import '../../attached-devices.scss';
 
 export const DiscoveryDonutChart: React.FC<DiscoveryDonutChartProps> = ({ state, dispatch }) => {
@@ -40,7 +41,14 @@ export const DiscoveryDonutChart: React.FC<DiscoveryDonutChartProps> = ({ state,
         if (nodes.includes(disk.node)) {
           const isValidSize =
             Number(disk.size) >= minSize && (maxSize ? Number(disk.size) <= maxSize : true);
-          if (isValidSize) {
+
+          // For disk type All it always true
+          let hasDiskType: boolean = true;
+          if (DISK_TYPES[state.diskType]?.property) {
+            hasDiskType = DISK_TYPES[state.diskType].property === disk.property;
+          }
+
+          if (isValidSize && hasDiskType) {
             return true;
           }
         }
@@ -58,6 +66,7 @@ export const DiscoveryDonutChart: React.FC<DiscoveryDonutChartProps> = ({ state,
     state.diskSizeUnit,
     nodes,
     state.nodesDiscoveries,
+    state.diskType,
     dispatch,
   ]);
 
