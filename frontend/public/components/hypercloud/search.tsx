@@ -208,7 +208,7 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = props =>
               <AccordionItem key={resource}>
                 <AccordionToggle className="co-search-group__accordion-toggle" onClick={() => toggleKindExpanded(resource)} isExpanded={!isCollapsed} id={`${resource}-toggle`}>
                   {getToggleText(resource)}
-                  {props.perspective !== 'hc' && (
+                  {props.perspective !== 'hc' && props.perspective !== 'mc' && (
                     <a className="pf-c-button pf-m-link co-search-group__pin-toggle" onClick={e => pinToggle(e, resource)}>
                       {pinnedResources.includes(resource) ? (
                         <>

@@ -21,6 +21,10 @@ import { Alert } from '../components/monitoring';
 export type UIState = ImmutableMap<string, any>;
 
 export function getDefaultPerspective() {
+  if(!window.SERVER_FLAGS.McMode){
+    return 'hc';
+  }
+
   let activePerspective = localStorage.getItem(LAST_PERSPECTIVE_LOCAL_STORAGE_KEY);
   if (
     activePerspective &&
