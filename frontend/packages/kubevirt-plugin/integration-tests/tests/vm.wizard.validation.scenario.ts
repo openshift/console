@@ -1,44 +1,26 @@
-import { execSync } from 'child_process';
 import { browser, ExpectedConditions as until } from 'protractor';
-import { click, waitForStringInElement } from '@console/shared/src/test-utils/utils';
+import { click } from '@console/shared/src/test-utils/utils';
 import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
-import { KUBEVIRT_TEMPLATES_PATH, KEBAP_ACTION, RECOMMENDED } from './utils/constants/common';
-import { Flavor, OperatingSystem, Workload } from './utils/constants/wizard';
+import { Flavor, TemplateByName, Workload } from './utils/constants/wizard';
 import { ProvisionSource } from './utils/constants/enums/provisionSource';
-import { DISK_SOURCE } from './utils/constants/vm';
+import { DISK_SOURCE, DISK_INTERFACE } from './utils/constants/vm';
 import { Wizard } from './models/wizard';
 import { Disk, FlavorConfig } from './types/types';
 import { getRandStr } from './utils/utils';
 import * as view from '../views/wizard.view';
-import { diskInterface } from '../views/dialogs/diskDialog.view';
 import { DiskDialog } from './dialogs/diskDialog';
-import { saveButton } from '../views/kubevirtUIResource.view';
+import { tableRows } from '../views/kubevirtUIResource.view';
 
 describe('Wizard validation', () => {
   const wizard = new Wizard();
-  const customFlavorNotEnoughMemory: FlavorConfig = {
-    flavor: Flavor.CUSTOM,
-    cpu: '1',
-    memory: '1',
-  };
   const customFlavorSufficientMemory: FlavorConfig = {
     flavor: Flavor.CUSTOM,
     cpu: '1',
     memory: '5',
   };
 
-  beforeAll(async () => {
-    execSync(`kubectl create -f ${KUBEVIRT_TEMPLATES_PATH}/validationCommonTemplate.yaml`);
-  });
-
-  afterAll(() => {
-    execSync(
-      `kubectl delete --ignore-not-found=true -f ${KUBEVIRT_TEMPLATES_PATH}/validationCommonTemplate.yaml`,
-    );
-  });
-
   beforeEach(async () => {
-    await wizard.openWizard(VirtualMachineModel, true);
+    await wizard.openWizard(VirtualMachineModel, true, TemplateByName.RHEL6);
   });
 
   afterEach(async () => {
@@ -46,36 +28,24 @@ describe('Wizard validation', () => {
     await click(view.cancelButton);
   });
 
-  it('ID(CNV-3697) Wizard validates custom flavor memory', async () => {
-    await wizard.selectOperatingSystem(OperatingSystem.VALIDATION_TEST);
-    await wizard.selectFlavor(customFlavorNotEnoughMemory);
-    await browser.wait(
-      waitForStringInElement(view.customFlavorMemoryHintBlock, 'Memory must be at least'),
-    );
-    await wizard.selectFlavor(customFlavorSufficientMemory);
-    expect(view.customFlavorMemoryHintBlock.isPresent()).toBe(false);
-  });
-
-  it('ID(CNV-3698) Disk Dialog displays warning when interface not recommended', async () => {
-    await wizard.selectOperatingSystem(OperatingSystem.WINDOWS_10);
+  it('ID(CNV-3698) Verify default disk interface for RHEL6 is sata', async () => {
+    await browser.wait(until.presenceOf(view.operatingSystemSelect));
+    await wizard.fillName(getRandStr(5));
     await wizard.selectProvisionSource(ProvisionSource.CONTAINER);
     await wizard.selectFlavor(customFlavorSufficientMemory);
     await wizard.selectWorkloadProfile(Workload.DESKTOP);
-    await wizard.fillName(getRandStr(5));
     await wizard.next();
     // Network tab
     await wizard.next();
     // Storage tab
-    await view.clickKebabAction('rootdisk', KEBAP_ACTION.Edit); // Open dialog
-    await browser.wait(waitForStringInElement(diskInterface, RECOMMENDED));
-    await click(saveButton); // Close dialog
+    const rows = await tableRows();
+    rows.forEach((row) => {
+      expect(row).toContain(DISK_INTERFACE.sata);
+    });
   });
 
   it('ID(CNV-4551) Import Wizard shows warning when using incorrect VM name', async () => {
     const WRONG_VM_NAME = 'VMNAME';
-    await wizard.selectProvisionSource(ProvisionSource.CONTAINER);
-    await wizard.selectFlavor(customFlavorSufficientMemory);
-    await wizard.selectWorkloadProfile(Workload.DESKTOP);
     await wizard.fillName(WRONG_VM_NAME);
     await browser.wait(until.presenceOf(view.vmNameHelper));
   });
@@ -84,6 +54,7 @@ describe('Wizard validation', () => {
     const disk: Disk = { source: DISK_SOURCE.Blank, size: '1', name: 'blankdisk' };
     const diskDialog = new DiskDialog();
 
+    await browser.wait(until.presenceOf(view.operatingSystemSelect));
     await wizard.selectProvisionSource(ProvisionSource.DISK);
     await wizard.selectFlavor(customFlavorSufficientMemory);
     await wizard.selectWorkloadProfile(Workload.DESKTOP);
@@ -99,9 +70,33 @@ describe('Wizard validation', () => {
   });
 
   it('ID(CNV-5468) Ephemeral Container disk can be used as bootdisk', async () => {
-    const disk: Disk = { source: DISK_SOURCE.EphemeralContainer, size: '1', name: 'containerdisk' };
+    const disk: Disk = {
+      source: DISK_SOURCE.EphemeralContainer,
+      size: '1',
+      name: 'ephemeralcontainerdisk',
+    };
     const diskDialog = new DiskDialog();
 
+    await browser.wait(until.presenceOf(view.operatingSystemSelect));
+    await wizard.selectProvisionSource(ProvisionSource.DISK);
+    await wizard.selectFlavor(customFlavorSufficientMemory);
+    await wizard.selectWorkloadProfile(Workload.DESKTOP);
+    await wizard.fillName(getRandStr(5));
+    await wizard.next();
+    // Network tab
+    await wizard.next();
+    // Storage tab
+    await click(view.addDiskButton);
+    await diskDialog.create(disk);
+    await wizard.selectBootableDisk(disk.name);
+    await browser.wait(until.stalenessOf(view.storageBootsourceHelper));
+  });
+
+  it('ID(CNV-5628) Registry Container disk can be used as bootdisk', async () => {
+    const disk: Disk = { source: DISK_SOURCE.Container, size: '1', name: 'registrycontainerdisk' };
+    const diskDialog = new DiskDialog();
+
+    await browser.wait(until.presenceOf(view.operatingSystemSelect));
     await wizard.selectProvisionSource(ProvisionSource.DISK);
     await wizard.selectFlavor(customFlavorSufficientMemory);
     await wizard.selectWorkloadProfile(Workload.DESKTOP);

@@ -62,7 +62,6 @@ export class Wizard {
 
     await click(view.createItemButton);
     await click(view.createWithWizardButton);
-    await view.waitForNoLoaders();
 
     if (customize) {
       await this.selectTemplate(template);
@@ -301,7 +300,10 @@ export class Wizard {
     await click(view.diskAdvance);
     await selectItemFromDropdown(view.selectSCButton, dropDownItem(STORAGE_CLASS));
     await selectItemFromDropdown(view.selectAccessModeButton, dropDownItem(accessModeLabel));
-    await selectItemFromDropdown(view.selectVolumeModeButton, dropDownItem(VolumeMode));
+    // Volume Mode is set by Source PVC
+    if (provisionSource !== ProvisionSource.DISK) {
+      await selectItemFromDropdown(view.selectVolumeModeButton, dropDownItem(VolumeMode));
+    }
 
     await this.next(ignoreWarnings);
   }
@@ -317,7 +319,10 @@ export class Wizard {
   }
 
   async processGeneralStep(data: VMBuilderData, ignoreWarnings: boolean = false) {
-    const { name, namespace, description, provisionSource, os, flavor, workload, pvcName } = data;
+    const { name, namespace, description, provisionSource, flavor, workload, pvcName } = data;
+
+    // wait for OS field loaded
+    await browser.wait(until.presenceOf(view.operatingSystemSelect));
     if (name) {
       await this.fillName(name);
     } else {
@@ -333,12 +338,6 @@ export class Wizard {
       // We are creating a VM from template via its action button
       // ProvisionSource, OS and workload are prefilled and disabled - ignoring them
     } else {
-      if (os) {
-        await this.selectOperatingSystem(os);
-      } else {
-        throw Error('VM OS not defined');
-      }
-
       if (provisionSource) {
         await this.disableGoldenImageCloneCheckbox();
         await this.selectProvisionSource(provisionSource);
