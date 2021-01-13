@@ -1,3 +1,5 @@
+import { execSync } from 'child_process';
+import { testName } from '@console/internal-integration-tests/protractor.conf';
 import {
   click,
   createResource,
@@ -28,6 +30,7 @@ describe('KubeVirt VM detail - edit flavor', () => {
 
   beforeAll(() => {
     createResource(testDataVolume);
+    execSync(`oc wait -n ${testName} --for condition=Ready DataVolume ${dvName} --timeout=100s`);
   });
 
   afterEach(() => {
