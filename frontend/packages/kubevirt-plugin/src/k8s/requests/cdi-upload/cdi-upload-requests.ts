@@ -9,6 +9,7 @@ import {
   k8sKill,
   k8sGet,
 } from '@console/internal/module/k8s';
+import { CDI_BIND_REQUESTED_ANNOTATION } from '../../../components/cdi-upload-provider/consts';
 import { delay } from '../../../utils/utils';
 
 const PVC_STATUS_DELAY = 2 * 1000;
@@ -67,6 +68,12 @@ const createUploadToken = async (pvcName: string, namespace: string): Promise<st
 export const createUploadPVC = async (dataVolume: V1alpha1DataVolume) => {
   const dataVolumeName = getName(dataVolume);
   const namespace = getNamespace(dataVolume);
+
+  dataVolume.metadata = dataVolume?.metadata || {};
+  dataVolume.metadata.annotations = {
+    ...(dataVolume?.metadata?.annotations || {}),
+    [CDI_BIND_REQUESTED_ANNOTATION]: 'true',
+  };
 
   try {
     const dv = await k8sCreate(DataVolumeModel, dataVolume);
