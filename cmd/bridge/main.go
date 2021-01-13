@@ -82,7 +82,7 @@ func main() {
 	// See https://github.com/openshift/service-serving-cert-signer
 	fServiceCAFile := fs.String("service-ca-file", "", "CA bundle for OpenShift services signed with the service signing certificates.")
 
-	fUserAuth := fs.String("user-auth", "disabled", "disabled | oidc | openshift")
+	fUserAuth := fs.String("user-auth", "hypercloud", "disabled | oidc | openshift | hypercloud")
 	fUserAuthOIDCIssuerURL := fs.String("user-auth-oidc-issuer-url", "", "The OIDC/OAuth2 issuer URL.")
 	fUserAuthOIDCCAFile := fs.String("user-auth-oidc-ca-file", "", "PEM file for the OIDC/OAuth2 issuer.")
 	fUserAuthOIDCClientID := fs.String("user-auth-oidc-client-id", "", "The OIDC OAuth2 Client ID.")
@@ -98,7 +98,7 @@ func main() {
 	fK8sModeOffClusterAlertmanager := fs.String("k8s-mode-off-cluster-alertmanager", "", "DEV ONLY. URL of the cluster's AlertManager server.")
 	fK8sModeOffClusterMetering := fs.String("k8s-mode-off-cluster-metering", "", "DEV ONLY. URL of the cluster's metering server.")
 
-	fK8sAuth := fs.String("k8s-auth", "service-account", "service-account | bearer-token | oidc | openshift")
+	fK8sAuth := fs.String("k8s-auth", "service-account", "service-account | bearer-token | openshift | hypercloud")
 	fK8sAuthBearerToken := fs.String("k8s-auth-bearer-token", "", "Authorization token to send with proxied Kubernetes API requests.")
 
 	fRedirectPort := fs.Int("redirect-port", 0, "Port number under which the console should listen for custom hostname redirect.")
@@ -386,23 +386,6 @@ func main() {
 			}
 			srv.TerminalProxyTLSConfig = serviceProxyTLSConfig
 
-			// NOTE: grafanaEndpoint 추가 // 윤진수
-			grafanaEndpoint := bridge.ValidateFlagIsURL("grafana-endpoint", *fGrafanaEndpoint)
-			srv.GrafanaProxyConfig = &hproxy.Config{
-				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
-				Endpoint:        grafanaEndpoint,
-				Origin:          "http://localhost",
-			}
-			kialiEndpoint := bridge.ValidateFlagIsURL("kiali-endpoint", *fKialiEndpoint)
-			srv.KialiProxyConfig = &hproxy.Config{
-				HeaderBlacklist: []string{"X-CSRFToken"},
-				TLSClientConfig: &tls.Config{
-					InsecureSkipVerify: true,
-				},
-				Endpoint: kialiEndpoint,
-				Origin:   "http://localhost",
-			}
-
 		}
 
 	case "off-cluster":
@@ -596,6 +579,8 @@ func main() {
 		if srv.Auther, err = auth.NewAuthenticator(context.Background(), oidcClientConfig); err != nil {
 			log.Fatalf("Error initializing authenticator: %v", err)
 		}
+	case "hypercloud":
+		log.Info("Start with hyperauth")
 	case "disabled":
 		log.Warningf("running with AUTHENTICATION DISABLED!")
 	default:
@@ -617,8 +602,27 @@ func main() {
 		}
 		resourceListerToken = *fK8sAuthBearerToken
 	case "oidc", "openshift":
-		bridge.ValidateFlagIs("user-auth", *fUserAuth, "oidc", "openshift")
+		bridge.ValidateFlagIs("user-auth", *fUserAuth, "oidc", "openshift", "hypercloud")
 		resourceListerToken = k8sAuthServiceAccountBearerToken
+
+	case "hypercloud":
+		switch *fK8sMode {
+		case "in-cluster":
+			srv.StaticUser = &auth.User{
+				Username: "hypercloud",
+				Token:    k8sAuthServiceAccountBearerToken,
+			}
+			resourceListerToken = k8sAuthServiceAccountBearerToken
+		case "off-cluster":
+			bridge.ValidateFlagNotEmpty("k8s-auth-bearer-token", *fK8sAuthBearerToken)
+			srv.StaticUser = &auth.User{
+				Username: "hypercloud",
+				Token:    *fK8sAuthBearerToken,
+			}
+			resourceListerToken = *fK8sAuthBearerToken
+		default:
+			bridge.FlagFatalf("hypercloud auth -> k8sMode", "must be one of: in-cluster, off-cluster")
+		}
 	default:
 		bridge.FlagFatalf("k8s-mode", "must be one of: service-account, bearer-token, oidc, openshift")
 	}

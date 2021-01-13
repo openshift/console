@@ -194,6 +194,7 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// NOTE: bearer token 넣어보기 위해 Authorization 추가 // 정동민
 	token, ok := r.URL.Query()["token"]
 	if ok && len(token[0]) > 0 {
+		fmt.Println("r.URL.Query()[token]")
 		proxiedHeader.Add("Authorization", "Bearer "+string(token[0]))
 	}
 	// NOTE: 여기까지
@@ -237,7 +238,7 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				return true
 			}
 			// Allow when origin is not same
-			log.Printf("Allow if CheckOrigin '%v' != '%v'", p.config.Origin, origin[0])
+			// log.Printf("Allow if CheckOrigin '%v' != '%v'", p.config.Origin, origin[0])
 			return true
 			// log.Printf("CheckOrigin '%v' != '%v'", p.config.Origin, origin[0])
 			// return false			log.Printf("CheckOrigin '%v' != '%v'", p.config.Origin, origin[0])

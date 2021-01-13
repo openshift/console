@@ -27,7 +27,7 @@ import './hypercloud/utils/langs/i18n';
 import { Page } from '@patternfly/react-core';
 import { ReactKeycloakProvider, withKeycloak } from '@react-keycloak/web';
 import keycloak from '../hypercloud/keycloak';
-
+import { setAccessToken, setId, resetLoginState } from '../hypercloud/auth';
 const breakpointMD = 768;
 const NOTIFICATION_DRAWER_BREAKPOINT = 1800;
 
@@ -204,16 +204,20 @@ const eventLogger = (event, error) => {
     case 'onReady':
       break;
     case 'onAuthSuccess':
+      setAccessToken(keycloak.idToken);
+      setId(keycloak.idTokenParsed.preferred_username);
       break;
     case 'onAuthError':
       break;
     case 'onAuthLogout':
       keycloak.logout();
+      resetLoginState();
       break;
     case 'onAuthRefreshError':
       break;
     case 'onTokenExpired':
       keycloak.logout();
+      resetLoginState();
       break;
   }
 };
