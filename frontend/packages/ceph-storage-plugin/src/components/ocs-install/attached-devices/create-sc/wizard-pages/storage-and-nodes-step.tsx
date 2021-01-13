@@ -54,7 +54,7 @@ const validate = (
 ): ValidationType[] => {
   const validations = [];
   if (!enableStretchCluster && enableFlexibleScaling) {
-    validations.push(ValidationType.BAREMETAL_FLEXIBLE_SCALING);
+    validations.push(ValidationType.ATTACHED_DEVICES_FLEXIBLE_SCALING);
   }
   if (enableMinimal) {
     validations.push(ValidationType.MINIMAL);

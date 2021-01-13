@@ -87,7 +87,7 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({
         </ReviewListBody>
         <ReviewListBody
           hideIcon={!enableFlexibleScaling || !stretchClusterChecked}
-          validation={enableFlexibleScaling && ValidationType.BAREMETAL_FLEXIBLE_SCALING}
+          validation={enableFlexibleScaling && ValidationType.ATTACHED_DEVICES_FLEXIBLE_SCALING}
         >
           <p>
             {t('ceph-storage-plugin~{{zoneCount, number}} zone', {

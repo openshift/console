@@ -41,7 +41,7 @@ export enum ValidationType {
   'REQUIRED_FIELD_KMS' = 'REQUIRED_FIELD_KMS',
   'NETWORK' = 'NETWORK',
   'INTERNAL_FLEXIBLE_SCALING' = 'INTERNAL_FLEXIBLE_SCALING',
-  'BAREMETAL_FLEXIBLE_SCALING' = 'BAREMETAL_FLEXIBLE_SCALING',
+  'ATTACHED_DEVICES_FLEXIBLE_SCALING' = 'ATTACHED_DEVICES_FLEXIBLE_SCALING',
 }
 
 export const VALIDATIONS = (type: keyof typeof ValidationType, t: TFunction): Validation => {
@@ -121,12 +121,12 @@ export const VALIDATIONS = (type: keyof typeof ValidationType, t: TFunction): Va
       };
     case ValidationType.INTERNAL_FLEXIBLE_SCALING:
       return {
-        variant: AlertVariant.warning,
+        variant: AlertVariant.info,
         title: t(
           'ceph-storage-plugin~The number of selected zones is less than the minimum requirement of 3. If not modified a host-based failure domain deployment will be enforced.',
         ),
       };
-    case ValidationType.BAREMETAL_FLEXIBLE_SCALING:
+    case ValidationType.ATTACHED_DEVICES_FLEXIBLE_SCALING:
       return {
         variant: AlertVariant.info,
         title: t(
