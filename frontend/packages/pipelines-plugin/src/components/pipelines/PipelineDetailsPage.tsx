@@ -44,8 +44,8 @@ const PipelineDetailsPage: React.FC<DetailsPageProps> = (props) => {
       pages={[
         navFactory.details(PipelineDetails),
         {
-          href: 'dashboard',
-          name: t('pipelines-plugin~Dashboard'),
+          href: 'metrics',
+          name: t('pipelines-plugin~Metrics'),
           component: PipelineMetrics,
         },
         navFactory.editYaml(),
