@@ -5,12 +5,17 @@ import (
 	"flag"
 	"fmt"
 	"strings"
+
+	"github.com/openshift/console/pkg/bridge"
 )
 
 func Validate(fs *flag.FlagSet) error {
 	if _, err := validateDeveloperCatalogCategories(fs.Lookup("developer-catalog-categories").Value.String()); err != nil {
 		return err
 	}
+
+	bridge.ValidateFlagIs("user-settings-location", fs.Lookup("user-settings-location").Value.String(), "configmap", "localstorage")
+
 	return nil
 }
 

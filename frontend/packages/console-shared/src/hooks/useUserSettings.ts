@@ -16,6 +16,12 @@ import {
   USER_SETTING_CONFIGMAP_NAMESPACE,
 } from '../utils/user-settings';
 
+const alwaysUseFallbackLocalStorage = window.SERVER_FLAGS.userSettingsLocation === 'localstorage';
+if (alwaysUseFallbackLocalStorage) {
+  // eslint-disable-next-line no-console
+  console.info('user-settings will be stored in localstorage instead of configmap.');
+}
+
 const useCounterRef = (initialValue: number = 0): [boolean, () => void, () => void] => {
   const counterRef = React.useRef<number>(initialValue);
   const increment = React.useCallback(() => {
@@ -32,19 +38,22 @@ export const useUserSettings = <T>(
   defaultValue?: T,
   sync: boolean = false,
 ): [T, React.Dispatch<React.SetStateAction<T>>, boolean] => {
-  const defaultValueRef = React.useRef<T>(defaultValue);
   const keyRef = React.useRef<string>(key);
+  const defaultValueRef = React.useRef<T>(defaultValue);
   const [isRequestPending, increaseRequest, decreaseRequest] = useCounterRef();
   const userUid = useSelector(
     (state: RootState) => state.UI.get('user')?.metadata?.uid ?? 'kubeadmin',
   );
   const configMapResource = React.useMemo(
-    () => ({
-      kind: ConfigMapModel.kind,
-      namespace: USER_SETTING_CONFIGMAP_NAMESPACE,
-      isList: false,
-      name: `user-settings-${userUid}`,
-    }),
+    () =>
+      alwaysUseFallbackLocalStorage
+        ? null
+        : {
+            kind: ConfigMapModel.kind,
+            namespace: USER_SETTING_CONFIGMAP_NAMESPACE,
+            isList: false,
+            name: `user-settings-${userUid}`,
+          },
     [userUid],
   );
   const [cfData, cfLoaded, cfLoadError] = useK8sWatchResource<K8sResourceKind>(configMapResource);
@@ -53,11 +62,14 @@ export const useUserSettings = <T>(
   settingsRef.current = settings;
   const [loaded, setLoaded] = React.useState(false);
 
-  const [fallbackLocalStorage, setFallbackLocalStorage] = React.useState<boolean>(false);
+  const [fallbackLocalStorage, setFallbackLocalStorage] = React.useState<boolean>(
+    alwaysUseFallbackLocalStorage,
+  );
   const [lsData, setLsDataCallback] = useUserSettingsLocalStorage(
+    alwaysUseFallbackLocalStorage ? 'console-user-settings' : `console-user-settings-${userUid}`,
     keyRef.current,
     defaultValueRef.current,
-    fallbackLocalStorage,
+    fallbackLocalStorage && sync,
   );
 
   React.useEffect(() => {

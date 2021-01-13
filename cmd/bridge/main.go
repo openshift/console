@@ -123,6 +123,7 @@ func main() {
 	fLoadTestFactor := fs.Int("load-test-factor", 0, "DEV ONLY. The factor used to multiply k8s API list responses for load testing purposes.")
 
 	fDevCatalogCategories := fs.String("developer-catalog-categories", "", "Allow catalog categories customization. (JSON as string)")
+	fUserSettingsLocation := fs.String("user-settings-location", "configmap", "DEV ONLY. Define where the user settings should be stored. (configmap | localstorage).")
 
 	if err := serverconfig.Parse(fs, os.Args[1:], "BRIDGE"); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
@@ -229,6 +230,7 @@ func main() {
 		LoadTestFactor:        *fLoadTestFactor,
 		InactivityTimeout:     *fInactivityTimeout,
 		DevCatalogCategories:  *fDevCatalogCategories,
+		UserSettingsLocation:  *fUserSettingsLocation,
 	}
 
 	// if !in-cluster (dev) we should not pass these values to the frontend
