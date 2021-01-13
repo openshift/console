@@ -64,6 +64,11 @@ const mockPipelineRunReasons = [
       conditions: [{ type: 'Succeeded', status: 'Unknown', reason: 'ExceededResourceQuota' }],
     },
   },
+  {
+    status: {
+      conditions: [{ type: 'Succeeded', status: 'Unknown', reason: 'ConditionCheckFailed' }],
+    },
+  },
 ];
 
 describe('Check PipelineRun Status | Filter Reducer applied to the following:', () => {
@@ -131,5 +136,9 @@ describe('Check PipelineRun Status | Filter Reducer applied to the following:', 
     expect(pipelineRunStatus(mockPipelineRunReasons[2])).toBe('Pending');
     expect(pipelineRunStatus(mockPipelineRunReasons[3])).toBe('Pending');
     expect(pipelineRunStatus(mockPipelineRunReasons[4])).toBe('Pending');
+  });
+
+  it('Pipelinerun with ConditionCheckFailed status should be skipped', () => {
+    expect(pipelineRunStatus(mockPipelineRunReasons[5])).toBe('Skipped');
   });
 });
