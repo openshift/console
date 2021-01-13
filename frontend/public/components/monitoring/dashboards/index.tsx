@@ -41,10 +41,19 @@ const evaluateTemplate = (s: string, variables: VariablesMap, timespan: number):
   // Use a minimum of 5m to make sure we have enough data to perform `irate` calculations, which
   // require 2 data points each. Otherwise, there could be gaps in the graph.
   const interval: Variable = { value: `${Math.max(intervalMinutes, 5)}m` };
+  const allVariables = {
+    ...variables,
+    __interval: interval,
+    // eslint-disable-next-line camelcase
+    __rate_interval: interval,
+
+    // This is last to ensure it is applied after all other variable substitutions (because the
+    // other variable substitutions may result in "$__auto_interval_*" being inserted)
+    '__auto_interval_[a-z]+': interval,
+  };
 
   let result = s;
-  // eslint-disable-next-line camelcase
-  _.each({ ...variables, __interval: interval, __rate_interval: interval }, (v, k) => {
+  _.each(allVariables, (v, k) => {
     const re = new RegExp(`\\$${k}`, 'g');
     if (result.match(re)) {
       if (v.isLoading) {
@@ -54,6 +63,7 @@ const evaluateTemplate = (s: string, variables: VariablesMap, timespan: number):
       result = result.replace(re, v.value || '');
     }
   });
+
   return result;
 };
 
