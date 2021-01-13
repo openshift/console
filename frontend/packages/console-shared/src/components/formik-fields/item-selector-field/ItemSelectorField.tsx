@@ -109,9 +109,7 @@ const ItemSelectorField: React.FC<ItemSelectorFieldProps> = ({
     [itemList, selected.value],
   );
 
-  const debounceFilterText = useDebounceCallback<(text: string) => void>(filterSources, [
-    filterSources,
-  ]);
+  const debounceFilterText = useDebounceCallback<(text: string) => void>(filterSources);
 
   const handleFilterChange = (text: string) => {
     setFilterText(text);

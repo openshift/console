@@ -28,7 +28,7 @@ const TopologyDataRetriever: React.FC<TopologyDataRetrieverProps> = ({ trafficDa
     [dataModelContext.extensionsLoaded, dataModelContext.watchedResources, namespace],
   );
 
-  const debouncedUpdateResources = useDebounceCallback<any>(setResources, [setResources], 250);
+  const debouncedUpdateResources = useDebounceCallback(setResources, 250);
 
   const updatedResources = useK8sWatchResources<TopologyResourcesObject>(resourcesList);
   React.useEffect(() => debouncedUpdateResources(updatedResources), [

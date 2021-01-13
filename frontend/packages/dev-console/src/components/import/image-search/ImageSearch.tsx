@@ -107,7 +107,7 @@ const ImageSearch: React.FC = () => {
     ],
   );
 
-  const debouncedHandleSearch = useDebounceCallback(handleSearch, [handleSearch]);
+  const debouncedHandleSearch = useDebounceCallback(handleSearch);
 
   const handleSave = React.useCallback(
     (name: string) => {
