@@ -93,7 +93,6 @@ export const getBasicVMBuilder = () =>
     .setDescription('Default vm description')
     .setSelectTemplateName(TemplateByName.RHEL7)
     .setFlavor(flavorConfigs.Tiny)
-    .setOS(OperatingSystem.RHEL7)
     .setWorkload(Workload.DESKTOP)
     .setStartOnCreation(true);
 

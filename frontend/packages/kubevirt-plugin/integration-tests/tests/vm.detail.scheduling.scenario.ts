@@ -95,8 +95,11 @@ describe('KubeVirt VM scheduling', () => {
       await click(editAffinityView.createValueBtn(fields['metadata.name']));
 
       await click(editAffinityView.editSubmitBtn);
-      await click(saveButton);
+      await browser.wait(
+        until.textToBePresentInElement(editAffinityView.alertTitle, '1 matching node found'),
+      );
 
+      await click(saveButton);
       await browser.wait(
         until.textToBePresentInElement(
           virtualMachineView.vmDetailAffinity(vm.namespace, vm.name),

@@ -33,18 +33,18 @@ describe('Kubevirt VM dashboard tab', () => {
   });
 
   it('ID(CNV-3333) Inventory card', async () => {
-    expect(dashboardView.vmInventoryNICs.getText()).toEqual('1 NIC');
+    expect(dashboardView.vmInventoryNICs.getText()).toContain('1');
     expect(dashboardView.vmInventoryNICs.$('a').getAttribute('href')).toMatch(
       new RegExp(`.*/k8s/ns/${vm.namespace}/${VirtualMachineModel.plural}/${vm.name}/nics`),
     );
-    expect(dashboardView.vmInventoryDisks.getText()).toEqual('2 Disks');
+    expect(dashboardView.vmInventoryDisks.getText()).toContain('2');
 
     await vm.addDisk(hddDisk);
     await vm.addNIC(multusNetworkInterface);
     await vm.navigateToOverview();
 
-    expect(dashboardView.vmInventoryNICs.getText()).toEqual('2 NICs');
-    expect(dashboardView.vmInventoryDisks.getText()).toEqual('3 Disks');
+    expect(dashboardView.vmInventoryNICs.getText()).toContain('2');
+    expect(dashboardView.vmInventoryDisks.getText()).toContain('3');
 
     await vm.removeDisk(hddDisk.name);
     await vm.removeNIC(multusNetworkInterface.name);

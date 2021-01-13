@@ -60,7 +60,9 @@ describe('Test VM enviromnet tab', () => {
     expect(!!disks.find((d) => d.name.includes(serviceAccountName))).toBeTruthy();
   });
 
-  it(
+  // TODO: this is a fragile test and not belongs to tier 1.
+  // Consider to move it to tier2.
+  xit(
     'ID(CNV-4185) Verify all sources are readable inside the VM',
     async () => {
       await vm.detailViewAction(VM_ACTION.Start);

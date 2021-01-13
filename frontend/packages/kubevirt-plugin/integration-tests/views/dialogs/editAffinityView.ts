@@ -10,3 +10,4 @@ export const kebabDelete = $('[data-test-action="Delete"]');
 export const affinityKeyInputByID = (name, id) => $(`#affinity-${name}-${id}-key-input`);
 export const affinityValuesSelectByID = (name, id) => $(`#affinity-${name}-${id}-values-select`);
 export const deleteBtnByID = (name, id) => $(`#affinity-${name}-${id}-delete-btn`);
+export const alertTitle = $('.pf-c-alert__title');
