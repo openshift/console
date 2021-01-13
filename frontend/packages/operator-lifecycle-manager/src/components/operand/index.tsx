@@ -64,6 +64,7 @@ import { CustomResourceDefinitionModel } from '@console/internal/models';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { useK8sModels } from '@console/shared/src/hooks/useK8sModels';
 import { DescriptorDetailsItem, DescriptorDetailsItemList } from '../descriptors';
+import { useTranslation } from 'react-i18next';
 
 export const getOperandActions = (
   ref: K8sResourceKindReference,
@@ -88,7 +89,9 @@ export const getOperandActions = (
             csvNameFromWindow()}/${reference}/${obj.metadata.name}/yaml`
         : `/k8s/cluster/${reference}/${obj.metadata.name}/yaml`;
       return {
-        label: `Edit ${kind.label}`,
+        // t('olm~Edit {{item}}')
+        labelKey: 'olm~Edit {{label}}',
+        labelKind: kind,
         href,
         accessReview: {
           group: kind.apiGroup,
@@ -99,9 +102,10 @@ export const getOperandActions = (
         },
       };
     },
-
     (kind, obj) => ({
-      label: `Delete ${kind.label}`,
+      // t('olm~Delete {{item}}'
+      labelKey: 'olm~Delete {{label}}',
+      labelKind: kind,
       callback: () =>
         deleteModal({
           kind,
@@ -130,50 +134,6 @@ const tableColumnClasses = [
   classNames('pf-m-hidden', 'pf-m-visible-on-2xl'),
   Kebab.columnClass,
 ];
-
-export const OperandTableHeader = () => {
-  return [
-    {
-      title: 'Name',
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: 'Kind',
-      sortField: 'kind',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-    },
-    {
-      title: 'Status',
-      sortFunc: 'operandStatus',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: 'Labels',
-      sortField: 'metadata.labels',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
-    },
-    {
-      title: 'Last Updated',
-      sortField: 'metadata.creationTimestamp',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[4] },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses[5] },
-    },
-  ];
-};
-
-type OperandStatusType = {
-  type: string;
-  value: string;
-};
 
 const getOperandStatus = (obj: K8sResourceKind): OperandStatusType => {
   const { phase, status, state, conditions } = obj?.status || {};
@@ -211,7 +171,7 @@ const getOperandStatus = (obj: K8sResourceKind): OperandStatusType => {
   return null;
 };
 
-export const OperandStatus: React.FunctionComponent<OperandStatusProps> = ({ operand }) => {
+export const OperandStatus: React.FC<OperandStatusProps> = ({ operand }) => {
   const status: OperandStatusType = getOperandStatus(operand);
   if (!status) {
     return <>-</>;
@@ -225,7 +185,7 @@ export const OperandStatus: React.FunctionComponent<OperandStatusProps> = ({ ope
   );
 };
 
-const getOperandStatusText = (operand: K8sResourceKind) => {
+const getOperandStatusText = (operand: K8sResourceKind): string => {
   const status = getOperandStatus(operand);
   return status ? `${status.type}: ${status.value}` : '';
 };
@@ -267,6 +227,45 @@ export const OperandTableRow: React.FC<OperandTableRowProps> = ({ obj, index, ro
 };
 
 export const OperandList: React.FC<OperandListProps> = (props) => {
+  const { t } = useTranslation();
+  const Header = () => {
+    return [
+      {
+        title: t('public~Name'),
+        sortField: 'metadata.name',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[0] },
+      },
+      {
+        title: t('public~Kind'),
+        sortField: 'kind',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[1] },
+      },
+      {
+        title: t('public~Status'),
+        sortFunc: 'operandStatus',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[2] },
+      },
+      {
+        title: t('public~Labels'),
+        sortField: 'metadata.labels',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[3] },
+      },
+      {
+        title: t('public~Last updated'),
+        sortField: 'metadata.creationTimestamp',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[4] },
+      },
+      {
+        title: '',
+        props: { className: tableColumnClasses[5] },
+      },
+    ];
+  };
   const Row = React.useCallback(
     (rowArgs: RowFunctionArgs<K8sResourceKind>) => (
       <OperandTableRow
@@ -295,8 +294,10 @@ export const OperandList: React.FC<OperandListProps> = (props) => {
   );
   const EmptyMsg = () => (
     <MsgBox
-      title="No Operands Found"
-      detail="Operands are declarative components used to define the behavior of the application."
+      title={t('olm~No operands found')}
+      detail={t(
+        'olm~Operands are declarative components used to define the behavior of the application.',
+      )}
     />
   );
 
@@ -309,7 +310,7 @@ export const OperandList: React.FC<OperandListProps> = (props) => {
       data={data}
       EmptyMsg={EmptyMsg}
       aria-label="Operands"
-      Header={OperandTableHeader}
+      Header={Header}
       Row={Row}
       virtualize
     />
@@ -317,6 +318,7 @@ export const OperandList: React.FC<OperandListProps> = (props) => {
 };
 
 export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
+  const { t } = useTranslation();
   const { obj } = props;
   const [models, inFlight] = useK8sModels();
   if (inFlight) {
@@ -342,8 +344,8 @@ export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
 
   const EmptyMsg = () => (
     <MsgBox
-      title="No Provided APIs Defined"
-      detail="This application was not properly installed or configured."
+      title={t('olm~No provided APIs defined')}
+      detail={t('olm~This application was not properly installed or configured.')}
     />
   );
   const createLink = (name: string) =>
@@ -383,13 +385,17 @@ export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
     <MultiListPage
       {...props}
       ListComponent={OperandList}
-      filterLabel="Resources by name"
+      filterLabel={t('olm~Resources by name')}
       resources={firehoseResources}
       namespace={obj.metadata.namespace}
       canCreate={providedAPIs.length > 0}
       createProps={createProps}
       createButtonText={
-        providedAPIs.length > 1 ? 'Create New' : `Create ${providedAPIs[0].displayName}`
+        providedAPIs.length > 1
+          ? t('olm~Create new')
+          : t('olm~Create {{item}}', {
+              item: providedAPIs[0].displayName,
+            })
       }
       flatten={flatten}
       rowFilters={firehoseResources.length > 1 ? rowFilters : null}
@@ -400,16 +406,17 @@ export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
 };
 
 export const ProvidedAPIPage = connectToModel((props: ProvidedAPIPageProps) => {
+  const { t } = useTranslation();
   const { namespace, kind, kindsInFlight, kindObj, csv } = props;
-
   if (!kindObj) {
     return kindsInFlight ? (
       <LoadingBox />
     ) : (
       <ErrorPage404
-        message={`The server doesn't have a resource type ${kindForReference(
-          kind,
-        )}. Try refreshing the page if it was recently added.`}
+        message={t(
+          "olm~The server doesn't have a resource type {{kind}}. Try refreshing the page if it was recently added.",
+          { kind: kindForReference(kind) },
+        )}
       />
     );
   }
@@ -419,7 +426,7 @@ export const ProvidedAPIPage = connectToModel((props: ProvidedAPIPageProps) => {
     <ListPage
       kind={kind}
       ListComponent={OperandList}
-      canCreate={_.get(kindObj, 'verbs', [] as string[]).some((v) => v === 'create')}
+      canCreate={kindObj?.verbs?.includes('create')}
       createProps={{ to }}
       namespace={kindObj.namespaced ? namespace : null}
       badge={getBadgeFromType(kindObj.badge)}
@@ -451,6 +458,7 @@ const PodStatuses: React.FC<PodStatusesProps> = ({ kindObj, obj, podStatusDescri
   ) : null;
 
 export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: OperandDetailsProps) => {
+  const { t } = useTranslation();
   const { kind, status } = obj;
   const [errorMessage, setErrorMessage] = React.useState(null);
   const handleError = (err: Error) => setErrorMessage(err.message);
@@ -498,7 +506,7 @@ export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: Operan
     <div className="co-operand-details co-m-pane">
       <div className="co-m-pane__body">
         {errorMessage && <ErrorAlert message={errorMessage} />}
-        <SectionHeading text={`${displayName || kind} Overview`} />
+        <SectionHeading text={t('olm~{{kind}} overview', { kind: displayName || kind })} />
         <PodStatuses
           kindObj={kindObj}
           obj={obj}
@@ -566,6 +574,7 @@ const ResourcesTab = (resourceProps) => (
 );
 
 export const OperandDetailsPage = (props: OperandDetailsPageProps) => {
+  const { t } = useTranslation();
   const [model] = useK8sModel(props.match.params.plural);
   const actionExtensions = useExtensions<ClusterServiceVersionAction>(
     isClusterServiceVersionAction,
@@ -598,7 +607,7 @@ export const OperandDetailsPage = (props: OperandDetailsPageProps) => {
       menuActions={menuActions}
       breadcrumbsFor={() => [
         {
-          name: 'Installed Operators',
+          name: t('olm~Installed Operators'),
           path: `/k8s/ns/${props.match.params.ns}/${ClusterServiceVersionModel.plural}`,
         },
         {
@@ -606,7 +615,7 @@ export const OperandDetailsPage = (props: OperandDetailsPageProps) => {
           path: props.match.url.slice(0, props.match.url.lastIndexOf('/')),
         },
         {
-          name: `${kindForReference(props.match.params.plural)} Details`, // Use url param in case model doesn't exist
+          name: t('olm~{{item}} details', { item: kindForReference(props.match.params.plural) }), // Use url param in case model doesn't exist
           path: `${props.match.url}`,
         },
       ]}
@@ -624,6 +633,11 @@ export const OperandDetailsPage = (props: OperandDetailsPageProps) => {
       ]}
     />
   );
+};
+
+type OperandStatusType = {
+  type: string;
+  value: string;
 };
 
 export type OperandListProps = {
@@ -708,6 +722,5 @@ OperandList.displayName = 'OperandList';
 ProvidedAPIsPage.displayName = 'ProvidedAPIsPage';
 OperandDetailsPage.displayName = 'OperandDetailsPage';
 OperandTableRow.displayName = 'OperandTableRow';
-OperandTableHeader.displayName = 'OperandTableHeader';
 OperandDetailsSection.displayName = 'OperandDetailsSection';
 PodStatuses.displayName = 'PodStatuses';

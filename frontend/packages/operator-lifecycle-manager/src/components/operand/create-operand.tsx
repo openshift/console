@@ -44,6 +44,7 @@ import {
 import { DEPRECATED_CreateOperandForm } from './DEPRECATED_operand-form';
 
 import './create-operand.scss';
+import { useTranslation } from 'react-i18next';
 
 export const CreateOperand: React.FC<CreateOperandProps> = ({
   clusterServiceVersion,
@@ -54,6 +55,7 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
   match,
   model,
 }) => {
+  const { t } = useTranslation();
   const { data: csv } = clusterServiceVersion;
   const { data: crd } = customResourceDefinition;
   const [activePerspective] = useActivePerspective();
@@ -121,14 +123,17 @@ export const CreateOperand: React.FC<CreateOperandProps> = ({
                       csv.metadata.namespace,
                     ),
                   },
-                  { name: `Create ${model.label}`, path: window.location.pathname },
+                  {
+                    name: t('olm~Create {{item}}', { item: model.label }),
+                    path: window.location.pathname,
+                  },
                 ]}
               />
             </div>
             <PageHeading
               badge={getBadgeFromType(model.badge)}
               className="olm-create-operand__page-heading"
-              title={`Create ${model.label}`}
+              title={t('olm~Create {{item}}', { item: model.label })}
             >
               <span className="help-block">{helpText}</span>
             </PageHeading>
@@ -155,41 +160,46 @@ const stateToProps = (state: RootState, props: Omit<CreateOperandPageProps, 'mod
   model: state.k8s.getIn(['RESOURCES', 'models', props.match.params.plural]) as K8sKind,
 });
 
-export const CreateOperandPage = connect(stateToProps)((props: CreateOperandPageProps) => (
-  <>
-    <Helmet>
-      <title>{`Create ${kindForReference(props.match.params.plural)}`}</title>
-    </Helmet>
-    {props.model && (
-      <Firehose
-        resources={[
-          {
-            kind: referenceForModel(ClusterServiceVersionModel),
-            name: props.match.params.appName,
-            namespace: props.match.params.ns,
-            isList: false,
-            prop: 'clusterServiceVersion',
-          },
-          {
-            kind: CustomResourceDefinitionModel.kind,
-            isList: false,
-            name: nameForModel(props.model),
-            prop: 'customResourceDefinition',
-            optional: true,
-          },
-        ]}
-      >
-        {/* FIXME(alecmerdler): Hack because `Firehose` injects props without TypeScript knowing about it */}
-        <CreateOperand
-          {...(props as any)}
-          model={props.model}
-          match={props.match}
-          initialEditorType={EditorType.Form}
-        />
-      </Firehose>
-    )}
-  </>
-));
+export const CreateOperandPage = connect(stateToProps)((props: CreateOperandPageProps) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <Helmet>
+        <title>
+          {t('olm~Create {{item}}', { item: kindForReference(props.match.params.plural) })}
+        </title>
+      </Helmet>
+      {props.model && (
+        <Firehose
+          resources={[
+            {
+              kind: referenceForModel(ClusterServiceVersionModel),
+              name: props.match.params.appName,
+              namespace: props.match.params.ns,
+              isList: false,
+              prop: 'clusterServiceVersion',
+            },
+            {
+              kind: CustomResourceDefinitionModel.kind,
+              isList: false,
+              name: nameForModel(props.model),
+              prop: 'customResourceDefinition',
+              optional: true,
+            },
+          ]}
+        >
+          {/* FIXME(alecmerdler): Hack because `Firehose` injects props without TypeScript knowing about it */}
+          <CreateOperand
+            {...(props as any)}
+            model={props.model}
+            match={props.match}
+            initialEditorType={EditorType.Form}
+          />
+        </Firehose>
+      )}
+    </>
+  );
+});
 
 export type CreateOperandProps = {
   clusterServiceVersion: FirehoseResult<ClusterServiceVersionKind>;

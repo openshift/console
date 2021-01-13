@@ -23,7 +23,6 @@ import {
   ProvidedAPIsPage,
   ProvidedAPIsPageProps,
   OperandTableRowProps,
-  OperandTableHeader,
   OperandTableRow,
   OperandDetails,
   OperandDetailsPageProps,
@@ -38,13 +37,6 @@ import { Resources } from '../k8s-resource';
 import { referenceForProvidedAPI } from '..';
 import { OperandLink } from './operand-link';
 import { DescriptorDetailsItem, DescriptorDetailsItemList } from '../descriptors';
-
-const COLUMNS = OperandTableHeader();
-const NAME_INDEX = _.findIndex(COLUMNS, { title: 'Name' });
-const KIND_INDEX = _.findIndex(COLUMNS, { title: 'Kind' });
-const STATUS_INDEX = _.findIndex(COLUMNS, { title: 'Status' });
-const LABELS_INDEX = _.findIndex(COLUMNS, { title: 'Labels' });
-const LAST_UPDATED_INDEX = _.findIndex(COLUMNS, { title: 'Last Updated' });
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');
@@ -77,12 +69,6 @@ jest.mock('@console/shared/src/hooks/useK8sModels', () => ({
 
 const i18nNS = 'details-page';
 
-describe(OperandTableHeader.displayName, () => {
-  it('returns column header definition for resource', () => {
-    expect(Array.isArray(OperandTableHeader())).toBe(true);
-  });
-});
-
 describe(OperandTableRow.displayName, () => {
   let wrapper: ShallowWrapper<OperandTableRowProps>;
 
@@ -94,50 +80,50 @@ describe(OperandTableRow.displayName, () => {
   });
 
   it('renders column for resource name', () => {
-    const col = wrapper.childAt(NAME_INDEX);
+    const col = wrapper.childAt(0);
     const link = col.find(OperandLink);
 
     expect(link.props().obj).toEqual(testResourceInstance);
   });
 
-  it('renders a `ResourceKebab` for resource actions', () => {
-    const kebab = wrapper.find(ResourceKebab);
+  it('renders column for resource type', () => {
+    const col = wrapper.childAt(1);
 
-    expect(kebab.props().actions[0](testModel, testOwnedResourceInstance).label).toEqual(
-      `Edit ${testModel.label}`,
-    );
-    expect(kebab.props().actions[1](testModel, testOwnedResourceInstance).label).toEqual(
-      `Delete ${testModel.label}`,
-    );
-    expect(kebab.props().kind).toEqual(k8sModels.referenceFor(testResourceInstance));
-    expect(kebab.props().resource).toEqual(testResourceInstance);
+    expect(col.shallow().text()).toEqual(testResourceInstance.kind);
+  });
+
+  it('renders column for resource status', () => {
+    const col = wrapper.childAt(2);
+
+    expect(col.find(OperandStatus).props().operand).toEqual(testResourceInstance);
   });
 
   it('renders column for resource labels', () => {
-    const col = wrapper.childAt(LABELS_INDEX);
+    const col = wrapper.childAt(3);
     const labelList = col.find(LabelList);
 
     expect(labelList.props().kind).toEqual(testResourceInstance.kind);
     expect(labelList.props().labels).toEqual(testResourceInstance.metadata.labels);
   });
 
-  it('renders column for resource type', () => {
-    const col = wrapper.childAt(KIND_INDEX);
-
-    expect(col.shallow().text()).toEqual(testResourceInstance.kind);
-  });
-
-  it('renders column for resource status', () => {
-    const col = wrapper.childAt(STATUS_INDEX);
-
-    expect(col.find(OperandStatus).props().operand).toEqual(testResourceInstance);
-  });
-
   it('renders column for last updated timestamp', () => {
-    const col = wrapper.childAt(LAST_UPDATED_INDEX);
+    const col = wrapper.childAt(4);
     const timestamp = col.find(Timestamp);
 
     expect(timestamp.props().timestamp).toEqual(testResourceInstance.metadata.creationTimestamp);
+  });
+
+  it('renders a `ResourceKebab` for resource actions', () => {
+    const kebab = wrapper.find(ResourceKebab);
+
+    expect(kebab.props().actions[0](testModel, testOwnedResourceInstance).labelKey).toEqual(
+      `olm~Edit {{label}}`,
+    );
+    expect(kebab.props().actions[1](testModel, testOwnedResourceInstance).labelKey).toEqual(
+      `olm~Delete {{label}}`,
+    );
+    expect(kebab.props().kind).toEqual(k8sModels.referenceFor(testResourceInstance));
+    expect(kebab.props().resource).toEqual(testResourceInstance);
   });
 });
 
@@ -160,7 +146,12 @@ describe(OperandList.displayName, () => {
         false,
       ),
     ).toBe(true);
-    expect(table.props().Header).toEqual(OperandTableHeader);
+    expect(table.props().Header().length).toEqual(6);
+    expect(table.props().Header()[0].title).toEqual('public~Name');
+    expect(table.props().Header()[1].title).toEqual('public~Kind');
+    expect(table.props().Header()[2].title).toEqual('public~Status');
+    expect(table.props().Header()[3].title).toEqual('public~Labels');
+    expect(table.props().Header()[4].title).toEqual('public~Last updated');
     expect(_.isFunction(table.props().Row)).toBe(true);
   });
 });
@@ -187,7 +178,7 @@ describe(OperandDetails.displayName, () => {
 
   it('renders description title', () => {
     const title = wrapper.find('SectionHeading').prop('text');
-    expect(title).toEqual('Test Resource Overview');
+    expect(title).toEqual('olm~{{kind}} overview');
   });
 
   it('renders info section', () => {
@@ -335,14 +326,14 @@ describe(OperandDetailsPage.displayName, () => {
       wrapper
         .find(DetailsPage)
         .props()
-        .menuActions[0](testModel, testOwnedResourceInstance).label,
-    ).toEqual(`Edit ${testModel.label}`);
+        .menuActions[0](testModel, testOwnedResourceInstance).labelKey,
+    ).toEqual('olm~Edit {{label}}');
     expect(
       wrapper
         .find(DetailsPage)
         .props()
-        .menuActions[1](testModel, testOwnedResourceInstance).label,
-    ).toEqual(`Delete ${testModel.label}`);
+        .menuActions[1](testModel, testOwnedResourceInstance).labelKey,
+    ).toEqual('olm~Delete {{label}}');
   });
 
   it('passes function to create breadcrumbs for resource to `DetailsPage`', () => {
@@ -352,13 +343,16 @@ describe(OperandDetailsPage.displayName, () => {
         .props()
         .breadcrumbsFor(null),
     ).toEqual([
-      { name: 'Installed Operators', path: `/k8s/ns/default/${ClusterServiceVersionModel.plural}` },
+      {
+        name: 'olm~Installed Operators',
+        path: `/k8s/ns/default/${ClusterServiceVersionModel.plural}`,
+      },
       {
         name: 'testapp',
         path: `/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/testapp.coreos.com~v1alpha1~TestResource`,
       },
       {
-        name: `${testResourceInstance.kind} Details`,
+        name: `olm~{{item}} details`,
         path: `/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/testapp.coreos.com~v1alpha1~TestResource/my-test-resource`,
       },
     ]);
@@ -378,10 +372,13 @@ describe(OperandDetailsPage.displayName, () => {
         .props()
         .breadcrumbsFor(null),
     ).toEqual([
-      { name: 'Installed Operators', path: `/k8s/ns/example/${ClusterServiceVersionModel.plural}` },
+      {
+        name: 'olm~Installed Operators',
+        path: `/k8s/ns/example/${ClusterServiceVersionModel.plural}`,
+      },
       { name: 'example', path: `/k8s/ns/${ClusterServiceVersionModel.plural}/example/example` },
       {
-        name: `example Details`,
+        name: `olm~{{item}} details`,
         path: `/k8s/ns/${ClusterServiceVersionModel.plural}/example/example/example`,
       },
     ]);
@@ -454,7 +451,7 @@ describe(ProvidedAPIsPage.displayName, () => {
     const listPage = wrapper.find(MultiListPage);
 
     expect(listPage.props().ListComponent).toEqual(OperandList);
-    expect(listPage.props().filterLabel).toEqual('Resources by name');
+    expect(listPage.props().filterLabel).toEqual('olm~Resources by name');
     expect(listPage.props().canCreate).toBe(true);
     expect(listPage.props().resources).toEqual(
       owned.concat(required).map((crdDesc) => ({
@@ -477,7 +474,7 @@ describe(ProvidedAPIsPage.displayName, () => {
     wrapper.setProps({ obj });
     const listPage = wrapper.find(MultiListPage);
 
-    expect(listPage.props().createButtonText).toEqual('Create New');
+    expect(listPage.props().createButtonText).toEqual('olm~Create new');
     expect(listPage.props().createProps.to).not.toBeDefined();
     expect(listPage.props().createProps.items).toEqual({
       'testresources.testapp.coreos.com': 'Test Resource',
@@ -493,9 +490,7 @@ describe(ProvidedAPIsPage.displayName, () => {
   it('passes `createProps` for single create button if app has only one owned CRD', () => {
     const listPage = wrapper.find(MultiListPage);
 
-    expect(listPage.props().createButtonText).toEqual(
-      `Create ${testClusterServiceVersion.spec.customresourcedefinitions.owned[0].displayName}`,
-    );
+    expect(listPage.props().createButtonText).toEqual(`olm~Create {{item}}`);
     expect(listPage.props().createProps.items).not.toBeDefined();
     expect(listPage.props().createProps.createLink).not.toBeDefined();
     expect(listPage.props().createProps.to).toEqual(

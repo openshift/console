@@ -27,7 +27,6 @@ export const OperandForm: React.FC<OperandFormProps> = ({
   schema,
 }) => {
   const [errors, setErrors] = React.useState<string[]>([]);
-  // const [formData, setFormData] = React.useState(initialData);
   const postFormCallback = usePostFormSubmitAction<K8sResourceKind>();
   const processFormData = ({ metadata, ...rest }) => {
     const data = {
