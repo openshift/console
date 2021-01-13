@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { CogsIcon, CloudTenantIcon } from '@patternfly/react-icons';
+import { CogsIcon } from '@patternfly/react-icons';
 import { FlagsObject } from '@console/internal/reducers/features';
 
 /* 임시 */
@@ -10,7 +10,7 @@ const perspectives: Perspective[] = [
         type: 'Perspective',
         properties: {
             id: 'mc',
-            name: 'MultiCluster',
+            name: 'Multi Cluster',
             icon: <CogsIcon />,
             default: true,
             getLandingPageURL: (flags) => '/k8s/cluster/hyperclusterresources',
@@ -22,8 +22,8 @@ const perspectives: Perspective[] = [
         type: 'Perspective',
         properties: {
             id: 'hc',
-            name: 'HyperCloud',
-            icon: <CloudTenantIcon />,
+            name: 'Single Cluster',
+            icon: <CogsIcon />,
             getLandingPageURL: (flags, cluster) => cluster && cluster !== '#MASTER_CLUSTER#' ? `/cl/${cluster}/dashboards` : '/dashboards',
             getK8sLandingPageURL: (flags, cluster) => cluster && cluster !== '#MASTER_CLUSTER#' ? `/cl/${cluster}/search` : '/search',
             getImportRedirectURL: (project, cluster) => cluster && cluster !== '#MASTER_CLUSTER#' ? `/k8s/cl/${cluster}/cluster/projects/${project}/workloads` : `/k8s/cluster/projects/${project}/workloads`,

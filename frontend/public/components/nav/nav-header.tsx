@@ -98,7 +98,7 @@ const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({
     <>
       {window.SERVER_FLAGS.McMode && (
         <div className="oc-nav-header">
-          <h4>Application</h4>
+          <span className="hc-dropdown__title">Application</span>
           <Dropdown
             isOpen={isPerspectiveDropdownOpen}
             toggle={renderToggle(icon, name)}
@@ -107,7 +107,7 @@ const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({
           />
           {activePerspective == "hc" &&
             <>
-              <h4>Cluster</h4>
+              <span className="hc-dropdown__title">Cluster</span>
               <ClusterDropdown onClusterSelected={onClusterSelected} />
             </>
           }
