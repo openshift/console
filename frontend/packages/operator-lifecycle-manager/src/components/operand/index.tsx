@@ -90,8 +90,8 @@ export const getOperandActions = (
         : `/k8s/cluster/${reference}/${obj.metadata.name}/yaml`;
       return {
         // t('olm~Edit {{item}}')
-        labelKey: 'olm~Edit {{label}}',
-        labelKind: kind,
+        labelKey: 'olm~Edit {{item}}',
+        labelKind: { item: kind.label },
         href,
         accessReview: {
           group: kind.apiGroup,
@@ -103,9 +103,9 @@ export const getOperandActions = (
       };
     },
     (kind, obj) => ({
-      // t('olm~Delete {{item}}'
-      labelKey: 'olm~Delete {{label}}',
-      labelKind: kind,
+      // t('olm~Delete {{item}}')
+      labelKey: 'olm~Delete {{item}}',
+      labelKind: { item: kind.label },
       callback: () =>
         deleteModal({
           kind,

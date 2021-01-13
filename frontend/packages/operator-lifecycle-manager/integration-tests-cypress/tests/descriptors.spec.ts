@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { nav } from '../../../integration-tests-cypress/views/nav';
 import { checkErrors, create, testName } from '../../../integration-tests-cypress/support';
 import { modal } from '../../../integration-tests-cypress/views/modal';
 import { testCR, testCRD, testCSV } from '../mocks';
@@ -6,6 +7,9 @@ import { testCR, testCRD, testCSV } from '../mocks';
 describe('Using OLM descriptor components', () => {
   before(() => {
     cy.login();
+    cy.visit('/');
+    nav.sidenav.switcher.changePerspectiveTo('Administrator');
+    nav.sidenav.switcher.shouldHaveText('Administrator');
     cy.createProject(testName);
     create(testCRD);
     create(testCSV);
@@ -52,7 +56,7 @@ describe('Using OLM descriptor components', () => {
 
   it('displays list containing operands', () => {
     cy.visit(
-      `/ns/${testName}/clusterserviceversions/${testCSV.metadata.name}/${testCRD.spec.group}~${testCRD.spec.version}~${testCRD.spec.names.kind}`,
+      `/k8s/ns/${testName}/operators.coreos.com~v1alpha1~ClusterServiceVersion/${testCSV.metadata.name}/${testCRD.spec.group}~${testCRD.spec.version}~${testCRD.spec.names.kind}`,
     );
     cy.byTestOperandLink('olm-descriptors-test').should('exist');
   });
@@ -64,7 +68,7 @@ describe('Using OLM descriptor components', () => {
       names: { kind },
     } = testCRD.spec;
     cy.visit(
-      `/ns/${testName}/clusterserviceversions/${testCSV.metadata.name}/${group}~${version}~${kind}/${testCR.metadata.name}`,
+      `/k8s/ns/${testName}/operators.coreos.com~v1alpha1~ClusterServiceVersion/${testCSV.metadata.name}/${group}~${version}~${kind}/${testCR.metadata.name}`,
     );
     cy.byLegacyTestID('resource-title')
       .invoke('text')
@@ -103,7 +107,7 @@ describe('Using OLM descriptor components', () => {
       'Delete operand instance created in prior steps. Fixes a failure when trying to create a duplicate operand in the "successfully creates operand using form" step.',
     );
     cy.visit(
-      `/ns/${testName}/clusterserviceversions/${testCSV.metadata.name}/${testCRD.spec.group}~${testCRD.spec.version}~${testCRD.spec.names.kind}`,
+      `/k8s/ns/${testName}/operators.coreos.com~v1alpha1~ClusterServiceVersion/${testCSV.metadata.name}/${testCRD.spec.group}~${testCRD.spec.version}~${testCRD.spec.names.kind}`,
     );
     cy.byTestOperandLink('olm-descriptors-test').should('exist');
     cy.byLegacyTestID('kebab-button').click();
@@ -115,7 +119,7 @@ describe('Using OLM descriptor components', () => {
 
   it('displays form for creating operand', () => {
     cy.visit(
-      `/ns/${testName}/clusterserviceversions/${testCSV.metadata.name}/${testCRD.spec.group}~${testCRD.spec.version}~${testCRD.spec.names.kind}`,
+      `/k8s/ns/${testName}/operators.coreos.com~v1alpha1~ClusterServiceVersion/${testCSV.metadata.name}/${testCRD.spec.group}~${testCRD.spec.version}~${testCRD.spec.names.kind}`,
     );
     cy.byTestID('item-create').click();
     cy.byLegacyTestID('resource-title').should('have.text', 'Create App');

@@ -1,3 +1,4 @@
+import { nav } from '../../../integration-tests-cypress/views/nav';
 import { checkErrors, testName } from '../../../integration-tests-cypress/support';
 import { modal } from '../../../integration-tests-cypress/views/modal';
 import { createCatalogSource, deleteCatalogSource } from '../views/catalog-source.view';
@@ -14,6 +15,9 @@ const operandLink = 'cb-example';
 describe(`Interacting with a single namespace install mode Operator (${operatorName})`, () => {
   before(() => {
     cy.login();
+    cy.visit('/');
+    nav.sidenav.switcher.changePerspectiveTo('Administrator');
+    nav.sidenav.switcher.shouldHaveText('Administrator');
     cy.createProject(testName);
     createCatalogSource(operatorName, catalogSourceName);
   });
@@ -48,7 +52,7 @@ describe(`Interacting with a single namespace install mode Operator (${operatorN
     cy.log('verify Operator began installation');
     cy.byTestID('view-installed-operators-btn').should(
       'contain',
-      `View Installed Operators in namespace ${testName}`,
+      `View installed Operators in Namespace ${testName}`,
     );
     cy.log('view the ClusterServiceVersion list page');
     cy.byTestID('view-installed-operators-btn').click();
@@ -60,14 +64,14 @@ describe(`Interacting with a single namespace install mode Operator (${operatorN
     cy.log(`navigate to the ${operatorName} details page`);
     cy.byTestOperatorRow(operatorRow).click();
     cy.byTestSectionHeading('Provided APIs').should('exist');
-    cy.byTestSectionHeading('ClusterServiceVersion Details').should('exist');
+    cy.byTestSectionHeading('ClusterServiceVersion details').should('exist');
     cy.byLegacyTestID('resource-summary').should('exist');
   });
 
   it(`displays empty message on the ${operatorName} ClusterServiceVersion "All Instances" tab`, () => {
     cy.log('navigate to the "All Instances" tab');
-    cy.byLegacyTestID('horizontal-link-All Instances').click();
-    cy.byTestID('msg-box-title').should('contain', 'No Operands Found');
+    cy.byLegacyTestID('horizontal-link-olm~All instances').click();
+    cy.byTestID('msg-box-title').should('contain', 'No operands found');
     cy.byTestID('msg-box-detail').should(
       'contain',
       'Operands are declarative components used to define the behavior of the application.',
@@ -92,7 +96,7 @@ describe(`Interacting with a single namespace install mode Operator (${operatorN
   it(`displays details about ${operatorName} ${operatorInstance} instance on the "Details" tab`, () => {
     cy.log(`navigate to the "Details" tab`);
     cy.byTestOperandLink(operandLink).click();
-    cy.byTestSectionHeading('Couchbase Cluster Overview').should('exist');
+    cy.byTestSectionHeading('Couchbase Cluster overview').should('exist');
   });
 
   it(`uninstalls the Operator from ${testName} namespace`, () => {

@@ -117,10 +117,10 @@ describe(OperandTableRow.displayName, () => {
     const kebab = wrapper.find(ResourceKebab);
 
     expect(kebab.props().actions[0](testModel, testOwnedResourceInstance).labelKey).toEqual(
-      `olm~Edit {{label}}`,
+      `olm~Edit {{item}}`,
     );
     expect(kebab.props().actions[1](testModel, testOwnedResourceInstance).labelKey).toEqual(
-      `olm~Delete {{label}}`,
+      `olm~Delete {{item}}`,
     );
     expect(kebab.props().kind).toEqual(k8sModels.referenceFor(testResourceInstance));
     expect(kebab.props().resource).toEqual(testResourceInstance);
@@ -327,13 +327,13 @@ describe(OperandDetailsPage.displayName, () => {
         .find(DetailsPage)
         .props()
         .menuActions[0](testModel, testOwnedResourceInstance).labelKey,
-    ).toEqual('olm~Edit {{label}}');
+    ).toEqual('olm~Edit {{item}}');
     expect(
       wrapper
         .find(DetailsPage)
         .props()
         .menuActions[1](testModel, testOwnedResourceInstance).labelKey,
-    ).toEqual('olm~Delete {{label}}');
+    ).toEqual('olm~Delete {{item}}');
   });
 
   it('passes function to create breadcrumbs for resource to `DetailsPage`', () => {

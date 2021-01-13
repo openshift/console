@@ -133,9 +133,9 @@ export const PackageManifestsPage: React.FC<PackageManifestsPageProps> = (props)
 
   const helpText = (
     <Trans ns="olm">
-      Catalogs are groups of Operators you can make available on the cluster. Use&nbsp;
-      <Link to="/operatorhub">OperatorHub</Link>
-      &nbsp;to subscribe and grant namespaces access to use installed Operators.
+      Catalogs are groups of Operators you can make available on the cluster. Use{' '}
+      <Link to="/operatorhub">OperatorHub</Link> to subscribe and grant namespaces access to use
+      installed Operators.
     </Trans>
   );
 

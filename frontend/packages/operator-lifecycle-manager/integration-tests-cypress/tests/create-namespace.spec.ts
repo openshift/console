@@ -1,9 +1,13 @@
+import { nav } from '../../../integration-tests-cypress/views/nav';
 import { checkErrors, testName } from '../../../integration-tests-cypress/support';
 import { modal } from '../../../integration-tests-cypress/views/modal';
 
 describe('Create namespace from install operators', () => {
   before(() => {
     cy.login();
+    cy.visit('/');
+    nav.sidenav.switcher.changePerspectiveTo('Administrator');
+    nav.sidenav.switcher.shouldHaveText('Administrator');
     cy.createProject(testName);
   });
 
