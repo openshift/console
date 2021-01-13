@@ -6,20 +6,39 @@ import { LoadingInline } from '@console/internal/components/utils';
 import { FormGroup, Alert } from '@patternfly/react-core';
 import { StarIcon } from '@patternfly/react-icons';
 import { getFieldId, ItemSelectorField } from '@console/shared';
+import { PIPELINE_RUNTIME_LABEL } from '@console/pipelines-plugin/src/const';
+import { Pipeline } from '@console/pipelines-plugin/src/utils/pipeline-augment';
 import { NormalizedBuilderImages } from '../../../utils/imagestream-utils';
 
 export interface BuilderImageSelectorProps {
   loadingImageStream: boolean;
   builderImages: NormalizedBuilderImages;
+  existingPipeline?: Pipeline;
 }
+
+const PipelineChangeAlert = (alertMessage: string) => (
+  <>
+    <Alert isInline variant="info" title={alertMessage} />
+    <br />
+  </>
+);
 
 const BuilderImageSelector: React.FC<BuilderImageSelectorProps> = ({
   loadingImageStream,
   builderImages,
+  existingPipeline,
 }) => {
   const { t } = useTranslation();
-  const { values, setFieldValue, setFieldTouched, validateForm } = useFormikContext<FormikValues>();
-  const { selected, recommended, isRecommending, couldNotRecommend, tag } = values.image;
+  const {
+    values: { pipeline, image },
+    setFieldValue,
+    setFieldTouched,
+    validateForm,
+  } = useFormikContext<FormikValues>();
+  const { selected, recommended, isRecommending, couldNotRecommend, tag } = image;
+  const [showPipelineWarning, setShowPipelineWarning] = React.useState(false);
+
+  const isPipelineAttached = !_.isEmpty(existingPipeline);
 
   React.useEffect(() => {
     if (selected && !tag) {
@@ -29,6 +48,22 @@ const BuilderImageSelector: React.FC<BuilderImageSelectorProps> = ({
   }, [selected, setFieldValue, setFieldTouched, builderImages, tag]);
 
   const fieldId = getFieldId('image.name', 'selector');
+  const imageName = builderImages?.[selected]?.title || t('devconsole~this Builder Image');
+
+  const changedPipelineWarning = pipeline.template
+    ? pipeline.template.metadata?.labels[PIPELINE_RUNTIME_LABEL] !==
+        existingPipeline?.metadata?.labels[PIPELINE_RUNTIME_LABEL] &&
+      PipelineChangeAlert(
+        t(
+          'devconsole~Changing to this builder image will update your associated Pipeline and remove any customization you may have applied.',
+        ),
+      )
+    : PipelineChangeAlert(
+        t(
+          'devconsole~There are no supported pipelines available for {{builderImage}}. Changing to this builder image will disconnect your associated Pipeline.',
+          { builderImage: imageName },
+        ),
+      );
 
   if (_.keys(builderImages).length === 1) {
     return (
@@ -71,14 +106,18 @@ const BuilderImageSelector: React.FC<BuilderImageSelectorProps> = ({
           <br />
         </>
       )}
+      {showPipelineWarning && changedPipelineWarning}
       <ItemSelectorField
         itemList={builderImages}
         name="image.selected"
         loadingItems={loadingImageStream}
-        recommended={values.image.recommended}
+        recommended={image.recommended}
         onSelect={() => {
           setFieldValue('image.tag', '', false);
           setFieldTouched('image.tag', true);
+          if (isPipelineAttached) {
+            setShowPipelineWarning(true);
+          }
           validateForm();
         }}
       />

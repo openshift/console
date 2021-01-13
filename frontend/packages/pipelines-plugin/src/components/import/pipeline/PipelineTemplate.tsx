@@ -19,7 +19,6 @@ const labelDocker = 'pipeline.openshift.io/strategy';
 
 const getAlertText = (
   isDockerStrategy: boolean,
-  isPipelineAttached: boolean,
   builderImage: string,
   resourceType: string,
   t: TFunction,
@@ -27,12 +26,7 @@ const getAlertText = (
   const MISSING_DOCKERFILE_LABEL_TEXT = t(
     'pipelines-plugin~The pipeline template for Dockerfiles is not available at this time.',
   );
-  const UNSUPPORTED_BUILDERIMAGE_TEXT = t(
-    'pipelines-plugin~There are no pipeline templates available for {{builderImage}}, current pipeline will be dissociated from application.',
-    { builderImage },
-  );
   if (isDockerStrategy) return MISSING_DOCKERFILE_LABEL_TEXT;
-  if (isPipelineAttached) return UNSUPPORTED_BUILDERIMAGE_TEXT;
 
   return t(
     'pipelines-plugin~There are no pipeline templates available for {{builderImage}} and {{resourceType}} combination.',
@@ -113,31 +107,13 @@ const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages, exis
       <Alert
         isInline
         variant="info"
-        title={getAlertText(
-          isDockerStrategy,
-          isPipelineAttached,
-          builderImageTitle,
-          resourceName,
-          t,
-        )}
+        title={getAlertText(isDockerStrategy, builderImageTitle, resourceName, t)}
       />
     );
   }
 
-  const changedPipelineWarning =
-    isPipelineAttached &&
-    pipeline.template?.metadata?.labels[PIPELINE_RUNTIME_LABEL] !==
-      existingPipeline?.metadata?.labels[PIPELINE_RUNTIME_LABEL] ? (
-      <Alert
-        isInline
-        variant="info"
-        title={t('pipelines-plugin~Pipeline will be updated to match the builder Image.')}
-      />
-    ) : null;
-
   return pipeline.template ? (
     <>
-      {changedPipelineWarning}
       <CheckboxField
         label={t('pipelines-plugin~Add pipeline')}
         name="pipeline.enabled"
