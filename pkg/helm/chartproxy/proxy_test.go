@@ -14,6 +14,14 @@ import (
 	"github.com/openshift/console/pkg/helm/actions/fake"
 )
 
+type MockKubeVersion struct {
+	fakeVersion string
+}
+
+func (v MockKubeVersion) GetKubeVersion() string {
+	return v.fakeVersion
+}
+
 func TestProxy_IndexFile(t *testing.T) {
 	tests := []struct {
 		name           string
@@ -140,7 +148,7 @@ func TestProxy_IndexFile(t *testing.T) {
 			}
 			p, err := New(func() (r *rest.Config, err error) {
 				return &rest.Config{}, nil
-			}, tt.kubeVersion, fakeProxyOption)
+			}, MockKubeVersion{fakeVersion: tt.kubeVersion}, fakeProxyOption)
 			if err != nil {
 				t.Error(err)
 			}
