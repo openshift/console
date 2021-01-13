@@ -706,16 +706,13 @@ const QueryTable_: React.FC<QueryTableProps> = ({
     );
   }
 
-  const { result, resultType } = data;
-
-  // Add any data series from `series` (those displayed in the graph) that are not already in `result`. This happens
-  // for filtering PromQL queries that exclude a series currently, but did not exclude that same series at some point
-  // during that graph's range.
-  _.each(series, (labels) => {
-    if (_.every(result, (r) => !_.isEqual(labels, r.metric))) {
-      result.push({ metric: labels });
-    }
-  });
+  // Add any data series from `series` (those displayed in the graph) that are not in `data.result`.
+  // This happens for queries that exclude a series currently, but included that same series at some
+  // point during the graph's range.
+  const expiredSeries = _.differenceWith(series, data.result, (s, r) => _.isEqual(s, r.metric));
+  const result = expiredSeries.length
+    ? [...data.result, ...expiredSeries.map((metric) => ({ metric }))]
+    : data.result;
 
   if (!result || result.length === 0) {
     return (
@@ -733,7 +730,7 @@ const QueryTable_: React.FC<QueryTableProps> = ({
   const buttonCell = (labels) => ({ title: <SeriesButton index={index} labels={labels} /> });
 
   let columns, rows;
-  if (resultType === 'scalar') {
+  if (data.resultType === 'scalar') {
     columns = ['', { title: 'Value', ...cellProps }];
     rows = [[buttonCell({}), _.get(result, '[1]')]];
   } else {
@@ -749,7 +746,7 @@ const QueryTable_: React.FC<QueryTableProps> = ({
     ];
 
     let rowMapper;
-    if (resultType === 'matrix') {
+    if (data.resultType === 'matrix') {
       rowMapper = ({ metric, values }) => [
         '',
         ..._.map(allLabelKeys, (k) => metric[k]),
