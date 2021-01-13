@@ -21,7 +21,10 @@ export const EfficiencyItemBody: React.FC<EfficiencyItemBodyProps> = React.memo(
     return (
       <div className="co-inventory-card__item">
         <div className="ceph-storage-efficiency-card__item-title">{title}</div>
-        <div className="ceph-storage-efficiency-card__item-status">
+        <div
+          className="ceph-storage-efficiency-card__item-status"
+          data-test={`${title}-efficiency-card-status`}
+        >
           {status}
           <FieldLevelHelp>{infoText}</FieldLevelHelp>
         </div>
