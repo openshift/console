@@ -154,6 +154,8 @@ func main() {
 	fMcModeFile := fs.String("mc-mode-file", cDir, "The YAML proxy config file")
 	fMcModeOperator := fs.Bool("mc-mode-operator", false, "Using operator which watch crd = true, disable = false")
 
+	fReleaseModeFlag := fs.Bool("release-mode", true, "DEV ONLY. When false, disable login/logout.")
+
 	if err := fs.Parse(os.Args[1:]); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
@@ -259,6 +261,8 @@ func main() {
 		KeycloakRealm:    *fKeycloakRealm,
 		KeycloakAuthURL:  *fKeycloakAuthURL,
 		KeycloakClientId: *fKeycloakClientId,
+
+		ReleaseModeFlag: *fReleaseModeFlag,
 	}
 
 	// if !in-cluster (dev) we should not pass these values to the frontend
