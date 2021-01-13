@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
 import {
   iGetRelevantTemplateSelectors,
   iGetVmSettings,
@@ -8,7 +9,7 @@ import {
 import { VMSettingsField, VMWizardProps } from '../../types';
 import { FormFieldReviewMemoRow } from '../../form/form-field-review-row';
 import { iGetCommonData, iGetLoadedCommonData } from '../../selectors/immutable/selectors';
-import { getField, getFieldValue, getFlavorValue } from './utils';
+import { getField, getFieldValue, getVMFlavorData } from './utils';
 import { getOS } from '../../selectors/combined';
 
 import './review-tab.scss';
@@ -24,7 +25,9 @@ const GeneralReviewConnected: React.FC<GeneralReviewConnectedProps> = (props) =>
     className,
   } = props;
 
-  const flavorValue = getFlavorValue({
+  const { t } = useTranslation();
+
+  const flavorData = getVMFlavorData({
     iVMSettings,
     iUserTemplate,
     iCommonTemplates,
@@ -59,7 +62,7 @@ const GeneralReviewConnected: React.FC<GeneralReviewConnectedProps> = (props) =>
 
       <FormFieldReviewMemoRow
         field={getField(VMSettingsField.FLAVOR, iVMSettings)}
-        value={flavorValue}
+        value={t('kubevirt-plugin~{{flavor}}: {{count}} CPU | {{memory}} Memory', flavorData)}
       />
 
       <FormFieldReviewMemoRow field={getField(VMSettingsField.WORKLOAD_PROFILE, iVMSettings)} />

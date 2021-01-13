@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { DASH, getName, getNamespace } from '@console/shared';
 import { PersistentVolumeClaimKind } from '@console/internal/module/k8s';
 import { VMKind } from '../../../types/vm';
@@ -19,8 +20,8 @@ import {
   getDataVolumeStorageClassName,
 } from '../../../selectors/dv/selectors';
 import { getPvcResources, getPvcStorageClassName } from '../../../selectors/pvc/selectors';
-import { getFlavorText } from '../../../selectors/vm/flavor-text';
 import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
+import { getFlavorData } from '../../../selectors/vm/flavor-data';
 
 import './_clone-vm-modal.scss';
 
@@ -71,6 +72,7 @@ export const ConfigurationSummary: React.FC<ConfigurationSummaryProps> = ({
   persistentVolumeClaims,
   dataVolumes,
 }) => {
+  const { t } = useTranslation();
   const disks = getDisksDescription(vm, persistentVolumeClaims, dataVolumes);
   const nics = getNicsDescription(vm);
   return (
@@ -79,11 +81,14 @@ export const ConfigurationSummary: React.FC<ConfigurationSummaryProps> = ({
       <dd>{getOperatingSystemName(vm) || DASH}</dd>
       <dt>Flavor</dt>
       <dd>
-        {getFlavorText({
-          flavor: getFlavor(vm),
-          cpu: getCPU(vm),
-          memory: getMemory(vm),
-        })}
+        {t(
+          'kubevirt-plugin~{{flavor}}: {{count}} CPU | {{memory}} Memory',
+          getFlavorData({
+            flavor: getFlavor(vm),
+            cpu: getCPU(vm),
+            memory: getMemory(vm),
+          }),
+        )}
       </dd>
       <dt>Workload Profile</dt>
       <dd>{getWorkloadProfile(vm) || DASH}</dd>

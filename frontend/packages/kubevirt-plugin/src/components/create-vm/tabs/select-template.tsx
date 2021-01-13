@@ -43,7 +43,7 @@ import { getTemplateSourceStatus } from '../../../statuses/template/template-sou
 import { TemplateSource } from '../../vm-templates/vm-template-source';
 import { getWorkloadProfile } from '../../../selectors/vm';
 import {
-  getTemplateFlavorDesc,
+  getTemplateFlavorData,
   getTemplateOperatingSystems,
   getTemplateSizeRequirementInBytes,
 } from '../../../selectors/vm-template/advanced';
@@ -121,7 +121,10 @@ export const TemplateTile: React.FC<TemplateTileProps> = ({
             </StackItem>
             <StackItem>
               <b>{t('kubevirt-plugin~Flavor ')}</b>
-              {getTemplateFlavorDesc(template)}
+              {t(
+                'kubevirt-plugin~{{flavor}}: {{count}} CPU | {{memory}} Memory',
+                getTemplateFlavorData(template),
+              )}
             </StackItem>
             <StackItem>
               <b>{t('kubevirt-plugin~Storage ')}</b>

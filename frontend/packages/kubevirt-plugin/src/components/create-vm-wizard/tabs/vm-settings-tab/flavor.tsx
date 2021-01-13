@@ -23,10 +23,10 @@ import { iGetFieldValue } from '../../selectors/immutable/field';
 import { nullOnEmptyChange } from '../../utils/utils';
 import { FormPFSelect } from '../../../form/form-pf-select';
 import { Flavor } from '../../../../constants/vm/flavor';
-import { getCPU, getFlavor, getMemory } from '../../../../selectors/vm';
-import { getFlavorText } from '../../../../selectors/vm/flavor-text';
-import { selectVM } from '../../../../selectors/vm-template/basic';
+import { getFlavor } from '../../../../selectors/vm';
 import { getLabelValue } from '../../../../selectors/selectors';
+import { getTemplateFlavorData } from '../../../../selectors/vm-template/advanced';
+import { CUSTOM_FLAVOR } from '../../../../constants';
 
 export const FlavorSelect: React.FC<FlavorProps> = React.memo(
   ({
@@ -59,10 +59,7 @@ export const FlavorSelect: React.FC<FlavorProps> = React.memo(
 
     const flavors = flavorSort(getFlavors(templates, params));
     const flavorDescriptions = templates.reduce((acc, tmp) => {
-      acc[getFlavor(tmp)] = getFlavorText({
-        cpu: getCPU(selectVM(tmp)),
-        memory: getMemory(selectVM(tmp)),
-      });
+      acc[getFlavor(tmp)] = getTemplateFlavorData(tmp);
       return acc;
     }, {});
 
@@ -111,10 +108,11 @@ export const FlavorSelect: React.FC<FlavorProps> = React.memo(
             onSelect={(e, v) => nullOnEmptyChange(onChange, VMSettingsField.FLAVOR)(v.toString())}
           >
             {flavors
+              .filter((f) => f && f !== CUSTOM_FLAVOR)
               .map(Flavor.fromString)
               .sort((a, b) => a.getOrder() - b.getOrder())
               .map((f) => {
-                const flavorDesc = flavorDescriptions?.[f.getValue()];
+                const flavorData = flavorDescriptions?.[f.getValue()];
                 const isDefault =
                   getLabelValue(defaultTemplate, getFlavorLabel(f.getValue())) === 'true';
 
@@ -125,12 +123,26 @@ export const FlavorSelect: React.FC<FlavorProps> = React.memo(
                     description={t(f.getDescriptionKey())}
                   >
                     {isDefault
-                      ? t('kubevirt-plugin~{{flavor}} (default)', { flavor: t(f.toString()) })
-                      : t(f.toString())}
-                    {flavorDesc && f !== Flavor.CUSTOM && ` - ${flavorDesc}`}
+                      ? t(
+                          'kubevirt-plugin~{{flavor}} (default): {{count}} CPU | {{memory}} Memory',
+                          flavorData,
+                        )
+                      : t(
+                          'kubevirt-plugin~{{flavor}}: {{count}} CPU | {{memory}} Memory',
+                          flavorData,
+                        )}
                   </SelectOption>
                 );
-              })}
+              })
+              .concat([
+                <SelectOption
+                  key={CUSTOM_FLAVOR}
+                  value={CUSTOM_FLAVOR}
+                  description={t(Flavor.fromString(CUSTOM_FLAVOR).getDescriptionKey())}
+                >
+                  {t('kubevirt-plugin~Custom')}
+                </SelectOption>,
+              ])}
           </FormPFSelect>
         </FormField>
       </FormFieldRow>
