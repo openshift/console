@@ -18,6 +18,7 @@ import {
   withUserSettingsCompatibility,
   COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
   COLUMN_MANAGEMENT_CONFIGMAP_KEY,
+  useUserSettingsCompatibility,
 } from '@console/shared';
 import { NodeModel, MachineModel } from '@console/internal/models';
 import { NodeKind, referenceForModel } from '@console/internal/module/k8s';
@@ -242,162 +243,153 @@ type NodesRowMapFromStateProps = {
   metrics: NodeMetrics;
 };
 
-type Props = NodesRowMapFromStateProps & NodesTableRowProps;
-
 const NodesTableRow = connect<NodesRowMapFromStateProps, null, NodesTableRowProps>(mapStateToProps)(
-  withUserSettingsCompatibility<
-    Props & WithUserSettingsCompatibilityProps<TableColumnsType>,
-    TableColumnsType
-  >(
-    COLUMN_MANAGEMENT_CONFIGMAP_KEY,
-    COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
-    undefined,
-    true,
-  )(
-    ({
-      obj: node,
-      index,
-      rowKey,
-      style,
-      metrics,
-      userSettingState: tableColumns,
-    }: NodesTableRowProps &
-      NodesRowMapFromStateProps &
-      WithUserSettingsCompatibilityProps<TableColumnsType>) => {
-      const nodeName = getName(node);
-      const nodeUID = getUID(node);
-      const usedMem = metrics?.usedMemory?.[nodeName];
-      const totalMem = metrics?.totalMemory?.[nodeName];
-      const memory =
-        Number.isFinite(usedMem) && Number.isFinite(totalMem)
-          ? `${humanizeBinaryBytes(usedMem).string} / ${humanizeBinaryBytes(totalMem).string}`
-          : '-';
-      const cores = metrics?.cpu?.[nodeName];
-      const totalCores = metrics?.totalCPU?.[nodeName];
-      const cpu =
-        Number.isFinite(cores) && Number.isFinite(totalCores)
-          ? `${formatCores(cores)} / ${totalCores} cores`
-          : '-';
-      const usedStrg = metrics?.usedStorage?.[nodeName];
-      const totalStrg = metrics?.totalStorage?.[nodeName];
-      const storage =
-        Number.isFinite(usedStrg) && Number.isFinite(totalStrg)
-          ? `${humanizeBinaryBytes(usedStrg).string} / ${humanizeBinaryBytes(totalStrg).string}`
-          : '-';
-      const pods = metrics?.pods?.[nodeName] ?? '-';
-      const machine = getNodeMachineNameAndNamespace(node);
-      const instanceType = node.metadata.labels?.['beta.kubernetes.io/instance-type'];
-      const labels = getLabels(node);
-      const zone = node.metadata.labels?.['topology.kubernetes.io/zone'];
-      const columns =
-        tableColumns?.[columnManagementID]?.length > 0
-          ? new Set(tableColumns[columnManagementID])
-          : getSelectedColumns();
-      return (
-        <TableRow id={nodeUID} index={index} trKey={rowKey} style={style}>
-          <TableData className={nodeColumnInfo.name.classes}>
-            <ResourceLink kind={referenceForModel(NodeModel)} name={nodeName} title={nodeUID} />
-          </TableData>
-          <TableData
-            className={nodeColumnInfo.status.classes}
-            columns={columns}
-            columnID={nodeColumnInfo.status.id}
-          >
-            {!node.spec.unschedulable ? (
-              <NodeStatus node={node} showPopovers />
-            ) : (
-              <MarkAsSchedulablePopover node={node} />
-            )}
-          </TableData>
-          <TableData
-            className={nodeColumnInfo.role.classes}
-            columns={columns}
-            columnID={nodeColumnInfo.role.id}
-          >
-            <NodeRoles node={node} />
-          </TableData>
-          <TableData
-            className={nodeColumnInfo.pods.classes}
-            columns={columns}
-            columnID={nodeColumnInfo.pods.id}
-          >
-            {pods}
-          </TableData>
-          <TableData
-            className={nodeColumnInfo.memory.classes}
-            columns={columns}
-            columnID={nodeColumnInfo.memory.id}
-          >
-            {memory}
-          </TableData>
-          <TableData
-            className={nodeColumnInfo.cpu.classes}
-            columns={columns}
-            columnID={nodeColumnInfo.cpu.id}
-          >
-            {cpu}
-          </TableData>
-          <TableData
-            className={nodeColumnInfo.filesystem.classes}
-            columns={columns}
-            columnID={nodeColumnInfo.filesystem.id}
-          >
-            {storage}
-          </TableData>
-          <TableData
-            className={nodeColumnInfo.created.classes}
-            columns={columns}
-            columnID={nodeColumnInfo.created.id}
-          >
-            <Timestamp timestamp={node.metadata.creationTimestamp} />
-          </TableData>
-          <TableData
-            className={nodeColumnInfo.instanceType.classes}
-            columns={columns}
-            columnID={nodeColumnInfo.instanceType.id}
-          >
-            {instanceType || '-'}
-          </TableData>
-          <TableData
-            className={nodeColumnInfo.machine.classes}
-            columns={columns}
-            columnID={nodeColumnInfo.machine.id}
-          >
-            {machine ? (
-              <ResourceLink
-                kind={referenceForModel(MachineModel)}
-                name={machine.name}
-                namespace={machine.namespace}
-              />
-            ) : (
-              '-'
-            )}
-          </TableData>
-          <TableData
-            className={nodeColumnInfo.labels.classes}
-            columns={columns}
-            columnID={nodeColumnInfo.labels.id}
-          >
-            <LabelList kind={kind} labels={labels} />
-          </TableData>
-          <TableData
-            className={nodeColumnInfo.zone.classes}
-            columns={columns}
-            columnID={nodeColumnInfo.zone.id}
-          >
-            {zone}
-          </TableData>
-          <TableData className={Kebab.columnClass}>
-            <ResourceKebab
-              actions={menuActions}
-              kind={referenceForModel(NodeModel)}
-              resource={node}
+  ({
+    obj: node,
+    index,
+    rowKey,
+    style,
+    metrics,
+  }: NodesTableRowProps & NodesRowMapFromStateProps) => {
+    const [tableColumns, , loaded] = useUserSettingsCompatibility(
+      COLUMN_MANAGEMENT_CONFIGMAP_KEY,
+      COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
+      undefined,
+      true,
+    );
+    const nodeName = getName(node);
+    const nodeUID = getUID(node);
+    const usedMem = metrics?.usedMemory?.[nodeName];
+    const totalMem = metrics?.totalMemory?.[nodeName];
+    const memory =
+      Number.isFinite(usedMem) && Number.isFinite(totalMem)
+        ? `${humanizeBinaryBytes(usedMem).string} / ${humanizeBinaryBytes(totalMem).string}`
+        : '-';
+    const cores = metrics?.cpu?.[nodeName];
+    const totalCores = metrics?.totalCPU?.[nodeName];
+    const cpu =
+      Number.isFinite(cores) && Number.isFinite(totalCores)
+        ? `${formatCores(cores)} / ${totalCores} cores`
+        : '-';
+    const usedStrg = metrics?.usedStorage?.[nodeName];
+    const totalStrg = metrics?.totalStorage?.[nodeName];
+    const storage =
+      Number.isFinite(usedStrg) && Number.isFinite(totalStrg)
+        ? `${humanizeBinaryBytes(usedStrg).string} / ${humanizeBinaryBytes(totalStrg).string}`
+        : '-';
+    const pods = metrics?.pods?.[nodeName] ?? '-';
+    const machine = getNodeMachineNameAndNamespace(node);
+    const instanceType = node.metadata.labels?.['beta.kubernetes.io/instance-type'];
+    const labels = getLabels(node);
+    const zone = node.metadata.labels?.['topology.kubernetes.io/zone'];
+    const columns: Set<string> =
+      loaded && tableColumns?.[columnManagementID]?.length > 0
+        ? new Set(tableColumns[columnManagementID])
+        : getSelectedColumns();
+    return (
+      <TableRow id={nodeUID} index={index} trKey={rowKey} style={style}>
+        <TableData className={nodeColumnInfo.name.classes}>
+          <ResourceLink kind={referenceForModel(NodeModel)} name={nodeName} title={nodeUID} />
+        </TableData>
+        <TableData
+          className={nodeColumnInfo.status.classes}
+          columns={columns}
+          columnID={nodeColumnInfo.status.id}
+        >
+          {!node.spec.unschedulable ? (
+            <NodeStatus node={node} showPopovers />
+          ) : (
+            <MarkAsSchedulablePopover node={node} />
+          )}
+        </TableData>
+        <TableData
+          className={nodeColumnInfo.role.classes}
+          columns={columns}
+          columnID={nodeColumnInfo.role.id}
+        >
+          <NodeRoles node={node} />
+        </TableData>
+        <TableData
+          className={nodeColumnInfo.pods.classes}
+          columns={columns}
+          columnID={nodeColumnInfo.pods.id}
+        >
+          {pods}
+        </TableData>
+        <TableData
+          className={nodeColumnInfo.memory.classes}
+          columns={columns}
+          columnID={nodeColumnInfo.memory.id}
+        >
+          {memory}
+        </TableData>
+        <TableData
+          className={nodeColumnInfo.cpu.classes}
+          columns={columns}
+          columnID={nodeColumnInfo.cpu.id}
+        >
+          {cpu}
+        </TableData>
+        <TableData
+          className={nodeColumnInfo.filesystem.classes}
+          columns={columns}
+          columnID={nodeColumnInfo.filesystem.id}
+        >
+          {storage}
+        </TableData>
+        <TableData
+          className={nodeColumnInfo.created.classes}
+          columns={columns}
+          columnID={nodeColumnInfo.created.id}
+        >
+          <Timestamp timestamp={node.metadata.creationTimestamp} />
+        </TableData>
+        <TableData
+          className={nodeColumnInfo.instanceType.classes}
+          columns={columns}
+          columnID={nodeColumnInfo.instanceType.id}
+        >
+          {instanceType || '-'}
+        </TableData>
+        <TableData
+          className={nodeColumnInfo.machine.classes}
+          columns={columns}
+          columnID={nodeColumnInfo.machine.id}
+        >
+          {machine ? (
+            <ResourceLink
+              kind={referenceForModel(MachineModel)}
+              name={machine.name}
+              namespace={machine.namespace}
             />
-          </TableData>
-        </TableRow>
-      );
-    },
-  ),
+          ) : (
+            '-'
+          )}
+        </TableData>
+        <TableData
+          className={nodeColumnInfo.labels.classes}
+          columns={columns}
+          columnID={nodeColumnInfo.labels.id}
+        >
+          <LabelList kind={kind} labels={labels} />
+        </TableData>
+        <TableData
+          className={nodeColumnInfo.zone.classes}
+          columns={columns}
+          columnID={nodeColumnInfo.zone.id}
+        >
+          {zone}
+        </TableData>
+        <TableData className={Kebab.columnClass}>
+          <ResourceKebab
+            actions={menuActions}
+            kind={referenceForModel(NodeModel)}
+            resource={node}
+          />
+        </TableData>
+      </TableRow>
+    );
+  },
 );
 NodesTableRow.displayName = 'NodesTableRow';
 
