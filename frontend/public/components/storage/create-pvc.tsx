@@ -259,7 +259,7 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
           />
         )}
         <p className="help-block" id="label-selector-help">
-          Use label selectors to define how storage is created
+          PersistentVolume resources that match all label selectors will be considered for binding.
         </p>
       </div>
       <label className="control-label" htmlFor="volume-mode">
