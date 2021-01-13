@@ -25,6 +25,7 @@ import { Link } from 'react-router-dom';
 import { FLAGS, YellowExclamationTriangleIcon } from '@console/shared';
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils';
 import CloudShellMastheadButton from '@console/app/src/components/cloud-shell/CloudShellMastheadButton';
+import CloudShellMastheadAction from '@console/app/src/components/cloud-shell/CloudShellMastheadAction';
 import * as UIActions from '../actions/ui';
 import { connectToFlags, flagPending, featureReducerName } from '../reducers/features';
 import { authSvc } from '../module/auth';
@@ -489,6 +490,9 @@ class MastheadToolbarContents_ extends React.Component {
         actions: [
           {
             component: <Link to={this._getImportYAMLPath()}>{t('masthead~Import YAML')}</Link>,
+          },
+          {
+            component: <CloudShellMastheadAction />,
           },
         ],
       });
