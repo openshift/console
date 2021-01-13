@@ -91,6 +91,8 @@ type jsGlobals struct {
 	McMode         bool   `json:mcMode`
 	McModeFile     string `json:mcModeFile`
 	McModeOperator bool   `json:mcModeOperator`
+
+	ReleaseModeFlag bool `json:"releaseModeFlag"`
 }
 
 type Server struct {
@@ -143,6 +145,9 @@ type Server struct {
 	McMode         bool
 	McModeFile     string
 	McModeOperator bool
+
+	// console mode
+	ReleaseModeFlag bool
 }
 
 func (s *Server) authDisabled() bool {
@@ -225,17 +230,18 @@ func (s *Server) HTTPHandler() http.Handler {
 		}
 		authHandlerWithUser = func(hf func(*auth.User, http.ResponseWriter, *http.Request)) http.Handler {
 			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				if s.StaticUser.Username == "hypercloud" {
-					if token := r.Header.Clone().Get("Authorization"); token != "" {
-						temp := strings.Split(token, "Bearer ")
-						if len(temp) > 1 {
-							token = temp[1]
-						} else {
-							token = temp[0]
-						}
-						// plog.Infof("check token is on : %v", token)
-						s.StaticUser.Token = token
+
+				// if s.StaticUser.Username == "hypercloud" {
+				if s.ReleaseModeFlag {
+					token := r.Header.Clone().Get("Authorization")
+					temp := strings.Split(token, "Bearer ")
+					if len(temp) > 1 {
+						token = temp[1]
+					} else {
+						token = temp[0]
 					}
+					// plog.Infof("check token is on : %v", token)
+					s.StaticUser.Token = token
 				}
 
 				hf(s.StaticUser, w, r)
@@ -505,6 +511,8 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		McMode:         s.McMode,
 		McModeFile:     s.McModeFile,
 		McModeOperator: s.McModeOperator,
+
+		ReleaseModeFlag: s.ReleaseModeFlag,
 	}
 
 	// if !s.authDisabled() {

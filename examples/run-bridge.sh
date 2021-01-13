@@ -17,8 +17,8 @@ PROM_PORT='9090'
 GRAFANA_PORT='32430'
 
 ./bin/bridge \
-    --listen=https://$myIP:9001 \
-    --base-address=https://$myIP:9001 \
+    --listen=https://$myIP:9000 \
+    --base-address=https://$myIP:9000 \
     --tls-cert-file=tls/tls.crt \
     --tls-key-file=tls/tls.key \
     --k8s-mode=off-cluster \
@@ -37,6 +37,7 @@ GRAFANA_PORT='32430'
     --webhook-endpoint=https://$k8sIP:31317/api/webhook/ \
     --user-auth=hypercloud \
     --k8s-auth=hypercloud \
+    --release-mode=false \
     # --k8s-auth=bearer-token \
     #--mc-mode=true  \
     #--mc-mode-operator=true \
