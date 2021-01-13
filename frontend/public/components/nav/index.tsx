@@ -6,15 +6,16 @@ import NavHeader from './nav-header';
 type NavigationProps = {
   onNavSelect: NavProps['onSelect'];
   onPerspectiveSelected: () => void;
+  onClusterSelected: () => void;
   isNavOpen: boolean;
 };
 
 export const Navigation: React.FC<NavigationProps> = React.memo(
-  ({ isNavOpen, onNavSelect, onPerspectiveSelected }) => (
+  ({ isNavOpen, onNavSelect, onPerspectiveSelected, onClusterSelected }) => (
     <PageSidebar
       nav={
         <Nav aria-label="Nav" onSelect={onNavSelect} theme="dark">
-          <NavHeader onPerspectiveSelected={onPerspectiveSelected} />
+          <NavHeader onPerspectiveSelected={onPerspectiveSelected} onClusterSelected={onClusterSelected} />
           <NavList>
             <PerspectiveNav />
           </NavList>

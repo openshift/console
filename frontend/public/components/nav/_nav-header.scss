@@ -1,6 +1,9 @@
 .oc-nav-header {
-  border-bottom: 1px solid $color-pf-black;
-  padding: var(--pf-global--spacer--md) var(--pf-global--spacer--sm);
+  padding: 10px 20px 20px 25px;
+
+  .hc-dropdown__title {
+    font-size: 10px;
+  }
 
   @media screen and (min-width: $grid-float-breakpoint) {
     padding-left: var(--pf-global--spacer--md);
@@ -13,10 +16,8 @@
 
   .pf-c-dropdown {
     width: 100%;
-
-    &.pf-m-expanded .pf-c-dropdown__toggle {
-      background-color: var(--pf-global--BackgroundColor--dark-200);
-    }
+    border: 1px solid #ffffff;
+    border-radius: 5px;
   }
   .pf-c-dropdown__menu-item  {
     padding-left: 7px;
@@ -26,7 +27,7 @@
   // For Edge
   .pf-c-dropdown__toggle {
     h1 {
-      font-size: $co-side-nav-font-size;
+      font-size: 13px;
     }
   }
 

@@ -38,6 +38,7 @@ declare interface Window {
     statuspageID: string;
     GOARCH: string;
     GOOS: string;
+    McMode: boolean;
   };
   windowError?: boolean | string;
   __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: Function;
