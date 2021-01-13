@@ -2,10 +2,9 @@ package chartproxy
 
 import (
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"net/http"
-	"net/http/httptest"
+	"os"
 	"reflect"
 	"testing"
 
@@ -23,6 +22,12 @@ type apiError struct {
 	verb     string
 	resource string
 	msg      string
+}
+
+type RoundTripFunc func(req *http.Request) *http.Response
+
+func (f RoundTripFunc) RoundTrip(req *http.Request) (*http.Response, error) {
+	return f(req), nil
 }
 
 func onlyResult(obj interface{}, err error) interface{} {
@@ -262,11 +267,12 @@ func TestHelmRepoGetter_ListErrors(t *testing.T) {
 
 func TestHelmRepo_IndexFile(t *testing.T) {
 	tests := []struct {
-		name      string
-		url       string
-		httpCode  int
-		indexFile string
-		err       bool
+		name              string
+		url               string
+		httpCode          int
+		indexFile         string
+		expectedIndexFile string
+		err               bool
 	}{
 		{
 			name:      "return index file",
@@ -284,6 +290,13 @@ func TestHelmRepo_IndexFile(t *testing.T) {
 			httpCode:  404,
 			err:       true,
 		},
+		{
+			name:              "return resolved index file",
+			indexFile:         "testdata/sampleRepoIndexWithRelativeURLs.yaml",
+			expectedIndexFile: "testdata/sampleRepoIndex.yaml",
+			httpCode:          200,
+			err:               false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -294,18 +307,7 @@ func TestHelmRepo_IndexFile(t *testing.T) {
 			url := tt.url
 
 			if url == "" {
-				ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-					w.Header().Set("Content-Type", "application/yaml")
-					w.WriteHeader(tt.httpCode)
-					if tt.indexFile != "" {
-						content, err := ioutil.ReadFile(tt.indexFile)
-						if err != nil {
-							t.Error(err)
-						}
-						fmt.Fprintln(w, string(content))
-					}
-				}))
-				url = ts.URL
+				url = "https://redhat-developer.github.com/redhat-helm-charts/charts/"
 			}
 			repoCR := unstructured.Unstructured{
 				Object: map[string]interface{}{
@@ -326,12 +328,37 @@ func TestHelmRepo_IndexFile(t *testing.T) {
 			if err != nil {
 				t.Error(err)
 			}
+			if tt.url == "" {
+				repo.httpClient = func() (*http.Client, error) {
+					return &http.Client{
+						Transport: RoundTripFunc(func(req *http.Request) *http.Response {
+							resp := &http.Response{
+								StatusCode: tt.httpCode,
+							}
+							if tt.indexFile != "" {
+								r, err := os.Open(tt.indexFile)
+								if err != nil {
+									t.Error(err)
+								}
+								resp.Body = ioutil.NopCloser(r)
+							}
+							return resp
+						}),
+					}, nil
+				}
+			}
 			index, err := repo.IndexFile()
 			if tt.err && err == nil {
 				t.Errorf("Expected error %v but got %v", tt.err, err)
 			}
+
 			if err == nil && tt.indexFile != "" {
-				expectedIndex, err := helmrepo.LoadIndexFile(tt.indexFile)
+				var expectedIndex *helmrepo.IndexFile
+				if tt.expectedIndexFile != "" {
+					expectedIndex, err = helmrepo.LoadIndexFile(tt.expectedIndexFile)
+				} else {
+					expectedIndex, err = helmrepo.LoadIndexFile(tt.indexFile)
+				}
 				if err != nil {
 					t.Error(err)
 				}
