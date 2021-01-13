@@ -9,15 +9,12 @@ import {
 } from '@console/internal/components/utils';
 import { CatalogSourceListPage, CatalogSourceListPageProps } from '../catalog-source';
 import { OperatorHubKind } from '.';
-import { OperatorHubModel } from '../../models';
 
 const OperatorHubDetails: React.FC<OperatorHubDetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
   return (
     <div className="co-m-pane__body">
-      <SectionHeading
-        text={t('operator-hub-details~{{resource}} details', { resource: OperatorHubModel.label })}
-      />
+      <SectionHeading text={t('olm~OperatorHub details')} />
       <ResourceSummary resource={obj} podSelector="spec.podSelector" showNodeSelector={false} />
     </div>
   );
@@ -34,7 +31,7 @@ export const OperatorHubDetailsPage: React.FC<DetailsPageProps> = (props) => {
     navFactory.editYaml(),
     {
       href: 'sources',
-      name: t('operator-hub-details~Sources'),
+      name: t('olm~Sources'),
       component: Sources,
     },
   ];
