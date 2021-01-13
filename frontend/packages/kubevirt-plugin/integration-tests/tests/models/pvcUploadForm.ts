@@ -9,15 +9,13 @@ import { clickNavLink } from '@console/internal-integration-tests/views/sidenav.
 import {
   inputPVCName,
   inputPVCSize,
-  selectItemFromDropdown,
-  storageclassDropdown,
-  selectAccessMode,
   sizeUnitsDropdown,
 } from '@console/ceph-storage-plugin/integration-tests/views/pvc.view';
 import { click, fillInput } from '@console/shared/src/test-utils/utils';
-import { selectOptionByText } from '../utils/utils';
+import { selectItemFromDropdown, selectOptionByText } from '../utils/utils';
 import * as pvcView from '../../views/pvc.view';
 import { PVCData } from '../types/pvc';
+import { dropDownItem } from '../../views/uiResource.view';
 
 export class UploadForm {
   async openForm() {
@@ -53,24 +51,42 @@ export class UploadForm {
   }
 
   async selectStorageClass(sc: string) {
-    await selectItemFromDropdown(sc, storageclassDropdown);
+    await selectItemFromDropdown(pvcView.uploadStorageClass, dropDownItem(sc));
   }
 
   async fillPVCSize(pvcSize: string, pvcSizeUnits: string) {
     await inputPVCSize.sendKeys(pvcSize);
-    await selectItemFromDropdown(pvcSizeUnits, sizeUnitsDropdown);
+    if (pvcSizeUnits) {
+      await selectItemFromDropdown(pvcSizeUnits, sizeUnitsDropdown);
+    }
   }
 
   async selectAccessMode(accessMode: string) {
-    await click(selectAccessMode(accessMode));
+    await selectItemFromDropdown(pvcView.uploadAccessMode, dropDownItem(accessMode));
+  }
+
+  async selectVolumeMode(volumeMode: string) {
+    await selectItemFromDropdown(pvcView.uploadVolumeMode, dropDownItem(volumeMode));
   }
 
   async fillAll(data: PVCData) {
-    const { image, os, pvcName, pvcSize, pvcSizeUnits, storageClass, accessMode } = data;
+    const {
+      image,
+      os,
+      pvcName,
+      pvcSize,
+      pvcSizeUnits,
+      storageClass,
+      accessMode,
+      volumeMode,
+    } = data;
     await this.selectStorageClass(storageClass);
     await this.fillPVCSize(pvcSize, pvcSizeUnits);
     if (accessMode) {
       await this.selectAccessMode(accessMode);
+    }
+    if (volumeMode) {
+      await this.selectVolumeMode(volumeMode);
     }
     if (os) {
       this.selectGoldenOS(os);
