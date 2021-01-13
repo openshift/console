@@ -96,7 +96,7 @@ const LazyRoute = props => {
     kind = pluralToKind.get(plural)['kind'];
     loader = () => import(`./hypercloud/form/${plural}/create-${kind.toLowerCase()}` /* webpackChunkName: "create-secret" */).then(m => m[`Create${kind}`]);
   } else if (kind === 'CustomResourceDefinition') {
-    if (props.computedMatch.params.plural === 'customresourcedefinitions' || props.computedMatch.params.plural === 'secrets') {
+    if (props.computedMatch.params.plural === 'secrets') {
       loader = () => import('./create-yaml' /* webpackChunkName: "create-yaml" */).then(m => m.CreateYAML);
     }
   }

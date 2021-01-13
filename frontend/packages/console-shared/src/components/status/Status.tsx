@@ -1,27 +1,12 @@
 import * as React from 'react';
-import {
-  ClipboardListIcon,
-  HourglassStartIcon,
-  HourglassHalfIcon,
-  SyncAltIcon,
-  BanIcon,
-  ExclamationTriangleIcon,
-  UnknownIcon,
-} from '@patternfly/react-icons';
+import { ClipboardListIcon, HourglassStartIcon, HourglassHalfIcon, SyncAltIcon, BanIcon, ExclamationTriangleIcon, UnknownIcon } from '@patternfly/react-icons';
 import { DASH } from '../../constants';
 import { YellowExclamationTriangleIcon } from './icons';
 import StatusIconAndText from './StatusIconAndText';
 import { ErrorStatus, InfoStatus, ProgressStatus, SuccessStatus } from './statuses';
 import { StatusComponentProps } from './types';
 
-export const Status: React.FC<StatusProps> = ({
-  status,
-  title,
-  children,
-  iconOnly,
-  noTooltip,
-  className,
-}) => {
+export const Status: React.FC<StatusProps> = ({ status, title, children, iconOnly, noTooltip, className }) => {
   const statusProps = { title: title || status, iconOnly, noTooltip, className };
   switch (status) {
     case 'New':
@@ -43,6 +28,7 @@ export const Status: React.FC<StatusProps> = ({
     case 'InstallReady':
     case 'Replacing':
     case 'Running':
+    case 'Signing':
     case 'Updating':
     case 'Upgrading':
       return <StatusIconAndText {...statusProps} icon={<SyncAltIcon />} />;
@@ -67,6 +53,7 @@ export const Status: React.FC<StatusProps> = ({
     case 'ErrImagePull':
     case 'Error':
     case 'Failed':
+    case 'Fail':
     case 'ImagePullBackOff':
     case 'InstallCheckFailed':
     case 'Lost':
@@ -75,6 +62,7 @@ export const Status: React.FC<StatusProps> = ({
       return <ErrorStatus {...statusProps}>{children}</ErrorStatus>;
 
     case 'Accepted':
+    case 'Success':
     case 'Active':
     case 'Bound':
     case 'Complete':
@@ -98,9 +86,7 @@ export const Status: React.FC<StatusProps> = ({
   }
 };
 
-export const StatusIcon: React.FC<StatusIconProps> = ({ status }) => (
-  <Status status={status} iconOnly />
-);
+export const StatusIcon: React.FC<StatusIconProps> = ({ status }) => <Status status={status} iconOnly />;
 
 type StatusIconProps = {
   status: string;
