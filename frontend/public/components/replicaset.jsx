@@ -46,13 +46,13 @@ const Details = ({ obj: replicaSet }) => {
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={t('workload~ReplicaSet details')} />
+        <SectionHeading text={t('public~ReplicaSet details')} />
         <div className="row">
           <div className="col-md-6">
             <ResourceSummary resource={replicaSet} showPodSelector showNodeSelector showTolerations>
               {revision && (
                 <>
-                  <dt>{t('workload~Deployment revision')}</dt>
+                  <dt>{t('public~Deployment revision')}</dt>
                   <dd>{revision}</dd>
                 </>
               )}
@@ -64,11 +64,11 @@ const Details = ({ obj: replicaSet }) => {
         </div>
       </div>
       <div className="co-m-pane__body">
-        <SectionHeading text={t('workload~Containers')} />
+        <SectionHeading text={t('public~Containers')} />
         <ContainerTable containers={replicaSet.spec.template.spec.containers} />
       </div>
       <div className="co-m-pane__body">
-        <VolumesTable resource={replicaSet} heading={t('workload~Volumes')} />
+        <VolumesTable resource={replicaSet} heading={t('public~Volumes')} />
       </div>
     </>
   );
@@ -124,38 +124,38 @@ const ReplicaSetsList = (props) => {
   const { t } = useTranslation();
   const ReplicaSetTableHeader = () => [
     {
-      title: t('workload~Name'),
+      title: t('public~Name'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: t('workload~Namespace'),
+      title: t('public~Namespace'),
       sortField: 'metadata.namespace',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
       id: 'namespace',
     },
     {
-      title: t('workload~Status'),
+      title: t('public~Status'),
       sortFunc: 'numReplicas',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: t('workload~Labels'),
+      title: t('public~Labels'),
       sortField: 'metadata.labels',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
     },
     {
-      title: t('workload~Owner'),
+      title: t('public~Owner'),
       sortField: 'metadata.ownerReferences[0].name',
       transforms: [sortable],
       props: { className: tableColumnClasses[4] },
     },
     {
-      title: t('workload~Created'),
+      title: t('public~Created'),
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: tableColumnClasses[5] },
@@ -192,7 +192,7 @@ const ReplicaSetsList = (props) => {
             to={`${resourcePath(kind, obj.metadata.name, obj.metadata.namespace)}/pods`}
             title="pods"
           >
-            {t('workload~{{count1}} of {{count2}} pods', {
+            {t('public~{{count1}} of {{count2}} pods', {
               count1: obj.status.replicas || 0,
               count2: obj.spec.replicas,
             })}
@@ -217,7 +217,7 @@ const ReplicaSetsList = (props) => {
   return (
     <Table
       {...props}
-      aria-label={t('workload~ReplicaSets')}
+      aria-label={t('public~ReplicaSets')}
       Header={ReplicaSetTableHeader}
       Row={ReplicaSetTableRow}
       virtualize

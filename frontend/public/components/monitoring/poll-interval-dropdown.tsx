@@ -21,16 +21,16 @@ const IntervalDropdown: React.FC<Props> = ({ interval, setInterval, id }) => {
   );
 
   const intervalOptions = {
-    [OFF_KEY]: t('monitoring~Refresh off'),
-    '15s': t('monitoring~{{count}} second', { count: 15 }),
-    '30s': t('monitoring~{{count}} second', { count: 30 }),
-    '1m': t('monitoring~{{count}} minute', { count: 1 }),
-    '5m': t('monitoring~{{count}} minute', { count: 5 }),
-    '15m': t('monitoring~{{count}} minute', { count: 15 }),
-    '30m': t('monitoring~{{count}} minute', { count: 30 }),
-    '1h': t('monitoring~{{count}} hour', { count: 1 }),
-    '2h': t('monitoring~{{count}} hour', { count: 2 }),
-    '1d': t('monitoring~{{count}} day', { count: 1 }),
+    [OFF_KEY]: t('public~Refresh off'),
+    '15s': t('public~{{count}} second', { count: 15 }),
+    '30s': t('public~{{count}} second', { count: 30 }),
+    '1m': t('public~{{count}} minute', { count: 1 }),
+    '5m': t('public~{{count}} minute', { count: 5 }),
+    '15m': t('public~{{count}} minute', { count: 15 }),
+    '30m': t('public~{{count}} minute', { count: 30 }),
+    '1h': t('public~{{count}} hour', { count: 1 }),
+    '2h': t('public~{{count}} hour', { count: 2 }),
+    '1d': t('public~{{count}} day', { count: 1 }),
   };
 
   return (

@@ -46,7 +46,7 @@ const GlobalConfigPage_: React.FC<GlobalConfigPageProps & GlobalConfigPageExtens
   const { t } = useTranslation();
 
   const oauthMenuItems = _.map(addIDPItems, (label: string, id: string) => ({
-    label: t('oauth~{{label}}', { label }),
+    label: t('public~{{label}}', { label }),
     href: `/settings/idp/${id}`,
   }));
 

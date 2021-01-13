@@ -185,9 +185,7 @@ const PodExec_ = connectToFlags(FLAGS.OPENSHIFT)(
 
       const reconnectAction =
         obj.status.phase === 'Running' ? (
-          <AlertActionLink onClick={() => this.connect_()}>
-            {t('workload~Reconnect')}
-          </AlertActionLink>
+          <AlertActionLink onClick={() => this.connect_()}>{t('public~Reconnect')}</AlertActionLink>
         ) : null;
 
       return (

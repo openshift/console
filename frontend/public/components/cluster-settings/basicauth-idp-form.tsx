@@ -119,7 +119,7 @@ class AddBasicAuthPageWithTranslation extends PromiseComponent<
     if (_.isEmpty(this.state.keyFileContent) !== _.isEmpty(this.state.certFileContent)) {
       this.setState({
         errorMessage: this.props.t(
-          'basicauth-idp-form~Values for certificate and key should both be either excluded or provided.',
+          'public~Values for certificate and key should both be either excluded or provided.',
         ),
       });
       return;
@@ -170,7 +170,7 @@ class AddBasicAuthPageWithTranslation extends PromiseComponent<
   render() {
     const { name, url, caFileContent, certFileContent, keyFileContent } = this.state;
     const { t } = this.props;
-    const title = t('basicauth-idp-form~Add Identity Provider: Basic Authentication');
+    const title = t('public~Add Identity Provider: Basic Authentication');
     return (
       <div className="co-m-pane__body">
         <Helmet>
@@ -180,13 +180,13 @@ class AddBasicAuthPageWithTranslation extends PromiseComponent<
           <h1 className="co-m-pane__heading">{title}</h1>
           <p className="co-m-pane__explanation">
             {t(
-              'basicauth-idp-form~Basic authentication is a generic backend integration mechanism that allows users to authenticate with credentials validated against a remote identity provider.',
+              'public~Basic authentication is a generic backend integration mechanism that allows users to authenticate with credentials validated against a remote identity provider.',
             )}
           </p>
           <IDPNameInput value={name} onChange={this.nameChanged} />
           <div className="form-group">
             <label className="control-label co-required" htmlFor="url">
-              {t('basicauth-idp-form~URL')}
+              {t('public~URL')}
             </label>
             <input
               className="pf-c-form-control"
@@ -198,7 +198,7 @@ class AddBasicAuthPageWithTranslation extends PromiseComponent<
               required
             />
             <p className="help-block" id="idp-url-help">
-              {t('basicauth-idp-form~The remote URL to connect to.')}
+              {t('public~The remote URL to connect to.')}
             </p>
           </div>
           <IDPCAFileInput value={caFileContent} onChange={this.caFileChanged} />
@@ -207,10 +207,10 @@ class AddBasicAuthPageWithTranslation extends PromiseComponent<
               onChange={this.certFileChanged}
               inputFileData={certFileContent}
               id="cert-file-input"
-              label={t('basicauth-idp-form~Certificate')}
+              label={t('public~Certificate')}
               hideContents
               inputFieldHelpText={t(
-                'basicauth-idp-form~PEM-encoded TLS client certificate to present when connecting to the server.',
+                'public~PEM-encoded TLS client certificate to present when connecting to the server.',
               )}
             />
           </div>
@@ -219,10 +219,10 @@ class AddBasicAuthPageWithTranslation extends PromiseComponent<
               onChange={this.keyFileChanged}
               inputFileData={keyFileContent}
               id="key-file-input"
-              label={t('basicauth-idp-form~Key')}
+              label={t('public~Key')}
               hideContents
               inputFieldHelpText={t(
-                'basicauth-idp-form~PEM-encoded TLS private key for the client certificate. Required if certificate is specified.',
+                'public~PEM-encoded TLS private key for the client certificate. Required if certificate is specified.',
               )}
             />
           </div>

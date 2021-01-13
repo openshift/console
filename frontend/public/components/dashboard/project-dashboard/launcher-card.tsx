@@ -15,7 +15,7 @@ export const LauncherCard: React.FC = () => {
   return (
     <DashboardCard data-test-id="launcher-card">
       <DashboardCardHeader>
-        <DashboardCardTitle>{t('namespace~Launcher')}</DashboardCardTitle>
+        <DashboardCardTitle>{t('public~Launcher')}</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody>
         <LauncherBody>

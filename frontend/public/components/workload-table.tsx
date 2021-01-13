@@ -60,7 +60,7 @@ export const WorkloadTableRow: React.FC<WorkloadTableRowProps> = ({
           to={`${resourcePath(kind, obj.metadata.name, obj.metadata.namespace)}/pods`}
           title="pods"
         >
-          {t('workload~{{statusReplicas}} of {{specReplicas}} pods', {
+          {t('public~{{statusReplicas}} of {{specReplicas}} pods', {
             statusReplicas: obj.status.replicas || 0,
             specReplicas: obj.spec.replicas,
           })}
@@ -92,32 +92,32 @@ type WorkloadTableRowProps = {
 export const WorkloadTableHeader = () => {
   return [
     {
-      title: i18next.t('workload~Name'),
+      title: i18next.t('public~Name'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: i18next.t('workload~Namespace'),
+      title: i18next.t('public~Namespace'),
       sortField: 'metadata.namespace',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
       id: 'namespace',
     },
     {
-      title: i18next.t('workload~Status'),
+      title: i18next.t('public~Status'),
       sortFunc: 'numReplicas',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: i18next.t('workload~Labels'),
+      title: i18next.t('public~Labels'),
       sortField: 'metadata.labels',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
     },
     {
-      title: i18next.t('workload~Pod selector'),
+      title: i18next.t('public~Pod selector'),
       sortField: 'spec.selector',
       transforms: [sortable],
       props: { className: tableColumnClasses[4] },

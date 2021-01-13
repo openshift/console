@@ -124,7 +124,7 @@ export const InventoryCard = () => {
   return (
     <DashboardCard data-test-id="inventory-card">
       <DashboardCardHeader>
-        <DashboardCardTitle>{t('namespace~Inventory')}</DashboardCardTitle>
+        <DashboardCardTitle>{t('public~Inventory')}</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody>
         <ProjectInventoryItem projectName={projectName} model={DeploymentModel} />

@@ -100,7 +100,7 @@ const VariableDropdown: React.FC<VariableDropdownProps> = ({
               id={`${id}-dropdown`}
               isDisabled={true}
             >
-              <RedExclamationCircleIcon /> {t('monitoring~Error loading options')}
+              <RedExclamationCircleIcon /> {t('public~Error loading options')}
             </DropdownToggle>
           }
         />
@@ -234,24 +234,24 @@ const TimespanDropdown_: React.FC<TimespanDropdownProps> = ({ timespan, setTimes
   ]);
 
   const timespanOptions = {
-    '5m': t('monitoring~{{count}} minute', { count: 5 }),
-    '15m': t('monitoring~{{count}} minute', { count: 15 }),
-    '30m': t('monitoring~{{count}} minute', { count: 30 }),
-    '1h': t('monitoring~{{count}} hour', { count: 1 }),
-    '2h': t('monitoring~{{count}} hour', { count: 2 }),
-    '6h': t('monitoring~{{count}} hour', { count: 6 }),
-    '12h': t('monitoring~{{count}} hour', { count: 12 }),
-    '1d': t('monitoring~{{count}} day', { count: 1 }),
-    '2d': t('monitoring~{{count}} day', { count: 2 }),
-    '1w': t('monitoring~{{count}} week', { count: 1 }),
-    '2w': t('monitoring~{{count}} week', { count: 2 }),
+    '5m': t('public~{{count}} minute', { count: 5 }),
+    '15m': t('public~{{count}} minute', { count: 15 }),
+    '30m': t('public~{{count}} minute', { count: 30 }),
+    '1h': t('public~{{count}} hour', { count: 1 }),
+    '2h': t('public~{{count}} hour', { count: 2 }),
+    '6h': t('public~{{count}} hour', { count: 6 }),
+    '12h': t('public~{{count}} hour', { count: 12 }),
+    '1d': t('public~{{count}} day', { count: 1 }),
+    '2d': t('public~{{count}} day', { count: 2 }),
+    '1w': t('public~{{count}} week', { count: 1 }),
+    '2w': t('public~{{count}} week', { count: 2 }),
   };
 
   return (
     <VariableDropdown
       id="monitoring-time-range-dropdown"
       items={timespanOptions}
-      label={t('monitoring~Time range')}
+      label={t('public~Time range')}
       onChange={onChange}
       selectedKey={formatPrometheusDuration(timespan)}
     />
@@ -273,7 +273,7 @@ const PollIntervalDropdown_ = ({ interval, setInterval }) => {
   return (
     <div className="form-group monitoring-dashboards__dropdown-wrap">
       <label htmlFor="refresh-interval-dropdown" className="monitoring-dashboards__dropdown-title">
-        {t('monitoring~Refresh interval')}
+        {t('public~Refresh interval')}
       </label>
       <IntervalDropdown
         interval={interval}
@@ -469,7 +469,7 @@ const MonitoringDashboardsPage_: React.FC<MonitoringDashboardsPageProps> = ({
             };
           } catch (e) {
             setError(
-              t('monitoring~Could not parse JSON data for dashboard "{{dashboard}}"', {
+              t('public~Could not parse JSON data for dashboard "{{dashboard}}"', {
                 dashboard: item.metadata.name,
               }),
             );
@@ -536,13 +536,13 @@ const MonitoringDashboardsPage_: React.FC<MonitoringDashboardsPageProps> = ({
   return (
     <>
       <Helmet>
-        <title>{t('monitoring~Metrics dashboards')}</title>
+        <title>{t('public~Metrics dashboards')}</title>
       </Helmet>
       <div className="co-m-nav-title co-m-nav-title--detail">
         <div className="monitoring-dashboards__header">
           <h1 className="co-m-pane__heading">
             <span>
-              {t('monitoring~Dashboards')} <GrafanaLink />
+              {t('public~Dashboards')} <GrafanaLink />
             </span>
           </h1>
           <div className="monitoring-dashboards__options">
@@ -555,7 +555,7 @@ const MonitoringDashboardsPage_: React.FC<MonitoringDashboardsPageProps> = ({
             <VariableDropdown
               id="monitoring-board-dropdown"
               items={boardItems}
-              label={t('monitoring~Dashboard')}
+              label={t('public~Dashboard')}
               onChange={changeBoard}
               selectedKey={board}
             />

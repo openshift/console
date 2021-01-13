@@ -60,14 +60,12 @@ export const AlertRoutingModal: React.FC<AlertRoutingModalProps> = ({
 
   return (
     <form onSubmit={submit} name="form" className="modal-content">
-      <ModalTitle className="modal-header">
-        {t('alert-routing-modal~Edit routing configuration')}
-      </ModalTitle>
+      <ModalTitle className="modal-header">{t('public~Edit routing configuration')}</ModalTitle>
       <ModalBody>
         <div className="row co-m-form-row">
           <div className="col-sm-12">
             <label htmlFor="group-by" className="control-label">
-              {t('alert-routing-modal~Group by')}
+              {t('public~Group by')}
             </label>
           </div>
           <div className="co-m-form-col col-sm-12">
@@ -89,7 +87,7 @@ export const AlertRoutingModal: React.FC<AlertRoutingModalProps> = ({
         <div className="row co-m-form-row">
           <div className="col-sm-12">
             <label htmlFor="group-wait" className="control-label">
-              {t('alert-routing-modal~Group wait')}
+              {t('public~Group wait')}
             </label>
           </div>
           <div className="co-m-form-col col-sm-12">
@@ -111,7 +109,7 @@ export const AlertRoutingModal: React.FC<AlertRoutingModalProps> = ({
         <div className="row co-m-form-row">
           <div className="col-sm-12">
             <label htmlFor="group-interval" className="control-label">
-              {t('alert-routing-modal~Group interval')}
+              {t('public~Group interval')}
             </label>
           </div>
           <div className="co-m-form-col col-sm-12">
@@ -133,7 +131,7 @@ export const AlertRoutingModal: React.FC<AlertRoutingModalProps> = ({
         <div className="row co-m-form-row">
           <div className="col-sm-12">
             <label htmlFor="repeat-interval" className="control-label">
-              {t('alert-routing-modal~Repeat interval')}
+              {t('public~Repeat interval')}
             </label>
           </div>
           <div className="co-m-form-col col-sm-12">

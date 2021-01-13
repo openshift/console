@@ -141,8 +141,8 @@ export const ActivityCard: React.FC = () => {
   return (
     <DashboardCard gradient data-test-id="activity-card">
       <DashboardCardHeader>
-        <DashboardCardTitle>{t('namespace~Activity')}</DashboardCardTitle>
-        <DashboardCardLink to={viewEvents}>{t('namespace~View events')}</DashboardCardLink>
+        <DashboardCardTitle>{t('public~Activity')}</DashboardCardTitle>
+        <DashboardCardLink to={viewEvents}>{t('public~View events')}</DashboardCardLink>
       </DashboardCardHeader>
       <DashboardCardBody>
         <ActivityBody className="co-project-dashboard__activity-body">

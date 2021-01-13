@@ -26,38 +26,38 @@ export const DetailsCard: React.FC = () => {
   return (
     <DashboardCard data-test-id="details-card">
       <DashboardCardHeader>
-        <DashboardCardTitle>{t('namespace~Details')}</DashboardCardTitle>
-        <DashboardCardLink to={detailsLink}>{t('namespace~View all')}</DashboardCardLink>
+        <DashboardCardTitle>{t('public~Details')}</DashboardCardTitle>
+        <DashboardCardLink to={detailsLink}>{t('public~View all')}</DashboardCardLink>
       </DashboardCardHeader>
       <DashboardCardBody>
         <DetailsBody>
-          <DetailItem isLoading={!obj} title={t('namespace~Name')}>
+          <DetailItem isLoading={!obj} title={t('public~Name')}>
             {getName(obj)}
           </DetailItem>
-          <DetailItem isLoading={!obj} title={t('namespace~Requester')}>
-            {getRequester(obj) || <span className="text-muted">{t('namespace~No requester')}</span>}
+          <DetailItem isLoading={!obj} title={t('public~Requester')}>
+            {getRequester(obj) || <span className="text-muted">{t('public~No requester')}</span>}
           </DetailItem>
-          <DetailItem isLoading={!obj} title={t('namespace~Labels')}>
+          <DetailItem isLoading={!obj} title={t('public~Labels')}>
             <div className="co-project-dashboard__details-labels">
               <LabelList kind={ProjectModel.kind} labels={firstThreelabels} />
               {keys.length > 3 && (
-                <DashboardCardLink to={detailsLink}>{t('namespace~View all')}</DashboardCardLink>
+                <DashboardCardLink to={detailsLink}>{t('public~View all')}</DashboardCardLink>
               )}
             </div>
           </DetailItem>
-          <DetailItem isLoading={!obj} title={t('namespace~Description')}>
+          <DetailItem isLoading={!obj} title={t('public~Description')}>
             <span
               className={cx({
                 'text-muted': !description,
                 'co-project-dashboard-details-card__description': description,
               })}
             >
-              {description || t('namespace~No description')}
+              {description || t('public~No description')}
             </span>
           </DetailItem>
           {serviceMeshEnabled && (
-            <DetailItem isLoading={!obj} title={t('namespace~Service mesh')}>
-              <GreenCheckCircleIcon /> {t('namespace~Service mesh enabled')}
+            <DetailItem isLoading={!obj} title={t('public~Service mesh')}>
+              <GreenCheckCircleIcon /> {t('public~Service mesh enabled')}
             </DetailItem>
           )}
         </DetailsBody>

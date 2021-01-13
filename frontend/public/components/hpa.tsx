@@ -67,11 +67,11 @@ const MetricsTable: React.FC<MetricsTableProps> = ({ obj: hpa }) => {
   const resourceRow = (metric, current, key) => {
     const { resource } = metric;
     const targetUtilization = resource.target.averageUtilization;
-    const resourceLabel = t('workload~resource {{name}}', { name: resource.name });
+    const resourceLabel = t('public~resource {{name}}', { name: resource.name });
     const type = targetUtilization ? (
       <>
         {resourceLabel}&nbsp;
-        <span className="small text-muted">{t('workload~(as a percentage of request)')}</span>
+        <span className="small text-muted">{t('public~(as a percentage of request)')}</span>
       </>
     ) : (
       resourceLabel
@@ -86,7 +86,7 @@ const MetricsTable: React.FC<MetricsTableProps> = ({ obj: hpa }) => {
 
   const podRow = (metric, current, key) => {
     const { pods } = metric;
-    const type = t('workload~{{name}} on pods', { name: pods.metric.name });
+    const type = t('public~{{name}} on pods', { name: pods.metric.name });
     const currentValue = current?.pods?.current.averageValue;
     const targetValue = pods.target.averageValue;
 
@@ -97,7 +97,7 @@ const MetricsTable: React.FC<MetricsTableProps> = ({ obj: hpa }) => {
     const { object } = metric;
     const type = (
       <>
-        {object.metric.name} {t('workload~on')}
+        {object.metric.name} {t('public~on')}
         <ResourceLink
           kind={scaleTarget.kind}
           name={scaleTarget.name}
@@ -114,12 +114,12 @@ const MetricsTable: React.FC<MetricsTableProps> = ({ obj: hpa }) => {
 
   return (
     <>
-      <SectionHeading text={t('workload~Metrics')} />
+      <SectionHeading text={t('public~Metrics')} />
       <div className="co-m-table-grid co-m-table-grid--bordered">
         <div className="row co-m-table-grid__head">
-          <div className="col-xs-6">{t('workload~Type')}</div>
-          <div className="col-xs-3">{t('workload~Current')}</div>
-          <div className="col-xs-3">{t('workload~Target')}</div>
+          <div className="col-xs-6">{t('public~Type')}</div>
+          <div className="col-xs-3">{t('public~Current')}</div>
+          <div className="col-xs-3">{t('public~Target')}</div>
         </div>
         <div className="co-m-table-grid__body">
           {hpa.spec.metrics.map((metric, i) => {
@@ -145,7 +145,7 @@ const MetricsTable: React.FC<MetricsTableProps> = ({ obj: hpa }) => {
                   <div key={i} className="row">
                     <div className="col-xs-12">
                       {metric.type}{' '}
-                      <span className="small text-muted">{t('workload~(unrecognized type)')}</span>
+                      <span className="small text-muted">{t('public~(unrecognized type)')}</span>
                     </div>
                   </div>
                 );
@@ -164,14 +164,14 @@ export const HorizontalPodAutoscalersDetails: React.FC<HorizontalPodAutoscalersD
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={t('workload~HorizontalPodAutoscaler details')} />
+        <SectionHeading text={t('public~HorizontalPodAutoscaler details')} />
         <div className="row">
           <div className="col-sm-6">
             <ResourceSummary resource={hpa} />
           </div>
           <div className="col-sm-6">
             <dl className="co-m-pane__details">
-              <DetailsItem label={t('workload~Scale target')} obj={hpa} path="spec.scaleTargetRef">
+              <DetailsItem label={t('public~Scale target')} obj={hpa} path="spec.scaleTargetRef">
                 <ResourceLink
                   kind={hpa.spec.scaleTargetRef.kind}
                   name={hpa.spec.scaleTargetRef.name}
@@ -179,22 +179,22 @@ export const HorizontalPodAutoscalersDetails: React.FC<HorizontalPodAutoscalersD
                   title={hpa.spec.scaleTargetRef.name}
                 />
               </DetailsItem>
-              <DetailsItem label={t('workload~Min replicas')} obj={hpa} path="spec.minReplicas" />
-              <DetailsItem label={t('workload~Max replicas')} obj={hpa} path="spec.maxReplicas" />
+              <DetailsItem label={t('public~Min replicas')} obj={hpa} path="spec.minReplicas" />
+              <DetailsItem label={t('public~Max replicas')} obj={hpa} path="spec.maxReplicas" />
               <DetailsItem
-                label={t('workload~Last scale time')}
+                label={t('public~Last scale time')}
                 obj={hpa}
                 path="status.lastScaleTime"
               >
                 <Timestamp timestamp={hpa.status.lastScaleTime} />
               </DetailsItem>
               <DetailsItem
-                label={t('workload~Current replicas')}
+                label={t('public~Current replicas')}
                 obj={hpa}
                 path="status.currentReplicas"
               />
               <DetailsItem
-                label={t('workload~Desired replicas')}
+                label={t('public~Desired replicas')}
                 obj={hpa}
                 path="status.desiredReplicas"
               />
@@ -206,7 +206,7 @@ export const HorizontalPodAutoscalersDetails: React.FC<HorizontalPodAutoscalersD
         <MetricsTable obj={hpa} />
       </div>
       <div className="co-m-pane__body">
-        <SectionHeading text={t('workload~Conditions')} />
+        <SectionHeading text={t('public~Conditions')} />
         <Conditions conditions={hpa.status.conditions} />
       </div>
     </>
@@ -296,38 +296,38 @@ const HorizontalPodAutoscalersList: React.FC = (props) => {
   const { t } = useTranslation();
   const HorizontalPodAutoscalersTableHeader = () => [
     {
-      title: t('workload~Name'),
+      title: t('public~Name'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: t('workload~Namespace'),
+      title: t('public~Namespace'),
       sortField: 'metadata.namespace',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
       id: 'namespace',
     },
     {
-      title: t('workload~Labels'),
+      title: t('public~Labels'),
       sortField: 'metadata.labels',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: t('workload~Scale target'),
+      title: t('public~Scale target'),
       sortField: 'spec.scaleTargetRef.name',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
     },
     {
-      title: t('workload~Min pods'),
+      title: t('public~Min pods'),
       sortField: 'spec.minReplicas',
       transforms: [sortable],
       props: { className: tableColumnClasses[4] },
     },
     {
-      title: t('workload~Max pods'),
+      title: t('public~Max pods'),
       sortField: 'spec.maxReplicas',
       transforms: [sortable],
       props: { className: tableColumnClasses[5] },

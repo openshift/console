@@ -40,7 +40,7 @@ export const StatusCard: React.FC = () => {
   return (
     <DashboardCard gradient data-test-id="status-card">
       <DashboardCardHeader>
-        <DashboardCardTitle>{t('namespace~Status')}</DashboardCardTitle>
+        <DashboardCardTitle>{t('public~Status')}</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody isLoading={!obj}>
         <HealthBody>

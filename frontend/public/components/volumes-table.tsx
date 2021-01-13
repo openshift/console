@@ -29,8 +29,8 @@ import { connectToModel } from '../kinds';
 
 const removeVolume = (kind: K8sKind, obj: K8sResourceKind, volume: RowVolumeData): KebabOption => {
   return {
-    // t('workload~Remove volume')
-    labelKey: 'workload~Remove volume',
+    // t('public~Remove volume')
+    labelKey: 'public~Remove volume',
     callback: () =>
       removeVolumeModal({
         kind,
@@ -171,35 +171,35 @@ export const VolumesTable = (props) => {
   const pod: PodTemplate = getPodTemplate(resource);
   const VolumesTableHeader = () => [
     {
-      title: t('workload~Name'),
+      title: t('public~Name'),
       sortField: 'name',
       transforms: [sortable],
       props: { className: volumeRowColumnClasses[0] },
     },
     {
-      title: t('workload~Mount path'),
+      title: t('public~Mount path'),
       sortField: 'mountPath',
       transforms: [sortable],
       props: { className: volumeRowColumnClasses[1] },
     },
     {
-      title: t('workload~SubPath'),
+      title: t('public~SubPath'),
       sortField: 'subPath',
       transforms: [sortable],
       props: { className: volumeRowColumnClasses[2] },
     },
     {
-      title: t('workload~Type'),
+      title: t('public~Type'),
       props: { className: volumeRowColumnClasses[3] },
     },
     {
-      title: t('workload~Permissions'),
+      title: t('public~Permissions'),
       sortField: 'readOnly',
       transforms: [sortable],
       props: { className: volumeRowColumnClasses[4] },
     },
     {
-      title: t('workload~Utilized by'),
+      title: t('public~Utilized by'),
       sortField: 'container',
       transforms: [sortable],
       props: { className: volumeRowColumnClasses[5] },
@@ -214,11 +214,11 @@ export const VolumesTable = (props) => {
     <>
       {props.heading && <SectionHeading text={props.heading} />}
       {_.isEmpty(pod.spec.volumes) && !anyContainerWithVolumeMounts(pod.spec.containers) ? (
-        <EmptyBox label={t('workload~Volumes')} />
+        <EmptyBox label={t('public~Volumes')} />
       ) : (
         <Table
           {...tableProps}
-          aria-label={t('workload~Volumes')}
+          aria-label={t('public~Volumes')}
           loaded={true}
           label={props.heading}
           data={data}

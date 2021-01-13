@@ -72,7 +72,7 @@ const AlertmanagerYAMLEditor: React.FC<AlertmanagerYAMLEditorProps> = ({ obj }) 
       <div className="co-m-nav-title">
         <p className="help-block">
           {t(
-            'alert-manager-yaml-editor~Update this YAML to configure Routes, Receivers, Groupings and other Alertmanager settings.',
+            'public~Update this YAML to configure Routes, Receivers, Groupings and other Alertmanager settings.',
           )}
         </p>
       </div>
@@ -99,7 +99,7 @@ export const AlertmanagerYAMLEditorWrapper: React.FC<AlertmanagerYAMLEditorWrapp
     return (
       <>
         <Helmet>
-          <title>{t('alert-manager-yaml-editor~Alerting')}</title>
+          <title>{t('public~Alerting')}</title>
         </Helmet>
         <StatusBox {...obj}>
           <AlertmanagerYAMLEditor {...props} obj={obj.data} />

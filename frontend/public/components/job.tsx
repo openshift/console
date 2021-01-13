@@ -26,8 +26,8 @@ import { ResourceEventStream } from './events';
 import { JobModel } from '../models';
 
 const ModifyJobParallelism: KebabAction = (kind: K8sKind, obj: JobKind) => ({
-  // t('workload~Edit parallelism')
-  labelKey: 'workload~Edit parallelism',
+  // t('public~Edit parallelism')
+  labelKey: 'public~Edit parallelism',
   callback: () =>
     configureJobParallelismModal({
       resourceKind: kind,
@@ -103,58 +103,58 @@ export const JobDetails: React.FC<JobsDetailsProps> = ({ obj: job }) => {
       <div className="co-m-pane__body">
         <div className="row">
           <div className="col-md-6">
-            <SectionHeading text={t('workload~Job details')} />
+            <SectionHeading text={t('public~Job details')} />
             <ResourceSummary resource={job} showPodSelector>
               <DetailsItem
-                label={t('workload~Desired completions')}
+                label={t('public~Desired completions')}
                 obj={job}
                 path="spec.completions"
               />
-              <DetailsItem label={t('workload~Parallelism')} obj={job} path="spec.parallelism" />
+              <DetailsItem label={t('public~Parallelism')} obj={job} path="spec.parallelism" />
               <DetailsItem
-                label={t('workload~Active deadline seconds')}
+                label={t('public~Active deadline seconds')}
                 obj={job}
                 path="spec.activeDeadlineSeconds"
               >
                 {job.spec.activeDeadlineSeconds
-                  ? t('workload~{{count}} second', { count: job.spec.activeDeadlineSeconds })
-                  : t('workload~Not configured')}
+                  ? t('public~{{count}} second', { count: job.spec.activeDeadlineSeconds })
+                  : t('public~Not configured')}
               </DetailsItem>
             </ResourceSummary>
           </div>
           <div className="col-md-6">
-            <SectionHeading text={t('workload~Job status')} />
+            <SectionHeading text={t('public~Job status')} />
             <dl className="co-m-pane__details">
-              <dt>{t('workload~Status')}</dt>
+              <dt>{t('public~Status')}</dt>
               <dd>
                 <Status
                   status={job?.status ? job?.status?.conditions?.[0]?.type || 'In progress' : null}
                 />
               </dd>
-              <DetailsItem label={t('workload~Start time')} obj={job} path="status.startTime">
+              <DetailsItem label={t('public~Start time')} obj={job} path="status.startTime">
                 <Timestamp timestamp={job.status.startTime} />
               </DetailsItem>
               <DetailsItem
-                label={t('workload~Completion time')}
+                label={t('public~Completion time')}
                 obj={job}
                 path="status.completionTime"
               >
                 <Timestamp timestamp={job.status.completionTime} />
               </DetailsItem>
               <DetailsItem
-                label={t('workload~Succeeded pods')}
+                label={t('public~Succeeded pods')}
                 obj={job}
                 path="status.succeeded"
                 defaultValue="0"
               />
               <DetailsItem
-                label={t('workload~Active pods')}
+                label={t('public~Active pods')}
                 obj={job}
                 path="status.active"
                 defaultValue="0"
               />
               <DetailsItem
-                label={t('workload~Failed pods')}
+                label={t('public~Failed pods')}
                 obj={job}
                 path="status.failed"
                 defaultValue="0"
@@ -164,11 +164,11 @@ export const JobDetails: React.FC<JobsDetailsProps> = ({ obj: job }) => {
         </div>
       </div>
       <div className="co-m-pane__body">
-        <SectionHeading text={t('workload~Containers')} />
+        <SectionHeading text={t('public~Containers')} />
         <ContainerTable containers={job.spec.template.spec.containers} />
       </div>
       <div className="co-m-pane__body">
-        <SectionHeading text={t('workload~Conditions')} />
+        <SectionHeading text={t('public~Conditions')} />
         <Conditions conditions={job.status.conditions} />
       </div>
     </>
@@ -197,32 +197,32 @@ const JobsList: React.FC = (props) => {
   const { t } = useTranslation();
   const JobTableHeader = () => [
     {
-      title: t('workload~Name'),
+      title: t('public~Name'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: t('workload~Namespace'),
+      title: t('public~Namespace'),
       sortField: 'metadata.namespace',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
       id: 'namespace',
     },
     {
-      title: t('workload~Labels'),
+      title: t('public~Labels'),
       sortField: 'metadata.labels',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: t('workload~Completions'),
+      title: t('public~Completions'),
       sortFunc: 'jobCompletions',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
     },
     {
-      title: t('workload~Type'),
+      title: t('public~Type'),
       sortFunc: 'jobType',
       transforms: [sortable],
       props: { className: tableColumnClasses[4] },

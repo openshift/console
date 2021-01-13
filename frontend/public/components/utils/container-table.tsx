@@ -27,10 +27,10 @@ export const ContainerTable: React.FC<ContainerTableProps> = ({ containers }) =>
   return (
     <div className="co-m-table-grid co-m-table-grid--bordered">
       <div className="row co-m-table-grid__head">
-        <div className="col-xs-5 col-sm-4 col-md-3">{t('workload~Name')}</div>
-        <div className="col-xs-7 col-sm-5">{t('workload~Image')}</div>
-        <div className="col-sm-3 col-md-2 hidden-xs">{t('workload~Resource limits')}</div>
-        <div className="col-md-2 hidden-xs hidden-sm">{t('workload~Ports')}</div>
+        <div className="col-xs-5 col-sm-4 col-md-3">{t('public~Name')}</div>
+        <div className="col-xs-7 col-sm-5">{t('public~Image')}</div>
+        <div className="col-sm-3 col-md-2 hidden-xs">{t('public~Resource limits')}</div>
+        <div className="col-md-2 hidden-xs hidden-sm">{t('public~Ports')}</div>
       </div>
       <div className="co-m-table-grid__body">
         {_.map(containers, (c, i) => (

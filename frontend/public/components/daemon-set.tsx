@@ -52,12 +52,12 @@ export const DaemonSetDetailsList: React.FC<DaemonSetDetailsListProps> = ({ ds }
   return (
     <dl className="co-m-pane__details">
       <DetailsItem
-        label={t('workload~Current count')}
+        label={t('public~Current count')}
         obj={ds}
         path="status.currentNumberScheduled"
       />
       <DetailsItem
-        label={t('workload~Desired count')}
+        label={t('public~Desired count')}
         obj={ds}
         path="status.desiredNumberScheduled"
       />
@@ -71,7 +71,7 @@ const DaemonSetDetails: React.FC<DaemonSetDetailsProps> = ({ obj: daemonset }) =
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={t('workload~DaemonSet details')} />
+        <SectionHeading text={t('public~DaemonSet details')} />
         {loaded ? (
           <PodRing
             key={daemonset.metadata.uid}
@@ -98,11 +98,11 @@ const DaemonSetDetails: React.FC<DaemonSetDetailsProps> = ({ obj: daemonset }) =
         </div>
       </div>
       <div className="co-m-pane__body">
-        <SectionHeading text={t('workload~Containers')} />
+        <SectionHeading text={t('public~Containers')} />
         <ContainerTable containers={daemonset.spec.template.spec.containers} />
       </div>
       <div className="co-m-pane__body">
-        <VolumesTable resource={daemonset} heading={t('workload~Volumes')} />
+        <VolumesTable resource={daemonset} heading={t('public~Volumes')} />
       </div>
     </>
   );
@@ -129,32 +129,32 @@ export const DaemonSets: React.FC = (props) => {
   const { t } = useTranslation();
   const DaemonSetTableHeader = () => [
     {
-      title: t('workload~Name'),
+      title: t('public~Name'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: t('workload~Namespace'),
+      title: t('public~Namespace'),
       sortField: 'metadata.namespace',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
       id: 'namespace',
     },
     {
-      title: t('workload~Status'),
+      title: t('public~Status'),
       sortFunc: 'daemonsetNumScheduled',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: t('workload~Labels'),
+      title: t('public~Labels'),
       sortField: 'metadata.labels',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
     },
     {
-      title: t('workload~Pod selector'),
+      title: t('public~Pod selector'),
       sortField: 'spec.selector',
       transforms: [sortable],
       props: { className: tableColumnClasses[4] },
@@ -196,7 +196,7 @@ export const DaemonSets: React.FC = (props) => {
             to={`/k8s/ns/${daemonset.metadata.namespace}/daemonsets/${daemonset.metadata.name}/pods`}
             title="pods"
           >
-            {t('workload~{{currentNumber}} of {{desiredNumber}} pods', {
+            {t('public~{{currentNumber}} of {{desiredNumber}} pods', {
               currentNumber: daemonset.status.currentNumberScheduled,
               desiredNumber: daemonset.status.desiredNumberScheduled,
             })}
@@ -218,7 +218,7 @@ export const DaemonSets: React.FC = (props) => {
   return (
     <Table
       {...props}
-      aria-label={t('workload~DaemonSets')}
+      aria-label={t('public~DaemonSets')}
       Header={DaemonSetTableHeader}
       Row={DaemonSetTableRow}
       virtualize
