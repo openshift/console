@@ -7,31 +7,31 @@ import { StatusGroup } from '../../status-group';
 export class V2VVMImportStatus extends StatusEnum {
   static readonly ERROR = new V2VVMImportStatus('V2VVMImportStatus_ERROR', 'Import error', {
     isError: true,
-    group: StatusGroup.RHV,
+    group: StatusGroup.VMIMPORT,
   });
   static readonly COMPLETE = new V2VVMImportStatus(
     'V2VVMImportStatus_COMPLETE',
     'Import complete',
     {
       isCompleted: true,
-      group: StatusGroup.RHV,
+      group: StatusGroup.VMIMPORT,
     },
   );
   static readonly PENDING = new V2VVMImportStatus('V2VVMImportStatus_PENDING', 'Import pending', {
     isPending: true,
-    group: StatusGroup.RHV,
+    group: StatusGroup.VMIMPORT,
   });
   static readonly IN_PROGRESS = new V2VVMImportStatus(
     'V2VVMImportStatus_IN_PROGRESS',
     StatusSimpleLabel.Importing,
     {
       isImporting: true,
-      group: StatusGroup.RHV,
+      group: StatusGroup.VMIMPORT,
     },
   );
   static readonly UNKNOWN = new V2VVMImportStatus('V2VVMImportStatus_UNKNOWN', 'Unknown', {
     isUnknown: true,
-    group: StatusGroup.RHV,
+    group: StatusGroup.VMIMPORT,
   });
 
   private static readonly ALL = Object.freeze(

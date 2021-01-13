@@ -95,18 +95,21 @@ export abstract class StatusEnum<SIMPLE_LABEL = StatusSimpleLabel> extends Objec
 
   getSimpleLabel = () => this.simpleLabel;
 
-  toString() {
+  toString(group?: string) {
     const result = this.label || super.toString();
-    return this.group && !this._isUnknown ? `${result} (${this.group.toString()})` : result;
+    if (!this._isUnknown) {
+      if (group) {
+        return `${result} (${group})`;
+      }
+      if (this.group) {
+        return `${result} (${this.group.toString()})`;
+      }
+    }
+    return result;
   }
 
   toSimpleSortString = () => {
     return `${this.simpleLabel}${this.simpleLabel === this.toString() ? '' : this.toString()}`;
-  };
-
-  toVerboseString = () => {
-    const result = this.label || super.toString();
-    return this.group && !this._isUnknown ? `${result} (${this.group.getVerboseName()})` : result;
   };
 
   protected resolveSimpleLabel(): SIMPLE_LABEL | StatusSimpleLabel {

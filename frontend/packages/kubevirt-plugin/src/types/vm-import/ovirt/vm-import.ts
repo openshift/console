@@ -42,6 +42,18 @@ export type VMImportOvirtSource = {
   };
 };
 
+export type VMImportVMwareSource = {
+  vm: {
+    id?: string;
+    name?: string;
+  };
+  mappings: {
+    networkMappings?: NetworkMapping[];
+    storageMappings?: StorageMapping[];
+    diskMappings?: DiskMapping[];
+  };
+};
+
 export type VMImportKind = {
   spec: {
     targetVmName?: string;
@@ -56,6 +68,7 @@ export type VMImportKind = {
     };
     source: {
       ovirt: VMImportOvirtSource;
+      vmware: VMImportVMwareSource;
     };
   };
   status?: {

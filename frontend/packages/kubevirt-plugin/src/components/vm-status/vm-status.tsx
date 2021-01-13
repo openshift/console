@@ -30,8 +30,27 @@ import { saveAndRestartModal } from '../modals/save-and-restart-modal/save-and-r
 import { history } from '@console/internal/components/utils/router';
 import { getVMTabURL } from '../../utils/url';
 import { VMTabURLEnum } from '../vms/types';
+import { StatusGroup } from '../../constants/status-group';
+import { VMImportWrappper } from '../../k8s/wrapper/vm-import/vm-import-wrapper';
+import { VMImportType } from '../../constants/v2v-import/ovirt/vm-import-type';
 
 import './vm-status.scss';
+
+const getStatusSuffixLabelKey = (vmStatusBundle: VMStatusBundle) => {
+  if (vmStatusBundle.status.getGroup() === StatusGroup.VMIMPORT) {
+    switch (new VMImportWrappper(vmStatusBundle.vmImport).getType()) {
+      case VMImportType.OVIRT:
+        // t('kubevirt-plugin~RHV')
+        return 'kubevirt-plugin~RHV';
+      case VMImportType.VMWARE:
+        // t('kubevirt-plugin~VMware')
+        return 'kubevirt-plugin~VMware';
+      default:
+        break;
+    }
+  }
+  return undefined;
+};
 
 type LinkType = {
   to: string;
@@ -164,7 +183,11 @@ export const VMStatus: React.FC<VMStatusProps> = ({
   const vmiLike = vm || vmi;
 
   const { status, pod, progress, importerPodsStatuses } = vmStatusBundle;
-  const title = t(status.getLabelKey()) || status.toString() || t('kubevirt-plugin~Unknown'); // TODO status.toVerboseString() should be called to pass to popup header
+
+  const title =
+    t(status.getLabelKey()) ||
+    status.toString(t(getStatusSuffixLabelKey(vmStatusBundle))) ||
+    t('kubevirt-plugin~Unknown');
   const popoverTitle = arePendingChanges ? 'Pending Changes' : null;
   const message = vmStatusBundle.message || vmStatusBundle.detailedMessage;
   const detailedMessage = vmStatusBundle.message ? vmStatusBundle.detailedMessage : null;
