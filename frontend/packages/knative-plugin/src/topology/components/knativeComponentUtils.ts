@@ -90,8 +90,9 @@ export const eventSourceSinkDropTargetSpec: DropTargetSpec<
     tooltipLabel: getKnativeTooltip(monitor),
   }),
   dropHint: (item) => {
-    if (item) {
-      const resourceObj = item.getData().resources.obj;
+    const itemData = item.getData();
+    if (itemData) {
+      const resourceObj = itemData.resources.obj;
       return resourceObj.kind === EventingBrokerModel.kind ? 'createTrigger' : 'createSubscription';
     }
     return 'create';
