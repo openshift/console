@@ -49,7 +49,7 @@ const ALL_QUICK_START_STATE_KEY = `${QUICK_START_KEY}.allStates`;
 const useActiveQuickStartId = () =>
   useUserSettings<string>(ACTIVE_QUICK_START_ID_KEY, getInitialState()?.activeQuickStartId ?? '');
 const useAllQuickStartStates = () =>
-  useUserSettings(ALL_QUICK_START_STATE_KEY, getInitialState()?.allQuickStartStates ?? {}, true);
+  useUserSettings(ALL_QUICK_START_STATE_KEY, getInitialState()?.allQuickStartStates ?? {});
 
 export const useValuesForQuickStartContext = (): QuickStartContextValues => {
   const [activeQuickStartID, setActiveQuickStartID] = useActiveQuickStartId();
