@@ -63,6 +63,7 @@ import { isCommonTemplate, selectVM } from '../../../../selectors/vm-template/ba
 import { convertToHighestUnitFromUnknown } from '../../../form/size-unit-utils';
 import { isCustomFlavor, toUIFlavor } from '../../../../selectors/vm-like/flavor';
 import { generateDataVolumeName } from '../../../../utils';
+import { VM_TEMPLATE_NAME_PARAMETER } from '../../../../constants';
 
 export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptions) => {
   const state = getState();
@@ -209,7 +210,7 @@ export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptio
     const standaloneDataVolumeLookup = createBasicLookup<V1alpha1DataVolume>(dataVolumes, getName);
 
     const vmDisks = commonTemplateName
-      ? getDisks(vm).filter((d) => d.name !== 'rootdisk')
+      ? getDisks(vm).filter((d) => d.name !== VM_TEMPLATE_NAME_PARAMETER)
       : getDisks(vm);
 
     // prefill storage

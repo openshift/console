@@ -22,7 +22,7 @@ import {
   hasStepUpdateDisabled,
   isStepLocked,
 } from '../../selectors/immutable/wizard-selectors';
-import { VMWizardProps, VMWizardStorage, VMWizardStorageType, VMWizardTab } from '../../types';
+import { VMWizardProps, VMWizardStorage, VMWizardTab } from '../../types';
 import { VMDisksTable } from '../../../vm-disks/vm-disks';
 import { vmWizardActions } from '../../redux/actions';
 import { ActionType } from '../../redux/types';
@@ -89,15 +89,6 @@ const StorageTabFirehose: React.FC<StorageTabFirehoseProps> = ({
   isDeleteDisabled,
 }) => {
   const { t } = useTranslation();
-
-  React.useEffect(() => {
-    storages.forEach(({ type, id, disk }) => {
-      const isTemplateType = type === VMWizardStorageType.TEMPLATE;
-      // eslint-disable-next-line no-template-curly-in-string
-      const isMatchedDiskName = disk.name === '${NAME}';
-      isTemplateType && isMatchedDiskName && removeStorage(id);
-    });
-  }, [removeStorage, storages]);
 
   const showStorages = storages.length > 0 || isBootDiskRequired;
 

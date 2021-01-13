@@ -16,7 +16,7 @@ import {
 import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
 import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
-import { WINTOOLS_CONTAINER_NAMES } from '../../../../constants';
+import { VM_TEMPLATE_NAME_PARAMETER, WINTOOLS_CONTAINER_NAMES } from '../../../../constants';
 import { stringValueUnitSplit } from '../../../form/size-unit-utils';
 import { InitialStepStateGetter } from './types';
 import {
@@ -240,9 +240,9 @@ export const getNewProvisionSourceStorage = (state: any, id: string): VMWizardSt
   const iUserTemplate = iGetCommonData(state, id, VMWizardProps.userTemplate);
   const iCommonTemplates = iGetLoadedCommonData(state, id, VMWizardProps.commonTemplates);
   const iTemplate = iCommonTemplates && iGetRelevantTemplate(iCommonTemplates, relevantOptions);
-  // eslint-disable-next-line no-template-curly-in-string
-  const tmpDiskBus = DiskBus.fromString(iGetCommonTemplateDiskBus(iTemplate, '${NAME}'));
-
+  const tmpDiskBus = DiskBus.fromString(
+    iGetCommonTemplateDiskBus(iTemplate, VM_TEMPLATE_NAME_PARAMETER),
+  );
   const initialData = getInitialData(state, id);
   const { source } = initialData;
   const storagesUpdate = getStorages(state, id);
