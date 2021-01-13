@@ -60,7 +60,7 @@ const SupportModal: React.FC<SupportModalProps> = ({ onConfirm, close, community
           <StackItem>
             <Checkbox
               id="support-warning"
-              label={t('kubevirt-plugin~Do not show this warning again')}
+              label={t('kubevirt-plugin~Do not show this message again')}
               onChange={setDoNotShow}
               isChecked={doNotShow}
             />

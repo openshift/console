@@ -538,7 +538,7 @@
   "This template does not have a support statement defined.": "This template does not have a support statement defined.",
   "The support will be provided in accordance with Red Hat's ": "The support will be provided in accordance with Red Hat's ",
   "third party support policy": "third party support policy",
-  "Do not show this warning again": "Do not show this warning again",
+  "Do not show this message again": "Do not show this message again",
   "Continue": "Continue",
   "Edit Flavor": "Edit Flavor",
   "CPU count": "CPU count",
