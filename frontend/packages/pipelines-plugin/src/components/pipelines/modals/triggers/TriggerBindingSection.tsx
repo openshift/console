@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useFormikContext } from 'formik';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { Badge, ExpandableSection, FormHelperText } from '@patternfly/react-core';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import { usePipelineOperatorVersion } from '../../utils/pipeline-operator';
@@ -62,10 +62,8 @@ const TriggerBindingSection: React.FC = () => {
               isHidden={false}
               className="odc-trigger-binding-section__variable-help-text"
             >
-              <Trans t={t} ns="pipelines-plugin">
-                Use this format when referencing variables in this form:{' '}
-                <code>{`$(${paramPrefix}parameter)`}</code>
-              </Trans>
+              {t('pipelines-plugin~Use this format when referencing variables in this form: ')}
+              <code>{`$(${paramPrefix}parameter)`}</code>
             </FormHelperText>
           </ExpandableSection>
         )}

@@ -114,7 +114,7 @@
   "Select your Git provider type to be associated with the Trigger": "Select your Git provider type to be associated with the Trigger",
   "Git Provider type": "Git Provider type",
   "The following variables can be used in the Parameters or when created new Resources.": "The following variables can be used in the Parameters or when created new Resources.",
-  "Use this format when referencing variables in this form: <2>{`$(${paramPrefix}parameter)`}</2>": "Use this format when referencing variables in this form: <2>{`$(${paramPrefix}parameter)`}</2>",
+  "Use this format when referencing variables in this form: ": "Use this format when referencing variables in this form: ",
   "Select {{label}}": "Select {{label}}",
   "Are you sure you want to remove <1>{selection}</1> from <3>{pipeline.metadata.name}</3>?": "Are you sure you want to remove <1>{selection}</1> from <3>{pipeline.metadata.name}</3>?",
   "Failed to load namespace Tasks. {{tasksLoadError}}": "Failed to load namespace Tasks. {{tasksLoadError}}",

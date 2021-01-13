@@ -9,9 +9,25 @@ import LinkedPipelineRunTaskStatus from '../../pipelineruns/status/LinkedPipelin
 import PipelineRunStatus from '../../pipelineruns/status/PipelineRunStatus';
 import { tableColumnClasses } from './pipeline-table';
 import PipelineRowKebabActions from './PipelineRowKebabActions';
+import { useTranslation } from 'react-i18next';
 
 const pipelineReference = referenceForModel(PipelineModel);
 const pipelinerunReference = referenceForModel(PipelineRunModel);
+
+type PipelineStatusProps = {
+  obj: Pipeline;
+};
+
+const PipelineStatus: React.FC<PipelineStatusProps> = ({ obj }) => {
+  const { t } = useTranslation();
+  return (
+    <PipelineRunStatus
+      status={pipelineFilterReducer(obj)}
+      title={pipelineFilterReducer(obj, t)}
+      pipelineRun={obj.latestRun}
+    />
+  );
+};
 
 const PipelineRow: RowFunction<Pipeline> = ({ obj, index, key, style }) => {
   return (
@@ -48,7 +64,7 @@ const PipelineRow: RowFunction<Pipeline> = ({ obj, index, key, style }) => {
         {obj.latestRun ? <LinkedPipelineRunTaskStatus pipelineRun={obj.latestRun} /> : '-'}
       </TableData>
       <TableData className={tableColumnClasses[4]}>
-        <PipelineRunStatus status={pipelineFilterReducer(obj)} pipelineRun={obj.latestRun} />
+        <PipelineStatus obj={obj} />
       </TableData>
       <TableData className={tableColumnClasses[5]}>
         {(obj.latestRun && obj.latestRun.status && obj.latestRun.status.completionTime && (

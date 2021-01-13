@@ -43,7 +43,10 @@ export const PipelineRunDetails: React.FC<PipelineRunDetailsProps> = ({ obj: pip
           <dl>
             <dt>{t('pipelines-plugin~Status')}</dt>
             <dd>
-              <Status status={pipelineRunFilterReducer(pipelineRun)} />
+              <Status
+                status={pipelineRunFilterReducer(pipelineRun)}
+                title={pipelineRunFilterReducer(pipelineRun, t)}
+              />
             </dd>
           </dl>
           <RunDetailsErrorLog

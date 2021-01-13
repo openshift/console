@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
 import { ResourceLink, Timestamp } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
@@ -13,6 +14,21 @@ import { tableColumnClasses } from './pipelinerun-table';
 import PipelineRunStatus from '../status/PipelineRunStatus';
 
 const pipelinerunReference = referenceForModel(PipelineRunModel);
+
+type PLRStatusProps = {
+  obj: PipelineRun;
+};
+
+const PLRStatus: React.FC<PLRStatusProps> = ({ obj }) => {
+  const { t } = useTranslation();
+  return (
+    <PipelineRunStatus
+      status={pipelineRunFilterReducer(obj)}
+      title={pipelineRunFilterReducer(obj, t)}
+      pipelineRun={obj}
+    />
+  );
+};
 
 const PipelineRunRow: RowFunction<PipelineRun> = ({ obj, index, key, style }) => {
   return (
@@ -30,7 +46,7 @@ const PipelineRunRow: RowFunction<PipelineRun> = ({ obj, index, key, style }) =>
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
-        <PipelineRunStatus status={pipelineRunFilterReducer(obj)} pipelineRun={obj} />
+        <PLRStatus obj={obj} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>
         <LinkedPipelineRunTaskStatus pipelineRun={obj} />
