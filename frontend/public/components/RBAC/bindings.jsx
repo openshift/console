@@ -502,7 +502,9 @@ class BaseEditRoleBinding extends React.Component {
           <title>{title}</title>
         </Helmet>
         <form className="co-m-pane__body-group co-m-pane__form" onSubmit={this.save}>
-          <h1 className="co-m-pane__heading">{title}</h1>
+          <h1 className="co-m-pane__heading" data-test="title">
+            {title}
+          </h1>
           <p className="co-m-pane__explanation">
             Associate a user/group to the selected role to define the type of access and resources
             that are allowed.
@@ -532,11 +534,12 @@ class BaseEditRoleBinding extends React.Component {
                   value={metadata.name}
                   required
                   id="role-binding-name"
+                  data-test="role-binding-name"
                 />
               )}
             </div>
             {kind === 'RoleBinding' && (
-              <div className="form-group">
+              <div className="form-group" data-test="namespace-dropdown">
                 <label htmlFor="ns-dropdown" className="co-required">
                   Namespace
                 </label>
@@ -553,7 +556,7 @@ class BaseEditRoleBinding extends React.Component {
           <div className="co-form-section__separator" />
 
           <Section label="Role">
-            <div className="form-group">
+            <div className="form-group" data-test="role-dropdown">
               <label htmlFor="role-dropdown" className="co-required">
                 Role Name
               </label>
@@ -603,6 +606,7 @@ class BaseEditRoleBinding extends React.Component {
                 required
                 id="subject-name"
                 disabled={fixed.subjectRef.subjectName ? true : false}
+                data-test="subject-name"
               />
             </div>
           </Section>
@@ -611,7 +615,7 @@ class BaseEditRoleBinding extends React.Component {
 
           <ButtonBar errorMessage={this.state.error} inProgress={this.state.inProgress}>
             <ActionGroup className="pf-c-form">
-              <Button type="submit" id="save-changes" variant="primary">
+              <Button type="submit" id="save-changes" variant="primary" data-test="save-changes">
                 {saveButtonText || 'Create'}
               </Button>
               <Button onClick={history.goBack} id="cancel" variant="secondary">
