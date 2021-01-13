@@ -258,7 +258,7 @@ export const getKameletMetadata = (kamelet: K8sResourceKind): EventSourceMetaDat
         definition: { title, description },
       },
     } = kamelet;
-    const provider = annotations[CAMEL_K_PROVIDER_ANNOTATION];
+    const provider = annotations?.[CAMEL_K_PROVIDER_ANNOTATION] || '';
     const iconUrl = getEventSourceIcon(kind, kamelet);
     normalizedKamelet = {
       name: title,

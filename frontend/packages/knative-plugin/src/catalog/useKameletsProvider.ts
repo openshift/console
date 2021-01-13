@@ -25,7 +25,7 @@ const normalizeKamelets = (
         definition: { title, description },
       },
     } = k;
-    const provider = annotations[CAMEL_K_PROVIDER_ANNOTATION];
+    const provider = annotations?.[CAMEL_K_PROVIDER_ANNOTATION] || '';
     const iconUrl = getEventSourceIcon(kind, k);
     const href = `/catalog/ns/${namespace}/eventsource?sourceKind=${CamelKameletBindingModel.kind}&name=${name}`;
     return {
