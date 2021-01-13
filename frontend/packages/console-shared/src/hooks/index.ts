@@ -25,3 +25,5 @@ export * from './usePinnedResources';
 export * from './useActivePerspective';
 export * from './useActiveNamespace';
 export * from './useIsMobile';
+export * from './useResizeObserver';
+export * from './useBoundingClientRect';
