@@ -168,7 +168,7 @@ spec:
         - --mc-mode=true 
         - --mc-mode-operator=true 
         # - --mc-mode-file=$HOME/dynamic-config.yaml
-        image: tmaxcloudck/hypercloud-console:0.5.0.4
+        image: tmaxcloudck/hypercloud-console:0.5.0.5
         imagePullPolicy: IfNotPresent
         volumeMounts:
         - mountPath: /var/https-cert
