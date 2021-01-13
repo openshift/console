@@ -379,7 +379,7 @@ export default (state: UIState, action: UIAction): UIState => {
       return state.set('activeCluster', action.payload.cluster);
 
     case ActionType.SetActiveClusterPath:
-      return state.set('activeClusterPath', action.payload.clusterPath);
+      return state.set('activeClusterPath', action.payload.activeClusterPath);
 
     default:
       break;

@@ -214,25 +214,31 @@ export const formatClusterRoute = (activeCluster, originalPath, location?) => {
   let path = originalPath.substr(window.SERVER_FLAGS.basePath.length);
 
   let parts = path.split('/').filter((p) => p);
-  const prefix = parts.shift();
+
+  let newPath = '';
+  if(parts[0] === 'k8s'){
+    const prefix = parts.shift();
+    newPath = `/${prefix}`;
+  }
 
   if (parts[0] === 'cl') {
     parts.shift();
     parts.shift();
   }
 
-  const clusterPrefix = `cl/${activeCluster}`;
+  if(activeCluster && activeCluster !== '#MASTER_CLUSTER#'){
+    newPath += `/cl/${activeCluster}`;
+  }
 
-  path = `/${prefix}/${clusterPrefix}`;
   if (parts.length) {
-    path += `/${parts.join('/')}`;
+    newPath += `/${parts.join('/')}`;
   }
 
   if (location) {
-    path += `${location.search}${location.hash}`;
+    newPath += `${location.search}${location.hash}`;
   }
 
-  return path;
+  return newPath;
 };
 
 export const setActiveCluster = (cluster: string) => {
@@ -249,7 +255,15 @@ export const setActiveCluster = (cluster: string) => {
 };
 
 export const setActiveClusterPath = (clusterPath: string) => {
-  return action(ActionType.SetActiveClusterPath, { clusterPath });
+  let activeClusterPath = clusterPath;
+  if (activeClusterPath?.startsWith('/')) {
+    activeClusterPath = activeClusterPath.slice(1);
+  }
+  if (activeClusterPath?.endsWith('/')) {
+    activeClusterPath = activeClusterPath.slice(0, -1);
+  }
+
+  return action(ActionType.SetActiveClusterPath, { activeClusterPath });
 };
 
 export const setPinnedResources = (resources: string[]) => {

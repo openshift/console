@@ -26,7 +26,7 @@ export const stripClusterNS = (href) => {
 export const formatClusteredNamespacedRouteForResource = (resource, cluster, namespace) => {
   let res = '/k8s';
 
-  if (cluster) {
+  if (cluster && cluster !== '#MASTER_CLUSTER#') {
     res += `/cl/${cluster}`;
   }
 
@@ -141,7 +141,7 @@ export class ResourceClusterLink extends NavLink<ResourceClusterLinkProps> {
   }
 
   get to() {
-    return this.props.activeCluster ? `/k8s/cl/${this.props.activeCluster}/cluster/${this.props.resource}` : `/k8s/cluster/${this.props.resource}`;
+    return this.props.activeCluster && this.props.activeCluster !== '#MASTER_CLUSTER#' ? `/k8s/cl/${this.props.activeCluster}/cluster/${this.props.resource}` : `/k8s/cluster/${this.props.resource}`;
   }
 }
 
@@ -152,7 +152,7 @@ export class HrefLink extends NavLink<HrefLinkProps> {
   }
 
   get to() {
-    return this.props.activeCluster ? `/cl/${this.props.activeCluster}${this.props.href}` : this.props.href;
+    return this.props.activeCluster && this.props.activeCluster !== '#MASTER_CLUSTER#' ? `/cl/${this.props.activeCluster}${this.props.href}` : this.props.href;
   }
 }
 

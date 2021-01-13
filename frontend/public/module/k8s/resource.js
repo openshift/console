@@ -14,17 +14,11 @@ const getK8sAPIPath = ({ apiGroup = 'core', apiVersion }) => {
   const cluster = window.SERVER_FLAGS.McMode && getActivePerspective() == "hc" && getActiveCluster();
 
   if (cluster) {
-    let activeClusterPath = getActiveClusterPath();
-    if (activeClusterPath?.startsWith('/')) {
-      activeClusterPath = activeClusterPath.slice(1);
-    }
-    if (activeClusterPath?.endsWith('/')) {
-      activeClusterPath = activeClusterPath.slice(0, -1);
-    }
+    const activeClusterPath = getActiveClusterPath();
     p = `${window.SERVER_FLAGS.basePath}${activeClusterPath}`;
   }
   else {
-    p = k8sBasePath; // TODO: cluster list로 전달받은 path로 넣기...
+    p = k8sBasePath;
   }
 
   if (isLegacy) {
