@@ -6,16 +6,18 @@ import { k8sPatch } from '../../module/k8s';
 import { RoleModel, ClusterRoleModel } from '../../models';
 import { Kebab, EmptyBox, ResourceIcon } from '../utils';
 import { confirmModal } from '../modals';
+import { useTranslation } from 'react-i18next';
 
-export const RulesList = ({ rules, name, namespace }) =>
-  _.isEmpty(rules) ? (
-    <EmptyBox label="Rules" />
+export const RulesList = ({ rules, name, namespace }) => {
+  const { t } = useTranslation();
+  return _.isEmpty(rules) ? (
+    <EmptyBox label={t('rules~Rules')} />
   ) : (
     <div className="co-m-table-grid co-m-table-grid--bordered">
       <div className="row co-m-table-grid__head">
-        <div className="col-xs-5 col-sm-4 col-md-3 col-lg-2">Actions</div>
-        <div className="hidden-xs col-sm-4 col-md-3 col-lg-3">API Groups</div>
-        <div className="col-xs-7 col-sm-4 col-md-6 col-lg-7">Resources</div>
+        <div className="col-xs-5 col-sm-4 col-md-3 col-lg-2">{t('rules~Actions')}</div>
+        <div className="hidden-xs col-sm-4 col-md-3 col-lg-3">{t('rules~API groups')}</div>
+        <div className="col-xs-7 col-sm-4 col-md-6 col-lg-7">{t('rules~Resources')}</div>
       </div>
       <div className="co-m-table-grid__body">
         {rules.map((rule, i) => (
@@ -26,6 +28,7 @@ export const RulesList = ({ rules, name, namespace }) =>
       </div>
     </div>
   );
+};
 
 const Actions = ({ verbs }) => {
   let actions = [];
@@ -117,25 +120,6 @@ const Resources = connect(({ k8s }) => ({ allModels: k8s.getIn(['RESOURCES', 'mo
   },
 );
 
-const DeleteRule = (name, namespace, i) => ({
-  label: 'Delete Rule',
-  callback: () =>
-    confirmModal({
-      title: 'Delete Rule',
-      message: `Are you sure you want to delete Rule #${i}?`,
-      btnText: 'Delete Rule',
-      executeFn: () => {
-        const kind = namespace ? RoleModel : ClusterRoleModel;
-        return k8sPatch(kind, { metadata: { name, namespace } }, [
-          {
-            op: 'remove',
-            path: `/rules/${i}`,
-          },
-        ]);
-      },
-    }),
-});
-
 // This page is temporarily disabled until we update the safe resources list.
 // const EditRule = (name, namespace, i) => ({
 //   label: 'Edit Rule',
@@ -143,6 +127,28 @@ const DeleteRule = (name, namespace, i) => ({
 // });
 
 const RuleKebab = ({ name, namespace, i }) => {
+  const { t } = useTranslation();
+  const DeleteRule = () => ({
+    label: t('rules~Delete rule'),
+    callback: () =>
+      confirmModal({
+        title: t('rules~Delete rule'),
+        message: t('rules~Are you sure you want to delete rule #{{ruleNumber}}?', {
+          ruleNumber: i,
+        }),
+        btnText: t('rules~Delete rule'),
+        executeFn: () => {
+          const kind = namespace ? RoleModel : ClusterRoleModel;
+          return k8sPatch(kind, { metadata: { name, namespace } }, [
+            {
+              op: 'remove',
+              path: `/rules/${i}`,
+            },
+          ]);
+        },
+      }),
+  });
+
   const options = [
     // EditRule,
     DeleteRule,

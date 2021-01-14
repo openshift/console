@@ -19,9 +19,11 @@ import { SecretModel, ServiceAccountModel } from '../models';
 import { SecretsPage } from './secret';
 import { saveAs } from 'file-saver';
 import { errorModal } from './modals';
+import { useTranslation } from 'react-i18next';
+import i18next from 'i18next';
 
 const KubeConfigify = (kind, sa) => ({
-  label: 'Download kubeconfig file',
+  label: i18next.t('service-account~Download kubeconfig file'),
   weight: 200,
   callback: () => {
     const name = sa.metadata.name;
@@ -41,7 +43,9 @@ const KubeConfigify = (kind, sa) => ({
             saSecretsByName[s.metadata.name] && s.type === 'kubernetes.io/service-account-token',
         );
         if (!secret) {
-          errorModal({ error: 'Unable to get service account token.' });
+          errorModal({
+            error: i18next.t('service-account~Unable to get ServiceAccount token.'),
+          });
           return;
         }
         const token = Base64.decode(secret.data.token);
@@ -113,41 +117,6 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const ServiceAccountTableHeader = () => {
-  return [
-    {
-      title: 'Name',
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: 'Namespace',
-      sortField: 'metadata.namespace',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-      id: 'namespace',
-    },
-    {
-      title: 'Secrets',
-      sortField: 'secrets',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: 'Created',
-      sortField: 'metadata.creationTimestamp',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses[4] },
-    },
-  ];
-};
-ServiceAccountTableHeader.displayName = 'ServiceAccountTableHeader';
-
 const ServiceAccountTableRow = ({ obj: serviceaccount, index, key, style }) => {
   const {
     metadata: { name, namespace, uid, creationTimestamp },
@@ -181,11 +150,12 @@ const Details = ({ obj: serviceaccount }) => {
     secrets,
   } = serviceaccount;
   const filters = { selector: { field: 'metadata.name', values: new Set(_.map(secrets, 'name')) } };
+  const { t } = useTranslation();
 
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Service Account Details" />
+        <SectionHeading text={t('service-account~ServiceAccount details')} />
         <div className="row">
           <div className="col-md-6">
             <ResourceSummary resource={serviceaccount} />
@@ -193,7 +163,7 @@ const Details = ({ obj: serviceaccount }) => {
         </div>
       </div>
       <div className="co-m-pane__body co-m-pane__body--section-heading">
-        <SectionHeading text="Secrets" />
+        <SectionHeading text={t('service-account~Secrets')} />
       </div>
       <SecretsPage
         kind="Secret"
@@ -214,15 +184,54 @@ const ServiceAccountsDetailsPage = (props) => (
     pages={[navFactory.details(Details), navFactory.editYaml()]}
   />
 );
-const ServiceAccountsList = (props) => (
-  <Table
-    {...props}
-    aria-label="Service Accounts"
-    Header={ServiceAccountTableHeader}
-    Row={ServiceAccountTableRow}
-    virtualize
-  />
-);
+
+const ServiceAccountsList = (props) => {
+  const { t } = useTranslation();
+  const ServiceAccountTableHeader = () => {
+    return [
+      {
+        title: t('service-account~Name'),
+        sortField: 'metadata.name',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[0] },
+      },
+      {
+        title: t('service-account~Namespace'),
+        sortField: 'metadata.namespace',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[1] },
+        id: 'namespace',
+      },
+      {
+        title: t('service-account~Secrets'),
+        sortField: 'secrets',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[2] },
+      },
+      {
+        title: t('service-account~Created'),
+        sortField: 'metadata.creationTimestamp',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[3] },
+      },
+      {
+        title: '',
+        props: { className: tableColumnClasses[4] },
+      },
+    ];
+  };
+  ServiceAccountTableHeader.displayName = 'ServiceAccountTableHeader';
+
+  return (
+    <Table
+      {...props}
+      aria-label={t('service-account~ServiceAccounts')}
+      Header={ServiceAccountTableHeader}
+      Row={ServiceAccountTableRow}
+      virtualize
+    />
+  );
+};
 const ServiceAccountsPage = (props) => (
   <ListPage ListComponent={ServiceAccountsList} {...props} canCreate={true} />
 );
