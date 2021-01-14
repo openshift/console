@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Stack, StackItem, Checkbox } from '@patternfly/react-core';
+import { Stack, StackItem, Checkbox, Label } from '@patternfly/react-core';
 import {
   createModalLauncher,
   ModalBody,
@@ -8,10 +8,13 @@ import {
   ModalTitle,
 } from '@console/internal/components/factory';
 import { ExternalLink } from '@console/internal/components/utils';
+import { BlueInfoCircleIcon } from '@console/shared';
 
 import { ModalFooter } from '../modal/modal-footer';
-import { SUPPORT_URL } from '../../../constants';
-import { BlueInfoCircleIcon } from '@console/shared';
+import { TEMPLATE_PROVIDER_ANNOTATION, TEMPLATE_SUPPORT_LEVEL } from '../../../constants';
+import { TemplateSupport } from '../../../constants/vm-templates/support';
+
+import './support-modal.scss';
 
 type SupportModalProps = ModalComponentProps & {
   onConfirm: (disable: boolean) => void;
@@ -33,7 +36,7 @@ const SupportModal: React.FC<SupportModalProps> = ({ onConfirm, close, community
             <>
               <StackItem>
                 {t(
-                  'kubevirt-plugin~Support for this template is provided by the OS community Red Hat participates in and contributes to.',
+                  'kubevirt-plugin~Support for this template is provided through the OS community Red Hat participates in and contributes to.',
                 )}
               </StackItem>
               <StackItem>
@@ -46,14 +49,17 @@ const SupportModal: React.FC<SupportModalProps> = ({ onConfirm, close, community
           ) : (
             <>
               <StackItem>
-                {t('kubevirt-plugin~This template does not have a support statement defined.')}
+                {t(
+                  'kubevirt-plugin~The support level is not defined in the template yaml. To mark this template as supported, add these two annotations in the template details:',
+                )}
               </StackItem>
               <StackItem>
-                {t("kubevirt-plugin~The support will be provided in accordance with Red Hat's ")}
-                <ExternalLink
-                  href={SUPPORT_URL}
-                  text={t('kubevirt-plugin~third party support policy')}
-                />
+                <Label className="kv-support-label">
+                  {TEMPLATE_PROVIDER_ANNOTATION}: Your company name
+                </Label>
+                <Label>
+                  {TEMPLATE_SUPPORT_LEVEL}: {TemplateSupport.FULL_SUPPORT.getValue()}
+                </Label>
               </StackItem>
             </>
           )}
