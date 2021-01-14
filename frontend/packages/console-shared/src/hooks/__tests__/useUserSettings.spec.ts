@@ -39,12 +39,7 @@ const emptyConfigMap: ConfigMapKind = {
 };
 
 const savedDataConfigMap: ConfigMapKind = {
-  apiVersion: 'v1',
-  kind: 'ConfigMap',
-  metadata: {
-    name: `user-settings-1234`,
-    namespace: USER_SETTING_CONFIGMAP_NAMESPACE,
-  },
+  ...emptyConfigMap,
   data: {
     'console.key': 'saved value',
   },
@@ -228,6 +223,229 @@ describe('useUserSettings', () => {
     expect(updateConfigMapMock).toHaveBeenCalledTimes(1);
     expect(updateConfigMapMock).toHaveBeenCalledWith(
       { ...emptyConfigMap, data: { 'console.key': 'saved value' } },
+      'console.key',
+      'new value',
+    );
+  });
+
+  it('should provide the default value for user settings without sync and setter if there is no old value', async () => {
+    // Mock already loaded data
+    useK8sWatchResourceMock.mockReturnValue([emptyConfigMap, true, null]);
+    updateConfigMapMock.mockReturnValue(Promise.resolve({}));
+
+    const { result, rerender } = testHook(() => useUserSettings('console.key', 'default value'));
+
+    // Expect saved data
+    expect(result.current).toEqual(['default value', expect.any(Function), true]);
+
+    // Call setSettings
+    await act(async () => {
+      const [, setSettings] = result.current;
+      setSettings((oldValue) => {
+        expect(oldValue).toEqual('default value');
+        return 'new value';
+      });
+      rerender();
+    });
+
+    // Expect new value and API update
+    expect(result.current).toEqual(['new value', expect.any(Function), true]);
+    expect(createConfigMapMock).toHaveBeenCalledTimes(0);
+    expect(updateConfigMapMock).toHaveBeenCalledTimes(2);
+    expect(updateConfigMapMock).toHaveBeenLastCalledWith(
+      emptyConfigMap,
+      'console.key',
+      'new value',
+    );
+  });
+
+  it('should provide the default value for user settings with sync and setter if there is no old value', async () => {
+    // Mock already loaded data
+    useK8sWatchResourceMock.mockReturnValue([emptyConfigMap, true, null]);
+    updateConfigMapMock.mockReturnValue(Promise.resolve({}));
+
+    const { result, rerender } = testHook(() =>
+      useUserSettings('console.key', 'default value', true),
+    );
+
+    // Expect saved data
+    expect(result.current).toEqual(['default value', expect.any(Function), true]);
+
+    // Call setSettings
+    await act(async () => {
+      const [, setSettings] = result.current;
+      setSettings((oldValue) => {
+        expect(oldValue).toEqual('default value');
+        return 'new value';
+      });
+      rerender();
+    });
+
+    // Expect new value and API update
+    expect(result.current).toEqual(['new value', expect.any(Function), true]);
+    expect(createConfigMapMock).toHaveBeenCalledTimes(0);
+    expect(updateConfigMapMock).toHaveBeenCalledTimes(2);
+    expect(updateConfigMapMock).toHaveBeenLastCalledWith(
+      emptyConfigMap,
+      'console.key',
+      'new value',
+    );
+  });
+
+  it('should provide the old value for user settings without sync and setter if there is an old value', async () => {
+    // Mock already loaded data
+    useK8sWatchResourceMock.mockReturnValue([savedDataConfigMap, true, null]);
+    updateConfigMapMock.mockReturnValue(Promise.resolve({}));
+
+    const { result, rerender } = testHook(() => useUserSettings('console.key', 'default value'));
+
+    // Expect saved data
+    expect(result.current).toEqual(['saved value', expect.any(Function), true]);
+
+    // Call setSettings
+    await act(async () => {
+      const [, setSettings] = result.current;
+      setSettings((oldValue) => {
+        expect(oldValue).toEqual('saved value');
+        return 'new value';
+      });
+      rerender();
+    });
+
+    // Expect new value and API update
+    expect(result.current).toEqual(['new value', expect.any(Function), true]);
+    expect(createConfigMapMock).toHaveBeenCalledTimes(0);
+    expect(updateConfigMapMock).toHaveBeenCalledTimes(1);
+    expect(updateConfigMapMock).toHaveBeenCalledWith(
+      { ...emptyConfigMap, data: { 'console.key': 'saved value' } },
+      'console.key',
+      'new value',
+    );
+  });
+
+  it('should provide the old value for user settings with sync and setter if there is an old value', async () => {
+    // Mock already loaded data
+    useK8sWatchResourceMock.mockReturnValue([savedDataConfigMap, true, null]);
+    updateConfigMapMock.mockReturnValue(Promise.resolve({}));
+
+    const { result, rerender } = testHook(() =>
+      useUserSettings('console.key', 'default value', true),
+    );
+
+    // Expect saved data
+    expect(result.current).toEqual(['saved value', expect.any(Function), true]);
+
+    // Call setSettings
+    await act(async () => {
+      const [, setSettings] = result.current;
+      setSettings((oldValue) => {
+        expect(oldValue).toEqual('saved value');
+        return 'new value';
+      });
+      rerender();
+    });
+
+    // Expect new value and API update
+    expect(result.current).toEqual(['new value', expect.any(Function), true]);
+    expect(createConfigMapMock).toHaveBeenCalledTimes(0);
+    expect(updateConfigMapMock).toHaveBeenCalledTimes(1);
+    expect(updateConfigMapMock).toHaveBeenCalledWith(
+      { ...emptyConfigMap, data: { 'console.key': 'saved value' } },
+      'console.key',
+      'new value',
+    );
+  });
+
+  it('should provide an updated value for user settings wuthout sync and setter if there is was an update in the meantime', async () => {
+    // Mock already loaded data
+    useK8sWatchResourceMock.mockReturnValue([savedDataConfigMap, true, null]);
+    updateConfigMapMock.mockReturnValue(Promise.resolve({}));
+
+    const { result, rerender } = testHook(() => useUserSettings('console.key', 'default value'));
+
+    // Expect saved data
+    expect(result.current).toEqual(['saved value', expect.any(Function), true]);
+
+    // Mock updated data (like, 'from another browser tab/window')
+    await act(async () => {
+      const updatedConfigMap = {
+        ...emptyConfigMap,
+        data: {
+          'console.key': 'magically changed value',
+        },
+      };
+      useK8sWatchResourceMock.mockReturnValue([updatedConfigMap, true, null]);
+      rerender();
+    });
+
+    // Expect that data are not changed when sync is disabled!
+    expect(result.current).toEqual(['saved value', expect.any(Function), true]);
+
+    // Call setSettings
+    await act(async () => {
+      const [, setSettings] = result.current;
+      setSettings((oldValue) => {
+        expect(oldValue).toEqual('saved value');
+        return 'new value';
+      });
+      rerender();
+    });
+
+    // Expect new value and API update
+    expect(result.current).toEqual(['new value', expect.any(Function), true]);
+    expect(createConfigMapMock).toHaveBeenCalledTimes(0);
+    expect(updateConfigMapMock).toHaveBeenCalledTimes(1);
+    expect(updateConfigMapMock).toHaveBeenCalledWith(
+      // Old configmap must not be the old value, but it's fine.
+      { ...emptyConfigMap, data: { 'console.key': 'magically changed value' } },
+      'console.key',
+      'new value',
+    );
+  });
+
+  it('should provide an updated value for user settings with sync and setter if there is was an update in the meantime', async () => {
+    // Mock already loaded data
+    useK8sWatchResourceMock.mockReturnValue([savedDataConfigMap, true, null]);
+    updateConfigMapMock.mockReturnValue(Promise.resolve({}));
+
+    const { result, rerender } = testHook(() =>
+      useUserSettings('console.key', 'default value', true),
+    );
+
+    // Expect saved data
+    expect(result.current).toEqual(['saved value', expect.any(Function), true]);
+
+    // Mock updated data (like, 'from another browser tab/window')
+    await act(async () => {
+      const updatedConfigMap = {
+        ...emptyConfigMap,
+        data: {
+          'console.key': 'magically changed value',
+        },
+      };
+      useK8sWatchResourceMock.mockReturnValue([updatedConfigMap, true, null]);
+      rerender();
+    });
+
+    // Expect changed data if sync option is enabled
+    expect(result.current).toEqual(['magically changed value', expect.any(Function), true]);
+
+    // Call setSettings
+    await act(async () => {
+      const [, setSettings] = result.current;
+      setSettings((oldValue) => {
+        expect(oldValue).toEqual('magically changed value');
+        return 'new value';
+      });
+      rerender();
+    });
+
+    // Expect new value and API update
+    expect(result.current).toEqual(['new value', expect.any(Function), true]);
+    expect(createConfigMapMock).toHaveBeenCalledTimes(0);
+    expect(updateConfigMapMock).toHaveBeenCalledTimes(1);
+    expect(updateConfigMapMock).toHaveBeenCalledWith(
+      { ...emptyConfigMap, data: { 'console.key': 'magically changed value' } },
       'console.key',
       'new value',
     );

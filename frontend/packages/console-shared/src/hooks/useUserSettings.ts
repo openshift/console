@@ -73,7 +73,10 @@ export const useUserSettings = <T>(
   );
 
   React.useEffect(() => {
-    if (!fallbackLocalStorage && (cfLoadError || (!cfData && cfLoaded))) {
+    if (fallbackLocalStorage) {
+      return;
+    }
+    if (cfLoadError || (!cfData && cfLoaded)) {
       (async () => {
         try {
           await createConfigMap();
@@ -90,7 +93,6 @@ export const useUserSettings = <T>(
       /**
        * update settings if key is present in config map but data is not equal to settings
        */
-      !fallbackLocalStorage &&
       cfData &&
       cfLoaded &&
       cfData.data?.hasOwnProperty(keyRef.current) &&
@@ -102,7 +104,6 @@ export const useUserSettings = <T>(
       /**
        * if key doesn't exist in config map send patch request to add the key with default value
        */
-      !fallbackLocalStorage &&
       defaultValueRef.current !== undefined &&
       cfData &&
       cfLoaded &&
@@ -111,7 +112,7 @@ export const useUserSettings = <T>(
       updateConfigMap(cfData, keyRef.current, seralizeData(defaultValueRef.current));
       setSettings(defaultValueRef.current);
       setLoaded(true);
-    } else if (!fallbackLocalStorage && cfLoaded) {
+    } else if (cfLoaded) {
       setSettings(defaultValueRef.current);
       setLoaded(true);
     }
@@ -141,30 +142,20 @@ export const useUserSettings = <T>(
   );
 
   const resultedSettings = React.useMemo(() => {
-    /**
-     * If key is deleted from the config map then return default value
-     */
-    if (
-      sync &&
-      cfLoaded &&
-      cfData &&
-      !cfData.data?.hasOwnProperty(keyRef.current) &&
-      settings !== undefined &&
-      !isRequestPending
-    ) {
-      return defaultValueRef.current;
-    }
-    if (
-      sync &&
-      !isRequestPending &&
-      cfLoaded &&
-      cfData &&
-      seralizeData(settingsRef.current) !== cfData?.data?.[keyRef.current]
-    ) {
-      return deseralizeData(cfData?.data?.[keyRef.current]);
+    if (sync && cfLoaded && cfData && !isRequestPending) {
+      /**
+       * If key is deleted from the config map then return default value
+       */
+      if (!cfData.data?.hasOwnProperty(keyRef.current) && settings !== undefined) {
+        return defaultValueRef.current;
+      }
+      if (seralizeData(settingsRef.current) !== cfData?.data?.[keyRef.current]) {
+        return deseralizeData(cfData?.data?.[keyRef.current]);
+      }
     }
     return settings;
   }, [sync, isRequestPending, cfData, cfLoaded, settings]);
+  settingsRef.current = resultedSettings;
 
   return fallbackLocalStorage
     ? [lsData, setLsDataCallback, true]
