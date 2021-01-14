@@ -45,9 +45,9 @@ const PerspectiveNav: React.FC<StateProps & DispatchProps> = ({ perspective, pin
   };
 
   // Until mc perspective is contributed through extensions, simply render static `MulticlusterNav`
-  if (perspective === 'mc') {
+  if (window.SERVER_FLAGS.McMode && perspective === 'mc') {
     return <MulticlusterNav />;
-  } else if (perspective === 'hc') {
+  } else if (!window.SERVER_FLAGS.McMode ||  perspective === 'hc') {
     return <HyperCloudNav />;
   }
 

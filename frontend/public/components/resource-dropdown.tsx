@@ -32,7 +32,7 @@ const DropdownItem: React.SFC<DropdownItemProps> = ({ model, showGroup, checked 
       <Checkbox
         tabIndex={-1}
         id={`${model.apiGroup}:${model.apiVersion}:${model.kind}`}
-        isChecked={checked}
+        checked={checked}
       />
       <span className="co-resource-icon--fixed-width">
         <ResourceIcon kind={referenceForModel(model)} />
@@ -53,7 +53,7 @@ const DropdownItem: React.SFC<DropdownItemProps> = ({ model, showGroup, checked 
 );
 
 const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
-  const { selected, onChange, allModels, showAll, className, preferredVersions } = props;
+  const { selected, onChange, allModels, showAll, className, preferredVersions, type } = props;
 
   const resources = allModels
     .filter(({ apiGroup, apiVersion, kind, verbs }) => {
@@ -146,6 +146,7 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
       onChange={handleSelected}
       autocompleteFilter={autocompleteFilter}
       autocompletePlaceholder="Select Resource"
+      type={type}
     />
   );
 };
@@ -167,6 +168,7 @@ export type ResourceListDropdownProps = {
   className?: string;
   id?: string;
   showAll?: boolean;
+  type?: string
 };
 
 type DropdownItemProps = {
