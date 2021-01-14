@@ -10,7 +10,7 @@ import i18next from 'i18next';
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 import { Button, Popover } from '@patternfly/react-core';
-import { Status, TableColumnsType } from '@console/shared';
+import { Status, TableColumnsType, useUserSettingsCompatibility } from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
 import {
   withUserSettingsCompatibility,
@@ -304,136 +304,127 @@ const getSelectedColumns = (showNodes: boolean) => {
 };
 
 const PodTableRow = connect<PodTableRowPropsFromState, null, PodTableRowProps>(podRowStateToProps)(
-  withUserSettingsCompatibility<
-    PodTableRowProps &
-      PodTableRowPropsFromState &
-      WithUserSettingsCompatibilityProps<TableColumnsType>,
-    TableColumnsType
-  >(
-    COLUMN_MANAGEMENT_CONFIGMAP_KEY,
-    COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
-    undefined,
-    true,
-  )(
-    ({
-      obj: pod,
-      index,
-      rowKey,
-      style,
-      metrics,
-      showNodes,
-      userSettingState: tableColumns,
-    }: PodTableRowProps &
-      PodTableRowPropsFromState &
-      WithUserSettingsCompatibilityProps<TableColumnsType>) => {
-      const { name, namespace, creationTimestamp, labels } = pod.metadata;
-      const { readyCount, totalContainers } = podReadiness(pod);
-      const phase = podPhase(pod);
-      const restarts = podRestarts(pod);
-      const bytes: number = _.get(metrics, ['memory', namespace, name]);
-      const cores: number = _.get(metrics, ['cpu', namespace, name]);
-      const columns =
-        tableColumns?.[columnManagementID]?.length > 0
-          ? new Set(tableColumns[columnManagementID])
-          : getSelectedColumns(showNodes);
-      return (
-        <TableRow id={pod.metadata.uid} index={index} trKey={rowKey} style={style}>
-          <TableData className={podColumnInfo.name.classes}>
-            <ResourceLink kind={kind} name={name} namespace={namespace} />
-          </TableData>
-          <TableData
-            className={classNames(podColumnInfo.namespace.classes, 'co-break-word')}
-            columns={columns}
-            columnID={podColumnInfo.namespace.id}
-          >
-            <ResourceLink kind="Namespace" name={namespace} />
-          </TableData>
-          <TableData
-            className={podColumnInfo.status.classes}
-            columns={columns}
-            columnID={podColumnInfo.status.id}
-          >
-            <PodStatus pod={pod} />
-          </TableData>
-          <TableData
-            className={podColumnInfo.ready.classes}
-            columns={columns}
-            columnID={podColumnInfo.ready.id}
-          >
-            {readyCount}/{totalContainers}
-          </TableData>
-          <TableData
-            className={podColumnInfo.restarts.classes}
-            columns={columns}
-            columnID={podColumnInfo.restarts.id}
-          >
-            {restarts}
-          </TableData>
-          <TableData
-            className={podColumnInfo.owner.classes}
-            columns={columns}
-            columnID={podColumnInfo.owner.id}
-          >
-            {showNodes ? (
-              <ResourceLink kind="Node" name={pod.spec.nodeName} namespace={namespace} />
-            ) : (
-              <OwnerReferences resource={pod} />
-            )}
-          </TableData>
-          <TableData
-            className={podColumnInfo.memory.classes}
-            columns={columns}
-            columnID={podColumnInfo.memory.id}
-          >
-            {bytes ? `${formatBytesAsMiB(bytes)} MiB` : '-'}
-          </TableData>
-          <TableData
-            className={podColumnInfo.cpu.classes}
-            columns={columns}
-            columnID={podColumnInfo.cpu.id}
-          >
-            {cores ? `${formatCores(cores)} cores` : '-'}
-          </TableData>
-          <TableData
-            className={podColumnInfo.created.classes}
-            columns={columns}
-            columnID={podColumnInfo.created.id}
-          >
-            <Timestamp timestamp={creationTimestamp} />
-          </TableData>
-          <TableData
-            className={podColumnInfo.node.classes}
-            columns={columns}
-            columnID={podColumnInfo.node.id}
-          >
+  ({
+    obj: pod,
+    index,
+    rowKey,
+    style,
+    metrics,
+    showNodes,
+  }: PodTableRowProps & PodTableRowPropsFromState) => {
+    const [tableColumns, , loaded] = useUserSettingsCompatibility(
+      COLUMN_MANAGEMENT_CONFIGMAP_KEY,
+      COLUMN_MANAGEMENT_LOCAL_STORAGE_KEY,
+      undefined,
+      true,
+    );
+    const { name, namespace, creationTimestamp, labels } = pod.metadata;
+    const { readyCount, totalContainers } = podReadiness(pod);
+    const phase = podPhase(pod);
+    const restarts = podRestarts(pod);
+    const bytes: number = _.get(metrics, ['memory', namespace, name]);
+    const cores: number = _.get(metrics, ['cpu', namespace, name]);
+    const columns: Set<string> =
+      loaded && tableColumns?.[columnManagementID]?.length > 0
+        ? new Set(tableColumns[columnManagementID])
+        : getSelectedColumns(showNodes);
+    return (
+      <TableRow id={pod.metadata.uid} index={index} trKey={rowKey} style={style}>
+        <TableData className={podColumnInfo.name.classes}>
+          <ResourceLink kind={kind} name={name} namespace={namespace} />
+        </TableData>
+        <TableData
+          className={classNames(podColumnInfo.namespace.classes, 'co-break-word')}
+          columns={columns}
+          columnID={podColumnInfo.namespace.id}
+        >
+          <ResourceLink kind="Namespace" name={namespace} />
+        </TableData>
+        <TableData
+          className={podColumnInfo.status.classes}
+          columns={columns}
+          columnID={podColumnInfo.status.id}
+        >
+          <PodStatus pod={pod} />
+        </TableData>
+        <TableData
+          className={podColumnInfo.ready.classes}
+          columns={columns}
+          columnID={podColumnInfo.ready.id}
+        >
+          {readyCount}/{totalContainers}
+        </TableData>
+        <TableData
+          className={podColumnInfo.restarts.classes}
+          columns={columns}
+          columnID={podColumnInfo.restarts.id}
+        >
+          {restarts}
+        </TableData>
+        <TableData
+          className={podColumnInfo.owner.classes}
+          columns={columns}
+          columnID={podColumnInfo.owner.id}
+        >
+          {showNodes ? (
             <ResourceLink kind="Node" name={pod.spec.nodeName} namespace={namespace} />
-          </TableData>
-          <TableData
-            className={podColumnInfo.labels.classes}
-            columns={columns}
-            columnID={podColumnInfo.labels.id}
-          >
-            <LabelList kind={kind} labels={labels} />
-          </TableData>
-          <TableData
-            className={podColumnInfo.ipaddress.classes}
-            columns={columns}
-            columnID={podColumnInfo.ipaddress.id}
-          >
-            {pod?.status?.hostIP ?? '-'}
-          </TableData>
-          <TableData className={Kebab.columnClass}>
-            <ResourceKebab
-              actions={menuActions}
-              kind={kind}
-              resource={pod}
-              isDisabled={phase === 'Terminating'}
-            />
-          </TableData>
-        </TableRow>
-      );
-    },
-  ),
+          ) : (
+            <OwnerReferences resource={pod} />
+          )}
+        </TableData>
+        <TableData
+          className={podColumnInfo.memory.classes}
+          columns={columns}
+          columnID={podColumnInfo.memory.id}
+        >
+          {bytes ? `${formatBytesAsMiB(bytes)} MiB` : '-'}
+        </TableData>
+        <TableData
+          className={podColumnInfo.cpu.classes}
+          columns={columns}
+          columnID={podColumnInfo.cpu.id}
+        >
+          {cores ? `${formatCores(cores)} cores` : '-'}
+        </TableData>
+        <TableData
+          className={podColumnInfo.created.classes}
+          columns={columns}
+          columnID={podColumnInfo.created.id}
+        >
+          <Timestamp timestamp={creationTimestamp} />
+        </TableData>
+        <TableData
+          className={podColumnInfo.node.classes}
+          columns={columns}
+          columnID={podColumnInfo.node.id}
+        >
+          <ResourceLink kind="Node" name={pod.spec.nodeName} namespace={namespace} />
+        </TableData>
+        <TableData
+          className={podColumnInfo.labels.classes}
+          columns={columns}
+          columnID={podColumnInfo.labels.id}
+        >
+          <LabelList kind={kind} labels={labels} />
+        </TableData>
+        <TableData
+          className={podColumnInfo.ipaddress.classes}
+          columns={columns}
+          columnID={podColumnInfo.ipaddress.id}
+        >
+          {pod?.status?.hostIP ?? '-'}
+        </TableData>
+        <TableData className={Kebab.columnClass}>
+          <ResourceKebab
+            actions={menuActions}
+            kind={kind}
+            resource={pod}
+            isDisabled={phase === 'Terminating'}
+          />
+        </TableData>
+      </TableRow>
+    );
+  },
 );
 PodTableRow.displayName = 'PodTableRow';
 
