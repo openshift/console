@@ -16,7 +16,6 @@ import { getAnnotations, getLabels } from '../../src/selectors/selectors';
 import {
   VM_BOOTUP_TIMEOUT_SECS,
   CLONE_VM_TIMEOUT_SECS,
-  commonTemplateVersion,
   STORAGE_CLASS,
   CLONED_VM_BOOTUP_TIMEOUT_SECS,
 } from './utils/constants/common';
@@ -131,11 +130,6 @@ describe('Kubevirt create VM using wizard', () => {
         const requiredLabels = {
           [`workload.template.kubevirt.io/${vm.getData().workload.toLowerCase()}`]: 'true',
           [`os.template.kubevirt.io/${osID}`]: 'true',
-          'vm.kubevirt.io/template': `windows10-${vm
-            .getData()
-            .workload.toLowerCase()}-${vm
-            .getData()
-            .flavor.flavor.toLowerCase()}-${commonTemplateVersion()}`,
         };
         expect(_.pick(annotations, Object.keys(requiredAnnotations))).toEqual(requiredAnnotations);
         expect(_.pick(labels, Object.keys(requiredLabels))).toEqual(requiredLabels);

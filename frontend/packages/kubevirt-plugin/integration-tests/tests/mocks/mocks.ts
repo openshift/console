@@ -3,7 +3,6 @@ import { ConfigMapKind, SecretKind, ServiceAccountKind } from '@console/internal
 import { CloudInitConfig, Disk } from '../types/types';
 import {
   STORAGE_CLASS,
-  commonTemplateVersion,
   KUBEVIRT_STORAGE_CLASS_DEFAULTS,
   KUBEVIRT_PROJECT_NAME,
   COMMON_TEMPLATES_NAMESPACE,
@@ -263,10 +262,8 @@ function getMetadata(
       app: vmName,
       'flavor.template.kubevirt.io/tiny': 'true',
       'os.template.kubevirt.io/rhel7.8': 'true',
-      'vm.kubevirt.io/template': `rhel7-desktop-${Flavor.TINY.toLowerCase()}-${commonTemplateVersion()}`,
       'vm.kubevirt.io/template.namespace': COMMON_TEMPLATES_NAMESPACE,
       'vm.kubevirt.io/template.revision': COMMON_TEMPLATES_REVISION,
-      'vm.kubevirt.io/template.version': commonTemplateVersion(),
       'workload.template.kubevirt.io/desktop': 'true',
     },
   };
