@@ -55,7 +55,7 @@ const ClusterDropdown_: React.FC<ClusterDropdownProps & StateProps> = ({
                 data-test-id="perspective-switcher-toggle"
             >
                 <Title size="md">
-                    {name}
+                    {name.endsWith("@file") ? name.slice(0, -5) : name}
                 </Title>
             </DropdownToggle>) : <LoadingInline />
         ,
@@ -74,7 +74,7 @@ const ClusterDropdown_: React.FC<ClusterDropdownProps & StateProps> = ({
                     component="button"
                 >
                     <Title size="md">
-                        {nextCluster.name}
+                        {nextCluster.name.endsWith("@file") ? nextCluster.name.slice(0, -5) : nextCluster.name}
                     </Title>
                 </DropdownItem>
             ));
@@ -96,7 +96,6 @@ const ClusterDropdown_: React.FC<ClusterDropdownProps & StateProps> = ({
 
                 if (!cluster) {
                     setActiveCluster("master");
-                } else {
                 }
 
             });
