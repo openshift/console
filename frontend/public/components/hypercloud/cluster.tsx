@@ -21,12 +21,12 @@ import {
   // Selector,
 } from '../utils';
 import { ResourceEventStream } from '../events';
-import { HyperClusterResourceModel } from '../../models';
+import { ClusterManagerModel } from '../../models';
 // import { SpecCapability } from '@console/operator-lifecycle-manager/src/components/descriptors/types';
 
-export const menuActions: KebabAction[] = [...Kebab.getExtensionsActionsForKind(HyperClusterResourceModel), ...Kebab.factory.common];
+export const menuActions: KebabAction[] = [...Kebab.getExtensionsActionsForKind(ClusterManagerModel), ...Kebab.factory.common];
 
-const kind = HyperClusterResourceModel.kind;
+const kind = ClusterManagerModel.kind;
 
 const tableColumnClasses = ['', '', classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-lg'), Kebab.columnClass];
 
@@ -136,7 +136,7 @@ export const ClustersPage: React.FC<ClustersPageProps> = props => {
   };
   const createProps = {
     items: createItems,
-    createLink: type => `/k8s/cluster/hyperclusterresources/~new/${type !== 'yaml' ? type : ''}`,
+    createLink: type => `/k8s/cluster/clustermanagers/~new/${type !== 'yaml' ? type : ''}`,
   };
   return <ListPage canCreate={true} createProps={createProps} ListComponent={Clusters} kind={kind} {...props} />;
 };

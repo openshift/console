@@ -12,6 +12,30 @@ export const HyperClusterResourceModel: K8sKind = {
   namespaced: false,
 };
 
+export const ClusterManagerModel: K8sKind = {
+  label: 'Cluster',
+  labelPlural: 'Clusters',
+  apiVersion: 'v1alpha1',
+  apiGroup: 'cluster.tmax.io',
+  plural: 'clustermanagers',
+  abbr: 'CM',
+  kind: 'ClusterManager',
+  id: 'clustermanager',
+  namespaced: true,
+};
+
+export const ClusterClaimModel: K8sKind = {
+  label: 'ClusterClaim',
+  labelPlural: 'Clusters Claims',
+  apiVersion: 'v1alpha1',
+  apiGroup: 'claims.tmax.io',
+  plural: 'clusterclaims',
+  abbr: 'CC',
+  kind: 'ClusterClaim',
+  id: 'clusterclaim',
+  namespaced: true,
+};
+
 export const PodSecurityPolicyModel: K8sKind = {
   kind: 'PodSecurityPolicy',
   namespaced: false,

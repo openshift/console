@@ -14,8 +14,9 @@ const Separator: React.FC<SeparatorProps> = ({ name }) => <NavItemSeparator name
 
 const MulticlusterNav = () => (
   <>
-    <ResourceClusterLink resource="hyperclusterresources" name="Clusters" />
-    <ResourceClusterLink resource="clustergroups" name="Cluster Groups" />
+    <ResourceClusterLink resource="clustermanagers" name="Clusters" />
+    <ResourceClusterLink resource="clusterclaims" name="Clusters Claims" />
+    {/* <ResourceClusterLink resource="clustergroups" name="Cluster Groups" /> */}
     <NavSection title="Federation">
       <h3 style={{ paddingLeft: '28px' }}>Workloads</h3>
       <ResourceClusterLink resource="federatedpods" name="Pods" />

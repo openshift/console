@@ -45,6 +45,8 @@ export const pluralToKind = new Map([
   ['pipelineresources', { kind: 'PipelineResource', type: 'CustomResourceDefinition' }],
   ['integrationconfigs', { kind: 'IntegrationConfig', type: 'CustomResourceDefinition' }],
   ['hyperclusterresources', { kind: 'HyperClusterResource', type: 'CustomResourceDefinition' }],
+  ['clusterclaims', { kind: 'ClusterClaim', type: 'CustomResourceDefinition' }],
+  ['hyperclusterresources', { kind: 'HyperClusterResource', type: 'CustomResourceDefinition' }],
   ['federatedconfigmaps', { kind: 'FederatedConfigMap', type: 'CustomResourceDefinition' }],
   ['federateddeployments', { kind: 'FederatedDeployment', type: 'CustomResourceDefinition' }],
   ['federatedingresses', { kind: 'FederatedIngress', type: 'CustomResourceDefinition' }],
