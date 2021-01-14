@@ -6,6 +6,10 @@ export const consoleNetworkInterfaceDropdownId = '#nic-dropdown';
 const manualConnectionValues = $$('.manual-connection-pf-value');
 export const rdpIpAddress = manualConnectionValues.first();
 export const rdpPort = manualConnectionValues.last();
+// Templates view
+export const defaultOS = element(
+  by.xpath('//*[contains(text(),"template.kubevirt.io/default-os-variant")]'),
+);
 
 // VM detail view
 export const vmDetailItemId = (namespace, vmName, itemName) =>
