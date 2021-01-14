@@ -66,7 +66,6 @@ export enum ActionType {
   SetNodeMetrics = 'setNodeMetrics',
   SetPinnedResources = 'setPinnedResources',
   SetActiveCluster = "setActiveCluster",
-  SetActiveClusterPath = "setActiveClusterPath",
 }
 
 type MetricValuesByName = {
@@ -208,62 +207,10 @@ export const setActivePerspective = (perspective: string) => {
 
 export const getActiveCluster = (): string => store.getState().UI.get('activeCluster');
 
-export const getActiveClusterPath = (): string => store.getState().UI.get('activeClusterPath');
-
-export const formatClusterRoute = (activeCluster, originalPath, location?) => {
-  let path = originalPath.substr(window.SERVER_FLAGS.basePath.length);
-
-  let parts = path.split('/').filter((p) => p);
-
-  let newPath = '';
-  if(parts[0] === 'k8s'){
-    const prefix = parts.shift();
-    newPath = `/${prefix}`;
-  }
-
-  if (parts[0] === 'cl') {
-    parts.shift();
-    parts.shift();
-  }
-
-  if(activeCluster && activeCluster !== '#MASTER_CLUSTER#'){
-    newPath += `/cl/${activeCluster}`;
-  }
-
-  if (parts.length) {
-    newPath += `/${parts.join('/')}`;
-  }
-
-  if (location) {
-    newPath += `${location.search}${location.hash}`;
-  }
-
-  return newPath;
-};
-
 export const setActiveCluster = (cluster: string) => {
-  if (cluster !== getActiveCluster()) {
-    const oldPath = window.location.pathname;
-    const newPath = formatClusterRoute(cluster, oldPath, window.location);
-    if (newPath !== oldPath) {
-      history.pushPath(newPath);
-    }
+  localStorage.setItem(LAST_CLUSTER_LOCAL_STORAGE_KEY, cluster);
 
-    localStorage.setItem(LAST_CLUSTER_LOCAL_STORAGE_KEY, cluster);
-  }
   return action(ActionType.SetActiveCluster, { cluster });
-};
-
-export const setActiveClusterPath = (clusterPath: string) => {
-  let activeClusterPath = clusterPath;
-  if (activeClusterPath?.startsWith('/')) {
-    activeClusterPath = activeClusterPath.slice(1);
-  }
-  if (activeClusterPath?.endsWith('/')) {
-    activeClusterPath = activeClusterPath.slice(0, -1);
-  }
-
-  return action(ActionType.SetActiveClusterPath, { activeClusterPath });
 };
 
 export const setPinnedResources = (resources: string[]) => {
@@ -465,7 +412,6 @@ const uiActions = {
   notificationDrawerToggleRead,
   setPinnedResources,
   setActiveCluster,
-  setActiveClusterPath,
 };
 
 export type UIAction = Action<typeof uiActions>;

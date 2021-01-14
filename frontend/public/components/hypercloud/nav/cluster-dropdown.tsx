@@ -2,22 +2,16 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Dropdown, DropdownItem, DropdownToggle, Title } from '@patternfly/react-core';
 import { CaretDownIcon } from '@patternfly/react-icons';
+import { LoadingInline } from '@console/internal/components/utils';
 import { RootState } from '../../../redux';
 import { featureReducerName } from '../../../reducers/features';
 import { getActiveCluster } from '../../../reducers/ui';
 import * as UIActions from '../../../actions/ui';
 import { coFetchJSON } from '../../../co-fetch';
 
-const defaultCluster: ClusterInfo[] = [{
-    key: '#MASTER_CLUSTER#',
-    name: 'Master Cluster',
-    path: '',
-}];
-
 type StateProps = {
     activeCluster: string;
     setActiveCluster?: (name: string) => void;
-    setActiveClusterPath?: (path: string) => void;
 };
 
 export type ClusterDropdownProps = {
@@ -26,12 +20,11 @@ export type ClusterDropdownProps = {
 
 const ClusterDropdown_: React.FC<ClusterDropdownProps & StateProps> = ({
     setActiveCluster,
-    setActiveClusterPath,
     onClusterSelected,
     activeCluster,
 }) => {
     const [isClusterDropdownOpen, setClusterDropdownOpen] = React.useState(false);
-    const [clusters, setClusters] = React.useState(defaultCluster);
+    const [clusters, setClusters] = React.useState([]);
 
     const toggleClusterOpen = React.useCallback(() => {
         setClusterDropdownOpen(!isClusterDropdownOpen);
@@ -41,13 +34,10 @@ const ClusterDropdown_: React.FC<ClusterDropdownProps & StateProps> = ({
         (event: React.MouseEvent<HTMLLinkElement>, cluster): void => {
             event.preventDefault();
 
-            const clusterKey = cluster.key ?? cluster.name;
-            if (clusterKey !== activeCluster) {
-                setActiveCluster(clusterKey);
-                setActiveClusterPath(cluster.path);
+            if (cluster.name !== activeCluster) {
+                setActiveCluster(cluster.name);
 
-                //history.push(cluster.properties.getLandingPageURL(flags));
-                // TODO: k8sIP 바꾸기
+                // TODO: rerendering
             }
 
             setClusterDropdownOpen(false);
@@ -57,7 +47,7 @@ const ClusterDropdown_: React.FC<ClusterDropdownProps & StateProps> = ({
     );
 
     const renderClusterToggle = React.useCallback(
-        (name: string) =>
+        (name: string) => name ? (
             <DropdownToggle
                 isOpen={isClusterDropdownOpen}
                 onToggle={toggleClusterOpen}
@@ -65,9 +55,9 @@ const ClusterDropdown_: React.FC<ClusterDropdownProps & StateProps> = ({
                 data-test-id="perspective-switcher-toggle"
             >
                 <Title size="md">
-                    {name && name !== '#MASTER_CLUSTER#' ? name : defaultCluster[0].name}
+                    {name}
                 </Title>
-            </DropdownToggle>
+            </DropdownToggle>) : <LoadingInline />
         ,
         [isClusterDropdownOpen, toggleClusterOpen],
     );
@@ -76,11 +66,11 @@ const ClusterDropdown_: React.FC<ClusterDropdownProps & StateProps> = ({
         (clusters) => {
             return clusters.map((nextCluster) => (
                 <DropdownItem
-                    key={nextCluster.key ?? nextCluster.name}
+                    key={nextCluster.name}
                     onClick={(event: React.MouseEvent<HTMLLinkElement>) =>
                         onClusterSelect(event, nextCluster)
                     }
-                    isHovered={(nextCluster.key || nextCluster.name) === activeCluster}
+                    isHovered={(nextCluster.name) === activeCluster}
                     component="button"
                 >
                     <Title size="md">
@@ -93,22 +83,20 @@ const ClusterDropdown_: React.FC<ClusterDropdownProps & StateProps> = ({
     );
 
     React.useEffect(() => {
-        if (clusters.length <= 1 || isClusterDropdownOpen) {
+        if (clusters.length == 0 || isClusterDropdownOpen) {
             coFetchJSON('api/k8sAll').then((res) => {
                 const clusterList: ClusterInfo[] = Object.keys(res.routers).reduce((list, currentKey) => {
                     list.push({ name: currentKey, path: res.routers[currentKey].path });
                     return list;
                 }, []);
 
-                setClusters(defaultCluster.concat(clusterList));
+                setClusters(clusterList);
 
                 const cluster = activeCluster && clusterList.find(c => c.name === activeCluster);
 
                 if (!cluster) {
-                    setActiveCluster(defaultCluster[0].key);
-                    setActiveClusterPath(defaultCluster[0].path);
+                    setActiveCluster("master");
                 } else {
-                    setActiveClusterPath(cluster.path);
                 }
 
             });
@@ -131,7 +119,7 @@ const mapStateToProps = (state: RootState): StateProps => ({
 
 export default connect<StateProps, {}, ClusterDropdownProps, RootState>(
     mapStateToProps,
-    { setActiveCluster: UIActions.setActiveCluster, setActiveClusterPath: UIActions.setActiveClusterPath },
+    { setActiveCluster: UIActions.setActiveCluster },
     null,
     {
         areStatesEqual: (next, prev) =>
@@ -141,7 +129,6 @@ export default connect<StateProps, {}, ClusterDropdownProps, RootState>(
 )(ClusterDropdown_);
 
 type ClusterInfo = {
-    key?: string;
     name: string;
     path: string;
 };
