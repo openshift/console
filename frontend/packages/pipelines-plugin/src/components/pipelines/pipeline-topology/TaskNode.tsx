@@ -13,7 +13,7 @@ type TaskNodeProps = {
 const TaskNode: React.FC<TaskNodeProps> = ({ element, disableTooltip }) => {
   const { height, width } = element.getBounds();
   const { pipeline, pipelineRun, task, selected } = element.getData();
-
+  const isTaskSkipped = pipelineRun?.status?.skippedTasks?.some((t) => t.name === task.name);
   return (
     <foreignObject width={width} height={height + DROP_SHADOW_SPACING}>
       <PipelineVisualizationTask
@@ -23,6 +23,7 @@ const TaskNode: React.FC<TaskNodeProps> = ({ element, disableTooltip }) => {
         namespace={pipeline?.metadata?.namespace}
         disableTooltip={disableTooltip}
         selected={selected}
+        isSkipped={isTaskSkipped}
       />
     </foreignObject>
   );

@@ -37,6 +37,8 @@ export const pipelineRunStatus = (pipelineRun, t?: TFunction): string => {
       case 'ExceededNodeResources':
       case 'ExceededResourceQuota':
         return t ? t('pipelines-plugin~Pending') : 'Pending';
+      case 'ConditionCheckFailed':
+        return t ? t('pipelines-plugin~Skipped') : 'Skipped';
       default:
         return status;
     }

@@ -41,6 +41,7 @@ interface PipelineVisualizationTaskProp {
   pipelineRunStatus?: string;
   disableTooltip?: boolean;
   selected?: boolean;
+  isSkipped?: boolean;
 }
 
 export const PipelineVisualizationTask: React.FC<PipelineVisualizationTaskProp> = ({
@@ -50,6 +51,7 @@ export const PipelineVisualizationTask: React.FC<PipelineVisualizationTaskProp> 
   pipelineRunStatus,
   disableTooltip,
   selected,
+  isSkipped,
 }) => {
   const taskStatus = task.status || {
     duration: '',
@@ -59,6 +61,9 @@ export const PipelineVisualizationTask: React.FC<PipelineVisualizationTaskProp> 
     if (task.status?.reason === runStatus.Idle || task.status?.reason === runStatus.Pending) {
       taskStatus.reason = runStatus.Cancelled;
     }
+  }
+  if (isSkipped) {
+    taskStatus.reason = runStatus.Skipped;
   }
 
   const taskComponent = (
