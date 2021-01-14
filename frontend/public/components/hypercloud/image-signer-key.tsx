@@ -1,10 +1,11 @@
 import * as React from 'react';
-// import { Base64 } from 'js-base64';
+import { Base64 } from 'js-base64';
 import { saveAs } from 'file-saver';
 import { EyeIcon, EyeSlashIcon } from '@patternfly/react-icons';
 import { Button } from '@patternfly/react-core';
 
-import { CopyToClipboard, EmptyBox, SectionHeading } from '../utils';
+import { CopyToClipboard } from './utils/copy-to-clipboard';
+import { EmptyBox, SectionHeading } from '../utils';
 
 export const MaskedData: React.FC<{}> = () => (
   <>
@@ -60,19 +61,19 @@ export const ConfigMapData: React.FC<ConfigMapDataProps> = ({ data, label }) => 
 };
 ConfigMapData.displayName = 'ConfigMapData';
 
-export const SecretValue: React.FC<SecretValueProps> = ({ value, reveal, encoded = true }) => {
+export const SecretValue: React.FC<SecretValueProps> = ({ isTable, value, reveal, encoded = true }) => {
   if (!value) {
     return <span className="text-muted">No value</span>;
   }
 
-  // const decodedValue = encoded ? Base64.decode(value) : value;
-  const decodedValue = value;
+  const decodedValue = encoded ? Base64.decode(value) : value;
+  // const decodedValue = value;
   const visibleValue = reveal ? decodedValue : <MaskedData />;
-  return <CopyToClipboard value={decodedValue} visibleValue={visibleValue} />;
+  return <CopyToClipboard value={decodedValue} visibleValue={visibleValue} isTable={isTable} />;
 };
 SecretValue.displayName = 'SecretValue';
 
-export const SecretData: React.FC<SecretDataProps> = ({ data, title }) => {
+export const SecretData: React.FC<SecretDataProps> = ({ data, title, isTable }) => {
   const [reveal, setReveal] = React.useState(false);
 
   const dl = [];
@@ -80,11 +81,7 @@ export const SecretData: React.FC<SecretDataProps> = ({ data, title }) => {
     .sort()
     .forEach(k => {
       dl.push(<dt key={`${k}-k`}>{`Root ${k.toUpperCase()}`}</dt>);
-      dl.push(
-        <dd key={`${k}-v`}>
-          <SecretValue value={data[k]} reveal={reveal} />
-        </dd>,
-      );
+      dl.push(<dd key={`${k}-v`}>{k === 'id' ? <SecretValue encoded={false} value={data[k]} reveal={true} isTable={isTable} /> : <SecretValue value={data[k]} reveal={reveal} isTable={isTable} />}</dd>);
     });
 
   return (
@@ -129,9 +126,11 @@ type SecretValueProps = {
   value: string;
   encoded?: boolean;
   reveal: boolean;
+  isTable?: boolean;
 };
 
 type SecretDataProps = {
   data: KeyValueData;
   title?: string;
+  isTable?: boolean;
 };

@@ -3,8 +3,11 @@ import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 
 import { EmptyBox, SectionHeading } from '../utils';
-import { Table } from '../factory';
+import { Table, TableRow, TableData } from '../hypercloud/factory/table';
+import { EyeIcon, EyeSlashIcon } from '@patternfly/react-icons';
+import { Button } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
+import { SecretValue } from './image-signer-key';
 
 const targetRowColumnClasses = [classNames('col-lg-2', 'col-md-3', 'col-sm-4', 'col-xs-5'), classNames('col-lg-2', 'col-md-3', 'col-sm-4', 'col-xs-7'), classNames('col-lg-2', 'col-md-2', 'col-sm-4', 'hidden-xs')];
 
@@ -32,40 +35,49 @@ const TargetsTableHeader = () => {
 };
 TargetsTableHeader.displayName = 'TargetsTableHeader';
 
-const TargetsTableRows = ({ componentProps: { data } }) => {
-  return _.map(data, (target: RowTargetData) => {
-    const { id, key, passPhrase } = target;
-    return [
-      {
-        title: id,
-        props: {
-          className: targetRowColumnClasses[0],
-        },
-      },
-      {
-        title: key,
-        props: {
-          className: targetRowColumnClasses[1],
-        },
-      },
-      {
-        title: passPhrase || <span className="text-muted">No passPhrase</span>,
-        props: {
-          className: targetRowColumnClasses[2],
-        },
-      },
-    ];
-  });
+const TargetsTableRows = props => {
+  const { obj, index, key, style, reveal } = props;
+  console.log(obj);
+  return (
+    <TableRow id={'target-table'} index={index} trKey={key} style={style}>
+      <TableData className={targetRowColumnClasses[0]}>{<SecretValue encoded={false} value={obj.id} reveal={true} isTable={true}></SecretValue>}</TableData>
+      <TableData className={classNames(targetRowColumnClasses[1])}>
+        <SecretValue value={obj.key} reveal={reveal} isTable={true}></SecretValue>
+      </TableData>
+      <TableData className={classNames(targetRowColumnClasses[2])}>
+        <SecretValue value={obj.passPhrase} reveal={reveal} isTable={true}></SecretValue>
+      </TableData>
+    </TableRow>
+  );
 };
 
 export const TargetsTable = props => {
   const { resource, ...tableProps } = props;
+  const [reveal, setReveal] = React.useState(false);
   console.log(resource);
   const data: RowTargetData[] = resource;
   return (
     <>
-      {props.heading && <SectionHeading text={props.heading} />}
-      {resource.length <= 0 ? <EmptyBox label="Targets" /> : <Table {...tableProps} aria-label="Targets" loaded={true} label={props.heading} data={data} Header={TargetsTableHeader} Rows={TargetsTableRows} virtualize={false} />}
+      {props.heading && (
+        <SectionHeading text={props.heading}>
+          {resource.length ? (
+            <Button type="button" onClick={() => setReveal(!reveal)} variant="link" className="pf-m-link--align-right">
+              {reveal ? (
+                <>
+                  <EyeSlashIcon className="co-icon-space-r" />
+                  Hide Values
+                </>
+              ) : (
+                <>
+                  <EyeIcon className="co-icon-space-r" />
+                  Reveal Values
+                </>
+              )}
+            </Button>
+          ) : null}
+        </SectionHeading>
+      )}
+      {resource.length <= 0 ? <EmptyBox label="Targets" /> : <Table {...tableProps} aria-label="Targets" loaded={true} reveal={reveal} label={props.heading} data={data} Header={TargetsTableHeader} Row={TargetsTableRows} virtualize={true} />}
     </>
   );
 };
@@ -75,3 +87,9 @@ TargetsTable.displayName = 'TargetsTable';
 export type RowTargetData = {
   [index: string]: string;
 };
+
+// type SecretValueProps = {
+//   value: string;
+//   encoded?: boolean;
+//   reveal: boolean;
+// };

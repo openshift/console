@@ -140,12 +140,12 @@ const SignerKeyDetails: React.FC<SignerKeyDetailsProps> = ({ obj: imagesigner })
       <div className="co-m-pane__body">
         <div className="row">
           <div className="col-lg-12">
-            <SecretData data={root} title="Signer Key Details" />
+            <SecretData data={root} title="Signer Key Details" isTable={false} />
           </div>
         </div>
       </div>
       <div className="co-m-pane__body">
-        <TargetsTable resource={data} heading="Targets" />
+        <TargetsTable resource={data} heading="Target" />
       </div>
     </>
   );
