@@ -2,6 +2,7 @@ import { checkErrors } from '../../../integration-tests-cypress/support';
 import { modal } from '../../../integration-tests-cypress/views/modal';
 import { detailsPage } from '../../../integration-tests-cypress/views/details-page';
 import { createCatalogSource, deleteCatalogSource } from '../views/catalog-source.view';
+import { nav } from '../../../integration-tests-cypress/views/nav';
 
 const operatorName = 'Portworx Essentials';
 const catalogSourceName = 'console-e2e';
@@ -16,6 +17,9 @@ const operandLink = 'portworx';
 describe(`Interacting with a global install mode Operator (${operatorName})`, () => {
   before(() => {
     cy.login();
+    cy.visit('/');
+    nav.sidenav.switcher.changePerspectiveTo('Administrator');
+    nav.sidenav.switcher.shouldHaveText('Administrator');
     createCatalogSource(operatorName, catalogSourceName);
   });
 
@@ -45,7 +49,7 @@ describe(`Interacting with a global install mode Operator (${operatorName})`, ()
     cy.log('verify Operator began installation');
     cy.byTestID('view-installed-operators-btn').should(
       'contain',
-      `View Installed Operators in namespace ${openshiftOperatorsNS}`,
+      `View installed Operators in Namespace ${openshiftOperatorsNS}`,
     );
     cy.log('view the ClusterServiceVersion list page');
     cy.byTestID('view-installed-operators-btn').click();
@@ -57,14 +61,14 @@ describe(`Interacting with a global install mode Operator (${operatorName})`, ()
     cy.log(`navigate to the ${operatorName} details page`);
     cy.byTestOperatorRow(operatorRow).click();
     cy.byTestSectionHeading('Provided APIs').should('exist');
-    cy.byTestSectionHeading('ClusterServiceVersion Details').should('exist');
+    cy.byTestSectionHeading('ClusterServiceVersion details').should('exist');
     cy.byLegacyTestID('resource-summary').should('exist');
   });
 
   it(`displays empty message on the ${operatorName} ClusterServiceVersion "All Instances" tab`, () => {
-    cy.log('navigate to the "All Instances" tab');
-    cy.byLegacyTestID('horizontal-link-All Instances').click();
-    cy.byTestID('msg-box-title').should('contain', 'No Operands Found');
+    cy.log('navigate to the "All instances" tab');
+    cy.byLegacyTestID('horizontal-link-olm~All instances').click();
+    cy.byTestID('msg-box-title').should('contain', 'No operands found');
     cy.byTestID('msg-box-detail').should(
       'contain',
       'Operands are declarative components used to define the behavior of the application.',
@@ -89,7 +93,7 @@ describe(`Interacting with a global install mode Operator (${operatorName})`, ()
   it(`displays details about ${operatorName} ${operatorInstance} instance on the "Details" tab`, () => {
     cy.log(`navigate to the "Details" tab`);
     cy.byTestOperandLink(operandLink).click();
-    cy.byTestSectionHeading('Storage Cluster Overview').should('exist');
+    cy.byTestSectionHeading('Storage Cluster overview').should('exist');
   });
 
   it(`deletes the ${operatorName} ${operatorInstance} instance`, () => {
@@ -97,7 +101,7 @@ describe(`Interacting with a global install mode Operator (${operatorName})`, ()
     modal.shouldBeOpened();
     modal.submit();
     modal.shouldBeClosed();
-    cy.byTestID('msg-box-title').should('contain', 'No Operands Found');
+    cy.byTestID('msg-box-title').should('contain', 'No operands found');
     cy.byTestID('msg-box-detail').should(
       'contain',
       'Operands are declarative components used to define the behavior of the application.',

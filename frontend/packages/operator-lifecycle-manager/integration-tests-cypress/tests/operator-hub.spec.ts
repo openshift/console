@@ -4,6 +4,9 @@ import { nav } from '../../../integration-tests-cypress/views/nav';
 describe('Interacting with OperatorHub', () => {
   before(() => {
     cy.login();
+    cy.visit('/');
+    nav.sidenav.switcher.changePerspectiveTo('Administrator');
+    nav.sidenav.switcher.shouldHaveText('Administrator');
     cy.createProject(testName);
   });
 
