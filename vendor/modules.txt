@@ -348,6 +348,8 @@ github.com/stretchr/testify/require
 github.com/subosito/gotenv
 # github.com/traefik/traefik v1.7.26
 github.com/traefik/traefik/safe
+# github.com/urfave/negroni v1.0.0
+github.com/urfave/negroni
 # github.com/vulcand/predicate v1.1.0
 github.com/vulcand/predicate
 # github.com/xeipuuv/gojsonpointer v0.0.0-20180127040702-4e3ac2762d5f

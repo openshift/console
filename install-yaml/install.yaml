@@ -113,7 +113,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: console
+  name: console-np
   namespace: @@NAME_NS@@
 spec:
   externalTrafficPolicy: Local

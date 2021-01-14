@@ -5,148 +5,251 @@ import { sortable } from '@patternfly/react-table';
 import { Status } from '@console/shared';
 import { K8sResourceKind } from '../../module/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from '../factory';
-import { DetailsItem, Kebab, KebabAction, detailsPage, Timestamp, navFactory, ResourceKebab, ResourceLink, ResourceSummary, SectionHeading } from '../utils';
-import { RegistryModel } from '../../models/hypercloud';
+import { AsyncComponent, DetailsItem, Kebab, KebabAction, detailsPage, Timestamp, navFactory, ResourceKebab, ResourceLink, ResourceSummary, SectionHeading } from '../utils';
+import { RegistryModel, NotaryModel } from '../../models/hypercloud';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
+import { RepositoriesPage } from './repository';
+import { Resources } from './resources';
+import { match } from 'react-router-dom';
 
 export const menuActions: KebabAction[] = [...Kebab.getExtensionsActionsForKind(RegistryModel), ...Kebab.factory.common];
 
 const kind = RegistryModel.kind;
 
 const tableColumnClasses = [
-    classNames('col-xs-2', 'col-sm-2'),
-    classNames('col-xs-2', 'col-sm-2'),
-    classNames('col-sm-2', 'hidden-xs'),
-    classNames('col-xs-2', 'col-sm-2'),
-    classNames('col-sm-2', 'hidden-xs'),
-    Kebab.columnClass,
-  ];
+  '',
+  '',
+  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
+  Kebab.columnClass,
+];
 
 
 const RegistryTableHeader = (t?: TFunction) => {
-    return [
-      {
-        title: t('COMMON:MSG_MAIN_TABLEHEADER_1'),
-        sortField: 'metadata.name',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[0] },
-      },
-      {
-        title: t('COMMON:MSG_MAIN_TABLEHEADER_2'),
-        sortField: 'metadata.namespace',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[1] },
-      },
-      {
-        title: t('COMMON:MSG_DETAILS_TABDETAILS_CONTAINERS_TABLEHEADER_3'),
-        sortField: 'spec.image',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[2] },
-      },
-      {
-        title: t('COMMON:MSG_MAIN_TABLEHEADER_3'),
-        sortField: 'status.phase',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[3] },
-      },
-      {
-        title: t('COMMON:MSG_MAIN_TABLEHEADER_12'),
-        sortField: 'metadata.creationTimestamp',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[4] },
-      },
-      {
-        title: '',
-        props: { className: tableColumnClasses[5] },
-      },
-    ];
-  };
+  return [
+    {
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_1'),
+      sortField: 'metadata.name',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[0] },
+    },
+    {
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_2'),
+      sortField: 'metadata.namespace',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[1] },
+    },
+    {
+      title: t('COMMON:MSG_DETAILS_TABDETAILS_CONTAINERS_TABLEHEADER_3'),
+      sortField: 'spec.image',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[2] },
+    },
+    {
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_3'),
+      sortField: 'status.phase',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[3] },
+    },
+    {
+      title: t('SINGLE:MSG_IMAGEREGISTRIES_CREATEFORM_DIV2_29'),
+      sortField: 'status.capacity',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[4] },
+    },
+    {
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_12'),
+      sortField: 'metadata.creationTimestamp',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[5] },
+    },
+    {
+      title: '',
+      props: { className: tableColumnClasses[6] },
+    },
+  ];
+};
 
-  RegistryTableHeader.displayName = 'RegistryTableHeader';
+RegistryTableHeader.displayName = 'RegistryTableHeader';
 
-  
+
 const RegistryTableRow: RowFunction<K8sResourceKind> = ({ obj: registry, index, key, style }) => {
-    return (
-      <TableRow id={registry.metadata.uid} index={index} trKey={key} style={style}>
-        <TableData className={tableColumnClasses[0]}>
-          <ResourceLink kind={kind} name={registry.metadata.name} namespace={registry.metadata.namespace} title={registry.metadata.uid} />
-        </TableData>
-        <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
-            <ResourceLink kind="Namespace" name={registry.metadata.namespace} title={registry.metadata.namespace} />
-        </TableData>
-        <TableData className={tableColumnClasses[2]}>
-          {registry.spec.image}
-        </TableData>
-        <TableData className={classNames(tableColumnClasses[3], 'co-break-word')}>
-          <Status status={registry.status.phase} />
-        </TableData>
-        <TableData className={tableColumnClasses[4]}>
-          <Timestamp timestamp={registry.metadata.creationTimestamp} />
-        </TableData>
-        <TableData className={tableColumnClasses[5]}>
+  return (
+    <TableRow id={registry.metadata.uid} index={index} trKey={key} style={style}>
+      <TableData className={tableColumnClasses[0]}>
+        <ResourceLink kind={kind} name={registry.metadata.name} namespace={registry.metadata.namespace} title={registry.metadata.uid} />
+      </TableData>
+      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+        <ResourceLink kind="Namespace" name={registry.metadata.namespace} title={registry.metadata.namespace} />
+      </TableData>
+      <TableData className={tableColumnClasses[2]}>
+        {registry.spec.image}
+      </TableData>
+      <TableData className={classNames(tableColumnClasses[3], 'co-break-word')}>
+        <Status status={registry.status.phase} />
+      </TableData>
+      <TableData className={tableColumnClasses[4]}>
+        {registry.status.capacity}
+      </TableData>
+      <TableData className={tableColumnClasses[5]}>
+        <Timestamp timestamp={registry.metadata.creationTimestamp} />
+      </TableData>
+      <TableData className={tableColumnClasses[6]}>
         <ResourceKebab actions={menuActions} kind={kind} resource={registry} />
       </TableData>
-      </TableRow>
-    );
-  };
+    </TableRow>
+  );
+};
 
-  export const RegistryDetailsList: React.FC<RegistryDetailsListProps> = ({ ds }) => (
+export const RegistryDetailsList: React.FC<RegistryDetailsListProps> = ({ ds }) => {
+  const { t } = useTranslation();
+
+  return (
     <dl className="co-m-pane__details">
-      <DetailsItem label="Status" obj={ds} path="status.phase">
+      <DetailsItem label={t('COMMON:MSG_MAIN_TABLEHEADER_3')} obj={ds} path="status.phase">
         <Status status={ds.status.phase} />
+      </DetailsItem>
+      <DetailsItem label={t('COMMON:MSG_DETAILS_TABDETAILS_CONTAINERS_TABLEHEADER_3')} obj={ds} path="spec.image">
+        {ds.spec.image}
+      </DetailsItem>
+      <DetailsItem label={t('SINGLE:MSG_IMAGEREGISTRIES_CREATEFORM_DIV2_29')} obj={ds} path="status.capacity">
+        {ds.status.capacity}
       </DetailsItem>
     </dl>
   );
+}
 
-  
+
 const RegistryDetails: React.FC<RegistryDetailsProps> = ({ obj: registry }) => (
-    <>
-      <div className="co-m-pane__body">
-        <SectionHeading text="Registry Details" />
-        <div className="row">
-          <div className="col-lg-6">
-            <ResourceSummary resource={registry} />
-          </div>
-          <div className="col-lg-6">
-            <RegistryDetailsList ds={registry} />
-          </div>
+  <>
+    <div className="co-m-pane__body">
+      <SectionHeading text="Registry Details" />
+      <div className="row">
+        <div className="col-lg-6">
+          <ResourceSummary resource={registry} />
+        </div>
+        <div className="col-lg-6">
+          <RegistryDetailsList ds={registry} />
         </div>
       </div>
-      <div className="co-m-pane__body">
-        <SectionHeading text="Containers" />
-      </div>
-    </>
-  );
+    </div>
+    <div className="co-m-pane__body">
+      <SectionHeading text="Resources" />
+      <Resources conditions={registry.status.conditions} registry={registry.metadata.name} />
+    </div>
+  </>
+);
 
-  
+
 const { details, editYaml } = navFactory;
 
 export const Registries: React.FC = props => {
   const { t } = useTranslation();
- return <Table {...props} aria-label="Registries" Header={RegistryTableHeader.bind(null, t)} Row={RegistryTableRow} virtualize />
+  return <Table {...props} aria-label="Registries" Header={RegistryTableHeader.bind(null, t)} Row={RegistryTableRow} virtualize />
 };
 
+const registryStatusReducer = (registry: any): string => {
+  return registry.status.phase;
+}
 
-export const RegistriesPage: React.FC<RegistriesPageProps> = props => <ListPage canCreate={true} ListComponent={Registries} kind={kind} {...props} />;
+const filters = [
+  {
+    filterGroupName: 'Status',
+    type: 'registry-status',
+    reducer: registryStatusReducer,
+    items: [
+      { id: 'Running', title: 'Running' },
+      { id: 'Not Ready', title: 'Not Ready' },
+      { id: 'Creating', title: 'Creating' },
+    ],
+  },
+];
 
-export const RegistriesDetailsPage: React.FC<RegistriesDetailsPageProps> = props => <DetailsPage {...props} kind={kind} menuActions={menuActions} pages={[details(detailsPage(RegistryDetails)), editYaml()]} />;
+export const RegistriesPage: React.FC<RegistriesPageProps> = props => <ListPage canCreate={true} ListComponent={Registries} rowFilters={filters} kind={kind} {...props} />;
 
 
-  type RegistryDetailsListProps = {
-    ds: K8sResourceKind;
+const RepositoriesTab: React.FC<RepositoriesTabProps> = ({ obj }) => {
+  const {
+    metadata: { namespace },
+  } = obj;
+
+  const selector = {
+    matchLabels: {
+      app: 'registry',
+      registry: obj.metadata.name
+    }
   };
+  return (
+    <RepositoriesPage
+      showTitle={false}
+      namespace={namespace}
+      selector={selector}
+      canCreate={false} />);
+}
 
-  type RegistriesPageProps = {
-    showTitle?: boolean;
-    namespace?: string;
-    selector?: any;
-  };
+export const NotaryLoader: React.FC<NotaryLoaderProps> = (props) => {
 
-  type RegistryDetailsProps = {
-    obj: K8sResourceKind;
-  };
+  return (
+    <AsyncComponent
+      loader={() => import('./notary').then((c) => c.NotariesDetailsPage)}
+      kind={'Notary'}
+      kindObj={NotaryModel}
+      name={decodeURIComponent(props.obj.metadata.name)}
+      namespace={props.obj.metadata.namespace}
+      match={props.match}
+    />
+  );
+}
 
-  type RegistriesDetailsPageProps = {
-    match: any;
-  };
+
+export const RegistriesDetailsPage: React.FC<RegistriesDetailsPageProps> = props => <DetailsPage
+  {...props}
+  kind={kind}
+  menuActions={menuActions}
+  pages={[
+    details(detailsPage(RegistryDetails)),
+    editYaml(),
+    {
+      href: 'repository',
+      name: 'Repository',
+      component: RepositoriesTab,
+    },
+    {
+      href: 'notary',
+      name: 'Notary',
+      component: detailsPage(NotaryLoader),
+    }
+  ]}
+/>;
+
+
+
+type RegistryDetailsListProps = {
+  ds: K8sResourceKind;
+};
+
+type RegistriesPageProps = {
+  showTitle?: boolean;
+  namespace?: string;
+  selector?: any;
+};
+
+type RegistryDetailsProps = {
+  obj: K8sResourceKind;
+};
+
+type RegistriesDetailsPageProps = {
+  match: any;
+};
+
+type RepositoriesTabProps = {
+  obj: K8sResourceKind;
+};
+
+type NotaryLoaderProps = {
+  obj: K8sResourceKind;
+  match: match<any>;
+};

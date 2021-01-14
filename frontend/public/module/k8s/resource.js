@@ -3,11 +3,23 @@ import { coFetchJSON } from '../../co-fetch';
 import { k8sBasePath } from './k8s';
 import { selectorToString } from './selector';
 import { WSFactory } from '../ws-factory';
+import { getActivePerspective, getActiveCluster, getActiveClusterPath } from '../../actions/ui';
 
 /** @type {(model: K8sKind) => string} */
 const getK8sAPIPath = ({ apiGroup = 'core', apiVersion }) => {
   const isLegacy = apiGroup === 'core' && apiVersion === 'v1';
-  let p = k8sBasePath;
+    
+  let p;
+
+  const cluster = window.SERVER_FLAGS.McMode && getActivePerspective() == "hc" && getActiveCluster();
+
+  if (cluster && cluster !== "#MASTER_CLUSTER#") {
+    const activeClusterPath = getActiveClusterPath();
+    p = `${window.SERVER_FLAGS.basePath}${activeClusterPath}`;
+  }
+  else {
+    p = k8sBasePath;
+  }
 
   if (isLegacy) {
     p += '/api/';

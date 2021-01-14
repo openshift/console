@@ -52,7 +52,7 @@ export class DropdownMixin extends React.PureComponent {
     e.preventDefault();
     e.stopPropagation();
 
-    const { items, actionItems, onChange, noSelection, title } = this.props;
+    const { items, actionItems, onChange, noSelection, title, type } = this.props;
 
     if (onChange) {
       onChange(selectedKey, e);
@@ -67,7 +67,9 @@ export class DropdownMixin extends React.PureComponent {
       });
     }
 
-    this.hide();
+    if(type !== 'multiple'){
+      this.hide();
+    }
   }
 
   toggle(e) {
@@ -620,6 +622,11 @@ Dropdown.propTypes = {
   textFilter: PropTypes.string,
   title: PropTypes.node,
   disabled: PropTypes.bool,
+  type: PropTypes.string,
+};
+
+Dropdown.defaultProps = {
+  type: 'single',
 };
 
 class ActionsMenuDropdown extends DropdownMixin {

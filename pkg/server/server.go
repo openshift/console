@@ -10,10 +10,12 @@ import (
 	"net/url"
 	"os"
 	"path"
+	"strings"
 
 	"github.com/coreos/dex/api"
 	"github.com/coreos/pkg/capnslog"
 	"github.com/coreos/pkg/health"
+	"github.com/urfave/negroni"
 
 	"github.com/openshift/console/pkg/auth"
 	// "github.com/openshift/console/pkg/backend"
@@ -53,17 +55,17 @@ var (
 )
 
 type jsGlobals struct {
-	ConsoleVersion           string `json:"consoleVersion"`
-	AuthDisabled             bool   `json:"authDisabled"`
-	KubectlClientID          string `json:"kubectlClientID"`
-	BasePath                 string `json:"basePath"`
-	LoginURL                 string `json:"loginURL"`
-	LoginSuccessURL          string `json:"loginSuccessURL"`
-	LoginErrorURL            string `json:"loginErrorURL"`
-	LogoutURL                string `json:"logoutURL"`
-	LogoutRedirect           string `json:"logoutRedirect"`
-	RequestTokenURL          string `json:"requestTokenURL"`
-	KubeAdminLogoutURL       string `json:"kubeAdminLogoutURL"`
+	ConsoleVersion string `json:"consoleVersion"`
+	// AuthDisabled             bool   `json:"authDisabled"`
+	// KubectlClientID          string `json:"kubectlClientID"`
+	BasePath string `json:"basePath"`
+	// LoginURL                 string `json:"loginURL"`
+	// LoginSuccessURL          string `json:"loginSuccessURL"`
+	// LoginErrorURL            string `json:"loginErrorURL"`
+	// LogoutURL                string `json:"logoutURL"`
+	// LogoutRedirect           string `json:"logoutRedirect"`
+	// RequestTokenURL          string `json:"requestTokenURL"`
+	// KubeAdminLogoutURL       string `json:"kubeAdminLogoutURL"`
 	KubeAPIServerURL         string `json:"kubeAPIServerURL"`
 	PrometheusBaseURL        string `json:"prometheusBaseURL"`
 	PrometheusTenancyBaseURL string `json:"prometheusTenancyBaseURL"`
@@ -71,16 +73,16 @@ type jsGlobals struct {
 	MeteringBaseURL          string `json:"meteringBaseURL"`
 	Branding                 string `json:"branding"`
 	CustomProductName        string `json:"customProductName"`
-	CustomLogoURL            string `json:"customLogoURL"`
-	StatuspageID             string `json:"statuspageID"`
-	DocumentationBaseURL     string `json:"documentationBaseURL"`
-	AlertManagerPublicURL    string `json:"alertManagerPublicURL"`
-	GrafanaPublicURL         string `json:"grafanaPublicURL"`
-	PrometheusPublicURL      string `json:"prometheusPublicURL"`
-	ThanosPublicURL          string `json:"thanosPublicURL"`
-	LoadTestFactor           int    `json:"loadTestFactor"`
-	GOARCH                   string `json:"GOARCH"`
-	GOOS                     string `json:"GOOS"`
+	// CustomLogoURL            string `json:"customLogoURL"`
+	// StatuspageID             string `json:"statuspageID"`
+	// DocumentationBaseURL     string `json:"documentationBaseURL"`
+	// AlertManagerPublicURL    string `json:"alertManagerPublicURL"`
+	GrafanaPublicURL    string `json:"grafanaPublicURL"`
+	PrometheusPublicURL string `json:"prometheusPublicURL"`
+	ThanosPublicURL     string `json:"thanosPublicURL"`
+	LoadTestFactor      int    `json:"loadTestFactor"`
+	GOARCH              string `json:"GOARCH"`
+	GOOS                string `json:"GOOS"`
 
 	KeycloakRealm    string `json:keycloakRealm`
 	KeycloakAuthURL  string `json:keycloakAuthURL`
@@ -89,6 +91,8 @@ type jsGlobals struct {
 	McMode         bool   `json:mcMode`
 	McModeFile     string `json:mcModeFile`
 	McModeOperator bool   `json:mcModeOperator`
+
+	ReleaseModeFlag bool `json:"releaseModeFlag"`
 }
 
 type Server struct {
@@ -141,6 +145,9 @@ type Server struct {
 	McMode         bool
 	McModeFile     string
 	McModeOperator bool
+
+	// console mode
+	ReleaseModeFlag bool
 }
 
 func (s *Server) authDisabled() bool {
@@ -171,15 +178,8 @@ func (s *Server) webhookEnable() bool {
 	return s.WebhookProxyConfig != nil
 }
 
-// func (s *Server) dynamicProxyEnabled() bool {
-// 	return len(s.DynamicProxyConfig) != 0
-// }
-
 func (s *Server) HTTPHandler() http.Handler {
 	mux := http.NewServeMux()
-
-	// te:=gmux.NewRouter()
-	// mux.Handle("/test/test",http.Handler(te))
 
 	if len(s.BaseURL.Scheme) > 0 && len(s.BaseURL.Host) > 0 {
 		s.K8sProxyConfig.Origin = fmt.Sprintf("%s://%s", s.BaseURL.Scheme, s.BaseURL.Host)
@@ -230,9 +230,24 @@ func (s *Server) HTTPHandler() http.Handler {
 		}
 		authHandlerWithUser = func(hf func(*auth.User, http.ResponseWriter, *http.Request)) http.Handler {
 			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+				// if s.StaticUser.Username == "hypercloud" {
+				if s.ReleaseModeFlag {
+					token := r.Header.Clone().Get("Authorization")
+					temp := strings.Split(token, "Bearer ")
+					if len(temp) > 1 {
+						token = temp[1]
+					} else {
+						token = temp[0]
+					}
+					// plog.Infof("check token is on : %v", token)
+					s.StaticUser.Token = token
+				}
+
 				hf(s.StaticUser, w, r)
 			})
 		}
+
 	}
 
 	if !s.authDisabled() {
@@ -263,11 +278,13 @@ func (s *Server) HTTPHandler() http.Handler {
 		Checks: []health.Checkable{},
 	}.ServeHTTP)
 
+	// TODO: K8S api
 	k8sProxy := proxy.NewProxy(s.K8sProxyConfig)
 	handle(k8sProxyEndpoint, http.StripPrefix(
 		proxy.SingleJoiningSlash(s.BaseURL.Path, k8sProxyEndpoint),
 		authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
-			r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
+			// plog.Infof("request Header token : %v", s.StaticUser.Token)
+			r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", s.StaticUser.Token))
 			k8sProxy.ServeHTTP(w, r)
 		})),
 	)
@@ -378,6 +395,7 @@ func (s *Server) HTTPHandler() http.Handler {
 		handle(grafanaProxyAPIPath, http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, grafanaProxyAPIPath),
 			http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				// s.StaticUser.Token = r.Header.Clone().Get("Authorization")
 				grafanaProxy.ServeHTTP(w, r)
 			})),
 		)
@@ -445,8 +463,12 @@ func (s *Server) HTTPHandler() http.Handler {
 		http.HandlerFunc(helmChartRepoProxy.ServeHTTP)))
 
 	mux.HandleFunc(s.BaseURL.Path, s.indexHandler)
+	n := negroni.New(negroni.NewLogger())
+	n.UseHandler(mux)
 
-	return securityHeadersMiddleware(http.Handler(mux))
+	// return http.Handler(n)
+	return securityHeadersMiddleware(http.Handler(n))
+	// return securityHeadersMiddleware(http.Handler(mux))
 }
 
 func (s *Server) handleMonitoringDashboardConfigmaps(w http.ResponseWriter, r *http.Request) {
@@ -459,27 +481,27 @@ func (s *Server) handleKnativeEventSourceCRDs(w http.ResponseWriter, r *http.Req
 
 func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 	jsg := &jsGlobals{
-		ConsoleVersion:        version.Version,
-		AuthDisabled:          s.authDisabled(),
-		KubectlClientID:       s.KubectlClientID,
-		BasePath:              s.BaseURL.Path,
-		LoginURL:              proxy.SingleJoiningSlash(s.BaseURL.String(), authLoginEndpoint),
-		LoginSuccessURL:       proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginSuccessEndpoint),
-		LoginErrorURL:         proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginErrorEndpoint),
-		LogoutURL:             proxy.SingleJoiningSlash(s.BaseURL.String(), authLogoutEndpoint),
-		LogoutRedirect:        s.LogoutRedirect.String(),
-		KubeAPIServerURL:      s.KubeAPIServerURL,
-		Branding:              s.Branding,
-		CustomProductName:     s.CustomProductName,
-		StatuspageID:          s.StatuspageID,
-		DocumentationBaseURL:  s.DocumentationBaseURL.String(),
-		AlertManagerPublicURL: s.AlertManagerPublicURL.String(),
-		GrafanaPublicURL:      s.GrafanaPublicURL.String(),
-		PrometheusPublicURL:   s.PrometheusPublicURL.String(),
-		ThanosPublicURL:       s.ThanosPublicURL.String(),
-		GOARCH:                s.GOARCH,
-		GOOS:                  s.GOOS,
-		LoadTestFactor:        s.LoadTestFactor,
+		ConsoleVersion: version.Version,
+		// AuthDisabled:          s.authDisabled(),
+		// KubectlClientID:       s.KubectlClientID,
+		BasePath: s.BaseURL.Path,
+		// LoginURL:              proxy.SingleJoiningSlash(s.BaseURL.String(), authLoginEndpoint),
+		// LoginSuccessURL:       proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginSuccessEndpoint),
+		// LoginErrorURL:         proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginErrorEndpoint),
+		// LogoutURL:             proxy.SingleJoiningSlash(s.BaseURL.String(), authLogoutEndpoint),
+		// LogoutRedirect:        s.LogoutRedirect.String(),
+		KubeAPIServerURL:  s.KubeAPIServerURL,
+		Branding:          s.Branding,
+		CustomProductName: s.CustomProductName,
+		// StatuspageID:          s.StatuspageID,
+		// DocumentationBaseURL:  s.DocumentationBaseURL.String(),
+		// AlertManagerPublicURL: s.AlertManagerPublicURL.String(),
+		GrafanaPublicURL:    s.GrafanaPublicURL.String(),
+		PrometheusPublicURL: s.PrometheusPublicURL.String(),
+		ThanosPublicURL:     s.ThanosPublicURL.String(),
+		GOARCH:              s.GOARCH,
+		GOOS:                s.GOOS,
+		LoadTestFactor:      s.LoadTestFactor,
 
 		// return ekycloak info
 		KeycloakRealm:    s.KeycloakRealm,
@@ -489,13 +511,15 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		McMode:         s.McMode,
 		McModeFile:     s.McModeFile,
 		McModeOperator: s.McModeOperator,
+
+		ReleaseModeFlag: s.ReleaseModeFlag,
 	}
 
-	if !s.authDisabled() {
-		specialAuthURLs := s.Auther.GetSpecialURLs()
-		jsg.RequestTokenURL = specialAuthURLs.RequestToken
-		jsg.KubeAdminLogoutURL = specialAuthURLs.KubeAdminLogout
-	}
+	// if !s.authDisabled() {
+	// specialAuthURLs := s.Auther.GetSpecialURLs()
+	// jsg.RequestTokenURL = specialAuthURLs.RequestToken
+	// jsg.KubeAdminLogoutURL = specialAuthURLs.KubeAdminLogout
+	// }
 
 	if s.prometheusProxyEnabled() {
 		jsg.PrometheusBaseURL = proxy.SingleJoiningSlash(s.BaseURL.Path, prometheusProxyEndpoint)
@@ -514,9 +538,9 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		s.Auther.SetCSRFCookie(s.BaseURL.Path, &w)
 	}
 
-	if s.CustomLogoFile != "" {
-		jsg.CustomLogoURL = proxy.SingleJoiningSlash(s.BaseURL.Path, customLogoEndpoint)
-	}
+	// if s.CustomLogoFile != "" {
+	// jsg.CustomLogoURL = proxy.SingleJoiningSlash(s.BaseURL.Path, customLogoEndpoint)
+	// }
 
 	tpl := template.New(indexPageTemplateName)
 	tpl.Delims("[[", "]]")
