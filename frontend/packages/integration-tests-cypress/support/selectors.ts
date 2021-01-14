@@ -12,6 +12,8 @@ declare global {
       byTestOperatorRow(selector: string, options?: object): Chainable<Element>;
       byTestSectionHeading(selector: string): Chainable<Element>;
       byTestOperandLink(selector: string): Chainable<Element>;
+      byTestRowFilter(selector: string): Chainable<Element>;
+      byTestRows(selector: string, options?: object): Chainable<Element>;
     }
   }
 }
@@ -56,3 +58,11 @@ Cypress.Commands.add('byTestSectionHeading', (selector: string) =>
 Cypress.Commands.add('byTestOperandLink', (selector: string) =>
   cy.get(`[data-test-operand-link="${selector}"]`),
 );
+
+Cypress.Commands.add('byTestRowFilter', (selector: string) =>
+  cy.get(`[data-test-row-filter="${selector}"]`),
+);
+
+Cypress.Commands.add('byTestRows', (selector: string, options?: object) => {
+  cy.get(`[data-test-rows="${selector}"]`, options);
+});
