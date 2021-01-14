@@ -160,15 +160,14 @@ spec:
         - --tls-cert-file=/var/https-cert/cert
         - --tls-key-file=/var/https-cert/key
         - --keycloak-realm=tmax 
-        - --keycloak-auth-url=https://testauth.tmaxcloud.com/auth/ 
+        - --keycloak-auth-url=https://172.22.6.11/auth
         - --keycloak-client-id=hypercloud4         
-        - --grafana-endpoint=http://0.0.0.0:8080/
+        - --grafana-endpoint=http://grafana.monitoring.svc:3000/api/grafana/
         - --kiali-endpoint=https://172.22.6.22/api/kiali/
-        - --webhook-endpoint=https://0.0.0.0:31317/api/webhook/
+        - --webhook-endpoint=https://hypercloud4-webhook-svc.hypercloud4-system.svc/api/webhook/
         - --mc-mode=true 
         - --mc-mode-operator=true 
-        # - --mc-mode-file=$HOME/dynamic-config.yaml
-        image: tmaxcloudck/hypercloud-console:0.5.0.5
+        image: tmaxcloudck/hypercloud-console:0.5.0.6
         imagePullPolicy: IfNotPresent
         volumeMounts:
         - mountPath: /var/https-cert
