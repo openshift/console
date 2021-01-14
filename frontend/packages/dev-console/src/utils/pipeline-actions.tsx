@@ -194,7 +194,7 @@ export const stopPipelineRun: KebabAction = (kind: K8sKind, pipelineRun: Pipelin
   };
 };
 
-const addTrigger: KebabAction = (kind: K8sKind, pipeline: Pipeline) => ({
+export const addTrigger: KebabAction = (kind: K8sKind, pipeline: Pipeline) => ({
   label: 'Add Trigger',
   callback: () => {
     const cleanPipeline: Pipeline = {

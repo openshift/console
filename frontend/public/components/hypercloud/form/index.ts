@@ -1,4 +1,5 @@
 export const pluralToKind = new Map([
+  ['podsecuritypolicies', { kind: 'PodSecurityPolicy', type: 'VanilaObject' }],
   ['pods', { kind: 'Pod', type: 'VanilaObject' }],
   ['deployments', { kind: 'Deployment', type: 'VanilaObject' }],
   ['replicasets', { kind: 'ReplicaSet', type: 'VanilaObject' }],
@@ -21,6 +22,7 @@ export const pluralToKind = new Map([
   ['roles', { kind: 'Role', type: 'VanilaObject' }],
   ['rolebindings', { kind: 'RoleBinding', type: 'VanilaObject' }],
   ['serviceaccounts', { kind: 'ServiceAccount', type: 'VanilaObject' }],
+  ['customresourcedefinitions', { kind: 'CustomResourceDefinition', type: 'VanilaObject' }],
   ['namespaceclaims', { kind: 'NamespaceClaim', type: 'CustomResourceDefinition' }],
   ['servicebrokers', { kind: 'ServiceBroker', type: 'CustomResourceDefinition' }],
   ['serviceclasses', { kind: 'ServiceClass', type: 'CustomResourceDefinition' }],
@@ -72,5 +74,7 @@ export const pluralToKind = new Map([
   ['virtualmachines', { kind: 'VirtualMachine', type: 'CustomResourceDefinition' }],
   ['registries', { kind: 'Registry', type: 'CustomResourceDefinition' }],
   ['imagesigners', { kind: 'ImageSigner', type: 'CustomResourceDefinition' }],
-  ['imagesignrequests', { kind: 'ImageSignRequest', type: 'CustomResourceDefinition' }]
+  ['imagesignrequests', { kind: 'ImageSignRequest', type: 'CustomResourceDefinition' }],
+  ['imagescanrequests', { kind: 'ImageScanRequest', type: 'CustomResourceDefinition' }],
+  ['signerpolicies', { kind: 'SignerPolicy', type: 'CustomResourceDefinition' }],
 ]);

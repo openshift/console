@@ -34,6 +34,19 @@ export const ClusterClaimModel: K8sKind = {
   kind: 'ClusterClaim',
   id: 'clusterclaim',
   namespaced: true,
+}
+
+export const SignerPolicyModel: K8sKind = {
+  kind: 'SignerPolicy',
+  label: 'Signer Policy',
+  labelPlural: 'Signer Policies',
+  apiGroup: 'tmax.io',
+  apiVersion: 'v1',
+  abbr: 'SP',
+  namespaced: true,
+  crd: false,
+  id: 'signerpolicy',
+  plural: 'signerpolicies',
 };
 
 export const PodSecurityPolicyModel: K8sKind = {
@@ -280,6 +293,18 @@ export const ImageSignRequestModel: K8sKind = {
   kind: 'ImageSignRequest',
   id: 'imagesignrequest',
   labelPlural: 'Image Sign Requests',
+  crd: false,
+};
+export const ImageScanRequestModel: K8sKind = {
+  label: 'Image Scan Request',
+  apiVersion: 'v1',
+  apiGroup: 'tmax.io',
+  plural: 'imagescanrequests',
+  abbr: 'ISR',
+  namespaced: true,
+  kind: 'ImageScanRequest',
+  id: 'imagescanrequest',
+  labelPlural: 'Image Scan Requests',
   crd: false,
 };
 

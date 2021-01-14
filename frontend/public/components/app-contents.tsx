@@ -19,7 +19,7 @@ import { NamespaceRedirect } from './utils/namespace-redirect';
 import { RootState } from '../redux';
 import { pluralToKind } from './hypercloud/form';
 import { getPerspectives } from '../hypercloud/perspectives';
-// import { GrafanaPage } from './hypercloud/grafana';
+import { GrafanaPage } from './hypercloud/grafana';
 
 //PF4 Imports
 import { PageSection, PageSectionVariants } from '@patternfly/react-core';
@@ -30,7 +30,7 @@ const RedirectComponent = props => {
 };
 
 // const RedirectClusterComponent = props => {
-  
+
 //   const to = `/k8s/`
 //   return <Redirect to={to} />;
 // }
@@ -47,17 +47,17 @@ function NamespaceFromURL(Component) {
   }
   return C;
 }
-const ActiveNamespaceRedirect = ({ location }) => {
-  const activeNamespace = localStorage.getItem('bridge/last-namespace-name');
-  let to;
-  if (activeNamespace === '#ALL_NS#') {
-    to = `${location.pathname}/all-namespaces`;
-  } else if (activeNamespace) {
-    to = `${location.pathname}/ns/${activeNamespace}`;
-  }
-  to += location.search;
-  return <Redirect to={to} />;
-};
+// const ActiveNamespaceRedirect = ({ location }) => {
+//   const activeNamespace = localStorage.getItem('bridge/last-namespace-name');
+//   let to;
+//   if (activeNamespace === '#ALL_NS#') {
+//     to = `${location.pathname}/all-namespaces`;
+//   } else if (activeNamespace) {
+//     to = `${location.pathname}/ns/${activeNamespace}`;
+//   }
+//   to += location.search;
+//   return <Redirect to={to} />;
+// };
 
 const namespacedRoutes = [];
 _.each(namespacedPrefixes, p => {
@@ -103,8 +103,12 @@ const LazyRoute = props => {
   if (kind === 'form') {
     kind = pluralToKind.get(plural)['kind'];
     loader = () => import(`./hypercloud/form/${plural}/create-${kind.toLowerCase()}` /* webpackChunkName: "create-secret" */).then(m => m[`Create${kind}`]);
-  } else if (kind === 'CustomResourceDefinition' && props.computedMatch.params.plural === 'customresourcedefinitions') {
-    loader = () => import('./create-yaml' /* webpackChunkName: "create-yaml" */).then(m => m.CreateYAML);
+  } else if (kind === 'CustomResourceDefinition') {
+    if (props.computedMatch.params.plural === 'secrets') {
+      loader = () => import('./create-yaml' /* webpackChunkName: "create-yaml" */).then(m => m.CreateYAML);
+    }
+    if (props.path.indexOf('all-namespaces')) {
+    }
   }
   return <Route {...props} component={undefined} render={componentProps => <AsyncComponent loader={loader} kind={kind} {...componentProps} />} />;
 };
@@ -188,9 +192,12 @@ const AppContents_: React.FC<AppContentsProps> = ({ activePerspective, activeClu
           }
           <LazyRoute path="/k8s/ns/:ns/audits" exact loader={() => import('./hypercloud/audit').then(m => NamespaceFromURL(m.AuditPage))} />
           <LazyRoute path="/k8s/all-namespaces/audits" exact loader={() => import('./hypercloud/audit').then(m => NamespaceFromURL(m.AuditPage))} />
-          <Route path="/grafana" exact component={ActiveNamespaceRedirect} />
+          <Route path="/grafana/all-namespaces" exact component={NamespaceFromURL(GrafanaPage)} />
+          <Route path="/grafana/ns/:ns" exact component={NamespaceFromURL(GrafanaPage)} />
+          <Route path="/grafana" exact component={NamespaceRedirect} />
+          {/* <Route path="/grafana" exact component={ActiveNamespaceRedirect} />
           <LazyRoute path="/grafana/all-namespaces" exact loader={() => import('./hypercloud/grafana').then(m => NamespaceFromURL(m.GrafanaPage))} />
-          <LazyRoute path="/grafana/ns/:ns" exact loader={() => import('./hypercloud/grafana').then(m => NamespaceFromURL(m.GrafanaPage))} />
+          <LazyRoute path="/grafana/ns/:ns" exact loader={() => import('./hypercloud/grafana').then(m => NamespaceFromURL(m.GrafanaPage))} /> */}
 
           {/*Create Form */}
           <LazyRoute path="/k8s/cluster/rolebindings/~new" exact loader={() => import('./RBAC' /* webpackChunkName: "rbac" */).then(m => m.CreateRoleBinding)} kind="RoleBinding" />
