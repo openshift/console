@@ -93,7 +93,7 @@ const stateToProps = (state: RootState, props: Omit<CreateDefaultPageProps, 'mod
   let model;
   if (modelFor(pluralToKind.get(props.match.params.plural)['kind'])) {
     model = modelFor(pluralToKind.get(props.match.params.plural)['kind']);
-    plural = model.apiGroup + '~' + model.apiVersion + '~' + model.kind;
+    plural = referenceForModel(model);
   }
   return { model: state.k8s.getIn(['RESOURCES', 'models', plural]) || (state.k8s.getIn(['RESOURCES', 'models', model.kind]) as K8sKind), activePerspective: getActivePerspective(state) };
 };

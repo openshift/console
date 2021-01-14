@@ -5,8 +5,9 @@ import { Translation } from 'react-i18next';
 // import { GroupModel, UserModel } from '../../../models';
 
 // import { referenceForModel } from '../../../module/k8s';
-import { HrefLink, ResourceNSLink, ResourceClusterLink } from '../../nav/items';
+// import { HrefLink, ResourceNSLink, ResourceClusterLink } from '../../nav/items';
 // import { AuthAdminLink } from './items';
+import { HrefLink, ResourceNSLink, ResourceClusterLink } from './items';
 import { NavSection } from '../../nav/section';
 
 // Wrap `NavItemSeparator` so we can use `required` without prop type errors.
@@ -81,6 +82,7 @@ const HyperCloudNav = () => (
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_56')}>
           <ResourceNSLink resource="tasks" name={t('COMMON:MSG_LNB_MENU_57')} />
+          <ResourceNSLink resource="clustertasks" name="Cluster Task" />
           <ResourceNSLink resource="taskruns" name={t('COMMON:MSG_LNB_MENU_58')} />
           <ResourceNSLink resource="pipelines" name={t('COMMON:MSG_LNB_MENU_59')} />
           <ResourceNSLink resource="pipelineruns" name={t('COMMON:MSG_LNB_MENU_60')} />
@@ -99,9 +101,10 @@ const HyperCloudNav = () => (
         </NavSection> */}
         <NavSection title="Image">
           <ResourceNSLink resource="registries" name={t('COMMON:MSG_LNB_MENU_71')} />
-          <ResourceNSLink resource="imagesigners" name="Image Signer" />
+          <ResourceClusterLink resource="imagesigners" name="Image Signer" />
           <ResourceNSLink resource="imagesignrequests" name="Image Sign Request" />
-          <ResourceNSLink resource="imagescannings" name="Image Scanning" />
+          <ResourceNSLink resource="imagescanrequests" name="Image Scan Request" />
+          <ResourceNSLink resource="signerpolicies" name="Signer Policy" />
           {/* <ResourceNSLink resource="imagetransfers" name="Image Transfer" /> */}
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_79')}>

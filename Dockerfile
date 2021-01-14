@@ -9,8 +9,10 @@ FROM openshift/origin-base
 
 COPY --from=build /go/src/github.com/openshift/console/frontend/public/dist /opt/bridge/static
 COPY --from=build /go/src/github.com/openshift/console/bin/bridge /opt/bridge/bin/bridge
-COPY --from=build /go/src/github.com/openshift/console/tools/crd-operator /opt/bridge/bin/crd-operator
-WORKDIR /opt/bridge/bin/
+COPY --from=build /go/src/github.com/openshift/console/tools/crd-operator /opt/bridge/tools/crd-operator
+COPY --from=build /go/src/github.com/openshift/console/configs/ /opt/bridge/configs/
+
+WORKDIR /opt/bridge/
 
 LABEL io.k8s.display-name="Hypercloud Console" \
       io.k8s.description="This is a component of Hypercloud Container Platform and provides a web console." \

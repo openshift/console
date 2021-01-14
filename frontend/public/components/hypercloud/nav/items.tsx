@@ -1,9 +1,43 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
+import { referenceForModel, K8sKind } from '../../../module/k8s';
+import { stripBasePath } from '../../utils';
+import { ALL_NAMESPACES_KEY } from '@console/shared';
 
 import { Link, LinkProps } from 'react-router-dom';
 import { NavItem } from '@patternfly/react-core';
+
+export const matchesPath = (resourcePath, prefix) =>
+  resourcePath === prefix || _.startsWith(resourcePath, `${prefix}/`);
+export const matchesModel = (resourcePath, model) =>
+  model && matchesPath(resourcePath, referenceForModel(model));
+
+export const stripClusterNS = (href) => {
+  href = stripBasePath(href);
+  return href
+    .replace(/^\/?k8s\//, '')
+    .replace(/^\/?(mc|cl\/[^/]*)/, '')
+    .replace(/^\/?(cluster|all-namespaces|ns\/[^/]*)/, '')
+    .replace(/^\//, '');
+};
+//activeCluster: state.UI.get('activeCluster'),
+
+export const formatClusteredNamespacedRouteForResource = (resource, cluster, namespace) => {
+  let res = '/k8s';
+
+  if (cluster && cluster !== '#MASTER_CLUSTER#') {
+    res += `/cl/${cluster}`;
+  }
+
+  if (namespace === ALL_NAMESPACES_KEY) {
+    res += `/all-namespaces/${resource}`;
+  } else {
+    res += `/ns/${namespace}/${resource}`;
+  }
+
+  return res;
+}
 
 class NavLink<P extends NavLinkProps> extends React.PureComponent<P> {
   static defaultProps = {
@@ -83,4 +117,59 @@ type AuthAdminLinkProps = {
   name: string;
   resource: string;
   startsWith?: string[];
+};
+
+export class ResourceNSLink extends NavLink<ResourceNSLinkProps> {
+  static isActive(props, resourcePath, activeCluster, activeNamespace) {
+    const href = stripClusterNS(formatClusteredNamespacedRouteForResource(props.resource, activeCluster, activeNamespace));
+    return matchesPath(resourcePath, href) || matchesModel(resourcePath, props.model);
+  }
+
+  get to() {
+    const { resource, activeCluster, activeNamespace } = this.props;
+    return formatClusteredNamespacedRouteForResource(resource, activeCluster, activeNamespace);
+  }
+}
+
+export class ResourceClusterLink extends NavLink<ResourceClusterLinkProps> {
+  static isActive(props, resourcePath) {
+    return (
+      resourcePath === props.resource ||
+      _.startsWith(resourcePath, `${props.resource}/`) ||
+      matchesModel(resourcePath, props.model)
+    );
+  }
+
+  get to() {
+    return this.props.activeCluster && this.props.activeCluster !== '#MASTER_CLUSTER#' ? `/k8s/cl/${this.props.activeCluster}/cluster/${this.props.resource}` : `/k8s/cluster/${this.props.resource}`;
+  }
+}
+
+export class HrefLink extends NavLink<HrefLinkProps> {
+  static isActive(props, resourcePath) {
+    const noNSHref = stripClusterNS(props.href);
+    return resourcePath === noNSHref || _.startsWith(resourcePath, `${noNSHref}/`);
+  }
+
+  get to() {
+    return this.props.activeCluster && this.props.activeCluster !== '#MASTER_CLUSTER#' ? `/cl/${this.props.activeCluster}${this.props.href}` : this.props.href;
+  }
+}
+
+export type ResourceNSLinkProps = NavLinkProps & {
+  resource: string;
+  model?: K8sKind;
+  activeCluster?: string;
+  activeNamespace?: string;
+};
+
+export type ResourceClusterLinkProps = NavLinkProps & {
+  resource: string;
+  model?: K8sKind;
+  activeCluster?: string;
+};
+
+export type HrefLinkProps = NavLinkProps & {
+  href: string;
+  activeCluster?: string;
 };

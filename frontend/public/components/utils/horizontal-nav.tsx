@@ -12,16 +12,8 @@ import { K8sResourceKind, K8sResourceCommon } from '../../module/k8s';
 import { referenceForModel, referenceFor } from '../../module/k8s/k8s';
 import { useExtensions, HorizontalNavTab, isHorizontalNavTab } from '@console/plugin-sdk';
 
-const editYamlComponent = (props) => (
-  <AsyncComponent loader={() => import('../edit-yaml').then((c) => c.EditYAML)} obj={props.obj} />
-);
-export const viewYamlComponent = (props) => (
-  <AsyncComponent
-    loader={() => import('../edit-yaml').then((c) => c.EditYAML)}
-    obj={props.obj}
-    readOnly={true}
-  />
-);
+const editYamlComponent = props => <AsyncComponent loader={() => import('../edit-yaml').then(c => c.EditYAML)} obj={props.obj} />;
+export const viewYamlComponent = props => <AsyncComponent loader={() => import('../edit-yaml').then(c => c.EditYAML)} obj={props.obj} readOnly={true} />;
 
 export class NodesComponent extends React.PureComponent<NodesComponentProps> {
   render() {
@@ -42,15 +34,7 @@ export class PodsComponent extends React.PureComponent<PodsComponentProps> {
     // Hide the create button to avoid confusion when showing pods for an object.
     // Otherwise it might seem like you click "Create Pod" to add replicas instead
     // of scaling the owner.
-    return (
-      <PodsPage
-        showTitle={false}
-        namespace={namespace}
-        selector={selector}
-        canCreate={false}
-        customData={customData}
-      />
-    );
+    return <PodsPage showTitle={false} namespace={namespace} selector={selector} canCreate={false} customData={customData} />;
   }
 }
 
@@ -64,17 +48,17 @@ export type Page = {
 
 type NavFactory = { [name: string]: (c?: React.ComponentType<any>) => Page };
 export const navFactory: NavFactory = {
-  details: (component) => ({
+  details: component => ({
     href: '',
     name: 'Details',
     component,
   }),
-  events: (component) => ({
+  events: component => ({
     href: 'events',
     name: 'Events',
     component,
   }),
-  logs: (component) => ({
+  logs: component => ({
     href: 'logs',
     name: 'Logs',
     component,
@@ -84,7 +68,7 @@ export const navFactory: NavFactory = {
     name: 'YAML',
     component,
   }),
-  pods: (component) => ({
+  pods: component => ({
     href: 'pods',
     name: 'Pods',
     component: component || PodsComponent,
@@ -94,59 +78,64 @@ export const navFactory: NavFactory = {
     name: 'Nodes',
     component: component || NodesComponent,
   }),
-  roles: (component) => ({
+  roles: component => ({
     href: 'roles',
     name: 'Role Bindings',
     component,
   }),
-  builds: (component) => ({
+  builds: component => ({
     href: 'builds',
     name: 'Builds',
     component,
   }),
-  envEditor: (component) => ({
+  envEditor: component => ({
     href: 'environment',
     name: 'Environment',
     component,
   }),
-  clusterServiceClasses: (component) => ({
+  clusterServiceClasses: component => ({
     href: 'serviceclasses',
     name: 'Service Classes',
     component,
   }),
-  clusterServicePlans: (component) => ({
+  clusterServicePlans: component => ({
     href: 'serviceplans',
     name: 'Service Plans',
     component,
   }),
-  serviceBindings: (component) => ({
+  serviceBindings: component => ({
     href: 'servicebindings',
     name: 'Service Bindings',
     component,
   }),
-  clusterOperators: (component) => ({
+  clusterOperators: component => ({
     href: 'clusteroperators',
     name: 'Cluster Operators',
     component,
   }),
-  machineConfigs: (component) => ({
+  machineConfigs: component => ({
     href: 'machineconfigs',
     name: 'Machine Configs',
     component,
   }),
-  machines: (component) => ({
+  machines: component => ({
     href: 'machines',
     name: 'Machines',
     component,
   }),
-  workloads: (component) => ({
+  workloads: component => ({
     href: 'workloads',
     name: 'Workloads',
     component,
   }),
-  history: (component) => ({
+  history: component => ({
     href: 'history',
     name: 'History',
+    component,
+  }),
+  signerKey: component => ({
+    href: 'signerkeys',
+    name: 'Signer Key',
     component,
   }),
 };
@@ -166,10 +155,7 @@ export const NavBar = withRouter<NavBarProps>(({ pages, baseURL, basePath }) => 
         });
         return (
           <li className={klass} key={name}>
-            <Link
-              to={`${baseURL.replace(/\/$/, '')}/${href}`}
-              data-test-id={`horizontal-link-${name}`}
-            >
+            <Link to={`${baseURL.replace(/\/$/, '')}/${href}`} data-test-id={`horizontal-link-${name}`}>
               {name}
             </Link>
           </li>
@@ -222,11 +208,7 @@ export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
     ..._.pick(props, ['filters', 'selected', 'match', 'loaded']),
     obj: _.get(props.obj, 'data'),
   };
-  const extraResources = _.reduce(
-    props.resourceKeys,
-    (extraObjs, key) => ({ ...extraObjs, [key]: _.get(props[key], 'data') }),
-    {},
-  );
+  const extraResources = _.reduce(props.resourceKeys, (extraObjs, key) => ({ ...extraObjs, [key]: _.get(props[key], 'data') }), {});
 
   const objReference = props.obj?.data ? referenceFor(props.obj.data) : '';
   const navTabExtensions = useExtensions<HorizontalNavTab>(isHorizontalNavTab);
@@ -234,41 +216,27 @@ export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
   const pluginPages = React.useMemo(
     () =>
       navTabExtensions
-        .filter((tab) => referenceForModel(tab.properties.model) === objReference)
-        .map((tab) => ({
+        .filter(tab => referenceForModel(tab.properties.model) === objReference)
+        .map(tab => ({
           ...tab.properties.page,
-          component: (params: PageComponentProps) => (
-            <AsyncComponent {...params} loader={tab.properties.loader} />
-          ),
+          component: (params: PageComponentProps) => <AsyncComponent {...params} loader={tab.properties.loader} />,
         })),
     [navTabExtensions, objReference],
   );
 
   const pages = (props.pages || props.pagesFor(props.obj?.data)).concat(pluginPages);
 
-  const routes = pages.map((p) => {
+  const routes = pages.map(p => {
     const path = `${props.match.path}/${p.path || p.href}`;
-    const render = (params) => {
-      return (
-        <p.component
-          {...componentProps}
-          {...extraResources}
-          {...p.pageData}
-          params={params}
-          customData={props.customData}
-        />
-      );
+    const render = params => {
+      return <p.component {...componentProps} {...extraResources} {...p.pageData} params={params} customData={props.customData} />;
     };
     return <Route path={path} exact key={p.name} render={render} />;
   });
 
   return (
     <div className={classNames('co-m-page__body', props.className)}>
-      <div className="co-m-horizontal-nav">
-        {!props.hideNav && (
-          <NavBar pages={pages} baseURL={props.match.url} basePath={props.match.path} />
-        )}
-      </div>
+      <div className="co-m-horizontal-nav">{!props.hideNav && <NavBar pages={pages} baseURL={props.match.url} basePath={props.match.path} />}</div>
       {renderContent(routes)}
     </div>
   );

@@ -56,8 +56,8 @@ volumes: [
           usernameVariable: 'DOCKER_USER',
           passwordVariable: 'DOCKER_PWD')]){
           sh "docker login -u ${DOCKER_USER} -p ${DOCKER_PWD}"
-          sh "docker build -t ${DOCKER_REGISTRY}/${PRODUCT}:${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}.${HOTFIX_VERSION} -f ./Dockerfile.jenkins ."
-          sh "docker push ${DOCKER_REGISTRY}/${PRODUCT}:${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}.${HOTFIX_VERSION}"
+          sh "docker build -t ${DOCKER_REGISTRY}/${PRODUCT}:${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}.${HOTFIX_VERSION} -f ./Dockerfile ."
+          //sh "docker push ${DOCKER_REGISTRY}/${PRODUCT}:${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}.${HOTFIX_VERSION}"
           }
       }
     }
@@ -66,33 +66,18 @@ volumes: [
       container('kubectl'){
         sh "rm -rf ./temp-yaml"     
         sh "cp -r ./install-yaml ./temp-yaml"
-        sh "sed -i 's#@@NAME_NS@@#${NAME_NS}#g' ./temp-yaml/*.yaml"
-        sh "cat ./temp-yaml/1.initialization.yaml"
-        sh "sed -i 's#@@NODE_PORT@@#${NODE_PORT}#g' ./temp-yaml/2.svc-np.yaml"
-        sh "cat ./temp-yaml/2.svc-np.yaml"
         
-        sh "sed -i 's#@@REALM@@#${REALM}#g' ./temp-yaml/3.deployment.yaml "
-        sh "sed -i 's#@@KEYCLOAK@@#${KEYCLOAK}#g' ./temp-yaml/3.deployment.yaml "
-        sh "sed -i 's#@@CLIENTID@@#${CLIENTID}#g' ./temp-yaml/3.deployment.yaml "
-        sh "sed -i 's#@@VER@@#${VER}#g' ./temp-yaml/3.deployment.yaml "
-        sh "sed -i '/--hdc-mode=/d' ./temp-yaml/3.deployment.yaml"
-        sh "sed -i '/--tmaxcloud-portal=/d' ./temp-yaml/3.deployment.yaml"
-        sh "cat ./temp-yaml/3.deployment.yaml"
-        sh "kubectl apply -f ./temp-yaml/1.initialization.yaml"
-
-        secret = sh (
-          script: 'kubectl get secret -A | grep console-https-secret',
-          returnStdout: true
-        ).trim()
-        sh """
-        if [ -z "${secret}" ]; then
-          kubectl create secret tls console-https-secret --cert=tls/tls.crt --key=tls/tls.key -n ${NAME_NS}
-        fi
-        """
-        sh "kubectl apply -f ./temp-yaml/2.svc-lb.yaml"
-        sh "kubectl apply -f ./temp-yaml/2.svc-np.yaml"
-        sh "kubectl apply -f ./temp-yaml/3.deployment.yaml"
-        // sh "kubectl apply -f ./temp-yaml/3.deployment.yaml"
+        sh "sed -i 's#@@NAME_NS@@#${NAME_NS}#g' ./temp-yaml/*.yaml"        
+        sh "sed -i 's#@@NODE_PORT@@#${NODE_PORT}#g' ./temp-yaml/install.yaml"        
+        sh "sed -i 's#@@REALM@@#${REALM}#g' ./temp-yaml/install.yaml "
+        sh "sed -i 's#@@KEYCLOAK@@#${KEYCLOAK}#g' ./temp-yaml/install.yaml "
+        sh "sed -i 's#@@CLIENTID@@#${CLIENTID}#g' ./temp-yaml/install.yaml "
+        sh "sed -i 's#@@VER@@#${VER}#g' ./temp-yaml/install.yaml "
+        sh "sed -i '/--hdc-mode=/d' ./temp-yaml/install.yaml"
+        sh "sed -i '/--tmaxcloud-portal=/d' ./temp-yaml/install.yaml"
+        sh "cat ./temp-yaml/install.yaml"
+        
+        sh "kubectl apply -f ./temp-yaml/install.yaml"
       }
     }
 

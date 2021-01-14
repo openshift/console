@@ -9,6 +9,7 @@ import {
   NAMESPACE_LOCAL_STORAGE_KEY,
   LAST_PERSPECTIVE_LOCAL_STORAGE_KEY,
   PINNED_RESOURCES_LOCAL_STORAGE_KEY,
+  LAST_CLUSTER_LOCAL_STORAGE_KEY,
 } from '@console/shared/src/constants';
 import { AlertStates, isSilenced, SilenceStates } from '../reducers/monitoring';
 import { legalNamePattern, getNamespace } from '../components/utils/link';
@@ -20,6 +21,10 @@ import { Alert } from '../components/monitoring';
 export type UIState = ImmutableMap<string, any>;
 
 export function getDefaultPerspective() {
+  if(!window.SERVER_FLAGS.McMode){
+    return 'hc';
+  }
+
   let activePerspective = localStorage.getItem(LAST_PERSPECTIVE_LOCAL_STORAGE_KEY);
   if (
     activePerspective &&
@@ -84,6 +89,8 @@ export default (state: UIState, action: UIAction): UIState => {
     const storedPins = localStorage.getItem(PINNED_RESOURCES_LOCAL_STORAGE_KEY);
     const pinnedResources = storedPins ? JSON.parse(storedPins) : {};
 
+    const activeCluster = window.SERVER_FLAGS.McMode ? localStorage.getItem(LAST_CLUSTER_LOCAL_STORAGE_KEY) : '';
+
     return ImmutableMap({
       activeNavSectionId: 'workloads',
       location: pathname,
@@ -112,6 +119,8 @@ export default (state: UIState, action: UIAction): UIState => {
         queries: ImmutableList([newQueryBrowserQuery()]),
       }),
       pinnedResources,
+      activeCluster,
+      activeClusterPath: '',
     });
   }
 
@@ -366,6 +375,12 @@ export default (state: UIState, action: UIAction): UIState => {
       return state.set('pinnedResources', pinnedResources);
     }
 
+    case ActionType.SetActiveCluster:
+      return state.set('activeCluster', action.payload.cluster);
+
+    case ActionType.SetActiveClusterPath:
+      return state.set('activeClusterPath', action.payload.activeClusterPath);
+
     default:
       break;
   }
@@ -392,6 +407,10 @@ export const getActiveApplication = ({ UI }: RootState): string => UI.get('activ
 
 export const getPinnedResources = (rootState: RootState): string[] =>
   rootState.UI.get('pinnedResources')[getActivePerspective(rootState)];
+
+export const getActiveCluster = ({ UI }: RootState): string => UI.get('activeCluster');
+
+export const getActiveClusterPath = ({ UI }: RootState): string => UI.get('activeClusterPath');
 
 export type NotificationAlerts = {
   data: Alert[];

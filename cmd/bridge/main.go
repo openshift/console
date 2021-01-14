@@ -66,6 +66,9 @@ const (
 
 	// Well-known location of metering service for OpenShift. This is only accessible in-cluster.
 	openshiftMeteringHost = "reporting-operator.openshift-metering.svc:8080"
+
+	// Well-known location of hypercloud-server for hypercloud. This is only accessible in-clsuter.
+	hypercloudServerHost = "hypercloud-server-svc.hypercloud5-system.svc"
 )
 
 func main() {
@@ -82,7 +85,7 @@ func main() {
 	// See https://github.com/openshift/service-serving-cert-signer
 	fServiceCAFile := fs.String("service-ca-file", "", "CA bundle for OpenShift services signed with the service signing certificates.")
 
-	fUserAuth := fs.String("user-auth", "disabled", "disabled | oidc | openshift")
+	fUserAuth := fs.String("user-auth", "hypercloud", "disabled | oidc | openshift | hypercloud")
 	fUserAuthOIDCIssuerURL := fs.String("user-auth-oidc-issuer-url", "", "The OIDC/OAuth2 issuer URL.")
 	fUserAuthOIDCCAFile := fs.String("user-auth-oidc-ca-file", "", "PEM file for the OIDC/OAuth2 issuer.")
 	fUserAuthOIDCClientID := fs.String("user-auth-oidc-client-id", "", "The OIDC OAuth2 Client ID.")
@@ -98,7 +101,7 @@ func main() {
 	fK8sModeOffClusterAlertmanager := fs.String("k8s-mode-off-cluster-alertmanager", "", "DEV ONLY. URL of the cluster's AlertManager server.")
 	fK8sModeOffClusterMetering := fs.String("k8s-mode-off-cluster-metering", "", "DEV ONLY. URL of the cluster's metering server.")
 
-	fK8sAuth := fs.String("k8s-auth", "service-account", "service-account | bearer-token | oidc | openshift")
+	fK8sAuth := fs.String("k8s-auth", "hypercloud", "service-account | bearer-token | openshift | hypercloud")
 	fK8sAuthBearerToken := fs.String("k8s-auth-bearer-token", "", "Authorization token to send with proxied Kubernetes API requests.")
 
 	fRedirectPort := fs.Int("redirect-port", 0, "Port number under which the console should listen for custom hostname redirect.")
@@ -133,8 +136,8 @@ func main() {
 	helmConfig := chartproxy.RegisterFlags(fs)
 
 	// dynamic multi proxy config  2021/01/05 jinsoo
-	fDynamicConfig := fs.String("dynamic-config", "configs/dynamic-config.yaml", "The YAML proxy dynamic config file. (default file name: configs/dynamic-config.yaml)")
-	fOperator := fs.Bool("operator", false, "Choose whether using CRD (console) operator, true | false ")
+	// fDynamicConfig := fs.String("dynamic-config", "configs/dynamic-config.yaml", "The YAML proxy dynamic config file. (default file name: configs/dynamic-config.yaml)")
+	// fOperator := fs.Bool("operator", false, "Choose whether using CRD (console) operator, true | false ")
 
 	// NOTE: Keycloak 연동 추가 // 최여진 -> 윤진수 // 20.12.17
 	fKeycloakRealm := fs.String("keycloak-realm", "", "Keycloak Realm Name")
@@ -146,6 +149,18 @@ func main() {
 	fKialiEndpoint := fs.String("kiali-endpoint", "", "URL of the KIALI Portal")
 	// NOTE: webhook 연동 추가
 	fwebhookEndpoint := fs.String("webhook-endpoint", "", "URL of the hypercloud webhook endpoint")
+
+	// NOTE: Multi Cluster(MC) Mode flags //jinsoo
+	fMcMode := fs.Bool("mc-mode", false, "Multi Cluster => true | Single Cluster => false")
+	dir, _ := os.Getwd()
+	cDir := dir + "/configs/dynamic-config.yaml"
+	fMcModeFile := fs.String("mc-mode-file", cDir, "The YAML proxy config file")
+	fMcModeOperator := fs.Bool("mc-mode-operator", false, "Using operator which watch crd = true, disable = false")
+
+	fReleaseModeFlag := fs.Bool("release-mode", true, "DEV ONLY. When false")
+
+	// hypercloud-server proxy 추가
+	fHypercloudServerEndpoint := fs.String("hypercloud-endpoint", "", "URL of the Hypercloud Server API server")
 
 	if err := fs.Parse(os.Args[1:]); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
@@ -252,6 +267,8 @@ func main() {
 		KeycloakRealm:    *fKeycloakRealm,
 		KeycloakAuthURL:  *fKeycloakAuthURL,
 		KeycloakClientId: *fKeycloakClientId,
+
+		ReleaseModeFlag: *fReleaseModeFlag,
 	}
 
 	// if !in-cluster (dev) we should not pass these values to the frontend
@@ -379,23 +396,6 @@ func main() {
 			}
 			srv.TerminalProxyTLSConfig = serviceProxyTLSConfig
 
-			// NOTE: grafanaEndpoint 추가 // 윤진수
-			grafanaEndpoint := bridge.ValidateFlagIsURL("grafana-endpoint", *fGrafanaEndpoint)
-			srv.GrafanaProxyConfig = &hproxy.Config{
-				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
-				Endpoint:        grafanaEndpoint,
-				Origin:          "http://localhost",
-			}
-			kialiEndpoint := bridge.ValidateFlagIsURL("kiali-endpoint", *fKialiEndpoint)
-			srv.KialiProxyConfig = &hproxy.Config{
-				HeaderBlacklist: []string{"X-CSRFToken"},
-				TLSClientConfig: &tls.Config{
-					InsecureSkipVerify: true,
-				},
-				Endpoint: kialiEndpoint,
-				Origin:   "http://localhost",
-			}
-
 		}
 
 	case "off-cluster":
@@ -483,6 +483,19 @@ func main() {
 			InsecureSkipVerify: true,
 		},
 		Endpoint: webhookEndpoint,
+		Origin:   "http://localhost",
+	}
+
+	// Add hproxy.config
+	var hsEndpoint *url.URL
+	switch *fK8sMode {
+	case "off-cluster":
+		hsEndpoint = bridge.ValidateFlagIsURL("hypercloud-endpoint", *fHypercloudServerEndpoint)
+	case "in-cluster":
+		hsEndpoint = &url.URL{Scheme: "http", Host: hypercloudServerHost}
+	}
+	srv.HypercloudServerProxyConfig = &hproxy.Config{
+		Endpoint: hsEndpoint,
 		Origin:   "http://localhost",
 	}
 
@@ -589,6 +602,8 @@ func main() {
 		if srv.Auther, err = auth.NewAuthenticator(context.Background(), oidcClientConfig); err != nil {
 			log.Fatalf("Error initializing authenticator: %v", err)
 		}
+	case "hypercloud":
+		log.Info("Start with hyperauth")
 	case "disabled":
 		log.Warningf("running with AUTHENTICATION DISABLED!")
 	default:
@@ -610,8 +625,27 @@ func main() {
 		}
 		resourceListerToken = *fK8sAuthBearerToken
 	case "oidc", "openshift":
-		bridge.ValidateFlagIs("user-auth", *fUserAuth, "oidc", "openshift")
+		bridge.ValidateFlagIs("user-auth", *fUserAuth, "oidc", "openshift", "hypercloud")
 		resourceListerToken = k8sAuthServiceAccountBearerToken
+
+	case "hypercloud":
+		switch *fK8sMode {
+		case "in-cluster":
+			srv.StaticUser = &auth.User{
+				Username: "hypercloud",
+				Token:    k8sAuthServiceAccountBearerToken,
+			}
+			resourceListerToken = k8sAuthServiceAccountBearerToken
+		case "off-cluster":
+			bridge.ValidateFlagNotEmpty("k8s-auth-bearer-token", *fK8sAuthBearerToken)
+			srv.StaticUser = &auth.User{
+				Username: "hypercloud",
+				Token:    *fK8sAuthBearerToken,
+			}
+			resourceListerToken = *fK8sAuthBearerToken
+		default:
+			bridge.FlagFatalf("hypercloud auth -> k8sMode", "must be one of: in-cluster, off-cluster")
+		}
 	default:
 		bridge.FlagFatalf("k8s-mode", "must be one of: service-account, bearer-token, oidc, openshift")
 	}
@@ -664,22 +698,6 @@ func main() {
 
 	helmConfig.Configure(srv)
 
-	//TODO: Porxy Server Start
-	proxyServer, err := pServer.NewServer(srv, fTlSCertFile, fTlSKeyFile)
-	if err != nil {
-		log.Errorf("Failed to get proxyserver from pServer.NewServer() %v \n", err)
-	}
-
-	// pvd := &file.Provider{Filename: "/home/jinsoo/hypercloud-console5.0/examples/pconfig.yaml", Watch: true}
-	pvd := &file.Provider{Filename: *fDynamicConfig, Watch: true}
-	routinesPool := safe.NewPool(context.Background())
-	watcher := pServer.NewWatcher(pvd, routinesPool)
-	watcher.AddListener(switchRouter(srv, proxyServer))
-
-	proxyServer.Start(context.Background())
-	watcher.Start()
-	// Proxy Server End
-
 	if *fRedirectPort != 0 {
 		go func() {
 			// Listen on passed port number to be redirected to the console
@@ -699,17 +717,71 @@ func main() {
 		}()
 	}
 
-	if *fOperator {
+	//TODO: Porxy Server Start
+	srv.McMode = *fMcMode
+	proxyServer, err := pServer.NewServer(srv, fTlSCertFile, fTlSKeyFile)
+	if err != nil {
+		log.Errorf("Failed to get proxyserver from pServer.NewServer() %v \n", err)
+	}
 
+	var pvd = new(file.Provider)
+	pvd.Watch = true
+	if *fMcModeFile != cDir {
+		filename := *fMcModeFile
+		if _, err := os.Stat(filename); os.IsNotExist(err) {
+			log.Infof("does not exist file : %s", filename)
+			log.Infof("Create file : %s ", filename)
+			var pwd, err = os.Create(filename)
+			if err != nil {
+				log.Fatalf("filed to create config filed : %v", err)
+				return
+			}
+			defer pwd.Close()
+		}
+		pvd.Filename = filename
+	} else {
+		// log.Infof("Using default config directory : %s", *fMcModeFile)
+		filename := *fMcModeFile
+		if _, err := os.Stat(filename); os.IsNotExist(err) {
+			log.Infof("does not exist file : %s", filename)
+			log.Infof("Create file : %s ", filename)
+			var pwd, err = os.Create(filename)
+			if err != nil {
+				log.Fatalf("filed to create config filed : %v", err)
+				return
+			}
+			defer pwd.Close()
+		}
+		pvd.Filename = filename
+	}
+	srv.McModeFile = pvd.Filename
+
+	routinesPool := safe.NewPool(context.Background())
+	watcher := pServer.NewWatcher(pvd, routinesPool)
+	watcher.AddListener(switchRouter(srv, proxyServer))
+	watcher.Start()
+
+	if *fMcMode {
+		log.Info("Start Multi Cluster Console")
+		log.Infof("Address : %s \n", srv.BaseURL.String())
+	} else {
+		log.Info("Start Single Cluster Console")
+		log.Infof("Address: %s \n", srv.BaseURL.String())
+	}
+	proxyServer.Start(context.Background())
+	// Proxy Server End
+
+	srv.McModeOperator = *fMcModeOperator
+	if *fMcModeOperator {
 		go func() {
-			cmd := exec.Command("./tools/crd-operator")
+			cmd := exec.Command(dir+"/tools/crd-operator", "-dynamic-config", pvd.Filename)
+			log.Infof("operator wrd is : %v", cmd.Path)
 			log.Info("Running crd watcher operator")
 			cmd.Stdout = os.Stdout
 			cmd.Stderr = os.Stderr
-
 			err = cmd.Start()
 			if err != nil {
-				log.Fatal("Error when running cmd")
+				log.Fatal("Error when running cmd", err)
 			}
 		}()
 	}

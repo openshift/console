@@ -12,6 +12,19 @@ export const HyperClusterResourceModel: K8sKind = {
   namespaced: false,
 };
 
+export const SignerPolicyModel: K8sKind = {
+  kind: 'SignerPolicy',
+  label: 'Signer Policy',
+  labelPlural: 'Signer Policies',
+  apiGroup: 'tmax.io',
+  apiVersion: 'v1',
+  abbr: 'SP',
+  namespaced: true,
+  crd: false,
+  id: 'signerpolicy',
+  plural: 'signerpolicies',
+};
+
 export const PodSecurityPolicyModel: K8sKind = {
   kind: 'PodSecurityPolicy',
   namespaced: false,
@@ -194,6 +207,32 @@ export const RegistryModel: K8sKind = {
   crd: false,
 };
 
+export const RepositoryModel: K8sKind = {
+  kind: 'Repository',
+  namespaced: true,
+  label: 'Repository',
+  plural: 'repositories',
+  apiVersion: 'v1',
+  abbr: 'RP',
+  apiGroup: 'tmax.io',
+  labelPlural: 'Repositories',
+  id: 'repository',
+  crd: false,
+};
+
+export const NotaryModel: K8sKind = {
+  kind: 'Notary',
+  namespaced: true,
+  label: 'Notary',
+  plural: 'notaries',
+  apiVersion: 'v1',
+  abbr: 'N',
+  apiGroup: 'tmax.io',
+  labelPlural: 'Notaries',
+  id: 'notary',
+  crd: false,
+};
+
 export const ImageModel: K8sKind = {
   label: 'Image',
   apiVersion: 'v1',
@@ -232,6 +271,18 @@ export const ImageSignRequestModel: K8sKind = {
   labelPlural: 'Image Sign Requests',
   crd: false,
 };
+export const ImageScanRequestModel: K8sKind = {
+  label: 'Image Scan Request',
+  apiVersion: 'v1',
+  apiGroup: 'tmax.io',
+  plural: 'imagescanrequests',
+  abbr: 'ISR',
+  namespaced: true,
+  kind: 'ImageScanRequest',
+  id: 'imagescanrequest',
+  labelPlural: 'Image Scan Requests',
+  crd: false,
+};
 
 export const TaskModel: K8sKind = {
   kind: 'Task',
@@ -243,6 +294,19 @@ export const TaskModel: K8sKind = {
   apiGroup: 'tekton.dev',
   labelPlural: 'Tasks',
   id: 'task',
+  crd: false,
+};
+
+export const ClusterTaskModel: K8sKind = {
+  kind: 'ClusterTask',
+  namespaced: false,
+  label: 'ClusterTask',
+  plural: 'clustertasks',
+  apiVersion: 'v1beta1',
+  abbr: 'CTK',
+  apiGroup: 'tekton.dev',
+  labelPlural: 'Cluster Tasks',
+  id: 'clustertask',
   crd: false,
 };
 

@@ -26,6 +26,10 @@ import {
 export const fuzzyCaseInsensitive = (a: string, b: string): boolean =>
   fuzzy(_.toLower(a), _.toLower(b));
 
+const registryStatusReducer = (registry: any): string => {
+  return registry.status.phase;
+}
+
 // TODO: Table filters are undocumented, stringly-typed, and non-obvious. We can change that.
 export const tableFilters: TableFilterMap = {
   name: (filter, obj) => fuzzyCaseInsensitive(filter, obj.metadata.name),
@@ -110,6 +114,15 @@ export const tableFilters: TableFilterMap = {
     }
 
     const phase = podPhaseFilterReducer(pod);
+    return phases.selected.has(phase) || !_.includes(phases.all, phase);
+  },
+
+  'registry-status': (phases, registry) => {
+    if (!phases || !phases.selected || !phases.selected.size) {
+      return true;
+    }
+
+    const phase = registryStatusReducer(registry);
     return phases.selected.has(phase) || !_.includes(phases.all, phase);
   },
 
