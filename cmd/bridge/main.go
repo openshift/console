@@ -66,6 +66,9 @@ const (
 
 	// Well-known location of metering service for OpenShift. This is only accessible in-cluster.
 	openshiftMeteringHost = "reporting-operator.openshift-metering.svc:8080"
+
+	// Well-known location of hypercloud-server for hypercloud. This is only accessible in-clsuter.
+	hypercloudServerHost = "hypercloud-server-svc.hypercloud5-system.svc"
 )
 
 func main() {
@@ -98,7 +101,7 @@ func main() {
 	fK8sModeOffClusterAlertmanager := fs.String("k8s-mode-off-cluster-alertmanager", "", "DEV ONLY. URL of the cluster's AlertManager server.")
 	fK8sModeOffClusterMetering := fs.String("k8s-mode-off-cluster-metering", "", "DEV ONLY. URL of the cluster's metering server.")
 
-	fK8sAuth := fs.String("k8s-auth", "service-account", "service-account | bearer-token | openshift | hypercloud")
+	fK8sAuth := fs.String("k8s-auth", "hypercloud", "service-account | bearer-token | openshift | hypercloud")
 	fK8sAuthBearerToken := fs.String("k8s-auth-bearer-token", "", "Authorization token to send with proxied Kubernetes API requests.")
 
 	fRedirectPort := fs.Int("redirect-port", 0, "Port number under which the console should listen for custom hostname redirect.")
@@ -154,7 +157,10 @@ func main() {
 	fMcModeFile := fs.String("mc-mode-file", cDir, "The YAML proxy config file")
 	fMcModeOperator := fs.Bool("mc-mode-operator", false, "Using operator which watch crd = true, disable = false")
 
-	fReleaseModeFlag := fs.Bool("release-mode", true, "DEV ONLY. When false, disable login/logout.")
+	fReleaseModeFlag := fs.Bool("release-mode", true, "DEV ONLY. When false")
+
+	// hypercloud-server proxy 추가
+	fHypercloudServerEndpoint := fs.String("hypercloud-endpoint", "", "URL of the Hypercloud Server API server")
 
 	if err := fs.Parse(os.Args[1:]); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
@@ -477,6 +483,19 @@ func main() {
 			InsecureSkipVerify: true,
 		},
 		Endpoint: webhookEndpoint,
+		Origin:   "http://localhost",
+	}
+
+	// Add hproxy.config
+	var hsEndpoint *url.URL
+	switch *fK8sMode {
+	case "off-cluster":
+		hsEndpoint = bridge.ValidateFlagIsURL("hypercloud-endpoint", *fHypercloudServerEndpoint)
+	case "in-cluster":
+		hsEndpoint = &url.URL{Scheme: "http", Host: hypercloudServerHost}
+	}
+	srv.HypercloudServerProxyConfig = &hproxy.Config{
+		Endpoint: hsEndpoint,
 		Origin:   "http://localhost",
 	}
 

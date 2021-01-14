@@ -13,7 +13,7 @@ const perspectives: Perspective[] = [
             name: 'Multi Cluster',
             icon: <CogsIcon />,
             default: true,
-            getLandingPageURL: (flags) => '/k8s/cluster/hyperclusterresources',
+            getLandingPageURL: (flags) => '/k8s/cluster/clustermanagers',
             getK8sLandingPageURL: (flags) => '/search',
             getImportRedirectURL: (project) => `/k8s/cluster/projects/${project}/workloads`,
         },

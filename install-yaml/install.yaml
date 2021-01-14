@@ -167,7 +167,6 @@ spec:
         - --webhook-endpoint=https://hypercloud4-webhook-svc.hypercloud4-system.svc/api/webhook/
         - --mc-mode=true 
         - --mc-mode-operator=true 
-        # - --mc-mode-file=$HOME/dynamic-config.yaml
         image: tmaxcloudck/hypercloud-console:@@VER@@
         imagePullPolicy: IfNotPresent
         volumeMounts:
