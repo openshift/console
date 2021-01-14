@@ -3,15 +3,15 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: @@NAME_NS@@
+  name: console-system
 
 ---
 
 apiVersion: v1
 kind: ResourceQuota
 metadata:
-  name: @@NAME_NS@@-quota
-  namespace: @@NAME_NS@@
+  name: console-system-quota
+  namespace: console-system
 spec:
   hard:
     limits.cpu: "2"
@@ -23,15 +23,15 @@ spec:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: @@NAME_NS@@-admin
-  namespace: @@NAME_NS@@
+  name: console-system-admin
+  namespace: console-system
 
 ---
 
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: @@NAME_NS@@-admin
+  name: console-system-admin
 rules:
   - apiGroups: ["*"]
     resources: ["*"]
@@ -42,14 +42,14 @@ rules:
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: @@NAME_NS@@-admin
+  name: console-system-admin
 subjects:
   - kind: ServiceAccount
-    name: @@NAME_NS@@-admin
-    namespace: @@NAME_NS@@
+    name: console-system-admin
+    namespace: console-system
 roleRef:
   kind: ClusterRole
-  name: @@NAME_NS@@-admin
+  name: console-system-admin
   apiGroup: rbac.authorization.k8s.io
 
 --- 
@@ -59,7 +59,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: console-https-secret-create
-  namespace: @@NAME_NS@@
+  namespace: console-system
 spec:
   template:
     metadata:
@@ -84,7 +84,7 @@ spec:
               cpu: '1'
               memory: '1Gi'                  
       restartPolicy: OnFailure
-      serviceAccountName: @@NAME_NS@@-admin
+      serviceAccountName: console-system-admin
       securityContext:
         runAsNonRoot: true
         runAsUser: 2000
@@ -96,7 +96,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: console
-  namespace: @@NAME_NS@@
+  namespace: console-system
 spec:
   externalTrafficPolicy: Local
   type: LoadBalancer
@@ -114,7 +114,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: console-np
-  namespace: @@NAME_NS@@
+  namespace: console-system
 spec:
   externalTrafficPolicy: Local
   type: NodePort
@@ -122,7 +122,7 @@ spec:
   - name: "https"
     port: 6433
     targetPort: 6443
-    # nodePort: @@NODE_PORT@@
+    # nodePort: 31304
   selector:
     app: console   
     hypercloud: ui
@@ -134,7 +134,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: console
-  namespace: @@NAME_NS@@
+  namespace: console-system
 spec:
   progressDeadlineSeconds: 600
   replicas: 1
@@ -150,7 +150,7 @@ spec:
         hypercloud: ui
         app: console
     spec:
-      serviceAccountName: @@NAME_NS@@-admin
+      serviceAccountName: console-system-admin
       containers:
       - command:
         - /opt/bridge/bin/bridge
@@ -159,15 +159,16 @@ spec:
         - --base-address=https://0.0.0.0:6443
         - --tls-cert-file=/var/https-cert/cert
         - --tls-key-file=/var/https-cert/key
-        - --keycloak-realm=@@REALM@@ 
-        - --keycloak-auth-url=https://@@KEYCLOAK@@/auth
-        - --keycloak-client-id=@@CLIENTID@@         
-        - --grafana-endpoint=http://grafana.monitoring.svc:3000/
+        - --keycloak-realm=tmax 
+        - --keycloak-auth-url=https://testauth.tmaxcloud.com/auth/ 
+        - --keycloak-client-id=hypercloud4         
+        - --grafana-endpoint=http://0.0.0.0:8080/
         - --kiali-endpoint=https://172.22.6.22/api/kiali/
-        - --webhook-endpoint=https://hypercloud4-webhook-svc.hypercloud4-system.svc/api/webhook/
+        - --webhook-endpoint=https://0.0.0.0:31317/api/webhook/
         - --mc-mode=true 
         - --mc-mode-operator=true 
-        image: tmaxcloudck/hypercloud-console:@@VER@@
+        # - --mc-mode-file=$HOME/dynamic-config.yaml
+        image: tmaxcloudck/hypercloud-console:0.5.0.5
         imagePullPolicy: IfNotPresent
         volumeMounts:
         - mountPath: /var/https-cert
