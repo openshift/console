@@ -33,8 +33,14 @@ const validateStatus = (response, url) => {
     return response;
   }
 
-  if (response.status === 401 && shouldLogout(url)) {
-    authSvc.logout(window.location.pathname);
+  if (response.status === 401) {
+    //authSvc.logout(window.location.pathname);
+    return response.json().then(json => {
+      const error = new Error(json.message || 'Authorization failed.');
+      error.response = response;
+      error.json = json;
+      throw error;
+    });
   }
 
   const contentType = response.headers.get('content-type');
@@ -107,16 +113,7 @@ export const coFetch = (url, options = {}, timeout = 60000) => {
     delete allOptions.headers['X-CSRFToken'];
   }
 
-  if (url.indexOf('otp') < 0 && url.indexOf('login') < 0 && url.indexOf('logout') < 0 && url.indexOf('tokenrefresh') < 0) {
-    if (url.indexOf('nameSpace') < 0 && url.indexOf('nameSpaceClaim') < 0) {
-      allOptions.headers.Authorization = 'Bearer ' + getAccessToken();
-    } else {
-      allOptions.headers.Authorization = getAccessToken();
-      {
-        /* nameSpace 서비스에는 Bearer 제외하고 token 보내야함.*/
-      }
-    }
-  }
+  allOptions.headers.Authorization = 'Bearer ' + getAccessToken();
 
   const fetchPromise = fetch(url, allOptions).then(response => validateStatus(response, url));
 

@@ -38,7 +38,7 @@ import {
 } from './utils/get-knative-resources';
 import { getKebabActionsForKind } from './utils/kebab-actions';
 import {
-  fetchEventSourcesCrd,
+ // fetchEventSourcesCrd,
   getDynamicEventSourcesResourceList,
   hideDynamicEventSourceCard,
 } from './utils/fetch-dynamic-eventsources-utils';
@@ -59,7 +59,7 @@ type ConsumedExtensions =
   | AddAction;
 
 // Added it to perform discovery of Dynamic event sources on cluster on app load as kebab option needed models upfront
-fetchEventSourcesCrd();
+// fetchEventSourcesCrd();
 const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'ModelDefinition',

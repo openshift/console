@@ -162,7 +162,7 @@ spec:
         - --keycloak-realm=@@REALM@@ 
         - --keycloak-auth-url=https://@@KEYCLOAK@@/auth
         - --keycloak-client-id=@@CLIENTID@@         
-        - --grafana-endpoint=http://grafana.monitoring.svc:3000/
+        - --grafana-endpoint=http://grafana.monitoring.svc:3000/api/grafana/
         - --kiali-endpoint=https://172.22.6.22/api/kiali/
         - --webhook-endpoint=https://hypercloud4-webhook-svc.hypercloud4-system.svc/api/webhook/
         - --mc-mode=true 

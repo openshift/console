@@ -30,7 +30,7 @@ spec:
         - --keycloak-realm=tmax 
         - --keycloak-auth-url=https://testauth.tmaxcloud.com/auth/ 
         - --keycloak-client-id=hypercloud4         
-        - --grafana-endpoint=http://0.0.0.0:8080/
+        - --grafana-endpoint=http://0.0.0.0:8080/api/grafana/
         - --kiali-endpoint=https://172.22.6.22/api/kiali/
         - --webhook-endpoint=https://0.0.0.0:31317/api/webhook/
         - --mc-mode=true 
