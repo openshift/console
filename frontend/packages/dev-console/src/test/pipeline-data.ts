@@ -10,6 +10,7 @@ export enum DataState {
   FAILED2 = 'Failed at stage 2',
   FAILED3 = 'Failed at stage 3',
   FAILED_BUT_COMPLETE = 'Completed But Failed',
+  SKIPPED = 'Skipped',
 }
 
 export enum PipelineExampleNames {
@@ -18,6 +19,7 @@ export enum PipelineExampleNames {
   SIMPLE_PIPELINE = 'simple-pipeline',
   CLUSTER_PIPELINE = 'cluster-pipeline',
   BROKEN_MOCK_APP = 'broken-mock-app',
+  CONDITIONAL_PIPELINE = 'conditional-pipeline',
   INVALID_PIPELINE_MISSING_TASK = 'missing-task-pipeline',
   INVALID_PIPELINE_INVALID_TASK = 'invalid-task-pipeline',
 }
@@ -1370,6 +1372,121 @@ export const pipelineTestData: PipelineTestData = {
                 ],
                 podName: '',
                 startTime: '2020-07-13T17:16:28Z',
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+  [PipelineExampleNames.CONDITIONAL_PIPELINE]: {
+    dataSource: 'conditional-pipeline',
+    pipeline: {
+      apiVersion: 'tekton.dev/v1alpha1',
+      kind: 'Pipeline',
+      metadata: {
+        name: 'conditional-pipeline',
+        namespace: 'tekton-pipelines',
+      },
+      spec: {
+        tasks: [
+          {
+            name: 'first-create-file',
+            resources: {
+              outputs: [
+                {
+                  name: 'workspace',
+                  resource: 'source-repo',
+                },
+              ],
+            },
+            taskRef: {
+              kind: 'Task',
+              name: 'create-readme-file',
+            },
+          },
+          {
+            when: [
+              {
+                Input: '$(params.path)',
+                Operator: 'in',
+                Values: ['README.md'],
+              },
+            ],
+            name: 'then-check',
+            taskRef: {
+              kind: 'Task',
+              name: 'echo-hello',
+            },
+          },
+        ],
+      },
+    },
+    pipelineRuns: {
+      [DataState.SKIPPED]: {
+        apiVersion: 'tekton.dev/v1beta1',
+        kind: 'PipelineRun',
+        metadata: {
+          name: 'when-expression-pipeline-cx05c9',
+          namespace: 'tekton-pipelines',
+          labels: {
+            'tekton.dev/pipeline': 'when-expression-pipeline',
+          },
+        },
+        spec: {
+          params: [
+            {
+              name: 'path',
+              value: 'README.txt',
+            },
+          ],
+          pipelineRef: {
+            name: 'when-expression-pipeline',
+          },
+          resources: [
+            {
+              name: 'source-repo',
+              resourceRef: {
+                name: 'pipeline-git',
+              },
+            },
+          ],
+          serviceAccountName: 'pipeline',
+          timeout: '1h0m0s',
+        },
+        status: {
+          completionTime: '2021-01-13T14:34:19Z',
+          conditions: [
+            {
+              lastTransitionTime: '2021-01-13T14:34:19Z',
+              message: 'Tasks Completed: 1 (Failed: 0, Cancelled 0), Skipped: 1',
+              reason: 'Completed',
+              status: 'True',
+              type: 'Succeeded',
+            },
+          ],
+          skippedTasks: [
+            {
+              name: 'then-check',
+            },
+          ],
+          startTime: '2021-01-13T14:33:59Z',
+          taskRuns: {
+            'when-expression-pipeline-cx05c9-first-create-file-4sqr2': {
+              pipelineTaskName: 'first-create-file',
+              status: {
+                completionTime: '2021-01-13T14:34:19Z',
+                conditions: [
+                  {
+                    lastTransitionTime: '2021-01-13T14:34:19Z',
+                    message: 'All Steps have completed executing',
+                    reason: 'Succeeded',
+                    status: 'True',
+                    type: 'Succeeded',
+                  },
+                ],
+                podName: 'when-expression-pipeline-cx05c9-first-create-file-4sqr2-p-2p5j8',
+                startTime: '2021-01-13T14:33:59Z',
               },
             },
           },
