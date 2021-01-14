@@ -76,11 +76,11 @@ const ClusterTableHeader = () => {
 };
 ClusterTableHeader.displayName = 'ClusterTableHeader';
 
-const ClusterTableRow: RowFunction<K8sResourceKind> = ({ obj: cluster, index, key, style }) => {
+const ClusterTableRow: RowFunction<IClusterTableRow> = ({ obj: cluster, index, key, style }) => {
   return (
     <TableRow id={cluster.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink kind={kind} name={cluster.metadata.name} namespace={cluster.metadata.namespace} title={cluster.metadata.uid} />
+        <ResourceLink kind={kind} name={cluster.metadata.name} displayName={cluster.fakeMetadata.fakename} namespace={cluster.metadata.namespace} title={cluster.metadata.uid} />
       </TableData>
       <TableData className={classNames(tableColumnClasses[1])}>{cluster.spec.provider}</TableData>
       <TableData className={classNames(tableColumnClasses[2])}>{cluster.spec.provider ? 'Create' : 'Enroll'}</TableData>
@@ -141,6 +141,10 @@ export const ClustersPage: React.FC<ClustersPageProps> = props => {
   return <ListPage canCreate={true} createProps={createProps} ListComponent={Clusters} kind={kind} {...props} />;
 };
 export const ClustersDetailsPage: React.FC<ClustersDetailsPageProps> = props => <DetailsPage {...props} kind={kind} menuActions={menuActions} pages={[details(detailsPage(ClusterDetails)), editYaml(), nodes(ClusterNodes), events(ResourceEventStream)]} />;
+
+interface IClusterTableRow extends K8sResourceKind {
+  fakeMetadata: any;
+}
 
 type ClusterDetailsListProps = {
   cl: K8sResourceKind;
