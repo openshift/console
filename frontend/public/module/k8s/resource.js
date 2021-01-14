@@ -123,17 +123,6 @@ export const k8sUpdate = (kind, data, ns, name) =>
   );
 
 export const k8sUpdateApproval = (kind, resource, approval, data) => {
-  console.log('k8s update approval');
-  console.log({resourceURL: resourceApprovalURL(
-    kind,
-    Object.assign(
-      {
-        ns: resource.metadata.namespace,
-        name: resource.metadata.name,
-      },
-    ),
-    approval,
-  ),});
   const url = resourceApprovalURL(
     kind,
     Object.assign(
@@ -195,10 +184,6 @@ export const k8sList = (kind, params = {}, raw = false, options = {}) => {
     }
     return `${encodeURIComponent(k)}=${encodeURIComponent(v)}`;
   }).join('&');
-
-  console.log('k8s list');
-  console.log({kind, ns: params.ns});
-  console.log({resourceURL: resourceURL(kind, { ns: params.ns })});
 
   if(isCluster(kind) || isClusterClaim(kind)) {
     const listClusterURL = resourceClusterURL(kind);
