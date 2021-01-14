@@ -1,3 +1,62 @@
 .odc-pipeline-visualization {
   margin-bottom: var(--pf-global--spacer--md);
 }
+
+.parameter-input-field-wrapper {
+}
+
+.parameter-input-section-wrapper {
+  width: 250px;
+  margin-left: 10px;
+  margin-top: 15px;
+  margin-bottom: 0;
+}
+
+.parameter-input-section-wrapper .row {
+  margin-left: 0px;
+}
+
+.remove-button-wrapper {
+  text-align: right;
+}
+
+.remove-button {
+  margin-right: 20px;
+}
+
+#parameter-array-row-input-wrapper {
+  margin-left: 10px;
+  margin-bottom: 10px;
+}
+
+#parameter-array-row-input-wrapper .pf-c-form__group {
+  display: inline-block;
+}
+
+#parameter-array-row-input-wrapper .input-field {
+  width: 200px;
+}
+
+#parameter-array-row-input-wrapper .remove-button {
+  width: 20px;
+}
+
+.input-section-without-margin-left {
+  margin-left: 0;
+}
+
+.space-left {
+  margin-left: 10px;
+}
+
+.short-margin-top {
+  margin-top: 5px;
+}
+
+.add-button-wrapper {
+  margin-top: 10px;
+}
+
+.delete-button {
+  color: grey;
+}
