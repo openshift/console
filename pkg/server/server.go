@@ -45,9 +45,10 @@ const (
 	customLogoEndpoint             = "/custom-logo"
 	helmChartRepoProxyEndpoint     = "/api/helm/charts/"
 
-	grafanaProxyEndpoint = "/api/grafana/"
-	kialiProxyEndpoint   = "/api/kiali/"
-	webhookEndpoint      = "/api/webhook/"
+	grafanaProxyEndpoint     = "/api/grafana/"
+	kialiProxyEndpoint       = "/api/kiali/"
+	webhookEndpoint          = "/api/webhook/"
+	hypercloudServerEndpoint = "/api/hypercloud/"
 )
 
 var (
@@ -138,9 +139,10 @@ type Server struct {
 	KeycloakClientId string
 
 	// Add proxy config
-	GrafanaProxyConfig *hproxy.Config
-	KialiProxyConfig   *hproxy.Config
-	WebhookProxyConfig *hproxy.Config
+	GrafanaProxyConfig          *hproxy.Config
+	KialiProxyConfig            *hproxy.Config
+	WebhookProxyConfig          *hproxy.Config
+	HypercloudServerProxyConfig *hproxy.Config
 
 	McMode         bool
 	McModeFile     string
@@ -176,6 +178,10 @@ func (s *Server) kialiEnable() bool {
 
 func (s *Server) webhookEnable() bool {
 	return s.WebhookProxyConfig != nil
+}
+
+func (s *Server) hypercloudServerEnable() bool {
+	return s.HypercloudServerProxyConfig != nil
 }
 
 func (s *Server) HTTPHandler() http.Handler {
@@ -422,6 +428,18 @@ func (s *Server) HTTPHandler() http.Handler {
 			proxy.SingleJoiningSlash(s.BaseURL.Path, webhookProxyAPIPath),
 			http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				webhookProxy.ServeHTTP(w, r)
+			})),
+		)
+	}
+
+	// NOTE: hypercloudServer proxy
+	if s.hypercloudServerEnable() {
+		hypercloudServerProxyAPIPath := hypercloudServerEndpoint
+		hypercloudServerProxy := hproxy.NewProxy(s.HypercloudServerProxyConfig)
+		handle(hypercloudServerProxyAPIPath, http.StripPrefix(
+			proxy.SingleJoiningSlash(s.BaseURL.Path, hypercloudServerProxyAPIPath),
+			http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				hypercloudServerProxy.ServeHTTP(w, r)
 			})),
 		)
 	}
