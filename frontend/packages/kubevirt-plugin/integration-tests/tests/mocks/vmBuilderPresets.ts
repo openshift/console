@@ -121,12 +121,14 @@ export const vmPresets: { [k: string]: VirtualMachine } = {
   [ProvisionSource.PXE.getValue()]: new VMBuilder(getBasicVMBuilder())
     .setProvisionSource(ProvisionSource.PXE)
     .setDisks([rootDisk])
+    .setCustomize(true)
     .setNetworks([multusNetworkInterface])
     .setStartOnCreation(false)
     .build(),
   [ProvisionSource.DISK.getValue()]: new VMBuilder(getBasicVMBuilder())
     .setProvisionSource(ProvisionSource.DISK)
     .setNetworks([multusNetworkInterface])
+    .setPVCName(`testdv-${testName}`)
     .setDisks([getDiskToCloneFrom()])
     .setStartOnCreation(true)
     .build(),
@@ -145,12 +147,12 @@ export const VMTemplatePresets: { [k: string]: VirtualMachineTemplate } = {
     .build(),
   [ProvisionSource.PXE.getValue()]: new VMTemplateBuilder(getBasicVMTBuilder())
     .setProvisionSource(ProvisionSource.PXE)
-    .setDisks([rootDisk])
     .setNetworks([multusNetworkInterface])
+    .setDisks([rootDisk])
     .build(),
   [ProvisionSource.DISK.getValue()]: new VMTemplateBuilder(getBasicVMTBuilder())
     .setProvisionSource(ProvisionSource.DISK)
-    .setDisks([getDiskToCloneFrom()])
+    .setPVCName(`testdv-${testName}`)
     .setNetworks([multusNetworkInterface])
     .build(),
 };

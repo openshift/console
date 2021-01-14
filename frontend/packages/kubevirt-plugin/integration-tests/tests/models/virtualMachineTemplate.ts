@@ -7,7 +7,7 @@ import { VirtualMachineTemplateModel } from '../types/types';
 import { getResourceUID } from '../utils/utils';
 import { KubevirtUIResource } from './kubevirtUIResource';
 import { VMT_ACTION } from '../utils/constants/vm';
-import { templateCreateVMLink, vmtLinkByName } from '../../views/template.view';
+import { templateCreateVMLink, vmtTitle, vmtLinkByName } from '../../views/template.view';
 import { VMTemplateBuilderData } from '../types/vm';
 import { Wizard } from './wizard';
 
@@ -23,7 +23,8 @@ export class VirtualMachineTemplate extends KubevirtUIResource<VMTemplateBuilder
   }
 
   async action(action: VMT_ACTION) {
-    await this.navigateToDetail();
+    await this.navigateToListView();
+    await click(vmtLinkByName(this.name));
     await detailViewAction(action, confirmedActions.includes(action));
   }
 
@@ -39,6 +40,11 @@ export class VirtualMachineTemplate extends KubevirtUIResource<VMTemplateBuilder
     return this.getResourceTitle();
   }
 
+  async navigateToVMTDetails() {
+    const templateName = await this.getResourceName();
+    await click(vmtTitle(templateName));
+  }
+
   async createVMFromRowLink() {
     await this.navigateToListView();
     const templateName = await this.getResourceName();
@@ -50,7 +56,11 @@ export class VirtualMachineTemplate extends KubevirtUIResource<VMTemplateBuilder
     const wizard = new Wizard();
     await this.navigateToListView();
     await wizard.openWizard(VirtualMachineTemplateModel);
-    await wizard.processWizard(this.data);
-    await this.navigateToDetail();
+    await wizard.processGeneralStep(this.data);
+    await wizard.processNetworkStep(this.data);
+    await wizard.processStorageStep(this.data);
+    await wizard.processAdvanceStep(this.data);
+    await wizard.confirmAndCreate();
+    await wizard.waitForCreation();
   }
 }

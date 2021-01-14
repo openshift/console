@@ -13,7 +13,6 @@ describe('KubeVirt VM detail - edit Dedicated Resources', () => {
   const leakedResources = new Set<string>();
   const vm = new VMBuilder(getBasicVMBuilder())
     .setProvisionSource(ProvisionSource.URL)
-    .setCustomize(true)
     .setStartOnCreation(false)
     .build();
 

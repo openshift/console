@@ -14,3 +14,4 @@ export const diskVolumeMode = $('#disk-volume-mode');
 export const diskAccessMode = $('#disk-access-mode');
 export const diskDropDownItem = (text) =>
   element(by.cssContainingText('.pf-c-select__menu-item-main', text));
+export const diskVolumeHelpText = $('.pf-c-form__helper-text');

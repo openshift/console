@@ -23,6 +23,7 @@ export const serialConsole = $('.xterm-cursor-layer');
 export const serialConsoleWrapper = $('.console-terminal-pf');
 export const serialDisconnectButton = element(by.buttonText('Disconnect'));
 export const serialReconnectButton = element(by.buttonText('Reconnect'));
+export const serialConnectButton = element(by.buttonText('Connect'));
 
 const terminalInteractionTimeout = 200;
 export const sendCommandToConsole = async (terminal, command) => {
