@@ -155,7 +155,9 @@ const { details, editYaml, signerKey } = navFactory;
 
 export const ImageSigners: React.FC = props => <Table {...props} aria-label="ImageSigners" Header={ImageSignerTableHeader} Row={ImageSignerTableRow} virtualize />;
 
-export const ImageSignersPage: React.FC<ImageSignersPageProps> = props => <ListPage canCreate={true} ListComponent={ImageSigners} kind={kind} {...props} />;
+export const ImageSignersPage: React.FC<ImageSignersPageProps> = props => {
+  return <ListPage canCreate={props.isDetailPage ? false : true} ListComponent={ImageSigners} kind={kind} {...props} />;
+};
 
 export const ImageSignersDetailsPage: React.FC<ImageSignersDetailsPageProps> = props => <DetailsPage {...props} kind={kind} menuActions={menuActions} pages={[details(detailsPage(ImageSignerDetails)), editYaml(), signerKey(SignerKeyDetails)]} />;
 
@@ -167,6 +169,7 @@ type ImageSignersPageProps = {
   showTitle?: boolean;
   namespace?: string;
   selector?: any;
+  isDetailPage?: boolean;
 };
 
 type SignerKeyDetailsProps = {

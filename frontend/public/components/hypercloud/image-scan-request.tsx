@@ -5,7 +5,7 @@ import { sortable } from '@patternfly/react-table';
 
 import { K8sResourceKind } from '../../module/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from '../factory';
-import { Kebab, KebabAction, detailsPage, Timestamp, navFactory, ResourceKebab, ResourceLink, ResourceSummary, SectionHeading } from '../utils';
+import { DetailsItem, Kebab, KebabAction, detailsPage, Timestamp, navFactory, ResourceKebab, ResourceLink, ResourceSummary, SectionHeading } from '../utils';
 import { ImageScanRequestModel } from '../../models';
 import { Status } from '@console/shared';
 
@@ -13,7 +13,7 @@ export const menuActions: KebabAction[] = [...Kebab.getExtensionsActionsForKind(
 
 const kind = ImageScanRequestModel.kind;
 
-const tableColumnClasses = ['', classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-lg'), Kebab.columnClass];
+const tableColumnClasses = ['', '', classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-lg'), Kebab.columnClass];
 
 const ImageScanRequestTableHeader = () => {
   return [
@@ -31,19 +31,25 @@ const ImageScanRequestTableHeader = () => {
     },
     {
       title: 'Status',
-      sortField: 'status.imageSignResponse.result',
+      sortField: 'status.status',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
+    },
+    {
+      title: 'Image',
+      sortField: 'spec.imageUrl',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[3] },
     },
     {
       title: 'Created',
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
+      props: { className: tableColumnClasses[4] },
     },
     {
       title: '',
-      props: { className: tableColumnClasses[4] },
+      props: { className: tableColumnClasses[5] },
     },
   ];
 };
@@ -63,9 +69,12 @@ const ImageScanRequestTableRow: RowFunction<K8sResourceKind> = ({ obj: scanreque
         <Status status={scanrequest?.status?.status} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>
-        <Timestamp timestamp={scanrequest.metadata.creationTimestamp} />
+        <Status status={scanrequest?.spec?.imageUrl} />
       </TableData>
       <TableData className={tableColumnClasses[4]}>
+        <Timestamp timestamp={scanrequest.metadata.creationTimestamp} />
+      </TableData>
+      <TableData className={tableColumnClasses[5]}>
         <ResourceKebab actions={menuActions} kind={kind} resource={scanrequest} />
       </TableData>
     </TableRow>
@@ -74,14 +83,26 @@ const ImageScanRequestTableRow: RowFunction<K8sResourceKind> = ({ obj: scanreque
 
 export const ImageScanRequestStatus: React.FC<ImageScanRequestStatusStatusProps> = ({ result }) => <Status status={result} />;
 
-export const ImageScanRequestDetailsList: React.FC<ImageScanRequestDetailsListProps> = ({ ds }) => (
-  <dl className="co-m-pane__details">
-    <dt>Status</dt>
-    <dd>
-      <ImageScanRequestStatus result={ds?.status?.status} />
-    </dd>
-  </dl>
-);
+export const ImageScanRequestDetailsList: React.FC<ImageScanRequestDetailsListProps> = ({ ds }) => {
+  const summaries = [];
+  for (const key in ds.status.summary) {
+    summaries.push({ key: key, value: ds.status.summary[key] });
+  }
+  return (
+    <dl className="co-m-pane__details">
+      <dt>Status</dt>
+      <dd>
+        <ImageScanRequestStatus result={ds?.status?.status} />
+      </dd>
+      <DetailsItem label="Image" obj={ds} path="spec.imageUrl" />
+      <dt>Summary</dt>
+      {summaries.map(summary => {
+        return <dd key={summary.key}> {`${summary.key} ${summary.value}`}</dd>;
+      })}
+      {/* <DetailsItem label="Summary" obj={ds} path="status.summary" /> */}
+    </dl>
+  );
+};
 
 const ImageScanRequestDetails: React.FC<ImageScanRequestDetailsProps> = ({ obj: scanrequest }) => (
   <>

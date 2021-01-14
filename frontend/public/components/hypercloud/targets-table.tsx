@@ -54,7 +54,6 @@ const TargetsTableRows = props => {
 export const TargetsTable = props => {
   const { resource, ...tableProps } = props;
   const [reveal, setReveal] = React.useState(false);
-  console.log(resource);
   const data: RowTargetData[] = resource;
   return (
     <>

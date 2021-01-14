@@ -12,6 +12,19 @@ export const HyperClusterResourceModel: K8sKind = {
   namespaced: false,
 };
 
+export const SignerPolicyModel: K8sKind = {
+  kind: 'SignerPolicy',
+  label: 'Signer Policy',
+  labelPlural: 'Signer Policies',
+  apiGroup: 'tmax.io',
+  apiVersion: 'v1',
+  abbr: 'SP',
+  namespaced: true,
+  crd: false,
+  id: 'signerpolicy',
+  plural: 'signerpolicies',
+};
+
 export const PodSecurityPolicyModel: K8sKind = {
   kind: 'PodSecurityPolicy',
   namespaced: false,

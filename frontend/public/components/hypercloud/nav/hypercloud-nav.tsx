@@ -102,6 +102,7 @@ const HyperCloudNav = () => (
           <ResourceClusterLink resource="imagesigners" name="Image Signer" />
           <ResourceNSLink resource="imagesignrequests" name="Image Sign Request" />
           <ResourceNSLink resource="imagescanrequests" name="Image Scan Request" />
+          <ResourceNSLink resource="signerpolicies" name="Signer Policy" />
           {/* <ResourceNSLink resource="imagetransfers" name="Image Transfer" /> */}
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_79')}>
