@@ -8,6 +8,8 @@ import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from '
 import { DetailsItem, Kebab, KebabAction, detailsPage, Timestamp, navFactory, ResourceKebab, ResourceLink, ResourceSummary, SectionHeading } from '../utils';
 import { ImageSignRequestModel } from '../../models';
 import { Status } from '@console/shared';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 
 export const menuActions: KebabAction[] = [...Kebab.getExtensionsActionsForKind(ImageSignRequestModel), ...Kebab.factory.common];
 
@@ -15,16 +17,16 @@ const kind = ImageSignRequestModel.kind;
 
 const tableColumnClasses = ['', '', '', classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-lg'), Kebab.columnClass];
 
-const ImageSignRequestTableHeader = () => {
+const ImageSignRequestTableHeader = (t?: TFunction) => {
   return [
     {
-      title: 'Name',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_1'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: 'Namespace',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_2'),
       sortField: 'metadata.namespace',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
@@ -48,7 +50,7 @@ const ImageSignRequestTableHeader = () => {
       props: { className: tableColumnClasses[4] },
     },
     {
-      title: 'Created',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_12'),
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: tableColumnClasses[5] },
@@ -117,7 +119,10 @@ const ImageSignRequestDetails: React.FC<ImageSignRequestDetailsProps> = ({ obj: 
 
 const { details, editYaml } = navFactory;
 
-export const ImageSignRequests: React.FC = props => <Table {...props} aria-label="ImageSignRequests" Header={ImageSignRequestTableHeader} Row={ImageSignRequestTableRow} virtualize />;
+export const ImageSignRequests: React.FC = props => {
+  const { t } = useTranslation();
+  return <Table {...props} aria-label="ImageSignRequests" Header={ImageSignRequestTableHeader.bind(null, t)} Row={ImageSignRequestTableRow} virtualize />;
+};
 
 export const ImageSignRequestsPage: React.FC<ImageSignRequestsPageProps> = props => <ListPage canCreate={true} ListComponent={ImageSignRequests} kind={kind} {...props} />;
 

@@ -2,13 +2,15 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Dropdown, DropdownItem, DropdownToggle, Title } from '@patternfly/react-core';
 import { CaretDownIcon } from '@patternfly/react-icons';
-import { Perspective } from '@console/plugin-sdk';
-import { getPerspectives } from '../../hypercloud/perspectives';
+//import { Perspective } from '@console/plugin-sdk';
+import { Perspective, getPerspectives } from '../../hypercloud/perspectives';
 import { RootState } from '../../redux';
 import { featureReducerName, getFlagsObject, FlagsObject } from '../../reducers/features';
+import { getActiveCluster } from '../../actions/ui';
 import { getActivePerspective } from '../../reducers/ui';
 import * as UIActions from '../../actions/ui';
 import { history } from '../utils';
+import ClusterDropdown from '../hypercloud/nav/cluster-dropdown';
 
 type StateProps = {
   activePerspective: string;
@@ -18,12 +20,14 @@ type StateProps = {
 
 export type NavHeaderProps = {
   onPerspectiveSelected: () => void;
+  onClusterSelected: () => void;
 };
 
 const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({
   setActivePerspective,
   onPerspectiveSelected,
   activePerspective,
+  onClusterSelected,
   flags,
 }) => {
   const [isPerspectiveDropdownOpen, setPerspectiveDropdownOpen] = React.useState(false);
@@ -37,7 +41,7 @@ const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({
       event.preventDefault();
       if (perspective.properties.id !== activePerspective) {
         setActivePerspective(perspective.properties.id);
-        history.push(perspective.properties.getLandingPageURL(flags));
+        history.push(perspective.properties.getLandingPageURL(flags, getActiveCluster()));
       }
 
       setPerspectiveDropdownOpen(false);
@@ -91,14 +95,26 @@ const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({
   );
 
   return (
-    <div className="oc-nav-header">
-      <Dropdown
-        isOpen={isPerspectiveDropdownOpen}
-        toggle={renderToggle(icon, name)}
-        dropdownItems={getPerspectiveItems(perspectives)}
-        data-test-id="perspective-switcher-menu"
-      />
-    </div>
+    <>
+      {window.SERVER_FLAGS.McMode && (
+        <div className="oc-nav-header">
+          <span className="hc-dropdown__title">Application</span>
+          <Dropdown
+            isOpen={isPerspectiveDropdownOpen}
+            toggle={renderToggle(icon, name)}
+            dropdownItems={getPerspectiveItems(perspectives)}
+            data-test-id="perspective-switcher-menu"
+          />
+          {activePerspective == "hc" &&
+            <>
+              <span className="hc-dropdown__title">Cluster</span>
+              <ClusterDropdown onClusterSelected={onClusterSelected} />
+            </>
+          }
+        </div>
+      )
+      }
+    </>
   );
 };
 

@@ -18,7 +18,7 @@ import { clusterVersionReference, getReportBugLink } from '../module/k8s/cluster
 import * as redhatLogoImg from '../imgs/logos/redhat.svg';
 import { withKeycloak } from '@react-keycloak/web';
 import { ExpTimer } from './hypercloud/exp-timer';
-
+import { setAccessToken } from '../hypercloud/auth';
 import { withTranslation } from 'react-i18next';
 import i18n from 'i18next';
 
@@ -475,7 +475,7 @@ class MastheadToolbarContents_ extends React.Component {
         console.log('refreshed', refreshed);
         if (refreshed) {
           // TODO: 토큰 설정
-          // setAccessToken(keycloak.idToken);
+          setAccessToken(keycloak.idToken);
           this.timerRef.tokRefresh();
         } else {
           // expired time > 60

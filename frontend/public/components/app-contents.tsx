@@ -14,7 +14,7 @@ import { namespacedPrefixes } from './utils/link';
 import { AlertmanagerModel } from '../models';
 import { referenceForModel } from '../module/k8s';
 import * as plugins from '../plugins';
-import { getActivePerspective } from '../reducers/ui';
+import { getActivePerspective, getActiveCluster } from '../reducers/ui';
 import { NamespaceRedirect } from './utils/namespace-redirect';
 import { RootState } from '../redux';
 import { pluralToKind } from './hypercloud/form';
@@ -28,6 +28,12 @@ const RedirectComponent = props => {
   const to = `/k8s${props.location.pathname}`;
   return <Redirect to={to} />;
 };
+
+// const RedirectClusterComponent = props => {
+  
+//   const to = `/k8s/`
+//   return <Redirect to={to} />;
+// }
 
 // Ensure a *const* function wrapper for each namespaced Component so that react router doesn't recreate them
 const Memoized = new Map();
@@ -61,11 +67,12 @@ _.each(namespacedPrefixes, p => {
 
 type DefaultPageProps = {
   activePerspective: string;
+  activeCluster: string;
   flags: FlagsObject;
 };
 
 // The default page component lets us connect to flags without connecting the entire App.
-const DefaultPage_: React.FC<DefaultPageProps> = ({ flags, activePerspective }) => {
+const DefaultPage_: React.FC<DefaultPageProps> = ({ flags, activePerspective, activeCluster }) => {
   if (Object.keys(flags).some(key => flagPending(flags[key]))) {
     return <LoadingBox />;
   }
@@ -74,19 +81,20 @@ const DefaultPage_: React.FC<DefaultPageProps> = ({ flags, activePerspective }) 
     <Redirect
       to={getPerspectives()
         .find(p => p.properties.id === activePerspective)
-        .properties.getLandingPageURL(flags)}
+        .properties.getLandingPageURL(flags, activeCluster)}
     />
   ) : (
     <Redirect
       to={getPerspectives()
         .find(p => p.properties.id === activePerspective)
-        .properties.getK8sLandingPageURL(flags)}
+        .properties.getK8sLandingPageURL(flags, activeCluster)}
     />
   );
 };
 
 const DefaultPage = connect((state: RootState) => ({
   activePerspective: getActivePerspective(state),
+  activeCluster: getActiveCluster(state),
 }))(connectToFlags(FLAGS.OPENSHIFT, FLAGS.CAN_LIST_NS)(DefaultPage_));
 
 const LazyRoute = props => {
@@ -117,10 +125,11 @@ const getPluginPageRoutes = (activePerspective: string, flags: FlagsObject) =>
 
 type AppContentsProps = {
   activePerspective: string;
+  activeCluster: string;
   flags: FlagsObject;
 };
 
-const AppContents_: React.FC<AppContentsProps> = ({ activePerspective, flags }) => (
+const AppContents_: React.FC<AppContentsProps> = ({ activePerspective, activeCluster, flags }) => (
   <PageSection variant={PageSectionVariants.light}>
     <div id="content">
       <GlobalNotifications />
@@ -130,7 +139,9 @@ const AppContents_: React.FC<AppContentsProps> = ({ activePerspective, flags }) 
         <Switch>
           {getPluginPageRoutes(activePerspective, flags)}
           <Route path={['/all-namespaces', '/ns/:ns']} component={RedirectComponent} />
+          {/* <Route path={['/k8s']} render={() => <RedirectClusterComponent activeCluster/>} /> */}
           <LazyRoute path="/dashboards" loader={() => import('./dashboard/dashboards-page/dashboards' /* webpackChunkName: "dashboards" */).then(m => m.DashboardsPage)} />
+          <LazyRoute path="/cl/:cl/dashboards" loader={() => import('./dashboard/dashboards-page/dashboards' /* webpackChunkName: "dashboards" */).then(m => m.DashboardsPage)} />
           {/* Redirect legacy routes to avoid breaking links */}
           <Redirect from="/cluster-status" to="/dashboards" />
           <Redirect from="/status/all-namespaces" to="/dashboards" />
@@ -242,6 +253,7 @@ const AppContents_: React.FC<AppContentsProps> = ({ activePerspective, flags }) 
 
 const AppContents = connect((state: RootState) => ({
   activePerspective: getActivePerspective(state),
+  activeCluster: getActiveCluster(state),
 }))(connectToFlags(...plugins.registry.getGatingFlagNames([plugins.isRoutePage]))(AppContents_));
 
 export default AppContents;

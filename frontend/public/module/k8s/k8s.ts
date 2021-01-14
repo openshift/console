@@ -20,11 +20,11 @@ export const k8sBasePath = `${window.SERVER_FLAGS.basePath}api/kubernetes`;
 export const referenceForGroupVersionKind = (group: string) => (version: string) => (
   kind: string,
 ) => {
-  if(kind === 'PipelineResource') {
+  if (kind === 'PipelineResource' || kind === 'ClusterTask') {
     return kind;
   }
   return [group, version, kind].join('~')
-}; 
+};
 
 export const getGroupVersionKind = (
   ref: GroupVersionKind | string,

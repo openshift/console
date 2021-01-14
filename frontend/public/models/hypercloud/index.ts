@@ -207,6 +207,32 @@ export const RegistryModel: K8sKind = {
   crd: false,
 };
 
+export const RepositoryModel: K8sKind = {
+  kind: 'Repository',
+  namespaced: true,
+  label: 'Repository',
+  plural: 'repositories',
+  apiVersion: 'v1',
+  abbr: 'RP',
+  apiGroup: 'tmax.io',
+  labelPlural: 'Repositories',
+  id: 'repository',
+  crd: false,
+};
+
+export const NotaryModel: K8sKind = {
+  kind: 'Notary',
+  namespaced: true,
+  label: 'Notary',
+  plural: 'notaries',
+  apiVersion: 'v1',
+  abbr: 'N',
+  apiGroup: 'tmax.io',
+  labelPlural: 'Notaries',
+  id: 'notary',
+  crd: false,
+};
+
 export const ImageModel: K8sKind = {
   label: 'Image',
   apiVersion: 'v1',
@@ -268,6 +294,19 @@ export const TaskModel: K8sKind = {
   apiGroup: 'tekton.dev',
   labelPlural: 'Tasks',
   id: 'task',
+  crd: false,
+};
+
+export const ClusterTaskModel: K8sKind = {
+  kind: 'ClusterTask',
+  namespaced: false,
+  label: 'ClusterTask',
+  plural: 'clustertasks',
+  apiVersion: 'v1beta1',
+  abbr: 'CTK',
+  apiGroup: 'tekton.dev',
+  labelPlural: 'Cluster Tasks',
+  id: 'clustertask',
   crd: false,
 };
 

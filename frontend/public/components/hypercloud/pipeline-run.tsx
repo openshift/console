@@ -80,7 +80,7 @@ const PipelineRunTableRow: RowFunction<K8sResourceKind> = ({ obj: pipelineRun, i
 const PipelineRunDetails: React.FC<PipelineRunDetailsProps> = ({ obj: pipelineRun }) => (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Federated Job Details" />
+        <SectionHeading text="Pipeline Run Details" />
         <div className="row">
           <div className="col-lg-6">
             <ResourceSummary resource={pipelineRun} showPodSelector showNodeSelector showTolerations />

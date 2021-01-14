@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import 'whatwg-fetch';
-
+import { getAccessToken } from './hypercloud/auth';
 import { authSvc } from './module/auth';
 import store from './redux';
 
@@ -10,7 +10,7 @@ const initDefaults = {
 };
 
 // TODO: url can be url or path, but shouldLogout only handles paths
-export const shouldLogout = (url) => {
+export const shouldLogout = url => {
   const k8sRegex = new RegExp(`^${window.SERVER_FLAGS.basePath}api/kubernetes/`);
   // 401 from k8s. show logout screen
   if (k8sRegex.test(url)) {
@@ -19,9 +19,7 @@ export const shouldLogout = (url) => {
     if (proxyRegex.test(url)) {
       return false;
     }
-    const serviceRegex = new RegExp(
-      `^${window.SERVER_FLAGS.basePath}api/kubernetes/api/v1/namespaces/\\w+/services/\\w+/proxy/`,
-    );
+    const serviceRegex = new RegExp(`^${window.SERVER_FLAGS.basePath}api/kubernetes/api/v1/namespaces/\\w+/services/\\w+/proxy/`);
     if (serviceRegex.test(url)) {
       return false;
     }
@@ -47,7 +45,7 @@ const validateStatus = (response, url) => {
   }
 
   if (response.status === 403) {
-    return response.json().then((json) => {
+    return response.json().then(json => {
       const error = new Error(json.message || 'Access denied due to cluster policy.');
       error.response = response;
       error.json = json;
@@ -55,7 +53,7 @@ const validateStatus = (response, url) => {
     });
   }
 
-  return response.json().then((json) => {
+  return response.json().then(json => {
     const cause = _.get(json, 'details.causes[0]');
     let reason;
     if (cause) {
@@ -91,9 +89,9 @@ const getCSRFToken = () =>
   document.cookie &&
   document.cookie
     .split(';')
-    .map((c) => _.trim(c))
-    .filter((c) => c.startsWith(cookiePrefix))
-    .map((c) => c.slice(cookiePrefix.length))
+    .map(c => _.trim(c))
+    .filter(c => c.startsWith(cookiePrefix))
+    .map(c => c.slice(cookiePrefix.length))
     .pop();
 
 export const coFetch = (url, options = {}, timeout = 60000) => {
@@ -109,22 +107,31 @@ export const coFetch = (url, options = {}, timeout = 60000) => {
     delete allOptions.headers['X-CSRFToken'];
   }
 
-  const fetchPromise = fetch(url, allOptions).then((response) => validateStatus(response, url));
+  if (url.indexOf('otp') < 0 && url.indexOf('login') < 0 && url.indexOf('logout') < 0 && url.indexOf('tokenrefresh') < 0) {
+    if (url.indexOf('nameSpace') < 0 && url.indexOf('nameSpaceClaim') < 0) {
+      allOptions.headers.Authorization = 'Bearer ' + getAccessToken();
+    } else {
+      allOptions.headers.Authorization = getAccessToken();
+      {
+        /* nameSpace 서비스에는 Bearer 제외하고 token 보내야함.*/
+      }
+    }
+  }
+
+  const fetchPromise = fetch(url, allOptions).then(response => validateStatus(response, url));
 
   // return fetch promise directly if timeout <= 0
   if (timeout < 1) {
     return fetchPromise;
   }
 
-  const timeoutPromise = new Promise((unused, reject) =>
-    setTimeout(() => reject(new TimeoutError(url, timeout)), timeout),
-  );
+  const timeoutPromise = new Promise((unused, reject) => setTimeout(() => reject(new TimeoutError(url, timeout)), timeout));
 
   // Initiate both the fetch promise and a timeout promise
   return Promise.race([fetchPromise, timeoutPromise]);
 };
 
-const parseJson = (response) => response.json();
+const parseJson = response => response.json();
 
 export const coFetchUtils = {
   parseJson,
@@ -142,7 +149,7 @@ export const coFetchCommon = (url, method = 'GET', options = {}, timeout) => {
   }
   // Pass headers last to let callers to override Accept.
   const allOptions = _.defaultsDeep({ method }, options, { headers });
-  return coFetch(url, allOptions, timeout).then((response) => {
+  return coFetch(url, allOptions, timeout).then(response => {
     if (!response.ok) {
       return response.text();
     }
@@ -171,9 +178,7 @@ const coFetchSendJSON = (url, method, json = null, options = {}, timeout) => {
   const allOptions = {
     headers: {
       Accept: 'application/json',
-      'Content-Type': `application/${
-        method === 'PATCH' ? 'json-patch+json' : 'json'
-      };charset=UTF-8`,
+      'Content-Type': `application/${method === 'PATCH' ? 'json-patch+json' : 'json'};charset=UTF-8`,
     },
   };
   if (json) {
@@ -183,13 +188,8 @@ const coFetchSendJSON = (url, method, json = null, options = {}, timeout) => {
 };
 
 coFetchJSON.delete = (url, options = {}, json = null, timeout) => {
-  return json
-    ? coFetchSendJSON(url, 'DELETE', json, options, timeout)
-    : coFetchJSON(url, 'DELETE', options, timeout);
+  return json ? coFetchSendJSON(url, 'DELETE', json, options, timeout) : coFetchJSON(url, 'DELETE', options, timeout);
 };
-coFetchJSON.post = (url, json, options = {}, timeout) =>
-  coFetchSendJSON(url, 'POST', json, options, timeout);
-coFetchJSON.put = (url, json, options = {}, timeout) =>
-  coFetchSendJSON(url, 'PUT', json, options, timeout);
-coFetchJSON.patch = (url, json, options = {}, timeout) =>
-  coFetchSendJSON(url, 'PATCH', json, options, timeout);
+coFetchJSON.post = (url, json, options = {}, timeout) => coFetchSendJSON(url, 'POST', json, options, timeout);
+coFetchJSON.put = (url, json, options = {}, timeout) => coFetchSendJSON(url, 'PUT', json, options, timeout);
+coFetchJSON.patch = (url, json, options = {}, timeout) => coFetchSendJSON(url, 'PATCH', json, options, timeout);

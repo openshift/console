@@ -10,6 +10,8 @@ import { ImageSignerModel } from '../../models';
 import { coFetchJSON } from '../../co-fetch';
 import { SecretData } from './image-signer-key';
 import { TargetsTable } from './targets-table';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 
 export const menuActions: KebabAction[] = [...Kebab.getExtensionsActionsForKind(ImageSignerModel), ...Kebab.factory.common];
 
@@ -17,10 +19,10 @@ const kind = ImageSignerModel.kind;
 
 const tableColumnClasses = ['', '', classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-lg'), Kebab.columnClass];
 
-const ImageSignerTableHeader = () => {
+const ImageSignerTableHeader = (t?: TFunction) => {
   return [
     {
-      title: 'Name',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_1'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses[0] },
@@ -44,7 +46,7 @@ const ImageSignerTableHeader = () => {
       props: { className: tableColumnClasses[3] },
     },
     {
-      title: 'Created',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_12'),
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: tableColumnClasses[4] },
@@ -153,7 +155,10 @@ const SignerKeyDetails: React.FC<SignerKeyDetailsProps> = ({ obj: imagesigner })
 
 const { details, editYaml, signerKey } = navFactory;
 
-export const ImageSigners: React.FC = props => <Table {...props} aria-label="ImageSigners" Header={ImageSignerTableHeader} Row={ImageSignerTableRow} virtualize />;
+export const ImageSigners: React.FC = props => {
+  const { t } = useTranslation();
+  return <Table {...props} aria-label="ImageSigners" Header={ImageSignerTableHeader.bind(null, t)} Row={ImageSignerTableRow} virtualize />;
+};
 
 export const ImageSignersPage: React.FC<ImageSignersPageProps> = props => {
   return <ListPage canCreate={props.isDetailPage ? false : true} ListComponent={ImageSigners} kind={kind} {...props} />;
