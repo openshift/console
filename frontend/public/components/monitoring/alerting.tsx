@@ -397,6 +397,7 @@ const Graph: React.FC<GraphProps> = ({
 
   return (
     <QueryBrowser
+      namespace={namespace}
       defaultTimespan={timespan}
       filterLabels={filterLabels}
       formatLegendLabel={formatLegendLabel}
