@@ -2,22 +2,22 @@ import * as _ from 'lodash-es';
 import { ValidTabGuard } from 'packages/kubevirt-plugin/src/components/create-vm-wizard/tabs/valid-tab-guard';
 import * as React from 'react';
 
-import { k8sUpdateApproval, referenceForModel } from '../../../module/k8s';
+import { k8sUpdateClaim, referenceForModel } from '../../../module/k8s';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../../factory/modal';
 import { PromiseComponent, ResourceIcon, SelectorInput } from '../../utils';
 
-const STATUS_PATH = '/status/result';
+const STATUS_PATH = '/status/phase';
 const REASON_PATH = '/status/reason';
 // const STATUS_PATH = '/status';
 const TEMPLATE_SELECTOR_PATH = '/spec/template/metadata/status';
 
-class BaseStatusModal extends PromiseComponent {
+class BaseClaimModal extends PromiseComponent {
     constructor(props) {
         super(props);
         this._submit = this._submit.bind(this);
         this._cancel = props.cancel.bind(this);
         let status = _.get(props.resource, props.path.split('/').slice(1));
-        if(status === 'Waiting') {
+        if(status === 'Awaiting') {
             status = 'Approved';
         }
         const reason = _.get(props.resource, props.reasonPath.split('/').slice(1));
@@ -30,14 +30,15 @@ class BaseStatusModal extends PromiseComponent {
     _submit(e) {
         e.preventDefault();
 
-        const { kind, path, resource } = this.props;
+        const { kind, resource } = this.props;
+        const clusterClaim = resource.metadata.name;
 
         // resourceURL
-        const approval = this.state.status === 'Approved' ? 'approve' : 'reject';
+        const admit = this.state.status === 'Approved' ? true : false;
+
+        const reason = this.state.reason;
         
-        const promise = k8sUpdateApproval(kind, resource, approval, {
-            reason: this.state.reason
-        });
+        const promise = k8sUpdateClaim(kind, clusterClaim, admit, reason);
         this.handlePromise(promise)
             .then(this.successSubmit);
     }
@@ -93,6 +94,6 @@ class BaseStatusModal extends PromiseComponent {
     }
 }
 
-export const statusModal = createModalLauncher((props) => (
-    <BaseStatusModal path={STATUS_PATH} reasonPath={REASON_PATH} {...props} />
+export const claimModal = createModalLauncher((props) => (
+    <BaseClaimModal path={STATUS_PATH} reasonPath={REASON_PATH} {...props} />
 ));

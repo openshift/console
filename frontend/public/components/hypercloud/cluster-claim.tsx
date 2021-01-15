@@ -11,11 +11,13 @@ import { ClusterClaimModel } from '../../models';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 
-export const menuActions: KebabAction[] = [...Kebab.getExtensionsActionsForKind(ClusterClaimModel), ...Kebab.factory.common, Kebab.factory.ModifyStatus];
+export const menuActions: KebabAction[] = [...Kebab.getExtensionsActionsForKind(ClusterClaimModel), ...Kebab.factory.common, Kebab.factory.ModifyClaim];
 
 const kind = ClusterClaimModel.kind;
 
 const tableColumnClasses = [
+  '',
+  '',
   '',
   '',
   classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'),
@@ -39,26 +41,38 @@ const ClusterClaimTableHeader = (t?: TFunction) => {
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: t('COMMON:MSG_MAIN_TABLEHEADER_3'),
-      sortField: 'status.phase',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_59'),
+      sortFunc: 'spec.provider',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: t('COMMON:MSG_MAIN_TABLEHEADER_57'),
-      sortField: 'metadata.annotations.creator',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_62'),
+      sortFunc: 'spec.version',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
+    },
+    {
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_3'),
+      sortField: 'status.phase',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[4] },
+    },
+    {
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_11'),
+      sortField: 'metadata.annotations.creator',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[5] },
     },
     {
       title: t('COMMON:MSG_MAIN_TABLEHEADER_12'),
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
-      props: { className: tableColumnClasses[4] },
+      props: { className: tableColumnClasses[6] },
     },
     {
       title: '',
-      props: { className: tableColumnClasses[5] },
+      props: { className: tableColumnClasses[7] },
     },
   ];
 };
@@ -73,16 +87,22 @@ const ClusterClaimTableRow: RowFunction<K8sResourceKind> = ({ obj: clusterClaim,
       <TableData className={tableColumnClasses[1]}>
         {clusterClaim.spec.clusterName}
       </TableData>
-      <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
-        <Status status={clusterClaim.status.phase} />
+      <TableData className={tableColumnClasses[2]}>
+        {clusterClaim.spec.provider}
       </TableData>
       <TableData className={tableColumnClasses[3]}>
-        {clusterClaim.metadata.annotations.creator}
+        {clusterClaim.spec.version}
       </TableData>
-      <TableData className={tableColumnClasses[4]}>
-        <Timestamp timestamp={clusterClaim.metadata.creationTimestamp} />
+      <TableData className={classNames(tableColumnClasses[4], 'co-break-word')}>
+        <Status status={clusterClaim.status.phase} />
       </TableData>
       <TableData className={tableColumnClasses[5]}>
+        {clusterClaim.metadata.annotations.creator}
+      </TableData>
+      <TableData className={tableColumnClasses[6]}>
+        <Timestamp timestamp={clusterClaim.metadata.creationTimestamp} />
+      </TableData>
+      <TableData className={tableColumnClasses[7]}>
         <ResourceKebab actions={menuActions} kind={kind} resource={clusterClaim} />
       </TableData>
     </TableRow>
@@ -128,7 +148,28 @@ export const ClusterClaims: React.FC = props => {
   return <Table {...props} aria-label="Cluster Claims" Header={ClusterClaimTableHeader.bind(null, t)} Row={ClusterClaimTableRow} virtualize />;
 }
 
-export const ClusterClaimsPage: React.FC<ClusterClaimsPageProps> = props => <ListPage canCreate={true} ListComponent={ClusterClaims} kind={kind} {...props} />;
+
+const clusterClaimStatusReducer = (clusterClaim: any): string => {
+  return clusterClaim.status.phase;
+}
+const filters = [
+  {
+    filterGroupName: 'Status',
+    type: 'registry-status',
+    reducer: clusterClaimStatusReducer,
+    items: [
+      { id: 'Created', title: 'Created' },
+      { id: 'Waiting', title: 'Waiting' },
+      { id: 'Admitted', title: 'Admitted' },
+      { id: 'Success', title: 'Success' },
+      { id: 'Rejected', title: 'Rejected' },
+      { id: 'Error', title: 'Error' },
+      { id: 'Deleted', title: 'Deleted' },
+    ],
+  },
+];
+
+export const ClusterClaimsPage: React.FC<ClusterClaimsPageProps> = props => <ListPage canCreate={true} ListComponent={ClusterClaims} kind={kind} rowFilters={filters} {...props} />;
 
 export const ClusterClaimsDetailsPage: React.FC<ClusterClaimsDetailsPageProps> = props => <DetailsPage {...props} kind={kind} menuActions={menuActions} pages={[details(detailsPage(ClusterClaimDetails)), editYaml()]} />;
 

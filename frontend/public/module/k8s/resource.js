@@ -127,6 +127,12 @@ export const k8sUpdateApproval = (kind, resource, approval, data) => {
 
   return coFetchJSON.put(url, data);
 }
+
+export const k8sUpdateClaim = (kind, clusterClaim, admit, reason) => {
+  const url = resourceClusterURL(kind) + `&clusterClaim=${clusterClaim}&admit=${admit}&reason=${reason}`;
+
+  return coFetchJSON.put(url);
+}
   
 
 
