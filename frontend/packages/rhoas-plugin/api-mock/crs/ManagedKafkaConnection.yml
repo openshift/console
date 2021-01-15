@@ -1,0 +1,14 @@
+apiVersion: rhoas.redhat.com/v1alpha1
+kind: ManagedKafkaConnection
+metadata:
+  name: test453-serviceapi
+spec:
+  kafkaId: "fgdsff443ghjdsffrds"
+  credentials:
+    serviceAccountSecretName: service-account-123-credentials
+status:
+  message: "created"
+  updated: 2020-12-10T17:02:30Z
+  boostrapServer:
+    host: kafka--ltosqyk-wsmt-t-elukpkft-bg.apps.ms-bv8dm6nbd3jo.cx74.s1.devshift.org:443'
+  serviceAccountSecretName: service-account-123-credentials
