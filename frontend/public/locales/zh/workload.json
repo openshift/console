@@ -118,7 +118,7 @@
   "Add Secret to workload": "在工作负载中添加 Secret",
   "Edit Secret": "编辑 Secret",
   "Secret details": "Secret 详情",
-  "Key/value secret": "健/值 secret。",
+  "Key/value secret": "健/值 secret",
   "Image pull secret": "镜像 pull secret",
   "Source secret": "源 Secret",
   "Webhook secret": "Webhook secret",
