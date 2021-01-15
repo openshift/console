@@ -12,6 +12,7 @@ import { errorModal } from '@console/internal/components/modals';
 //   startPipelineModal,
 //   removeTriggerModal,
 // } from '../pipelines/modals';
+import { startPipelineModal } from '../../../../packages/dev-console/src/components/pipelines/modals';
 import { getPipelineRunData } from '../pipelines/modals/utils';
 //import { StartedByLabel } from '../pipelines/const';
 import { EventListenerModel, PipelineModel, PipelineRunModel } from '../../../models';
@@ -86,11 +87,11 @@ export const startPipeline: KebabAction = (
     const workspaces = _.get(pipeline, ['spec', 'workspaces'], []);
 
     if (!_.isEmpty(params) || !_.isEmpty(resources) || !_.isEmpty(workspaces)) {
-      // startPipelineModal({
-      //   pipeline,
-      //   modalClassName: 'modal-lg',
-      //   onSubmit,
-      // });
+      startPipelineModal({
+        pipeline,
+        modalClassName: 'modal-lg',
+        onSubmit,
+      });
     } else {
       triggerPipeline(pipeline, onSubmit);
     }
