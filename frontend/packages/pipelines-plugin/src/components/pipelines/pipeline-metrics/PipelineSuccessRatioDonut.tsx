@@ -108,7 +108,7 @@ const PipelineSuccessRatioDonut: React.FC<PipelineMetricsGraphProps> = ({
           ariaTitle={t('pipelines-plugin~Pipeline success ratio')}
           subTitle={
             successData
-              ? t('pipelines-plugin~{{successValue}} succeeded of {{totalValue}}', {
+              ? t('pipelines-plugin~{{successValue}} of {{totalValue}} succeeded', {
                   successValue,
                   totalValue,
                 })

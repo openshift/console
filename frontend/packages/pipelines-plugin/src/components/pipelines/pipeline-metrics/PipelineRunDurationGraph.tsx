@@ -77,7 +77,7 @@ const PipelineRunDurationGraph: React.FC<PipelineMetricsGraphProps> = ({
           <Flex className="pipeline-run-average__body" spaceItems={{ default: 'spaceItemsNone' }}>
             <FlexItem className="pipeline-run-average__duration">{`${averageDuration}`}</FlexItem>
             <FlexItem className="pipeline-run-average__duration-desc">
-              {t('pipelines-plugin~Average pipeline run duration')}
+              {t('pipelines-plugin~Average Pipeline Run duration')}
             </FlexItem>
           </Flex>
         </Bullseye>
