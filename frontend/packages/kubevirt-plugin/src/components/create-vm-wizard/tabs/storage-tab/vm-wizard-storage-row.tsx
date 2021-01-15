@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { Kebab, KebabOption } from '@console/internal/components/utils';
 import { RowFunction } from '@console/internal/components/factory';
-import { VMWizardStorage, VMWizardStorageType } from '../../types';
+import { VMWizardStorage } from '../../types';
 import { DiskSimpleRow } from '../../../vm-disks/disk-row';
 import {
   VMWizardStorageBundle,
@@ -32,17 +32,12 @@ const menuActionEdit = (
 };
 
 const menuActionRemove = (
-  { id, type }: VMWizardStorage,
+  { id }: VMWizardStorage,
   { withProgress, removeStorage, isDeleteDisabled }: VMWizardStorageRowActionOpts,
 ): KebabOption => ({
   // t('kubevirt-plugin~Delete')
   labelKey: 'kubevirt-plugin~Delete',
-  isDisabled:
-    isDeleteDisabled ||
-    [
-      VMWizardStorageType.PROVISION_SOURCE_DISK,
-      VMWizardStorageType.PROVISION_SOURCE_TEMPLATE_DISK,
-    ].includes(type),
+  isDisabled: isDeleteDisabled,
   callback: () =>
     withProgress(
       new Promise((resolve) => {
