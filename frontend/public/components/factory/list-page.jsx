@@ -227,16 +227,16 @@ export const FireMan_ = connect(null, { filterList })(
             </div>
           );
         }
-        if (!_.isEmpty(createAccessReview)) {
-          createLink = (
-            <RequireCreatePermission
-              model={createAccessReview.model}
-              namespace={createAccessReview.namespace}
-            >
-              {createLink}
-            </RequireCreatePermission>
-          );
-        }
+        // if (!_.isEmpty(createAccessReview)) {
+        //   createLink = (
+        //     <RequireCreatePermission
+        //       model={createAccessReview.model}
+        //       namespace={createAccessReview.namespace}
+        //     >
+        //       {createLink}
+        //     </RequireCreatePermission>
+        //   );
+        // }
       }
 
       return (
