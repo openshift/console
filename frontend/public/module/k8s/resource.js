@@ -15,8 +15,7 @@ const getK8sAPIPath = ({ apiGroup = 'core', apiVersion }) => {
   const cluster = window.SERVER_FLAGS.McMode && getActivePerspective() == 'hc' && getActiveCluster();
 
   if (cluster) {
-    const clusterPath = cluster.endsWith("@file") ? cluster.slice(0, -5) : cluster;
-    p = `${window.SERVER_FLAGS.basePath}api/${clusterPath}`;
+    p = `${window.SERVER_FLAGS.basePath}api/${cluster}`;
   }
   else {
     p = k8sBasePath;
