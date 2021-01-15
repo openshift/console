@@ -19,6 +19,7 @@ import {
   ResourceSummary,
   SectionHeading,
   // Selector,
+  Timestamp
 } from '../utils';
 import { ResourceEventStream } from '../events';
 import { ClusterManagerModel } from '../../models';
@@ -28,7 +29,17 @@ export const menuActions: KebabAction[] = [...Kebab.getExtensionsActionsForKind(
 
 const kind = ClusterManagerModel.kind;
 
-const tableColumnClasses = ['', '', classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-lg'), Kebab.columnClass];
+const tableColumnClasses = [
+  '',
+  '',
+  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
+  Kebab.columnClass
+];
 
 const ClusterTableHeader = () => {
   return [
@@ -69,8 +80,20 @@ const ClusterTableHeader = () => {
       props: { className: tableColumnClasses[5] },
     },
     {
-      title: '',
+      title: 'Owner',
+      sortField: 'status.owner',
+      transforms: [sortable],
       props: { className: tableColumnClasses[6] },
+    },
+    {
+      title: 'Created',
+      sortField: 'metadata.creationTimestamp',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[7] },
+    },
+    {
+      title: '',
+      props: { className: tableColumnClasses[8] },
     },
   ];
 };
@@ -91,6 +114,12 @@ const ClusterTableRow: RowFunction<IClusterTableRow> = ({ obj: cluster, index, k
         {/* {`M: ${cluster.status?.masterRun} / ${cluster.spec?.masterNum}, W: ${cluster.status?.workerRun} / ${cluster.spec?.workerNum}`} */}
       </TableData>
       <TableData className={tableColumnClasses[6]}>
+        {cluster.status.owner}
+      </TableData>
+      <TableData className={tableColumnClasses[7]}>
+        <Timestamp timestamp={cluster.metadata.creationTimestamp} />
+      </TableData>
+      <TableData className={tableColumnClasses[8]}>
         <ResourceKebab actions={menuActions} kind={kind} resource={cluster} />
       </TableData>
     </TableRow>
@@ -98,11 +127,7 @@ const ClusterTableRow: RowFunction<IClusterTableRow> = ({ obj: cluster, index, k
 };
 
 const ClusterNodesInfo = cluster => {
-  if (cluster.status?.masterRun && cluster.status?.workerRun) {
-    return `M: ${cluster.status?.masterRun} / ${cluster.spec?.masterNum}, W: ${cluster.status?.workerRun} / ${cluster.spec?.workerNum}`;
-  } else {
-    return '';
-  }
+  return `M: ${cluster.status.masterRun ?? 0} / ${cluster.spec?.masterNum}, W: ${cluster.status.workerRun ?? 0} / ${cluster.spec?.workerNum}`;
 };
 
 const ClusterNodes: React.FC<ClusterNodesProps> = props => <NodesComponent {...props} customData={{ showNodes: true }} />;
@@ -129,16 +154,7 @@ const { details, nodes, editYaml, events } = navFactory;
 export const Clusters: React.FC = props => <Table {...props} aria-label="Clusters" Header={ClusterTableHeader} Row={ClusterTableRow} virtualize />;
 
 export const ClustersPage: React.FC<ClustersPageProps> = props => {
-  const createItems = {
-    default: 'From FORM (Create)',
-    enroll: 'From FORM (Enroll)',
-    yaml: 'From YAML',
-  };
-  const createProps = {
-    items: createItems,
-    createLink: type => `/k8s/cluster/clustermanagers/~new/${type !== 'yaml' ? type : ''}`,
-  };
-  return <ListPage canCreate={true} createProps={createProps} ListComponent={Clusters} kind={kind} {...props} />;
+  return <ListPage ListComponent={Clusters} kind={kind} {...props} />;
 };
 export const ClustersDetailsPage: React.FC<ClustersDetailsPageProps> = props => <DetailsPage {...props} kind={kind} menuActions={menuActions} pages={[details(detailsPage(ClusterDetails)), editYaml(), nodes(ClusterNodes), events(ResourceEventStream)]} />;
 

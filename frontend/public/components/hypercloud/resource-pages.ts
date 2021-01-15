@@ -56,7 +56,8 @@ import {
   ImageScanRequestModel,
   SignerPolicyModel,
   IntegrationConfigModel,
-  ClusterClaimModel
+  ClusterClaimModel,
+  RepositoryModel
 } from '../../models';
 
 type ResourceMapKey = GroupVersionKind | string;
@@ -115,6 +116,7 @@ export const hyperCloudDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapVa
   .set(referenceForModel(TemplateModel), () => import('./template' /* webpackChunkName: "template" */).then(m => m.TemplatesDetailsPage))
   .set(referenceForModel(TemplateInstanceModel), () => import('./template-instance' /* webpackChunkName: "templateinstance" */).then(m => m.TemplateInstancesDetailsPage))
   .set(referenceForModel(RegistryModel), () => import('./registry' /* webpackChunkName: "registry" */).then(m => m.RegistriesDetailsPage))
+  .set(referenceForModel(RepositoryModel), () => import('./repository' /* webpackChunkName: "repository" */).then(m => m.RepositoriesDetailsPage))
   .set(referenceForModel(ImageSignerModel), () => import('./image-signer' /* webpackChunkName: "image-signer" */).then(m => m.ImageSignersDetailsPage))
   .set(referenceForModel(ImageSignRequestModel), () => import('./image-sign-request' /* webpackChunkName: "image-sign-request" */).then(m => m.ImageSignRequestsDetailsPage))
   .set(referenceForModel(SignerPolicyModel), () => import('./signer-policy' /* webpackChunkName: "image-sign-request" */).then(m => m.SignerPoliciesDetailsPage))

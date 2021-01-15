@@ -747,3 +747,29 @@ export const ClusterTemplateModel: K8sKind = {
   id: 'clustertemplate',
   namespaced: false,
 };
+
+export const EventListenerModel: K8sKind = {
+  apiGroup: 'triggers.tekton.dev',
+  apiVersion: 'v1alpha1',
+  label: 'Event Listener',
+  plural: 'eventlisteners',
+  abbr: 'EL',
+  namespaced: true,
+  kind: 'EventListener',
+  id: 'eventlistener',
+  labelPlural: 'Event Listeners',
+  crd: false,
+};
+
+export const TriggerTemplateModel: K8sKind = {
+  apiGroup: 'triggers.tekton.dev',
+  apiVersion: 'v1alpha1',
+  label: 'Trigger Template',
+  plural: 'triggertemplates',
+  abbr: 'TT',
+  namespaced: true,
+  kind: 'TriggerTemplate',
+  id: 'triggertemplate',
+  labelPlural: 'Trigger Templates',
+  crd: false,
+};

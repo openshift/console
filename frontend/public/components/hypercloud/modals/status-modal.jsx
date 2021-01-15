@@ -36,7 +36,7 @@ class BaseStatusModal extends PromiseComponent {
         const approval = this.state.status === 'Approved' ? 'approve' : 'reject';
         
         const promise = k8sUpdateApproval(kind, resource, approval, {
-            reason: 'lalal'
+            reason: this.state.reason
         });
         this.handlePromise(promise)
             .then(this.successSubmit);

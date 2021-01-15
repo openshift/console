@@ -26,7 +26,6 @@ const navSectionStateToProps = (
   return {
     flags,
     canRender,
-    activeCluster: state.UI.get('activeCluster'),
     activeNamespace: state.UI.get('activeNamespace'),
     location: state.UI.get('location'),
     perspective: getActivePerspective(state),
@@ -145,7 +144,7 @@ export const NavSection = connect(navSectionStateToProps)(
         }
 
         const { activeChild } = this.state;
-        const { flags, activeCluster, activeNamespace } = this.props;
+        const { flags, activeNamespace } = this.props;
         const { name, required, disallowed, id } = c.props;
 
         const requiredArray = required ? _.castArray(required) : [];
@@ -163,7 +162,6 @@ export const NavSection = connect(navSectionStateToProps)(
         return React.cloneElement(c, {
           key: name,
           isActive: `${id}-${name}` === activeChild,
-          activeCluster,
           activeNamespace,
           flags,
         });
@@ -223,7 +221,6 @@ export type NavSectionTitle =
 type NavSectionStateProps = {
   flags?: FeatureState;
   canRender?: boolean;
-  activeCluster?: string;
   activeNamespace?: string;
   activePath?: string;
   location?: string;

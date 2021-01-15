@@ -17,7 +17,8 @@ import {
   expandPVCModal,
 } from '../modals';
 import {
-  statusModal
+  statusModal,
+  claimModal
 } from '../hypercloud/modals';
 import { asAccessReview, checkAccess, history, resourceObjPath, useAccessReview } from './index';
 import {
@@ -273,6 +274,16 @@ const kebabFactory: KebabFactory = {
     label: 'Approval Processing',
     callback: () =>
       statusModal({
+        kind,
+        resource: obj,
+        blocking: true,
+      }),
+    accessReview: asAccessReview(kind, obj, 'patch'),
+  }),
+  ModifyClaim: (kind, obj) => ({
+    label: 'Approval Processing',
+    callback: () =>
+      claimModal({
         kind,
         resource: obj,
         blocking: true,
