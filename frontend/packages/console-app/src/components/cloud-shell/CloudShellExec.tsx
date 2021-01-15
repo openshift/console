@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
+import { connect, Dispatch } from 'react-redux';
 import { Base64 } from 'js-base64';
 import { useTranslation } from 'react-i18next';
 import { connectToFlags, WithFlagsProps } from '@console/internal/reducers/features';
@@ -8,6 +8,8 @@ import { FLAGS } from '@console/shared';
 import { WSFactory } from '@console/internal/module/ws-factory';
 import { resourceURL } from '@console/internal/module/k8s';
 import { PodModel } from '@console/internal/models';
+import { Button, EmptyState, EmptyStateBody } from '@patternfly/react-core';
+import { setCloudShellActive } from '../../redux/actions/cloud-shell-actions';
 import Terminal, { ImperativeTerminalType } from './Terminal';
 import TerminalLoadingBox from './TerminalLoadingBox';
 import useActivityTick from './useActivityTick';
@@ -17,7 +19,7 @@ import {
   startWorkspace,
   CloudShellResource,
 } from './cloud-shell-utils';
-import { Button, EmptyState, EmptyStateBody } from '@patternfly/react-core';
+
 import './CloudShellExec.scss';
 
 // pod exec WS protocol is FD prefixed, base64 encoded data (sometimes json stringified)
@@ -40,7 +42,11 @@ type StateProps = {
   };
 };
 
-type CloudShellExecProps = Props & StateProps & WithFlagsProps;
+type DispatchProps = {
+  onActivate: (active: boolean) => void;
+};
+
+type CloudShellExecProps = Props & DispatchProps & StateProps & WithFlagsProps;
 
 const NO_SH =
   'starting container process caused "exec: \\"sh\\": executable file not found in $PATH"';
@@ -53,6 +59,7 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
   shcommand,
   flags,
   impersonate,
+  onActivate,
 }) => {
   const [wsOpen, setWsOpen] = React.useState<boolean>(false);
   const [wsError, setWsError] = React.useState<string>();
@@ -71,6 +78,13 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
     },
     [tick],
   );
+
+  React.useEffect(() => {
+    onActivate(true);
+    return () => {
+      onActivate(false);
+    };
+  }, [onActivate]);
 
   React.useEffect(() => {
     let unmounted: boolean;
@@ -237,6 +251,11 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
   );
 };
 
-export default connect<StateProps>(impersonateStateToProps)(
-  connectToFlags<CloudShellExecProps & WithFlagsProps>(FLAGS.OPENSHIFT)(CloudShellExec),
-);
+const dispatchToProps = (dispatch: Dispatch): DispatchProps => ({
+  onActivate: (active: boolean) => dispatch(setCloudShellActive(active)),
+});
+
+export default connect<StateProps, DispatchProps>(
+  impersonateStateToProps,
+  dispatchToProps,
+)(connectToFlags<CloudShellExecProps & WithFlagsProps>(FLAGS.OPENSHIFT)(CloudShellExec));

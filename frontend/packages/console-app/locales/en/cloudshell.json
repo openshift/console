@@ -13,6 +13,7 @@
   "connecting to {{container}}": "connecting to {{container}}",
   "Reconnect to terminal": "Reconnect to terminal",
   "Restart terminal": "Restart terminal",
+  "OpenShift command line": "OpenShift command line",
   "Close command line terminal": "Close command line terminal",
   "Open command line terminal": "Open command line terminal",
   "OpenShift command line terminal": "OpenShift command line terminal",
