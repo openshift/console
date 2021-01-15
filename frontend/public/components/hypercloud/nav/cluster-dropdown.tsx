@@ -7,7 +7,10 @@ import { RootState } from '../../../redux';
 import { featureReducerName } from '../../../reducers/features';
 import { getActiveCluster } from '../../../reducers/ui';
 import * as UIActions from '../../../actions/ui';
-import { coFetchJSON } from '../../../co-fetch';
+import { ClusterManagerModel } from '../../../models';
+import { k8sList } from '../../../module/k8s/resource'
+
+const clusterModel = ClusterManagerModel;
 
 type StateProps = {
     activeCluster: string;
@@ -24,7 +27,7 @@ const ClusterDropdown_: React.FC<ClusterDropdownProps & StateProps> = ({
     activeCluster,
 }) => {
     const [isClusterDropdownOpen, setClusterDropdownOpen] = React.useState(false);
-    const [clusters, setClusters] = React.useState([]);
+    const [clusters, setClusters] = React.useState(new Set<string>([]));
 
     const toggleClusterOpen = React.useCallback(() => {
         setClusterDropdownOpen(!isClusterDropdownOpen);
@@ -34,10 +37,10 @@ const ClusterDropdown_: React.FC<ClusterDropdownProps & StateProps> = ({
         (event: React.MouseEvent<HTMLLinkElement>, cluster): void => {
             event.preventDefault();
 
-            if (cluster.name !== activeCluster) {
-                setActiveCluster(cluster.name);
-
-                // TODO: rerendering
+            if (cluster !== activeCluster) {
+                setActiveCluster(cluster);
+                window.location.reload()
+                // TODO: rerendering 고도화...
             }
 
             setClusterDropdownOpen(false);
@@ -64,39 +67,46 @@ const ClusterDropdown_: React.FC<ClusterDropdownProps & StateProps> = ({
 
     const getClusterItems = React.useCallback(
         (clusters) => {
-            return clusters.map((nextCluster) => (
-                <DropdownItem
-                    key={nextCluster.name}
-                    onClick={(event: React.MouseEvent<HTMLLinkElement>) =>
-                        onClusterSelect(event, nextCluster)
-                    }
-                    isHovered={(nextCluster.name) === activeCluster}
-                    component="button"
-                >
-                    <Title size="md">
-                        {nextCluster.name}
-                    </Title>
-                </DropdownItem>
+            let clusterItmes = [];
+            clusters.forEach((nextCluster) => (
+                clusterItmes.push(
+                    <DropdownItem
+                        key={nextCluster}
+                        onClick={(event: React.MouseEvent<HTMLLinkElement>) =>
+                            onClusterSelect(event, nextCluster)
+                        }
+                        isHovered={(nextCluster) === activeCluster}
+                        component="button"
+                    >
+                        <Title size="md">
+                            {nextCluster}
+                        </Title>
+                    </DropdownItem>
+                )
             ));
+            return clusterItmes;
         },
         [activeCluster, onClusterSelect],
     );
 
     React.useEffect(() => {
-        if (clusters.length == 0 || isClusterDropdownOpen) {
-            coFetchJSON('api/k8sAll').then((res) => {
-                const clusterList: ClusterInfo[] = Object.keys(res.routers).reduce((list, currentKey) => {
-                    list.push({ name: currentKey, path: res.routers[currentKey].path });
+        if (clusters.size == 0 || isClusterDropdownOpen) {
+            k8sList(clusterModel).then((res) => {
+                const clusterList: Set<string> = new Set(res.reduce((list, cluster)=> {
+                    if(cluster.status.ready) {
+                        list.push(cluster.metadata.name);
+                    }
                     return list;
-                }, []);
-
+                }, []));
+                clusterList.add('master');
+              
                 setClusters(clusterList);
 
-                const cluster = activeCluster && clusterList.find(c => c.name === activeCluster);
+                const hasCluster = activeCluster && clusterList.has(activeCluster);
 
-                if (!cluster) {
-                    setActiveCluster("master");
-                } else {
+                if (!hasCluster) {
+                    const defaultCluster = clusterList.has('master') ? 'master' : clusterList[0];
+                    setActiveCluster(defaultCluster);
                 }
 
             });
@@ -127,8 +137,3 @@ export default connect<StateProps, {}, ClusterDropdownProps, RootState>(
             getActiveCluster(next) === getActiveCluster(prev),
     },
 )(ClusterDropdown_);
-
-type ClusterInfo = {
-    name: string;
-    path: string;
-};
