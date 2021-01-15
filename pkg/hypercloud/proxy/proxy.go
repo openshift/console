@@ -190,17 +190,11 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// required to supply an origin.
 	proxiedHeader.Add("Origin", "http://localhost")
 
-	// NOTE: bearer token 넣어보기 위해 Authorization 추가 // 정동민
-	token, ok := r.URL.Query()["token"]
-	if ok && len(token[0]) > 0 {
-		proxiedHeader.Add("Authorization", "Bearer "+string(token[0]))
+	// NOTE: websocket에 bear token 추가
+	token := r.Header.Clone().Get("Authorization")
+	if token != "" {
+		proxiedHeader.Add("Authorization", token)
 	}
-
-	// NOTE: bearer token 넣어보기 위해 Authorization 추가 // 정동민
-	// token, ok := r.URL.Query()["token"]
-	// if ok && len(token[0]) > 0 {
-	// 	proxiedHeader.Add("Authorization", "Bearer "+string(token[0]))
-	// }
 
 	dialer := &websocket.Dialer{
 		TLSClientConfig: p.config.TLSClientConfig,

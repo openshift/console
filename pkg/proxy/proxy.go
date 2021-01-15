@@ -192,10 +192,9 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	proxiedHeader.Add("Origin", "http://localhost")
 
 	// NOTE: bearer token 넣어보기 위해 Authorization 추가 // 정동민
-	token, ok := r.URL.Query()["token"]
-	if ok && len(token[0]) > 0 {
-		fmt.Println("r.URL.Query()[token]")
-		proxiedHeader.Add("Authorization", "Bearer "+string(token[0]))
+	token := r.Header.Clone().Get("Authorization")
+	if token != "" {
+		proxiedHeader.Add("Authorization", token)
 	}
 	// NOTE: 여기까지
 
