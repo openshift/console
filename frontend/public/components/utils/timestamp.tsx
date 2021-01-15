@@ -105,14 +105,16 @@ const formatUtcStamp = timestamp => {
     const isoTimestamp: any = d.toISOString();
     return isoTimestamp
       .replace('T', ' ')
-      .replaceAll('-', '.')
+      .replace(/-/g, '.')
       .replace('Z', ' (UTC)');
-  } else {
+  } else if (typeof timestamp == 'string') {
     const formattedStamp = timestamp
       .replace('T', ' ')
-      .replaceAll('-', '.')
+      .replace(/-/g, '.')
       .replace('Z', ' (UTC)');
     return formattedStamp;
+  } else {
+    return '';
   }
 };
 
