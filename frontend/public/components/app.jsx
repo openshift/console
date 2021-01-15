@@ -204,6 +204,8 @@ keycloak.onAuthSuccess = function() {
   // Global timer to ensure all <Timestamp> components update in sync
   setInterval(() => store.dispatch(UIActions.updateTimestamps(Date.now())), 10000);
 
+  fetchEventSourcesCrd(); 
+  
   // Fetch swagger on load if it's stale.
   fetchSwagger();
 
