@@ -1,0 +1,48 @@
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: managedkafkaconnections.rhoas.redhat.com
+spec:
+  group: rhoas.redhat.com
+  names:
+    kind: ManagedKafkaConnection
+    plural: managedkafkaconnections
+    shortNames:
+    - mkc
+    singular: managedkafkaconnection
+  scope: Namespaced
+  subresources:
+    status: {}
+  validation:
+    openAPIV3Schema:
+      properties:
+        managedKafkaConnectionSpec:
+          properties:
+            kafkaId:
+              type: string
+            credentials:
+              properties:
+                serviceAccountSecretName:
+                  type: string
+              type: object
+          type: object
+        status:
+          properties:
+            message:
+              type: string
+            updated:
+              type: string
+            boostrapServer:
+              properties:
+                host:
+                  type: string
+              type: object
+            serviceAccountSecretName:
+              type: string
+          type: object
+      type: object
+  versions:
+  - name: v1alpha1
+    served: true
+    storage: true
