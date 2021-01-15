@@ -16,7 +16,6 @@ import { openshiftHelpBase } from './utils/documentation';
 import { AboutModal } from './about-modal';
 import { clusterVersionReference, getReportBugLink } from '../module/k8s/cluster-settings';
 import * as redhatLogoImg from '../imgs/logos/redhat.svg';
-import { withKeycloak } from '@react-keycloak/web';
 import { ExpTimer } from './hypercloud/exp-timer';
 import { setAccessToken } from '../hypercloud/auth';
 import { withTranslation } from 'react-i18next';
@@ -592,9 +591,9 @@ const mastheadToolbarStateToProps = state => ({
 
 const MastheadToolbarContents = connect(mastheadToolbarStateToProps, {
   drawerToggle: UIActions.notificationDrawerToggleExpanded,
-})(connectToFlags(FLAGS.AUTH_ENABLED, FLAGS.CONSOLE_CLI_DOWNLOAD, FLAGS.OPENSHIFT)(withKeycloak(withTranslation()(MastheadToolbarContents_))));
+})(connectToFlags(FLAGS.AUTH_ENABLED, FLAGS.CONSOLE_CLI_DOWNLOAD, FLAGS.OPENSHIFT)(withTranslation()(MastheadToolbarContents_)));
 
-export const MastheadToolbar = connectToFlags(FLAGS.CLUSTER_VERSION)(({ flags }) => {
+export const MastheadToolbar = connectToFlags(FLAGS.CLUSTER_VERSION)(({ flags, keycloak }) => {
   const resources = flags[FLAGS.CLUSTER_VERSION]
     ? [
         {
@@ -607,7 +606,7 @@ export const MastheadToolbar = connectToFlags(FLAGS.CLUSTER_VERSION)(({ flags })
     : [];
   return (
     <Firehose resources={resources}>
-      <MastheadToolbarContents />
+      <MastheadToolbarContents keycloak={keycloak}/>
     </Firehose>
   );
 });

@@ -26,8 +26,7 @@ import '../style.scss';
 import './hypercloud/utils/langs/i18n';
 //PF4 Imports
 import { Page } from '@patternfly/react-core';
-import { ReactKeycloakProvider, withKeycloak } from '@react-keycloak/web';
-import keycloak from '../hypercloud/keycloak';
+import Keycloak from 'keycloak-js';
 import { setAccessToken, setId, resetLoginState } from '../hypercloud/auth';
 const breakpointMD = 768;
 const NOTIFICATION_DRAWER_BREAKPOINT = 1800;
@@ -35,7 +34,7 @@ const NOTIFICATION_DRAWER_BREAKPOINT = 1800;
 // Edge lacks URLSearchParams
 import 'url-search-params-polyfill';
 
-class App_ extends React.PureComponent {
+class App extends React.PureComponent {
   constructor(props) {
     super(props);
     this._onNavToggle = this._onNavToggle.bind(this);
@@ -125,13 +124,6 @@ class App_ extends React.PureComponent {
   }
 
   render() {
-    if (!this.props.keycloakInitialized) {
-      return <LoadingBox />;
-    } else if (!this.props.keycloak.authenticated) {
-      keycloak.login();
-      return null;
-    }
-
     const { isNavOpen, isDrawerInline } = this.state;
     const { productName } = getBrandingDetails();
 
@@ -139,7 +131,7 @@ class App_ extends React.PureComponent {
       <>
         <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
         <ConsoleNotifier location="BannerTop" />
-        <Page header={<Masthead onNavToggle={this._onNavToggle} />} sidebar={<Navigation isNavOpen={isNavOpen} onNavSelect={this._onNavSelect} onPerspectiveSelected={this._onNavSelect} onClusterSelected={this._onNavSelect} />}>
+        <Page header={<Masthead keycloak={keycloak} onNavToggle={this._onNavToggle} />} sidebar={<Navigation isNavOpen={isNavOpen} onNavSelect={this._onNavSelect} onPerspectiveSelected={this._onNavSelect} onClusterSelected={this._onNavSelect} />}>
           <ConnectedNotificationDrawer isDesktop={isDrawerInline} onDrawerChange={this._onNotificationDrawerToggle}>
             <AppContents />
           </ConnectedNotificationDrawer>
@@ -150,93 +142,118 @@ class App_ extends React.PureComponent {
     );
   }
 }
-const App = withKeycloak(App_);
 
-const eventLogger = (event, error) => {
-  switch (event) {
-    case 'onReady':
-      break;
-    case 'onAuthSuccess':
-      setAccessToken(keycloak.idToken);
-      setId(keycloak.idTokenParsed.preferred_username);
-      const startDiscovery = () => store.dispatch(watchAPIServices());
+const keycloak = new Keycloak({
+  realm: window.SERVER_FLAGS.KeycloakRealm,
+  url: window.SERVER_FLAGS.KeycloakAuthURL,
+  clientId: window.SERVER_FLAGS.KeycloakClientId,
+});
 
-      // Load cached API resources from localStorage to speed up page load.
-      getCachedResources()
-        .then(resources => {
-          if (resources) {
-            store.dispatch(receivedResources(resources));
-          }
-          // Still perform discovery to refresh the cache.
-          startDiscovery();
-        })
-        .catch(startDiscovery);
+keycloak.logout = keycloak.logout.bind(keycloak, { redirectUri: document.location.origin });
 
-      store.dispatch(detectFeatures());
+keycloak
+  .init({
+    onLoad: 'check-sso',
+    checkLoginIframe: false,
+  })
+  .then(authorization => {
+    if (!authorization) {
+      keycloak.login();
+      return;
+    }
 
-      // Global timer to ensure all <Timestamp> components update in sync
-      setInterval(() => store.dispatch(UIActions.updateTimestamps(Date.now())), 10000);
+    setAccessToken(keycloak.idToken);
+    setId(keycloak.idTokenParsed.preferred_username);
 
-      // Added it to perform discovery of Dynamic event sources on cluster on app load as kebab option needed models upfront
-      fetchEventSourcesCrd();
+    render(
+      <Provider store={store}>
+        <Router history={history} basename={window.SERVER_FLAGS.basePath}>
+          <Switch>
+            <Route path="/terminal" component={CloudShellTab} />
+            <Route path="/" component={App} />
+          </Switch>
+        </Router>
+      </Provider>,
+      document.getElementById('app'),
+    );
+  })
+  .catch(function() {
+    render(<div>Failed to initialize Keycloak</div>, document.getElementById('app'));
+  });
 
-      // Fetch swagger on load if it's stale.
-      fetchSwagger();
+keycloak.onReady = function() {
+  console.log('[keycloak] onReady');
+};
+keycloak.onAuthSuccess = function() {
+  console.log('[keycloak] onAuthSuccess');
+  const startDiscovery = () => store.dispatch(watchAPIServices());
 
-      // Used by GUI tests to check for unhandled exceptions
-      window.windowError = false;
-      window.onerror = window.onunhandledrejection = e => {
-        // eslint-disable-next-line no-console
-        console.error('Uncaught error', e);
-        window.windowError = e || true;
-      };
-
-      if ('serviceWorker' in navigator) {
-        if (window.SERVER_FLAGS.loadTestFactor > 1) {
-          // eslint-disable-next-line import/no-unresolved
-          import('file-loader?name=load-test.sw.js!../load-test.sw.js')
-            .then(() => navigator.serviceWorker.register('/load-test.sw.js'))
-            .then(() => new Promise(r => (navigator.serviceWorker.controller ? r() : navigator.serviceWorker.addEventListener('controllerchange', () => r()))))
-            .then(() =>
-              navigator.serviceWorker.controller.postMessage({
-                topic: 'setFactor',
-                value: window.SERVER_FLAGS.loadTestFactor,
-              }),
-            );
-        } else {
-          navigator.serviceWorker
-            .getRegistrations()
-            .then(registrations => registrations.forEach(reg => reg.unregister()))
-            // eslint-disable-next-line no-console
-            .catch(e => console.warn('Error unregistering service workers', e));
-        }
+  // Load cached API resources from localStorage to speed up page load.
+  getCachedResources()
+    .then(resources => {
+      if (resources) {
+        store.dispatch(receivedResources(resources));
       }
-      break;
-    case 'onAuthError':
-      break;
-    case 'onAuthLogout':
-      keycloak.logout();
-      resetLoginState();
-      break;
-    case 'onAuthRefreshError':
-      break;
-    case 'onTokenExpired':
-      keycloak.logout();
-      resetLoginState();
-      break;
+      // Still perform discovery to refresh the cache.
+      startDiscovery();
+    })
+    .catch(startDiscovery);
+
+  store.dispatch(detectFeatures());
+
+  // Global timer to ensure all <Timestamp> components update in sync
+  setInterval(() => store.dispatch(UIActions.updateTimestamps(Date.now())), 10000);
+
+  fetchEventSourcesCrd(); 
+  
+  // Fetch swagger on load if it's stale.
+  fetchSwagger();
+
+  // Used by GUI tests to check for unhandled exceptions
+  window.windowError = false;
+  window.onerror = window.onunhandledrejection = e => {
+    // eslint-disable-next-line no-console
+    console.error('Uncaught error', e);
+    window.windowError = e || true;
+  };
+
+  if ('serviceWorker' in navigator) {
+    if (window.SERVER_FLAGS.loadTestFactor > 1) {
+      // eslint-disable-next-line import/no-unresolved
+      import('file-loader?name=load-test.sw.js!../load-test.sw.js')
+        .then(() => navigator.serviceWorker.register('/load-test.sw.js'))
+        .then(() => new Promise(r => (navigator.serviceWorker.controller ? r() : navigator.serviceWorker.addEventListener('controllerchange', () => r()))))
+        .then(() =>
+          navigator.serviceWorker.controller.postMessage({
+            topic: 'setFactor',
+            value: window.SERVER_FLAGS.loadTestFactor,
+          }),
+        );
+    } else {
+      navigator.serviceWorker
+        .getRegistrations()
+        .then(registrations => registrations.forEach(reg => reg.unregister()))
+        // eslint-disable-next-line no-console
+        .catch(e => console.warn('Error unregistering service workers', e));
+    }
   }
 };
-
-render(
-  <ReactKeycloakProvider authClient={keycloak} initOptions={{ onLoad: 'check-sso', checkLoginIframe: false }} LoadingComponent={<LoadingBox />} onEvent={eventLogger}>
-    <Provider store={store}>
-      <Router history={history} basename={window.SERVER_FLAGS.basePath}>
-        <Switch>
-          <Route path="/terminal" component={CloudShellTab} />
-          <Route path="/" component={App} />
-        </Switch>
-      </Router>
-    </Provider>
-  </ReactKeycloakProvider>,
-  document.getElementById('app'),
-);
+keycloak.onAuthError = function() {
+  console.log('[keycloak] onAuthError');
+};
+keycloak.onAuthRefreshSuccess = function() {
+  console.log('[keycloak] onAuthRefreshSuccess');
+};
+keycloak.onAuthRefreshError = function() {
+  console.log('[keycloak] onAuthRefreshError');
+};
+keycloak.onAuthLogout = function() {
+  console.log('[keycloak] onAuthLogout');
+  keycloak.logout();
+  resetLoginState();
+};
+keycloak.onTokenExpired = function() {
+  console.log('[keycloak] onTokenExpired ');
+  keycloak.logout();
+  resetLoginState();
+};
