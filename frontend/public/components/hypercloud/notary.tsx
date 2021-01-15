@@ -56,7 +56,7 @@ export const NotaryDetails: React.FC<NotaryDetailsProps> = props => {
     );
 }
 
-export const NotariesDetailsPage: React.FC<RegistriesDetailsPageProps> = props => (
+export const NotariesDetailsPage: React.FC<NotariesDetailsPageProps> = props => (
     <Firehose
         resources={[
             {
@@ -84,7 +84,7 @@ type NotaryDetailsProps = {
     resources?: any;
 };
 
-type RegistriesDetailsPageProps = {
+type NotariesDetailsPageProps = {
     kind: any;
     kindObj: any;
     name: string;
