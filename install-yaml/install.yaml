@@ -211,6 +211,7 @@ spec:
 
 
 # console crd stage
+
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
@@ -268,9 +269,6 @@ spec:
                         rule:
                           type: string
                         server:
-                          description: Middlewares []string `json:"middlewares,omitempty"
-                            toml:"middlewares,omitempty" yaml:"middlewares,omitempty"
-                            export:"true"`
                           type: string
                       type: object
                     type: object
