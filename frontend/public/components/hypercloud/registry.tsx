@@ -138,7 +138,7 @@ const RegistryDetails: React.FC<RegistryDetailsProps> = ({ obj: registry }) => (
     </div>
     <div className="co-m-pane__body">
       <SectionHeading text="Resources" />
-      <Resources conditions={registry.status.conditions} registry={registry.metadata.name} />
+      <Resources conditions={registry.status.conditions} registry={registry.metadata.name} namespace={registry.metadata.namespace} />
     </div>
   </>
 );
@@ -178,7 +178,6 @@ const RepositoriesTab: React.FC<RepositoriesTabProps> = ({ obj }) => {
 
   const selector = {
     matchLabels: {
-      app: 'registry',
       registry: obj.metadata.name
     }
   };
