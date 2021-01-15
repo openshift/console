@@ -14,7 +14,7 @@ const perspectives: Perspective[] = [
             icon: <CogsIcon />,
             default: true,
             getLandingPageURL: (flags) => '/k8s/cluster/clustermanagers',
-            getK8sLandingPageURL: (flags) => '/search',
+            getK8sLandingPageURL: (flags) => '/k8s/cluster/clustermanagers',
             getImportRedirectURL: (project) => `/k8s/cluster/projects/${project}/workloads`,
         },
     },
