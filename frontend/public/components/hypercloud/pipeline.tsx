@@ -5,7 +5,7 @@ import { sortable } from '@patternfly/react-table';
 
 import { K8sKind } from '../../module/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from '../factory';
-import { Kebab, KebabAction, detailsPage, /*Timestamp,*/ navFactory, ResourceLink, ResourceSummary, SectionHeading } from '../utils';
+import { Kebab, KebabAction, detailsPage, Timestamp, navFactory, ResourceLink, ResourceSummary, SectionHeading } from '../utils';
 import { PipelineModel, /*PipelineRunModel,*/ TaskModel, ClusterTaskModel } from '../../models';
 import PipelineVisualization from '../../../packages/dev-console/src/components/pipelines/detail-page-tabs/pipeline-details/PipelineVisualization';
 import DynamicResourceLinkList from '../../../packages/dev-console/src/components/pipelines/resource-overview/DynamicResourceLinkList';
@@ -13,6 +13,7 @@ import { Pipeline } from './utils/pipeline-augment';
 import { PipelineForm, PipelineParametersForm, PipelineResourcesForm, parametersValidationSchema, resourcesValidationSchema } from '../../../packages/dev-console/src/components/pipelines/detail-page-tabs';
 import { addTrigger } from '../../../packages/dev-console/src/utils/pipeline-actions';
 import { PipelineRunsPage } from './pipeline-run';
+// PipelineRun 정보 정책 정해지면 넣을 것
 // import { pipelineFilterReducer } from './utils/pipeline-filter-reducer';
 // import LinkedPipelineRunTaskStatus from './pipelineruns/linked-pipeline-run-task-status';
 import PipelineRowKebabActions from './pipelines/pipeline-row-kebab-actions';
@@ -21,18 +22,20 @@ import PipelineRowKebabActions from './pipelines/pipeline-row-kebab-actions';
 export const menuActions: KebabAction[] = [addTrigger, ...Kebab.getExtensionsActionsForKind(PipelineModel), ...Kebab.factory.common];
 
 const kind = PipelineModel.kind;
+// PipelineRun 정보 정책 정해지면 넣을 것
 //const pipelineRunKind = PipelineRunModel.kind;
 
-const tableColumnClasses = [
-  'col-lg-2 col-md-3 col-sm-4 col-xs-4', // name
-  'col-lg-2 col-md-3 col-sm-3 col-xs-3', // namespace
-  // 'col-lg-2 col-md-4 col-sm-5 col-xs-5', // last run
-  // 'col-lg-2 col-md-2 hidden-sm hidden-xs', // task status
-  // 'col-lg-2 hidden-md hidden-sm hidden-xs', // last run status
-  // 'col-lg-2 hidden-md hidden-sm hidden-xs', // last run time
-  Kebab.columnClass,
-];
+// const tableColumnClasses = [
+//   'col-lg-2 col-md-3 col-sm-4 col-xs-4', // name
+//   'col-lg-2 col-md-3 col-sm-3 col-xs-3', // namespace
+//   // 'col-lg-2 col-md-4 col-sm-5 col-xs-5', // last run
+//   // 'col-lg-2 col-md-2 hidden-sm hidden-xs', // task status
+//   // 'col-lg-2 hidden-md hidden-sm hidden-xs', // last run status
+//   // 'col-lg-2 hidden-md hidden-sm hidden-xs', // last run time
+//   Kebab.columnClass,
+// ];
 
+const tableColumnClasses = [classNames('col-xs-6', 'col-sm-4'), classNames('col-xs-6', 'col-sm-4'), classNames('col-sm-4', 'hidden-xs'), Kebab.columnClass];
 
 const PipelineTableHeader = () => {
   return [
@@ -48,6 +51,13 @@ const PipelineTableHeader = () => {
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
     },
+    {
+      title: 'Created',
+      sortField: 'metadata.creationTimestamp',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[2] },
+    },
+    // PipelineRun 정보 정책 정해지면 넣을 것
     // {
     //   title: 'Last Run',
     //   sortField: 'latestRun.metadata.name',
@@ -74,7 +84,7 @@ const PipelineTableHeader = () => {
     // },
     {
       title: '',
-      props: { className: tableColumnClasses[6] },
+      props: { className: tableColumnClasses[3] },
     },
   ];
 };
@@ -90,6 +100,9 @@ const PipelineTableRow: RowFunction<Pipeline> = ({ obj: pipeline, index, key, st
       </TableData>
       <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
         <ResourceLink kind="Namespace" name={pipeline.metadata?.namespace} title={pipeline.metadata?.namespace} />
+      </TableData>
+      <TableData className={tableColumnClasses[2]}>
+        <Timestamp timestamp={pipeline.metadata.creationTimestamp} />
       </TableData>
       {/* <TableData className={tableColumnClasses[2]}>
         {pipeline.latestRun && pipeline.latestRun.metadata && pipeline.latestRun.metadata.name ? (
@@ -118,7 +131,7 @@ const PipelineTableRow: RowFunction<Pipeline> = ({ obj: pipeline, index, key, st
         )) ||
           '-'}
       </TableData> */}
-      <TableData className={tableColumnClasses[6]}>
+      <TableData className={tableColumnClasses[3]}>
         <PipelineRowKebabActions pipeline={pipeline} />
       </TableData>
     </TableRow>
