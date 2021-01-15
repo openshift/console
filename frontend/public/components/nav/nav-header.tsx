@@ -2,11 +2,10 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Dropdown, DropdownItem, DropdownToggle, Title } from '@patternfly/react-core';
 import { CaretDownIcon } from '@patternfly/react-icons';
-//import { Perspective } from '@console/plugin-sdk';
-import { Perspective, getPerspectives } from '../../hypercloud/perspectives';
+import { Perspective } from '@console/plugin-sdk';
+import { getPerspectives } from '../../hypercloud/perspectives';
 import { RootState } from '../../redux';
 import { featureReducerName, getFlagsObject, FlagsObject } from '../../reducers/features';
-import { getActiveCluster } from '../../actions/ui';
 import { getActivePerspective } from '../../reducers/ui';
 import * as UIActions from '../../actions/ui';
 import { history } from '../utils';
@@ -41,7 +40,7 @@ const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({
       event.preventDefault();
       if (perspective.properties.id !== activePerspective) {
         setActivePerspective(perspective.properties.id);
-        history.push(perspective.properties.getLandingPageURL(flags, getActiveCluster()));
+        history.push(perspective.properties.getLandingPageURL(flags));
       }
 
       setPerspectiveDropdownOpen(false);
@@ -98,7 +97,7 @@ const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({
     <>
       {window.SERVER_FLAGS.McMode && (
         <div className="oc-nav-header">
-          <span className="hc-dropdown__title">Application</span>
+          <div className="hc-dropdown__title">Application</div>
           <Dropdown
             isOpen={isPerspectiveDropdownOpen}
             toggle={renderToggle(icon, name)}
@@ -107,7 +106,7 @@ const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({
           />
           {activePerspective == "hc" &&
             <>
-              <span className="hc-dropdown__title">Cluster</span>
+              <div className="hc-dropdown__title">Cluster</div>
               <ClusterDropdown onClusterSelected={onClusterSelected} />
             </>
           }
