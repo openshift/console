@@ -94,8 +94,8 @@ export const PipelineApprovalDetailsList: React.FC<PipelineApprovalDetailsListPr
       <DetailsItem label='Approval/Rejection Time' obj={ds} path="status.decisionTime">
         {time}
       </DetailsItem>
-      <DetailsItem label='Acceptable Users' obj={ds} path="status.approver">
-        {ds.status.approver}
+      <DetailsItem label='Acceptable Users' obj={ds} path="spec.users">
+        {ds.spec.users.map(user => <div>{user}</div>)}
       </DetailsItem>
       <DetailsItem label='Reason for approval/rejection' obj={ds} path="status.reason">
         {ds.status.reason}
