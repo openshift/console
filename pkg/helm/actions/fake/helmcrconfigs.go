@@ -8,6 +8,7 @@ import (
 
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/dynamic/fake"
 )
@@ -23,6 +24,12 @@ func newUnstructured(apiVersion, kind, namespace, name string) *unstructured.Uns
 			},
 		},
 	}
+}
+
+func newScheme() *runtime.Scheme {
+	scheme := runtime.NewScheme()
+	scheme.AddKnownTypeWithName(schema.GroupVersionKind{Group: "helm.openshift.io", Version: "v1beta1", Kind: "HelmChartRepositoryList"}, &unstructured.UnstructuredList{})
+	return scheme
 }
 
 func fakeHelmCR(fakeIndexFile string, name string) *unstructured.Unstructured {
@@ -42,7 +49,6 @@ func fakeHelmCR(fakeIndexFile string, name string) *unstructured.Unstructured {
 }
 
 func K8sDynamicClient(indexFiles ...string) dynamic.Interface {
-	scheme := runtime.NewScheme()
 	var objs []runtime.Object
 
 	for i, indexFile := range indexFiles {
@@ -50,16 +56,15 @@ func K8sDynamicClient(indexFiles ...string) dynamic.Interface {
 		objs = append(objs, fakeCr)
 	}
 
-	return fake.NewSimpleDynamicClient(scheme, objs...)
+	return fake.NewSimpleDynamicClient(newScheme(), objs...)
 }
 
 func K8sDynamicClientFromCRs(crs ...*unstructured.Unstructured) dynamic.Interface {
-	scheme := runtime.NewScheme()
 	var objs []runtime.Object
 
 	for _, cr := range crs {
 		objs = append(objs, cr)
 	}
 
-	return fake.NewSimpleDynamicClient(scheme, objs...)
+	return fake.NewSimpleDynamicClient(newScheme(), objs...)
 }
