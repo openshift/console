@@ -15,8 +15,7 @@ import {
 } from '@console/plugin-sdk';
 import { ProjectDashboardContext } from './project-dashboard-context';
 import { ResourceHealthItem } from '../dashboards-page/cluster-dashboard/health-item';
-
-import './status-card.scss';
+import { Gallery } from '@patternfly/react-core';
 
 export const StatusCard: React.FC = () => {
   const { obj } = React.useContext(ProjectDashboardContext);
@@ -44,12 +43,14 @@ export const StatusCard: React.FC = () => {
       </DashboardCardHeader>
       <DashboardCardBody isLoading={!obj}>
         <HealthBody>
-          <div className="co-project-dashboard__status">
-            <Status status={obj.status.phase} />
-          </div>
-          {subsystem && (
-            <ResourceHealthItem subsystem={subsystem.properties} namespace={namespace} />
-          )}
+          <Gallery className="co-overview-status__health" hasGutter>
+            <div className="co-status-card__health-item">
+              <Status status={obj.status.phase} className="co-icon-and-text--lg" />
+            </div>
+            {subsystem && (
+              <ResourceHealthItem subsystem={subsystem.properties} namespace={namespace} />
+            )}
+          </Gallery>
         </HealthBody>
       </DashboardCardBody>
     </DashboardCard>

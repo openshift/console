@@ -1,6 +1,8 @@
 @import '~@patternfly/patternfly/sass-utilities/colors';
+@import '../../../../../../public/components/_icon-and-text.scss';
 
 $co-dashboard-card--line-height: 19px;
+$co-dashboard-text-font-size: 0.875rem;
 
 .co-dashboard-card {
   margin: 0;
@@ -57,9 +59,9 @@ $co-dashboard-card--line-height: 19px;
 }
 
 .co-dashboard-icon {
-  font-size: 1.2rem;
+  font-size: $co-icon-and-text-icon-lg;
 }
 
 .co-dashboard-text--small {
-  font-size: 0.875rem;
+  font-size: $co-dashboard-text-font-size;
 }
