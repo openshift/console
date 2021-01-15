@@ -48,19 +48,19 @@ export const getBrandingDetails = () => {
   return { logoImg, productName };
 };
 
-export const Masthead = React.memo(({ onNavToggle }) => {
+export const Masthead = React.memo(({ onNavToggle, keycloak }) => {
   const details = getBrandingDetails();
   const defaultRoute = '/';
   const logoProps = {
     href: defaultRoute,
     // use onClick to prevent browser reload
-    onClick: (e) => {
+    onClick: e => {
       e.preventDefault();
       history.push(defaultRoute);
     },
   };
 
-  return <PageHeader id="page-main-header" logo={<Brand src={details.logoImg} alt={details.productName} />} logoProps={logoProps} toolbar={<MastheadToolbar />} showNavToggle onNavToggle={onNavToggle} />;
+  return <PageHeader id="page-main-header" logo={<Brand src={details.logoImg} alt={details.productName} />} logoProps={logoProps} toolbar={<MastheadToolbar keycloak={keycloak}/>} showNavToggle onNavToggle={onNavToggle} />;
 });
 
 Masthead.propTypes = {
