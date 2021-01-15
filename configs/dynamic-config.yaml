@@ -1,17 +1,9 @@
 routers:
-  daum:
-    server: https://www.daum.com/
-    rule: Host(`daum.com`) && PathPrefix(`/daum/`)
-    path: /daum/
-  google:
-    server: https://google.com/
-    rule: Host(`google.com`) && PathPrefix(`/google/`)
-    path: /google/
-  naver:
-    server: https://www.naver.com/
-    rule: Host(`naver.com`) && PathPrefix(`/naver/`)
-    path: /naver/
-  show:
-    server: http://192.168.8.62:9002/
-    rule: Host(`console`) && PathPrefix(`/console/`)
-    path: /console/
+  f-test-2ddsb:
+    server: https://f-test-2ddsb-apiserver-492352234.us-east-2.elb.amazonaws.com:6443
+    rule: PathPrefix(`/api/f-test-2ddsb/`)
+    path: /api/f-test-2ddsb/
+  master:
+    server: https://220.90.208.100:6443
+    rule: PathPrefix(`/api/master/`)
+    path: /api/master/

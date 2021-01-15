@@ -14,12 +14,12 @@ import { namespacedPrefixes } from './utils/link';
 import { AlertmanagerModel } from '../models';
 import { referenceForModel } from '../module/k8s';
 import * as plugins from '../plugins';
-import { getActivePerspective, getActiveCluster } from '../reducers/ui';
+import { getActivePerspective } from '../reducers/ui';
 import { NamespaceRedirect } from './utils/namespace-redirect';
 import { RootState } from '../redux';
 import { pluralToKind } from './hypercloud/form';
 import { getPerspectives } from '../hypercloud/perspectives';
-// import { GrafanaPage } from './hypercloud/grafana';
+import { GrafanaPage } from './hypercloud/grafana';
 
 //PF4 Imports
 import { PageSection, PageSectionVariants } from '@patternfly/react-core';
@@ -28,12 +28,6 @@ const RedirectComponent = props => {
   const to = `/k8s${props.location.pathname}`;
   return <Redirect to={to} />;
 };
-
-// const RedirectClusterComponent = props => {
-  
-//   const to = `/k8s/`
-//   return <Redirect to={to} />;
-// }
 
 // Ensure a *const* function wrapper for each namespaced Component so that react router doesn't recreate them
 const Memoized = new Map();
@@ -47,17 +41,17 @@ function NamespaceFromURL(Component) {
   }
   return C;
 }
-const ActiveNamespaceRedirect = ({ location }) => {
-  const activeNamespace = localStorage.getItem('bridge/last-namespace-name');
-  let to;
-  if (activeNamespace === '#ALL_NS#') {
-    to = `${location.pathname}/all-namespaces`;
-  } else if (activeNamespace) {
-    to = `${location.pathname}/ns/${activeNamespace}`;
-  }
-  to += location.search;
-  return <Redirect to={to} />;
-};
+// const ActiveNamespaceRedirect = ({ location }) => {
+//   const activeNamespace = localStorage.getItem('bridge/last-namespace-name');
+//   let to;
+//   if (activeNamespace === '#ALL_NS#') {
+//     to = `${location.pathname}/all-namespaces`;
+//   } else if (activeNamespace) {
+//     to = `${location.pathname}/ns/${activeNamespace}`;
+//   }
+//   to += location.search;
+//   return <Redirect to={to} />;
+// };
 
 const namespacedRoutes = [];
 _.each(namespacedPrefixes, p => {
@@ -67,12 +61,11 @@ _.each(namespacedPrefixes, p => {
 
 type DefaultPageProps = {
   activePerspective: string;
-  activeCluster: string;
   flags: FlagsObject;
 };
 
 // The default page component lets us connect to flags without connecting the entire App.
-const DefaultPage_: React.FC<DefaultPageProps> = ({ flags, activePerspective, activeCluster }) => {
+const DefaultPage_: React.FC<DefaultPageProps> = ({ flags, activePerspective }) => {
   if (Object.keys(flags).some(key => flagPending(flags[key]))) {
     return <LoadingBox />;
   }
@@ -81,20 +74,19 @@ const DefaultPage_: React.FC<DefaultPageProps> = ({ flags, activePerspective, ac
     <Redirect
       to={getPerspectives()
         .find(p => p.properties.id === activePerspective)
-        .properties.getLandingPageURL(flags, activeCluster)}
+        .properties.getLandingPageURL(flags)}
     />
   ) : (
     <Redirect
       to={getPerspectives()
         .find(p => p.properties.id === activePerspective)
-        .properties.getK8sLandingPageURL(flags, activeCluster)}
+        .properties.getK8sLandingPageURL(flags)}
     />
   );
 };
 
 const DefaultPage = connect((state: RootState) => ({
   activePerspective: getActivePerspective(state),
-  activeCluster: getActiveCluster(state),
 }))(connectToFlags(FLAGS.OPENSHIFT, FLAGS.CAN_LIST_NS)(DefaultPage_));
 
 const LazyRoute = props => {
@@ -106,6 +98,8 @@ const LazyRoute = props => {
   } else if (kind === 'CustomResourceDefinition') {
     if (props.computedMatch.params.plural === 'secrets') {
       loader = () => import('./create-yaml' /* webpackChunkName: "create-yaml" */).then(m => m.CreateYAML);
+    }
+    if (props.path.indexOf('all-namespaces')) {
     }
   }
   return <Route {...props} component={undefined} render={componentProps => <AsyncComponent loader={loader} kind={kind} {...componentProps} />} />;
@@ -125,11 +119,10 @@ const getPluginPageRoutes = (activePerspective: string, flags: FlagsObject) =>
 
 type AppContentsProps = {
   activePerspective: string;
-  activeCluster: string;
   flags: FlagsObject;
 };
 
-const AppContents_: React.FC<AppContentsProps> = ({ activePerspective, activeCluster, flags }) => (
+const AppContents_: React.FC<AppContentsProps> = ({ activePerspective, flags }) => (
   <PageSection variant={PageSectionVariants.light}>
     <div id="content">
       <GlobalNotifications />
@@ -139,9 +132,7 @@ const AppContents_: React.FC<AppContentsProps> = ({ activePerspective, activeClu
         <Switch>
           {getPluginPageRoutes(activePerspective, flags)}
           <Route path={['/all-namespaces', '/ns/:ns']} component={RedirectComponent} />
-          {/* <Route path={['/k8s']} render={() => <RedirectClusterComponent activeCluster/>} /> */}
           <LazyRoute path="/dashboards" loader={() => import('./dashboard/dashboards-page/dashboards' /* webpackChunkName: "dashboards" */).then(m => m.DashboardsPage)} />
-          <LazyRoute path="/cl/:cl/dashboards" loader={() => import('./dashboard/dashboards-page/dashboards' /* webpackChunkName: "dashboards" */).then(m => m.DashboardsPage)} />
           {/* Redirect legacy routes to avoid breaking links */}
           <Redirect from="/cluster-status" to="/dashboards" />
           <Redirect from="/status/all-namespaces" to="/dashboards" />
@@ -190,9 +181,12 @@ const AppContents_: React.FC<AppContentsProps> = ({ activePerspective, activeClu
           }
           <LazyRoute path="/k8s/ns/:ns/audits" exact loader={() => import('./hypercloud/audit').then(m => NamespaceFromURL(m.AuditPage))} />
           <LazyRoute path="/k8s/all-namespaces/audits" exact loader={() => import('./hypercloud/audit').then(m => NamespaceFromURL(m.AuditPage))} />
-          <Route path="/grafana" exact component={ActiveNamespaceRedirect} />
+          <Route path="/grafana/all-namespaces" exact component={NamespaceFromURL(GrafanaPage)} />
+          <Route path="/grafana/ns/:ns" exact component={NamespaceFromURL(GrafanaPage)} />
+          <Route path="/grafana" exact component={NamespaceRedirect} />
+          {/* <Route path="/grafana" exact component={ActiveNamespaceRedirect} />
           <LazyRoute path="/grafana/all-namespaces" exact loader={() => import('./hypercloud/grafana').then(m => NamespaceFromURL(m.GrafanaPage))} />
-          <LazyRoute path="/grafana/ns/:ns" exact loader={() => import('./hypercloud/grafana').then(m => NamespaceFromURL(m.GrafanaPage))} />
+          <LazyRoute path="/grafana/ns/:ns" exact loader={() => import('./hypercloud/grafana').then(m => NamespaceFromURL(m.GrafanaPage))} /> */}
 
           {/*Create Form */}
           <LazyRoute path="/k8s/cluster/rolebindings/~new" exact loader={() => import('./RBAC' /* webpackChunkName: "rbac" */).then(m => m.CreateRoleBinding)} kind="RoleBinding" />
@@ -253,7 +247,6 @@ const AppContents_: React.FC<AppContentsProps> = ({ activePerspective, activeClu
 
 const AppContents = connect((state: RootState) => ({
   activePerspective: getActivePerspective(state),
-  activeCluster: getActiveCluster(state),
 }))(connectToFlags(...plugins.registry.getGatingFlagNames([plugins.isRoutePage]))(AppContents_));
 
 export default AppContents;

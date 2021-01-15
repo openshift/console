@@ -1,8 +1,11 @@
 .oc-nav-header {
-  padding: 10px 20px 20px 25px;
+  padding: 3px 20px 20px 25px;
 
   .hc-dropdown__title {
     font-size: 10px;
+    line-height: 18px;
+    margin-top: 7px;
+    margin-bottom: 3px;
   }
 
   @media screen and (min-width: $grid-float-breakpoint) {
@@ -31,6 +34,14 @@
     }
   }
 
+  .pf-c-dropdown__menu-item:hover,
+  .pf-c-dropdown__menu-item.pf-m-hover, {
+    h1 {
+      color: #0066CC;
+    }
+  }
+  
+
   .pf-c-dropdown__toggle {
     font-size: $co-side-nav-font-size;
     justify-content: space-between;
@@ -44,6 +55,7 @@
 
     .pf-c-title {
       color: var(--pf-global--Color--light-100);
+      line-height: 28px;
     }
 
     &:before {

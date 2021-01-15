@@ -3,19 +3,19 @@ import { coFetchJSON } from '../../co-fetch';
 import { k8sBasePath } from './k8s';
 import { selectorToString } from './selector';
 import { WSFactory } from '../ws-factory';
-import { getActivePerspective, getActiveCluster, getActiveClusterPath } from '../../actions/ui';
+import { getActivePerspective, getActiveCluster } from '../../actions/ui';
+import { getId } from '../../hypercloud/auth';
 
 /** @type {(model: K8sKind) => string} */
 const getK8sAPIPath = ({ apiGroup = 'core', apiVersion }) => {
   const isLegacy = apiGroup === 'core' && apiVersion === 'v1';
-    
+
   let p;
 
-  const cluster = window.SERVER_FLAGS.McMode && getActivePerspective() == "hc" && getActiveCluster();
+  const cluster = window.SERVER_FLAGS.McMode && getActivePerspective() == 'hc' && getActiveCluster();
 
-  if (cluster && cluster !== "#MASTER_CLUSTER#") {
-    const activeClusterPath = getActiveClusterPath();
-    p = `${window.SERVER_FLAGS.basePath}${activeClusterPath}`;
+  if (cluster) {
+    p = `${window.SERVER_FLAGS.basePath}api/${cluster}`;
   }
   else {
     p = k8sBasePath;
@@ -61,6 +61,31 @@ export const resourceURL = (model, options) => {
   return u;
 };
 
+export const resourceClusterURL = (model) => {
+  if(isCluster(model)) {
+    return `/api/hypercloud/api/master/cluster?userId=${getId()}`;
+  }
+  return `api/hypercloud/api/master/clusterclaim?userId=${getId()}`;
+}
+
+export const resourceApprovalURL = (model, options, approval) => {
+  return resourceURL(model, options).replace('cicd', 'cicdapi') + `/${approval}`
+}
+
+const isCluster = (model) => {
+  if(model.kind === 'ClusterManager') {
+    return true;
+  }
+  return false;
+}
+
+const isClusterClaim = (model) => {
+  if(model.kind === 'ClusterClaim') {
+    return true;
+  }
+  return false;
+}
+
 export const watchURL = (kind, options) => {
   const opts = options || {};
 
@@ -69,8 +94,7 @@ export const watchURL = (kind, options) => {
   return resourceURL(kind, opts);
 };
 
-export const k8sGet = (kind, name, ns, opts) =>
-  coFetchJSON(resourceURL(kind, Object.assign({ ns, name }, opts)));
+export const k8sGet = (kind, name, ns, opts) => coFetchJSON(resourceURL(kind, Object.assign({ ns, name }, opts)));
 
 export const k8sCreate = (kind, data, opts = {}) => {
   // Occassionally, a resource won't have a metadata property.
@@ -84,17 +108,27 @@ export const k8sCreate = (kind, data, opts = {}) => {
     data.metadata.name = data.metadata.name.toLowerCase();
   }
 
-  return coFetchJSON.post(
-    resourceURL(kind, Object.assign({ ns: data.metadata.namespace }, opts)),
-    data,
-  );
+  return coFetchJSON.post(resourceURL(kind, Object.assign({ ns: data.metadata.namespace }, opts)), data);
 };
 
-export const k8sUpdate = (kind, data, ns, name) =>
-  coFetchJSON.put(
-    resourceURL(kind, { ns: ns || data.metadata.namespace, name: name || data.metadata.name }),
-    data,
+export const k8sUpdate = (kind, data, ns, name) => coFetchJSON.put(resourceURL(kind, { ns: ns || data.metadata.namespace, name: name || data.metadata.name }), data);
+
+export const k8sUpdateApproval = (kind, resource, approval, data) => {
+  const url = resourceApprovalURL(
+    kind,
+    Object.assign(
+      {
+        ns: resource.metadata.namespace,
+        name: resource.metadata.name,
+      },
+    ),
+    approval,
   );
+
+  return coFetchJSON.put(url, data);
+}
+  
+
 
 export const k8sPatch = (kind, resource, data, opts = {}) => {
   const patches = _.compact(data);
@@ -118,21 +152,11 @@ export const k8sPatch = (kind, resource, data, opts = {}) => {
   );
 };
 
-export const k8sPatchByName = (kind, name, namespace, data, opts = {}) =>
-  k8sPatch(kind, { metadata: { name, namespace } }, data, opts);
+export const k8sPatchByName = (kind, name, namespace, data, opts = {}) => k8sPatch(kind, { metadata: { name, namespace } }, data, opts);
 
-export const k8sKill = (kind, resource, opts = {}, json = null) =>
-  coFetchJSON.delete(
-    resourceURL(
-      kind,
-      Object.assign({ ns: resource.metadata.namespace, name: resource.metadata.name }, opts),
-    ),
-    opts,
-    json,
-  );
+export const k8sKill = (kind, resource, opts = {}, json = null) => coFetchJSON.delete(resourceURL(kind, Object.assign({ ns: resource.metadata.namespace, name: resource.metadata.name }, opts)), opts, json);
 
-export const k8sKillByName = (kind, name, namespace, opts = {}) =>
-  k8sKill(kind, { metadata: { name, namespace } }, opts);
+export const k8sKillByName = (kind, name, namespace, opts = {}) => k8sKill(kind, { metadata: { name, namespace } }, opts);
 
 export const k8sList = (kind, params = {}, raw = false, options = {}) => {
   const query = _.map(_.omit(params, 'ns'), (v, k) => {
@@ -142,17 +166,27 @@ export const k8sList = (kind, params = {}, raw = false, options = {}) => {
     return `${encodeURIComponent(k)}=${encodeURIComponent(v)}`;
   }).join('&');
 
+  if(isCluster(kind) || isClusterClaim(kind)) {
+    const listClusterURL = resourceClusterURL(kind);
+    return coFetchJSON(`${listClusterURL}`, 'GET').then((result) => raw ? result: result.items);
+  }
+
   const listURL = resourceURL(kind, { ns: params.ns });
-  return coFetchJSON(`${listURL}?${query}`, 'GET', options).then((result) =>
-    raw ? result : result.items,
-  );
+  // if (kind.kind === 'Namespace') {
+  //   listURL = `${document.location.origin}/api/hypercloud/nameSpace?userId=${sessionStorage.getItem('id')}`;
+  //   return coFetchJSON(`${listURL}${query && '&' + query}`, 'GET', options).then(result => (raw ? result : result.items));
+  // } else if (kind.kind === 'NamespaceClaim') {
+  //   listURL = `${document.location.origin}/api/hypercloud/nameSpaceClaim?userId=${sessionStorage.getItem('id')}`;
+  //   return coFetchJSON(`${listURL}${query && '&' + query}`, 'GET', options).then(result => (raw ? result : result.items));
+  // } else {
+  return coFetchJSON(`${listURL}?${query}`, 'GET', options).then(result => (raw ? result : result.items));
+  // }
 };
 
 export const k8sListPartialMetadata = (kind, params = {}, raw = false) => {
   return k8sList(kind, params, raw, {
     headers: {
-      Accept:
-        'application/json;as=PartialObjectMetadataList;v=v1beta1;g=meta.k8s.io,application/json',
+      Accept: 'application/json;as=PartialObjectMetadataList;v=v1beta1;g=meta.k8s.io,application/json',
     },
   });
 };

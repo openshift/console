@@ -89,7 +89,7 @@ export default (state: UIState, action: UIAction): UIState => {
     const storedPins = localStorage.getItem(PINNED_RESOURCES_LOCAL_STORAGE_KEY);
     const pinnedResources = storedPins ? JSON.parse(storedPins) : {};
 
-    const activeCluster = window.SERVER_FLAGS.McMode ? localStorage.getItem(LAST_CLUSTER_LOCAL_STORAGE_KEY) : '';
+    const activeCluster = window.SERVER_FLAGS.McMode ? localStorage.getItem(LAST_CLUSTER_LOCAL_STORAGE_KEY) : 'master';
 
     return ImmutableMap({
       activeNavSectionId: 'workloads',
@@ -120,7 +120,6 @@ export default (state: UIState, action: UIAction): UIState => {
       }),
       pinnedResources,
       activeCluster,
-      activeClusterPath: '',
     });
   }
 
@@ -378,9 +377,6 @@ export default (state: UIState, action: UIAction): UIState => {
     case ActionType.SetActiveCluster:
       return state.set('activeCluster', action.payload.cluster);
 
-    case ActionType.SetActiveClusterPath:
-      return state.set('activeClusterPath', action.payload.activeClusterPath);
-
     default:
       break;
   }
@@ -409,8 +405,6 @@ export const getPinnedResources = (rootState: RootState): string[] =>
   rootState.UI.get('pinnedResources')[getActivePerspective(rootState)];
 
 export const getActiveCluster = ({ UI }: RootState): string => UI.get('activeCluster');
-
-export const getActiveClusterPath = ({ UI }: RootState): string => UI.get('activeClusterPath');
 
 export type NotificationAlerts = {
   data: Alert[];

@@ -13,6 +13,7 @@ export const Status: React.FC<StatusProps> = ({ status, title, children, iconOnl
       return <StatusIconAndText {...statusProps} icon={<HourglassStartIcon />} />;
 
     case 'Pending':
+    case 'Waiting':
       return <StatusIconAndText {...statusProps} icon={<HourglassHalfIcon />} />;
 
     case 'Planning':
@@ -39,6 +40,7 @@ export const Status: React.FC<StatusProps> = ({ status, title, children, iconOnl
     case 'Not Ready':
     case 'NotReady':
     case 'Terminating':
+    case 'Deleted':
       return <StatusIconAndText {...statusProps} icon={<BanIcon />} />;
 
     case 'Warning':
@@ -73,6 +75,8 @@ export const Status: React.FC<StatusProps> = ({ status, title, children, iconOnl
     case 'Ready':
     case 'Up to date':
     case 'Provisioned as node':
+    case 'Approved':
+    case 'Success':
       return <SuccessStatus {...statusProps} />;
 
     case 'Info':

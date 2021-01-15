@@ -12,6 +12,30 @@ export const HyperClusterResourceModel: K8sKind = {
   namespaced: false,
 };
 
+export const ClusterManagerModel: K8sKind = {
+  label: 'Cluster',
+  labelPlural: 'Clusters',
+  apiVersion: 'v1alpha1',
+  apiGroup: 'cluster.tmax.io',
+  plural: 'clustermanagers',
+  abbr: 'CM',
+  kind: 'ClusterManager',
+  id: 'clustermanager',
+  namespaced: true,
+};
+
+export const ClusterClaimModel: K8sKind = {
+  label: 'ClusterClaim',
+  labelPlural: 'Clusters Claims',
+  apiVersion: 'v1alpha1',
+  apiGroup: 'claims.tmax.io',
+  plural: 'clusterclaims',
+  abbr: 'CC',
+  kind: 'ClusterClaim',
+  id: 'clusterclaim',
+  namespaced: true,
+}
+
 export const SignerPolicyModel: K8sKind = {
   kind: 'SignerPolicy',
   label: 'Signer Policy',
@@ -722,4 +746,30 @@ export const ClusterTemplateModel: K8sKind = {
   kind: 'ClusterTemplate',
   id: 'clustertemplate',
   namespaced: false,
+};
+
+export const EventListenerModel: K8sKind = {
+  apiGroup: 'triggers.tekton.dev',
+  apiVersion: 'v1alpha1',
+  label: 'Event Listener',
+  plural: 'eventlisteners',
+  abbr: 'EL',
+  namespaced: true,
+  kind: 'EventListener',
+  id: 'eventlistener',
+  labelPlural: 'Event Listeners',
+  crd: false,
+};
+
+export const TriggerTemplateModel: K8sKind = {
+  apiGroup: 'triggers.tekton.dev',
+  apiVersion: 'v1alpha1',
+  label: 'Trigger Template',
+  plural: 'triggertemplates',
+  abbr: 'TT',
+  namespaced: true,
+  kind: 'TriggerTemplate',
+  id: 'triggertemplate',
+  labelPlural: 'Trigger Templates',
+  crd: false,
 };

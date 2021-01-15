@@ -16,6 +16,9 @@ import {
   deleteModal,
   expandPVCModal,
 } from '../modals';
+import {
+  statusModal
+} from '../hypercloud/modals';
 import { asAccessReview, checkAccess, history, resourceObjPath, useAccessReview } from './index';
 import {
   AccessReviewResourceAttributes,
@@ -198,8 +201,8 @@ export const KebabItem: React.FC<KebabItemProps> = (props) => {
       {item}
     </Tooltip>
   ) : (
-    item
-  );
+      item
+    );
 };
 
 type KebabMenuItemsProps = {
@@ -224,12 +227,12 @@ export const KebabMenuItems: React.FC<KebabMenuItemsProps> = ({
         {isKebabSubMenu(o) ? (
           <KebabSubMenu option={o} onClick={onClick} />
         ) : (
-          <KebabItem
-            option={o}
-            onClick={onClick}
-            autoFocus={focusItem ? o === focusItem : undefined}
-          />
-        )}
+            <KebabItem
+              option={o}
+              onClick={onClick}
+              autoFocus={focusItem ? o === focusItem : undefined}
+            />
+          )}
       </li>
     ))}
   </ul>
@@ -260,6 +263,16 @@ const kebabFactory: KebabFactory = {
     label: 'Edit Labels',
     callback: () =>
       labelsModal({
+        kind,
+        resource: obj,
+        blocking: true,
+      }),
+    accessReview: asAccessReview(kind, obj, 'patch'),
+  }),
+  ModifyStatus: (kind, obj) => ({
+    label: 'Approval Processing',
+    callback: () =>
+      statusModal({
         kind,
         resource: obj,
         blocking: true,

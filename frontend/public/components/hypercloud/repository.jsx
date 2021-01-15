@@ -21,6 +21,7 @@ const RepositoryTableRow = ({ obj, index, key, style }) => {
           <ResourceLink
             kind={kind}
             name={obj.metadata.name}
+            displayName={obj.spec.name}
             namespace={obj.metadata.namespace}
             title={obj.metadata.uid}
           />
