@@ -167,7 +167,7 @@ spec:
         - --webhook-endpoint=https://hypercloud4-webhook-svc.hypercloud4-system.svc/api/webhook/
         - --mc-mode=true 
         - --mc-mode-operator=true 
-        image: tmaxcloudck/hypercloud-console:0.5.0.8
+        image: tmaxcloudck/hypercloud-console:0.5.0.9
         imagePullPolicy: IfNotPresent
         volumeMounts:
         - mountPath: /var/https-cert
