@@ -39,7 +39,7 @@ import '../vendor.scss';
 import '../style.scss';
 
 //PF4 Imports
-import { Page } from '@patternfly/react-core';
+import { Page, SkipToContent } from '@patternfly/react-core';
 
 const breakpointMD = 768;
 const NOTIFICATION_DRAWER_BREAKPOINT = 1800;
@@ -164,6 +164,13 @@ class App_ extends React.PureComponent {
                 onNavSelect={this._onNavSelect}
                 onPerspectiveSelected={this._onNavSelect}
               />
+            }
+            skipToContent={
+              <SkipToContent
+                href={`${this.props.location.pathname}${this.props.location.search}#content`}
+              >
+                Skip to Content
+              </SkipToContent>
             }
           >
             <ConnectedNotificationDrawer
