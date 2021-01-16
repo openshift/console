@@ -8,10 +8,14 @@ import { PageBody } from '@console/shared';
 
 const ManagedKafkas = () => {
 
+  // TODO change namespace from URL (args)
+  const namespace = "default";
+  const secretName = "MyLittleSecret"
+  const accessToken = "notrelevantyet"
 
   const onSubmit = async (event) => {
     event.preventDefault();
-    const existingSecret = await k8sGet(SecretModel.kind, "testsomesecret", "default", {})
+    const existingSecret = await k8sGet(SecretModel.kind, secretName, namespace, {})
     console.log(existingSecret)
 
     if (existingSecret) {
@@ -22,11 +26,11 @@ const ManagedKafkas = () => {
       apiVersion: SecretModel.apiVersion,
       kind: SecretModel.kind,
       metadata: {
-        name: 'testsomesecret',
-        namespace: "default",
+        name: secretName,
+        namespace
       },
       stringData: {
-        accessToken: "hardcoded"
+        accessToken
       },
       type: 'Opaque',
     };
@@ -35,15 +39,16 @@ const ManagedKafkas = () => {
       apiVersion: ManagedKafkaRequestModel.apiVersion,
       kind: ManagedKafkaRequestModel.kind,
       metadata: {
+        // TODO better name generation
         name: 'KafkaRequest-' + new Date().getTime(),
-        // TODO - namespace based url
-        namespace: "default",
+        namespace
       },
       spec: {
-        accessTokenSecretName: "testsomesecret",
+        accessTokenSecretName: secretName,
       },
     };
 
+    // TODO proper handling for create
     console.log(await k8sCreate(SecretModel, secret))
     console.log(await k8sCreate(ManagedKafkaRequestModel, mkRequest));
   }
