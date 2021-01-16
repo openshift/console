@@ -12,15 +12,23 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { referenceForModel } from '@console/internal/module/k8s';
 import { ClusterServiceVersionModel } from '../../models';
 import { ClusterServiceVersionKind, SubscriptionKind } from '../../types';
+import { Trans, useTranslation } from 'react-i18next';
+
+// t('olm~Basic Install'),
+// t('olm~Seamless Upgrades'),
+// t('olm~Full Lifecycle'),
+// t('olm~Deep Insights'),
+// t('olm~Auto Pilot'),
+const levels = [
+  'Basic Install',
+  'Seamless Upgrades',
+  'Full Lifecycle',
+  'Deep Insights',
+  'Auto Pilot',
+];
 
 const CapabilityLevel: React.FC<CapabilityLevelProps> = ({ capabilityLevel }) => {
-  const levels = [
-    'Basic Install',
-    'Seamless Upgrades',
-    'Full Lifecycle',
-    'Deep Insights',
-    'Auto Pilot',
-  ];
+  const { t } = useTranslation();
   const capabilityLevelIndex = _.indexOf(levels, capabilityLevel);
 
   return (
@@ -38,10 +46,10 @@ const CapabilityLevel: React.FC<CapabilityLevelProps> = ({ capabilityLevel }) =>
               <CheckCircleIcon
                 color="var(--pf-global--primary-color--100)"
                 className="properties-side-panel-pf-property-value__capability-level-icon"
-                title="Checked"
+                title={t('olm~Checked')}
               />
             )}
-            {level}
+            {t(`olm~${level}`)}
           </li>
         );
       })}
@@ -58,6 +66,7 @@ const InstalledHintBlock: React.FC<OperatorHubItemDetailsHintBlockProps> = ({
   namespace,
   subscription,
 }) => {
+  const { t } = useTranslation();
   const [installedCSV] = useK8sWatchResource<ClusterServiceVersionKind>({
     kind: referenceForModel(ClusterServiceVersionModel),
     name: subscription?.status?.installedCSV,
@@ -69,25 +78,29 @@ const InstalledHintBlock: React.FC<OperatorHubItemDetailsHintBlockProps> = ({
   const to = installedCSV
     ? `${nsPath}/clusterserviceversions/${installedCSV?.metadata?.name ?? ''}`
     : `${nsPath}/subscriptions/${subscription.metadata.name ?? ''}`;
+  const installedVersion = installedCSV?.spec?.version;
   return (
     <HintBlock className="co-catalog-page__hint" title="Installed Operator">
       <p>
-        {installedCSV && installedCSV?.spec?.version !== latestVersion ? (
+        {installedVersion !== latestVersion ? (
           <span>
-            Version <strong>{installedCSV?.spec?.version}</strong> of this operator has been
-            installed on the cluster.
+            <Trans ns="olm">
+              Version <strong>{{ installedVersion }}</strong> of this Operator has been installed on
+              the cluster.
+            </Trans>
           </span>
         ) : (
-          'This Operator has been installed on the cluster.'
+          t('olm~This Operator has been installed on the cluster.')
         )}
         &nbsp;
-        <Link to={to}>View it here.</Link>
+        <Link to={to}>{t('olm~View it here.')}</Link>
       </p>
     </HintBlock>
   );
 };
 
 const OperatorHubItemDetailsHintBlock: React.FC<OperatorHubItemDetailsHintBlockProps> = (props) => {
+  const { t } = useTranslation();
   const { installed, providerType } = props;
   if (installed) {
     return <InstalledHintBlock {...props} />;
@@ -95,17 +108,17 @@ const OperatorHubItemDetailsHintBlock: React.FC<OperatorHubItemDetailsHintBlockP
 
   if (providerType === 'Community') {
     return (
-      <HintBlock className="co-catalog-page__hint" title="Community Operator">
+      <HintBlock className="co-catalog-page__hint" title={t('olm~Community Operator')}>
         <p>
-          This is a community provided operator. These are operators which have not been vetted or
-          verified by Red Hat. Community Operators should be used with caution because their
-          stability is unknown. Red Hat provides no support for Community Operators.
+          {t(
+            'olm~This is a community provided Operator. These are Operators which have not been vetted or verified by Red Hat. Community Operators should be used with caution because their stability is unknown. Red Hat provides no support for community Operators.',
+          )}
         </p>
         {RH_OPERATOR_SUPPORT_POLICY_LINK && (
           <span className="co-modal-ignore-warning__link">
             <ExternalLink
               href={RH_OPERATOR_SUPPORT_POLICY_LINK}
-              text="Learn more about Red Hat’s third party software support policy"
+              text={t('olm~Learn more about Red Hat’s third party software support policy')}
             />
           </span>
         )}
@@ -115,16 +128,16 @@ const OperatorHubItemDetailsHintBlock: React.FC<OperatorHubItemDetailsHintBlockP
 
   if (providerType === 'Marketplace') {
     return (
-      <HintBlock title="Marketplace Operator">
+      <HintBlock title={t('olm~Marketplace Operator')}>
         <p>
-          This Operator is purchased through Red Hat Marketplace. After completing the purchase
-          process, you can install the Operator on this or other OpenShift clusters. Visit Red Hat
-          Marketplace for more details and to track your usage of this application.
+          {t(
+            'olm~This Operator is purchased through Red Hat Marketplace. After completing the purchase process, you can install the Operator on this or other OpenShift clusters. Visit Red Hat Marketplace for more details and to track your usage of this application.',
+          )}
         </p>
         <p>
           <ExternalLink
             href="https://marketplace.redhat.com/en-us?utm_source=openshift_console"
-            text="Learn more about the Red Hat Marketplace"
+            text={t('olm~Learn more about the Red Hat Marketplace')}
           />
         </p>
       </HintBlock>
@@ -138,10 +151,7 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
   item,
   namespace,
 }) => {
-  if (!item) {
-    return null;
-  }
-
+  const { t } = useTranslation();
   const {
     capabilityLevel,
     containerImage,
@@ -159,35 +169,39 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
     validSubscription,
     version,
   } = item;
-  const notAvailable = <span className="properties-side-panel-pf-property-label">N/A</span>;
+  const notAvailable = (
+    <span className="properties-side-panel-pf-property-label">{t('olm~N/A')}</span>
+  );
   const created = Date.parse(createdAt) ? <Timestamp timestamp={createdAt} /> : createdAt;
 
-  const mappedData = (data) =>
-    Array.isArray(data) ? data.map((d) => <div key={d}>{d}</div>) : notAvailable;
+  const mappedData = (data) => data?.map?.((d) => <div key={d}>{d}</div>) ?? notAvailable;
 
   const mappedInfraFeatures = mappedData(infraFeatures);
   const mappedValidSubscription = mappedData(validSubscription);
 
-  let supportWorkflowUrl;
-  if (marketplaceSupportWorkflow)
-    try {
-      const url = new URL(marketplaceSupportWorkflow);
-      url.searchParams.set('utm_source', 'openshift_console');
-      supportWorkflowUrl = url.toString();
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(error.message);
+  const supportWorkflowUrl = React.useMemo(() => {
+    if (marketplaceSupportWorkflow) {
+      try {
+        const url = new URL(marketplaceSupportWorkflow);
+        url.searchParams.set('utm_source', 'openshift_console');
+        return url.toString();
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error(error.message);
+      }
     }
+    return null;
+  }, [marketplaceSupportWorkflow]);
 
-  return (
+  return item ? (
     <div className="modal-body modal-body-border">
       <div className="modal-body-content">
         <div className="modal-body-inner-shadow-covers">
           <div className="co-catalog-page__overlay-body">
             <PropertiesSidePanel>
-              <PropertyItem label="Latest Version" value={version || notAvailable} />
+              <PropertyItem label={t('olm~Latest version')} value={version || notAvailable} />
               <PropertyItem
-                label="Capability Level"
+                label={t('olm~Capability level')}
                 value={
                   capabilityLevel ? (
                     <CapabilityLevel capabilityLevel={capabilityLevel} />
@@ -196,22 +210,31 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
                   )
                 }
               />
-              <PropertyItem label="Provider Type" value={providerType || notAvailable} />
-              <PropertyItem label="Provider" value={provider || notAvailable} />
+              <PropertyItem label={t('olm~Provider type')} value={providerType || notAvailable} />
+              <PropertyItem label={t('olm~Provider')} value={provider || notAvailable} />
               {infraFeatures && (
-                <PropertyItem label="Infrastructure Features" value={mappedInfraFeatures} />
+                <PropertyItem
+                  label={t('olm~Infrastructure features')}
+                  value={mappedInfraFeatures}
+                />
               )}
               {validSubscription && (
-                <PropertyItem label="Valid Subscriptions" value={mappedValidSubscription} />
+                <PropertyItem
+                  label={t('olm~Valid Subscriptions')}
+                  value={mappedValidSubscription}
+                />
               )}
-              <PropertyItem label="Repository" value={repository || notAvailable} />
-              <PropertyItem label="Container Image" value={containerImage || notAvailable} />
-              <PropertyItem label="Created At" value={created || notAvailable} />
+              <PropertyItem label={t('olm~Repository')} value={repository || notAvailable} />
               <PropertyItem
-                label="Support"
+                label={t('olm~Container image')}
+                value={containerImage || notAvailable}
+              />
+              <PropertyItem label={t('olm~Created at')} value={created || notAvailable} />
+              <PropertyItem
+                label={t('olm~Support')}
                 value={
                   supportWorkflowUrl ? (
-                    <ExternalLink href={supportWorkflowUrl} text="Get support" />
+                    <ExternalLink href={supportWorkflowUrl} text={t('olm~Get support')} />
                   ) : (
                     support || notAvailable
                   )
@@ -232,7 +255,7 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
         </div>
       </div>
     </div>
-  );
+  ) : null;
 };
 
 OperatorHubItemDetails.defaultProps = {

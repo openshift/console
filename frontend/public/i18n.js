@@ -114,7 +114,6 @@ i18n
         'oauth',
         'olm',
         'openid-idp-form',
-        'operator-hub-details',
         'operator-hub-subscribe',
         'operator-install-page',
         'olm',

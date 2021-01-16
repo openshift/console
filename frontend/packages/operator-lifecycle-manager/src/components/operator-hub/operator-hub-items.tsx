@@ -31,6 +31,7 @@ import {
   CapabilityLevel,
   InfraFeatures,
 } from './index';
+import { useTranslation } from 'react-i18next';
 
 const osBaseLabel = 'operatorframework.io/os.';
 const targetGOOSLabel = window.SERVER_FLAGS.GOOS ? `${osBaseLabel}${window.SERVER_FLAGS.GOOS}` : '';
@@ -80,8 +81,8 @@ const filterByArchAndOS = (items: OperatorHubItem[]): OperatorHubItem[] => {
   });
 };
 
-const badge = (text: string) => (
-  <span key="1" className="pf-c-badge pf-m-read">
+const Badge = ({ text }) => (
+  <span key={text} className="pf-c-badge pf-m-read">
     {text}
   </span>
 );
@@ -97,14 +98,21 @@ const operatorHubFilterGroups = [
   'infraFeatures',
 ];
 
+// t('olm~Provider type')
+// t('olm~Provider')
+// t('olm~Install state')
+// t('olm~Capability level')
+// t('olm~Infrastructure features')
 const operatorHubFilterMap = {
-  providerType: 'Provider Type',
+  providerType: 'Provider type',
   provider: 'Provider',
-  installState: 'Install State',
-  capabilityLevel: 'Capability Level',
-  infraFeatures: 'Infrastructure Features',
+  installState: 'Install state',
+  capabilityLevel: 'Capability level',
+  infraFeatures: 'Infrastructure features',
 };
 
+// t('olm~Community')
+// t('olm~Marketplace')
 const COMMUNITY_PROVIDER_TYPE = 'Community';
 const MARKETPLACE_PROVIDER_TYPE = 'Marketplace';
 
@@ -325,7 +333,49 @@ const setURLParams = (params) => {
   history.replace(`${url.pathname}${searchParams}`);
 };
 
+const OperatorHubTile: React.FC<OperatorHubTileProps> = ({ item, onClick }) => {
+  const { t } = useTranslation();
+  if (!item) {
+    return null;
+  }
+
+  const { uid, name, imgUrl, provider, description, installed } = item;
+  const vendor = provider ? t('olm~provided by {{provider}}', { provider }) : null;
+  const badges = [COMMUNITY_PROVIDER_TYPE, MARKETPLACE_PROVIDER_TYPE].includes(item.providerType)
+    ? [<Badge text={item.providerType} />]
+    : [];
+  const icon = (
+    <img
+      className="catalog-tile-pf-icon catalog-tile-pf-icon--align-top"
+      loading="lazy"
+      src={imgUrl}
+      alt=""
+    />
+  );
+  return (
+    <CatalogTile
+      className="co-catalog-tile"
+      key={uid}
+      title={name}
+      badges={badges}
+      icon={icon}
+      vendor={vendor}
+      description={description}
+      onClick={() => onClick(item)}
+      footer={
+        installed ? (
+          <span>
+            <GreenCheckCircleIcon /> {t('olm~Installed')}
+          </span>
+        ) : null
+      }
+      data-test={uid}
+    />
+  );
+};
+
 export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) => {
+  const { t } = useTranslation();
   const [detailsItem, setDetailsItem] = React.useState(null);
   const [showDetails, setShowDetails] = React.useState(false);
   const [ignoreOperatorWarning, setIgnoreOperatorWarning, loaded] = useUserSettingsCompatibility<
@@ -353,6 +403,14 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
     }
   };
 
+  const closeOverlay = () => {
+    const params = new URLSearchParams(window.location.search);
+    params.delete('details-item');
+    setURLParams(params);
+    setDetailsItem(null);
+    setShowDetails(false);
+  };
+
   const openOverlay = (item: OperatorHubItem) => {
     if (!ignoreOperatorWarning && item.providerType === COMMUNITY_PROVIDER_TYPE) {
       communityOperatorWarningModal({
@@ -367,53 +425,9 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
     }
   };
 
-  const closeOverlay = () => {
-    const params = new URLSearchParams(window.location.search);
-    params.delete('details-item');
-    setURLParams(params);
-    setDetailsItem(null);
-    setShowDetails(false);
-  };
-
-  const renderTile = (item: OperatorHubItem) => {
-    if (!item) {
-      return null;
-    }
-
-    const { uid, name, imgUrl, provider, description, installed } = item;
-    const vendor = provider ? `provided by ${provider}` : null;
-    const badges = [COMMUNITY_PROVIDER_TYPE, MARKETPLACE_PROVIDER_TYPE].includes(item.providerType)
-      ? [badge(item.providerType)]
-      : [];
-    const icon = (
-      <img
-        className="catalog-tile-pf-icon catalog-tile-pf-icon--align-top"
-        loading="lazy"
-        src={imgUrl}
-        alt=""
-      />
-    );
-    return (
-      <CatalogTile
-        className="co-catalog-tile"
-        key={uid}
-        title={name}
-        badges={badges}
-        icon={icon}
-        vendor={vendor}
-        description={description}
-        onClick={() => openOverlay(item)}
-        footer={
-          installed ? (
-            <span>
-              <GreenCheckCircleIcon /> Installed
-            </span>
-          ) : null
-        }
-        data-test={uid}
-      />
-    );
-  };
+  const renderTile = (item: OperatorHubItem) => (
+    <OperatorHubTile item={item} onClick={openOverlay} />
+  );
 
   const createLink =
     detailsItem &&
@@ -423,29 +437,36 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
     detailsItem &&
     `/k8s/ns/${detailsItem.subscription.metadata.namespace}/${SubscriptionModel.plural}/${detailsItem.subscription.metadata.name}?showDelete=true`;
 
-  let remoteWorkflowUrl = detailsItem?.marketplaceRemoteWorkflow;
-  if (remoteWorkflowUrl) {
-    try {
-      const url = new URL(remoteWorkflowUrl);
-      url.searchParams.set('utm_source', 'openshift_console');
-      remoteWorkflowUrl = url.toString();
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(error.message);
+  const remoteWorkflowUrl = React.useMemo(() => {
+    if (detailsItem?.marketplaceRemoteWorkflow) {
+      try {
+        const url = new URL(detailsItem?.marketplaceRemoteWorkflow);
+        url.searchParams.set('utm_source', 'openshift_console');
+        return url.toString();
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error(error.message);
+      }
     }
-  }
+    return null;
+  }, [detailsItem]);
 
   if (_.isEmpty(filteredItems)) {
     return (
       <>
         <EmptyState variant={EmptyStateVariant.full} className="co-status-card__alerts-msg">
           <Title headingLevel="h5" size="lg">
-            No operators available
+            {t('olm~No Operators available')}
           </Title>
           {window.SERVER_FLAGS.GOOS && window.SERVER_FLAGS.GOARCH && (
             <EmptyStateBody>
-              There are no operators that match operating system {window.SERVER_FLAGS.GOOS} and
-              architecture {window.SERVER_FLAGS.GOARCH}.
+              {t(
+                'olm~There are no Operators that match operating system {{os}} and architecture {{arch}}.',
+                {
+                  os: window.SERVER_FLAGS.GOOS,
+                  arch: window.SERVER_FLAGS.GOARCH,
+                },
+              )}
             </EmptyStateBody>
           )}
         </EmptyState>
@@ -464,7 +485,9 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
         filterGroupNameMap={operatorHubFilterMap}
         keywordCompare={keywordCompare}
         renderTile={renderTile}
-        emptyStateInfo="No OperatorHub items are being shown due to the filters being applied."
+        emptyStateInfo={t(
+          'olm~No OperatorHub items are being shown due to the filters being applied.',
+        )}
       />
       {detailsItem && (
         <Modal
@@ -477,7 +500,10 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
                 iconClass={detailsItem.iconClass}
                 iconImg={detailsItem.imgUrl}
                 title={detailsItem.name}
-                vendor={`${detailsItem.version} provided by ${detailsItem.provider}`}
+                vendor={t('olm~{{version}} provided by {{provider}}', {
+                  version: detailsItem.version,
+                  provider: detailsItem.provider,
+                })}
                 data-test-id="operator-modal-header"
                 id="catalog-item-header"
               />
@@ -489,7 +515,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
                     text={
                       <>
                         <div className="co-catalog-page__overlay-action-label">
-                          {detailsItem.marketplaceActionText || 'Purchase'}
+                          {detailsItem.marketplaceActionText || t('olm~Purchase')}
                         </div>
                         <ExternalLinkAltIcon className="co-catalog-page__overlay-action-icon" />
                       </>
@@ -507,7 +533,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
                     data-test-id="operator-install-btn"
                     to={createLink}
                   >
-                    Install
+                    {t('olm~Install')}
                   </Link>
                 ) : (
                   <Button
@@ -517,7 +543,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
                     onClick={() => history.push(uninstallLink())}
                     variant="secondary"
                   >
-                    Uninstall
+                    {t('olm~Uninstall')}
                   </Button>
                 )}
               </div>
@@ -532,6 +558,11 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
       )}
     </>
   );
+};
+
+type OperatorHubTileProps = {
+  item: OperatorHubItem;
+  onClick: (item: OperatorHubItem) => void;
 };
 
 export type OperatorHubTileViewProps = {

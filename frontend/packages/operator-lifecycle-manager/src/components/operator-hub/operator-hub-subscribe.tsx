@@ -685,9 +685,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
                         isInline
                         className="co-alert co-alert--margin-top"
                         variant="info"
-                        title={t(
-                          'operator-hub-subscribe~Will function as manual approval strategy',
-                        )}
+                        title={t('olm~Will function as manual approval strategy')}
                       >
                         <NamespaceIncludesManualApproval
                           subscriptions={manualSubscriptionsInNamespace}
@@ -700,11 +698,9 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
                       isInline
                       className="co-alert co-alert--margin-top"
                       variant="info"
-                      title={t(
-                        'operator-hub-subscribe~Manual approval applies to all operators in a namespace',
-                      )}
+                      title={t('olm~Manual approval applies to all operators in a namespace')}
                     >
-                      <Trans ns="operator-hub-subscribe">
+                      <Trans ns="olm">
                         Installing an operator with manual approval causes all operators installed
                         in namespace <strong>{{ selectedTargetNamespace }}</strong> to function as
                         manual approval strategy. To allow automatic approval, all operators

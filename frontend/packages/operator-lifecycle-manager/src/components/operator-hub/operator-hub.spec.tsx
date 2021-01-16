@@ -28,6 +28,14 @@ import {
 import { OperatorHubItemDetails, OperatorHubItemDetailsProps } from './operator-hub-item-details';
 import { OperatorHubList, OperatorHubListProps } from './operator-hub-page';
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key }),
+  };
+});
+
 xdescribe('[https://issues.redhat.com/browse/CONSOLE-2136] OperatorHubList', () => {
   let wrapper: ReactWrapper<OperatorHubListProps>;
 

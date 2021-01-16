@@ -27,31 +27,30 @@ import {
   OperatorHubCSVAnnotations,
   InstalledState,
   OperatorHubCSVAnnotationKey,
+  ProviderType,
 } from './index';
 import { parseJSONAnnotation } from '@console/shared/src/utils/annotations';
+import { Trans, useTranslation } from 'react-i18next';
 
 const ANNOTATIONS_WITH_JSON = [
   OperatorHubCSVAnnotationKey.infrastructureFeatures,
   OperatorHubCSVAnnotationKey.validSubscription,
 ];
 
-export const OperatorHubList: React.SFC<OperatorHubListProps> = (props) => {
-  const { operatorGroup, subscription, loaded, loadError, namespace = '' } = props;
-  // FIXME optional chaining
-  const marketplaceItems = _.get(
-    props.marketplacePackageManifest,
-    'data',
-    [] as PackageManifestKind[],
-  );
-
-  const localItems = _.get(props, 'packageManifest.data', [] as PackageManifestKind[]); // FIXME optional chaining
-  const getPackageStatus = (pkg) => _.get(pkg, 'status'); // FIXME optional chaining and/or is this needed?
-
+export const OperatorHubList: React.FC<OperatorHubListProps> = ({
+  loaded,
+  loadError,
+  marketplacePackageManifest,
+  namespace,
+  operatorGroup,
+  packageManifest,
+  subscription,
+}) => {
+  const { t } = useTranslation();
   const items: OperatorHubItem[] = React.useMemo(() => {
-    return marketplaceItems
-      .concat(localItems)
+    return [...(marketplacePackageManifest?.data ?? []), ...(packageManifest?.data ?? [])]
       .filter((pkg) => {
-        const { channels, defaultChannel } = getPackageStatus(pkg);
+        const { channels, defaultChannel } = pkg.status ?? {};
         // if a package does not have status.defaultChannel, exclude it so the app doesn't fail
         if (!defaultChannel) {
           // eslint-disable-next-line no-console
@@ -69,15 +68,10 @@ export const OperatorHubList: React.SFC<OperatorHubListProps> = (props) => {
       })
       .map(
         (pkg): OperatorHubItem => {
-          const { channels, defaultChannel } = getPackageStatus(pkg);
-          const { currentCSVDesc } = _.find(channels || [], { name: defaultChannel } as any);
-          // FIXME optional chaining
-          const currentCSVAnnotations: OperatorHubCSVAnnotations = _.get(
-            currentCSVDesc,
-            'annotations',
-            {},
-          );
-
+          const { channels, defaultChannel } = pkg.status ?? {};
+          const { currentCSVDesc } = (channels || []).find(({ name }) => name === defaultChannel);
+          const currentCSVAnnotations: OperatorHubCSVAnnotations =
+            currentCSVDesc?.annotations ?? {};
           const [infraFeatures, validSubscription] = ANNOTATIONS_WITH_JSON.map((annotationKey) => {
             return parseJSONAnnotation(currentCSVAnnotations, annotationKey, () =>
               // eslint-disable-next-line no-console
@@ -101,7 +95,7 @@ export const OperatorHubList: React.SFC<OperatorHubListProps> = (props) => {
           return {
             obj: pkg,
             kind: PackageManifestModel.kind,
-            name: _.get(currentCSVDesc, 'displayName', pkg.metadata.name), // FIXME optional chaining
+            name: currentCSVDesc?.displayName ?? pkg.metadata.name,
             uid: `${pkg.metadata.name}-${pkg.status.catalogSource}-${pkg.status.catalogSourceNamespace}`,
             installed: installedFor(subscription.data)(operatorGroup.data)(pkg.status.packageName)(
               namespace,
@@ -118,15 +112,15 @@ export const OperatorHubList: React.SFC<OperatorHubListProps> = (props) => {
             imgUrl: iconFor(pkg),
             description: currentCSVAnnotations.description || currentCSVDesc.description,
             longDescription: currentCSVDesc.description || currentCSVAnnotations.description,
-            provider: _.get(pkg, 'status.provider.name', _.get(pkg, 'metadata.labels.provider')), // FIXME optional chaining
+            provider: (pkg.status.provider?.name ?? pkg.metadata.labels?.provider) as ProviderType,
             providerType: getOperatorProviderType(pkg),
             tags: [],
-            version: _.get(currentCSVDesc, 'version'), // FIXME optional chaining
-            categories: _.get(currentCSVAnnotations, 'categories', '') // FIXME optional chaining
+            version: currentCSVDesc?.version,
+            categories: (currentCSVAnnotations?.categories ?? '')
               .split(',')
               .map((category) => category.trim()),
-            catalogSource: _.get(pkg, 'status.catalogSource'), // FIXME optional chaining
-            catalogSourceNamespace: _.get(pkg, 'status.catalogSourceNamespace'), // FIXME optional chaining
+            catalogSource: pkg.status.catalogSource,
+            catalogSourceNamespace: pkg.status.catalogSourceNamespace,
             certifiedLevel,
             healthIndex,
             repository,
@@ -139,18 +133,22 @@ export const OperatorHubList: React.SFC<OperatorHubListProps> = (props) => {
             marketplaceSupportWorkflow,
             validSubscription,
             infraFeatures,
-            keywords: currentCSVDesc.keywords,
+            keywords: currentCSVDesc?.keywords ?? [],
           };
         },
       );
-  }, [localItems, marketplaceItems, namespace, operatorGroup.data, subscription.data]);
+  }, [
+    marketplacePackageManifest,
+    namespace,
+    operatorGroup.data,
+    packageManifest,
+    subscription.data,
+  ]);
 
   const uniqueItems = _.uniqBy(items, 'uid');
   if (uniqueItems.length !== items.length) {
     // eslint-disable-next-line no-console
-    console.warn(
-      `${items.length - uniqueItems.length} duplicate packagemanifests returned from olm query.`,
-    );
+    console.warn(`${items.length - uniqueItems.length} duplicate PackageManifests.`);
   }
 
   return (
@@ -159,19 +157,21 @@ export const OperatorHubList: React.SFC<OperatorHubListProps> = (props) => {
       data={items}
       loaded={loaded}
       loadError={loadError}
-      label="Resources"
+      label={t('olm~Resources')}
       EmptyMsg={() => (
         <MsgBox
-          title="No OperatorHub Items Found"
+          title={t('olm~No OperatorHub items found')}
           detail={
             <span>
-              Please check that the OperatorHub is running and that you have created a valid
-              OperatorSource. For more information about OperatorHub, please click{' '}
-              <ExternalLink
-                href="https://github.com/operator-framework/operator-marketplace"
-                text="here"
-              />
-              .
+              <Trans ns="olm">
+                Please check that the OperatorHub is running and that you have created a valid
+                CatalogSource. For more information about OperatorHub, please click{' '}
+                <ExternalLink
+                  href="https://github.com/operator-framework/operator-marketplace"
+                  text={t('olm~here')}
+                />
+                .
+              </Trans>
             </span>
           }
         />
@@ -192,15 +192,17 @@ export const OperatorHubPage = withFallback(
         <div className="co-catalog">
           <PageHeading title="OperatorHub" />
           <p className="co-catalog-page__description">
-            Discover Operators from the Kubernetes community and Red Hat partners, curated by Red
-            Hat. You can purchase commercial software through{' '}
-            <ExternalLink
-              href="https://marketplace.redhat.com/en-us?utm_source=openshift_console"
-              text="Red Hat Marketplace"
-            />
-            . You can install Operators on your clusters to provide optional add-ons and shared
-            services to your developers. After installation, the Operator capabilities will appear
-            in the <Link to="/catalog">Developer Catalog</Link> providing a self-service experience.
+            <Trans ns="olm">
+              Discover Operators from the Kubernetes community and Red Hat partners, curated by Red
+              Hat. You can purchase commercial software through{' '}
+              <ExternalLink href="https://marketplace.redhat.com/en-us?utm_source=openshift_console">
+                Red Hat Marketplace
+              </ExternalLink>
+              . You can install Operators on your clusters to provide optional add-ons and shared
+              services to your developers. After installation, the Operator capabilities will appear
+              in the <Link to="/catalog">Developer Catalog</Link> providing a self-service
+              experience.
+            </Trans>
           </p>
           <div className="co-catalog__body">
             <Firehose
