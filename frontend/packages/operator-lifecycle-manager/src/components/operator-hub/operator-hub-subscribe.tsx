@@ -52,6 +52,7 @@ import {
 import { installedFor, supports, providedAPIsForOperatorGroup, isGlobal } from '../operator-group';
 import { CRDCard } from '../clusterserviceversion';
 import { OperatorInstallStatusPage } from '../operator-install-page';
+import { parseJSONAnnotation } from '@console/shared/src/utils/annotations';
 
 export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> = (props) => {
   const [targetNamespace, setTargetNamespace] = React.useState(null);
@@ -102,25 +103,17 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
     currentCSVDesc.annotations?.['operatorframework.io/suggested-namespace'];
   const operatorRequestsMonitoring =
     currentCSVDesc.annotations?.['operatorframework.io/cluster-monitoring'] === 'true';
-  const initializationResourceJSON =
-    currentCSVDesc.annotations?.['operatorframework.io/initialization-resource'];
+  const initializationResource = parseJSONAnnotation(
+    currentCSVDesc.annotations,
+    'operatorframework.io/initialization-resource',
+    // eslint-disable-next-line no-console
+    () => console.error('Operator Hub Subscribe: Could not get initialization resource.'),
+  );
 
-  let initializationResourceReference = null;
-  if (initializationResourceJSON) {
-    let initializationResource = null;
-    try {
-      initializationResource = JSON.parse(initializationResourceJSON);
-    } catch (err) {
-      // eslint-disable-next-line no-console
-      console.error(
-        err.message || 'Operator Hub Subscribe: Could not get initialization resource.',
-      );
-    }
-
-    initializationResourceReference = initializationResource
-      ? referenceFor(initializationResource)
-      : null;
-  }
+  const initializationResourceReference = React.useMemo(
+    () => (initializationResource ? referenceFor(initializationResource) : null),
+    [initializationResource],
+  );
 
   const globalNS =
     (props.operatorGroup?.data || ([] as OperatorGroupKind[])).find(
@@ -193,20 +186,24 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
   if (!supportsSingle && !supportsGlobal) {
     return (
       <MsgBox
-        title={`${_.get(channels, '[0].currentCSVDesc.displayName')} can't be installed`}
-        detail="The operator does not support single namespace or global installation modes."
+        title={t("olm~{{item}} can't be installed", {
+          item: channels?.[0]?.currentCSVDesc?.displayName,
+        })}
+        detail={t(
+          'olm~The operator does not support single namespace or global installation modes.',
+        )}
       />
     );
   }
 
   const descFor = (mode: InstallModeType) => {
     if (mode === InstallModeType.InstallModeTypeAllNamespaces && supportsGlobal) {
-      return 'Operator will be available in all namespaces.';
+      return t('olm~Operator will be available in all Namespaces.');
     }
     if (mode === InstallModeType.InstallModeTypeOwnNamespace && supportsSingle) {
-      return 'Operator will be available in a single namespace only.';
+      return t('olm~Operator will be available in a single Namespace only.');
     }
-    return 'This mode is not supported by this Operator';
+    return t('olm~This mode is not supported by this Operator');
   };
   const subscriptionExists = (ns: string) =>
     installedFor(props.subscription.data)(props.operatorGroup.data)(
@@ -339,7 +336,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
       await k8sCreate(SubscriptionModel, subscription);
       setShowInstallStatusPage(true);
     } catch (err) {
-      setError(err.message || 'Could not create operator subscription.');
+      setError(err.message || t('olm~Could not create Operator Subscription.'));
     }
   };
 
@@ -359,7 +356,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
           isInline
           className="co-alert co-alert--scrollable"
           variant="danger"
-          title="An error occurred"
+          title={t('olm~An error occurred')}
         >
           <div className="co-pre-line">{error}</div>
         </Alert>
@@ -369,22 +366,28 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
           isInline
           className="co-alert"
           variant="danger"
-          title="Namespace does not support installation mode"
+          title={t('olm~Namespace does not support installation mode')}
         >
           {selectedInstallMode === InstallModeType.InstallModeTypeOwnNamespace &&
           selectedTargetNamespace === globalNS ? (
             <>
-              The {selectedTargetNamespace} namespace is reserved for global operators that watch
-              all namespaces. To install an operator in a single namespace, select a different
-              namespace where the operand should run.
+              {t(
+                'olm~The {{namespace}} Namespace is reserved for global Operators that watch all Namespaces. To install an Operator in a single Namespace, select a different Namespace where the operand should run.',
+                { namespace: selectedTargetNamespace },
+              )}
             </>
           ) : (
             <>
-              The operator group in the {selectedTargetNamespace} namespace does not support the
-              {selectedInstallMode === InstallModeType.InstallModeTypeAllNamespaces
-                ? ' global '
-                : ' single namespace '}
-              installation mode. Select a different installation namespace that supports this mode.
+              {t(
+                'olm~The OperatorGroup in the {{namespace}} Namespace does not support the {{mode}} installation mode. Select a different installation Namespace that supports this mode.',
+                {
+                  namespace: selectedTargetNamespace,
+                  mode:
+                    selectedInstallMode === InstallModeType.InstallModeTypeAllNamespaces
+                      ? ' global '
+                      : ' single-Namespace ',
+                },
+              )}
             </>
           )}
         </Alert>
@@ -394,13 +397,24 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
           isInline
           className="co-alert"
           variant="danger"
-          title={`Operator subscription for namespace '${selectedTargetNamespace}' already exists`}
+          title={t(
+            "olm~A Subscription for this Operator already exists in Namespace '{{namespace}}'",
+            {
+              namespace: selectedTargetNamespace,
+            },
+          )}
         />
       )) ||
       (!_.isEmpty(conflictingProvidedAPIs(selectedTargetNamespace)) && (
-        <Alert isInline className="co-alert" variant="danger" title="Operator conflicts exist">
-          Installing Operator in selected namespace would cause conflicts with another Operator
-          providing these APIs:
+        <Alert
+          isInline
+          className="co-alert"
+          variant="danger"
+          title={t('olm~Operator conflicts exist')}
+        >
+          {t(
+            'olm~Installing this Operator in the selected Namespace would cause conflicts with another Operator providing these APIs:',
+          )}
           <ul>
             {conflictingProvidedAPIs(selectedTargetNamespace).map((gvk) => (
               <li key={gvk}>
@@ -415,7 +429,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
           isInline
           className="co-alert"
           variant="danger"
-          title="Operator not available for selected namespaces"
+          title={t('olm~Operator not available for selected Namespaces')}
         />
       ))
     );
@@ -430,17 +444,19 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
         isInline
         className="co-alert co-alert--scrollable"
         variant={suggestedNamespaceExists ? 'warning' : 'info'}
-        title={suggestedNamespaceExists ? 'Namespace already exists' : 'Namespace creation'}
+        title={
+          suggestedNamespaceExists ? t('olm~Namespace already exists') : t('olm~Namespace creation')
+        }
       >
         {suggestedNamespaceExists ? (
-          <>
-            Namespace <b>{suggestedNamespace}</b> already exists and will be used. Other users can
-            already have access to this namespace.
-          </>
+          <Trans ns="olm">
+            Namespace <b>{{ suggestedNamespace }}</b> already exists and will be used. Other users
+            can already have access to this namespace.
+          </Trans>
         ) : (
-          <>
-            Namespace <b>{suggestedNamespace}</b> does not exist and will be created.
-          </>
+          <Trans ns="olm">
+            Namespace <b>{{ suggestedNamespace }}</b> does not exist and will be created.
+          </Trans>
         )}
       </Alert>
       {showMonitoringCheckbox && !suggestedNamespaceExists && (
@@ -448,7 +464,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
           <Checkbox
             id="enable-monitoring-checkbox"
             data-test="enable-monitoring"
-            label="Enable operator recommended cluster monitoring on this namespace"
+            label={t('olm~Enable Operator recommended cluster monitoring on this Namespace')}
             onChange={setEnableMonitoring}
             isChecked={enableMonitoring}
           />
@@ -457,17 +473,20 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
               isInline
               className="co-alert pf-c-alert--top-margin"
               variant="warning"
-              title="Namespace monitoring"
+              title={t('olm~Namespace monitoring')}
             >
-              Please note that installing non Red Hat operators into openshift namespaces and
-              enabling monitoring voids user support. Enabling cluster monitoring for non Red Hat
-              operators can lead to malicious metrics data overriding existing cluster metrics. For
-              more information, see the{' '}
-              <ExternalLink
-                href={`${openshiftHelpBase}monitoring/configuring-the-monitoring-stack.html#maintenance-and-support_configuring-monitoring`}
-                text="cluster monitoring documentation"
-              />{' '}
-              .
+              <Trans ns="olm">
+                Please note that installing non Red Hat operators into openshift namespaces and
+                enabling monitoring voids user support. Enabling cluster monitoring for non Red Hat
+                operators can lead to malicious metrics data overriding existing cluster metrics.
+                For more information, see the{' '}
+                <ExternalLink
+                  href={`${openshiftHelpBase}monitoring/configuring-the-monitoring-stack.html#maintenance-and-support_configuring-monitoring`}
+                >
+                  cluster monitoring documentation
+                </ExternalLink>
+                .
+              </Trans>
             </Alert>
           )}
         </div>
@@ -521,7 +540,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
         }}
         value={suggestedNamespace}
         checked={useSuggestedNSForSingleInstallMode}
-        title="Operator recommended namespace:"
+        title={t('olm~Operator recommended Namespace:')}
       >
         {' '}
         <ResourceIcon kind="Project" />
@@ -535,7 +554,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
         }}
         value={suggestedNamespace}
         checked={!useSuggestedNSForSingleInstallMode}
-        title="Select a namespace"
+        title={t('olm~Select a Namespace')}
       />
       {!useSuggestedNSForSingleInstallMode && (
         <NsDropdown
@@ -572,14 +591,15 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
       <div className="co-m-nav-title co-m-nav-title--breadcrumbs">
         <BreadCrumbs
           breadcrumbs={[
-            { name: 'OperatorHub', path: `/operatorhub?${search.toString()}` },
-            { name: 'Operator Installation', path: props.match.url },
+            { name: t('olm~OperatorHub'), path: `/operatorhub?${search.toString()}` },
+            { name: t('olm~Operator Installation'), path: props.match.url },
           ]}
         />
-        <h1 className="co-m-pane__heading">Install Operator</h1>
+        <h1 className="co-m-pane__heading">{t('olm~Install Operator')}</h1>
         <p className="co-help-text">
-          Install your Operator by subscribing to one of the update channels to keep the Operator up
-          to date. The strategy determines either manual or automatic updates.
+          {t(
+            'olm~Install your Operator by subscribing to one of the update channels to keep the Operator up to date. The strategy determines either manual or automatic updates.',
+          )}
         </p>
       </div>
       <div className="co-m-pane__body">
@@ -589,12 +609,14 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
               <div className="form-group">
                 <fieldset>
                   <Popover
-                    headerContent={<div>Update Channel</div>}
-                    bodyContent={<div>The channel to track and receive the updates from.</div>}
+                    headerContent={<div>{t('olm~Update channel')}</div>}
+                    bodyContent={
+                      <div>{t('olm~The channel to track and receive the updates from.')}</div>
+                    }
                   >
                     <h5 className="co-required co-form-heading__popover">
                       <Button variant="plain" className="co-form-heading__popover-button">
-                        Update Channel
+                        {t('olm~Update channel')}
                       </Button>
                     </h5>
                   </Popover>
@@ -610,7 +632,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
               </div>
               <div className="form-group">
                 <fieldset>
-                  <h5 className="co-required">Installation Mode</h5>
+                  <h5 className="co-required">{t('olm~Installation mode')}</h5>
                   <RadioInput
                     onChange={(e) => {
                       setInstallMode(e.target.value);
@@ -620,8 +642,8 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
                     value={InstallModeType.InstallModeTypeAllNamespaces}
                     checked={selectedInstallMode === InstallModeType.InstallModeTypeAllNamespaces}
                     disabled={!supportsGlobal}
-                    title="All namespaces on the cluster"
-                    subTitle="(default)"
+                    title={t('olm~All namespaces on the cluster')}
+                    subTitle={t('olm~(default)')}
                   >
                     <div className="co-m-radio-desc">
                       <p className="text-muted">
@@ -640,7 +662,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
                     value={InstallModeType.InstallModeTypeOwnNamespace}
                     checked={selectedInstallMode === InstallModeType.InstallModeTypeOwnNamespace}
                     disabled={!supportsSingle}
-                    title="A specific namespace on the cluster"
+                    title={t('olm~A specific namespace on the cluster')}
                   >
                     <div className="co-m-radio-desc">
                       <p className="text-muted">
@@ -651,7 +673,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
                 </fieldset>
               </div>
               <div className="form-group">
-                <h5 className="co-required">Installed Namespace</h5>
+                <h5 className="co-required">{t('olm~Installed Namespace')}</h5>
                 {selectedInstallMode === InstallModeType.InstallModeTypeAllNamespaces &&
                   globalNamespaceInstallMode}
                 {selectedInstallMode === InstallModeType.InstallModeTypeOwnNamespace &&
@@ -660,22 +682,24 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
               <div className="form-group">
                 <fieldset>
                   <Popover
-                    headerContent={<div>Approval Strategy</div>}
+                    headerContent={<div>{t('olm~Approval strategy')}</div>}
                     bodyContent={
-                      <div>The strategy to determine either manual or automatic updates.</div>
+                      <div>
+                        {t('olm~The strategy to determine either manual or automatic updates.')}
+                      </div>
                     }
                   >
                     <h5 className="co-required co-form-heading__popover">
                       <Button variant="plain" className="co-form-heading__popover-button">
-                        Approval Strategy
+                        {t('olm~Approval strategy')}
                       </Button>
                     </h5>
                   </Popover>
                   <RadioGroup
                     currentValue={selectedApproval}
                     items={[
-                      { value: InstallPlanApproval.Automatic, title: 'Automatic' },
-                      { value: InstallPlanApproval.Manual, title: 'Manual' },
+                      { value: InstallPlanApproval.Automatic, title: t('olm~Automatic') },
+                      { value: InstallPlanApproval.Manual, title: t('olm~Manual') },
                     ]}
                     onChange={(e) => setApproval(e.currentTarget.value)}
                   />
@@ -720,10 +744,10 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
                 isDisabled={formValid()}
                 variant="primary"
               >
-                Install
+                {t('olm~Install')}
               </Button>
               <Button variant="secondary" onClick={() => history.push('/operatorhub')}>
-                Cancel
+                {t('public~Cancel')}
               </Button>
             </ActionGroup>
           </div>
@@ -735,11 +759,11 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
               icon={iconFor(props.packageManifest.data[0])}
               provider={provider}
             />
-            <h4>Provided APIs</h4>
+            <h4>{t('olm~Provided APIs')}</h4>
             <div className="co-crd-card-row">
               {!providedAPIs.length ? (
                 <span className="text-muted">
-                  No Kubernetes APIs are provided by this Operator.
+                  {t('olm~No Kubernetes APIs are provided by this Operator.')}
                 </span>
               ) : (
                 providedAPIs.map((api) => (

@@ -30,7 +30,7 @@ describe('Create namespace from install operators', () => {
     cy.byLegacyTestID('operator-install-btn').click({ force: true });
 
     // configure operator install
-    cy.byTestID('Select a namespace-radio-input').check();
+    cy.byTestID('Select a Namespace-radio-input').check();
     cy.byTestID('dropdown-selectbox')
       .click()
       .get('[data-test-dropdown-menu="Create_Namespace"]')
