@@ -109,17 +109,22 @@ export const MonitoringDashboard: React.FC<Props> = ({ match, timespan, pollInte
         <title>{t('devconsole~Dashboard')}</title>
       </Helmet>
       <div className="odc-monitoring-dashboard">
-        <div className="odc-monitoring-dashboard__dropdown-options">
-          <TimespanDropdown />
-          <PollIntervalDropdown />
-        </div>
-        <div className="row odc-monitoring-dashboard__resource-toolbar">
-          <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6">
+        <div className="odc-monitoring-dashboard__resource-toolbar">
+          <div className="odc-monitoring-dashboard__workload">
+            <label htmlFor="odc-monitoring-dashboard-workload-filter">
+              {t('devconsole~Workload')}
+            </label>
             <MonitoringWorkloadFilter
               name={workloadName}
               namespace={namespace}
               onChange={onSelect}
             />
+          </div>
+          <div className="odc-monitoring-dashboard__dropdown-options">
+            <div className="odc-monitoring-dashboard__dropdown-time-interval">
+              <TimespanDropdown />
+              <PollIntervalDropdown />
+            </div>
           </div>
         </div>
         <Dashboard>
