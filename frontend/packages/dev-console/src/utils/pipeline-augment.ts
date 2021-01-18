@@ -116,6 +116,27 @@ export interface TaskRuns {
   [key: string]: TaskRunKind;
 }
 
+export interface PipelineSpecTaskRef {
+  kind?: string;
+  name?: string;
+  apiVersion?: string;
+}
+
+export interface PipelineSpecTask {
+  name: string;
+  runAfter?: string[];
+  taskRef?: PipelineSpecTaskRef;
+  params?: PipelineTaskParam[];
+  resources?: PipelineTaskResources;
+  taskSpec?: any;
+  workspaces?: PipelineRunWorkspace[];
+}
+
+export interface PipelineSpec extends K8sResourceKind {
+  tasks: PipelineSpecTask[];
+  workspaces?: PipelineRunWorkspace[];
+}
+
 export interface PipelineRun extends K8sResourceKind {
   spec?: {
     pipelineRef?: { name: string };
@@ -126,6 +147,7 @@ export interface PipelineRun extends K8sResourceKind {
     // Odd status value that only appears in a single case - cancelling a pipeline
     status?: 'PipelineRunCancelled';
     timeout?: string;
+    pipelineSpec?: PipelineSpec;
   };
   status?: {
     succeededCondition?: string;
