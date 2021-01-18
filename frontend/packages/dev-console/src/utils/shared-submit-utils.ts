@@ -30,6 +30,7 @@ export const createService = (
     labels: userLabels,
     image: { ports: imagePorts, tag: selectedTag },
     route: { unknownTargetPort, defaultUnknownPort },
+    servicePort,
   } = formData;
 
   const imageStreamName = _.get(imageStreamData, 'metadata.name') || _.get(formData, 'image.name');
@@ -40,7 +41,6 @@ export const createService = (
   const defaultAnnotations = git
     ? { ...getGitAnnotations(git.url, git.ref), ...getCommonAnnotations() }
     : getCommonAnnotations();
-
   let ports = imagePorts;
   const buildStrategy = formData.build?.strategy;
   if (buildStrategy === 'Docker' && unknownTargetPort) {
@@ -59,9 +59,13 @@ export const createService = (
       isi: { ports: isiPorts },
     } = formData;
     ports = isiPorts;
-  } else if (_.isEmpty(ports)) {
+  } else if (_.isEmpty(ports) && !servicePort) {
     const port = { containerPort: defaultUnknownPort, protocol: 'TCP' };
     ports = [port];
+  }
+  if (servicePort && !ports.some((port) => servicePort === port.containerPort.toString())) {
+    const port = { containerPort: _.toInteger(servicePort), protocol: 'TCP' };
+    ports = [...ports, port];
   }
   if (
     unknownTargetPort &&

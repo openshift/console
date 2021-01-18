@@ -20,6 +20,10 @@ describe('Shared submit utils', () => {
       mockDeployImageData.isi.ports = [PORT];
       serviceObj = createService(mockDeployImageData);
       expect(serviceObj.spec.ports[0].port).toEqual(8081);
+
+      mockDeployImageData.servicePort = '8002';
+      serviceObj = createService(mockDeployImageData);
+      expect(serviceObj.spec.ports[1].port).toEqual(8002);
     });
 
     it('should match the previous snapshot created with git import data', () => {

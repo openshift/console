@@ -11,6 +11,7 @@ import ImageSearchSection from '../image-search/ImageSearchSection';
 import AppSection from '../app/AppSection';
 import AdvancedSection from '../advanced/AdvancedSection';
 import ResourceSection from '../section/ResourceSection';
+import PortSection from '../section/PortSection';
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');
@@ -100,6 +101,9 @@ describe('Deploy Image Test', () => {
   });
   it('should load  correct resource section', () => {
     expect(deployImageWrapper.find(ResourceSection).exists()).toBe(true);
+  });
+  it('should load correct port section', () => {
+    expect(deployImageWrapper.find(PortSection).exists()).toBe(true);
   });
   it('should load  correct advanced section', () => {
     expect(deployImageWrapper.find(AdvancedSection).exists()).toBe(true);

@@ -36,13 +36,15 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({ values, appResources 
         visibleItems={visibleItems}
         onVisibleItemChange={handleVisibleItemChange}
       >
-        <ProgressiveListItem name={t('devconsole~Routing')}>
-          {values.resources === Resources.KnativeService ? (
-            <ServerlessRouteSection route={values.route} />
-          ) : (
-            <RouteSection route={values.route} />
-          )}
-        </ProgressiveListItem>
+        {values.route.create && (
+          <ProgressiveListItem name={t('devconsole~Routing')}>
+            {values.resources === Resources.KnativeService ? (
+              <ServerlessRouteSection route={values.route} />
+            ) : (
+              <RouteSection route={values.route} />
+            )}
+          </ProgressiveListItem>
+        )}
         <ProgressiveListItem name={t('devconsole~Health checks')}>
           <HealthChecks title={t('devconsole~Health checks')} resourceType={values.resources} />
         </ProgressiveListItem>

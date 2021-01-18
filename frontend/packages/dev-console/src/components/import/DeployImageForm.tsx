@@ -11,6 +11,7 @@ import IconSection from './section/IconSection';
 import AppSection from './app/AppSection';
 import AdvancedSection from './advanced/AdvancedSection';
 import ResourceSection from './section/ResourceSection';
+import PortSection from './section/PortSection';
 
 const DeployImageForm: React.FC<FormikProps<FormikValues> & DeployImageFormProps> = ({
   values,
@@ -34,6 +35,7 @@ const DeployImageForm: React.FC<FormikProps<FormikValues> & DeployImageFormProps
         noProjectsAvailable={projects.loaded && _.isEmpty(projects.data)}
       />
       <ResourceSection />
+      <PortSection />
       <AdvancedSection values={values} />
       <FormFooter
         handleReset={handleReset}

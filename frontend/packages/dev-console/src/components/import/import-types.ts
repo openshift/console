@@ -88,6 +88,7 @@ export interface DeployImageFormData {
   deployment: DeploymentData;
   limits: LimitsData;
   healthChecks: HealthChecksData;
+  servicePort?: string;
 }
 
 export interface GitImportFormData {
@@ -110,6 +111,7 @@ export interface GitImportFormData {
   labels: { [name: string]: string };
   limits: LimitsData;
   healthChecks: HealthChecksData;
+  servicePort?: string;
 }
 
 export interface ApplicationData {

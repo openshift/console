@@ -9,16 +9,14 @@ interface RouteSectionProps {
   route: RouteData;
 }
 
-const RouteSection: React.FC<RouteSectionProps> = ({ route }) => {
+const RouteSection: React.FC<RouteSectionProps> = () => {
   const { t } = useTranslation();
   return (
     <FormSection title={t('devconsole~Routing')}>
-      {route.create && (
-        <>
-          <CreateRoute />
-          <SecureRoute />
-        </>
-      )}
+      <>
+        <CreateRoute />
+        <SecureRoute />
+      </>
     </FormSection>
   );
 };

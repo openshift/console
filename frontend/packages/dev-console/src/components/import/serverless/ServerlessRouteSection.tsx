@@ -9,7 +9,7 @@ export interface ServerlessRouteSectionProps {
   route: RouteData;
 }
 
-const ServerlessRouteSection: React.FC<ServerlessRouteSectionProps> = ({ route }) => {
+const ServerlessRouteSection: React.FC<ServerlessRouteSectionProps> = () => {
   const { t } = useTranslation();
   const {
     values: {
@@ -21,15 +21,13 @@ const ServerlessRouteSection: React.FC<ServerlessRouteSectionProps> = ({ route }
   const portOptions = ports.map((port) => port?.containerPort.toString());
   return (
     <FormSection title="Routing">
-      {route.create && (
-        <PortInputField
-          name="route.unknownTargetPort"
-          label={t('devconsole~Target port')}
-          placeholderText={placeholderPort.toString()}
-          helpText={t('devconsole~Target port for traffic.')}
-          options={portOptions}
-        />
-      )}
+      <PortInputField
+        name="route.unknownTargetPort"
+        label={t('devconsole~Target port')}
+        placeholderText={placeholderPort.toString()}
+        helpText={t('devconsole~Target port for traffic.')}
+        options={portOptions}
+      />
     </FormSection>
   );
 };

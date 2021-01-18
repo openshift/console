@@ -12,6 +12,7 @@ import AdvancedSection from './advanced/AdvancedSection';
 import DockerSection from './git/DockerSection';
 import PipelineSection from '@console/pipelines-plugin/src/components/import/pipeline/PipelineSection';
 import ResourceSection from './section/ResourceSection';
+import PortSection from './section/PortSection';
 
 const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = ({
   values,
@@ -36,6 +37,7 @@ const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = 
       />
       <ResourceSection />
       <PipelineSection builderImages={builderImages} />
+      <PortSection />
       <AdvancedSection values={values} />
       <FormFooter
         handleReset={handleReset}
