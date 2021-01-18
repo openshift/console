@@ -29,11 +29,16 @@ const QuickStartMarkdownView: React.FC<QuickStartMarkdownViewProps> = ({
 }) => {
   return (
     <SyncMarkdownView
+      inline
       content={content}
       exactHeight={exactHeight}
       extensions={[EXTENSION_NAME]}
-      renderExtension={(docContext) => (
-        <MarkdownHighlightExtension key={content} docContext={docContext} />
+      renderExtension={(docContext, rootSelector) => (
+        <MarkdownHighlightExtension
+          key={content}
+          docContext={docContext}
+          rootSelector={rootSelector}
+        />
       )}
     />
   );

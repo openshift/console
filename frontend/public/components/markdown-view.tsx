@@ -1,7 +1,11 @@
 import * as React from 'react';
+import * as cx from 'classnames';
 import * as _ from 'lodash-es';
 import { Converter } from 'showdown';
 import * as sanitizeHtml from 'sanitize-html';
+import { useTranslation } from 'react-i18next';
+
+import './_markdown-view.scss';
 
 const tableTags = ['table', 'thead', 'tbody', 'tr', 'th', 'td'];
 
@@ -49,124 +53,150 @@ const markdownConvert = (markdown, extensions?: string[]) => {
 };
 
 type SyncMarkdownProps = {
-  content: string;
+  content?: string;
   emptyMsg?: string;
-  styles?: string;
   exactHeight?: boolean;
   truncateContent?: boolean;
   extensions?: string[];
-  renderExtension?: (contentDocument: HTMLDocument) => React.ReactNode;
+  renderExtension?: (contentDocument: HTMLDocument, rootSelector: string) => React.ReactNode;
+  inline?: boolean;
 };
 
-type State = {
-  loaded?: boolean;
+type InnerSyncMarkdownProps = Pick<SyncMarkdownProps, 'renderExtension' | 'exactHeight'> & {
+  markup: string;
+  isEmpty: boolean;
 };
 
-export class SyncMarkdownView extends React.Component<SyncMarkdownProps, State> {
-  private frame: any;
-  private timeoutHandle: any;
-
-  constructor(props) {
-    super(props);
-  }
-
-  componentDidMount() {
-    this.updateDimensions();
-  }
-
-  componentWillUnmount() {
-    clearTimeout(this.timeoutHandle);
-  }
-
-  updateDimensions() {
-    if (!this.frame?.contentWindow?.document.body.firstChild) {
-      return;
-    }
-    this.frame.style.height = `${this.frame.contentWindow.document.body.firstChild.scrollHeight}px`;
-
-    // Let the new height take effect, then reset again once we recompute
-    this.timeoutHandle = setTimeout(() => {
-      if (this.props.exactHeight) {
-        this.frame.style.height = `${this.frame.contentWindow.document.body.firstChild.scrollHeight}px`;
-      } else {
-        // Increase by 15px for the case where a horizontal scrollbar might appear
-        this.frame.style.height = `${this.frame.contentWindow.document.body.firstChild
-          .scrollHeight + 15}px`;
-      }
-    });
-  }
-
-  onLoad() {
-    this.updateDimensions();
-    this.setState({ loaded: true });
-  }
-
-  render() {
-    // Find the app's stylesheets and inject them into the frame to ensure consistent styling.
-    const filteredLinks = Array.from(document.getElementsByTagName('link')).filter((l) =>
-      _.includes(l.href, 'app-bundle'),
-    );
-
-    const linkRefs = _.reduce(
-      filteredLinks,
-      (refs, link) => `${refs}
-        <link rel="stylesheet" href="${link.href}">`,
-      '',
-    );
-    const content = this.props.truncateContent
-      ? _.truncate(this.props.content, {
+export const SyncMarkdownView: React.FC<SyncMarkdownProps> = ({
+  truncateContent,
+  content,
+  emptyMsg,
+  extensions,
+  renderExtension,
+  exactHeight,
+  inline,
+}) => {
+  const { t } = useTranslation();
+  const markup = React.useMemo(() => {
+    const truncatedContent = truncateContent
+      ? _.truncate(content, {
           length: 256,
           separator: ' ',
           omission: '\u2026',
         })
-      : this.props.content;
+      : content;
+    return markdownConvert(truncatedContent || emptyMsg || t('utils~Not available'), extensions);
+  }, [content, emptyMsg, extensions, t, truncateContent]);
+  const innerProps: InnerSyncMarkdownProps = {
+    renderExtension: extensions?.length > 0 ? renderExtension : undefined,
+    exactHeight,
+    markup,
+    isEmpty: !content,
+  };
+  return inline ? <InlineMarkdownView {...innerProps} /> : <IFrameMarkdownView {...innerProps} />;
+};
 
-    const emptyMsg = this.props.emptyMsg;
+const InlineMarkdownView: React.FC<InnerSyncMarkdownProps> = ({
+  markup,
+  isEmpty,
+  renderExtension,
+}) => {
+  const id = React.useMemo(() => _.uniqueId('markdown'), []);
+  return (
+    <div className={cx('co-markdown-view', { ['is-empty']: isEmpty })} id={id}>
+      <div dangerouslySetInnerHTML={{ __html: markup }} />
+      {renderExtension && renderExtension(document, `#${id}`)}
+    </div>
+  );
+};
 
-    const contents = `
-      ${linkRefs}
-      <style type="text/css">
-      body {
-        background-color: transparent !important;
-        color: ${content ? '#333' : '#999'};
-        font-family: var(--pf-global--FontFamily--sans-serif);
-        min-width: auto !important;
+const IFrameMarkdownView: React.FC<InnerSyncMarkdownProps> = ({
+  exactHeight,
+  markup,
+  isEmpty,
+  renderExtension,
+}) => {
+  const [frame, setFrame] = React.useState<HTMLIFrameElement>();
+  const [loaded, setLoaded] = React.useState(false);
+  const updateTimeoutHandle = React.useRef<number>();
+
+  const updateDimensions = React.useCallback(() => {
+    if (!frame?.contentWindow?.document.body.firstChild) {
+      return;
+    }
+    frame.style.height = `${frame.contentWindow.document.body.firstElementChild.scrollHeight}px`;
+
+    // Let the new height take effect, then reset again once we recompute
+    updateTimeoutHandle.current = setTimeout(() => {
+      if (exactHeight) {
+        frame.style.height = `${frame.contentWindow.document.body.firstElementChild.scrollHeight}px`;
+      } else {
+        // Increase by 15px for the case where a horizontal scrollbar might appear
+        frame.style.height = `${frame.contentWindow.document.body.firstElementChild.scrollHeight +
+          15}px`;
       }
-      table {
-        display: block;
-        margin-bottom: 11.5px;
-        overflow-x: auto;
-      }
-      td,
-      th {
-        border-bottom: 1px solid #ededed;
-        padding: 10px;
-        vertical-align: top;
-      }
-      th {
-        padding-top: 0;
-      }
-      ${this.props.styles ? this.props.styles : ''}
-      </style>
-      <body class="pf-m-redhat-font"><div style="overflow-y: auto;">${markdownConvert(
-        content || emptyMsg || 'Not available',
-        this.props.extensions,
-      )}</div></body>`;
-    const hasExtension = this.props.extensions?.length > 0 && !!this.props.renderExtension;
-    return (
-      <>
-        <iframe
-          sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin"
-          srcDoc={contents}
-          style={{ border: '0px', display: 'block', width: '100%', height: '0' }}
-          ref={(r) => (this.frame = r)}
-          onLoad={() => this.onLoad()}
-        />
-        {this.state?.loaded &&
-          this.frame?.contentDocument &&
-          hasExtension &&
-          this.props.renderExtension(this.frame.contentDocument)}
-      </>
-    );
+    });
+  }, [frame, exactHeight]);
+
+  React.useEffect(
+    () => () => {
+      clearTimeout(updateTimeoutHandle.current);
+    },
+    [],
+  );
+
+  const onLoad = React.useCallback(() => {
+    updateDimensions();
+    setLoaded(true);
+  }, [updateDimensions]);
+
+  // Find the app's stylesheets and inject them into the frame to ensure consistent styling.
+  const filteredLinks = Array.from(document.getElementsByTagName('link')).filter((l) =>
+    _.includes(l.href, 'app-bundle'),
+  );
+
+  const linkRefs = _.reduce(
+    filteredLinks,
+    (refs, link) => `${refs}
+    <link rel="stylesheet" href="${link.href}">`,
+    '',
+  );
+
+  const contents = `
+  ${linkRefs}
+  <style type="text/css">
+  body {
+    background-color: transparent !important;
+    color: ${isEmpty ? '#999' : '#333'};
+    font-family: var(--pf-global--FontFamily--sans-serif);
+    min-width: auto !important;
   }
-}
+  table {
+    display: block;
+    margin-bottom: 11.5px;
+    overflow-x: auto;
+  }
+  td,
+  th {
+    border-bottom: 1px solid #ededed;
+    padding: 10px;
+    vertical-align: top;
+  }
+  th {
+    padding-top: 0;
+  }
+  </style>
+  <body class="pf-m-redhat-font"><div style="overflow-y: auto;">${markup}</div></body>`;
+  return (
+    <>
+      <iframe
+        sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin"
+        srcDoc={contents}
+        style={{ border: '0px', display: 'block', width: '100%', height: '0' }}
+        ref={(r) => setFrame(r)}
+        onLoad={() => onLoad()}
+      />
+      {loaded && frame && renderExtension && renderExtension(frame.contentDocument, '')}
+    </>
+  );
+};
