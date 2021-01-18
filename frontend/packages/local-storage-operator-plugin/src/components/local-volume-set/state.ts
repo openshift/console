@@ -10,9 +10,9 @@ export const initialState = {
   deviceType: [],
   maxDiskLimit: '',
   nodeNames: [],
-  minDiskSize: '0',
+  minDiskSize: '1',
   maxDiskSize: '',
-  diskSizeUnit: 'Ti',
+  diskSizeUnit: 'Gi',
   nodeNamesForLVS: [],
   hostNamesMapForLVS: {},
 };
