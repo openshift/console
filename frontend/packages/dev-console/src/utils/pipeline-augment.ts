@@ -122,13 +122,32 @@ export interface PipelineSpecTaskRef {
   apiVersion?: string;
 }
 
+export interface PipelineSpecTaskSpec {
+  metadata?: {};
+  steps?: {
+    // TODO: Figure out required fields
+    env?: PipelineTaskParam[];
+    image?: string;
+    name?: string;
+    resources?: {};
+    script?: string;
+    securityContext?: {
+      privileged: boolean;
+      [key: string]: any;
+    }
+    imagePullPolicy?: string;
+    workingDir?: string;
+  }[];
+  workspaces?: PipelineRunWorkspace[];
+}
+
 export interface PipelineSpecTask {
   name: string;
   runAfter?: string[];
   taskRef?: PipelineSpecTaskRef;
   params?: PipelineTaskParam[];
   resources?: PipelineTaskResources;
-  taskSpec?: any;
+  taskSpec?: PipelineSpecTaskSpec;
   workspaces?: PipelineRunWorkspace[];
 }
 
@@ -156,6 +175,7 @@ export interface PipelineRun extends K8sResourceKind {
     startTime?: string;
     completionTime?: string;
     taskRuns?: TaskRuns;
+    runs?: TaskRuns; 
   };
 }
 
@@ -365,7 +385,8 @@ export const getTaskStatus = (pipelinerun: PipelineRun, pipeline: Pipeline): Tas
     pipeline && pipeline.spec && pipeline.spec.tasks ? pipeline.spec.tasks.length : 0;
   const plrTasks =
     pipelinerun && pipelinerun.status && pipelinerun.status.taskRuns
-      ? Object.keys(pipelinerun.status.taskRuns)
+      ? pipelinerun.status.runs ? Object.keys(pipelinerun.status.runs).concat(Object.keys(pipelinerun.status.taskRuns))
+        : Object.keys(pipelinerun.status.taskRuns)
       : [];
   const plrTaskLength = plrTasks.length;
   const taskStatus: TaskStatus = {
@@ -376,9 +397,9 @@ export const getTaskStatus = (pipelinerun: PipelineRun, pipeline: Pipeline): Tas
     Failed: 0,
     Cancelled: 0,
   };
-  if (pipelinerun && pipelinerun.status && pipelinerun.status.taskRuns) {
+  if (plrTasks) {
     plrTasks.forEach((taskRun) => {
-      const status = pipelineRunFilterReducer(pipelinerun.status.taskRuns[taskRun]);
+      const status = pipelineRunFilterReducer(pipelinerun.status.taskRuns[taskRun] ?? pipelinerun.status.runs[taskRun]);
       if (status === 'Succeeded' || status === 'Completed' || status === 'Complete') {
         taskStatus[runStatus.Succeeded]++;
       } else if (status === 'Running') {
