@@ -21,6 +21,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       models: _.values(models),
     },
   },
+  // TODO Use flag in the system
   {
     type: 'FeatureFlag/Model',
     properties: {
@@ -32,11 +33,27 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Page/Route',
     properties: {
       exact: true,
-      path: ['/managedServices/rhosak', '/managedServices/rhosak/ns/:ns'],
+      path: ['/managedServices', '/managedServices/ns/:ns'],
       loader: async () =>
         (
           await import(
-            './components/rhosak-page/ManagedKafkas' /* webpackChunkName: "helm-plugin-releases-list-page" */
+            './components/rhosak-page/ManagedServices' /* webpackChunkName: "managedservices-plugin-releases-list-page" */
+          )
+        ).default,
+    },
+    flags: {
+      required: [],
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: ['/managedServices/managedkafka', '/managedServices/managedkafka/ns/:ns'],
+      loader: async () =>
+        (
+          await import(
+            './components/rhosak-page/ManagedKafkas' /* webpackChunkName: "managedservices-plugin-releases-list-page" */
           )
         ).default,
     },
@@ -69,8 +86,8 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     properties: {
       id: 'rhosak',
-      url: '/managedServices/rhosak',
-      label: 'ManagedService Kafka',
+      url: '/managedServices',
+      label: 'ManagedServices',
       description: 'ManagedService',
       icon: rhoasIcon,
     },
