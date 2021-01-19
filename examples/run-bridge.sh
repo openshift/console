@@ -4,16 +4,11 @@ set -exuo pipefail
 
 myIP=$(hostname -I | awk '{print $1}')
 
-k8sIP='220.90.208.100'
-# k8sIP='192.168.6.197'
+# Default K8S Endpoint is public POC environment 
+k8sIP='220.90.208.100' 
 BRIDGE_K8S_AUTH_BEARER_TOKEN=$(ssh root@$k8sIP "secretname=\$(kubectl get serviceaccount default --namespace=kube-system -o jsonpath='{.secrets[0].name}'); kubectl get secret "\$secretname" --namespace=kube-system -o template --template='{{.data.token}}' | base64 --decode; ")
 
-# k8sIP='kubernetes.docker.internal'
-# secretname=$(kubectl get serviceaccount default -n kube-system -o jsonpath='{.secrets[0].name}')
-# echo secretname
-# BRIDGE_K8S_AUTH_BEARER_TOKEN=$(kubectl get secret $secretname -n kube-system  -o template --template='{{.data.token}}' | base64 --decode )
-
-# Should verify port number which corresponding to service in yourself!!
+# Should verify port number which corresponding to Service in yourself!!
 PROM_PORT='9090'
 GRAFANA_PORT='30997'
 HC_PORT='33333'
