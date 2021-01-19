@@ -1,3 +1,5 @@
+$co-icon-and-text-icon-lg: 1.2rem;
+
 .co-icon-and-text {
   align-items: baseline;
   display: flex;
@@ -10,4 +12,13 @@
 
 .co-icon-and-text__icon {
   margin-right: 5px;
+}
+
+.co-icon-and-text--lg {
+  display: block;
+
+  .co-icon-and-text__icon {
+    font-size: $co-icon-and-text-icon-lg;
+    margin-right: 1rem;
+  }
 }
