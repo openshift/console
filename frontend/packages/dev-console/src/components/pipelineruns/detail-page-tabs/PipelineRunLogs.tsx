@@ -7,7 +7,7 @@ import { StatusIcon } from '@console/shared';
 import { Firehose, resourcePathFromModel } from '@console/internal/components/utils';
 import { pipelineRunFilterReducer } from '../../../utils/pipeline-filter-reducer';
 import { PipelineRun } from '../../../utils/pipeline-augment';
-import { PipelineRunModel } from '../../../models';
+import { PipelineRunModel } from '../../../../../../../frontend/public/models/index';
 import LogsWrapperComponent from '../logs/LogsWrapperComponent';
 import { getDownloadAllLogsCallback } from '../logs/logs-utils';
 import './PipelineRunLogs.scss';

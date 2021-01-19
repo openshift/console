@@ -6,7 +6,7 @@ import { Tooltip } from '@patternfly/react-core';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { Firehose, resourcePathFromModel } from '@console/internal/components/utils';
 import { runStatus } from '../../../../utils/pipeline-augment';
-import { PipelineRunModel, TaskModel, ClusterTaskModel } from '../../../../models';
+import { PipelineRunModel, TaskModel, ClusterTaskModel } from '../../../../../../../../frontend/public/models/index';
 import { ColoredStatusIcon } from './StatusIcon';
 import { PipelineVisualizationStepList } from './PipelineVisualizationStepList';
 import TaskComponentTaskStatus from './TaskComponentTaskStatus';
