@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
+import { Button } from '@patternfly/react-core';
 import { ListPage } from '@console/internal/components/factory';
 import PipelineRunsResourceList from '../PipelineRunsResourceList';
 
@@ -12,12 +13,9 @@ describe('PipelineRunsResourceList:', () => {
   beforeEach(() => {
     pipelineRunsResourceListProps = {
       hideBadge: false,
+      canCreate: false,
     };
     wrapper = shallow(<PipelineRunsResourceList {...pipelineRunsResourceListProps} />);
-  });
-
-  it('Should set the create button prop in the list page', () => {
-    expect(wrapper.find(ListPage).props().canCreate).toBeTruthy();
   });
 
   it('Should render the badge in the list page', () => {
@@ -28,5 +26,14 @@ describe('PipelineRunsResourceList:', () => {
   it('Should not render the badge in the list page', () => {
     wrapper.setProps({ hideBadge: true });
     expect(wrapper.find(ListPage).props().badge).toBeNull();
+  });
+
+  it('Should not render the create button in the list page', () => {
+    expect(wrapper.find(Button).exists()).toBe(false);
+  });
+
+  it('Should render the create button in the list page', () => {
+    wrapper.setProps({ canCreate: true });
+    expect(wrapper.find(Button).exists()).toBe(false);
   });
 });

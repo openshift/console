@@ -8,17 +8,18 @@ import PipelineRunsList from './list-page/PipelineRunList';
 
 interface PipelineRunsResourceListProps {
   hideBadge?: boolean;
+  canCreate?: boolean;
 }
 
 const PipelineRunsResourceList: React.FC<Omit<
   React.ComponentProps<typeof ListPage>,
-  'canCreate' | 'kind' | 'ListComponent' | 'rowFilters'
+  'kind' | 'ListComponent' | 'rowFilters'
 > &
   PipelineRunsResourceListProps> = (props) => {
   return (
     <ListPage
       {...props}
-      canCreate
+      canCreate={props.canCreate ?? true}
       kind={referenceForModel(PipelineRunModel)}
       ListComponent={PipelineRunsList}
       rowFilters={runFilters}
