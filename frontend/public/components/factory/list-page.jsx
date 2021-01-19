@@ -12,43 +12,17 @@ import { filterList } from '../../actions/k8s';
 import { storagePrefix } from '../row-filter';
 import { ErrorPage404, ErrorBoundaryFallback } from '../error';
 import { referenceForModel } from '../../module/k8s';
-import {
-  Dropdown,
-  Firehose,
-  history,
-  inject,
-  kindObj,
-  makeQuery,
-  makeReduxID,
-  PageHeading,
-  RequireCreatePermission,
-} from '../utils';
+import { Dropdown, Firehose, history, inject, kindObj, makeQuery, makeReduxID, PageHeading, RequireCreatePermission } from '../utils';
 import { FilterToolbar } from '../filter-toolbar';
 
 /** @type {React.SFC<{disabled?: boolean, label?: string, onChange: (value: string) => void;, defaultValue?: string, value?: string, placeholder?: string, autoFocus?: boolean, onFocus?:any, name?:string, id?: string, onKeyDown?: any, parentClassName?: string }}>} */
-export const TextFilter = (props) => {
-  const {
-    label,
-    className,
-    placeholder = `Filter ${label}...`,
-    autoFocus = false,
-    parentClassName,
-  } = props;
+export const TextFilter = props => {
+  const { label, className, placeholder = `Filter ${label}...`, autoFocus = false, parentClassName } = props;
   const { ref } = useDocumentListener();
 
   return (
     <div className={classNames('has-feedback', parentClassName)}>
-      <TextInput
-        {...props}
-        className={classNames('co-text-filter', className)}
-        data-test-id="item-filter"
-        aria-label={placeholder}
-        placeholder={placeholder}
-        ref={ref}
-        autoFocus={autoFocus}
-        tabIndex={0}
-        type="text"
-      />
+      <TextInput {...props} className={classNames('co-text-filter', className)} data-test-id="item-filter" aria-label={placeholder} placeholder={placeholder} ref={ref} autoFocus={autoFocus} tabIndex={0} type="text" />
       <span className="form-control-feedback form-control-feedback--keyboard-hint">
         <kbd>{KEYBOARD_SHORTCUTS.focusFilterInput}</kbd>
       </span>
@@ -61,27 +35,9 @@ TextFilter.displayName = 'TextFilter';
 /** @augments {React.PureComponent<{ListComponent: React.ComponentType<any>, kinds: string[], filters?:any, flatten?: function, data?: any[], rowFilters?: any[], hideToolbar?: boolean, hideLabelFilter?: boolean }>} */
 export class ListPageWrapper_ extends React.PureComponent {
   render() {
-    const {
-      flatten,
-      ListComponent,
-      reduxIDs,
-      rowFilters,
-      textFilter,
-      hideToolbar,
-      hideLabelFilter,
-    } = this.props;
+    const { flatten, ListComponent, reduxIDs, rowFilters, textFilter, hideToolbar, hideLabelFilter } = this.props;
     const data = flatten ? flatten(this.props.resources) : [];
-    const Filter = (
-      <FilterToolbar
-        rowFilters={rowFilters}
-        data={data}
-        reduxIDs={reduxIDs}
-        textFilter={textFilter}
-        hideToolbar={hideToolbar}
-        hideLabelFilter={hideLabelFilter}
-        {...this.props}
-      />
-    );
+    const Filter = <FilterToolbar rowFilters={rowFilters} data={data} reduxIDs={reduxIDs} textFilter={textFilter} hideToolbar={hideToolbar} hideLabelFilter={hideLabelFilter} {...this.props} />;
 
     return (
       <div>
@@ -116,16 +72,12 @@ export const FireMan_ = connect(null, { filterList })(
       this.onExpandChange = this.onExpandChange.bind(this);
       this.applyFilter = this.applyFilter.bind(this);
 
-      const reduxIDs = props.resources.map((r) =>
-        makeReduxID(kindObj(r.kind), makeQuery(r.namespace, r.selector, r.fieldSelector, r.name)),
-      );
+      const reduxIDs = props.resources.map(r => makeReduxID(kindObj(r.kind), makeQuery(r.namespace, r.selector, r.fieldSelector, r.name)));
       this.state = { reduxIDs };
     }
 
     UNSAFE_componentWillReceiveProps({ resources }) {
-      const reduxIDs = resources.map((r) =>
-        makeReduxID(kindObj(r.kind), makeQuery(r.namespace, r.selector, r.fieldSelector, r.name)),
-      );
+      const reduxIDs = resources.map(r => makeReduxID(kindObj(r.kind), makeQuery(r.namespace, r.selector, r.fieldSelector, r.name)));
       if (_.isEqual(reduxIDs, this.state.reduxIDs)) {
         return;
       }
@@ -162,7 +114,7 @@ export const FireMan_ = connect(null, { filterList })(
       if (filterName.indexOf(storagePrefix) === 0) {
         return;
       }
-      this.state.reduxIDs.forEach((id) => this.props.filterList(id, filterName, options));
+      this.state.reduxIDs.forEach(id => this.props.filterList(id, filterName, options));
       this.updateURL(filterName, options);
     }
 
@@ -172,7 +124,7 @@ export const FireMan_ = connect(null, { filterList })(
       params.forEach((v, k) => this.applyFilter(k, v));
     }
 
-    runOrNavigate = (itemName) => {
+    runOrNavigate = itemName => {
       const { createProps = {} } = this.props;
       const action = _.isFunction(createProps.action) && createProps.action(itemName);
       if (action) {
@@ -183,16 +135,7 @@ export const FireMan_ = connect(null, { filterList })(
     };
 
     render() {
-      const {
-        canCreate,
-        createAccessReview,
-        createButtonText,
-        createProps = {},
-        helpText,
-        resources,
-        badge,
-        title,
-      } = this.props;
+      const { canCreate, createAccessReview, createButtonText, createProps = {}, helpText, resources, badge, title } = this.props;
 
       let createLink;
       if (canCreate) {
@@ -207,15 +150,7 @@ export const FireMan_ = connect(null, { filterList })(
         } else if (createProps.items) {
           createLink = (
             <div className="co-m-primary-action">
-              <Dropdown
-                buttonClassName="pf-m-primary"
-                id="item-create"
-                menuClassName={classNames({ 'pf-m-align-right-on-md': title })}
-                title={createButtonText}
-                noSelection
-                items={createProps.items}
-                onChange={this.runOrNavigate}
-              />
+              <Dropdown buttonClassName="pf-m-primary" id="item-create" menuClassName={classNames({ 'pf-m-align-right-on-md': title })} title={createButtonText} noSelection items={createProps.items} onChange={this.runOrNavigate} />
             </div>
           );
         } else {
@@ -229,10 +164,7 @@ export const FireMan_ = connect(null, { filterList })(
         }
         if (!_.isEmpty(createAccessReview)) {
           createLink = (
-            <RequireCreatePermission
-              model={createAccessReview.model}
-              namespace={createAccessReview.namespace}
-            >
+            <RequireCreatePermission model={createAccessReview.model} namespace={createAccessReview.namespace}>
               {createLink}
             </RequireCreatePermission>
           );
@@ -242,11 +174,7 @@ export const FireMan_ = connect(null, { filterList })(
       return (
         <>
           {/* Badge rendered from PageHeading only when title is present */}
-          <PageHeading
-            title={title}
-            badge={title ? badge : null}
-            className={classNames({ 'co-m-nav-title--row': createLink })}
-          >
+          <PageHeading title={title} badge={title ? badge : null} className={classNames({ 'co-m-nav-title--row': createLink })}>
             {createLink && (
               <div
                 className={classNames('co-m-pane__createLink', {
@@ -308,42 +236,15 @@ FireMan_.propTypes = {
 };
 
 /** @type {React.SFC<{ListComponent: React.ComponentType<any>, kind: string, helpText?: any, namespace?: string, filterLabel?: string, textFilter?: string, title?: string, showTitle?: boolean, rowFilters?: any[], selector?: any, fieldSelector?: string, canCreate?: boolean, createButtonText?: string, createProps?: any, mock?: boolean, badge?: React.ReactNode, createHandler?: any, hideToolbar?: boolean, hideLabelFilter?: boolean, customData?: any} >} */
-export const ListPage = withFallback((props) => {
-  const {
-    autoFocus,
-    canCreate,
-    createButtonText,
-    createHandler,
-    customData,
-    fieldSelector,
-    filterLabel,
-    filters,
-    helpText,
-    kind,
-    limit,
-    ListComponent,
-    mock,
-    name,
-    nameFilter,
-    namespace,
-    selector,
-    showTitle = true,
-    skipAccessReview,
-    textFilter,
-    match,
-    badge,
-    hideToolbar,
-    hideLabelFilter,
-  } = props;
+export const ListPage = withFallback(props => {
+  const { autoFocus, canCreate, createButtonText, createHandler, customData, fieldSelector, filterLabel, filters, helpText, kind, limit, ListComponent, mock, name, nameFilter, namespace, selector, showTitle = true, skipAccessReview, textFilter, match, badge, hideToolbar, hideLabelFilter } = props;
   let { createProps } = props;
   const ko = kindObj(kind);
   const { label, labelPlural, namespaced, plural } = ko;
   const title = props.title || labelPlural;
   const usedNamespace = !namespace && namespaced ? _.get(match, 'params.ns') : namespace;
 
-  let href = usedNamespace
-    ? `/k8s/ns/${usedNamespace || 'default'}/${plural}/~new`
-    : `/k8s/cluster/${plural}/~new`;
+  let href = usedNamespace ? `/k8s/ns/${usedNamespace || 'default'}/${plural}/~new` : `/k8s/cluster/${plural}/~new`;
   if (ko.crd) {
     try {
       const ref = referenceForModel(ko);
@@ -383,7 +284,7 @@ export const ListPage = withFallback((props) => {
       createProps={createProps}
       customData={customData}
       filterLabel={filterLabel || 'by name'}
-      flatten={(_resources) => _.get(_resources, name || kind, {}).data}
+      flatten={_resources => _.get(_resources, name || kind, {}).data}
       helpText={helpText}
       label={labelPlural}
       ListComponent={ListComponent}
@@ -405,32 +306,10 @@ export const ListPage = withFallback((props) => {
 ListPage.displayName = 'ListPage';
 
 /** @type {React.SFC<{canCreate?: boolean, createButtonText?: string, createProps?: any, createAccessReview?: Object, flatten?: Function, title?: string, label?: string, hideTextFilter?: boolean, showTitle?: boolean, helpText?: any, filterLabel?: string, textFilter?: string, rowFilters?: any[], resources: any[], ListComponent: React.ComponentType<any>, namespace?: string, customData?: any, badge?: React.ReactNode, hideToolbar?: boolean, hideLabelFilter?: boolean >} */
-export const MultiListPage = (props) => {
-  const {
-    autoFocus,
-    canCreate,
-    createAccessReview,
-    createButtonText,
-    createProps,
-    filterLabel,
-    flatten,
-    helpText,
-    label,
-    ListComponent,
-    mock,
-    namespace,
-    rowFilters,
-    showTitle = true,
-    staticFilters,
-    textFilter,
-    title,
-    customData,
-    badge,
-    hideToolbar,
-    hideLabelFilter,
-  } = props;
+export const MultiListPage = props => {
+  const { autoFocus, canCreate, createAccessReview, createButtonText, createProps, filterLabel, flatten, helpText, label, ListComponent, mock, namespace, rowFilters, showTitle = true, staticFilters, textFilter, title, customData, badge, hideToolbar, hideLabelFilter } = props;
 
-  const resources = _.map(props.resources, (r) => ({
+  const resources = _.map(props.resources, r => ({
     ...r,
     isList: r.isList !== undefined ? r.isList : true,
     namespace: r.namespaced ? namespace : r.namespace,
@@ -438,33 +317,9 @@ export const MultiListPage = (props) => {
   }));
 
   return (
-    <FireMan_
-      autoFocus={autoFocus}
-      canCreate={canCreate}
-      createAccessReview={createAccessReview}
-      createButtonText={createButtonText || 'Create'}
-      createProps={createProps}
-      filterLabel={filterLabel || 'by name'}
-      helpText={helpText}
-      resources={mock ? [] : resources}
-      selectorFilterLabel="Filter by selector (app=nginx) ..."
-      textFilter={textFilter}
-      title={showTitle ? title : undefined}
-      badge={badge}
-    >
+    <FireMan_ autoFocus={autoFocus} canCreate={canCreate} createAccessReview={createAccessReview} createButtonText={createButtonText || 'Create'} createProps={createProps} filterLabel={filterLabel || 'by name'} helpText={helpText} resources={mock ? [] : resources} selectorFilterLabel="Filter by selector (app=nginx) ..." textFilter={textFilter} title={showTitle ? title : undefined} badge={badge}>
       <Firehose resources={mock ? [] : resources}>
-        <ListPageWrapper_
-          flatten={flatten}
-          kinds={_.map(resources, 'kind')}
-          label={label}
-          ListComponent={ListComponent}
-          textFilter={textFilter}
-          rowFilters={rowFilters}
-          staticFilters={staticFilters}
-          customData={customData}
-          hideToolbar={hideToolbar}
-          hideLabelFilter={hideLabelFilter}
-        />
+        <ListPageWrapper_ flatten={flatten} kinds={_.map(resources, 'kind')} label={label} ListComponent={ListComponent} textFilter={textFilter} rowFilters={rowFilters} staticFilters={staticFilters} customData={customData} hideToolbar={hideToolbar} hideLabelFilter={hideLabelFilter} />
       </Firehose>
     </FireMan_>
   );
