@@ -16,7 +16,7 @@ BRIDGE_K8S_AUTH_BEARER_TOKEN=$(ssh root@$k8sIP "secretname=\$(kubectl get servic
 # Should verify port number which corresponding to service in yourself!!
 PROM_PORT='9090'
 GRAFANA_PORT='30997'
-HC_PORT= '33333'
+HC_PORT='33333'
 MHC_PORT='31430'
 
 ./bin/bridge \
