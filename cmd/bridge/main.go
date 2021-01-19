@@ -68,7 +68,11 @@ const (
 	openshiftMeteringHost = "reporting-operator.openshift-metering.svc:8080"
 
 	// Well-known location of hypercloud-server for hypercloud. This is only accessible in-clsuter.
+	// TODO: url 입력
 	hypercloudServerHost = "hypercloud-server-svc.hypercloud5-system.svc"
+
+	// Well-known location of hypercloud-server for hypercloud. This is only accessible in-clsuter.
+	multiHypercloudServerHost = "hypercloud-server-svc.hypercloud5-system.svc"
 )
 
 func main() {
@@ -160,7 +164,8 @@ func main() {
 	fReleaseModeFlag := fs.Bool("release-mode", true, "DEV ONLY. When false")
 
 	// hypercloud-server proxy 추가
-	fHypercloudServerEndpoint := fs.String("hypercloud-endpoint", "", "URL of the Hypercloud Server API server")
+	fHypercloudServerEndpoint := fs.String("hypercloud-endpoint", "http://0.0.0.0:33333", "URL of the Hypercloud Server API server")
+	fMultiHypercloudServerEndpoint := fs.String("multi-hypercloud-endpoint", "http://0.0.0.0:33333", "URL of the Multi Hypercloud Server API server")
 
 	if err := fs.Parse(os.Args[1:]); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
@@ -487,15 +492,22 @@ func main() {
 	}
 
 	// Add hproxy.config
-	var hsEndpoint *url.URL
+	var hsEndpoint *url.URL      // Hypercloud Server Endpoint
+	var multiHsEndpoint *url.URL // Multi Hypercloud Server Endpoint
 	switch *fK8sMode {
 	case "off-cluster":
 		hsEndpoint = bridge.ValidateFlagIsURL("hypercloud-endpoint", *fHypercloudServerEndpoint)
+		multiHsEndpoint = bridge.ValidateFlagIsURL("multi-hypercloud-endpoint", *fMultiHypercloudServerEndpoint)
 	case "in-cluster":
 		hsEndpoint = &url.URL{Scheme: "http", Host: hypercloudServerHost}
+		multiHsEndpoint = &url.URL{Scheme: "http", Host: multiHypercloudServerHost}
 	}
 	srv.HypercloudServerProxyConfig = &hproxy.Config{
 		Endpoint: hsEndpoint,
+		Origin:   "http://localhost",
+	}
+	srv.MultiHypercloudServerProxyConfig = &hproxy.Config{
+		Endpoint: multiHsEndpoint,
 		Origin:   "http://localhost",
 	}
 

@@ -5,7 +5,7 @@ import {
   NamespaceClaimModel,
   ResourceQuotaClaimModel,
   RoleBindingClaimModel,
-  HyperClusterResourceModel,
+  ClusterManagerModel,
   FederatedConfigMapModel,
   FederatedDeploymentModel,
   FederatedIngressModel,
@@ -56,6 +56,8 @@ import {
   ImageScanRequestModel,
   SignerPolicyModel,
   IntegrationConfigModel,
+  ClusterClaimModel,
+  RepositoryModel
 } from '../../models';
 
 type ResourceMapKey = GroupVersionKind | string;
@@ -66,7 +68,8 @@ export const hyperCloudDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapVa
   .set(referenceForModel(ResourceQuotaClaimModel), () => import('./resource-quota-claim' /* webpackChunkName: "resourcequotaclaim" */).then(m => m.ResourceQuotaClaimsDetailsPage))
   .set(referenceForModel(RoleBindingClaimModel), () => import('./role-binding-claim' /* webpackChunkName: "rolebindingclaim" */).then(m => m.RoleBindingClaimsDetailsPage))
   .set(referenceForModel(NamespaceClaimModel), () => import('./namespace-claim' /* webpackChunkName: "namespaceclaim" */).then(m => m.NamespaceClaimsDetailsPage))
-  .set(referenceForModel(HyperClusterResourceModel), () => import('./cluster' /* webpackChunkName: "cluster" */).then(m => m.ClustersDetailsPage))
+  .set(referenceForModel(ClusterManagerModel), () => import('./cluster' /* webpackChunkName: "cluster" */).then(m => m.ClustersDetailsPage))
+  .set(referenceForModel(ClusterClaimModel), () => import('./cluster-claim' /* webpackChunkName: "cluster-claim" */).then(m => m.ClusterClaimsDetailsPage))
   .set(referenceForModel(FederatedConfigMapModel), () => import('./federated-config-map' /* webpackChunkName: "configmap" */).then(m => m.FederatedConfigMapsDetailsPage))
   .set(referenceForModel(FederatedDeploymentModel), () => import('./federated-deployment' /* webpackChunkName: "deployment" */).then(m => m.FederatedDeploymentsDetailsPage))
   .set(referenceForModel(FederatedIngressModel), () => import('./federated-ingress' /* webpackChunkName: "ingress" */).then(m => m.FederatedIngressesDetailsPage))
@@ -113,6 +116,7 @@ export const hyperCloudDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapVa
   .set(referenceForModel(TemplateModel), () => import('./template' /* webpackChunkName: "template" */).then(m => m.TemplatesDetailsPage))
   .set(referenceForModel(TemplateInstanceModel), () => import('./template-instance' /* webpackChunkName: "templateinstance" */).then(m => m.TemplateInstancesDetailsPage))
   .set(referenceForModel(RegistryModel), () => import('./registry' /* webpackChunkName: "registry" */).then(m => m.RegistriesDetailsPage))
+  .set(referenceForModel(RepositoryModel), () => import('./repository' /* webpackChunkName: "repository" */).then(m => m.RepositoriesDetailsPage))
   .set(referenceForModel(ImageSignerModel), () => import('./image-signer' /* webpackChunkName: "image-signer" */).then(m => m.ImageSignersDetailsPage))
   .set(referenceForModel(ImageSignRequestModel), () => import('./image-sign-request' /* webpackChunkName: "image-sign-request" */).then(m => m.ImageSignRequestsDetailsPage))
   .set(referenceForModel(SignerPolicyModel), () => import('./signer-policy' /* webpackChunkName: "image-sign-request" */).then(m => m.SignerPoliciesDetailsPage))
@@ -120,7 +124,8 @@ export const hyperCloudDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapVa
 
 export const hyperCloudListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
   .set(referenceForModel(PodSecurityPolicyModel), () => import('./pod-security-policy' /* webpackChunkName: "pod-security-policy" */).then(m => m.PodSecurityPoliciesPage))
-  .set(referenceForModel(HyperClusterResourceModel), () => import('./cluster' /* webpackChunkName: "cluster" */).then(m => m.ClustersPage))
+  .set(referenceForModel(ClusterManagerModel), () => import('./cluster' /* webpackChunkName: "cluster" */).then(m => m.ClustersPage))
+  .set(referenceForModel(ClusterClaimModel), () => import('./cluster-claim' /* webpackChunkName: "cluster-claim" */).then(m => m.ClusterClaimsPage))
   .set(referenceForModel(FederatedConfigMapModel), () => import('./federated-config-map' /* webpackChunkName: "configmap" */).then(m => m.FederatedConfigMapsPage))
   .set(referenceForModel(FederatedDeploymentModel), () => import('./federated-deployment' /* webpackChunkName: "deployment" */).then(m => m.FederatedDeploymentsPage))
   .set(referenceForModel(FederatedIngressModel), () => import('./federated-ingress' /* webpackChunkName: "ingress" */).then(m => m.FederatedIngressesPage))

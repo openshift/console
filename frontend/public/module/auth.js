@@ -60,7 +60,7 @@ export const authSvc = {
       .catch((e) => console.error('Error logging out', e))
       .then(() => {
         if (window.SERVER_FLAGS.logoutRedirect && !next) {
-          window.location = window.SERVER_FLAGS.logoutRedirect;
+          // window.location = window.SERVER_FLAGS.logoutRedirect;
         } else {
           authSvc.login();
         }
@@ -118,6 +118,6 @@ export const authSvc = {
   },
 
   login: () => {
-    window.location = window.SERVER_FLAGS.loginURL;
+    // window.location = window.SERVER_FLAGS.loginURL;
   },
 };

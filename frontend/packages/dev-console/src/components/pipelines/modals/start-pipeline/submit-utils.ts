@@ -28,7 +28,7 @@ export const resourceSubmit = async (
 export const submitStartPipeline = async (
   values: StartPipelineFormValues,
   pipeline: Pipeline,
-  labels: { [key: string]: string },
+  labels?: { [key: string]: string },
 ): Promise<PipelineRun> => {
   const { namespace, resources } = values;
 

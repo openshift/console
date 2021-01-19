@@ -30,6 +30,10 @@ const registryStatusReducer = (registry: any): string => {
   return registry.status.phase;
 }
 
+const pipelineApprovalStatusReducer = (pipelineApproval: any): string => {
+  return pipelineApproval.status.result;
+}
+
 // TODO: Table filters are undocumented, stringly-typed, and non-obvious. We can change that.
 export const tableFilters: TableFilterMap = {
   name: (filter, obj) => fuzzyCaseInsensitive(filter, obj.metadata.name),
@@ -124,6 +128,15 @@ export const tableFilters: TableFilterMap = {
 
     const phase = registryStatusReducer(registry);
     return phases.selected.has(phase) || !_.includes(phases.all, phase);
+  },
+
+  'pipeline-approval-status': (results, pipelineApproval) => {
+    if (!results || !results.selected || !results.selected.size) {
+      return true;
+    }
+
+    const result = pipelineApprovalStatusReducer(pipelineApproval);
+    return results.selected.has(result) || !_.includes(results.all, result);
   },
 
   'node-status': (statuses, node) => {

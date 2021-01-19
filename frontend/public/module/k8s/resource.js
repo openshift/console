@@ -3,7 +3,8 @@ import { coFetchJSON } from '../../co-fetch';
 import { k8sBasePath } from './k8s';
 import { selectorToString } from './selector';
 import { WSFactory } from '../ws-factory';
-import { getActivePerspective, getActiveCluster, getActiveClusterPath } from '../../actions/ui';
+import { getActivePerspective, getActiveCluster } from '../../actions/ui';
+import { getId } from '../../hypercloud/auth';
 
 /** @type {(model: K8sKind) => string} */
 const getK8sAPIPath = ({ apiGroup = 'core', apiVersion }) => {
@@ -13,10 +14,10 @@ const getK8sAPIPath = ({ apiGroup = 'core', apiVersion }) => {
 
   const cluster = window.SERVER_FLAGS.McMode && getActivePerspective() == 'hc' && getActiveCluster();
 
-  if (cluster && cluster !== '#MASTER_CLUSTER#') {
-    const activeClusterPath = getActiveClusterPath();
-    p = `${window.SERVER_FLAGS.basePath}${activeClusterPath}`;
-  } else {
+  if (cluster) {
+    p = `${window.SERVER_FLAGS.basePath}api/${cluster}`;
+  }
+  else {
     p = k8sBasePath;
   }
 
@@ -60,6 +61,31 @@ export const resourceURL = (model, options) => {
   return u;
 };
 
+export const resourceClusterURL = (model) => {
+  if(isCluster(model)) {
+    return `/api/hypercloud/api/master/cluster?userId=${getId()}`;
+  }
+  return `api/hypercloud/api/master/clusterclaim?userId=${getId()}`;
+}
+
+export const resourceApprovalURL = (model, options, approval) => {
+  return resourceURL(model, options).replace('cicd', 'cicdapi') + `/${approval}`
+}
+
+const isCluster = (model) => {
+  if(model.kind === 'ClusterManager') {
+    return true;
+  }
+  return false;
+}
+
+const isClusterClaim = (model) => {
+  if(model.kind === 'ClusterClaim') {
+    return true;
+  }
+  return false;
+}
+
 export const watchURL = (kind, options) => {
   const opts = options || {};
 
@@ -86,6 +112,29 @@ export const k8sCreate = (kind, data, opts = {}) => {
 };
 
 export const k8sUpdate = (kind, data, ns, name) => coFetchJSON.put(resourceURL(kind, { ns: ns || data.metadata.namespace, name: name || data.metadata.name }), data);
+
+export const k8sUpdateApproval = (kind, resource, approval, data) => {
+  const url = resourceApprovalURL(
+    kind,
+    Object.assign(
+      {
+        ns: resource.metadata.namespace,
+        name: resource.metadata.name,
+      },
+    ),
+    approval,
+  );
+
+  return coFetchJSON.put(url, data);
+}
+
+export const k8sUpdateClaim = (kind, clusterClaim, admit, reason) => {
+  const url = resourceClusterURL(kind) + `&clusterClaim=${clusterClaim}&admit=${admit}&reason=${reason}`;
+
+  return coFetchJSON.put(url);
+}
+  
+
 
 export const k8sPatch = (kind, resource, data, opts = {}) => {
   const patches = _.compact(data);
@@ -122,6 +171,11 @@ export const k8sList = (kind, params = {}, raw = false, options = {}) => {
     }
     return `${encodeURIComponent(k)}=${encodeURIComponent(v)}`;
   }).join('&');
+
+  if(isCluster(kind) || isClusterClaim(kind)) {
+    const listClusterURL = resourceClusterURL(kind);
+    return coFetchJSON(`${listClusterURL}`, 'GET').then((result) => raw ? result: result.items);
+  }
 
   const listURL = resourceURL(kind, { ns: params.ns });
   // if (kind.kind === 'Namespace') {
