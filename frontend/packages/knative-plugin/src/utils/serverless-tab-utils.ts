@@ -1,14 +1,29 @@
-import { K8sKind } from '@console/internal/module/k8s';
-import { RevisionModel, ServiceModel, RouteModel } from '../models';
+import {
+  RevisionModel,
+  ServiceModel,
+  RouteModel,
+  EventingBrokerModel,
+  EventingTriggerModel,
+  EventingSubscriptionModel,
+} from '../models';
 
-export const servingTab = (kindObj: K8sKind) => {
-  switch (kindObj.kind) {
+export const serverlessTab = (kind: string) => {
+  switch (kind) {
     case ServiceModel.kind:
+    case 'EventSource':
       return '';
     case RevisionModel.kind:
       return 'revisions';
     case RouteModel.kind:
       return 'routes';
+    case EventingBrokerModel.kind:
+      return 'brokers';
+    case EventingTriggerModel.kind:
+      return 'triggers';
+    case EventingSubscriptionModel.kind:
+      return 'subscriptions';
+    case 'Channel':
+      return 'channels';
     default:
       return null;
   }

@@ -61,11 +61,11 @@ const TriggerRow: RowFunction<EventTriggerKind, TriggerRowType> = ({
         </TableData>
       )}
       <TableData columnID="subscriber" className={tableColumnClasses[6]}>
-        <ResourceLink
-          kind={referenceFor(subscriber.ref)}
-          name={subscriber.ref.name}
-          namespace={namespace}
-        />
+        {subscriber.ref ? (
+          <ResourceLink kind={referenceFor(subscriber.ref)} name={subscriber.ref.name} />
+        ) : (
+          '-'
+        )}
       </TableData>
       <TableData columnID="created" className={tableColumnClasses[7]}>
         <Timestamp timestamp={creationTimestamp} />

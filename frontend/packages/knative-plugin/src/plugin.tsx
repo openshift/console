@@ -297,6 +297,150 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: models.EventingBrokerModel,
+      loader: async () =>
+        (
+          await import(
+            './components/pub-sub/details/BrokerDetailsPage' /* webpackChunkName: "broker-details-page" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: models.EventSourceContainerModel,
+      loader: async () =>
+        (
+          await import(
+            './components/pub-sub/details/EventSourceDetailsPage' /* webpackChunkName: "event-source-details-page" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: models.EventSourceKafkaModel,
+      loader: async () =>
+        (
+          await import(
+            './components/pub-sub/details/EventSourceDetailsPage' /* webpackChunkName: "event-source-details-page" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: models.EventSourceApiServerModel,
+      loader: async () =>
+        (
+          await import(
+            './components/pub-sub/details/EventSourceDetailsPage' /* webpackChunkName: "event-source-details-page" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: models.EventSourceCamelModel,
+      loader: async () =>
+        (
+          await import(
+            './components/pub-sub/details/EventSourceDetailsPage' /* webpackChunkName: "event-source-details-page" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: models.EventSourceCronJobModel,
+      loader: async () =>
+        (
+          await import(
+            './components/pub-sub/details/EventSourceDetailsPage' /* webpackChunkName: "event-source-details-page" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: models.EventSourcePingModel,
+      loader: async () =>
+        (
+          await import(
+            './components/pub-sub/details/EventSourceDetailsPage' /* webpackChunkName: "event-source-details-page" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: models.EventSourceSinkBindingModel,
+      loader: async () =>
+        (
+          await import(
+            './components/pub-sub/details/EventSourceDetailsPage' /* webpackChunkName: "event-source-details-page" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: models.CamelKameletBindingModel,
+      loader: async () =>
+        (
+          await import(
+            './components/pub-sub/details/EventSourceDetailsPage' /* webpackChunkName: "event-source-details-page" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: models.EventingChannelModel,
+      loader: async () =>
+        (
+          await import(
+            './components/pub-sub/details/ChannelDetailsPage' /* webpackChunkName: "channel-details-page" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: models.EventingIMCModel,
+      loader: async () =>
+        (
+          await import(
+            './components/pub-sub/details/ChannelDetailsPage' /* webpackChunkName: "channel-details-page" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: models.EventingKafkaChannelModel,
+      loader: async () =>
+        (
+          await import(
+            './components/pub-sub/details/ChannelDetailsPage' /* webpackChunkName: "channel-details-page" */
+          )
+        ).default,
+    },
+  },
+  {
     type: 'Page/Resource/List',
     properties: {
       model: models.RouteModel,
