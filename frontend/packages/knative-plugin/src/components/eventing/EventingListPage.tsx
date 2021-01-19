@@ -9,6 +9,7 @@ import BrokerListPage from './brokers-list/BrokerListPage';
 import ChannelListPage from './channels-list/ChannelListPage';
 import TriggerListPage from './triggers-list/TriggerListPage';
 import SubscriptionListPage from './subscription-list/SubscriptionListPage';
+import { EventingBrokerModel } from '../../models';
 
 interface EventingListPageProps {
   match: Rmatch<{ ns: string }>;
@@ -25,6 +26,7 @@ const EventingListPage: React.FC<EventingListPageProps> = ({ match }) => {
       label: t('knative-plugin~Event Source'),
       onSelection: () => `/catalog/ns/${namespace}?catalogType=EventSource`,
     },
+    brokers: { label: t('knative-plugin~Broker'), model: EventingBrokerModel },
     channels: { label: t('knative-plugin~Channel'), onSelection: () => `/channel/ns/${namespace}` },
   };
   const pages: Page[] = [
