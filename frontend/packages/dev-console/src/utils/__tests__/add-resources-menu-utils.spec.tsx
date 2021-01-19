@@ -94,9 +94,9 @@ describe('addResourceMenuUtils: ', () => {
       getAddPageUrl(resource, '', ImportOptions.EVENTSOURCE, true),
       'https://mock.test.com',
     );
-    expect(url.pathname).toBe('/event-source/ns/testproject1');
+    expect(url.pathname).toBe('/catalog/ns/testproject1');
     expect(url.searchParams.get('application')).toBe('application-1');
-    expect(Array.from(url.searchParams.entries())).toHaveLength(1);
+    expect(Array.from(url.searchParams.entries())).toHaveLength(2);
   });
 
   it('should return the page url with proper queryparams for catalog flow', async () => {
