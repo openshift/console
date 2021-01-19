@@ -12,13 +12,7 @@ import { FLAG_RHOAS_KAFKA } from './const';
 
 import * as models from './models';
 
-type ConsumedExtensions =
-  | ModelDefinition
-  | ModelFeatureFlag
-  | RoutePage
-  | AddAction
-  | HrefNavItem
-
+type ConsumedExtensions = ModelDefinition | ModelFeatureFlag | RoutePage | AddAction | HrefNavItem;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -47,7 +41,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         ).default,
     },
     flags: {
-      required: [FLAG_RHOAS_KAFKA],
+      required: [],
     },
   },
   {
@@ -65,7 +59,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       },
     },
     flags: {
-      required: [FLAG_RHOAS_KAFKA],
+      required: [],
     },
   },
   {
@@ -80,7 +74,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       description: 'ManagedService',
       icon: rhoasIcon,
     },
-  }
+  },
 ];
 
 export default plugin;
