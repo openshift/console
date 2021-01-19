@@ -45,10 +45,11 @@ const (
 	customLogoEndpoint             = "/custom-logo"
 	helmChartRepoProxyEndpoint     = "/api/helm/charts/"
 
-	grafanaProxyEndpoint     = "/api/grafana/"
-	kialiProxyEndpoint       = "/api/kiali/"
-	webhookEndpoint          = "/api/webhook/"
-	hypercloudServerEndpoint = "/api/hypercloud/"
+	grafanaProxyEndpoint          = "/api/grafana/"
+	kialiProxyEndpoint            = "/api/kiali/"
+	webhookEndpoint               = "/api/webhook/"
+	hypercloudServerEndpoint      = "/api/hypercloud/"
+	multiHypercloudServerEndpoint = "/api/multi-hypercloud/"
 )
 
 var (
@@ -139,10 +140,11 @@ type Server struct {
 	KeycloakClientId string
 
 	// Add proxy config
-	GrafanaProxyConfig          *hproxy.Config
-	KialiProxyConfig            *hproxy.Config
-	WebhookProxyConfig          *hproxy.Config
-	HypercloudServerProxyConfig *hproxy.Config
+	GrafanaProxyConfig               *hproxy.Config
+	KialiProxyConfig                 *hproxy.Config
+	WebhookProxyConfig               *hproxy.Config
+	HypercloudServerProxyConfig      *hproxy.Config
+	MultiHypercloudServerProxyConfig *hproxy.Config
 
 	McMode         bool
 	McModeFile     string
@@ -182,6 +184,10 @@ func (s *Server) webhookEnable() bool {
 
 func (s *Server) hypercloudServerEnable() bool {
 	return s.HypercloudServerProxyConfig != nil
+}
+
+func (s *Server) multiHypercloudServerEnable() bool {
+	return s.MultiHypercloudServerProxyConfig != nil
 }
 
 func (s *Server) HTTPHandler() http.Handler {
@@ -440,6 +446,18 @@ func (s *Server) HTTPHandler() http.Handler {
 			proxy.SingleJoiningSlash(s.BaseURL.Path, hypercloudServerProxyAPIPath),
 			http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				hypercloudServerProxy.ServeHTTP(w, r)
+			})),
+		)
+	}
+
+	// NOTE: multi-hypercloudServer proxy
+	if s.multiHypercloudServerEnable() {
+		multiHypercloudServerProxyAPIPath := multiHypercloudServerEndpoint
+		multiHypercloudServerProxy := hproxy.NewProxy(s.MultiHypercloudServerProxyConfig)
+		handle(multiHypercloudServerProxyAPIPath, http.StripPrefix(
+			proxy.SingleJoiningSlash(s.BaseURL.Path, multiHypercloudServerProxyAPIPath),
+			http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				multiHypercloudServerProxy.ServeHTTP(w, r)
 			})),
 		)
 	}
