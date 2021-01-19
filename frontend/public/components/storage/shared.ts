@@ -20,6 +20,8 @@ export const provisionerAccessModeMapping = {
   'manila.csi.openstack.org': ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'],
   'ebs.csi.aws.com': ['ReadWriteOnce'],
   'csi.ovirt.org': ['ReadWriteOnce'],
+  'cinder.csi.openstack.org': ['ReadWriteOnce'],
+  'pd.csi.storage.gke.io': ['ReadWriteOnce'],
 };
 export const initialAccessModes = ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'];
 export const accessModeRadios = [
