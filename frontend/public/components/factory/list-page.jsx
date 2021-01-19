@@ -242,7 +242,7 @@ export const ListPage = withFallback(props => {
   const ko = kindObj(kind);
   const { label, labelPlural, namespaced, plural } = ko;
   const title = props.title || labelPlural;
-  const usedNamespace = !namespace && namespaced ? _.get(match, 'params.ns') : namespace;
+  const usedNamespace = !namespace && namespaced ? _.get(match, 'params.ns') || 'default' : namespace;
 
   let href = usedNamespace ? `/k8s/ns/${usedNamespace || 'default'}/${plural}/~new` : `/k8s/cluster/${plural}/~new`;
   if (ko.crd) {
