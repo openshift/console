@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { RouteComponentProps } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { PageBody } from '@console/shared';
+import { PageBody, TechPreviewBadge } from '@console/shared';
 import { LoadingInline, PageHeading } from '@console/internal/components/utils';
 import NamespacedPage, {
   NamespacedPageVariants,
@@ -36,7 +36,10 @@ const EventSourcePage: React.FC<EventSourcePageProps> = ({ match, location }) =>
       <Helmet>
         <title>{t('knative-plugin~Event Source')}</title>
       </Helmet>
-      <PageHeading title={t('knative-plugin~Create Event Source')}>
+      <PageHeading
+        title={t('knative-plugin~Create Event Source')}
+        badge={isKameletSource ? <TechPreviewBadge /> : null}
+      >
         {t(
           'knative-plugin~Create an Event source to register interest in a class of events from a particular system. Configure using the YAML and form views.',
         )}
