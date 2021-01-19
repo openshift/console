@@ -51,7 +51,7 @@ const PipelinesListPage: React.FC<PipelinesListPageProps> = ({ match }) => {
       href: 'pipeline-runs',
       name: t('pipelines-plugin~Pipeline Runs'),
       component: PipelineRunsResourceList,
-      pageData: { showTitle, hideBadge },
+      pageData: { showTitle, hideBadge, canCreate },
     },
     {
       href: 'pipeline-resources',
