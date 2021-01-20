@@ -96,7 +96,7 @@ const ImageSignerDetails: React.FC<ImageSignerDetailsProps> = ({ obj: imagesigne
       <SectionHeading text="Image Signer Details" />
       <div className="row">
         <div className="col-lg-6">
-          <ResourceSummary resource={imagesigner} />
+          <ResourceSummary resource={imagesigner} showSpecOwner={true} />
         </div>
         <div className="col-lg-6">
           <ImageSignerDetailsList ds={imagesigner} />
