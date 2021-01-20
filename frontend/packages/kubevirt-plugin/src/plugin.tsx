@@ -7,7 +7,6 @@ import {
   ResourceNSNavItem,
   ResourceListPage,
   ResourceDetailsPage,
-  ModelFeatureFlag,
   YAMLTemplate,
   ModelDefinition,
   RoutePage,
@@ -54,7 +53,6 @@ type ConsumedExtensions =
   | ResourceNSNavItem
   | ResourceListPage
   | ResourceDetailsPage
-  | ModelFeatureFlag
   | YAMLTemplate
   | ModelDefinition
   | RoutePage
@@ -83,13 +81,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'ModelDefinition',
     properties: {
       models: _.values(models),
-    },
-  },
-  {
-    type: 'FeatureFlag/Model',
-    properties: {
-      model: models.VirtualMachineModel,
-      flag: FLAG_KUBEVIRT,
     },
   },
   {

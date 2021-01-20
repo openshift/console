@@ -1,4 +1,16 @@
 {
   "$schema": "../console-dynamic-plugin-sdk/dist/schema/console-extensions.json",
-  "data": []
+  "data": [
+    {
+      "type": "console.flag/model",
+      "properties": {
+        "model": {
+          "group": "kubevirt.io",
+          "version": "v1alpha3",
+          "kind": "VirtualMachine"
+        },
+        "flag": "KUBEVIRT"
+      }
+    }
+  ]
 }
