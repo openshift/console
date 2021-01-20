@@ -1,7 +1,8 @@
 import { FeatureFlag, ModelFeatureFlag } from '../extensions/feature-flags';
 import { ReduxReducer } from '../extensions/redux';
+import { ContextProvider } from '../extensions/context-providers';
 
-export type SupportedExtension = FeatureFlag | ModelFeatureFlag | ReduxReducer;
+export type SupportedExtension = FeatureFlag | ModelFeatureFlag | ReduxReducer | ContextProvider;
 
 /**
  * Schema of Console plugin's `console-extensions.json` file.
