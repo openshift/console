@@ -31,18 +31,18 @@ import { confirmModal } from './modals';
 import { k8sPatch } from '../module/k8s';
 
 const CancelAction = (kind, obj) => ({
-  // t('workload~Cancel rollout')
-  labelKey: 'workload~Cancel rollout',
+  // t('public~Cancel rollout')
+  labelKey: 'public~Cancel rollout',
   hidden: !_.includes(
     ['New', 'Pending', 'Running'],
     obj?.metadata?.annotations?.['openshift.io/deployment.phase'],
   ),
   callback: () =>
     confirmModal({
-      title: i18next.t('workload~Cancel rollout'),
-      message: i18next.t('workload~Are you sure you want to cancel this rollout?'),
-      btnText: i18next.t('workload~Yes, cancel'),
-      cancelText: i18next.t("workload~No, don't cancel"),
+      title: i18next.t('public~Cancel rollout'),
+      message: i18next.t('public~Are you sure you want to cancel this rollout?'),
+      btnText: i18next.t('public~Yes, cancel'),
+      cancelText: i18next.t("public~No, don't cancel"),
       executeFn: () =>
         k8sPatch(kind, obj, [
           {
@@ -101,7 +101,7 @@ export const ReplicationControllersDetailsPage = (props) => {
     return (
       <>
         <div className="co-m-pane__body">
-          <SectionHeading text={t('workload~ReplicationController details')} />
+          <SectionHeading text={t('public~ReplicationController details')} />
           <div className="row">
             <div className="col-md-6">
               <ResourceSummary
@@ -112,7 +112,7 @@ export const ReplicationControllersDetailsPage = (props) => {
               >
                 {revision && (
                   <>
-                    <dt>{t('workload~Deployment revision')}</dt>
+                    <dt>{t('public~Deployment revision')}</dt>
                     <dd>{revision}</dd>
                   </>
                 )}
@@ -121,7 +121,7 @@ export const ReplicationControllersDetailsPage = (props) => {
             <div className="col-md-6">
               {phase && (
                 <>
-                  <dt>{t('workload~Phase')}</dt>
+                  <dt>{t('public~Phase')}</dt>
                   <dd>
                     <Status status={phase} />
                   </dd>
@@ -132,11 +132,11 @@ export const ReplicationControllersDetailsPage = (props) => {
           </div>
         </div>
         <div className="co-m-pane__body">
-          <SectionHeading text={t('workload~Containers')} />
+          <SectionHeading text={t('public~Containers')} />
           <ContainerTable containers={replicationController.spec.template.spec.containers} />
         </div>
         <div className="co-m-pane__body">
-          <VolumesTable resource={replicationController} heading={t('workload~Volumes')} />
+          <VolumesTable resource={replicationController} heading={t('public~Volumes')} />
         </div>
       </>
     );
@@ -202,7 +202,7 @@ export const ReplicationControllersList = (props) => {
             to={`${resourcePath(kind, obj.metadata.name, obj.metadata.namespace)}/pods`}
             title="pods"
           >
-            {t('workload~{{statusReplicas}} of {{specReplicas}} pods', {
+            {t('public~{{statusReplicas}} of {{specReplicas}} pods', {
               statusReplicas: obj.status.replicas || 0,
               specReplicas: obj.spec.replicas,
             })}
@@ -226,38 +226,38 @@ export const ReplicationControllersList = (props) => {
 
   const ReplicationControllerTableHeader = () => [
     {
-      title: t('workload~Name'),
+      title: t('public~Name'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: t('workload~Namespace'),
+      title: t('public~Namespace'),
       sortField: 'metadata.namespace',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
       id: 'namespace',
     },
     {
-      title: t('workload~Status'),
+      title: t('public~Status'),
       sortFunc: 'numReplicas',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: t('workload~Phase'),
+      title: t('public~Phase'),
       sortField: 'metadata.annotations["openshift.io/deployment.phase"]',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
     },
     {
-      title: t('workload~Owner'),
+      title: t('public~Owner'),
       sortField: 'metadata.ownerReferences[0].name',
       transforms: [sortable],
       props: { className: tableColumnClasses[4] },
     },
     {
-      title: t('workload~Created'),
+      title: t('public~Created'),
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: tableColumnClasses[5] },
@@ -271,7 +271,7 @@ export const ReplicationControllersList = (props) => {
   return (
     <Table
       {...props}
-      aria-label={t('workload~ReplicationControllers')}
+      aria-label={t('public~ReplicationControllers')}
       Header={ReplicationControllerTableHeader}
       Row={ReplicationControllerTableRow}
       virtualize

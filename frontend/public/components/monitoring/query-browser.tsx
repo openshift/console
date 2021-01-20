@@ -131,7 +131,7 @@ const SpanControls: React.FC<SpanControlsProps> = React.memo(
           type="button"
           variant="tertiary"
         >
-          {t('monitoring~Reset zoom')}
+          {t('public~Reset zoom')}
         </Button>
       </>
     );

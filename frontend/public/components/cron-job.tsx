@@ -88,25 +88,25 @@ const CronJobDetails: React.FC<CronJobDetailsProps> = ({ obj: cronjob }) => {
       <div className="co-m-pane__body">
         <div className="row">
           <div className="col-md-6">
-            <SectionHeading text={t('workload~CronJob details')} />
+            <SectionHeading text={t('public~CronJob details')} />
             <ResourceSummary resource={cronjob}>
-              <DetailsItem label={t('workload~Schedule')} obj={cronjob} path="spec.schedule" />
+              <DetailsItem label={t('public~Schedule')} obj={cronjob} path="spec.schedule" />
               <DetailsItem
-                label={t('workload~Concurrency policy')}
+                label={t('public~Concurrency policy')}
                 obj={cronjob}
                 path="spec.concurrencyPolicy"
               />
               <DetailsItem
-                label={t('workload~Starting deadline seconds')}
+                label={t('public~Starting deadline seconds')}
                 obj={cronjob}
                 path="spec.startingDeadlineSeconds"
               >
                 {cronjob.spec.startingDeadlineSeconds
-                  ? t('workload~{{count}} second', { count: cronjob.spec.startingDeadlineSeconds })
-                  : t('workload~Not configured')}
+                  ? t('public~{{count}} second', { count: cronjob.spec.startingDeadlineSeconds })
+                  : t('public~Not configured')}
               </DetailsItem>
               <DetailsItem
-                label={t('workload~Last schedule time')}
+                label={t('public~Last schedule time')}
                 obj={cronjob}
                 path="status.lastScheduleTime"
               >
@@ -115,33 +115,33 @@ const CronJobDetails: React.FC<CronJobDetailsProps> = ({ obj: cronjob }) => {
             </ResourceSummary>
           </div>
           <div className="col-md-6">
-            <SectionHeading text={t('workload~Job details')} />
+            <SectionHeading text={t('public~Job details')} />
             <dl className="co-m-pane__details">
               <DetailsItem
-                label={t('workload~Desired completions')}
+                label={t('public~Desired completions')}
                 obj={cronjob}
                 path="spec.jobTemplate.spec.completions"
               />
               <DetailsItem
-                label={t('workload~Parallelism')}
+                label={t('public~Parallelism')}
                 obj={cronjob}
                 path="spec.jobTemplate.spec.parallelism"
               />
               <DetailsItem
-                label={t('workload~Active deadline seconds')}
+                label={t('public~Active deadline seconds')}
                 obj={cronjob}
                 path="spec.jobTemplate.spec.activeDeadlineSeconds"
               >
                 {job.spec.activeDeadlineSeconds
-                  ? t('workload~{{count}} second', { count: job.spec.activeDeadlineSeconds })
-                  : t('workload~Not configured')}
+                  ? t('public~{{count}} second', { count: job.spec.activeDeadlineSeconds })
+                  : t('public~Not configured')}
               </DetailsItem>
             </dl>
           </div>
         </div>
       </div>
       <div className="co-m-pane__body">
-        <SectionHeading text={t('workload~Containers')} />
+        <SectionHeading text={t('public~Containers')} />
         <ContainerTable containers={job.spec.template.spec.containers} />
       </div>
     </>
@@ -229,32 +229,32 @@ export const CronJobsList: React.FC = (props) => {
   const { t } = useTranslation();
   const CronJobTableHeader = () => [
     {
-      title: t('workload~Name'),
+      title: t('public~Name'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: t('workload~Namespace'),
+      title: t('public~Namespace'),
       sortField: 'metadata.namespace',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
       id: 'namespace',
     },
     {
-      title: t('workload~Schedule'),
+      title: t('public~Schedule'),
       sortField: 'spec.schedule',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: t('workload~Concurrency policy'),
+      title: t('public~Concurrency policy'),
       sortField: 'spec.concurrencyPolicy',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
     },
     {
-      title: t('workload~Starting deadline seconds'),
+      title: t('public~Starting deadline seconds'),
       sortField: 'spec.startingDeadlineSeconds',
       transforms: [sortable],
       props: { className: tableColumnClasses[4] },

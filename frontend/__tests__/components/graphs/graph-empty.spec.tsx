@@ -11,7 +11,7 @@ jest.mock('react-i18next', () => {
   };
 });
 
-const i18ns = 'monitoring';
+const i18ns = 'public';
 
 describe('<GraphEmpty />', () => {
   it('should render a loading state', () => {

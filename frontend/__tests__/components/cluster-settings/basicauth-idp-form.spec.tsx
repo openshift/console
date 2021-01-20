@@ -22,7 +22,7 @@ jest.mock('react-i18next', () => {
   };
 });
 
-const i18nNS = 'basicauth-idp-form';
+const i18nNS = 'public';
 
 export const controlButtonTest = (wrapper: ShallowWrapper, i18nNamespace) => {
   expect(wrapper.find(ButtonBar).exists()).toBe(true);

@@ -56,7 +56,7 @@ const StatefulSetDetails: React.FC<StatefulSetDetailsProps> = ({ obj: ss }) => {
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={t('workload~StatefulSet details')} />
+        <SectionHeading text={t('public~StatefulSet details')} />
         <PodRingSet key={ss.metadata.uid} obj={ss} path="/spec/replicas" />
         <div className="row">
           <div className="col-md-6">
@@ -65,11 +65,11 @@ const StatefulSetDetails: React.FC<StatefulSetDetailsProps> = ({ obj: ss }) => {
         </div>
       </div>
       <div className="co-m-pane__body">
-        <SectionHeading text={t('workload~Containers')} />
+        <SectionHeading text={t('public~Containers')} />
         <ContainerTable containers={ss.spec.template.spec.containers} />
       </div>
       <div className="co-m-pane__body">
-        <VolumesTable resource={ss} heading={t('workload~Volumes')} />
+        <VolumesTable resource={ss} heading={t('public~Volumes')} />
       </div>
     </>
   );
@@ -97,7 +97,7 @@ export const StatefulSetsList: React.FC = (props) => {
   return (
     <Table
       {...props}
-      aria-label={t('workload~StatefulSets')}
+      aria-label={t('public~StatefulSets')}
       Header={StatefulSetTableHeader}
       Row={StatefulSetTableRow}
       virtualize

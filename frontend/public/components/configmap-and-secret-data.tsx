@@ -10,7 +10,7 @@ export const MaskedData: React.FC<{}> = () => {
   const { t } = useTranslation();
   return (
     <>
-      <span className="sr-only">{t('workload~Value hidden')}</span>
+      <span className="sr-only">{t('public~Value hidden')}</span>
       <span aria-hidden="true">&bull;&bull;&bull;&bull;&bull;</span>
     </>
   );
@@ -47,12 +47,12 @@ export const ConfigMapBinaryData: React.FC<DownloadValueProps> = ({ data }) => {
             onClick={() => downloadBinary(k, value)}
             variant="link"
           >
-            {t('workload~Save file')}
+            {t('public~Save file')}
           </Button>
         </dd>,
       );
     });
-  return dl.length ? <dl>{dl}</dl> : <EmptyBox label={t('workload~binary data')} />;
+  return dl.length ? <dl>{dl}</dl> : <EmptyBox label={t('public~binary data')} />;
 };
 ConfigMapBinaryData.displayName = 'ConfigMapBinaryData';
 
@@ -80,7 +80,7 @@ ConfigMapData.displayName = 'ConfigMapData';
 export const SecretValue: React.FC<SecretValueProps> = ({ value, reveal, encoded = true }) => {
   const { t } = useTranslation();
   if (!value) {
-    return <span className="text-muted">{t('workload~No value')}</span>;
+    return <span className="text-muted">{t('public~No value')}</span>;
   }
 
   const decodedValue = encoded ? Base64.decode(value) : value;
@@ -92,7 +92,7 @@ SecretValue.displayName = 'SecretValue';
 export const SecretData: React.FC<SecretDataProps> = ({ data, title }) => {
   const [reveal, setReveal] = React.useState(false);
   const { t } = useTranslation();
-  const titleI18n = title || t('workload~Data');
+  const titleI18n = title || t('public~Data');
   const dl = [];
   Object.keys(data || {})
     .sort()
@@ -122,18 +122,18 @@ export const SecretData: React.FC<SecretDataProps> = ({ data, title }) => {
             {reveal ? (
               <>
                 <EyeSlashIcon className="co-icon-space-r" />
-                {t('workload~Hide values')}
+                {t('public~Hide values')}
               </>
             ) : (
               <>
                 <EyeIcon className="co-icon-space-r" />
-                {t('workload~Reveal values')}
+                {t('public~Reveal values')}
               </>
             )}
           </Button>
         ) : null}
       </SectionHeading>
-      {dl.length ? <dl className="secret-data">{dl}</dl> : <EmptyBox label={t('workload~Data')} />}
+      {dl.length ? <dl className="secret-data">{dl}</dl> : <EmptyBox label={t('public~Data')} />}
     </>
   );
 };

@@ -184,18 +184,18 @@ const AlertMsg: React.FC<AlertMsgProps> = ({ type }) => {
   switch (type) {
     case InitialReceivers.Default:
       return t(
-        'alert-manager-receiver-forms~Your default receiver will automatically receive all alerts from this cluster that are not caught by other receivers first.',
+        'public~Your default receiver will automatically receive all alerts from this cluster that are not caught by other receivers first.',
       );
     case InitialReceivers.Critical:
       return t(
-        'alert-manager-receiver-forms~The routing labels for this receiver are configured to capture critical alerts.  Finish setting up this receiver by selecting a "Receiver Type" to choose a destination for these alerts.  If this receiver is deleted, critical alerts will go to the default receiver instead.',
+        'public~The routing labels for this receiver are configured to capture critical alerts.  Finish setting up this receiver by selecting a "Receiver Type" to choose a destination for these alerts.  If this receiver is deleted, critical alerts will go to the default receiver instead.',
       );
     case InitialReceivers.Watchdog:
       return t(
-        'alert-manager-receiver-forms~The Watchdog alert fires constantly to confirm that your alerting stack is functioning correctly. This receiver is configured to prevent it from creating unnecessary notifications. You can edit this receiver if you plan to use the information that Watchdog provides, otherwise this receiver should remain in its current state with no set receiver type.',
+        'public~The Watchdog alert fires constantly to confirm that your alerting stack is functioning correctly. This receiver is configured to prevent it from creating unnecessary notifications. You can edit this receiver if you plan to use the information that Watchdog provides, otherwise this receiver should remain in its current state with no set receiver type.',
       );
     default:
-      return t('alert-manager-receiver-forms~unknown receiver type'); // should never get here
+      return t('public~unknown receiver type'); // should never get here
   }
 };
 
@@ -206,7 +206,7 @@ const ReceiverInfoTip: React.FC<ReceiverInfoTipProps> = ({ type }) => {
       isInline
       className="co-alert co-alert--scrollable"
       variant="info"
-      title={`${type} ${t('alert-manager-receiver-forms~Receiver')}`}
+      title={`${type} ${t('public~Receiver')}`}
     >
       <div className="co-pre-line">
         <AlertMsg type={type} />
@@ -384,27 +384,24 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
   };
   const { t } = useTranslation();
   const receiverTypeLabel = formValues.receiverType
-    ? t('alert-manager-receiver-forms~{{receiverTypeLabel}}', {
+    ? t('public~{{receiverTypeLabel}}', {
         receiverTypeLabel: receiverTypes[formValues.receiverType],
       })
     : null;
-  const defaultString = isDefaultReceiver ? t('alert-manager-receiver-forms~Default') : null;
+  const defaultString = isDefaultReceiver ? t('public~Default') : null;
 
   return (
     <div className="co-m-pane__body co-m-pane__form">
       <Helmet>
-        <title>{t('alert-manager-receiver-forms~{{titleVerb}} Receiver', { titleVerb })}</title>
+        <title>{t('public~{{titleVerb}} Receiver', { titleVerb })}</title>
       </Helmet>
       <form className="co-m-pane__body-group" onSubmit={save}>
         <h1 className="co-m-pane__heading">
-          {t(
-            'alert-manager-receiver-forms~{{titleVerb}} {{receiverTypeLabel}} {{defaultString}} Receiver',
-            {
-              titleVerb,
-              receiverTypeLabel,
-              defaultString,
-            },
-          )}
+          {t('public~{{titleVerb}} {{receiverTypeLabel}} {{defaultString}} Receiver', {
+            titleVerb,
+            receiverTypeLabel,
+            defaultString,
+          })}
         </h1>
         {isDefaultReceiver && <ReceiverInfoTip type={InitialReceivers.Default} />}
         {formValues.receiverName === 'Critical' && !formValues.receiverType && (
@@ -418,9 +415,7 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
             'has-error': receiverNameAlreadyExist,
           })}
         >
-          <label className="control-label co-required">
-            {t('alert-manager-receiver-forms~Receiver name')}
-          </label>
+          <label className="control-label co-required">{t('public~Receiver name')}</label>
           <input
             className="pf-c-form-control"
             type="text"
@@ -439,15 +434,13 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
           {receiverNameAlreadyExist && (
             <span className="help-block">
               <span data-test-id="receiver-name-already-exists-error">
-                {t('alert-manager-receiver-forms~A receiver with that name already exists.')}
+                {t('public~A receiver with that name already exists.')}
               </span>
             </span>
           )}
         </div>
         <div className="form-group co-m-pane__dropdown">
-          <label className="control-label co-required">
-            {t('alert-manager-receiver-forms~Receiver type')}
-          </label>
+          <label className="control-label co-required">{t('public~Receiver type')}</label>
           <Dropdown
             title="Select receiver type..."
             name="receiverType"
@@ -558,7 +551,7 @@ export const SendResolvedAlertsCheckbox = ({ formField, formValues, dispatchForm
           checked={formValues[formField]}
           aria-checked={formValues[formField]}
         />
-        {t('alert-manager-receiver-forms~Send resolved alerts to this receiver?')}
+        {t('public~Send resolved alerts to this receiver?')}
       </label>
     </div>
   );

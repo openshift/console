@@ -91,7 +91,7 @@ const APIResourceLink = connect<APIResourceLinkStateProps, {}, APIResourceLinkOw
 
 const EmptyAPIResourcesMsg: React.FC<{}> = () => {
   const { t } = useTranslation();
-  return <EmptyBox label={t('api-explorer~API resources')} />;
+  return <EmptyBox label={t('public~API resources')} />;
 };
 
 const Group: React.FC<{ value: string }> = ({ value }) => {
@@ -137,7 +137,7 @@ const APIResourceRows = ({ componentProps: { data } }) =>
       props: { className: tableClasses[2] },
     },
     {
-      title: model.namespaced ? i18next.t('api-explorer~true') : i18next.t('api-explorer~false'),
+      title: model.namespaced ? i18next.t('public~true') : i18next.t('public~false'),
       props: { className: tableClasses[3] },
     },
     {
@@ -176,7 +176,7 @@ const APIResourcesList = compose(
       result[group] = <Group value={group} />;
       return result;
     },
-    { [ALL]: t('api-explorer~All groups'), '': t('api-explorer~No group') },
+    { [ALL]: t('public~All groups'), '': t('public~No group') },
   );
 
   const groupSpacer = new Set<string>();
@@ -198,7 +198,7 @@ const APIResourcesList = compose(
       result[version] = version;
       return result;
     },
-    { [ALL]: t('api-explorer~All versions') },
+    { [ALL]: t('public~All versions') },
   );
 
   const versionSpacer = new Set<string>();
@@ -207,9 +207,9 @@ const APIResourcesList = compose(
   }
 
   const scopeOptions = {
-    [ALL]: t('api-explorer~All scopes'),
-    cluster: t('api-explorer~Cluster'),
-    namespace: t('api-explorer~Namespace'),
+    [ALL]: t('public~All scopes'),
+    cluster: t('public~Cluster'),
+    namespace: t('public~Namespace'),
   };
   const scopeSpacer = new Set<string>(['cluster']);
 
@@ -265,31 +265,31 @@ const APIResourcesList = compose(
 
   const APIResourceHeader = () => [
     {
-      title: t('api-explorer~Kind'),
+      title: t('public~Kind'),
       sortField: 'kind',
       transforms: [sortable],
       props: { className: tableClasses[0] },
     },
     {
-      title: t('api-explorer~Group'),
+      title: t('public~Group'),
       sortField: 'apiGroup',
       transforms: [sortable],
       props: { className: tableClasses[1] },
     },
     {
-      title: t('api-explorer~Version'),
+      title: t('public~Version'),
       sortField: 'apiVersion',
       transforms: [sortable],
       props: { className: tableClasses[2] },
     },
     {
-      title: t('api-explorer~Namespaced'),
+      title: t('public~Namespaced'),
       sortField: 'namespaced',
       transforms: [sortable],
       props: { className: tableClasses[3] },
     },
     {
-      title: t('api-explorer~Description'),
+      title: t('public~Description'),
       props: { className: tableClasses[4] },
     },
   ];
@@ -325,11 +325,7 @@ const APIResourcesList = compose(
           />
         </div>
         <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
-          <TextFilter
-            value={textFilter}
-            label={t('api-explorer~by kind')}
-            onChange={setTextFilter}
-          />
+          <TextFilter value={textFilter} label={t('public~by kind')} onChange={setTextFilter} />
         </div>
       </div>
       <div className="co-m-pane__body">
@@ -337,7 +333,7 @@ const APIResourcesList = compose(
           EmptyMsg={EmptyAPIResourcesMsg}
           Header={APIResourceHeader}
           Rows={APIResourceRows}
-          aria-label={t('api-explorer~API resources')}
+          aria-label={t('public~API resources')}
           data={sortedResources}
           loaded={!!models.size}
           virtualize={false}
@@ -353,10 +349,10 @@ export const APIExplorerPage: React.FC<{}> = () => {
   return (
     <>
       <Helmet>
-        <title>{t('api-explorer~Explore API Resources')}</title>
+        <title>{t('public~Explore API Resources')}</title>
       </Helmet>
       <div className="co-m-nav-title">
-        <h1 className="co-m-pane__heading">{t('api-explorer~Explore API Resources')}</h1>
+        <h1 className="co-m-pane__heading">{t('public~Explore API Resources')}</h1>
       </div>
       <APIResourcesList />
     </>
@@ -371,25 +367,23 @@ const APIResourceDetails: React.FC<APIResourceTabProps> = ({ customData: { kindO
   return (
     <div className="co-m-pane__body">
       <dl className="co-m-pane__details">
-        <dt>{t('api-explorer~Kind')}</dt>
+        <dt>{t('public~Kind')}</dt>
         <dd>{kind}</dd>
-        <dt>{t('api-explorer~API group')}</dt>
+        <dt>{t('public~API group')}</dt>
         <dd className="co-select-to-copy">{apiGroup || '-'}</dd>
-        <dt>{t('api-explorer~API version')}</dt>
+        <dt>{t('public~API version')}</dt>
         <dd>{apiVersion}</dd>
-        <dt>{t('api-explorer~Namespaced')}</dt>
+        <dt>{t('public~Namespaced')}</dt>
         <dd>{namespaced ? 'true' : 'false'}</dd>
-        <dt>{t('api-explorer~Verbs')}</dt>
+        <dt>{t('public~Verbs')}</dt>
         <dd>{verbs.join(', ')}</dd>
         {shortNames && (
           <>
             <dt>
               <Tooltip
-                content={t(
-                  'api-explorer~Short names can be used to match this resource on the CLI.',
-                )}
+                content={t('public~Short names can be used to match this resource on the CLI.')}
               >
-                <span>{t('api-explorer~Short names')}</span>
+                <span>{t('public~Short names')}</span>
               </Tooltip>
             </dt>
             <dd>{shortNames.join(', ')}</dd>
@@ -397,7 +391,7 @@ const APIResourceDetails: React.FC<APIResourceTabProps> = ({ customData: { kindO
         )}
         {description && (
           <>
-            <dt>{t('api-explorer~Description')}</dt>
+            <dt>{t('public~Description')}</dt>
             <dd className="co-break-word co-pre-wrap">
               <LinkifyExternal>{description}</LinkifyExternal>
             </dd>
@@ -466,7 +460,7 @@ const AccessTableRows = ({ componentProps: { data } }) =>
 
 const EmptyAccessReviewMsg: React.FC<{}> = () => {
   const { t } = useTranslation();
-  return <EmptyBox label={t('api-explorer~Subjects')} />;
+  return <EmptyBox label={t('public~Subjects')} />;
 };
 
 const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
@@ -508,7 +502,7 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
     return (
       <LoadError
         message={error.message}
-        label={t('api-explorer~Access review')}
+        label={t('public~Access review')}
         className="loading-box loading-box__errored"
       />
     );
@@ -544,12 +538,12 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
   const sortedData = _.orderBy(filteredData, ['type', 'name'], ['asc', 'asc']);
   const AccessTableHeader = () => [
     {
-      title: t('api-explorer~Subject'),
+      title: t('public~Subject'),
       sortField: 'name',
       transforms: [sortable],
     },
     {
-      title: t('api-explorer~Type'),
+      title: t('public~Type'),
       sortField: 'type',
       transforms: [sortable],
     },
@@ -582,13 +576,13 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
             items={verbOptions}
             onChange={(v: K8sVerb) => setVerb(v)}
             selectedKey={verb}
-            titlePrefix={t('api-explorer~Verb')}
+            titlePrefix={t('public~Verb')}
           />
         </div>
         <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
           <TextFilter
             defaultValue={filter}
-            label={t('api-explorer~by subject')}
+            label={t('public~by subject')}
             onChange={(val) => setFilter(val)}
           />
         </div>
@@ -601,19 +595,19 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
           onSelectAll={onSelectAll}
         >
           <CheckBox
-            title={t('api-explorer~User')}
+            title={t('public~User')}
             active={showUsers}
             number={users.length}
             toggle={toggleShowUsers}
           />
           <CheckBox
-            title={t('api-explorer~Group')}
+            title={t('public~Group')}
             active={showGroups}
             number={groups.length}
             toggle={toggleShowGroups}
           />
           <CheckBox
-            title={t('api-explorer~ServiceAccount')}
+            title={t('public~ServiceAccount')}
             active={showServiceAccounts}
             number={serviceAccounts.length}
             toggle={toggleShowServiceAccounts}
@@ -623,17 +617,17 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
           {namespaced &&
             namespace &&
             t(
-              'api-explorer~The following subjects can {{verb}} {{plural}} in namespace {{ namespace }}',
+              'public~The following subjects can {{verb}} {{plural}} in namespace {{ namespace }}',
               { verb, plural, namespace },
             )}
           {namespaced &&
             !namespace &&
-            t('api-explorer~The following subjects can {{verb}} {{plural}} in all namespaces', {
+            t('public~The following subjects can {{verb}} {{plural}} in all namespaces', {
               verb,
               plural,
             })}
           {!namespaced &&
-            t('api-explorer~The following subjects can {{verb}} {{plural}} at the cluster scope', {
+            t('public~The following subjects can {{verb}} {{plural}} at the cluster scope', {
               verb,
               plural,
             })}
@@ -642,7 +636,7 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
           EmptyMsg={EmptyAccessReviewMsg}
           Header={AccessTableHeader}
           Rows={AccessTableRows}
-          aria-label={t('api-explorer~API resources')}
+          aria-label={t('public~API resources')}
           data={sortedData}
           loaded
           virtualize={false}
@@ -683,7 +677,7 @@ const APIResourcePage_ = ({
     ) : (
       <div className="co-m-pane__body">
         <h1 className="co-m-pane__heading co-m-pane__heading--center">
-          {t('api-explorer~404: Not found')}
+          {t('public~404: Not found')}
         </h1>
       </div>
     );
@@ -691,11 +685,11 @@ const APIResourcePage_ = ({
 
   const breadcrumbs = [
     {
-      name: t('api-explorer~Explore'),
+      name: t('public~Explore'),
       path: '/api-explorer',
     },
     {
-      name: t('api-explorer~Resource details'),
+      name: t('public~Resource details'),
       path: match.url,
     },
   ];
@@ -703,12 +697,12 @@ const APIResourcePage_ = ({
   const pages = [
     {
       href: '',
-      name: t('api-explorer~Details'),
+      name: t('public~Details'),
       component: APIResourceDetails,
     },
     {
       href: 'schema',
-      name: t('api-explorer~Schema'),
+      name: t('public~Schema'),
       component: APIResourceSchema,
     },
   ];
@@ -716,7 +710,7 @@ const APIResourcePage_ = ({
   if (_.isEmpty(kindObj.verbs) || kindObj.verbs.includes('list')) {
     pages.push({
       href: 'instances',
-      name: t('api-explorer~Instances'),
+      name: t('public~Instances'),
       component: APIResourceInstances,
     });
   }
@@ -724,7 +718,7 @@ const APIResourcePage_ = ({
   if (flags[FLAGS.OPENSHIFT] && canCreateResourceAccessReview) {
     pages.push({
       href: 'access',
-      name: t('api-explorer~Access review'),
+      name: t('public~Access review'),
       component: APIResourceAccessReview,
     });
   }

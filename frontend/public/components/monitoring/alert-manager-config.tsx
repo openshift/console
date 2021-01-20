@@ -41,7 +41,7 @@ const AlertRouting = () => {
   const { t } = useTranslation();
   return (
     <div className="co-m-pane__body">
-      <SectionHeading text={t('alert-manager-config~Alert routing')}>
+      <SectionHeading text={t('public~Alert routing')}>
         <Button
           className="co-alert-manager-config__edit-alert-routing-btn"
           onClick={() => createAlertRoutingModal({ config, secret })}
@@ -53,21 +53,21 @@ const AlertRouting = () => {
       <div className="row">
         <div className="col-sm-6">
           <dl className="co-m-pane__details">
-            <dt>{t('alert-manager-config~Group by')}</dt>
+            <dt>{t('public~Group by')}</dt>
             <dd data-test-id="group_by_value">
               {_.isEmpty(groupBy) ? '-' : _.join(groupBy, ', ')}
             </dd>
-            <dt>{t('alert-manager-config~Group wait')}</dt>
+            <dt>{t('public~Group wait')}</dt>
             <dd data-test-id="group_wait_value">{_.get(config, ['route', 'group_wait'], '-')}</dd>
           </dl>
         </div>
         <div className="col-sm-6">
           <dl className="co-m-pane__details">
-            <dt>{t('alert-manager-config~Group interval')}</dt>
+            <dt>{t('public~Group interval')}</dt>
             <dd data-test-id="group_interval_value">
               {_.get(config, ['route', 'group_interval'], '-')}
             </dd>
-            <dt>{t('alert-manager-config~Repeat interval')}</dt>
+            <dt>{t('public~Repeat interval')}</dt>
             <dd data-test-id="repeat_interval_value">
               {_.get(config, ['route', 'repeat_interval'], '-')}
             </dd>
@@ -233,24 +233,22 @@ const ReceiversTable: React.FC<ReceiverTableProps> = (props) => {
 
   const routingLabelsByReceivers = _.isEmpty(routes) ? [] : getRoutingLabelsByReceivers(routes, {});
   const EmptyMsg = () => (
-    <MsgBox
-      title={t('alert-manager-config~No Receivers match filter {{filterValue}}', { filterValue })}
-    />
+    <MsgBox title={t('public~No Receivers match filter {{filterValue}}', { filterValue })} />
   );
   const ReceiverTableHeader = () => {
     return [
       {
-        title: t('alert-manager-config~Name'),
+        title: t('public~Name'),
         sortField: 'name',
         transforms: [sortable],
         props: { className: tableColumnClasses[0] },
       },
       {
-        title: t('alert-manager-config~Integration type'),
+        title: t('public~Integration type'),
         props: { className: tableColumnClasses[1] },
       },
       {
-        title: t('alert-manager-config~Routing labels'),
+        title: t('public~Routing labels'),
         props: { className: tableColumnClasses[2] },
       },
       {
@@ -286,7 +284,7 @@ const ReceiversTable: React.FC<ReceiverTableProps> = (props) => {
 
     const receiverMenuItems = (receiverName: string) => [
       {
-        label: t('alert-manager-config~Edit Receiver'),
+        label: t('public~Edit Receiver'),
         callback: () => {
           const targetUrl = canUseEditForm
             ? `/monitoring/alertmanagerconfig/receivers/${receiverName}/edit`
@@ -295,21 +293,18 @@ const ReceiversTable: React.FC<ReceiverTableProps> = (props) => {
         },
       },
       {
-        label: t('alert-manager-config~Delete Receiver'),
+        label: t('public~Delete Receiver'),
         isDisabled: !canDelete,
         tooltip: !canDelete
-          ? t(
-              'alert-manager-config~Cannot delete the default receiver, or a receiver which has a sub-route',
-            )
+          ? t('public~Cannot delete the default receiver, or a receiver which has a sub-route')
           : '',
         callback: () =>
           confirmModal({
-            title: t('alert-manager-config~Delete Receiver'),
-            message: t(
-              'alert-manager-config~Are you sure you want to delete receiver {{receiverName}}?',
-              { receiverName },
-            ),
-            btnText: t('alert-manager-config~Delete Receiver'),
+            title: t('public~Delete Receiver'),
+            message: t('public~Are you sure you want to delete receiver {{receiverName}}?', {
+              receiverName,
+            }),
+            btnText: t('public~Delete Receiver'),
             executeFn: () => deleteReceiver(receiverName),
           }),
       },
@@ -324,7 +319,7 @@ const ReceiversTable: React.FC<ReceiverTableProps> = (props) => {
           !integrationTypesLabel ? (
             <Link to={`/monitoring/alertmanagerconfig/receivers/${receiver.name}/edit`}>
               <PencilAltIcon className="co-icon-space-r pf-c-button-icon--plain" />
-              {t('alert-manager-config~Configure')}
+              {t('public~Configure')}
             </Link>
           ) : (
             integrationTypesLabel
@@ -345,7 +340,7 @@ const ReceiversTable: React.FC<ReceiverTableProps> = (props) => {
   return (
     <Table
       {...props}
-      aria-label={t('alert-manager-config~Receivers')}
+      aria-label={t('public~Receivers')}
       customData={{ routingLabelsByReceivers, defaultReceiverName }}
       EmptyMsg={EmptyMsg}
       Header={ReceiverTableHeader}
@@ -363,11 +358,11 @@ const ReceiversEmptyState: React.FC = () => {
   return (
     <EmptyState variant={EmptyStateVariant.full}>
       <Title headingLevel="h2" size="lg">
-        {t('alert-manager-config~No receivers found')}
+        {t('public~No receivers found')}
       </Title>
       <EmptyStateBody>
         {t(
-          'alert-manager-config~Create a receiver to get OpenShift alerts through other services such as email or a chat platform. The first receiver you create will become the default receiver and will automatically receive all alerts from this cluster. Subsequent receivers can have specific sets of alerts routed to them.',
+          'public~Create a receiver to get OpenShift alerts through other services such as email or a chat platform. The first receiver you create will become the default receiver and will automatically receive all alerts from this cluster. Subsequent receivers can have specific sets of alerts routed to them.',
         )}
       </EmptyStateBody>
     </EmptyState>
@@ -384,14 +379,14 @@ const Receivers = () => {
 
   const numOfIncompleteReceivers = numberOfIncompleteReceivers();
   const { t } = useTranslation();
-  const receiverString = t('alert-manager-config~receiver', { count: numOfIncompleteReceivers });
+  const receiverString = t('public~receiver', { count: numOfIncompleteReceivers });
   return (
     <div className="co-m-pane__body">
-      <SectionHeading text={t('alert-manager-config~Receivers')} />
+      <SectionHeading text={t('public~Receivers')} />
       <div className="co-m-pane__filter-row">
         <TextFilter
           defaultValue=""
-          label={t('alert-manager-config~Receivers by name')}
+          label={t('public~Receivers by name')}
           onChange={(val) => setReceiverFilter(val)}
         />
         <Link
@@ -399,7 +394,7 @@ const Receivers = () => {
           to="/monitoring/alertmanagerconfig/receivers/~new"
         >
           <Button variant="primary" data-test-id="create-receiver">
-            {t('alert-manager-config~Create Receiver')}
+            {t('public~Create Receiver')}
           </Button>
         </Link>
       </div>
@@ -408,11 +403,11 @@ const Receivers = () => {
           isInline
           className="co-alert co-alert--scrollable"
           variant="info"
-          title={t('alert-manager-config~Incomplete alert {{receiverString}}', { receiverString })}
+          title={t('public~Incomplete alert {{receiverString}}', { receiverString })}
         >
           <div className="co-pre-line">
             {t(
-              'alert-manager-config~Configure the {{receiverString}} to ensure that you learn about important issues with your cluster.',
+              'public~Configure the {{receiverString}} to ensure that you learn about important issues with your cluster.',
               { receiverString },
             )}
           </div>
@@ -441,7 +436,7 @@ const AlertmanagerConfiguration: React.FC<AlertmanagerConfigurationProps> = ({ o
         isInline
         className="co-alert co-alert--scrollable"
         variant="danger"
-        title={t('alert-manager-config~An error occurred')}
+        title={t('public~An error occurred')}
       >
         <div className="co-pre-line">{errorMsg}</div>
       </Alert>
@@ -462,7 +457,7 @@ export const AlertmanagerConfigWrapper: React.FC<AlertmanagerConfigWrapperProps>
     return (
       <>
         <Helmet>
-          <title>{t('alert-manager-config~Alerting')}</title>
+          <title>{t('public~Alerting')}</title>
         </Helmet>
         <StatusBox {...obj}>
           <AlertmanagerConfiguration {...props} obj={obj.data} />

@@ -103,29 +103,29 @@ const pollerTimeouts = {};
 
 const silenceAlert = (alert: Alert) => ({
   callback: () => history.replace(`${SilenceResource.plural}/~new?${labelsToParams(alert.labels)}`),
-  label: i18next.t('monitoring~Silence alert'),
+  label: i18next.t('public~Silence alert'),
 });
 
 const viewAlertRule = (alert: Alert) => ({
-  label: i18next.t('monitoring~View alerting rule'),
+  label: i18next.t('public~View alerting rule'),
   href: ruleURL(alert.rule),
 });
 
 const editSilence = (silence: Silence) => ({
   label:
     silenceState(silence) === SilenceStates.Expired
-      ? i18next.t('monitoring~Recreate silence')
-      : i18next.t('monitoring~Edit silence'),
+      ? i18next.t('public~Recreate silence')
+      : i18next.t('public~Edit silence'),
   href: `${SilenceResource.plural}/${silence.id}/edit`,
 });
 
 const cancelSilence = (silence: Silence) => ({
-  label: i18next.t('monitoring~Expire silence'),
+  label: i18next.t('public~Expire silence'),
   callback: () =>
     confirmModal({
-      title: i18next.t('monitoring~Expire silence'),
-      message: i18next.t('monitoring~Are you sure you want to expire this silence?'),
-      btnText: i18next.t('monitoring~Expire silence'),
+      title: i18next.t('public~Expire silence'),
+      message: i18next.t('public~Are you sure you want to expire this silence?'),
+      btnText: i18next.t('public~Expire silence'),
       executeFn: () =>
         coFetchJSON
           .delete(`${window.SERVER_FLAGS.alertManagerBaseURL}/api/v2/silence/${silence.id}`)
@@ -392,7 +392,7 @@ const Graph: React.FC<GraphProps> = ({
 
   const GraphLink = () =>
     query ? (
-      <Link to={queryBrowserURL(query, namespace)}>{t('monitoring~View in Metrics')}</Link>
+      <Link to={queryBrowserURL(query, namespace)}>{t('public~View in Metrics')}</Link>
     ) : null;
 
   return (
@@ -533,25 +533,25 @@ const HeaderAlertMessage: React.FC<{ alert: Alert; rule: Rule }> = ({ alert, rul
 
 const getSilenceTableHeader = (t) => [
   {
-    title: t('monitoring~Name'),
+    title: t('public~Name'),
     sortField: 'name',
     transforms: [sortable],
     props: { className: tableSilenceClasses[0] },
   },
   {
-    title: t('monitoring~Firing alerts'),
+    title: t('public~Firing alerts'),
     sortFunc: 'silenceFiringAlertsOrder',
     transforms: [sortable],
     props: { className: tableSilenceClasses[1] },
   },
   {
-    title: t('monitoring~State'),
+    title: t('public~State'),
     sortFunc: 'silenceStateOrder',
     transforms: [sortable],
     props: { className: tableSilenceClasses[2] },
   },
   {
-    title: t('monitoring~Creator'),
+    title: t('public~Creator'),
     sortField: 'createdBy',
     transforms: [sortable],
     props: { className: tableSilenceClasses[3] },
@@ -606,10 +606,10 @@ export const AlertsDetailsPage = withFallback(
             <BreadCrumbs
               breadcrumbs={[
                 {
-                  name: t('monitoring~Alerts'),
+                  name: t('public~Alerts'),
                   path: namespace ? `/dev-monitoring/ns/${namespace}/alerts` : '/monitoring/alerts',
                 },
-                { name: t('monitoring~Alert details'), path: undefined },
+                { name: t('public~Alert details'), path: undefined },
               ]}
             />
             <h1 className="co-m-pane__heading">
@@ -631,7 +631,7 @@ export const AlertsDetailsPage = withFallback(
           </div>
           <div className="co-m-pane__body">
             <ToggleGraph />
-            <SectionHeading text={t('monitoring~Alert details')} />
+            <SectionHeading text={t('public~Alert details')} />
             <div className="co-m-pane__body-group">
               <div className="row">
                 <div className="col-sm-12">
@@ -646,16 +646,16 @@ export const AlertsDetailsPage = withFallback(
               <div className="row">
                 <div className="col-sm-6">
                   <dl className="co-m-pane__details">
-                    <dt>{t('monitoring~Name')}</dt>
+                    <dt>{t('public~Name')}</dt>
                     <dd>{labels?.alertname}</dd>
                     <dt>
-                      <PopoverField label={t('monitoring~Severity')} body={severityHelp} />
+                      <PopoverField label={t('public~Severity')} body={severityHelp} />
                     </dt>
                     <dd>
                       <Severity severity={labels?.severity} />
                     </dd>
                     {alert?.annotations?.description && (
-                      <Annotation title={t('monitoring~Description')}>
+                      <Annotation title={t('public~Description')}>
                         <AlertMessage
                           alertText={alert.annotations.description}
                           labels={labels}
@@ -663,11 +663,11 @@ export const AlertsDetailsPage = withFallback(
                         />
                       </Annotation>
                     )}
-                    <Annotation title={t('monitoring~Summary')}>
+                    <Annotation title={t('public~Summary')}>
                       {alert?.annotations?.summary}
                     </Annotation>
                     {alert?.annotations?.message && (
-                      <Annotation title={t('monitoring~Message')}>
+                      <Annotation title={t('public~Message')}>
                         <AlertMessage
                           alertText={alert.annotations.message}
                           labels={labels}
@@ -680,11 +680,11 @@ export const AlertsDetailsPage = withFallback(
                 <div className="col-sm-6">
                   <dl className="co-m-pane__details">
                     <dt>
-                      <PopoverField label={t('monitoring~Source')} body={sourceHelp} />
+                      <PopoverField label={t('public~Source')} body={sourceHelp} />
                     </dt>
                     <dd>{alert && _.startCase(alertSource(alert))}</dd>
                     <dt>
-                      <PopoverField label={t('monitoring~State')} body={alertStateHelp} />
+                      <PopoverField label={t('public~State')} body={alertStateHelp} />
                     </dt>
                     <dd>
                       <AlertState state={state} />
@@ -696,7 +696,7 @@ export const AlertsDetailsPage = withFallback(
               <div className="row">
                 <div className="col-xs-12">
                   <dl className="co-m-pane__details" data-test="label-list">
-                    <dt>{t('monitoring~Labels')}</dt>
+                    <dt>{t('public~Labels')}</dt>
                     <dd>
                       {_.isEmpty(labels) ? (
                         <div className="text-muted">No labels</div>
@@ -714,7 +714,7 @@ export const AlertsDetailsPage = withFallback(
               <div className="row">
                 <div className="col-xs-12">
                   <dl className="co-m-pane__details">
-                    <dt>{t('monitoring~Alerting rule')}</dt>
+                    <dt>{t('public~Alerting rule')}</dt>
                     <dd>
                       <div className="co-resource-item">
                         <MonitoringResourceIcon resource={RuleResource} />
@@ -835,12 +835,12 @@ export const AlertRulesDetailsPage = withFallback(
             <BreadCrumbs
               breadcrumbs={[
                 {
-                  name: namespace ? t('monitoring~Alerts') : t('monitoring~Alerting rules'),
+                  name: namespace ? t('public~Alerts') : t('public~Alerting rules'),
                   path: namespace
                     ? `/dev-monitoring/ns/${namespace}/alerts`
                     : '/monitoring/alertrules',
                 },
-                { name: t('monitoring~Alerting rule details'), path: undefined },
+                { name: t('public~Alerting rule details'), path: undefined },
               ]}
             />
             <h1 className="co-m-pane__heading">
@@ -856,40 +856,40 @@ export const AlertRulesDetailsPage = withFallback(
           </div>
           <div className="co-m-pane__body">
             <div className="monitoring-heading">
-              <SectionHeading text={t('monitoring~Alerting rule details')} />
+              <SectionHeading text={t('public~Alerting rule details')} />
             </div>
             <div className="co-m-pane__body-group">
               <div className="row">
                 <div className="col-sm-6">
                   <dl className="co-m-pane__details">
-                    <dt>{t('monitoring~Name')}</dt>
+                    <dt>{t('public~Name')}</dt>
                     <dd>{name}</dd>
                     <dt>
-                      <PopoverField label={t('monitoring~Severity')} body={severityHelp} />
+                      <PopoverField label={t('public~Severity')} body={severityHelp} />
                     </dt>
                     <dd>
                       <Severity severity={severity} />
                     </dd>
-                    <Annotation title={t('monitoring~Description')}>
+                    <Annotation title={t('public~Description')}>
                       {annotations?.description}
                     </Annotation>
-                    <Annotation title={t('monitoring~Summary')}>{annotations?.summary}</Annotation>
-                    <Annotation title={t('monitoring~Message')}>{annotations?.message}</Annotation>
+                    <Annotation title={t('public~Summary')}>{annotations?.summary}</Annotation>
+                    <Annotation title={t('public~Message')}>{annotations?.message}</Annotation>
                   </dl>
                 </div>
                 <div className="col-sm-6">
                   <dl className="co-m-pane__details">
                     <dt>
-                      <PopoverField label={t('monitoring~Source')} body={sourceHelp} />
+                      <PopoverField label={t('public~Source')} body={sourceHelp} />
                     </dt>
                     <dd>{rule && _.startCase(alertingRuleSource(rule))}</dd>
                     {_.isInteger(duration) && (
                       <>
-                        <dt>{t('monitoring~For')}</dt>
+                        <dt>{t('public~For')}</dt>
                         <dd>{duration === 0 ? '-' : formatPrometheusDuration(duration * 1000)}</dd>
                       </>
                     )}
-                    <dt>{t('monitoring~Expression')}</dt>
+                    <dt>{t('public~Expression')}</dt>
                     <dd>
                       <Link to={queryBrowserURL(query, namespace)}>
                         <pre className="co-pre-wrap monitoring-query">{query}</pre>
@@ -901,10 +901,10 @@ export const AlertRulesDetailsPage = withFallback(
               <div className="row">
                 <div className="col-xs-12">
                   <dl className="co-m-pane__details">
-                    <dt>{t('monitoring~Labels')}</dt>
+                    <dt>{t('public~Labels')}</dt>
                     <dd>
                       {_.isEmpty(labels) ? (
-                        <div className="text-muted">{t('monitoring~No labels')}</div>
+                        <div className="text-muted">{t('public~No labels')}</div>
                       ) : (
                         <div className={`co-text-${RuleResource.kind.toLowerCase()}`}>
                           {_.map(labels, (v, k) => (
@@ -921,7 +921,7 @@ export const AlertRulesDetailsPage = withFallback(
           <div className="co-m-pane__body">
             <div className="co-m-pane__body-group">
               <ToggleGraph />
-              <SectionHeading text={t('monitoring~Active alerts')} />
+              <SectionHeading text={t('public~Active alerts')} />
               <div className="row">
                 <div className="col-sm-12">
                   <Graph
@@ -935,7 +935,7 @@ export const AlertRulesDetailsPage = withFallback(
               <div className="row">
                 <div className="col-xs-12">
                   {_.isEmpty(alerts) ? (
-                    <div className="text-center">{t('monitoring~None found')}</div>
+                    <div className="text-center">{t('public~None found')}</div>
                   ) : (
                     <ActiveAlerts alerts={alerts} ruleID={rule?.id} namespace={namespace} />
                   )}
@@ -953,12 +953,12 @@ const SilencedAlertsList = ({ alerts }) => {
   const { t } = useTranslation();
 
   return _.isEmpty(alerts) ? (
-    <div className="text-center">{t('monitoring~None found')}</div>
+    <div className="text-center">{t('public~None found')}</div>
   ) : (
     <div className="co-m-table-grid co-m-table-grid--bordered">
       <div className="row co-m-table-grid__head">
-        <div className="col-xs-9">{t('monitoring~Name')}</div>
-        <div className="col-xs-3">{t('monitoring~Severity')}</div>
+        <div className="col-xs-9">{t('public~Name')}</div>
+        <div className="col-xs-3">{t('public~Severity')}</div>
       </div>
       <div className="co-m-table-grid__body">
         {_.sortBy(alerts, alertDescription).map((a, i) => (
@@ -1017,14 +1017,13 @@ const SilencesDetailsPage = withFallback(
             <BreadCrumbs
               breadcrumbs={[
                 {
-                  name:
-                    activePerspective === 'dev' ? t('monitoring~Alerts') : t('monitoring~Silences'),
+                  name: activePerspective === 'dev' ? t('public~Alerts') : t('public~Silences'),
                   path:
                     activePerspective === 'dev'
                       ? `/dev-monitoring/ns/${namespace}/alerts`
                       : '/monitoring/silences',
                 },
-                { name: t('monitoring~Silence details'), path: undefined },
+                { name: t('public~Silence details'), path: undefined },
               ]}
             />
             <h1 className="co-m-pane__heading">
@@ -1041,18 +1040,18 @@ const SilencesDetailsPage = withFallback(
             </h1>
           </div>
           <div className="co-m-pane__body">
-            <SectionHeading text={t('monitoring~Silence details')} />
+            <SectionHeading text={t('public~Silence details')} />
             <div className="co-m-pane__body-group">
               <div className="row">
                 <div className="col-sm-6">
                   <dl className="co-m-pane__details">
                     {name && (
                       <>
-                        <dt>{t('monitoring~Name')}</dt>
+                        <dt>{t('public~Name')}</dt>
                         <dd>{name}</dd>
                       </>
                     )}
-                    <dt>{t('monitoring~Matchers')}</dt>
+                    <dt>{t('public~Matchers')}</dt>
                     <dd data-test="label-list">
                       {_.isEmpty(matchers) ? (
                         <div className="text-muted">No matchers</div>
@@ -1060,11 +1059,11 @@ const SilencesDetailsPage = withFallback(
                         <SilenceMatchersList silence={silence} />
                       )}
                     </dd>
-                    <dt>{t('monitoring~State')}</dt>
+                    <dt>{t('public~State')}</dt>
                     <dd>
                       <SilenceState silence={silence} />
                     </dd>
-                    <dt>{t('monitoring~Last updated at')}</dt>
+                    <dt>{t('public~Last updated at')}</dt>
                     <dd>
                       <Timestamp timestamp={updatedAt} />
                     </dd>
@@ -1072,19 +1071,19 @@ const SilencesDetailsPage = withFallback(
                 </div>
                 <div className="col-sm-6">
                   <dl className="co-m-pane__details">
-                    <dt>{t('monitoring~Starts at')}</dt>
+                    <dt>{t('public~Starts at')}</dt>
                     <dd>
                       <Timestamp timestamp={startsAt} />
                     </dd>
-                    <dt>{t('monitoring~Ends at')}</dt>
+                    <dt>{t('public~Ends at')}</dt>
                     <dd>
                       <Timestamp timestamp={endsAt} />
                     </dd>
-                    <dt>{t('monitoring~Created by')}</dt>
+                    <dt>{t('public~Created by')}</dt>
                     <dd>{createdBy || '-'}</dd>
-                    <dt>{t('monitoring~Comment')}</dt>
+                    <dt>{t('public~Comment')}</dt>
                     <dd>{comment || '-'}</dd>
-                    <dt>{t('monitoring~Firing alerts')}</dt>
+                    <dt>{t('public~Firing alerts')}</dt>
                     <dd>
                       {alertsLoaded ? <SeverityCounts alerts={firingAlerts} /> : <LoadingInline />}
                     </dd>
@@ -1095,7 +1094,7 @@ const SilencesDetailsPage = withFallback(
           </div>
           <div className="co-m-pane__body">
             <div className="co-m-pane__body-group">
-              <SectionHeading text={t('monitoring~Firing alerts')} />
+              <SectionHeading text={t('public~Firing alerts')} />
               <div className="row">
                 <div className="col-xs-12">
                   {alertsLoaded ? <SilencedAlertsList alerts={firingAlerts} /> : <LoadingInline />}
@@ -1286,25 +1285,25 @@ const AlertsPage_: React.FC<Alerts> = ({ data, loaded, loadError }) => {
 
   const Header = () => [
     {
-      title: t('monitoring~Name'),
+      title: t('public~Name'),
       sortField: 'labels.alertname',
       transforms: [sortable],
       props: { className: tableAlertClasses[0] },
     },
     {
-      title: t('monitoring~Severity'),
+      title: t('public~Severity'),
       sortFunc: 'alertSeverityOrder',
       transforms: [sortable],
       props: { className: tableAlertClasses[1] },
     },
     {
-      title: t('monitoring~State'),
+      title: t('public~State'),
       sortFunc: 'alertStateOrder',
       transforms: [sortable],
       props: { className: tableAlertClasses[2] },
     },
     {
-      title: t('monitoring~Source'),
+      title: t('public~Source'),
       sortFunc: 'alertSource',
       transforms: [sortable],
       props: { className: tableAlertClasses[3] },
@@ -1319,7 +1318,7 @@ const AlertsPage_: React.FC<Alerts> = ({ data, loaded, loadError }) => {
     <MonitoringListPage
       data={data}
       Header={Header}
-      kindPlural={t('monitoring~Alerts')}
+      kindPlural={t('public~Alerts')}
       labelFilter="alerts"
       labelPath="labels"
       loaded={loaded}
@@ -1403,25 +1402,25 @@ const RulesPage_: React.FC<Rules> = ({ data, loaded, loadError }) => {
 
   const Header = () => [
     {
-      title: t('monitoring~Name'),
+      title: t('public~Name'),
       sortField: 'name',
       transforms: [sortable],
       props: { className: tableRuleClasses[0] },
     },
     {
-      title: t('monitoring~Severity'),
+      title: t('public~Severity'),
       sortFunc: 'alertSeverityOrder',
       transforms: [sortable],
       props: { className: tableRuleClasses[1] },
     },
     {
-      title: t('monitoring~Alert state'),
+      title: t('public~Alert state'),
       sortFunc: 'alertingRuleStateOrder',
       transforms: [sortable],
       props: { className: tableRuleClasses[2] },
     },
     {
-      title: t('monitoring~Source'),
+      title: t('public~Source'),
       sortFunc: 'alertingRuleSource',
       transforms: [sortable],
       props: { className: tableRuleClasses[3] },
@@ -1432,7 +1431,7 @@ const RulesPage_: React.FC<Rules> = ({ data, loaded, loadError }) => {
     <MonitoringListPage
       data={data}
       Header={Header}
-      kindPlural={t('monitoring~Alerting rules')}
+      kindPlural={t('public~Alerting rules')}
       labelFilter="alerts"
       labelPath="labels"
       loaded={loaded}
@@ -1465,7 +1464,7 @@ const CreateButton = () => {
 
   return (
     <Link className="co-m-primary-action" to="/monitoring/silences/~new">
-      <Button variant="primary">{t('monitoring~Create silence')}</Button>
+      <Button variant="primary">{t('public~Create silence')}</Button>
     </Link>
   );
 };
@@ -1481,7 +1480,7 @@ const SilencesPage_: React.FC<Silences> = ({ data, loaded, loadError }) => {
       data={data}
       Header={Header}
       hideLabelFilter
-      kindPlural={t('monitoring~Silences')}
+      kindPlural={t('public~Silences')}
       loaded={loaded}
       loadError={loadError}
       nameFilterID="silence-name"
@@ -1557,7 +1556,7 @@ const AlertingPage: React.FC<AlertingPageProps> = ({ match }) => {
         <h1 className="co-m-pane__heading">
           <div className="co-m-pane__name co-resource-item">
             <span className="co-resource-item__resource-name" data-test-id="resource-title">
-              {isAlertmanager ? 'Alertmanager' : t('monitoring~Alerting')}
+              {isAlertmanager ? 'Alertmanager' : t('public~Alerting')}
             </span>
             <HeaderAlertmanagerLink path="/#/alerts" />
           </div>
@@ -1567,13 +1566,13 @@ const AlertingPage: React.FC<AlertingPageProps> = ({ match }) => {
         {(url === alertsPath || url === rulesPath || url === silencesPath) && (
           <>
             <Tab active={url === alertsPath}>
-              <Link to={alertsPath}>{t('monitoring~Alerts')}</Link>
+              <Link to={alertsPath}>{t('public~Alerts')}</Link>
             </Tab>
             <Tab active={url === silencesPath}>
-              <Link to={silencesPath}>{t('monitoring~Silences')}</Link>
+              <Link to={silencesPath}>{t('public~Silences')}</Link>
             </Tab>
             <Tab active={url === rulesPath}>
-              <Link to={rulesPath}>{t('monitoring~Alerting rules')}</Link>
+              <Link to={rulesPath}>{t('public~Alerting rules')}</Link>
             </Tab>
           </>
         )}

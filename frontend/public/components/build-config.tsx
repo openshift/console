@@ -35,8 +35,8 @@ import { BuildConfigModel } from '../models';
 const BuildConfigsReference: K8sResourceKindReference = 'BuildConfig';
 
 const startBuildAction: KebabAction = (kind, buildConfig) => ({
-  // t('build-config~Start build')
-  labelKey: 'build-config~Start build',
+  // t('public~Start build')
+  labelKey: 'public~Start build',
   callback: () =>
     startBuild(buildConfig)
       .then((build) => {
@@ -69,7 +69,7 @@ export const BuildConfigsDetails: React.SFC<BuildConfigsDetailsProps> = ({ obj: 
     <>
       <div className="co-m-pane__body">
         {hasPipeline && <PipelineBuildStrategyAlert obj={buildConfig} />}
-        <SectionHeading text={t('build-config~Build Config details')} />
+        <SectionHeading text={t('public~Build Config details')} />
         <div className="row">
           <div className="col-sm-6">
             <ResourceSummary resource={buildConfig} />
@@ -160,26 +160,26 @@ export const BuildConfigsList: React.SFC = (props) => {
   const BuildConfigsTableHeader = () => {
     return [
       {
-        title: t('build-config~Name'),
+        title: t('public~Name'),
         sortField: 'metadata.name',
         transforms: [sortable],
         props: { className: tableColumnClasses[0] },
       },
       {
-        title: t('build-config~Namespace'),
+        title: t('public~Namespace'),
         sortField: 'metadata.namespace',
         transforms: [sortable],
         props: { className: tableColumnClasses[1] },
         id: 'namespace',
       },
       {
-        title: t('build-config~Labels'),
+        title: t('public~Labels'),
         sortField: 'metadata.labels',
         transforms: [sortable],
         props: { className: tableColumnClasses[2] },
       },
       {
-        title: t('build-config~Created'),
+        title: t('public~Created'),
         sortField: 'metadata.creationTimestamp',
         transforms: [sortable],
         props: { className: tableColumnClasses[3] },
@@ -195,7 +195,7 @@ export const BuildConfigsList: React.SFC = (props) => {
   return (
     <Table
       {...props}
-      aria-label={t('build-config~Build Configs')}
+      aria-label={t('public~Build Configs')}
       Header={BuildConfigsTableHeader}
       Row={BuildConfigsTableRow}
       virtualize
@@ -209,7 +209,7 @@ export const BuildConfigsPage: React.FC<BuildConfigsPageProps> = (props) => {
   const { t } = useTranslation();
   const filters = [
     {
-      filterGroupName: t('build-config~Build strategy'),
+      filterGroupName: t('public~Build strategy'),
       type: 'build-strategy',
       reducer: buildStrategy,
       items: _.map(allStrategies, (strategy) => ({
@@ -221,7 +221,7 @@ export const BuildConfigsPage: React.FC<BuildConfigsPageProps> = (props) => {
   return (
     <ListPage
       {...props}
-      title={t('build-config~Build Configs')}
+      title={t('public~Build Configs')}
       kind={BuildConfigsReference}
       ListComponent={BuildConfigsList}
       canCreate={true}

@@ -27,7 +27,7 @@ export const addSecretToWorkload = (kindObj, secret) => {
 
   return {
     callback: () => configureAddSecretToWorkloadModal({ secretName, namespace, blocking: true }),
-    label: i18next.t('workload~Add Secret to workload'),
+    label: i18next.t('public~Add Secret to workload'),
   };
 };
 
@@ -38,8 +38,8 @@ const menuActions = [
   Kebab.factory.ModifyAnnotations,
   (kind, obj) => {
     return {
-      // t('workload~Edit Secret')
-      labelKey: 'workload~Edit Secret',
+      // t('public~Edit Secret')
+      labelKey: 'public~Edit Secret',
       href: `${resourceObjPath(obj, kind.kind)}/edit`,
       accessReview: {
         group: kind.apiGroup,
@@ -105,7 +105,7 @@ const SecretDetails = ({ obj: secret }) => {
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={t('workload~Secret details')} />
+        <SectionHeading text={t('public~Secret details')} />
         <div className="row">
           <div className="col-md-6">
             <ResourceSummary resource={secret} />
@@ -123,32 +123,32 @@ const SecretsList = (props) => {
   const { t } = useTranslation();
   const SecretTableHeader = () => [
     {
-      title: t('workload~Name'),
+      title: t('public~Name'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: t('workload~Namespace'),
+      title: t('public~Namespace'),
       sortField: 'metadata.namespace',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
       id: 'namespace',
     },
     {
-      title: t('workload~Type'),
+      title: t('public~Type'),
       sortField: 'type',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: t('workload~Size'),
+      title: t('public~Size'),
       sortFunc: 'dataSize',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
     },
     {
-      title: t('workload~Created'),
+      title: t('public~Created'),
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: tableColumnClasses[4] },
@@ -220,11 +220,11 @@ const filters = [
 const SecretsPage = (props) => {
   const { t } = useTranslation();
   const createItems = {
-    generic: t('workload~Key/value secret'),
-    image: t('workload~Image pull secret'),
-    source: t('workload~Source secret'),
-    webhook: t('workload~Webhook secret'),
-    yaml: t('workload~From YAML'),
+    generic: t('public~Key/value secret'),
+    image: t('public~Image pull secret'),
+    source: t('public~Source secret'),
+    webhook: t('public~Webhook secret'),
+    yaml: t('public~From YAML'),
   };
 
   const createProps = {
@@ -238,7 +238,7 @@ const SecretsPage = (props) => {
       ListComponent={SecretsList}
       canCreate={true}
       rowFilters={filters}
-      createButtonText={t('workload~Create')}
+      createButtonText={t('public~Create')}
       createProps={createProps}
       {...props}
     />

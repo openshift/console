@@ -22,15 +22,15 @@ const tokenDuration = (seconds: number) =>
 const IdentityProviders: React.FC<IdentityProvidersProps> = ({ identityProviders }) => {
   const { t } = useTranslation();
   return _.isEmpty(identityProviders) ? (
-    <EmptyBox label={t('oauth~Identity providers')} />
+    <EmptyBox label={t('public~Identity providers')} />
   ) : (
     <div className="co-table-container">
       <table className="table">
         <thead>
           <tr>
-            <th>{t('oauth~Name')}</th>
-            <th>{t('oauth~Type')}</th>
-            <th>{t('oauth~Mapping method')}</th>
+            <th>{t('public~Name')}</th>
+            <th>{t('public~Type')}</th>
+            <th>{t('public~Mapping method')}</th>
           </tr>
         </thead>
         <tbody>
@@ -47,15 +47,15 @@ const IdentityProviders: React.FC<IdentityProvidersProps> = ({ identityProviders
   );
 };
 
-// t('oauth~Basic Authentication')
-// t('oauth~GitHub')
-// t('oauth~GitLab')
-// t('oauth~Google')
-// t('oauth~HTPasswd')
-// t('oauth~Keystone')
-// t('oauth~LDAP')
-// t('oauth~OpenID Connect')
-// t('oauth~Request Header')
+// t('public~Basic Authentication')
+// t('public~GitHub')
+// t('public~GitLab')
+// t('public~Google')
+// t('public~HTPasswd')
+// t('public~Keystone')
+// t('public~LDAP')
+// t('public~OpenID Connect')
+// t('public~Request Header')
 export const addIDPItems = Object.freeze({
   basicauth: 'Basic Authentication',
   github: 'GitHub',
@@ -74,7 +74,7 @@ const OAuthDetails: React.FC<OAuthDetailsProps> = ({ obj }: { obj: OAuthKind }) 
   const { t } = useTranslation();
 
   const IDPDropdownItems = _.keys(addIDPItems).map((idp) => {
-    const label = t('oauth~{{label}}', { label: addIDPItems[idp] });
+    const label = t('public~{{label}}', { label: addIDPItems[idp] });
     return (
       <DropdownItem
         key={`idp-${addIDPItems[idp]}`}
@@ -91,13 +91,13 @@ const OAuthDetails: React.FC<OAuthDetailsProps> = ({ obj }: { obj: OAuthKind }) 
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={t('oauth~{{resource}} details', { resource: OAuthModel.label })} />
+        <SectionHeading text={t('public~{{resource}} details', { resource: OAuthModel.label })} />
         <div className="row">
           <div className="col-md-6">
             <ResourceSummary resource={obj}>
               {tokenConfig && (
                 <>
-                  <dt>{t('oauth~Access token max age')}</dt>
+                  <dt>{t('public~Access token max age')}</dt>
                   <dd>{tokenDuration(tokenConfig.accessTokenMaxAgeSeconds)}</dd>
                 </>
               )}
@@ -106,9 +106,9 @@ const OAuthDetails: React.FC<OAuthDetailsProps> = ({ obj }: { obj: OAuthKind }) 
         </div>
       </div>
       <div className="co-m-pane__body">
-        <SectionHeading text={t('oauth~Identity providers')} />
+        <SectionHeading text={t('public~Identity providers')} />
         <p className="co-m-pane__explanation co-m-pane__explanation--alt">
-          {t('oauth~Identity providers determine how users log into the cluster.')}
+          {t('public~Identity providers determine how users log into the cluster.')}
         </p>
         <Dropdown
           className="co-m-pane__dropdown"

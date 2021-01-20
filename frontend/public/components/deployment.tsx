@@ -40,8 +40,8 @@ const deploymentsReference: K8sResourceKindReference = 'Deployment';
 const { ModifyCount, AddStorage, common } = Kebab.factory;
 
 const UpdateStrategy: KebabAction = (kind: K8sKind, deployment: DeploymentKind) => ({
-  // t('workload~Edit update strategy')
-  labelKey: 'workload~Edit update strategy',
+  // t('public~Edit update strategy')
+  labelKey: 'public~Edit update strategy',
   callback: () => configureUpdateStrategyModal({ deployment }),
   accessReview: {
     group: kind.apiGroup,
@@ -53,9 +53,9 @@ const UpdateStrategy: KebabAction = (kind: K8sKind, deployment: DeploymentKind) 
 });
 
 const PauseAction: KebabAction = (kind: K8sKind, obj: DeploymentKind) => ({
-  // t('workload~Resume rollouts')
-  // t('workload~Pause rollouts')
-  labelKey: obj.spec.paused ? 'workload~Resume rollouts' : 'workload~Pause rollouts',
+  // t('public~Resume rollouts')
+  // t('public~Pause rollouts')
+  labelKey: obj.spec.paused ? 'public~Resume rollouts' : 'public~Pause rollouts',
   callback: () => togglePaused(kind, obj).catch((err) => errorModal({ error: err.message })),
   accessReview: {
     group: kind.apiGroup,
@@ -84,29 +84,25 @@ export const DeploymentDetailsList: React.FC<DeploymentDetailsListProps> = ({ de
   const { t } = useTranslation();
   return (
     <dl className="co-m-pane__details">
-      <DetailsItem
-        label={t('workload~Update strategy')}
-        obj={deployment}
-        path="spec.strategy.type"
-      />
+      <DetailsItem label={t('public~Update strategy')} obj={deployment} path="spec.strategy.type" />
       {deployment.spec.strategy.type === 'RollingUpdate' && (
         <>
           <DetailsItem
-            label={t('workload~Max unavailable')}
+            label={t('public~Max unavailable')}
             obj={deployment}
             path="spec.strategy.rollingUpdate.maxUnavailable"
           >
-            {t('workload~{{maxUnavailable}} of {{count}} pod', {
+            {t('public~{{maxUnavailable}} of {{count}} pod', {
               maxUnavailable: deployment.spec.strategy.rollingUpdate.maxUnavailable ?? 1,
               count: deployment.spec.replicas,
             })}
           </DetailsItem>
           <DetailsItem
-            label={t('workload~Max surge')}
+            label={t('public~Max surge')}
             obj={deployment}
             path="spec.strategy.rollingUpdate.maxSurge"
           >
-            {t('workload~{{maxSurge}} greater than {{count}} pod', {
+            {t('public~{{maxSurge}} greater than {{count}} pod', {
               maxSurge: deployment.spec.strategy.rollingUpdate.maxSurge ?? 1,
               count: deployment.spec.replicas,
             })}
@@ -114,22 +110,22 @@ export const DeploymentDetailsList: React.FC<DeploymentDetailsListProps> = ({ de
         </>
       )}
       <DetailsItem
-        label={t('workload~Progress deadline seconds')}
+        label={t('public~Progress deadline seconds')}
         obj={deployment}
         path="spec.progressDeadlineSeconds"
       >
         {deployment.spec.progressDeadlineSeconds
-          ? t('workload~{{count}} second', { count: deployment.spec.progressDeadlineSeconds })
-          : t('workload~Not configured')}
+          ? t('public~{{count}} second', { count: deployment.spec.progressDeadlineSeconds })
+          : t('public~Not configured')}
       </DetailsItem>
       <DetailsItem
-        label={t('workload~Min ready seconds')}
+        label={t('public~Min ready seconds')}
         obj={deployment}
         path="spec.minReadySeconds"
       >
         {deployment.spec.minReadySeconds
-          ? t('workload~{{count}} second', { count: deployment.spec.minReadySeconds })
-          : t('workload~Not configured')}
+          ? t('public~{{count}} second', { count: deployment.spec.minReadySeconds })
+          : t('public~Not configured')}
       </DetailsItem>
     </dl>
   );
@@ -141,7 +137,7 @@ const DeploymentDetails: React.FC<DeploymentDetailsProps> = ({ obj: deployment }
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={t('workload~Deployment details')} />
+        <SectionHeading text={t('public~Deployment details')} />
         {deployment.spec.paused && <WorkloadPausedAlert obj={deployment} model={DeploymentModel} />}
         <PodRingSet key={deployment.metadata.uid} obj={deployment} path="/spec/replicas" />
         <div className="co-m-pane__body-group">
@@ -153,7 +149,7 @@ const DeploymentDetails: React.FC<DeploymentDetailsProps> = ({ obj: deployment }
                 showNodeSelector
                 showTolerations
               >
-                <dt>{t('workload~Status')}</dt>
+                <dt>{t('public~Status')}</dt>
                 <dd>
                   {deployment.status.availableReplicas === deployment.status.updatedReplicas &&
                   deployment.spec.replicas === deployment.status.availableReplicas ? (
@@ -171,14 +167,14 @@ const DeploymentDetails: React.FC<DeploymentDetailsProps> = ({ obj: deployment }
         </div>
       </div>
       <div className="co-m-pane__body">
-        <SectionHeading text={t('workload~Containers')} />
+        <SectionHeading text={t('public~Containers')} />
         <ContainerTable containers={deployment.spec.template.spec.containers} />
       </div>
       <div className="co-m-pane__body">
-        <VolumesTable resource={deployment} heading={t('workload~Volumes')} />
+        <VolumesTable resource={deployment} heading={t('public~Volumes')} />
       </div>
       <div className="co-m-pane__body">
-        <SectionHeading text={t('workload~Conditions')} />
+        <SectionHeading text={t('public~Conditions')} />
         <Conditions conditions={deployment.status.conditions} />
       </div>
     </>
@@ -283,7 +279,7 @@ export const DeploymentsList: React.FC = (props) => {
   return (
     <Table
       {...props}
-      aria-label={t('workload~Deployments')}
+      aria-label={t('public~Deployments')}
       Header={DeploymentTableHeader}
       Row={DeploymentTableRow}
       virtualize

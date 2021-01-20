@@ -38,7 +38,7 @@ export const ResourceQuotaCard = withDashboardResources(
     return (
       <DashboardCard data-test-id="resource-quotas-card">
         <DashboardCardHeader>
-          <DashboardCardTitle>{t('namespace~Resource quotas')}</DashboardCardTitle>
+          <DashboardCardTitle>{t('public~Resource quotas')}</DashboardCardTitle>
         </DashboardCardHeader>
         <DashboardCardBody>
           <ResourceQuotaBody error={!!error} isLoading={!loaded}>

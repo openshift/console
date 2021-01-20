@@ -60,26 +60,26 @@ const ConfigMaps = (props) => {
   const { t } = useTranslation();
   const ConfigMapTableHeader = () => [
     {
-      title: t('workload~Name'),
+      title: t('public~Name'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: t('workload~Namespace'),
+      title: t('public~Namespace'),
       sortField: 'metadata.namespace',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
       id: 'namespace',
     },
     {
-      title: t('workload~Size'),
+      title: t('public~Size'),
       sortFunc: 'dataSize',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: t('workload~Created'),
+      title: t('public~Created'),
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
@@ -111,7 +111,7 @@ const ConfigMapsDetailsPage = (props) => {
     return (
       <>
         <div className="co-m-pane__body">
-          <SectionHeading text={t('workload~ConfigMap details')} />
+          <SectionHeading text={t('public~ConfigMap details')} />
           <div className="row">
             <div className="col-md-6">
               <ResourceSummary resource={configMap} />
@@ -119,11 +119,11 @@ const ConfigMapsDetailsPage = (props) => {
           </div>
         </div>
         <div className="co-m-pane__body">
-          <SectionHeading text={t('workload~Data')} />
+          <SectionHeading text={t('public~Data')} />
           <ConfigMapData data={configMap.data} label="Data" />
         </div>
         <div className="co-m-pane__body">
-          <SectionHeading text={t('workload~Binary data')} />
+          <SectionHeading text={t('public~Binary data')} />
           <ConfigMapBinaryData data={configMap.binaryData} />
         </div>
       </>
