@@ -68,7 +68,7 @@ const tableColumnClasses = [
 
 const TemplateInstanceTableRow = ({ obj, index, key, style }) => {
   let phase = templateInstancePhase(obj);
-  let paramCount = obj.spec.template.parameters ? obj.spec.template.parameters.length : 0;
+  let paramCount = !!obj.spec.template?.parameters ? obj.spec.template?.parameters.length : 0;
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
