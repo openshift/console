@@ -12,10 +12,25 @@ import { addIDPItems } from './oauth';
 import { TextFilter } from '../factory';
 import { fuzzyCaseInsensitive } from '../factory/table-filters';
 import { withExtensions, isGlobalConfig, GlobalConfig } from '@console/plugin-sdk';
+import i18next from 'i18next';
 
 const stateToProps = (state: RootState) => ({
   configResources: state.k8s.getIn(['RESOURCES', 'configResources']),
 });
+
+export const breadcrumbsForGlobalConfig = (
+  detailsPageKind: string,
+  detailsPageUrl: string,
+) => () => [
+  {
+    name: 'Global Configuration',
+    path: '/settings/cluster/globalconfig',
+  },
+  {
+    name: i18next.t('details-page~{{kind}} details', { kind: detailsPageKind }),
+    path: `${detailsPageUrl}`,
+  },
+];
 
 const ItemRow = ({ item }) => {
   return (

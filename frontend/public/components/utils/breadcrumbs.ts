@@ -13,13 +13,25 @@ export const getBreadcrumbPath = (match: any, customPlural?: string) => {
   return `/k8s/cluster/${customPlural || match.params.plural}`;
 };
 
-export const breadcrumbsForDetailsPage = (kindObj: K8sKind, match: any) => () => [
-  {
-    name: `${kindObj.labelPlural}`,
-    path: getBreadcrumbPath(match),
-  },
-  {
+export const breadcrumbsForDetailsPage = (kindObj: K8sKind, match: any) => () => {
+  const breadcrumbs =
+    kindObj.apiGroup === 'config.openshift.io' && match.params.name === 'cluster'
+      ? [
+          {
+            name: 'Global Configuration',
+            path: '/settings/cluster/globalconfig',
+          },
+        ]
+      : [
+          {
+            name: `${kindObj.labelPlural}`,
+            path: getBreadcrumbPath(match),
+          },
+        ];
+
+  breadcrumbs.push({
     name: i18next.t('details-page~{{kind}} details', { kind: kindObj.label }),
     path: `${match.url}`,
-  },
-];
+  });
+  return breadcrumbs;
+};
