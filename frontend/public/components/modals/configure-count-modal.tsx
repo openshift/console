@@ -15,6 +15,7 @@ export const ConfigureCountModal = withHandlePromise((props: ConfigureCountModal
     path,
     resource,
     resourceKind,
+    opts,
     handlePromise,
     title,
     titleKey,
@@ -32,8 +33,6 @@ export const ConfigureCountModal = withHandlePromise((props: ConfigureCountModal
     e.preventDefault();
 
     const patch = [{ op: 'replace', path, value: _.toInteger(value) }];
-    const opts = { path: 'scale' };
-
     const invalidateState = props.invalidateState || _.noop;
 
     invalidateState(true, _.toInteger(value));
@@ -88,6 +87,7 @@ export const configureReplicaCountModal = (props) => {
         path: '/spec/replicas',
         // t('modal~Save')
         buttonTextKey: 'modal~Save',
+        opts: { path: 'scale' },
       },
       props,
     ),
@@ -126,6 +126,7 @@ export type ConfigureCountModalProps = {
   path: string;
   resource: K8sResourceKind;
   resourceKind: K8sKind;
+  opts?: { [key: string]: any };
   title?: string;
   titleKey?: string;
   titleVariables?: { [key: string]: any };
