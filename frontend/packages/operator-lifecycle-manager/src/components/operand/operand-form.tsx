@@ -8,17 +8,7 @@ import { ClusterServiceVersionLogo } from '../index';
 import { DynamicForm } from '@console/shared/src/components/dynamic-form';
 import { getUISchema } from './utils';
 
-export const OperandForm: React.FC<OperandFormProps> = ({
-  csv,
-  formData,
-  match,
-  model,
-  next,
-  onChange,
-  providedAPI,
-  prune,
-  schema,
-}) => {
+export const OperandForm: React.FC<OperandFormProps> = ({ csv, formData, match, model, next, onChange, providedAPI, prune, schema }) => {
   const [errors, setErrors] = React.useState<string[]>([]);
   // const [formData, setFormData] = React.useState(initialData);
 
@@ -49,27 +39,13 @@ export const OperandForm: React.FC<OperandFormProps> = ({
         <div className="col-md-4 col-md-push-8 col-lg-5 col-lg-push-7">
           {csv && providedAPI && (
             <div style={{ marginBottom: '30px' }}>
-              <ClusterServiceVersionLogo
-                displayName={providedAPI.displayName}
-                icon={_.get(csv, 'spec.icon[0]')}
-                provider={_.get(csv, 'spec.provider')}
-              />
+              <ClusterServiceVersionLogo displayName={providedAPI.displayName} icon={_.get(csv, 'spec.icon[0]')} provider={_.get(csv, 'spec.provider')} />
               {providedAPI.description}
             </div>
           )}
         </div>
         <div className="col-md-8 col-md-pull-4 col-lg-7 col-lg-pull-5">
-          <DynamicForm
-            noValidate
-            errors={errors}
-            formContext={{ namespace: match.params.ns }}
-            uiSchema={uiSchema}
-            formData={formData}
-            onChange={onChange}
-            onError={setErrors}
-            onSubmit={handleSubmit}
-            schema={schema}
-          />
+          <DynamicForm noValidate errors={errors} formContext={{ namespace: match.params.ns }} uiSchema={uiSchema} formData={formData} onChange={onChange} onError={setErrors} onSubmit={handleSubmit} schema={schema} />
         </div>
       </div>
     </div>
