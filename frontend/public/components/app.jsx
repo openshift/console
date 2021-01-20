@@ -26,7 +26,9 @@ import CloudShell from '@console/app/src/components/cloud-shell/CloudShell';
 import CloudShellTab from '@console/app/src/components/cloud-shell/CloudShellTab';
 import DetectPerspective from '@console/app/src/components/detect-perspective/DetectPerspective';
 import DetectNamespace from '@console/app/src/components/detect-namespace/DetectNamespace';
-import { useExtensions, withExtensions, isContextProvider } from '@console/plugin-sdk';
+import { useExtensions } from '@console/plugin-sdk';
+import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
+import { isContextProvider } from '@console/dynamic-plugin-sdk/src/extensions/context-providers';
 import { GuidedTour } from '@console/app/src/components/tour';
 import { isStandaloneRoutePage } from '@console/dynamic-plugin-sdk';
 import QuickStartDrawer from '@console/app/src/components/quick-starts/QuickStartDrawer';
@@ -48,7 +50,7 @@ import { graphQLReady } from '../graphql/client';
 // Only linkify url strings beginning with a proper protocol scheme.
 linkify.set({ fuzzyLink: false });
 
-const EnhancedProvider = ({ Provider: ContextProvider, useValueHook, children }) => {
+const EnhancedProvider = ({ provider: ContextProvider, useValueHook, children }) => {
   const value = useValueHook();
   return <ContextProvider value={value}>{children}</ContextProvider>;
 };
@@ -202,13 +204,15 @@ class App_ extends React.PureComponent {
   }
 }
 
+const AppWithExtensions = withTranslation()((props) => {
+  const [contextProviderExtensions, resolved] = useResolvedExtensions(isContextProvider);
+
+  return resolved && <App_ contextProviderExtensions={contextProviderExtensions} {...props} />;
+});
+
 initConsolePlugins(store);
 
-const App = withExtensions({ contextProviderExtensions: isContextProvider })(App_);
-
 render(<LoadingBox />, document.getElementById('app'));
-
-const AppWithTranslation = withTranslation()(App);
 
 const AppRouter = () => {
   const standaloneRouteExtensions = useExtensions(isStandaloneRoutePage);
@@ -226,7 +230,7 @@ const AppRouter = () => {
           />
         ))}
         <Route path="/terminal" component={CloudShellTab} />
-        <Route path="/" component={AppWithTranslation} />
+        <Route path="/" component={AppWithExtensions} />
       </Switch>
     </Router>
   );

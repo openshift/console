@@ -29,6 +29,11 @@
     "@console/topology": "0.0.0-fixed"
   },
   "consolePlugin": {
-    "entry": "src/plugin.tsx"
+    "entry": "src/plugin.tsx",
+    "exposedModules": {
+      "tourContext": "src/components/tour/tour-context.ts",
+      "quickStartContext": "src/components/quick-starts/utils/quick-start-context.ts",
+      "fileUploadContext": "src/components/file-upload/file-upload-context.ts"
+    }
   }
 }

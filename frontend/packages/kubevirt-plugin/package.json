@@ -44,7 +44,8 @@
     "exposedModules": {
       "standaloneConsole": "src/components/vms/vm-console/StandaloneVMConsolePage.tsx",
       "icons": "src/utils/icons.tsx",
-      "createVM": "src/components/create-vm"
+      "createVM": "src/components/create-vm",
+      "contextProvider": "src/components/cdi-upload-provider/cdi-upload-provider.tsx"
     }
   }
 }

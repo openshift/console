@@ -24,6 +24,8 @@ export type QuickStartContextValues = {
 
 export const QuickStartContext = createContext<QuickStartContextValues>({ activeQuickStartID: '' });
 
+export const QuickStartContextProvider = QuickStartContext.Provider;
+
 const getInitialState = () =>
   localStorage.getItem(QUICKSTART_REDUX_STATE_LOCAL_STORAGE_KEY)
     ? JSON.parse(localStorage.getItem(QUICKSTART_REDUX_STATE_LOCAL_STORAGE_KEY))

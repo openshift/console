@@ -23,6 +23,8 @@ export const CDIUploadContext = React.createContext<CDIUploadContextProps>({
   uploadData: () => {},
 });
 
+export const CDIUploadProvider = CDIUploadContext.Provider;
+
 export const useCDIUploadHook = (): CDIUploadContextProps => {
   const [cdiConfig, configLoaded, configError] = useK8sWatchResource<K8sResourceKind>(resource);
   const [uploads, setUploads] = React.useState<DataUpload[]>([]);

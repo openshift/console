@@ -1,10 +1,8 @@
 import * as _ from 'lodash';
 import * as React from 'react';
-
 import { DashboardsStorageCapacityDropdownItem } from '@console/ceph-storage-plugin';
 import { PersistentVolumeClaimModel, PodModel, TemplateModel } from '@console/internal/models';
 import {
-  ContextProvider,
   DashboardsInventoryItemGroup,
   DashboardsOverviewHealthURLSubsystem,
   DashboardsOverviewInventoryItem,
@@ -25,11 +23,6 @@ import {
 } from '@console/plugin-sdk';
 import { getName } from '@console/shared/src/selectors/common';
 import { AlertVariant } from '@patternfly/react-core';
-
-import {
-  CDIUploadContext,
-  useCDIUploadHook,
-} from './components/cdi-upload-provider/cdi-upload-provider';
 import { killCDIBoundPVC } from './components/cdi-upload-provider/pvc-delete-extension';
 import { getKubevirtHealthState } from './components/dashboards-page/overview-dashboard/health';
 import {
@@ -61,7 +54,6 @@ type ConsumedExtensions =
   | ProjectDashboardInventoryItem
   | DashboardsOverviewResourceActivity
   | TopologyConsumedExtensions
-  | ContextProvider
   | PVCCreateProp
   | PVCAlert
   | PVCStatus
@@ -479,16 +471,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   ...getTopologyPlugin([FLAG_KUBEVIRT]),
-  {
-    type: 'ContextProvider',
-    properties: {
-      Provider: CDIUploadContext.Provider,
-      useValueHook: useCDIUploadHook,
-    },
-    flags: {
-      required: [FLAG_KUBEVIRT],
-    },
-  },
   {
     type: 'PVCCreateProp',
     properties: {

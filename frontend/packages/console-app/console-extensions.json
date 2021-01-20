@@ -9,5 +9,26 @@
         "kind": "DevWorkspace"
       }
     }
+  },
+  {
+    "type": "console.context-provider",
+    "properties": {
+      "provider": { "$codeRef": "tourContext.TourContextProvider" },
+      "useValueHook": { "$codeRef": "tourContext.useTourValuesForContext" }
+    }
+  },
+  {
+    "type": "console.context-provider",
+    "properties": {
+      "provider": { "$codeRef": "quickStartContext.QuickStartContextProvider" },
+      "useValueHook": { "$codeRef": "quickStartContext.useValuesForQuickStartContext" }
+    }
+  },
+  {
+    "type": "console.context-provider",
+    "properties": {
+      "provider": { "$codeRef": "fileUploadContext.FileUploadContextProvider" },
+      "useValueHook": { "$codeRef": "fileUploadContext.useValuesFileUploadContext" }
+    }
   }
 ]
