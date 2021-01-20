@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { TemplateKind } from '@console/internal/module/k8s';
-import { getLabel } from '@console/shared';
+import { getLabel, getName } from '@console/shared';
 import {
   CloudInitDataHelper,
   CloudInitDataFormKeys,
@@ -36,9 +36,11 @@ import { convertToBaseValue, humanizeBinaryBytes } from '@console/internal/compo
 import { isTemplateSourceError, TemplateSourceStatus } from '../../statuses/template/types';
 import { vCPUCount } from '../vm/cpu';
 import { BootSourceState } from '../../components/create-vm/forms/boot-source-form-reducer';
+import { stringValueUnitSplit } from '../../components/form/size-unit-utils';
 import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
 import { DiskWrapper } from '../../k8s/wrapper/vm/disk-wrapper';
 import { getDataVolumeStorageSize } from '../dv/selectors';
+import { VM_TEMPLATE_NAME_PARAMETER } from '../../constants';
 
 export const getTemplatesWithLabels = (templates: TemplateKind[], labels: string[]) => {
   const requiredLabels = labels.filter((label) => label);
@@ -108,12 +110,16 @@ export const getTemplateOperatingSystems = (templates: TemplateKind[]) => {
         (t) =>
           !!Object.keys(getAnnotations(t, {})).find((annotation) => annotation === nameAnnotation),
       );
+      const vm = selectVM(template);
+      const dvTemplates = getDataVolumeTemplates(vm);
+      const dv = dvTemplates.find((dvt) => getName(dvt) === VM_TEMPLATE_NAME_PARAMETER);
 
       return {
         id: osId,
         name: getAnnotation(template, nameAnnotation),
         baseImageName: getParameterValue(template, TEMPLATE_BASE_IMAGE_NAME_PARAMETER),
         baseImageNamespace: getParameterValue(template, TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER),
+        baseImageRecomendedSize: dv && stringValueUnitSplit(getDataVolumeStorageSize(dv)),
       };
     }),
   );

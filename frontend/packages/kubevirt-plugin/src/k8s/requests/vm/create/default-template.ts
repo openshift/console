@@ -44,8 +44,7 @@ export const resolveDefaultVMTemplate = (params: DefaultVMLikeEntityParams): Tem
       }),
     )
     .removeStorage('rootdisk')
-    // eslint-disable-next-line no-template-curly-in-string
-    .removeStorage('${NAME}')
+    .removeStorage(VM_TEMPLATE_NAME_PARAMETER)
     .prependStorage({
       disk: new DiskWrapper()
         .init({
