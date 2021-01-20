@@ -39,7 +39,8 @@ export const CreateDefault: React.FC<CreateDefaultProps> = ({ customResourceDefi
     },
   };
   const [helpText, setHelpText] = React.useState(FORM_HELP_TEXT);
-  const next = `${resourcePathFromModel(CustomResourceDefinitionModel, match.params.appName, match.params.ns)}/${model.plural}.${model.apiGroup}`;
+  // const next = `${resourcePathFromModel(CustomResourceDefinitionModel, match.params.appName, match.params.ns)}/${model.plural}.${model.apiGroup}`;
+  const next = `${resourcePathFromModel(model, match.params.appName, match.params.ns)}`;
   let definition;
 
   if (customResourceDefinition) {
@@ -112,15 +113,6 @@ export const CreateDefaultPage = connect(stateToProps)((props: CreateDefaultPage
           },
         ]
       : [];
-  // const isLoaded = async () => {
-  //   console.log(_.has(localStorage, 'bridge/api-discovery-resources'));
-  //   if (_.has(localStorage, 'bridge/api-discovery-resources')) {
-  //     console.log('있음!!!');
-  //   } else {
-  //     console.log('없음!!');
-  //   }
-  // };
-  // isLoaded();
   return (
     <>
       <Helmet>

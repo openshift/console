@@ -25,8 +25,13 @@ export const OperandForm: React.FC<OperandFormProps> = ({ csv, formData, match, 
 
   const handleSubmit = ({ formData: submitFormData }) => {
     k8sCreate(model, processFormData(submitFormData))
-      .then(() => next && history.push(next))
-      .catch((e) => setErrors([e.message]));
+      .then(() => {
+        if (next) {
+          next += `/${submitFormData.metadata.name}`;
+          history.push(next);
+        }
+      })
+      .catch(e => setErrors([e.message]));
   };
 
   const uiSchema = React.useMemo(() => getUISchema(schema, providedAPI), [schema, providedAPI]);
