@@ -69,7 +69,7 @@
   "Drag": "Drag",
   "Click": "Click",
   "Right click": "Right click",
-  "{{label}} Details": "{{label}} Details",
+  "{{label}} details": "{{label}} details",
   "Scheduling disabled": "Scheduling disabled",
   "Scaled to 0": "Scaled to 0",
   "Scaling to {{podSubTitle}}": "Scaling to {{podSubTitle}}",

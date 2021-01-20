@@ -33,7 +33,7 @@ export const PipelineRunDetails: React.FC<PipelineRunDetailsProps> = ({ obj: pip
 
   return (
     <div className="co-m-pane__body odc-pipeline-run-details">
-      <SectionHeading text={t('pipelines-plugin~Pipeline run details')} />
+      <SectionHeading text={t('pipelines-plugin~Pipeline Run details')} />
       <PipelineRunVisualization pipelineRun={pipelineRun} />
       <div className="row">
         <div className="col-sm-6">

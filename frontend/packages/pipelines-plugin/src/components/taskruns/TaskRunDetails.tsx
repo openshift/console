@@ -19,7 +19,7 @@ const TaskRunDetails: React.FC<TaskRunDetailsProps> = ({ obj: taskRun }) => {
   return (
     <div className="co-m-pane__body">
       <SectionHeading
-        text={t('pipelines-plugin~{{taskRunLabel}} Details', { taskRunLabel: TaskRunModel.label })}
+        text={t('pipelines-plugin~{{taskRunLabel}} details', { taskRunLabel: TaskRunModel.label })}
       />
       <div className="row">
         <div className="col-sm-6">
