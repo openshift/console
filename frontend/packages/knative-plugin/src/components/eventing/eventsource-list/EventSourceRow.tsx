@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
 import { Kebab, ResourceKebab, ResourceLink, Timestamp } from '@console/internal/components/utils';
-import { referenceFor } from '@console/internal/module/k8s';
+import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { NamespaceModel } from '@console/internal/models';
 import { getDynamicEventSourceModel } from '../../../utils/fetch-dynamic-eventsources-utils';
 import { EventSourceKind, EventSourceConditionTypes } from '../../../types';
@@ -12,7 +12,7 @@ const EventSourceRow: RowFunction<EventSourceKind> = ({ obj, index, key, style }
     metadata: { name, namespace, creationTimestamp, uid },
   } = obj;
   const objReference = referenceFor(obj);
-  const kind = getDynamicEventSourceModel(objReference);
+  const kind = getDynamicEventSourceModel(objReference) || modelFor(objReference);
   const menuActions = [...Kebab.getExtensionsActionsForKind(kind), ...Kebab.factory.common];
   const readyCondition = obj.status
     ? getCondition(obj.status.conditions, EventSourceConditionTypes.Ready)

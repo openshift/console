@@ -1,25 +1,37 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useFlag } from '@console/shared';
 import { MultiListPage } from '@console/internal/components/factory';
-import { K8sResourceKind, referenceFor, referenceForModel } from '@console/internal/module/k8s';
+import {
+  K8sResourceKind,
+  modelFor,
+  referenceFor,
+  referenceForModel,
+} from '@console/internal/module/k8s';
 import { RowFilter } from '@console/internal/components/filter-toolbar';
 import EventSourceList from './EventSourceList';
 import {
   getDynamicEventSourceModel,
   useEventSourceModels,
 } from '../../../utils/fetch-dynamic-eventsources-utils';
+import { CamelKameletBindingModel } from '../../../models';
+import { FLAG_CAMEL_KAMELETS } from '../../../const';
 
 const EventSourceListPage: React.FC<React.ComponentProps<typeof MultiListPage>> = (props) => {
   const { t } = useTranslation();
   const { loaded: modelsLoaded, eventSourceModels } = useEventSourceModels();
+  const isKameletEnabled = useFlag(FLAG_CAMEL_KAMELETS);
+  const sourcesModel = isKameletEnabled
+    ? [...eventSourceModels, CamelKameletBindingModel]
+    : eventSourceModels;
   const flatten = (resources) =>
     modelsLoaded
-      ? eventSourceModels.flatMap((model) => resources[referenceForModel(model)]?.data ?? [])
+      ? sourcesModel.flatMap((model) => resources[referenceForModel(model)]?.data ?? [])
       : [];
   const resources = React.useMemo(
     () =>
       modelsLoaded
-        ? eventSourceModels.map((model) => {
+        ? sourcesModel.map((model) => {
             const { namespaced } = model;
 
             return {
@@ -31,11 +43,11 @@ const EventSourceListPage: React.FC<React.ComponentProps<typeof MultiListPage>> 
             };
           })
         : [],
-    [eventSourceModels, modelsLoaded],
+    [sourcesModel, modelsLoaded],
   );
   const getModelId = React.useCallback((obj: K8sResourceKind) => {
     const reference = referenceFor(obj);
-    const model = getDynamicEventSourceModel(reference);
+    const model = getDynamicEventSourceModel(reference) || modelFor(reference);
     return model.id;
   }, []);
 
@@ -50,12 +62,12 @@ const EventSourceListPage: React.FC<React.ComponentProps<typeof MultiListPage>> 
       {
         filterGroupName: 'Type',
         type: 'event-source-type',
-        items: eventSourceModels.map(({ id, label }) => ({ id, title: label })),
+        items: sourcesModel.map(({ id, label }) => ({ id, title: label })),
         reducer: getModelId,
         filter: rowFilterReducer,
       },
     ],
-    [eventSourceModels, getModelId, rowFilterReducer],
+    [sourcesModel, getModelId, rowFilterReducer],
   );
   return (
     <MultiListPage
