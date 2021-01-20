@@ -4,7 +4,7 @@ Feature: Helm Chart
 
 Background:
     Given user logged into the openshift application
-    And user is at developer perspecitve
+    And user is at developer perspective
 
 
 @regression, @smoke, @manual

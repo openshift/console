@@ -19,9 +19,9 @@ export enum switchPerspective {
 }
 
 export enum operators {
-  pipelineOperator = 'Pipeline Operator',
-  serverlessOperator = 'Serverless Operator',
-  virtualizationOperator = 'Virtualization Operator',
-  knativeCamelOperator = 'knative Apache Camel Operator',
-  eclipseCheOperator = 'Eclipse Che',
+  PipelinesOperator = 'Pipeline',
+  ServerlessOperator = 'Serverless',
+  VirtualizationOperator = 'Virtualization',
+  KnativeCamelOperator = 'Knative Apache Camel K',
+  EclipseCheOperator = 'Eclipse Che',
 }

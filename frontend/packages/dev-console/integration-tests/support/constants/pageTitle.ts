@@ -32,4 +32,6 @@ export const pageTitle = {
   UpgradeHelmRelease: 'Upgrade Helm Release',
   OperatorHub: 'OperatorHub',
   AddHealthChecks: 'Add health checks',
+  InstallOperator: 'Install Operator',
+  InstalledOperators: 'Installed Operators',
 };
