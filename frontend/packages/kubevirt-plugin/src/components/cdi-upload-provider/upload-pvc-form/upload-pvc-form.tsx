@@ -254,6 +254,10 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
     if (operatingSystem?.baseImageNamespace) {
       setNamespace(operatingSystem.baseImageNamespace);
     }
+    if (operatingSystem?.baseImageRecomendedSize) {
+      setRequestSizeValue(operatingSystem?.baseImageRecomendedSize[0]);
+      setRequestSizeUnit(operatingSystem?.baseImageRecomendedSize[1]);
+    }
   };
 
   React.useEffect(() => {
