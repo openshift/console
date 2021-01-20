@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
 import * as _ from 'lodash-es';
-import { Table as PfTable, TableHeader as PfTableHeader, TableBody as PfTableBody, IRow, ICell } from '@patternfly/react-table';
+import { Table as PfTable, TableHeader as PfTableHeader, TableBody as PfTableBody, ICell } from '@patternfly/react-table';
 
 export const SingleExpandableTable: React.FC<SingleExpandableTableProps> = ({ header, itemList, rowRenderer, innerRenderer, compoundParent }) => {
-  const [tableRows, setTableRows] = useState<IRow[]>([]);
-
+  const [tableRows, setTableRows] = useState([]);
   useEffect(() => {
     const preData = [];
     _.forEach(itemList, async (item, index: number) => {
+      await delay();
       const innerTable = await innerRenderer(item);
       if (!!innerTable) {
         preData.push({
@@ -18,7 +18,7 @@ export const SingleExpandableTable: React.FC<SingleExpandableTableProps> = ({ he
 
         if (innerTable.props?.data?.length > 0) {
           //TODO: parent 값으로 어떤걸 넣어줘야 되는지 파악하기
-          let parentValue = 2 * index;
+          let parentValue = index * 2;
           preData.push({
             parent: parentValue,
             compoundParent: compoundParent,
@@ -30,13 +30,19 @@ export const SingleExpandableTable: React.FC<SingleExpandableTableProps> = ({ he
             ],
           });
         }
-        setTableRows(_.cloneDeep(preData));
+        if (index === itemList.length - 1) {
+          setTableRows(_.cloneDeep(preData));
+        }
       }
     });
   }, [itemList]);
 
+  function delay() {
+    return new Promise(resolve => setTimeout(resolve, 300));
+  }
+
   const onExpand = (event, rowIndex, colIndex, isOpen, rowData, extraData) => {
-    let rows: IRow[] = _.cloneDeep(tableRows);
+    let rows = _.cloneDeep(tableRows);
     if (!isOpen) {
       rows[rowIndex].cells.forEach((cell: ICell) => {
         if (cell.props) cell.props.isOpen = false;
