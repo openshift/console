@@ -9,15 +9,16 @@ import SourceSecretSelector from './SourceSecretSelector';
 
 const AdvancedGitOptions: React.FC = () => {
   const { t } = useTranslation();
-  const { setFieldValue } = useFormikContext<FormikValues>();
+  const { setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
 
   const handleGitRefChange = useDebounceCallback((e: React.SyntheticEvent) =>
     setFieldValue('git.ref', (e.target as HTMLInputElement).value),
   );
 
-  const handleGitDirChange = useDebounceCallback((e: React.SyntheticEvent) =>
-    setFieldValue('git.dir', (e.target as HTMLInputElement).value),
-  );
+  const handleGitDirChange = useDebounceCallback((e: React.SyntheticEvent) => {
+    setFieldValue('git.dir', (e.target as HTMLInputElement).value);
+    setFieldTouched('git.dir');
+  });
 
   return (
     <ExpandCollapse
