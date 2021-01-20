@@ -57,6 +57,7 @@ func (repo helmRepo) httpClient() (*http.Client, error) {
 	}
 	tr := &http.Transport{
 		TLSClientConfig: tlsConfig,
+		Proxy:           http.ProxyFromEnvironment,
 	}
 
 	client := &http.Client{Transport: tr}
