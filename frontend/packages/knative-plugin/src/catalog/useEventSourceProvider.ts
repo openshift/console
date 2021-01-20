@@ -5,7 +5,7 @@ import { CatalogItem, CatalogExtensionHook } from '@console/plugin-sdk';
 import { K8sKind, referenceForModel } from '@console/internal/module/k8s';
 import { getEventSourceIcon } from '../utils/get-knative-icon';
 import { getEventSourceCatalogProviderData } from './event-source-data';
-import { useEventSourceModelsWithAccess } from '../hooks';
+import { useEventSourceModelsWithAccess } from '../hooks/useEventSourceModelsWithAccess';
 
 const normalizeEventSources = (
   eventSources: K8sKind[],

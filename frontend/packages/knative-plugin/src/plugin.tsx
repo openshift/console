@@ -16,6 +16,7 @@ import {
   HorizontalNavTab,
   CatalogItemProvider,
   CatalogItemType,
+  DetailPageBreadCrumbs,
 } from '@console/plugin-sdk';
 import { NamespaceRedirect } from '@console/internal/components/utils/namespace-redirect';
 import { AddAction } from '@console/dev-console/src/extensions/add-actions';
@@ -37,6 +38,7 @@ import { TopologyConsumedExtensions, topologyPlugin } from './topology/topology-
 import * as eventSourceIcon from './imgs/event-source.svg';
 import * as channelIcon from './imgs/channel.svg';
 import { eventSourceProvider, kameletsProvider } from './catalog';
+import { eventSourceBreadcrumbsProvider, eventSourceModelsProviderForBreadCrumbs } from './hooks';
 
 type ConsumedExtensions =
   | NavSection
@@ -55,7 +57,8 @@ type ConsumedExtensions =
   | TopologyConsumedExtensions
   | HorizontalNavTab
   | CatalogItemProvider
-  | CatalogItemType;
+  | CatalogItemType
+  | DetailPageBreadCrumbs;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -304,102 +307,6 @@ const plugin: Plugin<ConsumedExtensions> = [
         (
           await import(
             './components/pub-sub/details/BrokerDetailsPage' /* webpackChunkName: "broker-details-page" */
-          )
-        ).default,
-    },
-  },
-  {
-    type: 'Page/Resource/Details',
-    properties: {
-      model: models.EventSourceContainerModel,
-      loader: async () =>
-        (
-          await import(
-            './components/pub-sub/details/EventSourceDetailsPage' /* webpackChunkName: "event-source-details-page" */
-          )
-        ).default,
-    },
-  },
-  {
-    type: 'Page/Resource/Details',
-    properties: {
-      model: models.EventSourceKafkaModel,
-      loader: async () =>
-        (
-          await import(
-            './components/pub-sub/details/EventSourceDetailsPage' /* webpackChunkName: "event-source-details-page" */
-          )
-        ).default,
-    },
-  },
-  {
-    type: 'Page/Resource/Details',
-    properties: {
-      model: models.EventSourceApiServerModel,
-      loader: async () =>
-        (
-          await import(
-            './components/pub-sub/details/EventSourceDetailsPage' /* webpackChunkName: "event-source-details-page" */
-          )
-        ).default,
-    },
-  },
-  {
-    type: 'Page/Resource/Details',
-    properties: {
-      model: models.EventSourceCamelModel,
-      loader: async () =>
-        (
-          await import(
-            './components/pub-sub/details/EventSourceDetailsPage' /* webpackChunkName: "event-source-details-page" */
-          )
-        ).default,
-    },
-  },
-  {
-    type: 'Page/Resource/Details',
-    properties: {
-      model: models.EventSourceCronJobModel,
-      loader: async () =>
-        (
-          await import(
-            './components/pub-sub/details/EventSourceDetailsPage' /* webpackChunkName: "event-source-details-page" */
-          )
-        ).default,
-    },
-  },
-  {
-    type: 'Page/Resource/Details',
-    properties: {
-      model: models.EventSourcePingModel,
-      loader: async () =>
-        (
-          await import(
-            './components/pub-sub/details/EventSourceDetailsPage' /* webpackChunkName: "event-source-details-page" */
-          )
-        ).default,
-    },
-  },
-  {
-    type: 'Page/Resource/Details',
-    properties: {
-      model: models.EventSourceSinkBindingModel,
-      loader: async () =>
-        (
-          await import(
-            './components/pub-sub/details/EventSourceDetailsPage' /* webpackChunkName: "event-source-details-page" */
-          )
-        ).default,
-    },
-  },
-  {
-    type: 'Page/Resource/Details',
-    properties: {
-      model: models.CamelKameletBindingModel,
-      loader: async () =>
-        (
-          await import(
-            './components/pub-sub/details/EventSourceDetailsPage' /* webpackChunkName: "event-source-details-page" */
           )
         ).default,
     },
@@ -745,6 +652,13 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [FLAG_CAMEL_KAMELETS],
+    },
+  },
+  {
+    type: 'DetailPageBreadCrumbs',
+    properties: {
+      getModels: eventSourceModelsProviderForBreadCrumbs,
+      breadcrumbsProvider: eventSourceBreadcrumbsProvider,
     },
   },
   ...topologyPlugin,
