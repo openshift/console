@@ -53,8 +53,10 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = ({
     dispatch({ type: 'setShowNodesListOnLVS', value: !state.showNodesListOnLVS });
   };
 
-  const validMaxDiskSize = /^\+?([1-9]\d*)$/.test(state.maxDiskSize || '1');
-  const validMaxDiskLimit = /^\+?([1-9]\d*)$/.test(state.maxDiskLimit || '1');
+  const INTEGER_REGEX = /^\+?([1-9]\d*)$/;
+  const validMinDiskSize = INTEGER_REGEX.test(state.minDiskSize || '1');
+  const validMaxDiskSize = INTEGER_REGEX.test(state.maxDiskSize || '1');
+  const validMaxDiskLimit = INTEGER_REGEX.test(state.maxDiskLimit || '1');
 
   return (
     <>
@@ -193,14 +195,21 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = ({
               fieldId="create-lvs-min-disk-size"
               className="lso-create-lvs__disk-size-form-group-max-min-input"
             >
-              <TextInput
-                type={TextInputTypes.number}
-                id="create-lvs-min-disk-size"
-                value={state.minDiskSize}
-                onChange={(size: string) => {
-                  dispatch({ type: 'setMinDiskSize', value: size });
-                }}
-              />
+              <Tooltip
+                content="Please enter a positive Integer"
+                isVisible={!validMinDiskSize}
+                trigger="manual"
+              >
+                <TextInput
+                  type={TextInputTypes.number}
+                  id="create-lvs-min-disk-size"
+                  value={state.minDiskSize}
+                  validated={validMinDiskSize ? 'default' : 'error'}
+                  onChange={(size: string) => {
+                    dispatch({ type: 'setMinDiskSize', value: size });
+                  }}
+                />
+              </Tooltip>
             </FormGroup>
             <div>-</div>
             <FormGroup
