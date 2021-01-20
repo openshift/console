@@ -7,7 +7,7 @@ import { StatusIcon } from '@console/shared';
 import { Firehose, resourcePathFromModel } from '@console/internal/components/utils';
 import { pipelineRunFilterReducer } from '../../../utils/pipeline-filter-reducer';
 import { PipelineRun } from '../../../utils/pipeline-augment';
-import { PipelineRunModel } from '../../../models';
+import { PipelineRunModel } from '../../../../../../../frontend/public/models/index';
 import LogsWrapperComponent from '../logs/LogsWrapperComponent';
 import { getDownloadAllLogsCallback } from '../logs/logs-utils';
 import './PipelineRunLogs.scss';
@@ -28,7 +28,7 @@ class PipelineRunLogs extends React.Component<PipelineRunLogsProps, PipelineRunL
 
   componentDidMount() {
     const { obj, activeTask } = this.props;
-    const taskRunFromYaml = _.get(obj, ['status', 'taskRuns'], {});
+    const taskRunFromYaml = _.merge(_.get(obj, ['status', 'taskRuns'], {}), _.get(obj, ['status', 'runs'], {}));
     const taskRuns = this.getSortedTaskRun(taskRunFromYaml);
     const activeItem = this.getActiveTaskRun(taskRuns, activeTask);
     this.setState({ activeItem });
@@ -37,7 +37,7 @@ class PipelineRunLogs extends React.Component<PipelineRunLogsProps, PipelineRunL
   UNSAFE_componentWillReceiveProps(nextProps) {
     if (this.props.obj !== nextProps.obj) {
       const { obj, activeTask } = this.props;
-      const taskRunFromYaml = _.get(obj, ['status', 'taskRuns'], {});
+      const taskRunFromYaml = _.merge(_.get(obj, ['status', 'taskRuns'], {}), _.get(obj, ['status', 'runs'], {}));
       const taskRuns = this.getSortedTaskRun(taskRunFromYaml);
       const activeItem = this.getActiveTaskRun(taskRuns, activeTask);
       this.state.navUntouched && this.setState({ activeItem });
@@ -77,7 +77,7 @@ class PipelineRunLogs extends React.Component<PipelineRunLogsProps, PipelineRunL
   render() {
     const { obj } = this.props;
     const { activeItem } = this.state;
-    const taskRunFromYaml = _.get(obj, ['status', 'taskRuns'], {});
+    const taskRunFromYaml = _.merge(_.get(obj, ['status', 'taskRuns'], {}), _.get(obj, ['status', 'runs'], {}));
     const taskRuns = this.getSortedTaskRun(taskRunFromYaml);
 
     const taskCount = taskRuns.length;
@@ -121,7 +121,7 @@ class PipelineRunLogs extends React.Component<PipelineRunLogsProps, PipelineRunL
                       <Link to={path + _.get(taskRunFromYaml, [task, `pipelineTaskName`], '-')}>
                         <StatusIcon
                           status={pipelineRunFilterReducer(
-                            _.get(obj, ['status', 'taskRuns', task]),
+                            _.merge(_.get(obj, ['status', 'taskRuns'], {}), _.get(obj, ['status', 'runs'], {})),
                           )}
                         />
                         <span className="odc-pipeline-run-logs__namespan">

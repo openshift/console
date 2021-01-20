@@ -65,10 +65,10 @@ class GrafanaPage_ extends React.PureComponent {
 
     // Ensure that the "kind" route parameter is a valid resource kind ID
     kind = kind ? decodeURIComponent(kind) : 'Service';
-    let ns = localStorage.getItem('bridge/last-namespace-name') === '#ALL_NS#' ? 'all-namespaces' : localStorage.getItem('bridge/last-namespace-name');
+    let ns = localStorage.getItem('bridge/last-namespace-name') === '#ALL_NS#' ? 'all-namespaces' : localStorage.getItem('bridge/last-namespace-name') ?? 'all-namespaces';
     // const showGettingStarted = flags.OPENSHIFT && !flags.PROJECTS_AVAILABLE;
-    // let url = `${document.location.origin}/api/grafana/d/k8s-namespace/?var-namespace=${ns}`;
-    let url = `${document.location.origin}/api/grafana`;
+    let url = `${document.location.origin}/api/grafana/d/k8s-namespace/?var-namespace=${ns}`;
+    // let url = `${document.location.origin}/api/grafana`;
     return (
       <React.Fragment>
         <div>

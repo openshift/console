@@ -1,6 +1,5 @@
 import * as React from 'react';
 
-import { FLAGS } from '@console/shared';
 import { Translation } from 'react-i18next';
 // import { GroupModel, UserModel } from '../../../models';
 
@@ -32,9 +31,9 @@ const HyperCloudNav = () => (
           <ResourceNSLink resource="servicebrokers" name="Service Broker" />
           <ResourceNSLink resource="serviceclasses" name="Service Class" />
           <ResourceNSLink resource="serviceplans" name="Service Plan" />
-          <ResourceClusterLink resource="clusterservicebrokers" name="Cluster Service Broker" required={FLAGS.CAN_LIST_PV} />
-          <ResourceClusterLink resource="clusterserviceclasses" name="Cluster Service Class" required={FLAGS.CAN_LIST_PV} />
-          <ResourceClusterLink resource="clusterserviceplans" name="Cluster Service Plan" required={FLAGS.CAN_LIST_PV} />
+          <ResourceClusterLink resource="clusterservicebrokers" name="Cluster Service Broker" />
+          <ResourceClusterLink resource="clusterserviceclasses" name="Cluster Service Class" />
+          <ResourceClusterLink resource="clusterserviceplans" name="Cluster Service Plan" />
           <ResourceNSLink resource="serviceinstances" name="Service Instance" />
           <ResourceNSLink resource="servicebindings" name="Service Binding" />
           <ResourceNSLink resource="catalogserviceclaims" name="Catalog Service Claim" />
@@ -77,7 +76,7 @@ const HyperCloudNav = () => (
           <ResourceClusterLink resource="storageclasses" name="Storage Classes" />
           <ResourceNSLink resource="datavolumes" name="Data Volumes" />
           <ResourceNSLink resource="persistentvolumeclaims" name="Persistent Volume Claims" />
-          <ResourceClusterLink resource="persistentvolumes" name="Persistent Volumes" required={FLAGS.CAN_LIST_PV} />
+          <ResourceClusterLink resource="persistentvolumes" name="Persistent Volumes" />
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_56')}>
           <ResourceNSLink resource="tasks" name={t('COMMON:MSG_LNB_MENU_57')} />
@@ -107,12 +106,12 @@ const HyperCloudNav = () => (
           {/* <ResourceNSLink resource="imagetransfers" name="Image Transfer" /> */}
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_79')}>
-          <ResourceClusterLink resource="namespaces" name="Namespaces" required={FLAGS.CAN_LIST_NS} />
-          <ResourceClusterLink resource="namespaceclaims" name="Namespace Claims" required={FLAGS.CAN_LIST_NS} />
+          <ResourceClusterLink resource="namespaces" name="Namespaces" />
+          <ResourceClusterLink resource="namespaceclaims" name="Namespace Claims" />
           <ResourceNSLink resource="limitranges" name="Limit Ranges" />
           <ResourceNSLink resource="resourcequotas" name="Resource Quotas" startsWith={quotaStartsWith} />
           <ResourceNSLink resource="resourcequotaclaims" name="Resource Quota Claims" startsWith={quotaStartsWith} />
-          <ResourceClusterLink resource="customresourcedefinitions" name="Custom Resource Definitions" required={FLAGS.CAN_LIST_CRD} />
+          <ResourceClusterLink resource="customresourcedefinitions" name="Custom Resource Definitions" />
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_72')}>
           <ResourceClusterLink resource="nodes" name="Nodes" />
