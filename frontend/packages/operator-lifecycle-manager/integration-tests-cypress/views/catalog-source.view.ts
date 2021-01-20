@@ -10,7 +10,7 @@ const verifyPackageManifest = (opName: string, csName: string, depth: number = 0
     .visit(
       `/k8s/ns/openshift-marketplace/operators.coreos.com~v1alpha1~CatalogSource/${csName}/operators?packagemanifest-name=${opName}`,
     )
-    .byTestID('filter-toolbar')
+    .get(`[data-test-table-loaded="true"]`, { timeout: 5000 })
     .should('exist')
     .then(() => {
       const row = Cypress.$(`[data-test-rows="resource-row"]:contains("${opName}")`);

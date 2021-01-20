@@ -713,6 +713,7 @@ export const Table = connect<
           gridBreakPoint = TableGridBreakpoint.none,
           Header,
           activeColumns,
+          loaded,
         } = this.props;
         const { sortBy } = this.state;
         const componentProps: any = _.pick(this.props, [
@@ -778,7 +779,10 @@ export const Table = connect<
           </TableWrapper>
         );
         return (
-          <div className="co-m-table-grid co-m-table-grid--bordered">
+          <div
+            className="co-m-table-grid co-m-table-grid--bordered"
+            data-test-table-loaded={loaded}
+          >
             {mock ? (
               children
             ) : (
