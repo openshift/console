@@ -63,7 +63,8 @@ export const getAddPageUrl = (
       params.append('category', 'databases');
       break;
     case ImportOptions.EVENTSOURCE:
-      pageUrl = `/event-source/ns/${ns}`;
+      pageUrl = `/catalog/ns/${ns}`;
+      params.append('catalogType', 'EventSource');
       contextSource && params.append(QUERY_PROPERTIES.CONTEXT_SOURCE, contextSource);
       break;
     case ImportOptions.EVENTPUBSUB:

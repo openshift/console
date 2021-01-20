@@ -27,7 +27,7 @@ const CatalogDetailsModal: React.FC<CatalogDetailsModalProps> = ({ item, onClose
   Object.values(CatalogQueryParams).map((q) => queryParams.delete(q)); // don't pass along catalog specific query params
 
   const to = params
-    ? `${url}?${params}${Object.keys(queryParams).length > 0 ? `&${queryParams.toString()}` : ''}`
+    ? `${url}?${params}${queryParams.toString() !== '' ? `&${queryParams.toString()}` : ''}`
     : `${url}?${queryParams.toString()}`;
 
   const vendor = item.provider
