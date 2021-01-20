@@ -216,7 +216,12 @@ export const watchK8sList = (
 
       if (!_.get(k8skind, 'verbs', ['watch']).includes('watch')) {
         // eslint-disable-next-line no-console
-        console.warn(`${referenceForModel(k8skind)} does not support watching`);
+        console.warn(
+          `${referenceForModel(k8skind)} does not support watching, falling back to polling.`,
+        );
+        if (!POLLs[id]) {
+          POLLs[id] = setTimeout(pollAndWatch, 15 * 1000);
+        }
         return;
       }
 
