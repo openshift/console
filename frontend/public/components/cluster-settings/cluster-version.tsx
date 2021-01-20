@@ -7,6 +7,7 @@ import { DetailsPage } from '../factory';
 import { Conditions } from '../conditions';
 import { ClusterVersionKind, K8sResourceKindReference, referenceForModel } from '../../module/k8s';
 import { navFactory, ResourceSummary, SectionHeading } from '../utils';
+import { breadcrumbsForGlobalConfig } from './global-config';
 
 const clusterVersionReference: K8sResourceKindReference = referenceForModel(ClusterVersionModel);
 
@@ -34,6 +35,7 @@ export const ClusterVersionDetailsPage: React.FC<ClusterVersionDetailsPageProps>
     {...props}
     kind={clusterVersionReference}
     pages={[navFactory.details(ClusterVersionDetails), navFactory.editYaml()]}
+    breadcrumbsFor={() => breadcrumbsForGlobalConfig(ClusterVersionModel.label, props.match.url)}
   />
 );
 

@@ -1,7 +1,7 @@
 import * as classNames from 'classnames';
 import i18next from 'i18next';
 import * as _ from 'lodash-es';
-import { Button, Popover } from '@patternfly/react-core';
+import { Button, Popover, Split, SplitItem } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
@@ -95,6 +95,7 @@ import { history } from '../utils/router';
 import { LoadingInline, StatusBox } from '../utils/status-box';
 import { Timestamp } from '../utils/timestamp';
 import { getPrometheusURL, PrometheusEndpoint } from '../graphs/helpers';
+import { breadcrumbsForGlobalConfig } from '../cluster-settings/global-config';
 
 const ruleURL = (rule: Rule) => `${RuleResource.plural}/${_.get(rule, 'id')}`;
 
@@ -1552,7 +1553,23 @@ const AlertingPage: React.FC<AlertingPageProps> = ({ match }) => {
 
   return (
     <>
-      <div className="co-m-nav-title co-m-nav-title--detail">
+      <div
+        className={classNames('co-m-nav-title', 'co-m-nav-title--detail', {
+          'co-m-nav-title--breadcrumbs': isAlertmanager,
+        })}
+      >
+        {isAlertmanager && (
+          <Split style={{ alignItems: 'baseline' }}>
+            <SplitItem isFilled>
+              <BreadCrumbs
+                breadcrumbs={breadcrumbsForGlobalConfig(
+                  'Alertmanager',
+                  '/monitoring/alertmanagerconfig',
+                )}
+              />
+            </SplitItem>
+          </Split>
+        )}
         <h1 className="co-m-pane__heading">
           <div className="co-m-pane__name co-resource-item">
             <span className="co-resource-item__resource-name" data-test-id="resource-title">
