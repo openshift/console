@@ -19,9 +19,9 @@ import {
   getNodeAllocatableMemory,
 } from '@console/shared';
 import { useSelectList } from '@console/shared/src/hooks/select-list';
-import { hasNoTaints } from '../../utils';
+import { hasNoTaints, getZone } from '../../utils';
 import { GetRows } from './types';
-import { getZone } from '@console/ceph-storage-plugin/src/utils/install';
+
 import './node-selection-list.scss';
 
 const tableColumnClasses = [

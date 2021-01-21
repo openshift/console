@@ -6,6 +6,11 @@ export const diskModeDropdownItems = Object.freeze({
   FILESYSTEM: 'Filesystem',
 });
 
+export const ZONE_LABELS = [
+  'topology.kubernetes.io/zone',
+  'failure-domain.beta.kubernetes.io/zone', // deprecated
+];
+
 export const DISK_TYPES: {
   [key: string]: {
     property: keyof typeof DiskMechanicalProperties;
