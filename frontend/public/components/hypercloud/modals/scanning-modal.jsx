@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import { ValidTabGuard } from 'packages/kubevirt-plugin/src/components/create-vm-wizard/tabs/valid-tab-guard';
 import * as React from 'react';
 
-import { k8sCreateUrl, referenceForModel, kindForReference } from '../../../module/k8s';
+import { k8sCreateUrl, k8sList, referenceForModel, kindForReference } from '../../../module/k8s';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../../factory/modal';
 import { PromiseComponent, ResourceIcon, SelectorInput } from '../../utils';
 import { Section } from '../utils/section';
@@ -12,6 +12,7 @@ import { CloseIcon } from '@patternfly/react-icons';
 import { ResourceIcon } from '../utils';
 // import { RegistryModel } from '../../../models/hypercloud';
 import { modelFor } from '../../../module/k8s/k8s-models';
+import { NamespaceModel } from '@console/internal/models';
 
 class BaseScanningModal extends PromiseComponent {
     constructor(props) {
@@ -26,9 +27,19 @@ class BaseScanningModal extends PromiseComponent {
             name: '',
             selected: new Set([]),
             allData: [],
+            namespaces: [],
+            namespace: '',
         });
+    }
 
+    componentDidMount() {
+        this.getNamespaceList();
+    }
 
+    async getNamespaceList() {
+        const list = await k8sList(NamespaceModel);
+        const namespaces = list.map(item => item.metadata.name);
+        this.setState({ namespaces, namespace: namespaces[0] });
     }
 
     _submit(e) {
@@ -76,6 +87,10 @@ class BaseScanningModal extends PromiseComponent {
         this.setState({ name: e.target.value });
     }
 
+    onChangeNamespace = (e) => {
+        this.setState({ namespace: e.target.value });
+    }
+
     toggleSelected = selection => {
         if (this.state.selected.has('All') || selection === 'All') {
             this.setState({ selected: new Set([selection]) });
@@ -98,6 +113,13 @@ class BaseScanningModal extends PromiseComponent {
         const { kind, resource, message } = this.props;
         const { selected } = this.state;
 
+        let label;
+        if (kind === 'Registry') {
+            label = 'Image Registry';
+        } else {
+            label = kind;
+        }
+
         return (
             <form onSubmit={this._submit} name="form" className="modal-content">
                 <ModalTitle>Image Scan Request Creation</ModalTitle>
@@ -113,9 +135,19 @@ class BaseScanningModal extends PromiseComponent {
                                 <input className="pf-c-form-control" id="name" name="metadata.name" onChange={this.onChangeName} value={this.state.name} />
                             </Section>
                         </div>
+                        <div className="col-sm-12" style={{ marginBottom: '15px' }}>
+                            <Section label="Namespace" id="namespace" isRequired={true}>
+                                <select className="col-sm-12" value={this.state.namespace} onChange={this.onChangeNamespace}>
+                                    {this.state.namespaces.map(namespace => <option value={namespace}>{namespace}</option>)}
+                                </select>
+                            </Section>
+                        </div>
                         <div className="col-sm-12">
+                            <label className={'control-label co-required'} htmlFor={label}>
+                                {label}
+                            </label>
                             <div className="co-search-group">
-                                <RegistryListDropdown onChange={this.toggleSelected} selected={Array.from(selected)} showAll clearSelection={this.clearSelection} setAllData={this.setAllData} namespace='reg-test' className="co-search-group__registry" />
+                                <RegistryListDropdown onChange={this.toggleSelected} selected={Array.from(selected)} showAll clearSelection={this.clearSelection} setAllData={this.setAllData} namespace={this.state.namespace} className="co-search-group__registry" />
                             </div>
                             <div className="form-group">
                                 <ChipGroup withToolbar defaultIsOpen={false}>
