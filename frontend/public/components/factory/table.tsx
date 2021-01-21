@@ -387,7 +387,7 @@ export const Table = connect<TablePropsFromState, TablePropsFromDispatch, TableP
     }
 
     componentDidUpdate(prevProps) {
-      if (!!this.props.expandableRows) {
+      if (this.props.expandable && !!this.props.expandableRows) {
         this.props.expandableRows(this.props.data).then(res => {
           if (_.isEqual(this.props.currentSortField, prevProps.currentSortField) && _.isEqual(this.props.currentSortOrder, prevProps.currentSortOrder) && res.length === this.state.expandableData.length) {
             // do nothing
