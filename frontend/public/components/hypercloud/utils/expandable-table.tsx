@@ -7,39 +7,52 @@ export const SingleExpandableTable: React.FC<SingleExpandableTableProps> = ({ he
   const [tableRows, setTableRows] = useState([]);
   useEffect(() => {
     const preData = [];
-    _.forEach(itemList, async (item, index: number) => {
-      await delay();
-      const innerTable = await innerRenderer(item);
-      if (!!innerTable) {
-        preData.push({
-          isOpen: false,
-          cells: rowRenderer(index, item, innerTable.props?.data?.length),
-        });
+    itemList
+      .reduce((result, item, index: number) => {
+        return result.then(async () => {
+          const innerTable = await innerRenderer(item);
+          if (!!innerTable) {
+            preData.push({
+              isOpen: false,
+              cells: rowRenderer(index, item, innerTable.props?.data?.length),
+            });
 
-        if (innerTable.props?.data?.length > 0) {
-          //TODO: parent 값으로 어떤걸 넣어줘야 되는지 파악하기
-          let parentValue = index * 2;
-          preData.push({
-            parent: parentValue,
-            compoundParent: compoundParent,
-            cells: [
-              {
-                title: innerTable,
-                props: { colSpan: header.length, className: 'pf-m-no-padding' },
-              },
-            ],
-          });
-        }
-        if (index === itemList.length - 1) {
-          setTableRows(_.cloneDeep(preData));
-        }
-      }
-    });
+            if (innerTable.props?.data?.length > 0) {
+              let parentValue = index * 2;
+              preData.push({
+                parent: parentValue,
+                compoundParent: compoundParent,
+                cells: [
+                  {
+                    title: innerTable,
+                    props: { colSpan: header.length, className: 'pf-m-no-padding' },
+                  },
+                ],
+              });
+            } else {
+              let parentValue = index * 2;
+              preData.push({
+                parent: parentValue,
+                compoundParent: compoundParent,
+                cells: [
+                  {
+                    title: <div>...No Data...</div>,
+                    props: { colSpan: header.length, className: 'pf-m-no-padding' },
+                  },
+                ],
+              });
+            }
+          }
+        });
+      }, Promise.resolve())
+      .then(() => {
+        setTableRows(_.cloneDeep(preData));
+      });
   }, [itemList]);
 
-  function delay() {
-    return new Promise(resolve => setTimeout(resolve, 300));
-  }
+  // function delay() {
+  //   return new Promise(resolve => setTimeout(resolve, 300));
+  // }
 
   const onExpand = (event, rowIndex, colIndex, isOpen, rowData, extraData) => {
     let rows = _.cloneDeep(tableRows);

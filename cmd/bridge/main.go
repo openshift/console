@@ -69,10 +69,10 @@ const (
 
 	// Well-known location of hypercloud-server for hypercloud. This is only accessible in-clsuter.
 	// TODO: url 입력
-	hypercloudServerHost = "hypercloud-server-svc.hypercloud5-system.svc"
+	hypercloudServerHost = "hypercloud5-api-server-service.hypercloud5-system.svc"
 
-	// Well-known location of hypercloud-server for hypercloud. This is only accessible in-clsuter.
-	multiHypercloudServerHost = "hypercloud-server-svc.hypercloud5-system.svc"
+	// Well-known location of hypercloud-server for hypercloud. This is only accessible in-clsuter. // http port : 80 don't require
+	multiHypercloudServerHost = "hypercloud5-api-server-service.hypercloud5-system.svc"
 )
 
 func main() {
