@@ -12,7 +12,7 @@ import {
 
 const StreamsInstanceFilter = () => {
   const [isToolbarSelectOpen, setIsToolbarSelectOpen] = React.useState(false);
-  const [toolbarSelections, setToolbarSelections] = React.useState('Name');
+  const [toolbarSelections, setToolbarSelections] = React.useState("Name");
   const [textInputNameValue, setTextInputNameValue] = React.useState('');
   const [textInputLabelValue, setTextInputLabelValue] = React.useState('');
 
@@ -25,16 +25,16 @@ const StreamsInstanceFilter = () => {
     setIsToolbarSelectOpen(isOpen);
   };
 
-  const onSelect = (selection) => {
+  const onSelect = selection => {
     setToolbarSelections(selection);
     setIsToolbarSelectOpen(!isToolbarSelectOpen);
   };
 
-  const handleTextInputNameChange = (value) => {
+  const handleTextInputNameChange = value => {
     setTextInputNameValue(value);
   };
 
-  const handleTextInputLabelChange = (value) => {
+  const handleTextInputLabelChange = value => {
     setTextInputLabelValue(value);
   };
 

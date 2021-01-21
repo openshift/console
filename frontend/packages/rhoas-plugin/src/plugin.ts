@@ -37,7 +37,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       loader: async () =>
         (
           await import(
-            './components/rhosak-page/ManagedServices' /* webpackChunkName: "managedservices-plugin-releases-list-page" */
+            './components/managed-services-list/ManagedServicesList' /* webpackChunkName: "managedservices-plugin-releases-list-page" */
           )
         ).default,
     },
