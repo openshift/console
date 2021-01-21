@@ -66,23 +66,17 @@ export const CreateCatalogSource: React.FC<CreateCatalogSourceProps> = withHandl
     const availabilityKinds = [
       {
         value: AvailabilityValue.ALL_NAMESPACES,
-        title: t('olm~Cluster-wide {{resource}}', {
-          resource: CatalogSourceModel.label,
-        }),
+        title: t('olm~Cluster-wide CatalogSource'),
         desc: t('olm~Catalog will be available in all namespaces'),
       },
       {
         value: AvailabilityValue.SINGLE_NAMESPACE,
-        title: t('olm~Namespace {{resource}}', {
-          resource: CatalogSourceModel.label,
-        }),
+        title: t('olm~Namespaced CatalogSource'),
         desc: t('olm~Catalog will only be available in a single namespace'),
       },
     ];
 
-    const title = t('olm~Create {{resource}}', {
-      resource: CatalogSourceModel.label,
-    });
+    const title = t('olm~Create CatalogSource');
     return (
       <div className="co-m-pane__body">
         <Helmet>
@@ -95,13 +89,7 @@ export const CreateCatalogSource: React.FC<CreateCatalogSourceProps> = withHandl
           {t('olm~Create a CatalogSource in order to make operators available in OperatorHub.')}
         </p>
         <Form onSubmit={onSave}>
-          <FormGroup
-            fieldId="catalog-source-name"
-            isRequired
-            label={t('olm~{{resource}} name', {
-              resource: CatalogSourceModel.label,
-            })}
-          >
+          <FormGroup fieldId="catalog-source-name" isRequired label={t('olm~CatalogSource name')}>
             <TextInput
               id="catalog-source-name"
               isRequired

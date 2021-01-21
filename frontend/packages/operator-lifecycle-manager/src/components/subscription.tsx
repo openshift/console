@@ -550,9 +550,7 @@ export const SubscriptionUpdates: React.FC<SubscriptionUpdatesProps> = ({
                     manualSubscriptionsInNamespace?.length > 0 && (
                       <div>
                         <Popover
-                          headerContent={
-                            <>{t('subscription~Functioning as manual approval strategy')}</>
-                          }
+                          headerContent={<>{t('olm~Functioning as manual approval strategy')}</>}
                           bodyContent={
                             <NamespaceIncludesManualApproval
                               subscriptions={manualSubscriptionsInNamespace}
@@ -562,7 +560,7 @@ export const SubscriptionUpdates: React.FC<SubscriptionUpdatesProps> = ({
                         >
                           <Button type="button" isInline variant="link">
                             <BlueInfoCircleIcon className="co-icon-space-r" />
-                            {t('subscription~Functioning as manual')}
+                            {t('olm~Functioning as manual')}
                           </Button>
                         </Popover>
                       </div>

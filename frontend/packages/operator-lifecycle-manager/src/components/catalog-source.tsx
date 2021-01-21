@@ -577,9 +577,7 @@ export const CatalogSourceListPage: React.FC<CatalogSourceListPageProps> = (prop
       {...props}
       canCreate
       createAccessReview={{ model: CatalogSourceModel }}
-      createButtonText={t('olm~Create {{item}}', {
-        item: CatalogSourceModel.label,
-      })}
+      createButtonText={t('olm~Create CatalogSource')}
       createProps={{ to: `/k8s/cluster/${referenceForModel(CatalogSourceModel)}/~new` }}
       flatten={(data) => flatten({ operatorHub: props.obj, ...data })}
       ListComponent={CatalogSourceList}
