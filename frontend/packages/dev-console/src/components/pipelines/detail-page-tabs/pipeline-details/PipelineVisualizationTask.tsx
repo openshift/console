@@ -114,7 +114,7 @@ const TaskComponent: React.FC<TaskProps> = ({
   disableTooltip,
   selected,
 }) => {
-  const stepList = _.get(task, ['data', 'spec', 'steps'], []);
+  const stepList = _.get(task, ['data', 'spec', 'steps'], _.get(status, ['steps'], []));
   const stepStatusList: StepStatus[] = stepList.map((step) => createStepStatus(step, status));
   const showStatusState: boolean = isPipelineRun && !!status && !!status.reason;
   const visualName = name || _.get(task, ['metadata', 'name'], '');

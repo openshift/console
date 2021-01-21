@@ -63,9 +63,6 @@ const plugin: Plugin<ConsumedExtensions> = [
         href: '/operatorhub',
       },
     },
-    flags: {
-      required: [FLAGS.CAN_LIST_PACKAGE_MANIFEST, FLAGS.CAN_LIST_OPERATOR_GROUP],
-    },
   },
   {
     type: 'NavItem/ResourceNS',
