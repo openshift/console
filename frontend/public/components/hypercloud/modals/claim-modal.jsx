@@ -17,14 +17,14 @@ class BaseClaimModal extends PromiseComponent {
         this._submit = this._submit.bind(this);
         this._cancel = props.cancel.bind(this);
         let status = _.get(props.resource, props.path.split('/').slice(1));
-        if(status === 'Awaiting') {
+        if (status === 'Awaiting') {
             status = 'Approved';
         }
         const reason = _.get(props.resource, props.reasonPath.split('/').slice(1));
         this.state = Object.assign(this.state, {
             status,
             reason
-        });   
+        });
     }
 
     _submit(e) {
@@ -37,7 +37,7 @@ class BaseClaimModal extends PromiseComponent {
         const admit = this.state.status === 'Approved' ? true : false;
 
         const reason = this.state.reason;
-        
+
         const promise = k8sUpdateClaim(kind, clusterClaim, admit, reason);
         this.handlePromise(promise)
             .then(this.successSubmit);
@@ -49,11 +49,11 @@ class BaseClaimModal extends PromiseComponent {
     }
 
     onChangeApproval = (e) => {
-        this.setState({status: e.target.value});
+        this.setState({ status: e.target.value });
     }
-    
+
     onChangeReason = (e) => {
-        this.setState({reason: e.target.value});
+        this.setState({ reason: e.target.value });
     }
 
     render() {
@@ -69,14 +69,14 @@ class BaseClaimModal extends PromiseComponent {
                         </div>
                     </div>
                     <div className="row co-m=-form-row">
-                        <div className="col-sm-12" style={{marginBottom: '15px'}}>
+                        <div className="col-sm-12" style={{ marginBottom: '15px' }}>
                             <select className="col-sm-12" value={this.state.status} onChange={this.onChangeApproval}>
                                 <option value="Approved">Approved</option>
                                 <option value="Rejected">Rejected</option>
                             </select>
                         </div>
                         <div className="col-sm-12">
-                        <textarea className="col-sm-12" style={{height: '100px'}} onChange={this.onChangeReason} value={this.state.reason} />
+                            <textarea className="col-sm-12" style={{ height: '100px' }} onChange={this.onChangeReason} value={this.state.reason} />
                         </div>
                         <div className="col-sm-12">
                             Please enter a reason for refusal.
