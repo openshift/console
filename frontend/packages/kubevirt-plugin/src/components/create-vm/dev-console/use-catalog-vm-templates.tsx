@@ -16,7 +16,7 @@ import {
   templateProviders,
 } from '../../../selectors/vm-template/basic';
 import {
-  getTemplateFlavorDesc,
+  getTemplateFlavorData,
   getTemplateSizeRequirementInBytes,
 } from '../../../selectors/vm-template/advanced';
 import { isTemplateSourceError } from '../../../statuses/template/types';
@@ -55,7 +55,10 @@ const normalizeVmTemplates = (
     const sourceProvider = !isTemplateSourceError(sourceStatus) && sourceStatus?.provider;
     const imgUrl = getTemplateOSIcon(tmp);
     const workloadType = getWorkloadProfile(tmp) || t('kubevirt-plugin~Not available');
-    const flavor = getTemplateFlavorDesc(tmp, false);
+    const flavor = t(
+      'kubevirt-plugin~{{flavor}}: {{count}} CPU | {{memory}}',
+      getTemplateFlavorData(tmp),
+    );
     const storage = getTemplateSizeRequirementInBytes(tmp, sourceStatus);
     const storageLabel = storage
       ? humanizeBinaryBytes(storage).string
@@ -118,7 +121,7 @@ const normalizeVmTemplates = (
                   'kubevirt-plugin~You will be able to change the flavor after selecting this template',
                 )}
               >
-                {getTemplateFlavorDesc(tmp)}
+                {flavor}
               </FormRow>
               <FormRow
                 className="vm-side-drawer-form-row"
