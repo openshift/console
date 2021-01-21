@@ -24,6 +24,7 @@ const menuActions = [
   ...Kebab.getExtensionsActionsForKind(PersistentVolumeClaimModel),
   ExpandPVC,
   ...common,
+  Kebab.factory.ModifyStatus
 ];
 
 const PVCStatus = ({ pvc }) => (
