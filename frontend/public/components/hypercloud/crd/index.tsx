@@ -18,7 +18,7 @@ export const exampleForModel = (crd: CustomResourceDefinitionKind, model: K8sKin
     {},
     {
       kind: model.kind,
-      apiVersion: `${model.apiGroup}/${model.apiVersion}`,
+      apiVersion: model?.apiGroup ? `${model.apiGroup}/${model.apiVersion}` : `${model.apiVersion}`,
     },
     _.find(almObj, (s: CustomResourceDefinitionKind) => referenceFor(s) === referenceForModel(model)),
   );

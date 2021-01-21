@@ -2,26 +2,11 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-import {
-  OutlinedCircleIcon,
-  ResourcesAlmostEmptyIcon,
-  ResourcesAlmostFullIcon,
-  ResourcesFullIcon,
-  UnknownIcon,
-} from '@patternfly/react-icons';
+import { OutlinedCircleIcon, ResourcesAlmostEmptyIcon, ResourcesAlmostFullIcon, ResourcesFullIcon, UnknownIcon } from '@patternfly/react-icons';
 
 import { FLAGS, YellowExclamationTriangleIcon } from '@console/shared';
 import { DetailsPage, MultiListPage, Table, TableRow, TableData } from './factory';
-import {
-  Kebab,
-  SectionHeading,
-  navFactory,
-  ResourceKebab,
-  ResourceLink,
-  ResourceSummary,
-  convertToBaseValue,
-  FieldLevelHelp,
-} from './utils';
+import { Kebab, SectionHeading, navFactory, ResourceKebab, ResourceLink, ResourceSummary, convertToBaseValue, FieldLevelHelp } from './utils';
 import { connectToFlags, flagPending } from '../reducers/features';
 import { GaugeChart } from './graphs/gauge';
 import { LoadingBox } from './utils/status-box';
@@ -29,52 +14,36 @@ import { referenceForModel } from '../module/k8s';
 import { ResourceQuotaModel, ClusterResourceQuotaModel } from '../models';
 
 const { common } = Kebab.factory;
-const resourceQuotaMenuActions = [
-  ...Kebab.getExtensionsActionsForKind(ResourceQuotaModel),
-  ...common,
-];
-const clusterResourceQuotaMenuActions = [
-  ...Kebab.getExtensionsActionsForKind(ClusterResourceQuotaModel),
-  ...common,
-];
+const resourceQuotaMenuActions = [...Kebab.getExtensionsActionsForKind(ResourceQuotaModel), ...common];
+const clusterResourceQuotaMenuActions = [...Kebab.getExtensionsActionsForKind(ClusterResourceQuotaModel), ...common];
 
-const isClusterQuota = (quota) => !quota.metadata.namespace;
+const isClusterQuota = quota => !quota.metadata.namespace;
 
-const quotaKind = (quota) =>
-  isClusterQuota(quota)
-    ? referenceForModel(ClusterResourceQuotaModel)
-    : referenceForModel(ResourceQuotaModel);
-const quotaActions = (quota) =>
-  quota.metadata.namespace ? resourceQuotaMenuActions : clusterResourceQuotaMenuActions;
+const quotaKind = quota => (isClusterQuota(quota) ? referenceForModel(ClusterResourceQuotaModel) : referenceForModel(ResourceQuotaModel));
+const quotaActions = quota => (quota.metadata.namespace ? resourceQuotaMenuActions : clusterResourceQuotaMenuActions);
 const gaugeChartThresholds = [{ value: 90 }, { value: 101 }];
 
 const quotaScopes = Object.freeze({
   Terminating: {
     label: 'Terminating',
-    description:
-      'Affects pods that have an active deadline. These pods usually include builds, deployers, and jobs.',
+    description: 'Affects pods that have an active deadline. These pods usually include builds, deployers, and jobs.',
   },
   NotTerminating: {
     label: 'Not Terminating',
-    description:
-      'Affects pods that do not have an active deadline. These pods usually include your applications.',
+    description: 'Affects pods that do not have an active deadline. These pods usually include your applications.',
   },
   BestEffort: {
     label: 'Best Effort',
-    description:
-      'Affects pods that do not have resource limits set. These pods have a best effort quality of service.',
+    description: 'Affects pods that do not have resource limits set. These pods have a best effort quality of service.',
   },
   NotBestEffort: {
     label: 'Not Best Effort',
-    description:
-      'Affects pods that have at least one resource limit set. These pods do not have a best effort quality of service.',
+    description: 'Affects pods that have at least one resource limit set. These pods do not have a best effort quality of service.',
   },
 });
 
-export const getQuotaResourceTypes = (quota) => {
-  const specHard = isClusterQuota(quota)
-    ? _.get(quota, 'spec.quota.hard')
-    : _.get(quota, 'spec.hard');
+export const getQuotaResourceTypes = quota => {
+  const specHard = isClusterQuota(quota) ? _.get(quota, 'spec.quota.hard') : _.get(quota, 'spec.hard');
   return _.keys(specHard).sort();
 };
 
@@ -83,8 +52,7 @@ const getResourceUsage = (quota, resourceType) => {
   const statusPath = isCluster ? ['status', 'total', 'hard'] : ['status', 'hard'];
   const specPath = isCluster ? ['spec', 'quota', 'hard'] : ['spec', 'hard'];
   const usedPath = isCluster ? ['status', 'total', 'used'] : ['status', 'used'];
-  const max =
-    _.get(quota, [...statusPath, resourceType]) || _.get(quota, [...specPath, resourceType]);
+  const max = _.get(quota, [...statusPath, resourceType]) || _.get(quota, [...specPath, resourceType]);
   const used = _.get(quota, [...usedPath, resourceType]);
   const percent = !max || !used ? 0 : (convertToBaseValue(used) / convertToBaseValue(max)) * 100;
   return {
@@ -94,11 +62,7 @@ const getResourceUsage = (quota, resourceType) => {
   };
 };
 
-const tableColumnClasses = [
-  classNames('col-md-5', 'col-xs-6'),
-  classNames('col-md-7', 'col-xs-6'),
-  Kebab.columnClass,
-];
+const tableColumnClasses = [classNames('col-md-5', 'col-xs-6'), classNames('col-md-7', 'col-xs-6'), Kebab.columnClass];
 
 const ResourceQuotaTableHeader = () => {
   return [
@@ -126,24 +90,9 @@ export const ResourceQuotaTableRow = ({ obj: rq, index, key, style }) => {
   return (
     <TableRow id={rq.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink
-          kind={quotaKind(rq)}
-          name={rq.metadata.name}
-          namespace={rq.metadata.namespace}
-          className="co-resource-item__resource-name"
-        />
+        <ResourceLink kind={quotaKind(rq)} name={rq.metadata.name} namespace={rq.metadata.namespace} className="co-resource-item__resource-name" />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
-        {rq.metadata.namespace ? (
-          <ResourceLink
-            kind="Namespace"
-            name={rq.metadata.namespace}
-            title={rq.metadata.namespace}
-          />
-        ) : (
-          'None'
-        )}
-      </TableData>
+      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>{rq.metadata.namespace ? <ResourceLink kind="Namespace" name={rq.metadata.namespace} title={rq.metadata.namespace} /> : 'None'}</TableData>
       <TableData className={tableColumnClasses[2]}>
         <ResourceKebab actions={quotaActions(rq)} kind={quotaKind(rq)} resource={rq} />
       </TableData>
@@ -181,9 +130,7 @@ export const ResourceUsageRow = ({ quota, resourceType }) => {
   );
 };
 
-const NoQuotaGuage = ({ title, className }) => (
-  <GaugeChart error="No Quota" thresholds={[{ value: 100 }]} title={title} className={className} />
-);
+const NoQuotaGuage = ({ title, className }) => <GaugeChart error="No Quota" thresholds={[{ value: 100 }]} title={title} className={className} />;
 
 export const QuotaGaugeCharts = ({ quota, resourceTypes, chartClassName = null }) => {
   const resourceTypesSet = new Set(resourceTypes);
@@ -193,10 +140,7 @@ export const QuotaGaugeCharts = ({ quota, resourceTypes, chartClassName = null }
         <div className="co-resource-quota-gauge-chart">
           <GaugeChart
             data={{
-              y: getResourceUsage(
-                quota,
-                resourceTypesSet.has('requests.cpu') ? 'requests.cpu' : 'cpu',
-              ).percent,
+              y: getResourceUsage(quota, resourceTypesSet.has('requests.cpu') ? 'requests.cpu' : 'cpu').percent,
             }}
             thresholds={gaugeChartThresholds}
             title="CPU Request"
@@ -210,12 +154,7 @@ export const QuotaGaugeCharts = ({ quota, resourceTypes, chartClassName = null }
       )}
       {resourceTypesSet.has('limits.cpu') ? (
         <div className="co-resource-quota-gauge-chart">
-          <GaugeChart
-            data={{ y: getResourceUsage(quota, 'limits.cpu').percent }}
-            thresholds={gaugeChartThresholds}
-            title="CPU Limit"
-            className={chartClassName}
-          />
+          <GaugeChart data={{ y: getResourceUsage(quota, 'limits.cpu').percent }} thresholds={gaugeChartThresholds} title="CPU Limit" className={chartClassName} />
         </div>
       ) : (
         <div className="co-resource-quota-gauge-chart">
@@ -226,10 +165,7 @@ export const QuotaGaugeCharts = ({ quota, resourceTypes, chartClassName = null }
         <div className="co-resource-quota-gauge-chart">
           <GaugeChart
             data={{
-              y: getResourceUsage(
-                quota,
-                resourceTypesSet.has('requests.memory') ? 'requests.memory' : 'memory',
-              ).percent,
+              y: getResourceUsage(quota, resourceTypesSet.has('requests.memory') ? 'requests.memory' : 'memory').percent,
             }}
             thresholds={gaugeChartThresholds}
             title="Memory Request"
@@ -243,12 +179,7 @@ export const QuotaGaugeCharts = ({ quota, resourceTypes, chartClassName = null }
       )}
       {resourceTypesSet.has('limits.memory') ? (
         <div className="co-resource-quota-gauge-chart">
-          <GaugeChart
-            data={{ y: getResourceUsage(quota, 'limits.memory').percent }}
-            thresholds={gaugeChartThresholds}
-            title="Memory Limit"
-            className={chartClassName}
-          />
+          <GaugeChart data={{ y: getResourceUsage(quota, 'limits.memory').percent }} thresholds={gaugeChartThresholds} title="Memory Limit" className={chartClassName} />
         </div>
       ) : (
         <div className="co-resource-quota-gauge-chart">
@@ -264,7 +195,7 @@ export const QuotaScopesInline = ({ scopes, className }) => {
     <span className={classNames(className)}>
       (
       {scopes
-        .map((scope) => {
+        .map(scope => {
           const scopeObj = _.get(quotaScopes, scope);
           return scopeObj ? scopeObj.label : scope;
         })
@@ -275,7 +206,7 @@ export const QuotaScopesInline = ({ scopes, className }) => {
 };
 
 export const QuotaScopesList = ({ scopes }) => {
-  return scopes.map((scope) => {
+  return scopes.map(scope => {
     const scopeObj = _.get(quotaScopes, scope);
     return scopeObj ? (
       <dd key={scope}>
@@ -290,15 +221,8 @@ export const QuotaScopesList = ({ scopes }) => {
   });
 };
 
-export const hasComputeResources = (resourceTypes) => {
-  const chartResourceTypes = [
-    'requests.cpu',
-    'cpu',
-    'limits.cpu',
-    'requests.memory',
-    'memory',
-    'limits.memory',
-  ];
+export const hasComputeResources = resourceTypes => {
+  const chartResourceTypes = ['requests.cpu', 'cpu', 'limits.cpu', 'requests.memory', 'memory', 'limits.memory'];
   return _.intersection(resourceTypes, chartResourceTypes).length > 0;
 };
 
@@ -327,23 +251,11 @@ const Details = ({ obj: rq }) => {
         </div>
       </div>
       <div className="co-m-pane__body">
-        <SectionHeading
-          text={`${label} Details`}
-          style={{ display: 'block', marginBottom: '20px' }}
-        >
+        <SectionHeading text={`${label} Details`} style={{ display: 'block', marginBottom: '20px' }}>
           <FieldLevelHelp>
-            <p>
-              Requests are the amount of resources you expect to use. These are used when
-              establishing if the cluster can fulfill your Request.
-            </p>
-            <p>
-              Limits are a maximum amount of a resource you can consume. Applications consuming more
-              than the Limit may be terminated.
-            </p>
-            <p>
-              A cluster administrator can establish limits on both the amount you can Request and
-              your Limits with a Resource Quota.
-            </p>
+            <p>Requests are the amount of resources you expect to use. These are used when establishing if the cluster can fulfill your Request.</p>
+            <p>Limits are a maximum amount of a resource you can consume. Applications consuming more than the Limit may be terminated.</p>
+            <p>A cluster administrator can establish limits on both the amount you can Request and your Limits with a Resource Quota.</p>
           </FieldLevelHelp>
         </SectionHeading>
         <div className="co-m-table-grid co-m-table-grid--bordered">
@@ -354,7 +266,7 @@ const Details = ({ obj: rq }) => {
             <div className="col-sm-3 col-xs-3">Max</div>
           </div>
           <div className="co-m-table-grid__body">
-            {resourceTypes.map((type) => (
+            {resourceTypes.map(type => (
               <ResourceUsageRow key={type} quota={rq} resourceType={type} />
             ))}
           </div>
@@ -364,17 +276,9 @@ const Details = ({ obj: rq }) => {
   );
 };
 
-export const ResourceQuotasList = (props) => (
-  <Table
-    {...props}
-    aria-label="Resource Quoates"
-    Header={ResourceQuotaTableHeader}
-    Row={ResourceQuotaTableRow}
-    virtualize
-  />
-);
+export const ResourceQuotasList = props => <Table {...props} aria-label="Resource Quoates" Header={ResourceQuotaTableHeader} Row={ResourceQuotaTableRow} virtualize />;
 
-export const quotaType = (quota) => {
+export const quotaType = quota => {
   if (!quota) {
     return undefined;
   }
@@ -382,11 +286,11 @@ export const quotaType = (quota) => {
 };
 
 // Split each resource quota into one row per subject
-export const flatten = (resources) => _.flatMap(resources, (resource) => _.compact(resource.data));
+export const flatten = resources => _.flatMap(resources, resource => _.compact(resource.data));
 
 export const ResourceQuotasPage = connectToFlags(FLAGS.OPENSHIFT)(({ namespace, flags, mock }) => {
   const resources = [{ kind: 'ResourceQuota', namespaced: true }];
-  let rowFilters = null;
+  let rowFilters;
 
   if (flagPending(flags[FLAGS.OPENSHIFT])) {
     return <LoadingBox />;
@@ -414,28 +318,7 @@ export const ResourceQuotasPage = connectToFlags(FLAGS.OPENSHIFT)(({ namespace, 
     model: ResourceQuotaModel,
     namespace: createNS,
   };
-  return (
-    <MultiListPage
-      canCreate={true}
-      createAccessReview={accessReview}
-      createButtonText="Create Resource Quota"
-      createProps={{ to: `/k8s/ns/${createNS}/resourcequotas/~new` }}
-      ListComponent={ResourceQuotasList}
-      resources={resources}
-      label="Resource Quotas"
-      namespace={namespace}
-      flatten={flatten}
-      title="Resource Quotas"
-      rowFilters={rowFilters}
-      mock={mock}
-    />
-  );
+  return <MultiListPage canCreate={true} createAccessReview={accessReview} createButtonText="Create Resource Quota" createProps={{ to: `/k8s/ns/${createNS}/resourcequotas/~new` }} ListComponent={ResourceQuotasList} resources={resources} label="Resource Quotas" namespace={namespace} flatten={flatten} title="Resource Quotas" rowFilters={rowFilters} mock={mock} />;
 });
 
-export const ResourceQuotasDetailsPage = (props) => (
-  <DetailsPage
-    {...props}
-    menuActions={resourceQuotaMenuActions}
-    pages={[navFactory.details(Details), navFactory.editYaml()]}
-  />
-);
+export const ResourceQuotasDetailsPage = props => <DetailsPage {...props} menuActions={resourceQuotaMenuActions} pages={[navFactory.details(Details), navFactory.editYaml()]} />;
