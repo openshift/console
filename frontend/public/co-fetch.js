@@ -3,6 +3,7 @@ import 'whatwg-fetch';
 import { getAccessToken } from './hypercloud/auth';
 import { authSvc } from './module/auth';
 import store from './redux';
+import keycloak from './hypercloud/keycloak';
 
 const initDefaults = {
   headers: {},
@@ -35,12 +36,15 @@ const validateStatus = (response, url) => {
 
   if (response.status === 401) {
     //authSvc.logout(window.location.pathname);
-    return response.json().then(json => {
-      const error = new Error(json.message || 'Authorization failed.');
-      error.response = response;
-      error.json = json;
-      throw error;
-    });
+    
+    //keycloak.logout();
+    
+    // return response.json().then(json => {
+    //   const error = new Error(json.message || 'Authorization failed.');
+    //   error.response = response;
+    //   error.json = json;
+    //   throw error;
+    // });
   }
 
   const contentType = response.headers.get('content-type');
