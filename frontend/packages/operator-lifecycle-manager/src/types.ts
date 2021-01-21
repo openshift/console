@@ -194,11 +194,18 @@ export type SubscriptionKind = {
     installPlanApproval?: InstallPlanApproval;
   };
   status?: {
+    catalogHealth?: {
+      catalogSourceRef?: ObjectReference;
+      healthy?: boolean;
+      lastUpdated?: string;
+    }[];
+    conditions?: K8sResourceCondition[];
     installedCSV?: string;
     installPlanRef?: ObjectReference;
     state?: SubscriptionState;
+    lastUpdated?: string;
   };
-} & K8sResourceKind;
+} & K8sResourceCommon;
 
 export type CatalogSourceKind = {
   apiVersion: 'operators.coreos.com/v1alpha1';
