@@ -9,6 +9,7 @@ import {
   ButtonBar,
   withHandlePromise,
   HandlePromiseProps,
+  resourcePathFromModel,
 } from '@console/internal/components/utils';
 import {
   k8sGet,
@@ -142,9 +143,8 @@ const CreateExternalCluster = withHandlePromise((props: CreateExternalClusterPro
     );
   };
 
-  const onCancel = () => {
-    history.goBack();
-  };
+  const onCancel = () =>
+    history.push(resourcePathFromModel(ClusterServiceVersionModel, appName, ns));
 
   React.useEffect(() => {
     k8sGet(ClusterServiceVersionModel, appName, ns)
