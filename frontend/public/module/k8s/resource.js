@@ -63,9 +63,9 @@ export const resourceURL = (model, options) => {
 
 export const resourceClusterURL = (model) => {
   if(isCluster(model)) {
-    return `/api/multi-hypercloud/api/master/cluster?userId=${getId()}`;
+    return `/api/multi-hypercloud/cluster?userId=${getId()}`;
   }
-  return `api/multi-hypercloud/api/master/clusterclaim?userId=${getId()}`;
+  return `api/multi-hypercloud/clusterclaim?userId=${getId()}`;
 }
 
 export const resourceApprovalURL = (model, options, approval) => {
