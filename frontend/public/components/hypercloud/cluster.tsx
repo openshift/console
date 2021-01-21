@@ -7,7 +7,7 @@ import { K8sResourceKind } from '../../module/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from '../factory';
 import {
   // AsyncComponent,
-  // DetailsItem,
+  DetailsItem,
   Kebab,
   KebabAction,
   detailsPage,
@@ -132,7 +132,19 @@ const ClusterNodesInfo = cluster => {
 
 const ClusterNodes: React.FC<ClusterNodesProps> = props => <NodesComponent {...props} customData={{ showNodes: true }} />;
 
-export const ClusterDetailsList: React.FC<ClusterDetailsListProps> = ({ cl }) => <dl className="co-m-pane__details"></dl>;
+export const ClusterDetailsList: React.FC<ClusterDetailsListProps> = ({ cl }) => {
+  return <dl className="co-m-pane__details">
+    <DetailsItem label='Provider' obj={cl} path="spec.provider">
+      {cl.spec.provider}
+    </DetailsItem>
+    <DetailsItem label='Type' obj={cl} path="spec.provider">
+      {cl.spec.provider ? 'Create' : 'Enroll'}
+    </DetailsItem>
+    <DetailsItem label='Provider' obj={cl} path="status.ready">
+      {cl.status?.ready ? 'Ready' : 'Not Ready'}
+    </DetailsItem>
+  </dl>;
+};
 
 const ClusterDetails: React.FC<ClusterDetailsProps> = ({ obj: cluster }) => (
   <>

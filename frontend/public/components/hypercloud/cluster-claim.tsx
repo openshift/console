@@ -5,7 +5,7 @@ import { sortable } from '@patternfly/react-table';
 
 import { K8sResourceKind } from '../../module/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from '../factory';
-import { Kebab, KebabAction, detailsPage, Timestamp, navFactory, ResourceKebab, ResourceLink, ResourceIcon, ResourceSummary, SectionHeading } from '../utils';
+import { Kebab, KebabAction, detailsPage, Timestamp, navFactory, ResourceKebab, ResourceLink, ResourceIcon, ResourceSummary, SectionHeading, DetailsItem } from '../utils';
 import { Status } from '@console/shared';
 import { ClusterClaimModel } from '../../models';
 import { useTranslation } from 'react-i18next';
@@ -129,6 +129,21 @@ export const ClusterRow: React.FC<ClusterRowProps> = ({ pod }) => {
   );
 };
 
+
+export const ClusterClaimDetailsList: React.FC<ClusterClaimDetailsListProps> = ({ clcl }) => {
+  return <dl className="co-m-pane__details">
+    <DetailsItem label='Provider' obj={clcl} path="spec.provider">
+      {clcl.spec.provider}
+    </DetailsItem>
+    <DetailsItem label='Type' obj={clcl} path="spec.provider">
+      {clcl.spec.provider ? 'Create' : 'Enroll'}
+    </DetailsItem>
+    <DetailsItem label='Provider' obj={clcl} path="status.ready">
+      {clcl.status?.ready ? 'Ready' : 'Not Ready'}
+    </DetailsItem>
+  </dl>;
+};
+
 const ClusterClaimDetails: React.FC<ClusterClaimDetailsProps> = ({ obj: clusterClaim }) => (
   <>
     <div className="co-m-pane__body">
@@ -136,6 +151,9 @@ const ClusterClaimDetails: React.FC<ClusterClaimDetailsProps> = ({ obj: clusterC
       <div className="row">
         <div className="col-lg-6">
           <ResourceSummary resource={clusterClaim} />
+        </div>
+        <div className="col-lg-6">
+          <ClusterClaimDetailsList clcl={clusterClaim} />
         </div>
       </div>
     </div>
@@ -177,6 +195,10 @@ export const ClusterClaimsDetailsPage: React.FC<ClusterClaimsDetailsPageProps> =
 type ClusterRowProps = {
   pod: K8sResourceKind;
 }
+
+type ClusterClaimDetailsListProps = {
+  clcl: K8sResourceKind;
+};
 
 type ClusterClaimDetailsProps = {
   obj: K8sResourceKind;
