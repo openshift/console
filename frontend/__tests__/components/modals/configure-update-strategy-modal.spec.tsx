@@ -8,13 +8,7 @@ import {
 } from '@console/internal/components/modals/configure-update-strategy-modal';
 import { RadioInput } from '@console/internal/components/radio';
 
-jest.mock('react-i18next', () => {
-  const reactI18next = require.requireActual('react-i18next');
-  return {
-    ...reactI18next,
-    useTranslation: () => ({ t: (key) => key }),
-  };
-});
+jest.mock('i18next');
 
 describe(ConfigureUpdateStrategy.displayName, () => {
   let wrapper: ShallowWrapper<ConfigureUpdateStrategyProps>;

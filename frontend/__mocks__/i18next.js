@@ -1,13 +1,12 @@
-/* eslint-env node */
-const dependency = require.requireActual('i18next');
-module.exports = {
-  ...dependency,
-  default: {
-    ...dependency.default,
-    use() {
-      return this;
-    },
-    init: () => Promise.resolve(),
-    t: (key) => (key?.indexOf('~') !== -1 ? key.substring(key.indexOf('~') + 1) : key),
-  },
-};
+class MockI18n {
+  init() {}
+  on() {}
+  t(i) {
+    return i;
+  }
+  use() {
+    return this;
+  }
+}
+
+export default new MockI18n();
