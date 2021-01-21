@@ -91,7 +91,7 @@ const formatTimeZoneStamp = timestamp => {
   const time: string = d.toTimeString().split(' ')[0];
 
   if (!!date) {
-    const formattedDate = date.replaceAll('-', '.');
+    const formattedDate = date.replace(/-/g, '.');
     return `${formattedDate} ${time}`;
   } else {
     return timestamp;
