@@ -12,6 +12,10 @@ const ManagedKafkas = () => {
 
   const [authenticationSuccess, setAuthenticationSuccess] = React.useState(false);
 
+  const handleNext = () => {
+    setAuthenticationSuccess(true);
+  }
+
   return (
     <>
       <NamespacedPage variant={NamespacedPageVariants.light} hideApplications>
@@ -24,15 +28,18 @@ const ManagedKafkas = () => {
         { authenticationSuccess &&
           <StreamsInstancePage />
         }
-        <FormFooter
-          isSubmitting={false}
-          errorMessage=""
-          submitLabel="Create"
-          disableSubmit={false}
-          resetLabel="Reset"
-          sticky
-          handleCancel={history.goBack}
-        />
+        <div className="co-m-pane__body" style={{ borderTop: 0, paddingTop: 0, paddingBottom: 0 }}>
+          <FormFooter
+            handleSubmit={() => handleNext()}
+            isSubmitting={false}
+            errorMessage=""
+            submitLabel={ authenticationSuccess ? "Create" : "Next" }
+            disableSubmit={false}
+            resetLabel="Reset"
+            sticky
+            handleCancel={history.goBack}
+          />
+        </div>
       </NamespacedPage>
     </>
   );

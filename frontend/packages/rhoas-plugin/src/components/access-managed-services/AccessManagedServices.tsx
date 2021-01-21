@@ -17,10 +17,19 @@ import {
   FlexForm,
   FormHeader,
 } from '@console/shared';
-import { Button } from '@patternfly/react-core';
-
+import { Button, FormGroup, TextInput } from '@patternfly/react-core';
 
 const AccessManagedServices = ({setAuthenticationSuccess}) => {
+
+  const [ apiTokenValue, setApiTokenValue ] = React.useState("");
+
+  const handleApiTokenValueChange = value => {
+    setApiTokenValue(value);
+  }
+
+  const handleAuthChange = () => {
+    setAuthenticationSuccess(true);
+  }
 
   // TODO change namespace from URL (args)
   const namespace = "default";
@@ -87,9 +96,7 @@ const AccessManagedServices = ({setAuthenticationSuccess}) => {
     })
   }
 
-  const handleAuthChange = () => {
-    setAuthenticationSuccess(true);
-  }
+
 
   return (
     <>
@@ -100,28 +107,27 @@ const AccessManagedServices = ({setAuthenticationSuccess}) => {
         className="rhoas__page-heading"
         title="Access managed services with API Token"
       >
-        <p>To access this managed service, input the API token which can be located at</p>
-        <a href="/">https://qaprodauth.cloud.redhat.com/openshift/token</a>
+        <span>
+          To access this managed service, input the API token which can be located at 
+          <a href="/">https://qaprodauth.cloud.redhat.com/openshift/token</a>
+        </span>
       </PageHeading>
       <PageBody>
-        API token
-        <input id="token" type="text"></input>
-
-      </PageBody>
-      <Button variant="primary" onClick={handleAuthChange}>Click here to pass auth and go to table</Button>
-
-
-        {/* <FlexForm onSubmit={onSubmit}>
-
-          <FormFooter
-            isSubmitting={false}
-            errorMessage=""
-            submitLabel="Add token"
-            disableSubmit={false}
-            resetLabel="Reset"
-            sticky
+        <FormGroup
+          fieldId=""
+          label="API Token"
+          className=""
+        >
+          <TextInput
+            isRequired
+            value={apiTokenValue}
+            onChange={() => handleApiTokenValueChange()}
+            type="text"
+            id=""
+            name=""
           />
-        </FlexForm> */}
+        </FormGroup>
+      </PageBody>
     </>
   )
 
