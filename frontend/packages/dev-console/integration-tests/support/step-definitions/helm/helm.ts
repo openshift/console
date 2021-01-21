@@ -1,6 +1,7 @@
 import { When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { catalogPage, catalogInstallPageObj } from '../../pages/add-flow/catalog-page';
 import { topologyHelper } from '../../pages/topology/topology-helper-page';
+import { helmPage } from '../../pages/helm/helm-page';
 
 When('user selects YAML view', () => {
   cy.get(catalogInstallPageObj.installHelmChart.yamlView).click();
@@ -32,3 +33,10 @@ When('user enters Release Name as {string}', (releaseName: string) => {
 Then('user will see the chart version dropdown', () => {
   catalogInstallPageObj.verifyChartVersionDropdownAvailable();
 });
+
+Then(
+  'user will see that the README is also updated with new chart version {string}',
+  (chartVersion: string) => {
+    helmPage.verifyChartVersionInReadme(chartVersion);
+  },
+);
