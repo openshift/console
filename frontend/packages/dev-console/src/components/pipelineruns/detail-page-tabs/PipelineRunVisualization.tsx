@@ -3,7 +3,7 @@ import { Alert } from '@patternfly/react-core';
 import { k8sGet } from '@console/internal/module/k8s';
 import { PipelineModel } from '../../../models';
 import PipelineVisualization from '../../pipelines/detail-page-tabs/pipeline-details/PipelineVisualization';
-import { Pipeline, PipelineRun, pipelineRefExists } from '../../../utils/pipeline-augment';
+import { Pipeline, PipelineRun, pipelineRefExists, PipelineTask } from '../../../utils/pipeline-augment';
 
 type PipelineRunVisualizationProps = {
   pipelineRun: PipelineRun;
@@ -20,6 +20,23 @@ const PipelineRunVisualization: React.FC<PipelineRunVisualizationProps> = ({ pip
         .catch((error) =>
           setErrorMessage(error?.message || 'Could not load visualization at this time.'),
         );
+    } else {
+      const p: Pipeline = {
+        spec: {
+          tasks: pipelineRun.spec.pipelineSpec.tasks.map((task): PipelineTask => {
+            return {
+              name: task.name,
+              params: task.params,
+              taskRef: {
+                name: task.name,
+              },
+              runAfter: task.runAfter,
+              resources: task.resources
+            }
+          })
+        }
+      };
+      setPipeline(p);
     }
   }, [pipelineRun, setPipeline]);
 

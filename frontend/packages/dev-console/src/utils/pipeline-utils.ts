@@ -126,11 +126,11 @@ const appendPipelineRunStatus = (pipeline, pipelineRun) => {
     if (!pipelineRun.status) {
       return task;
     }
-    if (pipelineRun.status && !pipelineRun.status.taskRuns) {
+    if (pipelineRun.status && !pipelineRun.status.taskRuns && !pipelineRun.status.runs) {
       return _.merge(task, { status: { reason: runStatus.Failed } });
     }
     const mTask = _.merge(task, {
-      status: _.get(_.find(pipelineRun.status.taskRuns, { pipelineTaskName: task.name }), 'status'),
+      status: _.get(_.find(pipelineRun.status.taskRuns, { pipelineTaskName: task.name }) || _.find(pipelineRun.status.runs, { pipelineTaskName: task.name }), 'status'),
     });
     // append task duration
     if (mTask.status && mTask.status.completionTime && mTask.status.startTime) {

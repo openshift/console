@@ -20,6 +20,6 @@ LABEL io.k8s.display-name="Hypercloud Console" \
       maintainer="Jinsoo Youn <jinsoo_youn@tmax.co.kr>"
 
 # doesn't require a root user.
-USER 1001
+USER 1001:1001
 
 CMD [ "/opt/bridge/bin/bridge", "--public-dir=/opt/bridge/static" ]

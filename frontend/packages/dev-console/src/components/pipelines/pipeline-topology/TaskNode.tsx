@@ -20,7 +20,7 @@ const TaskNode: React.FC<TaskNodeProps> = ({ element, disableTooltip }) => {
         pipelineRunName={pipelineRun?.metadata?.name}
         task={task}
         pipelineRunStatus={pipelineRun && pipelineRunFilterReducer(pipelineRun)}
-        namespace={pipeline?.metadata?.namespace}
+        namespace={pipeline?.metadata?.namespace ?? pipelineRun?.metadata?.namespace}
         disableTooltip={disableTooltip}
         selected={selected}
       />
