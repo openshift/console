@@ -6,19 +6,21 @@ import {
   k8sCreate,
   k8sWatch
 } from '@console/internal/module/k8s';
-
+import { Helmet } from 'react-helmet';
+import { PageBody } from '@console/shared';
+import { PageHeading } from '@console/internal/components/utils';
 // To be clarified if we watch for resource on second page
 // import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
-
 import {
   FormFooter,
   FlexForm,
   FormHeader,
 } from '@console/shared';
+import { Button } from '@patternfly/react-core';
 
 
-const ManagedServicesToken = () => {
+const AccessManagedServices = ({setAuthenticationSuccess}) => {
 
   // TODO change namespace from URL (args)
   const namespace = "default";
@@ -81,23 +83,36 @@ const ManagedServicesToken = () => {
     console.log(await k8sCreate(ManagedKafkaRequestModel, mkRequest));
     // TODO This is for tesing and should not be on this page
     k8sWatch(ManagedKafkaRequestModel.kind, {}).onmessage((msg) => {
-      console.log("resource updated", msg)
+      console.log("resource updated", msg);
     })
+  }
+
+  const handleAuthChange = () => {
+    setAuthenticationSuccess(true);
   }
 
   return (
     <>
-      <div style={{ "backgroundColor": "#e6e6e6", "padding": 10 }}>
-        Managed Managed Kafka Access token.
-        {/*  TODO Add environment abstraction */}
-        <p>
-          Go to https://qaprodauth.cloud.redhat.com/openshift/token to retrieve token
-        </p>
-
-        <FlexForm onSubmit={onSubmit}>
-          <FormHeader title="Access token" helpText="token help" marginBottom="lg" />
-        Provide accessTokenSecretName
+      <Helmet>
+        <title>Access managed services with API Token</title>
+      </Helmet>
+      <PageHeading
+        className="rhoas__page-heading"
+        title="Access managed services with API Token"
+      >
+        <p>To access this managed service, input the API token which can be located at</p>
+        <a href="/">https://qaprodauth.cloud.redhat.com/openshift/token</a>
+      </PageHeading>
+      <PageBody>
+        API token
         <input id="token" type="text"></input>
+
+      </PageBody>
+      <Button variant="primary" onClick={handleAuthChange}>Click here to pass auth and go to table</Button>
+
+
+        {/* <FlexForm onSubmit={onSubmit}>
+
           <FormFooter
             isSubmitting={false}
             errorMessage=""
@@ -106,11 +121,10 @@ const ManagedServicesToken = () => {
             resetLabel="Reset"
             sticky
           />
-        </FlexForm>
-      </div>
+        </FlexForm> */}
     </>
   )
 
 }
 
-export default ManagedServicesToken;
+export default AccessManagedServices;

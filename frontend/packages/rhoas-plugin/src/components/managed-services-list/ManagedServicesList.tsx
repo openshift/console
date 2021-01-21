@@ -3,8 +3,7 @@ import { Gallery, GalleryItem } from '@patternfly/react-core';
 import { CatalogTile } from '@patternfly/react-catalog-view-extension';
 import { history } from '@console/internal/components/utils';
 import { PageLayout } from '@console/shared';
-import ManagedServicesToken from './ManagedServicesToken';
-
+// import ManagedServicesToken from './ManagedServicesToken';
 
 const navigateTo = (e: React.SyntheticEvent, url: string) => {
   history.push(url);
@@ -34,9 +33,9 @@ const ODCEmptyState = () => {
             />
           </GalleryItem>
         </Gallery>
-        <div style={{ "position": "absolute", "bottom": 10 }}>
+        {/* <div style={{ "position": "absolute", "bottom": 10 }}>
           <ManagedServicesToken></ManagedServicesToken>
-        </div>
+        </div> */}
       </PageLayout>
     </>
   );

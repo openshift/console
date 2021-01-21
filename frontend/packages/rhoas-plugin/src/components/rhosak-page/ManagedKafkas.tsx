@@ -1,30 +1,38 @@
 import * as React from 'react';
 import StreamsInstancePage from '../streams-list/StreamsInstancePage';
+import AccessManagedServices from '../access-managed-services/AccessManagedServices';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
-import { Button, ActionList, ActionListItem } from '@patternfly/react-core';
-import { PageBody } from '@console/shared';
+import { FormFooter } from '@console/shared';
+import { history } from '@console/internal/components/utils';
+import './ManagedKafkas.css';
 
 const ManagedKafkas = () => {
+
+  const [authenticationSuccess, setAuthenticationSuccess] = React.useState(false);
+
   return (
     <>
       <NamespacedPage variant={NamespacedPageVariants.light} hideApplications>
-        <StreamsInstancePage />
-        <PageBody>
-          <ActionList>
-            <ActionListItem>
-              <Button variant="primary" id="create-button">
-                Create
-              </Button>
-            </ActionListItem>
-            <ActionListItem>
-              <Button variant="secondary" id="cancels-button">
-                Cancel
-              </Button>
-            </ActionListItem>
-          </ActionList>
-        </PageBody>
+        { !authenticationSuccess &&
+          <AccessManagedServices 
+            authenticationSuccess={authenticationSuccess}
+            setAuthenticationSuccess={setAuthenticationSuccess}
+          />
+        }
+        { authenticationSuccess &&
+          <StreamsInstancePage />
+        }
+        <FormFooter
+          isSubmitting={false}
+          errorMessage=""
+          submitLabel="Create"
+          disableSubmit={false}
+          resetLabel="Reset"
+          sticky
+          handleCancel={history.goBack}
+        />
       </NamespacedPage>
     </>
   );
