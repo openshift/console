@@ -45,6 +45,10 @@ export const validateDNS1123SubdomainValue = (
     return asValidationObject(emptyMsg, ValidationErrorType.TrivialError);
   }
 
+  if (value.match(/^\$\{[A-Z_]+\}$/)) {
+    return asValidationObject('template parameter', ValidationErrorType.Warn);
+  }
+
   if (min && value.length < min) {
     return asValidationObject(shortMsg);
   }

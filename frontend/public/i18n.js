@@ -101,6 +101,8 @@ i18n
         'network-service',
         'nodes',
         'noobaa-storage-plugin',
+        'notification-drawer',
+        'oauth',
         'olm',
         'openid-idp-form',
         'operator-hub-subscribe',

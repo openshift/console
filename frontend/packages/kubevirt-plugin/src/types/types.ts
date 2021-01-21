@@ -17,4 +17,5 @@ export type OperatingSystemRecord = {
   name: string;
   baseImageName?: string;
   baseImageNamespace?: string;
+  baseImageRecomendedSize?: any;
 };
