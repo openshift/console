@@ -12,7 +12,12 @@ import {
 
 // TODO(vojtech): support code refs at any level within the properties object
 
-export const codeRefSymbol = Symbol('CodeRef');
+const codeRefSymbol = Symbol('CodeRef');
+
+export const applyCodeRefSymbol = <T = any>(ref: CodeRef<T>) => {
+  ref[codeRefSymbol] = true;
+  return ref;
+};
 
 export const isEncodedCodeRef = (obj): obj is EncodedCodeRef =>
   _.isPlainObject(obj) &&
@@ -98,8 +103,7 @@ export const resolveEncodedCodeRefs = (
       const executableCodeRef: CodeRef = async () =>
         loadReferencedObject(ref, entryModule, pluginID, errorCallback);
 
-      executableCodeRef[codeRefSymbol] = true;
-      e.properties[propName] = executableCodeRef;
+      e.properties[propName] = applyCodeRefSymbol(executableCodeRef);
     });
 
     return e;

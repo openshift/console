@@ -54,10 +54,20 @@ export class ConsoleActivePluginsModule {
 
         this.virtualModules.writeModule(
           'node_modules/@console/active-plugins.js',
-          getActivePluginsModule(this.pluginPackages, (pkg) =>
-            getDynamicExtensions(pkg, getExtensionsFilePath(pkg), (errorMessage) => {
-              errors.push(errorMessage);
-            }),
+          getActivePluginsModule(
+            this.pluginPackages,
+            () => `
+              import { applyCodeRefSymbol } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-resolver';
+            `,
+            (pkg) =>
+              getDynamicExtensions(
+                pkg,
+                getExtensionsFilePath(pkg),
+                (errorMessage) => {
+                  errors.push(errorMessage);
+                },
+                (codeRefSource) => `applyCodeRefSymbol(${codeRefSource})`,
+              ),
           ),
         );
       }

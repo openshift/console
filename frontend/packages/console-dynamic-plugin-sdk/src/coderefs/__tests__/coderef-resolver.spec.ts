@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import { Extension } from '@console/plugin-sdk/src/typings/base';
 import {
+  applyCodeRefSymbol,
   isEncodedCodeRef,
   isExecutableCodeRef,
   filterEncodedCodeRefProperties,
@@ -10,13 +11,28 @@ import {
   resolveEncodedCodeRefs,
   resolveCodeRefProperties,
 } from '../coderef-resolver';
-import { EncodedCodeRef } from '../../types';
+import { EncodedCodeRef, CodeRef } from '../../types';
 import {
   getExecutableCodeRefMock,
   getEntryModuleMocks,
   ModuleFactoryMock,
   RemoteEntryModuleMock,
 } from '../../utils/test-utils';
+
+describe('applyCodeRefSymbol', () => {
+  it('marks the given function with CodeRef symbol', () => {
+    const ref: CodeRef = () => Promise.resolve('qux');
+    expect(isExecutableCodeRef(ref)).toBe(false);
+
+    const updatedRef = applyCodeRefSymbol(ref);
+    expect(isExecutableCodeRef(updatedRef)).toBe(true);
+  });
+
+  it('returns the same function instance', () => {
+    const ref: CodeRef = () => Promise.resolve('qux');
+    expect(applyCodeRefSymbol(ref)).toBe(ref);
+  });
+});
 
 describe('isEncodedCodeRef', () => {
   it('returns true if obj is structured as { $codeRef: string }', () => {
@@ -31,6 +47,7 @@ describe('isExecutableCodeRef', () => {
   it('returns true if obj is a function marked with CodeRef symbol', () => {
     expect(isExecutableCodeRef(() => {})).toBe(false);
     expect(isExecutableCodeRef(getExecutableCodeRefMock('qux'))).toBe(true);
+    expect(isExecutableCodeRef(applyCodeRefSymbol(() => Promise.resolve('qux')))).toBe(true);
   });
 });
 

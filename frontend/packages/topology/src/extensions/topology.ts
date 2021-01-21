@@ -1,4 +1,4 @@
-import { Extension, CodeRef } from '@console/plugin-sdk/src/typings/base';
+import { Extension } from '@console/plugin-sdk/src/typings/base';
 import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
 import {
   TopologyApplyDisplayOptions,
@@ -51,7 +51,7 @@ namespace ExtensionProperties {
     id: string;
     priority: number;
     quadrant: TopologyDecoratorQuadrant;
-    decorator: CodeRef<TopologyDecoratorGetter>;
+    decorator: () => Promise<TopologyDecoratorGetter>;
   }
 }
 
