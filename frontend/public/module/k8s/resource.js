@@ -7,10 +7,16 @@ import { getActivePerspective, getActiveCluster } from '../../actions/ui';
 import { getId } from '../../hypercloud/auth';
 
 /** @type {(model: K8sKind) => string} */
-const getK8sAPIPath = ({ apiGroup = 'core', apiVersion }) => {
+// const getK8sAPIPath = ({ apiGroup = 'core', apiVersion, kind }, listName) 
+// => {
+const getK8sAPIPath = ({ apiGroup = 'core', apiVersion})
+=> {
   const isLegacy = apiGroup === 'core' && apiVersion === 'v1';
 
   let p;
+
+  // console.log('get K8s API Path');
+  // console.log({kind, name: listName});
 
   const cluster = window.SERVER_FLAGS.McMode && getActivePerspective() == 'hc' && getActiveCluster();
 
@@ -20,6 +26,10 @@ const getK8sAPIPath = ({ apiGroup = 'core', apiVersion }) => {
   else {
     p = k8sBasePath;
   }
+
+  // if(window.SERVER_FLAGS.McMode && getActivePerspective() == 'mc' && kind == 'Node') {
+  //   p = `${window.SERVER_FLAGS.basePath}api/${listName}`;
+  // } 
 
   if (isLegacy) {
     p += '/api/';
@@ -36,8 +46,10 @@ const getK8sAPIPath = ({ apiGroup = 'core', apiVersion }) => {
 };
 
 /** @type {(model: GroupVersionKind, options: {ns?: string, name?: string, path?: string, queryParams?: {[k: string]: string}}) => string} */
+// export const resourceURL = (model, options, listName) => {
 export const resourceURL = (model, options) => {
   let q = '';
+  // let u = getK8sAPIPath(model, listName);
   let u = getK8sAPIPath(model);
 
   if (options.ns) {
@@ -63,9 +75,9 @@ export const resourceURL = (model, options) => {
 
 export const resourceClusterURL = (model) => {
   if(isCluster(model)) {
-    return `/api/hypercloud/api/master/cluster?userId=${getId()}`;
+    return `/api/hypercloud/cluster?userId=${getId()}`;
   }
-  return `api/hypercloud/api/master/clusterclaim?userId=${getId()}`;
+  return `api/hypercloud/clusterclaim?userId=${getId()}`;
 }
 
 export const resourceApprovalURL = (model, options, approval) => {
@@ -110,6 +122,11 @@ export const k8sCreate = (kind, data, opts = {}) => {
 
   return coFetchJSON.post(resourceURL(kind, Object.assign({ ns: data.metadata.namespace }, opts)), data);
 };
+
+export const k8sCreateUrl = (kind, data, opts = {}) => {
+  return coFetchJSON.post(resourceURL(kind, opts), data);
+}
+
 
 export const k8sUpdate = (kind, data, ns, name) => coFetchJSON.put(resourceURL(kind, { ns: ns || data.metadata.namespace, name: name || data.metadata.name }), data);
 
@@ -164,6 +181,7 @@ export const k8sKill = (kind, resource, opts = {}, json = null) => coFetchJSON.d
 
 export const k8sKillByName = (kind, name, namespace, opts = {}) => k8sKill(kind, { metadata: { name, namespace } }, opts);
 
+// export const k8sList = (kind, params = {}, raw = false, options = {}, listName) => {
 export const k8sList = (kind, params = {}, raw = false, options = {}) => {
   const query = _.map(_.omit(params, 'ns'), (v, k) => {
     if (k === 'labelSelector') {
@@ -177,7 +195,9 @@ export const k8sList = (kind, params = {}, raw = false, options = {}) => {
     return coFetchJSON(`${listClusterURL}`, 'GET').then((result) => raw ? result: result.items);
   }
 
+  // const listURL = resourceURL(kind, { ns: params.ns }, listName);
   const listURL = resourceURL(kind, { ns: params.ns });
+
   // if (kind.kind === 'Namespace') {
   //   listURL = `${document.location.origin}/api/hypercloud/nameSpace?userId=${sessionStorage.getItem('id')}`;
   //   return coFetchJSON(`${listURL}${query && '&' + query}`, 'GET', options).then(result => (raw ? result : result.items));

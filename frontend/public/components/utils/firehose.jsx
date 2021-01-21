@@ -208,9 +208,17 @@ export const Firehose = connect(
               resource.name,
               resource.limit,
             );
+            // console.log('firehose중간');
+            // console.log(location.href);
+            // const splitUrl = location.href.split('/');
+            // console.log(splitUrl);
+            // console.log(splitUrl[splitUrl.length - 2]);
+            
+            // const name = resource.name;
             const k8sKind = k8sModels.get(resource.kind);
             const id = makeReduxID(k8sKind, query);
-            return _.extend({}, resource, { query, id, k8sKind });
+            // return _.extend({}, resource, { query, id, k8sKind, listName: splitUrl[splitUrl.length - 2]});
+            return _.extend({}, resource, { query, id, k8sKind});
           })
           .filter((f) => {
             if (_.isEmpty(f.k8sKind)) {
@@ -221,6 +229,11 @@ export const Firehose = connect(
           });
       }
 
+      // firehoses.forEach(({ id, query, k8sKind, isList, name, namespace, listName }) =>
+      //   isList
+      //     ? watchK8sList(id, query, k8sKind, null, listName)
+      //     : watchK8sObject(id, name, namespace, query, k8sKind),
+      // );
       firehoses.forEach(({ id, query, k8sKind, isList, name, namespace }) =>
         isList
           ? watchK8sList(id, query, k8sKind)

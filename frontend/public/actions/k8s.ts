@@ -35,7 +35,7 @@ const WS = {} as { [id: string]: WebSocket & any };
 const POLLs = {};
 const REF_COUNTS = {};
 
-const nop = () => {};
+const nop = () => { };
 const paginationLimit = 250;
 const apiGroups = 'apiGroups';
 
@@ -142,6 +142,7 @@ export const watchK8sList = (
   query: { [key: string]: string },
   k8skind: K8sKind,
   extraAction?,
+  // listName?: string,
 ) => (dispatch, getState) => {
   // Only one watch per unique list ID
   if (id in REF_COUNTS) {
@@ -167,6 +168,8 @@ export const watchK8sList = (
         ...(continueToken ? { continue: continueToken } : {}),
       },
       true,
+      // {},
+      // listName
     );
 
     if (!REF_COUNTS[id]) {
