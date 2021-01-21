@@ -3,3 +3,6 @@ export const statusModal = (props) =>
 
 export const claimModal = (props) =>
     import('./claim-modal' /* webpackChunkName: "claim-modal" */).then((m) => m.claimModal(props));
+
+export const scanningModal = (props) =>
+    import('./scanning-modal' /* webpackChunkName: "scanning-modal" */).then((m) => m.scanningModal(props));

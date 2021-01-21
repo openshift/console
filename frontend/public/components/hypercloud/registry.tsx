@@ -11,9 +11,10 @@ import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import { RepositoriesPage } from './repository';
 import { Resources } from './resources';
-import { match } from 'react-router-dom';
+import { scanningModal } from './modals';
+import { withRouter, match } from 'react-router-dom';
 
-export const menuActions: KebabAction[] = [...Kebab.getExtensionsActionsForKind(RegistryModel), ...Kebab.factory.common];
+export const menuActions: KebabAction[] = [...Kebab.getExtensionsActionsForKind(RegistryModel), ...Kebab.factory.common, Kebab.factory.ModifyScanning];
 
 const kind = RegistryModel.kind;
 
@@ -168,7 +169,44 @@ const filters = [
   },
 ];
 
-export const RegistriesPage: React.FC<RegistriesPageProps> = props => <ListPage canCreate={true} ListComponent={Registries} rowFilters={filters} kind={kind} {...props} />;
+const registryCreateAction = (history, item) => {
+  const pathname = window.location.pathname;
+  const pathNameSplit = pathname.split('/');
+  const allNS = pathNameSplit[2];
+  let ns;
+  if (allNS !== 'all-namespaces') {
+    ns = pathNameSplit[3];
+  }
+
+  switch (item) {
+    case 'scan':
+      scanningModal({ kind: 'Registry', ns });
+      break;
+    case 'generic':
+      history.push('/');
+      if (allNS === 'all-namespaces') {
+        history.push('/k8s/ns/default/registries/~new');
+      } else {
+        history.push(`/k8s/ns/${ns}/registries/~new`);
+      }
+      break;
+  }
+}
+
+
+export const RegistriesPage = withRouter((props) => {
+  const createItems = {
+    generic: 'Create Registry',
+    scan: 'Image Scan Request',
+  }
+
+  const createProps = {
+    items: createItems,
+    action: registryCreateAction.bind(null, props.history)
+  }
+
+  return <ListPage canCreate={true} createProps={createProps} ListComponent={Registries} rowFilters={filters} kind={kind} {...props} />;
+});
 
 
 const RepositoriesTab: React.FC<RepositoriesTabProps> = ({ obj }) => {
@@ -228,12 +266,6 @@ export const RegistriesDetailsPage: React.FC<RegistriesDetailsPageProps> = props
 
 type RegistryDetailsListProps = {
   ds: K8sResourceKind;
-};
-
-type RegistriesPageProps = {
-  showTitle?: boolean;
-  namespace?: string;
-  selector?: any;
 };
 
 type RegistryDetailsProps = {

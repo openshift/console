@@ -60,6 +60,16 @@
   margin: 0 15px 15px 0;
 }
 
+.co-search-group__registry {
+  margin: 0 0 15px 0;
+  width: 100%;
+
+  & .dropdown, button, ul {
+    width: 100%;
+  }
+}
+
+
 .co-search-input.pf-c-form-control {
   align-items: center;
   display: flex;

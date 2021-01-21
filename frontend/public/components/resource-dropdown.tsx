@@ -52,6 +52,26 @@ const DropdownItem: React.SFC<DropdownItemProps> = ({ model, showGroup, checked 
   </>
 );
 
+const DropdownResourceItem: React.SFC<DropdownResourceItemProps> = ({ name, checked, kind }) => (
+  <>
+    <span className={'co-resource-item'}>
+      <Checkbox
+        tabIndex={-1}
+        id={name}
+        checked={checked}
+      />
+      <span className="co-resource-icon--fixed-width">
+        <ResourceIcon kind={kind} />
+      </span>
+      <span className="co-resource-item__resource-name">
+        <span>
+          {name}
+        </span>
+      </span>
+    </span>
+  </>
+);
+
 const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
   const { selected, onChange, allModels, showAll, className, preferredVersions, type } = props;
 
@@ -102,18 +122,18 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
   // Add an "All" item to the top if `showAll`.
   const allItems = (showAll
     ? OrderedMap({
-        All: (
-          <>
-            <span className="co-resource-item">
-              <Checkbox id="all-resources" isChecked={isKindSelected('All')} />
-              <span className="co-resource-icon--fixed-width">
-                <ResourceIcon kind="All" />
-              </span>
-              <span className="co-resource-item__resource-name">All Resources</span>
+      All: (
+        <>
+          <span className="co-resource-item">
+            <Checkbox id="all-resources" isChecked={isKindSelected('All')} />
+            <span className="co-resource-icon--fixed-width">
+              <ResourceIcon kind="All" />
             </span>
-          </>
-        ),
-      }).concat(items)
+            <span className="co-resource-item__resource-name">All Resources</span>
+          </span>
+        </>
+      ),
+    }).concat(items)
     : items
   ).toJS() as { [s: string]: JSX.Element };
 
@@ -160,6 +180,113 @@ export const ResourceListDropdown = connect(resourceListDropdownStateToProps)(
   ResourceListDropdown_,
 );
 
+const RegistryListDropdown_: React.SFC<RegistryListDropdownProps> = (props) => {
+  const { selected, onChange, setAllData, allData, showAll, className, type } = props;
+
+  const getName = (map) => {
+    return map.get('metadata').get('name');
+  }
+
+  const resources = [];
+  for (let item of Array.from(allData)) {
+    resources.push(getName(item[1]));
+  }
+
+
+
+  const isResourceSelected = (resource: string) => {
+    return _.includes(selected, resource);
+  };
+
+  const items = allData.map((resource) => (
+    <DropdownResourceItem
+      name={getName(resource)}
+      checked={isResourceSelected(getName(resource))}
+      kind='Registry'
+    />
+  )) as OrderedMap<string, JSX.Element>;
+
+  const allItems = (showAll
+    ? OrderedMap({
+      All: (
+        <>
+          <span className="co-resource-item">
+            <Checkbox id="all-resources" isChecked={isResourceSelected('All')} />
+            <span className="co-resource-icon--fixed-width">
+              <ResourceIcon kind="All" />
+            </span>
+            <span className="co-resource-item__resource-name">All Registries</span>
+          </span>
+        </>
+      ),
+    }).concat(items)
+    : items
+  ).toJS() as { [s: string]: JSX.Element };
+
+  const autocompleteFilter = (text, item) => {
+    const { model } = item.props;
+    if (!model) {
+      return false;
+    }
+
+    return fuzzy(_.toLower(text), _.toLower(model.kind));
+  };
+
+  const handleSelected = (value: string) => {
+    if (value === 'All') {
+      onChange('All');
+      setAllData(resources);
+    } else {
+      onChange(value.split(')-')[1]);
+    }
+  };
+
+  return (
+    <Dropdown
+      menuClassName="dropdown-menu--text-wrap"
+      className={classNames('co-type-selector', className)}
+      items={allItems}
+      title={
+        <div key="title-resource">
+          Registries{' '}
+          <Badge isRead>
+            {selected.length === 1 && selected[0] === 'All' ? 'All' : selected.length}
+          </Badge>
+        </div>
+      }
+      onChange={handleSelected}
+      autocompleteFilter={autocompleteFilter}
+      autocompletePlaceholder="Select Registry"
+      type={type}
+    />
+  );
+
+}
+
+const registryListDropdownStateToProps = ({ k8s, UI }) => {
+  let namespace = UI.getIn(['activeNamespace']);
+  let registryKey = 'tmax.io~v1~Registry';
+  if (namespace !== '#ALL_NS#') {
+    registryKey += `---{"ns":"${namespace}"}`;
+  }
+  return ({
+    allData: k8s.getIn([registryKey, 'data']),
+  });
+};
+
+export const RegistryListDropdown = connect(registryListDropdownStateToProps)(RegistryListDropdown_);
+
+export type RegistryListDropdownProps = {
+  selected: K8sResourceKindReference[];
+  onChange: (value: string) => void;
+  setAllData: (allData: string[]) => void;
+  allData: any;
+  className?: string;
+  id?: string;
+  showAll?: boolean;
+  type?: string;
+}
+
 export type ResourceListDropdownProps = {
   selected: K8sResourceKindReference[];
   onChange: (value: string) => void;
@@ -176,3 +303,9 @@ type DropdownItemProps = {
   showGroup?: boolean;
   checked?: boolean;
 };
+
+type DropdownResourceItemProps = {
+  name: string;
+  checked?: boolean;
+  kind: string;
+}

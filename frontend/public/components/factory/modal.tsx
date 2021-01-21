@@ -62,7 +62,7 @@ export const createModalLauncher: CreateModalLauncher = (Component) => (props) =
   return createModal(getModalContainer);
 };
 
-export const ModalTitle: React.SFC<ModalTitleProps> = ({
+export const ModalTitle: React.SFC<ModalTitleProps> = React.memo(({
   children,
   className = 'modal-header',
 }) => (
@@ -71,10 +71,10 @@ export const ModalTitle: React.SFC<ModalTitleProps> = ({
       {children}
     </h1>
   </div>
-);
+));
 
-export const ModalBody: React.SFC<ModalBodyProps> = ({ children }) => (
-  <div className="modal-body">
+export const ModalBody: React.SFC<ModalBodyProps> = ({ children, unsetOverflow = false }) => (
+  <div className={unsetOverflow ? classNames("modal-body", 'unset-overflow') : 'modal-body'}>
     <div className="modal-body-content">
       <div className="modal-body-inner-shadow-covers">{children}</div>
     </div>
@@ -130,10 +130,10 @@ export const ModalSubmitFooter: React.SFC<ModalSubmitFooterProps> = ({
             {submitText}
           </Button>
         ) : (
-          <Button type="submit" variant="primary" isDisabled={submitDisabled} id="confirm-action">
-            {submitText}
-          </Button>
-        )}
+            <Button type="submit" variant="primary" isDisabled={submitDisabled} id="confirm-action">
+              {submitText}
+            </Button>
+          )}
       </ActionGroup>
     </ModalFooter>
   );
@@ -159,6 +159,7 @@ export type ModalTitleProps = {
 
 export type ModalBodyProps = {
   className?: string;
+  unsetOverflow?: boolean;
 };
 
 export type ModalFooterProps = {

@@ -20,6 +20,10 @@
   padding: 0;
   @include scroll-shadows-vertical;
   -webkit-overflow-scrolling: touch;
+
+  &.unset-overflow {
+    overflow-y: unset;
+  }
 }
 
 .modal-body-border {

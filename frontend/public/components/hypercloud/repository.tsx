@@ -76,7 +76,12 @@ const RepositoriesList = (props) => (
 const RepositoriesPage = (props) => {
   const { canCreate = true } = props;
   return (
-    <ListPage canCreate={canCreate} kind="Repository" ListComponent={RepositoriesList} {...props} />
+    <>
+      <button className="pf-c-dropdown__toggle pf-m-primary">
+        Image Scan Request Creation
+      </button>
+      <ListPage canCreate={canCreate} kind="Repository" ListComponent={RepositoriesList} {...props} />
+    </>
   );
 };
 

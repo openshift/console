@@ -18,7 +18,8 @@ import {
 } from '../modals';
 import {
   statusModal,
-  claimModal
+  claimModal,
+  scanningModal
 } from '../hypercloud/modals';
 import { asAccessReview, checkAccess, history, resourceObjPath, useAccessReview } from './index';
 import {
@@ -284,6 +285,16 @@ const kebabFactory: KebabFactory = {
     label: 'Approval Processing',
     callback: () =>
       claimModal({
+        kind,
+        resource: obj,
+        blocking: true,
+      }),
+    accessReview: asAccessReview(kind, obj, 'patch'),
+  }),
+  ModifyScanning: (kind, obj) => ({
+    label: 'Image Scan Request Creation',
+    callback: () =>
+      scanningModal({
         kind,
         resource: obj,
         blocking: true,
