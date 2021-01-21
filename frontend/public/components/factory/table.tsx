@@ -2,39 +2,12 @@ import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { connect } from 'react-redux';
-import {
-  getNodeRoles,
-  getMachinePhase,
-  nodeMemory,
-  nodeCPU,
-  nodeFS,
-  nodePods,
-} from '@console/shared';
+import { getNodeRoles, getMachinePhase, nodeMemory, nodeCPU, nodeFS, nodePods } from '@console/shared';
 import * as UIActions from '../../actions/ui';
-import {
-  alertStateOrder,
-  silenceFiringAlertsOrder,
-  silenceStateOrder,
-} from '../../reducers/monitoring';
+import { alertStateOrder, silenceFiringAlertsOrder, silenceStateOrder } from '../../reducers/monitoring';
 import { ingressValidHosts } from '../ingress';
 import { convertToBaseValue, EmptyBox, StatusBox, WithScrollContainer } from '../utils';
-import {
-  getClusterOperatorStatus,
-  getClusterOperatorVersion,
-  getJobTypeAndCompletions,
-  getTemplateInstanceStatus,
-  K8sResourceKind,
-  K8sResourceKindReference,
-  NodeKind,
-  planExternalName,
-  PodKind,
-  podPhase,
-  podReadiness,
-  podRestarts,
-  serviceCatalogStatus,
-  serviceClassDisplayName,
-  MachineKind,
-} from '../../module/k8s';
+import { getClusterOperatorStatus, getClusterOperatorVersion, getJobTypeAndCompletions, getTemplateInstanceStatus, K8sResourceKind, K8sResourceKindReference, NodeKind, planExternalName, PodKind, podPhase, podReadiness, podRestarts, serviceCatalogStatus, serviceClassDisplayName, MachineKind } from '../../module/k8s';
 
 import {
   IRowData, // eslint-disable-line no-unused-vars
@@ -45,25 +18,20 @@ import {
   TableGridBreakpoint,
   SortByDirection,
   OnSelect,
+  ICell,
 } from '@patternfly/react-table';
 
 import { CellMeasurerCache, CellMeasurer } from 'react-virtualized';
 
-import {
-  AutoSizer,
-  VirtualTableBody,
-  WindowScroller,
-} from '@patternfly/react-virtualized-extension';
+import { AutoSizer, VirtualTableBody, WindowScroller } from '@patternfly/react-virtualized-extension';
 
 import { tableFilters } from './table-filters';
 
-const rowFiltersToFilterFuncs = (rowFilters) => {
-  return (rowFilters || [])
-    .filter((f) => f.type && _.isFunction(f.filter))
-    .reduce((acc, f) => ({ ...acc, [f.type]: f.filter }), {});
+const rowFiltersToFilterFuncs = rowFilters => {
+  return (rowFilters || []).filter(f => f.type && _.isFunction(f.filter)).reduce((acc, f) => ({ ...acc, [f.type]: f.filter }), {});
 };
 
-const getAllTableFilters = (rowFilters) => ({
+const getAllTableFilters = rowFilters => ({
   ...tableFilters,
   ...rowFiltersToFilterFuncs(rowFilters),
 });
@@ -78,7 +46,7 @@ const getFilteredRows = (_filters, rowFilters, objects) => {
   _.each(_filters, (value, name) => {
     const filter = allTableFilters[name];
     if (_.isFunction(filter)) {
-      filteredObjects = _.filter(filteredObjects, (o) => filter(value, o));
+      filteredObjects = _.filter(filteredObjects, o => filter(value, o));
     }
   });
 
@@ -95,27 +63,24 @@ const filterPropType = (props, propName, componentName) => {
     if (key in allTableFilters || key === 'loadTest') {
       continue;
     }
-    return new Error(
-      `Invalid prop '${propName}' in '${componentName}'. '${key}' is not a valid filter type!`,
-    );
+    return new Error(`Invalid prop '${propName}' in '${componentName}'. '${key}' is not a valid filter type!`);
   }
 };
 
 const sorts = {
   alertStateOrder,
-  daemonsetNumScheduled: (daemonset) =>
-    _.toInteger(_.get(daemonset, 'status.currentNumberScheduled')),
-  dataSize: (resource) => _.size(_.get(resource, 'data')) + _.size(_.get(resource, 'binaryData')),
+  daemonsetNumScheduled: daemonset => _.toInteger(_.get(daemonset, 'status.currentNumberScheduled')),
+  dataSize: resource => _.size(_.get(resource, 'data')) + _.size(_.get(resource, 'binaryData')),
   ingressValidHosts,
   serviceCatalogStatus,
-  jobCompletions: (job) => getJobTypeAndCompletions(job).completions,
-  jobType: (job) => getJobTypeAndCompletions(job).type,
+  jobCompletions: job => getJobTypeAndCompletions(job).completions,
+  jobType: job => getJobTypeAndCompletions(job).type,
   nodeReadiness: (node: NodeKind) => {
     let readiness = _.get(node, 'status.conditions');
     readiness = _.find(readiness, { type: 'Ready' });
     return _.get(readiness, 'status');
   },
-  numReplicas: (resource) => _.toInteger(_.get(resource, 'status.replicas')),
+  numReplicas: resource => _.toInteger(_.get(resource, 'status.replicas')),
   planExternalName,
   namespaceCPU: (ns: K8sResourceKind): number => UIActions.getNamespaceMetric(ns, 'cpu'),
   namespaceMemory: (ns: K8sResourceKind): number => UIActions.getNamespaceMetric(ns, 'memory'),
@@ -124,13 +89,13 @@ const sorts = {
   podPhase,
   podReadiness: (pod: PodKind): number => podReadiness(pod).readyCount,
   podRestarts,
-  pvStorage: (pv) => _.toInteger(convertToBaseValue(pv?.spec?.capacity?.storage)),
-  pvcStorage: (pvc) => _.toInteger(convertToBaseValue(pvc?.status?.capacity?.storage)),
+  pvStorage: pv => _.toInteger(convertToBaseValue(pv?.spec?.capacity?.storage)),
+  pvcStorage: pvc => _.toInteger(convertToBaseValue(pvc?.status?.capacity?.storage)),
   serviceClassDisplayName,
   silenceFiringAlertsOrder,
   silenceStateOrder,
-  string: (val) => JSON.stringify(val),
-  number: (val) => _.toNumber(val),
+  string: val => JSON.stringify(val),
+  number: val => _.toNumber(val),
   getClusterOperatorStatus,
   getClusterOperatorVersion,
   getTemplateInstanceStatus,
@@ -145,38 +110,20 @@ const sorts = {
   nodePods: (node: NodeKind): number => nodePods(node),
 };
 
-const stateToProps = (
-  { UI },
-  {
-    customSorts = {},
-    data = [],
-    defaultSortField = 'metadata.name',
-    defaultSortFunc = undefined,
-    defaultSortOrder = SortByDirection.asc,
-    filters = {},
-    loaded = false,
-    reduxID = null,
-    reduxIDs = null,
-    staticFilters = [{}],
-    rowFilters = [],
-  },
-) => {
+const stateToProps = ({ UI }, { customSorts = {}, data = [], defaultSortField = 'metadata.name', defaultSortFunc = undefined, defaultSortOrder = SortByDirection.asc, filters = {}, loaded = false, reduxID = null, reduxIDs = null, staticFilters = [{}], rowFilters = [] }) => {
   const allFilters = staticFilters ? Object.assign({}, filters, ...staticFilters) : filters;
   const newData = getFilteredRows(allFilters, rowFilters, data);
 
   const listId = reduxIDs ? reduxIDs.join(',') : reduxID;
   // Only default to 'metadata.name' if no `defaultSortFunc`
-  const currentSortField = UI.getIn(
-    ['listSorts', listId, 'field'],
-    defaultSortFunc ? undefined : defaultSortField,
-  );
+  const currentSortField = UI.getIn(['listSorts', listId, 'field'], defaultSortFunc ? undefined : defaultSortField);
   const currentSortFunc = UI.getIn(['listSorts', listId, 'func'], defaultSortFunc);
   const currentSortOrder = UI.getIn(['listSorts', listId, 'orderBy'], defaultSortOrder);
 
   if (loaded) {
     let sortBy: string | Function = 'metadata.name';
     if (currentSortField) {
-      sortBy = (resource) => sorts.string(_.get(resource, currentSortField, ''));
+      sortBy = resource => sorts.string(_.get(resource, currentSortField, ''));
     } else if (currentSortFunc && customSorts[currentSortFunc]) {
       // Sort resources by a function in the 'customSorts' prop
       sortBy = customSorts[currentSortFunc];
@@ -185,7 +132,7 @@ const stateToProps = (
       sortBy = sorts[currentSortFunc];
     }
 
-    const getSortValue = (resource) => {
+    const getSortValue = resource => {
       const val = _.isFunction(sortBy) ? sortBy(resource) : _.get(resource, sortBy as string);
       return val ?? '';
     };
@@ -195,10 +142,7 @@ const stateToProps = (
       const compareOpts = { numeric: true, ignorePunctuation: true };
       const aValue = getSortValue(a);
       const bValue = getSortValue(b);
-      const result: number =
-        Number.isFinite(aValue) && Number.isFinite(bValue)
-          ? aValue - bValue
-          : `${aValue}`.localeCompare(`${bValue}`, lang, compareOpts);
+      const result: number = Number.isFinite(aValue) && Number.isFinite(bValue) ? aValue - bValue : `${aValue}`.localeCompare(`${bValue}`, lang, compareOpts);
       if (result !== 0) {
         return currentSortOrder === SortByDirection.asc ? result : result * -1;
       }
@@ -221,26 +165,8 @@ const stateToProps = (
 };
 
 // Common table row/columns helper SFCs for implementing accessible data grid
-export const TableRow: React.SFC<TableRowProps> = ({
-  id,
-  index,
-  trKey,
-  style,
-  className,
-  ...props
-}) => {
-  return (
-    <tr
-      {...props}
-      data-id={id}
-      data-index={index}
-      data-test-rows="resource-row"
-      data-key={trKey}
-      style={style}
-      className={className}
-      role="row"
-    />
-  );
+export const TableRow: React.SFC<TableRowProps> = ({ id, index, trKey, style, className, ...props }) => {
+  return <tr {...props} data-id={id} data-index={index} data-test-rows="resource-row" data-key={trKey} style={style} className={className} role="row" />;
 };
 TableRow.displayName = 'TableRow';
 export type TableRowProps = {
@@ -260,17 +186,8 @@ export type TableDataProps = {
   className?: string;
 };
 
-const TableWrapper: React.SFC<TableWrapperProps> = ({
-  virtualize,
-  ariaLabel,
-  ariaRowCount,
-  ...props
-}) => {
-  return virtualize ? (
-    <div {...props} role="grid" aria-label={ariaLabel} aria-rowcount={ariaRowCount} />
-  ) : (
-    <React.Fragment {...props} />
-  );
+const TableWrapper: React.SFC<TableWrapperProps> = ({ virtualize, ariaLabel, ariaRowCount, ...props }) => {
+  return virtualize ? <div {...props} role="grid" aria-label={ariaLabel} aria-rowcount={ariaRowCount} /> : <React.Fragment {...props} />;
 };
 export type TableWrapperProps = {
   virtualize: boolean;
@@ -278,23 +195,13 @@ export type TableWrapperProps = {
   ariaRowCount: number | undefined;
 };
 
-const VirtualBody: React.SFC<VirtualBodyProps> = (props) => {
-  const {
-    customData,
-    Row,
-    height,
-    isScrolling,
-    onChildScroll,
-    data,
-    columns,
-    scrollTop,
-    width,
-  } = props;
+const VirtualBody: React.SFC<VirtualBodyProps> = props => {
+  const { customData, Row, height, isScrolling, onChildScroll, data, columns, scrollTop, width } = props;
 
   const cellMeasurementCache = new CellMeasurerCache({
     fixedWidth: true,
     minHeight: 44,
-    keyMapper: (rowIndex) => _.get(props.data[rowIndex], 'metadata.uid', rowIndex),
+    keyMapper: rowIndex => _.get(props.data[rowIndex], 'metadata.uid', rowIndex),
   });
 
   const rowRenderer = ({ index, isScrolling: scrolling, isVisible, key, style, parent }) => {
@@ -315,36 +222,13 @@ const VirtualBody: React.SFC<VirtualBodyProps> = (props) => {
       return null;
     }
     return (
-      <CellMeasurer
-        cache={cellMeasurementCache}
-        columnIndex={0}
-        key={key}
-        parent={parent}
-        rowIndex={index}
-      >
+      <CellMeasurer cache={cellMeasurementCache} columnIndex={0} key={key} parent={parent} rowIndex={index}>
         {row}
       </CellMeasurer>
     );
   };
 
-  return (
-    <VirtualTableBody
-      autoHeight
-      className="pf-c-table pf-m-compact pf-m-border-rows pf-c-virtualized pf-c-window-scroller"
-      deferredMeasurementCache={cellMeasurementCache}
-      rowHeight={cellMeasurementCache.rowHeight}
-      height={height || 0}
-      isScrolling={isScrolling}
-      onScroll={onChildScroll}
-      overscanRowCount={10}
-      columns={columns}
-      rows={data}
-      rowCount={data.length}
-      rowRenderer={rowRenderer}
-      scrollTop={scrollTop}
-      width={width}
-    />
-  );
+  return <VirtualTableBody autoHeight className="pf-c-table pf-m-compact pf-m-border-rows pf-c-virtualized pf-c-window-scroller" deferredMeasurementCache={cellMeasurementCache} rowHeight={cellMeasurementCache.rowHeight} height={height || 0} isScrolling={isScrolling} onScroll={onChildScroll} overscanRowCount={10} columns={columns} rows={data} rowCount={data.length} rowRenderer={rowRenderer} scrollTop={scrollTop} width={width} />;
 };
 
 export type RowFunctionArgs<T = any, C = any> = {
@@ -393,6 +277,8 @@ export type TableProps = {
   reduxID?: string;
   reduxIDs?: string[];
   label?: string;
+  expandable?: boolean;
+  expandableRows?: (...args) => any[];
 };
 
 type TablePropsFromState = {};
@@ -411,12 +297,7 @@ type ComponentProps = {
   kindObj?: K8sResourceKindReference;
 };
 
-export const Table = connect<
-  TablePropsFromState,
-  TablePropsFromDispatch,
-  TableProps,
-  TableOptionProps
->(stateToProps, { sortList: UIActions.sortList }, null, {
+export const Table = connect<TablePropsFromState, TablePropsFromDispatch, TableProps, TableOptionProps>(stateToProps, { sortList: UIActions.sortList }, null, {
   areStatesEqual: ({ UI: next }, { UI: prev }) => next.get('listSorts') === prev.get('listSorts'),
 })(
   class TableInner extends React.Component<TableInnerProps, TableInnerState> {
@@ -451,24 +332,21 @@ export const Table = connect<
       sortList: PropTypes.func,
       onSelect: PropTypes.func,
       scrollElement: PropTypes.oneOf([PropTypes.object, PropTypes.func]),
+      expandable: PropTypes.bool,
+      expandableRows: PropTypes.func,
     };
     _columnShift: number;
 
     constructor(props) {
       super(props);
-      const componentProps: ComponentProps = _.pick(props, [
-        'data',
-        'filters',
-        'selected',
-        'match',
-        'kindObj',
-      ]);
+      const componentProps: ComponentProps = _.pick(props, ['data', 'filters', 'selected', 'match', 'kindObj']);
       const columns = props.Header(componentProps);
       const { currentSortField, currentSortFunc, currentSortOrder } = props;
 
       this._columnShift = props.onSelect ? 1 : 0; //shift indexes by 1 if select provided
       this._applySort = this._applySort.bind(this);
       this._onSort = this._onSort.bind(this);
+      this._onExpand = this._onExpand.bind(this);
       this._handleResize = _.debounce(this._handleResize.bind(this), 100);
 
       let sortBy = {};
@@ -483,17 +361,11 @@ export const Table = connect<
           sortBy = { index: columnIndex + this._columnShift, direction: currentSortOrder };
         }
       }
-      this.state = { sortBy };
+      this.state = { sortBy, expandableData: [] };
     }
 
     componentDidMount() {
-      const componentProps: ComponentProps = _.pick(this.props, [
-        'data',
-        'filters',
-        'selected',
-        'match',
-        'kindObj',
-      ]);
+      const componentProps: ComponentProps = _.pick(this.props, ['data', 'filters', 'selected', 'match', 'kindObj']);
       const columns = this.props.Header(componentProps);
       const sp = new URLSearchParams(window.location.search);
       const columnIndex = _.findIndex(columns, { title: sp.get('sortBy') });
@@ -514,6 +386,22 @@ export const Table = connect<
       window.addEventListener('resize', this._handleResize);
     }
 
+    componentDidUpdate(prevProps) {
+      if (this.props.expandable && !!this.props.expandableRows) {
+        this.props.expandableRows(this.props.data).then(res => {
+          if (_.isEqual(this.props.currentSortField, prevProps.currentSortField) && _.isEqual(this.props.currentSortOrder, prevProps.currentSortOrder) && res.length === this.state.expandableData.length) {
+            // do nothing
+            console.log('do nothing');
+          } else {
+            console.log('setstate change');
+            this.setState({
+              expandableData: res,
+            });
+          }
+        });
+      }
+    }
+
     componentWillUnmount() {
       window.removeEventListener('resize', this._handleResize);
     }
@@ -530,13 +418,7 @@ export const Table = connect<
 
     _onSort(event, index, direction) {
       event.preventDefault();
-      const componentProps: ComponentProps = _.pick(this.props, [
-        'data',
-        'filters',
-        'selected',
-        'match',
-        'kindObj',
-      ]);
+      const componentProps: ComponentProps = _.pick(this.props, ['data', 'filters', 'selected', 'match', 'kindObj']);
       const columns = this.props.Header(componentProps);
       const sortColumn = columns[index - this._columnShift];
       this._applySort(sortColumn.sortField, sortColumn.sortFunc, direction, sortColumn.title);
@@ -548,51 +430,38 @@ export const Table = connect<
       });
     }
 
+    _onExpand = (event, rowIndex, colIndex, isOpen, rowData, extraData) => {
+      const { expandableData } = this.state;
+      let rows = _.cloneDeep(expandableData);
+      if (!isOpen) {
+        rows[rowIndex].cells.forEach((cell: ICell) => {
+          if (cell.props) cell.props.isOpen = false;
+        });
+        (rows[rowIndex].cells[colIndex] as ICell).props.isOpen = true;
+        rows[rowIndex].isOpen = true;
+      } else {
+        (rows[rowIndex].cells[colIndex] as ICell).props.isOpen = false;
+        rows[rowIndex].isOpen = rows[rowIndex].cells.some((cell: ICell) => cell.props && cell.props.isOpen);
+      }
+      this.setState({
+        expandableData: rows,
+      });
+    };
+
     render() {
-      const {
-        scrollElement,
-        Rows,
-        Row,
-        expand,
-        label,
-        mock,
-        onSelect,
-        selectedResourcesForKind,
-        'aria-label': ariaLabel,
-        virtualize = true,
-        customData,
-        gridBreakPoint = TableGridBreakpoint.none,
-        Header,
-      } = this.props;
-      const { sortBy } = this.state;
-      const componentProps: any = _.pick(this.props, [
-        'data',
-        'filters',
-        'selected',
-        'match',
-        'kindObj',
-      ]);
+      const { scrollElement, Rows, Row, expand, label, mock, onSelect, selectedResourcesForKind, 'aria-label': ariaLabel, virtualize = true, expandable = false, customData, gridBreakPoint = TableGridBreakpoint.none, Header } = this.props;
+      const { sortBy, expandableData } = this.state;
+      const componentProps: any = _.pick(this.props, ['data', 'filters', 'selected', 'match', 'kindObj']);
       const columns = Header(componentProps);
       const ariaRowCount = componentProps.data && componentProps.data.length;
       const scrollNode = typeof scrollElement === 'function' ? scrollElement() : scrollElement;
-      const renderVirtualizedTable = (scrollContainer) => (
+      const renderVirtualizedTable = scrollContainer => (
         <WindowScroller scrollElement={scrollContainer}>
           {({ height, isScrolling, registerChild, onChildScroll, scrollTop }) => (
             <AutoSizer disableHeight>
               {({ width }) => (
                 <div ref={registerChild}>
-                  <VirtualBody
-                    Row={Row}
-                    customData={customData}
-                    height={height}
-                    isScrolling={isScrolling}
-                    onChildScroll={onChildScroll}
-                    data={componentProps.data}
-                    columns={columns}
-                    scrollTop={scrollTop}
-                    width={width}
-                    expand={expand}
-                  />
+                  <VirtualBody Row={Row} customData={customData} height={height} isScrolling={isScrolling} onChildScroll={onChildScroll} data={componentProps.data} columns={columns} scrollTop={scrollTop} width={width} expand={expand} />
                 </div>
               )}
             </AutoSizer>
@@ -603,26 +472,11 @@ export const Table = connect<
         <EmptyBox label={label} />
       ) : (
         <TableWrapper virtualize={virtualize} ariaLabel={ariaLabel} ariaRowCount={ariaRowCount}>
-          <PfTable
-            cells={columns}
-            rows={virtualize ? [] : Rows({ componentProps, selectedResourcesForKind, customData })}
-            gridBreakPoint={gridBreakPoint}
-            onSort={this._onSort}
-            onSelect={onSelect}
-            sortBy={sortBy}
-            className="pf-m-compact pf-m-border-rows"
-            role={virtualize ? 'presentation' : 'grid'}
-            aria-label={virtualize ? null : ariaLabel}
-          >
+          <PfTable cells={columns} rows={virtualize && !expandable ? [] : !!Rows ? Rows({ componentProps, selectedResourcesForKind, customData }) : expandableData} gridBreakPoint={gridBreakPoint} onSort={this._onSort} onSelect={onSelect} onExpand={this._onExpand} sortBy={sortBy} className="pf-m-compact pf-m-border-rows" role={virtualize ? 'presentation' : 'grid'} aria-label={virtualize ? null : ariaLabel}>
             <TableHeader />
             {!virtualize && <TableBody />}
           </PfTable>
-          {virtualize &&
-            (scrollNode ? (
-              renderVirtualizedTable(scrollNode)
-            ) : (
-              <WithScrollContainer>{renderVirtualizedTable}</WithScrollContainer>
-            ))}
+          {virtualize && (scrollNode ? renderVirtualizedTable(scrollNode) : <WithScrollContainer>{renderVirtualizedTable}</WithScrollContainer>)}
         </TableWrapper>
       );
       return (
@@ -669,20 +523,17 @@ export type TableInnerProps = {
   selector?: Object;
   sortList?: (listId: string, field: string, func: any, orderBy: string, column: string) => any;
   selectedResourcesForKind?: string[];
-  onSelect?: (
-    event: React.MouseEvent,
-    isSelected: boolean,
-    rowIndex: number,
-    rowData: IRowData,
-    extraData: IExtraData,
-  ) => void;
+  onSelect?: (event: React.MouseEvent, isSelected: boolean, rowIndex: number, rowData: IRowData, extraData: IExtraData) => void;
   staticFilters?: any[];
   rowFilters?: any[];
   virtualize?: boolean;
   gridBreakPoint?: 'grid' | 'grid-md' | 'grid-lg' | 'grid-xl' | 'grid-2xl';
   scrollElement?: HTMLElement | (() => HTMLElement);
+  expandable?: boolean;
+  expandableRows?: (...args) => any;
 };
 
 export type TableInnerState = {
   sortBy: object;
+  expandableData: any[];
 };
