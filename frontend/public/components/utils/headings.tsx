@@ -38,14 +38,14 @@ export const BreadCrumbs: React.SFC<BreadCrumbsProps> = ({ breadcrumbs }) => (
           {isLast ? (
             crumb.name
           ) : (
-            <Link
-              className="pf-c-breadcrumb__link"
-              to={crumb.path}
-              data-test-id={`breadcrumb-link-${i}`}
-            >
-              {crumb.name}
-            </Link>
-          )}
+              <Link
+                className="pf-c-breadcrumb__link"
+                to={crumb.path}
+                data-test-id={`breadcrumb-link-${i}`}
+              >
+                {crumb.name}
+              </Link>
+            )}
         </BreadcrumbItem>
       );
     })}
@@ -95,7 +95,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
     {},
   );
   const data = _.get(obj, 'data');
-  const resourceTitle = titleFunc && data ? titleFunc(data) : title;
+  const resourceTitle = titleFunc && data.hasOwnProperty('metadata') ? titleFunc(data) : title;
   const hasButtonActions = !_.isEmpty(buttonActions);
   const hasMenuActions = _.isFunction(menuActions) || !_.isEmpty(menuActions);
   const hasData = !_.isEmpty(data);
@@ -131,20 +131,20 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
           {props.icon ? (
             <props.icon obj={data} />
           ) : (
-            <div className="co-m-pane__name co-resource-item">
-              {kind && <ResourceIcon kind={kind} className="co-m-resource-icon--lg" />}{' '}
-              <span data-test-id="resource-title" className="co-resource-item__resource-name">
-                {resourceTitle}
-              </span>
-              {resourceStatus && (
-                <span className="co-resource-item__resource-status hidden-xs">
-                  <Badge className="co-resource-item__resource-status-badge" isRead>
-                    <Status status={resourceStatus} />
-                  </Badge>
+              <div className="co-m-pane__name co-resource-item">
+                {kind && <ResourceIcon kind={kind} className="co-m-resource-icon--lg" />}{' '}
+                <span data-test-id="resource-title" className="co-resource-item__resource-name">
+                  {resourceTitle}
                 </span>
-              )}
-            </div>
-          )}
+                {resourceStatus && (
+                  <span className="co-resource-item__resource-status hidden-xs">
+                    <Badge className="co-resource-item__resource-status-badge" isRead>
+                      <Status status={resourceStatus} />
+                    </Badge>
+                  </span>
+                )}
+              </div>
+            )}
           {!breadcrumbsFor && badge && <span className="co-m-pane__heading-badge">{badge}</span>}
           {showActions && (
             <div className="co-actions" data-test-id="details-actions">

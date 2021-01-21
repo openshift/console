@@ -13,7 +13,7 @@ import {
   detailsPage,
   // LabelList,
   navFactory,
-  NodesComponent,
+  // NodesComponent,
   ResourceKebab,
   ResourceLink,
   ResourceSummary,
@@ -21,7 +21,7 @@ import {
   // Selector,
   Timestamp
 } from '../utils';
-import { ResourceEventStream } from '../events';
+// import { ResourceEventStream } from '../events';
 import { ClusterManagerModel } from '../../models';
 // import { SpecCapability } from '@console/operator-lifecycle-manager/src/components/descriptors/types';
 
@@ -130,7 +130,7 @@ const ClusterNodesInfo = cluster => {
   return `M: ${cluster.status.masterRun ?? 0} / ${cluster.spec?.masterNum}, W: ${cluster.status.workerRun ?? 0} / ${cluster.spec?.workerNum}`;
 };
 
-const ClusterNodes: React.FC<ClusterNodesProps> = props => <NodesComponent {...props} customData={{ showNodes: true }} />;
+// const ClusterNodes: React.FC<ClusterNodesProps> = props => <NodesComponent {...props} customData={{ showNodes: true }} />;
 
 export const ClusterDetailsList: React.FC<ClusterDetailsListProps> = ({ cl }) => {
   return <dl className="co-m-pane__details">
@@ -143,6 +143,9 @@ export const ClusterDetailsList: React.FC<ClusterDetailsListProps> = ({ cl }) =>
     <DetailsItem label='Provider' obj={cl} path="status.ready">
       {cl.status?.ready ? 'Ready' : 'Not Ready'}
     </DetailsItem>
+    <DetailsItem label='Node' obj={cl} path="">
+      {ClusterNodesInfo(cl)}
+    </DetailsItem>
   </dl>;
 };
 
@@ -152,7 +155,7 @@ const ClusterDetails: React.FC<ClusterDetailsProps> = ({ obj: cluster }) => (
       <SectionHeading text="Cluster Details" />
       <div className="row">
         <div className="col-lg-6">
-          <ResourceSummary resource={cluster} />
+          <ResourceSummary resource={cluster} customPathName={'fakeMetadata.fakename'} />
         </div>
         <div className="col-lg-6">
           <ClusterDetailsList cl={cluster} />
@@ -162,13 +165,15 @@ const ClusterDetails: React.FC<ClusterDetailsProps> = ({ obj: cluster }) => (
   </>
 );
 
-const { details, nodes, editYaml, events } = navFactory;
+const { details, /* nodes, */editYaml /*, events */ } = navFactory;
 export const Clusters: React.FC = props => <Table {...props} aria-label="Clusters" Header={ClusterTableHeader} Row={ClusterTableRow} virtualize />;
 
 export const ClustersPage: React.FC<ClustersPageProps> = props => {
   return <ListPage ListComponent={Clusters} kind={kind} {...props} />;
 };
-export const ClustersDetailsPage: React.FC<ClustersDetailsPageProps> = props => <DetailsPage {...props} kind={kind} menuActions={menuActions} pages={[details(detailsPage(ClusterDetails)), editYaml(), nodes(ClusterNodes), events(ResourceEventStream)]} />;
+export const ClustersDetailsPage: React.FC<ClustersDetailsPageProps> = props => {
+  return <DetailsPage {...props} titleFunc={(obj: any) => obj.fakeMetadata.fakename} kind={kind} menuActions={menuActions} pages={[details(detailsPage(ClusterDetails)), editYaml(), /* nodes(ClusterNodes),  events(ResourceEventStream) */]} />;
+}
 
 interface IClusterTableRow extends K8sResourceKind {
   fakeMetadata: any;
@@ -192,6 +197,6 @@ type ClustersDetailsPageProps = {
   match: any;
 };
 
-type ClusterNodesProps = {
-  obj: K8sResourceKind;
-};
+// type ClusterNodesProps = {
+//   obj: K8sResourceKind;
+// };
