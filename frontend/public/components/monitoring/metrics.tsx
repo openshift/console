@@ -198,9 +198,11 @@ const headerPrometheusLinkStateToProps = ({ UI }: RootState) => {
 };
 
 const HeaderPrometheusLink_ = ({ url }) => {
+  const { t } = useTranslation();
+
   return url ? (
     <span className="monitoring-header-link">
-      <ExternalLink href={url} text="Prometheus UI" />
+      <ExternalLink href={url} text={t('public~Platform Prometheus UI')} />
     </span>
   ) : null;
 };
