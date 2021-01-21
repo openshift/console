@@ -213,12 +213,12 @@ export const Firehose = connect(
             // const splitUrl = location.href.split('/');
             // console.log(splitUrl);
             // console.log(splitUrl[splitUrl.length - 2]);
-            
-            // const name = resource.name;
+
+            const name = resource.name;
             const k8sKind = k8sModels.get(resource.kind);
             const id = makeReduxID(k8sKind, query);
-            // return _.extend({}, resource, { query, id, k8sKind, listName: splitUrl[splitUrl.length - 2]});
-            return _.extend({}, resource, { query, id, k8sKind});
+            // return _.extend({}, resource, { query, id, k8sKind, listName: splitUrl[splitUrl.length - 2] });
+            return _.extend({}, resource, { query, id, k8sKind });
           })
           .filter((f) => {
             if (_.isEmpty(f.k8sKind)) {
