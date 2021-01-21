@@ -21,6 +21,7 @@ import {
 import { useSelectList } from '@console/shared/src/hooks/select-list';
 import { hasNoTaints } from '../../utils';
 import { GetRows } from './types';
+import { getZone } from '@console/ceph-storage-plugin/src/utils/install';
 import './node-selection-list.scss';
 
 const tableColumnClasses = [
@@ -60,7 +61,7 @@ const getRows: GetRows = (
         title: roles.join(', ') ?? '-',
       },
       {
-        title: node.metadata.labels?.['failure-domain.beta.kubernetes.io/zone'] ?? '-',
+        title: getZone(node) || '-',
       },
       {
         title: `${humanizeCpuCores(cpuSpec).string || '-'}`,
