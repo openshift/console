@@ -26,7 +26,8 @@ import '../style.scss';
 import './hypercloud/utils/langs/i18n';
 //PF4 Imports
 import { Page } from '@patternfly/react-core';
-import Keycloak from 'keycloak-js';
+// import Keycloak from 'keycloak-js';
+import keycloak from '../hypercloud/keycloak';
 import { setAccessToken, setId, resetLoginState } from '../hypercloud/auth';
 const breakpointMD = 768;
 const NOTIFICATION_DRAWER_BREAKPOINT = 1800;
@@ -143,13 +144,13 @@ class App extends React.PureComponent {
   }
 }
 
-const keycloak = new Keycloak({
-  realm: window.SERVER_FLAGS.KeycloakRealm,
-  url: window.SERVER_FLAGS.KeycloakAuthURL,
-  clientId: window.SERVER_FLAGS.KeycloakClientId,
-});
+// export const keycloak = new Keycloak({
+//   realm: window.SERVER_FLAGS.KeycloakRealm,
+//   url: window.SERVER_FLAGS.KeycloakAuthURL,
+//   clientId: window.SERVER_FLAGS.KeycloakClientId,
+// });
 
-keycloak.logout = keycloak.logout.bind(keycloak, { redirectUri: document.location.origin });
+// keycloak.logout = keycloak.logout.bind(keycloak, { redirectUri: document.location.origin });
 
 keycloak
   .init({
