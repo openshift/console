@@ -48,24 +48,24 @@ const HyperCloudNav = () => (
           <ResourceNSLink resource="horizontalpodautoscalers" name="Horizontal Pod Autoscalers" />
           <ResourceNSLink resource="daemonsets" name="Daemon Sets" />
           <ResourceNSLink resource="statefulsets" name="Stateful Sets" />
-          <ResourceNSLink resource="virtualmachines" name="Virtual Machine" />
-          <ResourceNSLink resource="virtualmachineinstances" name="Virtual Machine Instance" />
+          <ResourceNSLink resource="virtualmachines" name={t('COMMON:MSG_LNB_MENU_33')} />
+          <ResourceNSLink resource="virtualmachineinstances" name={t('COMMON:MSG_LNB_MENU_34')} />
           <ResourceNSLink resource="configmaps" name="Config Maps" />
           <ResourceNSLink resource="secrets" name="Secrets" />
           <ResourceNSLink resource="jobs" name="Jobs" />
           <ResourceNSLink resource="cronjobs" name="Cron Jobs" />
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_35')}>
-          <ResourceNSLink resource="virtualservices" name="Virtual Services" />
-          <ResourceNSLink resource="destinationrules" name="Destination Rules" />
-          <ResourceNSLink resource="envoyfilters" name="Envoy Filters" />
-          <ResourceNSLink resource="gateways" name="Gateways" />
-          <ResourceNSLink resource="sidecars" name="Sidecars" />
-          <ResourceNSLink resource="serviceentries" name="Service Entries" />
-          <ResourceNSLink resource="requestauthentications" name="Request Authentications" />
-          <ResourceNSLink resource="peerauthentications" name="Peer Authentications" />
-          <ResourceNSLink resource="authorizationpolicies" name="Authorization Policies" />
-          <HrefLink href="/kiali" name="Kiali" />
+          <ResourceNSLink resource="virtualservices" name={t('COMMON:MSG_LNB_MENU_36')} />
+          <ResourceNSLink resource="destinationrules" name={t('COMMON:MSG_LNB_MENU_37')} />
+          <ResourceNSLink resource="envoyfilters" name={t('COMMON:MSG_LNB_MENU_38')} />
+          <ResourceNSLink resource="gateways" name={t('COMMON:MSG_LNB_MENU_39')} />
+          <ResourceNSLink resource="sidecars" name={t('COMMON:MSG_LNB_MENU_40')} />
+          <ResourceNSLink resource="serviceentries" name={t('COMMON:MSG_LNB_MENU_41')} />
+          <ResourceNSLink resource="requestauthentications" name={t('COMMON:MSG_LNB_MENU_42')} />
+          <ResourceNSLink resource="peerauthentications" name={t('COMMON:MSG_LNB_MENU_43')} />
+          <ResourceNSLink resource="authorizationpolicies" name={t('COMMON:MSG_LNB_MENU_44')} />
+          <HrefLink href="/kiali" name={t('COMMON:MSG_LNB_MENU_45')} />
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_46')}>
           <ResourceNSLink resource="services" name="Services" />
@@ -73,10 +73,10 @@ const HyperCloudNav = () => (
           <ResourceNSLink resource="networkpolicies" name="Network Policies" />
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_50')}>
-          <ResourceClusterLink resource="storageclasses" name="Storage Classes" />
-          <ResourceNSLink resource="datavolumes" name="Data Volumes" />
-          <ResourceNSLink resource="persistentvolumeclaims" name="Persistent Volume Claims" />
-          <ResourceClusterLink resource="persistentvolumes" name="Persistent Volumes" />
+          <ResourceClusterLink resource="storageclasses" name={t('COMMON:MSG_LNB_MENU_53')} />
+          <ResourceNSLink resource="datavolumes" name={t('COMMON:MSG_LNB_MENU_54')} />
+          <ResourceNSLink resource="persistentvolumeclaims" name={t('COMMON:MSG_LNB_MENU_52')} />
+          <ResourceClusterLink resource="persistentvolumes" name={t('COMMON:MSG_LNB_MENU_51')} />
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_56')}>
           <ResourceNSLink resource="tasks" name={t('COMMON:MSG_LNB_MENU_57')} />

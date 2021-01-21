@@ -25,7 +25,7 @@ const perspectives: Perspective[] = [
             name: 'Single Cluster',
             icon: <CogsIcon />,
             getLandingPageURL: (flags) => '/dashboards',
-            getK8sLandingPageURL: (flags) => '/search',
+            getK8sLandingPageURL: (flags) => '/dashboards',
             getImportRedirectURL: (project) => `/k8s/cluster/projects/${project}/workloads`,
         },
     },

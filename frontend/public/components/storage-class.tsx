@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
+import { Translation } from 'react-i18next';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
 import {
   DetailsItem,
@@ -37,38 +38,6 @@ const tableColumnClasses = [
   classNames('col-sm-2', 'hidden-xs'),
   Kebab.columnClass,
 ];
-
-const StorageClassTableHeader = () => {
-  return [
-    {
-      title: 'Name',
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: 'Provisioner',
-      sortField: 'provisioner',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-    },
-    {
-      title: (
-        <>
-          Reclaim <span className="hidden-sm">Policy</span>
-        </>
-      ),
-      sortField: 'reclaimPolicy',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses[3] },
-    },
-  ];
-};
-StorageClassTableHeader.displayName = 'StorageClassTableHeader';
 
 const StorageClassTableRow: RowFunction<StorageClassResourceKind> = ({
   obj,
@@ -120,13 +89,38 @@ const StorageClassDetails: React.SFC<StorageClassDetailsProps> = ({ obj }) => (
 );
 
 export const StorageClassList: React.SFC = (props) => (
-  <Table
-    {...props}
-    aria-label="Storage Classes"
-    Header={StorageClassTableHeader}
-    Row={StorageClassTableRow}
-    virtualize
-  />
+  <Translation>{
+    (t) => <Table
+      {...props}
+      aria-label="Storage Classes"
+      Header={() => [
+        {
+          title: t('COMMON:MSG_MAIN_TABLEHEADER_1'),
+          sortField: 'metadata.name',
+          transforms: [sortable],
+          props: { className: tableColumnClasses[0] },
+        },
+        {
+          title: t('COMMON:MSG_MAIN_TABLEHEADER_30'),
+          sortField: 'provisioner',
+          transforms: [sortable],
+          props: { className: tableColumnClasses[1] },
+        },
+        {
+          title: t('COMMON:MSG_MAIN_TABLEHEADER_31'),
+          sortField: 'reclaimPolicy',
+          transforms: [sortable],
+          props: { className: tableColumnClasses[2] },
+        },
+        {
+          title: '',
+          props: { className: tableColumnClasses[3] },
+        },
+      ]}
+      Row={StorageClassTableRow}
+      virtualize
+    />}
+  </Translation>
 );
 StorageClassList.displayName = 'StorageClassList';
 
