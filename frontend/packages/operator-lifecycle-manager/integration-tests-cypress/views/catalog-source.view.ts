@@ -1,29 +1,6 @@
 import { modal } from '../../../integration-tests-cypress/views/modal';
 import { listPage } from '../../../integration-tests-cypress/views/list-page';
 
-const verifyPackageManifest = (opName: string, csName: string, depth: number = 0) => {
-  // prevent infinite recursion of verifyPackageManifest
-  expect(depth).toBeLessThan(20);
-  cy.log('verify the PackageManifest has been created');
-
-  return cy
-    .visit(
-      `/k8s/ns/openshift-marketplace/operators.coreos.com~v1alpha1~CatalogSource/${csName}/operators?packagemanifest-name=${opName}`,
-    )
-    .byTestID('filter-toolbar')
-    .should('exist')
-    .then(() => {
-      const row = Cypress.$(`[data-test-rows="resource-row"]:contains("${opName}")`);
-      if (row && row.length) {
-        cy.get(`[data-test-rows="resource-row"]`).contains(opName);
-      } else {
-        cy.log(`Did not find ${opName} in ${csName}, waiting to try again`);
-        cy.wait(5000);
-        verifyPackageManifest(opName, csName, depth + 1);
-      }
-    });
-};
-
 export const createCatalogSource = (operatorName: string, catalogSourceName: string) => {
   cy.log('navigate to OperatorHub > Sources');
   cy.visit('/k8s/cluster/config.openshift.io~v1~OperatorHub/cluster/sources');
@@ -38,8 +15,14 @@ export const createCatalogSource = (operatorName: string, catalogSourceName: str
   cy.log('verify the CatalogSource is READY');
   cy.visit('/k8s/cluster/config.openshift.io~v1~OperatorHub/cluster/sources');
   cy.byLegacyTestID(catalogSourceName).should('exist');
-  cy.byTestID(`${catalogSourceName}-status`, { timeout: 90000 }).should('contain', 'READY');
-  verifyPackageManifest(operatorName, catalogSourceName);
+  cy.byTestID(`${catalogSourceName}-status`, { timeout: 90000 }).should('have.text', 'READY');
+  cy.visit(
+    `/k8s/ns/openshift-marketplace/operators.coreos.com~v1alpha1~CatalogSource/${catalogSourceName}/operators?packagemanifest-name=${operatorName}`,
+  );
+  cy.get('.co-clusterserviceversion-logo__name__clusterserviceversion', { timeout: 90000 }).should(
+    'have.text',
+    operatorName,
+  );
 };
 
 export const deleteCatalogSource = (catalogSourceName: string) => {
