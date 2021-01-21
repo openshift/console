@@ -32,7 +32,7 @@ const YAMLEditor = React.forwardRef<MonacoEditor, YAMLEditorProps>((props, ref) 
     (editor, monaco) => {
       editor.layout();
       editor.focus();
-      registerYAMLinMonaco(monaco);
+      registerYAMLinMonaco(editor, monaco);
       monaco.editor.getModels()[0].updateOptions({ tabSize: 2 });
       onSave && editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S, onSave); // eslint-disable-line no-bitwise
     },
