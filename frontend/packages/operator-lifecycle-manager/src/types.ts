@@ -2,7 +2,7 @@ import {
   K8sResourceCommon,
   K8sResourceCondition,
   K8sResourceKind,
-  OwnerReference,
+  ObjectReference,
   Selector,
 } from '@console/internal/module/k8s';
 import { Descriptor } from './components/descriptors/types';
@@ -195,7 +195,7 @@ export type SubscriptionKind = {
   };
   status?: {
     installedCSV?: string;
-    installplan?: OwnerReference;
+    installPlanRef?: ObjectReference;
     state?: SubscriptionState;
   };
 } & K8sResourceKind;
