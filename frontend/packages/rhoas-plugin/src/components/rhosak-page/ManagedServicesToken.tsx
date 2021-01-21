@@ -27,14 +27,18 @@ const ManagedServicesToken = () => {
 
   const [data, loaded, loadError] = useK8sGet(SecretModel, secretName, namespace)
 
-  if (loaded) {
-    return "Loading"
+  if (!loaded) {
+    return (<>
+      <h4>Loading</h4>
+    </>)
   }
 
   console.log(data, loadError);
 
   if (data) {
-    return "Token already exist"
+    return (<>
+      You have already setup connection details to Managed Services
+    </>)
   }
 
   const onSubmit = async (event) => {
@@ -83,23 +87,27 @@ const ManagedServicesToken = () => {
 
   return (
     <>
-      Managed Managed Kafka Access token.
-      {/*  TODO Add environment abstraction */}
-      Go to https://qaprodauth.cloud.redhat.com/openshift/token to retrieve token
+      <div style={{ "backgroundColor": "#e6e6e6", "padding": 10 }}>
+        Managed Managed Kafka Access token.
+        {/*  TODO Add environment abstraction */}
+        <p>
+          Go to https://qaprodauth.cloud.redhat.com/openshift/token to retrieve token
+        </p>
 
-      <FlexForm onSubmit={onSubmit}>
-        <FormHeader title="Access token" helpText="token help" marginBottom="lg" />
+        <FlexForm onSubmit={onSubmit}>
+          <FormHeader title="Access token" helpText="token help" marginBottom="lg" />
         Provide accessTokenSecretName
         <input id="token" type="text"></input>
-        <FormFooter
-          isSubmitting={false}
-          errorMessage=""
-          submitLabel="Next"
-          disableSubmit={false}
-          resetLabel="Reset"
-          sticky
-        />
-      </FlexForm>
+          <FormFooter
+            isSubmitting={false}
+            errorMessage=""
+            submitLabel="Add token"
+            disableSubmit={false}
+            resetLabel="Reset"
+            sticky
+          />
+        </FlexForm>
+      </div>
     </>
   )
 
