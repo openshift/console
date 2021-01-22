@@ -61,11 +61,11 @@ const ClusterDropdown_: React.FC<ClusterDropdownProps & StateProps> = ({
                 data-test-id="perspective-switcher-toggle"
             >
                 <Title size="md">
-                    {clusters.find(cl => cl.name === name)?.displayName ?? 'Master'}
+                    {clusters.find(cl => cl.name === name)?.displayName ?? name}
                 </Title>
             </DropdownToggle>) : <LoadingInline />
         ,
-        [isClusterDropdownOpen, toggleClusterOpen],
+        [isClusterDropdownOpen, toggleClusterOpen, clusters],
     );
 
     const getClusterItems = React.useCallback(
