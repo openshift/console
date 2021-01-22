@@ -70,7 +70,9 @@ const ManagedServicesList = () => {
     // FIXME Progress bar/Handling errors here?
     // FIXME Patch existing config
     await k8sCreate(ManagedKafkaRequestModel, mkRequest)
-
+    await new Promise((resolver)=>{
+      setTimeout(resolver, 3000);
+    })
     navigateTo(e, "/managedServices/managedkafka")
   }
 

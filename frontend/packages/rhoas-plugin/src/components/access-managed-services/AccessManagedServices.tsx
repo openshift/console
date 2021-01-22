@@ -14,7 +14,7 @@ const AccessManagedServices = ({ }) => {
   const [currentNamespace] = useActiveNamespace();
 
   const namespace = currentNamespace
-  const secretName = "rh-managed-services-api-accesstoken495222"
+  const secretName = "rh-managed-services-api-accesstoken4954"
 
   console.log("Token page rendered for namespace ", namespace, apiTokenValue, secretName)
 
@@ -79,7 +79,7 @@ const AccessManagedServices = ({ }) => {
               onChange={(value: string) => setApiTokenValue(value)}
 
               type="text"
-              id=""
+              id="TODOID?"
               name=""
             />
 

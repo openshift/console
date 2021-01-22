@@ -62,24 +62,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
-    type: 'NavItem/Href',
-    properties: {
-      id: 'rhoas',
-      perspective: 'dev',
-      section: 'resources',
-      insertBefore: 'project',
-      componentProps: {
-        name: 'rhoas',
-        href: '/rhoas',
-        testID: 'rhoas',
-        'data-quickstart-id': 'qs-nav-helm',
-      },
-    },
-    flags: {
-      required: [],
-    },
-  },
-  {
     type: 'AddAction',
     flags: {
       required: [FLAG_RHOAS_KAFKA],

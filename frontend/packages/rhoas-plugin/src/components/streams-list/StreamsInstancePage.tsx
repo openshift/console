@@ -4,8 +4,11 @@ import { PageBody } from '@console/shared';
 import StreamsInstanceFilter from './StreamsInstanceFilter';
 import StreamsInstanceTable from './StreamsInstanceTable';
 import { PageHeading } from '@console/internal/components/utils';
+import { ManagedKafkaModel } from '../managed-services-kafka/ManagedKafkaModel';
 
-const StreamsInstancePage = () => {
+// FIXME full typed experience React.FC<{ kafkaArray: ManagedKafkaModel[]}>
+const StreamsInstancePage: any = ({ kafkaArray }) => {
+  console.log(kafkaArray)
   return (
     <>
       <Helmet>
@@ -19,7 +22,7 @@ const StreamsInstancePage = () => {
       </PageHeading>
       <PageBody>
         <StreamsInstanceFilter />
-        <StreamsInstanceTable />
+        <StreamsInstanceTable kafkaArray={kafkaArray} />
       </PageBody>
     </>
   );
