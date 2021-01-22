@@ -15,16 +15,7 @@ export const menuActions: KebabAction[] = [...Kebab.getExtensionsActionsForKind(
 
 const kind = ClusterClaimModel.kind;
 
-const tableColumnClasses = [
-  '',
-  '',
-  '',
-  '',
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
-  Kebab.columnClass
-];
+const tableColumnClasses = ['', '', '', '', classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-lg'), Kebab.columnClass];
 
 const ClusterClaimTableHeader = (t?: TFunction) => {
   return [
@@ -84,21 +75,13 @@ const ClusterClaimTableRow: RowFunction<K8sResourceKind> = ({ obj: clusterClaim,
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink kind={kind} name={clusterClaim.metadata.name} namespace={clusterClaim.metadata.namespace} title={clusterClaim.metadata.uid} />
       </TableData>
-      <TableData className={tableColumnClasses[1]}>
-        {clusterClaim.spec.clusterName}
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
-        {clusterClaim.spec.provider}
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
-        {clusterClaim.spec.version}
-      </TableData>
+      <TableData className={tableColumnClasses[1]}>{clusterClaim.spec.clusterName}</TableData>
+      <TableData className={tableColumnClasses[2]}>{clusterClaim.spec.provider}</TableData>
+      <TableData className={tableColumnClasses[3]}>{clusterClaim.spec.version}</TableData>
       <TableData className={classNames(tableColumnClasses[4], 'co-break-word')}>
         <Status status={clusterClaim.status.phase} />
       </TableData>
-      <TableData className={tableColumnClasses[5]}>
-        {clusterClaim.metadata.annotations.creator}
-      </TableData>
+      <TableData className={tableColumnClasses[5]}>{clusterClaim.metadata.annotations.creator}</TableData>
       <TableData className={tableColumnClasses[6]}>
         <Timestamp timestamp={clusterClaim.metadata.creationTimestamp} />
       </TableData>
@@ -129,19 +112,20 @@ export const ClusterRow: React.FC<ClusterRowProps> = ({ pod }) => {
   );
 };
 
-
 export const ClusterClaimDetailsList: React.FC<ClusterClaimDetailsListProps> = ({ clcl }) => {
-  return <dl className="co-m-pane__details">
-    <DetailsItem label='Provider' obj={clcl} path="spec.provider">
-      {clcl.spec.provider}
-    </DetailsItem>
-    <DetailsItem label='Type' obj={clcl} path="spec.provider">
-      {clcl.spec.provider ? 'Create' : 'Enroll'}
-    </DetailsItem>
-    <DetailsItem label='Provider' obj={clcl} path="status.ready">
-      {clcl.status?.ready ? 'Ready' : 'Not Ready'}
-    </DetailsItem>
-  </dl>;
+  return (
+    <dl className="co-m-pane__details">
+      <DetailsItem label="Provider" obj={clcl} path="spec.provider" />
+      <DetailsItem label="Cluster Name" obj={clcl} path="spec.clusterName" />
+      <DetailsItem label="Version" obj={clcl} path="spec.version" />
+      <DetailsItem label="Region" obj={clcl} path="spec.region" />
+      <DetailsItem label="Master Node Count" obj={clcl} path="spec.masterNum" />
+      <DetailsItem label="Master Node Type" obj={clcl} path="spec.masterType" />
+      <DetailsItem label="Worker Node Count" obj={clcl} path="spec.workerNum" />
+      <DetailsItem label="Worker Node Type" obj={clcl} path="spec.workerType" />
+      <DetailsItem label="SSH Key" obj={clcl} path="spec.sshKey" />
+    </dl>
+  );
 };
 
 const ClusterClaimDetails: React.FC<ClusterClaimDetailsProps> = ({ obj: clusterClaim }) => (
@@ -150,7 +134,8 @@ const ClusterClaimDetails: React.FC<ClusterClaimDetailsProps> = ({ obj: clusterC
       <SectionHeading text="Cluster Claim Details" />
       <div className="row">
         <div className="col-lg-6">
-          <ResourceSummary resource={clusterClaim} />
+          <ResourceSummary resource={clusterClaim} showOwner={false} />
+          <DetailsItem label="Owner" obj={clusterClaim} path="metadata.annotations.creator" />
         </div>
         <div className="col-lg-6">
           <ClusterClaimDetailsList clcl={clusterClaim} />
@@ -164,12 +149,11 @@ const { details, editYaml } = navFactory;
 export const ClusterClaims: React.FC = props => {
   const { t } = useTranslation();
   return <Table {...props} aria-label="Cluster Claims" Header={ClusterClaimTableHeader.bind(null, t)} Row={ClusterClaimTableRow} virtualize />;
-}
-
+};
 
 const clusterClaimStatusReducer = (clusterClaim: any): string => {
   return clusterClaim.status.phase;
-}
+};
 const filters = [
   {
     filterGroupName: 'Status',
@@ -191,10 +175,9 @@ export const ClusterClaimsPage: React.FC<ClusterClaimsPageProps> = props => <Lis
 
 export const ClusterClaimsDetailsPage: React.FC<ClusterClaimsDetailsPageProps> = props => <DetailsPage {...props} kind={kind} menuActions={menuActions} pages={[details(detailsPage(ClusterClaimDetails)), editYaml()]} />;
 
-
 type ClusterRowProps = {
   pod: K8sResourceKind;
-}
+};
 
 type ClusterClaimDetailsListProps = {
   clcl: K8sResourceKind;
