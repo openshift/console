@@ -41,7 +41,7 @@ class BaseScanningModal extends PromiseComponent {
         let registries;
         const selectedArray = Array.from(this.state.selected);
 
-        if (kind === 'Registry' || modelKind.kind) {
+        if (kind === 'Registry' || modelKind.kind === 'Registry') {
             if (resource) {
                 registries = [{
                     'name': resource.metadata.name,
@@ -51,18 +51,45 @@ class BaseScanningModal extends PromiseComponent {
                         }
                     ]
                 }];
-            } else {
-                registries = selectedArray.map(selectedItem => ({
-                    'name': selectedItem,
+            }
+            // else {
+            //     registries = selectedArray.map(selectedItem => ({
+            //         'name': selectedItem,
+            //         'repositories': [
+            //             {
+            //                 'name': '*'
+            //             }
+            //         ]
+            //     }))
+            // }
+        }
+
+        if (kind === 'Repository' || modelKind.kind === 'Repository') {
+            if (resource) {
+                registries = [{
+                    'name': resource.spec.registry,
                     'repositories': [
                         {
-                            'name': '*'
+                            'name': resource.metadata.name,
+                            'versions': [
+                                '*'
+                            ]
                         }
                     ]
-                }))
+                }];
             }
-
+            // else {
+            //     registries = selectedArray.map(selectedItem => ({
+            //         'name': selectedItem,
+            //         'repositories': [
+            //             {
+            //                 'name': '*'
+            //             }
+            //         ]
+            //     }))
+            // }
         }
+
         const data = { registries };
 
 

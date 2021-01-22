@@ -85,7 +85,7 @@ export const ImageScanRequestStatus: React.FC<ImageScanRequestStatusStatusProps>
 
 export const ImageScanRequestDetailsList: React.FC<ImageScanRequestDetailsListProps> = ({ ds }) => {
   const summaries = [];
-  for (const key in ds.status.summary) {
+  for (const key in ds.status?.summary) {
     summaries.push({ key: key, value: ds.status.summary[key] });
   }
   return (
