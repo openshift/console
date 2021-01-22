@@ -4,9 +4,13 @@ import { useK8sWatchResources } from '@console/internal/components/utils/k8s-wat
 import { getBuildConfigsForResource } from '../utils';
 import { BuildConfigOverviewItem } from '../types';
 
-export const useBuildConfigsWatcher = (
-  resource: K8sResourceKind,
-): { loaded: boolean; loadError: string; buildConfigs: BuildConfigOverviewItem[] } => {
+export type BuildConfigData = {
+  loaded: boolean;
+  loadError: string;
+  buildConfigs: BuildConfigOverviewItem[];
+};
+
+export const useBuildConfigsWatcher = (resource: K8sResourceKind): BuildConfigData => {
   const [loaded, setLoaded] = React.useState<boolean>(false);
   const [loadError, setLoadError] = React.useState<string>(null);
   const [buildConfigs, setBuildConfigs] = React.useState<BuildConfigOverviewItem[]>();
