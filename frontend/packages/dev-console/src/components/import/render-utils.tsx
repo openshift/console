@@ -10,9 +10,14 @@ export const routeDecoratorIcon = (
   radius: number,
   t: TFunction,
   cheEnabled?: boolean,
+  cheIconURL?: string,
 ): React.ReactElement => {
   if (cheEnabled && routeURL) {
-    return <CheIcon style={{ fontSize: radius }} />;
+    return cheIconURL ? (
+      <image xlinkHref={cheIconURL} width={radius} height={radius} />
+    ) : (
+      <CheIcon style={{ fontSize: radius }} />
+    );
   }
   switch (detectGitType(routeURL)) {
     case GitTypes.invalid:

@@ -28,11 +28,21 @@ export const WORKLOAD_TYPES = [
   'pods',
 ];
 
+export type CheDecoratorData = {
+  cheURL?: string;
+  cheIconURL?: string;
+};
+
 export const getServiceBindingStatus = ({ FLAGS }: RootState): boolean =>
   FLAGS.get(ALLOW_SERVICE_BINDING_FLAG);
 
-export const getCheURL = (consoleLinks: K8sResourceKind[]) =>
-  _.get(_.find(consoleLinks, ['metadata.name', 'che']), 'spec.href', '');
+export const getCheDecoratorData = (consoleLinks: K8sResourceKind[]): CheDecoratorData => {
+  const cheConsoleLink = _.find(consoleLinks, ['metadata.name', 'che']);
+  return {
+    cheURL: cheConsoleLink?.spec?.href,
+    cheIconURL: cheConsoleLink?.spec?.applicationMenu?.imageURL,
+  };
+};
 
 export const getEditURL = (vcsURI?: string, gitBranch?: string, cheURL?: string) => {
   if (!vcsURI) {

@@ -6,7 +6,7 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { ConsoleLinkModel } from '@console/internal/models';
 import { routeDecoratorIcon } from '@console/dev-console/src/components/import/render-utils';
-import { getCheURL, getEditURL } from '../../../../../utils';
+import { getCheDecoratorData, getEditURL } from '../../../../../utils';
 import Decorator from './Decorator';
 
 interface DefaultDecoratorProps {
@@ -23,12 +23,12 @@ const EditDecorator: React.FC<DefaultDecoratorProps> = ({ element, radius, x, y 
     kind: referenceForModel(ConsoleLinkModel),
     optional: true,
   });
-  const cheURL = getCheURL(consoleLinks);
+  const { cheURL, cheIconURL } = getCheDecoratorData(consoleLinks);
   const workloadData = element.getData().data;
   const { editURL, vcsURI, vcsRef } = workloadData;
   const cheEnabled = !!cheURL;
   const editUrl = editURL || getEditURL(vcsURI, vcsRef, cheURL);
-  const repoIcon = routeDecoratorIcon(editUrl, radius, t, cheEnabled);
+  const repoIcon = routeDecoratorIcon(editUrl, radius, t, cheEnabled, cheIconURL);
 
   if (!repoIcon) {
     return null;
