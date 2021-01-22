@@ -9,6 +9,7 @@ import {
   removeQueryArgument,
   setQueryArgument,
 } from '@console/internal/components/utils';
+import './QuickSearchModalBody.scss';
 
 interface QuickSearchModalBodyProps {
   allCatalogItemsLoaded: boolean;
@@ -139,7 +140,11 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
   }, [closeModal, onCancel, onEnter, selectNext, selectPrevious]);
 
   return (
-    <div ref={ref}>
+    <div
+      ref={ref}
+      className="odc-quick-search-modal-body"
+      style={{ height: catalogItems?.length > 0 ? 468 : 60 }}
+    >
       <QuickSearchBar
         searchTerm={searchTerm}
         onSearch={onSearch}
