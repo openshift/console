@@ -71,7 +71,7 @@ describe('TopologyPageToolbar tests', () => {
     const wrapper = shallow(
       <TopologyPageToolbar viewType={TopologyViewType.list} onViewChange={mockViewChange} />,
     );
-    expect(wrapper.find(Tooltip).props().content).toBe('topology~Topology view');
+    expect(wrapper.find(Tooltip).props().content).toBe('topology~Graph view');
   });
 
   it('should show the topology list icon when on topology page', () => {

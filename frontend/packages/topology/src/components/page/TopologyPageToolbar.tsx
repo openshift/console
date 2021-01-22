@@ -22,7 +22,7 @@ const TopologyPageToolbar: React.FC<TopologyPageToolbarProps> = observer(
     const { namespace, isEmptyModel } = dataModelContext;
     const viewChangeTooltipContent = showGraphView
       ? t('topology~List view')
-      : t('topology~Topology view');
+      : t('topology~Graph view');
 
     if (!namespace || isEmptyModel) {
       return null;
