@@ -44,7 +44,7 @@ const EditButton: React.SFC<EditButtonProps> = (props) => {
       isInline
       onClick={props.onClick}
       data-test={
-        props.testID ? `${props.testID}-details-item__edit-button` : 'details-item__edit-button'
+        props.testId ? `${props.testId}-details-item__edit-button` : 'details-item__edit-button'
       }
     >
       {props.children}
@@ -106,7 +106,9 @@ export const DetailsItem: React.FC<DetailsItemProps> = ({
             <>
               <SplitItem isFilled />
               <SplitItem>
-                <EditButton onClick={onEdit}>{t('public~Edit')}</EditButton>
+                <EditButton testId={label} onClick={onEdit}>
+                  {t('public~Edit')}
+                </EditButton>
               </SplitItem>
             </>
           )}
@@ -119,7 +121,7 @@ export const DetailsItem: React.FC<DetailsItemProps> = ({
         data-test-selector={`details-item-value__${label}`}
       >
         {editable && !editAsGroup ? (
-          <EditButton testID={label} onClick={onEdit}>
+          <EditButton testId={label} onClick={onEdit}>
             {value}
           </EditButton>
         ) : (
@@ -146,7 +148,7 @@ export type DetailsItemProps = {
 
 type EditButtonProps = {
   onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
-  testID?: string;
+  testId?: string;
 };
 
 DetailsItem.displayName = 'DetailsItem';

@@ -6,16 +6,65 @@ import {
   SectionHeading,
   ResourceSummary,
   Kebab,
+  DetailsItem,
+  useAccessReview,
 } from '@console/internal/components/utils';
 import { CatalogSourceListPage, CatalogSourceListPageProps } from '../catalog-source';
 import { OperatorHubKind } from '.';
+import { OperatorHubModel } from '../../models';
+import { editDefaultSourcesModal } from '../modals/edit-default-sources-modal';
 
-const OperatorHubDetails: React.FC<OperatorHubDetailsProps> = ({ obj }) => {
+const OperatorHubDetails: React.FC<OperatorHubDetailsProps> = ({ obj: operatorHub }) => {
   const { t } = useTranslation();
+
+  const canEditDefaultSources = useAccessReview({
+    group: OperatorHubModel.apiGroup,
+    resource: OperatorHubModel.plural,
+    verb: 'patch',
+  });
+
   return (
     <div className="co-m-pane__body">
       <SectionHeading text={t('olm~OperatorHub details')} />
-      <ResourceSummary resource={obj} podSelector="spec.podSelector" showNodeSelector={false} />
+      <div className="row">
+        <div className="col-sm-6 col-xs-12">
+          <ResourceSummary
+            resource={operatorHub}
+            podSelector="spec.podSelector"
+            showNodeSelector={false}
+          />
+        </div>
+        <div className="col-sm-6 col-xs-12">
+          <div className="co-m-pane__details">
+            <DetailsItem
+              label={t('olm~Default sources')}
+              obj={operatorHub}
+              path="status.sources"
+              canEdit={canEditDefaultSources}
+              onEdit={() => editDefaultSourcesModal({ operatorHub })}
+              editAsGroup
+            >
+              {operatorHub.status.sources
+                .sort((a, b) => (a.name ?? '').localeCompare(b.name ?? ''))
+                .map((source, idx) => {
+                  return (
+                    <dl key={source.name}>
+                      <DetailsItem
+                        label={source.name}
+                        obj={operatorHub}
+                        path={`status.sources[${idx}]`}
+                      >
+                        <p data-test={`status_${source.name}`}>
+                          {source.disabled ? t('public~Disabled') : t('public~Enabled')}
+                        </p>
+                      </DetailsItem>
+                    </dl>
+                  );
+                })}
+            </DetailsItem>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

@@ -5,6 +5,7 @@ export const Checkbox: React.SFC<CheckboxProps> = ({ name, label, checked, onCha
     <div className="checkbox">
       <label className="control-label">
         <input
+          data-test={`${label}__checkbox`}
           className="form-checkbox"
           name={name}
           onChange={onChange}

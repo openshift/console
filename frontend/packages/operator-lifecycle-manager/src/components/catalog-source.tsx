@@ -55,8 +55,8 @@ import { editRegitryPollInterval } from './modals/edit-registry-poll-interval-mo
 import { PackageManifestsPage } from './package-manifest';
 import useOperatorHubConfig from '../utils/useOperatorHubConfig';
 import i18n from '@console/internal/i18n';
+import { DEFAULT_SOURCE_NAMESPACE } from '../const';
 
-const DEFAULT_SOURCE_NAMESPACE = 'openshift-marketplace';
 const catalogSourceModelReference = referenceForModel(CatalogSourceModel);
 
 const deleteModal = (kind: K8sKind, catalogSource: CatalogSourceKind): KebabOption => ({
