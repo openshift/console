@@ -106,7 +106,7 @@ const ManagedKafkas = () => {
 
   const createManagedKafkaConnectionFlow = async () => {
     const responseServiceAccount = await createManagedServiceAccount();
-    console.log('what is this thoooo' + JSON.stringify(responseServiceAccount));
+    console.log('what is this 2' + JSON.stringify(responseServiceAccount));
     createManagedKafkaConnection(serviceAccountSecretName);
   }
   
