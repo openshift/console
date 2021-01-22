@@ -6,8 +6,7 @@ import { devNavigationMenuPO } from '../pageObjects/global-po';
 import { pageTitle } from '../constants/pageTitle';
 
 export const app = {
-  waitForLoad: (timeout: number = 30000) =>
-    cy.get('.co-m-loader', { timeout }).should('not.be.visible'),
+  waitForLoad: (timeout: number = 30000) => cy.get('.co-m-loader', { timeout }).should('not.exist'),
 };
 
 export const perspective = {

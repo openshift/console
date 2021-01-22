@@ -392,7 +392,9 @@ const Graph: React.FC<GraphProps> = ({
 
   const GraphLink = () =>
     query ? (
-      <Link to={queryBrowserURL(query, namespace)}>{t('public~View in Metrics')}</Link>
+      <Link aria-label={t('public~View in Metrics')} to={queryBrowserURL(query, namespace)}>
+        {t('public~View in Metrics')}
+      </Link>
     ) : null;
 
   return (

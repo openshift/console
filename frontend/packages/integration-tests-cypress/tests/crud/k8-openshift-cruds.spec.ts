@@ -98,6 +98,10 @@ describe('Kubernetes resource CRUD operations', () => {
 
   testObjs.forEach(
     ({ kind, namespaced = true, humanizeKind = true, testI18n = true }, resource) => {
+      // Ex: to execute just the Pod crud tests, set environment var 'cypress_k8sTestResource=Pod' before running cypress
+      if (Cypress.env('k8sTestResource') && kind !== Cypress.env('k8sTestResource')) {
+        return;
+      }
       describe(kind, () => {
         const name = `${testName}-${_.kebabCase(kind)}`;
 

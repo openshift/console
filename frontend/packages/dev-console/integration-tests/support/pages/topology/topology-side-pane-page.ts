@@ -71,7 +71,7 @@ export const topologySidePane = {
       .scrollIntoView()
       .should('be.visible');
     cy.byLegacyTestID('modal-cancel-action').click();
-    cy.get('form').should('not.be.visible');
+    cy.get('form').should('not.exist');
   },
   verifyAnnotaiton: (annotationName: string) => {
     cy.byTestID('edit-annotations').click();

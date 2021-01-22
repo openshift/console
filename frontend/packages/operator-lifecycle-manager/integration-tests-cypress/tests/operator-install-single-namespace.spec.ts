@@ -119,7 +119,7 @@ describe(`Interacting with a single namespace install mode Operator (${operatorN
       `/k8s/ns/${testName}/operators.coreos.com~v1alpha1~ClusterServiceVersion`,
     );
     cy.log(`verify the Operator is not installed in namespace ${testName}`);
-    cy.get('.loading-skeleton--table').should('not.be.visible');
+    cy.get('.loading-skeleton--table').should('not.exist');
     cy.byTestOperatorRow(operatorRow).should('not.exist');
   });
 });

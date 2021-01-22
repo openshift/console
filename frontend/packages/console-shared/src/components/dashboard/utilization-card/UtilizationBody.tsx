@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ChartAxis } from '@patternfly/react-charts';
+import { ChartAxis, ChartContainer } from '@patternfly/react-charts';
 import { Grid } from '@patternfly/react-core';
 import { useRefWidth } from '@console/internal/components/utils/ref-width-hook';
 import { useTranslation } from 'react-i18next';
@@ -13,10 +13,12 @@ const formatDate = (date: Date): string => {
 
 const UtilizationAxis: React.FC<UtilizationAxisProps> = ({ timestamps = [] }) => {
   const [containerRef, width] = useRefWidth();
+  const { t } = useTranslation();
   return (
     <div ref={containerRef}>
       {!!timestamps.length && (
         <ChartAxis
+          containerComponent={<ChartContainer title={t('dashboard~time axis')} />}
           scale={{ x: 'time' }}
           domain={{ x: [timestamps[0], timestamps[timestamps.length - 1]] }}
           tickFormat={formatDate}

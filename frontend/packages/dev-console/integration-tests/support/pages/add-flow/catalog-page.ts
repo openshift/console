@@ -64,7 +64,7 @@ export const catalogPage = {
       .click(),
   clickOnInstallButton: () => {
     cy.get(catalogPO.installHelmChart.install).click();
-    cy.get('.co-m-loader', { timeout: 40000 }).should('not.be.visible');
+    cy.get('.co-m-loader', { timeout: 40000 }).should('not.exist');
   },
   enterReleaseName: (releaseName: string) =>
     cy
