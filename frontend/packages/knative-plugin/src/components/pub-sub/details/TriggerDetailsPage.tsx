@@ -1,13 +1,19 @@
 import * as React from 'react';
 import { DetailsPage } from '@console/internal/components/factory';
 import { Kebab, navFactory } from '@console/internal/components/utils';
+import { useTabbedTableBreadcrumbsFor } from '@console/shared';
 import TriggerDetails from './TriggerDetails';
 import { EventingTriggerModel } from '../../../models';
-import { useServerlessBreadcrumbsFor } from '../../../hooks/useBreadcrumbsFor';
+import { serverlessTab } from '../../../utils/serverless-tab-utils';
 
 const TriggerDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (props) => {
   const { kindObj, match } = props;
-  const breadcrumbsFor = useServerlessBreadcrumbsFor(kindObj, match, 'eventing');
+  const breadcrumbs = useTabbedTableBreadcrumbsFor(
+    kindObj,
+    match,
+    'eventing',
+    serverlessTab(kindObj.kind),
+  );
   const pages = [navFactory.details(TriggerDetails), navFactory.editYaml()];
   const commonActions = Kebab.factory.common.map((action) => action);
   const menuActionsCreator = [
@@ -18,7 +24,7 @@ const TriggerDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (
   return (
     <DetailsPage
       {...props}
-      breadcrumbsFor={() => breadcrumbsFor}
+      breadcrumbsFor={() => breadcrumbs}
       pages={pages}
       menuActions={menuActionsCreator}
     />

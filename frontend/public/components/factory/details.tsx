@@ -37,7 +37,9 @@ import { ErrorBoundaryFallback } from '../error';
 import { breadcrumbsForDetailsPage } from '../utils/breadcrumbs';
 import DetailsBreadcrumbResolver from './details-breadcrumb-resolver';
 
-const useBreadCrumbsForDetailPage = (kind: string): ResolvedExtension<DetailPageBreadCrumbs> => {
+const useBreadCrumbsForDetailPage = (
+  kindObj: K8sKind,
+): ResolvedExtension<DetailPageBreadCrumbs> => {
   const [breadCrumbsExtension, breadCrumbsResolved] = useResolvedExtensions<DetailPageBreadCrumbs>(
     isDetailPageBreadCrumbs,
   );
@@ -47,11 +49,11 @@ const useBreadCrumbsForDetailPage = (kind: string): ResolvedExtension<DetailPage
         ? breadCrumbsExtension.find(({ properties: { getModels } }) => {
             const models = getModels();
             return Array.isArray(models)
-              ? models.findIndex((model: K8sKind) => referenceForModel(model) === kind) !== -1
-              : referenceForModel(models) === kind;
+              ? models.findIndex((model: K8sKind) => model.kind === kindObj.kind) !== -1
+              : models.kind === kindObj.kind;
           })
         : undefined,
-    [breadCrumbsResolved, breadCrumbsExtension, kind],
+    [breadCrumbsResolved, breadCrumbsExtension, kindObj.kind],
   );
 };
 
@@ -79,12 +81,10 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
         })),
     [resourcePageExtensions, props],
   );
-  const kind = props.kindObj
-    ? referenceForModel(props.kindObj)
-    : referenceForModel(modelFor(props.kind));
-  const resolvedBreadcrumbExtension = useBreadCrumbsForDetailPage(kind);
+  const kindObj = props.kindObj ?? modelFor(props.kind);
+  const resolvedBreadcrumbExtension = useBreadCrumbsForDetailPage(kindObj);
   const onBreadcrumbsResolved = React.useCallback((breadcrumbs) => {
-    setPluginBreadcrumbs(breadcrumbs ? () => breadcrumbs : undefined);
+    setPluginBreadcrumbs(breadcrumbs || undefined);
   }, []);
   let allPages = [...pages, ...pluginPages];
   allPages = allPages.length ? allPages : null;
@@ -96,7 +96,7 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
           useBreadcrumbs={resolvedBreadcrumbExtension.properties.breadcrumbsProvider}
           onBreadcrumbsResolved={onBreadcrumbsResolved}
           urlMatch={props.match}
-          kind={kind}
+          kind={kindObj}
         />
       )}
       <Firehose
@@ -120,11 +120,8 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
           kind={props.customKind || props.kind}
           breadcrumbs={pluginBreadcrumbs}
           breadcrumbsFor={
-            props.breadcrumbsFor
-              ? props.breadcrumbsFor
-              : !pluginBreadcrumbs
-              ? breadcrumbsForDetailsPage(props.kindObj, props.match)
-              : undefined
+            props.breadcrumbsFor ??
+            (!pluginBreadcrumbs ? breadcrumbsForDetailsPage(props.kindObj, props.match) : undefined)
           }
           resourceKeys={resourceKeys}
           getResourceStatus={props.getResourceStatus}

@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { DetailsPage } from '@console/internal/components/factory';
 import { Kebab, navFactory } from '@console/internal/components/utils';
+import { useTabbedTableBreadcrumbsFor } from '@console/shared';
 import SubscriptionDetails from './SubscriptionDetails';
 import { EventingSubscriptionModel } from '../../../models';
-import { useServerlessBreadcrumbsFor } from '../../../hooks/useBreadcrumbsFor';
+import { serverlessTab } from '../../../utils/serverless-tab-utils';
 
 const SubscriptionDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (props) => {
   const { kindObj, match } = props;
@@ -13,12 +14,17 @@ const SubscriptionDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>
     ...Kebab.getExtensionsActionsForKind(EventingSubscriptionModel),
     ...commonActions,
   ];
-  const breadcrumbsFor = useServerlessBreadcrumbsFor(kindObj, match, 'eventing');
+  const breadcrumbs = useTabbedTableBreadcrumbsFor(
+    kindObj,
+    match,
+    'eventing',
+    serverlessTab(kindObj.kind),
+  );
 
   return (
     <DetailsPage
       {...props}
-      breadcrumbsFor={() => breadcrumbsFor}
+      breadcrumbsFor={() => breadcrumbs}
       pages={pages}
       menuActions={menuActionsCreator}
     />

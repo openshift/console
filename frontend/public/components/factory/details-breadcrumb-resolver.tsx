@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { DetailsPageBreadCrumbsHook } from '@console/plugin-sdk';
 import { match } from 'react-router';
+import { DetailsPageBreadCrumbsHook } from '@console/plugin-sdk';
+import { K8sKind } from '@console/internal/module/k8s';
 
 type DetailsBreadcrumbResolverType = {
   useBreadcrumbs: DetailsPageBreadCrumbsHook;
@@ -10,7 +11,7 @@ type DetailsBreadcrumbResolverType = {
       path: string;
     }[],
   ) => void;
-  kind: string;
+  kind: K8sKind;
   urlMatch: match<any>;
 };
 
@@ -22,7 +23,9 @@ const DetailsBreadcrumbResolver: React.FC<DetailsBreadcrumbResolverType> = ({
 }) => {
   const breadcrumbs = useBreadcrumbs(kind, urlMatch);
   React.useEffect(() => {
-    onBreadcrumbsResolved(breadcrumbs);
+    if (breadcrumbs?.length > 0) {
+      onBreadcrumbsResolved(breadcrumbs);
+    }
   }, [breadcrumbs, onBreadcrumbsResolved]);
   return null;
 };

@@ -106,6 +106,7 @@ export const useEventSourceModels = (): EventSourcetData => {
 
 export const getEventSourceModels = (): K8sKind[] => eventSourceData.eventSourceModels;
 
+export const getChannelModels = (): K8sKind[] => eventSourceData.eventSourceChannels;
 export const getDynamicEventSourcesResourceList = (namespace: string, limit?: number) => {
   return eventSourceData.eventSourceModels.map((model) => {
     return {

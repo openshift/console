@@ -38,7 +38,14 @@ import { TopologyConsumedExtensions, topologyPlugin } from './topology/topology-
 import * as eventSourceIcon from './imgs/event-source.svg';
 import * as channelIcon from './imgs/channel.svg';
 import { eventSourceProvider, kameletsProvider } from './catalog';
-import { eventSourceBreadcrumbsProvider, eventSourceModelsProviderForBreadCrumbs } from './hooks';
+import {
+  eventSourceBreadcrumbsProvider,
+  channelBreadcrumbsProvider,
+  brokerBreadcrumbsProvider,
+  eventSourceModelsProviderForBreadcrumbs,
+  channelModelsProviderForBreadcrumbs,
+  brokerModelProviderForBreadcrumbs,
+} from './providers';
 
 type ConsumedExtensions =
   | NavSection
@@ -295,54 +302,6 @@ const plugin: Plugin<ConsumedExtensions> = [
         (
           await import(
             './components/pub-sub/details/SubscriptionDetailsPage' /* webpackChunkName: "subscription-details-page" */
-          )
-        ).default,
-    },
-  },
-  {
-    type: 'Page/Resource/Details',
-    properties: {
-      model: models.EventingBrokerModel,
-      loader: async () =>
-        (
-          await import(
-            './components/pub-sub/details/BrokerDetailsPage' /* webpackChunkName: "broker-details-page" */
-          )
-        ).default,
-    },
-  },
-  {
-    type: 'Page/Resource/Details',
-    properties: {
-      model: models.EventingChannelModel,
-      loader: async () =>
-        (
-          await import(
-            './components/pub-sub/details/ChannelDetailsPage' /* webpackChunkName: "channel-details-page" */
-          )
-        ).default,
-    },
-  },
-  {
-    type: 'Page/Resource/Details',
-    properties: {
-      model: models.EventingIMCModel,
-      loader: async () =>
-        (
-          await import(
-            './components/pub-sub/details/ChannelDetailsPage' /* webpackChunkName: "channel-details-page" */
-          )
-        ).default,
-    },
-  },
-  {
-    type: 'Page/Resource/Details',
-    properties: {
-      model: models.EventingKafkaChannelModel,
-      loader: async () =>
-        (
-          await import(
-            './components/pub-sub/details/ChannelDetailsPage' /* webpackChunkName: "channel-details-page" */
           )
         ).default,
     },
@@ -657,8 +616,22 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'DetailPageBreadCrumbs',
     properties: {
-      getModels: eventSourceModelsProviderForBreadCrumbs,
+      getModels: eventSourceModelsProviderForBreadcrumbs,
       breadcrumbsProvider: eventSourceBreadcrumbsProvider,
+    },
+  },
+  {
+    type: 'DetailPageBreadCrumbs',
+    properties: {
+      getModels: channelModelsProviderForBreadcrumbs,
+      breadcrumbsProvider: channelBreadcrumbsProvider,
+    },
+  },
+  {
+    type: 'DetailPageBreadCrumbs',
+    properties: {
+      getModels: brokerModelProviderForBreadcrumbs,
+      breadcrumbsProvider: brokerBreadcrumbsProvider,
     },
   },
   ...topologyPlugin,

@@ -1,4 +1,5 @@
 import { match as RMatch } from 'react-router-dom';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { K8sKind } from '@console/internal/module/k8s';
 // FIXME upgrading redux types is causing many errors at this time
@@ -18,22 +19,37 @@ export const useTabbedTableBreadcrumbsFor = (
   match: Match,
   navOption: string,
   subTab: string = null,
+  customBreadcrumbName?: string,
 ) => {
   const { t } = useTranslation();
+  const { label, labelPlural } = kindObj;
   const currentNamespace = useSelector((state: RootState) => getActiveNamespace(state));
   const isAdminPerspective = useActivePerspective()[0] === 'admin';
   const nsURL =
     ALL_NAMESPACES_KEY === currentNamespace ? 'all-namespaces' : `ns/${currentNamespace}`;
-
-  if (subTab == null) {
-    return [];
-  }
-
-  return [
-    {
-      name: kindObj.labelPlural,
-      path: isAdminPerspective ? `/${navOption}/${nsURL}/${subTab}` : getBreadcrumbPath(match),
-    },
-    { name: t('console-shared~{{label}} details', { label: kindObj.label }), path: match.url },
-  ];
+  return useMemo(
+    () =>
+      subTab === null
+        ? []
+        : [
+            {
+              name: customBreadcrumbName || labelPlural,
+              path: isAdminPerspective
+                ? `/${navOption}/${nsURL}/${subTab}`
+                : getBreadcrumbPath(match),
+            },
+            { name: t('console-shared~{{label}} details', { label }), path: match.url },
+          ],
+    [
+      subTab,
+      customBreadcrumbName,
+      labelPlural,
+      isAdminPerspective,
+      navOption,
+      nsURL,
+      match,
+      t,
+      label,
+    ],
+  );
 };

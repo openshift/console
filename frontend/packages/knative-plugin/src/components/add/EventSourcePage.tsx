@@ -11,7 +11,7 @@ import { QUERY_PROPERTIES } from '@console/dev-console/src/const';
 import ConnectedEventSource from './EventSource';
 import EventSourceAlert from './EventSourceAlert';
 import { CamelKameletBindingModel } from '../../models';
-import { useEventSourceStatus } from '../../hooks/useEventSourceStatus';
+import { useEventSourceStatus } from '../../hooks';
 
 type EventSourcePageProps = RouteComponentProps<{ ns?: string }>;
 

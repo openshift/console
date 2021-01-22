@@ -1,9 +1,9 @@
-import { K8sKind } from '@console/internal/module/k8s';
 import { match } from 'react-router';
+import { K8sKind } from '@console/internal/module/k8s';
 import { CodeRef, Extension } from './base';
 
 export type DetailsPageBreadCrumbsHook = (
-  kind: string,
+  kind: K8sKind,
   urlMatch: match<any>,
 ) => { name: string; path: string }[];
 
