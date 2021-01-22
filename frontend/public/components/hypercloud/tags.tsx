@@ -1,40 +1,23 @@
 import * as React from 'react';
+import * as _ from 'lodash-es';
 import { useEffect, useState } from 'react';
-// import * as classNames from 'classnames';
-import { referenceFor } from '@console/internal/module/k8s';
-// import { Kebab, detailsPage, Timestamp, navFactory, ResourceKebab, ResourceLink, ResourceSummary, SectionHeading } from '../utils';
-import { ResourceLink } from '../utils';
 import { k8sGet } from '../../module/k8s';
 import { RepositoryModel } from '../../models/hypercloud';
+import { compoundExpand, sortable } from '@patternfly/react-table';
+import { SingleExpandableTable } from './utils/expandable-table';
+import { ExpandableInnerTable } from './utils/expandable-inner-table';
 
-// export const menuActions = [...Kebab.factory.common, Kebab.factory.ModifyScanning];
-
-
-// const tableColumnClasses = [
-//   '',
-//   '',
-//   '',
-//   classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
-//   Kebab.columnClass,
-// ];
-
-export const Tags: React.SFC<TagsProps> = ({ tags, namespace, repository }) => {
-
-  const [scans, setScans] = useState({});
+export const Tags: React.SFC<TagsProps> = React.memo(({ tags, namespace, repository }) => {
+  const [addedTags, setAddedTags] = useState(tags);
 
   useEffect(() => {
-    getScans();
+    let mounted = true;
+    getScans(mounted);
+    return () => (mounted = false);
   }, []);
 
-  const getScans = async () => {
-    const model = Object.assign({}, RepositoryModel);
-    model.apiGroup = 'registry.' + model.apiGroup;
 
-    const res = await k8sGet(model, repository, namespace, { path: 'imagescanresults' });
-    setScans(res);
-  }
-
-  const getWorstScan = (tag) => {
+  const getWorstScan = (scans, tag) => {
     const res = scans[tag];
     if (res) {
       if (res.hasOwnProperty('Critical')) {
@@ -54,51 +37,124 @@ export const Tags: React.SFC<TagsProps> = ({ tags, namespace, repository }) => {
     return '';
   }
 
-  const rows = tags?.map?.((tag: any, i: number) => {
-    return (
-      <div className="row" data-test-id={tag.type} key={i}>
-        <div className="col-xs-5 col-sm-3 col-md-3">
-          {tag.version}
-        </div>
-        <div className="col-xs-5 col-sm-3 col-md-3">
-          {tag.signer &&
-            <ResourceLink kind={referenceFor({ kind: 'ImageSigner', apiVersion: 'tmax.io/v1' })} namespace={namespace} name={tag.signer}
-            />
-          }
-        </div>
-        <div className="col-xs-5 col-sm-3 col-md-3">
-          {getWorstScan(tag.version)}
-        </div>
-        <div className="col-xs-5 col-sm-3 col-md-3">
-          {tag.createdAt}
-        </div>
-      </div>
-    );
-  });
 
+  const getScans = async (mounted) => {
+    if (mounted) {
+      const model = Object.assign({}, RepositoryModel);
+      model.apiGroup = 'registry.' + model.apiGroup;
 
+      const scans = await k8sGet(model, repository, namespace, { path: 'imagescanresults' });
 
+      setAddedTags(addedTags.map((addedTag) => {
+        addedTag.severity = getWorstScan(scans, addedTag.version);
+        return addedTag;
+      }));
+    }
+  }
 
   return (
     <>
-      {tags?.length ? (
-        <div className="co-m-table-grid co-m-table-grid--bordered">
-          <div className="row co-m-table-grid__head">
-            <div className="col-xs-5 col-sm-3 col-md-3">Name</div>
-            <div className="col-xs-5 col-sm-3 col-md-3">Signer</div>
-            <div className="col-xs-5 col-sm-3 col-md-3">Scan Result</div>
-            <div className="col-xs-5 col-sm-3 col-md-3">Created Time</div>
-          </div>
-          <div className="co-m-table-grid__body">{rows}</div>
-        </div>
-      ) : (
-          <div className="cos-status-box">
-            <div className="text-center">No Conditions Found</div>
-          </div>
-        )}
+      <div className="co-m-pane__body">
+        <TagsListTable tags={addedTags} namespace={namespace} repository={repository} />
+      </div>
     </>
   );
-};
+});
+
+const TagsListTable = ({ tags, namespace, repository }) => {
+
+  const TagsListHeaderColumns = [
+    'Name',
+    'Signer',
+    {
+      title: 'Scan Result',
+      cellTransforms: [compoundExpand],
+    },
+    'Created Time',
+  ];
+
+  const rowRenderer = (index, obj) => {
+    return [
+      {
+        title: obj?.version,
+      },
+      {
+        title: obj?.signer,
+      },
+      {
+        title: obj?.severity,
+        props: {
+          isOpen: false,
+        },
+      },
+      {
+        title: obj?.createdAt
+      },
+    ];
+  };
+
+  const innerRenderer = parentItem => {
+
+    const ScanResultTableRow = obj => {
+      return [
+        {
+          title: <a href={obj.link} target="_blank">{obj.name}</a>,
+          textValue: obj.name,
+        },
+        {
+          title: obj.severity,
+          textValue: obj.severity,
+        },
+        {
+          title: obj.version,
+          textValue: obj.version,
+        },
+      ];
+    };
+
+    const ScanResultTableHeader = [
+      {
+        title: 'Vulnerability',
+        sortFunc: 'string',
+        transforms: [sortable],
+      },
+      {
+        title: 'Status',
+        transforms: [sortable],
+      },
+      {
+        title: 'Fixable Version',
+        transforms: [sortable],
+      },
+    ];
+
+    const model = Object.assign({}, RepositoryModel);
+    model.apiGroup = 'registry.' + model.apiGroup;
+
+    return k8sGet(model, repository, namespace, { path: `imagescanresults/${parentItem.version}` })
+      .then(res => {
+        const innerItemsData = [];
+        const resObj = _.get(res, parentItem.version);
+
+        for (const proerty in resObj) {
+          for (let i = 0; i < resObj[proerty].length; ++i) {
+            innerItemsData.push({
+              severity: resObj[proerty][i].Severity,
+              name: resObj[proerty][i].Name,
+              version: resObj[proerty][i].NamespaceName,
+              link: resObj[proerty][i].Link
+            });
+          }
+        }
+        return <ExpandableInnerTable aria-label="Scan Result" header={ScanResultTableHeader} Row={ScanResultTableRow} data={innerItemsData} />;
+      })
+      .catch(err => {
+        return <div>{err}</div>;
+      });
+  }
+
+  return <SingleExpandableTable header={TagsListHeaderColumns} itemList={tags} rowRenderer={rowRenderer} innerRenderer={innerRenderer} compoundParent={2}></SingleExpandableTable>;
+}
 
 export type TagsProps = {
   tags: any;
