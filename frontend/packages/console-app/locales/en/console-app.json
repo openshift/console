@@ -24,5 +24,6 @@
   "Status": "Status",
   "API version": "API version",
   "Restore": "Restore",
-  "Administrator": "Administrator"
+  "Administrator": "Administrator",
+  "VolumeSnapshotContents": "VolumeSnapshotContents"
 }
