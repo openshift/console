@@ -45,6 +45,7 @@ type helmRepo struct {
 func httpClient(tlsConfig *tls.Config) (*http.Client, error) {
 	tr := &http.Transport{
 		TLSClientConfig: tlsConfig,
+		Proxy:           http.ProxyFromEnvironment,
 	}
 
 	client := &http.Client{Transport: tr}
