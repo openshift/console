@@ -12,6 +12,9 @@ export const NotaryDetailsList: React.FC<NotaryDetailsListProps> = ({ ds }) => {
 
     return (
         <dl className="co-m-pane__details">
+            <DetailsItem label="Server URL" obj={ds} path="status.notaryURL">
+                {ds.status.notaryURL}
+            </DetailsItem>
             <DetailsItem label={t('COMMON:MSG_LNB_MENU_73')} obj={ds} path="spec.authConfig">
                 <div>
                     realm: {ds.spec.authConfig.realm}

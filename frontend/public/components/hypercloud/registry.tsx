@@ -44,8 +44,8 @@ const RegistryTableHeader = (t?: TFunction) => {
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: t('COMMON:MSG_DETAILS_TABDETAILS_CONTAINERS_TABLEHEADER_3'),
-      sortField: 'spec.image',
+      title: t('SINGLE:MSG_VIRTUALMACHINES_CREATEFORM_STEP1_DIV2_5'),
+      sortField: 'status.serverURL',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
@@ -87,7 +87,7 @@ const RegistryTableRow: RowFunction<K8sResourceKind> = ({ obj: registry, index, 
         <ResourceLink kind="Namespace" name={registry.metadata.namespace} title={registry.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
-        {registry.spec.image}
+        {registry.status.serverURL}
       </TableData>
       <TableData className={classNames(tableColumnClasses[3], 'co-break-word')}>
         <Status status={registry.status.phase} />
