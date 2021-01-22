@@ -7,7 +7,7 @@ import { history } from '@console/internal/components/utils';
 import './ManagedKafkas.css';
 import StreamsInstancePage from '../streams-list/StreamsInstancePage';
 import { ManagedKafkaModel } from './ManagedKafkaModel';
-import { ManagedKafkaRequestModel } from '../../models/rhoas';
+import { ManagedKafkaRequestModel, ManagedServiceAccountRequest, ManagedKafkaConnectionModel } from '../../models/rhoas';
 import { useActiveNamespace } from '@console/shared';
 import { k8sCreate, k8sPatch } from '@console/internal/module/k8s/resource';
 import { AccessTokenSecretName } from '../../const'
@@ -21,6 +21,10 @@ const ManagedKafkas = () => {
 
   // FIXME Pass this down to the table to get checked kafkas
   // const [checkedKafkas, setCheckedKafkas] = useState([])
+
+  React.useEffect(() => {
+    createManagedKafkaRequest();
+  }, []);
 
   // TODO Create actions folder
   const createManagedKafkaRequest = async () => {
@@ -49,13 +53,58 @@ const ManagedKafkas = () => {
     })
   }
 
-  React.useEffect(() => {
-    createManagedKafkaRequest();
-  }, []);
+  const createManagedServiceAccount = async () => {
+    const serviceAcct = {
+      apiVersion: "rhoas.redhat.com/v1alpha1",
+      kind: ManagedServiceAccountRequest.kind,
+      metadata: {
+
+      },
+      spec: {
+        serviceAccountName: "myServiceAccount",
+        reset: false,
+        description: "some service account",
+        serviceAccountSecretname: "service-account-123-credentials"
+      },
+      status: {
+        message: "created",
+        updated: new Date().getTime(),
+        serviceAccountSecretName: "service-account-123-credentials"
+      }
+    }
+    await k8sCreate(ManagedServiceAccountRequest, serviceAcct);
+  };
 
   const createManagedKafkaConnection = async () => {
-    // FIXME createManagedServiceAccount
-    // FIXME createManagedKafkaConnection
+    const kafkaConnection = {
+      apiVersion: "rhoas.redhat.com/v1alpha1",
+      kind: ManagedKafkaConnectionModel.kind,
+      metadata: {
+        name: test453-serviceapi
+      },
+      spec: {
+        kafkaId: "fgdsff443ghjdsffrds",
+        credentials: {
+          serviceAccountSecretName: "service-account-123-credentials"
+        }
+      },
+      status: {
+        message: "created",
+        updated: new Date().getTime(),
+        boostrapServer: {
+          host: "kafka--ltosqyk-wsmt-t-elukpkft-bg.apps.ms-bv8dm6nbd3jo.cx74.s1.devshift.org:443"
+        }
+        serviceAccountSecretName: "service-account-123-credentials"
+      }
+    }
+    await k8sCreate(ManagedKafkaConnectionModel, kafkaConnection);
+  };
+
+  const createManagedKafkaConnectionFlow = async () => {
+    /// create createManagedServiceAccount async func and return service  account secret
+
+    // pass in secret to here createManagedKafkaConnection() 
+
   }
 
   return (
