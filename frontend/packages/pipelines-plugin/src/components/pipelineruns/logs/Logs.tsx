@@ -29,33 +29,22 @@ const Logs: React.FC<LogsProps> = ({
   const { name } = container;
   const { kind, metadata = {} } = resource;
   const { name: resName, namespace: resNamespace } = metadata;
+  const scrollToRef = React.useRef<HTMLDivElement>(null);
   const contentRef = React.useRef<HTMLDivElement>(null);
   const [error, setError] = React.useState<boolean>(false);
   const resourceStatusRef = React.useRef<string>(resourceStatus);
   const onCompleteRef = React.useRef<(name) => void>();
   onCompleteRef.current = onComplete;
+
   const appendMessage = React.useRef<(blockContent) => void>();
-  const prevFetchNewline = React.useRef(true);
+
   appendMessage.current = React.useCallback(
     (blockContent: string) => {
-      const contentLines = blockContent.split('\n').filter((line) => !!line);
-      if (!prevFetchNewline.current && contentRef.current.lastChild) {
-        contentRef.current.lastChild.textContent += contentLines.shift();
+      if (contentRef.current && blockContent) {
+        contentRef.current.innerText += blockContent;
       }
-      prevFetchNewline.current = blockContent.endsWith('\n');
-      if (contentRef.current && contentLines.length >= 0) {
-        const elements = contentLines.map((content) => {
-          const customElement = document.createElement('div');
-          customElement.textContent = content;
-          return customElement;
-        });
-        elements.forEach((element) => {
-          contentRef.current.append(element);
-        });
-        const lastElement = elements[elements.length - 1];
-        if (render && lastElement && autoScroll) {
-          lastElement.scrollIntoView({ behavior: 'smooth', block: 'end' });
-        }
+      if (scrollToRef.current && blockContent && render && autoScroll) {
+        scrollToRef.current.scrollIntoView({ behavior: 'smooth' });
       }
     },
     [autoScroll, render],
@@ -118,10 +107,11 @@ const Logs: React.FC<LogsProps> = ({
   }, [kind, name, resName, resNamespace]);
 
   React.useEffect(() => {
-    if (contentRef.current && render && autoScroll) {
-      contentRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    if (scrollToRef.current && render && autoScroll) {
+      scrollToRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [autoScroll, render]);
+
   return (
     <div className="odc-logs" style={{ display: render ? '' : 'none' }}>
       <p className="odc-logs__name">{name}</p>
@@ -132,7 +122,10 @@ const Logs: React.FC<LogsProps> = ({
           title={t('pipelines-plugin~An error occurred while retrieving the requested logs.')}
         />
       )}
-      <div className="odc-logs__content" ref={contentRef} />
+      <div>
+        <div className="odc-logs__content" ref={contentRef} />
+        <div ref={scrollToRef} />
+      </div>
     </div>
   );
 };
