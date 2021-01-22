@@ -261,32 +261,28 @@ export const TemplateSource: React.FC<TemplateSourceProps> = ({
   if (!detailed) {
     if (isTemplateSourceError(sourceStatus)) {
       return (
-        <Label variant="outline" color="red" icon={<RedExclamationCircleIcon />}>
+        <Label variant="outline" color="red" icon={<RedExclamationCircleIcon />} isTruncated>
           {t('kubevirt-plugin~Boot source error')}
         </Label>
       );
     }
     if (sourceStatus) {
       return sourceStatus.isReady ? (
-        <Label variant="outline" color="green" icon={<GreenCheckCircleIcon />}>
-          {
-            // t('kubevirt-plugin~User defined boot source')
-            // t('kubevirt-plugin~Community defined boot source')
-          }
+        <Label variant="outline" color="green" icon={<GreenCheckCircleIcon />} isTruncated>
           {t('kubevirt-plugin~{{provider}} boot source', { provider: sourceStatus.provider })}
         </Label>
       ) : (
-        <Label variant="outline" color="blue" icon={<InProgressIcon />}>
+        <Label variant="outline" color="blue" icon={<InProgressIcon />} isTruncated>
           {t('kubevirt-plugin~Preparing boot source')}
         </Label>
       );
     }
     return isCommonTemplate(template) ? (
-      <Label variant="outline" color="orange" icon={<YellowExclamationTriangleIcon />}>
+      <Label variant="outline" color="orange" icon={<YellowExclamationTriangleIcon />} isTruncated>
         {t('kubevirt-plugin~Boot source required')}
       </Label>
     ) : (
-      <Label variant="outline" color="red" icon={<RedExclamationCircleIcon />}>
+      <Label variant="outline" color="red" icon={<RedExclamationCircleIcon />} isTruncated>
         {t('kubevirt-plugin~Boot source error')}
       </Label>
     );

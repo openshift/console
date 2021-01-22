@@ -68,12 +68,11 @@ import { CDI_APP_LABEL } from '../../constants';
 import './vm-template.scss';
 
 const tableColumnClasses = (showNamespace: boolean) => [
-  'pf-u-w-33', // name
+  '', // name
   classNames('pf-m-hidden', 'pf-m-visible-on-xl'), // provider
   classNames('pf-m-hidden', { 'pf-m-visible-on-lg': showNamespace }), // namespace
-  '', // boot source
-  'kubevirt-vm-template-actions', // actions
-  Kebab.columnClass,
+  classNames('pf-m-hidden', 'pf-m-visible-on-md'), // boot source
+  classNames('pf-c-table__action', 'kubevirt-vm-template-actions'), // actions
 ];
 
 const VMTemplateTableHeader = (showNamespace: boolean, t: TFunction) =>
@@ -96,9 +95,6 @@ const VMTemplateTableHeader = (showNamespace: boolean, t: TFunction) =>
       },
       {
         title: t('kubevirt-plugin~Boot source'),
-      },
-      {
-        title: '',
       },
       {
         title: '',
@@ -223,7 +219,7 @@ const VMTemplateTableRow: RowFunction<TemplateItem, VMTemplateTableRowProps> = (
           detailed
         />
       </TableData>
-      <TableData className={dimensify()}>
+      <TableData className={dimensify(true)}>
         <Popover
           position={PopoverPosition.top}
           headerContent={t('kubevirt-plugin~Template details')}
@@ -236,11 +232,10 @@ const VMTemplateTableRow: RowFunction<TemplateItem, VMTemplateTableRowProps> = (
         <Button
           onClick={() => withSupportModal(obj, () => createVMAction(obj, sourceStatus, namespace))}
           variant="secondary"
+          className="kubevirt-vm-template-details"
         >
           {t('kubevirt-plugin~Create')}
         </Button>
-      </TableData>
-      <TableData className={dimensify(true)}>
         <Kebab
           options={menuActionsCreator(TemplateModel, obj, null, {
             togglePin,
