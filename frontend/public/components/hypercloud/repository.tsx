@@ -9,7 +9,7 @@ import { RepositoryModel } from '../../models/hypercloud';
 import { Tags } from './tags';
 // import { scanningModal } from './modals';
 
-export const menuActions = [...Kebab.factory.common];
+export const menuActions = [...Kebab.factory.common, Kebab.factory.ModifyScanning];
 
 const kind = RepositoryModel.kind;
 
