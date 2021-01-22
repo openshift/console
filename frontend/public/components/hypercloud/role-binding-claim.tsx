@@ -11,7 +11,7 @@ const { common } = Kebab.factory;
 
 const tableColumnClasses = ['', '', classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-lg'), Kebab.columnClass];
 
-export const menuActions = [...Kebab.getExtensionsActionsForKind(modelFor('RoleBindingClaim')), ...common];
+export const menuActions = [...Kebab.getExtensionsActionsForKind(modelFor('RoleBindingClaim')), ...common, Kebab.factory.ModifyStatus];
 
 const kind = 'RoleBindingClaim';
 

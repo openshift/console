@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
+import { Translation } from 'react-i18next';
 
 import { Status, FLAGS } from '@console/shared';
 import { connectToFlags } from '../reducers/features';
@@ -40,52 +41,6 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const PVCTableHeader = () => {
-  return [
-    {
-      title: 'Name',
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: 'Namespace',
-      sortField: 'metadata.namespace',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-    },
-    {
-      title: 'Status',
-      sortField: 'status.phase',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: 'Persistent Volume',
-      sortField: 'spec.volumeName',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
-    },
-    {
-      title: 'Capacity',
-      sortFunc: 'pvcStorage',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[4] },
-    },
-    {
-      title: 'Storage Class',
-      sortField: 'spec.storageClassName',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[5] },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses[6] },
-    },
-  ];
-};
-PVCTableHeader.displayName = 'PVCTableHeader';
-
 const kind = 'PersistentVolumeClaim';
 
 const PVCTableRow = ({ obj, index, key, style }) => {
@@ -117,8 +72,8 @@ const PVCTableRow = ({ obj, index, key, style }) => {
             title={obj.spec.volumeName}
           />
         ) : (
-          <div className="text-muted">No Persistent Volume</div>
-        )}
+            <div className="text-muted">No Persistent Volume</div>
+          )}
       </TableData>
       <TableData className={tableColumnClasses[4]}>
         {_.get(obj, 'status.capacity.storage', '-')}
@@ -131,8 +86,8 @@ const PVCTableRow = ({ obj, index, key, style }) => {
             title={obj.spec.storageClassName}
           />
         ) : (
-          '-'
-        )}
+            '-'
+          )}
       </TableData>
       <TableData className={tableColumnClasses[6]}>
         <ResourceKebab actions={menuActions} kind={kind} resource={obj} />
@@ -188,8 +143,8 @@ const Details_ = ({ flags, obj: pvc }) => {
                 {storageClassName ? (
                   <ResourceLink kind="StorageClass" name={storageClassName} />
                 ) : (
-                  '-'
-                )}
+                    '-'
+                  )}
               </dd>
               {volumeName && canListPV && (
                 <>
@@ -227,13 +182,56 @@ const filters = [
 ];
 
 export const PersistentVolumeClaimsList = (props) => (
-  <Table
-    {...props}
-    aria-label="Persistent Volume Claims"
-    Header={PVCTableHeader}
-    Row={PVCTableRow}
-    virtualize
-  />
+  <Translation>{
+    (t) => <Table
+      {...props}
+      aria-label="Persistent Volume Claims"
+      Header={() => [
+        {
+          title: t('COMMON:MSG_MAIN_TABLEHEADER_1'),
+          sortField: 'metadata.name',
+          transforms: [sortable],
+          props: { className: tableColumnClasses[0] },
+        },
+        {
+          title: t('COMMON:MSG_MAIN_TABLEHEADER_2'),
+          sortField: 'metadata.namespace',
+          transforms: [sortable],
+          props: { className: tableColumnClasses[1] },
+        },
+        {
+          title: t('COMMON:MSG_MAIN_TABLEHEADER_3'),
+          sortField: 'status.phase',
+          transforms: [sortable],
+          props: { className: tableColumnClasses[2] },
+        },
+        {
+          title: t('COMMON:MSG_MAIN_TABLEHEADER_29'),
+          sortField: 'spec.volumeName',
+          transforms: [sortable],
+          props: { className: tableColumnClasses[3] },
+        },
+        {
+          title: t('COMMON:MSG_MAIN_TABLEHEADER_14'),
+          sortFunc: 'pvcStorage',
+          transforms: [sortable],
+          props: { className: tableColumnClasses[4] },
+        },
+        {
+          title: t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_63'), // 이거 쓰는거 맞나..
+          sortField: 'spec.storageClassName',
+          transforms: [sortable],
+          props: { className: tableColumnClasses[5] },
+        },
+        {
+          title: '',
+          props: { className: tableColumnClasses[6] },
+        },
+      ]}
+      Row={PVCTableRow}
+      virtualize
+    />
+  }</Translation>
 );
 export const PersistentVolumeClaimsPage = (props) => {
   const createProps = {

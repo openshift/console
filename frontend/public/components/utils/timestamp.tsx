@@ -87,11 +87,12 @@ const nowStateToProps = ({ UI }) => ({ now: UI.get('lastTick') });
 
 const formatTimeZoneStamp = timestamp => {
   const d = new Date(timestamp);
-  const date: any = d.toISOString().split('T')[0];
+  const date: any = d.toLocaleDateString();
   const time: string = d.toTimeString().split(' ')[0];
 
   if (!!date) {
-    const formattedDate = date.replace(/-/g, '.');
+    const dateSplit = date.replace(/\.\s/g, '.').split('.');
+    const formattedDate = dateSplit[0] + '.' + (dateSplit[1]?.length === 1 ? '0' + dateSplit[1] : dateSplit[1]) + '.' + dateSplit[2];
     return `${formattedDate} ${time}`;
   } else {
     return timestamp;

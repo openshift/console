@@ -7,10 +7,13 @@ import { RootState } from '../../../redux';
 import { featureReducerName } from '../../../reducers/features';
 import { getActiveCluster } from '../../../reducers/ui';
 import * as UIActions from '../../../actions/ui';
-import { ClusterManagerModel } from '../../../models';
-import { k8sList } from '../../../module/k8s/resource'
+import { coFetchJSON } from '../../../co-fetch';
+import { getId } from '../../../hypercloud/auth';
 
-const clusterModel = ClusterManagerModel;
+type clusterItemProps = {
+    displayName: string;
+    name: string;
+}
 
 type StateProps = {
     activeCluster: string;
@@ -27,7 +30,7 @@ const ClusterDropdown_: React.FC<ClusterDropdownProps & StateProps> = ({
     activeCluster,
 }) => {
     const [isClusterDropdownOpen, setClusterDropdownOpen] = React.useState(false);
-    const [clusters, setClusters] = React.useState(new Set<string>([]));
+    const [clusters, setClusters] = React.useState([]);
 
     const toggleClusterOpen = React.useCallback(() => {
         setClusterDropdownOpen(!isClusterDropdownOpen);
@@ -37,8 +40,8 @@ const ClusterDropdown_: React.FC<ClusterDropdownProps & StateProps> = ({
         (event: React.MouseEvent<HTMLLinkElement>, cluster): void => {
             event.preventDefault();
 
-            if (cluster !== activeCluster) {
-                setActiveCluster(cluster);
+            if (cluster.name !== activeCluster) {
+                setActiveCluster(cluster.name);
                 window.location.reload()
                 // TODO: rerendering 고도화...
             }
@@ -58,7 +61,7 @@ const ClusterDropdown_: React.FC<ClusterDropdownProps & StateProps> = ({
                 data-test-id="perspective-switcher-toggle"
             >
                 <Title size="md">
-                    {name}
+                    {clusters.find(cl => cl.name === name)?.displayName ?? 'Master'}
                 </Title>
             </DropdownToggle>) : <LoadingInline />
         ,
@@ -71,15 +74,15 @@ const ClusterDropdown_: React.FC<ClusterDropdownProps & StateProps> = ({
             clusters.forEach((nextCluster) => (
                 clusterItmes.push(
                     <DropdownItem
-                        key={nextCluster}
+                        key={nextCluster.name}
                         onClick={(event: React.MouseEvent<HTMLLinkElement>) =>
                             onClusterSelect(event, nextCluster)
                         }
-                        isHovered={(nextCluster) === activeCluster}
+                        isHovered={(nextCluster.name) === activeCluster}
                         component="button"
                     >
                         <Title size="md">
-                            {nextCluster}
+                            {nextCluster.displayName}
                         </Title>
                     </DropdownItem>
                 )
@@ -90,22 +93,24 @@ const ClusterDropdown_: React.FC<ClusterDropdownProps & StateProps> = ({
     );
 
     React.useEffect(() => {
-        if (clusters.size == 0 || isClusterDropdownOpen) {
-            k8sList(clusterModel).then((res) => {
-                const clusterList: Set<string> = new Set(res.reduce((list, cluster)=> {
+        if (clusters.length == 0 || isClusterDropdownOpen) {
+            coFetchJSON(`/api/multi-hypercloud/cluster/owner?userId=${getId()}`, 'GET')
+            .then((result) => result.items)
+            .then((res) => {
+                const clusterList: clusterItemProps[] = res.reduce((list, cluster)=> {
                     if(cluster.status.ready) {
-                        list.push(cluster.metadata.name);
+                        list.push({displayName: cluster.fakeMetadata.fakename, name: cluster.metadata.name});
                     }
                     return list;
-                }, []));
-                clusterList.add('master');
+                }, []);
+                clusterList.push({displayName: 'Master', name: 'master'});
               
                 setClusters(clusterList);
 
-                const hasCluster = activeCluster && clusterList.has(activeCluster);
+                const hasCluster = activeCluster && clusterList.find(cl => cl.name === activeCluster);
 
                 if (!hasCluster) {
-                    const defaultCluster = clusterList.has('master') ? 'master' : clusterList[0];
+                    const defaultCluster = clusterList.find(cl => cl.name === 'master') ? 'master' : clusterList[0].name;
                     setActiveCluster(defaultCluster);
                 }
 

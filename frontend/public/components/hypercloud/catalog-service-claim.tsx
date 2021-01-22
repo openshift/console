@@ -10,7 +10,7 @@ const { common } = Kebab.factory;
 
 const kind = CatalogServiceClaimModel.kind;
 
-export const catalogServiceClaimMenuActions = [...Kebab.getExtensionsActionsForKind(CatalogServiceClaimModel), ...common];
+export const catalogServiceClaimMenuActions = [...Kebab.getExtensionsActionsForKind(CatalogServiceClaimModel), ...common, Kebab.factory.ModifyStatus];
 
 const CatalogServiceClaimDetails: React.FC<CatalogServiceClaimDetailsProps> = ({ obj: catalogServiceClaim }) => {
   return (

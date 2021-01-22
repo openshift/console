@@ -138,7 +138,7 @@ class PipelineRunLogs extends React.Component<PipelineRunLogsProps, PipelineRunL
           )}
         </div>
         <div className="odc-pipeline-run-logs__container">
-          {activeItem ? (
+          {activeItem && resources[0].name ? (
             <Firehose key={activeItem} resources={resources}>
               <LogsWrapperComponent
                 taskName={_.get(taskRunFromYaml, [activeItem, 'pipelineTaskName'], '-')}
@@ -146,12 +146,15 @@ class PipelineRunLogs extends React.Component<PipelineRunLogsProps, PipelineRunL
                 onDownloadAll={downloadAllCallback}
               />
             </Firehose>
-          ) : _.has(obj, ['status', 'conditions', 0, 'message']) ? (
-            <div className="odc-pipeline-run-logs__log">
-              {_.get(obj, ['status', 'conditions', 0, 'message'], '-')}
-            </div>
           ) : (
-            <div>No Logs Found</div>
+            <>
+              <div className="odc-pipeline-run-logs__taskName">
+                {_.get(taskRunFromYaml, [activeItem, 'pipelineTaskName'], '-')}
+              </div>
+              <div className="odc-pipeline-run-logs__log">
+                <span className="odc-pipeline-run-logs__message">No Logs Found</span>
+              </div>
+            </>
           )}
         </div>
       </div>
