@@ -295,7 +295,7 @@ const kebabFactory: KebabFactory = {
     label: 'Image Scan Request Creation',
     callback: () =>
       scanningModal({
-        kind,
+        modelKind: kind,
         resource: obj,
         blocking: true,
       }),
