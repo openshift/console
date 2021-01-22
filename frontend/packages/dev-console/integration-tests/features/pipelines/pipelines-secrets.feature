@@ -39,8 +39,8 @@ Feature: Secrets
 
    @regression
    Scenario Outline: Add secret to pipeline with authentication type as SSH Key : P-11-TC04   
-      Given user has created pipeline "pipe-task-with-resource-1" with git resources
-      And user is at Start Pipeline modal
+      Given user has created pipeline "pipe-task-with-resource-2" with git resources
+      And user is at Start Pipeline modal for pipeline "pipe-task-with-resource-2"
       When user enters URL, Revision as "<git_private_repo_url>" and "master"
       And user enters Secret Name as "<secret_name>"
       And user selects the "Git Server" option from accessTo drop down
@@ -57,8 +57,8 @@ Feature: Secrets
 
    @regression
    Scenario Outline: Add secret to pipeline with authentication type as Image Registry Credentials : P-11-TC03
-      Given user has created pipeline "pipe-task-with-resource-2" with git resources
-      And user is at Start Pipeline modal
+      Given user has created pipeline "pipe-task-with-resource-3" with git resources
+      And user is at Start Pipeline modal for pipeline "pipe-task-with-resource-3"
       When user enters URL, Revision as "<git_private_repo_url>" and "master"
       And user enters Secret Name as "<secret_name>"
       And user selects the "Git Server" option from accessTo drop down
