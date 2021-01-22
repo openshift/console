@@ -28,7 +28,7 @@ const getTolerationsPath = (obj: K8sResourceKind): string => {
   return obj.kind === 'Pod' ? 'spec.tolerations' : 'spec.template.spec.tolerations';
 };
 
-export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({ children, resource, customPathName, showSpecOwner = false, showPodSelector = false, showNodeSelector = false, showAnnotations = true, showTolerations = false, podSelector = 'spec.selector', nodeSelector = 'spec.template.spec.nodeSelector' }) => {
+export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({ children, resource, customPathName, showOwner = true, showPodSelector = false, showNodeSelector = false, showAnnotations = true, showTolerations = false, podSelector = 'spec.selector', nodeSelector = 'spec.template.spec.nodeSelector' }) => {
   const { metadata, type } = resource;
   const reference = referenceFor(resource);
   const model = modelFor(reference);
@@ -95,9 +95,7 @@ export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({ children, res
           <DetailsItem label={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_43')} obj={resource} path="metadata.creationTimestamp">
             <Timestamp timestamp={metadata.creationTimestamp} />
           </DetailsItem>
-          {showSpecOwner ? (
-            <DetailsItem label={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_44')} obj={resource} path="spec.owner" />
-          ) : (
+          {showOwner && (
             <DetailsItem label={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_44')} obj={resource} path="metadata.ownerReferences">
               <OwnerReferences resource={resource} />
             </DetailsItem>
@@ -125,7 +123,7 @@ export type ResourceSummaryProps = {
   showNodeSelector?: boolean;
   showAnnotations?: boolean;
   showTolerations?: boolean;
-  showSpecOwner?: boolean;
+  showOwner?: boolean;
   podSelector?: string;
   nodeSelector?: string;
   children?: React.ReactNode;
