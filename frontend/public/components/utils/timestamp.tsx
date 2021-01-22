@@ -91,9 +91,19 @@ const formatTimeZoneStamp = timestamp => {
   const time: string = d.toTimeString().split(' ')[0];
 
   if (!!date) {
-    const dateSplit = date.replace(/\.\s/g, '.').split('.');
-    const formattedDate = dateSplit[0] + '.' + (dateSplit[1]?.length === 1 ? '0' + dateSplit[1] : dateSplit[1]) + '.' + dateSplit[2];
-    return `${formattedDate} ${time}`;
+    if (date.indexOf('.') > -1) {
+      // MEMO: Date()가 YYYY. MM. DD로 들어오는 경우
+      const dateSplit = date.replace(/\.\s/g, '.').split('.');
+      const formattedDate = dateSplit[0] + '.' + (dateSplit[1]?.length === 1 ? '0' + dateSplit[1] : dateSplit[1]) + '.' + dateSplit[2];
+      return `${formattedDate} ${time}`;
+    } else if (date.indexOf('/') > -1) {
+      // MEMO: Date()가 YYYY/MM/DD로 들어오는 경우
+      const formattedDate = date.replace(/\//g, '.');
+      return `${formattedDate} ${time}`;
+    } else {
+      // MEMO: Date()가 이상하게 들어오는 경우 그냥 보여줄 거
+      `${date} ${time}`;
+    }
   } else {
     return timestamp;
   }
