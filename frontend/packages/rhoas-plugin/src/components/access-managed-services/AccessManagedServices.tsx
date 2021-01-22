@@ -5,8 +5,7 @@ import { PageBody } from '@console/shared';
 import { PageHeading } from '@console/internal/components/utils';
 // To be clarified if we watch for resource on second page
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
-import { k8sCreate, k8sGet } from '@console/internal/module/k8s/resource';
+import { k8sCreate } from '@console/internal/module/k8s/resource';
 import { Button, FormGroup, TextInput } from '@patternfly/react-core';
 import { useActiveNamespace } from '@console/shared';
 
@@ -15,7 +14,7 @@ const AccessManagedServices = ({ }) => {
   const [currentNamespace] = useActiveNamespace();
 
   const namespace = currentNamespace
-  const secretName = "rh-managed-services-api-accesstoken495222"
+  const secretName = "rh-managed-services-api-accesstoken4954"
 
   console.log("Token page rendered for namespace ", namespace, apiTokenValue, secretName)
 
@@ -80,7 +79,7 @@ const AccessManagedServices = ({ }) => {
               onChange={(value: string) => setApiTokenValue(value)}
 
               type="text"
-              id=""
+              id="TODOID?"
               name=""
             />
 

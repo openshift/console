@@ -2,9 +2,8 @@ import * as React from 'react';
 import { Gallery, GalleryItem } from '@patternfly/react-core';
 import { CatalogTile } from '@patternfly/react-catalog-view-extension';
 import { history } from '@console/internal/components/utils';
-import { PageLayout } from '@console/shared';
+import { PageLayout, useActiveNamespace } from '@console/shared';
 import AccessManagedServices from '../access-managed-services/AccessManagedServices';
-import { useActiveNamespace } from 'packages/console-shared/src/hooks/redux-selectors';
 import { ManagedKafkaRequestModel } from '../../models/rhoas';
 import { k8sCreate } from '@console/internal/module/k8s/resource';
 const navigateTo = (e: React.SyntheticEvent, url: string) => {
@@ -71,7 +70,9 @@ const ManagedServicesList = () => {
     // FIXME Progress bar/Handling errors here?
     // FIXME Patch existing config
     await k8sCreate(ManagedKafkaRequestModel, mkRequest)
-
+    await new Promise((resolver)=>{
+      setTimeout(resolver, 3000);
+    })
     navigateTo(e, "/managedServices/managedkafka")
   }
 
