@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import { RepositoriesPage } from './repository';
 import { Resources } from './resources';
-import { scanningModal } from './modals';
+// import { scanningModal } from './modals';
 import { withRouter, match } from 'react-router-dom';
 
 export const menuActions: KebabAction[] = [...Kebab.getExtensionsActionsForKind(RegistryModel), ...Kebab.factory.common, Kebab.factory.ModifyScanning];
