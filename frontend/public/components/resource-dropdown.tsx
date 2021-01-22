@@ -180,8 +180,8 @@ export const ResourceListDropdown = connect(resourceListDropdownStateToProps)(
   ResourceListDropdown_,
 );
 
-const RegistryListDropdown_: React.SFC<RegistryListDropdownProps> = (props) => {
-  const { selected, onChange, setAllData, allData, showAll, className, type } = props;
+export const RegistryListDropdown_: React.SFC<RegistryListDropdownProps> = (props) => {
+  const { selected, onChange, /*setAllData, */ allData, showAll, className, type } = props;
 
   const getName = (map) => {
     return map.get('metadata').get('name');
@@ -192,14 +192,13 @@ const RegistryListDropdown_: React.SFC<RegistryListDropdownProps> = (props) => {
     resources.push(getName(item[1]));
   }
 
-
-
   const isResourceSelected = (resource: string) => {
     return _.includes(selected, resource);
   };
 
   const items = allData.map((resource) => (
     <DropdownResourceItem
+      key={getName(resource)}
       name={getName(resource)}
       checked={isResourceSelected(getName(resource))}
       kind='Registry'
@@ -235,7 +234,7 @@ const RegistryListDropdown_: React.SFC<RegistryListDropdownProps> = (props) => {
   const handleSelected = (value: string) => {
     if (value === 'All') {
       onChange('All');
-      setAllData(resources);
+      // setAllData(resources);
     } else {
       onChange(value.split(')-')[1]);
     }

@@ -44,8 +44,8 @@ const RegistryTableHeader = (t?: TFunction) => {
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: t('COMMON:MSG_DETAILS_TABDETAILS_CONTAINERS_TABLEHEADER_3'),
-      sortField: 'spec.image',
+      title: t('SINGLE:MSG_VIRTUALMACHINES_CREATEFORM_STEP1_DIV2_5'),
+      sortField: 'status.serverURL',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
@@ -87,7 +87,7 @@ const RegistryTableRow: RowFunction<K8sResourceKind> = ({ obj: registry, index, 
         <ResourceLink kind="Namespace" name={registry.metadata.namespace} title={registry.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
-        {registry.spec.image}
+        {registry.status.serverURL}
       </TableData>
       <TableData className={classNames(tableColumnClasses[3], 'co-break-word')}>
         <Status status={registry.status.phase} />
@@ -169,43 +169,42 @@ const filters = [
   },
 ];
 
-const registryCreateAction = (history, item) => {
-  const pathname = window.location.pathname;
-  const pathNameSplit = pathname.split('/');
-  const allNS = pathNameSplit[2];
-  let ns;
-  if (allNS !== 'all-namespaces') {
-    ns = pathNameSplit[3];
-  }
+// const registryCreateAction = (history, item) => {
+//   const pathname = window.location.pathname;
+//   const pathNameSplit = pathname.split('/');
+//   const allNS = pathNameSplit[2];
+//   let ns;
+//   if (allNS !== 'all-namespaces') {
+//     ns = pathNameSplit[3];
+//   }
 
-  switch (item) {
-    case 'scan':
-      scanningModal({ kind: 'Registry', ns });
-      break;
-    case 'generic':
-      history.push('/');
-      if (allNS === 'all-namespaces') {
-        history.push('/k8s/ns/default/registries/~new');
-      } else {
-        history.push(`/k8s/ns/${ns}/registries/~new`);
-      }
-      break;
-  }
-}
-
+//   switch (item) {
+//     case 'scan':
+//       scanningModal({ kind: 'Registry', ns });
+//       break;
+//     case 'generic':
+//       history.push('/');
+//       if (allNS === 'all-namespaces') {
+//         history.push('/k8s/ns/default/registries/~new');
+//       } else {
+//         history.push(`/k8s/ns/${ns}/registries/~new`);
+//       }
+//       break;
+//   }
+// }
 
 export const RegistriesPage = withRouter((props) => {
-  const createItems = {
-    generic: 'Create Registry',
-    scan: 'Image Scan Request',
-  }
+  // const createItems = {
+  //   generic: 'Create Registry',
+  //   scan: 'Image Scan Request',
+  // }
 
-  const createProps = {
-    items: createItems,
-    action: registryCreateAction.bind(null, props.history)
-  }
+  // const createProps = {
+  //   items: createItems,
+  //   action: registryCreateAction.bind(null, props.history)
+  // }
 
-  return <ListPage canCreate={true} createProps={createProps} ListComponent={Registries} rowFilters={filters} kind={kind} {...props} />;
+  return <ListPage canCreate={true} /* createProps={createProps} */ ListComponent={Registries} rowFilters={filters} kind={kind} {...props} />;
 });
 
 
