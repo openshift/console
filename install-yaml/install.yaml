@@ -129,6 +129,20 @@ spec:
 
 ---
 
+# storage stage - dynamic-pvc.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: console-pvc
+spec:
+  accessModes:
+    - ReadOnlyMany
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+
 # deployment stage 
 apiVersion: apps/v1
 kind: Deployment
@@ -163,10 +177,9 @@ spec:
         - --keycloak-auth-url=https://@@KEYCLOAK@@/auth
         - --keycloak-client-id=@@CLIENTID@@         
         - --grafana-endpoint=http://grafana.monitoring.svc:3000/api/grafana/
-        - --kiali-endpoint=https://172.22.6.22/api/kiali/
-        - --webhook-endpoint=https://hypercloud4-webhook-svc.hypercloud4-system.svc/api/webhook/
+        - --kiali-endpoint=https://0.0.0.0/api/kiali/
+        - --webhook-endpoint=https://hypercloud-webhook-svc.hypercloud5-system.svc/api/webhook/
         - --mc-mode=true 
-        - --mc-mode-operator=true 
         image: tmaxcloudck/hypercloud-console:@@VER@@
         imagePullPolicy: IfNotPresent
         volumeMounts:
@@ -179,14 +192,19 @@ spec:
         - mountPath: /etc/timezone
           name: timezone
           readOnly: true
+        - mountPath: /opt/bridge/configs 
+          name: dynamic-config
         name: console
         ports:
         - containerPort: 6443
           protocol: TCP
         resources:
           limits:
-            cpu: '1'
-            memory: '2Gi'
+            cpu: '400m'
+            memory: '500Mib'
+          requests:
+            cpu: '400m'
+            memory: '500Mib'            
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File
       dnsPolicy: ClusterFirst
@@ -208,7 +226,9 @@ spec:
       - name: timezone
         hostPath:
           path: /etc/timezone
-
+      - name: dynamic-config
+        persistentVolumeClaim:
+          claimName: console-disk
 
 # console crd stage
 
@@ -265,10 +285,14 @@ spec:
                       description: Router holds the router configuration.
                       properties:
                         path:
+                          description: If want to remove url path when proxy server
+                            request backend
                           type: string
                         rule:
+                          description: Reverse proxy rule
                           type: string
                         server:
+                          description: Backend Server Name
                           type: string
                       type: object
                     type: object
@@ -280,12 +304,11 @@ spec:
             description: ConsoleStatus defines the observed state of Console
             properties:
               number:
-                description: Status
+                description: Show the number of backend proxy
                 type: integer
               routers:
+                description: Config information
                 type: string
-            required:
-            - number
             type: object
         type: object
     served: true
