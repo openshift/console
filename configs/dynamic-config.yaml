@@ -1,9 +1,0 @@
-routers:
-  f-test-2ddsb:
-    server: https://f-test-2ddsb-apiserver-492352234.us-east-2.elb.amazonaws.com:6443
-    rule: PathPrefix(`/api/f-test-2ddsb/`)
-    path: /api/f-test-2ddsb/
-  master:
-    server: https://220.90.208.100:6443
-    rule: PathPrefix(`/api/master/`)
-    path: /api/master/
