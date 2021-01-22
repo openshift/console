@@ -4,58 +4,76 @@ import { CatalogTile } from '@patternfly/react-catalog-view-extension';
 import { history } from '@console/internal/components/utils';
 import { PageLayout } from '@console/shared';
 import AccessManagedServices from '../access-managed-services/AccessManagedServices';
+import { useActiveNamespace } from 'packages/console-shared/src/hooks/redux-selectors';
+import { ManagedKafkaRequestModel } from '../../models/rhoas';
+import { k8sCreate } from 'public/module/k8s';
 
 const navigateTo = (e: React.SyntheticEvent, url: string) => {
   history.push(url);
   e.preventDefault();
 };
 
-
 const ManagedServicesList = () => {
-  // const onSubmit = async (event) => {
-  //   event.preventDefault();
-  //   const existingSecret = await k8sGet(SecretModel.kind, secretName, namespace, {})
-  //   console.log(existingSecret)
+  const [currentNamespace] = useActiveNamespace();
 
-  //   if (existingSecret) {
-  //     return;
-  //   }
+  // FIXME use the same secretname across 2 components
+  const accessTokenSecretName = "rh-managed-services-api-accesstoken"
+  // FIXME IMPORTANT: Name should be fixed later and patched if needed.
+  const currentCRName = 'KafkaRequest-' + currentNamespace + new Date().getTime();
 
-  //   const secret = {
-  //     apiVersion: SecretModel.apiVersion,
-  //     kind: SecretModel.kind,
-  //     metadata: {
-  //       name: secretName,
-  //       namespace
-  //     },
-  //     stringData: {
-  //       accessToken
-  //     },
-  //     type: 'Opaque',
-  //   };
+  // FIXME status is used only to simulate operator work and it should be removed
+  const status = [{
+    id: '1iSY6RQ3JKI8Q0OTmjQFd3ocFRg',
+    kind: 'kafka',
+    href: '/api/managed-services-api/v1/kafkas/1iSY6RQ3JKI8Q0OTmjQFd3ocFRg',
+    status: 'ready',
+    cloudProvider: 'aws',
+    multiAz: true,
+    region: 'us-east-1',
+    owner: 'api_kafka_service',
+    name: 'serviceapi',
+    bootstrapServerHost:
+      'serviceapi-1isy6rq3jki8q0otmjqfd3ocfrg.apps.ms-bttg0jn170hp.x5u8.s1.devshift.org',
+    createdAt: '2020-10-05T12:51:24.053142Z',
+    updatedAt: '2020-10-05T12:56:36.362208Z',
+  },
+  {
+    id: '1iSY6RQ3JKI8Q0OTmjQFd3ocFRz',
+    kind: 'kafka',
+    href: '/api/managed-services-api/v1/kafkas/1iSY6RQ3JKI8Q0OTmjQFd3ocFRz',
+    status: 'ready',
+    cloudProvider: 'aws',
+    multiAz: true,
+    region: 'us-east-1',
+    owner: 'api_kafka_service',
+    name: 'kafka',
+    bootstrapServerHost:
+      'serviceapi-1isy6rq3jki8q0otmjqfd3ocfrx.apps.ms-bttg0jn170hp.x5u8.s1.devshift.org',
+    createdAt: '2021-01-19T12:51:24.053142Z',
+    updatedAt: '2021-01-19T12:56:36.362208Z',
+  },
+  ];
 
-  //   const mkRequest = {
-  //     apiVersion: ManagedKafkaRequestModel.apiVersion,
-  //     kind: ManagedKafkaRequestModel.kind,
-  //     metadata: {
-  //       // TODO better name generation
-  //       name: 'KafkaRequest-' + new Date().getTime(),
-  //       namespace
-  //     },
-  //     spec: {
-  //       accessTokenSecretName: secretName,
-  //     },
-  //   };
+  // FIXME ? Should be part of the ManagedKafkas?
+  const onKafkaServiceNagivate = async (e: React.SyntheticEvent) => {
+    const mkRequest = {
+      apiVersion: ManagedKafkaRequestModel.apiVersion,
+      kind: ManagedKafkaRequestModel.kind,
+      metadata: {
+        name: currentCRName,
+        currentNamespace
+      },
+      spec: {
+        accessTokenSecretName: accessTokenSecretName,
+      },
+      status: status
+    };
 
-  //   // TODO proper handling for create
-  //   console.log(await k8sCreate(SecretModel, secret))
-  //   console.log(await k8sCreate(ManagedKafkaRequestModel, mkRequest));
-  //   // TODO This is for tesing and should not be on this page
-  //   k8sWatch(ManagedKafkaRequestModel.kind, {}).onmessage((msg) => {
-  //     console.log("resource updated", msg);
-  //   })
-  // }
+    // Progress bar/Handling errors here?
+    await k8sCreate(ManagedKafkaRequestModel, mkRequest)
 
+    navigateTo(e, "/managedServices/managedkafka")
+  }
 
   const defaultHintBlockText = `Select Managed Service you would like to connect with.
 
@@ -69,7 +87,7 @@ const ManagedServicesList = () => {
             <CatalogTile
               data-test-id={"id"}
               className="co-catalog-tile"
-              onClick={(e: React.SyntheticEvent) => navigateTo(e, "/managedServices/managedkafka")}
+              onClick={(e: React.SyntheticEvent) => onKafkaServiceNagivate(e)}
               href={"/managedServices/managedkafka"}
               title={"ManagedKafka"}
               iconImg={""}
