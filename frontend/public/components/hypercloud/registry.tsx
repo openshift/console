@@ -11,23 +11,14 @@ import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import { RepositoriesPage } from './repository';
 import { Resources } from './resources';
-import { scanningModal } from './modals';
+// import { scanningModal } from './modals';
 import { withRouter, match } from 'react-router-dom';
 
 export const menuActions: KebabAction[] = [...Kebab.getExtensionsActionsForKind(RegistryModel), ...Kebab.factory.common, Kebab.factory.ModifyScanning];
 
 const kind = RegistryModel.kind;
 
-const tableColumnClasses = [
-  '',
-  '',
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-xl'),
-  Kebab.columnClass,
-];
-
+const tableColumnClasses = ['', '', classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-xl'), Kebab.columnClass];
 
 const RegistryTableHeader = (t?: TFunction) => {
   return [
@@ -76,7 +67,6 @@ const RegistryTableHeader = (t?: TFunction) => {
 
 RegistryTableHeader.displayName = 'RegistryTableHeader';
 
-
 const RegistryTableRow: RowFunction<K8sResourceKind> = ({ obj: registry, index, key, style }) => {
   return (
     <TableRow id={registry.metadata.uid} index={index} trKey={key} style={style}>
@@ -86,15 +76,11 @@ const RegistryTableRow: RowFunction<K8sResourceKind> = ({ obj: registry, index, 
       <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
         <ResourceLink kind="Namespace" name={registry.metadata.namespace} title={registry.metadata.namespace} />
       </TableData>
-      <TableData className={tableColumnClasses[2]}>
-        {registry.status.serverURL}
-      </TableData>
+      <TableData className={tableColumnClasses[2]}>{registry.status.serverURL}</TableData>
       <TableData className={classNames(tableColumnClasses[3], 'co-break-word')}>
         <Status status={registry.status.phase} />
       </TableData>
-      <TableData className={tableColumnClasses[4]}>
-        {registry.status.capacity}
-      </TableData>
+      <TableData className={tableColumnClasses[4]}>{registry.status.capacity}</TableData>
       <TableData className={tableColumnClasses[5]}>
         <Timestamp timestamp={registry.metadata.creationTimestamp} />
       </TableData>
@@ -121,8 +107,7 @@ export const RegistryDetailsList: React.FC<RegistryDetailsListProps> = ({ ds }) 
       </DetailsItem>
     </dl>
   );
-}
-
+};
 
 const RegistryDetails: React.FC<RegistryDetailsProps> = ({ obj: registry }) => (
   <>
@@ -144,17 +129,16 @@ const RegistryDetails: React.FC<RegistryDetailsProps> = ({ obj: registry }) => (
   </>
 );
 
-
 const { details, editYaml } = navFactory;
 
 export const Registries: React.FC = props => {
   const { t } = useTranslation();
-  return <Table {...props} aria-label="Registries" Header={RegistryTableHeader.bind(null, t)} Row={RegistryTableRow} virtualize />
+  return <Table {...props} aria-label="Registries" Header={RegistryTableHeader.bind(null, t)} Row={RegistryTableRow} virtualize />;
 };
 
 const registryStatusReducer = (registry: any): string => {
   return registry.status.phase;
-}
+};
 
 const filters = [
   {
@@ -193,7 +177,7 @@ const filters = [
 //   }
 // }
 
-export const RegistriesPage = withRouter((props) => {
+export const RegistriesPage = withRouter(props => {
   // const createItems = {
   //   generic: 'Create Registry',
   //   scan: 'Image Scan Request',
@@ -207,7 +191,6 @@ export const RegistriesPage = withRouter((props) => {
   return <ListPage canCreate={true} /* createProps={createProps} */ ListComponent={Registries} rowFilters={filters} kind={kind} {...props} />;
 });
 
-
 const RepositoriesTab: React.FC<RepositoriesTabProps> = ({ obj }) => {
   const {
     metadata: { namespace },
@@ -215,53 +198,37 @@ const RepositoriesTab: React.FC<RepositoriesTabProps> = ({ obj }) => {
 
   const selector = {
     matchLabels: {
-      registry: obj.metadata.name
-    }
-  };
-  return (
-    <RepositoriesPage
-      showTitle={false}
-      namespace={namespace}
-      selector={selector}
-      canCreate={false} />);
-}
-
-export const NotaryLoader: React.FC<NotaryLoaderProps> = (props) => {
-
-  return (
-    <AsyncComponent
-      loader={() => import('./notary').then((c) => c.NotariesDetailsPage)}
-      kind={'Notary'}
-      kindObj={NotaryModel}
-      name={decodeURIComponent(props.obj.metadata.name)}
-      namespace={props.obj.metadata.namespace}
-      match={props.match}
-    />
-  );
-}
-
-
-export const RegistriesDetailsPage: React.FC<RegistriesDetailsPageProps> = props => <DetailsPage
-  {...props}
-  kind={kind}
-  menuActions={menuActions}
-  pages={[
-    details(detailsPage(RegistryDetails)),
-    editYaml(),
-    {
-      href: 'repository',
-      name: 'Repository',
-      component: RepositoriesTab,
+      registry: obj.metadata.name,
     },
-    {
-      href: 'notary',
-      name: 'Notary',
-      component: detailsPage(NotaryLoader),
-    }
-  ]}
-/>;
+  };
+  return <RepositoriesPage showTitle={false} namespace={namespace} selector={selector} canCreate={false} />;
+};
 
+export const NotaryLoader: React.FC<NotaryLoaderProps> = props => {
+  return <AsyncComponent loader={() => import('./notary').then(c => c.NotariesDetailsPage)} kind={'Notary'} kindObj={NotaryModel} name={decodeURIComponent(props.obj.metadata.name)} namespace={props.obj.metadata.namespace} match={props.match} />;
+};
 
+export const RegistriesDetailsPage: React.FC<RegistriesDetailsPageProps> = props => (
+  <DetailsPage
+    {...props}
+    kind={kind}
+    menuActions={menuActions}
+    pages={[
+      details(detailsPage(RegistryDetails)),
+      editYaml(),
+      {
+        href: 'repository',
+        name: 'Repository',
+        component: RepositoriesTab,
+      },
+      {
+        href: 'notary',
+        name: 'Notary',
+        component: detailsPage(NotaryLoader),
+      },
+    ]}
+  />
+);
 
 type RegistryDetailsListProps = {
   ds: K8sResourceKind;
