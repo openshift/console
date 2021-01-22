@@ -58,34 +58,38 @@ const ManagedKafkas = () => {
       apiVersion: "rhoas.redhat.com/v1alpha1",
       kind: ManagedServiceAccountRequest.kind,
       metadata: {
-
+        name: currentCRName,
+        namespace: currentNamespace
       },
       spec: {
         serviceAccountName: "myServiceAccount",
         reset: false,
         description: "some service account",
-        serviceAccountSecretname: "service-account-123-credentials"
-      },
-      status: {
-        message: "created",
-        updated: new Date().getTime(),
-        serviceAccountSecretName: "service-account-123-credentials"
+        serviceAccountSecretname: AccessTokenSecretName
       }
+      // status: {
+      //   message: "created",
+      //   updated: new Date().getTime(),
+      //   serviceAccountSecretName: "service-account-123-credentials"
+      // }
     }
-    await k8sCreate(ManagedServiceAccountRequest, serviceAcct);
+
+    const statusResponse = await k8sCreate(ManagedServiceAccountRequest, serviceAcct);
+    console.log('what is this' + JSON.stringify(statusResponse));
+    return statusResponse
   };
 
-  const createManagedKafkaConnection = async () => {
+  const createManagedKafkaConnection = async (serviceAccountSecretName) => {
     const kafkaConnection = {
       apiVersion: "rhoas.redhat.com/v1alpha1",
       kind: ManagedKafkaConnectionModel.kind,
       metadata: {
-        name: test453-serviceapi
+        name: "test453-serviceapi"
       },
       spec: {
         kafkaId: "fgdsff443ghjdsffrds",
         credentials: {
-          serviceAccountSecretName: "service-account-123-credentials"
+          serviceAccountSecretName: serviceAccountSecretName
         }
       },
       status: {
@@ -93,7 +97,7 @@ const ManagedKafkas = () => {
         updated: new Date().getTime(),
         boostrapServer: {
           host: "kafka--ltosqyk-wsmt-t-elukpkft-bg.apps.ms-bv8dm6nbd3jo.cx74.s1.devshift.org:443"
-        }
+        },
         serviceAccountSecretName: "service-account-123-credentials"
       }
     }
@@ -101,11 +105,11 @@ const ManagedKafkas = () => {
   };
 
   const createManagedKafkaConnectionFlow = async () => {
-    /// create createManagedServiceAccount async func and return service  account secret
-
-    // pass in secret to here createManagedKafkaConnection() 
-
+    const responseServiceAccount = await createManagedServiceAccount();
+    console.log('what is this thoooo' + JSON.stringify(responseServiceAccount));
+    createManagedKafkaConnection(serviceAccountSecretName);
   }
+  
 
   return (
     <>
@@ -113,7 +117,7 @@ const ManagedKafkas = () => {
         <StreamsInstancePage kafkaArray={kafkaRequestData} />
         <div className="co-m-pane__body" style={{ borderTop: 0, paddingTop: 0, paddingBottom: 0 }}>
           <FormFooter
-            handleSubmit={() => createManagedKafkaConnection()}
+            handleSubmit={() => createManagedKafkaConnectionFlow()}
             isSubmitting={false}
             errorMessage=""
             submitLabel={"Create"}
