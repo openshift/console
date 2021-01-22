@@ -1,4 +1,5 @@
 {
+  "{{kind}} details": "{{kind}} details",
   "Type": "Type",
   "Status": "Status",
   "Updated": "Updated",
@@ -8,7 +9,6 @@
   "ReplicationControllers": "ReplicationControllers",
   "ReplicaSets": "ReplicaSets",
   "Terminal": "Terminal",
-  "{{kind}} details": "{{kind}} details",
   "Name": "Name",
   "Namespace": "Namespace",
   "Labels": "Labels",
