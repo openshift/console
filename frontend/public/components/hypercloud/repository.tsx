@@ -7,6 +7,7 @@ import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from '
 import { Kebab, detailsPage, Timestamp, navFactory, ResourceKebab, ResourceLink, ResourceSummary, SectionHeading } from '../utils';
 import { RepositoryModel } from '../../models/hypercloud';
 import { Tags } from './tags';
+// import { scanningModal } from './modals';
 
 export const menuActions = [...Kebab.factory.common];
 
@@ -77,9 +78,11 @@ const RepositoriesPage = (props) => {
   const { canCreate = true } = props;
   return (
     <>
-      <button className="pf-c-dropdown__toggle pf-m-primary">
-        Image Scan Request Creation
+      {/* <div className="pf-m-expanded" style={{ padding: '30px 0 0 30px' }}>
+        <button className="pf-c-dropdown__toggle pf-m-primary" style={{ backgroundColor: '#0066cc', color: 'white', fontSize: '14px', width: '150px', height: '25px', display: 'flex', justifyContent: 'center' }} onClick={scanningModal.bind(null, { kind: 'Repository', showNs: false })}>
+          Image Scan Request
       </button>
+      </div> */}
       <ListPage canCreate={canCreate} kind="Repository" ListComponent={RepositoriesList} {...props} />
     </>
   );
