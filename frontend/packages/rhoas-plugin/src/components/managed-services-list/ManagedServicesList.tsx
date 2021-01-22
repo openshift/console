@@ -6,8 +6,7 @@ import { PageLayout } from '@console/shared';
 import AccessManagedServices from '../access-managed-services/AccessManagedServices';
 import { useActiveNamespace } from 'packages/console-shared/src/hooks/redux-selectors';
 import { ManagedKafkaRequestModel } from '../../models/rhoas';
-import { k8sCreate } from 'public/module/k8s';
-
+import { k8sCreate } from '@console/internal/module/k8s/resource';
 const navigateTo = (e: React.SyntheticEvent, url: string) => {
   history.push(url);
   e.preventDefault();
@@ -69,7 +68,8 @@ const ManagedServicesList = () => {
       status: status
     };
 
-    // Progress bar/Handling errors here?
+    // FIXME Progress bar/Handling errors here?
+    // FIXME Patch existing config
     await k8sCreate(ManagedKafkaRequestModel, mkRequest)
 
     navigateTo(e, "/managedServices/managedkafka")
