@@ -99,8 +99,8 @@ const RepositoryDetails: React.FC<RepositoryDetailsProps> = ({ obj: repository }
       </div>
     </div>
     <div className="co-m-pane__body">
-      <SectionHeading text="Resources" />
-      <Tags tags={repository.spec.versions} namespace={repository.metadata.namespace} />
+      <SectionHeading text="Tags" />
+      <Tags repository={repository.metadata.name} tags={repository.spec.versions} namespace={repository.metadata.namespace} />
     </div>
   </>
 );

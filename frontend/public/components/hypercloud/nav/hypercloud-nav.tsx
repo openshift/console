@@ -26,7 +26,7 @@ const HyperCloudNav = () => (
           <ResourceNSLink resource="events" name={t('COMMON:MSG_LNB_MENU_6')} />
           <HrefLink href="/grafana" name="Grafana" />
         </NavSection>
-        <NavSection title="Operators" />
+        {/* <NavSection title="Operators" /> */}
         <NavSection title={t('COMMON:MSG_LNB_MENU_10')}>
           <ResourceNSLink resource="servicebrokers" name="Service Broker" />
           <ResourceNSLink resource="serviceclasses" name="Service Class" />
@@ -48,8 +48,8 @@ const HyperCloudNav = () => (
           <ResourceNSLink resource="horizontalpodautoscalers" name="Horizontal Pod Autoscalers" />
           <ResourceNSLink resource="daemonsets" name="Daemon Sets" />
           <ResourceNSLink resource="statefulsets" name="Stateful Sets" />
-          <ResourceNSLink resource="virtualmachines" name={t('COMMON:MSG_LNB_MENU_33')} />
-          <ResourceNSLink resource="virtualmachineinstances" name={t('COMMON:MSG_LNB_MENU_34')} />
+          {/* <ResourceNSLink resource="virtualmachines" name={t('COMMON:MSG_LNB_MENU_33')} />
+          <ResourceNSLink resource="virtualmachineinstances" name={t('COMMON:MSG_LNB_MENU_34')} /> */}
           <ResourceNSLink resource="configmaps" name="Config Maps" />
           <ResourceNSLink resource="secrets" name="Secrets" />
           <ResourceNSLink resource="jobs" name="Jobs" />
@@ -74,7 +74,7 @@ const HyperCloudNav = () => (
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_50')}>
           <ResourceClusterLink resource="storageclasses" name={t('COMMON:MSG_LNB_MENU_53')} />
-          <ResourceNSLink resource="datavolumes" name={t('COMMON:MSG_LNB_MENU_54')} />
+          {/* <ResourceNSLink resource="datavolumes" name={t('COMMON:MSG_LNB_MENU_54')} /> */}
           <ResourceNSLink resource="persistentvolumeclaims" name={t('COMMON:MSG_LNB_MENU_52')} />
           <ResourceClusterLink resource="persistentvolumes" name={t('COMMON:MSG_LNB_MENU_51')} />
         </NavSection>
