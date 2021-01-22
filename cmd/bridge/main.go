@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"os/exec"
 	"runtime"
 
 	"io/ioutil"
@@ -159,7 +158,8 @@ func main() {
 	dir, _ := os.Getwd()
 	cDir := dir + "/configs/dynamic-config.yaml"
 	fMcModeFile := fs.String("mc-mode-file", cDir, "The YAML proxy config file")
-	fMcModeOperator := fs.Bool("mc-mode-operator", false, "Using operator which watch crd = true, disable = false")
+	// Deplicated working proxy operator inside console
+	// fMcModeOperator := fs.Bool("mc-mode-operator", false, "Using operator which watch crd = true, disable = false")
 
 	fReleaseModeFlag := fs.Bool("release-mode", true, "DEV ONLY. When false")
 
@@ -741,28 +741,13 @@ func main() {
 	if *fMcModeFile != cDir {
 		filename := *fMcModeFile
 		if _, err := os.Stat(filename); os.IsNotExist(err) {
-			log.Infof("does not exist file : %s", filename)
-			log.Infof("Create file : %s ", filename)
-			var pwd, err = os.Create(filename)
-			if err != nil {
-				log.Fatalf("filed to create config filed : %v", err)
-				return
-			}
-			defer pwd.Close()
+			log.Infof("Not Exist Proxy Config file : %s", filename)
 		}
 		pvd.Filename = filename
 	} else {
-		// log.Infof("Using default config directory : %s", *fMcModeFile)
 		filename := *fMcModeFile
 		if _, err := os.Stat(filename); os.IsNotExist(err) {
-			log.Infof("does not exist file : %s", filename)
-			log.Infof("Create file : %s ", filename)
-			var pwd, err = os.Create(filename)
-			if err != nil {
-				log.Fatalf("filed to create config filed : %v", err)
-				return
-			}
-			defer pwd.Close()
+			log.Infof("Not Exist Proxy Config file : %s", filename)
 		}
 		pvd.Filename = filename
 	}
@@ -783,20 +768,21 @@ func main() {
 	proxyServer.Start(context.Background())
 	// Proxy Server End
 
-	srv.McModeOperator = *fMcModeOperator
-	if *fMcModeOperator {
-		go func() {
-			cmd := exec.Command(dir+"/tools/crd-operator", "-dynamic-config", pvd.Filename)
-			log.Infof("operator wrd is : %v", cmd.Path)
-			log.Info("Running crd watcher operator")
-			cmd.Stdout = os.Stdout
-			cmd.Stderr = os.Stderr
-			err = cmd.Start()
-			if err != nil {
-				log.Fatal("Error when running cmd", err)
-			}
-		}()
-	}
+	// // Delpicated Running operator inside console process
+	// srv.McModeOperator = *fMcModeOperator
+	// if *fMcModeOperator {
+	// 	go func() {
+	// 		cmd := exec.Command(dir+"/tools/crd-operator", "-dynamic-config", pvd.Filename)
+	// 		log.Infof("operator wrd is : %v", cmd.Path)
+	// 		log.Info("Running crd watcher operator")
+	// 		cmd.Stdout = os.Stdout
+	// 		cmd.Stderr = os.Stderr
+	// 		err = cmd.Start()
+	// 		if err != nil {
+	// 			log.Fatal("Error when running cmd", err)
+	// 		}
+	// 	}()
+	// }
 
 	end := make(chan bool)
 	<-end
