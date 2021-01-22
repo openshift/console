@@ -3,13 +3,11 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Redirect, Route, Switch } from 'react-router-dom';
 
-import { FLAGS } from '@console/shared';
-import { connectToFlags, flagPending, FlagsObject } from '../reducers/features';
 import { GlobalNotifications } from './global-notifications';
 import { NamespaceBar } from './namespace';
 import { SearchPage } from './hypercloud/search';
 import { ResourceDetailsPage, ResourceListPage } from './resource-list';
-import { AsyncComponent, LoadingBox } from './utils';
+import { AsyncComponent } from './utils';
 import { namespacedPrefixes } from './utils/link';
 import { AlertmanagerModel } from '../models';
 import { referenceForModel } from '../module/k8s';
@@ -61,33 +59,22 @@ _.each(namespacedPrefixes, p => {
 
 type DefaultPageProps = {
   activePerspective: string;
-  flags: FlagsObject;
 };
 
-// The default page component lets us connect to flags without connecting the entire App.
-const DefaultPage_: React.FC<DefaultPageProps> = ({ flags, activePerspective }) => {
-  if (Object.keys(flags).some(key => flagPending(flags[key]))) {
-    return <LoadingBox />;
-  }
+const DefaultPage_: React.FC<DefaultPageProps> = ({ activePerspective }) => {
   // support redirecting to perspective landing page
-  return flags[FLAGS.OPENSHIFT] ? (
+  return (
     <Redirect
       to={getPerspectives()
         .find(p => p.properties.id === activePerspective)
-        .properties.getLandingPageURL(flags)}
-    />
-  ) : (
-    <Redirect
-      to={getPerspectives()
-        .find(p => p.properties.id === activePerspective)
-        .properties.getK8sLandingPageURL(flags)}
+        .properties.getLandingPageURL()}
     />
   );
 };
 
 const DefaultPage = connect((state: RootState) => ({
   activePerspective: getActivePerspective(state),
-}))(connectToFlags(FLAGS.OPENSHIFT, FLAGS.CAN_LIST_NS)(DefaultPage_));
+}))(DefaultPage_);
 
 const LazyRoute = props => {
   let { kind, loader } = props;
@@ -105,10 +92,9 @@ const LazyRoute = props => {
   return <Route {...props} component={undefined} render={componentProps => <AsyncComponent loader={loader} kind={kind} {...componentProps} />} />;
 };
 
-const getPluginPageRoutes = (activePerspective: string, flags: FlagsObject) =>
+const getPluginPageRoutes = (activePerspective: string) =>
   plugins.registry
     .getRoutePages()
-    .filter(e => plugins.registry.isExtensionInUse(e, flags))
     .map(r => {
       if (r.properties.perspective && r.properties.perspective !== activePerspective) {
         return null;
@@ -119,10 +105,9 @@ const getPluginPageRoutes = (activePerspective: string, flags: FlagsObject) =>
 
 type AppContentsProps = {
   activePerspective: string;
-  flags: FlagsObject;
 };
 
-const AppContents_: React.FC<AppContentsProps> = ({ activePerspective, flags }) => (
+const AppContents_: React.FC<AppContentsProps> = ({ activePerspective }) => (
   <PageSection variant={PageSectionVariants.light}>
     <div id="content">
       <GlobalNotifications />
@@ -130,7 +115,7 @@ const AppContents_: React.FC<AppContentsProps> = ({ activePerspective, flags }) 
       {/* tabIndex is necessary to restore keyboard scrolling as a result of PatternFly's <Page> having a hard-coded tabIndex.  See https://github.com/patternfly/patternfly-react/issues/4180 */}
       <div id="content-scrollable" tabIndex={-1}>
         <Switch>
-          {getPluginPageRoutes(activePerspective, flags)}
+          {getPluginPageRoutes(activePerspective)}
           <Route path={['/all-namespaces', '/ns/:ns']} component={RedirectComponent} />
           <LazyRoute path="/dashboards" loader={() => import('./dashboard/dashboards-page/dashboards' /* webpackChunkName: "dashboards" */).then(m => m.DashboardsPage)} />
           {/* Redirect legacy routes to avoid breaking links */}
@@ -247,6 +232,6 @@ const AppContents_: React.FC<AppContentsProps> = ({ activePerspective, flags }) 
 
 const AppContents = connect((state: RootState) => ({
   activePerspective: getActivePerspective(state),
-}))(connectToFlags(...plugins.registry.getGatingFlagNames([plugins.isRoutePage]))(AppContents_));
+}))(AppContents_);
 
 export default AppContents;
