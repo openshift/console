@@ -85,40 +85,16 @@ const top25Queries = {
 
 const resourceQuotaQueries = {
   [NodeQueries.POD_RESOURCE_LIMIT_CPU]: _.template(
-    `sum(
-      max by (namespace, pod, container) (
-          kube_pod_container_resource_limits_cpu_cores{node='<%= node %>', job="kube-state-metrics"}
-      ) * on(namespace, pod) group_left() max by (namespace, pod) (
-          kube_pod_status_phase{phase=~"Pending|Running"} == 1
-      )
-    )`,
+    `sum(kube_pod_resource_limit{node='<%= node %>',resource='cpu'})`,
   ),
   [NodeQueries.POD_RESOURCE_LIMIT_MEMORY]: _.template(
-    `sum(
-      max by (namespace, pod, container) (
-          kube_pod_container_resource_limits_memory_bytes{node='<%= node %>', job="kube-state-metrics"}
-      ) * on(namespace, pod) group_left() max by (namespace, pod) (
-          kube_pod_status_phase{phase=~"Pending|Running"} == 1
-      )
-    )`,
+    `sum(kube_pod_resource_limit{node='<%= node %>',resource='memory'})`,
   ),
   [NodeQueries.POD_RESOURCE_REQUEST_CPU]: _.template(
-    `sum(
-      max by (namespace, pod, container) (
-          kube_pod_container_resource_requests_cpu_cores{node='<%= node %>', job="kube-state-metrics"}
-      ) * on(namespace, pod) group_left() max by (namespace, pod) (
-          kube_pod_status_phase{phase=~"Pending|Running"} == 1
-      )
-    )`,
+    `sum(kube_pod_resource_request{node='<%= node %>',resource='cpu'})`,
   ),
   [NodeQueries.POD_RESOURCE_REQUEST_MEMORY]: _.template(
-    `sum(
-      max by (namespace, pod, container) (
-          kube_pod_container_resource_requests_memory_bytes{node='<%= node %>', job="kube-state-metrics"}
-      ) * on(namespace, pod) group_left() max by (namespace, pod) (
-          kube_pod_status_phase{phase=~"Pending|Running"} == 1
-      )
-    )`,
+    `sum(kube_pod_resource_request{node='<%= node %>',resource='memory'})`,
   ),
 };
 
