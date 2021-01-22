@@ -1,66 +1,38 @@
 import * as React from 'react';
-import { ManagedKafkaRequestModel } from '../../models';
 import { SecretModel } from '@console/internal/models';
-import {
-  k8sGet,
-  k8sCreate,
-  k8sWatch
-} from '@console/internal/module/k8s';
 import { Helmet } from 'react-helmet';
 import { PageBody } from '@console/shared';
 import { PageHeading } from '@console/internal/components/utils';
 // To be clarified if we watch for resource on second page
-// import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
-import {
-  FormFooter,
-  FlexForm,
-  FormHeader,
-} from '@console/shared';
+import { k8sCreate, k8sGet } from '@console/internal/module/k8s/resource';
 import { Button, FormGroup, TextInput } from '@patternfly/react-core';
+import { useActiveNamespace } from '@console/shared';
 
-const AccessManagedServices = ({setAuthenticationSuccess}) => {
+const AccessManagedServices = ({ }) => {
+  const [apiTokenValue, setApiTokenValue] = React.useState("");
+  const [currentNamespace] = useActiveNamespace();
 
-  const [ apiTokenValue, setApiTokenValue ] = React.useState("");
+  const namespace = currentNamespace
+  const secretName = "rh-managed-services-api-accesstoken495222"
 
-  const handleApiTokenValueChange = value => {
-    setApiTokenValue(value);
-  }
+  console.log("Token page rendered for namespace ", namespace, apiTokenValue, secretName)
 
-  const handleAuthChange = () => {
-    setAuthenticationSuccess(true);
-  }
+  const [tokenSecret] = useK8sWatchResource({ kind: SecretModel.kind, isList: false, name: secretName, namespace, namespaced: true })
+  console.log(tokenSecret)
 
-  // TODO change namespace from URL (args)
-  const namespace = "default";
-  const secretName = "MyLittleSecret"
-  const accessToken = "notrelevantyet"
-
-  const [data, loaded, loadError] = useK8sGet(SecretModel, secretName, namespace)
-
-  if (!loaded) {
+  if (tokenSecret) {
+    {/* FIXME - improve component */ }
     return (<>
-      <h4>Loading</h4>
+      <div style={{ width: "100%", height: 300, backgroundColor: "#D3D3D3", padding: 10 }}>
+        <h2>  You have already setup connection details to Managed Services</h2>
+      </div>
+      {/* FIXME - allow to pach secret - if they are like different user or something */}
     </>)
   }
 
-  console.log(data, loadError);
-
-  if (data) {
-    return (<>
-      You have already setup connection details to Managed Services
-    </>)
-  }
-
-  const onSubmit = async (event) => {
-    event.preventDefault();
-    const existingSecret = await k8sGet(SecretModel.kind, secretName, namespace, {})
-    console.log(existingSecret)
-
-    if (existingSecret) {
-      return;
-    }
-
+  const onSubmit = async () => {
     const secret = {
       apiVersion: SecretModel.apiVersion,
       kind: SecretModel.kind,
@@ -69,65 +41,56 @@ const AccessManagedServices = ({setAuthenticationSuccess}) => {
         namespace
       },
       stringData: {
-        accessToken
+        apiTokenValue
       },
       type: 'Opaque',
     };
 
-    const mkRequest = {
-      apiVersion: ManagedKafkaRequestModel.apiVersion,
-      kind: ManagedKafkaRequestModel.kind,
-      metadata: {
-        // TODO better name generation
-        name: 'KafkaRequest-' + new Date().getTime(),
-        namespace
-      },
-      spec: {
-        accessTokenSecretName: secretName,
-      },
-    };
+    // FIXME error handling for create operation
+    await k8sCreate(SecretModel, secret);
 
-    // TODO proper handling for create
-    console.log(await k8sCreate(SecretModel, secret))
-    console.log(await k8sCreate(ManagedKafkaRequestModel, mkRequest));
-    // TODO This is for tesing and should not be on this page
-    k8sWatch(ManagedKafkaRequestModel.kind, {}).onmessage((msg) => {
-      console.log("resource updated", msg);
-    })
+    // IMPORTANT! CVE prevention
+    setApiTokenValue("");
   }
-
-
 
   return (
     <>
-      <Helmet>
-        <title>Access managed services with API Token</title>
-      </Helmet>
-      <PageHeading
-        className="rhoas__page-heading"
-        title="Access managed services with API Token"
-      >
-        <span>
-          To access this managed service, input the API token which can be located at 
-          <a href="/">https://qaprodauth.cloud.redhat.com/openshift/token</a>
-        </span>
-      </PageHeading>
-      <PageBody>
-        <FormGroup
-          fieldId=""
-          label="API Token"
-          className=""
+      <div style={{ backgroundColor: "#D3D3D3", padding: 10 }}>
+        <Helmet>
+          <title>Access managed services with API Token</title>
+        </Helmet>
+        <PageHeading
+          className="rhoas__page-heading"
+          title="Access managed services with API Token"
         >
-          <TextInput
-            isRequired
-            value={apiTokenValue}
-            onChange={() => handleApiTokenValueChange()}
-            type="text"
-            id=""
-            name=""
-          />
-        </FormGroup>
-      </PageBody>
+          <span>
+            To access this managed service, input the API token which can be located at
+          <a href="/">https://qaprodauth.cloud.redhat.com/openshift/token</a>
+          </span>
+        </PageHeading>
+        <PageBody>
+          <FormGroup
+            fieldId=""
+            label="API Token"
+            className=""
+          >
+            <TextInput
+              isRequired
+              value={apiTokenValue}
+              onChange={(value: string) => setApiTokenValue(value)}
+
+              type="text"
+              id=""
+              name=""
+            />
+
+            <p></p>
+            <Button variant="secondary" onClick={() => onSubmit()}>
+              Connect
+          </Button>
+          </FormGroup>
+        </PageBody>
+      </div>
     </>
   )
 
