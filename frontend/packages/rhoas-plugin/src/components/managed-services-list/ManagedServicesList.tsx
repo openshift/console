@@ -2,80 +2,15 @@ import * as React from 'react';
 import { Gallery, GalleryItem } from '@patternfly/react-core';
 import { CatalogTile } from '@patternfly/react-catalog-view-extension';
 import { history } from '@console/internal/components/utils';
-import { PageLayout, useActiveNamespace } from '@console/shared';
+import { PageLayout } from '@console/shared';
 import AccessManagedServices from '../access-managed-services/AccessManagedServices';
-import { ManagedKafkaRequestModel } from '../../models/rhoas';
-import { k8sCreate } from '@console/internal/module/k8s/resource';
+
 const navigateTo = (e: React.SyntheticEvent, url: string) => {
   history.push(url);
   e.preventDefault();
 };
 
 const ManagedServicesList = () => {
-  const [currentNamespace] = useActiveNamespace();
-
-  // FIXME use the same secretname across 2 components
-  const accessTokenSecretName = "rh-managed-services-api-accesstoken"
-  // FIXME IMPORTANT: Name should be fixed later and patched if needed.
-  const currentCRName = 'KafkaRequest-' + currentNamespace + new Date().getTime();
-
-  // FIXME status is used only to simulate operator work and it should be removed
-  const status = [{
-    id: '1iSY6RQ3JKI8Q0OTmjQFd3ocFRg',
-    kind: 'kafka',
-    href: '/api/managed-services-api/v1/kafkas/1iSY6RQ3JKI8Q0OTmjQFd3ocFRg',
-    status: 'ready',
-    cloudProvider: 'aws',
-    multiAz: true,
-    region: 'us-east-1',
-    owner: 'api_kafka_service',
-    name: 'serviceapi',
-    bootstrapServerHost:
-      'serviceapi-1isy6rq3jki8q0otmjqfd3ocfrg.apps.ms-bttg0jn170hp.x5u8.s1.devshift.org',
-    createdAt: '2020-10-05T12:51:24.053142Z',
-    updatedAt: '2020-10-05T12:56:36.362208Z',
-  },
-  {
-    id: '1iSY6RQ3JKI8Q0OTmjQFd3ocFRz',
-    kind: 'kafka',
-    href: '/api/managed-services-api/v1/kafkas/1iSY6RQ3JKI8Q0OTmjQFd3ocFRz',
-    status: 'ready',
-    cloudProvider: 'aws',
-    multiAz: true,
-    region: 'us-east-1',
-    owner: 'api_kafka_service',
-    name: 'kafka',
-    bootstrapServerHost:
-      'serviceapi-1isy6rq3jki8q0otmjqfd3ocfrx.apps.ms-bttg0jn170hp.x5u8.s1.devshift.org',
-    createdAt: '2021-01-19T12:51:24.053142Z',
-    updatedAt: '2021-01-19T12:56:36.362208Z',
-  },
-  ];
-
-  // FIXME ? Should be part of the ManagedKafkas?
-  const onKafkaServiceNagivate = async (e: React.SyntheticEvent) => {
-    const mkRequest = {
-      apiVersion: ManagedKafkaRequestModel.apiVersion,
-      kind: ManagedKafkaRequestModel.kind,
-      metadata: {
-        name: currentCRName,
-        currentNamespace
-      },
-      spec: {
-        accessTokenSecretName: accessTokenSecretName,
-      },
-      status: status
-    };
-
-    // FIXME Progress bar/Handling errors here?
-    // FIXME Patch existing config
-    await k8sCreate(ManagedKafkaRequestModel, mkRequest)
-    await new Promise((resolver)=>{
-      setTimeout(resolver, 3000);
-    })
-    navigateTo(e, "/managedServices/managedkafka")
-  }
-
   const defaultHintBlockText = `Select Managed Service you would like to connect with.
 
   To use the Red Hat Managed Services you need to have account and at least one active service in https://cloud.redhat.com`;
@@ -86,9 +21,9 @@ const ManagedServicesList = () => {
         <Gallery className="co-catalog-tile-view" hasGutter>
           <GalleryItem>
             <CatalogTile
-              data-test-id={"id"}
-              className="co-catalog-tile"
-              onClick={(e: React.SyntheticEvent) => onKafkaServiceNagivate(e)}
+              data-test-id={"kafka-id"}
+              className="co-kafka-tile"
+              onClick={(e: React.SyntheticEvent) => navigateTo(e, "/managedServices/managedkafka")}
               href={"/managedServices/managedkafka"}
               title={"ManagedKafka"}
               iconImg={""}

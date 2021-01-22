@@ -8,17 +8,18 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { k8sCreate } from '@console/internal/module/k8s/resource';
 import { Button, FormGroup, TextInput } from '@patternfly/react-core';
 import { useActiveNamespace } from '@console/shared';
+import { AccessTokenSecretName } from '../../const'
 
-const AccessManagedServices = ({ }) => {
+// TODO Full typings
+const AccessManagedServices: any = () => {
   const [apiTokenValue, setApiTokenValue] = React.useState("");
   const [currentNamespace] = useActiveNamespace();
 
-  const namespace = currentNamespace
-  const secretName = "rh-managed-services-api-accesstoken4954"
+  const namespace = currentNamespace;
 
-  console.log("Token page rendered for namespace ", namespace, apiTokenValue, secretName)
+  console.log("Token page rendered for namespace ", namespace, apiTokenValue, AccessTokenSecretName)
 
-  const [tokenSecret] = useK8sWatchResource({ kind: SecretModel.kind, isList: false, name: secretName, namespace, namespaced: true })
+  const [tokenSecret] = useK8sWatchResource({ kind: SecretModel.kind, isList: false, name: AccessTokenSecretName, namespace, namespaced: true })
   console.log(tokenSecret)
 
   if (tokenSecret) {
@@ -36,7 +37,7 @@ const AccessManagedServices = ({ }) => {
       apiVersion: SecretModel.apiVersion,
       kind: SecretModel.kind,
       metadata: {
-        name: secretName,
+        name: AccessTokenSecretName,
         namespace
       },
       stringData: {
