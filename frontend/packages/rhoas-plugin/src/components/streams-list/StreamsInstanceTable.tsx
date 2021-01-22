@@ -7,7 +7,6 @@ import {
   TableHeader,
   TableBody,
 } from '@patternfly/react-table';
-import { ManagedKafkaModel } from '../managed-services-kafka/ManagedKafkaModel';
 
 const StreamsInstanceTable: any = ({ kafkaArray }) => {
   const tableColumns = [

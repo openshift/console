@@ -4,7 +4,6 @@ import { PageBody } from '@console/shared';
 import StreamsInstanceFilter from './StreamsInstanceFilter';
 import StreamsInstanceTable from './StreamsInstanceTable';
 import { PageHeading } from '@console/internal/components/utils';
-import { ManagedKafkaModel } from '../managed-services-kafka/ManagedKafkaModel';
 
 // FIXME full typed experience React.FC<{ kafkaArray: ManagedKafkaModel[]}>
 const StreamsInstancePage: any = ({ kafkaArray }) => {
