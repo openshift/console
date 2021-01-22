@@ -18,7 +18,6 @@ const StreamsInstanceTable: any = ({ kafkaArray }) => {
 
   const tableRowData = () => {
     const tableRow: (IRowData | string[])[] | undefined = [];
-    console.log("HHAHAHAHAHA", kafkaArray);
 
     kafkaArray.forEach((row: IRowData) => {
       const { name, bootstrapServerHost, cloudProvider, region, owner } = row;

@@ -7,37 +7,64 @@ import { history } from '@console/internal/components/utils';
 import './ManagedKafkas.css';
 import StreamsInstancePage from '../streams-list/StreamsInstancePage';
 import { ManagedKafkaModel } from './ManagedKafkaModel';
+import { ManagedKafkaRequestModel } from '../../models/rhoas';
+import { useActiveNamespace } from '@console/shared';
+import { k8sCreate, k8sPatch } from '@console/internal/module/k8s/resource';
+import { AccessTokenSecretName } from '../../const'
+import { KafkaMocks } from '../mocks/KafkaMocks';
 
 const ManagedKafkas = () => {
+  const [currentNamespace] = useActiveNamespace();
+  // FIXME IMPORTANT: Name should be fixed later and patched if needed.
+  const currentCRName = 'kafkarequest' + currentNamespace + new Date().getTime();
+  const kafkaRequestData: ManagedKafkaModel[] = KafkaMocks;
 
-  const handleNext = () => {
+  // FIXME Pass this down to the table to get checked kafkas
+  // const [checkedKafkas, setCheckedKafkas] = useState([])
 
+  // TODO Create actions folder
+  const createManagedKafkaRequest = async () => {
+    const mkRequest = {
+      apiVersion: "rhoas.redhat.com/v1alpha1",// ManagedKafkaRequestModel.apiVersion,
+      kind: ManagedKafkaRequestModel.kind,
+      metadata: {
+        name: currentCRName,
+        namespace: currentNamespace
+      },
+      spec: {
+        accessTokenSecretName: AccessTokenSecretName,
+      },
+      status: {
+        lastUpdate: new Date().getTime(),
+        userKafkas: KafkaMocks
+      }
+    };
+
+    // FIXME Progress bar/Handling errors here?
+    // FIXME Patch existing request if exist etc.
+    await k8sCreate(ManagedKafkaRequestModel, mkRequest)
+    await k8sPatch(ManagedKafkaRequestModel, mkRequest)
+    await new Promise((resolver) => {
+      setTimeout(resolver, 3000);
+    })
   }
-  const kafkaRequestData : ManagedKafkaModel[]= [
-    {
-      id: '1iSY6RQ3JKI8Q0OTmjQFd3ocFRg',
-      kind: 'kafka',
-      href: '/api/managed-services-api/v1/kafkas/1iSY6RQ3JKI8Q0OTmjQFd3ocFRg',
-      status: 'ready',
-      cloudProvider: 'aws',
-      multiAz: true,
-      region: 'us-east-1',
-      owner: 'api_kafka_service',
-      name: 'serviceapi',
-      bootstrapServerHost:
-        'serviceapi-1isy6rq3jki8q0otmjqfd3ocfrg.apps.ms-bttg0jn170hp.x5u8.s1.devshift.org',
-      createdAt: '2020-10-05T12:51:24.053142Z',
-      updatedAt: '2020-10-05T12:56:36.362208Z',
-    }
-  ];
+
+  React.useEffect(() => {
+    createManagedKafkaRequest();
+  }, []);
+
+  const createManagedKafkaConnection = async () => {
+    // FIXME createManagedServiceAccount
+    // FIXME createManagedKafkaConnection
+  }
 
   return (
     <>
       <NamespacedPage variant={NamespacedPageVariants.light} hideApplications>
-        <StreamsInstancePage kafkaArray={kafkaRequestData}/>
+        <StreamsInstancePage kafkaArray={kafkaRequestData} />
         <div className="co-m-pane__body" style={{ borderTop: 0, paddingTop: 0, paddingBottom: 0 }}>
           <FormFooter
-            handleSubmit={() => handleNext()}
+            handleSubmit={() => createManagedKafkaConnection()}
             isSubmitting={false}
             errorMessage=""
             submitLabel={"Create"}
