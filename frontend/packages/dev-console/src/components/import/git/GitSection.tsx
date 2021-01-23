@@ -92,6 +92,7 @@ const GitSection: React.FC<GitSectionProps> = ({
 
       gitRepoName && !values.name && setFieldValue('name', gitRepoName);
       gitRepoName &&
+        values.formType !== 'edit' &&
         !values.application.name &&
         values.application.selectedKey !== UNASSIGNED_KEY &&
         setFieldValue('application.name', `${gitRepoName}-app`);
@@ -119,6 +120,7 @@ const GitSection: React.FC<GitSectionProps> = ({
       setFieldValue,
       values.application.name,
       values.application.selectedKey,
+      values.formType,
       values.git.type,
       values.name,
     ],
@@ -166,6 +168,7 @@ const GitSection: React.FC<GitSectionProps> = ({
     const gitRepoName = detectGitRepoName(url);
     values.formType !== 'edit' && gitRepoName && setFieldValue('name', gitRepoName);
     gitRepoName &&
+      values.formType !== 'edit' &&
       !values.application.name &&
       values.application.selectedKey !== UNASSIGNED_KEY &&
       setFieldValue('application.name', `${gitRepoName}-app`);
