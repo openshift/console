@@ -2,8 +2,12 @@ import * as _ from 'lodash';
 import { NodeKind, MatchExpression } from '@console/internal/module/k8s';
 import { NodeAffinityTerm, HostNamesMap } from '../components/auto-detect-volume/types';
 import { getName } from '@console/shared';
+import { ZONE_LABELS } from '../constants';
 
 export const hasNoTaints = (node: NodeKind): boolean => _.isEmpty(node.spec?.taints);
+
+export const getZone = (node: NodeKind) =>
+  node.metadata.labels?.[ZONE_LABELS[0]] || node.metadata.labels?.[ZONE_LABELS[1]];
 
 export const getNodes = (
   showNodes: boolean,
