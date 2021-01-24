@@ -291,6 +291,6 @@ export function uploadOSImage(
   volumeMode: boolean,
 ) {
   execSync(
-    `virtctl image-upload dv ${dv} --image-path=${imagePath} --size=10Gi --storage-class=${STORAGE_CLASS} --access-mode=${accessMode} --block-volume=${volumeMode} -n ${ns} --insecure`,
+    `virtctl image-upload dv ${dv} --image-path=${imagePath} --size=1Gi --storage-class=${STORAGE_CLASS} --access-mode=${accessMode} --block-volume=${volumeMode} -n ${ns} --insecure`,
   );
 }

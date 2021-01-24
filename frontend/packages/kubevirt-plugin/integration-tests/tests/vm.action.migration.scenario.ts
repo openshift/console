@@ -2,7 +2,6 @@ import { browser } from 'protractor';
 import { deleteResource, waitForStringInElement } from '@console/shared/src/test-utils/utils';
 import { getDetailActionDropdownOptions } from '@console/shared/src/test-utils/actions.view';
 import { vmDetailNode } from '../views/virtualMachine.view';
-import { rwxRootDisk } from './mocks/mocks';
 import {
   VM_BOOTUP_TIMEOUT_SECS,
   VM_MIGRATION_TIMEOUT_SECS,
@@ -21,8 +20,7 @@ describe('Test VM Migration', () => {
 
   const vm = new VMBuilder(getBasicVMBuilder())
     .setProvisionSource(ProvisionSource.URL)
-    .setDisks([rwxRootDisk])
-    .setCustomize(true)
+    .setStartOnCreation(false)
     .generateNameForPrefix('vm-for-migration-test')
     .build();
 
@@ -34,10 +32,6 @@ describe('Test VM Migration', () => {
   afterAll(async () => {
     deleteResource(vm.asResource());
   });
-
-  afterEach(async () => {
-    await vm.detailViewAction(VM_ACTION.Stop);
-  }, VM_BOOT_AND_MIGRATE_TIMEOUT);
 
   it(
     'ID(CNV-2140) Migrate VM action button is displayed appropriately',
@@ -60,7 +54,6 @@ describe('Test VM Migration', () => {
   it(
     'ID(CNV-2133) Migrate already migrated VM',
     async () => {
-      await vm.detailViewAction(VM_ACTION.Start);
       let sourceNode = await vm.getNode();
 
       await vm.detailViewAction(VM_ACTION.Migrate);
@@ -71,13 +64,12 @@ describe('Test VM Migration', () => {
       await vm.waitForMigrationComplete(sourceNode, VM_MIGRATION_TIMEOUT_SECS);
       expect(vm.getStatus()).toEqual(VM_STATUS.Running);
     },
-    VM_BOOT_AND_MIGRATE_TIMEOUT * 2,
+    VM_BOOT_AND_MIGRATE_TIMEOUT,
   );
 
   it(
     'ID(CNV-2132) Cancel ongoing VM migration',
     async () => {
-      await vm.detailViewAction(VM_ACTION.Start);
       const sourceNode = await vm.getNode();
 
       // Start migration without waiting for it to finish

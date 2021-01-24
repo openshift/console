@@ -12,7 +12,7 @@ import { MatchLabels } from '@console/internal/module/k8s';
 import { ProvisionSource } from './utils/constants/enums/provisionSource';
 
 describe('KubeVirt VM scheduling', () => {
-  const testVM = getVMManifest(ProvisionSource.CONTAINER, testName, `vm-${getRandStr(5)}`);
+  const testVM = getVMManifest(ProvisionSource.URL, testName, `vm-${getRandStr(5)}`);
   const vm: VirtualMachine = new VirtualMachine(testVM.metadata);
   const labels: MatchLabels = {
     key1: 'value1',

@@ -1,5 +1,3 @@
-import { execSync } from 'child_process';
-
 export const {
   STORAGE_CLASS = 'standard',
   KUBEVIRT_PROJECT_NAME = 'openshift-cnv',
@@ -13,10 +11,6 @@ export const {
   RHEL7_IMAGE = REMOTE_IMAGE,
   WIN10_IMAGE = REMOTE_IMAGE,
 } = process.env;
-
-const rhelTinyCommonTemplateName = execSync(
-  "kubectl get template -n openshift | grep rhel7-desktop-tiny | awk '{print $1}'",
-).toString();
 
 export const NOT_AVAILABLE = 'Not available';
 
@@ -78,7 +72,6 @@ export const NODE_READY_STATUS = 'Ready';
 // Kubevirt related
 export const KUBEVIRT_STORAGE_CLASS_DEFAULTS = 'kubevirt-storage-class-defaults';
 
-export const commonTemplateVersion = () => rhelTinyCommonTemplateName.match(/v\d+\.\d+\.\d+/)[0];
 export const INNER_TEMPLATE_VERSION = 'v0.11.0';
 
 export const COMMON_TEMPLATES_NAMESPACE = 'openshift';

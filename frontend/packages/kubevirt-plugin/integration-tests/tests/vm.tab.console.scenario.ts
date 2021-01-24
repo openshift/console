@@ -12,6 +12,7 @@ import {
   consoleTypeSelectorId,
   serialDisconnectButton,
   serialReconnectButton,
+  serialConnectButton,
   vncSendKeyButton,
   vncConnectingBar,
   serialConsoleWrapper,
@@ -23,9 +24,11 @@ import {
 import {
   PAGE_LOAD_TIMEOUT_SECS,
   VM_BOOTUP_TIMEOUT_SECS,
+  VM_IMPORT_TIMEOUT_SECS,
   KUBEVIRT_SCRIPTS_PATH,
+  EXPECT_LOGIN_SCRIPT_PATH,
 } from './utils/constants/common';
-import { VM_ACTION } from './utils/constants/vm';
+import { VM_ACTION, VM_STATUS } from './utils/constants/vm';
 import { VirtualMachine } from './models/virtualMachine';
 import { getVMManifest } from './mocks/mocks';
 import { ProvisionSource } from './utils/constants/enums/provisionSource';
@@ -65,45 +68,16 @@ describe('KubeVirt VM console - VNC/Serial', () => {
 
   beforeAll(async () => {
     createResource(vmResource);
+    await testVM.navigateToDetail();
+    await testVM.waitForStatus(VM_STATUS.Off, VM_IMPORT_TIMEOUT_SECS);
     await testVM.detailViewAction(VM_ACTION.Start);
+    // wait for the VM to boot up
+    execSync(`expect ${EXPECT_LOGIN_SCRIPT_PATH} ${testVM.name} ${testVM.namespace}`);
     await testVM.navigateToConsole();
   }, VM_BOOTUP_TIMEOUT_SECS);
 
   afterAll(async () => {
     deleteResource(vmResource);
-  });
-
-  it('ID(CNV-4660) Open VNC Console in new window', async () => {
-    await click(openInNewWindow);
-
-    const consoleWinHandles = await browser.getAllWindowHandles();
-    const parentHandle = consoleWinHandles[0];
-    const popUpHandle = consoleWinHandles[1];
-
-    await browser.switchTo().window(popUpHandle);
-    const getPopUpHandle = browser.getWindowHandle();
-    expect(getPopUpHandle).toEqual(popUpHandle);
-
-    // verify it's connecting to vnc console in the new window.
-    await browser.wait(until.invisibilityOf(vncConnectingBar));
-    await browser.wait(until.presenceOf(vncSendKeyButton), PAGE_LOAD_TIMEOUT_SECS);
-    await checkTouchedFile(testVM, vncConsole, vncTestFile1);
-
-    // verify it's connecting to serial console in the new window.
-    await selectDropdownOption(consoleTypeSelectorId, 'Serial Console');
-    await browser.wait(waitForStringNotInElement(serialConsoleWrapper, 'Loading'));
-    await browser.wait(until.presenceOf(serialReconnectButton), PAGE_LOAD_TIMEOUT_SECS);
-    await browser.wait(until.presenceOf(serialDisconnectButton), PAGE_LOAD_TIMEOUT_SECS);
-    await browser.wait(until.elementToBeClickable(serialDisconnectButton), PAGE_LOAD_TIMEOUT_SECS);
-    await browser.wait(until.presenceOf(serialConsole), PAGE_LOAD_TIMEOUT_SECS);
-
-    await checkTouchedFile(testVM, serialConsole, serialTestFile1);
-
-    await browser.close();
-
-    await browser.switchTo().window(parentHandle);
-    const getParentHandle = browser.getWindowHandle();
-    expect(getParentHandle).toEqual(parentHandle);
   });
 
   it('ID(CNV-3609) Serial Console connects', async () => {
@@ -134,5 +108,40 @@ describe('KubeVirt VM console - VNC/Serial', () => {
     await browser.wait(until.presenceOf(vncSendKeyButton), PAGE_LOAD_TIMEOUT_SECS);
 
     await checkTouchedFile(testVM, vncConsole, vncTestFile);
+  });
+
+  it('ID(CNV-4660) Open VNC Console in new window', async () => {
+    await click(openInNewWindow);
+
+    const consoleWinHandles = await browser.getAllWindowHandles();
+    const parentHandle = consoleWinHandles[0];
+    const popUpHandle = consoleWinHandles[1];
+
+    await browser.switchTo().window(popUpHandle);
+    const getPopUpHandle = browser.getWindowHandle();
+    expect(getPopUpHandle).toEqual(popUpHandle);
+
+    // verify it's connecting to vnc console in the new window.
+    await browser.wait(until.invisibilityOf(vncConnectingBar));
+    await browser.wait(until.presenceOf(vncSendKeyButton), PAGE_LOAD_TIMEOUT_SECS);
+    await checkTouchedFile(testVM, vncConsole, vncTestFile1);
+
+    // verify it's connecting to serial console in the new window.
+    await selectDropdownOption(consoleTypeSelectorId, 'Serial Console');
+    if (await serialConnectButton.isPresent()) {
+      await click(serialConnectButton);
+    }
+    await browser.wait(until.presenceOf(serialReconnectButton), PAGE_LOAD_TIMEOUT_SECS);
+    await browser.wait(until.presenceOf(serialDisconnectButton), PAGE_LOAD_TIMEOUT_SECS);
+    await browser.wait(until.elementToBeClickable(serialDisconnectButton), PAGE_LOAD_TIMEOUT_SECS);
+    await browser.wait(until.presenceOf(serialConsole), PAGE_LOAD_TIMEOUT_SECS);
+
+    await checkTouchedFile(testVM, serialConsole, serialTestFile1);
+
+    await browser.close();
+
+    await browser.switchTo().window(parentHandle);
+    const getParentHandle = browser.getWindowHandle();
+    expect(getParentHandle).toEqual(parentHandle);
   });
 });

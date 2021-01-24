@@ -133,10 +133,6 @@ describe('Tests involving guest agent', () => {
       'ID(CNV-1721) connects via exposed service',
       async () => {
         await vmWindows.navigateToDetail();
-        await browser.wait(
-          waitForStringInElement(vmView.vmDetailTimeZone(testName, VM_WINDOWS_NAME), 'UTC'),
-          VM_WITH_GA_CREATE_AND_EDIT_CLOUDINIT_TIMEOUT_SECS,
-        );
         await vmWindows.navigateToConsole();
         await browser.wait(until.presenceOf(consoleTypeSelector));
         await click(consoleTypeSelector);
@@ -201,7 +197,8 @@ describe('Tests involving guest agent', () => {
       VM_CREATE_AND_EDIT_TIMEOUT_SECS,
     );
 
-    it(
+    // TODO: consider move this to Tier2 tests
+    xit(
       'ID(CNV-1726) connects via L2 network',
       async () => {
         /* Pre-requisite:

@@ -7,7 +7,9 @@ import { ProvisionSource } from '../tests/utils/constants/enums/provisionSource'
 // Wizard Common
 export const createItemButton = $('[data-test-id="item-create"]');
 export const createWithWizardButton = $('[data-test-id="vm-wizard"]');
+export const createVMTWithWizardButton = $('[data-test-id="template-wizard"]');
 export const createWithYAMLButton = $('[data-test-id="vm-yaml"]');
+export const createVMTWithYAMLButton = $('[data-test-id="template-yaml"]');
 export const backButton = element(by.buttonText('Back'));
 export const cancelButton = element(by.buttonText('Cancel'));
 export const nextButton = element(by.buttonText('Next'));

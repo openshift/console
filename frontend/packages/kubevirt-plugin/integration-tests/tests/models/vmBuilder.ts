@@ -33,11 +33,6 @@ export class VMBuilder extends BaseVMBuilder<VMBuilderData> {
     return this;
   }
 
-  public setPVCName(pvcName: string) {
-    this.data.pvcName = pvcName;
-    return this;
-  }
-
   public setSelectTemplateName(selectTemplateName: string) {
     this.data.selectTemplateName = selectTemplateName;
     return this;

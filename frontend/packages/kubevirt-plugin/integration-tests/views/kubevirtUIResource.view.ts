@@ -34,3 +34,5 @@ export const selectKebabOption = async (name: string, option: string) => {
 };
 
 export const dataID = (name: string) => $(`[data-id="${name}"]`);
+export const resourceTitleLink = (text: string) =>
+  element(by.cssContainingText('.pf-c-breadcrumb__link', text));

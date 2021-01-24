@@ -15,15 +15,14 @@ import * as pvcView from '../views/pvc.view';
 import { restrictedAccessBlock } from '../views/vms.list.view';
 import { uploadLink } from '../views/wizard.view';
 import { createProject } from './utils/utils';
-import { RHEL7_IMAGE, VM_CREATE_AND_EDIT_TIMEOUT_SECS } from './utils/constants/common';
-import { GOLDEN_OS_IMAGES_NS, FEDORA_PVC, RHEL7_PVC } from './utils/constants/pvc';
-import { OperatingSystem } from './utils/constants/wizard';
-import { ProvisionSource } from './utils/constants/enums/provisionSource';
+import { RHEL7_IMAGE, CLONED_VM_BOOTUP_TIMEOUT_SECS } from './utils/constants/common';
+import { TemplateByName } from './utils/constants/wizard';
+import { GOLDEN_OS_IMAGES_NS, RHEL7_PVC } from './utils/constants/pvc';
+
 import { VMBuilder } from './models/vmBuilder';
 import { getBasicVMBuilder } from './mocks/vmBuilderPresets';
-import { rootDisk } from './mocks/mocks';
-import { UploadForm } from './models/pvcUploadForm';
 import { PVC } from './models/pvc';
+import { UploadForm } from './models/pvcUploadForm';
 import { Wizard } from './models/wizard';
 
 const testNonAdminNamespace = `${testName}-non-admin`;
@@ -49,7 +48,7 @@ describe('Kubevirt non-admin Flow', () => {
     await loginView.logout();
     await loginView.login(BRIDGE_HTPASSWD_IDP, BRIDGE_HTPASSWD_USERNAME, BRIDGE_HTPASSWD_PASSWORD);
     await createProject(testNonAdminNamespace);
-  });
+  }, CLONED_VM_BOOTUP_TIMEOUT_SECS);
 
   afterAll(async () => {
     execSync(`rm ${pvc.image}`);
@@ -63,9 +62,7 @@ describe('Kubevirt non-admin Flow', () => {
   describe('Kubevirt non-admin virtualization Flow', () => {
     const vm = new VMBuilder(getBasicVMBuilder())
       .setNamespace(testNonAdminNamespace)
-      .setProvisionSource(ProvisionSource.URL)
-      .setDisks([rootDisk])
-      .setCustomize(true)
+      .setSelectTemplateName(TemplateByName.RHEL7)
       .build();
 
     it(
@@ -78,35 +75,35 @@ describe('Kubevirt non-admin Flow', () => {
           await vm.navigateToDetail();
         });
       },
-      VM_CREATE_AND_EDIT_TIMEOUT_SECS,
+      CLONED_VM_BOOTUP_TIMEOUT_SECS,
     );
 
-    it('ID(CNV-1720) Non-admin cannot create vm in a foreign namespace', async () => {
-      // Check access is restricted on foreign namespace.
-      await browser.get(`${appHost}/k8s/ns/default/virtualmachines`);
-      await browser.wait(
-        until.textToBePresentInElement(restrictedAccessBlock, 'Restricted Access'),
-      );
-    });
+    it(
+      'ID(CNV-1720) Non-admin cannot create vm in a foreign namespace',
+      async () => {
+        // Check access is restricted on foreign namespace.
+        await browser.get(`${appHost}/k8s/ns/default/virtualmachines`);
+        await browser.wait(
+          until.textToBePresentInElement(restrictedAccessBlock, 'Restricted Access'),
+        );
+      },
+      CLONED_VM_BOOTUP_TIMEOUT_SECS,
+    );
   });
 
   describe('Kubevirt non-admin PVC Flow', () => {
     const vm = new VMBuilder(getBasicVMBuilder())
       .setNamespace(testNonAdminNamespace)
-      .setOS(pvc.os)
       .setStartOnCreation(true)
-      .setCustomize(true)
+      .setSelectTemplateName(TemplateByName.RHEL7)
       .generateNameForPrefix('auto-clone-vm-with-normal-user')
       .build();
 
     it('ID(CNV-5039) Non-admin cannot create golden pvc', async () => {
       await browser.get(`${appHost}/k8s/ns/${testNonAdminNamespace}/persistentvolumeclaims`);
       const uploadForm = new UploadForm();
-      FEDORA_PVC.image = pvc.image;
-      await uploadForm.upload(FEDORA_PVC);
-      await click(crudView.saveChangesBtn);
-      await browser.wait(until.presenceOf(crudView.errorMessage));
-      expect(pvcView.errorUploading.getText()).toContain('forbidden');
+      await uploadForm.openForm();
+      expect(pvcView.goldenOSCheckbox.isPresent()).toBe(false);
     });
 
     it('ID(CNV-5040) Non-admin cannot delete golden pvc', async () => {
@@ -121,10 +118,8 @@ describe('Kubevirt non-admin Flow', () => {
     it('ID(CNV-5055) Non-admin has no link on wizard page to upload data', async () => {
       await browser.get(`${appHost}/k8s/ns/${testNonAdminNamespace}/virtualization`);
       const wizard = new Wizard();
-      await wizard.openWizard(VirtualMachineModel);
-      await wizard.selectOperatingSystem(OperatingSystem.RHEL8);
+      await wizard.openWizard(VirtualMachineModel, true, TemplateByName.RHEL8);
       expect(uploadLink.isPresent()).toBe(false);
-      await wizard.closeWizard();
     });
 
     it(
@@ -135,7 +130,7 @@ describe('Kubevirt non-admin Flow', () => {
           await vm.navigateToDetail();
         });
       },
-      VM_CREATE_AND_EDIT_TIMEOUT_SECS,
+      CLONED_VM_BOOTUP_TIMEOUT_SECS,
     );
   });
 });
