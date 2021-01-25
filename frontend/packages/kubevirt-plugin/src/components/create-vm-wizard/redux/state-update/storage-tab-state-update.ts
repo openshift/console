@@ -5,6 +5,7 @@ import {
   hasStoragesChanged,
   iGetProvisionSourceStorage,
   iGetProvisionSourceAdditionalStorage,
+  iGetStorages,
 } from '../../selectors/immutable/storage';
 import {
   getNewProvisionSourceStorage,
@@ -201,6 +202,27 @@ export const internalStorageDiskBusUpdater = ({
   }
 };
 
+const initialStorageDiskUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
+  const state = getState();
+
+  if (!hasStoragesChanged(prevState, state, id)) {
+    return;
+  }
+
+  const provisionSourceStorage = iGetProvisionSourceStorage(state, id)?.toJSON();
+
+  if (provisionSourceStorage) {
+    const removableRootDisk = iGetStorages(state, id)
+      ?.toJSON()
+      ?.find((disk) => disk.type === VMWizardStorageType.TEMPLATE);
+
+    removableRootDisk &&
+      dispatch(
+        vmWizardInternalActions[InternalActionType.RemoveStorage](id, removableRootDisk?.id),
+      );
+  }
+};
+
 const initialStorageClassUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
   const state = getState();
 
@@ -241,6 +263,7 @@ export const updateStorageTabState = (options: UpdateOptions) =>
     windowsToolsUpdater,
     internalStorageDiskBusUpdater,
     initialStorageClassUpdater,
+    initialStorageDiskUpdater,
   ].forEach((updater) => {
     updater && updater(options);
   });
