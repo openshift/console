@@ -134,11 +134,11 @@ export const ClusterDetailsList: React.FC<ClusterDetailsListProps> = ({ cl }) =>
       <DetailsItem label="Version" obj={cl} path="spec.version" />
       <DetailsItem label="Region" obj={cl} path="spec.region" />
       <DetailsItem label="Master Node" obj={cl} path="spec.masterNum">
-        {`${cl.status?.masterRun} / ${cl.spec.masterNum}`}
+        {`${cl.status?.masterRun ?? 0} / ${cl.spec.masterNum}`}
       </DetailsItem>
       <DetailsItem label="Master Node Type" obj={cl} path="spec.masterType" />
       <DetailsItem label="Worker Node" obj={cl} path="spec.workerNum">
-        {`${cl.status?.workerRun} / ${cl.spec.workerNum}`}
+        {`${cl.status?.workerRun ?? 0} / ${cl.spec.workerNum}`}
       </DetailsItem>
       <DetailsItem label="Worker Node Type" obj={cl} path="spec.workerType" />
       <DetailsItem label="SSH Key" obj={cl} path="spec.sshKey" />

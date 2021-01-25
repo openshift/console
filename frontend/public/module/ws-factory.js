@@ -4,6 +4,7 @@
  *
  */
 /* eslint-disable no-console */
+import { getAccessToken } from '../hypercloud/auth';
 
 function createURL(host, path) {
   let url;
@@ -20,7 +21,16 @@ function createURL(host, path) {
   }
 
   if (path) {
-    url += path;
+    if (window.SERVER_FLAGS.releaseModeFlag && !!getAccessToken()) {
+      if (path.indexOf('?') !== -1) {
+        url += path + '&token=' + getAccessToken();
+      } else {
+        url += path + '?token=' + getAccessToken();
+      }
+    } else {
+      url += path;
+    }
+    // url += path;
   }
 
   return url;
@@ -45,10 +55,7 @@ export function WSFactory(id, options) {
   this._connect();
 
   if (this.bufferMax) {
-    this.flushCanceler = setInterval(
-      this.flushMessageBuffer.bind(this),
-      this.options.bufferFlushInterval || 500,
-    );
+    this.flushCanceler = setInterval(this.flushMessageBuffer.bind(this), this.options.bufferFlushInterval || 500);
   }
 }
 
@@ -207,7 +214,7 @@ WSFactory.prototype.flushMessageBuffer = function() {
   if (this._handlers.bulkmessage.length) {
     this._invokeHandlers('bulkmessage', this._messageBuffer);
   } else {
-    this._messageBuffer.forEach((e) => this._invokeHandlers('message', e));
+    this._messageBuffer.forEach(e => this._invokeHandlers('message', e));
   }
 
   this._messageBuffer = [];

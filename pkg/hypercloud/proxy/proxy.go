@@ -191,10 +191,15 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	proxiedHeader.Add("Origin", "http://localhost")
 
 	// NOTE: websocket에 bear token 추가
-	token := r.Header.Clone().Get("Authorization")
-	if token != "" {
-		proxiedHeader.Add("Authorization", token)
+	// NOTE: websocket시 header에 정보를 넣을 수 없어서 4.1버전으로 롤백
+	token, ok := r.URL.Query()["token"]
+	if ok && len(token[0]) > 0 {
+		proxiedHeader.Add("Authorization", "Bearer "+string(token[0]))
 	}
+	// token := r.Header.Clone().Get("Authorization")
+	// if token != "" {
+	// 	proxiedHeader.Add("Authorization", token)
+	// }
 
 	dialer := &websocket.Dialer{
 		TLSClientConfig: p.config.TLSClientConfig,
