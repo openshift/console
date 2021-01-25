@@ -28,7 +28,7 @@ describe('pod-ring utils:', () => {
     expect(
       podRingLabel(mockDeploymentData, mockDeploymentData.kind, [mockPod as ExtPodKind], t)
         .subTitle,
-    ).toEqual('pods');
+    ).toEqual('Pods');
   });
 
   it('should return title scaled to 0, empty subtitle for podRingLabel when no pods exist', () => {
@@ -100,7 +100,7 @@ describe('pod-ring utils:', () => {
       t,
     );
     expect(podRingLabelData.title).toEqual('2');
-    expect(podRingLabelData.subTitle).toEqual('pods');
+    expect(podRingLabelData.subTitle).toEqual('Pods');
     expect(podRingLabelData.longTitle).toBeFalsy();
     expect(podRingLabelData.longSubtitle).toBeFalsy();
     expect(podRingLabelData.reversed).toBeFalsy();
@@ -116,7 +116,7 @@ describe('pod-ring utils:', () => {
       t,
     );
     expect(podRingLabelData.title).toEqual('2');
-    expect(podRingLabelData.subTitle).toEqual('pods');
+    expect(podRingLabelData.subTitle).toEqual('Pods');
     expect(podRingLabelData.longTitle).toBeFalsy();
     expect(podRingLabelData.longSubtitle).toBeFalsy();
     expect(podRingLabelData.reversed).toBeFalsy();
@@ -132,7 +132,7 @@ describe('pod-ring utils:', () => {
       t,
     );
     expect(podRingLabelData.title).toEqual('2');
-    expect(podRingLabelData.subTitle).toEqual('pods');
+    expect(podRingLabelData.subTitle).toEqual('Pods');
     expect(podRingLabelData.longTitle).toBeFalsy();
     expect(podRingLabelData.longSubtitle).toBeFalsy();
     expect(podRingLabelData.reversed).toBeFalsy();
@@ -161,7 +161,7 @@ describe('pod-ring utils:', () => {
       t,
     );
     expect(podRingLabelData.title).toEqual('1');
-    expect(podRingLabelData.subTitle).toEqual('pod');
+    expect(podRingLabelData.subTitle).toEqual('Pod');
     expect(podRingLabelData.longTitle).toBeFalsy();
     expect(podRingLabelData.longSubtitle).toBeFalsy();
     expect(podRingLabelData.reversed).toBeFalsy();

@@ -64,8 +64,7 @@ describe('CRD extensions', () => {
       await crudView.isLoaded();
       await crudView.clickKebabAction(crd, 'View instances');
       await crudView.resourceRowsPresent();
-      // cannot use `await crudView.deleteRow(crd)(name)` because ConsoleCLIDownload is humanized as 'Console C L I Download';
-      await crudView.clickKebabAction(name, 'Delete Console CLI Download');
+      await crudView.clickKebabAction(name, 'Delete ConsoleCLIDownload');
       await browser.wait(until.presenceOf($('#confirm-action')));
       await $('#confirm-action').click();
     });

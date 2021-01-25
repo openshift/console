@@ -71,6 +71,8 @@
   "Right click": "Right click",
   "{{label}} Details": "{{label}} Details",
   "Scheduling disabled": "Scheduling disabled",
+  "Pod": "Pod",
+  "Pods": "Pods",
   "Scaled to 0": "Scaled to 0",
   "Scaling to {{podSubTitle}}": "Scaling to {{podSubTitle}}",
   "Autoscaled": "Autoscaled",

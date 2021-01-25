@@ -98,8 +98,8 @@ export const navFactory: NavFactory = {
   }),
   roles: (component) => ({
     href: 'roles',
-    // t('details-page~Role Bindings')
-    nameKey: 'details-page~Role Bindings',
+    // t('details-page~RoleBindings')
+    nameKey: 'details-page~RoleBindings',
     component,
   }),
   builds: (component) => ({
@@ -116,20 +116,20 @@ export const navFactory: NavFactory = {
   }),
   clusterServiceClasses: (component) => ({
     href: 'serviceclasses',
-    // t('details-page~Service Classes')
-    nameKey: 'details-page~Service Classes',
+    // t('details-page~ServiceClasses')
+    nameKey: 'details-page~ServiceClasses',
     component,
   }),
   clusterServicePlans: (component) => ({
     href: 'serviceplans',
-    // t('details-page~Service Plans')
-    nameKey: 'details-page~Service Plans',
+    // t('details-page~ServicePlans')
+    nameKey: 'details-page~ServicePlans',
     component,
   }),
   serviceBindings: (component) => ({
     href: 'servicebindings',
-    // t('details-page~Service Bindings')
-    nameKey: 'details-page~Service Bindings',
+    // t('details-page~ServiceBindings')
+    nameKey: 'details-page~ServiceBindings',
     component,
   }),
   clusterOperators: (component) => ({
@@ -140,8 +140,8 @@ export const navFactory: NavFactory = {
   }),
   machineConfigs: (component) => ({
     href: 'machineconfigs',
-    // t('details-page~Machine Configs')
-    nameKey: 'details-page~Machine Configs',
+    // t('details-page~MachineConfigs')
+    nameKey: 'details-page~MachineConfigs',
     component,
   }),
   machines: (component) => ({

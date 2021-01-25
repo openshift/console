@@ -17,7 +17,7 @@ const inventoryItems = [
   { title: 'PVC', link: `/k8s/ns/${testName}/persistentvolumeclaims` },
   { title: 'Service', link: `/k8s/ns/${testName}/services` },
   { title: 'Route', link: `/k8s/ns/${testName}/routes` },
-  { title: 'Config Map', link: `/k8s/ns/${testName}/configmaps` },
+  { title: 'ConfigMap', link: `/k8s/ns/${testName}/configmaps` },
   { title: 'Secret', link: `/k8s/ns/${testName}/secrets` },
 ];
 

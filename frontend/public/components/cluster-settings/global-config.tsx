@@ -20,7 +20,7 @@ const stateToProps = (state: RootState) => ({
 
 export const breadcrumbsForGlobalConfig = (detailsPageKind: string, detailsPagePath: string) => [
   {
-    name: 'Global Configuration',
+    name: i18next.t('details-page~Global Configuration'),
     path: '/settings/cluster/globalconfig',
   },
   {

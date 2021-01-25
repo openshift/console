@@ -63,7 +63,7 @@ const actionOnKind = (action: string, kind: string, humanizeKind: boolean) => {
 
   const humanizedKind = (kind.includes('~') ? kind.split('~')[2] : kind)
     .split(/(?=[A-Z])/)
-    .join(' ');
+    .join('');
 
   return `${action} ${humanizedKind}`;
 };

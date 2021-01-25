@@ -7,28 +7,28 @@ import * as crudView from '../views/crud.view';
 import * as yamlView from '../views/yaml.view';
 
 const chunkedRoutes = OrderedMap<string, { section: string; name: string }>()
-  .set('daemon-set', { section: 'Workloads', name: 'Daemon Sets' })
+  .set('daemon-set', { section: 'Workloads', name: 'DaemonSets' })
   .set('deployment', { section: 'Workloads', name: 'Deployments' })
-  .set('deployment-config', { section: 'Workloads', name: 'Deployment Configs' })
-  .set('replicaset', { section: 'Workloads', name: 'Replica Sets' }) // TODO should be replica-set
-  .set('replication-controller', { section: 'Workloads', name: 'Replication Controllers' })
-  .set('stateful-set', { section: 'Workloads', name: 'Stateful Sets' })
+  .set('deployment-config', { section: 'Workloads', name: 'DeploymentConfigs' })
+  .set('replicaset', { section: 'Workloads', name: 'ReplicaSets' }) // TODO should be replica-set
+  .set('replication-controller', { section: 'Workloads', name: 'ReplicationControllers' })
+  .set('stateful-set', { section: 'Workloads', name: 'StatefulSets' })
   .set('job', { section: 'Workloads', name: 'Jobs' })
-  .set('cron-job', { section: 'Workloads', name: 'Cron Jobs' })
-  .set('configmap', { section: 'Workloads', name: 'Config Maps' })
-  .set('hpa', { section: 'Workloads', name: 'Horizontal Pod Autoscalers' })
+  .set('cron-job', { section: 'Workloads', name: 'CronJobs' })
+  .set('configmap', { section: 'Workloads', name: 'ConfigMaps' })
+  .set('hpa', { section: 'Workloads', name: 'HorizontalPodAutoscalers' })
   .set('service', { section: 'Networking', name: 'Services' })
-  .set('persistent-volume', { section: 'Storage', name: 'Persistent Volumes' })
-  .set('persistent-volume-claim', { section: 'Storage', name: 'Persistent Volume Claims' })
-  .set('storage-class', { section: 'Storage', name: 'Storage Classes' })
-  .set('build-config', { section: 'Builds', name: 'Build Configs' })
-  .set('image-stream', { section: 'Builds', name: 'Image Streams' })
+  .set('persistent-volume', { section: 'Storage', name: 'PersistentVolumes' })
+  .set('persistent-volume-claim', { section: 'Storage', name: 'PersistentVolumeClaims' })
+  .set('storage-class', { section: 'Storage', name: 'StorageClasses' })
+  .set('build-config', { section: 'Builds', name: 'BuildConfigs' })
+  .set('image-stream', { section: 'Builds', name: 'ImageStreams' })
   .set('node', { section: 'Compute', name: 'Nodes' })
-  .set('service-account', { section: 'User Management', name: 'Service Accounts' })
-  .set('limit-range', { section: 'Administration', name: 'Limit Ranges' })
+  .set('service-account', { section: 'User Management', name: 'ServiceAccounts' })
+  .set('limit-range', { section: 'Administration', name: 'LimitRanges' })
   .set('custom-resource-definition', {
     section: 'Administration',
-    name: 'Custom Resource Definitions',
+    name: 'CustomResourceDefinitions',
   })
   .set('operator-hub', { section: 'Operators', name: 'OperatorHub' });
 
@@ -41,7 +41,7 @@ describe('Performance test', () => {
       performance.getEntriesByType('resource').filter(({ name }) => name.endsWith('.js')),
     );
 
-    await crudView.clickKebabAction('console-config', 'Edit Config Map');
+    await crudView.clickKebabAction('console-config', 'Edit ConfigMap');
     await yamlView.isLoaded();
 
     const postChunks = await browser.executeScript(() =>

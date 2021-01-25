@@ -155,30 +155,26 @@ const AdminNav = () => {
         <ResourceNSLink
           id="deploymentconfigs"
           resource="deploymentconfigs"
-          name={t('public~Deployment Configs')}
+          name={t('public~DeploymentConfigs')}
           required={FLAGS.OPENSHIFT}
         />
-        <ResourceNSLink
-          id="statefulsets"
-          resource="statefulsets"
-          name={t('public~Stateful Sets')}
-        />
+        <ResourceNSLink id="statefulsets" resource="statefulsets" name={t('public~StatefulSets')} />
         <ResourceNSLink id="secrets" resource="secrets" name={t('public~Secrets')} />
-        <ResourceNSLink id="configmaps" resource="configmaps" name={t('public~Config Maps')} />
+        <ResourceNSLink id="configmaps" resource="configmaps" name={t('public~ConfigMaps')} />
         <Separator id="WorkloadsSeparator" name={t('public~WorkloadsSeparator')} />
-        <ResourceNSLink id="cronjobs" resource="cronjobs" name={t('public~Cron Jobs')} />
+        <ResourceNSLink id="cronjobs" resource="cronjobs" name={t('public~CronJobs')} />
         <ResourceNSLink id="jobs" resource="jobs" name={t('public~Jobs')} />
-        <ResourceNSLink id="daemonsets" resource="daemonsets" name={t('public~Daemon Sets')} />
-        <ResourceNSLink id="replicasets" resource="replicasets" name={t('public~Replica Sets')} />
+        <ResourceNSLink id="daemonsets" resource="daemonsets" name={t('public~DaemonSets')} />
+        <ResourceNSLink id="replicasets" resource="replicasets" name={t('public~ReplicaSets')} />
         <ResourceNSLink
           id="replicationcontrollers"
           resource="replicationcontrollers"
-          name={t('public~Replication Controllers')}
+          name={t('public~ReplicationControllers')}
         />
         <ResourceNSLink
           id="horizontalpodautoscalers"
           resource="horizontalpodautoscalers"
-          name={t('public~Horizontal Pod Autoscalers')}
+          name={t('public~HorizontalPodAutoscalers')}
         />
       </NavSection>
 
@@ -206,7 +202,7 @@ const AdminNav = () => {
         <ResourceNSLink
           id="networkpolicies"
           resource="networkpolicies"
-          name={t('public~Network Policies')}
+          name={t('public~NetworkPolicies')}
         />
       </NavSection>
 
@@ -214,28 +210,28 @@ const AdminNav = () => {
         <ResourceClusterLink
           id="networkpolicies"
           resource="persistentvolumes"
-          name={t('public~Persistent Volumes')}
+          name={t('public~PersistentVolumes')}
           required={FLAGS.CAN_LIST_PV}
         />
         <ResourceNSLink
           id="persistentvolumeclaims"
           resource="persistentvolumeclaims"
-          name={t('public~Persistent Volume Claims')}
+          name={t('public~PersistentVolumeClaims')}
         />
         <ResourceClusterLink
           id="storageclasses"
           resource="storageclasses"
-          name={t('public~Storage Classes')}
+          name={t('public~StorageClasses')}
         />
         <ResourceNSLink
           id="volumesnapshots"
           resource={referenceForModel(VolumeSnapshotModel)}
-          name={t('public~Volume Snapshots')}
+          name={t('public~VolumeSnapshots')}
         />
         <ResourceClusterLink
           id="volumesnapshotclasses"
           resource={referenceForModel(VolumeSnapshotClassModel)}
-          name={t('public~Volume Snapshot Classes')}
+          name={t('public~VolumeSnapshotClasses')}
         />
       </NavSection>
 
@@ -245,16 +241,12 @@ const AdminNav = () => {
         required={FLAGS.OPENSHIFT}
         data-quickstart-id="qs-nav-builds"
       >
-        <ResourceNSLink
-          id="buildconfigs"
-          resource="buildconfigs"
-          name={t('public~Build Configs')}
-        />
+        <ResourceNSLink id="buildconfigs" resource="buildconfigs" name={t('public~BuildConfigs')} />
         <ResourceNSLink id="builds" resource="builds" name={t('public~Builds')} />
         <ResourceNSLink
           id="imagestreams"
           resource="imagestreams"
-          name={t('public~Image Streams')}
+          name={t('public~ImageStreams')}
           startsWith={imagestreamsStartsWith}
         />
       </NavSection>
@@ -307,7 +299,7 @@ const AdminNav = () => {
         <HrefLink
           id="machinesets"
           href={formatNamespacedRouteForResource(referenceForModel(MachineSetModel), machineNS)}
-          name={t('public~Machine Sets')}
+          name={t('public~MachineSets')}
           required={FLAGS.CLUSTER_API}
         />
         <HrefLink
@@ -316,7 +308,7 @@ const AdminNav = () => {
             referenceForModel(MachineAutoscalerModel),
             machineNS,
           )}
-          name={t('public~Machine Autoscalers')}
+          name={t('public~MachineAutoscalers')}
           required={FLAGS.MACHINE_AUTOSCALER}
         />
         <HrefLink
@@ -325,7 +317,7 @@ const AdminNav = () => {
             referenceForModel(MachineHealthCheckModel),
             machineNS,
           )}
-          name={t('public~Machine Health Checks')}
+          name={t('public~MachineHealthChecks')}
           required={FLAGS.MACHINE_HEALTH_CHECK}
         />
         <Separator
@@ -336,13 +328,13 @@ const AdminNav = () => {
         <ResourceClusterLink
           id="machineconfigs"
           resource={referenceForModel(MachineConfigModel)}
-          name={t('public~Machine Configs')}
+          name={t('public~MachineConfigs')}
           required={FLAGS.MACHINE_CONFIG}
         />
         <ResourceClusterLink
           id="machineconfigpools"
           resource={referenceForModel(MachineConfigPoolModel)}
-          name={t('public~Machine Config Pools')}
+          name={t('public~MachineConfigPools')}
           required={FLAGS.MACHINE_CONFIG}
         />
       </NavSection>
@@ -367,7 +359,7 @@ const AdminNav = () => {
         <ResourceNSLink
           id="serviceaccounts"
           resource="serviceaccounts"
-          name={t('public~Service Accounts')}
+          name={t('public~ServiceAccounts')}
         />
         <ResourceNSLink
           id="roles"
@@ -378,7 +370,7 @@ const AdminNav = () => {
         <ResourceNSLink
           id="rolebindings"
           resource="rolebindings"
-          name={t('public~Role Bindings')}
+          name={t('public~RoleBindings')}
           startsWith={rolebindingsStartsWith}
         />
       </NavSection>
@@ -405,10 +397,10 @@ const AdminNav = () => {
         <ResourceNSLink
           id="resourcequotas"
           resource="resourcequotas"
-          name={t('public~Resource Quotas')}
+          name={t('public~ResourceQuotas')}
           startsWith={quotaStartsWith}
         />
-        <ResourceNSLink id="roles" resource="limitranges" name={t('public~Limit Ranges')} />
+        <ResourceNSLink id="roles" resource="limitranges" name={t('public~LimitRanges')} />
         <HrefLink
           id="metering"
           href={formatNamespacedRouteForResource(
@@ -422,7 +414,7 @@ const AdminNav = () => {
         <ResourceClusterLink
           id="customresourcedefinitions"
           resource="customresourcedefinitions"
-          name={t('public~Custom Resource Definitions')}
+          name={t('public~CustomResourceDefinitions')}
           required={FLAGS.CAN_LIST_CRD}
         />
       </NavSection>

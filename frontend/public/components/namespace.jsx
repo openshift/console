@@ -438,7 +438,7 @@ export const NamespacesPage = withUserSettingsCompatibility(
         ),
         id: NamespacesColumnManagementID,
         selectedColumns,
-        type: 'Namespaces',
+        type: t('public~Namespaces'),
       }}
     />
   );
@@ -815,7 +815,7 @@ export const ProjectsPage = connectToFlags(
             tableColumns?.[projectColumnManagementID]?.length > 0
               ? new Set(tableColumns[projectColumnManagementID])
               : null,
-          type: 'Project',
+          type: t('public~Project'),
         }}
       />
     );
