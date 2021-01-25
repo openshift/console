@@ -9,10 +9,15 @@ import {
   HrefNavItem,
 } from '@console/plugin-sdk';
 import { FLAG_RHOAS_KAFKA } from './const';
-
+import { rhoasTopologyPlugin, TopologyConsumedExtensions } from './topology/rhoas-topology-plugin'
 import * as models from './models';
 
-type ConsumedExtensions = ModelDefinition | ModelFeatureFlag | RoutePage | AddAction | HrefNavItem;
+type ConsumedExtensions = ModelDefinition
+  | ModelFeatureFlag
+  | RoutePage
+  | AddAction
+  | HrefNavItem
+  | TopologyConsumedExtensions
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -74,6 +79,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       icon: rhoasIcon,
     },
   },
+  ...rhoasTopologyPlugin
 ];
 
 export default plugin;

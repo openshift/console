@@ -1,0 +1,31 @@
+@import '../../../../topology/src/components/topology-utils.scss';
+
+.odc-rhoas {
+  outline: none;
+  cursor: pointer;
+
+  .odc-m-drag-active & {
+    pointer-events: none;
+  }
+
+  &__bg {
+    fill: $group-node-fill-color;
+    fill-opacity: $group-node-fill-opacity;
+    stroke: $group-node-stroke-color;
+    stroke-width: $group-node-stroke-width;
+    stroke-dasharray: $group-node-stroke-dasharray;
+  }
+
+  &.is-filtered &__bg {
+    stroke: $filtered-stroke-color;
+    stroke-width: $group-node-filtered-stroke-width;
+    stroke-dasharray: none;
+  }
+
+  &.is-selected &__bg {
+    stroke: $selected-stroke-color;
+    fill: $selected-fill-color;
+    stroke-width: $group-node-selected-stroke-width;
+    stroke-dasharray: $group-node-stroke-dasharray;
+  }
+}
