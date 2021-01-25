@@ -16,5 +16,9 @@
   "Username": "Username",
   "The displayed username.": "The displayed username.",
   "Link names": "Link names",
-  "Find and link channel names and usernames.": "Find and link channel names and usernames."
+  "Find and link channel names and usernames.": "Find and link channel names and usernames.",
+  "Title": "Title",
+  "The title of the Slack message.": "The title of the Slack message.",
+  "Text": "Text",
+  "The text of the Slack message.": "The text of the Slack message."
 }

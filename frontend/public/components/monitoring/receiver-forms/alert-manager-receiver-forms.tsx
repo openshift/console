@@ -255,6 +255,8 @@ const ReceiverBaseForm: React.FC<ReceiverBaseFormProps> = ({
     ['slack_icon_emoji']: '{{ template "slack.default.iconemoji" .}}',
     ['slack_icon_url']: '{{ template "slack.default.iconurl" .}}',
     ['slack_link_names']: false,
+    ['slack_title']: '{{ template "slack.default.title" .}}',
+    ['slack_text']: '{{ template "slack.default.text" .}}',
     ['webhook_send_resolved']: true,
   };
 
