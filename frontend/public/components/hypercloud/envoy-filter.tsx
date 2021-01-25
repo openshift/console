@@ -2,7 +2,8 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-import { Translation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 
 import { K8sResourceKind } from '../../module/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from '../factory';
@@ -15,6 +16,34 @@ export const menuActions: KebabAction[] = [...Kebab.getExtensionsActionsForKind(
 const kind = EnvoyFilterModel.kind;
 
 const tableColumnClasses = ['', '', classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'), Kebab.columnClass];
+
+const EnvoyFilterTableHeader = (t?: TFunction) => {
+  return [
+    {
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_1'),
+      sortField: 'metadata.name',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[0] },
+    },
+    {
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_2'),
+      sortFunc: 'metadata.namespace',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[1] },
+    },
+    {
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_12'),
+      sortField: 'metadata.creationTimestamp',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[2] },
+    },
+    {
+      title: '',
+      props: { className: tableColumnClasses[3] },
+    },
+  ];
+};
+EnvoyFilterTableHeader.displayName = 'EnvoyFilterTableHeader';
 
 const EnvoyFilterTableRow: RowFunction<K8sResourceKind> = ({ obj: envoyfilter, index, key, style }) => {
   return (
@@ -51,33 +80,10 @@ const EnvoyFilterDetails: React.FC<EnvoyFilterDetailsProps> = ({ obj: envoyfilte
 );
 
 const { details, editYaml } = navFactory;
-export const EnvoyFilters: React.FC = props =>
-  <Translation>{
-    (t) => <Table {...props} aria-label="Envoy Filters" Header={() => [
-      {
-        title: t('COMMON:MSG_MAIN_TABLEHEADER_1'),
-        sortField: 'metadata.name',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[0] },
-      },
-      {
-        title: t('COMMON:MSG_MAIN_TABLEHEADER_2'),
-        sortFunc: 'metadata.namespace',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[1] },
-      },
-      {
-        title: t('COMMON:MSG_MAIN_TABLEHEADER_12'),
-        sortField: 'metadata.creationTimestamp',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[2] },
-      },
-      {
-        title: '',
-        props: { className: tableColumnClasses[3] },
-      },
-    ]} Row={EnvoyFilterTableRow} virtualize />
-  }</Translation>;
+export const EnvoyFilters: React.FC = props => {
+  const { t } = useTranslation();
+  return <Table {...props} aria-label="Envoy Filters" Header={EnvoyFilterTableHeader.bind(null, t)} Row={EnvoyFilterTableRow} virtualize />;
+};
 
 export const EnvoyFiltersPage: React.FC<EnvoyFiltersPageProps> = props => <ListPage canCreate={true} ListComponent={EnvoyFilters} kind={kind} {...props} />;
 

@@ -2,7 +2,8 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-import { Translation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 
 import { K8sResourceKind } from '../../module/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from '../factory';
@@ -15,6 +16,34 @@ export const menuActions: KebabAction[] = [...Kebab.getExtensionsActionsForKind(
 const kind = PeerAuthenticationModel.kind;
 
 const tableColumnClasses = ['', '', classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'), Kebab.columnClass];
+
+const PeerAuthenticationTableHeader = (t?: TFunction) => {
+  return [
+    {
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_1'),
+      sortField: 'metadata.name',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[0] },
+    },
+    {
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_2'),
+      sortFunc: 'metadata.namespace',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[1] },
+    },
+    {
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_12'),
+      sortField: 'metadata.creationTimestamp',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[2] },
+    },
+    {
+      title: '',
+      props: { className: tableColumnClasses[3] },
+    },
+  ];
+};
+PeerAuthenticationTableHeader.displayName = 'PeerAuthenticationTableHeader';
 
 const PeerAuthenticationTableRow: RowFunction<K8sResourceKind> = ({ obj: peerauthentication, index, key, style }) => {
   return (
@@ -51,33 +80,10 @@ const PeerAuthenticationDetails: React.FC<PeerAuthenticationDetailsProps> = ({ o
 );
 
 const { details, editYaml } = navFactory;
-export const PeerAuthentications: React.FC = props =>
-  <Translation>{
-    (t) => <Table {...props} aria-label="Peer Authentications" Header={() => [
-      {
-        title: t('COMMON:MSG_MAIN_TABLEHEADER_1'),
-        sortField: 'metadata.name',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[0] },
-      },
-      {
-        title: t('COMMON:MSG_MAIN_TABLEHEADER_2'),
-        sortFunc: 'metadata.namespace',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[1] },
-      },
-      {
-        title: t('COMMON:MSG_MAIN_TABLEHEADER_12'),
-        sortField: 'metadata.creationTimestamp',
-        transforms: [sortable],
-        props: { className: tableColumnClasses[2] },
-      },
-      {
-        title: '',
-        props: { className: tableColumnClasses[3] },
-      },
-    ]} Row={PeerAuthenticationTableRow} virtualize />
-  }</Translation>;
+export const PeerAuthentications: React.FC = props => {
+  const { t } = useTranslation();
+  return <Table {...props} aria-label="Peer Authentications" Header={PeerAuthenticationTableHeader.bind(null, t)} Row={PeerAuthenticationTableRow} virtualize />;
+};
 
 export const PeerAuthenticationsPage: React.FC<PeerAuthenticationsPageProps> = props => <ListPage canCreate={true} ListComponent={PeerAuthentications} kind={kind} {...props} />;
 
