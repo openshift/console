@@ -7,7 +7,7 @@ import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from '
 import { Kebab, detailsPage, Timestamp, navFactory, ResourceKebab, ResourceLink, ResourceSummary, SectionHeading } from '../utils';
 import { RepositoryModel } from '../../models/hypercloud';
 import { Tags } from './tags';
-// import { scanningModal } from './modals';
+import { scanningModal } from './modals';
 
 export const menuActions = [...Kebab.factory.common, Kebab.factory.ModifyScanning];
 
@@ -75,14 +75,16 @@ const RepositoriesList = (props) => (
   />
 );
 const RepositoriesPage = (props) => {
-  const { canCreate = true } = props;
+
+
+  const { canCreate = true, namespace, selector: { matchLabels: { registry } } } = props;
   return (
     <>
-      {/* <div className="pf-m-expanded" style={{ padding: '30px 0 0 30px' }}>
-        <button className="pf-c-dropdown__toggle pf-m-primary" style={{ backgroundColor: '#0066cc', color: 'white', fontSize: '14px', width: '150px', height: '25px', display: 'flex', justifyContent: 'center' }} onClick={scanningModal.bind(null, { kind: 'Repository', showNs: false })}>
+      <div className="pf-m-expanded" style={{ padding: '30px 0 0 30px' }}>
+        <button className="pf-c-dropdown__toggle pf-m-primary" style={{ backgroundColor: '#0066cc', color: 'white', fontSize: '14px', width: '150px', height: '25px', display: 'flex', justifyContent: 'center' }} onClick={scanningModal.bind(null, { kind: 'Repository', ns: namespace, showNs: false, labelSelector: { registry } })}>
           Image Scan Request
       </button>
-      </div> */}
+      </div>
       <ListPage canCreate={canCreate} kind="Repository" ListComponent={RepositoriesList} {...props} />
     </>
   );

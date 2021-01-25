@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import { RepositoriesPage } from './repository';
 import { Resources } from './resources';
-// import { scanningModal } from './modals';
+import { scanningModal } from './modals';
 import { withRouter, match } from 'react-router-dom';
 
 export const menuActions: KebabAction[] = [...Kebab.getExtensionsActionsForKind(RegistryModel), ...Kebab.factory.common, Kebab.factory.ModifyScanning];
@@ -153,42 +153,42 @@ const filters = [
   },
 ];
 
-// const registryCreateAction = (history, item) => {
-//   const pathname = window.location.pathname;
-//   const pathNameSplit = pathname.split('/');
-//   const allNS = pathNameSplit[2];
-//   let ns;
-//   if (allNS !== 'all-namespaces') {
-//     ns = pathNameSplit[3];
-//   }
+const registryCreateAction = (history, item) => {
+  const pathname = window.location.pathname;
+  const pathNameSplit = pathname.split('/');
+  const allNS = pathNameSplit[2];
+  let ns;
+  if (allNS !== 'all-namespaces') {
+    ns = pathNameSplit[3];
+  }
 
-//   switch (item) {
-//     case 'scan':
-//       scanningModal({ kind: 'Registry', ns });
-//       break;
-//     case 'generic':
-//       history.push('/');
-//       if (allNS === 'all-namespaces') {
-//         history.push('/k8s/ns/default/registries/~new');
-//       } else {
-//         history.push(`/k8s/ns/${ns}/registries/~new`);
-//       }
-//       break;
-//   }
-// }
+  switch (item) {
+    case 'scan':
+      scanningModal({ kind: 'Registry', ns, showNs: true });
+      break;
+    case 'generic':
+      history.push('/');
+      if (allNS === 'all-namespaces') {
+        history.push('/k8s/ns/default/registries/~new');
+      } else {
+        history.push(`/k8s/ns/${ns}/registries/~new`);
+      }
+      break;
+  }
+}
 
 export const RegistriesPage = withRouter(props => {
-  // const createItems = {
-  //   generic: 'Create Registry',
-  //   scan: 'Image Scan Request',
-  // }
+  const createItems = {
+    generic: 'Create Registry',
+    scan: 'Image Scan Request',
+  }
 
-  // const createProps = {
-  //   items: createItems,
-  //   action: registryCreateAction.bind(null, props.history)
-  // }
+  const createProps = {
+    items: createItems,
+    action: registryCreateAction.bind(null, props.history)
+  }
 
-  return <ListPage canCreate={true} /* createProps={createProps} */ ListComponent={Registries} rowFilters={filters} kind={kind} {...props} />;
+  return <ListPage canCreate={true} createProps={createProps} ListComponent={Registries} rowFilters={filters} kind={kind} {...props} />;
 });
 
 const RepositoriesTab: React.FC<RepositoriesTabProps> = ({ obj }) => {

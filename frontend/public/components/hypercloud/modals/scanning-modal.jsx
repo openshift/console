@@ -13,35 +13,60 @@ import { ResourceIcon } from '../utils';
 import { modelFor } from '../../../module/k8s/k8s-models';
 import { NamespaceModel } from '@console/internal/models';
 import { withRouter } from 'react-router-dom';
+import { oidcClientIDInput } from 'integration-tests/views/oauth.view';
 
 class BaseScanningModal extends PromiseComponent {
     constructor(props) {
         super(props);
-        console.log('base scanning modal');
-        console.log({ props });
-
         this._submit = this._submit.bind(this);
         this._cancel = props.cancel.bind(this);
 
         this.state = Object.assign(this.state, {
             name: '',
-            selected: new Set([]),
-            allData: [],
             dataList: [],
             namespaces: [],
             namespace: '',
+            resources: [],
+            resource: [],
         });
+    }
+
+    componentDidMount() {
+        const { showNs } = this.props;
+        showNs && this.getNamespaceList();
+        const { ns } = this.props;
+        this.setState({ namespace: ns });
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (prevState.namespace !== this.state.namespace) {
+            return this.getResourceList();
+        }
+    }
+
+    async getNamespaceList() {
+        const { ns } = this.props;
+        const list = await k8sList(NamespaceModel);
+        const namespaces = list.map(item => item.metadata.name);
+        const namespace = ns || namespaces[0];
+        this.setState({ namespaces, namespace });
+    }
+
+    async getResourceList() {
+        const { kind, ns, labelSelector } = this.props;
+        const list = await k8sList(modelFor(kind), { ns: this.state.namespace, labelSelector });
+        const resources = list.map(item => item.metadata.name);
+        return this.setState({ resources });
     }
 
     _submit(e) {
         e.preventDefault();
 
-        const { kind, ns, modelKind, resource } = this.props;
+        const { kind, ns, modelKind, resource, labelSelector } = this.props;
 
         let registries;
-        const selectedArray = Array.from(this.state.selected);
 
-        if (kind === 'Registry' || modelKind.kind === 'Registry') {
+        if (kind === 'Registry' || modelKind?.kind === 'Registry') {
             if (resource) {
                 registries = [{
                     'name': resource.metadata.name,
@@ -52,19 +77,17 @@ class BaseScanningModal extends PromiseComponent {
                     ]
                 }];
             }
-            // else {
-            //     registries = selectedArray.map(selectedItem => ({
-            //         'name': selectedItem,
-            //         'repositories': [
-            //             {
-            //                 'name': '*'
-            //             }
-            //         ]
-            //     }))
-            // }
-        }
-
-        if (kind === 'Repository' || modelKind.kind === 'Repository') {
+            else {
+                registries = this.state.resource.map(selectedItem => ({
+                    'name': selectedItem,
+                    'repositories': [
+                        {
+                            'name': '*'
+                        }
+                    ]
+                }))
+            }
+        } else if (kind === 'Repository' || modelKind?.kind === 'Repository') {
             if (resource) {
                 registries = [{
                     'name': resource.spec.registry,
@@ -78,23 +101,26 @@ class BaseScanningModal extends PromiseComponent {
                     ]
                 }];
             }
-            // else {
-            //     registries = selectedArray.map(selectedItem => ({
-            //         'name': selectedItem,
-            //         'repositories': [
-            //             {
-            //                 'name': '*'
-            //             }
-            //         ]
-            //     }))
-            // }
+            else {
+                registries = [{
+                    'name': labelSelector.registry,
+                    'repositories': this.state.resource.map(selectedItem => (
+                        {
+                            'name': selectedItem,
+                            'versions': [
+                                '*'
+                            ]
+                        }
+                    ))
+                }];
+            }
         }
 
         const data = { registries };
 
 
         const opts = {
-            ns: ns || resource.metadata.namespace,
+            ns: (this.state.namespace !== '' && this.state.namespace) || resource.metadata.namespace,
             plural: 'scans',
             name: this.state.name,
         };
@@ -111,8 +137,10 @@ class BaseScanningModal extends PromiseComponent {
     successSubmit = ({ imageScanRequestName }) => {
         const { resource } = this.props;
 
+        const namespace = resource?.metadata.namespace || this.state.namespace;
+
         this.props.close();
-        history.push(`/k8s/ns/${resource.metadata.namespace}/imagescanrequests/${imageScanRequestName}`);
+        history.push(`/k8s/ns/${namespace}/imagescanrequests/${imageScanRequestName}`);
     }
 
     onChangeName = (e) => {
@@ -123,24 +151,9 @@ class BaseScanningModal extends PromiseComponent {
         this.setState({ namespace: e.target.value });
     }
 
-    toggleSelected = selection => {
-        if (this.state.selected.has('All') || selection === 'All') {
-            this.setState({ selected: new Set([selection]) });
-        } else {
-            const updateItems = new Set(this.state.selected);
-            updateItems.has(selection) ? updateItems.delete(selection) : updateItems.add(selection);
-            this.setState({ selected: updateItems });
-        }
-    };
-
-    clearSelection = () => {
-        this.setState({ selected: new Set([]) });
-    };
-
-    setAllData = (allData) => {
-        this.setState(({ allData: [...allData] }));
-        console.log('set All Data');
-        console.log({ allData });
+    onChangeResource = (e) => {
+        const resource = Array.from(e.target.selectedOptions, option => option.value);
+        this.setState({ resource });
     }
 
     render() {
@@ -148,13 +161,11 @@ class BaseScanningModal extends PromiseComponent {
         const { selected } = this.state;
 
         let label;
-        if (kind === 'Registry' || modelKind.kind === 'Registry') {
+        if (kind === 'Registry' || modelKind?.kind === 'Registry') {
             label = 'Image Registry';
         } else {
-            label = kind || modelKind.kind;
+            label = kind || modelKind?.kind;
         }
-
-        console.log({ resource });
 
         return (
             <form onSubmit={this._submit} name="form" className="modal-content">
@@ -174,7 +185,7 @@ class BaseScanningModal extends PromiseComponent {
                         {showNs && <div className="col-sm-12" style={{ marginBottom: '15px' }}>
                             <Section label="Namespace" id="namespace" isRequired={true}>
                                 <select className="col-sm-12" value={this.state.namespace} onChange={this.onChangeNamespace}>
-                                    {this.state.namespaces.map(namespace => <option value={namespace}>{namespace}</option>)}
+                                    {this.state.namespaces.map(namespace => <option key={namespace} value={namespace}>{namespace}</option>)}
                                 </select>
                             </Section>
                         </div>}
@@ -185,28 +196,10 @@ class BaseScanningModal extends PromiseComponent {
                             <div className="co-search-group">
                                 {resource ?
                                     <div>{resource.metadata.name}</div> :
-                                    <RegistryListDropdown onChange={this.toggleSelected} selected={Array.from(selected)} showAll clearSelection={this.clearSelection} setAllData={this.setAllData} namespace={this.state.namespace} className="co-search-group__registry" />
+                                    <select className="col-sm-12" value={this.state.resource} onChange={this.onChangeResource} multiple>
+                                        {this.state.resources.map(resource => <option key={resource} value={resource}>{resource}</option>)}
+                                    </select>
                                 }
-                            </div>
-
-                            <div className="form-group">
-                                <ChipGroup withToolbar defaultIsOpen={false}>
-                                    <ChipGroupToolbarItem key="resources-category" categoryName="Registry">
-                                        {[...selected].map(chip => (
-                                            <Chip key={chip} onClick={() => this.toggleSelected(chip)}>
-                                                <ResourceIcon kind={chip} />
-                                                {kindForReference(chip)}
-                                            </Chip>
-                                        ))}
-                                        {selected.size > 0 && (
-                                            <>
-                                                <Button variant="plain" aria-label="Close" onClick={this.clearSelection}>
-                                                    <CloseIcon />
-                                                </Button>
-                                            </>
-                                        )}
-                                    </ChipGroupToolbarItem>
-                                </ChipGroup>
                             </div>
                         </div>
                     </div>
