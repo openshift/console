@@ -8,15 +8,16 @@ import {
   TableBody,
 } from '@patternfly/react-table';
 
-const StreamsInstanceTable: any = ({ kafkaArray }) => {
-  const tableColumns = [
-    { title: 'Cluster Name', transforms: [sortable] },
-    { title: 'Bootstrap URL', transforms: [sortable], cellTransforms: [truncate] },
-    { title: 'Provider', transforms: [sortable] },
-    { title: 'Owner', transforms: [sortable] },
-  ];
+type FormattedKafkas = {
+  cells: JSX.Element[];
+  selected: boolean;
+};
 
-  const tableRowData = () => {
+const StreamsInstanceTable: any = ({ kafkaArray, selectedKafkas, setSelectedKafkas }) => {
+
+  const [formattedKafkas, setFormattedKafkas] = React.useState<FormattedKafkas[]>([]);
+
+  const formatTableRowData = () => {
     const tableRow: (IRowData | string[])[] | undefined = [];
 
     kafkaArray.forEach((row: IRowData) => {
@@ -35,18 +36,59 @@ const StreamsInstanceTable: any = ({ kafkaArray }) => {
     return tableRow;
   };
 
-  const onSelectTableRow = () => { };
+  React.useEffect(() => {
+    setFormattedKafkas(formatTableRowData(kafkaArray));
+  }, [kafkaArray]);
+
+  const tableColumns = [
+    { title: 'Cluster Name', transforms: [sortable] },
+    { title: 'Bootstrap URL', transforms: [sortable], cellTransforms: [truncate] },
+    { title: 'Provider', transforms: [sortable] },
+    { title: 'Owner', transforms: [sortable] },
+  ];
+
+  const onSelectTableRow = (event, isSelected, rowId) => {
+    let rows;
+    if (rowId === -1) {
+      rows = formattedKafkas.map(row => {
+        row.selected = isSelected;
+        return row;
+      })
+    } else {
+      rows = [...formattedKafkas];
+      rows[rowId].selected = isSelected;
+
+      const copyOfSelectedKafkas = [...selectedKafkas];
+      if (copyOfSelectedKafkas.includes(rowId)) {
+        const index = copyOfSelectedKafkas.indexOf(rowId);
+        if (index === 0) {
+          copyOfSelectedKafkas.shift();
+        }
+        else {
+          copyOfSelectedKafkas.splice(index, 1);
+        }
+        setSelectedKafkas(copyOfSelectedKafkas);
+      } else {
+        setSelectedKafkas([rowId, ...selectedKafkas]);
+      }
+    }
+    setFormattedKafkas(rows);
+  };
 
   return (
-    <Table
-      aria-label="List of Kafka Instances"
-      cells={tableColumns}
-      rows={tableRowData()}
-      onSelect={onSelectTableRow}
-    >
-      <TableHeader />
-      <TableBody />
-    </Table>
+    <>
+    { formattedKafkas && (
+      <Table
+        aria-label="List of Kafka Instances"
+        cells={tableColumns}
+        rows={formattedKafkas}
+        onSelect={onSelectTableRow}
+      >
+        <TableHeader />
+        <TableBody />
+      </Table>
+    )}
+    </>
   );
 };
 
