@@ -4,16 +4,24 @@ import { useEffect, useState } from 'react';
 import { k8sGet } from '../../module/k8s';
 import { RepositoryModel } from '../../models/hypercloud';
 import { compoundExpand, sortable } from '@patternfly/react-table';
+import { Kebab, ResourceKebab } from '../utils';
 import { SingleExpandableTable } from './utils/expandable-table';
 import { ExpandableInnerTable } from './utils/expandable-inner-table';
 
-export const Tags: React.SFC<TagsProps> = React.memo(({ tags, namespace, repository }) => {
+export const menuActions = [Kebab.factory.ModifyScanning];
+
+const tableColumnClasses = [
+  Kebab.columnClass,
+];
+
+export const Tags: React.SFC<TagsProps> = React.memo(({ tags, namespace, repository, registry }) => {
   const [addedTags, setAddedTags] = useState(tags);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    let mounted = true;
-    getScans(mounted);
-    return () => (mounted = false);
+    setLoading(true);
+    getScans();
+    return () => (setLoading(false));
   }, []);
 
 
@@ -38,8 +46,8 @@ export const Tags: React.SFC<TagsProps> = React.memo(({ tags, namespace, reposit
   }
 
 
-  const getScans = async (mounted) => {
-    if (mounted) {
+  const getScans = async () => {
+    if (loading) {
       const model = Object.assign({}, RepositoryModel);
       model.apiGroup = 'registry.' + model.apiGroup;
 
@@ -55,13 +63,13 @@ export const Tags: React.SFC<TagsProps> = React.memo(({ tags, namespace, reposit
   return (
     <>
       <div className="co-m-pane__body">
-        <TagsListTable tags={addedTags} namespace={namespace} repository={repository} />
+        <TagsListTable tags={addedTags} namespace={namespace} repository={repository} registry={registry} />
       </div>
     </>
   );
 });
 
-const TagsListTable = ({ tags, namespace, repository }) => {
+const TagsListTable = ({ tags, namespace, repository, registry }) => {
 
   const TagsListHeaderColumns = [
     'Name',
@@ -71,9 +79,17 @@ const TagsListTable = ({ tags, namespace, repository }) => {
       cellTransforms: [compoundExpand],
     },
     'Created Time',
+    {
+      title: '',
+      props: { className: tableColumnClasses[0] }
+    }
   ];
 
   const rowRenderer = (index, obj) => {
+    obj.registry = registry;
+    obj.repository = repository;
+    obj.kind = 'Tag';
+    obj.namespace = namespace;
     return [
       {
         title: obj?.version,
@@ -90,6 +106,10 @@ const TagsListTable = ({ tags, namespace, repository }) => {
       {
         title: obj?.createdAt
       },
+      {
+        title: <ResourceKebab actions={menuActions} kind='Tag' resource={obj} />,
+        props: { className: tableColumnClasses[0] }
+      }
     ];
   };
 
@@ -159,5 +179,6 @@ const TagsListTable = ({ tags, namespace, repository }) => {
 export type TagsProps = {
   tags: any;
   namespace: string;
-  repository: string;
+  repository?: string;
+  registry?: string;
 };
