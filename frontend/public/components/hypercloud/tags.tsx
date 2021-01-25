@@ -16,12 +16,12 @@ const tableColumnClasses = [
 
 export const Tags: React.SFC<TagsProps> = React.memo(({ tags, namespace, repository, registry }) => {
   const [addedTags, setAddedTags] = useState(tags);
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setLoading(true);
+    // setLoading(true);
     getScans();
-    return () => (setLoading(false));
+    // return () => (setLoading(false));
   }, []);
 
 
@@ -47,17 +47,17 @@ export const Tags: React.SFC<TagsProps> = React.memo(({ tags, namespace, reposit
 
 
   const getScans = async () => {
-    if (loading) {
-      const model = Object.assign({}, RepositoryModel);
-      model.apiGroup = 'registry.' + model.apiGroup;
+    // if (loading) {
+    const model = Object.assign({}, RepositoryModel);
+    model.apiGroup = 'registry.' + model.apiGroup;
 
-      const scans = await k8sGet(model, repository, namespace, { path: 'imagescanresults' });
+    const scans = await k8sGet(model, repository, namespace, { path: 'imagescanresults' });
 
-      setAddedTags(addedTags.map((addedTag) => {
-        addedTag.severity = getWorstScan(scans, addedTag.version);
-        return addedTag;
-      }));
-    }
+    setAddedTags(addedTags.map((addedTag) => {
+      addedTag.severity = getWorstScan(scans, addedTag.version);
+      return addedTag;
+    }));
+    // }
   }
 
   return (
