@@ -64,10 +64,11 @@ const VirtualMachineInstanceTableRow: RowFunction<K8sResourceKind> = ({ obj: vir
   );
 };
 
-const VirtualMachineInstanceDetails: React.FC<VirtualMachineInstanceDetailsProps> = ({ obj: virtualmachineinstance }) => (
-  <>
+const VirtualMachineInstanceDetails: React.FC<VirtualMachineInstanceDetailsProps> = ({ obj: virtualmachineinstance }) => {
+  const { t } = useTranslation();
+  return <>
     <div className="co-m-pane__body">
-      <SectionHeading text="Virtual Machine Instance Details" />
+      <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_34')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
       <div className="row">
         <div className="col-lg-6">
           <ResourceSummary resource={virtualmachineinstance} />
@@ -76,8 +77,8 @@ const VirtualMachineInstanceDetails: React.FC<VirtualMachineInstanceDetailsProps
     </div>
     <div className="co-m-pane__body">
     </div>
-  </>
-);
+  </>;
+};
 
 const { details, editYaml } = navFactory;
 export const VirtualMachineInstances: React.FC = props => {
@@ -85,7 +86,10 @@ export const VirtualMachineInstances: React.FC = props => {
   return <Table {...props} aria-label="Virtual Machine Instances" Header={VirtualMachineInstanceTableHeader.bind(null, t)} Row={VirtualMachineInstanceTableRow} virtualize />;
 };
 
-export const VirtualMachineInstancesPage: React.FC<VirtualMachineInstancesPageProps> = props => <ListPage canCreate={false} ListComponent={VirtualMachineInstances} kind={kind} {...props} />;
+export const VirtualMachineInstancesPage: React.FC<VirtualMachineInstancesPageProps> = props => {
+  const { t } = useTranslation();
+  return <ListPage title={t('COMMON:MSG_LNB_MENU_34')} canCreate={false} ListComponent={VirtualMachineInstances} kind={kind} {...props} />;
+};
 
 export const VirtualMachineInstancesDetailsPage: React.FC<VirtualMachineInstancesDetailsPageProps> = props => <DetailsPage {...props} kind={kind} menuActions={menuActions} pages={[details(detailsPage(VirtualMachineInstanceDetails)), editYaml()]} />;
 

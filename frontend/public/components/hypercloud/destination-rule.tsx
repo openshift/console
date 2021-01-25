@@ -73,10 +73,11 @@ const DestinationRuleTableRow: RowFunction<K8sResourceKind> = ({ obj: destinatio
   );
 };
 
-const DestinationRuleDetails: React.FC<DestinationRuleDetailsProps> = ({ obj: destinationrule }) => (
-  <>
+const DestinationRuleDetails: React.FC<DestinationRuleDetailsProps> = ({ obj: destinationrule }) => {
+  const { t } = useTranslation();
+  return <>
     <div className="co-m-pane__body">
-      <SectionHeading text="Destination Rule Details" />
+      <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_37')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
       <div className="row">
         <div className="col-lg-6">
           <ResourceSummary resource={destinationrule} />
@@ -85,8 +86,8 @@ const DestinationRuleDetails: React.FC<DestinationRuleDetailsProps> = ({ obj: de
     </div>
     <div className="co-m-pane__body">
     </div>
-  </>
-);
+  </>;
+};
 
 const { details, editYaml } = navFactory;
 export const DestinationRules: React.FC = props => {
@@ -94,7 +95,10 @@ export const DestinationRules: React.FC = props => {
   return <Table {...props} aria-label="Destination Rules" Header={DestinationRuleTableHeader.bind(null, t)} Row={DestinationRuleTableRow} virtualize />;
 };
 
-export const DestinationRulesPage: React.FC<DestinationRulesPageProps> = props => <ListPage canCreate={true} ListComponent={DestinationRules} kind={kind} {...props} />;
+export const DestinationRulesPage: React.FC<DestinationRulesPageProps> = props => {
+  const { t } = useTranslation();
+  return <ListPage title={t('COMMON:MSG_LNB_MENU_37')} createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:MSG_LNB_MENU_37') })} canCreate={true} ListComponent={DestinationRules} kind={kind} {...props} />;
+};
 
 export const DestinationRulesDetailsPage: React.FC<DestinationRulesDetailsPageProps> = props => <DetailsPage {...props} kind={kind} menuActions={menuActions} pages={[details(detailsPage(DestinationRuleDetails)), editYaml()]} />;
 

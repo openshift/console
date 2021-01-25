@@ -65,10 +65,11 @@ const GatewayTableRow: RowFunction<K8sResourceKind> = ({ obj: gateway, index, ke
   );
 };
 
-const GatewayDetails: React.FC<GatewayDetailsProps> = ({ obj: gateway }) => (
-  <>
+const GatewayDetails: React.FC<GatewayDetailsProps> = ({ obj: gateway }) => {
+  const { t } = useTranslation();
+  return <>
     <div className="co-m-pane__body">
-      <SectionHeading text="Gateway Details" />
+      <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_39')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
       <div className="row">
         <div className="col-lg-6">
           <ResourceSummary resource={gateway} />
@@ -77,8 +78,8 @@ const GatewayDetails: React.FC<GatewayDetailsProps> = ({ obj: gateway }) => (
     </div>
     <div className="co-m-pane__body">
     </div>
-  </>
-);
+  </>;
+};
 
 const { details, editYaml } = navFactory;
 export const Gateways: React.FC = props => {
@@ -86,7 +87,10 @@ export const Gateways: React.FC = props => {
   return <Table {...props} aria-label="Gateways" Header={GatewayTableHeader.bind(null, t)} Row={GatewayTableRow} virtualize />;
 };
 
-export const GatewaysPage: React.FC<GatewaysPageProps> = props => <ListPage canCreate={true} ListComponent={Gateways} kind={kind} {...props} />;
+export const GatewaysPage: React.FC<GatewaysPageProps> = props => {
+  const { t } = useTranslation();
+  return <ListPage title={t('COMMON:MSG_LNB_MENU_39')} createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:MSG_LNB_MENU_39') })} canCreate={true} ListComponent={Gateways} kind={kind} {...props} />;
+};
 
 export const GatewaysDetailsPage: React.FC<GatewaysDetailsPageProps> = props => <DetailsPage {...props} kind={kind} menuActions={menuActions} pages={[details(detailsPage(GatewayDetails)), editYaml()]} />;
 

@@ -64,10 +64,11 @@ const ServiceEntryTableRow: RowFunction<K8sResourceKind> = ({ obj: serviceentry,
   );
 };
 
-const ServiceEntryDetails: React.FC<ServiceEntryDetailsProps> = ({ obj: serviceentry }) => (
-  <>
+const ServiceEntryDetails: React.FC<ServiceEntryDetailsProps> = ({ obj: serviceentry }) => {
+  const { t } = useTranslation();
+  return <>
     <div className="co-m-pane__body">
-      <SectionHeading text="Authorization Policy Details" />
+      <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_41')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
       <div className="row">
         <div className="col-lg-6">
           <ResourceSummary resource={serviceentry} />
@@ -76,8 +77,8 @@ const ServiceEntryDetails: React.FC<ServiceEntryDetailsProps> = ({ obj: servicee
     </div>
     <div className="co-m-pane__body">
     </div>
-  </>
-);
+  </>;
+};
 
 const { details, editYaml } = navFactory;
 export const ServiceEntries: React.FC = props => {
@@ -85,7 +86,10 @@ export const ServiceEntries: React.FC = props => {
   return <Table {...props} aria-label="Service Entries" Header={ServiceEntryTableHeader.bind(null, t)} Row={ServiceEntryTableRow} virtualize />;
 };
 
-export const ServiceEntriesPage: React.FC<ServiceEntriesPageProps> = props => <ListPage canCreate={true} ListComponent={ServiceEntries} kind={kind} {...props} />;
+export const ServiceEntriesPage: React.FC<ServiceEntriesPageProps> = props => {
+  const { t } = useTranslation();
+  return <ListPage title={t('COMMON:MSG_LNB_MENU_41')} createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:MSG_LNB_MENU_41') })} canCreate={true} ListComponent={ServiceEntries} kind={kind} {...props} />;
+}
 
 export const ServiceEntriesDetailsPage: React.FC<ServiceEntriesDetailsPageProps> = props => <DetailsPage {...props} kind={kind} menuActions={menuActions} pages={[details(detailsPage(ServiceEntryDetails)), editYaml()]} />;
 

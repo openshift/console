@@ -143,6 +143,8 @@ const PVCTableRow = ({ obj, index, key, style }) => {
 };
 
 const Details_ = ({ flags, obj: pvc }) => {
+  const { t } = useTranslation();
+  
   const canListPV = flags[FLAGS.CAN_LIST_PV];
   const labelSelector = _.get(pvc, 'spec.selector');
   const storageClassName = _.get(pvc, 'spec.storageClassName');
@@ -154,7 +156,7 @@ const Details_ = ({ flags, obj: pvc }) => {
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="PersistentVolumeClaim Details" />
+        <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_52')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
         <div className="row">
           <div className="col-sm-6">
             <ResourceSummary resource={pvc}>
@@ -242,11 +244,14 @@ export const PersistentVolumeClaimsPage = (props) => {
   const createProps = {
     to: `/k8s/ns/${props.namespace || 'default'}/persistentvolumeclaims/~new/form`,
   };
+  const { t } = useTranslation();
   return (
     <ListPage
       {...props}
       ListComponent={PersistentVolumeClaimsList}
       kind={kind}
+      title={t('COMMON:MSG_LNB_MENU_52')}
+      createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:MSG_LNB_MENU_52') })} 
       canCreate={true}
       rowFilters={filters}
       createProps={createProps}

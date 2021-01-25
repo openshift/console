@@ -65,10 +65,11 @@ const DataVolumeTableRow: RowFunction<K8sResourceKind> = ({ obj: datavolume, ind
   );
 };
 
-const DataVolumeDetails: React.FC<DataVolumeDetailsProps> = ({ obj: datavolume }) => (
-  <>
+const DataVolumeDetails: React.FC<DataVolumeDetailsProps> = ({ obj: datavolume }) => {
+  const { t } = useTranslation();
+  return <>
     <div className="co-m-pane__body">
-      <SectionHeading text="Data Volume Details" />
+      <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_54')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
       <div className="row">
         <div className="col-lg-6">
           <ResourceSummary resource={datavolume} />
@@ -77,8 +78,8 @@ const DataVolumeDetails: React.FC<DataVolumeDetailsProps> = ({ obj: datavolume }
     </div>
     <div className="co-m-pane__body">
     </div>
-  </>
-);
+  </>;
+};
 
 const { details, editYaml } = navFactory;
 export const DataVolumes: React.FC = props => {
@@ -86,7 +87,10 @@ export const DataVolumes: React.FC = props => {
   return <Table {...props} aria-label="Data Volumes" Header={DataVolumeTableHeader.bind(null, t)} Row={DataVolumeTableRow} virtualize />;
 };
 
-export const DataVolumesPage: React.FC<DataVolumesPageProps> = props => <ListPage canCreate={true} ListComponent={DataVolumes} kind={kind} {...props} />;
+export const DataVolumesPage: React.FC<DataVolumesPageProps> = props => {
+  const { t } = useTranslation();
+  return <ListPage title={t('COMMON:MSG_LNB_MENU_54')} createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:MSG_LNB_MENU_54') })} canCreate={true} ListComponent={DataVolumes} kind={kind} {...props} />;
+};
 
 export const DataVolumesDetailsPage: React.FC<DataVolumesDetailsPageProps> = props => <DetailsPage {...props} kind={kind} menuActions={menuActions} pages={[details(detailsPage(DataVolumeDetails)), editYaml()]} />;
 

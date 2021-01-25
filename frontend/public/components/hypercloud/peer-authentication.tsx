@@ -64,10 +64,11 @@ const PeerAuthenticationTableRow: RowFunction<K8sResourceKind> = ({ obj: peeraut
   );
 };
 
-const PeerAuthenticationDetails: React.FC<PeerAuthenticationDetailsProps> = ({ obj: peerauthentication }) => (
-  <>
+const PeerAuthenticationDetails: React.FC<PeerAuthenticationDetailsProps> = ({ obj: peerauthentication }) => {
+  const { t } = useTranslation();
+  return <>
     <div className="co-m-pane__body">
-      <SectionHeading text="Peer Authentication Details" />
+      <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_43')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
       <div className="row">
         <div className="col-lg-6">
           <ResourceSummary resource={peerauthentication} />
@@ -76,8 +77,8 @@ const PeerAuthenticationDetails: React.FC<PeerAuthenticationDetailsProps> = ({ o
     </div>
     <div className="co-m-pane__body">
     </div>
-  </>
-);
+  </>;
+};
 
 const { details, editYaml } = navFactory;
 export const PeerAuthentications: React.FC = props => {
@@ -85,7 +86,10 @@ export const PeerAuthentications: React.FC = props => {
   return <Table {...props} aria-label="Peer Authentications" Header={PeerAuthenticationTableHeader.bind(null, t)} Row={PeerAuthenticationTableRow} virtualize />;
 };
 
-export const PeerAuthenticationsPage: React.FC<PeerAuthenticationsPageProps> = props => <ListPage canCreate={true} ListComponent={PeerAuthentications} kind={kind} {...props} />;
+export const PeerAuthenticationsPage: React.FC<PeerAuthenticationsPageProps> = props => {
+  const { t } = useTranslation();
+  return <ListPage title={t('COMMON:MSG_LNB_MENU_43')} createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:MSG_LNB_MENU_43') })} canCreate={true} ListComponent={PeerAuthentications} kind={kind} {...props} />;
+};
 
 export const PeerAuthenticationsDetailsPage: React.FC<PeerAuthenticationsDetailsPageProps> = props => <DetailsPage {...props} kind={kind} menuActions={menuActions} pages={[details(detailsPage(PeerAuthenticationDetails)), editYaml()]} />;
 

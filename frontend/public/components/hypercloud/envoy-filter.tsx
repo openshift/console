@@ -64,10 +64,11 @@ const EnvoyFilterTableRow: RowFunction<K8sResourceKind> = ({ obj: envoyfilter, i
   );
 };
 
-const EnvoyFilterDetails: React.FC<EnvoyFilterDetailsProps> = ({ obj: envoyfilter }) => (
-  <>
+const EnvoyFilterDetails: React.FC<EnvoyFilterDetailsProps> = ({ obj: envoyfilter }) => {
+  const { t } = useTranslation();
+  return <>
     <div className="co-m-pane__body">
-      <SectionHeading text="Envoy Filter Details" />
+      <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_38')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
       <div className="row">
         <div className="col-lg-6">
           <ResourceSummary resource={envoyfilter} />
@@ -76,8 +77,8 @@ const EnvoyFilterDetails: React.FC<EnvoyFilterDetailsProps> = ({ obj: envoyfilte
     </div>
     <div className="co-m-pane__body">
     </div>
-  </>
-);
+  </>;
+};
 
 const { details, editYaml } = navFactory;
 export const EnvoyFilters: React.FC = props => {
@@ -85,7 +86,10 @@ export const EnvoyFilters: React.FC = props => {
   return <Table {...props} aria-label="Envoy Filters" Header={EnvoyFilterTableHeader.bind(null, t)} Row={EnvoyFilterTableRow} virtualize />;
 };
 
-export const EnvoyFiltersPage: React.FC<EnvoyFiltersPageProps> = props => <ListPage canCreate={true} ListComponent={EnvoyFilters} kind={kind} {...props} />;
+export const EnvoyFiltersPage: React.FC<EnvoyFiltersPageProps> = props => {
+  const { t } = useTranslation();
+  return <ListPage title={t('COMMON:MSG_LNB_MENU_38')} createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:MSG_LNB_MENU_38') })} canCreate={true} ListComponent={EnvoyFilters} kind={kind} {...props} />;
+};
 
 export const EnvoyFiltersDetailsPage: React.FC<EnvoyFiltersDetailsPageProps> = props => <DetailsPage {...props} kind={kind} menuActions={menuActions} pages={[details(detailsPage(EnvoyFilterDetails)), editYaml()]} />;
 

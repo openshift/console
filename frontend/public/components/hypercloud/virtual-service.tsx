@@ -85,10 +85,11 @@ const VirtualServiceTableRow: RowFunction<K8sResourceKind> = ({ obj: virtualserv
   );
 };
 
-const VirtualServiceDetails: React.FC<VirtualServiceDetailsProps> = ({ obj: virtualservice }) => (
-  <>
+const VirtualServiceDetails: React.FC<VirtualServiceDetailsProps> = ({ obj: virtualservice }) => {
+  const { t } = useTranslation();
+  return <>
     <div className="co-m-pane__body">
-      <SectionHeading text="Virtual Service Details" />
+      <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_36')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
       <div className="row">
         <div className="col-lg-6">
           <ResourceSummary resource={virtualservice} />
@@ -98,7 +99,7 @@ const VirtualServiceDetails: React.FC<VirtualServiceDetailsProps> = ({ obj: virt
     <div className="co-m-pane__body">
     </div>
   </>
-);
+};
 
 const { details, editYaml } = navFactory;
 export const VirtualServices: React.FC = props =>{
@@ -106,7 +107,10 @@ export const VirtualServices: React.FC = props =>{
   return <Table {...props} aria-label="Virtual Services" Header={VirtualServiceTableHeader.bind(null, t)} Row={VirtualServiceTableRow} virtualize />;
 };
 
-export const VirtualServicesPage: React.FC<VirtualServicesPageProps> = props => <ListPage canCreate={true} ListComponent={VirtualServices} kind={kind} {...props} />;
+export const VirtualServicesPage: React.FC<VirtualServicesPageProps> = props => {
+  const { t } = useTranslation();
+  return <ListPage title={t('COMMON:MSG_LNB_MENU_36')} createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:MSG_LNB_MENU_36') })} canCreate={true} ListComponent={VirtualServices} kind={kind} {...props} />;
+};
 
 export const VirtualServicesDetailsPage: React.FC<VirtualServicesDetailsPageProps> = props => <DetailsPage {...props} kind={kind} menuActions={menuActions} pages={[details(detailsPage(VirtualServiceDetails)), editYaml()]} />;
 

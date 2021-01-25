@@ -126,6 +126,8 @@ const PVTableRow = ({ obj, index, key, style }) => {
 };
 
 const Details = ({ obj: pv }) => {
+  const { t } = useTranslation();
+
   const storageClassName = _.get(pv, 'spec.storageClassName');
   const pvcName = _.get(pv, 'spec.claimRef.name');
   const namespace = _.get(pv, 'spec.claimRef.namespace');
@@ -135,7 +137,7 @@ const Details = ({ obj: pv }) => {
   const reclaimPolicy = _.get(pv, 'spec.persistentVolumeReclaimPolicy');
   return (
     <div className="co-m-pane__body">
-      <SectionHeading text="PersistentVolume Details" />
+      <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_51')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
       <div className="row">
         <div className="col-sm-6">
           <ResourceSummary resource={pv}>
@@ -197,9 +199,10 @@ export const PersistentVolumesList = (props) => {
     />;
 };
 
-export const PersistentVolumesPage = (props) => (
-  <ListPage {...props} ListComponent={PersistentVolumesList} kind={kind} canCreate={true} />
-);
+export const PersistentVolumesPage = (props) => {
+  const { t } = useTranslation();
+  return <ListPage {...props} ListComponent={PersistentVolumesList} kind={kind} title={t('COMMON:MSG_LNB_MENU_51')} createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:MSG_LNB_MENU_51') })} canCreate={true} />;
+};
 export const PersistentVolumesDetailsPage = (props) => (
   <DetailsPage
     {...props}

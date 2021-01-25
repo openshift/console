@@ -64,10 +64,11 @@ const SidecarTableRow: RowFunction<K8sResourceKind> = ({ obj: sidecar, index, ke
   );
 };
 
-const SidecarDetails: React.FC<SidecarDetailsProps> = ({ obj: sidecar }) => (
-  <>
+const SidecarDetails: React.FC<SidecarDetailsProps> = ({ obj: sidecar }) => {
+  const { t } = useTranslation();
+  return <>
     <div className="co-m-pane__body">
-      <SectionHeading text="Sidecar Details" />
+      <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_40')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
       <div className="row">
         <div className="col-lg-6">
           <ResourceSummary resource={sidecar} />
@@ -76,8 +77,8 @@ const SidecarDetails: React.FC<SidecarDetailsProps> = ({ obj: sidecar }) => (
     </div>
     <div className="co-m-pane__body">
     </div>
-  </>
-);
+  </>;
+};
 
 const { details, editYaml } = navFactory;
 export const Sidecars: React.FC = props => {
@@ -85,7 +86,10 @@ export const Sidecars: React.FC = props => {
   return <Table {...props} aria-label="Sidecars" Header={SidecarTableHeader.bind(null, t)} Row={SidecarTableRow} virtualize />;
 };
 
-export const SidecarsPage: React.FC<SidecarsPageProps> = props => <ListPage canCreate={true} ListComponent={Sidecars} kind={kind} {...props} />;
+export const SidecarsPage: React.FC<SidecarsPageProps> = props => {
+  const { t } = useTranslation();
+  return <ListPage title={t('COMMON:MSG_LNB_MENU_40')} createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:MSG_LNB_MENU_40') })} canCreate={true} ListComponent={Sidecars} kind={kind} {...props} />;
+};
 
 export const SidecarsDetailsPage: React.FC<SidecarsDetailsPageProps> = props => <DetailsPage {...props} kind={kind} menuActions={menuActions} pages={[details(detailsPage(SidecarDetails)), editYaml()]} />;
 

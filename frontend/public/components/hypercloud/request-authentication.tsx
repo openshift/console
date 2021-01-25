@@ -64,10 +64,11 @@ const RequestAuthenticationTableRow: RowFunction<K8sResourceKind> = ({ obj: requ
   );
 };
 
-const RequestAuthenticationDetails: React.FC<RequestAuthenticationDetailsProps> = ({ obj: requestauthentication }) => (
-  <>
+const RequestAuthenticationDetails: React.FC<RequestAuthenticationDetailsProps> = ({ obj: requestauthentication }) => {
+  const { t } = useTranslation();
+  return <>
     <div className="co-m-pane__body">
-      <SectionHeading text="Request Authentication Details" />
+      <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_42')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
       <div className="row">
         <div className="col-lg-6">
           <ResourceSummary resource={requestauthentication} />
@@ -76,8 +77,8 @@ const RequestAuthenticationDetails: React.FC<RequestAuthenticationDetailsProps> 
     </div>
     <div className="co-m-pane__body">
     </div>
-  </>
-);
+  </>;
+};
 
 const { details, editYaml } = navFactory;
 export const RequestAuthentications: React.FC = props => {
@@ -85,7 +86,10 @@ export const RequestAuthentications: React.FC = props => {
   return <Table {...props} aria-label="Request Authentications" Header={RequestAuthenticationTableHeader.bind(null, t)} Row={RequestAuthenticationTableRow} virtualize />;
 };
 
-export const RequestAuthenticationsPage: React.FC<RequestAuthenticationsPageProps> = props => <ListPage canCreate={true} ListComponent={RequestAuthentications} kind={kind} {...props} />;
+export const RequestAuthenticationsPage: React.FC<RequestAuthenticationsPageProps> = props => {
+  const { t } = useTranslation();
+  return <ListPage title={t('COMMON:MSG_LNB_MENU_42')} createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:MSG_LNB_MENU_42') })} canCreate={true} ListComponent={RequestAuthentications} kind={kind} {...props} />;
+};
 
 export const RequestAuthenticationsDetailsPage: React.FC<RequestAuthenticationsDetailsPageProps> = props => <DetailsPage {...props} kind={kind} menuActions={menuActions} pages={[details(detailsPage(RequestAuthenticationDetails)), editYaml()]} />;
 
