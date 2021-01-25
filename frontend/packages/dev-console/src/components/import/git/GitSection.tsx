@@ -90,7 +90,7 @@ const GitSection: React.FC<GitSectionProps> = ({
         return;
       }
 
-      gitRepoName && !values.name && setFieldValue('name', gitRepoName);
+      gitRepoName && !nameTouched && !values.name && setFieldValue('name', gitRepoName);
       gitRepoName &&
         values.formType !== 'edit' &&
         !values.application.name &&
@@ -116,6 +116,7 @@ const GitSection: React.FC<GitSectionProps> = ({
     [
       buildStrategy,
       gitTypeTouched,
+      nameTouched,
       setFieldTouched,
       setFieldValue,
       values.application.name,
@@ -166,7 +167,7 @@ const GitSection: React.FC<GitSectionProps> = ({
   const handleGitUrlBlur = React.useCallback(() => {
     const { url } = values.git;
     const gitRepoName = detectGitRepoName(url);
-    values.formType !== 'edit' && gitRepoName && setFieldValue('name', gitRepoName);
+    values.formType !== 'edit' && gitRepoName && !nameTouched && setFieldValue('name', gitRepoName);
     gitRepoName &&
       values.formType !== 'edit' &&
       !values.application.name &&
@@ -174,12 +175,13 @@ const GitSection: React.FC<GitSectionProps> = ({
       setFieldValue('application.name', `${gitRepoName}-app`);
     setFieldTouched('git.url', true);
   }, [
-    setFieldTouched,
-    setFieldValue,
-    values.application.name,
-    values.application.selectedKey,
     values.git,
     values.formType,
+    values.application.name,
+    values.application.selectedKey,
+    nameTouched,
+    setFieldValue,
+    setFieldTouched,
   ]);
 
   const fillSample: React.ReactEventHandler<HTMLButtonElement> = React.useCallback(() => {
