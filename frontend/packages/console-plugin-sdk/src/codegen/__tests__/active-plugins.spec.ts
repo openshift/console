@@ -13,7 +13,6 @@ import { getTemplatePackage } from '../../utils/test-utils';
 
 const parseJSONC = jest.spyOn(jsoncModule, 'parseJSONC');
 const validateExtensionsFileSchema = jest.spyOn(assetPluginModule, 'validateExtensionsFileSchema');
-const reloadModule = jest.spyOn(activePluginsModule, 'reloadModule');
 
 const {
   getActivePluginsModule,
@@ -23,7 +22,7 @@ const {
 } = activePluginsModule;
 
 beforeEach(() => {
-  [parseJSONC, validateExtensionsFileSchema, reloadModule].forEach((mock) => mock.mockReset());
+  [parseJSONC, validateExtensionsFileSchema].forEach((mock) => mock.mockReset());
 });
 
 describe('getActivePluginsModule', () => {
@@ -189,16 +188,6 @@ describe('getExecutableCodeRefSource', () => {
   it('transforms encoded code reference into executable CodeRef function source', () => {
     const validationResult = new ValidationResult('test');
 
-    reloadModule.mockImplementation((request: string) => {
-      switch (request) {
-        case 'test-plugin/src/foo.ts':
-        case '@console/test-plugin/src/foo.ts':
-          return { bar: 'value' };
-        default:
-          throw new Error('invalid mock arguments');
-      }
-    });
-
     expect(
       getExecutableCodeRefSource(
         { $codeRef: 'foo.bar' },
@@ -256,53 +245,6 @@ describe('getExecutableCodeRefSource', () => {
 
     expect(validationResult.getErrors().length).toBe(1);
     expect(validationResult.getErrors()[0]).toBe("Module 'foo' is not exposed in property 'qux'");
-  });
-
-  it('fails when requested module resolution throws an error', () => {
-    const validationResult = new ValidationResult('test');
-
-    reloadModule.mockImplementation(() => {
-      throw new Error('boom');
-    });
-
-    expect(
-      getExecutableCodeRefSource(
-        { $codeRef: 'foo.bar' },
-        'qux',
-        getPluginPackage('test-plugin', { foo: 'src/foo.ts' }),
-        validationResult,
-      ),
-    ).toBe('() => Promise.resolve(null)');
-
-    expect(validationResult.getErrors().length).toBe(1);
-    expect(validationResult.getErrors()[0]).toBe(
-      "Cannot import 'test-plugin/src/foo.ts' in property 'qux'",
-    );
-  });
-
-  it('fails on missing module export', () => {
-    const validationResult = new ValidationResult('test');
-
-    reloadModule.mockImplementation((request: string) => {
-      switch (request) {
-        case 'test-plugin/src/foo.ts':
-          return { bar: 'value' };
-        default:
-          throw new Error('invalid mock arguments');
-      }
-    });
-
-    expect(
-      getExecutableCodeRefSource(
-        { $codeRef: 'foo.baz' },
-        'qux',
-        getPluginPackage('test-plugin', { foo: 'src/foo.ts' }),
-        validationResult,
-      ),
-    ).toBe('() => Promise.resolve(null)');
-
-    expect(validationResult.getErrors().length).toBe(1);
-    expect(validationResult.getErrors()[0]).toBe("Invalid module export 'baz' in property 'qux'");
   });
 });
 
