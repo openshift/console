@@ -163,7 +163,7 @@ const ManagedKafkas = () => {
       }
     });
   };
-  
+
   return (
     <>
       <NamespacedPage variant={NamespacedPageVariants.light} hideApplications>

@@ -3,7 +3,7 @@ import {
   TopologyComponentFactory,
   TopologyDataModelFactory,
 } from '@console/topology/src/extensions/topology';
-import { getRhoasComponentFactory, getRhoasTopologyDataModel, getIsRhoasResource } from './index';
+import { getRhoasComponentFactory, getRhoasTopologyDataModel } from './index';
 import { WatchK8sResources } from 'public/components/utils/k8s-watch-hook';
 
 export type TopologyConsumedExtensions =
@@ -13,7 +13,7 @@ export type TopologyConsumedExtensions =
 
 const getRhoasWatchedResources = (namespace: string): WatchK8sResources<any> => {
   return {
-    secrets: {
+    ManagedKafkaConnection: {
       isList: true,
       kind: 'Secret',
       namespace,
@@ -35,8 +35,7 @@ export const rhoasTopologyPlugin: Plugin<TopologyConsumedExtensions> = [
       id: 'rhoas-topology-model-factory',
       priority: 400,
       getDataModel: getRhoasTopologyDataModel,
-      resources: getRhoasWatchedResources,
-      isResourceDepicted: getIsRhoasResource,
+      resources: getRhoasWatchedResources
     },
   }
 ];

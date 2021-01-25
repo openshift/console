@@ -7,9 +7,3 @@ export const getRhoasComponentFactory = () =>
   import(
     './components/RhoasComponentFactory' /* webpackChunkName: "rhoas-topology-components" */
   ).then((m) => m.getRhoasComponentFactory());
-
-export const getIsRhoasResource = () =>
-  import('./isRhoasResource' /* webpackChunkName: "rhoas-topology-components" */).then(
-    (m) => m.isRhoasResource,
-  );
-
