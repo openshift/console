@@ -9,22 +9,36 @@ import StreamsInstancePage from '../streams-list/StreamsInstancePage';
 import { ManagedKafkaModel } from './ManagedKafkaModel';
 import { ManagedKafkaRequestModel, ManagedServiceAccountRequest, ManagedKafkaConnectionModel } from '../../models/rhoas';
 import { useActiveNamespace } from '@console/shared';
-import { k8sCreate, k8sPatch } from '@console/internal/module/k8s/resource';
+import { k8sCreate, k8sPatch, k8sGet } from '@console/internal/module/k8s/resource';
 import { AccessTokenSecretName } from '../../const'
 import { KafkaMocks } from '../mocks/KafkaMocks';
+import { ServiceAccountSecretName } from '../../const';
+import { Button, EmptyState, EmptyStateIcon, EmptyStateSecondaryActions, Title } from '@patternfly/react-core';
+import CubesIcon from '@patternfly/react-icons/dist/js/icons/cubes-icon';
 
 const ManagedKafkas = () => {
   const [currentNamespace] = useActiveNamespace();
   // FIXME IMPORTANT: Name should be fixed later and patched if needed.
   const currentCRName = 'kafkarequest' + currentNamespace + new Date().getTime();
-  const kafkaRequestData: ManagedKafkaModel[] = KafkaMocks;
+  const currentMSAName = 'managedservice' + currentNamespace + new Date().getTime();
 
-  // FIXME Pass this down to the table to get checked kafkas
-  // const [checkedKafkas, setCheckedKafkas] = useState([])
+  const kafkaRequestData: ManagedKafkaModel[] = KafkaMocks;
+  const [selectedKafkas, setSelectedKafkas] = React.useState([]);
+  const [serviceAccountExists, setServiceAccountExists] = React.useState();
+  console.log('what is serviceAccountExists' + serviceAccountExists);
 
   React.useEffect(() => {
     createManagedKafkaRequest();
+    doesManagedServiceAccountExist();
   }, []);
+
+  const doesManagedServiceAccountExist = async () => {
+    const managedServiceAccounts = await k8sGet(ManagedServiceAccountRequest, null, currentNamespace);
+    console.log('what is response from get' + JSON.stringify(managedServiceAccounts.items.length));
+    if (managedServiceAccounts.items.length > 0) {
+      setServiceAccountExists(true);
+    }
+  }
 
   // TODO Create actions folder
   const createManagedKafkaRequest = async () => {
@@ -37,20 +51,25 @@ const ManagedKafkas = () => {
       },
       spec: {
         accessTokenSecretName: AccessTokenSecretName,
-      },
-      status: {
-        lastUpdate: new Date().getTime(),
-        userKafkas: KafkaMocks
+        status: {
+          lastUpdate: new Date().getTime(),
+          userKafkas: kafkaRequestData
+        }
       }
     };
 
     // FIXME Progress bar/Handling errors here?
     // FIXME Patch existing request if exist etc.
-    await k8sCreate(ManagedKafkaRequestModel, mkRequest)
-    await k8sPatch(ManagedKafkaRequestModel, mkRequest)
-    await new Promise((resolver) => {
-      setTimeout(resolver, 3000);
-    })
+    try {
+      const resource = await k8sCreate(ManagedKafkaRequestModel, mkRequest);
+      console.log('what is resource' + JSON.stringify(resource));
+    } catch (error) {
+      console.log('what is error' + error)
+    }
+    // await k8sPatch(ManagedKafkaRequestModel, mkRequest)
+    // await new Promise((resolver) => {
+    //   setTimeout(resolver, 3000);
+    // })
   }
 
   const createManagedServiceAccount = async () => {
@@ -58,75 +77,109 @@ const ManagedKafkas = () => {
       apiVersion: "rhoas.redhat.com/v1alpha1",
       kind: ManagedServiceAccountRequest.kind,
       metadata: {
-        name: currentCRName,
+        name: currentMSAName,
         namespace: currentNamespace
       },
       spec: {
         serviceAccountName: "myServiceAccount",
         reset: false,
         description: "some service account",
-        serviceAccountSecretname: AccessTokenSecretName
+        serviceAccountSecretname: ServiceAccountSecretName,
+        status: {
+          message: "created",
+          updated: new Date().getTime(),
+          serviceAccountSecretName: "service-account-123-credentials"
+        }
       }
-      // status: {
-      //   message: "created",
-      //   updated: new Date().getTime(),
-      //   serviceAccountSecretName: "service-account-123-credentials"
-      // }
     }
 
-    const statusResponse = await k8sCreate(ManagedServiceAccountRequest, serviceAcct);
-    console.log('what is this' + JSON.stringify(statusResponse));
-    return statusResponse
+    try {
+      const resource = await k8sCreate(ManagedServiceAccountRequest, serviceAcct);
+      console.log('what is service account' + JSON.stringify(resource));
+    } catch (error) {
+      console.log('what is error' + error)
+    }
+
   };
 
-  const createManagedKafkaConnection = async (serviceAccountSecretName) => {
+  const createManagedKafkaConnection = async (kafkaId, kafkaName) => {
     const kafkaConnection = {
       apiVersion: "rhoas.redhat.com/v1alpha1",
       kind: ManagedKafkaConnectionModel.kind,
       metadata: {
-        name: "test453-serviceapi"
+        name: kafkaName,
+        namespace: currentNamespace
       },
       spec: {
-        kafkaId: "fgdsff443ghjdsffrds",
+        kafkaId: kafkaId,
         credentials: {
-          serviceAccountSecretName: serviceAccountSecretName
+          serviceAccountSecretName: ServiceAccountSecretName
         }
       },
-      status: {
-        message: "created",
-        updated: new Date().getTime(),
-        boostrapServer: {
-          host: "kafka--ltosqyk-wsmt-t-elukpkft-bg.apps.ms-bv8dm6nbd3jo.cx74.s1.devshift.org:443"
-        },
-        serviceAccountSecretName: "service-account-123-credentials"
-      }
+      // status: {
+      //   message: "created",
+      //   updated: new Date().getTime(),
+      //   boostrapServer: {
+      //     host: "kafka--ltosqyk-wsmt-t-elukpkft-bg.apps.ms-bv8dm6nbd3jo.cx74.s1.devshift.org:443"
+      //   },
+      //   serviceAccountSecretName: "service-account-123-credentials"
+      // }
     }
-    await k8sCreate(ManagedKafkaConnectionModel, kafkaConnection);
+
+    try {
+      const resource = await k8sCreate(ManagedKafkaConnectionModel, kafkaConnection);
+      console.log('what is response for create connection' + JSON.stringify(resource));
+    } catch (error) {
+      console.log('what is error' + error)
+    }
   };
 
   const createManagedKafkaConnectionFlow = async () => {
-    const responseServiceAccount = await createManagedServiceAccount();
-    console.log('what is this 2' + JSON.stringify(responseServiceAccount));
-    createManagedKafkaConnection(serviceAccountSecretName);
-  }
-  
+    if (serviceAccountExists !== undefined || serviceAccountExists !== true) {
+      createManagedServiceAccount();
+    }
 
+    selectedKafkas.forEach(function(rowId) {
+      const kafkaId = kafkaRequestData[rowId].id;
+      const kafkaName = kafkaRequestData[rowId].name;
+      createManagedKafkaConnection(kafkaId, kafkaName);
+    });
+  };
+  
   return (
     <>
       <NamespacedPage variant={NamespacedPageVariants.light} hideApplications>
-        <StreamsInstancePage kafkaArray={kafkaRequestData} />
-        <div className="co-m-pane__body" style={{ borderTop: 0, paddingTop: 0, paddingBottom: 0 }}>
-          <FormFooter
-            handleSubmit={() => createManagedKafkaConnectionFlow()}
-            isSubmitting={false}
-            errorMessage=""
-            submitLabel={"Create"}
-            disableSubmit={false}
-            resetLabel="Reset"
-            sticky
-            handleCancel={history.goBack}
-          />
-        </div>
+        { kafkaRequestData.length > 0 ? (
+          <>
+            <StreamsInstancePage
+              kafkaArray={kafkaRequestData}
+              selectedKafkas={selectedKafkas}
+              setSelectedKafkas={setSelectedKafkas}
+            />
+            <div className="co-m-pane__body" style={{ borderTop: 0, paddingTop: 0, paddingBottom: 0 }}>
+              <FormFooter
+                handleSubmit={() => createManagedKafkaConnectionFlow()}
+                isSubmitting={false}
+                errorMessage=""
+                submitLabel={"Create"}
+                disableSubmit={selectedKafkas.length < 1 ? true : false}
+                resetLabel="Reset"
+                sticky
+                handleCancel={history.goBack}
+              />
+            </div>
+          </>
+        ) : (
+          <EmptyState>
+            <EmptyStateIcon icon={CubesIcon} />
+            <Title headingLevel="h4" size="lg">
+              No Managed Kafka Clusters found
+            </Title>
+            <EmptyStateSecondaryActions>
+              <Button variant="link">Go back to Managed Services Catalog</Button>
+            </EmptyStateSecondaryActions>
+          </EmptyState>
+        )}
       </NamespacedPage>
     </>
   );
