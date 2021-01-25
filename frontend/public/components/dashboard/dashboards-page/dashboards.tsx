@@ -7,60 +7,46 @@ import { Helmet } from 'react-helmet';
 import { ClusterDashboard } from './cluster-dashboard/cluster-dashboard';
 import { HorizontalNav, PageHeading, LoadingBox, Page, AsyncComponent } from '../../utils';
 import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
-import DashboardGrid, {
-  GridPosition,
-  GridDashboardCard,
-} from '@console/shared/src/components/dashboard/DashboardGrid';
-import {
-  useExtensions,
-  DashboardsCard,
-  DashboardsTab,
-  isDashboardsCard,
-  isDashboardsTab,
-} from '@console/plugin-sdk';
+import DashboardGrid, { GridPosition, GridDashboardCard } from '@console/shared/src/components/dashboard/DashboardGrid';
+import { useExtensions, DashboardsCard, DashboardsTab, isDashboardsCard, isDashboardsTab } from '@console/plugin-sdk';
 import { RootState } from '../../../redux';
+import { useTranslation } from 'react-i18next';
 
 const getCardsOnPosition = (cards: DashboardsCard[], position: GridPosition): GridDashboardCard[] =>
   cards
-    .filter((c) => c.properties.position === position)
-    .map((c) => ({
+    .filter(c => c.properties.position === position)
+    .map(c => ({
       Card: () => <AsyncComponent loader={c.properties.loader} />,
       span: c.properties.span,
     }));
 
 const getPluginTabPages = (tabs: DashboardsTab[], cards: DashboardsCard[]): Page[] =>
-  tabs.map((tab) => {
-    const tabCards = cards.filter((c) => c.properties.tab === tab.properties.id);
+  tabs.map(tab => {
+    const tabCards = cards.filter(c => c.properties.tab === tab.properties.id);
     return {
       href: tab.properties.id,
       name: tab.properties.title,
       component: () => (
         <Dashboard>
-          <DashboardGrid
-            mainCards={getCardsOnPosition(tabCards, GridPosition.MAIN)}
-            leftCards={getCardsOnPosition(tabCards, GridPosition.LEFT)}
-            rightCards={getCardsOnPosition(tabCards, GridPosition.RIGHT)}
-          />
+          <DashboardGrid mainCards={getCardsOnPosition(tabCards, GridPosition.MAIN)} leftCards={getCardsOnPosition(tabCards, GridPosition.LEFT)} rightCards={getCardsOnPosition(tabCards, GridPosition.RIGHT)} />
         </Dashboard>
       ),
     };
   });
 
 const DashboardsPage_: React.FC<DashboardsPageProps> = ({ match, kindsInFlight, k8sModels }) => {
+  const { t } = useTranslation();
   const title = 'Overview';
   const tabExtensions = useExtensions<DashboardsTab>(isDashboardsTab);
   const cardExtensions = useExtensions<DashboardsCard>(isDashboardsCard);
 
-  const pluginPages = React.useMemo(() => getPluginTabPages(tabExtensions, cardExtensions), [
-    tabExtensions,
-    cardExtensions,
-  ]);
+  const pluginPages = React.useMemo(() => getPluginTabPages(tabExtensions, cardExtensions), [tabExtensions, cardExtensions]);
 
   const allPages = React.useMemo(
     () => [
       {
         href: '',
-        name: 'Cluster',
+        name: t('SINGLE:MSG_OVERVIEW_MAIN_TABCLUSTER_1'),
         component: ClusterDashboard,
       },
       ...pluginPages,

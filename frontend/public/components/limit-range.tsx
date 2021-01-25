@@ -39,19 +39,19 @@ export const LimitRangeTableHeader = (t?: TFunction) => {
   console.log(t('COMMON:MSG_MAIN_TABLEHEADER_12'));
   return [
     {
-      title: 'Name',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_1'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: 'Namespace',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_2'),
       sortField: 'metadata.namespace',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Created',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_12'),
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
@@ -69,7 +69,10 @@ export const LimitRangeList: React.SFC = props => {
   return <Table {...props} aria-label="Limit Ranges" Header={LimitRangeTableHeader.bind(null, t)} Row={LimitRangeTableRow} virtualize />;
 };
 
-export const LimitRangeListPage: React.SFC<LimitRangeListPageProps> = props => <ListPage {...props} title="Limit Ranges" kind={LimitRangeReference} ListComponent={LimitRangeList} canCreate={true} />;
+export const LimitRangeListPage: React.SFC<LimitRangeListPageProps> = props => {
+  const { t } = useTranslation();
+  return <ListPage {...props} title={t('COMMON:MSG_LNB_MENU_81')} kind={LimitRangeReference} ListComponent={LimitRangeList} canCreate={true} />;
+};
 
 export const LimitRangeDetailsRow: React.SFC<LimitRangeDetailsRowProps> = ({ limitType, resource, limit }) => {
   return (
@@ -102,20 +105,21 @@ const LimitRangeDetailsRows: React.SFC<LimitRangeDetailsRowsProps> = ({ limit })
 };
 
 export const LimitRangeDetailsList = resource => {
+  const { t } = useTranslation();
   return (
     <div className="co-m-pane__body">
-      <SectionHeading text="Limits" />
+      <SectionHeading text={t('COMMON:MSG_DETAILS_TABDETAILS_LIMITS_1')} />
       <div className="table-responsive">
         <table className="co-m-table-grid co-m-table-grid--bordered table">
           <thead className="co-m-table-grid__head">
             <tr>
-              <td>Type</td>
-              <td>Resource</td>
-              <td>Min</td>
-              <td>Max</td>
-              <td>Default Request</td>
-              <td>Default Limit</td>
-              <td>Max Limit/Request Ratio</td>
+              <td>{t('COMMON:MSG_DETAILS_TABDETAILS_LIMITS_TABLEHEADER_1')}</td>
+              <td>{t('COMMON:MSG_DETAILS_TABDETAILS_LIMITS_TABLEHEADER_2')}</td>
+              <td>{t('COMMON:MSG_DETAILS_TABDETAILS_LIMITS_TABLEHEADER_3')}</td>
+              <td>{t('COMMON:MSG_DETAILS_TABDETAILS_LIMITS_TABLEHEADER_4')}</td>
+              <td>{t('COMMON:MSG_DETAILS_TABDETAILS_LIMITS_TABLEHEADER_5')}</td>
+              <td>{t('COMMON:MSG_DETAILS_TABDETAILS_LIMITS_TABLEHEADER_6')}</td>
+              <td>{t('COMMON:MSG_DETAILS_TABDETAILS_LIMITS_TABLEHEADER_7')}</td>
             </tr>
           </thead>
           <tbody className="co-m-table-grid__body">
@@ -129,15 +133,18 @@ export const LimitRangeDetailsList = resource => {
   );
 };
 
-const Details = ({ obj: rq }) => (
-  <>
-    <div className="co-m-pane__body">
-      <SectionHeading text="Limit Range Details" />
-      <ResourceSummary resource={rq} />
-    </div>
-    <LimitRangeDetailsList resource={rq} />
-  </>
-);
+const Details = ({ obj: rq }) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <div className="co-m-pane__body">
+        <SectionHeading text={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_1', { 0: t('COMMON:MSG_LNB_MENU_81') })} />
+        <ResourceSummary resource={rq} />
+      </div>
+      <LimitRangeDetailsList resource={rq} />
+    </>
+  );
+};
 
 export const LimitRangeDetailsPage = props => <DetailsPage {...props} menuActions={menuActions} pages={[navFactory.details(Details), navFactory.editYaml()]} />;
 

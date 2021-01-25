@@ -19,6 +19,7 @@ import { kindForReference, modelFor, referenceForModel } from '../../module/k8s'
 import { LoadingBox, MsgBox, PageHeading, ResourceIcon, setQueryArgument, AsyncComponent } from '../utils';
 import confirmNavUnpinModal from '../nav/confirmNavUnpinModal';
 import { SearchFilterDropdown, searchFilterValues } from '../search-filter-dropdown';
+import { useTranslation } from 'react-i18next';
 
 const ResourceList = connectToModel(({ kindObj, mock, namespace, selector, nameFilter }) => {
   if (!kindObj) {
@@ -41,6 +42,7 @@ interface DispatchProps {
 }
 
 const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = props => {
+  const { t } = useTranslation();
   const [selectedItems, setSelectedItems] = React.useState(new Set<string>([]));
   const [collapsedKinds, setCollapsedKinds] = React.useState(new Set<string>([]));
   const [labelFilter, setLabelFilter] = React.useState([]);
@@ -167,9 +169,9 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = props =>
   return (
     <>
       <Helmet>
-        <title>Search</title>
+        <title>{t('COMMON:MSG_LNB_MENU_4')}</title>
       </Helmet>
-      <PageHeading detail={true} title="Search">
+      <PageHeading detail={true} title={t('COMMON:MSG_LNB_MENU_4')}>
         <DataToolbar id="search-toolbar" clearAllFilters={clearAll}>
           <DataToolbarContent>
             <DataToolbarItem>
@@ -187,7 +189,7 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = props =>
                 deleteChip={updateNewItems}
                 categoryName="Resource"
               >
-                <ResourceListDropdown selected={[...selectedItems]} onChange={updateSelectedItems} type="multiple"/>
+                <ResourceListDropdown selected={[...selectedItems]} onChange={updateSelectedItems} type="multiple" />
               </DataToolbarFilter>
             </DataToolbarItem>
             <DataToolbarItem className="co-search-group__filter">
@@ -229,7 +231,7 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = props =>
             );
           })}
         </Accordion>
-        {selectedItems.size === 0 && <MsgBox title="No resources selected" detail={<p>Select one or more resources from the dropdown.</p>} />}
+        {selectedItems.size === 0 && <MsgBox title={t('SINGLE:MSG_SEARCH_MAIN_NORESOURCES_1')} detail={<p>{t('SINGLE:MSG_SEARCH_MAIN_NORESOURCES_2')}</p>} />}
       </div>
     </>
   );

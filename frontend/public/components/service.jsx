@@ -6,6 +6,7 @@ import { sortable } from '@patternfly/react-table';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import { DetailsItem, Kebab, LabelList, ResourceIcon, ResourceKebab, ResourceLink, ResourceSummary, SectionHeading, Selector, navFactory } from './utils';
 import { ServiceModel } from '../models';
+import { useTranslation } from 'react-i18next';
 
 const menuActions = [Kebab.factory.ModifyPodSelector, ...Kebab.getExtensionsActionsForKind(ServiceModel), ...Kebab.factory.common];
 
@@ -26,34 +27,34 @@ const kind = 'Service';
 
 const tableColumnClasses = [classNames('col-lg-3', 'col-md-3', 'col-sm-4', 'col-xs-6'), classNames('col-lg-2', 'col-md-3', 'col-sm-4', 'col-xs-6'), classNames('col-lg-3', 'col-md-3', 'col-sm-4', 'hidden-xs'), classNames('col-lg-2', 'col-md-3', 'hidden-sm', 'hidden-xs'), classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'), Kebab.columnClass];
 
-const ServiceTableHeader = () => {
+const ServiceTableHeader = t => {
   return [
     {
-      title: 'Name',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_1'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: 'Namespace',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_2'),
       sortField: 'metadata.namespace',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Labels',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_15'),
       sortField: 'metadata.labels',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'Pod Selector',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_16'),
       sortField: 'spec.selector',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
     },
     {
-      title: 'Location',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_27'),
       sortField: 'spec.clusterIP',
       transforms: [sortable],
       props: { className: tableColumnClasses[4] },
@@ -92,6 +93,7 @@ const ServiceTableRow = ({ obj: s, index, key, style }) => {
 };
 
 const ServiceAddress = ({ s }) => {
+  const { t } = useTranslation();
   const ServiceIPsRow = (name, desc, ips, note = null) => (
     <div className="co-ip-row">
       <div className="row">
@@ -127,8 +129,8 @@ const ServiceAddress = ({ s }) => {
   return (
     <div>
       <div className="row co-ip-header">
-        <div className="col-xs-6">Type</div>
-        <div className="col-xs-6">Location</div>
+        <div className="col-xs-6">{t('SINGLE:MSG_SERVICES_SERVICESDETAILS_TABDETAILS_SERVICEROUTING_3')}</div>
+        <div className="col-xs-6">{t('SINGLE:MSG_SERVICES_SERVICESDETAILS_TABDETAILS_SERVICEROUTING_4')}</div>
       </div>
       <div className="rows">
         {ServiceType(s.spec.type)}
@@ -138,81 +140,93 @@ const ServiceAddress = ({ s }) => {
   );
 };
 
-const ServicePortMapping = ({ ports }) => (
-  <div>
-    <div className="row co-ip-header">
-      <div className="col-xs-3">Name</div>
-      <div className="col-xs-3">Port</div>
-      <div className="col-xs-3">Protocol</div>
-      <div className="col-xs-3">Pod Port or Name</div>
-    </div>
-    <div className="rows">
-      {ports.map((portObj, i) => {
-        return (
-          <div className="co-ip-row" key={i}>
-            <div className="row">
-              <div className="col-xs-3 co-text-service">
-                <p>{portObj.name || '-'}</p>
-                {portObj.nodePort && <p className="co-text-node">Node Port</p>}
-              </div>
-              <div className="col-xs-3 co-text-service">
-                <p>
-                  <ResourceIcon kind="Service" />
-                  <span>{portObj.port}</span>
-                </p>
-                {portObj.nodePort && (
-                  <p className="co-text-node">
-                    <ResourceIcon kind="Node" />
-                    <span>{portObj.nodePort}</span>
+const ServicePortMapping = ({ ports }) => {
+  const { t } = useTranslation();
+  return (
+    <div>
+      <div className="row co-ip-header">
+        <div className="col-xs-3">{t('SINGLE:MSG_SERVICES_SERVICESDETAILS_TABDETAILS_SERVICEROUTING_6')}</div>
+        <div className="col-xs-3">{t('SINGLE:MSG_SERVICES_SERVICESDETAILS_TABDETAILS_SERVICEROUTING_7')}</div>
+        <div className="col-xs-3">{t('SINGLE:MSG_SERVICES_SERVICESDETAILS_TABDETAILS_SERVICEROUTING_8')}</div>
+        <div className="col-xs-3">{t('SINGLE:MSG_SERVICES_SERVICESDETAILS_TABDETAILS_SERVICEROUTING_9')}</div>
+      </div>
+      <div className="rows">
+        {ports.map((portObj, i) => {
+          return (
+            <div className="co-ip-row" key={i}>
+              <div className="row">
+                <div className="col-xs-3 co-text-service">
+                  <p>{portObj.name || '-'}</p>
+                  {portObj.nodePort && <p className="co-text-node">Node Port</p>}
+                </div>
+                <div className="col-xs-3 co-text-service">
+                  <p>
+                    <ResourceIcon kind="Service" />
+                    <span>{portObj.port}</span>
                   </p>
-                )}
-              </div>
-              <div className="col-xs-3">
-                <p>{portObj.protocol}</p>
-              </div>
-              <div className="col-xs-3 co-text-pod">
-                <p>
-                  <ResourceIcon kind="Pod" />
-                  <span>{portObj.targetPort}</span>
-                </p>
+                  {portObj.nodePort && (
+                    <p className="co-text-node">
+                      <ResourceIcon kind="Node" />
+                      <span>{portObj.nodePort}</span>
+                    </p>
+                  )}
+                </div>
+                <div className="col-xs-3">
+                  <p>{portObj.protocol}</p>
+                </div>
+                <div className="col-xs-3 co-text-pod">
+                  <p>
+                    <ResourceIcon kind="Pod" />
+                    <span>{portObj.targetPort}</span>
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
-const Details = ({ obj: s }) => (
-  <div className="co-m-pane__body">
-    <div className="row">
-      <div className="col-sm-6">
-        <SectionHeading text="Service Details" />
-        <ResourceSummary resource={s} showPodSelector>
-          <DetailsItem label="Session Affinity" obj={s} path="spec.sessionAffinity" />
-        </ResourceSummary>
-      </div>
-      <div className="col-sm-6">
-        <SectionHeading text="Service Routing" />
-        <dl>
-          <dt>Service Address</dt>
-          <dd className="service-ips">
-            <ServiceAddress s={s} />
-          </dd>
-          <DetailsItem label="Service Port Mapping" obj={s} path="spec.ports">
-            <div className="service-ips">{s.spec.ports ? <ServicePortMapping ports={s.spec.ports} /> : '-'}</div>
-          </DetailsItem>
-        </dl>
+const Details = ({ obj: s }) => {
+  const { t } = useTranslation();
+  return (
+    <div className="co-m-pane__body">
+      <div className="row">
+        <div className="col-sm-6">
+          <SectionHeading text={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_1', { 0: t('COMMON:MSG_LNB_MENU_47') })} />
+          <ResourceSummary resource={s} showPodSelector>
+            <DetailsItem label={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_40')} obj={s} path="spec.sessionAffinity" />
+          </ResourceSummary>
+        </div>
+        <div className="col-sm-6">
+          <SectionHeading text={t('SINGLE:MSG_SERVICES_SERVICESDETAILS_TABDETAILS_SERVICEROUTING_1')} />
+          <dl>
+            <dt>{t('SINGLE:MSG_SERVICES_SERVICESDETAILS_TABDETAILS_SERVICEROUTING_2')}</dt>
+            <dd className="service-ips">
+              <ServiceAddress s={s} />
+            </dd>
+            <DetailsItem label={t('SINGLE:MSG_SERVICES_SERVICESDETAILS_TABDETAILS_SERVICEROUTING_5')} obj={s} path="spec.ports">
+              <div className="service-ips">{s.spec.ports ? <ServicePortMapping ports={s.spec.ports} /> : '-'}</div>
+            </DetailsItem>
+          </dl>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const { details, pods, editYaml } = navFactory;
 const ServicesDetailsPage = props => <DetailsPage {...props} menuActions={menuActions} pages={[details(Details), editYaml(), pods()]} />;
 
-const ServicesList = props => <Table {...props} aria-label="Services" Header={ServiceTableHeader} Row={ServiceTableRow} virtualize />;
-const ServicesPage = props => <ListPage canCreate={true} ListComponent={ServicesList} {...props} />;
+const ServicesList = props => {
+  const { t } = useTranslation();
+  return <Table {...props} aria-label="Services" Header={ServiceTableHeader.bind(null, t)} Row={ServiceTableRow} virtualize />;
+};
+const ServicesPage = props => {
+  const { t } = useTranslation();
+  return <ListPage title={t('COMMON:MSG_LNB_MENU_47')} canCreate={true} ListComponent={ServicesList} {...props} />;
+};
 
 export { ServicesList, ServicesPage, ServicesDetailsPage };

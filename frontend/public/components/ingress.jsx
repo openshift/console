@@ -4,7 +4,7 @@ import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import { Kebab, SectionHeading, LabelList, ResourceKebab, ResourceIcon, detailsPage, EmptyBox, navFactory, ResourceLink, ResourceSummary } from './utils';
-
+import { useTranslation } from 'react-i18next';
 const menuActions = Kebab.factory.common;
 
 export const ingressValidHosts = ingress => _.map(_.get(ingress, 'spec.rules', []), 'host').filter(_.isString);
@@ -47,28 +47,28 @@ const tableColumnClasses = [classNames('col-md-3', 'col-sm-4', 'col-xs-6'), clas
 
 const kind = 'Ingress';
 
-const IngressTableHeader = () => {
+const IngressTableHeader = t => {
   return [
     {
-      title: 'Name',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_1'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: 'Namespace',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_2'),
       sortField: 'metadata.namespace',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Labels',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_15'),
       sortField: 'metadata.labels',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'Hosts',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_28'),
       sortFunc: 'ingressValidHosts',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
@@ -101,14 +101,17 @@ const IngressTableRow = ({ obj: ingress, index, key, style }) => {
   );
 };
 
-const RulesHeader = () => (
-  <div className="row co-m-table-grid__head">
-    <div className="col-xs-3">Host</div>
-    <div className="col-xs-3">Path</div>
-    <div className="col-xs-3">Service</div>
-    <div className="col-xs-2">Service Port</div>
-  </div>
-);
+const RulesHeader = () => {
+  const { t } = useTranslation();
+  return (
+    <div className="row co-m-table-grid__head">
+      <div className="col-xs-3">{t('COMMON:MSG_DETAILS_TABDETAILS_INGRESSRULES_TABLEHEADER_1')}</div>
+      <div className="col-xs-3">{t('COMMON:MSG_DETAILS_TABDETAILS_INGRESSRULES_TABLEHEADER_2')}</div>
+      <div className="col-xs-3">{t('COMMON:MSG_DETAILS_TABDETAILS_INGRESSRULES_TABLEHEADER_3')}</div>
+      <div className="col-xs-2">{t('COMMON:MSG_DETAILS_TABDETAILS_INGRESSRULES_TABLEHEADER_4')}</div>
+    </div>
+  );
+};
 
 const RulesRow = ({ rule, namespace }) => {
   return (
@@ -162,29 +165,38 @@ const RulesRows = props => {
   return <EmptyBox label="Rules" />;
 };
 
-const Details = ({ obj: ingress }) => (
-  <>
-    <div className="co-m-pane__body">
-      <SectionHeading text="Ingress Details" />
-      <ResourceSummary resource={ingress}>
-        <dt>TLS Certificate</dt>
-        <dd>{getTLSCert(ingress)}</dd>
-      </ResourceSummary>
-    </div>
-    <div className="co-m-pane__body">
-      <SectionHeading text="Ingress Rules" />
-      <p className="co-m-pane__explanation">These rules are handled by a routing layer (Ingress Controller) which is updated as the rules are modified. The Ingress controller implementation defines how headers and other metadata are forwarded or manipulated.</p>
-      <div className="co-m-table-grid co-m-table-grid--bordered">
-        <RulesHeader />
-        <RulesRows spec={ingress.spec} namespace={ingress.metadata.namespace} />
+const Details = ({ obj: ingress }) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <div className="co-m-pane__body">
+        <SectionHeading text={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_1', { 0: t('COMMON:MSG_LNB_MENU_48') })} />
+        <ResourceSummary resource={ingress}>
+          <dt>{t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_42')}</dt>
+          <dd>{getTLSCert(ingress)}</dd>
+        </ResourceSummary>
       </div>
-    </div>
-  </>
-);
+      <div className="co-m-pane__body">
+        <SectionHeading text="Ingress Rules" />
+        <p className="co-m-pane__explanation">{t('COMMON:MSG_DETAILS_TABDETAILS_INGRESSRULES_2')}</p>
+        <div className="co-m-table-grid co-m-table-grid--bordered">
+          <RulesHeader />
+          <RulesRows spec={ingress.spec} namespace={ingress.metadata.namespace} />
+        </div>
+      </div>
+    </>
+  );
+};
 
 const IngressesDetailsPage = props => <DetailsPage {...props} menuActions={menuActions} pages={[navFactory.details(detailsPage(Details)), navFactory.editYaml()]} />;
-const IngressesList = props => <Table {...props} aria-label="Ingresses" Header={IngressTableHeader} Row={IngressTableRow} virtualize />;
+const IngressesList = props => {
+  const { t } = useTranslation();
+  return <Table {...props} aria-label="Ingresses" Header={IngressTableHeader.bind(null, t)} Row={IngressTableRow} virtualize />;
+};
 
-const IngressesPage = props => <ListPage ListComponent={IngressesList} canCreate={true} {...props} />;
+const IngressesPage = props => {
+  const { t } = useTranslation();
+  return <ListPage title={t('COMMON:MSG_LNB_MENU_48')} ListComponent={IngressesList} canCreate={true} {...props} />;
+};
 
 export { IngressesList, IngressesPage, IngressesDetailsPage };
