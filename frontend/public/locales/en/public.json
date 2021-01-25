@@ -430,6 +430,7 @@
   "StatefulSet details": "StatefulSet details",
   "Resource limits": "Resource limits",
   "Ports": "Ports",
+  "Select {{item}}": "Select {{item}}",
   "{{date, MMM D, h:mm a}}": "{{date, MMM D, h:mm a}}",
   "Remove volume": "Remove volume",
   "Mount path": "Mount path",

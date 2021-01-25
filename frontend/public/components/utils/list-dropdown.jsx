@@ -13,6 +13,7 @@ import { flagPending } from '../../reducers/features';
 import { useAccessReview } from '@console/internal/components/utils';
 import { createNamespaceModal, createProjectModal } from '../modals';
 import { NamespaceModel, ProjectModel } from '@console/internal/models';
+import { useTranslation } from 'react-i18next';
 
 const getKey = (key, keyKind) => {
   return keyKind ? `${key}-${keyKind}` : key;
@@ -217,6 +218,7 @@ const useProjectOrNamespaceModel = () => {
 
 /** @type {React.FC<{dataFilter?: (ns: any) => boolean, desc?: string, selectedKey?: string, fixed?: boolean, placeholder?: string, onChange?: (selectedKey: string, selectedKeyKind: string,  selectedResource?: K8sResourceKind) => void, id?: string, dataTest?: string}}>} */
 export const NsDropdown = (props) => {
+  const { t } = useTranslation();
   const [selectedKey, setSelectedKey] = React.useState(props.selectedKey);
   const [model, canCreate] = useProjectOrNamespaceModel();
 
@@ -262,7 +264,7 @@ export const NsDropdown = (props) => {
       actionItems={actionItems}
       desc={model.plural}
       onChange={onChange}
-      placeholder={`Select ${model.kind}`}
+      placeholder={t('public~Select {{item}}', { item: model.kind ?? 'item' })}
       resources={[{ kind: `${model.kind}` }]}
       selectedKeyKind={model.kind}
       selectedKey={selectedKey}
