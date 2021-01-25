@@ -6,28 +6,14 @@ import * as classNames from 'classnames';
 import { connectToFlags } from '../reducers/features';
 import { FLAGS } from '@console/shared';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
-import {
-  Kebab,
-  navFactory,
-  ResourceKebab,
-  SectionHeading,
-  ResourceLink,
-  ResourceSummary,
-  Selector,
-  ExternalLink,
-} from './utils';
+import { Kebab, navFactory, ResourceKebab, SectionHeading, ResourceLink, ResourceSummary, Selector, ExternalLink } from './utils';
 import { NetworkPolicyModel } from '../models';
 import { getNetworkPolicyDocLink } from './utils/documentation';
 
 const { common } = Kebab.factory;
 const menuActions = [...Kebab.getExtensionsActionsForKind(NetworkPolicyModel), ...common];
 
-const tableColumnClasses = [
-  classNames('col-sm-4', 'col-xs-6'),
-  classNames('col-sm-4', 'col-xs-6'),
-  classNames('col-sm-4', 'hidden-xs'),
-  Kebab.columnClass,
-];
+const tableColumnClasses = [classNames('col-sm-4', 'col-xs-6'), classNames('col-sm-4', 'col-xs-6'), classNames('col-sm-4', 'hidden-xs'), Kebab.columnClass];
 
 const NetworkPolicyTableHeader = () => {
   return [
@@ -63,29 +49,12 @@ const NetworkPolicyTableRow = ({ obj: np, index, key, style }) => {
   return (
     <TableRow id={np.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink
-          kind={kind}
-          name={np.metadata.name}
-          namespace={np.metadata.namespace}
-          title={np.metadata.name}
-        />
+        <ResourceLink kind={kind} name={np.metadata.name} namespace={np.metadata.namespace} title={np.metadata.name} />
       </TableData>
       <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
-        <ResourceLink
-          kind={'Namespace'}
-          name={np.metadata.namespace}
-          title={np.metadata.namespace}
-        />
+        <ResourceLink kind={'Namespace'} name={np.metadata.namespace} title={np.metadata.namespace} />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
-        {_.isEmpty(np.spec.podSelector) ? (
-          <Link
-            to={`/search/ns/${np.metadata.namespace}?kind=Pod`}
-          >{`All pods within ${np.metadata.namespace}`}</Link>
-        ) : (
-          <Selector selector={np.spec.podSelector} namespace={np.metadata.namespace} />
-        )}
-      </TableData>
+      <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>{_.isEmpty(np.spec.podSelector) ? <Link to={`/search/ns/${np.metadata.namespace}?kind=Pod`}>{`All pods within ${np.metadata.namespace}`}</Link> : <Selector selector={np.spec.podSelector} namespace={np.metadata.namespace} />}</TableData>
       <TableData className={tableColumnClasses[3]}>
         <ResourceKebab actions={menuActions} kind={kind} resource={np} />
       </TableData>
@@ -93,19 +62,9 @@ const NetworkPolicyTableRow = ({ obj: np, index, key, style }) => {
   );
 };
 
-const NetworkPoliciesList = (props) => (
-  <Table
-    {...props}
-    aria-label="Network Policies"
-    Header={NetworkPolicyTableHeader}
-    Row={NetworkPolicyTableRow}
-    virtualize
-  />
-);
+const NetworkPoliciesList = props => <Table {...props} aria-label="Network Policies" Header={NetworkPolicyTableHeader} Row={NetworkPolicyTableRow} virtualize />;
 
-export const NetworkPoliciesPage = (props) => (
-  <ListPage {...props} ListComponent={NetworkPoliciesList} kind={kind} canCreate={true} />
-);
+export const NetworkPoliciesPage = props => <ListPage {...props} ListComponent={NetworkPoliciesList} kind={kind} canCreate={true} />;
 
 const IngressHeader = () => (
   <div className="row co-m-table-grid__head">
@@ -183,14 +142,7 @@ const Details_ = ({ obj: np, flags }) => {
       <div className="co-m-pane__body">
         <SectionHeading text="Ingress Rules" />
         <p className="co-m-pane__explanation">
-          Pods accept all traffic by default. They can be isolated via Network Policies which
-          specify a whitelist of ingress rules. When a Pod is selected by a Network Policy, it will
-          reject all traffic not explicitly allowed via a Network Policy. See more details in{' '}
-          <ExternalLink
-            href={getNetworkPolicyDocLink(flags[FLAGS.OPENSHIFT])}
-            text="Network Policies Documentation"
-          />
-          .
+          Pods accept all traffic by default. They can be isolated via Network Policies which specify a whitelist of ingress rules. When a Pod is selected by a Network Policy, it will reject all traffic not explicitly allowed via a Network Policy. See more details in <ExternalLink href={getNetworkPolicyDocLink(flags[FLAGS.OPENSHIFT])} text="Network Policies Documentation" />.
         </p>
         {_.isEmpty(_.get(np, 'spec.ingress[0]', [])) ? (
           `All traffic is allowed to Pods in ${np.metadata.namespace}.`
@@ -199,12 +151,7 @@ const Details_ = ({ obj: np, flags }) => {
             <IngressHeader />
             <div className="co-m-table-grid__body">
               {_.map(np.spec.ingress, (ingress, i) => (
-                <IngressRow
-                  key={i}
-                  ingress={ingress}
-                  podSelector={np.spec.podSelector}
-                  namespace={np.metadata.namespace}
-                />
+                <IngressRow key={i} ingress={ingress} podSelector={np.spec.podSelector} namespace={np.metadata.namespace} />
               ))}
             </div>
           </div>
@@ -216,10 +163,4 @@ const Details_ = ({ obj: np, flags }) => {
 
 const Details = connectToFlags(FLAGS.OPENSHIFT)(Details_);
 
-export const NetworkPoliciesDetailsPage = (props) => (
-  <DetailsPage
-    {...props}
-    menuActions={menuActions}
-    pages={[navFactory.details(Details), navFactory.editYaml()]}
-  />
-);
+export const NetworkPoliciesDetailsPage = props => <DetailsPage {...props} menuActions={menuActions} pages={[navFactory.details(Details), navFactory.editYaml()]} />;
