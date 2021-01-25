@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {
   sortable,
-  truncate,
   IRowData,
   Table,
   TableHeader,
@@ -29,7 +28,7 @@ const StreamsInstanceTable: any = ({ kafkaArray, selectedKafkas, setSelectedKafk
           { title: <a href="/">{bootstrapServerHost}</a> },
           { title: `${cloudProvider};${region}` },
           { title: <a href="/">{owner}</a> },
-        ],
+        ]
       });
     });
 
@@ -37,7 +36,8 @@ const StreamsInstanceTable: any = ({ kafkaArray, selectedKafkas, setSelectedKafk
   };
 
   React.useEffect(() => {
-    setFormattedKafkas(formatTableRowData(kafkaArray));
+    // FIXME type issues
+    setFormattedKafkas(formatTableRowData() as any);
   }, [kafkaArray]);
 
   const tableColumns = [
