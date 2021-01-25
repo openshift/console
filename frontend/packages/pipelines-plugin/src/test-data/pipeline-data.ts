@@ -1,6 +1,6 @@
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { Pipeline, PipelineRun, TaskRunKind, PipelineSpec } from '../utils/pipeline-augment';
-import { TektonResourceLabel } from '../components/pipelines/const';
+import { TektonResourceLabel, preferredNameAnnotation } from '../components/pipelines/const';
 
 export enum DataState {
   IN_PROGRESS = 'In Progress',
@@ -25,6 +25,7 @@ export enum PipelineExampleNames {
   CONDITIONAL_PIPELINE = 'conditional-pipeline',
   INVALID_PIPELINE_MISSING_TASK = 'missing-task-pipeline',
   INVALID_PIPELINE_INVALID_TASK = 'invalid-task-pipeline',
+  EMBEDDED_PIPELINE_SPEC = 'embedded-pipeline-spec',
 }
 
 type CombinedPipelineTestData = {
@@ -1881,6 +1882,107 @@ export const pipelineTestData: PipelineTestData = {
               },
             },
           },
+        },
+      },
+    },
+  },
+  [PipelineExampleNames.EMBEDDED_PIPELINE_SPEC]: {
+    dataSource: 'embedded-pipelineSpec',
+    pipeline: null,
+    pipelineRuns: {
+      [DataState.IN_PROGRESS]: {
+        apiVersion: 'tekton.dev/v1alpha1',
+        kind: 'PipelineRun',
+        metadata: {
+          name: 'pipelinerun-with-embedded-pipelineSpec',
+          namespace: 'tekton-pipelines',
+          creationTimestamp: '2020-10-29T06:11:46Z',
+        },
+        spec: {
+          pipelineSpec: {
+            tasks: [
+              {
+                name: 'echo-good-morning',
+                taskSpec: {
+                  metadata: {
+                    labels: {
+                      app: 'example',
+                    },
+                  },
+                  steps: [
+                    {
+                      name: 'echo',
+                      image: 'ubuntu',
+                      script: ['#!/usr/bin/env bash echo "Good Morning!"'],
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+          resources: [
+            { name: 'source-repo', resourceRef: { name: 'mapit-git' } },
+            { name: 'web-image', resourceRef: { name: 'mapit-image' } },
+          ],
+        },
+      },
+      [DataState.SUCCESS]: {
+        apiVersion: 'tekton.dev/v1alpha1',
+        kind: 'PipelineRun',
+        metadata: {
+          name: 'pipelinerun-wit-embedded-pipelineSpec-p1bun0',
+          namespace: 'tekton-pipelines',
+          creationTimestamp: '2020-10-29T09:58:19Z',
+          annotations: {
+            [preferredNameAnnotation]: 'pipelinerun-wit-embedded-pipelineSpec',
+          },
+        },
+        spec: {
+          pipelineSpec: {
+            tasks: [
+              {
+                name: 'echo-good-morning',
+                taskSpec: {
+                  metadata: {
+                    labels: {
+                      app: 'example',
+                    },
+                  },
+                  steps: [
+                    {
+                      name: 'echo',
+                      image: 'ubuntu',
+                      script: ['#!/usr/bin/env bash echo "Good Morning!"'],
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+          resources: [
+            { name: 'source-repo', resourceRef: { name: 'mapit-git' } },
+            {
+              name: 'web-image',
+              resourceRef: { name: 'mapit-image' },
+            },
+          ],
+        },
+      },
+      [DataState.SKIPPED]: {
+        apiVersion: 'tekton.dev/v1alpha1',
+        kind: 'PipelineRun',
+        metadata: {
+          name: 'embedded-pipelineSpec-br8cxv',
+          namespace: 'tekton-pipelines',
+          creationTimestamp: '2020-10-29T06:11:46Z',
+          labels: { [TektonResourceLabel.pipeline]: 'embedded-pipelineSpec' },
+        },
+        spec: {
+          pipelineRef: { name: 'embedded-pipelineSpec' },
+          resources: [
+            { name: 'source-repo', resourceRef: { name: 'mapit-git' } },
+            { name: 'web-image', resourceRef: { name: 'mapit-image' } },
+          ],
         },
       },
     },

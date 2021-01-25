@@ -16,7 +16,7 @@ import { PipelineRunModel } from '../../../../models';
 import { getPipelineRunParams, getPipelineRunWorkspaces } from '../../../../utils/pipeline-utils';
 import { CREATE_PIPELINE_RESOURCE, initialResourceFormValues } from './const';
 import { CommonPipelineModalFormikValues, PipelineModalFormResource } from './types';
-import { TektonResourceLabel, VolumeTypes } from '../../const';
+import { TektonResourceLabel, VolumeTypes, preferredNameAnnotation } from '../../const';
 
 /**
  * Migrates a PipelineRun from one version to another to support auto-upgrades with old (and invalid) PipelineRuns.
@@ -43,6 +43,20 @@ export const migratePipelineRun = (pipelineRun: PipelineRun): PipelineRun => {
   return newPipelineRun;
 };
 
+export const getPipelineName = (pipeline?: Pipeline, latestRun?: PipelineRun): string => {
+  if (pipeline) {
+    return pipeline.metadata.name;
+  }
+
+  if (latestRun) {
+    return (
+      latestRun.spec.pipelineRef?.name ??
+      (latestRun.metadata.annotations?.[preferredNameAnnotation] || latestRun.metadata.name)
+    );
+  }
+  return null;
+};
+
 export const getPipelineRunData = (
   pipeline: Pipeline = null,
   latestRun?: PipelineRun,
@@ -54,7 +68,7 @@ export const getPipelineRunData = (
     return null;
   }
 
-  const pipelineName = pipeline ? pipeline.metadata.name : latestRun.spec.pipelineRef.name;
+  const pipelineName = getPipelineName(pipeline, latestRun);
 
   const resources = latestRun?.spec.resources;
   const workspaces = latestRun?.spec.workspaces;
@@ -68,6 +82,10 @@ export const getPipelineRunData = (
     {},
     pipeline?.metadata?.annotations,
     latestRun?.metadata?.annotations,
+    !latestRun?.spec.pipelineRef &&
+      !latestRun?.metadata.annotations?.[preferredNameAnnotation] && {
+        [preferredNameAnnotation]: pipelineName,
+      },
   );
   delete annotations['kubectl.kubernetes.io/last-applied-configuration'];
 
@@ -84,15 +102,22 @@ export const getPipelineRunData = (
           }),
       annotations,
       namespace: pipeline ? pipeline.metadata.namespace : latestRun.metadata.namespace,
-      labels: _.merge({}, pipeline?.metadata?.labels, latestRun?.metadata?.labels, {
-        'tekton.dev/pipeline': pipelineName,
-      }),
+      labels: _.merge(
+        {},
+        pipeline?.metadata?.labels,
+        latestRun?.metadata?.labels,
+        (latestRun?.spec.pipelineRef || pipeline) && {
+          'tekton.dev/pipeline': pipelineName,
+        },
+      ),
     },
     spec: {
       ...(latestRun?.spec || {}),
-      pipelineRef: {
-        name: pipelineName,
-      },
+      ...((latestRun?.spec.pipelineRef || pipeline) && {
+        pipelineRef: {
+          name: pipelineName,
+        },
+      }),
       resources,
       ...(params && { params }),
       workspaces,

@@ -52,3 +52,6 @@ export const DEFAULT_LEGEND_CHART_HEIGHT = 375;
 export const DEFAULT_TIME_RANGE = '1w';
 export const DEFAULT_REFRESH_INTERVAL = '30s';
 export const DEFAULT_SAMPLES = 60;
+
+// Annotation for referencing pipeline name in case of PipelineRun with no reference to a Pipeline (embedded pipeline)
+export const preferredNameAnnotation = 'pipeline.openshift.io/preferredName';
