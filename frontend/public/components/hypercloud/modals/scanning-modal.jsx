@@ -39,7 +39,7 @@ class BaseScanningModal extends PromiseComponent {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if (prevState.namespace !== this.state.namespace) {
+        if (prevState.namespace !== this.state.namespace && prevProps.resource?.kind !== 'Tag') {
             return this.getResourceList();
         }
     }
@@ -62,9 +62,11 @@ class BaseScanningModal extends PromiseComponent {
     _submit(e) {
         e.preventDefault();
 
-        const { kind, ns, modelKind, resource, labelSelector } = this.props;
+        let { kind, ns, modelKind, resource, labelSelector } = this.props;
 
         let registries;
+
+        kind = kind || resource?.kind;
 
         if (kind === 'Registry' || modelKind?.kind === 'Registry') {
             if (resource) {
@@ -114,19 +116,33 @@ class BaseScanningModal extends PromiseComponent {
                     ))
                 }];
             }
+        } else if (kind === 'Tag') {
+            registries = [{
+                'name': resource.registry,
+                'repositories': [
+                    {
+                        'name': resource.repository,
+                        'versions': [
+                            resource.version
+                        ]
+                    }
+                ]
+            }];
         }
 
         const data = { registries };
 
 
         const opts = {
-            ns: (this.state.namespace !== '' && this.state.namespace) || resource.metadata.namespace,
+            ns: (this.state.namespace !== '' && this.state.namespace) || resource.metadata?.namespace || resource.namespace,
             plural: 'scans',
             name: this.state.name,
         };
-        const model = kind ? modelFor(kind) : modelKind;
+        let model = kind ? modelFor(kind) : modelKind;
 
-        model.apiGroup = 'registry.' + model.apiGroup;
+        model = model || { apiVersion: 'v1' };
+
+        model.apiGroup = 'registry.tmax.io';
         model.plural = 'scans';
 
         const promise = k8sCreateUrl(model, data, opts);
@@ -137,7 +153,7 @@ class BaseScanningModal extends PromiseComponent {
     successSubmit = ({ imageScanRequestName }) => {
         const { resource } = this.props;
 
-        const namespace = resource?.metadata.namespace || this.state.namespace;
+        const namespace = resource?.metadata?.namespace || this.state.namespace || resource?.namespace;
 
         this.props.close();
         history.push(`/k8s/ns/${namespace}/imagescanrequests/${imageScanRequestName}`);
@@ -167,6 +183,8 @@ class BaseScanningModal extends PromiseComponent {
             label = kind || modelKind?.kind;
         }
 
+        const name = resource?.meatadata?.name || resource?.version;
+
         return (
             <form onSubmit={this._submit} name="form" className="modal-content">
                 <ModalTitle>Image Scan Request Creation</ModalTitle>
@@ -195,7 +213,7 @@ class BaseScanningModal extends PromiseComponent {
                             </label>
                             <div className="co-search-group">
                                 {resource ?
-                                    <div>{resource.metadata.name}</div> :
+                                    <div>{name}</div> :
                                     <select className="col-sm-12" value={this.state.resource} onChange={this.onChangeResource} multiple>
                                         {this.state.resources.map(resource => <option key={resource} value={resource}>{resource}</option>)}
                                     </select>
