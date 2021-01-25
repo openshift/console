@@ -84,8 +84,7 @@ export const useUserSettings = <T>(
           if (err?.response?.status === 403 || err?.response?.status === 404) {
             setFallbackLocalStorage(true);
           } else {
-            setSettings(defaultValueRef.current);
-            setLoaded(true);
+            throw err;
           }
         }
       })();
