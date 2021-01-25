@@ -4,25 +4,10 @@ import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
-import {
-  DetailsItem,
-  Kebab,
-  LabelList,
-  ResourceIcon,
-  ResourceKebab,
-  ResourceLink,
-  ResourceSummary,
-  SectionHeading,
-  Selector,
-  navFactory,
-} from './utils';
+import { DetailsItem, Kebab, LabelList, ResourceIcon, ResourceKebab, ResourceLink, ResourceSummary, SectionHeading, Selector, navFactory } from './utils';
 import { ServiceModel } from '../models';
 
-const menuActions = [
-  Kebab.factory.ModifyPodSelector,
-  ...Kebab.getExtensionsActionsForKind(ServiceModel),
-  ...Kebab.factory.common,
-];
+const menuActions = [Kebab.factory.ModifyPodSelector, ...Kebab.getExtensionsActionsForKind(ServiceModel), ...Kebab.factory.common];
 
 const ServiceIP = ({ s }) => {
   const children = _.map(s.spec.ports, (portObj, i) => {
@@ -39,14 +24,7 @@ const ServiceIP = ({ s }) => {
 
 const kind = 'Service';
 
-const tableColumnClasses = [
-  classNames('col-lg-3', 'col-md-3', 'col-sm-4', 'col-xs-6'),
-  classNames('col-lg-2', 'col-md-3', 'col-sm-4', 'col-xs-6'),
-  classNames('col-lg-3', 'col-md-3', 'col-sm-4', 'hidden-xs'),
-  classNames('col-lg-2', 'col-md-3', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
-  Kebab.columnClass,
-];
+const tableColumnClasses = [classNames('col-lg-3', 'col-md-3', 'col-sm-4', 'col-xs-6'), classNames('col-lg-2', 'col-md-3', 'col-sm-4', 'col-xs-6'), classNames('col-lg-3', 'col-md-3', 'col-sm-4', 'hidden-xs'), classNames('col-lg-2', 'col-md-3', 'hidden-sm', 'hidden-xs'), classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'), Kebab.columnClass];
 
 const ServiceTableHeader = () => {
   return [
@@ -92,12 +70,7 @@ const ServiceTableRow = ({ obj: s, index, key, style }) => {
   return (
     <TableRow id={s.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink
-          kind={kind}
-          name={s.metadata.name}
-          namespace={s.metadata.namespace}
-          title={s.metadata.uid}
-        />
+        <ResourceLink kind={kind} name={s.metadata.name} namespace={s.metadata.namespace} title={s.metadata.uid} />
       </TableData>
       <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
         <ResourceLink kind="Namespace" name={s.metadata.namespace} title={s.metadata.namespace} />
@@ -134,31 +107,20 @@ const ServiceAddress = ({ s }) => {
     </div>
   );
 
-  const ServiceType = (type) => {
+  const ServiceType = type => {
     switch (type) {
       case 'NodePort':
-        return ServiceIPsRow(
-          'Node Port',
-          'Accessible outside the cluster',
-          _.map(s.spec.ports, 'nodePort'),
-          '(all nodes): ',
-        );
+        return ServiceIPsRow('Node Port', 'Accessible outside the cluster', _.map(s.spec.ports, 'nodePort'), '(all nodes): ');
       case 'LoadBalancer':
         return ServiceIPsRow(
           'External Load Balancer',
           'Ingress point(s) of load balancer',
-          _.map(s.status.loadBalancer.ingress, (i) => i.hostname || i.ip || '-'),
+          _.map(s.status.loadBalancer.ingress, i => i.hostname || i.ip || '-'),
         );
       case 'ExternalName':
-        return ServiceIPsRow(
-          'External Service Name',
-          'Location of the resource that backs the service',
-          [s.spec.externalName],
-        );
+        return ServiceIPsRow('External Service Name', 'Location of the resource that backs the service', [s.spec.externalName]);
       default:
-        return ServiceIPsRow('Cluster IP', 'Accessible within the cluster only', [
-          s.spec.clusterIP,
-        ]);
+        return ServiceIPsRow('Cluster IP', 'Accessible within the cluster only', [s.spec.clusterIP]);
     }
   };
 
@@ -170,12 +132,7 @@ const ServiceAddress = ({ s }) => {
       </div>
       <div className="rows">
         {ServiceType(s.spec.type)}
-        {s.spec.externalIPs &&
-          ServiceIPsRow(
-            'External IP',
-            'IP Address(es) accepting traffic for service',
-            s.spec.externalIPs,
-          )}
+        {s.spec.externalIPs && ServiceIPsRow('External IP', 'IP Address(es) accepting traffic for service', s.spec.externalIPs)}
       </div>
     </div>
   );
@@ -244,9 +201,7 @@ const Details = ({ obj: s }) => (
             <ServiceAddress s={s} />
           </dd>
           <DetailsItem label="Service Port Mapping" obj={s} path="spec.ports">
-            <div className="service-ips">
-              {s.spec.ports ? <ServicePortMapping ports={s.spec.ports} /> : '-'}
-            </div>
+            <div className="service-ips">{s.spec.ports ? <ServicePortMapping ports={s.spec.ports} /> : '-'}</div>
           </DetailsItem>
         </dl>
       </div>
@@ -255,25 +210,9 @@ const Details = ({ obj: s }) => (
 );
 
 const { details, pods, editYaml } = navFactory;
-const ServicesDetailsPage = (props) => (
-  <DetailsPage
-    {...props}
-    menuActions={menuActions}
-    pages={[details(Details), editYaml(), pods()]}
-  />
-);
+const ServicesDetailsPage = props => <DetailsPage {...props} menuActions={menuActions} pages={[details(Details), editYaml(), pods()]} />;
 
-const ServicesList = (props) => (
-  <Table
-    {...props}
-    aria-label="Services"
-    Header={ServiceTableHeader}
-    Row={ServiceTableRow}
-    virtualize
-  />
-);
-const ServicesPage = (props) => (
-  <ListPage canCreate={true} ListComponent={ServicesList} {...props} />
-);
+const ServicesList = props => <Table {...props} aria-label="Services" Header={ServiceTableHeader} Row={ServiceTableRow} virtualize />;
+const ServicesPage = props => <ListPage canCreate={true} ListComponent={ServicesList} {...props} />;
 
 export { ServicesList, ServicesPage, ServicesDetailsPage };
