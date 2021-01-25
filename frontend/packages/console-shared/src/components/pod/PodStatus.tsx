@@ -93,6 +93,7 @@ const PodStatus: React.FC<PodStatusProps> = ({
   const chartDonut = React.useMemo(() => {
     return (
       <ChartDonut
+        ariaTitle={`${title} ${subTitle}`}
         animate={{
           duration: ANIMATION_DURATION,
           onEnd: updateOnEnd ? forceUpdate : undefined,
@@ -110,7 +111,7 @@ const PodStatus: React.FC<PodStatusProps> = ({
         subTitle={truncSubTitle}
         allowTooltip={false}
         labels={() => null}
-        /* 
+        /*
             // @ts-ignore */
         padAngle={({ datum }) => (datum.y > 0 ? 2 : 0)}
         style={{
@@ -129,6 +130,8 @@ const PodStatus: React.FC<PodStatusProps> = ({
     outerRadius,
     size,
     standalone,
+    subTitle,
+    title,
     truncSubTitle,
     subTitleComponent,
     truncTitle,
