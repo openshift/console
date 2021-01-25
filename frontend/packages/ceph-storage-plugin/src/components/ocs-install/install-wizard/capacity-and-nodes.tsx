@@ -56,6 +56,7 @@ export const SelectNodesDetails: React.FC<SelectNodesDetailsProps> = React.memo(
             memory: humanizeBinaryBytes(memory).string,
           })}
           {t('ceph-storage-plugin~{{zoneCount, number}} zone', { zoneCount: zones, count: zones })}
+          {')'}
         </Text>
       </TextContent>
     );
