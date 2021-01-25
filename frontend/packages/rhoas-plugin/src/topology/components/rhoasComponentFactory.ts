@@ -8,15 +8,16 @@ import {
   withNoDrop
 } from '@console/topology/src/components/graph-view';
 import { } from '@console/topology/src/components/graph-view';
-import KafkaConnection from './KafkaConnection';
-
+import KafkaNode from './KafkaNode';
+import { ManagedKafkaConnectionModel } from "../../models"
 
 export const getRhoasComponentFactory = (): ComponentFactory => {
   return (kind, type): React.ComponentType<{ element: GraphElement }> | undefined => {
-    console.log(kind, type);
+    console.log("RHOAS Toplogy", kind, type);
     switch (type) {
-      case "ManagedKafkaConnection":
-        return withNoDrop()(KafkaConnection)
+      // Using resource kind as model kind for simplicity
+      case ManagedKafkaConnectionModel.kind:
+        return withNoDrop()(KafkaNode)
       default:
         return undefined;
     }

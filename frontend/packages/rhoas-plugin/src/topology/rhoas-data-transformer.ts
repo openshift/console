@@ -6,36 +6,26 @@ import { KAFKA_WIDTH, KAFKA_HEIGHT, KAFKA_PADDING } from "./components/const"
 import { ManagedKafkaConnectionModel } from '../models'
 
 export const getTopologyRhoasItem = (
-  obj: K8sResourceKind
+  objArray: K8sResourceKind[]
 ): NodeModel[] => {
-  // const { kind, apiVersion } = SecretModel;
   const returnData = [];
-  const managedKafka: OdcNodeModel = {
-    id: "ManagedKafkaConnection" + new Date().getTime(),
-    type: "ManagedKafkaConnection",
-    resourceKind: ManagedKafkaConnectionModel.kind,
-    group: false,
-    label: obj.metadata.name || "ManagedKafkaConnection",
-    children: [],
-    width: KAFKA_WIDTH,
-    height: KAFKA_HEIGHT,
-    visible: true,
-    style: {
-      padding: KAFKA_PADDING,
-    },
-    data: {
-      resources: {
-        obj: null,
-        buildConfigs: null,
-        services: null,
-        routes: null,
-      },
-      data: {
-      },
-    },
-  };
-
-  returnData.push(managedKafka);
+  for (const obj of objArray) {
+    const managedKafka: OdcNodeModel = {
+      id: "ManagedKafkaConnection" + obj.metadata.creationTimestamp,
+      type: ManagedKafkaConnectionModel.kind,
+      resourceKind: ManagedKafkaConnectionModel.kind,
+      group: false,
+      label: obj.metadata.name || "ManagedKafkaConnection",
+      children: [],
+      width: KAFKA_WIDTH,
+      height: KAFKA_HEIGHT,
+      visible: true,
+      style: {
+        padding: KAFKA_PADDING,
+      }
+    };
+    returnData.push(managedKafka);
+  }
 
   return returnData;
 };
@@ -43,8 +33,10 @@ export const getTopologyRhoasItem = (
 export const getRhoasTopologyDataModel = () => {
 
   return (namespace: string, resources: TopologyDataResources): Promise<Model> => {
-    console.log(namespace);
-    const items = getTopologyRhoasItem(undefined);
+
+    console.log("getRhoasTopologyDataModel", namespace, resources.kafkaConnections);
+    const items = getTopologyRhoasItem(resources.kafkaConnections.data);
+
     return Promise.resolve({
       nodes: items
     });

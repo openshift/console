@@ -13,9 +13,9 @@ export type TopologyConsumedExtensions =
 
 const getRhoasWatchedResources = (namespace: string): WatchK8sResources<any> => {
   return {
-    ManagedKafkaConnection: {
+    kafkaConnections: {
       isList: true,
-      kind: 'Secret',
+      kind: 'ManagedKafkaConnection',
       namespace,
       optional: true,
     },
