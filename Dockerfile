@@ -9,7 +9,7 @@ FROM openshift/origin-base
 
 COPY --from=build /go/src/github.com/openshift/console/frontend/public/dist /opt/bridge/static
 COPY --from=build /go/src/github.com/openshift/console/bin/bridge /opt/bridge/bin/bridge
-RUN mkdir -p /opt/bridge/configs/
+COPY --from=build /go/src/github.com/openshift/console/configs/ /opt/bridge/configs/
 
 WORKDIR /opt/bridge/
 

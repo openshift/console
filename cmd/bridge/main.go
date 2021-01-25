@@ -18,9 +18,9 @@ import (
 	"github.com/coreos/pkg/capnslog"
 	"github.com/coreos/pkg/flagutil"
 	"github.com/openshift/console/pkg/hypercloud/safe"
+	"github.com/pkg/errors"
 
 	"github.com/openshift/console/pkg/auth"
-	"github.com/openshift/console/pkg/backend"
 	"github.com/openshift/console/pkg/config/dynamic"
 	"github.com/openshift/console/pkg/provider/file"
 
@@ -28,8 +28,6 @@ import (
 	"github.com/openshift/console/pkg/bridge"
 	"github.com/openshift/console/pkg/crypto"
 	"github.com/openshift/console/pkg/helm/chartproxy"
-	pConfig "github.com/openshift/console/pkg/hypercloud/config"
-	"github.com/openshift/console/pkg/hypercloud/middlewares/stripprefix"
 	hproxy "github.com/openshift/console/pkg/hypercloud/proxy"
 	"github.com/openshift/console/pkg/hypercloud/router"
 	pServer "github.com/openshift/console/pkg/hypercloud/server"
@@ -801,34 +799,77 @@ func switchRouter(hyperCloudSrv *server.Server, proxySrv *pServer.HttpServer) fu
 		}
 		log.Infof("buildHandler : %v  \n", config.Routers)
 		for name, value := range config.Routers {
-			log.Infof("Creating proxy backend based on %v : %v  \n", name, value)
-			proxyBackend, err := backend.NewBackend(name, value.Server)
+
+			log.Infof("Create Hypercloud proxy based on %v: %v \n", name, value)
+			backURL, err := url.Parse(value.Server)
 			if err != nil {
-				log.Error("Failed to parse url of server")
+				log.Error(errors.Wrapf(err, "URL Parsing failed for: %s", value.Server))
+			}
+
+			dhconfig := &hproxy.Config{
+				TLSClientConfig: &tls.Config{
+					InsecureSkipVerify: true,
+					CipherSuites:       crypto.DefaultCiphers(),
+				},
+				HeaderBlacklist: []string{"X-CSRFToken"},
+				Endpoint:        backURL,
+			}
+			dhproxy := hproxy.NewProxy(dhconfig)
+			err = routerTemp.AddRoute(value.Rule, 0, http.StripPrefix(value.Path, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				if hyperCloudSrv.ReleaseModeFlag {
+					token := r.Header.Clone().Get("Authorization")
+					temp := strings.Split(token, "Bearer ")
+					if len(temp) > 1 {
+						token = temp[1]
+					} else {
+						token = temp[0]
+					}
+					// plog.Infof("check token is on : %v", token)
+					hyperCloudSrv.StaticUser.Token = token
+					// NOTE: query에 token 정보가 있을 시 해당 token으로 설정
+					queryToken := r.URL.Query().Get("token")
+					if queryToken != "" && token == "" {
+						r.URL.Query().Del("token")
+						token = queryToken
+					}
+					r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
+				}
+				dhproxy.ServeHTTP(w, r)
+			})))
+			if err != nil {
+				log.Error("failed to put proxy handler into Router", err)
 				// return nil, err
 			}
-			proxyBackend.Rule = value.Rule
-			proxyBackend.ServerURL = value.Server
-			if value.Path != "" {
-				handlerConfig := &pConfig.StripPrefix{
-					Prefixes: []string{value.Path},
-				}
-				prefixHandler, err := stripprefix.New(context.TODO(), proxyBackend.Handler, *handlerConfig, "stripPrefix")
-				if err != nil {
-					log.Error("Failed to create stripPrefix handler", err)
-					// return nil, err
-				}
-				err = routerTemp.AddRoute(proxyBackend.Rule, 0, prefixHandler)
-				if err != nil {
-					log.Error("failed to put proxy handler into Router", err)
-					// return nil, err
-				}
-			}
-			err = routerTemp.AddRoute(proxyBackend.Rule, 0, proxyBackend.Handler)
-			if err != nil {
-				log.Error("failed to put proxy handler into Router ", err)
-				// return nil, err
-			}
+
+			// log.Infof("Creating proxy backend based on %v : %v  \n", name, value)
+			// proxyBackend, err := backend.NewBackend(name, value.Server)
+			// if err != nil {
+			// 	log.Error("Failed to parse url of server")
+			// 	// return nil, err
+			// }
+			// proxyBackend.Rule = value.Rule
+			// proxyBackend.ServerURL = value.Server
+
+			// if value.Path != "" {
+			// 	handlerConfig := &pConfig.StripPrefix{
+			// 		Prefixes: []string{value.Path},
+			// 	}
+			// 	prefixHandler, err := stripprefix.New(context.TODO(), proxyBackend.Handler, *handlerConfig, "stripPrefix")
+			// 	if err != nil {
+			// 		log.Error("Failed to create stripPrefix handler", err)
+			// 		// return nil, err
+			// 	}
+			// 	err = routerTemp.AddRoute(proxyBackend.Rule, 0, prefixHandler)
+			// 	if err != nil {
+			// 		log.Error("failed to put proxy handler into Router", err)
+			// 		// return nil, err
+			// 	}
+			// }
+			// err = routerTemp.AddRoute(proxyBackend.Rule, 0, proxyBackend.Handler)
+			// if err != nil {
+			// 	log.Error("failed to put proxy handler into Router ", err)
+			// 	// return nil, err
+			// }
 		}
 
 		err = routerTemp.AddRoute("PathPrefix(`/api/k8sAll`)", 0, http.HandlerFunc(
@@ -845,7 +886,12 @@ func switchRouter(hyperCloudSrv *server.Server, proxySrv *pServer.HttpServer) fu
 			log.Error("/api/k8sAll/ has a problem", err)
 		}
 
-		routerTemp.AddRoute("PathPrefix(`/`)", 0, hyperCloudSrv.HTTPHandler())
+		err = routerTemp.AddRoute("PathPrefix(`/`)", 0, hyperCloudSrv.HTTPHandler())
+		if err != nil {
+			log.Error("failed to put hypercloud proxy", err)
+			// return nil, err
+		}
+
 		log.Info("===End SwitchRouter ===")
 		log.Info("Call updateHandler --> routerTemp.Router")
 		// olderSrv:=proxySrv.Handler.Switcher.GetHandler()
@@ -858,3 +904,8 @@ func switchRouter(hyperCloudSrv *server.Server, proxySrv *pServer.HttpServer) fu
 
 	}
 }
+
+// func tokenUtilMiddleware(hdlr http.Handler) http.Handler {
+// 	return http.handler
+
+// }
