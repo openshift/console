@@ -23,7 +23,6 @@ import { ManagedKafkaConnectionModel } from '../../models';
 
 const KafkaNode: React.FC<any> = ({
   element,
-  editAccess,
   selected,
   onSelect,
   onContextMenu,
@@ -49,7 +48,7 @@ const KafkaNode: React.FC<any> = ({
     <g
       ref={refs}
       onClick={onSelect}
-      onContextMenu={editAccess ? onContextMenu : null}
+      onContextMenu={null}
       className={classNames('odc-rhoas', {
         'is-dragging': dragging,
         'is-selected': selected,
