@@ -10,11 +10,12 @@
 
 .kubevirt-vm-template-actions {
   text-align: right;
-  display: flex;
+  width: 230px !important;
+  max-width: 350px !important;
 }
 
 .kubevirt-vm-template-details {
-  margin: 0 var(--pf-global--spacer--sm);
+  margin: 0 var(--pf-global--spacer--md) 0 0;
 }
 
 .kubevirt-vm-template-popover {
