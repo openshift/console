@@ -33,7 +33,7 @@ export const PrometheusGraphLink_: React.FC<PrometheusGraphLinkProps> = ({
   children,
   query,
   namespace,
-  ariaChartLabel,
+  ariaChartLinkLabel,
 }) => {
   const [perspective] = useActivePerspective();
   if (!query) {
@@ -49,7 +49,11 @@ export const PrometheusGraphLink_: React.FC<PrometheusGraphLinkProps> = ({
       : `/dev-monitoring/ns/${namespace}/metrics?${params.toString()}`;
 
   return (
-    <Link to={url} aria-label={ariaChartLabel} style={{ color: 'inherit', textDecoration: 'none' }}>
+    <Link
+      to={url}
+      aria-label={ariaChartLinkLabel}
+      style={{ color: 'inherit', textDecoration: 'none' }}
+    >
       {children}
     </Link>
   );
@@ -69,7 +73,7 @@ type PrometheusGraphLinkProps = {
   canAccessMonitoring: boolean;
   query: string;
   namespace?: string;
-  ariaChartLabel?: string;
+  ariaChartLinkLabel?: string;
 };
 
 type PrometheusGraphProps = {

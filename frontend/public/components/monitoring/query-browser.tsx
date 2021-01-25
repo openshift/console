@@ -250,6 +250,7 @@ const Graph: React.FC<GraphProps> = React.memo(
     const data: GraphSeries[] = [];
     const tooltipSeriesNames: string[] = [];
     const legendData: { name: string }[] = [];
+    const { t } = useTranslation();
 
     _.each(allSeries, (series, i) => {
       _.each(series, ([metric, values]) => {
@@ -317,6 +318,7 @@ const Graph: React.FC<GraphProps> = React.memo(
     return (
       <Chart
         containerComponent={graphContainer}
+        ariaTitle={t('public~query browser chart')}
         domain={domain}
         domainPadding={{ y: 1 }}
         height={200}

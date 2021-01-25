@@ -40,6 +40,8 @@ import {
 } from '@console/local-storage-operator-plugin/src/utils';
 import { DiskType } from '@console/local-storage-operator-plugin/src/components/local-volume-set/types';
 import { OCS_ATTACHED_DEVICES_FLAG } from '@console/local-storage-operator-plugin/src/features';
+import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
+import { resourcePathFromModel } from '@console/internal/components/utils';
 import { initialState, reducer, State, Action, Discoveries, OnNextClick } from './state';
 import { AutoDetectVolume } from './wizard-pages/auto-detect-volume';
 import { CreateLocalVolumeSet } from './wizard-pages/create-local-volume-set';
@@ -124,6 +126,7 @@ const makeAutoDiscoveryCall = (
 
 const CreateSC: React.FC<CreateSCProps> = ({ match, hasNoProvSC, mode, lsoNs }) => {
   const { t } = useTranslation();
+  const { appName, ns } = match.params;
   const [state, dispatch] = React.useReducer(reducer, initialState);
   const [discoveriesData, discoveriesLoaded, discoveriesLoadError] = useK8sWatchResource<
     K8sResourceKind[]
@@ -236,7 +239,6 @@ const CreateSC: React.FC<CreateSCProps> = ({ match, hasNoProvSC, mode, lsoNs }) 
   };
 
   const createCluster = async () => {
-    const { appName, ns } = match.params;
     try {
       setInProgress(true);
       const {
@@ -360,7 +362,9 @@ const CreateSC: React.FC<CreateSCProps> = ({ match, hasNoProvSC, mode, lsoNs }) 
           className="ocs-install-wizard"
           steps={steps}
           startAtStep={hasNoProvSC ? 3 : 1}
-          onClose={() => history.goBack()}
+          onClose={() =>
+            history.push(resourcePathFromModel(ClusterServiceVersionModel, appName, ns))
+          }
           footer={CustomFooter}
         />
       </StackItem>

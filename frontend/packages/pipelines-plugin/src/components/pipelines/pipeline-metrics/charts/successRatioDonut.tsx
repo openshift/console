@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import { ChartDonut, ChartDonutProps, ChartThemeColor } from '@patternfly/react-charts';
 import { global_danger_color_100 as dangerColor } from '@patternfly/react-tokens/dist/js/global_danger_color_100';
 
@@ -22,7 +23,7 @@ const SuccessRatioDonut: React.FC<SuccessRatioDonutProps & ChartDonutProps> = ({
       constrainToVisibleArea
       data={data}
       sortKey={successValue ? ['success', 'failed'] : ['failed']}
-      labels={({ datum }) => `${datum.x}: ${datum.y}%`}
+      labels={({ datum }) => `${_.capitalize(datum.x)}: ${datum.y}%`}
       colorScale={successValue ? [ChartThemeColor.green, dangerColor.value] : [dangerColor.value]}
       padding={{
         bottom: 20,

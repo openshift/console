@@ -228,7 +228,8 @@ const plugin: Plugin<ConsumedExtensions> = [
       id: 'volumesnapshots',
       section: 'storage',
       componentProps: {
-        name: 'Volume Snapshot Contents',
+        // t('console-app~VolumeSnapshotContents')
+        name: '%console-app~VolumeSnapshotContents%',
         resource: referenceForModel(VolumeSnapshotContentModel),
       },
     },

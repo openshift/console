@@ -27,7 +27,7 @@ describe('Kubevirt create VM using cloud-init', () => {
 
   it('ID(CNV-874) Create vm using hostname and key as cloud-init data', async () => {
     const vm = new VMBuilder(getBasicVMBuilder())
-      .setProvisionSource(ProvisionSource.CONTAINER)
+      .setProvisionSource(ProvisionSource.URL)
       .setCloudInit(cloudinitConfig)
       .setCustomize(true)
       .build();
@@ -46,7 +46,7 @@ describe('Kubevirt create VM using cloud-init', () => {
 
   it('ID(CNV-4022) Create VM using custom script as cloud-init data', async () => {
     const vm = new VMBuilder(getBasicVMBuilder())
-      .setProvisionSource(ProvisionSource.CONTAINER)
+      .setProvisionSource(ProvisionSource.URL)
       .setCloudInit(customScript)
       .setCustomize(true)
       .build();

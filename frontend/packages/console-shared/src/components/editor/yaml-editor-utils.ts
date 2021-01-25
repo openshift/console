@@ -9,6 +9,7 @@ import { getLanguageService, TextDocument } from 'yaml-language-server';
 import { openAPItoJSONSchema } from '@console/internal/module/k8s/openapi-to-json-schema';
 import { getSwaggerDefinitions } from '@console/internal/module/k8s/swagger';
 import { global_BackgroundColor_dark_100 as editorBackground } from '@patternfly/react-tokens';
+import * as yaml from 'yaml-ast-parser';
 
 window.monaco.editor.defineTheme('console', {
   base: 'vs-dark',
@@ -28,7 +29,16 @@ window.monaco.editor.defineTheme('console', {
   },
 });
 
+const { Range } = window.monaco;
+
 export const defaultEditorOptions = { readOnly: false, scrollBeyondLastLine: false };
+
+const MODEL_URI = 'inmemory://model.yaml';
+const MONACO_URI = monaco.Uri.parse(MODEL_URI);
+
+const createDocument = (model) => {
+  return TextDocument.create(MODEL_URI, model.getModeId(), model.getVersionId(), model.getValue());
+};
 
 // Unfortunately, `editor.focus()` doesn't work when hiding the shortcuts
 // popover. We need to find the actual DOM element.
@@ -85,14 +95,7 @@ export const createYAMLService = () => {
   return yamlService;
 };
 
-export const registerYAMLCompletion = (
-  languageID,
-  monaco,
-  m2p,
-  p2m,
-  createDocument,
-  yamlService,
-) => {
+export const registerYAMLCompletion = (languageID, monaco, m2p, p2m, yamlService) => {
   monaco.languages.registerCompletionItemProvider(languageID, {
     provideCompletionItems(model, position) {
       const document = createDocument(model);
@@ -105,13 +108,7 @@ export const registerYAMLCompletion = (
   });
 };
 
-export const registerYAMLDocumentSymbols = (
-  languageID,
-  monaco,
-  p2m,
-  createDocument,
-  yamlService,
-) => {
+export const registerYAMLDocumentSymbols = (languageID, monaco, p2m, yamlService) => {
   monaco.languages.registerDocumentSymbolProvider(languageID, {
     provideDocumentSymbols(model) {
       const document = createDocument(model);
@@ -120,7 +117,7 @@ export const registerYAMLDocumentSymbols = (
   });
 };
 
-export const registerYAMLHover = (languageID, monaco, m2p, p2m, createDocument, yamlService) => {
+export const registerYAMLHover = (languageID, monaco, m2p, p2m, yamlService) => {
   monaco.languages.registerHoverProvider(languageID, {
     provideHover(model, position) {
       const doc = createDocument(model);
@@ -143,7 +140,60 @@ export const registerYAMLHover = (languageID, monaco, m2p, p2m, createDocument, 
   });
 };
 
-export const enableYAMLValidation = (monaco, p2m, monacoURI, createDocument, yamlService) => {
+const findManagedMetadata = (model) => {
+  const document = createDocument(model);
+  const doc = yaml.safeLoad(document.getText());
+  const rootMappings = doc.mappings || [];
+  for (const rootElement of rootMappings) {
+    const rootKey = rootElement.key;
+    const rootValue = rootElement.value;
+
+    // Search for metadata
+    if (rootKey.value === 'metadata') {
+      const metadataMappings = rootValue.mappings || [];
+      for (const metadataChildren of metadataMappings) {
+        const childKey = metadataChildren.key;
+
+        // Search for managedFields
+        if (childKey.value === 'managedFields') {
+          const startLine = document.positionAt(metadataChildren.startPosition).line + 1;
+          const endLine = document.positionAt(metadataChildren.endPosition).line;
+          return {
+            start: startLine,
+            end: endLine,
+          };
+        }
+      }
+    }
+  }
+  return {
+    start: -1,
+    end: -1,
+  };
+};
+
+export const fold = (editor, model, resetMouseLocation: boolean): void => {
+  const managedLocation = findManagedMetadata(model);
+  const { start } = managedLocation;
+  const { end } = managedLocation;
+
+  if (start >= 0 && end >= 0) {
+    const top = editor.getScrollTop();
+    editor.setSelection(new Range(start, 0, end, 0));
+    editor
+      .getAction('editor.fold')
+      .run()
+      .then(() => {
+        if (resetMouseLocation) {
+          editor.setSelection(new Range(0, 0, 0, 0));
+        }
+        editor.setScrollTop(Math.abs(top));
+      })
+      .catch(() => {});
+  }
+};
+
+export const enableYAMLValidation = (editor, monaco, p2m, monacoURI, yamlService) => {
   const pendingValidationRequests = new Map();
 
   const getModel = () => monaco.editor.getModels()[0];
@@ -173,8 +223,16 @@ export const enableYAMLValidation = (monaco, p2m, monacoURI, createDocument, yam
       .catch(() => {});
   };
 
+  let initialFoldingTriggered = false;
+
   getModel().onDidChangeContent(() => {
     const document = createDocument(getModel());
+
+    if (!initialFoldingTriggered && document.getText() !== '') {
+      fold(editor, getModel(), true);
+      initialFoldingTriggered = true;
+    }
+
     cleanPendingValidation(document);
     pendingValidationRequests.set(
       document.uri,
@@ -186,28 +244,17 @@ export const enableYAMLValidation = (monaco, p2m, monacoURI, createDocument, yam
   });
 };
 
-export const registerYAMLinMonaco = (monaco) => {
+export const registerYAMLinMonaco = (editor, monaco) => {
   const LANGUAGE_ID = 'yaml';
-  const MODEL_URI = 'inmemory://model.yaml';
-  const MONACO_URI = monaco.Uri.parse(MODEL_URI);
 
   const m2p = new MonacoToProtocolConverter();
   const p2m = new ProtocolToMonacoConverter();
-
-  function createDocument(model) {
-    return TextDocument.create(
-      MODEL_URI,
-      model.getModeId(),
-      model.getVersionId(),
-      model.getValue(),
-    );
-  }
 
   const yamlService = createYAMLService();
 
   // validation is not a 'registered' feature like the others, it relies on calling the yamlService
   // directly for validation results when content in the editor has changed
-  enableYAMLValidation(monaco, p2m, MONACO_URI, createDocument, yamlService);
+  enableYAMLValidation(editor, monaco, p2m, MONACO_URI, yamlService);
 
   /**
    * This exists because react-monaco-editor passes the same monaco
@@ -225,9 +272,9 @@ export const registerYAMLinMonaco = (monaco) => {
   }
 
   registerYAMLLanguage(monaco); // register the YAML language with monaco
-  registerYAMLCompletion(LANGUAGE_ID, monaco, m2p, p2m, createDocument, yamlService);
-  registerYAMLDocumentSymbols(LANGUAGE_ID, monaco, p2m, createDocument, yamlService);
-  registerYAMLHover(LANGUAGE_ID, monaco, m2p, p2m, createDocument, yamlService);
+  registerYAMLCompletion(LANGUAGE_ID, monaco, m2p, p2m, yamlService);
+  registerYAMLDocumentSymbols(LANGUAGE_ID, monaco, p2m, yamlService);
+  registerYAMLHover(LANGUAGE_ID, monaco, m2p, p2m, yamlService);
 };
 
 export const downloadYaml = (data) => {

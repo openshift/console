@@ -29,6 +29,7 @@ export type BaseVMBuilderData = {
   flavor?: FlavorConfig;
   workload?: Workload;
   os?: OperatingSystem;
+  pvcName?: string;
   provisionSource?: ProvisionSource;
   networks?: Network[];
   disks?: Disk[];
@@ -41,7 +42,6 @@ export type VMBuilderData = (BaseVMBuilderData | VMTemplateBuilderData) & {
   startOnCreation?: boolean;
   template?: string;
   pvcSize?: string;
-  pvcName?: string;
   customize?: boolean;
   mountAsCDROM?: boolean;
 };

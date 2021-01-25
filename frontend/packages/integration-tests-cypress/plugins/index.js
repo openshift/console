@@ -14,7 +14,7 @@ module.exports = (on, config) => {
           {
             test: /\.tsx?$/,
             loader: 'ts-loader',
-            options: { transpileOnly: true },
+            options: { happyPackMode: true, transpileOnly: true },
           },
         ],
       },
@@ -42,15 +42,6 @@ module.exports = (on, config) => {
     },
   });
   on('file:preprocessor', wp(options));
-  /* In a Docker container, the default size of the /dev/shm shared memory space is 64MB. This is not typically enough
-   to run Chrome and can cause the browser to crash. You can fix this by passing the --disable-dev-shm-usage flag to
-   Chrome with the following workaround: */
-  on('before:browser:launch', (browser = {}, launchOptions) => {
-    if (browser.family === 'chromium' && browser.name !== 'electron') {
-      launchOptions.args.push('--disable-dev-shm-usage');
-    }
-    return launchOptions;
-  });
   // `config` is the resolved Cypress config
   config.baseUrl = `${process.env.BRIDGE_BASE_ADDRESS || 'http://localhost:9000'}${(
     process.env.BRIDGE_BASE_PATH || '/'

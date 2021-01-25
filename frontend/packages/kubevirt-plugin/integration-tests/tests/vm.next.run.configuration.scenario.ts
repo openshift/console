@@ -59,7 +59,8 @@ describe('Kubevirt VM Next Run Configuration', () => {
     await vm.detailViewAction(VM_ACTION.Stop);
   }, VM_BOOTUP_TIMEOUT_SECS);
 
-  it('ID(CNV-5326) Change Flavor from tiny to custom while VM is running.', async () => {
+  // TODO: remove the skip once bug is fixed:  https://bugzilla.redhat.com/show_bug.cgi?id=1918112
+  xit('ID(CNV-5326) Change Flavor from tiny to custom while VM is running.', async () => {
     await vm.navigateToDetail();
     await vm.modalEditFlavor();
     expect(await isPCInfoAlertPresent()).toBeTruthy();
@@ -79,7 +80,7 @@ describe('Kubevirt VM Next Run Configuration', () => {
     expect(alertTabAttrs.includes('Flavor')).toBeTruthy();
   });
 
-  it('ID(CNV-5327) Change Custom Flavor while VM is running.', async () => {
+  xit('ID(CNV-5327) Change Custom Flavor while VM is running.', async () => {
     await vm.navigateToDetail();
     await vm.modalEditFlavor();
     expect(await isPCInfoAlertPresent()).toBeTruthy();

@@ -57,7 +57,7 @@ describe('KubeVirt VM detail - edit flavor', () => {
         expect(getMemory(vm.getResource())).toEqual('3Gi');
         expect(
           (await virtualMachineView.vmDetailLabelValue('vm.kubevirt.io/template')).startsWith(
-            'rhel7-highperformance-large-', // template is not changed (might be in the future)
+            'rhel7-server-small', // template is not changed (might be in the future)
           ),
         ).toBeTruthy();
       });

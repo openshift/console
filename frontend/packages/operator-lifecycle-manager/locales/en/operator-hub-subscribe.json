@@ -1,5 +1,0 @@
-{
-  "Will function as manual approval strategy": "Will function as manual approval strategy",
-  "Manual approval applies to all operators in a namespace": "Manual approval applies to all operators in a namespace",
-  "Installing an operator with manual approval causes all operators installed in namespace <1>{{selectedTargetNamespace}}</1> to function as manual approval strategy. To allow automatic approval, all operators installed in the namespace must use automatic approval strategy.": "Installing an operator with manual approval causes all operators installed in namespace <1>{{selectedTargetNamespace}}</1> to function as manual approval strategy. To allow automatic approval, all operators installed in the namespace must use automatic approval strategy."
-}

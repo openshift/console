@@ -22,8 +22,7 @@ import {
   hddDisk,
   multusNetworkInterface,
   getVMManifest,
-  defaultWizardPodNetworkingInterface,
-  defaultYAMLPodNetworkingInterface,
+  defaultPodNetworkingInterface,
 } from './mocks/mocks';
 import { getBasicVMBuilder } from './mocks/vmBuilderPresets';
 import {
@@ -46,7 +45,7 @@ import { VMBuilder } from './models/vmBuilder';
 import { ProvisionSource } from './utils/constants/enums/provisionSource';
 
 describe('Add/remove disks and NICs on respective VM pages', () => {
-  const testVm = getVMManifest(ProvisionSource.CONTAINER, testName, `vm-disk-nic-${testName}`);
+  const testVm = getVMManifest(ProvisionSource.URL, testName, `vm-disk-nic-${testName}`);
   const vm = new VirtualMachine(testVm.metadata);
 
   beforeAll(async () => {
@@ -125,7 +124,7 @@ describe('Test network type presets and options', () => {
   const leakedResources = new Set<string>();
 
   const vm = new VMBuilder(getBasicVMBuilder())
-    .setProvisionSource(ProvisionSource.CONTAINER)
+    .setProvisionSource(ProvisionSource.URL)
     .setCustomize(true)
     .build();
 
@@ -140,13 +139,13 @@ describe('Test network type presets and options', () => {
   it('ID(CNV-2073) Test NIC default type in VM Wizard', async () => {
     await browser.get(`${appHost}/k8s/ns/${testName}/virtualization`);
     await isLoaded();
-    await wizard.openWizard(VirtualMachineModel);
+    await wizard.openWizard(VirtualMachineModel, true);
 
     await wizard.processGeneralStep(vm.getData());
 
     // Default type for Pod Networking NIC is masquerade
     const podNic = await wizardView.tableRowAttribute(
-      defaultWizardPodNetworkingInterface.name,
+      defaultPodNetworkingInterface.name,
       networkTabCol.type,
     );
     expect(podNic.toLowerCase()).toEqual(NIC_TYPE.masquerade.toLowerCase());
@@ -178,10 +177,7 @@ describe('Test network type presets and options', () => {
 
       expect(
         _.findIndex(await exampleVM.getAttachedNICs(), (x) => {
-          return _.isMatch(
-            x,
-            _.pick(defaultYAMLPodNetworkingInterface, ['name', 'model', 'network']),
-          );
+          return _.isMatch(x, _.pick(defaultPodNetworkingInterface, ['name', 'model', 'network']));
         }) > -1,
       ).toBe(true);
 
@@ -198,7 +194,7 @@ describe('Test network type presets and options', () => {
   it('ID(CNV-4781) Test NIC supported models in VM Wizard', async () => {
     await browser.get(`${appHost}/k8s/ns/${testName}/virtualization`);
     await isLoaded();
-    await wizard.openWizard(VirtualMachineModel);
+    await wizard.openWizard(VirtualMachineModel, true);
 
     await wizard.processGeneralStep(vm.getData());
 
@@ -215,7 +211,7 @@ describe('Test network type presets and options', () => {
   it('ID(CNV-4780) NIC model is disabled when sriov is selected in VM Wizard', async () => {
     await browser.get(`${appHost}/k8s/ns/${testName}/virtualization`);
     await isLoaded();
-    await wizard.openWizard(VirtualMachineModel);
+    await wizard.openWizard(VirtualMachineModel, true);
 
     await wizard.processGeneralStep(vm.getData());
 

@@ -26,6 +26,8 @@ export const GaugeChart: React.FC<GaugeChartProps> = ({
   themeColor = ChartThemeColor.green,
   thresholds = DEFAULT_THRESHOLDS,
   title,
+  ariaChartLinkLabel,
+  ariaChartTitle,
   usedLabel = 'used',
   // Don't sort, Uses previously declared props
   label = data ? humanize(data.y).string : 'No Data',
@@ -42,8 +44,9 @@ export const GaugeChart: React.FC<GaugeChartProps> = ({
       ref={ref}
       title={title}
     >
-      <PrometheusGraphLink query={query}>
+      <PrometheusGraphLink query={query} ariaChartLinkLabel={ariaChartLinkLabel}>
         <ChartDonutThreshold
+          ariaTitle={ariaChartTitle || title}
           data={thresholds}
           height={width} // Changes the scale of the graph, not actual width and height
           padding={0}
@@ -121,6 +124,8 @@ type GaugeChartProps = {
     color?: string;
   }[];
   title?: string;
+  ariaChartLinkLabel?: string;
+  ariaChartTitle?: string;
   usedLabel?: string;
   className?: string;
 };

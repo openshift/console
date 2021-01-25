@@ -47,7 +47,7 @@ describe('Visiting other routes', () => {
       cy.visit(route);
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(5000); // wait for page to load
-      cy.byLegacyTestID('error-page').should('not.be.visible');
+      cy.byLegacyTestID('error-page').should('not.exist');
       cy.testA11y(`${route} page`);
     });
   });

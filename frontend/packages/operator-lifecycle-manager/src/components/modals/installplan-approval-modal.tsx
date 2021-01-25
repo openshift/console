@@ -21,7 +21,7 @@ import { useTranslation } from 'react-i18next';
 
 const getApprovalStrategy = (obj: InstallPlanKind | SubscriptionKind): InstallPlanApproval =>
   (obj as SubscriptionKind)?.spec?.installPlanApproval ??
-  obj?.spec?.approval ??
+  (obj as InstallPlanKind)?.spec?.approval ??
   InstallPlanApproval.Automatic;
 
 export const InstallPlanApprovalModal: React.FC<InstallPlanApprovalModalProps> = ({

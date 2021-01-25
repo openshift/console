@@ -32,7 +32,7 @@ import { ProjectDropdown } from '../../form/project-dropdown';
 import { getTemplateName, selectVM } from '../../../selectors/vm-template/basic';
 import {
   getDefaultDiskBus,
-  getTemplateFlavorDesc,
+  getTemplateFlavorData,
   getTemplateMemory,
   getTemplateSizeRequirementInBytes,
 } from '../../../selectors/vm-template/advanced';
@@ -165,7 +165,10 @@ export const CreateVMForm: React.FC<CreateVMFormProps> = ({
       return aCPU - bCPU;
     })
     .reduce((acc, tmp) => {
-      const flavor = getTemplateFlavorDesc(tmp);
+      const flavor = t(
+        'kubevirt-plugin~{{flavor}}: {{count}} CPU | {{memory}} Memory',
+        getTemplateFlavorData(tmp),
+      );
       acc[flavor] = tmp;
       return acc;
     }, {});
@@ -245,7 +248,12 @@ export const CreateVMForm: React.FC<CreateVMFormProps> = ({
             <FormPFSelect
               toggleId="vm-flavor-select"
               variant={SelectVariant.single}
-              selections={[getTemplateFlavorDesc(template)]}
+              selections={[
+                t(
+                  'kubevirt-plugin~{{flavor}}: {{count}} CPU | {{memory}} Memory',
+                  getTemplateFlavorData(template),
+                ),
+              ]}
               onSelect={(e, f: string) =>
                 dispatch({ type: FORM_ACTION_TYPE.SET_TEMPLATE, payload: flavors[f] })
               }

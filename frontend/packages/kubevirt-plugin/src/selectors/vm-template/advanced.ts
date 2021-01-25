@@ -34,12 +34,12 @@ import { compareVersions, removeOSDups } from '../../utils/sort';
 import { selectVM, isCommonTemplate } from './basic';
 import { convertToBaseValue, humanizeBinaryBytes } from '@console/internal/components/utils';
 import { isTemplateSourceError, TemplateSourceStatus } from '../../statuses/template/types';
-import { vCPUCount } from '../vm/cpu';
 import { BootSourceState } from '../../components/create-vm/forms/boot-source-form-reducer';
 import { stringValueUnitSplit } from '../../components/form/size-unit-utils';
 import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
 import { DiskWrapper } from '../../k8s/wrapper/vm/disk-wrapper';
 import { getDataVolumeStorageSize } from '../dv/selectors';
+import { getFlavorData } from '../vm/flavor-data';
 import { VM_TEMPLATE_NAME_PARAMETER } from '../../constants';
 
 export const getTemplatesWithLabels = (templates: TemplateKind[], labels: string[]) => {
@@ -171,13 +171,13 @@ export const getTemplateMemory = (template: TemplateKind): string => {
   return humanizeBinaryBytes(baseMemoryValue).string;
 };
 
-export const getTemplateFlavorDesc = (
-  template: TemplateKind,
-  addMemoryText: boolean = true,
-): string =>
-  `${_.capitalize(getFlavor(template) || 'Custom')} ${vCPUCount(
-    getCPU(selectVM(template)),
-  )} CPU | ${getTemplateMemory(template).concat(addMemoryText ? ' Memory' : '')}`;
+export const getTemplateFlavorData = (template: TemplateKind) => {
+  return getFlavorData({
+    cpu: getCPU(selectVM(template)),
+    memory: getMemory(selectVM(template)),
+    flavor: getFlavor(template),
+  });
+};
 
 export const getDefaultDiskBus = (template: TemplateKind): DiskBus => {
   const vmWrapper = new VMWrapper(template);

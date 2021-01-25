@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import {
   Form,
   FormGroup,
@@ -41,10 +42,9 @@ import {
 import { Errors } from '../../errors/errors';
 import { COULD_NOT_LOAD_DATA } from '../../../utils/strings';
 import { ConfigurationSummary } from './configuration-summary';
+import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
 
 import './_clone-vm-modal.scss';
-import { V1alpha1DataVolume } from 'packages/kubevirt-plugin/src/types/vm/disk/V1alpha1DataVolume';
-import { useTranslation } from 'react-i18next';
 
 export const CloneVMModal = withHandlePromise<CloneVMModalProps>((props) => {
   const {

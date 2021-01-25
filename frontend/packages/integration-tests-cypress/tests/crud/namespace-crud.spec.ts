@@ -70,7 +70,7 @@ describe('Namespace', () => {
     nav.sidenav.clickNavLink(['Workloads', 'Secrets']);
     projectDropdown.shouldContain('All Projects');
     cy.log(
-      'Nav back to list page from details page via sidebar nav menu should change Project back to "All Projects"',
+      'Nav back to list page from details page via breadcrumb should change Project back to "All Projects"',
     );
     cy.get(`[data-test-rows="resource-row"]`)
       .first()

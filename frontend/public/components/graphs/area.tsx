@@ -55,7 +55,8 @@ export const AreaChart: React.FC<AreaChartProps> = ({
   query,
   tickCount = DEFAULT_TICK_COUNT,
   title,
-  ariaChartLabel,
+  ariaChartLinkLabel,
+  ariaChartTitle,
   xAxis = true,
   yAxis = true,
   chartStyle,
@@ -136,8 +137,9 @@ export const AreaChart: React.FC<AreaChartProps> = ({
   return (
     <PrometheusGraph className={className} ref={containerRef} title={title}>
       {processedData?.length ? (
-        <PrometheusGraphLink query={query} ariaChartLabel={ariaChartLabel}>
+        <PrometheusGraphLink query={query} ariaChartLinkLabel={ariaChartLinkLabel}>
           <Chart
+            ariaTitle={ariaChartTitle || title}
             containerComponent={container}
             domainPadding={{ y: 20 }}
             height={height}
@@ -220,7 +222,8 @@ export type AreaChartProps = {
   theme?: any; // TODO figure out the best way to import VictoryThemeDefinition
   tickCount?: number;
   title?: string;
-  ariaChartLabel?: string;
+  ariaChartLinkLabel?: string;
+  ariaChartTitle?: string;
   data?: DataPoint[][];
   xAxis?: boolean;
   yAxis?: boolean;

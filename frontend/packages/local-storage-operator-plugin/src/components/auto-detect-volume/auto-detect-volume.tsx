@@ -122,7 +122,13 @@ const AutoDetectVolume: React.FC = withHandlePromise<AutoDetectVolumeProps & Han
               >
                 Create
               </Button>
-              <Button type="button" variant="secondary" onClick={history.goBack}>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() =>
+                  history.push(resourcePathFromModel(ClusterServiceVersionModel, appName, ns))
+                }
+              >
                 Cancel
               </Button>
             </ActionGroup>

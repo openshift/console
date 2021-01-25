@@ -92,7 +92,9 @@ export class DiskDialog {
   async selectStorageOptions() {
     await this.selectStorageClass(STORAGE_CLASS);
     await this.openAdvancedSettingsDrawer();
-    await this.selectVolumeMode(VolumeMode);
+    if (!(await view.diskVolumeHelpText.isPresent())) {
+      await this.selectVolumeMode(VolumeMode);
+    }
     await this.selectAccessMode(AccessMode);
   }
 

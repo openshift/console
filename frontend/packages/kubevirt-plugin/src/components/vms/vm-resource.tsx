@@ -28,7 +28,6 @@ import { isVMIPaused, getVMINodeName } from '../../selectors/vmi';
 import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
 import { asVMILikeWrapper } from '../../k8s/wrapper/utils/convert';
 import { getVMTemplate } from '../../selectors/vm-template/selectors';
-import { getFlavorText } from '../../selectors/vm/flavor-text';
 import { useGuestAgentInfo } from '../../hooks/use-guest-agent-info';
 import { GuestAgentInfoWrapper } from '../../k8s/wrapper/vm/guest-agent-info/guest-agent-info-wrapper';
 import { VMStatusBundle } from '../../statuses/vm/types';
@@ -39,6 +38,7 @@ import { isFlavorChanged, isBootOrderChanged } from '../../selectors/vm-like/nex
 import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
 import { VMIWrapper } from '../../k8s/wrapper/vm/vmi-wrapper';
 import { isVMRunningOrExpectedRunning } from '../../selectors/vm/selectors';
+import { getFlavorData } from '../../selectors/vm/flavor-data';
 
 export const VMDetailsItem: React.FC<VMDetailsItemProps> = ({
   title,
@@ -282,11 +282,14 @@ export const VMSchedulingList: React.FC<VMSchedulingListProps> = ({
     !isVMRunningOrExpectedRunning(vm);
 
   const id = getBasicID(vmiLike);
-  const flavorText = getFlavorText({
-    memory: vmiLikeWrapper?.getMemory(),
-    cpu: vmiLikeWrapper?.getCPU(),
-    flavor: vmiLikeWrapper?.getFlavor(),
-  });
+  const flavorText = t(
+    'kubevirt-plugin~{{flavor}}: {{count}} CPU | {{memory}} Memory',
+    getFlavorData({
+      memory: vmiLikeWrapper?.getMemory(),
+      cpu: vmiLikeWrapper?.getCPU(),
+      flavor: vmiLikeWrapper?.getFlavor(),
+    }),
+  );
   const isCPUPinned = vmiLikeWrapper?.isDedicatedCPUPlacement();
   const nodeSelector = vmiLikeWrapper?.getNodeSelector();
   const evictionStrategy = vmiLikeWrapper?.getEvictionStrategy();

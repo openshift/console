@@ -14,9 +14,8 @@ import { humanizeCpuCores, ResourceLink } from '@console/internal/components/uti
 import { NodeKind } from '@console/internal/module/k8s';
 import { Table } from '@console/internal/components/factory';
 import { IRow, sortable } from '@patternfly/react-table';
-import { getConvertedUnits, nodesWithoutTaints } from '../../utils/install';
+import { getConvertedUnits, nodesWithoutTaints, getZone } from '../../utils/install';
 import { cephStorageLabel } from '../../selectors';
-import { ZONE_LABELS } from '../../constants';
 import { GetRows, NodeTableProps } from './types';
 import './ocs-install.scss';
 
@@ -45,7 +44,6 @@ const getRows: GetRows = (
     const roles = getNodeRoles(node).sort();
     const cpuSpec: string = getNodeCPUCapacity(node);
     const memSpec: string = getNodeAllocatableMemory(node);
-    const nodeLabels = node.metadata?.labels;
     const cells: IRow['cells'] = [
       {
         title: <ResourceLink kind="Node" name={getName(node)} title={getName(node)} />,
@@ -60,7 +58,7 @@ const getRows: GetRows = (
         title: `${getConvertedUnits(memSpec)}`,
       },
       {
-        title: nodeLabels[ZONE_LABELS[0]] || nodeLabels[ZONE_LABELS[1]] || '-',
+        title: getZone(node) || '-',
       },
     ];
     return {

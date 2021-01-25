@@ -504,33 +504,49 @@ const getNetworkName = (result: PrometheusResult) =>
 
 const PodGraphs = requirePrometheus(({ pod }) => {
   const { t } = useTranslation();
+  const chartTitles = {
+    memory: t('public~Memory usage'),
+    cpu: t('public~CPU usage'),
+    fs: t('public~Filesystem'),
+    networkIn: t('public~Network in'),
+    networkOut: t('public~Network out'),
+  };
   return (
     <>
       <div className="row">
         <div className="col-md-12 col-lg-4">
           <Area
-            title={t('public~Memory usage')}
+            title={chartTitles.memory}
+            ariaChartLinkLabel={t('public~View {{title}} metrics in query browser', {
+              title: chartTitles.memory,
+            })}
             humanize={humanizeBinaryBytes}
             byteDataType={ByteDataTypes.BinaryBytes}
             namespace={pod.metadata.namespace}
             query={`sum(container_memory_working_set_bytes{pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}',container='',}) BY (pod, namespace)`}
-            limitQuery={`sum(kube_pod_container_resource_limits_memory_bytes{pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}) BY (pod, namespace)`}
-            requestedQuery={`sum(kube_pod_container_resource_requests_memory_bytes{pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}) BY (pod, namespace)`}
+            limitQuery={`sum(label_replace(label_replace(kube_pod_resource_limit{resource='cpu',exported_pod='${pod.metadata.name}',exported_namespace='${pod.metadata.namespace}'},'pod','$1','exported_pod','(.+)'),'namespace','$1','exported_namespace','(.+)'))`}
+            requestedQuery={`sum(label_replace(label_replace(kube_pod_resource_request{resource='memory',exported_pod='${pod.metadata.name}',exported_namespace='${pod.metadata.namespace}'},'pod','$1','exported_pod','(.+)'),'namespace','$1','exported_namespace','(.+)')) BY (pod, namespace)`}
           />
         </div>
         <div className="col-md-12 col-lg-4">
           <Area
-            title={t('public~CPU usage')}
+            title={chartTitles.cpu}
+            ariaChartLinkLabel={t('public~View {{title}} metrics in query browser', {
+              title: chartTitles.cpu,
+            })}
             humanize={humanizeCpuCores}
             namespace={pod.metadata.namespace}
             query={`pod:container_cpu_usage:sum{pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}`}
-            limitQuery={`sum(kube_pod_container_resource_limits_cpu_cores{pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}) BY (pod, namespace)`}
-            requestedQuery={`sum(kube_pod_container_resource_requests_cpu_cores{pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}) BY (pod, namespace)`}
+            limitQuery={`sum(label_replace(label_replace(kube_pod_resource_limit{resource='cpu',exported_pod='${pod.metadata.name}',exported_namespace='${pod.metadata.namespace}'},'pod','$1','exported_pod','(.+)'),'namespace','$1','exported_namespace','(.+)'))`}
+            requestedQuery={`sum(label_replace(label_replace(kube_pod_resource_request{resource='cpu',exported_pod='${pod.metadata.name}',exported_namespace='${pod.metadata.namespace}'},'pod','$1','exported_pod','(.+)'),'namespace','$1','exported_namespace','(.+)')) BY (pod, namespace)`}
           />
         </div>
         <div className="col-md-12 col-lg-4">
           <Area
-            title={t('public~Filesystem')}
+            title={chartTitles.fs}
+            ariaChartLinkLabel={t('public~View {{title}} metrics in query browser', {
+              title: chartTitles.fs,
+            })}
             humanize={humanizeBinaryBytes}
             byteDataType={ByteDataTypes.BinaryBytes}
             namespace={pod.metadata.namespace}
@@ -541,7 +557,10 @@ const PodGraphs = requirePrometheus(({ pod }) => {
       <div className="row">
         <div className="col-md-12 col-lg-4">
           <Stack
-            title={t('public~Network in')}
+            title={chartTitles.networkIn}
+            ariaChartLinkLabel={t('public~View {{title}} metrics in query browser', {
+              title: chartTitles.networkIn,
+            })}
             humanize={humanizeDecimalBytesPerSec}
             namespace={pod.metadata.namespace}
             query={`(sum(irate(container_network_receive_bytes_total{pod='${pod.metadata.name}', namespace='${pod.metadata.namespace}'}[5m])) by (pod, namespace, interface)) + on(namespace,pod,interface) group_left(network_name) ( pod_network_name_info )`}
@@ -550,7 +569,10 @@ const PodGraphs = requirePrometheus(({ pod }) => {
         </div>
         <div className="col-md-12 col-lg-4">
           <Stack
-            title={t('public~Network out')}
+            title={chartTitles.networkOut}
+            ariaChartLinkLabel={t('public~View {{title}} metrics in query browser', {
+              title: chartTitles.networkOut,
+            })}
             humanize={humanizeDecimalBytesPerSec}
             namespace={pod.metadata.namespace}
             query={`(sum(irate(container_network_transmit_bytes_total{pod='${pod.metadata.name}', namespace='${pod.metadata.namespace}'}[5m])) by (pod, namespace, interface)) + on(namespace,pod,interface) group_left(network_name) ( pod_network_name_info )`}

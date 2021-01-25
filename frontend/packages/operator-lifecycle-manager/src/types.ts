@@ -2,7 +2,7 @@ import {
   K8sResourceCommon,
   K8sResourceCondition,
   K8sResourceKind,
-  OwnerReference,
+  ObjectReference,
   Selector,
 } from '@console/internal/module/k8s';
 import { Descriptor } from './components/descriptors/types';
@@ -194,11 +194,18 @@ export type SubscriptionKind = {
     installPlanApproval?: InstallPlanApproval;
   };
   status?: {
+    catalogHealth?: {
+      catalogSourceRef?: ObjectReference;
+      healthy?: boolean;
+      lastUpdated?: string;
+    }[];
+    conditions?: K8sResourceCondition[];
     installedCSV?: string;
-    installplan?: OwnerReference;
+    installPlanRef?: ObjectReference;
     state?: SubscriptionState;
+    lastUpdated?: string;
   };
-} & K8sResourceKind;
+} & K8sResourceCommon;
 
 export type CatalogSourceKind = {
   apiVersion: 'operators.coreos.com/v1alpha1';

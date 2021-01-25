@@ -92,7 +92,13 @@ const CreateLocalVolumeSet: React.FC = withHandlePromise<
             <Button type="submit" variant="primary" isDisabled={getDisabledCondition()}>
               {t('lso-plugin~Create')}
             </Button>
-            <Button type="button" variant="secondary" onClick={history.goBack}>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() =>
+                history.push(resourcePathFromModel(ClusterServiceVersionModel, appName, ns))
+              }
+            >
               {t('lso-plugin~Cancel')}
             </Button>
           </ActionGroup>

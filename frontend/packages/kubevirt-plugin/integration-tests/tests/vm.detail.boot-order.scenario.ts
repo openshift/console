@@ -14,7 +14,7 @@ import { dragAndDrop } from './utils/scripts/drag-drop';
 import { ProvisionSource } from './utils/constants/enums/provisionSource';
 
 describe('KubeVirt VM detail - Boot Order Dialog', () => {
-  const testVM = getVMManifest(ProvisionSource.CONTAINER, testName, `bootordervm-${getRandStr(5)}`);
+  const testVM = getVMManifest(ProvisionSource.URL, testName, `bootordervm-${getRandStr(5)}`);
   const vm = new VirtualMachine(testVM.metadata);
 
   beforeAll(async () => {

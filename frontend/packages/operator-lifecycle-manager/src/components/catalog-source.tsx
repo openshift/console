@@ -55,8 +55,8 @@ import { editRegitryPollInterval } from './modals/edit-registry-poll-interval-mo
 import { PackageManifestsPage } from './package-manifest';
 import useOperatorHubConfig from '../utils/useOperatorHubConfig';
 import i18n from '@console/internal/i18n';
+import { DEFAULT_SOURCE_NAMESPACE } from '../const';
 
-const DEFAULT_SOURCE_NAMESPACE = 'openshift-marketplace';
 const catalogSourceModelReference = referenceForModel(CatalogSourceModel);
 
 const deleteModal = (kind: K8sKind, catalogSource: CatalogSourceKind): KebabOption => ({
@@ -577,9 +577,7 @@ export const CatalogSourceListPage: React.FC<CatalogSourceListPageProps> = (prop
       {...props}
       canCreate
       createAccessReview={{ model: CatalogSourceModel }}
-      createButtonText={t('olm~Create {{item}}', {
-        item: CatalogSourceModel.label,
-      })}
+      createButtonText={t('olm~Create CatalogSource')}
       createProps={{ to: `/k8s/cluster/${referenceForModel(CatalogSourceModel)}/~new` }}
       flatten={(data) => flatten({ operatorHub: props.obj, ...data })}
       ListComponent={CatalogSourceList}

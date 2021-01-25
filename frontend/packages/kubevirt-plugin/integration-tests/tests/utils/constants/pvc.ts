@@ -5,7 +5,7 @@ import { STORAGE_CLASS } from './common';
 
 export const GOLDEN_OS_IMAGES_NS = 'openshift-virtualization-os-images';
 export enum GOLDEN_OS_PVC_NAME {
-  FEDORA = 'fedora32',
+  FEDORA = 'fedora',
   RHEL7 = 'rhel7',
   RHEL8 = 'rhel8',
   WIN10 = 'win10',
@@ -29,7 +29,7 @@ export const FEDORA_PVC: PVCData = {
   image: LOCAL_FEDORA_IMAGE,
   os: OperatingSystem.FEDORA,
   pvcName: GOLDEN_OS_PVC_NAME.FEDORA,
-  pvcSize: '10',
+  pvcSize: '1',
   storageClass: STORAGE_CLASS,
 };
 
@@ -38,7 +38,7 @@ export const RHEL7_PVC: PVCData = {
   image: LOCAL_RHEL7_IMAGE,
   os: OperatingSystem.RHEL7,
   pvcName: GOLDEN_OS_PVC_NAME.RHEL7,
-  pvcSize: '10',
+  pvcSize: '1',
   storageClass: STORAGE_CLASS,
 };
 
@@ -47,6 +47,6 @@ export const WIN10_PVC: PVCData = {
   image: LOCAL_WIN10_IMAGE,
   os: OperatingSystem.WINDOWS_10,
   pvcName: GOLDEN_OS_PVC_NAME.WIN10,
-  pvcSize: '10',
+  pvcSize: '1',
   storageClass: STORAGE_CLASS,
 };

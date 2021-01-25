@@ -60,6 +60,7 @@ const GitSection: React.FC<GitSectionProps> = ({
   const sampleRepo = showSample && getSampleRepo(tag);
   const { application = {}, name: nameTouched, git = {}, image = {} } = touched;
   const { type: gitTypeTouched } = git as FormikTouched<{ type: boolean }>;
+  const { dir: gitDirTouched } = git as FormikTouched<{ dir: boolean }>;
   const { name: applicationNameTouched } = application as FormikTouched<{ name: boolean }>;
   const { selected: imageSelectorTouched } = image as FormikTouched<{ selected: boolean }>;
   const [validated, setValidated] = React.useState<ValidatedOptions>(ValidatedOptions.default);
@@ -91,6 +92,7 @@ const GitSection: React.FC<GitSectionProps> = ({
 
       gitRepoName && !values.name && setFieldValue('name', gitRepoName);
       gitRepoName &&
+        values.formType !== 'edit' &&
         !values.application.name &&
         values.application.selectedKey !== UNASSIGNED_KEY &&
         setFieldValue('application.name', `${gitRepoName}-app`);
@@ -118,6 +120,7 @@ const GitSection: React.FC<GitSectionProps> = ({
       setFieldValue,
       values.application.name,
       values.application.selectedKey,
+      values.formType,
       values.git.type,
       values.name,
     ],
@@ -165,6 +168,7 @@ const GitSection: React.FC<GitSectionProps> = ({
     const gitRepoName = detectGitRepoName(url);
     values.formType !== 'edit' && gitRepoName && setFieldValue('name', gitRepoName);
     gitRepoName &&
+      values.formType !== 'edit' &&
       !values.application.name &&
       values.application.selectedKey !== UNASSIGNED_KEY &&
       setFieldValue('application.name', `${gitRepoName}-app`);
@@ -196,9 +200,18 @@ const GitSection: React.FC<GitSectionProps> = ({
   }, [handleBuilderImageRecommendation, values.build.strategy, values.git.url]);
 
   React.useEffect(() => {
-    const { url, ref, dir } = values.git;
-    (!dirty || gitTypeTouched) && values.git.url && handleGitUrlChange(url, ref, dir);
-  }, [dirty, gitTypeTouched, handleGitUrlChange, values.git]);
+    (!dirty || gitTypeTouched || gitDirTouched) &&
+      values.git.url &&
+      debouncedHandleGitUrlChange(values.git.url, values.git.ref, values.git.dir);
+  }, [
+    dirty,
+    gitTypeTouched,
+    gitDirTouched,
+    debouncedHandleGitUrlChange,
+    values.git.url,
+    values.git.ref,
+    values.git.dir,
+  ]);
 
   const getHelpText = () => {
     if (values.git.isUrlValidating) {

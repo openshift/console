@@ -12,11 +12,7 @@ import affinityModal from '../modals/scheduling-modals/affinity-modal/connected-
 import evictionStrategyModal from '../modals/scheduling-modals/eviction-strategy-modal/eviction-strategy-modal';
 import { getRowsDataFromAffinity } from '../modals/scheduling-modals/affinity-modal/helpers';
 import { getDescription } from '../../selectors/selectors';
-import {
-  getFlavor,
-  getWorkloadProfile,
-  isDedicatedCPUPlacement,
-} from '../../selectors/vm/selectors';
+import { getWorkloadProfile, isDedicatedCPUPlacement } from '../../selectors/vm/selectors';
 import { getTemplateOperatingSystems } from '../../selectors/vm-template/advanced';
 import { vmFlavorModal } from '../modals';
 import { EditButton } from '../edit-button';
@@ -27,15 +23,15 @@ import { VMTemplateLink } from './vm-template-link';
 import { TemplateSource } from './vm-template-source';
 import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
 import { getVMTemplateNamespacedName } from '../../selectors/vm-template/selectors';
-import { getFlavorText } from '../../selectors/vm/flavor-text';
 import { TemplateSourceStatus } from '../../statuses/template/types';
-
-import './_vm-template-resource.scss';
 import {
   getTemplateParentProvider,
   getTemplateProvider,
   getTemplateSupport,
 } from '../../selectors/vm-template/basic';
+import { getVMTemplateResourceFlavorData } from './utils';
+
+import './_vm-template-resource.scss';
 
 export const VMTemplateResourceSummary: React.FC<VMTemplateResourceSummaryProps> = ({
   template,
@@ -177,11 +173,10 @@ export const VMTemplateSchedulingList: React.FC<VMTemplateResourceSummaryProps> 
   const id = getBasicID(template);
   const vm = asVM(template);
   const vmWrapper = new VMWrapper(vm);
-  const flavorText = getFlavorText({
-    flavor: getFlavor(template),
-    cpu: vmWrapper.getCPU(),
-    memory: vmWrapper.getMemory(),
-  });
+  const flavorText = t(
+    'kubevirt-plugin~{{flavor}}: {{count}} CPU | {{memory}} Memory',
+    getVMTemplateResourceFlavorData(template, vmWrapper),
+  );
   const isCPUPinned = isDedicatedCPUPlacement(vm);
   const nodeSelector = vmWrapper?.getNodeSelector();
   const evictionStrategy = vmWrapper?.getEvictionStrategy();

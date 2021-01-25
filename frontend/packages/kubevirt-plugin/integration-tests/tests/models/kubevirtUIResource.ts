@@ -2,6 +2,7 @@
 import * as _ from 'lodash';
 import { browser, ExpectedConditions as until } from 'protractor';
 import { appHost, testName } from '@console/internal-integration-tests/protractor.conf';
+import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
 import { click } from '@console/shared/src/test-utils/utils';
 import { confirmAction } from '@console/shared/src/test-utils/actions.view';
 import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
@@ -10,6 +11,7 @@ import { clickNavLink } from '@console/internal-integration-tests/views/sidenav.
 import { PAGE_LOAD_TIMEOUT_SECS } from '../utils/constants/common';
 import { Disk, Network, VirtualMachineTemplateModel } from '../types/types';
 import * as kubevirtDetailView from '../../views/kubevirtUIResource.view';
+import { virtualizationTitle } from '../../views/vms.list.view';
 import * as disksView from '../../views/vm.disks.view';
 import {
   vmDetailFlavorEditButton,
@@ -47,6 +49,12 @@ export class KubevirtUIResource<T extends BaseVMBuilderData> extends UIResource 
 
   async isOnListView(): Promise<boolean> {
     const currentUrl = await browser.getCurrentUrl();
+    if (!(await virtualizationTitle.isPresent())) {
+      return false;
+    }
+    if (this.model === VirtualMachineTemplateModel) {
+      return currentUrl.endsWith('/virtualization/templates');
+    }
     const virtualizationURLs = (namespace) =>
       `${appHost}/k8s/${namespace === 'all-namespaces' ? '' : 'ns/'}${namespace}/virtualization`;
     return [virtualizationURLs(testName), virtualizationURLs('all-namespaces')].includes(
@@ -55,17 +63,25 @@ export class KubevirtUIResource<T extends BaseVMBuilderData> extends UIResource 
   }
 
   async isOnDetailView(): Promise<boolean> {
-    return (await this.getResourceTitle()) === this.name;
+    if (this.model === VirtualMachineTemplateModel) {
+      if (await kubevirtDetailView.resourceTitleLink('Templates').isPresent()) {
+        return true;
+      }
+    }
+    if (this.model === VirtualMachineModel) {
+      return (await this.getResourceTitle()) === this.name;
+    }
+    return false;
   }
 
   async navigateToListView() {
     if (!(await this.isOnListView())) {
       try {
         await clickNavLink(['Workloads', 'Virtualization']);
+        await isLoaded();
         if ((await getClusterNamespace()) !== this.namespace) {
           await switchClusterNamespace(this.namespace);
         }
-        await isLoaded();
       } catch (e) {
         // clickNavLink may fail in case there is a overlay
         // Try to navigate using URL
@@ -85,6 +101,7 @@ export class KubevirtUIResource<T extends BaseVMBuilderData> extends UIResource 
       await click(vmsListView.vmLinkByName(this.name));
       await isLoaded();
     }
+
     if ((await getClusterNamespace()) !== this.namespace) {
       await switchClusterNamespace(this.namespace);
     }

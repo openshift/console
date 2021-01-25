@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { execSync } from 'child_process';
 import { browser, ExpectedConditions as until } from 'protractor';
 import { isLoaded, resourceTitle } from '@console/internal-integration-tests/views/crud.view';
 import { selectDropdownOption, resolveTimeout } from '@console/shared/src/test-utils/utils';
@@ -19,17 +20,16 @@ import { VMBuilderData } from '../types/vm';
 export class BaseVirtualMachine extends KubevirtUIResource<VMBuilderData> {
   async waitForStatus(status: string, timeout?: number) {
     await this.navigateToTab(TAB.Details);
+    const waitTimeout = resolveTimeout(timeout, VM_BOOTUP_TIMEOUT_SECS);
     await browser.wait(
       until.textToBePresentInElement(vmView.vmDetailStatus(this.namespace, this.name), status),
-      resolveTimeout(timeout, VM_BOOTUP_TIMEOUT_SECS),
+      waitTimeout,
     );
-    // TODO: uncomment below once https://github.com/openshift/console/pull/7306 is merged.
-    /*
     if (status === VM_STATUS.Running) {
-      // wait for the VM to boot up
-      execSync(`expect ${EXPECT_LOGIN_SCRIPT_PATH} ${this.name} ${this.namespace}`);
+      execSync(
+        `oc wait --for condition=Ready vmi ${this.name} -n ${this.namespace} --timeout=${waitTimeout}s`,
+      );
     }
-    */
   }
 
   protected hasResource(resources, resource) {

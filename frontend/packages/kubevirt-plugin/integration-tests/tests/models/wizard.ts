@@ -4,6 +4,7 @@ import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
 import { clickNavLink } from '@console/internal-integration-tests/views/sidenav.view';
 import { click, fillInput, asyncForEach } from '@console/shared/src/test-utils/utils';
 import { K8sKind } from '@console/internal/module/k8s';
+import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
 import {
   selectOptionByText,
   enabledAsBoolean,
@@ -56,17 +57,19 @@ export class Wizard {
       await isLoaded();
     }
     if (model === VirtualMachineTemplateModel) {
-      await click(resourceHorizontalTab(VirtualMachineTemplateModel));
-      await isLoaded();
+      await click(view.createItemButton);
+      await click(view.createVMTWithWizardButton);
     }
 
-    await click(view.createItemButton);
-    await click(view.createWithWizardButton);
+    if (model === VirtualMachineModel) {
+      await click(view.createItemButton);
+      await click(view.createWithWizardButton);
 
-    if (customize) {
-      await this.selectTemplate(template);
-      await this.next();
-      await click(view.customizeButton);
+      if (customize) {
+        await this.selectTemplate(template);
+        await this.next();
+        await click(view.customizeButton);
+      }
     }
   }
 
@@ -333,6 +336,9 @@ export class Wizard {
     }
     if ('provider' in data) {
       await this.fillProvider(data.provider);
+    }
+    if ('os' in data) {
+      await this.selectOperatingSystem(data.os);
     }
     if ((await browser.getCurrentUrl()).match(/\?template=.+$/)) {
       // We are creating a VM from template via its action button

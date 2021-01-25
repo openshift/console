@@ -3,13 +3,14 @@ import { vCPUCount } from './cpu';
 import { humanizeBinaryBytes } from '@console/internal/components/utils';
 import { convertToBytes } from '../../components/form/size-unit-utils';
 import { toUIFlavorLabel } from '../vm-like/flavor';
+import { CUSTOM_FLAVOR } from '../../constants';
 
 export const humanizeMemory = (memory: string): string => {
   const memoryBase = convertToBytes(memory);
   return humanizeBinaryBytes(memoryBase).string;
 };
 
-export const getFlavorText = ({
+export const getFlavorData = ({
   cpu,
   memory,
   flavor,
@@ -18,12 +19,10 @@ export const getFlavorText = ({
   memory: string;
   flavor?: string;
 }) => {
-  const vcpusCount = vCPUCount(cpu);
-  const vcpusText = `${vcpusCount} vCPU${vcpusCount > 1 ? 's' : ''}`;
+  const cpuValue = vCPUCount(cpu);
+  const memoryValue = humanizeMemory(memory);
+  const flavorValue = flavor ? toUIFlavorLabel(flavor) : CUSTOM_FLAVOR;
 
-  const memoryText = humanizeMemory(memory);
-
-  return (flavor ? `${toUIFlavorLabel(flavor)}: ` : '').concat(
-    `${vcpusText}, ${memoryText} Memory`,
-  );
+  // must use 'count' for CPU to make it plural when translated by i18next
+  return { flavor: flavorValue, count: cpuValue, memory: memoryValue };
 };

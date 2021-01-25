@@ -103,7 +103,7 @@ export const installPlanForSubscription = (
   installPlans: InstallPlanKind[] = [],
   subscription: SubscriptionKind,
 ): InstallPlanKind =>
-  installPlans.find((ip) => ip?.metadata?.name === subscription?.status?.installPlan?.name);
+  installPlans.find((ip) => ip?.metadata?.name === subscription?.status?.installPlanRef?.name);
 
 export const upgradeRequiresApproval = (subscription: SubscriptionKind): boolean =>
   subscription?.status?.state === SubscriptionState.SubscriptionStateUpgradePending &&
@@ -126,7 +126,7 @@ export const UpgradeApprovalLink: React.FC<{ subscription: SubscriptionKind }> =
   const { t } = useTranslation();
   const to = resourcePathFromModel(
     InstallPlanModel,
-    subscription.status.installplan.name,
+    subscription.status.installPlanRef.name,
     subscription.metadata.namespace,
   );
   return (
@@ -150,7 +150,7 @@ export const SubscriptionStatus: React.FC<{ subscription: SubscriptionKind }> = 
         </span>
       );
     case SubscriptionState.SubscriptionStateUpgradePending:
-      return upgradeRequiresApproval(subscription) && subscription.status.installplan ? (
+      return upgradeRequiresApproval(subscription) && subscription.status.installPlanRef ? (
         <UpgradeApprovalLink subscription={subscription} />
       ) : (
         <span>
@@ -550,9 +550,7 @@ export const SubscriptionUpdates: React.FC<SubscriptionUpdatesProps> = ({
                     manualSubscriptionsInNamespace?.length > 0 && (
                       <div>
                         <Popover
-                          headerContent={
-                            <>{t('subscription~Functioning as manual approval strategy')}</>
-                          }
+                          headerContent={<>{t('olm~Functioning as manual approval strategy')}</>}
                           bodyContent={
                             <NamespaceIncludesManualApproval
                               subscriptions={manualSubscriptionsInNamespace}
@@ -562,7 +560,7 @@ export const SubscriptionUpdates: React.FC<SubscriptionUpdatesProps> = ({
                         >
                           <Button type="button" isInline variant="link">
                             <BlueInfoCircleIcon className="co-icon-space-r" />
-                            {t('subscription~Functioning as manual')}
+                            {t('olm~Functioning as manual')}
                           </Button>
                         </Popover>
                       </div>
@@ -602,11 +600,11 @@ export const SubscriptionUpdates: React.FC<SubscriptionUpdatesProps> = ({
                   <span>{t('olm~0 installed')}</span>
                 )}
                 {obj?.status?.state === SubscriptionState.SubscriptionStateUpgradePending &&
-                obj?.status?.installplan &&
+                obj?.status?.installPlanRef &&
                 installPlan ? (
                   <Link
                     to={`/k8s/ns/${obj.metadata.namespace}/${referenceForModel(InstallPlanModel)}/${
-                      obj.status.installplan.name
+                      obj.status.installPlanRef.name
                     }`}
                   >
                     <span>{installPlanPhase}</span>

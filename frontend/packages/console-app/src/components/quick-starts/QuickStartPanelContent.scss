@@ -10,6 +10,10 @@
     background: inherit;
     z-index: var(--pf-global--ZIndex--xs);
   }
+  &__body {
+    display: flex;
+    flex-direction: column;
+  }
   &__title {
     display: flex;
     align-items: center;

@@ -101,6 +101,11 @@ export abstract class BaseVMBuilder<T extends BaseVMBuilderData> {
     return this;
   }
 
+  public setPVCName(pvcName: string) {
+    this.data.pvcName = pvcName;
+    return this;
+  }
+
   /**
    * Sets attributes configured in passed builder instance.
    * @param builder BaseVMBuilder<T>
