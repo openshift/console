@@ -16,7 +16,7 @@ export const initialState: State = {
   showNodesListOnLVS: false,
   diskType: 'All',
   diskMode: diskModeDropdownItems.BLOCK,
-  deviceType: [],
+  deviceType: ['Disk', 'Part'],
   maxDiskLimit: '',
   nodeNames: [], // nodes selected on the LVS step
   minDiskSize: '1',
