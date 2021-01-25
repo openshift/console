@@ -52,22 +52,7 @@ describe('featureReducer', () => {
     const initialState = Immutable.Map(defaults);
     const newState = featureReducer(initialState, action);
 
-    expect(newState).toEqual(
-      initialState.merge({
-        [FLAGS.PROMETHEUS]: false,
-        [FLAGS.CHARGEBACK]: false,
-        [FLAGS.SERVICE_CATALOG]: false,
-        [FLAGS.CLUSTER_API]: false,
-        [FLAGS.MACHINE_CONFIG]: false,
-        [FLAGS.MACHINE_AUTOSCALER]: false,
-        [FLAGS.MACHINE_HEALTH_CHECK]: false,
-        [FLAGS.CONSOLE_LINK]: false,
-        [FLAGS.CONSOLE_CLI_DOWNLOAD]: false,
-        [FLAGS.CONSOLE_NOTIFICATION]: false,
-        [FLAGS.CONSOLE_EXTERNAL_LOG_LINK]: false,
-        [FLAGS.CONSOLE_YAML_SAMPLE]: false,
-      }),
-    );
+    expect(newState).toEqual(initialState);
   });
 });
 

@@ -4,6 +4,138 @@
     {
       "type": "console.flag/model",
       "properties": {
+        "flag": "CHARGEBACK",
+        "model": {
+          "group": "metering.openshift.io",
+          "version": "v1",
+          "kind": "Report"
+        }
+      }
+    },
+    {
+      "type": "console.flag/model",
+      "properties": {
+        "flag": "SERVICE_CATALOG",
+        "model": {
+          "group": "servicecatalog.k8s.io",
+          "version": "v1beta1",
+          "kind": "ClusterServiceClass"
+        }
+      }
+    },
+    {
+      "type": "console.flag/model",
+      "properties": {
+        "flag": "CONSOLE_LINK",
+        "model": {
+          "group": "console.openshift.io",
+          "version": "v1",
+          "kind": "ConsoleLink"
+        }
+      }
+    },
+    {
+      "type": "console.flag/model",
+      "properties": {
+        "flag": "CONSOLE_CLI_DOWNLOAD",
+        "model": {
+          "group": "console.openshift.io",
+          "version": "v1",
+          "kind": "ConsoleCLIDownload"
+        }
+      }
+    },
+    {
+      "type": "console.flag/model",
+      "properties": {
+        "flag": "CONSOLE_EXTERNAL_LOG_LINK",
+        "model": {
+          "group": "console.openshift.io",
+          "version": "v1",
+          "kind": "ConsoleExternalLogLink"
+        }
+      }
+    },
+    {
+      "type": "console.flag/model",
+      "properties": {
+        "flag": "CONSOLE_NOTIFICATION",
+        "model": {
+          "group": "console.openshift.io",
+          "version": "v1",
+          "kind": "ConsoleNotification"
+        }
+      }
+    },
+    {
+      "type": "console.flag/model",
+      "properties": {
+        "flag": "CONSOLE_YAML_SAMPLE",
+        "model": {
+          "group": "console.openshift.io",
+          "version": "v1",
+          "kind": "ConsoleYAMLSample"
+        }
+      }
+    },
+    {
+      "type": "console.flag/model",
+      "properties": {
+        "flag": "MACHINE_AUTOSCALER",
+        "model": {
+          "group": "autoscaling.openshift.io",
+          "version": "v1beta1",
+          "kind": "MachineAutoscaler"
+        }
+      }
+    },
+    {
+      "type": "console.flag/model",
+      "properties": {
+        "flag": "MACHINE_CONFIG",
+        "model": {
+          "group": "machineconfiguration.openshift.io",
+          "version": "v1",
+          "kind": "MachineConfig"
+        }
+      }
+    },
+    {
+      "type": "console.flag/model",
+      "properties": {
+        "flag": "MACHINE_HEALTH_CHECK",
+        "model": {
+          "group": "machine.openshift.io",
+          "version": "v1beta1",
+          "kind": "MachineHealthCheck"
+        }
+      }
+    },
+    {
+      "type": "console.flag/model",
+      "properties": {
+        "flag": "CLUSTER_API",
+        "model": {
+          "group": "machine.openshift.io",
+          "version": "v1beta1",
+          "kind": "Machine"
+        }
+      }
+    },
+    {
+      "type": "console.flag/model",
+      "properties": {
+        "flag": "PROMETHEUS",
+        "model": {
+          "group": "monitoring.coreos.com",
+          "version": "v1",
+          "kind": "Prometheus"
+        }
+      }
+    },
+    {
+      "type": "console.flag/model",
+      "properties": {
         "flag": "DEVWORKSPACE",
         "model": {
           "group": "workspace.devfile.io",
