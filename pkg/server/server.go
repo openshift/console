@@ -254,6 +254,14 @@ func (s *Server) HTTPHandler() http.Handler {
 					}
 					// plog.Infof("check token is on : %v", token)
 					s.StaticUser.Token = token
+
+					// NOTE: query에 token 정보가 있을 시 해당 token으로 설정
+					queryToken := r.URL.Query().Get("token")
+					if queryToken != "" && token == "" {
+						r.URL.Query().Del("token")
+						s.StaticUser.Token = queryToken
+					}
+
 				}
 
 				hf(s.StaticUser, w, r)

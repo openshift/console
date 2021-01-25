@@ -192,10 +192,12 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	proxiedHeader.Add("Origin", "http://localhost")
 
 	// NOTE: bearer token 넣어보기 위해 Authorization 추가 // 정동민
-	token, ok := r.URL.Query()["token"]
-	if ok && len(token[0]) > 0 {
-		proxiedHeader.Add("Authorization", "Bearer "+string(token[0]))
-	}
+	// token, ok := r.URL.Query()["token"]
+	// if ok && len(token[0]) > 0 {
+	// 	proxiedHeader.Add("Authorization", "Bearer "+string(token[0]))
+	// 	r.URL.Query().Del("token")
+	// }
+	// log.Printf("url query: %v", r.URL.Query())
 	// NOTE: 여기까지
 
 	dialer := &websocket.Dialer{

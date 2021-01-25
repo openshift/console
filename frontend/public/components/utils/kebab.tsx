@@ -299,7 +299,6 @@ const kebabFactory: KebabFactory = {
         resource: obj,
         blocking: true,
       }),
-    accessReview: asAccessReview(kind, obj, 'patch'),
   }),
   ModifyPodSelector: (kind, obj) => ({
     label: 'Edit Pod Selector',
@@ -387,7 +386,23 @@ export const getExtensionsKebabActionsForKind = (kind: K8sKind) => {
 };
 
 export const ResourceKebab = connectToModel((props: ResourceKebabProps) => {
-  const { actions, kindObj, resource, isDisabled } = props;
+  const { actions, kind, kindObj, resource, isDisabled } = props;
+
+  if (kind === 'Tag') {
+    const options = _.reject(
+      actions.map((a) => a(kindObj, resource)),
+      'hidden',
+    );
+    return (
+      <Kebab
+        options={options}
+        key={resource.version}
+        isDisabled={
+          isDisabled !== undefined ? isDisabled : _.get(resource.metadata, 'deletionTimestamp')
+        }
+      />
+    );
+  }
 
   if (!kindObj) {
     return null;
@@ -546,7 +561,7 @@ export type ResourceKebabProps = {
   kindObj: K8sKind;
   actions: KebabAction[];
   kind: K8sResourceKindReference;
-  resource: K8sResourceKind;
+  resource: K8sResourceKind | any;
   isDisabled?: boolean;
 };
 

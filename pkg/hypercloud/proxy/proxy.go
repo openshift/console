@@ -192,13 +192,16 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// NOTE: websocket에 bear token 추가
 	// NOTE: websocket시 header에 정보를 넣을 수 없어서 4.1버전으로 롤백
-	token, ok := r.URL.Query()["token"]
-	if ok && len(token[0]) > 0 {
-		proxiedHeader.Add("Authorization", "Bearer "+string(token[0]))
-	}
-	// token := r.Header.Clone().Get("Authorization")
-	// if token != "" {
-	// 	proxiedHeader.Add("Authorization", token)
+	// token, ok := r.URL.Query()["token"]
+	// if ok && len(token[0]) > 0 {
+	// 	proxiedHeader.Set("Authorization", "Bearer "+string(token[0]))
+	// 	r.URL.Query().Del("token")
+	// }
+	// } else {
+	// 	token := r.Header.Clone().Get("Authorization")
+	// 	if token != "" {
+	// 		proxiedHeader.Add("Authorization", token)
+	// 	}
 	// }
 
 	dialer := &websocket.Dialer{
