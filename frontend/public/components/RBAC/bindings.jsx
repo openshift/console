@@ -377,28 +377,6 @@ const ClusterRoleDropdown = (props) => {
   );
 };
 
-const bindingKinds = [
-  {
-    value: 'RoleBinding',
-    title: i18next.t('bindings~Namespace RoleBinding (RoleBinding)'),
-    desc: i18next.t(
-      'bindings~Grant the permissions to a user or set of users within the selected namespace.',
-    ),
-  },
-  {
-    value: 'ClusterRoleBinding',
-    title: i18next.t('bindings~Cluster-wide RoleBinding (ClusterRoleBinding)'),
-    desc: i18next.t(
-      'bindings~Grant the permissions to a user or set of users at the cluster level and in all namespaces.',
-    ),
-  },
-];
-const subjectKinds = [
-  { value: 'User', title: i18next.t('bindings~User') },
-  { value: 'Group', title: i18next.t('bindings~Group') },
-  { value: 'ServiceAccount', title: i18next.t('bindings~ServiceAccount') },
-];
-
 const Section = ({ label, children }) => (
   <div>
     <div className="co-form-section__label">{label}</div>
@@ -522,6 +500,27 @@ class BaseEditRoleBindingWithTranslation extends React.Component {
     const { fixed, saveButtonText, t } = this.props;
     const RoleDropdown = kind === 'RoleBinding' ? NsRoleDropdown : ClusterRoleDropdown;
     const title = `${this.props.titleVerb} ${kindObj(kind).label}`;
+    const bindingKinds = [
+      {
+        value: 'RoleBinding',
+        title: t('bindings~Namespace role binding (RoleBinding)'),
+        desc: t(
+          'bindings~Grant the permissions to a user or set of users within the selected namespace.',
+        ),
+      },
+      {
+        value: 'ClusterRoleBinding',
+        title: t('bindings~Cluster-wide role binding (ClusterRoleBinding)'),
+        desc: t(
+          'bindings~Grant the permissions to a user or set of users at the cluster level and in all namespaces.',
+        ),
+      },
+    ];
+    const subjectKinds = [
+      { value: 'User', title: t('bindings~User') },
+      { value: 'Group', title: t('bindings~Group') },
+      { value: 'ServiceAccount', title: t('bindings~ServiceAccount') },
+    ];
 
     return (
       <div className="co-m-pane__body">
