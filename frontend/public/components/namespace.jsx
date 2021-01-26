@@ -27,6 +27,7 @@ import { OpenShiftGettingStarted } from './start-guide';
 import { Overview } from './overview';
 import { getNamespaceDashboardConsoleLinks, ProjectDashboard } from './dashboard/project-dashboard/project-dashboard';
 import { removeQueryArgument } from './utils/router';
+import { useTranslation } from 'react-i18next';
 
 const getModel = useProjects => (useProjects ? ProjectModel : NamespaceModel);
 const getDisplayName = obj => _.get(obj, ['metadata', 'annotations', 'openshift.io/display-name']);
@@ -89,28 +90,28 @@ const namespacesColumnClasses = [
   Kebab.columnClass,
 ];
 
-const NamespacesTableHeader = () => {
+const NamespacesTableHeader = t => {
   return [
     {
-      title: 'Name',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_1'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: namespacesColumnClasses[0] },
     },
     {
-      title: 'Status',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_3'),
       sortField: 'status.phase',
       transforms: [sortable],
       props: { className: namespacesColumnClasses[1] },
     },
     {
-      title: 'Labels',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_15'),
       sortField: 'metadata.labels',
       transforms: [sortable],
       props: { className: namespacesColumnClasses[2] },
     },
     {
-      title: 'Created',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_12'),
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: namespacesColumnClasses[3] },
@@ -142,9 +143,13 @@ const NamespacesTableRow = ({ obj: ns, index, key, style }) => {
   );
 };
 
-export const NamespacesList = props => <Table {...props} aria-label="Namespaces" Header={NamespacesTableHeader} Row={NamespacesTableRow} virtualize />;
+export const NamespacesList = props => {
+  const { t } = useTranslation();
+  return <Table {...props} aria-label="Namespaces" Header={NamespacesTableHeader.bind(null, t)} Row={NamespacesTableRow} virtualize />;
+};
 
 export const NamespacesPage = props => {
+  const { t } = useTranslation();
   // const createProps = {
   //   items: createItems,
   //   createLink: (type) =>
@@ -154,6 +159,7 @@ export const NamespacesPage = props => {
   return (
     <ListPage
       {...props}
+      title={t('COMMON:MSG_LNB_MENU_3')}
       ListComponent={NamespacesList}
       canCreate={true}
       // createProps={createProps}
@@ -345,6 +351,7 @@ export const ProjectsPage = connectToFlags(FLAGS.CAN_CREATE_PROJECT)(({ flags, .
 export const PullSecret = props => {
   const [isLoading, setIsLoading] = React.useState(true);
   const [data, setData] = React.useState(undefined);
+  const { t } = useTranslation();
 
   React.useEffect(() => {
     k8sGet(SecretModel, null, props.namespace.metadata.name, {
@@ -371,22 +378,25 @@ export const PullSecret = props => {
 
   return (
     <Button variant="link" type="button" isInline onClick={modal}>
-      {_.get(data, 'metadata.name') || 'Not Configured'}
+      {_.get(data, 'metadata.name') || t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_33')}
       <PencilAltIcon className="co-icon-space-l pf-c-button-icon--plain" />
     </Button>
   );
 };
 
-export const NamespaceLineCharts = ({ ns }) => (
-  <div className="row">
-    <div className="col-md-6 col-sm-12">
-      <Area title="CPU Usage" humanize={humanizeCpuCores} namespace={ns.metadata.name} query={`namespace:container_cpu_usage:sum{namespace='${ns.metadata.name}'}`} />
+export const NamespaceLineCharts = ({ ns }) => {
+  const { t } = useTranslation();
+  return (
+    <div className="row">
+      <div className="col-md-6 col-sm-12">
+        <Area title="CPU Usage" humanize={humanizeCpuCores} namespace={ns.metadata.name} query={`namespace:container_cpu_usage:sum{namespace='${ns.metadata.name}'}`} />
+      </div>
+      <div className="col-md-6 col-sm-12">
+        <Area title="Memory Usage" humanize={humanizeBinaryBytes} byteDataType={ByteDataTypes.BinaryBytes} namespace={ns.metadata.name} query={`sum by(namespace) (container_memory_working_set_bytes{namespace="${ns.metadata.name}",container="",pod!=""})`} />
+      </div>
     </div>
-    <div className="col-md-6 col-sm-12">
-      <Area title="Memory Usage" humanize={humanizeBinaryBytes} byteDataType={ByteDataTypes.BinaryBytes} namespace={ns.metadata.name} query={`sum by(namespace) (container_memory_working_set_bytes{namespace="${ns.metadata.name}",container="",pod!=""})`} />
-    </div>
-  </div>
-);
+  );
+};
 
 export const TopPodsBarChart = ({ ns }) => <Bar title="Memory Usage by Pod (Top 10)" namespace={ns.metadata.name} query={`sort_desc(topk(10, sum by (pod)(container_memory_working_set_bytes{container="",pod!="",namespace="${ns.metadata.name}"})))`} humanize={humanizeBinaryBytes} metric="pod" />;
 
@@ -399,6 +409,7 @@ const ResourceUsage = requirePrometheus(({ ns }) => (
 ));
 
 export const NamespaceSummary = ({ ns }) => {
+  const { t } = useTranslation();
   const displayName = getDisplayName(ns);
   const requester = getRequester(ns);
   const canListSecrets = useAccessReview({
@@ -419,20 +430,20 @@ export const NamespaceSummary = ({ ns }) => {
       </div>
       <div className="col-sm-6 col-xs-12">
         <dl className="co-m-pane__details">
-          <DetailsItem label="Status" obj={ns} path="status.phase">
+          <DetailsItem label={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_13')} obj={ns} path="status.phase">
             <Status status={ns.status.phase} />
           </DetailsItem>
           {canListSecrets && (
             <>
-              <dt>Default Pull Secret</dt>
+              <dt>{t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_95')}</dt>
               <dd>
                 <PullSecret namespace={ns} />
               </dd>
             </>
           )}
-          <dt>Network Policies</dt>
+          <dt>{t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_96')}</dt>
           <dd>
-            <Link to={`/k8s/ns/${ns.metadata.name}/networkpolicies`}>Network Policies</Link>
+            <Link to={`/k8s/ns/${ns.metadata.name}/networkpolicies`}>{t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_96')}</Link>
           </dd>
         </dl>
       </div>
@@ -441,11 +452,12 @@ export const NamespaceSummary = ({ ns }) => {
 };
 
 const NamespaceDetails_ = ({ obj: ns, consoleLinks, customData }) => {
+  const { t } = useTranslation();
   const links = getNamespaceDashboardConsoleLinks(ns, consoleLinks);
   return (
     <div>
       <div className="co-m-pane__body">
-        {!customData?.hideHeading && <SectionHeading text={`${ns.kind} Details`} />}
+        {!customData?.hideHeading && <SectionHeading text={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_1', { 0: t('COMMON:MSG_LNB_MENU_3') })} />}
         <NamespaceSummary ns={ns} />
       </div>
       {ns.kind === 'Namespace' && <ResourceUsage ns={ns} />}

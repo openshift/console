@@ -8,21 +8,13 @@ import { sortable } from '@patternfly/react-table';
 import { flatten as bindingsFlatten } from './bindings';
 import { BindingName, BindingsList, RulesList } from './index';
 import { DetailsPage, MultiListPage, TextFilter, Table, TableRow, TableData } from '../factory';
-import {
-  Kebab,
-  SectionHeading,
-  MsgBox,
-  navFactory,
-  ResourceKebab,
-  ResourceLink,
-  Timestamp,
-} from '../utils';
+import { Kebab, SectionHeading, MsgBox, navFactory, ResourceKebab, ResourceLink, Timestamp } from '../utils';
 
-export const isSystemRole = (role) => _.startsWith(role.metadata.name, 'system:');
+export const isSystemRole = role => _.startsWith(role.metadata.name, 'system:');
 
 // const addHref = (name, ns) => ns ? `/k8s/ns/${ns}/roles/${name}/add-rule` : `/k8s/cluster/clusterroles/${name}/add-rule`;
 
-export const roleKind = (role) => (role.metadata.namespace ? 'Role' : 'ClusterRole');
+export const roleKind = role => (role.metadata.namespace ? 'Role' : 'ClusterRole');
 
 const menuActions = [
   // This page is temporarily disabled until we update the safe resources list.
@@ -32,9 +24,7 @@ const menuActions = [
   // }),
   (kind, role) => ({
     label: 'Add Role Binding',
-    href: `/k8s/cluster/rolebindings/~new?rolekind=${roleKind(role)}&rolename=${
-      role.metadata.name
-    }`,
+    href: `/k8s/cluster/rolebindings/~new?rolekind=${roleKind(role)}&rolename=${role.metadata.name}`,
   }),
   Kebab.factory.Edit,
   Kebab.factory.Delete,
@@ -65,19 +55,9 @@ const RolesTableRow = ({ obj: role, index, key, style }) => {
   return (
     <TableRow id={role.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={roleColumnClasses[0]}>
-        <ResourceLink
-          kind={roleKind(role)}
-          name={role.metadata.name}
-          namespace={role.metadata.namespace}
-        />
+        <ResourceLink kind={roleKind(role)} name={role.metadata.name} namespace={role.metadata.namespace} />
       </TableData>
-      <TableData className={classNames(roleColumnClasses[1], 'co-break-word')}>
-        {role.metadata.namespace ? (
-          <ResourceLink kind="Namespace" name={role.metadata.namespace} />
-        ) : (
-          'All Namespaces'
-        )}
-      </TableData>
+      <TableData className={classNames(roleColumnClasses[1], 'co-break-word')}>{role.metadata.namespace ? <ResourceLink kind="Namespace" name={role.metadata.namespace} /> : 'All Namespaces'}</TableData>
       <TableData className={roleColumnClasses[2]}>
         <ResourceKebab actions={menuActions} kind={roleKind(role)} resource={role} />
       </TableData>
@@ -89,7 +69,7 @@ class Details extends React.Component {
   constructor(props) {
     super(props);
     this.state = {};
-    this.changeFilter = (val) => this.setState({ ruleFilter: val });
+    this.changeFilter = val => this.setState({ ruleFilter: val });
   }
 
   render() {
@@ -101,9 +81,7 @@ class Details extends React.Component {
     if (ruleFilter) {
       const fuzzyCaseInsensitive = (a, b) => fuzzy(_.toLower(a), _.toLower(b));
       const searchKeys = ['nonResourceURLs', 'resources', 'verbs'];
-      rules = rules.filter((rule) =>
-        searchKeys.some((k) => _.some(rule[k], (v) => fuzzyCaseInsensitive(ruleFilter, v))),
-      );
+      rules = rules.filter(rule => searchKeys.some(k => _.some(rule[k], v => fuzzyCaseInsensitive(ruleFilter, v))));
     }
 
     return (
@@ -156,12 +134,7 @@ class Details extends React.Component {
   }
 }
 
-const bindingsColumnClasses = [
-  classNames('col-xs-4'),
-  classNames('col-xs-2'),
-  classNames('col-xs-4'),
-  classNames('col-xs-2'),
-];
+const bindingsColumnClasses = [classNames('col-xs-4'), classNames('col-xs-2'), classNames('col-xs-4'), classNames('col-xs-2')];
 
 const BindingsTableHeader = () => {
   return [
@@ -201,18 +174,14 @@ const BindingsTableRow = ({ obj: binding, index, key, style }) => {
       </TableData>
       <TableData className={bindingsColumnClasses[1]}>{binding.subject.kind}</TableData>
       <TableData className={bindingsColumnClasses[2]}>{binding.subject.name}</TableData>
-      <TableData className={bindingsColumnClasses[3]}>
-        {binding.namespace || 'All Namespaces'}
-      </TableData>
+      <TableData className={bindingsColumnClasses[3]}>{binding.namespace || 'All Namespaces'}</TableData>
     </TableRow>
   );
 };
 
-const BindingsListComponent = (props) => (
-  <BindingsList {...props} Header={BindingsTableHeader} Row={BindingsTableRow} virtualize />
-);
+const BindingsListComponent = props => <BindingsList {...props} Header={BindingsTableHeader} Row={BindingsTableRow} virtualize />;
 
-export const BindingsForRolePage = (props) => {
+export const BindingsForRolePage = props => {
   const {
     match: {
       params: { name, ns },
@@ -228,9 +197,7 @@ export const BindingsForRolePage = (props) => {
       canCreate={true}
       createButtonText="Create Binding"
       createProps={{
-        to: `/k8s/${
-          ns ? `ns/${ns}` : 'cluster'
-        }/rolebindings/~new?rolekind=${kind}&rolename=${name}`,
+        to: `/k8s/${ns ? `ns/${ns}` : 'cluster'}/rolebindings/~new?rolekind=${kind}&rolename=${name}`,
       }}
       ListComponent={BindingsListComponent}
       staticFilters={[{ 'role-binding-roleRef-name': name }, { 'role-binding-roleRef-kind': kind }]}
@@ -243,39 +210,15 @@ export const BindingsForRolePage = (props) => {
   );
 };
 
-export const RolesDetailsPage = (props) => (
-  <DetailsPage
-    {...props}
-    pages={[
-      navFactory.details(Details),
-      navFactory.editYaml(),
-      { href: 'bindings', name: 'Role Bindings', component: BindingsForRolePage },
-    ]}
-    menuActions={menuActions}
-  />
-);
+export const RolesDetailsPage = props => <DetailsPage {...props} pages={[navFactory.details(Details), navFactory.editYaml(), { href: 'bindings', name: 'Role Bindings', component: BindingsForRolePage }]} menuActions={menuActions} />;
 
 export const ClusterRolesDetailsPage = RolesDetailsPage;
 
-const EmptyMsg = () => (
-  <MsgBox
-    title="No Roles Found"
-    detail="Roles grant access to types of objects in the cluster. Roles are applied to a team or user via a Role Binding."
-  />
-);
+const EmptyMsg = () => <MsgBox title="No Roles Found" detail="Roles grant access to types of objects in the cluster. Roles are applied to a team or user via a Role Binding." />;
 
-const RolesList = (props) => (
-  <Table
-    {...props}
-    aria-label="Roles"
-    EmptyMsg={EmptyMsg}
-    Header={RolesTableHeader}
-    Row={RolesTableRow}
-    virtualize
-  />
-);
+const RolesList = props => <Table {...props} aria-label="Roles" EmptyMsg={EmptyMsg} Header={RolesTableHeader} Row={RolesTableRow} virtualize />;
 
-export const roleType = (role) => {
+export const roleType = role => {
   if (!role) {
     return undefined;
   }
@@ -300,7 +243,7 @@ export const RolesPage = ({ namespace, mock, showTitle }) => {
       createAccessReview={accessReview}
       createButtonText="Create Role"
       createProps={{ to: `/k8s/ns/${createNS}/roles/~new` }}
-      flatten={(resources) => _.flatMap(resources, 'data').filter((r) => !!r)}
+      flatten={resources => _.flatMap(resources, 'data').filter(r => !!r)}
       resources={[
         { kind: 'Role', namespaced: true, optional: mock },
         { kind: 'ClusterRole', namespaced: false, optional: true },
