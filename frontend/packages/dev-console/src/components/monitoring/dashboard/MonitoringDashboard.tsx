@@ -8,8 +8,8 @@ import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import { RootState } from '@console/internal/redux';
 import {
   getURLSearchParams,
-  setQueryArgument,
-  removeQueryArgument,
+  setQueryArguments,
+  removeQueryArguments,
 } from '@console/internal/components/utils';
 import {
   TimespanDropdown,
@@ -45,59 +45,24 @@ export const MonitoringDashboard: React.FC<Props> = ({ match, timespan, pollInte
     params.workloadName || OptionTypes.selectAll,
   );
   const [workloadType, setWorkloadType] = React.useState(params.workloadType);
-  const [initialRun, setInitialRun] = React.useState(true);
-  const selectedTaskRef = React.useRef<string>(workloadName);
-  selectedTaskRef.current = workloadName;
 
-  const getQueries = React.useCallback(() => {
+  const queries = React.useMemo(() => {
     return workloadName && workloadType && workloadName !== OptionTypes.selectAll
       ? [...topWorkloadMetricsQueries(t), ...workloadMetricsQueries(t)]
       : monitoringDashboardQueries(t);
   }, [t, workloadName, workloadType]);
 
-  const [queries, setQueries] = React.useState(getQueries());
-
-  const removeQueryParams = React.useCallback(() => {
-    if (!initialRun) {
-      removeQueryArgument('workloadName');
-      removeQueryArgument('workloadType');
-      setWorkloadType(null);
-      setWorkloadName(OptionTypes.selectAll);
-      setQueries(getQueries());
-    }
-  }, [getQueries, initialRun]);
-
-  React.useEffect(
-    () => {
-      setQueries(getQueries());
-      if (workloadName !== OptionTypes.selectAll && workloadType) {
-        setQueryArgument('workloadName', workloadName);
-        setQueryArgument('workloadType', workloadType);
-      } else if (
-        workloadName === OptionTypes.selectAll &&
-        !initialRun &&
-        !_.isEmpty(getURLSearchParams())
-      ) {
-        removeQueryParams();
-      }
-    }, // eslint-disable-next-line react-hooks/exhaustive-deps
-    [workloadName, workloadType, getQueries, namespace],
-  );
-
-  React.useEffect(
-    () => {
-      initialRun ? setInitialRun(false) : removeQueryParams();
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [namespace],
-  );
-
   const onSelect = React.useCallback(
     (key: string, type: string = null): void => {
-      if (selectedTaskRef.current !== key) {
-        selectedTaskRef.current = key;
-        setWorkloadName(key);
-        setWorkloadType(type);
+      setWorkloadName(key);
+      setWorkloadType(type);
+      if (key && type && key !== OptionTypes.selectAll) {
+        setQueryArguments({
+          workloadName: key,
+          workloadType: type,
+        });
+      } else {
+        removeQueryArguments('workloadName', 'workloadType');
       }
     },
     [setWorkloadType, setWorkloadName],

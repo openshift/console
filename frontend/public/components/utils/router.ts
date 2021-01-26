@@ -43,6 +43,21 @@ export const setQueryArgument = (k: string, v: string) => {
   }
 };
 
+export const setQueryArguments = (newParams: { [k: string]: string }) => {
+  const params = new URLSearchParams(window.location.search);
+  let update = false;
+  _.each(newParams, (v, k) => {
+    if (params.get(k) !== v) {
+      update = true;
+      params.set(k, v);
+    }
+  });
+  if (update) {
+    const url = new URL(window.location.href);
+    history.replace(`${url.pathname}?${params.toString()}${url.hash}`);
+  }
+};
+
 export const setAllQueryArguments = (newParams: { [k: string]: string }) => {
   const params = new URLSearchParams();
   let update = false;
@@ -62,6 +77,21 @@ export const removeQueryArgument = (k: string) => {
   const params = new URLSearchParams(window.location.search);
   if (params.has(k)) {
     params.delete(k);
+    const url = new URL(window.location.href);
+    history.replace(`${url.pathname}?${params.toString()}${url.hash}`);
+  }
+};
+
+export const removeQueryArguments = (...keys: string[]) => {
+  const params = new URLSearchParams(window.location.search);
+  let update = false;
+  keys.forEach((k) => {
+    if (params.has(k)) {
+      update = true;
+      params.delete(k);
+    }
+  });
+  if (update) {
     const url = new URL(window.location.href);
     history.replace(`${url.pathname}?${params.toString()}${url.hash}`);
   }
