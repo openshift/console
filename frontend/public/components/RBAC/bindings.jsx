@@ -15,7 +15,7 @@ import { confirmModal } from '../modals';
 import { ButtonBar, Kebab, Firehose, ListDropdown, MsgBox, NsDropdown, ResourceKebab, ResourceLink, ResourceName, StatusBox, getQueryArgument, history, kindObj, resourceObjPath, useAccessReview } from '../utils';
 import { isSystemRole } from './index';
 import { connectToFlags, flagPending } from '../../reducers/features';
-
+import { useTranslation } from 'react-i18next';
 const bindingKind = binding => (binding.metadata.namespace ? 'RoleBinding' : 'ClusterRoleBinding');
 
 // Split each binding into one row per subject
@@ -100,44 +100,43 @@ const menuActions = ({ subjectIndex, subjects }, startImpersonate) => {
 
 const tableColumnClasses = [classNames('col-md-3', 'col-sm-4', 'col-xs-6'), classNames('col-md-3', 'col-sm-4', 'hidden-xs'), classNames('col-lg-2', 'col-md-3', 'hidden-sm', 'hidden-xs'), classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'), classNames('col-lg-2', 'col-md-3', 'col-sm-4', 'col-xs-6'), Kebab.columnClass];
 
-const RoleBindingsTableHeader = () => {
-  return [
-    {
-      title: 'Name',
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: 'Role Ref',
-      sortField: 'roleRef.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-    },
-    {
-      title: 'Subject Kind',
-      sortField: 'subject.kind',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: 'Subject Name',
-      sortField: 'subject.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
-    },
-    {
-      title: 'Namespace',
-      sortField: 'metadata.namespace',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[4] },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses[5] },
-    },
-  ];
-};
+const RoleBindingsTableHeader = t => [
+  {
+    title: t('COMMON:MSG_DETAILS_TABROLEBINDINGS_TABLEHEADER_1'),
+    sortField: 'metadata.name',
+    transforms: [sortable],
+    props: { className: tableColumnClasses[0] },
+  },
+  {
+    title: t('COMMON:MSG_DETAILS_TABROLEBINDINGS_TABLEHEADER_2'),
+    sortField: 'roleRef.name',
+    transforms: [sortable],
+    props: { className: tableColumnClasses[1] },
+  },
+  {
+    title: t('COMMON:MSG_DETAILS_TABROLEBINDINGS_TABLEHEADER_3'),
+    sortField: 'subject.kind',
+    transforms: [sortable],
+    props: { className: tableColumnClasses[2] },
+  },
+  {
+    title: t('COMMON:MSG_DETAILS_TABROLEBINDINGS_TABLEHEADER_4'),
+    sortField: 'subject.name',
+    transforms: [sortable],
+    props: { className: tableColumnClasses[3] },
+  },
+  {
+    title: t('COMMON:MSG_DETAILS_TABROLEBINDINGS_TABLEHEADER_5'),
+    sortField: 'metadata.namespace',
+    transforms: [sortable],
+    props: { className: tableColumnClasses[4] },
+  },
+  {
+    title: '',
+    props: { className: tableColumnClasses[5] },
+  },
+];
+
 RoleBindingsTableHeader.displayName = 'RoleBindingsTableHeader';
 
 export const BindingName = ({ binding }) => {
@@ -177,7 +176,10 @@ const RoleBindingsTableRow = ({ obj: binding, index, key, style }) => {
 
 const EmptyMsg = () => <MsgBox title="No Role Bindings Found" detail="Roles grant access to types of objects in the cluster. Roles are applied to a group or user via a Role Binding." />;
 
-export const BindingsList = props => <Table {...props} aria-label="Role Bindings" EmptyMsg={EmptyMsg} Header={RoleBindingsTableHeader} Row={RoleBindingsTableRow} virtualize />;
+export const BindingsList = props => {
+  const { t } = useTranslation();
+  return <Table {...props} aria-label="Role Bindings" EmptyMsg={EmptyMsg} Header={RoleBindingsTableHeader.bind(null, t)} Row={RoleBindingsTableRow} virtualize />;
+};
 
 export const bindingType = binding => {
   if (!binding) {
@@ -212,27 +214,30 @@ const rowFilters = [
   },
 ];
 
-export const RoleBindingsPage = ({ namespace = undefined, showTitle = true, mock = false, staticFilters = undefined, createPath = '/k8s/cluster/rolebindings/~new' }) => (
-  <MultiListPage
-    canCreate={!mock}
-    createButtonText="Create Binding"
-    createProps={{
-      to: createPath,
-    }}
-    mock={mock}
-    filterLabel="by role or subject"
-    flatten={flatten}
-    label="Role Bindings"
-    ListComponent={BindingsList}
-    namespace={namespace}
-    resources={roleResources}
-    rowFilters={staticFilters ? [] : rowFilters}
-    staticFilters={staticFilters}
-    showTitle={showTitle}
-    textFilter="role-binding"
-    title="Role Bindings"
-  />
-);
+export const RoleBindingsPage = ({ namespace = undefined, showTitle = true, mock = false, staticFilters = undefined, createPath = '/k8s/cluster/rolebindings/~new' }) => {
+  const { t } = useTranslation();
+  return (
+    <MultiListPage
+      canCreate={!mock}
+      createButtonText="Create Binding"
+      createProps={{
+        to: createPath,
+      }}
+      mock={mock}
+      filterLabel="by role or subject"
+      flatten={flatten}
+      label={t('COMMON:MSG_LNB_MENU_76')}
+      ListComponent={BindingsList}
+      namespace={namespace}
+      resources={roleResources}
+      rowFilters={staticFilters ? [] : rowFilters}
+      staticFilters={staticFilters}
+      showTitle={showTitle}
+      textFilter="role-binding"
+      title={t('COMMON:MSG_LNB_MENU_76')}
+    />
+  );
+};
 
 const NsRoleDropdown_ = props => {
   const openshiftFlag = props.flags[FLAGS.OPENSHIFT];

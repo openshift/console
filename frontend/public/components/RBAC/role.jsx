@@ -9,6 +9,7 @@ import { flatten as bindingsFlatten } from './bindings';
 import { BindingName, BindingsList, RulesList } from './index';
 import { DetailsPage, MultiListPage, TextFilter, Table, TableRow, TableData } from '../factory';
 import { Kebab, SectionHeading, MsgBox, navFactory, ResourceKebab, ResourceLink, Timestamp } from '../utils';
+import { useTranslation, withTranslation } from 'react-i18next';
 
 export const isSystemRole = role => _.startsWith(role.metadata.name, 'system:');
 
@@ -32,16 +33,16 @@ const menuActions = [
 
 const roleColumnClasses = [classNames('col-xs-6'), classNames('col-xs-6'), Kebab.columnClass];
 
-const RolesTableHeader = () => {
+const RolesTableHeader = t => {
   return [
     {
-      title: 'Name',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_1'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: roleColumnClasses[0] },
     },
     {
-      title: 'Namespace',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_2'),
       sortField: 'metadata.namespace',
       transforms: [sortable],
       props: { className: roleColumnClasses[1] },
@@ -71,23 +72,21 @@ class Details extends React.Component {
     this.state = {};
     this.changeFilter = val => this.setState({ ruleFilter: val });
   }
-
   render() {
     const ruleObj = this.props.obj;
     const { creationTimestamp, name, namespace } = ruleObj.metadata;
     const { ruleFilter } = this.state;
-
+    const { t } = this.props;
     let rules = ruleObj.rules;
     if (ruleFilter) {
       const fuzzyCaseInsensitive = (a, b) => fuzzy(_.toLower(a), _.toLower(b));
       const searchKeys = ['nonResourceURLs', 'resources', 'verbs'];
       rules = rules.filter(rule => searchKeys.some(k => _.some(rule[k], v => fuzzyCaseInsensitive(ruleFilter, v))));
     }
-
     return (
       <div>
         <div className="co-m-pane__body">
-          <SectionHeading text="Role Details" />
+          <SectionHeading text={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_1', { 0: t('COMMON:MSG_LNB_MENU_75') })} />
           <div className="row">
             <div className="col-xs-6">
               <dl className="co-m-pane__details">
@@ -95,7 +94,7 @@ class Details extends React.Component {
                 <dd>{name}</dd>
                 {namespace && (
                   <div>
-                    <dt>Namespace</dt>
+                    <dt>{t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_6')}</dt>
                     <dd>
                       <ResourceLink kind="Namespace" name={namespace} />
                     </dd>
@@ -105,7 +104,7 @@ class Details extends React.Component {
             </div>
             <div className="col-xs-6">
               <dl className="co-m-pane__details">
-                <dt>Created At</dt>
+                <dt>{t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_43')}</dt>
                 <dd>
                   <Timestamp timestamp={creationTimestamp} />
                 </dd>
@@ -114,15 +113,15 @@ class Details extends React.Component {
           </div>
         </div>
         <div className="co-m-pane__body">
-          <SectionHeading text="Rules" />
+          <SectionHeading text={t('COMMON:MSG_DETAILS_TABDETAILS_RULES_1')} />
           <div className="co-m-pane__filter-bar co-m-pane__filter-bar--alt">
             {/* This page is temporarily disabled until we update the safe resources list.
-          <div className="co-m-pane__filter-bar-group">
-            <Link to={addHref(name, namespace)} className="co-m-primary-action">
-              <button className="btn btn-primary">Add Rule</button>
-            </Link>
-          </div>
-          */}
+        <div className="co-m-pane__filter-bar-group">
+          <Link to={addHref(name, namespace)} className="co-m-primary-action">
+            <button className="btn btn-primary">Add Rule</button>
+          </Link>
+        </div>
+        */}
             <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
               <TextFilter label="Rules by action or resource" onChange={this.changeFilter} />
             </div>
@@ -210,13 +209,16 @@ export const BindingsForRolePage = props => {
   );
 };
 
-export const RolesDetailsPage = props => <DetailsPage {...props} pages={[navFactory.details(Details), navFactory.editYaml(), { href: 'bindings', name: 'Role Bindings', component: BindingsForRolePage }]} menuActions={menuActions} />;
+export const RolesDetailsPage = props => <DetailsPage {...props} pages={[navFactory.details(withTranslation()(Details)), navFactory.editYaml(), { href: 'bindings', name: 'Role Bindings', component: BindingsForRolePage }]} menuActions={menuActions} />;
 
 export const ClusterRolesDetailsPage = RolesDetailsPage;
 
 const EmptyMsg = () => <MsgBox title="No Roles Found" detail="Roles grant access to types of objects in the cluster. Roles are applied to a team or user via a Role Binding." />;
 
-const RolesList = props => <Table {...props} aria-label="Roles" EmptyMsg={EmptyMsg} Header={RolesTableHeader} Row={RolesTableRow} virtualize />;
+const RolesList = props => {
+  const { t } = useTranslation();
+  return <Table {...props} aria-label="Roles" EmptyMsg={EmptyMsg} Header={RolesTableHeader.bind(null, t)} Row={RolesTableRow} virtualize />;
+};
 
 export const roleType = role => {
   if (!role) {
@@ -229,6 +231,7 @@ export const roleType = role => {
 };
 
 export const RolesPage = ({ namespace, mock, showTitle }) => {
+  const { t } = useTranslation();
   const createNS = namespace || 'default';
   const accessReview = {
     model: RoleModel,
@@ -260,7 +263,7 @@ export const RolesPage = ({ namespace, mock, showTitle }) => {
           ],
         },
       ]}
-      title="Roles"
+      title={t('COMMON:MSG_LNB_MENU_75')}
     />
   );
 };
