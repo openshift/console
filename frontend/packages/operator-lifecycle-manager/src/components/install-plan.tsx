@@ -199,7 +199,7 @@ export const InstallPlansList = requireOperatorGroup((props: InstallPlansListPro
       {...props}
       aria-label={t('olm~InstallPlans')}
       Header={InstallPlanTableHeader}
-      Row={InstallPlanTableRow}
+      Row={(rowArgs) => <InstallPlanTableRow {...rowArgs} />}
       EmptyMsg={EmptyMsg}
     />
   );
