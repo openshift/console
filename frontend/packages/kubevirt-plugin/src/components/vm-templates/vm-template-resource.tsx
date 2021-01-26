@@ -28,6 +28,7 @@ import {
   getTemplateParentProvider,
   getTemplateProvider,
   getTemplateSupport,
+  isCommonTemplate,
 } from '../../selectors/vm-template/basic';
 import { getVMTemplateResourceFlavorData } from './utils';
 
@@ -136,7 +137,7 @@ export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
     <dl className="co-m-pane__details">
       <VMDetailsItem
         title={t('kubevirt-plugin~Boot Order')}
-        canEdit
+        canEdit={!isCommonTemplate(template)}
         editButtonId={prefixedID(id, 'boot-order-edit')}
         onEditClick={() => BootOrderModal({ vmLikeEntity: template, modalClassName: 'modal-lg' })}
         idValue={prefixedID(id, 'boot-order')}
