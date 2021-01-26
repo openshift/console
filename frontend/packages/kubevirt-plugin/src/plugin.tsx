@@ -249,7 +249,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Page/Route',
     properties: {
-      path: '/k8s/ns/:ns/vmtemplates/:name',
+      path: '/k8s/ns/:ns/virtualization/templates/:name',
       loader: () =>
         import(
           './components/vm-templates/vm-template-details-page' /* webpackChunkName: "kubevirt" */

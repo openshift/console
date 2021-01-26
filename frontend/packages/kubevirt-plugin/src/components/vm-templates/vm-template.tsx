@@ -145,7 +145,7 @@ const VMTemplateDetailsBody: React.FC<VMTemplateDetailsBodyProps> = ({
       </StackItem>
       <StackItem>
         <Link
-          to={`/k8s/ns/${template.metadata.namespace}/vmtemplates/${template.metadata.name}`}
+          to={`/k8s/ns/${template.metadata.namespace}/virtualization/templates/${template.metadata.name}`}
           title={template.metadata.uid}
           data-test-id={template.metadata.name}
           className="co-resource-item__resource-name"
@@ -193,7 +193,7 @@ const VMTemplateTableRow: RowFunction<TemplateItem, VMTemplateTableRowProps> = (
       <TableData className={dimensify()}>
         <img src={getTemplateOSIcon(template)} alt="" className="kubevirt-vm-template-logo" />
         <Link
-          to={`/k8s/ns/${template.metadata.namespace}/vmtemplates/${template.metadata.name}`}
+          to={`/k8s/ns/${template.metadata.namespace}/virtualization/templates/${template.metadata.name}`}
           title={template.metadata.uid}
           data-test-id={template.metadata.name}
           className="co-resource-item__resource-name"
