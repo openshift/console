@@ -147,7 +147,7 @@ export const PodsOverviewContent: React.SFC<PodsOverviewContentProps> = ({
   const { t } = useTranslation();
   const [showWaitingPods, setShowWaitingPods] = React.useState(false);
   const showWaitingForBuildAlert =
-    buildConfigData.buildConfigs?.length > 0 &&
+    buildConfigData?.buildConfigs?.length > 0 &&
     !buildConfigData.buildConfigs[0].builds.some((build) => isComplete(build)) &&
     isDeploymentGeneratedByWebConsole(obj);
 
@@ -190,7 +190,7 @@ export const PodsOverviewContent: React.SFC<PodsOverviewContentProps> = ({
           </Link>
         )}
       </SidebarSectionHeading>
-      {buildConfigData.loaded && !buildConfigData.loadError && podAlert}
+      {buildConfigData?.loaded && !buildConfigData?.loadError && podAlert}
       {_.isEmpty(filteredPods) ? (
         <span className="text-muted">{loaded || !!loadError ? emptyMessage : <LoadingBox />}</span>
       ) : (
