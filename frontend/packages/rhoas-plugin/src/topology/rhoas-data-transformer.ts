@@ -11,7 +11,7 @@ export const getTopologyRhoasItem = (
   const returnData = [];
   for (const obj of objArray) {
     const managedKafka: OdcNodeModel = {
-      id: "ManagedKafkaConnection" + obj.metadata.creationTimestamp,
+      id: "ManagedKafkaConnection" + obj.metadata.uid,
       type: ManagedKafkaConnectionModel.kind,
       resourceKind: ManagedKafkaConnectionModel.kind,
       group: false,
