@@ -42,7 +42,7 @@ const StreamsInstanceTable: any = ({ kafkaArray, selectedKafkas, setSelectedKafk
 
   const tableColumns = [
     { title: 'Cluster Name', transforms: [sortable] },
-    { title: 'Bootstrap URL', transforms: [sortable], cellTransforms: [truncate] },
+    { title: 'Bootstrap URL', transforms: [sortable] },
     { title: 'Provider', transforms: [sortable] },
     { title: 'Owner', transforms: [sortable] },
   ];
