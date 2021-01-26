@@ -124,6 +124,7 @@ const ManagedKafkas = () => {
     }
 
     await k8sCreate(ManagedKafkaConnectionModel, kafkaConnection);
+    history.push(`/topology/ns/${currentNamespace}`);
   };
 
   const createManagedKafkaConnectionFlow = async () => {
