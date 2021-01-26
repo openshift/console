@@ -64,8 +64,8 @@ const AccessManagedServices: any = () => {
           title="Access managed services with API Token"
         >
           <span>
-            To access this managed service, input the API token which can be located at
-          <a href="/">https://qaprodauth.cloud.redhat.com/openshift/token</a>
+            To access this managed service please provide the API token which can be located at
+          <a href="https://cloud.redhat.com/openshift/token" target="_blank" >https://cloud.redhat.com/openshift/token</a>
           </span>
         </PageHeading>
         <PageBody>
