@@ -49,7 +49,7 @@ const PipelineVisualization: React.FC<PipelineTopologyVisualizationProps> = ({
   } else {
     content = (
       <PipelineTopologyGraph
-        id={pipelineRun?.metadata?.name || pipeline.metadata.name}
+        id={`${pipelineRun?.metadata?.name || pipeline.metadata.name}-graph`}
         nodes={nodes}
         edges={edges}
         layout={PipelineLayout.DAGRE_VIEWER}
