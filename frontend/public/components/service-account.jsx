@@ -5,15 +5,7 @@ import { Base64 } from 'js-base64';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
-import {
-  Kebab,
-  SectionHeading,
-  navFactory,
-  ResourceKebab,
-  ResourceLink,
-  ResourceSummary,
-  Timestamp,
-} from './utils';
+import { Kebab, SectionHeading, navFactory, ResourceKebab, ResourceLink, ResourceSummary, Timestamp } from './utils';
 import { k8sList } from '../module/k8s';
 import { SecretModel, ServiceAccountModel } from '../models';
 import { SecretsPage } from './secret';
@@ -28,18 +20,14 @@ const KubeConfigify = (kind, sa) => ({
     const namespace = sa.metadata.namespace;
 
     k8sList(SecretModel, { ns: namespace })
-      .then((secrets) => {
+      .then(secrets => {
         const server = window.SERVER_FLAGS.kubeAPIServerURL;
         const url = new URL(server);
         const clusterName = url.host.replace(/\./g, '-');
 
         // Find the secret that is the service account token.
         const saSecretsByName = _.keyBy(sa.secrets, 'name');
-        const secret = _.find(
-          secrets,
-          (s) =>
-            saSecretsByName[s.metadata.name] && s.type === 'kubernetes.io/service-account-token',
-        );
+        const secret = _.find(secrets, s => saSecretsByName[s.metadata.name] && s.type === 'kubernetes.io/service-account-token');
         if (!secret) {
           errorModal({ error: 'Unable to get service account token.' });
           return;
@@ -84,7 +72,7 @@ const KubeConfigify = (kind, sa) => ({
         const blob = new Blob([dump], { type: 'text/yaml;charset=utf-8' });
         saveAs(blob, `kube-config-sa-${name}-${clusterName}`);
       })
-      .catch((err) => {
+      .catch(err => {
         const error = err.message;
         errorModal({ error });
       });
@@ -97,21 +85,11 @@ const KubeConfigify = (kind, sa) => ({
   },
 });
 const { common } = Kebab.factory;
-const menuActions = [
-  KubeConfigify,
-  ...Kebab.getExtensionsActionsForKind(ServiceAccountModel),
-  ...common,
-];
+const menuActions = [KubeConfigify, ...Kebab.getExtensionsActionsForKind(ServiceAccountModel), ...common];
 
 const kind = 'ServiceAccount';
 
-const tableColumnClasses = [
-  classNames('col-sm-4', 'col-xs-6'),
-  classNames('col-sm-4', 'col-xs-6'),
-  classNames('col-md-2', 'hidden-sm', 'hidden-xs'),
-  classNames('col-sm-2', 'hidden-xs'),
-  Kebab.columnClass,
-];
+const tableColumnClasses = [classNames('col-sm-4', 'col-xs-6'), classNames('col-sm-4', 'col-xs-6'), classNames('col-md-2', 'hidden-sm', 'hidden-xs'), classNames('col-sm-2', 'hidden-xs'), Kebab.columnClass];
 
 const ServiceAccountTableHeader = () => {
   return [
@@ -187,35 +165,12 @@ const Details = ({ obj: serviceaccount }) => {
       <div className="co-m-pane__body co-m-pane__body--section-heading">
         <SectionHeading text="Secrets" />
       </div>
-      <SecretsPage
-        kind="Secret"
-        canCreate={false}
-        namespace={namespace}
-        filters={filters}
-        autoFocus={false}
-        showTitle={false}
-      />
+      <SecretsPage kind="Secret" canCreate={false} namespace={namespace} filters={filters} autoFocus={false} showTitle={false} />
     </>
   );
 };
 
-const ServiceAccountsDetailsPage = (props) => (
-  <DetailsPage
-    {...props}
-    menuActions={menuActions}
-    pages={[navFactory.details(Details), navFactory.editYaml()]}
-  />
-);
-const ServiceAccountsList = (props) => (
-  <Table
-    {...props}
-    aria-label="Service Accounts"
-    Header={ServiceAccountTableHeader}
-    Row={ServiceAccountTableRow}
-    virtualize
-  />
-);
-const ServiceAccountsPage = (props) => (
-  <ListPage ListComponent={ServiceAccountsList} {...props} canCreate={true} />
-);
+const ServiceAccountsDetailsPage = props => <DetailsPage {...props} menuActions={menuActions} pages={[navFactory.details(Details), navFactory.editYaml()]} />;
+const ServiceAccountsList = props => <Table {...props} aria-label="Service Accounts" Header={ServiceAccountTableHeader} Row={ServiceAccountTableRow} virtualize />;
+const ServiceAccountsPage = props => <ListPage ListComponent={ServiceAccountsList} {...props} canCreate={true} />;
 export { ServiceAccountsList, ServiceAccountsPage, ServiceAccountsDetailsPage };
