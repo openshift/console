@@ -34,6 +34,6 @@ export const useTabbedTableBreadcrumbsFor = (
       name: kindObj.labelPlural,
       path: isAdminPerspective ? `/${navOption}/${nsURL}/${subTab}` : getBreadcrumbPath(match),
     },
-    { name: t('console-shared~{{label}} Details', { label: kindObj.label }), path: match.url },
+    { name: t('console-shared~{{label}} details', { label: kindObj.label }), path: match.url },
   ];
 };
