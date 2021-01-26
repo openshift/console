@@ -57,6 +57,7 @@ export const operatorsDataModelReconciler = (
   }
   const defaultIcon = getImageForIconClass(`icon-openshift`);
 
+  const obsGroupNodes: OdcNodeModel[] = [];
   installedOperators.forEach((csv) => {
     const crds = csv?.spec?.customresourcedefinitions?.owned ?? [];
     const crdKinds = crds.map((crd) => crd.kind);
@@ -146,8 +147,9 @@ export const operatorsDataModelReconciler = (
           children,
           'Operator Backed Service',
         );
-        model.nodes.push(obsNode);
+        obsGroupNodes.push(obsNode);
       }
     });
   });
+  model.nodes.push(...obsGroupNodes);
 };
