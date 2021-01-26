@@ -1,16 +1,21 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { topologyPage } from '../../pages/topology/topology-page';
-import { naviagteTo } from '../../pages/app';
+import { navigateTo } from '../../pages/app';
 import { devNavigationMenu } from '../../constants/global';
 import { topologySidePane } from '../../pages/topology/topology-side-pane-page';
 
 Given('user is at the Topology page', () => {
-  naviagteTo(devNavigationMenu.Topology);
+  navigateTo(devNavigationMenu.Topology);
   topologyPage.verifyTopologyPage();
 });
 
 When('user navigates to Topology page', () => {
-  naviagteTo(devNavigationMenu.Topology);
+  navigateTo(devNavigationMenu.Topology);
+});
+
+When('user clicks node {string} to open the side bar', (componentNode) => {
+  topologyPage.clickOnNode(componentNode);
+  topologySidePane.verify();
 });
 
 Then('user is able to see workload {string} in topology page list view', (workloadName: string) => {

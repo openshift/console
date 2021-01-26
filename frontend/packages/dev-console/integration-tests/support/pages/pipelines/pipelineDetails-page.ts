@@ -9,7 +9,7 @@ import {
 export const pipelineDetailsPage = {
   verifyTitle: (pipelineName: string) => detailsPage.titleShouldContain(pipelineName),
   clickActionMenu: () => cy.byLegacyTestID('actions-menu-button').click(),
-  selectActionFromActionsDropdown: (action: string) => {
+  selectFromActionsDropdown: (action: string) => {
     cy.get(pipelineDetailsPO.actionsMenu)
       .should('be.enabled')
       .click();

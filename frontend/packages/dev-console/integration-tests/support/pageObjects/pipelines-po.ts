@@ -8,9 +8,9 @@ export const pipelineBuilderPO = {
   cancel: '[data-test-id="reset-button"]',
   add: 'button.pf-c-button.pf-m-link.pf-m-inline',
   addParams: {
-    name: '#form-input-params-0-name-field',
-    description: '#form-input-params-0-description-field',
-    defaultValue: '#form-input-params-0-default-field',
+    name: '#form-input-formData-params-0-name-field',
+    description: '#form-input-formData-params-0-description-field',
+    defaultValue: '#form-input-formData-params-0-default-field',
   },
   addResources: {
     name: '#form-input-formData-resources-0-name-field',
@@ -35,7 +35,7 @@ export const pipelineBuilderPO = {
 };
 
 export const pipelineDetailsPO = {
-  title: '[data-test-section-heading="Pipeline Details"]',
+  title: '[data-test-section-heading="Pipeline details"]',
   actionsMenu: '[data-test-id="actions-menu-button"]',
   details: {
     triggerTemplateSection: 'div.odc-trigger-template-list',
@@ -44,7 +44,7 @@ export const pipelineDetailsPO = {
 };
 
 export const triggerTemplateDetailsPO = {
-  title: '[data-test-section-heading="Trigger Template Details"]',
+  title: '[data-test-section-heading="Trigger Template details"]',
   actions: '[data-test-id="actions-menu-button"]',
   details: {
     eventListenerLink: 'a[data-test-id^="event-listener-"]',
@@ -52,7 +52,7 @@ export const triggerTemplateDetailsPO = {
 };
 
 export const eventListenerDetailsPO = {
-  title: '[data-test-section-heading="Event Listener Details"]',
+  title: '[data-test-section-heading="Event Listener details"]',
   actions: '[data-test-id="actions-menu-button"]',
   details: {
     triggerBindingLink: '[data-test-id="github-pullreq"]',
@@ -60,19 +60,21 @@ export const eventListenerDetailsPO = {
 };
 
 export const clusterTriggerBindingDetailsPO = {
-  title: '[data-test-section-heading="ClusterTriggerBinding Details"]',
+  title: '[data-test-section-heading="ClusterTriggerBinding details"]',
   actions: '[data-test-id="actions-menu-button"]',
 };
 
 export const pipelineRunDetailsPO = {
   actions: '[data-test-id="actions-menu-button"]',
   logsTab: '[data-test-id="horizontal-link-Logs"]',
-  yamlTab: '[data-test-id="horizontal-link-YAML"]',
-  detailsTab: '[data-test-id="horizontal-link-Details"]',
+  yamlTab: '[data-test-id="horizontal-link-details-page~YAML"]',
+  detailsTab: '[data-test-id="horizontal-link-details-page~Details"]',
+  taskRunsTab: '[data-test-id="horizontal-link-Task Runs"]',
+  eventsTab: '[data-test-id="horizontal-link-details-page~Events"]',
   pipelineRunStatus: 'h1 [data-test="status-text"]',
   details: {
     pipelineLink: '[data-test-id="git-pipeline-events"]',
-    sectionTitle: '[data-test-section-heading="Pipeline Run Details"]',
+    sectionTitle: '[data-test-section-heading="Pipeline Run details"]',
     pipelineRunDetails: 'div dl',
   },
   yaml: {
@@ -103,6 +105,7 @@ export const pipelinesPO = {
     kebabMenu: '[data-test-id="kebab-button"]',
     columnValues: '[aria-label="Pipelines"] tbody tr td',
     columnNames: 'div[aria-label="Pipelines"] thead tr th',
+    pipelineRunIcon: '[title="PipelineRun"]',
   },
   addTrigger: {
     add: '#confirm-action',
@@ -123,6 +126,7 @@ export const pipelinesPO = {
   },
   startPipeline: {
     sectionTitle: 'h2.odc-form-section__heading',
+    gitResourceDropdown: '.odc-pipeline-resource-dropdown button',
     gitUrl: '#form-input-resources-0-data-params-url-field',
     revision: '#form-input-resources-0-data-params-revision-field',
     sharedWorkspace: '#form-dropdown-workspaces-0-type-field',
