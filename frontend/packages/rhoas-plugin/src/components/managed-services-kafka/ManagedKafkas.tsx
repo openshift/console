@@ -124,7 +124,6 @@ const ManagedKafkas = () => {
     }
 
     await k8sCreate(ManagedKafkaConnectionModel, kafkaConnection);
-    history.push(`/topology/ns/${currentNamespace}`);
   };
 
   const createManagedKafkaConnectionFlow = async () => {
@@ -132,17 +131,17 @@ const ManagedKafkas = () => {
       createManagedServiceAccount();
     }
 
-    selectedKafkas.forEach(function (rowId) {
+    for (const rowId of selectedKafkas) {
       const kafkaId = kafkaRequestData[rowId].id;
       const kafkaName = kafkaRequestData[rowId].name;
 
       if (currentKafkaConnections) {
-        console.log('is currentKafkaConnections true' + currentKafkaConnections);
         if (!currentKafkaConnections.includes(kafkaId)) {
           createManagedKafkaConnection(kafkaId, kafkaName);
         }
       }
-    });
+    }
+    history.push(`/topology/ns/${currentNamespace}`);
   };
 
   return (
