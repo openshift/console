@@ -9,7 +9,7 @@ import StreamsInstancePage from '../streams-list/StreamsInstancePage';
 import { ManagedKafkaModel } from './ManagedKafkaModel';
 import { ManagedKafkaRequestModel, ManagedServiceAccountRequest, ManagedKafkaConnectionModel } from '../../models/rhoas';
 import { useActiveNamespace } from '@console/shared';
-import { k8sCreate, k8sPatch, k8sGet } from '@console/internal/module/k8s/resource';
+import { k8sCreate, k8sGet } from '@console/internal/module/k8s/resource';
 import { AccessTokenSecretName } from '../../const'
 import { KafkaMocks } from '../mocks/KafkaMocks';
 import { ServiceAccountSecretName } from '../../const';
@@ -24,7 +24,7 @@ const ManagedKafkas = () => {
 
   const kafkaRequestData: ManagedKafkaModel[] = KafkaMocks;
   const [selectedKafkas, setSelectedKafkas] = React.useState([]);
-  const [serviceAccountExists, setServiceAccountExists] = React.useState();
+  const [serviceAccountExists, setServiceAccountExists] = React.useState(false);
   const [currentKafkaConnections, setCurrentKafkaConnections] = React.useState([]);
 
   React.useEffect(() => {
