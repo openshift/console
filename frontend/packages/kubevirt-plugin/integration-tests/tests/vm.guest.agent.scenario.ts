@@ -69,9 +69,6 @@ describe('Tests involving guest agent', () => {
     await vmLinux.navigateToOverview();
 
     // create windows VM
-    // for cmd-line scripts only
-    execSync(`kubectl config set-context --current --namespace=${testName}`);
-
     execSync('kubectl create -f -', {
       input: getFakeWindowsVM({
         name: VM_WINDOWS_NAME,
@@ -87,7 +84,6 @@ describe('Tests involving guest agent', () => {
     deleteResource(multusNAD);
     deleteResource(vmLinux.asResource());
     deleteResource(vmWindows.asResource());
-    execSync(`kubectl config set-context --current --namespace=default`);
   });
 
   describe('Testing guest agent data', () => {
@@ -154,7 +150,7 @@ describe('Tests involving guest agent', () => {
 
         // the next command follows recommendation by documentation
         execSync(
-          `virtctl expose virtualmachine ${vmWindows.name} --name ${vmWindows.name}-rdp --port 4567 --target-port 3389 --type NodePort`,
+          `virtctl expose virtualmachine ${vmWindows.name} --name ${vmWindows.name}-rdp  --namespace=${testName} --port 4567 --target-port 3389 --type NodePort`,
         );
 
         await browser.wait(until.presenceOf(desktopClientTitle));
@@ -167,11 +163,13 @@ describe('Tests involving guest agent', () => {
         expect(launchRemoteDesktopButton.isEnabled()).toBe(true);
 
         // there should be just the single laucher-pod
-        const hostIP = execSync("kubectl get pod -o json | jq '.items[0].status.hostIP' -r")
+        const hostIP = execSync(
+          `kubectl get -n ${testName} pod -o json | jq '.items[0].status.hostIP' -r`,
+        )
           .toString()
           .trim();
         const port = execSync(
-          `kubectl get service ${vmWindows.name}-rdp -o json | jq '.spec.ports[0].nodePort' -r`,
+          `kubectl get -n ${testName} service ${vmWindows.name}-rdp -o json | jq '.spec.ports[0].nodePort' -r`,
         )
           .toString()
           .trim();
@@ -198,7 +196,7 @@ describe('Tests involving guest agent', () => {
     );
 
     // TODO: consider move this to Tier2 tests
-    xit(
+    it(
       'ID(CNV-1726) connects via L2 network',
       async () => {
         /* Pre-requisite:

@@ -1,3 +1,4 @@
+import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { COMMON_TEMPLATES_NAMESPACE, COMMON_TEMPLATES_REVISION } from '../constants/common';
 
 export const getFakeWindowsVM = ({ name, networkName, vmIP }) => `
@@ -7,6 +8,7 @@ metadata:
   annotations:
     name.os.template.kubevirt.io/win2k12r2: Microsoft Windows Server 2012 R2
   name: ${name}
+  namespace: ${testName}
   labels:
     app: ${name}
     os.template.kubevirt.io/win2k12r2: 'true'
