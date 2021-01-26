@@ -438,7 +438,7 @@ class MastheadToolbarContents_ extends React.Component {
     const actions = [];
     const userActions = [
       {
-        label: t('masthead~Language preferences'),
+        label: t('masthead~Language preference'),
         callback: () => languagePreferencesModal({}),
         component: 'button',
         dataTest: 'language',
