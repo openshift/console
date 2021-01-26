@@ -188,7 +188,7 @@
   "Check": "Check",
   "documentation": "documentation",
   "Error": "Error",
-  "Starting {{providerName}} controller)}": "Starting {{providerName}} controller)}",
+  "Starting {{providerName}} controller": "Starting {{providerName}} controller",
   "Deploying {{providerName}} controller": "Deploying {{providerName}} controller",
   "Please inspect a failing pod <1>{podName}</1>": "Please inspect a failing pod <1>{podName}</1>",
   "Deployment of {{providerName}} controller <4></4> failed": "Deployment of {{providerName}} controller <4></4> failed",

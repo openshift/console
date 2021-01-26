@@ -45,7 +45,7 @@ const NoDeployment: React.FC<NoDeploymentProps> = ({ provider }) => {
     <StatusIconAndText
       spin
       noTooltip
-      title={t('kubevirt-plugin~Starting {{providerName}} controller)}', { providerName })}
+      title={t('kubevirt-plugin~Starting {{providerName}} controller', { providerName })}
       icon={<InProgressIcon />}
     />
   );
@@ -72,12 +72,10 @@ const DeploymentProgressing: React.FC<DeploymentProgressingProps> = ({
           icon.props.className,
         ),
       })}{' '}
-      {
-        (t('kubevirt-plugin~Deploying {{providerName}} controller'),
-        { providerName: getProviderName(provider) })
-      }{' '}
-      (
-      <DeploymentLink deployment={deployment} />)
+      {t('kubevirt-plugin~Deploying {{providerName}} controller', {
+        providerName: getProviderName(provider),
+      })}{' '}
+      <DeploymentLink deployment={deployment} />
     </span>
   );
 };
