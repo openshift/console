@@ -29,12 +29,10 @@ import {
   Node,
 } from '@patternfly/react-topology';
 import { getResource } from '@console/topology/src/utils';
-import { TopologyDataObject } from '@console/topology/src/topology-types';
 import { ModifyApplication } from '@console/topology/src/actions';
 
 export const rhoasActions = (
-  contextMenuResource: K8sResourceKind,
-  vm: TopologyDataObject<any>,
+  contextMenuResource: K8sResourceKind
 ): KebabOption[] => {
   if (!contextMenuResource) {
     return null;
@@ -47,7 +45,7 @@ export const rhoasActions = (
 };
 
 export const rhoasContextMenu = (element: Node) => {
-  return createMenuItems(kebabOptionsToMenu(rhoasActions(getResource(element), element.getData())));
+  return createMenuItems(kebabOptionsToMenu(rhoasActions(getResource(element))));
 };
 
 export const getRhoasComponentFactory = (): ComponentFactory => {
