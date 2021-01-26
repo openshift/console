@@ -25,18 +25,30 @@ const ManagedKafkas = () => {
   const kafkaRequestData: ManagedKafkaModel[] = KafkaMocks;
   const [selectedKafkas, setSelectedKafkas] = React.useState([]);
   const [serviceAccountExists, setServiceAccountExists] = React.useState();
-  console.log('what is serviceAccountExists' + serviceAccountExists);
+  const [currentKafkaConnections, setCurrentKafkaConnections] = React.useState([]);
 
   React.useEffect(() => {
     createManagedKafkaRequest();
     doesManagedServiceAccountExist();
+    listOfCurrentKafkaConnectionsById();
   }, []);
 
   const doesManagedServiceAccountExist = async () => {
     const managedServiceAccounts = await k8sGet(ManagedServiceAccountRequest, null, currentNamespace);
-    console.log('what is response from get' + JSON.stringify(managedServiceAccounts.items.length));
     if (managedServiceAccounts.items.length > 0) {
       setServiceAccountExists(true);
+    }
+  }
+
+  const listOfCurrentKafkaConnectionsById = async () => {
+    const localArray = [];
+    const kafkaConnections = await k8sGet(ManagedKafkaConnectionModel, null, currentNamespace);
+    if (kafkaConnections) {
+      kafkaConnections.items.map((kafka) => {
+        const kafkaId = kafka.spec.kafkaId;
+        localArray.push(kafkaId);
+      })
+      setCurrentKafkaConnections(localArray);
     }
   }
 
@@ -142,7 +154,13 @@ const ManagedKafkas = () => {
     selectedKafkas.forEach(function(rowId) {
       const kafkaId = kafkaRequestData[rowId].id;
       const kafkaName = kafkaRequestData[rowId].name;
-      createManagedKafkaConnection(kafkaId, kafkaName);
+
+      if(currentKafkaConnections) {
+        console.log('is currentKafkaConnections true' + currentKafkaConnections);
+        if(!currentKafkaConnections.includes(kafkaId)) {
+          createManagedKafkaConnection(kafkaId, kafkaName);
+        }
+      }
     });
   };
   
