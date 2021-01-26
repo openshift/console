@@ -5,6 +5,8 @@ import {
 } from '@console/topology/src/extensions/topology';
 import { getRhoasComponentFactory, getRhoasTopologyDataModel } from './index';
 import { WatchK8sResources } from 'public/components/utils/k8s-watch-hook';
+import { ManagedKafkaConnectionModel } from '../models';
+import { referenceForModel } from '@console/internal/module/k8s';
 
 export type TopologyConsumedExtensions =
   | TopologyComponentFactory
@@ -15,7 +17,7 @@ const getRhoasWatchedResources = (namespace: string): WatchK8sResources<any> => 
   return {
     kafkaConnections: {
       isList: true,
-      kind: 'ManagedKafkaConnection',
+      kind: referenceForModel(ManagedKafkaConnectionModel),
       namespace,
       optional: true,
     },

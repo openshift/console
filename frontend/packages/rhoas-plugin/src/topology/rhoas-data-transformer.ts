@@ -15,13 +15,16 @@ export const getTopologyRhoasItem = (
       type: ManagedKafkaConnectionModel.kind,
       resourceKind: ManagedKafkaConnectionModel.kind,
       group: false,
-      label: obj.metadata.name || "ManagedKafkaConnection",
+      label: obj.metadata.name,
       children: [],
       width: KAFKA_WIDTH,
       height: KAFKA_HEIGHT,
       visible: true,
       style: {
         padding: KAFKA_PADDING,
+      },
+      data: {
+        resource: obj
       }
     };
     returnData.push(managedKafka);
@@ -33,8 +36,6 @@ export const getTopologyRhoasItem = (
 export const getRhoasTopologyDataModel = () => {
 
   return (namespace: string, resources: TopologyDataResources): Promise<Model> => {
-
-    console.log("getRhoasTopologyDataModel", namespace, resources.kafkaConnections);
     const items = getTopologyRhoasItem(resources.kafkaConnections.data);
 
     return Promise.resolve({

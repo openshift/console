@@ -1,5 +1,5 @@
-import { GROUP_HEIGHT, GROUP_PADDING, GROUP_WIDTH } from '@console/topology/src/const';
+import { NODE_WIDTH, NODE_HEIGHT, NODE_PADDING } from '@console/topology/src/const';
 
-export const KAFKA_WIDTH = GROUP_WIDTH;
-export const KAFKA_HEIGHT = GROUP_HEIGHT;
-export const KAFKA_PADDING = GROUP_PADDING;
+export const KAFKA_WIDTH = NODE_WIDTH;
+export const KAFKA_HEIGHT = NODE_HEIGHT;
+export const KAFKA_PADDING = NODE_PADDING;

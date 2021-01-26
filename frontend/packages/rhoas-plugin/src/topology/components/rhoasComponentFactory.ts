@@ -13,7 +13,6 @@ import { ManagedKafkaConnectionModel } from "../../models"
 
 export const getRhoasComponentFactory = (): ComponentFactory => {
   return (kind, type): React.ComponentType<{ element: GraphElement }> | undefined => {
-    console.log("RHOAS Toplogy", kind, type);
     switch (type) {
       // Using resource kind as model kind for simplicity
       case ManagedKafkaConnectionModel.kind:
