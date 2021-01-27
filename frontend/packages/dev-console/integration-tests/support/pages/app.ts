@@ -109,11 +109,15 @@ export const naviagteTo = (opt: devNavigationMenu) => {
 
 export const projectNameSpace = {
   selectCreateProjectOption: () => {
-    cy.byLegacyTestID('namespace-bar-dropdown')
-      .find('button')
-      .eq(0)
-      .click();
-    cy.byTestDropDownMenu('#CREATE_RESOURCE_ACTION#').click();
+    cy.document().then((doc) => {
+      if (doc.readyState === 'complete') {
+        cy.byLegacyTestID('namespace-bar-dropdown')
+          .find('button')
+          .eq(0)
+          .click();
+        cy.byTestDropDownMenu('#CREATE_RESOURCE_ACTION#').click();
+      }
+    });
   },
 
   enterProjectName: (projectName: string) => {

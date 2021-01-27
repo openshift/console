@@ -18,6 +18,9 @@ declare global {
 before(() => {
   cy.login();
   cy.visit('');
+  cy.document()
+    .its('readyState')
+    .should('eq', 'complete');
 });
 
 after(() => {
