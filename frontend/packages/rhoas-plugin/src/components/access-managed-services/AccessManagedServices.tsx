@@ -61,7 +61,7 @@ const AccessManagedServices: any = ({isModalOpen, setIsModalOpen}) => {
           </Button>
         ]}
       >
-        To access this application service, input the API token which can be located at 
+        To access this application service, input the API token which can be located at
         <a href="https://cloud.redhat.com/openshift/token" target="_blank"> https://cloud.redhat.com/openshift/token</a>
         <br/>
         <br/>
