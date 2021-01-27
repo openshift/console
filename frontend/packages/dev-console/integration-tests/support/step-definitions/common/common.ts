@@ -6,6 +6,7 @@ import { nav } from '../../../../../integration-tests-cypress/views/nav';
 import { modal } from '../../../../../integration-tests-cypress/views/modal';
 import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
 import { adminNavigationMenu, perspectiveName } from '../../constants/staticText/global-text';
+import { pipelinesPage } from '../../pages/pipelines/pipelines-page';
 
 Given('user is at developer perspective', () => {
   perspective.switchTo(switchPerspective.Developer);
@@ -54,9 +55,13 @@ When('user switches to developer perspective', () => {
   guidedTour.close();
 });
 
-When('user selects {string} option from kebab menu', (option: string) => {
-  cy.byTestActionID(option).click();
-});
+When(
+  'user selects {string} option from kebab menu for pipeline {string}',
+  (option: string, pipelineName: string) => {
+    pipelinesPage.selectKebabMenu(pipelineName);
+    cy.byTestActionID(option).click();
+  },
+);
 
 When('user selects {string} option from Actions menu', (option: string) => {
   cy.byTestActionID(option).click();

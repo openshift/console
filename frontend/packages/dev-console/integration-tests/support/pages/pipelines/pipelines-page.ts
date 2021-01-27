@@ -160,25 +160,13 @@ export const startPipelineInPipelinsPage = {
       .should('have.text', 'Advanced Options');
   },
   addGitResource: (gitUrl: string, revision: string = 'master') => {
-    cy.get('form').then(($el) => {
-      if ($el.find('#form-input-parameters-1-default-field').length !== 0) {
-        cy.get('#form-input-parameters-1-default-field').type(gitUrl);
-      } else if ($el.attr('disabled') === 'disabled') {
-        cy.get(pipelinesPO.startPipeline.gitUrl).type(gitUrl);
-        cy.get(pipelinesPO.startPipeline.revision).type(revision);
-      } else {
-        $el.find('button').click();
-        cy.get('button[role="option"]')
-          .eq(0)
-          .click();
-        cy.get(pipelinesPO.startPipeline.gitUrl).type(gitUrl);
-        cy.get(pipelinesPO.startPipeline.revision).type(revision);
-      }
-    });
+    cy.get('.modal-body-content').should('be.visible');
+    cy.get(pipelinesPO.startPipeline.gitUrl).type(gitUrl);
+    cy.get(pipelinesPO.startPipeline.revision).type(revision);
   },
   clickStart: () => cy.get(pipelinesPO.startPipeline.start).click(),
-  clickShowCredentialOptions: () => cy.byButtonText('Show Credential Options').click(),
-  clickHideCredentialOptions: () => cy.byButtonText('Hide Credential Options').click(),
+  clickShowCredentialOptions: () => cy.byButtonText('Show Credential options').click(),
+  clickHideCredentialOptions: () => cy.byButtonText('Hide Credential options').click(),
   addSecret: (
     secretName: string,
     serverUrl: string,
@@ -205,15 +193,18 @@ export const startPipelineInPipelinsPage = {
     cy.get('div.odc-secret-form .pf-c-form__group-label').as('labels');
     cy.get('@labels')
       .eq(0)
-      .should('contain.text', 'Secret Name');
+      .should('contain.text', 'Secret name');
     cy.get('@labels')
       .eq(1)
       .should('contain.text', 'Access to');
     cy.get('@labels')
       .eq(2)
-      .should('contain.text', 'Server URL');
+      .should('contain.text', 'Authentication type');
     cy.get('@labels')
       .eq(3)
-      .should('contain.text', 'Authentication Type');
+      .should('contain.text', 'Server URL');
+    cy.byLegacyTestID('create-image-secret-form')
+      .scrollIntoView()
+      .should('be.visible');
   },
 };
