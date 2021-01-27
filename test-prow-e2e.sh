@@ -49,4 +49,6 @@ elif [ "$SCENARIO" == "olmFull" ]; then
   ./test-cypress.sh -p olm -h true
 elif [ "$SCENARIO" == "ceph" ]; then
   ./test-cypress.sh -p ceph -h true
+elif [ "$SCENARIO" == "kubevirt-gating" ]; then
+  ./test-cypress.sh -p kubevirt -h true
 fi

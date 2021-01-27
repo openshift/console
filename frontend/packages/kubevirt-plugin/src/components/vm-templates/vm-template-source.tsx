@@ -89,6 +89,7 @@ const DeleteSourceButton: React.FC<DeleteSourceButtonProps> = ({ template, sourc
           isInline
           variant={ButtonVariant.link}
           onClick={() => createDeleteSourceModal({ sourceStatus })}
+          data-test="delete-template-source"
         >
           {t('kubevirt-plugin~Delete source')}
         </Button>

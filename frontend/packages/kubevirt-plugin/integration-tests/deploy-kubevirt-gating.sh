@@ -8,6 +8,8 @@ VIRTCTL_AMD64="${VIRTCTL_DOWNLOAD_URL}-linux-amd64"
 # Create openshift-cnv namespace for Integration Tests
 oc create namespace openshift-cnv
 
+oc create namespace kubevirt-os-images
+
 # Deploy Kubevirt, Storage, CDI Pods
 oc create -f https://github.com/kubevirt/kubevirt/releases/download/$KUBEVIRT_VERSION/kubevirt-operator.yaml
 
@@ -21,11 +23,13 @@ oc create -f https://github.com/kubevirt/containerized-data-importer/releases/do
 
 # Deploy Common Templates
 oc project openshift
-oc create -f https://raw.githubusercontent.com/MarSik/kubevirt-ssp-operator/master/roles/KubevirtCommonTemplatesBundle/files/common-templates-v0.12.1.yaml
+oc create -f https://github.com/kubevirt/common-templates/releases/download/v0.13.1/common-templates-v0.13.1.yaml
 oc project default
 
 # Wait for kubevirt to be available
 oc wait -n kubevirt kv kubevirt --for condition=Available --timeout 15m
+
+oc patch storageclass hostpath -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
 
 # Create storage-class permissions
 oc create -f - <<EOF

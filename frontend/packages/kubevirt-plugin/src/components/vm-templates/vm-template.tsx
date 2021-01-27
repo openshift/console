@@ -210,7 +210,7 @@ const VMTemplateTableRow: RowFunction<TemplateItem, VMTemplateTableRowProps> = (
           title={template.metadata.namespace}
         />
       </TableData>
-      <TableData className={dimensify()}>
+      <TableData className={dimensify()} data-test="template-source">
         <TemplateSource
           loadError={sourceLoadError}
           loaded={loaded}

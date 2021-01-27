@@ -1,0 +1,27 @@
+{
+  "apiVersion": "cdi.kubevirt.io/v1beta1",
+  "kind": "DataVolume",
+  "metadata": {
+    "name": "foo",
+    "namespace": "bar",
+    "annotations": {
+      "cdi.kubevirt.io/storage.bind.immediate.requested": "true"
+    }
+  },
+  "spec": {
+    "pvc": {
+      "accessModes": ["ReadWriteOnce"],
+      "resources": {
+        "requests": {
+          "storage": "1Gi"
+        }
+      },
+      "volumeMode": "Block"
+    },
+    "source": {
+      "registry": {
+        "url": "docker://quay.io/kubevirt/cirros-container-disk-demo"
+      }
+    }
+  }
+}

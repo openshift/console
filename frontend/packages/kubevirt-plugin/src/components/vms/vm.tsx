@@ -223,14 +223,17 @@ const VMListEmpty: React.FC = () => {
       <EmptyStateBody>
         <Trans ns="kubevirt-plugin">
           See the{' '}
-          <Link to={`${location.pathname}${location.pathname.endsWith('/') ? '' : '/'}templates`}>
+          <Link
+            data-test="vm-empty-templates"
+            to={`${location.pathname}${location.pathname.endsWith('/') ? '' : '/'}templates`}
+          >
             templates tab
           </Link>{' '}
           to quickly create a virtual machine from the available templates.
         </Trans>
       </EmptyStateBody>
       <Button
-        data-test-id="create-vm-empty"
+        data-test="create-vm-empty"
         variant="primary"
         onClick={() =>
           history.push(
@@ -247,7 +250,7 @@ const VMListEmpty: React.FC = () => {
       {hasQuickStarts && (
         <EmptyStateSecondaryActions>
           <Button
-            data-test-id="vm-quickstart"
+            data-test="vm-quickstart"
             variant="secondary"
             onClick={() => history.push('/quickstart?keyword=virtual+machine')}
           >
