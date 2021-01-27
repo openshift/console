@@ -34,6 +34,7 @@ import TopologyServiceBindingRequestPanel from '../../operators/TopologyServiceB
 import TopologyOperatorBackedPanel from '../../operators/TopologyOperatorBackedPanel';
 import TopologyResourcePanel from './TopologyResourcePanel';
 import TopologyHelmWorkloadPanel from '@console/helm-plugin/src/topology/TopologyHelmWorkloadPanel';
+import TopologyKafkaPanel from "@console/rhoas-plugin/src/topology/components/TopologyKafkaPanel"
 
 type TopologySideBarProps = {
   show: boolean;
@@ -72,6 +73,9 @@ export const SelectedItemDetails: React.FC<SelectedItemDetailsProps> = observer(
       // TODO: Use Plugins
       if (selectedEntity.getType() === TYPE_HELM_RELEASE) {
         return <TopologyHelmReleasePanel helmRelease={selectedEntity} />;
+      }
+      if (selectedEntity.getType() === "ManagedKafkaConnection") {
+        return <TopologyKafkaPanel item={selectedEntity} />;
       }
       if (selectedEntity.getType() === TYPE_HELM_WORKLOAD) {
         return <TopologyHelmWorkloadPanel item={selectedEntity.getData() as TopologyDataObject} />;

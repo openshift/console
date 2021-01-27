@@ -22,7 +22,6 @@ import {
 } from '@patternfly/react-topology';
 import { kebabOptionsToMenu } from '@console/internal/components/utils';
 import KafkaNode from './KafkaNode';
-import { ManagedKafkaConnectionModel } from "../../models";
 import { K8sResourceKind, modelFor, referenceFor } from '@console/internal/module/k8s';
 import { KebabOption } from '@console/internal/components/utils';
 import {
@@ -30,6 +29,7 @@ import {
 } from '@patternfly/react-topology';
 import { getResource } from '@console/topology/src/utils';
 import { ModifyApplication } from '@console/topology/src/actions';
+import { MANAGED_KAFKA_TOPOLOGY_TYPE } from '../rhoas-topology-plugin'
 
 export const rhoasActions = (
   contextMenuResource: K8sResourceKind
@@ -52,7 +52,7 @@ export const getRhoasComponentFactory = (): ComponentFactory => {
   return (kind, type): React.ComponentType<{ element: GraphElement }> | undefined => {
     switch (type) {
       // Using resource kind as model kind for simplicity
-      case ManagedKafkaConnectionModel.kind:
+      case MANAGED_KAFKA_TOPOLOGY_TYPE:
         return withCreateConnector(
           createConnectorCallback(),
           CreateConnector,

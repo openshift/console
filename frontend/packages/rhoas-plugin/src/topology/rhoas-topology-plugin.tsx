@@ -13,6 +13,8 @@ export type TopologyConsumedExtensions =
   | TopologyDataModelFactory
 
 
+export const MANAGED_KAFKA_TOPOLOGY_TYPE = ManagedKafkaConnectionModel.kind
+
 const getRhoasWatchedResources = (namespace: string): WatchK8sResources<any> => {
   return {
     kafkaConnections: {
@@ -37,7 +39,8 @@ export const rhoasTopologyPlugin: Plugin<TopologyConsumedExtensions> = [
       id: 'rhoas-topology-model-factory',
       priority: 400,
       getDataModel: getRhoasTopologyDataModel,
-      resources: getRhoasWatchedResources
+      resources: getRhoasWatchedResources,
+      workloadKeys: ['kafkaConnections']
     },
   }
 ];

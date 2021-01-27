@@ -1,45 +1,65 @@
 import { Model, NodeModel } from '@patternfly/react-topology';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { OdcNodeModel, TopologyDataResources } from '@console/topology/src/topology-types';
-
+import { apiVersionForModel, K8sResourceKind } from '@console/internal/module/k8s';
+import {
+  TopologyDataObject,
+  TopologyDataResources
+} from '@console/topology/src/topology-types';
+​
 import { KAFKA_WIDTH, KAFKA_HEIGHT, KAFKA_PADDING } from "./components/const"
 import { ManagedKafkaConnectionModel } from '../models'
+import {
+  getTopologyNodeItem,
+} from '@console/topology/src/data-transforms/transform-utils';
+import { OverviewItem } from '@console/shared/src';
+​import {MANAGED_KAFKA_TOPOLOGY_TYPE} from "./rhoas-topology-plugin"
 
-export const getTopologyRhoasItem = (
-  objArray: K8sResourceKind[]
+const KAFKA_PROPS = {
+  width: KAFKA_WIDTH,
+  height: KAFKA_HEIGHT,
+  group: false,
+  visible: true,
+  style: {
+    padding: KAFKA_PADDING,
+  },
+};
+​
+export const createOverviewItem = (obj: K8sResourceKind): OverviewItem<K8sResourceKind> => {
+  if (!obj.apiVersion) {
+    obj.apiVersion = apiVersionForModel(ManagedKafkaConnectionModel);
+  }
+  if (!obj.kind) {
+    obj.kind = ManagedKafkaConnectionModel.kind;
+  }
+​
+  return {
+    obj,
+  }
+};
+​
+export const getTopologyRhoasNodes = (
+  kafkaConnections: K8sResourceKind[]
 ): NodeModel[] => {
-  const returnData = [];
-  for (const obj of objArray) {
-    const managedKafka: OdcNodeModel = {
-      id: "ManagedKafkaConnection" + obj.metadata.uid,
-      type: ManagedKafkaConnectionModel.kind,
-      resourceKind: ManagedKafkaConnectionModel.kind,
-      group: false,
-      label: obj.metadata.name,
-      children: [],
-      width: KAFKA_WIDTH,
-      height: KAFKA_HEIGHT,
-      visible: true,
-      style: {
-        padding: KAFKA_PADDING,
-      },
+  const nodes = [];
+  for (const obj of kafkaConnections) {
+    const data: TopologyDataObject = {
+      id: obj.metadata.uid,
+      name: obj.metadata.name,
+      type: MANAGED_KAFKA_TOPOLOGY_TYPE,
+      resource: obj,
+      // resources is poorly named, should be overviewItem, eventually going away.
+      resources: createOverviewItem(obj),
       data: {
-        resource: obj
+        resource: obj,
       }
     };
-    returnData.push(managedKafka);
+    nodes.push(getTopologyNodeItem(obj, ManagedKafkaConnectionModel.kind, data, KAFKA_PROPS));
   }
-
-  return returnData;
+​
+  return nodes;
 };
-
-export const getRhoasTopologyDataModel = () => {
-
-  return (namespace: string, resources: TopologyDataResources): Promise<Model> => {
-    const items = getTopologyRhoasItem(resources.kafkaConnections.data);
-
-    return Promise.resolve({
-      nodes: items
-    });
-  };
-};
+​
+export const getRhoasTopologyDataModel = () =>
+  (namespace: string, resources: TopologyDataResources): Promise<Model> =>
+    Promise.resolve({
+      nodes: getTopologyRhoasNodes(resources.kafkaConnections.data)
+  });
