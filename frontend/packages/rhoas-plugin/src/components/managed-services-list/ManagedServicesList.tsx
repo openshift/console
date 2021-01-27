@@ -4,16 +4,36 @@ import { CatalogTile } from '@patternfly/react-catalog-view-extension';
 import { history } from '@console/internal/components/utils';
 import { PageLayout } from '@console/shared';
 import AccessManagedServices from '../access-managed-services/AccessManagedServices';
+import { AccessTokenSecretName } from '../../const';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { SecretModel } from '@console/internal/models';
+import { useActiveNamespace } from '@console/shared';
 
-const navigateTo = (e: React.SyntheticEvent, url: string) => {
-  history.push(url);
-  e.preventDefault();
-};
+
 
 const ManagedServicesList = () => {
-  const defaultHintBlockText = `Select Managed Service you would like to connect with.
 
-  To use the Red Hat Managed Services you need to have account and at least one active service in https://cloud.redhat.com`;
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+
+  const [currentNamespace] = useActiveNamespace();
+  const namespace = currentNamespace;
+  console.log("Token page rendered for namespace ", namespace, AccessTokenSecretName)
+  const [tokenSecret] = useK8sWatchResource({ kind: SecretModel.kind, isList: false, name: AccessTokenSecretName, namespace, namespaced: true })
+
+  const openAccessModal = () => {
+    setIsModalOpen(true);
+  }
+
+  const checkTokenSecretStatus = () => {
+    if (tokenSecret) {
+      history.push("/managedServices/managedkafka");
+    }
+    else {
+      setIsModalOpen(true);
+    }
+  }
+
+  const defaultHintBlockText = `Select Managed Service you would like to connect with. To use the Red Hat Managed Services you need to have account and at least one active service in https://cloud.redhat.com`;
 
   return (
     <>
@@ -23,19 +43,21 @@ const ManagedServicesList = () => {
             <CatalogTile
               data-test-id={"kafka-id"}
               className="co-kafka-tile"
-              onClick={(e: React.SyntheticEvent) => navigateTo(e, "/managedServices/managedkafka")}
-              href={"/managedServices/managedkafka"}
+              onClick={() => checkTokenSecretStatus()}
+              // href={"/managedServices/managedkafka"}
               title={"ManagedKafka"}
               iconImg={""}
               iconClass={""}
               icon={""}
-              description={"Connect to OpenShift Streams for Apache Kafka"}
+              description={"Connect to OpenShift Streams for Apache Kafkaa"}
+              footer={tokenSecret ? "Unlocked" : "Unlock with token"}
             />
           </GalleryItem>
         </Gallery>
-        <div style={{ "position": "absolute", "bottom": 10, "width": "100%" }}>
-          <AccessManagedServices />
-        </div>
+        <AccessManagedServices
+          isModalOpen={isModalOpen}
+          setIsModalOpen={setIsModalOpen}
+        />
       </PageLayout>
 
     </>
