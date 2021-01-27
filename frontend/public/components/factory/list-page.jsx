@@ -31,12 +31,14 @@ export const TextFilter = (props) => {
   const {
     label,
     className,
-    placeholder = `Filter ${label}...`,
+    placeholder,
     autoFocus = false,
     parentClassName,
     ...otherInputProps
   } = props;
   const { ref } = useDocumentListener();
+  const { t } = useTranslation();
+  const placeholderText = placeholder ?? t('public~Filter {{label}}...', { label });
 
   return (
     <div className={classNames('has-feedback', parentClassName)}>
@@ -44,8 +46,8 @@ export const TextFilter = (props) => {
         {...otherInputProps}
         className={classNames('co-text-filter', className)}
         data-test-id="item-filter"
-        aria-label={placeholder}
-        placeholder={placeholder}
+        aria-label={placeholderText}
+        placeholder={placeholderText}
         ref={ref}
         autoFocus={autoFocus}
         tabIndex={0}

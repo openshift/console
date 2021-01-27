@@ -135,7 +135,7 @@ class Details extends React.Component {
           */}
 
             <TextFilter
-              label={t('role~Rules by action or resource')}
+              label={t('role~rules by action or resource')}
               onChange={this.changeFilter}
             />
           </div>
