@@ -2,7 +2,6 @@ import * as _ from 'lodash';
 import i18next from 'i18next';
 import {
   K8sKind,
-  k8sGet,
   k8sList,
   k8sPatch,
   k8sKill,
@@ -131,7 +130,14 @@ const safeKill = async (model: K8sKind, obj: K8sResourceKind) => {
     namespace: obj.metadata.namespace,
   });
   if (resp.status.allowed) {
-    return k8sKill(model, obj);
+    try {
+      return await k8sKill(model, obj);
+    } catch (error) {
+      // 404 when resource is not found
+      if (error?.response?.status !== 404) {
+        throw error;
+      }
+    }
   }
   return null;
 };
@@ -171,13 +177,6 @@ export const cleanUpWorkload = async (
   isKnativeResource: boolean,
 ): Promise<K8sResourceKind[]> => {
   const reqs = [];
-  const isImageStreamPresent = await k8sGet(
-    ImageStreamModel,
-    resource.metadata.name,
-    resource.metadata.namespace,
-  )
-    .then(() => true)
-    .catch(() => false);
   const buildConfigs = await k8sList(BuildConfigModel, { ns: resource.metadata.namespace });
   const builds = await k8sList(BuildModel, { ns: resource.metadata.namespace });
   const resources = {
@@ -195,15 +194,11 @@ export const cleanUpWorkload = async (
   const resourceBuildConfigs = getBuildConfigsForResource(resource, resources);
   const isBuildConfigPresent = !_.isEmpty(resourceBuildConfigs);
 
-  const deleteModels = [ServiceModel, RouteModel];
-  const knativeDeleteModels = [KnativeServiceModel];
+  const deleteModels = [ServiceModel, RouteModel, ImageStreamModel];
+  const knativeDeleteModels = [KnativeServiceModel, ImageStreamModel];
   if (isBuildConfigPresent) {
     deleteModels.push(BuildConfigModel);
     knativeDeleteModels.push(BuildConfigModel);
-  }
-  if (isImageStreamPresent) {
-    deleteModels.push(ImageStreamModel);
-    knativeDeleteModels.push(ImageStreamModel);
   }
   const resourceData = _.cloneDeep(resource);
   const deleteRequest = (model: K8sKind, resourceObj: K8sResourceKind) => {
