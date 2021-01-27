@@ -38,15 +38,24 @@ export const useUserSettings = <T>(
   defaultValue?: T,
   sync: boolean = false,
 ): [T, React.Dispatch<React.SetStateAction<T>>, boolean] => {
+  const impersonate = useSelector((state: RootState) => !!state.UI.get('impersonate'));
   const keyRef = React.useRef<string>(key);
   const defaultValueRef = React.useRef<T>(defaultValue);
   const [isRequestPending, increaseRequest, decreaseRequest] = useCounterRef();
   const userUid = useSelector(
-    (state: RootState) => state.UI.get('user')?.metadata?.uid ?? 'kubeadmin',
+    (state: RootState) =>
+      state.UI.get('impersonate')?.name ?? state.UI.get('user')?.metadata?.uid ?? 'kubeadmin',
   );
+
+  const [fallbackLocalStorage, setFallbackLocalStorage] = React.useState<boolean>(
+    alwaysUseFallbackLocalStorage,
+  );
+
+  const isLocalStorage = fallbackLocalStorage || impersonate;
+
   const configMapResource = React.useMemo(
     () =>
-      alwaysUseFallbackLocalStorage
+      isLocalStorage
         ? null
         : {
             kind: ConfigMapModel.kind,
@@ -54,7 +63,7 @@ export const useUserSettings = <T>(
             isList: false,
             name: `user-settings-${userUid}`,
           },
-    [userUid],
+    [userUid, isLocalStorage],
   );
   const [cfData, cfLoaded, cfLoadError] = useK8sWatchResource<K8sResourceKind>(configMapResource);
   const [settings, setSettings] = React.useState<T>();
@@ -62,18 +71,18 @@ export const useUserSettings = <T>(
   settingsRef.current = settings;
   const [loaded, setLoaded] = React.useState(false);
 
-  const [fallbackLocalStorage, setFallbackLocalStorage] = React.useState<boolean>(
-    alwaysUseFallbackLocalStorage,
-  );
   const [lsData, setLsDataCallback] = useUserSettingsLocalStorage(
-    alwaysUseFallbackLocalStorage ? 'console-user-settings' : `console-user-settings-${userUid}`,
+    alwaysUseFallbackLocalStorage && !impersonate
+      ? 'console-user-settings'
+      : `console-user-settings-${userUid}`,
     keyRef.current,
     defaultValueRef.current,
-    fallbackLocalStorage && sync,
+    isLocalStorage && sync,
+    impersonate,
   );
 
   React.useEffect(() => {
-    if (fallbackLocalStorage) {
+    if (isLocalStorage) {
       return;
     }
     if (cfLoadError || (!cfData && cfLoaded)) {
@@ -118,7 +127,7 @@ export const useUserSettings = <T>(
     }
     // This effect should only be run on change of configmap data, status.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cfLoadError, cfLoaded, fallbackLocalStorage]);
+  }, [cfLoadError, cfLoaded, isLocalStorage]);
 
   const callback = React.useCallback<React.Dispatch<React.SetStateAction<T>>>(
     (action: React.SetStateAction<T>) => {
@@ -157,7 +166,5 @@ export const useUserSettings = <T>(
   }, [sync, isRequestPending, cfData, cfLoaded, settings]);
   settingsRef.current = resultedSettings;
 
-  return fallbackLocalStorage
-    ? [lsData, setLsDataCallback, true]
-    : [resultedSettings, callback, loaded];
+  return isLocalStorage ? [lsData, setLsDataCallback, true] : [resultedSettings, callback, loaded];
 };

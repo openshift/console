@@ -2,65 +2,65 @@ import * as React from 'react';
 import { deseralizeData, seralizeData } from '../utils/user-settings';
 
 export const useUserSettingsLocalStorage = <T>(
-  localStorageKey: string,
+  storageKey: string,
   userSettingsKey: string,
   defaultValue: T,
-  sync: boolean = false,
+  sync = false,
+  session = false, // use sessionStorage if set to `true`
 ): [T, React.Dispatch<React.SetStateAction<T>>] => {
+  const storage = session ? sessionStorage : localStorage;
   const keyRef = React.useRef(userSettingsKey);
   const defaultValueRef = React.useRef(defaultValue);
-  const [lsData, setLsData] = React.useState(() => {
-    const valueInLocalStorage =
-      localStorage.getItem(localStorageKey) !== null &&
-      deseralizeData(localStorage.getItem(localStorageKey));
-    return valueInLocalStorage?.hasOwnProperty(keyRef.current) &&
-      valueInLocalStorage[keyRef.current]
-      ? valueInLocalStorage[keyRef.current]
+  const [data, setData] = React.useState(() => {
+    const valueInStorage =
+      storage.getItem(storageKey) !== null && deseralizeData(storage.getItem(storageKey));
+    return valueInStorage?.hasOwnProperty(keyRef.current) && valueInStorage[keyRef.current]
+      ? valueInStorage[keyRef.current]
       : defaultValueRef.current;
   });
-  const lsDataRef = React.useRef<T>(lsData);
-  lsDataRef.current = lsData;
+  const dataRef = React.useRef<T>(data);
+  dataRef.current = data;
 
-  const localStorageUpdated = React.useCallback(
+  const storageUpdated = React.useCallback(
     (event: StorageEvent) => {
-      if (event.key === localStorageKey) {
-        const lsConfigMapData = deseralizeData(event.newValue);
-        const newData = lsConfigMapData?.[keyRef.current];
+      if (event.storageArea === storage && event.key === storageKey) {
+        const configMapData = deseralizeData(event.newValue);
+        const newData = configMapData?.[keyRef.current];
 
-        if (newData && seralizeData(newData) !== seralizeData(lsDataRef.current)) {
-          setLsData(newData);
+        if (newData && seralizeData(newData) !== seralizeData(dataRef.current)) {
+          setData(newData);
         }
       }
     },
-    [localStorageKey],
+    [storageKey, storage],
   );
 
   React.useEffect(() => {
     if (sync) {
-      window.addEventListener('storage', localStorageUpdated);
+      window.addEventListener('storage', storageUpdated);
     }
     return () => {
       if (sync) {
-        window.removeEventListener('storage', localStorageUpdated);
+        window.removeEventListener('storage', storageUpdated);
       }
     };
-  }, [localStorageUpdated, sync]);
+  }, [storageUpdated, sync]);
 
-  const updateLsData = React.useCallback<React.Dispatch<React.SetStateAction<T>>>(
+  const updateData = React.useCallback<React.Dispatch<React.SetStateAction<T>>>(
     (action: React.SetStateAction<T>) => {
-      const previousData = lsDataRef.current;
-      const data =
+      const previousData = dataRef.current;
+      const newState =
         typeof action === 'function' ? (action as (prevState: T) => T)(previousData) : action;
-      const lsConfigMapData = deseralizeData(localStorage.getItem(localStorageKey)) ?? {};
+      const configMapData = deseralizeData(storage.getItem(storageKey)) ?? {};
       if (
-        data !== undefined &&
-        seralizeData(data) !== seralizeData(lsConfigMapData?.[keyRef.current])
+        newState !== undefined &&
+        seralizeData(newState) !== seralizeData(configMapData?.[keyRef.current])
       ) {
-        setLsData(data);
+        setData(newState);
         const dataToUpdate = {
-          ...lsConfigMapData,
+          ...configMapData,
           ...{
-            [keyRef.current]: data,
+            [keyRef.current]: newState,
           },
         };
         const newValue = seralizeData(dataToUpdate);
@@ -68,22 +68,22 @@ export const useUserSettingsLocalStorage = <T>(
         // create a storage event to dispatch locally since browser windows do not fire the
         // storage event if the change originated from the current window
         const event = new StorageEvent('storage', {
-          storageArea: localStorage,
-          key: localStorageKey,
+          storageArea: storage,
+          key: storageKey,
           newValue,
-          oldValue: localStorage.getItem(localStorageKey),
+          oldValue: storage.getItem(storageKey),
           url: window.location.toString(),
         });
 
-        // update local storage
-        localStorage.setItem(localStorageKey, newValue);
+        // update storage
+        storage.setItem(storageKey, newValue);
 
-        // dispatch local event
+        // dispatch storage event
         window.dispatchEvent(event);
       }
     },
-    [localStorageKey],
+    [storageKey, storage],
   );
 
-  return [lsData, updateLsData];
+  return [data, updateData];
 };
