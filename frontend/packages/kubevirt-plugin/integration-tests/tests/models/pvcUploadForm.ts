@@ -20,6 +20,7 @@ import { dropDownItem } from '../../views/uiResource.view';
 export class UploadForm {
   async openForm() {
     await clickNavLink(['Storage', 'Persistent Volume Claims']);
+    // await clickNavLink(['Storage', 'PersistentVolumeClaims']);
     await isLoaded();
     await click(createItemButton);
     await click(pvcView.uploadCdiFormButton);
@@ -55,7 +56,7 @@ export class UploadForm {
   }
 
   async fillPVCSize(pvcSize: string, pvcSizeUnits: string) {
-    await inputPVCSize.sendKeys(pvcSize);
+    await fillInput(inputPVCSize, pvcSize);
     if (pvcSizeUnits) {
       await selectItemFromDropdown(pvcSizeUnits, sizeUnitsDropdown);
     }
@@ -80,6 +81,11 @@ export class UploadForm {
       accessMode,
       volumeMode,
     } = data;
+    if (os) {
+      this.selectGoldenOS(os);
+    } else {
+      await this.fillPVCName(pvcName);
+    }
     await this.selectStorageClass(storageClass);
     await this.fillPVCSize(pvcSize, pvcSizeUnits);
     if (accessMode) {
@@ -87,11 +93,6 @@ export class UploadForm {
     }
     if (volumeMode) {
       await this.selectVolumeMode(volumeMode);
-    }
-    if (os) {
-      this.selectGoldenOS(os);
-    } else {
-      await this.fillPVCName(pvcName);
     }
     await this.fillUploadImage(image);
   }

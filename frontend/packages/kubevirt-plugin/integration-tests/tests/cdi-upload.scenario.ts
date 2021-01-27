@@ -112,15 +112,19 @@ describe('KubeVirt Auto Clone', () => {
       2 * CDI_UPLOAD_TIMEOUT_SECS,
     );
 
-    it('ID(CNV-5176) It shows an error when uploading data to golden OS again', async () => {
-      await withResource(leakedResources, rhel7PVC.getDVResource(), async () => {
-        await rhel7PVC.create();
-        await uploadForm.openForm();
-        await uploadForm.selectGoldenOS(rhel7PVC.os);
-        await browser.wait(until.presenceOf(errorMessage));
-        expect(errorMessage.getText()).toContain('Operating system source already defined');
-      });
-    });
+    it(
+      'ID(CNV-5176) It shows an error when uploading data to golden OS again',
+      async () => {
+        await withResource(leakedResources, rhel7PVC.getDVResource(), async () => {
+          await rhel7PVC.create();
+          await uploadForm.openForm();
+          await uploadForm.selectGoldenOS(rhel7PVC.os);
+          await browser.wait(until.presenceOf(errorMessage));
+          expect(errorMessage.getText()).toContain('Operating system source already defined');
+        });
+      },
+      CDI_UPLOAD_TIMEOUT_SECS,
+    );
   });
 
   describe('KubeVirt GOLDEN OS Creation', () => {
