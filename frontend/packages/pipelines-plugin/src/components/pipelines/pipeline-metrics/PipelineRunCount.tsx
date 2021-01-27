@@ -1,4 +1,5 @@
 import * as React from 'react';
+import Measure from 'react-measure';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { ChartVoronoiContainer } from '@patternfly/react-charts';
@@ -19,7 +20,6 @@ const PipelineRunCount: React.FC<PipelineMetricsGraphProps> = ({
   pipeline,
   timespan,
   interval,
-  width = 650,
   loaded = true,
   onLoad: onInitialLoad,
 }) => {
@@ -53,26 +53,31 @@ const PipelineRunCount: React.FC<PipelineMetricsGraphProps> = ({
   });
   const grouped = _.groupBy(newGraphData[0], (g) => formatDate(g.x));
   const finalArray = _.compact(_.keys(grouped).map((x) => _.maxBy(grouped[x], 'y')));
-
   return (
-    <TimeSeriesChart
-      ariaDesc={t('pipelines-plugin~Pipeline run count chart')}
-      ariaTitle={t('pipelines-plugin~Pipeline run count')}
-      data={finalArray}
-      timespan={timespan}
-      width={width}
-      containerComponent={
-        <ChartVoronoiContainer
-          constrainToVisibleArea
-          labels={({ datum }) =>
-            datum.childName.includes('bar-') && datum.y !== null
-              ? `${formatDate(datum.x)}
+    <Measure bounds>
+      {({ measureRef, contentRect }) => (
+        <div ref={measureRef} style={{ height: DEFAULT_CHART_HEIGHT }}>
+          <TimeSeriesChart
+            ariaDesc={t('pipelines-plugin~Pipeline run count chart')}
+            ariaTitle={t('pipelines-plugin~Pipeline run count')}
+            data={finalArray}
+            timespan={timespan}
+            width={contentRect.bounds.width}
+            containerComponent={
+              <ChartVoronoiContainer
+                constrainToVisibleArea
+                labels={({ datum }) =>
+                  datum.childName.includes('bar-') && datum.y !== null
+                    ? `${formatDate(datum.x)}
               ${datum.y}`
-              : null
-          }
-        />
-      }
-    />
+                    : null
+                }
+              />
+            }
+          />
+        </div>
+      )}
+    </Measure>
   );
 };
 

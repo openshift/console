@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
+import Measure from 'react-measure';
 import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
 import { DEFAULT_PROMETHEUS_TIMESPAN } from '@console/internal/components/graphs';
 import { parsePrometheusDuration } from '@console/internal/components/utils/datetime';
@@ -74,6 +75,14 @@ describe('Pipeline Success Ratio Graph', () => {
       <PipelineSuccessRatioDonut {...PipelineSuccessRatioDonutProps} />,
     );
     expect(PipelineSuccessRatioDonutWrapper.find(SuccessRatioDonut).exists()).toBe(true);
-    expect(PipelineSuccessRatioDonutWrapper.find(TimeSeriesChart).exists()).toBe(true);
+    expect(PipelineSuccessRatioDonutWrapper.find(LoadingInline).exists()).toBe(false);
+    expect(PipelineSuccessRatioDonutWrapper.find(GraphEmpty).exists()).toBe(false);
+    expect(
+      PipelineSuccessRatioDonutWrapper.find(Measure)
+        .dive()
+        .dive()
+        .find(TimeSeriesChart)
+        .exists(),
+    ).toBe(true);
   });
 });
