@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { Map as ImmutableMap, Set as ImmutableSet } from 'immutable';
 import * as classNames from 'classnames';
 import * as fuzzy from 'fuzzysearch';
+import { useTranslation } from 'react-i18next';
 
 import { Dropdown, ResourceIcon } from './utils';
 import {
@@ -26,34 +27,40 @@ const blacklistResources = ImmutableSet([
   'events.k8s.io/v1beta1.Event',
 ]);
 
-const DropdownItem: React.SFC<DropdownItemProps> = ({ model, showGroup, checked }) => (
-  <>
-    <span className={'co-resource-item'}>
-      <Checkbox
-        tabIndex={-1}
-        id={`${model.apiGroup}:${model.apiVersion}:${model.kind}`}
-        isChecked={checked}
-      />
-      <span className="co-resource-icon--fixed-width">
-        <ResourceIcon kind={referenceForModel(model)} />
-      </span>
-      <span className="co-resource-item__resource-name">
-        <span>
-          {model.kind}
-          {model.badge && <span className="co-resource-item__tech-dev-preview">{model.badge}</span>}
+const DropdownItem: React.SFC<DropdownItemProps> = ({ model, showGroup, checked }) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <span className={'co-resource-item'}>
+        <Checkbox
+          tabIndex={-1}
+          id={`${model.apiGroup}:${model.apiVersion}:${model.kind}`}
+          isChecked={checked}
+        />
+        <span className="co-resource-icon--fixed-width">
+          <ResourceIcon kind={referenceForModel(model)} />
         </span>
-        {showGroup && (
-          <span className="co-resource-item__resource-api text-muted co-truncate show co-nowrap small">
-            {model.apiGroup || 'core'}/{model.apiVersion}
+        <span className="co-resource-item__resource-name">
+          <span>
+            {model.labelKey ? t(model.labelKey) : model.kind}
+            {model.badge && model.badge === 'Tech Preview' && (
+              <span className="co-resource-item__tech-dev-preview">{t('public~Tech Preview')}</span>
+            )}
           </span>
-        )}
+          {showGroup && (
+            <span className="co-resource-item__resource-api text-muted co-truncate show co-nowrap small">
+              {model.apiGroup || 'core'}/{model.apiVersion}
+            </span>
+          )}
+        </span>
       </span>
-    </span>
-  </>
-);
+    </>
+  );
+};
 
 const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
   const { selected, onChange, allModels, className, groupToVersionMap } = props;
+  const { t } = useTranslation();
   const resources = allModels
     .filter(({ apiGroup, apiVersion, kind, verbs }) => {
       // Remove blacklisted items.
@@ -106,7 +113,10 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
       return false;
     }
 
-    return fuzzy(_.toLower(text), _.toLower(model.kind));
+    return fuzzy(
+      _.toLower(text),
+      model.labelKey ? _.toLower(t(model.labelKey)) : _.toLower(model.kind),
+    );
   };
 
   const handleSelected = (value: string) => {
@@ -120,12 +130,12 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
       items={items}
       title={
         <div key="title-resource">
-          Resources <Badge isRead>{selected.length}</Badge>
+          {t('public~Resources')} <Badge isRead>{selected.length}</Badge>
         </div>
       }
       onChange={handleSelected}
       autocompleteFilter={autocompleteFilter}
-      autocompletePlaceholder="Select Resource"
+      autocompletePlaceholder={t('public~Select Resource')}
     />
   );
 };
