@@ -105,7 +105,8 @@ export const StorageClassFormProvisoners: ExtensionSCProvisionerProp = Object.fr
         fsName: {
           name: 'Filesystem Name',
           hintText: 'CephFS filesystem name into which the volume shall be created',
-          required: true,
+          value: 'ocs-storagecluster-cephfilesystem',
+          visible: () => false,
         },
         'csi.storage.k8s.io/provisioner-secret-name': {
           name: 'Provisioner Secret Name',
