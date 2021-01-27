@@ -26,7 +26,6 @@ import {
 import { VMWrapper } from '../../../wrapper/vm/vm-wrapper';
 import { VMTemplateWrapper } from '../../../wrapper/vm/vm-template-wrapper';
 import { isCustomFlavor } from '../../../../selectors/vm-like/flavor';
-import { isCommonTemplate } from '../../../../selectors/vm-template/basic';
 import { TemplateSupport } from '../../../../constants/vm-templates/support';
 
 export const initializeCommonMetadata = (
@@ -129,20 +128,9 @@ export const initializeCommonTemplateMetadata = (
   const iconClass = annotations?.[ANNOTATION_ICON];
   iconClass && entity.addAnotation(ANNOTATION_ICON, iconClass);
 
-  let provider = annotations?.[TEMPLATE_PROVIDER_ANNOTATION];
-  let supportLevel = annotations?.[TEMPLATE_SUPPORT_LEVEL];
+  const provider = annotations?.[TEMPLATE_PROVIDER_ANNOTATION];
+  const supportLevel = annotations?.[TEMPLATE_SUPPORT_LEVEL];
 
-  const isUpstream = window.SERVER_FLAGS.branding === 'okd';
-  if (
-    !provider &&
-    !supportLevel &&
-    !isUpstream &&
-    isCommonTemplate(template) &&
-    (template.metadata.name.startsWith('win') || template.metadata.name.startsWith('rhel'))
-  ) {
-    provider = 'Red Hat';
-    supportLevel = 'Full';
-  }
   if (provider && supportLevel) {
     entity.addAnotation(TEMPLATE_PARENT_SUPPORT_LEVEL, supportLevel);
     entity.addAnotation(TEMPLATE_PARENT_PROVIDER_ANNOTATION, provider);

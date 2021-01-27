@@ -202,7 +202,9 @@ const VMTemplateTableRow: RowFunction<TemplateItem, VMTemplateTableRowProps> = (
         </Link>
         {pinned && <PinnedIcon />}
       </TableData>
-      <TableData className={dimensify()}>{getTemplateProvider(t, template)}</TableData>
+      <TableData data-test="template-provider" className={dimensify()}>
+        {getTemplateProvider(t, template)}
+      </TableData>
       <TableData className={dimensify()}>
         <ResourceLink
           kind={NamespaceModel.kind}
@@ -225,11 +227,16 @@ const VMTemplateTableRow: RowFunction<TemplateItem, VMTemplateTableRowProps> = (
           headerContent={t('kubevirt-plugin~Template details')}
           bodyContent={<VMTemplateDetailsBody template={template} sourceStatus={sourceStatus} />}
         >
-          <Button variant="link" className="kubevirt-vm-template-details">
+          <Button
+            variant="link"
+            className="kubevirt-vm-template-details"
+            data-test="template-details"
+          >
             {t('kubevirt-plugin~Details')}
           </Button>
         </Popover>
         <Button
+          data-test="create-from-template"
           onClick={() => withSupportModal(obj, () => createVMAction(obj, sourceStatus, namespace))}
           variant="secondary"
           className="kubevirt-vm-template-details"

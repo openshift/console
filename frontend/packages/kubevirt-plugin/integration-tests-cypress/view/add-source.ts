@@ -11,7 +11,7 @@ type DiskSourceOpts = {
 };
 
 export const addSource = {
-  addBootSource: (provisionSource: ProvisionSource, opts?: DiskSourceOpts) => {
+  addBootSource: (provisionSource: ProvisionSource, opts?: DiskSourceOpts, provider?: string) => {
     cy.get('#image-source-type-dropdown').click();
     cy.get('.pf-c-select__menu')
       .contains(provisionSource.getDescription())
@@ -34,6 +34,9 @@ export const addSource = {
       cy.get('#request-size-input')
         .clear()
         .type('5');
+    }
+    if (provider) {
+      cy.get('#form-ds-provider-input').type(provider);
     }
     if (Cypress.env('STORAGE_CLASS')) {
       cy.byTestID('advanced-section').within(() =>

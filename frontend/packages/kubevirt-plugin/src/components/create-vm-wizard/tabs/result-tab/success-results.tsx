@@ -58,6 +58,7 @@ export const SuccessResultsComponent: React.FC<SuccessResultsProps> = ({
         history.push(modelListPath);
         onClick && onClick();
       }}
+      data-test="success-list"
     >
       {t('kubevirt-plugin~Go to list')}
     </Button>

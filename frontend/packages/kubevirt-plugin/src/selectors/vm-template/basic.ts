@@ -47,14 +47,6 @@ export const getTemplateSupport = (
     return support;
   }
 
-  if (
-    !support.provider &&
-    isCommonTemplate(template) &&
-    (template.metadata.name.startsWith('win') || template.metadata.name.startsWith('rhel'))
-  ) {
-    support.provider = 'Full';
-  }
-
   support.parent = getAnnotation(template, TEMPLATE_PARENT_SUPPORT_LEVEL);
   support.parentURL = getAnnotation(template, TEMPLATE_PARENT_PROVIDER_URL);
   return support;
