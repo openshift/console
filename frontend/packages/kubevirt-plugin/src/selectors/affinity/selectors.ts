@@ -24,3 +24,5 @@ export const getPodAffinityRequiredTerms = (affinity: PodAffinity) =>
 
 export const getPodAffinityPreferredTerms = (affinity: PodAffinity) =>
   affinity?.[AffinityCondition.preferred];
+
+export const test = (affinity: PodAffinity) => affinity?.[AffinityCondition.preferred];
