@@ -25,7 +25,7 @@ Cypress.Commands.add('install', (mode: 'Internal' | 'Attached' = 'Internal', enc
 
       cy.log('Subscribe to OCS Operator');
       cy.byLegacyTestID('operator-install-btn').click({ force: true });
-      cy.byTestID('Operator recommended namespace:-radio-input').should('be.checked');
+      cy.byTestID('Operator recommended Namespace:-radio-input').should('be.checked');
       cy.byTestID('enable-monitoring').click();
       cy.byTestID('install-operator').click();
       cy.byTestID('success-icon', { timeout: 180000 }).should('be.visible');
