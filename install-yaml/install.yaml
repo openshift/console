@@ -136,8 +136,9 @@ metadata:
   name: console-pvc
   namespace: @@NAME_NS@@ 
 spec:
+  storageClassName: csi-cephfs-sc 
   accessModes:
-    - ReadOnlyMany
+    - ReadWriteMany
   resources:
     requests:
       storage: 1Gi
@@ -210,12 +211,7 @@ spec:
         terminationMessagePolicy: File
       dnsPolicy: ClusterFirst
       restartPolicy: Always
-      schedulerName: default-scheduler
-      securityContext: {}
       terminationGracePeriodSeconds: 30
-      tolerations:
-      - effect: NoSchedule
-        key: node-role.kubernetes.io/master
       volumes:
       - name: https-cert
         secret:

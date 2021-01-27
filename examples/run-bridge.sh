@@ -6,13 +6,16 @@ myIP=$(hostname -I | awk '{print $1}')
 
 # Default K8S Endpoint is public POC environment 
 k8sIP='220.90.208.100' 
-BRIDGE_K8S_AUTH_BEARER_TOKEN=$(ssh root@$k8sIP "secretname=\$(kubectl get serviceaccount default --namespace=kube-system -o jsonpath='{.secrets[0].name}'); kubectl get secret "\$secretname" --namespace=kube-system -o template --template='{{.data.token}}' | base64 --decode; ")
+#k8sIP='172.23.4.201' 
+BRIDGE_K8S_AUTH_BEARER_TOKEN=$(ssh root@$k8sIP "secretname=\$(kubectl get serviceaccount console-system-admin --namespace=console-system -o jsonpath='{.secrets[0].name}'); kubectl get secret "\$secretname" --namespace=console-system -o template --template='{{.data.token}}' | base64 --decode; ")
+#BRIDGE_K8S_AUTH_BEARER_TOKEN=$(ssh root@$k8sIP "secretname=\$(kubectl get serviceaccount default --namespace=kube-system -o jsonpath='{.secrets[0].name}'); kubectl get secret "\$secretname" --namespace=kube-system -o template --template='{{.data.token}}' | base64 --decode; ")
+
 
 # Should verify port number which corresponding to Service in yourself!!
 PROM_PORT='9090'
 GRAFANA_PORT='30997'
-HC_PORT='33333'
-MHC_PORT='31430'
+HC_PORT='32440'
+MHC_PORT='32440'
 
 ./bin/bridge \
     --listen=https://$myIP:9000 \
@@ -38,7 +41,7 @@ MHC_PORT='31430'
     --user-auth=hypercloud \
     --k8s-auth=hypercloud \
     --mc-mode=true \
-    --release-mode=false \
+    --release-mode=true \
     # --mc-mode-operator=true \
     # --k8s-auth=bearer-token \
     # --mc-mode-file="$HOME/dynamic-config.yaml" \
