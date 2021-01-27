@@ -4,7 +4,10 @@ import { JSONSchema6 } from 'json-schema';
 import { UiSchema } from 'react-jsonschema-form';
 import { getSchemaType } from 'react-jsonschema-form/lib/utils';
 import { modelFor } from '@console/internal/module/k8s';
-import { getJSONSchemaOrder } from '@console/shared/src/components/dynamic-form/utils';
+import {
+  getJSONSchemaOrder,
+  stringPathToUISchemaPath,
+} from '@console/shared/src/components/dynamic-form/utils';
 import { SpecCapability, Descriptor } from '../descriptors/types';
 import { capabilityFieldMap, capabilityWidgetMap } from '../descriptors/spec/spec-descriptor-input';
 import { HIDDEN_UI_SCHEMA } from './const';
@@ -31,12 +34,6 @@ const getCompatibleCapabilities = (jsonSchemaType: JSONSchemaType) => {
       return PRIMITIVE_COMPATIBLE_CAPABILITIES;
   }
 };
-
-// Transform a path string from a descriptor to a JSON schema path array
-export const descriptorPathToUISchemaPath = (path: string): string[] =>
-  (_.toPath(path) ?? []).map((subPath) => {
-    return /^\d+$/.test(subPath) ? 'items' : subPath;
-  });
 
 // Applies a hidden widget and label configuration to every property of the given schema.
 // This is useful for whitelisting only a few schema properties when all properties are not known.
@@ -66,7 +63,7 @@ const k8sResourceCapabilityToUISchema = (capability: SpecCapability): UiSchema =
 
 const fieldDependencyCapabilityToUISchema = (capability: SpecCapability): UiSchema => {
   const [, path, controlFieldValue] = capability.match(REGEXP_FIELD_DEPENDENCY_PATH_VALUE) ?? [];
-  const controlFieldPath = descriptorPathToUISchemaPath(path);
+  const controlFieldPath = stringPathToUISchemaPath(path);
   const controlFieldName = _.last(controlFieldPath);
   return {
     ...(path &&
@@ -206,7 +203,7 @@ export const descriptorsToUISchema = (
         return uiSchemaAccumulator;
       }
       const capabilities = getValidCapabilities(descriptor, schemaForDescriptor);
-      const uiSchemaPath = descriptorPathToUISchemaPath(descriptor.path);
+      const uiSchemaPath = stringPathToUISchemaPath(descriptor.path);
       const isAdvanced = capabilities.includes(SpecCapability.advanced);
       const dependency = capabilities.find((capability) =>
         capability.startsWith(SpecCapability.fieldDependency),
@@ -214,7 +211,7 @@ export const descriptorsToUISchema = (
       return uiSchemaAccumulator.withMutations((mutable) => {
         if (isAdvanced) {
           const advancedPropertyName = _.last(uiSchemaPath);
-          const pathToAdvanced = [...uiSchemaPath.slice(0, uiSchemaPath.length - 1), 'ui:advanced'];
+          const pathToAdvanced = [...uiSchemaPath.slice(0, -1), 'ui:advanced'];
           const currentAdvanced = mutable.getIn(pathToAdvanced) ?? Immutable.List();
           mutable.setIn(pathToAdvanced, currentAdvanced.push(advancedPropertyName));
         }

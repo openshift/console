@@ -8,6 +8,12 @@ import { THOUSAND, MILLION, BILLION } from './const';
 
 const UNSUPPORTED_SCHEMA_PROPERTIES = ['allOf', 'anyOf', 'oneOf'];
 
+// Transform a path string to a JSON schema path array
+export const stringPathToUISchemaPath = (path: string): string[] =>
+  (_.toPath(path) ?? []).map((subPath) => {
+    return /^\d+$/.test(subPath) ? 'items' : subPath;
+  });
+
 export const useSchemaLabel = (schema: JSONSchema6, uiSchema: UiSchema, defaultLabel?: string) => {
   const options = getUiOptions(uiSchema ?? {});
   const showLabel = options?.label ?? true;
@@ -88,6 +94,21 @@ const getUISortOrder = (uiSchema: UiSchema, fallback: number): number => {
   );
 };
 
+// Return an array of dependency control field names that exist within uiSchema at the specified
+// path.
+const getControlFieldsAtPath = (uiSchema: UiSchema, path: string[]): string[] => {
+  if (!_.isObject(uiSchema)) {
+    return [];
+  }
+  const { 'ui:dependency': dependency } = uiSchema;
+  const dependencyMatchesPath =
+    dependency && _.isEqual(dependency.controlFieldPath.slice(0, -1), path ?? []);
+  return [
+    ...(dependencyMatchesPath ? [dependency.controlFieldName] : []),
+    ..._.flatMap(uiSchema, (childUISchema) => getControlFieldsAtPath(childUISchema, path)),
+  ];
+};
+
 /**
  * Give a property name a sort wieght based on whether it has ui schema, is required, or is a
  * control field for a property with a field dependency. A lower weight means higher sort order.
@@ -110,22 +131,22 @@ const getJSONSchemaPropertySortWeight = (
   property: string,
   jsonSchema: JSONSchema6,
   uiSchema: UiSchema,
+  currentPath?: string[],
 ): number => {
   const isRequired = (jsonSchema?.required ?? []).includes(property);
   const propertyUISchema = uiSchema?.[property];
 
+  // All control fields that exist within uiSchema and match this path
+  const controlFields = getControlFieldsAtPath(propertyUISchema, currentPath);
+
   // Any sibling has a dependency with this as the control field.
-  const isControlField = _.some(
-    uiSchema,
-    ({ 'ui:dependency': dependency }) => dependency?.controlFieldName === property,
+  const isControlField = _.some(uiSchema, ({ 'ui:dependency': siblingDependency }) =>
+    _.isEqual(siblingDependency?.controlFieldPath, [...(currentPath ?? []), property]),
   );
 
   // Minimum'ui:sortOrder' for this property and it's children. Use propertyNames.length as a fallback,
   // which ensures that properties without a "ui:sortOrder" have highest weight.
   const uiSortOrder = getUISortOrder(propertyUISchema, _.keys(jsonSchema?.properties).length);
-
-  // This property's control field name, if it exists
-  const controlFieldName = propertyUISchema?.['ui:dependency']?.controlFieldName;
 
   // A small offset that is added to the base weight so that control fields get sorted
   // below other fields in the same 'tier', and allows for depenendt fields to be sorted
@@ -135,9 +156,16 @@ const getJSONSchemaPropertySortWeight = (
   // Total offset to be added to base tier
   const offset = controlFieldOffset + uiSortOrder;
 
-  // If this property is a dependent, it's weight is based on it's control field
-  if (controlFieldName) {
-    return getJSONSchemaPropertySortWeight(controlFieldName, jsonSchema, uiSchema) + offset;
+  // If this property or it's children have a control field at the current path, it's weight is
+  // based on the highest weight control field.
+  if (controlFields?.length) {
+    return (
+      Math.max(
+        ...controlFields.map((controlField) =>
+          getJSONSchemaPropertySortWeight(controlField, jsonSchema, uiSchema, currentPath),
+        ),
+      ) + offset
+    );
   }
 
   // Tier 1 = -1001000000 (negative one billion one million) + offset
@@ -161,10 +189,17 @@ const getJSONSchemaPropertySortWeight = (
 //  - optional fields with an associated ui schema next,
 //  - field dependency properties (control then dependent)
 //  - all other properties
-export const getJSONSchemaOrder = (jsonSchema, uiSchema) => {
+export const getJSONSchemaOrder = (
+  jsonSchema: JSONSchema6,
+  uiSchema: UiSchema,
+  currentPath?: string[],
+) => {
   const type = getSchemaType(jsonSchema ?? {});
   const handleArray = () => {
-    const descendantOrder = getJSONSchemaOrder(jsonSchema?.items as JSONSchema6, uiSchema?.items);
+    const descendantOrder = getJSONSchemaOrder(jsonSchema?.items as JSONSchema6, uiSchema?.items, [
+      ...(currentPath ?? []),
+      'items',
+    ]);
     return !_.isEmpty(descendantOrder) ? { items: descendantOrder } : {};
   };
 
@@ -175,7 +210,9 @@ export const getJSONSchemaOrder = (jsonSchema, uiSchema) => {
     }
 
     const uiOrder = Immutable.Set(propertyNames)
-      .sortBy((propertyName) => getJSONSchemaPropertySortWeight(propertyName, jsonSchema, uiSchema))
+      .sortBy((property) =>
+        getJSONSchemaPropertySortWeight(property, jsonSchema, uiSchema, currentPath ?? []),
+      )
       .toJS();
 
     return {
@@ -183,7 +220,11 @@ export const getJSONSchemaOrder = (jsonSchema, uiSchema) => {
       ..._.reduce(
         jsonSchema?.properties ?? {},
         (orderAccumulator, propertySchema, propertyName) => {
-          const descendantOrder = getJSONSchemaOrder(propertySchema, uiSchema?.[propertyName]);
+          const descendantOrder = getJSONSchemaOrder(
+            propertySchema as JSONSchema6,
+            uiSchema?.[propertyName],
+            [...(currentPath ?? []), propertyName],
+          );
           if (_.isEmpty(descendantOrder)) {
             return orderAccumulator;
           }
