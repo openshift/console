@@ -6,6 +6,7 @@ import {
   ResourceIcon
 } from '@console/internal/components/utils';
 import * as UIActions from '@console/internal/actions/ui';
+import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
 import { Node } from '@patternfly/react-topology';
 import { ResourceSummary } from '@console/internal/components/utils';
 
@@ -56,10 +57,23 @@ export const ConnectedTopologyHelmReleasePanel: React.FC<TopologyHelmReleasePane
         <h1 className="co-m-pane__heading">
           <div className="co-m-pane__name co-resource-item">
             <ResourceIcon className="co-m-resource-icon--lg" kind="MKC" />
-            <h4>Managed Kafka Connection</h4>
+            <h3>Managed Kafka Connection</h3>
           </div>
         </h1>
       </div>
+
+      <Alert
+        variant="default"
+        title="ManagedService"
+        actionClose={<AlertActionCloseButton />}
+        isInline
+      >
+        This resource represents service that exist outside your cluster.
+        To view details about resource please go to <br/>
+        <a href="https://cloud.redhat.com/beta/application-services/openshift-streams/">OpenShift Streams Apache Kafka </a> console.
+
+      </Alert>
+
       <SimpleTabNav
         selectedTab={selectedDetailsTab}
         onClickTab={onClickTab}
