@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
+import { Status } from '@console/shared';
 import { ServiceInstanceModel } from '../../models';
 import { K8sResourceKind } from '../../module/k8s';
 import { DetailsPage, ListPage, Table, TableData, TableRow } from '../factory';
@@ -24,10 +25,12 @@ const ServiceInstanceDetails: React.FC<ServiceInstanceDetailsProps> = ({ obj: se
           </div>
           <div className="col-md-6">
             <dl className="co-m-pane__details">
-              <dt> SERVICE CLASS</dt>
-              <dd>{serviceInstance.spec.serviceClassName}</dd>
-              <dt> SERVICE PLAN</dt>
-              <dd>{serviceInstance.spec.servicePlanName}</dd>
+              <dt>Status</dt>
+              <dd><Status status={serviceInstance.status.lastConditionState} /></dd>
+              <dt>Service Class</dt>
+              <dd>{serviceInstance.spec.clusterServiceClassExternalName} {serviceInstance.spec.serviceClassExternalName}</dd>
+              <dt>Service Plan</dt>
+              <dd>{serviceInstance.spec.clusterServicePlanExternalName} {serviceInstance.spec.servicePlanExternalName}</dd>
             </dl>
           </div>
         </div>
@@ -63,10 +66,10 @@ const ServiceInstanceTableRow = ({ obj, index, key, style }) => {
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} title={obj.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
-        {obj.spec.clusterServiceClassName} {obj.spec.serviceClassName}
+        <Status status={obj.status.lastConditionState} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>
-        {obj.spec.clusterServicePlanName} {obj.spec.servicePlanName}
+        {obj.spec.clusterServicePlanExternalName} {obj.spec.servicePlanExternalName}
       </TableData>
       <TableData className={tableColumnClasses[4]}>
         <Timestamp timestamp={obj.metadata.creationTimestamp} />
@@ -93,8 +96,8 @@ const ServiceInstanceTableHeader = () => {
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Service Class',
-      sortField: 'spec.serviceClassName',
+      title: 'Status',
+      sortField: 'status.lastConditionState',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
@@ -122,8 +125,25 @@ ServiceInstanceTableHeader.displayName = 'ServiceInstanceTableHeader';
 const ServiceInstancesList: React.FC = props => <Table {...props} aria-label="Service Instance" Header={ServiceInstanceTableHeader} Row={ServiceInstanceTableRow} />;
 ServiceInstancesList.displayName = 'ServiceInstancesList';
 
+const serviceInstanceStatusReducer = (serviceInstance: any): string => {
+  return serviceInstance.status.lastConditionState;
+};
+
+const filters = [
+  {
+    filterGroupName: 'Status',
+    type: 'service-instance-status',
+    reducer: serviceInstanceStatusReducer,
+    items: [
+      { id: 'Ready', title: 'Ready' },
+      { id: 'Error', title: 'Error' },
+    ],
+  },
+];
+
+
 const ServiceInstancesPage: React.FC<ServiceInstancesPageProps> = props => {
-  return <ListPage canCreate={true} kind={kind} ListComponent={ServiceInstancesList} {...props} />;
+  return <ListPage canCreate={true} kind={kind} ListComponent={ServiceInstancesList} rowFilters={filters} {...props} />;
 };
 ServiceInstancesPage.displayName = 'ServiceInstancesPage';
 

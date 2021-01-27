@@ -30,6 +30,10 @@ const registryStatusReducer = (registry: any): string => {
   return registry.status.phase;
 }
 
+const serviceInstanceStatusReducer = (serviceInstance: any): string => {
+  return serviceInstance.status.lastConditionState;
+}
+
 const pipelineApprovalStatusReducer = (pipelineApproval: any): string => {
   return pipelineApproval.status.result;
 }
@@ -127,6 +131,15 @@ export const tableFilters: TableFilterMap = {
     }
 
     const phase = registryStatusReducer(registry);
+    return phases.selected.has(phase) || !_.includes(phases.all, phase);
+  },
+
+  'service-instance-status': (phases, serviceInstance) => {
+    if (!phases || !phases.selected || !phases.selected.size) {
+      return true;
+    }
+
+    const phase = serviceInstanceStatusReducer(serviceInstance);
     return phases.selected.has(phase) || !_.includes(phases.all, phase);
   },
 
