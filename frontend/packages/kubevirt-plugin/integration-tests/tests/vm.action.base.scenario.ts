@@ -1,4 +1,5 @@
 import { browser, ExpectedConditions as until } from 'protractor';
+import { execSync } from 'child_process';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import {
   resourceRows,
@@ -40,6 +41,9 @@ describe('Test VM actions', () => {
     beforeAll(async () => {
       testVM.metadata.name = vmName;
       createResource(testVM);
+      const out = execSync(`kubectl get vm -n ${testName}`).toString();
+      // eslint-disable-next-line no-console
+      console.error(out);
       addLeakableResource(leakedResources, testVM);
       vm = new VirtualMachine(testVM.metadata);
 

@@ -48,6 +48,9 @@ export function removeLeakableResource(leakedResources: Set<string>, resource) {
 }
 
 export function createResource(resource) {
+  const json = JSON.stringify(resource);
+  // eslint-disable-next-line no-console
+  console.error(json);
   execSync(`echo '${JSON.stringify(resource)}' | kubectl create -f -`);
 }
 
