@@ -1,0 +1,6 @@
+.temp-token-status-footer {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  color: grey;
+}

@@ -9,16 +9,13 @@ import { k8sCreate } from '@console/internal/module/k8s/resource';
 import { Button, FormGroup, TextInputTypes, Modal, ModalVariant, TextInput } from '@patternfly/react-core';
 import { useActiveNamespace } from '@console/shared';
 import { AccessTokenSecretName } from '../../const';
+import { history } from '@console/internal/components/utils';
 
 // TODO Full typings
 const AccessManagedServices: any = ({isModalOpen, setIsModalOpen}) => {
   const [apiTokenValue, setApiTokenValue] = React.useState("");
-
   const [currentNamespace] = useActiveNamespace();
   const namespace = currentNamespace;
-  // console.log("Token page rendered for namespace ", namespace, apiTokenValue, AccessTokenSecretName)
-  // const [tokenSecret] = useK8sWatchResource({ kind: SecretModel.kind, isList: false, name: AccessTokenSecretName, namespace, namespaced: true })
-  // console.log('what is tokenSecret' + tokenSecret);
 
   const onCreate = async () => {
     const secret = {
@@ -34,11 +31,15 @@ const AccessManagedServices: any = ({isModalOpen, setIsModalOpen}) => {
       type: 'Opaque',
     };
 
-    // FIXME error handling for create operation
-    await k8sCreate(SecretModel, secret);
+    try {
+      await k8sCreate(SecretModel, secret);
+      history.push("/managedServices/managedkafka");
+    } catch (error) {
+      console.log('what is this error' + error);
+    }
 
     // IMPORTANT! CVE prevention
-    setApiTokenValue("");
+    // setApiTokenValue("");
   }
 
   const handleModalToggle = () => {
@@ -65,15 +66,17 @@ const AccessManagedServices: any = ({isModalOpen, setIsModalOpen}) => {
           </Button>
         ]}
       >
-        <br/>
         To access this application service, input the API token which can be located at 
-        <a href="https://cloud.redhat.com/openshift/token" target="_blank">https://cloud.redhat.com/openshift/token</a>
+        <a href="https://cloud.redhat.com/openshift/token" target="_blank"> https://cloud.redhat.com/openshift/token</a>
+        <br/>
         <br/>
         <FormGroup
           fieldId=""
           label="API Token"
           isRequired
           helperText="API token can be access at cloud.redhat.com/openshift/token"
+          // helperTextInvalid="Age has to be a number"
+          // helperTextInvalidIcon={<ExclamationCircleIcon />}
         >
           <TextInput
             value={apiTokenValue}
