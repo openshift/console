@@ -50,7 +50,10 @@ Cypress.Commands.add('install', (mode: 'Internal' | 'Attached' = 'Internal', enc
 
       // Make changes to this once we add annotation
       cy.log(`Install OCS in ${mode} Mode`);
-      commonFlows.navigateToOCS(true);
+      // Reload because StorageCluster CRD is not registered in the UI; hence getting 404 Error
+      cy.visit('/');
+      cy.reload(true);
+      commonFlows.navigateToOCS();
       cy.byLegacyTestID('horizontal-link-Storage Cluster').click();
       cy.byTestID('item-create').click();
 
