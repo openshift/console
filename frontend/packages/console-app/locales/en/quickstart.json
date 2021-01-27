@@ -20,7 +20,7 @@
   "Not started": "Not started",
   "{{duration, number}} minutes": "{{duration, number}} minutes",
   "One or more verifications did not pass during this quick start. Revisit the tasks or the help links, and then try again.": "One or more verifications did not pass during this quick start. Revisit the tasks or the help links, and then try again.",
-  "Start {{nextQuickStart}} quick start": "Start {{nextQuickStart}} quick start",
+  "Start {{nextQSDisplayName}} quick start": "Start {{nextQSDisplayName}} quick start",
   "Start tour": "Start tour",
   "Next": "Next",
   "Close": "Close",

@@ -6,12 +6,14 @@ import { QuickStartContext, QuickStartContextValues } from './utils/quick-start-
 
 type QuickStartControllerProps = {
   quickStart: QuickStart;
+  nextQuickStarts?: QuickStart[];
   footerClass: string;
   contentRef: React.Ref<HTMLDivElement>;
 };
 
 const QuickStartController: React.FC<QuickStartControllerProps> = ({
   quickStart,
+  nextQuickStarts,
   contentRef,
   footerClass,
 }) => {
@@ -66,6 +68,7 @@ const QuickStartController: React.FC<QuickStartControllerProps> = ({
     <>
       <QuickStartContent
         quickStart={quickStart}
+        nextQuickStarts={nextQuickStarts}
         taskNumber={taskNumber}
         allTaskStatuses={allTaskStatuses}
         onTaskSelect={handleTaskSelect}

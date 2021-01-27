@@ -45,13 +45,15 @@ describe('QuickStartConclusion', () => {
   });
 
   it('should render link for next quick start if nextQuickStart prop is available and there are no failed tasks', () => {
-    wrapper = shallow(<QuickStartConclusion {...props} nextQuickStart="Serverless Application" />);
+    wrapper = shallow(
+      <QuickStartConclusion {...props} nextQuickStart={getQuickStartByName('explore-pipelines')} />,
+    );
     expect(
       wrapper
         .find(Button)
         .at(0)
         .props().children[0],
-    ).toEqual(`${i18nNS}~Start {{nextQuickStart}} quick start`);
+    ).toEqual(`${i18nNS}~Start {{nextQSDisplayName}} quick start`);
   });
 
   it('should not render link for next quick start if nextQuickStart props is not available', () => {
@@ -62,7 +64,7 @@ describe('QuickStartConclusion', () => {
     wrapper = shallow(
       <QuickStartConclusion
         {...props}
-        nextQuickStart="Serverless Application"
+        nextQuickStart={getQuickStartByName('explore-pipelines')}
         allTaskStatuses={[
           QuickStartTaskStatus.FAILED,
           QuickStartTaskStatus.SUCCESS,
