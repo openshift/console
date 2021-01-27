@@ -36,14 +36,14 @@ const ImageSearchSection: React.FC = () => {
         name="registry"
         options={[
           {
-            label: imageRegistryType.External.label,
-            value: imageRegistryType.External.value,
+            label: imageRegistryType(t).External.label,
+            value: imageRegistryType(t).External.value,
             isDisabled: values.formType === 'edit' && values.registry === 'internal',
             activeChildren: <ImageSearch />,
           },
           {
-            label: imageRegistryType.Internal.label,
-            value: imageRegistryType.Internal.value,
+            label: imageRegistryType(t).Internal.label,
+            value: imageRegistryType(t).Internal.value,
             isDisabled: values.formType === 'edit' && values.registry === 'external',
             activeChildren: <ImageStream />,
           },

@@ -11,7 +11,7 @@ const RevisionHeader = (t: TFunction) => () => {
       props: { className: tableColumnClasses[0] },
     },
     {
-      id: 'namesoace',
+      id: 'namespace',
       title: t('knative-plugin~Namespace'),
       sortField: 'metadata.namespace',
       transforms: [sortable],

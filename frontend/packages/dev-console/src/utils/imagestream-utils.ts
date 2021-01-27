@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { TFunction } from 'i18next';
 import * as semver from 'semver';
 import { ContainerPort, K8sResourceKind, K8sResourceCommon } from '@console/internal/module/k8s';
 import {
@@ -149,15 +150,17 @@ export enum RegistryType {
 export enum BuilderImagesNamespace {
   Openshift = 'openshift',
 }
-export const imageRegistryType = {
-  External: {
-    value: RegistryType.External,
-    label: 'Image name from external registry',
-  },
-  Internal: {
-    value: RegistryType.Internal,
-    label: 'Image stream tag from internal registry',
-  },
+export const imageRegistryType = (t: TFunction) => {
+  return {
+    External: {
+      value: RegistryType.External,
+      label: t('devconsole~Image name from external registry'),
+    },
+    Internal: {
+      value: RegistryType.Internal,
+      label: t('devconsole~Image stream tag from internal registry'),
+    },
+  };
 };
 
 export const getSortedTags = (imageStream: K8sResourceKind) => {

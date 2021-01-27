@@ -21,7 +21,7 @@ const ServingListPage: React.FC<ServingListPageProps> = ({ match }) => {
   } = match;
   const [showTitle, canCreate] = [false, false];
   const menuActions: MenuActions = {
-    service: { model: ServiceModel },
+    service: { label: t('knative-plugin~Service'), model: ServiceModel },
   };
   const pages: Page[] = [
     {

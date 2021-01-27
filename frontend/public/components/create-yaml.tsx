@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { match as RouterMatch } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { getYAMLTemplates } from '../models/yaml-templates';
 import { connectToPlural } from '../kinds';
 import { AsyncComponent } from './utils/async';
@@ -25,6 +26,7 @@ export const CreateYAML = connectToPlural((props: CreateYAMLProps) => {
     resourceObjPath,
   } = props;
   const { params } = match;
+  const { t } = useTranslation();
   const templateExtensions = useExtensions<YAMLTemplate>(isYAMLTemplate);
   const yamlTemplates = React.useMemo(() => getYAMLTemplates(templateExtensions), [
     templateExtensions,
@@ -53,7 +55,7 @@ export const CreateYAML = connectToPlural((props: CreateYAMLProps) => {
     obj.apiVersion = apiVersionForModel(kindObj);
     obj.spec = obj.spec || {};
   }
-  const header = `Create ${kindObj.label}`;
+  const header = t('public~Create {{objLabel}}', { objLabel: kindObj.label });
 
   // TODO: if someone edits namespace, we'll redirect to old namespace
 
