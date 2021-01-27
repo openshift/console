@@ -9,6 +9,7 @@
   "No conditions found": "No conditions found",
   "ReplicationControllers": "ReplicationControllers",
   "ReplicaSets": "ReplicaSets",
+  "Delete PersistentVolumeClaim": "Delete PersistentVolumeClaim",
   "Terminal": "Terminal",
   "Name": "Name",
   "Namespace": "Namespace",

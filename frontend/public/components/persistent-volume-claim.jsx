@@ -37,6 +37,7 @@ import { setPVCMetrics } from '../actions/ui';
 import { PrometheusEndpoint } from './graphs/helpers';
 import { usePrometheusPoll } from './graphs/prometheus-poll-hook';
 import deletePVCModal from './modals/delete-pvc-modal';
+import i18next from 'i18next';
 
 const { ModifyLabels, ModifyAnnotations, Edit, ExpandPVC, PVCSnapshot, ClonePVC } = Kebab.factory;
 const menuActions = [
@@ -48,7 +49,7 @@ const menuActions = [
   ModifyAnnotations,
   Edit,
   (kind, obj) => ({
-    label: `Delete ${kind.label}`,
+    label: i18next.t('details-page~Delete PersistentVolumeClaim'),
     callback: () =>
       deletePVCModal({
         pvc: obj,
