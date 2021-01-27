@@ -249,6 +249,18 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: models.KnativeServingModel,
+      loader: async () =>
+        (
+          await import(
+            './components/overview/KnativeServingDetailsPage' /* webpackChunkName: "knative-serving-details-page" */
+          )
+        ).default,
+    },
+  },
+  {
     type: 'Page/Resource/List',
     properties: {
       model: models.ServiceModel,
