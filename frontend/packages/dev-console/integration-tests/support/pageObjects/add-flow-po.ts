@@ -95,6 +95,7 @@ export const catalogPO = {
     builderImage: 'a[href="/?catalogType=BuilderImage"]',
     template: 'a[href="/?catalogType=Template"]',
     serviceClass: '[data-test="kind-cluster-service-class"]',
+    managedServices: '[data-test="kind-managed-service"]',
   },
   cards: {
     mariaDBTemplate: 'a[data-test="Template-MariaDB"] .catalog-tile-pf-title',
