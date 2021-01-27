@@ -1,6 +1,7 @@
 import { isCephProvisioner } from '@console/shared/src/utils';
 
 export const cephRBDProvisionerSuffix = 'rbd.csi.ceph.com';
+
 //See https://kubernetes.io/docs/concepts/storage/persistent-volumes/#types-of-persistent-volumes for more details
 export const provisionerAccessModeMapping = {
   'kubernetes.io/no-provisioner': ['ReadWriteOnce'],
