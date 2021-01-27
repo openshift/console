@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { useEffect, useState } from 'react';
 import { k8sGet } from '../../module/k8s';
 import { RepositoryModel } from '../../models/hypercloud';
 import { compoundExpand, sortable } from '@patternfly/react-table';
@@ -14,60 +13,15 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-export const Tags: React.SFC<TagsProps> = React.memo(({ tags, namespace, repository, registry }) => {
-  const [addedTags, setAddedTags] = useState(tags);
-  // const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    // setLoading(true);
-    getScans();
-    // return () => (setLoading(false));
-  }, []);
-
-
-  const getWorstScan = (scans, tag) => {
-    const res = scans[tag];
-    if (res) {
-      if (res.hasOwnProperty('Critical')) {
-        return 'Critical';
-      } else if (res.hasOwnProperty('High')) {
-        return 'High';
-      } else if (res.hasOwnProperty('Medium')) {
-        return 'Medium';
-      } else if (res.hasOwnProperty('Low')) {
-        return 'Low';
-      } else if (res.hasOwnProperty('Negligible')) {
-        return 'Negligible';
-      } else if (res.hasOwnProperty('Unknown')) {
-        return 'Unknown';
-      }
-    }
-    return '';
-  }
-
-
-  const getScans = async () => {
-    // if (loading) {
-    const model = Object.assign({}, RepositoryModel);
-    model.apiGroup = 'registry.' + model.apiGroup;
-
-    const scans = await k8sGet(model, repository, namespace, { path: 'imagescanresults' });
-
-    setAddedTags(addedTags.map((addedTag) => {
-      addedTag.severity = getWorstScan(scans, addedTag.version);
-      return addedTag;
-    }));
-    // }
-  }
-
+export const Tags: React.SFC<TagsProps> = ({ tags, namespace, repository, registry }) => {
   return (
     <>
       <div className="co-m-pane__body">
-        <TagsListTable tags={addedTags} namespace={namespace} repository={repository} registry={registry} />
+        <TagsListTable tags={tags} namespace={namespace} repository={repository} registry={registry} />
       </div>
     </>
   );
-});
+}
 
 const TagsListTable = ({ tags, namespace, repository, registry }) => {
 

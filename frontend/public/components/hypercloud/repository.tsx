@@ -1,13 +1,15 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import { useEffect, useState } from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { K8sResourceKind } from '../../module/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from '../factory';
-import { Kebab, detailsPage, Timestamp, navFactory, ResourceKebab, ResourceLink, ResourceSummary, SectionHeading } from '../utils';
+import { Kebab, Timestamp, navFactory, ResourceKebab, ResourceLink, ResourceSummary, SectionHeading } from '../utils';
 import { RepositoryModel } from '../../models/hypercloud';
 import { Tags } from './tags';
 import { scanningModal } from './modals';
+import { k8sGet } from '../../module/k8s';
 
 export const menuActions = [...Kebab.factory.common, Kebab.factory.ModifyScanning];
 
@@ -90,22 +92,63 @@ const RepositoriesPage = (props) => {
   );
 };
 
-const RepositoryDetails: React.FC<RepositoryDetailsProps> = ({ obj: repository }) => (
-  <>
-    <div className="co-m-pane__body">
-      <SectionHeading text="Registry Details" />
-      <div className="row">
-        <div className="col-lg-6">
-          <ResourceSummary resource={repository} showPodSelector={false} showNodeSelector={false} showAnnotations={false} showTolerations={false} />
+const RepositoryDetails: React.FC<RepositoryDetailsProps> = ({ obj: repository }) => {
+
+  const [addedTags, setAddedTags] = useState(repository.spec.versions);
+
+  useEffect(() => {
+    getScans();
+  }, []);
+
+  const getWorstScan = (scans, tag) => {
+    const res = scans[tag];
+    if (res) {
+      if (res.hasOwnProperty('Critical')) {
+        return 'Critical';
+      } else if (res.hasOwnProperty('High')) {
+        return 'High';
+      } else if (res.hasOwnProperty('Medium')) {
+        return 'Medium';
+      } else if (res.hasOwnProperty('Low')) {
+        return 'Low';
+      } else if (res.hasOwnProperty('Negligible')) {
+        return 'Negligible';
+      } else if (res.hasOwnProperty('Unknown')) {
+        return 'Unknown';
+      }
+    }
+    return '';
+  }
+
+  const getScans = async () => {
+    const model = Object.assign({}, RepositoryModel);
+    model.apiGroup = 'registry.' + model.apiGroup;
+
+    const scans = await k8sGet(model, repository.metadata.name, repository.metadata.namespace, { path: 'imagescanresults' });
+
+    setAddedTags(addedTags.map((addedTag) => {
+      addedTag.severity = getWorstScan(scans, addedTag.version);
+      return addedTag;
+    }));
+  }
+
+  return (
+    <>
+      <div className="co-m-pane__body">
+        <SectionHeading text="Registry Details" />
+        <div className="row">
+          <div className="col-lg-6">
+            <ResourceSummary resource={repository} showPodSelector={false} showNodeSelector={false} showAnnotations={false} showTolerations={false} />
+          </div>
         </div>
       </div>
-    </div>
-    <div className="co-m-pane__body">
-      <SectionHeading text="Tags" />
-      <Tags repository={repository.metadata.name} tags={repository.spec.versions} namespace={repository.metadata.namespace} registry={repository.spec.registry} />
-    </div>
-  </>
-);
+      <div className="co-m-pane__body">
+        <SectionHeading text="Tags" />
+        <Tags repository={repository.metadata.name} tags={addedTags} namespace={repository.metadata.namespace} registry={repository.spec.registry} />
+      </div>
+    </>
+  );
+}
 
 const { details, editYaml } = navFactory;
 
@@ -114,7 +157,7 @@ const RepositoriesDetailsPage: React.FC<RepositoriesDetailsPageProps> = props =>
   kind={kind}
   menuActions={menuActions}
   pages={[
-    details(detailsPage(RepositoryDetails)),
+    details(RepositoryDetails),
     editYaml(),
   ]}
 />;
