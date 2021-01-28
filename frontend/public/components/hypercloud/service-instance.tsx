@@ -53,9 +53,7 @@ const ServiceInstanceDetails: React.FC<ServiceInstanceDetailsProps> = props => {
                 </dd>
                 <dt>Service Class</dt>
                 <SidebarLink name={serviceInstance.spec.clusterServiceClassRef?.name ? serviceInstance.spec.clusterServiceClassRef?.name : serviceInstance.spec?.serviceClassExternalName} kind={serviceInstance.spec.clusterServiceClassRef?.name ? 'ClusterServiceClass' : 'ServiceClass'}></SidebarLink>
-                <dd>
-                  {serviceInstance.spec.clusterServiceClassExternalName} {serviceInstance.spec.serviceClassExternalName}
-                </dd>
+                <dd></dd>
                 <dt>Service Plan</dt>
                 <dd>
                   {serviceInstance.spec.clusterServicePlanExternalName} {serviceInstance.spec.servicePlanExternalName}
