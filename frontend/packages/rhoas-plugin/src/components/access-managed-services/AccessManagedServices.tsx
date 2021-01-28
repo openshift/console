@@ -83,7 +83,7 @@ const AccessManagedServices: any = ({isModalOpen, setIsModalOpen}) => {
           />
         </FormGroup>
         <br/>
-        Can't create an access token? Contact your cluster administrator
+        Can't create an access token? Contact your administrator
       </Modal>
     </>
   )
