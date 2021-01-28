@@ -135,7 +135,11 @@ export const getNics = (vm: OvirtVM, nads: K8sResourceKind[]): VMWizardNetwork[]
             )?.getKubevirtNetworkInterfaceModel() || NetworkInterfaceModel.VIRTIO,
           macAddress: nic.mac,
         })
-        .setType(nic.sriov ? NetworkInterfaceType.SRIOV : NetworkInterfaceType.BRIDGE)
+        .setType(
+          nic.sriov
+            ? NetworkInterfaceType.SRIOV
+            : networkWrapper.getType()?.getDefaultInterfaceType() || NetworkInterfaceType.BRIDGE,
+        )
         .asResource(),
       importData: {
         id: nic.id,
