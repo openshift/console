@@ -71,11 +71,7 @@ const ManagedKafkas = () => {
       },
       spec: {
         accessTokenSecretName: AccessTokenSecretName,
-      },
-      // status: {
-      //   lastUpdate: new Date().getTime(),
-      //   userKafkas: kafkaRequestData
-      // }
+      }
     };
 
     // FIXME Progress bar/Handling errors here?
@@ -95,13 +91,9 @@ const ManagedKafkas = () => {
         serviceAccountName: "myServiceAccount",
         reset: false,
         description: "some service account",
-        serviceAccountSecretname: ServiceAccountSecretName
+        serviceAccountSecretName: ServiceAccountSecretName
       },
-      // status: {
-      //   message: "created",
-      //   updated: new Date().getTime(),
-      //   serviceAccountSecretName: "service-account-123-credentials"
-      // }
+
     }
 
     await k8sCreate(ManagedServiceAccountRequest, serviceAcct);
@@ -120,15 +112,7 @@ const ManagedKafkas = () => {
         credentials: {
           serviceAccountSecretName: ServiceAccountSecretName
         }
-      },
-      // status: {
-      //   message: "created",
-      //   updated: new Date().getTime(),
-      //   boostrapServer: {
-      //     host: "kafka--ltosqyk-wsmt-t-elukpkft-bg.apps.ms-bv8dm6nbd3jo.cx74.s1.devshift.org:443"
-      //   },
-      //   serviceAccountSecretName: "service-account-123-credentials"
-      // }
+      }
     }
 
     await k8sCreate(ManagedKafkaConnectionModel, kafkaConnection);

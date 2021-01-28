@@ -7,7 +7,7 @@ import { AccessTokenSecretName } from '../../const';
 import { history } from '@console/internal/components/utils';
 
 // TODO Full typings
-const AccessManagedServices: any = ({isModalOpen, setIsModalOpen}) => {
+const AccessManagedServices: any = ({ isModalOpen, setIsModalOpen }) => {
   const [apiTokenValue, setApiTokenValue] = React.useState("");
   const [currentNamespace] = useActiveNamespace();
   const namespace = currentNamespace;
@@ -21,7 +21,7 @@ const AccessManagedServices: any = ({isModalOpen, setIsModalOpen}) => {
         namespace
       },
       stringData: {
-        apiTokenValue
+        value: apiTokenValue
       },
       type: 'Opaque',
     };
@@ -63,15 +63,15 @@ const AccessManagedServices: any = ({isModalOpen, setIsModalOpen}) => {
       >
         To access this application service, input the API token which can be located at
         <a href="https://cloud.redhat.com/openshift/token" target="_blank"> https://cloud.redhat.com/openshift/token</a>
-        <br/>
-        <br/>
+        <br />
+        <br />
         <FormGroup
           fieldId=""
           label="API Token"
           isRequired
           helperText="API token can be access at cloud.redhat.com/openshift/token"
-          // helperTextInvalid="Age has to be a number"
-          // helperTextInvalidIcon={<ExclamationCircleIcon />}
+        // helperTextInvalid="Age has to be a number"
+        // helperTextInvalidIcon={<ExclamationCircleIcon />}
         >
           <TextInput
             value={apiTokenValue}
@@ -82,7 +82,7 @@ const AccessManagedServices: any = ({isModalOpen, setIsModalOpen}) => {
             placeholder=""
           />
         </FormGroup>
-        <br/>
+        <br />
         Can't create an access token? Contact your administrator
       </Modal>
     </>
