@@ -4,14 +4,14 @@ import {
   TopologyDataObject,
   TopologyDataResources
 } from '@console/topology/src/topology-types';
-​
+
 import { KAFKA_WIDTH, KAFKA_HEIGHT, KAFKA_PADDING } from "./components/const"
 import { ManagedKafkaConnectionModel } from '../models'
 import {
   getTopologyNodeItem,
 } from '@console/topology/src/data-transforms/transform-utils';
 import { OverviewItem } from '@console/shared/src';
-​import {MANAGED_KAFKA_TOPOLOGY_TYPE} from "./rhoas-topology-plugin"
+import { MANAGED_KAFKA_TOPOLOGY_TYPE } from "./rhoas-topology-plugin"
 
 const KAFKA_PROPS = {
   width: KAFKA_WIDTH,
@@ -22,7 +22,7 @@ const KAFKA_PROPS = {
     padding: KAFKA_PADDING,
   },
 };
-​
+
 export const createOverviewItem = (obj: K8sResourceKind): OverviewItem<K8sResourceKind> => {
   if (!obj.apiVersion) {
     obj.apiVersion = apiVersionForModel(ManagedKafkaConnectionModel);
@@ -30,12 +30,13 @@ export const createOverviewItem = (obj: K8sResourceKind): OverviewItem<K8sResour
   if (!obj.kind) {
     obj.kind = ManagedKafkaConnectionModel.kind;
   }
-​
+
   return {
+    isOperatorBackedService: true,
     obj,
   }
 };
-​
+
 export const getTopologyRhoasNodes = (
   kafkaConnections: K8sResourceKind[]
 ): NodeModel[] => {
@@ -54,12 +55,12 @@ export const getTopologyRhoasNodes = (
     };
     nodes.push(getTopologyNodeItem(obj, ManagedKafkaConnectionModel.kind, data, KAFKA_PROPS));
   }
-​
+
   return nodes;
 };
-​
+
 export const getRhoasTopologyDataModel = () =>
   (namespace: string, resources: TopologyDataResources): Promise<Model> =>
     Promise.resolve({
       nodes: getTopologyRhoasNodes(resources.kafkaConnections.data)
-  });
+    });
