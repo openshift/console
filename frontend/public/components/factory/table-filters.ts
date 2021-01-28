@@ -13,7 +13,7 @@ import {
   serviceClassDisplayName,
   servicePlanDisplayName,
   getClusterOperatorStatus,
-  getTemplateInstanceStatus,
+  // getTemplateInstanceStatus,
 } from '../../module/k8s';
 
 import {
@@ -257,7 +257,22 @@ export const tableFilters: TableFilterMap = {
       return true;
     }
 
-    const status = getTemplateInstanceStatus(instance);
+    // const status = getTemplateInstanceStatus(instance);
+
+    // NOTE: HyperCloud5.0 TemplateInstance phase filter
+    const templateInstancePhase = instance => {
+      let phase = '';
+      if (instance.status) {
+        instance.status.conditions.forEach(cur => {
+          if (cur.type === '') {
+            phase = cur.status;
+          }
+        });
+        return phase;
+      }
+    };
+    const status = templateInstancePhase(instance);
+
     return statuses.selected.has(status) || !_.includes(statuses.all, status);
   },
 
