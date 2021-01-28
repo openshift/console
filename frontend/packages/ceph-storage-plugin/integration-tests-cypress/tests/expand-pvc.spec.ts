@@ -13,7 +13,7 @@ describe('Tests Expansion of a PVC', () => {
 
   beforeEach(() => {
     cy.visit('/');
-    cy.clickNavLink(['Storage', 'Persistent Volume Claims']);
+    cy.clickNavLink(['Storage', 'PersistentVolumeClaims']);
   });
 
   it('Test expansion of a CephFS PVC', () => {
