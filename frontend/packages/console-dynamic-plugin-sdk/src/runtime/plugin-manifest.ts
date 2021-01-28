@@ -31,8 +31,11 @@ export const validatePluginManifestSchema = async (
 
 export const fetchPluginManifest = async (baseURL: string) => {
   const url = resolveURL(baseURL, pluginManifestFile, { trailingSlashInBaseURL: true });
+  console.info(`Loading plugin manifest from ${url}`);
+
   const response: Response = await coFetch(url, { method: 'GET' });
   const manifest = (await response.json()) as ConsolePluginManifestJSON;
+
   (await validatePluginManifestSchema(manifest, url)).report();
   return manifest;
 };
