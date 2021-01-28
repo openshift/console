@@ -42,8 +42,7 @@ export class PVC<T extends PVCData> extends UIResource {
   }
 
   async delete() {
-    await clickNavLink(['Storage', 'Persistent Volume Claims']);
-    // await clickNavLink(['Storage', 'PersistentVolumeClaims']);
+    await clickNavLink(['Storage', 'PersistentVolumeClaims']);
     await crudView.isLoaded();
     await selectItemFromDropdown(this.namespace, namespaceDropdown);
     await crudView.resourceRowsPresent();
