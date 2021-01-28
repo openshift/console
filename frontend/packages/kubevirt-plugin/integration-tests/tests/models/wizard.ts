@@ -34,7 +34,7 @@ import { DiskDialog } from '../dialogs/diskDialog';
 import { Flavor, StepTitle, TemplateByName } from '../utils/constants/wizard';
 import * as view from '../../views/wizard.view';
 import { resourceHorizontalTab, dropDownItem, dropDownItemMain } from '../../views/uiResource.view';
-import { saveButton } from '../../views/kubevirtUIResource.view';
+import { continueButton, saveButton, modalTitle } from '../../views/kubevirtUIResource.view';
 import { confirmActionButton } from '../../views/importWizard.view';
 import { virtualizationTitle } from '../../views/vms.list.view';
 import { diskStorageClass } from '../../views/dialogs/diskDialog.view';
@@ -285,6 +285,9 @@ export class Wizard {
     const { selectTemplateName } = data;
     await this.selectTemplate(selectTemplateName);
     await this.next(ignoreWarnings);
+    if (await modalTitle.isPresent()) {
+      await click(continueButton);
+    }
   }
 
   async processBootSource(data: VMBuilderData, ignoreWarnings: boolean = false) {
