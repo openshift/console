@@ -78,15 +78,23 @@ describe('Test VM actions', () => {
       VM_ACTIONS_TIMEOUT_SECS,
     );
 
-    it('ID(CNV-4015) Stops VM', async () => {
-      await vm.listViewAction(VM_ACTION.Stop);
-    });
+    it(
+      'ID(CNV-4015) Stops VM',
+      async () => {
+        await vm.listViewAction(VM_ACTION.Stop);
+      },
+      VM_ACTIONS_TIMEOUT_SECS,
+    );
 
-    it('ID(CNV-4016) Deletes VM', async () => {
-      await vm.listViewAction(VM_ACTION.Delete, false);
-      await browser.wait(until.and(waitForCount(resourceRows, 0)), PAGE_LOAD_TIMEOUT_SECS);
-      removeLeakableResource(leakedResources, testVM);
-    });
+    it(
+      'ID(CNV-4016) Deletes VM',
+      async () => {
+        await vm.listViewAction(VM_ACTION.Delete, false);
+        await browser.wait(until.and(waitForCount(resourceRows, 0)), PAGE_LOAD_TIMEOUT_SECS);
+        removeLeakableResource(leakedResources, testVM);
+      },
+      VM_ACTIONS_TIMEOUT_SECS,
+    );
   });
 
   describe('Test VM detail view actions dropdown', () => {
@@ -127,24 +135,36 @@ describe('Test VM actions', () => {
       VM_ACTIONS_TIMEOUT_SECS,
     );
 
-    it('ID(CNV-4019) Unpauses VM via modal dialog', async () => {
-      await vm.waitForStatus(VM_STATUS.Running);
-      pauseVM(vmName, testName);
-      await vm.waitForStatus(VM_STATUS.Paused);
-      await vm.modalEditStatus();
-      await click(unpauseButton);
-      await vm.waitForStatus(VM_STATUS.Running);
-    });
+    it(
+      'ID(CNV-4019) Unpauses VM via modal dialog',
+      async () => {
+        await vm.waitForStatus(VM_STATUS.Running);
+        pauseVM(vmName, testName);
+        await vm.waitForStatus(VM_STATUS.Paused);
+        await vm.modalEditStatus();
+        await click(unpauseButton);
+        await vm.waitForStatus(VM_STATUS.Running);
+      },
+      VM_ACTIONS_TIMEOUT_SECS,
+    );
 
-    it('ID(CNV-4020) Stops VM', async () => {
-      await vm.detailViewAction(VM_ACTION.Stop);
-    });
+    it(
+      'ID(CNV-4020) Stops VM',
+      async () => {
+        await vm.detailViewAction(VM_ACTION.Stop);
+      },
+      VM_ACTIONS_TIMEOUT_SECS,
+    );
 
-    it('ID(CNV-4021) Deletes VM', async () => {
-      await vm.detailViewAction(VM_ACTION.Delete, false);
-      await vm.navigateToListView();
-      await browser.wait(until.and(waitForCount(resourceRows, 0)), PAGE_LOAD_TIMEOUT_SECS);
-      removeLeakableResource(leakedResources, testVM);
-    });
+    it(
+      'ID(CNV-4021) Deletes VM',
+      async () => {
+        await vm.detailViewAction(VM_ACTION.Delete, false);
+        await vm.navigateToListView();
+        await browser.wait(until.and(waitForCount(resourceRows, 0)), PAGE_LOAD_TIMEOUT_SECS);
+        removeLeakableResource(leakedResources, testVM);
+      },
+      VM_ACTIONS_TIMEOUT_SECS,
+    );
   });
 });
