@@ -7,6 +7,10 @@
   "Namespace": "namespace",
   "Select Project...": "プロジェクトの選択...",
   "Select Namespace...": "namespace の選択...",
+  "Remove bookmark {{content}}": "ブックマーク {{content}} の削除",
+  "Add bookmark {{content}}": "ブックマーク {{content}} の追加",
+  "Remove favorite {{content}}": "お気に入りの {{content}} の削除",
+  "Add favorite {{content}}": "お気に入りの {{content}} の追加",
   "Actions": "アクション",
   "Containers": "コンテナー",
   "Init containers": "Init コンテナー"

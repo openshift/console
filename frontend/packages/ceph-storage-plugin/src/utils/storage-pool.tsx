@@ -58,7 +58,7 @@ export const PROGRESS_STATUS = (t: TFunction) => [
     name: POOL_PROGRESS.NOTREADY,
     icon: LockIcon,
     desc: t(
-      'ceph-storage-plugin~The creation of an OCS storage cluster is still in progress or have failed please try again after the storage cluster is ready to use.',
+      'ceph-storage-plugin~The creation of an OCS storage cluster is still in progress or has failed. Please try again after the storage cluster is ready to use.',
     ),
     className: '',
   },

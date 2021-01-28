@@ -14,13 +14,14 @@
   "Total": "合計",
   "No Image vulnerabilities found": "イメージの脆弱性が見つかりません",
   "Image Manifest Vulnerabilities": "イメージマニフェストの脆弱性",
+  "Search by image name...": "イメージ名で検索...",
   "Container": "コンテナー",
   "Image": "イメージ",
   "Security scan": "セキュリティースキャン",
   "No vulnerabilities found": "脆弱性がありません",
   "Severity": "重大度",
   "Vulnerabilities": "脆弱性",
-  "Vulnerability": "脆弱性",
+  "Name": "名前",
   "Package": "パッケージ",
   "Current version": "現在のクラスター",
   "Fixed in version": "修正済みバージョン",
@@ -32,5 +33,6 @@
   "{{vulnImageCount, number}} total": "合計 {{vulnImageCount, number}}",
   "Fixable Container Images": "修正可能なコンテナーイメージ",
   "Impact": "影響",
-  "No vulnerabilities detected.": "脆弱性が検出されませんでした。"
+  "No vulnerabilities detected.": "脆弱性が検出されませんでした。",
+  "Vulnerability": "脆弱性"
 }

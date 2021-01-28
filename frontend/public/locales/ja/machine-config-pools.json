@@ -10,6 +10,7 @@
   "Total machine count": "マシンの合計数",
   "Total number of machines in the machine pool.": "マシンプール内のマシンの合計数。",
   "machine_0": "マシン",
+  "machine_1": "マシン",
   "Ready machines": "準備済みマシン",
   "Total number of ready machines targeted by the pool.": "プールがターゲットに設定する準備状態のマシンの合計数。",
   "Updated count": "更新数",
@@ -23,6 +24,6 @@
   "Configuration": "設定",
   "Updated": "更新済み",
   "Updating": "更新中",
-  "Degraded": "低下",
+  "Degraded": "異常な状態",
   "MachineConfigPools": "MachineConfigPool"
 }

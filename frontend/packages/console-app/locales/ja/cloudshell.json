@@ -13,6 +13,7 @@
   "connecting to {{container}}": "{{container}} に接続中",
   "Reconnect to terminal": "ターミナルへの再接続",
   "Restart terminal": "ターミナルの再起動",
+  "OpenShift command line": "OpenShift コマンドライン",
   "Close command line terminal": "コマンドラインターミナルを閉じる",
   "Open command line terminal": "コマンドラインターミナルを開く",
   "OpenShift command line terminal": "OpenShift コマンドラインターミナル",

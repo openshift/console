@@ -25,16 +25,16 @@ import { AdvancedSubscription } from '../subscription-icon';
 
 export const SelectNodesText: React.FC<SelectNodesTextProps> = React.memo(({ text, replica }) => {
   const { t } = useTranslation();
+  const label = 'cluster.ocs.openshift.io/openshift-storage=""';
   return (
     <TextContent>
       <Text>{text}</Text>
       <Text>
-        <Trans t={t} ns="ceph-storage-plugin" i18nKey="nodesText">
-          The selected nodes will be labeled with&nbsp;
-          <Label color="blue">cluster.ocs.openshift.io/openshift-storage=&quot;&quot;</Label>
-          &nbsp;(unless they are already labeled). {{ replica }} of the selected nodes will be used
-          for initial deployment. The remaining nodes will be used by OpenShift as scheduling
-          targets for OCS scaling.
+        <Trans t={t} ns="ceph-storage-plugin">
+          The selected nodes will be labeled with <Label color="blue">{{ label }}</Label> (unless
+          they are already labeled). {{ replica }} of the selected nodes will be used for initial
+          deployment. The remaining nodes will be used by OpenShift as scheduling targets for OCS
+          scaling.
         </Trans>
       </Text>
     </TextContent>

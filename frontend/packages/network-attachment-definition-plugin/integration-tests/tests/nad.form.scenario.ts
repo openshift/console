@@ -32,7 +32,7 @@ describe('Create network attachment definition using form', () => {
       await form.fillBridgeName(config.bridgeName);
 
       await browser.wait(until.presenceOf(nadFormView.nameErrorBlock));
-      expect(nadFormView.nameErrorBlock.getText()).toMatch('end with alphanumberic character');
+      expect(nadFormView.nameErrorBlock.getText()).toMatch('end with alphanumeric character');
       expect(nadFormView.createBtn.isEnabled()).toBeFalsy();
     });
 

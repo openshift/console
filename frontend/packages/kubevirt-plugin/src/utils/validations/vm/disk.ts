@@ -19,15 +19,15 @@ import { VolumeType } from '../../../constants';
 const validateDiskName = (name: string, usedDiskNames: Set<string>): ValidationObject => {
   let validation = validateDNS1123SubdomainValue(name, {
     // t('kubevirt-plugin~Disk name cannot be empty')
-    // t('kubevirt-plugin~Disk name name can contain only alphanumberic characters')
-    // t('kubevirt-plugin~Disk name must start/end with alphanumberic character')
+    // t('kubevirt-plugin~Disk name name can contain only alphanumeric characters')
+    // t('kubevirt-plugin~Disk name must start/end with alphanumeric character')
     // t('kubevirt-plugin~Disk name cannot contain uppercase characters')
     // t('kubevirt-plugin~Disk name is too long')
     // t('kubevirt-plugin~Disk name is too short')
     emptyMsg: 'kubevirt-plugin~Disk name cannot be empty',
-    errorMsg: 'kubevirt-plugin~Disk name name can contain only alphanumberic characters',
+    errorMsg: 'kubevirt-plugin~Disk name name can contain only alphanumeric characters',
     startEndAlphanumbericMsg:
-      'kubevirt-plugin~Disk name must start/end with alphanumberic character',
+      'kubevirt-plugin~Disk name must start/end with alphanumeric character',
     uppercaseMsg: 'kubevirt-plugin~Disk name cannot contain uppercase characters',
     longMsg: 'kubevirt-plugin~Disk name is too long',
     shortMsg: 'kubevirt-plugin~Disk name is too short',

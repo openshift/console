@@ -17,8 +17,10 @@
   "Node": "ノード",
   "Tolerations": "容認",
   "{{count}} toleration_0": "{{count}} 件の容認",
+  "{{count}} toleration_1": "{{count}} 件の容認",
   "Annotations": "アノテーション",
   "{{count}} annotation_0": "{{count}} アノテーション",
+  "{{count}} annotation_1": "{{count}} アノテーション",
   "Created at": "作成:",
   "Owner": "オーナー",
   "Current count": "現在のカウント",
@@ -53,5 +55,7 @@
   "Create snapshot": "スナップショットの作成",
   "Clone PVC": "PVC のクローン",
   "Restore as new PVC": "新規 PVC として復元",
-  "Managed by": "管理: "
+  "No labels": "ラベルなし",
+  "Managed by": "管理: ",
+  "No owner": "オーナーなし"
 }
