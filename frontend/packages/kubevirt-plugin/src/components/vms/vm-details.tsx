@@ -10,7 +10,7 @@ import {
   asAccessReview,
 } from '@console/internal/components/utils';
 import { getNamespace } from '@console/shared';
-import { K8sKind, PodKind, TemplateKind } from '@console/internal/module/k8s';
+import { K8sKind, PodKind } from '@console/internal/module/k8s';
 import { ServiceModel } from '@console/internal/models';
 import { ServicesList } from '@console/internal/components/service';
 import { VMKind, VMIKind } from '../../types';
@@ -36,7 +36,6 @@ export const VMDetailsFirehose: React.FC<VMTabProps> = ({
   vmImports,
   pods,
   migrations,
-  templates,
   pvcs,
   dataVolumes,
   customData: { kindObj },
@@ -72,7 +71,6 @@ export const VMDetailsFirehose: React.FC<VMTabProps> = ({
           vm={vm}
           vmi={vmi}
           pods={pods}
-          templates={templates}
           vmStatusBundle={vmStatusBundle}
         />
       </Firehose>
@@ -83,7 +81,7 @@ export const VMDetailsFirehose: React.FC<VMTabProps> = ({
 export const VMDetails: React.FC<VMDetailsProps> = (props) => {
   const { t } = useTranslation();
 
-  const { kindObj, vm, vmi, pods, vmStatusBundle, templates, ...restProps } = props;
+  const { kindObj, vm, vmi, pods, vmStatusBundle, ...restProps } = props;
 
   const vmiLike = kindObj === VirtualMachineModel ? vm : vmi;
   const vmServicesData = getServicesForVmi(getLoadedData(props.services, []), vmi);
@@ -117,13 +115,7 @@ export const VMDetails: React.FC<VMDetailsProps> = (props) => {
         <SectionHeading text={t('kubevirt-plugin~{{name}} Details', { name: kindObj.label })} />
         <div className="row">
           <div className="col-sm-6">
-            <VMResourceSummary
-              kindObj={kindObj}
-              canUpdateVM={canUpdate}
-              vm={vm}
-              vmi={vmi}
-              templates={templates}
-            />
+            <VMResourceSummary kindObj={kindObj} canUpdateVM={canUpdate} vm={vm} vmi={vmi} />
           </div>
           <div className="col-sm-6">
             <VMDetailsList
@@ -164,6 +156,5 @@ type VMDetailsProps = {
   vmi?: VMIKind;
   pods?: PodKind[];
   services?: FirehoseResult;
-  templates?: TemplateKind[];
   vmStatusBundle?: VMStatusBundle;
 };

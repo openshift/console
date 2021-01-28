@@ -1,12 +1,11 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ResourceSummary, NodeLink, ResourceLink } from '@console/internal/components/utils';
-import { K8sKind, PodKind, TemplateKind } from '@console/internal/module/k8s';
-import { getName, getNamespace, getNodeName } from '@console/shared';
+import { K8sKind, PodKind } from '@console/internal/module/k8s';
+import { getLabel, getName, getNamespace, getNodeName } from '@console/shared';
 import { PodModel } from '@console/internal/models';
 import { Selector } from '@console/internal/components/utils/selector';
 import { VMKind, VMIKind } from '../../types';
-import { VMTemplateLink } from '../vm-templates/vm-template-link';
 import { getBasicID, prefixedID } from '../../utils';
 import { descriptionModal, vmFlavorModal } from '../modals';
 import { BootOrderModal } from '../modals/boot-order-modal/boot-order-modal';
@@ -27,67 +26,24 @@ import { findVMIPod } from '../../selectors/pod/selectors';
 import { isVMIPaused, getVMINodeName } from '../../selectors/vmi';
 import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
 import { asVMILikeWrapper } from '../../k8s/wrapper/utils/convert';
-import { getVMTemplate } from '../../selectors/vm-template/selectors';
 import { useGuestAgentInfo } from '../../hooks/use-guest-agent-info';
 import { GuestAgentInfoWrapper } from '../../k8s/wrapper/vm/guest-agent-info/guest-agent-info-wrapper';
 import { VMStatusBundle } from '../../statuses/vm/types';
 import { isGuestAgentInstalled } from '../dashboards-page/vm-dashboard/vm-alerts';
 import { getGuestAgentFieldNotAvailMsg } from '../../utils/guest-agent-strings';
-import { Button } from '@patternfly/react-core';
 import { isFlavorChanged, isBootOrderChanged } from '../../selectors/vm-like/next-run-changes';
 import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
 import { VMIWrapper } from '../../k8s/wrapper/vm/vmi-wrapper';
 import { isVMRunningOrExpectedRunning } from '../../selectors/vm/selectors';
 import { getFlavorData } from '../../selectors/vm/flavor-data';
-
-export const VMDetailsItem: React.FC<VMDetailsItemProps> = ({
-  title,
-  canEdit = false,
-  editButtonId,
-  onEditClick,
-  idValue,
-  isNotAvail = false,
-  isNotAvailMessage,
-  valueClassName,
-  arePendingChanges,
-  children,
-}) => {
-  const { t } = useTranslation();
-  return (
-    <>
-      <dt>
-        <span>
-          {title} <EditButton id={editButtonId} canEdit={canEdit} onClick={onEditClick} />
-          {arePendingChanges && (
-            <Button
-              className="co-modal-btn-link--inline"
-              variant="link"
-              isInline
-              onClick={onEditClick}
-            >
-              {t('kubevirt-plugin~View Pending Changes')}
-            </Button>
-          )}
-        </span>
-      </dt>
-      <dd id={idValue} className={valueClassName}>
-        {isNotAvail ? (
-          <span className="text-secondary">
-            {isNotAvailMessage || t('kubevirt-plugin~Not available')}
-          </span>
-        ) : (
-          children
-        )}
-      </dd>
-    </>
-  );
-};
+import { LABEL_USED_TEMPLATE_NAME, LABEL_USED_TEMPLATE_NAMESPACE } from '../../constants';
+import VMDetailsItemTemplate from './VMDetailsItemTemplate';
+import VMDetailsItem from './VMDetailsItem';
 
 export const VMResourceSummary: React.FC<VMResourceSummaryProps> = ({
   vm,
   vmi,
   canUpdateVM,
-  templates,
   kindObj,
 }) => {
   const { t } = useTranslation();
@@ -95,7 +51,9 @@ export const VMResourceSummary: React.FC<VMResourceSummaryProps> = ({
   const isVM = kindObj === VirtualMachineModel;
   const vmiLike = isVM ? vm : vmi;
 
-  const template = getVMTemplate(vm, templates);
+  const templateName = getLabel(vm, LABEL_USED_TEMPLATE_NAME);
+  const templateNamespace = getLabel(vm, LABEL_USED_TEMPLATE_NAMESPACE);
+
   const id = getBasicID(vmiLike);
   const description = getDescription(vmiLike);
   const os = getOperatingSystemName(vmiLike) || getOperatingSystem(vmiLike);
@@ -130,17 +88,7 @@ export const VMResourceSummary: React.FC<VMResourceSummaryProps> = ({
         {operatingSystem || os}
       </VMDetailsItem>
 
-      {isVM && (
-        <VMDetailsItem
-          title={t('kubevirt-plugin~Template')}
-          idValue={prefixedID(id, 'template')}
-          isNotAvail={!template}
-        >
-          {template && (
-            <VMTemplateLink name={getName(template)} namespace={getNamespace(template)} />
-          )}
-        </VMDetailsItem>
-      )}
+      {isVM && <VMDetailsItemTemplate name={templateName} namespace={templateNamespace} />}
     </ResourceSummary>
   );
 };
@@ -397,24 +345,10 @@ export const VMSchedulingList: React.FC<VMSchedulingListProps> = ({
   );
 };
 
-type VMDetailsItemProps = {
-  title: string;
-  canEdit?: boolean;
-  editButtonId?: string;
-  onEditClick?: () => void;
-  idValue?: string;
-  isNotAvail?: boolean;
-  isNotAvailMessage?: string;
-  valueClassName?: string;
-  arePendingChanges?: boolean;
-  children: React.ReactNode;
-};
-
 type VMResourceSummaryProps = {
   kindObj: K8sKind;
   vm?: VMKind;
   vmi?: VMIKind;
-  templates: TemplateKind[];
   canUpdateVM: boolean;
 };
 

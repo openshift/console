@@ -16,7 +16,7 @@ import { getWorkloadProfile, isDedicatedCPUPlacement } from '../../selectors/vm/
 import { getTemplateOperatingSystems } from '../../selectors/vm-template/advanced';
 import { vmFlavorModal } from '../modals';
 import { EditButton } from '../edit-button';
-import { VMDetailsItem } from '../vms/vm-resource';
+import VMDetailsItem from '../vms/VMDetailsItem';
 import { asVM, getDevices, getVMLikeModel } from '../../selectors/vm';
 import { BootOrderSummary } from '../boot-order';
 import { VMTemplateLink } from './vm-template-link';
