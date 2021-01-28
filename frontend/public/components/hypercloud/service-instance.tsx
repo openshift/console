@@ -28,9 +28,19 @@ const ServiceInstanceDetails: React.FC<ServiceInstanceDetailsProps> = ({ obj: se
               <dt>Status</dt>
               <dd><Status status={serviceInstance.status.lastConditionState} /></dd>
               <dt>Service Class</dt>
-              <dd>{serviceInstance.spec.clusterServiceClassExternalName} {serviceInstance.spec.serviceClassExternalName}</dd>
+              <dd>
+                {
+                  serviceInstance.spec.clusterServiceClassExternalName ?
+                    <ResourceLink kind="ClusterServiceClass" title={serviceInstance.spec.clusterServiceClassRef?.name} name={serviceInstance.spec.clusterServiceClassRef?.name} displayName={serviceInstance.spec.clusterServiceClassExternalName} /> : <ResourceLink kind="ServiceClass" title={serviceInstance.spec.serviceClassRef?.name} name={serviceInstance.spec.serviceClassRef?.name} displayName={serviceInstance.spec.serviceClassExternalName} />
+                }
+              </dd>
               <dt>Service Plan</dt>
-              <dd>{serviceInstance.spec.clusterServicePlanExternalName} {serviceInstance.spec.servicePlanExternalName}</dd>
+              <dd>
+                {
+                  serviceInstance.spec.clusterServicePlanExternalName ?
+                    <ResourceLink kind="ClusterServicePlan" title={serviceInstance.spec.clusterServicePlanRef?.name} name={serviceInstance.spec.clusterServicePlanRef?.name} displayName={serviceInstance.spec.clusterServicePlanExternalName} /> : <ResourceLink kind="ServicePlan" title={serviceInstance.spec.servicePlanRef?.name} name={serviceInstance.spec.servicePlanRef?.name} displayName={serviceInstance.spec.servicePlanExternalName} />
+                }
+              </dd>
             </dl>
           </div>
         </div>
@@ -69,7 +79,10 @@ const ServiceInstanceTableRow = ({ obj, index, key, style }) => {
         <Status status={obj.status.lastConditionState} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>
-        {obj.spec.clusterServicePlanExternalName} {obj.spec.servicePlanExternalName}
+        {
+          obj.spec.clusterServicePlanExternalName ?
+            <ResourceLink kind="ClusterServicePlan" title={obj.spec.clusterServicePlanRef?.name} name={obj.spec.clusterServicePlanRef?.name} displayName={obj.spec.clusterServicePlanExternalName} /> : <ResourceLink kind="ServicePlan" title={obj.spec.servicePlanRef?.name} name={obj.spec.servicePlanRef?.name} displayName={obj.spec.servicePlanExternalName} />
+        }
       </TableData>
       <TableData className={tableColumnClasses[4]}>
         <Timestamp timestamp={obj.metadata.creationTimestamp} />
