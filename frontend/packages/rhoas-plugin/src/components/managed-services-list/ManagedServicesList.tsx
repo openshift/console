@@ -10,6 +10,9 @@ import { SecretModel } from '@console/internal/models';
 import { useActiveNamespace } from '@console/shared';
 import { LockIcon } from '@patternfly/react-icons';
 import './ManagedServicesList.css';
+import NamespacedPage, {
+  NamespacedPageVariants,
+} from '@console/dev-console/src/components/NamespacedPage';
 
 const ManagedServicesList = () => {
 
@@ -50,28 +53,29 @@ const ManagedServicesList = () => {
 
   return (
     <>
-      <PageLayout title={"Select Managed Service"} hint={defaultHintBlockText} isDark>
-        <Gallery className="co-catalog-tile-view" hasGutter>
-          <GalleryItem>
-            <CatalogTile
-              data-test-id={"kafka-id"}
-              className="co-kafka-tile"
-              onClick={() => checkTokenSecretStatus()}
-              title="Red Hat OpenShift Application Services"
-              iconImg={temporaryIcon}
-              iconClass={""}
-              icon={""}
-              description={"RHOAS can include Managed Kafka, Service Registry, custom resources for Managed Kafka, and Open Data Hub"}
-              footer={tokenStatusFooter()}
-            />
-          </GalleryItem>
-        </Gallery>
-        <AccessManagedServices
-          isModalOpen={isModalOpen}
-          setIsModalOpen={setIsModalOpen}
-        />
-      </PageLayout>
-
+      <NamespacedPage variant={NamespacedPageVariants.light} hideApplications>
+        <PageLayout title={"Select Managed Service"} hint={defaultHintBlockText} isDark>
+          <Gallery className="co-catalog-tile-view" hasGutter>
+            <GalleryItem>
+              <CatalogTile
+                data-test-id={"kafka-id"}
+                className="co-kafka-tile"
+                onClick={() => checkTokenSecretStatus()}
+                title="Red Hat OpenShift Application Services"
+                iconImg={temporaryIcon}
+                iconClass={""}
+                icon={""}
+                description={"RHOAS can include Managed Kafka, Service Registry, custom resources for Managed Kafka, and Open Data Hub"}
+                footer={tokenStatusFooter()}
+              />
+            </GalleryItem>
+          </Gallery>
+          <AccessManagedServices
+            isModalOpen={isModalOpen}
+            setIsModalOpen={setIsModalOpen}
+          />
+        </PageLayout>
+      </NamespacedPage>
     </>
   );
 };

@@ -5,6 +5,7 @@ import {
   Table,
   TableHeader,
   TableBody,
+  RowSelectVariant
 } from '@patternfly/react-table';
 
 type FormattedKafkas = {
@@ -12,16 +13,14 @@ type FormattedKafkas = {
   selected: boolean;
 };
 
-const StreamsInstanceTable: any = ({ kafkaArray, selectedKafkas, setSelectedKafkas }) => {
+const StreamsInstanceTable: any = ({ kafkaArray, selectedKafkas, setSelectedKafkas, currentKafkaConnections }) => {
 
   const [formattedKafkas, setFormattedKafkas] = React.useState<FormattedKafkas[]>([]);
 
   const formatTableRowData = () => {
     const tableRow: (IRowData | string[])[] | undefined = [];
-
     kafkaArray.forEach((row: IRowData) => {
       const { name, bootstrapServerHost, cloudProvider, region, owner } = row;
-
       tableRow.push({
         cells: [
           { title: name },
@@ -32,13 +31,22 @@ const StreamsInstanceTable: any = ({ kafkaArray, selectedKafkas, setSelectedKafk
       });
     });
 
-    return tableRow;
+    // let rows;
+    // rows = [...formattedKafkas];
+
+    kafkaArray.forEach((kafka, index) => {
+      if (currentKafkaConnections.includes(kafka.id)) {
+        tableRow[index].disableSelection = true;
+      }
+    })
+    setFormattedKafkas(tableRow);
   };
+
 
   React.useEffect(() => {
     // FIXME type issues
-    setFormattedKafkas(formatTableRowData() as any);
-  }, [kafkaArray]);
+    formatTableRowData();
+  }, [kafkaArray, currentKafkaConnections]);
 
   const tableColumns = [
     { title: 'Cluster Name', transforms: [sortable] },
@@ -83,6 +91,7 @@ const StreamsInstanceTable: any = ({ kafkaArray, selectedKafkas, setSelectedKafk
         cells={tableColumns}
         rows={formattedKafkas}
         onSelect={onSelectTableRow}
+        selectVariant={RowSelectVariant.radio}
       >
         <TableHeader />
         <TableBody />
