@@ -172,6 +172,16 @@ export const waitForFilterCount = (status: Status, targetCount: number) => {
   };
 };
 
+export const waitForTextStartsWith = (elem: any, text: string) => {
+  return async () => {
+    if (!(await elem.isPresent())) {
+      return false;
+    }
+    const content = await elem.getText();
+    return content.startsWith(text);
+  };
+};
+
 export const waitFor = async (element, text, count = 1) => {
   let sequenceNumber = 0;
   while (sequenceNumber !== count) {
