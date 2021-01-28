@@ -31,6 +31,7 @@ export const validatePluginManifestSchema = async (
 
 export const fetchPluginManifest = async (baseURL: string) => {
   const url = resolveURL(baseURL, pluginManifestFile, { trailingSlashInBaseURL: true });
+  // eslint-disable-next-line no-console
   console.info(`Loading plugin manifest from ${url}`);
 
   const response: Response = await coFetch(url, { method: 'GET' });

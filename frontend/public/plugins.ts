@@ -33,15 +33,18 @@ const loadPluginFromURL = async (baseURL: string) => {
 };
 
 // Load all dynamic plugins which are currently enabled on the cluster
-Promise.all(
-  window.SERVER_FLAGS.consolePlugins.map((pluginName) =>
-    loadPluginFromURL(`${window.SERVER_FLAGS.basePath}api/plugins/${pluginName}`).then(
-      (pluginID) => {
-        pluginStore.setDynamicPluginEnabled(pluginID, true);
-      },
-    ),
-  ),
-);
+window.SERVER_FLAGS.consolePlugins.forEach((pluginName) => {
+  const url = `${window.SERVER_FLAGS.basePath}api/plugins/${pluginName}`;
+
+  loadPluginFromURL(url)
+    .then((pluginID) => {
+      pluginStore.setDynamicPluginEnabled(pluginID, true);
+    })
+    .catch((error) => {
+      // eslint-disable-next-line no-console
+      console.error(`Error while loading plugin from ${url}`, error);
+    });
+});
 
 if (process.env.NODE_ENV !== 'production') {
   // Expose Console plugin store for debugging
