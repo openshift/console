@@ -15,10 +15,8 @@ import ApiServerSection from './ApiServerSection';
 import ContainerSourceSection from './ContainerSourceSection';
 import PingSourceSection from './PingSourceSection';
 import KafkaSourceSection from './KafkaSourceSection';
-import YAMLEditorSection from './YAMLEditorSection';
 import { EventSources } from '../import-types';
 import SinkSection from './SinkSection';
-import { isKnownEventSource } from '../../../utils/create-eventsources-utils';
 
 interface EventSourceSectionProps {
   namespace: string;
@@ -110,12 +108,12 @@ const EventSourceSection: React.FC<EventSourceSectionProps> = ({
       );
       break;
     default:
-      EventSource = <YAMLEditorSection title={sectionTitle} />;
+      EventSource = null;
   }
   return (
     <>
       {EventSource}
-      {isKnownEventSource(values.formData.type) && defaultFormSection}
+      {defaultFormSection}
     </>
   );
 };
