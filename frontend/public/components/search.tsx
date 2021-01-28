@@ -24,7 +24,12 @@ import { ResourceListDropdown } from './resource-dropdown';
 import { getResourceListPages } from './resource-pages';
 import { withStartGuide } from './start-guide';
 import { split, selectorFromString } from '../module/k8s/selector';
-import { kindForReference, modelFor, referenceForModel } from '../module/k8s';
+import {
+  kindForReference,
+  modelFor,
+  referenceForModel,
+  K8sResourceKindReference,
+} from '../module/k8s';
 import {
   LoadingBox,
   MsgBox,
@@ -183,15 +188,24 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
     if (!model) {
       return '';
     }
-    const { labelPlural, apiVersion, apiGroup } = model;
+    const { labelPlural, labelPluralKey, apiVersion, apiGroup } = model;
     return (
       <span className="co-search-group__accordion-label">
-        {labelPlural}{' '}
+        {labelPluralKey ? t(labelPluralKey) : labelPlural}{' '}
         <span className="text-muted show small">
           {apiGroup || 'core'}/{apiVersion}
         </span>
       </span>
     );
+  };
+
+  const getChipText = (reference: K8sResourceKindReference) => {
+    const model = modelFor(reference);
+    // API discovery happens asynchronously. Avoid runtime errors if the model hasn't loaded.
+    if (!model) {
+      return kindForReference(reference);
+    }
+    return model.labelKey ? t(model.labelKey) : model.label;
   };
 
   return (
@@ -204,6 +218,7 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
           id="search-toolbar"
           clearAllFilters={clearAll}
           collapseListedFiltersBreakpoint="xl"
+          clearFiltersButtonText={t('public~Clear all filters')}
         >
           <ToolbarContent>
             <ToolbarItem>
@@ -214,7 +229,7 @@ const SearchPage_: React.FC<SearchProps> = (props) => {
                   node: (
                     <>
                       <ResourceIcon kind={resourceKind} />
-                      {kindForReference(resourceKind)}
+                      {getChipText(resourceKind)}
                     </>
                   ),
                 }))}

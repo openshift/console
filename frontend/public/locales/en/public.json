@@ -423,6 +423,8 @@
   "{{selectedCount}} of {{itemCount}}": "{{selectedCount}} of {{itemCount}}",
   "Item": "Item",
   "Item_plural": "Items",
+  "Label": "Label",
+  "Clear all filters": "Clear all filters",
   "Add Secret to workload": "Add Secret to workload",
   "Edit Secret": "Edit Secret",
   "Secret details": "Secret details",

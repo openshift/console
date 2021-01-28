@@ -1,10 +1,13 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Dropdown, DropdownToggle, DropdownItem } from '@patternfly/react-core';
 import { CaretDownIcon, FilterIcon } from '@patternfly/react-icons';
 import { TextFilter } from './factory';
 
 export enum searchFilterValues {
+  // t('public~Label')
   Label = 'Label',
+  // t('public~Name')
   Name = 'Name',
 }
 
@@ -14,6 +17,8 @@ export const SearchFilterDropdown: React.SFC<SearchFilterDropdownProps> = (props
 
   const { onChange, nameFilterInput, labelFilterInput } = props;
 
+  const { t } = useTranslation();
+
   const onToggle = (open: boolean) => setOpen(open);
   const onSelect = (event: React.SyntheticEvent) => {
     setSelected((event.target as HTMLInputElement).name as searchFilterValues);
@@ -21,10 +26,10 @@ export const SearchFilterDropdown: React.SFC<SearchFilterDropdownProps> = (props
   };
   const dropdownItems = [
     <DropdownItem key="label-action" name={searchFilterValues.Label} component="button">
-      {searchFilterValues.Label}
+      {t(searchFilterValues.Label)}
     </DropdownItem>,
     <DropdownItem key="name-action" name={searchFilterValues.Name} component="button">
-      {searchFilterValues.Name}
+      {t(searchFilterValues.Name)}
     </DropdownItem>,
   ];
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -45,7 +50,7 @@ export const SearchFilterDropdown: React.SFC<SearchFilterDropdownProps> = (props
         toggle={
           <DropdownToggle id="toggle-id" onToggle={onToggle} toggleIndicator={CaretDownIcon}>
             <>
-              <FilterIcon className="span--icon__right-margin" /> {selected}
+              <FilterIcon className="span--icon__right-margin" /> {t(selected)}
             </>
           </DropdownToggle>
         }
