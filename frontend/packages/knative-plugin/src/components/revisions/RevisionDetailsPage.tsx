@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { DetailsPage } from '@console/internal/components/factory';
 import { navFactory } from '@console/internal/components/utils';
 import { DetailsForKind } from '@console/internal/components/default-resource';
@@ -10,8 +9,7 @@ import { serverlessTab } from '../../utils/serverless-tab-utils';
 
 const RevisionDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (props) => {
   const { kindObj, match, kind } = props;
-  const { t } = useTranslation();
-  const pages = [navFactory.details(DetailsForKind(kind, t)), navFactory.editYaml()];
+  const pages = [navFactory.details(DetailsForKind(kind)), navFactory.editYaml()];
   const breadcrumbs = useTabbedTableBreadcrumbsFor(
     kindObj,
     match,
