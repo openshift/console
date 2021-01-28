@@ -27,17 +27,29 @@ const ClusterServiceBrokerTableHeader = () => {
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Relist Behavior',
-      sortField: 'spec.relistBehavior',
+      title: 'Provider',
+      sortFunc: 'spec',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'Last Retrieved',
-      sortField: 'status.lastCatalogRetrievalTime',
+      title: 'Created',
+      sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
     },
+    // {
+    //   title: 'Relist Behavior',
+    //   sortField: 'spec.relistBehavior',
+    //   transforms: [sortable],
+    //   props: { className: tableColumnClasses[2] },
+    // },
+    // {
+    //   title: 'Last Retrieved',
+    //   sortField: 'status.lastCatalogRetrievalTime',
+    //   transforms: [sortable],
+    //   props: { className: tableColumnClasses[3] },
+    // },
     {
       title: '',
       props: { className: tableColumnClasses[4] },

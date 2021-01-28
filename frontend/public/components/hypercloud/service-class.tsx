@@ -3,6 +3,7 @@ import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { ServiceClassModel } from '../../models';
+import { ServicePlansPage } from './service-plan';
 import { K8sResourceKind } from '../../module/k8s';
 import { DetailsPage, ListPage, Table, TableData, TableRow } from '../factory';
 import { navFactory, SectionHeading, ResourceSummary, ResourceLink, Timestamp } from '../utils';
@@ -22,10 +23,10 @@ const ServiceClassDetails: React.FC<ServiceClassDetailsProps> = ({ obj: serviceC
             <dl className="co-m-pane__details">
               <dt>BINDABLE</dt>
               <dd>{serviceClass.spec.bindable ? 'True' : 'False'}</dd>
-              <dt>EXTERNAL NAME</dt>
-              <dd>{serviceClass.spec.externalName}</dd>
               <dt> SERVICE BROKER</dt>
               <dd>{serviceClass.spec.serviceBrokerName}</dd>
+              <dt>ID</dt>
+              <dd>{serviceClass.spec.externalID}</dd>
             </dl>
           </div>
         </div>
@@ -38,16 +39,15 @@ type ServiceClassDetailsProps = {
   obj: K8sResourceKind;
 };
 
-const { details } = navFactory;
-const ServiceClassesDetailsPage: React.FC<ServiceClassesDetailsPageProps> = props => <DetailsPage {...props} kind={kind} pages={[details(ServiceClassDetails)]} />;
+const { details, editYaml } = navFactory;
+const ServiceClassesDetailsPage: React.FC<ServiceClassesDetailsPageProps> = props => <DetailsPage {...props} kind={kind} pages={[details(ServiceClassDetails), editYaml(), { href: 'serviceplans', name: 'Service Plan', component: ServicePlansPage }]} />;
 ServiceClassesDetailsPage.displayName = 'ServiceClassesDetailsPage';
 
 const tableColumnClasses = [
   '', // NAME
   '', //NAMESPACE
   classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'), //BINDABLE
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg'), //EXTERNAL NAME
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'), // SERVICE BROKER
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg'), // SERVICEBROKER
   classNames('pf-m-hidden', 'pf-m-visible-on-xl'), // CREATED
 ];
 
@@ -61,11 +61,10 @@ const ServiceClassTableRow = ({ obj, index, key, style }) => {
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} title={obj.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>{obj.spec.bindable ? 'True' : 'False'}</TableData>
-      <TableData className={tableColumnClasses[3]}>{obj.spec.externalName}</TableData>
-      <TableData className={tableColumnClasses[4]}>
+      <TableData className={tableColumnClasses[3]}>
         <ResourceLink kind="ServiceBroker" name={obj.spec.serviceBrokerName} namespace={obj.metadata.namespace} title={obj.spec.serviceBrokerName} />
       </TableData>
-      <TableData className={tableColumnClasses[5]}>
+      <TableData className={tableColumnClasses[4]}>
         <Timestamp timestamp={obj.metadata.creationTimestamp} />
       </TableData>
     </TableRow>
@@ -91,12 +90,6 @@ const ServiceClassTableHeader = () => {
       sortField: 'spec.bindable',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: 'External Name',
-      sortField: 'spec.externalName',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
     },
     {
       title: 'Service Broker',
