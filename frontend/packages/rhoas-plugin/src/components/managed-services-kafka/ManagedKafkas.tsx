@@ -22,7 +22,8 @@ const ManagedKafkas = () => {
   const currentCRName = 'kafkarequest' + currentNamespace + new Date().getTime();
   const currentMSAName = 'managedservice' + currentNamespace + new Date().getTime();
 
-  const kafkaRequestData: ManagedKafkaModel[] = KafkaMocks;
+  // const kafkaRequestData: ManagedKafkaModel[] = KafkaMocks;
+  const [kafkaRequestData, setKafkaRequestData] = React.useState(KafkaMocks);
   const [selectedKafkas, setSelectedKafkas] = React.useState([]);
   const [serviceAccountExists, setServiceAccountExists] = React.useState(false);
   const [currentKafkaConnections, setCurrentKafkaConnections] = React.useState([]);
@@ -50,7 +51,14 @@ const ManagedKafkas = () => {
       })
       setCurrentKafkaConnections(localArray);
     }
+    // filterCurrentKafkasForAlreadyConnected(localArray);
   }
+
+  // const filterCurrentKafkasForAlreadyConnected = currentKafkaConnections => {
+  //   console.log('what is kafkaRequestData' + JSON.stringify(kafkaRequestData));
+  //   const newKafkaData = kafkaRequestData && kafkaRequestData.filter(kafka => !currentKafkaConnections.includes(kafka.id));
+  //   setKafkaRequestData(newKafkaData);
+  // }
 
   // TODO Create actions folder
   const createManagedKafkaRequest = async () => {
@@ -64,10 +72,10 @@ const ManagedKafkas = () => {
       spec: {
         accessTokenSecretName: AccessTokenSecretName,
       },
-      status: {
-        lastUpdate: new Date().getTime(),
-        userKafkas: kafkaRequestData
-      }
+      // status: {
+      //   lastUpdate: new Date().getTime(),
+      //   userKafkas: kafkaRequestData
+      // }
     };
 
     // FIXME Progress bar/Handling errors here?
@@ -89,11 +97,11 @@ const ManagedKafkas = () => {
         description: "some service account",
         serviceAccountSecretname: ServiceAccountSecretName
       },
-      status: {
-        message: "created",
-        updated: new Date().getTime(),
-        serviceAccountSecretName: "service-account-123-credentials"
-      }
+      // status: {
+      //   message: "created",
+      //   updated: new Date().getTime(),
+      //   serviceAccountSecretName: "service-account-123-credentials"
+      // }
     }
 
     await k8sCreate(ManagedServiceAccountRequest, serviceAcct);
@@ -113,14 +121,14 @@ const ManagedKafkas = () => {
           serviceAccountSecretName: ServiceAccountSecretName
         }
       },
-      status: {
-        message: "created",
-        updated: new Date().getTime(),
-        boostrapServer: {
-          host: "kafka--ltosqyk-wsmt-t-elukpkft-bg.apps.ms-bv8dm6nbd3jo.cx74.s1.devshift.org:443"
-        },
-        serviceAccountSecretName: "service-account-123-credentials"
-      }
+      // status: {
+      //   message: "created",
+      //   updated: new Date().getTime(),
+      //   boostrapServer: {
+      //     host: "kafka--ltosqyk-wsmt-t-elukpkft-bg.apps.ms-bv8dm6nbd3jo.cx74.s1.devshift.org:443"
+      //   },
+      //   serviceAccountSecretName: "service-account-123-credentials"
+      // }
     }
 
     await k8sCreate(ManagedKafkaConnectionModel, kafkaConnection);
@@ -138,21 +146,22 @@ const ManagedKafkas = () => {
       if (currentKafkaConnections) {
         if (!currentKafkaConnections.includes(kafkaId)) {
           createManagedKafkaConnection(kafkaId, kafkaName);
+          history.push(`/topology/ns/${currentNamespace}`);
         }
       }
     }
-    history.push(`/topology/ns/${currentNamespace}`);
   };
 
   return (
     <>
       <NamespacedPage variant={NamespacedPageVariants.light} hideApplications>
-        {kafkaRequestData.length > 0 ? (
+        {kafkaRequestData && kafkaRequestData.length > 0 ? (
           <>
             <StreamsInstancePage
-              kafkaArray={kafkaRequestData}
+              kafkaArray={kafkaRequestData && kafkaRequestData}
               selectedKafkas={selectedKafkas}
               setSelectedKafkas={setSelectedKafkas}
+              currentKafkaConnections={currentKafkaConnections}
             />
             <div className="co-m-pane__body" style={{ borderTop: 0, paddingTop: 0, paddingBottom: 0 }}>
               <FormFooter

@@ -1,12 +1,7 @@
 import * as React from 'react';
 import { SecretModel } from '@console/internal/models';
-import { Helmet } from 'react-helmet';
-import { PageBody } from '@console/shared';
-import { PageHeading } from '@console/internal/components/utils';
-// To be clarified if we watch for resource on second page
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { k8sCreate } from '@console/internal/module/k8s/resource';
-import { Button, FormGroup, TextInputTypes, Modal, ModalVariant, TextInput } from '@patternfly/react-core';
+import { Button, FormGroup, Modal, ModalVariant, TextInput } from '@patternfly/react-core';
 import { useActiveNamespace } from '@console/shared';
 import { AccessTokenSecretName } from '../../const';
 import { history } from '@console/internal/components/utils';
@@ -66,7 +61,7 @@ const AccessManagedServices: any = ({isModalOpen, setIsModalOpen}) => {
           </Button>
         ]}
       >
-        To access this application service, input the API token which can be located at 
+        To access this application service, input the API token which can be located at
         <a href="https://cloud.redhat.com/openshift/token" target="_blank"> https://cloud.redhat.com/openshift/token</a>
         <br/>
         <br/>
@@ -88,7 +83,7 @@ const AccessManagedServices: any = ({isModalOpen, setIsModalOpen}) => {
           />
         </FormGroup>
         <br/>
-        Can't create an access token? Contact your cluster administrator
+        Can't create an access token? Contact your administrator
       </Modal>
     </>
   )

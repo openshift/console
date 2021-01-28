@@ -6,7 +6,7 @@ import StreamsInstanceTable from './StreamsInstanceTable';
 import { PageHeading } from '@console/internal/components/utils';
 
 // FIXME full typed experience React.FC<{ kafkaArray: ManagedKafkaModel[]}>
-const StreamsInstancePage: any = ({ kafkaArray, selectedKafkas, setSelectedKafkas }) => {
+const StreamsInstancePage: any = ({ kafkaArray, selectedKafkas, setSelectedKafkas, currentKafkaConnections }) => {
   return (
     <>
       <Helmet>
@@ -24,6 +24,7 @@ const StreamsInstancePage: any = ({ kafkaArray, selectedKafkas, setSelectedKafka
           kafkaArray={kafkaArray}
           selectedKafkas={selectedKafkas}
           setSelectedKafkas={setSelectedKafkas}
+          currentKafkaConnections={currentKafkaConnections}
         />
       </PageBody>
     </>
