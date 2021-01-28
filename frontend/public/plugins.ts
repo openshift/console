@@ -6,6 +6,7 @@ import { ActivePlugin } from '@console/plugin-sdk/src/typings';
 import { initSubscriptionService } from '@console/plugin-sdk/src/api/subscribeToExtensions';
 import { fetchPluginManifest } from '@console/dynamic-plugin-sdk/src/runtime/plugin-manifest';
 import {
+  getPluginID,
   loadDynamicPlugin,
   registerPluginEntryCallback,
 } from '@console/dynamic-plugin-sdk/src/runtime/plugin-loader';
@@ -28,12 +29,15 @@ export const initConsolePlugins = _.once((reduxStore: Store<RootState>) => {
 const loadPluginFromURL = async (baseURL: string) => {
   const manifest = await fetchPluginManifest(baseURL);
   loadDynamicPlugin(baseURL, manifest);
+  return getPluginID(manifest);
 };
 
 // Load all dynamic plugins which are currently enabled on the cluster
 Promise.all(
   window.SERVER_FLAGS.consolePlugins.map((pluginName) =>
-    loadPluginFromURL(`/api/plugins/${pluginName}`),
+    loadPluginFromURL(`/api/plugins/${pluginName}`).then((pluginID) => {
+      pluginStore.setDynamicPluginEnabled(pluginID, true);
+    }),
   ),
 );
 
