@@ -11,7 +11,7 @@ const { common } = Kebab.factory;
 
 const kind = ServiceBindingModel.kind;
 
-export const serviceBindingMenuActions = [...Kebab.getExtensionsActionsForKind(ServiceBindingModel), ...common];
+export const serviceBindingMenuActions = [...Kebab.getExtensionsActionsForKind(ServiceBindingModel), common[0], common[1], common[3]];
 
 const ServiceBindingDetails: React.FC<ServiceBindingDetailsProps> = ({ obj: serviceBinding }) => {
   return (
@@ -20,14 +20,18 @@ const ServiceBindingDetails: React.FC<ServiceBindingDetailsProps> = ({ obj: serv
         <SectionHeading text="Service Binding Details" />
         <div className="row">
           <div className="col-md-6">
-            <ResourceSummary resource={serviceBinding} showPodSelector showNodeSelector></ResourceSummary>
+            <ResourceSummary resource={serviceBinding} showPodSelector showNodeSelector showOwner={false}></ResourceSummary>
           </div>
           <div className="col-md-6">
             <dl className="co-m-pane__details">
               <dt> SERVICE INSTANCE</dt>
-              <dd>{serviceBinding.spec.instanceRef.name}</dd>
+              <dd>
+                <ResourceLink kind="ServiceInstance" name={serviceBinding.spec.instanceRef.name} namespace={serviceBinding.metadata.namespace} title={serviceBinding.spec.instanceRef.name} />
+              </dd>
               <dt> SECRET</dt>
-              <dd>{serviceBinding.spec.secretName}</dd>
+              <dd>
+                <ResourceLink kind="Secret" name={serviceBinding.spec.secretName} namespace={serviceBinding.metadata.namespace} title={serviceBinding.spec.secretName} />
+              </dd>
             </dl>
           </div>
         </div>
@@ -65,7 +69,9 @@ const ServiceBindingTableRow = ({ obj, index, key, style }) => {
       <TableData className={tableColumnClasses[2]}>
         <ResourceLink kind="ServiceInstance" name={obj.spec.instanceRef.name} namespace={obj.metadata.namespace} title={obj.spec.instanceRef.name} />
       </TableData>
-      <TableData className={tableColumnClasses[3]}>{obj.spec.secretName}</TableData>
+      <TableData className={tableColumnClasses[3]}>
+        <ResourceLink kind="Secret" name={obj.spec.secretName} namespace={obj.metadata.namespace} title={obj.spec.secretName} />
+      </TableData>
       <TableData className={tableColumnClasses[4]}>
         <Timestamp timestamp={obj.metadata.creationTimestamp} />
       </TableData>

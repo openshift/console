@@ -740,12 +740,22 @@ func main() {
 		filename := *fMcModeFile
 		if _, err := os.Stat(filename); os.IsNotExist(err) {
 			log.Infof("Not Exist Proxy Config file : %s", filename)
+			f, _ := os.Create(filename)
+			err = f.Chmod(0777)
+			if err != nil {
+				log.Errorf("Error occur when chnage file permission %v \n", err)
+			}
 		}
 		pvd.Filename = filename
 	} else {
 		filename := *fMcModeFile
 		if _, err := os.Stat(filename); os.IsNotExist(err) {
 			log.Infof("Not Exist Proxy Config file : %s", filename)
+			f, _ := os.Create(filename)
+			err = f.Chmod(0777)
+			if err != nil {
+				log.Errorf("Error occur when chnage file permission %v \n", err)
+			}
 		}
 		pvd.Filename = filename
 	}
@@ -904,8 +914,3 @@ func switchRouter(hyperCloudSrv *server.Server, proxySrv *pServer.HttpServer) fu
 
 	}
 }
-
-// func tokenUtilMiddleware(hdlr http.Handler) http.Handler {
-// 	return http.handler
-
-// }
