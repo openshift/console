@@ -73,6 +73,7 @@ const APIResourceLink_: React.FC<APIResourceLinkStateProps & APIResourceLinkOwnP
   activeNamespace,
   model,
 }) => {
+  const { t } = useTranslation();
   const to = getAPIResourceLink(activeNamespace, model);
   return (
     <span className="co-resource-item">
@@ -80,7 +81,7 @@ const APIResourceLink_: React.FC<APIResourceLinkStateProps & APIResourceLinkOwnP
         <ResourceIcon kind={referenceForModel(model)} />
       </span>
       <Link to={to} className="co-resource-item__resource-name">
-        {model.kind}
+        {model.labelKey ? t(model.labelKey) : model.kind}
       </Link>
     </span>
   );
@@ -374,7 +375,7 @@ const APIResourceDetails: React.FC<APIResourceTabProps> = ({ customData: { kindO
         <dt>{t('public~API version')}</dt>
         <dd>{apiVersion}</dd>
         <dt>{t('public~Namespaced')}</dt>
-        <dd>{namespaced ? 'true' : 'false'}</dd>
+        <dd>{namespaced ? t('public~true') : t('public~false')}</dd>
         <dt>{t('public~Verbs')}</dt>
         <dd>{verbs.join(', ')}</dd>
         {shortNames && (
