@@ -35,9 +35,11 @@ const loadPluginFromURL = async (baseURL: string) => {
 // Load all dynamic plugins which are currently enabled on the cluster
 Promise.all(
   window.SERVER_FLAGS.consolePlugins.map((pluginName) =>
-    loadPluginFromURL(`/api/plugins/${pluginName}`).then((pluginID) => {
-      pluginStore.setDynamicPluginEnabled(pluginID, true);
-    }),
+    loadPluginFromURL(`${window.SERVER_FLAGS.basePath}api/plugins/${pluginName}`).then(
+      (pluginID) => {
+        pluginStore.setDynamicPluginEnabled(pluginID, true);
+      },
+    ),
   ),
 );
 
