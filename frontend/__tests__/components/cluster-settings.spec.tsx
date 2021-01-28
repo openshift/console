@@ -30,7 +30,6 @@ import {
 } from '../../public/components/cluster-settings/cluster-settings';
 import { GlobalConfigPage } from '../../public/components/cluster-settings/global-config';
 import { Firehose, HorizontalNav, ResourceLink, Timestamp } from '../../public/components/utils';
-import { AddCircleOIcon } from '@patternfly/react-icons';
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');
@@ -43,6 +42,15 @@ jest.mock('react-i18next', () => {
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   useK8sWatchResource: jest.fn(),
 }));
+
+jest.mock('react-redux', () => {
+  const ActualReactRedux = require.requireActual('react-redux');
+  return {
+    ...ActualReactRedux,
+    useSelector: jest.fn(),
+    useDispatch: jest.fn(),
+  };
+});
 
 const i18nNS = 'cluster-settings';
 
@@ -68,19 +76,13 @@ describe('Cluster Settings page', () => {
         .find(Firehose)
         .at(0)
         .props().resources.length,
-    ).toBe(2);
+    ).toBe(1);
     expect(
       wrapper
         .find(Firehose)
         .at(0)
         .props().resources[0].kind,
     ).toBe('config.openshift.io~v1~ClusterVersion');
-    expect(
-      wrapper
-        .find(Firehose)
-        .at(0)
-        .props().resources[1].kind,
-    ).toBe('autoscaling.openshift.io~v1~ClusterAutoscaler');
     expect(
       wrapper
         .find(Firehose)
@@ -93,12 +95,6 @@ describe('Cluster Settings page', () => {
         .at(0)
         .props().resources[0].isList,
     ).toBe(false);
-    expect(
-      wrapper
-        .find(Firehose)
-        .at(0)
-        .props().resources[1].isList,
-    ).toBe(true);
   });
   it('should render the HorizontalNav Component with the props', () => {
     expect(wrapper.find(HorizontalNav).exists()).toBe(true);
@@ -168,7 +164,6 @@ describe('Cluster Version Details Table page', () => {
     expect(wrapper.find(UpdatesGraph).exists()).toBe(true);
     expect(wrapper.find(UpdateInProgress).exists()).toBe(false);
     expect(wrapper.find(ResourceLink).exists()).toBe(true);
-    expect(wrapper.find(AddCircleOIcon).exists()).toBe(true);
     expect(wrapper.find(Timestamp).exists()).toBe(true);
   });
   it('should render correct values of ClusterVersionDetailsTable component', () => {
@@ -198,24 +193,6 @@ describe('Cluster Version Details Table page', () => {
         .at(0)
         .props().name,
     ).toEqual('version');
-    expect(
-      wrapper
-        .find(Link)
-        .childAt(1)
-        .text(),
-    ).toEqual(`${i18nNS}~Create autoscaler`);
-    expect(
-      wrapper
-        .find(ResourceLink)
-        .at(0)
-        .props().name,
-    ).toEqual('version');
-    expect(
-      wrapper
-        .find(Link)
-        .childAt(1)
-        .text(),
-    ).toEqual(`${i18nNS}~Create autoscaler`);
     expect(
       wrapper
         .find(Timestamp)
