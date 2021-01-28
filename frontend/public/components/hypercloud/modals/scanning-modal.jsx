@@ -180,10 +180,10 @@ class BaseScanningModal extends PromiseComponent {
         if (kind === 'Registry' || modelKind?.kind === 'Registry') {
             label = 'Image Registry';
         } else {
-            label = kind || modelKind?.kind;
+            label = kind || modelKind?.kind || resource?.kind;
         }
 
-        const name = resource?.meatadata?.name || resource?.version;
+        const name = resource?.metadata?.name || resource?.version;
 
         return (
             <form onSubmit={this._submit} name="form" className="modal-content">
@@ -215,7 +215,7 @@ class BaseScanningModal extends PromiseComponent {
                                 {resource ?
                                     <div>{name}</div> :
                                     <select className="col-sm-12" value={this.state.resource} onChange={this.onChangeResource} multiple>
-                                        {this.state.resources.map(resource => <option key={resource} value={resource}>{resource}</option>)}
+                                        {this.state.resources.map((resource, idx) => <option key={idx} value={resource}>{resource}</option>)}
                                     </select>
                                 }
                             </div>
