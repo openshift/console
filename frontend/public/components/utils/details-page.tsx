@@ -28,7 +28,7 @@ const getTolerationsPath = (obj: K8sResourceKind): string => {
   return obj.kind === 'Pod' ? 'spec.tolerations' : 'spec.template.spec.tolerations';
 };
 
-export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({ children, resource, customPathName, showOwner = true, showPodSelector = false, showNodeSelector = false, showAnnotations = true, showTolerations = false, podSelector = 'spec.selector', nodeSelector = 'spec.template.spec.nodeSelector' }) => {
+export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({ children, resource, customPathName, showOwner = true, showPodSelector = false, showNodeSelector = false, showAnnotations = true, showTolerations = false, podSelector = 'spec.selector', nodeSelector = 'spec.template.spec.nodeSelector', showAllNamespace = false }) => {
   const { metadata, type } = resource;
   const reference = referenceFor(resource);
   const model = modelFor(reference);
@@ -51,6 +51,12 @@ export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({ children, res
             <DetailsItem label={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_6')} obj={resource} path="metadata.namespace">
               <ResourceLink kind="Namespace" name={metadata.namespace} title={metadata.uid} namespace={null} />
             </DetailsItem>
+          )}
+          {showAllNamespace && (
+            <div>
+              <dt>{t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_6')}</dt>
+              <dd>all-namespace</dd>
+            </div>
           )}
           {type ? <dt>Type</dt> : null}
           {type ? <dd>{type}</dd> : null}
@@ -128,6 +134,7 @@ export type ResourceSummaryProps = {
   nodeSelector?: string;
   children?: React.ReactNode;
   customPathName?: string;
+  showAllNamespace?: boolean;
 };
 
 export type ResourcePodCountProps = {
