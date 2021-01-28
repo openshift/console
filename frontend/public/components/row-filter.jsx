@@ -3,6 +3,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import * as classNames from 'classnames';
 import { Button } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 
 import { filterList } from '../actions/k8s';
 import { getQueryArgument, setQueryArgument } from './utils';
@@ -27,36 +28,37 @@ export const CheckBoxControls = ({
   selectedCount,
   onSelectAll,
   children,
-}) => (
-  <div className="row">
-    <div className="col-xs-12">
-      <div className="row-filter">
-        {children}
-        <div className="co-m-row-filter__controls">
-          <Button
-            className="co-m-row-filter__selector"
-            disabled={allSelected}
-            type="button"
-            onClick={onSelectAll}
-            variant="link"
-          >
-            Select all filters
-          </Button>
-          <span className="co-m-row-filter__items">
-            {itemCount === selectedCount ? (
-              itemCount
-            ) : (
-              <>
-                {selectedCount} of {itemCount}
-              </>
-            )}{' '}
-            Item{itemCount !== 1 && 's'}
-          </span>
+}) => {
+  const { t } = useTranslation();
+  return (
+    <div className="row">
+      <div className="col-xs-12">
+        <div className="row-filter">
+          {children}
+          <div className="co-m-row-filter__controls">
+            <Button
+              className="co-m-row-filter__selector"
+              disabled={allSelected}
+              type="button"
+              onClick={onSelectAll}
+              variant="link"
+            >
+              {t('public~Select all filters')}
+            </Button>
+            <span className="co-m-row-filter__items">
+              {itemCount === selectedCount ? (
+                itemCount
+              ) : (
+                <>{t('public~{{selectedCount}} of {{itemCount}}', { selectedCount, itemCount })}</>
+              )}{' '}
+              {t('public~Item', { count: itemCount })}
+            </span>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 export const storagePrefix = 'rowFilter-';
 
