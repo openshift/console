@@ -47,3 +47,4 @@ KIBANA_PORT='31005'
     # --mc-mode-operator=true \
     # --k8s-auth=bearer-token \
     # --mc-mode-file="$HOME/dynamic-config.yaml" \
+    
