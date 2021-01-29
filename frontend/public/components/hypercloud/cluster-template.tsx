@@ -43,7 +43,7 @@ const ClusterTemplateDetails: React.FC<ClusterTemplateDetailsProps> = ({ obj: cl
         <SectionHeading text="Cluster Template Details" />
         <div className="row">
           <div className="col-md-6">
-            <ResourceSummary resource={clusterTemplate} showPodSelector showOwner={false} showAllNamespace={true}></ResourceSummary>
+            <ResourceSummary resource={clusterTemplate} showPodSelector showOwner={false}></ResourceSummary>
           </div>
           <div className="col-md-6">
             <dl className="co-m-pane__details">
