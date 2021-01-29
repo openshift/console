@@ -27,6 +27,11 @@ const RedirectComponent = props => {
   return <Redirect to={to} />;
 };
 
+const RedirectClusterComponent = props => {
+  const to = props.location.pathname.replace(/^(\/master|\/single)/, '');
+  return <Redirect to={to} />;
+};
+
 // Ensure a *const* function wrapper for each namespaced Component so that react router doesn't recreate them
 const Memoized = new Map();
 function NamespaceFromURL(Component) {
@@ -115,6 +120,7 @@ const AppContents_: React.FC<AppContentsProps> = ({ activePerspective }) => (
         <Switch>
           {getPluginPageRoutes(activePerspective)}
           <Route path={['/all-namespaces', '/ns/:ns']} component={RedirectComponent} />
+          <Route path={['/single', '/master']} component={RedirectClusterComponent} />
           <LazyRoute path="/dashboards" loader={() => import('./dashboard/dashboards-page/dashboards' /* webpackChunkName: "dashboards" */).then(m => m.DashboardsPage)} />
           {/* Redirect legacy routes to avoid breaking links */}
           <Redirect from="/cluster-status" to="/dashboards" />

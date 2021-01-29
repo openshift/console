@@ -196,7 +196,7 @@
     "MSG_LNB_MENU_82": "사용자 리소스 정의",
     "MSG_LNB_MENU_83": "메뉴 설정",
     "MSG_NNB__1": "네임스페이스 선택…",
-    "MSG_MAIN_CREATEBUTTON_1": "{0} 생성",
+    "MSG_MAIN_CREATEBUTTON_1": "{{0}} 생성",
     "MSG_MAIN_ACTIONBUTTON_1": "액션",
     "MSG_MAIN_ACTIONBUTTON_2": "태스크 실행",
     "MSG_MAIN_ACTIONBUTTON_3": "PVC 확장 ",
