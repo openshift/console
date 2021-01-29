@@ -1,7 +1,7 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { pipelinesPage, startPipelineInPipelinsPage } from '../../pages/pipelines/pipelines-page';
+import { pipelinesPage, startPipelineInPipelinesPage } from '../../pages/pipelines/pipelines-page';
 import { pipelineBuilderPage } from '../../pages/pipelines/pipelineBuilder-page';
-import { naviagteTo } from '../../pages/app';
+import { navigateTo } from '../../pages/app';
 import { devNavigationMenu } from '../../constants/global';
 import { modal } from '../../../../../integration-tests-cypress/views/modal';
 import { pipelinesPO } from '../../pageObjects/pipelines-po';
@@ -9,14 +9,14 @@ import { pipelinesPO } from '../../pageObjects/pipelines-po';
 const store: Record<string, string> = {};
 
 Given('user has created pipeline {string} with git resources', (pipelineName: string) => {
-  pipelinesPage.clickOncreatePipeline();
-  pipelineBuilderPage.createPipelineWithGitresources(pipelineName);
+  pipelinesPage.clickOnCreatePipeline();
+  pipelineBuilderPage.createPipelineWithGitResources(pipelineName);
   store.pipelineName = pipelineName;
 });
 
 When('user clicks on Show Credentials link present in Start Pipeline modal', () => {
   modal.modalTitleShouldContain('Start Pipeline');
-  startPipelineInPipelinsPage.clickShowCredentialOptions();
+  startPipelineInPipelinesPage.clickShowCredentialOptions();
 });
 
 When('user clicks on {string} link', (buttonName: string) => {
@@ -24,30 +24,30 @@ When('user clicks on {string} link', (buttonName: string) => {
 });
 
 Then('user is able to see Create Source Secret section', () => {
-  startPipelineInPipelinsPage.verifyCreateSourceSecretSection();
+  startPipelineInPipelinesPage.verifyCreateSourceSecretSection();
 });
 
 Then(
   'user is able to see Secret Name, Access to, Server UrL fields and authentication type fields',
   () => {
-    startPipelineInPipelinsPage.verifyFields();
+    startPipelineInPipelinesPage.verifyFields();
     cy.get(pipelinesPO.startPipeline.cancel).click();
   },
 );
 
 Given('user is at Start Pipeline modal for pipeline {string}', (pipelineName: string) => {
-  naviagteTo(devNavigationMenu.Pipelines);
+  navigateTo(devNavigationMenu.Pipelines);
   pipelinesPage.selectKebabMenu(pipelineName);
   cy.byTestActionID('Start').click();
   modal.modalTitleShouldContain('Start Pipeline');
 });
 
 When('user enters URL, Revision as {string} and {string}', (gitUrl: string, revision: string) => {
-  startPipelineInPipelinsPage.addGitResource(gitUrl, revision);
+  startPipelineInPipelinesPage.addGitResource(gitUrl, revision);
 });
 
 When('user enters Secret Name as {string}', (secretName: string) => {
-  startPipelineInPipelinsPage.clickShowCredentialOptions();
+  startPipelineInPipelinesPage.clickShowCredentialOptions();
   cy.byButtonText('Add Secret').click();
   cy.get(pipelinesPO.startPipeline.advancedOptions.secretName).type(secretName);
 });
@@ -81,11 +81,11 @@ When('user clicks on tick mark', () => {
 
 Then('{string} is added under secrets section', (secretName: string) => {
   cy.byLegacyTestID(secretName).should('be.visible');
-  startPipelineInPipelinsPage.clicKCancel();
+  cy.byLegacyTestID('modal-cancel-action').click();
 });
 
-When('user enters the SSH KEY as {string}', (sshkey: string) => {
-  cy.get(pipelinesPO.startPipeline.advancedOptions.sshPrivateKey).type(sshkey);
+When('user enters the SSH KEY as {string}', (sshKey: string) => {
+  cy.get(pipelinesPO.startPipeline.advancedOptions.sshPrivateKey).type(sshKey);
 });
 
 When(

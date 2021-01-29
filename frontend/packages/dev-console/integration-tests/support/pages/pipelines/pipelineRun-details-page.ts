@@ -1,10 +1,13 @@
 import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
 import { modal } from '../../../../../integration-tests-cypress/views/modal';
+import { pageTitle } from '../../constants/pageTitle';
 import { pipelineRunDetailsPO, pipelineRunsPO } from '../../pageObjects/pipelines-po';
 
 export const pipelineRunDetailsPage = {
   verifyTitle: () =>
-    cy.get(pipelineRunDetailsPO.details.sectionTitle).should('have.text', 'Pipeline Run Details'),
+    cy
+      .get(pipelineRunDetailsPO.details.sectionTitle)
+      .should('have.text', pageTitle.PipelineRunDetails),
   waitForTaskRunToComplete: () => {
     pipelineRunDetailsPage.waitForTaskRunToComplete();
   },
@@ -21,7 +24,7 @@ export const pipelineRunDetailsPage = {
     switch (action) {
       case 'Rerun': {
         cy.byTestActionID('Rerun').click();
-        cy.get('[data-test-section-heading="Pipeline Run Details"]').should('be.visible');
+        cy.get(pipelineRunDetailsPO.details.sectionTitle).should('be.visible');
         break;
       }
       case 'Delete Pipeline Run': {
@@ -37,7 +40,9 @@ export const pipelineRunDetailsPage = {
   verifyTabs: () => {
     cy.get(pipelineRunDetailsPO.detailsTab).should('have.text', 'Details');
     cy.get(pipelineRunDetailsPO.yamlTab).should('have.text', 'YAML');
+    cy.get(pipelineRunDetailsPO.taskRunsTab).should('have.text', 'Task Runs');
     cy.get(pipelineRunDetailsPO.logsTab).should('have.text', 'Logs');
+    cy.get(pipelineRunDetailsPO.eventsTab).should('have.text', 'Events');
   },
   verifyFields: () => {
     cy.get('div dl dt').as('fieldNames');
@@ -57,7 +62,7 @@ export const pipelineRunDetailsPage = {
       .should('have.text', 'Annotations');
     cy.get('@fieldNames')
       .eq(4)
-      .should('have.text', 'Created At');
+      .should('have.text', 'Created at');
     cy.get('@fieldNames')
       .eq(5)
       .should('have.text', 'Owner');

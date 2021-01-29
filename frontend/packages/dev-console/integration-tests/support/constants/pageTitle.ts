@@ -18,4 +18,5 @@ export const pageTitle = {
   Project: 'Project Details',
   ConfigMaps: 'Config Maps',
   Secrets: 'Secrets',
+  PipelineRunDetails: 'Pipeline Run details',
 };

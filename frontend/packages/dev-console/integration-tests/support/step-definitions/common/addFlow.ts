@@ -1,6 +1,6 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { gitPage } from '../../pages/add-flow/git-page';
-import { naviagteTo } from '../../pages/app';
+import { navigateTo } from '../../pages/app';
 import { addPage } from '../../pages/add-flow/add-page';
 import { topologyPage } from '../../pages/topology/topology-page';
 import { addOptions } from '../../constants/add';
@@ -10,7 +10,7 @@ import { detailsPage } from '../../../../../integration-tests-cypress/views/deta
 import { pageTitle } from '../../constants/pageTitle';
 
 Given('user is at Add page', () => {
-  naviagteTo(devNavigationMenu.Add);
+  navigateTo(devNavigationMenu.Add);
 });
 
 Given(
@@ -31,7 +31,7 @@ Given('user is at Developer Catlog page', () => {
 });
 
 When('user navigates to Add page', () => {
-  naviagteTo(devNavigationMenu.Add);
+  navigateTo(devNavigationMenu.Add);
 });
 
 When('user clicks Create button on Add page', () => {

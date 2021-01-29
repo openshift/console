@@ -1,9 +1,9 @@
 import { modal } from '../../../../../integration-tests-cypress/views/modal';
 import { pipelineActions } from '../../constants/pipelines';
-import { pipelinesPO } from '../../pageObjects/pipelines-po';
+import { pipelineRunDetailsPO, pipelinesPO } from '../../pageObjects/pipelines-po';
 
 export const pipelinesPage = {
-  clickOncreatePipeline: () => cy.get(pipelinesPO.createPipeline).click(),
+  clickOnCreatePipeline: () => cy.get(pipelinesPO.createPipeline).click(),
 
   selectKebabMenu: (pipelineName: string) => {
     cy.get(pipelinesPO.pipelinesTable.table).should('exist');
@@ -86,14 +86,14 @@ export const pipelinesPage = {
 
   selectPipeline: (pipelineName: string) => cy.byLegacyTestID(pipelineName).click(),
 
-  seelctPipelineRun: (pipelineName: string) => {
+  selectPipelineRun: (pipelineName: string) => {
     cy.get(pipelinesPO.pipelinesTable.table, { timeout: 30000 }).should('exist');
     cy.get(pipelinesPO.pipelinesTable.pipelineName).each(($el, index) => {
       if ($el.text().includes(pipelineName)) {
         cy.get(pipelinesPO.pipelinesTable.pipelineRunName)
           .eq(index)
           .click();
-        cy.get('[data-test-section-heading="Pipeline Run Details"]').should('be.visible');
+        cy.get(pipelineRunDetailsPO.details.sectionTitle).should('be.visible');
       }
     });
   },
@@ -148,8 +148,7 @@ export const pipelinesPage = {
   },
 };
 
-export const startPipelineInPipelinsPage = {
-  clicKCancel: () => cy.byLegacyTestID('modal-cancel-action').click(),
+export const startPipelineInPipelinesPage = {
   verifySections: () => {
     cy.get(pipelinesPO.startPipeline.sectionTitle).as('sectionTitle');
     cy.get('@sectionTitle')
@@ -159,8 +158,17 @@ export const startPipelineInPipelinsPage = {
       .eq(1)
       .should('have.text', 'Advanced Options');
   },
+  enterGitUrl: (gitUrl: string) => {
+    cy.get(pipelinesPO.startPipeline.gitUrl).type(gitUrl);
+  },
+  enterRevision: (revision: string) => {
+    cy.get(pipelinesPO.startPipeline.revision).type(revision);
+  },
   addGitResource: (gitUrl: string, revision: string = 'master') => {
     cy.get('.modal-body-content').should('be.visible');
+    cy.document()
+      .its('readyState')
+      .should('eq', 'complete');
     cy.get(pipelinesPO.startPipeline.gitUrl).type(gitUrl);
     cy.get(pipelinesPO.startPipeline.revision).type(revision);
   },
@@ -185,7 +193,7 @@ export const startPipelineInPipelinsPage = {
     cy.get(pipelinesPO.startPipeline.advancedOptions.userName).type(userName);
     cy.get(pipelinesPO.startPipeline.advancedOptions.password).type(password);
     cy.get(pipelinesPO.startPipeline.advancedOptions.tickIcon).click();
-    startPipelineInPipelinsPage.clickStart();
+    startPipelineInPipelinesPage.clickStart();
   },
   verifyCreateSourceSecretSection: () =>
     cy.get(pipelinesPO.startPipeline.advancedOptions.secretFormTitle).should('be.visible'),
