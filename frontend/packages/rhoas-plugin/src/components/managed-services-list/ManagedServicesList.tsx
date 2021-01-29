@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Gallery, GalleryItem } from '@patternfly/react-core';
+import { Gallery, GalleryItem, Label } from '@patternfly/react-core';
 import { CatalogTile } from '@patternfly/react-catalog-view-extension';
 import { history } from '@console/internal/components/utils';
 import { PageLayout } from '@console/shared';
@@ -9,7 +9,6 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { SecretModel } from '@console/internal/models';
 import { useActiveNamespace } from '@console/shared';
 import { LockIcon } from '@patternfly/react-icons';
-import './ManagedServicesList.css';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
@@ -17,8 +16,6 @@ import NamespacedPage, {
 const ManagedServicesList = () => {
   const [currentNamespace] = useActiveNamespace();
   const [isModalOpen, setIsModalOpen] = React.useState(false);
-
-  console.log("Token page rendered for namespace ", currentNamespace, AccessTokenSecretName)
   const [tokenSecret] = useK8sWatchResource({ kind: SecretModel.kind, isList: false, name: AccessTokenSecretName, namespace: currentNamespace, namespaced: true })
 
 
@@ -39,10 +36,9 @@ const ManagedServicesList = () => {
     }
     else {
       return (
-        <div className="temp-token-status-footer">
-          <LockIcon />
-          <span>Unlock with token</span>
-        </div>
+        <Label variant="outline" color="orange" icon={<LockIcon />}>
+          Unlock with token
+        </Label>
       )
     }
   }

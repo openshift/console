@@ -6,26 +6,29 @@ import {
   TableBody,
   RowSelectVariant
 } from '@patternfly/react-table';
+import { Timestamp } from '@console/internal/components/utils';
 
 type FormattedKafkas = {
   cells: JSX.Element[];
   selected: boolean;
 };
 
-const StreamsInstanceTable: any = ({ kafkaArray, selectedKafkas, setSelectedKafkas, currentKafkaConnections }) => {
+const StreamsInstanceTable: any = ({ kafkaArray, setSelectedKafka, currentKafkaConnections }) => {
 
   const [formattedKafkas, setFormattedKafkas] = React.useState<FormattedKafkas[]>([]);
 
   const formatTableRowData = () => {
     const tableRow = [];
     kafkaArray.forEach(row => {
-      const { name, bootstrapServerHost, cloudProvider, region, owner } = row;
+      const { name, bootstrapServerHost, region, owner, createdAt } = row;
       tableRow.push({
         cells: [
           { title: name },
           { title: <a href="/">{bootstrapServerHost}</a> },
-          { title: `${cloudProvider};${region}` },
+          { title: region },
+          { title: 'username' },
           { title: <a href="/">{owner}</a> },
+          { title: <Timestamp timestamp={createdAt} /> },
         ]
       });
     });
@@ -47,36 +50,19 @@ const StreamsInstanceTable: any = ({ kafkaArray, selectedKafkas, setSelectedKafk
   const tableColumns = [
     { title: 'Cluster Name', transforms: [sortable] },
     { title: 'Bootstrap URL', transforms: [sortable] },
+    { title: 'Region', transforms: [sortable] },
     { title: 'Provider', transforms: [sortable] },
     { title: 'Owner', transforms: [sortable] },
+    { title: 'Time created', transforms: [sortable] },
   ];
 
   const onSelectTableRow = (event, isSelected, rowId) => {
-    let rows;
-    if (rowId === -1) {
-      rows = formattedKafkas.map(row => {
-        row.selected = isSelected;
-        return row;
-      })
-    } else {
-      rows = [...formattedKafkas];
-      rows[rowId].selected = isSelected;
-
-      const copyOfSelectedKafkas = [...selectedKafkas];
-      if (copyOfSelectedKafkas.includes(rowId)) {
-        const index = copyOfSelectedKafkas.indexOf(rowId);
-        if (index === 0) {
-          copyOfSelectedKafkas.shift();
-        }
-        else {
-          copyOfSelectedKafkas.splice(index, 1);
-        }
-        setSelectedKafkas(copyOfSelectedKafkas);
-      } else {
-        setSelectedKafkas([rowId, ...selectedKafkas]);
-      }
-    }
+    let rows = formattedKafkas.map((row, index) => {
+      row.selected = rowId === index;
+      return row;
+    });
     setFormattedKafkas(rows);
+    setSelectedKafka(rowId);
   };
 
   return (

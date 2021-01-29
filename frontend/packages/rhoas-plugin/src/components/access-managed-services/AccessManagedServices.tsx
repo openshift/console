@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { SecretModel } from '@console/internal/models';
 import { k8sCreate } from '@console/internal/module/k8s/resource';
-import { Button, FormGroup, Modal, ModalVariant, TextInput } from '@patternfly/react-core';
+import { Button, Form, FormGroup, Modal, ModalVariant, TextInput } from '@patternfly/react-core';
 import { useActiveNamespace } from '@console/shared';
 import { AccessTokenSecretName } from '../../const';
 import { history } from '@console/internal/components/utils';
@@ -48,12 +48,12 @@ const AccessManagedServices: any = ({ isModalOpen, setIsModalOpen }) => {
   return (
     <>
       <Modal
-        title="Access Red Hat application services with API Token"
+        title="Access Red Hat application services"
         isOpen={isModalOpen}
         onClose={handleModalToggle}
         variant={ModalVariant.small}
         actions={[
-          <Button key="confirm" variant="primary" onClick={onCreate}>
+          <Button key="confirm" variant="primary" onClick={onCreate} isDisabled={apiTokenValue.length < 1 ? true : false}>
             Create
           </Button>,
           <Button key="cancel" variant="link" onClick={handleModalToggle}>
@@ -65,11 +65,12 @@ const AccessManagedServices: any = ({ isModalOpen, setIsModalOpen }) => {
         <a href="https://cloud.redhat.com/openshift/token" target="_blank"> https://cloud.redhat.com/openshift/token</a>
         <br />
         <br />
+        <Form>
         <FormGroup
-          fieldId=""
+          fieldId="api-token-value"
           label="API Token"
           isRequired
-          helperText="API token can be access at cloud.redhat.com/openshift/token"
+          helperText="API token can be accessed at cloud.redhat.com/openshift/token"
         // helperTextInvalid="Age has to be a number"
         // helperTextInvalidIcon={<ExclamationCircleIcon />}
         >
@@ -82,6 +83,7 @@ const AccessManagedServices: any = ({ isModalOpen, setIsModalOpen }) => {
             placeholder=""
           />
         </FormGroup>
+        </Form>
         <br />
         Can't create an access token? Contact your administrator
       </Modal>

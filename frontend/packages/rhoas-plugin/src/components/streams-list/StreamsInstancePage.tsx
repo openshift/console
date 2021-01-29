@@ -6,24 +6,23 @@ import StreamsInstanceTable from './StreamsInstanceTable';
 import { PageHeading } from '@console/internal/components/utils';
 
 // FIXME full typed experience React.FC<{ kafkaArray: ManagedKafkaModel[]}>
-const StreamsInstancePage: any = ({ kafkaArray, selectedKafkas, setSelectedKafkas, currentKafkaConnections }) => {
+const StreamsInstancePage: any = ({ kafkaArray, setSelectedKafka, currentKafkaConnections }) => {
   return (
     <>
       <Helmet>
-        <title>Select Bindable OpenShift Streams for Apache Kafka</title>
+        <title>Select Managed Kafka Cluster</title>
       </Helmet>
       <PageHeading
         className="rhoas__page-heading"
-        title="Select Bindable OpenShift Streams for Apache Kafka"
+        title="Select Managed Kafka Cluster"
       >
-        <p>Select all of the OpenShift Streams instances youd like to connect to.</p>
+        <p>The managed Kafka cluster selected below will appear in the topology view.</p>
       </PageHeading>
       <PageBody>
         <StreamsInstanceFilter />
         <StreamsInstanceTable
           kafkaArray={kafkaArray}
-          selectedKafkas={selectedKafkas}
-          setSelectedKafkas={setSelectedKafkas}
+          setSelectedKafka={setSelectedKafka}
           currentKafkaConnections={currentKafkaConnections}
         />
       </PageBody>
