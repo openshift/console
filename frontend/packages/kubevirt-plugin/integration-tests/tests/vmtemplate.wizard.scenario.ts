@@ -12,7 +12,7 @@ import {
   deleteResources,
   deleteResource,
 } from '@console/shared/src/test-utils/utils';
-import { VM_BOOTUP_TIMEOUT_SECS } from './utils/constants/common';
+import { COMMON_TEMPLATES_NAMESPACE, VM_BOOTUP_TIMEOUT_SECS } from './utils/constants/common';
 import { multusNAD, getTestDataVolume, flavorConfigs } from './mocks/mocks';
 import { VirtualMachine } from './models/virtualMachine';
 import { TemplateByName } from './utils/constants/wizard';
@@ -92,7 +92,7 @@ describe('Create VM from Template using wizard', () => {
         os: vmtData.os,
         profile: vmtData.workload.toLowerCase(),
         bootOrder: ['rootdisk (Disk)'],
-        flavor: `${vmtData.flavor.flavor}: 1 vCPU, 1 GiB Memory`,
+        flavor: `${vmtData.flavor.flavor}: 1 CPU | 1 GiB Memory`,
       };
 
       const found = {
@@ -143,7 +143,7 @@ describe('Create VM from Template using wizard', () => {
         .setName('vm-from-vmt-createlink')
         .setNamespace(testName)
         .setTemplate(vmTemplate.name)
-        .setTemplateNamespace(vmTemplate.namespace)
+        .setTemplateNamespace(COMMON_TEMPLATES_NAMESPACE)
         .setProvisionSource(ProvisionSource.URL)
         .build();
 

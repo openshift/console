@@ -63,7 +63,7 @@ describe('Test VMI Details', () => {
       os: OperatingSystem.RHEL7,
       profile: Workload.DESKTOP.toLowerCase(),
       bootOrderTexts: ['rootdisk (Disk)', 'nic-0 (NIC)', 'cloudinitdisk (Disk)'],
-      flavorText: 'Tiny: 1 vCPU, 1 GiB Memory',
+      flavorText: 'Tiny: 1 CPU | 1 GiB Memory',
     };
 
     const found = {
