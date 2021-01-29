@@ -12,11 +12,11 @@ BRIDGE_K8S_AUTH_BEARER_TOKEN=$(ssh root@$k8sIP "secretname=\$(kubectl get servic
 
 
 # Should verify port number which corresponding to Service in yourself!!
-PROM_PORT='30793'
+PROM_PORT='9090'
 GRAFANA_PORT='30997'
 HC_PORT='32440'
 MHC_PORT='32440'
-KIBANA_PORT='32012'
+KIBANA_PORT='31005'
 
 ./bin/bridge \
     --listen=https://$myIP:9000 \
