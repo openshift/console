@@ -32,7 +32,7 @@ export const pvcVolumeMode = $('[data-test-id=pvc-volume-mode]');
 export const pvcStorageClass = $('[data-test-id=pvc-storageclass]');
 export const pvcPersistentVolume = $('[data-test-id=persistent-volume]');
 export const actionsButton = $('[data-test-id=actions-menu-button]');
-export const deletePvc = $('[data-test-action="Delete Persistent Volume Claim"]');
+export const deletePvc = $('[data-test-action="Delete PersistentVolumeClaim"]');
 
 // list of PVCs
 export const nameInTable = (name) => $(`a[data-test-id=${name}]`);
