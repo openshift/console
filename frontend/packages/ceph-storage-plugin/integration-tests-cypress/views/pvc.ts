@@ -14,6 +14,7 @@ export const pvc = {
       cy.byTestID('Block-radio-input').click();
     }
     cy.byTestID('create-pvc').click();
+    cy.contains('Bound');
   },
   expandPVC: (expansionSize) => {
     cy.byLegacyTestID('actions-menu-button').click();
