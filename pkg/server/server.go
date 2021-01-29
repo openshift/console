@@ -421,7 +421,7 @@ func (s *Server) HTTPHandler() http.Handler {
 		handle(grafanaProxyAPIPath, http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, grafanaProxyAPIPath),
 			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
-				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
+				// r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
 				// s.StaticUser.Token = r.Header.Clone().Get("Authorization")
 				grafanaProxy.ServeHTTP(w, r)
 			})),
