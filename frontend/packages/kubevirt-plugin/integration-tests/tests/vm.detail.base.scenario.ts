@@ -14,7 +14,7 @@ import { ProvisionSource } from './utils/constants/enums/provisionSource';
 
 describe('Kubevirt VM details tab', () => {
   const vmName = `vm-${testName}`;
-  const cloudInit = `#cloud-config\nuser: cloud-user\npassword: atomic\nchpasswd: {expire: False}`;
+  const cloudInit = `#cloud-config\\nuser: cloud-user\\npassword: atomic\\nchpasswd: {expire: False}`;
   const serviceCommon = { name: vmName, kind: 'vm', type: 'NodePort', namespace: testName };
   const testVM = getVMManifest(ProvisionSource.CONTAINER, testName, vmName, cloudInit);
   const vm = new VirtualMachine(testVM.metadata);
@@ -60,7 +60,7 @@ describe('Kubevirt VM details tab', () => {
       profile: Workload.DESKTOP.toLowerCase(),
       template: NOT_AVAILABLE,
       bootOrder: ['rootdisk (Disk)', 'nic-0 (NIC)', 'cloudinitdisk (Disk)'],
-      flavorConfig: 'Tiny: 1 vCPU, 1 GiB Memory',
+      flavorConfig: 'Tiny: 1 CPU | 1 GiB Memory',
       ip: NOT_AVAILABLE,
       pod: NOT_AVAILABLE,
       node: NOT_AVAILABLE,

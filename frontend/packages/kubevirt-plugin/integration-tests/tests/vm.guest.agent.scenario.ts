@@ -55,7 +55,8 @@ describe('Tests involving guest agent', () => {
     createResource(multusNAD);
 
     // create linux vm
-    const cloudInit = `#cloud-config\nuser: cloud-user\npassword: atomic\nchpasswd: {expire: False}\nruncmd:\n- dnf install -y qemu-guest-agent\n- systemctl start qemu-guest-agent`;
+    const cloudInit =
+      '#cloud-config\\nuser: cloud-user\\npassword: atomic\\nchpasswd: {expire: False}\\nruncmd:\\n- dnf install -y qemu-guest-agent\\n- systemctl start qemu-guest-agent';
     const testVM = getVMManifest(ProvisionSource.CONTAINER, testName, VM_LINUX_NAME, cloudInit);
     vmLinux = new VirtualMachine(testVM.metadata);
     createResource(testVM);
