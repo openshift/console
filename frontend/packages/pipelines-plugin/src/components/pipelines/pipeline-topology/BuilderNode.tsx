@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Node, NodeModel, observer } from '@patternfly/react-topology';
+import { Node, NodeModel, observer, useHover } from '@patternfly/react-topology';
 import {
   AddNodeDirection,
   BUILDER_NODE_ADD_RADIUS,
@@ -19,19 +19,13 @@ type BuilderNodeProps = {
 
 const BuilderNode: React.FC<BuilderNodeProps> = ({ element }) => {
   const { t } = useTranslation();
-  const [showAdd, setShowAdd] = React.useState(false);
+  const [showAdd, hoverRef] = useHover();
   const { width, height } = element.getBounds();
   const data = element.getData();
   const { error, onAddNode, onNodeSelection } = data;
 
   return (
-    <g
-      className="odc-builder-node"
-      onFocus={() => setShowAdd(true)}
-      onBlur={() => setShowAdd(false)}
-      onMouseOver={() => setShowAdd(true)}
-      onMouseOut={() => setShowAdd(false)}
-    >
+    <g className="odc-builder-node" ref={hoverRef}>
       <rect
         x={-BUILDER_NODE_ADD_RADIUS * 2}
         y={0}

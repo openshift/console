@@ -1,15 +1,26 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import * as cx from 'classnames';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Tooltip } from '@patternfly/react-core';
+import { createSvgIdUrl, useHover } from '@patternfly/react-topology';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
-import { Firehose, resourcePathFromModel } from '@console/internal/components/utils';
-import { runStatus, PipelineTaskSpec, PipelineTaskRef } from '../../../../utils/pipeline-augment';
+import {
+  Firehose,
+  resourcePathFromModel,
+  truncateMiddle,
+} from '@console/internal/components/utils';
+import { SvgDropShadowFilter } from '@console/topology/src/components/svg';
+import {
+  runStatus,
+  PipelineTaskSpec,
+  PipelineTaskRef,
+  getRunStatusColor,
+} from '../../../../utils/pipeline-augment';
 import { PipelineRunModel, TaskModel, ClusterTaskModel } from '../../../../models';
-import { ColoredStatusIcon } from './StatusIcon';
+import { StatusIcon } from './StatusIcon';
 import { PipelineVisualizationStepList } from './PipelineVisualizationStepList';
-import TaskComponentTaskStatus from './TaskComponentTaskStatus';
 import { createStepStatus, StepStatus, TaskStatus } from './pipeline-step-utils';
 
 import './PipelineVisualizationTask.scss';
@@ -26,6 +37,8 @@ interface TaskProps {
   isPipelineRun: boolean;
   disableTooltip?: boolean;
   selected?: boolean;
+  width: number;
+  height: number;
 }
 
 interface PipelineVisualizationTaskProp {
@@ -42,7 +55,11 @@ interface PipelineVisualizationTaskProp {
   disableTooltip?: boolean;
   selected?: boolean;
   isSkipped?: boolean;
+  width: number;
+  height: number;
 }
+
+const FILTER_ID = 'SvgTaskDropShadowFilterId';
 
 export const PipelineVisualizationTask: React.FC<PipelineVisualizationTaskProp> = ({
   pipelineRunName,
@@ -52,6 +69,8 @@ export const PipelineVisualizationTask: React.FC<PipelineVisualizationTaskProp> 
   disableTooltip,
   selected,
   isSkipped,
+  width,
+  height,
 }) => {
   const taskStatus = task.status || {
     duration: '',
@@ -75,6 +94,8 @@ export const PipelineVisualizationTask: React.FC<PipelineVisualizationTaskProp> 
       isPipelineRun={!!pipelineRunStatus}
       disableTooltip={disableTooltip}
       selected={selected}
+      width={width}
+      height={height}
     />
   );
 
@@ -112,7 +133,10 @@ const TaskComponent: React.FC<TaskProps> = ({
   isPipelineRun,
   disableTooltip,
   selected,
+  width,
+  height,
 }) => {
+  const { t } = useTranslation();
   const stepList = _.get(task, ['data', 'spec', 'steps'], []);
   const stepStatusList: StepStatus[] = stepList.map((step) => createStepStatus(step, status));
   const showStatusState: boolean = isPipelineRun && !!status && !!status.reason;
@@ -126,22 +150,53 @@ const TaskComponent: React.FC<TaskProps> = ({
     status?.reason !== runStatus.Cancelled &&
     !!path;
 
+  const [hover, hoverRef] = useHover();
+  const truncatedVisualName = React.useMemo(
+    () => truncateMiddle(visualName, { length: showStatusState ? 11 : 14, truncateEnd: true }),
+    [visualName, showStatusState],
+  );
+
   let taskPill = (
-    <div className={cx('odc-pipeline-vis-task__content', { 'is-selected': selected })}>
-      <div
-        className={cx('odc-pipeline-vis-task__title-wrapper', {
+    <g ref={hoverRef}>
+      <SvgDropShadowFilter dy={1} id={FILTER_ID} />
+      <rect
+        filter={hover ? createSvgIdUrl(FILTER_ID) : ''}
+        width={width}
+        height={height}
+        rx={15}
+        className={cx('odc-pipeline-vis-task', {
+          'is-selected': selected,
+          'is-linked': enableLogLink,
+        })}
+      />
+      <text
+        x={showStatusState ? 30 : width / 2}
+        y={height / 2 + 1}
+        className={cx('odc-pipeline-vis-task-text', {
           'is-text-center': !isPipelineRun,
+          'is-linked': enableLogLink,
         })}
       >
-        <div className="odc-pipeline-vis-task__title">{visualName}</div>
-        {showStatusState && <TaskComponentTaskStatus steps={stepStatusList} />}
-      </div>
-      {isPipelineRun && (
-        <div className="odc-pipeline-vis-task__status">
-          {showStatusState && <ColoredStatusIcon status={status.reason} height={18} width={18} />}
-        </div>
+        {truncatedVisualName}
+      </text>
+      {isPipelineRun && showStatusState && (
+        <svg
+          width={30}
+          height={30}
+          viewBox="-5 -5 20 20"
+          style={{
+            color: status
+              ? getRunStatusColor(status.reason, t).pftoken.value
+              : getRunStatusColor(runStatus.Cancelled, t).pftoken.value,
+          }}
+        >
+          <StatusIcon status={status.reason} shiftOrigin />
+        </svg>
       )}
-    </div>
+      {showStatusState && (
+        <SvgTaskStatus steps={stepStatusList} x={30} y={23} width={width / 2 + 15} />
+      )}
+    </g>
   );
   if (!disableTooltip) {
     taskPill = (
@@ -161,15 +216,37 @@ const TaskComponent: React.FC<TaskProps> = ({
     );
   }
 
-  const visTask = (
-    <>
-      <div className="odc-pipeline-vis-task__connector" />
-      {taskPill}
-    </>
-  );
+  return enableLogLink ? <Link to={path}>{taskPill}</Link> : taskPill;
+};
+
+interface SvgTaskStatusProps {
+  steps: StepStatus[];
+  x: number;
+  y: number;
+  width: number;
+}
+
+const SvgTaskStatus: React.FC<SvgTaskStatusProps> = ({ steps, x, y, width }) => {
+  const { t } = useTranslation();
+  if (steps.length === 0) {
+    return null;
+  }
+  const stepWidth = width / steps.length;
+  const gap = 2;
   return (
-    <div className={cx('odc-pipeline-vis-task', { 'is-linked': enableLogLink })}>
-      {enableLogLink ? <Link to={path}>{visTask}</Link> : visTask}
-    </div>
+    <g>
+      {steps.map((step, index) => {
+        return (
+          <rect
+            key={step.name}
+            x={x + stepWidth * index}
+            y={y}
+            width={stepWidth - gap}
+            height={2}
+            fill={getRunStatusColor(step.runStatus, t).pftoken.value}
+          />
+        );
+      })}
+    </g>
   );
 };

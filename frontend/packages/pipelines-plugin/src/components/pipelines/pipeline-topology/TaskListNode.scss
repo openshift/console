@@ -5,18 +5,26 @@
     overflow: hidden;
     box-shadow: var(--pf-c-dropdown__menu--BoxShadow);
   }
-  &__label {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
   &__trigger-background {
-    background: var(--pf-global--BackgroundColor--light-100);
+    fill: var(--pf-global--BackgroundColor--light-100);
+    &.is-disabled {
+      fill: var(--pf-global--disabled-color--300);
+    }
+  }
+  &__trigger-underline {
+    fill: var(--pf-global--Color--100);
+    &--hover {
+      fill: var(--pf-global--link--Color);
+    }
   }
   &__trigger {
-    position: fixed;
-    padding: var(--pf-global--spacer--xs) var(--pf-global--spacer--md);
-    width: 100%;
+    font-size: var(--pf-global--FontSize--md);
+    text-anchor: middle;
+    dominant-baseline: middle;
+    cursor: pointer;
+  }
+  &__trigger-disabled {
+    fill: var(--pf-global--disabled-color--100);
   }
   &__list-items {
     max-height: 350px;
@@ -27,4 +35,3 @@
     margin: 0;
   }
 }
-
