@@ -7,7 +7,7 @@ import {
   Plugin,
   HrefNavItem,
 } from '@console/plugin-sdk';
-import { FLAG_RHOAS_KAFKA, temporaryIcon } from './const';
+import { FLAG_RHOAS_KAFKA, managedKafkaIcon } from './const';
 import { rhoasTopologyPlugin, TopologyConsumedExtensions } from './topology/rhoas-topology-plugin'
 import * as models from './models';
 
@@ -71,11 +71,11 @@ const plugin: Plugin<ConsumedExtensions> = [
       required: [FLAG_RHOAS_KAFKA],
     },
     properties: {
-      id: 'rhosak',
+      id: 'rhoasAddAction',
       url: '/managedServices',
       label: 'Managed Services',
       description: 'Reduce operational complexity and focus on building and scaling applications that add more value.',
-      icon: temporaryIcon,
+      icon: managedKafkaIcon,
     },
   },
   ...rhoasTopologyPlugin

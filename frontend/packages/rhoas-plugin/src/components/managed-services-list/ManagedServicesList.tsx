@@ -4,7 +4,7 @@ import { CatalogTile } from '@patternfly/react-catalog-view-extension';
 import { history } from '@console/internal/components/utils';
 import { PageLayout } from '@console/shared';
 import AccessManagedServices from '../access-managed-services/AccessManagedServices';
-import { AccessTokenSecretName, temporaryIcon } from '../../const';
+import { AccessTokenSecretName, managedKafkaIcon } from '../../const';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { SecretModel } from '@console/internal/models';
 import { useActiveNamespace } from '@console/shared';
@@ -56,7 +56,7 @@ const ManagedServicesList = () => {
                 className="co-kafka-tile"
                 onClick={() => checkTokenSecretStatus()}
                 title="Red Hat OpenShift Application Services"
-                iconImg={temporaryIcon}
+                iconImg={managedKafkaIcon}
                 iconClass={""}
                 icon={""}
                 description={"RHOAS can include Managed Kafka, Service Registry, custom resources for Managed Kafka, and Open Data Hub"}
