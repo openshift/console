@@ -24,7 +24,8 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({ ArrayFieldTemplate = D
       <Accordion asDefinitionList={false} className="co-dynamic-form__accordion">
         <Form
           className="co-dynamic-form"
-          liveValidate={true}
+          // liveValidate={true}
+          noValidate
           ArrayFieldTemplate={ArrayFieldTemplate}
           fields={{ ...defaultFields, ...fields }}
           FieldTemplate={FieldTemplate}
