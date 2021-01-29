@@ -50,11 +50,17 @@ export const createManagedKafkaRequest = async (currentNamespace: string) => {
 
 // TODO force refresh existing request
 export const createManagedKafkaRequestIfNeeded = async (currentNamespace) => {
-  const currentRequest = await k8sGet(ManagedKafkaRequestModel, ManagedKafkaRequestCRName, currentNamespace);
+  let currentRequest
+  try {
+    currentRequest = await k8sGet(ManagedKafkaRequestModel, ManagedKafkaRequestCRName, currentNamespace);
+  } catch (error) {
+    console.log(error)
+  }
   if (!currentRequest) {
-    await createManagedKafkaRequest(currentNamespace);
+    createManagedKafkaRequest(currentNamespace);
     return true
   }
+
   return false;
 }
 

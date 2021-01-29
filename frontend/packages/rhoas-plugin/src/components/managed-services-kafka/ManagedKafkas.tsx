@@ -90,8 +90,6 @@ const ManagedKafkas = () => {
 
   const kafkaRequestData = kafkaRequest.status.userKafkas;
 
-
-
   const createManagedKafkaConnectionFlow = async () => {
     // TODO verify if service account sercret exist
     const kafkaId = kafkaRequestData[selectedKafka].id;
