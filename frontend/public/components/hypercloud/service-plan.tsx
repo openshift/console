@@ -84,7 +84,7 @@ const ServicePlanTableHeader = () => {
 };
 ServicePlanTableHeader.displayName = 'ServicePlanTableHeader';
 
-const ServicePlanTableRow = (setSidebarDetails, setShowSidebar, props) => {
+const ServicePlanTableRow = (setSidebarDetails, setShowSidebar, setSidebarTitle, props) => {
   const { obj, index, key, style } = props;
   const SidebarLink = ({ name, kind, obj }) => {
     return (
@@ -95,6 +95,7 @@ const ServicePlanTableRow = (setSidebarDetails, setShowSidebar, props) => {
         onClick={() => {
           setShowSidebar(true);
           setSidebarDetails(obj);
+          setSidebarTitle(obj.metadata.name);
         }}
       >
         {name}
@@ -117,21 +118,40 @@ const ServicePlanTableRow = (setSidebarDetails, setShowSidebar, props) => {
   );
 };
 const ServicePlansList: React.FC<ServicePlansListProps> = props => {
-  const { setSidebarDetails, setShowSidebar } = props;
-  return <Table {...props} aria-label="Service Plan" Header={ServicePlanTableHeader} Row={ServicePlanTableRow.bind(null, setSidebarDetails, setShowSidebar)} />;
+  const { setSidebarDetails, setShowSidebar, setSidebarTitle } = props;
+  return <Table {...props} aria-label="Service Plan" Header={ServicePlanTableHeader} Row={ServicePlanTableRow.bind(null, setSidebarDetails, setShowSidebar, setSidebarTitle)} />;
 };
 ServicePlansList.displayName = 'ServicePlansList';
 
 const ServicePlansPage: React.FC<ServicePlansPageProps> = props => {
   const [showSidebar, setShowSidebar] = useState(false);
   const [servicePlan, setSidebarDetails] = useState({});
+  const [sidebarTitle, setSidebarTitle] = useState('');
   return (
     <>
       <div className="co-p-has-sidebar">
         <div className="co-m-pane__body">
-          <ListPage canCreate={false} kind={kind} ListComponent={ServicePlansList} setShowSidebar={setShowSidebar} setSidebarDetails={setSidebarDetails} {...props} />
+          <ListPage canCreate={false} kind={kind} ListComponent={ServicePlansList} setSidebarTitle={setSidebarTitle} setShowSidebar={setShowSidebar} setSidebarDetails={setSidebarDetails} {...props} />
         </div>
-        <ResourceSidebar resource={servicePlan} kindObj={modelFor('ServicePlan')} showName={false} showID={true} showPodSelector={true} showNodeSelector={true} showOwner={false} showSidebar={showSidebar} samples={[]} isCreateMode={true} showDetails={true} />
+        <ResourceSidebar
+          resource={servicePlan}
+          kindObj={modelFor('ServicePlan')}
+          toggleSidebar={() => {
+            setShowSidebar(!showSidebar);
+            window.dispatchEvent(new Event('sidebar_toggle'));
+          }}
+          title={sidebarTitle}
+          isFloat={true}
+          showName={false}
+          showID={true}
+          showPodSelector={true}
+          showNodeSelector={true}
+          showOwner={false}
+          showSidebar={showSidebar}
+          samples={[]}
+          isCreateMode={true}
+          showDetails={true}
+        />
       </div>
     </>
   );
@@ -143,6 +163,7 @@ export { ServicePlansList, ServicePlansPage, ServicePlansDetailsPage };
 type ServicePlansListProps = {
   setShowSidebar: any;
   setSidebarDetails: any;
+  setSidebarTitle: any;
 };
 type ServicePlansPageProps = {};
 

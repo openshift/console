@@ -20,14 +20,18 @@ export const serviceInstanceMenuActions = [...Kebab.getExtensionsActionsForKind(
 const ServiceInstanceDetails: React.FC<ServiceInstanceDetailsProps> = props => {
   const { obj: serviceInstance, match } = props;
   const [showSidebar, setShowSidebar] = useState(false);
-  const [classDetails, setClassDetails] = useState({});
+  const [sidebarDetails, setSidebarDetails] = useState({});
+  const [sidebarKind, setSidebarKind] = useState('');
+  const [sidebarTitle, setSidebarTitle] = useState('');
   // const [planDetails, setPlanDetails] = useState({});
   const getDetails = async (kind, e) => {
     const model = modelFor(kind);
     const details = await k8sGet(model, e.target.innerText, kind.indexOf('Cluster') < 0 ? match.params.ns : null);
-    setClassDetails(details);
+    setSidebarDetails(details);
     setShowSidebar(true);
-    console.log(classDetails);
+    setSidebarKind(kind);
+    setSidebarTitle(details.metadata.name);
+    console.log(sidebarDetails);
   };
   const SidebarLink = ({ name, kind }) => {
     return (
@@ -53,16 +57,33 @@ const ServiceInstanceDetails: React.FC<ServiceInstanceDetailsProps> = props => {
                 </dd>
                 <dt>Service Class</dt>
                 <SidebarLink name={serviceInstance.spec.clusterServiceClassRef?.name ? serviceInstance.spec.clusterServiceClassRef?.name : serviceInstance.spec?.serviceClassExternalName} kind={serviceInstance.spec.clusterServiceClassRef?.name ? 'ClusterServiceClass' : 'ServiceClass'}></SidebarLink>
-                <dd></dd>
                 <dt>Service Plan</dt>
                 <dd>
-                  {serviceInstance.spec.clusterServicePlanExternalName} {serviceInstance.spec.servicePlanExternalName}
+                  <SidebarLink name={serviceInstance.spec.clusterServicePlanRef?.name ? serviceInstance.spec.clusterServicePlanRef?.name : serviceInstance.spec?.servicePlanExternalName} kind={serviceInstance.spec.clusterServiceClassRef?.name ? 'ClusterServicePlan' : 'ServicePlan'}></SidebarLink>
                 </dd>
               </dl>
             </div>
           </div>
         </div>
-        <ResourceSidebar showName={false} showID={true} showPodSelector={true} showNodeSelector={true} showOwner={false} resource={classDetails} showSidebar={showSidebar} samples={[]} isCreateMode={true} kindObj={ServiceInstanceModel} showDetails={true} />
+        <ResourceSidebar
+          toggleSidebar={() => {
+            setShowSidebar(!showSidebar);
+            window.dispatchEvent(new Event('sidebar_toggle'));
+          }}
+          resource={sidebarDetails}
+          kindObj={modelFor(sidebarKind)}
+          title={sidebarTitle}
+          isFloat={true}
+          showName={false}
+          showID={true}
+          showPodSelector={true}
+          showNodeSelector={true}
+          showOwner={false}
+          showSidebar={showSidebar}
+          samples={[]}
+          isCreateMode={true}
+          showDetails={true}
+        />
       </div>
     </>
   );
@@ -98,12 +119,7 @@ const ServiceInstanceTableRow = ({ obj, index, key, style }) => {
       <TableData className={tableColumnClasses[2]}>
         <Status status={obj.status.lastConditionState} />
       </TableData>
-      <TableData className={tableColumnClasses[3]}>
-        {
-          obj.spec.clusterServicePlanExternalName ?
-            <ResourceLink kind="ClusterServicePlan" title={obj.spec.clusterServicePlanRef?.name} name={obj.spec.clusterServicePlanRef?.name} displayName={obj.spec.clusterServicePlanExternalName} /> : <ResourceLink kind="ServicePlan" title={obj.spec.servicePlanRef?.name} name={obj.spec.servicePlanRef?.name} displayName={obj.spec.servicePlanExternalName} />
-        }
-      </TableData>
+      <TableData className={tableColumnClasses[3]}>{obj.spec.clusterServicePlanExternalName ? <ResourceLink kind="ClusterServicePlan" title={obj.spec.clusterServicePlanRef?.name} name={obj.spec.clusterServicePlanRef?.name} displayName={obj.spec.clusterServicePlanExternalName} /> : <ResourceLink kind="ServicePlan" title={obj.spec.servicePlanRef?.name} name={obj.spec.servicePlanRef?.name} displayName={obj.spec.servicePlanExternalName} />}</TableData>
       <TableData className={tableColumnClasses[4]}>
         <Timestamp timestamp={obj.metadata.creationTimestamp} />
       </TableData>

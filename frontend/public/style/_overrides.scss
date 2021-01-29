@@ -571,3 +571,11 @@ button.pf-c-dropdown__menu-item.hover {
 .pagination .disabled {
   cursor: initial;
 }
+
+.sidebar__details {
+  position: absolute !important;
+  right: 0;
+  width: 800px;
+  height: 100%;
+  background-color: white;
+}
