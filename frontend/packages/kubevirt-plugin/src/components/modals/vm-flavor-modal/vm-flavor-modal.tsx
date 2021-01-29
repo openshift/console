@@ -6,6 +6,7 @@ import {
   Firehose,
   FirehoseResult,
   HandlePromiseProps,
+  humanizeBinaryBytesWithoutB,
   withHandlePromise,
 } from '@console/internal/components/utils';
 import { TemplateModel } from '@console/internal/models';
@@ -29,7 +30,7 @@ import { getUpdateFlavorPatches } from '../../../k8s/patches/vm/vm-patches';
 import { CUSTOM_FLAVOR } from '../../../constants';
 import { getLoadedData } from '../../../utils';
 import { SizeUnitFormRow } from '../../form/size-unit-form-row';
-import { BinaryUnit, stringValueUnitSplit } from '../../form/size-unit-utils';
+import { BinaryUnit, convertToBytes, stringValueUnitSplit } from '../../form/size-unit-utils';
 import { ModalFooter } from '../modal/modal-footer';
 import { FormRow } from '../../form/form-row';
 import { Integer } from '../../form/integer/integer';
@@ -60,6 +61,18 @@ const getAvailableFlavors = (template: TemplateKind) => {
   return _.uniq(flavorSort(flavors));
 };
 
+const getMemorySizeAndUnits = (combinedMemVal) => {
+  const [sourceMemSize, sourceMemUnit] = stringValueUnitSplit(combinedMemVal || '');
+
+  if (sourceMemUnit) {
+    return [sourceMemSize, sourceMemUnit];
+  }
+
+  const memoryBase = convertToBytes(sourceMemSize);
+  const humanizedValue = humanizeBinaryBytesWithoutB(memoryBase);
+  return [humanizedValue.value, humanizedValue.unit];
+};
+
 const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
   const {
     vmLike,
@@ -72,7 +85,6 @@ const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
     loaded,
     vmis,
   } = props;
-
   const { t } = useTranslation();
   const inProgress = props.inProgress || !loaded;
   const vm = asVM(vmLike);
@@ -83,12 +95,18 @@ const VMFlavorModal = withHandlePromise((props: VMFlavornModalProps) => {
   const flavors = getAvailableFlavors(underlyingTemplate);
   const vmFlavor = toUIFlavor(getFlavor(vmLike) || flavors[flavors.length - 1]);
 
-  const [sourceMemSize, sourceMemUnit] = stringValueUnitSplit(getMemory(vm) || '');
+  const [flavor, setFlavor] = React.useState(flavors.length === 1 ? CUSTOM_FLAVOR : vmFlavor);
+
+  // This prevents a situation where vmFlavor is set before the template is loaded and flavor gets stuck as Custom
+  React.useEffect(() => {
+    setFlavor(flavors.length === 1 ? CUSTOM_FLAVOR : vmFlavor);
+  }, [flavors.length, loaded, vmFlavor]);
+  const isCustom = isCustomFlavor(flavor);
+
   const sourceCPURaw = getCPU(vm);
   const sourceCPU = vCPUCount(sourceCPURaw);
 
-  const [flavor, setFlavor] = React.useState(vmFlavor);
-  const isCustom = isCustomFlavor(flavor);
+  const [sourceMemSize, sourceMemUnit] = getMemorySizeAndUnits(getMemory(vm) || '');
 
   const [memSize, setMemSize] = React.useState<string>(isCustom ? sourceMemSize || '' : '');
   const [memUnit, setMemUnit] = React.useState<string>(
