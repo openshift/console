@@ -23,9 +23,12 @@ const ManagedKafkas = () => {
   const currentMSAName = 'managedservice' + currentNamespace + new Date().getTime();
 
   const kafkaRequestData: ManagedKafkaModel[] = KafkaMocks;
-  const [selectedKafkas, setSelectedKafkas] = React.useState([]);
+  const [selectedKafka, setSelectedKafka] = React.useState<number>();
   const [serviceAccountExists, setServiceAccountExists] = React.useState(false);
   const [currentKafkaConnections, setCurrentKafkaConnections] = React.useState([]);
+
+  console.log('what is length of currentKafkaConnections' + currentKafkaConnections.length);
+  console.log('what is length of kafkaRequestData' + kafkaRequestData.length)
 
   const doesManagedServiceAccountExist = async () => {
     const managedServiceAccounts = await k8sGet(ManagedServiceAccountRequest, null, currentNamespace);
@@ -121,28 +124,37 @@ const ManagedKafkas = () => {
       createManagedServiceAccount();
     }
 
-    for (const rowId of selectedKafkas) {
-      const kafkaId = kafkaRequestData[rowId].id;
-      const kafkaName = kafkaRequestData[rowId].name;
+    const kafkaId = kafkaRequestData[selectedKafka].id;
+    const kafkaName = kafkaRequestData[selectedKafka].name;
 
-      if (currentKafkaConnections) {
-        if (!currentKafkaConnections.includes(kafkaId)) {
-          createManagedKafkaConnection(kafkaId, kafkaName);
-        }
+    if (currentKafkaConnections) {
+      if (!currentKafkaConnections.includes(kafkaId)) {
+        createManagedKafkaConnection(kafkaId, kafkaName);
       }
     }
     history.push(`/topology/ns/${currentNamespace}`);
   };
 
+  const disableCreate = () => {
+    if (selectedKafka === null || selectedKafka === undefined) {
+      return true;
+    }
+    if (currentKafkaConnections.length === kafkaRequestData.length) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+
   return (
     <>
-      <NamespacedPage variant={NamespacedPageVariants.light} hideApplications>
+      <NamespacedPage disabled variant={NamespacedPageVariants.light} hideApplications>
         {kafkaRequestData.length > 0 ? (
           <>
             <StreamsInstancePage
               kafkaArray={kafkaRequestData}
-              selectedKafkas={selectedKafkas}
-              setSelectedKafkas={setSelectedKafkas}
+              setSelectedKafka={setSelectedKafka}
               currentKafkaConnections={currentKafkaConnections}
             />
             <div className="co-m-pane__body" style={{ borderTop: 0, paddingTop: 0, paddingBottom: 0 }}>
@@ -151,7 +163,7 @@ const ManagedKafkas = () => {
                 isSubmitting={false}
                 errorMessage=""
                 submitLabel={"Create"}
-                disableSubmit={selectedKafkas.length < 1 ? true : false}
+                disableSubmit={disableCreate()}
                 resetLabel="Reset"
                 sticky
                 handleCancel={history.goBack}
