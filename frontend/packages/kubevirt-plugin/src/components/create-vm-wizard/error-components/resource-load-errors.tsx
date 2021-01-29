@@ -8,7 +8,7 @@ import { iGetCommonData } from '../selectors/immutable/selectors';
 import { getLoadError, getModelString } from '../../../utils';
 import { K8sKind } from '@console/internal/module/k8s';
 import { TemplateModel } from '@console/internal/models';
-import { DataVolumeModel, VirtualMachineModel } from '../../../models';
+import { VirtualMachineModel } from '../../../models';
 import { getExtraWSQueries } from '../selectors/selectors';
 
 const asError = ({
@@ -76,13 +76,6 @@ const stateToProps = (state, { wizardReduxID }) => {
   }
 
   errors.push(
-    asError({
-      state,
-      wizardReduxID,
-      key: VMWizardProps.dataVolumes,
-      isList: true,
-      model: DataVolumeModel,
-    }),
     asError({
       state,
       wizardReduxID,

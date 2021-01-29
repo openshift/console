@@ -18,7 +18,6 @@ import {
   CloudInitDataHelper,
 } from '../../../wrapper/vm/cloud-init-data-helper';
 import { DataVolumeWrapper } from '../../../wrapper/vm/data-volume-wrapper';
-import { StorageUISource } from '../../../../components/modals/disk-modal/storage-ui-source';
 import { CreateVMParams } from './types';
 import { isCustomFlavor } from '../../../../selectors/vm-like/flavor';
 import { DiskWrapper } from '../../../wrapper/vm/disk-wrapper';
@@ -26,32 +25,22 @@ import { VM_TEMPLATE_NAME_PARAMETER } from '../../../../constants/vm-templates/c
 import { resolveDataVolumeName } from '../../../../utils';
 
 const initializeStorage = (params: CreateVMParams, vm: VMWrapper) => {
-  const { vmSettings, storages, isTemplate, namespace } = params;
+  const { vmSettings, storages, isTemplate } = params;
   const settings = asSimpleSettings(vmSettings);
 
   const resolvedStorages = storages.map((storage) => {
-    const { disk, volume, dataVolume, persistentVolumeClaim } = storage;
+    const { disk, volume, dataVolume } = storage;
     const volumeWrapper = new VolumeWrapper(volume, true);
     const dataVolumeWrapper = dataVolume && new DataVolumeWrapper(dataVolume, true);
 
-    const source = StorageUISource.fromTypes(
-      volumeWrapper.getType(),
-      dataVolumeWrapper && dataVolumeWrapper.getType(),
-      !!persistentVolumeClaim,
-    );
-    const isPlainDataVolume = source.isPlainDataVolume(isTemplate);
-
     if (dataVolumeWrapper) {
-      dataVolumeWrapper
-        .setName(
-          resolveDataVolumeName({
-            diskName: new DiskWrapper(disk).getName(),
-            vmLikeEntityName: settings[VMSettingsField.NAME],
-            isTemplate,
-            isPlainDataVolume,
-          }),
-        )
-        .setNamespace(isPlainDataVolume ? namespace : undefined);
+      dataVolumeWrapper.setName(
+        resolveDataVolumeName({
+          diskName: new DiskWrapper(disk).getName(),
+          vmLikeEntityName: settings[VMSettingsField.NAME],
+          isTemplate,
+        }),
+      );
 
       if (volumeWrapper.getType() === VolumeType.DATA_VOLUME) {
         volumeWrapper.appendTypeData({ name: dataVolumeWrapper.getName() });
@@ -61,8 +50,7 @@ const initializeStorage = (params: CreateVMParams, vm: VMWrapper) => {
     return {
       ...storage,
       volume: volumeWrapper.asResource(),
-      dataVolume: isPlainDataVolume ? undefined : dataVolumeWrapper?.asResource(),
-      dataVolumeToCreate: isPlainDataVolume ? dataVolumeWrapper?.asResource() : undefined,
+      dataVolume: dataVolumeWrapper?.asResource(),
     };
   });
 

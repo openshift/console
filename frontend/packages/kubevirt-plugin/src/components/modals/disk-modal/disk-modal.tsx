@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  Alert,
-  AlertVariant,
   Form,
   FormSelect,
   FormSelectOption,
@@ -89,7 +87,6 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     onNamespaceChanged,
     usedDiskNames,
     isTemplate = false,
-    isInWizard = false,
     onSubmit,
     inProgress: _inProgress,
     isEditing,
@@ -226,14 +223,11 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
     type,
   });
 
-  const isPlainDataVolume = source.isPlainDataVolume(isInWizard && isTemplate);
-
   // We can generate a random name every time, because this modal should not operate on disks with live datavolumes
   const resultDataVolumeName = resolveDataVolumeName({
     diskName: name,
     vmLikeEntityName: vmName,
     isTemplate,
-    isPlainDataVolume,
   });
 
   const resultVolume = VolumeWrapper.initializeFromSimpleData({
@@ -619,15 +613,6 @@ export const DiskModal = withHandlePromise((props: DiskModalProps) => {
               }
             />
           )}
-          {isPlainDataVolume && (
-            <Alert
-              variant={AlertVariant.warning}
-              isInline
-              title={t(
-                'kubevirt-plugin~PVC will be created on template creation and used by VMs created from this template.',
-              )}
-            />
-          )}
           {source.requiresVolumeModeOrAccessModes() && (
             <ExpandableSection
               toggleText={t('kubevirt-plugin~Advanced')}
@@ -744,7 +729,6 @@ export type DiskModalProps = {
   disk?: DiskWrapper;
   showInitialValidation?: boolean;
   isTemplate?: boolean;
-  isInWizard?: boolean;
   isEditing?: boolean;
   volume?: VolumeWrapper;
   dataVolume?: DataVolumeWrapper;

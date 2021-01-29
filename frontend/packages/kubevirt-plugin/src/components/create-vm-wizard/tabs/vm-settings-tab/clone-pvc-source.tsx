@@ -6,17 +6,17 @@ import { ListDropdown } from '@console/internal/components/utils';
 import { toShallowJS } from '../../../../utils/immutable';
 import { FormFieldRow } from '../../form/form-field-row';
 import { FormField, FormFieldType } from '../../form/form-field';
-import { VMSettingsField, VMWizardStorage } from '../../types';
+import { VMWizardStorage } from '../../types';
 import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';
 import { ProjectDropdown } from '../../../form/project-dropdown';
-import { iGetFieldValue } from '../../selectors/immutable/field';
 
 export const ClonePVCSource: React.FC<ClonePVCSourceProps> = React.memo(
-  ({ nsField, nameField, provisionSourceStorage, onChange, onProvisionSourceStorageChange }) => {
+  ({ nsField, nameField, provisionSourceStorage, onProvisionSourceStorageChange }) => {
     const { t } = useTranslation();
     const storage: VMWizardStorage = toShallowJS(provisionSourceStorage);
-    const pvcNamespace = iGetFieldValue(nsField, '');
-    const pvcName = iGetFieldValue(nameField, '');
+    const dataVolumeWrapper = new DataVolumeWrapper(storage?.dataVolume);
+    const pvcName = dataVolumeWrapper.getPersistentVolumeClaimName();
+    const pvcNamespace = dataVolumeWrapper.getPersistentVolumeClaimNamespace();
 
     return (
       <>
@@ -24,8 +24,13 @@ export const ClonePVCSource: React.FC<ClonePVCSourceProps> = React.memo(
           <FormField value={pvcNamespace || ''}>
             <ProjectDropdown
               onChange={(payload) => {
-                onChange(VMSettingsField.CLONE_PVC_NS, payload);
-                onChange(VMSettingsField.CLONE_PVC_NAME, undefined);
+                onProvisionSourceStorageChange({
+                  ...storage,
+                  dataVolume: new DataVolumeWrapper(storage?.dataVolume, true)
+                    .appendTypeData({ namespace: payload }, false)
+                    .setSize('15Gi', '')
+                    .asResource(),
+                });
               }}
               project={pvcNamespace}
               placeholder={PersistentVolumeClaimModel.label}
@@ -41,7 +46,6 @@ export const ClonePVCSource: React.FC<ClonePVCSourceProps> = React.memo(
               },
             ]}
             onChange={(val, kind, pvc: PersistentVolumeClaimKind) => {
-              onChange(VMSettingsField.CLONE_PVC_NAME, pvc.metadata.name);
               onProvisionSourceStorageChange({
                 ...storage,
                 dataVolume: new DataVolumeWrapper(storage?.dataVolume, true)
@@ -66,5 +70,4 @@ type ClonePVCSourceProps = {
   nameField: any;
   provisionSourceStorage: any;
   onProvisionSourceStorageChange: (provisionSourceStorage: any) => void;
-  onChange: (key: string, value: string | boolean) => void;
 };

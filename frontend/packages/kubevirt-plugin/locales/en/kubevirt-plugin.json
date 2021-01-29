@@ -415,7 +415,6 @@
   "Container": "Container",
   "--- Select Type ---": "--- Select Type ---",
   " --- Recommended ---": " --- Recommended ---",
-  "PVC will be created on template creation and used by VMs created from this template.": "PVC will be created on template creation and used by VMs created from this template.",
   "--- Select Volume Mode ---": "--- Select Volume Mode ---",
   "--- Select Access Mode ---": "--- Select Access Mode ---",
   "Container (ephemeral)": "Container (ephemeral)",
@@ -714,6 +713,7 @@
   "slirp": "slirp",
   "PXE (network boot - adds network interface)": "PXE (network boot - adds network interface)",
   "Boot an operating system from a server on a network. Requires a PXE bootable network attachment definition": "Boot an operating system from a server on a network. Requires a PXE bootable network attachment definition",
+  "Attach PVC": "Attach PVC",
   "Blank (creates PVC)": "Blank (creates PVC)",
   "Create an empty disk.": "Create an empty disk.",
   "Import via URL (creates PVC)": "Import via URL (creates PVC)",
@@ -795,6 +795,5 @@
   "VM name must start/end with alphanumberic character": "VM name must start/end with alphanumberic character",
   "VM name cannot contain uppercase characters": "VM name cannot contain uppercase characters",
   "VM name is too long": "VM name is too long",
-  "VM name is too short": "VM name is too short",
-  "Could not select Provision Source. {{ error }}": "Could not select Provision Source. {{ error }}"
+  "VM name is too short": "VM name is too short"
 }

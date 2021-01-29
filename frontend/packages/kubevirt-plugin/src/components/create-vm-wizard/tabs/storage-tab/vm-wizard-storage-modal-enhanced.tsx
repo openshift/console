@@ -100,7 +100,6 @@ const VMWizardStorageModal: React.FC<VMWizardStorageModalProps> = (props) => {
           persistentVolumeClaim && new PersistentVolumeClaimWrapper(persistentVolumeClaim, true)
         }
         isTemplate={isCreateTemplate}
-        isInWizard
         editConfig={editConfig}
         onSubmit={(
           resultDiskWrapper,

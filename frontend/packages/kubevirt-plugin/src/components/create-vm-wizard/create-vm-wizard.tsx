@@ -18,7 +18,7 @@ import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-de
 import { Location } from 'history';
 import { match as RouterMatch } from 'react-router';
 import { withReduxID } from '../../utils/redux/common';
-import { DataVolumeModel, VirtualMachineModel } from '../../models';
+import { VirtualMachineModel } from '../../models';
 import { ITemplate } from '../../types/template';
 import {
   TEMPLATE_TYPE_BASE,
@@ -415,10 +415,6 @@ export const CreateVMWizardPageComponent: React.FC<CreateVMWizardPageComponentPr
       getResource(VirtualMachineModel, {
         namespace: activeNamespace,
         prop: VMWizardProps.virtualMachines,
-      }),
-      getResource(DataVolumeModel, {
-        namespace: activeNamespace,
-        prop: VMWizardProps.dataVolumes,
       }),
     ];
 
