@@ -6,7 +6,7 @@ import { K8sResourceCommon, K8sClaimResourceKind, modelFor } from '../../module/
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from '../factory';
 import { Kebab, navFactory, ResourceSummary, SectionHeading, ResourceLink, ResourceKebab } from '../utils';
 // import { WorkloadTableRow, WorkloadTableHeader } from '../workload-table';
-
+import { useTranslation } from 'react-i18next';
 const { common } = Kebab.factory;
 
 const tableColumnClasses = ['', '', classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-lg'), Kebab.columnClass];
@@ -15,40 +15,40 @@ export const menuActions = [...Kebab.getExtensionsActionsForKind(modelFor('PodSe
 
 const kind = 'PodSecurityPolicy';
 
-const PodSecurityPolicyTableHeader = () => {
+const PodSecurityPolicyTableHeader = t => {
   return [
     {
-      title: 'Name',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_1'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: 'Privileged',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_46'),
       sortField: 'spec.privileged',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'SecurityEnhancedLinux',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_47'),
       sortFunc: 'spec.seLinux.rule',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'RunaAsUser',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_48'),
       sortField: 'spec.runAsUser.rule',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
     },
     {
-      title: 'FileStorageGroup',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_49'),
       sortField: 'spec.fsGroup.rule',
       transforms: [sortable],
       props: { className: tableColumnClasses[4] },
     },
     {
-      title: 'SupplementalGroup',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_50'),
       sortField: 'spec.supplementalGroups.rule',
       transforms: [sortable],
       props: { className: tableColumnClasses[5] },
@@ -79,16 +79,24 @@ const PodSecurityPolicyTableRow: RowFunction<K8sClaimResourceKind> = ({ obj: pod
   );
 };
 
-export const PodSecurityPoliciesList: React.FC = props => <Table {...props} aria-label="PodSecurityPolicies" Header={PodSecurityPolicyTableHeader} Row={PodSecurityPolicyTableRow} virtualize />;
+export const PodSecurityPoliciesList: React.FC = props => {
+  const { t } = useTranslation();
+  return <Table {...props} aria-label="PodSecurityPolicies" Header={PodSecurityPolicyTableHeader.bind(null, t)} Row={PodSecurityPolicyTableRow} virtualize />;
+};
 PodSecurityPoliciesList.displayName = 'PodSecurityPoliciesList';
 
-export const PodSecurityPoliciesPage: React.FC<PodSecurityPoliciesPageProps> = props => <ListPage kind={'PodSecurityPolicy'} canCreate={true} ListComponent={PodSecurityPoliciesList} {...props} />;
+export const PodSecurityPoliciesPage: React.FC<PodSecurityPoliciesPageProps> = props => {
+  const { t } = useTranslation();
+  return <ListPage title={t('COMMON:MSG_LNB_MENU_78')} kind={'PodSecurityPolicy'} canCreate={true} ListComponent={PodSecurityPoliciesList} {...props} />;
+};
 PodSecurityPoliciesPage.displayName = 'PodSecurityPoliciesPage';
+
 const PodSecurityPoliciesDetails: React.FC<PodSecurityPoliciesDetailsProps> = ({ obj: podsecuritypolicies }) => {
+  const { t } = useTranslation();
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Namespace Claim Details" />
+        <SectionHeading text={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_1', { 0: t('COMMON:MSG_LNB_MENU_78') })} />
         <div className="co-m-pane__body-group">
           <div className="row">
             <div className="col-sm-6">

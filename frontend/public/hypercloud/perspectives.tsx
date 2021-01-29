@@ -21,11 +21,22 @@ const perspectives: Perspective[] = [
     {
         type: 'Perspective',
         properties: {
+            id: 'master',
+            name: 'Master Cluster',
+            icon: <CogsIcon />,
+            getLandingPageURL: (flags) => '/master/dashboards',
+            getK8sLandingPageURL: (flags) => '/master/dashboards',
+            getImportRedirectURL: (project) => `/k8s/cluster/projects/${project}/workloads`,
+        },
+    },
+    {
+        type: 'Perspective',
+        properties: {
             id: 'hc',
             name: 'Single Cluster',
             icon: <CogsIcon />,
-            getLandingPageURL: (flags) => '/dashboards',
-            getK8sLandingPageURL: (flags) => '/dashboards',
+            getLandingPageURL: (flags) => '/single/dashboards',
+            getK8sLandingPageURL: (flags) => '/single/dashboards',
             getImportRedirectURL: (project) => `/k8s/cluster/projects/${project}/workloads`,
         },
     },

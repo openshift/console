@@ -196,7 +196,7 @@
     "MSG_LNB_MENU_82": "Custom Resource Definitions",
     "MSG_LNB_MENU_83": "Menu Settings",
     "MSG_NNB__1": "Select Namespace...",
-    "MSG_MAIN_CREATEBUTTON_1": "Create {0}",
+    "MSG_MAIN_CREATEBUTTON_1": "Create {{0}}",
     "MSG_MAIN_ACTIONBUTTON_1": "Actions",
     "MSG_MAIN_ACTIONBUTTON_2": "Run Task",
     "MSG_MAIN_ACTIONBUTTON_3": "Expand PVC",

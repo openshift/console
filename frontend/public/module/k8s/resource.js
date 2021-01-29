@@ -18,10 +18,10 @@ const getK8sAPIPath = ({ apiGroup = 'core', apiVersion})
   // console.log('get K8s API Path');
   // console.log({kind, name: listName});
 
-  const cluster = window.SERVER_FLAGS.McMode && getActivePerspective() == 'hc' && getActiveCluster();
-
-  if (cluster) {
-    p = `${window.SERVER_FLAGS.basePath}api/${cluster}`;
+ // const cluster = window.SERVER_FLAGS.McMode && getActivePerspective() == 'hc' && getActiveCluster();
+  
+  if (window.SERVER_FLAGS.McMode && getActivePerspective() == 'hc') {
+    p = `${window.SERVER_FLAGS.basePath}api/${getActiveCluster()}`;
   }
   else {
     p = k8sBasePath;
@@ -194,6 +194,9 @@ export const k8sList = (kind, params = {}, raw = false, options = {}) => {
   }
 
   let listURL = resourceURL(kind, { ns: params.ns });
+  if(localStorage.getItem('bridge/last-perspective') === 'hc') {
+    return coFetchJSON(`${listURL}?${query}`, 'GET', options).then(result => (raw ? result : result.items));
+  }
 
   if (kind.kind === 'Namespace') {
     listURL = `${document.location.origin}/api/hypercloud/namespace?userId=${getId()}`;

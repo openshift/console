@@ -1,12 +1,15 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
+import { useState } from 'react';
+import { Button } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import { ServicePlanModel } from '../../models';
-import { K8sResourceKind } from '../../module/k8s';
+// import { K8sResourceKind, modelFor, k8sGet } from '../../module/k8s';
+import { K8sResourceKind, modelFor } from '../../module/k8s';
 import { DetailsPage, ListPage, Table, TableData, TableRow } from '../factory';
 import { navFactory, SectionHeading, ResourceSummary, ResourceLink, Timestamp } from '../utils';
-
+import { ResourceSidebar } from '../sidebars/resource-sidebar';
 const kind = ServicePlanModel.kind;
 
 const ServicePlanDetails: React.FC<ServicePlanDetailsProps> = ({ obj: servicePlan }) => {
@@ -48,35 +51,8 @@ const tableColumnClasses = [
   '', // NAME
   '', // NAMESPACE
   classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'), // BINDABLE
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg'), // EXTERNAL NAME
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'), // SERVICE BROKER
-  classNames('pf-m-hidden', 'pf-m-visible-on-xl'), // SERVICE CLASS
   classNames('pf-m-hidden', 'pf-m-visible-on-xl'), // CREATED
 ];
-
-const ServicePlanTableRow = ({ obj, index, key, style }) => {
-  return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
-        <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[1])}>
-        <ResourceLink kind="Namespace" name={obj.metadata.namespace} title={obj.metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>{obj.spec.bindable ? 'True' : 'False'}</TableData>
-      <TableData className={tableColumnClasses[3]}>{obj.spec.externalName}</TableData>
-      <TableData className={tableColumnClasses[4]}>
-        <ResourceLink kind="ServiceBroker" name={obj.spec.serviceBrokerName} namespace={obj.metadata.namespace} title={obj.spec.serviceBrokerName} />
-      </TableData>
-      <TableData className={tableColumnClasses[5]}>
-        <ResourceLink kind="ServiceClass" name={obj.spec.serviceClassRef.name} namespace={obj.metadata.namespace} title={obj.spec.serviceClassRef.name} />
-      </TableData>
-      <TableData className={tableColumnClasses[6]}>
-        <Timestamp timestamp={obj.metadata.creationTimestamp} />
-      </TableData>
-    </TableRow>
-  );
-};
 
 const ServicePlanTableHeader = () => {
   return [
@@ -99,24 +75,6 @@ const ServicePlanTableHeader = () => {
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'External Name',
-      sortField: 'spec.externalName',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
-    },
-    {
-      title: 'Service Broker',
-      sortField: 'spec.serviceBrokerName',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[4] },
-    },
-    {
-      title: 'Service Class',
-      sortField: 'spec.serviceClassRef.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[5] },
-    },
-    {
       title: 'Created',
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
@@ -126,16 +84,87 @@ const ServicePlanTableHeader = () => {
 };
 ServicePlanTableHeader.displayName = 'ServicePlanTableHeader';
 
-const ServicePlansList: React.FC = props => <Table {...props} aria-label="Service Plan" Header={ServicePlanTableHeader} Row={ServicePlanTableRow} />;
+const ServicePlanTableRow = (setSidebarDetails, setShowSidebar, setSidebarTitle, props) => {
+  const { obj, index, key, style } = props;
+  const SidebarLink = ({ name, kind, obj }) => {
+    return (
+      <Button
+        type="button"
+        variant="link"
+        isInline
+        onClick={() => {
+          setShowSidebar(true);
+          setSidebarDetails(obj);
+          setSidebarTitle(obj.metadata.name);
+        }}
+      >
+        {name}
+      </Button>
+    );
+  };
+  return (
+    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+      <TableData className={tableColumnClasses[0]}>
+        <SidebarLink kind={kind} name={obj.metadata.name} obj={obj} />
+      </TableData>
+      <TableData className={classNames(tableColumnClasses[1])}>
+        <ResourceLink kind="Namespace" name={obj.metadata.namespace} title={obj.metadata.namespace} />
+      </TableData>
+      <TableData className={tableColumnClasses[2]}>{obj.spec.bindable ? 'True' : 'False'}</TableData>
+      <TableData className={tableColumnClasses[6]}>
+        <Timestamp timestamp={obj.metadata.creationTimestamp} />
+      </TableData>
+    </TableRow>
+  );
+};
+const ServicePlansList: React.FC<ServicePlansListProps> = props => {
+  const { setSidebarDetails, setShowSidebar, setSidebarTitle } = props;
+  return <Table {...props} aria-label="Service Plan" Header={ServicePlanTableHeader} Row={ServicePlanTableRow.bind(null, setSidebarDetails, setShowSidebar, setSidebarTitle)} />;
+};
 ServicePlansList.displayName = 'ServicePlansList';
 
 const ServicePlansPage: React.FC<ServicePlansPageProps> = props => {
-  return <ListPage canCreate={true} kind={kind} ListComponent={ServicePlansList} {...props} />;
+  const [showSidebar, setShowSidebar] = useState(false);
+  const [servicePlan, setSidebarDetails] = useState({});
+  const [sidebarTitle, setSidebarTitle] = useState('');
+  return (
+    <>
+      <div className="co-p-has-sidebar">
+        <div className="co-m-pane__body">
+          <ListPage canCreate={false} kind={kind} ListComponent={ServicePlansList} setSidebarTitle={setSidebarTitle} setShowSidebar={setShowSidebar} setSidebarDetails={setSidebarDetails} {...props} />
+        </div>
+        <ResourceSidebar
+          resource={servicePlan}
+          kindObj={modelFor('ServicePlan')}
+          toggleSidebar={() => {
+            setShowSidebar(!showSidebar);
+            window.dispatchEvent(new Event('sidebar_toggle'));
+          }}
+          title={sidebarTitle}
+          isFloat={true}
+          showName={false}
+          showID={true}
+          showPodSelector={true}
+          showNodeSelector={true}
+          showOwner={false}
+          showSidebar={showSidebar}
+          samples={[]}
+          isCreateMode={true}
+          showDetails={true}
+        />
+      </div>
+    </>
+  );
 };
 ServicePlansPage.displayName = 'ServicePlansPage';
 
 export { ServicePlansList, ServicePlansPage, ServicePlansDetailsPage };
 
+type ServicePlansListProps = {
+  setShowSidebar: any;
+  setSidebarDetails: any;
+  setSidebarTitle: any;
+};
 type ServicePlansPageProps = {};
 
 type ServicePlansDetailsPageProps = {
