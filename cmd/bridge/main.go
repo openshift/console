@@ -150,6 +150,7 @@ func main() {
 	fKialiEndpoint := fs.String("kiali-endpoint", "", "URL of the KIALI Portal")
 	// NOTE: webhook 연동 추가
 	fwebhookEndpoint := fs.String("webhook-endpoint", "", "URL of the hypercloud webhook endpoint")
+	fKibanaEndpoint := fs.String("kibana-endpoint", "https://efk-opendistro-es-kibana-svc.efk.svc.cluster.local", "URL of the KIALI Portal")
 
 	// NOTE: Multi Cluster(MC) Mode flags //jinsoo
 	fMcMode := fs.Bool("mc-mode", false, "Multi Cluster => true | Single Cluster => false")
@@ -486,6 +487,15 @@ func main() {
 			InsecureSkipVerify: true,
 		},
 		Endpoint: webhookEndpoint,
+		Origin:   "http://localhost",
+	}
+	kibanaEndpoint := bridge.ValidateFlagIsURL("kibana-endpoint", *fKibanaEndpoint)
+	srv.KibanaProxyConfig = &hproxy.Config{
+		HeaderBlacklist: []string{"X-CSRFToken"},
+		TLSClientConfig: &tls.Config{
+			InsecureSkipVerify: true,
+		},
+		Endpoint: kibanaEndpoint,
 		Origin:   "http://localhost",
 	}
 

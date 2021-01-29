@@ -50,6 +50,7 @@ const (
 	webhookEndpoint               = "/api/webhook/"
 	hypercloudServerEndpoint      = "/api/hypercloud/"
 	multiHypercloudServerEndpoint = "/api/multi-hypercloud/"
+	kibanaEndpoint                = "/api/kibana/"
 )
 
 var (
@@ -145,6 +146,7 @@ type Server struct {
 	WebhookProxyConfig               *hproxy.Config
 	HypercloudServerProxyConfig      *hproxy.Config
 	MultiHypercloudServerProxyConfig *hproxy.Config
+	KibanaProxyConfig                *hproxy.Config
 
 	McMode         bool
 	McModeFile     string
@@ -188,6 +190,10 @@ func (s *Server) hypercloudServerEnable() bool {
 
 func (s *Server) multiHypercloudServerEnable() bool {
 	return s.MultiHypercloudServerProxyConfig != nil
+}
+
+func (s *Server) kibanaEnable() bool {
+	return s.KibanaProxyConfig != nil
 }
 
 func (s *Server) HTTPHandler() http.Handler {
@@ -466,6 +472,18 @@ func (s *Server) HTTPHandler() http.Handler {
 			proxy.SingleJoiningSlash(s.BaseURL.Path, multiHypercloudServerProxyAPIPath),
 			http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				multiHypercloudServerProxy.ServeHTTP(w, r)
+			})),
+		)
+	}
+
+	// NOTE: kibana proxy
+	if s.kibanaEnable() {
+		kibanaAPIPath := kibanaEndpoint
+		kibanaProxy := hproxy.NewProxy(s.KibanaProxyConfig)
+		handle(kibanaAPIPath, http.StripPrefix(
+			proxy.SingleJoiningSlash(s.BaseURL.Path, kibanaAPIPath),
+			http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				kibanaProxy.ServeHTTP(w, r)
 			})),
 		)
 	}
