@@ -194,6 +194,9 @@ export const k8sList = (kind, params = {}, raw = false, options = {}) => {
   }
 
   let listURL = resourceURL(kind, { ns: params.ns });
+  if(localStorage.getItem('bridge/last-perspective') === 'hc') {
+    return coFetchJSON(`${listURL}?${query}`, 'GET', options).then(result => (raw ? result : result.items));
+  }
 
   if (kind.kind === 'Namespace') {
     listURL = `${document.location.origin}/api/hypercloud/namespace?userId=${getId()}`;
