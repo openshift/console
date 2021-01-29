@@ -2,6 +2,8 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { TemplateModel } from '../../models';
 import { K8sResourceKind } from '../../module/k8s';
 import { DetailsPage, ListPage, Table, TableData, TableRow } from '../factory';
@@ -95,16 +97,16 @@ const TemplateTableRow = ({ obj, index, key, style }) => {
   );
 };
 
-const TemplateTableHeader = () => {
+const TemplateTableHeader = (t?: TFunction) => {
   return [
     {
-      title: 'Name',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_1'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: 'Namespace',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_2'),
       sortField: 'metadata.namespace',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
@@ -114,7 +116,7 @@ const TemplateTableHeader = () => {
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'Created',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_12'),
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
@@ -128,7 +130,10 @@ const TemplateTableHeader = () => {
 
 TemplateTableHeader.displayName = 'TemplateTableHeader';
 
-const TemplatesList: React.FC = props => <Table {...props} aria-label="Template" Header={TemplateTableHeader} Row={TemplateTableRow} />;
+const TemplatesList: React.FC = props => {
+  const { t } = useTranslation();
+  return <Table {...props} aria-label="Template" Header={TemplateTableHeader.bind(null, t)} Row={TemplateTableRow} />;
+};
 TemplatesList.displayName = 'TemplatesList';
 
 const TemplatesPage: React.FC<TemplatesPageProps> = props => {
