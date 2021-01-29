@@ -58,6 +58,13 @@ describe('Pipeline Run Count Graph', () => {
   it('Should render an TimeSeriesChart if data is available', () => {
     pipelineRunSpy.mockReturnValue([{ data: { result: [{ x: 'x' }] } }, false, false]);
     const PipelineRunCountWrapper = shallow(<PipelineRunCount {...PipelineRunCountProps} />);
-    expect(PipelineRunCountWrapper.find(TimeSeriesChart).exists()).toBe(true);
+    expect(PipelineRunCountWrapper.find(LoadingInline).exists()).toBe(false);
+    expect(PipelineRunCountWrapper.find(GraphEmpty).exists()).toBe(false);
+    expect(
+      PipelineRunCountWrapper.dive()
+        .dive()
+        .find(TimeSeriesChart)
+        .exists(),
+    ).toBe(true);
   });
 });

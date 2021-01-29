@@ -1,4 +1,5 @@
 import * as React from 'react';
+import Measure from 'react-measure';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { ChartVoronoiContainer } from '@patternfly/react-charts';
@@ -21,7 +22,6 @@ const PipelineSuccessRatioDonut: React.FC<PipelineMetricsGraphProps> = ({
   pipeline,
   timespan,
   interval,
-  width = 1000,
   loaded = true,
   onLoad: onInitialLoad,
 }) => {
@@ -99,46 +99,53 @@ const PipelineSuccessRatioDonut: React.FC<PipelineMetricsGraphProps> = ({
   const successData = _.sortBy(finalArray, 'sortOrder');
   return (
     <Grid hasGutter>
-      <GridItem span={3}>
-        <SuccessRatioDonut
-          data={successData}
-          successValue={successValue}
-          width={(width * 30) / 100}
-          ariaDesc={t('pipelines-plugin~Pipeline success ratio chart')}
-          ariaTitle={t('pipelines-plugin~Pipeline success ratio')}
-          subTitle={
-            successData
-              ? t('pipelines-plugin~{{successValue}} of {{totalValue}} succeeded', {
-                  successValue,
-                  totalValue,
-                })
-              : ''
-          }
-          title={successData.length ? `${((successValue * 100) / totalValue).toFixed(1)}%` : ''}
-        />
+      <GridItem xl2={3} xl={3} lg={3} md={3} sm={3}>
+        <div style={{ height: DEFAULT_CHART_HEIGHT }}>
+          <SuccessRatioDonut
+            data={successData}
+            successValue={successValue}
+            ariaDesc={t('pipelines-plugin~Pipeline success ratio chart')}
+            ariaTitle={t('pipelines-plugin~Pipeline success ratio')}
+            subTitle={
+              successData
+                ? t('pipelines-plugin~{{successValue}} of {{totalValue}} succeeded', {
+                    successValue,
+                    totalValue,
+                  })
+                : ''
+            }
+            title={successData.length ? `${((successValue * 100) / totalValue).toFixed(1)}%` : ''}
+          />
+        </div>
       </GridItem>
-      <GridItem span={9}>
-        <TimeSeriesChart
-          ariaDesc={t('pipelines-plugin~Pipeline success chart')}
-          ariaTitle={t('pipelines-plugin~Pipeline success per day')}
-          data={Object.values(successTimeSeriesObj) ?? []}
-          bar={false}
-          domain={{ y: [0, 100] }}
-          yTickFormatter={(v) => `${v}%`}
-          timespan={timespan}
-          width={(width * 70) / 100}
-          containerComponent={
-            <ChartVoronoiContainer
-              constrainToVisibleArea
-              labels={({ datum }) =>
-                datum.childName.includes('line-') && datum.y !== null
-                  ? `${formatDate(datum.x)} 
+      <GridItem xl2={9} xl={9} lg={9} md={9} sm={9}>
+        <Measure bounds>
+          {({ measureRef, contentRect }) => (
+            <div ref={measureRef} style={{ height: DEFAULT_CHART_HEIGHT }}>
+              <TimeSeriesChart
+                ariaDesc={t('pipelines-plugin~Pipeline success chart')}
+                ariaTitle={t('pipelines-plugin~Pipeline success per day')}
+                data={Object.values(successTimeSeriesObj) ?? []}
+                bar={false}
+                domain={{ y: [0, 100] }}
+                yTickFormatter={(v) => `${v}%`}
+                timespan={timespan}
+                width={contentRect.bounds.width}
+                containerComponent={
+                  <ChartVoronoiContainer
+                    constrainToVisibleArea
+                    labels={({ datum }) =>
+                      datum.childName.includes('line-') && datum.y !== null
+                        ? `${formatDate(datum.x)} 
               ${datum?.y}%`
-                  : null
-              }
-            />
-          }
-        />
+                        : null
+                    }
+                  />
+                }
+              />
+            </div>
+          )}
+        </Measure>
       </GridItem>
     </Grid>
   );

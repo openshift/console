@@ -1,4 +1,5 @@
 import * as React from 'react';
+import Measure from 'react-measure';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { DEFAULT_CHART_HEIGHT, DEFAULT_LEGEND_CHART_HEIGHT } from '../const';
@@ -26,7 +27,6 @@ const PipelineRunTaskRunGraph: React.FC<PipelineMetricsGraphProps> = ({
   pipeline,
   timespan,
   interval,
-  width = 650,
   loaded = true,
   onLoad: onInitialLoad,
 }) => {
@@ -115,43 +115,47 @@ const PipelineRunTaskRunGraph: React.FC<PipelineMetricsGraphProps> = ({
       onLegendClick: handleLegendClick,
     });
   return (
-    <>
-      <LineChart
-        ariaDesc={t('pipelines-plugin~Pipeline task run duration chart')}
-        ariaTitle={t('pipelines-plugin~Task run duration')}
-        data={_.values(finalObj)}
-        yTickFormatter={(seconds) => getYaxisValues(seconds)}
-        events={getEvents()}
-        hiddenSeries={hiddenSeries}
-        tickValues={tickValues}
-        width={width}
-        height={chartHeight}
-        legendPosition="bottom-left"
-        legendComponent={
-          <ChartLegend
-            gutter={25}
-            y={DEFAULT_CHART_HEIGHT + 75}
-            itemsPerRow={4}
-            name="legend"
-            data={getLegendData()}
-          />
-        }
-        containerComponent={
-          <ChartVoronoiContainer
-            constrainToVisibleArea
-            activateData={false}
-            voronoiPadding={{ bottom: 75 } as any}
-            labels={({ datum }) =>
-              datum.childName.includes('line-') && datum.y !== null
-                ? `${datum?.metric?.pipelinerun}
+    <Measure bounds>
+      {({ measureRef, contentRect }) => (
+        <div ref={measureRef}>
+          <LineChart
+            ariaDesc={t('pipelines-plugin~Pipeline task run duration chart')}
+            ariaTitle={t('pipelines-plugin~Task run duration')}
+            data={_.values(finalObj)}
+            yTickFormatter={(seconds) => getYaxisValues(seconds)}
+            events={getEvents()}
+            hiddenSeries={hiddenSeries}
+            tickValues={tickValues}
+            width={contentRect.bounds.width}
+            height={chartHeight}
+            legendPosition="bottom-left"
+            legendComponent={
+              <ChartLegend
+                gutter={25}
+                y={DEFAULT_CHART_HEIGHT + 75}
+                itemsPerRow={4}
+                name="legend"
+                data={getLegendData()}
+              />
+            }
+            containerComponent={
+              <ChartVoronoiContainer
+                constrainToVisibleArea
+                activateData={false}
+                voronoiPadding={{ bottom: 75 } as any}
+                labels={({ datum }) =>
+                  datum.childName.includes('line-') && datum.y !== null
+                    ? `${datum?.metric?.pipelinerun}
                 ${getCustomTaskName(datum?.metric?.task)}
             ${formatDuration(datum?.y * 1000)}`
-                : null
+                    : null
+                }
+              />
             }
           />
-        }
-      />
-    </>
+        </div>
+      )}
+    </Measure>
   );
 };
 

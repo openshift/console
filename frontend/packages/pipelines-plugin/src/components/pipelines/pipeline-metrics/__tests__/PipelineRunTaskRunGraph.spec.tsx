@@ -1,4 +1,5 @@
 import * as React from 'react';
+import Measure from 'react-measure';
 import { shallow } from 'enzyme';
 import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
 import { DEFAULT_PROMETHEUS_TIMESPAN } from '@console/internal/components/graphs';
@@ -72,6 +73,14 @@ describe('TaskRun Duration Graph', () => {
     const PipelineRunTaskRunGraphWrapper = shallow(
       <PipelineRunTaskRunGraph {...PipelineRunTaskRunGraphProps} />,
     );
-    expect(PipelineRunTaskRunGraphWrapper.find(LineChart).exists()).toBe(true);
+    expect(PipelineRunTaskRunGraphWrapper.find(LoadingInline).exists()).toBe(false);
+    expect(PipelineRunTaskRunGraphWrapper.find(GraphEmpty).exists()).toBe(false);
+    expect(
+      PipelineRunTaskRunGraphWrapper.find(Measure)
+        .dive()
+        .dive()
+        .find(LineChart)
+        .exists(),
+    ).toBe(true);
   });
 });

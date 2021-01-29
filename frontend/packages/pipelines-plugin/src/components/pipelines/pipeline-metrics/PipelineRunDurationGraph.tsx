@@ -1,4 +1,5 @@
 import * as React from 'react';
+import Measure from 'react-measure';
 import { useTranslation } from 'react-i18next';
 import { ChartThemeColor, ChartVoronoiContainer } from '@patternfly/react-charts';
 import { Bullseye, Flex, FlexItem, Grid, GridItem } from '@patternfly/react-core';
@@ -16,7 +17,6 @@ const PipelineRunDurationGraph: React.FC<PipelineMetricsGraphProps> = ({
   pipeline,
   timespan,
   interval,
-  width = 1000,
   loaded = true,
   onLoad: onInitialLoad,
 }) => {
@@ -83,28 +83,34 @@ const PipelineRunDurationGraph: React.FC<PipelineMetricsGraphProps> = ({
         </Bullseye>
       </GridItem>
       <GridItem span={9}>
-        <LineChart
-          ariaDesc={t('pipelines-plugin~Pipeline run duration chart')}
-          ariaTitle={t('pipelines-plugin~Pipeline run duration')}
-          data={[finalArray.duration]}
-          themeColor={ChartThemeColor.green}
-          yTickFormatter={(seconds) => `${Math.floor(seconds / 60)}m`}
-          width={(width * 70) / 100}
-          height={chartHeight}
-          containerComponent={
-            <ChartVoronoiContainer
-              voronoiPadding={{ bottom: 75 } as any}
-              constrainToVisibleArea
-              activateData={false}
-              labels={({ datum }) =>
-                datum.childName.includes('line-') && datum.y !== null
-                  ? `${datum?.metric?.pipelinerun} 
+        <Measure bounds>
+          {({ measureRef, contentRect }) => (
+            <div ref={measureRef}>
+              <LineChart
+                ariaDesc={t('pipelines-plugin~Pipeline run duration chart')}
+                ariaTitle={t('pipelines-plugin~Pipeline run duration')}
+                data={[finalArray.duration]}
+                themeColor={ChartThemeColor.green}
+                yTickFormatter={(seconds) => `${Math.floor(seconds / 60)}m`}
+                width={contentRect.bounds.width}
+                height={chartHeight}
+                containerComponent={
+                  <ChartVoronoiContainer
+                    voronoiPadding={{ bottom: 75 } as any}
+                    constrainToVisibleArea
+                    activateData={false}
+                    labels={({ datum }) =>
+                      datum.childName.includes('line-') && datum.y !== null
+                        ? `${datum?.metric?.pipelinerun} 
               ${datum?.time}`
-                  : null
-              }
-            />
-          }
-        />
+                        : null
+                    }
+                  />
+                }
+              />
+            </div>
+          )}
+        </Measure>
       </GridItem>
     </Grid>
   );

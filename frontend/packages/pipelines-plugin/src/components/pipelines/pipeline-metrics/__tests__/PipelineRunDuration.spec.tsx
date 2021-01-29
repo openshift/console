@@ -1,4 +1,5 @@
 import * as React from 'react';
+import Measure from 'react-measure';
 import { shallow } from 'enzyme';
 import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
 import { DEFAULT_PROMETHEUS_TIMESPAN } from '@console/internal/components/graphs';
@@ -76,6 +77,14 @@ describe('Pipeline Run Duration Graph', () => {
     const PipelineRunDurationGraphWrapper = shallow(
       <PipelineRunDurationGraph {...PipelineRunDurationGraphProps} />,
     );
-    expect(PipelineRunDurationGraphWrapper.find(LineChart).exists()).toBe(true);
+    expect(PipelineRunDurationGraphWrapper.find(LoadingInline).exists()).toBe(false);
+    expect(PipelineRunDurationGraphWrapper.find(GraphEmpty).exists()).toBe(false);
+    expect(
+      PipelineRunDurationGraphWrapper.find(Measure)
+        .dive()
+        .dive()
+        .find(LineChart)
+        .exists(),
+    ).toBe(true);
   });
 });
