@@ -66,6 +66,7 @@ describe('featureReducer', () => {
         [FLAGS.CONSOLE_NOTIFICATION]: false,
         [FLAGS.CONSOLE_EXTERNAL_LOG_LINK]: false,
         [FLAGS.CONSOLE_YAML_SAMPLE]: false,
+        [FLAGS.CLUSTER_AUTOSCALER]: false,
       }),
     );
   });

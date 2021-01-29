@@ -70,6 +70,7 @@ import {
   EmptyBox,
   ExternalLink,
   Firehose,
+  FirehoseResource,
   HorizontalNav,
   openshiftHelpBase,
   ResourceLink,
@@ -89,6 +90,8 @@ import {
   RedExclamationCircleIcon,
   YellowExclamationTriangleIcon,
 } from '@console/shared';
+import { useFlag } from '@console/shared/src/hooks/flag';
+import { FLAGS } from '@console/shared/src/constants';
 
 const cancelUpdate = (cv: ClusterVersionKind) => {
   k8sPatch(ClusterVersionModel, cv, [{ path: '/spec/desiredUpdate', op: 'remove' }]).catch(
@@ -875,24 +878,28 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
             <dd>
               <ResourceLink kind={referenceForModel(ClusterVersionModel)} name={cv.metadata.name} />
             </dd>
-            <dt>{t('cluster-settings~Cluster autoscaler')}</dt>
-            <dd>
-              {_.isEmpty(autoscalers) ? (
-                <Link to={`${resourcePathFromModel(ClusterAutoscalerModel)}/~new`}>
-                  <AddCircleOIcon className="co-icon-space-r" />
-                  {t('cluster-settings~Create autoscaler')}
-                </Link>
-              ) : (
-                autoscalers.map((autoscaler) => (
-                  <div key={autoscaler.metadata.uid}>
-                    <ResourceLink
-                      kind={clusterAutoscalerReference}
-                      name={autoscaler.metadata.name}
-                    />
-                  </div>
-                ))
-              )}
-            </dd>
+            {autoscalers && (
+              <>
+                <dt>{t('cluster-settings~Cluster autoscaler')}</dt>
+                <dd>
+                  {_.isEmpty(autoscalers) ? (
+                    <Link to={`${resourcePathFromModel(ClusterAutoscalerModel)}/~new`}>
+                      <AddCircleOIcon className="co-icon-space-r" />
+                      {t('cluster-settings~Create autoscaler')}
+                    </Link>
+                  ) : (
+                    autoscalers.map((autoscaler) => (
+                      <div key={autoscaler.metadata.uid}>
+                        <ResourceLink
+                          kind={clusterAutoscalerReference}
+                          name={autoscaler.metadata.name}
+                        />
+                      </div>
+                    ))
+                  )}
+                </dd>
+              </>
+            )}
           </dl>
         </div>
       </div>
@@ -960,11 +967,19 @@ export const ClusterOperatorTabPage: React.FC<ClusterOperatorTabPageProps> = ({ 
 
 export const ClusterSettingsPage: React.FC<ClusterSettingsPageProps> = ({ match }) => {
   const { t } = useTranslation();
+  const hasClusterAutoscaler = useFlag(FLAGS.CLUSTER_AUTOSCALER);
   const title = t('cluster-settings~Cluster Settings');
-  const resources = [
+  const resources: FirehoseResource[] = [
     { kind: clusterVersionReference, name: 'version', isList: false, prop: 'obj' },
-    { kind: clusterAutoscalerReference, isList: true, prop: 'autoscalers', optional: true },
   ];
+  if (hasClusterAutoscaler) {
+    resources.push({
+      kind: clusterAutoscalerReference,
+      isList: true,
+      prop: 'autoscalers',
+      optional: true,
+    });
+  }
   const resourceKeys = _.map(resources, 'prop');
   const pages = [
     {
@@ -1098,7 +1113,7 @@ type UpdateInProgressProps = {
 
 type ClusterVersionDetailsTableProps = {
   obj: ClusterVersionKind;
-  autoscalers: K8sResourceKind[];
+  autoscalers?: K8sResourceKind[];
 };
 
 type ClusterVersionConditionsLinkProps = {
