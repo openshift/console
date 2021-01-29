@@ -245,12 +245,23 @@ const formatLabels = (labels: PrometheusLabels) => {
 
 type GraphSeries = GraphDataPoint[] | null;
 
+const getXDomain = (endTime, span): AxisDomain => [endTime - span, endTime];
+
 const Graph: React.FC<GraphProps> = React.memo(
-  ({ allSeries, disabledSeries, formatLegendLabel, isStack, span, width, xDomain }) => {
+  ({ allSeries, disabledSeries, formatLegendLabel, isStack, span, width, fixedXDomain }) => {
     const data: GraphSeries[] = [];
     const tooltipSeriesNames: string[] = [];
     const legendData: { name: string }[] = [];
     const { t } = useTranslation();
+
+    const [xDomain, setXDomain] = React.useState(fixedXDomain || getXDomain(Date.now(), span));
+
+    // Only update X-axis if the time range (fixedXDomain or span) or graph data (allSeries) change
+    React.useEffect(() => {
+      setXDomain(fixedXDomain || getXDomain(Date.now(), span));
+    }, [allSeries, span, fixedXDomain]);
+
+    const domain = { x: xDomain, y: undefined };
 
     _.each(allSeries, (series, i) => {
       _.each(series, ([metric, values]) => {
@@ -265,8 +276,6 @@ const Graph: React.FC<GraphProps> = React.memo(
         }
       });
     });
-
-    const domain = { x: xDomain || [Date.now() - span, Date.now()], y: undefined };
 
     let yTickFormat = formatValue;
 
@@ -422,12 +431,12 @@ const minPollInterval = 10 * 1000;
 const ZoomableGraph: React.FC<ZoomableGraphProps> = ({
   allSeries,
   disabledSeries,
+  fixedXDomain,
   formatLegendLabel,
   isStack,
   onZoom,
   span,
   width,
-  xDomain,
 }) => {
   const [isZooming, setIsZooming] = React.useState(false);
   const [x1, setX1] = React.useState(0);
@@ -463,7 +472,7 @@ const ZoomableGraph: React.FC<ZoomableGraphProps> = ({
     }
 
     const zoomWidth = e.currentTarget.getBoundingClientRect().width;
-    const oldFrom = _.get(xDomain, '[0]', Date.now() - span);
+    const oldFrom = _.get(fixedXDomain, '[0]', Date.now() - span);
     let from = oldFrom + (span * xMin) / zoomWidth;
     let to = oldFrom + (span * xMax) / zoomWidth;
     let newSpan = to - from;
@@ -493,11 +502,11 @@ const ZoomableGraph: React.FC<ZoomableGraphProps> = ({
       <Graph
         allSeries={allSeries}
         disabledSeries={disabledSeries}
+        fixedXDomain={fixedXDomain}
         formatLegendLabel={formatLegendLabel}
         isStack={isStack}
         span={span}
         width={width}
-        xDomain={xDomain}
       />
     </div>
   );
@@ -768,22 +777,22 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
                     <Graph
                       allSeries={graphData}
                       disabledSeries={disabledSeries}
+                      fixedXDomain={xDomain}
                       formatLegendLabel={formatLegendLabel}
                       isStack={canStack && isStacked}
                       span={span}
                       width={width}
-                      xDomain={xDomain}
                     />
                   ) : (
                     <ZoomableGraph
                       allSeries={graphData}
                       disabledSeries={disabledSeries}
+                      fixedXDomain={xDomain}
                       formatLegendLabel={formatLegendLabel}
                       isStack={canStack && isStacked}
                       onZoom={onZoom}
                       span={span}
                       width={width}
-                      xDomain={xDomain}
                     />
                   )}
                 </>
@@ -843,11 +852,11 @@ type GraphEmptyStateProps = {
 type GraphProps = {
   allSeries: Series[][];
   disabledSeries?: PrometheusLabels[][];
+  fixedXDomain?: AxisDomain;
   formatLegendLabel?: FormatLegendLabel;
   isStack?: boolean;
   span: number;
   width: number;
-  xDomain?: AxisDomain;
 };
 
 type ZoomableGraphProps = GraphProps & { onZoom: (from: number, to: number) => void };
