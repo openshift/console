@@ -1,4 +1,7 @@
-import * as redux from 'react-redux';
+// FIXME upgrading redux types is causing many errors at this time
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore
+import { useSelector } from 'react-redux';
 import { act } from 'react-dom/test-utils';
 import { ConfigMapKind } from '@console/internal/module/k8s';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -14,6 +17,10 @@ import { useUserSettings } from '../useUserSettings';
 const useK8sWatchResourceMock = useK8sWatchResource as jest.Mock;
 const createConfigMapMock = createConfigMap as jest.Mock;
 const updateConfigMapMock = updateConfigMap as jest.Mock;
+const useSelectorMock = useSelector as jest.Mock;
+
+// need to mock StorageEvent because it doesn't exist
+(global as any).StorageEvent = Event;
 
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   useK8sWatchResource: jest.fn(),
@@ -26,6 +33,14 @@ jest.mock('../../utils/user-settings', () => {
     ...originalModule,
     createConfigMap: jest.fn(),
     updateConfigMap: jest.fn(),
+  };
+});
+
+jest.mock('react-redux', () => {
+  const originalModule = (jest as any).requireActual('react-redux');
+  return {
+    ...originalModule,
+    useSelector: jest.fn(),
   };
 });
 
@@ -50,7 +65,10 @@ describe('useUserSettings', () => {
     useK8sWatchResourceMock.mockClear();
     createConfigMapMock.mockClear();
     updateConfigMapMock.mockClear();
-    spyOn(redux, 'useSelector').and.returnValues({ user: {} });
+    useSelectorMock.mockClear();
+    useSelectorMock.mockImplementation((selector) =>
+      selector({ UI: new Map([['user', { metadata: { uid: 'foo' } }]]) }),
+    );
   });
 
   it('should create and update user settings if watcher could not find a ConfigMap', async () => {
@@ -509,5 +527,34 @@ describe('useUserSettings', () => {
     expect(createConfigMapMock).toHaveBeenCalledTimes(1);
     expect(createConfigMapMock).toHaveBeenCalledWith();
     expect(updateConfigMapMock).toHaveBeenCalledTimes(0);
+  });
+
+  it('should use session storage when impersonating', () => {
+    useSelectorMock.mockImplementation((selector) =>
+      selector({
+        UI: new Map([
+          ['user', { metadata: { uid: 'foo' } }],
+          ['impersonate', { name: 'imposter' }],
+        ]),
+      }),
+    );
+
+    let storageListenerInvoked = false;
+    const storageListener = (event: StorageEvent) => {
+      storageListenerInvoked = true;
+      expect(event.storageArea).toBe(sessionStorage);
+      expect(event.key).toBe('user-settings-imposter');
+      expect(event.newValue).toBe(JSON.stringify({ 'impersonate.key': 'newValue' }));
+    };
+    window.addEventListener('storage', storageListener);
+
+    const { result } = testHook(() => useUserSettings('impersonate.key', 'impersonate.value'));
+
+    expect(result.current).toEqual(['impersonate.value', expect.any(Function), true]);
+
+    result.current[1]('newValue');
+
+    expect(storageListenerInvoked).toBe(true);
+    window.removeEventListener('storage', storageListener);
   });
 });
