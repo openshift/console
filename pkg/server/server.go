@@ -420,7 +420,8 @@ func (s *Server) HTTPHandler() http.Handler {
 		grafanaProxy := httputil.NewSingleHostReverseProxy(s.GrafanaProxyConfig.Endpoint)
 		handle(grafanaProxyAPIPath, http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, grafanaProxyAPIPath),
-			http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
 				// s.StaticUser.Token = r.Header.Clone().Get("Authorization")
 				grafanaProxy.ServeHTTP(w, r)
 			})),
@@ -434,7 +435,8 @@ func (s *Server) HTTPHandler() http.Handler {
 		kialiProxy := hproxy.NewProxy(s.KialiProxyConfig)
 		handle(kialiProxyAPIPath, http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, kialiProxyAPIPath),
-			http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
 				kialiProxy.ServeHTTP(w, r)
 			})),
 		)
@@ -446,7 +448,8 @@ func (s *Server) HTTPHandler() http.Handler {
 		webhookProxy := hproxy.NewProxy(s.WebhookProxyConfig)
 		handle(webhookProxyAPIPath, http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, webhookProxyAPIPath),
-			http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
 				webhookProxy.ServeHTTP(w, r)
 			})),
 		)
@@ -458,7 +461,8 @@ func (s *Server) HTTPHandler() http.Handler {
 		hypercloudServerProxy := hproxy.NewProxy(s.HypercloudServerProxyConfig)
 		handle(hypercloudServerProxyAPIPath, http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, hypercloudServerProxyAPIPath),
-			http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
 				hypercloudServerProxy.ServeHTTP(w, r)
 			})),
 		)
@@ -470,7 +474,8 @@ func (s *Server) HTTPHandler() http.Handler {
 		multiHypercloudServerProxy := hproxy.NewProxy(s.MultiHypercloudServerProxyConfig)
 		handle(multiHypercloudServerProxyAPIPath, http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, multiHypercloudServerProxyAPIPath),
-			http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
 				multiHypercloudServerProxy.ServeHTTP(w, r)
 			})),
 		)
@@ -480,9 +485,12 @@ func (s *Server) HTTPHandler() http.Handler {
 	if s.kibanaEnable() {
 		kibanaAPIPath := kibanaEndpoint
 		kibanaProxy := hproxy.NewProxy(s.KibanaProxyConfig)
+		// authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+		// 	r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
 		handle(kibanaAPIPath, http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, kibanaAPIPath),
-			http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
 				kibanaProxy.ServeHTTP(w, r)
 			})),
 		)
