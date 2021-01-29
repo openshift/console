@@ -99,7 +99,10 @@ const ServiceInstanceTableRow = ({ obj, index, key, style }) => {
         <Status status={obj.status.lastConditionState} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>
-        {obj.spec.clusterServicePlanExternalName} {obj.spec.servicePlanExternalName}
+        {
+          obj.spec.clusterServicePlanExternalName ?
+            <ResourceLink kind="ClusterServicePlan" title={obj.spec.clusterServicePlanRef?.name} name={obj.spec.clusterServicePlanRef?.name} displayName={obj.spec.clusterServicePlanExternalName} /> : <ResourceLink kind="ServicePlan" title={obj.spec.servicePlanRef?.name} name={obj.spec.servicePlanRef?.name} displayName={obj.spec.servicePlanExternalName} />
+        }
       </TableData>
       <TableData className={tableColumnClasses[4]}>
         <Timestamp timestamp={obj.metadata.creationTimestamp} />

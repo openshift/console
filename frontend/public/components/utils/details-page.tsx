@@ -53,6 +53,12 @@ export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({ children, res
               <ResourceLink kind="Namespace" name={metadata.namespace} title={metadata.uid} namespace={null} />
             </DetailsItem>
           )}
+          {/* {showAllNamespace && (
+            <div>
+              <dt>{t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_6')}</dt>
+              <dd>all-namespace</dd>
+            </div>
+          )} */}
           {type ? <dt>Type</dt> : null}
           {type ? <dd>{type}</dd> : null}
           <DetailsItem label={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_8')} obj={resource} path="metadata.labels">
@@ -131,6 +137,7 @@ export type ResourceSummaryProps = {
   nodeSelector?: string;
   children?: React.ReactNode;
   customPathName?: string;
+  showAllNamespace?: boolean;
 };
 
 export type ResourcePodCountProps = {
