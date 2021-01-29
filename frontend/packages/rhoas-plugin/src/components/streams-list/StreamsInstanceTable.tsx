@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {
   sortable,
-  IRowData,
   Table,
   TableHeader,
   TableBody,
@@ -18,8 +17,8 @@ const StreamsInstanceTable: any = ({ kafkaArray, selectedKafkas, setSelectedKafk
   const [formattedKafkas, setFormattedKafkas] = React.useState<FormattedKafkas[]>([]);
 
   const formatTableRowData = () => {
-    const tableRow: (IRowData | string[])[] | undefined = [];
-    kafkaArray.forEach((row: IRowData) => {
+    const tableRow = [];
+    kafkaArray.forEach(row => {
       const { name, bootstrapServerHost, cloudProvider, region, owner } = row;
       tableRow.push({
         cells: [
@@ -30,9 +29,6 @@ const StreamsInstanceTable: any = ({ kafkaArray, selectedKafkas, setSelectedKafk
         ]
       });
     });
-
-    // let rows;
-    // rows = [...formattedKafkas];
 
     kafkaArray.forEach((kafka, index) => {
       if (currentKafkaConnections.includes(kafka.id)) {

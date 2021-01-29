@@ -22,17 +22,10 @@ const ManagedKafkas = () => {
   const currentCRName = 'kafkarequest' + currentNamespace + new Date().getTime();
   const currentMSAName = 'managedservice' + currentNamespace + new Date().getTime();
 
-  // const kafkaRequestData: ManagedKafkaModel[] = KafkaMocks;
-  const [kafkaRequestData, setKafkaRequestData] = React.useState(KafkaMocks);
+  const kafkaRequestData: ManagedKafkaModel[] = KafkaMocks;
   const [selectedKafkas, setSelectedKafkas] = React.useState([]);
   const [serviceAccountExists, setServiceAccountExists] = React.useState(false);
   const [currentKafkaConnections, setCurrentKafkaConnections] = React.useState([]);
-
-  React.useEffect(() => {
-    createManagedKafkaRequest();
-    doesManagedServiceAccountExist();
-    listOfCurrentKafkaConnectionsById();
-  }, []);
 
   const doesManagedServiceAccountExist = async () => {
     const managedServiceAccounts = await k8sGet(ManagedServiceAccountRequest, null, currentNamespace);
@@ -51,7 +44,6 @@ const ManagedKafkas = () => {
       })
       setCurrentKafkaConnections(localArray);
     }
-    // filterCurrentKafkasForAlreadyConnected(localArray);
   }
 
   // const filterCurrentKafkasForAlreadyConnected = currentKafkaConnections => {
@@ -78,6 +70,12 @@ const ManagedKafkas = () => {
     // FIXME Patch existing request if exist etc.
     await k8sCreate(ManagedKafkaRequestModel, mkRequest);
   }
+
+  React.useEffect(() => {
+    createManagedKafkaRequest();
+    doesManagedServiceAccountExist();
+    listOfCurrentKafkaConnectionsById();
+  }, []);
 
   const createManagedServiceAccount = async () => {
     const serviceAcct = {
@@ -130,19 +128,19 @@ const ManagedKafkas = () => {
       if (currentKafkaConnections) {
         if (!currentKafkaConnections.includes(kafkaId)) {
           createManagedKafkaConnection(kafkaId, kafkaName);
-          history.push(`/topology/ns/${currentNamespace}`);
         }
       }
     }
+    history.push(`/topology/ns/${currentNamespace}`);
   };
 
   return (
     <>
       <NamespacedPage variant={NamespacedPageVariants.light} hideApplications>
-        {kafkaRequestData && kafkaRequestData.length > 0 ? (
+        {kafkaRequestData.length > 0 ? (
           <>
             <StreamsInstancePage
-              kafkaArray={kafkaRequestData && kafkaRequestData}
+              kafkaArray={kafkaRequestData}
               selectedKafkas={selectedKafkas}
               setSelectedKafkas={setSelectedKafkas}
               currentKafkaConnections={currentKafkaConnections}

@@ -1,6 +1,5 @@
 import * as _ from 'lodash';
 import { AddAction } from '@console/dev-console/src/extensions/add-actions';
-import * as rhoasIcon from '@console/internal/imgs/logos/other-unknown.svg';
 import {
   ModelDefinition,
   ModelFeatureFlag,
@@ -8,7 +7,7 @@ import {
   Plugin,
   HrefNavItem,
 } from '@console/plugin-sdk';
-import { FLAG_RHOAS_KAFKA } from './const';
+import { FLAG_RHOAS_KAFKA, temporaryIcon } from './const';
 import { rhoasTopologyPlugin, TopologyConsumedExtensions } from './topology/rhoas-topology-plugin'
 import * as models from './models';
 
@@ -74,9 +73,9 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       id: 'rhosak',
       url: '/managedServices',
-      label: 'ManagedServices',
-      description: 'ManagedService',
-      icon: rhoasIcon,
+      label: 'Managed Services',
+      description: 'Reduce operational complexity and focus on building and scaling applications that add more value.',
+      icon: temporaryIcon,
     },
   },
   ...rhoasTopologyPlugin
