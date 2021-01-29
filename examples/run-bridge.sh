@@ -16,7 +16,7 @@ PROM_PORT='9090'
 GRAFANA_PORT='30997'
 HC_PORT='32440'
 MHC_PORT='32440'
-KIBANA_PORT='32449'
+KIBANA_PORT='31005'
 
 ./bin/bridge \
     --listen=https://$myIP:9000 \
@@ -39,7 +39,7 @@ KIBANA_PORT='32449'
     --webhook-endpoint=https://$k8sIP:31317/api/webhook/ \
     --hypercloud-endpoint=http://$k8sIP:$HC_PORT/ \
     --multi-hypercloud-endpoint=http://$k8sIP:$MHC_PORT/ \
-    --kibana-endpoint=https://$k8sIP:$KIBANA_PORT \
+    --kibana-endpoint=https://$k8sIP:$KIBANA_PORT/api/kibana/ \
     --user-auth=hypercloud \
     --k8s-auth=hypercloud \
     --mc-mode=true \
