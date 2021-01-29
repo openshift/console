@@ -8,9 +8,7 @@ export const pageTitle = {
   Pipelines: 'Pipelines',
   PipelineBuilder: 'Pipeline builder',
   EventSource: 'Event Sources',
-  helmReleaseDetails: 'Helm Release Details',
   upgradeHelmRelease: 'Upgrade Helm Release',
-  operatorHub: 'OperatorHub',
   Add: 'Add',
   GitOPs: 'GitOps',
   Monitoring: 'Monitoring',
@@ -30,4 +28,8 @@ export const pageTitle = {
   HelmCharts: 'Helm Charts',
   InstallHelmCharts: 'Install Helm Chart',
   OperatorBacked: 'Operator Backed',
+  HelmReleaseDetails: 'Helm Release details',
+  UpgradeHelmRelease: 'Upgrade Helm Release',
+  OperatorHub: 'OperatorHub',
+  AddHealthChecks: 'Add health checks',
 };

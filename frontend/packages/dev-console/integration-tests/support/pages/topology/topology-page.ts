@@ -1,10 +1,12 @@
 import { displayOptions, nodeActions } from '../../constants/topology';
 import { topologyPO } from '../../pageObjects/topology-po';
 import { createHelmRelease } from '../functions/createHelmRelease';
+import { sideBarTabs } from '../../constants/staticText/topology-text';
 
 export const topologyPage = {
   verifyTitle: () => {
     cy.get('h1.ocs-page-layout__title').should('have.text', 'Topology');
+    cy.get(topologyPO.title).should('have.text', 'Topology');
   },
   verifyTopologyPage: () => {
     cy.document()
@@ -12,10 +14,10 @@ export const topologyPage = {
       .should('eq', 'complete');
     cy.url().should('include', 'topology');
   },
-  verifyContextMenu: () => cy.get('#popper-container ul').should('be.visible'),
+  verifyContextMenu: () => cy.get(topologyPO.graph.contextMenu).should('be.visible'),
   verifyNoWorkLoadsText: (text: string) =>
-    cy.get('h2.co-hint-block__title').should('contain.text', text),
-  verifyWorkLoads: () => cy.get('g[data-surface="true"]').should('be.visible'),
+    cy.get(topologyPO.noWorkLoadsText).should('contain.text', text),
+  verifyWorkLoads: () => cy.get(topologyPO.graph.workloads).should('be.visible'),
   search: (name: string) =>
     cy
       .byLegacyTestID('item-filter')
@@ -29,20 +31,32 @@ export const topologyPage = {
   },
   clickDisplayOptionDropdown: () =>
     cy
-      .get('[id^=pf-select-toggle-id]')
+      .get(topologyPO.graph.filterDropdown)
       .contains('Display Options')
       .click(),
   selectDisplayOption: (opt: displayOptions) => {
     topologyPage.clickDisplayOptionDropdown();
     switch (opt) {
       case displayOptions.PodCount:
-        cy.get('#pf-random-id-1-show-pod-count').check();
+        cy.get('[id$=show-pod-count]').check();
         break;
       case displayOptions.Labels:
-        cy.get('#pf-random-id-1-show-labels').check();
+        cy.get('[id$=show-labels]').check();
         break;
       case displayOptions.ApplicationGroupings:
-        cy.get('#pf-random-id-1-expand-app-groups').check();
+        cy.get('[id$=expand-app-groups]').check();
+        break;
+      case displayOptions.HelmReleases:
+        cy.get('[id$=helmGrouping]').check();
+        break;
+      case displayOptions.KnativeServices:
+        cy.get('[id$=knativeServices]').check();
+        break;
+      case displayOptions.ConnectivityMode:
+        cy.get('#showGroups').click();
+        break;
+      case displayOptions.ConsumptionMode:
+        cy.get('#hideGroups').click();
         break;
       default:
         throw new Error('Option is not available');
@@ -50,7 +64,7 @@ export const topologyPage = {
     }
   },
   filterByResource: (resourceName: string) => {
-    cy.get('[id^=pf-select-toggle-id]')
+    cy.get(topologyPO.graph.filterDropdown)
       .contains('Filter by Resource')
       .click();
     cy.get(`[id$="${resourceName}"]`).check();
@@ -73,15 +87,13 @@ export const topologyPage = {
     });
   },
   verifyHelmReleaseSidePaneTabs: () => {
-    cy.get(topologyPO.sidePane.tabs)
+    cy.get(topologyPO.sidePane.tabName)
       .eq(0)
-      .should('contain.text', 'Details');
-    cy.get(topologyPO.sidePane.tabs)
+      .should('contain.text', sideBarTabs.details);
+    cy.get(topologyPO.sidePane.tabName)
       .eq(1)
-      .should('contain.text', 'Resources');
-    cy.get(topologyPO.sidePane.tabs)
-      .eq(2)
-      .should('contain.text', 'Release Notes');
+      .should('contain.text', sideBarTabs.resources);
+    cy.get(topologyPO.sidePane.tabName).should('contain.text', sideBarTabs.releaseNotes);
   },
   appNode: (appName: string) => {
     return cy.get(`[data-id="group:${appName}"] g.odc-resource-icon text`).contains('A');

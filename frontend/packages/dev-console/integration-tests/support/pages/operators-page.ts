@@ -10,7 +10,7 @@ export const operatorsPage = {
       .contains('Operators')
       .click();
     cy.get(operatorsPO.nav.operatorHub).click({ force: true });
-    detailsPage.titleShouldContain(pageTitle.operatorHub);
+    detailsPage.titleShouldContain(pageTitle.OperatorHub);
   },
 
   navigateToInstallOperatorsPage: () => {
