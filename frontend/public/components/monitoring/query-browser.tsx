@@ -28,7 +28,7 @@ import {
 import { ChartLineIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { VictoryPortal } from 'victory';
+import { VictoryPortal } from 'victory-core';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 
 import * as UIActions from '../../actions/ui';
