@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
-import { Translation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 
 import { Status } from '@console/shared';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
@@ -34,6 +34,52 @@ const tableColumnClasses = [
   classNames('col-lg-2', 'col-md-2', 'hidden-sm', 'hidden-xs'),
   Kebab.columnClass,
 ];
+
+const PVTableHeader = (t) => {
+  return [
+    {
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_1'),
+      sortField: 'metadata.name',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[0] },
+    },
+    {
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_3'),
+      sortField: 'status.phase',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[1] },
+    },
+    {
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_13'),
+      sortField: 'spec.claimRef.name',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[2] },
+    },
+    {
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_14'),
+      sortFunc: 'pvStorage',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[3] },
+    },
+    {
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_15'),
+      sortField: 'metadata.labels',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[4] },
+    },
+    {
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_12'),
+      sortField: 'metadata.creationTimestamp',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[5] },
+    },
+    {
+      title: '',
+      props: { className: tableColumnClasses[6] },
+    },
+  ];
+};
+PVTableHeader.displayName = 'PVTableHeader';
 
 const kind = 'PersistentVolume';
 
@@ -80,6 +126,8 @@ const PVTableRow = ({ obj, index, key, style }) => {
 };
 
 const Details = ({ obj: pv }) => {
+  const { t } = useTranslation();
+
   const storageClassName = _.get(pv, 'spec.storageClassName');
   const pvcName = _.get(pv, 'spec.claimRef.name');
   const namespace = _.get(pv, 'spec.claimRef.namespace');
@@ -89,7 +137,7 @@ const Details = ({ obj: pv }) => {
   const reclaimPolicy = _.get(pv, 'spec.persistentVolumeReclaimPolicy');
   return (
     <div className="co-m-pane__body">
-      <SectionHeading text="PersistentVolume Details" />
+      <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_51')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
       <div className="row">
         <div className="col-sm-6">
           <ResourceSummary resource={pv}>
@@ -140,61 +188,21 @@ const Details = ({ obj: pv }) => {
   );
 };
 
-export const PersistentVolumesList = (props) => (
-  <Translation>{
-    (t) => <Table
+export const PersistentVolumesList = (props) => {
+  const { t } = useTranslation();
+  return <Table
       {...props}
       aria-label="Persistent Volumes"
-      Header={() => [
-        {
-          title: t('COMMON:MSG_MAIN_TABLEHEADER_1'),
-          sortField: 'metadata.name',
-          transforms: [sortable],
-          props: { className: tableColumnClasses[0] },
-        },
-        {
-          title: t('COMMON:MSG_MAIN_TABLEHEADER_3'),
-          sortField: 'status.phase',
-          transforms: [sortable],
-          props: { className: tableColumnClasses[1] },
-        },
-        {
-          title: t('COMMON:MSG_MAIN_TABLEHEADER_13'),
-          sortField: 'spec.claimRef.name',
-          transforms: [sortable],
-          props: { className: tableColumnClasses[2] },
-        },
-        {
-          title: t('COMMON:MSG_MAIN_TABLEHEADER_14'),
-          sortFunc: 'pvStorage',
-          transforms: [sortable],
-          props: { className: tableColumnClasses[3] },
-        },
-        {
-          title: t('COMMON:MSG_MAIN_TABLEHEADER_15'),
-          sortField: 'metadata.labels',
-          transforms: [sortable],
-          props: { className: tableColumnClasses[4] },
-        },
-        {
-          title: t('COMMON:MSG_MAIN_TABLEHEADER_12'),
-          sortField: 'metadata.creationTimestamp',
-          transforms: [sortable],
-          props: { className: tableColumnClasses[5] },
-        },
-        {
-          title: '',
-          props: { className: tableColumnClasses[6] },
-        },
-      ]}
+      Header={PVTableHeader.bind(null, t)}
       Row={PVTableRow}
       virtualize
-    />}
-  </Translation>
-);
-export const PersistentVolumesPage = (props) => (
-  <ListPage {...props} ListComponent={PersistentVolumesList} kind={kind} canCreate={true} />
-);
+    />;
+};
+
+export const PersistentVolumesPage = (props) => {
+  const { t } = useTranslation();
+  return <ListPage {...props} ListComponent={PersistentVolumesList} kind={kind} title={t('COMMON:MSG_LNB_MENU_51')} createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:MSG_LNB_MENU_51') })} canCreate={true} />;
+};
 export const PersistentVolumesDetailsPage = (props) => (
   <DetailsPage
     {...props}

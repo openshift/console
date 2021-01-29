@@ -103,15 +103,13 @@ const ClusterDropdown_: React.FC<ClusterDropdownProps & StateProps> = ({
                     }
                     return list;
                 }, []);
-                clusterList.push({displayName: 'Master', name: 'master'});
               
                 setClusters(clusterList);
 
                 const hasCluster = activeCluster && clusterList.find(cl => cl.name === activeCluster);
 
                 if (!hasCluster) {
-                    const defaultCluster = clusterList.find(cl => cl.name === 'master') ? 'master' : clusterList[0].name;
-                    setActiveCluster(defaultCluster);
+                    setActiveCluster(clusterList[0].name);
                 }
 
             });

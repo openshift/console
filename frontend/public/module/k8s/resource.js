@@ -18,10 +18,10 @@ const getK8sAPIPath = ({ apiGroup = 'core', apiVersion})
   // console.log('get K8s API Path');
   // console.log({kind, name: listName});
 
-  const cluster = window.SERVER_FLAGS.McMode && getActivePerspective() == 'hc' && getActiveCluster();
-
-  if (cluster) {
-    p = `${window.SERVER_FLAGS.basePath}api/${cluster}`;
+ // const cluster = window.SERVER_FLAGS.McMode && getActivePerspective() == 'hc' && getActiveCluster();
+  
+  if (window.SERVER_FLAGS.McMode && getActivePerspective() == 'hc') {
+    p = `${window.SERVER_FLAGS.basePath}api/${getActiveCluster()}`;
   }
   else {
     p = k8sBasePath;
