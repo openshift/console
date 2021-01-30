@@ -27,7 +27,7 @@ export const DiscoveryDonutChart: React.FC<DiscoveryDonutChartProps> = ({ state,
     },
   ];
   const nodes = getNodes(state.showNodesListOnLVS, state.nodeNamesForLVS, state.nodeNames);
-  const { podStatusInnerRadius: innerRadius, podStatusOuterRadius: radius } = calculateRadius(220);
+  const { podStatusOuterRadius: radius } = calculateRadius(220);
 
   React.useEffect(() => {
     const filterDisks = () => {
@@ -137,7 +137,6 @@ export const DiscoveryDonutChart: React.FC<DiscoveryDonutChartProps> = ({ state,
         ariaTitle={t('ceph-storage-plugin~Selected versus Available Capacity')}
         height={220}
         width={220}
-        innerRadius={innerRadius}
         radius={radius}
         data={donutData}
         labels={({ datum }) => `${humanizeBinaryBytes(datum.y).string} ${datum.x}`}
