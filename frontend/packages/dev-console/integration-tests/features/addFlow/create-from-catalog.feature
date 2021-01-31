@@ -1,24 +1,24 @@
+@add-flow
 Feature: Create Application from Catalog file
-    As a user I want to create the application, component or service from Add Flow Catlog file
+    As a user, I want to create the application, component or service from Add Flow Catalog file
 
     Background:
         Given user is at developer perspective
-        And user has created namespace starts with "aut-addflow-catalog"
+        And user has created or selected namespace "aut-addflow-catalog"
         And user is at Add page
 
 
-    @addFlow-catalog
     Scenario: Developer Catalog page details: A-12-TC04
         When user selects From Catalog card from add page
         Then user will be redirected to Developer Catalog page
-        And user is able to see Operator Backed, Helm Charts, Builder Image, Template, Service Class types are not selected by default
+        # Check boxes are removed in 4.7 release, due to that below step is not applcable
+        # And user is able to see Operator Backed, Helm Charts, Builder Image, Template, Service Class types are not selected by default
         And search option is displayed in Developer Catalog page
         And GroupBy filter is selected with default option A-Z
 
 
-    @addFlow-catalog
     Scenario Outline: Filter the cards with type
-        Given user is at Developer Catlog page
+        Given user is at Developer Catalog page
         When user selects "<type>" option from Type section
         Then user is able to see cards related to "<type>"
 
@@ -29,16 +29,15 @@ Feature: Create Application from Catalog file
             | Template        |
 
 
-    @addFlow-catalog
     Scenario: Filter the catalog using GroupBy option
-        Given user is at Developer Catlog page
+        Given user is at Developer Catalog page
         When user searches "node" card from catalog page
         Then user is able to see cards with name containing "node"
 
 
-    @addFlow-catalog, @regression
+    @regression
     Scenario: Create the workload using template : A-12-TC01
-        Given user is at Developer Catlog page
+        Given user is at Developer Catalog page
         When user selects "Templates" option from Type section
         And user searches and selects Template card "CakePHP + MySQL" from catalog page
         And user clicks Create Application button on side bar
@@ -48,9 +47,9 @@ Feature: Create Application from Catalog file
         And user is able to see workload "php-one" in topology page
 
 
-    @addFlow-catalog,, @regression
+    @regression
     Scenario: Create the workload using Builder Image: A-12-TC02
-        Given user is at Developer Catlog page
+        Given user is at Developer Catalog page
         When user selects "Builder Images" option from Type section
         And user searches and selects Builder Image card "Node.js" from catalog page
         And user clicks Create Application button on side bar
@@ -60,8 +59,8 @@ Feature: Create Application from Catalog file
         And user is able to see workload "nodejs-ex-git" in topology page
 
 
-    @addFlow-catalog, @manual
+    @manual
     Scenario: Create the workload using Service Class : A-12-TC03
-        Given user is at Developer Catlog page
+        Given user is at Developer Catalog page
         When user selects "Service Class" option from Type section
         Then user is able to see cards with name containing "node"

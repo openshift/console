@@ -23,13 +23,13 @@ Then('user can see the image name gets Validated', () => {
 });
 
 Then('application name displays as {string}', (appName: string) => {
-  gitPage.veirfyAppName(appName);
+  gitPage.verifyAppName(appName);
 });
 
 Then(
   'name field auto populates with value {string} in Import from Docker file page',
   (nodeName: string) => {
-    gitPage.veirfyNodeName(nodeName);
+    gitPage.verifyNodeName(nodeName);
     gitPage.clickCancel();
   },
 );
@@ -58,8 +58,8 @@ When('user selects Image stream tag from internal registry', () => {
   containerImagePage.selectInternalImageRegistry();
 });
 
-When('user selects Image Stream as {string} from internal registry', (imageSrream: string) => {
-  containerImagePage.selectImageStream(imageSrream);
+When('user selects Image Stream as {string} from internal registry', (imageStream: string) => {
+  containerImagePage.selectImageStream(imageStream);
 });
 
 When('user selects tag as {string} from internal registry', (tag: string) => {

@@ -8,6 +8,7 @@ import { createGitWorkload } from '../../pages/functions/createGitWorkload';
 import { devNavigationMenu } from '../../constants/global';
 import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
 import { pageTitle } from '../../constants/pageTitle';
+import { catalogPage } from '../../pages/add-flow/catalog-page';
 
 Given('user is at Add page', () => {
   navigateTo(devNavigationMenu.Add);
@@ -26,8 +27,20 @@ Given(
   },
 );
 
-Given('user is at Developer Catlog page', () => {
+Given('user is at Developer Catalog page', () => {
   addPage.selectCardFromOptions(addOptions.DeveloperCatalog);
+});
+
+When('user clicks Instantiate Template button on side bar', () => {
+  catalogPage.clickButtonOnCatalogPageSidePane();
+});
+
+Given('user is at Developer Catalog page', () => {
+  addPage.selectCardFromOptions(addOptions.DeveloperCatalog);
+});
+
+Given('user is at DevFile page', () => {
+  addPage.selectCardFromOptions(addOptions.DevFile);
 });
 
 When('user navigates to Add page', () => {

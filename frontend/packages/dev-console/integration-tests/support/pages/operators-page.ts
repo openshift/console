@@ -5,7 +5,7 @@ import { operatorsPO } from '../pageObjects/operators-po';
 import { pageTitle } from '../constants/pageTitle';
 
 export const operatorsPage = {
-  navigateToOperaotorHubPage: () => {
+  navigateToOperatorHubPage: () => {
     cy.get(operatorsPO.nav.link)
       .contains('Operators')
       .click();
@@ -13,7 +13,7 @@ export const operatorsPage = {
     detailsPage.titleShouldContain(pageTitle.operatorHub);
   },
 
-  navigateToInstalloperatorsPage: () => {
+  navigateToInstallOperatorsPage: () => {
     cy.get(operatorsPO.nav.link)
       .contains('Operators')
       .click();
@@ -49,7 +49,7 @@ export const operatorsPage = {
     }).should('be.visible');
   },
 
-  verifyOperatoNotAvailable: (operatorName: string) => {
+  verifyOperatorNotAvailable: (operatorName: string) => {
     cy.get(operatorsPO.installOperators.search)
       .clear()
       .type(operatorName);
@@ -102,7 +102,7 @@ export const operatorsPage = {
     }
   },
 
-  verifySiedPane: () => cy.get(operatorsPO.alertDialog).should('be.exist'),
+  verifySidePane: () => cy.get(operatorsPO.alertDialog).should('be.exist'),
 
   clickInstallOnSidePane: () => {
     cy.get(operatorsPO.alertDialog).then(($sidePane) => {

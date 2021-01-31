@@ -39,7 +39,7 @@ export const gitPage = {
       }
     });
   },
-  veirfyAppName: (nodeName: string) => cy.get(gitPO.appName).should('have.value', nodeName),
+  verifyAppName: (nodeName: string) => cy.get(gitPO.appName).should('have.value', nodeName),
   enterComponentName: (name: string) => {
     cy.get(gitPO.nodeName)
       .scrollIntoView()
@@ -48,7 +48,7 @@ export const gitPage = {
       .type(name)
       .should('have.value', name);
   },
-  veirfyNodeName: (componentName: string) =>
+  verifyNodeName: (componentName: string) =>
     cy.get(gitPO.nodeName).should('have.value', componentName),
   selectResource: (resource: string = 'deployment') => {
     switch (resource) {
@@ -133,7 +133,7 @@ export const gitPage = {
   },
   enterRoutingHostName: (hostName: string) =>
     cy.get(gitPO.advancedOptions.routing.hostname).type(hostName),
-  eneterRoutingPath: (path: string) => cy.get(gitPO.advancedOptions.routing.path).type(path),
+  enterRoutingPath: (path: string) => cy.get(gitPO.advancedOptions.routing.path).type(path),
   uncheckBuildConfigOption: (checkBoxName: string | buildConfigOptions) => {
     switch (checkBoxName) {
       case buildConfigOptions.webhookBuildTrigger:
@@ -153,7 +153,7 @@ export const gitPage = {
         break;
       default:
         throw new Error(
-          `Unable to find the "${checkBoxName}" checbox in Build Configuration Section`,
+          `Unable to find the "${checkBoxName}" checkbox in Build Configuration Section`,
         );
     }
   },
@@ -168,8 +168,8 @@ export const gitPage = {
     cy.get(gitPO.advancedOptions.deployment.envName).type(envName),
   enterDeploymentEnvValue: (envValue: string) =>
     cy.get(gitPO.advancedOptions.deployment.envValue).type(envValue),
-  enterResourceLimitCPURequest: (cpuResquestValue: string) =>
-    cy.get(gitPO.advancedOptions.resourceLimit.cpuRequest).type(cpuResquestValue),
+  enterResourceLimitCPURequest: (cpuRequestValue: string) =>
+    cy.get(gitPO.advancedOptions.resourceLimit.cpuRequest).type(cpuRequestValue),
   enterResourceLimitCPULimit: (cpuLimitValue: string) =>
     cy.get(gitPO.advancedOptions.resourceLimit.cpuLimit).type(cpuLimitValue),
   enterResourceLimitMemoryRequest: (memoryRequestValue: string) =>

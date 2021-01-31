@@ -5,6 +5,10 @@ export const topologyPO = {
     zoomIn: '#zoom-in',
     zoomOut: '#zoom-out',
     fitToScreen: '#fit-to-screen',
+    emptyGraph: '[data-test-id="topology"]',
+    contextMenu: {
+      addToProject: '.odc-topology-context-menu button',
+    },
   },
   list: {
     appName: '#HelmRelease ul li div',

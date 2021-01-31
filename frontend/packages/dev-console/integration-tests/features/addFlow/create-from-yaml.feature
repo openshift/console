@@ -1,12 +1,14 @@
+@add-flow
 Feature: Create Application from YAML file
     As a user, I want to create the application, component or service from Yaml file using Add Flow
 
     Background:
         Given user is at developer perspective
-        And user has created namespace starts with "aut-addflow-yaml"
+        And user is at Add page
+        And user has created or selected namespace "aut-addflow-yaml"
 
 
-    @regression, @ToDo
+    @regression, @to-do
     Scenario: Create a workload from YAML file : A-07-TC01
         Given user is at Import YAML page
         When user clicks on create button with default YAML

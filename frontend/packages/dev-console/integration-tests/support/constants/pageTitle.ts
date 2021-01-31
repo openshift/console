@@ -4,6 +4,7 @@ export const pageTitle = {
   DockerFile: 'Import from Dockerfile',
   YAML: 'Import YAML',
   DeveloperCatalog: 'Developer Catalog',
+  DevFile: 'Import from Devfile',
   Pipelines: 'Pipelines',
   EventSource: 'Event Sources',
   helmReleaseDetails: 'Helm Release Details',
@@ -23,4 +24,10 @@ export const pageTitle = {
   TriggerTemplateDetails: 'Trigger Template details',
   EventListenerDetails: 'EventListener details',
   ClusterTriggerTemplateDetails: 'ClusterTriggerBinding Details',
+  Templates: 'Templates',
+  BuilderImages: 'Builder Images',
+  HelmCharts: 'Helm Charts',
+  InstallHelmCharts: 'Install Helm Chart',
+  OperatorBacked: 'Operator Backed',
+  PipelineBuilder: 'Pipeline Builder',
 };

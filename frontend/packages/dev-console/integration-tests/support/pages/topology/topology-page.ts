@@ -7,8 +7,10 @@ export const topologyPage = {
     cy.get('h1.ocs-page-layout__title').should('have.text', 'Topology');
   },
   verifyTopologyPage: () => {
-    cy.get('.co-m-loader', { timeout: 40000 }).should('not.exist');
-    cy.get(topologyPO.graph.reset).should('be.visible');
+    cy.document()
+      .its('readyState')
+      .should('eq', 'complete');
+    cy.url().should('include', 'topology');
   },
   verifyContextMenu: () => cy.get('#popper-container ul').should('be.visible'),
   verifyNoWorkLoadsText: (text: string) =>
@@ -20,18 +22,18 @@ export const topologyPage = {
       .clear()
       .type(name),
   verifyWorkloadInTopologyPage: (appName: string) => {
-    cy.get(topologyPO.switcher).click();
+    cy.get(topologyPO.switcher).click({ force: true });
     topologyPage.search(appName);
     cy.get('div.is-filtered').should('be.visible');
-    cy.get(topologyPO.switcher).click();
+    cy.get(topologyPO.switcher).click({ force: true });
   },
-  clicKDisplayOptionDropdown: () =>
+  clickDisplayOptionDropdown: () =>
     cy
       .get('[id^=pf-select-toggle-id]')
       .contains('Display Options')
       .click(),
   selectDisplayOption: (opt: displayOptions) => {
-    topologyPage.clicKDisplayOptionDropdown();
+    topologyPage.clickDisplayOptionDropdown();
     switch (opt) {
       case displayOptions.PodCount:
         cy.get('#pf-random-id-1-show-pod-count').check();
