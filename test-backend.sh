@@ -12,6 +12,8 @@ set -e
 #   PKG=ssh ./test-backend.sh
 #
 
+ARTIFACT_DIR=${ARTIFACT_DIR:=/tmp/artifacts}
+
 export GOBIN=${PWD}/bin:${GOBIN}
 
 # Use deps from vendor dir.
@@ -47,9 +49,9 @@ TEST=("${split[@]/#/github.com/openshift/console/}")
 
 echo "Running tests..."
 if [ "$OPENSHIFT_CI" = true ]; then
-    go test -v "${COVER}" "$@" "${TEST[@]}" 2>&1 | tee /tmp/artifacts/test.out
+    go test -v "${COVER}" "$@" "${TEST[@]}" 2>&1 | tee "$ARTIFACT_DIR/test.out"
     RESULT="${PIPESTATUS[0]}"
-    go-junit-report < /tmp/artifacts/test.out > /tmp/artifacts/junit.xml
+    go-junit-report < "$ARTIFACT_DIR/test.out" > "$ARTIFACT_DIR/junit.xml"
     if [ "$RESULT" -ne 0 ]; then
         exit 255
     fi
