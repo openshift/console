@@ -280,7 +280,6 @@ export const SelectTemplate: React.FC<SelectTemplateProps> = ({
                           }
                           selections={namespace}
                           className="kv-select-template__project"
-                          closeOnSelect={false}
                         >
                           {(canListNs
                             ? [allProjects, ...namespaces.sort()]
