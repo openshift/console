@@ -1,12 +1,15 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Dropdown, DropdownItem, DropdownToggle, Title } from '@patternfly/react-core';
-import { CaretDownIcon } from '@patternfly/react-icons';
+import { CaretDownIcon, DomainIcon } from '@patternfly/react-icons';
 import { Perspective, useExtensions, isPerspective } from '@console/plugin-sdk';
 import { RootState } from '../../redux';
 import { featureReducerName, getFlagsObject, FlagsObject } from '../../reducers/features';
 import { history } from '../utils';
 import { useActivePerspective } from '@console/shared';
+import { K8sResourceKind, referenceForModel } from '../../module/k8s';
+import { ConsoleLinkModel } from '../../models';
+import { useK8sWatchResource } from '../utils/k8s-watch-hook';
 
 type StateProps = {
   flags: FlagsObject;
@@ -16,10 +19,23 @@ export type NavHeaderProps = {
   onPerspectiveSelected: () => void;
 };
 
+export const ACM_LINK_ID = 'acm-console-link';
+
+const getACMConsoleLink = (links: K8sResourceKind[]): K8sResourceKind =>
+  links.find(
+    (link) => link.spec.location === 'ApplicationMenu' && link.metadata.name === ACM_LINK_ID,
+  );
+
 const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({ onPerspectiveSelected, flags }) => {
   const [activePerspective, setActivePerspective] = useActivePerspective();
   const [isPerspectiveDropdownOpen, setPerspectiveDropdownOpen] = React.useState(false);
   const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
+  const [consoleLinks] = useK8sWatchResource<K8sResourceKind[]>({
+    isList: true,
+    kind: referenceForModel(ConsoleLinkModel),
+    optional: true,
+  });
+  const acmLink: K8sResourceKind = getACMConsoleLink(consoleLinks);
   const togglePerspectiveOpen = React.useCallback(() => {
     setPerspectiveDropdownOpen(!isPerspectiveDropdownOpen);
   }, [isPerspectiveDropdownOpen]);
@@ -55,25 +71,41 @@ const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({ onPerspectiveSelect
     [isPerspectiveDropdownOpen, togglePerspectiveOpen],
   );
 
-  const perspectiveItems = React.useMemo(
-    () =>
-      perspectiveExtensions.map((nextPerspective: Perspective) => (
+  const perspectiveItems = React.useMemo(() => {
+    const items = perspectiveExtensions.map((nextPerspective: Perspective) => (
+      <DropdownItem
+        key={nextPerspective.properties.id}
+        onClick={(event: React.MouseEvent<HTMLLinkElement>) =>
+          onPerspectiveSelect(event, nextPerspective)
+        }
+        isHovered={nextPerspective.properties.id === activePerspective}
+      >
+        <Title headingLevel="h2" size="md" data-test-id="perspective-switcher-menu-option">
+          <span className="oc-nav-header__icon">{nextPerspective.properties.icon}</span>
+          {nextPerspective.properties.name}
+        </Title>
+      </DropdownItem>
+    ));
+    if (acmLink) {
+      items.push(
         <DropdownItem
-          key={nextPerspective.properties.id}
-          onClick={(event: React.MouseEvent<HTMLLinkElement>) =>
-            onPerspectiveSelect(event, nextPerspective)
-          }
-          isHovered={nextPerspective.properties.id === activePerspective}
-          component="button"
+          key={ACM_LINK_ID}
+          onClick={() => {
+            window.location.href = acmLink.spec.href;
+          }}
+          isHovered={ACM_LINK_ID === activePerspective}
         >
           <Title headingLevel="h2" size="md" data-test-id="perspective-switcher-menu-option">
-            <span className="oc-nav-header__icon">{nextPerspective.properties.icon}</span>
-            {nextPerspective.properties.name}
+            <span className="oc-nav-header__icon">
+              <DomainIcon />
+            </span>
+            Advanced Cluster Management
           </Title>
-        </DropdownItem>
-      )),
-    [activePerspective, onPerspectiveSelect, perspectiveExtensions],
-  );
+        </DropdownItem>,
+      );
+    }
+    return items;
+  }, [acmLink, activePerspective, onPerspectiveSelect, perspectiveExtensions]);
 
   const { icon, name } = React.useMemo(
     () => perspectiveExtensions.find((p) => p.properties.id === activePerspective).properties,

@@ -38,6 +38,7 @@ import * as redhatLogoImg from '../imgs/logos/redhat.svg';
 import { GuidedTourMastheadTrigger } from '@console/app/src/components/tour';
 import { ConsoleLinkModel } from '../models';
 import { languagePreferencesModal } from './modals';
+import { ACM_LINK_ID } from '../components/nav/nav-header';
 
 const SystemStatusButton = ({ statuspageData, className }) => {
   const { t } = useTranslation();
@@ -247,7 +248,12 @@ class MastheadToolbarContents_ extends React.Component {
 
   _launchActions = () => {
     const { clusterID, consoleLinks, t } = this.props;
-    const launcherItems = this._getAdditionalLinks(consoleLinks?.data, 'ApplicationMenu');
+    const launcherItems = this._getAdditionalLinks(consoleLinks?.data, 'ApplicationMenu').filter(
+      (item) => {
+        // prevent ACM (Advanced Cluster Management) from appearing in App Launcher as it has moved to perspective switcher
+        return item.metadata.name !== ACM_LINK_ID;
+      },
+    );
 
     const sections = [];
     if (
