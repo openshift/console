@@ -84,7 +84,7 @@ export const ResourceListDropdown: React.SFC<ResourceListDropdownProps> = (props
             <span className="co-resource-icon--fixed-width">
               <ResourceIcon kind="All" />
             </span>
-            <span className="co-resource-item__resource-name">All Resources</span>
+            <span className="co-resource-item__resource-name">{`All ${props.resourceType}`}</span>
           </span>
         </>
       ),
@@ -111,7 +111,7 @@ export const ResourceListDropdown: React.SFC<ResourceListDropdownProps> = (props
       title={
         props.title ??
         <div key="title-resource">
-          {props.resourceType ? `${props.resourceType} ` : 'Resources '}
+          {`${props.resourceType} `}
           <Badge isRead>
             {selected.length === 1 && selected[0] === 'All' ? 'All' : selected.length}
           </Badge>
@@ -138,6 +138,10 @@ export type ResourceListDropdownProps = {
   resourceType?: string;
   autocompletePlaceholder?: string;
   autocompleteFilter?: (text: any, item: any) => any;
+};
+
+ResourceListDropdown.defaultProps = {
+  resourceType: "Resources",
 };
 
 const ResourceListDropdownWithDataToolbar_: React.SFC<ResourceListDropdownWithDataToolbarProps> = (props, ref) => {
@@ -183,7 +187,7 @@ const ResourceListDropdownWithDataToolbar_: React.SFC<ResourceListDropdownWithDa
   };
 
   return (
-    <DataToolbar id="search-toolbar" clearAllFilters={clearAll}>
+    <DataToolbar id="search-toolbar" clearAllFilters={clearAll} clearFiltersButtonText={`Clear all ${props.resourceType}`}>
       <DataToolbarContent>
         <DataToolbarItem>
           <DataToolbarFilter
@@ -201,7 +205,7 @@ const ResourceListDropdownWithDataToolbar_: React.SFC<ResourceListDropdownWithDa
               }
             })}
             deleteChip={updateNewItems}
-            categoryName={props.resourceType ?? "Resources"}
+            categoryName={props.resourceType}
           >
             <ResourceListDropdown
               resourceList={resourceList}
@@ -229,4 +233,8 @@ export type ResourceListDropdownWithDataToolbarProps = {
   autocompletePlaceholder?: string;
   autocompleteFilter?: (text: any, item: any) => any;
   onSelectedItemChange?: (items: Set<string>) => any;
+};
+
+ResourceListDropdownWithDataToolbar.defaultProps = {
+  resourceType: "Resources",
 };
