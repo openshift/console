@@ -1,10 +1,11 @@
 /* eslint-disable max-nested-callbacks */
 import { isEqual } from 'lodash';
 import { execSync } from 'child_process';
-import { browser } from 'protractor';
-import { appHost, testName } from '@console/internal-integration-tests/protractor.conf';
-import { resourceTitle, isLoaded } from '@console/internal-integration-tests/views/crud.view';
+import { browser, ExpectedConditions as until } from 'protractor';
+import { testName } from '@console/internal-integration-tests/protractor.conf';
+import { resourceTitle } from '@console/internal-integration-tests/views/crud.view';
 import * as detailView from '../views/virtualMachine.view';
+import * as templateView from '../views/template.view';
 import {
   removeLeakedResources,
   withResource,
@@ -70,10 +71,23 @@ describe('Create VM from Template using wizard', () => {
     );
   }
 
-  it('ID(CNV=5655) [ui] verify os has default template with workload/flavor pre-define', async () => {
-    await browser.get(`${appHost}/k8s/ns/openshift/vmtemplates/rhel6-server-small`);
-    await isLoaded();
-    expect(detailView.defaultOS.getText()).toBe('template.kubevirt.io/default-os-variant');
+  it('ID(CNV-5655) Verify common template has workload/flavor pre-defined', async () => {
+    const vmTemplate = new VMTemplateBuilder(getBasicVMTBuilder())
+      .setName(TemplateByName.RHEL7)
+      .setProvisionSource(ProvisionSource.URL)
+      .build();
+
+    const vmtName = await vmTemplate.getResourceName();
+    const workload = vmtName.split('-')[1];
+    const flavor = vmtName.split('-')[2];
+
+    await browser.wait(until.presenceOf(templateView.defaultOSLabel));
+    expect(await (templateView.workload(`openshift-${vmtName}`) as any).getText()).toContain(
+      workload,
+    );
+    const detailFlavor = await (templateView.flavor(`openshift-${vmtName}`) as any).getText();
+    const flavorText = detailFlavor.toLowerCase();
+    expect(flavorText).toContain(flavor);
   });
 
   it('ID(CNV-1847) Displays correct data on VM Template Details page', async () => {
