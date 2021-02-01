@@ -56,6 +56,7 @@ export const pluralToKind = new Map([
   ['federatednamespaces', { kind: 'FederatedNamespace', type: 'CustomResourceDefinition' }],
   ['federatedreplicasets', { kind: 'FederatedReplicaSet', type: 'CustomResourceDefinition' }],
   ['federatedsecrets', { kind: 'FederatedSecret', type: 'CustomResourceDefinition' }],
+  ['federatedservices', { kind: 'FederatedService', type: 'CustomResourceDefinition' }],
   ['federatedpods', { kind: 'FederatedPod', type: 'CustomResourceDefinition' }],
   ['federatedhorizontalpodautoscalers', { kind: 'FederatedHorizontalPodAutoscaler', type: 'CustomResourceDefinition' }],
   ['federateddaemonsets', { kind: 'FederatedDaemonSet', type: 'CustomResourceDefinition' }],
