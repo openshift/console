@@ -359,7 +359,7 @@ const kebabFactory: KebabFactory = {
     labelKey: 'details-page~Create snapshot',
     isDisabled: obj?.status?.phase !== 'Bound',
     tooltip: obj?.status?.phase !== 'Bound' ? 'PVC is not Bound' : '',
-    href: `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/${
+    href: `${resourceObjPath(obj, referenceForModel(VolumeSnapshotModel))}/${
       VolumeSnapshotModel.plural
     }/~new/form`,
     accessReview: asAccessReview(kind, obj, 'create'),
