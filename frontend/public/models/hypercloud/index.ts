@@ -34,7 +34,7 @@ export const ClusterClaimModel: K8sKind = {
   kind: 'ClusterClaim',
   id: 'clusterclaim',
   namespaced: false,
-}
+};
 
 export const SignerPolicyModel: K8sKind = {
   kind: 'SignerPolicy',
@@ -571,8 +571,8 @@ export const DataVolumeModel: K8sKind = {
 export const NamespaceClaimModel: K8sKind = {
   label: 'NamespaceClaim',
   labelPlural: 'NamespaceClaims',
-  apiVersion: 'v1',
-  apiGroup: 'tmax.io',
+  apiVersion: 'v1alpha1',
+  apiGroup: 'claim.tmax.io',
   plural: 'namespaceclaims',
   abbr: 'NSC',
   kind: 'NamespaceClaim',
@@ -583,8 +583,8 @@ export const NamespaceClaimModel: K8sKind = {
 export const ResourceQuotaClaimModel: K8sKind = {
   label: 'ResourceQuotaClaim',
   labelPlural: 'ResourceQuotaClaims',
-  apiVersion: 'v1',
-  apiGroup: 'tmax.io',
+  apiVersion: 'v1alpha1',
+  apiGroup: 'claim.tmax.io',
   plural: 'resourcequotaclaims',
   abbr: 'RQC',
   kind: 'ResourceQuotaClaim',
@@ -595,8 +595,8 @@ export const ResourceQuotaClaimModel: K8sKind = {
 export const RoleBindingClaimModel: K8sKind = {
   label: 'RoleBindingClaim',
   labelPlural: 'RoleBindingClaims',
-  apiVersion: 'v1',
-  apiGroup: 'tmax.io',
+  apiVersion: 'v1alpha1',
+  apiGroup: 'claim.tmax.io',
   plural: 'rolebindingclaims',
   abbr: 'RBC',
   kind: 'RoleBindingClaim',

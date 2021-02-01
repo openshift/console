@@ -27,6 +27,11 @@ const RedirectComponent = props => {
   return <Redirect to={to} />;
 };
 
+const RedirectClusterComponent = props => {
+  const to = props.location.pathname.replace(/^(\/master|\/single)/, '');
+  return <Redirect to={to} />;
+};
+
 // Ensure a *const* function wrapper for each namespaced Component so that react router doesn't recreate them
 const Memoized = new Map();
 function NamespaceFromURL(Component) {
@@ -93,15 +98,13 @@ const LazyRoute = props => {
 };
 
 const getPluginPageRoutes = (activePerspective: string) =>
-  plugins.registry
-    .getRoutePages()
-    .map(r => {
-      if (r.properties.perspective && r.properties.perspective !== activePerspective) {
-        return null;
-      }
-      const Component = r.properties.loader ? LazyRoute : Route;
-      return <Component {...r.properties} key={Array.from(r.properties.path).join(',')} />;
-    });
+  plugins.registry.getRoutePages().map(r => {
+    if (r.properties.perspective && r.properties.perspective !== activePerspective) {
+      return null;
+    }
+    const Component = r.properties.loader ? LazyRoute : Route;
+    return <Component {...r.properties} key={Array.from(r.properties.path).join(',')} />;
+  });
 
 type AppContentsProps = {
   activePerspective: string;
@@ -117,6 +120,7 @@ const AppContents_: React.FC<AppContentsProps> = ({ activePerspective }) => (
         <Switch>
           {getPluginPageRoutes(activePerspective)}
           <Route path={['/all-namespaces', '/ns/:ns']} component={RedirectComponent} />
+          <Route path={['/single', '/master']} component={RedirectClusterComponent} />
           <LazyRoute path="/dashboards" loader={() => import('./dashboard/dashboards-page/dashboards' /* webpackChunkName: "dashboards" */).then(m => m.DashboardsPage)} />
           {/* Redirect legacy routes to avoid breaking links */}
           <Redirect from="/cluster-status" to="/dashboards" />
@@ -169,6 +173,9 @@ const AppContents_: React.FC<AppContentsProps> = ({ activePerspective }) => (
           <Route path="/grafana/all-namespaces" exact component={NamespaceFromURL(GrafanaPage)} />
           <Route path="/grafana/ns/:ns" exact component={NamespaceFromURL(GrafanaPage)} />
           <Route path="/grafana" exact component={NamespaceRedirect} />
+          <LazyRoute path="/kibana/all-namespaces" exact loader={() => import('./hypercloud/kibana' /* webpackChunkName: "kibana" */).then(m => NamespaceFromURL(m.KibanaPage))} />
+          <LazyRoute path="/kibana/ns/:ns" exact loader={() => import('./hypercloud/kibana' /* webpackChunkName: "kibana" */).then(m => NamespaceFromURL(m.KibanaPage))} />
+          <Route path="/kibana" exact component={NamespaceRedirect} />
           {/* <Route path="/grafana" exact component={ActiveNamespaceRedirect} />
           <LazyRoute path="/grafana/all-namespaces" exact loader={() => import('./hypercloud/grafana').then(m => NamespaceFromURL(m.GrafanaPage))} />
           <LazyRoute path="/grafana/ns/:ns" exact loader={() => import('./hypercloud/grafana').then(m => NamespaceFromURL(m.GrafanaPage))} /> */}

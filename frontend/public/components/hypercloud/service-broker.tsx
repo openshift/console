@@ -5,7 +5,7 @@ import { Status } from '@console/shared';
 import { sortable } from '@patternfly/react-table';
 import { ServiceBrokerModel } from '../../models';
 import { K8sResourceKind } from '../../module/k8s';
-import { DetailsPage, ListPage, Table, TableData, TableRow } from '../factory';
+import { DetailsPage, ListPage, Table, TableData, TableRow, RowFunction } from '../factory';
 import { DetailsItem, Kebab, navFactory, SectionHeading, ResourceSummary, ResourceLink, ResourceKebab, Timestamp } from '../utils';
 
 const { common } = Kebab.factory;
@@ -64,7 +64,7 @@ const ServiceBrokerPhase = instance => {
   }
 };
 
-const ServiceBrokerTableRow = ({ obj, index, key, style }) => {
+const ServiceBrokerTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }) => {
   let phase = ServiceBrokerPhase(obj);
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
@@ -74,8 +74,7 @@ const ServiceBrokerTableRow = ({ obj, index, key, style }) => {
       <TableData className={classNames(tableColumnClasses[1])}>
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} title={obj.metadata.namespace} />
       </TableData>
-      <TableData className={tableColumnClasses[2]}>{obj.spec.url}</TableData>
-      <TableData className={tableColumnClasses[3]}>
+      <TableData className={tableColumnClasses[2]}>
         <Status status={phase} />
       </TableData>
       <TableData className={tableColumnClasses[4]}>
@@ -103,16 +102,10 @@ const ServiceBrokerTableHeader = () => {
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Url',
-      sortField: 'spec.url',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
-    },
-    {
       title: 'Status',
       sortFunc: 'ServiceBrokerPhase',
       transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
+      props: { className: tableColumnClasses[2] },
     },
     {
       title: 'Created',
@@ -129,11 +122,28 @@ const ServiceBrokerTableHeader = () => {
 
 ServiceBrokerTableHeader.displayName = 'ServiceBrokerTableHeader';
 
+const serviceBrokerStatusReducer = (serviceBroker: any): string => {
+  return ServiceBrokerPhase(serviceBroker);
+}
+
+const filters = [
+  {
+    filterGroupName: 'Status',
+    type: 'service-broker-status',
+    reducer: serviceBrokerStatusReducer,
+    items: [
+      { id: 'Running', title: 'Running' },
+      { id: 'Error', title: 'Error' },
+    ],
+  },
+];
+
+
 const ServiceBrokersList: React.FC = props => <Table {...props} aria-label="Service Broker" Header={ServiceBrokerTableHeader} Row={ServiceBrokerTableRow} virtualize />;
 ServiceBrokersList.displayName = 'ServiceBrokersList';
 
 const ServiceBrokersPage: React.FC<ServiceBrokersPageProps> = props => {
-  return <ListPage canCreate={true} kind={kind} ListComponent={ServiceBrokersList} {...props} />;
+  return <ListPage canCreate={true} kind={kind} ListComponent={ServiceBrokersList} rowFilters={filters} {...props} />;
 };
 ServiceBrokersPage.displayName = 'ServiceBrokersPage';
 

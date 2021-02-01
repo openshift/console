@@ -8,11 +8,13 @@ import { RadioGroup } from './utils/radio';
 import { Section } from './utils/section';
 import { InputSelectBox } from './utils/inputSelectBox';
 import { Dropdown, ContainerDropdown } from './utils/dropdown';
+import { ResourceListDropdown, ResourceListDropdownWithDataToolbar } from './utils/resource-list-dropdown';
 import { KeyValueListEditor } from './utils/key-value-list-editor';
 import { TagsLabel } from './utils/tags-label';
 import { NumberSpinner } from './utils/number-spinner';
 import { ListView } from './utils/list-view';
 import { Button } from '@patternfly/react-core';
+
 const defaultValues = {
   // requestDo에 넣어줄 형식으로 defaultValues 작성
   metadata: {
@@ -60,12 +62,47 @@ const defaultValues = {
   dropdown1: 'Ti',
 };
 
+const ClusterResourceList = [
+  {
+    "kind": "ClusterManager",
+    "apiVersion": "cluster.tmax.io/v1alpha1",
+    "metadata": {
+      "name": "jmc-zgw2v",
+      "uid": "1a482d7d-ac35-46d3-8496-a94688fc6d0e",
+    },
+    "fakeMetadata": {
+      "fakename": "jmc"
+    },
+  },
+  {
+    "kind": "ClusterClaim",
+    "apiVersion": "cluster.tmax.io/v1alpha1",
+    "metadata": {
+      "name": "example",
+      "uid": "436b6e22-748e-4e04-aea5-156f2ed35fa0",
+    },
+  }
+];
+
 const sampleFormFactory = params => {
   return WithCommonForm(CreateSampleComponent, params, defaultValues);
 };
 
 const CreateSampleComponent: React.FC<SampleFormProps> = props => {
   const { control } = useFormContext();
+  const [selectedClusterItems, setSelectedClusterItems] = React.useState(new Set<string>([]));
+
+  const updateSelectedClusterItems = (selection: string) => { // selection: {resource}.metadata.uid | 'All'
+    const updateItems = _.cloneDeep(selectedClusterItems);
+    updateItems.has(selection) ? updateItems.delete(selection) : updateItems.add(selection);
+    setSelectedClusterItems(updateItems);
+  };
+
+  const onSelectedItemChange = (items: Set<string>) => {
+    //DO Something
+    console.log("hi")
+  };
+
   const resources = [
     // RadioGroup 컴포넌트에 넣어줄 items
     {
@@ -151,6 +188,8 @@ const CreateSampleComponent: React.FC<SampleFormProps> = props => {
             inline={false} // inline속성 먹일거면 true, 아니면 빼면 됨 (선택)
           />
         </Section>
+      </Section>
+      <Section id="dropdown" label="Dropdown">
         <Dropdown
           name="dropdown1"
           className="btn-group"
@@ -163,6 +202,31 @@ const CreateSampleComponent: React.FC<SampleFormProps> = props => {
           name="containerDropdown1"
           containers={containers} // (필수)
           initContainers={initContainers}
+        />
+      </Section>
+      <Section id="resourcelistdropdown" label="Resource List Dropdown">
+        <ResourceListDropdown
+          resourceList={ClusterResourceList} // 필수
+          selected={[...selectedClusterItems]} // 필수
+          onChange={updateSelectedClusterItems} // 필수
+          showAll={false}
+          title="select Resources" // 드롭다운 title 지정
+          autocompletePlaceholder="search by name"
+          type="multiple" // type: single / multiple
+        />
+        <ResourceListDropdownWithDataToolbar
+          resourceList={ClusterResourceList} // 필수
+          showAll={true} // 드롭다운에 all resource 라는 항목이 생긴다.
+          resourceType="Cluster and Cluster Claim" // title, placeholder, all resources, chip group 에 적용되는 문구 (title, placeholder는 직접 지정하는 것의 우선순위가 더 높음)
+          autocompletePlaceholder="search by name" // 검색란 placeholder
+          onSelectedItemChange={onSelectedItemChange} // 선택된 아이템 리스트 변동될 때마다 호출되는 함수
+        />
+        <ResourceListDropdownWithDataToolbar
+          name="ResourceListDropdownWithDataToolbar1"
+          resourceList={ClusterResourceList} // 필수
+          showAll={false}
+          title="select Resources" // 드롭다운 title 지정
+          resourceType="Cluster and Cluster Claim"
         />
       </Section>
       <Section id="numberspinner" label="Number Spinner">

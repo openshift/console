@@ -2,7 +2,9 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
-import { Translation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
+
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
 import {
   DetailsItem,
@@ -39,6 +41,34 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
+const StorageClassTableHeader = (t?: TFunction) => {
+  return [
+    {
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_1'),
+      sortField: 'metadata.name',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[0] },
+    },
+    {
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_30'),
+      sortField: 'provisioner',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[1] },
+    },
+    {
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_31'),
+      sortField: 'reclaimPolicy',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[2] },
+    },
+    {
+      title: '',
+      props: { className: tableColumnClasses[3] },
+    },
+  ];
+};
+StorageClassTableHeader.displayName = 'StorageClassTableHeader';
+
 const StorageClassTableRow: RowFunction<StorageClassResourceKind> = ({
   obj,
   index,
@@ -65,10 +95,11 @@ const StorageClassTableRow: RowFunction<StorageClassResourceKind> = ({
   );
 };
 
-const StorageClassDetails: React.SFC<StorageClassDetailsProps> = ({ obj }) => (
-  <>
+const StorageClassDetails: React.SFC<StorageClassDetailsProps> = ({ obj }) => {
+  const { t } = useTranslation();
+  return <>
     <div className="co-m-pane__body">
-      <SectionHeading text="StorageClass Details" />
+      <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_53')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
       <div className="row">
         <div className="col-sm-6">
           <ResourceSummary resource={obj}>
@@ -85,46 +116,25 @@ const StorageClassDetails: React.SFC<StorageClassDetailsProps> = ({ obj }) => (
         </div>
       </div>
     </div>
-  </>
-);
+  </>;
+};
 
-export const StorageClassList: React.SFC = (props) => (
-  <Translation>{
-    (t) => <Table
+export const StorageClassList: React.SFC = (props) => {
+  const { t } = useTranslation();
+  return <Table
       {...props}
       aria-label="Storage Classes"
-      Header={() => [
-        {
-          title: t('COMMON:MSG_MAIN_TABLEHEADER_1'),
-          sortField: 'metadata.name',
-          transforms: [sortable],
-          props: { className: tableColumnClasses[0] },
-        },
-        {
-          title: t('COMMON:MSG_MAIN_TABLEHEADER_30'),
-          sortField: 'provisioner',
-          transforms: [sortable],
-          props: { className: tableColumnClasses[1] },
-        },
-        {
-          title: t('COMMON:MSG_MAIN_TABLEHEADER_31'),
-          sortField: 'reclaimPolicy',
-          transforms: [sortable],
-          props: { className: tableColumnClasses[2] },
-        },
-        {
-          title: '',
-          props: { className: tableColumnClasses[3] },
-        },
-      ]}
+      Header={StorageClassTableHeader.bind(null, t)}
       Row={StorageClassTableRow}
       virtualize
-    />}
-  </Translation>
-);
+    />;
+};
+
 StorageClassList.displayName = 'StorageClassList';
 
 export const StorageClassPage: React.SFC<StorageClassPageProps> = (props) => {
+  const { t } = useTranslation();
+
   const createProps = {
     to: '/k8s/cluster/storageclasses/~new/form',
   };
@@ -132,13 +142,13 @@ export const StorageClassPage: React.SFC<StorageClassPageProps> = (props) => {
   return (
     <ListPage
       {..._.omit(props, 'mock')}
-      title="Storage Classes"
+      title={t('COMMON:MSG_LNB_MENU_53')}
+      createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:MSG_LNB_MENU_53') })} 
       kind={StorageClassReference}
       ListComponent={StorageClassList}
       canCreate={true}
       filterLabel={props.filterLabel}
       createProps={createProps}
-      createButtonText="Create Storage Class"
     />
   );
 };

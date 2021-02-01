@@ -356,6 +356,18 @@ h6 {
     --pf-global--Color--100: var(--pf-global--Color--dark-100);
   }
 
+  &.pf-m-dark .pf-c-dropdown__menu {
+    max-height: 366px;
+    max-width: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    &.pf-c-dropdown__menu-item .pf-c-title{
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
   .pf-c-nav {
     --pf-c-nav__list-link--PaddingRight: var(--pf-global--spacer--sm);
     --pf-c-nav__list-link--PaddinLeft: var(--pf-global--spacer--md);
@@ -385,6 +397,10 @@ h6 {
         color: var(--pf-c-nav__simple-list-link--focus--Color);
         font-weight: var(--pf-c-nav__simple-list-link--m-current--FontWeight);
       }
+    }
+
+    .pf-c-nav__simple-list .pf-c-nav__section-title {
+      padding-left: 28px;
     }
 
     // override list styles, necessary due to setting $pf-global--enable-reset to false
@@ -570,4 +586,12 @@ button.pf-c-dropdown__menu-item.hover {
 
 .pagination .disabled {
   cursor: initial;
+}
+
+.sidebar__details {
+  position: absolute !important;
+  right: 0;
+  width: 800px;
+  height: 100%;
+  background-color: white;
 }

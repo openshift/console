@@ -157,10 +157,23 @@ const PipelineRunDetails: React.FC<PipelineRunDetailsProps> = ({ obj: pipelineRu
   
 const { details, editYaml } = navFactory;
 
+const filters = [
+  {
+    filterGroupName: 'Status',
+    type: 'pipeline-run-status',
+    reducer: pipelineRunFilterReducer,
+    items: [
+      { id: 'Succeeded', title: 'Succeeded' },
+      { id: 'Running', title: 'Running' },
+      { id: 'Failed', title: 'Failed' },
+      { id: 'Cancelled', title: 'Cancelled' },
+    ],
+  },
+];
+
 export const PipelineRuns: React.FC = props => <Table {...props} aria-label="Pipeline Runs" Header={PipelineRunTableHeader} Row={PipelineRunTableRow} virtualize />;
 
-
-export const PipelineRunsPage: React.FC<PipelineRunsPageProps> = props => <ListPage canCreate={true} ListComponent={PipelineRuns} kind={kind} {...props} />;
+export const PipelineRunsPage: React.FC<PipelineRunsPageProps> = props => <ListPage canCreate={true} ListComponent={PipelineRuns} kind={kind} rowFilters={filters} {...props} />;
 
 export const PipelineRunsDetailsPage: React.FC<PipelineRunsDetailsPageProps> = props => <DetailsPage {...props} kind={kind} menuActions={getPipelineRunKebabActions()} pages={[details(detailsPage(PipelineRunDetails)), editYaml(), {
   href: 'logs',

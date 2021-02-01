@@ -12,6 +12,7 @@ import confirmNavUnpinModal from './confirmNavUnpinModal';
 import { NavSection } from './section';
 import MulticlusterNav from '../hypercloud/nav/multicluster-nav';
 import HyperCloudNav from '../hypercloud/nav/hypercloud-nav';
+import MasterNav from '../hypercloud/nav/master-nav';
 
 import { createLink, NavLinkComponent, ResourceClusterLink, ResourceNSLink, RootNavLink } from './items';
 
@@ -45,12 +46,16 @@ const PerspectiveNav: React.FC<StateProps & DispatchProps> = ({ perspective, pin
   };
 
   // Until mc perspective is contributed through extensions, simply render static `MulticlusterNav`
-  if (window.SERVER_FLAGS.McMode && perspective === 'mc') {
-    return <MulticlusterNav />;
-  } else if (!window.SERVER_FLAGS.McMode ||  perspective === 'hc') {
-    return <HyperCloudNav />;
-  }
+  if (window.SERVER_FLAGS.McMode) {
+    if (perspective === 'mc') {
+      return <MulticlusterNav />;
+    } else if (perspective === 'hc') {
+      return <HyperCloudNav />;
+    }
+  } 
 
+  return <MasterNav />;
+  
   const activePerspective = perspectives.find(p => p.properties.id === perspective);
   if (!pinnedResources && activePerspective.properties.defaultPins) {
     onPinnedResourcesChange(activePerspective.properties.defaultPins);

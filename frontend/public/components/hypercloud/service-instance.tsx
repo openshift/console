@@ -1,12 +1,15 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
+import { useState } from 'react';
+import { Button } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import { Status } from '@console/shared';
 import { ServiceInstanceModel } from '../../models';
-import { K8sResourceKind } from '../../module/k8s';
+import { K8sResourceKind, modelFor, k8sGet } from '../../module/k8s';
 import { DetailsPage, ListPage, Table, TableData, TableRow } from '../factory';
 import { Kebab, ResourceKebab, navFactory, SectionHeading, ResourceSummary, ResourceLink, Timestamp } from '../utils';
+import { ResourceSidebar } from '../sidebars/resource-sidebar';
 
 const { common } = Kebab.factory;
 
@@ -14,36 +17,73 @@ const kind = ServiceInstanceModel.kind;
 
 export const serviceInstanceMenuActions = [...Kebab.getExtensionsActionsForKind(ServiceInstanceModel), ...common];
 
-const ServiceInstanceDetails: React.FC<ServiceInstanceDetailsProps> = ({ obj: serviceInstance }) => {
+const ServiceInstanceDetails: React.FC<ServiceInstanceDetailsProps> = props => {
+  const { obj: serviceInstance, match } = props;
+  const [showSidebar, setShowSidebar] = useState(false);
+  const [sidebarDetails, setSidebarDetails] = useState({});
+  const [sidebarKind, setSidebarKind] = useState('');
+  const [sidebarTitle, setSidebarTitle] = useState('');
+  // const [planDetails, setPlanDetails] = useState({});
+  const getDetails = async (kind, e) => {
+    const model = modelFor(kind);
+    const details = await k8sGet(model, e.target.innerText, kind.indexOf('Cluster') < 0 ? match.params.ns : null);
+    setSidebarDetails(details);
+    setShowSidebar(true);
+    setSidebarKind(kind);
+    setSidebarTitle(details.metadata.name);
+    console.log(sidebarDetails);
+  };
+  const SidebarLink = ({ name, kind }) => {
+    return (
+      <Button type="button" variant="link" isInline onClick={getDetails.bind(null, kind)}>
+        {name}
+      </Button>
+    );
+  };
   return (
     <>
-      <div className="co-m-pane__body">
-        <SectionHeading text="Service Instance Details" />
-        <div className="row">
-          <div className="col-md-6">
-            <ResourceSummary resource={serviceInstance} showPodSelector showNodeSelector></ResourceSummary>
-          </div>
-          <div className="col-md-6">
-            <dl className="co-m-pane__details">
-              <dt>Status</dt>
-              <dd><Status status={serviceInstance.status.lastConditionState} /></dd>
-              <dt>Service Class</dt>
-              <dd>
-                {
-                  serviceInstance.spec.clusterServiceClassExternalName ?
-                    <ResourceLink kind="ClusterServiceClass" title={serviceInstance.spec.clusterServiceClassRef?.name} name={serviceInstance.spec.clusterServiceClassRef?.name} displayName={serviceInstance.spec.clusterServiceClassExternalName} /> : <ResourceLink kind="ServiceClass" title={serviceInstance.spec.serviceClassRef?.name} name={serviceInstance.spec.serviceClassRef?.name} displayName={serviceInstance.spec.serviceClassExternalName} />
-                }
-              </dd>
-              <dt>Service Plan</dt>
-              <dd>
-                {
-                  serviceInstance.spec.clusterServicePlanExternalName ?
-                    <ResourceLink kind="ClusterServicePlan" title={serviceInstance.spec.clusterServicePlanRef?.name} name={serviceInstance.spec.clusterServicePlanRef?.name} displayName={serviceInstance.spec.clusterServicePlanExternalName} /> : <ResourceLink kind="ServicePlan" title={serviceInstance.spec.servicePlanRef?.name} name={serviceInstance.spec.servicePlanRef?.name} displayName={serviceInstance.spec.servicePlanExternalName} />
-                }
-              </dd>
-            </dl>
+      <div className="co-p-has-sidebar">
+        <div className="co-m-pane__body">
+          <SectionHeading text="Service Instance Details" />
+          <div className="row">
+            <div className="col-md-6">
+              <ResourceSummary resource={serviceInstance} showPodSelector showNodeSelector></ResourceSummary>
+            </div>
+            <div className="col-md-6">
+              <dl className="co-m-pane__details">
+                <dt>Status</dt>
+                <dd>
+                  <Status status={serviceInstance.status.lastConditionState} />
+                </dd>
+                <dt>Service Class</dt>
+                <SidebarLink name={serviceInstance.spec.clusterServiceClassRef?.name ? serviceInstance.spec.clusterServiceClassRef?.name : serviceInstance.spec?.serviceClassExternalName} kind={serviceInstance.spec.clusterServiceClassRef?.name ? 'ClusterServiceClass' : 'ServiceClass'}></SidebarLink>
+                <dt>Service Plan</dt>
+                <dd>
+                  <SidebarLink name={serviceInstance.spec.clusterServicePlanRef?.name ? serviceInstance.spec.clusterServicePlanRef?.name : serviceInstance.spec?.servicePlanRef?.name} kind={serviceInstance.spec.clusterServiceClassRef?.name ? 'ClusterServicePlan' : 'ServicePlan'}></SidebarLink>
+                </dd>
+              </dl>
+            </div>
           </div>
         </div>
+        <ResourceSidebar
+          toggleSidebar={() => {
+            setShowSidebar(!showSidebar);
+            window.dispatchEvent(new Event('sidebar_toggle'));
+          }}
+          resource={sidebarDetails}
+          kindObj={modelFor(sidebarKind)}
+          title={sidebarTitle}
+          isFloat={true}
+          showName={false}
+          showID={true}
+          showPodSelector={true}
+          showNodeSelector={true}
+          showOwner={false}
+          showSidebar={showSidebar}
+          samples={[]}
+          isCreateMode={true}
+          showDetails={true}
+        />
       </div>
     </>
   );
@@ -51,6 +91,7 @@ const ServiceInstanceDetails: React.FC<ServiceInstanceDetailsProps> = ({ obj: se
 
 type ServiceInstanceDetailsProps = {
   obj: K8sResourceKind;
+  match?: any;
 };
 
 const { details, editYaml } = navFactory;
@@ -78,12 +119,7 @@ const ServiceInstanceTableRow = ({ obj, index, key, style }) => {
       <TableData className={tableColumnClasses[2]}>
         <Status status={obj.status.lastConditionState} />
       </TableData>
-      <TableData className={tableColumnClasses[3]}>
-        {
-          obj.spec.clusterServicePlanExternalName ?
-            <ResourceLink kind="ClusterServicePlan" title={obj.spec.clusterServicePlanRef?.name} name={obj.spec.clusterServicePlanRef?.name} displayName={obj.spec.clusterServicePlanExternalName} /> : <ResourceLink kind="ServicePlan" title={obj.spec.servicePlanRef?.name} name={obj.spec.servicePlanRef?.name} displayName={obj.spec.servicePlanExternalName} />
-        }
-      </TableData>
+      <TableData className={tableColumnClasses[3]}>{obj.spec.clusterServicePlanExternalName ? <ResourceLink kind="ClusterServicePlan" title={obj.spec.clusterServicePlanRef?.name} name={obj.spec.clusterServicePlanRef?.name} displayName={obj.spec.clusterServicePlanExternalName} /> : <ResourceLink kind="ServicePlan" title={obj.spec.servicePlanRef?.name} name={obj.spec.servicePlanRef?.name} displayName={obj.spec.servicePlanExternalName} />}</TableData>
       <TableData className={tableColumnClasses[4]}>
         <Timestamp timestamp={obj.metadata.creationTimestamp} />
       </TableData>
@@ -153,7 +189,6 @@ const filters = [
     ],
   },
 ];
-
 
 const ServiceInstancesPage: React.FC<ServiceInstancesPageProps> = props => {
   return <ListPage canCreate={true} kind={kind} ListComponent={ServiceInstancesList} rowFilters={filters} {...props} />;

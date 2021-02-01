@@ -11,14 +11,45 @@ const kind = ClusterTemplateModel.kind;
 
 export const clusterTemplateMenuActions = [...Kebab.getExtensionsActionsForKind(ClusterTemplateModel), ...common];
 
+const objectKinds = clustertemplate => {
+  const objects = !!clustertemplate.objectKinds ? clustertemplate.objectKinds : [];
+  let objMap = new Map();
+  for (const i in objects) {
+    const kind = !!objects[i] ? objects[i] : 'unknown kind';
+    if (!!objMap.get(kind)) {
+      const num = objMap.get(kind) as number;
+      objMap.set(kind, num + 1);
+    } else {
+      objMap.set(kind, 1);
+    }
+  }
+  const objectList = [];
+  objMap.forEach((value, key) => {
+    objectList.push(
+      <div>
+        {key} {value}
+      </div>,
+    );
+  });
+
+  return <div>{objectList}</div>;
+};
+
 const ClusterTemplateDetails: React.FC<ClusterTemplateDetailsProps> = ({ obj: clusterTemplate }) => {
+  const objectSummary = objectKinds(clusterTemplate);
   return (
     <>
       <div className="co-m-pane__body">
         <SectionHeading text="Cluster Template Details" />
         <div className="row">
           <div className="col-md-6">
-            <ResourceSummary resource={clusterTemplate} showPodSelector showNodeSelector></ResourceSummary>
+            <ResourceSummary resource={clusterTemplate} showPodSelector showOwner={false}></ResourceSummary>
+          </div>
+          <div className="col-md-6">
+            <dl className="co-m-pane__details">
+              <dt>Resource Summary</dt>
+              <dd>{objectSummary}</dd>
+            </dl>
           </div>
         </div>
       </div>
@@ -36,20 +67,25 @@ ClusterTemplatesDetailsPage.displayName = 'ClusterTemplatesDetailsPage';
 
 const tableColumnClasses = [
   '', // NAME
+  '', // NAMESPACE
+  '', // RESOURCE SUMMARY
   '', // CREATED
   Kebab.columnClass, // MENU ACTIONS
 ];
 
 const ClusterTemplateTableRow = ({ obj, index, key, style }) => {
+  const objects = objectKinds(obj);
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink kind={kind} name={obj.metadata.name} title={obj.metadata.name} />
       </TableData>
-      <TableData className={tableColumnClasses[1]}>
+      <TableData className={tableColumnClasses[1]}>all-namespace</TableData>
+      <TableData className={tableColumnClasses[2]}>{objects}</TableData>
+      <TableData className={tableColumnClasses[3]}>
         <Timestamp timestamp={obj.metadata.creationTimestamp} />
       </TableData>
-      <TableData className={tableColumnClasses[2]}>
+      <TableData className={tableColumnClasses[4]}>
         <ResourceKebab actions={clusterTemplateMenuActions} kind={kind} resource={obj} />
       </TableData>
     </TableRow>
@@ -65,14 +101,22 @@ const ClusterTemplateTableHeader = () => {
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: 'Created',
-      sortField: 'metadata.creationTimestamp',
-      transforms: [sortable],
+      title: 'Namespace',
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: '',
+      title: 'Resource Summary',
       props: { className: tableColumnClasses[2] },
+    },
+    {
+      title: 'Created',
+      sortField: 'metadata.creationTimestamp',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[3] },
+    },
+    {
+      title: '',
+      props: { className: tableColumnClasses[4] },
     },
   ];
 };

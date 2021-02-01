@@ -1,0 +1,17 @@
+routers:
+  f-test-2ddsb@file:
+    server: https://f-test-2ddsb-apiserver-492352234.us-east-2.elb.amazonaws.com:6443
+    rule: PathPrefix(`/api/f-test-2ddsb/`)
+    path: "/api/f-test-2ddsb/"
+  jmc-zgw2v@file:
+    server: https://jmc-zgw2v-apiserver-1390659011.ap-northeast-2.elb.amazonaws.com:6443
+    rule: PathPrefix(`/api/jmc-zgw2v/`)
+    path: "/api/jmc-zgw2v/"
+  master@file:
+    server: https://220.90.208.100:6443
+    rule: PathPrefix(`/api/master/`)
+    path: "/api/master/"
+  sh-test-us-east1@file:
+    server: https://sh-test-us-east1-apiserver-1962929540.us-east-1.elb.amazonaws.com:6443
+    rule: PathPrefix(`/api/sh-test-us-east1/`)
+    path: "/api/sh-test-us-east1/"

@@ -13,7 +13,7 @@ import {
   serviceClassDisplayName,
   servicePlanDisplayName,
   getClusterOperatorStatus,
-  getTemplateInstanceStatus,
+  // getTemplateInstanceStatus,
 } from '../../module/k8s';
 
 import {
@@ -22,12 +22,29 @@ import {
   alertState,
   silenceState,
 } from '../../reducers/monitoring';
+import { pipelineRunFilterReducer } from '../hypercloud/utils/pipeline-filter-reducer';
 
 export const fuzzyCaseInsensitive = (a: string, b: string): boolean =>
   fuzzy(_.toLower(a), _.toLower(b));
 
 const registryStatusReducer = (registry: any): string => {
   return registry.status.phase;
+}
+
+const serviceBrokerStatusReducer = (serviceBroker: any): string => {
+  let phase = '';
+  if (serviceBroker.status) {
+    serviceBroker.status.conditions.forEach(cur => {
+      if (cur.type === 'Ready') {
+        if (cur.status === 'True') {
+          phase = 'Running';
+        } else {
+          phase = 'Error';
+        }
+      }
+    });
+    return phase;
+  }
 }
 
 const serviceInstanceStatusReducer = (serviceInstance: any): string => {
@@ -134,6 +151,15 @@ export const tableFilters: TableFilterMap = {
     return phases.selected.has(phase) || !_.includes(phases.all, phase);
   },
 
+  'service-broker-status': (phases, serviceBroker) => {
+    if (!phases || !phases.selected || !phases.selected.size) {
+      return true;
+    }
+
+    const phase = serviceBrokerStatusReducer(serviceBroker);
+    return phases.selected.has(phase) || !_.includes(phases.all, phase);
+  },
+
   'service-instance-status': (phases, serviceInstance) => {
     if (!phases || !phases.selected || !phases.selected.size) {
       return true;
@@ -141,6 +167,15 @@ export const tableFilters: TableFilterMap = {
 
     const phase = serviceInstanceStatusReducer(serviceInstance);
     return phases.selected.has(phase) || !_.includes(phases.all, phase);
+  },
+
+  'pipeline-run-status': (results, pipelineRun) => {
+    if (!results || !results.selected || !results.selected.size) {
+      return true;
+    }
+
+    const result = pipelineRunFilterReducer(pipelineRun);
+    return results.selected.has(result) || !_.includes(results.all, result);
   },
 
   'pipeline-approval-status': (results, pipelineApproval) => {
@@ -270,7 +305,22 @@ export const tableFilters: TableFilterMap = {
       return true;
     }
 
-    const status = getTemplateInstanceStatus(instance);
+    // const status = getTemplateInstanceStatus(instance);
+
+    // NOTE: HyperCloud5.0 TemplateInstance phase filter
+    const templateInstancePhase = instance => {
+      let phase = '';
+      if (instance.status) {
+        instance.status.conditions.forEach(cur => {
+          if (cur.type === '') {
+            phase = cur.status;
+          }
+        });
+        return phase;
+      }
+    };
+    const status = templateInstancePhase(instance);
+
     return statuses.selected.has(status) || !_.includes(statuses.all, status);
   },
 
