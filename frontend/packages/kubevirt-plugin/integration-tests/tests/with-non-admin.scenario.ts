@@ -11,6 +11,8 @@ import {
 } from '@console/shared/src/test-utils/utils';
 import * as crudView from '@console/internal-integration-tests/views/crud.view';
 import * as loginView from '@console/internal-integration-tests/views/login.view';
+import * as sidenav from '@console/internal-integration-tests/views/sidenav.view';
+import { closeGuidedTour } from '@console/internal-integration-tests/views/overview.view';
 import * as pvcView from '../views/pvc.view';
 import { restrictedAccessBlock } from '../views/vms.list.view';
 import { uploadLink } from '../views/wizard.view';
@@ -47,6 +49,8 @@ describe('Kubevirt non-admin Flow', () => {
 
     await loginView.logout();
     await loginView.login(BRIDGE_HTPASSWD_IDP, BRIDGE_HTPASSWD_USERNAME, BRIDGE_HTPASSWD_PASSWORD);
+    await closeGuidedTour();
+    await sidenav.switchPerspective(sidenav.Perspective.Administrator);
     await createProject(testNonAdminNamespace);
   }, CLONED_VM_BOOTUP_TIMEOUT_SECS);
 
@@ -57,6 +61,8 @@ describe('Kubevirt non-admin Flow', () => {
 
     await loginView.logout();
     await loginView.login(KUBEADMIN_IDP, KUBEADMIN_USERNAME, BRIDGE_KUBEADMIN_PASSWORD);
+    await closeGuidedTour();
+    await sidenav.switchPerspective(sidenav.Perspective.Administrator);
   });
 
   describe('Kubevirt non-admin virtualization Flow', () => {
@@ -120,6 +126,7 @@ describe('Kubevirt non-admin Flow', () => {
       const wizard = new Wizard();
       await wizard.openWizard(VirtualMachineModel, true, TemplateByName.RHEL8);
       expect(uploadLink.isPresent()).toBe(false);
+      await wizard.closeWizard();
     });
 
     it(
