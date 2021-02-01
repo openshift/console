@@ -126,7 +126,13 @@ ClusterServicePlansPage.displayName = 'ClusterServicePlansPage';
 
 export { ClusterServicePlansList, ClusterServicePlansPage, ClusterServicePlansDetailsPage };
 
-type ClusterServicePlansPageProps = {};
+type ClusterServicePlansPageProps = {
+  showTitle?: boolean;
+  canCreate?: boolean;
+  fieldSelector?: string;
+  filters?: any;
+  selector?: any;
+};
 
 type ClusterServicePlansDetailsPageProps = {
   match: any;
