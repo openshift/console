@@ -1,4 +1,4 @@
-import { pipelineBuilderPO, pipelineDetailsPO } from '../../pageObjects/pipelines-po';
+import { pipelineBuilderPO, pipelineDetailsPO, pipelinesPO } from '../../pageObjects/pipelines-po';
 import { pipelineDetailsPage } from './pipelineDetails-page';
 
 export const pipelineBuilderPage = {
@@ -63,10 +63,15 @@ export const pipelineBuilderPage = {
   },
   clickCreateButton: () => cy.get(pipelineBuilderPO.create).click(),
   editYaml: () => {
-    cy.byButtonText('Edit YAML').click();
-    cy.get('form[name="form"]').should('be.visible');
-    cy.byTestID('confirm-action').click();
-    cy.get('[data-mode-id="yaml"]').should('be.visible');
+    cy.get(pipelinesPO.createPipeline).click();
+    cy.get(pipelineBuilderPO.yamlView).click();
+  },
+  enterYaml: (yamlContent: string) => {
+    cy.get(pipelineBuilderPO.yamlCreatePipeline.yamlEditor)
+      .click()
+      .focused()
+      .type('{ctrl}a')
+      .type(yamlContent);
   },
   createPipelineFromBuilderPage: (pipelineName: string, taskName: string = 'kn') => {
     pipelineBuilderPage.enterPipelineName(pipelineName);
@@ -98,5 +103,26 @@ export const pipelineBuilderPage = {
     cy.byTestDropDownMenu(resourceName).click();
     pipelineBuilderPage.clickCreateButton();
     pipelineDetailsPage.verifyTitle(pipelineName);
+  },
+  selectSampleInYamlView: (yamlSample: string) => {
+    switch (yamlSample) {
+      case 's2i-build-and-deploy-pipeline-using-workspace':
+        cy.get(pipelineBuilderPO.yamlCreatePipeline.samples.s2iPipelineWithWorkspace).click();
+        break;
+      case 'docker-build-and-deploy-pipeline-using-pipeline-resource':
+        cy.get(pipelineBuilderPO.yamlCreatePipeline.samples.dockerPipelineWithResource).click();
+        break;
+      case 'docker-build-and-deploy-pipeline':
+        cy.get(pipelineBuilderPO.yamlCreatePipeline.samples.dockerBuildAndDeployPipeline).click();
+        break;
+      case 'simple-pipeline':
+        cy.get(pipelineBuilderPO.yamlCreatePipeline.samples.simplePipeline).click();
+        break;
+      case 's2i-build-and-deploy-pipeline-using-pipeline-resource':
+        cy.get(pipelineBuilderPO.yamlCreatePipeline.samples.s2iPipelineWithResource).click();
+        break;
+      default:
+        break;
+    }
   },
 };

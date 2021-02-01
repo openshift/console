@@ -1,19 +1,59 @@
-apiVersion: tekton.dev/v1beta1 
-kind: Pipeline 
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
 metadata:
-  name: test-workspace-pipeline
+  name: s2i-build-and-deploy
 spec:
   params:
-    - name: first-param
-      description: this is the first param for Pipeline
+    - name: IMAGE_NAME
+      type: string
+    - name: GIT_REPO
+      type: string
+    - name: GIT_REVISION
+      type: string
   workspaces:
-    - name: shared-workspace
-      description: this is a shared workspace
+    - name: workspace
   tasks:
-    - name: first-task
+    - name: fetch-repository
       taskRef:
-        name: test-workspace-task
-        kind: Task
+        name: git-clone
+        kind: ClusterTask
       workspaces:
-        - name: messages
-          workspace: shared-workspace
+        - name: output
+          workspace: workspace
+      params:
+        - name: url
+          value: $(params.GIT_REPO)
+        - name: revision
+          value: $(params.GIT_REVISION)
+        - name: subdirectory
+          value: ""
+        - name: deleteExisting
+          value: "true"
+
+    - name: build
+      taskRef:
+        name: s2i-java-8
+        kind: ClusterTask
+      runAfter:
+        - fetch-repository
+      workspaces:
+        - name: source
+          workspace: workspace
+      params:
+        - name: IMAGE
+          value: $(params.IMAGE_NAME)
+        - name: TLSVERIFY
+          value: "false"
+
+    - name: deploy
+      taskRef:
+        name: openshift-client
+        kind: ClusterTask
+      runAfter:
+        - build
+      params:
+        - name: ARGS
+          value:
+            - "new-app"
+            - "--docker-image"
+            - "$(params.IMAGE_NAME)"
