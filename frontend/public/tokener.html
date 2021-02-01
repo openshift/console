@@ -2,33 +2,35 @@
 <html lang="en">
   <head>
     <script type="text/javascript">
-      // eslint-disable-next-line no-var
-      var json = [[.]];
-      var error;
-      try {
-        ['exp', 'email', 'name', 'userID'].forEach(function (key) {
-          localStorage.setItem(key, json[key]);
-        });
-      } catch (e) {
-        error = e;
-        console.error(e);
-        document.body.append('localStorage must be enabled:');
-        document.body.append(e.message || e.toString());
-      }
-      if (!error) {
-        var next = localStorage.getItem('next') || '';
-        if (next) {
-          if (next[0] === '/' && json.loginSuccessURL.substr(-1) === '/') {
-            while (next[0] === '/') {
-              next = next.substr(1); //remove any slash in front of "next"
-            }
-          }
-          localStorage.removeItem('next');
-          window.location = json.loginSuccessURL + next;
-        } else {
-          window.location = json.loginSuccessURL;
+      window.onload = function() {
+        // eslint-disable-next-line no-var
+        var json = [[.]];
+        var error;
+        try {
+          ['exp', 'email', 'name', 'userID'].forEach(function (key) {
+            localStorage.setItem(key, json[key]);
+          });
+        } catch (e) {
+          error = e;
+          console.error(e);
+          document.body.append('localStorage must be enabled:');
+          document.body.append(e.message || e.toString());
         }
-      }
+        if (!error) {
+          var next = localStorage.getItem('next') || '';
+          if (next) {
+            if (next[0] === '/' && json.loginSuccessURL.substr(-1) === '/') {
+              while (next[0] === '/') {
+                next = next.substr(1); //remove any slash in front of "next"
+              }
+            }
+            localStorage.removeItem('next');
+            window.location = json.loginSuccessURL + next;
+          } else {
+            window.location = json.loginSuccessURL;
+          }
+        }
+      };
     </script>
   </head>
   <body>
