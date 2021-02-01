@@ -56,12 +56,7 @@ const ManagedKafkas = () => {
     return (<><h1>Loading</h1></>)
   }
 
-  let watchedKafkasObject = watchedKafkaRequest.status.userKafkas;
-  console.log('what is kafkaRequestData', watchedKafkasObject);
-  const remoteKafkaInstances = [];
-  for (const kafkaName of Object.keys(watchedKafkasObject)) {
-    remoteKafkaInstances.push({ ...watchedKafkasObject[kafkaName], name: kafkaName })
-  }
+  let remoteKafkaInstances = watchedKafkaRequest.status.userKafkas;
 
   if (remoteKafkaInstances.length === 0) {
     return <NamespacedPage disabled variant={NamespacedPageVariants.light} hideApplications>
