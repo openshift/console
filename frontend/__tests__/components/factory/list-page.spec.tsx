@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { shallow, ShallowWrapper } from 'enzyme';
+import { shallow, mount, ShallowWrapper, ReactWrapper } from 'enzyme';
 import { TextInput } from '@patternfly/react-core';
 import {
   TextFilter,
@@ -8,6 +8,8 @@ import {
   MultiListPage,
 } from '../../../public/components/factory/list-page';
 import { Firehose, PageHeading } from '../../../public/components/utils';
+
+const i18nNS = 'public';
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');
@@ -18,23 +20,37 @@ jest.mock('react-i18next', () => {
 });
 
 describe(TextFilter.displayName, () => {
-  let wrapper: ShallowWrapper;
+  let wrapper: ReactWrapper;
   let label: string;
+  let placeholder: string;
   let onChange: React.ChangeEventHandler<any>;
   let defaultValue: string;
 
-  beforeEach(() => {
-    label = 'Pods';
+  it('renders text input', () => {
     onChange = () => null;
     defaultValue = '';
-    wrapper = shallow(<TextFilter label={label} onChange={onChange} defaultValue={defaultValue} />);
-  });
+    wrapper = mount(<TextFilter label={label} onChange={onChange} defaultValue={defaultValue} />);
 
-  it('renders text input', () => {
-    const input: ShallowWrapper<any> = wrapper.find(TextInput);
+    const input = wrapper.find(TextInput);
 
     expect(input.props().type).toEqual('text');
-    expect(input.props().placeholder).toEqual(`Filter ${label}...`);
+    expect(input.props().placeholder).toEqual(`${i18nNS}~Filter {{label}}...`);
+    expect(input.props().onChange).toEqual(onChange);
+    expect(input.props().defaultValue).toEqual(defaultValue);
+  });
+
+  it('renders text input with custom placeholder', () => {
+    placeholder = 'Pods';
+    onChange = () => null;
+    defaultValue = '';
+    wrapper = mount(
+      <TextFilter placeholder={placeholder} onChange={onChange} defaultValue={defaultValue} />,
+    );
+
+    const input = wrapper.find(TextInput);
+
+    expect(input.props().type).toEqual('text');
+    expect(input.props().placeholder).toEqual(placeholder);
     expect(input.props().onChange).toEqual(onChange);
     expect(input.props().defaultValue).toEqual(defaultValue);
   });

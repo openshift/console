@@ -145,6 +145,7 @@
   "Progress deadline seconds": "Progress deadline seconds",
   "Deployment details": "Deployment details",
   "Deployments": "Deployments",
+  "Filter {{label}}...": "Filter {{label}}...",
   "Create": "Create",
   "No datapoints found.": "No datapoints found.",
   "resource {{name}}": "resource {{name}}",
