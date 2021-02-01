@@ -36,6 +36,7 @@ import { SecretType } from '@console/internal/components/secrets/create-secret';
 import { history } from '@console/internal/components/utils/router';
 import { StorageClassDropdown } from '@console/internal/components/utils/storage-class-dropdown';
 import { StorageClass } from '@console/internal/components/storage-class-form';
+import { CEPH_STORAGE_NAMESPACE } from '@console/ceph-storage-plugin/src/constants';
 import { NooBaaBackingStoreModel } from '../../models';
 import './create-bs.scss';
 import {
@@ -306,7 +307,19 @@ const GCPEndpointType: React.FC<GCPEndPointTypeProps> = (props) => {
 
   const [fileData, setFileData] = React.useState('');
   const [inputData, setInputData] = React.useState('');
-  const { state, dispatch } = props;
+  const [showSecret, setShowSecret] = React.useState(false);
+  const { state, dispatch, namespace } = props;
+
+  const resources = [
+    {
+      isList: true,
+      namespace,
+      kind: SecretModel.kind,
+      prop: 'secrets',
+    },
+  ];
+
+  const toggleShowSecret = () => setShowSecret((isShown) => !isShown);
 
   const gcpHelpText = (
     <DashboardCardPopupLink
@@ -347,44 +360,83 @@ const GCPEndpointType: React.FC<GCPEndPointTypeProps> = (props) => {
     <>
       <FormGroup
         className="nb-bs-form-entry"
-        helperText="Upload a .json file with the service account keys provided by google cloud storage."
+        helperText={
+          !showSecret
+            ? t(
+                'noobaa-storage-plugin~Upload a .json file with the service account keys provided by google cloud storage.',
+              )
+            : null
+        }
         label={t('noobaa-storage-plugin~Secret Key')}
         fieldId="secret-key"
         isRequired
       >
-        <InputGroup>
-          <TextInput
-            isReadOnly
-            value={inputData}
-            className="nb-bs-form-entry__file-name"
-            placeholder={t('noobaa-storage-plugin~Upload JSON')}
-            aria-label={t('noobaa-storage-plugin~Uploaded File Name')}
-          />
-          <div className="inputbtn nb-bs-form-entry-upload-btn">
-            <Button
-              href="#"
-              variant="secondary"
-              className="custom-input-btn nb-bs-form-entry-upload-btn__button"
-            >
-              {t('noobaa-storage-plugin~Browse')}
-            </Button>
-            <input
-              type="file"
-              id="inputButton"
-              className="nb-bs-form-entry-upload-btn__input"
-              onChange={onUpload}
-              aria-label={t('noobaa-storage-plugin~Upload File')}
+        {!showSecret ? (
+          <InputGroup>
+            <TextInput
+              isReadOnly
+              value={inputData}
+              className="nb-bs-form-entry__file-name"
+              placeholder={t('noobaa-storage-plugin~Upload JSON')}
+              aria-label={t('noobaa-storage-plugin~Uploaded File Name')}
             />
-          </div>
-        </InputGroup>
+            <div className="inputbtn nb-bs-form-entry-upload-btn">
+              <Button
+                href="#"
+                variant="secondary"
+                className="custom-input-btn nb-bs-form-entry-upload-btn__button"
+                aria-label={t('noobaa-storage-plugin~Upload File')}
+              >
+                {t('noobaa-storage-plugin~Browse')}
+              </Button>
+              <input
+                type="file"
+                id="inputButton"
+                className="nb-bs-form-entry-upload-btn__input"
+                onChange={onUpload}
+                aria-label={t('noobaa-storage-plugin~Upload File')}
+              />
+            </div>
+            <Button
+              variant="plain"
+              onClick={toggleShowSecret}
+              aria-label={t('noobaa-storage-plugin~Switch to Secret')}
+            >
+              {t('noobaa-storage-plugin~Switch to Secret')}
+            </Button>
+          </InputGroup>
+        ) : (
+          <InputGroup>
+            <Firehose resources={resources}>
+              <ResourceDropdown
+                selectedKey={state.secretName}
+                placeholder={t('noobaa-storage-plugin~Select Secret')}
+                className="nb-bs-form-entry__dropdown nb-bs-form-entry__dropdown--full-width"
+                buttonClassName="nb-bs-form-entry__dropdown"
+                dataSelector={['metadata', 'name']}
+                ariaLabel={t('noobaa-storage-plugin~Select Secret')}
+                onChange={(e) => dispatch({ type: 'setSecretName', value: e })}
+              />
+            </Firehose>
+            <Button
+              variant="plain"
+              onClick={toggleShowSecret}
+              aria-label={t('noobaa-storage-plugin~Switch to upload JSON')}
+            >
+              {t('noobaa-storage-plugin~Switch to upload JSON')}
+            </Button>
+          </InputGroup>
+        )}
       </FormGroup>
-      <FormGroup className="nb-bs-form-entry" helperText={gcpHelpText} fieldId="gcp-data">
-        <TextArea
-          aria-label="cluster-metadata"
-          className="nb-bs-form-entry__data-dump"
-          value={fileData}
-        />
-      </FormGroup>
+      {!showSecret && (
+        <FormGroup className="nb-bs-form-entry" helperText={gcpHelpText} fieldId="gcp-data">
+          <TextArea
+            aria-label={t('noobaa-storage-plugin~Cluster Metadata')}
+            className="nb-bs-form-entry__data-dump"
+            value={fileData}
+          />
+        </FormGroup>
+      )}
       <FormGroup
         className="nb-bs-form-entry"
         label={t('noobaa-storage-plugin~Target Bucket')}
@@ -668,7 +720,11 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
         />
       </FormGroup>
       {provider === BC_PROVIDERS.GCP && (
-        <GCPEndpointType state={providerDataState} dispatch={providerDataDispatch} />
+        <GCPEndpointType
+          state={providerDataState}
+          dispatch={providerDataDispatch}
+          namespace={CEPH_STORAGE_NAMESPACE}
+        />
       )}
       {(provider === BC_PROVIDERS.AWS ||
         provider === BC_PROVIDERS.S3 ||
@@ -676,7 +732,7 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
         provider === BC_PROVIDERS.AZURE) && (
         <S3EndPointType
           provider={provider}
-          namespace="openshift-storage"
+          namespace={CEPH_STORAGE_NAMESPACE}
           state={providerDataState}
           dispatch={providerDataDispatch}
         />
@@ -722,4 +778,5 @@ type PVCTypeProps = {
 type GCPEndPointTypeProps = {
   state: ProviderDataState;
   dispatch: React.Dispatch<Action>;
+  namespace: string;
 };
