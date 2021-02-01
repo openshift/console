@@ -23,6 +23,9 @@ import {
   getUID,
   useActiveNamespace,
 } from '@console/shared';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { QuickStart } from '@console/app/src/components/quick-starts/utils/quick-start-types';
+import { QuickStartModel } from '@console/app/src/models';
 import { NetworkAttachmentDefinitionModel } from '../../models';
 import { getConfigAsJSON, getType } from '../../selectors';
 import { NetworkAttachmentDefinitionKind } from '../../types';
@@ -124,6 +127,20 @@ const getCreateLink = (namespace: string): string =>
 const NADListEmpty: React.FC = () => {
   const { t } = useTranslation();
   const [namespace] = useActiveNamespace();
+
+  const searchText = 'network attachment definition';
+  const [quickStarts, quickStartsLoaded] = useK8sWatchResource<QuickStart[]>({
+    kind: referenceForModel(QuickStartModel),
+    isList: true,
+  });
+  const hasQuickStarts =
+    quickStartsLoaded &&
+    quickStarts.find(
+      ({ spec: { displayName, description } }) =>
+        displayName.toLowerCase().includes(searchText) ||
+        description.toLowerCase().includes(searchText),
+    );
+
   return (
     <EmptyState>
       <Title headingLevel="h4" size="lg">
@@ -138,16 +155,18 @@ const NADListEmpty: React.FC = () => {
       >
         {t('kubevirt-plugin~Create network attachment definition')}
       </Button>
-      <EmptyStateSecondaryActions>
-        <Button
-          data-test-id="nad-quickstart"
-          variant="secondary"
-          onClick={() => history.push('/quickstart?keyword=network+attachment+definition')}
-        >
-          <RocketIcon className="nad-quickstart-icon" />
-          {t('kubevirt-plugin~Learn how to use network attachment definitions')}
-        </Button>
-      </EmptyStateSecondaryActions>
+      {hasQuickStarts && (
+        <EmptyStateSecondaryActions>
+          <Button
+            data-test-id="nad-quickstart"
+            variant="secondary"
+            onClick={() => history.push('/quickstart?keyword=network+attachment+definition')}
+          >
+            <RocketIcon className="nad-quickstart-icon" />
+            {t('kubevirt-plugin~Learn how to use network attachment definitions')}
+          </Button>
+        </EmptyStateSecondaryActions>
+      )}
     </EmptyState>
   );
 };
