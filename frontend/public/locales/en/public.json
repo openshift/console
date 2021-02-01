@@ -1012,6 +1012,7 @@
   "Critical Alerts": "Critical Alerts",
   "Other Alerts": "Other Alerts",
   "Recommendations": "Recommendations",
+  "Advanced Cluster Management": "Advanced Cluster Management",
   "Build {link} was cancelled": "Build {link} was cancelled",
   "Build {link} was complete": "Build {link} was complete",
   "Build {link} encountered an error": "Build {link} encountered an error",

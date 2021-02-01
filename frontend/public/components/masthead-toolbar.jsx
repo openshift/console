@@ -22,7 +22,7 @@ import {
   Tooltip,
 } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
-import { FLAGS, YellowExclamationTriangleIcon } from '@console/shared';
+import { FLAGS, YellowExclamationTriangleIcon, ACM_LINK_ID } from '@console/shared';
 import { formatNamespacedRouteForResource } from '@console/shared/src/utils';
 import CloudShellMastheadButton from '@console/app/src/components/cloud-shell/CloudShellMastheadButton';
 import CloudShellMastheadAction from '@console/app/src/components/cloud-shell/CloudShellMastheadAction';
@@ -216,7 +216,8 @@ class MastheadToolbarContents_ extends React.Component {
 
   _getAdditionalLinks(links, type) {
     return _.sortBy(
-      _.filter(links, (link) => link.spec.location === type),
+      // ACM link is being moved to the perspective switcher, so do not show in application launcher
+      _.filter(links, (link) => link.spec.location === type && link.metadata.name !== ACM_LINK_ID),
       'spec.text',
     );
   }
