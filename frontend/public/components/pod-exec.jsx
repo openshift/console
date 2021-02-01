@@ -192,7 +192,7 @@ const PodExec_ = connectToFlags(FLAGS.OPENSHIFT)(
         <div>
           <div className="co-toolbar">
             <div className="co-toolbar__group co-toolbar__group--left">
-              <div className="co-toolbar__item">Connecting to</div>
+              <div className="co-toolbar__item">{t('public~Connecting to')}</div>
               <div className="co-toolbar__item">
                 <Dropdown
                   className="btn-group"
@@ -211,7 +211,7 @@ const PodExec_ = connectToFlags(FLAGS.OPENSHIFT)(
                     onClick={() => this.setFullscreen(true)}
                   >
                     <ExpandIcon className="co-icon-space-r" />
-                    Expand
+                    {t('public~Expand')}
                   </Button>
                 </div>
               </div>

@@ -5,11 +5,12 @@ import * as fit from 'xterm/lib/addons/fit/fit';
 import * as full from 'xterm/lib/addons/fullscreen/fullscreen';
 import { CompressIcon } from '@patternfly/react-icons';
 import { Button } from '@patternfly/react-core';
+import { withTranslation } from 'react-i18next';
 
 XTerminal.applyAddon(fit);
 XTerminal.applyAddon(full);
 
-export class Terminal extends React.Component {
+class Terminal_ extends React.Component {
   constructor(props) {
     super(props);
     this.state = { height: 0, width: 0 };
@@ -118,6 +119,7 @@ export class Terminal extends React.Component {
   }
 
   render() {
+    const { t } = this.props;
     return (
       <div ref={this.outerRef} style={this.state} className={this.props.className}>
         <div ref={this.innerRef} className="console">
@@ -128,7 +130,7 @@ export class Terminal extends React.Component {
               variant="link"
             >
               <CompressIcon className="co-icon-space-r" />
-              Collapse
+              {t('public~Collapse')}
             </Button>
           )}
         </div>
@@ -136,6 +138,8 @@ export class Terminal extends React.Component {
     );
   }
 }
+
+export const Terminal = withTranslation('translation', { withRef: true })(Terminal_);
 
 Terminal.propTypes = {
   onData: PropTypes.func.isRequired,
