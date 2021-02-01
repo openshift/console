@@ -109,22 +109,19 @@ const ForcePowerOffDialog: React.FC<ForcePowerOffDialogProps> = ({
   if (!nodeName) {
     mainText = <p>{t('metal3-plugin~The host will be powered off gracefully.')}</p>;
   } else if (!hasMaintenance) {
-    const LinkButton: React.FC<{ children?: React.ReactNode }> = (text) => (
-      <Button
-        variant="link"
-        onClick={() => startNodeMaintenanceModal({ nodeName })}
-        isDisabled={!canStartMaintenance}
-        isInline
-      >
-        {text}
-      </Button>
-    );
-
     mainText = (
       <p>
         <Trans ns="metal3-plugin">
-          To power off gracefully, <LinkButton>start maintenance</LinkButton> on this host to move
-          all managed workloads to other nodes in the cluster.
+          To power off gracefully,{' '}
+          <Button
+            variant="link"
+            onClick={() => startNodeMaintenanceModal({ nodeName })}
+            isDisabled={!canStartMaintenance}
+            isInline
+          >
+            start maintenance
+          </Button>{' '}
+          on this host to move all managed workloads to other nodes in the cluster.
         </Trans>
       </p>
     );
