@@ -1,5 +1,5 @@
 import { PipelineRun, Pipeline } from '../../../../../utils/pipeline-augment';
-import { TektonResourceLabel } from '../../../const';
+import { TektonResourceLabel, preferredNameAnnotation } from '../../../const';
 import {
   pipelineTestData,
   PipelineExampleNames,
@@ -7,6 +7,7 @@ import {
 } from '../../../../../test-data/pipeline-data';
 import {
   convertPipelineToModalData,
+  getPipelineName,
   getPipelineRunData,
   getPipelineRunFromForm,
   migratePipelineRun,
@@ -28,6 +29,83 @@ const pipelineRunData = (pipeline: Pipeline): PipelineRun => ({
   spec: {
     pipelineRef: { name: pipeline.metadata.name },
   },
+});
+
+describe('PipelineAction testing migratePipelineRun', () => {
+  it('expect migratePipelineRun to do nothing when there is no migration needed', () => {
+    // Same instance should be returned if there was no need for a migration
+    expect(migratePipelineRun(samplePipelineRun)).toEqual(samplePipelineRun);
+  });
+
+  it('expect migratePipelineRun to handle serviceAccount to serviceAccountName migration (Operator 0.9.x)', () => {
+    type OldPipelineRun = PipelineRun & {
+      spec: {
+        serviceAccount: string;
+      };
+    };
+    const serviceAccountValue = 'serviceAccountValue';
+    const plr: OldPipelineRun = {
+      ...samplePipelineRun,
+      spec: {
+        ...samplePipelineRun.spec,
+        serviceAccount: serviceAccountValue,
+      },
+    };
+
+    const result: PipelineRun = migratePipelineRun(plr);
+
+    // Should be a new instance
+    expect(result).not.toEqual(plr);
+
+    // The value should have moved
+    expect(result.spec.serviceAccountName).toEqual(serviceAccountValue);
+    expect((result as OldPipelineRun).spec.serviceAccount).toBeUndefined();
+
+    // Should still have other spec properties
+    expect(result.spec.pipelineRef).toEqual(samplePipelineRun.spec.pipelineRef);
+  });
+});
+
+describe('getPipelineName', () => {
+  it('should return null if no argument is provided', () => {
+    expect(getPipelineName()).toBeNull();
+  });
+
+  it('should return the name from the pipeline metadata if both pipeline and latestRun are provided', () => {
+    expect(getPipelineName(samplePipeline, samplePipelineRun)).toEqual(
+      samplePipeline.metadata.name,
+    );
+  });
+
+  it('should return the name from the pipeline metadata if only pipeline is provided', () => {
+    expect(getPipelineName(samplePipeline)).toEqual(samplePipeline.metadata.name);
+  });
+
+  it('should return the name from the pipelineRef, if only latestRun is provided and pipelineRef exists', () => {
+    const pipelineRunWithPipelineRef =
+      pipelineTestData[PipelineExampleNames.EMBEDDED_PIPELINE_SPEC].pipelineRuns[DataState.SKIPPED];
+    expect(getPipelineName(undefined, pipelineRunWithPipelineRef)).toEqual(
+      pipelineRunWithPipelineRef.spec.pipelineRef.name,
+    );
+  });
+
+  it('should return the name from the latestRun metadata, if only latestRun is provided and annotation does not include the name', () => {
+    const pipelineRunWithPipelineSpec =
+      pipelineTestData[PipelineExampleNames.EMBEDDED_PIPELINE_SPEC].pipelineRuns[
+        DataState.IN_PROGRESS
+      ];
+    expect(getPipelineName(undefined, pipelineRunWithPipelineSpec)).toEqual(
+      pipelineRunWithPipelineSpec.metadata.name,
+    );
+  });
+
+  it('should return the name from the annotations, if only latestRun is provided and annotation includes the name', () => {
+    const pipelineRunWithAnnotations =
+      pipelineTestData[PipelineExampleNames.EMBEDDED_PIPELINE_SPEC].pipelineRuns[DataState.SUCCESS];
+    expect(getPipelineName(undefined, pipelineRunWithAnnotations)).toEqual(
+      pipelineRunWithAnnotations.metadata.annotations?.[preferredNameAnnotation],
+    );
+  });
 });
 
 describe('PipelineAction testing getPipelineRunData', () => {
@@ -52,6 +130,63 @@ describe('PipelineAction testing getPipelineRunData', () => {
       ...pipelineRunData(samplePipeline),
       metadata: { generateName: `${samplePipeline.metadata.name}-` },
     });
+  });
+
+  it('should set the annotation for preferredName if the latestRun have neither this annotation nor pipelineRef', () => {
+    const pipelineRun =
+      pipelineTestData[PipelineExampleNames.EMBEDDED_PIPELINE_SPEC].pipelineRuns[
+        DataState.IN_PROGRESS
+      ];
+    const runData = getPipelineRunData(null, pipelineRun);
+    expect(runData.metadata.annotations).toMatchObject({
+      [preferredNameAnnotation]: pipelineRun.metadata.name,
+    });
+  });
+
+  it('should not set the label for pipeline name if pipeline is not passed and latestRun does not have a pipelineRef', () => {
+    const pipelineRun =
+      pipelineTestData[PipelineExampleNames.EMBEDDED_PIPELINE_SPEC].pipelineRuns[
+        DataState.IN_PROGRESS
+      ];
+    const runData = getPipelineRunData(null, pipelineRun);
+    expect(runData.metadata.labels?.[TektonResourceLabel.pipeline]).toBeUndefined();
+  });
+
+  it('should set the label for pipeline name if pipeline is passed', () => {
+    const runData = getPipelineRunData(samplePipeline);
+    expect(runData.metadata.labels).toMatchObject({
+      [TektonResourceLabel.pipeline]: samplePipeline.metadata.name,
+    });
+  });
+
+  it('should set the label for pipeline name if only latestRun is passed and latestRun has a pipelineRef', () => {
+    const pipelineRun =
+      pipelineTestData[PipelineExampleNames.EMBEDDED_PIPELINE_SPEC].pipelineRuns[DataState.SKIPPED];
+    const runData = getPipelineRunData(null, pipelineRun);
+    expect(runData.metadata.labels).toMatchObject({
+      [TektonResourceLabel.pipeline]: pipelineRun.spec.pipelineRef.name,
+    });
+  });
+
+  it('should not set pipelineRef in the spec if pipeline is not passed and latestRun does not have a pipelineRef', () => {
+    const pipelineRun =
+      pipelineTestData[PipelineExampleNames.EMBEDDED_PIPELINE_SPEC].pipelineRuns[
+        DataState.IN_PROGRESS
+      ];
+    const runData = getPipelineRunData(null, pipelineRun);
+    expect(runData.spec.pipelineRef).toBeUndefined();
+  });
+
+  it('should set pipelineRef in the spec if pipeline is passed', () => {
+    const runData = getPipelineRunData(samplePipeline);
+    expect(runData.spec.pipelineRef).toMatchObject(samplePipelineRun.spec.pipelineRef);
+  });
+
+  it('should set pipelineRef in the spec if only latestRun is passed and latestRun has a pipelineRef', () => {
+    const pipelineRun =
+      pipelineTestData[PipelineExampleNames.EMBEDDED_PIPELINE_SPEC].pipelineRuns[DataState.SKIPPED];
+    const runData = getPipelineRunData(null, pipelineRun);
+    expect(runData.spec.pipelineRef).toMatchObject(pipelineRun.spec.pipelineRef);
   });
 });
 
@@ -184,41 +319,6 @@ describe('PipelineAction testing getPipelineRunFromForm', () => {
         workspaces: [],
       },
     });
-  });
-});
-
-describe('PipelineAction testing migratePipelineRun', () => {
-  it('expect migratePipelineRun to do nothing when there is no migration needed', () => {
-    // Same instance should be returned if there was no need for a migration
-    expect(migratePipelineRun(samplePipelineRun)).toEqual(samplePipelineRun);
-  });
-
-  it('expect migratePipelineRun to handle serviceAccount to serviceAccountName migration (Operator 0.9.x)', () => {
-    type OldPipelineRun = PipelineRun & {
-      spec: {
-        serviceAccount: string;
-      };
-    };
-    const serviceAccountValue = 'serviceAccountValue';
-    const plr: OldPipelineRun = {
-      ...samplePipelineRun,
-      spec: {
-        ...samplePipelineRun.spec,
-        serviceAccount: serviceAccountValue,
-      },
-    };
-
-    const result: PipelineRun = migratePipelineRun(plr);
-
-    // Should be a new instance
-    expect(result).not.toEqual(plr);
-
-    // The value should have moved
-    expect(result.spec.serviceAccountName).toEqual(serviceAccountValue);
-    expect((result as OldPipelineRun).spec.serviceAccount).toBeUndefined();
-
-    // Should still have other spec properties
-    expect(result.spec.pipelineRef).toEqual(samplePipelineRun.spec.pipelineRef);
   });
 });
 

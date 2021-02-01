@@ -64,6 +64,9 @@ export interface PipelineTaskSpec {
     args?: string[];
     script?: string[];
   }[];
+  metadata?: {
+    labels?: { [key: string]: string };
+  };
 }
 
 export interface PipelineTaskParam {
@@ -210,6 +213,7 @@ export type PLRTaskRuns = {
 export interface PipelineRun extends K8sResourceKind {
   spec?: {
     pipelineRef?: { name: string };
+    pipelineSpec?: PipelineSpec;
     params?: PipelineRunParam[];
     workspaces?: PipelineRunWorkspace[];
     resources?: PipelineRunResource[];
