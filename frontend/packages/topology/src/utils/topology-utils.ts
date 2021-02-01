@@ -49,7 +49,7 @@ export const getEditURL = (vcsURI?: string, gitBranch?: string, cheURL?: string)
     return null;
   }
   const parsedURL = GitUrlParse(vcsURI);
-  const gitURL = `https://${parsedURL.source}/${parsedURL.owner}/${parsedURL.name}`;
+  const gitURL = `https://${parsedURL.resource}/${parsedURL.owner}/${parsedURL.name}`;
   const fullGitURL = gitBranch ? `${gitURL}/tree/${gitBranch}` : gitURL;
   return cheURL ? `${cheURL}/f?url=${fullGitURL}&policies.create=peruser` : fullGitURL;
 };
