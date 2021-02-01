@@ -101,12 +101,12 @@ describe('capabilitiesToUISchema', () => {
   });
   it('Handles SpecCapablitiy.select', () => {
     const uiSchema = capabilitiesToUISchema([
-      `${SpecCapability.select}DEBUG`,
-      `${SpecCapability.select}INFO`,
-      `${SpecCapability.select}WARN`,
-      `${SpecCapability.select}ERROR`,
-      `${SpecCapability.select}FATAL`,
-    ] as SpecCapability[]);
+      `${SpecCapability.select}DEBUG` as SpecCapability,
+      `${SpecCapability.select}INFO` as SpecCapability,
+      `${SpecCapability.select}WARN` as SpecCapability,
+      `${SpecCapability.select}ERROR` as SpecCapability,
+      `${SpecCapability.select}FATAL` as SpecCapability,
+    ]);
     expect(uiSchema['ui:items']).toEqual({
       DEBUG: 'DEBUG',
       INFO: 'INFO',
