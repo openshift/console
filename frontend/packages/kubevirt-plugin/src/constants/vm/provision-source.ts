@@ -1,5 +1,5 @@
 /* eslint-disable lines-between-class-members */
-import { getName, getNamespace, K8sEntityMap } from '@console/shared/src';
+import { getName, getNamespace } from '@console/shared/src';
 import { ObjectEnum } from '@console/shared/src/constants/object-enum';
 import {
   asVM,
@@ -13,7 +13,6 @@ import { VMLikeEntityKind } from '../../types/vmLike';
 import { StorageUISource } from '../../components/modals/disk-modal/storage-ui-source';
 import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
 import { DataVolumeWrapper } from '../../k8s/wrapper/vm/data-volume-wrapper';
-import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
 import { DataVolumeSourceType, VolumeType } from './storage';
 import { SelectDropdownObjectEnum } from '../select-dropdown-object-enum';
 
@@ -40,6 +39,11 @@ export class ProvisionSource extends SelectDropdownObjectEnum<string> {
     descriptionKey:
       'kubevirt-plugin~Boot an operating system from a server on a network. Requires a PXE bootable network attachment definition',
     order: 6,
+  });
+  static readonly ATTACH_PVC = new ProvisionSource('ATTACH-PVC', {
+    // t('kubevirt-plugin~Attach PVC')
+    labelKey: 'kubevirt-plugin~Attach PVC',
+    order: 7,
   });
 
   private static fromDataVolume(dvType: DataVolumeSourceType, order: number) {
@@ -84,18 +88,7 @@ export class ProvisionSource extends SelectDropdownObjectEnum<string> {
 
   static fromString = (source: string): ProvisionSource => ProvisionSource.stringMapper[source];
 
-  static getProvisionSourceDetails = (
-    vmLikeEntity: VMLikeEntityKind,
-    {
-      convertTemplateDataVolumesToAttachClonedDisk,
-      dataVolumes,
-      dataVolumeLookup,
-    }: {
-      convertTemplateDataVolumesToAttachClonedDisk?: boolean;
-      dataVolumes?: V1alpha1DataVolume[];
-      dataVolumeLookup?: K8sEntityMap<V1alpha1DataVolume>;
-    } = {},
-  ): ProvisionSourceDetails => {
+  static getProvisionSourceDetails = (vmLikeEntity: VMLikeEntityKind): ProvisionSourceDetails => {
     const vm = asVM(vmLikeEntity);
     if (getInterfaces(vm).some((i) => i.bootOrder === 1)) {
       return {
@@ -112,39 +105,22 @@ export class ProvisionSource extends SelectDropdownObjectEnum<string> {
         };
       }
       const volumeWrapper = new VolumeWrapper(volume);
-      let dataVolumeWrapper;
+      let dataVolumeWrapper: DataVolumeWrapper;
 
       if (volumeWrapper.getType() === VolumeType.DATA_VOLUME) {
-        if (convertTemplateDataVolumesToAttachClonedDisk) {
+        const dataVolume = getDataVolumeTemplates(vm).find(
+          (dv) => getName(dv) === getVolumeDataVolumeName(volume),
+        );
+        if (!dataVolume) {
           return {
-            type: ProvisionSource.DISK,
+            type: ProvisionSource.ATTACH_PVC,
             source: `${getNamespace(vmLikeEntity)}/${volumeWrapper.getDataVolumeName()}`,
-          };
-        }
-        let dataVolume;
-
-        if (dataVolumeLookup) {
-          dataVolume = dataVolumeLookup[getVolumeDataVolumeName(volume)];
-        }
-        if (!dataVolume) {
-          const allDataVolumes = [...getDataVolumeTemplates(vm)];
-          if (dataVolumes) {
-            allDataVolumes.push(...dataVolumes);
-          }
-          dataVolume = allDataVolumes.find((dv) => getName(dv) === getVolumeDataVolumeName(volume));
-        }
-        if (!dataVolume) {
-          return {
-            error: `Datavolume ${volumeWrapper.getDataVolumeName()} does not exist.`,
           };
         }
         dataVolumeWrapper = new DataVolumeWrapper(dataVolume);
       }
 
-      const type = StorageUISource.fromTypes(
-        volumeWrapper.getType(),
-        dataVolumeWrapper && dataVolumeWrapper.getType(),
-      );
+      const type = StorageUISource.fromTypes(volumeWrapper.getType(), dataVolumeWrapper?.getType());
 
       switch (type) {
         case StorageUISource.CONTAINER:
@@ -169,7 +145,7 @@ export class ProvisionSource extends SelectDropdownObjectEnum<string> {
           };
         case StorageUISource.ATTACH_DISK:
           return {
-            type: ProvisionSource.DISK,
+            type: ProvisionSource.ATTACH_PVC,
             source: `${getNamespace(vmLikeEntity)}/${volumeWrapper.getPersistentVolumeClaimName()}`,
           };
         case StorageUISource.BLANK:

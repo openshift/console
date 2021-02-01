@@ -224,7 +224,7 @@ export const SourceDescription: React.FC<SourceDescriptionProps> = ({ sourceStat
         case DataVolumeSourceType.S3:
           return <URLSource url={dvWrapper.getURL()} isCDRom={isCDRom} />;
         case DataVolumeSourceType.REGISTRY:
-          return <ContainerSource container={dvWrapper.getURL()} isCDRom={isCDRom} />;
+          return <ContainerSource container={dvWrapper.getContainer()} isCDRom={isCDRom} />;
         case DataVolumeSourceType.PVC:
           return (
             <PVCSource

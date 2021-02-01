@@ -6,7 +6,7 @@ import {
   iGetRelevantTemplateSelectors,
   iGetVmSettingValue,
 } from '../../selectors/immutable/vm-settings';
-import { VMSettingsField, VMWizardProps } from '../../types';
+import { VMSettingsField, VMWizardProps, VMWizardStorage } from '../../types';
 import { InternalActionType, UpdateOptions } from '../types';
 import { asDisabled, asHidden, asRequired } from '../../utils/utils';
 import { vmWizardInternalActions } from '../internal-actions';
@@ -34,7 +34,12 @@ import { prefillVmTemplateUpdater } from './prefill-vm-template-state-update';
 import { iGetAnnotation, iGetPrameterValue } from '../../../../selectors/immutable/common';
 import { CDI_UPLOAD_POD_ANNOTATION, CDI_UPLOAD_RUNNING } from '../../../cdi-upload-provider/consts';
 import { commonTemplatesUpdater } from './vm-common-templates-updater';
-import { iGetIsLoaded, iGetLoadError } from '../../../../utils/immutable';
+import { iGetIsLoaded, iGetLoadError, toShallowJS } from '../../../../utils/immutable';
+import {
+  hasProvisionStorageChanged,
+  iGetProvisionSourceStorage,
+} from '../../selectors/immutable/storage';
+import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';
 
 const selectTemplateOnLoadedUpdater = (options: UpdateOptions) => {
   const { id, dispatch, getState } = options;
@@ -224,6 +229,9 @@ const cloneCommonBaseDiskImageUpdater = ({ id, prevState, dispatch, getState }: 
       [VMSettingsField.CLONE_PVC_NS]: {
         isHidden: asHidden(cloneCommonBaseDiskImage, VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE),
       },
+      [VMSettingsField.CLONE_PVC_NAME]: {
+        isHidden: asHidden(cloneCommonBaseDiskImage, VMSettingsField.CLONE_COMMON_BASE_DISK_IMAGE),
+      },
     }),
   );
 };
@@ -268,6 +276,13 @@ const provisioningSourceUpdater = ({ id, prevState, dispatch, getState }: Update
   );
   const isUrl = source === ProvisionSource.URL;
   const isPvc = source === ProvisionSource.DISK;
+  let hasPVCns = false;
+  if (isPvc) {
+    const provisionStorage = iGetProvisionSourceStorage(state, id);
+    const storage = toShallowJS<VMWizardStorage>(provisionStorage);
+    const dataVolumeWrapper = new DataVolumeWrapper(storage?.dataVolume);
+    hasPVCns = !!dataVolumeWrapper.getPersistentVolumeClaimNamespace();
+  }
 
   dispatch(
     vmWizardInternalActions[InternalActionType.UpdateVmSettings](id, {
@@ -279,6 +294,9 @@ const provisioningSourceUpdater = ({ id, prevState, dispatch, getState }: Update
       },
       [VMSettingsField.CLONE_PVC_NS]: {
         isHidden: asHidden(!isPvc, VMSettingsField.PROVISION_SOURCE_TYPE),
+      },
+      [VMSettingsField.CLONE_PVC_NAME]: {
+        isHidden: asHidden(!(isPvc && hasPVCns), VMSettingsField.CLONE_PVC_NS),
       },
     }),
   );
@@ -327,23 +345,23 @@ const flavorUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => 
 
 const cloneSourceUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
   const state = getState();
-  if (
-    !hasVmSettingsChanged(
-      prevState,
-      state,
-      id,
-      VMSettingsField.CLONE_PVC_NS,
-      VMSettingsField.CLONE_PVC_NAME,
-    )
-  ) {
+  if (!hasProvisionStorageChanged(prevState, state, id)) {
     return;
   }
-  const pvcNS = iGetVmSettingValue(state, id, VMSettingsField.CLONE_PVC_NS);
+  const provisionStorage = iGetProvisionSourceStorage(state, id);
+  const storage = toShallowJS<VMWizardStorage>(provisionStorage);
+  if (!storage?.dataVolume) {
+    return;
+  }
+  const dataVolumeWrapper = new DataVolumeWrapper(storage.dataVolume);
 
   dispatch(
     vmWizardInternalActions[InternalActionType.UpdateVmSettings](id, {
       [VMSettingsField.CLONE_PVC_NAME]: {
-        isHidden: asHidden(!pvcNS, VMSettingsField.CLONE_PVC_NS),
+        isHidden: asHidden(
+          !dataVolumeWrapper.getPersistentVolumeClaimNamespace(),
+          VMSettingsField.CLONE_PVC_NS,
+        ),
       },
     }),
   );

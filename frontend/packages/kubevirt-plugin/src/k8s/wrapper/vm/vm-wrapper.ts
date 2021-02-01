@@ -118,16 +118,9 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
     return this;
   };
 
-  getDiskByPVC = (PVCName: string): string => {
-    const dataVolumeByPVCName = this.getDataVolumeTemplates().find(
-      (dataVolumeTemplate) => dataVolumeTemplate?.spec?.source?.pvc?.name === PVCName,
-    );
-
-    const diskByPVCName = this.getDisks().find(
-      (d) => d.name === dataVolumeByPVCName?.metadata?.name,
-    );
-
-    return diskByPVCName?.disk?.bus;
+  getBootDisk = (): V1Disk => {
+    const disks = this.getDisks();
+    return disks.find((d) => d.bootOrder === 1) || disks[0];
   };
 
   addTemplateAnnotation = (key: string, value: string) => {

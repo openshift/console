@@ -301,8 +301,8 @@ const initialDefaultStorageClassUpdater = ({
       iProvisionSourceStorage && iProvisionSourceStorage.toJSON();
 
     if (
-      provisionSourceStorage &&
-      !getDataVolumeStorageClassName(provisionSourceStorage?.dataVolume)
+      provisionSourceStorage?.dataVolume &&
+      !getDataVolumeStorageClassName(provisionSourceStorage.dataVolume)
     ) {
       const updatedStorage = new DataVolumeWrapper(provisionSourceStorage.dataVolume)
         .setStorageClassName(storageClassName)

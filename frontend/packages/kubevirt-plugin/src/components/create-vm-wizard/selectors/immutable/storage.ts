@@ -6,7 +6,7 @@ export const iGetStorages = (state, id: string) =>
   iGetIn(iGetCreateVMWizardTabs(state, id), [VMWizardTab.STORAGE, 'value']);
 
 export const iGetProvisionSourceStorage = (state, id: string) =>
-  iGetStorages(state, id).find((storage) =>
+  iGetStorages(state, id)?.find((storage) =>
     [
       VMWizardStorageType.PROVISION_SOURCE_DISK,
       VMWizardStorageType.PROVISION_SOURCE_TEMPLATE_DISK,
@@ -32,4 +32,11 @@ export const hasStoragesChanged = (prevState, state, id: string) => {
       (prevIStorage, prevIStorageIndex) => prevIStorage !== iStorages.get(prevIStorageIndex),
     )
   );
+};
+
+export const hasProvisionStorageChanged = (prevState, state, id: string) => {
+  const prevIStorage = iGetProvisionSourceStorage(prevState, id);
+  const iStorage = iGetProvisionSourceStorage(state, id);
+
+  return prevIStorage !== iStorage;
 };

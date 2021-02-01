@@ -33,14 +33,12 @@ export const resolveDataVolumeName = ({
   diskName,
   vmLikeEntityName,
   isTemplate,
-  isPlainDataVolume,
 }: {
   diskName: string;
   vmLikeEntityName: string;
   isTemplate: boolean;
-  isPlainDataVolume: boolean;
 }) => {
-  return isTemplate && !isPlainDataVolume
+  return isTemplate
     ? joinIDs(VM_TEMPLATE_NAME_PARAMETER, diskName)
     : generateDataVolumeName(vmLikeEntityName, diskName);
 };

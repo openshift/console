@@ -79,11 +79,8 @@ export const getInitialVmSettings = (data: CommonData): VMSettings => {
     },
     [VMSettingsField.CLONE_PVC_NS]: {
       isHidden: hiddenByProviderOrCloneCommonBaseDiskImage,
-      value: initialData?.source?.pvcNamespace,
     },
-    [VMSettingsField.CLONE_PVC_NAME]: {
-      value: initialData?.source?.pvcName,
-    },
+    [VMSettingsField.CLONE_PVC_NAME]: {},
     [VMSettingsField.DEFAULT_STORAGE_CLASS]: {},
   };
 

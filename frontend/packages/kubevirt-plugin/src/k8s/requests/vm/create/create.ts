@@ -9,8 +9,6 @@ import {
 } from '../../../../components/create-vm-wizard/selectors/vm-settings';
 import { VMTemplateWrapper } from '../../../wrapper/vm/vm-template-wrapper';
 import { TEMPLATE_PARAM_VM_NAME, TEMPLATE_PARAM_VM_NAME_DESC } from '../../../../constants/vm';
-import { DataVolumeWrapper } from '../../../wrapper/vm/data-volume-wrapper';
-import { buildOwnerReference } from '../../../../utils';
 import { VMWrapper } from '../../../wrapper/vm/vm-wrapper';
 import { toShallowJS } from '../../../../utils/immutable';
 import { iGetRelevantTemplate } from '../../../../selectors/immutable/template/combined';
@@ -64,7 +62,7 @@ export const createVMTemplate = async (params: CreateVMParams) => {
     ...getOS({ osID: getFieldValue(vmSettings, VMSettingsField.OPERATING_SYSTEM), ...params }),
   };
 
-  const { template, storages } = getInitializedVMTemplate(params);
+  const { template } = getInitializedVMTemplate(params);
 
   const finalTemplate = new VMTemplateWrapper().init({
     name: combinedSimpleSettings[VMSettingsField.NAME],
@@ -82,18 +80,7 @@ export const createVMTemplate = async (params: CreateVMParams) => {
   initializeCommonMetadata(combinedSimpleSettings, finalTemplate, template.asResource());
   initializeCommonTemplateMetadata(combinedSimpleSettings, finalTemplate, template.asResource());
 
-  const templateResult = await k8sWrapperCreate(finalTemplate);
-
-  if (templateResult && storages) {
-    for (const storage of storages.filter((s) => s.dataVolumeToCreate)) {
-      // eslint-disable-next-line no-await-in-loop
-      await k8sWrapperCreate(
-        new DataVolumeWrapper(storage.dataVolumeToCreate, true).addOwnerReferences(
-          buildOwnerReference(templateResult, { controller: true }),
-        ),
-      );
-    }
-  }
+  await k8sWrapperCreate(finalTemplate);
   return getActualState();
 };
 

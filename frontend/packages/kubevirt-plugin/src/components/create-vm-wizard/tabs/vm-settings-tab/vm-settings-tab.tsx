@@ -182,7 +182,6 @@ export const VMSettingsTabComponent: React.FC<VMSettingsTabComponentProps> = ({
         nameField={getField(VMSettingsField.CLONE_PVC_NAME)}
         provisionSourceStorage={provisionSourceStorage}
         onProvisionSourceStorageChange={updateStorage}
-        onChange={onFieldChange}
       />
       <FlavorSelect
         iUserTemplate={iUserTemplate}

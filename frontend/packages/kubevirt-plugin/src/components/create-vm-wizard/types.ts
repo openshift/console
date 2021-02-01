@@ -32,7 +32,6 @@ export enum VMWizardProps {
   virtualMachines = 'virtualMachines',
   commonTemplates = 'commonTemplates',
   commonTemplateName = 'commonTemplateName',
-  dataVolumes = 'dataVolumes',
   openshiftCNVBaseImages = 'openshiftCNVBaseImages',
   storageClassConfigMap = 'storageClassConfigMap',
   nads = 'nads',
@@ -231,7 +230,6 @@ export type ChangedCommonDataProp =
   | VMWizardProps.userTemplate
   | VMWizardProps.userTemplates
   | VMWizardProps.commonTemplates
-  | VMWizardProps.dataVolumes
   | VMWizardProps.openshiftCNVBaseImages
   | VMWizardProps.storageClassConfigMap
   | VMWizardProps.nads
@@ -264,7 +262,6 @@ export const DetectCommonDataChanges = new Set<ChangedCommonDataProp>([
   VMWizardProps.virtualMachines,
   VMWizardProps.commonTemplates,
   VMWizardProps.storageClassConfigMap,
-  VMWizardProps.dataVolumes,
   VMWizardProps.openshiftCNVBaseImages,
   VMWizardProps.nads,
   VMWareProviderProps.deployment,

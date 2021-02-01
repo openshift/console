@@ -1,11 +1,8 @@
-import { TemplateKind } from '@console/internal/module/k8s';
 import {
-  asValidationObject,
   validateDNS1123SubdomainValue,
   ValidationErrorType,
   ValidationObject,
 } from '@console/shared';
-import { ProvisionSource } from '../../../constants/vm/provision-source';
 import { validateEntityAlreadyExists } from '../common';
 import { UIValidation, UIValidationType } from '../../../types/ui/ui';
 
@@ -50,19 +47,4 @@ export const validateVmLikeEntityName = (
     : validateEntityAlreadyExists(value, namespace, vmLikeEntities, {
         errorMessage: existsErrorMessage,
       });
-};
-
-export const validateUserTemplateProvisionSource = (
-  userTemplate: TemplateKind,
-): ValidationObject => {
-  const provisionSourceDetails = ProvisionSource.getProvisionSourceDetails(userTemplate, {
-    convertTemplateDataVolumesToAttachClonedDisk: true,
-  });
-
-  // t('kubevirt-plugin~Could not select Provision Source. {{ error }}')
-  return provisionSourceDetails.error
-    ? asValidationObject(
-        `kubevirt-plugin~Could not select Provision Source. ${provisionSourceDetails.error}`,
-      )
-    : null;
 };
