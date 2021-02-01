@@ -1,4 +1,5 @@
 import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
+import { pageTitle } from '../../constants/pageTitle';
 import {
   clusterTriggerBindingDetailsPO,
   eventListenerDetailsPO,
@@ -17,13 +18,14 @@ export const pipelineDetailsPage = {
   },
   verifyTriggerTemplateSection: () =>
     cy.get(pipelineDetailsPO.details.triggerTemplateSection).should('be.visible'),
-  verifyPage: () => cy.get(pipelineDetailsPO.title).should('contain.text', 'Pipeline Details'),
+  verifyPage: () =>
+    cy.get(pipelineDetailsPO.title).should('contain.text', pageTitle.PipelineDetails),
   selectTriggerTemplateLink: () => cy.get(pipelineDetailsPO.details.triggerTemplateLink).click(),
 };
 
 export const triggerTemplateDetailsPage = {
   verifyPage: () =>
-    cy.get(triggerTemplateDetailsPO.title).should('contain.text', 'Trigger Template Details'),
+    cy.get(triggerTemplateDetailsPO.title).should('contain.text', pageTitle.TriggerTemplateDetails),
   verifyTabs: () => {
     cy.get('ul.co-m-horizontal-nav__menu li a').as('tabName');
     cy.get('@tabName')
@@ -62,7 +64,7 @@ export const triggerTemplateDetailsPage = {
 
 export const eventListenerDetailsPage = {
   verifyPage: () =>
-    cy.get(eventListenerDetailsPO.title).should('contain.text', 'Event Listener Details'),
+    cy.get(eventListenerDetailsPO.title).should('contain.text', pageTitle.EventListenerDetails),
   verifyTabs: () => {
     cy.get('ul.co-m-horizontal-nav__menu li a').as('tabName');
     cy.get('@tabName')
@@ -102,7 +104,7 @@ export const clusterTriggerBindingDetailsPage = {
   verifyPage: () =>
     cy
       .get(clusterTriggerBindingDetailsPO.title)
-      .should('contain.text', 'ClusterTriggerBinding Details'),
+      .should('contain.text', pageTitle.ClusterTriggerTemplateDetails),
   verifyTabs: () => {
     cy.get('ul.co-m-horizontal-nav__menu li a').as('tabName');
     cy.get('@tabName')

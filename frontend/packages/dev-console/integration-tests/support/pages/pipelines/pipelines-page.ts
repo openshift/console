@@ -149,6 +149,7 @@ export const pipelinesPage = {
 };
 
 export const startPipelineInPipelinesPage = {
+  clickCancel: () => cy.byLegacyTestID('modal-cancel-action').click(),
   verifySections: () => {
     cy.get(pipelinesPO.startPipeline.sectionTitle).as('sectionTitle');
     cy.get('@sectionTitle')

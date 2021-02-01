@@ -13,11 +13,6 @@ When('user navigates to Topology page', () => {
   navigateTo(devNavigationMenu.Topology);
 });
 
-When('user clicks node {string} to open the side bar', (componentNode) => {
-  topologyPage.clickOnNode(componentNode);
-  topologySidePane.verify();
-});
-
 Then('user is able to see workload {string} in topology page list view', (workloadName: string) => {
   topologyPage.verifyWorkloadInTopologyPage(workloadName);
 });

@@ -81,7 +81,7 @@ When('user clicks on tick mark', () => {
 
 Then('{string} is added under secrets section', (secretName: string) => {
   cy.byLegacyTestID(secretName).should('be.visible');
-  cy.byLegacyTestID('modal-cancel-action').click();
+  startPipelineInPipelinesPage.clickCancel();
 });
 
 When('user enters the SSH KEY as {string}', (sshKey: string) => {
