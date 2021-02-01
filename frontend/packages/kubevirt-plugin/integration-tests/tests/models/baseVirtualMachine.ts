@@ -16,13 +16,14 @@ import { nameInput as cloneDialogNameInput } from '../../views/dialogs/cloneVirt
 import { TAB, VM_ACTION, VMI_ACTION, VM_STATUS } from '../utils/constants/vm';
 import { Disk, Network } from '../types/types';
 import { VMBuilderData } from '../types/vm';
+import { waitForTextStartsWith } from '../utils/utils';
 
 export class BaseVirtualMachine extends KubevirtUIResource<VMBuilderData> {
   async waitForStatus(status: string, timeout?: number) {
     await this.navigateToTab(TAB.Details);
     const waitTimeout = resolveTimeout(timeout, VM_BOOTUP_TIMEOUT_SECS);
     await browser.wait(
-      until.textToBePresentInElement(vmView.vmDetailStatus(this.namespace, this.name), status),
+      waitForTextStartsWith(vmView.vmDetailStatus(this.namespace, this.name), status),
       waitTimeout,
     );
     if (status === VM_STATUS.Running) {
