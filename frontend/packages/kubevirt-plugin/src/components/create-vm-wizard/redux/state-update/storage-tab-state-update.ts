@@ -29,6 +29,10 @@ import { iGetCommonData, iGetLoadedCommonData } from '../../selectors/immutable/
 import { toShallowJS } from '../../../../utils/immutable';
 import { getEmptyInstallStorage } from '../../../../utils/storage';
 import { getDataVolumeStorageClassName } from '../../../../selectors/dv/selectors';
+import {
+  getDefaultSCAccessModes,
+  getDefaultSCVolumeMode,
+} from '../../../../selectors/config-map/sc-defaults';
 
 export const prefillInitialDiskUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
   const state = getState();
@@ -225,6 +229,63 @@ const initialStorageDiskUpdater = ({ id, prevState, dispatch, getState }: Update
 
 const initialStorageClassUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
   const state = getState();
+  const provisionSourceStorage = iGetProvisionSourceStorage(state, id)?.toJSON();
+  const storageClassConfigMap = iGetCommonData(
+    state,
+    id,
+    VMWizardProps.storageClassConfigMap,
+  )?.toJSON();
+
+  const { commonTemplateName } = iGetCommonData(state, id, VMWizardProps.initialData).toJSON();
+
+  if (
+    !hasStoragesChanged(prevState, state, id) ||
+    !storageClassConfigMap ||
+    !commonTemplateName ||
+    !provisionSourceStorage
+  ) {
+    return;
+  }
+
+  const provisionSourceStorageClassName = getDataVolumeStorageClassName(
+    provisionSourceStorage?.dataVolume,
+  );
+
+  const storageClassVolumeMode = getDefaultSCVolumeMode(
+    storageClassConfigMap?.data,
+    provisionSourceStorageClassName,
+  );
+
+  const storageClassAccessMode = getDefaultSCAccessModes(
+    storageClassConfigMap?.data,
+    provisionSourceStorageClassName,
+  );
+
+  if (
+    storageClassVolumeMode &&
+    storageClassAccessMode &&
+    !provisionSourceStorage?.dataVolume?.spec?.source?.pvc
+  ) {
+    const updatedStorage = new DataVolumeWrapper(provisionSourceStorage.dataVolume)
+      .setVolumeMode(storageClassVolumeMode)
+      .setAccessModes(storageClassAccessMode)
+      .asResource();
+    dispatch(
+      vmWizardInternalActions[InternalActionType.UpdateStorage](id, {
+        ...provisionSourceStorage,
+        dataVolume: updatedStorage,
+      }),
+    );
+  }
+};
+
+const initialDefaultStorageClassUpdater = ({
+  id,
+  prevState,
+  dispatch,
+  getState,
+}: UpdateOptions) => {
+  const state = getState();
 
   if (
     !hasVMSettingsValueChanged(prevState, state, id, VMSettingsField.DEFAULT_STORAGE_CLASS) &&
@@ -262,6 +323,7 @@ export const updateStorageTabState = (options: UpdateOptions) =>
     prefillInitialDiskUpdater,
     windowsToolsUpdater,
     internalStorageDiskBusUpdater,
+    initialDefaultStorageClassUpdater,
     initialStorageClassUpdater,
     initialStorageDiskUpdater,
   ].forEach((updater) => {

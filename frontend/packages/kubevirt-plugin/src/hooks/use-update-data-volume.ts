@@ -38,6 +38,9 @@ export const useUpdateStorages = (reduxID) => {
 
   if (pvc && rootDisk && rootDisk.dataVolume.spec.pvc.volumeMode !== pvc?.spec?.volumeMode) {
     rootDisk.dataVolume.spec.pvc.volumeMode = pvc?.spec?.volumeMode;
+    rootDisk.dataVolume.spec.pvc.accessModes = pvc?.spec?.accessModes;
+    rootDisk.dataVolume.spec.pvc.storageClassName = pvc?.spec?.storageClassName;
+
     updateStorage(rootDisk);
   }
 };
