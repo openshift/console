@@ -47,9 +47,11 @@ const CreateNetAttachDefYAMLConnected = connectToPlural(
   },
 );
 
-export default (props: any) => (
+const NetworkAttachmentDefinitionCreateYaml = (props: any) => (
   <CreateNetAttachDefYAMLConnected
     {...(props as any)}
     plural={NetworkAttachmentDefinitionModel.plural}
   />
 );
+
+export default NetworkAttachmentDefinitionCreateYaml;

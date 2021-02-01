@@ -47,7 +47,7 @@ const getSriovNetNodePolicyResourceNames = (sriovNetNodePoliciesData) => {
   return resourceNames;
 };
 
-export default (props) => {
+const NetworkTypeOptions = (props) => {
   const { networkType, setTypeParamsData, sriovNetNodePoliciesData, typeParamsData } = props;
   const params: NetworkTypeParams = networkType && networkTypeParams[networkType];
 
@@ -197,3 +197,5 @@ export default (props) => {
 
   return <>{dynamicContent}</>;
 };
+
+export default NetworkTypeOptions;
