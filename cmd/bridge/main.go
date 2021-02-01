@@ -70,6 +70,9 @@ const (
 
 	// Well-known location of hypercloud-server for hypercloud. This is only accessible in-clsuter. // http port : 80 don't require
 	multiHypercloudServerHost = "hypercloud5-api-server-service.hypercloud5-system.svc"
+
+	// webhook for hypercloud. This is only accessible in-clsuter
+	webhookServerHost = "hypercloud5-api-server-service.hypercloud5-system.svc"
 )
 
 func main() {
@@ -149,7 +152,7 @@ func main() {
 	fGrafanaEndpoint := fs.String("grafana-endpoint", "", "URL of the Grafana API server.")
 	fKialiEndpoint := fs.String("kiali-endpoint", "", "URL of the KIALI Portal")
 	// NOTE: webhook 연동 추가
-	fwebhookEndpoint := fs.String("webhook-endpoint", "", "URL of the hypercloud webhook endpoint")
+	fwebhookEndpoint := fs.String("webhook-endpoint", "https://0.0.0.0:33333", "URL of the hypercloud webhook endpoint")
 	fKibanaEndpoint := fs.String("kibana-endpoint", "https://efk-opendistro-es-kibana-svc.efk.svc.cluster.local", "URL of the KIALI Portal")
 
 	// NOTE: Multi Cluster(MC) Mode flags //jinsoo
@@ -163,8 +166,8 @@ func main() {
 	fReleaseModeFlag := fs.Bool("release-mode", true, "DEV ONLY. When false")
 
 	// hypercloud-server proxy 추가
-	fHypercloudServerEndpoint := fs.String("hypercloud-endpoint", "http://0.0.0.0:33333", "URL of the Hypercloud Server API server")
-	fMultiHypercloudServerEndpoint := fs.String("multi-hypercloud-endpoint", "http://0.0.0.0:33333", "URL of the Multi Hypercloud Server API server")
+	fHypercloudServerEndpoint := fs.String("hypercloud-endpoint", "https://0.0.0.0:33333", "URL of the Hypercloud Server API server")
+	fMultiHypercloudServerEndpoint := fs.String("multi-hypercloud-endpoint", "https://0.0.0.0:33333", "URL of the Multi Hypercloud Server API server")
 
 	if err := fs.Parse(os.Args[1:]); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
@@ -480,15 +483,6 @@ func main() {
 		Endpoint: kialiEndpoint,
 		Origin:   "http://localhost",
 	}
-	webhookEndpoint := bridge.ValidateFlagIsURL("webhook-endpoint", *fwebhookEndpoint)
-	srv.WebhookProxyConfig = &hproxy.Config{
-		HeaderBlacklist: []string{"X-CSRFToken"},
-		TLSClientConfig: &tls.Config{
-			InsecureSkipVerify: true,
-		},
-		Endpoint: webhookEndpoint,
-		Origin:   "http://localhost",
-	}
 	kibanaEndpoint := bridge.ValidateFlagIsURL("kibana-endpoint", *fKibanaEndpoint)
 	srv.KibanaProxyConfig = &hproxy.Config{
 		HeaderBlacklist: []string{"X-CSRFToken"},
@@ -502,20 +496,39 @@ func main() {
 	// Add hproxy.config
 	var hsEndpoint *url.URL      // Hypercloud Server Endpoint
 	var multiHsEndpoint *url.URL // Multi Hypercloud Server Endpoint
+	var webhookEndpoint *url.URL // Webhook Hypercloud Server Endpoint
 	switch *fK8sMode {
 	case "off-cluster":
 		hsEndpoint = bridge.ValidateFlagIsURL("hypercloud-endpoint", *fHypercloudServerEndpoint)
 		multiHsEndpoint = bridge.ValidateFlagIsURL("multi-hypercloud-endpoint", *fMultiHypercloudServerEndpoint)
+		webhookEndpoint = bridge.ValidateFlagIsURL("webhook-endpoint", *fwebhookEndpoint)
 	case "in-cluster":
-		hsEndpoint = &url.URL{Scheme: "http", Host: hypercloudServerHost}
-		multiHsEndpoint = &url.URL{Scheme: "http", Host: multiHypercloudServerHost}
+		hsEndpoint = &url.URL{Scheme: "https", Host: hypercloudServerHost}
+		multiHsEndpoint = &url.URL{Scheme: "https", Host: multiHypercloudServerHost}
+		webhookEndpoint = &url.URL{Scheme: "https", Host: webhookServerHost}
 	}
 	srv.HypercloudServerProxyConfig = &hproxy.Config{
+		HeaderBlacklist: []string{"X-CSRFToken"},
+		TLSClientConfig: &tls.Config{
+			InsecureSkipVerify: true,
+		},
 		Endpoint: hsEndpoint,
 		Origin:   "http://localhost",
 	}
 	srv.MultiHypercloudServerProxyConfig = &hproxy.Config{
+		HeaderBlacklist: []string{"X-CSRFToken"},
+		TLSClientConfig: &tls.Config{
+			InsecureSkipVerify: true,
+		},
 		Endpoint: multiHsEndpoint,
+		Origin:   "http://localhost",
+	}
+	srv.WebhookProxyConfig = &hproxy.Config{
+		HeaderBlacklist: []string{"X-CSRFToken"},
+		TLSClientConfig: &tls.Config{
+			InsecureSkipVerify: true,
+		},
+		Endpoint: webhookEndpoint,
 		Origin:   "http://localhost",
 	}
 
