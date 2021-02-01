@@ -46,7 +46,15 @@ import {
   ResourceLink,
   Timestamp,
 } from '@console/internal/components/utils';
-import { K8sKind, PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
+import {
+  K8sKind,
+  PersistentVolumeClaimKind,
+  PodKind,
+  referenceForModel,
+} from '@console/internal/module/k8s';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { QuickStart } from '@console/app/src/components/quick-starts/utils/quick-start-types';
+import { QuickStartModel } from '@console/app/src/models';
 import { VMStatus } from '../vm-status/vm-status';
 import {
   DataVolumeModel,
@@ -192,6 +200,20 @@ const VMListEmpty: React.FC = () => {
   const { t } = useTranslation();
   const location = useLocation();
   const namespace = useNamespace();
+
+  const searchText = 'virtual machine';
+  const [quickStarts, quickStartsLoaded] = useK8sWatchResource<QuickStart[]>({
+    kind: referenceForModel(QuickStartModel),
+    isList: true,
+  });
+  const hasQuickStarts =
+    quickStartsLoaded &&
+    quickStarts.find(
+      ({ spec: { displayName, description } }) =>
+        displayName.toLowerCase().includes(searchText) ||
+        description.toLowerCase().includes(searchText),
+    );
+
   return (
     <EmptyState>
       <EmptyStateIcon icon={VirtualMachineIcon} />
@@ -222,16 +244,18 @@ const VMListEmpty: React.FC = () => {
       >
         {t('kubevirt-plugin~Create virtual machine')}
       </Button>
-      <EmptyStateSecondaryActions>
-        <Button
-          data-test-id="vm-quickstart"
-          variant="secondary"
-          onClick={() => history.push('/quickstart?keyword=virtual+machine')}
-        >
-          <RocketIcon className="kv-vm-quickstart-icon" />
-          {t('kubevirt-plugin~Learn how to use virtual machines')}
-        </Button>
-      </EmptyStateSecondaryActions>
+      {hasQuickStarts && (
+        <EmptyStateSecondaryActions>
+          <Button
+            data-test-id="vm-quickstart"
+            variant="secondary"
+            onClick={() => history.push('/quickstart?keyword=virtual+machine')}
+          >
+            <RocketIcon className="kv-vm-quickstart-icon" />
+            {t('kubevirt-plugin~Learn how to use virtual machines')}
+          </Button>
+        </EmptyStateSecondaryActions>
+      )}
     </EmptyState>
   );
 };
