@@ -30,6 +30,22 @@ const registryStatusReducer = (registry: any): string => {
   return registry.status.phase;
 }
 
+const serviceBrokerStatusReducer = (serviceBroker: any): string => {
+  let phase = '';
+  if (serviceBroker.status) {
+    serviceBroker.status.conditions.forEach(cur => {
+      if (cur.type === 'Ready') {
+        if (cur.status === 'True') {
+          phase = 'Running';
+        } else {
+          phase = 'Error';
+        }
+      }
+    });
+    return phase;
+  }
+}
+
 const serviceInstanceStatusReducer = (serviceInstance: any): string => {
   return serviceInstance.status.lastConditionState;
 }
@@ -131,6 +147,15 @@ export const tableFilters: TableFilterMap = {
     }
 
     const phase = registryStatusReducer(registry);
+    return phases.selected.has(phase) || !_.includes(phases.all, phase);
+  },
+
+  'service-broker-status': (phases, serviceBroker) => {
+    if (!phases || !phases.selected || !phases.selected.size) {
+      return true;
+    }
+
+    const phase = serviceBrokerStatusReducer(serviceBroker);
     return phases.selected.has(phase) || !_.includes(phases.all, phase);
   },
 
