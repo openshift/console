@@ -156,7 +156,7 @@ describe('knative data transformer ', () => {
       .then(() => {
         const allArgs = spy.calls.allArgs();
         const removedModels = allArgs.map((arg) => arg[0]);
-        expect(spy.calls.count()).toEqual(1);
+        expect(spy.calls.count()).toEqual(2);
         expect(removedModels.find((rm) => rm.id === ServiceModel.id)).toBeTruthy();
         done();
       })
