@@ -22,6 +22,7 @@ import {
   alertState,
   silenceState,
 } from '../../reducers/monitoring';
+import { pipelineRunFilterReducer } from '../hypercloud/utils/pipeline-filter-reducer';
 
 export const fuzzyCaseInsensitive = (a: string, b: string): boolean =>
   fuzzy(_.toLower(a), _.toLower(b));
@@ -166,6 +167,15 @@ export const tableFilters: TableFilterMap = {
 
     const phase = serviceInstanceStatusReducer(serviceInstance);
     return phases.selected.has(phase) || !_.includes(phases.all, phase);
+  },
+
+  'pipeline-run-status': (results, pipelineRun) => {
+    if (!results || !results.selected || !results.selected.size) {
+      return true;
+    }
+
+    const result = pipelineRunFilterReducer(pipelineRun);
+    return results.selected.has(result) || !_.includes(results.all, result);
   },
 
   'pipeline-approval-status': (results, pipelineApproval) => {
