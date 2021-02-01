@@ -54,18 +54,22 @@ export const createManagedKafkaRequestIfNeeded = async (currentNamespace) => {
   try {
     currentRequest = await k8sGet(ManagedKafkaRequestModel, ManagedKafkaRequestCRName, currentNamespace);
   } catch (error) {
-    console.log(error)
+    console.log('managed kafka doesnt exist')
   }
   if (!currentRequest) {
-    createManagedKafkaRequest(currentNamespace);
-    return true
+    return await createManagedKafkaRequest(currentNamespace);
   }
 
-  return false;
+  return currentRequest;
 }
 
 export const createServiceAccountIfNeeded = async (currentNamespace) => {
-  const managedServiceAccount = await k8sGet(ManagedServiceAccountRequest, ManagedServiceAccountCRName, currentNamespace);
+  let managedServiceAccount;
+  try {
+    managedServiceAccount = await k8sGet(ManagedServiceAccountRequest, ManagedServiceAccountCRName, currentNamespace);
+  } catch (error) {
+    console.log('managed service account doesnt exist')
+  }
   if (!managedServiceAccount) {
     await createManagedServiceAccount(currentNamespace);
     return true
