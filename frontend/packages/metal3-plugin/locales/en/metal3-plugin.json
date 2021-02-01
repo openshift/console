@@ -150,7 +150,7 @@
   "all workloads have already been moved, but {{length}} daemon sets have been skipped.": "all workloads have already been moved, but {{length}} daemon sets have been skipped.",
   "all workloads have already been moved, but {{podListlength}} static pods and {{daemonListlength}} daemon sets have been skipped.": "all workloads have already been moved, but {{podListlength}} static pods and {{daemonListlength}} daemon sets have been skipped.",
   "The host will be powered off gracefully.": "The host will be powered off gracefully.",
-  "To power off gracefully, <1>start maintenance</1> on this host to move all managed workloads to other nodes in the cluster.": "To power off gracefully, <1>start maintenance</1> on this host to move all managed workloads to other nodes in the cluster.",
+  "To power off gracefully, <2>start maintenance</2> on this host to move all managed workloads to other nodes in the cluster.": "To power off gracefully, <2>start maintenance</2> on this host to move all managed workloads to other nodes in the cluster.",
   "Workloads will not be moved before the host powers off.": "Workloads will not be moved before the host powers off.",
   "The host will power off immediately as if it were unplugged.": "The host will power off immediately as if it were unplugged.",
   "Power off immediately": "Power off immediately",
