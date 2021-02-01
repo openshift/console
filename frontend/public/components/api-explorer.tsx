@@ -445,20 +445,6 @@ const Subject: React.FC<{ value: string }> = ({ value }) => {
   );
 };
 
-const AccessTableRows = ({ componentProps: { data } }) =>
-  _.map(data, (subject) => [
-    {
-      title: (
-        <span className="co-break-word co-select-to-copy">
-          <Subject value={subject.name} />
-        </span>
-      ),
-    },
-    {
-      title: subject.type,
-    },
-  ]);
-
 const EmptyAccessReviewMsg: React.FC<{}> = () => {
   const { t } = useTranslation();
   return <EmptyBox label={t('public~Subjects')} />;
@@ -549,6 +535,34 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({
       transforms: [sortable],
     },
   ];
+
+  const getSubjectTypeLabel = (type: string) => {
+    switch (type) {
+      case 'User':
+        return t('public~User');
+      case 'Group':
+        return t('public~Group');
+      case 'ServiceAccount':
+        return t('public~ServiceAccount');
+      default:
+        return type;
+    }
+  };
+
+  const AccessTableRows = () =>
+    _.map(data, (subject) => [
+      {
+        title: (
+          <span className="co-break-word co-select-to-copy">
+            <Subject value={subject.name} />
+          </span>
+        ),
+      },
+      {
+        title: getSubjectTypeLabel(subject.type),
+      },
+    ]);
+
   // event handlers
   const toggleShowUsers = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
