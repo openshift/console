@@ -35,7 +35,7 @@ class Inner extends React.PureComponent {
   render() {
     const { klass, status, verb, objectRef, user, stageTimestamp, responseStatus } = this.props;
     let timestamp = Date.parse(stageTimestamp);
-    // timestamp -= 9 * 60 * 60 * 1000;
+    timestamp -= 9 * 60 * 60 * 1000;
     timestamp = new Date(timestamp).toISOString();
 
     return (
