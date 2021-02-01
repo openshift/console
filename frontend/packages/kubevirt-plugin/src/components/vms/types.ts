@@ -3,7 +3,6 @@ import {
   K8sResourceKind,
   PersistentVolumeClaimKind,
   PodKind,
-  TemplateKind,
 } from '@console/internal/module/k8s';
 import { VMIKind, VMKind } from '../../types/vm';
 import { VMGenericLikeEntityKind, VMILikeEntityKind } from '../../types/vmLike';
@@ -34,7 +33,6 @@ export type VMTabProps = {
   vmis?: VMIKind[];
   pods?: PodKind[];
   migrations?: K8sResourceKind[];
-  templates?: TemplateKind[];
   pvcs?: PersistentVolumeClaimKind[];
   dataVolumes?: V1alpha1DataVolume[];
   vmImports?: VMImportKind[];

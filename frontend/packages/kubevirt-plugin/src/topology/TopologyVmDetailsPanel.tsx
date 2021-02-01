@@ -1,17 +1,8 @@
 import * as React from 'react';
 import { Grid, GridItem } from '@patternfly/react-core';
-import {
-  Firehose,
-  FirehoseResult,
-  LoadingBox,
-  useAccessReview,
-  asAccessReview,
-} from '@console/internal/components/utils';
+import { LoadingBox, useAccessReview, asAccessReview } from '@console/internal/components/utils';
 import { observer } from '@patternfly/react-topology';
-import { TemplateKind } from '@console/internal/module/k8s';
-import { TemplateModel } from '@console/internal/models';
 import { VirtualMachineModel } from '../models';
-import { TEMPLATE_TYPE_LABEL, TEMPLATE_TYPE_VM } from '../constants/vm';
 import { VMDetailsList, VMResourceSummary } from '../components/vms/vm-resource';
 import { VMNode } from './types';
 import { VMKind } from '../types/vm';
@@ -24,11 +15,10 @@ type TopologyVmDetailsPanelProps = {
 
 type LoadedTopologyVmDetailsPanelProps = TopologyVmDetailsPanelProps & {
   loaded?: boolean;
-  templates?: FirehoseResult<TemplateKind[]>;
 };
 
 const LoadedTopologyVmDetailsPanel: React.FC<LoadedTopologyVmDetailsPanelProps> = observer(
-  ({ loaded, vmNode, templates }) => {
+  ({ loaded, vmNode }) => {
     const vmData = vmNode.getData();
     const vmObj = vmData.resource as VMKind;
     const { podData: { pods = [] } = {} } = usePodsForVm(vmObj);
@@ -46,7 +36,6 @@ const LoadedTopologyVmDetailsPanel: React.FC<LoadedTopologyVmDetailsPanelProps> 
             canUpdateVM={canUpdate}
             vm={vmObj}
             vmi={vmi}
-            templates={templates.data}
             kindObj={VirtualMachineModel}
           />
         </GridItem>
@@ -66,26 +55,9 @@ const LoadedTopologyVmDetailsPanel: React.FC<LoadedTopologyVmDetailsPanelProps> 
 );
 
 export const TopologyVmDetailsPanel: React.FC<TopologyVmDetailsPanelProps> = observer(
-  ({ vmNode }: TopologyVmDetailsPanelProps) => {
-    const vmData = vmNode.getData();
-    const vmObj = vmData.resources.obj;
-    const { namespace } = vmObj.metadata;
-
-    const resources = [
-      {
-        kind: TemplateModel.kind,
-        namespace,
-        isList: true,
-        prop: 'templates',
-        matchLabels: { [TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_VM },
-      },
-    ];
-    return (
-      <div className="overview__sidebar-pane-body resource-overview__body">
-        <Firehose resources={resources}>
-          <LoadedTopologyVmDetailsPanel vmNode={vmNode} />
-        </Firehose>
-      </div>
-    );
-  },
+  ({ vmNode }: TopologyVmDetailsPanelProps) => (
+    <div className="overview__sidebar-pane-body resource-overview__body">
+      <LoadedTopologyVmDetailsPanel vmNode={vmNode} />
+    </div>
+  ),
 );
