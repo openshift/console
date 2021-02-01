@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { TFunction } from 'i18next';
+import i18next, { TFunction } from 'i18next';
 
 import { Dropdown } from '../utils';
 import {
@@ -24,7 +24,8 @@ const LanguagePreferencesModal = (props: LanguagePreferencesModalProps) => {
   }));
   const initLang =
     localStorage.getItem('bridge/language') ||
-    langOptions.find((lang) => lang.lang === i18n.language)?.lang;
+    // handles languages we support, languages we don't support, and subsets of languages we support (such as en-us, zh-cn, etc.)
+    i18next.languages.find((lang) => langOptions.some((langOption) => langOption.lang === lang));
   const [language, setLanguage] = React.useState(initLang);
   const { close } = props;
   const submit: React.FormEventHandler<HTMLFormElement> = (e) => {
