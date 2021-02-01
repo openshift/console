@@ -33,7 +33,7 @@ export const generateCASecret = (caCertificate: string) => ({
     namespace: CEPH_STORAGE_NAMESPACE,
   },
   stringData: {
-    'ca.cert': caCertificate,
+    cert: caCertificate,
   },
 });
 
@@ -47,7 +47,7 @@ export const generateClientSecret = (clientCertificate: string) => ({
     namespace: CEPH_STORAGE_NAMESPACE,
   },
   stringData: {
-    'tls.cert': clientCertificate,
+    cert: clientCertificate,
   },
 });
 
@@ -61,7 +61,7 @@ export const generateClientKeySecret = (clientKey: string) => ({
     namespace: CEPH_STORAGE_NAMESPACE,
   },
   stringData: {
-    'tls.key': clientKey,
+    key: clientKey,
   },
 });
 
