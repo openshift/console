@@ -14,7 +14,7 @@ export const WithCommonForm = (SubForm, params, defaultValues, modal?: boolean) 
   const FormComponent: React.FC<CommonFormProps_> = props => {
     const methods = useForm({ defaultValues: defaultValues });
 
-    const kind = pluralToKind.get(params.plural)['kind'];
+    const kind = pluralToKind.get(params.plural)?.['kind'];
     const title = `${props.titleVerb} ${params?.type === 'form' ? '' : params.type || 'Sample'} ${kind || ''}`;
 
     const [inProgress] = React.useState(false); // onSubmit이나 나중에 Error관련 메서드에서 inProgress를 false로 변경해줘야함.
