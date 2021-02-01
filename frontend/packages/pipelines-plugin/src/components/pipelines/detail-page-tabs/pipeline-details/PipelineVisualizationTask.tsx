@@ -180,18 +180,24 @@ const TaskComponent: React.FC<TaskProps> = ({
         {truncatedVisualName}
       </text>
       {isPipelineRun && showStatusState && (
-        <svg
-          width={30}
-          height={30}
-          viewBox="-5 -5 20 20"
-          style={{
-            color: status
-              ? getRunStatusColor(status.reason, t).pftoken.value
-              : getRunStatusColor(runStatus.Cancelled, t).pftoken.value,
-          }}
+        <g
+          className={cx({
+            'fa-spin odc-pipeline-vis-task--icon-spin': status.reason === runStatus.Running,
+          })}
         >
-          <StatusIcon status={status.reason} shiftOrigin />
-        </svg>
+          <svg
+            width={30}
+            height={30}
+            viewBox="-5 -4 20 20"
+            style={{
+              color: status
+                ? getRunStatusColor(status.reason, t).pftoken.value
+                : getRunStatusColor(runStatus.Cancelled, t).pftoken.value,
+            }}
+          >
+            <StatusIcon status={status.reason} disableSpin />
+          </svg>
+        </g>
       )}
       {showStatusState && (
         <SvgTaskStatus steps={stepStatusList} x={30} y={23} width={width / 2 + 15} />
