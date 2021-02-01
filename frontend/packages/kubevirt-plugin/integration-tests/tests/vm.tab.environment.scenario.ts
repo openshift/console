@@ -26,7 +26,7 @@ describe('Test VM enviromnet tab', () => {
   const configMap = getConfigMap(testName, configmapName);
   const serviceAccount = getServiceAccount(testName, serviceAccountName);
 
-  const cloudInit = `#cloud-config\\nuser: fedora\\npassword: fedora\\nchpasswd: {expire: False}`;
+  const cloudInit = `#cloud-config\nuser: fedora\npassword: fedora\nchpasswd: {expire: False}`;
   const testVM = getVMManifest(ProvisionSource.CONTAINER, testName, null, cloudInit);
   const vm = new VirtualMachine(testVM.metadata);
 

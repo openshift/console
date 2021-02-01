@@ -113,7 +113,7 @@ export const getDiskToCloneFrom = (): Disk => {
   };
 };
 
-export const cloudInitScript = `#cloud-config\\nuser: cloud-user\\npassword: atomic\\nchpasswd: {expire: False}\\nhostname: vm-${testName}`;
+export const cloudInitScript = `#cloud-config\nuser: cloud-user\npassword: atomic\nchpasswd: {expire: False}\nhostname: vm-${testName}`;
 
 export const defaultPodNetworkingInterface = {
   name: 'default',
