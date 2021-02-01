@@ -25,7 +25,6 @@ export const getScriptElementID = (m: ConsolePluginManifestJSON) => `${scriptIDP
 
 export const loadDynamicPlugin = (baseURL: string, manifest: ConsolePluginManifestJSON) => {
   const pluginID = getPluginID(manifest);
-  console.info(`Loading plugin ${pluginID} from ${baseURL}`);
 
   const existingPluginData = Array.from(pluginMap.values()).find(
     (p) => p.manifest.name === manifest.name,
@@ -47,6 +46,7 @@ export const loadDynamicPlugin = (baseURL: string, manifest: ConsolePluginManife
     console.error(`Error while loading entry script for plugin ${pluginID}`, event);
   };
 
+  console.info(`Loading entry script for plugin ${pluginID} from ${script.src}`);
   document.head.appendChild(script);
 };
 
