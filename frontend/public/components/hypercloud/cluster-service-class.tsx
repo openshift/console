@@ -6,6 +6,7 @@ import { ClusterServiceClassModel } from '../../models';
 import { K8sResourceKind } from '../../module/k8s';
 import { DetailsPage, ListPage, Table, TableData, TableRow } from '../factory';
 import { navFactory, SectionHeading, ResourceSummary, ResourceLink, Timestamp } from '../utils';
+import { ClusterServicePlansPage } from './cluster-service-plan';
 
 const kind = ClusterServiceClassModel.kind;
 
@@ -20,12 +21,14 @@ const ClusterServiceClassDetails: React.FC<ClusterServiceClassDetailsProps> = ({
           </div>
           <div className="col-md-6">
             <dl className="co-m-pane__details">
-              <dt>BINDABLE</dt>
+              <dt>Bindable</dt>
               <dd>{clusterServiceClass.spec.bindable ? 'True' : 'False'}</dd>
-              <dt>EXTERNAL NAME</dt>
+              <dt>External Name</dt>
               <dd>{clusterServiceClass.spec.externalName}</dd>
-              <dt> SERVICE BROKER</dt>
-              <dd>{clusterServiceClass.spec.clusterServiceBrokerName}</dd>
+              <dt>Service Broker</dt>
+              <dd>
+                <ResourceLink kind="ClusterServiceBroker" name={clusterServiceClass.spec.clusterServiceBrokerName} title={clusterServiceClass.spec.clusterServiceBrokerName} />
+              </dd>
             </dl>
           </div>
         </div>
@@ -38,8 +41,35 @@ type ClusterServiceClassDetailsProps = {
   obj: K8sResourceKind;
 };
 
-const { details } = navFactory;
-const ClusterServiceClassesDetailsPage: React.FC<ClusterServiceClassesDetailsPageProps> = props => <DetailsPage {...props} kind={kind} pages={[details(ClusterServiceClassDetails)]} />;
+
+const ClusterServicePlanTab: React.FC<ClusterServicePlansTabProps> = ({ obj }) => {
+  const externalId = obj.metadata.labels['servicecatalog.k8s.io/spec.externalID'];
+
+  const selector = {
+    matchLabels: {
+      'servicecatalog.k8s.io/spec.clusterServiceClassRef.name': externalId
+    }
+  };
+
+  return <ClusterServicePlansPage showTitle={false} canCreate={false} selector={selector} />;
+};
+
+const { details, editYaml } = navFactory;
+const ClusterServiceClassesDetailsPage: React.FC<ClusterServiceClassesDetailsPageProps> = props => (
+  <DetailsPage
+    {...props}
+    kind={kind}
+    pages={[
+      details(ClusterServiceClassDetails),
+      editYaml(),
+      {
+        href: 'clusterserviceplan',
+        name: 'Cluster Service Plan',
+        component: ClusterServicePlanTab
+      }
+    ]}
+  />
+);
 ClusterServiceClassesDetailsPage.displayName = 'ClusterServiceClassesDetailsPage';
 
 const tableColumnClasses = [
@@ -119,4 +149,8 @@ type ClusterServiceClassesPageProps = {};
 
 type ClusterServiceClassesDetailsPageProps = {
   match: any;
+};
+
+type ClusterServicePlansTabProps = {
+  obj: K8sResourceKind;
 };
