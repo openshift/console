@@ -9,7 +9,7 @@ import StreamsInstancePage from '../streams-list/StreamsInstancePage';
 import { ManagedKafkaRequestModel } from '../../models/rhoas';
 import { useActiveNamespace } from '@console/shared';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-// import { ManagedKafkaRequestCRName } from '../../const';
+import { ManagedKafkaRequestCRName } from '../../const';
 import { Button, EmptyState, EmptyStateIcon, EmptyStateSecondaryActions, Title } from '@patternfly/react-core';
 import CubesIcon from '@patternfly/react-icons/dist/js/icons/cubes-icon';
 import {
@@ -18,6 +18,7 @@ import {
   createServiceAccountIfNeeded,
   listOfCurrentKafkaConnectionsById
 } from './resourceCreators';
+import { referenceForModel } from '@console/internal/module/k8s';
 
 import { KafkaRequest } from "./types"
 
@@ -26,43 +27,43 @@ const ManagedKafkas = () => {
   const [selectedKafka, setSelectedKafka] = React.useState<number>();
   const [serviceAccountCreated, setServiceAccountCreated] = React.useState(false);
   const [currentKafkaConnections, setCurrentKafkaConnections] = React.useState([]);
-  const [kafkaRequest, setKafkaRequest] = React.useState();
-
-  const [watchedKafkaRequest, loaded, error] = useK8sWatchResource<KafkaRequest[]>({
-    kind: ManagedKafkaRequestModel.kind,
-    namespace: currentNamespace,
-    isList: false
-  })
-
-  console.log("what is ManagedKafkas", watchedKafkaRequest, loaded, error);
-  console.log('what is kafkaRequest' + JSON.stringify(kafkaRequest));
 
   const createKafkaRequestFlow = async () => {
-    const request = await createManagedKafkaRequestIfNeeded(currentNamespace);
-    const managedServiceAccount = await createServiceAccountIfNeeded(currentNamespace);
+    await createManagedKafkaRequestIfNeeded(currentNamespace);
+    const accountCreated = await createServiceAccountIfNeeded(currentNamespace);
     const currentKafka = await listOfCurrentKafkaConnectionsById(currentNamespace)
     if (currentKafka) {
       setCurrentKafkaConnections(currentKafka);
     }
-    if (!managedServiceAccount) {
+    if (accountCreated) {
       setServiceAccountCreated(true);
     }
-    setKafkaRequest(request);
   }
 
   React.useEffect(() => {
     createKafkaRequestFlow()
   }, []);
 
-  console.log("watchedKafkaRequest", watchedKafkaRequest)
-  if (watchedKafkaRequest.length === 0 || !watchedKafkaRequest[0] || !watchedKafkaRequest[0].status) {
+  const [watchedKafkaRequest] = useK8sWatchResource<KafkaRequest>({
+    kind: referenceForModel(ManagedKafkaRequestModel),
+    name: ManagedKafkaRequestCRName,
+    namespace: currentNamespace,
+    isList: false
+  })
+
+  if (!watchedKafkaRequest || !watchedKafkaRequest.status) {
+    // TODO improve loader
     return (<><h1>Loading</h1></>)
   }
-  const singleKafkaRequest = watchedKafkaRequest[0];
-  const kafkaRequestData = singleKafkaRequest.status.userKafkas;
-  console.log('what is kafkaRequestData', kafkaRequestData);
 
-  if (kafkaRequestData.length === 0) {
+  let watchedKafkasObject = watchedKafkaRequest.status.userKafkas;
+  console.log('what is kafkaRequestData', watchedKafkasObject);
+  const remoteKafkaInstances = [];
+  for (const kafkaName of Object.keys(watchedKafkasObject)) {
+    remoteKafkaInstances.push({ ...watchedKafkasObject[kafkaName], name: kafkaName })
+  }
+
+  if (remoteKafkaInstances.length === 0) {
     return <NamespacedPage disabled variant={NamespacedPageVariants.light} hideApplications>
       <EmptyState>
         <EmptyStateIcon icon={CubesIcon} />
@@ -78,8 +79,8 @@ const ManagedKafkas = () => {
 
   const createManagedKafkaConnectionFlow = async () => {
     // TODO verify if service account sercret exist
-    const kafkaId = kafkaRequestData[selectedKafka].id;
-    const kafkaName = kafkaRequestData[selectedKafka].name;
+    const kafkaId = remoteKafkaInstances[selectedKafka].id;
+    const kafkaName = remoteKafkaInstances[selectedKafka].name;
     if (currentKafkaConnections) {
       if (!currentKafkaConnections.includes(kafkaId)) {
         createManagedKafkaConnection(kafkaId, kafkaName, currentNamespace);
@@ -92,7 +93,7 @@ const ManagedKafkas = () => {
     if (selectedKafka === null || selectedKafka === undefined) {
       return true;
     }
-    if (currentKafkaConnections.length === kafkaRequestData.length) {
+    if (currentKafkaConnections.length === remoteKafkaInstances.length) {
       return true;
     }
     else {
@@ -106,7 +107,7 @@ const ManagedKafkas = () => {
         <>
           {serviceAccountCreated ? (<><p>Created Service Account</p></>) : ""}
           <StreamsInstancePage
-            kafkaArray={kafkaRequestData}
+            kafkaArray={remoteKafkaInstances}
             setSelectedKafka={setSelectedKafka}
             currentKafkaConnections={currentKafkaConnections}
           />
