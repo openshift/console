@@ -19,7 +19,7 @@ import * as dashboardView from '../views/dashboard.view';
 import { ProvisionSource } from './utils/constants/enums/provisionSource';
 
 describe('Kubevirt VM dashboard tab', () => {
-  const cloudInit = `#cloud-config\\nuser: cloud-user\\npassword: atomic\\nchpasswd: {expire: False}\\nruncmd:\\n- dnf install -y qemu-guest-agent\\n- systemctl start qemu-guest-agent`;
+  const cloudInit = `#cloud-config\nuser: cloud-user\npassword: atomic\nchpasswd: {expire: False}\nruncmd:\n- dnf install -y qemu-guest-agent\n- systemctl start qemu-guest-agent`;
   const testVM = getVMManifest(ProvisionSource.CONTAINER, testName, null, cloudInit);
   const vm = new VirtualMachine(testVM.metadata);
 
