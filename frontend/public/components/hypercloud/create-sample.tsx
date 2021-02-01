@@ -210,21 +210,22 @@ const CreateSampleComponent: React.FC<SampleFormProps> = props => {
           selected={[...selectedClusterItems]} // 필수
           onChange={updateSelectedClusterItems} // 필수
           showAll={false}
-          title="select Resources"
+          title="select Resources" // 드롭다운 title 지정
           autocompletePlaceholder="search by name"
-          type="multiple"
+          type="multiple" // type: single / multiple
         />
         <ResourceListDropdownWithDataToolbar
           resourceList={ClusterResourceList} // 필수
-          showAll={true}
-          resourceType="Cluster and Cluster Claim"
-          onSelectedItemChange={onSelectedItemChange}
+          showAll={true} // 드롭다운에 all resource 라는 항목이 생긴다.
+          resourceType="Cluster and Cluster Claim" // title, placeholder, all resources, chip group 에 적용되는 문구 (title, placeholder는 직접 지정하는 것의 우선순위가 더 높음)
+          autocompletePlaceholder="search by name" // 검색란 placeholder
+          onSelectedItemChange={onSelectedItemChange} // 선택된 아이템 리스트 변동될 때마다 호출되는 함수
         />
         <ResourceListDropdownWithDataToolbar
           name="ResourceListDropdownWithDataToolbar1"
           resourceList={ClusterResourceList} // 필수
           showAll={false}
-          title="select Resources"
+          title="select Resources" // 드롭다운 title 지정
           resourceType="Cluster and Cluster Claim"
         />
       </Section>
