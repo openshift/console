@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as fuzzy from 'fuzzysearch';
 // import { Link } from 'react-router-dom';
-import { RoleModel } from '../../models';
+import { RoleModel, RoleBindingModel, ClusterRoleBindingModel } from '../../models';
 import * as classNames from 'classnames';
 import { useTranslation, withTranslation } from 'react-i18next';
 import i18next from 'i18next';
@@ -18,7 +18,13 @@ import {
   ResourceKebab,
   ResourceLink,
   Timestamp,
+  resourceListPathFromModel,
 } from '../utils';
+import { DetailsForKind } from '../default-resource';
+import { getLastNamespace } from '../utils/breadcrumbs';
+import { ALL_NAMESPACES_KEY } from '@console/shared';
+
+const { common } = Kebab.factory;
 
 export const isSystemRole = (role) => _.startsWith(role.metadata.name, 'system:');
 
@@ -238,6 +244,25 @@ export const BindingsForRolePage = (props) => {
   );
 };
 
+const getBreadcrumbs = (model, kindObj, match) => {
+  const lastNamespace = getLastNamespace();
+  return [
+    {
+      name: model.labelPluralKey ? i18next.t(model.labelPluralKey) : model.labelPlural,
+      path: resourceListPathFromModel(
+        model,
+        !lastNamespace || lastNamespace === ALL_NAMESPACES_KEY ? null : lastNamespace,
+      ),
+    },
+    {
+      name: i18next.t('details-page~{{kind}} details', {
+        kind: kindObj.labelKey ? i18next.t(kindObj.labelKey) : kindObj.label,
+      }),
+      path: `${match.url}`,
+    },
+  ];
+};
+
 export const RolesDetailsPage = (props) => {
   const { t } = useTranslation();
   return (
@@ -249,11 +274,26 @@ export const RolesDetailsPage = (props) => {
         { href: 'bindings', name: t('role~RoleBindings'), component: BindingsForRolePage },
       ]}
       menuActions={menuActions}
+      breadcrumbsFor={() => getBreadcrumbs(RoleModel, props.kindObj, props.match)}
     />
   );
 };
 
 export const ClusterRolesDetailsPage = RolesDetailsPage;
+
+export const ClusterRoleBindingsDetailsPage = (props) => {
+  const pages = [navFactory.details(DetailsForKind(props.kind)), navFactory.editYaml()];
+  const actions = [...Kebab.getExtensionsActionsForKind(ClusterRoleBindingModel), ...common];
+
+  return (
+    <DetailsPage
+      {...props}
+      menuActions={actions}
+      pages={pages}
+      breadcrumbsFor={() => getBreadcrumbs(RoleBindingModel, props.kindObj, props.match)}
+    />
+  );
+};
 
 const EmptyMsg = () => {
   const { t } = useTranslation();
