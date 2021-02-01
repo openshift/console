@@ -6,7 +6,6 @@ import { topologyPage } from '../../pages/topology/topology-page';
 import { addOptions } from '../../constants/add';
 import { createGitWorkload } from '../../pages/functions/createGitWorkload';
 import { devNavigationMenu } from '../../constants/global';
-import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
 import { pageTitle } from '../../constants/pageTitle';
 import { catalogPage } from '../../pages/add-flow/catalog-page';
 
@@ -52,7 +51,8 @@ When('user clicks Create button on Add page', () => {
 });
 
 Then('user will be redirected to Add page', () => {
-  detailsPage.titleShouldContain(pageTitle.Add);
+  // detailsPage.titleShouldContain(pageTitle.Add);
+  cy.get('.ocs-page-layout__title').should('contain.text', pageTitle.Add);
 });
 
 When('user clicks Cancel button on Add page', () => {

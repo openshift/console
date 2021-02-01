@@ -15,7 +15,7 @@ export const catalogPage = {
     cy
       .get('form h1')
       .eq(0)
-      .should('have.text', pageTitle.installHelmCharts),
+      .should('have.text', pageTitle.InstallHelmCharts),
   clickButtonOnCatalogPageSidePane: () => {
     catalogPage.verifyDialog();
     cy.get(catalogPO.sidePane.instantiateTemplate).click({ force: true });

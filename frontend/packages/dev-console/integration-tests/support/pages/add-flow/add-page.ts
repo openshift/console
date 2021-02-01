@@ -5,6 +5,9 @@ import { cardTitle } from '../../pageObjects/add-flow-po';
 
 export const addPage = {
   selectCardFromOptions: (card: addOptions | string) => {
+    cy.document()
+      .its('readyState')
+      .should('eq', 'complete');
     switch (card) {
       case 'Git':
       case addOptions.Git:
