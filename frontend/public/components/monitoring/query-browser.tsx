@@ -277,6 +277,10 @@ const Graph: React.FC<GraphProps> = React.memo(
       });
     });
 
+    if (data.every(_.isEmpty)) {
+      return <GraphEmpty />;
+    }
+
     let yTickFormat = formatValue;
 
     if (isStack) {
