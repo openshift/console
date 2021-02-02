@@ -43,11 +43,11 @@ type ClusterServiceClassDetailsProps = {
 
 
 const ClusterServicePlanTab: React.FC<ClusterServicePlansTabProps> = ({ obj }) => {
-  const externalId = obj.metadata.labels['servicecatalog.k8s.io/spec.externalID'];
+  const serviceClassRef = obj.spec.externalMetadata.serviceClassRefName
 
   const selector = {
     matchLabels: {
-      'servicecatalog.k8s.io/spec.clusterServiceClassRef.name': externalId
+      'servicecatalog.k8s.io/spec.clusterServiceClassRef.name': serviceClassRef
     }
   };
 

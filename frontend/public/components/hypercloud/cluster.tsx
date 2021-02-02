@@ -1,5 +1,4 @@
 import * as React from 'react';
-// import { Link } from 'react-router-dom';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 
@@ -7,30 +6,24 @@ import { Status } from '@console/shared';
 import { K8sResourceKind } from '../../module/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from '../factory';
 import {
-  // AsyncComponent,
   DetailsItem,
   Kebab,
   KebabAction,
   detailsPage,
-  // LabelList,
   navFactory,
-  // NodesComponent,
   ResourceKebab,
   ResourceLink,
   ResourceSummary,
   SectionHeading,
-  // Selector,
   Timestamp,
 } from '../utils';
-// import { ResourceEventStream } from '../events';
 import { ClusterManagerModel } from '../../models';
-// import { SpecCapability } from '@console/operator-lifecycle-manager/src/components/descriptors/types';
 
 export const menuActions: KebabAction[] = [...Kebab.getExtensionsActionsForKind(ClusterManagerModel), ...Kebab.factory.common];
 
 const kind = ClusterManagerModel.kind;
 
-const tableColumnClasses = ['', '', classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-lg'), Kebab.columnClass];
+const tableColumnClasses = ['', '', classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-lg'), Kebab.columnClass];
 
 const ClusterTableHeader = () => {
   return [
@@ -65,26 +58,32 @@ const ClusterTableHeader = () => {
       props: { className: tableColumnClasses[4] },
     },
     {
-      title: 'Node',
+      title: 'Master Node',
       sortField: 'spec.masterNum',
       transforms: [sortable],
       props: { className: tableColumnClasses[5] },
     },
     {
+      title: 'Worker Node',
+      sortField: 'spec.workerNum',
+      transforms: [sortable],
+      props: { className: tableColumnClasses[6] },
+    },
+    {
       title: 'Owner',
       sortField: 'status.owner',
       transforms: [sortable],
-      props: { className: tableColumnClasses[6] },
+      props: { className: tableColumnClasses[7] },
     },
     {
       title: 'Created',
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
-      props: { className: tableColumnClasses[7] },
+      props: { className: tableColumnClasses[8] },
     },
     {
       title: '',
-      props: { className: tableColumnClasses[8] },
+      props: { className: tableColumnClasses[9] },
     },
   ];
 };
@@ -101,25 +100,21 @@ const ClusterTableRow: RowFunction<IClusterTableRow> = ({ obj: cluster, index, k
       <TableData className={tableColumnClasses[3]}>{cluster.status?.ready ? 'Ready' : 'Not Ready'}</TableData>
       <TableData className={tableColumnClasses[4]}>{cluster.spec.version}</TableData>
       <TableData className={tableColumnClasses[5]}>
-        {ClusterNodesInfo(cluster)}
-        {/* {`M: ${cluster.status?.masterRun} / ${cluster.spec?.masterNum}, W: ${cluster.status?.workerRun} / ${cluster.spec?.workerNum}`} */}
+        {`${cluster.status?.masterRun ?? 0} / ${cluster.spec?.masterNum}`}
       </TableData>
-      <TableData className={tableColumnClasses[6]}>{cluster.status.owner}</TableData>
-      <TableData className={tableColumnClasses[7]}>
+      <TableData className={tableColumnClasses[6]}>
+        {`${cluster.status?.workerRun ?? 0} / ${cluster.spec?.workerNum}`}
+      </TableData>
+      <TableData className={tableColumnClasses[7]}>{cluster.status.owner}</TableData>
+      <TableData className={tableColumnClasses[8]}>
         <Timestamp timestamp={cluster.metadata.creationTimestamp} />
       </TableData>
-      <TableData className={tableColumnClasses[8]}>
+      <TableData className={tableColumnClasses[9]}>
         <ResourceKebab actions={menuActions} kind={kind} resource={cluster} />
       </TableData>
     </TableRow>
   );
 };
-
-const ClusterNodesInfo = cluster => {
-  return `M: ${cluster.status.masterRun ?? 0} / ${cluster.spec?.masterNum}, W: ${cluster.status.workerRun ?? 0} / ${cluster.spec?.workerNum}`;
-};
-
-// const ClusterNodes: React.FC<ClusterNodesProps> = props => <NodesComponent {...props} customData={{ showNodes: true }} />;
 
 export const ClusterDetailsList: React.FC<ClusterDetailsListProps> = ({ cl }) => {
   return (
@@ -194,7 +189,3 @@ type ClustersPageProps = {
 type ClustersDetailsPageProps = {
   match: any;
 };
-
-// type ClusterNodesProps = {
-//   obj: K8sResourceKind;
-// };

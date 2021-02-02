@@ -163,9 +163,6 @@ keycloak
       return;
     }
 
-    setAccessToken(keycloak.idToken);
-    setId(keycloak.idTokenParsed.preferred_username);
-
     render(
       <Provider store={store}>
         <Router history={history} basename={window.SERVER_FLAGS.basePath}>
@@ -187,6 +184,10 @@ keycloak.onReady = function() {
 };
 keycloak.onAuthSuccess = function() {
   console.log('[keycloak] onAuthSuccess');
+  
+  setAccessToken(keycloak.idToken);
+  setId(keycloak.idTokenParsed.preferred_username);
+
   const startDiscovery = () => store.dispatch(watchAPIServices());
 
   // Load cached API resources from localStorage to speed up page load.
