@@ -5,7 +5,7 @@ import { sortable } from '@patternfly/react-table';
 
 import { K8sResourceKind } from '../../module/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from '../factory';
-import { DetailsItem, Kebab, KebabAction, detailsPage, Timestamp, navFactory, ResourceKebab, ResourceLink, ResourceSummary, SectionHeading } from '../utils';
+import { Kebab, KebabAction, detailsPage, Timestamp, navFactory, ResourceKebab, ResourceLink, ResourceSummary, SectionHeading } from '../utils';
 import { ImageScanRequestModel } from '../../models';
 import { Status } from '@console/shared';
 
@@ -13,7 +13,7 @@ export const menuActions: KebabAction[] = [...Kebab.getExtensionsActionsForKind(
 
 const kind = ImageScanRequestModel.kind;
 
-const tableColumnClasses = ['', '', classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-lg'), Kebab.columnClass];
+const tableColumnClasses = ['', '', classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-lg'), Kebab.columnClass];
 
 const ImageScanRequestTableHeader = () => {
   return [
@@ -36,20 +36,14 @@ const ImageScanRequestTableHeader = () => {
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'Image',
-      sortField: 'spec.imageUrl',
+      title: 'Created',
+      sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
     },
     {
-      title: 'Created',
-      sortField: 'metadata.creationTimestamp',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[4] },
-    },
-    {
       title: '',
-      props: { className: tableColumnClasses[5] },
+      props: { className: tableColumnClasses[4] },
     },
   ];
 };
@@ -69,12 +63,9 @@ const ImageScanRequestTableRow: RowFunction<K8sResourceKind> = ({ obj: scanreque
         <Status status={scanrequest?.status?.status} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>
-        <Status status={scanrequest?.spec?.imageUrl} />
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
         <Timestamp timestamp={scanrequest.metadata.creationTimestamp} />
       </TableData>
-      <TableData className={tableColumnClasses[5]}>
+      <TableData className={tableColumnClasses[4]}>
         <ResourceKebab actions={menuActions} kind={kind} resource={scanrequest} />
       </TableData>
     </TableRow>
@@ -84,41 +75,85 @@ const ImageScanRequestTableRow: RowFunction<K8sResourceKind> = ({ obj: scanreque
 export const ImageScanRequestStatus: React.FC<ImageScanRequestStatusStatusProps> = ({ result }) => <Status status={result} />;
 
 export const ImageScanRequestDetailsList: React.FC<ImageScanRequestDetailsListProps> = ({ ds }) => {
-  const summaries = [];
-  for (const key in ds.status?.summary) {
-    summaries.push({ key: key, value: ds.status.summary[key] });
-  }
   return (
     <dl className="co-m-pane__details">
       <dt>Status</dt>
       <dd>
         <ImageScanRequestStatus result={ds?.status?.status} />
       </dd>
-      <DetailsItem label="Image" obj={ds} path="spec.imageUrl" />
-      <dt>Summary</dt>
+      {/* <dt>Summary</dt>
       {summaries.map(summary => {
-        return <dd key={summary.key}> {`${summary.key} ${summary.value}`}</dd>;
-      })}
+        let summaryDisplay = summary.map(status => {
+          return <li key={status.key}> {`${status.key} ${status.value}`}</li>;
+        });
+        return (
+          <>
+            <dd>
+              {summaryKey.shift()}
+              <ul>{summaryDisplay}</ul>
+            </dd>
+          </>
+        );
+      })} */}
       {/* <DetailsItem label="Summary" obj={ds} path="status.summary" /> */}
     </dl>
   );
 };
-
-const ImageScanRequestDetails: React.FC<ImageScanRequestDetailsProps> = ({ obj: scanrequest }) => (
+export const ScanResultRow: React.FC<ScanResultRowProps> = ({ scanList }) => {
+  return (
+    <div className="row">
+      <div className="col-lg-6 col-md-6 col-sm-6 col-xs-6">{scanList?.image}</div>
+      <div className="col-lg-6 col-md-6 col-sm-6 hidden-xs">{scanList?.summary}</div>
+    </div>
+  );
+};
+export const ScanResultTable: React.FC<ScanResultTableProps> = ({ heading, scanList }) => (
   <>
-    <div className="co-m-pane__body">
-      <SectionHeading text="Image Sign Request Details" />
-      <div className="row">
-        <div className="col-lg-6">
-          <ResourceSummary resource={scanrequest} />
-        </div>
-        <div className="col-lg-6">
-          <ImageScanRequestDetailsList ds={scanrequest} />
-        </div>
+    <SectionHeading text={heading} />
+    <div className="co-m-table-grid co-m-table-grid--bordered">
+      <div className="row co-m-table-grid__head">
+        <div className="col-lg-6 col-md-6 col-sm-6 col-xs-6">Image</div>
+        <div className="col-lg-6 col-md-6 col-sm-6 col-xs-6">Summary</div>
+      </div>
+      <div className="co-m-table-grid__body">
+        {scanList.map((c: any, i: number) => (
+          <ScanResultRow key={i} scanList={c} />
+        ))}
       </div>
     </div>
   </>
 );
+
+const ImageScanRequestDetails: React.FC<ImageScanRequestDetailsProps> = ({ obj: scanrequest }) => {
+  const summaries = [];
+  for (const key in scanrequest.status?.results) {
+    let summary = { image: '', summary: '' };
+    summary.image = key;
+    for (const statusKey in scanrequest.status.results[key].summary) {
+      summary.summary += `${statusKey} ${scanrequest.status.results[key].summary[statusKey]}, `;
+    }
+    summary.summary = summary.summary.substr(0, summary.summary.length - 2);
+    summaries.push(summary);
+  }
+  return (
+    <>
+      <div className="co-m-pane__body">
+        <SectionHeading text="Image Sign Request Details" />
+        <div className="row">
+          <div className="col-lg-6">
+            <ResourceSummary resource={scanrequest} />
+          </div>
+          <div className="col-lg-6">
+            <ImageScanRequestDetailsList ds={scanrequest} />
+          </div>
+        </div>
+      </div>
+      <div className="co-m-pane__body">
+        <ScanResultTable heading="Scan Result" scanList={summaries} />
+      </div>
+    </>
+  );
+};
 
 const { details, editYaml } = navFactory;
 
@@ -130,6 +165,15 @@ export const ImageScanRequestsDetailsPage: React.FC<ImageScanRequestsDetailsPage
 
 type ImageScanRequestDetailsListProps = {
   ds: K8sResourceKind;
+};
+
+type ScanResultTableProps = {
+  heading: string;
+  scanList: any;
+};
+
+type ScanResultRowProps = {
+  scanList: any;
 };
 
 type ImageScanRequestsPageProps = {
