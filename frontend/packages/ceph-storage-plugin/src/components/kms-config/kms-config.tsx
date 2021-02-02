@@ -34,7 +34,7 @@ export const KMSConfigure: React.FC<KMSConfigureProps> = ({ state, dispatch, mod
   const [kmsProvider, setKMSProvider] = React.useState<string>(KMSProviders[0].name);
 
   const setServiceName = (name: string) => {
-    const kmsObj: KMSConfig = kms;
+    const kmsObj: KMSConfig = _.cloneDeep(kms);
     kmsObj.name.value = name;
     name !== '' ? (kms.name.valid = true) : (kms.name.valid = false);
     kmsObj.hasHandled = kms.name.valid;
@@ -42,7 +42,7 @@ export const KMSConfigure: React.FC<KMSConfigureProps> = ({ state, dispatch, mod
   };
 
   const setAddress = (address: string) => {
-    const kmsObj: KMSConfig = kms;
+    const kmsObj: KMSConfig = _.cloneDeep(kms);
     kmsObj.address.value = address;
     address !== '' && parseURL(address.trim())
       ? (kms.address.valid = true)
@@ -52,7 +52,7 @@ export const KMSConfigure: React.FC<KMSConfigureProps> = ({ state, dispatch, mod
   };
 
   const setAddressPort = (port: string) => {
-    const kmsObj: KMSConfig = kms;
+    const kmsObj: KMSConfig = _.cloneDeep(kms);
     kmsObj.port.value = port;
     port !== '' && !_.isNaN(Number(port)) && Number(port) > 0
       ? (kms.port.valid = true)
@@ -62,7 +62,7 @@ export const KMSConfigure: React.FC<KMSConfigureProps> = ({ state, dispatch, mod
   };
 
   const setToken = (token: string) => {
-    const kmsObj: KMSConfig = kms;
+    const kmsObj: KMSConfig = _.cloneDeep(kms);
     kmsObj.token.value = token;
     token !== '' ? (kms.token.valid = true) : (kms.token.valid = false);
     kmsObj.hasHandled = kms.token.valid;
