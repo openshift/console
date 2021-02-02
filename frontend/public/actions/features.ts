@@ -247,15 +247,10 @@ const ssarCheckActions = ssarChecks.map(({ flag, resourceAttributes, after }) =>
 });
 
 export const detectFeatures = () => (dispatch: Dispatch) => {
-  const customFeatureDetectors: CustomFeatureFlag[] = [];
   subscribeToExtensions<CustomFeatureFlag>(
-    extensionDiffListener((added) => {
-      added.forEach((e) => {
-        if (!customFeatureDetectors.includes(e)) {
-          customFeatureDetectors.push(e);
-        }
-      });
-    }),
+    extensionDiffListener((added) =>
+      added.forEach((detector) => detector.properties.detect(dispatch)),
+    ),
     isCustomFeatureFlag,
   );
   [
@@ -264,7 +259,6 @@ export const detectFeatures = () => (dispatch: Dispatch) => {
     detectClusterVersion,
     detectUser,
     ...ssarCheckActions,
-    ...customFeatureDetectors.map((ff) => ff.properties.detect),
   ].forEach((detect) => detect(dispatch));
 };
 
