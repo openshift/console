@@ -143,7 +143,7 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
     <div
       ref={ref}
       className="odc-quick-search-modal-body"
-      style={{ height: catalogItems?.length > 0 ? 468 : 60 }}
+      style={{ height: catalogItems?.length > 0 ? 460 : 60 }}
     >
       <QuickSearchBar
         searchTerm={searchTerm}
