@@ -180,6 +180,7 @@
     "@types/classnames": "^2.2.7",
     "@types/cypress-axe": "^0.8.0",
     "@types/enzyme": "3.10.x",
+    "@types/git-url-parse": "^9.0.0",
     "@types/glob": "7.x",
     "@types/immutable": "3.x",
     "@types/jasmine": "2.8.x",
