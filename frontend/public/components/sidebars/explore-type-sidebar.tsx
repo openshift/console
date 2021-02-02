@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Breadcrumb, BreadcrumbItem, Button } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 
 import {
   getDefinitionKey,
@@ -25,6 +26,8 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
   // OpenAPI document.
   const [drilldownHistory, setDrilldownHistory] = React.useState([]);
   const { kindObj, schema } = props;
+  const { t } = useTranslation();
+
   if (!kindObj && !schema) {
     return null;
   }
@@ -49,8 +52,9 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
     ? currentSelection.description
     : currentDefinition.description;
   const required = new Set(currentDefinition.required || []);
+  const kindLabel = kindObj.labelKey ? t(kindObj.labelKey) : kindObj.kind;
   const breadcrumbs = drilldownHistory.length
-    ? [kindObj ? kindObj.kind : 'Schema', ..._.map(drilldownHistory, 'name')]
+    ? [kindObj ? kindLabel : t('public~Schema'), ..._.map(drilldownHistory, 'name')]
     : [];
 
   const drilldown = (
@@ -120,7 +124,7 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
         </p>
       )}
       {_.isEmpty(currentProperties) ? (
-        <EmptyBox label="Properties" />
+        <EmptyBox label={t('public~Properties')} />
       ) : (
         <ul className="co-resource-sidebar-list">
           {_.map(currentProperties, (definition: SwaggerDefinition, name: string) => {
@@ -148,7 +152,7 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
                     isInline
                     variant="link"
                   >
-                    View details
+                    {t('public~View details')}
                   </Button>
                 )}
               </li>

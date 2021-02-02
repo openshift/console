@@ -9,6 +9,7 @@ import {
   PasteIcon,
 } from '@patternfly/react-icons';
 import { Sample } from '@console/shared';
+import { useTranslation } from 'react-i18next';
 
 import { K8sKind, referenceFor } from '../../module/k8s';
 import { FirehoseResult } from '../utils';
@@ -20,6 +21,7 @@ const ResourceSidebarSample: React.FC<ResourceSidebarSampleProps> = ({
 }) => {
   const { highlightText, title, img, description, id, yaml, targetResource } = sample;
   const reference = referenceFor(targetResource);
+  const { t } = useTranslation();
   return (
     <li className="co-resource-sidebar-item">
       <h3 className="h4">
@@ -34,7 +36,7 @@ const ResourceSidebarSample: React.FC<ResourceSidebarSampleProps> = ({
         onClick={() => loadSampleYaml(id, yaml, reference)}
       >
         <PasteIcon className="co-icon-space-r" />
-        Try it
+        {t('public~Try it')}
       </Button>
       <Button
         type="button"
@@ -44,7 +46,7 @@ const ResourceSidebarSample: React.FC<ResourceSidebarSampleProps> = ({
         onClick={() => downloadSampleYaml(id, yaml, reference)}
       >
         <DownloadIcon className="co-icon-space-r" />
-        Download YAML
+        {t('public~Download YAML')}
       </Button>
     </li>
   );
@@ -89,6 +91,8 @@ const ResourceSidebarSnippet: React.FC<ResourceSidebarSnippetProps> = ({
     insertSnippetYaml(id, typeof lazyYaml === 'function' ? lazyYaml() : yaml, reference);
   };
 
+  const { t } = useTranslation();
+
   return (
     <li className="co-resource-sidebar-item">
       <h3 className="h4">
@@ -97,7 +101,7 @@ const ResourceSidebarSnippet: React.FC<ResourceSidebarSnippetProps> = ({
       <p>{description}</p>
       <Button type="button" variant="link" isInline onClick={insertSnippet}>
         <PasteIcon className="co-icon-space-r" />
-        Insert Snippet
+        {t('public~Insert snippet')}
       </Button>
       <Button
         type="button"
@@ -108,12 +112,12 @@ const ResourceSidebarSnippet: React.FC<ResourceSidebarSnippetProps> = ({
       >
         {yamlPreviewOpen ? (
           <>
-            Hide YAML
+            {t('public~Hide YAML')}
             <ChevronDownIcon className="co-icon-space-l" />
           </>
         ) : (
           <>
-            Show YAML
+            {t('public~Show YAML')}
             <ChevronRightIcon className="co-icon-space-l" />
           </>
         )}
