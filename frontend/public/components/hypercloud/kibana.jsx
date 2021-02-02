@@ -20,10 +20,6 @@ class KibanaPage_ extends React.PureComponent {
     return (
       <React.Fragment>
         <div>
-          <Helmet>
-            <title>Kibana</title>
-          </Helmet>
-          <PageHeading title="Kibana"></PageHeading>
           <iframe style={{ width: '100%', height: '100vh', border: 0 }} src={url} target="_blank" />
         </div>
       </React.Fragment>
