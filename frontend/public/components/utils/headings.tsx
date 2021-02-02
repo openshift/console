@@ -159,7 +159,9 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
               )}
             </div>
           )}
-          {!breadcrumbsFor && badge && <span className="co-m-pane__heading-badge">{badge}</span>}
+          {!breadcrumbsFor && !breadcrumbs && badge && (
+            <span className="co-m-pane__heading-badge">{badge}</span>
+          )}
           {showActions && (
             <div className="co-actions" data-test-id="details-actions">
               {hasButtonActions && (

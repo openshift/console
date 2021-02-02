@@ -16,6 +16,7 @@ import {
   HorizontalNavTab,
   CatalogItemProvider,
   CatalogItemType,
+  DetailPageBreadCrumbs,
 } from '@console/plugin-sdk';
 import { NamespaceRedirect } from '@console/internal/components/utils/namespace-redirect';
 import { AddAction } from '@console/dev-console/src/extensions/add-actions';
@@ -37,6 +38,14 @@ import { TopologyConsumedExtensions, topologyPlugin } from './topology/topology-
 import * as eventSourceIcon from './imgs/event-source.svg';
 import * as channelIcon from './imgs/channel.svg';
 import { eventSourceProvider, kameletsProvider } from './catalog';
+import {
+  eventSourceBreadcrumbsProvider,
+  channelBreadcrumbsProvider,
+  brokerBreadcrumbsProvider,
+  eventSourceModelsProviderForBreadcrumbs,
+  channelModelsProviderForBreadcrumbs,
+  brokerModelProviderForBreadcrumbs,
+} from './providers';
 
 type ConsumedExtensions =
   | NavSection
@@ -55,7 +64,8 @@ type ConsumedExtensions =
   | TopologyConsumedExtensions
   | HorizontalNavTab
   | CatalogItemProvider
-  | CatalogItemType;
+  | CatalogItemType
+  | DetailPageBreadCrumbs;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -601,6 +611,27 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [FLAG_CAMEL_KAMELETS],
+    },
+  },
+  {
+    type: 'DetailPageBreadCrumbs',
+    properties: {
+      getModels: eventSourceModelsProviderForBreadcrumbs,
+      breadcrumbsProvider: eventSourceBreadcrumbsProvider,
+    },
+  },
+  {
+    type: 'DetailPageBreadCrumbs',
+    properties: {
+      getModels: channelModelsProviderForBreadcrumbs,
+      breadcrumbsProvider: channelBreadcrumbsProvider,
+    },
+  },
+  {
+    type: 'DetailPageBreadCrumbs',
+    properties: {
+      getModels: brokerModelProviderForBreadcrumbs,
+      breadcrumbsProvider: brokerBreadcrumbsProvider,
     },
   },
   ...topologyPlugin,
