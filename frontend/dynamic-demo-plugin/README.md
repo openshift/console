@@ -48,15 +48,39 @@ Following commands should be executed in Console repository root.
 
 1. Build the image:
    ```sh
-   docker build -f Dockerfile.plugins.demo -t $USER/console-demo-plugin .
+   docker build -f Dockerfile.plugins.demo -t quay.io/$USER/console-demo-plugin .
    ```
 2. Run the image:
    ```sh
-   docker run -it -p 9001:9001 $USER/console-demo-plugin
+   docker run -it -p 9001:9001 quay.io/$USER/console-demo-plugin
    ```
-3. Push the image to Docker Hub or similar image registry:
+3. Push the image to image registry:
    ```sh
-   docker push $USER/console-demo-plugin
+   docker push quay.io/$USER/console-demo-plugin
    ```
 
 To test a locally built demo plugin image, simply update and re-apply `oc-manifest.yaml`.
+
+
+## Enable plugin
+
+To enable a Console plugin on the OpenShift cluster you need to edit console-operator's config.
+There you need to list all the Console plugins that you want to enable.
+
+To update the console-operator config use:
+
+  ```sh
+  oc edit console.operator.openshift.io cluster
+  ```
+
+There you need to update the config's spec by adding `plugins` field with the list of enabled Console plugins.
+
+```yaml
+...
+spec:
+  plugins:
+    - console-demo-plugin
+...
+```
+
+Only enabled Console plugins will be served.
