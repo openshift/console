@@ -38,3 +38,13 @@ export const SecretAnnotationType = {
 };
 
 export const PIPELINE_SERVICE_ACCOUNT = 'pipeline';
+
+// Annotation for referencing pipeline name in case of PipelineRun with no reference to a Pipeline (embedded pipeline)
+export const preferredNameAnnotation = 'pipeline.openshift.io/preferredName';
+
+export enum TektonResourceLabel {
+  pipeline = 'tekton.dev/pipeline',
+  pipelinerun = 'tekton.dev/pipelineRun',
+  taskrun = 'tekton.dev/taskRun',
+  pipelineTask = 'tekton.dev/pipelineTask',
+}
