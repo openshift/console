@@ -210,7 +210,6 @@ const ResourceTitleComponent: React.FC<ResourceTitleComponentComponent> = ({
 
 export const ResourceInventoryItem: React.FC<ResourceInventoryItemProps> = ({
   kind,
-  useAbbr,
   TitleComponent,
   resources = [],
   additionalResources,
@@ -223,6 +222,7 @@ export const ResourceInventoryItem: React.FC<ResourceInventoryItemProps> = ({
   basePath,
   dataTest,
 }) => {
+  const { t } = useTranslation();
   let Title: React.ComponentType = React.useCallback(
     (props) => (
       <ResourceTitleComponent
@@ -266,11 +266,14 @@ export const ResourceInventoryItem: React.FC<ResourceInventoryItemProps> = ({
     [mapper, groups, resources],
   );
 
+  const titleLabel = kind.labelKey ? t(kind.labelKey) : kind.label;
+  const titlePluralLabel = kind.labelPluralKey ? t(kind.labelPluralKey) : kind.labelPlural;
+
   return (
     <InventoryItem
       isLoading={isLoading}
-      title={useAbbr ? kind.abbr : kind.label}
-      titlePlural={useAbbr ? undefined : kind.labelPlural}
+      title={titleLabel}
+      titlePlural={titlePluralLabel}
       count={totalCount}
       error={error}
       TitleComponent={showLink ? Title : null}
@@ -347,7 +350,6 @@ type ResourceInventoryItemProps = {
   additionalResources?: { [key: string]: K8sResourceKind[] };
   mapper?: StatusGroupMapper;
   kind: K8sKind;
-  useAbbr?: boolean;
   isLoading: boolean;
   namespace?: string;
   error: boolean;

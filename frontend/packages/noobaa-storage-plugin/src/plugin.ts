@@ -302,7 +302,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Project/Dashboard/Inventory/Item',
     properties: {
       model: models.NooBaaObjectBucketClaimModel,
-      useAbbr: true,
       mapper: getObcStatusGroups,
     },
     flags: {

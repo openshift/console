@@ -57,8 +57,10 @@ describe('Check OCS Dashboards', () => {
             getPVCJSON('dummy-pvc', 'openshift-storage', 'ocs-storagecluster-ceph-rbd', '5Gi'),
           )}' | oc create -f -`,
         ).then(() => {
-          cy.byTestID('inventory-pvc').contains(`${(initialPVC + 1).toString()} PVC`);
-          cy.byTestID('inventory-pv').contains(`${(initialPVC + 1).toString()} PV`);
+          cy.byTestID('inventory-pvc').contains(
+            `${(initialPVC + 1).toString()} PersistentVolumeClaims`,
+          );
+          cy.byTestID('inventory-pv').contains(`${(initialPVC + 1).toString()} PersistentVolumes`);
         });
       });
   });

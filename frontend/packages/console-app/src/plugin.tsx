@@ -176,7 +176,6 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           '@console/shared/src/components/dashboard/inventory-card/utils' /* webpackChunkName: "console-app" */
         ).then((m) => m.getPVCStatusGroups),
-      useAbbr: true,
     },
   },
   {

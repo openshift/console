@@ -45,7 +45,6 @@ const ClusterInventoryItem = withDashboardResources<ClusterInventoryItemProps>(
     ({
       model,
       mapperLoader,
-      useAbbr,
       additionalResources,
       expandedComponent,
     }: ClusterInventoryItemProps) => {
@@ -99,7 +98,6 @@ const ClusterInventoryItem = withDashboardResources<ClusterInventoryItemProps>(
           kind={model}
           resources={resourceData}
           mapper={mapper}
-          useAbbr={useAbbr}
           additionalResources={additionalResourcesData}
           ExpandedComponent={expandedComponent ? ExpandedComponent : null}
         />
@@ -136,7 +134,6 @@ export const InventoryCard = () => {
             model={item.properties.model}
             mapperLoader={item.properties.mapper}
             additionalResources={item.properties.additionalResources}
-            useAbbr={item.properties.useAbbr}
             expandedComponent={item.properties.expandedComponent}
           />
         ))}
@@ -148,7 +145,6 @@ export const InventoryCard = () => {
 type ClusterInventoryItemProps = DashboardItemProps & {
   model: K8sKind;
   mapperLoader?: () => Promise<StatusGroupMapper>;
-  useAbbr?: boolean;
   additionalResources?: WatchK8sResources<any>;
   expandedComponent?: LazyLoader;
 };

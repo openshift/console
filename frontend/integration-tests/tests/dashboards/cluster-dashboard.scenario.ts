@@ -6,7 +6,7 @@ const inventoryItems = [
   { title: 'Node', link: '/k8s/cluster/nodes' },
   { title: 'Pod', link: '/k8s/all-namespaces/pods' },
   { title: 'StorageClass', link: '/k8s/cluster/storageclasses' },
-  { title: 'PVC', link: '/k8s/all-namespaces/persistentvolumeclaims' },
+  { title: 'PersistentVolumeClaim', link: '/k8s/all-namespaces/persistentvolumeclaims' },
 ];
 
 const utilizationItems = ['CPU', 'Memory', 'Filesystem', 'Network transfer', 'Pod count'];

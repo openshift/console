@@ -105,7 +105,6 @@ const InventoryCard: React.FC<DashboardItemProps> = ({
           isLoading={!pvcsLoaded}
           error={!!pvcsLoadError}
           kind={PersistentVolumeClaimModel}
-          useAbbr
           resources={getCephPVCs(filteredSCNames, pvcsData, pvsData)}
           mapper={getPVCStatusGroups}
           showLink={false}
@@ -115,7 +114,6 @@ const InventoryCard: React.FC<DashboardItemProps> = ({
           isLoading={!pvsLoaded}
           error={!!pvsLoadError}
           kind={PersistentVolumeModel}
-          useAbbr
           resources={getCephPVs(pvsData)}
           mapper={getPVStatusGroups}
           showLink={false}
