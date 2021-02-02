@@ -1,15 +1,17 @@
-import i18n from '@console/internal/i18n';
 import { confirmModal } from '@console/internal/components/modals/confirm-modal';
 
 const cloudShellConfirmationModal = (action) => {
   return confirmModal({
-    title: i18n.t('cloudshell~Close terminal?'),
-    message: i18n.t(
+    // t('cloudshell~Close terminal?')
+    // t('cloudshell~This will close the terminal session. Content in the terminal will not be restored on next session.')
+    // t('cloudshell~Yes')
+    // t('cloudshell~No')
+    titleKey: 'cloudshell~Close terminal?',
+    messageKey:
       'cloudshell~This will close the terminal session. Content in the terminal will not be restored on next session.',
-    ),
-    btnText: i18n.t('cloudshell~Yes'),
+    btnTextKey: 'cloudshell~Yes',
     submitDanger: true,
-    cancelText: i18n.t('cloudshell~No'),
+    cancelTextKey: 'cloudshell~No',
     executeFn: () => Promise.resolve(action()),
   });
 };
