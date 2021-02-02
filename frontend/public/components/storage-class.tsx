@@ -103,15 +103,15 @@ const StorageClassDetails: React.SFC<StorageClassDetailsProps> = ({ obj }) => {
       <div className="row">
         <div className="col-sm-6">
           <ResourceSummary resource={obj}>
-            <DetailsItem label="Provisioner" obj={obj} path="provisioner" />
+            <DetailsItem label={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_50')} obj={obj} path="provisioner" />
           </ResourceSummary>
         </div>
         <div className="col-sm-6">
           <dl className="co-m-pane__details">
-            <DetailsItem label="Reclaim Policy" obj={obj} path="reclaimPolicy" />
-            <dt>Default Class</dt>
+            <DetailsItem label={`${t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_51')}`} obj={obj} path="reclaimPolicy" />
+            <dt>{t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_52')}</dt>
             <dd>{isDefaultClass(obj).toString()}</dd>
-            <DetailsItem label="Volume Binding Mode" obj={obj} path="volumeBindingMode" />
+            <DetailsItem label={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_53')} obj={obj} path="volumeBindingMode" />
           </dl>
         </div>
       </div>
