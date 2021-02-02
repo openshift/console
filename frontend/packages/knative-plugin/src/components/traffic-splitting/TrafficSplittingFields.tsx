@@ -23,7 +23,11 @@ const TrafficSplittingFields: React.FC<Props> = ({ revisionItems, values }) => {
     <MultiColumnField
       name="trafficSplitting"
       addLabel={t('knative-plugin~Add Revision')}
-      headers={[{ name: 'Split', required: true }, 'Tag', { name: 'Revision', required: true }]}
+      headers={[
+        { name: t('knative-plugin~Split'), required: true },
+        t('knative-plugin~Tag'),
+        { name: t('knative-plugin~Revision'), required: true },
+      ]}
       emptyValues={{ percent: '', tag: '', revisionName: '' }}
       disableDeleteRow={values.trafficSplitting.length === 1}
       disableAddRow={values.trafficSplitting.length === size(revisionItems)}

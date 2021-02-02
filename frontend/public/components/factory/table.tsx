@@ -490,6 +490,7 @@ export type TableProps = {
   isPinned?: (val: any) => boolean;
   staticFilters?: any[];
   activeColumns?: Set<string>;
+  kinds?: string[];
 };
 
 type TablePropsFromState = {};

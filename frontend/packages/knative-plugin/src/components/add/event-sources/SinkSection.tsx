@@ -145,18 +145,19 @@ const SinkResources: React.FC<SinkResourcesProps> = ({ namespace, isMoveSink }) 
 };
 
 export const SinkUriResourcesGroup: React.FC<SinkResourcesProps> = ({ namespace, isMoveSink }) => {
+  const { t } = useTranslation();
   return (
     <RadioGroupField
       name="formData.sinkType"
       options={[
         {
-          label: sourceSinkType.Resource.label,
-          value: sourceSinkType.Resource.value,
+          label: sourceSinkType(t).Resource.label,
+          value: sourceSinkType(t).Resource.value,
           activeChildren: <SinkResources namespace={namespace} isMoveSink={isMoveSink} />,
         },
         {
-          label: sourceSinkType.Uri.label,
-          value: sourceSinkType.Uri.value,
+          label: sourceSinkType(t).Uri.label,
+          value: sourceSinkType(t).Uri.value,
           activeChildren: <SinkUri />,
         },
       ]}

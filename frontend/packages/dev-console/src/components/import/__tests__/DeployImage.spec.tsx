@@ -30,6 +30,8 @@ jest.mock('@console/shared/src/hooks/post-form-submit-action', () => {
   };
 });
 
+const i18ns = 'devconsole';
+
 describe('DeployImage Page Test', () => {
   type DeployImagePageProps = React.ComponentProps<typeof DeployImagePage>;
   let deployImagePageProps: DeployImagePageProps;
@@ -88,10 +90,12 @@ describe('Deploy Image Test', () => {
     expect(radioButtons.exists()).toBe(true);
     expect(radioButtons.length).toEqual(2);
     expect(radioButtons.at(0).prop('value')).toBe('external');
-    expect(radioButtons.at(0).prop('label')).toBe('Image name from external registry');
+    expect(radioButtons.at(0).prop('label')).toBe(`${i18ns}~Image name from external registry`);
     expect(radioButtons.at(0).prop('isChecked')).toBe(true);
     expect(radioButtons.at(1).prop('value')).toBe('internal');
-    expect(radioButtons.at(1).prop('label')).toBe('Image stream tag from internal registry');
+    expect(radioButtons.at(1).prop('label')).toBe(
+      `${i18ns}~Image stream tag from internal registry`,
+    );
     expect(radioButtons.at(1).prop('isChecked')).toBe(false);
   });
 

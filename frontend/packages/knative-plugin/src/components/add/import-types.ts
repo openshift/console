@@ -1,3 +1,4 @@
+import { TFunction } from 'i18next';
 import { CatalogItem } from '@console/plugin-sdk';
 import {
   EventSourceApiServerModel,
@@ -84,15 +85,17 @@ export enum SinkType {
 
 export const EVENT_SOURCES_APP = 'event-sources-app';
 
-export const sourceSinkType = {
-  Resource: {
-    value: SinkType.Resource,
-    label: 'Resource',
-  },
-  Uri: {
-    value: SinkType.Uri,
-    label: 'URI',
-  },
+export const sourceSinkType = (t: TFunction) => {
+  return {
+    Resource: {
+      value: SinkType.Resource,
+      label: t('knative-plugin~Resource'),
+    },
+    Uri: {
+      value: SinkType.Uri,
+      label: t('knative-plugin~URI'),
+    },
+  };
 };
 export interface AddChannelFormData {
   application: ApplicationData;

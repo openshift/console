@@ -11,8 +11,8 @@ const ServiceHeader = (t: TFunction) => () => {
       props: { className: tableColumnClasses[0] },
     },
     {
-      id: t('knative-plugin~namespace'),
-      title: 'Namespace',
+      id: 'namespace',
+      title: t('knative-plugin~Namespace'),
       sortField: 'metadata.namespace',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },

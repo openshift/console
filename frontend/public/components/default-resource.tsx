@@ -1,10 +1,20 @@
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import * as React from 'react';
 import * as classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { sortable } from '@patternfly/react-table';
 import { Conditions } from './conditions';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
-import { referenceFor, kindForReference } from '../module/k8s';
+import {
+  DetailsPage,
+  ListPage,
+  Table,
+  TableRow,
+  TableData,
+  RowFunction,
+  TableProps,
+} from './factory';
+import { referenceFor, kindForReference, K8sResourceKind } from '../module/k8s';
 import {
   Kebab,
   kindObj,
@@ -25,22 +35,22 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const TableHeader = () => {
+const TableHeader = (t: TFunction) => () => {
   return [
     {
-      title: 'Name',
+      title: t('public~Name'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: 'Namespace',
+      title: t('public~Namespace'),
       sortField: 'metadata.namespace',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Created',
+      title: t('public~Created'),
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
@@ -53,7 +63,13 @@ const TableHeader = () => {
 };
 TableHeader.displayName = 'TableHeader';
 
-const TableRowForKind = ({ obj, index, key, style, customData }) => {
+const TableRowForKind = (t: TFunction): RowFunction<K8sResourceKind> => ({
+  obj,
+  index,
+  key,
+  style,
+  customData,
+}) => {
   const kind = referenceFor(obj) || customData.kind;
   const menuActions = [...Kebab.getExtensionsActionsForKind(kindObj(kind)), ...common];
 
@@ -75,7 +91,7 @@ const TableRowForKind = ({ obj, index, key, style, customData }) => {
             title={obj.metadata.namespace}
           />
         ) : (
-          'None'
+          t('public~None')
         )}
       </TableData>
       <TableData className={tableColumnClasses[2]}>
@@ -88,50 +104,58 @@ const TableRowForKind = ({ obj, index, key, style, customData }) => {
   );
 };
 
-export const DetailsForKind = (kind) =>
-  function DetailsForKind_({ obj }) {
-    return (
-      <>
-        <div className="co-m-pane__body">
-          <SectionHeading text={`${kindForReference(kind)} Details`} />
-          <div className="row">
-            <div className="col-md-6">
-              <ResourceSummary
-                resource={obj}
-                podSelector="spec.podSelector"
-                showNodeSelector={false}
-              />
-            </div>
+type DetailsForKindProps = {
+  obj: K8sResourceKind;
+};
+
+export const DetailsForKind = (kind: string, t: TFunction): React.FC<DetailsForKindProps> => ({
+  obj,
+}) => {
+  return (
+    <>
+      <div className="co-m-pane__body">
+        <SectionHeading
+          text={t('public~{{kindReference}} details', { kindReference: kindForReference(kind) })}
+        />
+        <div className="row">
+          <div className="col-md-6">
+            <ResourceSummary
+              resource={obj}
+              podSelector="spec.podSelector"
+              showNodeSelector={false}
+            />
           </div>
         </div>
-        {_.isArray(obj?.status?.conditions) && (
-          <div className="co-m-pane__body">
-            <SectionHeading text="Conditions" />
-            <Conditions conditions={obj.status.conditions} />
-          </div>
-        )}
-      </>
-    );
-  };
+      </div>
+      {_.isArray(obj?.status?.conditions) && (
+        <div className="co-m-pane__body">
+          <SectionHeading text={t('public~Conditions')} />
+          <Conditions conditions={obj.status.conditions} />
+        </div>
+      )}
+    </>
+  );
+};
 
-export const DefaultList = (props) => {
+export const DefaultList: React.FC<TableProps> = (props) => {
+  const { t } = useTranslation();
   const { kinds } = props;
 
   return (
     <Table
       {...props}
-      aria-label="Default Resource"
+      aria-label={t('public~Default Resource')}
       kinds={[kinds[0]]}
       customData={{ kind: kinds[0] }}
-      Header={TableHeader}
-      Row={TableRowForKind}
+      Header={TableHeader(t)}
+      Row={TableRowForKind(t)}
       virtualize
     />
   );
 };
 DefaultList.displayName = 'DefaultList';
 
-export const DefaultPage = (props) => (
+export const DefaultPage: React.FC<React.ComponentProps<typeof ListPage>> = (props) => (
   <ListPage
     {...props}
     ListComponent={DefaultList}
@@ -140,8 +164,9 @@ export const DefaultPage = (props) => (
 );
 DefaultPage.displayName = 'DefaultPage';
 
-export const DefaultDetailsPage = (props) => {
-  const pages = [navFactory.details(DetailsForKind(props.kind)), navFactory.editYaml()];
+export const DefaultDetailsPage: React.FC<React.ComponentProps<typeof DetailsPage>> = (props) => {
+  const { t } = useTranslation();
+  const pages = [navFactory.details(DetailsForKind(props.kind, t)), navFactory.editYaml()];
   const menuActions = [...Kebab.getExtensionsActionsForKind(kindObj(props.kind)), ...common];
 
   return <DetailsPage {...props} menuActions={menuActions} pages={pages} />;
