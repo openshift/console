@@ -21,13 +21,17 @@ const EventingListPage: React.FC<EventingListPageProps> = ({ match }) => {
     params: { ns: namespace },
   } = match;
   const [showTitle, canCreate] = [false, false];
+  const nsSelected = namespace || 'default';
   const menuActions: MenuActions = {
     eventSource: {
       label: t('knative-plugin~Event Source'),
-      onSelection: () => `/catalog/ns/${namespace}?catalogType=EventSource`,
+      onSelection: () => `/catalog/ns/${nsSelected}?catalogType=EventSource`,
     },
     brokers: { label: t('knative-plugin~Broker'), model: EventingBrokerModel },
-    channels: { label: t('knative-plugin~Channel'), onSelection: () => `/channel/ns/${namespace}` },
+    channels: {
+      label: t('knative-plugin~Channel'),
+      onSelection: () => `/channel/ns/${nsSelected}`,
+    },
   };
   const pages: Page[] = [
     {
