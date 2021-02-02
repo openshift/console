@@ -6,7 +6,7 @@ import {
   ServiceAccountModel,
 } from '@console/internal/models';
 import { ObjectWithTypePropertyWrapper } from '../common/object-with-type-property-wrapper';
-import { V1Volume } from '../../../types/vm/disk/V1Volume';
+import { V1Volume, V1LocalObjectReference } from '../../../types/api';
 import { VolumeType } from '../../../constants/vm/storage';
 import {
   getVolumeContainerImage,
@@ -14,7 +14,6 @@ import {
   getVolumePersistentVolumeClaimName,
 } from '../../../selectors/vm/volume';
 import { DataVolumeModel } from '../../../models';
-import { V1LocalObjectReference } from '../../../types/vm/disk/V1LocalObjectReference';
 import * as _ from 'lodash';
 
 export type VolumeReferencedObject = {

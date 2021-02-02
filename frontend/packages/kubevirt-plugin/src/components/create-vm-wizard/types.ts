@@ -2,10 +2,7 @@ import { ConfigMapKind, PersistentVolumeClaimKind } from '@console/internal/modu
 import { V1Network, V1NetworkInterface } from '../../types/vm';
 import { IDReferences } from '../../utils/redux/id-reference';
 import { UINetworkEditConfig, UINetworkInterfaceValidation } from '../../types/ui/nic';
-import { V1Disk } from '../../types/vm/disk/V1Disk';
-import { V1Volume } from '../../types/vm/disk/V1Volume';
-import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
-import { V1PersistentVolumeClaim } from '../../types/vm/disk/V1PersistentVolumeClaim';
+import { V1Disk, V1PersistentVolumeClaim, V1alpha1DataVolume, V1Volume } from '../../types/api';
 import { UIStorageEditConfig, UIStorageValidation } from '../../types/ui/storage';
 import { VMWizardInitialData } from '../../types/url';
 

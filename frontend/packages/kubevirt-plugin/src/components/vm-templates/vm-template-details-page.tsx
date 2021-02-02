@@ -17,7 +17,7 @@ import { match as routerMatch } from 'react-router';
 import { menuActionsCreator } from './menu-actions';
 import { useSupportModal } from '../../hooks/use-support-modal';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
+import { V1alpha1DataVolume } from '../../types/api';
 import { useBaseImages } from '../../hooks/use-base-images';
 import { DataVolumeModel } from '../../models';
 import { isCommonTemplate } from '../../selectors/vm-template/basic';

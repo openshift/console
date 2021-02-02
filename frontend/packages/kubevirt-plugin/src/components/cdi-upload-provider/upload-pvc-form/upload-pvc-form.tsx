@@ -59,7 +59,7 @@ import {
   TemplateModel,
 } from '@console/internal/models';
 import { getName, getNamespace } from '@console/shared';
-import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
+import { V1alpha1DataVolume } from '../../../types/api';
 import { getTemplateOperatingSystems } from '../../../selectors/vm-template/advanced';
 import { FormSelectPlaceholderOption } from '../../form/form-select-placeholder-option';
 import {

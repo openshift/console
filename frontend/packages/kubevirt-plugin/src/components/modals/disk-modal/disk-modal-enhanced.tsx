@@ -24,9 +24,7 @@ import { getUpdateDiskPatches } from '../../../k8s/patches/vm/vm-disk-patches';
 import { CombinedDiskFactory } from '../../../k8s/wrapper/vm/combined-disk';
 import { DiskModal } from './disk-modal';
 import { TemplateValidations } from '../../../utils/validations/template/template-validations';
-import { V1Disk } from '../../../types/vm/disk/V1Disk';
-import { V1Volume } from '../../../types/vm/disk/V1Volume';
-import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
+import { V1Disk, V1Volume, V1alpha1DataVolume } from '../../../types/api';
 import { useStorageClassConfigMapWrapped } from '../../../hooks/storage-class-config-map';
 import { isTemplate } from '../../../selectors/check-type';
 

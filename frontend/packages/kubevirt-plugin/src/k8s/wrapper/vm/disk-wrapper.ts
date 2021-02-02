@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { ObjectWithTypePropertyWrapper } from '../common/object-with-type-property-wrapper';
-import { V1Disk } from '../../../types/vm/disk/V1Disk';
+import { V1Disk } from '../../../types/api';
 import { DiskType, DiskBus } from '../../../constants/vm/storage';
 
 type CombinedTypeData = {

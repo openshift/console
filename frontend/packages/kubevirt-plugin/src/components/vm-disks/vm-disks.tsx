@@ -16,7 +16,7 @@ import { getResource, getLoadedData } from '../../utils';
 import { wrapWithProgress } from '../../utils/utils';
 import { diskModalEnhanced } from '../modals/disk-modal/disk-modal-enhanced';
 import { CombinedDiskFactory } from '../../k8s/wrapper/vm/combined-disk';
-import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
+import { V1alpha1DataVolume } from '../../types/api';
 import { StorageBundle } from './types';
 import { DiskRow } from './disk-row';
 import { diskTableColumnClasses } from './utils';

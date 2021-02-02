@@ -1,4 +1,4 @@
-import { V1PersistentVolumeClaim } from '../../../types/vm/disk/V1PersistentVolumeClaim';
+import { V1PersistentVolumeClaim } from '../../../types/api';
 import {
   getPvcAccessModes,
   getPvcStorageClassName,

@@ -1,6 +1,6 @@
 import { DeviceType } from '../constants';
 import { V1NetworkInterface } from './vm';
-import { V1Disk } from './vm/disk/V1Disk';
+import { V1Disk } from './api';
 
 export type BootableDeviceType = {
   type: DeviceType;

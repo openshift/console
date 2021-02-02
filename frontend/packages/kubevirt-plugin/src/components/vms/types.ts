@@ -7,7 +7,7 @@ import {
 import { VMIKind, VMKind } from '../../types/vm';
 import { VMGenericLikeEntityKind, VMILikeEntityKind } from '../../types/vmLike';
 import { VMImportKind } from '../../types/vm-import/ovirt/vm-import';
-import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
+import { V1alpha1DataVolume } from '../../types/api';
 
 type PendingChange = {
   isPendingChange: boolean;

@@ -55,7 +55,7 @@ import {
   VMI_WAITING_MESSAGE,
 } from '../../strings/vm/status';
 import { CONVERSION_PROGRESS_ANNOTATION } from '../../constants/v2v';
-import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
+import { V1alpha1DataVolume } from '../../types/api';
 import { VMIPhase } from '../../constants/vmi/phase';
 import { PAUSED_VM_MODAL_MESSAGE } from '../../strings/vm/messages';
 

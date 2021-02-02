@@ -26,7 +26,7 @@ import { getVMStatus } from '../../statuses/vm/vm-status';
 import { isVMIPaused } from '../../selectors/vmi';
 import { unpauseVMI } from '../../k8s/requests/vmi/actions';
 import { VMImportKind } from '../../types/vm-import/ovirt/vm-import';
-import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
+import { V1alpha1DataVolume } from '../../types/api';
 import { VMStatusBundle } from '../../statuses/vm/types';
 import { confirmVMIModal } from '../modals/menu-actions-modals/confirm-vmi-modal';
 import { deleteVMModal } from '../modals/menu-actions-modals/delete-vm-modal';

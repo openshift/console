@@ -18,13 +18,12 @@ import { findKeySuffixValue, getSimpleName, getValueByPrefix } from '../utils';
 import { getAnnotations, getLabels } from '../selectors';
 import { NetworkWrapper } from '../../k8s/wrapper/vm/network-wrapper';
 import { getDataVolumeStorageClassName, getDataVolumeStorageSize } from '../dv/selectors';
-import { V1Disk } from '../../types/vm/disk/V1Disk';
+import { V1Disk, V1Volume } from '../../types/api';
 import {
   getVolumeCloudInitNoCloud,
   getVolumeContainerImage,
   getVolumePersistentVolumeClaimName,
 } from './volume';
-import { V1Volume } from '../../types/vm/disk/V1Volume';
 import { VMGenericLikeEntityKind } from '../../types/vmLike';
 import { RunStrategy, StateChangeRequest } from '../../constants/vm/vm';
 import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';

@@ -1,5 +1,5 @@
 import { PersistentVolumeClaimKind, PodKind, TemplateKind } from '@console/internal/module/k8s';
-import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
+import { V1alpha1DataVolume } from '../../types/api';
 
 export enum SOURCE_TYPE {
   BASE_IMAGE = 'BASE_IMAGE',

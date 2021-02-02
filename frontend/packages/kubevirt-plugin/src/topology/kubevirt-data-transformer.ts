@@ -19,7 +19,7 @@ import { VMIKind, VMKind } from '../types';
 import { VirtualMachineModel } from '../models';
 import { TYPE_VIRTUAL_MACHINE } from './components/const';
 import { getVMStatus } from '../statuses/vm/vm-status';
-import { V1alpha1DataVolume } from '../types/vm/disk/V1alpha1DataVolume';
+import { V1alpha1DataVolume } from '../types/api';
 import { VMImportKind } from '../types/vm-import/ovirt/vm-import';
 import { VMNodeData } from './types';
 

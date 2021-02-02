@@ -73,7 +73,7 @@ import { vmiMenuActions, vmImportMenuActions, vmMenuActions } from './menu-actio
 import { VMILikeEntityKind } from '../../types/vmLike';
 import { VMImportKind } from '../../types/vm-import/ovirt/vm-import';
 import { VMStatusBundle } from '../../statuses/vm/types';
-import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
+import { V1alpha1DataVolume } from '../../types/api';
 import { VMImportWrappper } from '../../k8s/wrapper/vm-import/vm-import-wrapper';
 import { getVMImportStatusAsVMStatus } from '../../statuses/vm-import/vm-import-status';
 import { V2VVMImportStatus } from '../../constants/v2v-import/ovirt/v2v-vm-import-status';

@@ -13,7 +13,7 @@ import { VMStatusSimpleLabel } from '../../../constants/vm/vm-status';
 import { StatusSimpleLabel } from '../../../constants/status-constants';
 import { VMImportWrappper } from '../../../k8s/wrapper/vm-import/vm-import-wrapper';
 import { getVMImportStatus } from '../../../statuses/vm-import/vm-import-status';
-import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
+import { V1alpha1DataVolume } from '../../../types/api';
 import { isVM, isVMImport } from '../../../selectors/check-type';
 import { getBasicID } from '../../../utils';
 

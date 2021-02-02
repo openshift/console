@@ -5,7 +5,7 @@ import { ResourceLink } from '@console/internal/components/utils';
 import { PodModel } from '@console/internal/models';
 import { PodKind } from '@console/internal/module/k8s';
 
-import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
+import { V1alpha1DataVolume } from '../../types/api';
 import { DataVolumeWrapper } from '../../k8s/wrapper/vm/data-volume-wrapper';
 import { DataVolumeSourceType } from '../../constants/vm';
 import { UploadPVCPopover } from '../cdi-upload-provider/upload-pvc-popover';

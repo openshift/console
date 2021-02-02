@@ -7,7 +7,7 @@ import { PersistentVolumeClaimModel, PodModel } from '@console/internal/models';
 import { PersistentVolumeClaimKind, PodKind, TemplateKind } from '@console/internal/module/k8s';
 import { getParameterValue } from '../selectors/selectors';
 import { TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER } from '../constants';
-import { V1alpha1DataVolume } from '../types/vm/disk/V1alpha1DataVolume';
+import { V1alpha1DataVolume } from '../types/api';
 import { DataVolumeModel } from '../models';
 
 type BaseImages = [PersistentVolumeClaimKind[], boolean, any, V1alpha1DataVolume[], PodKind[]];

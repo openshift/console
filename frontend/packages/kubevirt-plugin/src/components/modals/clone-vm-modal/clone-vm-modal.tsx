@@ -42,7 +42,7 @@ import {
 import { Errors } from '../../errors/errors';
 import { COULD_NOT_LOAD_DATA } from '../../../utils/strings';
 import { ConfigurationSummary } from './configuration-summary';
-import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
+import { V1alpha1DataVolume } from '../../../types/api';
 
 import './_clone-vm-modal.scss';
 

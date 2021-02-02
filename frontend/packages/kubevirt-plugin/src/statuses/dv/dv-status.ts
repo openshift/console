@@ -2,7 +2,7 @@ import { PodKind } from '@console/internal/module/k8s';
 import { DataVolumeSourceType } from '../../constants';
 import { DataVolumeWrapper } from '../../k8s/wrapper/vm/data-volume-wrapper';
 import { getPodStatusPhase } from '../../selectors/pod/selectors';
-import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
+import { V1alpha1DataVolume } from '../../types/api';
 import {
   getPodStatus,
   POD_PHASE_PENDING,

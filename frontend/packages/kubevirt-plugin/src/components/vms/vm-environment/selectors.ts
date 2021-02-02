@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { SOURCES, EnvDisk } from './types';
-import { V1Volume } from '../../../types/vm/disk/V1Volume';
+import { V1Volume, V1Disk } from '../../../types/api';
 import {
   configMapKind,
   configMapRef,
@@ -17,7 +17,6 @@ import {
   SecretKind,
   ServiceAccountKind,
 } from '@console/internal/module/k8s';
-import { V1Disk } from '../../../types/vm/disk/V1Disk';
 import { VMWrapper } from '../../../k8s/wrapper/vm/vm-wrapper';
 import { VolumeWrapper } from '../../../k8s/wrapper/vm/volume-wrapper';
 

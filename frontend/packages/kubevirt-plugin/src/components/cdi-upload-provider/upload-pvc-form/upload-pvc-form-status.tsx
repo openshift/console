@@ -27,7 +27,7 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { DataUpload } from '../cdi-upload-provider';
 import { getProgressVariant } from '../upload-pvc-popover';
 import { killUploadPVC } from '../../../k8s/requests/cdi-upload/cdi-upload-requests';
-import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
+import { V1alpha1DataVolume } from '../../../types/api';
 import { UPLOAD_STATUS } from '../consts';
 
 export enum uploadErrorType {

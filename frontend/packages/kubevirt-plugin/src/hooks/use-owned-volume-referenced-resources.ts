@@ -2,7 +2,7 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import { K8sResourceCommon, OwnerReference } from '@console/internal/module/k8s';
-import { V1Volume } from '../types/vm/disk/V1Volume';
+import { V1Volume } from '../types/api';
 import { VolumeReferencedObject, VolumeWrapper } from '../k8s/wrapper/vm/volume-wrapper';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { getOwnerReferences } from '@console/shared/src';
