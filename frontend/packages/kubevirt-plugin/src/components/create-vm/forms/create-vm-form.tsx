@@ -223,7 +223,11 @@ export const CreateVMForm: React.FC<CreateVMFormProps> = ({
               title={useProjects ? t('kubevirt-plugin~Project') : t('kubevirt-plugin~Namespace')}
               isRequired
             >
-              <ProjectDropdown onChange={onNamespaceChange} project={namespace} />
+              <ProjectDropdown
+                onChange={onNamespaceChange}
+                project={namespace}
+                id="project-dropdown"
+              />
             </FormRow>
           )}
           <FormRow

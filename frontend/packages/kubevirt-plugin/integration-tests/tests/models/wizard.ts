@@ -1,5 +1,5 @@
 /* eslint-disable no-await-in-loop */
-import { browser, ExpectedConditions as until } from 'protractor';
+import { browser, ExpectedConditions as until, element, by } from 'protractor';
 import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
 import { clickNavLink } from '@console/internal-integration-tests/views/sidenav.view';
 import { click, fillInput, asyncForEach } from '@console/shared/src/test-utils/utils';
@@ -117,6 +117,13 @@ export class Wizard {
 
   async fillProvider(provider: string) {
     await fillInput(view.providerInput, provider);
+  }
+
+  async selectNamespace(namespace: string) {
+    await selectItemFromDropdown(
+      $('#project-dropdown'),
+      element(by.cssContainingText('.pf-c-dropdown__menu-item', namespace)),
+    );
   }
 
   async selectOperatingSystem(operatingSystem: string) {
@@ -315,11 +322,14 @@ export class Wizard {
   }
 
   async processReviewAndCreate(data: VMBuilderData) {
-    const { name, startOnCreation } = data;
+    const { name, namespace, startOnCreation } = data;
+    if (namespace) {
+      await this.selectNamespace(namespace);
+    }
+
     if (name) {
       await this.fillName(name);
     }
-
     await this.startOnCreation(startOnCreation);
     await this.confirmAndCreate();
   }

@@ -30,8 +30,7 @@ describe('Create VM from Template using wizard', () => {
   const wizard = new Wizard();
   const VMTemplateTestCaseIDs = {
     'ID(CNV-871)': VMTemplatePresets[ProvisionSource.CONTAINER.getValue()],
-    // It's odd the rootdisk is empty even with a PVC selected.
-    // 'ID(CNV-4095)': VMTemplatePresets[ProvisionSource.DISK.getValue()],
+    'ID(CNV-4095)': VMTemplatePresets[ProvisionSource.DISK.getValue()],
     'ID(CNV-1503)': VMTemplatePresets[ProvisionSource.URL.getValue()],
     'ID(CNV-4094)': VMTemplatePresets[ProvisionSource.PXE.getValue()],
   };
@@ -125,13 +124,13 @@ describe('Create VM from Template using wizard', () => {
       deleteResource(vm.asResource());
     });
 
-    // it's odd the create button not working in automation.
-    xit('ID(CNV-4202) Creates VM using VM Template actions dropdown ', async () => {
+    it('ID(CNV-4202) Creates VM using VM Template actions dropdown ', async () => {
       vm = new VMBuilder()
         .setName('vm-from-vmt-detail')
         .setNamespace(testName)
         .setFlavor(flavorConfigs.Tiny)
         .setTemplate(vmTemplate.name)
+        .setProvisionSource(ProvisionSource.URL)
         .build();
 
       await vmTemplate.action(VMT_ACTION.Create);
