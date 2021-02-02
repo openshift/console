@@ -19,7 +19,7 @@ import { getWorkloadResources } from '../transform-utils';
 const namespace = 'test-project';
 
 jest.mock('git-url-parse', () => ({
-  default: jest.fn(() => ({ source: 'github.com', owner: 'openshift', name: 'console' })),
+  default: jest.fn(() => ({ resource: 'github.com', owner: 'openshift', name: 'console' })),
 }));
 
 function getTransformedTopologyData(
