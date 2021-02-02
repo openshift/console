@@ -642,7 +642,7 @@ export const ClusterServiceVersionsPage: React.FC<ClusterServiceVersionsPageProp
       ...(clusterServiceVersions?.data ?? []),
       ...(subscriptions?.data ?? []).filter(
         (sub) =>
-          ['', sub.metadata.namespace].includes(props.namespace) &&
+          ['', sub.metadata.namespace].includes(props.namespace || '') &&
           _.isNil(_.get(sub, 'status.installedCSV')),
       ),
     ].filter(
