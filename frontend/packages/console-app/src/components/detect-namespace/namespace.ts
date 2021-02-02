@@ -50,7 +50,7 @@ export const useValuesForNamespaceContext = () => {
   // Keep namespace in sync with redux.
   React.useEffect(() => {
     // Url namespace overrides everything. We don't need to wait for loaded
-    if (urlNamespace && !favoriteLoaded && !lastNamespaceLoaded) {
+    if (urlNamespace) {
       dispatch(setActiveNamespace(urlNamespace));
     }
     // Automatically sets favorited or latest namespace as soon as
