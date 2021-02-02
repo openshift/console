@@ -21,7 +21,7 @@ const ServiceBrokerDetails: React.FC<ServiceBrokerDetailsProps> = ({ obj: servic
         <SectionHeading text="Service Broker Details" />
         <div className="row">
           <div className="col-md-6">
-            <ResourceSummary resource={serviceBroker} showPodSelector showNodeSelector></ResourceSummary>
+            <ResourceSummary resource={serviceBroker} showAnnotations={false} showOwner={false}></ResourceSummary>
           </div>
           <div className="col-md-6">
             <dl className="co-m-pane__details">

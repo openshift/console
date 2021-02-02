@@ -5,33 +5,24 @@ import { sortable } from '@patternfly/react-table';
 
 import { K8sKind } from '../../module/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from '../factory';
-import { FirehoseResult } from '@console/internal/components/utils';
-import { Kebab, KebabAction, detailsPage, Timestamp, navFactory, ResourceLink, ResourceSummary, SectionHeading, Firehose } from '../utils';
-import { PipelineModel, PipelineRunModel, TaskModel, ClusterTaskModel } from '../../models';
+import { Kebab, KebabAction, detailsPage, Timestamp, navFactory, ResourceLink, ResourceSummary, SectionHeading } from '../utils';
+import { PipelineModel, TaskModel, ClusterTaskModel } from '../../models';
 import PipelineVisualization from '../../../packages/dev-console/src/components/pipelines/detail-page-tabs/pipeline-details/PipelineVisualization';
 import DynamicResourceLinkList from '../../../packages/dev-console/src/components/pipelines/resource-overview/DynamicResourceLinkList';
-import { Pipeline, PipelineRun } from './utils/pipeline-augment';
+import { Pipeline } from './utils/pipeline-augment';
 import { PipelineForm, PipelineParametersForm, PipelineResourcesForm, parametersValidationSchema, resourcesValidationSchema } from '../../../packages/dev-console/src/components/pipelines/detail-page-tabs';
 import { addTrigger } from '../../../packages/dev-console/src/utils/pipeline-actions';
 import { PipelineRunsPage } from './pipeline-run';
-import { pipelineRunStatus } from './utils/pipeline-filter-reducer';
-import LinkedPipelineRunTaskStatus from './pipelineruns/linked-pipeline-run-task-status';
 import PipelineRowKebabActions from './pipelines/pipeline-row-kebab-actions';
-import { Status } from '@console/shared';
-//import { LoadingInline } from '@console/internal/components/utils';
 
 export const menuActions: KebabAction[] = [addTrigger, ...Kebab.getExtensionsActionsForKind(PipelineModel), ...Kebab.factory.common];
 
 const kind = PipelineModel.kind;
-const pipelineRunKind = PipelineRunModel.kind;
 
 const tableColumnClasses = [
-  'col-lg-2 col-md-3 col-sm-4 col-xs-4', // name
-  'col-lg-2 col-md-3 col-sm-3 col-xs-3', // namespace
-  'col-lg-2 col-md-4 col-sm-5 col-xs-5', // last run
-  'col-lg-2 col-md-2 hidden-sm hidden-xs', // task status
-  'col-lg-2 hidden-md hidden-sm hidden-xs', // last run status
-  'col-lg-2 hidden-md hidden-sm hidden-xs', // last run time
+  'col-xs-6 col-sm-4', // name
+  'col-xs-6 col-sm-4', // namespace
+  'col-sm-4 hidden-xs', // created
   Kebab.columnClass,
 ];
 
@@ -50,75 +41,19 @@ const PipelineTableHeader = () => {
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Last Run',
-      sortField: 'latestRun.metadata.name',
+      title: 'Created',
+      sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'Task Status',
-      sortField: 'latestRun.status.succeededCondition',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[3] },
-    },
-    {
-      title: 'Last Run Status',
-      sortField: 'latestRun.status.succeededCondition',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[4] },
-    },
-    {
-      title: 'Last Run Time',
-      sortField: 'latestRun.status.completionTime',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[5] },
-    },
-    {
       title: '',
-      props: { className: tableColumnClasses[6] },
+      props: { className: tableColumnClasses[3] },
     },
   ];
 };
 
 PipelineTableHeader.displayName = 'PipelineTableHeader';
-
-type LatestRunRowProps = {
-  resource?: FirehoseResult<PipelineRun[]>;
-  pipeline: Pipeline;
-};
-
-const LatestRunRow: React.FC<LatestRunRowProps> = ({ pipeline, resource }) => {
-  const latestPipelineRun = resource.loaded && resource.data.sort((a, b) => a.status.completionTime > b.status.completionTime ? -1 : 1)[0];
-  return <>
-    <TableData className={tableColumnClasses[2]}>
-      {latestPipelineRun?.metadata?.name ? (
-        <ResourceLink
-          kind={pipelineRunKind}
-          name={latestPipelineRun.metadata.name}
-          namespace={latestPipelineRun.metadata.namespace}
-        />
-      ) : ('-')}
-    </TableData>
-    <TableData className={tableColumnClasses[3]}>
-      {latestPipelineRun ? (
-        <LinkedPipelineRunTaskStatus pipeline={pipeline} pipelineRun={latestPipelineRun} />
-      ) : ('-')}
-    </TableData>
-    <TableData className={tableColumnClasses[4]}>
-      {latestPipelineRun ? (<Status status={pipelineRunStatus(latestPipelineRun)} />
-      ) : ('-')
-      }
-    </TableData>
-    <TableData className={tableColumnClasses[5]}>
-      {latestPipelineRun?.status?.completionTime ? (
-        <Timestamp timestamp={latestPipelineRun.status.completionTime} />
-      ) : ('-')}
-    </TableData>
-    <TableData className={tableColumnClasses[6]}>
-      <PipelineRowKebabActions pipeline={pipeline} pipelineRun={latestPipelineRun}/>
-    </TableData>
-  </>
-};
 
 const PipelineTableRow: RowFunction<Pipeline> = ({ obj: pipeline, index, key, style }) => {
   return (
@@ -129,16 +64,12 @@ const PipelineTableRow: RowFunction<Pipeline> = ({ obj: pipeline, index, key, st
       <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
         <ResourceLink kind="Namespace" name={pipeline.metadata?.namespace} title={pipeline.metadata?.namespace} />
       </TableData>
-      <Firehose resources={[{
-        namespace: pipeline.metadata?.namespace,
-        kind: PipelineRunModel.kind,
-        selector: { 'tekton.dev/pipeline': pipeline.metadata.name, },
-        isList: true,
-        prop: 'resource',
-
-      }]}>
-        <LatestRunRow pipeline={pipeline} />
-      </Firehose>
+      <TableData className={tableColumnClasses[2]}>
+        <Timestamp timestamp={pipeline.metadata.creationTimestamp} />
+      </TableData>
+      <TableData className={tableColumnClasses[3]}>
+        <PipelineRowKebabActions pipeline={pipeline} />
+      </TableData>
     </TableRow>
   );
 };
