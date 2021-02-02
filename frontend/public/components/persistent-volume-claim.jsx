@@ -241,9 +241,6 @@ export const PersistentVolumeClaimsList = (props) => {
 };
 
 export const PersistentVolumeClaimsPage = (props) => {
-  const createProps = {
-    to: `/k8s/ns/${props.namespace || 'default'}/persistentvolumeclaims/~new/form`,
-  };
   const { t } = useTranslation();
   return (
     <ListPage
@@ -254,7 +251,6 @@ export const PersistentVolumeClaimsPage = (props) => {
       createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:MSG_LNB_MENU_52') })} 
       canCreate={true}
       rowFilters={filters}
-      createProps={createProps}
     />
   );
 };
