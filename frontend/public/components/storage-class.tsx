@@ -135,10 +135,6 @@ StorageClassList.displayName = 'StorageClassList';
 export const StorageClassPage: React.SFC<StorageClassPageProps> = (props) => {
   const { t } = useTranslation();
 
-  const createProps = {
-    to: '/k8s/cluster/storageclasses/~new/form',
-  };
-
   return (
     <ListPage
       {..._.omit(props, 'mock')}
@@ -148,7 +144,6 @@ export const StorageClassPage: React.SFC<StorageClassPageProps> = (props) => {
       ListComponent={StorageClassList}
       canCreate={true}
       filterLabel={props.filterLabel}
-      createProps={createProps}
     />
   );
 };
