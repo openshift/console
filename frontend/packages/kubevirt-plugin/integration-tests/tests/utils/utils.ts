@@ -304,3 +304,11 @@ export function uploadOSImage(
     `virtctl image-upload dv ${dv} --image-path=${imagePath} --size=1Gi --storage-class=${STORAGE_CLASS} --access-mode=${accessMode} --block-volume=${volumeMode} -n ${ns} --insecure`,
   );
 }
+
+export function getCommonTemplateName(os: string): string {
+  return execSync(
+    `kubectl get template -n openshift -l template.kubevirt.io/default-os-variant | grep ${os} | awk -F ' ' '{print $1}'`,
+  )
+    .toString()
+    .trim();
+}

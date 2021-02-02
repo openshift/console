@@ -52,5 +52,5 @@ export const WIN10_PVC: PVCData = {
 };
 
 export enum PVC_ACTION {
-  Delete = 'Delete Persistent Volume Claim',
+  Delete = 'Delete PersistentVolumeClaim',
 }
