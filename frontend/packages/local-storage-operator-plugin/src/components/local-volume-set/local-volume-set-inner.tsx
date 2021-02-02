@@ -53,8 +53,17 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = ({
     dispatch({ type: 'setShowNodesListOnLVS', value: !state.showNodesListOnLVS });
   };
 
-  const validMaxDiskSize = /^\+?([1-9]\d*)$/.test(state.maxDiskSize || '1');
-  const validMaxDiskLimit = /^\+?([1-9]\d*)$/.test(state.maxDiskLimit || '1');
+  const INTEGER_MAX_REGEX = /^\+?([1-9]\d*)$/;
+  const INTEGER_MIN_REGEX = /^\+?([0-9]\d*)$/;
+  const [activeMinDiskSize, setMinActiveState] = React.useState(false);
+  const [activeMaxDiskSize, setMaxActiveState] = React.useState(false);
+  const validMinDiskSize = INTEGER_MIN_REGEX.test(state.minDiskSize || '1');
+  const validMaxDiskSize = INTEGER_MAX_REGEX.test(state.maxDiskSize || '1');
+  const validMaxDiskLimit = INTEGER_MAX_REGEX.test(state.maxDiskLimit || '1');
+  const invalidMinGreaterThanMax =
+    state.minDiskSize !== '' &&
+    state.maxDiskSize !== '' &&
+    Number(state.minDiskSize) > Number(state.maxDiskSize);
 
   return (
     <>
@@ -193,14 +202,32 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = ({
               fieldId="create-lvs-min-disk-size"
               className="lso-create-lvs__disk-size-form-group-max-min-input"
             >
-              <TextInput
-                type={TextInputTypes.number}
-                id="create-lvs-min-disk-size"
-                value={state.minDiskSize}
-                onChange={(size: string) => {
-                  dispatch({ type: 'setMinDiskSize', value: size });
-                }}
-              />
+              <Tooltip
+                content={
+                  !validMinDiskSize
+                    ? 'Please enter a positive Integer'
+                    : 'Please enter a value less than or equal to max disk size'
+                }
+                isVisible={!validMinDiskSize || (invalidMinGreaterThanMax && activeMinDiskSize)}
+                trigger="manual"
+              >
+                <TextInput
+                  type={TextInputTypes.text}
+                  id="create-lvs-min-disk-size"
+                  value={state.minDiskSize}
+                  validated={
+                    !validMinDiskSize || (invalidMinGreaterThanMax && activeMinDiskSize)
+                      ? 'error'
+                      : 'default'
+                  }
+                  className="lso-create-lvs__disk-input"
+                  onFocus={() => setMinActiveState(true)}
+                  onBlur={() => setMinActiveState(false)}
+                  onChange={(size: string) => {
+                    dispatch({ type: 'setMinDiskSize', value: size });
+                  }}
+                />
+              </Tooltip>
             </FormGroup>
             <div>-</div>
             <FormGroup
@@ -209,16 +236,26 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = ({
               className="lso-create-lvs__disk-size-form-group-max-min-input"
             >
               <Tooltip
-                content="Please enter a positive Integer"
-                isVisible={!validMaxDiskSize}
+                content={
+                  !validMaxDiskSize
+                    ? 'Please enter a positive Integer'
+                    : 'Please enter a value greater than or equal to min disk size'
+                }
+                isVisible={!validMaxDiskSize || (invalidMinGreaterThanMax && activeMaxDiskSize)}
                 trigger="manual"
               >
                 <TextInput
-                  type={TextInputTypes.number}
+                  type={TextInputTypes.text}
                   id="create-lvs-max-disk-size"
                   value={state.maxDiskSize}
-                  validated={validMaxDiskSize ? 'default' : 'error'}
-                  className="lso-create-lvs__disk-size-form-group-max-input"
+                  validated={
+                    !validMaxDiskSize || (invalidMinGreaterThanMax && activeMaxDiskSize)
+                      ? 'error'
+                      : 'default'
+                  }
+                  className="lso-create-lvs__disk-input"
+                  onFocus={() => setMaxActiveState(true)}
+                  onBlur={() => setMaxActiveState(false)}
                   onChange={(value) => dispatch({ type: 'setMaxDiskSize', value })}
                 />
               </Tooltip>
@@ -246,10 +283,11 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = ({
             trigger="manual"
           >
             <TextInput
-              type={TextInputTypes.number}
+              type={TextInputTypes.text}
               id="create-lvs-max-disk-limit"
               value={state.maxDiskLimit}
               validated={validMaxDiskLimit ? 'default' : 'error'}
+              className="lso-create-lvs__disk-input"
               onChange={(maxLimit) => dispatch({ type: 'setMaxDiskLimit', value: maxLimit })}
               placeholder={t('lso-plugin~All')}
             />
