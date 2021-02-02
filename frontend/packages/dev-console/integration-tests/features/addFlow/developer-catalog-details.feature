@@ -1,12 +1,15 @@
+@add-flow
 Feature: Developer Catalog Page
     As a user, I should be able to use Developer Catalog page to deploy application
 
 
     Background:
         Given user is at developer perspective
+        And user is at Add page
+        And user has created or selected namespace "aut-addflow-pagedetails"
 
 
-    @smoke
+    @smoke, @to-do
     Scenario: Developer Catalog page - Default view
         Given user is at Add page
         When user clicks on From Catalog card
@@ -17,7 +20,7 @@ Feature: Developer Catalog Page
         And user will see A-Z, Z-A sort by dropdown
 
 
-    @smoke
+    @smoke, @to-do
     Scenario: Event Sources on default Developer Catalog
         Given user is at Developer Catalog page
         When user clicks on Event Sources type
@@ -37,7 +40,7 @@ Feature: Developer Catalog Page
         And user will see A-Z, Z-A sort by dropdown
 
 
-    @smoke
+    @smoke, @to-do
     Scenario: Helm Charts on default Developer Catalog
         Given user is at Developer Catalog page
         When user clicks on Helm Charts type

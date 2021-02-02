@@ -1,5 +1,6 @@
-import { catalogPO } from '../../pageObjects/add-flow-po';
+import { cardTitle, catalogPO } from '../../pageObjects/add-flow-po';
 import { catalogCards, catalogTypes } from '../../constants/add';
+import { pageTitle } from '../../constants/pageTitle';
 
 export const catalogPage = {
   isCheckBoxSelected: (type: string) => cy.get(`input[title="${type}"]`).should('be.checked'),
@@ -14,7 +15,7 @@ export const catalogPage = {
     cy
       .get('form h1')
       .eq(0)
-      .should('have.text', 'Install Helm Chart'),
+      .should('have.text', pageTitle.InstallHelmCharts),
   clickButtonOnCatalogPageSidePane: () => {
     catalogPage.verifyDialog();
     cy.get(catalogPO.sidePane.instantiateTemplate).click({ force: true });
@@ -24,27 +25,27 @@ export const catalogPage = {
     switch (type) {
       case catalogTypes.OperatorBacked:
       case 'Operator Backed': {
-        cy.get(catalogPO.catalogTypes.operatorBacked).check();
+        cy.get(catalogPO.catalogTypes.operatorBacked).click();
         break;
       }
       case catalogTypes.HelmCharts:
       case 'Helm Charts': {
-        cy.get(catalogPO.catalogTypes.helmCharts).check();
+        cy.get(catalogPO.catalogTypes.helmCharts).click();
         break;
       }
       case catalogTypes.BuilderImage:
       case 'Builder Images': {
-        cy.get(catalogPO.catalogTypes.builderImage).check();
+        cy.get(catalogPO.catalogTypes.builderImage).click();
         break;
       }
       case catalogTypes.Template:
       case 'Templates': {
-        cy.get(catalogPO.catalogTypes.template).check();
+        cy.get(catalogPO.catalogTypes.template).click();
         break;
       }
       case catalogTypes.ServiceClass:
       case 'Service Class': {
-        cy.get(catalogPO.catalogTypes.serviceClass).check();
+        cy.get(catalogPO.catalogTypes.serviceClass).click();
         break;
       }
       default: {
@@ -52,14 +53,14 @@ export const catalogPage = {
       }
     }
   },
-  selectknativeServingCard: () =>
+  selectKnativeServingCard: () =>
     cy
-      .get('div.catalog-tile-pf-title', { timeout: 40000 })
+      .get(cardTitle, { timeout: 40000 })
       .contains('Knative Serving')
       .click(),
   selectHelmChartCard: (cardName: string) =>
     cy
-      .get('a div.catalog-tile-pf-title')
+      .get(cardTitle, { timeout: 40000 })
       .contains(cardName)
       .click(),
   clickOnInstallButton: () => {
@@ -92,8 +93,6 @@ export const catalogPage = {
     }
   },
   verifyCardName: (partialCardName: string) => {
-    cy.get(catalogPO.card)
-      .find('div.catalog-tile-pf-title')
-      .should('contain.text', partialCardName);
+    cy.get(cardTitle).contains(partialCardName, { matchCase: false });
   },
 };

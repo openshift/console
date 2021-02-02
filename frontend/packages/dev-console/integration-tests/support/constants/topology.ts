@@ -5,11 +5,11 @@ export enum displayOptions {
 }
 
 export enum nodeActions {
-  EditApplicatoinGrouping = 'Edit Application Grouping',
+  EditApplicationGrouping = 'Edit Application Grouping',
   EditPodCount = 'Edit Pod Count',
-  PassRollouts = 'Pass Rollouts',
+  PassRollOuts = 'Pass Rollouts',
   AddHealthChecks = 'Add Health Checks',
-  AddHorizontalPodAutoscaler = 'Add Horizontal Pod Autoscaler',
+  AddHorizontalPodAutoScaler = 'Add Horizontal Pod Autoscaler',
   AddStorage = 'Add Storage',
   EditUpdateStrategy = 'Edit Update Strategy',
   EditLabels = 'Edit Labels',

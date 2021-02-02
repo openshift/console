@@ -10,11 +10,11 @@ import { pipelinesPage } from '../../pages/pipelines/pipelines-page';
 
 Given('user is at developer perspective', () => {
   perspective.switchTo(switchPerspective.Developer);
-  // Bug: 1890676 is created related to Accesibiity violation - Until bug fix, below line is commented to execute the scripts in CI
+  // Bug: 1890676 is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
   // cy.testA11y('Developer perspective with guider tour modal');
   guidedTour.close();
   nav.sidenav.switcher.shouldHaveText(perspectiveName.developer);
-  // Bug: 1890678 is created related to Accesibiity violation - Until bug fix, below line is commented to execute the scripts in CI
+  // Bug: 1890678 is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
   // cy.testA11y('Developer perspective');
 });
 
@@ -24,7 +24,7 @@ Given('user has created namespace starts with {string}', (projectName: string) =
   const d = new Date();
   const timestamp = d.getTime();
   projectNameSpace.selectOrCreateProject(`${projectName}-${timestamp}-ns`);
-  // Bug: 1890678 is created related to Accesibiity violation - Until bug fix, below line is commented to execute the scripts in CI
+  // Bug: 1890678 is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
   // cy.testA11y('Developer perspective display after creating or selecting project');
   cy.log(`User has selected namespace "${projectName}-${timestamp}-ns"`);
 });
@@ -82,8 +82,6 @@ When('user clicks create button', () => {
 Given('user has selected namespace {string}', (projectName: string) => {
   perspective.switchTo(switchPerspective.Developer);
   guidedTour.close();
-  const d = new Date();
-  const timestamp = d.getTime();
-  projectNameSpace.selectOrCreateProject(`${projectName}-${timestamp}-ns`);
-  cy.log(`User has selected namespace "${projectName}-${timestamp}-ns"`);
+  projectNameSpace.selectProject(projectName);
+  cy.log(`User has selected namespace ${projectName}`);
 });

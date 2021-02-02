@@ -20,6 +20,6 @@ Given('user has installed OpenShift Pipelines operator', () => {
 
 Given('user has installed OpenShift Serverless Operator', () => {
   perspective.switchTo(switchPerspective.Administrator);
-  nav.sidenav.switcher.shouldHaveText(perspectiveName.adminstrator);
+  nav.sidenav.switcher.shouldHaveText(perspectiveName.administrator);
   operatorsPage.verifyOperatorInNavigationMenu(adminNavigationMenu.serverless);
 });

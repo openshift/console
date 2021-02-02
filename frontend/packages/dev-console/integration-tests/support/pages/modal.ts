@@ -5,11 +5,11 @@ export const modal = {
     cy.byLegacyTestID('modal-cancel-action').click();
     cy.get('form').should('not.exist');
   },
-  clicKSave: () => {
+  clickSave: () => {
     cy.byTestID('confirm-action').click();
     cy.get('form').should('not.exist');
   },
-  clicKDelete: () => {
+  clickDelete: () => {
     cy.byTestID('confirm-action').click();
     cy.get('form').should('not.exist');
   },
@@ -99,7 +99,7 @@ export const deleteApplication = {
       .get('#form-input-resourceName-field')
       .clear()
       .type(appName),
-  clicKDelete: () => {
+  clickDelete: () => {
     cy.byTestID('confirm-action')
       .should('be.enabled')
       .click();
@@ -108,7 +108,7 @@ export const deleteApplication = {
   deleteApp: () => {
     cy.get('p strong').then((ele) => {
       deleteApplication.enterApplication(ele.text());
-      modal.clicKDelete();
+      modal.clickDelete();
     });
   },
 };
