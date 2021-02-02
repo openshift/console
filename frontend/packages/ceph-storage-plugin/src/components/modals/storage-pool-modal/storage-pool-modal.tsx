@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 
 import {
+  Alert,
   Dropdown,
   DropdownToggle,
   DropdownItem,
@@ -312,6 +313,16 @@ export const StoragePoolModal = withHandlePromise((props: StoragePoolModalProps)
                 </label>
               </div>
             </div>
+            {isCompressed && (
+              <Alert
+                className="co-alert"
+                variant="info"
+                title={t(
+                  'ceph-storage-plugin~Before enabling compression for this pool, note that it may have little or no effect on already encrypted or otherwise randomised data. Also, enabling compression for any data may have an impact on performance.',
+                )}
+                isInline
+              />
+            )}
             {/* Not to be exposed for 4.6
             {cephClusterObj[0]?.status?.storage?.deviceClasses && (
               <div className="form-group ceph-storage-pool__input">
