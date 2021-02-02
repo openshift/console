@@ -11,6 +11,7 @@ import { SafetyFirst } from '../safety-first';
 import { TextFilter } from '../factory';
 import { Dropdown, Box, Timestamp } from '../utils';
 import { coFetchJSON } from '../../co-fetch';
+import { getId, getUserGroup } from '../../hypercloud/auth';
 // import { withTranslation } from 'react-i18next';
 
 // TODO
@@ -250,7 +251,7 @@ class AuditPage_ extends React.Component {
       });
     }
 
-    let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=0&startTime=${this.state.start.getTime() / 1000}&endTime=${this.state.end.getTime() / 1000}`;
+    let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=0&startTime=${this.state.start.getTime() / 1000}&endTime=${this.state.end.getTime() / 1000}&userId=${getId()}${getUserGroup()}`;
     if (e !== 'all') {
       uri += `&resource=${e}`;
     }
@@ -286,7 +287,7 @@ class AuditPage_ extends React.Component {
 
     this.setState({ offset: 0 });
 
-    let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=0&startTime=${this.state.start.getTime() / 1000}&endTime=${this.state.end.getTime() / 1000}`;
+    let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=0&startTime=${this.state.start.getTime() / 1000}&endTime=${this.state.end.getTime() / 1000}&userId=${getId()}${getUserGroup()}`;
     if (value !== 'all') {
       uri += `&verb=${value}`;
     }
@@ -328,7 +329,7 @@ class AuditPage_ extends React.Component {
 
     this.setState({ offset: 0 });
 
-    let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=0&startTime=${this.state.start.getTime() / 1000}&endTime=${this.state.end.getTime() / 1000}`;
+    let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=0&startTime=${this.state.start.getTime() / 1000}&endTime=${this.state.end.getTime() / 1000}&userId=${getId()}${getUserGroup()}`;
     if (value !== 'all') {
       uri += `&status=${value}`;
     }
@@ -367,7 +368,7 @@ class AuditPage_ extends React.Component {
 
     this.setState({ offset: 0 });
 
-    let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=0&startTime=${this.state.start.getTime() / 1000}&endTime=${this.state.end.getTime() / 1000}`;
+    let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=0&startTime=${this.state.start.getTime() / 1000}&endTime=${this.state.end.getTime() / 1000}&userId=${getId()}${getUserGroup()}`;
     if (value !== 'all') {
       uri += `&code=${value}`;
     }
@@ -401,7 +402,7 @@ class AuditPage_ extends React.Component {
 
     this.setState({ offset: 0 });
 
-    let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=0&startTime=${date.getTime() / 1000}`;
+    let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=0&startTime=${date.getTime() / 1000}&userId=${getId()}${getUserGroup()}`;
 
     date_.setDate(date_.getDate() + 7);
     if (date_ < this.state.end || date > this.state.end) {
@@ -446,7 +447,7 @@ class AuditPage_ extends React.Component {
 
     this.setState({ offset: 0 });
 
-    let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=0&endTime=${date.getTime() / 1000}`;
+    let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=0&endTime=${date.getTime() / 1000}&userId=${getId()}${getUserGroup()}`;
 
     date_.setDate(date_.getDate() - 7);
     if (date_ <= this.state.start) {
@@ -490,7 +491,7 @@ class AuditPage_ extends React.Component {
     });
 
     // let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=${e.selected * 100}&startTime=${this.state.start.getTime() / 1000}&endTime=${this.state.end.getTime() / 1000}`;
-    let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=${e.selected * 100}`;
+    let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=${e.selected * 100}&userId=${getId()}${getUserGroup()}`;
 
     if (this.state.action !== this.state.actionList.all) {
       uri += `&verb=${this.state.action}`;
@@ -525,7 +526,7 @@ class AuditPage_ extends React.Component {
       offset: 0,
     });
 
-    let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=0&startTime=${this.state.start.getTime() / 1000}&endTime=${this.state.end.getTime() / 1000}&message=${e.target.value}`;
+    let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=0&startTime=${this.state.start.getTime() / 1000}&endTime=${this.state.end.getTime() / 1000}&message=${e.target.value}&userId=${getId()}${getUserGroup()}`;
 
     if (this.state.action !== this.state.actionList.all) {
       uri += `&verb=${this.state.action}`;
@@ -564,7 +565,7 @@ class AuditPage_ extends React.Component {
       status: this.statuslist.all,
       code: this.codeList.all,
     });
-    let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=0&startTime=${this.state.start.getTime() / 1000}&endTime=${this.state.end.getTime() / 1000}`;
+    let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=0&startTime=${this.state.start.getTime() / 1000}&endTime=${this.state.end.getTime() / 1000}&userId=${getId()}${getUserGroup()}`;
     if (namespace === undefined) {
       // all namespace
       coFetchJSON(uri).then(response => {
@@ -590,7 +591,7 @@ class AuditPage_ extends React.Component {
     const namespace = _.get(this.props, 'match.params.ns');
     this.setState({ namespace: namespace });
     this.setState({ action: this.state.actionList.all });
-    let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=${this.state.offset}&startTime=${this.state.start.getTime() / 1000}&endTime=${this.state.end.getTime() / 1000}`;
+    let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=${this.state.offset}&startTime=${this.state.start.getTime() / 1000}&endTime=${this.state.end.getTime() / 1000}&userId=${getId()}${getUserGroup()}`;
 
     if (namespace === undefined) {
       // all namespace

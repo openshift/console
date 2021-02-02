@@ -4,7 +4,7 @@ import { k8sBasePath } from './k8s';
 import { selectorToString } from './selector';
 import { WSFactory } from '../ws-factory';
 import { getActivePerspective, getActiveCluster } from '../../actions/ui';
-import { getId } from '../../hypercloud/auth';
+import { getId, getUserGroup } from '../../hypercloud/auth';
 
 /** @type {(model: K8sKind) => string} */
 // const getK8sAPIPath = ({ apiGroup = 'core', apiVersion, kind }, listName) 
@@ -75,9 +75,9 @@ export const resourceURL = (model, options) => {
 
 export const resourceClusterURL = (model) => {
   if(isCluster(model)) {
-    return `/api/multi-hypercloud/cluster?userId=${getId()}`;
+    return `/api/multi-hypercloud/cluster?userId=${getId()}${getUserGroup()}`;
   }
-  return `api/multi-hypercloud/clusterclaim?userId=${getId()}`;
+  return `api/multi-hypercloud/clusterclaim?userId=${getId()}${getUserGroup()}`;
 }
 
 export const resourceApprovalURL = (model, options, approval) => {
@@ -199,10 +199,10 @@ export const k8sList = (kind, params = {}, raw = false, options = {}) => {
   }
 
   if (kind.kind === 'Namespace') {
-    listURL = `${document.location.origin}/api/hypercloud/namespace?userId=${getId()}`;
+    listURL = `${document.location.origin}/api/hypercloud/namespace?userId=${getId()}${getUserGroup()}`;
     return coFetchJSON(`${listURL}`, 'GET', options).then(result => (raw ? result : result.items));
   } else if (kind.kind === 'NamespaceClaim') {
-    listURL = `${document.location.origin}/api/hypercloud/namespaceClaim?userId=${getId()}`;
+    listURL = `${document.location.origin}/api/hypercloud/namespaceClaim?userId=${getId()}${getUserGroup()}`;
     return coFetchJSON(`${listURL}`, 'GET', options).then(result => (raw ? result : result.items));
   } else {
   return coFetchJSON(`${listURL}?${query}`, 'GET', options).then(result => (raw ? result : result.items));
