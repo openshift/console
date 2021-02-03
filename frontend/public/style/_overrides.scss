@@ -362,7 +362,7 @@ h6 {
     overflow-x: hidden;
     overflow-y: auto;
 
-    &.pf-c-dropdown__menu-item .pf-c-title{
+    &.pf-c-dropdown__menu-item .pf-c-title {
       overflow: hidden;
       text-overflow: ellipsis;
     }
@@ -594,4 +594,8 @@ button.pf-c-dropdown__menu-item.hover {
   width: 800px;
   height: 100%;
   background-color: white;
+}
+
+.pf-c-accordion__toggle-text {
+  overflow: visible !important;
 }
