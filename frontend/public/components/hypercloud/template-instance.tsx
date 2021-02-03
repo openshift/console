@@ -69,6 +69,9 @@ const TemplateInstanceDetails: React.FC<TemplateInstanceDetailsProps> = ({ obj: 
               </DetailsItem>
               <dt>Resource Summary</dt>
               <dd>{objectSummary}</dd>
+              <DetailsItem label="Service Instance" obj={templateInstance} path="metadata.labels.serviceInstanceRef">
+                {!!templateInstance.metadata.labels?.serviceInstanceRef ? <ResourceLink kind="ServiceInstance" name={templateInstance.metadata.labels?.serviceInstanceRef} title={templateInstance.metadata.labels?.serviceInstanceRef} /> : 'None'}
+              </DetailsItem>
             </dl>
           </div>
         </div>
@@ -90,6 +93,7 @@ const tableColumnClasses = [
   '', // NAMESPACE
   classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'), // STATUS
   classNames('pf-m-hidden', 'pf-m-visible-on-lg'), // RESOURCE SUMMARY
+  classNames('pf-m-hidden', 'pf-m-visible-on-lg'), // SERVICE INSTANCE
   classNames('pf-m-hidden', 'pf-m-visible-on-xl'), // CREATED
   Kebab.columnClass, // MENU ACTIONS
 ];
@@ -109,10 +113,11 @@ const TemplateInstanceTableRow = ({ obj, index, key, style }) => {
         <Status status={phase} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>{objectSummary}</TableData>
-      <TableData className={tableColumnClasses[4]}>
+      <TableData className={tableColumnClasses[4]}>{!!obj.metadata.labels?.serviceInstanceRef ? <ResourceLink kind="ServiceInstance" name={obj.metadata.labels?.serviceInstanceRef} namespace={obj.metadata.namespace} title={obj.metadata.labels?.serviceInstanceRef} /> : 'None'}</TableData>
+      <TableData className={tableColumnClasses[5]}>
         <Timestamp timestamp={obj.metadata.creationTimestamp} />
       </TableData>
-      <TableData className={tableColumnClasses[5]}>
+      <TableData className={tableColumnClasses[6]}>
         <ResourceKebab actions={templateInstanceMenuActions} kind={kind} resource={obj} />
       </TableData>
     </TableRow>
@@ -144,14 +149,20 @@ const TemplateInstanceTableHeader = () => {
       props: { className: tableColumnClasses[3] },
     },
     {
-      title: 'Created',
-      sortField: 'metadata.creationTimestamp',
+      title: 'Service Instance',
+      sortField: 'metadata.labels.serviceInstanceRef',
       transforms: [sortable],
       props: { className: tableColumnClasses[4] },
     },
     {
-      title: '',
+      title: 'Created',
+      sortField: 'metadata.creationTimestamp',
+      transforms: [sortable],
       props: { className: tableColumnClasses[5] },
+    },
+    {
+      title: '',
+      props: { className: tableColumnClasses[6] },
     },
   ];
 };
