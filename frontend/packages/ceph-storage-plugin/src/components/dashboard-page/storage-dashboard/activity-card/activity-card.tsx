@@ -11,29 +11,18 @@ import {
   PersistentVolumeClaimKind,
 } from '@console/internal/module/k8s';
 import { FirehoseResult } from '@console/internal/components/utils';
-import { PersistentVolumeClaimModel } from '@console/internal/models';
 import ActivityBody, {
   RecentEventsBody,
   OngoingActivityBody,
 } from '@console/shared/src/components/dashboard/activity-card/ActivityBody';
 import { PrometheusResponse } from '@console/internal/components/graphs';
-import {
-  getNamespace,
-  getAnnotations,
-  isCephProvisioner,
-  getName,
-  useDeepCompareMemoize,
-} from '@console/shared';
+import { getAnnotations, isCephProvisioner, getName, useDeepCompareMemoize } from '@console/shared';
 import {
   DashboardItemProps,
   withDashboardResources,
 } from '@console/internal/components/dashboard/with-dashboard-resources';
 import { SubscriptionKind } from '@console/operator-lifecycle-manager';
-import {
-  CEPH_STORAGE_NAMESPACE,
-  OCS_OPERATOR,
-  PVC_PROVISIONER_ANNOTATION,
-} from '../../../../constants/index';
+import { OCS_OPERATOR, PVC_PROVISIONER_ANNOTATION } from '../../../../constants/index';
 import { DATA_RESILIENCY_QUERY, StorageDashboardQuery } from '../../../../constants/queries';
 import {
   pvcResource,
@@ -41,7 +30,7 @@ import {
   storageClusterResource,
   eventsResource,
 } from '../../../../constants/resources';
-import { getResiliencyProgress } from '../../../../utils';
+import { getResiliencyProgress, isPersistentStorageEvent } from '../../../../utils';
 import { isClusterExpandActivity, ClusterExpandActivity } from './cluster-expand-activity';
 import { isOCSUpgradeActivity, OCSUpgradeActivity } from './ocs-upgrade-activity';
 import './activity-card.scss';
@@ -67,14 +56,9 @@ const RecentEvent = withDashboardResources(
       .map(getName);
     const memoizedPVCNames = useDeepCompareMemoize(validPVC, true);
 
-    const ocsEventNamespaceKindFilter = (event: EventKind): boolean => {
-      const eventKind = event?.involvedObject?.kind;
-      const eventNamespace = getNamespace(event);
-      const eventObjectName = event?.involvedObject?.name;
-      return eventKind === PersistentVolumeClaimModel.kind
-        ? memoizedPVCNames.includes(eventObjectName)
-        : eventNamespace === CEPH_STORAGE_NAMESPACE;
-    };
+    const ocsEventsFilter = React.useCallback(isPersistentStorageEvent(memoizedPVCNames), [
+      memoizedPVCNames,
+    ]);
 
     const events = {
       ...resources.events,
@@ -82,10 +66,7 @@ const RecentEvent = withDashboardResources(
     };
 
     return (
-      <RecentEventsBody
-        events={events as FirehoseResult<EventKind[]>}
-        filter={ocsEventNamespaceKindFilter}
-      />
+      <RecentEventsBody events={events as FirehoseResult<EventKind[]>} filter={ocsEventsFilter} />
     );
   },
 );

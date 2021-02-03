@@ -1,8 +1,6 @@
-import * as _ from 'lodash';
 import {
   DashboardsCard,
   DashboardsTab,
-  ModelDefinition,
   ModelFeatureFlag,
   Plugin,
   ResourceClusterNavItem,
@@ -23,7 +21,6 @@ import { getObcStatusGroups } from './components/buckets-card/utils';
 
 type ConsumedExtensions =
   | ModelFeatureFlag
-  | ModelDefinition
   | DashboardsTab
   | DashboardsCard
   | ResourceNSNavItem
@@ -38,12 +35,6 @@ type ConsumedExtensions =
 const NOOBAA_FLAG = 'NOOBAA';
 
 const plugin: Plugin<ConsumedExtensions> = [
-  {
-    type: 'ModelDefinition',
-    properties: {
-      models: _.values(models),
-    },
-  },
   {
     type: 'Page/Route',
     properties: {
