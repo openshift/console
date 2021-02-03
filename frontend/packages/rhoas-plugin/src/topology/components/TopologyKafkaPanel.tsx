@@ -3,12 +3,13 @@ import { connect } from 'react-redux';
 import {
   navFactory,
   SimpleTabNav,
-  ResourceIcon
+  ResourceIcon,
+  ResourceSummary,
 } from '@console/internal/components/utils';
 import * as UIActions from '@console/internal/actions/ui';
 import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
 import { Node } from '@patternfly/react-topology';
-import { ResourceSummary } from '@console/internal/components/utils';
+import './TopologyKafkaPanel.css';
 
 type PropsFromState = {
   selectedDetailsTab?: any;
@@ -33,23 +34,47 @@ type OwnProps = {
 type TopologyHelmReleasePanelProps = PropsFromState & PropsFromDispatch & OwnProps;
 
 const DetailsComponent: React.FC<any> = ({ obj }) => {
-  return (<>
-    <div style={{ "padding": 20 }}>
-      <ResourceSummary resource={obj} />
+  const { host } = obj.status.boostrapServer;
+
+  return (
+    <div className="co-m-pane__body">
+      <div className="row">
+        <div className="col-sm-6">
+          <ResourceSummary resource={obj} />
+        </div>
+        <dl className="co-m-pane__details">
+          <dt>Bootstrap Server</dt>
+          <dd>{host}</dd>
+        </dl>
+      </div>
     </div>
-  </>)
-}
+  );
+};
+
+const ResourcesComponent = ({ obj }) => {
+  // TO DO Add correct secret
+  const secret = obj.status.serviceAccountSecretName;
+  return <div className="overview__sidebar-pane-body">{secret}</div>;
+};
 
 export const ConnectedTopologyHelmReleasePanel: React.FC<TopologyHelmReleasePanelProps> = ({
   item,
   selectedDetailsTab,
   onClickTab,
 }: TopologyHelmReleasePanelProps) => {
+  const [showAlert, setShowAlert] = React.useState(true);
+
   // Resource
   const mkc = item?.getData().resource;
   if (!mkc) {
-    return <>No data</>
+    return <>No data</>;
   }
+
+  const handleAlertFunction = () => {
+    if (showAlert) {
+      setShowAlert(false);
+    }
+  };
 
   return (
     <div className="overview__sidebar-pane resource-overview">
@@ -60,25 +85,32 @@ export const ConnectedTopologyHelmReleasePanel: React.FC<TopologyHelmReleasePane
             <h3>Managed Kafka Connection</h3>
           </div>
         </h1>
+        {showAlert && (
+          <div className="kafka-panel-alert">
+            <Alert
+              variant="default"
+              title="Managed Service"
+              actionClose={<AlertActionCloseButton onClick={handleAlertFunction} />}
+              isInline
+            >
+              This resource represents service that exist outside your cluster. To view details
+              about resource please go to
+              <a href="https://cloud.redhat.com/beta/application-services/openshift-streams/">
+                {' '}
+                OpenShift Streams Apache Kafka{' '}
+              </a>{' '}
+              console.
+            </Alert>
+          </div>
+        )}
       </div>
-
-      <Alert
-        variant="default"
-        title="ManagedService"
-        actionClose={<AlertActionCloseButton />}
-        isInline
-      >
-        This resource represents service that exist outside your cluster.
-        To view details about resource please go to <br/>
-        <a href="https://cloud.redhat.com/beta/application-services/openshift-streams/">OpenShift Streams Apache Kafka </a> console.
-
-      </Alert>
 
       <SimpleTabNav
         selectedTab={selectedDetailsTab}
         onClickTab={onClickTab}
         tabs={[
-          { name: "Details", component: navFactory.details(DetailsComponent).component },
+          { name: 'Details', component: navFactory.details(DetailsComponent).component },
+          { name: 'Resources', component: ResourcesComponent },
         ]}
         tabProps={{ obj: mkc }}
         additionalClassNames="co-m-horizontal-nav__menu--within-sidebar co-m-horizontal-nav__menu--within-overview-sidebar"
