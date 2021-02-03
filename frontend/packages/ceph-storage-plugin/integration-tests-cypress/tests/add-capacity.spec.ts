@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import { modal } from '../../../integration-tests-cypress/views/modal';
+import { checkErrors } from '../../../integration-tests-cypress/support';
 import { CLUSTER_STATUS } from '../../integration-tests/utils/consts';
 import {
   createOSDTreeMap,
@@ -24,6 +25,10 @@ describe('OCS Operator Expansion of Storage Class Test', () => {
 
   beforeEach(() => {
     cy.visit('/');
+  });
+
+  afterEach(() => {
+    checkErrors();
   });
 
   after(() => {
