@@ -19,6 +19,7 @@ import {
   listOfCurrentKafkaConnectionsById
 } from './resourceCreators';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { LoadingBox } from '@console/internal/components/utils';
 
 import { KafkaRequest } from "./types"
 
@@ -51,9 +52,20 @@ const ManagedKafkas = () => {
     isList: false
   })
 
-  if (!watchedKafkaRequest || !watchedKafkaRequest.status) {
-    // TODO improve loader
-    return (<><h1>Loading</h1></>)
+  if (!watchedKafkaRequest) {
+    return (
+      <div>
+        <LoadingBox />
+      </div>
+    )
+  }
+
+  if (!watchedKafkaRequest.status) {
+    return (
+      <div>
+        Operator did not return status
+      </div>
+    )
   }
 
   let remoteKafkaInstances = watchedKafkaRequest.status.userKafkas;
