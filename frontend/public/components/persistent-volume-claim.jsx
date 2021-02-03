@@ -168,25 +168,25 @@ const Details_ = ({ flags, obj: pvc }) => {
           </div>
           <div className="col-sm-6">
             <dl>
-              <dt>Status</dt>
+              <dt>{t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_45')}</dt>
               <dd data-test-id="pvc-status">
                 <PVCStatus pvc={pvc} />
               </dd>
               {storage && (
                 <>
-                  <dt>Capacity</dt>
+                  <dt>{t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_60')}</dt>
                   <dd data-test-id="pvc-capacity">{storage}</dd>
                 </>
               )}
               {!_.isEmpty(accessModes) && (
                 <>
-                  <dt>Access Modes</dt>
+                  <dt>{t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_61')}</dt>
                   <dd data-test-id="pvc-access-mode">{accessModes.join(', ')}</dd>
                 </>
               )}
-              <dt>Volume Mode</dt>
+              <dt>{t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_62')}</dt>
               <dd data-test-id="pvc-volume-mode">{volumeMode || 'Filesystem'}</dd>
-              <dt>Storage Class</dt>
+              <dt>{t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_63')}</dt>
               <dd data-test-id="pvc-storageclass">
                 {storageClassName ? (
                   <ResourceLink kind="StorageClass" name={storageClassName} />
@@ -196,7 +196,7 @@ const Details_ = ({ flags, obj: pvc }) => {
               </dd>
               {volumeName && canListPV && (
                 <>
-                  <dt>Persistent Volume</dt>
+                  <dt>{t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_64')}</dt>
                   <dd data-test-id="persistent-volume">
                     <ResourceLink kind="PersistentVolume" name={volumeName} />
                   </dd>
@@ -205,10 +205,6 @@ const Details_ = ({ flags, obj: pvc }) => {
             </dl>
           </div>
         </div>
-      </div>
-      <div className="co-m-pane__body">
-        <SectionHeading text="Conditions" />
-        <Conditions conditions={conditions} />
       </div>
     </>
   );

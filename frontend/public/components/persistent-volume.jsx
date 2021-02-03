@@ -141,31 +141,31 @@ const Details = ({ obj: pv }) => {
       <div className="row">
         <div className="col-sm-6">
           <ResourceSummary resource={pv}>
-            <dt>Reclaim Policy</dt>
+            <dt>{t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_51')}</dt>
             <dd>{reclaimPolicy}</dd>
           </ResourceSummary>
         </div>
         <div className="col-sm-6">
           <dl>
-            <dt>Status</dt>
+            <dt>{t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_45')}</dt>
             <dd>
               <PVStatus pv={pv} />
             </dd>
             {storage && (
               <>
-                <dt>Capacity</dt>
+                <dt>{t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_60')}</dt>
                 <dd>{storage}</dd>
               </>
             )}
             {!_.isEmpty(accessModes) && (
               <>
-                <dt>Access Modes</dt>
+                <dt>{t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_61')}</dt>
                 <dd>{accessModes.join(', ')}</dd>
               </>
             )}
-            <dt>Volume Mode</dt>
+            <dt>{t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_62')}</dt>
             <dd>{volumeMode || 'Filesystem'}</dd>
-            <dt>Storage Class</dt>
+            <dt>{t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_63')}</dt>
             <dd>
               {storageClassName ? (
                 <ResourceLink kind="StorageClass" name={storageClassName} />
