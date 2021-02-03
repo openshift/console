@@ -44,7 +44,6 @@ const FederatedNamespaceTableHeader = () => {
 FederatedNamespaceTableHeader.displayName = 'FederatedNamespaceTableHeader';
 
 const FederatedNamespaceTableRow: RowFunction<K8sResourceKind> = ({ obj: namespace, index, key, style }) => {
-  console.log('obj? ', namespace);
   return (
     <TableRow id={namespace.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
