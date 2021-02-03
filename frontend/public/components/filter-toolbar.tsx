@@ -21,6 +21,7 @@ import { setQueryArgument, removeQueryArgument } from './utils';
 import { filterList } from '../actions/k8s';
 import AutocompleteInput from './autocomplete';
 import { storagePrefix } from './row-filter';
+import { useTranslation } from 'react-i18next';
 
 /**
  * Housing both the row filter and name/label filter in the same file.
@@ -230,12 +231,18 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const switchFilter = (type: FilterType) => {
-    setFilterType(FilterType[type]);
-    setInputText(nameFilter && FilterType[type] === FilterType.NAME ? nameFilter : '');
+  const switchFilter = (type) => {
+    setFilterType(type);
+    setInputText(nameFilter && type === FilterType.NAME ? nameFilter : '');
   };
 
   const dropdownItems = getDropdownItems(rowFilters, selectedRowFilters, data, props);
+
+  const { t } = useTranslation();
+  const searchFilterTitle = {
+    [FilterType.LABEL]: t('COMMON:MSG_COMMON_SEARCH_FILTER_2'),
+    [FilterType.NAME]: t('COMMON:MSG_COMMON_SEARCH_FILTER_1'),
+  };
 
   return (
     !hideToolbar && (
@@ -285,20 +292,20 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
               deleteChip={(filter, chip: string) =>
                 updateLabelFilter(_.difference(labelFilters, [chip]))
               }
-              categoryName="Label"
+              categoryName={t('COMMON:MSG_COMMON_SEARCH_FILTER_2')}
             >
               <DataToolbarFilter
                 chips={nameFilter?.length ? [nameFilter] : []}
                 deleteChip={() => updateNameFilter('')}
-                categoryName="Name"
+                categoryName={t('COMMON:MSG_COMMON_SEARCH_FILTER_1')}
               >
                 <div className="pf-c-input-group">
                   {!hideLabelFilter && (
                     <DropdownInternal
-                      items={FilterType}
+                      items={searchFilterTitle}
                       onChange={switchFilter}
                       selectedKey={filterType}
-                      title={filterType}
+                      title={searchFilterTitle[filterType]}
                     />
                   )}
                   <AutocompleteInput
@@ -310,7 +317,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
                     textValue={inputText}
                     setTextValue={updateSearchFilter}
                     placeholder={
-                      FilterType.NAME === filterType ? 'Search by name...' : 'app=frontend'
+                      FilterType.NAME === filterType ? t('COMMON:MSG_COMMON_SEARCH_PLACEHOLDER_1') : 'app=frontend'
                     }
                     data={data}
                   />

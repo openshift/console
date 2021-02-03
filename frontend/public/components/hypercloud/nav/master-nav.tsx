@@ -25,16 +25,16 @@ const MasterNav = () => (
           <ResourceNSLink resource="audits" name={t('COMMON:MSG_LNB_MENU_5')} />
           <ResourceNSLink resource="events" name={t('COMMON:MSG_LNB_MENU_6')} />
           <HrefLink href="/grafana" name="Grafana" />
-          {/* <HrefLink href="/kibana" name="Kibana" /> */}
+          <HrefLink href="/kibana" name="Kibana" />
         </NavSection>
         {/* <NavSection title="Operators" /> */}
         <NavSection title={t('COMMON:MSG_LNB_MENU_10')}>
           <ResourceNSLink resource="servicebrokers" name="Service Broker" />
           <ResourceNSLink resource="serviceclasses" name="Service Class" />
-          <ResourceNSLink resource="serviceplans" name="Service Plan" />
+          {/* <ResourceNSLink resource="serviceplans" name="Service Plan" /> */}
           <ResourceClusterLink resource="clusterservicebrokers" name="Cluster Service Broker" />
           <ResourceClusterLink resource="clusterserviceclasses" name="Cluster Service Class" />
-          <ResourceClusterLink resource="clusterserviceplans" name="Cluster Service Plan" />
+          {/* <ResourceClusterLink resource="clusterserviceplans" name="Cluster Service Plan" /> */}
           <ResourceNSLink resource="serviceinstances" name="Service Instance" />
           <ResourceNSLink resource="servicebindings" name="Service Binding" />
           <ResourceNSLink resource="catalogserviceclaims" name="Catalog Service Claim" />
@@ -81,7 +81,7 @@ const MasterNav = () => (
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_56')}>
           <ResourceNSLink resource="tasks" name={t('COMMON:MSG_LNB_MENU_57')} />
-          <ResourceNSLink resource="clustertasks" name="Cluster Task" />
+          <ResourceClusterLink resource="clustertasks" name="Cluster Task" />
           <ResourceNSLink resource="taskruns" name={t('COMMON:MSG_LNB_MENU_58')} />
           <ResourceNSLink resource="pipelines" name={t('COMMON:MSG_LNB_MENU_59')} />
           <ResourceNSLink resource="pipelineruns" name={t('COMMON:MSG_LNB_MENU_60')} />

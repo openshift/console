@@ -3,9 +3,10 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 
+import { Status } from '@console/shared';
 import { K8sResourceKind } from '../../module/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from '../factory';
-import { Kebab, KebabAction, detailsPage, Timestamp, navFactory, ResourceKebab, ResourceLink, ResourceSummary, SectionHeading } from '../utils';
+import { DetailsItem,Kebab, KebabAction, detailsPage, Timestamp, navFactory, ResourceKebab, ResourceLink, ResourceSummary, SectionHeading } from '../utils';
 import { IntegrationConfigModel } from '../../models/hypercloud';
 
 export const menuActions: KebabAction[] = [...Kebab.getExtensionsActionsForKind(IntegrationConfigModel), ...Kebab.factory.common];
@@ -21,6 +22,21 @@ const tableColumnClasses = [
     Kebab.columnClass,
   ];
 
+const IntegrationConfigPhase = instance => {
+  let phase = '';
+  if (instance.status) {
+    instance.status.conditions.forEach(cur => {
+      if (cur.type === 'ready') {
+        if (cur.status === 'True') {
+          phase = 'Ready';
+        } else {
+          phase = 'UnReady';
+        }
+      }
+    });
+    return phase;
+  }
+};
 
 const IntegrationConfigTableHeader = () => {
     return [
@@ -65,6 +81,7 @@ const IntegrationConfigTableHeader = () => {
 
   
 const IntegrationConfigTableRow: RowFunction<K8sResourceKind> = ({ obj: registry, index, key, style }) => {
+  const phase = IntegrationConfigPhase(registry);
     return (
       <TableRow id={registry.metadata.uid} index={index} trKey={key} style={style}>
         <TableData className={tableColumnClasses[0]}>
@@ -77,7 +94,7 @@ const IntegrationConfigTableRow: RowFunction<K8sResourceKind> = ({ obj: registry
           {registry.spec.image}
         </TableData>
         <TableData className={tableColumnClasses[3]}>
-          {registry.status.phase}
+          <Status status={phase} />
         </TableData>
         <TableData className={tableColumnClasses[4]}>
           <Timestamp timestamp={registry.metadata.creationTimestamp} />
@@ -89,6 +106,23 @@ const IntegrationConfigTableRow: RowFunction<K8sResourceKind> = ({ obj: registry
     );
   };
   
+export const IntegrationConfigDetailsList: React.FC<IntegrationConfigDetailsListProps> = ({ ds }) => {
+  const readyCondition = ds.status.conditions.find(obj => _.lowerCase(obj.type) === 'ready');
+  const time = readyCondition?.lastTransitionTime?.replace('T', ' ').replaceAll('-', '.').replace('Z', '');
+  const phase = IntegrationConfigPhase(ds);
+
+  return (
+    <dl className="co-m-pane__details">
+      <DetailsItem label='Last Transition Time' obj={ds} path="status.transitionTime">
+        {time}
+      </DetailsItem>
+      <DetailsItem label='Status' obj={ds} path="status.result">
+        <Status status={phase} />
+      </DetailsItem>
+    </dl>
+  );
+}
+
 const IntegrationConfigDetails: React.FC<IntegrationConfigDetailsProps> = ({ obj: registry }) => (
     <>
       <div className="co-m-pane__body">
@@ -97,10 +131,10 @@ const IntegrationConfigDetails: React.FC<IntegrationConfigDetailsProps> = ({ obj
           <div className="col-lg-6">
             <ResourceSummary resource={registry} showPodSelector showNodeSelector showTolerations />
           </div>
+          <div className="col-lg-6">
+            <IntegrationConfigDetailsList ds={registry} />
         </div>
-      </div>
-      <div className="co-m-pane__body">
-        <SectionHeading text="Containers" />
+        </div>
       </div>
     </>
   );
@@ -114,6 +148,10 @@ export const IntegrationConfigs: React.FC = props => <Table {...props} aria-labe
 export const IntegrationConfigsPage: React.FC<IntegrationConfigsPageProps> = props => <ListPage canCreate={true} ListComponent={IntegrationConfigs} kind={kind} {...props} />;
 
 export const IntegrationConfigsDetailsPage: React.FC<IntegrationConfigsDetailsPageProps> = props => <DetailsPage {...props} kind={kind} menuActions={menuActions} pages={[details(detailsPage(IntegrationConfigDetails)), editYaml()]} />;
+
+  type IntegrationConfigDetailsListProps = {
+    ds: K8sResourceKind;
+  };
 
   type IntegrationConfigsPageProps = {
     showTitle?: boolean;

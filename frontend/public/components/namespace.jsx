@@ -27,7 +27,7 @@ import { OpenShiftGettingStarted } from './start-guide';
 import { Overview } from './overview';
 import { getNamespaceDashboardConsoleLinks, ProjectDashboard } from './dashboard/project-dashboard/project-dashboard';
 import { removeQueryArgument } from './utils/router';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, withTranslation } from 'react-i18next';
 
 const getModel = useProjects => (useProjects ? ProjectModel : NamespaceModel);
 const getDisplayName = obj => _.get(obj, ['metadata', 'annotations', 'openshift.io/display-name']);
@@ -513,7 +513,7 @@ class NamespaceBarDropdowns_ extends React.Component {
   }
 
   render() {
-    const { activeNamespace, onNamespaceChange, setActiveNamespace, canListNS, canCreateProject, useProjects, children, disabled } = this.props;
+    const { activeNamespace, onNamespaceChange, setActiveNamespace, canListNS, canCreateProject, useProjects, children, disabled, t } = this.props;
     // if (flagPending(canListNS)) {
     //   return null;
     // }
@@ -591,7 +591,7 @@ class NamespaceBarDropdowns_ extends React.Component {
   }
 }
 
-const NamespaceBarDropdowns = connect(namespaceBarDropdownStateToProps, namespaceBarDropdownDispatchToProps)(NamespaceBarDropdowns_);
+const NamespaceBarDropdowns = connect(namespaceBarDropdownStateToProps, namespaceBarDropdownDispatchToProps)(withTranslation()(NamespaceBarDropdowns_));
 
 const NamespaceBar_ = ({ useProjects, children, disabled, onNamespaceChange }) => {
   return (
