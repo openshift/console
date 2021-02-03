@@ -1,9 +1,9 @@
 .odc-quick-search-content {
-  height: calc(100% - 60px);
+  flex: 1;
+  overflow-y: hidden;
   &__list {
     width: 40%;
     height: 100%;
-    overflow-y: auto;
   }
   &__details {
     background: var(--pf-global--palette--white);
