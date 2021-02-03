@@ -35,6 +35,7 @@ export const TEMPLATE_SUPPORT_LEVEL = 'template.kubevirt.io/provider-support-lev
 export const TEMPLATE_PARENT_PROVIDER_ANNOTATION = 'template.kubevirt.ui/parent-provider';
 export const TEMPLATE_PARENT_SUPPORT_LEVEL = 'template.kubevirt.ui/parent-support-level';
 export const TEMPLATE_PARENT_PROVIDER_URL = 'template.kubevirt.ui/parent-provider-url';
+export const TEMPLATE_DEPRECATED_ANNOTATION = 'template.kubevirt.io/deprecated';
 
 export const LABEL_USED_TEMPLATE_NAME = 'vm.kubevirt.io/template';
 export const LABEL_USED_TEMPLATE_NAMESPACE = 'vm.kubevirt.io/template.namespace';

@@ -14,6 +14,7 @@ import {
   TEMPLATE_PARENT_PROVIDER_ANNOTATION,
   TEMPLATE_PROVIDER_URL,
   TEMPLATE_PARENT_PROVIDER_URL,
+  TEMPLATE_DEPRECATED_ANNOTATION,
 } from '../../constants';
 import { TemplateItem } from '../../types/template';
 
@@ -27,6 +28,9 @@ export const getTemplateName = (template: TemplateKind): string =>
 
 export const isCommonTemplate = (template: TemplateKind): boolean =>
   template?.metadata?.labels?.[TEMPLATE_TYPE_LABEL] === TEMPLATE_TYPE_BASE;
+
+export const isDeprecatedTemplate = (template: TemplateKind): boolean =>
+  getAnnotation(template, TEMPLATE_DEPRECATED_ANNOTATION) === 'true';
 
 export const getTemplateSupport = (
   template: TemplateKind,

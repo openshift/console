@@ -2,7 +2,11 @@ import { history } from '@console/internal/components/utils';
 import { TemplateKind } from '@console/internal/module/k8s';
 import { VMWizardName } from '../../constants';
 import { getFlavor, getWorkloadProfile } from '../../selectors/vm';
-import { getTemplateName, isCommonTemplate } from '../../selectors/vm-template/basic';
+import {
+  getTemplateName,
+  isCommonTemplate,
+  isDeprecatedTemplate,
+} from '../../selectors/vm-template/basic';
 import { isTemplateSourceError, TemplateSourceStatus } from '../../statuses/template/types';
 import { TemplateItem } from '../../types/template';
 import { getVMWizardCreateLink } from '../../utils/url';
@@ -17,7 +21,7 @@ export const filterTemplates = (
   commonTemplates: TemplateKind[],
 ): TemplateItem[] => {
   const userTemplateItems: TemplateItem[] = userTemplates
-    .filter((t) => !isCommonTemplate(t))
+    .filter((t) => !isCommonTemplate(t) && !isDeprecatedTemplate(t))
     .map((t) => ({
       metadata: {
         name: t.metadata.name,
@@ -28,33 +32,35 @@ export const filterTemplates = (
       variants: [t],
     }));
 
-  const commonTemplateItems = commonTemplates.reduce((acc, t) => {
-    const name = getTemplateName(t);
-    if (acc[name]) {
-      const isRecommended = t.metadata.labels?.[DEFAULT_OS_VARIANT] === 'true';
-      if (isRecommended) {
-        acc[name].metadata = {
-          name: t.metadata.name,
-          uid: t.metadata.uid,
-          namespace: t.metadata.namespace,
-        };
-        acc[name].variants.unshift(t);
+  const commonTemplateItems = commonTemplates
+    .filter((t) => !isDeprecatedTemplate(t))
+    .reduce((acc, t) => {
+      const name = getTemplateName(t);
+      if (acc[name]) {
+        const isRecommended = t.metadata.labels?.[DEFAULT_OS_VARIANT] === 'true';
+        if (isRecommended) {
+          acc[name].metadata = {
+            name: t.metadata.name,
+            uid: t.metadata.uid,
+            namespace: t.metadata.namespace,
+          };
+          acc[name].variants.unshift(t);
+        } else {
+          acc[name].variants.push(t);
+        }
       } else {
-        acc[name].variants.push(t);
+        acc[name] = {
+          metadata: {
+            name: t.metadata.name,
+            uid: t.metadata.uid,
+            namespace: t.metadata.namespace,
+          },
+          isCommon: true,
+          variants: [t],
+        };
       }
-    } else {
-      acc[name] = {
-        metadata: {
-          name: t.metadata.name,
-          uid: t.metadata.uid,
-          namespace: t.metadata.namespace,
-        },
-        isCommon: true,
-        variants: [t],
-      };
-    }
-    return acc;
-  }, {} as { [key: string]: TemplateItem });
+      return acc;
+    }, {} as { [key: string]: TemplateItem });
 
   Object.keys(commonTemplateItems).forEach((key) => {
     const recommendedProfile = getWorkloadProfile(commonTemplateItems[key].variants[0]);
