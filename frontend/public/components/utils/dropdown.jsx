@@ -67,7 +67,7 @@ export class DropdownMixin extends React.PureComponent {
       });
     }
 
-    if(type !== 'multiple'){
+    if (type !== 'multiple') {
       this.hide();
     }
   }
@@ -105,33 +105,14 @@ export class DropdownMixin extends React.PureComponent {
 
 class DropDownRow extends React.PureComponent {
   render() {
-    const {
-      itemKey,
-      content,
-      onclick,
-      onBookmark,
-      onUnBookmark,
-      className,
-      selected,
-      hover,
-      canFavorite,
-      onFavorite,
-      favoriteKey,
-      autocompleteFilter,
-    } = this.props;
+    const { itemKey, content, onclick, onBookmark, onUnBookmark, className, selected, hover, canFavorite, onFavorite, favoriteKey, autocompleteFilter } = this.props;
     let prefix;
 
     if (!autocompleteFilter && !onBookmark && !onUnBookmark) {
       //use pf4 markup if not using the autocomplete dropdown
       return (
         <li key={itemKey}>
-          <button
-            className="pf-c-dropdown__menu-item"
-            id={`${itemKey}-link`}
-            data-test-id="dropdown-menu"
-            data-test-dropdown-menu={itemKey}
-            onClick={(e) => onclick(itemKey, e)}
-          >
+          <button className="pf-c-dropdown__menu-item" id={`${itemKey}-link`} data-test-id="dropdown-menu" data-test-dropdown-menu={itemKey} onClick={e => onclick(itemKey, e)}>
             {content}
           </button>
         </li>
@@ -139,22 +120,14 @@ class DropDownRow extends React.PureComponent {
     }
     if (onUnBookmark) {
       prefix = (
-        <a
-          href="#"
-          className={classNames('bookmarker', { hover, focus: selected })}
-          onClick={(e) => onUnBookmark(e, itemKey)}
-        >
+        <a href="#" className={classNames('bookmarker', { hover, focus: selected })} onClick={e => onUnBookmark(e, itemKey)}>
           <MinusCircleIcon />
         </a>
       );
     }
     if (onBookmark) {
       prefix = (
-        <a
-          href="#"
-          className={classNames('bookmarker', { hover, focus: selected })}
-          onClick={(e) => onBookmark(e, itemKey, content)}
-        >
+        <a href="#" className={classNames('bookmarker', { hover, focus: selected })} onClick={e => onBookmark(e, itemKey, content)}>
           <PlusCircleIcon />
         </a>
       );
@@ -164,11 +137,7 @@ class DropDownRow extends React.PureComponent {
     if (onUnBookmark && canFavorite) {
       const isFavorite = favoriteKey === itemKey;
       suffix = (
-        <a
-          href="#"
-          className={classNames('bookmarker', { hover, focus: selected })}
-          onClick={(e) => onFavorite(e, isFavorite ? undefined : itemKey)}
-        >
+        <a href="#" className={classNames('bookmarker', { hover, focus: selected })} onClick={e => onFavorite(e, isFavorite ? undefined : itemKey)}>
           <StarIcon className={classNames({ favorite: isFavorite })} />
         </a>
       );
@@ -186,7 +155,7 @@ class DropDownRow extends React.PureComponent {
             hover,
             focus: selected,
           })}
-          onClick={(e) => onclick(itemKey, e)}
+          onClick={e => onclick(itemKey, e)}
         >
           {content}
         </a>
@@ -227,14 +196,12 @@ export class Dropdown extends DropdownMixin {
 
     this.state.items = Object.assign({}, bookmarks, props.items);
 
-    this.state.title = props.noSelection
-      ? props.title
-      : _.get(props.items, props.selectedKey, props.title);
+    this.state.title = props.noSelection ? props.title : _.get(props.items, props.selectedKey, props.title);
 
-    this.onKeyDown = (e) => this.onKeyDown_(e);
-    this.changeTextFilter = (e) => this.applyTextFilter_(e.target.value, this.props.items);
+    this.onKeyDown = e => this.onKeyDown_(e);
+    this.changeTextFilter = e => this.applyTextFilter_(e.target.value, this.props.items);
     const { shortCut } = this.props;
-    this.globalKeyDown = (e) => {
+    this.globalKeyDown = e => {
       const { nodeName } = e.target;
 
       if (nodeName === 'INPUT' || nodeName === 'TEXTAREA') {
@@ -380,16 +347,8 @@ export class Dropdown extends DropdownMixin {
       const { selectedKey, keyboardHoverKey, noSelection } = this.props;
       return (
         <>
-          {actionItems.map((ai) => (
-            <DropDownRow
-              className={classNames({ active: ai.actionKey === selectedKey && !noSelection })}
-              key={`${ai.actionKey}-${ai.actionTitle}`}
-              itemKey={ai.actionKey}
-              content={ai.actionTitle}
-              onclick={this.onClick}
-              selected={ai.actionKey === selectedKey && !noSelection}
-              hover={ai.actionKey === keyboardHoverKey}
-            />
+          {actionItems.map(ai => (
+            <DropDownRow className={classNames({ active: ai.actionKey === selectedKey && !noSelection })} key={`${ai.actionKey}-${ai.actionTitle}`} itemKey={ai.actionKey} content={ai.actionTitle} onclick={this.onClick} selected={ai.actionKey === selectedKey && !noSelection} hover={ai.actionKey === keyboardHoverKey} />
           ))}
           <li className="co-namespace-selector__divider">
             <div className="dropdown-menu__divider" />
@@ -401,30 +360,8 @@ export class Dropdown extends DropdownMixin {
   }
 
   render() {
-    const {
-      active,
-      autocompleteText,
-      selectedKey,
-      items,
-      title,
-      bookmarks,
-      keyboardHoverKey,
-      favoriteKey,
-    } = this.state;
-    const {
-      ariaLabel,
-      autocompleteFilter,
-      autocompletePlaceholder,
-      className,
-      buttonClassName,
-      menuClassName,
-      storageKey,
-      canFavorite,
-      dropDownClassName,
-      titlePrefix,
-      describedBy,
-      disabled,
-    } = this.props;
+    const { active, autocompleteText, selectedKey, items, title, bookmarks, keyboardHoverKey, favoriteKey } = this.state;
+    const { ariaLabel, autocompleteFilter, autocompletePlaceholder, className, buttonClassName, menuClassName, storageKey, canFavorite, dropDownClassName, titlePrefix, describedBy, disabled } = this.props;
 
     const spacerBefore = this.props.spacerBefore || new Set();
     const headerBefore = this.props.headerBefore || {};
@@ -436,21 +373,7 @@ export class Dropdown extends DropdownMixin {
       const hover = key === keyboardHoverKey;
       const klass = classNames({ active: selected });
       if (storageKey && bookmarks && bookmarks[key]) {
-        bookMarkRows.push(
-          <DropDownRow
-            className={klass}
-            key={key}
-            itemKey={key}
-            content={content}
-            onUnBookmark={this.onUnBookmark}
-            onclick={this.onClick}
-            selected={selected}
-            hover={hover}
-            canFavorite={canFavorite}
-            onFavorite={this.onFavorite}
-            favoriteKey={favoriteKey}
-          />,
-        );
+        bookMarkRows.push(<DropDownRow className={klass} key={key} itemKey={key} content={content} onUnBookmark={this.onUnBookmark} onclick={this.onClick} selected={selected} hover={hover} canFavorite={canFavorite} onFavorite={this.onFavorite} favoriteKey={favoriteKey} />);
         return;
       }
       if (spacerBefore.has(key)) {
@@ -468,19 +391,7 @@ export class Dropdown extends DropdownMixin {
           </li>,
         );
       }
-      rows.push(
-        <DropDownRow
-          className={klass}
-          key={key}
-          itemKey={key}
-          content={content}
-          onBookmark={storageKey && this.onBookmark}
-          onclick={this.onClick}
-          selected={selected}
-          hover={hover}
-          autocompleteFilter={autocompleteFilter}
-        />,
-      );
+      rows.push(<DropDownRow className={klass} key={key} itemKey={key} content={content} onBookmark={storageKey && this.onBookmark} onclick={this.onClick} selected={selected} hover={hover} autocompleteFilter={autocompleteFilter} />);
     };
 
     _.each(items, (v, k) => addItem(k, v));
@@ -489,23 +400,8 @@ export class Dropdown extends DropdownMixin {
     if (autocompleteFilter) {
       return (
         <div className={className} ref={this.dropdownElement} style={this.props.style}>
-          <div
-            className={classNames(
-              'dropdown pf-c-dropdown',
-              { 'pf-m-expanded': this.state.active },
-              dropDownClassName,
-            )}
-          >
-            <button
-              aria-haspopup="true"
-              onClick={this.toggle}
-              onKeyDown={this.onKeyDown}
-              type="button"
-              className={classNames('pf-c-dropdown__toggle', buttonClassName)}
-              id={this.props.id}
-              aria-describedby={describedBy}
-              disabled={disabled}
-            >
+          <div className={classNames('dropdown pf-c-dropdown', { 'pf-m-expanded': this.state.active }, dropDownClassName)}>
+            <button aria-haspopup="true" onClick={this.toggle} onKeyDown={this.onKeyDown} type="button" className={classNames('pf-c-dropdown__toggle', buttonClassName)} id={this.props.id} aria-describedby={describedBy} disabled={disabled}>
               <div className="btn-dropdown__content-wrap">
                 <span className="pf-c-dropdown__toggle-text">
                   {titlePrefix && `${titlePrefix}: `}
@@ -515,30 +411,10 @@ export class Dropdown extends DropdownMixin {
               </div>
             </button>
             {active && (
-              <ul
-                role="listbox"
-                ref={this.dropdownList}
-                className={classNames(
-                  'dropdown-menu__autocomplete-filter',
-                  'pf-c-dropdown__menu',
-                  menuClassName,
-                )}
-              >
+              <ul role="listbox" ref={this.dropdownList} className={classNames('dropdown-menu__autocomplete-filter', 'pf-c-dropdown__menu', menuClassName)}>
                 {autocompleteFilter && (
                   <div className="dropdown-menu__filter">
-                    <input
-                      autoFocus
-                      type="text"
-                      ref={(input) => (this.input = input)}
-                      onChange={this.changeTextFilter}
-                      placeholder={autocompletePlaceholder}
-                      value={autocompleteText || ''}
-                      autoCapitalize="none"
-                      onKeyDown={this.onKeyDown}
-                      className="pf-c-form-control"
-                      onClick={(e) => e.stopPropagation()}
-                      data-test-id="dropdown-text-filter"
-                    />
+                    <input autoFocus type="text" ref={input => (this.input = input)} onChange={this.changeTextFilter} placeholder={autocompletePlaceholder} value={autocompleteText || ''} autoCapitalize="none" onKeyDown={this.onKeyDown} className="pf-c-form-control" onClick={e => e.stopPropagation()} data-test-id="dropdown-text-filter" />
                   </div>
                 )}
                 {this.renderActionItem()}
@@ -559,25 +435,8 @@ export class Dropdown extends DropdownMixin {
     //pf4 markup
     return (
       <div className={className} ref={this.dropdownElement} style={this.props.style}>
-        <div
-          className={classNames(
-            { 'dropdown pf-c-dropdown': true, 'pf-m-expanded': this.state.active },
-            dropDownClassName,
-          )}
-        >
-          <button
-            aria-label={ariaLabel}
-            aria-haspopup="true"
-            aria-expanded={this.state.active}
-            className={classNames('pf-c-dropdown__toggle', buttonClassName)}
-            data-test-id="dropdown-button"
-            onClick={this.toggle}
-            onKeyDown={this.onKeyDown}
-            type="button"
-            id={this.props.id}
-            aria-describedby={describedBy}
-            disabled={disabled}
-          >
+        <div className={classNames({ 'dropdown pf-c-dropdown': true, 'pf-m-expanded': this.state.active }, dropDownClassName)}>
+          <button aria-label={ariaLabel} aria-haspopup="true" aria-expanded={this.state.active} className={classNames('pf-c-dropdown__toggle', buttonClassName)} data-test-id="dropdown-button" onClick={this.toggle} onKeyDown={this.onKeyDown} type="button" id={this.props.id} aria-describedby={describedBy} disabled={disabled}>
             <span className="pf-c-dropdown__toggle-text">
               {titlePrefix && `${titlePrefix}: `}
               {title}
@@ -585,10 +444,7 @@ export class Dropdown extends DropdownMixin {
             <CaretDownIcon className="pf-c-dropdown__toggle-icon" />
           </button>
           {active && (
-            <ul
-              ref={this.dropdownList}
-              className={classNames('pf-c-dropdown__menu', menuClassName)}
-            >
+            <ul ref={this.dropdownList} className={classNames('pf-c-dropdown__menu', menuClassName)}>
               {rows}
             </ul>
           )}
@@ -653,15 +509,7 @@ class ActionsMenuDropdown extends DropdownMixin {
           'pf-m-expanded': this.state.active,
         })}
       >
-        <button
-          type="button"
-          aria-haspopup="true"
-          aria-label="Actions"
-          aria-expanded={this.state.active}
-          className="pf-c-dropdown__toggle"
-          onClick={this.toggle}
-          data-test-id="actions-menu-button"
-        >
+        <button type="button" aria-haspopup="true" aria-label="Actions" aria-expanded={this.state.active} className="pf-c-dropdown__toggle" onClick={this.toggle} data-test-id="actions-menu-button">
           <span className="pf-c-dropdown__toggle-text">{title || 'Actions'}</span>
           <CaretDownIcon className="pf-c-dropdown__toggle-icon" />
         </button>
@@ -695,7 +543,7 @@ const ActionsMenu_ = ({ actions, impersonate, title = undefined }) => {
     }
 
     Promise.all(promises)
-      .then((results) => setVisible(_.some(results, 'status.allowed')))
+      .then(results => setVisible(_.some(results, 'status.allowed')))
       .catch(() => setVisible(true));
   }, [actions, impersonate, setVisible]);
 
@@ -715,9 +563,7 @@ ActionsMenu.propTypes = {
   title: PropTypes.node,
 };
 
-const containerLabel = (container) => (
-  <ResourceName name={container ? container.name : ''} kind="Container" />
-);
+const containerLabel = container => <ResourceName name={container ? container.name : ''} kind="Container" />;
 
 export class ContainerDropdown extends React.PureComponent {
   getSpacer(container) {
@@ -745,18 +591,7 @@ export class ContainerDropdown extends React.PureComponent {
     const headerBefore = this.getHeaders(firstContainer, firstInitContainer);
     const dropdownItems = _.mapValues(_.merge(containers, initContainers), containerLabel);
     const title = _.get(dropdownItems, currentKey) || containerLabel(firstContainer);
-    return (
-      <Dropdown
-        className="btn-group"
-        menuClassName="dropdown-menu--text-wrap"
-        headerBefore={headerBefore}
-        items={dropdownItems}
-        spacerBefore={spacerBefore}
-        title={title}
-        onChange={onChange}
-        selectedKey={currentKey}
-      />
-    );
+    return <Dropdown className="btn-group" menuClassName="dropdown-menu--text-wrap" headerBefore={headerBefore} items={dropdownItems} spacerBefore={spacerBefore} title={title} onChange={onChange} selectedKey={currentKey} />;
   }
 }
 
