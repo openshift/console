@@ -397,7 +397,7 @@ class BaseEditRoleBindingWithTranslation extends React.Component {
       'subjects',
     ]);
     existingData.kind = props.kind;
-    const { subjectKind, subjectName } = this.props.fixed.subjectRef;
+    const { subjectKind, subjectName } = this.props.fixed.subjectRef || {};
     const data = _.defaultsDeep({}, props.fixed, existingData, {
       apiVersion: 'rbac.authorization.k8s.io/v1',
       kind: 'RoleBinding',
@@ -500,6 +500,7 @@ class BaseEditRoleBindingWithTranslation extends React.Component {
     const { fixed, saveButtonText, t } = this.props;
     const RoleDropdown = kind === 'RoleBinding' ? NsRoleDropdown : ClusterRoleDropdown;
     const title = `${this.props.titleVerb} ${kindObj(kind).label}`;
+    const isSubjectDisabled = fixed?.subjectRef?.subjectName ? true : false;
     const bindingKinds = [
       {
         value: 'RoleBinding',
@@ -517,9 +518,9 @@ class BaseEditRoleBindingWithTranslation extends React.Component {
       },
     ];
     const subjectKinds = [
-      { value: 'User', title: t('bindings~User') },
-      { value: 'Group', title: t('bindings~Group') },
-      { value: 'ServiceAccount', title: t('bindings~ServiceAccount') },
+      { value: 'User', title: t('bindings~User'), disabled: false },
+      { value: 'Group', title: t('bindings~Group'), disabled: false },
+      { value: 'ServiceAccount', title: t('bindings~ServiceAccount'), disabled: false },
     ];
 
     return (
@@ -604,7 +605,7 @@ class BaseEditRoleBindingWithTranslation extends React.Component {
             <div className="form-group">
               <RadioGroup
                 currentValue={subject.kind}
-                items={subjectKinds}
+                items={subjectKinds.map((obj) => ({ ...obj, disabled: isSubjectDisabled }))}
                 onChange={this.changeSubjectKind}
               />
             </div>
@@ -632,7 +633,7 @@ class BaseEditRoleBindingWithTranslation extends React.Component {
                 value={subject.name}
                 required
                 id="subject-name"
-                disabled={fixed.subjectRef.subjectName ? true : false}
+                disabled={isSubjectDisabled}
                 data-test="subject-name"
               />
             </div>
