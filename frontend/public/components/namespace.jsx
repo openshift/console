@@ -536,7 +536,7 @@ class NamespaceBarDropdowns_ extends React.Component {
     } else if (loaded && !_.has(items, title)) {
       // If the currently active namespace is not found in the list of all namespaces, put it in anyway
       // items[title] = title;
-      // active한 namespace 없을 때 가장 첫번째 namespace 골라지도록 변경
+      // active한 namespace 없을 때 가장 첫번째 namespace 골라지도록 변.
       setActiveNamespace(Object.keys(items)[0]);
     }
     const defaultActionItem = canCreateProject
