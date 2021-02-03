@@ -57,18 +57,20 @@ export const prefillInitialDiskUpdater = ({ id, prevState, dispatch, getState }:
   // Depends on OPERATING_SYSTEM CLONE_COMMON_BASE_DISK_IMAGE PROVISION_SOURCE_TYPE FLAVOR USER_TEMPLATE and WORKLOAD_PROFILE
   const newSourceStorage = getNewProvisionSourceStorage(state, id);
   const oldType =
-    oldSourceStorage &&
-    StorageUISource.fromTypes(
-      new VolumeWrapper(oldSourceStorage.volume).getType(),
-      new DataVolumeWrapper(oldSourceStorage.dataVolume).getType(),
-    );
+    (oldSourceStorage &&
+      StorageUISource.fromTypes(
+        new VolumeWrapper(oldSourceStorage.volume).getType(),
+        new DataVolumeWrapper(oldSourceStorage.dataVolume).getType(),
+      )) ||
+    null;
 
   const newType =
-    newSourceStorage &&
-    StorageUISource.fromTypes(
-      new VolumeWrapper(newSourceStorage.volume).getType(),
-      new DataVolumeWrapper(newSourceStorage.dataVolume).getType(),
-    );
+    (newSourceStorage &&
+      StorageUISource.fromTypes(
+        new VolumeWrapper(newSourceStorage.volume).getType(),
+        new DataVolumeWrapper(newSourceStorage.dataVolume).getType(),
+      )) ||
+    null;
 
   const baseDiskImageChanged =
     newSourceStorage?.dataVolume?.spec?.source?.pvc?.name !==

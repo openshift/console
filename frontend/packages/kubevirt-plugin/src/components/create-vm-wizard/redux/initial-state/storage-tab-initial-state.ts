@@ -25,6 +25,7 @@ import {
 } from '../../../../selectors/config-map/sc-defaults';
 import { toShallowJS, iGetIn } from '../../../../utils/immutable';
 import { generateDataVolumeName } from '../../../../utils';
+import { getEmptyInstallStorage } from '../../../../utils/storage';
 import {
   DUMMY_VM_NAME,
   TEMPLATE_BASE_IMAGE_NAME_PARAMETER,
@@ -256,6 +257,12 @@ export const getNewProvisionSourceStorage = (state: any, id: string): VMWizardSt
     true,
   );
 
+  if (provisionSource === ProvisionSource.PXE) {
+    return {
+      type: VMWizardStorageType.PROVISION_SOURCE_DISK,
+      ...getEmptyInstallStorage(storageClassConfigMap),
+    };
+  }
   if (provisionSource === ProvisionSource.URL) {
     if (source?.url) {
       return getUrlStorage(
