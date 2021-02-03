@@ -52,18 +52,11 @@ const ManagedKafkas = () => {
     isList: false
   })
 
-  if (!watchedKafkaRequest) {
+  if (!watchedKafkaRequest || !watchedKafkaRequest.status) {
+    // TODO loader should be in center of page
     return (
       <div>
-        <LoadingBox />
-      </div>
-    )
-  }
-
-  if (!watchedKafkaRequest.status) {
-    return (
-      <div>
-        Operator did not return status
+        <LoadingBox/>
       </div>
     )
   }
