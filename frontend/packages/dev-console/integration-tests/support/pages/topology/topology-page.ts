@@ -17,6 +17,9 @@ export const topologyPage = {
   verifyNoWorkLoadsText: (text: string) =>
     cy.get('h2.co-hint-block__title').should('contain.text', text),
   verifyWorkLoads: () => cy.get('g[data-surface="true"]').should('be.visible'),
+  search: (name: string) => {
+    topologyHelper.search(name);
+  },
   verifyWorkloadInTopologyPage: (appName: string) => {
     topologyHelper.verifyWorkloadInTopologyPage(appName);
   },
