@@ -143,7 +143,6 @@ const ServicePortMapping = ({ ports }) => {
 };
 
 const FederatedServiceTableRow: RowFunction<K8sResourceKind> = ({ obj: service, index, key, style }) => {
-  console.log('obj? ', service);
   return (
     <TableRow id={service.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
