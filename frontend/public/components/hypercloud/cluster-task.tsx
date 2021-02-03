@@ -5,7 +5,7 @@ import { sortable } from '@patternfly/react-table';
 
 import { K8sResourceKind } from '../../module/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from '../factory';
-import { DetailsItem, Kebab, KebabAction, detailsPage, Timestamp, navFactory, ResourceKebab, ResourceLink, ResourceSummary, SectionHeading } from '../utils';
+import { Kebab, KebabAction, detailsPage, Timestamp, navFactory, ResourceKebab, ResourceLink, ResourceSummary, SectionHeading } from '../utils';
 import { ClusterTaskModel } from '../../models';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
@@ -70,14 +70,6 @@ const ClusterTaskTableRow: RowFunction<K8sResourceKind> = ({ obj: clusterTask, i
       </TableRow>
     );
   };
-
-  export const ClusterTaskDetailsList: React.FC<ClusterTaskDetailsListProps> = ({ ds }) => (
-    <dl className="co-m-pane__details">
-      <DetailsItem label="Current Count" obj={ds} path="status.currentNumberScheduled" />
-      <DetailsItem label="Desired Count" obj={ds} path="status.desiredNumberScheduled" />
-    </dl>
-  );
-
   
 const ClusterTaskDetails: React.FC<ClusterTaskDetailsProps> = ({ obj: clusterTask }) => (
     <>
@@ -85,15 +77,9 @@ const ClusterTaskDetails: React.FC<ClusterTaskDetailsProps> = ({ obj: clusterTas
         <SectionHeading text="ClusterTask Details" />
         <div className="row">
           <div className="col-lg-6">
-            <ResourceSummary resource={clusterTask} showPodSelector showNodeSelector showTolerations />
-          </div>
-          <div className="col-lg-6">
-            <ClusterTaskDetailsList ds={clusterTask} />
+            <ResourceSummary resource={clusterTask} />
           </div>
         </div>
-      </div>
-      <div className="co-m-pane__body">
-        <SectionHeading text="Containers" />
       </div>
     </>
   );
@@ -110,11 +96,6 @@ export const ClusterTasks: React.FC = props => {
 export const ClusterTasksPage: React.FC<ClusterTasksPageProps> = props => <ListPage canCreate={true} ListComponent={ClusterTasks} kind={kind} {...props} />;
 
 export const ClusterTasksDetailsPage: React.FC<ClusterTasksDetailsPageProps> = props => <DetailsPage {...props} kind={kind} menuActions={menuActions} pages={[details(detailsPage(ClusterTaskDetails)), editYaml()]} />;
-
-
-  type ClusterTaskDetailsListProps = {
-    ds: K8sResourceKind;
-  };
 
   type ClusterTasksPageProps = {
     showTitle?: boolean;
