@@ -53,6 +53,12 @@ const nameValueEquals = (row: JQuery<HTMLElement>, name: string, value: string) 
   });
 };
 
+const numberOfAnnotationsEquals = (count: number) => {
+  // eslint-disable-next-line cypress/no-unnecessary-waiting
+  cy.wait(2000); // wait a couple of seconds for watcher to update page
+  cy.byTestID('edit-annotations').contains(`${count} annotations`);
+};
+
 describe('Annotations', () => {
   before(() => {
     cy.login();
@@ -60,7 +66,6 @@ describe('Annotations', () => {
     nav.sidenav.switcher.changePerspectiveTo('Administrator');
     nav.sidenav.switcher.shouldHaveText('Administrator');
     cy.createProject(testName);
-    createExampleConfigMapInstance();
   });
 
   afterEach(() => {
@@ -68,7 +73,6 @@ describe('Annotations', () => {
   });
 
   after(() => {
-    deleteExampleConfigMapInstance();
     cy.deleteProject(testName);
     cy.logout();
   });
@@ -91,10 +95,12 @@ describe('Annotations', () => {
       },
     ];
 
+    createExampleConfigMapInstance();
+
     cy.url().should('include', `/k8s/ns/${testName}/configmaps/example`);
     detailsPage.isLoaded();
     detailsPage.titleShouldContain('example');
-    cy.byTestID('edit-annotations').contains('0 annotations');
+    numberOfAnnotationsEquals(0);
 
     cy.log('Add annotations');
     detailsPage.clickPageActionFromDropdown('Edit annotations');
@@ -115,7 +121,7 @@ describe('Annotations', () => {
     modal.shouldBeClosed();
 
     cy.log('Verify first two saved annotations');
-    cy.byTestID('edit-annotations').contains('2 annotation'); // 3rd annotation without key should not have been saved
+    numberOfAnnotationsEquals(2); // 3rd annotation without key should not have been saved
     detailsPage.clickPageActionFromDropdown('Edit annotations');
     modal.shouldBeOpened();
     getNameValueEditorRow(0).then((row) => {
@@ -142,7 +148,7 @@ describe('Annotations', () => {
     modal.shouldBeClosed();
 
     cy.log('Verify all three annotations');
-    cy.byTestID('edit-annotations').contains('3 annotations');
+    numberOfAnnotationsEquals(3);
     detailsPage.clickPageActionFromDropdown('Edit annotations');
     modal.shouldBeOpened();
     getNameValueEditorRow(0).then((row) => {
@@ -165,7 +171,7 @@ describe('Annotations', () => {
       .click();
     modal.submit();
     modal.shouldBeClosed();
-    cy.byTestID('edit-annotations').contains('2 annotations');
+    numberOfAnnotationsEquals(2);
     detailsPage.clickPageActionFromDropdown('Edit annotations');
     modal.shouldBeOpened();
     cy.log('verify 2nd annotation has been removed');
@@ -184,6 +190,8 @@ describe('Annotations', () => {
     cy.byTestID('delete-button').click();
     modal.submit();
     modal.shouldBeClosed();
-    cy.byTestID('edit-annotations').contains('0 annotations');
+    numberOfAnnotationsEquals(0);
+
+    deleteExampleConfigMapInstance();
   });
 });
