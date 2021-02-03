@@ -90,7 +90,7 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
     const osdSize = isNoProvionerSC ? defaultRequestSize.BAREMETAL : osdSizeWithUnit;
     let portable = !isNoProvionerSC;
     let deviceSetReplica = replica;
-    let deviceSetCount = isArbiterEnabled ? 2 : 1;
+    let deviceSetCount = 1;
     if (hasFlexibleScaling) {
       portable = false;
       deviceSetReplica = 1;
