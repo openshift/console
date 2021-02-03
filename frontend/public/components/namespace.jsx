@@ -535,7 +535,9 @@ class NamespaceBarDropdowns_ extends React.Component {
       title = allNamespacesTitle;
     } else if (loaded && !_.has(items, title)) {
       // If the currently active namespace is not found in the list of all namespaces, put it in anyway
-      items[title] = title;
+      // items[title] = title;
+      // active한 namespace 없을 때 가장 첫번째 namespace 골라지도록 변경
+      setActiveNamespace(Object.keys(items)[0]);
     }
     const defaultActionItem = canCreateProject
       ? [
@@ -569,7 +571,7 @@ class NamespaceBarDropdowns_ extends React.Component {
           className="co-namespace-selector"
           menuClassName="co-namespace-selector__menu"
           buttonClassName="pf-m-plain"
-          canFavorite
+          // canFavorite
           items={items}
           actionItems={defaultActionItem}
           titlePrefix={model.label}
@@ -578,6 +580,7 @@ class NamespaceBarDropdowns_ extends React.Component {
           selectedKey={activeNamespace || ALL_NAMESPACES_KEY}
           autocompleteFilter={autocompleteFilter}
           autocompletePlaceholder={`Select ${model.label.toLowerCase()}...`}
+          noBookmark={true}
           defaultBookmarks={defaultBookmarks}
           storageKey={NAMESPACE_LOCAL_STORAGE_KEY}
           shortCut={KEYBOARD_SHORTCUTS.focusNamespaceDropdown}

@@ -367,7 +367,7 @@ export class Dropdown extends DropdownMixin {
     const headerBefore = this.props.headerBefore || {};
     const rows = [];
     const bookMarkRows = [];
-
+    const noBookmark = this.props.noBookmark || false;
     const addItem = (key, content) => {
       const selected = key === selectedKey && !this.props.noSelection;
       const hover = key === keyboardHoverKey;
@@ -391,7 +391,7 @@ export class Dropdown extends DropdownMixin {
           </li>,
         );
       }
-      rows.push(<DropDownRow className={klass} key={key} itemKey={key} content={content} onBookmark={storageKey && this.onBookmark} onclick={this.onClick} selected={selected} hover={hover} autocompleteFilter={autocompleteFilter} />);
+      rows.push(<DropDownRow className={klass} key={key} itemKey={key} content={content} onBookmark={!noBookmark && storageKey && this.onBookmark} onclick={this.onClick} selected={selected} hover={hover} autocompleteFilter={autocompleteFilter} />);
     };
 
     _.each(items, (v, k) => addItem(k, v));
