@@ -9,6 +9,7 @@ import {
   Form,
   InputGroupText,
   TextInput,
+  Tooltip,
   InputGroup,
   TextArea,
 } from '@patternfly/react-core';
@@ -540,6 +541,12 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
     initialState,
   );
 
+  const handleBsNameTextInputChange = (strVal: string) => {
+    if (strVal.length <= 43) {
+      setBsName(strVal);
+    }
+  };
+
   const {
     cancel,
     className,
@@ -645,12 +652,19 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
         )}
         isRequired
       >
-        <TextInput
-          onChange={setBsName}
-          value={bsName}
-          placeholder="my-backingstore"
-          aria-label={t('noobaa-storage-plugin~Backing Store Name')}
-        />
+        <Tooltip
+          content="Name can contain a max of 43 characters"
+          isVisible={bsName.length > 42}
+          trigger="manual"
+        >
+          <TextInput
+            onChange={handleBsNameTextInputChange}
+            value={bsName}
+            maxLength={43}
+            placeholder="my-backingstore"
+            aria-label={t('noobaa-storage-plugin~Backing Store Name')}
+          />
+        </Tooltip>
       </FormGroup>
 
       <FormGroup
