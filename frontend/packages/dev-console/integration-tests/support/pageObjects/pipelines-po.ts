@@ -1,22 +1,43 @@
 export const pipelineBuilderPO = {
   title: '.odc-pipeline-builder-header h1',
-  name: '#form-input-formData-name-field',
-  taskDropdown: 'foreignObject button',
-  task: 'foreignObject div.odc-pipeline-vis-task__title',
-  sectionTitle: '.odc-pipeline-builder-page h2',
   create: '[data-test-id="submit-button"]',
   cancel: '[data-test-id="reset-button"]',
   add: 'button.pf-c-button.pf-m-link.pf-m-inline',
-  yamlView: '#form-radiobutton-editorType-yaml-field',
-  pipelineBuilderView: '#form-radiobutton-editorType-form-field',
-  addParams: {
-    name: '#form-input-formData-params-0-name-field',
-    description: '#form-input-formData-params-0-description-field',
-    defaultValue: '#form-input-formData-params-0-default-field',
+  configureVia: {
+    pipelineBuilder: '#form-radiobutton-editorType-form-field',
+    yamlView: '#form-radiobutton-editorType-yaml-field',
   },
-  addResources: {
-    name: '#form-input-formData-resources-0-name-field',
-    resourceType: '#form-dropdown-formData-resources-0-type-field',
+  formView: {
+    name: '#form-input-formData-name-field',
+    taskDropdown: '[data-id="initial-node"]',
+    task: '[data-type="builder"]',
+    plusTaskIcon: 'g.odc-plus-node-decorator',
+    seriesTask: '[data-id^="has-run-after-"][data-kind="node"]',
+    parallelTask: '[data-id^="shared-parallel-"][data-kind="node"]',
+    sectionTitle: '.odc-pipeline-builder-page h2',
+    addParams: {
+      name: '#form-input-formData-params-0-name-field',
+      description: '#form-input-formData-params-0-description-field',
+      defaultValue: '#form-input-formData-params-0-default-field',
+    },
+    addResources: {
+      name: '#form-input-formData-resources-0-name-field',
+      resourceType: '#form-dropdown-formData-resources-0-type-field',
+    },
+    sidePane: {
+      dialog: 'div.odc-sidebar',
+      displayName: '#task-name',
+      inputResource: 'div.pf-c-form [data-test-id="dropdown-button"]',
+    },
+  },
+  yamlView: {
+    editor: 'div.react-monaco-editor-container',
+    sideBar: '[data-test="resource-sidebar"]',
+    sidePane: {
+      samples: '',
+      snippets: '',
+      close: 'button[aria-label="Close"]',
+    },
   },
   switchToYamlEditorAlert: {
     alertDialog: 'form[name="form"]',

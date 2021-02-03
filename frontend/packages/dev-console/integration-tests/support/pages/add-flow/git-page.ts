@@ -14,14 +14,18 @@ export const gitPage = {
     cy.get(gitPO.pipeline.infoMessage).should('have.text', message);
   },
   verifyPipelineInfoMessage: (message: string) => {
-    cy.get(gitPO.pipeline.infoMessage).should('contain.text', message);
+    cy.get(gitPO.pipeline.infoMessage).should('contain.text', `Info alert:${message}`);
   },
   enterGitUrl: (gitUrl: string) =>
     cy
       .get(gitPO.gitRepoUrl)
       .clear()
       .type(gitUrl),
-  verifyPipelineCheckBox: () => cy.get(gitPO.pipeline.addPipeline).should('be.visible'),
+  verifyPipelineCheckBox: () =>
+    cy
+      .get(gitPO.pipeline.addPipeline)
+      .scrollIntoView()
+      .should('be.visible'),
   enterAppName: (appName: string) => {
     cy.get(gitPO.appName).then(($el) => {
       if ($el.prop('tagName').includes('button')) {
@@ -30,8 +34,11 @@ export const gitPage = {
       } else if ($el.prop('tagName').includes('input')) {
         cy.get(gitPO.appName)
           .scrollIntoView()
-          .clear()
-          .should('be.empty', { timeout: 3000 })
+          .clear();
+        // @ts-ignore
+        cy.wait(3000);
+        cy.get(gitPO.appName)
+          .scrollIntoView()
           .type(appName)
           .should('have.value', appName);
       } else {
@@ -43,9 +50,12 @@ export const gitPage = {
   enterComponentName: (name: string) => {
     cy.get(gitPO.nodeName)
       .scrollIntoView()
-      .clear()
-      .should('be.empty', { timeout: 3000 })
-      .type(name)
+      .clear();
+    // @ts-ignore
+    cy.wait(3000);
+    cy.get(gitPO.nodeName)
+      .scrollIntoView()
+      .type(name, { delay: 1000 })
       .should('have.value', name);
   },
   verifyNodeName: (componentName: string) =>

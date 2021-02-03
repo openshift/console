@@ -6,7 +6,13 @@ export const topologyPO = {
     zoomOut: '#zoom-out',
     fitToScreen: '#fit-to-screen',
     emptyGraph: '[data-test-id="topology"]',
-    contextMenu: {
+    filterDropdown: '[id^=pf-select-toggle-id]',
+    nodeLabel: 'g.odc-base-node__label',
+    contextMenu: '#popper-container ul',
+    workloads: 'g[data-surface="true"]',
+    node: '[data-test-id="base-node-handler"]',
+    workload: '[data-type="workload"]',
+    contextMenuOptions: {
       addToProject: '.odc-topology-context-menu button',
     },
   },

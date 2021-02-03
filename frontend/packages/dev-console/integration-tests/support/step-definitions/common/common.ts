@@ -19,8 +19,6 @@ Given('user is at developer perspective', () => {
 });
 
 Given('user has created namespace starts with {string}', (projectName: string) => {
-  perspective.switchTo(switchPerspective.Developer);
-  guidedTour.close();
   const d = new Date();
   const timestamp = d.getTime();
   projectNameSpace.selectOrCreateProject(`${projectName}-${timestamp}-ns`);
@@ -30,8 +28,6 @@ Given('user has created namespace starts with {string}', (projectName: string) =
 });
 
 Given('user has created or selected namespace {string}', (projectName: string) => {
-  perspective.switchTo(switchPerspective.Developer);
-  guidedTour.close();
   projectNameSpace.selectOrCreateProject(`${projectName}`);
   cy.log(`User has selected namespace "${projectName}"`);
 });
@@ -45,8 +41,6 @@ Given('user is at Monitoring page', () => {
 });
 
 Given('user is at namespace {string}', (projectName: string) => {
-  perspective.switchTo(switchPerspective.Developer);
-  guidedTour.close();
   projectNameSpace.selectOrCreateProject(projectName);
 });
 
@@ -80,8 +74,10 @@ When('user clicks create button', () => {
 });
 
 Given('user has selected namespace {string}', (projectName: string) => {
-  perspective.switchTo(switchPerspective.Developer);
-  guidedTour.close();
   projectNameSpace.selectProject(projectName);
   cy.log(`User has selected namespace ${projectName}`);
+});
+
+When('user clicks on {string} link', (buttonName: string) => {
+  cy.byButtonText(buttonName).click();
 });

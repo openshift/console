@@ -128,40 +128,60 @@ export const topologyPage = {
       .should('be.visible')
       .click(),
   rightClickOnNode: (releaseName: string) => {
-    cy.get('g.odc-base-node__label')
+    cy.get(topologyPO.graph.nodeLabel)
       .should('be.visible')
       .contains(releaseName)
       .trigger('contextmenu', { force: true });
   },
   clickOnNode: (releaseName: string) => {
-    cy.get('g.odc-base-node__label')
+    cy.get(topologyPO.graph.nodeLabel)
       .should('be.visible')
       .contains(releaseName)
       .click({ force: true });
   },
   clickOnSinkBinding: () => {
-    cy.get('g.odc-base-node__label')
+    cy.get(topologyPO.graph.nodeLabel)
       .should('be.visible')
       .contains('sink-binding')
       .click({ force: true });
   },
   rightClickOnKnativeRevision: () => {
-    cy.byLegacyTestID('base-node-handler')
+    cy.get(topologyPO.graph.node)
       .find('g.odc-resource-icon')
       .trigger('contextmenu', { force: true });
   },
   clickOnKnativeRevision: () => {
-    cy.byLegacyTestID('base-node-handler')
+    cy.get(topologyPO.graph.node)
       .find('g.odc-resource-icon')
       .click({ force: true });
   },
   waitForKnativeRevision: () => {
-    cy.get('[data-test-id="base-node-handler"]', { timeout: 300000 }).should('be.visible');
+    cy.get(topologyPO.graph.node, { timeout: 300000 }).should('be.visible');
   },
   rightClickOnHelmWorkload: () => {
-    cy.byLegacyTestID('base-node-handler')
+    cy.byLegacyTestID('base-node-handler');
+    cy.get(topologyPO.graph.node)
       .find('circle')
       .trigger('contextmenu', { force: true });
+  },
+  clickOnHelmWorkload: () => {
+    cy.get(topologyPO.graph.node)
+      .find('circle')
+      .click({ force: true });
+  },
+  clickWorkloadUrl: (workloadName: string) => {
+    cy.get('[data-type="workload"] text')
+      .contains(workloadName)
+      .parentsUntil(topologyPO.graph.node)
+      .siblings('a')
+      .first()
+      .click({ force: true });
+  },
+  clickOnKnativeService: (knativeService: string) => {
+    cy.get(`[data-id="group:${knativeService}"]`).click({ force: true });
+  },
+  rightClickOnKnativeService: (knativeService: string) => {
+    cy.get(`[data-id="group:${knativeService}"]`).trigger('contextmenu', { force: true });
   },
   addStorage: {
     pvc: {

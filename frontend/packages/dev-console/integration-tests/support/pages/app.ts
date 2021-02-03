@@ -1,9 +1,9 @@
 import { detailsPage } from '../../../../integration-tests-cypress/views/details-page';
 import { nav } from '../../../../integration-tests-cypress/views/nav';
 import { devNavigationMenu, switchPerspective } from '../constants/global';
-import { modal } from '../../../../integration-tests-cypress/views/modal';
 import { devNavigationMenuPO } from '../pageObjects/global-po';
 import { pageTitle } from '../constants/pageTitle';
+import { modal } from '../../../../integration-tests-cypress/views/modal';
 
 export const app = {
   waitForLoad: (timeout: number = 30000) => cy.get('.co-m-loader', { timeout }).should('not.exist'),
@@ -109,28 +109,28 @@ export const navigateTo = (opt: devNavigationMenu) => {
 };
 
 export const projectNameSpace = {
+  clickProjectDropdown: () => {
+    cy.byLegacyTestID('namespace-bar-dropdown')
+      .find('button')
+      .first()
+      .click();
+  },
   selectCreateProjectOption: () => {
     cy.document().then((doc) => {
       if (doc.readyState === 'complete') {
-        cy.byLegacyTestID('namespace-bar-dropdown')
-          .find('button')
-          .eq(0)
-          .click();
+        projectNameSpace.clickProjectDropdown();
         cy.byTestDropDownMenu('#CREATE_RESOURCE_ACTION#').click();
       }
     });
   },
 
   enterProjectName: (projectName: string) => {
-    cy.get('form[name="form"]').should('be.visible');
+    modal.shouldBeOpened();
     cy.get('#input-name').type(projectName);
   },
 
   selectOrCreateProject: (projectName: string) => {
-    cy.byLegacyTestID('namespace-bar-dropdown')
-      .find('button')
-      .eq(0)
-      .click();
+    projectNameSpace.clickProjectDropdown();
     // Bug: ODC-5129 - is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
     // cy.testA11y('Create Project modal');
     cy.byLegacyTestID('dropdown-text-filter').type(projectName);
@@ -138,7 +138,7 @@ export const projectNameSpace = {
       if ($el.find('li[role="option"]').length === 0) {
         cy.byTestDropDownMenu('#CREATE_RESOURCE_ACTION#').click();
         cy.byTestID('input-name').type(projectName);
-        modal.submit();
+        cy.byTestID('confirm-action').click();
       } else {
         cy.get('[role="listbox"]')
           .find('li[role="option"]')
@@ -156,10 +156,7 @@ export const projectNameSpace = {
   },
 
   selectProject: (projectName: string) => {
-    cy.byLegacyTestID('namespace-bar-dropdown')
-      .find('button')
-      .eq(0)
-      .click();
+    projectNameSpace.clickProjectDropdown();
     cy.byLegacyTestID('dropdown-text-filter').type(projectName);
     cy.get(`[id="${projectName}-link"]`).click();
   },
