@@ -62,7 +62,7 @@ const SnapshotsModal = withHandlePromise((props: SnapshotsModalProps) => {
         namespace: getNamespace(vmLikeEntity),
         vmName,
       })
-      .addOwnerReferences(buildOwnerReference(vmLikeEntity));
+      .addOwnerReferences(buildOwnerReference(vmLikeEntity, { blockOwnerDeletion: false }));
 
     handlePromise(k8sCreate(snapshotWrapper.getModel(), snapshotWrapper.asResource()), close);
   };
