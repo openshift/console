@@ -1,5 +1,5 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { naviagteTo } from '../../pages/app';
+import { navigateTo } from '../../pages/app';
 import { devNavigationMenu } from '../../constants/global';
 import { helmPage, helmDetailsPage } from '../../pages/helm/helm-page';
 import { addPage } from '../../pages/add-flow/add-page';
@@ -8,7 +8,7 @@ import { topologyPage } from '../../pages/topology/topology-page';
 import { catalogPage, catalogPageObj } from '../../pages/add-flow/catalog-page';
 
 When('user clicks on the Helm tab', () => {
-  naviagteTo(devNavigationMenu.Helm);
+  navigateTo(devNavigationMenu.Helm);
 });
 
 Then('user will be redirected to Helm releases page', () => {
@@ -33,7 +33,7 @@ Then('release name displays as {string}', (name: string) => {
 });
 
 Given('user is at Install Helm Chart page', () => {
-  naviagteTo(devNavigationMenu.Add);
+  navigateTo(devNavigationMenu.Add);
   addPage.selectCardFromOptions(addOptions.HelmChart);
   catalogPage.search('Nodejs Ex K v0.2.1');
   catalogPage.selectHelmChartCard('Nodejs Ex K v0.2.1');
@@ -50,12 +50,12 @@ Then('Topology page have the helm chart workload {string}', (nodeName: string) =
 });
 
 Given('helm chart is installed', () => {
-  naviagteTo(devNavigationMenu.Topology);
+  navigateTo(devNavigationMenu.Topology);
   topologyPage.verifyWorkloadInTopologyPage('nodejs-example');
 });
 
 Given('user is at the Helm page', () => {
-  naviagteTo(devNavigationMenu.Helm);
+  navigateTo(devNavigationMenu.Helm);
 });
 
 When('user selects checkbox for the Deployed Helm charts', (workloadname: string) => {

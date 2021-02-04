@@ -1,7 +1,6 @@
 // import { checkErrors } from '../../../../integration-tests-cypress/support';
 
 export { }; // needed in files which don't have an import to trigger ES6 module usage
-
 declare global {
   namespace Cypress {
     interface Chainable<Subject> {
@@ -33,26 +32,7 @@ after(() => {
 });
 
 afterEach(() => {
-  //checkErrors();
-});
-
-Cypress.Commands.add('pageTitleShouldContain', (title: string) => {
-  cy.get('[data-test-id ="resource-title"]')
-    .should('be.visible')
-    .and('contain.text', title);
-});
-
-Cypress.Commands.add('alertTitleShouldContain', (alertTitle: string) => {
-  cy.byLegacyTestID('modal-title').should('contain.text', alertTitle);
-});
-
-Cypress.Commands.add('clickNavLink', (path: [string, string]) => {
-  cy.get(`[data-component="pf-nav-expandable"]`) // this assumes all top level menu items are expandable
-    .contains(path[0])
-    .click(); // open top, expandable menu
-  cy.get('#page-sidebar')
-    .contains(path[1])
-    .click();
+  //  checkErrors();
 });
 
 Cypress.Commands.add('pageTitleShouldContain', (title: string) => {

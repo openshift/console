@@ -13,7 +13,7 @@ export const createHelmRelease = (helmCardName: string) => {
   catalogPage.clickOnInstallButton();
 };
 export const createHelmReleasewithName = (helmCardName: string, releaseName: string) => {
-  naviagteTo(devNavigationMenu.Add);
+  navigateTo(devNavigationMenu.Add);
   addPage.selectCardFromOptions(addOptions.HelmChart);
   catalogPage.search(helmCardName);
   catalogPage.selectHelmChartCard(helmCardName);

@@ -160,7 +160,7 @@ export const catalogInstallPageObj = {
       .should('exist')
       .find(catalogPO.cardHeader)
       .each(($el) => {
-        expect('Helm Charts').contain($el.text());
+        expect('Helm Charts').toContain($el.text());
       });
   },
   verifyFilterByKeywordField: () => {
