@@ -172,11 +172,7 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
                 onChange={setPVCName}
               />
             </FormGroup>
-            <FormGroup
-              fieldId="restore-storage-class"
-              className="co-restore-pvc-modal__input"
-              isRequired
-            >
+            <FormGroup fieldId="restore-storage-class" className="co-restore-pvc-modal__input">
               {!snapshotClassResourceLoaded ? (
                 <div className="skeleton-text" />
               ) : (
