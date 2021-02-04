@@ -14,7 +14,7 @@ import { StorageClassResourceKind, NodeKind } from '@console/internal/module/k8s
 import { StorageClassDropdown } from '@console/internal/components/utils/storage-class-dropdown';
 import { ListPage } from '@console/internal/components/factory';
 import { NodeModel } from '@console/internal/models';
-import { getName, getUID, useFlag } from '@console/shared';
+import { getName, getUID } from '@console/shared';
 import {
   storageClassTooltip,
   requestedCapacityTooltip,
@@ -25,20 +25,15 @@ import { InternalClusterState, InternalClusterAction, ActionType } from '../redu
 import {
   getNodeInfo,
   shouldDeployAsMinimal,
-  isFlexibleScaling,
   filterSCWithoutNoProv,
 } from '../../../../utils/install';
 import { ValidationMessage, ValidationType } from '../../../../utils/common-ocs-install-el';
 import InternalNodeTable from '../../node-list';
 import { SelectNodesText, SelectNodesDetails } from '../../install-wizard/capacity-and-nodes';
-import { GUARDED_FEATURES } from '../../../../features';
 
-const validate = (scName, enableMinimal, enableFlexibleScaling): ValidationType[] => {
+const validate = (scName, enableMinimal): ValidationType[] => {
   const validations = [];
-  if (enableFlexibleScaling) {
-    //  TODO: add check for arbiter
-    validations.push(ValidationType.INTERNAL_FLEXIBLE_SCALING);
-  }
+
   if (enableMinimal) {
     validations.push(ValidationType.MINIMAL);
   }
@@ -53,38 +48,17 @@ export const SelectCapacityAndNodes: React.FC<SelectCapacityAndNodesProps> = ({
   dispatch,
 }) => {
   const { t } = useTranslation();
-  const {
-    nodes: selectedNodes,
-    capacity: selectedCapacity,
-    storageClass,
-    enableMinimal,
-    enableFlexibleScaling,
-  } = state;
-  const isFlexibleScalingSupported = useFlag(GUARDED_FEATURES.OCS_FLEXIBLE_SCALING);
+  const { nodes: selectedNodes, capacity: selectedCapacity, storageClass, enableMinimal } = state;
 
   const { cpu, memory, zones } = getNodeInfo(selectedNodes);
   const scName: string = getName(storageClass);
   const nodesCount = selectedNodes.length;
-  const zonesCount = zones.size;
-  const validations = validate(
-    scName,
-    enableMinimal,
-    isFlexibleScalingSupported && enableFlexibleScaling,
-  );
+  const validations = validate(scName, enableMinimal);
 
   React.useEffect(() => {
     const isMinimal = shouldDeployAsMinimal(cpu, memory, nodesCount);
     dispatch({ type: ActionType.SET_ENABLE_MINIMAL, payload: isMinimal });
   }, [cpu, dispatch, memory, nodesCount]);
-
-  React.useEffect(() => {
-    if (isFlexibleScalingSupported) {
-      dispatch({
-        type: ActionType.SET_ENABLE_FLEXIBLE_SCALING,
-        payload: isFlexibleScaling(nodesCount, zonesCount),
-      });
-    }
-  }, [dispatch, zonesCount, nodesCount, isFlexibleScalingSupported]);
 
   return (
     <Form>

@@ -91,12 +91,12 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
     let portable = !isNoProvionerSC;
     let deviceSetReplica = replica;
     let deviceSetCount = 1;
-    if (hasFlexibleScaling) {
-      portable = false;
-      deviceSetReplica = 1;
-      deviceSetCount = 3;
-    }
+
     if (deviceSetIndex === -1) {
+      if (hasFlexibleScaling) {
+        portable = false;
+        deviceSetReplica = 1;
+      }
       patch.op = 'add';
       patch.path = `/spec/storageDeviceSets/-`;
       patch.value = createDeviceSet(
@@ -107,6 +107,7 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
         deviceSetCount,
       );
     } else {
+      if (hasFlexibleScaling) deviceSetCount = 3;
       patch.op = 'replace';
       patch.path = `/spec/storageDeviceSets/${deviceSetIndex}/count`;
       patch.value = deviceSets[deviceSetIndex].count + deviceSetCount;

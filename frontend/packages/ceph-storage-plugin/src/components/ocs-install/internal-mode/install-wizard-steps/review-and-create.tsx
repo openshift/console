@@ -34,7 +34,6 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({
     kms,
     capacity,
     enableMinimal,
-    enableFlexibleScaling,
     storageClass,
     networkType,
     publicNetwork,
@@ -89,10 +88,7 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({
             })}
           </p>
         </ReviewListBody>
-        <ReviewListBody
-          hideIcon={!enableFlexibleScaling}
-          validation={enableFlexibleScaling && ValidationType.INTERNAL_FLEXIBLE_SCALING}
-        >
+        <ReviewListBody>
           <p>
             {t('ceph-storage-plugin~{{zoneCount, number}} zone', {
               zoneCount: zones.size,
@@ -100,7 +96,6 @@ export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({
             })}
           </p>
         </ReviewListBody>
-        {/* @TODO: Update the check from Configure when adding more items */}
         {(encryption.clusterWide || encryption.storageClass) && (
           <>
             <ReviewListTitle text={t('ceph-storage-plugin~Configure')} />
