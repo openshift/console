@@ -59,7 +59,6 @@ const PipelineRunCount: React.FC<PipelineMetricsGraphProps> = ({
         <div ref={measureRef} style={{ height: DEFAULT_CHART_HEIGHT }}>
           <TimeSeriesChart
             ariaDesc={t('pipelines-plugin~Pipeline run count chart')}
-            ariaTitle={t('pipelines-plugin~Pipeline run count')}
             data={finalArray}
             timespan={timespan}
             width={contentRect.bounds.width}

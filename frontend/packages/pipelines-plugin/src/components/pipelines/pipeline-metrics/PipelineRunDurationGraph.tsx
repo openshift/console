@@ -88,7 +88,6 @@ const PipelineRunDurationGraph: React.FC<PipelineMetricsGraphProps> = ({
             <div ref={measureRef}>
               <LineChart
                 ariaDesc={t('pipelines-plugin~Pipeline run duration chart')}
-                ariaTitle={t('pipelines-plugin~Pipeline run duration')}
                 data={[finalArray.duration]}
                 themeColor={ChartThemeColor.green}
                 yTickFormatter={(seconds) => `${Math.floor(seconds / 60)}m`}
@@ -101,8 +100,7 @@ const PipelineRunDurationGraph: React.FC<PipelineMetricsGraphProps> = ({
                     activateData={false}
                     labels={({ datum }) =>
                       datum.childName.includes('line-') && datum.y !== null
-                        ? `${datum?.metric?.pipelinerun} 
-              ${datum?.time}`
+                        ? `${datum?.metric?.pipelinerun}\n${datum?.time}`
                         : null
                     }
                   />

@@ -120,7 +120,6 @@ const PipelineRunTaskRunGraph: React.FC<PipelineMetricsGraphProps> = ({
         <div ref={measureRef}>
           <LineChart
             ariaDesc={t('pipelines-plugin~Pipeline task run duration chart')}
-            ariaTitle={t('pipelines-plugin~Task run duration')}
             data={_.values(finalObj)}
             yTickFormatter={(seconds) => getYaxisValues(seconds)}
             events={getEvents()}
