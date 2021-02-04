@@ -346,7 +346,14 @@ const safeKill = async (model: K8sKind, obj: K8sResourceKind) => {
     namespace: obj.metadata.namespace,
   });
   if (resp.status.allowed) {
-    return k8sKill(model, obj);
+    try {
+      return await k8sKill(model, obj);
+    } catch (error) {
+      // 404 when resource is not found
+      if (error?.response?.status !== 404) {
+        throw error;
+      }
+    }
   }
   return null;
 };
@@ -386,22 +393,11 @@ export const cleanUpWorkload = async (workload: OdcNodeModel): Promise<K8sResour
   const { resource } = workload;
   const reqs = [];
   const isBuildConfigPresent = !_.isEmpty(workload.data?.resources?.buildConfigs);
-  const isImageStreamPresent = await k8sGet(
-    ImageStreamModel,
-    resource.metadata.name,
-    resource.metadata.namespace,
-  )
-    .then(() => true)
-    .catch(() => false);
-  const deleteModels = [ServiceModel, RouteModel];
-  const knativeDeleteModels = [KnativeServiceModel];
+  const deleteModels = [ServiceModel, RouteModel, ImageStreamModel];
+  const knativeDeleteModels = [KnativeServiceModel, ImageStreamModel];
   if (isBuildConfigPresent) {
     deleteModels.push(BuildConfigModel);
     knativeDeleteModels.push(BuildConfigModel);
-  }
-  if (isImageStreamPresent) {
-    deleteModels.push(ImageStreamModel);
-    knativeDeleteModels.push(ImageStreamModel);
   }
   const resourceData = _.cloneDeep(resource);
   const deleteRequest = (model: K8sKind, resourceObj: K8sResourceKind) => {
