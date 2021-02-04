@@ -164,6 +164,7 @@ export const mockImageStreamData = {
         },
         from: { kind: 'DockerImage', name: 'myimage' },
         importPolicy: { insecure: false },
+        referencePolicy: { type: 'Local' },
       },
     ],
   },
