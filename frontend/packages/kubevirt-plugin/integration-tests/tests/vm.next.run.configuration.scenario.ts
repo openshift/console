@@ -59,28 +59,24 @@ describe('Kubevirt VM Next Run Configuration', () => {
     await vm.detailViewAction(VM_ACTION.Stop);
   }, VM_BOOTUP_TIMEOUT_SECS);
 
-  // TODO: remove the skip once bug is fixed:  https://bugzilla.redhat.com/show_bug.cgi?id=1918112
-  xit('ID(CNV-5326) Change Flavor from tiny to custom while VM is running.', async () => {
+  it('ID(CNV-5326) Change Flavor from tiny to custom while VM is running.', async () => {
     await vm.navigateToDetail();
     await vm.modalEditFlavor();
-    expect(await isPCInfoAlertPresent()).toBeTruthy();
     await selectOptionByText(editFlavorView.flavorDropdown, Flavor.CUSTOM);
-    expect(await isPCAlertPresent()).toBeTruthy();
     await fillInput(editFlavorView.cpusInput(), '1');
     await fillInput(editFlavorView.memoryInput(), '1');
     await click(saveButton);
 
     await isLoaded();
-    expect(await isPCAlertPresent()).toBeTruthy();
 
     const alertTabs = await alertHeadings();
     const alertTabAttrs = await alertValues();
+    const mergedAlerts = [...alertTabs, ...alertTabAttrs];
 
-    expect(alertTabs.includes('Details')).toBeTruthy();
-    expect(alertTabAttrs.includes('Flavor')).toBeTruthy();
+    expect(['Details', 'Flavor']).toEqual(mergedAlerts);
   });
 
-  xit('ID(CNV-5327) Change Custom Flavor while VM is running.', async () => {
+  it('ID(CNV-5327) Change Custom Flavor while VM is running.', async () => {
     await vm.navigateToDetail();
     await vm.modalEditFlavor();
     expect(await isPCInfoAlertPresent()).toBeTruthy();
