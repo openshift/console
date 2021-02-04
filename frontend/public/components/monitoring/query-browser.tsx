@@ -357,7 +357,17 @@ const Graph: React.FC<GraphProps> = React.memo(
               data: { [isStack ? 'fill' : 'stroke']: color },
               labels: { fill: color, name: tooltipSeriesNames[i] },
             };
-            return <ChartComponent data={values} groupComponent={<g />} key={i} style={style} />;
+            return (
+              // We need to use the `name` prop to prevent an error in VictorySharedEvents when
+              // dynamically removing and then adding back data series
+              <ChartComponent
+                data={values}
+                groupComponent={<g />}
+                key={i}
+                name={`series-${i}`}
+                style={style}
+              />
+            );
           })}
         </GroupComponent>
         {!_.isEmpty(legendData) && (
