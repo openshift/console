@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as cx from 'classnames';
 import * as _ from 'lodash-es';
 import { Converter } from 'showdown';
-import * as sanitizeHtml from 'sanitize-html';
+import DOMPurify from "dompurify";
 import { useTranslation } from 'react-i18next';
 
 import './_markdown-view.scss';
@@ -18,37 +18,40 @@ const markdownConvert = (markdown, extensions?: string[]) => {
     extensions,
   }).makeHtml(markdown);
 
-  return sanitizeHtml(unsafeHtml, {
-    allowedTags: [
-      'b',
-      'i',
-      'strike',
-      's',
-      'del',
-      'em',
-      'strong',
-      'a',
-      'p',
-      'h1',
-      'h2',
-      'h3',
-      'h4',
-      'ul',
-      'ol',
-      'li',
-      'code',
-      'pre',
-      'button',
+  // add hook to transform anchor tags
+  DOMPurify.addHook("beforeSanitizeElements", function (node) {
+    // nodeType 1 = element type
+    if (node.nodeType === 1 && node.nodeName.toLowerCase() === "a") {
+      node.setAttribute("rel", "noopener noreferrer");
+      return node;
+    }
+  });
+
+  return DOMPurify.sanitize(unsafeHtml, {
+    ALLOWED_TAGS: [
+      "b",
+      "i",
+      "strike",
+      "s",
+      "del",
+      "em",
+      "strong",
+      "a",
+      "p",
+      "h1",
+      "h2",
+      "h3",
+      "h4",
+      "ul",
+      "ol",
+      "li",
+      "code",
+      "pre",
+      "button",
       ...tableTags,
     ],
-    allowedAttributes: {
-      a: ['href', 'target', 'rel', 'data-*'],
-      button: ['class', 'data-*'],
-    },
-    allowedSchemes: ['http', 'https', 'mailto'],
-    transformTags: {
-      a: sanitizeHtml.simpleTransform('a', { rel: 'noopener noreferrer' }, true),
-    },
+    ALLOWED_ATTR: ["href", "target", "rel", "class"],
+    ALLOWED_URI_REGEXP: /^(?:(?:https?|mailto):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
   });
 };
 
