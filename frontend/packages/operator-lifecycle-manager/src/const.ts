@@ -8,3 +8,4 @@ export const OPERATOR_TYPE_ANNOTATION = 'operators.operatorframework.io/operator
 export const NON_STANDALONE_ANNOTATION_VALUE = 'non-standalone';
 export const INTERNAL_OBJECTS_ANNOTATION = 'operators.operatorframework.io/internal-objects';
 export const DEFAULT_SOURCE_NAMESPACE = 'openshift-marketplace';
+export const OPERATOR_PLUGINS_ANNOTATION = 'console.openshift.io/plugins';

@@ -1,3 +1,5 @@
+export const CONSOLE_OPERATOR_CONFIG_NAME = 'cluster';
+
 // List of container status waiting reason values that we should call out as errors in project status rows.
 export const CONTAINER_WAITING_STATE_ERROR_REASONS = [
   'CrashLoopBackOff',

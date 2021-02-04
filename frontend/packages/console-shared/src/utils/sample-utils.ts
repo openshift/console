@@ -8,8 +8,8 @@ import { defaultCatalogCategories } from '@console/dev-console/src/components/ca
 import {
   BuildConfigModel,
   ClusterRoleModel,
-  ConsoleModel,
   ConsoleLinkModel,
+  ConsoleOperatorConfigModel,
   NetworkPolicyModel,
   ResourceQuotaModel,
   RoleModel,
@@ -280,7 +280,7 @@ const defaultSamples = (t: TFunction) =>
       ],
     )
     .setIn(
-      [referenceForModel(ConsoleModel)],
+      [referenceForModel(ConsoleOperatorConfigModel)],
       [
         {
           title: t('console-shared~Add catalog categories'),
@@ -290,7 +290,7 @@ const defaultSamples = (t: TFunction) =>
           id: 'devcatalog-categories',
           snippet: true,
           lazyYaml: () => YAML.dump(defaultCatalogCategories),
-          targetResource: getTargetResource(ConsoleModel),
+          targetResource: getTargetResource(ConsoleOperatorConfigModel),
         },
       ],
     );
