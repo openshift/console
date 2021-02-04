@@ -5,12 +5,10 @@ import {
   SimpleTabNav,
   ResourceIcon,
   ResourceSummary,
-  SectionHeading,
 } from '@console/internal/components/utils';
 import * as UIActions from '@console/internal/actions/ui';
 import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
 import { Node } from '@patternfly/react-topology';
-import { getTopologyResourceObject } from '@console/topology/src/utils';
 import './TopologyKafkaPanel.css';
 
 type PropsFromState = {
@@ -36,24 +34,17 @@ type OwnProps = {
 type TopologyHelmReleasePanelProps = PropsFromState & PropsFromDispatch & OwnProps;
 
 const DetailsComponent: React.FC<any> = ({ obj }) => {
-  const { kafkaId } = obj.spec;
+  const { host } = obj.status.boostrapServer;
 
   return (
     <div className="co-m-pane__body">
-      <SectionHeading text="Managed Kafka details" />
       <div className="row">
         <div className="col-sm-6">
           <ResourceSummary resource={obj} />
         </div>
         <dl className="co-m-pane__details">
-          <dt>Cloud provider</dt>
-          <dd>Empty</dd>
-          <dt>Region</dt>
-          <dd>Empty</dd>
-          <dt>ID</dt>
-          <dd>{kafkaId}</dd>
-          <dt>Owner</dt>
-          <dd>Empty</dd>
+          <dt>Bootstrap Server</dt>
+          <dd>{host}</dd>
         </dl>
       </div>
     </div>
@@ -61,8 +52,8 @@ const DetailsComponent: React.FC<any> = ({ obj }) => {
 };
 
 const ResourcesComponent = ({ obj }) => {
+  // TO DO Add correct secret
   const secret = obj.status.serviceAccountSecretName;
-
   return <div className="overview__sidebar-pane-body">{secret}</div>;
 };
 
@@ -72,11 +63,6 @@ export const ConnectedTopologyHelmReleasePanel: React.FC<TopologyHelmReleasePane
   onClickTab,
 }: TopologyHelmReleasePanelProps) => {
   const [showAlert, setShowAlert] = React.useState(true);
-
-  const kafkaResource = item.getData().resources.obj;
-  const kafkaResource2 = getTopologyResourceObject(item.getData());
-  console.log('what is kafkaResource' + JSON.stringify(kafkaResource));
-  console.log('what is kafkaResource2' + JSON.stringify(kafkaResource2));
 
   // Resource
   const mkc = item?.getData().resource;
