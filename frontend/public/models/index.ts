@@ -1282,7 +1282,7 @@ export const VolumeSnapshotModel: K8sKind = {
   label: 'VolumeSnapshot',
   // t('public~VolumeSnapshot')
   labelKey: 'public~VolumeSnapshot',
-  apiVersion: 'v1beta1',
+  apiVersion: 'v1',
   apiGroup: 'snapshot.storage.k8s.io',
   plural: 'volumesnapshots',
   abbr: 'VS',
@@ -1299,7 +1299,7 @@ export const VolumeSnapshotClassModel: K8sKind = {
   label: 'VolumeSnapshotClass',
   // t('public~VolumeSnapshotClass')
   labelKey: 'public~VolumeSnapshotClass',
-  apiVersion: 'v1beta1',
+  apiVersion: 'v1',
   apiGroup: 'snapshot.storage.k8s.io',
   plural: 'volumesnapshotclasses',
   abbr: 'VSC',
@@ -1316,7 +1316,7 @@ export const VolumeSnapshotContentModel: K8sKind = {
   label: 'VolumeSnapshotContent',
   // t('public~VolumeSnapshotContent')
   labelKey: 'public~VolumeSnapshotContent',
-  apiVersion: 'v1beta1',
+  apiVersion: 'v1',
   apiGroup: 'snapshot.storage.k8s.io',
   plural: 'volumesnapshotcontents',
   abbr: 'VSC',

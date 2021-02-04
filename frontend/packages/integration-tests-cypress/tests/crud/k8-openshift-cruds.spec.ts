@@ -64,17 +64,17 @@ describe('Kubernetes resource CRUD operations', () => {
     .set('horizontalpodautoscalers', { kind: 'HorizontalPodAutoscaler', humanizeKind: false })
     .set('networkpolicies', { kind: 'NetworkPolicy', humanizeKind: false })
     .set('roles', { kind: 'Role', testI18n: false })
-    .set('snapshot.storage.k8s.io~v1beta1~VolumeSnapshot', {
-      kind: 'snapshot.storage.k8s.io~v1beta1~VolumeSnapshot',
+    .set('snapshot.storage.k8s.io~v1~VolumeSnapshot', {
+      kind: 'snapshot.storage.k8s.io~v1~VolumeSnapshot',
       testI18n: false,
     })
-    .set('snapshot.storage.k8s.io~v1beta1~VolumeSnapshotClass', {
-      kind: 'snapshot.storage.k8s.io~v1beta1~VolumeSnapshotClass',
+    .set('snapshot.storage.k8s.io~v1~VolumeSnapshotClass', {
+      kind: 'snapshot.storage.k8s.io~v1~VolumeSnapshotClass',
       namespaced: false,
       testI18n: false,
     })
-    .set('snapshot.storage.k8s.io~v1beta1~VolumeSnapshotContent', {
-      kind: 'snapshot.storage.k8s.io~v1beta1~VolumeSnapshotContent',
+    .set('snapshot.storage.k8s.io~v1~VolumeSnapshotContent', {
+      kind: 'snapshot.storage.k8s.io~v1~VolumeSnapshotContent',
       namespaced: false,
       testI18n: false,
     });
@@ -108,7 +108,7 @@ describe('Kubernetes resource CRUD operations', () => {
     'StorageClass',
     'Route',
     'PersistentVolumeClaim',
-    'snapshot.storage.k8s.io~v1beta1~VolumeSnapshot',
+    'snapshot.storage.k8s.io~v1~VolumeSnapshot',
   ]);
 
   testObjs.forEach(

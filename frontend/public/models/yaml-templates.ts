@@ -1325,7 +1325,7 @@ spec:
   .setIn(
     [referenceForModel(k8sModels.VolumeSnapshotModel), 'default'],
     `
-apiVersion: snapshot.storage.k8s.io/v1beta1
+apiVersion: snapshot.storage.k8s.io/v1
 kind: VolumeSnapshot
 metadata:
   name: example-snap
@@ -1338,7 +1338,7 @@ spec:
   .setIn(
     [referenceForModel(k8sModels.VolumeSnapshotClassModel), 'default'],
     `
-apiVersion: snapshot.storage.k8s.io/v1beta1
+apiVersion: snapshot.storage.k8s.io/v1
 kind: VolumeSnapshotClass
 metadata:
   name: example-snapclass
@@ -1349,7 +1349,7 @@ deletionPolicy: Delete
   .setIn(
     [referenceForModel(k8sModels.VolumeSnapshotContentModel), 'default'],
     `
-apiVersion: snapshot.storage.k8s.io/v1beta1
+apiVersion: snapshot.storage.k8s.io/v1
 kind: VolumeSnapshotContent
 metadata:
   name: example-snapcontent
