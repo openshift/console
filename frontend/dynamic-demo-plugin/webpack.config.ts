@@ -5,10 +5,10 @@ import * as path from 'path';
 import { ConsoleRemotePlugin } from '@console/dynamic-plugin-sdk/src/webpack/ConsoleRemotePlugin';
 
 const config: webpack.Configuration = {
+  mode: 'development',
   context: path.resolve(__dirname, 'src'),
   output: {
     path: path.resolve(__dirname, 'dist'),
-    publicPath: 'http://localhost:9001/',
     filename: '[name]-bundle.js',
     chunkFilename: '[name]-chunk.js',
   },
@@ -32,7 +32,6 @@ const config: webpack.Configuration = {
     ],
   },
   plugins: [new ConsoleRemotePlugin()],
-  mode: 'development',
   devtool: 'source-map',
   optimization: {
     chunkIds: 'named',
@@ -41,9 +40,9 @@ const config: webpack.Configuration = {
 };
 
 if (process.env.NODE_ENV === 'production') {
+  config.mode = 'production';
   config.output.filename = '[name]-bundle-[hash].min.js';
   config.output.chunkFilename = '[name]-chunk-[chunkhash].min.js';
-  config.mode = 'production';
   config.optimization.chunkIds = 'deterministic';
   config.optimization.minimize = true;
 }

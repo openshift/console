@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "clean": "rm -rf ./dist",
-    "build": "yarn clean && yarn ts-node ./node_modules/.bin/webpack",
+    "build": "yarn clean && NODE_ENV=production yarn ts-node ./node_modules/.bin/webpack",
+    "build-dev": "yarn clean && yarn ts-node ./node_modules/.bin/webpack",
     "http-server": "./http-server.sh ./dist",
     "ts-node": "ts-node -O '{\"module\":\"commonjs\"}' -I '/node_modules/(?!(@console)/)/'"
   },
@@ -22,7 +23,9 @@
     "webpack-cli": "3.3.9"
   },
   "consolePlugin": {
-    "displayName": "Dynamic Demo Plugin",
+    "name": "console-demo-plugin",
+    "version": "0.0.0",
+    "displayName": "Console Demo Plugin",
     "description": "Plasma reactors online. Initiating hyper drive.",
     "exposedModules": {
       "barUtils": "./utils/bar"

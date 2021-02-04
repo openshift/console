@@ -27,7 +27,7 @@ describe('fetchPluginManifest', () => {
     coFetch.mockImplementation(() => Promise.resolve({ json: () => Promise.resolve(manifest) }));
     validatePluginManifestSchema.mockImplementation(() => Promise.resolve(validator.result));
 
-    const result = await fetchPluginManifest('http://example.com/test');
+    const result = await fetchPluginManifest('http://example.com/test/');
 
     expect(result).toBe(manifest);
     expect(coFetch).toHaveBeenCalledWith(manifestURL, { method: 'GET' });
@@ -40,7 +40,7 @@ describe('fetchPluginManifest', () => {
 
     expect.assertions(2);
     try {
-      await fetchPluginManifest('http://example.com/test');
+      await fetchPluginManifest('http://example.com/test/');
     } catch (e) {
       expect(coFetch).toHaveBeenCalled();
       expect(validatePluginManifestSchema).not.toHaveBeenCalled();
@@ -61,7 +61,7 @@ describe('fetchPluginManifest', () => {
 
     expect.assertions(2);
     try {
-      await fetchPluginManifest('http://example.com/test');
+      await fetchPluginManifest('http://example.com/test/');
     } catch (e) {
       expect(coFetch).toHaveBeenCalled();
       expect(validatePluginManifestSchema).toHaveBeenCalled();
