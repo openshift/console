@@ -18,6 +18,8 @@ import {
   getEventSourceData,
   sanitizeKafkaSourceResource,
   sanitizeSourceToForm,
+  isSecretKeyRefPresent,
+  getKafkaSourceResource,
 } from '../create-eventsources-utils';
 import { getDefaultEventingData, Kafkas } from './knative-serving-data';
 import { EventSourceFormData, EventSources } from '../../components/add/import-types';
@@ -296,5 +298,83 @@ describe('sanitizeSourceToForm always returns valid Event Source', () => {
     expect(formData.type).toBe(EventSourcePingModel.kind);
     expect(formData.application.name).toEqual('');
     expect(formData.application.selectedKey).toEqual(UNASSIGNED_KEY);
+  });
+
+  it('expect true if secretKeyRef is there for name or key or both', () => {
+    expect(isSecretKeyRefPresent({ secretKeyRef: { name: 'my-sasl-secret', key: 'user' } })).toBe(
+      true,
+    );
+    expect(isSecretKeyRefPresent({ secretKeyRef: { name: 'my-sasl-secret', key: '' } })).toBe(true);
+    expect(isSecretKeyRefPresent({ secretKeyRef: { name: '', key: 'user' } })).toBe(true);
+  });
+
+  it('expect false if secretKeyRef is not there for name and key', () => {
+    expect(isSecretKeyRefPresent({ secretKeyRef: { name: '', key: '' } })).toBe(false);
+    expect(isSecretKeyRefPresent(null)).toBe(false);
+  });
+
+  it('expect getKafkaSourceResource to return sasl and tls with secrets if enabled and present', () => {
+    const KafkaSourceData = getDefaultEventingData(EventSources.KafkaSource);
+    KafkaSourceData.formData.data[EventSources.KafkaSource] = {
+      ...KafkaSourceData.formData.data[EventSources.KafkaSource],
+      bootstrapServers: ['server1', 'server2'],
+      topics: ['topic1'],
+      consumerGroup: 'knative-group',
+      net: {
+        sasl: {
+          enable: true,
+          user: { secretKeyRef: { name: 'username', key: 'userkey' } },
+          password: { secretKeyRef: { name: 'passwordname', key: 'passwordkey' } },
+        },
+        tls: {
+          enable: true,
+          caCert: { secretKeyRef: { name: '', key: '' } },
+          cert: { secretKeyRef: { name: '', key: '' } },
+          key: { secretKeyRef: { name: '', key: '' } },
+        },
+      },
+    };
+    const {
+      spec: {
+        net: { sasl, tls },
+      },
+    } = getKafkaSourceResource(KafkaSourceData);
+    expect(sasl.enable).toBe(true);
+    expect(sasl.user).toEqual({
+      secretKeyRef: { name: 'username', key: 'userkey' },
+    });
+    expect(tls).toEqual({ enable: true, caCert: {}, cert: {}, key: {} });
+  });
+
+  it('expect getKafkaSourceResource to return sasl and tls without secrets if not enabled', () => {
+    const KafkaSourceData = getDefaultEventingData(EventSources.KafkaSource);
+    KafkaSourceData.formData.data[EventSources.KafkaSource] = {
+      ...KafkaSourceData.formData.data[EventSources.KafkaSource],
+      bootstrapServers: ['server1', 'server2'],
+      topics: ['topic1'],
+      consumerGroup: 'knative-group',
+      net: {
+        sasl: {
+          enable: false,
+          user: { secretKeyRef: { name: '', key: '' } },
+          password: { secretKeyRef: { name: '', key: '' } },
+        },
+        tls: {
+          enable: false,
+          caCert: { secretKeyRef: { name: '', key: '' } },
+          cert: { secretKeyRef: { name: '', key: '' } },
+          key: { secretKeyRef: { name: '', key: '' } },
+        },
+      },
+    };
+    const {
+      spec: {
+        net: { sasl, tls },
+      },
+    } = getKafkaSourceResource(KafkaSourceData);
+    expect(sasl.enable).toBeUndefined();
+    expect(sasl).toEqual({ user: {}, password: {} });
+    expect(tls.enable).toBeUndefined();
+    expect(tls).toEqual({ caCert: {}, cert: {}, key: {} });
   });
 });
