@@ -140,3 +140,31 @@ export const mockDeployImageFormData: DeployImageFormData = {
   },
   healthChecks: healthChecksProbeInitialData,
 };
+
+export const mockImageStreamData = {
+  apiVersion: 'image.openshift.io/v1',
+  kind: 'ImageStream',
+  metadata: {
+    labels: {
+      app: 'test-app',
+      'app.kubernetes.io/component': 'test-app',
+      'app.kubernetes.io/instance': 'test-app',
+      'app.kubernetes.io/part-of': 'mock-app',
+    },
+    name: 'test-app',
+    namespace: 'mock-project',
+  },
+  spec: {
+    tags: [
+      {
+        name: 'latest',
+        annotations: {
+          'openshift.io/generated-by': 'OpenShiftWebConsole',
+          'openshift.io/imported-from': 'myimage',
+        },
+        from: { kind: 'DockerImage', name: 'myimage' },
+        importPolicy: { insecure: false },
+      },
+    ],
+  },
+};
