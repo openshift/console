@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as cx from 'classnames';
 import * as _ from 'lodash-es';
 import { Converter } from 'showdown';
-import DOMPurify from "dompurify";
+import DOMPurify from 'dompurify';
 import { useTranslation } from 'react-i18next';
 
 import './_markdown-view.scss';
@@ -19,38 +19,38 @@ const markdownConvert = (markdown, extensions?: string[]) => {
   }).makeHtml(markdown);
 
   // add hook to transform anchor tags
-  DOMPurify.addHook("beforeSanitizeElements", function (node) {
+  DOMPurify.addHook('beforeSanitizeElements', function(node) {
     // nodeType 1 = element type
-    if (node.nodeType === 1 && node.nodeName.toLowerCase() === "a") {
-      node.setAttribute("rel", "noopener noreferrer");
+    if (node.nodeType === 1 && node.nodeName.toLowerCase() === 'a') {
+      node.setAttribute('rel', 'noopener noreferrer');
       return node;
     }
   });
 
   return DOMPurify.sanitize(unsafeHtml, {
     ALLOWED_TAGS: [
-      "b",
-      "i",
-      "strike",
-      "s",
-      "del",
-      "em",
-      "strong",
-      "a",
-      "p",
-      "h1",
-      "h2",
-      "h3",
-      "h4",
-      "ul",
-      "ol",
-      "li",
-      "code",
-      "pre",
-      "button",
+      'b',
+      'i',
+      'strike',
+      's',
+      'del',
+      'em',
+      'strong',
+      'a',
+      'p',
+      'h1',
+      'h2',
+      'h3',
+      'h4',
+      'ul',
+      'ol',
+      'li',
+      'code',
+      'pre',
+      'button',
       ...tableTags,
     ],
-    ALLOWED_ATTR: ["href", "target", "rel", "class"],
+    ALLOWED_ATTR: ['href', 'target', 'rel', 'class'],
     ALLOWED_URI_REGEXP: /^(?:(?:https?|mailto):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
   });
 };
