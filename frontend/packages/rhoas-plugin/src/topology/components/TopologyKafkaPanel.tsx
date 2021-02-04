@@ -10,7 +10,7 @@ import {
 import * as UIActions from '@console/internal/actions/ui';
 import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
 import { Node } from '@patternfly/react-topology';
-
+import { getTopologyResourceObject } from '@console/topology/src/utils';
 import './TopologyKafkaPanel.css';
 
 type PropsFromState = {
@@ -73,6 +73,11 @@ export const ConnectedTopologyHelmReleasePanel: React.FC<TopologyHelmReleasePane
 }: TopologyHelmReleasePanelProps) => {
   const [showAlert, setShowAlert] = React.useState(true);
 
+  const kafkaResource = item.getData().resources.obj;
+  const kafkaResource2 = getTopologyResourceObject(item.getData());
+  console.log('what is kafkaResource' + JSON.stringify(kafkaResource));
+  console.log('what is kafkaResource2' + JSON.stringify(kafkaResource2));
+
   // Resource
   const mkc = item?.getData().resource;
   if (!mkc) {
@@ -121,7 +126,7 @@ export const ConnectedTopologyHelmReleasePanel: React.FC<TopologyHelmReleasePane
           { name: 'Details', component: navFactory.details(DetailsComponent).component },
           { name: 'Resources', component: ResourcesComponent },
         ]}
-        tabProps={{ obj: mkc }}
+        tabProps={{ obj: mkc, item: item }}
         additionalClassNames="co-m-horizontal-nav__menu--within-sidebar co-m-horizontal-nav__menu--within-overview-sidebar"
       />
     </div>
