@@ -65,7 +65,7 @@ export const EmptyBox: React.FC<EmptyBoxProps> = ({ label }) => {
   return (
     <Box>
       <div data-test="empty-message" className="text-center">
-        {label ? t('utils~No {{label}} found', { label }) : t('utils~Not found')}
+        {label ? t('public~No {{label}} found', { label }) : t('public~Not found')}
       </div>
     </Box>
   );
@@ -88,22 +88,25 @@ export const MsgBox: React.FC<MsgBoxProps> = ({ title, detail, className = '' })
 );
 MsgBox.displayName = 'MsgBox';
 
-export const AccessDenied: React.FC<AccessDeniedProps> = ({ message }) => (
-  <div>
-    <Box className="text-center">
-      <img className="cos-status-box__access-denied-icon" src={restrictedSignImg} />
-      <MsgBox
-        title="Restricted Access"
-        detail="You don't have access to this section due to cluster policy."
-      />
-    </Box>
-    {_.isString(message) && (
-      <Alert isInline className="co-alert" variant="danger" title="Error details">
-        {message}
-      </Alert>
-    )}
-  </div>
-);
+export const AccessDenied: React.FC<AccessDeniedProps> = ({ message }) => {
+  const { t } = useTranslation();
+  return (
+    <div>
+      <Box className="text-center">
+        <img className="cos-status-box__access-denied-icon" src={restrictedSignImg} />
+        <MsgBox
+          title={t('public~Restricted Access')}
+          detail={t("public~You don't have access to this section due to cluster policy.")}
+        />
+      </Box>
+      {_.isString(message) && (
+        <Alert isInline className="co-alert" variant="danger" title={t('public~Error details')}>
+          {message}
+        </Alert>
+      )}
+    </div>
+  );
+};
 AccessDenied.displayName = 'AccessDenied';
 
 const Data: React.FC<DataProps> = ({
@@ -135,13 +138,16 @@ Data.displayName = 'Data';
 
 export const StatusBox: React.FC<StatusBoxProps> = (props) => {
   const { loadError, loaded, skeleton, ...dataProps } = props;
+  const { t } = useTranslation();
 
   if (loadError) {
     const status = _.get(loadError, 'response.status');
     if (status === 404) {
       return (
         <div className="co-m-pane__body">
-          <h1 className="co-m-pane__heading co-m-pane__heading--center">404: Not Found</h1>
+          <h1 className="co-m-pane__heading co-m-pane__heading--center">
+            {t('public~404: Not Found')}
+          </h1>
         </div>
       );
     }
@@ -153,7 +159,7 @@ export const StatusBox: React.FC<StatusBoxProps> = (props) => {
       return (
         <Data {...dataProps}>
           <div className="co-m-timeout-error text-muted">
-            Timed out fetching new data. The data below is stale.
+            {t('public~Timed out fetching new data. The data below is stale.')}
           </div>
           {props.children}
         </Data>
