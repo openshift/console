@@ -114,6 +114,7 @@ export const CreateOBCPage: React.FC<CreateOBCPageProps> = (props) => {
                 placeholder={t('noobaa-storage-plugin~my-object-bucket')}
                 aria-describedby="obc-name-help"
                 id="obc-name"
+                data-test="obc-name"
                 name="obcName"
                 pattern="[a-z0-9](?:[-a-z0-9]*[a-z0-9])?"
               />
@@ -129,6 +130,7 @@ export const CreateOBCPage: React.FC<CreateOBCPageProps> = (props) => {
                 hideClassName="co-required"
                 filter={isObjectSC}
                 id="sc-dropdown"
+                data-test="sc-dropdown"
               />
               <p className="help-block">
                 {t(
@@ -159,6 +161,7 @@ export const CreateOBCPage: React.FC<CreateOBCPageProps> = (props) => {
                     dropDownClassName="dropdown--full-width"
                     className="nb-create-obc__bc-dropdown"
                     id="bc-dropdown"
+                    data-test="bc-dropdown"
                   />
                 </Firehose>
               </div>

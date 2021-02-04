@@ -21,7 +21,9 @@ export const CopyToClipboard: React.FC<CopyToClipboardProps> = React.memo((props
 
   return (
     <div className="co-copy-to-clipboard">
-      <pre className="co-pre-wrap co-copy-to-clipboard__text">{visibleValue}</pre>
+      <pre className="co-pre-wrap co-copy-to-clipboard__text" data-test="copy-to-clipboard">
+        {visibleValue}
+      </pre>
       <Tooltip content={tooltipContent} trigger="click mouseenter focus" exitDelay={1250}>
         <CTC text={props.value} onCopy={() => setCopied(true)}>
           <Button

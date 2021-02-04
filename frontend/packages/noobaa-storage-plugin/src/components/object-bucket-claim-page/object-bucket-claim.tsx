@@ -133,6 +133,7 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
                 <dt>{t('noobaa-storage-plugin~Object Bucket')}</dt>
                 <dd>
                   <ResourceLink
+                    dataTest="obc-link"
                     kind={referenceForModel(NooBaaObjectBucketModel)}
                     name={obj.spec.ObjectBucketName}
                   />

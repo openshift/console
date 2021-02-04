@@ -80,6 +80,7 @@ export const ResourceLink = connectToModel(
     hideIcon,
     title,
     children,
+    dataTest,
   }) => {
     if (!kind) {
       return null;
@@ -99,11 +100,16 @@ export const ResourceLink = connectToModel(
             title={title}
             className="co-resource-item__resource-name"
             data-test-id={value}
+            data-test={dataTest}
           >
             {value}
           </Link>
         ) : (
-          <span className="co-resource-item__resource-name" data-test-id={value}>
+          <span
+            className="co-resource-item__resource-name"
+            data-test-id={value}
+            data-test={dataTest}
+          >
             {value}
           </span>
         )}
