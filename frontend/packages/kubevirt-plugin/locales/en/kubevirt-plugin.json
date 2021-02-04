@@ -618,6 +618,7 @@
   "{{provider}} defined": "{{provider}} defined",
   "This operating system boot source was added to the cluster by user on {{date}}": "This operating system boot source was added to the cluster by user on {{date}}",
   "Unknown source": "Unknown source",
+  "Any template with an available source will show in the developer catalog.": "Any template with an available source will show in the developer catalog.",
   "View full details": "View full details",
   "Template details": "Template details",
   "Create": "Create",

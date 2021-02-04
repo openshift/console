@@ -6,7 +6,7 @@ import { TFunction } from 'i18next';
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useSelector } from 'react-redux';
 import { match } from 'react-router';
-import { sortable } from '@patternfly/react-table';
+import { sortable, info } from '@patternfly/react-table';
 import {
   ListPage,
   Table,
@@ -95,6 +95,13 @@ const VMTemplateTableHeader = (showNamespace: boolean, t: TFunction) =>
       },
       {
         title: t('kubevirt-plugin~Boot source'),
+        transforms: [
+          info({
+            tooltip: t(
+              'kubevirt-plugin~Any template with an available source will show in the developer catalog.',
+            ),
+          }),
+        ],
       },
       {
         title: '',
