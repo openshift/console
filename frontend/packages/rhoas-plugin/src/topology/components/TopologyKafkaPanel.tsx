@@ -126,7 +126,7 @@ export const ConnectedTopologyHelmReleasePanel: React.FC<TopologyHelmReleasePane
           { name: 'Details', component: navFactory.details(DetailsComponent).component },
           { name: 'Resources', component: ResourcesComponent },
         ]}
-        tabProps={{ obj: mkc, item: item }}
+        tabProps={{ obj: mkc }}
         additionalClassNames="co-m-horizontal-nav__menu--within-sidebar co-m-horizontal-nav__menu--within-overview-sidebar"
       />
     </div>
