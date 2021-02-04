@@ -1,0 +1,25 @@
+{
+  "integrationFolder": "tests",
+  "screenshotsFolder": "../../../gui_test_screenshots/cypress/screenshots",
+  "videosFolder": "../../../gui_test_screenshots/cypress/videos",
+  "video": true,
+  "reporter": "../../../node_modules/cypress-multi-reporters",
+  "reporterOptions": {
+    "configFile": "reporter-config.json"
+  },
+  "supportFile": "support/index.ts",
+  "pluginsFile": "plugins/index.js",
+  "fixturesFolder": "fixtures",
+  "defaultCommandTimeout": 30000,
+  "retries": {
+    "runMode": 1,
+    "openMode": 0
+  },
+  "env": {
+    "KUBEVIRT_PROJECT_NAME": "openshift-cnv",
+    "OS_IMAGES_NS": "kubevirt-os-images",
+    "UPLOAD_IMG": "/tmp/cirros.img",
+    "TEMPLATE_NAME": "Red Hat Enterprise Linux 6.0+ VM",
+    "TEMPLATE_BASE_IMAGE": "rhel6"
+  }
+}
