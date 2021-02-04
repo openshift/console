@@ -1,21 +1,13 @@
 /**
  * Resolve URL string using `base` and `to` URLs.
  *
- * Delegates to `new URL(to, base)` for the actual resolution.
+ * If `base` is missing the protocol, it's considered to be relative to document origin.
  *
  * @param base Base URL.
  * @param to Target resource URL.
  * @param options Resolution options.
  */
-export const resolveURL = (
-  base: string,
-  to: string,
-  options: {
-    trailingSlashInBaseURL: boolean;
-  } = {
-    trailingSlashInBaseURL: false,
-  },
-): string => {
-  const from = options.trailingSlashInBaseURL && !base.endsWith('/') ? `${base}/` : base;
-  return new URL(to, from).toString();
+export const resolveURL = (base: string, to: string) => {
+  const baseAbsoluteURL = base.indexOf('://') === -1 ? window.location.origin + base : base;
+  return new URL(to, baseAbsoluteURL).toString();
 };
