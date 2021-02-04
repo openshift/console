@@ -98,6 +98,16 @@ describe('Event Source ValidationUtils', () => {
           expect(err.type).toBe('min');
         });
     });
+
+    it('should not throw error if net section is empty', async () => {
+      const defaultEventingData = getDefaultEventingData(EventSources.KafkaSource);
+      const mockData = _.cloneDeep(defaultEventingData);
+      delete mockData.formData.data.KafkaSource.net;
+      await eventSourceValidationSchema(t)
+        .resolve({ value: mockData })
+        .isValid(mockData)
+        .then((valid) => expect(valid).toEqual(true));
+    });
   });
 
   describe('ContainerSource : Event Source Validation', () => {

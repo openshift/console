@@ -114,52 +114,37 @@ export const sourceDataSpecSchema = (t: TFunction) =>
           net: yup.object().shape({
             sasl: yup.object().shape({
               enable: yup.boolean(),
-              user: yup.object().when('enable', {
-                is: true,
-                then: yup.object().shape({
-                  secretKeyRef: yup.object().shape({
-                    name: yup.string().required(t('knative-plugin~Required')),
-                    key: yup.string().required(t('knative-plugin~Required')),
-                  }),
+              user: yup.object().shape({
+                secretKeyRef: yup.object().shape({
+                  name: yup.string(),
+                  key: yup.string(),
                 }),
               }),
-              password: yup.object().when('enable', {
-                is: true,
-                then: yup.object().shape({
-                  secretKeyRef: yup.object().shape({
-                    name: yup.string().required(t('knative-plugin~Required')),
-                    key: yup.string().required(t('knative-plugin~Required')),
-                  }),
+              password: yup.object().shape({
+                secretKeyRef: yup.object().shape({
+                  name: yup.string(),
+                  key: yup.string(),
                 }),
               }),
             }),
             tls: yup.object().shape({
               enable: yup.boolean(),
-              caCert: yup.object().when('enable', {
-                is: true,
-                then: yup.object().shape({
-                  secretKeyRef: yup.object().shape({
-                    name: yup.string().required(t('knative-plugin~Required')),
-                    key: yup.string().required(t('knative-plugin~Required')),
-                  }),
+              caCert: yup.object().shape({
+                secretKeyRef: yup.object().shape({
+                  name: yup.string(),
+                  key: yup.string(),
                 }),
               }),
-              cert: yup.object().when('enable', {
-                is: true,
-                then: yup.object().shape({
-                  secretKeyRef: yup.object().shape({
-                    name: yup.string().required(t('knative-plugin~Required')),
-                    key: yup.string().required(t('knative-plugin~Required')),
-                  }),
+              cert: yup.object().shape({
+                secretKeyRef: yup.object().shape({
+                  name: yup.string(),
+                  key: yup.string(),
                 }),
               }),
-              key: yup.object().when('enable', {
-                is: true,
-                then: yup.object().shape({
-                  secretKeyRef: yup.object().shape({
-                    name: yup.string().required(t('knative-plugin~Required')),
-                    key: yup.string().required(t('knative-plugin~Required')),
-                  }),
+              key: yup.object().shape({
+                secretKeyRef: yup.object().shape({
+                  name: yup.string(),
+                  key: yup.string(),
                 }),
               }),
             }),

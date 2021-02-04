@@ -80,13 +80,28 @@ export const getEventSourcesDepResource = (formData: EventSourceFormData): K8sRe
   return eventSourceResource;
 };
 
+export const isSecretKeyRefPresent = (dataObj: {
+  secretKeyRef: { name: string; key: string };
+}): boolean => !!(dataObj?.secretKeyRef?.name || dataObj?.secretKeyRef?.key);
+
 export const getKafkaSourceResource = (sourceFormData: any): K8sResourceKind => {
   const baseResource = getEventSourcesDepResource(sourceFormData.formData);
   const { net } = baseResource.spec;
   baseResource.spec.net = {
     ...net,
     ...(!net.sasl?.enable && { sasl: { user: {}, password: {} } }),
+    ...(net.sasl?.enable &&
+      !isSecretKeyRefPresent(net.sasl?.user) &&
+      !isSecretKeyRefPresent(net.sasl?.password) && {
+        sasl: { enable: true, user: {}, password: {} },
+      }),
     ...(!net.tls?.enable && { tls: { caCert: {}, cert: {}, key: {} } }),
+    ...(net.tls?.enable &&
+      !isSecretKeyRefPresent(net.tls?.caCert) &&
+      !isSecretKeyRefPresent(net.tls?.cert) &&
+      !isSecretKeyRefPresent(net.tls?.key) && {
+        tls: { enable: true, caCert: {}, cert: {}, key: {} },
+      }),
   };
   return baseResource;
 };

@@ -13,6 +13,7 @@ import { RootState } from '@console/internal/redux';
 interface SecretKeySelectorProps {
   name: string;
   label: string;
+  isRequired?: boolean;
 }
 
 interface StateProps {
@@ -23,6 +24,7 @@ const SecretKeySelector: React.FC<SecretKeySelectorProps & StateProps> = ({
   name,
   label,
   namespace,
+  isRequired = false,
 }) => {
   const { setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
   const [field, { touched, error }] = useField(name);
@@ -61,7 +63,7 @@ const SecretKeySelector: React.FC<SecretKeySelectorProps & StateProps> = ({
       label={label}
       helperTextInvalid={errorMessage}
       validated={isValid ? 'default' : 'error'}
-      isRequired
+      isRequired={isRequired}
     >
       <ValueFromPair
         pair={{ secretKeyRef: field.value }}
