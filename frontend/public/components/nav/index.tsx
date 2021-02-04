@@ -16,7 +16,7 @@ export const Navigation: React.FC<NavigationProps> = React.memo(
         <Nav aria-label="Nav" onSelect={onNavSelect} theme="dark">
           <NavHeader onPerspectiveSelected={onPerspectiveSelected} />
           <NavList>
-            <PerspectiveNav />
+            <PerspectiveNav isNavOpen={isNavOpen} />
           </NavList>
         </Nav>
       }
