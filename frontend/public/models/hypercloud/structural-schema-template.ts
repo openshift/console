@@ -33028,6 +33028,17 @@ metadata:
             type: ['string', 'null'],
           },
         },
+        required: ['ports'],
+        if: {
+          properties: {
+            type: {
+              enum: ['ExternalName'],
+            },
+          },
+        },
+        then: {
+          not: { required: ['ports'] },
+        },
         additionalProperties: false,
       },
       status: {
