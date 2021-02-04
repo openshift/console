@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Popover, Button } from '@patternfly/react-core';
 import { QuestionCircleIcon } from '@patternfly/react-icons';
 import { ShortcutTable, Shortcut } from '../shortcuts';
+import { isMac } from '../shortcuts/Shortcut';
 import { useTranslation } from 'react-i18next';
 
 interface ShortcutsLinkProps {
@@ -15,8 +16,17 @@ const ShortcutsLink: React.FC<ShortcutsLinkProps> = ({ onHideShortcuts }) => {
       aria-label={t('editor~Shortcuts')}
       bodyContent={
         <ShortcutTable>
+          <Shortcut alt keyName="F1">
+            {t('editor~Accessibility help')}
+          </Shortcut>
+          <Shortcut keyName="F1">{t('editor~View all editor shortcuts')}</Shortcut>
           <Shortcut ctrl keyName="space">
             {t('editor~Activate auto complete')}
+          </Shortcut>
+          <Shortcut ctrl shift={isMac} keyName="m">
+            {t(
+              'editor~Toggle Tab action between insert Tab character and move focus out of editor',
+            )}
           </Shortcut>
           <Shortcut ctrlCmd shift keyName="o">
             {t('editor~View document outline')}
