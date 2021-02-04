@@ -1,6 +1,9 @@
 {
   "Add Health Checks": "ヘルスチェックの追加",
   "Edit Health Checks": "ヘルスチェックの編集",
+  "Add HorizontalPodAutoscaler": "HorizontalPodAutoscaler の追加",
+  "Edit HorizontalPodAutoscaler": "HorizontalPodAutoscaler の編集",
+  "Remove HorizontalPodAutoscaler": "HorizontalPodAutoscaler の削除",
   "Clone": "クローン",
   "Name": "名前",
   "Clone PVC": "PVC のクローン",
@@ -20,5 +23,6 @@
   "Created at": "作成:",
   "Status": "ステータス",
   "API version": "API バージョン",
-  "Restore": "復元"
+  "Restore": "復元",
+  "Administrator": "管理者"
 }

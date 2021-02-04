@@ -32,8 +32,8 @@
   "No": "否",
   "{{index, number}} of {{tasks, number}}": "{{tasks, number}} 的 {{index, number}}",
   "Learn how to create, import, and run applications on OpenShift with step-by-step instructions and tasks.": "了解如何在 OpenShift 上按照具体步骤和任务创建、导入和运行应用程序。",
-  "Are you sure you want to leave the tour?": "您确定要离开功能浏览吗？",
+  "Leave quick start?": "离开快速开始？",
   "Cancel": "取消",
   "Leave": "离开",
-  "Any progress you've made will be saved.": "您所做的任何进度都将被保存。"
+  "Your progress will be saved.": "您的进度将被保存。"
 }

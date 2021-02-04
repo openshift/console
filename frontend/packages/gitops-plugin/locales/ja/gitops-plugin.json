@@ -13,7 +13,9 @@
   "{{appName}} · Details": "{{appName}} · 詳細",
   "Argo CD": "Argo CD",
   "{{count, number}} item_0": "{{count, number}} 項目",
+  "{{count, number}} item_1": "{{count, number}} 項目",
   "{{count, number}} Environment_0": "{{count, number}} 環境",
+  "{{count, number}} Environment_1": "{{count, number}} 環境",
   "No GitOps manifest URLs found": "GitOps マニフェスト URL が見つかりません",
   "No Application groups found": "アプリケーショングループが見つかりません"
 }

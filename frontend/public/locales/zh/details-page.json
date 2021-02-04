@@ -53,5 +53,7 @@
   "Create snapshot": "创建快照",
   "Clone PVC": "克隆 PVC",
   "Restore as new PVC": "恢复为新的 PVC",
-  "Managed by": "管理由"
+  "No labels": "没有标签",
+  "Managed by": "管理由",
+  "No owner": "没有所有者"
 }

@@ -125,7 +125,7 @@ const ConfirmationModal = ({ state, dispatch, setInProgress, setErrorMessage, ns
     <>
       <span>
         {t(
-          'ceph-storage-plugin~After the volume set and storage class are created you wont be able to go back to this step.',
+          "ceph-storage-plugin~After the volume set and storage class are created you won't be able to go back to this step.",
         )}
       </span>
       {isArbiterSupported && (
@@ -153,7 +153,7 @@ const ConfirmationModal = ({ state, dispatch, setInProgress, setErrorMessage, ns
       ]}
       description={description}
     >
-      <p>{t('ceph-storage-plugin~Are you sure you want to continue ?')}</p>
+      <p>{t('ceph-storage-plugin~Are you sure you want to continue?')}</p>
     </Modal>
   );
 };

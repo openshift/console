@@ -23,15 +23,15 @@ export const validateVmLikeEntityName = (
     value,
     {
       // t('kubevirt-plugin~VM name cannot be empty')
-      // t('kubevirt-plugin~VM name name can contain only alphanumberic characters')
-      // t('kubevirt-plugin~VM name must start/end with alphanumberic character')
+      // t('kubevirt-plugin~VM name name can contain only alphanumeric characters')
+      // t('kubevirt-plugin~VM name must start/end with alphanumeric character')
       // t('kubevirt-plugin~VM name cannot contain uppercase characters')
       // t('kubevirt-plugin~VM name is too long')
       // t('kubevirt-plugin~VM name is too short')
       emptyMsg: 'kubevirt-plugin~VM name cannot be empty',
-      errorMsg: 'kubevirt-plugin~VM name name can contain only alphanumberic characters',
+      errorMsg: 'kubevirt-plugin~VM name name can contain only alphanumeric characters',
       startEndAlphanumbericMsg:
-        'kubevirt-plugin~VM name must start/end with alphanumberic character',
+        'kubevirt-plugin~VM name must start/end with alphanumeric character',
       uppercaseMsg: 'kubevirt-plugin~VM name cannot contain uppercase characters',
       longMsg: 'kubevirt-plugin~VM name is too long',
       shortMsg: 'kubevirt-plugin~VM name is too short',

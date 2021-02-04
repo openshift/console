@@ -149,10 +149,10 @@
   "Selecting all nodes will use the available disks that match the selected filters on all nodes selected on previous step.": "Selecting all nodes will use the available disks that match the selected filters on all nodes selected on previous step.",
   "Minimum Node Requirement": "Minimum Node Requirement",
   "The OCS storage cluster require a minimum of 3 nodes for the intial deployment. Only {{nodes}} node match to the selected filters. Please adjust the filters to include more nodes.": "The OCS storage cluster require a minimum of 3 nodes for the intial deployment. Only {{nodes}} node match to the selected filters. Please adjust the filters to include more nodes.",
-  "After the volume set and storage class are created you wont be able to go back to this step.": "After the volume set and storage class are created you wont be able to go back to this step.",
+  "After the volume set and storage class are created you won't be able to go back to this step.": "After the volume set and storage class are created you won't be able to go back to this step.",
   "Note:": "Note:",
   "Yes": "Yes",
-  "Are you sure you want to continue ?": "Are you sure you want to continue ?",
+  "Are you sure you want to continue?": "Are you sure you want to continue?",
   "Node": "Node",
   "Selected Disks": "Selected Disks",
   "Close": "Close",
@@ -187,7 +187,7 @@
   "Node Table": "Node Table",
   "Create Storage Cluster": "Create Storage Cluster",
   "OCS runs as a cloud-native service for optimal integration with applications in need of storage and handles the scenes such as provisioning and management.": "OCS runs as a cloud-native service for optimal integration with applications in need of storage and handles the scenes such as provisioning and management.",
-  "nodesText": "The selected nodes will be labeled with <1>cluster.ocs.openshift.io/openshift-storage=\"\"</1> (unless they are already labeled). {{replica}} of the selected nodes will be used for initial deployment. The remaining nodes will be used by OpenShift as scheduling targets for OCS scaling.",
+  "The selected nodes will be labeled with <1>{{label}}</1> (unless they are already labeled). {{replica}} of the selected nodes will be used for initial deployment. The remaining nodes will be used by OpenShift as scheduling targets for OCS scaling.": "The selected nodes will be labeled with <1>{{label}}</1> (unless they are already labeled). {{replica}} of the selected nodes will be used for initial deployment. The remaining nodes will be used by OpenShift as scheduling targets for OCS scaling.",
   "selected ({{cpu}} CPU and {{memory}} on ": "selected ({{cpu}} CPU and {{memory}} on ",
   "Stretch Cluster": "Stretch Cluster",
   "Enable Arbiter": "Enable Arbiter",
@@ -253,7 +253,7 @@
   "The last saved values will be updated": "The last saved values will be updated",
   "The Storage Class will be used to request storage from the underlying infrastructure to create the backing persistent volumes that will be used to provide the OpenShift Container Storage (OCS) service.": "The Storage Class will be used to request storage from the underlying infrastructure to create the backing persistent volumes that will be used to provide the OpenShift Container Storage (OCS) service.",
   "The backing storage requested will be higher as it will factor in the requested capacity replica factor and fault tolerant costs associated with the requested capacity.": "The backing storage requested will be higher as it will factor in the requested capacity replica factor and fault tolerant costs associated with the requested capacity.",
-  "If you wish to use the Arbiter stretch cluster, a minimum of 4 nodes(2 different zones, 2 nodes per zone) and 1 additional zone with 1 node is required. All nodes must be pre-labeled with zones in order to be validated on cluster creation.": "If you wish to use the Arbiter stretch cluster, a minimum of 4 nodes(2 different zones, 2 nodes per zone) and 1 additional zone with 1 node is required. All nodes must be pre-labeled with zones in order to be validated on cluster creation.",
+  "If you wish to use the Arbiter stretch cluster, a minimum of 4 nodes (2 different zones, 2 nodes per zone) and 1 additional zone with 1 node is required. All nodes must be pre-labeled with zones in order to be validated on cluster creation.": "If you wish to use the Arbiter stretch cluster, a minimum of 4 nodes (2 different zones, 2 nodes per zone) and 1 additional zone with 1 node is required. All nodes must be pre-labeled with zones in order to be validated on cluster creation.",
   "Selected nodes are based on the selected storage class. The selected nodes will preferably be in 3 different zones with a recommended requirement of 14 CPUs and 34 GiB per node.": "Selected nodes are based on the selected storage class. The selected nodes will preferably be in 3 different zones with a recommended requirement of 14 CPUs and 34 GiB per node.",
   "Selected nodes are based on the selected storage class. 4 nodes in 2 different zones will be selected with a recommended requirement of 14 CPU and 34 GiB RAM per node.": "Selected nodes are based on the selected storage class. 4 nodes in 2 different zones will be selected with a recommended requirement of 14 CPU and 34 GiB RAM per node.",
   "Persistent Storage": "Persistent Storage",
@@ -292,5 +292,5 @@
   "Pool {name} was successfully created": "Pool {name} was successfully created",
   "An error occurred Pool {name} was not created": "An error occurred Pool {name} was not created",
   "Pool {name} creation timed out. Please check if ocs-operator and rook operator are running": "Pool {name} creation timed out. Please check if ocs-operator and rook operator are running",
-  "The creation of an OCS storage cluster is still in progress or have failed please try again after the storage cluster is ready to use.": "The creation of an OCS storage cluster is still in progress or have failed please try again after the storage cluster is ready to use."
+  "The creation of an OCS storage cluster is still in progress or has failed. Please try again after the storage cluster is ready to use.": "The creation of an OCS storage cluster is still in progress or has failed. Please try again after the storage cluster is ready to use."
 }

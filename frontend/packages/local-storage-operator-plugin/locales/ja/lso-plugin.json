@@ -27,6 +27,7 @@
   "Storage Class Name": "ストレージクラス名",
   "Filter Disks": "ディスクのフィルター",
   "{{nodes, number}} node_0": "{{nodes, number}} ノード",
+  "{{nodes, number}} node_1": "{{nodes, number}} ノード",
   "Selecting all nodes will use the available disks that match the selected filters only on selected nodes.": "すべてのノードを選択すると、選択されたノードのみの選択されたフィルターに一致する利用可能なディスクが使用されます。",
   "Disk Type": "ディスクタイプ",
   "Advanced": "詳細",
@@ -45,6 +46,7 @@
   "Memory": "メモリー",
   "Select nodes for creating volume filter": "ボリュームフィルターを作成するためのノードの選択",
   "{{nodeCount, number}} node_0": "{{nodeCount, number}} ノード",
+  "{{nodeCount, number}} node_1": "{{nodeCount, number}} ノード",
   "selected": "選択済み",
   "SSD / NVMe": "SSD / NVMe",
   "HDD": "HDD"
