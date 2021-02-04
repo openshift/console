@@ -165,12 +165,12 @@ describe('Tests involving guest agent', () => {
 
         // there should be just the single laucher-pod
         const hostIP = execSync(
-          `kubectl get -n ${testName} pod -o json | jq '.items[0].status.hostIP' -r`,
+          `kubectl get -n ${testName} pod $(kubectl get -n ${testName} pods -o name | grep ${vmWindows.name} | cut -d'/' -f 2) -o jsonpath='{.status.hostIP}'`,
         )
           .toString()
           .trim();
         const port = execSync(
-          `kubectl get -n ${testName} service ${vmWindows.name}-rdp -o json | jq '.spec.ports[0].nodePort' -r`,
+          `kubectl get -n ${testName} service ${vmWindows.name}-rdp -o jsonpath='{.spec.ports[0].nodePort}'`,
         )
           .toString()
           .trim();
@@ -180,12 +180,13 @@ describe('Tests involving guest agent', () => {
         await browser.wait(
           until.textToBePresentInElement(manualConnectionTitle, 'Manual Connection'),
         );
-        const titles = rdpManualConnectionTitles();
+        const titles = rdpManualConnectionTitles;
+        await browser.wait(until.presenceOf(titles));
         expect(titles.first().getText()).toBe('RDP Address:');
         expect(titles.last().getText()).toBe('RDP Port:');
 
-        const values = rdpManualConnectionValues();
-        expect(values.count()).toBe(2);
+        const values = rdpManualConnectionValues;
+        await browser.wait(until.presenceOf(values));
         expect(values.first().getText()).toBe(hostIP);
         expect(values.last().getText()).toBe(port);
 
@@ -240,12 +241,13 @@ describe('Tests involving guest agent', () => {
         await browser.wait(
           until.textToBePresentInElement(manualConnectionTitle, 'Manual Connection'),
         );
-        const titles = rdpManualConnectionTitles();
+        const titles = rdpManualConnectionTitles;
+        await browser.wait(until.presenceOf(titles));
         expect(titles.first().getText()).toBe('RDP Address:');
         expect(titles.last().getText()).toBe('RDP Port:');
 
-        const values = rdpManualConnectionValues();
-        expect(values.count()).toBe(2);
+        const values = rdpManualConnectionValues;
+        await browser.wait(until.presenceOf(values));
         expect(values.first().getText()).toBe(VM_WINDOWS_IP);
         expect(values.last().getText()).toBe('3389');
 

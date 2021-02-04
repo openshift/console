@@ -12,8 +12,8 @@ export const launchRemoteViewerButton = $('.remote-viewer-pf-launch-vv');
 export const launchRemoteDesktopButton = $('.remote-viewer-pf-launch-rdp');
 
 export const manualConnectionTitle = $('.manual-connection-pf > h2');
-export const rdpManualConnectionTitles = () => $$('.manual-connection-pf-title'); // first for address, second for port
-export const rdpManualConnectionValues = () => $$('.manual-connection-pf-value');
+export const rdpManualConnectionTitles = $$('.manual-connection-pf-title'); // first for address, second for port
+export const rdpManualConnectionValues = $$('.manual-connection-pf-value');
 
 export const vncConnectingBar = $('.vnc-console-connecting');
 export const vncSendKeyButton = $('#console-send-shortcut');
