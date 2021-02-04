@@ -62,7 +62,8 @@ export const LineChart: React.FC<LineChartProps> = ({
     },
   };
 
-  return (
+  const OVERLAP = 50;
+  const chart = (
     <Chart
       ariaDesc={ariaDesc}
       ariaTitle={ariaTitle}
@@ -77,7 +78,7 @@ export const LineChart: React.FC<LineChartProps> = ({
         bottom: 80,
         left: 50,
         right: 20,
-        top: 30,
+        top: 30 + OVERLAP,
       }}
       themeColor={themeColor || ChartThemeColor.multiUnordered}
       width={width}
@@ -110,4 +111,6 @@ export const LineChart: React.FC<LineChartProps> = ({
       </ChartGroup>
     </Chart>
   );
+
+  return <div style={{ marginTop: OVERLAP * -1 }}>{chart}</div>;
 };
