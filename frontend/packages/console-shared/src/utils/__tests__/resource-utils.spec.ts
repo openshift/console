@@ -169,7 +169,7 @@ describe('TransformResourceData', () => {
       },
     };
     const alerts: Alert[] = getWorkloadMonitoringAlerts(deploymentResource, mockAlerts);
-    const expectedAlerts: Alert[] = _.pullAt(mockAlerts.data, [0, 1]);
+    const expectedAlerts: Alert[] = _.pullAt(mockAlerts.data, [0, 1, 4]);
     expect(alerts).toEqual(expectedAlerts);
   });
 });

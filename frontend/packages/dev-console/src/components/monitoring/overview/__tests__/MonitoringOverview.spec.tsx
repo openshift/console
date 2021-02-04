@@ -46,14 +46,15 @@ describe('Monitoring Metric Section', () => {
     expect(component.find('#monitoring-alerts-content').prop('isHidden')).toBe(false);
   });
 
-  it('monitoring alerts should be 2', () => {
-    expect(component.find(Badge).props().children).toBe(4);
+  it('monitoring alerts should be 5', () => {
+    expect(component.find(Badge).props().children).toBe(5);
   });
 
   it('alerts section should not be present if there are no firing alerts', () => {
     monitoringOverviewProps.monitoringAlerts[0].state = AlertStates.Pending;
     monitoringOverviewProps.monitoringAlerts[2].state = AlertStates.Pending;
     monitoringOverviewProps.monitoringAlerts[3].state = AlertStates.Pending;
+    monitoringOverviewProps.monitoringAlerts[4].state = AlertStates.Pending;
     component = shallow(<MonitoringOverview {...monitoringOverviewProps} />);
     expect(component.find('#monitoring-alerts').exists()).toBe(false);
   });

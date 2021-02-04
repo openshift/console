@@ -32,5 +32,11 @@ describe('Monitoring Alerts Section', () => {
         .at(1)
         .prop('variant'),
     ).toBe('warning');
+    expect(
+      component
+        .find(Alert)
+        .at(2)
+        .prop('variant'),
+    ).toBe('warning');
   });
 });

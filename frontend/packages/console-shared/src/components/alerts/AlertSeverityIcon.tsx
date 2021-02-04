@@ -22,6 +22,7 @@ const AlertSeverityIcon: React.FC<AlertSeverityIconProps> = ({
         />
       );
     case AlertSeverity.Warning:
+    default:
       return (
         <ExclamationTriangleIcon
           style={{
@@ -30,8 +31,6 @@ const AlertSeverityIcon: React.FC<AlertSeverityIconProps> = ({
           }}
         />
       );
-    default:
-      return null;
   }
 };
 
