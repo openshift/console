@@ -98,6 +98,7 @@ export const createOrUpdateImageStream = async (
             name: `${isiName}`,
           },
           importPolicy: { insecure: allowInsecureRegistry },
+          referencePolicy: { type: 'Local' },
         },
       ],
     },
