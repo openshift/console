@@ -44,10 +44,9 @@ export const getAppLabels = ({
 };
 
 export const getGitAnnotations = (gitURL: string, gitRef?: string) => {
-  const ref = gitRef || 'master';
   return {
     'app.openshift.io/vcs-uri': gitURL,
-    'app.openshift.io/vcs-ref': ref,
+    'app.openshift.io/vcs-ref': gitRef || '',
   };
 };
 
