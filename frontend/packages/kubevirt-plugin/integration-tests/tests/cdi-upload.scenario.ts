@@ -21,6 +21,7 @@ import {
   FEDORA_IMAGE,
   RHEL7_IMAGE,
   WIN10_IMAGE,
+  VM_IMPORT_TIMEOUT_SECS,
 } from './utils/constants/common';
 import {
   GOLDEN_OS_IMAGES_NS,
@@ -30,6 +31,7 @@ import {
   RHEL7_PVC,
   WIN10_PVC,
 } from './utils/constants/pvc';
+import { VM_STATUS } from './utils/constants/vm';
 import { TemplateByName } from './utils/constants/wizard';
 import { PVCData } from './types/pvc';
 import { UploadForm } from './models/pvcUploadForm';
@@ -170,6 +172,7 @@ describe('KubeVirt Auto Clone', () => {
       const fedora = new VMBuilder(getBasicVMBuilder())
         .setSelectTemplateName(TemplateByName.FEDORA)
         .generateNameForPrefix('auto-clone-vm-with-pvc-deleted')
+        .setStartOnCreation(false)
         .build();
 
       await withResources(
@@ -178,7 +181,7 @@ describe('KubeVirt Auto Clone', () => {
         async () => {
           await fedoraPVC.create();
           await fedora.create();
-          await fedora.stop();
+          await fedora.waitForStatus(VM_STATUS.Off, VM_IMPORT_TIMEOUT_SECS);
           await fedoraPVC.delete();
           await fedora.start();
           await fedora.navigateToDetail();

@@ -25,6 +25,7 @@ export const vmDetailWorkloadProfile = (namespace, vmName) =>
   $(vmDetailItemId(namespace, vmName, 'workload-profile'));
 export const vmDetailTemplate = (namespace, vmName) =>
   $(`${vmDetailItemId(namespace, vmName, 'template')}`);
+export const vmDetailTemplateByTestID = (templateName) => $(`[data-test-id="${templateName}"]`);
 export const vmDetailNamespace = (namespace, vmName) =>
   $(vmDetailItemId(namespace, vmName, 'namespace'));
 export const vmDetailPod = (namespace, vmName) => $(vmDetailItemId(namespace, vmName, 'pod'));
