@@ -59,14 +59,14 @@ export enum StatusCardQueries {
 export const CAPACITY_BREAKDOWN_QUERIES = {
   [ObjectServiceDashboardQuery.PROJECTS_BY_USED]: 'NooBaa_projects_capacity_usage',
   [ObjectServiceDashboardQuery.BUCKETS_BY_USED]: 'NooBaa_bucket_class_capacity_usage',
-  [ObjectServiceDashboardQuery.NOOBAA_TOTAL_USED]: 'NooBaa_total_usage',
+  [ObjectServiceDashboardQuery.NOOBAA_TOTAL_USED]: 'sum(NooBaa_providers_physical_size)',
   [ObjectServiceDashboardQuery.RGW_TOTAL_USED]: (rgwPrefix: string = '') =>
     _.template(
-      'sum(ceph_pool_metadata{name=~"<%= name %>rgw.*"} *on (job, namesapce, pool_id) group_right(name) ceph_pool_stored_raw) - sum(NooBaa_projects_capacity_usage)',
+      'sum(ceph_pool_metadata{name=~"<%= name %>rgw.buckets.data"} *on (job, namesapce, pool_id) group_right(name) ceph_pool_stored) - max(NooBaa_providers_physical_size{type="S3_COMPATIBLE"} or vector(0))',
     )({ name: rgwPrefix ? `${rgwPrefix}.` : '.*' }),
   [ObjectServiceDashboardQuery.OBJECT_STORAGE_TOTAL_USED]: (rgwPrefix: string = '') =>
     _.template(
-      'sum(ceph_pool_metadata{name=~"<%= name %>rgw.*"} *on (job, namesapce, pool_id) group_right(name) ceph_pool_stored_raw)',
+      'sum(ceph_pool_metadata{name=~"<%= name %>rgw.buckets.data"} *on (job, namesapce, pool_id) group_right(name) ceph_pool_stored) + max(sum(NooBaa_providers_physical_size{type!="S3_COMPATIBLE"}) or vector(0))',
     )({
       name: rgwPrefix ? `${rgwPrefix}.` : '.*',
     }),
