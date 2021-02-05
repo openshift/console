@@ -25,7 +25,7 @@
   "Edit parallelism": "並列処理の編集",
   "{{resourceKinds}} create one or more pods and ensure that a specified number of them successfully terminate. When the specified number of completions is successfully reached, the job is complete.": "{{resourceKinds}} は 1 つ以上の Pod を作成し、指定した数の Pod が正常に終了することを確認します。指定された完了数に正常に達すると、ジョブは完了します。",
   "Delete {{kind}}?": "{{kind}} を削除しますか?",
-  "Are you sure you want to delete <2>{{resourceName}}</2><3> in namespace <2>{{namespace}}</2></3>?": "namespace <2>{{namespace}}</2></3> で <2>{{resourceName}}</2><3> を削除してもよいですか?",
+  "Are you sure you want to delete <2>{{resourceName}}</2> in namespace <5>{{namespace}}</5>?": "namespace <5>{{namespace}}</5> で <2>{{resourceName}}</2> を削除してもよいですか?",
   "Are you sure you want to delete <2>{{resourceName}}</2>?": "<2>{{resourceName}}</2> を削除してもよいですか?",
   "Delete dependent objects of this resource": "このリソースの依存オブジェクトの削除",
   "Managed resource": "管理対象リソース",
