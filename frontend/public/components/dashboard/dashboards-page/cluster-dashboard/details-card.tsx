@@ -127,7 +127,7 @@ export const DetailsCard_ = connect(mapStateToProps)(
       <DashboardCard data-test-id="details-card">
         <DashboardCardHeader>
           <DashboardCardTitle>Details</DashboardCardTitle>
-          <DashboardCardLink to="/settings/cluster/">View settings</DashboardCardLink>
+          {/* <DashboardCardLink to="/settings/cluster/">View settings</DashboardCardLink> */}
         </DashboardCardHeader>
         <DashboardCardBody isLoading={flagPending(openshiftFlag)}>
           <DetailsBody>
