@@ -31,7 +31,7 @@
   "Selecting all nodes will use the available disks that match the selected filters only on selected nodes.": "Selecting all nodes will use the available disks that match the selected filters only on selected nodes.",
   "Disk Type": "Disk Type",
   "Advanced": "Advanced",
-  "Disk Mode": "Disk Mode",
+  "Volume Mode": "Volume Mode",
   "Disk Size": "Disk Size",
   "Min": "Min",
   "Max": "Max",

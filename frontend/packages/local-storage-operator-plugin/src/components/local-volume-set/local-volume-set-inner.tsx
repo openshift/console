@@ -152,7 +152,7 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = ({
         data-test-id="create-lvs-form-advanced"
       >
         <FormGroup
-          label={t('lso-plugin~Disk Mode')}
+          label={t('lso-plugin~Volume Mode')}
           fieldId="create-lso-disk-mode-dropdown"
           className="lso-create-lvs__disk-mode-dropdown--margin"
         >
