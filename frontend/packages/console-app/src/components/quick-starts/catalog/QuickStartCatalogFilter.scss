@@ -7,6 +7,17 @@
   &__input {
     flex-grow: 1;
     max-width: 500px;
+
+    // Hack to fix the search input issue
+    // https://github.com/patternfly/patternfly-react/issues/5416
+    .pf-c-search-input {
+      position: relative;
+      display: flex;
+      width: 100%;
+    }
+    .pf-c-search-input:hover {
+      --pf-c-search-input__text--after--BorderBottomColor: var(--pf-c-search-input--hover__text--after--BorderBottomColor);
+    }
   }
 
   &__count {
