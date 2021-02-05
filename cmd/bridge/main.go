@@ -151,9 +151,9 @@ func main() {
 	//NOTE: proxy config // jinsoo
 	fGrafanaEndpoint := fs.String("grafana-endpoint", "", "URL of the Grafana API server.")
 	fKialiEndpoint := fs.String("kiali-endpoint", "", "URL of the KIALI Portal")
-	// NOTE: webhook 연동 추가
+	// NOTE: webhook 연동 추1가
 	fwebhookEndpoint := fs.String("webhook-endpoint", "https://0.0.0.0:33333", "URL of the hypercloud webhook endpoint")
-	fKibanaEndpoint := fs.String("kibana-endpoint", "https://efk-opendistro-es-kibana-svc.efk.svc.cluster.local", "URL of the KIALI Portal")
+	fKibanaEndpoint := fs.String("kibana-endpoint", "https://opendistro-kibana.efk.svc.cluster.local:5601/api/kibana/", "URL of the KIALI Portal")
 
 	// NOTE: Multi Cluster(MC) Mode flags //jinsoo
 	fMcMode := fs.Bool("mc-mode", false, "Multi Cluster => true | Single Cluster => false")
