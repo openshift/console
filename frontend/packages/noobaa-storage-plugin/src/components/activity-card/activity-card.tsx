@@ -1,13 +1,12 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import * as _ from 'lodash';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import { EventKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { FirehoseResource, FirehoseResult } from '@console/internal/components/utils';
-import { EventModel, StatefulSetModel, PodModel } from '@console/internal/models';
+import { EventModel } from '@console/internal/models';
 import ActivityBody, {
   RecentEventsBody,
   OngoingActivityBody,
@@ -17,41 +16,19 @@ import {
   DashboardItemProps,
   withDashboardResources,
 } from '@console/internal/components/dashboard/with-dashboard-resources';
-import { getResiliencyProgress } from '@console/ceph-storage-plugin/src/utils';
-import { CephObjectStoreModel } from '@console/ceph-storage-plugin/src/models';
+import {
+  getResiliencyProgress,
+  isObjectStorageEvent,
+} from '@console/ceph-storage-plugin/src/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { RGW_FLAG } from '@console/ceph-storage-plugin/src/features';
 import { dataResiliencyQueryMap, ObjectServiceDashboardQuery } from '../../queries';
-import {
-  NooBaaBackingStoreModel,
-  NooBaaBucketClassModel,
-  NooBaaObjectBucketClaimModel,
-} from '../../models';
 import { secretResource } from '../../constants';
 import { decodeRGWPrefix } from '../../utils';
 import './activity-card.scss';
 
 const eventsResource: FirehoseResource = { isList: true, kind: EventModel.kind, prop: 'events' };
-
-const isObjectStorageEvent = (event: EventKind): boolean => {
-  const eventName: string = event?.involvedObject?.name;
-  return _.startsWith(eventName, 'noobaa') || eventName.includes('rgw');
-};
-
-const objectStorageEventsFilter = (event: EventKind): boolean => {
-  const eventKind: string = event?.involvedObject?.kind;
-  const objectStorageResources = [
-    NooBaaBackingStoreModel.kind,
-    NooBaaBucketClassModel.kind,
-    NooBaaObjectBucketClaimModel.kind,
-    CephObjectStoreModel.kind,
-  ];
-  if (eventKind === PodModel.kind || eventKind === StatefulSetModel.kind) {
-    return isObjectStorageEvent(event);
-  }
-  return objectStorageResources.includes(eventKind);
-};
 
 const RecentEvent = withDashboardResources(
   ({ watchK8sResource, stopWatchK8sResource, resources }: DashboardItemProps) => {
@@ -64,7 +41,7 @@ const RecentEvent = withDashboardResources(
     return (
       <RecentEventsBody
         events={resources.events as FirehoseResult<EventKind[]>}
-        filter={objectStorageEventsFilter}
+        filter={isObjectStorageEvent}
       />
     );
   },

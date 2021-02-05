@@ -1,5 +1,6 @@
 import { K8sKind } from '@console/internal/module/k8s';
 
+// Todo(bipuladh): Remove this file in 4.8
 export const NooBaaSystemModel: K8sKind = {
   label: 'NooBaa System',
   labelPlural: 'NooBaa Systems',
