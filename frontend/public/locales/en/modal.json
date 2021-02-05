@@ -25,7 +25,7 @@
   "Edit parallelism": "Edit parallelism",
   "{{resourceKinds}} create one or more pods and ensure that a specified number of them successfully terminate. When the specified number of completions is successfully reached, the job is complete.": "{{resourceKinds}} create one or more pods and ensure that a specified number of them successfully terminate. When the specified number of completions is successfully reached, the job is complete.",
   "Delete {{kind}}?": "Delete {{kind}}?",
-  "Are you sure you want to delete <2>{{resourceName}}</2><3> in namespace <2>{{namespace}}</2></3>?": "Are you sure you want to delete <2>{{resourceName}}</2><3> in namespace <2>{{namespace}}</2></3>?",
+  "Are you sure you want to delete <2>{{resourceName}}</2> in namespace <5>{{namespace}}</5>?": "Are you sure you want to delete <2>{{resourceName}}</2> in namespace <5>{{namespace}}</5>?",
   "Are you sure you want to delete <2>{{resourceName}}</2>?": "Are you sure you want to delete <2>{{resourceName}}</2>?",
   "Delete dependent objects of this resource": "Delete dependent objects of this resource",
   "Managed resource": "Managed resource",

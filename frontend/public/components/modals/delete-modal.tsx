@@ -85,12 +85,8 @@ const DeleteModal = withHandlePromise((props: DeleteModalProps) => {
           {_.has(resource.metadata, 'namespace') ? (
             <Trans t={t} ns="modal">
               Are you sure you want to delete{' '}
-              <strong className="co-break-word">{{ resourceName: resource.metadata.name }}</strong>
-              <span>
-                {' '}
-                in namespace <strong>{{ namespace: resource.metadata.namespace }}</strong>
-              </span>
-              ?
+              <strong className="co-break-word">{{ resourceName: resource.metadata.name }}</strong>{' '}
+              in namespace <strong>{{ namespace: resource.metadata.namespace }}</strong>?
             </Trans>
           ) : (
             <Trans t={t} ns="modal">

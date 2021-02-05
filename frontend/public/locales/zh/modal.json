@@ -25,7 +25,7 @@
   "Edit parallelism": "编辑并行机制",
   "{{resourceKinds}} create one or more pods and ensure that a specified number of them successfully terminate. When the specified number of completions is successfully reached, the job is complete.": "{{resourceKinds}} 创建一个或多个 Pod，并确保指定数量的 Pod 已成功终止。当指定的数量已成功完成，则作业即告完成。",
   "Delete {{kind}}?": "删除 {{kind}}?",
-  "Are you sure you want to delete <2>{{resourceName}}</2><3> in namespace <2>{{namespace}}</2></3>?": "确定要删除命名空间 <2>{{namespace}}</2></3> 中的 <2>{{resourceName}}</2><3> 吗？",
+  "Are you sure you want to delete <2>{{resourceName}}</2> in namespace <5>{{namespace}}</5>?": "确定要删除命名空间 <5>{{namespace}}</5> 中的 <2>{{resourceName}}</2> 吗？",
   "Are you sure you want to delete <2>{{resourceName}}</2>?": "您确定要删除<2>{{resourceName}}</2> 吗？",
   "Delete dependent objects of this resource": "删除此资源的依赖项",
   "Managed resource": "管理的资源",
