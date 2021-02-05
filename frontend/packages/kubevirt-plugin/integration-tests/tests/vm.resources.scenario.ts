@@ -33,11 +33,11 @@ import {
   selectItemFromDropdown,
 } from './utils/utils';
 import {
-  VM_BOOTUP_TIMEOUT_SECS,
+  VM_IMPORT_TIMEOUT_SECS,
   VM_ACTIONS_TIMEOUT_SECS,
   DEFAULT_YAML_VM_NAME,
 } from './utils/constants/common';
-import { VM_ACTION, NIC_MODEL, NIC_TYPE, networkTabCol } from './utils/constants/vm';
+import { VM_ACTION, VM_STATUS, NIC_MODEL, NIC_TYPE, networkTabCol } from './utils/constants/vm';
 import { VirtualMachine } from './models/virtualMachine';
 import { Wizard } from './models/wizard';
 import { NetworkInterfaceDialog } from './dialogs/networkInterfaceDialog';
@@ -45,15 +45,16 @@ import { VMBuilder } from './models/vmBuilder';
 import { ProvisionSource } from './utils/constants/enums/provisionSource';
 
 describe('Add/remove disks and NICs on respective VM pages', () => {
-  const testVm = getVMManifest(ProvisionSource.URL, testName, `vm-disk-nic-${testName}`);
-  const vm = new VirtualMachine(testVm.metadata);
+  const testVM = getVMManifest(ProvisionSource.URL, testName, `vm-disk-nic-${testName}`);
+  const vm = new VirtualMachine(testVM.metadata);
 
   beforeAll(async () => {
-    createResources([multusNAD, testVm]);
-  }, VM_BOOTUP_TIMEOUT_SECS);
+    createResources([multusNAD, testVM]);
+    await vm.waitForStatus(VM_STATUS.Off, VM_IMPORT_TIMEOUT_SECS);
+  });
 
   afterAll(() => {
-    deleteResources([multusNAD, testVm]);
+    deleteResources([multusNAD, testVM]);
   });
 
   it(
