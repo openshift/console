@@ -105,7 +105,6 @@ const PipelineSuccessRatioDonut: React.FC<PipelineMetricsGraphProps> = ({
             data={successData}
             successValue={successValue}
             ariaDesc={t('pipelines-plugin~Pipeline success ratio chart')}
-            ariaTitle={t('pipelines-plugin~Pipeline success ratio')}
             subTitle={
               successData
                 ? t('pipelines-plugin~{{successValue}} of {{totalValue}} succeeded', {
@@ -124,7 +123,6 @@ const PipelineSuccessRatioDonut: React.FC<PipelineMetricsGraphProps> = ({
             <div ref={measureRef} style={{ height: DEFAULT_CHART_HEIGHT }}>
               <TimeSeriesChart
                 ariaDesc={t('pipelines-plugin~Pipeline success chart')}
-                ariaTitle={t('pipelines-plugin~Pipeline success per day')}
                 data={Object.values(successTimeSeriesObj) ?? []}
                 bar={false}
                 domain={{ y: [0, 100] }}
@@ -136,8 +134,7 @@ const PipelineSuccessRatioDonut: React.FC<PipelineMetricsGraphProps> = ({
                     constrainToVisibleArea
                     labels={({ datum }) =>
                       datum.childName.includes('line-') && datum.y !== null
-                        ? `${formatDate(datum.x)} 
-              ${datum?.y}%`
+                        ? `${formatDate(datum.x)}\n${datum?.y}%`
                         : null
                     }
                   />

@@ -74,7 +74,8 @@ export const TimeSeriesChart: React.FC<TimeSeriesChart & ChartProps & ChartLineP
       },
     };
   }
-  return (
+  const OVERLAP = 20;
+  const chart = (
     <Chart
       ariaDesc={ariaDesc}
       ariaTitle={ariaTitle}
@@ -97,7 +98,7 @@ export const TimeSeriesChart: React.FC<TimeSeriesChart & ChartProps & ChartLineP
         bottom: 50,
         left: 50,
         right: 20,
-        top: 30,
+        top: 30 + OVERLAP,
       }}
       themeColor={themeColor || ChartThemeColor.blue}
       width={width}
@@ -136,4 +137,6 @@ export const TimeSeriesChart: React.FC<TimeSeriesChart & ChartProps & ChartLineP
       </ChartGroup>
     </Chart>
   );
+
+  return <div style={{ marginTop: OVERLAP * -1 }}>{chart}</div>;
 };
