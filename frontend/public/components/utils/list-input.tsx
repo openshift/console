@@ -3,8 +3,10 @@ import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import { Button } from '@patternfly/react-core';
 import { PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
+/* eslint-disable-next-line */
+import { withTranslation, WithTranslation } from 'react-i18next';
 
-export class ListInput extends React.Component<ListInputProps, ListInputState> {
+class ListInput_ extends React.Component<ListInputProps, ListInputState> {
   private helpID: string = _.uniqueId('list-view-help-');
   constructor(props: ListInputProps) {
     super(props);
@@ -43,7 +45,7 @@ export class ListInput extends React.Component<ListInputProps, ListInputState> {
   }
 
   render() {
-    const { label, required, helpText } = this.props;
+    const { label, required, helpText, t } = this.props;
     const { values } = this.state;
     const missingValues = required && (_.isEmpty(values) || _.every(values, (v) => !v));
     const isEmpty = values.length === 1 && (_.isEmpty(values) || _.every(values, (v) => !v));
@@ -69,7 +71,7 @@ export class ListInput extends React.Component<ListInputProps, ListInputState> {
               type="button"
               className="pairs-list__span-btns"
               onClick={() => this.removeValue(i)}
-              aria-label="Remove"
+              aria-label={t('public~Remove')}
               variant="plain"
               disabled={isEmpty}
             >
@@ -89,12 +91,14 @@ export class ListInput extends React.Component<ListInputProps, ListInputState> {
           variant="link"
         >
           <PlusCircleIcon className="co-icon-space-r" />
-          Add More
+          {t('public~Add more')}
         </Button>
       </div>
     );
   }
 }
+
+export const ListInput = withTranslation()(ListInput_);
 
 type ListInputState = {
   values: string[];
@@ -102,7 +106,7 @@ type ListInputState = {
 
 type ChangeCallback = (values: string[]) => void;
 
-type ListInputProps = {
+type ListInputProps = WithTranslation & {
   label: string;
   initialValues?: string[];
   onChange: ChangeCallback;
