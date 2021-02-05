@@ -26,40 +26,37 @@ const readOnlyColumns = new Set([NAME_COLUMN_ID]);
 const DataListRow: React.FC<DataListRowProps> = ({
   checkedColumns,
   column,
+  onChange,
   disableUncheckedRow,
-  onClick,
-}) => {
-  const isColumnIdDisabled = (id: string) => {
-    return (disableUncheckedRow && !checkedColumns.has(id)) || readOnlyColumns.has(id);
-  };
-
-  return (
-    <DataListItem
-      aria-labelledby={`table-column-management-item-${column.id}`}
-      key={column.id}
-      className="pf-c-data-list__item--transparent-bg"
-      id={column.id}
-      onClick={isColumnIdDisabled(column.id) ? undefined : onClick}
-    >
-      <DataListItemRow>
-        <DataListCheck
-          isDisabled={isColumnIdDisabled(column.id)}
-          aria-labelledby={`table-column-management-item-${column.id}`}
-          checked={checkedColumns.has(column.id)}
-          name={column.title}
-          id={column.id}
-        />
-        <DataListItemCells
-          dataListCells={[
-            <DataListCell id={`table-column-management-item-${column.id}`} key={column.id}>
+}) => (
+  <DataListItem
+    aria-labelledby={`table-column-management-item-${column.id}`}
+    key={column.id}
+    className="pf-c-data-list__item--transparent-bg"
+  >
+    <DataListItemRow>
+      <DataListCheck
+        isDisabled={
+          (disableUncheckedRow && !checkedColumns.has(column.id)) || readOnlyColumns.has(column.id)
+        }
+        aria-labelledby={`table-column-management-item-${column.id}`}
+        checked={checkedColumns.has(column.id)}
+        name={column.title}
+        id={column.id}
+        onChange={onChange}
+      />
+      <DataListItemCells
+        dataListCells={[
+          <DataListCell id={`table-column-management-item-${column.id}`} key={column.id}>
+            <label className="co-label--plain" htmlFor={column.id}>
               {column.title}
-            </DataListCell>,
-          ]}
-        />
-      </DataListItemRow>
-    </DataListItem>
-  );
-};
+            </label>
+          </DataListCell>,
+        ]}
+      />
+    </DataListItemRow>
+  </DataListItem>
+);
 
 export const ColumnManagementModal: React.FC<ColumnManagementModalProps &
   WithUserSettingsCompatibilityProps<object>> = ({
@@ -78,9 +75,9 @@ export const ColumnManagementModal: React.FC<ColumnManagementModalProps &
       : new Set(defaultColumns.map((col) => col.id)),
   );
 
-  const onRowClick = (event: React.SyntheticEvent): void => {
-    const selectedId = event?.currentTarget?.id;
+  const onColumnChange = (checked: boolean, event: React.SyntheticEvent): void => {
     const updatedCheckedColumns = new Set<string>(checkedColumns);
+    const selectedId = event?.currentTarget?.id;
     updatedCheckedColumns.has(selectedId)
       ? updatedCheckedColumns.delete(selectedId)
       : updatedCheckedColumns.add(selectedId);
@@ -140,10 +137,10 @@ export const ColumnManagementModal: React.FC<ColumnManagementModalProps &
                 {defaultColumns.map((defaultColumn) => (
                   <DataListRow
                     key={defaultColumn.id}
+                    onChange={onColumnChange}
                     disableUncheckedRow={areMaxColumnsDisplayed}
                     column={defaultColumn}
                     checkedColumns={checkedColumns}
-                    onClick={onRowClick}
                   />
                 ))}
               </DataList>
@@ -158,10 +155,10 @@ export const ColumnManagementModal: React.FC<ColumnManagementModalProps &
                 {additionalColumns.map((additionalColumn) => (
                   <DataListRow
                     key={additionalColumn.id}
+                    onChange={onColumnChange}
                     disableUncheckedRow={areMaxColumnsDisplayed}
                     column={additionalColumn}
                     checkedColumns={checkedColumns}
-                    onClick={onRowClick}
                   />
                 ))}
               </DataList>
@@ -196,9 +193,9 @@ ColumnManagementModal.displayName = 'ColumnManagementModal';
 
 type DataListRowProps = {
   column: ManagedColumn;
+  onChange: (checked: boolean, event: React.SyntheticEvent) => void;
   disableUncheckedRow: boolean;
   checkedColumns: Set<string>;
-  onClick: (event: React.SyntheticEvent) => void;
 };
 
 export type ColumnManagementModalProps = {
