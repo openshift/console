@@ -56,7 +56,7 @@ const PoolStatusComponent: React.FC<PoolStatusComponentProps> = ({ status, name,
     <>
       <EmptyState>
         <EmptyStateIcon icon={statusObj.icon} className={statusObj.className} />
-        <EmptyStateBody>
+        <EmptyStateBody data-test="empty-state-body">
           {error ? error.replace(ROOK_MODEL, 'Pool') : statusObj.desc.replace('{name}', name)}
         </EmptyStateBody>
       </EmptyState>
@@ -233,6 +233,7 @@ export const StoragePoolModal = withHandlePromise((props: StoragePoolModalProps)
             <Button
               type="submit"
               variant="primary"
+              data-test="confirm-action"
               isDisabled={poolStatus === POOL_PROGRESS.PROGRESS}
               id="confirm-action"
               onClick={handleFinishButton}
@@ -269,6 +270,7 @@ export const StoragePoolModal = withHandlePromise((props: StoragePoolModalProps)
                 aria-describedby={t('ceph-storage-plugin~pool-name-help')}
                 id="pool-name"
                 name="newPoolName"
+                data-test="new-pool-name-textbox"
                 required
               />
             </div>
@@ -281,6 +283,7 @@ export const StoragePoolModal = withHandlePromise((props: StoragePoolModalProps)
                 toggle={
                   <DropdownToggle
                     id="replica-dropdown"
+                    data-test="replica-dropdown"
                     onToggle={() => setReplicaOpen(!isReplicaOpen)}
                     toggleIndicator={CaretDownIcon}
                   >

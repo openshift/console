@@ -1053,6 +1053,7 @@ export class StorageClassForm_ extends React.Component<
               selectedKey={_.get(this.state, 'newStorageClass.type')}
               onChange={(event) => this.setStorageHandler('type', event)}
               id="storage-class-provisioner"
+              dataTest="storage-class-provisioner-dropdown"
             />
             <span className="help-block">
               Determines what volume plugin is used for provisioning persistent volumes.

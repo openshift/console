@@ -96,6 +96,7 @@ export const PoolResourceComponent: React.FC<ProvisionerProps> = ({ onParamChang
             key={pool.metadata.uid}
             component="button"
             id={pool?.metadata?.name}
+            data-test={pool?.metadata?.name}
             onClick={handleDropdownChange}
             description={t('ceph-storage-plugin~Replica {{poolSize}} {{compressionText}}', {
               poolSize: pool?.spec?.replicated?.size,
@@ -110,6 +111,7 @@ export const PoolResourceComponent: React.FC<ProvisionerProps> = ({ onParamChang
     },
     [
       <DropdownItem
+        data-test="create-new-pool-button"
         key="first-item"
         component="button"
         onClick={() =>
@@ -138,6 +140,7 @@ export const PoolResourceComponent: React.FC<ProvisionerProps> = ({ onParamChang
               toggle={
                 <DropdownToggle
                   id="pool-dropdown-id"
+                  data-test="pool-dropdown-toggle"
                   onToggle={() => setOpen(!isOpen)}
                   toggleIndicator={CaretDownIcon}
                 >
