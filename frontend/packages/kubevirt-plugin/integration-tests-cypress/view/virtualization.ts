@@ -27,6 +27,23 @@ export const virtualization = {
           .should('have.text', 'Add source')
           .click(),
       ),
+    testProvider: (templateName: string, provider: string) =>
+      getRow(templateName, () => cy.byTestID('template-provider').should('have.text', provider)),
+    testSupport: (templateName: string, support?: string, parentSupport?: string) => {
+      getRow(templateName, () => cy.byTestID('template-details').click());
+      if (support) {
+        cy.byTestID('template-support').should('exist');
+        cy.byTestID('template-support').should('have.text', support);
+      } else {
+        cy.byTestID('template-support').should('not.exist');
+      }
+      if (parentSupport) {
+        cy.byTestID('template-support-parent').should('exist');
+        cy.byTestID('template-support-parent').should('have.text', parentSupport);
+      } else {
+        cy.byTestID('template-support-parent').should('not.exist');
+      }
+    },
     testSource: (templateName: string, sourceStatus: string, timeout = 600000) =>
       getRow(templateName, () =>
         cy.byTestID('template-source', { timeout }).should('have.text', sourceStatus),
@@ -38,5 +55,7 @@ export const virtualization = {
       cy.byTestID('delete-template-source').click();
       cy.byTestID('confirm-action').click();
     },
+    clickCreate: (templateName: string) =>
+      getRow(templateName, () => cy.byTestID('create-from-template').click()),
   },
 };

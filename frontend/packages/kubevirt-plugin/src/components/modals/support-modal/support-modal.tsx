@@ -48,7 +48,7 @@ const SupportModal: React.FC<SupportModalProps> = ({ onConfirm, close, community
             </>
           ) : (
             <>
-              <StackItem>
+              <StackItem data-test="no-support-description">
                 {t(
                   'kubevirt-plugin~The support level is not defined in the template yaml. To mark this template as supported, add these two annotations in the template details:',
                 )}

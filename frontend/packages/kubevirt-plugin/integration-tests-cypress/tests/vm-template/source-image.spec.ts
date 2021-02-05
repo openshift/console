@@ -73,3 +73,14 @@ describe('test vm template source image', () => {
     virtualization.templates.testSource(TEMPLATE, 'Add source');
   });
 });
+
+describe('test vm template source image provider', () => {
+  it('Vm Template list shows source provider', () => {
+    virtualization.templates.addSource(TEMPLATE);
+    addSource.addBootSource(ProvisionSource.REGISTRY, undefined, 'fooProvider');
+    virtualization.templates.testSource(TEMPLATE, 'Importing');
+    virtualization.templates.testSource(TEMPLATE, 'fooProvider');
+    virtualization.templates.deleteSource(TEMPLATE);
+    virtualization.templates.testSource(TEMPLATE, 'Add source');
+  });
+});
