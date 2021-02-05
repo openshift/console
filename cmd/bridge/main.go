@@ -376,30 +376,31 @@ func main() {
 				RootCAs:      serviceProxyRootCAs,
 				CipherSuites: crypto.DefaultCiphers(),
 			}
+			srv.PrometheusPublicURL = &url.URL{Scheme: "http", Host: openshiftPrometheusHost, Path: "/api"}
 			srv.PrometheusProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
 				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
-				Endpoint:        &url.URL{Scheme: "https", Host: openshiftPrometheusHost, Path: "/api"},
+				Endpoint:        &url.URL{Scheme: "http", Host: openshiftPrometheusHost, Path: "/api"},
 			}
 			srv.ThanosProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
 				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
-				Endpoint:        &url.URL{Scheme: "https", Host: openshiftThanosHost, Path: "/api"},
+				Endpoint:        &url.URL{Scheme: "http", Host: openshiftThanosHost, Path: "/api"},
 			}
 			srv.ThanosTenancyProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
 				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
-				Endpoint:        &url.URL{Scheme: "https", Host: openshiftThanosTenancyHost, Path: "/api"},
+				Endpoint:        &url.URL{Scheme: "http", Host: openshiftThanosTenancyHost, Path: "/api"},
 			}
 			srv.AlertManagerProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
 				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
-				Endpoint:        &url.URL{Scheme: "https", Host: openshiftAlertManagerHost, Path: "/api"},
+				Endpoint:        &url.URL{Scheme: "http", Host: openshiftAlertManagerHost, Path: "/api"},
 			}
 			srv.MeteringProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
 				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
-				Endpoint:        &url.URL{Scheme: "https", Host: openshiftMeteringHost, Path: "/api"},
+				Endpoint:        &url.URL{Scheme: "http", Host: openshiftMeteringHost, Path: "/api"},
 			}
 			srv.TerminalProxyTLSConfig = serviceProxyTLSConfig
 
