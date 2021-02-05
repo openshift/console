@@ -371,6 +371,10 @@ func main() {
 			HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
 			Endpoint:        &url.URL{Scheme: "http", Host: openshiftThanosHost, Path: "/api"},
 		}
+		srv.ThanosTenancyProxyConfig = &proxy.Config{
+			HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+			Endpoint:        &url.URL{Scheme: "http", Host: openshiftThanosTenancyHost, Path: "/api"},
+		}
 		// If running in an OpenShift cluster, set up a proxy to the prometheus-k8s service running in the openshift-monitoring namespace.
 		if *fServiceCAFile != "" {
 			serviceCertPEM, err := ioutil.ReadFile(*fServiceCAFile)
@@ -395,11 +399,11 @@ func main() {
 			// 	HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
 			// 	Endpoint:        &url.URL{Scheme: "http", Host: openshiftThanosHost, Path: "/api"},
 			// }
-			srv.ThanosTenancyProxyConfig = &proxy.Config{
-				TLSClientConfig: serviceProxyTLSConfig,
-				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
-				Endpoint:        &url.URL{Scheme: "http", Host: openshiftThanosTenancyHost, Path: "/api"},
-			}
+			// srv.ThanosTenancyProxyConfig = &proxy.Config{
+			// 	TLSClientConfig: serviceProxyTLSConfig,
+			// 	HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+			// 	Endpoint:        &url.URL{Scheme: "http", Host: openshiftThanosTenancyHost, Path: "/api"},
+			// }
 			srv.AlertManagerProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
 				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
