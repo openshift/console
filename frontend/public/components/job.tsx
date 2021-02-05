@@ -53,8 +53,9 @@ const kind = 'Job';
 const tableColumnClasses = [
   classNames('col-lg-2', 'col-md-3', 'col-sm-4', 'col-xs-6'),
   classNames('col-lg-2', 'col-md-3', 'col-sm-4', 'col-xs-6'),
-  classNames('col-lg-4', 'col-md-4', 'col-sm-4', 'hidden-xs'),
+  classNames('col-lg-3', 'col-md-4', 'col-sm-4', 'hidden-xs'),
   classNames('col-lg-2', 'col-md-2', 'hidden-sm', 'hidden-xs'),
+  classNames('col-lg-1', 'hidden-md', 'hidden-sm', 'hidden-xs'),
   classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
   Kebab.columnClass,
 ];
@@ -92,8 +93,14 @@ const JobTableHeader = () => {
       props: { className: tableColumnClasses[4] },
     },
     {
-      title: '',
+      title: 'Created',
+      sortFunc: 'metadata.creationTimestamp',
+      transforms: [sortable],
       props: { className: tableColumnClasses[5] },
+    },
+    {
+      title: '',
+      props: { className: tableColumnClasses[6] },
     },
   ];
 };
@@ -128,6 +135,9 @@ const JobTableRow: RowFunction<JobKind> = ({ obj: job, index, key, style }) => {
       </TableData>
       <TableData className={tableColumnClasses[4]}>{type}</TableData>
       <TableData className={tableColumnClasses[5]}>
+        <Timestamp timestamp={job.metadata.creationTimestamp} />
+      </TableData>
+      <TableData className={tableColumnClasses[6]}>
         <ResourceKebab actions={menuActions} kind="Job" resource={job} />
       </TableData>
     </TableRow>
