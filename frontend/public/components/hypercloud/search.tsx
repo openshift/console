@@ -3,7 +3,6 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { connect, Dispatch } from 'react-redux';
 import { Accordion, AccordionContent, AccordionItem, AccordionToggle, DataToolbar, DataToolbarChip, DataToolbarContent, DataToolbarFilter, DataToolbarItem } from '@patternfly/react-core';
-import { PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
 import { getBadgeFromType } from '@console/shared';
 import { RootState } from '../../redux';
 import { getActivePerspective, getPinnedResources } from '../../reducers/ui';
@@ -17,7 +16,6 @@ import { withStartGuide } from '../start-guide';
 import { split, selectorFromString } from '../../module/k8s/selector';
 import { kindForReference, modelFor, referenceForModel } from '../../module/k8s';
 import { LoadingBox, MsgBox, PageHeading, ResourceIcon, setQueryArgument, AsyncComponent } from '../utils';
-import confirmNavUnpinModal from '../nav/confirmNavUnpinModal';
 import { SearchFilterDropdown, searchFilterValues } from '../search-filter-dropdown';
 import { useTranslation } from 'react-i18next';
 
@@ -48,7 +46,7 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = props =>
   const [labelFilter, setLabelFilter] = React.useState([]);
   const [labelFilterInput, setLabelFilterInput] = React.useState('');
   const [typeaheadNameFilter, setTypeaheadNameFilter] = React.useState('');
-  const { namespace, noProjectsAvailable, pinnedResources } = props;
+  const { namespace, noProjectsAvailable } = props;
 
   // Set state variables from the URL
   React.useEffect(() => {
@@ -104,18 +102,6 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = props =>
     clearSelectedItems();
     clearNameFilter();
     clearLabelFilter();
-  };
-
-  const pinToggle = (e: React.MouseEvent<HTMLElement>, resource: string) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    const index = props.pinnedResources.indexOf(resource);
-    if (index >= 0) {
-      confirmNavUnpinModal(resource, pinnedResources, props.onPinnedResourcesChange);
-      return;
-    }
-    props.onPinnedResourcesChange([...pinnedResources, resource]);
   };
 
   const toggleKindExpanded = (kindView: string) => {
@@ -210,21 +196,6 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = props =>
               <AccordionItem key={resource}>
                 <AccordionToggle className="co-search-group__accordion-toggle" onClick={() => toggleKindExpanded(resource)} isExpanded={!isCollapsed} id={`${resource}-toggle`}>
                   {getToggleText(resource)}
-                  {props.perspective !== 'hc' && props.perspective !== 'mc' && (
-                    <a className="pf-c-button pf-m-link co-search-group__pin-toggle" onClick={e => pinToggle(e, resource)}>
-                      {pinnedResources.includes(resource) ? (
-                        <>
-                          <MinusCircleIcon className="co-search-group__pin-toggle__icon" />
-                          Remove from navigation
-                        </>
-                      ) : (
-                        <>
-                          <PlusCircleIcon className="co-search-group__pin-toggle__icon" />
-                          Add to navigation
-                        </>
-                      )}
-                    </a>
-                  )}
                 </AccordionToggle>
                 <AccordionContent isHidden={isCollapsed}>{!isCollapsed && <ResourceList kind={resource} selector={selectorFromString(labelFilter.join(','))} nameFilter={typeaheadNameFilter} namespace={namespace} mock={noProjectsAvailable} key={resource} />}</AccordionContent>
               </AccordionItem>
