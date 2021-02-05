@@ -25,14 +25,15 @@
   padding-top: var(--pf-global--spacer--md);
 }
 
-.ceph-ocs-install__create-sc-form {
-  width: 80%;
+.ceph-ocs-install__form-wrapper {
+  margin-top: var(--pf-global--spacer--lg);
 }
 
-.ceph-ocs-install__form-wrapper {
-  display: flex;
-  margin-top: var(--pf-global--spacer--lg);
-  justify-content: space-between;
+.ceph-ocs-install__donut-chart {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: var(--pf-global--spacer--sm);
 }
 
 .ceph-ocs-install__chart-wrapper {
@@ -47,6 +48,7 @@
 }
 
 .ceph-ocs-install_capacity-header {
+  text-align: center;
   font-size: var(--pf-global--FontSize--xl);
   margin-bottom: var(--pf-c-wizard__main-body--PaddingBottom);
 }
@@ -55,6 +57,7 @@
   display: flex;
   font-size: var(--pf-global--FontSize--md);
   margin-bottom: var(--pf-global--spacer--xs);
+  text-align: center;
 }
 
 .ceph-ocs-install_stats--divider {

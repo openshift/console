@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Form, Alert, Button } from '@patternfly/react-core';
+import { Form, Alert, Button, Grid, GridItem } from '@patternfly/react-core';
 import { Modal, useFlag } from '@console/shared';
 import { k8sCreate } from '@console/internal/module/k8s';
 import { LocalVolumeSetModel } from '@console/local-storage-operator-plugin/src/models';
@@ -65,18 +65,30 @@ export const CreateLocalVolumeSet: React.FC<CreateLocalVolumeSetProps> = ({
   return (
     <>
       <LocalVolumeSetHeader />
-      <div className="ceph-ocs-install__form-wrapper">
-        <Form noValidate={false} className="ceph-ocs-install__create-sc-form">
-          <LocalVolumeSetInner
-            state={state}
-            dispatch={dispatch}
-            diskModeOptions={diskModeDropdownItems}
-            allNodesHelpTxt={allNodesSelectorTxt}
-            taintsFilter={hasOCSTaint}
-          />
-        </Form>
-        <DiscoveryDonutChart state={state} dispatch={dispatch} />
-      </div>
+      <Grid className="ceph-ocs-install__form-wrapper">
+        <GridItem lg={10} md={12} sm={12}>
+          <Form noValidate={false}>
+            <LocalVolumeSetInner
+              state={state}
+              dispatch={dispatch}
+              diskModeOptions={diskModeDropdownItems}
+              allNodesHelpTxt={allNodesSelectorTxt}
+              taintsFilter={hasOCSTaint}
+            />
+          </Form>
+        </GridItem>
+        <GridItem
+          lg={2}
+          lgOffset={10}
+          md={4}
+          mdOffset={4}
+          sm={4}
+          smOffset={4}
+          className="ceph-ocs-install__donut-chart"
+        >
+          <DiscoveryDonutChart state={state} dispatch={dispatch} />
+        </GridItem>
+      </Grid>
       <ConfirmationModal
         ns={ns}
         state={state}
