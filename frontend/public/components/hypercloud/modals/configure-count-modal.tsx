@@ -60,10 +60,10 @@ export const ConfigureCountModal = withHandlePromise((props: ConfigureCountModal
                         className="pf-c-form-control"
                         value={value1}
                         onChange={(e: any) => setValue1(e.target.value)}
-                        changeValueBy={(operation) => setValue1(_.toInteger(value1) + operation)}
+                        changeValueBy={(operation) => setValue1(_.toInteger(value1) + operation * 2)}
                         autoFocus
                         required
-                        min={0}
+                        min={1}
                     />
                 </Section>
                 <Section label="Worker Node" id="worker-node">
@@ -74,7 +74,7 @@ export const ConfigureCountModal = withHandlePromise((props: ConfigureCountModal
                         changeValueBy={(operation) => setValue2(_.toInteger(value2) + operation)}
                         autoFocus
                         required
-                        min={0}
+                        min={1}
                     />
                 </Section>
             </ModalBody>
