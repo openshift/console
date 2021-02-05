@@ -390,6 +390,16 @@ h6 {
   list-style: none;
 }
 
+// Temp fix for https://issues.redhat.com/browse/ODC-5487 Remove when updating to pf 2021.2
+.pf-c-search-input {
+  position: relative;
+  display: flex;
+  width: 100%;
+}
+.pf-c-search-input:hover {
+    --pf-c-search-input__text--after--BorderBottomColor: var(--pf-c-search-input--hover__text--after--BorderBottomColor);
+}
+
 // pf table overrides
 
 .pf-c-table tr > th {
