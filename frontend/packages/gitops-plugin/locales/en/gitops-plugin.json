@@ -1,5 +1,5 @@
 {
-  "{{id}} by {{author}}": "{{id}} by {{author}}",
+  "by {{author}}": "by {{author}}",
   "Commit details not available": "Commit details not available",
   "Cluster URL not available": "Cluster URL not available",
   "Environments": "Environments",

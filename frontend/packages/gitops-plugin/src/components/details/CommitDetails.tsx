@@ -10,6 +10,8 @@ import { ImageStreamImportsModel } from '@console/internal/models';
 import { LoadingInline, Timestamp } from '@console/internal/components/utils';
 import { getActiveNamespace } from '@console/internal/reducers/ui';
 import { CommitData } from '../utils/gitops-types';
+import { Label, Split, SplitItem } from '@patternfly/react-core';
+import './CommitDetails.scss';
 
 interface CommitDetailsProps {
   imageName: string;
@@ -45,7 +47,7 @@ const CommitDetails: React.FC<CommitDetailsProps> = ({ imageName }) => {
     let ignore = false;
 
     const getCommitData = async () => {
-      let lastCommitData: CommitData = { author: '', timestamp: '', id: '' };
+      let lastCommitData: CommitData = { author: '', timestamp: '', id: '', msg: '', ref: '' };
       let imageStreamImport;
       try {
         imageStreamImport = importImage
@@ -61,6 +63,8 @@ const CommitDetails: React.FC<CommitDetailsProps> = ({ imageName }) => {
           author: imageLabels?.['io.openshift.build.commit.author'],
           timestamp: imageLabels?.['io.openshift.build.commit.date'],
           id: imageLabels?.['io.openshift.build.commit.id'],
+          msg: imageLabels?.['io.openshift.build.commit.message'],
+          ref: imageLabels?.['io.openshift.build.commit.ref'],
         };
       }
       setCommitData(lastCommitData);
@@ -80,11 +84,34 @@ const CommitDetails: React.FC<CommitDetailsProps> = ({ imageName }) => {
     <>
       {commitData.id ? (
         <>
-          <Timestamp timestamp={commitData.timestamp} />
-          {t('gitops-plugin~{{id}} by {{author}}', {
-            id: commitData.id,
-            author: commitData.author,
-          })}
+          <Split className="odc-gitops-commit">
+            <SplitItem isFilled>
+              <Label className="odc-gitops-commit__item" isTruncated>
+                <Timestamp timestamp={commitData.timestamp} />
+              </Label>
+            </SplitItem>
+          </Split>
+          <Split className="odc-gitops-commit">
+            <SplitItem isFilled>
+              <Label className="odc-gitops-commit__item" isTruncated>
+                {commitData.id}
+              </Label>
+            </SplitItem>
+          </Split>
+          <Split className="odc-gitops-commit">
+            <SplitItem isFilled>
+              <Label className="odc-gitops-commit__item" isTruncated>
+                {commitData.msg}
+              </Label>
+            </SplitItem>
+          </Split>
+          <Split className="odc-gitops-commit">
+            <SplitItem isFilled>
+              <Label className="odc-gitops-commit__item" isTruncated>
+                {t('gitops-plugin~by {{author}}', { author: commitData.author })}
+              </Label>
+            </SplitItem>
+          </Split>
         </>
       ) : (
         <span>{t('gitops-plugin~Commit details not available')}</span>

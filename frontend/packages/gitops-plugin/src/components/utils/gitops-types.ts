@@ -56,4 +56,6 @@ export interface CommitData {
   author: string;
   timestamp: string;
   id: string;
+  msg: string;
+  ref: string;
 }

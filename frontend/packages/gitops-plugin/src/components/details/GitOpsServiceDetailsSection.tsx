@@ -36,7 +36,7 @@ const GitOpsServiceDetailsSection: React.FC<GitOpsServiceDetailsSectionProps> = 
                   )}
                 </CardTitle>
                 <CardBody>
-                  <Label className="co-nowrap" style={{ fontSize: '12px' }} color="cyan">
+                  <Label className="co-nowrap odc-gitops-service__image" color="cyan" isTruncated>
                     {service.image || <div>{t('gitops-plugin~Image not available')}</div>}
                   </Label>
                   <Split className="odc-gitops-service__details">
