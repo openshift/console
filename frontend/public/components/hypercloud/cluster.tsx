@@ -3,7 +3,7 @@ import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 
 import { Status } from '@console/shared';
-import { K8sResourceKind } from '../../module/k8s';
+import { K8sResourceKind, K8sKind } from '../../module/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from '../factory';
 import {
   DetailsItem,
@@ -18,8 +18,24 @@ import {
   Timestamp,
 } from '../utils';
 import { ClusterManagerModel } from '../../models';
+import { configureClusterNodesModal } from './modals';
 
-export const menuActions: KebabAction[] = [...Kebab.getExtensionsActionsForKind(ClusterManagerModel), ...Kebab.factory.common];
+const ModifyClusterNodes: KebabAction = (kind: K8sKind, obj: any) => ({
+  label: 'Edit Nodes',
+  callback: () =>
+    configureClusterNodesModal({
+      resourceKind: kind,
+      resource: obj,
+    }),
+  accessReview: {
+    group: kind.apiGroup,
+    resource: kind.plural,
+    name: obj.metadata.name,
+    verb: 'patch',
+  }
+});
+
+export const menuActions: KebabAction[] = [ModifyClusterNodes, ...Kebab.getExtensionsActionsForKind(ClusterManagerModel), ...Kebab.factory.common];
 
 const kind = ClusterManagerModel.kind;
 
@@ -100,10 +116,10 @@ const ClusterTableRow: RowFunction<IClusterTableRow> = ({ obj: cluster, index, k
       <TableData className={tableColumnClasses[3]}>{cluster.status?.ready ? 'Ready' : 'Not Ready'}</TableData>
       <TableData className={tableColumnClasses[4]}>{cluster.spec.version}</TableData>
       <TableData className={tableColumnClasses[5]}>
-        {`${cluster.status?.masterRun ?? 0} / ${cluster.spec?.masterNum}`}
+        {`${cluster.status?.masterRun ?? 0} / ${cluster.spec?.masterNum ?? 0}`}
       </TableData>
       <TableData className={tableColumnClasses[6]}>
-        {`${cluster.status?.workerRun ?? 0} / ${cluster.spec?.workerNum}`}
+        {`${cluster.status?.workerRun ?? 0} / ${cluster.spec?.workerNum ?? 0}`}
       </TableData>
       <TableData className={tableColumnClasses[7]}>{cluster.status.owner}</TableData>
       <TableData className={tableColumnClasses[8]}>
@@ -129,11 +145,11 @@ export const ClusterDetailsList: React.FC<ClusterDetailsListProps> = ({ cl }) =>
       <DetailsItem label="Version" obj={cl} path="spec.version" />
       <DetailsItem label="Region" obj={cl} path="spec.region" />
       <DetailsItem label="Master Node" obj={cl} path="spec.masterNum">
-        {`${cl.status?.masterRun ?? 0} / ${cl.spec.masterNum}`}
+        {`${cl.status?.masterRun ?? 0} / ${cl.spec.masterNum ?? 0}`}
       </DetailsItem>
       <DetailsItem label="Master Node Type" obj={cl} path="spec.masterType" />
       <DetailsItem label="Worker Node" obj={cl} path="spec.workerNum">
-        {`${cl.status?.workerRun ?? 0} / ${cl.spec.workerNum}`}
+        {`${cl.status?.workerRun ?? 0} / ${cl.spec.workerNum ?? 0}`}
       </DetailsItem>
       <DetailsItem label="Worker Node Type" obj={cl} path="spec.workerType" />
       <DetailsItem label="SSH Key" obj={cl} path="spec.sshKey" />

@@ -6,3 +6,8 @@ export const claimModal = (props) =>
 
 export const scanningModal = (props) =>
     import('./scanning-modal' /* webpackChunkName: "scanning-modal" */).then((m) => m.scanningModal(props));
+
+export const configureClusterNodesModal = (props) =>
+    import('./configure-count-modal' /* webpackChunkName: "configure-cluster-nodes-modal" */).then((m) =>
+        m.configureClusterNodesModal(props),
+    );
