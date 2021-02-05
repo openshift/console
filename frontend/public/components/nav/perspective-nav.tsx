@@ -31,11 +31,7 @@ const getLabelForResource = (resource: string): string => {
   return model ? model.labelPlural : '';
 };
 
-type PerspectiveNavProps = {
-  isNavOpen?: boolean;
-};
-
-const PerspectiveNav: React.FC<PerspectiveNavProps> = ({ isNavOpen }) => {
+const PerspectiveNav: React.FC<{}> = () => {
   const [perspective] = useActivePerspective();
   const allItems = useExtensions<PluginNavSection | NavItem | SeparatorNavItem>(
     isNavSection,
@@ -108,7 +104,7 @@ const PerspectiveNav: React.FC<PerspectiveNavProps> = ({ isNavOpen }) => {
           .filter((p) => p !== null)
       : [];
 
-  return isNavOpen ? (
+  return (
     <>
       {orderedNavItems.map((item, index) => {
         if (isNavSection(item)) {
@@ -128,7 +124,7 @@ const PerspectiveNav: React.FC<PerspectiveNavProps> = ({ isNavOpen }) => {
         </NavGroup>
       ) : null}
     </>
-  ) : null;
+  );
 };
 
 export default PerspectiveNav;
