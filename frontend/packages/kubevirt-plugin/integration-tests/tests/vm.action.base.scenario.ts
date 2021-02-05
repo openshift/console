@@ -17,7 +17,6 @@ import { pauseVM } from './utils/utils';
 import {
   VM_BOOTUP_TIMEOUT_SECS,
   VM_ACTIONS_TIMEOUT_SECS,
-  PAGE_LOAD_TIMEOUT_SECS,
   VM_IMPORT_TIMEOUT_SECS,
 } from './utils/constants/common';
 import { VirtualMachine } from './models/virtualMachine';
@@ -90,7 +89,7 @@ describe('Test VM actions', () => {
       'ID(CNV-4016) Deletes VM',
       async () => {
         await vm.listViewAction(VM_ACTION.Delete, false);
-        await browser.wait(until.and(waitForCount(resourceRows, 0)), PAGE_LOAD_TIMEOUT_SECS);
+        await browser.wait(until.and(waitForCount(resourceRows, 0)), VM_ACTIONS_TIMEOUT_SECS);
         removeLeakableResource(leakedResources, testVM);
       },
       VM_ACTIONS_TIMEOUT_SECS,
@@ -161,7 +160,7 @@ describe('Test VM actions', () => {
       async () => {
         await vm.detailViewAction(VM_ACTION.Delete, false);
         await vm.navigateToListView();
-        await browser.wait(until.and(waitForCount(resourceRows, 0)), PAGE_LOAD_TIMEOUT_SECS);
+        await browser.wait(until.and(waitForCount(resourceRows, 0)), VM_ACTIONS_TIMEOUT_SECS);
         removeLeakableResource(leakedResources, testVM);
       },
       VM_ACTIONS_TIMEOUT_SECS,
