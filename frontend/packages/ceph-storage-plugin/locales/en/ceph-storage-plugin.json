@@ -135,7 +135,7 @@
   "Select Replication": "Select Replication",
   "Compression": "Compression",
   "Enable Compression": "Enable Compression",
-  "Before enabling compression for this pool, note that it may have little or no effect on already encrypted or otherwise randomised data. Also, enabling compression for any data may have an impact on performance.": "Before enabling compression for this pool, note that it may have little or no effect on already encrypted or otherwise randomised data. Also, enabling compression for any data may have an impact on performance.",
+  "Enabling compression may result in little or no space savings for encrypted or random data. Also, enabling compression may have an impact on I/O performance.": "Enabling compression may result in little or no space savings for encrypted or random data. Also, enabling compression may have an impact on I/O performance.",
   "Discover Disks": "Discover Disks",
   "Create Storage Class": "Create Storage Class",
   "Storage and Nodes": "Storage and Nodes",

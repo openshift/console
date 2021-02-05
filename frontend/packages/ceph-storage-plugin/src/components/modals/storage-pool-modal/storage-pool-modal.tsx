@@ -321,7 +321,7 @@ export const StoragePoolModal = withHandlePromise((props: StoragePoolModalProps)
                 className="co-alert"
                 variant="info"
                 title={t(
-                  'ceph-storage-plugin~Before enabling compression for this pool, note that it may have little or no effect on already encrypted or otherwise randomised data. Also, enabling compression for any data may have an impact on performance.',
+                  'ceph-storage-plugin~Enabling compression may result in little or no space savings for encrypted or random data. Also, enabling compression may have an impact on I/O performance.',
                 )}
                 isInline
               />
