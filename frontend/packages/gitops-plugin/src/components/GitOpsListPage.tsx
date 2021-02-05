@@ -77,7 +77,7 @@ const GitOpsListPage: React.FC = () => {
       {!appGroups && !emptyStateMsg ? (
         <LoadingBox />
       ) : (
-        <GitOpsList appGroups={appGroups} emptyStateMsg={emptyStateMsg} />
+        <GitOpsList appGroups={appGroups} emptyStateMsg={emptyStateMsg} argocdLink={argocdLink} />
       )}
     </>
   );

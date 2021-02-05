@@ -67,6 +67,12 @@ export const getPipelinesBaseURI = (secretNS: string, secretName: string) => {
     : undefined;
 };
 
+export const getArgoCDFilteredAppsURI = (argocdBaseUri: string, appGroupName: string) => {
+  return argocdBaseUri && appGroupName
+    ? `${argocdBaseUri}/applications?labels=app.kubernetes.io%252Fname%253D${appGroupName}`
+    : undefined;
+};
+
 export const getApplicationsBaseURI = (
   appName: string,
   secretNS: string,
