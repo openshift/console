@@ -12,25 +12,18 @@ import {
 } from '@patternfly/react-icons';
 import { getRunStatusColor, runStatus } from '../../../../utils/pipeline-augment';
 
-import './StatusIcon.scss';
-
 interface StatusIconProps {
   status: string;
   height?: number;
   width?: number;
-  shiftOrigin?: boolean;
+  disableSpin?: boolean;
 }
 
-export const StatusIcon: React.FC<StatusIconProps> = ({ status, shiftOrigin, ...props }) => {
+export const StatusIcon: React.FC<StatusIconProps> = ({ status, disableSpin, ...props }) => {
   switch (status) {
     case runStatus['In Progress']:
     case runStatus.Running:
-      return (
-        <SyncAltIcon
-          {...props}
-          className={cx('fa-spin', { 'pipeline-status-icon--spin': shiftOrigin })}
-        />
-      );
+      return <SyncAltIcon {...props} className={cx({ 'fa-spin': !disableSpin })} />;
 
     case runStatus.Succeeded:
       return <CheckCircleIcon {...props} />;
