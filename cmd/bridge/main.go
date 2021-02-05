@@ -361,7 +361,16 @@ func main() {
 		}
 
 		k8sAuthServiceAccountBearerToken = string(bearerToken)
-
+		srv.PrometheusProxyConfig = &proxy.Config{
+			// TLSClientConfig: serviceProxyTLSConfig,
+			HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+			Endpoint:        &url.URL{Scheme: "http", Host: openshiftPrometheusHost, Path: "/api"},
+		}
+		srv.ThanosProxyConfig = &proxy.Config{
+			// TLSClientConfig: serviceProxyTLSConfig,
+			HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+			Endpoint:        &url.URL{Scheme: "http", Host: openshiftThanosHost, Path: "/api"},
+		}
 		// If running in an OpenShift cluster, set up a proxy to the prometheus-k8s service running in the openshift-monitoring namespace.
 		if *fServiceCAFile != "" {
 			serviceCertPEM, err := ioutil.ReadFile(*fServiceCAFile)
@@ -376,17 +385,16 @@ func main() {
 				RootCAs:      serviceProxyRootCAs,
 				CipherSuites: crypto.DefaultCiphers(),
 			}
-			srv.PrometheusPublicURL = &url.URL{Scheme: "http", Host: openshiftPrometheusHost, Path: "/api"}
-			srv.PrometheusProxyConfig = &proxy.Config{
-				TLSClientConfig: serviceProxyTLSConfig,
-				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
-				Endpoint:        &url.URL{Scheme: "http", Host: openshiftPrometheusHost, Path: "/api"},
-			}
-			srv.ThanosProxyConfig = &proxy.Config{
-				TLSClientConfig: serviceProxyTLSConfig,
-				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
-				Endpoint:        &url.URL{Scheme: "http", Host: openshiftThanosHost, Path: "/api"},
-			}
+			// srv.PrometheusProxyConfig = &proxy.Config{
+			// 	TLSClientConfig: serviceProxyTLSConfig,
+			// 	HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+			// 	Endpoint:        &url.URL{Scheme: "http", Host: openshiftPrometheusHost, Path: "/api"},
+			// }
+			// srv.ThanosProxyConfig = &proxy.Config{
+			// 	TLSClientConfig: serviceProxyTLSConfig,
+			// 	HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+			// 	Endpoint:        &url.URL{Scheme: "http", Host: openshiftThanosHost, Path: "/api"},
+			// }
 			srv.ThanosTenancyProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
 				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
