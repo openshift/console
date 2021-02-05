@@ -32,6 +32,9 @@ const QuickStartPanelContent: React.FC<QuickStartPanelContentProps> = ({
   const shadows = useScrollShadows(contentRef);
 
   const quickStart = quickStarts.find((qs) => qs.metadata.name === activeQuickStartID);
+  const nextQuickStarts: QuickStart[] = quickStarts.filter((qs: QuickStart) =>
+    quickStart?.spec.nextQuickStart?.includes(qs.metadata.name),
+  );
 
   const headerClasses = classNames({
     'pf-u-box-shadow-sm-bottom': shadows === Shadows.top || shadows === Shadows.both,
@@ -68,6 +71,7 @@ const QuickStartPanelContent: React.FC<QuickStartPanelContentProps> = ({
         <AsyncComponent
           loader={() => import('./QuickStartController').then((c) => c.default)}
           quickStart={quickStart}
+          nextQuickStarts={nextQuickStarts}
           footerClass={footerClass}
           contentRef={setContentRef}
         />
