@@ -83,7 +83,7 @@ export const PageContents: React.FC<MonitoringPageProps> = ({
       pages={pages}
     />
   ) : (
-    <CreateProjectListPage title="Project Details">
+    <CreateProjectListPage title={t('devconsole~Project Details')}>
       {t('devconsole~Select a Project to view its details')}
     </CreateProjectListPage>
   );

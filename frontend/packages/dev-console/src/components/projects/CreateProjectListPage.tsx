@@ -27,9 +27,9 @@ const CreateProjectListPage: React.FC<CreateProjectListPageProps> = ({
   const openProjectModal = () => createProjectModal({ blocking: true, onSubmit: handleSubmit });
 
   return (
-    <Trans t={t} ns="devconsole">
+    <Trans t={t} ns="devconsole" values={{ children }}>
       <ProjectListPage {...props} title={title}>
-        {children} {'or '}
+        {{ children }} {'or '}
         <Button isInline variant="link" onClick={openProjectModal}>
           {'create a Project.'}
         </Button>
