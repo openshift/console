@@ -120,6 +120,37 @@ export const mockAlerts: Alerts = {
       activeAt: '2020-07-15T06:36:06.662770393Z',
       value: 12,
     },
+    {
+      labels: {
+        alertname: 'VersionNewAlert',
+        severity: 'Critical',
+        endpoint: 'web',
+        instance: '10.131.0.35:8080',
+        job: 'prometheus-example-app',
+        namespace: 'ns1',
+        deployment: 'prometheus-example-app',
+        prometheus: 'openshift-user-workload-monitoring/user-workload',
+        service: 'prometheus-example-app',
+        version: 'v0.1.0',
+      },
+      annotations: {
+        message: 'Alerts are not configured to be sent to a notification system.',
+      },
+      state: AlertStates.Firing,
+      activeAt: '2020-06-09T04:06:36.662770393Z',
+      value: 0,
+      rule: {
+        labels: {},
+        alerts: [],
+        annotations: {},
+        duration: 10,
+        id: '778oi9oi',
+        name: 'abc',
+        query: 'query2',
+        state: RuleStates.Firing,
+        type: 'type-1',
+      },
+    },
   ],
 };
 
@@ -269,6 +300,37 @@ export const expectedFiringAlerts: Alert[] = [
     activeAt: '2020-07-15T06:36:06.662770393Z',
     value: 12,
   },
+  {
+    labels: {
+      alertname: 'VersionNewAlert',
+      severity: 'Critical',
+      endpoint: 'web',
+      instance: '10.131.0.35:8080',
+      job: 'prometheus-example-app',
+      namespace: 'ns1',
+      deployment: 'prometheus-example-app',
+      prometheus: 'openshift-user-workload-monitoring/user-workload',
+      service: 'prometheus-example-app',
+      version: 'v0.1.0',
+    },
+    annotations: {
+      message: 'Alerts are not configured to be sent to a notification system.',
+    },
+    state: AlertStates.Firing,
+    activeAt: '2020-06-09T04:06:36.662770393Z',
+    value: 0,
+    rule: {
+      labels: {},
+      alerts: [],
+      annotations: {},
+      duration: 10,
+      id: '778oi9oi',
+      name: 'abc',
+      query: 'query2',
+      state: RuleStates.Firing,
+      type: 'type-1',
+    },
+  },
 ];
 
 export const expectedSortedAlerts: Alert[] = [
@@ -359,6 +421,37 @@ export const expectedSortedAlerts: Alert[] = [
     state: AlertStates.Firing,
     activeAt: '2020-07-15T06:36:06.662770393Z',
     value: 132,
+  },
+  {
+    labels: {
+      alertname: 'VersionNewAlert',
+      severity: 'Critical',
+      endpoint: 'web',
+      instance: '10.131.0.35:8080',
+      job: 'prometheus-example-app',
+      namespace: 'ns1',
+      deployment: 'prometheus-example-app',
+      prometheus: 'openshift-user-workload-monitoring/user-workload',
+      service: 'prometheus-example-app',
+      version: 'v0.1.0',
+    },
+    annotations: {
+      message: 'Alerts are not configured to be sent to a notification system.',
+    },
+    state: AlertStates.Firing,
+    activeAt: '2020-06-09T04:06:36.662770393Z',
+    value: 0,
+    rule: {
+      labels: {},
+      alerts: [],
+      annotations: {},
+      duration: 10,
+      id: '778oi9oi',
+      name: 'abc',
+      query: 'query2',
+      state: RuleStates.Firing,
+      type: 'type-1',
+    },
   },
   {
     rule: {

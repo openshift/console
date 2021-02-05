@@ -5,11 +5,13 @@ export const getAlertType = (severity: string): 'danger' | 'warning' | 'info' =>
     case AlertSeverity.Critical: {
       return 'danger';
     }
-    case AlertSeverity.Warning: {
-      return 'warning';
-    }
-    default: {
+    case AlertSeverity.Info:
+    case AlertSeverity.None: {
       return 'info';
+    }
+    case AlertSeverity.Warning:
+    default: {
+      return 'warning';
     }
   }
 };
