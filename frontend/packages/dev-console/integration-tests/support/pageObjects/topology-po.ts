@@ -1,5 +1,7 @@
 export const topologyPO = {
-  switcher: '.odc-topology__view-switcher > svg',
+  switcher: '[data-test-id="topology-switcher-view"]',
+  noWorkLoadsText: 'h2.co-hint-block__title',
+  title: 'h1.ocs-page-layout__title',
   graph: {
     reset: '#reset-view',
     zoomIn: '#zoom-in',
@@ -28,6 +30,19 @@ export const topologyPO = {
     close: 'button[aria-label="Close"]',
     labelsList: '[data-test="label-list"]',
     editAnnotations: '[data-test="edit-annotations"]',
+    tabName: '[role="dialog"] li button',
+    detailsTab: {
+      labels: 'dt[data-test-selector$="Labels"]',
+      annotations: '[data-test-selector="details-item-label__Annotations"]',
+    },
+    resourcesTab: {
+      startLastRun: '[role="dialog"] li.list-group-item.pipeline-overview div button',
+      pipelineRuns: 'li.odc-pipeline-run-item',
+    },
+    monitoringTab: {
+      viewMonitoringDashBoardLink: '',
+    },
+    releaseNotesTab: {},
   },
   addStorage: {
     pvc: {

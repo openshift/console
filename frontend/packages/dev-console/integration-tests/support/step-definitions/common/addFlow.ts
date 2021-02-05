@@ -8,6 +8,7 @@ import { createGitWorkload } from '../../pages/functions/createGitWorkload';
 import { devNavigationMenu } from '../../constants/global';
 import { pageTitle } from '../../constants/pageTitle';
 import { catalogPage } from '../../pages/add-flow/catalog-page';
+import { topologyPO } from '../../pageObjects/topology-po';
 
 Given('user is at Add page', () => {
   navigateTo(devNavigationMenu.Add);
@@ -25,6 +26,23 @@ Given(
     topologyPage.verifyWorkloadInTopologyPage(componentName);
   },
 );
+
+Given('user has opened application {string} in topology page', (componentName: string) => {
+  cy.get('body').then(($body) => {
+    if ($body.find(topologyPO.graph.workload).length > 0) {
+      topologyPage.verifyWorkloadInTopologyPage(componentName);
+      topologyPage.clickWorkloadUrl(componentName);
+    } else {
+      createGitWorkload(
+        'https://github.com/sclorg/nodejs-ex.git',
+        componentName,
+        'Deployment',
+        'dancer-ex-git-app',
+      );
+    }
+  });
+  topologyPage.verifyWorkloadInTopologyPage(componentName);
+});
 
 Given('user is at Developer Catalog page', () => {
   addPage.selectCardFromOptions(addOptions.DeveloperCatalog);
