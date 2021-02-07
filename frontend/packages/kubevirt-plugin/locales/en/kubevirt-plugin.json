@@ -570,7 +570,6 @@
   "Disks description": "Disks description",
   "The following information is provided by the OpenShift Virtualization operator.": "The following information is provided by the OpenShift Virtualization operator.",
   "VM Nics List": "VM Nics List",
-  "Name,": "Name,",
   "Snapshot Details": "Snapshot Details",
   "Last Restored": "Last Restored",
   "Conditions": "Conditions",
