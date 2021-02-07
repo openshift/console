@@ -2,11 +2,11 @@ import * as React from 'react';
 import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
 import { ResourceLink, Timestamp, Kebab, ResourceKebab } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { PipelineResourceKind } from '../../../utils/pipeline-augment';
 import { PipelineResourceModel } from '../../../models';
-import { tableColumnClasses } from './pipeline-resources-table';
+import { PipelineResourceKind } from '../../../types';
 import { PipelineResourceListFilterLabels } from '../../../utils/pipeline-utils';
 import { pipelineResourceFilterReducer } from '../../../utils/pipeline-filter-reducer';
+import { tableColumnClasses } from './pipeline-resources-table';
 
 const PipelineResourcesRow: RowFunction<PipelineResourceKind> = ({ obj, index, key, style }) => {
   const pipelineResourcesReference = referenceForModel(PipelineResourceModel);

@@ -2,7 +2,7 @@ import { RouteModel, ServiceModel } from '@console/internal/models';
 import { errorModal } from '@console/internal/components/modals';
 import { k8sCreate, k8sGet, K8sResourceKind, RouteKind } from '@console/internal/module/k8s';
 import { EventListenerModel, TriggerTemplateModel } from '../../../../models';
-import { Pipeline, PipelineRun } from '../../../../utils/pipeline-augment';
+import { PipelineKind, PipelineRunKind } from '../../../../types';
 import {
   EventListenerKind,
   TriggerTemplateKind,
@@ -51,13 +51,13 @@ const exposeRoute = async (elName: string, ns: string, iteration = 0) => {
 };
 
 export const submitTrigger = async (
-  pipeline: Pipeline,
+  pipeline: PipelineKind,
   formValues: AddTriggerFormValues,
 ): Promise<K8sResourceKind[]> => {
   const { triggerBinding } = formValues;
   const thisNamespace = pipeline.metadata.namespace;
 
-  const pipelineRun: PipelineRun = getPipelineRunFromForm(pipeline, formValues, null, null, {
+  const pipelineRun: PipelineRunKind = getPipelineRunFromForm(pipeline, formValues, null, null, {
     generateName: true,
   });
   const triggerTemplateParams: TriggerTemplateKindParam[] = triggerBinding.resource.spec.params.map(

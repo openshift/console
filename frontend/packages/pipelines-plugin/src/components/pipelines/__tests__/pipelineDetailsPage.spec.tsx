@@ -7,7 +7,7 @@ import { LoadingBox } from '@console/internal/components/utils';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { pipelineTestData, PipelineExampleNames } from '../../../test-data/pipeline-data';
 import { getPipelineKebabActions } from '../../../utils/pipeline-actions';
-import { PipelineRun } from '../../../utils/pipeline-augment';
+import { PipelineRunKind } from '../../../types';
 import { PipelineModel } from '../../../models';
 import * as utils from '../../pipelineruns/triggered-by';
 import * as hookUtils from '../hooks';
@@ -33,7 +33,7 @@ jest.mock('react-i18next', () => {
 
 type PipelineDetailsPageProps = React.ComponentProps<typeof PipelineDetailsPage>;
 const mockData = pipelineTestData[PipelineExampleNames.SIMPLE_PIPELINE];
-const pipelineRuns: PipelineRun[] = Object.values(mockData.pipelineRuns);
+const pipelineRuns: PipelineRunKind[] = Object.values(mockData.pipelineRuns);
 const {
   metadata: { name: pipelineName, namespace },
 } = mockData.pipeline;

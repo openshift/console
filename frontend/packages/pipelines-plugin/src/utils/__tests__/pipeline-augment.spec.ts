@@ -2,12 +2,12 @@ import * as _ from 'lodash';
 import { TFunction } from 'i18next';
 import { referenceForModel, apiVersionForModel } from '@console/internal/module/k8s';
 import { pipelineTestData, DataState, PipelineExampleNames } from '../../test-data/pipeline-data';
+import { PipelineKind } from '../../types';
 import {
   getResources,
   augmentRunsToData,
   getTaskStatus,
   TaskStatus,
-  Pipeline,
   getRunStatusColor,
   runStatus,
   getResourceModelFromTask,
@@ -124,7 +124,7 @@ describe('PipelineAugment test correct task status state is pulled from pipeline
     });
   });
 
-  const getExpectedTaskCount = (pipeline: Pipeline): number => pipeline.spec.tasks.length;
+  const getExpectedTaskCount = (pipeline: PipelineKind): number => pipeline.spec.tasks.length;
   const sumTaskStatuses = (status: TaskStatus): number =>
     Object.values(status).reduce((acc, v) => acc + v, 0);
 

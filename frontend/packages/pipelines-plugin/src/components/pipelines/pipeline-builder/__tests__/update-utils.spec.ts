@@ -1,4 +1,4 @@
-import { PipelineTask } from '../../../../utils/pipeline-augment';
+import { PipelineTask } from '../../../../types';
 import { applyParamsUpdate } from '../update-utils';
 import { UpdateTaskParamData } from '../types';
 

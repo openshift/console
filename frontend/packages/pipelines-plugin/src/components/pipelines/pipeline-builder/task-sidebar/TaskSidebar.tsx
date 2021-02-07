@@ -3,15 +3,14 @@ import { useField } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { ActionsMenu, ResourceIcon } from '@console/internal/components/utils';
 import { referenceFor } from '@console/internal/module/k8s';
+import { getResourceModelFromTaskKind } from '../../../../utils/pipeline-augment';
 import {
-  getResourceModelFromTaskKind,
-  PipelineResource,
-  PipelineResourceTask,
-  PipelineResourceTaskResource,
   PipelineTask,
   PipelineTaskParam,
   PipelineTaskResource,
-} from '../../../../utils/pipeline-augment';
+  TektonResource,
+  TaskKind,
+} from '../../../../types';
 import { getTaskParameters, getTaskResources } from '../../resource-utils';
 import { ResourceTarget, TaskErrorMap, UpdateOperationUpdateTaskData } from '../types';
 import TaskSidebarParam from './TaskSidebarParam';
@@ -24,9 +23,9 @@ type TaskSidebarProps = {
   errorMap: TaskErrorMap;
   onRemoveTask: (taskName: string) => void;
   onUpdateTask: (data: UpdateOperationUpdateTaskData) => void;
-  resourceList: PipelineResource[];
+  resourceList: TektonResource[];
   selectedPipelineTaskIndex: number;
-  taskResource: PipelineResourceTask;
+  taskResource: TaskKind;
 };
 
 const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
@@ -50,7 +49,7 @@ const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
   const inputResources = resources.inputs;
   const outputResources = resources.outputs;
 
-  const renderResource = (type: ResourceTarget) => (resource: PipelineResourceTaskResource) => {
+  const renderResource = (type: ResourceTarget) => (resource: TektonResource) => {
     const taskResources: PipelineTaskResource[] = taskField.value?.resources?.[type] || [];
     const thisResource = taskResources.find(
       (taskFieldResource) => taskFieldResource.name === resource.name,

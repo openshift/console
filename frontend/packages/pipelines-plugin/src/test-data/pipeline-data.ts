@@ -1,6 +1,7 @@
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { Pipeline, PipelineRun, TaskRunKind, PipelineSpec } from '../utils/pipeline-augment';
+import { PipelineKind, PipelineRunKind, TaskRunKind, PipelineSpec, TaskKind } from '../types';
 import { TektonResourceLabel, preferredNameAnnotation } from '../components/pipelines/const';
+import { TaskKindAlpha } from '../components/pipelines/resource-utils';
 
 export enum DataState {
   IN_PROGRESS = 'In Progress',
@@ -30,12 +31,12 @@ export enum PipelineExampleNames {
 
 type CombinedPipelineTestData = {
   dataSource: string; // where the data was sourced from
-  pipeline: Pipeline;
-  pipelineRuns: { [key in DataState]?: PipelineRun };
+  pipeline: PipelineKind;
+  pipelineRuns: { [key in DataState]?: PipelineRunKind };
   taskRuns?: TaskRunKind[];
   pods?: K8sResourceKind[];
   // esLint seems to be having issues detecting the usage above - but typescript is properly typing the value
-  eslint_workaround?: PipelineRun;
+  eslint_workaround?: PipelineRunKind;
 };
 
 type PipelineTestData = { [key in PipelineExampleNames]?: CombinedPipelineTestData };
@@ -1989,7 +1990,11 @@ export const pipelineTestData: PipelineTestData = {
   },
 };
 
-export const taskTestData = {
+type TaskTestData = {
+  v1alpha1: { buildah: TaskKindAlpha };
+  v1beta1: { buildah: TaskKind };
+};
+export const taskTestData: TaskTestData = {
   v1alpha1: {
     buildah: {
       apiVersion: 'tekton.dev/v1alpha1',

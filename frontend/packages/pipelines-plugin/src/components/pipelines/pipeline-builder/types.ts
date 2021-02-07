@@ -1,11 +1,6 @@
 import { FormikValues } from 'formik';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
-import {
-  PipelineParam,
-  PipelineResource,
-  PipelineResourceTask,
-  PipelineTask,
-} from '../../../utils/pipeline-augment';
+import { PipelineTask, TektonParam, TektonResource, TaskKind } from '../../../types';
 import { PipelineVisualizationTaskItem } from '../../../utils/pipeline-utils';
 import { AddNodeDirection } from '../pipeline-topology/const';
 // eslint-disable-next-line import/no-cycle
@@ -28,8 +23,8 @@ export type PipelineBuilderTaskGroup = PipelineBuilderTaskGrouping & {
 
 export type PipelineBuilderFormValues = PipelineBuilderTaskGrouping & {
   name: string;
-  params: PipelineParam[];
-  resources: PipelineResource[];
+  params: TektonParam[];
+  resources: TektonResource[];
 };
 
 export type PipelineBuilderFormYamlValues = {
@@ -41,7 +36,7 @@ export type PipelineBuilderFormYamlValues = {
 export type PipelineBuilderFormikValues = FormikValues & PipelineBuilderFormYamlValues;
 
 export type SelectedBuilderTask = {
-  resource: PipelineResourceTask;
+  resource: TaskKind;
   taskIndex: number;
 };
 
@@ -51,7 +46,7 @@ export type TaskErrorMap = {
 
 export type SelectTaskCallback = (
   task: PipelineVisualizationTaskItem,
-  taskResource: PipelineResourceTask,
+  taskResource: TaskKind,
 ) => void;
 
 export type UpdateOperation<D extends UpdateOperationBaseData = UpdateOperationBaseData> = {
@@ -72,12 +67,12 @@ export type UpdateOperationAddData = UpdateOperationBaseData & {
 };
 export type UpdateOperationConvertToTaskData = UpdateOperationBaseData & {
   name: string;
-  resource: PipelineResourceTask;
+  resource: TaskKind;
   runAfter?: string[];
 };
 export type UpdateOperationFixInvalidTaskListData = UpdateOperationBaseData & {
   existingName: string;
-  resource: PipelineResourceTask;
+  resource: TaskKind;
   runAfter?: string[];
 };
 export type UpdateOperationDeleteListTaskData = UpdateOperationBaseData & {
@@ -90,7 +85,7 @@ export type UpdateOperationRemoveTaskData = UpdateOperationBaseData & {
 export type ResourceTarget = 'inputs' | 'outputs';
 export type UpdateTaskResourceData = {
   resourceTarget: ResourceTarget;
-  selectedPipelineResource: PipelineResource;
+  selectedPipelineResource: TektonResource;
   taskResourceName: string;
 };
 export type UpdateTaskParamData = {
@@ -100,7 +95,7 @@ export type UpdateTaskParamData = {
 export type UpdateOperationUpdateTaskData = UpdateOperationBaseData & {
   // Task information
   thisPipelineTask: PipelineTask;
-  taskResource: PipelineResourceTask;
+  taskResource: TaskKind;
 
   // Change information
   newName?: string;

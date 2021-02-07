@@ -8,7 +8,7 @@ import { history } from '@console/internal/components/utils';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { k8sCreate, k8sUpdate } from '@console/internal/module/k8s';
 import { PipelineModel } from '../../../models';
-import { Pipeline } from '../../../utils/pipeline-augment';
+import { PipelineKind } from '../../../types';
 import PipelineBuilderForm from './PipelineBuilderForm';
 import { PipelineBuilderFormYamlValues, PipelineBuilderFormikValues } from './types';
 import {
@@ -22,7 +22,7 @@ import { validationSchema } from './validation-utils';
 import './PipelineBuilderPage.scss';
 
 type PipelineBuilderPageProps = RouteComponentProps<{ ns?: string }> & {
-  existingPipeline?: Pipeline;
+  existingPipeline?: PipelineKind;
 };
 
 const PipelineBuilderPage: React.FC<PipelineBuilderPageProps> = (props) => {
@@ -45,7 +45,7 @@ const PipelineBuilderPage: React.FC<PipelineBuilderPageProps> = (props) => {
     values: PipelineBuilderFormikValues,
     actions: FormikBag<any, PipelineBuilderFormYamlValues>,
   ) => {
-    let pipeline: Pipeline;
+    let pipeline: PipelineKind;
     if (values.editorType === EditorType.YAML) {
       try {
         pipeline = safeLoad(values.yamlData);

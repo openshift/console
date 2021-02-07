@@ -7,13 +7,13 @@ import { FormGroup, Alert } from '@patternfly/react-core';
 import { StarIcon } from '@patternfly/react-icons';
 import { getFieldId, ItemSelectorField } from '@console/shared';
 import { PIPELINE_RUNTIME_LABEL } from '@console/pipelines-plugin/src/const';
-import { Pipeline } from '@console/pipelines-plugin/src/utils/pipeline-augment';
+import { PipelineKind } from '@console/pipelines-plugin/src/types';
 import { NormalizedBuilderImages } from '../../../utils/imagestream-utils';
 
 export interface BuilderImageSelectorProps {
   loadingImageStream: boolean;
   builderImages: NormalizedBuilderImages;
-  existingPipeline?: Pipeline;
+  existingPipeline?: PipelineKind;
 }
 
 const PipelineChangeAlert = (alertMessage: string) => (

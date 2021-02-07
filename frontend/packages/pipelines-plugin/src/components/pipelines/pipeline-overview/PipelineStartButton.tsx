@@ -6,7 +6,7 @@ import { useAccessReview } from '@console/internal/components/utils';
 import { AccessReviewResourceAttributes } from '@console/internal/module/k8s';
 import { impersonateStateToProps } from '@console/internal/reducers/ui';
 import { PipelineRunModel } from '../../../models';
-import { Pipeline } from '../../../utils/pipeline-augment';
+import { PipelineKind } from '../../../types';
 import { startPipelineModal } from '../modals';
 
 type StateProps = {
@@ -18,7 +18,7 @@ type StateProps = {
 };
 
 type PipelineStartButtonProps = {
-  pipeline: Pipeline;
+  pipeline: PipelineKind;
   namespace: string;
 };
 

@@ -1,6 +1,6 @@
 import { shallow } from 'enzyme';
 import { TableData, RowFunctionArgs } from '@console/internal/components/factory';
-import { TaskRunKind } from '../../../../utils/pipeline-augment';
+import { TaskRunKind } from '../../../../types';
 import TaskRunsRow from '../TaskRunsRow';
 import { ResourceLink, Timestamp } from '@console/internal/components/utils';
 

@@ -6,7 +6,8 @@ import {
   ModalComponentProps,
 } from '@console/internal/components/factory/modal';
 import { LoadingBox } from '@console/internal/components/utils';
-import { Pipeline } from '../../../../utils/pipeline-augment';
+import { PipelineKind } from '../../../../types';
+import { usePipelinePVC } from '../../hooks';
 import ModalStructure from '../common/ModalStructure';
 import { convertPipelineToModalData } from '../common/utils';
 import { addTriggerSchema } from '../common/validation-utils';
@@ -14,10 +15,9 @@ import AddTriggerForm from './AddTriggerForm';
 import { TRIGGER_BINDING_EMPTY } from './const';
 import { submitTrigger } from './submit-utils';
 import { AddTriggerFormValues } from './types';
-import { usePipelinePVC } from '../../hooks';
 
 type AddTriggerModalProps = ModalComponentProps & {
-  pipeline: Pipeline;
+  pipeline: PipelineKind;
 };
 
 const AddTriggerModal: React.FC<AddTriggerModalProps> = ({ pipeline, close }) => {

@@ -6,7 +6,7 @@ import { Stack, StackItem } from '@patternfly/react-core';
 import { FormFooter, SyncedEditorField, YAMLEditorField, FlexForm } from '@console/shared';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
-import { Pipeline, PipelineResourceTask } from '../../../utils/pipeline-augment';
+import { PipelineKind, TaskKind } from '../../../types';
 import { PipelineVisualizationTaskItem } from '../../../utils/pipeline-utils';
 import { PipelineModel } from '../../../models';
 import { useResourceValidation } from './hooks';
@@ -30,7 +30,7 @@ import PipelineBuilderFormEditor from './PipelineBuilderFormEditor';
 import './PipelineBuilderForm.scss';
 
 type PipelineBuilderFormProps = FormikProps<PipelineBuilderFormikValues> & {
-  existingPipeline: Pipeline;
+  existingPipeline: PipelineKind;
   namespace: string;
 };
 
@@ -77,7 +77,7 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
     [setStatus],
   );
 
-  const onTaskSelection = (task: PipelineVisualizationTaskItem, resource: PipelineResourceTask) => {
+  const onTaskSelection = (task: PipelineVisualizationTaskItem, resource: TaskKind) => {
     setSelectedTask({
       taskIndex: values.formData.tasks.findIndex(({ name }) => name === task.name),
       resource,
@@ -125,7 +125,7 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
     <YAMLEditorField name="yamlData" model={PipelineModel} onSave={handleSubmit} />
   );
 
-  const sanitizeToForm = (newFormData: Pipeline) => {
+  const sanitizeToForm = (newFormData: PipelineKind) => {
     const formData = {
       ...newFormData.spec,
       name: newFormData.metadata?.name,

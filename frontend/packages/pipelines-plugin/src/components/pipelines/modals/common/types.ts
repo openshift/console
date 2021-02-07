@@ -1,11 +1,11 @@
 import { FormikValues } from 'formik';
 import {
-  PipelineParam,
+  TektonParam,
   VolumeTypeClaim,
   VolumeTypeConfigMaps,
   VolumeTypePVC,
   VolumeTypeSecret,
-} from '../../../../utils/pipeline-augment';
+} from '../../../../types';
 
 export type PipelineModalFormResource = {
   name: string;
@@ -40,7 +40,7 @@ export type PipelineModalFormWorkspace = {
 
 export type CommonPipelineModalFormikValues = FormikValues & {
   namespace: string;
-  parameters: PipelineParam[];
+  parameters: TektonParam[];
   resources: PipelineModalFormResource[];
   workspaces: PipelineModalFormWorkspace[];
 };

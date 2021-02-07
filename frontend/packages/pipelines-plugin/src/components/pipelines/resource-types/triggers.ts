@@ -1,5 +1,5 @@
 import { K8sResourceCommon, K8sResourceKind, Toleration } from '@console/internal/module/k8s';
-import { PipelineRun } from '../../../utils/pipeline-augment';
+import { PipelineRunKind } from '../../../types';
 
 export type TriggerBindingParam = {
   name: string;
@@ -18,7 +18,7 @@ export type TriggerTemplateKindParam = {
   default?: string;
 };
 
-export type TriggerTemplateKindResource = PipelineRun;
+export type TriggerTemplateKindResource = PipelineRunKind;
 export type TriggerTemplateKind = K8sResourceCommon & {
   spec: {
     params: TriggerTemplateKindParam[];

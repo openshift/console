@@ -1,6 +1,6 @@
 import * as React from 'react';
 import TaskRunsListPage from '../../taskruns/list-page/TaskRunsListPage';
-import { TaskRunKind } from '../../../utils/pipeline-augment';
+import { TaskRunKind } from '../../../types';
 
 interface TaskRunsProps {
   obj: TaskRunKind;

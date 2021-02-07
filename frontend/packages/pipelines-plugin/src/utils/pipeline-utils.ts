@@ -2,7 +2,6 @@ import * as _ from 'lodash';
 import { formatDuration } from '@console/internal/components/utils/datetime';
 import {
   ContainerStatus,
-  K8sResourceKind,
   k8sUpdate,
   k8sGet,
   SecretKind,
@@ -20,16 +19,16 @@ import { errorModal } from '@console/internal/components/modals/error-modal';
 import { PIPELINE_SERVICE_ACCOUNT, SecretAnnotationId } from '../components/pipelines/const';
 import { PipelineModalFormWorkspace } from '../components/pipelines/modals/common/types';
 import {
-  getLatestRun,
-  PipelineRun,
-  runStatus,
-  PipelineParam,
+  PipelineRunKind,
   PipelineRunParam,
   PipelineTaskRef,
   PipelineRunWorkspace,
-  TaskRunKind,
   PipelineTask,
-} from './pipeline-augment';
+  PipelineKind,
+  TaskRunKind,
+  TektonParam,
+} from '../types';
+import { getLatestRun, runStatus } from './pipeline-augment';
 import { pipelineRunFilterReducer, pipelineRunStatus } from './pipeline-filter-reducer';
 import {
   PipelineRunModel,
@@ -191,11 +190,12 @@ export const hasInlineTaskSpec = (tasks: PipelineTask[] = []): boolean =>
   tasks.some((task) => !!(task.taskSpec && !task.taskRef));
 
 export const getPipelineTasks = (
-  pipeline: K8sResourceKind,
-  pipelineRun: K8sResourceKind = {
+  pipeline: PipelineKind,
+  pipelineRun: PipelineRunKind = {
     apiVersion: '',
     metadata: {},
     kind: 'PipelineRun',
+    spec: {},
   },
 ): PipelineVisualizationTaskItem[][] => {
   // Each unit in 'out' array is termed as stage | out = [stage1 = [task1], stage2 = [task2,task3], stage3 = [task4]]
@@ -294,7 +294,7 @@ export const containerToLogSourceStatus = (container: ContainerStatus): string =
 };
 
 export type LatestPipelineRunStatus = {
-  latestPipelineRun: PipelineRun;
+  latestPipelineRun: PipelineRunKind;
   status: string;
 };
 
@@ -302,7 +302,7 @@ export type LatestPipelineRunStatus = {
  * Takes pipeline runs and produces a latest pipeline run state.
  */
 export const getLatestPipelineRunStatus = (
-  pipelineRuns: PipelineRun[],
+  pipelineRuns: PipelineRunKind[],
 ): LatestPipelineRunStatus => {
   if (!pipelineRuns || pipelineRuns.length === 0) {
     // Not enough data to build the current state
@@ -327,7 +327,7 @@ export const getLatestPipelineRunStatus = (
   };
 };
 
-export const getPipelineRunParams = (pipelineParams: PipelineParam[]): PipelineRunParam[] => {
+export const getPipelineRunParams = (pipelineParams: TektonParam[]): PipelineRunParam[] => {
   return (
     pipelineParams &&
     pipelineParams.map((param) => ({
@@ -373,7 +373,7 @@ export const calculateRelativeTime = (startTime: string, completionTime?: string
   return 'a few seconds';
 };
 
-export const pipelineRunDuration = (run: PipelineRun | TaskRunKind): string => {
+export const pipelineRunDuration = (run: PipelineRunKind | TaskRunKind): string => {
   const startTime = _.get(run, ['status', 'startTime'], null);
   const completionTime = _.get(run, ['status', 'completionTime'], null);
 

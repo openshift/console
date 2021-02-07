@@ -1,7 +1,7 @@
 import { pipelineTestData, PipelineExampleNames, DataState } from '../../test-data/pipeline-data';
-import { Pipeline } from '../pipeline-augment';
+import { PipelineKind } from '../../types';
 
-export const mockPipelinesJSON: Pipeline[] = [
+export const mockPipelinesJSON: PipelineKind[] = [
   {
     apiVersion: 'tekton.dev/v1alpha1',
     kind: 'Pipeline',

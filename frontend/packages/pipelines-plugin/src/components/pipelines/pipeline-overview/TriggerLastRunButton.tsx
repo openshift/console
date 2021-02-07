@@ -7,11 +7,12 @@ import { useAccessReview } from '@console/internal/components/utils';
 import { AccessReviewResourceAttributes } from '@console/internal/module/k8s';
 import { rerunPipelineAndStay } from '../../../utils/pipeline-actions';
 import { PipelineRunModel } from '../../../models';
+import { PipelineRunKind } from '../../../types';
+import { getLatestRun } from '../../../utils/pipeline-augment';
 import { usePipelineRunWithUserAnnotation } from '../../pipelineruns/triggered-by';
-import { getLatestRun, PipelineRun } from '../../../utils/pipeline-augment';
 
 type TriggerLastRunButtonProps = {
-  pipelineRuns: PipelineRun[];
+  pipelineRuns: PipelineRunKind[];
   namespace: string;
   impersonate?;
 };

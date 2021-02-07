@@ -4,12 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { ClusterTaskModel, TaskModel } from '../../../models';
-import {
-  PipelineResource,
-  PipelineResourceTask,
-  PipelineTask,
-  PipelineTaskRef,
-} from '../../../utils/pipeline-augment';
+import { TektonResource, TaskKind, PipelineTask, PipelineTaskRef } from '../../../types';
 import { PipelineVisualizationTaskItem } from '../../../utils/pipeline-utils';
 import { AddNodeDirection } from '../pipeline-topology/const';
 import {
@@ -37,8 +32,8 @@ import { nodeTaskErrors, TaskErrorType, UpdateOperationType } from './const';
 import { getErrorMessage } from './utils';
 
 type UseTasks = {
-  namespacedTasks: PipelineResourceTask[] | null;
-  clusterTasks: PipelineResourceTask[] | null;
+  namespacedTasks: TaskKind[] | null;
+  clusterTasks: TaskKind[] | null;
   errorMsg?: string;
 };
 export const useTasks = (namespace?: string): UseTasks => {
@@ -54,7 +49,7 @@ export const useTasks = (namespace?: string): UseTasks => {
     }),
     [namespace],
   );
-  const { tasks, clusterTasks } = useK8sWatchResources<{ [kind: string]: PipelineResourceTask[] }>(
+  const { tasks, clusterTasks } = useK8sWatchResources<{ [kind: string]: TaskKind[] }>(
     memoizedResources,
   );
   let errorMsg: string;
@@ -105,7 +100,7 @@ export const useNodes = (
     const data: UpdateOperationAddData = { direction, relatedTask: task };
     onUpdateTasks(taskGroupRef.current, { type: UpdateOperationType.ADD_LIST_TASK, data });
   };
-  const onNewTask = (resource: PipelineResourceTask, name: string, runAfter?: string[]) => {
+  const onNewTask = (resource: TaskKind, name: string, runAfter?: string[]) => {
     const data: UpdateOperationConvertToTaskData = { resource, name, runAfter };
     onUpdateTasks(taskGroupRef.current, { type: UpdateOperationType.CONVERT_LIST_TO_TASK, data });
   };
@@ -118,7 +113,7 @@ export const useNodes = (
     createTaskListNode(name, {
       namespaceTaskList: namespacedTasks,
       clusterTaskList: clusterTasks,
-      onNewTask: (resource: PipelineResourceTask) => {
+      onNewTask: (resource: TaskKind) => {
         onNewTask(resource, name, runAfter);
       },
       onRemoveTask: firstTask
@@ -139,7 +134,7 @@ export const useNodes = (
     createInvalidTaskListNode(name, {
       namespaceTaskList: namespacedTasks,
       clusterTaskList: clusterTasks,
-      onNewTask: (resource: PipelineResourceTask) => {
+      onNewTask: (resource: TaskKind) => {
         const data: UpdateOperationFixInvalidTaskListData = {
           existingName: name,
           resource,
@@ -203,7 +198,7 @@ export const useNodes = (
 
 export const useResourceValidation = (
   tasks: PipelineTask[],
-  resourceValues: PipelineResource[],
+  resourceValues: TektonResource[],
   onError: UpdateErrors,
 ) => {
   const [previousErrorIds, setPreviousErrorIds] = React.useState([]);

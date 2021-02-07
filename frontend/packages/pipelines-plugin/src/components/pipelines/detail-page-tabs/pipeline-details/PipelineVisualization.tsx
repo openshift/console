@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert } from '@patternfly/react-core';
-import { Pipeline, PipelineRun } from '../../../../utils/pipeline-augment';
+import { PipelineKind, PipelineRunKind } from '../../../../types';
 import { hasInlineTaskSpec } from '../../../../utils/pipeline-utils';
 import PipelineTopologyGraph from '../../pipeline-topology/PipelineTopologyGraph';
 import { getTopologyNodesEdges } from '../../pipeline-topology/utils';
@@ -10,8 +10,8 @@ import { PipelineLayout } from '../../pipeline-topology/const';
 import './PipelineVisualization.scss';
 
 interface PipelineTopologyVisualizationProps {
-  pipeline: Pipeline;
-  pipelineRun?: PipelineRun;
+  pipeline: PipelineKind;
+  pipelineRun?: PipelineRunKind;
 }
 
 const PipelineVisualization: React.FC<PipelineTopologyVisualizationProps> = ({

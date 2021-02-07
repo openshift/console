@@ -5,19 +5,15 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Tooltip } from '@patternfly/react-core';
 import { createSvgIdUrl, useHover } from '@patternfly/react-topology';
-import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
 import {
   Firehose,
   resourcePathFromModel,
   truncateMiddle,
 } from '@console/internal/components/utils';
 import { SvgDropShadowFilter } from '@console/topology/src/components/svg';
-import {
-  runStatus,
-  PipelineTaskSpec,
-  PipelineTaskRef,
-  getRunStatusColor,
-} from '../../../../utils/pipeline-augment';
+import { PipelineTaskSpec, PipelineTaskRef, TaskKind } from '../../../../types';
+import { runStatus, getRunStatusColor } from '../../../../utils/pipeline-augment';
 import { PipelineRunModel, TaskModel, ClusterTaskModel } from '../../../../models';
 import { StatusIcon } from './StatusIcon';
 import { PipelineVisualizationStepList } from './PipelineVisualizationStepList';
@@ -30,7 +26,7 @@ interface TaskProps {
   name: string;
   loaded?: boolean;
   task?: {
-    data: K8sResourceKind;
+    data: TaskKind;
   };
   status?: TaskStatus;
   namespace: string;

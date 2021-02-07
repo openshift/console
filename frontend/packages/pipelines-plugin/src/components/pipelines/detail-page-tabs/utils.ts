@@ -1,11 +1,9 @@
 import * as _ from 'lodash';
-import { PipelineParam } from '../../../utils/pipeline-augment';
+import { TektonParam } from '../../../types';
 
-export const removeEmptyDefaultFromPipelineParams = (
-  parameters: PipelineParam[],
-): PipelineParam[] =>
+export const removeEmptyDefaultFromPipelineParams = (parameters: TektonParam[]): TektonParam[] =>
   _.map(
     parameters,
     (parameter) =>
-      _.omit(parameter, _.isEmpty(parameter.default) ? ['default'] : []) as PipelineParam,
+      _.omit(parameter, _.isEmpty(parameter.default) ? ['default'] : []) as TektonParam,
   );

@@ -1,25 +1,21 @@
 import { get } from 'lodash';
-import {
-  PipelineResourceTask,
-  PipelineResourceTaskParam,
-  PipelineResourceTaskResource,
-} from '../../utils/pipeline-augment';
+import { TaskKind, TektonParam, TektonResource } from '../../types';
 
-type PipelineResourceTaskAlpha = PipelineResourceTask & {
+export type TaskKindAlpha = TaskKind & {
   spec: {
     inputs?: {
-      params?: PipelineResourceTaskParam[];
-      resources?: PipelineResourceTaskResource[];
+      params?: TektonParam[];
+      resources?: TektonResource[];
     };
     outputs?: {
-      resources?: PipelineResourceTaskResource[];
+      resources?: TektonResource[];
     };
   };
 };
 
 export type InputOutputResources = {
-  inputs?: PipelineResourceTaskResource[];
-  outputs?: PipelineResourceTaskResource[];
+  inputs?: TektonResource[];
+  outputs?: TektonResource[];
 };
 
 enum PATHS {
@@ -32,9 +28,7 @@ enum PATHS {
   betaParameters = 'spec.params',
 }
 
-export const getTaskResources = (
-  taskResource: PipelineResourceTask | PipelineResourceTaskAlpha,
-): InputOutputResources => {
+export const getTaskResources = (taskResource: TaskKind | TaskKindAlpha): InputOutputResources => {
   const inputs =
     get(taskResource, PATHS.alphaInputResources) || get(taskResource, PATHS.betaInputResources);
   const outputs =
@@ -50,8 +44,6 @@ export const getTaskResources = (
   return {};
 };
 
-export const getTaskParameters = (
-  taskResource: PipelineResourceTask | PipelineResourceTaskAlpha,
-): PipelineResourceTaskParam[] => {
+export const getTaskParameters = (taskResource: TaskKind | TaskKindAlpha): TektonParam[] => {
   return get(taskResource, PATHS.alphaParameters) || get(taskResource, PATHS.betaParameters) || [];
 };

@@ -1,6 +1,6 @@
 import * as dagre from 'dagre';
 import * as _ from 'lodash';
-import { Pipeline, PipelineRun } from '../../../utils/pipeline-augment';
+import { PipelineKind, PipelineRunKind } from '../../../types';
 import { getPipelineTasks, PipelineVisualizationTaskItem } from '../../../utils/pipeline-utils';
 import {
   NODE_HEIGHT,
@@ -167,8 +167,8 @@ export const handleParallelToParallelNodes = (
 
 export const tasksToNodes = (
   taskList: PipelineVisualizationTaskItem[],
-  pipeline?: Pipeline,
-  pipelineRun?: PipelineRun,
+  pipeline?: PipelineKind,
+  pipelineRun?: PipelineRunKind,
 ): PipelineMixedNodeModel[] => {
   const nodeList: PipelineTaskNodeModel[] = taskList.map((task) =>
     createTaskNode(task.name, {
@@ -224,8 +224,8 @@ export const getEdgesFromNodes = (nodes: PipelineMixedNodeModel[]): PipelineEdge
   ).filter((edgeList) => !!edgeList);
 
 export const getTopologyNodesEdges = (
-  pipeline: Pipeline,
-  pipelineRun?: PipelineRun,
+  pipeline: PipelineKind,
+  pipelineRun?: PipelineRunKind,
 ): { nodes: PipelineMixedNodeModel[]; edges: PipelineEdgeModel[] } => {
   const taskList: PipelineVisualizationTaskItem[] = _.flatten(
     getPipelineTasks(pipeline, pipelineRun),

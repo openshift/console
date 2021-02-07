@@ -5,13 +5,13 @@ import { merge } from 'lodash';
 import { useSelector } from 'react-redux';
 import { KebabAction, Kebab } from '@console/internal/components/utils';
 import { K8sResourceCommon } from '@console/internal/module/k8s';
-import { PipelineRun } from '../../../utils/pipeline-augment';
+import { PipelineRunKind } from '../../../types';
 import { StartedByAnnotation } from '../../pipelines/const';
 
 type AnnotationMap = { [annotationKey: string]: string };
 
 const mergeAnnotationsWithResource = (annotations: AnnotationMap, resource: K8sResourceCommon) => {
-  return merge({}, resource, { metadata: { annotations } });
+  return merge({}, resource, { metadata: { annotations }, spec: {} });
 };
 
 export const useUserAnnotationForManualStart = (): AnnotationMap => {
@@ -26,7 +26,7 @@ export const useUserAnnotationForManualStart = (): AnnotationMap => {
   };
 };
 
-export const usePipelineRunWithUserAnnotation = (plr: PipelineRun): PipelineRun => {
+export const usePipelineRunWithUserAnnotation = (plr: PipelineRunKind): PipelineRunKind => {
   const annotations = useUserAnnotationForManualStart();
 
   return plr && mergeAnnotationsWithResource(annotations, plr);

@@ -1,14 +1,9 @@
 import * as _ from 'lodash';
 import { k8sCreate, k8sUpdate } from '@console/internal/module/k8s';
 import { PipelineData } from '../import-types';
-import {
-  Pipeline,
-  PipelineRun,
-  PipelineWorkspace,
-  PipelineParam,
-} from '../../../utils/pipeline-augment';
-import { PipelineModel } from '../../../models';
 import { PIPELINE_RUNTIME_LABEL } from '../../../const';
+import { PipelineModel } from '../../../models';
+import { PipelineKind, PipelineRunKind, PipelineWorkspace, TektonParam } from '../../../types';
 import { createPipelineResource } from '../../pipelines/pipeline-resource/pipelineResource-utils';
 import {
   convertPipelineToModalData,
@@ -35,7 +30,7 @@ export const createImageResource = (name: string, namespace: string) => {
 };
 
 export const getPipelineParams = (
-  params: PipelineParam[],
+  params: TektonParam[],
   name: string,
   namespace: string,
   gitUrl: string,
@@ -95,7 +90,9 @@ export const createPipelineForImportFlow = async (
   return k8sCreate(PipelineModel, template, { ns: namespace });
 };
 
-export const createPipelineRunForImportFlow = async (pipeline: Pipeline): Promise<PipelineRun> => {
+export const createPipelineRunForImportFlow = async (
+  pipeline: PipelineKind,
+): Promise<PipelineRunKind> => {
   const pipelineInitialValues: StartPipelineFormValues = {
     ...convertPipelineToModalData(pipeline),
     workspaces: (pipeline.spec.workspaces || []).map((workspace: PipelineWorkspace) => ({
@@ -109,15 +106,15 @@ export const createPipelineRunForImportFlow = async (pipeline: Pipeline): Promis
 };
 
 export const updatePipelineForImportFlow = async (
-  pipeline: Pipeline,
-  template: Pipeline,
+  pipeline: PipelineKind,
+  template: PipelineKind,
   name: string,
   namespace: string,
   gitUrl: string,
   gitRef: string,
   gitDir: string,
   dockerfilePath: string,
-): Promise<Pipeline> => {
+): Promise<PipelineKind> => {
   let updatedPipeline = _.cloneDeep(pipeline);
 
   if (!template) {

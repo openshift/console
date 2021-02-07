@@ -2,17 +2,13 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { FormGroup } from '@patternfly/react-core';
 import { Dropdown } from '@console/internal/components/utils';
-import {
-  PipelineResource,
-  PipelineResourceTaskResource,
-  PipelineTaskResource,
-} from '../../../../utils/pipeline-augment';
+import { TektonResource, PipelineTaskResource } from '../../../../types';
 import { SidebarInputWrapper } from './temp-utils';
 
 type TaskSidebarResourceProps = {
-  availableResources: PipelineResource[];
-  onChange: (resourceName: string, resource: PipelineResource) => void;
-  resource: PipelineResourceTaskResource;
+  availableResources: TektonResource[];
+  onChange: (resourceName: string, resource: TektonResource) => void;
+  resource: TektonResource;
   taskResource?: PipelineTaskResource;
 };
 

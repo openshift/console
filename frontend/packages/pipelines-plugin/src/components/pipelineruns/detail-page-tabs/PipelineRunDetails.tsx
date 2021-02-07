@@ -3,12 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { SectionHeading, ResourceSummary, ResourceLink } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { Status } from '@console/shared';
+import { PipelineRunKind, PipelineRunReferenceResource } from '../../../types';
 import { pipelineRunFilterReducer } from '../../../utils/pipeline-filter-reducer';
-import {
-  PipelineRun,
-  PipelineRunReferenceResource,
-  pipelineRefExists,
-} from '../../../utils/pipeline-augment';
+import { pipelineRefExists } from '../../../utils/pipeline-augment';
 import { PipelineModel, PipelineResourceModel } from '../../../models';
 import ResourceLinkList from '../../pipelines/resource-overview/ResourceLinkList';
 import RunDetailsErrorLog from '../logs/RunDetailsErrorLog';
@@ -19,7 +16,7 @@ import { getPLRLogSnippet } from '../logs/pipelineRunLogSnippet';
 import './TriggeredBySection.scss';
 
 export interface PipelineRunDetailsProps {
-  obj: PipelineRun;
+  obj: PipelineRunKind;
 }
 
 export const PipelineRunDetails: React.FC<PipelineRunDetailsProps> = ({ obj: pipelineRun }) => {

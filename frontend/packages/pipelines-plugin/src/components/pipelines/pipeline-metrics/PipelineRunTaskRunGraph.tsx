@@ -9,7 +9,7 @@ import {
   getInteractiveLegendEvents,
   getInteractiveLegendItemStyles,
 } from '@patternfly/react-charts';
-import { PipelineTask } from '../../../utils/pipeline-augment';
+import { PipelineTask } from '../../../types';
 import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
 import { formatDuration } from '@console/internal/components/utils/datetime';
 import { LoadingInline, truncateMiddle } from '@console/internal/components/utils';

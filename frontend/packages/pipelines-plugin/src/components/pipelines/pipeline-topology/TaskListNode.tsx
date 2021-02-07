@@ -12,17 +12,14 @@ import {
   truncateMiddle,
 } from '@console/internal/components/utils';
 import { observer, Node, NodeModel, useHover } from '@patternfly/react-topology';
-import { PipelineResourceTask } from '../../../utils/pipeline-augment';
+import { TaskKind } from '../../../types';
 import { NewTaskNodeCallback, TaskListNodeModelData } from './types';
 
 import './TaskListNode.scss';
 
 type KeyedKebabOption = KebabOption & { key: string };
 
-const taskToOption = (
-  task: PipelineResourceTask,
-  callback: NewTaskNodeCallback,
-): KeyedKebabOption => {
+const taskToOption = (task: TaskKind, callback: NewTaskNodeCallback): KeyedKebabOption => {
   const {
     kind,
     metadata: { name },

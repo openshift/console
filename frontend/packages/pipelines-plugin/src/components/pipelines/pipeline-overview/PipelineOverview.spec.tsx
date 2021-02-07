@@ -30,6 +30,7 @@ describe('Pipeline sidebar overview', () => {
   it('should show view all link if there are more than MAX_VISIBLE pipelineruns', () => {
     props.item.pipelineRuns = ['pr0', 'pr1', 'pr2', 'pr3'].map((pr) => ({
       metadata: { name: pr, namespace: 'test' },
+      spec: {},
     }));
     const wrapper = shallow(<PipelineOverview {...props} />);
     expect(wrapper.find('Link').text()).toBe('pipelines-plugin~View all {{pipelineRunsLength}}');
@@ -38,6 +39,7 @@ describe('Pipeline sidebar overview', () => {
   it('should show not view all link if there exactly MAX_VISIBLE pipelineruns', () => {
     props.item.pipelineRuns = ['pr0', 'pr1', 'pr2'].map((pr) => ({
       metadata: { name: pr, namespace: 'test' },
+      spec: {},
     }));
     const wrapper = shallow(<PipelineOverview {...props} />);
     expect(wrapper.find('Link')).toHaveLength(0);
@@ -49,7 +51,7 @@ describe('Pipeline sidebar overview', () => {
   });
 
   it('should show Start last run button when pipelineruns are available', () => {
-    props.item.pipelineRuns = [{ metadata: { name: 'pipelinerun', namespace: 'test' } }];
+    props.item.pipelineRuns = [{ metadata: { name: 'pipelinerun', namespace: 'test' }, spec: {} }];
     const wrapper = shallow(<PipelineOverview {...props} />);
     expect(wrapper.find(TriggerLastRunButton)).toHaveLength(1);
   });

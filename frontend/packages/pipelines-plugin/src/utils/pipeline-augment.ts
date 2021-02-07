@@ -9,12 +9,9 @@ import {
 } from '@patternfly/react-tokens';
 import {
   K8sKind,
-  K8sResourceKind,
-  PersistentVolumeClaimKind,
   referenceForModel,
   GroupVersionKind,
   apiVersionForModel,
-  ObjectMetadata,
 } from '@console/internal/module/k8s';
 import {
   ClusterTaskModel,
@@ -26,6 +23,7 @@ import {
 } from '../models';
 import { pipelineRunFilterReducer } from './pipeline-filter-reducer';
 import { TektonResourceLabel } from '../components/pipelines/const';
+import { PipelineKind, PipelineRunKind, PipelineTask } from '../types';
 
 interface Metadata {
   name: string;
@@ -34,7 +32,7 @@ interface Metadata {
 
 export interface PropPipelineData {
   metadata: Metadata;
-  latestRun?: PipelineRun;
+  latestRun?: PipelineRunKind;
 }
 
 interface StatusMessage {
@@ -52,295 +50,16 @@ export interface TaskStatus {
   Skipped: number;
 }
 
-export interface PipelineTaskRef {
-  kind?: string;
-  name: string;
-}
-
-export interface PipelineTaskSpec {
-  steps: {
-    name: string;
-    image?: string;
-    args?: string[];
-    script?: string[];
-  }[];
-  metadata?: {
-    labels?: { [key: string]: string };
-  };
-}
-
-export interface PipelineTaskParam {
-  name: string;
-  value: any;
-}
-export interface PipelineTaskResources {
-  inputs?: PipelineTaskResource[];
-  outputs?: PipelineTaskResource[];
-}
-export interface PipelineTaskResource {
-  name: string;
-  resource?: string;
-  from?: string[];
-}
-export interface WhenExpression {
-  Input: string;
-  Operator: string;
-  Values: string[];
-}
-export interface PipelineTask {
-  name: string;
-  runAfter?: string[];
-  taskRef?: PipelineTaskRef;
-  taskSpec?: PipelineTaskSpec;
-  params?: PipelineTaskParam[];
-  resources?: PipelineTaskResources;
-  workspaces?: PipelineTaskWorkspace[];
-  when?: WhenExpression[];
-}
-export interface PipelineTaskWorkspace {
-  name: string;
-  description?: string;
-  mountPath?: string;
-  readOnly?: boolean;
-  workspace?: string;
-}
 export interface Resource {
   propsReferenceForRuns: string[];
   resources: FirehoseResource[];
 }
 
-export interface PipelineResource {
-  name: string;
-  type: string;
-}
-
-type PipelineRunResourceCommonProperties = {
-  name: string;
-};
-export type PipelineRunInlineResourceParam = { name: string; value: string };
-export type PipelineRunInlineResource = PipelineRunResourceCommonProperties & {
-  resourceSpec: {
-    params: PipelineRunInlineResourceParam[];
-    type: string;
-  };
-};
-export type PipelineRunReferenceResource = PipelineRunResourceCommonProperties & {
-  resourceRef: {
-    name: string;
-  };
-};
-export type PipelineRunResource = PipelineRunReferenceResource | PipelineRunInlineResource;
-
-export type PipelineWorkspace = Param;
-
 export interface Runs {
-  data?: PipelineRun[];
+  data?: PipelineRunKind[];
 }
 
 export type KeyedRuns = { [key: string]: Runs };
-export interface PipelineSpec {
-  params?: PipelineParam[];
-  resources?: PipelineResource[];
-  workspaces?: PipelineWorkspace[];
-  tasks: PipelineTask[];
-  serviceAccountName?: string;
-}
-export interface Pipeline extends K8sResourceKind {
-  latestRun?: PipelineRun;
-  spec: PipelineSpec;
-}
-
-export type TaskRunWorkspace = {
-  name: string;
-  volumeClaimTemplate?: PersistentVolumeClaimKind;
-  persistentVolumeClaim?: VolumeTypePVC;
-  configMap?: VolumeTypeConfigMaps;
-  emptyDir?: {};
-  secret?: VolumeTypeSecret;
-  subPath?: string;
-};
-
-export type TaskRunStatus = {
-  completionTime?: string;
-  conditions?: Condition[];
-  podName?: string;
-  startTime?: string;
-  steps?: PLRTaskRunStep[];
-};
-
-export interface TaskRunKind extends K8sResourceKind {
-  spec: {
-    taskRef?: PipelineTaskRef;
-    taskSpec?: PipelineTaskSpec;
-    serviceAccountName?: string;
-    params?: PipelineTaskParam[];
-    resources?: PipelineResource[];
-    timeout?: string;
-    workspaces?: TaskRunWorkspace[];
-  };
-  status?: TaskRunStatus;
-}
-
-export type PLRTaskRunStep = {
-  container: string;
-  imageID: string;
-  name: string;
-  terminated?: {
-    containerID: string;
-    exitCode: number;
-    finishedAt: string;
-    reason: string;
-    startedAt: string;
-  };
-};
-
-export type PLRTaskRunData = {
-  pipelineTaskName: string;
-  status: {
-    completionTime?: string;
-    conditions: Condition[];
-    /** Can be empty */
-    podName: string;
-    startTime: string;
-    steps?: PLRTaskRunStep[];
-  };
-};
-
-export type PLRTaskRuns = {
-  [taskRunName: string]: PLRTaskRunData;
-};
-
-export interface PipelineRun extends K8sResourceKind {
-  spec?: {
-    pipelineRef?: { name: string };
-    pipelineSpec?: PipelineSpec;
-    params?: PipelineRunParam[];
-    workspaces?: PipelineRunWorkspace[];
-    resources?: PipelineRunResource[];
-    serviceAccountName?: string;
-    // Odd status value that only appears in a single case - cancelling a pipeline
-    status?: 'PipelineRunCancelled';
-    timeout?: string;
-  };
-  status?: {
-    succeededCondition?: string;
-    creationTimestamp?: string;
-    conditions?: Condition[];
-    startTime?: string;
-    completionTime?: string;
-    taskRuns?: PLRTaskRuns;
-    pipelineSpec: PipelineSpec;
-    skippedTasks?: {
-      name: string;
-    }[];
-  };
-}
-
-export type PipelineResourceKind = K8sResourceKind & {
-  spec: {
-    params: { name: string; value: string }[];
-    type: string;
-  };
-};
-
-export interface PipelineResourceTaskParam extends PipelineParam {
-  type: string;
-}
-export interface PipelineResourceTaskResource {
-  name: string;
-  type: string;
-  optional?: boolean;
-}
-export interface PipelineResourceTask extends K8sResourceKind {
-  spec: {
-    params?: PipelineResourceTaskParam[];
-    resources?: {
-      inputs?: PipelineResourceTaskResource[];
-      outputs?: PipelineResourceTaskResource[];
-    };
-
-    steps: {
-      // TODO: Figure out required fields
-      args?: string[];
-      command?: string[];
-      image?: string;
-      resources?: {}[];
-    }[];
-  };
-}
-
-export interface Condition {
-  type: string;
-  status: string;
-  reason?: string;
-  message?: string;
-  lastTransitionTime?: string;
-}
-
-export interface Param {
-  name: string;
-}
-
-export interface PipelineParam extends Param {
-  type?: string | string[];
-  default?: string | string[];
-  description?: string;
-}
-
-export interface PipelineRunParam extends Param {
-  value: string | string[];
-  input?: string;
-  output?: string;
-  resource?: object;
-}
-
-export type VolumeTypeSecret = {
-  secretName: string;
-  items?: {
-    key: string;
-    path: string;
-  }[];
-};
-
-export type VolumeTypeConfigMaps = {
-  name: string;
-  items?: {
-    key: string;
-    path: string;
-  }[];
-};
-
-export type VolumeTypePVC = {
-  claimName: string;
-};
-
-export type PersistentVolumeClaimType = {
-  persistentVolumeClaim: VolumeTypePVC;
-};
-
-export type VolumeClaimTemplateType = {
-  volumeClaimTemplate: VolumeTypeClaim;
-};
-export type VolumeTypeClaim = {
-  metadata: ObjectMetadata;
-  spec: {
-    accessModes: string[];
-    resources: {
-      requests: {
-        storage: string;
-      };
-    };
-  };
-};
-
-export interface PipelineRunWorkspace extends Param {
-  [volumeType: string]:
-    | VolumeTypeSecret
-    | VolumeTypeConfigMaps
-    | VolumeTypePVC
-    | VolumeTypeClaim
-    | {};
-}
 
 interface FirehoseResource {
   kind: string;
@@ -372,7 +91,7 @@ export const getResources = (data: PropPipelineData[]): Resource => {
   return { propsReferenceForRuns: null, resources: null };
 };
 
-export const getLatestRun = (runs: Runs, field: string): PipelineRun => {
+export const getLatestRun = (runs: Runs, field: string): PipelineRunKind => {
   if (!runs || !runs.data || !(runs.data.length > 0) || !field) {
     return null;
   }
@@ -475,7 +194,7 @@ export const getRunStatusColor = (status: string, t: TFunction): StatusMessage =
 export const truncateName = (name: string, length: number): string =>
   name.length < length ? name : `${name.slice(0, length - 1)}...`;
 
-export const getPipelineFromPipelineRun = (pipelineRun: PipelineRun): Pipeline => {
+export const getPipelineFromPipelineRun = (pipelineRun: PipelineRunKind): PipelineKind => {
   const pipelineName = pipelineRun?.metadata?.labels?.[TektonResourceLabel.pipeline];
   if (!pipelineName || !pipelineRun?.status?.pipelineSpec) {
     return null;
@@ -491,7 +210,7 @@ export const getPipelineFromPipelineRun = (pipelineRun: PipelineRun): Pipeline =
   };
 };
 
-export const getTaskStatus = (pipelinerun: PipelineRun): TaskStatus => {
+export const getTaskStatus = (pipelinerun: PipelineRunKind): TaskStatus => {
   const executedPipeline = getPipelineFromPipelineRun(pipelinerun);
   const totalTasks = (executedPipeline?.spec?.tasks || []).length ?? 0;
   const plrTasks =
@@ -562,7 +281,7 @@ export const getResourceModelFromTask = (task: PipelineTask): K8sKind => {
   return getResourceModelFromTaskKind(kind);
 };
 
-export const pipelineRefExists = (pipelineRun: PipelineRun): boolean =>
+export const pipelineRefExists = (pipelineRun: PipelineRunKind): boolean =>
   !!pipelineRun.spec.pipelineRef?.name;
 
 export const getModelReferenceFromTaskKind = (kind: string): GroupVersionKind => {

@@ -1,11 +1,6 @@
 import * as _ from 'lodash';
 import { getRandomChars } from '@console/shared';
-import {
-  PipelineResourceTask,
-  PipelineTask,
-  PipelineTaskParam,
-  PipelineTaskResource,
-} from '../../../utils/pipeline-augment';
+import { TaskKind, PipelineTask, PipelineTaskParam, PipelineTaskResource } from '../../../types';
 import { AddNodeDirection } from '../pipeline-topology/const';
 import { getTaskParameters, getTaskResources } from '../resource-utils';
 import { TaskErrorType, UpdateOperationType } from './const';
@@ -115,7 +110,7 @@ const mapAddRelatedToOthers = <TaskType extends PipelineBuilderTaskBase>(
 };
 
 // TODO: Can we use yup? Do we need this level of checking for errors?
-const getErrors = (task: PipelineTask, resource: PipelineResourceTask): TaskErrorMap => {
+const getErrors = (task: PipelineTask, resource: TaskKind): TaskErrorMap => {
   const params = getTaskParameters(resource);
   const resourceParams = params || [];
   const requiredParamNames = resourceParams.filter(taskParamIsRequired).map((param) => param.name);

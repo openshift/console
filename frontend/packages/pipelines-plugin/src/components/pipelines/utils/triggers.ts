@@ -13,7 +13,8 @@ import {
   WatchK8sResultsObject,
 } from '@console/internal/components/utils/k8s-watch-hook';
 import { EventListenerModel, PipelineRunModel, TriggerTemplateModel } from '../../../models';
-import { getResourceModelFromBindingKind, PipelineRun } from '../../../utils/pipeline-augment';
+import { PipelineRunKind } from '../../../types';
+import { getResourceModelFromBindingKind } from '../../../utils/pipeline-augment';
 import {
   EventListenerKind,
   EventListenerKindTrigger,
@@ -117,7 +118,7 @@ export const usePipelineTriggerTemplateNames = (
     .filter((resourceWatch) => resourceWatch.loaded)
     .map((resourceWatch) => resourceWatch.data)
     .filter((triggerTemplate: TriggerTemplateKind) => {
-      const plr: PipelineRun = triggerTemplate?.spec?.resourcetemplates?.find(
+      const plr: PipelineRunKind = triggerTemplate?.spec?.resourcetemplates?.find(
         ({ kind }) => kind === PipelineRunModel.kind,
       );
       return plr?.spec?.pipelineRef?.name === pipelineName;

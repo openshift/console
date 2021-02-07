@@ -23,7 +23,7 @@ import {
 } from '@console/pipelines-plugin/src/components/import/pipeline/pipeline-template-utils';
 import { Perspective } from '@console/plugin-sdk';
 import { setPipelineNotStarted } from '@console/pipelines-plugin/src/components/pipelines/pipeline-overview/pipeline-overview-utils';
-import { Pipeline } from '@console/pipelines-plugin/src/utils/pipeline-augment';
+import { PipelineKind } from '@console/pipelines-plugin/src/types';
 import {
   getAppLabels,
   getPodLabels,
@@ -424,7 +424,7 @@ export const managePipelineResources = async (
   appResources: AppResources,
 ) => {
   const { name, git, pipeline, project, docker } = formData;
-  let managedPipeline: Pipeline;
+  let managedPipeline: PipelineKind;
 
   if (!_.isEmpty(appResources?.pipeline?.data)) {
     managedPipeline = await updatePipelineForImportFlow(

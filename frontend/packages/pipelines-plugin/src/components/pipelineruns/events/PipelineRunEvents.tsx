@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { match as RMatch } from 'react-router';
 import { ResourcesEventStream } from '@console/internal/components/events';
-import { PipelineRun } from '../../../utils/pipeline-augment';
+import { PipelineRunKind } from '../../../types';
 import { usePipelineRunFilters } from './event-utils';
 
 type PipelineRunEventsProps = {
-  obj: PipelineRun;
+  obj: PipelineRunKind;
   match: RMatch<{
     ns?: string;
   }>;

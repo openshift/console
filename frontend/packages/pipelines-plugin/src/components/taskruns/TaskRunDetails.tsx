@@ -7,7 +7,7 @@ import { taskRunFilterReducer } from '../../utils/pipeline-filter-reducer';
 import RunDetailsErrorLog from '../pipelineruns/logs/RunDetailsErrorLog';
 import { TaskRunModel } from '../../models';
 import { getTRLogSnippet } from './logs/taskRunLogSnippet';
-import { TaskRunKind } from '../../utils/pipeline-augment';
+import { TaskRunKind } from '../../types';
 import './TaskRunDetails.scss';
 
 export interface TaskRunDetailsProps {

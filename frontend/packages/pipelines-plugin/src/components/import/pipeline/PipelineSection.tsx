@@ -8,9 +8,9 @@ import { useAccessReview } from '@console/internal/components/utils';
 import { TechPreviewBadge } from '@console/shared';
 import { NormalizedBuilderImages } from '@console/dev-console/src/utils/imagestream-utils';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
-import { PipelineModel, PipelineResourceModel } from '../../../models';
 import { FLAG_OPENSHIFT_PIPELINE, CLUSTER_PIPELINE_NS } from '../../../const';
-import { Pipeline } from '../../../utils/pipeline-augment';
+import { PipelineModel, PipelineResourceModel } from '../../../models';
+import { PipelineKind } from '../../../types';
 import PipelineTemplate from './PipelineTemplate';
 
 import './PipelineSection.scss';
@@ -18,7 +18,7 @@ import './PipelineSection.scss';
 type PipelineSectionProps = {
   flags: FlagsObject;
   builderImages: NormalizedBuilderImages;
-  existingPipeline?: Pipeline;
+  existingPipeline?: PipelineKind;
 };
 
 const usePipelineAccessReview = (): boolean => {

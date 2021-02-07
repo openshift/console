@@ -10,8 +10,8 @@ import {
   K8sResourceKind,
   referenceForModel,
 } from '@console/internal/module/k8s';
-import { PipelineRun, TaskRunKind } from '../../../utils/pipeline-augment';
 import { PipelineRunModel, TaskRunModel } from '../../../models';
+import { PipelineRunKind, TaskRunKind } from '../../../types';
 import { TektonResourceLabel } from '../../pipelines/const';
 
 export type EventFilter = (eventObj: EventInvolvedObject) => boolean;
@@ -86,7 +86,7 @@ const isPodMatched = (pods): EventFilter => (pod: EventInvolvedObject): boolean 
  */
 export const usePipelineRunFilters = (
   namespace: string,
-  pipelineRun: PipelineRun,
+  pipelineRun: PipelineRunKind,
 ): EventFilter[] => {
   const { taskruns, pods } = usePipelineRunRelatedResources(namespace, pipelineRun.metadata.name);
   const isPipelineRunMatched: EventFilter = (plr: EventInvolvedObject): boolean => {
