@@ -1,5 +1,6 @@
 import { K8sResourceCommon, ObjectMetadata } from '@console/internal/module/k8s';
 import { PipelineKind, PipelineSpec } from './pipeline';
+import { TektonResultsRun } from './coreTekton';
 
 export type PLRTaskRunStep = {
   container: string;
@@ -136,6 +137,7 @@ export type PipelineRunKind = K8sResourceCommon & {
     skippedTasks?: {
       name: string;
     }[];
+    pipelineResults?: TektonResultsRun[];
   };
 };
 

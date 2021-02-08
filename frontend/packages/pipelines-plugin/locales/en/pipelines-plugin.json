@@ -12,9 +12,9 @@
   "Namespace": "Namespace",
   "Type": "Type",
   "Created": "Created",
-  "Pipeline Run details": "Pipeline Run details",
   "Status": "Status",
   "Pipeline": "Pipeline",
+  "Pipeline Run details": "Pipeline Run details",
   "No task runs found": "No task runs found",
   "Download all task logs": "Download all task logs",
   "No logs found": "No logs found",
@@ -196,6 +196,8 @@
   "Select a Project to view the list of Pipelines": "Select a Project to view the list of Pipelines",
   "Create Pipeline": "Create Pipeline",
   "by name": "by name",
+  "{{resourceName}} results": "{{resourceName}} results",
+  "No {{resourceName}} results available due to failure": "No {{resourceName}} results available due to failure",
   "Task": "Task",
   "Pod": "Pod",
   "{{taskRunLabel}} details": "{{taskRunLabel}} details",
@@ -227,5 +229,6 @@
   "Skipped": "Skipped",
   "Cancelled": "Cancelled",
   "Pending": "Pending",
-  "PipelineRun not started yet": "PipelineRun not started yet"
+  "PipelineRun not started yet": "PipelineRun not started yet",
+  "Value": "Value"
 }
