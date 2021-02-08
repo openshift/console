@@ -33,7 +33,7 @@ i18n
       },
       lng: localStorage.getItem('bridge/language'),
       fallbackLng: 'en',
-      load: 'all',
+      load: 'languageOnly',
       debug: process.env.NODE_ENV === 'development',
       detection: { caches: [] },
       contextSeparator: '~',
