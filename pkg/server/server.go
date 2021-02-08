@@ -435,14 +435,14 @@ func (s *Server) HTTPHandler() http.Handler {
 		kialiProxy := hproxy.NewProxy(s.KialiProxyConfig)
 		handle(kialiProxyAPIPath, http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, kialiProxyAPIPath),
-			http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			// 	http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			// 		kialiProxy.ServeHTTP(w, r)
+			// 	})),
+			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+				// r.Header.Set("Host", s.KialiProxyConfig.Endpoint.Host)
+				// r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
 				kialiProxy.ServeHTTP(w, r)
 			})),
-		// authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
-		// 	// r.Header.Set("Host", s.KialiProxyConfig.Endpoint.Host)
-		// 	r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
-		// 	kialiProxy.ServeHTTP(w, r)
-		// })),
 		)
 	}
 
