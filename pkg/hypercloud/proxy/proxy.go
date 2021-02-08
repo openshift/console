@@ -109,20 +109,19 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// Include `system:authenticated` when impersonating groups so that basic requests that all
 	// users can run like self-subject access reviews work.
-	if len(r.Header["Impersonate-Group"]) > 0 {
-		r.Header.Add("Impersonate-Group", "system:authenticated")
-	}
-
-	r.Host = p.config.Endpoint.Host
-	r.URL.Host = p.config.Endpoint.Host
-	r.URL.Scheme = p.config.Endpoint.Scheme
+	// if len(r.Header["Impersonate-Group"]) > 0 {
+	// 	r.Header.Add("Impersonate-Group", "system:authenticated")
+	// }
 
 	if !isWebsocket {
 		p.reverseProxy.ServeHTTP(w, r)
 		return
 	}
 
+	r.Host = p.config.Endpoint.Host
+	r.URL.Host = p.config.Endpoint.Host
 	r.URL.Path = SingleJoiningSlash(p.config.Endpoint.Path, r.URL.Path)
+	r.URL.Scheme = p.config.Endpoint.Scheme
 
 	if r.URL.Scheme == "https" {
 		r.URL.Scheme = "wss"
