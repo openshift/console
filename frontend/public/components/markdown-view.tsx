@@ -52,7 +52,7 @@ const markdownConvert = (markdown, extensions?: string[]) => {
     ],
     ALLOWED_ATTR: ['href', 'target', 'rel', 'class'],
     ALLOWED_URI_REGEXP: /^(?:(?:https?|mailto):|[^a-z]|[a-z+.-]+(?:[^a-z+.\-:]|$))/i,
-    ALLOW_DATA_ATTR: true
+    ALLOW_DATA_ATTR: true,
   });
 };
 
