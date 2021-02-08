@@ -1,5 +1,5 @@
 {
-  "Add RoleBinding": "RoleBinding の追加",
+  "Add RoleBinding": "ロールバインディングの追加",
   "All namespaces": "すべての namespace",
   "Role details": "ロールの詳細",
   "Role name": "ロール名",
@@ -12,9 +12,9 @@
   "Subject name": "サブジェクトの名前",
   "Create binding": "バインディングの作成",
   "by role or subject": "ロールまたはサブジェクト別",
-  "RoleBindings": "RoleBinding",
+  "RoleBindings": "ロールバインディング",
   "No Roles found": "ロールが見つかりません",
-  "Roles grant access to types of objects in the cluster. Roles are applied to a team or user via a RoleBinding.": "ロールは、クラスター内の各種のオブジェクトにアクセスを付与します。ロールは、RoleBinding 経由でチームまたはユーザーに適用されます。",
+  "Roles grant access to types of objects in the cluster. Roles are applied to a team or user via a RoleBinding.": "ロールは、クラスター内の各種のオブジェクトにアクセスを付与します。ロールは、ロールバインディングでチームまたはユーザーに適用されます。",
   "Roles": "ロール",
   "Create Role": "ロールの作成",
   "Role": "ロール",

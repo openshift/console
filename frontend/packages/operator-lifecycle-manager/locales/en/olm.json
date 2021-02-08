@@ -300,7 +300,7 @@
   "Each Namespace can subscribe to a single channel of a package for automatic updates.": "Each Namespace can subscribe to a single channel of a package for automatic updates.",
   "Create Subscription": "Create Subscription",
   "Subscriptions by package": "Subscriptions by package",
-  "InstalPlan failed": "InstalPlan failed",
+  "InstallPlan failed": "InstallPlan failed",
   "CatalogSource removed": "CatalogSource removed",
   "The CatalogSource for this Operator has been removed. The CatalogSource must be added back in order for this Operator to receive any updates.": "The CatalogSource for this Operator has been removed. The CatalogSource must be added back in order for this Operator to receive any updates.",
   "Subscription details": "Subscription details",

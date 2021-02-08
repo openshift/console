@@ -20,7 +20,7 @@
   "Not started": "開始されていません",
   "{{duration, number}} minutes": "{{duration, number}} 分",
   "One or more verifications did not pass during this quick start. Revisit the tasks or the help links, and then try again.": "このクイックスタートで 1 つ以上の検証にパスしませんでした。タスクまたはヘルプリンクに再度アクセスし、再試行してください。",
-  "Start {{nextQSDisplayName}} quick start": "{{nextQSDisplayName}} クイックスタートを開始する",
+  "Start {{nextQuickStart}} quick start": "{{nextQuickStart}} クイックスタートを開始する",
   "Start tour": "ツアーを開始する",
   "Next": "次へ",
   "Close": "閉じる",

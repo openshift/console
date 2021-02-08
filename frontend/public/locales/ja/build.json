@@ -9,7 +9,7 @@
   "CPU usage": "CPU の使用率",
   "Filesystem": "ファイルシステム",
   "Pipeline build strategy deprecation": "Pipeline ビルドストラテジーの利用停止",
-  "pipelineBuildStrategyAlert": "pipelineBuildStrategyAlert",
+  "pipelineBuildStrategyAlert": "Pipeline ビルドストラテジーアラート",
   "OpenShift Pipelines based on Tekton": "Tekton をベースとする OpenShift Pipeline",
   "Try the OpenShift Pipelines tutorial": "OpenShift Pipeline チュートリアルを試す",
   "Build details": "ビルドの詳細",

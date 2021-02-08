@@ -188,7 +188,7 @@ const AlertMsg: React.FC<AlertMsgProps> = ({ type }) => {
       );
     case InitialReceivers.Critical:
       return t(
-        'public~The routing labels for this receiver are configured to capture critical alerts.  Finish setting up this receiver by selecting a "Receiver Type" to choose a destination for these alerts.  If this receiver is deleted, critical alerts will go to the default receiver instead.',
+        'public~The routing labels for this receiver are configured to capture critical alerts. Finish setting up this receiver by selecting a "Receiver Type" to choose a destination for these alerts. If this receiver is deleted, critical alerts will go to the default receiver instead.',
       );
     case InitialReceivers.Watchdog:
       return t(

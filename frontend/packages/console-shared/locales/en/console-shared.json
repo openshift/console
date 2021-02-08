@@ -61,7 +61,7 @@
   "from": "from",
   "The resources that are attached to the {{hpaLabel}} will be deleted.": "The resources that are attached to the {{hpaLabel}} will be deleted.",
   "Delete": "Delete",
-  "This action cannot be undone. All associated Deployments, Routes, Builds, Pipelines, Storage/PVC's, Secrets, and ConfigMaps will be deleted.": "This action cannot be undone. All associated Deployments, Routes, Builds, Pipelines, Storage/PVC's, Secrets, and ConfigMaps will be deleted.",
+  "This action cannot be undone. All associated Deployments, Routes, Builds, Pipelines, Storage/PVCs, Secrets, and ConfigMaps will be deleted.": "This action cannot be undone. All associated Deployments, Routes, Builds, Pipelines, Storage/PVCs, Secrets, and ConfigMaps will be deleted.",
   "Confirm deletion by typing <1>{{resourceName}}</1> below:": "Confirm deletion by typing <1>{{resourceName}}</1> below:",
   "Increase the Pod count": "Increase the Pod count",
   "Decrease the Pod count": "Decrease the Pod count",

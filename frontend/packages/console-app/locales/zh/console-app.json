@@ -1,9 +1,9 @@
 {
   "Add Health Checks": "添加健康检查",
   "Edit Health Checks": "编辑健康检查",
-  "Add HorizontalPodAutoscaler": "Add HorizontalPodAutoscaler",
-  "Edit HorizontalPodAutoscaler": "Edit HorizontalPodAutoscaler",
-  "Remove HorizontalPodAutoscaler": "Remove HorizontalPodAutoscaler",
+  "Add HorizontalPodAutoscaler": "添加 HorizontalPodAutoscaler",
+  "Edit HorizontalPodAutoscaler": "编辑 HorizontalPodAutoscaler",
+  "Remove HorizontalPodAutoscaler": "删除 HorizontalPodAutoscaler",
   "Clone": "克隆",
   "Name": "名称",
   "Clone PVC": "克隆 PVC",

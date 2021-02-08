@@ -12,6 +12,7 @@ export const confirmAction: string = 'confirm-action';
 // Pool status
 export const emptyStateBody: string = 'empty-state-body';
 
+<<<<<<< HEAD
 export enum PoolState {
   DUPLICATED = 'DUPLICATED',
   CREATED = 'CREATED',

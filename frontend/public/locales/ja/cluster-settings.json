@@ -16,7 +16,7 @@
   "Last completed version": "最後に完了したバージョン",
   "Learn more about OpenShift update channels": "OpenShift 更新チャネルの詳細",
   "Channel": "チャネル",
-  "Channels help to control the pace of updates and recommend the appropriate release versions. Update channels are tied to a minor version of OpenShift Container Platform, for example 4.5.": "チャネルは、更新のペースを制御し、適切なリリースバージョンを推奨するのに役立ちます。更新チャネルは、OpenShift ContainerPlatform のマイナーバージョン (4.5 など) に関連付けられています。",
+  "Channels help to control the pace of updates and recommend the appropriate release versions. Update channels are tied to a minor version of OpenShift Container Platform, for example 4.5.": "チャネルは、更新のペースを制御し、適切なリリースバージョンを推奨するのに役立ちます。更新チャネルは、OpenShift Container Platform のマイナーバージョン (4.5 など) に関連付けられています。",
   "Version": "バージョン",
   "{{name}} {{resource}} may continue to update after the update of Master {{resource}} and {{resource2}} are complete.": "{{name}} {{resource}} は、マスター {{resource}} と {{resource2}} の更新が完了した後も更新を継続できます。",
   "{{updatedMCPNodes}} of {{totalMCPNodes}}": "{{updatedMCPNodes}}/{{totalMCPNodes}}",

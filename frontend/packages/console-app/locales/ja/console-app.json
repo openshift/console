@@ -1,9 +1,9 @@
 {
   "Add Health Checks": "ヘルスチェックの追加",
   "Edit Health Checks": "ヘルスチェックの編集",
-  "Add HorizontalPodAutoscaler": "HorizontalPodAutoscaler の追加",
-  "Edit HorizontalPodAutoscaler": "HorizontalPodAutoscaler の編集",
-  "Remove HorizontalPodAutoscaler": "HorizontalPodAutoscaler の削除",
+  "Add HorizontalPodAutoscaler": "Horizontal Pod Autoscaler の追加",
+  "Edit HorizontalPodAutoscaler": "Horizontal Pod Autoscaler の編集",
+  "Remove HorizontalPodAutoscaler": "Horizontal Pod Autoscaler の削除",
   "Clone": "クローン",
   "Name": "名前",
   "Clone PVC": "PVC のクローン",
