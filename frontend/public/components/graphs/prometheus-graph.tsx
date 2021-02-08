@@ -43,11 +43,7 @@ export const PrometheusGraphLink_: React.FC<PrometheusGraphLinkProps> = ({
   const params = new URLSearchParams();
   params.set('query0', query);
 
-  /* TODO: perspective admin을 사용하지 않기 때문에 추후 확인 필요 */
-  const url =
-    canAccessMonitoring && perspective === 'admin'
-      ? `/monitoring/query-browser?${params.toString()}`
-      : `/dev-monitoring/ns/${namespace}/metrics?${params.toString()}`;
+  const url = `/monitoring/query-browser?${params.toString()}`;
 
   return (
     <Link to={url} style={{ color: 'inherit', textDecoration: 'none' }}>
