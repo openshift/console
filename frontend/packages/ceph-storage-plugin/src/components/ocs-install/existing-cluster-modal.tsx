@@ -24,6 +24,17 @@ const ExistingClusterModal: React.FC<ExistingClusterModalProps> = ({ match, stor
     OCSServiceModel,
   )}/${clusterName}`;
 
+  const storageClusterListPage = `${resourcePathFromModel(
+    ClusterServiceVersionModel,
+    appName,
+    ns,
+  )}/${referenceForModel(OCSServiceModel)}`;
+
+  const onClose = () => {
+    setIsOpen(false);
+    history.push(storageClusterListPage);
+  };
+
   const onConfirm = () => {
     setIsOpen(false);
     history.push(resourcePathFromModel(ClusterServiceVersionModel, appName, ns));
@@ -39,6 +50,7 @@ const ExistingClusterModal: React.FC<ExistingClusterModalProps> = ({ match, stor
       title={t('ceph-storage-plugin~Storage Cluster exists')}
       titleIconVariant="warning"
       isOpen={isOpen}
+      onClose={onClose}
       variant="small"
       isFullScreen={false}
       actions={[
@@ -51,7 +63,7 @@ const ExistingClusterModal: React.FC<ExistingClusterModalProps> = ({ match, stor
       ]}
     >
       <Trans t={t} ns="ceph-storage-plugin" i18nKey="clusterExistText">
-        A storage cluster <Link to={storageClusterPath}>{{ clusterName }}</Link> is already created.
+        A storage cluster <Link to={storageClusterPath}>{{ clusterName }}</Link> already exists.
         <br />
         You cannot create another storage cluster.
       </Trans>
