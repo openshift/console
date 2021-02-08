@@ -4,7 +4,7 @@ import { k8sCreate } from '@console/internal/module/k8s/resource';
 import { Button, Form, FormGroup, Modal, ModalVariant, TextInput } from '@patternfly/react-core';
 import { useActiveNamespace } from '@console/shared';
 import { AccessTokenSecretName } from '../../const';
-import { history } from '@console/internal/components/utils';
+import { createServiceAccountIfNeeded } from '../managed-services-kafka/resourceCreators';
 
 // TODO Full typings
 const AccessManagedServices: any = ({ isModalOpen, setIsModalOpen }) => {
@@ -26,15 +26,9 @@ const AccessManagedServices: any = ({ isModalOpen, setIsModalOpen }) => {
       type: 'Opaque',
     };
 
-    try {
-      await k8sCreate(SecretModel, secret);
-      history.push("/managedServices/managedkafka");
-    } catch (error) {
-      console.log('what is this error' + error);
-    }
-
-    // IMPORTANT! CVE prevention
-    // setApiTokenValue("");
+    await k8sCreate(SecretModel, secret);
+    await createServiceAccountIfNeeded(namespace);
+    setIsModalOpen(false);
   }
 
   const handleModalToggle = () => {
@@ -66,23 +60,23 @@ const AccessManagedServices: any = ({ isModalOpen, setIsModalOpen }) => {
         <br />
         <br />
         <Form>
-        <FormGroup
-          fieldId="api-token-value"
-          label="API Token"
-          isRequired
-          helperText="API token can be accessed at cloud.redhat.com/openshift/token"
-        // helperTextInvalid="Age has to be a number"
-        // helperTextInvalidIcon={<ExclamationCircleIcon />}
-        >
-          <TextInput
-            value={apiTokenValue}
-            onChange={(value: string) => handleApiTokenValueChange(value)}
-            type="text"
-            id=""
-            name=""
-            placeholder=""
-          />
-        </FormGroup>
+          <FormGroup
+            fieldId="api-token-value"
+            label="API Token"
+            isRequired
+            helperText="API token can be accessed at cloud.redhat.com/openshift/token"
+          // helperTextInvalid="Age has to be a number"
+          // helperTextInvalidIcon={<ExclamationCircleIcon />}
+          >
+            <TextInput
+              value={apiTokenValue}
+              onChange={(value: string) => handleApiTokenValueChange(value)}
+              type="text"
+              id=""
+              name=""
+              placeholder=""
+            />
+          </FormGroup>
         </Form>
         <br />
         Can't create an access token? Contact your administrator

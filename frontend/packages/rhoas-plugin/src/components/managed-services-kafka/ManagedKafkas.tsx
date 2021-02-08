@@ -15,7 +15,6 @@ import CubesIcon from '@patternfly/react-icons/dist/js/icons/cubes-icon';
 import {
   createManagedKafkaConnection,
   createManagedKafkaRequestIfNeeded,
-  createServiceAccountIfNeeded,
   listOfCurrentKafkaConnectionsById
 } from './resourceCreators';
 import { referenceForModel } from '@console/internal/module/k8s';
@@ -26,18 +25,14 @@ import { KafkaRequest } from "./types"
 const ManagedKafkas = () => {
   const [currentNamespace] = useActiveNamespace();
   const [selectedKafka, setSelectedKafka] = React.useState<number>();
-  const [serviceAccountCreated, setServiceAccountCreated] = React.useState(false);
   const [currentKafkaConnections, setCurrentKafkaConnections] = React.useState([]);
 
   const createKafkaRequestFlow = async () => {
     await createManagedKafkaRequestIfNeeded(currentNamespace);
-    const accountCreated = await createServiceAccountIfNeeded(currentNamespace);
+
     const currentKafka = await listOfCurrentKafkaConnectionsById(currentNamespace)
     if (currentKafka) {
       setCurrentKafkaConnections(currentKafka);
-    }
-    if (accountCreated) {
-      setServiceAccountCreated(true);
     }
   }
 
@@ -105,7 +100,6 @@ const ManagedKafkas = () => {
     <>
       <NamespacedPage disabled variant={NamespacedPageVariants.light} hideApplications>
         <>
-          {serviceAccountCreated ? (<><p>Created Service Account</p></>) : ""}
           <StreamsInstancePage
             kafkaArray={remoteKafkaInstances}
             setSelectedKafka={setSelectedKafka}
