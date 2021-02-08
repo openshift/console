@@ -57,7 +57,7 @@ Feature: Install the Helm Release
     @regression
     Scenario: Chart versions drop down menu
         Given user is at Add page
-        And user is at the developer catalog page
+        And user is at Developer Catalog page
         And user searches 'Nodejs Ex K v0.2.1' card from catalog page
         And user selects "Nodejs Ex K v0.2.1" helm chart from catalog page
         And user will see the information of all the chart versions together

@@ -2,16 +2,21 @@ import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { gitPage } from '../../pages/add-flow/git-page';
 import { navigateTo } from '../../pages/app';
 import { addPage } from '../../pages/add-flow/add-page';
-import { topologyPage } from '../../pages/topology/topology-page';
 import { addOptions } from '../../constants/add';
 import { createGitWorkload } from '../../pages/functions/createGitWorkload';
 import { devNavigationMenu } from '../../constants/global';
 import { pageTitle } from '../../constants/pageTitle';
 import { catalogPage } from '../../pages/add-flow/catalog-page';
 import { topologyPO } from '../../pageObjects/topology-po';
+import { topologyHelper } from '../../pages/topology/topology-helper-page';
+import { topologyPage } from '../../pages/topology/topology-page';
 
 Given('user is at Add page', () => {
   navigateTo(devNavigationMenu.Add);
+});
+
+Given('user is at Topology page', () => {
+  navigateTo(devNavigationMenu.Topology);
 });
 
 Given(
@@ -23,7 +28,7 @@ Given(
       resourceType,
       'nodejs-ex-git-app',
     );
-    topologyPage.verifyWorkloadInTopologyPage(componentName);
+    topologyHelper.verifyWorkloadInTopologyPage(componentName);
   },
 );
 
@@ -75,4 +80,12 @@ Then('user will be redirected to Add page', () => {
 
 When('user clicks Cancel button on Add page', () => {
   gitPage.clickCancel();
+});
+
+Then('user can see {string} card on the Add page', (cardName: string) => {
+  addPage.verifyCard(cardName);
+});
+
+When('user selects {string} card from add page', (cardName: string) => {
+  addPage.selectCardFromOptions(cardName);
 });

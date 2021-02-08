@@ -18,6 +18,12 @@ When('user selects {string} option from Type section', (catalogType: string) => 
   catalogPage.selectCatalogType(catalogType);
 });
 
+When('user searches and selects {string} card from catalog page', (cardName: string) => {
+  catalogPage.search(cardName);
+  cy.get(catalogPO.catalogTypes.template).should('be.checked');
+  catalogPage.selectCardInCatalog(cardName);
+});
+
 When('user searches and selects Template card {string} from catalog page', (cardName: string) => {
   catalogPage.search(cardName);
   detailsPage.titleShouldContain(pageTitle.Templates).should('be.visible');
@@ -85,4 +91,12 @@ When('user enters Name as {string} in Instantiate Template page', (name: string)
   cy.get('#NAME')
     .clear()
     .type(name);
+});
+
+When('user selects {string} card from catalog page', (cardName: string) => {
+  catalogPage.selectCardInCatalog(cardName);
+});
+
+When('user selects {string} helm chart from catalog page', (helmChartName: string) => {
+  catalogPage.selectHelmChartCard(helmChartName);
 });
