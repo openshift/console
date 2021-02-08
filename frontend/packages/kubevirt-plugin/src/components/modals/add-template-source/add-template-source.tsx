@@ -30,7 +30,10 @@ import { BootSourceForm } from '../../create-vm/forms/boot-source-form';
 import { getRootDataVolume } from '../../../k8s/requests/vm/create/simple-create';
 import { ProvisionSource } from '../../../constants/vm/provision-source';
 import { useErrorTranslation } from '../../../hooks/use-error-translation';
-import { CDI_UPLOAD_URL_BUILDER } from '../../cdi-upload-provider/consts';
+import {
+  CDI_UPLOAD_URL_BUILDER,
+  CDI_BIND_REQUESTED_ANNOTATION,
+} from '../../cdi-upload-provider/consts';
 import { uploadErrorMessage } from '../../cdi-upload-provider/upload-pvc-form/upload-pvc-form';
 
 const getAction = (t: TFunction, dataSource: string): string => {
@@ -121,6 +124,7 @@ export const AddTemplateSourceModal: React.FC<ModalComponentProps &
       volumeMode: state.volumeMode?.value,
     })
       .setNamespace(baseImageNamespace)
+      .addAnotation(CDI_BIND_REQUESTED_ANNOTATION, 'true')
       .asResource();
 
     // t('kubevirt-plugin~Could not create Persistent volume claim')
