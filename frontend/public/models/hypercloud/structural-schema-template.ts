@@ -33858,12 +33858,12 @@ metadata:
     description: "PersistentVolumeClaim is a user's request for and claim to a persistent volume",
     properties: {
       apiVersion: {
-        description: 'APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources',
+        description: 'APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources',
         type: ['string', 'null'],
         enum: ['v1'],
       },
       kind: {
-        description: 'Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds',
+        description: 'Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds',
         type: ['string', 'null'],
         enum: ['PersistentVolumeClaim'],
       },
@@ -33871,11 +33871,11 @@ metadata:
         description: 'ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.',
         properties: {
           annotations: {
-            description: 'Annotations is an unstructured key value map stored with a resource that may be set by external tools to store and retrieve arbitrary metadata. They are not queryable and should be preserved when modifying objects. More info: http://kubernetes.io/docs/user-guide/annotations',
-            type: 'object',
             additionalProperties: {
               type: ['string', 'null'],
             },
+            description: 'Annotations is an unstructured key value map stored with a resource that may be set by external tools to store and retrieve arbitrary metadata. They are not queryable and should be preserved when modifying objects. More info: http://kubernetes.io/docs/user-guide/annotations',
+            type: ['object', 'null'],
           },
           clusterName: {
             description: 'The name of the cluster which the object belongs to. This is used to distinguish resources with same name and namespace in different clusters. This field is not set anywhere right now and apiserver is going to ignore it if set in create or update request.',
@@ -33883,175 +33883,80 @@ metadata:
           },
           creationTimestamp: {
             description: 'Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.',
-            type: ['string', 'null'],
             format: 'date-time',
+            type: ['string', 'null'],
           },
           deletionGracePeriodSeconds: {
             description: 'Number of seconds allowed for this object to gracefully terminate before it will be removed from the system. Only set when deletionTimestamp is also set. May only be shortened. Read-only.',
-            type: 'integer',
             format: 'int64',
+            type: ['integer', 'null'],
           },
           deletionTimestamp: {
             description: 'Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.',
-            type: ['string', 'null'],
             format: 'date-time',
+            type: ['string', 'null'],
           },
           finalizers: {
-            description: 'Must be empty before the object is deleted from the registry. Each entry is an identifier for the responsible component that will remove the entry from the list. If the deletionTimestamp of the object is non-nil, entries in this list can only be removed.',
-            type: ['array', 'null'],
+            description:
+              'Must be empty before the object is deleted from the registry. Each entry is an identifier for the responsible component that will remove the entry from the list. If the deletionTimestamp of the object is non-nil, entries in this list can only be removed. Finalizers may be processed and removed in any order.  Order is NOT enforced because it introduces significant risk of stuck finalizers. finalizers is a shared field, any actor with permission can reorder it. If the finalizer list is processed in order, then this can lead to a situation in which the component responsible for the first finalizer in the list is waiting for a signal (field value, external system, or other) produced by a component responsible for a finalizer later in the list, resulting in a deadlock. Without enforced ordering finalizers are free to order amongst themselves and are not vulnerable to ordering changes in the list.',
             items: {
               type: ['string', 'null'],
             },
+            type: ['array', 'null'],
             'x-kubernetes-patch-strategy': 'merge',
           },
           generateName: {
             description:
-              'GenerateName is an optional prefix, used by the server, to generate a unique name ONLY IF the Name field has not been provided. If this field is used, the name returned to the client will be different than the name passed. This value will also be combined with a unique suffix. The provided value has the same validation rules as the Name field, and may be truncated by the length of the suffix required to make the value unique on the server.\n\nIf this field is specified and the generated name exists, the server will NOT return a 409 - instead, it will either return 201 Created or 500 with Reason ServerTimeout indicating a unique name could not be found in the time allotted, and the client should retry (optionally after the time indicated in the Retry-After header).\n\nApplied only if Name is not specified. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#idempotency',
+              'GenerateName is an optional prefix, used by the server, to generate a unique name ONLY IF the Name field has not been provided. If this field is used, the name returned to the client will be different than the name passed. This value will also be combined with a unique suffix. The provided value has the same validation rules as the Name field, and may be truncated by the length of the suffix required to make the value unique on the server.\n\nIf this field is specified and the generated name exists, the server will NOT return a 409 - instead, it will either return 201 Created or 500 with Reason ServerTimeout indicating a unique name could not be found in the time allotted, and the client should retry (optionally after the time indicated in the Retry-After header).\n\nApplied only if Name is not specified. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#idempotency',
             type: ['string', 'null'],
           },
           generation: {
             description: 'A sequence number representing a specific generation of the desired state. Populated by the system. Read-only.',
-            type: 'integer',
             format: 'int64',
-          },
-          initializers: {
-            description: 'Initializers tracks the progress of initialization.',
-            required: ['pending'],
-            properties: {
-              pending: {
-                description: 'Pending is a list of initializers that must execute in order before this object is visible. When the last pending initializer is removed, and no failing result is set, the initializers struct will be set to nil and the object is considered as initialized and visible to all clients.',
-                type: 'array',
-                items: {
-                  description: 'Initializer is information about an initializer that has not yet completed.',
-                  required: ['name'],
-                  properties: {
-                    name: {
-                      description: 'name of the process that is responsible for initializing this object.',
-                      type: 'string',
-                    },
-                  },
-                  additionalProperties: false,
-                },
-                'x-kubernetes-patch-merge-key': 'name',
-                'x-kubernetes-patch-strategy': 'merge',
-              },
-              result: {
-                description: "Status is a return value for calls that don't return other objects.",
-                properties: {
-                  apiVersion: {
-                    description: 'APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources',
-                    type: ['string', 'null'],
-                    enum: ['v1'],
-                  },
-                  code: {
-                    description: 'Suggested HTTP return code for this status, 0 if not set.',
-                    type: 'integer',
-                    format: 'int32',
-                  },
-                  details: {
-                    description: 'StatusDetails is a set of additional properties that MAY be set by the server to provide additional information about a response. The Reason field of a Status object defines what attributes will be set. Clients must ignore fields that do not match the defined type of each attribute, and should assume that any attribute may be empty, invalid, or under defined.',
-                    properties: {
-                      causes: {
-                        description: 'The Causes array includes more details associated with the StatusReason failure. Not all StatusReasons may provide detailed causes.',
-                        type: ['array', 'null'],
-                        items: {
-                          description: 'StatusCause provides more information about an api.Status failure, including cases when multiple errors are encountered.',
-                          properties: {
-                            field: {
-                              description: 'The field of the resource that has caused this error, as named by its JSON serialization. May include dot and postfix notation for nested attributes. Arrays are zero-indexed.  Fields may appear more than once in an array of causes due to fields having multiple errors. Optional.\n\nExamples:\n  "name" - the field "name" on the current resource\n  "items[0].name" - the field "name" on the first array entry in "items"',
-                              type: ['string', 'null'],
-                            },
-                            message: {
-                              description: 'A human-readable description of the cause of the error.  This field may be presented as-is to a reader.',
-                              type: ['string', 'null'],
-                            },
-                            reason: {
-                              description: 'A machine-readable description of the cause of the error. If this value is empty there is no information available.',
-                              type: ['string', 'null'],
-                            },
-                          },
-                          additionalProperties: false,
-                        },
-                      },
-                      group: {
-                        description: 'The group attribute of the resource associated with the status StatusReason.',
-                        type: ['string', 'null'],
-                      },
-                      kind: {
-                        description: 'The kind attribute of the resource associated with the status StatusReason. On some operations may differ from the requested resource Kind. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds',
-                        type: ['string', 'null'],
-                      },
-                      name: {
-                        description: 'The name attribute of the resource associated with the status StatusReason (when there is a single name which can be described).',
-                        type: ['string', 'null'],
-                      },
-                      retryAfterSeconds: {
-                        description: 'If specified, the time in seconds before the operation should be retried. Some errors may indicate the client must take an alternate action - for those errors this field may indicate how long to wait before taking the alternate action.',
-                        type: 'integer',
-                        format: 'int32',
-                      },
-                      uid: {
-                        description: 'UID of the resource. (when there is a single resource which can be described). More info: http://kubernetes.io/docs/user-guide/identifiers#uids',
-                        type: ['string', 'null'],
-                      },
-                    },
-                    additionalProperties: false,
-                  },
-                  kind: {
-                    description: 'Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds',
-                    type: ['string', 'null'],
-                    enum: ['Status'],
-                  },
-                  message: {
-                    description: 'A human-readable description of the status of this operation.',
-                    type: ['string', 'null'],
-                  },
-                  metadata: {
-                    description: 'ListMeta describes metadata that synthetic resources must have, including lists and various status objects. A resource may have only one of {ObjectMeta, ListMeta}.',
-                    properties: {
-                      continue: {
-                        description:
-                          'continue may be set if the user set a limit on the number of items returned, and indicates that the server has more data available. The value is opaque and may be used to issue another request to the endpoint that served this list to retrieve the next set of available objects. Continuing a list may not be possible if the server configuration has changed or more than a few minutes have passed. The resourceVersion field returned when using this continue value will be identical to the value in the first response.',
-                        type: ['string', 'null'],
-                      },
-                      resourceVersion: {
-                        description: "String that identifies the server's internal version of this object that can be used by clients to determine when objects have changed. Value must be treated as opaque by clients and passed unmodified back to the server. Populated by the system. Read-only. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#concurrency-control-and-consistency",
-                        type: ['string', 'null'],
-                      },
-                      selfLink: {
-                        description: 'selfLink is a URL representing this object. Populated by the system. Read-only.',
-                        type: ['string', 'null'],
-                      },
-                    },
-                    additionalProperties: false,
-                  },
-                  reason: {
-                    description: 'A machine-readable description of why this operation is in the "Failure" status. If this value is empty there is no information available. A Reason clarifies an HTTP status code but does not override it.',
-                    type: ['string', 'null'],
-                  },
-                  status: {
-                    description: 'Status of the operation. One of: "Success" or "Failure". More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status',
-                    type: ['string', 'null'],
-                  },
-                },
-                'x-kubernetes-group-version-kind': [
-                  {
-                    group: '',
-                    kind: 'Status',
-                    version: 'v1',
-                  },
-                ],
-                additionalProperties: false,
-              },
-            },
-            additionalProperties: false,
+            type: ['integer', 'null'],
           },
           labels: {
-            description: 'Map of string keys and values that can be used to organize and categorize (scope and select) objects. May match selectors of replication controllers and services. More info: http://kubernetes.io/docs/user-guide/labels',
-            type: 'object',
             additionalProperties: {
               type: ['string', 'null'],
             },
+            description: 'Map of string keys and values that can be used to organize and categorize (scope and select) objects. May match selectors of replication controllers and services. More info: http://kubernetes.io/docs/user-guide/labels',
+            type: ['object', 'null'],
+          },
+          managedFields: {
+            description: "ManagedFields maps workflow-id and version to the set of fields that are managed by that workflow. This is mostly for internal housekeeping, and users typically shouldn't need to set or understand this field. A workflow can be the user's name, a controller's name, or the name of a specific apply path like \"ci-cd\". The set of fields is always in the version that the workflow used when modifying the object.",
+            items: {
+              description: 'ManagedFieldsEntry is a workflow-id, a FieldSet and the group version of the resource that the fieldset applies to.',
+              properties: {
+                apiVersion: {
+                  description: 'APIVersion defines the version of this resource that this field set applies to. The format is "group/version" just like the top-level APIVersion field. It is necessary to track the version of a field set because it cannot be automatically converted.',
+                  type: ['string', 'null'],
+                },
+                fieldsType: {
+                  description: 'FieldsType is the discriminator for the different fields format and version. There is currently only one possible value: "FieldsV1"',
+                  type: ['string', 'null'],
+                },
+                fieldsV1: {
+                  description:
+                    "FieldsV1 stores a set of fields in a data structure like a Trie, in JSON format.\n\nEach key is either a '.' representing the field itself, and will always map to an empty set, or a string representing a sub-field or item. The string will follow one of these four formats: 'f:<name>', where <name> is the name of a field in a struct, or key in a map 'v:<value>', where <value> is the exact json formatted value of a list item 'i:<index>', where <index> is position of a item in a list 'k:<keys>', where <keys> is a map of  a list item's key fields to their unique values If a key maps to an empty Fields value, the field that key represents is part of the set.\n\nThe exact format is defined in sigs.k8s.io/structured-merge-diff",
+                  type: ['object', 'null'],
+                },
+                manager: {
+                  description: 'Manager is an identifier of the workflow managing these fields.',
+                  type: ['string', 'null'],
+                },
+                operation: {
+                  description: "Operation is the type of operation which lead to this ManagedFieldsEntry being created. The only valid values for this field are 'Apply' and 'Update'.",
+                  type: ['string', 'null'],
+                },
+                time: {
+                  description: 'Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.',
+                  format: 'date-time',
+                  type: ['string', 'null'],
+                },
+              },
+              type: ['object', 'null'],
+            },
+            type: ['array', 'null'],
           },
           name: {
             description: 'Name must be unique within a namespace. Is required when creating resources, although some resources may allow a client to request the generation of an appropriate name automatically. Name is primarily intended for creation idempotence and configuration definition. Cannot be updated. More info: http://kubernetes.io/docs/user-guide/identifiers#names',
@@ -34063,10 +33968,8 @@ metadata:
           },
           ownerReferences: {
             description: 'List of objects depended by this object. If ALL objects in the list have been deleted, this object will be garbage collected. If this object is managed by a controller, then an entry in this list will point to this controller, with the controller field set to true. There cannot be more than one managing controller.',
-            type: ['array', 'null'],
             items: {
-              description: 'OwnerReference contains enough information to let you identify an owning object. Currently, an owning object must be in the same namespace, so there is no namespace field.',
-              required: ['apiVersion', 'kind', 'name', 'uid'],
+              description: 'OwnerReference contains enough information to let you identify an owning object. An owning object must be in the same namespace as the dependent, or be cluster-scoped, so there is no namespace field.',
               properties: {
                 apiVersion: {
                   description: 'API version of the referent.',
@@ -34074,14 +33977,14 @@ metadata:
                 },
                 blockOwnerDeletion: {
                   description: 'If true, AND if the owner has the "foregroundDeletion" finalizer, then the owner cannot be deleted from the key-value store until this reference is removed. Defaults to false. To set this field, a user needs "delete" permission of the owner, otherwise 422 (Unprocessable Entity) will be returned.',
-                  type: 'boolean',
+                  type: ['boolean', 'null'],
                 },
                 controller: {
                   description: 'If true, this reference points to the managing controller.',
-                  type: 'boolean',
+                  type: ['boolean', 'null'],
                 },
                 kind: {
-                  description: 'Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds',
+                  description: 'Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds',
                   type: 'string',
                 },
                 name: {
@@ -34093,18 +33996,20 @@ metadata:
                   type: 'string',
                 },
               },
-              additionalProperties: false,
+              required: ['apiVersion', 'kind', 'name', 'uid'],
+              type: ['object', 'null'],
             },
+            type: ['array', 'null'],
             'x-kubernetes-patch-merge-key': 'uid',
             'x-kubernetes-patch-strategy': 'merge',
           },
           resourceVersion: {
             description:
-              'An opaque value that represents the internal version of this object that can be used by clients to determine when objects have changed. May be used for optimistic concurrency, change detection, and the watch operation on a resource or set of resources. Clients must treat these values as opaque and passed unmodified back to the server. They may only be valid for a particular resource or set of resources.\n\nPopulated by the system. Read-only. Value must be treated as opaque by clients and . More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#concurrency-control-and-consistency',
+              'An opaque value that represents the internal version of this object that can be used by clients to determine when objects have changed. May be used for optimistic concurrency, change detection, and the watch operation on a resource or set of resources. Clients must treat these values as opaque and passed unmodified back to the server. They may only be valid for a particular resource or set of resources.\n\nPopulated by the system. Read-only. Value must be treated as opaque by clients and . More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#concurrency-control-and-consistency',
             type: ['string', 'null'],
           },
           selfLink: {
-            description: 'SelfLink is a URL representing this object. Populated by the system. Read-only.',
+            description: 'SelfLink is a URL representing this object. Populated by the system. Read-only.\n\nDEPRECATED Kubernetes will stop propagating this field in 1.20 release and the field is planned to be removed in 1.21 release.',
             type: ['string', 'null'],
           },
           uid: {
@@ -34112,61 +34017,75 @@ metadata:
             type: ['string', 'null'],
           },
         },
-        additionalProperties: false,
+        type: ['object', 'null'],
       },
       spec: {
         description: 'PersistentVolumeClaimSpec describes the common attributes of storage devices and allows a Source for provider-specific attributes',
         properties: {
           accessModes: {
             description: 'AccessModes contains the desired access modes the volume should have. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#access-modes-1',
-            type: ['array', 'null'],
             items: {
               type: ['string', 'null'],
+              enum: ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'],
             },
+            type: ['array', 'null'],
+          },
+          dataSource: {
+            description: 'TypedLocalObjectReference contains enough information to let you locate the typed referenced object inside the same namespace.',
+            properties: {
+              apiGroup: {
+                description: 'APIGroup is the group for the resource being referenced. If APIGroup is not specified, the specified Kind must be in the core API group. For any other third-party types, APIGroup is required.',
+                type: ['string', 'null'],
+              },
+              kind: {
+                description: 'Kind is the type of resource being referenced',
+                type: 'string',
+              },
+              name: {
+                description: 'Name is the name of resource being referenced',
+                type: 'string',
+              },
+            },
+            required: ['kind', 'name'],
+            type: ['object', 'null'],
           },
           resources: {
-            description: 'ResourceRequirements describes the compute resource requirements.',
+            description: 'Resources represents the minimum resources the volume should have. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#resources',
             properties: {
               limits: {
-                description: 'Limits describes the maximum amount of compute resources allowed. More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/',
-                type: 'object',
-                additionalProperties: {
-                  oneOf: [
-                    {
-                      type: ['string', 'null'],
-                    },
-                    {
-                      type: 'integer',
-                    },
-                  ],
+                properties: {
+                  storage: {
+                    type: ['string', 'null'],
+                  },
+                  'ephemeral-storage': {
+                    type: ['string', 'null'],
+                  },
                 },
+                description: 'Limits describes the maximum amount of compute resources allowed. More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/',
+                type: ['object', 'null'],
               },
               requests: {
-                description: 'Requests describes the minimum amount of compute resources required. If Requests is omitted for a container, it defaults to Limits if that is explicitly specified, otherwise to an implementation-defined value. More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/',
-                type: 'object',
-                additionalProperties: {
-                  oneOf: [
-                    {
-                      type: ['string', 'null'],
-                    },
-                    {
-                      type: 'integer',
-                    },
-                  ],
+                properties: {
+                  storage: {
+                    type: ['string', 'null'],
+                  },
+                  'ephemeral-storage': {
+                    type: ['string', 'null'],
+                  },
                 },
+                description: 'Requests describes the minimum amount of compute resources required. If Requests is omitted for a container, it defaults to Limits if that is explicitly specified, otherwise to an implementation-defined value. More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/',
+                type: ['object', 'null'],
               },
             },
-            additionalProperties: false,
+            type: ['object', 'null'],
           },
           selector: {
             description: 'A label selector is a label query over a set of resources. The result of matchLabels and matchExpressions are ANDed. An empty label selector matches all objects. A null label selector matches no objects.',
             properties: {
               matchExpressions: {
                 description: 'matchExpressions is a list of label selector requirements. The requirements are ANDed.',
-                type: ['array', 'null'],
                 items: {
                   description: 'A label selector requirement is a selector that contains values, a key, and an operator that relates the key and values.',
-                  required: ['key', 'operator'],
                   properties: {
                     key: {
                       description: 'key is the label key that the selector applies to.',
@@ -34180,31 +34099,33 @@ metadata:
                     },
                     values: {
                       description: 'values is an array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. This array is replaced during a strategic merge patch.',
-                      type: ['array', 'null'],
                       items: {
                         type: ['string', 'null'],
                       },
+                      type: ['array', 'null'],
                     },
                   },
-                  additionalProperties: false,
+                  required: ['key', 'operator'],
+                  type: ['object', 'null'],
                 },
+                type: ['array', 'null'],
               },
               matchLabels: {
-                description: 'matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, whose key field is "key", the operator is "In", and the values array contains only "value". The requirements are ANDed.',
-                type: 'object',
                 additionalProperties: {
                   type: ['string', 'null'],
                 },
+                description: 'matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, whose key field is "key", the operator is "In", and the values array contains only "value". The requirements are ANDed.',
+                type: ['object', 'null'],
               },
             },
-            additionalProperties: false,
+            type: ['object', 'null'],
           },
           storageClassName: {
             description: 'Name of the StorageClass required by the claim. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#class-1',
             type: ['string', 'null'],
           },
           volumeMode: {
-            description: 'volumeMode defines what type of volume is required by the claim. Value of Filesystem is implied when not included in claim spec. This is an alpha feature and may change in the future.',
+            description: 'volumeMode defines what type of volume is required by the claim. Value of Filesystem is implied when not included in claim spec.',
             type: ['string', 'null'],
           },
           volumeName: {
@@ -34212,48 +34133,46 @@ metadata:
             type: ['string', 'null'],
           },
         },
-        additionalProperties: false,
+        type: ['object', 'null'],
       },
       status: {
         description: 'PersistentVolumeClaimStatus is the current status of a persistent volume claim.',
         properties: {
           accessModes: {
             description: 'AccessModes contains the actual access modes the volume backing the PVC has. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#access-modes-1',
-            type: ['array', 'null'],
             items: {
               type: ['string', 'null'],
             },
+            type: ['array', 'null'],
           },
           capacity: {
-            description: 'Represents the actual resources of the underlying volume.',
-            type: 'object',
             additionalProperties: {
               oneOf: [
                 {
                   type: ['string', 'null'],
                 },
                 {
-                  type: 'integer',
+                  type: ['number', 'null'],
                 },
               ],
             },
+            description: 'Represents the actual resources of the underlying volume.',
+            type: ['object', 'null'],
           },
           conditions: {
             description: "Current Condition of persistent volume claim. If underlying persistent volume is being resized then the Condition will be set to 'ResizeStarted'.",
-            type: ['array', 'null'],
             items: {
               description: 'PersistentVolumeClaimCondition contails details about state of pvc',
-              required: ['type', 'status'],
               properties: {
                 lastProbeTime: {
                   description: 'Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.',
-                  type: ['string', 'null'],
                   format: 'date-time',
+                  type: ['string', 'null'],
                 },
                 lastTransitionTime: {
                   description: 'Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.',
-                  type: ['string', 'null'],
                   format: 'date-time',
+                  type: ['string', 'null'],
                 },
                 message: {
                   description: 'Human-readable message indicating details about last transition.',
@@ -34270,8 +34189,10 @@ metadata:
                   type: 'string',
                 },
               },
-              additionalProperties: false,
+              required: ['type', 'status'],
+              type: ['object', 'null'],
             },
+            type: ['array', 'null'],
             'x-kubernetes-patch-merge-key': 'type',
             'x-kubernetes-patch-strategy': 'merge',
           },
@@ -34280,9 +34201,10 @@ metadata:
             type: ['string', 'null'],
           },
         },
-        additionalProperties: false,
+        type: ['object', 'null'],
       },
     },
+    type: 'object',
     'x-kubernetes-group-version-kind': [
       {
         group: '',
@@ -34290,9 +34212,7 @@ metadata:
         version: 'v1',
       },
     ],
-    additionalProperties: false,
     $schema: 'http://json-schema.org/schema#',
-    type: 'object',
   })
   .setIn([referenceForModel(k8sModels.PersistentVolumeModel), 'default'], {
     description: 'PersistentVolume (PV) is a storage resource provisioned by an administrator. It is analogous to a node. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes',
