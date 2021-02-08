@@ -34,7 +34,7 @@ type OwnProps = {
 type TopologyHelmReleasePanelProps = PropsFromState & PropsFromDispatch & OwnProps;
 
 const DetailsComponent: React.FC<any> = ({ obj }) => {
-  const { host } = obj.status.boostrapServer;
+  const host = obj.status?.boostrapServer?.host || "";
 
   return (
     <div className="co-m-pane__body">
@@ -53,8 +53,8 @@ const DetailsComponent: React.FC<any> = ({ obj }) => {
 
 const ResourcesComponent = ({ obj }) => {
   // TO DO Add correct secret
-  const secret = obj.status.serviceAccountSecretName;
-  return <div className="overview__sidebar-pane-body">{secret}</div>;
+  // const secret = obj.status.serviceAccountSecretName;
+  return <div className="overview__sidebar-pane-body">Secret</div>;
 };
 
 export const ConnectedTopologyHelmReleasePanel: React.FC<TopologyHelmReleasePanelProps> = ({

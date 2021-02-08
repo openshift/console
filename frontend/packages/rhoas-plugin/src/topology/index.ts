@@ -5,5 +5,5 @@ export const getRhoasTopologyDataModel = () =>
 
 export const getRhoasComponentFactory = () =>
   import(
-    './components/RhoasComponentFactory' /* webpackChunkName: "rhoas-topology-components" */
+    './components/rhoasComponentFactory' /* webpackChunkName: "rhoas-topology-components" */
   ).then((m) => m.getRhoasComponentFactory());
