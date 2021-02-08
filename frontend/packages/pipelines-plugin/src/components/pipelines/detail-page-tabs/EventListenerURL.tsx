@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { ExternalLink } from '@console/internal/components/utils';
+import { ClipboardCopy } from '@patternfly/react-core';
 import { EventListenerKind } from '../resource-types';
 import { useEventListenerURL } from '../utils/triggers';
 
@@ -20,7 +20,7 @@ const EventListenerURL: React.FC<EventListenerURLProps> = ({ eventListener, name
         <dl>
           <dt>{t('pipelines-plugin~URL')}</dt>
           <dd>
-            <ExternalLink href={routeURL} text={routeURL} />
+            <ClipboardCopy isReadOnly>{routeURL}</ClipboardCopy>
           </dd>
         </dl>
       </div>
