@@ -1,7 +1,7 @@
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { PipelineRunModel, PipelineModel } from '../models';
-import { Pipeline, PipelineRun } from './pipeline-augment';
+import { PipelineKind, PipelineRunKind } from '../types';
 
 // label to get the pipelines
 export const INSTANCE_LABEL = 'app.kubernetes.io/instance';
@@ -26,8 +26,8 @@ export const tknPipelineAndPipelineRunsWatchResources = (
 };
 
 type PipelineItem = {
-  pipelines: Pipeline[];
-  pipelineRuns: PipelineRun[];
+  pipelines: PipelineKind[];
+  pipelineRuns: PipelineRunKind[];
 };
 
 const byCreationTime = (left: K8sResourceKind, right: K8sResourceKind): number => {
@@ -36,13 +36,13 @@ const byCreationTime = (left: K8sResourceKind, right: K8sResourceKind): number =
   return rightCreationTime.getTime() - leftCreationTime.getTime();
 };
 
-const getPipelineRunsForPipeline = (pipeline: Pipeline, props): PipelineRun[] => {
+const getPipelineRunsForPipeline = (pipeline: PipelineKind, props): PipelineRunKind[] => {
   if (!props || !props.pipelineRuns) return null;
   const pipelineRunsData = props.pipelineRuns.data;
   const PIPELINE_RUN_LABEL = 'tekton.dev/pipeline';
   const pipelineName = pipeline.metadata.name;
   return pipelineRunsData
-    .filter((pr: PipelineRun) => {
+    .filter((pr: PipelineRunKind) => {
       return (
         pipelineName === (pr.spec?.pipelineRef?.name || pr?.metadata?.labels?.[PIPELINE_RUN_LABEL])
       );

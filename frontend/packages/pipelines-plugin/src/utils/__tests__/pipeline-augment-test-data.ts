@@ -26,6 +26,7 @@ export const testData: PipelineAugmentData[] = [
             apiVersion: 'abhiapi/v1',
             kind: 'PipelineRun',
             metadata: { name: 'apple-1-run1', creationTimestamp: '21-05-2019' },
+            spec: {},
             status: {
               pipelineSpec: { tasks: [] },
               conditions: [{ type: 'Succeeded', status: 'True' }],
@@ -67,6 +68,7 @@ export const testData: PipelineAugmentData[] = [
                 '/apis/tekton.dev/v1alpha1/namespaces/tekton-pipelines/pipelines/simple-pipeline',
               uid: '7f06aeb0-838f-11e9-8282-525400bab8f1',
             },
+            spec: {},
           },
           {
             apiVersion: 'tekton.dev/v1alpha1',
@@ -81,6 +83,7 @@ export const testData: PipelineAugmentData[] = [
                 '/apis/tekton.dev/v1alpha1/namespaces/tekton-pipelines/pipelines/voting-deploy-pipeline',
               uid: '7f07d2c1-838f-11e9-8282-525400bab8f1',
             },
+            spec: {},
           },
         ],
       },
@@ -90,6 +93,7 @@ export const testData: PipelineAugmentData[] = [
             apiVersion: 'abhiapi/v1',
             kind: 'PipelineRun',
             metadata: { name: 'apple-2-run1', creationTimestamp: '31-04-2019' },
+            spec: {},
             status: {
               pipelineSpec: { tasks: [] },
               conditions: [{ type: 'Succeeded', status: 'True' }],

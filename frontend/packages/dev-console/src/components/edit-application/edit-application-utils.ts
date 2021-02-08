@@ -9,7 +9,7 @@ import { BuildStrategyType } from '@console/internal/components/build';
 import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models';
 import { hasIcon } from '@console/internal/components/catalog/catalog-item-icon';
 import { ServiceModel } from '@console/knative-plugin';
-import { Pipeline } from '@console/pipelines-plugin/src/utils/pipeline-augment';
+import { PipelineKind } from '@console/pipelines-plugin/src/types';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import { Resources, DeploymentData, GitReadableTypes } from '../import/import-types';
 import { AppResources } from './edit-application-types';
@@ -74,7 +74,7 @@ export const getGitDataFromBuildConfig = (buildConfig: K8sResourceKind) => {
   return gitData;
 };
 
-const getGitDataFromPipeline = (pipeline: Pipeline) => {
+const getGitDataFromPipeline = (pipeline: PipelineKind) => {
   const params = pipeline?.spec?.params;
   const url = (params?.find((param) => param?.name === 'GIT_REPO')?.default ?? '') as string;
   const ref = params?.find((param) => param?.name === 'GIT_REVISION')?.default ?? '';
@@ -127,7 +127,11 @@ export const getRouteData = (route: K8sResourceKind, resource: K8sResourceKind) 
   return routeData;
 };
 
-export const getBuildData = (buildConfig: K8sResourceKind, pipeline: Pipeline, gitType: string) => {
+export const getBuildData = (
+  buildConfig: K8sResourceKind,
+  pipeline: PipelineKind,
+  gitType: string,
+) => {
   const buildStrategyType = _.get(buildConfig, 'spec.strategy.type', '');
   let buildStrategyData;
   switch (buildStrategyType) {
@@ -274,7 +278,7 @@ export const getUserLabels = (resource: K8sResourceKind) => {
 export const getCommonInitialValues = (
   editAppResource: K8sResourceKind,
   route: K8sResourceKind,
-  pipelineData: Pipeline,
+  pipelineData: PipelineKind,
   name: string,
   namespace: string,
 ) => {
@@ -313,7 +317,7 @@ export const getIconInitialValues = (editAppResource: K8sResourceKind) => {
 
 export const getGitAndDockerfileInitialValues = (
   buildConfig: K8sResourceKind,
-  pipeline: Pipeline,
+  pipeline: PipelineKind,
 ) => {
   if (_.isEmpty(buildConfig) && _.isEmpty(pipeline)) {
     return {};

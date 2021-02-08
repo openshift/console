@@ -6,7 +6,7 @@ import DashboardCardBody from '@console/shared/src/components/dashboard/dashboar
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import { parsePrometheusDuration } from '@console/internal/components/utils/datetime';
-import { Pipeline } from '../../../utils/pipeline-augment';
+import { PipelineKind } from '../../../types';
 import PipelineMetricsTimeRangeDropdown from './PipelineMetricsTimeRangeDropdown';
 import PipelineMetricsRefreshDropdown from './PipelineMetricsRefreshDropdown';
 import PipelineMetricsEmptyState from './PipelineMetricsEmptyState';
@@ -20,7 +20,7 @@ import { useLatestPipelineRun } from '../hooks';
 import './PipelineMetrics.scss';
 
 interface PipelineMeticsProps {
-  obj: Pipeline;
+  obj: PipelineKind;
 }
 
 const PipelineMetrics: React.FC<PipelineMeticsProps> = ({ obj }) => {

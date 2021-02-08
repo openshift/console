@@ -1,12 +1,12 @@
 import * as _ from 'lodash';
 import { pipelineParameters, pipelineParametersWithoutDefaults } from './utils-data';
-import { PipelineParam } from '../../../../utils/pipeline-augment';
+import { TektonParam } from '../../../../types';
 import { removeEmptyDefaultFromPipelineParams } from '../utils';
 
 describe('removeEmptyDefaultFromPipelineParams omits empty default values', () => {
   it('should return pipline parameters by only omitting empty default values', () => {
     const result = removeEmptyDefaultFromPipelineParams(pipelineParameters);
-    const expectedPipelineParameters: PipelineParam[] = [
+    const expectedPipelineParameters: TektonParam[] = [
       {
         name: 'param1',
         default: 'abc',

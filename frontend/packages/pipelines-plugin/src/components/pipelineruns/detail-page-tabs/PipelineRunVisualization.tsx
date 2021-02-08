@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { LoadingInline } from '@console/internal/components/utils';
 import PipelineVisualization from '../../pipelines/detail-page-tabs/pipeline-details/PipelineVisualization';
-import { PipelineRun, getPipelineFromPipelineRun } from '../../../utils/pipeline-augment';
+import { PipelineRunKind } from '../../../types';
+import { getPipelineFromPipelineRun } from '../../../utils/pipeline-augment';
 
 import './PipelineRunVisualization.scss';
 
 type PipelineRunVisualizationProps = {
-  pipelineRun: PipelineRun;
+  pipelineRun: PipelineRunKind;
 };
 
 const PipelineRunVisualization: React.FC<PipelineRunVisualizationProps> = ({ pipelineRun }) => {

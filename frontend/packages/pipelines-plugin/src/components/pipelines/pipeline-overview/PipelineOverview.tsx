@@ -11,19 +11,19 @@ import {
 import { referenceForModel } from '@console/internal/module/k8s';
 import { OverviewItem } from '@console/shared';
 import { PipelineRunModel, PipelineModel } from '../../../models';
+import { PipelineKind, PipelineRunKind } from '../../../types';
 import TriggerLastRunButton from './TriggerLastRunButton';
 import PipelineRunItem from './PipelineRunItem';
 import PipelineStartButton from './PipelineStartButton';
 import { isPipelineNotStarted, removePipelineNotStarted } from './pipeline-overview-utils';
 import PipelineOverviewAlert from './PipelineOverviewAlert';
-import { Pipeline, PipelineRun } from '../../../utils/pipeline-augment';
 
 const MAX_VISIBLE = 3;
 
 type PipelinesOverviewProps = {
   item: OverviewItem & {
-    pipelines?: Pipeline[];
-    pipelineRuns?: PipelineRun[];
+    pipelines?: PipelineKind[];
+    pipelineRuns?: PipelineRunKind[];
   };
 };
 

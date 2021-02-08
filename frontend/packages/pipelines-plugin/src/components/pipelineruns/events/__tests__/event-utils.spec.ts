@@ -6,7 +6,7 @@ import {
   PipelineExampleNames,
   pipelineTestData,
 } from '../../../../test-data/pipeline-data';
-import { PipelineRun } from '../../../../utils/pipeline-augment';
+import { PipelineRunKind } from '../../../../types';
 import * as eventUtils from '../event-utils';
 
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
@@ -14,7 +14,7 @@ jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
 }));
 
 const pipeline = pipelineTestData[PipelineExampleNames.WORKSPACE_PIPELINE];
-const pipelineRun: PipelineRun = pipeline.pipelineRuns[DataState.SUCCESS];
+const pipelineRun: PipelineRunKind = pipeline.pipelineRuns[DataState.SUCCESS];
 const {
   metadata: { namespace },
 } = pipelineRun;

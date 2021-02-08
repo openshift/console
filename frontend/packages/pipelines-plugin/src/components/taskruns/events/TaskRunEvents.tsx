@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { match as RMatch } from 'react-router';
 import { ResourcesEventStream } from '@console/internal/components/events';
-import { TaskRunKind } from '../../../utils/pipeline-augment';
+import { TaskRunKind } from '../../../types';
 import { useTaskRunFilters } from '../../pipelineruns/events/event-utils';
 
 type TaskRunEventsProps = {

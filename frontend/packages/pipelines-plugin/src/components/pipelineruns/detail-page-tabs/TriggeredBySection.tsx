@@ -3,11 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { ResourceLink } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { EventListenerModel } from '../../../models';
-import { PipelineRun } from '../../../utils/pipeline-augment';
+import { PipelineRunKind } from '../../../types';
 import { StartedByAnnotation, StartedByLabel } from '../../pipelines/const';
 
 type TriggeredByProps = {
-  pipelineRun: PipelineRun;
+  pipelineRun: PipelineRunKind;
 };
 
 const TriggeredBySection: React.FC<TriggeredByProps> = (props) => {

@@ -14,10 +14,11 @@ import { PrometheusResponse } from '@console/internal/components/graphs';
 import { getPrometheusURL, PrometheusEndpoint } from '@console/internal/components/graphs/helpers';
 import { useURLPoll } from '@console/internal/components/utils/url-poll-hook';
 import { metricQueries, PipelineQuery } from './pipeline-metrics/pipeline-metrics-utils';
-import { pipelinesTab } from '../../utils/pipeline-utils';
-import { PipelineRun, getLatestRun } from '../../utils/pipeline-augment';
-import { DEFAULT_SAMPLES, TektonResourceLabel } from './const';
 import { PipelineRunModel } from '../../models';
+import { PipelineRunKind } from '../../types';
+import { getLatestRun } from '../../utils/pipeline-augment';
+import { pipelinesTab } from '../../utils/pipeline-utils';
+import { DEFAULT_SAMPLES, TektonResourceLabel } from './const';
 
 type Match = RMatch<{ url: string }>;
 
@@ -30,7 +31,7 @@ export const useTasksBreadcrumbsFor = (kindObj: K8sKind, match: Match) =>
 export const useTriggersBreadcrumbsFor = (kindObj: K8sKind, match: Match) =>
   useTabbedTableBreadcrumbsFor(kindObj, match, 'triggers', pipelinesTab(kindObj));
 
-export const useLatestPipelineRun = (pipelineName: string, namespace: string): PipelineRun => {
+export const useLatestPipelineRun = (pipelineName: string, namespace: string): PipelineRunKind => {
   const pipelineRunResource: WatchK8sResource = {
     kind: referenceForModel(PipelineRunModel),
     namespace,
@@ -40,7 +41,7 @@ export const useLatestPipelineRun = (pipelineName: string, namespace: string): P
     optional: true,
     isList: true,
   };
-  const [pipelineRun, pipelineRunLoaded, pipelineRunError] = useK8sWatchResource<PipelineRun[]>(
+  const [pipelineRun, pipelineRunLoaded, pipelineRunError] = useK8sWatchResource<PipelineRunKind[]>(
     pipelineRunResource,
   );
   const latestRun = getLatestRun({ data: pipelineRun }, 'creationTimestamp');

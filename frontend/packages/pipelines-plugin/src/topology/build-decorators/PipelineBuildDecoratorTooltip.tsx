@@ -1,17 +1,13 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  getRunStatusColor,
-  getTaskStatus,
-  PipelineRun,
-  runStatus,
-} from '../../utils/pipeline-augment';
+import { PipelineRunKind } from '../../types';
+import { getRunStatusColor, getTaskStatus, runStatus } from '../../utils/pipeline-augment';
 import HorizontalStackedBars from '../../components/charts/HorizontalStackedBars';
 import TaskStatusToolTip from '../../components/pipelineruns/status/TaskStatusTooltip';
 import './PipelineBuildDecoratorTooltip.scss';
 
 export interface PipelineBuildDecoratorTooltipProps {
-  pipelineRun: PipelineRun;
+  pipelineRun: PipelineRunKind;
   status: string;
 }
 

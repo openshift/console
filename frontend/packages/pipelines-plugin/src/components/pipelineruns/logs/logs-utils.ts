@@ -15,8 +15,8 @@ import {
 import { PodModel } from '@console/internal/models';
 import { coFetchText } from '@console/internal/co-fetch';
 import { errorModal } from '@console/internal/components/modals';
+import { PLRTaskRunData, PLRTaskRuns } from '../../../types';
 import { containerToLogSourceStatus } from '../../../utils/pipeline-utils';
-import { PLRTaskRunData, PLRTaskRuns } from '../../../utils/pipeline-augment';
 
 const getSortedContainerStatus = (
   containers: ContainerSpec[],

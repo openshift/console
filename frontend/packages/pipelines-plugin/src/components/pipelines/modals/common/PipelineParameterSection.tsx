@@ -3,11 +3,11 @@ import { FieldArray } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { TextInputTypes } from '@patternfly/react-core';
 import { InputField } from '@console/shared';
-import { PipelineParam } from '../../../../utils/pipeline-augment';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
+import { TektonParam } from '../../../../types';
 
 type ParametersSectionProps = {
-  parameters: PipelineParam[];
+  parameters: TektonParam[];
 };
 
 const PipelineParameterSection: React.FC<ParametersSectionProps> = ({ parameters }) => {

@@ -9,13 +9,13 @@ import { resourcePathFromModel, useAccessReview } from '@console/internal/compon
 import { BuildDecoratorBubble } from '@console/topology/src/components/graph-view';
 import { impersonateStateToProps } from '@console/internal/reducers/ui';
 import { AccessReviewResourceAttributes } from '@console/internal/module/k8s';
-import { Pipeline, PipelineRun } from '../../utils/pipeline-augment';
+import { PipelineKind, PipelineRunKind } from '../../types';
 import { startPipelineModal } from '../../components/pipelines/modals';
 import { PipelineRunModel } from '../../models';
 
 type PipelineRunDecoratorProps = {
-  pipeline: Pipeline;
-  pipelineRuns: PipelineRun[];
+  pipeline: PipelineKind;
+  pipelineRuns: PipelineRunKind[];
   radius: number;
   x: number;
   y: number;

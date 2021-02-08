@@ -1,8 +1,8 @@
-import { PipelineResourceTaskParam } from '../../../../utils/pipeline-augment';
+import { TektonParam } from '../../../../types';
 import { taskParamIsRequired } from '../utils';
 
 describe('taskParamIsRequired properly detects what is required', () => {
-  const structure: PipelineResourceTaskParam = {
+  const structure: TektonParam = {
     name: 'test-param',
     description: 'some description',
     type: 'string',

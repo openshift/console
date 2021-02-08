@@ -1,4 +1,4 @@
-import { TaskRunKind } from '../../../../utils/pipeline-augment';
+import { TaskRunKind } from '../../../../types';
 
 export const LogSnippetTaskData: TaskRunKind[] = [
   {

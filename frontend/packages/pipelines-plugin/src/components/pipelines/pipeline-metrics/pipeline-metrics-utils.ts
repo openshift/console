@@ -3,15 +3,15 @@ import * as moment from 'moment';
 import { TFunction } from 'i18next';
 import { humanizeNumberSI } from '@console/internal/components/utils';
 import { PrometheusResponse, PrometheusResult } from '@console/internal/components/graphs';
-import { Pipeline } from '../../../utils/pipeline-augment';
 import { parsePrometheusDuration } from '@console/internal/components/utils/datetime';
+import { PipelineKind } from '../../../types';
 
 export interface GraphData {
   chartName: string;
   hasData: boolean;
 }
 export interface PipelineMetricsGraphProps {
-  pipeline: Pipeline;
+  pipeline: PipelineKind;
   timespan: number;
   interval: number;
   width?: number;

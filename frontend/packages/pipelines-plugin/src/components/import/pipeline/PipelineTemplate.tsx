@@ -11,8 +11,8 @@ import { NormalizedBuilderImages } from '@console/dev-console/src/utils/imagestr
 import { ReadableResourcesNames } from '@console/dev-console/src/components/import/import-types';
 import { CLUSTER_PIPELINE_NS, PIPELINE_RUNTIME_LABEL } from '../../../const';
 import { PipelineModel } from '../../../models';
+import { PipelineKind } from '../../../types';
 import PipelineVisualization from '../../pipelines/detail-page-tabs/pipeline-details/PipelineVisualization';
-import { Pipeline } from '../../../utils/pipeline-augment';
 
 const labelType = 'pipeline.openshift.io/type';
 const labelDocker = 'pipeline.openshift.io/strategy';
@@ -36,14 +36,14 @@ const getAlertText = (
 
 type PipelineTemplateProps = {
   builderImages: NormalizedBuilderImages;
-  existingPipeline?: Pipeline;
+  existingPipeline?: PipelineKind;
 };
 
 const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages, existingPipeline }) => {
   const { t } = useTranslation();
   const [noTemplateForRuntime, setNoTemplateForRuntime] = React.useState(false);
   const [isExpanded, setIsExpanded] = React.useState(false);
-  const pipelineStorageRef = React.useRef<{ [image: string]: Pipeline[] }>({});
+  const pipelineStorageRef = React.useRef<{ [image: string]: PipelineKind[] }>({});
 
   const {
     values: { pipeline, image, build, resources },
@@ -62,12 +62,12 @@ const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages, exis
     const labelSelector = isDockerStrategy ? dockerPipelineLabel : builderPipelineLabel;
 
     const fetchPipelineTemplate = async () => {
-      let fetchedPipelines: Pipeline[] = null;
+      let fetchedPipelines: PipelineKind[] = null;
       if (!pipelineStorageRef.current[image.selected]) {
         fetchedPipelines = (await k8sList(PipelineModel, {
           ns: CLUSTER_PIPELINE_NS,
           labelSelector,
-        })) as Pipeline[];
+        })) as PipelineKind[];
       }
 
       if (ignore) return;
@@ -76,7 +76,7 @@ const PipelineTemplate: React.FC<PipelineTemplateProps> = ({ builderImages, exis
         pipelineStorageRef.current[image.selected] = fetchedPipelines;
       }
 
-      const imagePipelines: Pipeline[] = pipelineStorageRef.current[image.selected] || [];
+      const imagePipelines: PipelineKind[] = pipelineStorageRef.current[image.selected] || [];
       const resourceSpecificPipeline = imagePipelines.find(
         (pl) => pl.metadata?.labels?.[labelType] === resources,
       );

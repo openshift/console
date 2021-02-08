@@ -1,19 +1,16 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { SectionHeading, ResourceSummary } from '@console/internal/components/utils';
-import {
-  getResourceModelFromTaskKind,
-  Pipeline,
-  PipelineTask,
-} from '../../../../utils/pipeline-augment';
 import { TriggerTemplateModel } from '../../../../models';
+import { PipelineKind, PipelineTask } from '../../../../types';
+import { getResourceModelFromTaskKind } from '../../../../utils/pipeline-augment';
 import { RouteTemplate } from '../../utils/triggers';
 import DynamicResourceLinkList from '../../resource-overview/DynamicResourceLinkList';
 import TriggerTemplateResourceLink from '../../resource-overview/TriggerTemplateResourceLink';
 import PipelineVisualization from './PipelineVisualization';
 
 interface PipelineDetailsProps {
-  obj: Pipeline;
+  obj: PipelineKind;
   customData: RouteTemplate[];
 }
 

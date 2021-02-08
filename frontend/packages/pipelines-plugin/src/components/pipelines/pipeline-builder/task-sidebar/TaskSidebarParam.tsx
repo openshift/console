@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { FormGroup, ValidatedOptions } from '@patternfly/react-core';
-import { PipelineResourceTaskParam, PipelineTaskParam } from '../../../../utils/pipeline-augment';
+import { PipelineTaskParam, TektonParam } from '../../../../types';
 import { taskParamIsRequired, isFieldValid } from '../utils';
 import { ArrayParam, ParameterProps, SidebarInputWrapper, StringParam } from './temp-utils';
 
 type TaskSidebarParamProps = {
-  resourceParam: PipelineResourceTaskParam;
+  resourceParam: TektonParam;
   taskParam?: PipelineTaskParam;
   onChange: (newValue: string) => void;
 };

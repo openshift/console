@@ -1,5 +1,5 @@
 import { TFunction } from 'i18next';
-import { Condition, TaskRunStatus } from '../../../utils/pipeline-augment';
+import { Condition, TaskRunStatus } from '../../../types';
 import { CombinedErrorDetails } from './log-snippet-types';
 
 const joinConditions = (conditions: Condition[], t: TFunction) =>

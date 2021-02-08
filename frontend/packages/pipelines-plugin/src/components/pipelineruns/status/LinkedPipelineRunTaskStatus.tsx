@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { resourcePathFromModel } from '@console/internal/components/utils';
-import { PipelineRun } from '../../../utils/pipeline-augment';
 import { PipelineRunModel } from '../../../models';
+import { PipelineRunKind } from '../../../types';
 import { PipelineBars } from './PipelineBars';
 
 export interface LinkedPipelineRunTaskStatusProps {
-  pipelineRun: PipelineRun;
+  pipelineRun: PipelineRunKind;
 }
 
 /**

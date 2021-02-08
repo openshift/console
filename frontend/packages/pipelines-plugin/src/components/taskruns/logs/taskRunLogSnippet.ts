@@ -1,5 +1,5 @@
 import { TFunction } from 'i18next';
-import { Condition, PLRTaskRunStep, TaskRunKind } from '../../../utils/pipeline-augment';
+import { Condition, PLRTaskRunStep, TaskRunKind } from '../../../types';
 import { taskRunFilterReducer } from '../../../utils/pipeline-filter-reducer';
 import { CombinedErrorDetails } from '../../pipelineruns/logs/log-snippet-types';
 import { taskRunSnippetMessage } from '../../pipelineruns/logs/log-snippet-utils';

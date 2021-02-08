@@ -7,19 +7,19 @@ import {
 } from '@console/internal/components/factory/modal';
 import { errorModal } from '@console/internal/components/modals';
 import { LoadingBox } from '@console/internal/components/utils';
-import { Pipeline, PipelineRun } from '../../../../utils/pipeline-augment';
+import { PipelineKind, PipelineRunKind } from '../../../../types';
 import { useUserAnnotationForManualStart } from '../../../pipelineruns/triggered-by';
+import { usePipelinePVC } from '../../hooks';
 import ModalStructure from '../common/ModalStructure';
 import { convertPipelineToModalData } from '../common/utils';
 import { startPipelineSchema } from '../common/validation-utils';
 import StartPipelineForm from './StartPipelineForm';
 import { submitStartPipeline } from './submit-utils';
 import { StartPipelineFormValues } from './types';
-import { usePipelinePVC } from '../../hooks';
 
 export interface StartPipelineModalProps {
-  pipeline: Pipeline;
-  onSubmit?: (pipelineRun: PipelineRun) => void;
+  pipeline: PipelineKind;
+  onSubmit?: (pipelineRun: PipelineRunKind) => void;
 }
 const StartPipelineModal: React.FC<StartPipelineModalProps & ModalComponentProps> = ({
   pipeline,

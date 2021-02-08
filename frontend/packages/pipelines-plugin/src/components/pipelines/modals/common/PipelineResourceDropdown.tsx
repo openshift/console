@@ -10,7 +10,7 @@ import {
 } from '@console/internal/components/utils/k8s-watch-hook';
 import { LoadingInline } from '@console/internal/components/utils';
 import { PipelineResourceModel } from '../../../../models';
-import { PipelineResourceKind } from '../../../../utils/pipeline-augment';
+import { PipelineResourceKind } from '../../../../types';
 import { CREATE_PIPELINE_RESOURCE } from './const';
 
 import './PipelineResourceDropdown.scss';

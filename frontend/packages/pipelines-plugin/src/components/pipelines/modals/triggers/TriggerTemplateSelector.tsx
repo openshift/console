@@ -2,14 +2,14 @@ import * as React from 'react';
 import { useField } from 'formik';
 import { Trans, useTranslation } from 'react-i18next';
 import { DropdownField } from '@console/shared/src';
-import { Pipeline } from '../../../../utils/pipeline-augment';
+import { PipelineKind } from '../../../../types';
 import { RouteTemplate, usePipelineTriggerTemplateNames } from '../../utils/triggers';
 
 import './TriggerTemplateSelector.scss';
 
 type TriggerTemplateSelectorProps = {
   name: string;
-  pipeline: Pipeline;
+  pipeline: PipelineKind;
   placeholder: string;
 };
 

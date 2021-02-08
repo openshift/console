@@ -1,11 +1,11 @@
 import { EdgeModel, NodeModel } from '@patternfly/react-topology';
-import { Pipeline, PipelineResourceTask, PipelineRun } from '../../../utils/pipeline-augment';
+import { PipelineKind, TaskKind, PipelineRunKind } from '../../../types';
 import { PipelineVisualizationTaskItem } from '../../../utils/pipeline-utils';
 import { AddNodeDirection, NodeType } from './const';
 
 // Builder Callbacks
 export type NewTaskListNodeCallback = (direction: AddNodeDirection) => void;
-export type NewTaskNodeCallback = (resource: PipelineResourceTask) => void;
+export type NewTaskNodeCallback = (resource: TaskKind) => void;
 export type RemoveListTaskCallback = () => void;
 export type NodeSelectionCallback = (nodeData: BuilderNodeModelData) => void;
 
@@ -18,8 +18,8 @@ export type PipelineRunAfterNodeModelData = {
   };
 };
 export type TaskListNodeModelData = PipelineRunAfterNodeModelData & {
-  clusterTaskList: PipelineResourceTask[];
-  namespaceTaskList: PipelineResourceTask[];
+  clusterTaskList: TaskKind[];
+  namespaceTaskList: TaskKind[];
   onNewTask: NewTaskNodeCallback;
   onRemoveTask: RemoveListTaskCallback | null;
 };
@@ -32,8 +32,8 @@ export type BuilderNodeModelData = PipelineRunAfterNodeModelData & {
 export type SpacerNodeModelData = PipelineRunAfterNodeModelData & {};
 export type TaskNodeModelData = PipelineRunAfterNodeModelData & {
   task: PipelineVisualizationTaskItem;
-  pipeline?: Pipeline;
-  pipelineRun?: PipelineRun;
+  pipeline?: PipelineKind;
+  pipelineRun?: PipelineRunKind;
 };
 
 // Graph Models

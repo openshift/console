@@ -1,10 +1,10 @@
-import { PipelineRun, Pipeline } from '../../../../../utils/pipeline-augment';
-import { TektonResourceLabel, preferredNameAnnotation } from '../../../const';
+import { PipelineRunKind, PipelineKind } from '../../../../../types';
 import {
   pipelineTestData,
   PipelineExampleNames,
   DataState,
 } from '../../../../../test-data/pipeline-data';
+import { TektonResourceLabel, preferredNameAnnotation } from '../../../const';
 import {
   convertPipelineToModalData,
   getPipelineName,
@@ -18,7 +18,7 @@ const samplePipeline = pipelineTestData[PipelineExampleNames.SIMPLE_PIPELINE].pi
 const samplePipelineRun =
   pipelineTestData[PipelineExampleNames.SIMPLE_PIPELINE].pipelineRuns[DataState.SUCCESS];
 
-const pipelineRunData = (pipeline: Pipeline): PipelineRun => ({
+const pipelineRunData = (pipeline: PipelineKind): PipelineRunKind => ({
   apiVersion: pipeline.apiVersion,
   kind: 'PipelineRun',
   metadata: {
@@ -38,7 +38,7 @@ describe('PipelineAction testing migratePipelineRun', () => {
   });
 
   it('expect migratePipelineRun to handle serviceAccount to serviceAccountName migration (Operator 0.9.x)', () => {
-    type OldPipelineRun = PipelineRun & {
+    type OldPipelineRun = PipelineRunKind & {
       spec: {
         serviceAccount: string;
       };
@@ -52,7 +52,7 @@ describe('PipelineAction testing migratePipelineRun', () => {
       },
     };
 
-    const result: PipelineRun = migratePipelineRun(plr);
+    const result: PipelineRunKind = migratePipelineRun(plr);
 
     // Should be a new instance
     expect(result).not.toEqual(plr);

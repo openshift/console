@@ -1,21 +1,21 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
 import { ResourceLink, Timestamp } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { pipelineFilterReducer } from '../../../utils/pipeline-filter-reducer';
-import { Pipeline } from '../../../utils/pipeline-augment';
 import { PipelineModel, PipelineRunModel } from '../../../models';
+import { PipelineWithLatest } from '../../../types';
+import { pipelineFilterReducer } from '../../../utils/pipeline-filter-reducer';
 import LinkedPipelineRunTaskStatus from '../../pipelineruns/status/LinkedPipelineRunTaskStatus';
 import PipelineRunStatus from '../../pipelineruns/status/PipelineRunStatus';
 import { tableColumnClasses } from './pipeline-table';
 import PipelineRowKebabActions from './PipelineRowKebabActions';
-import { useTranslation } from 'react-i18next';
 
 const pipelineReference = referenceForModel(PipelineModel);
 const pipelinerunReference = referenceForModel(PipelineRunModel);
 
 type PipelineStatusProps = {
-  obj: Pipeline;
+  obj: PipelineWithLatest;
 };
 
 const PipelineStatus: React.FC<PipelineStatusProps> = ({ obj }) => {
@@ -29,7 +29,7 @@ const PipelineStatus: React.FC<PipelineStatusProps> = ({ obj }) => {
   );
 };
 
-const PipelineRow: RowFunction<Pipeline> = ({ obj, index, key, style }) => {
+const PipelineRow: RowFunction<PipelineWithLatest> = ({ obj, index, key, style }) => {
   return (
     <TableRow
       id={obj.metadata.uid}

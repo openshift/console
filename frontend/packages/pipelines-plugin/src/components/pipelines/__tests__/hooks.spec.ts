@@ -1,7 +1,7 @@
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { testHook } from '../../../../../../__tests__/utils/hooks-utils';
 import { pipelineTestData, PipelineExampleNames } from '../../../test-data/pipeline-data';
-import { PipelineRun } from '../../../utils/pipeline-augment';
+import { PipelineRunKind } from '../../../types';
 import * as hooks from '../hooks';
 
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
@@ -9,7 +9,7 @@ jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
 }));
 
 const mockData = pipelineTestData[PipelineExampleNames.SIMPLE_PIPELINE];
-const pipelineRuns: PipelineRun[] = Object.values(mockData.pipelineRuns);
+const pipelineRuns: PipelineRunKind[] = Object.values(mockData.pipelineRuns);
 const {
   metadata: { name: pipelineName, namespace },
 } = mockData.pipeline;

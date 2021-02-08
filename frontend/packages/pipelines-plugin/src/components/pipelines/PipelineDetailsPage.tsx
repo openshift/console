@@ -5,7 +5,7 @@ import { KebabAction, navFactory, LoadingBox } from '@console/internal/component
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { getPipelineKebabActions } from '../../utils/pipeline-actions';
-import { Pipeline } from '../../utils/pipeline-augment';
+import { PipelineKind } from '../../types';
 import { PipelineModel } from '../../models';
 import { useMenuActionsWithUserAnnotation } from '../pipelineruns/triggered-by';
 import {
@@ -26,7 +26,7 @@ const PipelineDetailsPage: React.FC<DetailsPageProps> = (props) => {
   const { name, namespace, kindObj, match } = props;
   const templateNames = usePipelineTriggerTemplateNames(name, namespace) || [];
   const breadcrumbsFor = usePipelinesBreadcrumbsFor(kindObj, match);
-  const [, pipelineLoaded, pipelineError] = useK8sGet<Pipeline>(PipelineModel, name, namespace);
+  const [, pipelineLoaded, pipelineError] = useK8sGet<PipelineKind>(PipelineModel, name, namespace);
   const latestPipelineRun = useLatestPipelineRun(name, namespace);
 
   const augmentedMenuActions: KebabAction[] = useMenuActionsWithUserAnnotation(

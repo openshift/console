@@ -1,15 +1,13 @@
 import { TFunction } from 'i18next';
-import {
-  Condition,
-  PipelineRun,
-  PLRTaskRunData,
-  PLRTaskRunStep,
-} from '../../../utils/pipeline-augment';
+import { Condition, PipelineRunKind, PLRTaskRunData, PLRTaskRunStep } from '../../../types';
 import { CombinedErrorDetails } from './log-snippet-types';
 import { pipelineRunStatus } from '../../../utils/pipeline-filter-reducer';
 import { taskRunSnippetMessage } from './log-snippet-utils';
 
-export const getPLRLogSnippet = (pipelineRun: PipelineRun, t: TFunction): CombinedErrorDetails => {
+export const getPLRLogSnippet = (
+  pipelineRun: PipelineRunKind,
+  t: TFunction,
+): CombinedErrorDetails => {
   if (!pipelineRun?.status) {
     // Lack information to pull from the Pipeline Run
     return null;

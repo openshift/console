@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { ResourceKebabWithUserLabel } from '../../pipelineruns/triggered-by';
-import { getPipelineKebabActions } from '../../../utils/pipeline-actions';
-import { Pipeline } from '../../../utils/pipeline-augment';
 import { PipelineModel } from '../../../models';
+import { PipelineWithLatest } from '../../../types';
+import { getPipelineKebabActions } from '../../../utils/pipeline-actions';
+import { ResourceKebabWithUserLabel } from '../../pipelineruns/triggered-by';
 import { usePipelineTriggerTemplateNames } from '../utils/triggers';
 
 type PipelineRowKebabActionsProps = {
-  pipeline: Pipeline;
+  pipeline: PipelineWithLatest;
 };
 
 const pipelineReference = referenceForModel(PipelineModel);

@@ -1,6 +1,6 @@
-import { PipelineParam } from '../../../../utils/pipeline-augment';
+import { TektonParam } from '../../../../types';
 
-export const pipelineParameters: PipelineParam[] = [
+export const pipelineParameters: TektonParam[] = [
   {
     name: 'param1',
     default: 'abc',
@@ -18,7 +18,7 @@ export const pipelineParameters: PipelineParam[] = [
   },
 ];
 
-export const pipelineParametersWithoutDefaults: PipelineParam[] = [
+export const pipelineParametersWithoutDefaults: TektonParam[] = [
   {
     name: 'param1',
     description: 'This is param 1',

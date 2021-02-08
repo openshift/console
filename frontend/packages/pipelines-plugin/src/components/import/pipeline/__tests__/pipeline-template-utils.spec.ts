@@ -1,12 +1,12 @@
 import { k8sCreate, k8sUpdate } from '@console/internal/module/k8s';
 import { GitImportFormData } from '@console/dev-console/src/components/import/import-types';
-import { PipelineModel } from '../../../../models';
 import { PIPELINE_RUNTIME_LABEL } from '../../../../const';
+import { PipelineModel } from '../../../../models';
+import { PipelineKind } from '../../../../types';
 import {
   createPipelineForImportFlow,
   updatePipelineForImportFlow,
 } from '../pipeline-template-utils';
-import { Pipeline } from '../../../../utils/pipeline-augment';
 
 jest.mock('@console/internal/module/k8s', () => ({
   k8sCreate: jest.fn(),
@@ -24,7 +24,7 @@ beforeEach(() => {
 });
 
 describe('createPipelineForImportFlow', () => {
-  const createFormData = (pipelineTemplate: Pipeline): GitImportFormData => {
+  const createFormData = (pipelineTemplate: PipelineKind): GitImportFormData => {
     const minimalFormData = {
       name: 'an-app',
       project: { name: 'a-project' },
@@ -52,7 +52,7 @@ describe('createPipelineForImportFlow', () => {
   };
 
   it('should create an almost empty pipeline for a template with only task data (empty task)', async () => {
-    const pipelineTemplate: Pipeline = {
+    const pipelineTemplate: PipelineKind = {
       spec: {
         tasks: [],
       },
@@ -69,7 +69,7 @@ describe('createPipelineForImportFlow', () => {
       formData.docker.dockerfilePath,
     );
 
-    const expectedPipeline: Pipeline = {
+    const expectedPipeline: PipelineKind = {
       metadata: {
         name: 'an-app',
         namespace: 'a-project',
@@ -88,7 +88,7 @@ describe('createPipelineForImportFlow', () => {
   });
 
   it('should create a pipeline for a template with params, resources, workspaces, tasks (all empty)', async () => {
-    const pipelineTemplate: Pipeline = {
+    const pipelineTemplate: PipelineKind = {
       spec: {
         params: [],
         resources: [],
@@ -109,7 +109,7 @@ describe('createPipelineForImportFlow', () => {
       formData.docker.dockerfilePath,
     );
 
-    const expectedPipeline: Pipeline = {
+    const expectedPipeline: PipelineKind = {
       metadata: {
         name: 'an-app',
         namespace: 'a-project',
@@ -131,7 +131,7 @@ describe('createPipelineForImportFlow', () => {
   });
 
   it('should create a pipeline for a template with filled params, resources, workspaces and tasks', async () => {
-    const pipelineTemplate: Pipeline = {
+    const pipelineTemplate: PipelineKind = {
       spec: {
         params: [{ name: 'a-param', default: 'default value', description: 'a description' }],
         resources: [{ type: 'resource-type', name: 'a-resource' }],
@@ -158,7 +158,7 @@ describe('createPipelineForImportFlow', () => {
       formData.docker.dockerfilePath,
     );
 
-    const expectedPipeline: Pipeline = {
+    const expectedPipeline: PipelineKind = {
       metadata: {
         name: 'an-app',
         namespace: 'a-project',
@@ -186,7 +186,7 @@ describe('createPipelineForImportFlow', () => {
   });
 
   it('should fill different pipeline parameters if the template contains known params', async () => {
-    const pipelineTemplate: Pipeline = {
+    const pipelineTemplate: PipelineKind = {
       spec: {
         params: [
           { name: 'APP_NAME' },
@@ -210,7 +210,7 @@ describe('createPipelineForImportFlow', () => {
       formData.docker.dockerfilePath,
     );
 
-    const expectedPipeline: Pipeline = {
+    const expectedPipeline: PipelineKind = {
       metadata: {
         name: 'an-app',
         namespace: 'a-project',
@@ -238,7 +238,7 @@ describe('createPipelineForImportFlow', () => {
   });
 
   it('should remove prefix slash of the git directory from the PATH_CONTEXT param', async () => {
-    const pipelineTemplate: Pipeline = {
+    const pipelineTemplate: PipelineKind = {
       spec: {
         params: [
           { name: 'APP_NAME' },
@@ -263,7 +263,7 @@ describe('createPipelineForImportFlow', () => {
       'Dockerfile',
     );
 
-    const expectedPipeline: Pipeline = {
+    const expectedPipeline: PipelineKind = {
       metadata: {
         name: 'an-app',
         namespace: 'a-project',
@@ -296,17 +296,17 @@ describe('createPipelineForImportFlow', () => {
 });
 
 describe('updatePipelineForImportFlow', () => {
-  const mockTemplate: Pipeline = {
+  const mockTemplate: PipelineKind = {
     metadata: {
       labels: { 'app.kubernetes.io/instance': 'sample' },
     },
     spec: {
       tasks: [],
-      params: [{ type: 'paramtype', name: 'PARAM1' }],
+      params: [{ type: 'string', name: 'PARAM1' }],
     },
   };
 
-  const mockPipeline: Pipeline = {
+  const mockPipeline: PipelineKind = {
     metadata: {
       name: 'test',
       labels: { 'app.kubernetes.io/instance': 'sample' },
@@ -344,7 +344,7 @@ describe('updatePipelineForImportFlow', () => {
       props.dockerfilePath,
     );
 
-    const expectedPipeline: Pipeline = {
+    const expectedPipeline: PipelineKind = {
       metadata: {
         name: 'test',
         labels: {},
@@ -372,7 +372,7 @@ describe('updatePipelineForImportFlow', () => {
       props.dockerfilePath,
     );
 
-    const expectedPipeline: Pipeline = {
+    const expectedPipeline: PipelineKind = {
       metadata: {
         name: 'test',
         labels: { 'app.kubernetes.io/instance': 'sample' },
@@ -380,7 +380,7 @@ describe('updatePipelineForImportFlow', () => {
       },
       spec: {
         tasks: [],
-        params: [{ name: 'PARAM1', type: 'paramtype' }],
+        params: [{ name: 'PARAM1', type: 'string' }],
       },
     };
 
@@ -402,7 +402,7 @@ describe('updatePipelineForImportFlow', () => {
       props.dockerfilePath,
     );
 
-    const expectedPipeline: Pipeline = {
+    const expectedPipeline: PipelineKind = {
       metadata: {
         name: 'test',
         namespace: 'test',
@@ -414,7 +414,7 @@ describe('updatePipelineForImportFlow', () => {
       },
       spec: {
         tasks: [],
-        params: [{ name: 'PARAM1', type: 'paramtype' }],
+        params: [{ name: 'PARAM1', type: 'string' }],
       },
     };
 

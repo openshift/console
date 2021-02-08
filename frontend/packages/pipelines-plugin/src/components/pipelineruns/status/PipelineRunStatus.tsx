@@ -3,15 +3,15 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { resourcePathFromModel } from '@console/internal/components/utils';
 import { DASH } from '@console/shared';
-import { PipelineRun } from '../../../utils/pipeline-augment';
-import { getPLRLogSnippet } from '../logs/pipelineRunLogSnippet';
 import { PipelineRunModel } from '../../../models';
+import { PipelineRunKind } from '../../../types';
+import { getPLRLogSnippet } from '../logs/pipelineRunLogSnippet';
 import PipelineResourceStatus from './PipelineResourceStatus';
 import StatusPopoverContent from './StatusPopoverContent';
 
 type PipelineRunStatusProps = {
   status: string;
-  pipelineRun: PipelineRun;
+  pipelineRun: PipelineRunKind;
   title?: string;
 };
 const PipelineRunStatus: React.FC<PipelineRunStatusProps> = ({ status, pipelineRun, title }) => {

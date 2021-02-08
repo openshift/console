@@ -3,11 +3,11 @@ import { Trans, useTranslation } from 'react-i18next';
 import { Split, SplitItem } from '@patternfly/react-core';
 import { global_warning_color_100 as warningColor } from '@patternfly/react-tokens';
 import { ExclamationTriangleIcon } from '@patternfly/react-icons';
-import { Pipeline } from '../../../../utils/pipeline-augment';
+import { PipelineKind } from '../../../../types';
 import TriggerTemplateSelector from './TriggerTemplateSelector';
 
 type RemoveTriggerFormProps = {
-  pipeline: Pipeline;
+  pipeline: PipelineKind;
 };
 
 const RemoveTriggerForm: React.FC<RemoveTriggerFormProps> = (props) => {

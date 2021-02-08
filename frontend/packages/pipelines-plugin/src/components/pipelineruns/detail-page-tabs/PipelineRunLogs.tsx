@@ -6,16 +6,16 @@ import { RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
 import { Nav, NavItem, NavList } from '@patternfly/react-core';
 import { Firehose, resourcePathFromModel } from '@console/internal/components/utils';
-import { pipelineRunFilterReducer } from '../../../utils/pipeline-filter-reducer';
-import { PipelineRun } from '../../../utils/pipeline-augment';
 import { PipelineRunModel } from '../../../models';
+import { PipelineRunKind } from '../../../types';
+import { pipelineRunFilterReducer } from '../../../utils/pipeline-filter-reducer';
 import { ColoredStatusIcon } from '../../pipelines/detail-page-tabs/pipeline-details/StatusIcon';
 import LogsWrapperComponent from '../logs/LogsWrapperComponent';
 import { getDownloadAllLogsCallback } from '../logs/logs-utils';
 import './PipelineRunLogs.scss';
 
 interface PipelineRunLogsProps {
-  obj: PipelineRun;
+  obj: PipelineRunKind;
   activeTask?: string;
   t: TFunction;
 }
@@ -175,7 +175,7 @@ class PipelineRunLogsWithTranslation extends React.Component<
 }
 
 type PipelineRunLogsWithActiveTaskProps = {
-  obj: PipelineRun;
+  obj: PipelineRunKind;
   params?: RouteComponentProps;
 };
 

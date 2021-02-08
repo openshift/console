@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { resourcePathFromModel } from '@console/internal/components/utils';
-import { TaskRunKind } from '../../../utils/pipeline-augment';
+import { TaskRunKind } from '../../../types';
 import { taskRunFilterReducer } from '../../../utils/pipeline-filter-reducer';
 import { TaskRunModel } from '../../../models';
 import PipelineResourceStatus from '../../pipelineruns/status/PipelineResourceStatus';

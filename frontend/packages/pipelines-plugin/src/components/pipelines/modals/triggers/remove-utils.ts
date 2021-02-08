@@ -1,10 +1,10 @@
 import { k8sKill, k8sList, k8sPatch } from '@console/internal/module/k8s';
 import { EventListenerModel, TriggerTemplateModel } from '../../../../models';
-import { Pipeline } from '../../../../utils/pipeline-augment';
+import { PipelineKind } from '../../../../types';
 import { EventListenerKind } from '../../resource-types';
 import { RemoveTriggerFormValues } from './types';
 
-export const removeTrigger = async (values: RemoveTriggerFormValues, pipeline: Pipeline) => {
+export const removeTrigger = async (values: RemoveTriggerFormValues, pipeline: PipelineKind) => {
   const ns = pipeline.metadata.namespace;
   const selectedTriggerTemplate = values.selectedTrigger;
 

@@ -2,7 +2,7 @@ import { getRandomChars } from '@console/shared';
 import { apiVersionForModel, RouteKind } from '@console/internal/module/k8s';
 import { RouteModel } from '@console/internal/models';
 import { EventListenerModel, TriggerTemplateModel } from '../../../../models';
-import { Pipeline, PipelineRun } from '../../../../utils/pipeline-augment';
+import { PipelineKind, PipelineRunKind } from '../../../../types';
 import { PIPELINE_SERVICE_ACCOUNT } from '../../const';
 import { getPipelineOperatorVersion } from '../../utils/pipeline-operator';
 import {
@@ -14,8 +14,8 @@ import {
 } from '../../resource-types';
 
 export const createTriggerTemplate = (
-  pipeline: Pipeline,
-  pipelineRun: PipelineRun,
+  pipeline: PipelineKind,
+  pipelineRun: PipelineRunKind,
   params: TriggerTemplateKindParam[],
 ): TriggerTemplateKind => {
   return {

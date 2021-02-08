@@ -8,13 +8,13 @@ import { LogSnippet, Status } from '@console/shared';
 import { fromNow } from '@console/internal/components/utils/datetime';
 import { pipelineRunStatus } from '../../../utils/pipeline-filter-reducer';
 import { PipelineRunModel } from '../../../models';
-import { PipelineRun } from '../../../utils/pipeline-augment';
+import { PipelineRunKind } from '../../../types';
 import LogSnippetBlock from '../../pipelineruns/logs/LogSnippetBlock';
 import { getPLRLogSnippet } from '../../pipelineruns/logs/pipelineRunLogSnippet';
 import './PipelineRunItem.scss';
 
 type PipelineRunItemProps = {
-  pipelineRun: PipelineRun;
+  pipelineRun: PipelineRunKind;
 };
 
 const PipelineRunItem: React.FC<PipelineRunItemProps> = ({ pipelineRun }) => {

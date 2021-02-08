@@ -1,6 +1,6 @@
-import { Pipeline } from '../../utils/pipeline-augment';
+import { PipelineKind } from '../../types';
 
 export interface PipelineData {
   enabled: boolean;
-  template?: Pipeline;
+  template?: PipelineKind;
 }

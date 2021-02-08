@@ -6,7 +6,7 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import { pipelineRunFilterReducer } from '../../../utils/pipeline-filter-reducer';
 import { getPipelineRunKebabActions } from '../../../utils/pipeline-actions';
 import { pipelineRunDuration } from '../../../utils/pipeline-utils';
-import { PipelineRun } from '../../../utils/pipeline-augment';
+import { PipelineRunKind } from '../../../types';
 import { PipelineRunModel } from '../../../models';
 import LinkedPipelineRunTaskStatus from '../status/LinkedPipelineRunTaskStatus';
 import { ResourceKebabWithUserLabel } from '../triggered-by';
@@ -16,7 +16,7 @@ import PipelineRunStatus from '../status/PipelineRunStatus';
 const pipelinerunReference = referenceForModel(PipelineRunModel);
 
 type PLRStatusProps = {
-  obj: PipelineRun;
+  obj: PipelineRunKind;
 };
 
 const PLRStatus: React.FC<PLRStatusProps> = ({ obj }) => {
@@ -30,7 +30,7 @@ const PLRStatus: React.FC<PLRStatusProps> = ({ obj }) => {
   );
 };
 
-const PipelineRunRow: RowFunction<PipelineRun> = ({ obj, index, key, style }) => {
+const PipelineRunRow: RowFunction<PipelineRunKind> = ({ obj, index, key, style }) => {
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>

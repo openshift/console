@@ -1,6 +1,6 @@
 import { k8sCreate, K8sResourceCommon } from '@console/internal/module/k8s';
 import { PipelineRunModel } from '../../../../models';
-import { Pipeline, PipelineRun } from '../../../../utils/pipeline-augment';
+import { PipelineKind, PipelineRunKind } from '../../../../types';
 import {
   createPipelineResource,
   createSecretResource,
@@ -27,10 +27,10 @@ export const resourceSubmit = async (
 
 export const submitStartPipeline = async (
   values: StartPipelineFormValues,
-  pipeline: Pipeline,
+  pipeline: PipelineKind,
   labels?: { [key: string]: string },
   annotations?: { [key: string]: string },
-): Promise<PipelineRun> => {
+): Promise<PipelineRunKind> => {
   const { namespace, resources } = values;
 
   const toCreateResources: { [index: string]: PipelineModalFormResource } = resources.reduce(
@@ -63,7 +63,7 @@ export const submitStartPipeline = async (
     };
   }
 
-  const pipelineRunResource: PipelineRun = await k8sCreate(
+  const pipelineRunResource: PipelineRunKind = await k8sCreate(
     PipelineRunModel,
     getPipelineRunFromForm(pipeline, formValues, labels, annotations),
   );
