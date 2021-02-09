@@ -1,6 +1,11 @@
 {
   "An error occurred": "An error occurred",
   "No resources found": "No resources found",
+  "({{operatorStatusLength}} installed)": "({{operatorStatusLength}} installed)",
+  "Status": "Status",
+  "Not available": "Not available",
+  "View all": "View all",
+  "All {{status}}": "All {{status}}",
   "Error loading - {{placeholder}}": "Error loading - {{placeholder}}",
   "Value": "Value",
   "Resource requirements": "Resource requirements",

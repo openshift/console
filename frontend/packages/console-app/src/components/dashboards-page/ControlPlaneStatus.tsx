@@ -11,16 +11,24 @@ import Status, {
 } from '@console/shared/src/components/dashboard/status-card/StatusPopup';
 import { PrometheusHealthPopupProps } from '@console/plugin-sdk';
 
-const titles = ['API Servers', 'Controller Managers', 'Schedulers', 'API Request Success Rate'];
-
 const ControlPlanePopup: React.FC<PrometheusHealthPopupProps> = ({ responses }) => {
   const { t } = useTranslation();
+  const titles = [
+    t('console-app~API Servers'),
+    t('console-app~Controller Managers'),
+    t('console-app~Schedulers'),
+    t('console-app~API Request Success Rate'),
+  ];
 
   return (
     <>
-      Components of the Control Plane are responsible for maintaining and reconciling the state of
-      the cluster.
-      <StatusPopupSection firstColumn="Components" secondColumn="Response rate">
+      {t(
+        'console-app~Components of the Control Plane are responsible for maintaining and reconciling the state of the cluster.',
+      )}
+      <StatusPopupSection
+        firstColumn={t('console-app~Components')}
+        secondColumn={t('console-app~Response rate')}
+      >
         {responses.map(({ response, error }, index) => {
           const health = getControlPlaneComponentHealth(response, error, t);
           const icon =

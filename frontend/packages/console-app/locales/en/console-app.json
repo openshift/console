@@ -4,6 +4,13 @@
   "Add HorizontalPodAutoscaler": "Add HorizontalPodAutoscaler",
   "Edit HorizontalPodAutoscaler": "Edit HorizontalPodAutoscaler",
   "Remove HorizontalPodAutoscaler": "Remove HorizontalPodAutoscaler",
+  "API Servers": "API Servers",
+  "Controller Managers": "Controller Managers",
+  "Schedulers": "Schedulers",
+  "API Request Success Rate": "API Request Success Rate",
+  "Components of the Control Plane are responsible for maintaining and reconciling the state of the cluster.": "Components of the Control Plane are responsible for maintaining and reconciling the state of the cluster.",
+  "Components": "Components",
+  "Response rate": "Response rate",
   "Clone": "Clone",
   "Name": "Name",
   "Clone PVC": "Clone PVC",
@@ -25,5 +32,9 @@
   "API version": "API version",
   "Restore": "Restore",
   "Administrator": "Administrator",
+  "Cluster": "Cluster",
+  "Control Plane": "Control Plane",
+  "Control Plane status": "Control Plane status",
+  "Cluster operators": "Cluster operators",
   "VolumeSnapshotContents": "VolumeSnapshotContents"
 }

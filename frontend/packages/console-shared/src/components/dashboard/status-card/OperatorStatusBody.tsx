@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { GetOperatorsWithStatuses, LazyLoader } from '@console/plugin-sdk';
 import { AsyncComponent, FirehoseResourcesResult } from '@console/internal/components/utils';
 import { HealthState } from './states';
@@ -15,6 +16,7 @@ export const OperatorsSection: React.FC<OperatorsSectionProps> = ({
   linkTo,
   rowLoader,
 }) => {
+  const { t } = useTranslation();
   const error = _.values(resources).some((r) => r.loadError);
   const operatorStatuses = getOperatorsWithStatuses(resources);
   const sortedOperatorStatuses = getMostImportantStatuses(operatorStatuses).sort((a, b) =>
@@ -27,12 +29,17 @@ export const OperatorsSection: React.FC<OperatorsSectionProps> = ({
       <div className="co-status-popup__row">
         <div>
           <span className="co-status-popup__text--bold">{title}</span>
-          <span className="text-secondary">{` (${operatorStatuses.length} installed)`}</span>
+          <span className="text-secondary">
+            {' '}
+            {t('console-shared~({{operatorStatusLength}} installed)', {
+              operatorStatusLength: operatorStatuses.length,
+            })}
+          </span>
         </div>
-        <div className="text-secondary">Status</div>
+        <div className="text-secondary">{t('console-shared~Status')}</div>
       </div>
       {error ? (
-        <div className="text-secondary">Not Available</div>
+        <div className="text-secondary">{t('console-shared~Not available')}</div>
       ) : (
         !operatorsHealthy &&
         sortedOperatorStatuses.map((operatorStatus) => (
@@ -45,11 +52,13 @@ export const OperatorsSection: React.FC<OperatorsSectionProps> = ({
         ))
       )}
       <div className="co-status-popup__row">
-        <Link to={linkTo}>View all</Link>
+        <Link to={linkTo}>{t('console-shared~View all')}</Link>
         {!error && operatorsHealthy && operatorStatuses.length && (
           <div className="co-status-popup__status">
             <div className="text-secondary">
-              All {operatorStatuses[0].status.title.toLowerCase()}
+              {t('console-shared~All {{status}}', {
+                status: operatorStatuses[0].status.title.toLowerCase(),
+              })}
             </div>
             <div className="co-status-popup__icon">{operatorStatuses[0].status.icon}</div>
           </div>
