@@ -27,6 +27,7 @@ export enum PipelineExampleNames {
   INVALID_PIPELINE_MISSING_TASK = 'missing-task-pipeline',
   INVALID_PIPELINE_INVALID_TASK = 'invalid-task-pipeline',
   EMBEDDED_PIPELINE_SPEC = 'embedded-pipeline-spec',
+  PIPELINE_WITH_FINALLY = 'pipeline-with-finally',
 }
 
 type CombinedPipelineTestData = {
@@ -282,6 +283,20 @@ const pipelineSpec: PipelineSpecData = {
           kind: 'Task',
           name: 'echo-hello',
         },
+      },
+    ],
+  },
+  [PipelineExampleNames.PIPELINE_WITH_FINALLY]: {
+    tasks: [
+      {
+        name: 'hello-world-1',
+        taskRef: { name: 'hello-world-1' },
+      },
+    ],
+    finally: [
+      {
+        name: 'run-anyway',
+        taskRef: { name: 'run-anyway' },
       },
     ],
   },
@@ -1984,6 +1999,65 @@ export const pipelineTestData: PipelineTestData = {
             { name: 'source-repo', resourceRef: { name: 'mapit-git' } },
             { name: 'web-image', resourceRef: { name: 'mapit-image' } },
           ],
+        },
+      },
+    },
+  },
+  [PipelineExampleNames.PIPELINE_WITH_FINALLY]: {
+    dataSource: 'finally-pipeline',
+    pipeline: {
+      apiVersion: 'tekton.dev/v1alpha1',
+      kind: 'Pipeline',
+      metadata: {
+        name: 'finally-pipeline',
+        namespace: 'tekton-pipelines',
+      },
+      spec: pipelineSpec[PipelineExampleNames.PIPELINE_WITH_FINALLY],
+    },
+    pipelineRuns: {
+      [DataState.SUCCESS]: {
+        apiVersion: 'tekton.dev/v1alpha1',
+        kind: 'PipelineRun',
+        metadata: {
+          name: 'finally-pipeline-3tt7aw',
+          namespace: 'tekton-pipelines',
+          labels: { [TektonResourceLabel.pipeline]: 'finally-pipeline' },
+        },
+        spec: {
+          pipelineRef: { name: 'finally-pipeline' },
+        },
+        status: {
+          pipelineSpec: pipelineSpec[PipelineExampleNames.PIPELINE_WITH_FINALLY],
+          completionTime: '2019-10-29T11:57:53Z',
+          conditions: [
+            {
+              lastTransitionTime: '2019-09-12T20:38:01Z',
+              message: 'All Tasks have completed executing',
+              reason: 'Succeeded',
+              status: 'True',
+              type: 'Succeeded',
+            },
+          ],
+          taskRuns: {
+            'pipeline-p1bun0-hello-world-1-rlj9b': {
+              pipelineTaskName: 'hello-world-1',
+              status: {
+                completionTime: '2019-12-10T11:18:38Z',
+                conditions: [{ status: 'True', type: 'Succeeded' }],
+                podName: 'test',
+                startTime: '2019-12-10T11:18:38Z',
+              },
+            },
+            'pipeline-p1bun0-run-anyway-cnd82': {
+              pipelineTaskName: 'run-anyway',
+              status: {
+                completionTime: '2019-12-10T11:18:38Z',
+                conditions: [{ status: 'True', type: 'Succeeded' }],
+                podName: 'test',
+                startTime: '2019-12-10T11:18:38Z',
+              },
+            },
+          },
         },
       },
     },
