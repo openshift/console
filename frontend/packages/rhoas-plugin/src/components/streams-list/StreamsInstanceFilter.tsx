@@ -14,28 +14,18 @@ const StreamsInstanceFilter = () => {
   const [isToolbarSelectOpen, setIsToolbarSelectOpen] = React.useState(false);
   const [toolbarSelections, setToolbarSelections] = React.useState("Name");
   const [textInputNameValue, setTextInputNameValue] = React.useState('');
-  const [textInputLabelValue, setTextInputLabelValue] = React.useState('');
-
-  const toolbarSelectOptions = [
-    <SelectOption key={0} value="Name" />,
-    <SelectOption key={1} value="Label" />,
-  ];
 
   const onToggleToolbarSelect = (isOpen) => {
     setIsToolbarSelectOpen(isOpen);
   };
 
-  const onSelect = selection => {
+  const onSelect = (selection) => {
     setToolbarSelections(selection);
-    setIsToolbarSelectOpen(!isToolbarSelectOpen);
+    setIsToolbarSelectOpen(false);
   };
 
   const handleTextInputNameChange = value => {
     setTextInputNameValue(value);
-  };
-
-  const handleTextInputLabelChange = value => {
-    setTextInputLabelValue(value);
   };
 
   return (
@@ -52,7 +42,7 @@ const StreamsInstanceFilter = () => {
               isOpen={isToolbarSelectOpen}
               aria-labelledby=""
             >
-              {toolbarSelectOptions}
+              <SelectOption key={0} value="Name" />
             </Select>
           </ToolbarItem>
           <ToolbarItem>
@@ -63,15 +53,6 @@ const StreamsInstanceFilter = () => {
                 onChange={handleTextInputNameChange}
                 aria-label="Search by name"
                 placeholder="Search by name..."
-              />
-            )}
-            {toolbarSelections === 'Label' && (
-              <TextInput
-                value={textInputLabelValue}
-                type="text"
-                onChange={handleTextInputLabelChange}
-                aria-label="Search by label"
-                placeholder="Search by label..."
               />
             )}
           </ToolbarItem>

@@ -2,7 +2,6 @@ import * as React from 'react';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
-import { FormFooter } from '@console/shared';
 import { history } from '@console/internal/components/utils';
 import './ManagedKafkas.css';
 import StreamsInstancePage from '../streams-list/StreamsInstancePage';
@@ -10,8 +9,6 @@ import { ManagedKafkaRequestModel } from '../../models/rhoas';
 import { useActiveNamespace } from '@console/shared';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ManagedKafkaRequestCRName } from '../../const';
-import { Button, EmptyState, EmptyStateIcon, EmptyStateSecondaryActions, Title } from '@patternfly/react-core';
-import CubesIcon from '@patternfly/react-icons/dist/js/icons/cubes-icon';
 import {
   createManagedKafkaConnection,
   createManagedKafkaRequestIfNeeded,
@@ -47,8 +44,8 @@ const ManagedKafkas = () => {
     isList: false
   })
 
+  // TO DO: Replace this once we get error handling from operator
   if (!watchedKafkaRequest || !watchedKafkaRequest.status) {
-    // TODO loader should be in center of page
     return (
       <div>
         <LoadingBox/>
@@ -57,20 +54,6 @@ const ManagedKafkas = () => {
   }
 
   let remoteKafkaInstances = watchedKafkaRequest.status.userKafkas;
-
-  if (remoteKafkaInstances.length === 0) {
-    return <NamespacedPage disabled variant={NamespacedPageVariants.light} hideApplications>
-      <EmptyState>
-        <EmptyStateIcon icon={CubesIcon} />
-        <Title headingLevel="h4" size="lg">
-          No Managed Kafka Clusters found
-        </Title>
-        <EmptyStateSecondaryActions>
-          <Button variant="link">Go back to Managed Services Catalog</Button>
-        </EmptyStateSecondaryActions>
-      </EmptyState>
-    </NamespacedPage>
-  }
 
   const createManagedKafkaConnectionFlow = async () => {
     // TODO verify if service account sercret exist
@@ -98,26 +81,15 @@ const ManagedKafkas = () => {
 
   return (
     <>
-      <NamespacedPage disabled variant={NamespacedPageVariants.light} hideApplications>
-        <>
-          <StreamsInstancePage
-            kafkaArray={remoteKafkaInstances}
-            setSelectedKafka={setSelectedKafka}
-            currentKafkaConnections={currentKafkaConnections}
-          />
-          <div className="co-m-pane__body" style={{ borderTop: 0, paddingTop: 0, paddingBottom: 0 }}>
-            <FormFooter
-              handleSubmit={() => createManagedKafkaConnectionFlow()}
-              isSubmitting={false}
-              errorMessage=""
-              submitLabel={"Create"}
-              disableSubmit={disableCreate()}
-              resetLabel="Reset"
-              sticky
-              handleCancel={history.goBack}
-            />
-          </div>
-        </>
+      <NamespacedPage variant={NamespacedPageVariants.light} disabled hideApplications>
+        <StreamsInstancePage
+          kafkaArray={remoteKafkaInstances}
+          setSelectedKafka={setSelectedKafka}
+          currentKafkaConnections={currentKafkaConnections}
+          currentNamespace={currentNamespace}
+          createManagedKafkaConnectionFlow={createManagedKafkaConnectionFlow}
+          disableCreate={disableCreate}
+        />
       </NamespacedPage>
     </>
   );

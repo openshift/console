@@ -1,32 +1,34 @@
 import * as React from 'react';
 import {
   sortable,
+  cellWidth,
   Table,
   TableHeader,
   TableBody,
   RowSelectVariant
 } from '@patternfly/react-table';
 import { Timestamp } from '@console/internal/components/utils';
+import './StreamsInstanceTable.css'
 
 type FormattedKafkas = {
   cells: JSX.Element[];
   selected: boolean;
 };
 
-const StreamsInstanceTable: any = ({ kafkaArray, setSelectedKafka, currentKafkaConnections }) => {
+const StreamsInstanceTable: any = ({ kafkaArray, setSelectedKafka, currentKafkaConnections, allKafkasConnected, setAllKafkasConnected }) => {
 
   const [formattedKafkas, setFormattedKafkas] = React.useState<FormattedKafkas[]>([]);
 
   const formatTableRowData = () => {
     const tableRow = [];
     kafkaArray.forEach(row => {
-      const { name, bootstrapServerHost, region, owner, createdAt } = row;
+      const { name, bootstrapServerHost, provider, region, owner, createdAt } = row;
       tableRow.push({
         cells: [
           { title: name },
           { title: <a href="/">{bootstrapServerHost}</a> },
+          { title: provider },
           { title: region },
-          { title: 'username' },
           { title: <a href="/">{owner}</a> },
           { title: <Timestamp timestamp={createdAt} /> },
         ]
@@ -38,7 +40,12 @@ const StreamsInstanceTable: any = ({ kafkaArray, setSelectedKafka, currentKafkaC
         tableRow[index].disableSelection = true;
       }
     })
-    setFormattedKafkas(tableRow);
+    if(kafkaArray.length === currentKafkaConnections.length) {
+      setAllKafkasConnected(true);
+    }
+    else {
+      setFormattedKafkas(tableRow);
+    }
   };
 
 
@@ -49,11 +56,11 @@ const StreamsInstanceTable: any = ({ kafkaArray, setSelectedKafka, currentKafkaC
 
   const tableColumns = [
     { title: 'Cluster Name', transforms: [sortable] },
-    { title: 'Bootstrap URL', transforms: [sortable] },
-    { title: 'Region', transforms: [sortable] },
+    { title: 'Bootstrap URL', transforms: [sortable, cellWidth(30)] },
     { title: 'Provider', transforms: [sortable] },
+    { title: 'Region', transforms: [sortable] },
     { title: 'Owner', transforms: [sortable] },
-    { title: 'Time created', transforms: [sortable] },
+    { title: 'Created', transforms: [sortable] },
   ];
 
   const onSelectTableRow = (event, isSelected, rowId) => {
@@ -74,6 +81,7 @@ const StreamsInstanceTable: any = ({ kafkaArray, setSelectedKafka, currentKafkaC
         rows={formattedKafkas}
         onSelect={onSelectTableRow}
         selectVariant={RowSelectVariant.radio}
+        className="mk-streams-table"
       >
         <TableHeader />
         <TableBody />
