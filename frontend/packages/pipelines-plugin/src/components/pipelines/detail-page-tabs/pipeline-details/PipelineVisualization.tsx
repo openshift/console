@@ -2,7 +2,6 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert } from '@patternfly/react-core';
 import { PipelineKind, PipelineRunKind } from '../../../../types';
-import { hasInlineTaskSpec } from '../../../../utils/pipeline-utils';
 import PipelineTopologyGraph from '../../pipeline-topology/PipelineTopologyGraph';
 import { getTopologyNodesEdges } from '../../pipeline-topology/utils';
 import { PipelineLayout } from '../../pipeline-topology/const';
@@ -20,19 +19,6 @@ const PipelineVisualization: React.FC<PipelineTopologyVisualizationProps> = ({
 }) => {
   const { t } = useTranslation();
   let content: React.ReactElement;
-  if (hasInlineTaskSpec(pipeline.spec.tasks)) {
-    // TODO: Inline taskSpec is not yet supported feature
-    content = (
-      <Alert
-        variant="info"
-        isInline
-        title={t(
-          'pipelines-plugin~This Pipeline cannot be visualized. Pipeline taskSpec is not supported.',
-        )}
-      />
-    );
-    return <div className="odc-pipeline-visualization">{content}</div>;
-  }
 
   const { nodes, edges } = getTopologyNodesEdges(pipeline, pipelineRun);
 

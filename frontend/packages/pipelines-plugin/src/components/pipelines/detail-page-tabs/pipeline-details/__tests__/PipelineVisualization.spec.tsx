@@ -20,12 +20,9 @@ describe('Pipeline Visualization', () => {
     wrapper = shallow(<PipelineVisualization pipeline={mockPipelinesJSON[2]} />);
   });
 
-  it('Should render a Alert message if the pipeline has inline taskSpec ', () => {
-    const alert = wrapper.find(Alert);
-    expect(alert).toHaveLength(1);
-    expect(alert.props().title).toBe(
-      'pipelines-plugin~This Pipeline cannot be visualized. Pipeline taskSpec is not supported.',
-    );
+  it('Should render pipeline Visualization component if the pipeline has inline taskSpec ', () => {
+    const PipelineTopologyGraphComponent = wrapper.find(PipelineTopologyGraph);
+    expect(PipelineTopologyGraphComponent).toHaveLength(1);
   });
 
   it('Should render a Alert message if the pipeline does not have tasks', () => {

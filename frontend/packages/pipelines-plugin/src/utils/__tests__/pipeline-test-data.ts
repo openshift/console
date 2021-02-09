@@ -91,6 +91,19 @@ export const mockPipelinesJSON: PipelineKind[] = [
             },
           ],
         },
+        {
+          name: 'use-secret',
+          taskSpec: {
+            steps: [
+              {
+                name: 'greet',
+                image: 'registry.access.redhat.com/ubi8/ubi',
+                script: ['#!/usr/bin/env bash', 'echo "Hello world!"'],
+              },
+            ],
+          },
+          params: [{ name: 'xyz', value: 'default' }],
+        },
       ],
     },
   },

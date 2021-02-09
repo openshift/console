@@ -85,6 +85,7 @@ export const PipelineVisualizationTask: React.FC<PipelineVisualizationTaskProp> 
     <TaskComponent
       pipelineRunName={pipelineRunName}
       name={task.name || ''}
+      task={task.taskSpec && { data: { spec: task.taskSpec } }}
       namespace={namespace}
       status={taskStatus}
       isPipelineRun={!!pipelineRunStatus}
@@ -95,7 +96,7 @@ export const PipelineVisualizationTask: React.FC<PipelineVisualizationTaskProp> 
     />
   );
 
-  if (disableTooltip) {
+  if (disableTooltip || task.taskSpec) {
     return taskComponent;
   }
 
@@ -133,7 +134,7 @@ const TaskComponent: React.FC<TaskProps> = ({
   height,
 }) => {
   const { t } = useTranslation();
-  const stepList = _.get(task, ['data', 'spec', 'steps'], []);
+  const stepList = task?.data?.spec?.steps || [];
   const stepStatusList: StepStatus[] = stepList.map((step) => createStepStatus(step, status));
   const showStatusState: boolean = isPipelineRun && !!status && !!status.reason;
   const visualName = name || _.get(task, ['metadata', 'name'], '');
