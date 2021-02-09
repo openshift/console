@@ -87,7 +87,7 @@ const ClusterTableHeader = () => {
     },
     {
       title: 'Owner',
-      sortField: 'status.owner',
+      // sortField: 'status.owner',
       transforms: [sortable],
       props: { className: tableColumnClasses[7] },
     },
@@ -106,6 +106,8 @@ const ClusterTableHeader = () => {
 ClusterTableHeader.displayName = 'ClusterTableHeader';
 
 const ClusterTableRow: RowFunction<IClusterTableRow> = ({ obj: cluster, index, key, style }) => {
+  const owner = Object.keys(cluster.status.owner)[0];
+
   return (
     <TableRow id={cluster.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
@@ -121,7 +123,7 @@ const ClusterTableRow: RowFunction<IClusterTableRow> = ({ obj: cluster, index, k
       <TableData className={tableColumnClasses[6]}>
         {`${cluster.status?.workerRun ?? 0} / ${cluster.spec?.workerNum ?? 0}`}
       </TableData>
-      <TableData className={tableColumnClasses[7]}>{cluster.status.owner}</TableData>
+      <TableData className={tableColumnClasses[7]}>{owner}</TableData>
       <TableData className={tableColumnClasses[8]}>
         <Timestamp timestamp={cluster.metadata.creationTimestamp} />
       </TableData>
@@ -157,22 +159,39 @@ export const ClusterDetailsList: React.FC<ClusterDetailsListProps> = ({ cl }) =>
   );
 };
 
-const ClusterDetails: React.FC<ClusterDetailsProps> = ({ obj: cluster }) => (
-  <>
-    <div className="co-m-pane__body">
-      <SectionHeading text="Cluster Details" />
-      <div className="row">
-        <div className="col-lg-6">
-          <ResourceSummary resource={cluster} customPathName={'fakeMetadata.fakename'} showOwner={false} />
-          <DetailsItem label="Owner" obj={cluster} path="status.owner" />
-        </div>
-        <div className="col-lg-6">
-          <ClusterDetailsList cl={cluster} />
+interface KeyValuePrintProps {
+  obj: any;
+  key: string;
+}
+
+const KeyValuePrint: React.FC<KeyValuePrintProps> = ({ obj, key }) => {
+  return <div>{`${key} / ${obj[key]}`}</div>;
+}
+
+const ClusterDetails: React.FC<ClusterDetailsProps> = ({ obj: cluster }) => {
+  const owner = Object.keys(cluster.status.owner)[0];
+  const members = Object.keys(cluster.status.members);
+  const groups = Object.keys(cluster.status.groups);
+
+  return (
+    <>
+      <div className="co-m-pane__body">
+        <SectionHeading text="Cluster Details" />
+        <div className="row">
+          <div className="col-lg-6">
+            <ResourceSummary resource={cluster} customPathName={'fakeMetadata.fakename'} showOwner={false} />
+            <DetailsItem label="Owner" obj={cluster} children={KeyValuePrint({ obj: cluster.status.owner, key: owner })} />
+            <DetailsItem label="Members" obj={cluster} children={members.map(member => KeyValuePrint({ obj: cluster.status.members, key: member }))} />
+            <DetailsItem label="Groups" obj={cluster} children={groups.map(group => KeyValuePrint({ obj: cluster.status.groups, key: group }))} />
+          </div>
+          <div className="col-lg-6">
+            <ClusterDetailsList cl={cluster} />
+          </div>
         </div>
       </div>
-    </div>
-  </>
-);
+    </>
+  );
+}
 
 const { details, /* nodes, */ editYaml /*, events */ } = navFactory;
 export const Clusters: React.FC = props => <Table {...props} aria-label="Clusters" Header={ClusterTableHeader} Row={ClusterTableRow} virtualize />;
