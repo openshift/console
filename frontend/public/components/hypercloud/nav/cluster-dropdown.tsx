@@ -109,7 +109,7 @@ const ClusterDropdown_: React.FC<ClusterDropdownProps & StateProps> = ({
                 const hasCluster = activeCluster && clusterList.find(cl => cl.name === activeCluster);
 
                 if (!hasCluster) {
-                    setActiveCluster(clusterList[0].name);
+                    setActiveCluster(clusterList[0]?.name);
                 }
 
             });
