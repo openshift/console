@@ -1700,6 +1700,7 @@ metadata:
               matchLabels: {
                 description: 'matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, whose key field is "key", the operator is "In", and the values array contains only "value". The requirements are ANDed.',
                 type: 'object',
+                propertyNames: 'Labels',
                 additionalProperties: {
                   type: ['string', 'null'],
                 },
@@ -1928,6 +1929,7 @@ metadata:
                   labels: {
                     description: 'Map of string keys and values that can be used to organize and categorize (scope and select) objects. May match selectors of replication controllers and services. More info: http://kubernetes.io/docs/user-guide/labels',
                     type: 'object',
+                    propertyNames: 'Labels',
                     additionalProperties: {
                       type: ['string', 'null'],
                     },
@@ -34114,6 +34116,7 @@ metadata:
                 additionalProperties: {
                   type: ['string', 'null'],
                 },
+                propertyNames: 'Labels',
                 description: 'matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, whose key field is "key", the operator is "In", and the values array contains only "value". The requirements are ANDed.',
                 type: ['object', 'null'],
               },

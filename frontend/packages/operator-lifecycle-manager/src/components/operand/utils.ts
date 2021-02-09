@@ -4,15 +4,7 @@ import { JSONSchema6 } from 'json-schema';
 import { SpecCapability, Descriptor } from '../descriptors/types';
 import { modelFor } from '@console/internal/module/k8s';
 import { capabilityFieldMap, capabilityWidgetMap } from '../descriptors/spec/spec-descriptor-input';
-import {
-  HIDDEN_UI_SCHEMA,
-  REGEXP_K8S_RESOURCE_SUFFIX,
-  REGEXP_SELECT_OPTION,
-  REGEXP_FIELD_DEPENDENCY_PATH_VALUE,
-  SORT_WEIGHT_SCALE_1,
-  SORT_WEIGHT_SCALE_2,
-  SORT_WEIGHT_SCALE_3,
-} from './const';
+import { HIDDEN_UI_SCHEMA, REGEXP_K8S_RESOURCE_SUFFIX, REGEXP_SELECT_OPTION, REGEXP_FIELD_DEPENDENCY_PATH_VALUE, SORT_WEIGHT_SCALE_1, SORT_WEIGHT_SCALE_2, SORT_WEIGHT_SCALE_3 } from './const';
 import { UiSchema } from 'react-jsonschema-form';
 import { SchemaType } from '@console/shared/src/components/dynamic-form';
 import { getSchemaType } from 'react-jsonschema-form/lib/utils';
@@ -20,7 +12,7 @@ import { getSchemaErrors } from '@console/shared/src/components/dynamic-form/uti
 
 // Transform a path string from a descriptor to a JSON schema path array
 export const descriptorPathToUISchemaPath = (path: string): string[] =>
-  (_.toPath(path) ?? []).map((subPath) => {
+  (_.toPath(path) ?? []).map(subPath => {
     return /^\d+$/.test(subPath) ? 'items' : subPath;
   });
 
@@ -59,10 +51,8 @@ export const hasNoFields = (jsonSchema: JSONSchema6 = {}): boolean => {
     return hasNoFields(jsonSchema.items as JSONSchema6);
   };
   const handleObject = () => {
-    return (
-      _.every(jsonSchema?.properties, hasNoFields) &&
-      hasNoFields(jsonSchema?.additionalProperties as JSONSchema6)
-    );
+    return _.every(jsonSchema?.properties, hasNoFields) && !jsonSchema?.additionalProperties;
+    //  && hasNoFields(jsonSchema?.additionalProperties as JSONSchema6);
   };
 
   switch (type) {
@@ -90,6 +80,11 @@ export const getDefaultUISchema = (jsonSchema: JSONSchema6): UiSchema => {
   };
 
   const handleObject = () => {
+    if (jsonSchema.propertyNames) {
+      return {
+        'ui:field': 'LabelsField',
+      };
+    }
     return _.reduce(
       jsonSchema.properties,
       (uiSchemaAccumulator: UiSchema, property: JSONSchema6, name: string) => {
@@ -104,7 +99,12 @@ export const getDefaultUISchema = (jsonSchema: JSONSchema6): UiSchema => {
       {},
     );
   };
-
+  // if (jsonSchema.propertyNames === 'matchLabels') {
+  //   return {
+  //     'ui:title': 'Match Labels',
+  //     'ui:field': 'LabelsField',
+  //   };
+  // }
   switch (type) {
     case SchemaType.array:
       return handleArray();
@@ -160,23 +160,17 @@ export const capabilitiesToUISchema = (capabilities: SpecCapability[] = []) => {
     return {};
   }
 
-  const k8sResourceCapability = _.find(capabilities, (capability) =>
-    capability.startsWith(SpecCapability.k8sResourcePrefix),
-  );
+  const k8sResourceCapability = _.find(capabilities, capability => capability.startsWith(SpecCapability.k8sResourcePrefix));
   if (k8sResourceCapability) {
     return k8sResourceCapabilityToUISchema(k8sResourceCapability);
   }
 
-  const fieldDependencyCapability = _.find(capabilities, (capability) =>
-    capability.startsWith(SpecCapability.fieldDependency),
-  );
+  const fieldDependencyCapability = _.find(capabilities, capability => capability.startsWith(SpecCapability.fieldDependency));
   if (fieldDependencyCapability) {
     return fieldDependencyCapabilityToUISchema(fieldDependencyCapability);
   }
 
-  const hasSelectOptions = _.some(capabilities, (capability) =>
-    capability.startsWith(SpecCapability.select),
-  );
+  const hasSelectOptions = _.some(capabilities, capability => capability.startsWith(SpecCapability.select));
   if (hasSelectOptions) {
     return selectCapabilitiesToUISchema(capabilities);
   }
@@ -323,16 +317,10 @@ export const getJSONSchemaOrder = (jsonSchema, uiSchema) => {
 };
 
 // Map a set of spec descriptors to a ui schema
-export const descriptorsToUISchema = (
-  descriptors: Descriptor<SpecCapability>[],
-  jsonSchema: JSONSchema6,
-) => {
+export const descriptorsToUISchema = (descriptors: Descriptor<SpecCapability>[], jsonSchema: JSONSchema6) => {
   const uiSchemaFromDescriptors = _.reduce(
     descriptors,
-    (
-      uiSchemaAccumulator,
-      { path, description, displayName, 'x-descriptors': capabilities = [] },
-    ) => {
+    (uiSchemaAccumulator, { path, description, displayName, 'x-descriptors': capabilities = [] }) => {
       const uiSchemaPath = descriptorPathToUISchemaPath(path);
       if (!jsonSchemaHas(jsonSchema, uiSchemaPath)) {
         // eslint-disable-next-line no-console
@@ -340,10 +328,8 @@ export const descriptorsToUISchema = (
         return uiSchemaAccumulator;
       }
       const isAdvanced = _.includes(capabilities, SpecCapability.advanced);
-      const capabilitiesUISchema = capabilitiesToUISchema(
-        _.without(capabilities, SpecCapability.advanced),
-      );
-      return uiSchemaAccumulator.withMutations((mutable) => {
+      const capabilitiesUISchema = capabilitiesToUISchema(_.without(capabilities, SpecCapability.advanced));
+      return uiSchemaAccumulator.withMutations(mutable => {
         if (isAdvanced) {
           const advancedPropertyName = _.last(uiSchemaPath);
           const pathToAdvanced = [...uiSchemaPath.slice(0, uiSchemaPath.length - 1), 'ui:advanced'];
