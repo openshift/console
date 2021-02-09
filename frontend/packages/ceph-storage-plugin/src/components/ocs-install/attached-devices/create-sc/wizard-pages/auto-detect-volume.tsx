@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Form } from '@patternfly/react-core';
+import { Form, TextVariants } from '@patternfly/react-core';
 import {
   AutoDetectVolumeInner,
   AutoDetectVolumeHeader,
@@ -11,7 +11,7 @@ import '../../attached-devices.scss';
 
 export const AutoDetectVolume: React.FC<AutoDetectVolumeProps> = ({ state, dispatch }) => (
   <>
-    <AutoDetectVolumeHeader />
+    <AutoDetectVolumeHeader className="ocs-install-wizard__h3" variant={TextVariants.h3} />
     <Form noValidate={false} className="ceph-ocs-install__auto-detect-table">
       <AutoDetectVolumeInner state={state} dispatch={dispatch} taintsFilter={hasOCSTaint} />
     </Form>

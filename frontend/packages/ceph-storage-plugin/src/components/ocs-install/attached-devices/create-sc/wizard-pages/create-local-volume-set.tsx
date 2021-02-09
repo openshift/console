@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Form, Alert, Button, Grid, GridItem } from '@patternfly/react-core';
+import { Form, Alert, Button, Grid, GridItem, TextVariants } from '@patternfly/react-core';
 import { Modal, useFlag } from '@console/shared';
 import { k8sCreate } from '@console/internal/module/k8s';
 import { LocalVolumeSetModel } from '@console/local-storage-operator-plugin/src/models';
@@ -64,7 +64,7 @@ export const CreateLocalVolumeSet: React.FC<CreateLocalVolumeSetProps> = ({
 
   return (
     <>
-      <LocalVolumeSetHeader />
+      <LocalVolumeSetHeader className="ocs-install-wizard__h3" variant={TextVariants.h3} />
       <Grid className="ceph-ocs-install__form-wrapper">
         <GridItem lg={10} md={12} sm={12}>
           <Form noValidate={false}>

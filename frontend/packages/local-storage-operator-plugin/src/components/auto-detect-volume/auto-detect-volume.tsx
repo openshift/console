@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { match as RouterMatch } from 'react-router';
-import { ActionGroup, Button, Form } from '@patternfly/react-core';
+import { ActionGroup, Button, Form, TextVariants } from '@patternfly/react-core';
 import {
   resourcePathFromModel,
   BreadCrumbs,
@@ -105,7 +105,7 @@ const AutoDetectVolume: React.FC = withHandlePromise<AutoDetectVolumeProps & Han
             />
           </div>
 
-          <AutoDetectVolumeHeader />
+          <AutoDetectVolumeHeader variant={TextVariants.h1} />
         </div>
         <Form
           noValidate={false}

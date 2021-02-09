@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { match as RouterMatch } from 'react-router';
-import { ActionGroup, Button, Form } from '@patternfly/react-core';
+import { ActionGroup, Button, Form, TextVariants } from '@patternfly/react-core';
 import {
   resourcePathFromModel,
   BreadCrumbs,
@@ -79,7 +79,7 @@ const CreateLocalVolumeSet: React.FC = withHandlePromise<
             ]}
           />
         </div>
-        <LocalVolumeSetHeader />
+        <LocalVolumeSetHeader variant={TextVariants.h1} />
       </div>
       <Form
         noValidate={false}

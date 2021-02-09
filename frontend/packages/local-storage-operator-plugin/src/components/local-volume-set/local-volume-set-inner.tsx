@@ -7,6 +7,7 @@ import {
   ExpandableSection,
   TextInputTypes,
   Text,
+  TextContent,
   TextVariants,
   Tooltip,
 } from '@patternfly/react-core';
@@ -307,12 +308,19 @@ type LocalVolumeSetInnerProps = {
   taintsFilter?: (node: NodeKind) => boolean;
 };
 
-export const LocalVolumeSetHeader = () => {
+export const LocalVolumeSetHeader: React.FC<LocalVolumeSetHeaderProps> = ({
+  className,
+  variant,
+}) => {
   const { t } = useTranslation();
 
   return (
     <>
-      <h1 className="co-create-operand__header-text">{t('lso-plugin~Local Volume Set')}</h1>
+      <TextContent>
+        <Text component={variant} className={className}>
+          {t('lso-plugin~Local Volume Set')}
+        </Text>
+      </TextContent>
       <p className="help-block">
         {t(
           'lso-plugin~A Local Volume Set allows you to filter a set of storage volumes group them and create a dedicated storage class to consume storage for them.',
@@ -320,4 +328,9 @@ export const LocalVolumeSetHeader = () => {
       </p>
     </>
   );
+};
+
+type LocalVolumeSetHeaderProps = {
+  variant: any;
+  className?: string;
 };
