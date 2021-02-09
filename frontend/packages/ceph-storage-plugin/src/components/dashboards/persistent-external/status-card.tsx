@@ -11,7 +11,7 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { DashboardItemProps } from '@console/internal/components/dashboard/with-dashboard-resources';
 import { getCephHealthState } from '../persistent-internal/status-card/utils';
-import { cephClusterResource } from '../../../constants/resources';
+import { cephClusterResource } from '../../../resources';
 
 export const StatusCard: React.FC<DashboardItemProps> = () => {
   const { t } = useTranslation();

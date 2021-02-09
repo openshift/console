@@ -6,3 +6,7 @@ export * from './tooltips';
 export * from './common';
 export * from './disks';
 export * from './pool';
+export * from './data-consumption';
+export * from './providers';
+export * from './capacity-breakdown';
+export * from './status';

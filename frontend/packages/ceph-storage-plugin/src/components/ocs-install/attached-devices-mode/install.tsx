@@ -11,7 +11,7 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { StorageClassModel } from '@console/internal/models';
 import { fetchK8s } from '@console/internal/graphql/client';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
-import { LSOSubscriptionResource } from '../../../constants/resources';
+import { LSOSubscriptionResource } from '../../../resources';
 import { filterSCWithNoProv } from '../../../utils/install';
 import CreateSC from './create-sc/create-sc';
 import './attached-devices.scss';

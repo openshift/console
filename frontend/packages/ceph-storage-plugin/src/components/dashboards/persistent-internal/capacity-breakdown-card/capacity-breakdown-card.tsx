@@ -12,8 +12,8 @@ import DashboardCard from '@console/shared/src/components/dashboard/dashboard-ca
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
-import { breakdownQueryMap } from '../../../../constants/queries';
-import { PODS, PROJECTS, STORAGE_CLASSES } from '../../../../constants/index';
+import { breakdownQueryMap } from '../../../../queries';
+import { PODS, PROJECTS, STORAGE_CLASSES } from '../../../../constants';
 import { BreakdownCardBody } from '../../common/capacity-breakdown/breakdown-body';
 import { getStackChartStats, sortInstantVectorStats } from '../../common/capacity-breakdown/utils';
 import { getSelectOptions } from '../../common/capacity-breakdown/breakdown-dropdown';

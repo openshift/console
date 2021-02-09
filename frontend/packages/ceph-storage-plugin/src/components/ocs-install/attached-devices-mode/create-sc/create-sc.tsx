@@ -40,7 +40,7 @@ import { resourcePathFromModel } from '@console/internal/components/utils';
 import { initialState, reducer, State, Action, Discoveries } from './state';
 import { AutoDetectVolume } from './wizard-pages/auto-detect-volume';
 import { CreateLocalVolumeSet } from './wizard-pages/create-local-volume-set';
-import { nodesDiscoveriesResource } from '../../../../constants/resources';
+import { nodesDiscoveriesResource } from '../../../../resources';
 import { getTotalDeviceCapacity } from '../../../../utils/install';
 import {
   AVAILABLE,

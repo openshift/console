@@ -42,7 +42,7 @@ import { State, Action } from '../state';
 import AttachedDevicesNodeTable from '../../sc-node-list';
 import { PVsAvailableCapacity } from '../../../pvs-available-capacity';
 import { getSCAvailablePVs } from '../../../../../selectors';
-import { nodeResource, pvResource } from '../../../../../constants/resources';
+import { nodeResource, pvResource } from '../../../../../resources';
 import { GUARDED_FEATURES } from '../../../../../features';
 
 const validate = (

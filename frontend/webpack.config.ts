@@ -220,7 +220,6 @@ const config: Configuration = {
     new CopyWebpackPlugin([{ from: './packages/gitops-plugin/locales', to: 'locales' }]),
     new CopyWebpackPlugin([{ from: './packages/kubevirt-plugin/locales', to: 'locales' }]),
     new CopyWebpackPlugin([{ from: './packages/ceph-storage-plugin/locales', to: 'locales' }]),
-    new CopyWebpackPlugin([{ from: './packages/noobaa-storage-plugin/locales', to: 'locales' }]),
     new CopyWebpackPlugin([{ from: './packages/metal3-plugin/locales', to: 'locales' }]),
     new CopyWebpackPlugin([{ from: './packages/insights-plugin/locales', to: 'locales' }]),
     new CopyWebpackPlugin([

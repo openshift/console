@@ -20,7 +20,7 @@ import {
   StorageDashboardQuery,
   UTILIZATION_QUERY,
   utilizationPopoverQueryMap,
-} from '../../../../constants/queries';
+} from '../../../../queries';
 import { humanizeIOPS, humanizeLatency } from './utils';
 
 const UtilizationCard: React.FC = () => {

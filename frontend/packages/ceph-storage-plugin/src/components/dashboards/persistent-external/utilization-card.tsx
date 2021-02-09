@@ -12,7 +12,7 @@ import {
   Duration,
 } from '@console/shared/src/components/dashboard/duration-hook';
 import { PrometheusUtilizationItem } from '@console/internal/components/dashboard/dashboards-page/cluster-dashboard/utilization-card';
-import { StorageDashboardQuery, INDEPENDENT_UTILIZATION_QUERIES } from '../../../constants/queries';
+import { StorageDashboardQuery, INDEPENDENT_UTILIZATION_QUERIES } from '../../../queries';
 
 export const UtilizationCard: React.FC = () => {
   const { t } = useTranslation();

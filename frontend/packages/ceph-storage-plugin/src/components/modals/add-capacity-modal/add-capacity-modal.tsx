@@ -25,7 +25,7 @@ import {
 import { OCSStorageClassDropdown } from '../storage-class-dropdown';
 import { PVsAvailableCapacity } from '../../ocs-install/pvs-available-capacity';
 import { createDeviceSet } from '../../ocs-install/ocs-request-data';
-import { cephCapacityResource } from '../../../constants/resources';
+import { cephCapacityResource } from '../../../resources';
 import { DeviceSet } from '../../../types';
 import './add-capacity-modal.scss';
 import { checkArbiterCluster, checkFlexibleScaling } from '../../../utils/common';
