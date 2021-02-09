@@ -1,0 +1,3 @@
+.mk-streams-table tr>*:empty {
+  width: 45px; /* Match width of PF React Table until solution is figured out */
+}
