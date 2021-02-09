@@ -20,6 +20,7 @@
     "OS_IMAGES_NS": "kubevirt-os-images",
     "UPLOAD_IMG": "/tmp/cirros.img",
     "TEMPLATE_NAME": "Red Hat Enterprise Linux 6.0+ VM",
-    "TEMPLATE_BASE_IMAGE": "rhel6"
+    "TEMPLATE_BASE_IMAGE": "rhel6",
+    "DOWNSTREAM": false
   }
 }
