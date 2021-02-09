@@ -75,7 +75,7 @@ export const resourceURL = (model, options) => {
 
 export const resourceClusterURL = (model) => {
   if(isCluster(model)) {
-    return `/api/multi-hypercloud/cluster?userId=${getId()}${getUserGroup()}`;
+    return `/api/multi-hypercloud/cluster?userId=${getId()}${getUserGroup()}&accessOnly=false`;
   }
   return `api/multi-hypercloud/clusterclaim?userId=${getId()}${getUserGroup()}`;
 }

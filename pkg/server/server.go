@@ -435,8 +435,12 @@ func (s *Server) HTTPHandler() http.Handler {
 		kialiProxy := hproxy.NewProxy(s.KialiProxyConfig)
 		handle(kialiProxyAPIPath, http.StripPrefix(
 			proxy.SingleJoiningSlash(s.BaseURL.Path, kialiProxyAPIPath),
+			// 	http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			// 		kialiProxy.ServeHTTP(w, r)
+			// 	})),
 			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
-				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
+				// r.Header.Set("Host", s.KialiProxyConfig.Endpoint.Host)
+				// r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
 				kialiProxy.ServeHTTP(w, r)
 			})),
 		)
@@ -569,9 +573,10 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		GrafanaPublicURL:    s.GrafanaPublicURL.String(),
 		PrometheusPublicURL: s.PrometheusPublicURL.String(),
 		ThanosPublicURL:     s.ThanosPublicURL.String(),
-		GOARCH:              s.GOARCH,
-		GOOS:                s.GOOS,
-		LoadTestFactor:      s.LoadTestFactor,
+
+		GOARCH:         s.GOARCH,
+		GOOS:           s.GOOS,
+		LoadTestFactor: s.LoadTestFactor,
 
 		// return ekycloak info
 		KeycloakRealm:    s.KeycloakRealm,

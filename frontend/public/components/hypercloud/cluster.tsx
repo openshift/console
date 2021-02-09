@@ -3,7 +3,7 @@ import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 
 import { Status } from '@console/shared';
-import { K8sResourceKind } from '../../module/k8s';
+import { K8sResourceKind, K8sKind } from '../../module/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from '../factory';
 import {
   DetailsItem,
@@ -18,8 +18,25 @@ import {
   Timestamp,
 } from '../utils';
 import { ClusterManagerModel } from '../../models';
+import { configureClusterNodesModal } from './modals';
+import { MembersPage } from './members';
 
-export const menuActions: KebabAction[] = [...Kebab.getExtensionsActionsForKind(ClusterManagerModel), ...Kebab.factory.common];
+const ModifyClusterNodes: KebabAction = (kind: K8sKind, obj: any) => ({
+  label: 'Edit Nodes',
+  callback: () =>
+    configureClusterNodesModal({
+      resourceKind: kind,
+      resource: obj,
+    }),
+  accessReview: {
+    group: kind.apiGroup,
+    resource: kind.plural,
+    name: obj.metadata.name,
+    verb: 'patch',
+  }
+});
+
+export const menuActions: KebabAction[] = [ModifyClusterNodes, ...Kebab.getExtensionsActionsForKind(ClusterManagerModel), ...Kebab.factory.common];
 
 const kind = ClusterManagerModel.kind;
 
@@ -71,7 +88,7 @@ const ClusterTableHeader = () => {
     },
     {
       title: 'Owner',
-      sortField: 'status.owner',
+      // sortField: 'status.owner',
       transforms: [sortable],
       props: { className: tableColumnClasses[7] },
     },
@@ -90,6 +107,8 @@ const ClusterTableHeader = () => {
 ClusterTableHeader.displayName = 'ClusterTableHeader';
 
 const ClusterTableRow: RowFunction<IClusterTableRow> = ({ obj: cluster, index, key, style }) => {
+  const owner = Object.keys(cluster.status.owner)[0];
+
   return (
     <TableRow id={cluster.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
@@ -100,12 +119,12 @@ const ClusterTableRow: RowFunction<IClusterTableRow> = ({ obj: cluster, index, k
       <TableData className={tableColumnClasses[3]}>{cluster.status?.ready ? 'Ready' : 'Not Ready'}</TableData>
       <TableData className={tableColumnClasses[4]}>{cluster.spec.version}</TableData>
       <TableData className={tableColumnClasses[5]}>
-        {`${cluster.status?.masterRun ?? 0} / ${cluster.spec?.masterNum}`}
+        {`${cluster.status?.masterRun ?? 0} / ${cluster.spec?.masterNum ?? 0}`}
       </TableData>
       <TableData className={tableColumnClasses[6]}>
-        {`${cluster.status?.workerRun ?? 0} / ${cluster.spec?.workerNum}`}
+        {`${cluster.status?.workerRun ?? 0} / ${cluster.spec?.workerNum ?? 0}`}
       </TableData>
-      <TableData className={tableColumnClasses[7]}>{cluster.status.owner}</TableData>
+      <TableData className={tableColumnClasses[7]}>{owner}</TableData>
       <TableData className={tableColumnClasses[8]}>
         <Timestamp timestamp={cluster.metadata.creationTimestamp} />
       </TableData>
@@ -129,11 +148,11 @@ export const ClusterDetailsList: React.FC<ClusterDetailsListProps> = ({ cl }) =>
       <DetailsItem label="Version" obj={cl} path="spec.version" />
       <DetailsItem label="Region" obj={cl} path="spec.region" />
       <DetailsItem label="Master Node" obj={cl} path="spec.masterNum">
-        {`${cl.status?.masterRun ?? 0} / ${cl.spec.masterNum}`}
+        {`${cl.status?.masterRun ?? 0} / ${cl.spec.masterNum ?? 0}`}
       </DetailsItem>
       <DetailsItem label="Master Node Type" obj={cl} path="spec.masterType" />
       <DetailsItem label="Worker Node" obj={cl} path="spec.workerNum">
-        {`${cl.status?.workerRun ?? 0} / ${cl.spec.workerNum}`}
+        {`${cl.status?.workerRun ?? 0} / ${cl.spec.workerNum ?? 0}`}
       </DetailsItem>
       <DetailsItem label="Worker Node Type" obj={cl} path="spec.workerType" />
       <DetailsItem label="SSH Key" obj={cl} path="spec.sshKey" />
@@ -141,22 +160,39 @@ export const ClusterDetailsList: React.FC<ClusterDetailsListProps> = ({ cl }) =>
   );
 };
 
-const ClusterDetails: React.FC<ClusterDetailsProps> = ({ obj: cluster }) => (
-  <>
-    <div className="co-m-pane__body">
-      <SectionHeading text="Cluster Details" />
-      <div className="row">
-        <div className="col-lg-6">
-          <ResourceSummary resource={cluster} customPathName={'fakeMetadata.fakename'} showOwner={false} />
-          <DetailsItem label="Owner" obj={cluster} path="status.owner" />
-        </div>
-        <div className="col-lg-6">
-          <ClusterDetailsList cl={cluster} />
+interface KeyValuePrintProps {
+  obj: any;
+  key: string;
+}
+
+const KeyValuePrint: React.FC<KeyValuePrintProps> = ({ obj, key }) => {
+  return <div>{`${key} / ${obj[key]}`}</div>;
+}
+
+const ClusterDetails: React.FC<ClusterDetailsProps> = ({ obj: cluster }) => {
+  const owner = cluster.status.owner && Object.keys(cluster.status.owner)[0];
+  const members = cluster.status.members && Object.keys(cluster.status.members);
+  const groups = cluster.status.groups && Object.keys(cluster.status.groups);
+
+  return (
+    <>
+      <div className="co-m-pane__body">
+        <SectionHeading text="Cluster Details" />
+        <div className="row">
+          <div className="col-lg-6">
+            <ResourceSummary resource={cluster} customPathName={'fakeMetadata.fakename'} showOwner={false} />
+            {cluster.status.owner && <DetailsItem label="Owner" obj={cluster} children={KeyValuePrint({ obj: cluster.status.owner, key: owner })} />}
+            {cluster.status.members && <DetailsItem label="Members" obj={cluster} children={members.map(member => KeyValuePrint({ obj: cluster.status.members, key: member }))} />}
+            {cluster.status.groups && <DetailsItem label="Groups" obj={cluster} children={groups.map(group => KeyValuePrint({ obj: cluster.status.groups, key: group }))} />}
+          </div>
+          <div className="col-lg-6">
+            <ClusterDetailsList cl={cluster} />
+          </div>
         </div>
       </div>
-    </div>
-  </>
-);
+    </>
+  );
+}
 
 const { details, /* nodes, */ editYaml /*, events */ } = navFactory;
 export const Clusters: React.FC = props => <Table {...props} aria-label="Clusters" Header={ClusterTableHeader} Row={ClusterTableRow} virtualize />;
@@ -164,8 +200,16 @@ export const Clusters: React.FC = props => <Table {...props} aria-label="Cluster
 export const ClustersPage: React.FC<ClustersPageProps> = props => {
   return <ListPage ListComponent={Clusters} kind={kind} {...props} />;
 };
+
 export const ClustersDetailsPage: React.FC<ClustersDetailsPageProps> = props => {
-  return <DetailsPage {...props} titleFunc={(obj: any) => obj.fakeMetadata.fakename} kind={kind} menuActions={menuActions} pages={[details(detailsPage(ClusterDetails)), editYaml() /* nodes(ClusterNodes),  events(ResourceEventStream) */]} />;
+  return <DetailsPage {...props} titleFunc={(obj: any) => obj.fakeMetadata.fakename} kind={kind} menuActions={menuActions}
+  pages={[details(detailsPage(ClusterDetails)), editYaml(), /* nodes(ClusterNodes),  events(ResourceEventStream) */ 
+    {
+    href: 'members',
+    name: 'Members',
+    component: pageProps => <MembersPage resource={pageProps.obj} title="Members" userHeading="Users" userGroupHeading="User Groups" />,
+    }]} 
+  />;
 };
 
 interface IClusterTableRow extends K8sResourceKind {

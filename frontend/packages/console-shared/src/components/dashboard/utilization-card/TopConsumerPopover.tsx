@@ -12,12 +12,9 @@ import {
   DashboardItemProps,
 } from '@console/internal/components/dashboard/with-dashboard-resources';
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
-import { featureReducerName } from '@console/internal/reducers/features';
-import { RootState } from '@console/internal/redux';
 import { getPrometheusQueryResponse } from '@console/internal/actions/dashboards';
 import { PopoverPosition } from '@patternfly/react-core';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { FLAGS } from '@console/shared/src/constants';
 import { getName, getNamespace } from '../../..';
 import { DashboardCardPopupLink } from '../dashboard-card/DashboardCardLink';
 import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '../../status';
@@ -109,14 +106,11 @@ export const PopoverBody = withDashboardResources<DashboardItemProps & PopoverBo
       children,
     }) => {
       const [currentConsumer, setCurrentConsumer] = React.useState(consumers[0]);
-      const activePerspective = useSelector<RootState, string>(({ UI }) =>
-        UI.get('activePerspective'),
-      );
-      const canAccessMonitoring = useSelector<RootState, boolean>(
-        (state) =>
-          !!state[featureReducerName].get(FLAGS.CAN_GET_NS) &&
-          !!window.SERVER_FLAGS.prometheusBaseURL,
-      );
+      // const canAccessMonitoring = useSelector<RootState, boolean>(
+      //   (state) =>
+      //     !!state[featureReducerName].get(FLAGS.CAN_GET_NS) &&
+      //     !!window.SERVER_FLAGS.prometheusBaseURL,
+      // );
       const { query, model, metric, fieldSelector } = currentConsumer;
       const k8sResource = React.useMemo(
         () => (isOpen ? getResourceToWatch(model, namespace, fieldSelector) : null),
@@ -176,11 +170,7 @@ export const PopoverBody = withDashboardResources<DashboardItemProps & PopoverBo
         [consumers],
       );
 
-       /* TODO: perspective admin을 사용하지 않기 때문에 추후 확인 필요 */
-      const monitoringURL =
-        canAccessMonitoring && activePerspective === 'admin'
-          ? `/monitoring/query-browser?${monitoringParams.toString()}`
-          : `/dev-monitoring/ns/${namespace}/metrics?${monitoringParams.toString()}`;
+      const monitoringURL = `/monitoring/query-browser?${monitoringParams.toString()}`;
 
       let body: React.ReactNode;
       if (error || consumersLoadError) {

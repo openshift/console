@@ -51,12 +51,14 @@ const (
 
 	// Well-known location of the tenant aware Thanos service for OpenShift. This is only accessible in-cluster.
 	// Thanos proxies requests to both cluster monitoring and user workload monitoring prometheus instances.
-	openshiftThanosTenancyHost = "thanos-querier.openshift-monitoring.svc:9092"
+	openshiftThanosTenancyHost = "prometheus-k8s.monitoring.svc:9090"
+	// openshiftThanosTenancyHost = ""
 
 	// Well-known location of the Thanos service for OpenShift. This is only accessible in-cluster.
 	// This is used for non-tenant global query requests
 	// proxying to both cluster monitoring and user workload monitoring prometheus instances.
-	openshiftThanosHost = "thanos-querier.openshift-monitoring.svc:9091"
+	openshiftThanosHost = "prometheus-k8s.monitoring.svc:9090"
+	// openshiftThanosHost = ""
 
 	// Well-known location of Alert Manager service for OpenShift. This is only accessible in-cluster.
 	openshiftAlertManagerHost = "alertmanager-main.monitoring.svc:9093"
@@ -151,9 +153,9 @@ func main() {
 	//NOTE: proxy config // jinsoo
 	fGrafanaEndpoint := fs.String("grafana-endpoint", "", "URL of the Grafana API server.")
 	fKialiEndpoint := fs.String("kiali-endpoint", "", "URL of the KIALI Portal")
-	// NOTE: webhook 연동 추가
+	// NOTE: webhook 연동 추1가
 	fwebhookEndpoint := fs.String("webhook-endpoint", "https://0.0.0.0:33333", "URL of the hypercloud webhook endpoint")
-	fKibanaEndpoint := fs.String("kibana-endpoint", "https://efk-opendistro-es-kibana-svc.efk.svc.cluster.local", "URL of the KIALI Portal")
+	fKibanaEndpoint := fs.String("kibana-endpoint", "https://opendistro-kibana.efk.svc.cluster.local:5601/api/kibana/", "URL of the KIALI Portal")
 
 	// NOTE: Multi Cluster(MC) Mode flags //jinsoo
 	fMcMode := fs.Bool("mc-mode", false, "Multi Cluster => true | Single Cluster => false")
@@ -361,7 +363,20 @@ func main() {
 		}
 
 		k8sAuthServiceAccountBearerToken = string(bearerToken)
-
+		srv.PrometheusProxyConfig = &proxy.Config{
+			// TLSClientConfig: serviceProxyTLSConfig,
+			HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+			Endpoint:        &url.URL{Scheme: "http", Host: openshiftPrometheusHost, Path: "/api"},
+		}
+		srv.ThanosProxyConfig = &proxy.Config{
+			// TLSClientConfig: serviceProxyTLSConfig,
+			HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+			Endpoint:        &url.URL{Scheme: "http", Host: openshiftThanosHost, Path: "/api"},
+		}
+		srv.ThanosTenancyProxyConfig = &proxy.Config{
+			HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+			Endpoint:        &url.URL{Scheme: "http", Host: openshiftThanosTenancyHost, Path: "/api"},
+		}
 		// If running in an OpenShift cluster, set up a proxy to the prometheus-k8s service running in the openshift-monitoring namespace.
 		if *fServiceCAFile != "" {
 			serviceCertPEM, err := ioutil.ReadFile(*fServiceCAFile)
@@ -376,30 +391,30 @@ func main() {
 				RootCAs:      serviceProxyRootCAs,
 				CipherSuites: crypto.DefaultCiphers(),
 			}
-			srv.PrometheusProxyConfig = &proxy.Config{
-				TLSClientConfig: serviceProxyTLSConfig,
-				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
-				Endpoint:        &url.URL{Scheme: "https", Host: openshiftPrometheusHost, Path: "/api"},
-			}
-			srv.ThanosProxyConfig = &proxy.Config{
-				TLSClientConfig: serviceProxyTLSConfig,
-				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
-				Endpoint:        &url.URL{Scheme: "https", Host: openshiftThanosHost, Path: "/api"},
-			}
-			srv.ThanosTenancyProxyConfig = &proxy.Config{
-				TLSClientConfig: serviceProxyTLSConfig,
-				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
-				Endpoint:        &url.URL{Scheme: "https", Host: openshiftThanosTenancyHost, Path: "/api"},
-			}
+			// srv.PrometheusProxyConfig = &proxy.Config{
+			// 	TLSClientConfig: serviceProxyTLSConfig,
+			// 	HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+			// 	Endpoint:        &url.URL{Scheme: "http", Host: openshiftPrometheusHost, Path: "/api"},
+			// }
+			// srv.ThanosProxyConfig = &proxy.Config{
+			// 	TLSClientConfig: serviceProxyTLSConfig,
+			// 	HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+			// 	Endpoint:        &url.URL{Scheme: "http", Host: openshiftThanosHost, Path: "/api"},
+			// }
+			// srv.ThanosTenancyProxyConfig = &proxy.Config{
+			// 	TLSClientConfig: serviceProxyTLSConfig,
+			// 	HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+			// 	Endpoint:        &url.URL{Scheme: "http", Host: openshiftThanosTenancyHost, Path: "/api"},
+			// }
 			srv.AlertManagerProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
 				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
-				Endpoint:        &url.URL{Scheme: "https", Host: openshiftAlertManagerHost, Path: "/api"},
+				Endpoint:        &url.URL{Scheme: "http", Host: openshiftAlertManagerHost, Path: "/api"},
 			}
 			srv.MeteringProxyConfig = &proxy.Config{
 				TLSClientConfig: serviceProxyTLSConfig,
 				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
-				Endpoint:        &url.URL{Scheme: "https", Host: openshiftMeteringHost, Path: "/api"},
+				Endpoint:        &url.URL{Scheme: "http", Host: openshiftMeteringHost, Path: "/api"},
 			}
 			srv.TerminalProxyTLSConfig = serviceProxyTLSConfig
 

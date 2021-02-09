@@ -94,7 +94,7 @@ const ClusterDropdown_: React.FC<ClusterDropdownProps & StateProps> = ({
 
     React.useEffect(() => {
         if (clusters.length == 0 || isClusterDropdownOpen) {
-            coFetchJSON(`/api/multi-hypercloud/cluster/owner?userId=${getId()}`, 'GET')
+            coFetchJSON(`/api/multi-hypercloud/cluster?accessOnly=true&userId=${getId()}`, 'GET')
             .then((result) => result.items)
             .then((res) => {
                 const clusterList: clusterItemProps[] = res.reduce((list, cluster)=> {
@@ -109,7 +109,7 @@ const ClusterDropdown_: React.FC<ClusterDropdownProps & StateProps> = ({
                 const hasCluster = activeCluster && clusterList.find(cl => cl.name === activeCluster);
 
                 if (!hasCluster) {
-                    setActiveCluster(clusterList[0].name);
+                    setActiveCluster(clusterList[0]?.name);
                 }
 
             });

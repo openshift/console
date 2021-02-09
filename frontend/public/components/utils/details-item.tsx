@@ -64,8 +64,8 @@ export const DetailsItem: React.FC<DetailsItemProps> = ({
             </Button>
           </Popover>
         ) : (
-          label
-        )}
+            label
+          )}
       </dt>
       <dd>{value}</dd>
     </>
@@ -75,7 +75,7 @@ export const DetailsItem: React.FC<DetailsItemProps> = ({
 export type DetailsItemProps = {
   label: string;
   obj: K8sResourceKind;
-  path: string | string[];
+  path?: string | string[];
   defaultValue?: React.ReactNode;
   hideEmpty?: boolean;
   children?: React.ReactNode;
