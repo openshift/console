@@ -199,24 +199,6 @@ const AppContents: React.FC<{}> = () => {
             />
 
             <LazyRoute
-              path="/catalog/create-service-instance"
-              exact
-              loader={() =>
-                import(
-                  './service-catalog/create-instance' /* webpackChunkName: "create-service-instance" */
-                ).then((m) => m.CreateInstancePage)
-              }
-            />
-            <LazyRoute
-              path="/k8s/ns/:ns/serviceinstances/:name/create-binding"
-              exact
-              loader={() =>
-                import(
-                  './service-catalog/create-binding' /* webpackChunkName: "create-binding" */
-                ).then((m) => m.CreateBindingPage)
-              }
-            />
-            <LazyRoute
               path="/catalog/instantiate-template"
               exact
               loader={() =>
