@@ -40,6 +40,7 @@ export enum OCS_PROVISIONER {
 export const OCS_DEVICE_REPLICA = Object.freeze({
   '2': '2-way',
   '3': '3-way',
+  '4': '4-way',
 });
 export const RGW_PROVISIONER = 'openshift-storage.ceph.rook.io/bucket';
 export const NOOBAA_PROVISIONER = 'openshift-storage.noobaa.io/obc';
