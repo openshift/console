@@ -9,7 +9,7 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import { InternalClusterState, InternalClusterAction, ActionType } from '../internal-mode/reducer';
 import { State, Action } from '../attached-devices/create-sc/state';
 import { KMSConfigure } from '../../kms-config/kms-config';
-import { NetworkType } from '../types';
+import { NetworkType } from '../../../types';
 import { ValidationMessage, ValidationType } from '../../../utils/common-ocs-install-el';
 import { GUARDED_FEATURES } from '../../../features';
 import { setEncryptionDispatch } from '../../kms-config/utils';

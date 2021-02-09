@@ -20,8 +20,8 @@ import {
   InternalClusterAction,
   ActionType,
 } from '../ocs-install/internal-mode/reducer';
-import { KMSProviders } from '../../constants/ocs-install';
-import { KMSConfig } from '../ocs-install/types';
+import { KMSProviders } from '../../constants';
+import { KMSConfig } from '../../types';
 import { State, Action } from '../ocs-install/attached-devices/create-sc/state';
 import { setEncryptionDispatch, parseURL } from './utils';
 import { StorageClassState, StorageClassClusterAction } from '../../utils/storage-pool';

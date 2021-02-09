@@ -13,7 +13,7 @@ import { humanizeCpuCores, ResourceLink } from '@console/internal/components/uti
 import { Table } from '@console/internal/components/factory';
 import { NodeKind } from '@console/internal/module/k8s';
 import { getConvertedUnits, getZone } from '../../../utils/install';
-import { GetRows, NodeTableProps } from '../types';
+import { GetRows, NodeTableProps } from '../../../types';
 import '../ocs-install.scss';
 
 const tableColumnClasses = [

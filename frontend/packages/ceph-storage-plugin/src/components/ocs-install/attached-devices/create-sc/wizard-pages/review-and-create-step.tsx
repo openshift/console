@@ -17,7 +17,7 @@ import {
   NodesCard,
   RequestErrors,
 } from '../../../install-wizard/review-and-create';
-import { NetworkType } from '../../../types';
+import { NetworkType } from '../../../../../types';
 import { GUARDED_FEATURES } from '../../../../../features';
 
 export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({

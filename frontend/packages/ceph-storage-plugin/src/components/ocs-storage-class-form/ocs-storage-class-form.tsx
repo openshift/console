@@ -37,15 +37,14 @@ import {
   CEPH_EXTERNAL_CR_NAME,
   CLUSTER_STATUS,
   CEPH_STORAGE_NAMESPACE,
+  KMSConfigMapCSIName,
 } from '../../constants';
-import { KMSConfigMapCSIName } from '../../constants/ocs-install';
 import { cephBlockPoolResource, cephClusterResource } from '../../constants/resources';
-import { CephClusterKind, StoragePoolKind } from '../../types';
+import { CephClusterKind, StoragePoolKind, KMSConfig, KMSConfigMap } from '../../types';
 import { storagePoolModal } from '../modals/storage-pool-modal/storage-pool-modal';
 import { POOL_STATE } from '../../constants/storage-pool-const';
 import { KMSConfigure } from '../kms-config/kms-config';
 import { scReducer, scInitialState, SCActionType } from '../../utils/storage-pool';
-import { KMSConfig, KMSConfigMap } from '../ocs-install/types';
 import { createKmsResources, setEncryptionDispatch, parseURL } from '../kms-config/utils';
 import './ocs-storage-class-form.scss';
 import { GUARDED_FEATURES } from '../../features';
