@@ -17,7 +17,7 @@ import {
 } from '@console/local-storage-operator-plugin/src/constants';
 import { getNodeCPUCapacity, getNodeAllocatableMemory, getName } from '@console/shared';
 import { ocsTaint, NO_PROVISIONER, AVAILABLE, MINIMUM_NODES, ZONE_LABELS } from '../constants';
-import { Discoveries } from '../components/ocs-install/attached-devices/create-sc/state';
+import { Discoveries } from '../components/ocs-install/attached-devices-mode/create-sc/state';
 import { getSCAvailablePVs } from '../selectors';
 
 export const hasNoTaints = (node: NodeKind) => {

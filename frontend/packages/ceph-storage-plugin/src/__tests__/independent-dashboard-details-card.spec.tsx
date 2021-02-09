@@ -4,7 +4,7 @@ import { ShallowWrapper, shallow } from 'enzyme';
 import { DashboardItemProps } from '@console/internal/components/dashboard/with-dashboard-resources';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import { DetailsCard } from '../components/independent-dashboard-page/details-card';
+import { DetailsCard } from '../components/dashboards/persistent-external/details-card';
 import { dashboardData } from '../__mocks__/independent-mode-dashboard-data';
 
 jest.mock('react-i18next', () => {

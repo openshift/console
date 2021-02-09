@@ -20,7 +20,7 @@ import {
 import { twentyFourHourTime } from '@console/internal/components/utils/datetime';
 import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
 import { PrometheusGraph } from '@console/internal/components/graphs/prometheus-graph';
-import { getLatestValue } from '@console/ceph-storage-plugin/src/components/dashboard-page/storage-dashboard/utilization-card/utils';
+import { getLatestValue } from '@console/ceph-storage-plugin/src/components/dashboards/persistent-internal/utilization-card/utils';
 import { DataPoint } from '@console/internal/components/graphs';
 import { Metrics, CHART_LABELS } from '../../constants';
 import { convertNaNToNull } from '../../utils';

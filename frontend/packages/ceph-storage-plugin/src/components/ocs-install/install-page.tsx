@@ -13,11 +13,11 @@ import {
   ClusterServiceVersionModel,
   ClusterServiceVersionKind,
 } from '@console/operator-lifecycle-manager';
-import { getRequiredKeys, createDownloadFile } from '../independent-mode/utils';
-import CreateExternalCluster from '../independent-mode/install';
+import { getRequiredKeys, createDownloadFile } from './external-mode/utils';
+import CreateExternalCluster from './external-mode/install';
 import { CreateInternalCluster } from './internal-mode/install-wizard';
 import { CEPH_STORAGE_NAMESPACE, MODES } from '../../constants';
-import { CreateAttachedDevicesCluster } from './attached-devices/install';
+import { CreateAttachedDevicesCluster } from './attached-devices-mode/install';
 import { StorageClusterKind } from '../../types';
 import { OCSServiceModel } from '../../models';
 import ExistingClusterModal from './existing-cluster-modal';

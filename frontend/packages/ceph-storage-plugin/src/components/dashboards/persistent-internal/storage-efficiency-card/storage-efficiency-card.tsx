@@ -14,11 +14,9 @@ import {
   POOL_STORAGE_EFFICIENCY_QUERIES,
   StorageDashboardQuery,
 } from '../../../../constants/queries';
-import { EfficiencyItemBody } from './storage-efficiency-card-item';
+import { EfficiencyItemBody } from '../../common/storage-efficiency/storage-efficiency-card-item';
 import { getGaugeValue } from '../../../../utils';
 import { humanizeBinaryBytes } from '@console/internal/components/utils';
-
-import './storage-efficiency-card.scss';
 
 const StorageEfficiencyCard: React.FC<DashboardItemProps> = ({
   watchPrometheus,

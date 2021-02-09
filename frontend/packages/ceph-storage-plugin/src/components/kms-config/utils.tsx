@@ -10,7 +10,7 @@ import {
   KMSSecretName,
   KMSConfigMapCSIName,
 } from '../../constants';
-import { Action } from '../ocs-install/attached-devices/create-sc/state';
+import { Action } from '../ocs-install/attached-devices-mode/create-sc/state';
 import { InternalClusterAction } from '../ocs-install/internal-mode/reducer';
 import { KMSConfig, KMSConfigMap } from '../../types';
 import { StorageClassClusterAction } from '../../utils/storage-pool';

@@ -10,7 +10,7 @@ import {
 import {
   getOptionsMenuItems,
   getGroupedSelectOptions,
-} from '@console/ceph-storage-plugin/src/components/dashboard-page/storage-dashboard/breakdown-card/breakdown-dropdown';
+} from '@console/ceph-storage-plugin/src/components/dashboards/common/capacity-breakdown/breakdown-dropdown';
 import {
   Breakdown,
   Metrics,

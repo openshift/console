@@ -3,12 +3,12 @@ import { ShallowWrapper, shallow } from 'enzyme';
 import {
   BreakdownBodyProps,
   BreakdownCardBody,
-} from '../components/dashboard-page/storage-dashboard/breakdown-card/breakdown-body';
-import { getStackChartStats } from '../components/dashboard-page/storage-dashboard/breakdown-card/utils';
+} from '../components/dashboards/common/capacity-breakdown/breakdown-body';
+import { getStackChartStats } from '../components/dashboards/common/capacity-breakdown/utils';
 import { breakdownData } from '../__mocks__/breakdown-data';
-import { BreakdownChart } from '../components/dashboard-page/storage-dashboard/breakdown-card/breakdown-chart';
-import { TotalCapacityBody } from '../components/dashboard-page/storage-dashboard/breakdown-card/breakdown-capacity';
-import { BreakdownChartLoading } from '../components/dashboard-page/storage-dashboard/breakdown-card/breakdown-loading';
+import { BreakdownChart } from '../components/dashboards/common/capacity-breakdown/breakdown-chart';
+import { TotalCapacityBody } from '../components/dashboards/common/capacity-breakdown/breakdown-capacity';
+import { BreakdownChartLoading } from '../components/dashboards/common/capacity-breakdown/breakdown-loading';
 
 const top5MetricsStats = getStackChartStats(breakdownData.top5, breakdownData.humanize);
 

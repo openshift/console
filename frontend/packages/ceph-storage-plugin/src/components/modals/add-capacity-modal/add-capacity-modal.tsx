@@ -27,7 +27,7 @@ import { PVsAvailableCapacity } from '../../ocs-install/pvs-available-capacity';
 import { createDeviceSet } from '../../ocs-install/ocs-request-data';
 import { cephCapacityResource } from '../../../constants/resources';
 import { DeviceSet } from '../../../types';
-import './_add-capacity-modal.scss';
+import './add-capacity-modal.scss';
 import { checkArbiterCluster, checkFlexibleScaling } from '../../../utils/common';
 
 const getProvisionedCapacity = (value: number) => (value % 1 ? (value * 3).toFixed(2) : value * 3);
