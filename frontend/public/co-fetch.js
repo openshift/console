@@ -30,9 +30,15 @@ export const shouldLogout = (url) => {
   return false;
 };
 
-const validateStatus = (response, url) => {
+export class RetryError extends Error {}
+
+export const validateStatus = async (response, url, method, retry) => {
   if (response.ok) {
     return response;
+  }
+
+  if (retry && response.status === 429) {
+    throw new RetryError();
   }
 
   if (response.status === 401 && shouldLogout(url)) {
@@ -56,7 +62,17 @@ const validateStatus = (response, url) => {
   }
 
   return response.json().then((json) => {
-    const cause = _.get(json, 'details.causes[0]');
+    // retry 409 conflict errors due to ClustResourceQuota / ResourceQuota
+    // https://bugzilla.redhat.com/show_bug.cgi?id=1920699
+    if (
+      retry &&
+      method === 'POST' &&
+      response.status === 409 &&
+      ['resourcequotas', 'clusterresourcequotas'].includes(json.details?.kind)
+    ) {
+      throw new RetryError();
+    }
+    const cause = json.details?.causes?.[0];
     let reason;
     if (cause) {
       reason = `Error "${cause.message}" for field "${cause.field}".`;
@@ -76,7 +92,6 @@ const validateStatus = (response, url) => {
     throw error;
   });
 };
-
 export class TimeoutError extends Error {
   constructor(url, ms, ...params) {
     super(`Call to ${url} timed out after ${ms}ms.`, ...params);
@@ -96,7 +111,7 @@ const getCSRFToken = () =>
     .map((c) => c.slice(cookiePrefix.length))
     .pop();
 
-export const coFetch = (url, options = {}, timeout = 60000) => {
+const coFetchInternal = (url, options, timeout, retry) => {
   const allOptions = _.defaultsDeep({}, initDefaults, options);
   if (allOptions.method !== 'GET') {
     allOptions.headers['X-CSRFToken'] = getCSRFToken();
@@ -109,7 +124,9 @@ export const coFetch = (url, options = {}, timeout = 60000) => {
     delete allOptions.headers['X-CSRFToken'];
   }
 
-  const fetchPromise = fetch(url, allOptions).then((response) => validateStatus(response, url));
+  const fetchPromise = fetch(url, allOptions).then((response) =>
+    validateStatus(response, url, allOptions.method, retry),
+  );
 
   // return fetch promise directly if timeout <= 0
   if (timeout < 1) {
@@ -122,6 +139,27 @@ export const coFetch = (url, options = {}, timeout = 60000) => {
 
   // Initiate both the fetch promise and a timeout promise
   return Promise.race([fetchPromise, timeoutPromise]);
+};
+
+export const coFetch = async (url, options = {}, timeout = 60000) => {
+  let attempt = 0;
+  let response;
+  let retry = true;
+  while (retry) {
+    retry = false;
+    attempt++;
+    try {
+      response = await coFetchInternal(url, options, timeout, attempt < 3);
+    } catch (e) {
+      if (e instanceof RetryError) {
+        retry = true;
+      } else {
+        throw e;
+      }
+    }
+  }
+
+  return response;
 };
 
 const parseJson = (response) => response.json();
