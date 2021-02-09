@@ -169,9 +169,9 @@ const KeyValuePrint: React.FC<KeyValuePrintProps> = ({ obj, key }) => {
 }
 
 const ClusterDetails: React.FC<ClusterDetailsProps> = ({ obj: cluster }) => {
-  const owner = Object.keys(cluster.status.owner)[0];
-  const members = Object.keys(cluster.status.members);
-  const groups = Object.keys(cluster.status.groups);
+  const owner = cluster.status.owner && Object.keys(cluster.status.owner)[0];
+  const members = cluster.status.members && Object.keys(cluster.status.members);
+  const groups = cluster.status.groups && Object.keys(cluster.status.groups);
 
   return (
     <>
@@ -180,9 +180,9 @@ const ClusterDetails: React.FC<ClusterDetailsProps> = ({ obj: cluster }) => {
         <div className="row">
           <div className="col-lg-6">
             <ResourceSummary resource={cluster} customPathName={'fakeMetadata.fakename'} showOwner={false} />
-            <DetailsItem label="Owner" obj={cluster} children={KeyValuePrint({ obj: cluster.status.owner, key: owner })} />
-            <DetailsItem label="Members" obj={cluster} children={members.map(member => KeyValuePrint({ obj: cluster.status.members, key: member }))} />
-            <DetailsItem label="Groups" obj={cluster} children={groups.map(group => KeyValuePrint({ obj: cluster.status.groups, key: group }))} />
+            {cluster.status.owner && <DetailsItem label="Owner" obj={cluster} children={KeyValuePrint({ obj: cluster.status.owner, key: owner })} />}
+            {cluster.status.members && <DetailsItem label="Members" obj={cluster} children={members.map(member => KeyValuePrint({ obj: cluster.status.members, key: member }))} />}
+            {cluster.status.groups && <DetailsItem label="Groups" obj={cluster} children={groups.map(group => KeyValuePrint({ obj: cluster.status.groups, key: group }))} />}
           </div>
           <div className="col-lg-6">
             <ClusterDetailsList cl={cluster} />
