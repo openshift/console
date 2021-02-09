@@ -71,7 +71,7 @@ export const VMNicsTable: React.FC<VMNicsTableProps> = ({
         dimensifyHeader(
           [
             {
-              title: t('kubevirt-plugin~Name,'),
+              title: t('kubevirt-plugin~Name'),
               sortField: 'name',
               transforms: [sortable],
             },
