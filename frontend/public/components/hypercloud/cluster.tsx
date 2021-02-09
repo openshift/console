@@ -19,6 +19,7 @@ import {
 } from '../utils';
 import { ClusterManagerModel } from '../../models';
 import { configureClusterNodesModal } from './modals';
+import { MembersPage } from './members';
 
 const ModifyClusterNodes: KebabAction = (kind: K8sKind, obj: any) => ({
   label: 'Edit Nodes',
@@ -199,8 +200,16 @@ export const Clusters: React.FC = props => <Table {...props} aria-label="Cluster
 export const ClustersPage: React.FC<ClustersPageProps> = props => {
   return <ListPage ListComponent={Clusters} kind={kind} {...props} />;
 };
+
 export const ClustersDetailsPage: React.FC<ClustersDetailsPageProps> = props => {
-  return <DetailsPage {...props} titleFunc={(obj: any) => obj.fakeMetadata.fakename} kind={kind} menuActions={menuActions} pages={[details(detailsPage(ClusterDetails)), editYaml() /* nodes(ClusterNodes),  events(ResourceEventStream) */]} />;
+  return <DetailsPage {...props} titleFunc={(obj: any) => obj.fakeMetadata.fakename} kind={kind} menuActions={menuActions}
+  pages={[details(detailsPage(ClusterDetails)), editYaml(), /* nodes(ClusterNodes),  events(ResourceEventStream) */ 
+    {
+    href: 'members',
+    name: 'Members',
+    component: pageProps => <MembersPage resource={pageProps.obj} title="Members" userHeading="Users" userGroupHeading="User Groups" />,
+    }]} 
+  />;
 };
 
 interface IClusterTableRow extends K8sResourceKind {
