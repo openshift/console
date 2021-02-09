@@ -10,6 +10,8 @@ import * as UIActions from '@console/internal/actions/ui';
 import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
 import { Node } from '@patternfly/react-topology';
 import './TopologyKafkaPanel.css';
+import { useTranslation } from 'react-i18next';
+import { ResourceLink } from '@console/internal/components/utils';
 
 type PropsFromState = {
   selectedDetailsTab?: any;
@@ -34,6 +36,7 @@ type OwnProps = {
 type TopologyHelmReleasePanelProps = PropsFromState & PropsFromDispatch & OwnProps;
 
 const DetailsComponent: React.FC<any> = ({ obj }) => {
+  const { t } = useTranslation();
   const host = obj.status?.boostrapServer?.host || "";
 
   return (
@@ -43,7 +46,7 @@ const DetailsComponent: React.FC<any> = ({ obj }) => {
           <ResourceSummary resource={obj} />
         </div>
         <dl className="co-m-pane__details">
-          <dt>Bootstrap Server</dt>
+          <dt>{t('rhoas-plugin~Bootstrap Server')}</dt>
           <dd>{host}</dd>
         </dl>
       </div>
@@ -51,10 +54,26 @@ const DetailsComponent: React.FC<any> = ({ obj }) => {
   );
 };
 
-const ResourcesComponent = ({ obj }) => {
-  // TO DO Add correct secret
-  // const secret = obj.status.serviceAccountSecretName;
-  return <div className="overview__sidebar-pane-body">Secret</div>;
+const ResourcesComponent = ({obj}) => {
+  const serviceAccountSecretName = obj.status?.serviceAccountSecretName;
+  console.log(serviceAccountSecretName);
+
+  // const { metadata: {name, namespace},} = obj;
+  // const link = linkForResource ? (
+  //   linkForResource(obj)
+  // ) : (
+  //   <ResourceLink kind={kind} name={name} namespace={resourceNamespace} />
+
+  return (
+    <ul>
+      <li className="list-group-item container-fluid">
+        <div className="row">
+          <span className="col-xs-12">TBD</span>
+          {/* <span className="col-xs-12">{link}</span> */}
+        </div>
+      </li>
+    </ul>
+  )
 };
 
 export const ConnectedTopologyHelmReleasePanel: React.FC<TopologyHelmReleasePanelProps> = ({

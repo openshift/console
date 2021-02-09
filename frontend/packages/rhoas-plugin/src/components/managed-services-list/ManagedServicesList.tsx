@@ -12,12 +12,13 @@ import { LockIcon } from '@patternfly/react-icons';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
+import { useTranslation } from 'react-i18next';
 
 const ManagedServicesList = () => {
   const [currentNamespace] = useActiveNamespace();
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [tokenSecret] = useK8sWatchResource({ kind: SecretModel.kind, isList: false, name: AccessTokenSecretName, namespace: currentNamespace, namespaced: true })
-
+  const { t } = useTranslation();
 
   const checkTokenSecretStatus = () => {
     if (tokenSecret) {
@@ -31,13 +32,13 @@ const ManagedServicesList = () => {
   const tokenStatusFooter = () => {
     if (tokenSecret) {
       return (
-        <span>Unlocked</span>
+        <span>{t('rhoas-plugin~Unlocked')}</span>
       )
     }
     else {
       return (
         <Label variant="outline" color="orange" icon={<LockIcon />}>
-          Unlock with token
+          {t('rhoas-plugin~Unlock with token')}
         </Label>
       )
     }
@@ -48,18 +49,18 @@ const ManagedServicesList = () => {
   return (
     <>
       <NamespacedPage variant={NamespacedPageVariants.light} hideApplications>
-        <PageLayout title={"Select Managed Service"} hint={defaultHintBlockText} isDark>
+        <PageLayout title={t('rhoas-plugin~Select Managed Service')} hint={defaultHintBlockText} isDark>
           <Gallery className="co-catalog-tile-view" hasGutter>
             <GalleryItem>
               <CatalogTile
                 data-test-id={"kafka-id"}
                 className="co-kafka-tile"
                 onClick={() => checkTokenSecretStatus()}
-                title="Red Hat OpenShift Application Services"
+                title={t('rhoas-plugin~Red Hat OpenShift Application Services')}
                 iconImg={managedKafkaIcon}
                 iconClass={""}
                 icon={""}
-                description={"RHOAS can include Managed Kafka, Service Registry, custom resources for Managed Kafka, and Open Data Hub"}
+                description={t('rhoas-plugin~RHOAS can include Managed Kafka, Service Registry, custom resources for Managed Kafka, and Open Data Hub')}
                 footer={tokenStatusFooter()}
               />
             </GalleryItem>
