@@ -11,6 +11,7 @@
   "Status": "Status",
   "{{count, number}} item": "{{count, number}} item",
   "{{count, number}} item_plural": "{{count, number}} items",
+  "Prerequisites ({{totalPrereqs}})": "Prerequisites ({{totalPrereqs}})",
   "Prerequisites": "Prerequisites",
   "Start the tour": "Start the tour",
   "Resume the tour": "Resume the tour",
