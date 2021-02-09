@@ -68,6 +68,9 @@ export class Wizard {
       if (customize) {
         await this.selectTemplate(template);
         await this.next();
+        if (await modalTitle.isPresent()) {
+          await click(continueButton);
+        }
         await click(view.customizeButton);
       }
     }
