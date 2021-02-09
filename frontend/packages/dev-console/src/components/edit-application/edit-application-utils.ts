@@ -8,7 +8,14 @@ import {
 import { BuildStrategyType } from '@console/internal/components/build';
 import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models';
 import { hasIcon } from '@console/internal/components/catalog/catalog-item-icon';
-import { ServiceModel } from '@console/knative-plugin';
+import {
+  KNATIVE_AUTOSCALEWINDOW_ANNOTATION,
+  KNATIVE_CONCURRENCYTARGET_ANNOTATION,
+  KNATIVE_CONCURRENCYUTILIZATION_ANNOTATION,
+  KNATIVE_MAXSCALE_ANNOTATION,
+  KNATIVE_MINSCALE_ANNOTATION,
+  ServiceModel,
+} from '@console/knative-plugin';
 import { PipelineKind } from '@console/pipelines-plugin/src/types';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import { Resources, DeploymentData, GitReadableTypes } from '../import/import-types';
@@ -16,6 +23,7 @@ import { AppResources } from './edit-application-types';
 import { RegistryType } from '../../utils/imagestream-utils';
 import { getHealthChecksData } from '../health-checks/create-health-checks-probe-utils';
 import { detectGitType } from '../import/import-validation-utils';
+import { getAutoscaleWindow } from '../import/serverless/serverless-utils';
 
 export enum CreateApplicationFlow {
   Git = 'Import from Git',
@@ -165,20 +173,39 @@ export const getBuildData = (
 export const getServerlessData = (resource: K8sResourceKind) => {
   let serverlessData = {
     scaling: {
-      minpods: 0,
+      minpods: '',
       maxpods: '',
       concurrencytarget: '',
       concurrencylimit: '',
+      autoscale: {
+        autoscalewindow: '',
+        autoscalewindowUnit: 's',
+        defaultAutoscalewindowUnit: 's',
+      },
+      concurrencyutilization: '',
     },
   };
   if (getResourcesType(resource) === Resources.KnativeService) {
-    const annotations = _.get(resource, 'spec.template.metadata.annotations');
+    const {
+      spec: {
+        template: { metadata, spec },
+      },
+    } = resource;
+    const annotations = metadata?.annotations;
+    const autoscalewindowAnnotation = annotations?.[KNATIVE_AUTOSCALEWINDOW_ANNOTATION] || '';
+    const [autoscalewindow, autoscalewindowUnit] = getAutoscaleWindow(autoscalewindowAnnotation);
     serverlessData = {
       scaling: {
-        minpods: _.get(annotations, 'autoscaling.knative.dev/minScale', 0),
-        maxpods: _.get(annotations, 'autoscaling.knative.dev/maxScale', ''),
-        concurrencytarget: _.get(annotations, 'autoscaling.knative.dev/target', ''),
-        concurrencylimit: _.get(resource, 'spec.template.spec.containerConcurrency', ''),
+        minpods: annotations?.[KNATIVE_MINSCALE_ANNOTATION] || '',
+        maxpods: annotations?.[KNATIVE_MAXSCALE_ANNOTATION] || '',
+        concurrencytarget: annotations?.[KNATIVE_CONCURRENCYTARGET_ANNOTATION] || '',
+        concurrencylimit: spec?.containerConcurrency || '',
+        autoscale: {
+          autoscalewindow: autoscalewindow || '',
+          autoscalewindowUnit: autoscalewindowUnit || 's',
+          defaultAutoscalewindowUnit: autoscalewindowUnit || 's',
+        },
+        concurrencyutilization: annotations?.[KNATIVE_CONCURRENCYUTILIZATION_ANNOTATION] || '',
       },
     };
   }

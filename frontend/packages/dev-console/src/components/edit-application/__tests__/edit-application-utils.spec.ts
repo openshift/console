@@ -1,11 +1,13 @@
 import * as _ from 'lodash';
 import { BuildStrategyType } from '@console/internal/components/build';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import {
   getResourcesType,
   getPageHeading,
   CreateApplicationFlow,
   getInitialValues,
   getExternalImagelValues,
+  getServerlessData,
 } from '../edit-application-utils';
 import { GitImportFormData, Resources } from '../../import/import-types';
 import {
@@ -103,5 +105,74 @@ describe('Edit Application Utils', () => {
     expect(
       getInitialValues({ editAppResource, buildConfig, route }, 'nationalparks-py', 'div'),
     ).toEqual(gitImportInitialValuesWithHealthChecksEnabled);
+  });
+
+  describe('getServerlessData', () => {
+    let knativeServiceData: K8sResourceKind;
+    beforeEach(() => {
+      knativeServiceData = _.cloneDeep(knativeService);
+    });
+    it('getServerlessData should return correct autoscalewindow values', () => {
+      knativeServiceData.spec = {
+        template: {
+          metadata: {
+            annotations: {
+              'autoscaling.knative.dev/window': '60s',
+            },
+          },
+        },
+      };
+      const serverlessData = getServerlessData(knativeServiceData);
+      expect(serverlessData.scaling.autoscale.autoscalewindow).toBe('60');
+      expect(serverlessData.scaling.autoscale.autoscalewindowUnit).toBe('s');
+    });
+    it('getServerlessData should return correct autoscalewindow values when stable-window annotation has empty value', () => {
+      knativeServiceData.spec = {
+        template: {
+          metadata: {
+            annotations: {
+              'autoscaling.knative.dev/window': '',
+            },
+          },
+        },
+      };
+      const serverlessData = getServerlessData(knativeServiceData);
+      expect(serverlessData.scaling.autoscale.autoscalewindow).toBe('');
+      expect(serverlessData.scaling.autoscale.autoscalewindowUnit).toBe('s');
+    });
+    it('getServerlessData should return correct values', () => {
+      knativeServiceData.spec = {
+        template: {
+          metadata: {
+            annotations: {
+              'autoscaling.knative.dev/maxScale': '2',
+              'autoscaling.knative.dev/window': '60s',
+              'autoscaling.knative.dev/target': '100',
+              'autoscaling.knative.dev/targetUtilizationPercentage': '70',
+              'autoscaling.knative.dev/minScale': '1',
+            },
+          },
+          spec: {
+            containerConcurrency: '3',
+          },
+        },
+      };
+      const expectedValue = {
+        scaling: {
+          minpods: '1',
+          maxpods: '2',
+          concurrencytarget: '100',
+          concurrencylimit: '3',
+          autoscale: {
+            autoscalewindow: '60',
+            autoscalewindowUnit: 's',
+            defaultAutoscalewindowUnit: 's',
+          },
+          concurrencyutilization: '70',
+        },
+      };
+      const serverlessData = getServerlessData(knativeServiceData);
+      expect(serverlessData).toEqual(expectedValue);
+    });
   });
 });

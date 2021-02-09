@@ -1,5 +1,6 @@
 import { DeployImageFormData, Resources } from '../import-types';
 import { healthChecksProbeInitialData } from '../../health-checks/health-checks-probe-utils';
+import { serverlessInitialValues } from '../__mocks__/serverless-mock';
 
 export const defaultData: DeployImageFormData = {
   project: {
@@ -38,14 +39,7 @@ export const defaultData: DeployImageFormData = {
   isSearchingForImage: false,
   runtimeIcon: null,
   resources: Resources.OpenShift,
-  serverless: {
-    scaling: {
-      minpods: 0,
-      maxpods: '',
-      concurrencytarget: '',
-      concurrencylimit: '',
-    },
-  },
+  serverless: serverlessInitialValues,
   route: {
     create: true,
     targetPort: '',
@@ -174,9 +168,7 @@ export const dataWithTargetPort: DeployImageFormData = {
   image: { name: '', image: {}, tag: '', status: { metadata: {}, status: '' }, ports: [] },
   isSearchingForImage: false,
   resources: Resources.OpenShift,
-  serverless: {
-    scaling: { minpods: 0, maxpods: '', concurrencytarget: '', concurrencylimit: '' },
-  },
+  serverless: serverlessInitialValues,
   route: {
     create: true,
     targetPort: '',
@@ -398,9 +390,7 @@ export const dataWithPorts: DeployImageFormData = {
   },
   isSearchingForImage: false,
   resources: Resources.OpenShift,
-  serverless: {
-    scaling: { minpods: 0, maxpods: '', concurrencytarget: '', concurrencylimit: '' },
-  },
+  serverless: serverlessInitialValues,
   route: {
     create: true,
     targetPort: '',
@@ -514,9 +504,7 @@ export const dataWithoutPorts: DeployImageFormData = {
   image: { name: '', image: {}, tag: '', status: { metadata: {}, status: '' }, ports: [] },
   isSearchingForImage: false,
   resources: Resources.OpenShift,
-  serverless: {
-    scaling: { minpods: 0, maxpods: '', concurrencytarget: '', concurrencylimit: '' },
-  },
+  serverless: serverlessInitialValues,
   route: {
     create: true,
     targetPort: '',
@@ -780,14 +768,7 @@ export const internalImageData: DeployImageFormData = {
     ],
   },
   isSearchingForImage: false,
-  serverless: {
-    scaling: {
-      minpods: 0,
-      maxpods: '',
-      concurrencytarget: '',
-      concurrencylimit: '',
-    },
-  },
+  serverless: serverlessInitialValues,
   route: {
     create: true,
     targetPort: '8080-tcp',

@@ -19,6 +19,7 @@ import { GitImportFormData, FirehoseList, ImportData, Resources } from './import
 import { createOrUpdateResources, handleRedirect } from './import-submit-utils';
 import { validationSchema } from './import-validation-utils';
 import { healthChecksProbeInitialData } from '../health-checks/health-checks-probe-utils';
+import { useUpdateKnScalingDefaultValues } from './serverless/useUpdateKnScalingDefaultValues';
 
 export interface ImportFormProps {
   namespace: string;
@@ -105,10 +106,16 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
     resourceTypesNotValid: contextualSource ? [Resources.KnativeService] : [],
     serverless: {
       scaling: {
-        minpods: 0,
+        minpods: '',
         maxpods: '',
         concurrencytarget: '',
         concurrencylimit: '',
+        autoscale: {
+          autoscalewindow: '',
+          autoscalewindowUnit: 's',
+          defaultAutoscalewindowUnit: 's',
+        },
+        concurrencyutilization: '',
       },
     },
     pipeline: {
@@ -152,6 +159,7 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
     },
     healthChecks: healthChecksProbeInitialData,
   };
+  const initialVals = useUpdateKnScalingDefaultValues(initialValues);
   const builderImages: NormalizedBuilderImages =
     imageStreams && imageStreams.loaded && normalizeBuilderImages(imageStreams.data);
 
@@ -198,7 +206,7 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
 
   return (
     <Formik
-      initialValues={initialValues}
+      initialValues={initialVals}
       onSubmit={handleSubmit}
       onReset={history.goBack}
       validationSchema={validationSchema(t)}

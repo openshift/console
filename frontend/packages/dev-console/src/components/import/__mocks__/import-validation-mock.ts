@@ -1,5 +1,6 @@
 import { GitImportFormData, Resources } from '../import-types';
 import { healthChecksProbeInitialData } from '../../health-checks/health-checks-probe-utils';
+import { serverlessInitialValues } from './serverless-mock';
 
 export const mockFormData: GitImportFormData = {
   name: 'test-app',
@@ -69,14 +70,7 @@ export const mockFormData: GitImportFormData = {
   },
   labels: {},
   resources: Resources.OpenShift,
-  serverless: {
-    scaling: {
-      minpods: 0,
-      maxpods: '',
-      concurrencytarget: '',
-      concurrencylimit: '',
-    },
-  },
+  serverless: serverlessInitialValues,
   limits: {
     cpu: {
       request: null,

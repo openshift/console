@@ -2,6 +2,7 @@ import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import { GitImportFormData, Resources } from '../import-types';
 import { healthChecksProbeInitialData } from '../../health-checks/health-checks-probe-utils';
 import { PipelineKind } from '@console/pipelines-plugin/src/types';
+import { serverlessInitialValues } from '../__mocks__/serverless-mock';
 
 export const mockPipelineTemplate: PipelineKind = {
   apiVersion: 'tekton.dev/v1alpha1',
@@ -100,14 +101,7 @@ export const defaultData: GitImportFormData = {
     isRecommending: false,
     couldNotRecommend: false,
   },
-  serverless: {
-    scaling: {
-      minpods: 0,
-      maxpods: '',
-      concurrencytarget: '',
-      concurrencylimit: '',
-    },
-  },
+  serverless: serverlessInitialValues,
   route: {
     create: true,
     targetPort: '',

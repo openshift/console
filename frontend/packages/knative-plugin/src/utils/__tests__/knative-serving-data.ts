@@ -56,6 +56,12 @@ export const defaultData: DeployImageFormData = {
       maxpods: 5,
       concurrencytarget: 1,
       concurrencylimit: 1,
+      autoscale: {
+        autoscalewindow: 6,
+        autoscalewindowUnit: 's',
+        defaultAutoscalewindowUnit: 's',
+      },
+      concurrencyutilization: 70,
     },
   },
   route: {

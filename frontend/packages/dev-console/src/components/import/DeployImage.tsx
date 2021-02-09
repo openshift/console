@@ -13,6 +13,7 @@ import { createOrUpdateDeployImageResources } from './deployImage-submit-utils';
 import { deployValidationSchema } from './deployImage-validation-utils';
 import DeployImageForm from './DeployImageForm';
 import { healthChecksProbeInitialData } from '../health-checks/health-checks-probe-utils';
+import { useUpdateKnScalingDefaultValues } from './serverless/useUpdateKnScalingDefaultValues';
 
 export interface DeployImageProps {
   namespace: string;
@@ -73,10 +74,16 @@ const DeployImage: React.FC<Props> = ({
     isSearchingForImage: false,
     serverless: {
       scaling: {
-        minpods: 0,
+        minpods: '',
         maxpods: '',
         concurrencytarget: '',
         concurrencylimit: '',
+        autoscale: {
+          autoscalewindow: '',
+          autoscalewindowUnit: '',
+          defaultAutoscalewindowUnit: 's',
+        },
+        concurrencyutilization: '',
       },
     },
     route: {
@@ -139,6 +146,8 @@ const DeployImage: React.FC<Props> = ({
     healthChecks: healthChecksProbeInitialData,
   };
 
+  const initialVals = useUpdateKnScalingDefaultValues(initialValues);
+
   const handleSubmit = (
     values: DeployImageFormData,
     helpers: FormikHelpers<DeployImageFormData>,
@@ -167,7 +176,7 @@ const DeployImage: React.FC<Props> = ({
 
   return (
     <Formik
-      initialValues={initialValues}
+      initialValues={initialVals}
       onSubmit={handleSubmit}
       onReset={history.goBack}
       validationSchema={deployValidationSchema(t)}
