@@ -1,4 +1,5 @@
 import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
+import { CodeRef } from '@console/dynamic-plugin-sdk/src/types';
 import { Extension } from './base';
 
 namespace ExtensionProperties {
@@ -26,7 +27,7 @@ namespace ExtensionProperties {
     /** Type ID for the catalog item type. */
     type: string;
     /** Fetch items and normalize it for the catalog. Value is a react effect hook. */
-    provider: () => Promise<CatalogExtensionHook<CatalogItem[]>>;
+    provider: CodeRef<CatalogExtensionHook<CatalogItem[]>>;
     /** Priority for this provider. Defaults to 0. Higher priority providers may override catalog
         items provided by other providers. */
     priority?: number;
@@ -36,7 +37,7 @@ namespace ExtensionProperties {
     /** Type ID for the catalog item type. */
     type: string;
     /** Filters items of a specific type. Value is a function that takes CatalogItem[] and returns a subset based on the filter criteria. */
-    filter: () => Promise<(items: CatalogItem[]) => CatalogItem[]>;
+    filter: CodeRef<(items: CatalogItem[]) => CatalogItem[]>;
   }
 }
 
