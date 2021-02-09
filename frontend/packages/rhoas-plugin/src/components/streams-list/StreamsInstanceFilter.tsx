@@ -9,11 +9,13 @@ import {
   ToolbarItem,
   ToolbarGroup,
 } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 
 const StreamsInstanceFilter = () => {
   const [isToolbarSelectOpen, setIsToolbarSelectOpen] = React.useState(false);
   const [toolbarSelections, setToolbarSelections] = React.useState("Name");
   const [textInputNameValue, setTextInputNameValue] = React.useState('');
+  const { t } = useTranslation();
 
   const onToggleToolbarSelect = (isOpen) => {
     setIsToolbarSelectOpen(isOpen);
@@ -28,6 +30,10 @@ const StreamsInstanceFilter = () => {
     setTextInputNameValue(value);
   };
 
+  const selectOptions = [
+    <SelectOption key={0} value="Name" />
+  ]
+
   return (
     <Toolbar id="toolbar-filter-instances">
       <ToolbarContent>
@@ -35,14 +41,14 @@ const StreamsInstanceFilter = () => {
           <ToolbarItem>
             <Select
               variant={SelectVariant.single}
-              aria-label="Select name"
+              aria-label={t('rhoas-plugin~Select name')}
               onToggle={onToggleToolbarSelect}
               onSelect={onSelect}
               selections={toolbarSelections}
               isOpen={isToolbarSelectOpen}
               aria-labelledby=""
             >
-              <SelectOption key={0} value="Name" />
+              {selectOptions}
             </Select>
           </ToolbarItem>
           <ToolbarItem>
@@ -51,8 +57,8 @@ const StreamsInstanceFilter = () => {
                 value={textInputNameValue}
                 type="text"
                 onChange={handleTextInputNameChange}
-                aria-label="Search by name"
-                placeholder="Search by name..."
+                aria-label={t('rhoas-plugin~Search by name')}
+                placeholder={t('rhoas-plugin~Search by name...')}
               />
             )}
           </ToolbarItem>

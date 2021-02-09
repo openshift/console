@@ -7,11 +7,13 @@ import { PageHeading } from '@console/internal/components/utils';
 import { ManagedKafkaEmptyState } from './../empty-state/ManagedKafkaEmptyState';
 import { history } from '@console/internal/components/utils';
 import { FormFooter } from '@console/shared';
+import { useTranslation } from 'react-i18next';
 
 // FIXME full typed experience React.FC<{ kafkaArray: ManagedKafkaModel[]}>
 const StreamsInstancePage: any = ({ kafkaArray, setSelectedKafka, currentKafkaConnections, currentNamespace, createManagedKafkaConnectionFlow, disableCreate }) => {
 
   const [allKafkasConnected, setAllKafkasConnected] = React.useState(false);
+  const { t } = useTranslation();
 
   const goToTopology = () => {
     history.push(`/topology/ns/${currentNamespace}`);
@@ -20,25 +22,25 @@ const StreamsInstancePage: any = ({ kafkaArray, setSelectedKafka, currentKafkaCo
   return (
     <>
       <Helmet>
-        <title>Select Managed Kafka Cluster</title>
+        <title>{t('rhoas-plugin~Select Managed Kafka Cluster')}</title>
       </Helmet>
       <PageHeading
         className="rhoas__page-heading"
-        title="Select Managed Kafka Cluster"
+        title={t('rhoas-plugin~Select Managed Kafka Cluster')}
       >
-        <p>The managed Kafka cluster selected below will appear in the topology view.</p>
+        <p>{t('rhoas-plugin~The managed Kafka cluster selected below will appear on the topology view.')}</p>
       </PageHeading>
       <PageBody>
           { kafkaArray.length === 0 ? (
             <ManagedKafkaEmptyState
-              title="No Managed Kafka Clusters found"
-              actionInfo="Go back to Managed Services Catalog"
+              title={t('rhoas-plugin~No Managed Kafka Clusters found')}
+              actionInfo={t('rhoas-plugin~Go back to Managed Services Catalog')}
               icon="CubesIcon"
             />
           ) : allKafkasConnected ? (
             <ManagedKafkaEmptyState
-              title="All Managed Kafka clusters are in use"
-              actionInfo="See Managed Kafka clusters in Topology view"
+              title={t('rhoas-plugin~All Managed Kafka clusters are in use')}
+              actionInfo={t('rhoas-plugin~See Managed Kafka clusters in Topology view')}
               action={() => goToTopology()}
               icon="CubesIcon"
             />
@@ -57,9 +59,9 @@ const StreamsInstancePage: any = ({ kafkaArray, setSelectedKafka, currentKafkaCo
                   handleSubmit={() => createManagedKafkaConnectionFlow()}
                   isSubmitting={false}
                   errorMessage=""
-                  submitLabel={"Create"}
+                  submitLabel={t('rhoas-plugin~Create')}
                   disableSubmit={disableCreate()}
-                  resetLabel="Reset"
+                  resetLabel={t('rhoas-plugin~Reset')}
                   sticky
                   handleCancel={history.goBack}
                 />

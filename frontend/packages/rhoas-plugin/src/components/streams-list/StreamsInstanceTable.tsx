@@ -8,16 +8,18 @@ import {
   RowSelectVariant
 } from '@patternfly/react-table';
 import { Timestamp } from '@console/internal/components/utils';
-import './StreamsInstanceTable.css'
+import './StreamsInstanceTable.css';
+import { useTranslation } from 'react-i18next';
 
 type FormattedKafkas = {
   cells: JSX.Element[];
   selected: boolean;
 };
 
-const StreamsInstanceTable: any = ({ kafkaArray, setSelectedKafka, currentKafkaConnections, allKafkasConnected, setAllKafkasConnected }) => {
+const StreamsInstanceTable: any = ({ kafkaArray, setSelectedKafka, currentKafkaConnections, setAllKafkasConnected }) => {
 
   const [formattedKafkas, setFormattedKafkas] = React.useState<FormattedKafkas[]>([]);
+  const { t } = useTranslation();
 
   const formatTableRowData = () => {
     const tableRow = [];
@@ -55,12 +57,12 @@ const StreamsInstanceTable: any = ({ kafkaArray, setSelectedKafka, currentKafkaC
   }, [kafkaArray, currentKafkaConnections]);
 
   const tableColumns = [
-    { title: 'Cluster Name', transforms: [sortable] },
-    { title: 'Bootstrap URL', transforms: [sortable, cellWidth(30)] },
-    { title: 'Provider', transforms: [sortable] },
-    { title: 'Region', transforms: [sortable] },
-    { title: 'Owner', transforms: [sortable] },
-    { title: 'Created', transforms: [sortable] },
+    { title: t('rhoas-plugin~Cluster Name'), transforms: [sortable] },
+    { title: t('rhoas-plugin~Bootstrap URL'), transforms: [sortable, cellWidth(20)] },
+    { title: t('rhoas-plugin~Provider'), transforms: [sortable] },
+    { title: t('rhoas-plugin~Region'), transforms: [sortable] },
+    { title: t('rhoas-plugin~Owner'), transforms: [sortable] },
+    { title: t('rhoas-plugin~Created'), transforms: [sortable] },
   ];
 
   const onSelectTableRow = (event, isSelected, rowId) => {
@@ -76,7 +78,7 @@ const StreamsInstanceTable: any = ({ kafkaArray, setSelectedKafka, currentKafkaC
     <>
     { formattedKafkas && (
       <Table
-        aria-label="List of Kafka Instances"
+        aria-label={t('rhoas-plugin~List of Kafka Instances')}
         cells={tableColumns}
         rows={formattedKafkas}
         onSelect={onSelectTableRow}
