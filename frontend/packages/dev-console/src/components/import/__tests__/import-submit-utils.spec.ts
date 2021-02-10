@@ -194,6 +194,7 @@ describe('Import Submit Utils', () => {
         mockData.git.dir,
         mockData.pipeline,
         mockData.docker.dockerfilePath,
+        mockData.image.tag,
       );
       expect(createPipelineRunResourceSpy).toHaveBeenCalledTimes(1);
       expect(createPipelineRunResourceSpy).not.toThrowError();
@@ -223,6 +224,7 @@ describe('Import Submit Utils', () => {
         mockData.git.dir,
         mockData.pipeline,
         mockData.docker.dockerfilePath,
+        mockData.image.tag,
       );
       const pipelineRunResource = returnValue[1].data;
       expect(pipelineRunResource.metadata.name.includes(mockData.name)).toEqual(true);

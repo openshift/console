@@ -37,6 +37,7 @@ export const getPipelineParams = (
   gitRef: string,
   gitDir: string,
   dockerfilePath: string,
+  tag: string,
 ) => {
   return params.map((param) => {
     switch (param.name) {
@@ -52,6 +53,8 @@ export const getPipelineParams = (
         return { ...param, default: getImageUrl(name, namespace) };
       case 'DOCKERFILE':
         return { ...param, default: dockerfilePath };
+      case 'VERSION':
+        return { ...param, default: tag || param.default };
       default:
         return param;
     }
@@ -66,6 +69,7 @@ export const createPipelineForImportFlow = async (
   gitDir: string,
   pipeline: PipelineData,
   dockerfilePath: string,
+  tag: string,
 ) => {
   const template = _.cloneDeep(pipeline.template);
 
@@ -85,6 +89,7 @@ export const createPipelineForImportFlow = async (
       gitRef,
       gitDir,
       dockerfilePath,
+      tag,
     );
 
   return k8sCreate(PipelineModel, template, { ns: namespace });
@@ -114,6 +119,7 @@ export const updatePipelineForImportFlow = async (
   gitRef: string,
   gitDir: string,
   dockerfilePath: string,
+  tag: string,
 ): Promise<PipelineKind> => {
   let updatedPipeline = _.cloneDeep(pipeline);
 
@@ -144,6 +150,7 @@ export const updatePipelineForImportFlow = async (
       gitRef,
       gitDir,
       dockerfilePath,
+      tag,
     );
   }
   return k8sUpdate(PipelineModel, updatedPipeline, namespace, name);
