@@ -42,7 +42,8 @@
   width: 100%;
 
   // so that input, textarea, button, and input-group-addon don't mask the inner scroll shadows
-  input, textarea {
+  input,
+  textarea {
     &.pf-c-form-control {
       background-color: transparent;
       &[disabled],
@@ -62,7 +63,7 @@
   flex-direction: column;
   height: 100%;
   position: relative;
-  @media(min-width: $screen-sm-min) {
+  @media (min-width: $screen-sm-min) {
     // Desktop only responsive max-height allows modal to adjust to content height and enable scroll shadows if needed.
     max-height: calc(100vh - 60px);
     // Dropdown workaround:  use when modal content can expand (taints, tolerations)
@@ -92,10 +93,10 @@
   margin-bottom: 0;
   outline: 0;
 
-  @media(max-width: $screen-xs-max) and (orientation: portrait) {
+  @media (max-width: $screen-xs-max) and (orientation: portrait) {
     height: calc(100% - 20px); // subtract height margin-top 10px + margin-bottom 10px
   }
-  @media(max-width: $screen-xs-max) and (orientation: landscape) {
+  @media (max-width: $screen-xs-max) and (orientation: landscape) {
     height: calc(100% - 60px); // At desktop, subtract margin-top 30px + margin-bottom 30px OR in the case of mobile landscape orientation, subtract the height of ios url control bar, since its height is not taken into account when the viewport height is calculated on initial page load. This causes the modal to extend below the viewport and hide modal-footer buttons.
   }
 }
@@ -107,28 +108,36 @@
 }
 
 .modal-header {
-  background-color:var(--pf-global--BackgroundColor--100);
+  background-color: var(--pf-global--BackgroundColor--100);
   padding: var(--pf-global--spacer--xl) var(--pf-global--spacer--xl) var(--pf-global--spacer--lg);
 }
 
-.toleration-modal__field, .taint-modal__field  {
+.toleration-modal__field,
+.taint-modal__field {
   padding-right: 0;
 }
 
-.toleration-modal__field, .taint-modal__input {
+.toleration-modal__field,
+.taint-modal__input {
   margin-bottom: 5px;
-  @media(max-width: $screen-sm-max) {
+  @media (max-width: $screen-sm-max) {
     margin-bottom: 10px;
   }
 }
 
-.toleration-modal__heading, .taint-modal__heading {
+.toleration-modal__heading,
+.taint-modal__heading {
   margin-bottom: 5px;
 }
 
-.toleration-modal__row, .taint-modal__row {
+.toleration-modal__row,
+.taint-modal__row {
   margin-bottom: 15px;
-  @media(max-width: $screen-sm-max) {
+  @media (max-width: $screen-sm-max) {
     margin-bottom: 24px;
   }
+}
+
+ul {
+  list-style: none;
 }
