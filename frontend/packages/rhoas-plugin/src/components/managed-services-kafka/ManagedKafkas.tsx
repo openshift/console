@@ -56,7 +56,6 @@ const ManagedKafkas = () => {
   let remoteKafkaInstances = watchedKafkaRequest.status.userKafkas;
 
   const createManagedKafkaConnectionFlow = async () => {
-    // TODO verify if service account sercret exist
     const kafkaId = remoteKafkaInstances[selectedKafka].id;
     const kafkaName = remoteKafkaInstances[selectedKafka].name;
     if (currentKafkaConnections) {

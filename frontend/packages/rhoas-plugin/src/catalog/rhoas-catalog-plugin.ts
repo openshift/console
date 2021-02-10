@@ -1,4 +1,5 @@
 import { CatalogItemProvider, CatalogItemType, Plugin } from '@console/plugin-sdk';
+import { FLAG_RHOAS } from '../const';
 import { rhoasProvider } from './providers';
 
 export type CatalogConsumedExtensions = CatalogItemProvider | CatalogItemType;
@@ -15,7 +16,7 @@ export const rhoasCatalogPlugin: Plugin<CatalogConsumedExtensions> = [
       filters: [{ label: 'Managed', attribute: 'Managed' }],
     },
     flags: {
-      required: [],
+      required: [FLAG_RHOAS],
     },
   },
   {
@@ -25,7 +26,7 @@ export const rhoasCatalogPlugin: Plugin<CatalogConsumedExtensions> = [
       provider: rhoasProvider,
     },
     flags: {
-      required: [],
+      required: [FLAG_RHOAS],
     },
   },
 ];

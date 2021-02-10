@@ -52,7 +52,6 @@ const StreamsInstanceTable: any = ({ kafkaArray, setSelectedKafka, currentKafkaC
 
 
   React.useEffect(() => {
-    // FIXME type issues
     formatTableRowData();
   }, [kafkaArray, currentKafkaConnections]);
 

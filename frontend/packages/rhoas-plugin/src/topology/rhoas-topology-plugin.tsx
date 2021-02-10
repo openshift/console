@@ -10,14 +10,14 @@ import { ManagedKafkaConnectionModel } from '../models';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { ALLOW_SERVICE_BINDING_FLAG } from '@console/topology/src/const';
 import { getExecutableCodeRef } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-utils';
+import { FLAG_RHOAS } from '../const';
 
 export type TopologyConsumedExtensions =
   | TopologyComponentFactory
   | TopologyDataModelFactory
-  | TopologyCreateConnector
+  | TopologyCreateConnector;
 
-
-export const MANAGED_KAFKA_TOPOLOGY_TYPE = ManagedKafkaConnectionModel.kind
+export const MANAGED_KAFKA_TOPOLOGY_TYPE = ManagedKafkaConnectionModel.kind;
 
 const getRhoasWatchedResources = (namespace: string): WatchK8sResources<any> => {
   return {
@@ -36,6 +36,9 @@ export const rhoasTopologyPlugin: Plugin<TopologyConsumedExtensions> = [
     properties: {
       getFactory: getRhoasComponentFactory,
     },
+    flags: {
+      required: [FLAG_RHOAS],
+    },
   },
   {
     type: 'Topology/DataModelFactory',
@@ -44,8 +47,11 @@ export const rhoasTopologyPlugin: Plugin<TopologyConsumedExtensions> = [
       priority: 400,
       getDataModel: getRhoasTopologyDataModel,
       resources: getRhoasWatchedResources,
-      workloadKeys: ['kafkaConnections']
-    }
+      workloadKeys: ['kafkaConnections'],
+    },
+    flags: {
+      required: [FLAG_RHOAS],
+    },
   },
   {
     type: 'Topology/CreateConnector',
@@ -53,10 +59,11 @@ export const rhoasTopologyPlugin: Plugin<TopologyConsumedExtensions> = [
       getCreateConnector: getExecutableCodeRef(() =>
         import('./createConnector' /* webpackChunkName: "operators-service-bindings" */).then(
           (m) => m.getCreateConnector,
-        )),
+        ),
+      ),
     },
     flags: {
-      required: [ALLOW_SERVICE_BINDING_FLAG],
-    }
+      required: [ALLOW_SERVICE_BINDING_FLAG, FLAG_RHOAS],
+    },
   },
 ];

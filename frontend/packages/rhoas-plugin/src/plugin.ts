@@ -7,18 +7,19 @@ import {
   Plugin,
   HrefNavItem,
 } from '@console/plugin-sdk';
-import { FLAG_RHOAS_KAFKA, managedKafkaIcon } from './const';
-import { rhoasTopologyPlugin, TopologyConsumedExtensions } from './topology/rhoas-topology-plugin'
+import { FLAG_RHOAS_KAFKA, FLAG_RHOAS, managedKafkaIcon } from './const';
+import { rhoasTopologyPlugin, TopologyConsumedExtensions } from './topology/rhoas-topology-plugin';
 import * as models from './models';
 import { rhoasCatalogPlugin, CatalogConsumedExtensions } from './catalog/rhoas-catalog-plugin';
 
-type ConsumedExtensions = ModelDefinition
+type ConsumedExtensions =
+  | ModelDefinition
   | ModelFeatureFlag
   | RoutePage
   | AddAction
   | HrefNavItem
   | TopologyConsumedExtensions
-  | CatalogConsumedExtensions
+  | CatalogConsumedExtensions;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -27,12 +28,18 @@ const plugin: Plugin<ConsumedExtensions> = [
       models: _.values(models),
     },
   },
-  // TODO Use flag in the system
   {
     type: 'FeatureFlag/Model',
     properties: {
-      model: models.ManagedKafkaRequestModel,
+      model: models.ManagedKafkaConnectionModel,
       flag: FLAG_RHOAS_KAFKA,
+    },
+  },
+  {
+    type: 'FeatureFlag/Model',
+    properties: {
+      model: models.ManagedServiceAccountRequest,
+      flag: FLAG_RHOAS,
     },
   },
   {
@@ -48,7 +55,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         ).default,
     },
     flags: {
-      required: [FLAG_RHOAS_KAFKA],
+      required: [FLAG_RHOAS],
     },
   },
   {
@@ -70,18 +77,19 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'AddAction',
     flags: {
-      required: [FLAG_RHOAS_KAFKA],
+      required: [FLAG_RHOAS],
     },
     properties: {
       id: 'rhoasAddAction',
       url: '/managedServices',
       label: '%rhoas-plugin~Managed Services%',
-      description: '%rhoas-plugin~Reduce operational complexity and focus on building and scaling applications that add more value.%',
+      description:
+        '%rhoas-plugin~Reduce operational complexity and focus on building and scaling applications that add more value.%',
       icon: managedKafkaIcon,
     },
   },
   ...rhoasTopologyPlugin,
-  ...rhoasCatalogPlugin
+  ...rhoasCatalogPlugin,
 ];
 
 export default plugin;

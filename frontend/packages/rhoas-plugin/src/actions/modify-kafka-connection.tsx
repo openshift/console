@@ -4,13 +4,13 @@ import { ManagedKafkaConnectionModel } from '../models/rhoas';
 export const deleteManagedKafkaConnection = (name: string, namespace: string) => {
   return {
     labelKey: 'rhoas-plugin~Delete Kafka Connection',
-    callback: () => {
-      k8sKill(ManagedKafkaConnectionModel, {
+    callback: async () => {
+      await k8sKill(ManagedKafkaConnectionModel, {
         metadata: {
-          name: name,
-          namespace: namespace
-        }
-      })
-    }
+          name,
+          namespace,
+        },
+      });
+    },
   };
 };

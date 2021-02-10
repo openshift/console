@@ -48,7 +48,6 @@ export const createManagedKafkaRequest = async (currentNamespace: string) => {
   await k8sCreate(ManagedKafkaRequestModel, mkRequest);
 }
 
-// TODO force refresh existing request
 export const createManagedKafkaRequestIfNeeded = async (currentNamespace) => {
   let currentRequest
   try {
@@ -103,7 +102,6 @@ export const createManagedKafkaConnection = async (kafkaId: string, kafkaName: s
   await k8sCreate(ManagedKafkaConnectionModel, kafkaConnection);
 };
 
-// TODO - this probaly needs refactor
 export const listOfCurrentKafkaConnectionsById = async (currentNamespace: string) => {
   const localArray = [];
   const kafkaConnections = await k8sGet(ManagedKafkaConnectionModel, null, currentNamespace);

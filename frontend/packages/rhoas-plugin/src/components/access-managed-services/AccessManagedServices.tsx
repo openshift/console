@@ -7,7 +7,7 @@ import { AccessTokenSecretName } from '../../const';
 import { createServiceAccountIfNeeded } from '../managed-services-kafka/resourceCreators';
 import { useTranslation } from 'react-i18next';
 
-// TODO Full typings
+
 const AccessManagedServices: any = ({ isModalOpen, setIsModalOpen }) => {
   const [apiTokenValue, setApiTokenValue] = React.useState("");
   const [currentNamespace] = useActiveNamespace();
