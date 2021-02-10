@@ -2,7 +2,6 @@ import * as _ from 'lodash-es';
 import { switchPerspective } from 'packages/dev-console/integration-tests/views/dev-perspective.view';
 import { ValidTabGuard } from 'packages/kubevirt-plugin/src/components/create-vm-wizard/tabs/valid-tab-guard';
 import * as React from 'react';
-import classNames from 'classnames';
 import { NamespaceClaimModel, ResourceQuotaClaimModel } from '../../../models';
 import { k8sUpdateApproval, referenceForModel } from '../../../module/k8s';
 import { Select, SelectOption, SelectVariant } from '@patternfly/react-core';
@@ -105,11 +104,7 @@ class BaseStatusModal extends PromiseComponent {
             <div className="col-sm-12">{message || ''}</div>
           </div>
           <div className="row co-m=-form-row">
-            <div
-              className={classNames('col-sm-12', 'approval-dropdown--short-bottom', {
-                'approval-dropdown--long-bottom': this.state.status !== 'Rejected',
-              })}
-            >
+            <div className="col-sm-12 approval-dropdown--short-bottom">
               {/* <select className="col-sm-12" value={this.state.status} onChange={this.onChangeApproval}>
                 <option value="Approved">Approved</option>
                 <option value="Rejected">Rejected</option>
@@ -120,14 +115,10 @@ class BaseStatusModal extends PromiseComponent {
                 ))}
               </Select>
             </div>
-            {this.state.status === 'Rejected' ? (
-              <div>
-                <div className="col-sm-12">
-                  <textarea className="col-sm-12 pf-c-form-control query-browser__query-input" style={{ height: '100px' }} onChange={this.onChangeReason} value={this.state.reason} />
-                </div>
-                <div className="col-sm-12">Please enter a reason for refusal.</div>
-              </div>
-            ) : null}
+            <div className="col-sm-12">
+              <textarea className="col-sm-12 pf-c-form-control query-browser__query-input" style={{ height: '100px' }} onChange={this.onChangeReason} value={this.state.reason} />
+            </div>
+            <div className="col-sm-12">Please enter a reason.</div>
           </div>
         </ModalBody>
         <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitText="Confirm" cancel={this._cancel} />
