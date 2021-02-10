@@ -1,31 +1,5 @@
 import { eventSourcePO } from '../pageObjects/add-flow-po';
-
-export const modal = {
-  clickCancel: () => {
-    cy.byLegacyTestID('modal-cancel-action').click();
-    cy.get('form').should('not.exist');
-  },
-  clickSave: () => {
-    cy.byTestID('confirm-action').click();
-    cy.get('form').should('not.exist');
-  },
-  clickDelete: () => {
-    cy.byTestID('confirm-action').click();
-    cy.get('form').should('not.exist');
-  },
-  verifySaveButtonIsDisplayed: () => {
-    cy.byTestID('confirm-action').should('be.visible');
-  },
-  verifySaveButtonIsDisabled: () => {
-    cy.byTestID('confirm-action').should('be.disabled');
-  },
-  verifyCancelButtonIsDisplayed: () => {
-    cy.byLegacyTestID('modal-cancel-action').should('be.visible');
-  },
-  isDisplayed: () => {
-    cy.get('form').should('be.visible');
-  },
-};
+import { modal } from '../../../../integration-tests-cypress/views/modal';
 
 export const editLabels = {
   enterLabel: (labelName: string) =>
@@ -108,7 +82,7 @@ export const deleteApplication = {
   deleteApp: () => {
     cy.get('p strong').then((ele) => {
       deleteApplication.enterApplication(ele.text());
-      modal.clickDelete();
+      modal.submit();
     });
   },
 };

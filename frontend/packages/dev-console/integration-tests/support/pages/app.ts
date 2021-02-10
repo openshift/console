@@ -6,7 +6,15 @@ import { pageTitle } from '../constants/pageTitle';
 import { modal } from '../../../../integration-tests-cypress/views/modal';
 
 export const app = {
-  waitForLoad: (timeout: number = 30000) => cy.get('.co-m-loader', { timeout }).should('not.exist'),
+  waitForLoad: (timeout: number = 80000) => {
+    cy.get('.co-m-loader', { timeout }).should('not.exist');
+    cy.get('.pf-c-spinner', { timeout }).should('not.exist');
+  },
+};
+export const sidePane = {
+  close: () => {
+    cy.get('button[aria-label="Close"]').click({ force: true });
+  },
 };
 
 export const perspective = {
