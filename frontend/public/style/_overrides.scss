@@ -599,3 +599,10 @@ button.pf-c-dropdown__menu-item.hover {
 .pf-c-accordion__toggle-text {
   overflow: visible !important;
 }
+
+.pf-c-data-toolbar {
+  padding: 5px 0px !important;
+  &__content {
+    padding: 0px !important;
+  }
+}
