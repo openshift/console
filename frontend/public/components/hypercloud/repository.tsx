@@ -67,25 +67,35 @@ const RepositoryTableHeader = () => {
 RepositoryTableHeader.displayName = 'RepositoryTableHeader';
 
 
-const RepositoriesList = (props) => (
-  <Table
+const RepositoriesList = (props) => {
+  return (<Table
     {...props}
     aria-label="Repositories"
     Header={RepositoryTableHeader}
     Row={RepositoryTableRow}
     virtualize
   />
-);
+  );
+}
 const RepositoriesPage = (props) => {
 
 
-  const { canCreate = true, namespace, selector: { matchLabels: { registry } } } = props;
+  const { canCreate = true, namespace, isExtRegistry } = props;
+  let registry;
+  if (isExtRegistry) {
+    registry = props.selector.matchLabels['ext-registry'];
+  } else {
+    registry = props.selector.matchLabels.registry;
+  }
+
   return (
     <>
       <div className="pf-m-expanded" style={{ padding: '30px 0 0 30px' }}>
-        <button className="pf-c-dropdown__toggle pf-m-primary" style={{ backgroundColor: '#0066cc', color: 'white', fontSize: '14px', width: '150px', height: '25px', display: 'flex', justifyContent: 'center' }} onClick={scanningModal.bind(null, { kind: 'Repository', ns: namespace, showNs: false, labelSelector: { registry } })}>
+        {isExtRegistry ? <button className="pf-c-dropdown__toggle pf-m-primary" style={{ backgroundColor: '#0066cc', color: 'white', fontSize: '14px', width: '150px', height: '25px', display: 'flex', justifyContent: 'center' }} onClick={scanningModal.bind(null, { kind: 'Repository', ns: namespace, showNs: false, labelSelector: { 'ext-registry': registry }, isExtRegistry })}>
           Image Scan Request
-      </button>
+      </button> : <button className="pf-c-dropdown__toggle pf-m-primary" style={{ backgroundColor: '#0066cc', color: 'white', fontSize: '14px', width: '150px', height: '25px', display: 'flex', justifyContent: 'center' }} onClick={scanningModal.bind(null, { kind: 'Repository', ns: namespace, showNs: false, labelSelector: { registry }, isExtRegistry })}>
+            Image Scan Request
+      </button>}
       </div>
       <ListPage canCreate={canCreate} kind="Repository" ListComponent={RepositoriesList} {...props} />
     </>
@@ -132,6 +142,10 @@ const RepositoryDetails: React.FC<RepositoryDetailsProps> = ({ obj: repository }
     }));
   }
 
+  // const showSigner = repository.metadata.labels?.app === 'registry' ? true : false;
+
+  const isExtRegistry = repository.metadata.labels.app === 'ext-registry' ? true : false;
+
   return (
     <>
       <div className="co-m-pane__body">
@@ -144,7 +158,7 @@ const RepositoryDetails: React.FC<RepositoryDetailsProps> = ({ obj: repository }
       </div>
       <div className="co-m-pane__body">
         <SectionHeading text="Tags" />
-        <Tags repository={repository.metadata.name} tags={addedTags} namespace={repository.metadata.namespace} registry={repository.spec.registry} />
+        <Tags repository={repository.metadata.name} tags={addedTags} namespace={repository.metadata.namespace} registry={repository.spec.registry} isExtRegistry={isExtRegistry} /* showSigner={showSigner} */ />
       </div>
     </>
   );

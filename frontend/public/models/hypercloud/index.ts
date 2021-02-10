@@ -231,6 +231,19 @@ export const RegistryModel: K8sKind = {
   crd: false,
 };
 
+export const ExternalRegistryModel: K8sKind = {
+  kind: 'ExternalRegistry',
+  namespaced: true,
+  label: 'External Registry',
+  plural: 'externalregistries',
+  apiVersion: 'v1',
+  abbr: 'ERG',
+  apiGroup: 'tmax.io',
+  labelPlural: 'External Registries',
+  id: 'externalregistry',
+  crd: false,
+};
+
 export const RepositoryModel: K8sKind = {
   kind: 'Repository',
   namespaced: true,

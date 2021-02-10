@@ -100,6 +100,7 @@ const MasterNav = () => (
         </NavSection> */}
         <NavSection title="Image">
           <ResourceNSLink resource="registries" name={t('COMMON:MSG_LNB_MENU_71')} />
+          <ResourceNSLink resource="externalregistries" name="External Registries" />
           <ResourceClusterLink resource="imagesigners" name="Image Signer" />
           <ResourceNSLink resource="imagesignrequests" name="Image Sign Request" />
           <ResourceNSLink resource="imagescanrequests" name="Image Scan Request" />

@@ -13,17 +13,17 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-export const Tags: React.SFC<TagsProps> = ({ tags, namespace, repository, registry }) => {
+export const Tags: React.SFC<TagsProps> = ({ tags, namespace, repository, registry, isExtRegistry }) => {
   return (
     <>
       <div className="co-m-pane__body">
-        <TagsListTable tags={tags} namespace={namespace} repository={repository} registry={registry} />
+        <TagsListTable tags={tags} namespace={namespace} repository={repository} registry={registry} isExtRegistry={isExtRegistry} />
       </div>
     </>
   );
 }
 
-const TagsListTable = ({ tags, namespace, repository, registry }) => {
+const TagsListTable = ({ tags, namespace, repository, registry, isExtRegistry }) => {
 
   const TagsListHeaderColumns = [
     'Name',
@@ -44,6 +44,7 @@ const TagsListTable = ({ tags, namespace, repository, registry }) => {
     obj.repository = repository;
     obj.kind = 'Tag';
     obj.namespace = namespace;
+    obj.isExtRegistry = isExtRegistry;
     return [
       {
         title: obj?.version,
@@ -135,4 +136,5 @@ export type TagsProps = {
   namespace: string;
   repository?: string;
   registry?: string;
+  isExtRegistry?: boolean;
 };

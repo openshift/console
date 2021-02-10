@@ -291,15 +291,22 @@ const kebabFactory: KebabFactory = {
       }),
     accessReview: asAccessReview(kind, obj, 'patch'),
   }),
-  ModifyScanning: (kind, obj) => ({
-    label: 'Image Scan Request Creation',
-    callback: () =>
-      scanningModal({
-        modelKind: kind,
-        resource: obj,
-        blocking: true,
-      }),
-  }),
+  ModifyScanning: (kind, obj) => {
+    let isExtRegistry = false;
+    if (obj.kind === 'ExternalRegistry' || obj.metadata?.labels?.app === 'ext-registry' || obj.isExtRegistry) {
+      isExtRegistry = true;
+    }
+    return ({
+      label: 'Image Scan Request Creation',
+      callback: () =>
+        scanningModal({
+          modelKind: kind,
+          resource: obj,
+          blocking: true,
+          isExtRegistry
+        }),
+    })
+  },
   ModifyPodSelector: (kind, obj) => ({
     label: 'Edit Pod Selector',
     callback: () =>
@@ -552,7 +559,7 @@ export type KebabOption = {
 
 export type KebabAction = (
   kind: K8sKind,
-  obj: K8sResourceKind,
+  obj: K8sResourceKind | any,
   resources?: any,
   customData?: any,
 ) => KebabOption;
