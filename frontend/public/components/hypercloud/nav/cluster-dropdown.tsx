@@ -8,7 +8,7 @@ import { featureReducerName } from '../../../reducers/features';
 import { getActiveCluster } from '../../../reducers/ui';
 import * as UIActions from '../../../actions/ui';
 import { coFetchJSON } from '../../../co-fetch';
-import { getId } from '../../../hypercloud/auth';
+import { getId, getUserGroup } from '../../../hypercloud/auth';
 
 type clusterItemProps = {
     displayName: string;
@@ -94,7 +94,7 @@ const ClusterDropdown_: React.FC<ClusterDropdownProps & StateProps> = ({
 
     React.useEffect(() => {
         if (clusters.length == 0 || isClusterDropdownOpen) {
-            coFetchJSON(`/api/multi-hypercloud/cluster?accessOnly=true&userId=${getId()}`, 'GET')
+            coFetchJSON(`/api/multi-hypercloud/cluster?accessOnly=true&userId=${getId()}${getUserGroup()}`, 'GET')
             .then((result) => result.items)
             .then((res) => {
                 const clusterList: clusterItemProps[] = res.reduce((list, cluster)=> {

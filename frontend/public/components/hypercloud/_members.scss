@@ -4,6 +4,14 @@
   .hc-members__users {
     margin-bottom: 30px;
   }
+
+  table {
+    thead {
+      td {
+        width: 44px !important;
+      }
+    }
+  }
 }
 
 .hc-invite-modal__input-members {
