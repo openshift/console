@@ -8,6 +8,7 @@ When('user selects YAML view', () => {
     .its('readyState')
     .should('eq', 'complete');
   cy.get(catalogPO.installHelmChart.yamlView).click();
+  cy.testA11y('Pipeline Builder page - YAML view');
 });
 
 When('user selects the Chart Version {string}', (chartVersion: string) => {

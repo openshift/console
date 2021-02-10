@@ -92,7 +92,7 @@ export const catalogPO = {
   catalogTypes: {
     operatorBacked: '[data-test="kind-cluster-service-version"]',
     helmCharts: 'a[href="/?catalogType=HelmChart"]',
-    builderImage: 'a[href="/?catalogType=BuilderImage"]',
+    builderImage: 'ul:nth-child(3) > li:nth-child(1) > a', // This needs to be changed
     template: 'a[href="/?catalogType=Template"]',
     serviceClass: '[data-test="kind-cluster-service-class"]',
   },

@@ -6,7 +6,6 @@ import { nav } from '../../../../../integration-tests-cypress/views/nav';
 import { modal } from '../../../../../integration-tests-cypress/views/modal';
 import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
 import { adminNavigationMenu, perspectiveName } from '../../constants/staticText/global-text';
-import { pipelinesPage } from '../../pages/pipelines/pipelines-page';
 
 Given('user is at developer perspective', () => {
   perspective.switchTo(switchPerspective.Developer);
@@ -34,10 +33,6 @@ Given('user has created or selected namespace {string}', (projectName: string) =
   cy.log(`User has selected namespace "${projectName}-${timestamp}-ns"`);
 });
 
-Given('user is at pipelines page', () => {
-  navigateTo(devNavigationMenu.Pipelines);
-});
-
 Given('user is at Monitoring page', () => {
   navigateTo(devNavigationMenu.Monitoring);
 });
@@ -50,14 +45,6 @@ When('user switches to developer perspective', () => {
   perspective.switchTo(switchPerspective.Developer);
   guidedTour.close();
 });
-
-When(
-  'user selects {string} option from kebab menu for pipeline {string}',
-  (option: string, pipelineName: string) => {
-    pipelinesPage.selectKebabMenu(pipelineName);
-    cy.byTestActionID(option).click();
-  },
-);
 
 When('user selects {string} option from Actions menu', (option: string) => {
   cy.byTestActionID(option).click();

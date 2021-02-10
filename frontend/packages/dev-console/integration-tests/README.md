@@ -38,8 +38,6 @@ frontend/packages/dev-console/integration-tests/
 |   |    └──create-from-git.feature
 |   ├──  topology           <--- Topology gherkin scenarios
 |   |    └──chart-area-visual.feature
-|   ├──  pipelines          <--- Pipelines gherkin scenarios
-|   |    └──create-from-builder-page.feature
 |   ├──  knative            <--- Knative gherkin scenarios
 |   |    └──create-event-sources.feature
 |   ├──  helm               <--- Helm gherkin scenarios
@@ -51,8 +49,6 @@ frontend/packages/dev-console/integration-tests/
 |   ├── commands            <--- add commands to Cypress 'cy.' global, other support configurations
 |   |   └── index.ts
 |   |   └── app.ts          <--- hooks are added in this file
-|   ├── pageObjects         <--- helper objects
-|   |   └── add-fow-po.ts   <--- helper objects related to add page - git, catalog, container
 |   ├── constants           <--- enums required for dev-console scripts
 |   |   |   └──static-text
 |   |   |       └── add-fow-text.ts <--- enums required for dev-console scripts
@@ -61,8 +57,6 @@ frontend/packages/dev-console/integration-tests/
 |   ├── pageObjects         <--- Object Repository [Going forward will publish it as npm module]
 │   |   ├── add-flow-po.ts  <--- Add flow related page objects
 |   |   └── helm-po.ts      <--- Helm related page objects
-│   |   ├── add-flow-po.ts  <--- helper objects related to add page - git, catalog, container
-|   |   └── helm-po.ts      <--- helper objects related to helm page
 |   ├── pages               <--- page functions
 │   |   ├── add-flow        <--- Add flow related helper objects and page functions
 |   |   |   └──add-page.ts
@@ -71,25 +65,9 @@ frontend/packages/dev-console/integration-tests/
 │   |   ├── addFlow          <--- Re-usable dev-console step definitions
 |   |       create-from-catalog.ts
 |   |       └──project-creation.ts
-│   |   ├── pipelines          <--- Re-usable dev-console step definitions
-|   |       └──common.ts
-|   |       └──project-creation.ts
 │   |   ├── common          <--- Re-usable dev-console step definitions
 |   |       └──common.ts
 |   |       └──project-creation.ts
-├── features
-|   ├──  addFlow            <--- Add flow gherkin scenarios
-|   |    └──create-from-git.feature
-|   ├──  topology           <--- Topology gherkin scenarios
-|   |    └──chart-area-visual.feature
-|   ├──  pipelines          <--- Pipelines gherkin scenarios
-|   |    └──create-from-builder-page.feature
-|   ├──  knative            <--- Knative gherkin scenarios
-|   |    └──create-event-sources.feature
-|   ├──  helm               <--- Helm gherkin scenarios
-|   |    └──helm-navigation.feature
-|   ├──  BestPractices.md   <--- Gherkin script standards
-├── fixtures                <--- Test data required for scripts
 ├── testData                <--- Test data required for scripts
 ├── cypress.json            <--- cypress configuration file
 ```
