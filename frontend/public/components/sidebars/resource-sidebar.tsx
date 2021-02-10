@@ -74,7 +74,8 @@ export const ResourceSidebar = (props) => {
     return null;
   }
 
-  const { label = sidebarLabel } = kindObj ?? {};
+  const kindLabel = kindObj?.labelKey ? t(kindObj.labelKey) : kindObj?.label;
+  const label = sidebarLabel ? sidebarLabel : kindLabel;
 
   const showSamples = !_.isEmpty(samples);
   const showSnippets = !_.isEmpty(snippets);
