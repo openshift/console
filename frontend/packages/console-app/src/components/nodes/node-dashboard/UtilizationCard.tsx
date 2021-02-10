@@ -60,13 +60,12 @@ const UtilizationCard: React.FC = () => {
   const { obj, setCPULimit, setMemoryLimit } = React.useContext(NodeDashboardContext);
 
   const nodeName = obj.metadata.name;
-  const nodeIp = getNodeAddresses(obj).find((addr) => addr.type === 'InternalIP')?.address;
-
+  const nodeIp = getNodeAddresses(obj).find(addr => addr.type === 'InternalIP')?.address;
   const [queries, multilineQueries, resourceQuotaQueries, consumers] = React.useMemo(() => {
     const topConsumerQueries = getTopConsumerQueries(nodeIp);
     return [
       getUtilizationQueries(nodeName, nodeIp),
-      getMultilineQueries(nodeName),
+      getMultilineQueries(nodeName, nodeIp),
       getResourceQutoaQueries(nodeName),
       [
         [getProjectConsumers(topConsumerQueries[NodeQueries.PROJECTS_BY_FILESYSTEM]), getPodConsumers(topConsumerQueries[NodeQueries.PODS_BY_FILESYSTEM], nodeName)],

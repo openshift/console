@@ -28,16 +28,28 @@ export enum NodeQueries {
   POD_RESOURCE_REQUEST_MEMORY = 'POD_RESOURCE_REQUEST_MEMORY',
 }
 
+// const queries = {
+//   [NodeQueries.CPU_USAGE]: _.template(`instance:node_cpu:rate:sum{instance='<%= node %>'}`),
+//   [NodeQueries.CPU_TOTAL]: _.template(`instance:node_num_cpu:sum{instance='<%= node %>'}`),
+//   [NodeQueries.MEMORY_USAGE]: _.template(`node_memory_MemTotal_bytes{instance='<%= node %>'} - node_memory_MemAvailable_bytes{instance='<%= node %>'}`),
+//   [NodeQueries.MEMORY_TOTAL]: _.template(`node_memory_MemTotal_bytes{instance='<%= node %>'}`),
+//   [NodeQueries.POD_COUNT]: _.template(`kubelet_running_pod_count{instance=~'<%= ipAddress %>:.*'}`),
+//   [NodeQueries.FILESYSTEM_USAGE]: _.template(`instance:node_filesystem_usage:sum{instance='<%= node %>'}`),
+//   [NodeQueries.FILESYSTEM_TOTAL]: _.template(`node_filesystem_size_bytes{instance='<%= node %>'}`),
+//   [NodeQueries.NETWORK_IN_UTILIZATION]: _.template(`instance:node_network_receive_bytes:rate:sum{instance='<%= node %>'}`),
+//   [NodeQueries.NETWORK_OUT_UTILIZATION]: _.template(`instance:node_network_transmit_bytes:rate:sum{instance='<%= node %>'}`),
+// };
+
 const queries = {
-  [NodeQueries.CPU_USAGE]: _.template(`instance:node_cpu:rate:sum{instance='<%= node %>'}`),
-  [NodeQueries.CPU_TOTAL]: _.template(`instance:node_num_cpu:sum{instance='<%= node %>'}`),
-  [NodeQueries.MEMORY_USAGE]: _.template(`node_memory_MemTotal_bytes{instance='<%= node %>'} - node_memory_MemAvailable_bytes{instance='<%= node %>'}`),
-  [NodeQueries.MEMORY_TOTAL]: _.template(`node_memory_MemTotal_bytes{instance='<%= node %>'}`),
-  [NodeQueries.POD_COUNT]: _.template(`kubelet_running_pod_count{instance=~'<%= ipAddress %>:.*'}`),
-  [NodeQueries.FILESYSTEM_USAGE]: _.template(`instance:node_filesystem_usage:sum{instance='<%= node %>'}`),
-  [NodeQueries.FILESYSTEM_TOTAL]: _.template(`node_filesystem_size_bytes{instance='<%= node %>'}`),
-  [NodeQueries.NETWORK_IN_UTILIZATION]: _.template(`instance:node_network_receive_bytes:rate:sum{instance='<%= node %>'}`),
-  [NodeQueries.NETWORK_OUT_UTILIZATION]: _.template(`instance:node_network_transmit_bytes:rate:sum{instance='<%= node %>'}`),
+  [NodeQueries.CPU_USAGE]: _.template(`instance:node_cpu:rate:sum{instance='<%= ipAddress %>'}`),
+  [NodeQueries.CPU_TOTAL]: _.template(`instance:node_num_cpu:sum{instance='<%= ipAddress %>'}`),
+  [NodeQueries.MEMORY_USAGE]: _.template(`node_memory_MemTotal_bytes{instance='<%= ipAddress %>'} - node_memory_MemAvailable_bytes{instance='<%= ipAddress %>'}`),
+  [NodeQueries.MEMORY_TOTAL]: _.template(`node_memory_MemTotal_bytes{instance='<%= ipAddress %>'}`),
+  [NodeQueries.POD_COUNT]: _.template(`kubelet_running_pods{instance=~'<%= podCountIp %>'}`),
+  [NodeQueries.FILESYSTEM_USAGE]: _.template(`instance:node_filesystem_usage:sum{instance='<%= ipAddress %>'}`),
+  [NodeQueries.FILESYSTEM_TOTAL]: _.template(`node_filesystem_size_bytes{instance='<%= ipAddress %>'}`),
+  [NodeQueries.NETWORK_IN_UTILIZATION]: _.template(`instance:node_network_receive_bytes:rate:sum{instance='<%= ipAddress %>'}`),
+  [NodeQueries.NETWORK_OUT_UTILIZATION]: _.template(`instance:node_network_transmit_bytes:rate:sum{instance='<%= ipAddress %>'}`),
 };
 
 const top25Queries = {
@@ -92,18 +104,33 @@ const resourceQuotaQueries = {
   ),
 };
 
-export const getMultilineQueries = (node: string): { [key: string]: QueryWithDescription[] } => ({
-  [NodeQueries.NETWORK_UTILIZATION]: [
-    {
-      query: queries[NodeQueries.NETWORK_IN_UTILIZATION]({ node }),
-      desc: 'In',
-    },
-    {
-      query: queries[NodeQueries.NETWORK_OUT_UTILIZATION]({ node }),
-      desc: 'Out',
-    },
-  ],
-});
+// export const getMultilineQueries = (node: string): { [key: string]: QueryWithDescription[] } => ({
+//   [NodeQueries.NETWORK_UTILIZATION]: [
+//     {
+//       query: queries[NodeQueries.NETWORK_IN_UTILIZATION]({ node }),
+//       desc: 'In',
+//     },
+//     {
+//       query: queries[NodeQueries.NETWORK_OUT_UTILIZATION]({ node }),
+//       desc: 'Out',
+//     },
+//   ],
+// });
+export const getMultilineQueries = (node: string, ipAddress: string): { [key: string]: QueryWithDescription[] } => {
+  ipAddress = ipAddress + ':9100';
+  return {
+    [NodeQueries.NETWORK_UTILIZATION]: [
+      {
+        query: queries[NodeQueries.NETWORK_IN_UTILIZATION]({ ipAddress }),
+        desc: 'In',
+      },
+      {
+        query: queries[NodeQueries.NETWORK_OUT_UTILIZATION]({ ipAddress }),
+        desc: 'Out',
+      },
+    ],
+  };
+};
 
 export const getResourceQutoaQueries = (node: string) => ({
   [NodeQueries.POD_RESOURCE_LIMIT_CPU]: resourceQuotaQueries[NodeQueries.POD_RESOURCE_LIMIT_CPU]({
@@ -116,19 +143,36 @@ export const getResourceQutoaQueries = (node: string) => ({
   [NodeQueries.POD_RESOURCE_REQUEST_MEMORY]: resourceQuotaQueries[NodeQueries.POD_RESOURCE_REQUEST_MEMORY]({ node }),
 });
 
-export const getUtilizationQueries = (node: string, ipAddress: string) => ({
-  [NodeQueries.CPU_USAGE]: queries[NodeQueries.CPU_USAGE]({ node }),
-  [NodeQueries.CPU_TOTAL]: queries[NodeQueries.CPU_TOTAL]({ node }),
-  [NodeQueries.MEMORY_USAGE]: queries[NodeQueries.MEMORY_USAGE]({ node }),
-  [NodeQueries.MEMORY_TOTAL]: queries[NodeQueries.MEMORY_TOTAL]({ node }),
-  [NodeQueries.POD_COUNT]: queries[NodeQueries.POD_COUNT]({ ipAddress }),
-  [NodeQueries.FILESYSTEM_USAGE]: queries[NodeQueries.FILESYSTEM_USAGE]({
-    node,
-  }),
-  [NodeQueries.FILESYSTEM_TOTAL]: queries[NodeQueries.FILESYSTEM_TOTAL]({
-    node,
-  }),
-});
+// export const getUtilizationQueries = (node: string, ipAddress: string) => ({
+//   [NodeQueries.CPU_USAGE]: queries[NodeQueries.CPU_USAGE]({ node }),
+//   [NodeQueries.CPU_TOTAL]: queries[NodeQueries.CPU_TOTAL]({ node }),
+//   [NodeQueries.MEMORY_USAGE]: queries[NodeQueries.MEMORY_USAGE]({ node }),
+//   [NodeQueries.MEMORY_TOTAL]: queries[NodeQueries.MEMORY_TOTAL]({ node }),
+//   [NodeQueries.POD_COUNT]: queries[NodeQueries.POD_COUNT]({ ipAddress }),
+//   [NodeQueries.FILESYSTEM_USAGE]: queries[NodeQueries.FILESYSTEM_USAGE]({
+//     node,
+//   }),
+//   [NodeQueries.FILESYSTEM_TOTAL]: queries[NodeQueries.FILESYSTEM_TOTAL]({
+//     node,
+//   }),
+// });
+export const getUtilizationQueries = (node: string, ipAddress: string) => {
+  let podCountIp = ipAddress + ':10250';
+  ipAddress = ipAddress + ':9100';
+  return {
+    [NodeQueries.CPU_USAGE]: queries[NodeQueries.CPU_USAGE]({ ipAddress }),
+    [NodeQueries.CPU_TOTAL]: queries[NodeQueries.CPU_TOTAL]({ ipAddress }),
+    [NodeQueries.MEMORY_USAGE]: queries[NodeQueries.MEMORY_USAGE]({ ipAddress }),
+    [NodeQueries.MEMORY_TOTAL]: queries[NodeQueries.MEMORY_TOTAL]({ ipAddress }),
+    [NodeQueries.POD_COUNT]: queries[NodeQueries.POD_COUNT]({ podCountIp }),
+    [NodeQueries.FILESYSTEM_USAGE]: queries[NodeQueries.FILESYSTEM_USAGE]({
+      ipAddress,
+    }),
+    [NodeQueries.FILESYSTEM_TOTAL]: queries[NodeQueries.FILESYSTEM_TOTAL]({
+      ipAddress,
+    }),
+  };
+};
 
 export const getTopConsumerQueries = (ipAddress: string) => ({
   [NodeQueries.PODS_BY_CPU]: top25Queries[NodeQueries.PODS_BY_CPU]({ ipAddress }),
