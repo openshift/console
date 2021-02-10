@@ -6,6 +6,7 @@ import { k8sCreateUrl, k8sList, referenceForModel, kindForReference } from '../.
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../../factory/modal';
 import { PromiseComponent, ResourceIcon, SelectorInput } from '../../utils';
 import { Section } from '../utils/section';
+import { ResourceListDropdownWithDataToolbar } from '../utils/resource-list-dropdown';
 import { ResourceListDropdown, RegistryListDropdown } from '../../resource-dropdown';
 import { Button, Chip, ChipGroup, ChipGroupToolbarItem } from '@patternfly/react-core';
 import { CloseIcon } from '@patternfly/react-icons';
@@ -54,8 +55,7 @@ class BaseScanningModal extends PromiseComponent {
 
     async getResourceList() {
         const { kind, ns, labelSelector } = this.props;
-        const list = await k8sList(modelFor(kind), { ns: this.state.namespace, labelSelector });
-        const resources = list.map(item => item.metadata.name);
+        const resources = await k8sList(modelFor(kind), { ns: this.state.namespace, labelSelector });
         return this.setState({ resources });
     }
 
@@ -200,14 +200,15 @@ class BaseScanningModal extends PromiseComponent {
         this.setState({ namespace: e.target.value });
     }
 
-    onChangeResource = (e) => {
-        const resource = Array.from(e.target.selectedOptions, option => option.value);
+    onSelectedItemChange = (items) => {
+        const resource = [...items][0] === 'All' ? this.state.resources.map(res => res.metadata.name)
+            : [...items].map(item => this.state.resources.find(res => res.metadata.uid === item)?.metadata.name);
         this.setState({ resource });
-    }
+    };
 
     render() {
         const { kind, showNs, resource, message, modelKind } = this.props;
-        const { selected } = this.state;
+        const { selected, resources } = this.state;
 
         let label;
         if (kind === 'Registry' || modelKind?.kind === 'Registry') {
@@ -247,9 +248,13 @@ class BaseScanningModal extends PromiseComponent {
                             <div className="co-search-group">
                                 {resource ?
                                     <div>{name}</div> :
-                                    <select className="col-sm-12" value={this.state.resource} onChange={this.onChangeResource} multiple>
-                                        {this.state.resources.map((resource, idx) => <option key={idx} value={resource}>{resource}</option>)}
-                                    </select>
+                                    <ResourceListDropdownWithDataToolbar
+                                        resourceList={resources} // 필수
+                                        showAll={true} // 드롭다운에 all resource 라는 항목이 생긴다.
+                                        resourceType="Registry" // title, placeholder, all resources, chip group 에 적용되는 문구 (title, placeholder는 직접 지정하는 것의 우선순위가 더 높음)
+                                        autocompletePlaceholder="search by name" // 검색란 placeholder
+                                        onSelectedItemChange={this.onSelectedItemChange} // 선택된 아이템 리스트 변동될 때마다 호출되는 함수
+                                    />
                                 }
                             </div>
                         </div>

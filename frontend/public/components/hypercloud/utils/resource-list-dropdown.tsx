@@ -42,12 +42,13 @@ type DropdownItemProps = {
 };
 
 export const ResourceListDropdown: React.SFC<ResourceListDropdownProps> = (props) => {
-  const { register, unregister, setValue } = useFormContext();
-  const { name, required, resourceList, onChange, showAll, className, type } = props;
+  const { name, required, resourceList, onChange, showAll, className, type, useHookForm } = props;
 
   const selected = name ? props.selected : props.selected;
 
-  if (name) {
+  if (useHookForm && name) {
+    const { register, unregister, setValue } = useFormContext();
+
     React.useEffect(() => {
       setValue(name, selected);
       
@@ -138,10 +139,12 @@ export type ResourceListDropdownProps = {
   resourceType?: string;
   autocompletePlaceholder?: string;
   autocompleteFilter?: (text: any, item: any) => any;
+  useHookForm?: boolean;
 };
 
 ResourceListDropdown.defaultProps = {
   resourceType: "Resources",
+  useHookForm: false,
 };
 
 const ResourceListDropdownWithDataToolbar_: React.SFC<ResourceListDropdownWithDataToolbarProps> = (props, ref) => {
@@ -233,6 +236,7 @@ export type ResourceListDropdownWithDataToolbarProps = {
   autocompletePlaceholder?: string;
   autocompleteFilter?: (text: any, item: any) => any;
   onSelectedItemChange?: (items: Set<string>) => any;
+  useHookForm?: boolean;
 };
 
 ResourceListDropdownWithDataToolbar.defaultProps = {
