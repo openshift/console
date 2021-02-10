@@ -4,6 +4,7 @@ import * as classNames from 'classnames';
 import { Button } from '@patternfly/react-core';
 import { EmptyBox, PageHeading, SectionHeading, } from '../utils';
 import { Table, TableHeader, TableBody, sortable, SortByDirection } from '@patternfly/react-table';
+import { getId } from '../../hypercloud/auth';
 
 const getRowUserData = (users): RowUserData[] => {
   const data: RowUserData[] = [];
@@ -46,12 +47,12 @@ const UserGroupsTableHeader = [
 ];
 
 export const UsersTable = (props) => {
-  const { users, heading } = props;
+  const { clusterName, isOwner, users, heading } = props;
 
   const [rows, setRows] = React.useState(getRowUserData(users));
   const [sortBy, setSortBy] = React.useState({ index: 0, direction: SortByDirection.asc });
 
-  React.useEffect(()=>{
+  React.useEffect(() => {
     setRows(getRowUserData(users));
   }, [users]);
 
@@ -70,13 +71,29 @@ export const UsersTable = (props) => {
 
   };
 
+  const userActions = [
+    {
+      title: 'Update',
+      onClick: (event, rowId, rowData, extra) => {
+        inviteMemberModal({ clusterName, modalClassName: 'modal-lg', type: 'User', member: rowData[0], role: rowData[1], requestType: 'update' })
+      }
+    },
+    {
+      title: 'Delete',
+      onClick: (event, rowId, rowData, extra) => {
+        console.log('clicked on Some action, on row: ', rowId)
+        removeMemberModal({ clusterName, modalClassName: 'modal-lg', type: 'User', member: rowData[0] })
+      }
+    }
+  ]
+
   return (
     <div className="hc-members__users">
       {heading && <SectionHeading text={heading} />}
       {_.isEmpty(rows) ? (
         <EmptyBox label="Users" />
       ) : (
-          <Table aria-label="Users" sortBy={sortBy} onSort={onSort} cells={UsersTableHeader} rows={rows}>
+          <Table aria-label="Users" sortBy={sortBy} onSort={onSort} cells={UsersTableHeader} rows={rows} actions={isOwner && userActions}>
             <TableHeader />
             <TableBody />
           </Table>
@@ -86,13 +103,13 @@ export const UsersTable = (props) => {
 };
 
 export const UserGroupsTable = (props) => {
-  const { groups, heading } = props;
+  const { clusterName, isOwner, groups, heading } = props;
   const data: RowUserGroupData[] = getRowUserGroupData(groups);
 
   const [rows, setRows] = React.useState(data);
   const [sortBy, setSortBy] = React.useState({ index: 0, direction: SortByDirection.asc });
-  
-  React.useEffect(()=>{
+
+  React.useEffect(() => {
     setRows(getRowUserGroupData(groups));
   }, [groups]);
 
@@ -111,13 +128,28 @@ export const UserGroupsTable = (props) => {
 
   };
 
+  const userGroupActions = [
+    {
+      title: 'Update',
+      onClick: (event, rowId, rowData, extra) => {
+        inviteMemberModal({ clusterName, modalClassName: 'modal-lg', type: 'Group', member: rowData[0], role: rowData[1], requestType: 'update' })
+      }
+    },
+    {
+      title: 'Delete',
+      onClick: (event, rowId, rowData, extra) => {
+        removeMemberModal({ clusterName, modalClassName: 'modal-lg', type: 'Group', member: rowData[0] })
+      }
+    }
+  ]
+
   return (
     <div className="hc-members__user-groups">
       {heading && <SectionHeading text={heading} />}
       {_.isEmpty(data) ? (
         <EmptyBox label="UserGroups" />
       ) : (
-          <Table aria-label="UserGroups" sortBy={sortBy} onSort={onSort} cells={UserGroupsTableHeader} rows={rows}>
+          <Table aria-label="UserGroups" sortBy={sortBy} onSort={onSort} cells={UserGroupsTableHeader} rows={rows} actions={isOwner && userGroupActions}>
             <TableHeader />
             <TableBody />
           </Table>
@@ -129,19 +161,24 @@ export const UserGroupsTable = (props) => {
 export const inviteMemberModal = (props) =>
   import('./modals/invite-member-modal' /* webpackChunkName: "members-modal" */).then((m) => m.inviteMemberModal(props));
 
+export const removeMemberModal = (props) =>
+  import('./modals/remove-member-modal' /* webpackChunkName: "remove-member-modal" */).then((m) => m.removeMemberModal(props));
+
 export const MembersPage = (props) => {
+  const isOwner = Object.keys(props.resource.status.owner)[0] === getId();
   return (
     <>
       <PageHeading title={props.title} className={classNames('co-m-nav-title--row')}>
-        <div className="co-m-primary-action">
-          <Button variant="primary" id="yaml-create" onClick={() => inviteMemberModal({ clusterName: props.resource.metadata.name, modalClassName: 'modal-lg' })}>
-            Invite Member
+        {isOwner &&
+          <div className="co-m-primary-action">
+            <Button variant="primary" id="yaml-create" onClick={() => inviteMemberModal({ clusterName: props.resource.metadata.name, modalClassName: 'modal-lg' })}>
+              Invite Member
           </Button>
-        </div>
+          </div>}
       </PageHeading>
       <div className="hc-members__body">
-        <UsersTable users={props.resource.status.members} heading={props.userHeading} />
-        <UserGroupsTable groups={props.resource.status.groups} heading={props.userGroupHeading} />
+        <UsersTable clusterName={props.resource.metadata.name} isOwner={isOwner} users={props.resource.status.members} heading={props.userHeading} />
+        <UserGroupsTable clusterName={props.resource.metadata.name} isOwner={isOwner} groups={props.resource.status.groups} heading={props.userGroupHeading} />
       </div>
     </>
   );
