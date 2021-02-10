@@ -1,5 +1,5 @@
 import { checkErrors } from '../../../integration-tests-cypress/support';
-import { storagePool } from '../views/multiple-pool';
+import { storagePool, PoolState } from '../views/multiple-pool';
 
 // Pool var
 const poolName: string = 'example.pool';
@@ -24,14 +24,14 @@ describe('Test Ceph pool creation', () => {
 
     cy.log('Test creation of a new pool');
     storagePool.prepareStorageClassForm();
-    storagePool.create(poolName, replicaCount, 'POOL_CREATED');
+    storagePool.create(poolName, replicaCount, PoolState.CREATED);
 
     cy.log('Verify a newly created pool');
     storagePool.verify(poolName, replicaCount);
 
     cy.log('Try to create a new pool with already existing name');
     storagePool.prepareStorageClassForm();
-    storagePool.create(poolName, replicaCount, 'POOL_DUPLICATED');
+    storagePool.create(poolName, replicaCount, PoolState.DUPLICATED);
 
     cy.log('Deleting a pool');
     storagePool.delete(poolName);
