@@ -3,7 +3,7 @@ import * as classNames from 'classnames';
 
 import { sortable } from '@patternfly/react-table';
 import { fromNow } from '@console/internal/components/utils/datetime';
-import { K8sResourceCommon, K8sClaimResourceKind, modelFor } from '../../module/k8s';
+import { K8sResourceKind, K8sClaimResourceKind, modelFor } from '../../module/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from '../factory';
 import { Kebab, navFactory, ResourceSummary, SectionHeading, ResourceLink, ResourceKebab } from '../utils';
 // import { WorkloadTableRow, WorkloadTableHeader } from '../workload-table';
@@ -88,7 +88,23 @@ const NamespaceClaimsDetails: React.FC<NamespaceClaimDetailsProps> = ({ obj: nam
         <div className="co-m-pane__body-group">
           <div className="row">
             <div className="col-sm-6">
-              <ResourceSummary resource={namespaceclaims}></ResourceSummary>
+              <ResourceSummary resource={namespaceclaims} showOwner={false}></ResourceSummary>
+              <dt>Owner</dt>
+              <dd>{namespaceclaims.metadata.annotations.owner}</dd>
+            </div>
+            <div className="col-md-6">
+              <dl className="co-m-pane__details">
+                <dt>Status</dt>
+                <dd>{namespaceclaims?.status?.status}</dd>
+                <dt> Reason</dt>
+                <dd>{namespaceclaims?.status?.reason}</dd>
+                <dt>CPU request limit</dt>
+                <dd>{namespaceclaims?.specLimit?.limitCpu}</dd>
+                <dt>Memory request limit</dt>
+                <dd>{namespaceclaims?.specLimit?.limitMemory}</dd>
+                <dt>Namespace name</dt>
+                <dd>{namespaceclaims?.resourceName}</dd>
+              </dl>
             </div>
           </div>
         </div>
@@ -103,7 +119,7 @@ export const NamespaceClaimsDetailsPage: React.FC<NamespaceClaimsDetailsPageProp
 NamespaceClaimsDetailsPage.displayName = 'NamespaceClaimsDetailsPage';
 
 type NamespaceClaimDetailsProps = {
-  obj: K8sResourceCommon;
+  obj: K8sResourceKind;
 };
 
 type NamespaceClaimsPageProps = {
