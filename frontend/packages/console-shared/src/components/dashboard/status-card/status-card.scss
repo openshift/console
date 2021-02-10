@@ -87,8 +87,11 @@
 }
 
 .co-status-card__health-item-text {
+  word-break: break-word;
   display: block;
   margin-left: 1rem;
+  overflow-wrap: break-word;
+  white-space: pre-line;
 }
 
 .co-status-card__health-item:last-of-type {
