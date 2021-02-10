@@ -11,19 +11,7 @@ import DetailsBody from '@console/shared/src/components/dashboard/details-card/D
 import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';
 import { DashboardItemProps, withDashboardResources } from '../../with-dashboard-resources';
 import { ClusterVersionModel } from '../../../../models';
-import {
-  referenceForModel,
-  getOpenShiftVersion,
-  getK8sGitVersion,
-  ClusterVersionKind,
-  getClusterID,
-  getDesiredClusterVersion,
-  getLastCompletedUpdate,
-  getClusterUpdateStatus,
-  getClusterVersionChannel,
-  ClusterUpdateStatus,
-  getOCMLink,
-} from '../../../../module/k8s';
+import { referenceForModel, getOpenShiftVersion, getK8sGitVersion, ClusterVersionKind, getClusterID, getDesiredClusterVersion, getLastCompletedUpdate, getClusterUpdateStatus, getClusterVersionChannel, ClusterUpdateStatus, getOCMLink } from '../../../../module/k8s';
 import { flagPending, featureReducerName } from '../../../../reducers/features';
 import { ExternalLink } from '../../../utils';
 import { RootState } from '../../../../redux';
@@ -55,24 +43,14 @@ const ClusterVersion: React.FC<ClusterVersionProps> = ({ cv }) => {
         <>
           <span className="co-select-to-copy">{desiredVersion}</span>
           <div>
-            <Button
-              variant="link"
-              className="btn-link--no-btn-default-values"
-              onClick={() => clusterUpdateModal({ cv })}
-              icon={<ArrowCircleUpIcon />}
-              isInline
-            >
+            <Button variant="link" className="btn-link--no-btn-default-values" onClick={() => clusterUpdateModal({ cv })} icon={<ArrowCircleUpIcon />} isInline>
               Update
             </Button>
           </div>
         </>
       );
     default:
-      return lastVersion ? (
-        <span className="co-select-to-copy">{lastVersion}</span>
-      ) : (
-        <span className="text-secondary">Not available</span>
-      );
+      return lastVersion ? <span className="co-select-to-copy">{lastVersion}</span> : <span className="text-secondary">Not available</span>;
   }
 };
 
@@ -87,111 +65,80 @@ const mapStateToProps = (state: RootState) => ({
   openshiftFlag: state[featureReducerName].get(FLAGS.OPENSHIFT),
 });
 
-export const DetailsCard_ = connect(mapStateToProps)(
-  ({ watchK8sResource, stopWatchK8sResource, openshiftFlag }: DetailsCardProps) => {
-    const { infrastructure, infrastructureLoaded, infrastructureError } = React.useContext(
-      ClusterDashboardContext,
-    );
-    const [k8sVersion, setK8sVersion] = React.useState<Response>();
-    const [k8sVersionError, setK8sVersionError] = React.useState();
+export const DetailsCard_ = connect(mapStateToProps)(({ watchK8sResource, stopWatchK8sResource, openshiftFlag }: DetailsCardProps) => {
+  const { infrastructure, infrastructureLoaded, infrastructureError } = React.useContext(ClusterDashboardContext);
+  const [k8sVersion, setK8sVersion] = React.useState<Response>();
+  const [k8sVersionError, setK8sVersionError] = React.useState();
 
-    const [clusterVersionData, clusterVersionLoaded, clusterVersionError] = useK8sWatchResource<
-      ClusterVersionKind
-    >(clusterVersionResource);
-    React.useEffect(() => {
-      if (flagPending(openshiftFlag)) {
-        return;
+  const [clusterVersionData, clusterVersionLoaded, clusterVersionError] = useK8sWatchResource<ClusterVersionKind>(clusterVersionResource);
+  React.useEffect(() => {
+    if (flagPending(openshiftFlag)) {
+      return;
+    }
+    const fetchK8sVersion = () => {
+      try {
+        fetch('api/kubernetes/version')
+          .then(response => {
+            return response.json();
+          })
+          .then(myJson => {
+            setK8sVersion(myJson);
+          });
+        // const version = await fetch('api/kubernetes/version');
+        // setK8sVersion(version);
+      } catch (error) {
+        setK8sVersionError(error);
       }
-      const fetchK8sVersion = async () => {
-        try {
-          const version = await fetch('version');
-          setK8sVersion(version);
-        } catch (error) {
-          setK8sVersionError(error);
-        }
-      };
-      fetchK8sVersion();
-    }, [openshiftFlag, watchK8sResource, stopWatchK8sResource]);
+    };
+    fetchK8sVersion();
+  }, [openshiftFlag, watchK8sResource, stopWatchK8sResource]);
 
-    const clusterId = getClusterID(clusterVersionData);
-    const openShiftVersion = getOpenShiftVersion(clusterVersionData);
-    const cvChannel = getClusterVersionChannel(clusterVersionData);
+  const clusterId = getClusterID(clusterVersionData);
+  const openShiftVersion = getOpenShiftVersion(clusterVersionData);
+  const cvChannel = getClusterVersionChannel(clusterVersionData);
 
-    const infrastructurePlatform = getInfrastructurePlatform(infrastructure);
-    const infrastuctureApiUrl = getInfrastructureAPIURL(infrastructure);
+  const infrastructurePlatform = getInfrastructurePlatform(infrastructure);
+  const infrastuctureApiUrl = getInfrastructureAPIURL(infrastructure);
 
-    const k8sGitVersion = getK8sGitVersion(k8sVersion);
+  const k8sGitVersion = getK8sGitVersion(k8sVersion);
 
-    return (
-      <DashboardCard data-test-id="details-card">
-        <DashboardCardHeader>
-          <DashboardCardTitle>Details</DashboardCardTitle>
-          {/* <DashboardCardLink to="/settings/cluster/">View settings</DashboardCardLink> */}
-        </DashboardCardHeader>
-        <DashboardCardBody isLoading={flagPending(openshiftFlag)}>
-          <DetailsBody>
-            {openshiftFlag ? (
-              <>
-                <DetailItem
-                  title="Cluster API address"
-                  isLoading={!infrastructureLoaded}
-                  error={!!infrastructureError || (infrastructure && !infrastuctureApiUrl)}
-                  valueClassName="co-select-to-copy"
-                >
-                  {infrastuctureApiUrl}
-                </DetailItem>
-                <DetailItem
-                  title="Cluster ID"
-                  error={!!clusterVersionError || (clusterVersionLoaded && !clusterId)}
-                  isLoading={!clusterVersionLoaded}
-                >
-                  <div className="co-select-to-copy">{clusterId}</div>
-                  {window.SERVER_FLAGS.branding !== 'okd' &&
-                    window.SERVER_FLAGS.branding !== 'azure' && (
-                      <ExternalLink text="OpenShift Cluster Manager" href={getOCMLink(clusterId)} />
-                    )}
-                </DetailItem>
-                <DetailItem
-                  title="Provider"
-                  error={!!infrastructureError || (infrastructure && !infrastructurePlatform)}
-                  isLoading={!infrastructureLoaded}
-                  valueClassName="co-select-to-copy"
-                >
-                  {infrastructurePlatform}
-                </DetailItem>
-                <DetailItem
-                  title="OpenShift version"
-                  error={!!clusterVersionError || (clusterVersionLoaded && !openShiftVersion)}
-                  isLoading={!clusterVersionLoaded}
-                >
-                  <ClusterVersion cv={clusterVersionData} />
-                </DetailItem>
-                <DetailItem
-                  title="Update channel"
-                  isLoading={!clusterVersionLoaded && !clusterVersionError}
-                  error={!!clusterVersionError || (clusterVersionLoaded && !cvChannel)}
-                  valueClassName="co-select-to-copy"
-                >
-                  {cvChannel}
-                </DetailItem>
-              </>
-            ) : (
-              <DetailItem
-                key="kubernetes"
-                title="Kubernetes version"
-                error={!!k8sVersionError || (k8sVersion && !k8sGitVersion)}
-                isLoading={!k8sVersion}
-                valueClassName="co-select-to-copy"
-              >
-                {k8sGitVersion}
+  return (
+    <DashboardCard data-test-id="details-card">
+      <DashboardCardHeader>
+        <DashboardCardTitle>Details</DashboardCardTitle>
+        {/* <DashboardCardLink to="/settings/cluster/">View settings</DashboardCardLink> */}
+      </DashboardCardHeader>
+      <DashboardCardBody isLoading={flagPending(openshiftFlag)}>
+        <DetailsBody>
+          {openshiftFlag ? (
+            <>
+              <DetailItem title="Cluster API address" isLoading={!infrastructureLoaded} error={!!infrastructureError || (infrastructure && !infrastuctureApiUrl)} valueClassName="co-select-to-copy">
+                {infrastuctureApiUrl}
               </DetailItem>
-            )}
-          </DetailsBody>
-        </DashboardCardBody>
-      </DashboardCard>
-    );
-  },
-);
+              <DetailItem title="Cluster ID" error={!!clusterVersionError || (clusterVersionLoaded && !clusterId)} isLoading={!clusterVersionLoaded}>
+                <div className="co-select-to-copy">{clusterId}</div>
+                {window.SERVER_FLAGS.branding !== 'okd' && window.SERVER_FLAGS.branding !== 'azure' && <ExternalLink text="OpenShift Cluster Manager" href={getOCMLink(clusterId)} />}
+              </DetailItem>
+              <DetailItem title="Provider" error={!!infrastructureError || (infrastructure && !infrastructurePlatform)} isLoading={!infrastructureLoaded} valueClassName="co-select-to-copy">
+                {infrastructurePlatform}
+              </DetailItem>
+              <DetailItem title="OpenShift version" error={!!clusterVersionError || (clusterVersionLoaded && !openShiftVersion)} isLoading={!clusterVersionLoaded}>
+                <ClusterVersion cv={clusterVersionData} />
+              </DetailItem>
+              <DetailItem title="Update channel" isLoading={!clusterVersionLoaded && !clusterVersionError} error={!!clusterVersionError || (clusterVersionLoaded && !cvChannel)} valueClassName="co-select-to-copy">
+                {cvChannel}
+              </DetailItem>
+            </>
+          ) : (
+            <DetailItem key="kubernetes" title="Kubernetes version" error={!!k8sVersionError || (k8sVersion && !k8sGitVersion)} isLoading={!k8sVersion} valueClassName="co-select-to-copy">
+              {k8sGitVersion}
+            </DetailItem>
+          )}
+        </DetailsBody>
+      </DashboardCardBody>
+    </DashboardCard>
+  );
+});
 
 export const DetailsCard = withDashboardResources(DetailsCard_);
 
