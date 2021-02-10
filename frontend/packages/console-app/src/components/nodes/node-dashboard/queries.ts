@@ -31,54 +31,26 @@ export enum NodeQueries {
 const queries = {
   [NodeQueries.CPU_USAGE]: _.template(`instance:node_cpu:rate:sum{instance='<%= node %>'}`),
   [NodeQueries.CPU_TOTAL]: _.template(`instance:node_num_cpu:sum{instance='<%= node %>'}`),
-  [NodeQueries.MEMORY_USAGE]: _.template(
-    `node_memory_MemTotal_bytes{instance='<%= node %>'} - node_memory_MemAvailable_bytes{instance='<%= node %>'}`,
-  ),
+  [NodeQueries.MEMORY_USAGE]: _.template(`node_memory_MemTotal_bytes{instance='<%= node %>'} - node_memory_MemAvailable_bytes{instance='<%= node %>'}`),
   [NodeQueries.MEMORY_TOTAL]: _.template(`node_memory_MemTotal_bytes{instance='<%= node %>'}`),
   [NodeQueries.POD_COUNT]: _.template(`kubelet_running_pod_count{instance=~'<%= ipAddress %>:.*'}`),
-  [NodeQueries.FILESYSTEM_USAGE]: _.template(
-    `instance:node_filesystem_usage:sum{instance='<%= node %>'}`,
-  ),
+  [NodeQueries.FILESYSTEM_USAGE]: _.template(`instance:node_filesystem_usage:sum{instance='<%= node %>'}`),
   [NodeQueries.FILESYSTEM_TOTAL]: _.template(`node_filesystem_size_bytes{instance='<%= node %>'}`),
-  [NodeQueries.NETWORK_IN_UTILIZATION]: _.template(
-    `instance:node_network_receive_bytes:rate:sum{instance='<%= node %>'}`,
-  ),
-  [NodeQueries.NETWORK_OUT_UTILIZATION]: _.template(
-    `instance:node_network_transmit_bytes:rate:sum{instance='<%= node %>'}`,
-  ),
+  [NodeQueries.NETWORK_IN_UTILIZATION]: _.template(`instance:node_network_receive_bytes:rate:sum{instance='<%= node %>'}`),
+  [NodeQueries.NETWORK_OUT_UTILIZATION]: _.template(`instance:node_network_transmit_bytes:rate:sum{instance='<%= node %>'}`),
 };
 
 const top25Queries = {
-  [NodeQueries.PODS_BY_CPU]: _.template(
-    `topk(25, sort_desc(sum(rate(container_cpu_usage_seconds_total{container="",pod!="", instance=~'<%= ipAddress %>:.*'}[5m])) by (pod, namespace)))`,
-  ),
-  [NodeQueries.PODS_BY_MEMORY]: _.template(
-    `topk(25, sort_desc(sum(avg_over_time(container_memory_working_set_bytes{container="",pod!="",instance=~'<%= ipAddress %>:.*'}[5m])) BY (pod, namespace)))`,
-  ),
-  [NodeQueries.PODS_BY_FILESYSTEM]: _.template(
-    `topk(25, sort_desc(sum(container_fs_usage_bytes{instance=~'<%= ipAddress %>:.*'}) BY (pod, namespace)))`,
-  ),
-  [NodeQueries.PODS_BY_NETWORK_IN]: _.template(
-    `topk(25, sort_desc(sum(rate(container_network_receive_bytes_total{ container="POD", pod!= "", instance=~'<%= ipAddress %>:.*'}[5m])) BY (pod, namespace)))`,
-  ),
-  [NodeQueries.PODS_BY_NETWORK_OUT]: _.template(
-    `topk(25, sort_desc(sum(rate(container_network_transmit_bytes_total{ container="POD", pod!= "", instance=~'<%= ipAddress %>:.*'}[5m])) BY (pod, namespace)))`,
-  ),
-  [NodeQueries.PROJECTS_BY_CPU]: _.template(
-    `topk(25, sort_desc(sum(rate(container_cpu_usage_seconds_total{container="",pod!="", instance=~'<%= ipAddress %>:.*'}[5m])) by (namespace)))`,
-  ),
-  [NodeQueries.PROJECTS_BY_MEMORY]: _.template(
-    `topk(25, sort_desc(sum(avg_over_time(container_memory_working_set_bytes{container="",pod!="",instance=~'<%= ipAddress %>:.*'}[5m])) BY (namespace)))`,
-  ),
-  [NodeQueries.PROJECTS_BY_FILESYSTEM]: _.template(
-    `topk(25, sort_desc(sum(container_fs_usage_bytes{instance=~'<%= ipAddress %>:.*'}) BY (namespace)))`,
-  ),
-  [NodeQueries.PROJECTS_BY_NETWORK_IN]: _.template(
-    `topk(25, sort_desc(sum(rate(container_network_receive_bytes_total{ container="POD", pod!= "", instance=~'<%= ipAddress %>:.*'}[5m])) BY (namespace)))`,
-  ),
-  [NodeQueries.PROJECTS_BY_NETWORK_OUT]: _.template(
-    `topk(25, sort_desc(sum(rate(container_network_transmit_bytes_total{ container="POD", pod!= "", instance=~'<%= ipAddress %>:.*'}[5m])) BY (namespace)))`,
-  ),
+  [NodeQueries.PODS_BY_CPU]: _.template(`topk(25, sort_desc(sum(rate(container_cpu_usage_seconds_total{container="",pod!="", instance=~'<%= ipAddress %>:.*'}[5m])) by (pod, namespace)))`),
+  [NodeQueries.PODS_BY_MEMORY]: _.template(`topk(25, sort_desc(sum(avg_over_time(container_memory_working_set_bytes{container="",pod!="",instance=~'<%= ipAddress %>:.*'}[5m])) BY (pod, namespace)))`),
+  [NodeQueries.PODS_BY_FILESYSTEM]: _.template(`topk(25, sort_desc(sum(container_fs_usage_bytes{instance=~'<%= ipAddress %>:.*'}) BY (pod, namespace)))`),
+  [NodeQueries.PODS_BY_NETWORK_IN]: _.template(`topk(25, sort_desc(sum(rate(container_network_receive_bytes_total{ container="POD", pod!= "", instance=~'<%= ipAddress %>:.*'}[5m])) BY (pod, namespace)))`),
+  [NodeQueries.PODS_BY_NETWORK_OUT]: _.template(`topk(25, sort_desc(sum(rate(container_network_transmit_bytes_total{ container="POD", pod!= "", instance=~'<%= ipAddress %>:.*'}[5m])) BY (pod, namespace)))`),
+  [NodeQueries.PROJECTS_BY_CPU]: _.template(`topk(25, sort_desc(sum(rate(container_cpu_usage_seconds_total{container="",pod!="", instance=~'<%= ipAddress %>:.*'}[5m])) by (namespace)))`),
+  [NodeQueries.PROJECTS_BY_MEMORY]: _.template(`topk(25, sort_desc(sum(avg_over_time(container_memory_working_set_bytes{container="",pod!="",instance=~'<%= ipAddress %>:.*'}[5m])) BY (namespace)))`),
+  [NodeQueries.PROJECTS_BY_FILESYSTEM]: _.template(`topk(25, sort_desc(sum(container_fs_usage_bytes{instance=~'<%= ipAddress %>:.*'}) BY (namespace)))`),
+  [NodeQueries.PROJECTS_BY_NETWORK_IN]: _.template(`topk(25, sort_desc(sum(rate(container_network_receive_bytes_total{ container="POD", pod!= "", instance=~'<%= ipAddress %>:.*'}[5m])) BY (namespace)))`),
+  [NodeQueries.PROJECTS_BY_NETWORK_OUT]: _.template(`topk(25, sort_desc(sum(rate(container_network_transmit_bytes_total{ container="POD", pod!= "", instance=~'<%= ipAddress %>:.*'}[5m])) BY (namespace)))`),
 };
 
 const resourceQuotaQueries = {
@@ -137,17 +109,11 @@ export const getResourceQutoaQueries = (node: string) => ({
   [NodeQueries.POD_RESOURCE_LIMIT_CPU]: resourceQuotaQueries[NodeQueries.POD_RESOURCE_LIMIT_CPU]({
     node,
   }),
-  [NodeQueries.POD_RESOURCE_LIMIT_MEMORY]: resourceQuotaQueries[
-    NodeQueries.POD_RESOURCE_LIMIT_MEMORY
-  ]({ node }),
-  [NodeQueries.POD_RESOURCE_REQUEST_CPU]: resourceQuotaQueries[
-    NodeQueries.POD_RESOURCE_REQUEST_CPU
-  ]({
+  [NodeQueries.POD_RESOURCE_LIMIT_MEMORY]: resourceQuotaQueries[NodeQueries.POD_RESOURCE_LIMIT_MEMORY]({ node }),
+  [NodeQueries.POD_RESOURCE_REQUEST_CPU]: resourceQuotaQueries[NodeQueries.POD_RESOURCE_REQUEST_CPU]({
     node,
   }),
-  [NodeQueries.POD_RESOURCE_REQUEST_MEMORY]: resourceQuotaQueries[
-    NodeQueries.POD_RESOURCE_REQUEST_MEMORY
-  ]({ node }),
+  [NodeQueries.POD_RESOURCE_REQUEST_MEMORY]: resourceQuotaQueries[NodeQueries.POD_RESOURCE_REQUEST_MEMORY]({ node }),
 });
 
 export const getUtilizationQueries = (node: string, ipAddress: string) => ({
