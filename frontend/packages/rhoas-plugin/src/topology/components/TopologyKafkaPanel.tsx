@@ -5,13 +5,16 @@ import {
   SimpleTabNav,
   ResourceIcon,
   ResourceSummary,
+  ResourceLink,
 } from '@console/internal/components/utils';
 import * as UIActions from '@console/internal/actions/ui';
 import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
 import { Node } from '@patternfly/react-topology';
 import './TopologyKafkaPanel.css';
 import { useTranslation } from 'react-i18next';
-import { ResourceLink } from '@console/internal/components/utils';
+
+import { referenceForModel } from '@console/internal/module/k8s';
+import { SecretModel } from '@console/internal/models';
 
 type PropsFromState = {
   selectedDetailsTab?: any;
@@ -37,7 +40,7 @@ type TopologyHelmReleasePanelProps = PropsFromState & PropsFromDispatch & OwnPro
 
 const DetailsComponent: React.FC<any> = ({ obj }) => {
   const { t } = useTranslation();
-  const host = obj.status?.boostrapServer?.host || "";
+  const host = obj.status?.boostrapServer?.host || '';
 
   return (
     <div className="co-m-pane__body">
@@ -54,26 +57,26 @@ const DetailsComponent: React.FC<any> = ({ obj }) => {
   );
 };
 
-const ResourcesComponent = ({obj}) => {
+const ResourcesComponent = ({ obj }) => {
   const serviceAccountSecretName = obj.status?.serviceAccountSecretName;
-  console.log(serviceAccountSecretName);
-
-  // const { metadata: {name, namespace},} = obj;
-  // const link = linkForResource ? (
-  //   linkForResource(obj)
-  // ) : (
-  //   <ResourceLink kind={kind} name={name} namespace={resourceNamespace} />
+  const { namespace } = obj.metadata;
+  const link = (
+    <ResourceLink
+      kind={referenceForModel(SecretModel)}
+      name={serviceAccountSecretName}
+      namespace={namespace}
+    />
+  );
 
   return (
     <ul>
       <li className="list-group-item container-fluid">
         <div className="row">
-          <span className="col-xs-12">TBD</span>
-          {/* <span className="col-xs-12">{link}</span> */}
+          <span className="col-xs-12">{link}</span>
         </div>
       </li>
     </ul>
-  )
+  );
 };
 
 export const ConnectedTopologyHelmReleasePanel: React.FC<TopologyHelmReleasePanelProps> = ({
