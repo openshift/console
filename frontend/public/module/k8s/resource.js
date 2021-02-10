@@ -130,7 +130,7 @@ export const k8sCreateUrl = (kind, data, opts = {}) => {
 
 export const k8sUpdate = (kind, data, ns, name) => coFetchJSON.put(resourceURL(kind, { ns: ns || data.metadata.namespace, name: name || data.metadata.name }), data);
 
-export const k8sUpdateApproval = (kind, resource, approval, data) => {
+export const k8sUpdateApproval = (kind, resource, approval, data, method = 'PUT') => {
   const url = resourceApprovalURL(
     kind,
     Object.assign(
@@ -142,7 +142,14 @@ export const k8sUpdateApproval = (kind, resource, approval, data) => {
     approval,
   );
 
-  return coFetchJSON.put(url, data);
+  switch(method) {
+    case 'PATCH': {
+      return coFetchJSON.patch(url, data);
+    }
+    default: {
+      return coFetchJSON.put(url, data);
+    }
+  }
 }
 
 export const k8sUpdateClaim = (kind, clusterClaim, admit, reason) => {
