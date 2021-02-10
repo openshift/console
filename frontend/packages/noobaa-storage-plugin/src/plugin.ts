@@ -54,21 +54,6 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Page/Route',
     properties: {
-      path: `/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/${referenceForModel(
-        models.NooBaaSystemModel,
-      )}/noobaa/`,
-      loader: () =>
-        import('./components/noobaa-operator/noobaa-page' /* webpackChunkName: "create-bc" */).then(
-          (m) => m.default,
-        ),
-    },
-    flags: {
-      required: [NOOBAA_FLAG],
-    },
-  },
-  {
-    type: 'Page/Route',
-    properties: {
       exact: true,
       path: [
         `/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/${referenceForModel(
