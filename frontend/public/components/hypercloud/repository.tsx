@@ -110,6 +110,9 @@ const RepositoryDetails: React.FC<RepositoryDetailsProps> = ({ obj: repository }
     getScans();
   }, []);
 
+
+  const isExtRegistry = repository.metadata.labels.app === 'ext-registry' ? true : false;
+
   const getWorstScan = (scans, tag) => {
     const res = scans[tag];
     if (res) {
@@ -133,6 +136,9 @@ const RepositoryDetails: React.FC<RepositoryDetailsProps> = ({ obj: repository }
   const getScans = async () => {
     const model = Object.assign({}, RepositoryModel);
     model.apiGroup = 'registry.' + model.apiGroup;
+    if (isExtRegistry) {
+      model.plural = 'ext-repositories';
+    }
 
     const scans = await k8sGet(model, repository.metadata.name, repository.metadata.namespace, { path: 'imagescanresults' });
 
@@ -144,7 +150,6 @@ const RepositoryDetails: React.FC<RepositoryDetailsProps> = ({ obj: repository }
 
   // const showSigner = repository.metadata.labels?.app === 'registry' ? true : false;
 
-  const isExtRegistry = repository.metadata.labels.app === 'ext-registry' ? true : false;
 
   return (
     <>

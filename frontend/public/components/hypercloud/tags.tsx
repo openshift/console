@@ -105,6 +105,9 @@ const TagsListTable = ({ tags, namespace, repository, registry, isExtRegistry })
 
     const model = Object.assign({}, RepositoryModel);
     model.apiGroup = 'registry.' + model.apiGroup;
+    if (isExtRegistry) {
+      model.plural = 'ext-repositories';
+    }
 
     return k8sGet(model, repository, namespace, { path: `imagescanresults/${parentItem.version}` })
       .then(res => {
