@@ -74,6 +74,7 @@ export const pluralToKind = new Map([
   ['datavolumes', { kind: 'DataVolume', type: 'CustomResourceDefinition' }],
   ['virtualmachines', { kind: 'VirtualMachine', type: 'CustomResourceDefinition' }],
   ['registries', { kind: 'Registry', type: 'CustomResourceDefinition' }],
+  ['externalregistries', { kind: 'ExternalRegistry', type: 'CustomResourceDefinition' }],
   ['imagesigners', { kind: 'ImageSigner', type: 'CustomResourceDefinition' }],
   ['imagesignrequests', { kind: 'ImageSignRequest', type: 'CustomResourceDefinition' }],
   ['imagescanrequests', { kind: 'ImageScanRequest', type: 'CustomResourceDefinition' }],

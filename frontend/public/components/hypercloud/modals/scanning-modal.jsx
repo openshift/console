@@ -39,7 +39,7 @@ class BaseScanningModal extends PromiseComponent {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if (prevState.namespace !== this.state.namespace && prevProps.resource?.kind !== 'Tag') {
+        if (!prevProps.resource && prevState.namespace !== this.state.namespace) {
             return this.getResourceList();
         }
     }
@@ -62,11 +62,20 @@ class BaseScanningModal extends PromiseComponent {
     _submit(e) {
         e.preventDefault();
 
-        let { kind, ns, modelKind, resource, labelSelector } = this.props;
+        let { kind, ns, modelKind, resource, labelSelector, isExtRegistry } = this.props;
 
         let registries;
 
         kind = kind || resource?.kind;
+
+        let modelPlural = 'scans';
+        if (kind === 'ExternalRegistry' || modelKind?.kind === 'ExternalRegistry') {
+            isExtRegistry = true;
+        }
+
+        if (isExtRegistry) {
+            modelPlural = 'ext-scans';
+        }
 
         if (kind === 'Registry' || modelKind?.kind === 'Registry') {
             if (resource) {
@@ -89,7 +98,29 @@ class BaseScanningModal extends PromiseComponent {
                     ]
                 }))
             }
-        } else if (kind === 'Repository' || modelKind?.kind === 'Repository') {
+        } else if (kind === 'ExternalRegistry' || modelKind?.kind === 'ExternalRegistry') {
+            if (resource) {
+                registries = [{
+                    'name': resource.metadata.name,
+                    'repositories': [
+                        {
+                            'name': '*'
+                        }
+                    ]
+                }];
+            }
+            else {
+                registries = this.state.resource.map(selectedItem => ({
+                    'name': selectedItem,
+                    'repositories': [
+                        {
+                            'name': '*'
+                        }
+                    ]
+                }))
+            }
+        }
+        else if (kind === 'Repository' || modelKind?.kind === 'Repository') {
             if (resource) {
                 registries = [{
                     'name': resource.spec.registry,
@@ -104,8 +135,9 @@ class BaseScanningModal extends PromiseComponent {
                 }];
             }
             else {
+                const reg = isExtRegistry ? labelSelector['ext-registry'] : labelSelector.registry;
                 registries = [{
-                    'name': labelSelector.registry,
+                    'name': reg,
                     'repositories': this.state.resource.map(selectedItem => (
                         {
                             'name': selectedItem,
@@ -143,7 +175,8 @@ class BaseScanningModal extends PromiseComponent {
         model = model || { apiVersion: 'v1' };
 
         model.apiGroup = 'registry.tmax.io';
-        model.plural = 'scans';
+
+        model.plural = modelPlural;
 
         const promise = k8sCreateUrl(model, data, opts);
         this.handlePromise(promise)
