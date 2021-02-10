@@ -217,7 +217,7 @@ const JobsList: React.FC = (props) => {
     },
     {
       title: t('public~Completions'),
-      sortFunc: 'jobCompletions',
+      sortFunc: 'jobCompletionsSucceeded',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
     },

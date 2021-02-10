@@ -271,7 +271,7 @@ export const MachineSetList: React.SFC = (props) => {
       },
       {
         title: t('machine-sets~Machines'),
-        sortField: 'status.replicas',
+        sortField: 'status.readyReplicas',
         transforms: [sortable],
         props: { className: tableColumnClasses[2] },
       },

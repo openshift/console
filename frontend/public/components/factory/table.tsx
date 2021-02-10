@@ -131,7 +131,7 @@ const sorts = {
   dataSize: (resource) => _.size(_.get(resource, 'data')) + _.size(_.get(resource, 'binaryData')),
   ingressValidHosts,
   serviceCatalogStatus,
-  jobCompletions: (job) => getJobTypeAndCompletions(job).completions,
+  jobCompletionsSucceeded: (job) => job?.status?.succeeded || 0,
   jobType: (job) => getJobTypeAndCompletions(job).type,
   nodeReadiness: (node: NodeKind) => {
     let readiness = _.get(node, 'status.conditions');
