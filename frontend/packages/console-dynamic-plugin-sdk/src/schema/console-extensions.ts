@@ -5,6 +5,7 @@ import { StandaloneRoutePage } from '../extensions/pages';
 import { PVCCreateProp, PVCStatus, PVCAlert, PVCDelete } from '../extensions/pvc';
 import { YAMLTemplate } from '../extensions/yaml-templates';
 import { AddAction } from '../extensions/add-actions';
+import { ClusterGlobalConfig } from '../extensions/cluster-settings';
 
 export type SupportedExtension =
   | FeatureFlag
@@ -17,7 +18,8 @@ export type SupportedExtension =
   | PVCAlert
   | PVCDelete
   | YAMLTemplate
-  | AddAction;
+  | AddAction
+  | ClusterGlobalConfig;
 
 /**
  * Schema of Console plugin's `console-extensions.json` file.
