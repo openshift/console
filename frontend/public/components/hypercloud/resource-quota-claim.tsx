@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 
-import { K8sResourceCommon, K8sClaimResourceKind, modelFor } from '../../module/k8s';
+import { K8sResourceKind, K8sClaimResourceKind, modelFor } from '../../module/k8s';
 import { fromNow } from '@console/internal/components/utils/datetime';
 import { sortable } from '@patternfly/react-table';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from '../factory';
@@ -82,11 +82,25 @@ const ResourceQuotaClaimsDetails: React.FC<ResourceQuotaClaimDetailsProps> = ({ 
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Namespace Claim Details" />
+        <SectionHeading text="Resource Quota Claim Details" />
         <div className="co-m-pane__body-group">
           <div className="row">
             <div className="col-sm-6">
-              <ResourceSummary resource={resourcequotaclaims}></ResourceSummary>
+              <ResourceSummary resource={resourcequotaclaims} showOwner={false}></ResourceSummary>
+              <dt>Owner</dt>
+              <dd>{resourcequotaclaims?.metadata?.annotations?.creator}</dd>
+            </div>
+            <div className="col-md-6">
+              <dl className="co-m-pane__details">
+                <dt>Status</dt>
+                <dd>{resourcequotaclaims?.status?.status}</dd>
+                <dt> Reason</dt>
+                <dd>{resourcequotaclaims?.status?.reason}</dd>
+                <dt>CPU request limit</dt>
+                <dd>{resourcequotaclaims?.specLimit?.limitCpu}</dd>
+                <dt>Memory request limit</dt>
+                <dd>{resourcequotaclaims?.specLimit?.limitMemory}</dd>
+              </dl>
             </div>
           </div>
         </div>
@@ -101,7 +115,7 @@ export const ResourceQuotaClaimsDetailsPage: React.FC<ResourceQuotaClaimsDetails
 ResourceQuotaClaimsDetailsPage.displayName = 'ResourceQuotaClaimsDetailsPage';
 
 type ResourceQuotaClaimDetailsProps = {
-  obj: K8sResourceCommon;
+  obj: K8sResourceKind;
 };
 
 type ResourceQuotaClaimsPageProps = {
