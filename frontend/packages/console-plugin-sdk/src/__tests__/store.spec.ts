@@ -314,24 +314,24 @@ describe('PluginStore', () => {
         },
       ]);
 
-      const dynamicExtensions1: Extension[] = [
+      const dynamicPluginExtensions1: Extension[] = [
         { type: 'Qux', properties: { value: 'test' }, flags: { required: ['foo', 'bar'] } },
       ];
 
-      const dynamicExtensions2: Extension[] = [
+      const dynamicPluginExtensions2: Extension[] = [
         { type: 'Mux', properties: {}, flags: { required: ['foo'], disallowed: ['bar'] } },
       ];
 
       store.addDynamicPlugin(
         'Test1@1.2.3',
-        getPluginManifest('Test1', '1.2.3', dynamicExtensions1),
-        dynamicExtensions1,
+        getPluginManifest('Test1', '1.2.3', dynamicPluginExtensions1),
+        dynamicPluginExtensions1,
       );
 
       store.addDynamicPlugin(
         'Test2@2.3.4',
-        getPluginManifest('Test2', '2.3.4', dynamicExtensions2),
-        dynamicExtensions2,
+        getPluginManifest('Test2', '2.3.4', dynamicPluginExtensions2),
+        dynamicPluginExtensions2,
       );
 
       store.setDynamicPluginEnabled('Test1@1.2.3', true);

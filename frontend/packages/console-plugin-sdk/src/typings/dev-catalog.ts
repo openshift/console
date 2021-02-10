@@ -1,5 +1,6 @@
 import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
-import { CodeRef, Extension } from './base';
+import { CodeRef } from '@console/dynamic-plugin-sdk/src/types';
+import { Extension } from './base';
 
 namespace ExtensionProperties {
   export interface DevCatalogModel {
@@ -36,7 +37,7 @@ namespace ExtensionProperties {
     /** Type ID for the catalog item type. */
     type: string;
     /** Filters items of a specific type. Value is a function that takes CatalogItem[] and returns a subset based on the filter criteria. */
-    filter: CodeRef<<T extends CatalogItem[]>(items: T) => T>;
+    filter: CodeRef<(items: CatalogItem[]) => CatalogItem[]>;
   }
 }
 

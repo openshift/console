@@ -1,5 +1,4 @@
-import { codeRefSymbol } from '../coderef-resolver';
-import { executeReferencedFunction, getExecutableCodeRef } from '../coderef-utils';
+import { executeReferencedFunction } from '../coderef-utils';
 
 describe('executeReferencedFunction', () => {
   it('executes the referenced function with given args and returns its result', async () => {
@@ -36,14 +35,5 @@ describe('executeReferencedFunction', () => {
     expect(ref).toHaveBeenCalledWith();
     expect(func).toHaveBeenCalledWith(...args);
     expect(result).toBe(null);
-  });
-});
-
-describe('getExecutableCodeRef', () => {
-  it('should add codeRefSymbol to the codeRef to make it executable', () => {
-    const codeRef = jest.fn(() => Promise.resolve({}));
-    expect(codeRef[codeRefSymbol]).toBeFalsy();
-    const executableCodeRef = getExecutableCodeRef(codeRef);
-    expect(executableCodeRef[codeRefSymbol]).toBe(true);
   });
 });

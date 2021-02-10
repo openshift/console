@@ -87,13 +87,6 @@ export type ExtensionTypeGuard<E extends Extension> = (e: E) => e is E;
 export type LazyLoader<T extends {} = {}> = () => Promise<React.ComponentType<Partial<T>>>;
 
 /**
- * Code reference, resolved to a function that returns the object `T`.
- *
- * TODO: Remove this once https://github.com/openshift/console/pull/7163 gets merged that adds support for dynamic extensions in static plugins.
- */
-export type CodeRef<T> = () => Promise<T>;
-
-/**
  * From Console application perspective, a plugin is a list of extensions
  * enhanced with additional data.
  */

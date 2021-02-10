@@ -26,9 +26,11 @@ export const reloadModule = (request: string) => {
  */
 export const getActivePluginsModule = (
   pluginPackages: PluginPackage[],
-  dynamicExtensionHook: (pkg: PluginPackage) => string = _.constant('[]'),
+  moduleHook: () => string = _.constant(''),
+  extensionHook: (pkg: PluginPackage) => string = _.constant('[]'),
 ) => {
   let output = `
+    ${moduleHook()}
     const activePlugins = [];
   `;
 
@@ -39,7 +41,7 @@ export const getActivePluginsModule = (
         name: '${pkg.name}',
         extensions: [
           ...require('${pkg.name}/${pkg.consolePlugin.entry}').default,
-          ...${dynamicExtensionHook(pkg)},
+          ...${extensionHook(pkg)},
         ],
       });
     `;
@@ -58,8 +60,10 @@ export const getActivePluginsModule = (
  */
 export const loadActivePluginsForTestPurposes = (
   pluginPackages: PluginPackage[],
-  dynamicExtensionHook: (pkg: PluginPackage) => Extension[] = _.constant([]),
+  moduleHook: VoidFunction = _.noop,
+  extensionHook: (pkg: PluginPackage) => Extension[] = _.constant([]),
 ) => {
+  moduleHook();
   const activePlugins: ActivePlugin[] = [];
 
   for (const pkg of pluginPackages) {
@@ -67,7 +71,7 @@ export const loadActivePluginsForTestPurposes = (
       name: pkg.name,
       extensions: [
         ...require(`${pkg.name}/${pkg.consolePlugin.entry}`).default,
-        ...dynamicExtensionHook(pkg),
+        ...extensionHook(pkg),
       ],
     });
   }
@@ -131,6 +135,7 @@ export const getDynamicExtensions = (
   pkg: PluginPackage,
   extensionsFilePath: string,
   errorCallback: (errorMessage: string) => void,
+  codeRefTransformer: (codeRefSource: string) => string = _.identity,
 ) => {
   const emptyArraySource = '[]';
 
@@ -151,7 +156,9 @@ export const getDynamicExtensions = (
     ext.data,
     (key, value) =>
       isEncodedCodeRef(value)
-        ? `%${getExecutableCodeRefSource(value, key, pkg, codeRefValidationResult)}%`
+        ? `%${codeRefTransformer(
+            getExecutableCodeRefSource(value, key, pkg, codeRefValidationResult),
+          )}%`
         : value,
     2,
   ).replace(/"%(.*)%"/g, '$1');

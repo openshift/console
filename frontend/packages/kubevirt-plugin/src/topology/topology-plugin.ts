@@ -1,4 +1,5 @@
 import { Plugin } from '@console/plugin-sdk';
+import { getExecutableCodeRef } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-utils';
 import {
   TopologyComponentFactory,
   TopologyDataModelFactory,
@@ -67,7 +68,7 @@ export const getTopologyPlugin = (required: string[]): Plugin<TopologyConsumedEx
   {
     type: 'Topology/ComponentFactory',
     properties: {
-      getFactory: getKubevirtComponentFactory,
+      getFactory: getExecutableCodeRef(getKubevirtComponentFactory),
     },
     flags: {
       required,
@@ -80,8 +81,8 @@ export const getTopologyPlugin = (required: string[]): Plugin<TopologyConsumedEx
       priority: 200,
       resources: virtualMachineResourceWatchers,
       workloadKeys: ['virtualmachines'],
-      getDataModel: getKubevirtTopologyDataModel,
-      isResourceDepicted: getIsKubevirtResource,
+      getDataModel: getExecutableCodeRef(getKubevirtTopologyDataModel),
+      isResourceDepicted: getExecutableCodeRef(getIsKubevirtResource),
     },
     flags: {
       required,

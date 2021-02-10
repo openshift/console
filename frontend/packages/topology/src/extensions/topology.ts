@@ -1,4 +1,5 @@
-import { Extension, CodeRef } from '@console/plugin-sdk/src/typings/base';
+import { Extension } from '@console/plugin-sdk/src/typings/base';
+import { CodeRef } from '@console/dynamic-plugin-sdk/src/types';
 import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
 import {
   TopologyApplyDisplayOptions,
@@ -15,7 +16,7 @@ import {
 namespace ExtensionProperties {
   export interface TopologyComponentFactory {
     /** Getter for a ViewComponentFactory */
-    getFactory: () => Promise<ViewComponentFactory>;
+    getFactory: CodeRef<ViewComponentFactory>;
   }
 
   export interface TopologyDataModelFactory {
@@ -28,23 +29,23 @@ namespace ExtensionProperties {
     /** Keys in resources containing workloads. */
     workloadKeys?: string[];
     /** Getter for the data model factory */
-    getDataModel?: () => Promise<TopologyDataModelGetter>;
+    getDataModel?: CodeRef<TopologyDataModelGetter>;
     /** Getter for function to determine if a resource is depicted by this model factory */
-    isResourceDepicted?: () => Promise<TopologyDataModelDepicted>;
+    isResourceDepicted?: CodeRef<TopologyDataModelDepicted>;
     /** Getter for function to reconcile data model after all extensions' models have loaded */
-    getDataModelReconciler?: () => Promise<TopologyDataModelReconciler>;
+    getDataModelReconciler?: CodeRef<TopologyDataModelReconciler>;
   }
 
   export interface TopologyCreateConnector {
     /** Getter for the create connector function */
-    getCreateConnector: () => Promise<CreateConnectionGetter>;
+    getCreateConnector: CodeRef<CreateConnectionGetter>;
   }
 
   export interface TopologyDisplayFilters {
     // Getter for topology filters specific to the extension
-    getTopologyFilters: () => Promise<() => TopologyDisplayOption[]>;
+    getTopologyFilters: CodeRef<() => TopologyDisplayOption[]>;
     // Function to apply filters to the model
-    applyDisplayOptions: () => Promise<TopologyApplyDisplayOptions>;
+    applyDisplayOptions: CodeRef<TopologyApplyDisplayOptions>;
   }
 
   export interface TopologyDecoratorProvider {
