@@ -111,6 +111,8 @@ export type K8sResourceKind = K8sResourceCommon & {
   status?: { [key: string]: any };
   type?: { [key: string]: any };
   data?: { [key: string]: any };
+  specLimit?: any;
+  resourceName?: any;
 };
 
 export type VolumeMount = {
@@ -756,16 +758,7 @@ export type ClusterOperator = {
 
 export type MappingMethodType = 'claim' | 'lookup' | 'add';
 
-type IdentityProviderType =
-  | 'BasicAuth'
-  | 'GitHub'
-  | 'GitLab'
-  | 'Google'
-  | 'HTPasswd'
-  | 'Keystone'
-  | 'LDAP'
-  | 'OpenID'
-  | 'RequestHeader';
+type IdentityProviderType = 'BasicAuth' | 'GitHub' | 'GitLab' | 'Google' | 'HTPasswd' | 'Keystone' | 'LDAP' | 'OpenID' | 'RequestHeader';
 
 type IdentityProviderConfig = {
   [key: string]: any;
@@ -800,15 +793,7 @@ export type OAuthKind = {
   };
 } & K8sResourceCommon;
 
-export type K8sVerb =
-  | 'create'
-  | 'get'
-  | 'list'
-  | 'update'
-  | 'patch'
-  | 'delete'
-  | 'deletecollection'
-  | 'watch';
+export type K8sVerb = 'create' | 'get' | 'list' | 'update' | 'patch' | 'delete' | 'deletecollection' | 'watch';
 
 export type AccessReviewResourceAttributes = {
   group?: string;
