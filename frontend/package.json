@@ -116,7 +116,7 @@
     "@patternfly/react-table": "4.20.15",
     "@patternfly/react-tokens": "4.9.26",
     "@patternfly/react-topology": "4.7.3",
-    "@patternfly/react-virtualized-extension": "4.6.15",
+    "@patternfly/react-virtualized-extension": "4.6.21",
     "abort-controller": "3.0.0",
     "ajv": "^6.12.3",
     "apollo-cache-inmemory": "^1.6.5",
