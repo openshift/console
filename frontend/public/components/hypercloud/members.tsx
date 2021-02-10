@@ -73,13 +73,13 @@ export const UsersTable = (props) => {
 
   const userActions = [
     {
-      title: 'Update',
+      title: 'Update User',
       onClick: (event, rowId, rowData, extra) => {
         inviteMemberModal({ clusterName, modalClassName: 'modal-lg', type: 'User', member: rowData[0], role: rowData[1], requestType: 'update' })
       }
     },
     {
-      title: 'Delete',
+      title: 'Delete User',
       onClick: (event, rowId, rowData, extra) => {
         console.log('clicked on Some action, on row: ', rowId)
         removeMemberModal({ clusterName, modalClassName: 'modal-lg', type: 'User', member: rowData[0] })
@@ -130,13 +130,13 @@ export const UserGroupsTable = (props) => {
 
   const userGroupActions = [
     {
-      title: 'Update',
+      title: 'Update User Group',
       onClick: (event, rowId, rowData, extra) => {
         inviteMemberModal({ clusterName, modalClassName: 'modal-lg', type: 'Group', member: rowData[0], role: rowData[1], requestType: 'update' })
       }
     },
     {
-      title: 'Delete',
+      title: 'Delete User Group',
       onClick: (event, rowId, rowData, extra) => {
         removeMemberModal({ clusterName, modalClassName: 'modal-lg', type: 'Group', member: rowData[0] })
       }

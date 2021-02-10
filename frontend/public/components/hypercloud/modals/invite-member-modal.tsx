@@ -53,13 +53,13 @@ export const InviteMemberModal = withHandlePromise((props: InviteMemberModalProp
         props.close();
       })
       .catch((err) => {
-        setError("Fail to invite/update member(s). " + err);
+        setError(`Fail to ${isUpdate?'update':'invite'} member. ` + err);
       })
   };
 
   return (
     <form onSubmit={submit} name="form" className="modal-content ">
-      <ModalTitle>Invite Members</ModalTitle>
+      <ModalTitle>{isUpdate? 'Update' : 'Invite'} Member</ModalTitle>
       <ModalBody unsetOverflow={true}>
         <Section label="User / UserGroup" id="user" isRequired={true}>
           <div className="hc-invite-modal__input-members">
