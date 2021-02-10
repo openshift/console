@@ -12,6 +12,7 @@ import { TextFilter } from '../factory';
 import { Dropdown, Box, Timestamp } from '../utils';
 import { coFetchJSON } from '../../co-fetch';
 import { getId, getUserGroup } from '../../hypercloud/auth';
+import { setQueryArgument, getQueryArgument, removeQueryArgument } from '../utils/router.ts';
 // import { withTranslation } from 'react-i18next';
 
 // TODO
@@ -250,10 +251,14 @@ class AuditPage_ extends React.Component {
         actionList: { all: '전체 액션', create: 'Create', delete: 'Delete', patch: 'Patch', update: 'Update' },
       });
     }
+    const search = getQueryArgument('user');
 
     let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=0&startTime=${this.state.start.getTime() / 1000}&endTime=${this.state.end.getTime() / 1000}&userId=${getId()}${getUserGroup()}`;
     if (e !== 'all') {
       uri += `&resource=${e}`;
+    }
+    if (search) {
+      uri += `&search=${search}`;
     }
     if (this.state.namespace !== undefined) {
       uri += `&namespace=${this.state.namespace}`;
@@ -286,10 +291,14 @@ class AuditPage_ extends React.Component {
     }
 
     this.setState({ offset: 0 });
+    const search = getQueryArgument('user');
 
     let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=0&startTime=${this.state.start.getTime() / 1000}&endTime=${this.state.end.getTime() / 1000}&userId=${getId()}${getUserGroup()}`;
     if (value !== 'all') {
       uri += `&verb=${value}`;
+    }
+    if (search) {
+      uri += `&search=${search}`;
     }
     if (this.state.resourceType !== this.resourcelist.all) {
       uri += `&resource=${this.state.resourceType}`;
@@ -327,11 +336,15 @@ class AuditPage_ extends React.Component {
       });
     }
 
+    const search = getQueryArgument('user');
     this.setState({ offset: 0 });
 
     let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=0&startTime=${this.state.start.getTime() / 1000}&endTime=${this.state.end.getTime() / 1000}&userId=${getId()}${getUserGroup()}`;
     if (value !== 'all') {
       uri += `&status=${value}`;
+    }
+    if (search) {
+      uri += `&search=${search}`;
     }
     if (this.state.resourceType !== this.resourcelist.all) {
       uri += `&resource=${this.state.resourceType}`;
@@ -367,10 +380,14 @@ class AuditPage_ extends React.Component {
     }
 
     this.setState({ offset: 0 });
+    const search = getQueryArgument('user');
 
     let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=0&startTime=${this.state.start.getTime() / 1000}&endTime=${this.state.end.getTime() / 1000}&userId=${getId()}${getUserGroup()}`;
     if (value !== 'all') {
       uri += `&code=${value}`;
+    }
+    if (search) {
+      uri += `&search=${search}`;
     }
     if (this.state.resourceType !== this.resourcelist.all) {
       uri += `&resource=${this.state.resourceType}`;
@@ -401,6 +418,7 @@ class AuditPage_ extends React.Component {
     });
 
     this.setState({ offset: 0 });
+    const search = getQueryArgument('user');
 
     let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=0&startTime=${date.getTime() / 1000}&userId=${getId()}${getUserGroup()}`;
 
@@ -414,6 +432,9 @@ class AuditPage_ extends React.Component {
       uri += `&endTime=${this.state.end.getTime() / 1000}`;
     }
 
+    if (search) {
+      uri += `&search=${search}`;
+    }
     if (this.state.resourceType !== this.resourcelist.all) {
       uri += `&resource=${this.state.resourceType}`;
     }
@@ -446,6 +467,7 @@ class AuditPage_ extends React.Component {
     });
 
     this.setState({ offset: 0 });
+    const search = getQueryArgument('user');
 
     let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=0&endTime=${date.getTime() / 1000}&userId=${getId()}${getUserGroup()}`;
 
@@ -459,6 +481,9 @@ class AuditPage_ extends React.Component {
       uri += `&startTime=${date_.getTime() / 1000}`;
     }
 
+    if (search) {
+      uri += `&search=${search}`;
+    }
     if (this.state.resourceType !== this.resourcelist.all) {
       uri += `&resource=${this.state.resourceType}`;
     }
@@ -490,9 +515,13 @@ class AuditPage_ extends React.Component {
       textFilter: '',
     });
 
+    const search = getQueryArgument('user');
     // let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=${e.selected * 100}&startTime=${this.state.start.getTime() / 1000}&endTime=${this.state.end.getTime() / 1000}`;
     let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=${e.selected * 100}&userId=${getId()}${getUserGroup()}`;
 
+    if (search) {
+      uri += `&search=${search}`;
+    }
     if (this.state.action !== this.state.actionList.all) {
       uri += `&verb=${this.state.action}`;
     }
@@ -518,16 +547,22 @@ class AuditPage_ extends React.Component {
   }
 
   onSearch_(e) {
-    if (e.key !== 'Enter') {
-      return;
-    }
+    // if (e.key !== 'Enter') {
+    //   return;
+    // }
 
+    let value = e;
+
+    value ? setQueryArgument('user', value) : removeQueryArgument('user');
     this.setState({
       offset: 0,
     });
 
-    let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=0&startTime=${this.state.start.getTime() / 1000}&endTime=${this.state.end.getTime() / 1000}&message=${e.target.value}&userId=${getId()}${getUserGroup()}`;
+    let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=0&startTime=${this.state.start.getTime() / 1000}&endTime=${this.state.end.getTime() / 1000}&userId=${getId()}${getUserGroup()}`;
 
+    if (value) {
+      uri += `&search=${value}`;
+    }
     if (this.state.action !== this.state.actionList.all) {
       uri += `&verb=${this.state.action}`;
     }
@@ -546,7 +581,14 @@ class AuditPage_ extends React.Component {
     coFetchJSON(uri).then(response => {
       // console.log(response.items);
       this.setState({
-        data: response.eventList.Items,
+        data:
+          response.eventList?.Items?.filter(cur => {
+            if (cur.User.username.indexOf(value) >= 0) {
+              return true;
+            } else {
+              return false;
+            }
+          }) ?? [],
         pages: Math.ceil(response.rowsCount / 100),
       });
     });
@@ -565,7 +607,13 @@ class AuditPage_ extends React.Component {
       status: this.statuslist.all,
       code: this.codeList.all,
     });
+    const search = getQueryArgument('user');
+
     let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=0&startTime=${this.state.start.getTime() / 1000}&endTime=${this.state.end.getTime() / 1000}&userId=${getId()}${getUserGroup()}`;
+
+    if (search) {
+      uri += `&search=${search}`;
+    }
     if (namespace === undefined) {
       // all namespace
       coFetchJSON(uri).then(response => {
@@ -591,8 +639,12 @@ class AuditPage_ extends React.Component {
     const namespace = _.get(this.props, 'match.params.ns');
     this.setState({ namespace: namespace });
     this.setState({ action: this.state.actionList.all });
+    const search = getQueryArgument('user');
     let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=${this.state.offset}&startTime=${this.state.start.getTime() / 1000}&endTime=${this.state.end.getTime() / 1000}&userId=${getId()}${getUserGroup()}`;
 
+    if (search) {
+      uri += `&search=${search}`;
+    }
     if (namespace === undefined) {
       // all namespace
       coFetchJSON(uri).then(response => {
@@ -635,7 +687,7 @@ class AuditPage_ extends React.Component {
               <DatePicker className="co-datepicker" placeholderText="To" startDate={start} endDate={end} selected={end} onChange={this.onChangeEndDate} minDate={start} maxDate={new Date()} />
             </div>
             <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
-              <TextFilter id="audit" label="검색" autoFocus={true} onKeyUp={this.onSearch} />
+              <TextFilter id="audit" label="검색" autoFocus={true} onChange={this.onSearch} />
             </div>
           </div>
           <AuditList {...this.props} textFilter={textFilter} data={data} />

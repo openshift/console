@@ -590,7 +590,7 @@ export const NamespaceClaimModel: K8sKind = {
   abbr: 'NSC',
   kind: 'NamespaceClaim',
   id: 'namespaceclaim',
-  namespaced: true,
+  namespaced: false,
 };
 
 export const ResourceQuotaClaimModel: K8sKind = {
