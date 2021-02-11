@@ -14,14 +14,6 @@ import { trimStartMultiLine } from '../utils/string';
 import { consolePkgScope, PluginPackage } from './plugin-resolver';
 
 /**
- * Reload the requested module, bypassing `require.cache` mechanism.
- */
-export const reloadModule = (request: string) => {
-  delete require.cache[require.resolve(request)];
-  return require(request);
-};
-
-/**
  * Generate the `@console/active-plugins` virtual module source.
  */
 export const getActivePluginsModule = (
@@ -105,20 +97,6 @@ export const getExecutableCodeRefSource = (
   }
 
   const importPath = `${pkg.name}/${exposedModules[moduleName]}`;
-  let requestedModule: object;
-
-  try {
-    requestedModule = reloadModule(importPath);
-  } catch (error) {
-    validationResult.addError(`Cannot import '${importPath}' ${errorTrace}`);
-    return emptyCodeRefSource;
-  }
-
-  if (!requestedModule[exportName]) {
-    validationResult.addError(`Invalid module export '${exportName}' ${errorTrace}`);
-    return emptyCodeRefSource;
-  }
-
   const pluginReference = pkg.name.replace(`${consolePkgScope}/`, '');
   const webpackChunkName = `${pluginReference}/code-refs/${moduleName}`;
   const webpackMagicComment = `/* webpackChunkName: '${webpackChunkName}' */`;

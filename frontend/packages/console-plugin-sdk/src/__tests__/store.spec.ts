@@ -223,17 +223,6 @@ describe('getGatingFlagNames', () => {
 });
 
 describe('PluginStore', () => {
-  let debounce: jest.SpyInstance<typeof _.debounce>;
-
-  beforeEach(() => {
-    debounce = jest.spyOn(_, 'debounce');
-    debounce.mockImplementation((func) => func);
-  });
-
-  afterEach(() => {
-    debounce.mockRestore();
-  });
-
   describe('constructor', () => {
     it('processes all plugins and stores their extensions in staticPluginExtensions', () => {
       const store = new PluginStore([
