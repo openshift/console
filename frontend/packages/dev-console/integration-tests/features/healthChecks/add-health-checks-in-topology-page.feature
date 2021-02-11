@@ -17,39 +17,78 @@ Feature: Health Checks
 
     
     @smoke
-    Scenario: Add Readiness Probe Health Check to Deployments from Sidebar: MH-05-TC02
+    Scenario: Add Health Checks to Deployments from Sidebar: MH-05-TC02
         Given workload "health-checks-d" with resource type "Deployment" is present in topology page
         When user clicks on the workload "health-checks-d" to open the sidebar
         And user selects "Add Health Checks" from topology sidebar Actions dropdown
-        And user clicks on Add Readiness Probe
+        And user clicks on Add Readiness Probe of type <readinesss_type>
+        And user fills the details
+        And user clicks on tick button
+        And user clicks on Add Liveness Probe of type <liveness_type>
+        And user fills the details
+        And user clicks on tick button
+        And user clicks on Add Startup Probe of type <startup_type>
+        And user fills the details
         And user clicks on tick button
         And user clicks on Add button
         Then user will be redirected to Topology page
         And user will see Readiness Probe added on the Add Health Checks page
 
+    Examples:
+        | readinesss_type   | liveness_type     | startup_type      |
+        | HTTP GET          | HTTP GET          | HTTP GET          |
+        | TCP Socket        | TCP Socket        | TCP Socket        |
+        | Container Command | Container Command | Container Command |
+
 
     @smoke
-    Scenario: Add Liveness Probe Health Check to Deployment Configs from Actions dropdown Sidebar: MH-05-TC02
+    Scenario: Add Health Checks to Deployment Configs from Actions dropdown Sidebar: MH-05-TC02
         Given workload "health-checks-dc" with resource type "Deployment Config" is present in topology page
         When user clicks on the workload "health-checks-dc" to open the sidebar
         And user selects "Add Health Checks" from topology sidebar Actions dropdown
-        And user clicks on Add Liveness Probe
+        And user clicks on Add Readiness Probe of type <readinesss_type>
+        And user fills the details
+        And user clicks on tick button
+        And user clicks on Add Liveness Probe of type <liveness_type>
+        And user fills the details
+        And user clicks on tick button
+        And user clicks on Add Startup Probe of type <startup_type>
+        And user fills the details
         And user clicks on tick button
         And user clicks on Add button
         Then user will be redirected to Topology page
         And user will see Liveness Probe added on the Add Health Checks page
 
+    Examples:
+        | readinesss_type   | liveness_type     | startup_type      |
+        | HTTP GET          | HTTP GET          | HTTP GET          |
+        | TCP Socket        | TCP Socket        | TCP Socket        |
+        | Container Command | Container Command | Container Command |
+
 
     @regression
-    Scenario: Add Startup Probe Health Check to Deployments from Context Menu: MH-05-TC02
+    Scenario: Add Health Check to Deployments from Context Menu: MH-05-TC02
         Given workload "health-checks-d" with resource type "Deployment" is present in topology page
         When user right clicks on the workload "health-checks-d" to open the Context Menu
         And user selects "Add Health Checks" from Context Menu
-        And user clicks on Add Startup Probe
+        And user clicks on Add Readiness Probe of type <readinesss_type>
+        And user fills the details
+        And user clicks on tick button
+        And user clicks on Add Liveness Probe of type <liveness_type>
+        And user fills the details
+        And user clicks on tick button
+        And user clicks on Add Startup Probe of type <startup_type>
+        And user fills the details
         And user clicks on tick button
         And user clicks on Add button
         Then user will be redirected to Topology page
         And user will see Startup Probe added on the Add Health Checks page
+
+    Examples:
+        | readinesss_type   | liveness_type     | startup_type      |
+        | HTTP GET          | HTTP GET          | HTTP GET          |
+        | TCP Socket        | TCP Socket        | TCP Socket        |
+        | Container Command | Container Command | Container Command |
 
 
     @regression
@@ -58,11 +97,18 @@ Feature: Health Checks
         When user right clicks on the Service "health-checks-kn" to open the Context Menu
         And user selects "Edit Health Checks" from Context Menu
         And user sees Readiness Probe already added
-        And user clicks on Add Liveness Probe
+        And user clicks on Add Liveness Probe of type <liveness_type>
+        And user fills the details
         And user clicks on tick button
         And user clicks on Add button
         Then user will be redirected to Topology page
         And user will see Startup Probe added on the Add Health Checks page
+
+    Examples:
+        | liveness_type     |
+        | HTTP GET          |
+        | TCP Socket        |
+        | Container Command |
 
 
     @regression
