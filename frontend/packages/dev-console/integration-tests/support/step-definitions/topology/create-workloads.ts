@@ -12,7 +12,7 @@ Given('user is at the Topology page', () => {
 });
 
 When('user applies cronjob YAML', () => {
-  cy.exec(`oc apply -f testData/YAMLs/create-cronjob.yaml`);
+  cy.exec(`oc apply -f testData/yamls/create-cronjob.yaml`);
 });
 
 Then('user will see cron job with name {string} on topology page', (name: string) => {
@@ -23,7 +23,7 @@ Then('user will see cron job with name {string} on topology page', (name: string
 });
 
 When('user applies job YAML', () => {
-  cy.exec(`oc apply -f testData/YAMLs/create-job.yaml`);
+  cy.exec(`oc apply -f testData/yamls/create-job.yaml`);
 });
 
 Then('user will see job with name {string} on topology page', (name: string) => {
@@ -34,7 +34,7 @@ Then('user will see job with name {string} on topology page', (name: string) => 
 });
 
 When('user applies pod YAML', () => {
-  cy.exec(`oc apply -f testData/YAMLs/create-pod.yaml`);
+  cy.exec(`oc apply -f testData/yamls/create-pod.yaml`);
 });
 
 Then('user will see pod with name {string} on topology page', (name: string) => {
