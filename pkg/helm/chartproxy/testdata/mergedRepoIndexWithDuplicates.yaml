@@ -39,7 +39,7 @@ entries:
       maintainers:
         - name: IBM
       name: ibm-cpq-prod
-      response:
+      urls:
         - https://redhat-developer.github.com/redhat-helm-charts/charts/ibm-cpq-prod-2.0.0.tgz
       version: 2.0.0
   ibm-object-storage-plugin--sample-repo-1:
@@ -74,7 +74,7 @@ entries:
         - email: contsto2@in.ibm.com
           name: IBM
       name: ibm-object-storage-plugin
-      response:
+      urls:
         - https://redhat-developer.github.com/redhat-helm-charts/charts/ibm-object-storage-plugin-2.0.0.tgz
       version: 2.0.0
   ibm-oms-ent-prod--sample-repo-1:
@@ -112,7 +112,7 @@ entries:
         - name: IBM
       name: ibm-oms-ent-prod
       type: application
-      response:
+      urls:
         - https://redhat-developer.github.com/redhat-helm-charts/charts/ibm-oms-ent-prod-5.0.0.tgz
       version: 5.0.0
   ibm-cpq-prod--sample-repo-2:
@@ -154,7 +154,7 @@ entries:
       maintainers:
         - name: IBM
       name: ibm-cpq-prod
-      response:
+      urls:
         - https://redhat-developer.github.com/redhat-helm-charts/charts/ibm-cpq-prod-2.0.0.tgz
       version: 2.0.0
   ibm-object-storage-plugin--sample-repo-2:
@@ -189,7 +189,7 @@ entries:
         - email: contsto2@in.ibm.com
           name: IBM
       name: ibm-object-storage-plugin
-      response:
+      urls:
         - https://redhat-developer.github.com/redhat-helm-charts/charts/ibm-object-storage-plugin-2.0.0.tgz
       version: 2.0.0
   ibm-oms-ent-prod--sample-repo-2:
@@ -227,7 +227,7 @@ entries:
         - name: IBM
       name: ibm-oms-ent-prod
       type: application
-      response:
+      urls:
         - https://redhat-developer.github.com/redhat-helm-charts/charts/ibm-oms-ent-prod-5.0.0.tgz
       version: 5.0.0
 generated: "2020-07-15T16:32:34.538582491+05:30"

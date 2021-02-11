@@ -19,6 +19,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/client-go/dynamic"
 	corev1 "k8s.io/client-go/kubernetes/typed/core/v1"
+	"k8s.io/klog"
 
 	"github.com/openshift/library-go/pkg/crypto"
 )
@@ -37,24 +38,13 @@ const (
 )
 
 type helmRepo struct {
-	Name            string
-	URL             *url.URL
-	TLSClientConfig *tls.Config
+	Name       string
+	URL        *url.URL
+	Disabled   bool
+	httpClient func() (*http.Client, error)
 }
 
-type TLSConfigGetter interface {
-	Get() (*tls.Config, error)
-}
-
-func (repo helmRepo) Get() (*tls.Config, error) {
-	return repo.TLSClientConfig, nil
-}
-
-func (repo helmRepo) httpClient() (*http.Client, error) {
-	tlsConfig, err := repo.Get()
-	if err != nil {
-		return nil, err
-	}
+func httpClient(tlsConfig *tls.Config) (*http.Client, error) {
 	tr := &http.Transport{
 		TLSClientConfig: tlsConfig,
 	}
@@ -88,6 +78,17 @@ func (hr helmRepo) IndexFile() (*repo.IndexFile, error) {
 	if err != nil {
 		return nil, err
 	}
+	for _, chartVersions := range indexFile.Entries {
+		for _, chartVersion := range chartVersions {
+			for i, url := range chartVersion.URLs {
+				chartVersion.URLs[i], err = repo.ResolveReferenceURL(hr.URL.String(), url)
+				if err != nil {
+					klog.Errorf("Error resolving chart url for %v: %v", hr, err)
+				}
+			}
+		}
+	}
+
 	return &indexFile, nil
 }
 
@@ -151,7 +152,7 @@ func (b helmRepoGetter) unmarshallConfig(repo unstructured.Unstructured) (*helmR
 			return nil, err
 		}
 	}
-	h.TLSClientConfig = crypto.SecureTLSConfig(&tls.Config{
+	tlsClientConfig := crypto.SecureTLSConfig(&tls.Config{
 		RootCAs: rootCAs,
 	})
 	if tlsReference != "" {
@@ -174,8 +175,11 @@ func (b helmRepoGetter) unmarshallConfig(repo unstructured.Unstructured) (*helmR
 			if err != nil {
 				return nil, err
 			}
-			h.TLSClientConfig.Certificates = []tls.Certificate{cert}
+			tlsClientConfig.Certificates = []tls.Certificate{cert}
 		}
+	}
+	h.httpClient = func() (*http.Client, error) {
+		return httpClient(tlsClientConfig)
 	}
 	return h, nil
 }

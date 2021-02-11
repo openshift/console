@@ -6,7 +6,7 @@ entries:
       description: A Helm chart for Kubernetes
       digest: a9bc374461e31cb1429021a898ef83d0a650783033f3bc121ed536ad99301bbc
       name: aks-helloworld
-      response:
+      urls:
         - https://azure-samples.github.io/helm-charts/aks-helloworld-0.1.1.tgz
       version: 0.1.1
     - apiVersion: v1
@@ -14,7 +14,7 @@ entries:
       description: A Helm chart for Kubernetes
       digest: f4eb20e7116b24c4825861e6ff6f4303bbe83bcee4a7b2b6ea9fe6929852f34d
       name: aks-helloworld
-      response:
+      urls:
         - https://azure-samples.github.io/helm-charts/aks-helloworld-0.1.0.tgz
       version: 0.1.0
   azure-vote--sample-repo-1:
@@ -23,7 +23,7 @@ entries:
       description: A Helm chart for Kubernetes
       digest: ac7698878230b11c766c0fcbfce36e7a1c8ab4ab18d55eae9e6551217042c164
       name: azure-vote
-      response:
+      urls:
         - https://azure-samples.github.io/helm-charts/azure-vote-0.1.1.tgz
       version: 0.1.1
     - apiVersion: v1
@@ -31,7 +31,7 @@ entries:
       description: A Helm chart for Kubernetes
       digest: da054ba832f52ff3e8da26ffe705d6ad6c2ed0818c04588c832c716e8e8d84a7
       name: azure-vote
-      response:
+      urls:
         - https://azure-samples.github.io/helm-charts/azure-vote-0.1.0.tgz
       version: 0.1.0
   azure-vote-osba--sample-repo-1:
@@ -40,7 +40,7 @@ entries:
       description: A Helm chart for Kubernetes
       digest: 64f7688099208066cef552afc560bd4d0ff04a297365c4260d3116fd1af061da
       name: azure-vote-osba
-      response:
+      urls:
         - https://azure-samples.github.io/helm-charts/azure-vote-osba-0.1.0.tgz
       version: 0.1.0
   burst-scheduler--sample-repo-1:
@@ -49,7 +49,7 @@ entries:
       description: A Helm chart for Kubernetes
       digest: 326910e7174b98c337e508c1b2baa1e430720758e013256aa8fcbcf1551c2c13
       name: burst-scheduler
-      response:
+      urls:
         - https://azure-samples.github.io/helm-charts/burst-scheduler-0.1.0.tgz
       version: 0.1.0
   image-pull-secret--sample-repo-1:
@@ -58,7 +58,7 @@ entries:
       description: A Helm chart for Kubernetes
       digest: ee937e26d72c420a9eb5af8eb0ef23206260858c830b06e7b5ec37c5752fa6a3
       name: image-pull-secret
-      response:
+      urls:
         - https://azure-samples.github.io/helm-charts/image-pull-secret-0.1.0.tgz
       version: 0.1.0
   open-service-broker-azure--sample-repo-1:
@@ -86,7 +86,7 @@ entries:
       sources:
         - https://github.com/azure/open-service-broker-azure
         - https://hub.docker.com/r/microsoft/azure-service-broker/
-      response:
+      urls:
         - https://azure-samples.github.io/helm-charts/open-service-broker-azure-v0.0.1.tgz
       version: v0.0.1
   osba-container-instances-demo--sample-repo-1:
@@ -95,7 +95,7 @@ entries:
       description: A Helm chart for Kubernetes
       digest: b5f25ecf64d72644166835e48afda396b83acaff341bcb7c1e60efc12e547df6
       name: osba-container-instances-demo
-      response:
+      urls:
         - https://azure-samples.github.io/helm-charts/osba-container-instances-demo-0.1.0.tgz
       version: 0.1.0
   osba-cosmos-mongodb-demo--sample-repo-1:
@@ -104,7 +104,7 @@ entries:
       description: A Helm chart for Kubernetes
       digest: b581f67458cdf999ef0308786dc29f603bab6aadf5ad0a127f5fb1a816aef091
       name: osba-cosmos-mongodb-demo
-      response:
+      urls:
         - https://azure-samples.github.io/helm-charts/osba-cosmos-mongodb-demo-0.1.0.tgz
       version: 0.1.0
   osba-mysql-demo--sample-repo-1:
@@ -113,7 +113,7 @@ entries:
       description: A Helm chart for Kubernetes
       digest: 034fe8960dcc4948ae28110622c6ea5b5439eb5ee35750899446da2455acf6ea
       name: osba-mysql-demo
-      response:
+      urls:
         - https://azure-samples.github.io/helm-charts/osba-mysql-demo-0.1.0.tgz
       version: 0.1.0
   osba-storage-demo--sample-repo-1:
@@ -122,7 +122,7 @@ entries:
       description: A Helm chart for Kubernetes
       digest: d74b4c6a348b988e4dfa8fb2ad6873f533aeb0390ee5a1a88fedcee9fc2abc3a
       name: osba-storage-demo
-      response:
+      urls:
         - https://azure-samples.github.io/helm-charts/osba-storage-demo-0.1.0.tgz
       version: 0.1.0
   osba-text-analytics-demo--sample-repo-1:
@@ -131,7 +131,7 @@ entries:
       description: A Helm chart for Kubernetes
       digest: d249a3f0926c24f448e36bc40211faee4b320927919e27c1aabe337065496db0
       name: osba-text-analytics-demo
-      response:
+      urls:
         - https://azure-samples.github.io/helm-charts/osba-text-analytics-demo-0.1.0.tgz
       version: 0.1.0
   tweet-factory-operator--sample-repo-1:
@@ -140,7 +140,7 @@ entries:
       description: A Helm chart for Kubernetes
       digest: 8186cd27426d20d607f093f90ee05fe65be0e27fda7ecaeb6b98c1ee6204f11a
       name: tweet-factory-operator
-      response:
+      urls:
         - https://azure-samples.github.io/helm-charts/tweet-factory-operator-0.1.0.tgz
       version: 0.1.0
   twitter-sentiment--sample-repo-1:
@@ -149,7 +149,7 @@ entries:
       description: A Helm chart for Kubernetes
       digest: 0a71fceec9bc133c4d2e7a9475e19478bb997cd10898803eaf68f3ce33ff271a
       name: twitter-sentiment
-      response:
+      urls:
         - https://azure-samples.github.io/helm-charts/twitter-sentiment-0.1.0.tgz
       version: 0.1.0
   twitter-sentiment-cnab--sample-repo-1:
@@ -158,7 +158,7 @@ entries:
       description: A Helm chart for Kubernetes
       digest: f6446a210a13c6f8a3b5d5feb7cd70115e3b00c8b445dc14c5186e5d2a56de2a
       name: twitter-sentiment-cnab
-      response:
+      urls:
         - https://azure-samples.github.io/helm-charts/twitter-sentiment-cnab-0.1.0.tgz
       version: 0.1.0
 generated: "2020-03-30T16:27:13.4275217-05:00"
