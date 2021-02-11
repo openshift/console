@@ -1,6 +1,8 @@
 import * as React from 'react';
 import ShortcutsLink from './ShortcutsLink';
 import './YAMLEditorToolbar.scss';
+import { useTranslation } from 'react-i18next';
+import { isMac, ShortcutCommand } from '../shortcuts/Shortcut';
 
 interface YAMLEditorToolbarProps {
   showShortcuts?: boolean;
@@ -8,10 +10,16 @@ interface YAMLEditorToolbarProps {
 }
 
 const YAMLEditorToolbar: React.FC<YAMLEditorToolbarProps> = ({ showShortcuts, toolbarLinks }) => {
+  const { t } = useTranslation();
   if (!showShortcuts && !toolbarLinks?.length) return null;
-
   return (
-    <div className="ocs-yaml-editor-toolbar__links">
+    <div className="ocs-yaml-editor-toolbar">
+      <span className="ocs-yaml-editor-shortcut__command">
+        <ShortcutCommand>{isMac ? '⌥ Opt' : 'Alt'}</ShortcutCommand>
+        <ShortcutCommand>F1</ShortcutCommand>
+      </span>
+      <span className="ocs-yaml-editor-shortcut__text">{t('editor~Accessibility help')}</span>
+      <div className="co-action-divider">|</div>
       {showShortcuts && (
         <div className="ocs-yaml-editor-toolbar__link">
           <ShortcutsLink />
