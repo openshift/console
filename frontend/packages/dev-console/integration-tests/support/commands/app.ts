@@ -1,6 +1,6 @@
 // import { checkErrors } from '../../../../integration-tests-cypress/support';
 
-export { }; // needed in files which don't have an import to trigger ES6 module usage
+export {}; // needed in files which don't have an import to trigger ES6 module usage
 declare global {
   namespace Cypress {
     interface Chainable<Subject> {

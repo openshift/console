@@ -197,6 +197,32 @@ export const helmPage = {
   },
 };
 
+export const upgradeHelmRelease = {
+  verifyTitle: () =>
+    cy
+      .get('h1')
+      .contains('Upgrade Helm Release')
+      .should('be.visible'),
+  upgradeChartVersion: (yamlView: boolean = false) => {
+    cy.get(helmPageObj.upgradeHelmRelease.chartVersion).click();
+    cy.byLegacyTestID('dropdown-menu').then((listing) => {
+      const count = Cypress.$(listing).length;
+      const randNum = Math.floor(Math.random() * count);
+      cy.byLegacyTestID('dropdown-menu')
+        .eq(randNum)
+        .click();
+    });
+    if (yamlView === true) {
+      cy.alertTitleShouldContain('Change Chart Version?');
+      cy.byTestID('confirm-action').click();
+    }
+  },
+  clickOnUpgrade: () => {
+    cy.get(helmPageObj.upgradeHelmRelease.upgrade).click();
+    cy.get('.co-m-loader', { timeout: 40000 }).should('not.exist');
+  },
+};
+
 export const helmDetailsPage = {
   verifyTitle: () =>
     cy.get(helmPageObj.details.title).should('contain.text', 'Helm Release details'),
