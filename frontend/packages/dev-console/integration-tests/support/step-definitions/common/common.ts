@@ -81,3 +81,8 @@ Given('user has selected namespace {string}', (projectName: string) => {
 When('user clicks on {string} link', (buttonName: string) => {
   cy.byButtonText(buttonName).click();
 });
+
+When('user is at namespace {string}', (projectName: string) => {
+  perspective.switchTo(switchPerspective.Developer);
+  projectNameSpace.selectOrCreateProject(projectName);
+});
