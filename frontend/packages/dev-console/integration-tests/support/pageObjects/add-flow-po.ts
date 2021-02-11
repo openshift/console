@@ -193,3 +193,15 @@ export const eventSourcePO = {
     image: '[data-test-id="container-image-field"]',
   },
 };
+
+export const devFilePO = {
+  form: '[data-test-id="import-devfile-form"]',
+  formFields: {
+    validatedMessage: '#form-input-git-url-field-helper',
+    advancedGitOptions: {
+      gitReference: '#form-input-git-ref-field',
+      contextDir: 'form-input-git-dir-field',
+      sourceSecret: '',
+    },
+  },
+};

@@ -7,6 +7,7 @@ When('user enters project name as {string} in Create Project modal', (projectNam
   const d = new Date();
   const timestamp = d.getTime();
   projectNameSpace.enterProjectName(`${projectName}-${timestamp}-ns`);
+  Cypress.env('NAMESPACE', `${projectName}-${timestamp}-ns`);
 });
 
 When('user clicks Create button present in Create Project modal', () => {

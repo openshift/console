@@ -31,6 +31,7 @@ before(() => {
 });
 
 after(() => {
+  cy.exec(`oc delete namespace ${Cypress.env('NAMESPACE')}`);
   cy.logout();
 });
 
