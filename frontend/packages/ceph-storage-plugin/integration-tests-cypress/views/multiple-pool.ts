@@ -12,12 +12,18 @@ export const confirmAction: string = 'confirm-action';
 // Pool status
 export const emptyStateBody: string = 'empty-state-body';
 
-export const poolMessage = {
-  PROGRESS:
-    'The creation of an OCS storage cluster is still in progress or have failed please try again after the storage cluster is ready to use.',
-  POOL_START: (poolName) => `Pool ${poolName} creation in progress`,
-  POOL_DUPLICATED: (poolName) => `Pool "${poolName}" already exists`,
-  POOL_CREATED: (poolName) => `Pool ${poolName} was successfully created`,
+export enum PoolState {
+  DUPLICATED = 'DUPLICATED',
+  CREATED = 'CREATED',
+}
+
+type PoolMessage = {
+  [key in PoolState]: (arg: string) => string;
+};
+
+export const poolMessage: PoolMessage = {
+  [PoolState.DUPLICATED]: (poolName: string) => `Pool "${poolName}" already exists`,
+  [PoolState.CREATED]: (poolName: string) => `Pool ${poolName} was successfully created`,
 };
 
 export const storagePool = {
@@ -31,7 +37,7 @@ export const storagePool = {
     cy.byTestID(storagePoolDropdown).click();
     cy.byTestID('create-new-pool-button').click();
   },
-  create: (poolName: string, replicaCount: string, poolCreationJobStatus: string) => {
+  create: (poolName: string, replicaCount: string, poolCreationJobStatus: PoolState) => {
     // Make sure the storage pool creation form is open
     modal.modalTitleShouldContain('Create New Storage Pool');
     modal.submitShouldBeDisabled();
@@ -52,7 +58,6 @@ export const storagePool = {
       .click();
 
     // Validations
-    storagePool.validate(emptyStateBody, poolMessage.POOL_START(poolName));
     storagePool.validate(emptyStateBody, poolMessage[poolCreationJobStatus](poolName));
 
     // Close a pool creation form
