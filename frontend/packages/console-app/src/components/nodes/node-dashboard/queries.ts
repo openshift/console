@@ -37,10 +37,10 @@ const queries = {
   [NodeQueries.MEMORY_TOTAL]: _.template(`node_memory_MemTotal_bytes{instance='<%= node %>'}`),
   [NodeQueries.POD_COUNT]: _.template(`kubelet_running_pods{instance=~'<%= ipAddress %>:.*'}`),
   [NodeQueries.FILESYSTEM_USAGE]: _.template(
-    `sum(node_filesystem_size_bytes{instance="<%= node %>",mountpoint="/var"} - node_filesystem_avail_bytes{instance="<%= node %>",mountpoint="/var"})`,
+    `sum(node_filesystem_size_bytes{instance="<%= node %>",mountpoint="/"} - node_filesystem_avail_bytes{instance="<%= node %>",mountpoint="/"})`,
   ),
   [NodeQueries.FILESYSTEM_TOTAL]: _.template(
-    `sum(node_filesystem_size_bytes{instance='<%= node %>',mountpoint="/var"})`,
+    `sum(node_filesystem_size_bytes{instance='<%= node %>',mountpoint="/"})`,
   ),
   [NodeQueries.NETWORK_IN_UTILIZATION]: _.template(
     `instance:node_network_receive_bytes:rate:sum{instance='<%= node %>'}`,
