@@ -199,7 +199,7 @@ export const hpaPodRingLabel = (
     (!currentPods && !!desiredPods) || !pods.every((p) => p.status?.phase === 'Running');
   return {
     title: scaling ? t('console-shared~Autoscaling') : t('console-shared~Autoscaled'),
-    subTitle: t('console-shared~to {{podSubTitle}}', { podSubTitle: desiredPods }),
+    subTitle: t('console-shared~to {{count}} Pod', { count: desiredPods }),
     longTitle: false,
     longSubtitle: false,
     reversed: true,
