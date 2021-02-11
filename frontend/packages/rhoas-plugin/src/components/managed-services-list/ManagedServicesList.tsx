@@ -2,8 +2,8 @@ import * as React from 'react';
 import { Gallery, GalleryItem, Label } from '@patternfly/react-core';
 import { CatalogTile } from '@patternfly/react-catalog-view-extension';
 import { history } from '@console/internal/components/utils';
+// import AccessManagedServices from '../access-managed-services/AccessManagedServices';
 import { PageLayout, useActiveNamespace } from '@console/shared';
-import AccessManagedServices from '../access-managed-services/AccessManagedServices';
 import { AccessTokenSecretName, managedServicesIcon } from '../../const';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { SecretModel } from '@console/internal/models';
@@ -16,23 +16,14 @@ import { useTranslation } from 'react-i18next';
 
 const ManagedServicesList = () => {
   const [currentNamespace] = useActiveNamespace();
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const [tokenSecret] = useK8sWatchResource({
-    kind: SecretModel.kind,
-    isList: false,
-    name: AccessTokenSecretName,
-    namespace: currentNamespace,
-    namespaced: true,
-  });
+  const [tokenSecret] = useK8sWatchResource({ kind: SecretModel.kind, isList: false, name: AccessTokenSecretName, namespace: currentNamespace, namespaced: true })
   const { t } = useTranslation();
 
   const checkTokenSecretStatus = () => {
     if (tokenSecret) {
-      history.push('/managedServices/managedkafka');
-    } else {
-      setIsModalOpen(true);
+      history.push("/managedServices/managedkafka");
     }
-  };
+  }
 
   const tokenStatusFooter = () => {
     if (tokenSecret) {
@@ -73,7 +64,10 @@ const ManagedServicesList = () => {
               />
             </GalleryItem>
           </Gallery>
-          <AccessManagedServices isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
+          {/* <AccessManagedServices
+            isModalOpen={isModalOpen}
+            setIsModalOpen={setIsModalOpen}
+          /> */}
         </PageLayout>
       </NamespacedPage>
     </>

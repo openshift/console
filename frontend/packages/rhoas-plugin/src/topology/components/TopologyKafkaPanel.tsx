@@ -58,14 +58,17 @@ const DetailsComponent: React.FC<any> = ({ obj }) => {
 };
 
 const ResourcesComponent = ({ obj }) => {
-  const serviceAccountSecretName = obj.status?.serviceAccountSecretName;
+  const serviceAccountSecretName = obj?.spec?.credentials?.serviceAccountSecretName;
   const { namespace } = obj.metadata;
   const link = (
-    <ResourceLink
-      kind={referenceForModel(SecretModel)}
-      name={serviceAccountSecretName}
-      namespace={namespace}
-    />
+    <>
+      <h3>Secret</h3>
+      <ResourceLink
+        kind={referenceForModel(SecretModel)}
+        name={serviceAccountSecretName}
+        namespace={namespace}
+      />
+    </>
   );
 
   return (
