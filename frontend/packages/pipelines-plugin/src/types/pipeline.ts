@@ -69,6 +69,7 @@ export type PipelineSpec = {
   serviceAccountName?: string;
   tasks: PipelineTask[];
   workspaces?: PipelineWorkspace[];
+  finally?: PipelineTask[];
 };
 
 export type PipelineKind = K8sResourceCommon & {

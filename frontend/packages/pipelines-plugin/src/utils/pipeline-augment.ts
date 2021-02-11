@@ -210,9 +210,18 @@ export const getPipelineFromPipelineRun = (pipelineRun: PipelineRunKind): Pipeli
   };
 };
 
-export const getTaskStatus = (pipelinerun: PipelineRunKind): TaskStatus => {
+export const totalPipelineRunTasks = (pipelinerun: PipelineRunKind): number => {
   const executedPipeline = getPipelineFromPipelineRun(pipelinerun);
-  const totalTasks = (executedPipeline?.spec?.tasks || []).length ?? 0;
+  if (!executedPipeline) {
+    return 0;
+  }
+  const totalTasks = (executedPipeline.spec?.tasks || []).length ?? 0;
+  const finallyTasks = (executedPipeline.spec?.finally || []).length ?? 0;
+  return totalTasks + finallyTasks;
+};
+
+export const getTaskStatus = (pipelinerun: PipelineRunKind): TaskStatus => {
+  const totalTasks = totalPipelineRunTasks(pipelinerun);
   const plrTasks =
     pipelinerun && pipelinerun.status && pipelinerun.status.taskRuns
       ? Object.keys(pipelinerun.status.taskRuns)
