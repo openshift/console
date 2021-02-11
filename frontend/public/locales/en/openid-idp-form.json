@@ -13,5 +13,6 @@
   "The list of claims whose values should be used as the display name.": "The list of claims whose values should be used as the display name.",
   "Email": "Email",
   "The list of claims whose values should be used as the email address.": "The list of claims whose values should be used as the email address.",
+  "More options": "More options",
   "Extra scopes": "Extra scopes"
 }

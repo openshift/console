@@ -277,7 +277,7 @@ class AddOpenIDIDPPageWithTranslation extends PromiseComponent<
             )}
           />
           <div className="co-form-section__separator" />
-          <h3>More Options</h3>
+          <h3>{t('openid-idp-form~More options')}</h3>
           <IDPCAFileInput value={caFileContent} onChange={this.caFileChanged} />
           <ListInput
             label={t('openid-idp-form~Extra scopes')}

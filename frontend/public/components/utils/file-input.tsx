@@ -3,6 +3,8 @@ import * as classNames from 'classnames';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { DropTarget } from 'react-dnd';
 import { ConnectDropTarget, DropTargetMonitor } from 'react-dnd/lib/interfaces';
+/* eslint-disable-next-line */
+import { withTranslation, WithTranslation } from 'react-i18next';
 
 import withDragDropContext from './drag-drop-context';
 
@@ -10,7 +12,7 @@ import withDragDropContext from './drag-drop-context';
 const maxFileUploadSize = 4000000;
 const fileSizeErrorMsg = 'Maximum file size exceeded. File limit is 4MB.';
 
-export class FileInput extends React.Component<FileInputProps, FileInputState> {
+class FileInput_ extends React.Component<FileInputProps, FileInputState> {
   constructor(props) {
     super(props);
     this.onDataChange = this.onDataChange.bind(this);
@@ -50,6 +52,7 @@ export class FileInput extends React.Component<FileInputProps, FileInputState> {
       canDrop,
       id,
       isRequired,
+      t,
     } = this.props;
     const klass = classNames('co-file-dropzone-container', {
       'co-file-dropzone--drop-over': isOver,
@@ -58,7 +61,7 @@ export class FileInput extends React.Component<FileInputProps, FileInputState> {
       <div className="co-file-dropzone">
         {canDrop && (
           <div className={klass}>
-            <p className="co-file-dropzone__drop-text">Drop file here</p>
+            <p className="co-file-dropzone__drop-text">{t('public~Drop file here')}</p>
           </div>
         )}
 
@@ -81,7 +84,7 @@ export class FileInput extends React.Component<FileInputProps, FileInputState> {
               />
               <span className="pf-c-button pf-m-tertiary co-btn-file">
                 <input type="file" onChange={this.onFileUpload} />
-                Browse&hellip;
+                {t('public~Browse...')}
               </span>
             </div>
             <p className="help-block" id={`${id}-help`}>
@@ -109,6 +112,8 @@ export class FileInput extends React.Component<FileInputProps, FileInputState> {
     );
   }
 }
+
+export const FileInput = withTranslation()(FileInput_);
 
 const boxTarget = {
   drop(props: FileInputProps, monitor: DropTargetMonitor) {
@@ -213,7 +218,7 @@ export type FileInputState = {
   inputFileName: string;
 };
 
-export type FileInputProps = {
+export type FileInputProps = WithTranslation & {
   errorMessage: string;
   connectDropTarget?: ConnectDropTarget;
   isOver?: boolean;
