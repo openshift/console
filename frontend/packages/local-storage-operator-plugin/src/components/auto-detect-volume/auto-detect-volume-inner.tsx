@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { FormGroup, Radio } from '@patternfly/react-core';
+import { FormGroup, Radio, Text, TextContent } from '@patternfly/react-core';
 import { ListPage } from '@console/internal/components/factory';
 import { NodeKind } from '@console/internal/module/k8s';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -101,12 +101,19 @@ export const AutoDetectVolumeInner: React.FC<AutoDetectVolumeInnerProps> = ({
   );
 };
 
-export const AutoDetectVolumeHeader = () => {
+export const AutoDetectVolumeHeader: React.FC<AutoDetectVolumeHeaderProps> = ({
+  className,
+  variant,
+}) => {
   const { t } = useTranslation();
 
   return (
     <>
-      <h1 className="co-create-operand__header-text">{t('lso-plugin~Auto Detect Volume')}</h1>
+      <TextContent>
+        <Text component={variant} className={className}>
+          {t('lso-plugin~Auto Detect Volume')}
+        </Text>
+      </TextContent>
       <p className="help-block">
         {t('lso-plugin~Allows you to discover the available disks on all available nodes')}
       </p>
@@ -118,4 +125,9 @@ type AutoDetectVolumeInnerProps = {
   state: State;
   dispatch: React.Dispatch<Action>;
   taintsFilter?: (node: NodeKind) => boolean;
+};
+
+type AutoDetectVolumeHeaderProps = {
+  variant: any;
+  className?: string;
 };
