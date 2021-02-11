@@ -1,5 +1,5 @@
 import { StorageClassResourceKind, NodeKind } from '@console/internal/module/k8s';
-import { EncryptionType, KMSConfig, NetworkType } from '../types';
+import { EncryptionType, KMSConfig, NetworkType } from '../../../types';
 import { defaultRequestSize, KMSEmptyState } from '../../../constants';
 
 export type InternalClusterState = {

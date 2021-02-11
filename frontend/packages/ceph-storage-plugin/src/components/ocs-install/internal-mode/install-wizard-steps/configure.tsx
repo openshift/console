@@ -3,7 +3,7 @@ import { Form } from '@patternfly/react-core';
 import { useFlag } from '@console/shared';
 import { InternalClusterAction, InternalClusterState, ActionType } from '../reducer';
 import { EncryptionFormGroup, NetworkFormGroup } from '../../install-wizard/configure';
-import { NetworkType } from '../../types';
+import { NetworkType } from '../../../../types';
 import { GUARDED_FEATURES } from '../../../../features';
 
 export const Configure: React.FC<ConfigureProps> = ({ state, dispatch, mode }) => {

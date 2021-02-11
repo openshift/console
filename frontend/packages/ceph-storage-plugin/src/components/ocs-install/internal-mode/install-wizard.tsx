@@ -20,12 +20,11 @@ import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager'
 import { OCSServiceModel } from '../../../models';
 import { OCS_CONVERGED_FLAG, OCS_INDEPENDENT_FLAG, OCS_FLAG } from '../../../features';
 import { OCS_INTERNAL_CR_NAME, MINIMUM_NODES, CreateStepsSC } from '../../../constants';
-import { StorageClusterKind } from '../../../types';
+import { StorageClusterKind, NetworkType } from '../../../types';
 import { labelNodes, getOCSRequestData, labelOCSNamespace } from '../ocs-request-data';
 import { SelectCapacityAndNodes, Configure, ReviewAndCreate } from './install-wizard-steps';
 import { initialState, reducer, InternalClusterState } from './reducer';
 import { createKmsResources } from '../../kms-config/utils';
-import { NetworkType } from '../types';
 import '../install-wizard/install-wizard.scss';
 
 const makeOCSRequest = (state: InternalClusterState): Promise<StorageClusterKind> => {

@@ -9,9 +9,9 @@ import {
 } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
 import { TechPreviewBadge } from '@console/shared';
-import { CreateStepsSC } from '../constants/ocs-install';
+import { CreateStepsSC } from '../constants';
 import '../components/ocs-install/ocs-install.scss';
-import { EncryptionType } from '../components/ocs-install/types';
+import { EncryptionType } from '../types';
 import { TFunction } from 'i18next';
 
 export type Validation = {

@@ -12,7 +12,7 @@ import {
 } from '../../constants';
 import { Action } from '../ocs-install/attached-devices/create-sc/state';
 import { InternalClusterAction } from '../ocs-install/internal-mode/reducer';
-import { KMSConfig, KMSConfigMap } from '../ocs-install/types';
+import { KMSConfig, KMSConfigMap } from '../../types';
 import { StorageClassClusterAction } from '../../utils/storage-pool';
 
 export const parseURL = (url: string) => {

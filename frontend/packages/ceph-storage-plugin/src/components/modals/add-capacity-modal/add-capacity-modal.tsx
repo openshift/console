@@ -18,12 +18,10 @@ import {
   NO_PROVISIONER,
   OCS_DEVICE_SET_ARBITER_REPLICA,
   OCS_DEVICE_SET_REPLICA,
-} from '../../../constants';
-import {
   requestedCapacityTooltip,
   storageClassTooltip,
   defaultRequestSize,
-} from '../../../constants/ocs-install';
+} from '../../../constants';
 import { OCSStorageClassDropdown } from '../storage-class-dropdown';
 import { PVsAvailableCapacity } from '../../ocs-install/pvs-available-capacity';
 import { createDeviceSet } from '../../ocs-install/ocs-request-data';

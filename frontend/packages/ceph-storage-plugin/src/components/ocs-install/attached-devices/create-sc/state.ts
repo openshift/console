@@ -2,7 +2,7 @@ import { HostNamesMap } from '@console/local-storage-operator-plugin/src/compone
 import { diskModeDropdownItems, KMSEmptyState } from '../../../../constants';
 import { deviceTypeDropdownItems } from '@console/local-storage-operator-plugin/src/constants';
 import { StorageClassResourceKind, NodeKind } from '@console/internal/module/k8s';
-import { EncryptionType, KMSConfig, NetworkType } from '../../types';
+import { EncryptionType, KMSConfig, NetworkType } from '../../../../types';
 
 export const initialState: State = {
   // states for step 1

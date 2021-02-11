@@ -9,7 +9,7 @@ import {
 } from '@patternfly/react-icons';
 import { TFunction } from 'i18next';
 import { POOL_PROGRESS } from '../constants/storage-pool-const';
-import { KMSConfig } from '../components/ocs-install/types';
+import { KMSConfig } from '../types';
 
 export const LoadingComponent: React.FC = () => {
   const { t } = useTranslation();

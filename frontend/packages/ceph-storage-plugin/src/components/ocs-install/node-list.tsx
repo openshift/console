@@ -16,7 +16,7 @@ import { Table } from '@console/internal/components/factory';
 import { IRow, sortable } from '@patternfly/react-table';
 import { getConvertedUnits, nodesWithoutTaints, getZone } from '../../utils/install';
 import { cephStorageLabel } from '../../selectors';
-import { GetRows, NodeTableProps } from './types';
+import { GetRows, NodeTableProps } from '../../types';
 import './ocs-install.scss';
 
 const tableColumnClasses = [
