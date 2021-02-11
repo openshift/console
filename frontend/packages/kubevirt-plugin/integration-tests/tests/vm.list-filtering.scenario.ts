@@ -20,6 +20,7 @@ describe('Test List View Filtering', () => {
   });
 
   it('ID(CNV-3614) Displays correct count of importing VMs', async () => {
+    await vm.waitForStatus(VM_STATUS.Importing, VM_IMPORT_TIMEOUT_SECS);
     await vm.navigateToListView();
     const importingCount = await filterCount(VM_STATUS.Importing);
     expect(importingCount).toEqual(1);

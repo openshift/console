@@ -44,7 +44,7 @@ describe('KubeVirt VM Snapshots', () => {
       await editVMSnapshotsView.snapshotNameInput
         .clear()
         .then(() => editVMSnapshotsView.snapshotNameInput.sendKeys(TEST_SNAPSHOT));
-      if (editVMSnapshotsView.approveUnsupportedCheckbox.isPresent()) {
+      if (await editVMSnapshotsView.approveUnsupportedCheckbox.isPresent()) {
         await click(editVMSnapshotsView.approveUnsupportedCheckbox);
       }
       await click(saveButton);

@@ -50,7 +50,7 @@ const VMDetailsItem: React.FC<VMDetailsItemProps> = ({
         </span>
       </dt>
       <dd id={idValue} className={valueClassName}>
-        {body}
+        <span data-test-id={`details-${title}`}>{body}</span>
       </dd>
     </>
   );

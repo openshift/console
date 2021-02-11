@@ -1,30 +1,23 @@
 import * as _ from 'lodash';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { resourceTitle } from '@console/internal-integration-tests/views/crud.view';
-import { asyncForEach, deleteResource } from '@console/shared/src/test-utils/utils';
+import { asyncForEach, createResource, deleteResource } from '@console/shared/src/test-utils/utils';
 import * as vmView from '../views/virtualMachine.view';
-import { exposeServices, getCommonTemplateName } from './utils/utils';
-import {
-  VM_BOOTUP_TIMEOUT_SECS,
-  VM_ACTIONS_TIMEOUT_SECS,
-  NOT_AVAILABLE,
-} from './utils/constants/common';
+import { getVMManifest } from './mocks/mocks';
+import { exposeServices } from './utils/utils';
+import { VirtualMachine } from './models/virtualMachine';
+import { VM_BOOTUP_TIMEOUT_SECS, NOT_AVAILABLE } from './utils/constants/common';
 import { VM_STATUS } from './utils/constants/vm';
 import { NodePortService } from './types/types';
 import { OperatingSystem, Workload } from './utils/constants/wizard';
 import { ProvisionSource } from './utils/constants/enums/provisionSource';
-import { VMBuilder } from './models/vmBuilder';
-import { getBasicVMBuilder } from './mocks/vmBuilderPresets';
 
 describe('Kubevirt VM details tab', () => {
   const vmName = `vm-${testName}`;
-  const vm = new VMBuilder(getBasicVMBuilder())
-    .setProvisionSource(ProvisionSource.CONTAINER)
-    .setName(vmName)
-    .setDescription(testName)
-    .setStartOnCreation(false)
-    .build();
+  const cloudInit = `#cloud-config\nuser: cloud-user\npassword: atomic\nchpasswd: {expire: False}`;
   const serviceCommon = { name: vmName, kind: 'vm', type: 'NodePort', namespace: testName };
+  const testVM = getVMManifest(ProvisionSource.CONTAINER, testName, vmName, cloudInit);
+  const vm = new VirtualMachine(testVM.metadata);
   const nodePortServices = new Set<NodePortService>();
   nodePortServices.add({
     ...serviceCommon,
@@ -46,13 +39,12 @@ describe('Kubevirt VM details tab', () => {
   });
 
   beforeAll(async () => {
-    await vm.create();
-    await vm.waitForStatus(VM_STATUS.Off, VM_ACTIONS_TIMEOUT_SECS);
+    createResource(testVM);
     exposeServices(nodePortServices);
   });
 
   afterAll(async () => {
-    deleteResource(vm.asResource());
+    deleteResource(testVM);
   });
 
   beforeEach(async () => {
@@ -60,16 +52,15 @@ describe('Kubevirt VM details tab', () => {
   });
 
   it('ID(CNV-763) Check VM details when VM is off', async () => {
-    const templateName = getCommonTemplateName('rhel7');
     const expectation = {
       name: vmName,
       status: VM_STATUS.Off,
-      description: NOT_AVAILABLE,
+      description: testName,
       os: OperatingSystem.RHEL7,
-      profile: Workload.SERVER.toLowerCase(),
-      template: templateName,
-      bootOrder: [`${vmName} (Disk)`],
-      flavorConfig: 'Small: 1 CPU | 2 GiB Memory',
+      profile: Workload.DESKTOP.toLowerCase(),
+      template: NOT_AVAILABLE,
+      bootOrder: ['rootdisk (Disk)', 'nic-0 (NIC)', 'cloudinitdisk (Disk)'],
+      flavorConfig: 'Tiny: 1 CPU | 1 GiB Memory',
       ip: NOT_AVAILABLE,
       pod: NOT_AVAILABLE,
       node: NOT_AVAILABLE,
@@ -81,7 +72,7 @@ describe('Kubevirt VM details tab', () => {
       description: await vmView.vmDetailDesc(testName, vmName).getText(),
       os: await vmView.vmDetailOS(testName, vmName).getText(),
       profile: await vmView.vmDetailWorkloadProfile(testName, vmName).getText(),
-      template: await vmView.vmDetailTemplateByTestID(templateName).getText(),
+      template: await vmView.vmDetailTemplate().getText(),
       bootOrder: await vmView.vmDetailBootOrder(testName, vmName).getText(),
       flavorConfig: await vmView.vmDetailFlavor(testName, vmName).getText(),
       ip: await vmView.vmDetailIP(testName, vmName).getText(),

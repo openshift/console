@@ -1,5 +1,5 @@
 import { cloneDeepWithEnum } from '@console/shared/src/constants/object-enum';
-import { OperatingSystem, Workload, OSIDLookup } from '../utils/constants/wizard';
+import { Workload, OSIDLookup } from '../utils/constants/wizard';
 import { FlavorConfig, Disk, Network, CloudInitConfig } from '../types/types';
 import { BaseVMBuilderData } from '../types/vm';
 import { K8sKind } from '@console/internal/module/k8s';
@@ -76,7 +76,7 @@ export abstract class BaseVMBuilder<T extends BaseVMBuilderData> {
     return this;
   }
 
-  public setOS(os: OperatingSystem) {
+  public setOS(os: string) {
     this.data.os = os;
     return this;
   }

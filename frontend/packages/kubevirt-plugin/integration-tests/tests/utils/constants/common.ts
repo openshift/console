@@ -2,6 +2,7 @@ export const {
   STORAGE_CLASS = 'standard',
   KUBEVIRT_PROJECT_NAME = 'openshift-cnv',
   VOLUME_MODE,
+  CNV_25 = false,
 } = process.env;
 export const REMOTE_IMAGE =
   'http://cnv-qe-server.rhevdev.lab.eng.rdu2.redhat.com/files/cnv-tests/cirros-images/cirros-0.4.0-x86_64-disk.qcow2';

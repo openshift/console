@@ -1,5 +1,5 @@
 import { DISK_SOURCE, DISK_DRIVE, VM_STATUS } from '../utils/constants/vm';
-import { Flavor, OperatingSystem, Workload } from '../utils/constants/wizard';
+import { Flavor, Workload } from '../utils/constants/wizard';
 import { K8sKind } from '@console/internal/module/k8s';
 import { POD_STATUS } from '../utils/constants/pod';
 import { ProvisionSource } from '../utils/constants/enums/provisionSource';
@@ -101,7 +101,7 @@ export type VMImportConfig = {
   instanceConfig: InstanceConfig;
   sourceVMName: string;
   description?: string;
-  operatingSystem?: OperatingSystem;
+  operatingSystem?: string;
   flavorConfig?: FlavorConfig;
   workloadProfile?: Workload;
   storageResources?: Disk[];
@@ -112,7 +112,7 @@ export type VMImportConfig = {
 };
 
 export type BaseVMConfig = {
-  operatingSystem: OperatingSystem;
+  operatingSystem: string;
   flavorConfig: FlavorConfig;
   workloadProfile: Workload;
   sourceURL: string;
