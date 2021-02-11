@@ -61,7 +61,12 @@ const StatefulSetDetails: React.FC<StatefulSetDetailsProps> = ({ obj: ss }) => (
         namespace={ss.metadata.namespace}
         kind={ss.kind}
         render={(d) => {
-          return d.loaded ? (
+          if (!d.loaded) {
+            return <LoadingInline />;
+          } else if (!d.data[ss.metadata.uid]) {
+            return null;
+          }
+          return (
             <PodRingSet
               key={ss.metadata.uid}
               podData={d.data[ss.metadata.uid]}
@@ -69,8 +74,6 @@ const StatefulSetDetails: React.FC<StatefulSetDetailsProps> = ({ obj: ss }) => (
               resourceKind={StatefulSetModel}
               path="/spec/replicas"
             />
-          ) : (
-            <LoadingInline />
           );
         }}
       />

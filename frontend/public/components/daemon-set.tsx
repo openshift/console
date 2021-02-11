@@ -146,7 +146,12 @@ const DaemonSetDetails: React.FC<DaemonSetDetailsProps> = ({ obj: daemonset }) =
         namespace={daemonset.metadata.namespace}
         kind={daemonset.kind}
         render={(d) => {
-          return d.loaded ? (
+          if (!d.loaded) {
+            return <LoadingInline />;
+          } else if (!d.data[daemonset.metadata.uid].pods) {
+            return null;
+          }
+          return (
             <PodRing
               key={daemonset.metadata.uid}
               pods={d.data[daemonset.metadata.uid].pods}
@@ -154,8 +159,6 @@ const DaemonSetDetails: React.FC<DaemonSetDetailsProps> = ({ obj: daemonset }) =
               resourceKind={DaemonSetModel}
               enableScaling={false}
             />
-          ) : (
-            <LoadingInline />
           );
         }}
       />

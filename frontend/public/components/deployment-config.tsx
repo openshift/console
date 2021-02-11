@@ -172,7 +172,12 @@ export const DeploymentConfigsDetails: React.FC<{ obj: K8sResourceKind }> = ({ o
           namespace={dc.metadata.namespace}
           kind={dc.kind}
           render={(d) => {
-            return d.loaded ? (
+            if (!d.loaded) {
+              return <LoadingInline />;
+            } else if (!d.data[dc.metadata.uid]) {
+              return null;
+            }
+            return (
               <PodRingSet
                 key={dc.metadata.uid}
                 podData={d.data[dc.metadata.uid]}
@@ -180,8 +185,6 @@ export const DeploymentConfigsDetails: React.FC<{ obj: K8sResourceKind }> = ({ o
                 resourceKind={DeploymentConfigModel}
                 path="/spec/replicas"
               />
-            ) : (
-              <LoadingInline />
             );
           }}
         />
