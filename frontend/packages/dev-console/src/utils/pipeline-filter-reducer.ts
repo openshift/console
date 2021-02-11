@@ -2,22 +2,37 @@ import * as _ from 'lodash';
 
 export const pipelineRunStatus = (pipelineRun): string => {
   const conditions = _.get(pipelineRun, ['status', 'conditions'], []);
-  const isCancelled = conditions.find((c) =>
-    ['PipelineRunCancelled', 'TaskRunCancelled'].some((cancel) => cancel === c.reason),
-  );
-  if (isCancelled) {
-    return 'Cancelled';
-  }
   if (conditions.length === 0) return null;
-
-  const condition = conditions.find((c) => c.type === 'Succeeded');
-  return !condition || !condition.status
-    ? null
-    : condition.status === 'True'
-    ? 'Succeeded'
-    : condition.status === 'False'
-    ? 'Failed'
-    : 'Running';
+  const succeedCondition = conditions.find((c) => c.type === 'Succeeded');
+  if (!succeedCondition || !succeedCondition.status) {
+    return null;
+  }
+  const status =
+    succeedCondition.status === 'True'
+      ? 'Succeeded'
+      : succeedCondition.status === 'False'
+      ? 'Failed'
+      : 'Running';
+  if (succeedCondition.reason && succeedCondition.reason !== status) {
+    switch (succeedCondition.reason) {
+      case 'PipelineRunCancelled':
+      case 'TaskRunCancelled':
+      case 'Cancelled':
+        return 'Cancelled';
+      case 'PipelineRunStopping':
+      case 'TaskRunStopping':
+        return 'Failed';
+      case 'CreateContainerConfigError':
+      case 'ExceededNodeResources':
+      case 'ExceededResourceQuota':
+        return 'Pending';
+      case 'ConditionCheckFailed':
+        return 'Skipped';
+      default:
+        return status;
+    }
+  }
+  return status;
 };
 
 export const pipelineFilterReducer = (pipeline): string => {

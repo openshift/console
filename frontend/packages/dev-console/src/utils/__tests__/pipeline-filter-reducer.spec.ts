@@ -32,8 +32,19 @@ const mockPipelineRuns = [
     },
   },
   { status: { conditions: [{ status: 'Unknown', type: 'Succeeded' }] } },
-  { status: { conditions: [{ reason: 'PipelineRunCancelled' }] } },
-  { status: { conditions: [{ reason: 'TaskRunCancelled' }] } },
+  {
+    status: {
+      conditions: [{ type: 'Succeeded', status: 'Unknown', reason: 'PipelineRunCancelled' }],
+    },
+  },
+  {
+    status: { conditions: [{ type: 'Succeeded', status: 'Unknown', reason: 'TaskRunCancelled' }] },
+  },
+  {
+    status: {
+      conditions: [{ type: 'Succeeded', status: 'Unknown', reason: 'ConditionCheckFailed' }],
+    },
+  },
 ];
 
 describe('Check PipelineRun Status | Filter Reducer applied to the following:', () => {
@@ -92,5 +103,8 @@ describe('Check PipelineRun Status | Filter Reducer applied to the following:', 
   it('Pipelinerun with first element of condition array with type as "Succeeded" & status as "Unknown"', () => {
     const reducerOutput = pipelineRunStatus(mockPipelineRuns[10]);
     expect(reducerOutput).toBe('Cancelled');
+  });
+  it('Pipelinerun with ConditionCheckFailed status should be skipped', () => {
+    expect(pipelineRunStatus(mockPipelineRuns[11])).toBe('Skipped');
   });
 });
