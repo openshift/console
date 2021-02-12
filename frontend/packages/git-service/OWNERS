@@ -16,6 +16,7 @@ approvers:
   - andrewballantyne
   - christianvogt
   - invincibleJai
+  - jerolimov
   - rohitkrai03
 labels:
   - component/dev-console
