@@ -45,7 +45,13 @@ import { storagePoolModal } from '../modals/storage-pool-modal/storage-pool-moda
 import { POOL_STATE } from '../../constants/storage-pool-const';
 import { KMSConfigure } from '../kms-config/kms-config';
 import { scReducer, scInitialState, SCActionType } from '../../utils/storage-pool';
-import { createKmsResources, setEncryptionDispatch, parseURL } from '../kms-config/utils';
+import {
+  createKmsResources,
+  setEncryptionDispatch,
+  parseURL,
+  scKmsConfigValidation,
+  getPort,
+} from '../kms-config/utils';
 import './ocs-storage-class-form.scss';
 import { GUARDED_FEATURES } from '../../features';
 
@@ -295,6 +301,7 @@ export const StorageClassEncryption: React.FC<ProvisionerProps> = ({ onParamChan
       const kmsData = JSON.parse(csiConfigMap?.data[serviceNames[serviceNames.length - 1]]);
       setCurrentKMS(kmsData);
       const url = parseURL(kmsData.VAULT_ADDR);
+      const port = getPort(url);
       const kmsObj: KMSConfig = {
         name: {
           value: kmsData.KMS_SERVICE_NAME,
@@ -305,7 +312,7 @@ export const StorageClassEncryption: React.FC<ProvisionerProps> = ({ onParamChan
           valid: true,
         },
         port: {
-          value: url.port,
+          value: port,
           valid: true,
         },
         backend: kmsData.VAULT_BACKEND_PATH,
@@ -327,14 +334,9 @@ export const StorageClassEncryption: React.FC<ProvisionerProps> = ({ onParamChan
   }, [csiConfigMap, editKMS, isKmsSupported]);
 
   React.useEffect(() => {
-    if (isKmsSupported && editKMS) {
-      if (state.kms.name.valid && state.kms.address.valid && state.kms.port.valid) {
-        setValidSave(true);
-      } else {
-        setValidSave(false);
-      }
-      setEncryptionDispatch(SCActionType.SET_KMS_ENCRYPTION, '', dispatch, state.kms);
-    }
+    if (isKmsSupported && (editKMS || !_.isEqual(state.kms, scInitialState.kms)))
+      scKmsConfigValidation(state.kms) ? setValidSave(true) : setValidSave(false);
+    else setValidSave(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     state.kms.name.value,
@@ -343,6 +345,8 @@ export const StorageClassEncryption: React.FC<ProvisionerProps> = ({ onParamChan
     state.kms.name.valid,
     state.kms.address.valid,
     state.kms.port.valid,
+    editKMS,
+    csiConfigMapLoaded,
     isKmsSupported,
   ]);
 
