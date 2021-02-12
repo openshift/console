@@ -46,7 +46,7 @@ const adjustDurationForStart = (start: number, createdAt: string): number => {
 export const VMUtilizationCard: React.FC = () => {
   const { t } = useTranslation();
   const [timestamps, setTimestamps] = React.useState<Date[]>();
-  const [duration, setDuration] = useMetricDuration();
+  const [duration, setDuration] = useMetricDuration(t);
   const { vm, vmi, pods } = React.useContext(VMDashboardContext);
   const vmiLike = vm || vmi;
   const vmName = getName(vmiLike);
@@ -82,7 +82,12 @@ export const VMUtilizationCard: React.FC = () => {
     <DashboardCard>
       <DashboardCardHeader>
         <DashboardCardTitle>{t('kubevirt-plugin~Utilization')}</DashboardCardTitle>
-        <Dropdown items={Duration} onChange={setDuration} selectedKey={duration} title={duration} />
+        <Dropdown
+          items={Duration(t)}
+          onChange={setDuration}
+          selectedKey={duration}
+          title={duration}
+        />
       </DashboardCardHeader>
       <UtilizationBody timestamps={timestamps}>
         <PrometheusUtilizationItem

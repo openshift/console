@@ -1,48 +1,32 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 
-export enum Duration {
-  ONE_HR = '1 hour',
-  SIX_HR = '6 hours',
-  TWENTY_FOUR_HR = '24 hours',
-}
+export const Duration = (t: TFunction) => {
+  return {
+    ONE_HR: t('console-shared~1 hour'),
+    SIX_HR: t('console-shared~6 hours'),
+    TWENTY_FOUR_HR: t('console-shared~24 hours'),
+  };
+};
 
-export const TranslatedDuration: React.FC<TranslatedDurationProps> = ({ duration }) => {
-  let translatedString;
-  const { t } = useTranslation();
-
+export const TranslatedDuration = (duration, t: TFunction) => {
   switch (duration) {
-    case Duration.ONE_HR:
-      translatedString = t('dashboard~1 Hour');
-      break;
-    case Duration.SIX_HR:
-      translatedString = t('dashboard~6 Hours');
-      break;
+    case 'ONE_HR':
+      return t('console-shared~1 hour');
+    case 'SIX_HR':
+      return t('console-shared~6 hours');
     default:
-      translatedString = t('dashboard~24 Hours');
-      break;
+      return t('console-shared~24 hours');
   }
-  return translatedString;
 };
 
-type TranslatedDurationProps = {
-  duration: Duration;
-};
-
-const ONE_HOUR = 60 * 60 * 1000;
-
-export const UTILIZATION_QUERY_HOUR_MAP = {
-  [Duration.ONE_HR]: ONE_HOUR,
-  [Duration.SIX_HR]: 6 * ONE_HOUR,
-  [Duration.TWENTY_FOUR_HR]: 24 * ONE_HOUR,
-};
-
-export const useMetricDuration = (): MetricDuration => {
-  const [duration, setDuration] = React.useState(Duration.ONE_HR);
-  const setMetricDuration = React.useCallback((d: Duration) => setDuration(Duration[d]), [
-    setDuration,
-  ]);
+export const useMetricDuration = (t: TFunction): MetricDuration => {
+  const [duration, setDuration] = React.useState(TranslatedDuration('ONE_HR', t));
+  const setMetricDuration = React.useCallback(
+    (d: string) => setDuration(TranslatedDuration(d, t)),
+    [t],
+  );
   return [duration, setMetricDuration];
 };
 
-type MetricDuration = [Duration, (duration: Duration) => void];
+type MetricDuration = [string, (duration: string, t: TFunction) => void];

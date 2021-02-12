@@ -33,7 +33,7 @@ import {
 const UtilizationCard: React.FC = () => {
   const { t } = useTranslation();
   const [timestamps, setTimestamps] = React.useState<Date[]>();
-  const [duration, setDuration] = useMetricDuration();
+  const [duration, setDuration] = useMetricDuration(t);
 
   const { machine } = React.useContext(BareMetalHostDashboardContext);
   const nodeName = getMachineNodeName(machine);
@@ -134,7 +134,12 @@ const UtilizationCard: React.FC = () => {
     <DashboardCard>
       <DashboardCardHeader>
         <DashboardCardTitle>{t('metal3-plugin~Utilization')}</DashboardCardTitle>
-        <Dropdown items={Duration} onChange={setDuration} selectedKey={duration} title={duration} />
+        <Dropdown
+          items={Duration(t)}
+          onChange={setDuration}
+          selectedKey={duration}
+          title={duration}
+        />
       </DashboardCardHeader>
       <UtilizationBody timestamps={timestamps}>
         <PrometheusUtilizationItem

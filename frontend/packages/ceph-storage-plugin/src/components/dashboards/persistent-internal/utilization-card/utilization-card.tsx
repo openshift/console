@@ -25,7 +25,7 @@ import { humanizeIOPS, humanizeLatency } from './utils';
 
 const UtilizationCard: React.FC = () => {
   const { t } = useTranslation();
-  const [duration, setDuration] = useMetricDuration();
+  const [duration, setDuration] = useMetricDuration(t);
   const [timestamps, setTimestamps] = React.useState<Date[]>();
 
   const storagePopover = React.useCallback(
@@ -44,7 +44,12 @@ const UtilizationCard: React.FC = () => {
     <DashboardCard>
       <DashboardCardHeader>
         <DashboardCardTitle>{t('ceph-storage-plugin~Utilization')}</DashboardCardTitle>
-        <Dropdown items={Duration} onChange={setDuration} selectedKey={duration} title={duration} />
+        <Dropdown
+          items={Duration(t)}
+          onChange={setDuration}
+          selectedKey={duration}
+          title={duration}
+        />
       </DashboardCardHeader>
       <UtilizationBody timestamps={timestamps}>
         <PrometheusUtilizationItem
