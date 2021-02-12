@@ -32,12 +32,14 @@ type QuickStartsCatalogCardProps = {
   quickStarts: QuickStart[];
   storageKey: string;
   userSettingsKey: string;
+  shouldShowQSTile?: (boolean) => void;
 };
 
 const QuickStartsCatalogCard: React.FC<QuickStartsCatalogCardProps> = ({
   quickStarts,
   storageKey,
   userSettingsKey,
+  shouldShowQSTile,
 }) => {
   const { t } = useTranslation();
   const { allQuickStartStates, setActiveQuickStart } = React.useContext<QuickStartContextValues>(
@@ -49,6 +51,10 @@ const QuickStartsCatalogCard: React.FC<QuickStartsCatalogCardProps> = ({
     true,
   );
   const [isOpen, setOpen] = React.useState<boolean>(false);
+
+  React.useEffect(() => {
+    shouldShowQSTile && shouldShowQSTile(showTile);
+  }, [showTile, shouldShowQSTile]);
 
   const onRemove = () => {
     setShowTile(false);

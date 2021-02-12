@@ -4,10 +4,6 @@ import { connect } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-
-import { ClusterDashboard } from './cluster-dashboard/cluster-dashboard';
-import { HorizontalNav, PageHeading, LoadingBox, Page, AsyncComponent } from '../../utils';
-import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import DashboardGrid, {
   GridPosition,
   GridDashboardCard,
@@ -19,7 +15,10 @@ import {
   isDashboardsCard,
   isDashboardsTab,
 } from '@console/plugin-sdk';
+import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
+import { HorizontalNav, PageHeading, LoadingBox, Page, AsyncComponent } from '../../utils';
 import { RootState } from '../../../redux';
+import ClusterDashboardWithQuickStarts from './cluster-dashboard/ClusterDashboardWithQuickStarts';
 
 const getCardsOnPosition = (cards: DashboardsCard[], position: GridPosition): GridDashboardCard[] =>
   cards
@@ -63,7 +62,7 @@ const DashboardsPage_: React.FC<DashboardsPageProps> = ({ match, kindsInFlight, 
       {
         href: '',
         name: t('dashboard~Cluster'),
-        component: ClusterDashboard,
+        component: ClusterDashboardWithQuickStarts,
       },
       ...pluginPages,
     ],
