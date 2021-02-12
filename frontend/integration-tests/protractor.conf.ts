@@ -63,13 +63,6 @@ const testSuites = {
   monitoring: suite(['tests/monitoring.scenario.ts']),
   newApp: suite(['tests/overview/overview.scenario.ts', 'tests/deploy-image.scenario.ts']),
   performance: suite(['tests/performance.scenario.ts']),
-  serviceCatalog: suite([
-    'tests/service-catalog/service-catalog.scenario.ts',
-    'tests/service-catalog/service-broker.scenario.ts',
-    'tests/service-catalog/service-class.scenario.ts',
-    'tests/service-catalog/service-binding.scenario.ts',
-    'tests/developer-catalog.scenario.ts',
-  ]),
   overview: suite(['tests/overview/overview.scenario.ts']),
   crdExtensions: suite(['tests/crd-extensions.scenario.ts']),
   oauth: suite(['tests/oauth.scenario.ts']),
