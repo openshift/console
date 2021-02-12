@@ -251,7 +251,7 @@
   "Each Namespace can subscribe to a single channel of a package for automatic updates.": "각 네임 스페이스는 자동 업데이트를 위해 패키지의 단일 채널을 구독할 수 있습니다.",
   "Create Subscription": "서브스크립션 만들기",
   "Subscriptions by package": "패키지 별 서브스크립션",
-  "InstalPlan failed": "InstalPlan 실패",
+  "InstallPlan failed": "InstallPlan 실패",
   "CatalogSource removed": "CatalogSource가 제거되었습니다.",
   "The CatalogSource for this Operator has been removed. The CatalogSource must be added back in order for this Operator to receive any updates.": "이 Operator의 CatalogSource가 제거되었습니다. 이 Operator가 업데이트를 받으려면 CatalogSource를 다시 추가해야 합니다.",
   "Subscription details": "서브스크립션 세부 정보",

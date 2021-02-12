@@ -25,7 +25,7 @@
   "Edit parallelism": "병렬 처리 편집",
   "{{resourceKinds}} create one or more pods and ensure that a specified number of them successfully terminate. When the specified number of completions is successfully reached, the job is complete.": "{{resourceKinds}} 하나 이상의 pod를 생성하고 지정된 수의 pod가 성공적으로 종료되는지 확인합니다. 지정된 수량이 성공적으로 완료되면 작업이 완료된 것입니다.",
   "Delete {{kind}}?": "{{kind}} 삭제하시겠습니까?",
-  "Are you sure you want to delete <2>{{resourceName}}</2><3> in namespace <2>{{namespace}}</2></3>?": "<2>{{namespace}}</2></3> 네임스페이스에서 <2>{{resourceName}}</2><3> 을/를 삭제하시겠습니까?",
+  "Are you sure you want to delete <2>{{resourceName}}</2> in namespace <5>{{namespace}}</5>?": "<5>{{namespace}}</5> 네임스페이스에서 <2>{{resourceName}}</2> 을/를 삭제하시겠습니까?",
   "Are you sure you want to delete <2>{{resourceName}}</2>?": "<2>{{resourceName}}</2>을/를 삭제하시겠습니까?",
   "Delete dependent objects of this resource": "이 리소스의 종속 개체 삭제",
   "Managed resource": "관리 리소스",

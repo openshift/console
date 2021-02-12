@@ -148,10 +148,10 @@
   "Selecting all nodes will use the available disks that match the selected filters on all nodes selected on previous step.": "모든 노드를 선택하면 이전 단계에서 선택한 모든 노드의 필터와 일치하는 사용 가능한 디스크가 사용됩니다.",
   "Minimum Node Requirement": "최소 노드 요구 사항",
   "The OCS storage cluster require a minimum of 3 nodes for the intial deployment. Only {{nodes}} node match to the selected filters. Please adjust the filters to include more nodes.": "OCS 스토리지 클러스터에는 초기 배포를 위해 최소 3 개의 노드가 필요합니다. {{nodes}} 노드만 선택한 필터와 일치합니다. 노드를 추가하려면 필터를 조정하십시오.",
-  "After the volume set and storage class are created you wont be able to go back to this step.": "볼륨 세트와 스토리지 클래스가 생성된 후에는이 절차로 돌아갈 수 없습니다.",
+  "After the volume set and storage class are created you won't be able to go back to this step.": "볼륨 세트와 스토리지 클래스가 생성된 후에는이 절차로 돌아갈 수 없습니다.",
   "Note:": "참고:",
   "Yes": "예",
-  "Are you sure you want to continue ?": "계속 진행하시겠습니까?",
+  "Are you sure you want to continue?": "계속 진행하시겠습니까?",
   "Node": "노드",
   "Selected Disks": "선택한 디스크",
   "Close": "닫기",
@@ -262,7 +262,7 @@
   "This is a required field. The Storage Class will be used to request storage from the underlying infrastructure to create the backing persistent volumes that will be used to provide the OpenShift Container Storage (OCS) service.": "이는 필수 필드입니다. 스토리지 클래스는 OpenShift Container Storage (OCS) 서비스를 제공하는 데 사용되는 백업 영구 볼륨을 생성하기 위해 기본 인프라에서 스토리지를 요청하는 데 사용됩니다.",
   "Create new storage class": "새 스토리지 클래스 만들기",
   "All required fields are not set": "모든 필수 필드가 설정되지 않았습니다.",
-  "In order to create the storage cluster you must set the storage class select at least 3 nodes (preferably in 3 different zones) and meet the minimum or recommended requirement": "스토리지 클러스터를 생성하려면 스토리지 클래스를 설정하고 최소 3 개의 노드 (바람직하게는 3 개의 다른 영역에서)를 선택하고 최소 또는 권장 요구 사항을 충족해야 합니다.",
+  "In order to create the storage cluster you must set the storage class, select at least 3 nodes (preferably in 3 different zones) and meet the minimum or recommended requirement": "스토리지 클러스터를 생성하려면 스토리지 클래스를 설정하고 최소 3 개의 노드 (바람직하게는 3 개의 다른 영역에서)를 선택하고 최소 또는 권장 요구 사항을 충족해야 합니다.",
   "The OCS Storage cluster require a minimum of 3 nodes for the initial deployment. Please choose a different storage class or go to create a new volume set that matches the minimum node requirement.": "OCS 스토리지 클러스터에는 초기 배포를 위해 최소 3 개의 노드가 필요합니다. 다른 스토리지 클래스를 선택하거나 최소 노드 요구 사항과 일치하는 새 볼륨 세트를 생성하십시오.",
   "Create new volume set instance": "새 볼륨 세트 인스턴스 만들기",
   "Select at least 1 encryption level or disable encryption.": "하나 이상의 암호화 수준을 선택하거나 암호화를 비활성화합니다.",
@@ -287,5 +287,5 @@
   "Pool {name} was successfully created": "풀{name} 성공적으로 생성되었습니다",
   "An error occurred Pool {name} was not created": "오류가 발생했습니다. 풀 {name}이/가 생성되지 않았습니다",
   "Pool {name} creation timed out. Please check if ocs-operator and rook operator are running": "풀{name} 생성 시간이 초과되었습니다. ocs-operator와 rook operator가 실행 중인지 확인하십시오.",
-  "The creation of an OCS storage cluster is still in progress or have failed please try again after the storage cluster is ready to use.": "OCS 스토리지 클러스터 생성이 아직 진행 중이거나 실패했습니다. 스토리지 클러스터를 사용할 준비가 되면 다시 시도하십시오."
+  "The creation of an OCS storage cluster is still in progress or has failed. Please try again after the storage cluster is ready to use.": "OCS 스토리지 클러스터 생성이 아직 진행 중이거나 실패했습니다. 스토리지 클러스터를 사용할 준비가 되면 다시 시도하십시오."
 }
