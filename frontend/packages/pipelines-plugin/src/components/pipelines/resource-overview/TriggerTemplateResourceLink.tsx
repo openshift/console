@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { ResourceLink, ExternalLink } from '@console/internal/components/utils';
+import { ResourceLink } from '@console/internal/components/utils';
 import { K8sKind, referenceForModel } from '@console/internal/module/k8s';
+import { ClipboardCopy } from '@patternfly/react-core';
 import { RouteTemplate } from '../utils/triggers';
 import './TriggerTemplateResourceLink.scss';
 
@@ -34,11 +35,7 @@ const TriggerTemplateResourceLink: React.FC<TriggerTemplateResourceLinkProps> = 
                 title={triggerTemplateName}
                 inline
               />
-              {routeURL && (
-                <div className="odc-trigger-template-list__url">
-                  <ExternalLink href={routeURL} text={routeURL} />
-                </div>
-              )}
+              {routeURL && <ClipboardCopy isReadOnly>{routeURL}</ClipboardCopy>}
             </dd>
           );
         })}
