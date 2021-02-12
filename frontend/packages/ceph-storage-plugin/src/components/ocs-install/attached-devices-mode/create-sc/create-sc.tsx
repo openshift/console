@@ -20,29 +20,24 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { setFlag } from '@console/internal/actions/features';
 import {
   k8sCreate,
+  k8sGet,
   k8sPatch,
   K8sResourceKind,
   referenceForModel,
 } from '@console/internal/module/k8s';
-import { fetchK8s } from '@console/internal/graphql/client';
 import { LocalVolumeDiscovery } from '@console/local-storage-operator-plugin/src/models';
 import { getDiscoveryRequestData } from '@console/local-storage-operator-plugin/src/components/auto-detect-volume/discovery-request-data';
-import {
-  DISCOVERY_CR_NAME,
-  HOSTNAME_LABEL_KEY,
-  LABEL_OPERATOR,
-  AUTO_DISCOVER_ERR_MSG,
-} from '@console/local-storage-operator-plugin/src/constants';
+import { DISCOVERY_CR_NAME } from '@console/local-storage-operator-plugin/src/constants';
 import {
   getNodes,
-  getLabelIndex,
+  getNodeSelectorTermsIndices,
   getHostNames,
 } from '@console/local-storage-operator-plugin/src/utils';
 import { DiskType } from '@console/local-storage-operator-plugin/src/components/local-volume-set/types';
 import { OCS_ATTACHED_DEVICES_FLAG } from '@console/local-storage-operator-plugin/src/features';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
 import { resourcePathFromModel } from '@console/internal/components/utils';
-import { initialState, reducer, State, Action, Discoveries, OnNextClick } from './state';
+import { initialState, reducer, State, Action, Discoveries } from './state';
 import { AutoDetectVolume } from './wizard-pages/auto-detect-volume';
 import { CreateLocalVolumeSet } from './wizard-pages/create-local-volume-set';
 import { nodesDiscoveriesResource } from '../../../../constants/resources';
@@ -67,11 +62,11 @@ import { Configure } from './wizard-pages/configure-step';
 import '../../install-wizard/install-wizard.scss';
 import { createKmsResources } from '../../../kms-config/utils';
 
-const makeAutoDiscoveryCall = (
-  onNext: OnNextClick,
+const makeAutoDiscoveryCall = async (
   state: State,
   dispatch: React.Dispatch<Action>,
   ns: string,
+  onNext: () => void,
 ) => {
   dispatch({ type: 'setIsLoading', value: true });
   const selectedNodes = getNodes(
@@ -80,48 +75,49 @@ const makeAutoDiscoveryCall = (
     state.nodeNamesForLVS,
   );
 
-  fetchK8s(LocalVolumeDiscovery, DISCOVERY_CR_NAME, ns)
-    .then((discoveryRes: K8sResourceKind) => {
-      const nodeSelectorTerms = discoveryRes?.spec?.nodeSelector?.nodeSelectorTerms;
-      const [selectorIndex, expIndex] = nodeSelectorTerms
-        ? getLabelIndex(nodeSelectorTerms, HOSTNAME_LABEL_KEY, LABEL_OPERATOR)
-        : [-1, -1];
-      if (selectorIndex !== -1 && expIndex !== -1) {
-        const nodes = new Set(
-          discoveryRes?.spec?.nodeSelector?.nodeSelectorTerms?.[selectorIndex]?.matchExpressions?.[
-            expIndex
-          ]?.values,
-        );
-        const hostNames = getHostNames(selectedNodes, state.hostNamesMapForADV);
-        hostNames.forEach((name) => nodes.add(name));
-        const patch = [
-          {
-            op: 'replace',
-            path: `/spec/nodeSelector/nodeSelectorTerms/${selectorIndex}/matchExpressions/${expIndex}/values`,
-            value: Array.from(nodes),
-          },
-        ];
-        return k8sPatch(LocalVolumeDiscovery, discoveryRes, patch);
-      }
-      throw new Error(AUTO_DISCOVER_ERR_MSG);
-    })
-    .catch((err) => {
-      // handle AUTO_DISCOVER_ERR_MSG and throw to next catch block to show the message
-      if (err.message === AUTO_DISCOVER_ERR_MSG) {
-        throw err;
-      }
-      const requestData = getDiscoveryRequestData({ ...state, ns, toleration: OCS_TOLERATION });
-      return k8sCreate(LocalVolumeDiscovery, requestData);
-    })
-    .then(() => {
-      dispatch({ type: 'setNodeNamesForLVS', value: selectedNodes });
+  try {
+    const discoveryRes: K8sResourceKind = await k8sGet(LocalVolumeDiscovery, DISCOVERY_CR_NAME, ns);
+    const nodeSelectorTerms = discoveryRes?.spec?.nodeSelector?.nodeSelectorTerms;
+    const [selectorIndex, expIndex] = getNodeSelectorTermsIndices(nodeSelectorTerms);
+    if (selectorIndex !== -1 && expIndex !== -1) {
+      const nodes = new Set(
+        discoveryRes?.spec?.nodeSelector?.nodeSelectorTerms?.[selectorIndex]?.matchExpressions?.[
+          expIndex
+        ]?.values,
+      );
+      const hostNames = getHostNames(selectedNodes, state.hostNamesMapForADV);
+      hostNames.forEach((name) => nodes.add(name));
+      const patch = [
+        {
+          op: 'replace',
+          path: `/spec/nodeSelector/nodeSelectorTerms/${selectorIndex}/matchExpressions/${expIndex}/values`,
+          value: Array.from(nodes),
+        },
+      ];
+      await k8sPatch(LocalVolumeDiscovery, discoveryRes, patch);
       onNext();
-      dispatch({ type: 'setIsLoading', value: false });
-    })
-    .catch((err) => {
-      dispatch({ type: 'setError', value: err.message });
-      dispatch({ type: 'setIsLoading', value: false });
-    });
+      dispatch({ type: 'setError', value: '' });
+    } else {
+      throw new Error(
+        'Could not find matchExpression of type key: "kubernetes.io/hostname" and operator: "In"',
+      );
+    }
+  } catch (patchError) {
+    if (patchError?.response?.status === 404) {
+      try {
+        const requestData = getDiscoveryRequestData({ ...state, ns, toleration: OCS_TOLERATION });
+        await k8sCreate(LocalVolumeDiscovery, requestData);
+        onNext();
+      } catch (createError) {
+        dispatch({ type: 'setError', value: createError.message });
+      }
+    } else {
+      dispatch({ type: 'setError', value: patchError.message });
+    }
+  } finally {
+    dispatch({ type: 'setIsLoading', value: false });
+    dispatch({ type: 'setNodeNamesForLVS', value: selectedNodes });
+  }
 };
 
 const CreateSC: React.FC<CreateSCProps> = ({ match, hasNoProvSC, mode, lsoNs }) => {
@@ -182,6 +178,12 @@ const CreateSC: React.FC<CreateSCProps> = ({ match, hasNoProvSC, mode, lsoNs }) 
     dispatch({ type: 'setHostNamesMapForLVS', value: state.hostNamesMapForADV });
   }, [state.hostNamesMapForADV]);
 
+  const discoveryNodes = getNodes(
+    state.showNodesListOnADV,
+    state.allNodeNamesOnADV,
+    state.nodeNamesForLVS,
+  );
+
   const steps: WizardStep[] = [
     {
       id: CreateStepsSC.DISCOVER,
@@ -206,38 +208,12 @@ const CreateSC: React.FC<CreateSCProps> = ({ match, hasNoProvSC, mode, lsoNs }) 
     {
       id: CreateStepsSC.REVIEWANDCREATE,
       name: t('ceph-storage-plugin~Review and Create'),
+      nextButtonText: t('ceph-storage-plugin~Create'),
       component: (
         <ReviewAndCreate state={state} inProgress={inProgress} errorMessage={errorMessage} />
       ),
     },
   ];
-
-  const getDisabledCondition = (activeStep: WizardStep) => {
-    switch (activeStep.id) {
-      case CreateStepsSC.DISCOVER:
-        return (
-          getNodes(state.showNodesListOnADV, state.allNodeNamesOnADV, state.nodeNamesForLVS)
-            .length < 1
-        );
-      case CreateStepsSC.STORAGECLASS:
-        if (!state.volumeSetName.trim().length) return true;
-        if (state.filteredNodes.length < MINIMUM_NODES) return true;
-        if (!state.isValidDiskSize) return true;
-        return !state.volumeSetName.trim().length;
-      case CreateStepsSC.STORAGEANDNODES:
-        return state.nodes.length < MINIMUM_NODES || !getName(state.storageClass);
-      case CreateStepsSC.REVIEWANDCREATE:
-        return (
-          state.nodes.length < MINIMUM_NODES ||
-          !getName(state.storageClass) ||
-          !state.kms.hasHandled
-        );
-      case CreateStepsSC.CONFIGURE:
-        return !state.encryption.hasHandled || !state.kms.hasHandled;
-      default:
-        return false;
-    }
-  };
 
   const createCluster = async () => {
     try {
@@ -288,47 +264,69 @@ const CreateSC: React.FC<CreateSCProps> = ({ match, hasNoProvSC, mode, lsoNs }) 
     }
   };
 
-  const makeCall = (activeStep: WizardStep, onNext: OnNextClick) => {
-    // TODO: Need to think of a way to remove this
-    dispatch({ type: 'setOnNextClick', value: onNext });
-    if (activeStep.id === CreateStepsSC.DISCOVER) {
-      makeAutoDiscoveryCall(onNext, state, dispatch, lsoNs);
-    } else if (activeStep.id === CreateStepsSC.STORAGECLASS) {
-      dispatch({ type: 'setShowConfirmModal', value: true });
-    } else if (activeStep.id === CreateStepsSC.REVIEWANDCREATE) {
-      createCluster();
-    } else {
-      onNext();
-    }
-  };
-
-  const CustomFooter = (
+  /**
+   * This custom footer for wizard provides a control over the movement to next step.
+   * This allows error handling per step and moves to next step only when API request is successful.
+   */
+  const CustomFooter: React.ReactNode = (
     <WizardFooter>
       <WizardContextConsumer>
-        {({ activeStep, onNext, onBack, onClose }) => (
-          <>
-            <Button
-              variant="primary"
-              type="submit"
-              onClick={() => makeCall(activeStep, onNext)}
-              className={state.isLoading || getDisabledCondition(activeStep) ? 'pf-m-disabled' : ''}
-            >
-              {activeStep.id === CreateStepsSC.REVIEWANDCREATE
-                ? t('ceph-storage-plugin~Create')
-                : t('ceph-storage-plugin~Next')}
-            </Button>
-            <Button
-              variant="secondary"
-              onClick={onBack}
-              className={activeStep.id === CreateStepsSC.DISCOVER ? 'pf-m-disabled' : ''}
-            >
-              {t('ceph-storage-plugin~Back')}
-            </Button>
-            <Button variant="link" onClick={onClose}>
-              {t('ceph-storage-plugin~Cancel')}
-            </Button>
-          </>
-        )}
+        {({ activeStep, onNext, onBack, onClose }) => {
+          const nextButtonFactory = {
+            [CreateStepsSC.DISCOVER]: {
+              onNextClick: () => makeAutoDiscoveryCall(state, dispatch, lsoNs, onNext),
+              isNextDisabled: state.isLoading || discoveryNodes.length < MINIMUM_NODES,
+            },
+            [CreateStepsSC.STORAGECLASS]: {
+              onNextClick: () => dispatch({ type: 'setShowConfirmModal', value: true }),
+              isNextDisabled:
+                state.filteredNodes.length < MINIMUM_NODES ||
+                !state.volumeSetName.trim().length ||
+                !state.isValidDiskSize,
+            },
+            [CreateStepsSC.STORAGEANDNODES]: {
+              onNextClick: () => onNext(),
+              isNextDisabled: state.nodes.length < MINIMUM_NODES || !getName(state.storageClass),
+            },
+            [CreateStepsSC.CONFIGURE]: {
+              onNextClick: () => onNext(),
+              isNextDisabled: !state.encryption.hasHandled || !state.kms.hasHandled,
+            },
+            [CreateStepsSC.REVIEWANDCREATE]: {
+              onNextClick: () => createCluster(),
+              isNextDisabled:
+                state.nodes.length < MINIMUM_NODES ||
+                !getName(state.storageClass) ||
+                !state.kms.hasHandled,
+            },
+          };
+          const { id } = activeStep;
+
+          return (
+            <>
+              <Button
+                variant="primary"
+                type="submit"
+                isDisabled={nextButtonFactory[id].isNextDisabled}
+                onClick={nextButtonFactory[id].onNextClick}
+              >
+                {id === CreateStepsSC.REVIEWANDCREATE
+                  ? t('ceph-storage-plugin~Create')
+                  : t('ceph-storage-plugin~Next')}
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={onBack}
+                isDisabled={id === CreateStepsSC.DISCOVER}
+              >
+                {t('ceph-storage-plugin~Back')}
+              </Button>
+              <Button variant="link" onClick={onClose}>
+                {t('ceph-storage-plugin~Cancel')}
+              </Button>
+            </>
+          );
+        }}
       </WizardContextConsumer>
     </WizardFooter>
   );
@@ -367,6 +365,10 @@ const CreateSC: React.FC<CreateSCProps> = ({ match, hasNoProvSC, mode, lsoNs }) 
             history.push(resourcePathFromModel(ClusterServiceVersionModel, appName, ns))
           }
           footer={CustomFooter}
+          onSave={createCluster}
+          cancelButtonText={t('ceph-storage-plugin~Cancel')}
+          nextButtonText={t('ceph-storage-plugin~Next')}
+          backButtonText={t('ceph-storage-plugin~Back')}
         />
       </StackItem>
     </Stack>

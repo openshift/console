@@ -142,10 +142,13 @@ export const CreateInternalCluster: React.FC<CreateInternalClusterProps> = ({ ma
           navAriaLabel={t('ceph-storage-plugin~{{title}} steps', { title })}
           mainAriaLabel={t('ceph-storage-plugin~{{title}} content', { title })}
           steps={steps}
-          onSave={createCluster}
+          cancelButtonText={t('ceph-storage-plugin~Cancel')}
+          nextButtonText={t('ceph-storage-plugin~Next')}
+          backButtonText={t('ceph-storage-plugin~Back')}
           onClose={() =>
             history.push(resourcePathFromModel(ClusterServiceVersionModel, appName, ns))
           }
+          onSave={createCluster}
         />
       </StackItem>
     </Stack>
