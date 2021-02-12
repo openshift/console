@@ -6,7 +6,6 @@ import {
   useK8sWatchResource,
   WatchK8sResource,
 } from '@console/internal/components/utils/k8s-watch-hook';
-import { getBasicID, prefixedID } from '../../utils';
 import { VMTemplateLink } from '../vm-templates/vm-template-link';
 import VMDetailsItem from './VMDetailsItem';
 
@@ -21,12 +20,10 @@ const VMDetailsItemTemplate: React.FC<VMDetailsItemTemplateProps> = ({ name, nam
   const [template, loadedTemplates, errorTemplates] = useK8sWatchResource<TemplateKind>(
     templatesResource,
   );
-  const id = getBasicID(template);
 
   return (
     <VMDetailsItem
       title={t('kubevirt-plugin~Template')}
-      idValue={prefixedID(id, 'template')}
       isLoading={!loadedTemplates}
       isNotAvail={!name || !namespace || (loadedTemplates && !template) || errorTemplates}
     >

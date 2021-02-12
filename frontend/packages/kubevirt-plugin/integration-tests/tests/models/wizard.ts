@@ -325,7 +325,7 @@ export class Wizard {
   }
 
   async processReviewAndCreate(data: VMBuilderData) {
-    const { name, namespace, startOnCreation } = data;
+    const { name, namespace, startOnCreation, flavor } = data;
     if (namespace) {
       await this.selectNamespace(namespace);
     }
@@ -333,6 +333,11 @@ export class Wizard {
     if (name) {
       await this.fillName(name);
     }
+
+    if (flavor) {
+      await selectItemFromDropdown($('#vm-flavor-select'), dropDownItem(flavor.flavor));
+    }
+
     await this.startOnCreation(startOnCreation);
     await this.confirmAndCreate();
   }

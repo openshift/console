@@ -32,7 +32,7 @@ import {
   WIN10_PVC,
 } from './utils/constants/pvc';
 import { VM_STATUS } from './utils/constants/vm';
-import { TemplateByName } from './utils/constants/wizard';
+import { Flavor, TemplateByName } from './utils/constants/wizard';
 import { PVCData } from './types/pvc';
 import { UploadForm } from './models/pvcUploadForm';
 import { PVC } from './models/pvc';
@@ -122,7 +122,8 @@ describe('KubeVirt Auto Clone', () => {
           await uploadForm.openForm();
           await uploadForm.selectGoldenOS(rhel7PVC.os);
           await browser.wait(until.presenceOf(errorMessage));
-          expect(errorMessage.getText()).toContain('Operating system source already defined');
+          const alertText = await errorMessage.getText();
+          expect(alertText).toContain('Operating system source already defined');
         });
       },
       CDI_UPLOAD_TIMEOUT_SECS,
@@ -189,9 +190,10 @@ describe('KubeVirt Auto Clone', () => {
       );
     }, 1200000);
 
-    it('ID(CNV-5043) Create Fedora/RHEL/Windows VMs from golden os template', async () => {
+    xit('ID(CNV-5043) Create Fedora/RHEL/Windows VMs from golden os template', async () => {
       // skip creating fedora/rhel vm here as it's covered above.
       const win10 = new VMBuilder(getBasicVMBuilder())
+        .setFlavor({ flavor: Flavor.MEDIUM }) // Win does not have tiny flavor
         .setSelectTemplateName(TemplateByName.WINDOWS_10)
         .generateNameForPrefix('auto-clone-win10-vm')
         .build();

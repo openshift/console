@@ -1,9 +1,7 @@
-import { OperatingSystem } from '../utils/constants/wizard';
-
 export type PVCData = {
   namespace?: string;
   image: string;
-  os?: OperatingSystem;
+  os?: string;
   pvcName?: string;
   pvcSize: string;
   pvcSizeUnits?: string;

@@ -1,4 +1,5 @@
 import { execSync } from 'child_process';
+import { browser } from 'protractor';
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import {
   click,
@@ -47,19 +48,18 @@ describe('KubeVirt VM detail - edit flavor', () => {
       await vm.create();
       await withResource(leakedResources, vm.asResource(), async () => {
         await vm.navigateToDetail();
+        const template = await virtualMachineView.vmDetailLabelValue('vm.kubevirt.io/template');
         await vm.modalEditFlavor();
         await selectOptionByText(editFlavorView.flavorDropdown, 'Custom');
         await fillInput(editFlavorView.cpusInput(), '2');
         await fillInput(editFlavorView.memoryInput(), '3');
         await click(saveButton);
 
-        expect(getCPU(vm.getResource()).cores).toEqual(2);
-        expect(getMemory(vm.getResource())).toEqual('3Gi');
-        expect(
-          (await virtualMachineView.vmDetailLabelValue('vm.kubevirt.io/template')).startsWith(
-            'rhel7-server-small', // template is not changed (might be in the future)
-          ),
-        ).toBeTruthy();
+        await browser.wait(() => (getCPU(vm.getResource()).cores as any) === 2, 5000);
+        await browser.wait(() => getMemory(vm.getResource()) === '3Gi', 5000);
+        expect(await virtualMachineView.vmDetailLabelValue('vm.kubevirt.io/template')).toEqual(
+          template,
+        ); // template is not changed (might be in the future)
       });
     },
     CLONE_VM_TIMEOUT_SECS,

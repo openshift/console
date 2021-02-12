@@ -245,7 +245,7 @@ export class KubevirtUIResource<T extends BaseVMBuilderData> extends UIResource 
   }
 
   async modalEditStatus() {
-    await click(vmDetailstatusButton(this.namespace, this.name));
+    await click(vmDetailstatusButton());
     await browser.wait(until.presenceOf(editStatusView.unpauseVMDialog));
     await isLoaded();
   }

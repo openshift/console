@@ -13,7 +13,11 @@ import {
   deleteResources,
   deleteResource,
 } from '@console/shared/src/test-utils/utils';
-import { COMMON_TEMPLATES_NAMESPACE, VM_BOOTUP_TIMEOUT_SECS } from './utils/constants/common';
+import {
+  CNV_25,
+  COMMON_TEMPLATES_NAMESPACE,
+  VM_BOOTUP_TIMEOUT_SECS,
+} from './utils/constants/common';
 import { multusNAD, getTestDataVolume, flavorConfigs } from './mocks/mocks';
 import { VirtualMachine } from './models/virtualMachine';
 import { TemplateByName } from './utils/constants/wizard';
@@ -70,24 +74,27 @@ describe('Create VM from Template using wizard', () => {
     );
   }
 
-  it('ID(CNV-5655) Verify common template has workload/flavor pre-defined', async () => {
-    const vmTemplate = new VMTemplateBuilder(getBasicVMTBuilder())
-      .setName(TemplateByName.RHEL7)
-      .setProvisionSource(ProvisionSource.URL)
-      .build();
+  // default OS exists only in 2.6+
+  if (!CNV_25) {
+    it('ID(CNV-5655) Verify common template has workload/flavor pre-defined', async () => {
+      const vmTemplate = new VMTemplateBuilder(getBasicVMTBuilder())
+        .setName(TemplateByName.RHEL7)
+        .setProvisionSource(ProvisionSource.URL)
+        .build();
 
-    const vmtName = await vmTemplate.getResourceName();
-    const workload = vmtName.split('-')[1];
-    const flavor = vmtName.split('-')[2];
+      const vmtName = await vmTemplate.getResourceName();
+      const workload = vmtName.split('-')[1];
+      const flavor = vmtName.split('-')[2];
 
-    await browser.wait(until.presenceOf(templateView.defaultOSLabel));
-    expect(await (templateView.workload(`openshift-${vmtName}`) as any).getText()).toContain(
-      workload,
-    );
-    const detailFlavor = await (templateView.flavor(`openshift-${vmtName}`) as any).getText();
-    const flavorText = detailFlavor.toLowerCase();
-    expect(flavorText).toContain(flavor);
-  });
+      await browser.wait(until.presenceOf(templateView.defaultOSLabel));
+      expect(await (templateView.workload(`openshift-${vmtName}`) as any).getText()).toContain(
+        workload,
+      );
+      const detailFlavor = await (templateView.flavor(`openshift-${vmtName}`) as any).getText();
+      const flavorText = detailFlavor.toLowerCase();
+      expect(flavorText).toContain(flavor);
+    });
+  }
 
   it('ID(CNV-1847) Displays correct data on VM Template Details page', async () => {
     const vmt = new VMTemplateBuilder(getBasicVMTBuilder())

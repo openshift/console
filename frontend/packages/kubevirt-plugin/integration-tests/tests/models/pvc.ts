@@ -10,7 +10,6 @@ import {
 import { clickNavLink } from '@console/internal-integration-tests/views/sidenav.view';
 import { listViewAction } from '@console/shared/src/test-utils/actions.view';
 import * as pvcView from '../../views/pvc.view';
-import { OperatingSystem } from '../utils/constants/wizard';
 import { PVC_ACTION } from '../utils/constants/pvc';
 import { PVC_STATUS } from '@console/ceph-storage-plugin/integration-tests/utils/consts';
 import { getTestDataVolume } from '../mocks/mocks';
@@ -22,7 +21,7 @@ import { UIResource } from './uiResource';
 export class PVC<T extends PVCData> extends UIResource {
   protected data: T;
 
-  readonly os: OperatingSystem;
+  readonly os: string;
 
   readonly image: string;
 

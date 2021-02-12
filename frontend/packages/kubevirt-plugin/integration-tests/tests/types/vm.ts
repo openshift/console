@@ -4,7 +4,7 @@ import { V1Volume } from '../../../src/types/vm/disk/V1Volume';
 import { V1alpha1DataVolume } from '../../../src/types/vm/disk/V1alpha1DataVolume';
 import { V1PersistentVolumeClaim } from '../../../src/types/vm/disk/V1PersistentVolumeClaim';
 import { V1Network, V1NetworkInterface } from '../../../src/types/vm/index';
-import { OperatingSystem, Workload } from '../utils/constants/wizard';
+import { Workload } from '../utils/constants/wizard';
 import { ProvisionSource } from '../utils/constants/enums/provisionSource';
 
 // The following types TestNetwork and TestDisk are currently not user
@@ -28,7 +28,7 @@ export type BaseVMBuilderData = {
   templateNamespace?: string;
   flavor?: FlavorConfig;
   workload?: Workload;
-  os?: OperatingSystem;
+  os?: string;
   pvcName?: string;
   provisionSource?: ProvisionSource;
   networks?: Network[];
@@ -68,5 +68,5 @@ export type VMTemplateBuilderData = BaseVMBuilderData & { provider: string };
 export type VMBuilderDataGenerationConfig = {
   flavor?: FlavorConfig[];
   workload?: Workload[];
-  os?: OperatingSystem[];
+  os?: string[];
 };
