@@ -66,6 +66,14 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = ({
     state.maxDiskSize !== '' &&
     Number(state.minDiskSize) > Number(state.maxDiskSize);
 
+  React.useEffect(() => {
+    if (!validMinDiskSize || !validMaxDiskSize || !validMaxDiskLimit || invalidMinGreaterThanMax) {
+      dispatch({ type: 'setIsValidDiskSize', value: false });
+    } else {
+      dispatch({ type: 'setIsValidDiskSize', value: true });
+    }
+  }, [dispatch, validMinDiskSize, validMaxDiskSize, validMaxDiskLimit, invalidMinGreaterThanMax]);
+
   return (
     <>
       <FormGroup

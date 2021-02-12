@@ -5,6 +5,7 @@ export const initialState = {
   volumeSetName: '',
   storageClassName: '',
   showNodesListOnLVS: false,
+  isValidDiskSize: true,
   diskType: 'All',
   diskMode: diskModeDropdownItems.BLOCK,
   deviceType: [],
@@ -21,6 +22,7 @@ export type State = {
   volumeSetName: string;
   storageClassName: string;
   showNodesListOnLVS: boolean;
+  isValidDiskSize: boolean;
   diskType: string;
   diskMode: string;
   deviceType: string[];
@@ -37,6 +39,7 @@ export type Action =
   | { type: 'setVolumeSetName'; name: string }
   | { type: 'setStorageClassName'; name: string }
   | { type: 'setShowNodesListOnLVS'; value: boolean }
+  | { type: 'setIsValidDiskSize'; value: boolean }
   | { type: 'setDiskType'; value: string }
   | { type: 'setDiskMode'; value: string }
   | { type: 'setMaxDiskLimit'; value: string }
@@ -56,6 +59,8 @@ export const reducer = (state: State, action: Action) => {
       return Object.assign({}, state, { storageClassName: action.name });
     case 'setShowNodesListOnLVS':
       return Object.assign({}, state, { showNodesListOnLVS: action.value });
+    case 'setIsValidDiskSize':
+      return Object.assign({}, state, { isValidDiskSize: action.value });
     case 'setDiskType':
       return Object.assign({}, state, { diskType: action.value });
     case 'setDiskMode':

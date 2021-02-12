@@ -62,6 +62,7 @@ const CreateLocalVolumeSet: React.FC = withHandlePromise<
   const getDisabledCondition = () => {
     if (!state.volumeSetName.trim().length) return true;
     if (state.showNodesListOnLVS && state.nodeNames.length < 1) return true;
+    if (!state.isValidDiskSize) return true;
     return false;
   };
 
