@@ -29,7 +29,6 @@ import {
   resourceObjPath,
   useAccessReview,
 } from '../utils';
-import { isSystemRole } from './index';
 import { connectToFlags, flagPending } from '../../reducers/features';
 
 const bindingKind = (binding) =>
@@ -319,8 +318,6 @@ const NsRoleDropdown_ = (props) => {
     return null;
   }
 
-  const roleFilter = (role) => !isSystemRole(role);
-
   let kinds;
   if (props.fixed) {
     kinds = [props.selectedKeyKind];
@@ -335,7 +332,6 @@ const NsRoleDropdown_ = (props) => {
   return (
     <ListDropdown
       {...props}
-      dataFilter={roleFilter}
       desc="Namespace Roles (Role)"
       resources={resources}
       placeholder="Select role name"
@@ -347,7 +343,6 @@ const NsRoleDropdown = connectToFlags(FLAGS.OPENSHIFT)(NsRoleDropdown_);
 const ClusterRoleDropdown = (props) => (
   <ListDropdown
     {...props}
-    dataFilter={(role) => !isSystemRole(role)}
     desc="Cluster-wide Roles (ClusterRole)"
     resources={[{ kind: 'ClusterRole' }]}
     placeholder="Select role name"
