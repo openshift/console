@@ -8,7 +8,18 @@ type SpotlightProps = {
 };
 
 const Spotlight: React.FC<SpotlightProps> = ({ selector, interactive }) => {
-  const element = React.useMemo(() => document.querySelector(selector), [selector]);
+  // if target element is a hidden one return null
+  const element = React.useMemo(() => {
+    const highlightElement = document.querySelector(selector);
+    let hiddenElement = highlightElement;
+    while (hiddenElement) {
+      const ariaHidden = hiddenElement.getAttribute('aria-hidden');
+      if (ariaHidden === 'true') return null;
+      hiddenElement = hiddenElement.parentElement;
+    }
+    return highlightElement;
+  }, [selector]);
+
   if (!element) return null;
   return interactive ? (
     <InteractiveSpotlight element={element} />
