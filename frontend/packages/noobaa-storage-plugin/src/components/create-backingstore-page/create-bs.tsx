@@ -117,6 +117,7 @@ const S3EndPointType: React.FC<S3EndpointTypeProps> = (props) => {
             className="nb-bs-form-entry__dropdown"
             menuClassName="nb-bs-form-entry__dropdown--short"
             buttonClassName="nb-bs-form-entry__dropdown"
+            dataTest="backingstore-aws-region-dropdown"
             onChange={(e) => {
               dispatch({ type: 'setRegion', value: e });
             }}
@@ -135,6 +136,7 @@ const S3EndPointType: React.FC<S3EndpointTypeProps> = (props) => {
           isRequired
         >
           <TextInput
+            data-test="backingstore-s3-endpoint"
             onChange={(e) => {
               dispatch({ type: 'setEndpoint', value: e });
             }}
@@ -162,7 +164,7 @@ const S3EndPointType: React.FC<S3EndpointTypeProps> = (props) => {
                 onChange={(e) => dispatch({ type: 'setSecretName', value: e })}
               />
             </Firehose>
-            <Button variant="plain" onClick={switchToCredentials}>
+            <Button variant="plain" data-test="switch-to-creds" onClick={switchToCredentials}>
               {t('noobaa-storage-plugin~Switch to Credentials')}
             </Button>
           </InputGroup>
@@ -172,6 +174,7 @@ const S3EndPointType: React.FC<S3EndpointTypeProps> = (props) => {
           <FormGroup label={credentialField1Label} fieldId="acess-key">
             <InputGroup>
               <TextInput
+                data-test="backingstore-access-key"
                 value={state.accessKey}
                 onChange={(e) => {
                   dispatch({ type: 'setAccessKey', value: e });
@@ -190,6 +193,7 @@ const S3EndPointType: React.FC<S3EndpointTypeProps> = (props) => {
           >
             <TextInput
               value={state.secretKey}
+              data-test="backingstore-secret-key"
               onChange={(e) => {
                 dispatch({ type: 'setSecretKey', value: e });
               }}
@@ -207,6 +211,7 @@ const S3EndPointType: React.FC<S3EndpointTypeProps> = (props) => {
       >
         <TextInput
           value={state.target}
+          data-test="backingstore-target-bucket"
           onChange={(e) => dispatch({ type: 'setTarget', value: e })}
           aria-label={targetLabel}
         />
@@ -713,6 +718,7 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
             onChange={handleBsNameTextInputChange}
             value={bsName}
             maxLength={43}
+            data-test="backingstore-name"
             placeholder="my-backingstore"
             aria-label={t('noobaa-storage-plugin~Backing Store Name')}
           />
@@ -728,6 +734,7 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
         <Dropdown
           className="nb-bs-form-entry__dropdown"
           buttonClassName="nb-bs-form-entry__dropdown"
+          dataTest="backingstore-provider"
           onChange={setProvider}
           items={PROVIDERS}
           selectedKey={provider}
@@ -756,7 +763,7 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
       )}
       <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
         <ActionGroup>
-          <Button type="submit" variant="primary">
+          <Button type="submit" data-test="backingstore-create-button" variant="primary">
             {t('noobaa-storage-plugin~Create Backing Store')}
           </Button>
           <Button onClick={cancel} variant="secondary">
