@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import { getInfrastructurePlatform } from '@console/shared';
@@ -15,12 +16,17 @@ import {
 } from '@console/internal/components/dashboard/with-dashboard-resources';
 import { FirehoseResource, ExternalLink, FirehoseResult } from '@console/internal/components/utils';
 import { InfrastructureModel } from '@console/internal/models/index';
-import { SubscriptionModel } from '@console/operator-lifecycle-manager/src/models';
+import {
+  SubscriptionModel,
+  ClusterServiceVersionModel,
+} from '@console/operator-lifecycle-manager/src/models';
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { getOCSVersion } from '@console/ceph-storage-plugin/src/selectors';
 import { RGW_FLAG } from '@console/ceph-storage-plugin/src/features';
+import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
+import { CEPH_STORAGE_NAMESPACE } from '@console/ceph-storage-plugin/src/constants/index';
 import { getMetric } from '../../utils';
 import './details-card.scss';
 
@@ -82,7 +88,11 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
   const ocsVersion = getOCSVersion(subscription);
 
   const hasRGW = useFlag(RGW_FLAG);
-
+  const ocsPath = `${resourcePathFromModel(
+    ClusterServiceVersionModel,
+    ocsVersion,
+    CEPH_STORAGE_NAMESPACE,
+  )}`;
   return (
     <DashboardCard>
       <DashboardCardHeader>
@@ -96,7 +106,7 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
             error={false}
             isLoading={false}
           >
-            OpenShift Container Storage
+            <Link to={ocsPath}>OpenShift Container Storage</Link>
           </DetailItem>
           <DetailItem
             key="system_name"
