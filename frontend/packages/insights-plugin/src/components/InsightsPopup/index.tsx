@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { ChartDonut, ChartLegend, ChartLabel } from '@patternfly/react-charts';
+import { useTranslation } from 'react-i18next';
 
 import {
   riskIcons,
@@ -21,6 +22,7 @@ const DataComponent: React.FC<DataComponentProps> = ({ x, y, datum }) => {
 };
 
 export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses, k8sResult }) => {
+  const { t } = useTranslation();
   const metrics = mapMetrics(responses[0].response);
   const clusterID = (k8sResult as K8sResourceKind)?.data?.spec?.clusterID || '';
   const riskEntries = Object.entries(metrics).sort(
@@ -32,11 +34,28 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
   const isWaitingOrDisabled = _isWaitingOrDisabled(metrics);
   const isError = _isError(metrics);
 
+  const riskKeys = {
+    // t('insights-plugin~low')
+    low: 'insights-plugin~low',
+    // t('insights-plugin~moderate')
+    moderate: 'insights-plugin~moderate',
+    // t('insights-plugin~important')
+    important: 'insights-plugin~important',
+    // t('insights-plugin~critical')
+    critical: 'insights-plugin~critical',
+  };
+
   return (
     <div className="co-insights__box">
-      {isError && <div className="co-status-popup__section">Temporary unavailable.</div>}
+      {isError && (
+        <div className="co-status-popup__section">
+          {t('insights-plugin~Temporary unavailable.')}
+        </div>
+      )}
       {isWaitingOrDisabled && (
-        <div className="co-status-popup__section">Disabled or waiting for results.</div>
+        <div className="co-status-popup__section">
+          {t('insights-plugin~Disabled or waiting for results.')}
+        </div>
       )}
       <div className="co-status-popup__section">
         {hasIssues && !isWaitingOrDisabled && !isError && (
@@ -48,7 +67,7 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
                 y: v,
               }))}
               title={`${numberOfIssues}`}
-              subTitle={`Total ${numberOfIssues === 1 ? 'issue' : 'issues'}`}
+              subTitle={t('insights-plugin~Total issue', { count: numberOfIssues })}
               legendData={Object.entries(metrics).map(([k, v]) => ({ name: `${k}: ${v}` }))}
               legendOrientation="vertical"
               width={304}
@@ -57,12 +76,12 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
               constrainToVisibleArea
               legendComponent={
                 <ChartLegend
-                  title="Total Risk"
+                  title={t('insights-plugin~Total Risk')}
                   titleComponent={
                     <ChartLabel dx={13} style={{ fontWeight: 'bold', fontSize: '14px' }} />
                   }
                   data={riskEntries.map(([k, v]) => ({
-                    name: `${v} ${k}`,
+                    name: `${v} ${t(riskKeys[k])}`,
                     id: k,
                   }))}
                   dataComponent={<DataComponent />}
@@ -82,11 +101,11 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
       <div className="co-status-popup__section">
         {hasIssues && !isWaitingOrDisabled && !isError && (
           <>
-            <h6 className="pf-c-title pf-m-md">Fixable issues</h6>
+            <h6 className="pf-c-title pf-m-md">{t('insights-plugin~Fixable issues')}</h6>
             <div>
               <ExternalLink
                 href={`https://cloud.redhat.com/openshift/details/${clusterID}#insights`}
-                text="View all in OpenShift Cluster Manager"
+                text={t('insights-plugin~View all in OpenShift Cluster Manager')}
               />
             </div>
           </>
@@ -94,7 +113,7 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
         {!hasIssues && (isWaitingOrDisabled || isError) && (
           <ExternalLink
             href="https://docs.openshift.com/container-platform/latest/support/getting-support.html"
-            text="More about Insights"
+            text={t('insights-plugin~More about Insights')}
           />
         )}
       </div>

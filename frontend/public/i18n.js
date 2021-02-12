@@ -76,6 +76,7 @@ i18n
         'idp-name-input',
         'image-stream',
         'ingress',
+        'insights-plugin',
         'k8s',
         'keystone-idp-form',
         'knative-plugin',

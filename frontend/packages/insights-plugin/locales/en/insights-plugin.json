@@ -1,0 +1,17 @@
+{
+  "low": "low",
+  "moderate": "moderate",
+  "important": "important",
+  "critical": "critical",
+  "Temporary unavailable.": "Temporary unavailable.",
+  "Disabled or waiting for results.": "Disabled or waiting for results.",
+  "Total issue": "Total issue",
+  "Total issue_plural": "Total issues",
+  "Total Risk": "Total Risk",
+  "Fixable issues": "Fixable issues",
+  "View all in OpenShift Cluster Manager": "View all in OpenShift Cluster Manager",
+  "More about Insights": "More about Insights",
+  "Not available": "Not available",
+  "{{issuesNumber}} issue found": "{{issuesNumber}} issue found",
+  "{{issuesNumber}} issues found": "{{issuesNumber}} issues found"
+}
