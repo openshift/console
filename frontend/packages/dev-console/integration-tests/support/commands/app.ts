@@ -32,7 +32,7 @@ after(() => {
 });
 
 afterEach(() => {
-  //  checkErrors();
+  // checkErrors();
 });
 
 Cypress.Commands.add('pageTitleShouldContain', (title: string) => {
