@@ -5,7 +5,7 @@
   "no-dupe-scenario-names": ["on", "in-feature"],
   "no-dupe-feature-names": "on",
   "no-partially-commented-tag-lines": "on",
-  "indentation" : ["on", {"Feature": 0, "Background": 4, "Scenario": 4, "Step": 8, "Examples": 8, "example": 12, "given": 8, "when": 8, "then": 8, "and": 8, "but": 8, "feature tag": 0, "scenario tag": 4}],
+  "indentation" : ["off", {"Feature": 0, "Background": 4, "Scenario": 4, "Step": 8, "Examples": 8, "example": 12, "given": 8, "when": 8, "then": 8, "and": 8, "but": 8, "feature tag": 0, "scenario tag": 4}],
   "no-trailing-spaces": "on",
   "new-line-at-eof": ["on", "yes"],
   "no-multiple-empty-lines": "off",
@@ -22,5 +22,6 @@
   "no-unused-variables": "on",
   "no-background-only-scenario": "on",
   "no-empty-background": "on",
-  "scenario-size": ["on", { "steps-length": {"Background": 5, "Scenario": 15}}]
+  "scenario-size": ["on", { "steps-length": {"Background": 5, "Scenario": 15}}],
+  "max-scenarios-per-file": ["on", {"maxScenarios": 10, "countOutlineExamples": true}]
 }

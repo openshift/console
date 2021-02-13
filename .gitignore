@@ -17,8 +17,6 @@ cypress-a11y-report.json
 /frontend/**/dist
 /frontend/@types/gql
 /frontend/gui_test_screenshots
-/frontend/packages/integration-tests-cypress/cypress-a11y-report.json
-/frontend/packages/ceph-storage-plugin/integration-tests-cypress/cypress-a11y-report.json
 /frontend/@types
 /frontend/package-lock.json
 /frontend/po-files
