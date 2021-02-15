@@ -48,12 +48,10 @@ class BaseStatusModal extends PromiseComponent {
           kind,
           resource,
           'status',
-          {
-            status: {
-              status: stat,
-              reason: this.state.reason,
-            },
-          },
+          [
+            { op: 'replace', path: '/status/status', value: stat },
+            { op: 'replace', path: '/status/reason', value: this.state.reason },
+          ],
           'PATCH',
         );
         this.handlePromise(promise).then(this.successSubmit);
