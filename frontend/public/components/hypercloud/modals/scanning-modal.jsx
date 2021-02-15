@@ -210,12 +210,7 @@ class BaseScanningModal extends PromiseComponent {
         const { kind, showNs, resource, message, modelKind } = this.props;
         const { selected, resources } = this.state;
 
-        let label;
-        if (kind === 'Registry' || modelKind?.kind === 'Registry') {
-            label = 'Image Registry';
-        } else {
-            label = kind || modelKind?.kind || resource?.kind;
-        }
+        const label = kind || modelKind?.kind || resource?.kind;
 
         const name = resource?.metadata?.name || resource?.version;
 
@@ -251,7 +246,7 @@ class BaseScanningModal extends PromiseComponent {
                                     <ResourceListDropdownWithDataToolbar
                                         resourceList={resources} // 필수
                                         showAll={true} // 드롭다운에 all resource 라는 항목이 생긴다.
-                                        resourceType="Registry" // title, placeholder, all resources, chip group 에 적용되는 문구 (title, placeholder는 직접 지정하는 것의 우선순위가 더 높음)
+                                        resourceType={label} // title, placeholder, all resources, chip group 에 적용되는 문구 (title, placeholder는 직접 지정하는 것의 우선순위가 더 높음)
                                         autocompletePlaceholder="search by name" // 검색란 placeholder
                                         onSelectedItemChange={this.onSelectedItemChange} // 선택된 아이템 리스트 변동될 때마다 호출되는 함수
                                     />
