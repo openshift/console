@@ -2,11 +2,10 @@
 
 set vm_name [lindex $argv 0]
 set vm_namespace [lindex $argv 1]
-set hostname vm-example
 set username fedora
 set password fedora
 
-set login_prompt "$hostname login: "
+set login_prompt "login: "
 set password_prompt "Password: "
 set prompt "$"
 
