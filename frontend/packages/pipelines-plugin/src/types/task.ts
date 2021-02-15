@@ -11,6 +11,7 @@ export type TaskKind = K8sResourceCommon & {
 
     steps: {
       // TODO: Figure out required fields
+      name: string;
       args?: string[];
       command?: string[];
       image?: string;

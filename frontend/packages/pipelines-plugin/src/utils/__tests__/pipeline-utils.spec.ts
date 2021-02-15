@@ -33,10 +33,10 @@ beforeAll(() => {
 });
 
 describe('pipeline-utils ', () => {
-  it('For first pipeline there should be 1 stages of length 2', () => {
+  it('For first pipeline there should be 1 stage of length 3', () => {
     const stages = getPipelineTasks(mockPipelinesJSON[0]);
     expect(stages).toHaveLength(1);
-    expect(stages[0]).toHaveLength(2);
+    expect(stages[0]).toHaveLength(3);
   });
   it('should transform pipelines', () => {
     const stages = getPipelineTasks(mockPipelinesJSON[1]);
@@ -171,7 +171,7 @@ describe('pipeline-utils ', () => {
   });
 
   it('expect pipeline without inline task spec to return false', () => {
-    const hasSpec = hasInlineTaskSpec(mockPipelinesJSON[0].spec.tasks);
+    const hasSpec = hasInlineTaskSpec(mockPipelinesJSON[1].spec.tasks);
     expect(hasSpec).toBe(false);
   });
 
