@@ -5,18 +5,7 @@ import { sortable } from '@patternfly/react-table';
 import { Status } from '@console/shared';
 import { K8sResourceKind, K8sKind } from '../../module/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from '../factory';
-import {
-  DetailsItem,
-  Kebab,
-  KebabAction,
-  detailsPage,
-  navFactory,
-  ResourceKebab,
-  ResourceLink,
-  ResourceSummary,
-  SectionHeading,
-  Timestamp,
-} from '../utils';
+import { DetailsItem, Kebab, KebabAction, detailsPage, navFactory, ResourceKebab, ResourceLink, ResourceSummary, SectionHeading, Timestamp } from '../utils';
 import { ClusterManagerModel } from '../../models';
 import { configureClusterNodesModal } from './modals';
 import { MembersPage } from './members';
@@ -33,7 +22,7 @@ const ModifyClusterNodes: KebabAction = (kind: K8sKind, obj: any) => ({
     resource: kind.plural,
     name: obj.metadata.name,
     verb: 'patch',
-  }
+  },
 });
 
 export const menuActions: KebabAction[] = [ModifyClusterNodes, ...Kebab.getExtensionsActionsForKind(ClusterManagerModel), ...Kebab.factory.common];
@@ -107,7 +96,7 @@ const ClusterTableHeader = () => {
 ClusterTableHeader.displayName = 'ClusterTableHeader';
 
 const ClusterTableRow: RowFunction<IClusterTableRow> = ({ obj: cluster, index, key, style }) => {
-  const owner = Object.keys(cluster.status.owner)[0];
+  const owner = Object.keys(cluster.status?.owner)[0];
 
   return (
     <TableRow id={cluster.metadata.uid} index={index} trKey={key} style={style}>
@@ -118,12 +107,8 @@ const ClusterTableRow: RowFunction<IClusterTableRow> = ({ obj: cluster, index, k
       <TableData className={classNames(tableColumnClasses[2])}>{cluster.spec.provider ? 'Create' : 'Enroll'}</TableData>
       <TableData className={tableColumnClasses[3]}>{cluster.status?.ready ? 'Ready' : 'Not Ready'}</TableData>
       <TableData className={tableColumnClasses[4]}>{cluster.spec.version}</TableData>
-      <TableData className={tableColumnClasses[5]}>
-        {`${cluster.status?.masterRun ?? 0} / ${cluster.spec?.masterNum ?? 0}`}
-      </TableData>
-      <TableData className={tableColumnClasses[6]}>
-        {`${cluster.status?.workerRun ?? 0} / ${cluster.spec?.workerNum ?? 0}`}
-      </TableData>
+      <TableData className={tableColumnClasses[5]}>{`${cluster.status?.masterRun ?? 0} / ${cluster.spec?.masterNum ?? 0}`}</TableData>
+      <TableData className={tableColumnClasses[6]}>{`${cluster.status?.workerRun ?? 0} / ${cluster.spec?.workerNum ?? 0}`}</TableData>
       <TableData className={tableColumnClasses[7]}>{owner}</TableData>
       <TableData className={tableColumnClasses[8]}>
         <Timestamp timestamp={cluster.metadata.creationTimestamp} />
@@ -167,7 +152,7 @@ interface KeyValuePrintProps {
 
 const KeyValuePrint: React.FC<KeyValuePrintProps> = ({ obj, key }) => {
   return <div>{`${key} / ${obj[key]}`}</div>;
-}
+};
 
 const ClusterDetails: React.FC<ClusterDetailsProps> = ({ obj: cluster }) => {
   const owner = cluster.status.owner && Object.keys(cluster.status.owner)[0];
@@ -192,7 +177,7 @@ const ClusterDetails: React.FC<ClusterDetailsProps> = ({ obj: cluster }) => {
       </div>
     </>
   );
-}
+};
 
 const { details, /* nodes, */ editYaml /*, events */ } = navFactory;
 export const Clusters: React.FC = props => <Table {...props} aria-label="Clusters" Header={ClusterTableHeader} Row={ClusterTableRow} virtualize />;
@@ -202,14 +187,23 @@ export const ClustersPage: React.FC<ClustersPageProps> = props => {
 };
 
 export const ClustersDetailsPage: React.FC<ClustersDetailsPageProps> = props => {
-  return <DetailsPage {...props} titleFunc={(obj: any) => obj.fakeMetadata.fakename} kind={kind} menuActions={menuActions}
-  pages={[details(detailsPage(ClusterDetails)), editYaml(), /* nodes(ClusterNodes),  events(ResourceEventStream) */ 
-    {
-    href: 'members',
-    name: 'Members',
-    component: pageProps => <MembersPage resource={pageProps.obj} title="Members" userHeading="Users" userGroupHeading="User Groups" />,
-    }]} 
-  />;
+  return (
+    <DetailsPage
+      {...props}
+      titleFunc={(obj: any) => obj.fakeMetadata.fakename}
+      kind={kind}
+      menuActions={menuActions}
+      pages={[
+        details(detailsPage(ClusterDetails)),
+        editYaml() /* nodes(ClusterNodes),  events(ResourceEventStream) */,
+        {
+          href: 'members',
+          name: 'Members',
+          component: pageProps => <MembersPage resource={pageProps.obj} title="Members" userHeading="Users" userGroupHeading="User Groups" />,
+        },
+      ]}
+    />
+  );
 };
 
 interface IClusterTableRow extends K8sResourceKind {
