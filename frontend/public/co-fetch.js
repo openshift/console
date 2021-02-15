@@ -204,7 +204,7 @@ const coFetchSendJSON = (url, method, json = null, options = {}, timeout) => {
   const allOptions = {
     headers: {
       Accept: 'application/json',
-      'Content-Type': `application/${method === 'PATCH' ? 'merge-patch+json;application/json-patch+json' : 'json'};charset=UTF-8`,
+      'Content-Type': `application/${method === 'PATCH' ? 'json-patch+json' : 'json'};charset=UTF-8`,
     },
   };
   if (json) {
