@@ -204,7 +204,7 @@ const Details = ({ obj: s }) => {
   return (
     <div className="co-m-pane__body">
       <div className="row">
-        <div className="col-sm-6">
+        <div className="col-md-6">
           <SectionHeading text={t('network-service~Service details')} />
           <ResourceSummary resource={s} showPodSelector>
             <DetailsItem
@@ -214,7 +214,7 @@ const Details = ({ obj: s }) => {
             />
           </ResourceSummary>
         </div>
-        <div className="col-sm-6">
+        <div className="col-md-6">
           <SectionHeading text={t('network-service~Service routing')} />
           <dl>
             <dt>{t('network-service~Service address')}</dt>
