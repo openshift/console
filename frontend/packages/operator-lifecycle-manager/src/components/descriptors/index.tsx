@@ -170,7 +170,6 @@ export const DescriptorDetailsItemList: React.FC<DescriptorDetailsItemListProps>
         };
 
         const commonProps = {
-          key: `${type}.${groupPath}`,
           model,
           obj,
           onError,
@@ -181,18 +180,24 @@ export const DescriptorDetailsItemList: React.FC<DescriptorDetailsItemListProps>
         const { isArrayGroup, descriptor, nested } = group;
         if (isArrayGroup) {
           return (
-            <div className="col-sm-6">
+            <div key={`${type}.${groupPath}`} className="col-sm-6">
               <DescriptorDetailsItemArrayGroup {...groupProps} {...commonProps} />
             </div>
           );
         }
 
         if (!_.isEmpty(nested)) {
-          return <DescriptorDetailsItemGroup {...groupProps} {...commonProps} />;
+          return (
+            <DescriptorDetailsItemGroup
+              key={`${type}.${groupPath}`}
+              {...groupProps}
+              {...commonProps}
+            />
+          );
         }
 
         return (
-          <div className="col-sm-6">
+          <div key={`${type}.${groupPath}`} className="col-sm-6">
             <DescriptorDetailsItem descriptor={descriptor} {...commonProps} />
           </div>
         );

@@ -26,6 +26,7 @@ const OBJ = {
     ...testResourceInstance.spec,
     pods: 3,
     endpoints: [{ targetPort: 80, scheme: 'TCP' }],
+    resourceRequirements: {},
     basicSelector: { matchNames: ['default'] },
     resourceLink: 'my-service',
   },
@@ -119,7 +120,11 @@ describe('Spec descriptors', () => {
   });
 
   it('renders a resource requirements control', () => {
-    descriptor['x-descriptors'] = [SpecCapability.resourceRequirements];
+    descriptor = {
+      ...descriptor,
+      path: 'resourceRequirements',
+      'x-descriptors': [SpecCapability.resourceRequirements],
+    };
     wrapper.setProps({ descriptor });
 
     expect(

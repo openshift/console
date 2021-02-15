@@ -11,6 +11,7 @@ import { Phase } from './phase';
 import { PodStatusChart } from './pods';
 import { DefaultCapability, Invalid, K8sResourceLinkCapability } from '../common';
 import { useTranslation } from 'react-i18next';
+import { isMainStatusDescriptor, getValidCapabilitiesForValue } from '../utils';
 
 const PodStatuses: React.FC<StatusCapabilityProps> = ({
   description,
@@ -145,25 +146,17 @@ const MainStatus: React.FC<StatusCapabilityProps> = ({
   label,
   obj,
   value,
-}) => {
-  return (
-    <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
-      {value === 'Running' ? <SuccessStatus title={value} /> : <Status status={value} />}
-    </DetailsItem>
-  );
-};
+}) => (
+  <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
+    {value === 'Running' ? <SuccessStatus title={value} /> : <Status status={value} />}
+  </DetailsItem>
+);
 
 export const StatusDescriptorDetailsItem: React.FC<StatusCapabilityProps> = (props) => {
-  const capability = _.get(props.descriptor, ['x-descriptors', 0], null) as StatusCapability;
-  if (props.descriptor.path === 'status' || props.descriptor.displayName === 'Status') {
-    return <MainStatus {...props} />;
-  }
+  const [capability] =
+    getValidCapabilitiesForValue<StatusCapability>(props.descriptor, props.value, true) ?? [];
 
-  if (_.isEmpty(capability)) {
-    return <DefaultCapability {...props} />;
-  }
-
-  if (capability.startsWith(StatusCapability.k8sResourcePrefix)) {
+  if (capability?.startsWith(StatusCapability.k8sResourcePrefix)) {
     return <K8sResourceLinkCapability capability={capability} {...props} />;
   }
 
@@ -183,7 +176,18 @@ export const StatusDescriptorDetailsItem: React.FC<StatusCapabilityProps> = (pro
     case StatusCapability.hidden:
       return null;
     default:
-      return <DefaultCapability {...props} />;
+      if (_.isObject(props.value)) {
+        // eslint-disable-next-line no-console
+        console.warn(
+          `[Invalid StatusDescriptor] Descriptor is incompatible with non-primitive value.`,
+          props.descriptor,
+        );
+      }
+      return isMainStatusDescriptor(props.descriptor) ? (
+        <MainStatus {...props} />
+      ) : (
+        <DefaultCapability {...props} />
+      );
   }
 };
 
