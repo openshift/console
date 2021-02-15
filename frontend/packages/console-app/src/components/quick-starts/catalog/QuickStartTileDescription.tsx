@@ -1,14 +1,22 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Text, TextVariants } from '@patternfly/react-core';
+import {
+  Button,
+  Popover,
+  Text,
+  TextList,
+  TextListItem,
+  TextVariants,
+} from '@patternfly/react-core';
+import { InfoCircleIcon } from '@patternfly/react-icons';
 
 import './QuickStartTileDescription.scss';
 
 type QuickStartTileDescriptionProps = {
   description: string;
   prerequisites?: string[];
-  unmetPrerequisite?: boolean;
 };
+
 const QuickStartTileDescription: React.FC<QuickStartTileDescriptionProps> = ({
   description,
   prerequisites,
@@ -19,16 +27,38 @@ const QuickStartTileDescription: React.FC<QuickStartTileDescriptionProps> = ({
       <Text component={TextVariants.p} className="oc-quick-start-tile-description">
         {description}
       </Text>
-      <div className="co-quick-start-tile-description">
-        {prerequisites && (
-          <>
-            <Text component={TextVariants.h5}>{t('quickstart~Prerequisites')}</Text>
-            {prerequisites.map((prerequisite) => (
-              <Text component={TextVariants.small}>{prerequisite}</Text>
-            ))}
-          </>
-        )}
-      </div>
+      {prerequisites && (
+        <div className="co-quick-start-tile-prerequisites">
+          <Text component={TextVariants.h5} className="co-quick-start-tile-prerequisites__text">
+            {t('quickstart~Prerequisites ({{totalPrereqs}})', {
+              totalPrereqs: prerequisites.length,
+            })}{' '}
+          </Text>
+          <Popover
+            aria-label="Prerequisites"
+            headerContent={<Text component={TextVariants.h5}>{t('quickstart~Prerequisites')}</Text>}
+            bodyContent={
+              <TextList aria-label="Prerequisites">
+                {prerequisites.map((prerequisite, index) => (
+                  <TextListItem key={index}>{prerequisite}</TextListItem> // eslint-disable-line react/no-array-index-key
+                ))}
+              </TextList>
+            }
+          >
+            <Button
+              variant="link"
+              isInline
+              className="co-quick-start-tile-prerequisites__icon"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+            >
+              <InfoCircleIcon />
+            </Button>
+          </Popover>
+        </div>
+      )}
     </>
   );
 };
