@@ -1,20 +1,28 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import * as _ from 'lodash';
 import { match as RouterMatch } from 'react-router';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import { Alert, Button } from '@patternfly/react-core';
-import { StorageClassResourceKind, K8sResourceKind, k8sList } from '@console/internal/module/k8s';
+import {
+  StorageClassResourceKind,
+  K8sResourceKind,
+  k8sList,
+  referenceForModel,
+} from '@console/internal/module/k8s';
 import { history, LoadingBox } from '@console/internal/components/utils';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import {
+  useK8sWatchResource,
+  WatchK8sResource,
+} from '@console/internal/components/utils/k8s-watch-hook';
 import { StorageClassModel } from '@console/internal/models';
-import { fetchK8s } from '@console/internal/graphql/client';
-import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
+import { ClusterServiceVersionModel, SubscriptionModel } from '@console/operator-lifecycle-manager';
+import { getNamespace } from '@console/shared';
 import CreateStorageClusterWizard from './install-wizard';
-import { LSOSubscriptionResource } from '../../../resources';
 import { NavUtils } from '../../../types';
 import { filterSCWithNoProv } from '../../../utils/install';
+import { getOperatorVersion } from '../../../selectors';
+import { LSO_OPERATOR } from '../../../constants';
 import './attached-devices.scss';
 
 const goToLSOInstallationPage = () =>
@@ -31,34 +39,34 @@ export const CreateAttachedDevicesCluster: React.FC<CreateAttachedDevicesCluster
 
   const { appName, ns } = match.params;
   const [hasNoProvSC, setHasNoProvSC] = React.useState(false);
-  const [isLsoPresent, setIsLsoPresent] = React.useState(false);
-  const [allDataLoaded, setAllDataLoaded] = React.useState(false);
-  const [lsoNs, setLsoNs] = React.useState('');
-  const [subscription, subscriptionLoaded, subscriptionLoadError] = useK8sWatchResource<
+  const [lsoSubscription, setLsoSubscription] = React.useState<K8sResourceKind>();
+  const isDataLoaded = React.useRef(false);
+  const lsoNs = getNamespace(lsoSubscription);
+  const lsoVersion = getOperatorVersion(lsoSubscription);
+
+  const subscriptionResource: WatchK8sResource = {
+    kind: referenceForModel(SubscriptionModel),
+    isList: true,
+  };
+  const [subscriptions, subscriptionsLoaded, subscriptionsLoadError] = useK8sWatchResource<
     K8sResourceKind[]
-  >(LSOSubscriptionResource);
+  >(subscriptionResource);
+
+  const csvResource = {
+    kind: referenceForModel(ClusterServiceVersionModel),
+    name: lsoVersion,
+    namespaced: true,
+    namespace: lsoNs,
+    isList: false,
+  };
+  const [csv, csvLoaded, csvLoadError] = useK8sWatchResource<K8sResourceKind>(csvResource);
+
+  if (subscriptionsLoaded && csvLoaded) isDataLoaded.current = true;
+  const isLsoCsvSucceeded = !!lsoNs && !!lsoVersion && csv?.status?.phase === 'Succeeded';
 
   React.useEffect(() => {
-    if (subscriptionLoadError || (!subscription.length && subscriptionLoaded)) {
-      setIsLsoPresent(false);
-      setAllDataLoaded(true);
-    } else if (subscriptionLoaded && !_.isEmpty(subscription[0])) {
-      fetchK8s(
-        ClusterServiceVersionModel,
-        subscription[0]?.status?.installedCSV,
-        subscription[0]?.metadata?.namespace,
-      )
-        .then(() => {
-          setIsLsoPresent(true);
-          setLsoNs(subscription[0]?.metadata?.namespace);
-          setAllDataLoaded(true);
-        })
-        .catch(() => {
-          setIsLsoPresent(false);
-          setAllDataLoaded(true);
-        });
-    }
-  }, [subscription, subscriptionLoaded, subscriptionLoadError]);
+    setLsoSubscription(subscriptions.find((item) => item?.spec?.name === LSO_OPERATOR));
+  }, [subscriptions]);
 
   React.useEffect(() => {
     /* this call can't be watched here as watching will take the user back to this view
@@ -73,9 +81,9 @@ export const CreateAttachedDevicesCluster: React.FC<CreateAttachedDevicesCluster
       .catch(() => setHasNoProvSC(false));
   }, [appName, ns]);
 
-  return !allDataLoaded && !subscriptionLoadError ? (
+  return !isDataLoaded.current && !subscriptionsLoadError && !csvLoadError ? (
     <LoadingBox />
-  ) : subscriptionLoadError || !isLsoPresent ? (
+  ) : subscriptionsLoadError || csvLoadError || !isLsoCsvSucceeded ? (
     <Alert
       className="co-alert ceph-ocs-install__lso-install-alert"
       variant="info"
