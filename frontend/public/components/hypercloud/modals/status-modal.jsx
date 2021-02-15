@@ -18,11 +18,13 @@ class BaseStatusModal extends PromiseComponent {
     super(props);
     this._submit = this._submit.bind(this);
     this._cancel = props.cancel.bind(this);
-    let status = _.get(props.resource, props.path.split('/').slice(1));
+    // let status = _.get(props.resource, props.path.split('/').slice(1));
+    let status = '';
     // if (status === 'Waiting') {
     //   status = 'Approved';
     // }
-    const reason = _.get(props.resource, props.reasonPath.split('/').slice(1));
+    // const reason = _.get(props.resource, props.reasonPath.split('/').slice(1));
+    const reason = '';
     this.state = Object.assign(this.state, {
       status,
       reason,
@@ -102,12 +104,12 @@ class BaseStatusModal extends PromiseComponent {
             <div className="col-sm-12">{message || ''}</div>
           </div>
           <div className="row co-m=-form-row">
-            <div className="col-sm-12" style={{ marginBottom: '15px' }}>
+            <div className="col-sm-12 approval-dropdown--short-bottom">
               {/* <select className="col-sm-12" value={this.state.status} onChange={this.onChangeApproval}>
                 <option value="Approved">Approved</option>
                 <option value="Rejected">Rejected</option>
               </select> */}
-              <Select variant={SelectVariant.single} placeholderText="Select status"  selections={this.state.status} onSelect={this.onSelect} onToggle={this.onToggle} isExpanded={this.state.isOptionsOpen} isDisabled={false}>
+              <Select variant={SelectVariant.single} placeholderText="Select status" selections={this.state.status} onSelect={this.onSelect} onToggle={this.onToggle} isExpanded={this.state.isOptionsOpen} isDisabled={false}>
                 {this.options.map((option, index) => (
                   <SelectOption isDisabled={option.disabled} key={index} value={option.value} />
                 ))}
@@ -116,7 +118,7 @@ class BaseStatusModal extends PromiseComponent {
             <div className="col-sm-12">
               <textarea className="col-sm-12 pf-c-form-control query-browser__query-input" style={{ height: '100px' }} onChange={this.onChangeReason} value={this.state.reason} />
             </div>
-            <div className="col-sm-12">Please enter a reason for refusal.</div>
+            <div className="col-sm-12">Please enter a reason.</div>
           </div>
         </ModalBody>
         <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitText="Confirm" cancel={this._cancel} />
