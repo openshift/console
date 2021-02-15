@@ -9,7 +9,8 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Dashboards/Overview/Health/Prometheus',
     properties: {
-      title: 'Insights',
+      // t('insights-plugin~Insights')
+      title: '%insights-plugin~Insights%',
       queries: [
         "health_statuses_insights{metric=~'low|moderate|important|critical'}",
         'insightsclient_request_send_total',
@@ -26,7 +27,8 @@ const plugin: Plugin<ConsumedExtensions> = [
         import('./components/InsightsPopup/index' /* webpackChunkName: "insights-plugin" */).then(
           (m) => m.InsightsPopup,
         ),
-      popupTitle: 'Insights status',
+      // t('insights-plugin~Insights status')
+      popupTitle: '%insights-plugin~Insights status%',
     },
   },
 ];

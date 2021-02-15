@@ -347,7 +347,8 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Dashboards/Overview/Health/Operator',
     properties: {
-      title: 'Operators',
+      // t('olm~Operators')
+      title: '%olm~Operators%',
       resources: [
         {
           kind: referenceForModel(models.ClusterServiceVersionModel),
