@@ -240,15 +240,15 @@ class AuditPage_ extends React.Component {
     // 리소스 타입 선택에 따라 액션 드롭다운 항목 설정
     if (e === 'all') {
       this.setState({
-        actionList: { all: '전체 액션' },
+        actionList: { all: 'All Actions' },
       });
     } else if (e === 'users') {
       this.setState({
-        actionList: { all: '전체 액션', create: 'Create', delete: 'Delete', patch: 'Patch', update: 'Update', login: 'Login', logout: 'Logout' },
+        actionList: { all: 'All Actions', create: 'Create', delete: 'Delete', patch: 'Patch', update: 'Update', login: 'Login', logout: 'Logout' },
       });
     } else {
       this.setState({
-        actionList: { all: '전체 액션', create: 'Create', delete: 'Delete', patch: 'Patch', update: 'Update' },
+        actionList: { all: 'All Actions', create: 'Create', delete: 'Delete', patch: 'Patch', update: 'Update' },
       });
     }
     const search = getQueryArgument('user');
@@ -687,7 +687,7 @@ class AuditPage_ extends React.Component {
               <DatePicker className="co-datepicker" placeholderText="To" startDate={start} endDate={end} selected={end} onChange={this.onChangeEndDate} minDate={start} maxDate={new Date()} />
             </div>
             <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
-              <TextFilter id="audit" label="검색" autoFocus={true} onChange={this.onSearch} />
+              <TextFilter id="audit" label="User Account" autoFocus={true} onChange={this.onSearch} />
             </div>
           </div>
           <AuditList {...this.props} textFilter={textFilter} data={data} />
