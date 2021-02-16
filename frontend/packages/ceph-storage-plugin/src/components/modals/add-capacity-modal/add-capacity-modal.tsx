@@ -28,6 +28,7 @@ import { createDeviceSet } from '../../ocs-install/ocs-request-data';
 import { cephCapacityResource } from '../../../constants/resources';
 import { DeviceSet } from '../../../types';
 import './_add-capacity-modal.scss';
+import { checkArbiterCluster, checkFlexibleScaling } from '../../../utils/common';
 
 const getProvisionedCapacity = (value: number) => (value % 1 ? (value * 3).toFixed(2) : value * 3);
 
@@ -52,8 +53,8 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
   const isNoProvionerSC: boolean = storageClass?.provisioner === NO_PROVISIONER;
   const selectedSCName: string = getName(storageClass);
   const deviceSetIndex: number = getCurrentDeviceSetIndex(deviceSets, selectedSCName);
-  const hasFlexibleScaling = ocsConfig?.spec?.flexibleScaling;
-  const isArbiterEnabled: boolean = ocsConfig?.spec?.arbiter?.enable;
+  const hasFlexibleScaling = checkFlexibleScaling(ocsConfig);
+  const isArbiterEnabled: boolean = checkArbiterCluster(ocsConfig);
   const replica = isArbiterEnabled ? OCS_DEVICE_SET_ARBITER_REPLICA : OCS_DEVICE_SET_REPLICA;
   const name = getName(ocsConfig);
 

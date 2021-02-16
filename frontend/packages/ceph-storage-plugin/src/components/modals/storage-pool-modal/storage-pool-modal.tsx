@@ -28,17 +28,19 @@ import {
   withHandlePromise,
 } from '@console/internal/components/utils/promise-component';
 import { k8sCreate } from '@console/internal/module/k8s/resource';
-import { referenceForModel, apiVersionForModel } from '@console/internal/module/k8s';
+import { referenceForModel, apiVersionForModel, ListKind } from '@console/internal/module/k8s';
 import {
   useK8sWatchResource,
   WatchK8sResource,
 } from '@console/internal/components/utils/k8s-watch-hook';
+import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 
-import { CephClusterKind, StoragePoolKind } from '../../../types';
-import { CephBlockPoolModel } from '../../../models';
+import { CephClusterKind, StoragePoolKind, StorageClusterKind } from '../../../types';
+import { CephBlockPoolModel, OCSServiceModel } from '../../../models';
 import { CEPH_STORAGE_NAMESPACE, OCS_DEVICE_REPLICA } from '../../../constants/index';
 import { PROGRESS_STATUS } from '../../../utils/storage-pool';
 import { SECOND } from '../../../../integration-tests/utils/consts';
+import { checkArbiterCluster } from '../../../utils/common';
 import {
   POOL_STATE,
   POOL_PROGRESS,
@@ -84,6 +86,7 @@ export const StoragePoolModal = withHandlePromise((props: StoragePoolModalProps)
   /* TODO: use reducer */
   const [isSubmit, setIsSubmit] = React.useState(false);
   const [timer, setTimer] = React.useState<NodeJS.Timer>(null);
+  const [isArbiterCluster, setArbiterCluster] = React.useState(false);
 
   /* Not to be exposed for 4.6
   const [isPerfObjOpen, setPerfObjOpen] = React.useState(false);
@@ -121,20 +124,33 @@ export const StoragePoolModal = withHandlePromise((props: StoragePoolModalProps)
     }
   }, [isSubmit, newPool, newPoolLoadError, newPoolLoaded, timer]);
 
-  const replicaDropdownItems = _.keys(OCS_DEVICE_REPLICA).map((replica) => {
-    return (
-      <DropdownItem
-        key={`replica-${OCS_DEVICE_REPLICA[replica]}`}
-        component="button"
-        id={replica}
-        data-test-id={replica}
-        onClick={(e) => setReplicaSize(e.currentTarget.id)}
-      >
-        {t('ceph-storage-plugin~{{replica}} Replication', { replica: OCS_DEVICE_REPLICA[replica] })}
-      </DropdownItem>
-    );
-  });
+  const [storageCluster, storageClusterLoaded, storageClusterLoadError] = useK8sGet<
+    ListKind<StorageClusterKind>
+  >(OCSServiceModel, null, CEPH_STORAGE_NAMESPACE);
 
+  React.useEffect(() => {
+    setArbiterCluster(checkArbiterCluster(storageCluster?.items[0]));
+    if (isArbiterCluster) {
+      setReplicaSize('4');
+    }
+  }, [storageCluster, storageClusterLoaded, storageClusterLoadError, isArbiterCluster]);
+
+  const replicaList: string[] = _.keys(OCS_DEVICE_REPLICA).filter(
+    (replica: string) =>
+      (isArbiterCluster && replica === '4') || (!isArbiterCluster && replica !== '4'),
+  );
+
+  const replicaDropdownItems = replicaList.map((replica) => (
+    <DropdownItem
+      key={`replica-${OCS_DEVICE_REPLICA[replica]}`}
+      component="button"
+      id={replica}
+      data-test-id={replica}
+      onClick={(e) => setReplicaSize(e.currentTarget.id)}
+    >
+      {t('ceph-storage-plugin~{{replica}} Replication', { replica: OCS_DEVICE_REPLICA[replica] })}
+    </DropdownItem>
+  ));
   /* Not to be exposed for 4.6
   const availableDeviceClasses = cephClusterObj[0]?.status?.storage?.deviceClasses.map((device) => {
     return (
@@ -286,6 +302,7 @@ export const StoragePoolModal = withHandlePromise((props: StoragePoolModalProps)
                     data-test="replica-dropdown"
                     onToggle={() => setReplicaOpen(!isReplicaOpen)}
                     toggleIndicator={CaretDownIcon}
+                    isDisabled={isArbiterCluster}
                   >
                     {replicaSize
                       ? t('ceph-storage-plugin~{{replica}} Replication', {
