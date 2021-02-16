@@ -128,7 +128,7 @@ export const PipelineResourceListFilterLabels = {
  * @param pipeline
  * @param pipelineRun
  */
-const appendPipelineRunStatus = (pipeline, pipelineRun) => {
+export const appendPipelineRunStatus = (pipeline, pipelineRun) => {
   return _.map(pipeline.spec.tasks, (task) => {
     if (!pipelineRun.status) {
       return task;
@@ -151,6 +151,8 @@ const appendPipelineRunStatus = (pipeline, pipelineRun) => {
       mTask.status = { reason: runStatus.Idle };
     } else if (mTask.status && mTask.status.conditions) {
       mTask.status.reason = pipelineRunStatus(mTask) || runStatus.Idle;
+    } else if (mTask.status && !mTask.status.reason) {
+      mTask.status.reason = runStatus.Idle;
     }
     return mTask;
   });
