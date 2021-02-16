@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useField } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { ActionsMenu, ResourceIcon } from '@console/internal/components/utils';
+import { ActionsMenu, ResourceIcon, CloseButton } from '@console/internal/components/utils';
 import { referenceFor } from '@console/internal/module/k8s';
 import { getResourceModelFromTaskKind } from '../../../../utils/pipeline-augment';
 import {
@@ -26,6 +26,7 @@ type TaskSidebarProps = {
   resourceList: TektonResource[];
   selectedPipelineTaskIndex: number;
   taskResource: TaskKind;
+  onClose: () => void;
 };
 
 const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
@@ -35,6 +36,7 @@ const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
     resourceList,
     selectedPipelineTaskIndex,
     taskResource,
+    onClose,
   } = props;
   const { t } = useTranslation();
   const formikTaskReference = `formData.tasks.${selectedPipelineTaskIndex}`;
@@ -77,6 +79,9 @@ const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
 
   return (
     <div className="odc-task-sidebar">
+      <div className="co-sidebar-dismiss clearfix">
+        <CloseButton onClick={onClose} />
+      </div>
       <div className="odc-task-sidebar__header">
         <h1 className="co-m-pane__heading">
           <div className="co-m-pane__name co-resource-item">

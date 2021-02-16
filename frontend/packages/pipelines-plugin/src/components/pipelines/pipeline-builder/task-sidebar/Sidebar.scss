@@ -20,10 +20,6 @@ $overview-sidebar-width: 550px;
     max-width: $overview-sidebar-width;
   }
 
-  &__content {
-    padding: var(--pf-global--spacer--lg) 0;
-  }
-
   // CSSTransitionGroup classes
   &-appear { // start in
     opacity: 0;
