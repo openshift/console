@@ -12,6 +12,7 @@ import Dashboard from '@console/shared/src/components/dashboard/Dashboard';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
+import DashboardCardLink from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 
@@ -293,64 +294,21 @@ export const PollIntervalDropdown = connect(
   },
 )(PollIntervalDropdown_);
 
-// Matches Prometheus labels surrounded by {{ }} in the graph legend label templates
-const legendTemplateOptions = { interpolate: /{{([a-zA-Z_][a-zA-Z0-9_]*)}}/g };
+const QueryBrowserLink = ({ queries }) => {
+  const { t } = useTranslation();
 
-const CardBody_: React.FC<CardBodyProps> = ({ panel, pollInterval, timespan, variables }) => {
-  const formatLegendLabel = React.useCallback(
-    (labels, i) => {
-      const legendFormat = panel.targets?.[i]?.legendFormat;
-      const compiled = _.template(legendFormat, legendTemplateOptions);
-      try {
-        return compiled(labels);
-      } catch (e) {
-        // If we can't format the label (e.g. if one of it's variables is missing from `labels`),
-        // show the template string instead
-        return legendFormat;
-      }
-    },
-    [panel],
-  );
-
-  const variablesJS: VariablesMap = variables.toJS();
-
-  const rawQueries = _.map(panel.targets, 'expr');
-  if (!rawQueries.length) {
-    return null;
-  }
-  const queries = rawQueries.map((expr) => evaluateTemplate(expr, variablesJS, timespan));
-
-  if (_.some(queries, _.isUndefined)) {
-    return <LoadingInline />;
-  }
+  const params = new URLSearchParams();
+  queries.forEach((q, i) => params.set(`query${i}`, q));
 
   return (
-    <>
-      {panel.type === 'grafana-piechart-panel' && (
-        <BarChart pollInterval={pollInterval} query={queries[0]} />
-      )}
-      {panel.type === 'graph' && (
-        <Graph
-          formatLegendLabel={panel.legend?.show ? formatLegendLabel : undefined}
-          isStack={panel.stack}
-          pollInterval={pollInterval}
-          queries={queries}
-        />
-      )}
-      {panel.type === 'singlestat' && (
-        <SingleStat panel={panel} pollInterval={pollInterval} query={queries[0]} />
-      )}
-      {panel.type === 'table' && (
-        <Table panel={panel} pollInterval={pollInterval} queries={queries} />
-      )}
-    </>
+    <DashboardCardLink
+      aria-label={t('public~Inspect')}
+      to={`/monitoring/query-browser?${params.toString()}`}
+    >
+      {t('public~Inspect')}
+    </DashboardCardLink>
   );
 };
-const CardBody = connect(({ UI }: RootState) => ({
-  pollInterval: UI.getIn(['monitoringDashboards', 'pollInterval']),
-  timespan: UI.getIn(['monitoringDashboards', 'timespan']),
-  variables: UI.getIn(['monitoringDashboards', 'variables']),
-}))(CardBody_);
 
 // Determine how many columns a panel should span. If panel specifies a `span`, use that. Otherwise
 // look for a `breakpoint` percentage. If neither are specified, default to 12 (full width).
@@ -383,7 +341,25 @@ const getPanelClassModifier = (panel: Panel): string => {
   }
 };
 
-const Card: React.FC<CardProps> = ({ panel }) => {
+// Matches Prometheus labels surrounded by {{ }} in the graph legend label templates
+const legendTemplateOptions = { interpolate: /{{([a-zA-Z_][a-zA-Z0-9_]*)}}/g };
+
+const Card_: React.FC<CardProps> = ({ panel, pollInterval, timespan, variables }) => {
+  const formatLegendLabel = React.useCallback(
+    (labels, i) => {
+      const legendFormat = panel.targets?.[i]?.legendFormat;
+      const compiled = _.template(legendFormat, legendTemplateOptions);
+      try {
+        return compiled(labels);
+      } catch (e) {
+        // If we can't format the label (e.g. if one of it's variables is missing from `labels`),
+        // show the template string instead
+        return legendFormat;
+      }
+    },
+    [panel],
+  );
+
   if (panel.type === 'row') {
     return (
       <>
@@ -398,6 +374,15 @@ const Card: React.FC<CardProps> = ({ panel }) => {
     return null;
   }
 
+  const variablesJS: VariablesMap = variables.toJS();
+
+  const rawQueries = _.map(panel.targets, 'expr');
+  if (!rawQueries.length) {
+    return null;
+  }
+  const queries = rawQueries.map((expr) => evaluateTemplate(expr, variablesJS, timespan));
+  const isLoading = _.some(queries, _.isUndefined);
+
   const panelClassModifier = getPanelClassModifier(panel);
 
   return (
@@ -410,14 +395,42 @@ const Card: React.FC<CardProps> = ({ panel }) => {
       >
         <DashboardCardHeader className="monitoring-dashboards__card-header">
           <DashboardCardTitle>{panel.title}</DashboardCardTitle>
+          {!isLoading && <QueryBrowserLink queries={queries} />}
         </DashboardCardHeader>
         <DashboardCardBody className="co-dashboard-card__body--dashboard-graph">
-          <CardBody panel={panel} />
+          {isLoading ? (
+            <LoadingInline />
+          ) : (
+            <>
+              {panel.type === 'grafana-piechart-panel' && (
+                <BarChart pollInterval={pollInterval} query={queries[0]} />
+              )}
+              {panel.type === 'graph' && (
+                <Graph
+                  formatLegendLabel={panel.legend?.show ? formatLegendLabel : undefined}
+                  isStack={panel.stack}
+                  pollInterval={pollInterval}
+                  queries={queries}
+                />
+              )}
+              {panel.type === 'singlestat' && (
+                <SingleStat panel={panel} pollInterval={pollInterval} query={queries[0]} />
+              )}
+              {panel.type === 'table' && (
+                <Table panel={panel} pollInterval={pollInterval} queries={queries} />
+              )}
+            </>
+          )}
         </DashboardCardBody>
       </DashboardCard>
     </div>
   );
 };
+const Card = connect(({ UI }: RootState) => ({
+  pollInterval: UI.getIn(['monitoringDashboards', 'pollInterval']),
+  timespan: UI.getIn(['monitoringDashboards', 'timespan']),
+  variables: UI.getIn(['monitoringDashboards', 'variables']),
+}))(Card_);
 
 const Board: React.FC<BoardProps> = ({ rows }) => (
   <>
@@ -640,15 +653,11 @@ type TimespanDropdownProps = {
   setTimespan: (v: number) => never;
 };
 
-type CardBodyProps = {
+type CardProps = {
   panel: Panel;
   pollInterval: null | number;
   timespan: number;
   variables: ImmutableMap<string, ImmutableMap<string, any>>;
-};
-
-type CardProps = {
-  panel: Panel;
 };
 
 type MonitoringDashboardsPageProps = {

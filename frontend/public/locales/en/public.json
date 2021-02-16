@@ -256,6 +256,7 @@
   "{{count}} week_plural": "{{count}} weeks",
   "Time range": "Time range",
   "Refresh interval": "Refresh interval",
+  "Inspect": "Inspect",
   "Could not parse JSON data for dashboard \"{{dashboard}}\"": "Could not parse JSON data for dashboard \"{{dashboard}}\"",
   "Metrics dashboards": "Metrics dashboards",
   "Dashboards": "Dashboards",
