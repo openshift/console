@@ -8,15 +8,15 @@ import { BackingStoreKind, BucketClassKind, PlacementPolicy } from './types';
 import { TFunction } from 'i18next';
 
 export const filterNooBaaAlerts = (alerts: Alert[]): Alert[] =>
-  alerts.filter((alert) => _.get(alert, 'annotations.storage_type') === 'NooBaa');
+  alerts.filter((alert) => alert?.annotations?.storage_type === 'NooBaa');
 
 export const filterRGWAlerts = (alerts: Alert[]): Alert[] =>
   alerts.filter((alert) => alert?.annotations?.storage_type === 'RGW');
 
-export const getGaugeValue = (data) => _.get(data, 'data.result[0].value[1]');
+export const getGaugeValue = (data) => data?.data?.result?.[0]?.value?.[1];
 
 export const getMetric = (result: PrometheusResponse, metric: string): string =>
-  _.get(result, ['data', 'result', '0', 'metric', metric], null);
+  result?.data?.result?.[0]?.metric?.[metric];
 
 export type PrometheusMetricResult = {
   metric: { [key: string]: any };
@@ -24,7 +24,7 @@ export type PrometheusMetricResult = {
 };
 
 export const getPhase = (obj: K8sResourceKind): string => {
-  return _.get(obj, 'status.phase', 'Lost');
+  return obj?.status?.phase ?? 'Lost';
 };
 
 export const isBound = (obj: K8sResourceKind): boolean => getPhase(obj) === 'Bound';

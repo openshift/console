@@ -25,20 +25,21 @@ import {
   k8sPatch,
   K8sResourceKind,
   referenceFor,
+  DeploymentKind,
 } from '@console/internal/module/k8s/';
 import { getName } from '@console/shared';
 
 const AttachDeploymentToOBCModal = withHandlePromise((props: AttachDeploymentToOBCModalProps) => {
   const { t } = useTranslation();
-  const [requestDeployment, setRequestedDeployment] = React.useState({});
+  const [requestDeployment, setRequestedDeployment] = React.useState<DeploymentKind>();
   const [deploymentObjects, setDeployments] = React.useState({});
   const [deploymentNames, setDeploymentNames] = React.useState({});
   const { handlePromise, close, cancel, resource, deployments } = props;
 
   const obcName = getName(resource);
-  const deploymentData = _.get(deployments, 'data');
-  const inProgress = _.get(props, 'loaded');
-  const errorMessage = _.get(props, 'loadError');
+  const deploymentData = deployments?.data;
+  const inProgress = props?.inProgress;
+  const errorMessage = props?.errorMessage;
 
   React.useEffect(() => {
     const deploymentObjectList = {};
@@ -66,11 +67,7 @@ const AttachDeploymentToOBCModal = withHandlePromise((props: AttachDeploymentToO
       },
     };
 
-    const containers: ContainerSpec[] = _.get(
-      requestDeployment,
-      'spec.template.spec.containers',
-      [],
-    );
+    const containers: ContainerSpec[] = requestDeployment?.spec?.template?.spec?.containers ?? [];
     const patches = containers.reduce((patch, container, i) => {
       if (_.isEmpty(container.envFrom)) {
         patch.push({

@@ -36,7 +36,7 @@ export const numberInWords = (unit: string, t: TFunction): string => {
 };
 
 const getMaxVal: GetMaxVal = (response, humanize) => {
-  const result: PrometheusResponse['data']['result'] = _.get(response, 'data.result', []);
+  const result: PrometheusResponse['data']['result'] = response?.data?.result ?? [];
   let maxVal = { unit: '', value: 0, string: '' };
   if (result.length) {
     maxVal = humanize(_.maxBy(result, (r) => Number(r.value[1])).value[1]);
@@ -45,10 +45,10 @@ const getMaxVal: GetMaxVal = (response, humanize) => {
 };
 
 export const getChartData: GetChartData = (response, metric, humanize, unit, name) => {
-  const result = _.get(response, 'data.result', []);
+  const result = response?.data?.result ?? [];
   return result.map((r) => {
-    const x = _.get(r, ['metric', metric], '');
-    const y = parseFloat(_.get(r, 'value[1]'));
+    const x = r?.metric?.metric ?? '';
+    const y = parseFloat(r?.value?.[1]);
     let val = name;
     if (!name) val = x; // For Egress, which have the legend name(name) as providers name(x)
     return {

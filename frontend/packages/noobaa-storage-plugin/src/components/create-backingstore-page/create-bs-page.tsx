@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import * as _ from 'lodash';
 import { RouteComponentProps } from 'react-router';
 import { Alert, AlertActionCloseButton, Title } from '@patternfly/react-core';
 import { history } from '@console/internal/components/utils/router';
@@ -35,11 +34,9 @@ const CreateBackingStoreFormPage: React.FC<CreateBackingStoreFormPageProps> = ({
           <BreadCrumbs
             breadcrumbs={[
               {
-                name: _.get(
-                  clusterServiceVersion,
-                  'spec.displayName',
+                name:
+                  clusterServiceVersion?.spec?.displayName ??
                   'Openshift Container Storage Operator',
-                ),
                 path: resourcePathFromModel(ClusterServiceVersionModel, appName, ns),
               },
               { name: t('noobaa-storage-plugin~Create Backing Store'), path: match.url },

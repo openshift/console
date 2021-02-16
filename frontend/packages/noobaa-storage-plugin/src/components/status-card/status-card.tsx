@@ -141,7 +141,7 @@ const StatusCard: React.FC<DashboardItemProps> = ({
 
   const rgwResiliencyError = prometheusResults.getIn([rgwResiliencyQuery, 'loadError']);
 
-  const noobaa = _.get(resources, 'noobaa') as FirehoseResult;
+  const noobaa = resources?.noobaa as FirehoseResult;
   const rgw = resources?.rgw?.data?.[0];
 
   const MCGState = getNooBaaState(

@@ -1,6 +1,5 @@
 import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
-import * as _ from 'lodash';
 import * as React from 'react';
 import { ResourceEventStream } from '@console/internal/components/events';
 import {
@@ -46,7 +45,7 @@ const tableColumnClasses = [
 ];
 
 const OBCTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }) => {
-  const storageClassName = _.get(obj, 'spec.storageClassName');
+  const storageClassName = obj?.spec?.storageClassName;
 
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
@@ -92,7 +91,7 @@ const OBCTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }) =
 
 const Details: React.FC<DetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
-  const storageClassName = _.get(obj, 'spec.storageClassName');
+  const storageClassName = obj?.spec?.storageClassName;
 
   return (
     <>
@@ -201,14 +200,14 @@ const ObjectBucketClaimsList: React.FC = (props) => {
   );
 };
 
-export const ObjectBucketClaimsPage: React.FC = (props) => {
+export const ObjectBucketClaimsPage: React.FC<ObjectBucketClaimsPageProps> = (props) => {
   const { t } = useTranslation();
 
   const createProps = {
     to: `${resourcePathFromModel(
       NooBaaObjectBucketClaimModel,
       null,
-      _.get(props, 'namespace', 'default'),
+      props?.namespace ?? 'default',
     )}/~new/form`,
   };
   return (
@@ -244,4 +243,8 @@ type OBCStatusProps = {
 
 type DetailsProps = {
   obj: K8sResourceKind;
+};
+
+type ObjectBucketClaimsPageProps = {
+  namespace: string;
 };

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import * as _ from 'lodash';
 import * as classNames from 'classnames';
 import { Status } from '@console/shared';
 import {
@@ -55,9 +54,7 @@ const OBTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }) =>
       <TableData className={classNames(tableColumnClasses[1])}>
         <OBStatus ob={obj} />
       </TableData>
-      <TableData className={tableColumnClasses[2]}>
-        {_.get(obj, 'spec.storageClassName', '-')}
-      </TableData>
+      <TableData className={tableColumnClasses[2]}>{obj?.spec?.storageClassName ?? '-'};</TableData>
       <TableData className={tableColumnClasses[3]}>
         <ResourceKebab actions={menuActions} kind={kind} resource={obj} />
       </TableData>
@@ -68,11 +65,8 @@ const OBTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, style }) =>
 const Details: React.FC<DetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
 
-  const storageClassName = _.get(obj, 'spec.storageClassName');
-  const [OBCName, OBCNamespace] = [
-    _.get(obj, 'spec.claimRef.name'),
-    _.get(obj, 'spec.claimRef.namespace'),
-  ];
+  const storageClassName = obj?.spec?.storageClassName;
+  const [OBCName, OBCNamespace] = [obj?.spec?.claimRef?.name, obj?.spec?.claimRef?.namespace];
   return (
     <>
       <div className="co-m-pane__body">

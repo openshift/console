@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import * as _ from 'lodash';
 import { getInfrastructurePlatform } from '@console/shared';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
@@ -77,8 +76,8 @@ export const ObjectServiceDetailsCard: React.FC<DashboardItemProps> = ({
 
   const infrastructurePlatform = getInfrastructurePlatform(infrastructure);
 
-  const subscription = _.get(resources, 'subscription') as FirehoseResult;
-  const subscriptionLoaded = _.get(subscription, 'loaded');
+  const subscription = resources?.subscription as FirehoseResult;
+  const subscriptionLoaded = subscription?.loaded;
   const ocsVersion = getOCSVersion(subscription);
 
   const hasRGW = useFlag(RGW_FLAG);

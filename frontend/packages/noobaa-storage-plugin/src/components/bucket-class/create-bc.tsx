@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import * as _ from 'lodash';
 import { RouteComponentProps } from 'react-router';
 import { Title, Wizard } from '@patternfly/react-core';
 import {
@@ -136,11 +135,9 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
           <BreadCrumbs
             breadcrumbs={[
               {
-                name: _.get(
-                  clusterServiceVersion,
-                  'spec.displayName',
+                name:
+                  clusterServiceVersion?.spec?.displayName ??
                   'Openshift Container Storage Operator',
-                ),
                 path: resourcePathFromModel(ClusterServiceVersionModel, appName, ns),
               },
               {

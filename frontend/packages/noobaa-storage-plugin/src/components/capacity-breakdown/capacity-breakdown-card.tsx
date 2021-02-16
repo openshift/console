@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import * as _ from 'lodash';
 import { Select, SelectGroup, SelectOption, SelectProps } from '@patternfly/react-core';
 import { FirehoseResource, humanizeBinaryBytes } from '@console/internal/components/utils';
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
@@ -159,11 +158,9 @@ const BreakdownCard: React.FC = () => {
   const ocsVersion =
     loaded && !loadError
       ? (() => {
-          const operator = _.find(
-            subscription,
-            (item) => _.get(item, 'spec.name') === OCS_OPERATOR,
-          );
-          return _.get(operator, 'status.installedCSV');
+          return subscription?.spec?.name === OCS_OPERATOR
+            ? subscription?.status?.installedCSV
+            : '';
         })()
       : '';
 

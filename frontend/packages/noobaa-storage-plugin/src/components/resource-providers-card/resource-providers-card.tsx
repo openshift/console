@@ -22,17 +22,15 @@ const RESOURCE_PROVIDERS_QUERY = {
   RESOURCES_LINK_QUERY: 'NooBaa_system_links',
 };
 
-const getProviderType = (provider: ProviderPrometheusData): string =>
-  _.get(provider, 'metric.type', null);
-const getProviderCount = (provider: ProviderPrometheusData): number =>
-  Number(_.get(provider, 'value[1]', null));
+const getProviderType = (provider: ProviderPrometheusData): string => provider?.metric?.type;
+const getProviderCount = (provider: ProviderPrometheusData): number => Number(provider?.value?.[1]);
 
 const filterProviders = (allProviders: ProviderType): string[] => {
   return _.keys(allProviders).filter((provider) => allProviders[provider] > 0);
 };
 
 const createProvidersList = (data: PrometheusResponse): ProviderType => {
-  const providers = _.get(data, 'data.result', null);
+  const providers = data?.data?.result;
   const providersList: ProviderType = {};
   if (_.isNil(providers)) return {};
   providers.forEach((provider) => {

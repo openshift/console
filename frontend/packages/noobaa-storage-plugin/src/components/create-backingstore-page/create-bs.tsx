@@ -354,7 +354,7 @@ const GCPEndpointType: React.FC<GCPEndPointTypeProps> = (props) => {
     const file = event.target.files[0];
     const reader = new FileReader();
     reader.onload = (ev) => {
-      const data = _.get(ev, 'target.result');
+      const data = ev?.target?.result as string;
       setFileData(data);
       setInputData(file.name);
       dispatch({ type: 'setGcpJSON', value: data });
