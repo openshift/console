@@ -1,24 +1,18 @@
-import * as _ from 'lodash';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { ServiceKind } from '@console/knative-plugin/src/types';
-import { VMIKind } from '../../types';
 import { getLabels } from '@console/shared';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 
-export const getServicePort = (service: K8sResourceKind, targetPort: number) =>
-  _.get(service, ['spec', 'ports'], []).find(
-    (servicePort) => targetPort === servicePort.targetPort,
-  );
+import { VMIKind } from '../../types';
 
-const getServiceSelectors = (service: ServiceKind) =>
-  service && service.spec && service.spec.selector ? service.spec.selector : {};
+export const getServicePort = (
+  service: K8sResourceKind,
+  targetPort: number,
+): { protocol: string; port: number; targetPort: number; nodePort?: number } =>
+  service?.spec?.ports?.find((servicePort) => targetPort === servicePort.targetPort);
 
-export const getServicesForVmi = (services: ServiceKind[], vmi: VMIKind): ServiceKind[] => {
+export const getServicesForVmi = (services: K8sResourceKind[], vmi: VMIKind): K8sResourceKind[] => {
   const vmLabels = getLabels(vmi, {});
   return services.filter((service) => {
-    const selectors = getServiceSelectors(service);
-    const selectorKeys = Object.keys(selectors);
-    return selectorKeys.length > 0
-      ? selectorKeys.every((key) => vmLabels[key] === selectors[key])
-      : false;
+    const selectors = service?.spec?.selector || {};
+    return Object.keys(selectors).every((key) => vmLabels[key] === selectors[key]);
   });
 };

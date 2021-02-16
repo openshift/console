@@ -23,7 +23,7 @@ import {
   VM_DETAIL_CONSOLES_HREF,
 } from '../../constants';
 import { VMEvents } from './vm-events';
-import { VMConsoleFirehose } from './vm-console';
+import VMConsoleDetailsPage from './vm-console/VMConsoleDetailsPage';
 import { VMDetailsFirehose } from './vm-details';
 import { vmMenuActionsCreator } from './menu-actions';
 import { VMDashboard } from './vm-dashboard';
@@ -73,7 +73,7 @@ export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProp
   const consolePage = {
     href: VM_DETAIL_CONSOLES_HREF,
     name: t('kubevirt-plugin~Console'),
-    component: VMConsoleFirehose,
+    component: VMConsoleDetailsPage,
   };
 
   const nicsPage = {

@@ -1,10 +1,10 @@
 import { $, $$, element, by, browser, ExpectedConditions as until, Key } from 'protractor';
 import { PAGE_LOAD_TIMEOUT_SECS } from '../tests/utils/constants/common';
 
-export const consoleTypeSelectorId = '#console-type-selector';
+export const consoleTypeSelectorId = '#pf-c-console__type-selector';
 export const openInNewWindow = element(by.buttonText('Open Console in new Window'));
 export const consoleTypeSelector = $(consoleTypeSelectorId);
-export const rdpServiceNotConfiguredElem = $('.kubevirt-vm-consoles__rdp'); // this class is used just for this informative elemenet
+export const rdpServiceNotConfiguredElem = $('[data-test="rdp-console-desc"]');
 export const networkSelectorId = '#network-dropdown';
 
 export const desktopClientTitle = $('.remote-viewer-pf > h2');
@@ -15,14 +15,12 @@ export const manualConnectionTitle = $('.manual-connection-pf > h2');
 export const rdpManualConnectionTitles = $$('.manual-connection-pf-title'); // first for address, second for port
 export const rdpManualConnectionValues = $$('.manual-connection-pf-value');
 
-export const vncConnectingBar = $('.vnc-console-connecting');
-export const vncSendKeyButton = $('#console-send-shortcut');
-export const vncConsole = $('div.vnc-console canvas');
+export const vncSendKeyButton = $('#pf-c-console__actions-vnc-toggle-id');
+export const vncConsole = $('div.pf-c-console__vnc canvas');
 
 export const serialConsole = $('.xterm-cursor-layer');
-export const serialConsoleWrapper = $('.console-terminal-pf');
 export const serialDisconnectButton = element(by.buttonText('Disconnect'));
-export const serialReconnectButton = element(by.buttonText('Reconnect'));
+export const serialResetButton = element(by.buttonText('Reset'));
 export const serialConnectButton = element(by.buttonText('Connect'));
 
 const terminalInteractionTimeout = 200;

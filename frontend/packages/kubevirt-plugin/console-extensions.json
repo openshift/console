@@ -16,8 +16,8 @@
       "type": "console.page/route/standalone",
       "properties": {
         "exact": false,
-        "path": "/standalone/k8s/ns/:ns/virtualmachineinstances/:name/console",
-        "component": { "$codeRef": "standaloneConsole.VMConsolePage" }
+        "path": "/k8s/ns/:ns/virtualmachineinstances/:name/standaloneconsole",
+        "component": { "$codeRef": "standaloneConsole" }
       }
     }
   ]
