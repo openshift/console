@@ -8,6 +8,7 @@ import {
   getInitialValues,
   getExternalImagelValues,
   getServerlessData,
+  getKsvcRouteData,
 } from '../edit-application-utils';
 import { GitImportFormData, Resources } from '../../import/import-types';
 import {
@@ -174,5 +175,52 @@ describe('Edit Application Utils', () => {
       const serverlessData = getServerlessData(knativeServiceData);
       expect(serverlessData).toEqual(expectedValue);
     });
+  });
+});
+
+describe('KSVC Route Data', () => {
+  it('getKsvcRouteData should return values of route based on the resource', () => {
+    const routeData = {
+      create: true,
+      unknownTargetPort: '',
+      targetPort: '',
+      defaultUnknownPort: 8080,
+    };
+    expect(getKsvcRouteData(knativeService)).toEqual(routeData);
+  });
+
+  it('getKsvcRouteData should return values of route(clusterlocal and ports) based on the resource', () => {
+    const routeData = {
+      create: true,
+      unknownTargetPort: '8080',
+      targetPort: '8080',
+      defaultUnknownPort: 8080,
+    };
+    const ksvcData = {
+      ...knativeService,
+      metadata: {
+        ...knativeService.metadata,
+        labels: {
+          'serving.knative.dev/visibility': 'cluster-local',
+        },
+      },
+      spec: {
+        template: {
+          spec: {
+            containers: [
+              {
+                ...knativeService.spec.template.spec.containers[0],
+                ports: [
+                  {
+                    containerPort: 8080,
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      },
+    };
+    expect(getKsvcRouteData(ksvcData)).toEqual(routeData);
   });
 });

@@ -33,7 +33,7 @@ import {
   FLAG_KNATIVE_EVENTING_BROKER,
   FLAG_CAMEL_KAMELETS,
 } from './const';
-import { getKebabActionsForKind } from './utils/kebab-actions';
+import { getKebabActionsForKind, getKebabActionsForWorkload } from './utils/kebab-actions';
 import { TopologyConsumedExtensions, topologyPlugin } from './topology/topology-plugin';
 import * as eventSourceIcon from './imgs/event-source.svg';
 import * as channelIcon from './imgs/channel.svg';
@@ -428,9 +428,34 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: '/knatify/ns/:ns',
+      loader: async () =>
+        (
+          await import(
+            './components/knatify/CreateKnatifyPage' /* webpackChunkName: "knatify-create" */
+          )
+        ).default,
+    },
+    flags: {
+      required: [FLAG_KNATIVE_SERVING_SERVICE],
+    },
+  },
+  {
     type: 'KebabActions',
     properties: {
       getKebabActionsForKind,
+    },
+  },
+  {
+    type: 'KebabActions',
+    flags: {
+      required: [FLAG_KNATIVE_SERVING_SERVICE],
+    },
+    properties: {
+      getKebabActionsForKind: getKebabActionsForWorkload,
     },
   },
   {

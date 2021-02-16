@@ -14,11 +14,17 @@ import {
   KNATIVE_CONCURRENCYUTILIZATION_ANNOTATION,
   KNATIVE_MAXSCALE_ANNOTATION,
   KNATIVE_MINSCALE_ANNOTATION,
+  KNATIVE_SERVING_LABEL,
   ServiceModel,
 } from '@console/knative-plugin';
 import { PipelineKind } from '@console/pipelines-plugin/src/types';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
-import { Resources, DeploymentData, GitReadableTypes } from '../import/import-types';
+import {
+  Resources,
+  DeploymentData,
+  GitReadableTypes,
+  ServerlessData,
+} from '../import/import-types';
 import { AppResources } from './edit-application-types';
 import { RegistryType } from '../../utils/imagestream-utils';
 import { getHealthChecksData } from '../health-checks/create-health-checks-probe-utils';
@@ -98,6 +104,19 @@ const getGitDataFromPipeline = (pipeline: PipelineKind) => {
   };
 };
 
+export const getKsvcRouteData = (resource: K8sResourceKind) => {
+  const { metadata, spec } = resource;
+  const containers = spec?.template?.spec?.containers ?? [];
+  const port = containers?.[0]?.ports?.[0]?.containerPort ?? '';
+  const routeData = {
+    create: metadata?.labels?.[`${KNATIVE_SERVING_LABEL}/visibility`] !== 'cluster-local',
+    unknownTargetPort: _.toString(port),
+    targetPort: _.toString(port),
+    defaultUnknownPort: 8080,
+  };
+  return routeData;
+};
+
 export const getRouteData = (route: K8sResourceKind, resource: K8sResourceKind) => {
   let routeData = {
     disable: !_.isEmpty(route),
@@ -118,18 +137,9 @@ export const getRouteData = (route: K8sResourceKind, resource: K8sResourceKind) 
     },
   };
   if (getResourcesType(resource) === Resources.KnativeService) {
-    const containers = _.get(resource, 'spec.template.spec.containers', []);
-    const port = _.get(containers[0], 'ports[0].containerPort', '');
     routeData = {
       ...routeData,
-      disable:
-        _.get(resource, 'metadata.labels["serving.knative.dev/visibility"]', '') !==
-        'cluster-local',
-      create:
-        _.get(resource, 'metadata.labels["serving.knative.dev/visibility"]', '') !==
-        'cluster-local',
-      unknownTargetPort: _.toString(port),
-      targetPort: _.toString(port),
+      ...getKsvcRouteData(resource),
     };
   }
   return routeData;
@@ -171,7 +181,7 @@ export const getBuildData = (
 };
 
 export const getServerlessData = (resource: K8sResourceKind) => {
-  let serverlessData = {
+  let serverlessData: ServerlessData = {
     scaling: {
       minpods: '',
       maxpods: '',
@@ -380,7 +390,7 @@ export const getGitAndDockerfileInitialValues = (
   return initialValues;
 };
 
-const deployImageInitialValues = {
+export const deployImageInitialValues = {
   searchTerm: '',
   registry: 'external',
   allowInsecureRegistry: false,
@@ -457,7 +467,7 @@ export const getInternalImageInitialValues = (editAppResource: K8sResourceKind) 
 export const getExternalImagelValues = (appResource: K8sResourceKind) => {
   const name = _.get(appResource, 'spec.template.spec.containers[0].image', null);
   if (_.isEmpty(appResource) || !name) {
-    return {};
+    return deployImageInitialValues;
   }
   return {
     ...deployImageInitialValues,

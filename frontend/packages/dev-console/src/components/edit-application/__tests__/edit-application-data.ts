@@ -758,7 +758,7 @@ export const knExternalImageValues: DeployImageFormData = {
   route: {
     create: true,
     defaultUnknownPort: 8080,
-    disable: true,
+    disable: false,
     hostname: '',
     path: '',
     secure: false,

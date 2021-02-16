@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useFormikContext, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { RadioGroupField } from '@console/shared';
+import { isKnatifyForm } from '@console/knative-plugin/src/utils/knatify-utils';
 import FormSection from '../section/FormSection';
 import { imageRegistryType } from '../../../utils/imagestream-utils';
 import ImageStream from './ImageStream';
@@ -38,13 +39,17 @@ const ImageSearchSection: React.FC = () => {
           {
             label: imageRegistryType(t).External.label,
             value: imageRegistryType(t).External.value,
-            isDisabled: values.formType === 'edit' && values.registry === 'internal',
+            isDisabled:
+              (values.formType === 'edit' || isKnatifyForm(values.formType)) &&
+              values.registry === 'internal',
             activeChildren: <ImageSearch />,
           },
           {
             label: imageRegistryType(t).Internal.label,
             value: imageRegistryType(t).Internal.value,
-            isDisabled: values.formType === 'edit' && values.registry === 'external',
+            isDisabled:
+              (values.formType === 'edit' || isKnatifyForm(values.formType)) &&
+              values.registry === 'external',
             activeChildren: <ImageStream />,
           },
         ]}

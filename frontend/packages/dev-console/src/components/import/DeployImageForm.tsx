@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { FormFooter } from '@console/shared/src/components/form-utils';
 import { usePreventDataLossLock } from '@console/internal/components/utils';
 import { Form } from '@patternfly/react-core';
+import { isKnatifyForm } from '@console/knative-plugin/src/utils/knatify-utils';
 import { DeployImageFormProps } from './import-types';
 import ImageSearchSection from './image-search/ImageSearchSection';
 import IconSection from './section/IconSection';
@@ -33,7 +34,7 @@ const DeployImageForm: React.FC<FormikProps<FormikValues> & DeployImageFormProps
         project={values.project}
         noProjectsAvailable={projects.loaded && _.isEmpty(projects.data)}
       />
-      <ResourceSection />
+      {!isKnatifyForm(values.formType) && <ResourceSection />}
       <AdvancedSection values={values} />
       <FormFooter
         handleReset={handleReset}

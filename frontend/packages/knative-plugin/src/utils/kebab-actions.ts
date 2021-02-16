@@ -3,7 +3,9 @@ import { K8sKind, referenceForModel } from '@console/internal/module/k8s';
 import { KebabAction } from '@console/internal/components/utils';
 import { EditApplication } from '@console/topology/src/actions/modify-application';
 import { AddHealthChecks, EditHealthChecks } from '@console/app/src/actions/modify-health-checks';
+import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models';
 import { setTrafficDistribution } from '../actions/traffic-splitting';
+import { setKnatify } from '../actions/knatify';
 import { addTrigger } from '../actions/add-trigger';
 import { addSubscription } from '../actions/add-subscription';
 import { setSinkSource } from '../actions/sink-source';
@@ -45,6 +47,18 @@ export const getKebabActionsForKind = (resourceKind: K8sKind): KebabAction[] => 
     if (isEventingChannelResourceKind(referenceForModel(resourceKind))) {
       menuActions.push(addSubscription);
     }
+  }
+  return menuActions;
+};
+
+export const getKebabActionsForWorkload = (resourceKind: K8sKind): KebabAction[] => {
+  const menuActions: KebabAction[] = [];
+  if (
+    resourceKind &&
+    (referenceForModel(resourceKind) === referenceForModel(DeploymentModel) ||
+      referenceForModel(resourceKind) === referenceForModel(DeploymentConfigModel))
+  ) {
+    menuActions.push(setKnatify);
   }
   return menuActions;
 };
