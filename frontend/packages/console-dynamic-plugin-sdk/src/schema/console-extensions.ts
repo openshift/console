@@ -6,6 +6,12 @@ import { PVCCreateProp, PVCStatus, PVCAlert, PVCDelete } from '../extensions/pvc
 import { YAMLTemplate } from '../extensions/yaml-templates';
 import { AddAction } from '../extensions/add-actions';
 import { ClusterGlobalConfig } from '../extensions/cluster-settings';
+import {
+  ResourceClusterNavItem,
+  HrefNavItem,
+  ResourceNSNavItem,
+  Separator,
+} from '../extensions/navigation';
 
 export type SupportedExtension =
   | FeatureFlag
@@ -19,7 +25,11 @@ export type SupportedExtension =
   | PVCDelete
   | YAMLTemplate
   | AddAction
-  | ClusterGlobalConfig;
+  | ClusterGlobalConfig
+  | Separator
+  | HrefNavItem
+  | ResourceNSNavItem
+  | ResourceClusterNavItem;
 
 /**
  * Schema of Console plugin's `console-extensions.json` file.
