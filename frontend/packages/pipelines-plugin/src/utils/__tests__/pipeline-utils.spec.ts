@@ -8,6 +8,7 @@ import {
 import * as k8s from '@console/internal/module/k8s';
 import { ContainerStatus } from '@console/internal/module/k8s';
 import { SecretAnnotationId } from '../../components/pipelines/const';
+import { DataState, PipelineExampleNames, pipelineTestData } from '../../test-data/pipeline-data';
 import { runStatus } from '../pipeline-augment';
 import {
   getPipelineTasks,
@@ -20,6 +21,7 @@ import {
   hasInlineTaskSpec,
   LatestPipelineRunStatus,
   updateServiceAccount,
+  appendPipelineRunStatus,
 } from '../pipeline-utils';
 import {
   constructPipelineData,
@@ -199,5 +201,26 @@ describe('pipeline-utils ', () => {
     expect(serviceAccount.imagePullSecrets.find((s) => s.name === imageSecretName)).toBeDefined();
     expect(serviceAccount.secrets).toHaveLength(2);
     expect(serviceAccount.imagePullSecrets).toHaveLength(2);
+  });
+
+  it('should append Idle status if a taskrun status reason is missing', () => {
+    const { pipeline, pipelineRuns } = pipelineTestData[PipelineExampleNames.SIMPLE_PIPELINE];
+    const pipelineRunWithoutStatus = _.cloneDeep(pipelineRuns[DataState.IN_PROGRESS]);
+    _.forIn(pipelineRunWithoutStatus.status.taskRuns, (taskRun, name) => {
+      pipelineRunWithoutStatus.status.taskRuns[name] = _.omit(taskRun, [
+        'status.conditions',
+        'status.startTime',
+        'status.completionTime',
+      ]);
+    });
+    const taskList = appendPipelineRunStatus(pipeline, pipelineRunWithoutStatus);
+    expect(taskList.filter((t) => t.status.reason === runStatus.Idle)).toHaveLength(2);
+  });
+
+  it('should append pipelineRun running status for all the tasks', () => {
+    const { pipeline, pipelineRuns } = pipelineTestData[PipelineExampleNames.SIMPLE_PIPELINE];
+    const pipelineRun = pipelineRuns[DataState.IN_PROGRESS];
+    const taskList = appendPipelineRunStatus(pipeline, pipelineRun);
+    expect(taskList.filter((t) => t.status.reason === runStatus.Running)).toHaveLength(2);
   });
 });
