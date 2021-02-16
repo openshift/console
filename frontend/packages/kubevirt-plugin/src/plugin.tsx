@@ -338,7 +338,6 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/dashboards-page/overview-dashboard/inventory' /* webpackChunkName: "kubevirt" */
         ).then((m) => m.getVMStatusGroups),
-      useAbbr: true,
     },
     flags: {
       required: [FLAG_KUBEVIRT],
@@ -415,7 +414,6 @@ const plugin: Plugin<ConsumedExtensions> = [
       ],
       model: models.VirtualMachineModel,
       mapper: getVMStatusGroups,
-      useAbbr: true,
     },
     flags: {
       required: [FLAG_KUBEVIRT],

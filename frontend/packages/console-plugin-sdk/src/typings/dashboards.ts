@@ -159,9 +159,6 @@ namespace ExtensionProperties {
     /** Additional resources which will be fetched and passed to `mapper` function. */
     additionalResources?: WatchK8sResources<any>;
 
-    /** Defines whether model's label or abbr should be used when rendering the item. Defaults to false (label). */
-    useAbbr?: boolean;
-
     /** Loader for the component which will be used when item is expanded. */
     expandedComponent?: LazyLoader<ExpandedComponentProps>;
   }
@@ -219,9 +216,6 @@ namespace ExtensionProperties {
 
     /** Additional resources which will be fetched and passed to `mapper` function. */
     additionalResources?: FirehoseResource[];
-
-    /** Defines whether model's label or abbr should be used when rendering the item. Defaults to false (label). */
-    useAbbr?: boolean;
 
     /** Function which will map various statuses to groups. */
     mapper: StatusGroupMapper;

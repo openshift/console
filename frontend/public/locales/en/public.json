@@ -578,6 +578,7 @@
   "Resume": "Resume",
   "Pause": "Pause",
   "Warning": "Warning",
+  "Loading {{title}} status": "Loading {{title}} status",
   "Not available": "Not available",
   "Resource": "Resource",
   "Unsupported": "Unsupported",
