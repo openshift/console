@@ -4,12 +4,12 @@ import { ProjectsTable } from '@console/internal/components/namespace';
 import { PageHeading } from '@console/internal/components/utils';
 import './ProjectListPage.scss';
 
-export interface ProjectListPageProps {
+export type ProjectListPageProps = {
   title: string;
   listComponent?: React.ComponentType<any>;
   children?: React.ReactNode;
   badge?: React.ReactNode;
-}
+};
 const ProjectListPage: React.FC<ProjectListPageProps> = ({
   badge,
   title,

@@ -1,9 +1,10 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import Helmet from 'react-helmet';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 import { RouteComponentProps } from 'react-router';
-import { Gallery, GalleryItem } from '@patternfly/react-core';
+import { Button, Gallery, GalleryItem } from '@patternfly/react-core';
+
 import { CatalogTile } from '@patternfly/react-catalog-view-extension';
 import { ImageStreamModel } from '@console/internal/models';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -74,7 +75,15 @@ const SampleCatalog: React.FC<SampleCatalogProps> = ({ match }) => {
           </PageLayout>
         ) : (
           <CreateProjectListPage title={t('devconsole~Samples')}>
-            {t('devconsole~Select a Project to view the list of samples.')}
+            {(openProjectModal) => (
+              <Trans t={t} ns="devconsole">
+                Select a Project to view the list of samples or{' '}
+                <Button isInline variant="link" onClick={openProjectModal}>
+                  create a Project
+                </Button>
+                .
+              </Trans>
+            )}
           </CreateProjectListPage>
         )}
       </NamespacedPage>

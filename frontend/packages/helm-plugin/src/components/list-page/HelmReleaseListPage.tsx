@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import Helmet from 'react-helmet';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
+import { Button } from '@patternfly/react-core';
 import { PageHeading } from '@console/internal/components/utils';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import CreateProjectListPage from '@console/dev-console/src/components/projects/CreateProjectListPage';
@@ -26,7 +27,15 @@ const PageContents: React.FC<HelmReleaseListPageProps> = (props) => {
     </div>
   ) : (
     <CreateProjectListPage title={t('helm-plugin~Helm Releases')}>
-      {t('helm-plugin~Select a Project to view the list of Helm Releases')}
+      {(openProjectModal) => (
+        <Trans t={t} ns="helm-plugin">
+          Select a Project to view the list of Helm Releases or{' '}
+          <Button isInline variant="link" onClick={openProjectModal}>
+            create a Project
+          </Button>
+          .
+        </Trans>
+      )}
     </CreateProjectListPage>
   );
 };

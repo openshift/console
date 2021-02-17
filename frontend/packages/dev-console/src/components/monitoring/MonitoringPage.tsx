@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 import { match as RMatch } from 'react-router';
+import { Button } from '@patternfly/react-core';
 import {
   HorizontalNav,
   PageHeading,
@@ -73,7 +74,15 @@ export const PageContents: React.FC<MonitoringPageProps> = ({ match }) => {
     </>
   ) : (
     <CreateProjectListPage title={t('devconsole~Monitoring')}>
-      {t('devconsole~Select a Project to view monitoring metrics')}
+      {(openProjectModal) => (
+        <Trans t={t} ns="devconsole">
+          Select a Project to view monitoring metrics or{' '}
+          <Button isInline variant="link" onClick={openProjectModal}>
+            create a Project
+          </Button>
+          .
+        </Trans>
+      )}
     </CreateProjectListPage>
   );
 };
