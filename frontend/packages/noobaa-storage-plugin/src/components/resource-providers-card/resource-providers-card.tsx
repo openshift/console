@@ -101,7 +101,7 @@ const ResourceProviders: React.FC<DashboardItemProps> = ({
         <DashboardCardTitle>{t('noobaa-storage-plugin~Resource Providers')}</DashboardCardTitle>
         <FieldLevelHelp>
           {t(
-            'noobaa-storage-plugin~A list of all MCG (Multicloud Object Gateway) resources that are currently in use. Those resources are used to store data according to the buckets policies and can be a cloud-based resource or a bare metal resource.',
+            'noobaa-storage-plugin~A list of all Multicloud Object Gateway resources that are currently in use. Those resources are used to store data according to the buckets policies and can be a cloud-based resource or a bare metal resource.',
           )}
         </FieldLevelHelp>
       </DashboardCardHeader>

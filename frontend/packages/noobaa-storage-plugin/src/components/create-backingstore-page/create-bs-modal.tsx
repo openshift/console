@@ -18,7 +18,7 @@ const CreateBackingStoreFormModal: React.FC<CreateBackingStoreFormModal> = (prop
       <ModalBody>
         <p>
           {t(
-            'noobaa-storage-plugin~Backing Store represents a storage target to be used as the underlying storage for the data in MCG buckets.',
+            'noobaa-storage-plugin~Backing Store represents a storage target to be used as the underlying storage for the data in Multicloud Object Gateway buckets.',
           )}
         </p>
         <CreateBackingStoreForm {...props} />

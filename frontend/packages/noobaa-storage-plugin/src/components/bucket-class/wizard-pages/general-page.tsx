@@ -32,7 +32,7 @@ const GeneralPage: React.FC<GeneralPageProps> = ({ dispatch, state }) => {
         >
           <p>
             {t(
-              'noobaa-storage-plugin~An MCG Buckets data location is determined by a policy called a Bucket Class',
+              'noobaa-storage-plugin~An Multicloud Object Gateway Buckets data location is determined by a policy called a Bucket Class',
             )}
           </p>
           <ExternalLink
