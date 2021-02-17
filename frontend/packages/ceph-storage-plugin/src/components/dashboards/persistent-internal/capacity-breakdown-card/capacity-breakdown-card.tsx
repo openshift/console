@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import * as _ from 'lodash';
 import { Select, SelectProps } from '@patternfly/react-core';
-import { humanizeBinaryBytes } from '@console/internal/components/utils';
+import { humanizeBinaryBytes, FieldLevelHelp } from '@console/internal/components/utils';
 import {
   DashboardItemProps,
   withDashboardResources,
@@ -11,17 +12,14 @@ import DashboardCard from '@console/shared/src/components/dashboard/dashboard-ca
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
-import { breakdownIndependentQueryMap } from '../../constants/queries';
-import { PROJECTS, STORAGE_CLASSES, PODS } from '../../constants';
-import {
-  sortInstantVectorStats,
-  getStackChartStats,
-} from '../dashboard-page/storage-dashboard/breakdown-card/utils';
-import { BreakdownCardBody } from '../dashboard-page/storage-dashboard/breakdown-card/breakdown-body';
-import { getSelectOptions } from '../dashboard-page/storage-dashboard/breakdown-card/breakdown-dropdown';
-import '../dashboard-page/storage-dashboard/capacity-breakdown/capacity-breakdown-card.scss';
+import { breakdownQueryMap } from '../../../../constants/queries';
+import { PODS, PROJECTS, STORAGE_CLASSES } from '../../../../constants/index';
+import { BreakdownCardBody } from '../../common/capacity-breakdown/breakdown-body';
+import { getStackChartStats, sortInstantVectorStats } from '../../common/capacity-breakdown/utils';
+import { getSelectOptions } from '../../common/capacity-breakdown/breakdown-dropdown';
+import './capacity-breakdown-card.scss';
 
-export const BreakdownCard: React.FC<DashboardItemProps> = ({
+const BreakdownCard: React.FC<DashboardItemProps> = ({
   watchPrometheus,
   stopWatchPrometheusQuery,
   prometheusResults,
@@ -29,7 +27,8 @@ export const BreakdownCard: React.FC<DashboardItemProps> = ({
   const { t } = useTranslation();
   const [metricType, setMetricType] = React.useState(PROJECTS);
   const [isOpenBreakdownSelect, setBreakdownSelect] = React.useState(false);
-  const { queries, model, metric } = breakdownIndependentQueryMap[metricType];
+
+  const { queries, model, metric } = breakdownQueryMap[metricType];
   const queryKeys = Object.keys(queries);
 
   React.useEffect(() => {
@@ -48,7 +47,8 @@ export const BreakdownCard: React.FC<DashboardItemProps> = ({
   const top6MetricsData = getInstantVectorStats(results[0], metric);
   const top5SortedMetricsData = sortInstantVectorStats(top6MetricsData);
   const top5MetricsStats = getStackChartStats(top5SortedMetricsData, humanize);
-  const metricTotal = results[1]?.data?.result[0]?.value[1];
+  const metricTotal = _.get(results[1], 'data.result[0].value[1]');
+  const cephUsed = _.get(results[2], 'data.result[0].value[1]');
 
   const handleMetricsChange: SelectProps['onSelect'] = (_e, breakdown) => {
     setMetricType(breakdown as string);
@@ -69,13 +69,19 @@ export const BreakdownCard: React.FC<DashboardItemProps> = ({
       id: PODS,
     },
   ];
-
   const breakdownSelectItems = getSelectOptions(dropdownOptions);
 
   return (
     <DashboardCard>
       <DashboardCardHeader>
-        <DashboardCardTitle>{t('ceph-storage-plugin~Capacity breakdown')}</DashboardCardTitle>
+        <DashboardCardTitle>
+          {t('ceph-storage-plugin~Used Capacity Breakdown')}
+          <FieldLevelHelp>
+            {t(
+              'ceph-storage-plugin~This card shows the used capacity for Usable storage, broken-down by different kubernetes resources. Usable storage is all the data that can be stored in the system after decreasing the replication policies.',
+            )}
+          </FieldLevelHelp>
+        </DashboardCardTitle>
         <div className="ceph-capacity-breakdown-card__header">
           <Select
             className="ceph-capacity-breakdown-card-header__dropdown"
@@ -83,9 +89,9 @@ export const BreakdownCard: React.FC<DashboardItemProps> = ({
             onSelect={handleMetricsChange}
             onToggle={() => setBreakdownSelect(!isOpenBreakdownSelect)}
             isOpen={isOpenBreakdownSelect}
-            selections={[t('ceph-storage-plugin~{{metricType}}', { metricType })]}
+            selections={[metricType]}
             placeholderText={t('ceph-storage-plugin~{{metricType}}', { metricType })}
-            aria-label="Break By Dropdown"
+            aria-label={t('ceph-storage-plugin~Break By Dropdown')}
             isCheckboxSelectionBadgeHidden
           >
             {breakdownSelectItems}
@@ -97,8 +103,8 @@ export const BreakdownCard: React.FC<DashboardItemProps> = ({
           isLoading={queriesDataLoaded}
           hasLoadError={queriesLoadError}
           metricTotal={metricTotal}
-          capacityUsed={metricTotal}
           top5MetricsStats={top5MetricsStats}
+          capacityUsed={cephUsed}
           metricModel={model}
           humanize={humanize}
         />

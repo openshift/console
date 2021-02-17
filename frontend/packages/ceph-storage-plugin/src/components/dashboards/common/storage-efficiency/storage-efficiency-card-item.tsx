@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { FieldLevelHelp } from '@console/internal/components/utils';
+import './storage-efficiency-card.scss';
 
 export const EfficiencyItemBody: React.FC<EfficiencyItemBodyProps> = React.memo(
   ({ stats, title, infoText, isLoading, error, getStats }) => {

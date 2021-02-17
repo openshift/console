@@ -15,8 +15,8 @@ import DashboardCardBody from '@console/shared/src/components/dashboard/dashboar
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { InfrastructureModel } from '@console/internal/models';
-import { getOCSVersion } from '../../selectors';
-import { OCSServiceModel } from '../../models';
+import { getOCSVersion } from '../../../selectors';
+import { OCSServiceModel } from '../../../models';
 
 const k8sResources: FirehoseResource[] = [
   {

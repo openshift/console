@@ -25,8 +25,8 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import { NodeModel } from '@console/internal/models';
 import { LSO_DEVICE_DISCOVERY } from '@console/local-storage-operator-plugin/src/plugin';
 import { OCS_ATTACHED_DEVICES_FLAG } from '@console/local-storage-operator-plugin/src/features';
-import { getCephHealthState } from './components/dashboard-page/storage-dashboard/status-card/utils';
-import { isClusterExpandActivity } from './components/dashboard-page/storage-dashboard/activity-card/cluster-expand-activity';
+import { getCephHealthState } from './components/dashboards/persistent-internal/status-card/utils';
+import { isClusterExpandActivity } from './components/dashboards/persistent-internal/activity-card/cluster-expand-activity';
 import { StorageClassFormProvisoners } from './utils/ocs-storage-class-params';
 import { WatchCephResource } from './types';
 import {
@@ -154,7 +154,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.LEFT,
       loader: () =>
         import(
-          './components/dashboard-page/storage-dashboard/details-card' /* webpackChunkName: "ceph-storage-details-card" */
+          './components/dashboards/persistent-internal/details-card' /* webpackChunkName: "ceph-storage-details-card" */
         ).then((m) => m.default),
     },
     flags: {
@@ -168,7 +168,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.LEFT,
       loader: () =>
         import(
-          './components/dashboard-page/storage-dashboard/inventory-card' /* webpackChunkName: "ceph-storage-inventory-card" */
+          './components/dashboards/persistent-internal/inventory-card' /* webpackChunkName: "ceph-storage-inventory-card" */
         ).then((m) => m.default),
     },
     flags: {
@@ -182,7 +182,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.LEFT,
       loader: () =>
         import(
-          './components/dashboard-page/storage-dashboard/storage-efficiency-card/storage-efficiency-card' /* webpackChunkName: "ceph-storage-efficiency-card" */
+          './components/dashboards/persistent-internal/storage-efficiency-card/storage-efficiency-card' /* webpackChunkName: "ceph-storage-efficiency-card" */
         ).then((m) => m.default),
     },
     flags: {
@@ -197,7 +197,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.MAIN,
       loader: () =>
         import(
-          './components/dashboard-page/storage-dashboard/status-card/status-card' /* webpackChunkName: "ceph-storage-status-card" */
+          './components/dashboards/persistent-internal/status-card/status-card' /* webpackChunkName: "ceph-storage-status-card" */
         ).then((m) => m.default),
     },
     flags: {
@@ -211,7 +211,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.MAIN,
       loader: () =>
         import(
-          './components/dashboard-page/storage-dashboard/raw-capacity-card/raw-capacity-card' /* webpackChunkName: "raw-capacity-card" */
+          './components/dashboards/persistent-internal/raw-capacity-card/raw-capacity-card' /* webpackChunkName: "raw-capacity-card" */
         ).then((m) => m.default),
     },
     flags: {
@@ -225,7 +225,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.MAIN,
       loader: () =>
         import(
-          './components/dashboard-page/storage-dashboard/capacity-breakdown/capacity-breakdown-card' /* webpackChunkName: "ceph-storage-usage-breakdown-card" */
+          './components/dashboards/persistent-internal/capacity-breakdown-card/capacity-breakdown-card' /* webpackChunkName: "ceph-storage-usage-breakdown-card" */
         ).then((m) => m.default),
     },
     flags: {
@@ -239,7 +239,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.MAIN,
       loader: () =>
         import(
-          './components/dashboard-page/storage-dashboard/utilization-card/utilization-card' /* webpackChunkName: "ceph-storage-utilization-card" */
+          './components/dashboards/persistent-internal/utilization-card/utilization-card' /* webpackChunkName: "ceph-storage-utilization-card" */
         ).then((m) => m.default),
     },
     flags: {
@@ -254,7 +254,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.RIGHT,
       loader: () =>
         import(
-          './components/dashboard-page/storage-dashboard/activity-card/activity-card' /* webpackChunkName: "ceph-storage-activity-card" */
+          './components/dashboards/persistent-internal/activity-card/activity-card' /* webpackChunkName: "ceph-storage-activity-card" */
         ).then((m) => m.ActivityCard),
     },
     flags: {
@@ -320,7 +320,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.LEFT,
       loader: () =>
         import(
-          './components/independent-dashboard-page/details-card' /* webpackChunkName: "indepedent-details-card" */
+          './components/dashboards/persistent-external/details-card' /* webpackChunkName: "indepedent-details-card" */
         ).then((m) => m.default),
     },
     flags: {
@@ -334,7 +334,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.LEFT,
       loader: () =>
         import(
-          './components/dashboard-page/storage-dashboard/inventory-card' /* webpackChunkName: "ceph-storage-inventory-card" */
+          './components/dashboards/persistent-internal/inventory-card' /* webpackChunkName: "ceph-storage-inventory-card" */
         ).then((m) => m.default),
     },
     flags: {
@@ -349,7 +349,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.MAIN,
       loader: () =>
         import(
-          './components/independent-dashboard-page/status-card' /* webpackChunkName: "indepedent-status-card" */
+          './components/dashboards/persistent-external/status-card' /* webpackChunkName: "indepedent-status-card" */
         ).then((m) => m.default),
     },
     flags: {
@@ -363,7 +363,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.MAIN,
       loader: () =>
         import(
-          './components/independent-dashboard-page/breakdown-card' /* webpackChunkName: "independent-breakdown-card" */
+          './components/dashboards/persistent-external/breakdown-card' /* webpackChunkName: "independent-breakdown-card" */
         ).then((m) => m.default),
     },
     flags: {
@@ -377,7 +377,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.MAIN,
       loader: () =>
         import(
-          './components/independent-dashboard-page/utilization-card' /* webpackChunkName: "utilization-card" */
+          './components/dashboards/persistent-external/utilization-card' /* webpackChunkName: "utilization-card" */
         ).then((m) => m.default),
     },
     flags: {
@@ -392,7 +392,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.RIGHT,
       loader: () =>
         import(
-          './components/dashboard-page/storage-dashboard/activity-card/activity-card' /* webpackChunkName: "ceph-storage-activity-card" */
+          './components/dashboards/persistent-internal/activity-card/activity-card' /* webpackChunkName: "ceph-storage-activity-card" */
         ).then((m) => m.ActivityCard),
     },
     flags: {
@@ -411,7 +411,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       isActivity: isClusterExpandActivity,
       loader: () =>
         import(
-          './components/dashboard-page/storage-dashboard/activity-card/cluster-expand-activity' /* webpackChunkName: "ceph-storage-plugin" */
+          './components/dashboards/persistent-internal/activity-card/cluster-expand-activity' /* webpackChunkName: "ceph-storage-plugin" */
         ).then((m) => m.ClusterExpandActivity),
     },
     flags: {
@@ -429,7 +429,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       },
       loader: () =>
         import(
-          './components/attached-devices-mode/lso-disk-inventory/ocs-disks-list' /* webpackChunkName: "ocs-nodes-disks-list" */
+          './components/disk-inventory/ocs-disks-list' /* webpackChunkName: "ocs-nodes-disks-list" */
         ).then((m) => m.OCSNodesDiskListPage),
     },
     flags: {

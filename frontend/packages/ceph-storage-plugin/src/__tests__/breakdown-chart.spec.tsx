@@ -4,14 +4,14 @@ import {
   addAvailable,
   getStackChartStats,
   getLegends,
-} from '../components/dashboard-page/storage-dashboard/breakdown-card/utils';
+} from '../components/dashboards/common/capacity-breakdown/utils';
 import { breakdownData } from '../__mocks__/breakdown-data';
 import {
   BreakdownChart,
   BreakdownChartProps,
   LinkableLegend,
   LinkableLegendProps,
-} from '../components/dashboard-page/storage-dashboard/breakdown-card/breakdown-chart';
+} from '../components/dashboards/common/capacity-breakdown/breakdown-chart';
 import { Link } from 'react-router-dom';
 import { Chart, ChartBar } from '@patternfly/react-charts';
 import { Tooltip } from '@patternfly/react-core';

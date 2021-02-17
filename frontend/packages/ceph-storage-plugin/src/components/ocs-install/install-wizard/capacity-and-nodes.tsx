@@ -17,7 +17,7 @@ import { humanizeBinaryBytes, Dropdown } from '@console/internal/components/util
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { StorageClassResourceKind, NodeKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { useDeepCompareMemoize } from '@console/shared';
-import { State, Action } from '../attached-devices/create-sc/state';
+import { State, Action } from '../attached-devices-mode/create-sc/state';
 import { scResource } from '../../../constants/resources';
 import { arbiterText } from '../../../constants';
 import { getZone, isArbiterSC } from '../../../utils/install';

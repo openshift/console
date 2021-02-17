@@ -114,7 +114,10 @@ const OngoingActivity = withDashboardResources(
     if (getResiliencyProgress(progressResponse) < 1) {
       prometheusActivities.push({
         results: progressResponse,
-        loader: () => import('./data-resiliency-activity').then((m) => m.DataResiliency),
+        loader: () =>
+          import('../../common/data-resiliency/data-resiliency-activity').then(
+            (m) => m.DataResiliency,
+          ),
       });
     }
 

@@ -18,7 +18,7 @@ import {
 } from '@console/internal/components/dashboard/with-dashboard-resources';
 import { FirehoseResource, FirehoseResult } from '@console/internal/components/utils';
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
-import { getDataResiliencyState } from '@console/ceph-storage-plugin/src/components/dashboard-page/storage-dashboard/status-card/utils';
+import { getDataResiliencyState } from '@console/ceph-storage-plugin/src/components/dashboards/persistent-internal/status-card/utils';
 import { CephObjectStoreModel } from '@console/ceph-storage-plugin/src/models';
 import { RGW_FLAG } from '@console/ceph-storage-plugin/src/features';
 import { useFlag } from '@console/shared/src/hooks/flag';

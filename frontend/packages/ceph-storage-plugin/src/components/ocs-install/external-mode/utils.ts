@@ -4,7 +4,7 @@ import { HealthState } from '@console/shared/src/components/dashboard/status-car
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
 import { getAnnotations } from '@console/shared';
-import { IP_FAMILY } from '../../constants';
+import { IP_FAMILY } from '../../../constants';
 
 const pluralize = (count: number, singular: string, plural: string = `${singular}s`): string =>
   count > 1 ? plural : singular;

@@ -34,12 +34,12 @@ import { history } from '@console/internal/components/utils/router';
 import { SecretModel, PodModel } from '@console/internal/models';
 import { setFlag } from '@console/internal/actions/features';
 import { getName } from '@console/shared';
-import { OCSServiceModel } from '../../models';
+import { OCSServiceModel } from '../../../models';
 import FileUpload from './fileUpload';
 import { isValidJSON, checkError, prettifyJSON, getIPFamily } from './utils';
-import { OCS_INDEPENDENT_FLAG, OCS_FLAG, OCS_CONVERGED_FLAG } from '../../features';
-import { OCS_EXTERNAL_CR_NAME, IP_FAMILY } from '../../constants';
-import { labelOCSNamespace } from '../ocs-install/ocs-request-data';
+import { OCS_INDEPENDENT_FLAG, OCS_FLAG, OCS_CONVERGED_FLAG } from '../../../features';
+import { OCS_EXTERNAL_CR_NAME, IP_FAMILY } from '../../../constants';
+import { labelOCSNamespace } from '../ocs-request-data';
 import './install.scss';
 
 const CreateExternalCluster = withHandlePromise((props: CreateExternalClusterProps) => {

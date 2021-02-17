@@ -18,8 +18,13 @@ import {
   SecretKind,
 } from '@console/internal/module/k8s';
 import { TemplateModel, TemplateInstanceModel, SecretModel } from '@console/internal/models';
-import { CEPH_STORAGE_NAMESPACE, OSD_REMOVAL_TEMPLATE, DASHBOARD_LINK } from '../../../constants';
-import { OCSDiskList, OCSColumnStateAction, ActionType, Status } from './state-reducer';
+import { CEPH_STORAGE_NAMESPACE, OSD_REMOVAL_TEMPLATE, DASHBOARD_LINK } from '../../constants';
+import {
+  OCSDiskList,
+  OCSColumnStateAction,
+  ActionType,
+  Status,
+} from '../disk-inventory/state-reducer';
 
 const createTemplateSecret = async (template: TemplateKind, osdId: string) => {
   const parametersSecret: SecretKind = {
