@@ -1,5 +1,6 @@
 export const helmPO = {
   noHelmReleasesMessage: 'h3',
+  noHelmSearchMessage: '.loading-box.loading-box__loaded',
   search: '[data-test-id="item-filter"]',
   table: '[role="grid"]',
   helmReleaseName: 'tr td:nth-child(1)',
@@ -7,6 +8,12 @@ export const helmPO = {
   revisionHistoryTab: '[data-test-id="horizontal-link-Revision History"]',
   releaseNotesTab: '[data-test-id="horizontal-link-Release Notes"]',
   filterDropdown: 'button[data-test-id="filter-dropdown-toggle"]',
+  filterDropdownDialog: '.pf-c-dropdown__group.co-filter-dropdown-group',
+  filterToolBar: '#filter-toolbar',
+  clearAllFilter: '.pf-c-button.pf-m-link.pf-m-inline',
+  deployedCheckbox: '#deployed-checkbox',
+  failedCheckbox: '#failed-checkbox',
+  otherCheckbox: '#other-checkbox',
   details: {
     title: '[data-test-section-heading="Helm Release Details"]',
   },

@@ -5,6 +5,13 @@ import { addOptions, catalogCards, catalogTypes } from '../../constants/add';
 import { topologyHelper } from '../topology/topology-helper-page';
 import { devNavigationMenuPO } from '../../pageObjects/global-po';
 
+export const catalogPageObj = {
+  installHelmChart: {
+    releaseName: '#form-input-releaseName-field',
+    cancel: '[data-test-id="reset-button"]',
+  },
+};
+
 export const catalogPage = {
   verifyTitle: () => cy.pageTitleShouldContain('Developer Catalog'),
   verifyPageTitle: (page: string) => cy.pageTitleShouldContain(page),
@@ -140,5 +147,32 @@ export const catalogInstallPageObj = {
     } else {
       cy.byLegacyTestID('modal-cancel-action').click();
     }
+  },
+  verifyChartListAvailable: () => {
+    cy.get(catalogPO.cardList)
+      .should('exist')
+      .find(catalogPO.cardHeader)
+      .its('length')
+      .should('be.greaterThan', 0);
+  },
+  verifyChartCardsAvailable: () => {
+    cy.get(catalogPO.cardList)
+      .should('exist')
+      .find(catalogPO.cardHeader)
+      .each(($el) => {
+        expect('Helm Charts').toContain($el.text());
+      });
+  },
+  verifyFilterByKeywordField: () => {
+    cy.get('.pf-c-search-input__text-input').should('be.visible');
+  },
+  verifySortDropdown: () => {
+    cy.get(catalogPO.groupBy).then((body) => {
+      if (body.find(catalogPO.groupByMenu).length <= 0) {
+        cy.get(catalogPO.groupBy).click();
+      }
+    });
+    cy.get(catalogPO.aToz).should('be.visible');
+    cy.get(catalogPO.zToA).should('be.visible');
   },
 };
