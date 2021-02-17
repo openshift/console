@@ -67,6 +67,7 @@ describe('createPipelineForImportFlow', () => {
       formData.git.dir,
       formData.pipeline,
       formData.docker.dockerfilePath,
+      '14-ubi8',
     );
 
     const expectedPipeline: PipelineKind = {
@@ -107,6 +108,7 @@ describe('createPipelineForImportFlow', () => {
       formData.git.dir,
       formData.pipeline,
       formData.docker.dockerfilePath,
+      '14-ubi8',
     );
 
     const expectedPipeline: PipelineKind = {
@@ -156,6 +158,7 @@ describe('createPipelineForImportFlow', () => {
       formData.git.dir,
       formData.pipeline,
       formData.docker.dockerfilePath,
+      '14-ubi8',
     );
 
     const expectedPipeline: PipelineKind = {
@@ -194,6 +197,7 @@ describe('createPipelineForImportFlow', () => {
           { name: 'GIT_REVISION' },
           { name: 'PATH_CONTEXT', default: '.' },
           { name: 'IMAGE_NAME' },
+          { name: 'VERSION' },
         ],
         tasks: [],
       },
@@ -208,6 +212,7 @@ describe('createPipelineForImportFlow', () => {
       formData.git.dir,
       formData.pipeline,
       formData.docker.dockerfilePath,
+      '14-ubi8',
     );
 
     const expectedPipeline: PipelineKind = {
@@ -226,6 +231,7 @@ describe('createPipelineForImportFlow', () => {
             name: 'IMAGE_NAME',
             default: 'image-registry.openshift-image-registry.svc:5000/a-project/an-app',
           },
+          { name: 'VERSION', default: '14-ubi8' },
         ],
         tasks: [],
       },
@@ -261,6 +267,7 @@ describe('createPipelineForImportFlow', () => {
       '/anotherpath',
       formData.pipeline,
       'Dockerfile',
+      '14-ubi8',
     );
 
     const expectedPipeline: PipelineKind = {
@@ -330,6 +337,7 @@ describe('updatePipelineForImportFlow', () => {
     gitRef: '',
     gitDir: '',
     dockerfilePath: '',
+    image: { tag: '10-ubi7' },
   };
 
   it('should dissociate pipeline if template is not available', async () => {
@@ -342,6 +350,7 @@ describe('updatePipelineForImportFlow', () => {
       props.gitRef,
       props.gitDir,
       props.dockerfilePath,
+      props.image.tag,
     );
 
     const expectedPipeline: PipelineKind = {
@@ -370,6 +379,7 @@ describe('updatePipelineForImportFlow', () => {
       props.gitRef,
       props.gitDir,
       props.dockerfilePath,
+      props.image.tag,
     );
 
     const expectedPipeline: PipelineKind = {
@@ -381,6 +391,39 @@ describe('updatePipelineForImportFlow', () => {
       spec: {
         tasks: [],
         params: [{ name: 'PARAM1', type: 'string' }],
+      },
+    };
+
+    expect(k8sUpdate).toHaveBeenCalledTimes(1);
+    expect(k8sUpdate).toHaveBeenCalledWith(PipelineModel, expectedPipeline, 'test', 'test');
+  });
+
+  it('should update VERSION params if image tag is changed', async () => {
+    const template = {
+      ...mockTemplate,
+      spec: { tasks: [], params: [{ name: 'VERSION', default: 'latest' }] },
+    };
+    await updatePipelineForImportFlow(
+      mockPipeline,
+      template,
+      props.name,
+      props.namespace,
+      props.gitUrl,
+      props.gitRef,
+      props.gitDir,
+      props.dockerfilePath,
+      '14-ubi8',
+    );
+
+    const expectedPipeline: PipelineKind = {
+      metadata: {
+        name: 'test',
+        labels: { 'app.kubernetes.io/instance': 'sample' },
+        resourceVersion: 'test',
+      },
+      spec: {
+        tasks: [],
+        params: [{ name: 'VERSION', default: '14-ubi8' }],
       },
     };
 
@@ -400,6 +443,7 @@ describe('updatePipelineForImportFlow', () => {
       props.gitRef,
       props.gitDir,
       props.dockerfilePath,
+      props.image.tag,
     );
 
     const expectedPipeline: PipelineKind = {
