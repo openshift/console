@@ -49,7 +49,7 @@ const defaultState = {
     type: null,
     parameters: {},
     reclaim: null,
-    expansion: false,
+    expansion: true,
   },
   customParams: [['', '']],
   validationSuccessful: false,
@@ -76,7 +76,7 @@ class StorageClassFormWithTranslation extends React.Component<
     title: '',
     provisioner: '',
     parameters: {},
-    allowVolumeExpansion: false,
+    allowVolumeExpansion: true,
   };
 
   storageTypes = {};
@@ -1067,6 +1067,10 @@ class StorageClassFormWithTranslation extends React.Component<
             </span>
           </div>
 
+          <div className="co-form-subsection">
+            {newStorageClass.type !== null ? this.getProvisionerElements() : null}
+          </div>
+
           {expansionFlag && (
             <div className="checkbox">
               <label>
@@ -1080,10 +1084,6 @@ class StorageClassFormWithTranslation extends React.Component<
               </label>
             </div>
           )}
-
-          <div className="co-form-subsection">
-            {newStorageClass.type !== null ? this.getProvisionerElements() : null}
-          </div>
 
           <ButtonBar
             errorMessage={this.state.error ? this.state.error.message : ''}

@@ -201,8 +201,8 @@ const StorageClassEncryptionLabel: React.FC = () => {
   const { t } = useTranslation();
 
   return (
-    <div className="ocs-storageClass-encryption__pv-title">
-      <span className="ocs-storageClass-encryption__pv-title--padding">
+    <div className="ocs-storage-class-encryption__pv-title">
+      <span className="ocs-storage-class-encryption__pv-title--padding">
         {t('ceph-storage-plugin~Enable Encryption')}
       </span>
     </div>
@@ -226,35 +226,35 @@ const KMSDetails: React.FC<KMSDetailsProps> = ({ setEditKMS, currentKMS }) => {
         </Button>
       </h3>
       <TextContent>
-        <TextList component={TextListVariants.ul} className="ocs-storageClass-encryption__details">
+        <TextList component={TextListVariants.ul} className="ocs-storage-class-encryption__details">
           {currentKMS?.VAULT_NAMESPACE && (
             <TextListItem>
               {t('ceph-storage-plugin~Vault Enterprise Namespace:')}{' '}
-              <span className="help-block ocs-storageClass-encryption__help-block">
+              <span className="help-block ocs-storage-class-encryption__help-block">
                 {currentKMS?.VAULT_NAMESPACE}
               </span>
             </TextListItem>
           )}
           <TextListItem>
             {t('ceph-storage-plugin~Key management service name:')}{' '}
-            <span className="help-block ocs-storageClass-encryption__help-block">
+            <span className="help-block ocs-storage-class-encryption__help-block">
               {currentKMS?.KMS_SERVICE_NAME}
             </span>
           </TextListItem>
           <TextListItem>
             {t('ceph-storage-plugin~Provider:')}{' '}
-            <span className="help-block ocs-storageClass-encryption__help-block">Vault</span>
+            <span className="help-block ocs-storage-class-encryption__help-block">Vault</span>
           </TextListItem>
           <TextListItem>
             {t('ceph-storage-plugin~Address and Port:')}{' '}
-            <span className="help-block ocs-storageClass-encryption__help-block">
+            <span className="help-block ocs-storage-class-encryption__help-block">
               {currentKMS?.VAULT_ADDR}
             </span>
           </TextListItem>
           {currentKMS?.VAULT_CACERT && (
             <TextListItem>
               {t('ceph-storage-plugin~CA certificate:')}{' '}
-              <span className="help-block ocs-storageClass-encryption__help-block">
+              <span className="help-block ocs-storage-class-encryption__help-block">
                 {t('ceph-storage-plugin~Provided')}
               </span>
             </TextListItem>
@@ -390,65 +390,71 @@ export const StorageClassEncryption: React.FC<ProvisionerProps> = ({ onParamChan
 
   return (
     isKmsSupported && (
-      <Form>
-        <FormGroup
-          fieldId="storage-class-encryption"
-          helperTextInvalid={t('ceph-storage-plugin~This is a required field')}
-          isRequired
-        >
-          <Checkbox
-            id="storage-class-encryption"
-            isChecked={checked}
-            label={<StorageClassEncryptionLabel />}
-            aria-label={t('ceph-storage-plugin~Storage class encryption')}
-            description={t(
-              'ceph-storage-plugin~An encryption key will be generated for each persistent volume created using this storageclass.',
-            )}
-            onChange={setChecked}
-            className="ocs-storageClass-encryption__form-checkbox"
-          />
+      <div className="ocs-storage-class__form">
+        <Form>
+          <FormGroup
+            fieldId="storage-class-encryption"
+            helperTextInvalid={t('ceph-storage-plugin~This is a required field')}
+            isRequired
+          >
+            <Checkbox
+              id="storage-class-encryption"
+              isChecked={checked}
+              label={<StorageClassEncryptionLabel />}
+              aria-label={t('ceph-storage-plugin~Storage class encryption')}
+              onChange={setChecked}
+              className="ocs-storage-class-encryption__form-checkbox"
+            />
+            <span className="help-block">
+              {t(
+                'ceph-storage-plugin~An encryption key will be generated for each persistent volume created using this storageclass.',
+              )}
+            </span>
 
-          {checked && (
-            <>
-              <Card isFlat className="ocs-storageClass-encryption__card">
-                {((!csiConfigMapLoaded && !csiConfigMapLoadError) || progress) && <LoadingInline />}
-                {csiConfigMapLoaded && csiConfigMap && !editKMS && !csiConfigMapLoadError ? (
-                  <KMSDetails currentKMS={currentKMS} setEditKMS={setEditKMS} />
-                ) : (
-                  <>
-                    <KMSConfigure
-                      state={state}
-                      dispatch={dispatch}
-                      className="ocs-storageClass-encryption"
-                    />
-                    <div className="ocs-install-kms__save-button">
-                      <ButtonBar errorMessage={errorMessage} inProgress={progress}>
-                        <ActionGroup>
-                          <Button variant="secondary" onClick={updateKMS} isDisabled={!validSave}>
-                            {t('ceph-storage-plugin~Save')}
-                          </Button>
-                          <Button variant="plain" onClick={cancelKMSUpdate}>
-                            {t('ceph-storage-plugin~Cancel')}
-                          </Button>
-                        </ActionGroup>
-                      </ButtonBar>
-                    </div>
-                  </>
-                )}
-              </Card>
-              <Alert
-                className="co-alert"
-                variant="warning"
-                title={t(
-                  'ceph-storage-plugin~PV expansion operation is not supported for encrypted PVs.',
-                )}
-                aria-label={t('ceph-storage-plugin~The last saved values will be updated')}
-                isInline
-              />
-            </>
-          )}
-        </FormGroup>
-      </Form>
+            {checked && (
+              <>
+                <Card isFlat className="ocs-storage-class-encryption__card">
+                  {((!csiConfigMapLoaded && !csiConfigMapLoadError) || progress) && (
+                    <LoadingInline />
+                  )}
+                  {csiConfigMapLoaded && csiConfigMap && !editKMS && !csiConfigMapLoadError ? (
+                    <KMSDetails currentKMS={currentKMS} setEditKMS={setEditKMS} />
+                  ) : (
+                    <>
+                      <KMSConfigure
+                        state={state}
+                        dispatch={dispatch}
+                        className="ocs-storage-class-encryption"
+                      />
+                      <div className="ocs-install-kms__save-button">
+                        <ButtonBar errorMessage={errorMessage} inProgress={progress}>
+                          <ActionGroup>
+                            <Button variant="secondary" onClick={updateKMS} isDisabled={!validSave}>
+                              {t('ceph-storage-plugin~Save')}
+                            </Button>
+                            <Button variant="plain" onClick={cancelKMSUpdate}>
+                              {t('ceph-storage-plugin~Cancel')}
+                            </Button>
+                          </ActionGroup>
+                        </ButtonBar>
+                      </div>
+                    </>
+                  )}
+                </Card>
+                <Alert
+                  className="co-alert"
+                  variant="warning"
+                  title={t(
+                    'ceph-storage-plugin~PV expansion operation is not supported for encrypted PVs.',
+                  )}
+                  aria-label={t('ceph-storage-plugin~The last saved values will be updated')}
+                  isInline
+                />
+              </>
+            )}
+          </FormGroup>
+        </Form>
+      </div>
     )
   );
 };

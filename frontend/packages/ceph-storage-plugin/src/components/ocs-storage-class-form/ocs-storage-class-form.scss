@@ -1,8 +1,12 @@
-.ocs-storageClass__input {
+.ocs-storage-class__input {
   margin-bottom: var(--pf-global--spacer--md);
 }
 
-.ocs-storageClass-encryption {
+.ocs-storage-class__form {
+  margin-bottom: var(--pf-global--spacer--md);
+}
+
+.ocs-storage-class-encryption {
   &__form-body {
     padding: var(--pf-global--spacer--md) !important;
   }

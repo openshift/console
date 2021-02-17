@@ -4,6 +4,7 @@ import {
   StorageClassEncryption,
   StorageClassEncryptionKMSID,
 } from '../components/ocs-storage-class-form/ocs-storage-class-form';
+import { ThickProvision } from '../components/ocs-storage-class-form/ocs-thick-provisioner';
 import { CEPH_STORAGE_NAMESPACE } from '../constants';
 
 export const StorageClassFormProvisoners: ExtensionSCProvisionerProp = Object.freeze({
@@ -88,6 +89,11 @@ export const StorageClassFormProvisoners: ExtensionSCProvisionerProp = Object.fr
           name: 'Encryption ID',
           hintText: 'A unique ID matching KMS ConfigMap',
           Component: StorageClassEncryptionKMSID,
+        },
+        thickProvision: {
+          name: 'Enable Thick Provisioning',
+          Component: ThickProvision,
+          hintText: 'Volumes will allocate the requested capacity upon volume creation.',
         },
       },
     },
