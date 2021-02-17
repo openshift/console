@@ -2,6 +2,11 @@ import * as React from 'react';
 import {
   GraphElement,
   ComponentFactory,
+  withDragNode,
+  withSelection,
+  withDndDrop,
+  withCreateConnector,
+  Node,
 } from '@patternfly/react-topology';
 import { withEditReviewAccess } from '@console/topology/src/utils';
 import {
@@ -13,17 +18,8 @@ import {
   CreateConnector,
   createMenuItems
 } from '@console/topology/src/components/graph-view';
-import {
-  withDragNode,
-  withSelection,
-  withDndDrop,
-  withCreateConnector,
-} from '@patternfly/react-topology';
 import { kebabOptionsToMenu } from '@console/internal/components/utils';
 import KafkaNode from './KafkaNode';
-import {
-  Node,
-} from '@patternfly/react-topology';
 import { MANAGED_KAFKA_TOPOLOGY_TYPE } from '../rhoas-topology-plugin';
 import { rhoasActions } from '../actions/rhoasActions';
 

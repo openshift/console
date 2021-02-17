@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Select,
   SelectVariant,
@@ -9,7 +10,6 @@ import {
   ToolbarItem,
   ToolbarGroup,
 } from '@patternfly/react-core';
-import { useTranslation } from 'react-i18next';
 
 const StreamsInstanceFilter = () => {
   const [isToolbarSelectOpen, setIsToolbarSelectOpen] = React.useState(false);

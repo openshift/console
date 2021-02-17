@@ -1,11 +1,11 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
+import { Button, Form, FormGroup, TextInput, TextContent, Text, TextVariants } from '@patternfly/react-core';
 import { SecretModel } from '@console/internal/models';
 import { k8sCreate } from '@console/internal/module/k8s/resource';
-import { Button, Form, FormGroup, TextInput, TextContent, Text, TextVariants } from '@patternfly/react-core';
 import { useActiveNamespace } from '@console/shared';
 import { AccessTokenSecretName } from '../../const';
 import { createServiceAccountIfNeeded } from '../managed-services-kafka/resourceCreators';
-import { useTranslation } from 'react-i18next';
 
 export const AccessManagedServices: any = () => {
   const [apiTokenValue, setApiTokenValue] = React.useState("");

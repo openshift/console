@@ -1,6 +1,9 @@
 export const FLAG_RHOAS_KAFKA = 'RHOAS_KAFKA_FLAG';
 export const FLAG_RHOAS = 'RHOAS_FLAG';
 
+export const API_GROUP = 'rhoas.redhat.com';
+export const API_VERSION = 'v1alpha1';
+
 export const AccessTokenSecretName = 'rh-managed-services-api-accesstoken';
 export const ServiceAccountSecretName = 'rh-managed-services-service-account';
 export const ManagedKafkaRequestCRName = 'rh-managed-services-kafka-request';

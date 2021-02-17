@@ -1,16 +1,15 @@
 import { Model, NodeModel } from '@patternfly/react-topology';
 import { apiVersionForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import {
-  TopologyDataObject,
-  TopologyDataResources
-} from '@console/topology/src/topology-types';
-
-import { KAFKA_WIDTH, KAFKA_HEIGHT, KAFKA_PADDING } from "./components/const"
-import { ManagedKafkaConnectionModel } from '../models'
-import {
   getTopologyNodeItem,
 } from '@console/topology/src/data-transforms/transform-utils';
 import { OverviewItem } from '@console/shared/src';
+import {
+  TopologyDataObject,
+  TopologyDataResources
+} from '@console/topology/src/topology-types';
+import { KAFKA_WIDTH, KAFKA_HEIGHT, KAFKA_PADDING } from "./components/const"
+import { ManagedKafkaConnectionModel } from '../models'
 import { MANAGED_KAFKA_TOPOLOGY_TYPE } from "./rhoas-topology-plugin"
 
 const KAFKA_PROPS = {

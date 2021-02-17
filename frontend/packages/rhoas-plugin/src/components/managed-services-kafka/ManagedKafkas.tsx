@@ -3,20 +3,19 @@ import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
 import { history } from '@console/internal/components/utils';
-import './ManagedKafkas.css';
-import StreamsInstancePage from '../streams-list/StreamsInstancePage';
-import { ManagedKafkaRequestModel } from '../../models/rhoas';
+import { referenceForModel } from '@console/internal/module/k8s';
+import { LoadingBox } from '@console/internal/components/utils';
 import { useActiveNamespace } from '@console/shared';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import StreamsInstancePage from '../streams-list/StreamsInstancePage';
+import { ManagedKafkaRequestModel } from '../../models/rhoas';
 import { ManagedKafkaRequestCRName } from '../../const';
 import {
   createManagedKafkaConnection,
   createManagedKafkaRequestIfNeeded,
   listOfCurrentKafkaConnectionsById
 } from './resourceCreators';
-import { referenceForModel } from '@console/internal/module/k8s';
-import { LoadingBox } from '@console/internal/components/utils';
-
+import './ManagedKafkas.css';
 import { KafkaRequest } from "./types"
 
 const ManagedKafkas = () => {
@@ -41,7 +40,8 @@ const ManagedKafkas = () => {
     kind: referenceForModel(ManagedKafkaRequestModel),
     name: ManagedKafkaRequestCRName,
     namespace: currentNamespace,
-    isList: false
+    isList: false,
+    optional: true
   })
 
   // TO DO: Replace this once we get error handling from operator

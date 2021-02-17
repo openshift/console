@@ -1,13 +1,12 @@
 import * as React from 'react';
 import {
-  observer,
-
+  observer
 } from '@patternfly/react-topology';
 import {
   BaseNode,
 } from '@console/topology/src/components/graph-view';
-import { ManagedKafkaConnectionModel } from '../../models';
 import { calculateRadius } from '@console/shared';
+import { ManagedKafkaConnectionModel } from '../../models';
 import { managedKafkaIcon } from '../../const';
 
 const KafkaNode: React.FC<any> = ({

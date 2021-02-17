@@ -1,4 +1,7 @@
 import { Plugin } from '@console/plugin-sdk';
+import { referenceForModel } from '@console/internal/module/k8s';
+import { ALLOW_SERVICE_BINDING_FLAG } from '@console/topology/src/const';
+import { getExecutableCodeRef } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-utils';
 import {
   TopologyComponentFactory,
   TopologyCreateConnector,
@@ -7,9 +10,6 @@ import {
 import { getRhoasComponentFactory, getRhoasTopologyDataModel } from './index';
 import { WatchK8sResources } from 'public/components/utils/k8s-watch-hook';
 import { ManagedKafkaConnectionModel } from '../models';
-import { referenceForModel } from '@console/internal/module/k8s';
-import { ALLOW_SERVICE_BINDING_FLAG } from '@console/topology/src/const';
-import { getExecutableCodeRef } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-utils';
 import { FLAG_RHOAS } from '../const';
 
 export type TopologyConsumedExtensions =

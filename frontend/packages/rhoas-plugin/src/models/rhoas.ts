@@ -1,8 +1,9 @@
 import { K8sKind } from '@console/internal/module/k8s';
+import { API_GROUP, API_VERSION } from './../const';
 
 export const ManagedKafkaRequestModel: K8sKind = {
-  apiGroup: 'rhoas.redhat.com',
-  apiVersion: 'v1alpha1',
+  apiGroup: API_GROUP,
+  apiVersion: API_VERSION,
   kind: 'ManagedKafkaRequest',
   id: 'managedkafkarequest',
   plural: 'managedkafkarequests',
@@ -14,8 +15,8 @@ export const ManagedKafkaRequestModel: K8sKind = {
 };
 
 export const ManagedKafkaConnectionModel: K8sKind = {
-  apiGroup: 'rhoas.redhat.com',
-  apiVersion: 'v1alpha1',
+  apiGroup: API_GROUP,
+  apiVersion: API_VERSION,
   kind: 'ManagedKafkaConnection',
   id: 'managedkafkaconnection',
   plural: 'managedkafkaconnections',
@@ -27,8 +28,8 @@ export const ManagedKafkaConnectionModel: K8sKind = {
 };
 
 export const ManagedServiceAccountRequest: K8sKind = {
-  apiGroup: 'rhoas.redhat.com',
-  apiVersion: 'v1alpha1',
+  apiGroup: API_GROUP,
+  apiVersion: API_VERSION,
   kind: 'ManagedServiceAccountRequest',
   id: 'managedserviceaccountrequest',
   plural: 'managedserviceaccountrequests',

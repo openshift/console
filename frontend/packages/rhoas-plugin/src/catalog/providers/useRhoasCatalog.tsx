@@ -1,14 +1,14 @@
-import { CatalogExtensionHook, CatalogItem } from '@console/plugin-sdk';
-import { CATALOG_TYPE } from '../rhoas-catalog-plugin';
 import * as React from 'react';
-import { Flex, FlexItem, Divider, Label, TextContent, Text, TextVariants} from '@patternfly/react-core';
-import { LockIcon } from '@patternfly/react-icons';
-import { AccessTokenSecretName, managedKafkaIcon, operatorIcon } from '../../const';
 import { useTranslation } from 'react-i18next';
+import { Flex, FlexItem, Divider, Label, TextContent, Text, TextVariants } from '@patternfly/react-core';
+import { LockIcon } from '@patternfly/react-icons';
+import { CatalogExtensionHook, CatalogItem } from '@console/plugin-sdk';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { SecretModel } from '@console/internal/models';
 import { useActiveNamespace } from '@console/shared';
 import { AccessManagedServices } from '../../components/access-managed-services/AccessManagedServices';
+import { CATALOG_TYPE } from '../rhoas-catalog-plugin';
+import { AccessTokenSecretName, managedKafkaIcon, operatorIcon } from '../../const';
 
 const useRhoasCatalog: CatalogExtensionHook<CatalogItem[]> = (): [CatalogItem[], boolean, any] => {
   const [currentNamespace] = useActiveNamespace();
@@ -31,7 +31,7 @@ const useRhoasCatalog: CatalogExtensionHook<CatalogItem[]> = (): [CatalogItem[],
     return (
       <Flex direction={{ default: 'column' }}>
         <FlexItem>
-          RHOAS can include Managed Kafka, Service Registry, custom resources for Managed Kafka, and Open Data Hub.
+          {t('rhoas-plugin~RHOAS can include Managed Kafka, Service Registry, custom resources for Managed Kafka, and Open Data Hub.')}
         </FlexItem>
         <FlexItem>
           {token}
@@ -45,16 +45,16 @@ const useRhoasCatalog: CatalogExtensionHook<CatalogItem[]> = (): [CatalogItem[],
       <FlexItem>
         <TextContent>
           <Text component={TextVariants.p}>
-            Installed cluster-side, creates resources in specific namespaces. The RHOAS operator could include these services below:
+            {t('rhoas-plugin~Installed cluster-side, creates resources in specific namespaces. The RHOAS operator could include these services below:')}
           </Text>
           <Text component={TextVariants.p}>
-            <b>Kafka Connect:</b> We will add a descsription for Kafka Connect here.
+            {t('rhoas-plugin~Kafka Connect: We will add a description for Kafka Connect here')}
           </Text>
           <Text component={TextVariants.p}>
-            <b>API Management:</b> We will add a description for API Management here.
+            {t('API Management: We will add a description for API Management here.')}
           </Text>
           <Text component={TextVariants.p}>
-            <b>Red Hat Open Data Hub:</b> We will add a description for Red Hat Open Data Hub here.
+            {t('Red Hat Open Data Hub: We will add a description for Red Hat Open Data Hub here.')}
           </Text>
         </TextContent>
       </FlexItem>

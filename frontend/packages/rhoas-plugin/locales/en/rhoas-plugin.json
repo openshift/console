@@ -33,5 +33,10 @@
   "Bootstrap Server": "Bootstrap Server",
   "Managed Services": "Managed Services",
   "Reduce operational complexity and focus on building and scaling applications that add more value.": "Reduce operational complexity and focus on building and scaling applications that add more value.",
-  "Browse managed services to connect applications and microservices to other services and support services to create a full solution.": "Browse managed services to connect applications and microservices to other services and support services to create a full solution."
+  "Browse managed services to connect applications and microservices to other services and support services to create a full solution.": "Browse managed services to connect applications and microservices to other services and support services to create a full solution.",
+  "RHOAS can include Managed Kafka, Service Registry, custom resources for Managed Kafka, and Open Data Hub.": "RHOAS can include Managed Kafka, Service Registry, custom resources for Managed Kafka, and Open Data Hub.",
+  "Installed cluster-side, creates resources in specific namespaces. The RHOAS operator could include these services below:": "Installed cluster-side, creates resources in specific namespaces. The RHOAS operator could include these services below:",
+  "Kafka Connect: We will add a description for Kafka Connect here": "<b>Kafka Connect:</b> We will add a description for Kafka Connect here.",
+  "API Management: We will add a description for API Management here.": "<b>API Management:</b> We will add a description for API Management here.",
+  "Red Hat Open Data Hub: We will add a description for Red Hat Open Data Hub here.": "<b>Red Hat Open Data Hub:</b> We will add a description for Red Hat Open Data Hub here.",
 }

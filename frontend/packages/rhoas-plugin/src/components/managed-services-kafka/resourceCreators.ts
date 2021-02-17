@@ -1,7 +1,7 @@
-import { ManagedKafkaRequestModel, ManagedServiceAccountRequest, ManagedKafkaConnectionModel } from '../../models/rhoas';
 import { k8sCreate, k8sGet } from '@console/internal/module/k8s/resource';
 import { AccessTokenSecretName } from '../../const'
 import { ServiceAccountSecretName, ManagedServiceAccountCRName, ManagedKafkaRequestCRName } from '../../const';
+import { ManagedKafkaRequestModel, ManagedServiceAccountRequest, ManagedKafkaConnectionModel } from '../../models/rhoas';
 
 /**
  * Create service account for purpose of supplying connection credentials

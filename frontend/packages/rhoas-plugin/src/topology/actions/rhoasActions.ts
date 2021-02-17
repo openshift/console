@@ -1,9 +1,9 @@
-import { KebabOption } from '@console/internal/components/utils/kebab';
 import { Node } from '@patternfly/react-topology';
 import { getResource } from '@console/topology/src/utils/topology-utils';
+import { KebabOption } from '@console/internal/components/utils/kebab';
 import {
   deleteManagedKafkaConnection
-} from '../../actions/modify-kafka-connection';
+} from '../../actions/delete-kafka-connection';
 
 export const rhoasActions = (kafkaInstance: Node): KebabOption[] => {
   const name = kafkaInstance.getLabel();

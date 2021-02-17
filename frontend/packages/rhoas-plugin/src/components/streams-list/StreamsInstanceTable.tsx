@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   sortable,
   cellWidth,
@@ -9,7 +10,6 @@ import {
 } from '@patternfly/react-table';
 import { Timestamp } from '@console/internal/components/utils';
 import './StreamsInstanceTable.css';
-import { useTranslation } from 'react-i18next';
 
 type FormattedKafkas = {
   cells: JSX.Element[];
@@ -22,10 +22,8 @@ const StreamsInstanceTable: any = ({ kafkaArray, setSelectedKafka, currentKafkaC
   const { t } = useTranslation();
 
   const formatTableRowData = () => {
-    const tableRow = [];
-    kafkaArray.forEach(row => {
-      const { name, bootstrapServerHost, provider, region, owner, createdAt } = row;
-      tableRow.push({
+    const tableRow = kafkaArray.map(({ id, name, bootstrapServerHost, provider, region, owner, createdAt }) => {
+      return {
         cells: [
           { title: name },
           { title: <a href="/">{bootstrapServerHost}</a> },
@@ -33,22 +31,18 @@ const StreamsInstanceTable: any = ({ kafkaArray, setSelectedKafka, currentKafkaC
           { title: region },
           { title: <a href="/">{owner}</a> },
           { title: <Timestamp timestamp={createdAt} /> },
-        ]
-      });
-    });
-
-    kafkaArray.forEach((kafka, index) => {
-      if (currentKafkaConnections.includes(kafka.id)) {
-        tableRow[index].disableSelection = true;
+        ],
+        ...(currentKafkaConnections.includes(id) && { disableSelection : true })
       }
     })
+
     if(kafkaArray.length === currentKafkaConnections.length) {
       setAllKafkasConnected(true);
     }
     else {
       setFormattedKafkas(tableRow);
     }
-  };
+  }
 
 
   React.useEffect(() => {

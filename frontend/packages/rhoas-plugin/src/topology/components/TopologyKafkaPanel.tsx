@@ -1,5 +1,8 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
+import { Node } from '@patternfly/react-topology';
 import {
   navFactory,
   SimpleTabNav,
@@ -7,14 +10,10 @@ import {
   ResourceSummary,
   ResourceLink,
 } from '@console/internal/components/utils';
-import * as UIActions from '@console/internal/actions/ui';
-import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
-import { Node } from '@patternfly/react-topology';
-import './TopologyKafkaPanel.css';
-import { useTranslation } from 'react-i18next';
-
 import { referenceForModel } from '@console/internal/module/k8s';
 import { SecretModel } from '@console/internal/models';
+import * as UIActions from '@console/internal/actions/ui';
+import './TopologyKafkaPanel.css';
 
 type PropsFromState = {
   selectedDetailsTab?: any;
@@ -36,7 +35,7 @@ type OwnProps = {
   item: Node;
 };
 
-type TopologyHelmReleasePanelProps = PropsFromState & PropsFromDispatch & OwnProps;
+type TopologyRhoasPanelProps = PropsFromState & PropsFromDispatch & OwnProps;
 
 const DetailsComponent: React.FC<any> = ({ obj }) => {
   const { t } = useTranslation();
@@ -82,11 +81,11 @@ const ResourcesComponent = ({ obj }) => {
   );
 };
 
-export const ConnectedTopologyHelmReleasePanel: React.FC<TopologyHelmReleasePanelProps> = ({
+export const ConnectedTopologyRhoasPanel: React.FC<TopologyRhoasPanelProps> = ({
   item,
   selectedDetailsTab,
   onClickTab,
-}: TopologyHelmReleasePanelProps) => {
+}: TopologyRhoasPanelProps) => {
   const [showAlert, setShowAlert] = React.useState(true);
 
   // Resource
@@ -144,7 +143,7 @@ export const ConnectedTopologyHelmReleasePanel: React.FC<TopologyHelmReleasePane
   );
 };
 
-export default connect<PropsFromState, PropsFromDispatch, TopologyHelmReleasePanelProps>(
+export default connect<PropsFromState, PropsFromDispatch, TopologyRhoasPanelProps>(
   stateToProps,
   dispatchToProps,
-)(ConnectedTopologyHelmReleasePanel);
+)(ConnectedTopologyRhoasPanel);

@@ -1,5 +1,5 @@
-import { createServiceBinding } from "@console/topology/src/operators/actions/serviceBindings";
 import { Node } from '@patternfly/react-topology';
+import { createServiceBinding } from '@console/topology/src/operators/actions/serviceBindings';
 
 export const getCreateConnector = (createHints: string[]) => {
   if (

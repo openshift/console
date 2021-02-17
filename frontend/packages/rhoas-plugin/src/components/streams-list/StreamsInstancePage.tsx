@@ -1,13 +1,13 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet';
 import { PageBody } from '@console/shared';
-import StreamsInstanceFilter from './StreamsInstanceFilter';
-import StreamsInstanceTable from './StreamsInstanceTable';
-import { PageHeading } from '@console/internal/components/utils';
-import { ManagedKafkaEmptyState } from './../empty-state/ManagedKafkaEmptyState';
 import { history } from '@console/internal/components/utils';
 import { FormFooter } from '@console/shared';
-import { useTranslation } from 'react-i18next';
+import { PageHeading } from '@console/internal/components/utils';
+import StreamsInstanceFilter from './StreamsInstanceFilter';
+import StreamsInstanceTable from './StreamsInstanceTable';
+import { ManagedKafkaEmptyState } from './../empty-state/ManagedKafkaEmptyState';
 
 const StreamsInstancePage: any = ({ kafkaArray,
   setSelectedKafka,
