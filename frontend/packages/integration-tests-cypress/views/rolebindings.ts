@@ -18,9 +18,10 @@ export const roleBindings = {
       .get('#cluster-admin-ClusterRole-link')
       .click(),
   inputSubject: (subject: string) => cy.byTestID('subject-name').type(subject),
-  clickSaveChangesButton: () =>
-    cy
-      .byTestID('save-changes')
+  clickSaveChangesButton: () => {
+    cy.byTestID('save-changes')
       .should('be.visible')
-      .click(),
+      .click();
+    cy.byTestID('loading-indicator').should('not.exist');
+  },
 };
