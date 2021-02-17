@@ -52,7 +52,7 @@ const CreateBackingStoreFormPage: React.FC<CreateBackingStoreFormPageProps> = ({
           </Title>
           <p className="nb-bs-page-title__info">
             {t(
-              'noobaa-storage-plugin~Storage targets that are used to store chunks of data on MCG buckets.',
+              'noobaa-storage-plugin~Storage targets that are used to store chunks of data on Multicloud Object Gateway buckets.',
             )}
           </p>
         </div>
@@ -66,7 +66,7 @@ const CreateBackingStoreFormPage: React.FC<CreateBackingStoreFormPageProps> = ({
             actionClose={<AlertActionCloseButton onClose={() => setShowHelp(false)} />}
           >
             {t(
-              'noobaa-storage-plugin~A backing store represents a storage target to be used as the underlying storage layer in MCG buckets.',
+              'noobaa-storage-plugin~A backing store represents a storage target to be used as the underlying storage layer in Multicloud Object Gateway buckets.',
             )}
             <br />
             {t(
