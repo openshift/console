@@ -56,10 +56,12 @@ const EditApplicationForm: React.FC<FormikProps<FormikValues> & EditApplicationF
         {createFlowType === CreateApplicationFlow.Container && <ImageSearchSection />}
         {createFlowType === CreateApplicationFlow.Container && <IconSection />}
         <AppSection project={values.project} />
-        <PipelineSection
-          builderImages={builderImages}
-          existingPipeline={appResources?.pipeline?.data}
-        />
+        {createFlowType !== CreateApplicationFlow.Container && (
+          <PipelineSection
+            builderImages={builderImages}
+            existingPipeline={appResources?.pipeline?.data}
+          />
+        )}
         <AdvancedSection values={values} appResources={appResources} />
         <FormFooter
           handleReset={handleReset}
