@@ -9,6 +9,9 @@
   &.pf-c-label {
     background-color: #d93f00;
     border-radius: var(--pf-global--BorderRadius--sm);
+    :before {
+      border-color: transparent;
+    }
   }
   .pf-c-label__content {
     color: var(--pf-global--Color--light-100);
