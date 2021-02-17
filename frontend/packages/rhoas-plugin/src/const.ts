@@ -6,7 +6,7 @@ export const API_VERSION = 'v1alpha1';
 
 export const AccessTokenSecretName = 'rh-managed-services-api-accesstoken';
 export const ServiceAccountSecretName = 'rh-managed-services-service-account';
-export const ManagedKafkaRequestCRName = 'rh-managed-services-kafka-request';
+export const ManagedServicesRequestCRName = 'rh-managed-services-kafka-request';
 export const ManagedServiceAccountCRName = 'rh-managed-services-serviceaccount-request';
 
 // SVG icon representing kafka service

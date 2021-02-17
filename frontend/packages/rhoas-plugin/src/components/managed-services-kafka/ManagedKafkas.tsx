@@ -8,11 +8,11 @@ import { LoadingBox } from '@console/internal/components/utils';
 import { useActiveNamespace } from '@console/shared';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import StreamsInstancePage from '../streams-list/StreamsInstancePage';
-import { ManagedKafkaRequestModel } from '../../models/rhoas';
-import { ManagedKafkaRequestCRName } from '../../const';
+import { ManagedServicesRequestModel } from '../../models/rhoas';
+import { ManagedServicesRequestCRName } from '../../const';
 import {
   createManagedKafkaConnection,
-  createManagedKafkaRequestIfNeeded,
+  createManagedServicesRequestIfNeeded,
   listOfCurrentKafkaConnectionsById
 } from './resourceCreators';
 import './ManagedKafkas.css';
@@ -24,7 +24,7 @@ const ManagedKafkas = () => {
   const [currentKafkaConnections, setCurrentKafkaConnections] = React.useState([]);
 
   const createKafkaRequestFlow = async () => {
-    await createManagedKafkaRequestIfNeeded(currentNamespace);
+    await createManagedServicesRequestIfNeeded(currentNamespace);
 
     const currentKafka = await listOfCurrentKafkaConnectionsById(currentNamespace)
     if (currentKafka) {
@@ -37,8 +37,8 @@ const ManagedKafkas = () => {
   }, []);
 
   const [watchedKafkaRequest] = useK8sWatchResource<KafkaRequest>({
-    kind: referenceForModel(ManagedKafkaRequestModel),
-    name: ManagedKafkaRequestCRName,
+    kind: referenceForModel(ManagedServicesRequestModel),
+    name: ManagedServicesRequestCRName,
     namespace: currentNamespace,
     isList: false,
     optional: true

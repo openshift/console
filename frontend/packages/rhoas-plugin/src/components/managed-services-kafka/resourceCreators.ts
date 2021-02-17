@@ -1,7 +1,7 @@
 import { k8sCreate, k8sGet } from '@console/internal/module/k8s/resource';
 import { AccessTokenSecretName } from '../../const'
-import { ServiceAccountSecretName, ManagedServiceAccountCRName, ManagedKafkaRequestCRName } from '../../const';
-import { ManagedKafkaRequestModel, ManagedServiceAccountRequest, ManagedKafkaConnectionModel } from '../../models/rhoas';
+import { ServiceAccountSecretName, ManagedServiceAccountCRName, ManagedServicesRequestCRName } from '../../const';
+import { ManagedServicesRequestModel, ManagedServiceAccountRequest, ManagedKafkaConnectionModel } from '../../models/rhoas';
 
 /**
  * Create service account for purpose of supplying connection credentials
@@ -10,7 +10,7 @@ import { ManagedKafkaRequestModel, ManagedServiceAccountRequest, ManagedKafkaCon
  */
 export const createManagedServiceAccount = async (currentNamespace: string) => {
   const serviceAcct = {
-    apiVersion: ManagedKafkaRequestModel.apiGroup + "/" + ManagedKafkaRequestModel.apiVersion,
+    apiVersion: ManagedServicesRequestModel.apiGroup + "/" + ManagedServicesRequestModel.apiVersion,
     kind: ManagedServiceAccountRequest.kind,
     metadata: {
       name: ManagedServiceAccountCRName,
@@ -32,12 +32,12 @@ export const createManagedServiceAccount = async (currentNamespace: string) => {
 /**
  * Create request to fetch all managed kafkas from upstream
  */
-export const createManagedKafkaRequest = async (currentNamespace: string) => {
+export const createManagedServicesRequest = async (currentNamespace: string) => {
   const mkRequest = {
-    apiVersion: ManagedKafkaRequestModel.apiGroup + "/" + ManagedKafkaRequestModel.apiVersion,
-    kind: ManagedKafkaRequestModel.kind,
+    apiVersion: ManagedServicesRequestModel.apiGroup + "/" + ManagedServicesRequestModel.apiVersion,
+    kind: ManagedServicesRequestModel.kind,
     metadata: {
-      name: ManagedKafkaRequestCRName,
+      name: ManagedServicesRequestCRName,
       namespace: currentNamespace
     },
     spec: {
@@ -45,18 +45,18 @@ export const createManagedKafkaRequest = async (currentNamespace: string) => {
     }
   };
 
-  await k8sCreate(ManagedKafkaRequestModel, mkRequest);
+  await k8sCreate(ManagedServicesRequestModel, mkRequest);
 }
 
-export const createManagedKafkaRequestIfNeeded = async (currentNamespace) => {
+export const createManagedServicesRequestIfNeeded = async (currentNamespace) => {
   let currentRequest
   try {
-    currentRequest = await k8sGet(ManagedKafkaRequestModel, ManagedKafkaRequestCRName, currentNamespace);
+    currentRequest = await k8sGet(ManagedServicesRequestModel, ManagedServicesRequestCRName, currentNamespace);
   } catch (error) {
     console.log('managed kafka doesnt exist')
   }
   if (!currentRequest) {
-    return await createManagedKafkaRequest(currentNamespace);
+    return await createManagedServicesRequest(currentNamespace);
   }
 
   return currentRequest;
@@ -84,7 +84,7 @@ export const createServiceAccountIfNeeded = async (currentNamespace) => {
  */
 export const createManagedKafkaConnection = async (kafkaId: string, kafkaName: string, currentNamespace: string) => {
   const kafkaConnection = {
-    apiVersion: ManagedKafkaRequestModel.apiGroup + "/" + ManagedKafkaRequestModel.apiVersion,
+    apiVersion: ManagedServicesRequestModel.apiGroup + "/" + ManagedServicesRequestModel.apiVersion,
     kind: ManagedKafkaConnectionModel.kind,
     metadata: {
       name: kafkaName,

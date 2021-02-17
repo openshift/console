@@ -1,15 +1,15 @@
 import { K8sKind } from '@console/internal/module/k8s';
 import { API_GROUP, API_VERSION } from './../const';
 
-export const ManagedKafkaRequestModel: K8sKind = {
+export const ManagedServicesRequestModel: K8sKind = {
   apiGroup: API_GROUP,
   apiVersion: API_VERSION,
-  kind: 'ManagedKafkaRequest',
-  id: 'managedkafkarequest',
-  plural: 'managedkafkarequests',
-  label: 'Managed Kafka Request',
-  labelPlural: 'Managed Kafka Requests',
-  abbr: 'MKR',
+  kind: 'ManagedServicesRequest',
+  id: 'managedservicesrequest',
+  plural: 'managedservicesrequests',
+  label: 'Managed Services Request',
+  labelPlural: 'Managed Services Requests',
+  abbr: 'MSCR',
   namespaced: true,
   crd: true,
 };
