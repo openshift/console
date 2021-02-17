@@ -103,6 +103,7 @@ type Server struct {
 	StaticUser           *auth.User
 	KubectlClientID      string
 	KubeAPIServerURL     string
+	KubeVersion          string
 	DocumentationBaseURL *url.URL
 	Branding             string
 	CustomProductName    string
@@ -394,8 +395,9 @@ func (s *Server) HTTPHandler() http.Handler {
 	handle("/api/console/knative-channels", authHandler(s.handleKnativeChannelCRDs))
 	handle("/api/console/version", authHandler(s.versionHandler))
 
+	helmHandlers := helmhandlerspkg.New(s.K8sProxyConfig.Endpoint.String(), s.K8sClient.Transport, s)
+
 	// Helm Endpoints
-	helmHandlers := helmhandlerspkg.New(s.K8sProxyConfig.Endpoint.String(), s.K8sClient.Transport)
 	handle("/api/helm/template", authHandlerWithUser(helmHandlers.HandleHelmRenderManifests))
 	handle("/api/helm/releases", authHandlerWithUser(helmHandlers.HandleHelmList))
 	handle("/api/helm/chart", authHandlerWithUser(helmHandlers.HandleChartGet))
