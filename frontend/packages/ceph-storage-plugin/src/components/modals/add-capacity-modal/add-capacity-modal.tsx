@@ -1,12 +1,14 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import * as classNames from 'classnames';
-import { FieldLevelHelp, humanizeBinaryBytes } from '@console/internal/components/utils/index';
+import { QuestionCircleIcon } from '@patternfly/react-icons';
+import { Form, Tooltip, FormGroup, TextInput, TextContent } from '@patternfly/react-core';
+import { humanizeBinaryBytes } from '@console/internal/components/utils/index';
 import {
   createModalLauncher,
-  ModalBody,
-  ModalSubmitFooter,
   ModalTitle,
+  ModalSubmitFooter,
+  ModalBody,
 } from '@console/internal/components/factory';
 import { usePrometheusPoll } from '@console/internal/components/graphs/prometheus-poll-hook';
 import { k8sPatch, StorageClassResourceKind } from '@console/internal/module/k8s';
@@ -40,7 +42,7 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
 
   const [response, loadError, loading] = usePrometheusPoll(cephCapacityResource);
   const [storageClass, setStorageClass] = React.useState<StorageClassResourceKind>(null);
-  /* TBD(Afreen): Show installation storage class as preselected 
+  /* TBD(Afreen): Show installation storage class as preselected
                   Change state metadata
   */
   const [inProgress, setProgress] = React.useState(false);
@@ -129,62 +131,76 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
   };
 
   return (
-    <form onSubmit={submit} className="modal-content modal-content--no-inner-scroll">
+    <Form
+      onSubmit={submit}
+      className="pf-u-display-block modal-content modal-content--no-inner-scroll"
+    >
       <ModalTitle>{t('ceph-storage-plugin~Add Capacity')}</ModalTitle>
       <ModalBody>
         <Trans t={t} ns="ceph-storage-plugin" values={{ name }}>
           Adding capacity for <strong>{{ name }}</strong>, may increase your expenses.
         </Trans>
-        <div className="ceph-add-capacity__modal">
-          <div
-            className={classNames('ceph-add-capacity__sc-dropdown', {
-              'ceph-add-capacity__sc-dropdown--margin': !isNoProvionerSC,
-            })}
-          >
-            <label className="control-label" htmlFor="storageClass">
-              {t('ceph-storage-plugin~Storage Class')}
-              <FieldLevelHelp>{storageClassTooltip(t)}</FieldLevelHelp>
-            </label>
+        <FormGroup
+          className="pf-u-pt-md pf-u-pb-sm"
+          id="add-cap-sc-dropdown__FormGroup"
+          fieldId="add-capacity-dropdown"
+          label={t('ceph-storage-plugin~Storage Class')}
+          labelIcon={
+            <Tooltip position="top" content={<>{storageClassTooltip(t)}</>}>
+              <QuestionCircleIcon className="pf-u-secondary-color-100" />
+            </Tooltip>
+          }
+          isRequired
+        >
+          <div id="add-capacity-dropdown" className="ceph-add-capacity__sc-dropdown">
             <OCSStorageClassDropdown onChange={onChange} data-test="add-cap-sc-dropdown" />
           </div>
-          {isNoProvionerSC ? (
-            <PVsAvailableCapacity
-              replica={replica}
-              data-test-id="ceph-add-capacity-pvs-available-capacity"
-              storageClass={storageClass}
-            />
-          ) : (
-            <div>
-              <label className="control-label" htmlFor="requestSize">
-                {t('ceph-storage-plugin~Raw Capacity')}
-                <FieldLevelHelp>{requestedCapacityTooltip}</FieldLevelHelp>
-              </label>
-              <div className="ceph-add-capacity__form">
-                <input
-                  className={classNames('pf-c-form-control', 'ceph-add-capacity__input')}
-                  type="number"
-                  name="requestSize"
-                  value={osdSizeWithoutUnit}
-                  required
-                  disabled
-                  data-test-id="requestSize"
-                />
-                {provisionedCapacity && (
-                  <div className="ceph-add-capacity__input--info-text">
-                    {t('ceph-storage-plugin~x {{ replica, number }} replicas =', { replica })}{' '}
-                    <strong data-test="provisioned-capacity">{provisionedCapacity} TiB</strong>
-                  </div>
-                )}
-              </div>
-              <div className="ceph-add-capacity__current-capacity">
-                <div className="text-secondary ceph-add-capacity__current-capacity--text">
-                  <strong>{t('ceph-storage-plugin~Currently Used:')}</strong>
-                </div>
+        </FormGroup>
+        {isNoProvionerSC ? (
+          <PVsAvailableCapacity
+            replica={replica}
+            data-test-id="ceph-add-capacity-pvs-available-capacity"
+            storageClass={storageClass}
+          />
+        ) : (
+          <>
+            <FormGroup
+              className="pf-u-py-sm"
+              fieldId="request-size"
+              id="requestSize__FormGroup"
+              label={t('ceph-storage-plugin~Raw Capacity')}
+              labelIcon={
+                <Tooltip position="top" content={<>{requestedCapacityTooltip(t)}</>}>
+                  <QuestionCircleIcon className="pf-u-secondary-color-100" />
+                </Tooltip>
+              }
+            >
+              <TextInput
+                isDisabled
+                id="request-size"
+                className={classNames('pf-c-form-control', 'ceph-add-capacity__input')}
+                type="number"
+                name="requestSize"
+                value={osdSizeWithoutUnit}
+                aria-label="requestSize"
+                data-test-id="requestSize"
+              />
+              {provisionedCapacity && (
+                <TextContent className="ceph-add-capacity__provisioned-capacity">
+                  {' '}
+                  {t('ceph-storage-plugin~x {{ replica, number }} replicas =', {
+                    replica,
+                  })}{' '}
+                  <strong data-test="provisioned-capacity">{provisionedCapacity}&nbsp;TiB</strong>
+                </TextContent>
+              )}
+              <TextContent className="pf-u-font-weight-bold pf-u-secondary-color-100 ceph-add-capacity__current-capacity">
+                {t('ceph-storage-plugin~Currently Used:')}&nbsp;
                 {currentCapacity}
-              </div>
-            </div>
-          )}
-        </div>
+              </TextContent>
+            </FormGroup>
+          </>
+        )}
       </ModalBody>
       <ModalSubmitFooter
         inProgress={inProgress}
@@ -192,7 +208,7 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
         submitText={t('ceph-storage-plugin~Add')}
         cancel={cancel}
       />
-    </form>
+    </Form>
   );
 };
 
