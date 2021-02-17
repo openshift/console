@@ -12,4 +12,5 @@ export const devNavigationMenuPO = {
   configMaps: '#ConfigMap',
   secret: '#Secret',
   dropdownButton: '[data-test-id="dropdown-button"]',
+  environments: '[data-test-id="environments-header"]',
 };

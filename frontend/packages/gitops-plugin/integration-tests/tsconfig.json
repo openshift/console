@@ -1,0 +1,4 @@
+{
+  "extends": "../../dev-console/integration-tests/tsconfig.json",
+  "include": ["**/*.ts", "./support/commands/index.ts", "plugins/index.js"]
+}
