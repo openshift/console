@@ -9,5 +9,8 @@ export const topologyHelper = {
   verifyWorkloadInTopologyPage: (appName: string) => {
     topologyHelper.search(appName);
     cy.get(topologyPO.search).should('be.visible');
+    cy.document()
+      .its('readyState')
+      .should('eq', 'complete');
   },
 };

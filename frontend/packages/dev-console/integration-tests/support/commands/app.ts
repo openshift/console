@@ -16,6 +16,8 @@ declare global {
         dropdownText: string,
       ): Chainable<Element>;
       selectActionsMenuOption(actionsMenuOption: string): Chainable<Element>;
+      dropdownSwitchTo(dropdownMenuOption: string): Chainable<Element>;
+      isDropdownVisible(): Chainable<Element>;
     }
   }
 }
@@ -94,4 +96,20 @@ Cypress.Commands.add('selectActionsMenuOption', (actionsMenuOption: string) => {
   cy.byTestActionID(actionsMenuOption)
     .should('be.visible')
     .click();
+});
+
+Cypress.Commands.add('dropdownSwitchTo', (dropdownMenuOption: string) => {
+  cy.byLegacyTestID('dropdown-button')
+    .click()
+    .get('.pf-c-dropdown__menu')
+    .contains(dropdownMenuOption)
+    .click();
+});
+
+Cypress.Commands.add('isDropdownVisible', () => {
+  cy.byLegacyTestID('dropdown-button')
+    .should('be.visible')
+    .click()
+    .get('.pf-c-dropdown__menu')
+    .should('be.visible');
 });

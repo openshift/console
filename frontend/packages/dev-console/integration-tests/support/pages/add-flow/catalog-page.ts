@@ -3,7 +3,7 @@ import { pageTitle } from '../../constants/pageTitle';
 import { addPage } from './add-page';
 import { addOptions, catalogCards, catalogTypes } from '../../constants/add';
 import { topologyHelper } from '../topology/topology-helper-page';
-import { devNavigationMenuPO } from '../../pageObjects/global-po';
+import { helmPO } from '../../pageObjects/helm-po';
 
 export const catalogPage = {
   verifyTitle: () => cy.pageTitleShouldContain('Developer Catalog'),
@@ -125,15 +125,8 @@ export const catalogPage = {
 };
 
 export const catalogInstallPageObj = {
-  installHelmChart: {
-    install: '[data-test-id="submit-button"]',
-    chartVersion: '#form-dropdown-chartVersion-field',
-    yamlView: '#form-radiobutton-editorType-yaml-field',
-  },
-  selectHelmChartVersion: (version: string) =>
-    cy.selectByDropDownText(devNavigationMenuPO.dropdownButton, version),
-  verifyChartVersionDropdownAvailable: () =>
-    cy.verifyDropdownselected(devNavigationMenuPO.dropdownButton),
+  selectHelmChartVersion: (version: string) => cy.dropdownSwitchTo(version),
+  verifyChartVersionDropdownAvailable: () => cy.isDropdownVisible(),
   selectChangeOfChartVersionDialog: (option: string) => {
     if (option === 'Proceed') {
       cy.get('#confirm-action').click();
@@ -141,4 +134,13 @@ export const catalogInstallPageObj = {
       cy.byLegacyTestID('modal-cancel-action').click();
     }
   },
+  selectHelmChartCard: (cardName: string) => cy.dropdownSwitchTo(cardName),
+};
+
+export const sidePaneObj = {
+  verifyChartVersion: () =>
+    cy
+      .get(helmPO.sidePane.chartVersion)
+      .eq(0)
+      .should('have.text', '0.2.1'),
 };
