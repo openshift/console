@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import { getInfrastructurePlatform } from '@console/shared';
@@ -14,11 +15,15 @@ import {
 import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
 import { FirehoseResource, FirehoseResult } from '@console/internal/components/utils/index';
 import { InfrastructureModel } from '@console/internal/models/index';
-import { SubscriptionModel } from '@console/operator-lifecycle-manager/src/models';
+import {
+  SubscriptionModel,
+  ClusterServiceVersionModel,
+} from '@console/operator-lifecycle-manager/src/models';
 import { K8sResourceKind } from '@console/internal/module/k8s/index';
 import { getName } from '@console/shared/src/selectors/common';
 import { referenceForModel } from '@console/internal/module/k8s/k8s';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
+import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
 import { OCSServiceModel } from '../../../models';
 import { getOCSVersion } from '../../../selectors';
 import { CEPH_STORAGE_NAMESPACE } from '../../../constants';
@@ -69,7 +74,11 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
   const subscription = _.get(resources, 'subscription') as FirehoseResult;
   const subscriptionLoaded = _.get(subscription, 'loaded');
   const ocsVersion = getOCSVersion(subscription);
-
+  const ocsPath = `${resourcePathFromModel(
+    ClusterServiceVersionModel,
+    ocsVersion,
+    CEPH_STORAGE_NAMESPACE,
+  )}`;
   return (
     <DashboardCard>
       <DashboardCardHeader>
@@ -83,7 +92,7 @@ const DetailsCard: React.FC<DashboardItemProps> = ({
             isLoading={false}
             error={false}
           >
-            OpenShift Container Storage
+            <Link to={ocsPath}>OpenShift Container Storage</Link>
           </DetailItem>
           <DetailItem
             key="cluster_name"
