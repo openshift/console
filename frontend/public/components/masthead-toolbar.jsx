@@ -326,7 +326,7 @@ class MastheadToolbarContents_ extends React.Component {
 
   _renderMenu(mobile) {
     const { flags, consoleLinks, keycloak, t } = this.props;
-    const username = keycloak.idTokenParsed.email;
+    const username = !!keycloak.idTokenParsed.preferred_username ? keycloak.idTokenParsed.preferred_username : keycloak.idTokenParsed.email;
     const { isUserDropdownOpen, isKebabDropdownOpen } = this.state;
     const additionalUserActions = this._getAdditionalActions(this._getAdditionalLinks(consoleLinks, 'UserMenu'));
     const helpActions = this._helpActions(this._getAdditionalActions(this._getAdditionalLinks(consoleLinks, 'HelpMenu')));
@@ -606,7 +606,7 @@ export const MastheadToolbar = connectToFlags(FLAGS.CLUSTER_VERSION)(({ flags, k
     : [];
   return (
     <Firehose resources={resources}>
-      <MastheadToolbarContents keycloak={keycloak}/>
+      <MastheadToolbarContents keycloak={keycloak} />
     </Firehose>
   );
 });
