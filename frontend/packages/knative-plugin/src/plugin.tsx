@@ -9,7 +9,6 @@ import {
   ResourceListPage,
   ResourceDetailsPage,
   RoutePage,
-  GlobalConfig,
   KebabActions,
   YAMLTemplate,
   HrefNavItem,
@@ -47,7 +46,6 @@ type ConsumedExtensions =
   | ResourceNSNavItem
   | ModelFeatureFlag
   | ModelDefinition
-  | GlobalConfig
   | OverviewResourceTab
   | ResourceListPage
   | RoutePage
@@ -127,19 +125,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: models.CamelKameletModel,
       flag: FLAG_CAMEL_KAMELETS,
-    },
-  },
-  {
-    type: 'GlobalConfig',
-    properties: {
-      kind: 'KnativeServing',
-      model: models.KnativeServingModel,
-      name: 'knative-serving',
-      namespace: 'knative-serving',
-      uid: 'knative-serving',
-    },
-    flags: {
-      required: [FLAG_KNATIVE_SERVING],
     },
   },
   {
