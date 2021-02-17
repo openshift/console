@@ -1,3 +1,5 @@
+@import '~@patternfly/patternfly/sass-utilities/all';
+
 .odc-monitoring-alerts {
   padding: var(--pf-global--spacer--lg);
   &--state-column {
@@ -6,6 +8,14 @@
   }
   &--kebab {
     text-align: right;
+  }
+  .odc-monitoring-alert-column {
+    &--notification {
+      width: 20%;
+      @media screen and (max-width: $pf-global--breakpoint--2xl) {
+        width: 30%;
+      }
+    }
   }
   .pf-c-table {
     table-layout: auto;
