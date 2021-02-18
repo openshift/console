@@ -40,8 +40,8 @@ export class ConsoleAssetPlugin {
     validateExtensionsFileSchema(ext).report();
 
     this.manifest = {
-      name: pkg.name,
-      version: pkg.version,
+      name: pkg.consolePlugin.name,
+      version: pkg.consolePlugin.version,
       displayName: pkg.consolePlugin.displayName,
       description: pkg.consolePlugin.description,
       dependencies: pkg.consolePlugin.dependencies,

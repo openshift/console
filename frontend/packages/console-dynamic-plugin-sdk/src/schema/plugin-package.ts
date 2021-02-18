@@ -4,6 +4,13 @@ import * as readPkg from 'read-pkg';
  * Console plugin metadata in `package.json` file.
  */
 export type ConsolePluginMetadata = {
+  /**
+   * Plugin name. Should be the same as `metadata.name` of the corresponding
+   * `ConsolePlugin` resource used to represent the plugin on the cluster.
+   */
+  name: string;
+  /** Plugin version. Must be semver compliant. */
+  version: string;
   /** User-friendly plugin name. */
   displayName?: string;
   /** User-friendly plugin description. */

@@ -1,3 +1,4 @@
+import { Simulate } from 'react-dom/test-utils';
 import { Extension } from '@console/plugin-sdk/src/typings/base';
 import { PluginStore } from '@console/plugin-sdk/src/store';
 import {
@@ -40,9 +41,9 @@ describe('loadDynamicPlugin', () => {
   const getAllScriptElements = () =>
     document.querySelectorAll<HTMLScriptElement>(`[id^="${scriptIDPrefix}"]`);
 
-  it('updates pluginMap and adds script element to document head', () => {
+  it('updates pluginMap and adds a script element to document head', () => {
     const manifest = getPluginManifest('Test', '1.2.3');
-    loadDynamicPlugin('http://example.com/test', manifest);
+    loadDynamicPlugin('http://example.com/test/', manifest);
 
     const { pluginMap } = getStateForTestPurposes();
     expect(pluginMap.size).toBe(1);
@@ -53,28 +54,67 @@ describe('loadDynamicPlugin', () => {
     const script = getScriptElement(manifest);
     expect(script instanceof HTMLScriptElement).toBe(true);
     expect(script.parentElement).toBe(document.head);
-    expect(script.id).toBe('console-plugin-Test');
+    expect(script.id).toBe(getScriptElementID(manifest));
     expect(script.src).toBe('http://example.com/test/plugin-entry.js');
-    expect(script.async).toBe(true);
   });
 
-  it('does nothing if a plugin with the same name is already registered', () => {
+  it('throws an error if a plugin with the same name is already registered', async () => {
     const manifest1 = getPluginManifest('Test', '1.2.3');
     const manifest2 = getPluginManifest('Test', '2.3.4');
-    loadDynamicPlugin('http://example.com/test1', manifest1);
-    loadDynamicPlugin('http://example.com/test2', manifest2);
+    loadDynamicPlugin('http://example.com/test1/', manifest1);
+
+    expect.assertions(6);
+    try {
+      await loadDynamicPlugin('http://example.com/test2/', manifest2);
+    } catch (e) {
+      const { pluginMap } = getStateForTestPurposes();
+      expect(pluginMap.size).toBe(1);
+      expect(pluginMap.get('Test@1.2.3').manifest).toBe(manifest1);
+      expect(pluginMap.get('Test@1.2.3').entryCallbackFired).toBe(false);
+
+      const allScripts = getAllScriptElements();
+      expect(allScripts.length).toBe(1);
+      expect(allScripts[0].id).toBe(getScriptElementID(manifest1));
+      expect(allScripts[0].src).toBe('http://example.com/test1/plugin-entry.js');
+    }
+  });
+
+  it('returns plugin ID if the script was loaded successfully and the entry callback was fired', async () => {
+    const manifest = getPluginManifest('Test', '1.2.3');
+    const promise = loadDynamicPlugin('http://example.com/test/', manifest);
 
     const { pluginMap } = getStateForTestPurposes();
-    expect(pluginMap.size).toBe(1);
-    expect(pluginMap.has('Test@1.2.3')).toBe(true);
-    expect(pluginMap.get('Test@1.2.3').manifest).toBe(manifest1);
-    expect(pluginMap.get('Test@1.2.3').entryCallbackFired).toBe(false);
+    pluginMap.get('Test@1.2.3').entryCallbackFired = true;
 
-    const allScripts = getAllScriptElements();
-    expect(allScripts.length).toBe(1);
-    expect(allScripts[0].id).toBe('console-plugin-Test');
-    expect(allScripts[0].src).toBe('http://example.com/test1/plugin-entry.js');
-    expect(allScripts[0].async).toBe(true);
+    Simulate.load(getScriptElement(manifest));
+
+    expect(await promise).toBe('Test@1.2.3');
+  });
+
+  it('throws an error if the script was loaded successfully but the entry callback was not fired', async (done) => {
+    const manifest = getPluginManifest('Test', '1.2.3');
+    const promise = loadDynamicPlugin('http://example.com/test/', manifest);
+
+    Simulate.load(getScriptElement(manifest));
+
+    try {
+      await promise;
+    } catch (e) {
+      done();
+    }
+  });
+
+  it('throws an error if the script was not loaded successfully', async (done) => {
+    const manifest = getPluginManifest('Test', '1.2.3');
+    const promise = loadDynamicPlugin('http://example.com/test/', manifest);
+
+    Simulate.error(getScriptElement(manifest));
+
+    try {
+      await promise;
+    } catch (e) {
+      done();
+    }
   });
 });
 
@@ -117,11 +157,12 @@ describe('window.loadPluginEntry', () => {
 
     const manifest = getPluginManifest('Test', '1.2.3', extensions);
     const [, entryModule] = getEntryModuleMocks({});
+    const { pluginMap } = getStateForTestPurposes();
 
     const overrideSharedModules = jest.fn();
     const resolveEncodedCodeRefs = jest.fn(() => resolvedExtensions);
 
-    loadDynamicPlugin('http://example.com/test', manifest);
+    pluginMap.set(getPluginID(manifest), { manifest, entryCallbackFired: false });
 
     getPluginEntryCallback(
       pluginStore,
@@ -129,11 +170,7 @@ describe('window.loadPluginEntry', () => {
       resolveEncodedCodeRefs,
     )('Test@1.2.3', entryModule);
 
-    const { pluginMap } = getStateForTestPurposes();
-    expect(pluginMap.size).toBe(1);
-    expect(pluginMap.get('Test@1.2.3').manifest).toBe(manifest);
     expect(pluginMap.get('Test@1.2.3').entryCallbackFired).toBe(true);
-
     expect(overrideSharedModules).toHaveBeenCalledWith(entryModule);
 
     expect(resolveEncodedCodeRefs).toHaveBeenCalledWith(
@@ -151,6 +188,7 @@ describe('window.loadPluginEntry', () => {
     const addDynamicPlugin = jest.spyOn(pluginStore, 'addDynamicPlugin');
 
     const [, entryModule] = getEntryModuleMocks({});
+    const { pluginMap } = getStateForTestPurposes();
 
     const overrideSharedModules = jest.fn();
     const resolveEncodedCodeRefs = jest.fn(() => []);
@@ -161,9 +199,7 @@ describe('window.loadPluginEntry', () => {
       resolveEncodedCodeRefs,
     )('Test@1.2.3', entryModule);
 
-    const { pluginMap } = getStateForTestPurposes();
     expect(pluginMap.size).toBe(0);
-
     expect(overrideSharedModules).not.toHaveBeenCalled();
     expect(resolveEncodedCodeRefs).not.toHaveBeenCalled();
     expect(addDynamicPlugin).not.toHaveBeenCalled();
@@ -175,11 +211,12 @@ describe('window.loadPluginEntry', () => {
 
     const manifest = getPluginManifest('Test', '1.2.3');
     const [, entryModule] = getEntryModuleMocks({});
+    const { pluginMap } = getStateForTestPurposes();
 
     const overrideSharedModules = jest.fn();
     const resolveEncodedCodeRefs = jest.fn(() => []);
 
-    loadDynamicPlugin('http://example.com/test', manifest);
+    pluginMap.set(getPluginID(manifest), { manifest, entryCallbackFired: false });
 
     getPluginEntryCallback(
       pluginStore,
@@ -193,9 +230,7 @@ describe('window.loadPluginEntry', () => {
       resolveEncodedCodeRefs,
     )('Test@1.2.3', entryModule);
 
-    const { pluginMap } = getStateForTestPurposes();
     expect(pluginMap.size).toBe(1);
-
     expect(overrideSharedModules).toHaveBeenCalledTimes(1);
     expect(resolveEncodedCodeRefs).toHaveBeenCalledTimes(1);
     expect(addDynamicPlugin).toHaveBeenCalledTimes(1);
@@ -207,13 +242,14 @@ describe('window.loadPluginEntry', () => {
 
     const manifest = getPluginManifest('Test', '1.2.3');
     const [, entryModule] = getEntryModuleMocks({});
+    const { pluginMap } = getStateForTestPurposes();
 
     const overrideSharedModules = jest.fn(() => {
       throw new Error('boom');
     });
     const resolveEncodedCodeRefs = jest.fn(() => []);
 
-    loadDynamicPlugin('http://example.com/test', manifest);
+    pluginMap.set(getPluginID(manifest), { manifest, entryCallbackFired: false });
 
     getPluginEntryCallback(
       pluginStore,
@@ -221,9 +257,7 @@ describe('window.loadPluginEntry', () => {
       resolveEncodedCodeRefs,
     )('Test@1.2.3', entryModule);
 
-    const { pluginMap } = getStateForTestPurposes();
     expect(pluginMap.size).toBe(1);
-
     expect(overrideSharedModules).toHaveBeenCalledWith(entryModule);
     expect(resolveEncodedCodeRefs).not.toHaveBeenCalled();
     expect(addDynamicPlugin).not.toHaveBeenCalled();

@@ -23,32 +23,43 @@ export const getPluginID = (m: ConsolePluginManifestJSON) => `${m.name}@${m.vers
 
 export const getScriptElementID = (m: ConsolePluginManifestJSON) => `${scriptIDPrefix}-${m.name}`;
 
-export const loadDynamicPlugin = (baseURL: string, manifest: ConsolePluginManifestJSON) => {
-  const pluginID = getPluginID(manifest);
+export const loadDynamicPlugin = (baseURL: string, manifest: ConsolePluginManifestJSON) =>
+  new Promise<string>((resolve, reject) => {
+    const pluginID = getPluginID(manifest);
 
-  const existingPluginData = Array.from(pluginMap.values()).find(
-    (p) => p.manifest.name === manifest.name,
-  );
+    const existingPluginData = Array.from(pluginMap.values()).find(
+      (p) => p.manifest.name === manifest.name,
+    );
 
-  if (existingPluginData) {
-    const existingPluginID = getPluginID(existingPluginData.manifest);
-    console.error(`Attempt to reload plugin ${existingPluginID} with ${pluginID}`);
-    return;
-  }
+    if (existingPluginData) {
+      const existingPluginID = getPluginID(existingPluginData.manifest);
+      reject(new Error(`Attempt to reload plugin ${existingPluginID} with ${pluginID}`));
+      return;
+    }
 
-  pluginMap.set(pluginID, { manifest, entryCallbackFired: false });
+    pluginMap.set(pluginID, { manifest, entryCallbackFired: false });
 
-  const script = document.createElement('script');
-  script.id = getScriptElementID(manifest);
-  script.src = resolveURL(baseURL, remoteEntryFile, { trailingSlashInBaseURL: true });
-  script.async = true;
-  script.onerror = (event) => {
-    console.error(`Error while loading entry script for plugin ${pluginID}`, event);
-  };
+    const script = document.createElement('script');
+    script.id = getScriptElementID(manifest);
+    script.src = resolveURL(baseURL, remoteEntryFile);
+    script.async = true;
 
-  console.info(`Loading entry script for plugin ${pluginID} from ${script.src}`);
-  document.head.appendChild(script);
-};
+    script.onload = () => {
+      if (pluginMap.get(pluginID).entryCallbackFired) {
+        resolve(pluginID);
+      } else {
+        reject(new Error(`Entry script for plugin ${pluginID} loaded without callback`));
+      }
+    };
+
+    script.onerror = (event) => {
+      console.error(event);
+      reject(new Error(`Error while loading entry script for plugin ${pluginID}`));
+    };
+
+    console.info(`Loading entry script for plugin ${pluginID} from ${script.src}`);
+    document.head.appendChild(script);
+  });
 
 export const getPluginEntryCallback = (
   pluginStore: PluginStore,
