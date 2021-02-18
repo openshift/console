@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Alert, AlertVariant, Button, List, ListItem } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 
 export const ExpandableAlert: React.FC<CustomAlertProps> = ({ alerts, variant }) => {
   const alertCount = alerts.length;
@@ -15,6 +16,7 @@ export const ExpandableAlert: React.FC<CustomAlertProps> = ({ alerts, variant })
     ) : (
       alerts
     );
+  const { t } = useTranslation();
 
   return (
     <Alert
@@ -23,9 +25,9 @@ export const ExpandableAlert: React.FC<CustomAlertProps> = ({ alerts, variant })
       className="co-alert"
       title={
         <>
-          {`There are ${alertCount} ${variant} alerts.`}
+          {t('public~There is {{count}} {{variant}} alert.', { count: alertCount, variant })}
           <Button type="button" onClick={() => setExpanded(!expanded)} variant="link">
-            {expanded ? 'Hide' : 'Show'} Details
+            {expanded ? t('public~Hide details') : t('public~Show details')}
           </Button>
         </>
       }

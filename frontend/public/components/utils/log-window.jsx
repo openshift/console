@@ -1,17 +1,18 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
-import { pluralize } from './';
 import { STREAM_EOF, STREAM_PAUSED, STREAM_ACTIVE } from './resource-log';
 import { OutlinedPlayCircleIcon } from '@patternfly/react-icons';
 import { Button } from '@patternfly/react-core';
+/* eslint-disable import/named */
+import { withTranslation } from 'react-i18next';
 
 // Subtracted from log window height to prevent scroll bar from appearing when resume button is shown.
 // Added fullscreen fudge factor to account for fullscreen taking log contents outside of .co-m-pane__body div
 const FUDGE_FACTOR = 105;
 const FULLSCREEN_FUDGE_FACTOR = 57;
 
-export class LogWindow extends React.PureComponent {
+class LogWindowWithTranslation extends React.PureComponent {
   constructor(props) {
     super(props);
     this._unpause = this._unpause.bind(this);
@@ -113,15 +114,16 @@ export class LogWindow extends React.PureComponent {
   }
 
   render() {
-    const { bufferFull, lines, linesBehind, status } = this.props;
+    const { bufferFull, lines, linesBehind, status, t } = this.props;
     const { content, height } = this.state;
-
     // TODO maybe move these variables into state so they are only updated on changes
-    const totalLineCount = pluralize(lines.length, 'line');
-    const linesBehindCount = pluralize(linesBehind, 'new line');
-    const headerText = bufferFull ? `last ${totalLineCount}` : totalLineCount;
+    const headerText = bufferFull
+      ? t('public~last {{count}} line', { count: lines.length })
+      : t('public~{{count}} line', { count: lines.length });
     const resumeText =
-      linesBehind > 0 ? ` Resume stream and show ${linesBehindCount}` : ' Resume stream';
+      linesBehind > 0
+        ? t('public~Resume stream and show {{count}} new line', { count: linesBehind })
+        : t('public~Resume stream');
 
     return (
       <div className="log-window">
@@ -136,13 +138,15 @@ export class LogWindow extends React.PureComponent {
         {status === STREAM_PAUSED && (
           <Button onClick={this._unpause} isBlock>
             <OutlinedPlayCircleIcon />
-            {resumeText}
+            &nbsp;{resumeText}
           </Button>
         )}
       </div>
     );
   }
 }
+
+export const LogWindow = withTranslation()(LogWindowWithTranslation);
 
 LogWindow.propTypes = {
   bufferFull: PropTypes.bool.isRequired,

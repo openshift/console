@@ -3,6 +3,7 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import * as PropTypes from 'prop-types';
 import { Alert } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 
 import { LoadingInline } from './status-box';
 
@@ -16,16 +17,19 @@ const injectDisabled = (children, disabled) => {
   });
 };
 
-const ErrorMessage = ({ message }) => (
-  <Alert
-    isInline
-    className="co-alert co-alert--scrollable"
-    variant="danger"
-    title="An error occurred"
-  >
-    <div className="co-pre-line">{message}</div>
-  </Alert>
-);
+const ErrorMessage = ({ message }) => {
+  const { t } = useTranslation();
+  return (
+    <Alert
+      isInline
+      className="co-alert co-alert--scrollable"
+      variant="danger"
+      title={t('public~An error occurred')}
+    >
+      <div className="co-pre-line">{message}</div>
+    </Alert>
+  );
+};
 const InfoMessage = ({ message }) => (
   <Alert isInline className="co-alert" variant="info" title={message} />
 );

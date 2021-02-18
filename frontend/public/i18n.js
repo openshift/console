@@ -123,7 +123,6 @@ i18n
         'slack-receiver-form',
         'topology',
         'tour',
-        'utils',
         'user',
         'webhook-receiver-form',
         'yaml',

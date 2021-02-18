@@ -3,6 +3,7 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import { Button } from '@patternfly/react-core';
 import { MinusSquareIcon, PlusSquareIcon } from '@patternfly/react-icons';
+import { useTranslation } from 'react-i18next';
 
 export const NumberSpinner: React.FC<NumberSpinnerProps> = ({
   className,
@@ -10,6 +11,7 @@ export const NumberSpinner: React.FC<NumberSpinnerProps> = ({
   min,
   ...inputProps
 }) => {
+  const { t } = useTranslation();
   return (
     <div>
       <Button
@@ -17,7 +19,7 @@ export const NumberSpinner: React.FC<NumberSpinnerProps> = ({
         type="button"
         variant="plain"
         isDisabled={!_.isNil(min) && inputProps.value <= min}
-        aria-label="Decrement"
+        aria-label={t('public~Decrement')}
         className="co-m-number-spinner__button"
       >
         <MinusSquareIcon className="co-m-number-spinner__down-icon" noVerticalAlign />
@@ -31,7 +33,7 @@ export const NumberSpinner: React.FC<NumberSpinnerProps> = ({
         onClick={() => changeValueBy(1)}
         type="button"
         variant="plain"
-        aria-label="Increment"
+        aria-label={t('public~Increment')}
         className="co-m-number-spinner__button"
       >
         <PlusSquareIcon className="co-m-number-spinner__up-icon" noVerticalAlign />

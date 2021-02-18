@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { Breadcrumb, BreadcrumbItem, Button, SplitItem, Split } from '@patternfly/react-core';
 import { RootState } from '@console/internal/redux';
 import {
@@ -33,11 +34,14 @@ import {
 } from '../../module/k8s';
 import { ManagedByOperatorLink } from './managed-by';
 
-export const ResourceItemDeleting = () => (
-  <span className="co-resource-item__deleting">
-    <YellowExclamationTriangleIcon /> Deleting
-  </span>
-);
+export const ResourceItemDeleting = () => {
+  const { t } = useTranslation();
+  return (
+    <span className="co-resource-item__deleting">
+      <YellowExclamationTriangleIcon /> {t('public~Deleting')}
+    </span>
+  );
+};
 
 export const BreadCrumbs: React.SFC<BreadCrumbsProps> = ({ breadcrumbs }) => (
   <Breadcrumb>

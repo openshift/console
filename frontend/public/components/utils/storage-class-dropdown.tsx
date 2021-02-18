@@ -1,6 +1,8 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as fuzzy from 'fuzzysearch';
+/* eslint-disable import/named */
+import { WithTranslation, withTranslation } from 'react-i18next';
 
 import { Firehose, LoadingInline, Dropdown, ResourceName, ResourceIcon } from '.';
 import { isDefaultClass } from '../storage-class';
@@ -8,7 +10,7 @@ import * as classNames from 'classnames';
 
 /* Component StorageClassDropdown - creates a dropdown list of storage classes */
 
-export class StorageClassDropdownInner extends React.Component<
+export class StorageClassDropdownInnerWithTranslation extends React.Component<
   StorageClassDropdownInnerProps,
   StorageClassDropdownInnerState
 > {
@@ -25,11 +27,15 @@ export class StorageClassDropdownInner extends React.Component<
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
-    const { loaded, loadError, resources } = nextProps;
+    const { loaded, loadError, resources, t } = nextProps;
 
     if (loadError) {
       this.setState({
-        title: <div className="cos-error-title">Error Loading {nextProps.desc}</div>,
+        title: (
+          <div className="cos-error-title">
+            {t('public~Error loading {{desc}}', { desc: nextProps.desc })}
+          </div>
+        ),
       });
       return;
     }
@@ -43,7 +49,7 @@ export class StorageClassDropdownInner extends React.Component<
       defaultClass: '',
     };
     let unorderedItems = {};
-    const noStorageClass = 'No default storage class';
+    const noStorageClass = t('public~No default StorageClass');
     _.map(resources.StorageClass.data, (resource) => {
       unorderedItems[resource.metadata.name] = {
         kindLabel: 'StorageClass',
@@ -81,7 +87,7 @@ export class StorageClassDropdownInner extends React.Component<
     }
 
     if (!this.props.loaded || !selectedKey || !unorderedItems[selectedKey || state.defaultClass]) {
-      state.title = <span className="text-muted">Select storage class</span>;
+      state.title = <span className="text-muted">{t('public~Select StorageClass')}</span>;
     }
 
     const selectedItem = unorderedItems[selectedKey || state.defaultClass];
@@ -132,7 +138,7 @@ export class StorageClassDropdownInner extends React.Component<
   };
 
   render() {
-    const { id, loaded, describedBy, noSelection } = this.props;
+    const { id, loaded, describedBy, noSelection, t } = this.props;
     const items = {};
     _.each(
       this.state.items,
@@ -158,13 +164,13 @@ export class StorageClassDropdownInner extends React.Component<
               })}
               htmlFor={id}
             >
-              Storage Class
+              {t('public~StorageClass')}
             </label>
             <Dropdown
               className="co-storage-class-dropdown"
               dropDownClassName="dropdown--full-width"
               autocompleteFilter={this.autocompleteFilter}
-              autocompletePlaceholder="Select storage class"
+              autocompletePlaceholder={t('public~Select StorageClass')}
               items={items}
               selectedKey={selectedKey}
               title={this.state.title}
@@ -176,7 +182,7 @@ export class StorageClassDropdownInner extends React.Component<
             />
             {describedBy && (
               <p className="help-block" id={describedBy}>
-                Storage class for the new claim
+                {t('public~StorageClass for the new claim')}
               </p>
             )}
           </div>
@@ -185,6 +191,10 @@ export class StorageClassDropdownInner extends React.Component<
     );
   }
 }
+
+export const StorageClassDropdownInner = withTranslation()(
+  StorageClassDropdownInnerWithTranslation,
+);
 
 export const StorageClassDropdown = (props) => {
   return (
@@ -231,7 +241,7 @@ export type StorageClassDropdownInnerState = {
   defaultClass: string;
 };
 
-export type StorageClassDropdownInnerProps = {
+export type StorageClassDropdownInnerProps = WithTranslation & {
   id?: string;
   loaded?: boolean;
   resources?: any;
