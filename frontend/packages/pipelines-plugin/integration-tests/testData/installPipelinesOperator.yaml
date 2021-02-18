@@ -1,0 +1,13 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: CatalogSource
+metadata:
+  name: managed-operators
+  namespace: openshift-marketplace
+spec:
+  displayName: Managed Operators
+  image: 'registry.redhat.io/redhat/redhat-operator-index:v4.7'
+  publisher: Red Hat
+  sourceType: grpc
+  updateStrategy:
+    registryPoll:
+      interval: 10m0s

@@ -6,26 +6,29 @@ export const gitPage = {
   unselectRoute: () => cy.get(gitPO.advancedOptions.createRoute).uncheck(),
   verifyNoWorkLoadsText: (text: string) =>
     cy.get(gitPO.noWorkLoadsText).should('contain.text', text),
-  verifyPipelinesSection: (message: string) => {
-    cy.get('body').scrollTo('bottom');
+  verifyPipelinesSection: () => {
+    cy.get('.odc-namespaced-page__content').scrollTo('bottom', { ensureScrollable: false });
     cy.get(gitPO.sectionTitle)
       .contains('Pipelines')
       .should('be.visible');
-    cy.get(gitPO.pipeline.infoMessage).should('have.text', message);
   },
   verifyPipelineInfoMessage: (message: string) => {
     cy.get(gitPO.pipeline.infoMessage).should('contain.text', `Info alert:${message}`);
   },
-  enterGitUrl: (gitUrl: string) =>
-    cy
-      .get(gitPO.gitRepoUrl)
+  enterGitUrl: (gitUrl: string) => {
+    cy.get(gitPO.gitRepoUrl)
       .clear()
-      .type(gitUrl),
-  verifyPipelineCheckBox: () =>
-    cy
-      .get(gitPO.pipeline.addPipeline)
+      .type(gitUrl);
+    cy.document()
+      .its('readyState')
+      .should('eq', 'complete');
+  },
+
+  verifyPipelineCheckBox: () => {
+    cy.get(gitPO.pipeline.addPipeline)
       .scrollIntoView()
-      .should('be.visible'),
+      .should('be.visible');
+  },
   enterAppName: (appName: string) => {
     cy.get(gitPO.appName).then(($el) => {
       if ($el.prop('tagName').includes('button')) {
@@ -34,11 +37,10 @@ export const gitPage = {
       } else if ($el.prop('tagName').includes('input')) {
         cy.get(gitPO.appName)
           .scrollIntoView()
-          .clear();
-        // @ts-ignore
-        cy.wait(3000);
+          .invoke('val')
+          .should('not.be.empty');
+        cy.get(gitPO.appName).clear();
         cy.get(gitPO.appName)
-          .scrollIntoView()
           .type(appName)
           .should('have.value', appName);
       } else {
@@ -50,12 +52,11 @@ export const gitPage = {
   enterComponentName: (name: string) => {
     cy.get(gitPO.nodeName)
       .scrollIntoView()
-      .clear();
-    // @ts-ignore
-    cy.wait(3000);
+      .invoke('val')
+      .should('not.be.empty');
+    cy.get(gitPO.nodeName).clear();
     cy.get(gitPO.nodeName)
-      .scrollIntoView()
-      .type(name, { delay: 1000 })
+      .type(name)
       .should('have.value', name);
   },
   verifyNodeName: (componentName: string) =>
