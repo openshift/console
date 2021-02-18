@@ -40,6 +40,9 @@
         "integration-tests/tests/vm.tab.snapshots.scenario.ts",
         "integration-tests/tests/vmi.actions.scenario.ts"
       ]
+    },
+    "exposedModules": {
+      "standaloneConsole": "./src/components/connected-vm-console/vm-console-page.tsx"
     }
   }
 }

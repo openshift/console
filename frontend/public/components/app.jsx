@@ -28,11 +28,8 @@ import DetectPerspective from '@console/app/src/components/detect-perspective/De
 import DetectNamespace from '@console/app/src/components/detect-namespace/DetectNamespace';
 import { withExtensions, isContextProvider } from '@console/plugin-sdk';
 import { GuidedTour } from '@console/app/src/components/tour';
-
-const consoleLoader = () =>
-  import(
-    '@console/kubevirt-plugin/src/components/connected-vm-console/vm-console-page' /* webpackChunkName: "kubevirt" */
-  ).then((m) => m.VMConsolePage);
+import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
+import { isStandaloneRoutePage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
 import QuickStartDrawer from '@console/app/src/components/quick-starts/QuickStartDrawer';
 import '../i18n';
 import '../vendor.scss';
@@ -213,6 +210,38 @@ render(<LoadingBox />, document.getElementById('app'));
 
 const AppWithTranslation = withTranslation()(App);
 
+const StandaloneRouter = () => {
+  const [extensions, extensionsResolved] = useResolvedExtensions(isStandaloneRoutePage);
+  return (
+    <Switch>
+      {extensions.map(({ properties }) => (
+        <Route
+          key={properties.path}
+          path={properties.path}
+          component={properties.component}
+          exact={properties.exact}
+        />
+      ))}
+      <Route
+        render={(componentProps) => (
+          <AsyncComponent
+            loader={
+              extensionsResolved
+                ? () =>
+                    import('./error' /* webpackChunkName: "error" */).then((m) => m.ErrorPage404)
+                : () =>
+                    import('./utils/status-box' /* webpackChunkName: "loading" */).then(
+                      (m) => m.LoadingBox,
+                    )
+            }
+            {...componentProps}
+          />
+        )}
+      />
+    </Switch>
+  );
+};
+
 graphQLReady.onReady(() => {
   const startDiscovery = () => store.dispatch(watchAPIServices());
 
@@ -286,12 +315,7 @@ graphQLReady.onReady(() => {
       <Provider store={store}>
         <Router history={history} basename={window.SERVER_FLAGS.basePath}>
           <Switch>
-            <Route
-              path="/k8s/ns/:ns/virtualmachineinstances/:name/standaloneconsole"
-              render={(componentProps) => (
-                <AsyncComponent loader={consoleLoader} {...componentProps} />
-              )}
-            />
+            <Route path="/standalone" component={StandaloneRouter} />
             <Route path="/terminal" component={CloudShellTab} />
             <Route path="/" component={AppWithTranslation} />
           </Switch>

@@ -139,7 +139,7 @@ const VMConsoles: React.FC<VMConsolesProps> = ({
             variant="secondary"
             onClick={() =>
               window.open(
-                `/k8s/ns/${namespace}/virtualmachineinstances/${vmName}/standaloneconsole?type=${consoleType.toString()}`,
+                `/standalone/k8s/ns/${namespace}/virtualmachineinstances/${vmName}/console?type=${consoleType.toString()}`,
                 `${vmName}-console`,
                 'modal=yes,alwaysRaised=yes,width=1024,height=768',
               )
