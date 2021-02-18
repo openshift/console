@@ -3,12 +3,13 @@ import { Extension } from '@console/plugin-sdk/src/typings/base';
 import { CodeRef, EncodedCodeRef, UpdateExtensionProperties } from '../types';
 
 export namespace ExtensionProperties {
+  /** Adds new standalone page (rendered outside the common page layout) to Console router. */
   export type StandaloneRoutePage = {
-    /** The component to be rendered when route matches */
+    /** The component to be rendered when the route matches. */
     component: EncodedCodeRef;
-    /** The route path to match against */
+    /** Valid URL path or array of paths that `path-to-regexp@^1.7.0` understands. */
     path: string | string[];
-    /** Defines whether the path must be an exact match */
+    /** When true, will only match if the path matches the `location.pathname` exactly. */
     exact?: boolean;
   };
 

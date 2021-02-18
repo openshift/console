@@ -43,7 +43,7 @@ Plugin metadata is declared via the `consolePlugin` object.
       "barUtils": "./utils/bar"
     },
     "dependencies": {
-      "@console/pluginAPI": "~0.0.1"
+      "@console/pluginAPI": "*"
     }
   }
 }
@@ -73,9 +73,7 @@ Declares all extensions contributed by the plugin. The `$schema` property is opt
     {
       "type": "console.flag",
       "properties": {
-        "handler": {
-          "$codeRef": "barUtils.testHandler"
-        }
+        "handler": { "$codeRef": "barUtils.testHandler" }
       }
     },
     {

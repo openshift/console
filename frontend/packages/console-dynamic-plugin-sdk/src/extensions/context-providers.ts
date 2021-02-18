@@ -3,6 +3,7 @@ import { Extension } from '@console/plugin-sdk/src/typings/base';
 import { CodeRef, EncodedCodeRef, UpdateExtensionProperties } from '../types';
 
 export namespace ExtensionProperties {
+  /** Adds new React context provider to Console application root. */
   export type ContextProvider = {
     /** Context Provider Exotic Component. */
     provider: EncodedCodeRef;
