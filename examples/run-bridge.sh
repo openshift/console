@@ -12,11 +12,17 @@ BRIDGE_K8S_AUTH_BEARER_TOKEN=$(ssh root@$k8sIP "secretname=\$(kubectl get servic
 
 
 # Should verify port number which corresponding to Service in yourself!!
-PROM_PORT='9090'
+# kubectl get svc -n monitoring prometheus-k8s
+PROM_PORT='30793'
+# kubectl get svc -n monitoring grafana
 GRAFANA_PORT='30997'
-HC_PORT='32440'
-MHC_PORT='32440'
-KIBANA_PORT='31005'
+# kubectl get svc -n hypercloud5-system hypercloud5-api-server-service 
+HC_PORT='30470'
+MHC_PORT='30470'
+# kubectl get svc -n efk opendistro-kibana
+KIBANA_PORT='32496'
+# kubectl get ingress -n istio-system 
+KIALI='kiali.istio-system.220.90.208.239.nip.io'
 
 ./bin/bridge \
     --listen=https://$myIP:9000 \
@@ -35,7 +41,7 @@ KIBANA_PORT='31005'
     --keycloak-auth-url=https://testauth.tmaxcloud.com/auth/ \
     --keycloak-client-id=hypercloud4 \
     --grafana-endpoint=http://$k8sIP:$GRAFANA_PORT/api/grafana/ \
-    --kiali-endpoint=https://172.22.6.22/api/kiali/ \
+    --kiali-endpoint=https://$KIALI/api/kiali/ \
     --webhook-endpoint=https://$k8sIP:32440/ \
     --hypercloud-endpoint=https://$k8sIP:$HC_PORT/ \
     --multi-hypercloud-endpoint=https://$k8sIP:$MHC_PORT/ \
