@@ -45,7 +45,7 @@ const QuickStartPanelContent: React.FC<QuickStartPanelContentProps> = ({
   });
 
   return quickStart ? (
-    <DrawerPanelContent className="co-quick-start-panel-content">
+    <DrawerPanelContent isResizable>
       <div className={`co-quick-start-panel-content-head ${headerClasses}`}>
         <DrawerHead>
           <div className="co-quick-start-panel-content__title">
