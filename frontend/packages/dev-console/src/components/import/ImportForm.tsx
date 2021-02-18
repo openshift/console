@@ -12,7 +12,7 @@ import {
   usePostFormSubmitAction,
 } from '@console/shared';
 import { useExtensions, Perspective, isPerspective } from '@console/plugin-sdk';
-import { UNASSIGNED_KEY, ALLOW_SERVICE_BINDING_FLAG } from '@console/topology/src/const';
+import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import { sanitizeApplicationValue } from '@console/topology/src/utils/application-utils';
 import { NormalizedBuilderImages, normalizeBuilderImages } from '../../utils/imagestream-utils';
 import { GitImportFormData, FirehoseList, ImportData, Resources } from './import-types';
@@ -33,7 +33,6 @@ export interface ImportFormProps {
 
 export interface StateProps {
   activeApplication: string;
-  serviceBindingAvailable: boolean;
 }
 
 const ImportForm: React.FC<ImportFormProps & StateProps> = ({
@@ -214,7 +213,6 @@ const mapStateToProps = (state: RootState, ownProps: OwnProps): StateProps => {
   const activeApplication = ownProps.forApplication || getActiveApplication(state);
   return {
     activeApplication: activeApplication !== ALL_APPLICATIONS_KEY ? activeApplication : '',
-    serviceBindingAvailable: state.FLAGS.get(ALLOW_SERVICE_BINDING_FLAG),
   };
 };
 
