@@ -411,6 +411,7 @@
   "Resource limits": "リソース制限",
   "Ports": "ポート",
   "{{date, MMM D, h:mm a}}": "{{date, MMM D, h:mm a}}",
+  "{{date, MMM D, h:mm a z}}": "{{date, MMM D, h:mm a z}}",
   "Remove volume": "ボリュームの削除",
   "Mount path": "マウントパス",
   "SubPath": "SubPath",
