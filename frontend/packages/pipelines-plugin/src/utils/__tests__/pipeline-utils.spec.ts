@@ -10,6 +10,7 @@ import { ContainerStatus } from '@console/internal/module/k8s';
 import { SecretAnnotationId } from '../../components/pipelines/const';
 import { DataState, PipelineExampleNames, pipelineTestData } from '../../test-data/pipeline-data';
 import { runStatus } from '../pipeline-augment';
+import { taskRunWithResults } from '../../components/taskruns/__tests__/taskrun-test-data';
 import {
   getPipelineTasks,
   containerToLogSourceStatus,
@@ -22,6 +23,7 @@ import {
   LatestPipelineRunStatus,
   updateServiceAccount,
   appendPipelineRunStatus,
+  getCellsFromResults,
 } from '../pipeline-utils';
 import {
   constructPipelineData,
@@ -175,6 +177,20 @@ describe('pipeline-utils ', () => {
   it('expect pipeline without inline task spec to return false', () => {
     const hasSpec = hasInlineTaskSpec(mockPipelinesJSON[1].spec.tasks);
     expect(hasSpec).toBe(false);
+  });
+
+  it('expect correct rows and columns for task with results', () => {
+    const { rows, columns } = getCellsFromResults(taskRunWithResults.status.taskResults);
+    expect(columns.length).toBe(2);
+    expect(rows.length).toBe(4);
+    expect(rows[0][0]).toBe('sum');
+    expect(rows[0][1]).toBe('30');
+    expect(rows[1][0]).toBe('difference');
+    expect(rows[1][1]).toBe('10');
+    expect(rows[2][0]).toBe('multiply');
+    expect(rows[2][1]).toBe('200');
+    expect(rows[3][0]).toBe('divide');
+    expect(rows[3][1]).toBe('2');
   });
 
   it('expect service account to have secret name available only in secrets property', async () => {

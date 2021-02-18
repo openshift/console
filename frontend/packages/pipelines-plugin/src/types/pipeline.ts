@@ -48,6 +48,12 @@ export type WhenExpression = {
   Values: string[];
 };
 
+export type PipelineResult = {
+  name: string;
+  value: string;
+  description?: string;
+};
+
 export type PipelineTask = {
   name: string;
   params?: PipelineTaskParam[];
@@ -70,6 +76,7 @@ export type PipelineSpec = {
   tasks: PipelineTask[];
   workspaces?: PipelineWorkspace[];
   finally?: PipelineTask[];
+  results?: PipelineResult[];
 };
 
 export type PipelineKind = K8sResourceCommon & {

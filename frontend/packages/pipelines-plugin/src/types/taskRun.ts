@@ -1,6 +1,7 @@
 import { K8sResourceCommon, PersistentVolumeClaimKind } from '@console/internal/module/k8s';
-import { TektonResource } from './coreTekton';
+import { TektonResource, TektonResultsRun } from './coreTekton';
 import { PipelineTaskParam, PipelineTaskRef, PipelineTaskSpec } from './pipeline';
+
 import {
   Condition,
   PLRTaskRunStep,
@@ -25,6 +26,7 @@ export type TaskRunStatus = {
   podName?: string;
   startTime?: string;
   steps?: PLRTaskRunStep[];
+  taskResults?: TektonResultsRun[];
 };
 
 export type TaskRunKind = K8sResourceCommon & {

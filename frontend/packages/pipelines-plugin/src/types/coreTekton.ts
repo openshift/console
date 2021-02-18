@@ -11,3 +11,8 @@ export type TektonResource = {
   optional?: boolean;
   type: string; // TODO: limit to known strings
 };
+
+export type TektonResultsRun = {
+  name: string;
+  value: string;
+};

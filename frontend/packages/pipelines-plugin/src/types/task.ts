@@ -1,6 +1,11 @@
 import { K8sResourceCommon } from '@console/internal/module/k8s';
 import { TektonParam, TektonResource } from './coreTekton';
 
+export type TaskResult = {
+  name: string;
+  description?: string;
+};
+
 export type TaskKind = K8sResourceCommon & {
   spec: {
     params?: TektonParam[];
@@ -17,5 +22,6 @@ export type TaskKind = K8sResourceCommon & {
       image?: string;
       resources?: {}[];
     }[];
+    results?: TaskResult[];
   };
 };
