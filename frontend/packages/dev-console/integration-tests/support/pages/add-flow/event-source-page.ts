@@ -1,20 +1,40 @@
-import { addOptions } from '../../constants/add';
-import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
-import { eventSourcePO } from '../../pageObjects/add-flow-po';
+import { addOptions, eventSourceCards } from '../../constants/add';
+import { catalogPO, eventSourcePO } from '../../pageObjects/add-flow-po';
 import { addPage } from './add-page';
+import { createForm } from '../app';
+import { topologyPage } from '../topology/topology-page';
 
 export const eventSourcesPage = {
-  verifyTitle: (title: string = 'Event Sources') => detailsPage.titleShouldContain(title),
   search: (type: string) => cy.get(eventSourcePO.search).type(type),
   verifyEventSourceType: (eventSourceName: string) => {
-    cy.get(`button[aria-label="${eventSourceName}"]`).should('be.visible');
+    cy.byTestID(`EventSource-${eventSourceName}`).should('be.visible');
   },
-  clickEventSourceType: (eventSourceName: string) => {
-    // app.waitForLoad();
-    cy.get(`button[aria-label="${eventSourceName}"]`).click();
+  clickEventSourceType: (eventSourceName: string | eventSourceCards) => {
+    cy.byTestID(`EventSource-${eventSourceName}`)
+      .should('be.visible')
+      .click();
   },
-  clickCreate: () => cy.byLegacyTestID('submit-button').click(),
-  clickCancel: () => cy.byLegacyTestID('reset-button').click(),
+  clickCreateEventSourceOnSidePane: () => {
+    cy.get(catalogPO.sidePane.createApplication).click({ force: true });
+  },
+};
+
+export const createEventSourcePage = {
+  enterEventSourceName: (eventSourceName: string) =>
+    cy
+      .get(eventSourcePO.sinkBinding.name)
+      .clear()
+      .type(eventSourceName),
+  enterApiVersion: (apiVersion: string) =>
+    cy
+      .get(eventSourcePO.sinkBinding.apiVersion)
+      .clear()
+      .type(apiVersion),
+  enterKind: (kind: string) =>
+    cy
+      .get(eventSourcePO.sinkBinding.kind)
+      .clear()
+      .type(kind),
   selectServiceType: (serviceAccountName: string = 'default') => {
     cy.get(eventSourcePO.apiServerSource.serviceAccountName).click();
     cy.get('li')
@@ -22,33 +42,29 @@ export const eventSourcesPage = {
       .click();
   },
   selectKnativeService: (knativeService: string) => {
-    cy.get(eventSourcePO.apiServerSource.sinkResource).click();
+    cy.get(eventSourcePO.sinkBinding.sink.resource.resourceDropdown).click();
     cy.get(`[id*=${knativeService}-link]`).click();
   },
   selectMode: (mode: string) => {
     cy.get(eventSourcePO.apiServerSource.mode).click();
     cy.get(`[data-test-dropdown-menu="${mode}"]`).click();
   },
-  enterEventSourceName: (eventSourceName: string) =>
-    cy
-      .get(eventSourcePO.sinkBinding.name)
-      .clear()
-      .type(eventSourceName),
   createSinkBinding: (
     eventSourceName: string,
     apiVersion: string = 'batch/v1',
     kind: string = 'Job',
+    knativeServiceName: string = 'nodejs-ex-git',
   ) => {
     addPage.selectCardFromOptions(addOptions.EventSource);
     eventSourcesPage.clickEventSourceType('Sink Binding');
-    cy.get(eventSourcePO.sinkBinding.apiVersion).type(apiVersion);
-    cy.get(eventSourcePO.sinkBinding.kind).type(kind);
-    cy.get(eventSourcePO.sinkBinding.resource).click();
-    eventSourcesPage.selectKnativeService('nodejs-ex-git');
-    cy.get(eventSourcePO.sinkBinding.name)
-      .clear()
-      .type(eventSourceName);
-    eventSourcesPage.clickCreate();
+    eventSourcesPage.clickCreateEventSourceOnSidePane();
+    createEventSourcePage.enterApiVersion(apiVersion);
+    createEventSourcePage.enterKind(kind);
+    cy.get(eventSourcePO.sinkBinding.sink.resourceRadioButton).click();
+    createEventSourcePage.selectKnativeService(knativeServiceName);
+    createEventSourcePage.enterEventSourceName(eventSourceName);
+    createForm.clickCreate();
+    topologyPage.verifyWorkloadInTopologyPage(eventSourceName);
   },
   createEventSource: (
     eventSourceName: string,
@@ -57,8 +73,9 @@ export const eventSourcesPage = {
   ) => {
     addPage.selectCardFromOptions(addOptions.EventSource);
     eventSourcesPage.clickEventSourceType(eventSourceName);
-    cy.get(eventSourcePO.sinkBinding.apiVersion).type(apiVersion);
-    cy.get(eventSourcePO.sinkBinding.kind).type(kind);
-    eventSourcesPage.clickCreate();
+    createEventSourcePage.enterApiVersion(apiVersion);
+    createEventSourcePage.enterKind(kind);
+    createForm.clickCreate();
+    topologyPage.verifyWorkloadInTopologyPage(eventSourceName);
   },
 };

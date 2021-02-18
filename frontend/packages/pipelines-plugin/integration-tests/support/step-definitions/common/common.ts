@@ -1,6 +1,7 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { guidedTour } from '../../../../../integration-tests-cypress/views/guided-tour';
 import {
+  createForm,
   navigateTo,
   perspective,
   projectNameSpace,
@@ -18,7 +19,7 @@ import { operatorsPage } from '@console/dev-console/integration-tests/support/pa
 import {
   createKnativeEventing,
   createKnativeServing,
-} from '@console/knative-plugin/integration-tests/support/pages/functions/knativeSubscriptions';
+} from '@console/dev-console/integration-tests/support/pages/functions/knativeSubscriptions';
 import { topologyPage } from '@console/dev-console/integration-tests/support/pages/topology/topology-page';
 import { gitPage } from '@console/dev-console/integration-tests/support/pages/add-flow/git-page';
 import { catalogPage } from '@console/dev-console/integration-tests/support/pages/add-flow/catalog-page';
@@ -95,7 +96,7 @@ When('user selects resource type as {string}', (resourceType: string) => {
 });
 
 When('user clicks Create button on Add page', () => {
-  gitPage.clickCreate();
+  createForm.clickCreate();
 });
 
 Then('user will be redirected to Topology page', () => {

@@ -1,6 +1,6 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { gitPage } from '@console/dev-console/integration-tests/support/pages/add-flow/git-page';
-import { navigateTo } from '@console/dev-console/integration-tests/support/pages/app';
+import { createForm, navigateTo } from '@console/dev-console/integration-tests/support/pages/app';
 import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants/global';
 import { addOptions } from '@console/dev-console/integration-tests/support/constants/add';
 import { topologyPage } from '@console/dev-console/integration-tests/support/pages/topology/topology-page';
@@ -133,7 +133,7 @@ Given('workload {string} is created from add page with pipeline', (pipelineName:
   gitPage.enterGitUrl('https://github.com/sclorg/nodejs-ex.git');
   gitPage.enterComponentName(pipelineName);
   gitPage.selectAddPipeline();
-  gitPage.clickCreate();
+  createForm.clickCreate();
   topologyPage.verifyTopologyPage();
 });
 
@@ -151,7 +151,7 @@ When('user creates the application with the selected builder image', () => {
 });
 
 When('user clicks Create button on Create Source-to-Image application', () => {
-  gitPage.clickCreate();
+  createForm.clickCreate();
 });
 
 Given(
@@ -168,7 +168,7 @@ Given(
 );
 
 When('user clicks Create button on Add page', () => {
-  gitPage.clickCreate();
+  createForm.clickCreate();
 });
 
 Then('user will be redirected to Topology page', () => {

@@ -7,6 +7,7 @@ import { topologyPage } from '../../pages/topology/topology-page';
 import { devFilePage } from '../../pages/add-flow/dev-file-page';
 import { devFilePO, gitPO } from '../../pageObjects/add-flow-po';
 import { messages } from '../../constants/staticText/addFlow-text';
+import { createForm } from '../../pages/app';
 
 Given('user is at Import from Devfile page', () => {
   addPage.selectCardFromOptions(addOptions.DevFile);
@@ -44,7 +45,7 @@ When('user selects Try sample link', () => {
 });
 
 When('user clicks Create button on Devfile page', () => {
-  gitPage.clickCreate();
+  createForm.clickCreate();
 });
 
 When('user enters Git Repo url {string}', (privateGitRepoUrl: string) => {

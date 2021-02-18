@@ -5,7 +5,7 @@ import {
   pipelineRunDetailsPage,
   pipelineRunsPage,
 } from '../../pages/pipelines/pipelineRun-details-page';
-import { navigateTo } from '@console/dev-console/integration-tests/support/pages/app';
+import { createForm, navigateTo } from '@console/dev-console/integration-tests/support/pages/app';
 import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants/global';
 import { pipelineDetailsPage } from '../../pages/pipelines/pipelineDetails-page';
 import { addPage } from '@console/dev-console/integration-tests/support/pages/add-flow/add-page';
@@ -266,7 +266,7 @@ Given('pipeline {string} is created from git page', (name: string) => {
   gitPage.enterGitUrl('https://github.com/sclorg/nodejs-ex.git');
   gitPage.enterComponentName(name);
   gitPage.selectAddPipeline();
-  gitPage.clickCreate();
+  createForm.clickCreate();
   topologyPage.verifyTopologyPage();
 });
 

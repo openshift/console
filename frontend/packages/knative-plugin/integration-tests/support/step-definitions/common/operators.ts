@@ -12,7 +12,7 @@ import { operatorsPage } from '@console/dev-console/integration-tests/support/pa
 import {
   createKnativeEventing,
   createKnativeServing,
-} from '../../pages/functions/knativeSubscriptions';
+} from '@console/dev-console/integration-tests/support/pages/functions/knativeSubscriptions';
 
 Given('user has installed OpenShift Serverless Operator', () => {
   perspective.switchTo(switchPerspective.Administrator);

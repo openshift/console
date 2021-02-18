@@ -1,6 +1,6 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { gitPage } from '../../pages/add-flow/git-page';
-import { perspective, navigateTo } from '../../pages/app';
+import { createForm, navigateTo, perspective } from '../../pages/app';
 import { addPage } from '../../pages/add-flow/add-page';
 import { addOptions } from '../../constants/add';
 import { createGitWorkload } from '../../pages/functions/createGitWorkload';
@@ -68,7 +68,7 @@ When('user navigates to Add page', () => {
 });
 
 When('user clicks Create button on Add page', () => {
-  gitPage.clickCreate();
+  createForm.clickCreate();
 });
 
 Then('user will be redirected to Add page', () => {

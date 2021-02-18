@@ -5,6 +5,7 @@ import { addOptions } from '../../constants/add';
 import { topologyPage } from '../../pages/topology/topology-page';
 import { gitPage } from '../../pages/add-flow/git-page';
 import { gitPO } from '../../pageObjects/add-flow-po';
+import { createForm } from '../../pages/app';
 
 Given('user is at Deploy Image page', () => {
   addPage.selectCardFromOptions(addOptions.ContainerImage);
@@ -43,7 +44,7 @@ Then('advanced option Create a route to the application is selected', () => {
 });
 
 When('user clicks Create button on Deploy Image page', () => {
-  gitPage.clickCreate();
+  createForm.clickCreate();
 });
 
 Then('node is displayed with name {string}', (nodeName: string) => {

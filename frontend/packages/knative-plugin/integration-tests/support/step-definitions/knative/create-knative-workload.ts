@@ -18,6 +18,10 @@ Given('user is on {string} form', (formName: string) => {
   addPage.selectCardFromOptions(formName);
 });
 
+Given('user is at Deploy Image page', () => {
+  addPage.selectCardFromOptions(addOptions.ContainerImage);
+});
+
 Given('builder images are displayed', () => {
   catalogPage.selectCatalogType(catalogTypes.BuilderImage);
 });
@@ -54,8 +58,8 @@ When('user enters External registry image name as {string}', (imageName: string)
 });
 
 When('user enters Docker url as {string}', (dockerUrl: string) => {
-  containerImagePage.enterGitUrl(dockerUrl);
-  containerImagePage.verifyValidatedMessage();
+  gitPage.enterGitUrl(dockerUrl);
+  gitPage.verifyValidatedMessage();
 });
 
 When('user selects {string} radio button on Add page', (resourceType: string) => {
@@ -67,13 +71,12 @@ When('user searches and selects the {string} card', (cardName: string) => {
 });
 
 When('user creates the application with the selected builder image', () => {
-  catalogPage.selectCatalogType('Builder Image');
   catalogPage.selectCardInCatalog(catalogCards.nodeJs);
   catalogPage.clickButtonOnCatalogPageSidePane();
 });
 
 When('user enters workload name as {string}', (workloadName: string) => {
-  containerImagePage.enterGitUrl(workloadName);
+  containerImagePage.enterAppName(workloadName);
 });
 
 Then('user will be redirected to page with header name {string}', (headerName: string) => {
@@ -84,4 +87,12 @@ Then('Knative Service option is displayed under Resources section', () => {
   cy.get(gitPO.resources.knative)
     .scrollIntoView()
     .should('be.visible');
+});
+
+Given('user is on Import from Docker file page', () => {
+  addPage.selectCardFromOptions(addOptions.DockerFile);
+});
+
+When('user enters Image name from external registry as {string}', (imageName: string) => {
+  containerImagePage.enterExternalRegistryImageName(imageName);
 });
