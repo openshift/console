@@ -19,6 +19,8 @@ import { clusterUpdateModal } from '../../../modals';
 import { Link } from 'react-router-dom';
 import { useK8sWatchResource, WatchK8sResource } from '../../../utils/k8s-watch-hook';
 import { ClusterDashboardContext } from './context';
+import { getAccessToken } from '../../../../hypercloud/auth';
+import { getActivePerspective, getActiveCluster } from '../../../../actions/ui';
 
 const ClusterVersion: React.FC<ClusterVersionProps> = ({ cv }) => {
   const desiredVersion = getDesiredClusterVersion(cv);
@@ -76,8 +78,20 @@ export const DetailsCard_ = connect(mapStateToProps)(({ watchK8sResource, stopWa
       return;
     }
     const fetchK8sVersion = () => {
+      let url;
+      let headers;
+      if (getActivePerspective() === 'master') {
+        url = 'api/kubernetes/version';
+      } else {
+        url = `api/${getActiveCluster()}/version`;
+        headers = new Headers();
+        headers.append("Authorization", `Bearer ${getAccessToken()}`);
+      }
+
       try {
-        fetch('api/kubernetes/version')
+        fetch(url, {
+          headers
+        })
           .then(response => {
             return response.json();
           })
@@ -130,10 +144,10 @@ export const DetailsCard_ = connect(mapStateToProps)(({ watchK8sResource, stopWa
               </DetailItem>
             </>
           ) : (
-            <DetailItem key="kubernetes" title="Kubernetes version" error={!!k8sVersionError || (k8sVersion && !k8sGitVersion)} isLoading={!k8sVersion} valueClassName="co-select-to-copy">
-              {k8sGitVersion}
-            </DetailItem>
-          )}
+              <DetailItem key="kubernetes" title="Kubernetes version" error={!!k8sVersionError || (k8sVersion && !k8sGitVersion)} isLoading={!k8sVersion} valueClassName="co-select-to-copy">
+                {k8sGitVersion}
+              </DetailItem>
+            )}
         </DetailsBody>
       </DashboardCardBody>
     </DashboardCard>
