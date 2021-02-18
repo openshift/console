@@ -1,13 +1,7 @@
-import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { CodeRef } from '@console/dynamic-plugin-sdk/src/types';
 import { Extension } from './base';
 
 namespace ExtensionProperties {
-  export interface DevCatalogModel {
-    model: K8sKind;
-    normalize: (data: K8sResourceKind[]) => K8sResourceKind[];
-  }
-
   export interface CatalogItemType {
     /** Type for the catalog item. */
     type: string;
@@ -41,10 +35,6 @@ namespace ExtensionProperties {
   }
 }
 
-export interface DevCatalogModel extends Extension<ExtensionProperties.DevCatalogModel> {
-  type: 'DevCatalogModel';
-}
-
 export interface CatalogItemType extends Extension<ExtensionProperties.CatalogItemType> {
   type: 'Catalog/ItemType';
 }
@@ -56,10 +46,6 @@ export interface CatalogItemProvider extends Extension<ExtensionProperties.Catal
 export interface CatalogItemFilter extends Extension<ExtensionProperties.CatalogItemFilter> {
   type: 'Catalog/ItemFilter';
 }
-
-export const isDevCatalogModel = (e: Extension): e is DevCatalogModel => {
-  return e.type === 'DevCatalogModel';
-};
 
 export const isCatalogItemType = (e: Extension): e is CatalogItemType => {
   return e.type === 'Catalog/ItemType';

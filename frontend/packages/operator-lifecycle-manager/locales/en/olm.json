@@ -310,8 +310,6 @@
   "1 installed": "1 installed",
   "0 installed": "0 installed",
   "0 installing": "0 installing",
-  "Operator description": "Operator description",
-  "This resource is provided by {{displayName}}, a Kubernetes Operator enabled by the Operator Lifecycle Manager.": "This resource is provided by {{displayName}}, a Kubernetes Operator enabled by the Operator Lifecycle Manager.",
   "Operator Backed": "Operator Backed",
   "Browse for a variety of managed services that are installed by cluster administrators. Cluster administrators can customize the content made available in the catalog.": "Browse for a variety of managed services that are installed by cluster administrators. Cluster administrators can customize the content made available in the catalog.",
   "**Operator backed** includes a variety of services managed by Kubernetes controllers.": "**Operator backed** includes a variety of services managed by Kubernetes controllers.",
@@ -320,5 +318,6 @@
   "Failed": "Failed",
   "Hide operator description": "Hide operator description",
   "Show operator description": "Show operator description",
+  "Operator description": "Operator description",
   "This resource is provided by {{operatorName}}, a Kubernetes Operator enabled by the Operator Lifecycle Manager.": "This resource is provided by {{operatorName}}, a Kubernetes Operator enabled by the Operator Lifecycle Manager."
 }

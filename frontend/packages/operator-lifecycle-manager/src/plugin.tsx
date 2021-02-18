@@ -8,7 +8,6 @@ import {
   ResourceListPage,
   ResourceDetailsPage,
   RoutePage,
-  DevCatalogModel,
   DashboardsOverviewHealthOperator,
   CatalogItemProvider,
   CatalogItemType,
@@ -16,7 +15,6 @@ import {
 import { referenceForModel } from '@console/internal/module/k8s';
 import { getExecutableCodeRef } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-utils';
 import { FLAGS } from '@console/shared/src/constants';
-import { normalizeClusterServiceVersions } from './dev-catalog';
 import * as models from './models';
 import { Flags } from './const';
 import { getClusterServiceVersionsWithStatuses } from './components/dashboard/utils';
@@ -38,7 +36,6 @@ type ConsumedExtensions =
   | ResourceListPage
   | ResourceDetailsPage
   | RoutePage
-  | DevCatalogModel
   | CatalogItemProvider
   | CatalogItemType
   | DashboardsOverviewHealthOperator<ClusterServiceVersionKind>;
@@ -55,16 +52,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: models.ClusterServiceVersionModel,
       flag: Flags.OPERATOR_LIFECYCLE_MANAGER,
-    },
-  },
-  {
-    type: 'DevCatalogModel',
-    properties: {
-      model: models.ClusterServiceVersionModel,
-      normalize: normalizeClusterServiceVersions,
-    },
-    flags: {
-      required: [Flags.OPERATOR_LIFECYCLE_MANAGER],
     },
   },
   {
