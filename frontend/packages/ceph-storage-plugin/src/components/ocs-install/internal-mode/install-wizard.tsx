@@ -94,7 +94,7 @@ export const CreateInternalCluster: React.FC<CreateInternalClusterProps> = ({
       name: (
         <Link to={toLink(CreateStepsSC, CreateStepsSC.STORAGEANDNODES, MODES)}>
           {' '}
-          {t('ceph-storage-plugin~Select capacity and nodes')}{' '}
+          {t('ceph-storage-plugin~Capacity and nodes')}{' '}
         </Link>
       ),
       id: CreateStepsSC.STORAGEANDNODES,
@@ -105,7 +105,7 @@ export const CreateInternalCluster: React.FC<CreateInternalClusterProps> = ({
       name: (
         <Link to={toLink(CreateStepsSC, CreateStepsSC.CONFIGURE, MODES)}>
           {' '}
-          {t('ceph-storage-plugin~Configure')}{' '}
+          {t('ceph-storage-plugin~Security and network')}{' '}
         </Link>
       ),
       id: CreateStepsSC.CONFIGURE,

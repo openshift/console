@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { match as RouterMatch } from 'react-router';
-import { Form, TextVariants } from '@patternfly/react-core';
+import { FormGroup, Form, TextVariants } from '@patternfly/react-core';
 import { resourcePathFromModel, BreadCrumbs } from '@console/internal/components/utils';
 import { history } from '@console/internal/components/utils/router';
 import { referenceForModel, NodeKind } from '@console/internal/module/k8s';
@@ -97,13 +97,18 @@ export const CreateLocalVolumeDiscovery: React.FC<CreateLocalVolumeDiscoveryProp
         className="co-m-pane__body lso-form-body__node-list"
         onSubmit={onSubmit}
       >
-        <LocalVolumeDiscoveryBody
-          allNodes={allNodes}
-          selectNodes={selectNodes}
-          showSelectNodes={showSelectNodes}
-          setShowSelectNodes={() => setShowSelectNodes(!showSelectNodes)}
-          setSelectNodes={setSelectNodes}
-        />
+        <FormGroup
+          label={t('lso-plugin~Node Selector')}
+          fieldId="auto-detect-volume--radio-group-node-selector"
+        >
+          <LocalVolumeDiscoveryBody
+            allNodes={allNodes}
+            selectNodes={selectNodes}
+            showSelectNodes={showSelectNodes}
+            setShowSelectNodes={() => setShowSelectNodes(!showSelectNodes)}
+            setSelectNodes={setSelectNodes}
+          />
+        </FormGroup>
         <FormFooter
           inProgress={inProgress}
           errorMessage={errorMessage}

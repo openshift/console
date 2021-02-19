@@ -1,19 +1,9 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  Form,
-  Alert,
-  Button,
-  Grid,
-  GridItem,
-  TextVariants,
-  WizardContextConsumer,
-} from '@patternfly/react-core';
+import { Form, Alert, Button, Grid, GridItem, WizardContextConsumer } from '@patternfly/react-core';
 import { Modal, useFlag } from '@console/shared';
 import { k8sCreate, NodeKind } from '@console/internal/module/k8s';
 import { LocalVolumeSetModel } from '@console/local-storage-operator-plugin/src/models';
-
-import { LocalVolumeSetHeader } from '@console/local-storage-operator-plugin/src/components/local-volume-set/header';
 import { LocalVolumeSetBody } from '@console/local-storage-operator-plugin/src/components/local-volume-set/body';
 import { getLocalVolumeSetRequestData } from '@console/local-storage-operator-plugin/src/components/local-volume-set/request';
 import { getNodesByHostNameLabel } from '@console/local-storage-operator-plugin/src/utils';
@@ -66,13 +56,15 @@ export const CreateStorageClass: React.FC<CreateStorageClassProps> = ({ state, d
   const [errorMessage, setErrorMessage] = React.useState('');
 
   const allNodesSelectorTxt = t(
-    'ceph-storage-plugin~Selecting all nodes will use the available disks that match the selected filters on all nodes selected on previous step.',
+    'ceph-storage-plugin~Uses the available disks that match the selected filters on all nodes selected in the previous step.',
+  );
+  const lvsNameSelectorTxt = t(
+    'ceph-storage-plugin~A Local Volume Set allows you to filter a set of disks, group them and create a dedicated StorageClass to consume storage from them.',
   );
   const lvsNodes = state.lvsIsSelectNodes ? state.lvsSelectNodes : state.lvsAllNodes;
 
   return (
     <>
-      <LocalVolumeSetHeader className="ocs-install-wizard__h3" variant={TextVariants.h3} />
       <Grid className="ceph-ocs-install__form-wrapper">
         <GridItem lg={10} md={12} sm={12}>
           <Form noValidate={false}>
@@ -81,6 +73,7 @@ export const CreateStorageClass: React.FC<CreateStorageClassProps> = ({ state, d
               dispatch={dispatch}
               diskModeOptions={diskModeDropdownItems}
               allNodesHelpTxt={allNodesSelectorTxt}
+              lvsNameHelpTxt={lvsNameSelectorTxt}
               taintsFilter={hasOCSTaint}
             />
           </Form>

@@ -205,7 +205,7 @@ const CreateStorageClusterWizard: React.FC<CreateStorageClusterWizardProps> = ({
       name: (
         <Link to={toLink(CreateStepsSC, CreateStepsSC.DISCOVER, MODES)}>
           {' '}
-          {t('ceph-storage-plugin~Discover Disks')}{' '}
+          {t('ceph-storage-plugin~Discover disks')}{' '}
         </Link>
       ),
       component: (
@@ -234,7 +234,7 @@ const CreateStorageClusterWizard: React.FC<CreateStorageClusterWizardProps> = ({
       name: (
         <Link to={toLink(CreateStepsSC, CreateStepsSC.STORAGEANDNODES, MODES)}>
           {' '}
-          {t('ceph-storage-plugin~Storage and Nodes')}{' '}
+          {t('ceph-storage-plugin~Capacity and nodes')}{' '}
         </Link>
       ),
       component: <StorageAndNodes dispatch={dispatch} state={state} mode={mode} />,
@@ -244,7 +244,7 @@ const CreateStorageClusterWizard: React.FC<CreateStorageClusterWizardProps> = ({
       name: (
         <Link to={toLink(CreateStepsSC, CreateStepsSC.CONFIGURE, MODES)}>
           {' '}
-          {t('ceph-storage-plugin~Configure')}{' '}
+          {t('ceph-storage-plugin~Security and network')}{' '}
         </Link>
       ),
       component: <Configure dispatch={dispatch} state={state} mode={mode} />,
@@ -254,7 +254,7 @@ const CreateStorageClusterWizard: React.FC<CreateStorageClusterWizardProps> = ({
       name: (
         <Link to={toLink(CreateStepsSC, CreateStepsSC.REVIEWANDCREATE, MODES)}>
           {' '}
-          {t('ceph-storage-plugin~Review and Create')}{' '}
+          {t('ceph-storage-plugin~Review and create')}{' '}
         </Link>
       ),
       nextButtonText: t('ceph-storage-plugin~Create'),
@@ -272,11 +272,11 @@ const CreateStorageClusterWizard: React.FC<CreateStorageClusterWizardProps> = ({
             className="co-alert ocs-install-info-alert"
             variant="info"
             isInline
-            title="Internal - Attached devices"
+            title={t('ceph-storage-plugin~Internal - Attached devices')}
             actionClose={<AlertActionCloseButton onClose={() => setShowInfoAlert(false)} />}
           >
             {t(
-              'ceph-storage-plugin~Can be used on any platform. It means that OpenShift Container Storage uses attached disks, via Local Storage Operator. In this case, the infrastructure StorageClass is actually provided by Local Storage Operator, on top of attached drives.',
+              'ceph-storage-plugin~Can be used on any platform where there are attached devices to the nodes, using the Local Storage Operator. The infrastructure StorageClass is provided by Local Storage Operator, on top of the attached drives.',
             )}
           </Alert>
         )}

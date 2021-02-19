@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { Form, TextVariants } from '@patternfly/react-core';
+import { Form } from '@patternfly/react-core';
 import { LocalVolumeDiscoveryBody } from '@console/local-storage-operator-plugin/src/components/local-volume-discovery/body';
-import { LocalVolumeDiscoveryHeader } from '@console/local-storage-operator-plugin/src/components/local-volume-discovery/header';
 import { NodeKind } from '@console/internal/module/k8s';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { getNodesByHostNameLabel } from '@console/local-storage-operator-plugin/src/utils';
@@ -10,10 +9,10 @@ import {
   updateLocalVolumeDiscovery,
 } from '@console/local-storage-operator-plugin/src/components/local-volume-discovery/request';
 import { OCS_TOLERATION } from '@console/ceph-storage-plugin/src/constants';
-import { nodeResource } from '../../../../resources';
 import { Action } from '../reducer';
 import { RequestErrors } from '../../install-wizard/review-and-create';
 import { hasNoTaints, hasOCSTaint } from '../../../../utils/install';
+import { nodeResource } from '../../../../resources';
 import '../attached-devices.scss';
 
 export const DiscoverDisks: React.FC<DiscoverDisksProps> = ({
@@ -37,7 +36,6 @@ export const DiscoverDisks: React.FC<DiscoverDisksProps> = ({
 
   return (
     <>
-      <LocalVolumeDiscoveryHeader className="ocs-install-wizard__h3" variant={TextVariants.h3} />
       <Form noValidate={false} className="ceph-ocs-install__auto-detect-table">
         <LocalVolumeDiscoveryBody
           allNodes={allNodes}
