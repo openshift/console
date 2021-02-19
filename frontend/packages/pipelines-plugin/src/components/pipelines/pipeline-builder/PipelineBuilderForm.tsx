@@ -193,6 +193,7 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
             <TaskSidebar
               // Intentional remount when selection changes
               key={selectedTask.taskIndex}
+              onClose={() => setSelectedTask(null)}
               resourceList={values.formData.resources || []}
               errorMap={status?.tasks || {}}
               onUpdateTask={(data: UpdateOperationUpdateTaskData) => {
