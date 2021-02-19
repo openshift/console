@@ -49,11 +49,44 @@ describe('resource-label-utils', () => {
       );
     });
 
-    it('should return mergedData with newResource template containers', () => {
+    it('should return mergedData with newResource template container values', () => {
       const mergedResource = mergeData(originalDeployment, newDeployment);
-      expect(mergedResource.spec.template.spec.containers).toEqual(
-        newDeployment.spec.template.spec.containers,
-      );
+      expect(mergedResource.spec.template.spec.containers).toEqual([
+        {
+          name: 'nationalparks-py',
+          image:
+            'image-registry.openshift-image-registry.svc:5000/div/nationalparks-py@sha256:8b187a8f235f42e7ea3e21e740c4940fdfa3ec8b59a14bb1cd9a67ffedf2eef9',
+          ports: [
+            {
+              containerPort: 8080,
+              protocol: 'TCP',
+            },
+          ],
+          env: [
+            {
+              name: 'dev',
+              value: 'test',
+            },
+          ],
+          envFrom: [
+            {
+              configMapRef: {
+                name: 'testconfig',
+              },
+            },
+          ],
+          volumeMounts: [
+            {
+              name: 'test-volume',
+              mountPath: '/test',
+            },
+          ],
+          resources: {},
+          terminationMessagePath: '/dev/termination-log',
+          terminationMessagePolicy: 'File',
+          imagePullPolicy: 'Always',
+        },
+      ]);
     });
 
     it('should return mergedData with newResource strategy', () => {
@@ -71,13 +104,10 @@ describe('resource-label-utils', () => {
       expect(mergedResource.spec.triggers).toEqual(newDeploymentConfig.spec.triggers);
     });
 
-    it('should return mergedData with originalResource template volumes and volumeMounts ', () => {
+    it('should return mergedData with originalResource template volumes', () => {
       const mergedResource = mergeData(originalDeployment, newDeployment);
       expect(mergedResource.spec.template.spec.volumes).toEqual(
         originalDeployment.spec.template.spec.volumes,
-      );
-      expect(mergedResource.spec.template.spec.containers[0].volumeMounts).toEqual(
-        originalDeployment.spec.template.spec.containers[0].volumeMounts,
       );
     });
   });

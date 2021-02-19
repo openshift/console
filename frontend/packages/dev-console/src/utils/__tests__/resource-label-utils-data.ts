@@ -55,6 +55,13 @@ export const originalDeployment = {
                 protocol: 'TCP',
               },
             ],
+            envFrom: [
+              {
+                configMapRef: {
+                  name: 'testconfig',
+                },
+              },
+            ],
             volumeMounts: [
               {
                 name: 'test-volume',
