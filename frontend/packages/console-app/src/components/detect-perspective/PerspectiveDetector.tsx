@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useExtensions, Perspective, isPerspective } from '@console/plugin-sdk';
 
 type PerspectiveDetectorProps = {
-  setActivePerspective: (string) => void;
+  setActivePerspective: (perspective: string) => void;
 };
 
 const PerspectiveDetector: React.FC<PerspectiveDetectorProps> = ({ setActivePerspective }) => {

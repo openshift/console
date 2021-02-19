@@ -80,21 +80,46 @@ const LazyRoute = (props) => (
   />
 );
 
-const getPluginPageRoutes = (activePerspective: string, routePages: RoutePage[]) =>
-  routePages.map((r) => {
-    if (r.properties.perspective && r.properties.perspective !== activePerspective) {
-      return null;
-    }
-    const Component = r.properties.loader ? LazyRoute : Route;
-    return <Component {...r.properties} key={Array.from(r.properties.path).join(',')} />;
-  });
+const getPluginPageRoutes = (
+  activePerspective: string,
+  setActivePerspective: (perspective: string) => void,
+  routePages: RoutePage[],
+) => {
+  const activeRoutes = routePages
+    .filter((r) => !r.properties.perspective || r.properties.perspective === activePerspective)
+    .map((r) => {
+      const Component = r.properties.loader ? LazyRoute : Route;
+      return <Component {...r.properties} key={Array.from(r.properties.path).join(',')} />;
+    });
+
+  const inactiveRoutes = routePages
+    .filter((r) => r.properties.perspective && r.properties.perspective !== activePerspective)
+    .map((r) => {
+      const key = Array.from(r.properties.path)
+        .concat([r.properties.perspective])
+        .join(',');
+
+      return (
+        <Route
+          {...r.properties}
+          key={key}
+          component={() => {
+            React.useEffect(() => setActivePerspective(r.properties.perspective));
+            return null;
+          }}
+        />
+      );
+    });
+
+  return [activeRoutes, inactiveRoutes];
+};
 
 const AppContents: React.FC<{}> = () => {
-  const [activePerspective] = useActivePerspective();
+  const [activePerspective, setActivePerspective] = useActivePerspective();
   const routePageExtensions = useExtensions<RoutePage>(isRoutePage);
-  const pluginPageRoutes = React.useMemo(
-    () => getPluginPageRoutes(activePerspective, routePageExtensions),
-    [activePerspective, routePageExtensions],
+  const [pluginPageRoutes, inactivePluginPageRoutes] = React.useMemo(
+    () => getPluginPageRoutes(activePerspective, setActivePerspective, routePageExtensions),
+    [activePerspective, setActivePerspective, routePageExtensions],
   );
 
   return (
@@ -610,6 +635,8 @@ const AppContents: React.FC<{}> = () => {
 
             <Route path="/k8s/all-namespaces/:plural" exact component={ResourceListPage} />
             <Route path="/k8s/all-namespaces/:plural/:name" component={ResourceDetailsPage} />
+
+            {inactivePluginPageRoutes}
 
             <LazyRoute
               path="/error"
