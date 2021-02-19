@@ -191,7 +191,10 @@ export const getDeploymentData = (resource: K8sResourceKind) => {
     replicas: 1,
     triggers: { image: true, config: true },
   };
-  const container = resource.spec?.template?.spec?.containers?.[0];
+  const container = _.find(
+    resource.spec?.template?.spec?.containers,
+    (c) => c.name === resource.metadata.name,
+  );
   const env = container?.env ?? [];
   switch (getResourcesType(resource)) {
     case Resources.KnativeService:
