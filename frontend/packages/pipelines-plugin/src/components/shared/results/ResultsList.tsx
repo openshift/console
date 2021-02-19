@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert } from '@patternfly/react-core';
+import { Bullseye, EmptyState, EmptyStateBody, EmptyStateVariant } from '@patternfly/react-core';
 import { Table, TableHeader, TableBody } from '@patternfly/react-table';
 import { SectionHeading } from '@console/internal/components/utils';
 import { TektonResultsRun } from '../../../types';
@@ -32,13 +32,15 @@ const ResultsList: React.FC<ResultsListProps> = ({ results, resourceName, status
           <TableBody />
         </Table>
       ) : (
-        <Alert
-          variant="danger"
-          isInline
-          title={t('pipelines-plugin~No {{resourceName}} results available due to failure', {
-            resourceName,
-          })}
-        />
+        <Bullseye>
+          <EmptyState variant={EmptyStateVariant.full}>
+            <EmptyStateBody>
+              {t('pipelines-plugin~No {{resourceName}} results available due to failure', {
+                resourceName,
+              })}
+            </EmptyStateBody>
+          </EmptyState>
+        </Bullseye>
       )}
     </>
   );
