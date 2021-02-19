@@ -77,7 +77,7 @@ export const DetailsCard_ = connect(mapStateToProps)(({ watchK8sResource, stopWa
     if (flagPending(openshiftFlag)) {
       return;
     }
-    const fetchK8sVersion = () => {
+    const fetchK8sVersion = async () => {
       let url;
       let headers;
       if (getActivePerspective() === 'master') {
@@ -85,21 +85,11 @@ export const DetailsCard_ = connect(mapStateToProps)(({ watchK8sResource, stopWa
       } else {
         url = `api/${getActiveCluster()}/version`;
         headers = new Headers();
-        headers.append("Authorization", `Bearer ${getAccessToken()}`);
+        headers.append('Authorization', `Bearer ${getAccessToken()}`);
       }
-
       try {
-        fetch(url, {
-          headers
-        })
-          .then(response => {
-            return response.json();
-          })
-          .then(myJson => {
-            setK8sVersion(myJson);
-          });
-        // const version = await fetch('api/kubernetes/version');
-        // setK8sVersion(version);
+        let version = await (await fetch(url)).json();
+        setK8sVersion(version);
       } catch (error) {
         setK8sVersionError(error);
       }
@@ -144,10 +134,10 @@ export const DetailsCard_ = connect(mapStateToProps)(({ watchK8sResource, stopWa
               </DetailItem>
             </>
           ) : (
-              <DetailItem key="kubernetes" title="Kubernetes version" error={!!k8sVersionError || (k8sVersion && !k8sGitVersion)} isLoading={!k8sVersion} valueClassName="co-select-to-copy">
-                {k8sGitVersion}
-              </DetailItem>
-            )}
+            <DetailItem key="kubernetes" title="Kubernetes version" error={!!k8sVersionError || (k8sVersion && !k8sGitVersion)} isLoading={!k8sVersion} valueClassName="co-select-to-copy">
+              {k8sGitVersion}
+            </DetailItem>
+          )}
         </DetailsBody>
       </DashboardCardBody>
     </DashboardCard>
