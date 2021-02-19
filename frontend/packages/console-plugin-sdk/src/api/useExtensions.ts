@@ -1,11 +1,12 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useForceRender } from '@console/shared/src/hooks/useForceRender';
+import { deepMergeExtensionProperties } from '../store';
 import { subscribeToExtensions } from './subscribeToExtensions';
 import { Extension, ExtensionTypeGuard, LoadedExtension } from '../typings';
 import useTranslationExt from '../utils/useTranslationExt';
 
-function translate(obj: any, t: (str: string) => string): any {
+const translate = (obj: any, t: (str: string) => string): typeof obj => {
   if (typeof obj === 'string') {
     return t(obj);
   }
@@ -21,7 +22,7 @@ function translate(obj: any, t: (str: string) => string): any {
     }, {});
   }
   return obj;
-}
+};
 
 /**
  * React hook for consuming Console extensions.
@@ -74,10 +75,9 @@ export const useExtensions = <E extends Extension>(
   const trySubscribe = React.useCallback(() => {
     if (unsubscribeRef.current === null) {
       unsubscribeRef.current = subscribeToExtensions<E>((extensions) => {
-        extensionsInUseRef.current = extensions.map((ext) => ({
-          ...ext,
-          properties: translate(ext.properties, t),
-        }));
+        extensionsInUseRef.current = extensions.map((e) =>
+          deepMergeExtensionProperties(e, translate(e.properties, t)),
+        );
         isMountedRef.current && forceRender();
       }, ...latestTypeGuardsRef.current);
     }

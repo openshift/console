@@ -10,6 +10,7 @@ import {
   augmentExtension,
   isExtensionInUse,
   getGatingFlagNames,
+  deepMergeExtensionProperties,
   PluginStore,
 } from '../store';
 import { Extension, ModelDefinition } from '../typings';
@@ -219,6 +220,59 @@ describe('getGatingFlagNames', () => {
     ].map(sanitizeExtension);
 
     expect(getGatingFlagNames(extensions)).toEqual(['foo', 'bar', 'baz', 'qux', 'test']);
+  });
+});
+
+describe('deepMergeExtensionProperties', () => {
+  it('merges the given object into extension properties', () => {
+    expect(
+      deepMergeExtensionProperties(
+        {
+          type: 'Foo/Bar',
+          properties: {},
+        },
+        {
+          test: true,
+          qux: { foo: ['value'], baz: 1 },
+        },
+      ),
+    ).toEqual({
+      type: 'Foo/Bar',
+      properties: {
+        test: true,
+        qux: { foo: ['value'], baz: 1 },
+      },
+    });
+
+    expect(
+      deepMergeExtensionProperties(
+        {
+          type: 'Foo/Bar',
+          properties: {
+            test: true,
+            qux: { foo: ['value'], baz: 1 },
+          },
+        },
+        {
+          test: false,
+          qux: { baz: 2 },
+        },
+      ),
+    ).toEqual({
+      type: 'Foo/Bar',
+      properties: {
+        test: false,
+        qux: { foo: ['value'], baz: 2 },
+      },
+    });
+  });
+
+  it('returns a new extension instance', () => {
+    const testExtension: Extension = { type: 'Foo/Bar', properties: {} };
+    const updatedExtension = deepMergeExtensionProperties(testExtension, {});
+
+    expect(updatedExtension).not.toBe(testExtension);
+    expect(Object.isFrozen(updatedExtension)).toBe(true);
   });
 });
 

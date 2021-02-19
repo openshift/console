@@ -1,6 +1,6 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
+import { deepMergeExtensionProperties } from '@console/plugin-sdk/src/store';
 import {
   Extension,
   ExtensionTypeGuard,
@@ -43,34 +43,40 @@ import {
  */
 export const useResolvedExtensions = <E extends Extension>(
   ...typeGuards: ExtensionTypeGuard<E>[]
-): [ResolvedExtension<E>[], boolean] => {
+): [ResolvedExtension<E>[], boolean, any] => {
   const extensions = useExtensions<E>(...typeGuards);
 
   const [resolvedExtensions, setResolvedExtensions] = React.useState<ResolvedExtension<E>[]>([]);
   const [resolved, setResolved] = React.useState<boolean>(false);
+  const [error, setError] = React.useState<any>(undefined);
 
   React.useEffect(() => {
     let disposed = false;
 
-    // eslint-disable-next-line promise/catch-or-return
     Promise.all(
       extensions.map(async (e) => {
-        const properties = await resolveCodeRefProperties(e);
-        return Object.freeze(_.merge({}, e, { properties })) as ResolvedExtension<E>;
+        const resolvedProperties = await resolveCodeRefProperties(e);
+        return deepMergeExtensionProperties(e, resolvedProperties) as ResolvedExtension<E>;
       }),
-    ).then((result) => {
-      if (!disposed) {
-        setResolvedExtensions(result);
-        setResolved(true);
-      }
-    });
+    )
+      .then((result) => {
+        if (!disposed) {
+          setResolvedExtensions(result);
+          setResolved(true);
+        }
+      })
+      .catch((err) => {
+        if (!disposed) {
+          setError(err);
+        }
+      });
 
     return () => {
       disposed = true;
     };
   }, [extensions]);
 
-  return [resolvedExtensions, resolved];
+  return [resolvedExtensions, resolved, error];
 };
 
 export type ResolvedExtension<
