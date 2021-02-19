@@ -15,7 +15,7 @@ export const topologyPO = {
     node: '[data-test-id="base-node-handler"]',
     workload: '[data-type="workload"]',
     contextMenuOptions: {
-      addToProject: '.odc-topology-context-menu button',
+      addToProject: '.pf-topology-context-sub-menu',
     },
   },
   list: {

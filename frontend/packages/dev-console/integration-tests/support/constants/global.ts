@@ -25,3 +25,8 @@ export enum operators {
   KnativeCamelOperator = 'Knative Apache Camel K',
   EclipseCheOperator = 'Eclipse Che',
 }
+
+export enum authenticationType {
+  BasicAuthentication = 'Basic Authentication',
+  SSHKey = 'SSHKey',
+}

@@ -13,3 +13,16 @@ export const devNavigationMenuPO = {
   secret: '#Secret',
   dropdownButton: '[data-test-id="dropdown-button"]',
 };
+
+export const createSourceSecret = {
+  form: 'form.co-create-secret-form.modal-content',
+  secretName: '#secret-name',
+  authenticationType: '#dropdown-selectbox',
+  basicAuthentication: {
+    userName: '#username',
+    password: '#password',
+  },
+  sshKey: {
+    sshPrivateKey: '[data-test-id="file-input-textarea"]',
+  },
+};

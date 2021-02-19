@@ -27,10 +27,9 @@ Given('user has created namespace starts with {string}', (projectName: string) =
 });
 
 Given('user has created or selected namespace {string}', (projectName: string) => {
-  const d = new Date();
-  const timestamp = d.getTime();
-  projectNameSpace.selectOrCreateProject(`${projectName}-${timestamp}-ns`);
-  cy.log(`User has selected namespace "${projectName}-${timestamp}-ns"`);
+  Cypress.env('NAMESPACE', projectName);
+  projectNameSpace.selectOrCreateProject(`${projectName}`);
+  cy.log(`User has selected namespace "${projectName}"`);
 });
 
 Given('user is at Monitoring page', () => {
