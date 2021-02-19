@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 import { useQueryParams } from '@console/shared';
+import { Button } from '@patternfly/react-core';
 import CreateProjectListPage from '../projects/CreateProjectListPage';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import CatalogServiceProvider from './service/CatalogServiceProvider';
@@ -26,7 +27,15 @@ const CatalogPage: React.FC<CatalogPageProps> = ({ match }) => {
         </CatalogServiceProvider>
       ) : (
         <CreateProjectListPage title={t('devconsole~Developer Catalog')}>
-          {t('devconsole~Select a Project to view the developer catalog')}
+          {(openProjectModal) => (
+            <Trans t={t} ns="devconsole">
+              Select a Project to view the developer catalog or{' '}
+              <Button isInline variant="link" onClick={openProjectModal}>
+                create a Project
+              </Button>
+              .
+            </Trans>
+          )}
         </CreateProjectListPage>
       )}
     </NamespacedPage>

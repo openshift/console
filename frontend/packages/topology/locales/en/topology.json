@@ -49,7 +49,7 @@
   "No resources found": "No resources found",
   "To add content to your Project, create an Application, component or service using one of these options.": "To add content to your Project, create an Application, component or service using one of these options.",
   "Topology": "Topology",
-  "Select a Project to view the topology": "Select a Project to view the topology",
+  "Select a Project to view the topology or <2>create a Project</2>.": "Select a Project to view the topology or <2>create a Project</2>.",
   "List view": "List view",
   "Graph view": "Graph view",
   "Shortcuts": "Shortcuts",

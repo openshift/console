@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { match as RMatch } from 'react-router';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
+import { Button } from '@patternfly/react-core';
 import { history, useAccessReview, Page } from '@console/internal/components/utils';
 import { ALL_NAMESPACES_KEY } from '@console/shared';
 import { NamespaceDetails, projectMenuActions } from '@console/internal/components/namespace';
@@ -83,8 +84,16 @@ export const PageContents: React.FC<MonitoringPageProps> = ({
       pages={pages}
     />
   ) : (
-    <CreateProjectListPage title="Project Details">
-      {t('devconsole~Select a Project to view its details')}
+    <CreateProjectListPage title={t('devconsole~Project Details')}>
+      {(openProjectModal) => (
+        <Trans t={t} ns="devconsole">
+          Select a Project to view its details or{' '}
+          <Button isInline variant="link" onClick={openProjectModal}>
+            create a Project
+          </Button>
+          .
+        </Trans>
+      )}
     </CreateProjectListPage>
   );
 };

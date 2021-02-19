@@ -58,7 +58,7 @@
   "Unable to load Helm Releases": "Unable to load Helm Releases",
   "No Helm Releases found": "No Helm Releases found",
   "Install a Helm Chart from the developer catalog": "Install a Helm Chart from the developer catalog",
-  "Select a Project to view the list of Helm Releases": "Select a Project to view the list of Helm Releases",
+  "Select a Project to view the list of Helm Releases or <2>create a Project</2>.": "Select a Project to view the list of Helm Releases or <2>create a Project</2>.",
   "Helm": "Helm",
   "Browse the catalog to discover and install Helm Charts": "Browse the catalog to discover and install Helm Charts",
   "Unable to find resource for {{helmLabel}}": "Unable to find resource for {{helmLabel}}",

@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 import { match } from 'react-router';
+import { Button } from '@patternfly/react-core';
 import { LoadingBox } from '@console/internal/components/utils';
 import { connectToPlural } from '@console/internal/kinds';
 import {
@@ -43,15 +44,22 @@ const ProjectSelectPage: React.FC<ProjectSelectPageProps> = (props) => {
       />
     );
   }
+  const { labelPlural: projectLabelPlural } = kindObj;
   return (
     <>
       <Helmet>
-        <title>{kindObj.labelPlural}</title>
+        <title>{projectLabelPlural}</title>
       </Helmet>
       <CreateProjectListPage title={kindObj.labelPlural} badge={getBadgeFromType(kindObj.badge)}>
-        {t('devconsole~Select a Project to view the list of {{projectLabelPlural}}', {
-          projectLabelPlural: kindObj.labelPlural,
-        })}
+        {(openProjectModal) => (
+          <Trans t={t} ns="devconsole" values={{ projectLabelPlural }}>
+            Select a Project to view the list of {{ projectLabelPlural }} or{' '}
+            <Button isInline variant="link" onClick={openProjectModal}>
+              create a Project
+            </Button>
+            .
+          </Trans>
+        )}
       </CreateProjectListPage>
     </>
   );

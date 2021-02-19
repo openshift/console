@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 import { RouteComponentProps } from 'react-router';
+import { Button } from '@patternfly/react-core';
 import { getBadgeFromType } from '@console/shared';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import CreateProjectListPage from '@console/dev-console/src/components/projects/CreateProjectListPage';
@@ -30,7 +31,15 @@ export const PipelinesPage: React.FC<PipelinesPageProps> = (props) => {
       title={t('pipelines-plugin~Pipelines')}
       badge={getBadgeFromType(PipelineModel.badge)}
     >
-      {t('pipelines-plugin~Select a Project to view the list of Pipelines')}
+      {(openProjectModal) => (
+        <Trans t={t} ns="pipelines-plugin">
+          Select a Project to view the list of Pipelines or{' '}
+          <Button isInline variant="link" onClick={openProjectModal}>
+            create a Project
+          </Button>
+          .
+        </Trans>
+      )}
     </CreateProjectListPage>
   );
 };
