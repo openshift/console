@@ -2,6 +2,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
+import { TextArea } from '@patternfly/react-core';
 
 import { RadioInput } from '../../radio';
 import { ExpandCollapse, ExternalLink } from '../../utils';
@@ -18,6 +19,8 @@ const GLOBAL_FIELDS = [
   'slack_icon_emoji',
   'slack_icon_url',
   'slack_link_names',
+  'slack_title',
+  'slack_text',
 ];
 
 export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormChange }) => {
@@ -227,6 +230,44 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
               </div>
               <div className="help-block" id="slack-link-names-help">
                 {t('slack-receiver-form~Find and link channel names and usernames.')}
+              </div>
+            </div>
+            <div className="form-group">
+              <label className="control-label" htmlFor="slack-title">
+                {t('slack-receiver-form~Title')}
+              </label>
+              <TextArea
+                id="slack-title"
+                aria-describedby="slack-title-help"
+                onChange={(value) =>
+                  dispatchFormChange({
+                    type: 'setFormValues',
+                    payload: { slack_title: value },
+                  })
+                }
+                value={formValues.slack_title}
+              />
+              <div className="help-block" id="slack-title-help">
+                {t('slack-receiver-form~The title of the Slack message.')}
+              </div>
+            </div>
+            <div className="form-group">
+              <label className="control-label" htmlFor="slack-text">
+                {t('slack-receiver-form~Text')}
+              </label>
+              <TextArea
+                id="slack-text"
+                aria-describedby="slack-text-help"
+                onChange={(value) =>
+                  dispatchFormChange({
+                    type: 'setFormValues',
+                    payload: { slack_text: value },
+                  })
+                }
+                value={formValues.slack_text}
+              />
+              <div className="help-block" id="slack-text-help">
+                {t('slack-receiver-form~The text of the Slack message.')}
               </div>
             </div>
           </div>
