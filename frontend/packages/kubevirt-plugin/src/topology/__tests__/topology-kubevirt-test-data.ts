@@ -204,7 +204,7 @@ const pods = {
         enableServiceLinks: true,
         terminationGracePeriodSeconds: 10,
         shareProcessNamespace: false,
-        nodeName: 'master-2',
+        nodeName: 'primary-2',
         securityContext: {
           seLinuxOptions: {
             level: 's0:c27,c19',
@@ -625,7 +625,7 @@ const pods = {
         schedulerName: 'default-scheduler',
         enableServiceLinks: true,
         terminationGracePeriodSeconds: 30,
-        nodeName: 'master-2',
+        nodeName: 'primary-2',
         securityContext: {
           seLinuxOptions: {
             type: 'virt_launcher.process',
@@ -2362,7 +2362,7 @@ const virtualmachineinstances = {
         labels: {
           'flavor.template.kubevirt.io/tiny': 'true',
           'kubevirt.io/domain': 'example-04',
-          'kubevirt.io/nodeName': 'master-2',
+          'kubevirt.io/nodeName': 'primary-2',
           'kubevirt.io/size': 'tiny',
           'os.template.kubevirt.io/fedora31': 'true',
           'vm.kubevirt.io/name': 'rhel-8-vm',
@@ -2468,7 +2468,7 @@ const virtualmachineinstances = {
           },
         ],
         migrationMethod: 'BlockMigration',
-        nodeName: 'master-2',
+        nodeName: 'primary-2',
         phase: 'Running',
         qosClass: 'Burstable',
       },

@@ -5,14 +5,14 @@ import {
 } from '@console/internal/module/k8s';
 import { V1alpha1DataVolumeSpec, V1alpha1DataVolumeStatus, V1ObjectMeta } from '../api';
 
-// https://kubevirt.io/api-reference/master/definitions.html#_v1_datavolumetemplatespec
+// https://kubevirt.io/api-reference/v0.38.1/definitions.html#_v1_datavolumetemplatespec
 export interface V1DataVolumeTemplateSpec {
   metadata?: V1ObjectMeta;
   spec: V1alpha1DataVolumeSpec;
   status?: V1alpha1DataVolumeStatus;
 }
 
-// https://kubevirt.io/api-reference/master/definitions.html#_v1_virtualmachineinstancespec
+// https://kubevirt.io/api-reference/v0.38.1/definitions.html#_v1_virtualmachineinstancespec
 export type VMISpec = {
   affinity: any;
   dnsConfig: any;
@@ -30,7 +30,7 @@ export type VMISpec = {
   volumes?: any[];
 };
 
-// https://kubevirt.io/api-reference/master/definitions.html#_v1_virtualmachineinstancestatus
+// https://kubevirt.io/api-reference/v0.38.1/definitions.html#_v1_virtualmachineinstancestatus
 export type VMIStatus = {
   conditions: any[];
   interfaces: any[];
@@ -71,7 +71,7 @@ export type VMStatusStateChangeRequest = {
   data: { [key: string]: string };
 };
 
-// https://kubevirt.io/api-reference/master/definitions.html#_v1_virtualmachine
+// https://kubevirt.io/api-reference/v0.38.1/definitions.html#_v1_virtualmachine
 export type VMKind = {
   spec: VMSpec;
   status: VMStatus;

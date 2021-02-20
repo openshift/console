@@ -56,7 +56,7 @@ const OvirtImportProviderConnected: React.FC<OvirtImportProviderProps> = ({
         fieldType={FormFieldType.TEXT}
         fieldHelp={
           <a
-            href="https://ovirt.github.io/ovirt-engine-api-model/master/#_access_api_entry_point"
+            href="https://ovirt.github.io/ovirt-engine-api-model/4.4/#_access_api_entry_point"
             target="_blank"
             rel="noopener noreferrer"
           >
