@@ -479,6 +479,7 @@ class ConfigEntryFormWithTranslation extends React.Component<
             <input
               className="pf-c-form-control"
               id={`${this.props.id}-address`}
+              aria-describedby={`${this.props.id}-address-help`}
               type="text"
               name="address"
               onChange={this.onAddressChanged}
@@ -486,6 +487,9 @@ class ConfigEntryFormWithTranslation extends React.Component<
               required
             />
           </div>
+          <p className="help-block" id={`${this.props.id}-address-help`}>
+            {t('public~For example quay.io or docker.io')}
+          </p>
         </div>
         <div className="form-group">
           <label className="control-label co-required" htmlFor={`${this.props.id}-username`}>

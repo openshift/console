@@ -461,6 +461,7 @@
   "Upload configuration file": "Upload configuration file",
   "Authentication type": "Authentication type",
   "Registry server address": "Registry server address",
+  "For example quay.io or docker.io": "For example quay.io or docker.io",
   "Username": "Username",
   "Password": "Password",
   "Remove credentials": "Remove credentials",
