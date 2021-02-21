@@ -10,10 +10,6 @@ import {
   ModelDefinition,
   Plugin,
   ProjectDashboardInventoryItem,
-  PVCAlert,
-  PVCCreateProp,
-  PVCDelete,
-  PVCStatus,
   ReduxReducer,
   ResourceDetailsPage,
   ResourceListPage,
@@ -22,8 +18,6 @@ import {
   YAMLTemplate,
 } from '@console/plugin-sdk';
 import { getName } from '@console/shared/src/selectors/common';
-import { AlertVariant } from '@patternfly/react-core';
-import { killCDIBoundPVC } from './components/cdi-upload-provider/pvc-delete-extension';
 import { getKubevirtHealthState } from './components/dashboards-page/overview-dashboard/health';
 import {
   getVMStatusGroups,
@@ -33,7 +27,6 @@ import { diskImportKindMapping } from './components/dashboards-page/overview-das
 import * as models from './models';
 import { VirtualMachineYAMLTemplates, VMTemplateYAMLTemplates } from './models/templates';
 import kubevirtReducer from './redux';
-import { isPvcBoundToCDI, isPvcUploading } from './selectors/pvc/selectors';
 import { getTopologyPlugin, TopologyConsumedExtensions } from './topology/topology-plugin';
 
 import '@console/internal/i18n.js';
@@ -53,11 +46,7 @@ type ConsumedExtensions =
   | ReduxReducer
   | ProjectDashboardInventoryItem
   | DashboardsOverviewResourceActivity
-  | TopologyConsumedExtensions
-  | PVCCreateProp
-  | PVCAlert
-  | PVCStatus
-  | PVCDelete;
+  | TopologyConsumedExtensions;
 
 export const FLAG_KUBEVIRT = 'KUBEVIRT';
 
@@ -471,60 +460,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   ...getTopologyPlugin([FLAG_KUBEVIRT]),
-  {
-    type: 'PVCCreateProp',
-    properties: {
-      label: 'With Data upload form',
-      path: '~new/upload-form',
-    },
-    flags: {
-      required: [FLAG_KUBEVIRT],
-    },
-  },
-  {
-    type: 'PVCAlert',
-    properties: {
-      loader: () =>
-        import('./components/cdi-upload-provider/pvc-alert-extension').then(
-          (m) => m.PVCAlertExtension,
-        ),
-    },
-    flags: {
-      required: [FLAG_KUBEVIRT],
-    },
-  },
-  {
-    type: 'PVCStatus',
-    properties: {
-      priority: 10,
-      predicate: isPvcUploading,
-      loader: () =>
-        import('./components/cdi-upload-provider/upload-pvc-popover').then(
-          (m) => m.UploadPVCPopover,
-        ),
-    },
-    flags: {
-      required: [FLAG_KUBEVIRT],
-    },
-  },
-  {
-    type: 'PVCDelete',
-    properties: {
-      predicate: isPvcBoundToCDI,
-      onPVCKill: killCDIBoundPVC,
-      alert: {
-        type: AlertVariant.warning,
-        title: 'PVC Delete',
-        body: () =>
-          import('./components/cdi-upload-provider/pvc-delete-extension').then(
-            (m) => m.PVCDeleteAlertExtension,
-          ),
-      },
-    },
-    flags: {
-      required: [FLAG_KUBEVIRT],
-    },
-  },
 ];
 
 export default plugin;

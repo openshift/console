@@ -45,7 +45,11 @@
       "standaloneConsole": "src/components/vms/vm-console/StandaloneVMConsolePage.tsx",
       "icons": "src/utils/icons.tsx",
       "createVM": "src/components/create-vm",
-      "contextProvider": "src/components/cdi-upload-provider/cdi-upload-provider.tsx"
+      "contextProvider": "src/components/cdi-upload-provider/cdi-upload-provider.tsx",
+      "pvcSelectors": "src/selectors/pvc/selectors.ts",
+      "pvcAlert": "src/components/cdi-upload-provider/pvc-alert-extension.tsx",
+      "pvcStatus": "src/components/cdi-upload-provider/upload-pvc-popover.tsx",
+      "pvcDelete": "src/components/cdi-upload-provider/pvc-delete-extension.tsx"
     }
   }
 }

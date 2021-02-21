@@ -7,6 +7,13 @@ import { useDispatch, connect } from 'react-redux';
 import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import { ChartDonut } from '@patternfly/react-charts';
+import { useExtensions } from '@console/plugin-sdk';
+import {
+  isPVCAlert,
+  isPVCCreateProp,
+  isPVCStatus,
+} from '@console/dynamic-plugin-sdk/src/extensions/pvc';
+import { useResolvedExtensions } from '@console/dynamic-plugin-sdk';
 import {
   Status,
   FLAGS,
@@ -15,7 +22,6 @@ import {
   getName,
   getRequestedPVCSize,
 } from '@console/shared';
-import { useExtensions, isPVCCreateProp, isPVCAlert, isPVCStatus } from '@console/plugin-sdk';
 import { connectToFlags } from '../reducers/features';
 import { Conditions } from './conditions';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
@@ -29,7 +35,6 @@ import {
   Selector,
   humanizeBinaryBytes,
   convertToBaseValue,
-  AsyncComponent,
   asAccessReview,
 } from './utils';
 import { ResourceEventStream } from './events';
@@ -60,20 +65,18 @@ const menuActions = [
 ];
 
 export const PVCStatus = ({ pvc }) => {
-  const pvcStatusExtensions = useExtensions(isPVCStatus);
-  if (pvcStatusExtensions.length > 0) {
+  const [pvcStatusExtensions, resolved] = useResolvedExtensions(isPVCStatus);
+  if (resolved && pvcStatusExtensions.length > 0) {
     const sortedByPriority = pvcStatusExtensions.sort(
       (a, b) => b.properties.priority - a.properties.priority,
     );
     const priorityStatus = sortedByPriority.find((status) => status.properties.predicate(pvc));
+    const PriorityStatusComponent = priorityStatus?.properties?.status;
 
-    const priorityStatusComponent = priorityStatus && (
-      <AsyncComponent loader={priorityStatus.properties.loader} pvc={pvc} />
-    );
-    return (
-      priorityStatusComponent || (
-        <Status status={pvc.metadata.deletionTimestamp ? 'Terminating' : pvc.status.phase} />
-      )
+    return PriorityStatusComponent ? (
+      <PriorityStatusComponent pvc={pvc} />
+    ) : (
+      <Status status={pvc.metadata.deletionTimestamp ? 'Terminating' : pvc.status.phase} />
     );
   }
 
@@ -192,10 +195,10 @@ const Details_ = ({ flags, obj: pvc }) => {
       ]
     : [{ x: 'Total', y: totalCapacity.value }];
 
-  const pvcAlertExtensions = useExtensions(isPVCAlert);
-  const alertComponents = pvcAlertExtensions.map(({ properties: { loader } }, i) => (
-    <AsyncComponent key={`ext-${i}`} loader={loader} pvc={pvc} />
-  ));
+  const [pvcAlertExtensions] = useResolvedExtensions(isPVCAlert);
+  const alertComponents = pvcAlertExtensions?.map(
+    ({ properties: { alert: AlertComponent }, uid }) => <AlertComponent key={uid} pvc={pvc} />,
+  );
   const { t } = useTranslation();
   return (
     <>
