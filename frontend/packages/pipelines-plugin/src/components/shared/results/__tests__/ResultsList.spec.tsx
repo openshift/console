@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ShallowWrapper, shallow } from 'enzyme';
 import { Table } from '@patternfly/react-table';
-import { Alert } from '@patternfly/react-core';
+import { EmptyState } from '@patternfly/react-core';
 import ResultsList, { ResultsListProps } from '../ResultsList';
 import { runStatus } from '../../../../utils/pipeline-augment';
 import { taskRunWithResults } from '../../../taskruns/__tests__/taskrun-test-data';
@@ -29,9 +29,9 @@ describe('ResultsList', () => {
 
   it('Should render Results Table', () => {
     expect(resultsListWrapper.find(Table).exists()).toBe(true);
-    expect(resultsListWrapper.find(Alert).exists()).toBe(false);
+    expect(resultsListWrapper.find(EmptyState).exists()).toBe(false);
   });
-  it('Should render an Alert instead', () => {
+  it('Should render an EmptyState instead', () => {
     resultsListProps = {
       status: runStatus.Failed,
       resourceName: 'Task Run',
@@ -39,6 +39,6 @@ describe('ResultsList', () => {
     };
     resultsListWrapper = shallow(<ResultsList {...resultsListProps} />);
     expect(resultsListWrapper.find(Table).exists()).toBe(false);
-    expect(resultsListWrapper.find(Alert).exists()).toBe(true);
+    expect(resultsListWrapper.find(EmptyState).exists()).toBe(true);
   });
 });
