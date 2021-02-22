@@ -20,7 +20,7 @@ import {
   getDataVolumeStorageClassName,
 } from '../../../selectors/dv/selectors';
 import { getPvcResources, getPvcStorageClassName } from '../../../selectors/pvc/selectors';
-import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
+import { V1alpha1DataVolume } from '../../../types/api';
 import { getFlavorData } from '../../../selectors/vm/flavor-data';
 
 import './_clone-vm-modal.scss';

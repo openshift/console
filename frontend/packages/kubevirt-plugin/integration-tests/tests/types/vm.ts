@@ -1,8 +1,10 @@
 import { FlavorConfig, Network, Disk, CloudInitConfig } from './types';
-import { V1Disk } from '../../../src/types/vm/disk/V1Disk';
-import { V1Volume } from '../../../src/types/vm/disk/V1Volume';
-import { V1alpha1DataVolume } from '../../../src/types/vm/disk/V1alpha1DataVolume';
-import { V1PersistentVolumeClaim } from '../../../src/types/vm/disk/V1PersistentVolumeClaim';
+import {
+  V1Disk,
+  V1PersistentVolumeClaim,
+  V1alpha1DataVolume,
+  V1Volume,
+} from '../../../src/types/api';
 import { V1Network, V1NetworkInterface } from '../../../src/types/vm/index';
 import { Workload } from '../utils/constants/wizard';
 import { ProvisionSource } from '../utils/constants/enums/provisionSource';

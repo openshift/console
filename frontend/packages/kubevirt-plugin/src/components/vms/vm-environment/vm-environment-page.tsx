@@ -68,9 +68,8 @@ import {
 } from '../../../selectors/vm-template/selectors';
 import { PatchBuilder } from '@console/shared/src/k8s/patch';
 import { getVMLikePatches } from '../../../k8s/patches/vm-template';
-import { V1Volume } from '../../../types/vm/disk/V1Volume';
+import { V1Volume, V1Disk } from '../../../types/api';
 import { VirtualMachineModel } from '../../../models';
-import { V1Disk } from '../../../types/vm/disk/V1Disk';
 
 import './vm-environment.scss';
 

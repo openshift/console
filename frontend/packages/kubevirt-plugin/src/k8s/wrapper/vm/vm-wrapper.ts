@@ -32,9 +32,7 @@ import {
   VolumeType,
 } from '../../../constants/vm';
 import { VolumeWrapper } from './volume-wrapper';
-import { V1Disk } from '../../../types/vm/disk/V1Disk';
-import { V1Volume } from '../../../types/vm/disk/V1Volume';
-import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
+import { V1Disk, V1alpha1DataVolume, V1Volume } from '../../../types/api';
 import { VirtualMachineImportModel, VirtualMachineModel } from '../../../models';
 import { buildOwnerReferenceForModel } from '../../../utils';
 import { transformDevices } from '../../../selectors/vm/devices';

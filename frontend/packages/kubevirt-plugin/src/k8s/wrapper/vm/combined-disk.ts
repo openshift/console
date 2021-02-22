@@ -4,9 +4,7 @@ import { apiVersionForModel } from '@console/internal/module/k8s/k8s';
 import { createBasicLookup, getName, getNamespace, getOwnerReferences } from '@console/shared/src';
 import { FirehoseResult } from '@console/internal/components/utils';
 import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
-import { V1Disk } from '../../../types/vm/disk/V1Disk';
-import { V1Volume } from '../../../types/vm/disk/V1Volume';
-import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
+import { V1Disk, V1PersistentVolumeClaim, V1Volume, V1alpha1DataVolume } from '../../../types/api';
 import { getSimpleName } from '../../../selectors/utils';
 import { VolumeType, DiskType, AccessMode, VolumeMode } from '../../../constants/vm/storage';
 import { VMGenericLikeEntityKind } from '../../../types/vmLike';
@@ -19,7 +17,6 @@ import { DataVolumeWrapper } from './data-volume-wrapper';
 import { VolumeWrapper } from './volume-wrapper';
 import { PersistentVolumeClaimWrapper } from './persistent-volume-claim-wrapper';
 import { asVMILikeWrapper } from '../utils/convert';
-import { V1PersistentVolumeClaim } from '../../../types/vm/disk/V1PersistentVolumeClaim';
 import { DataVolumeModel } from '../../../models';
 import { V1DataVolumeTemplateSpec } from '../../../types';
 

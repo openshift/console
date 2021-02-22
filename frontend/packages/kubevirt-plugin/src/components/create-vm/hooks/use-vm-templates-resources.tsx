@@ -3,7 +3,7 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { PersistentVolumeClaimKind, PodKind, TemplateKind } from '@console/internal/module/k8s';
 import { PersistentVolumeClaimModel, PodModel, TemplateModel } from '@console/internal/models';
 import { DataVolumeModel } from '../../../models';
-import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
+import { V1alpha1DataVolume } from '../../../types/api';
 import {
   TEMPLATE_TYPE_BASE,
   TEMPLATE_TYPE_VM,

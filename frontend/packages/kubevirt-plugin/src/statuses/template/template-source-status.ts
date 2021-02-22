@@ -16,7 +16,7 @@ import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
 import { getPvcImportPodName, getPvcUploadPodName } from '../../selectors/pvc/selectors';
 import { getAnnotation, getParameterValue } from '../../selectors/selectors';
 import { isCommonTemplate } from '../../selectors/vm-template/basic';
-import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
+import { V1alpha1DataVolume } from '../../types/api';
 import { GetTemplateSourceStatus, SOURCE_TYPE } from './types';
 import { NetworkWrapper } from '../../k8s/wrapper/vm/network-wrapper';
 import { DVStatusType, getDVStatus } from '../dv/dv-status';

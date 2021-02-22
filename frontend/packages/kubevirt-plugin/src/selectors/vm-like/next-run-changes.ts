@@ -6,7 +6,7 @@ import { getBootableDevicesInOrder, getDevices } from '../vm/devices';
 import { getVMIBootableDevicesInOrder, getVMIDevices } from '../vmi/devices';
 import { createBasicLookup } from '@console/shared';
 import { getSimpleName } from '../utils';
-import { V1Disk } from '../../types/vm/disk/V1Disk';
+import { V1Disk } from '../../types/api';
 import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
 import { DiskWrapper } from '../../k8s/wrapper/vm/disk-wrapper';
 import { V1NetworkInterface } from '../../types/vm/index';

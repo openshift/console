@@ -38,7 +38,7 @@ import { SUPPORT_URL } from '../../constants/vm-templates';
 import { getLoadedData } from '../../utils';
 import { TEMPLATE_TYPE_LABEL, TEMPLATE_TYPE_BASE, TEMPLATE_TYPE_VM } from '../../constants/vm';
 import { DataVolumeModel } from '../../models';
-import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
+import { V1alpha1DataVolume } from '../../types/api';
 import { menuActionsCreator } from './menu-actions';
 import { TemplateSource } from './vm-template-source';
 import { getTemplateOSIcon, PinnedIcon } from './os-icons';

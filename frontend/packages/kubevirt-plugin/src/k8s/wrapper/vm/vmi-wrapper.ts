@@ -19,8 +19,7 @@ import {
 } from '../../../constants/vm';
 import { VirtualMachineInstanceModel } from '../../../models';
 import { transformDevices } from '../../../selectors/vm/devices';
-import { V1Disk } from '../../../types/vm/disk/V1Disk';
-import { V1Volume } from '../../../types/vm/disk/V1Volume';
+import { V1Disk, V1Volume } from '../../../types/api';
 
 export class VMIWrapper extends K8sResourceWrapper<VMIKind, VMIWrapper> implements VMILikeMethods {
   constructor(vmi?: VMIKind | VMIWrapper | any, copy = false) {

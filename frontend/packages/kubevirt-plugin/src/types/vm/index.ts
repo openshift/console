@@ -3,9 +3,7 @@ import {
   K8sResourceKind,
   ObjectMetadata,
 } from '@console/internal/module/k8s';
-import { V1alpha1DataVolumeSpec } from './disk/V1alpha1DataVolumeSpec';
-import { V1alpha1DataVolumeStatus } from './disk/V1alpha1DataVolumeStatus';
-import { V1ObjectMeta } from './disk/V1ObjectMeta';
+import { V1alpha1DataVolumeSpec, V1alpha1DataVolumeStatus, V1ObjectMeta } from '../api';
 
 // https://kubevirt.io/api-reference/master/definitions.html#_v1_datavolumetemplatespec
 export interface V1DataVolumeTemplateSpec {

@@ -8,7 +8,7 @@ import {
 } from '../../selectors/vm/selectors';
 import { WINTOOLS_CONTAINER_NAMES } from '../../constants';
 import { VMKind } from '../../types';
-import { V1Disk } from '../../types/vm/disk/V1Disk';
+import { V1Disk } from '../../types/api';
 
 import './disk-summary.scss';
 

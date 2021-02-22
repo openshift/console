@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import { getRandomChars } from '@console/shared';
 import { safeLoad, safeDump } from 'js-yaml';
-import { V1CloudInitNoCloudSource } from '../../../types/vm/disk/V1CloudInitNoCloudSource';
+import { V1CloudInitNoCloudSource } from '../../../types/api';
 
 const safeAtob = (value: string) => {
   try {

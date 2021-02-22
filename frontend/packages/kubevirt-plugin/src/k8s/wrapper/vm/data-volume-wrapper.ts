@@ -1,6 +1,6 @@
 import { getOwnerReferences } from '@console/shared/src';
 import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
-import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
+import { V1alpha1DataVolume } from '../../../types/api';
 import { AccessMode, DataVolumeSourceType, VolumeMode } from '../../../constants/vm/storage';
 import {
   getDataVolumeAccessModes,

@@ -38,7 +38,7 @@ import {
 } from '../../../selectors/vm-template/basic';
 import { getTemplateOSIcon, PinnedIcon } from '../../vm-templates/os-icons';
 import { VMTemplateLabel } from '../../vm-templates/label';
-import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
+import { V1alpha1DataVolume } from '../../../types/api';
 import { getTemplateSourceStatus } from '../../../statuses/template/template-source-status';
 import { TemplateSource } from '../../vm-templates/vm-template-source';
 import { getWorkloadProfile } from '../../../selectors/vm';

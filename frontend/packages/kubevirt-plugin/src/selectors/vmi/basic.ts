@@ -1,7 +1,6 @@
 import * as _ from 'lodash';
 import { V1Network, V1NetworkInterface, VMIKind } from '../../types';
-import { V1Disk } from '../../types/vm/disk/V1Disk';
-import { V1Volume } from '../../types/vm/disk/V1Volume';
+import { V1Disk, V1Volume } from '../../types/api';
 
 export const getVMIDisks = (vmi: VMIKind, defaultValue: V1Disk[] = []): V1Disk[] =>
   vmi && vmi.spec && vmi.spec.domain && vmi.spec.domain.devices && vmi.spec.domain.devices.disks

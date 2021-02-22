@@ -4,7 +4,7 @@ import { PersistentVolumeClaimModel, PodModel, ServiceModel } from '@console/int
 import { getVMStatus } from '../../statuses/vm/vm-status';
 import { getName } from '@console/shared';
 import { VMImportKind } from '../../types/vm-import/ovirt/vm-import';
-import { V1alpha1DataVolume } from '../../types/vm/disk/V1alpha1DataVolume';
+import { V1alpha1DataVolume } from '../../types/api';
 import {
   DataVolumeModel,
   VirtualMachineImportModel,

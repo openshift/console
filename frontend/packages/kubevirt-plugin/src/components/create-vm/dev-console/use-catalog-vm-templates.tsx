@@ -24,7 +24,7 @@ import { SourceDescription } from '../../vm-templates/vm-template-source';
 import { useVmTemplatesResources } from '../hooks/use-vm-templates-resources';
 import { filterTemplates } from '../../vm-templates/utils';
 import { getTemplateSourceStatus } from '../../../statuses/template/template-source-status';
-import { V1alpha1DataVolume } from '../../../types/vm/disk/V1alpha1DataVolume';
+import { V1alpha1DataVolume } from '../../../types/api';
 import { TemplateItem } from '../../../types/template';
 import { VMTemplateSupportDescription } from '../../vm-templates/vm-template-resource';
 import { getDescription } from '../../../selectors/selectors';

@@ -1,7 +1,7 @@
 /* eslint-disable camelcase, @typescript-eslint/camelcase,no-await-in-loop */
 import { getName, getNamespace } from '@console/shared';
 import { DataVolumeModel, UploadTokenRequestModel } from '@console/kubevirt-plugin/src/models';
-import { V1alpha1DataVolume } from '@console/kubevirt-plugin/src/types/vm/disk/V1alpha1DataVolume';
+import { V1alpha1DataVolume } from '@console/kubevirt-plugin/src/types/api';
 import {
   apiVersionForModel,
   K8sResourceKind,
