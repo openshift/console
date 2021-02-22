@@ -2,10 +2,15 @@
   &__row {
     position: relative;
     margin-right: var(--pf-global--spacer--lg);
-    margin-bottom: var(--pf-global--spacer--lg);
+    margin-bottom: var(--pf-global--spacer--md);
     max-height: var(--pf-global--spacer--xl);
   }
-
+  &__header {
+    position: relative;
+    margin-right: var(--pf-global--spacer--lg);
+    margin-bottom: var(--pf-global--spacer--sm);
+    max-height: var(--pf-global--spacer--xl);
+  }
   &__col {
     margin-right: var(--pf-global--spacer--md);
   }
