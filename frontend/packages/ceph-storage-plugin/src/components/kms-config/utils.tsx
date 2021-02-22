@@ -184,3 +184,21 @@ export const setEncryptionDispatch = (
     dispatch({ type: stateType });
   }
 };
+
+export const getPort = (url: URL) => {
+  if (url.port === '') {
+    return url.protocol === 'http:' ? '80' : '443';
+  }
+  return url.port;
+};
+
+export const scKmsConfigValidation = (kms: KMSConfig): boolean =>
+  kms.name?.valid &&
+  kms.address?.valid &&
+  kms.port?.valid &&
+  kms.name.value !== '' &&
+  kms.address.value !== '' &&
+  kms.port.value !== '';
+
+export const kmsConfigValidation = (kms: KMSConfig): boolean =>
+  kms.token?.valid && kms.token.value !== '' && scKmsConfigValidation(kms);

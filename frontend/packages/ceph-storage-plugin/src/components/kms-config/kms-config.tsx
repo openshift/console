@@ -23,7 +23,7 @@ import {
 import { KMSProviders } from '../../constants';
 import { KMSConfig } from '../../types';
 import { State, Action } from '../ocs-install/attached-devices-mode/create-sc/state';
-import { setEncryptionDispatch, parseURL } from './utils';
+import { setEncryptionDispatch, parseURL, kmsConfigValidation } from './utils';
 import { StorageClassState, StorageClassClusterAction } from '../../utils/storage-pool';
 
 import './kms-config.scss';
@@ -31,41 +31,42 @@ import './kms-config.scss';
 export const KMSConfigure: React.FC<KMSConfigureProps> = ({ state, dispatch, mode, className }) => {
   const { t } = useTranslation();
   const { kms } = state;
+  const kmsObj: KMSConfig = _.cloneDeep(kms);
+
+  // Vault as default KMS
   const [kmsProvider, setKMSProvider] = React.useState<string>(KMSProviders[0].name);
 
+  React.useEffect(() => {
+    const hasHandled: boolean = kmsConfigValidation(kms);
+    if (kms.hasHandled !== hasHandled) {
+      setEncryptionDispatch(ActionType.SET_KMS_ENCRYPTION, mode, dispatch, {
+        ...kms,
+        hasHandled,
+      });
+    }
+  }, [dispatch, mode, kms]);
+
   const setServiceName = (name: string) => {
-    const kmsObj: KMSConfig = _.cloneDeep(kms);
     kmsObj.name.value = name;
-    name !== '' ? (kms.name.valid = true) : (kms.name.valid = false);
-    kmsObj.hasHandled = kms.name.valid;
+    kmsObj.name.valid = name !== '';
     setEncryptionDispatch(ActionType.SET_KMS_ENCRYPTION, mode, dispatch, kmsObj);
   };
 
   const setAddress = (address: string) => {
-    const kmsObj: KMSConfig = _.cloneDeep(kms);
     kmsObj.address.value = address;
-    address !== '' && parseURL(address.trim())
-      ? (kms.address.valid = true)
-      : (kms.address.valid = false);
-    kmsObj.hasHandled = kms.address.valid;
+    kmsObj.address.valid = address !== '' && parseURL(address.trim()) != null;
     setEncryptionDispatch(ActionType.SET_KMS_ENCRYPTION, mode, dispatch, kmsObj);
   };
 
   const setAddressPort = (port: string) => {
-    const kmsObj: KMSConfig = _.cloneDeep(kms);
     kmsObj.port.value = port;
-    port !== '' && !_.isNaN(Number(port)) && Number(port) > 0
-      ? (kms.port.valid = true)
-      : (kms.port.valid = false);
-    kmsObj.hasHandled = kms.port.valid;
+    kmsObj.port.valid = port !== '' && !_.isNaN(Number(port)) && Number(port) > 0;
     setEncryptionDispatch(ActionType.SET_KMS_ENCRYPTION, mode, dispatch, kmsObj);
   };
 
   const setToken = (token: string) => {
-    const kmsObj: KMSConfig = _.cloneDeep(kms);
     kmsObj.token.value = token;
-    token !== '' ? (kms.token.valid = true) : (kms.token.valid = false);
-    kmsObj.hasHandled = kms.token.valid;
+    kmsObj.token.valid = token !== '';
     setEncryptionDispatch(ActionType.SET_KMS_ENCRYPTION, mode, dispatch, kmsObj);
   };
 
