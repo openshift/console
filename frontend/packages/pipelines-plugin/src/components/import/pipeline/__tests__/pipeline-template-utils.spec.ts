@@ -1,10 +1,16 @@
 import { k8sCreate, k8sUpdate } from '@console/internal/module/k8s';
 import { GitImportFormData } from '@console/dev-console/src/components/import/import-types';
-import { PIPELINE_RUNTIME_LABEL } from '../../../../const';
+import {
+  PIPELINE_RUNTIME_LABEL,
+  PIPELINE_RUNTIME_VERSION_LABEL,
+  PIPELINE_STRATEGY_LABEL,
+} from '../../../../const';
 import { PipelineModel } from '../../../../models';
 import { PipelineKind } from '../../../../types';
 import {
   createPipelineForImportFlow,
+  isDockerPipeline,
+  pipelineRuntimeOrVersionChanged,
   updatePipelineForImportFlow,
 } from '../pipeline-template-utils';
 
@@ -53,6 +59,11 @@ describe('createPipelineForImportFlow', () => {
 
   it('should create an almost empty pipeline for a template with only task data (empty task)', async () => {
     const pipelineTemplate: PipelineKind = {
+      metadata: {
+        labels: {
+          [PIPELINE_RUNTIME_LABEL]: 'nodejs',
+        },
+      },
       spec: {
         tasks: [],
       },
@@ -74,7 +85,11 @@ describe('createPipelineForImportFlow', () => {
       metadata: {
         name: 'an-app',
         namespace: 'a-project',
-        labels: { 'app.kubernetes.io/instance': 'an-app' },
+        labels: {
+          'app.kubernetes.io/instance': 'an-app',
+          [PIPELINE_RUNTIME_LABEL]: 'nodejs',
+          [PIPELINE_RUNTIME_VERSION_LABEL]: '14-ubi8',
+        },
       },
       spec: {
         params: undefined,
@@ -115,7 +130,10 @@ describe('createPipelineForImportFlow', () => {
       metadata: {
         name: 'an-app',
         namespace: 'a-project',
-        labels: { 'app.kubernetes.io/instance': 'an-app' },
+        labels: {
+          'app.kubernetes.io/instance': 'an-app',
+          [PIPELINE_RUNTIME_VERSION_LABEL]: '14-ubi8',
+        },
       },
       spec: {
         params: [],
@@ -165,7 +183,10 @@ describe('createPipelineForImportFlow', () => {
       metadata: {
         name: 'an-app',
         namespace: 'a-project',
-        labels: { 'app.kubernetes.io/instance': 'an-app' },
+        labels: {
+          'app.kubernetes.io/instance': 'an-app',
+          [PIPELINE_RUNTIME_VERSION_LABEL]: '14-ubi8',
+        },
       },
       spec: {
         params: [{ name: 'a-param', default: 'default value', description: 'a description' }],
@@ -219,7 +240,10 @@ describe('createPipelineForImportFlow', () => {
       metadata: {
         name: 'an-app',
         namespace: 'a-project',
-        labels: { 'app.kubernetes.io/instance': 'an-app' },
+        labels: {
+          'app.kubernetes.io/instance': 'an-app',
+          [PIPELINE_RUNTIME_VERSION_LABEL]: '14-ubi8',
+        },
       },
       spec: {
         params: [
@@ -274,7 +298,10 @@ describe('createPipelineForImportFlow', () => {
       metadata: {
         name: 'an-app',
         namespace: 'a-project',
-        labels: { 'app.kubernetes.io/instance': 'an-app' },
+        labels: {
+          'app.kubernetes.io/instance': 'an-app',
+          [PIPELINE_RUNTIME_VERSION_LABEL]: '14-ubi8',
+        },
       },
       spec: {
         params: [
@@ -452,6 +479,7 @@ describe('updatePipelineForImportFlow', () => {
         namespace: 'test',
         labels: {
           [PIPELINE_RUNTIME_LABEL]: 'newImage',
+          [PIPELINE_RUNTIME_VERSION_LABEL]: props.image.tag,
           'app.kubernetes.io/instance': 'test',
         },
         resourceVersion: 'test',
@@ -464,5 +492,76 @@ describe('updatePipelineForImportFlow', () => {
 
     expect(k8sUpdate).toHaveBeenCalledTimes(1);
     expect(k8sUpdate).toHaveBeenCalledWith(PipelineModel, expectedPipeline, 'test', 'test');
+  });
+});
+
+describe('isDockerPipeline', () => {
+  const mockTemplate: PipelineKind = {
+    metadata: {
+      labels: { 'app.kubernetes.io/instance': 'sample' },
+    },
+    spec: {
+      tasks: [],
+      params: [{ type: 'string', name: 'PARAM1' }],
+    },
+  };
+
+  it('should return false for a non docker based pipelines', () => {
+    expect(isDockerPipeline(mockTemplate)).toBe(false);
+  });
+
+  it('should return true for a docker based pipeline template', () => {
+    const template = {
+      ...mockTemplate,
+      metadata: {
+        labels: {
+          ...mockTemplate.metadata.labels,
+          [PIPELINE_STRATEGY_LABEL]: 'docker',
+        },
+      },
+    };
+
+    expect(isDockerPipeline(template)).toBe(true);
+  });
+});
+
+describe('pipelineRuntimeOrVersionChanged', () => {
+  const mockTemplate: PipelineKind = {
+    metadata: {
+      labels: {
+        [PIPELINE_RUNTIME_LABEL]: 'nodejs',
+        [PIPELINE_RUNTIME_VERSION_LABEL]: '10-ubi8',
+      },
+    },
+    spec: {
+      tasks: [],
+      params: [{ type: 'string', name: 'PARAM1' }],
+    },
+  };
+
+  it('should return false if runtime and version is same for two given pipelines', () => {
+    const mockPipeline = {
+      ...mockTemplate,
+      metadata: {
+        labels: {
+          [PIPELINE_RUNTIME_LABEL]: 'nodejs',
+          [PIPELINE_RUNTIME_VERSION_LABEL]: '10-ubi8',
+        },
+      },
+    };
+    expect(pipelineRuntimeOrVersionChanged(mockTemplate, mockPipeline)).toBe(false);
+  });
+
+  it('should return false if runtime or version is different for two given pipelines', () => {
+    const mockPipeline = {
+      ...mockTemplate,
+      metadata: {
+        labels: {
+          [PIPELINE_RUNTIME_LABEL]: 'nodejs',
+          [PIPELINE_RUNTIME_VERSION_LABEL]: '14-ubi8',
+        },
+      },
+    };
+    expect(pipelineRuntimeOrVersionChanged(mockTemplate, mockPipeline)).toBe(true);
   });
 });
