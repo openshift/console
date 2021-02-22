@@ -8,7 +8,9 @@ import { AccessTokenSecretName } from '../../const';
 import { createServiceAccountIfNeeded } from '../managed-services-kafka/resourceCreators';
 
 export const AccessManagedServices: any = () => {
-  const [apiTokenValue, setApiTokenValue] = React.useState("");
+
+  const [apiTokenValue, setApiTokenValue] = React.useState<string>("");
+
   const [currentNamespace] = useActiveNamespace();
   const namespace = currentNamespace;
   const { t } = useTranslation();

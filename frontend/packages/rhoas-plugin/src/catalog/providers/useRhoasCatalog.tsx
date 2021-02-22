@@ -45,16 +45,7 @@ const useRhoasCatalog: CatalogExtensionHook<CatalogItem[]> = (): [CatalogItem[],
       <FlexItem>
         <TextContent>
           <Text component={TextVariants.p}>
-            {t('rhoas-plugin~Installed cluster-side, creates resources in specific namespaces. The RHOAS operator could include these services below:')}
-          </Text>
-          <Text component={TextVariants.p}>
-            {t('rhoas-plugin~Kafka Connect: We will add a description for Kafka Connect here')}
-          </Text>
-          <Text component={TextVariants.p}>
-            {t('API Management: We will add a description for API Management here.')}
-          </Text>
-          <Text component={TextVariants.p}>
-            {t('Red Hat Open Data Hub: We will add a description for Red Hat Open Data Hub here.')}
+            TO DO: Add description
           </Text>
         </TextContent>
       </FlexItem>
@@ -125,7 +116,7 @@ const useRhoasCatalog: CatalogExtensionHook<CatalogItem[]> = (): [CatalogItem[],
         properties: [{ label: 'Type', value: 'Red Hat Managed Service' }],
         descriptions: [
           {
-            value: <p>Here is where we provide the description for Red Hat OpenShift Streams for Apache Kafka</p>,
+            value: <p>TO DO: Add description</p>,
           }
         ]
       },
