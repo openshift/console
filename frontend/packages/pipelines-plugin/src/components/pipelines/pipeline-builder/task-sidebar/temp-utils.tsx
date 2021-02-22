@@ -5,7 +5,7 @@ import { global_disabled_color_200 as disabledColor } from '@patternfly/react-to
 import {
   Flex,
   FlexItem,
-  TextInput,
+  TextArea,
   Tooltip,
   ValidatedOptions,
   FormGroup,
@@ -30,8 +30,11 @@ export const StringParam: React.FC<ParameterProps> = (props) => {
   const { currentValue, defaultValue, isValid, name, onChange, setDirty } = props;
 
   return (
-    <TextInput
+    <TextArea
       id={name}
+      rows={1}
+      resizeOrientation="vertical"
+      style={{ minHeight: 33 }}
       validated={isValid ? 'default' : 'error'}
       isRequired={!defaultValue}
       onBlur={() => setDirty(true)}
