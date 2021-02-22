@@ -2,9 +2,13 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
-import { ActionGroup, Button, Tooltip } from '@patternfly/react-core';
-import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
-import { isCephProvisioner, isObjectSC, cephStorageProvisioners } from '@console/shared/src/utils';
+import { ActionGroup, Button } from '@patternfly/react-core';
+import {
+  isCephProvisioner,
+  isObjectSC,
+  cephStorageProvisioners,
+  InfoToolTip,
+} from '@console/shared/src/utils';
 import { k8sCreate, K8sResourceKind, referenceFor } from '../../module/k8s';
 import { AsyncComponent, ButtonBar, RequestSizeInput, history, resourceObjPath } from '../utils';
 import { StorageClassDropdown } from '../utils/storage-class-dropdown';
@@ -13,7 +17,6 @@ import { Checkbox } from '../checkbox';
 import { PersistentVolumeClaimModel } from '../../models';
 import { StorageClass } from '../storage-class-form';
 import {
-  cephRBDProvisionerSuffix,
   provisionerAccessModeMapping,
   initialAccessModes,
   accessModeRadios,
@@ -21,15 +24,6 @@ import {
   dropdownUnits,
   getAccessModeForProvisioner,
 } from './shared';
-
-const InfoToolTip = () => (
-  <Tooltip
-    position="bottom"
-    content={<div>Only filesystem volume mode is available for cephfs</div>}
-  >
-    <OutlinedQuestionCircleIcon />
-  </Tooltip>
-);
 
 const NameValueEditorComponent = (props) => (
   <AsyncComponent
@@ -97,14 +91,6 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
 
       if (storageClass) {
         obj.spec.storageClassName = storageClass;
-
-        // should set block only for RBD + RWX
-        if (
-          _.endsWith(storageProvisioner, cephRBDProvisionerSuffix) &&
-          accessMode === 'ReadWriteMany'
-        ) {
-          obj.spec.volumeMode = 'Block';
-        }
       }
 
       return obj;
@@ -165,6 +151,12 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
 
   const handleAccessMode: React.ReactEventHandler<HTMLInputElement> = (event) => {
     setAccessMode(event.currentTarget.value);
+    if (
+      storageProvisioner.includes(cephStorageProvisioners[2]) &&
+      event.currentTarget.value === 'ReadWriteMany'
+    ) {
+      setVolumeMode('Block');
+    }
   };
 
   const handleVolumeMode: React.ReactEventHandler<HTMLInputElement> = (event) => {
@@ -172,6 +164,43 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
   };
 
   const onlyPvcSCs = React.useCallback((sc: StorageClass) => !isObjectSC(sc), []);
+
+  const getVolumeMode = () => {
+    if (storageProvisioner.includes(cephStorageProvisioners[1])) {
+      return [
+        <>
+          Filesystem{' '}
+          <InfoToolTip
+            position="bottom"
+            content={<div>Only filesystem volume mode is available for cephfs</div>}
+          />
+        </>,
+      ];
+    }
+
+    if (storageProvisioner.includes(cephStorageProvisioners[2]) && accessMode === 'ReadWriteMany') {
+      return [
+        <>
+          Block{' '}
+          <InfoToolTip
+            position="bottom"
+            content={<div>Only block volume mode is available for rbd with ReadWriteMany mode</div>}
+          />
+        </>,
+      ];
+    }
+
+    return volumeModeRadios.map((radio) => (
+      <RadioInput
+        {...radio}
+        key={radio.value}
+        onChange={handleVolumeMode}
+        inline
+        checked={radio.value === volumeMode}
+        name="volumeMode"
+      />
+    ));
+  };
 
   return (
     <div>
@@ -278,24 +307,7 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
       <label className="control-label" htmlFor="volume-mode">
         Volume Mode
       </label>
-      <div className="form-group">
-        {storageProvisioner.includes(cephStorageProvisioners[1]) ? (
-          <>
-            Filesystem <InfoToolTip />
-          </>
-        ) : (
-          volumeModeRadios.map((radio) => (
-            <RadioInput
-              {...radio}
-              key={radio.value}
-              onChange={handleVolumeMode}
-              inline
-              checked={radio.value === volumeMode}
-              name="volumeMode"
-            />
-          ))
-        )}
-      </div>
+      <div className="form-group">{getVolumeMode()}</div>
     </div>
   );
 };
