@@ -18,6 +18,11 @@ const pipelineBuilderFormSchema = (t: TFunction) =>
         type: yup.string().required(t('pipelines-plugin~Required')),
       }),
     ),
+    workspaces: yup.array().of(
+      yup.object({
+        name: yup.string().required(t('pipelines-plugin~Required')),
+      }),
+    ),
     tasks: yup
       .array()
       .of(

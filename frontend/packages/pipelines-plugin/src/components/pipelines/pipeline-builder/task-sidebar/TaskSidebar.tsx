@@ -10,12 +10,14 @@ import {
   PipelineTaskResource,
   TektonResource,
   TaskKind,
+  PipelineWorkspace,
 } from '../../../../types';
 import { getTaskParameters, getTaskResources } from '../../resource-utils';
 import { ResourceTarget, TaskErrorMap, UpdateOperationUpdateTaskData } from '../types';
 import TaskSidebarParam from './TaskSidebarParam';
 import TaskSidebarResource from './TaskSidebarResource';
 import TaskSidebarName from './TaskSidebarName';
+import TaskSidebarWorkspace from './TaskSidebarWorkspace';
 
 import './TaskSidebar.scss';
 
@@ -24,6 +26,7 @@ type TaskSidebarProps = {
   onRemoveTask: (taskName: string) => void;
   onUpdateTask: (data: UpdateOperationUpdateTaskData) => void;
   resourceList: TektonResource[];
+  workspaceList: PipelineWorkspace[];
   selectedPipelineTaskIndex: number;
   taskResource: TaskKind;
 };
@@ -33,6 +36,7 @@ const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
     onRemoveTask,
     onUpdateTask,
     resourceList,
+    workspaceList,
     selectedPipelineTaskIndex,
     taskResource,
   } = props;
@@ -48,6 +52,7 @@ const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
   const resources = getTaskResources(taskResource);
   const inputResources = resources.inputs;
   const outputResources = resources.outputs;
+  const workspaces = taskResource.spec.workspaces || [];
 
   const renderResource = (type: ResourceTarget) => (resource: TektonResource) => {
     const taskResources: PipelineTaskResource[] = taskField.value?.resources?.[type] || [];
@@ -125,6 +130,34 @@ const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
                         params: {
                           newValue: value,
                           taskParamName: param.name,
+                        },
+                      });
+                    }}
+                  />
+                </div>
+              );
+            })}
+          </>
+        )}
+
+        {workspaces.length !== 0 && (
+          <>
+            <h2>{t('pipelines-plugin~Workspaces')}</h2>
+            {workspaces.map((workspace) => {
+              const selectedWorkspace = taskField.value?.workspaces?.find(
+                ({ name }) => name === workspace.name,
+              );
+              return (
+                <div key={workspace.name} className="odc-task-sidebar__workspace">
+                  <TaskSidebarWorkspace
+                    availableWorkspaces={workspaceList}
+                    taskWorkspace={workspace}
+                    selectedWorkspace={selectedWorkspace}
+                    onChange={(workspaceName, pipelineWorkspace) => {
+                      updateTask({
+                        workspaces: {
+                          workspaceName,
+                          selectedWorkspace: pipelineWorkspace,
                         },
                       });
                     }}
