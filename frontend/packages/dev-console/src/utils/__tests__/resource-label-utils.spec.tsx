@@ -1,4 +1,4 @@
-import { mergeData } from '../resource-label-utils';
+import { getTriggerAnnotation, mergeData } from '../resource-label-utils';
 import {
   devfileDeployment,
   newBuildConfig,
@@ -109,6 +109,20 @@ describe('resource-label-utils', () => {
       expect(mergedResource.spec.template.spec.volumes).toEqual(
         originalDeployment.spec.template.spec.volumes,
       );
+    });
+  });
+  describe('getTriggerAnnotation', () => {
+    it('should return trigger annotation with proper values', () => {
+      let annotation = getTriggerAnnotation('test', 'python', 'div', true);
+      expect(annotation).toEqual({
+        'image.openshift.io/triggers':
+          '[{"from":{"kind":"ImageStreamTag","name":"python:latest","namespace":"div"},"fieldPath":"spec.template.spec.containers[?(@.name==\\"test\\")].image","pause":"false"}]',
+      });
+      annotation = getTriggerAnnotation('test', 'test', 'div', false);
+      expect(annotation).toEqual({
+        'image.openshift.io/triggers':
+          '[{"from":{"kind":"ImageStreamTag","name":"test:latest","namespace":"div"},"fieldPath":"spec.template.spec.containers[?(@.name==\\"test\\")].image","pause":"true"}]',
+      });
     });
   });
 });

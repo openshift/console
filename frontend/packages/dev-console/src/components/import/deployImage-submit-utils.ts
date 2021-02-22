@@ -161,6 +161,7 @@ export const createOrUpdateDeployment = (
     ...annotations,
     'alpha.image.policy.openshift.io/resolve-names': '*',
     ...getTriggerAnnotation(
+      name,
       imgName || name,
       imgNamespace || namespace,
       imageChange,
@@ -440,6 +441,7 @@ export const createOrUpdateDeployImageResources = async (
     }
     const originalAnnotations = appResources?.editAppResource?.data?.metadata?.annotations || {};
     const triggerAnnotations = getTriggerAnnotation(
+      name,
       internalImageStreamName || name,
       internalImageStreamNamespace || namespace,
       imageChange,
