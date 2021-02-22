@@ -90,57 +90,62 @@ export const taskRunWithResults: TaskRunKind = {
   },
 };
 
-export const failedTaskRunWithResults: TaskRunKind = {
-  apiVersion: 'tekton.dev/v1beta1',
-  kind: 'TaskRun',
-  metadata: {
-    name: 'sum-three-pipeline-run-second-add-vbr96',
-  },
-  spec: {
-    params: [
-      {
-        name: 'first',
-        value: '20',
-      },
-      {
-        name: 'second',
-        value: '10',
-      },
-    ],
-    serviceAccountName: 'pipeline',
-    taskRef: {
-      kind: 'Task',
-      name: 'add-task',
+export const taskRunWithWorkspaces: TaskRunKind[] = [
+  {
+    apiVersion: 'tekton.dev/v1beta1',
+    kind: 'TaskRun',
+    metadata: {
+      name: 'sum-three-pipeline-run-second-add-vbr96',
     },
-    timeout: '1h0m0s',
+    spec: {
+      params: [
+        {
+          name: 'first',
+          value: '20',
+        },
+        {
+          name: 'second',
+          value: '10',
+        },
+      ],
+      workspaces: [],
+      serviceAccountName: 'pipeline',
+      taskRef: {
+        kind: 'Task',
+        name: 'add-task',
+      },
+      timeout: '1h0m0s',
+    },
   },
-  status: {
-    completionTime: '2019-10-29T11:57:53Z',
-    conditions: [
-      {
-        lastTransitionTime: '2019-10-29T11:57:53Z',
-        reason: 'Failed',
-        status: 'True',
-        type: 'Failed',
+  {
+    apiVersion: 'tekton.dev/v1beta1',
+    kind: 'TaskRun',
+    metadata: {
+      name: 'sum-three-pipeline-run-second-add-vbr96',
+    },
+    spec: {
+      params: [
+        {
+          name: 'first',
+          value: '20',
+        },
+        {
+          name: 'second',
+          value: '10',
+        },
+      ],
+      workspaces: [
+        { name: 'workspace1', persistentVolumeClaim: { claimName: 'claim1' } },
+        { name: 'workspace2', secret: { secretName: 'secret1' } },
+        { name: 'workspac3', configMap: { name: 'configmap1' } },
+        { name: 'emptyDir' },
+      ],
+      serviceAccountName: 'pipeline',
+      taskRef: {
+        kind: 'Task',
+        name: 'add-task',
       },
-    ],
-    taskResults: [
-      {
-        name: 'sum',
-        value: '30',
-      },
-      {
-        name: 'difference',
-        value: '10',
-      },
-      {
-        name: 'multiply',
-        value: '200',
-      },
-      {
-        name: 'divide',
-        value: '2',
-      },
-    ],
+      timeout: '1h0m0s',
+    },
   },
-};
+];

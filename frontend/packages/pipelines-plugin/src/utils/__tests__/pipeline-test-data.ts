@@ -1,5 +1,8 @@
 import { pipelineTestData, PipelineExampleNames, DataState } from '../../test-data/pipeline-data';
 import { PipelineKind } from '../../types';
+import { PersistentVolumeClaimModel } from '@console/internal/models';
+import { PersistentVolumeClaimKind } from '@console/internal/module/k8s';
+import { PipelineRunModel } from '../../models';
 
 export const mockPipelinesJSON: PipelineKind[] = [
   {
@@ -289,4 +292,101 @@ export const mockRunDurationTest = [
   pipelineTestData[PipelineExampleNames.SIMPLE_PIPELINE].pipelineRuns[DataState.SUCCESS],
   pipelineTestData[PipelineExampleNames.WORKSPACE_PIPELINE].pipelineRuns[DataState.SUCCESS],
   pipelineTestData[PipelineExampleNames.CLUSTER_PIPELINE].pipelineRuns[DataState.SUCCESS],
+];
+
+export const pvcWithPipelineOwnerRef: PersistentVolumeClaimKind[] = [
+  {
+    apiVersion: 'v1',
+    kind: PersistentVolumeClaimModel.kind,
+    metadata: {
+      name: 'pvc1',
+      namespace: 'test',
+      ownerReferences: [
+        { name: 'pipeline1', kind: PipelineRunModel.kind, uid: 'test', apiVersion: 'v1' },
+      ],
+    },
+    spec: {
+      accessModes: ['a'],
+      resources: { requests: { storage: 'test' } },
+      storageClassName: 'test',
+    },
+  },
+  {
+    apiVersion: 'v1',
+    kind: PersistentVolumeClaimModel.kind,
+    metadata: {
+      name: 'pvc2',
+      namespace: 'test',
+      ownerReferences: [
+        { name: 'pipeline2', kind: PipelineRunModel.kind, uid: 'test', apiVersion: 'v1' },
+      ],
+    },
+    spec: {
+      accessModes: ['a'],
+      resources: { requests: { storage: 'test' } },
+      storageClassName: 'test',
+    },
+  },
+  {
+    apiVersion: 'v1',
+    kind: PersistentVolumeClaimModel.kind,
+    metadata: {
+      name: 'pvc3',
+      namespace: 'test',
+      ownerReferences: [
+        { name: 'pipeline3', kind: PipelineRunModel.kind, uid: 'test', apiVersion: 'v1' },
+      ],
+    },
+    spec: {
+      accessModes: ['a'],
+      resources: { requests: { storage: 'test' } },
+      storageClassName: 'test',
+    },
+  },
+  {
+    apiVersion: 'v1',
+    kind: PersistentVolumeClaimModel.kind,
+    metadata: {
+      name: 'pvc-all',
+      namespace: 'test',
+      ownerReferences: [
+        { name: 'pipeline1', kind: PipelineRunModel.kind, uid: 'test', apiVersion: 'v1' },
+        { name: 'pipeline2', kind: PipelineRunModel.kind, uid: 'test', apiVersion: 'v1' },
+        { name: 'pipeline3', kind: PipelineRunModel.kind, uid: 'test', apiVersion: 'v1' },
+      ],
+    },
+    spec: {
+      accessModes: ['a'],
+      resources: { requests: { storage: 'test' } },
+      storageClassName: 'test',
+    },
+  },
+  {
+    apiVersion: 'v1',
+    kind: PersistentVolumeClaimModel.kind,
+    metadata: {
+      name: 'pvc4',
+      namespace: 'test',
+      ownerReferences: [{ name: 'pipeline5', kind: 'improperkind', uid: 'test', apiVersion: 'v1' }],
+    },
+    spec: {
+      accessModes: ['a'],
+      resources: { requests: { storage: 'test' } },
+      storageClassName: 'test',
+    },
+  },
+  {
+    apiVersion: 'v1',
+    kind: PersistentVolumeClaimModel.kind,
+    metadata: {
+      name: 'pvc5',
+      namespace: 'test',
+      ownerReferences: [{ name: 'pipeline6', kind: 'improperkind', uid: 'test', apiVersion: 'v1' }],
+    },
+    spec: {
+      accessModes: ['a'],
+      resources: { requests: { storage: 'test' } },
+      storageClassName: 'test',
+    },
+  },
 ];

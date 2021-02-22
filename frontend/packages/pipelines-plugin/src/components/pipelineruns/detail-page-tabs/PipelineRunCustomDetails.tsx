@@ -11,6 +11,7 @@ import ResourceLinkList from '../../pipelines/resource-overview/ResourceLinkList
 import RunDetailsErrorLog from '../logs/RunDetailsErrorLog';
 import TriggeredBySection from './TriggeredBySection';
 import { getPLRLogSnippet } from '../logs/pipelineRunLogSnippet';
+import WorkspaceResourceLinkList from '../../shared/workspaces/WorkspaceResourceLinkList';
 
 export type PipelineRunCustomDetailsProps = {
   pipelineRun: PipelineRunKind;
@@ -56,6 +57,11 @@ const PipelineRunCustomDetails: React.FC<PipelineRunCustomDetailsProps> = ({ pip
         model={PipelineResourceModel}
         links={renderResources}
         namespace={pipelineRun.metadata.namespace}
+      />
+      <WorkspaceResourceLinkList
+        workspaces={pipelineRun.spec.workspaces}
+        namespace={pipelineRun.metadata.namespace}
+        ownerResourceName={pipelineRun.metadata.name}
       />
     </>
   );

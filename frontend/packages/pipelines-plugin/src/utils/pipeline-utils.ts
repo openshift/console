@@ -7,6 +7,7 @@ import {
   SecretKind,
   K8sResourceCommon,
   K8sKind,
+  PersistentVolumeClaimKind,
 } from '@console/internal/module/k8s';
 import {
   LOG_SOURCE_RESTARTING,
@@ -441,4 +442,18 @@ export const getCellsFromResults = (results: TektonResultsRun[]): ResultCells =>
     columns: ['pipelines-plugin~Name', 'pipelines-plugin~Value'],
     rows: results.map((result) => [result.name, result.value]),
   };
+};
+
+export const getMatchedPVCs = (
+  pvcResources: PersistentVolumeClaimKind[],
+  ownerResourceName: string,
+  ownerResourceKind: string,
+): PersistentVolumeClaimKind[] => {
+  return pvcResources.filter((pvc) => {
+    const { ownerReferences = [] } = pvc.metadata;
+
+    return ownerReferences.some(
+      (reference) => reference.name === ownerResourceName && reference.kind === ownerResourceKind,
+    );
+  });
 };

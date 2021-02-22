@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { DetailsPageProps, DetailsPage } from '@console/internal/components/factory';
 import { navFactory, Kebab } from '@console/internal/components/utils';
-import { DetailsForKind } from '@console/internal/components/default-resource';
+import ClusterTaskDetails from './ClusterTaskDetails';
 import { useTasksBreadcrumbsFor } from '../pipelines/hooks';
 
 const ClusterTaskDetailsPage: React.FC<DetailsPageProps> = (props) => {
-  const { kindObj, match, kind } = props;
+  const { kindObj, match } = props;
   const breadcrumbsFor = useTasksBreadcrumbsFor(kindObj, match);
 
   return (
@@ -13,7 +13,7 @@ const ClusterTaskDetailsPage: React.FC<DetailsPageProps> = (props) => {
       {...props}
       menuActions={Kebab.factory.common}
       breadcrumbsFor={() => breadcrumbsFor}
-      pages={[navFactory.details(DetailsForKind(kind)), navFactory.editYaml()]}
+      pages={[navFactory.details(ClusterTaskDetails), navFactory.editYaml()]}
     />
   );
 };

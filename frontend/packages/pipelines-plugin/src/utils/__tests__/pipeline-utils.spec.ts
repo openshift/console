@@ -11,6 +11,7 @@ import { SecretAnnotationId } from '../../components/pipelines/const';
 import { DataState, PipelineExampleNames, pipelineTestData } from '../../test-data/pipeline-data';
 import { runStatus } from '../pipeline-augment';
 import { taskRunWithResults } from '../../components/taskruns/__tests__/taskrun-test-data';
+import { PipelineRunModel } from '../../models';
 import {
   getPipelineTasks,
   containerToLogSourceStatus,
@@ -24,11 +25,13 @@ import {
   updateServiceAccount,
   appendPipelineRunStatus,
   getCellsFromResults,
+  getMatchedPVCs,
 } from '../pipeline-utils';
 import {
   constructPipelineData,
   mockPipelinesJSON,
   mockRunDurationTest,
+  pvcWithPipelineOwnerRef,
 } from './pipeline-test-data';
 import { mockPipelineServiceAccount } from './pipeline-serviceaccount-test-data';
 
@@ -191,6 +194,22 @@ describe('pipeline-utils ', () => {
     expect(rows[2][1]).toBe('200');
     expect(rows[3][0]).toBe('divide');
     expect(rows[3][1]).toBe('2');
+  });
+
+  it('should return PVCs correctly matched with name and kind', () => {
+    const matchedPVCs = getMatchedPVCs(pvcWithPipelineOwnerRef, 'pipeline2', PipelineRunModel.kind);
+    expect(matchedPVCs.length).toBe(2);
+    expect(matchedPVCs[0].metadata.name).toBe(pvcWithPipelineOwnerRef[1].metadata.name);
+    expect(matchedPVCs[1].metadata.name).toBe(pvcWithPipelineOwnerRef[3].metadata.name);
+  });
+
+  it('should not match PVCs when ownerRef matches name but not kind', () => {
+    const matchedPVCs = getMatchedPVCs(
+      pvcWithPipelineOwnerRef.slice(4, 6),
+      'pipeline2',
+      PipelineRunModel.kind,
+    );
+    expect(matchedPVCs.length).toBe(0);
   });
 
   it('expect service account to have secret name available only in secrets property', async () => {
