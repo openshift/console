@@ -7,29 +7,17 @@ import { getActivePerspective, getActiveCluster } from '../../actions/ui';
 import { getId, getUserGroup } from '../../hypercloud/auth';
 
 /** @type {(model: K8sKind) => string} */
-// const getK8sAPIPath = ({ apiGroup = 'core', apiVersion, kind }, listName) 
-// => {
-const getK8sAPIPath = ({ apiGroup = 'core', apiVersion})
+const getK8sAPIPath = ({ apiGroup = 'core', apiVersion}, cluster)
 => {
   const isLegacy = apiGroup === 'core' && apiVersion === 'v1';
 
-  let p;
+  let p = k8sBasePath;
 
-  // console.log('get K8s API Path');
-  // console.log({kind, name: listName});
-
- // const cluster = window.SERVER_FLAGS.McMode && getActivePerspective() == 'hc' && getActiveCluster();
-  
   if (window.SERVER_FLAGS.McMode && getActivePerspective() == 'hc') {
     p = `${window.SERVER_FLAGS.basePath}api/${getActiveCluster()}`;
+  } else if (cluster) {
+    p = `${window.SERVER_FLAGS.basePath}api/${cluster}`;
   }
-  else {
-    p = k8sBasePath;
-  }
-
-  // if(window.SERVER_FLAGS.McMode && getActivePerspective() == 'mc' && kind == 'Node') {
-  //   p = `${window.SERVER_FLAGS.basePath}api/${listName}`;
-  // }
 
   if (isLegacy) {
     p += '/api/';
@@ -49,8 +37,7 @@ const getK8sAPIPath = ({ apiGroup = 'core', apiVersion})
 // export const resourceURL = (model, options, listName) => {
 export const resourceURL = (model, options) => {
   let q = '';
-  // let u = getK8sAPIPath(model, listName);
-  let u = getK8sAPIPath(model);
+  let u = getK8sAPIPath(model, options.cluster);
 
   if (options.ns) {
     u += `/namespaces/${options.ns}`;
@@ -186,7 +173,6 @@ export const k8sKill = (kind, resource, opts = {}, json = null) => coFetchJSON.d
 
 export const k8sKillByName = (kind, name, namespace, opts = {}) => k8sKill(kind, { metadata: { name, namespace } }, opts);
 
-// export const k8sList = (kind, params = {}, raw = false, options = {}, listName) => {
 export const k8sList = (kind, params = {}, raw = false, options = {}) => {
   const query = _.map(_.omit(params, 'ns'), (v, k) => {
     if (k === 'labelSelector') {
