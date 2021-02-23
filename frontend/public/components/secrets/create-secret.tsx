@@ -32,13 +32,13 @@ export enum SecretTypeAbstraction {
 const secretDisplayType = (isCreate: boolean, abstraction: SecretTypeAbstraction, t: TFunction) => {
   switch (abstraction) {
     case 'generic':
-      return isCreate ? t('public~Create Key/Value Secret') : t('public~Edit Key/Value Secret');
+      return isCreate ? t('public~Create key/value secret') : t('public~Edit key/value secret');
     case 'image':
-      return isCreate ? t('public~Create Image Pull Secret') : t('public~Edit Image Pull Secret');
+      return isCreate ? t('public~Create image pull secret') : t('public~Edit image pull secret');
     default:
       return isCreate
-        ? t('public~Create {{secretType}} Secret', { secretType: _.upperFirst(abstraction) })
-        : t('public~Edit {{secretType}} Secret', { secretType: _.upperFirst(abstraction) });
+        ? t('public~Create {{secretType}} secret', { secretType: abstraction })
+        : t('public~Edit {{secretType}} secret', { secretType: abstraction });
   }
 };
 
@@ -225,7 +225,7 @@ export const SecretFormWrapper = withTranslation()(
           <fieldset disabled={!this.props.isCreate}>
             <div className="form-group">
               <label className="control-label co-required" htmlFor="secret-name">
-                {t('public~Secret Name')}
+                {t('public~Secret name')}
               </label>
               <div>
                 <input
@@ -363,8 +363,8 @@ class ImageSecretFormWithTranslation extends React.Component<
   render() {
     const { t } = this.props;
     const authTypes = {
-      credentials: t('public~Image Registry Credentials'),
-      'config-file': t('public~Upload Configuration File'),
+      credentials: t('public~Image registry credentials'),
+      'config-file': t('public~Upload configuration file'),
     };
     const data = _.get(this.state.stringData, this.state.dataKey);
     return (
@@ -372,7 +372,7 @@ class ImageSecretFormWithTranslation extends React.Component<
         {this.props.isCreate && (
           <div className="form-group">
             <label className="control-label" htmlFor="secret-type">
-              {t('public~Authentication Type')}
+              {t('public~Authentication type')}
             </label>
             <div className="co-create-secret__dropdown">
               <Dropdown
@@ -473,7 +473,7 @@ class ConfigEntryFormWithTranslation extends React.Component<
       <div className="co-m-pane__body-group" data-test-id="create-image-secret-form">
         <div className="form-group">
           <label className="control-label co-required" htmlFor={`${this.props.id}-address`}>
-            {t('public~Registry Server Address')}
+            {t('public~Registry server address')}
           </label>
           <div>
             <input
@@ -669,7 +669,7 @@ class CreateConfigSubformWithTranslation extends React.Component<
             <div className="co-add-remove-form__link--remove-entry">
               <Button onClick={() => this.removeEntry(index)} type="button" variant="link">
                 <MinusCircleIcon className="co-icon-space-r" />
-                {t('public~Remove Credentials')}
+                {t('public~Remove credentials')}
               </Button>
             </div>
           )}
@@ -687,7 +687,7 @@ class CreateConfigSubformWithTranslation extends React.Component<
           variant="link"
         >
           <PlusCircleIcon className="co-icon-space-r" />
-          {t('public~Add Credentials')}
+          {t('public~Add credentials')}
         </Button>
       </>
     );
@@ -735,7 +735,7 @@ class UploadConfigSubformWithTranslation extends React.Component<
           onChange={this.onFileChange}
           inputFileData={this.state.configFile}
           id="docker-config"
-          label={t('public~Configuration File')}
+          label={t('public~Configuration file')}
           inputFieldHelpText={t('public~Upload a .dockercfg or .docker/config.json file.')}
           textareaFieldHelpText={t(
             'public~File with credentials and other configuration for connecting to a secured image registry.',
@@ -787,7 +787,7 @@ class WebHookSecretFormWithTranslation extends React.Component<
     return (
       <div className="form-group">
         <label className="control-label co-required" htmlFor="webhook-secret-key">
-          {t('public~Webhook Secret Key')}
+          {t('public~Webhook secret key')}
         </label>
         <div className="pf-c-input-group">
           <input
@@ -851,15 +851,15 @@ class SourceSecretFormWithTranslation extends React.Component<
   render() {
     const { t } = this.props;
     const authTypes = {
-      [SecretType.basicAuth]: t('public~Basic Authentication'),
-      [SecretType.sshAuth]: t('public~SSH Key'),
+      [SecretType.basicAuth]: t('public~Basic authentication'),
+      [SecretType.sshAuth]: t('public~SSH key'),
     };
     return (
       <>
         {this.props.isCreate ? (
           <div className="form-group">
             <label className="control-label" htmlFor="secret-type">
-              {t('public~Authentication Type')}
+              {t('public~Authentication type')}
             </label>
             <div className="co-create-secret__dropdown">
               <Dropdown
@@ -929,7 +929,7 @@ class BasicAuthSubformWithTranslation extends React.Component<
         </div>
         <div className="form-group">
           <label className="control-label co-required" htmlFor="password">
-            {t('public~Password or Token')}
+            {t('public~Password or token')}
           </label>
           <div>
             <input
@@ -1000,7 +1000,7 @@ class SSHAuthSubformWithTranslation extends React.Component<
         onChange={this.onFileChange}
         inputFileData={this.state['ssh-privatekey']}
         id="ssh-privatekey"
-        label={t('public~SSH Private Key')}
+        label={t('public~SSH private key')}
         inputFieldHelpText={t(
           'public~Drag and drop file with your private SSH key here or browse to upload it.',
         )}
@@ -1128,7 +1128,7 @@ class GenericSecretFormWithTranslation extends React.Component<
             <div className="co-add-remove-form__link--remove-entry">
               <Button type="button" onClick={() => this.removeEntry(index)} variant="link">
                 <MinusCircleIcon className="co-icon-space-r" />
-                {t('public~Remove Key/Value')}
+                {t('public~Remove key/value')}
               </Button>
             </div>
           )}
@@ -1146,7 +1146,7 @@ class GenericSecretFormWithTranslation extends React.Component<
           variant="link"
         >
           <PlusCircleIcon className="co-icon-space-r" />
-          {t('public~Add Key/Value')}
+          {t('public~Add key/value')}
         </Button>
       </>
     );
