@@ -11,6 +11,7 @@ export enum devNavigationMenu {
   ConfigMaps = 'Config Maps',
   Secrets = 'Secrets',
   GitOps = 'GitOps',
+  Environments = 'Environments',
 }
 
 export enum switchPerspective {
@@ -24,6 +25,7 @@ export enum operators {
   VirtualizationOperator = 'Virtualization',
   KnativeCamelOperator = 'Knative Apache Camel K',
   EclipseCheOperator = 'Eclipse Che',
+  GitOpsOperator = 'GitOps',
 }
 
 export enum authenticationType {

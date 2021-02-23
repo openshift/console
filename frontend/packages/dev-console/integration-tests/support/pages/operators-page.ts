@@ -16,7 +16,7 @@ export const operatorsPage = {
     detailsPage.titleShouldContain(pageTitle.InstalledOperators);
   },
 
-  searchOperator: (operatorName: string) => {
+  searchOperator: (operatorName: string | operators) => {
     cy.get(operatorsPO.search)
       .should('be.visible')
       .clear()
@@ -71,6 +71,11 @@ export const operatorsPage = {
       case 'Eclipse Che':
       case operators.EclipseCheOperator: {
         cy.byTestID('eclipse-che-community-operators-openshift-marketplace').click();
+        break;
+      }
+      case 'GitOps':
+      case operators.GitOpsOperator: {
+        cy.get(operatorsPO.operatorHub.gitOpsOperatorCard).click();
         break;
       }
       default: {

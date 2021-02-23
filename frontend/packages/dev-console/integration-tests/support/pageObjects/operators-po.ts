@@ -15,6 +15,7 @@ export const operatorsPO = {
     virtualizationOperatorCard: '[data-test^="kubevirt-hyperconverged"]',
     knativeCamelOperatorCard: '[data-test^="red-hat-camel-k"]',
     installingOperatorModal: '#operator-install-page',
+    gitOpsOperatorCard: '[data-test^="openshift-gitops-operator"]',
   },
   subscription: {
     logo: 'h1.co-clusterserviceversion-logo__name__clusterserviceversion',

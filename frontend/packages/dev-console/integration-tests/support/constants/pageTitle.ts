@@ -34,4 +34,5 @@ export const pageTitle = {
   AddHealthChecks: 'Add health checks',
   InstallOperator: 'Install Operator',
   InstalledOperators: 'Installed Operators',
+  Environments: 'Environments',
 };

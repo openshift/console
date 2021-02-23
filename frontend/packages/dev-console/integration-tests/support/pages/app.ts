@@ -111,6 +111,12 @@ export const navigateTo = (opt: devNavigationMenu) => {
       cy.testA11y('Secrets Page in dev perspective');
       break;
     }
+    case devNavigationMenu.Environments: {
+      cy.get(devNavigationMenuPO.environments).click();
+      detailsPage.titleShouldContain(pageTitle.Environments);
+      cy.testA11y('Environments Page in dev perspective');
+      break;
+    }
     default: {
       throw new Error('Option is not available');
     }
