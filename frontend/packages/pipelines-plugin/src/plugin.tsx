@@ -3,7 +3,6 @@ import {
   Plugin,
   ModelDefinition,
   ModelFeatureFlag,
-  KebabActions,
   NavSection,
   HrefNavItem,
   ResourceNSNavItem,
@@ -47,6 +46,7 @@ const {
   TriggerBindingModel,
   TriggerTemplateModel,
 } = models;
+
 type ConsumedExtensions =
   | ModelDefinition
   | ModelFeatureFlag
@@ -58,7 +58,6 @@ type ConsumedExtensions =
   | ResourceDetailsPage
   | Perspective
   | RoutePage
-  | KebabActions
   | OverviewResourceTab
   | YAMLTemplate
   | OverviewTabSection

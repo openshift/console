@@ -6,6 +6,8 @@ import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import { KEY_CODES, Tooltip, FocusTrap } from '@patternfly/react-core';
 import { AngleRightIcon, EllipsisVIcon } from '@patternfly/react-icons';
+import { subscribeToExtensions } from '@console/plugin-sdk/src/api/subscribeToExtensions';
+import { KebabActions, isKebabActions } from '@console/plugin-sdk/src/typings/kebab-actions';
 import Popper from '@console/shared/src/components/popper/Popper';
 import {
   annotationsModal,
@@ -30,7 +32,6 @@ import {
 } from '../../module/k8s';
 import { impersonateStateToProps } from '../../reducers/ui';
 import { connectToModel } from '../../kinds';
-import { registry } from '../../plugins';
 import { VolumeSnapshotModel } from '../../models';
 
 export const kebabOptionsToMenu = (options: KebabOption[]): KebabMenuOption[] => {
@@ -398,16 +399,20 @@ kebabFactory.common = [
   kebabFactory.Delete,
 ];
 
+let kebabActionExtensions: KebabActions[] = [];
+
+subscribeToExtensions<KebabActions>((extensions) => {
+  kebabActionExtensions = extensions;
+}, isKebabActions);
+
 export const getExtensionsKebabActionsForKind = (kind: K8sKind) => {
-  const extensionActions = [];
-  _.forEach(registry.getKebabActions(), (getActions: any) => {
-    if (getActions) {
-      _.forEach(getActions.properties.getKebabActionsForKind(kind), (kebabAction) => {
-        extensionActions.push(kebabAction);
-      });
-    }
+  const actionsForKind: KebabAction[] = [];
+  kebabActionExtensions.forEach((e) => {
+    e.properties.getKebabActionsForKind(kind).forEach((kebabAction) => {
+      actionsForKind.push(kebabAction);
+    });
   });
-  return extensionActions;
+  return actionsForKind;
 };
 
 export const ResourceKebab = connectToModel((props: ResourceKebabProps) => {

@@ -18,7 +18,6 @@ const activePlugins =
     : [];
 
 export const pluginStore = new PluginStore(activePlugins);
-export const registry = pluginStore.registry;
 
 export const initConsolePlugins = _.once((reduxStore: Store<RootState>) => {
   initSubscriptionService(pluginStore, reduxStore);
