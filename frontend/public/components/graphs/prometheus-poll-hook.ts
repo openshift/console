@@ -14,7 +14,7 @@ export const usePrometheusPoll = ({
 }: PrometheusPollProps) => {
   const url = getPrometheusURL({ endpoint, endTime, namespace, query, samples, timeout, timespan });
 
-  return useURLPoll<PrometheusResponse>(url, delay, endTime, query, timespan);
+  return useURLPoll<PrometheusResponse>(url, delay, query, timespan);
 };
 
 type PrometheusPollProps = {

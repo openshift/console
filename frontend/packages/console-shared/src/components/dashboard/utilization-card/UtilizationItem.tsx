@@ -170,6 +170,7 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
         height={70}
         chartStyle={chartStyle}
         byteDataType={byteDataType}
+        mainDataName="usage"
       />
     );
 

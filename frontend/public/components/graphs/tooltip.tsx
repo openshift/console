@@ -19,8 +19,11 @@ import {
   ChartTooltip,
 } from '@patternfly/react-charts';
 
+import { DataPoint } from '.';
+
 export const ChartLegendTooltipContent: React.FunctionComponent<ChartLegendTooltipContentProps & {
   stack?: boolean;
+  mainDataName?: string;
 }> = ({
   activePoints,
   center,
@@ -39,6 +42,7 @@ export const ChartLegendTooltipContent: React.FunctionComponent<ChartLegendToolt
   titleComponent = <ChartLabel />,
   width,
   stack,
+  mainDataName,
   // destructure last
   theme = getTheme(themeColor, themeVariant),
   ...rest
@@ -53,9 +57,11 @@ export const ChartLegendTooltipContent: React.FunctionComponent<ChartLegendToolt
     theme,
   });
 
+  const hasMainData = mainDataName ? activePoints[0].childName === mainDataName : false;
+
   if (stack) {
     visibleLegendData.reverse();
-  } else {
+  } else if (hasMainData) {
     visibleLegendData.shift();
   }
 
@@ -143,7 +149,7 @@ export const ChartLegendTooltipContent: React.FunctionComponent<ChartLegendToolt
 
   if (stack) {
     tooltipLegendData.reverse();
-  } else {
+  } else if (hasMainData) {
     tooltipLegendData.shift();
   }
 
@@ -208,8 +214,11 @@ export const ChartLegendTooltipLabel: React.FunctionComponent<ChartLegendLabelPr
 };
 ChartLegendTooltipLabel.displayName = 'ChartLegendTooltipLabel';
 
-export const ChartLegendTooltip: React.FunctionComponent<ChartLegendTooltipProps & {
+export const ChartLegendTooltip: React.FunctionComponent<Omit<ChartLegendTooltipProps, 'title'> & {
   stack?: boolean;
+  formatDate: (data: DataPoint<Date>[]) => string;
+  getLabel?: (prop: { datum: DataPoint<Date> }) => string;
+  mainDataName: string;
 }> = ({
   activePoints,
   datum,
@@ -218,32 +227,49 @@ export const ChartLegendTooltip: React.FunctionComponent<ChartLegendTooltipProps
   flyoutWidth,
   height,
   isCursorTooltip = true,
-  labelComponent = <ChartLegendTooltipContent />,
+  mainDataName,
+  labelComponent = <ChartLegendTooltipContent mainDataName={mainDataName} />,
   legendData,
   text,
   themeColor,
   themeVariant,
-  title,
   width,
+  stack,
+  formatDate,
+  getLabel,
 
   // destructure last
   theme = getTheme(themeColor, themeVariant),
-  stack,
   ...rest
 }) => {
+  const title = (d) => {
+    if (stack) {
+      return formatDate(d);
+    }
+    const mainDatum = mainDataName ? d.find((uDatum) => uDatum.childName === mainDataName) : d[0];
+    return mainDatum ? getLabel({ datum: mainDatum }) : `No ${mainDataName || 'data'} available`;
+  };
   const pointerLength = theme?.tooltip ? Helpers.evaluateProp(theme.tooltip.pointerLength) : 10;
-  const ap = stack ? activePoints : activePoints.slice(1);
   const legendTooltipProps = {
-    legendData: getLegendTooltipVisibleData({ activePoints: ap, legendData, text, theme }),
+    legendData: getLegendTooltipVisibleData({ activePoints, legendData, text, theme }),
     legendProps: getLegendTooltipDataProps(labelComponent.props.legendComponent),
-    text: getLegendTooltipVisibleText({ activePoints: ap, legendData, text }),
+    text: getLegendTooltipVisibleText({ activePoints, legendData, text }),
     theme,
   };
 
   // Returns flyout height based on legend size
   const getFlyoutHeight = () => {
+    const sizeProps = stack
+      ? legendTooltipProps
+      : {
+          ...legendTooltipProps,
+          // For non-stack graphs, remove the text for "mainDataName"
+          text: legendTooltipProps.text.filter(
+            (t, i) => legendTooltipProps.legendData[i].name !== mainDataName,
+          ),
+        };
     const _flyoutHeight =
-      getLegendTooltipSize(legendTooltipProps).height + ChartLegendTooltipStyles.flyout.padding;
+      getLegendTooltipSize(sizeProps).height + ChartLegendTooltipStyles.flyout.padding;
     return title ? _flyoutHeight + 4 : _flyoutHeight - 10;
   };
 

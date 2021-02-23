@@ -62,6 +62,7 @@ export const AreaChart: React.FC<AreaChartProps> = ({
   chartStyle,
   byteDataType = '',
   showAllTooltip,
+  mainDataName,
   ...rest
 }) => {
   // Note: Victory incorrectly typed ThemeBaseProps.padding as number instead of PaddingProps
@@ -97,8 +98,8 @@ export const AreaChart: React.FC<AreaChartProps> = ({
   );
 
   const getLabel = React.useCallback(
-    (prop, includeDate = true) => {
-      const { x, y } = prop.datum as DataPoint<Date>;
+    (prop: { datum: DataPoint<Date> }, includeDate = true) => {
+      const { x, y } = prop.datum;
       const value = humanize(y, unit, unit).string;
       const date = formatDate(x);
       return includeDate ? `${value} at ${date}` : value;
@@ -120,11 +121,14 @@ export const AreaChart: React.FC<AreaChartProps> = ({
           activateData={false}
           cursorDimension="x"
           labels={(props) => getLabel(props, false)}
+          mouseFollowTooltips
           labelComponent={
             <ChartLegendTooltip
               stack={showAllTooltip}
               legendData={legendData}
-              title={(d) => (showAllTooltip ? formatDate(d[0].x) : getLabel({ datum: d[0] }))}
+              getLabel={getLabel}
+              formatDate={(d) => formatDate(d[0].x)}
+              mainDataName={mainDataName}
             />
           }
           voronoiDimension="x"
@@ -132,7 +136,7 @@ export const AreaChart: React.FC<AreaChartProps> = ({
       );
     }
     return <ChartVoronoiContainer voronoiDimension="x" labels={getLabel} activateData={false} />;
-  }, [formatDate, getLabel, multiLine, processedData, showAllTooltip]);
+  }, [formatDate, getLabel, mainDataName, multiLine, processedData, showAllTooltip]);
 
   return (
     <PrometheusGraph className={className} ref={containerRef} title={title}>
@@ -171,7 +175,7 @@ export const AreaChart: React.FC<AreaChartProps> = ({
 };
 
 export const Area: React.FC<AreaProps> = ({
-  endTime,
+  endTime = Date.now(),
   namespace,
   query,
   limitQuery,
@@ -207,7 +211,14 @@ export const Area: React.FC<AreaProps> = ({
   const { data, chartStyle } = mapLimitsRequests(utilization, limit, requested);
 
   return (
-    <AreaChart chartStyle={chartStyle} data={data} loading={loading} query={query} {...rest} />
+    <AreaChart
+      chartStyle={chartStyle}
+      data={data}
+      loading={loading}
+      query={query}
+      mainDataName="usage"
+      {...rest}
+    />
   );
 };
 
@@ -231,6 +242,7 @@ export type AreaChartProps = {
   chartStyle?: object[];
   byteDataType?: ByteDataTypes; //Use this to process the whole data frame at once
   showAllTooltip?: boolean;
+  mainDataName?: string;
 };
 
 type AreaProps = AreaChartProps & {
