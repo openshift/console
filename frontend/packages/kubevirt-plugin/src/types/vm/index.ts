@@ -4,9 +4,11 @@ import {
   ObjectMetadata,
 } from '@console/internal/module/k8s';
 import { V1alpha1DataVolumeSpec, V1alpha1DataVolumeStatus, V1ObjectMeta } from '../api';
+import { V1VirtualMachineInstanceGuestOSInfo } from '../vmi-guest-data-info/vmi-guest-agent-info';
 
 // https://kubevirt.io/api-reference/master/definitions.html#_v1_datavolumetemplatespec
 export interface V1DataVolumeTemplateSpec {
+  apiVersion?: string;
   metadata?: V1ObjectMeta;
   spec: V1alpha1DataVolumeSpec;
   status?: V1alpha1DataVolumeStatus;
@@ -14,31 +16,39 @@ export interface V1DataVolumeTemplateSpec {
 
 // https://kubevirt.io/api-reference/master/definitions.html#_v1_virtualmachineinstancespec
 export type VMISpec = {
-  affinity: any;
-  dnsConfig: any;
-  dnsPolicy: string;
-  domain?: any;
+  accessCredentials?: any;
+  affinity?: any;
+  dnsConfig?: any;
+  dnsPolicy?: string;
+  domain: any;
   evictionStrategy?: string;
-  hostname: string;
-  livenessProbe: any;
+  hostname?: string;
+  livenessProbe?: any;
   networks?: any[];
-  nodeSelector: NodeSelector;
-  readinessProbe: any;
-  subdomain: string;
-  terminationGracePeriodSeconds: number;
-  tolerations: any[];
+  nodeSelector?: NodeSelector;
+  priorityClassName?: string;
+  readinessProbe?: any;
+  schedulerName?: string;
+  subdomain?: string;
+  terminationGracePeriodSeconds?: number;
+  tolerations?: any[];
   volumes?: any[];
 };
 
 // https://kubevirt.io/api-reference/master/definitions.html#_v1_virtualmachineinstancestatus
 export type VMIStatus = {
-  conditions: any[];
-  interfaces: any[];
-  migrationMethod: string;
-  migrationState: any;
-  nodeName: string;
-  phase: string;
-  reason: string;
+  activePods?: { [key: string]: string };
+  conditions?: any[];
+  evacuationNodeName?: string;
+  guestOSInfo?: V1VirtualMachineInstanceGuestOSInfo;
+  interfaces?: any[];
+  migrationMethod?: string;
+  migrationState?: any;
+  nodeName?: string;
+  phase?: string;
+  qosClass?: string;
+  reason?: string;
+  volumeStatus?: any;
 };
 
 export type VMIKind = {

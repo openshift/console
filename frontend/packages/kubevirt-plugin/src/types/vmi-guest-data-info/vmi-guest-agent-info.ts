@@ -29,7 +29,7 @@ export type V1VirtualMachineInstanceGuestOSUserList = {
 
 // https://kubevirt.io/api-reference/master/definitions.html#_v1_virtualmachineinstancefilesystem
 export type V1VirtualMachineInstanceFileSystem = {
-  diskName?: string;
+  diskName: string;
   fileSystemType: string;
   mountPoint: string;
   totalBytes: number;
