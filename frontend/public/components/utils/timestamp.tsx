@@ -4,6 +4,7 @@ import { Tooltip } from '@patternfly/react-core';
 import * as classNames from 'classnames';
 import { GlobeAmericasIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
+import * as moment from 'moment';
 
 import * as dateTime from './datetime';
 
@@ -54,7 +55,11 @@ export const Timestamp = connect(nowStateToProps)((props: TimestampProps) => {
       <Tooltip
         content={[
           <span className="co-nowrap" key="co-timestamp">
-            {mdate.toISOString()}
+            {t('{{date, MMM D, h:mm a z}}', {
+              date: moment(mdate)
+                .utc()
+                .format('MMM D, h:mm a z'),
+            })}
           </span>,
         ]}
       >
