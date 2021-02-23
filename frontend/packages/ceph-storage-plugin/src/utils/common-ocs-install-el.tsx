@@ -123,7 +123,7 @@ export const VALIDATIONS = (type: keyof typeof ValidationType, t: TFunction): Va
       return {
         variant: AlertVariant.info,
         title: t(
-          'ceph-storage-plugin~When all the selected nodes in the storage class are in a single zone the cluster will be using a host-based failure domain.',
+          'ceph-storage-plugin~When the nodes in the selected storage class are spread across fewer than 3 availability zones, the storage cluster will be deployed with the host based failure domain.',
         ),
       };
     default:
