@@ -48,6 +48,12 @@
   margin-left: 20px;
 }
 
+.co-label--plain {
+  font-weight: var(--pf-global--FontWeight--normal);
+  margin-bottom: 0px;
+  display: inline;
+}
+
 // Restrict form widths
 .co-m-pane__form {
   @media (min-width: 769px) {

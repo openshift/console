@@ -48,7 +48,9 @@ const DataListRow: React.FC<DataListRowProps> = ({
       <DataListItemCells
         dataListCells={[
           <DataListCell id={`table-column-management-item-${column.id}`} key={column.id}>
-            {column.title}
+            <label className="co-label--plain" htmlFor={column.id}>
+              {column.title}
+            </label>
           </DataListCell>,
         ]}
       />
