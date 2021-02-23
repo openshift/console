@@ -5,6 +5,7 @@ import { Split, SplitItem, Divider } from '@patternfly/react-core';
 import QuickSearchDetails from './QuickSearchDetails';
 import QuickSearchList from './QuickSearchList';
 import './QuickSearchContent.scss';
+import { CatalogLinkData } from './utils/quick-search-types';
 
 const MAX_CATALOG_ITEMS_SHOWN = 5;
 
@@ -15,10 +16,12 @@ interface QuickSearchContentProps {
   selectedItemId: string;
   selectedItem: CatalogItem;
   onSelect: (itemId: string) => void;
+  viewAll?: CatalogLinkData[];
 }
 
 const QuickSearchContent: React.FC<QuickSearchContentProps> = ({
   catalogItems,
+  viewAll,
   searchTerm,
   namespace,
   selectedItem,
@@ -35,7 +38,7 @@ const QuickSearchContent: React.FC<QuickSearchContentProps> = ({
       >
         <QuickSearchList
           listItems={catalogItems.slice(0, MAX_CATALOG_ITEMS_SHOWN)}
-          totalItems={catalogItems.length}
+          viewAll={viewAll}
           selectedItemId={selectedItemId}
           searchTerm={searchTerm}
           namespace={namespace}

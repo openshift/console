@@ -1,22 +1,58 @@
 import * as React from 'react';
-import { CatalogService } from '@console/dev-console/src/components/catalog/service/CatalogServiceProvider';
+import { useTranslation } from 'react-i18next';
 import { getQueryArgument } from '@console/internal/components/utils';
+import { quickSearch } from './utils/quick-search-utils';
 import QuickSearchButton from './QuickSearchButton';
 import QuickSearchModal from './QuickSearchModal';
+import { QuickSearchData, QuickSearchProviders } from './utils/quick-search-types';
 
-type QuickSearchControllerProps = CatalogService & {
+type QuickSearchControllerProps = {
   namespace: string;
   viewContainer?: HTMLElement;
+  quickSearchProviders: QuickSearchProviders;
+  allItemsLoaded: boolean;
 };
 
 const QuickSearchController: React.FC<QuickSearchControllerProps> = ({
   namespace,
-  searchCatalog,
-  loaded,
+  quickSearchProviders,
   viewContainer,
+  allItemsLoaded,
 }) => {
   const [isQuickSearchActive, setIsQuickSearchActive] = React.useState<boolean>(
     !!getQueryArgument('catalogSearch'),
+  );
+  const { t } = useTranslation();
+
+  const searchCatalog = React.useCallback(
+    (searchTerm: string): QuickSearchData => {
+      return quickSearchProviders.reduce(
+        (acc, quickSearchProvider) => {
+          const items = quickSearchProvider.loaded
+            ? quickSearch(quickSearchProvider.items, searchTerm)
+            : [];
+          const itemCount = items.length;
+          const viewAllLink =
+            itemCount > 0
+              ? [
+                  {
+                    label: t(quickSearchProvider.catalogLinkLabel, { itemCount }),
+                    to: quickSearchProvider.getCatalogURL(searchTerm, namespace),
+                    catalogType: quickSearchProvider.catalogType,
+                  },
+                ]
+              : [];
+          return {
+            filteredItems: [...acc.filteredItems, ...items].sort((item1, item2) =>
+              item1.name.localeCompare(item2.name),
+            ),
+            viewAllLinks: [...acc.viewAllLinks, ...viewAllLink],
+          };
+        },
+        { filteredItems: [], viewAllLinks: [] },
+      );
+    },
+    [namespace, quickSearchProviders, t],
   );
 
   React.useEffect(() => {
@@ -46,7 +82,7 @@ const QuickSearchController: React.FC<QuickSearchControllerProps> = ({
         isOpen={isQuickSearchActive}
         closeModal={() => setIsQuickSearchActive(false)}
         namespace={namespace}
-        allCatalogItemsLoaded={loaded}
+        allCatalogItemsLoaded={allItemsLoaded}
         searchCatalog={searchCatalog}
         viewContainer={viewContainer}
       />

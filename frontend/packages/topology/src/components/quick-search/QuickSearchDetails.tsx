@@ -2,14 +2,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { history } from '@console/internal/components/utils';
 import { CatalogItem } from '@console/plugin-sdk';
-import {
-  Button,
-  ButtonVariant,
-  Text,
-  TextContent,
-  TextVariants,
-  Title,
-} from '@patternfly/react-core';
+import { Button, ButtonVariant, TextContent, Title } from '@patternfly/react-core';
 import './QuickSearchDetails.scss';
 
 interface QuickSearchDetailsProps {
@@ -31,15 +24,14 @@ const QuickSearchDetails: React.FC<QuickSearchDetailsProps> = ({ selectedItem })
         variant={ButtonVariant.primary}
         className="odc-quick-search-details__form-button"
         onClick={() => {
-          history.push(selectedItem.cta.href);
+          const { href, callback } = selectedItem.cta;
+          callback ? callback() : history.push(href);
         }}
       >
         {selectedItem.cta.label}
       </Button>
-      <TextContent>
-        <Text component={TextVariants.p} className="odc-quick-search-details__description">
-          {selectedItem.description}
-        </Text>
+      <TextContent className="odc-quick-search-details__description">
+        {selectedItem.description}
       </TextContent>
     </div>
   );
