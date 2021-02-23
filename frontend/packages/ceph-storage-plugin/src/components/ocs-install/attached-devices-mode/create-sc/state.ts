@@ -40,7 +40,6 @@ export const initialState: State = {
   // common states
   isLoading: false,
   error: '',
-  onNextClick: null,
 
   // states for step 3-5
   enableMinimal: false,
@@ -105,8 +104,6 @@ export type Discoveries = {
   node: string;
 };
 
-export type OnNextClick = () => void;
-
 export type State = {
   volumeSetName: string;
   storageClassName: string;
@@ -130,7 +127,6 @@ export type State = {
   allNodeNamesOnADV: string[];
   nodesDiscoveries: Discoveries[];
   showConfirmModal: boolean;
-  onNextClick: () => void;
   filteredDiscoveries: Discoveries[];
   filteredNodes: string[];
   finalStep: boolean;
@@ -176,7 +172,6 @@ export type Action =
   | { type: 'setChartSelectedData'; value: number }
   | { type: 'setChartTotalData'; value: number }
   | { type: 'setShowConfirmModal'; value: boolean }
-  | { type: 'setOnNextClick'; value: OnNextClick }
   | { type: 'setFilteredDiscoveries'; value: Discoveries[] }
   | { type: 'setFinalStep'; value: boolean }
   | { type: 'setShowDiskList'; value: boolean }
@@ -244,8 +239,6 @@ export const reducer = (state: State, action: Action) => {
       return Object.assign({}, state, { chartTotalData: action.value });
     case 'setShowConfirmModal':
       return Object.assign({}, state, { showConfirmModal: action.value });
-    case 'setOnNextClick':
-      return Object.assign({}, state, { onNextClick: action.value });
     case 'setFilteredDiscoveries':
       return Object.assign({}, state, { filteredDiscoveries: action.value });
     case 'setFinalStep':

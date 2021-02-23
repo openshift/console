@@ -17,17 +17,12 @@ import {
 } from '@console/internal/module/k8s';
 import { fetchK8s } from '@console/internal/graphql/client';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
-import { getNodes, getLabelIndex, getHostNames } from '../../utils';
+import { getNodes, getNodeSelectorTermsIndices, getHostNames } from '../../utils';
 import { AutoDetectVolumeInner, AutoDetectVolumeHeader } from './auto-detect-volume-inner';
 import { getDiscoveryRequestData } from './discovery-request-data';
 import { LocalVolumeDiscovery as AutoDetectVolumeModel } from '../../models';
 import { initialState, reducer } from './state';
-import {
-  DISCOVERY_CR_NAME,
-  HOSTNAME_LABEL_KEY,
-  AUTO_DISCOVER_ERR_MSG,
-  LABEL_OPERATOR,
-} from '../../constants';
+import { DISCOVERY_CR_NAME, AUTO_DISCOVER_ERR_MSG } from '../../constants';
 import './auto-detect-volume.scss';
 import '../local-volume-set/create-local-volume-set.scss';
 
@@ -44,9 +39,7 @@ const AutoDetectVolume: React.FC = withHandlePromise<AutoDetectVolumeProps & Han
         fetchK8s(AutoDetectVolumeModel, DISCOVERY_CR_NAME, ns)
           .then((discoveryRes: K8sResourceKind) => {
             const nodeSelectorTerms = discoveryRes?.spec?.nodeSelector?.nodeSelectorTerms;
-            const [selectorIndex, expIndex] = nodeSelectorTerms
-              ? getLabelIndex(nodeSelectorTerms, HOSTNAME_LABEL_KEY, LABEL_OPERATOR)
-              : [-1, -1];
+            const [selectorIndex, expIndex] = getNodeSelectorTermsIndices(nodeSelectorTerms);
             if (selectorIndex !== -1 && expIndex !== -1) {
               const nodes = new Set<string>(
                 discoveryRes?.spec?.nodeSelector?.nodeSelectorTerms?.[
