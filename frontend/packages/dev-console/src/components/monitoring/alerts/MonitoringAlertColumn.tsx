@@ -7,6 +7,7 @@ type MonitoringAlertColumn = {
   transforms?: ITransform[];
   fieldName?: string;
   sortFunc?: string;
+  props?: { [className: string]: string };
 };
 
 export const MonitoringAlertColumn = (t: TFunction): MonitoringAlertColumn[] => [
@@ -25,15 +26,16 @@ export const MonitoringAlertColumn = (t: TFunction): MonitoringAlertColumn[] => 
   },
   {
     title: t('devconsole~Alert state'),
-    transforms: [sortable, cellWidth(15)],
+    transforms: [sortable, cellWidth(10)],
     fieldName: 'alertState',
     sortFunc: 'alertingRuleStateOrder',
   },
   {
     title: t('devconsole~Notifications'),
-    transforms: [sortable, cellWidth(20)],
+    transforms: [sortable],
     fieldName: 'notifications',
     sortFunc: 'alertingRuleNotificationsOrder',
+    props: { className: 'odc-monitoring-alert-column--notification' },
   },
   { title: '' },
 ];
