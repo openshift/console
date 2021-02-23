@@ -9,7 +9,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { SafetyFirst } from '../safety-first';
 import { TextFilter } from '../factory';
-import { Dropdown, Box, Timestamp } from '../utils';
+import { Dropdown, Box, Timestamp, PageHeading } from '../utils';
 import { coFetchJSON } from '../../co-fetch';
 import { getId, getUserGroup } from '../../hypercloud/auth';
 import { setQueryArgument, getQueryArgument, removeQueryArgument } from '../utils/router.ts';
@@ -58,9 +58,6 @@ class Inner extends React.PureComponent {
               })}
             >
               {user.username}
-              <div>
-                <span className={`fa fa-angle-${this.state.angle} fa-fw`} aria-hidden="true" value={responseStatus.message} onClick={this.onClickDetail}></span>
-              </div>
             </div>
           </div>
           <div className="co-sysevent__message" style={{ margin: '0', height: 'fit-content' }}>
@@ -665,6 +662,10 @@ class AuditPage_ extends React.Component {
       });
     }
   }
+  onIconClick = e => {
+    const datePickerElem = e.target.previousElementSibling.firstChild.firstChild;
+    datePickerElem.focus();
+  };
 
   render() {
     const { data, start, end, textFilter, actionList } = this.state;
@@ -675,21 +676,30 @@ class AuditPage_ extends React.Component {
           <Helmet>
             <title>Audit</title>
           </Helmet>
-          <div className="co-m-pane__filter-bar" style={{ marginBottom: 0 }}>
-            <div className="co-m-pane__filter-bar-group">
-              <Dropdown title={this.state.resourceType} className="btn-group btn-group-audit" items={this.resourcelist} onChange={this.onChangeResourceType} />
-              <Dropdown title={this.state.action} className="btn-group" items={actionList} onChange={this.onChangeAction} />
-              <Dropdown title={this.state.status} className="btn-group" items={this.statuslist} onChange={this.onChangeStatus} />
-              <Dropdown style={{ marginRight: '30px' }} title={this.state.code} className="btn-group" items={this.codeList} onChange={this.onChangeCode} />
-              Inquiry Period
-              <DatePicker className="co-datepicker" placeholderText="From" startDate={start} endDate={end} selected={start} onChange={this.onChangeStartDate} />
-              to
-              <DatePicker className="co-datepicker" placeholderText="To" startDate={start} endDate={end} selected={end} onChange={this.onChangeEndDate} minDate={start} maxDate={new Date()} />
+          <PageHeading detail={true} title="Audit">
+            <div className="co-m-pane__filter-bar" style={{ marginBottom: 0, marginLeft: 0 }}>
+              <div className="co-m-pane__filter-bar-group">
+                <Dropdown title={this.state.resourceType} className="btn-group btn-group-audit" items={this.resourcelist} onChange={this.onChangeResourceType} />
+                <Dropdown title={this.state.action} className="btn-group" items={actionList} onChange={this.onChangeAction} />
+                <Dropdown title={this.state.status} className="btn-group" items={this.statuslist} onChange={this.onChangeStatus} />
+                <Dropdown style={{ marginRight: '30px' }} title={this.state.code} className="btn-group" items={this.codeList} onChange={this.onChangeCode} />
+                <p style={{ marginRight: '10px', lineHeight: '30px' }}>Inquiry Period</p>
+                <div className="co-datepicker-wrapper">
+                  <DatePicker className="co-datepicker" placeholderText="From" startDate={start} endDate={end} selected={start} onChange={this.onChangeStartDate} />
+                  <i className="fa fa-calendar" aria-hidden="true" onClick={this.onIconClick}></i>
+                </div>
+                <p style={{ marginRight: '10px', lineHeight: '30px' }}>to</p>
+                <div className="co-datepicker-wrapper">
+                  <DatePicker className="co-datepicker" placeholderText="To" startDate={start} endDate={end} selected={end} onChange={this.onChangeEndDate} minDate={start} maxDate={new Date()} />
+                  <i className="fa fa-calendar" aria-hidden="true" onClick={this.onIconClick}></i>
+                </div>
+              </div>
+              <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
+                <TextFilter id="audit" label="User Account" autoFocus={true} onChange={this.onSearch} />
+              </div>
             </div>
-            <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
-              <TextFilter id="audit" label="User Account" autoFocus={true} onChange={this.onSearch} />
-            </div>
-          </div>
+          </PageHeading>
+
           <AuditList {...this.props} textFilter={textFilter} data={data} />
           {data && data.length !== 0 && (
             <div className="pagination-div">
