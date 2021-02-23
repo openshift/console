@@ -40,7 +40,7 @@ import { resourcePathFromModel } from '@console/internal/components/utils';
 import { initialState, reducer, State, Action, Discoveries } from './state';
 import { AutoDetectVolume } from './wizard-pages/auto-detect-volume';
 import { CreateLocalVolumeSet } from './wizard-pages/create-local-volume-set';
-import { nodesDiscoveriesResource } from '../../../../constants/resources';
+import { nodesDiscoveriesResultResource } from '../../../../constants/resources';
 import { getTotalDeviceCapacity } from '../../../../utils/install';
 import {
   AVAILABLE,
@@ -126,7 +126,7 @@ const CreateSC: React.FC<CreateSCProps> = ({ match, hasNoProvSC, mode, lsoNs }) 
   const [state, dispatch] = React.useReducer(reducer, initialState);
   const [discoveriesData, discoveriesLoaded, discoveriesLoadError] = useK8sWatchResource<
     K8sResourceKind[]
-  >(nodesDiscoveriesResource);
+  >(nodesDiscoveriesResultResource);
   const [showInfoAlert, setShowInfoAlert] = React.useState(true);
   const [inProgress, setInProgress] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');
