@@ -280,7 +280,7 @@
   "Public Network Attachment Definition cannot be empty": "Public Network Attachment Definition cannot be empty",
   "To use Multus networking the public Network Attachment Definition must be selected.": "To use Multus networking the public Network Attachment Definition must be selected.",
   "The number of selected zones is less than the minimum requirement of 3. If not modified a host-based failure domain deployment will be enforced.": "The number of selected zones is less than the minimum requirement of 3. If not modified a host-based failure domain deployment will be enforced.",
-  "When all the selected nodes in the storage class are in a single zone the cluster will be using a host-based failure domain.": "When all the selected nodes in the storage class are in a single zone the cluster will be using a host-based failure domain.",
+  "When the nodes in the selected storage class are spread across fewer than 3 availability zones, the storage cluster will be deployed with the host based failure domain.": "When the nodes in the selected storage class are spread across fewer than 3 availability zones, the storage cluster will be deployed with the host based failure domain.",
   "Cluster-Wide and Storage Class": "Cluster-Wide and Storage Class",
   "Cluster-Wide": "Cluster-Wide",
   "x {{replica}} replicas = {{osdSize, number}} TiB": "x {{replica}} replicas = {{osdSize, number}} TiB",
