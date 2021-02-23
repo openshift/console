@@ -3,7 +3,7 @@ import { browser, ExpectedConditions as until } from 'protractor';
 import { cloneDeepWithEnum } from '@console/shared/src/constants/object-enum';
 import { click, waitForStringNotInElement } from '@console/shared/src/test-utils/utils';
 import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
-import { detailViewAction, listViewAction } from '@console/shared/src/test-utils/actions.view';
+import { detailViewAction, listViewAction } from '../../views/actions.view';
 import { modalOverlay } from '@console/kubevirt-plugin/integration-tests/views/uiResource.view';
 import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
 import * as vmView from '../../views/virtualMachine.view';

@@ -160,9 +160,7 @@ describe('KubeVirt Auto Clone', () => {
         async () => {
           await rhel7PVC.create();
           await vm1.create();
-          await vm1.navigateToDetail();
           await vm2.create();
-          await vm2.navigateToDetail();
           await vm1.start();
         },
       );
@@ -194,6 +192,7 @@ describe('KubeVirt Auto Clone', () => {
       const win10 = new VMBuilder(getBasicVMBuilder())
         .setSelectTemplateName(TemplateByName.WINDOWS_10)
         .generateNameForPrefix('auto-clone-win10-vm')
+        .setStartOnCreation(false)
         .build();
 
       await withResources(
@@ -202,6 +201,8 @@ describe('KubeVirt Auto Clone', () => {
         async () => {
           await win10PVC.create();
           await win10.create();
+          await win10.waitForStatus(VM_STATUS.Off, VM_IMPORT_TIMEOUT_SECS);
+          await win10.start();
           await win10.navigateToDetail();
         },
       );
