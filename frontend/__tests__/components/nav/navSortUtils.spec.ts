@@ -7,57 +7,45 @@ import { LoadedExtension, NavItem, NavSection, SeparatorNavItem } from '@console
 const mockNavItems: LoadedExtension<NavSection | NavItem | SeparatorNavItem>[] = [
   {
     type: 'Nav/Section',
-    properties: {
-      id: 'test1',
-    },
+    properties: { id: 'test1' },
     pluginID: 'test-plugin-id',
-    pluginName: 'test-plugin-name',
-    uid: 'test-plugin-uid',
+    pluginType: 'static',
+    uid: 'test-plugin-uid-1',
   },
   {
     type: 'Nav/Section',
-    properties: {
-      id: 'test2',
-    },
+    properties: { id: 'test2' },
     pluginID: 'test-plugin-id',
-    pluginName: 'test-plugin-name',
-    uid: 'test-plugin-uid',
+    pluginType: 'static',
+    uid: 'test-plugin-uid-2',
   },
   {
     type: 'Nav/Section',
-    properties: {
-      id: 'test3',
-    },
+    properties: { id: 'test3' },
     pluginID: 'test-plugin-id',
-    pluginName: 'test-plugin-name',
-    uid: 'test-plugin-uid',
+    pluginType: 'static',
+    uid: 'test-plugin-uid-3',
   },
   {
     type: 'Nav/Section',
-    properties: {
-      id: 'test4',
-    },
+    properties: { id: 'test4' },
     pluginID: 'test-plugin-id',
-    pluginName: 'test-plugin-name',
-    uid: 'test-plugin-uid',
+    pluginType: 'static',
+    uid: 'test-plugin-uid-4',
   },
   {
     type: 'Nav/Section',
-    properties: {
-      id: 'test5',
-    },
+    properties: { id: 'test5' },
     pluginID: 'test-plugin-id',
-    pluginName: 'test-plugin-name',
-    uid: 'test-plugin-uid',
+    pluginType: 'static',
+    uid: 'test-plugin-uid-5',
   },
   {
     type: 'Nav/Section',
-    properties: {
-      id: 'test6',
-    },
+    properties: { id: 'test6' },
     pluginID: 'test-plugin-id',
-    pluginName: 'test-plugin-name',
-    uid: 'test-plugin-uid',
+    pluginType: 'static',
+    uid: 'test-plugin-uid-6',
   },
   {
     type: 'NavItem/Separator',
@@ -68,8 +56,8 @@ const mockNavItems: LoadedExtension<NavSection | NavItem | SeparatorNavItem>[] =
       },
     },
     pluginID: 'test-plugin-id',
-    pluginName: 'test-plugin-name',
-    uid: 'test-plugin-uid',
+    pluginType: 'static',
+    uid: 'test-plugin-uid-7',
   },
 ];
 

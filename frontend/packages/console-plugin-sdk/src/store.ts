@@ -14,12 +14,12 @@ export const sanitizeExtension = <E extends Extension>(e: E): E => {
 export const augmentExtension = <E extends Extension>(
   e: E,
   pluginID: string,
-  pluginName: string,
+  pluginType: LoadedExtension['pluginType'],
   index: number,
 ): LoadedExtension<E> =>
   Object.assign(e, {
     pluginID,
-    pluginName,
+    pluginType,
     uid: `${pluginID}[${index}]`,
   });
 
@@ -56,7 +56,7 @@ export class PluginStore {
     this.staticPluginExtensions = _.flatMap(
       plugins.map((p) =>
         p.extensions.map((e, index) =>
-          Object.freeze(augmentExtension(sanitizeExtension({ ...e }), p.name, p.name, index)),
+          Object.freeze(augmentExtension(sanitizeExtension({ ...e }), p.name, 'static', index)),
         ),
       ),
     );
@@ -91,7 +91,7 @@ export class PluginStore {
     this.dynamicPlugins.set(pluginID, {
       manifest: Object.freeze(manifest),
       processedExtensions: resolvedExtensions.map((e, index) =>
-        Object.freeze(augmentExtension(sanitizeExtension(e), pluginID, manifest.name, index)),
+        Object.freeze(augmentExtension(sanitizeExtension(e), pluginID, 'dynamic', index)),
       ),
       enabled: false,
     });

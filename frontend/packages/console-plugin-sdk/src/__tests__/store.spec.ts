@@ -114,14 +114,14 @@ describe('augmentExtension', () => {
           properties: {},
         },
         'Test@1.2.3',
-        'Test',
+        'dynamic',
         0,
       ),
     ).toEqual({
       type: 'Foo',
       properties: {},
       pluginID: 'Test@1.2.3',
-      pluginName: 'Test',
+      pluginType: 'dynamic',
       uid: 'Test@1.2.3[0]',
     });
 
@@ -132,14 +132,14 @@ describe('augmentExtension', () => {
           properties: {},
         },
         'Test',
-        'Test',
+        'static',
         1,
       ),
     ).toEqual({
       type: 'Bar',
       properties: {},
       pluginID: 'Test',
-      pluginName: 'Test',
+      pluginType: 'static',
       uid: 'Test[1]',
     });
   });
@@ -147,7 +147,7 @@ describe('augmentExtension', () => {
   it('returns the same extension instance', () => {
     const testExtension: Extension = { type: 'Foo/Bar', properties: {} };
 
-    expect(augmentExtension(testExtension, 'Test@1.2.3', 'Test', 0)).toBe(testExtension);
+    expect(augmentExtension(testExtension, 'Test@1.2.3', 'dynamic', 0)).toBe(testExtension);
   });
 });
 
@@ -301,7 +301,7 @@ describe('PluginStore', () => {
           properties: { test: true },
           flags: { required: ['foo'], disallowed: [] },
           pluginID: 'Test',
-          pluginName: 'Test',
+          pluginType: 'static',
           uid: 'Test[0]',
         },
         {
@@ -309,7 +309,7 @@ describe('PluginStore', () => {
           properties: { baz: 1 },
           flags: { required: [], disallowed: ['bar'] },
           pluginID: 'Test',
-          pluginName: 'Test',
+          pluginType: 'static',
           uid: 'Test[1]',
         },
       ]);
@@ -344,7 +344,7 @@ describe('PluginStore', () => {
           properties: { test: true },
           flags: { required: ['foo'], disallowed: [] },
           pluginID: 'Test0',
-          pluginName: 'Test0',
+          pluginType: 'static',
           uid: 'Test0[0]',
         },
         {
@@ -352,7 +352,7 @@ describe('PluginStore', () => {
           properties: { baz: 1 },
           flags: { required: [], disallowed: ['bar'] },
           pluginID: 'Test0',
-          pluginName: 'Test0',
+          pluginType: 'static',
           uid: 'Test0[1]',
         },
       ]);
@@ -386,7 +386,7 @@ describe('PluginStore', () => {
           properties: { test: true },
           flags: { required: ['foo'], disallowed: [] },
           pluginID: 'Test0',
-          pluginName: 'Test0',
+          pluginType: 'static',
           uid: 'Test0[0]',
         },
         {
@@ -394,7 +394,7 @@ describe('PluginStore', () => {
           properties: { baz: 1 },
           flags: { required: [], disallowed: ['bar'] },
           pluginID: 'Test0',
-          pluginName: 'Test0',
+          pluginType: 'static',
           uid: 'Test0[1]',
         },
         {
@@ -402,7 +402,7 @@ describe('PluginStore', () => {
           properties: { value: 'test' },
           flags: { required: ['foo', 'bar'], disallowed: [] },
           pluginID: 'Test1@1.2.3',
-          pluginName: 'Test1',
+          pluginType: 'dynamic',
           uid: 'Test1@1.2.3[0]',
         },
         {
@@ -410,7 +410,7 @@ describe('PluginStore', () => {
           properties: {},
           flags: { required: ['foo'], disallowed: ['bar'] },
           pluginID: 'Test2@2.3.4',
-          pluginName: 'Test2',
+          pluginType: 'dynamic',
           uid: 'Test2@2.3.4[0]',
         },
       ]);
@@ -521,7 +521,7 @@ describe('PluginStore', () => {
             properties: { test: true },
             flags: { required: ['foo'], disallowed: [] },
             pluginID: 'Test@1.2.3',
-            pluginName: 'Test',
+            pluginType: 'dynamic',
             uid: 'Test@1.2.3[0]',
           },
           {
@@ -529,7 +529,7 @@ describe('PluginStore', () => {
             properties: { baz: 1, qux: ref },
             flags: { required: [], disallowed: ['bar'] },
             pluginID: 'Test@1.2.3',
-            pluginName: 'Test',
+            pluginType: 'dynamic',
             uid: 'Test@1.2.3[1]',
           },
         ],
@@ -573,7 +573,7 @@ describe('PluginStore', () => {
             properties: {},
             flags: { required: [], disallowed: [] },
             pluginID: 'Test@1.2.3',
-            pluginName: 'Test',
+            pluginType: 'dynamic',
             uid: 'Test@1.2.3[0]',
           },
         ],
@@ -611,7 +611,7 @@ describe('PluginStore', () => {
           properties: {},
           flags: { required: [], disallowed: [] },
           pluginID: 'Test1@1.2.3',
-          pluginName: 'Test1',
+          pluginType: 'dynamic',
           uid: 'Test1@1.2.3[0]',
         },
       ]);
@@ -629,7 +629,7 @@ describe('PluginStore', () => {
           properties: {},
           flags: { required: [], disallowed: [] },
           pluginID: 'Test1@1.2.3',
-          pluginName: 'Test1',
+          pluginType: 'dynamic',
           uid: 'Test1@1.2.3[0]',
         },
         {
@@ -637,7 +637,7 @@ describe('PluginStore', () => {
           properties: {},
           flags: { required: [], disallowed: [] },
           pluginID: 'Test2@2.3.4',
-          pluginName: 'Test2',
+          pluginType: 'dynamic',
           uid: 'Test2@2.3.4[0]',
         },
       ]);
@@ -655,7 +655,7 @@ describe('PluginStore', () => {
           properties: {},
           flags: { required: [], disallowed: [] },
           pluginID: 'Test2@2.3.4',
-          pluginName: 'Test2',
+          pluginType: 'dynamic',
           uid: 'Test2@2.3.4[0]',
         },
       ]);

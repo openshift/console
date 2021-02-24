@@ -100,6 +100,6 @@ export type ActivePlugin = {
  */
 export type LoadedExtension<E extends Extension = Extension> = E & {
   pluginID: string;
-  pluginName: string;
+  pluginType: 'static' | 'dynamic';
   uid: string;
 };
