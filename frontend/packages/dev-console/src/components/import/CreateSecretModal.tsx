@@ -1,8 +1,6 @@
 import * as React from 'react';
 import {
-  withSecretForm,
-  ImageSecretForm,
-  SourceSecretForm,
+  SecretFormWrapper,
   SecretTypeAbstraction,
 } from '@console/internal/components/secrets/create-secret';
 import {
@@ -18,32 +16,20 @@ export interface CreateSecretModalProps {
 
 type Props = CreateSecretModalProps & ModalComponentProps;
 
-const getSecretForm = (type: SecretTypeAbstraction) => {
-  switch (type) {
-    case SecretTypeAbstraction.source:
-      return withSecretForm(SourceSecretForm, true);
-    case SecretTypeAbstraction.image:
-      return withSecretForm(ImageSecretForm, true);
-    default:
-      return null;
-  }
-};
-
 const CreateSecretModal: React.FC<Props> = ({ close, namespace, save, secretType }) => {
   const handleSave = (name: string) => {
     close();
     save(name);
   };
 
-  const CreateSecretForm = getSecretForm(secretType);
   return (
-    <CreateSecretForm
+    <SecretFormWrapper
       onCancel={close}
       onSave={handleSave}
       fixed={{ metadata: { namespace } }}
       secretTypeAbstraction={secretType}
-      titleVerb="Create"
       isCreate
+      modal
     />
   );
 };
