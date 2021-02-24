@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { EventKind } from '@console/internal/module/k8s';
-import { PodModel, StatefulSetModel, PersistentVolumeClaimModel } from '@console/internal/models';
+import { PersistentVolumeClaimModel, PersistentVolumeModel } from '@console/internal/models';
 import { getNamespace } from '@console/shared/src/selectors/common';
 import {
   NooBaaBackingStoreModel,
@@ -18,7 +18,7 @@ export const isObjectStorageEvent = (event: EventKind): boolean => {
     NooBaaObjectBucketClaimModel.kind,
     CephObjectStoreModel.kind,
   ];
-  if (eventKind === PodModel.kind || eventKind === StatefulSetModel.kind) {
+  if (eventKind !== PersistentVolumeClaimModel.kind && eventKind !== PersistentVolumeModel.kind) {
     const eventName: string = event?.involvedObject?.name;
     return _.startsWith(eventName, 'noobaa') || eventName.includes('rgw');
   }
