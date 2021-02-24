@@ -15,11 +15,7 @@ import { StorageClassDropdown } from '@console/internal/components/utils/storage
 import { ListPage } from '@console/internal/components/factory';
 import { NodeModel } from '@console/internal/models';
 import { getName, getUID } from '@console/shared';
-import {
-  storageClassTooltip,
-  requestedCapacityTooltip,
-  OCS_DEVICE_SET_REPLICA,
-} from '../../../../constants';
+import { storageClassTooltip, requestedCapacityTooltip } from '../../../../constants';
 import { OSDSizeDropdown, TotalCapacityText } from '../../../../utils/osd-size-dropdown';
 import { InternalClusterState, InternalClusterAction, ActionType } from '../reducer';
 import {
@@ -120,7 +116,6 @@ export const SelectCapacityAndNodes: React.FC<SelectCapacityAndNodesProps> = ({
             text={t(
               'ceph-storage-plugin~Select at least 3 nodes preferably in 3 different zones. It is recommended to start with at least 14 CPUs and 34 GiB per node.',
             )}
-            replica={OCS_DEVICE_SET_REPLICA}
           />
         </GridItem>
         <GridItem span={10} className="ocs-install-wizard__select-nodes">
