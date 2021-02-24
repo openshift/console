@@ -496,8 +496,6 @@
   "Select StorageClass": "Select StorageClass",
   "StorageClass": "StorageClass",
   "StorageClass for the new claim": "StorageClass for the new claim",
-  "{{date, MMM D, h:mm a}}": "{{date, MMM D, h:mm a}}",
-  "{{date, MMM D, h:mm a z}}": "{{date, MMM D, h:mm a z}}",
   "Pause event streaming": "Pause event streaming",
   "Start streaming events": "Start streaming events",
   "{{ metadataName }} is paused": "{{ metadataName }} is paused",

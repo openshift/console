@@ -410,8 +410,6 @@
   "StatefulSet details": "StatefulSet 详细信息",
   "Resource limits": "资源限制",
   "Ports": "端口",
-  "{{date, MMM D, h:mm a}}": "{{date, MMM D, h:mm a}}",
-  "{{date, MMM D, h:mm a z}}": "{{date, MMM D, h:mm a z}}",
   "Remove volume": "删除卷",
   "Mount path": "挂载路径",
   "SubPath": "SubPath",
