@@ -4,7 +4,13 @@ import { FormikProps, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { FormFooter, SyncedEditorField, YAMLEditorField, FlexForm } from '@console/shared';
+import {
+  FormFooter,
+  SyncedEditorField,
+  YAMLEditorField,
+  FlexForm,
+  FormBody,
+} from '@console/shared';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
 import EventSourceSection from './event-sources/EventSourceSection';
@@ -68,16 +74,18 @@ const EventSourceForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
   );
   return (
     <FlexForm onSubmit={handleSubmit}>
-      <SyncedEditorField
-        name="editorType"
-        formContext={{
-          name: 'formData',
-          editor: formEditor,
-          sanitizeTo: (newFormData: K8sResourceKind) =>
-            sanitizeSourceToForm(newFormData, values.formData, kameletSource),
-        }}
-        yamlContext={{ name: 'yamlData', editor: yamlEditor, sanitizeTo: sanitizeToYaml }}
-      />
+      <FormBody flexLayout>
+        <SyncedEditorField
+          name="editorType"
+          formContext={{
+            name: 'formData',
+            editor: formEditor,
+            sanitizeTo: (newFormData: K8sResourceKind) =>
+              sanitizeSourceToForm(newFormData, values.formData, kameletSource),
+          }}
+          yamlContext={{ name: 'yamlData', editor: yamlEditor, sanitizeTo: sanitizeToYaml }}
+        />
+      </FormBody>
       <FormFooter
         handleReset={handleReset}
         errorMessage={status && status.submitError}

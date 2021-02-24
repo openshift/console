@@ -1,14 +1,16 @@
 import * as React from 'react';
-import { Form, FormProps } from '@patternfly/react-core';
 
-interface FlexFormProps {
+type FlexFormProps = {
   children?: React.ReactNode;
-}
+};
 
-const FlexForm: React.FC<FlexFormProps & FormProps> = ({ children, ...props }) => (
-  <Form {...props} style={{ display: 'flex', flex: 1, flexDirection: 'column' }}>
+const FlexForm: React.FC<FlexFormProps & React.HTMLProps<HTMLFormElement>> = ({
+  children,
+  ...props
+}) => (
+  <form {...props} style={{ display: 'flex', flex: 1, flexDirection: 'column' }}>
     {children}
-  </Form>
+  </form>
 );
 
 export default FlexForm;

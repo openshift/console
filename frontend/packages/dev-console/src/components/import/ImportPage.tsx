@@ -122,16 +122,14 @@ const ImportPage: React.FunctionComponent<ImportPageProps> = ({ match, location 
             title={importData.title}
             badge={importType === ImportTypes.devfile ? <DevPreviewBadge /> : null}
           />
-          <div className="co-m-pane__body" style={{ paddingBottom: 0 }}>
-            <Firehose resources={resources}>
-              <ImportForm
-                forApplication={application}
-                contextualSource={searchParams.get(QUERY_PROPERTIES.CONTEXT_SOURCE)}
-                namespace={namespace || preselectedNamespace}
-                importData={importData}
-              />
-            </Firehose>
-          </div>
+          <Firehose resources={resources}>
+            <ImportForm
+              forApplication={application}
+              contextualSource={searchParams.get(QUERY_PROPERTIES.CONTEXT_SOURCE)}
+              namespace={namespace || preselectedNamespace}
+              importData={importData}
+            />
+          </Firehose>
         </NamespacedPage>
       )}
     </QueryFocusApplication>

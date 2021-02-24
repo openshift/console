@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { RouteComponentProps } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { PageBody, TechPreviewBadge } from '@console/shared';
+import { TechPreviewBadge } from '@console/shared';
 import { LoadingInline, PageHeading } from '@console/internal/components/utils';
 import NamespacedPage, {
   NamespacedPageVariants,
@@ -44,27 +44,26 @@ const EventSourcePage: React.FC<EventSourcePageProps> = ({ match, location }) =>
           'knative-plugin~Create an Event source to register interest in a class of events from a particular system. Configure using the YAML and form views.',
         )}
       </PageHeading>
-      <PageBody flexLayout>
-        {loaded ? (
-          <EventSourceAlert
-            isValidSource={isValidSource}
-            createSourceAccessLoading={createSourceAccessLoading}
-            createSourceAccess={createSourceAccess}
-          />
-        ) : (
-          <LoadingInline />
-        )}
-        {loaded && isValidSource && !createSourceAccessLoading && createSourceAccess && (
-          <ConnectedEventSource
-            namespace={namespace}
-            normalizedSource={normalizedSource}
-            selectedApplication={searchParams.get(QUERY_PROPERTIES.APPLICATION)}
-            contextSource={searchParams.get(QUERY_PROPERTIES.CONTEXT_SOURCE)}
-            sourceKind={sourceKindProp}
-            kameletSource={isKameletSource && kamelet}
-          />
-        )}
-      </PageBody>
+
+      {loaded ? (
+        <EventSourceAlert
+          isValidSource={isValidSource}
+          createSourceAccessLoading={createSourceAccessLoading}
+          createSourceAccess={createSourceAccess}
+        />
+      ) : (
+        <LoadingInline />
+      )}
+      {loaded && isValidSource && !createSourceAccessLoading && createSourceAccess && (
+        <ConnectedEventSource
+          namespace={namespace}
+          normalizedSource={normalizedSource}
+          selectedApplication={searchParams.get(QUERY_PROPERTIES.APPLICATION)}
+          contextSource={searchParams.get(QUERY_PROPERTIES.CONTEXT_SOURCE)}
+          sourceKind={sourceKindProp}
+          kameletSource={isKameletSource && kamelet}
+        />
+      )}
     </NamespacedPage>
   );
 };

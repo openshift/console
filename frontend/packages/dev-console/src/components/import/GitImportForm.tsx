@@ -1,9 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Form } from '@patternfly/react-core';
 import { FormikProps, FormikValues } from 'formik';
-import { FormFooter } from '@console/shared/src/components/form-utils';
+import { FormBody, FormFooter } from '@console/shared/src/components/form-utils';
 import { GitImportFormProps } from './import-types';
 import GitSection from './git/GitSection';
 import BuilderSection from './builder/BuilderSection';
@@ -26,17 +25,19 @@ const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = 
 }) => {
   const { t } = useTranslation();
   return (
-    <Form onSubmit={handleSubmit} data-test-id="import-git-form">
-      <GitSection builderImages={builderImages} />
-      <BuilderSection image={values.image} builderImages={builderImages} />
-      <DockerSection buildStrategy={values.build.strategy} />
-      <AppSection
-        project={values.project}
-        noProjectsAvailable={projects.loaded && _.isEmpty(projects.data)}
-      />
-      <ResourceSection />
-      <PipelineSection builderImages={builderImages} />
-      <AdvancedSection values={values} />
+    <form onSubmit={handleSubmit} data-test-id="import-git-form">
+      <FormBody>
+        <GitSection builderImages={builderImages} />
+        <BuilderSection image={values.image} builderImages={builderImages} />
+        <DockerSection buildStrategy={values.build.strategy} />
+        <AppSection
+          project={values.project}
+          noProjectsAvailable={projects.loaded && _.isEmpty(projects.data)}
+        />
+        <ResourceSection />
+        <PipelineSection builderImages={builderImages} />
+        <AdvancedSection values={values} />
+      </FormBody>
       <FormFooter
         handleReset={handleReset}
         errorMessage={status && status.submitError}
@@ -46,7 +47,7 @@ const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = 
         disableSubmit={!dirty || !_.isEmpty(errors) || isSubmitting}
         resetLabel={t('devconsole~Cancel')}
       />
-    </Form>
+    </form>
   );
 };
 

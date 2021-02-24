@@ -184,16 +184,14 @@ const ImportSamplePage: React.FC<ImportSamplePageProps> = ({ match }) => {
         <title>{t('devconsole~Create Sample Application')}</title>
       </Helmet>
       <PageHeading title={t('devconsole~Create Sample Application')} />
-      <div className="co-m-pane__body" style={{ marginTop: 0, paddingBottom: 0 }}>
-        <Formik
-          initialValues={initialValues}
-          onSubmit={handleSubmit}
-          onReset={history.goBack}
-          validationSchema={validationSchema(t)}
-        >
-          {(formikProps) => <ImportSampleForm {...formikProps} builderImage={builderImage} />}
-        </Formik>
-      </div>
+      <Formik
+        initialValues={initialValues}
+        onSubmit={handleSubmit}
+        onReset={history.goBack}
+        validationSchema={validationSchema(t)}
+      >
+        {(formikProps) => <ImportSampleForm {...formikProps} builderImage={builderImage} />}
+      </Formik>
     </NamespacedPage>
   );
 };

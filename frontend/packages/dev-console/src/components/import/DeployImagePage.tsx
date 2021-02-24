@@ -21,19 +21,17 @@ const DeployImagePage: React.FunctionComponent<DeployImagePageProps> = ({ match,
         <title>{t('devconsole~Deploy Image')}</title>
       </Helmet>
       <PageHeading title={t('devconsole~Deploy Image')} />
-      <div className="co-m-pane__body" style={{ paddingBottom: 0 }}>
-        <QueryFocusApplication>
-          {(desiredApplication) => (
-            <Firehose resources={[{ kind: 'Project', prop: 'projects', isList: true }]}>
-              <DeployImage
-                forApplication={desiredApplication}
-                namespace={namespace}
-                contextualSource={params.get(QUERY_PROPERTIES.CONTEXT_SOURCE)}
-              />
-            </Firehose>
-          )}
-        </QueryFocusApplication>
-      </div>
+      <QueryFocusApplication>
+        {(desiredApplication) => (
+          <Firehose resources={[{ kind: 'Project', prop: 'projects', isList: true }]}>
+            <DeployImage
+              forApplication={desiredApplication}
+              namespace={namespace}
+              contextualSource={params.get(QUERY_PROPERTIES.CONTEXT_SOURCE)}
+            />
+          </Firehose>
+        )}
+      </QueryFocusApplication>
     </NamespacedPage>
   );
 };

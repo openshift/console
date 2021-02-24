@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import { TextInputTypes, Form } from '@patternfly/react-core';
+import { TextInputTypes } from '@patternfly/react-core';
 import { InputField } from '@console/shared';
 import FlexForm from '../FlexForm';
 
-describe('Page Body', () => {
+describe('FlexForm', () => {
   let wrapper: ShallowWrapper<any>;
   beforeEach(() => {
     wrapper = shallow(
@@ -26,8 +26,8 @@ describe('Page Body', () => {
     expect(wrapper.getElement().props).toHaveProperty('onSubmit');
   });
 
-  it('it should return patternfly Form component as a wrapper', () => {
-    expect(wrapper.is(Form)).toEqual(true);
+  it('it should return form component as a wrapper', () => {
+    expect(wrapper.is('form')).toEqual(true);
   });
 
   it('it should contain inputfield as a children of content wrapper', () => {
