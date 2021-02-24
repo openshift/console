@@ -3,7 +3,6 @@
 import * as _ from 'lodash';
 import { ConsolePluginManifestJSON } from '@console/dynamic-plugin-sdk/src/schema/plugin-manifest';
 import { Extension, LoadedExtension, ActivePlugin } from './typings';
-import { ExtensionRegistry } from './registry';
 
 export const sanitizeExtension = <E extends Extension>(e: E): E => {
   e.flags = e.flags || {};
@@ -49,9 +48,6 @@ export class PluginStore {
   // Extensions contributed by dynamic plugins (loaded from remote hosts at runtime)
   private dynamicPluginExtensions: LoadedExtension[] = [];
 
-  // TODO(vojtech): legacy, remove
-  public readonly registry: ExtensionRegistry;
-
   private readonly dynamicPlugins = new Map<string, DynamicPlugin>();
 
   private readonly listeners: VoidFunction[] = [];
@@ -64,7 +60,6 @@ export class PluginStore {
         ),
       ),
     );
-    this.registry = new ExtensionRegistry(plugins);
   }
 
   public getAllExtensions() {

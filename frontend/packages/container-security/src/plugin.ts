@@ -3,7 +3,6 @@ import {
   Plugin,
   ModelDefinition,
   ModelFeatureFlag,
-  KebabActions,
   ResourceListPage,
   DashboardsOverviewHealthURLSubsystem,
   DashboardsOverviewHealthResourceSubsystem,
@@ -27,7 +26,6 @@ type ConsumedExtensions =
   | DashboardsOverviewHealthURLSubsystem
   | DashboardsOverviewHealthResourceSubsystem<WatchImageVuln>
   | RoutePage
-  | KebabActions
   | ResourceNSNavItem
   | HorizontalNavTab;
 

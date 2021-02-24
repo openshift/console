@@ -8,7 +8,6 @@ import {
   DashboardsOverviewUtilizationItem,
   DashboardsTab,
   HorizontalNavTab,
-  KebabActions,
   ModelDefinition,
   ModelFeatureFlag,
   Plugin,
@@ -53,11 +52,9 @@ type ConsumedExtensions =
   | RoutePage
   | CustomFeatureFlag
   | ClusterServiceVersionAction
-  | KebabActions
   | ResourceDetailsPage
   | ResourceTabPage
   | ClusterServiceVersionAction
-  | KebabActions
   | DashboardsOverviewResourceActivity
   | StorageClassProvisioner;
 
