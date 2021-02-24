@@ -16,7 +16,7 @@ const PipelineList: React.FC<PipelineListProps> = (props) => {
   return (
     <Table
       {...props}
-      defaultSortField="latestRun.status.completionTime"
+      defaultSortField="latestRun.status.startTime"
       defaultSortOrder={SortByDirection.desc}
       aria-label={PipelineModel.labelPlural}
       Header={PipelineHeader(t)}

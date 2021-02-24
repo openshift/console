@@ -67,8 +67,8 @@ const PipelineRow: RowFunction<PipelineWithLatest> = ({ obj, index, key, style }
         <PipelineStatus obj={obj} />
       </TableData>
       <TableData className={tableColumnClasses[5]}>
-        {(obj.latestRun && obj.latestRun.status && obj.latestRun.status.completionTime && (
-          <Timestamp timestamp={obj.latestRun.status.completionTime} />
+        {(obj.latestRun?.status?.startTime && (
+          <Timestamp timestamp={obj.latestRun.status.startTime} />
         )) ||
           '-'}
       </TableData>
