@@ -289,6 +289,7 @@ TableRow.displayName = 'TableRow';
 export type TableRowProps = {
   id: any;
   index: number;
+  title?: string;
   trKey: string;
   style: object;
   className?: string;
