@@ -41,7 +41,9 @@ export const CephAlerts = withDashboardResources(
       <AlertsBody error={!_.isEmpty(loadError)}>
         {loaded &&
           alerts.length > 0 &&
-          alerts.map((alert) => <AlertItem key={alertURL(alert, alert.rule.id)} alert={alert} />)}
+          alerts.map((alert) => (
+            <AlertItem key={alertURL(alert, alert.rule.id)} alert={alert} hideLink />
+          ))}
       </AlertsBody>
     );
   },
