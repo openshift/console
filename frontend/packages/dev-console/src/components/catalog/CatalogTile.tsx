@@ -9,6 +9,9 @@ import { Badge } from '@patternfly/react-core';
 import { CatalogItem } from '@console/plugin-sdk';
 import { getIconProps } from './utils/catalog-utils';
 import { CatalogType } from './utils/types';
+import CatalogBadges from './CatalogBadges';
+
+import './CatalogTile.scss';
 
 type CatalogTileProps = {
   item: CatalogItem;
@@ -18,12 +21,12 @@ type CatalogTileProps = {
 
 const CatalogTile: React.FC<CatalogTileProps> = ({ item, catalogTypes, onClick }) => {
   const { t } = useTranslation();
-  const { name, provider, description, type } = item;
+  const { name, provider, description, type, badges } = item;
 
   const vendor = provider ? t('devconsole~Provided by {{provider}}', { provider }) : null;
   const catalogType = _.find(catalogTypes, ['value', type]);
 
-  const badges = [
+  const typeBadges = [
     <CatalogTileBadge>
       <Badge isRead>{catalogType?.label}</Badge>
     </CatalogTileBadge>,
@@ -32,16 +35,17 @@ const CatalogTile: React.FC<CatalogTileProps> = ({ item, catalogTypes, onClick }
   const isDescriptionReactElement = React.isValidElement(description);
   return (
     <PfCatalogTile
-      className="co-catalog-tile"
+      className="odc-catalog-tile co-catalog-tile"
       onClick={() => onClick(item)}
       title={name}
-      badges={badges}
+      badges={typeBadges}
       vendor={vendor}
       description={isDescriptionReactElement ? undefined : description}
       data-test={`${type}-${name}`}
       {...getIconProps(item)}
     >
       {isDescriptionReactElement ? description : undefined}
+      {badges?.length > 0 ? <CatalogBadges badges={badges} /> : undefined}
     </PfCatalogTile>
   );
 };

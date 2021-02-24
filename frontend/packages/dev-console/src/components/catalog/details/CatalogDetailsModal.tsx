@@ -2,10 +2,11 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { CatalogItem } from '@console/plugin-sdk';
-import { Modal, useQueryParams } from '@console/shared';
+import { Modal } from '@console/shared';
 import { CatalogItemHeader } from '@patternfly/react-catalog-view-extension';
 import { getIconProps } from '../utils/catalog-utils';
-import { CatalogQueryParams } from '../utils/types';
+import useCtaLink from '../hooks/useCtaLink';
+import CatalogBadges from '../CatalogBadges';
 import CatalogDetailsPanel from './CatalogDetailsPanel';
 
 type CatalogDetailsModalProps = {
@@ -15,38 +16,45 @@ type CatalogDetailsModalProps = {
 
 const CatalogDetailsModal: React.FC<CatalogDetailsModalProps> = ({ item, onClose }) => {
   const { t } = useTranslation();
-  const queryParams = useQueryParams();
+  const [to, label] = useCtaLink(item?.cta);
 
   if (!item) {
     return null;
   }
 
-  const { href } = item.cta;
-  const [url, params] = href.split('?');
+  const { name, cta, badges } = item;
 
-  Object.values(CatalogQueryParams).map((q) => queryParams.delete(q)); // don't pass along catalog specific query params
-
-  const to = params
-    ? `${url}?${params}${queryParams.toString() !== '' ? `&${queryParams.toString()}` : ''}`
-    : `${url}?${queryParams.toString()}`;
-
-  const vendor = item.provider
+  const provider = item.provider
     ? t('devconsole~Provided by {{provider}}', { provider: item.provider })
     : null;
 
+  const vendor = (
+    <div>
+      {provider}
+      {badges?.length > 0 ? <CatalogBadges badges={badges} /> : undefined}
+    </div>
+  );
+
   const modalHeader = (
     <>
-      <CatalogItemHeader title={item.name} vendor={vendor} {...getIconProps(item)} />
-      <div className="co-catalog-page__overlay-actions">
-        <Link
-          className="pf-c-button pf-m-primary co-catalog-page__overlay-action"
-          to={to}
-          role="button"
-          onClick={onClose}
-        >
-          {item.cta.label}
-        </Link>
-      </div>
+      <CatalogItemHeader
+        className="co-catalog-page__overlay-header"
+        title={name}
+        vendor={vendor}
+        {...getIconProps(item)}
+      />
+      {cta && (
+        <div className="co-catalog-page__overlay-actions">
+          <Link
+            className="pf-c-button pf-m-primary co-catalog-page__overlay-action"
+            to={to}
+            role="button"
+            onClick={onClose}
+          >
+            {label}
+          </Link>
+        </div>
+      )}
     </>
   );
 

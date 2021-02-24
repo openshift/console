@@ -1,0 +1,10 @@
+.odc-catalog-tile {
+  > .catalog-tile-pf-body {
+    display: flex;
+    flex-direction: column;
+
+    > .catalog-tile-pf-description {
+      flex: 1 1 auto;
+    }
+  }
+}
