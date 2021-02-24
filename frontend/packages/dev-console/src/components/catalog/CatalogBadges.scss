@@ -1,0 +1,9 @@
+.odc-catalog-badges {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: var(--pf-global--spacer--sm);
+
+  &__label {
+    margin: var(--pf-global--spacer--xs) var(--pf-global--spacer--xs) var(--pf-global--spacer--xs) 0;
+  }
+}

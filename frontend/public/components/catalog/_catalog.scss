@@ -241,9 +241,12 @@ $catalog-tile-width: $co-m-catalog-tile-width;
   &__overlay-actions {
     display: flex;
     flex-wrap: wrap;
-    padding: var(--pf-global--spacer--lg) var(--pf-global--spacer--md) var(--pf-global--spacer--md)
-      0;
+    margin-bottom: var(--pf-global--spacer--md);
     white-space: normal;
+  }
+
+  &__overlay-header {
+    margin-bottom: var(--pf-global--spacer--md);
   }
 
   &__overlay-body {

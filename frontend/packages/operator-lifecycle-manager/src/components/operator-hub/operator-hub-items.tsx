@@ -497,6 +497,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
           header={
             <>
               <CatalogItemHeader
+                className="co-catalog-page__overlay-header"
                 iconClass={detailsItem.iconClass}
                 iconImg={detailsItem.imgUrl}
                 title={detailsItem.name}

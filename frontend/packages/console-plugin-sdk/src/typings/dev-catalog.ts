@@ -85,7 +85,7 @@ export type CatalogItem<T extends any = any> = {
   attributes?: {
     [key: string]: string;
   };
-  cta: {
+  cta?: {
     label: string;
     href: string;
   };
@@ -97,6 +97,8 @@ export type CatalogItem<T extends any = any> = {
     properties?: CatalogItemDetailsProperty[];
     descriptions?: CatalogItemDetailsDescription[];
   };
+  // Optional text only badges for the catalog item which will be rendered on the tile and details panel.
+  badges?: CatalogItemBadge[];
   // Optional data attached by the provider.
   // May be consumed by filters.
   // `data` for each `type` of CatalogItem should implement the same interface.
@@ -116,4 +118,11 @@ export type CatalogItemDetailsDescription = {
 export type CatalogItemAttribute = {
   label: string;
   attribute: string;
+};
+
+export type CatalogItemBadge = {
+  text: string;
+  color?: 'blue' | 'cyan' | 'green' | 'orange' | 'purple' | 'red' | 'grey';
+  icon?: React.ReactNode;
+  variant?: 'outline' | 'filled';
 };
