@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useForceRender } from '@console/shared/src/hooks/useForceRender';
-import { deepMergeExtensionProperties } from '../store';
+import { mergeExtensionProperties } from '../store';
 import { subscribeToExtensions } from './subscribeToExtensions';
 import { Extension, ExtensionTypeGuard, LoadedExtension } from '../typings';
 import useTranslationExt from '../utils/useTranslationExt';
@@ -76,7 +76,7 @@ export const useExtensions = <E extends Extension>(
     if (unsubscribeRef.current === null) {
       unsubscribeRef.current = subscribeToExtensions<E>((extensions) => {
         extensionsInUseRef.current = extensions.map((e) =>
-          deepMergeExtensionProperties(e, translate(e.properties, t)),
+          mergeExtensionProperties(e, translate(e.properties, t)),
         );
         isMountedRef.current && forceRender();
       }, ...latestTypeGuardsRef.current);

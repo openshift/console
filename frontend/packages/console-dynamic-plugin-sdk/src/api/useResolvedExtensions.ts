@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
-import { deepMergeExtensionProperties } from '@console/plugin-sdk/src/store';
+import { mergeExtensionProperties } from '@console/plugin-sdk/src/store';
 import {
   Extension,
   ExtensionTypeGuard,
@@ -56,7 +56,7 @@ export const useResolvedExtensions = <E extends Extension>(
     Promise.all(
       extensions.map(async (e) => {
         const resolvedProperties = await resolveCodeRefProperties(e);
-        return deepMergeExtensionProperties(e, resolvedProperties) as ResolvedExtension<E>;
+        return mergeExtensionProperties(e, resolvedProperties) as ResolvedExtension<E>;
       }),
     )
       .then((result) => {
