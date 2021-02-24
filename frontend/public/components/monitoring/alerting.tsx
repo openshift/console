@@ -1121,10 +1121,11 @@ const tableAlertClasses = [
 
 const AlertTableRow: RowFunction<Alert> = ({ index, key, obj, style }) => {
   const { annotations = {}, labels } = obj;
+  const description = annotations.description || annotations.message;
   const state = alertState(obj);
 
   return (
-    <TableRow id={obj.rule.id} index={index} trKey={key} style={style}>
+    <TableRow id={obj.rule.id} index={index} title={description} trKey={key} style={style}>
       <TableData className={tableAlertClasses[0]}>
         <div className="co-resource-item">
           <MonitoringResourceIcon resource={AlertResource} />
@@ -1136,9 +1137,7 @@ const AlertTableRow: RowFunction<Alert> = ({ index, key, obj, style }) => {
             {labels?.alertname}
           </Link>
         </div>
-        <div className="monitoring-description">
-          {annotations.description || annotations.message}
-        </div>
+        <div className="monitoring-description">{description}</div>
       </TableData>
       <TableData className={tableAlertClasses[1]}>
         <Severity severity={labels?.severity} />
@@ -1379,7 +1378,13 @@ const tableRuleClasses = [
 ];
 
 const RuleTableRow: RowFunction<Rule> = ({ index, key, obj, style }) => (
-  <TableRow id={obj.id} index={index} trKey={key} style={style}>
+  <TableRow
+    id={obj.id}
+    index={index}
+    style={style}
+    title={obj.annotations?.description || obj.annotations?.message}
+    trKey={key}
+  >
     <TableData className={tableRuleClasses[0]}>
       <div className="co-resource-item">
         <MonitoringResourceIcon resource={RuleResource} />
