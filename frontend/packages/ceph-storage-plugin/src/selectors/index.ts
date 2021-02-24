@@ -11,8 +11,14 @@ const enum status {
   BOUND = 'Bound',
   AVAILABLE = 'Available',
 }
-export const filterCephAlerts = (alerts: Alert[]): Alert[] =>
-  alerts.filter((alert) => _.get(alert, 'annotations.storage_type') === 'ceph');
+export const filterCephAlerts = (alerts: Alert[]): Alert[] => {
+  const rookRegex = /.*rook.*/;
+  return alerts?.filter(
+    (alert) =>
+      alert?.annotations?.storage_type === 'ceph' ||
+      Object.values(alert?.labels)?.some((item) => rookRegex.test(item)),
+  );
+};
 
 export const getCephPVs = (pvsData: K8sResourceKind[] = []): K8sResourceKind[] =>
   pvsData.filter((pv) => {
