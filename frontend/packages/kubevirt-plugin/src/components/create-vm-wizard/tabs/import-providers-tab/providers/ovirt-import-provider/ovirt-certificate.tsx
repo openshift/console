@@ -73,7 +73,7 @@ const OvirtCertificateConnected: React.FC<OvirtCertificateProps> = React.memo(
         validation={additionalValidation}
         fieldHelp={
           <a
-            href="https://ovirt.github.io/ovirt-engine-api-model/master/#_obtaining_the_ca_certificate"
+            href="https://ovirt.github.io/ovirt-engine-api-model/4.4/#_obtaining_the_ca_certificate"
             target="_blank"
             rel="noopener noreferrer"
           >
