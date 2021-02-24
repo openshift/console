@@ -32,9 +32,10 @@ import {
   SHOW_LABELS_FILTER_ID,
 } from '@console/topology/src/filters';
 import SvgBoxedText from '@console/topology/src/components/svg/SvgBoxedText';
+import { getNodeDecorators } from '@console/topology/src/components/graph-view/components/nodes/decorators/getNodeDecorators';
 import { TYPE_KNATIVE_SERVICE, EVENT_MARKER_RADIUS } from '../../const';
 import RevisionTrafficSourceAnchor from '../anchors/RevisionTrafficSourceAnchor';
-import { getNodeDecorators } from '@console/topology/src/components/graph-view/components/nodes/decorators/getNodeDecorators';
+import { isServerlessFunction } from '../../knative-topology-utils';
 
 export type KnativeServiceGroupProps = {
   element: Node;
@@ -119,6 +120,10 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
     height,
   );
 
+  const typeIconClass: string = isServerlessFunction(element)
+    ? 'icon-serverless-function'
+    : 'icon-knative';
+
   return (
     <Tooltip
       content={tooltipLabel}
@@ -150,6 +155,7 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
               'is-highlight': canDrop || edgeDragging,
               'is-dropTarget': canDrop && dropTarget,
               'is-filtered': filtered,
+              'is-function': isServerlessFunction(element),
             })}
           >
             <rect
@@ -189,7 +195,7 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
             paddingY={4}
             kind={data.kind}
             dragRef={dragLabelRef}
-            typeIconClass="icon-knative"
+            typeIconClass={typeIconClass}
           >
             {element.getLabel()}
           </SvgBoxedText>

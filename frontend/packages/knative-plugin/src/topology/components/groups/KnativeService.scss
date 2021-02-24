@@ -16,6 +16,10 @@
     stroke-dasharray: $group-node-stroke-dasharray;
   }
 
+  &.is-function &__bg {
+    fill: var(--pf-global--palette--purple-50);
+  }
+
   &.is-filtered &__bg {
     stroke: $filtered-stroke-color;
     stroke-width: $group-node-filtered-stroke-width;

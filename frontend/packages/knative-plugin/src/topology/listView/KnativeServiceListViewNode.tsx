@@ -5,6 +5,7 @@ import {
   TopologyListViewNode,
   TypedResourceBadgeCell,
 } from '@console/topology/src/components/list-view';
+import { isServerlessFunction } from '../knative-topology-utils';
 
 interface KnativeServiceListViewNodeProps {
   item: Node;
@@ -20,8 +21,12 @@ const ObservedKnativeServiceListViewNode: React.FC<KnativeServiceListViewNodePro
 }) => {
   const kind = getResourceKind(item);
 
+  const typeIconClass: string = isServerlessFunction(item)
+    ? 'icon-serverless-function'
+    : 'icon-knative';
+
   const badgeCell = (
-    <TypedResourceBadgeCell key="type-icon" kind={kind} typeIconClass={'icon-knative'} />
+    <TypedResourceBadgeCell key="type-icon" kind={kind} typeIconClass={typeIconClass} />
   );
 
   return (
