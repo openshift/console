@@ -6,13 +6,25 @@ import { K8sResourceCondition } from '../module/k8s';
 
 export const Conditions: React.FC<ConditionsProps> = ({ conditions }) => {
   const { t } = useTranslation();
+
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case 'True':
+        return t('public~True');
+      case 'False':
+        return t('public~False');
+      default:
+        return status;
+    }
+  };
+
   const rows = conditions?.map?.((condition: K8sResourceCondition, i: number) => (
     <div className="row" data-test-id={condition.type} key={i}>
       <div className="col-xs-4 col-sm-2 col-md-2">
         <CamelCaseWrap value={condition.type} />
       </div>
       <div className="col-xs-4 col-sm-2 col-md-2" data-test-id="status">
-        {condition.status}
+        {getStatusLabel(condition.status)}
       </div>
       <div className="hidden-xs hidden-sm col-md-2">
         <Timestamp timestamp={condition.lastTransitionTime} />
