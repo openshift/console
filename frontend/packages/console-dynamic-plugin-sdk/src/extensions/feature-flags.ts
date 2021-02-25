@@ -2,8 +2,9 @@ import { Extension } from '@console/plugin-sdk/src/typings/base';
 import { CodeRef, EncodedCodeRef, UpdateExtensionProperties } from '../types';
 
 export namespace ExtensionProperties {
+  /** Gives full control over Console feature flags. */
   export type FeatureFlag = {
-    /** Used to set/unset arbitrary Console feature flags. */
+    /** Used to set/unset arbitrary feature flags. */
     handler: EncodedCodeRef;
   };
 
@@ -11,6 +12,7 @@ export namespace ExtensionProperties {
     handler: CodeRef<FeatureFlagHandler>;
   };
 
+  /** Adds new Console feature flag driven by the presence of a CRD on the cluster. */
   export type ModelFeatureFlag = {
     /** The name of the flag to set once the CRD is detected. */
     flag: string;

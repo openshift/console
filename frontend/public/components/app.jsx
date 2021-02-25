@@ -26,16 +26,15 @@ import CloudShell from '@console/app/src/components/cloud-shell/CloudShell';
 import CloudShellTab from '@console/app/src/components/cloud-shell/CloudShellTab';
 import DetectPerspective from '@console/app/src/components/detect-perspective/DetectPerspective';
 import DetectNamespace from '@console/app/src/components/detect-namespace/DetectNamespace';
-import { withExtensions, isContextProvider } from '@console/plugin-sdk';
+import { useExtensions, withExtensions, isContextProvider } from '@console/plugin-sdk';
 import { GuidedTour } from '@console/app/src/components/tour';
-import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import { isStandaloneRoutePage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
 import QuickStartDrawer from '@console/app/src/components/quick-starts/QuickStartDrawer';
 import '../i18n';
 import '../vendor.scss';
 import '../style.scss';
 
-//PF4 Imports
+// PF4 Imports
 import { Page, SkipToContent } from '@patternfly/react-core';
 
 const breakpointMD = 768;
@@ -210,35 +209,25 @@ render(<LoadingBox />, document.getElementById('app'));
 
 const AppWithTranslation = withTranslation()(App);
 
-const StandaloneRouter = () => {
-  const [extensions, extensionsResolved] = useResolvedExtensions(isStandaloneRoutePage);
+const AppRouter = () => {
+  const standaloneRouteExtensions = useExtensions(isStandaloneRoutePage);
   return (
-    <Switch>
-      {extensions.map(({ properties }) => (
-        <Route
-          key={properties.path}
-          path={properties.path}
-          component={properties.component}
-          exact={properties.exact}
-        />
-      ))}
-      <Route
-        render={(componentProps) => (
-          <AsyncComponent
-            loader={
-              extensionsResolved
-                ? () =>
-                    import('./error' /* webpackChunkName: "error" */).then((m) => m.ErrorPage404)
-                : () =>
-                    import('./utils/status-box' /* webpackChunkName: "loading" */).then(
-                      (m) => m.LoadingBox,
-                    )
-            }
-            {...componentProps}
+    <Router history={history} basename={window.SERVER_FLAGS.basePath}>
+      <Switch>
+        {standaloneRouteExtensions.map((e) => (
+          <Route
+            key={e.uid}
+            render={(componentProps) => (
+              <AsyncComponent loader={e.properties.component} {...componentProps} />
+            )}
+            path={e.properties.path}
+            exact={e.properties.exact}
           />
-        )}
-      />
-    </Switch>
+        ))}
+        <Route path="/terminal" component={CloudShellTab} />
+        <Route path="/" component={AppWithTranslation} />
+      </Switch>
+    </Router>
   );
 };
 
@@ -313,13 +302,7 @@ graphQLReady.onReady(() => {
   render(
     <React.Suspense fallback={<LoadingBox />}>
       <Provider store={store}>
-        <Router history={history} basename={window.SERVER_FLAGS.basePath}>
-          <Switch>
-            <Route path="/standalone" component={StandaloneRouter} />
-            <Route path="/terminal" component={CloudShellTab} />
-            <Route path="/" component={AppWithTranslation} />
-          </Switch>
-        </Router>
+        <AppRouter />
       </Provider>
     </React.Suspense>,
     document.getElementById('app'),

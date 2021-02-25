@@ -12,7 +12,7 @@ export const getPluginManifest = (
   name,
   version,
   extensions: extensions as SupportedExtension[],
-  dependencies: { '@console/pluginAPI': '~0.0.1' },
+  dependencies: { '@console/pluginAPI': '*' },
 });
 
 export const getExecutableCodeRefMock = <T = any>(

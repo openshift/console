@@ -16,9 +16,7 @@
     {
       "type": "console.flag",
       "properties": {
-        "handler": {
-          "$codeRef": "barUtils.testHandler"
-        }
+        "handler": { "$codeRef": "barUtils.testHandler" }
       }
     },
     {

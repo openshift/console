@@ -42,7 +42,7 @@
       ]
     },
     "exposedModules": {
-      "standaloneConsole": "./src/components/connected-vm-console/vm-console-page.tsx"
+      "standaloneConsole": "src/components/connected-vm-console/vm-console-page.tsx"
     }
   }
 }
