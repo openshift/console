@@ -17,6 +17,11 @@ import {
   ServiceModel,
 } from '@console/knative-plugin';
 import { PipelineKind } from '@console/pipelines-plugin/src/types';
+import {
+  PIPELINE_RUNTIME_LABEL,
+  PIPELINE_RUNTIME_VERSION_LABEL,
+} from '@console/pipelines-plugin/src/const';
+import { isDockerPipeline } from '@console/pipelines-plugin/src/components/import/pipeline/pipeline-template-utils';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import { Resources, DeploymentData, GitReadableTypes } from '../import/import-types';
 import { AppResources } from './edit-application-types';
@@ -162,10 +167,7 @@ export const getBuildData = (
     },
     strategy:
       buildStrategyType ||
-      (pipeline?.metadata?.labels?.['pipeline.openshift.io/strategy'] ===
-      _.toLower(BuildStrategyType.Docker)
-        ? BuildStrategyType.Docker
-        : BuildStrategyType.Source),
+      (isDockerPipeline(pipeline) ? BuildStrategyType.Docker : BuildStrategyType.Source),
   };
   return buildData;
 };
@@ -366,10 +368,9 @@ export const getGitAndDockerfileInitialValues = (
         'Dockerfile',
     },
     image: {
-      selected:
-        currentImage[0] || (pipeline?.metadata?.labels?.['pipeline.openshift.io/runtime'] ?? ''),
+      selected: pipeline?.metadata?.labels?.[PIPELINE_RUNTIME_LABEL] || currentImage[0] || '',
       recommended: '',
-      tag: currentImage[1] || '',
+      tag: pipeline?.metadata?.labels?.[PIPELINE_RUNTIME_VERSION_LABEL] || currentImage[1] || '',
       tagObj: {},
       ports: [],
       isRecommending: false,

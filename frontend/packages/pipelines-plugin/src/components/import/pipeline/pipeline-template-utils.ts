@@ -1,7 +1,11 @@
 import * as _ from 'lodash';
 import { k8sCreate, k8sUpdate } from '@console/internal/module/k8s';
 import { PipelineData } from '../import-types';
-import { PIPELINE_RUNTIME_LABEL } from '../../../const';
+import {
+  PIPELINE_RUNTIME_LABEL,
+  PIPELINE_RUNTIME_VERSION_LABEL,
+  PIPELINE_STRATEGY_LABEL,
+} from '../../../const';
 import { PipelineModel } from '../../../models';
 import { PipelineKind, PipelineRunKind, PipelineWorkspace, TektonParam } from '../../../types';
 import { createPipelineResource } from '../../pipelines/pipeline-resource/pipelineResource-utils';
@@ -61,6 +65,18 @@ export const getPipelineParams = (
   });
 };
 
+export const pipelineRuntimeOrVersionChanged = (
+  template: PipelineKind,
+  pipeline: PipelineKind,
+): boolean =>
+  template.metadata?.labels[PIPELINE_RUNTIME_LABEL] !==
+    pipeline.metadata?.labels[PIPELINE_RUNTIME_LABEL] ||
+  template.metadata?.labels[PIPELINE_RUNTIME_VERSION_LABEL] !==
+    pipeline.metadata?.labels[PIPELINE_RUNTIME_VERSION_LABEL];
+
+export const isDockerPipeline = (template: PipelineKind): boolean =>
+  template?.metadata?.labels?.[PIPELINE_STRATEGY_LABEL] === 'docker';
+
 export const createPipelineForImportFlow = async (
   name: string,
   namespace: string,
@@ -76,7 +92,13 @@ export const createPipelineForImportFlow = async (
   template.metadata = {
     name: `${name}`,
     namespace,
-    labels: { ...template.metadata?.labels, 'app.kubernetes.io/instance': name },
+    labels: {
+      ...template.metadata?.labels,
+      'app.kubernetes.io/instance': name,
+      ...(!isDockerPipeline(template) && {
+        [PIPELINE_RUNTIME_VERSION_LABEL]: tag,
+      }),
+    },
   };
 
   template.spec.params =
@@ -109,7 +131,6 @@ export const createPipelineRunForImportFlow = async (
   };
   return submitStartPipeline(pipelineInitialValues, pipeline);
 };
-
 export const updatePipelineForImportFlow = async (
   pipeline: PipelineKind,
   template: PipelineKind,
@@ -129,16 +150,17 @@ export const updatePipelineForImportFlow = async (
       'app.kubernetes.io/instance',
     );
   } else {
-    if (
-      template.metadata?.labels[PIPELINE_RUNTIME_LABEL] !==
-      pipeline.metadata?.labels[PIPELINE_RUNTIME_LABEL]
-    ) {
+    if (pipelineRuntimeOrVersionChanged(template, pipeline)) {
       updatedPipeline = _.cloneDeep(template);
       updatedPipeline.metadata = {
         resourceVersion: pipeline.metadata.resourceVersion,
         name: `${name}`,
         namespace,
-        labels: { ...template.metadata?.labels, 'app.kubernetes.io/instance': name },
+        labels: {
+          ...template.metadata?.labels,
+          'app.kubernetes.io/instance': name,
+          ...(!isDockerPipeline(template) && { [PIPELINE_RUNTIME_VERSION_LABEL]: tag }),
+        },
       };
     }
 
