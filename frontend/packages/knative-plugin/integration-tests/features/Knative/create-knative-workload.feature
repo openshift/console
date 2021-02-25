@@ -17,7 +17,7 @@ Feature: Create a workload of 'knative Service' type resource
 
 
         @regression
-        Scenario: knative resource type in docke file add flow : Kn-01-TC05
+        Scenario: knative resource type in docker file add flow : Kn-01-TC05
             Given user is at Add page
              When user clicks on From Dockerfile card
              Then user will be redirected to page with header name "Import from Dockerfile"
@@ -88,3 +88,22 @@ Feature: Create a workload of 'knative Service' type resource
               And user clicks Create button on Add page
              Then user will be redirected to Topology page
               And user is able to see workload "nodejs-ex-git" in topology page list view
+
+
+        @regression
+        Scenario: Create a knative workload with advanced option "Scaling" from From Git card
+            Given user is at Import from git page
+             When user enters Git Repo url as "https://github.com/sclorg/dancer-ex.git"
+              And user enters name as "dancer-ex-git" in General section
+              And user selects resource type as "Knative Service"
+              And user clicks "Scaling" link in Advanced Options section
+              And user enters number of Min Pods as "1"
+              And user enters number of Max Pods as "5"
+              And user enters number of Concurrency target as "3"
+              And user enters number of Concurrency limit as "15"
+              And user enters percentage of Concurrency utilization as "70"
+              And user enters value of Autoscale window as "9 Sec"
+              And user clicks Create button on Add page
+              And user clicks on the Knative Service workload "dancer-ex-git"
+              And user clicks on name KSVC "dancer-ex-git"
+             Then user will see value of autoscaling.knative.dev/maxScale, autoscaling.knative.dev/minScale, autoscaling.knative.dev/target, autoscaling.knative.dev/targetUtilizationPercentage, autoscaling.knative.dev/window under annotation and containerConcurrency under spec as under spec 5, 1, 3, 70, 9s and 15 respectively
