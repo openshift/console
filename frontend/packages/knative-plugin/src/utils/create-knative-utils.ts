@@ -106,6 +106,7 @@ export const getKnativeServiceDepResource = (
           ...(concurrencylimit && { containerConcurrency: concurrencylimit }),
           containers: [
             {
+              name,
               image: `${imageStreamUrl}`,
               ...(contTargetPort && {
                 ports: [
