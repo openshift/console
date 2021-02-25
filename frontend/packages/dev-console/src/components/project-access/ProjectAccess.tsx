@@ -17,6 +17,8 @@ import {
   sendRoleBindingRequest,
   getNewRoles,
   getRemovedRoles,
+  sendK8sRequest,
+  getGroupedRole,
 } from './project-access-form-submit-utils';
 import { validationSchema } from './project-access-form-validation-utils';
 import ProjectAccessForm from './ProjectAccessForm';
@@ -33,7 +35,7 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({ formName, namespace, role
     return <LoadingBox />;
   }
 
-  const filteredRoleBindings = filterRoleBindings(roleBindings, Roles);
+  const filteredRoleBindings = filterRoleBindings(roleBindings.data, Roles);
 
   const userRoleBindings: UserRoleBinding[] = getUserRoleBindings(filteredRoleBindings);
 
@@ -59,6 +61,15 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({ formName, namespace, role
 
     const roleBindingRequests = [];
     roleBinding.metadata.namespace = namespace;
+
+    removeRoles = _.filter(removeRoles, (removeRole) => {
+      const groupedRole = getGroupedRole(removeRole, roleBindings.data);
+      if (groupedRole) {
+        roleBindingRequests.push(sendK8sRequest(Verb.Patch, groupedRole));
+        return false;
+      }
+      return true;
+    });
 
     actions.setSubmitting(true);
     if (!_.isEmpty(updateRoles)) {
