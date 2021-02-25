@@ -57,7 +57,8 @@ const ImageStream: React.FC<{ disabled?: boolean }> = ({ disabled = false }) => 
   const imageStreamTagList = getImageStreamTags(selectedImageStream as K8sResourceKind);
   const isNamespaceSelected = imageStream.namespace !== '' && !accessLoading;
   const isStreamsAvailable = isNamespaceSelected && hasImageStreams && !loading;
-  const isTagsAvailable = isStreamsAvailable && !_.isEmpty(imageStreamTagList);
+  const isTagsAvailable =
+    imageStream.tag !== '' || (isStreamsAvailable && !_.isEmpty(imageStreamTagList));
   const isImageStreamSelected = imageStream.image !== '';
   const showCommandLineAlert =
     project.name !== imageStream.namespace &&

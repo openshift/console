@@ -48,6 +48,7 @@ describe('knatify-utils', () => {
           spec: {
             containers: [
               {
+                name: ksvcData.metadata.name,
                 image:
                   'image-registry.openshift-image-registry.svc:5000/testproject3/ruby-ex-git-dc@sha256:731442c798a6afd04c4b2a97c29eb55993df87ee861185b736097ea72959d0bc',
                 ports: [{ containerPort: 8080 }],

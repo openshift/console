@@ -180,7 +180,7 @@ export const getBuildData = (
   return buildData;
 };
 
-export const getServerlessData = (resource: K8sResourceKind) => {
+export const getServerlessData = (resource: K8sResourceKind): ServerlessData => {
   let serverlessData: ServerlessData = {
     scaling: {
       minpods: '',
@@ -203,7 +203,9 @@ export const getServerlessData = (resource: K8sResourceKind) => {
     } = resource;
     const annotations = metadata?.annotations;
     const autoscalewindowAnnotation = annotations?.[KNATIVE_AUTOSCALEWINDOW_ANNOTATION] || '';
-    const [autoscalewindow, autoscalewindowUnit] = getAutoscaleWindow(autoscalewindowAnnotation);
+    const { autoscalewindow, autoscalewindowUnit, defaultAutoscalewindowUnit } = getAutoscaleWindow(
+      autoscalewindowAnnotation,
+    );
     serverlessData = {
       scaling: {
         minpods: annotations?.[KNATIVE_MINSCALE_ANNOTATION] || '',
@@ -211,9 +213,9 @@ export const getServerlessData = (resource: K8sResourceKind) => {
         concurrencytarget: annotations?.[KNATIVE_CONCURRENCYTARGET_ANNOTATION] || '',
         concurrencylimit: spec?.containerConcurrency || '',
         autoscale: {
-          autoscalewindow: autoscalewindow || '',
-          autoscalewindowUnit: autoscalewindowUnit || 's',
-          defaultAutoscalewindowUnit: autoscalewindowUnit || 's',
+          autoscalewindow,
+          autoscalewindowUnit,
+          defaultAutoscalewindowUnit,
         },
         concurrencyutilization: annotations?.[KNATIVE_CONCURRENCYUTILIZATION_ANNOTATION] || '',
       },

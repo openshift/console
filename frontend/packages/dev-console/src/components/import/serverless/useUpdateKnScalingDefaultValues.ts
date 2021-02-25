@@ -3,16 +3,16 @@ import { getAutoscaleWindow } from './serverless-utils';
 import { useGetAutoscalerConfig } from './useGetAutoscalerConfig';
 
 export const setKnScalingDefaultValue = (initialValues, knScalingConfig) => {
-  const [autoscalewindow, autoscalewindowUnit] =
+  const { autoscalewindow, autoscalewindowUnit, defaultAutoscalewindowUnit } =
     knScalingConfig && getAutoscaleWindow(knScalingConfig['stable-window'] ?? '');
   initialValues.serverless.scaling.concurrencytarget =
     knScalingConfig['container-concurrency-target-default'] || '';
   initialValues.serverless.scaling.concurrencyutilization =
     knScalingConfig['container-concurrency-target-percentage'] || '';
   initialValues.serverless.scaling.autoscale = {
-    autoscalewindow: autoscalewindow || '',
-    autoscalewindowUnit: autoscalewindowUnit || 's',
-    defaultAutoscalewindowUnit: autoscalewindowUnit || 's',
+    autoscalewindow,
+    autoscalewindowUnit,
+    defaultAutoscalewindowUnit,
   };
   return initialValues;
 };

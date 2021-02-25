@@ -124,7 +124,7 @@ describe('Edit Application Utils', () => {
         },
       };
       const serverlessData = getServerlessData(knativeServiceData);
-      expect(serverlessData.scaling.autoscale.autoscalewindow).toBe('60');
+      expect(serverlessData.scaling.autoscale.autoscalewindow).toBe(60);
       expect(serverlessData.scaling.autoscale.autoscalewindowUnit).toBe('s');
     });
     it('getServerlessData should return correct autoscalewindow values when stable-window annotation has empty value', () => {
@@ -165,7 +165,7 @@ describe('Edit Application Utils', () => {
           concurrencytarget: '100',
           concurrencylimit: '3',
           autoscale: {
-            autoscalewindow: '60',
+            autoscalewindow: 60,
             autoscalewindowUnit: 's',
             defaultAutoscalewindowUnit: 's',
           },

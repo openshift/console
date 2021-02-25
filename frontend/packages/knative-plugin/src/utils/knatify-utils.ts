@@ -53,6 +53,7 @@ export const getKnatifyWorkloadData = (obj: K8sResourceKind) => {
         spec: {
           containers: [
             {
+              name,
               image,
               ...(ports?.length > 0 && {
                 ports: [

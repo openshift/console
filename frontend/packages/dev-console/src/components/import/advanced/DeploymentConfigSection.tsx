@@ -28,6 +28,7 @@ const DeploymentConfigSection: React.FC<DeploymentConfigSectionProps> = ({
       namespace,
     },
   };
+
   return (
     <FormSection title={t('devconsole~Deployment')} fullWidth>
       <CheckboxField

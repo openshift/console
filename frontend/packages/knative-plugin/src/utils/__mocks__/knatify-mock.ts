@@ -15,6 +15,7 @@ export const ksvcData: K8sResourceKind = {
       spec: {
         containers: [
           {
+            name: 'overlayimage',
             image: 'openshift/hello-openshift',
             ports: [{ containerPort: 8080 }],
             imagePullPolicy: 'Always',
@@ -39,7 +40,18 @@ export const knatifyFormCommonInitailValues = {
   },
   resources: 'knative',
   serverless: {
-    scaling: { minpods: 0, maxpods: '', concurrencytarget: '', concurrencylimit: '' },
+    scaling: {
+      minpods: '',
+      maxpods: '',
+      concurrencytarget: '',
+      concurrencylimit: '',
+      concurrencyutilization: '',
+      autoscale: {
+        autoscalewindow: '',
+        autoscalewindowUnit: 's',
+        defaultAutoscalewindowUnit: 's',
+      },
+    },
   },
   pipeline: { enabled: false },
   deployment: { env: [], replicas: 1, triggers: { image: true } },

@@ -107,7 +107,7 @@ const CreateKnatifyPage: React.FunctionComponent<CreateKnatifyPageProps> = ({
         <title>{t('knative-plugin~Create Knative service')}</title>
       </Helmet>
       <PageHeading title={t('knative-plugin~Create Knative service')} />
-      <div className="co-m-pane__body">
+      <div className="co-m-pane__body" style={{ paddingBottom: 0 }}>
         {isResourcesLoaded() ? (
           <Formik
             initialValues={getInitialValuesKnatify(

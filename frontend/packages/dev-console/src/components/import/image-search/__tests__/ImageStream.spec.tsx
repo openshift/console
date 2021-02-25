@@ -102,6 +102,14 @@ describe('Imagestream', () => {
 
   it('should render imagestream tag not found alert if there are no imagestreams tags', () => {
     spyGetImageStreamTags.mockReturnValue({});
+    spyUseFormikContext.mockReturnValue({
+      ...formikFormProps,
+      values: {
+        ...internalImageValues,
+        imageStream: { image: 'python', tag: '', namespace: 'div' },
+      },
+      initialValues: internalImageValues,
+    });
     wrapper = shallow(<ImageStream />);
     expect(wrapper.find(Alert)).toHaveLength(1);
   });
