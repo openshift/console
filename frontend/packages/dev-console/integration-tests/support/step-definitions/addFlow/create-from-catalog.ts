@@ -1,4 +1,4 @@
-import { When, Then } from 'cypress-cucumber-preprocessor/steps';
+import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { addPage } from '../../pages/add-flow/add-page';
 import { addOptions } from '../../constants/add';
 import { catalogPage } from '../../pages/add-flow/catalog-page';
@@ -99,4 +99,12 @@ When('user selects {string} card from catalog page', (cardName: string) => {
 
 When('user selects {string} helm chart from catalog page', (helmChartName: string) => {
   catalogPage.selectHelmChartCard(helmChartName);
+});
+
+Given('user is at Templates page', () => {
+  catalogPage.selectCatalogType('Templates');
+});
+
+When('user selects {string} from Templates type', (templateType: string) => {
+  catalogPage.selectTemplateTypes(templateType);
 });

@@ -39,6 +39,10 @@ export enum catalogCards {
   dotnetCoreExample = '.NET Core Example',
   cakePhp = 'CakePHP + MySQL',
   nodeJs = 'Node.js',
+  nodeJsPostgreSQL = 'Node.js + PostgreSQL (Ephemeral)',
+  apacheHTTPServer = 'Apache HTTP Server',
+  nginxHTTPServer = 'Nginx HTTP server and a reverse proxy',
+  jenkins = 'Jenkins',
 }
 
 export enum catalogTypes {
