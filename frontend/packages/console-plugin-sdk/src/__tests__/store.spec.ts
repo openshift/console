@@ -10,7 +10,7 @@ import {
   augmentExtension,
   isExtensionInUse,
   getGatingFlagNames,
-  deepMergeExtensionProperties,
+  mergeExtensionProperties,
   PluginStore,
 } from '../store';
 import { Extension, ModelDefinition } from '../typings';
@@ -223,10 +223,10 @@ describe('getGatingFlagNames', () => {
   });
 });
 
-describe('deepMergeExtensionProperties', () => {
-  it('merges the given object into extension properties', () => {
+describe('mergeExtensionProperties', () => {
+  it('shallowly merges the given object into extension properties', () => {
     expect(
-      deepMergeExtensionProperties(
+      mergeExtensionProperties(
         {
           type: 'Foo/Bar',
           properties: {},
@@ -245,7 +245,7 @@ describe('deepMergeExtensionProperties', () => {
     });
 
     expect(
-      deepMergeExtensionProperties(
+      mergeExtensionProperties(
         {
           type: 'Foo/Bar',
           properties: {
@@ -262,14 +262,14 @@ describe('deepMergeExtensionProperties', () => {
       type: 'Foo/Bar',
       properties: {
         test: false,
-        qux: { foo: ['value'], baz: 2 },
+        qux: { baz: 2 },
       },
     });
   });
 
   it('returns a new extension instance', () => {
     const testExtension: Extension = { type: 'Foo/Bar', properties: {} };
-    const updatedExtension = deepMergeExtensionProperties(testExtension, {});
+    const updatedExtension = mergeExtensionProperties(testExtension, {});
 
     expect(updatedExtension).not.toBe(testExtension);
     expect(Object.isFrozen(updatedExtension)).toBe(true);
