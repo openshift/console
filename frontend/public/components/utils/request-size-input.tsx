@@ -30,14 +30,14 @@ export const RequestSizeInput: React.FC<RequestSizeInputProps> = ({
 
   const onUnitChange = (newUnit) => {
     setUnit(newUnit);
-    onChange({ value, newUnit });
+    onChange({ value, unit: newUnit });
   };
 
   const { t } = useTranslation();
   const inputName = `${name}Value`;
   const dropdownName = `${name}Unit`;
   return (
-    <div className="form-group">
+    <div>
       <div className="pf-c-input-group">
         <input
           className={classNames('pf-c-form-control', inputClassName)}

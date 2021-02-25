@@ -5,6 +5,7 @@ import { DeployImageFormData, GitImportFormData, Resources } from '../../import/
 import { AppResources } from '../edit-application-types';
 import { healthChecksProbeInitialData } from '../../health-checks/health-checks-probe-utils';
 import { healthChecksData } from '../../health-checks/__tests__/create-health-checks-probe-data';
+import { serverlessInitialValues } from '../../import/__mocks__/serverless-mock';
 
 export const knativeService: K8sResourceKind = {
   apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
@@ -508,14 +509,7 @@ export const gitImportInitialValues: GitImportFormData = {
     },
   },
   resources: Resources.OpenShift,
-  serverless: {
-    scaling: {
-      minpods: 0,
-      maxpods: '',
-      concurrencytarget: '',
-      concurrencylimit: '',
-    },
-  },
+  serverless: serverlessInitialValues,
   pipeline: { enabled: false },
   deployment: { env: [], triggers: { image: true, config: true }, replicas: 1 },
   labels: {},
@@ -589,14 +583,7 @@ export const externalImageValues: DeployImageFormData = {
     },
   },
   resources: Resources.OpenShift,
-  serverless: {
-    scaling: {
-      minpods: 0,
-      maxpods: '',
-      concurrencytarget: '',
-      concurrencylimit: '',
-    },
-  },
+  serverless: serverlessInitialValues,
   pipeline: { enabled: false },
   deployment: { env: [], triggers: { image: true, config: true }, replicas: 1 },
   labels: {},
@@ -666,14 +653,7 @@ export const internalImageValues: DeployImageFormData = {
     },
   },
   resources: Resources.OpenShift,
-  serverless: {
-    scaling: {
-      minpods: 0,
-      maxpods: '',
-      concurrencytarget: '',
-      concurrencylimit: '',
-    },
-  },
+  serverless: serverlessInitialValues,
   pipeline: { enabled: false },
   deployment: { env: [], triggers: { image: true, config: true }, replicas: 1 },
   labels: {},
@@ -795,7 +775,7 @@ export const knExternalImageValues: DeployImageFormData = {
   },
   searchTerm: 'openshift/hello-openshift',
   allowInsecureRegistry: false,
-  serverless: { scaling: { concurrencylimit: '', concurrencytarget: '', maxpods: '', minpods: 0 } },
+  serverless: serverlessInitialValues,
   healthChecks: healthChecksProbeInitialData,
 };
 

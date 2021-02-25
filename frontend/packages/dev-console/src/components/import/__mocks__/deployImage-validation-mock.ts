@@ -1,5 +1,6 @@
 import { DeployImageFormData, Resources } from '../import-types';
 import { healthChecksProbeInitialData } from '../../health-checks/health-checks-probe-utils';
+import { serverlessInitialValues } from './serverless-mock';
 
 export const mockDeployImageFormData: DeployImageFormData = {
   project: {
@@ -77,14 +78,7 @@ export const mockDeployImageFormData: DeployImageFormData = {
   },
   isSearchingForImage: false,
   resources: Resources.OpenShift,
-  serverless: {
-    scaling: {
-      minpods: 0,
-      maxpods: '',
-      concurrencytarget: '',
-      concurrencylimit: '',
-    },
-  },
+  serverless: serverlessInitialValues,
   route: {
     create: true,
     targetPort: '',

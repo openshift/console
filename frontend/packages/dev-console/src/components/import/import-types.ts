@@ -217,10 +217,12 @@ export interface ServerlessData {
 }
 
 export interface ServerlessScaling {
-  minpods: number;
+  minpods: number | '';
   maxpods: number | '';
   concurrencytarget: number | '';
   concurrencylimit: number | '';
+  autoscale: AutoscaleWindowType;
+  concurrencyutilization: number | '';
 }
 
 export enum GitTypes {
@@ -293,6 +295,12 @@ export interface ResourceType {
   limit: number | string;
   limitUnit: string;
   defaultLimitUnit: string;
+}
+
+export interface AutoscaleWindowType {
+  autoscalewindow: number | '';
+  autoscalewindowUnit: string;
+  defaultAutoscalewindowUnit: string;
 }
 
 export enum CPUUnits {

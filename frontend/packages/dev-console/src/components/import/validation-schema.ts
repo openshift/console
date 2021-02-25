@@ -13,6 +13,20 @@ const projectNameRegex = /^[a-z0-9]([-a-z0-9]*[a-z0-9])?$/;
 
 export const gitUrlRegex = /^((((ssh|git|https?:?):\/\/:?)(([^\s@]+@|[^@]:?)[-\w.]+(:\d\d+:?)?(\/[-\w.~/?[\]!$&'()*+,;=:@%]*:?)?:?))|([^\s@]+@[-\w.]+:[-\w.~/?[\]!$&'()*+,;=:@%]*?:?))$/;
 
+const convertToSec = (value: number, unit: string): number => {
+  switch (unit) {
+    case 'm': {
+      return value * 60;
+    }
+    case 'h': {
+      return value * 3600;
+    }
+    default: {
+      return value;
+    }
+  }
+};
+
 export const nameValidationSchema = yup
   .string()
   .matches(nameRegex, {
@@ -125,6 +139,27 @@ export const serverlessValidationSchema = (t: TFunction) =>
               maxSafeInteger: Number.MAX_SAFE_INTEGER,
             }),
           ),
+        concurrencyutilization: yup
+          .number()
+          .transform((cv) => (_.isNaN(cv) ? undefined : cv))
+          .min(0, t('devconsole~Concurrency utilization must be between 0 and 100.'))
+          .max(100, t('devconsole~Concurrency utilization must be between 0 and 100.')),
+        autoscale: yup.object().shape({
+          autoscalewindow: yup
+            .number()
+            .transform((cv) => (_.isNaN(cv) ? undefined : cv))
+            .test({
+              test(autoscalewindow) {
+                if (autoscalewindow) {
+                  const { autoscalewindowUnit } = this.parent;
+                  const value = convertToSec(autoscalewindow, autoscalewindowUnit);
+                  return value >= 6 && value <= 3600;
+                }
+                return true;
+              },
+              message: t('devconsole~Autoscale window must be between 6s and 1h.'),
+            }),
+        }),
       }),
     }),
   });

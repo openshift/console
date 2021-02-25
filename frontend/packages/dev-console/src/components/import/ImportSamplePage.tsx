@@ -112,10 +112,16 @@ const ImportSamplePage: React.FC<ImportSamplePageProps> = ({ match }) => {
     resources: Resources.Kubernetes,
     serverless: {
       scaling: {
-        minpods: 0,
+        minpods: '',
         maxpods: '',
         concurrencytarget: '',
         concurrencylimit: '',
+        autoscale: {
+          autoscalewindow: '',
+          autoscalewindowUnit: '',
+          defaultAutoscalewindowUnit: 's',
+        },
+        concurrencyutilization: '',
       },
     },
     pipeline: {

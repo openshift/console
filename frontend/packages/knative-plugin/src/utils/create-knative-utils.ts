@@ -36,7 +36,14 @@ export const getKnativeServiceDepResource = (
   } = formData;
   const contTargetPort = parseInt(unknownTargetPort, 10) || defaultUnknownPort;
   const imgPullPolicy = imagePolicy ? ImagePullPolicy.Always : ImagePullPolicy.IfNotPresent;
-  const { concurrencylimit, concurrencytarget, minpods, maxpods } = scaling;
+  const {
+    concurrencylimit,
+    concurrencytarget,
+    minpods,
+    maxpods,
+    autoscale: { autoscalewindow, autoscalewindowUnit },
+    concurrencyutilization,
+  } = scaling;
   const {
     cpu: {
       request: cpuRequest,
@@ -86,6 +93,12 @@ export const getKnativeServiceDepResource = (
             }),
             ...(minpods && { 'autoscaling.knative.dev/minScale': `${minpods}` }),
             ...(maxpods && { 'autoscaling.knative.dev/maxScale': `${maxpods}` }),
+            ...(autoscalewindow && {
+              'autoscaling.knative.dev/window': `${autoscalewindow}${autoscalewindowUnit}`,
+            }),
+            ...(concurrencyutilization && {
+              'autoscaling.knative.dev/targetUtilizationPercentage': `${concurrencyutilization}`,
+            }),
             ...annotations,
           },
         },
