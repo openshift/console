@@ -26,7 +26,11 @@ import {
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import { DeploymentModel, PodModel } from '@console/internal/models';
 import { RootState } from '@console/internal/redux';
-import { FLAG_KNATIVE_EVENTING, CAMEL_SOURCE_INTEGRATION } from '../const';
+import {
+  FLAG_KNATIVE_EVENTING,
+  CAMEL_SOURCE_INTEGRATION,
+  SERVERLESS_FUNCTION_LABEL,
+} from '../const';
 import { KnativeItem } from '../utils/get-knative-resources';
 import {
   KNATIVE_GROUP_NODE_HEIGHT,
@@ -1143,4 +1147,15 @@ export const createSinkPubSubConnection = (
   }
   const targetObj = getTopologyResourceObject(target);
   return createEventingPubSubSink(resources.obj, targetObj);
+};
+
+export const isServerlessFunction = (element: Node): boolean => {
+  if (!element) {
+    return false;
+  }
+
+  const {
+    metadata: { labels },
+  } = getResource(element);
+  return !!labels?.[SERVERLESS_FUNCTION_LABEL];
 };

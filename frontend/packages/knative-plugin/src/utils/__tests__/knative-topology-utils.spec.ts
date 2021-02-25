@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import * as k8s from '@console/internal/module/k8s';
+import { Node } from '@patternfly/react-topology';
 import {
   MockKnativeResources,
   getEventSourceResponse,
@@ -17,11 +18,13 @@ import {
   getSinkUriTopologyNodeItems,
   getSinkUriTopologyEdgeItems,
   isOperatorBackedKnResource,
+  isServerlessFunction,
 } from '../../topology/knative-topology-utils';
 import { EdgeType, NodeType } from '../../topology/topology-types';
 import { mockServiceData, mockRevisions } from '../__mocks__/traffic-splitting-utils-mock';
 import { EventSourceCronJobModel } from '../../models';
 import * as knativefetchutils from '../fetch-dynamic-eventsources-utils';
+import { SERVERLESS_FUNCTION_LABEL } from '../../const';
 
 describe('knative topology utils', () => {
   it('expect getKnativeServiceData to return knative resources', () => {
@@ -161,6 +164,28 @@ describe('knative topology utils', () => {
       MockKnativeResources,
     );
     expect(isOperatorbacked).toBe(false);
+  });
+
+  it('expect isServerlessFunction to return false if node is undefined', () => {
+    expect(isServerlessFunction(undefined)).toBe(false);
+  });
+
+  it('expect isServerlessFunction to return false if a node does not have necessary labels', () => {
+    const sampleKnNode: Node = ({
+      getResource: () => MockKnativeResources.ksservices.data[0],
+    } as any) as Node;
+    expect(isServerlessFunction(sampleKnNode)).toBe(false);
+  });
+
+  it('expect isServerlessFunction to return true if a node has necessary labels', () => {
+    const sampleKnResource: k8s.K8sResourceKind = {
+      ...MockKnativeResources.ksservices.data[0],
+      metadata: { labels: { [SERVERLESS_FUNCTION_LABEL]: 'true' } },
+    };
+    const sampleKnNode: Node = ({
+      getResource: () => sampleKnResource,
+    } as any) as Node;
+    expect(isServerlessFunction(sampleKnNode)).toBe(true);
   });
 });
 
