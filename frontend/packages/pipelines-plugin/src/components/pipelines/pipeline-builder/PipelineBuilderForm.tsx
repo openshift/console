@@ -3,7 +3,13 @@ import * as _ from 'lodash';
 import { FormikProps } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { Stack, StackItem } from '@patternfly/react-core';
-import { FormFooter, SyncedEditorField, YAMLEditorField, FlexForm } from '@console/shared';
+import {
+  FormFooter,
+  SyncedEditorField,
+  YAMLEditorField,
+  FlexForm,
+  FormBody,
+} from '@console/shared';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
 import { PipelineKind, TaskKind } from '../../../types';
@@ -154,17 +160,19 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
         <StackItem>
           <PipelineBuilderHeader />
         </StackItem>
-        <FlexForm className="odc-pipeline-builder-form__grid" onSubmit={handleSubmit}>
-          <SyncedEditorField
-            name="editorType"
-            formContext={{
-              name: 'formData',
-              editor: formEditor,
-              label: t('pipelines-plugin~Pipeline builder'),
-              sanitizeTo: sanitizeToForm,
-            }}
-            yamlContext={{ name: 'yamlData', editor: yamlEditor, sanitizeTo: sanitizeToYaml }}
-          />
+        <FlexForm onSubmit={handleSubmit}>
+          <FormBody flexLayout disablePaneBody className="odc-pipeline-builder-form__grid">
+            <SyncedEditorField
+              name="editorType"
+              formContext={{
+                name: 'formData',
+                editor: formEditor,
+                label: t('pipelines-plugin~Pipeline builder'),
+                sanitizeTo: sanitizeToForm,
+              }}
+              yamlContext={{ name: 'yamlData', editor: yamlEditor, sanitizeTo: sanitizeToYaml }}
+            />
+          </FormBody>
           <FormFooter
             handleReset={closeSidebarAndHandleReset}
             errorMessage={status?.submitError}

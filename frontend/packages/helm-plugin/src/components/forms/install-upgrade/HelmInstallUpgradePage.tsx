@@ -9,7 +9,6 @@ import { RouteComponentProps } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { history, LoadingBox } from '@console/internal/components/utils';
 import { coFetchJSON } from '@console/internal/co-fetch';
-import { PageBody } from '@console/shared';
 import { SecretModel } from '@console/internal/models';
 import { k8sGet } from '@console/internal/module/k8s';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
@@ -227,25 +226,23 @@ const HelmInstallUpgradePage: React.FunctionComponent<HelmInstallUpgradePageProp
       <Helmet>
         <title>{config.title}</title>
       </Helmet>
-      <PageBody flexLayout>
-        <Formik
-          initialValues={initialValues}
-          onSubmit={handleSubmit}
-          onReset={history.goBack}
-          validationSchema={getHelmActionValidationSchema(helmAction, t)}
-        >
-          {(formikProps) => (
-            <HelmInstallUpgradeForm
-              {...formikProps}
-              chartHasValues={chartHasValues}
-              chartMetaDescription={chartMetaDescription}
-              helmActionConfig={config}
-              onVersionChange={setChartData}
-              chartError={chartError}
-            />
-          )}
-        </Formik>
-      </PageBody>
+      <Formik
+        initialValues={initialValues}
+        onSubmit={handleSubmit}
+        onReset={history.goBack}
+        validationSchema={getHelmActionValidationSchema(helmAction, t)}
+      >
+        {(formikProps) => (
+          <HelmInstallUpgradeForm
+            {...formikProps}
+            chartHasValues={chartHasValues}
+            chartMetaDescription={chartMetaDescription}
+            helmActionConfig={config}
+            onVersionChange={setChartData}
+            chartError={chartError}
+          />
+        )}
+      </Formik>
     </NamespacedPage>
   );
 };

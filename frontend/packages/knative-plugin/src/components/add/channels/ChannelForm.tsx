@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { Alert } from '@patternfly/react-core';
 import { FormikProps, FormikValues, useFormikContext } from 'formik';
-import { FormFooter, FlexForm, useFormikValidationFix } from '@console/shared';
+import { FormFooter, FlexForm, useFormikValidationFix, FormBody } from '@console/shared';
 import { LoadingInline } from '@console/internal/components/utils';
 import {
   isDefaultChannel,
@@ -72,26 +72,28 @@ const ChannelForm: React.FC<FormikProps<FormikValues> & OwnProps> = ({
 
   return (
     <FlexForm onSubmit={handleSubmit}>
-      {((channels && !channels.loaded) || !defaultConfiguredChannelLoaded) && <LoadingInline />}
-      {channels &&
-        channels.loaded &&
-        defaultConfiguredChannelLoaded &&
-        !_.isEmpty(channels.channelList) && (
-          <>
-            <ChannelSelector
-              channels={channels.channelList}
-              onChange={onTypeChange}
-              defaultConfiguredChannel={defaultConfiguredChannel}
-            />
-            {channelHasFormView && <FormViewSection namespace={namespace} kind={channelKind} />}
-            {!channelHasFormView && <ChannelYamlEditor />}
-          </>
+      <FormBody flexLayout>
+        {((channels && !channels.loaded) || !defaultConfiguredChannelLoaded) && <LoadingInline />}
+        {channels &&
+          channels.loaded &&
+          defaultConfiguredChannelLoaded &&
+          !_.isEmpty(channels.channelList) && (
+            <>
+              <ChannelSelector
+                channels={channels.channelList}
+                onChange={onTypeChange}
+                defaultConfiguredChannel={defaultConfiguredChannel}
+              />
+              {channelHasFormView && <FormViewSection namespace={namespace} kind={channelKind} />}
+              {!channelHasFormView && <ChannelYamlEditor />}
+            </>
+          )}
+        {channels && channels.loaded && _.isEmpty(channels.channelList) && (
+          <Alert variant="default" title={t('knative-plugin~Channel cannot be created')} isInline>
+            {t('knative-plugin~You do not have write access in this project.')}
+          </Alert>
         )}
-      {channels && channels.loaded && _.isEmpty(channels.channelList) && (
-        <Alert variant="default" title={t('knative-plugin~Channel cannot be created')} isInline>
-          {t('knative-plugin~You do not have write access in this project.')}
-        </Alert>
-      )}
+      </FormBody>
       <FormFooter
         handleReset={handleReset}
         errorMessage={status && status.submitError}

@@ -2,9 +2,8 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { FormikProps, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { FormFooter } from '@console/shared/src/components/form-utils';
+import { FormFooter, FlexForm, FormBody } from '@console/shared/src/components/form-utils';
 import { usePreventDataLossLock } from '@console/internal/components/utils';
-import { Form } from '@patternfly/react-core';
 import { DeployImageFormProps } from './import-types';
 import ImageSearchSection from './image-search/ImageSearchSection';
 import IconSection from './section/IconSection';
@@ -26,15 +25,17 @@ const DeployImageForm: React.FC<FormikProps<FormikValues> & DeployImageFormProps
   usePreventDataLossLock(isSubmitting);
 
   return (
-    <Form className="co-deploy-image" data-test-id="deploy-image-form" onSubmit={handleSubmit}>
-      <ImageSearchSection />
-      <IconSection />
-      <AppSection
-        project={values.project}
-        noProjectsAvailable={projects.loaded && _.isEmpty(projects.data)}
-      />
-      <ResourceSection />
-      <AdvancedSection values={values} />
+    <FlexForm className="co-deploy-image" data-test-id="deploy-image-form" onSubmit={handleSubmit}>
+      <FormBody>
+        <ImageSearchSection />
+        <IconSection />
+        <AppSection
+          project={values.project}
+          noProjectsAvailable={projects.loaded && _.isEmpty(projects.data)}
+        />
+        <ResourceSection />
+        <AdvancedSection values={values} />
+      </FormBody>
       <FormFooter
         handleReset={handleReset}
         errorMessage={status && status.submitError}
@@ -44,7 +45,7 @@ const DeployImageForm: React.FC<FormikProps<FormikValues> & DeployImageFormProps
         disableSubmit={!dirty || !_.isEmpty(errors) || isSubmitting}
         resetLabel={t('devconsole~Cancel')}
       />
-    </Form>
+    </FlexForm>
   );
 };
 

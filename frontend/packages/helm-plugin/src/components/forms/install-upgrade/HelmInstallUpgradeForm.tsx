@@ -6,11 +6,12 @@ import { TextInputTypes, Grid, GridItem, Button, Alert } from '@patternfly/react
 import {
   InputField,
   FormFooter,
-  FlexForm,
+  FormBody,
   YAMLEditorField,
   DynamicFormField,
   SyncedEditorField,
   FormHeader,
+  FlexForm,
 } from '@console/shared';
 import { getJSONSchemaOrder } from '@console/shared/src/components/dynamic-form/utils';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
@@ -102,41 +103,45 @@ const HelmInstallUpgradeForm: React.FC<FormikProps<FormikValues> & HelmInstallUp
 
   return (
     <FlexForm onSubmit={handleSubmit}>
-      <FormHeader title={title} helpText={formHelpText} marginBottom="lg" />
-      {chartError && (
-        <Alert variant="danger" isInline title={t('helm-plugin~Helm Chart cannot be installed')}>
-          {t('helm-plugin~The Helm Chart is currently unavailable. {{chartError}}', { chartError })}
-        </Alert>
-      )}
-      <FormSection fullWidth>
-        <Grid hasGutter>
-          <GridItem xl={7} lg={8} md={12}>
-            <InputField
-              type={TextInputTypes.text}
-              name="releaseName"
-              label={t('helm-plugin~Release name')}
-              helpText={t('helm-plugin~A unique name for the Helm Chart release.')}
-              required
-              isDisabled={!!chartError || helmAction === HelmActionType.Upgrade}
-            />
-          </GridItem>
-          <GridItem xl={5} lg={4} md={12}>
-            <HelmChartVersionDropdown
-              chartName={chartName}
-              chartVersion={chartVersion}
-              helmAction={helmAction}
-              onVersionChange={onVersionChange}
-            />
-          </GridItem>
-        </Grid>
-      </FormSection>
-      {!chartError && (
-        <SyncedEditorField
-          name="editorType"
-          formContext={{ name: 'formData', editor: formEditor, isDisabled: !formSchema }}
-          yamlContext={{ name: 'yamlData', editor: yamlEditor }}
-        />
-      )}
+      <FormBody flexLayout>
+        <FormHeader title={title} helpText={formHelpText} marginBottom="lg" />
+        {chartError && (
+          <Alert variant="danger" isInline title={t('helm-plugin~Helm Chart cannot be installed')}>
+            {t('helm-plugin~The Helm Chart is currently unavailable. {{chartError}}', {
+              chartError,
+            })}
+          </Alert>
+        )}
+        <FormSection fullWidth>
+          <Grid hasGutter>
+            <GridItem xl={7} lg={8} md={12}>
+              <InputField
+                type={TextInputTypes.text}
+                name="releaseName"
+                label={t('helm-plugin~Release name')}
+                helpText={t('helm-plugin~A unique name for the Helm Chart release.')}
+                required
+                isDisabled={!!chartError || helmAction === HelmActionType.Upgrade}
+              />
+            </GridItem>
+            <GridItem xl={5} lg={4} md={12}>
+              <HelmChartVersionDropdown
+                chartName={chartName}
+                chartVersion={chartVersion}
+                helmAction={helmAction}
+                onVersionChange={onVersionChange}
+              />
+            </GridItem>
+          </Grid>
+        </FormSection>
+        {!chartError && (
+          <SyncedEditorField
+            name="editorType"
+            formContext={{ name: 'formData', editor: formEditor, isDisabled: !formSchema }}
+            yamlContext={{ name: 'yamlData', editor: yamlEditor }}
+          />
+        )}
+      </FormBody>
       <FormFooter
         handleReset={handleReset}
         errorMessage={status && status.submitError}

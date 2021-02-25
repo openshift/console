@@ -30,6 +30,12 @@ jest.mock('@console/shared/src/hooks/post-form-submit-action', () => {
   };
 });
 
+jest.mock('@console/shared/src/hooks/useResizeObserver', () => {
+  return {
+    useResizeObserver: () => {},
+  };
+});
+
 const i18ns = 'devconsole';
 
 describe('DeployImage Page Test', () => {
