@@ -84,7 +84,12 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
     });
   };
 
-  useResourceValidation(values.formData.tasks, values.formData.resources, updateErrors);
+  useResourceValidation(
+    values.formData.tasks,
+    values.formData.resources,
+    values.formData.workspaces,
+    updateErrors,
+  );
 
   const updateTasks = (changes: CleanupResults): void => {
     const { tasks, listTasks, errors: taskErrors } = changes;
@@ -195,6 +200,7 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
               key={selectedTask.taskIndex}
               onClose={() => setSelectedTask(null)}
               resourceList={values.formData.resources || []}
+              workspaceList={values.formData.workspaces || []}
               errorMap={status?.tasks || {}}
               onUpdateTask={(data: UpdateOperationUpdateTaskData) => {
                 updateTasks(

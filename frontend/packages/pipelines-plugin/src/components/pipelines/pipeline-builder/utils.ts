@@ -95,7 +95,7 @@ export const convertBuilderFormToPipeline = (
   namespace: string,
   existingPipeline?: PipelineKind,
 ): PipelineKind => {
-  const { name, resources, params, tasks, listTasks, ...unhandledSpec } = formValues;
+  const { name, resources, params, workspaces, tasks, listTasks, ...unhandledSpec } = formValues;
   const listIds = listTasks.map((listTask) => listTask.name);
 
   return {
@@ -112,6 +112,7 @@ export const convertBuilderFormToPipeline = (
       ...unhandledSpec,
       params: removeEmptyDefaultFromPipelineParams(params),
       resources,
+      workspaces,
       tasks: tasks.map((task) => removeEmptyDefaultParams(removeListRunAfters(task, listIds))),
     },
   };
@@ -124,7 +125,7 @@ export const convertPipelineToBuilderForm = (
 
   const {
     metadata: { name },
-    spec: { params = [], resources = [], tasks = [] },
+    spec: { params = [], resources = [], workspaces = [], tasks = [] },
   } = pipeline;
 
   return {
@@ -134,6 +135,7 @@ export const convertPipelineToBuilderForm = (
       name,
       params,
       resources,
+      workspaces,
       tasks,
       listTasks: [],
     },

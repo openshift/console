@@ -20,6 +20,7 @@ import {
   UpdateOperationUpdateTaskData,
   UpdateTaskParamData,
   UpdateTaskResourceData,
+  UpdateTaskWorkspaceData,
 } from './types';
 import { convertResourceToTask, taskParamIsRequired, hasEmptyString } from './utils';
 
@@ -131,6 +132,10 @@ const getErrors = (task: PipelineTask, resource: TaskKind): TaskErrorMap => {
   const requiredOutputResources = (resources.outputs || []).filter((r) => !r?.optional).length;
   const missingOutputResources = requiredOutputResources - taskOutputResources > 0;
 
+  const taskWorkspaces = resource.spec.workspaces;
+  const missingWorkspaces =
+    taskWorkspaces?.length > 0 && taskWorkspaces.length !== task.workspaces?.length;
+
   const errorListing: TaskErrorType[] = [];
   if (hasNonDefaultParams) {
     errorListing.push(TaskErrorType.MISSING_REQUIRED_PARAMS);
@@ -140,6 +145,9 @@ const getErrors = (task: PipelineTask, resource: TaskKind): TaskErrorMap => {
   }
   if (needsName) {
     errorListing.push(TaskErrorType.MISSING_NAME);
+  }
+  if (missingWorkspaces) {
+    errorListing.push(TaskErrorType.MISSING_WORKSPACES);
   }
 
   return { [task.name]: errorListing.length > 0 ? errorListing : null };
@@ -335,12 +343,25 @@ export const applyParamsUpdate = (
   };
 };
 
+export const applyWorkspaceUpdate = (
+  pipelineTask: PipelineTask,
+  params: UpdateTaskWorkspaceData,
+): PipelineTask => {
+  const { workspaceName, selectedWorkspace } = params;
+  const allWorkspaces = pipelineTask.workspaces || [];
+  const existingWorkspaces = allWorkspaces.filter(({ name }) => name !== workspaceName);
+  return {
+    ...pipelineTask,
+    workspaces: [...existingWorkspaces, { name: workspaceName, workspace: selectedWorkspace }],
+  };
+};
+
 const updateTask: UpdateOperationAction<UpdateOperationUpdateTaskData> = (
   tasks,
   listTasks,
   data,
 ) => {
-  const { thisPipelineTask, taskResource, newName, params, resources } = data;
+  const { thisPipelineTask, taskResource, newName, params, resources, workspaces } = data;
 
   const canRename = !!newName;
 
@@ -361,6 +382,9 @@ const updateTask: UpdateOperationAction<UpdateOperationUpdateTaskData> = (
     }
     if (params) {
       updatedResource = applyParamsUpdate(updatedResource, params);
+    }
+    if (workspaces) {
+      updatedResource = applyWorkspaceUpdate(updatedResource, workspaces);
     }
     if (canRename) {
       updatedResource = {

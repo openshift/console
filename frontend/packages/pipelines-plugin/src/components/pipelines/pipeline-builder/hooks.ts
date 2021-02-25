@@ -4,7 +4,13 @@ import { useTranslation } from 'react-i18next';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { ClusterTaskModel, TaskModel } from '../../../models';
-import { TektonResource, TaskKind, PipelineTask, PipelineTaskRef } from '../../../types';
+import {
+  TektonResource,
+  TaskKind,
+  PipelineTask,
+  PipelineTaskRef,
+  PipelineWorkspace,
+} from '../../../types';
 import { PipelineVisualizationTaskItem } from '../../../utils/pipeline-utils';
 import { AddNodeDirection } from '../pipeline-topology/const';
 import {
@@ -199,9 +205,10 @@ export const useNodes = (
 export const useResourceValidation = (
   tasks: PipelineTask[],
   resourceValues: TektonResource[],
+  workspaceValues: PipelineWorkspace[],
   onError: UpdateErrors,
 ) => {
-  const [previousErrorIds, setPreviousErrorIds] = React.useState([]);
+  const [previousErrorIds, setPreviousErrorIds] = React.useState<string[]>([]);
 
   React.useEffect(() => {
     const resourceNames = resourceValues.map((r) => r.name);
@@ -213,13 +220,25 @@ export const useResourceValidation = (
         (r) => !resourceNames.includes(r.resource),
       );
 
-      if (missingResources.length === 0) {
+      const workspaceNames = workspaceValues.map((w) => w.name);
+      const missingWorkspaces =
+        task.workspaces?.filter((w) => !workspaceNames.includes(w.workspace)) || [];
+
+      if (missingResources.length === 0 && missingWorkspaces.length === 0) {
         return acc;
+      }
+
+      const taskErrors: TaskErrorType[] = [];
+      if (missingResources.length > 0) {
+        taskErrors.push(TaskErrorType.MISSING_RESOURCES);
+      }
+      if (missingWorkspaces.length > 0) {
+        taskErrors.push(TaskErrorType.MISSING_WORKSPACES);
       }
 
       return {
         ...acc,
-        [task.name]: [TaskErrorType.MISSING_RESOURCES],
+        [task.name]: taskErrors,
       };
     }, {});
 
@@ -243,5 +262,5 @@ export const useResourceValidation = (
       }
       onError(outputErrors);
     }
-  }, [tasks, resourceValues, onError, previousErrorIds, setPreviousErrorIds]);
+  }, [tasks, resourceValues, workspaceValues, onError, previousErrorIds, setPreviousErrorIds]);
 };

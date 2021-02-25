@@ -1,5 +1,6 @@
 import { K8sResourceCommon } from '@console/internal/module/k8s';
 import { TektonParam, TektonResource } from './coreTekton';
+import { PipelineTaskWorkspace } from './pipeline';
 
 export type TaskResult = {
   name: string;
@@ -13,6 +14,7 @@ export type TaskKind = K8sResourceCommon & {
       inputs?: TektonResource[];
       outputs?: TektonResource[];
     };
+    workspaces?: PipelineTaskWorkspace[];
 
     steps: {
       // TODO: Figure out required fields

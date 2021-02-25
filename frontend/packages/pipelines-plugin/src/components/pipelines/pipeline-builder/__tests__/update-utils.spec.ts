@@ -1,6 +1,6 @@
 import { PipelineTask } from '../../../../types';
-import { applyParamsUpdate } from '../update-utils';
-import { UpdateTaskParamData } from '../types';
+import { applyParamsUpdate, applyWorkspaceUpdate } from '../update-utils';
+import { UpdateTaskParamData, UpdateTaskWorkspaceData } from '../types';
 
 describe('applyParamsUpdate', () => {
   it('change an existing task param', () => {
@@ -79,6 +79,63 @@ describe('applyParamsUpdate', () => {
         name: 'task',
       },
       params: [{ name: 'NEW_TASK_PARAM', value: 'new value' }],
+    });
+  });
+});
+
+describe('applyWorkspaceUpdate', () => {
+  it('changes an existing task workspace', () => {
+    const inputTask: PipelineTask = {
+      name: 'pipeline-task',
+      taskRef: {
+        name: 'task',
+      },
+      workspaces: [
+        { name: 'EXISTING_TASK_WORKSPACE', workspace: 'workspace-01' },
+        { name: 'ANOTHER_EXISTING_TASK_WORKSPACE', workspace: 'workspace-02' },
+      ],
+    };
+    const workspaceData: UpdateTaskWorkspaceData = {
+      workspaceName: 'ANOTHER_EXISTING_TASK_WORKSPACE',
+      selectedWorkspace: 'workspace-03',
+    };
+    const updatedTask = applyWorkspaceUpdate(inputTask, workspaceData);
+    expect(updatedTask).not.toBe(inputTask);
+    expect(updatedTask).toEqual({
+      name: 'pipeline-task',
+      taskRef: {
+        name: 'task',
+      },
+      workspaces: [
+        { name: 'EXISTING_TASK_WORKSPACE', workspace: 'workspace-01' },
+        { name: 'ANOTHER_EXISTING_TASK_WORKSPACE', workspace: 'workspace-03' },
+      ],
+    });
+  });
+
+  it('adds a new task workspace', () => {
+    const inputTask: PipelineTask = {
+      name: 'pipeline-task',
+      taskRef: {
+        name: 'task',
+      },
+      workspaces: [{ name: 'EXISTING_TASK_WORKSPACE', workspace: 'workspace-01' }],
+    };
+    const workspaceData: UpdateTaskWorkspaceData = {
+      workspaceName: 'ANOTHER_EXISTING_TASK_WORKSPACE',
+      selectedWorkspace: 'workspace-02',
+    };
+    const updatedTask = applyWorkspaceUpdate(inputTask, workspaceData);
+    expect(updatedTask).not.toBe(inputTask);
+    expect(updatedTask).toEqual({
+      name: 'pipeline-task',
+      taskRef: {
+        name: 'task',
+      },
+      workspaces: [
+        { name: 'EXISTING_TASK_WORKSPACE', workspace: 'workspace-01' },
+        { name: 'ANOTHER_EXISTING_TASK_WORKSPACE', workspace: 'workspace-02' },
+      ],
     });
   });
 });

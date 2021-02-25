@@ -1,6 +1,12 @@
 import { FormikValues } from 'formik';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
-import { PipelineTask, TektonParam, TektonResource, TaskKind } from '../../../types';
+import {
+  PipelineTask,
+  TektonParam,
+  TektonResource,
+  PipelineWorkspace,
+  TaskKind,
+} from '../../../types';
 import { PipelineVisualizationTaskItem } from '../../../utils/pipeline-utils';
 import { AddNodeDirection } from '../pipeline-topology/const';
 // eslint-disable-next-line import/no-cycle
@@ -25,6 +31,7 @@ export type PipelineBuilderFormValues = PipelineBuilderTaskGrouping & {
   name: string;
   params: TektonParam[];
   resources: TektonResource[];
+  workspaces: PipelineWorkspace[];
 };
 
 export type PipelineBuilderFormYamlValues = {
@@ -88,6 +95,10 @@ export type UpdateTaskResourceData = {
   selectedPipelineResource: TektonResource;
   taskResourceName: string;
 };
+export type UpdateTaskWorkspaceData = {
+  workspaceName: string;
+  selectedWorkspace: string;
+};
 export type UpdateTaskParamData = {
   newValue: string;
   taskParamName: string;
@@ -101,6 +112,7 @@ export type UpdateOperationUpdateTaskData = UpdateOperationBaseData & {
   newName?: string;
   params?: UpdateTaskParamData;
   resources?: UpdateTaskResourceData;
+  workspaces?: UpdateTaskWorkspaceData;
 };
 
 export type CleanupResults = {
