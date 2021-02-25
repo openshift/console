@@ -2,13 +2,12 @@ import * as React from 'react';
 import { useFormikContext, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { RadioGroupField } from '@console/shared';
-import { isKnatifyForm } from '@console/knative-plugin/src/utils/knatify-utils';
 import FormSection from '../section/FormSection';
 import { imageRegistryType } from '../../../utils/imagestream-utils';
 import ImageStream from './ImageStream';
 import ImageSearch from './ImageSearch';
 
-const ImageSearchSection: React.FC = () => {
+const ImageSearchSection: React.FC<{ disabled?: boolean }> = ({ disabled = false }) => {
   const { t } = useTranslation();
   const { values, setFieldValue, initialValues } = useFormikContext<FormikValues>();
   const [registry, setRegistry] = React.useState(values.registry);
@@ -39,18 +38,14 @@ const ImageSearchSection: React.FC = () => {
           {
             label: imageRegistryType(t).External.label,
             value: imageRegistryType(t).External.value,
-            isDisabled:
-              (values.formType === 'edit' || isKnatifyForm(values.formType)) &&
-              values.registry === 'internal',
+            isDisabled: (values.formType === 'edit' && values.registry === 'internal') || disabled,
             activeChildren: <ImageSearch />,
           },
           {
             label: imageRegistryType(t).Internal.label,
             value: imageRegistryType(t).Internal.value,
-            isDisabled:
-              (values.formType === 'edit' || isKnatifyForm(values.formType)) &&
-              values.registry === 'external',
-            activeChildren: <ImageStream />,
+            isDisabled: (values.formType === 'edit' && values.registry === 'external') || disabled,
+            activeChildren: <ImageStream disabled />,
           },
         ]}
       />

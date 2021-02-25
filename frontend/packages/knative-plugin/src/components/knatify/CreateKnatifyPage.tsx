@@ -16,7 +16,6 @@ import {
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
-import DeployImageForm from '@console/dev-console/src/components/import/DeployImageForm';
 import { handleRedirect } from '@console/dev-console/src/components/import/import-submit-utils';
 import { DeployImageFormData } from '@console/dev-console/src/components/import/import-types';
 import { deployValidationSchema } from '@console/dev-console/src/components/import/deployImage-validation-utils';
@@ -25,6 +24,7 @@ import {
   knatifyResources,
   getKnatifyWorkloadData,
 } from '../../utils/knatify-utils';
+import KnatifyForm from './KnatifyForm';
 
 type watchResource = {
   [key: string]: K8sResourceKind[] | K8sResourceKind;
@@ -121,7 +121,7 @@ const CreateKnatifyPage: React.FunctionComponent<CreateKnatifyPageProps> = ({
             onReset={history.goBack}
           >
             {(formikProps) => (
-              <DeployImageForm
+              <KnatifyForm
                 {...formikProps}
                 projects={(resources?.projects as WatchK8sResultsObject<K8sResourceKind[]>) ?? {}}
               />

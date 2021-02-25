@@ -4,17 +4,16 @@ import { useTranslation } from 'react-i18next';
 import { useFormikContext, FormikValues } from 'formik';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { ResourceDropdownField } from '@console/shared';
-import { isKnatifyForm } from '@console/knative-plugin/src/utils/knatify-utils';
 import { getImageStreamResource } from '../../../utils/imagestream-utils';
 import { ImageStreamActions } from '../import-types';
 import { ImageStreamContext } from './ImageStreamContext';
 
-const ImageStreamDropdown: React.FC = () => {
+const ImageStreamDropdown: React.FC<{ disabled?: boolean }> = ({ disabled = false }) => {
   const { t } = useTranslation();
   const imgCollection = {};
 
   const {
-    values: { imageStream, formType },
+    values: { imageStream },
     setFieldValue,
     initialValues,
   } = useFormikContext<FormikValues>();
@@ -90,7 +89,7 @@ const ImageStreamDropdown: React.FC = () => {
       fullWidth
       required
       title={imageStream.image || getTitle()}
-      disabled={!isStreamsAvailable || (isKnatifyForm(formType) && isStreamsAvailable)}
+      disabled={!isStreamsAvailable || disabled}
       onChange={onDropdownChange}
       onLoad={onLoad}
       resourceFilter={resourceFilter}

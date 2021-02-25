@@ -8,7 +8,6 @@ import { DropdownField } from '@console/shared';
 import { k8sGet, K8sResourceKind, ContainerPort } from '@console/internal/module/k8s';
 import { ImageStreamTagModel } from '@console/internal/models';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
-import { isKnatifyForm } from '@console/knative-plugin/src/utils/knatify-utils';
 import {
   getImageStreamTags,
   getPorts,
@@ -18,7 +17,7 @@ import {
 } from '../../../utils/imagestream-utils';
 import { ImageStreamContext } from './ImageStreamContext';
 
-const ImageStreamTagDropdown: React.FC = () => {
+const ImageStreamTagDropdown: React.FC<{ disabled?: boolean }> = ({ disabled = false }) => {
   const { t } = useTranslation();
   let imageStreamTagList = {};
   const {
@@ -133,9 +132,7 @@ const ImageStreamTagDropdown: React.FC = () => {
           ? t('devconsole~No tag')
           : t('devconsole~Select tag'))
       }
-      disabled={
-        !isImageStreamSelected || !isTagsAvailable || (isKnatifyForm(formType) && isTagsAvailable)
-      }
+      disabled={!isImageStreamSelected || !isTagsAvailable || disabled}
       fullWidth
       required
       onChange={(tag) => {

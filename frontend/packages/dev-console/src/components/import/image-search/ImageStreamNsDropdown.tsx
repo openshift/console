@@ -2,12 +2,11 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFormikContext, FormikValues } from 'formik';
 import { ResourceDropdownField } from '@console/shared';
-import { isKnatifyForm } from '@console/knative-plugin/src/utils/knatify-utils';
 import { getProjectResource, BuilderImagesNamespace } from '../../../utils/imagestream-utils';
 import { ImageStreamActions as Action } from '../import-types';
 import { ImageStreamContext } from './ImageStreamContext';
 
-const ImageStreamNsDropdown: React.FC = () => {
+const ImageStreamNsDropdown: React.FC<{ disabled?: boolean }> = ({ disabled = false }) => {
   const { t } = useTranslation();
   const { values, setFieldValue, initialValues } = useFormikContext<FormikValues>();
   const { dispatch } = React.useContext(ImageStreamContext);
@@ -58,7 +57,7 @@ const ImageStreamNsDropdown: React.FC = () => {
       dataSelector={['metadata', 'name']}
       onChange={onDropdownChange}
       appendItems={{ openshift: BuilderImagesNamespace.Openshift }}
-      disabled={isKnatifyForm(values.formType) && values.imageStream.namespace}
+      disabled={disabled}
     />
   );
 };

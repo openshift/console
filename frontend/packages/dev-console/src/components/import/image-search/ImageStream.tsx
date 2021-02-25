@@ -44,7 +44,7 @@ export const ImageStreamReducer = (state: ImageStreamState, action: ImageStreamA
   }
 };
 
-const ImageStream: React.FC = () => {
+const ImageStream: React.FC<{ disabled?: boolean }> = ({ disabled = false }) => {
   const { t } = useTranslation();
   const {
     values: { imageStream, project, registry, isi },
@@ -84,14 +84,14 @@ const ImageStream: React.FC = () => {
         >
           <div className="row">
             <div className="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-              <ImageStreamNsDropdown />
+              <ImageStreamNsDropdown disabled={disabled} />
             </div>
             <div className="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-              <ImageStreamDropdown />
+              <ImageStreamDropdown disabled={disabled} />
               <div className="odc-imagestream-separator">/</div>
             </div>
             <div className="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-              <ImageStreamTagDropdown />
+              <ImageStreamTagDropdown disabled={disabled} />
               <div className="odc-imagestream-separator">:</div>
             </div>
           </div>

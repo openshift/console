@@ -181,5 +181,3 @@ export const getInitialValuesKnatify = (
     ...(!isInternalImageValid && externalImageValues),
   };
 };
-
-export const isKnatifyForm = (formType: string): boolean => formType === knatify;

@@ -2,17 +2,16 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { FormikProps, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { Form } from '@patternfly/react-core';
 import { FormFooter } from '@console/shared/src/components/form-utils';
 import { usePreventDataLossLock } from '@console/internal/components/utils';
-import { Form } from '@patternfly/react-core';
-import { DeployImageFormProps } from './import-types';
-import ImageSearchSection from './image-search/ImageSearchSection';
-import IconSection from './section/IconSection';
-import AppSection from './app/AppSection';
-import AdvancedSection from './advanced/AdvancedSection';
-import ResourceSection from './section/ResourceSection';
+import { DeployImageFormProps } from '@console/dev-console/src/components/import/import-types';
+import ImageSearchSection from '@console/dev-console/src/components/import/image-search/ImageSearchSection';
+import IconSection from '@console/dev-console/src/components/import/section/IconSection';
+import AppSection from '@console/dev-console/src/components/import/app/AppSection';
+import AdvancedSection from '@console/dev-console/src/components/import/advanced/AdvancedSection';
 
-const DeployImageForm: React.FC<FormikProps<FormikValues> & DeployImageFormProps> = ({
+const KnatifyForm: React.FC<FormikProps<FormikValues> & DeployImageFormProps> = ({
   values,
   errors,
   handleSubmit,
@@ -26,26 +25,25 @@ const DeployImageForm: React.FC<FormikProps<FormikValues> & DeployImageFormProps
   usePreventDataLossLock(isSubmitting);
 
   return (
-    <Form className="co-deploy-image" data-test-id="deploy-image-form" onSubmit={handleSubmit}>
-      <ImageSearchSection />
+    <Form className="co-deploy-image" data-test-id="knatify-form" onSubmit={handleSubmit}>
+      <ImageSearchSection disabled />
       <IconSection />
       <AppSection
         project={values.project}
         noProjectsAvailable={projects.loaded && _.isEmpty(projects.data)}
       />
-      <ResourceSection />
       <AdvancedSection values={values} />
       <FormFooter
         handleReset={handleReset}
         errorMessage={status && status.submitError}
         isSubmitting={isSubmitting}
-        submitLabel={t('devconsole~Create')}
+        submitLabel={t('knative-plugin~Create')}
         sticky
         disableSubmit={!dirty || !_.isEmpty(errors) || isSubmitting}
-        resetLabel={t('devconsole~Cancel')}
+        resetLabel={t('knative-plugin~Cancel')}
       />
     </Form>
   );
 };
 
-export default DeployImageForm;
+export default KnatifyForm;

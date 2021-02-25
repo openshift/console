@@ -1,6 +1,5 @@
 import {
   getKnatifyWorkloadData,
-  isKnatifyForm,
   getCommonInitialValues,
   getInitialValuesKnatify,
 } from '../knatify-utils';
@@ -14,14 +13,6 @@ import { deploymentData } from './knative-serving-data';
 describe('knatify-utils', () => {
   it('getKnatifyWorkloadData should return valid knative service spec', () => {
     expect(getKnatifyWorkloadData(deploymentData)).toEqual(ksvcData);
-  });
-
-  it('isKnatifyForm should return true if formType is knatify', () => {
-    expect(isKnatifyForm('knatify')).toBe(true);
-  });
-
-  it('isKnatifyForm should return false if formType is edit', () => {
-    expect(isKnatifyForm('edit')).toBe(false);
   });
 
   it('getCommonInitialValues should return valid formik common initial values', () => {
