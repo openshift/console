@@ -1,19 +1,21 @@
 import * as React from 'react';
 import { CatalogItem } from '@console/plugin-sdk';
-import QuickSearchBar from './QuickSearchBar';
-import QuickSearchContent from './QuickSearchContent';
-import './QuickSearchButton.scss';
 import {
-  getQueryArgument,
   history,
+  getQueryArgument,
   removeQueryArgument,
   setQueryArgument,
 } from '@console/internal/components/utils';
+import QuickSearchBar from './QuickSearchBar';
+import QuickSearchContent from './QuickSearchContent';
+import './QuickSearchButton.scss';
+
 import './QuickSearchModalBody.scss';
+import { CatalogLinkData, QuickSearchData } from './utils/quick-search-types';
 
 interface QuickSearchModalBodyProps {
   allCatalogItemsLoaded: boolean;
-  searchCatalog: (query: string) => CatalogItem[];
+  searchCatalog: (searchTerm: string) => QuickSearchData;
   namespace: string;
   closeModal: () => void;
 }
@@ -30,13 +32,18 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
   );
   const [selectedItemId, setSelectedItemId] = React.useState<string>('');
   const [selectedItem, setSelectedItem] = React.useState<CatalogItem>(null);
+  const [viewAll, setViewAll] = React.useState<CatalogLinkData[]>(null);
   const listCatalogItems = catalogItems?.slice(0, 5);
   const ref = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
-    searchTerm && allCatalogItemsLoaded && setCatalogItems(searchCatalog(searchTerm));
+    if (searchTerm) {
+      const { filteredItems, viewAllLinks } = searchCatalog(searchTerm);
+      setCatalogItems(filteredItems);
+      setViewAll(viewAllLinks);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allCatalogItemsLoaded, searchCatalog]);
+  }, [searchCatalog]);
 
   React.useEffect(() => {
     if (catalogItems && !selectedItemId) {
@@ -49,7 +56,9 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
     (value: string) => {
       setSearchTerm(value);
       if (value) {
-        setCatalogItems(searchCatalog(value));
+        const { filteredItems, viewAllLinks } = searchCatalog(value);
+        setCatalogItems(filteredItems);
+        setViewAll(viewAllLinks);
         setQueryArgument('catalogSearch', value);
       } else {
         setCatalogItems(null);
@@ -77,14 +86,11 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
   );
 
   const onEnter = React.useCallback(() => {
-    const viewAllLink = document.getElementById('viewAll');
-    const { activeElement } = document;
-    if (activeElement === viewAllLink) {
-      history.push(`/catalog/ns/${namespace}?keyword=${searchTerm}`);
-    } else if (selectedItem) {
-      history.push(selectedItem.cta.href);
+    if (selectedItem) {
+      const { href, callback } = selectedItem.cta;
+      callback ? callback() : history.push(href);
     }
-  }, [selectedItem, namespace, searchTerm]);
+  }, [selectedItem]);
 
   const selectPrevious = React.useCallback(() => {
     let index = getIndexOfSelectedItem();
@@ -139,12 +145,16 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
     };
   }, [closeModal, onCancel, onEnter, selectNext, selectPrevious]);
 
+  const getModalHeight = () => {
+    let height: number = 60;
+    if (catalogItems?.length > 0) {
+      height += 388 + (viewAll?.length - 1) * 23;
+    }
+    return height;
+  };
+
   return (
-    <div
-      ref={ref}
-      className="odc-quick-search-modal-body"
-      style={{ height: catalogItems?.length > 0 ? 460 : 60 }}
-    >
+    <div ref={ref} className="odc-quick-search-modal-body" style={{ height: getModalHeight() }}>
       <QuickSearchBar
         searchTerm={searchTerm}
         onSearch={onSearch}
@@ -155,6 +165,7 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
       {catalogItems && selectedItem && (
         <QuickSearchContent
           catalogItems={catalogItems}
+          viewAll={viewAll}
           searchTerm={searchTerm}
           selectedItemId={selectedItemId}
           selectedItem={selectedItem}

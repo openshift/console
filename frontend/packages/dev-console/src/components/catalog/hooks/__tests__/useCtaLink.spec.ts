@@ -10,6 +10,13 @@ describe('UseCtaLink', () => {
     expect(useCtaLink(null)).toEqual([null, null]);
   });
 
+  it('should return href as null and label if there is no href in cta', () => {
+    const mockCta = {
+      label: 'Example CTA',
+    };
+    expect(useCtaLink(mockCta)).toEqual([null, mockCta.label]);
+  });
+
   it('should return link and label if there is cta', () => {
     const mockCta = {
       href: '/search?query=git',

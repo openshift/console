@@ -5,6 +5,7 @@ export type QuickStart = {
   kind: string;
   metadata: {
     name: string;
+    uid?: string;
   };
   spec: QuickStartSpec;
 };

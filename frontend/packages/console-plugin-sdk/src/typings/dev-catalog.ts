@@ -87,7 +87,8 @@ export type CatalogItem<T extends any = any> = {
   };
   cta?: {
     label: string;
-    href: string;
+    href?: string;
+    callback?: () => void;
   };
   icon?: {
     url?: string;
