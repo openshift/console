@@ -311,6 +311,7 @@ const PodTableRow = connect<PodTableRowPropsFromState, null, PodTableRowProps>(p
     style,
     metrics,
     showNodes,
+    showNamespaceOverride,
   }: PodTableRowProps & PodTableRowPropsFromState) => {
     const [tableColumns, , loaded] = useUserSettingsCompatibility(
       COLUMN_MANAGEMENT_CONFIGMAP_KEY,
@@ -337,6 +338,7 @@ const PodTableRow = connect<PodTableRowPropsFromState, null, PodTableRowProps>(p
           className={classNames(podColumnInfo.namespace.classes, 'co-break-word')}
           columns={columns}
           columnID={podColumnInfo.namespace.id}
+          showNamespaceOverride={showNamespaceOverride}
         >
           <ResourceLink kind="Namespace" name={namespace} />
         </TableData>
@@ -791,7 +793,7 @@ export const PodsDetailsPage: React.FC<PodDetailsPageProps> = (props) => {
 };
 PodsDetailsPage.displayName = 'PodsDetailsPage';
 
-const getRow = (showNodes) => {
+const getRow = (showNodes, showNamespaceOverride) => {
   return (rowArgs: RowFunctionArgs<PodKind>) => (
     <PodTableRow
       obj={rowArgs.obj}
@@ -799,6 +801,7 @@ const getRow = (showNodes) => {
       rowKey={rowArgs.key}
       style={rowArgs.style}
       showNodes={showNodes}
+      showNamespaceOverride={showNamespaceOverride}
     />
   );
 };
@@ -813,6 +816,7 @@ export const PodList: React.FC<PodListProps> = withUserSettingsCompatibility<
   true,
 )(({ userSettingState: tableColumns, ...props }) => {
   const showNodes = props?.customData?.showNodes;
+  const showNamespaceOverride = props?.customData?.showNamespaceOverride;
   const { t } = useTranslation();
   const selectedColumns: Set<string> =
     tableColumns?.[columnManagementID]?.length > 0
@@ -823,9 +827,10 @@ export const PodList: React.FC<PodListProps> = withUserSettingsCompatibility<
       {...props}
       activeColumns={selectedColumns}
       columnManagementID={columnManagementID}
+      showNamespaceOverride={showNamespaceOverride}
       aria-label={t('public~Pods')}
       Header={getHeader(showNodes)}
-      Row={getRow(showNodes)}
+      Row={getRow(showNodes, showNamespaceOverride)}
       virtualize
     />
   );
@@ -920,6 +925,7 @@ export const PodsPage = connect<{}, PodPagePropsFromDispatch, PodPageProps>(
               tableColumns?.[columnManagementID]?.length > 0
                 ? new Set(tableColumns[columnManagementID])
                 : null,
+            showNamespaceOverride: props?.customData?.showNamespaceOverride,
             type: t('public~Pod'),
           }}
         />
@@ -977,6 +983,7 @@ type PodTableRowProps = {
   rowKey: string;
   style: object;
   showNodes?: boolean;
+  showNamespaceOverride?: boolean;
 };
 
 type PodTableRowPropsFromState = {

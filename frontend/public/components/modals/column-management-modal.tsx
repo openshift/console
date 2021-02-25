@@ -118,7 +118,8 @@ export const ColumnManagementModal: React.FC<ColumnManagementModalProps &
             title={t('modal~You can select up to {{MAX_VIEW_COLS}} columns', { MAX_VIEW_COLS })}
             variant="info"
           >
-            {t('modal~The namespace column is only shown when in "All projects"')}
+            {!columnLayout?.showNamespaceOverride &&
+              t('modal~The namespace column is only shown when in "All projects"')}
           </Alert>
         </div>
         <div className="row co-m-form-row">
@@ -206,6 +207,7 @@ export type ColumnLayout = {
   id: string;
   columns: ManagedColumn[];
   selectedColumns: Set<string>;
+  showNamespaceOverride?: boolean;
   type: string;
 };
 
