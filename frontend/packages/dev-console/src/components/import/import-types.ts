@@ -1,6 +1,7 @@
 import { ValidatedOptions } from '@patternfly/react-core';
 import { K8sResourceKind, ContainerPort } from '@console/internal/module/k8s';
 import { DeploymentModel, DeploymentConfigModel } from '@console/internal/models';
+import { WatchK8sResultsObject } from '@console/internal/components/utils/k8s-watch-hook';
 import { LazyLoader } from '@console/plugin-sdk';
 import { NameValuePair, NameValueFromPair } from '@console/shared';
 import { ServiceModel } from '@console/knative-plugin/src/models';
@@ -10,7 +11,7 @@ import { HealthCheckProbe } from '../health-checks/health-checks-types';
 
 export interface DeployImageFormProps {
   builderImages?: NormalizedBuilderImages;
-  projects?: FirehoseList;
+  projects?: FirehoseList | WatchK8sResultsObject<K8sResourceKind[]>;
 }
 export type ImageStreamPayload = boolean | K8sResourceKind;
 
@@ -178,10 +179,10 @@ export interface RouteData {
   targetPort: string;
   unknownTargetPort?: string;
   defaultUnknownPort?: number;
-  path: string;
-  hostname: string;
-  secure: boolean;
-  tls: TLSData;
+  path?: string;
+  hostname?: string;
+  secure?: boolean;
+  tls?: TLSData;
 }
 
 export interface TLSData {

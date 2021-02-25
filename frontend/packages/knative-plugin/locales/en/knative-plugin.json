@@ -5,6 +5,7 @@
   "Add Trigger": "Add Trigger",
   "Delete Revision": "Delete Revision",
   "Edit URI": "Edit URI",
+  "Create Knative service": "Create Knative service",
   "Move {{kind}}": "Move {{kind}}",
   "Move sink": "Move sink",
   "Set traffic distribution": "Set traffic distribution",

@@ -17,7 +17,7 @@ import {
 } from '../../../utils/imagestream-utils';
 import { ImageStreamContext } from './ImageStreamContext';
 
-const ImageStreamTagDropdown: React.FC = () => {
+const ImageStreamTagDropdown: React.FC<{ disabled?: boolean }> = ({ disabled = false }) => {
   const { t } = useTranslation();
   let imageStreamTagList = {};
   const {
@@ -132,7 +132,7 @@ const ImageStreamTagDropdown: React.FC = () => {
           ? t('devconsole~No tag')
           : t('devconsole~Select tag'))
       }
-      disabled={!isImageStreamSelected || !isTagsAvailable}
+      disabled={!isImageStreamSelected || !isTagsAvailable || disabled}
       fullWidth
       required
       onChange={(tag) => {

@@ -7,7 +7,7 @@ import { imageRegistryType } from '../../../utils/imagestream-utils';
 import ImageStream from './ImageStream';
 import ImageSearch from './ImageSearch';
 
-const ImageSearchSection: React.FC = () => {
+const ImageSearchSection: React.FC<{ disabled?: boolean }> = ({ disabled = false }) => {
   const { t } = useTranslation();
   const { values, setFieldValue, initialValues } = useFormikContext<FormikValues>();
   const [registry, setRegistry] = React.useState(values.registry);
@@ -38,14 +38,14 @@ const ImageSearchSection: React.FC = () => {
           {
             label: imageRegistryType(t).External.label,
             value: imageRegistryType(t).External.value,
-            isDisabled: values.formType === 'edit' && values.registry === 'internal',
+            isDisabled: (values.formType === 'edit' && values.registry === 'internal') || disabled,
             activeChildren: <ImageSearch />,
           },
           {
             label: imageRegistryType(t).Internal.label,
             value: imageRegistryType(t).Internal.value,
-            isDisabled: values.formType === 'edit' && values.registry === 'external',
-            activeChildren: <ImageStream />,
+            isDisabled: (values.formType === 'edit' && values.registry === 'external') || disabled,
+            activeChildren: <ImageStream disabled={disabled} />,
           },
         ]}
       />

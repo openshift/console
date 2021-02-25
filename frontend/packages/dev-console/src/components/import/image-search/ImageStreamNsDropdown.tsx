@@ -6,7 +6,7 @@ import { getProjectResource, BuilderImagesNamespace } from '../../../utils/image
 import { ImageStreamActions as Action } from '../import-types';
 import { ImageStreamContext } from './ImageStreamContext';
 
-const ImageStreamNsDropdown: React.FC = () => {
+const ImageStreamNsDropdown: React.FC<{ disabled?: boolean }> = ({ disabled = false }) => {
   const { t } = useTranslation();
   const { values, setFieldValue, initialValues } = useFormikContext<FormikValues>();
   const { dispatch } = React.useContext(ImageStreamContext);
@@ -57,6 +57,7 @@ const ImageStreamNsDropdown: React.FC = () => {
       dataSelector={['metadata', 'name']}
       onChange={onDropdownChange}
       appendItems={{ openshift: BuilderImagesNamespace.Openshift }}
+      disabled={disabled}
     />
   );
 };

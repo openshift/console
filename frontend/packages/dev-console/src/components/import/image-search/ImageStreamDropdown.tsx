@@ -8,7 +8,7 @@ import { getImageStreamResource } from '../../../utils/imagestream-utils';
 import { ImageStreamActions } from '../import-types';
 import { ImageStreamContext } from './ImageStreamContext';
 
-const ImageStreamDropdown: React.FC = () => {
+const ImageStreamDropdown: React.FC<{ disabled?: boolean }> = ({ disabled = false }) => {
   const { t } = useTranslation();
   const imgCollection = {};
 
@@ -89,7 +89,7 @@ const ImageStreamDropdown: React.FC = () => {
       fullWidth
       required
       title={imageStream.image || getTitle()}
-      disabled={!isStreamsAvailable}
+      disabled={!isStreamsAvailable || disabled}
       onChange={onDropdownChange}
       onLoad={onLoad}
       resourceFilter={resourceFilter}
