@@ -131,7 +131,7 @@ export const getDynamicExtensions = (
 
   const codeRefValidationResult = new ValidationResult(extensionsFilePath);
   const source = JSON.stringify(
-    ext.data,
+    ext,
     (key, value) =>
       isEncodedCodeRef(value)
         ? `%${codeRefTransformer(

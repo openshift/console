@@ -13,9 +13,4 @@ export type SupportedExtension =
 /**
  * Schema of Console plugin's `console-extensions.json` file.
  */
-export type ConsoleExtensionsJSON = {
-  /** Reference to JSON schema. */
-  $schema?: string;
-  /** List of extensions contributed by the plugin. */
-  data: SupportedExtension[];
-};
+export type ConsoleExtensionsJSON = SupportedExtension[];
