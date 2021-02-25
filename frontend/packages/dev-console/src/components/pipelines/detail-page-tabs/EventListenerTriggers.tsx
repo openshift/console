@@ -16,11 +16,15 @@ interface EventListenerTriggersProps {
 }
 
 const EventListenerTriggers: React.FC<EventListenerTriggersProps> = ({ namespace, triggers }) => {
+  const triggerTemplates = triggers.filter((tr) => tr.template?.name);
+  if (triggerTemplates.length === 0) {
+    return null;
+  }
   return (
     <dl>
       <dt>Triggers</dt>
       <dd>
-        {triggers.map((trigger) => {
+        {triggerTemplates.map((trigger) => {
           const triggerTemplateKind = referenceForModel(TriggerTemplateModel);
           const triggerTemplateName = trigger.template.name;
           const bindings: ResourceModelLink[] = getEventListenerTriggerBindingNames(

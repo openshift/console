@@ -9,6 +9,7 @@ export interface EventListenerDetailsProps {
 }
 
 const EventListenerDetails: React.FC<EventListenerDetailsProps> = ({ obj: eventListener }) => {
+  const triggers = eventListener.spec.triggers?.filter((trigger) => trigger.template?.name) || [];
   return (
     <div className="co-m-pane__body">
       <SectionHeading text="Event Listener Details" />
@@ -21,10 +22,12 @@ const EventListenerDetails: React.FC<EventListenerDetailsProps> = ({ obj: eventL
             eventListener={eventListener}
             namespace={eventListener.metadata.namespace}
           />
-          <EventListenerTriggers
-            namespace={eventListener.metadata.namespace}
-            triggers={eventListener.spec.triggers}
-          />
+          {triggers.length > 0 && (
+            <EventListenerTriggers
+              namespace={eventListener.metadata.namespace}
+              triggers={triggers}
+            />
+          )}
         </div>
       </div>
     </div>
