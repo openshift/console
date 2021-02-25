@@ -6,7 +6,7 @@ import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '.
 import { NumberSpinner, withHandlePromise, HandlePromiseProps } from '../utils';
 
 export const ConfigureCountModal = withHandlePromise((props: ConfigureCountModalProps) => {
-  const { defaultValue, path, resource, resourceKind, handlePromise, close } = props;
+  const { defaultValue, path, resource, resourceKind, opts, handlePromise, close } = props;
   const getPath = path.substring(1).replace('/', '.');
   const [value, setValue] = React.useState<number>(_.get(resource, getPath) || defaultValue);
 
@@ -19,7 +19,7 @@ export const ConfigureCountModal = withHandlePromise((props: ConfigureCountModal
 
     invalidateState(true, _.toInteger(value));
     handlePromise(
-      k8sPatch(resourceKind, resource, patch),
+      k8sPatch(resourceKind, resource, patch, opts),
       () => close(),
       (error) => {
         invalidateState(false);
@@ -65,6 +65,7 @@ export const configureReplicaCountModal = (props) => {
         message: `${props.resourceKind.labelPlural} maintain the desired number of healthy pods.`,
         path: '/spec/replicas',
         buttonText: 'Save',
+        opts: { path: 'scale' },
       },
       props,
     ),
@@ -95,6 +96,7 @@ export type ConfigureCountModalProps = {
   resource: K8sResourceKind;
   resourceKind: K8sKind;
   title: string;
+  opts?: { [key: string]: any };
   invalidateState?: (isInvalid: boolean, count?: number) => void;
   inProgress: boolean;
   errorMessage: string;

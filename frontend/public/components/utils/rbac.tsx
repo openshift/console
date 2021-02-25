@@ -160,6 +160,7 @@ export const asAccessReview = (
   kindObj: K8sKind,
   obj: K8sResourceKind,
   verb: K8sVerb,
+  subresource?: string,
 ): AccessReviewResourceAttributes => {
   if (!obj) {
     console.warn('review obj should not be null'); // eslint-disable-line no-console
@@ -171,5 +172,6 @@ export const asAccessReview = (
     name: getName(obj),
     namespace: getNamespace(obj),
     verb,
+    subresource,
   };
 };

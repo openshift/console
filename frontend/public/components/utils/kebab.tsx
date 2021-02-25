@@ -297,7 +297,7 @@ const kebabFactory: KebabFactory = {
         resourceKind: kind,
         resource: obj,
       }),
-    accessReview: asAccessReview(kind, obj, 'patch'),
+    accessReview: asAccessReview(kind, obj, 'patch', 'scale'),
   }),
   ModifyTaints: (kind, obj) => ({
     label: 'Edit Taints',
