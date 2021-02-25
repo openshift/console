@@ -53,6 +53,9 @@ export interface PipelineTaskSpec {
     args?: string[];
     script?: string[];
   }[];
+  metadata?: {
+    labels?: { [key: string]: string };
+  };
 }
 
 export interface PipelineTaskParam {
@@ -124,15 +127,17 @@ export interface Runs {
 
 export type KeyedRuns = { [key: string]: Runs };
 
+export interface PipelineSpec {
+  params?: PipelineParam[];
+  resources?: PipelineResource[];
+  workspaces?: PipelineWorkspace[];
+  tasks: PipelineTask[];
+  serviceAccountName?: string;
+}
+
 export interface Pipeline extends K8sResourceKind {
   latestRun?: PipelineRun;
-  spec: {
-    params?: PipelineParam[];
-    resources?: PipelineResource[];
-    workspaces?: PipelineWorkspace[];
-    tasks: PipelineTask[];
-    serviceAccountName?: string;
-  };
+  spec: PipelineSpec;
 }
 
 /** TODO: Define */
@@ -170,6 +175,7 @@ export type PLRTaskRuns = {
 export interface PipelineRun extends K8sResourceKind {
   spec?: {
     pipelineRef?: { name: string };
+    pipelineSpec?: PipelineSpec;
     params?: PipelineRunParam[];
     workspaces?: PipelineRunWorkspace[];
     resources?: PipelineRunResource[];

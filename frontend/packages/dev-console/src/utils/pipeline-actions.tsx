@@ -42,8 +42,8 @@ export const reRunPipelineRun: KebabAction = (kind: K8sKind, pipelineRun: Pipeli
   label: 'Rerun',
   callback: () => {
     const namespace = _.get(pipelineRun, 'metadata.namespace');
-    const pipelineRef = _.get(pipelineRun, 'spec.pipelineRef.name');
-    if (namespace && pipelineRef) {
+    const { pipelineRef, pipelineSpec } = pipelineRun.spec;
+    if (namespace && (pipelineRef?.name || pipelineSpec)) {
       k8sCreate(PipelineRunModel, getPipelineRunData(null, pipelineRun));
     } else {
       errorModal({ error: 'Invalid Pipeline Run configuration, unable to start Pipeline.' });

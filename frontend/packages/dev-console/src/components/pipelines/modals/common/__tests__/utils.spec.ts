@@ -1,6 +1,17 @@
 import { PipelineRun, Pipeline } from '../../../../../utils/pipeline-augment';
-import { getPipelineRunData, getPipelineRunFromForm, migratePipelineRun } from '../utils';
+import {
+  getPipelineRunData,
+  getPipelineRunFromForm,
+  migratePipelineRun,
+  getPipelineName,
+} from '../utils';
 import { CommonPipelineModalFormikValues } from '../types';
+import { TektonResourceLabel, preferredNameAnnotation } from '../../../const';
+import {
+  pipelineTestData,
+  PipelineExampleNames,
+  DataState,
+} from '../../../../../test/pipeline-data';
 
 export const actionPipelines: Pipeline[] = [
   {
@@ -39,6 +50,65 @@ export const actionPipelineRuns: PipelineRun[] = [
   },
 ];
 
+const samplePipeline = pipelineTestData[PipelineExampleNames.SIMPLE_PIPELINE].pipeline;
+const samplePipelineRun =
+  pipelineTestData[PipelineExampleNames.SIMPLE_PIPELINE].pipelineRuns[DataState.SUCCESS];
+
+const pipelineRunData = (pipeline: Pipeline): PipelineRun => ({
+  apiVersion: pipeline.apiVersion,
+  kind: 'PipelineRun',
+  metadata: {
+    namespace: pipeline.metadata.namespace,
+    name: expect.stringMatching(new RegExp(`${pipeline.metadata.name}-[a-z0-9]{6}`)),
+    labels: { [TektonResourceLabel.pipeline]: pipeline.metadata.name },
+  },
+  spec: {
+    pipelineRef: { name: pipeline.metadata.name },
+  },
+});
+
+describe('getPipelineName', () => {
+  it('should return null if no argument is provided', () => {
+    expect(getPipelineName()).toBeNull();
+  });
+
+  it('should return the name from the pipeline metadata if both pipeline and latestRun are provided', () => {
+    expect(getPipelineName(samplePipeline, samplePipelineRun)).toEqual(
+      samplePipeline.metadata.name,
+    );
+  });
+
+  it('should return the name from the pipeline metadata if only pipeline is provided', () => {
+    expect(getPipelineName(samplePipeline)).toEqual(samplePipeline.metadata.name);
+  });
+
+  it('should return the name from the pipelineRef, if only latestRun is provided and pipelineRef exists', () => {
+    const pipelineRunWithPipelineRef =
+      pipelineTestData[PipelineExampleNames.EMBEDDED_PIPELINE_SPEC].pipelineRuns[DataState.SKIPPED];
+    expect(getPipelineName(undefined, pipelineRunWithPipelineRef)).toEqual(
+      pipelineRunWithPipelineRef.spec.pipelineRef.name,
+    );
+  });
+
+  it('should return the name from the latestRun metadata, if only latestRun is provided and annotation does not include the name', () => {
+    const pipelineRunWithPipelineSpec =
+      pipelineTestData[PipelineExampleNames.EMBEDDED_PIPELINE_SPEC].pipelineRuns[
+        DataState.IN_PROGRESS
+      ];
+    expect(getPipelineName(undefined, pipelineRunWithPipelineSpec)).toEqual(
+      pipelineRunWithPipelineSpec.metadata.name,
+    );
+  });
+
+  it('should return the name from the annotations, if only latestRun is provided and annotation includes the name', () => {
+    const pipelineRunWithAnnotations =
+      pipelineTestData[PipelineExampleNames.EMBEDDED_PIPELINE_SPEC].pipelineRuns[DataState.SUCCESS];
+    expect(getPipelineName(undefined, pipelineRunWithAnnotations)).toEqual(
+      pipelineRunWithAnnotations.metadata.annotations?.[preferredNameAnnotation],
+    );
+  });
+});
+
 describe('PipelineAction testing getPipelineRunData', () => {
   it('expect null to be returned when no arguments are passed', () => {
     const runData = getPipelineRunData();
@@ -46,47 +116,76 @@ describe('PipelineAction testing getPipelineRunData', () => {
   });
 
   it('expect pipeline run data to be returned when only Pipeline argument is passed', () => {
-    const runData = getPipelineRunData(actionPipelines[0]);
-    expect(runData).toMatchObject({
-      apiVersion: 'abhiapi/v1',
-      kind: 'PipelineRun',
-      metadata: {
-        namespace: 'corazon',
-        name: expect.stringMatching(/sansa-stark-[a-z0-9]{6}/),
-        labels: { 'tekton.dev/pipeline': 'sansa-stark' },
-      },
-      spec: {
-        pipelineRef: { name: 'sansa-stark' },
-      },
-    });
+    const runData = getPipelineRunData(samplePipeline);
+    expect(runData).toMatchObject(pipelineRunData(samplePipeline));
   });
-
   it('expect pipeline run data to be returned when only PipelineRun argument is passed', () => {
-    const runData = getPipelineRunData(null, actionPipelineRuns[0]);
+    const runData = getPipelineRunData(null, samplePipelineRun);
+    expect(runData).toMatchObject(pipelineRunData(samplePipeline));
+  });
+  it('expect pipeline run data with generateName if options argument is requests this', () => {
+    const runData = getPipelineRunData(samplePipeline, null, { generateName: true });
     expect(runData).toMatchObject({
-      apiVersion: 'abhiapi/v1',
-      kind: 'PipelineRun',
-      metadata: {
-        namespace: 'corazon',
-        name: expect.stringMatching(/sansa-stark-[a-z0-9]{6}/),
-        labels: { 'tekton.dev/pipeline': 'sansa-stark' },
-      },
-      spec: { pipelineRef: { name: 'sansa-stark' } },
+      ...pipelineRunData(samplePipeline),
+      metadata: { generateName: `${samplePipeline.metadata.name}-` },
     });
   });
 
-  it('expect pipeline run data with generateName if options argument is requests this', () => {
-    const runData = getPipelineRunData(actionPipelines[0], null, { generateName: true });
-    expect(runData).toMatchObject({
-      apiVersion: 'abhiapi/v1',
-      kind: 'PipelineRun',
-      metadata: {
-        namespace: 'corazon',
-        generateName: 'sansa-stark-',
-        labels: { 'tekton.dev/pipeline': 'sansa-stark' },
-      },
-      spec: { pipelineRef: { name: 'sansa-stark' } },
+  it('should set the annotation for preferredName if the latestRun have neither this annotation nor pipelineRef', () => {
+    const pipelineRun =
+      pipelineTestData[PipelineExampleNames.EMBEDDED_PIPELINE_SPEC].pipelineRuns[
+        DataState.IN_PROGRESS
+      ];
+    const runData = getPipelineRunData(null, pipelineRun);
+    expect(runData.metadata.annotations).toMatchObject({
+      [preferredNameAnnotation]: pipelineRun.metadata.name,
     });
+  });
+
+  it('should not set the label for pipeline name if pipeline is not passed and latestRun does not have a pipelineRef', () => {
+    const pipelineRun =
+      pipelineTestData[PipelineExampleNames.EMBEDDED_PIPELINE_SPEC].pipelineRuns[
+        DataState.IN_PROGRESS
+      ];
+    const runData = getPipelineRunData(null, pipelineRun);
+    expect(runData.metadata.labels?.[TektonResourceLabel.pipeline]).toBeUndefined();
+  });
+
+  it('should set the label for pipeline name if pipeline is passed', () => {
+    const runData = getPipelineRunData(samplePipeline);
+    expect(runData.metadata.labels).toMatchObject({
+      [TektonResourceLabel.pipeline]: samplePipeline.metadata.name,
+    });
+  });
+
+  it('should set the label for pipeline name if only latestRun is passed and latestRun has a pipelineRef', () => {
+    const pipelineRun =
+      pipelineTestData[PipelineExampleNames.EMBEDDED_PIPELINE_SPEC].pipelineRuns[DataState.SKIPPED];
+    const runData = getPipelineRunData(null, pipelineRun);
+    expect(runData.metadata.labels).toMatchObject({
+      [TektonResourceLabel.pipeline]: pipelineRun.spec.pipelineRef.name,
+    });
+  });
+
+  it('should not set pipelineRef in the spec if pipeline is not passed and latestRun does not have a pipelineRef', () => {
+    const pipelineRun =
+      pipelineTestData[PipelineExampleNames.EMBEDDED_PIPELINE_SPEC].pipelineRuns[
+        DataState.IN_PROGRESS
+      ];
+    const runData = getPipelineRunData(null, pipelineRun);
+    expect(runData.spec.pipelineRef).toBeUndefined();
+  });
+
+  it('should set pipelineRef in the spec if pipeline is passed', () => {
+    const runData = getPipelineRunData(samplePipeline);
+    expect(runData.spec.pipelineRef).toMatchObject(samplePipelineRun.spec.pipelineRef);
+  });
+
+  it('should set pipelineRef in the spec if only latestRun is passed and latestRun has a pipelineRef', () => {
+    const pipelineRun =
+      pipelineTestData[PipelineExampleNames.EMBEDDED_PIPELINE_SPEC].pipelineRuns[DataState.SKIPPED];
+    const runData = getPipelineRunData(null, pipelineRun);
+    expect(runData.spec.pipelineRef).toMatchObject(pipelineRun.spec.pipelineRef);
   });
 });
 
