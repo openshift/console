@@ -58,7 +58,7 @@ const ProbeForm: React.FC<ProbeFormProps> = ({ onSubmit, onClose, probeType }) =
         />
         {getRequestTypeForm(healthChecks?.[probeType]?.data?.requestType, probeType)}
         <InputField
-          type={TextInputTypes.number}
+          type={TextInputTypes.text}
           name={`healthChecks.${probeType}.data.failureThreshold`}
           label={t('devconsole~Failure threshold')}
           style={{ maxWidth: '100%' }}
@@ -68,7 +68,7 @@ const ProbeForm: React.FC<ProbeFormProps> = ({ onSubmit, onClose, probeType }) =
           isDisabled={viewOnly}
         />
         <InputField
-          type={TextInputTypes.number}
+          type={TextInputTypes.text}
           name={`healthChecks.${probeType}.data.successThreshold`}
           label={t('devconsole~Success threshold')}
           style={{ maxWidth: '100%' }}
@@ -78,7 +78,7 @@ const ProbeForm: React.FC<ProbeFormProps> = ({ onSubmit, onClose, probeType }) =
           isDisabled={viewOnly}
         />
         <InputGroupField
-          type={TextInputTypes.number}
+          type={TextInputTypes.text}
           name={`healthChecks.${probeType}.data.initialDelaySeconds`}
           label={t('devconsole~Initial delay')}
           helpText={t(
@@ -89,7 +89,7 @@ const ProbeForm: React.FC<ProbeFormProps> = ({ onSubmit, onClose, probeType }) =
           isDisabled={viewOnly}
         />
         <InputGroupField
-          type={TextInputTypes.number}
+          type={TextInputTypes.text}
           name={`healthChecks.${probeType}.data.periodSeconds`}
           label={t('devconsole~Period')}
           helpText={t('devconsole~How often to perform the probe.')}
@@ -98,7 +98,7 @@ const ProbeForm: React.FC<ProbeFormProps> = ({ onSubmit, onClose, probeType }) =
           isDisabled={viewOnly}
         />
         <InputGroupField
-          type={TextInputTypes.number}
+          type={TextInputTypes.text}
           name={`healthChecks.${probeType}.data.timeoutSeconds`}
           label={t('devconsole~Timeout')}
           helpText={t(
