@@ -1,11 +1,16 @@
-export const operatorProviderTypeMap = {
-  'redhat-operators': 'Red Hat',
-  'redhat-marketplace': 'Marketplace',
-  'certified-operators': 'Certified',
-  'community-operators': 'Community',
+import { DefaultCatalogSource, DefaultCatalogSourceDisplayName } from '../../const';
+import { PackageManifestKind } from '../../types';
+
+export const defaultCatalogSourceDisplayNameMap = {
+  [DefaultCatalogSource.RedHatOperators]: DefaultCatalogSourceDisplayName.RedHatOperators,
+  [DefaultCatalogSource.RedHatMarketPlace]: DefaultCatalogSourceDisplayName.RedHatMarketplace,
+  [DefaultCatalogSource.CertifiedOperators]: DefaultCatalogSourceDisplayName.CertifiedOperators,
+  [DefaultCatalogSource.CommunityOperators]: DefaultCatalogSourceDisplayName.CommunityOperators,
 };
 
-export const getOperatorProviderType = (packageManifest) => {
+export const getCatalogSourceDisplayName = (packageManifest: PackageManifestKind): string => {
   const { catalogSource, catalogSourceDisplayName } = packageManifest.status;
-  return operatorProviderTypeMap?.[catalogSource] || catalogSourceDisplayName || catalogSource;
+  return (
+    defaultCatalogSourceDisplayNameMap?.[catalogSource] || catalogSourceDisplayName || catalogSource
+  );
 };

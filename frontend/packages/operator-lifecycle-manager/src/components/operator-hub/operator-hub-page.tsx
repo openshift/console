@@ -20,14 +20,13 @@ import { PackageManifestKind, OperatorGroupKind, SubscriptionKind } from '../../
 import { OPERATOR_TYPE_ANNOTATION, NON_STANDALONE_ANNOTATION_VALUE } from '../../const';
 import { iconFor } from '..';
 import { installedFor, subscriptionFor } from '../operator-group';
-import { getOperatorProviderType } from './operator-hub-utils';
+import { getCatalogSourceDisplayName } from './operator-hub-utils';
 import { OperatorHubTileView } from './operator-hub-items';
 import {
   OperatorHubItem,
   OperatorHubCSVAnnotations,
   InstalledState,
   OperatorHubCSVAnnotationKey,
-  ProviderType,
 } from './index';
 import { parseJSONAnnotation } from '@console/shared/src/utils/annotations';
 import { Trans, useTranslation } from 'react-i18next';
@@ -112,14 +111,14 @@ export const OperatorHubList: React.FC<OperatorHubListProps> = ({
             imgUrl: iconFor(pkg),
             description: currentCSVAnnotations.description || currentCSVDesc.description,
             longDescription: currentCSVDesc.description || currentCSVAnnotations.description,
-            provider: (pkg.status.provider?.name ?? pkg.metadata.labels?.provider) as ProviderType,
-            providerType: getOperatorProviderType(pkg),
+            provider: pkg.status.provider?.name ?? pkg.metadata.labels?.provider,
             tags: [],
             version: currentCSVDesc?.version,
             categories: (currentCSVAnnotations?.categories ?? '')
               .split(',')
               .map((category) => category.trim()),
             catalogSource: pkg.status.catalogSource,
+            catalogSourceDisplayName: getCatalogSourceDisplayName(pkg),
             catalogSourceNamespace: pkg.status.catalogSourceNamespace,
             certifiedLevel,
             healthIndex,

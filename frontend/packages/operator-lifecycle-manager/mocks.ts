@@ -16,7 +16,7 @@ import {
   InstallPlanPhase,
 } from './src/types';
 import { StatusCapability, SpecCapability } from './src/components/descriptors/types';
-import { OperatorHubItem, ProviderType } from './src/components/operator-hub';
+import { OperatorHubItem } from './src/components/operator-hub';
 
 const prefixedCapabilities = new Set([
   SpecCapability.selector,
@@ -913,7 +913,7 @@ export const operatorHubTileViewPagePropsWithDummy = {
       uid: 'dummy/openshift-operator-lifecycle-manager',
       iconClass: null,
       description: undefined,
-      provider: ProviderType.Custom,
+      provider: 'Custom',
       tags: undefined,
       version: '1.0.0',
       certifiedLevel: undefined,
@@ -1029,7 +1029,7 @@ export const itemWithLongDescription = {
     '/api/kubernetes/apis/packages.operators.coreos.com/v1/packagemanifests/amq-streams/icon?resourceVersion=amq-streams.preview.amqstreams.v1.0.0.beta',
   description:
     '**Red Hat AMQ Streams** is a massively scalable, distributed, and high performance data streaming platform based on the Apache Kafka project. \nAMQ Streams provides an event streaming backbone that allows microservices and other application components to exchange data with extremely high throughput and low latency.\n\n**The core capabilities include**\n* A pub/sub messaging model, similar to a traditional enterprise messaging system, in which application components publish and consume events to/from an ordered stream\n* The long term, fault-tolerant storage of events\n* The ability for a consumer to replay streams of events\n* The ability to partition topics for horizontal scalability\n\n# Before you start\n\n1. Create AMQ Streams Cluster Roles\n```\n$ oc apply -f http://amq.io/amqstreams/rbac.yaml\n```\n2. Create following bindings\n```\n$ oc adm policy add-cluster-role-to-user strimzi-cluster-operator -z strimzi-cluster-operator --namespace <namespace>\n$ oc adm policy add-cluster-role-to-user strimzi-kafka-broker -z strimzi-cluster-operator --namespace <namespace>\n```',
-  provider: ProviderType.RedHat,
+  provider: 'Red Hat',
   tags: undefined,
   version: '1.0.0-Beta',
   certifiedLevel: undefined,
