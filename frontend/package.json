@@ -144,7 +144,7 @@
     "js-base64": "^2.5.1",
     "js-yaml": "^3.13.1",
     "json-schema": "0.2.3",
-    "lodash-es": "4.17.x",
+    "lodash-es": "^4.17.21",
     "monaco-languageclient": "^0.13.0",
     "murmurhash-js": "1.0.x",
     "null-loader": "^3.0.0",
@@ -304,6 +304,7 @@
   },
   "resolutions": {
     "jquery": "3.5.1",
+    "lodash-es": "^4.17.21",
     "minimist": "1.2.5",
     "@types/jest": "21.x"
   },
