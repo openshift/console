@@ -57,6 +57,7 @@ const PlacementPolicyPage: React.FC<PlacementPolicyPageProps> = ({ dispatch, sta
           {t('noobaa-storage-plugin~Tier 1 - Policy Type')}
         </Title>
         <Radio
+          data-test="placement-policy-spread1"
           value={PlacementPolicy.Spread}
           isChecked={tier1Policy === PlacementPolicy.Spread}
           onChange={onChange}
@@ -70,6 +71,7 @@ const PlacementPolicyPage: React.FC<PlacementPolicyPageProps> = ({ dispatch, sta
           )}
         </p>
         <Radio
+          data-test="placement-policy-mirror1"
           value={PlacementPolicy.Mirror}
           isChecked={tier1Policy === PlacementPolicy.Mirror}
           onChange={onChange}
@@ -92,6 +94,7 @@ const PlacementPolicyPage: React.FC<PlacementPolicyPageProps> = ({ dispatch, sta
           }
           isInline
           data-testid="add-tier-btn"
+          data-test="add-tier-btn"
         >
           {t('noobaa-storage-plugin~Add Tier')}
         </Button>
@@ -110,6 +113,7 @@ const PlacementPolicyPage: React.FC<PlacementPolicyPageProps> = ({ dispatch, sta
             </Button>
           </Title>
           <Radio
+            data-test="placement-policy-spread2"
             value={PlacementPolicy.Spread}
             isChecked={tier2Policy === PlacementPolicy.Spread}
             onChange={onChange}
@@ -123,6 +127,7 @@ const PlacementPolicyPage: React.FC<PlacementPolicyPageProps> = ({ dispatch, sta
             )}
           </p>
           <Radio
+            data-test="placement-policy-mirror2"
             value={PlacementPolicy.Mirror}
             isChecked={tier2Policy === PlacementPolicy.Mirror}
             onChange={onChange}
