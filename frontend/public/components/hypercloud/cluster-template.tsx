@@ -38,6 +38,7 @@ const objectKinds = clustertemplate => {
 };
 
 const ClusterTemplateDetails: React.FC<ClusterTemplateDetailsProps> = ({ obj: clusterTemplate }) => {
+  const { t } = useTranslation();
   const objectSummary = objectKinds(clusterTemplate);
   return (
     <>
@@ -49,7 +50,7 @@ const ClusterTemplateDetails: React.FC<ClusterTemplateDetailsProps> = ({ obj: cl
           </div>
           <div className="col-md-6">
             <dl className="co-m-pane__details">
-              <dt>Resource Summary</dt>
+              <dt>{t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_104')}</dt>
               <dd>{objectSummary}</dd>
             </dl>
           </div>
@@ -107,7 +108,7 @@ const ClusterTemplateTableHeader = (t?: TFunction) => {
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Resource Summary',
+      title: t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_104'),
       props: { className: tableColumnClasses[2] },
     },
     {

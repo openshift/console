@@ -70,7 +70,7 @@ const TemplateInstanceDetails: React.FC<TemplateInstanceDetailsProps> = ({ obj: 
               <DetailsItem label={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_13')} obj={templateInstance} path="status.phase">
                 <Status status={phase} />
               </DetailsItem>
-              <dt>Resource Summary</dt>
+              <dt>{t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_104')}</dt>
               <dd>{objectSummary}</dd>
               <DetailsItem label={t('COMMON:MSG_LNB_MENU_18')} obj={templateInstance} path="metadata.labels.serviceInstanceRef">
                 {!!templateInstance.metadata.labels?.serviceInstanceRef ? <ResourceLink kind="ServiceInstance" name={templateInstance.metadata.labels?.serviceInstanceRef} title={templateInstance.metadata.labels?.serviceInstanceRef} /> : 'None'}
@@ -148,7 +148,7 @@ const TemplateInstanceTableHeader = (t?: TFunction) => {
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'Resource Summary',
+      title: t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_104'),
       props: { className: tableColumnClasses[3] },
     },
     {

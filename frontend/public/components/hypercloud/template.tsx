@@ -51,7 +51,7 @@ const TemplateDetails: React.FC<TemplateDetailsProps> = ({ obj: template }) => {
           </div>
           <div className="col-md-6">
             <dl className="co-m-pane__details">
-              <dt>Resource Summary</dt>
+              <dt>{t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_104')}</dt>
               <dd>{objectSummary}</dd>
             </dl>
           </div>
@@ -113,7 +113,7 @@ const TemplateTableHeader = (t?: TFunction) => {
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Resource Summary',
+      title: t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_104'),
       props: { className: tableColumnClasses[2] },
     },
     {

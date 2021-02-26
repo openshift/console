@@ -6,7 +6,8 @@ import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 import { Status } from '@console/shared';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
-
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import * as UIActions from '../actions/ui';
 import { coFetchJSON } from '../co-fetch';
 import { ContainerSpec, K8sResourceKindReference, PodKind } from '../module/k8s';
@@ -108,58 +109,58 @@ const PodTableRow = connect<PodTableRowPropsFromState, null, PodTableRowProps>(p
 PodTableRow.displayName = 'PodTableRow';
 
 const getHeader = showNodes => {
-  return () => {
+  return (t?: TFunction) => {
     return [
       {
-        title: 'Name',
+        title: t('COMMON:MSG_MAIN_TABLEHEADER_1'),
         sortField: 'metadata.name',
         transforms: [sortable],
         props: { className: tableColumnClasses[0] },
       },
       {
-        title: 'Namespace',
+        title: t('COMMON:MSG_MAIN_TABLEHEADER_2'),
         sortField: 'metadata.namespace',
         transforms: [sortable],
         props: { className: tableColumnClasses[1] },
       },
       {
-        title: 'Status',
+        title: t('COMMON:MSG_MAIN_TABLEHEADER_3'),
         sortFunc: 'podPhase',
         transforms: [sortable],
         props: { className: tableColumnClasses[2] },
       },
       {
-        title: 'Ready',
+        title: t('COMMON:MSG_MAIN_TABLEHEADER_9'),
         sortFunc: 'podReadiness',
         transforms: [sortable],
         props: { className: tableColumnClasses[3] },
       },
       {
-        title: 'Restarts',
+        title: t('COMMON:MSG_MAIN_TABLEHEADER_10'),
         sortFunc: 'podRestarts',
         transforms: [sortable],
         props: { className: tableColumnClasses[4] },
       },
       {
-        title: showNodes ? 'Node' : 'Owner',
+        title: showNodes ? t('COMMON:MSG_MAIN_TABLEHEADER_63') : t('COMMON:MSG_MAIN_TABLEHEADER_11'),
         sortField: showNodes ? 'spec.nodeName' : 'metadata.ownerReferences[0].name',
         transforms: [sortable],
         props: { className: tableColumnClasses[5] },
       },
       {
-        title: 'Memory',
+        title: t('COMMON:MSG_MAIN_TABLEHEADER_65'),
         sortFunc: 'podMemory',
         transforms: [sortable],
         props: { className: tableColumnClasses[6] },
       },
       {
-        title: 'CPU',
+        title: t('COMMON:MSG_MAIN_TABLEHEADER_64'),
         sortFunc: 'podCPU',
         transforms: [sortable],
         props: { className: tableColumnClasses[7] },
       },
       {
-        title: 'Created',
+        title: t('COMMON:MSG_MAIN_TABLEHEADER_12'),
         sortField: 'metadata.creationTimestamp',
         transforms: [sortable],
         props: { className: tableColumnClasses[8] },
@@ -207,71 +208,78 @@ export const ContainerRow: React.FC<ContainerRowProps> = ({ pod, container }) =>
   );
 };
 
-export const PodContainerTable: React.FC<PodContainerTableProps> = ({ heading, containers, pod }) => (
-  <>
-    <SectionHeading text={heading} />
-    <div className="co-m-table-grid co-m-table-grid--bordered">
-      <div className="row co-m-table-grid__head">
-        <div className="col-lg-2 col-md-3 col-sm-4 col-xs-5">Name</div>
-        <div className="col-lg-2 col-md-3 col-sm-5 col-xs-7">Image</div>
-        <div className="col-lg-2 col-md-2 col-sm-3 hidden-xs">State</div>
-        <div className="col-lg-1 col-md-2 hidden-sm hidden-xs">Restarts</div>
-        <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">Started</div>
-        <div className="col-lg-2 hidden-md hidden-sm hidden-xs">Finished</div>
-        <div className="col-lg-1 hidden-md hidden-sm hidden-xs">Exit Code</div>
+export const PodContainerTable: React.FC<PodContainerTableProps> = ({ heading, containers, pod }) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <SectionHeading text={heading} />
+      <div className="co-m-table-grid co-m-table-grid--bordered">
+        <div className="row co-m-table-grid__head">
+          <div className="col-lg-2 col-md-3 col-sm-4 col-xs-5">{t('COMMON:MSG_DETAILS_TABDETAILS_CONTAINERS_TABLEHEADER_2')}</div>
+          <div className="col-lg-2 col-md-3 col-sm-5 col-xs-7">{t('COMMON:MSG_DETAILS_TABDETAILS_CONTAINERS_TABLEHEADER_3')}</div>
+          <div className="col-lg-2 col-md-2 col-sm-3 hidden-xs">{t('COMMON:MSG_DETAILS_TABDETAILS_CONTAINERS_TABLEHEADER_4')}</div>
+          <div className="col-lg-1 col-md-2 hidden-sm hidden-xs">{t('COMMON:MSG_DETAILS_TABDETAILS_CONTAINERS_TABLEHEADER_5')}</div>
+          <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">{t('COMMON:MSG_DETAILS_TABDETAILS_CONTAINERS_TABLEHEADER_6')}</div>
+          <div className="col-lg-2 hidden-md hidden-sm hidden-xs">{t('COMMON:MSG_DETAILS_TABDETAILS_CONTAINERS_TABLEHEADER_7')}</div>
+          <div className="col-lg-1 hidden-md hidden-sm hidden-xs">{t('COMMON:MSG_DETAILS_TABDETAILS_CONTAINERS_TABLEHEADER_8')}</div>
+        </div>
+        <div className="co-m-table-grid__body">
+          {containers.map((c: any, i: number) => (
+            <ContainerRow key={i} pod={pod} container={c} />
+          ))}
+        </div>
       </div>
-      <div className="co-m-table-grid__body">
-        {containers.map((c: any, i: number) => (
-          <ContainerRow key={i} pod={pod} container={c} />
-        ))}
-      </div>
-    </div>
-  </>
-);
+    </>
+  );
+};
 
-const PodGraphs = requirePrometheus(({ pod }) => (
-  <>
-    <div className="row">
-      <div className="col-md-12 col-lg-4">
-        <Area title="Memory Usage" humanize={humanizeBinaryBytes} byteDataType={ByteDataTypes.BinaryBytes} namespace={pod.metadata.namespace} query={`sum(container_memory_working_set_bytes{pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}',container='',}) BY (pod, namespace)`} />
+const PodGraphs = requirePrometheus(({ pod }) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <div className="row">
+        <div className="col-md-12 col-lg-4">
+          <Area title={t('SINGLE:MSG_NAMESPACES_NAMESPACEDETAILS_TABDETAILS_RESOURCEUSAGE_3')} humanize={humanizeBinaryBytes} byteDataType={ByteDataTypes.BinaryBytes} namespace={pod.metadata.namespace} query={`sum(container_memory_working_set_bytes{pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}',container='',}) BY (pod, namespace)`} />
+        </div>
+        <div className="col-md-12 col-lg-4">
+          <Area title={t('SINGLE:MSG_NAMESPACES_NAMESPACEDETAILS_TABDETAILS_RESOURCEUSAGE_2')} humanize={humanizeCpuCores} namespace={pod.metadata.namespace} query={`pod:container_cpu_usage:sum{pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}`} />
+        </div>
+        <div className="col-md-12 col-lg-4">
+          <Area title={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_81')} humanize={humanizeBinaryBytes} byteDataType={ByteDataTypes.BinaryBytes} namespace={pod.metadata.namespace} query={`pod:container_fs_usage_bytes:sum{pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}`} />
+        </div>
       </div>
-      <div className="col-md-12 col-lg-4">
-        <Area title="CPU Usage" humanize={humanizeCpuCores} namespace={pod.metadata.namespace} query={`pod:container_cpu_usage:sum{pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}`} />
+      <div className="row">
+        <div className="col-md-12 col-lg-4">
+          <Area title={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_79')} humanize={humanizeDecimalBytesPerSec} namespace={pod.metadata.namespace} query={`sum(irate(container_network_receive_bytes_total{pod='${pod.metadata.name}', namespace='${pod.metadata.namespace}'}[5m])) by (pod, namespace)`} />
+        </div>
+        <div className="col-md-12 col-lg-4">
+          <Area title={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_80')} humanize={humanizeDecimalBytesPerSec} namespace={pod.metadata.namespace} query={`sum(irate(container_network_transmit_bytes_total{pod='${pod.metadata.name}', namespace='${pod.metadata.namespace}'}[5m])) by (pod, namespace)`} />
+        </div>
       </div>
-      <div className="col-md-12 col-lg-4">
-        <Area title="Filesystem" humanize={humanizeBinaryBytes} byteDataType={ByteDataTypes.BinaryBytes} namespace={pod.metadata.namespace} query={`pod:container_fs_usage_bytes:sum{pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}`} />
-      </div>
-    </div>
-    <div className="row">
-      <div className="col-md-12 col-lg-4">
-        <Area title="Network In" humanize={humanizeDecimalBytesPerSec} namespace={pod.metadata.namespace} query={`sum(irate(container_network_receive_bytes_total{pod='${pod.metadata.name}', namespace='${pod.metadata.namespace}'}[5m])) by (pod, namespace)`} />
-      </div>
-      <div className="col-md-12 col-lg-4">
-        <Area title="Network Out" humanize={humanizeDecimalBytesPerSec} namespace={pod.metadata.namespace} query={`sum(irate(container_network_transmit_bytes_total{pod='${pod.metadata.name}', namespace='${pod.metadata.namespace}'}[5m])) by (pod, namespace)`} />
-      </div>
-    </div>
 
-    <br />
-  </>
-));
+      <br />
+    </>
+  );
+});
 
 export const PodStatus: React.FC<PodStatusProps> = ({ pod }) => <Status status={podPhase(pod)} />;
 
 export const PodDetailsList: React.FC<PodDetailsListProps> = ({ pod }) => {
+  const { t } = useTranslation();
   return (
     <dl className="co-m-pane__details">
-      <dt>Status</dt>
+      <dt>{t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_20')}</dt>
       <dd>
         <PodStatus pod={pod} />
       </dd>
-      <DetailsItem label="Restart Policy" obj={pod} path="spec.restartPolicy">
+      <DetailsItem label={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_21')} obj={pod} path="spec.restartPolicy">
         {getRestartPolicyLabel(pod)}
       </DetailsItem>
-      <DetailsItem label="Active Deadline Seconds" obj={pod} path="spec.activeDeadlineSeconds">
+      <DetailsItem label={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_22')} obj={pod} path="spec.activeDeadlineSeconds">
         {pod.spec.activeDeadlineSeconds ? pluralize(pod.spec.activeDeadlineSeconds, 'second') : 'Not Configured'}
       </DetailsItem>
-      <DetailsItem label="Pod IP" obj={pod} path="status.podIP" />
-      <DetailsItem label="Node" obj={pod} path="spec.nodeName" hideEmpty>
+      <DetailsItem label={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_23')} obj={pod} path="status.podIP" />
+      <DetailsItem label={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_24')} obj={pod} path="spec.nodeName" hideEmpty>
         <NodeLink name={pod.spec.nodeName} />
       </DetailsItem>
     </dl>
@@ -281,6 +289,7 @@ export const PodDetailsList: React.FC<PodDetailsListProps> = ({ pod }) => {
 export const PodResourceSummary: React.FC<PodResourceSummaryProps> = ({ pod }) => <ResourceSummary resource={pod} showNodeSelector nodeSelector="spec.nodeSelector" showTolerations />;
 
 const Details: React.FC<PodDetailsProps> = ({ obj: pod }) => {
+  const { t } = useTranslation();
   const limits = {
     cpu: null,
     memory: null,
@@ -306,7 +315,7 @@ const Details: React.FC<PodDetailsProps> = ({ obj: pod }) => {
     <>
       <ScrollToTopOnMount />
       <div className="co-m-pane__body">
-        <SectionHeading text="Pod Details" />
+        <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_23')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
         <PodGraphs pod={pod} />
         <div className="row">
           <div className="col-sm-6">
@@ -323,13 +332,13 @@ const Details: React.FC<PodDetailsProps> = ({ obj: pod }) => {
         </div>
       )}
       <div className="co-m-pane__body">
-        <PodContainerTable key="containerTable" heading="Containers" containers={pod.spec.containers} pod={pod} />
+        <PodContainerTable key="containerTable" heading={t('COMMON:MSG_DETAILS_TABDETAILS_CONTAINERS_TABLEHEADER_1')} containers={pod.spec.containers} pod={pod} />
       </div>
       <div className="co-m-pane__body">
-        <VolumesTable resource={pod} heading="Volumes" />
+        <VolumesTable resource={pod} heading={t('COMMON:MSG_DETAILS_TABDETAILS_VOLUMES_TABLEHEADER_1')} />
       </div>
       <div className="co-m-pane__body">
-        <SectionHeading text="Conditions" />
+        <SectionHeading text={t('COMMON:MSG_DETAILS_TABDETAILS_CONDITIONS_1')} />
         <Conditions conditions={pod.status.conditions} />
       </div>
     </>
@@ -353,25 +362,27 @@ export const PodExecLoader: React.FC<PodExecLoaderProps> = ({ obj, message }) =>
   </div>
 );
 
-export const PodsDetailsPage: React.FC<PodDetailsPageProps> = props => (
-  <DetailsPage
-    {...props}
-    getResourceStatus={podPhase}
-    menuActions={menuActions}
-    pages={[
-      navFactory.details(Details),
-      navFactory.editYaml(),
-      navFactory.envEditor(PodEnvironmentComponent),
-      navFactory.logs(PodLogs),
-      navFactory.events(ResourceEventStream),
-      {
-        href: 'terminal',
-        name: 'Terminal',
-        component: PodExecLoader,
-      },
-    ]}
-  />
-);
+export const PodsDetailsPage: React.FC<PodDetailsPageProps> = props => {
+  return (
+    <DetailsPage
+      {...props}
+      getResourceStatus={podPhase}
+      menuActions={menuActions}
+      pages={[
+        navFactory.details(Details),
+        navFactory.editYaml(),
+        navFactory.envEditor(PodEnvironmentComponent),
+        navFactory.logs(PodLogs),
+        navFactory.events(ResourceEventStream),
+        {
+          href: 'terminal',
+          name: 'Terminal',
+          component: PodExecLoader,
+        },
+      ]}
+    />
+  );
+};
 PodsDetailsPage.displayName = 'PodsDetailsPage';
 
 const getRow = showNodes => {
@@ -380,28 +391,10 @@ const getRow = showNodes => {
 
 export const PodList: React.FC<PodListProps> = props => {
   const showNodes = props?.customData?.showNodes;
-  return <Table {...props} aria-label="Pods" Header={getHeader(showNodes)} Row={getRow(showNodes)} virtualize />;
+  const { t } = useTranslation();
+  return <Table {...props} aria-label="Pods" Header={getHeader(showNodes).bind(null, t)} Row={getRow(showNodes)} virtualize />;
 };
 PodList.displayName = 'PodList';
-
-const filters = [
-  {
-    filterGroupName: 'Status',
-    type: 'pod-status',
-    reducer: podPhaseFilterReducer,
-    items: [
-      { id: 'Running', title: 'Running' },
-      { id: 'Pending', title: 'Pending' },
-      { id: 'Terminating', title: 'Terminating' },
-      { id: 'CrashLoopBackOff', title: 'CrashLoopBackOff' },
-      // Use title "Completed" to match what appears in the status column for the pod.
-      // The pod phase is "Succeeded," but the container state is "Completed."
-      { id: 'Succeeded', title: 'Completed' },
-      { id: 'Failed', title: 'Failed' },
-      { id: 'Unknown', title: 'Unknown ' },
-    ],
-  },
-];
 
 const dispatchToProps = (dispatch): PodPagePropsFromDispatch => ({
   setPodMetrics: metrics => dispatch(UIActions.setPodMetrics(metrics)),
@@ -411,6 +404,7 @@ export const PodsPage = connect<{}, PodPagePropsFromDispatch, PodPageProps>(
   null,
   dispatchToProps,
 )((props: PodPageProps & PodPagePropsFromDispatch) => {
+  const { t } = useTranslation();
   const { canCreate = true, namespace, setPodMetrics, customData, ...listProps } = props;
   /* eslint-disable react-hooks/exhaustive-deps */
   React.useEffect(() => {
@@ -432,7 +426,34 @@ export const PodsPage = connect<{}, PodPagePropsFromDispatch, PodPageProps>(
     }
   }, [namespace]);
   /* eslint-enable react-hooks/exhaustive-deps */
-  return <ListPage {...listProps} canCreate={canCreate} kind="Pod" ListComponent={PodList} rowFilters={filters} namespace={namespace} customData={customData} />;
+  return (
+    <ListPage
+      {...listProps}
+      canCreate={canCreate}
+      kind="Pod"
+      ListComponent={PodList}
+      rowFilters={[
+        {
+          filterGroupName: 'Status',
+          type: 'pod-status',
+          reducer: podPhaseFilterReducer,
+          items: [
+            { id: 'Running', title: t('COMMON:MSG_COMMON_STATUS_1') },
+            { id: 'Pending', title: t('COMMON:MSG_COMMON_STATUS_2') },
+            { id: 'Terminating', title: t('COMMON:MSG_COMMON_STATUS_3') },
+            { id: 'CrashLoopBackOff', title: t('COMMON:MSG_COMMON_STATUS_4') },
+            // Use title "Completed" to match what appears in the status column for the pod.
+            // The pod phase is "Succeeded," but the container state is "Completed."
+            { id: 'Succeeded', title: t('COMMON:MSG_COMMON_STATUS_5') },
+            { id: 'Failed', title: t('COMMON:MSG_COMMON_STATUS_12') },
+            { id: 'Unknown', title: t('COMMON:MSG_COMMON_STATUS_6') },
+          ],
+        },
+      ]}
+      namespace={namespace}
+      customData={customData}
+    />
+  );
 });
 
 type ContainerLinkProps = {

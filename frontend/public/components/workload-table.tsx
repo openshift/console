@@ -4,56 +4,22 @@ import { sortable } from '@patternfly/react-table';
 import { Link } from 'react-router-dom';
 import { K8sResourceKind } from '../module/k8s';
 import { TableRow, TableData } from './factory';
+import { TFunction } from 'i18next';
+import { Kebab, KebabAction, LabelList, ResourceKebab, ResourceLink, resourcePath, Selector } from './utils';
 
-import {
-  Kebab,
-  KebabAction,
-  LabelList,
-  ResourceKebab,
-  ResourceLink,
-  resourcePath,
-  Selector,
-} from './utils';
+const tableColumnClasses = ['', '', classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-lg'), Kebab.columnClass];
 
-const tableColumnClasses = [
-  '',
-  '',
-  classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
-  classNames('pf-m-hidden', 'pf-m-visible-on-lg'),
-  Kebab.columnClass,
-];
-
-export const WorkloadTableRow: React.FC<WorkloadTableRowProps> = ({
-  obj,
-  index,
-  rowKey,
-  style,
-  kind,
-  menuActions,
-}) => {
+export const WorkloadTableRow: React.FC<WorkloadTableRowProps> = ({ obj, index, rowKey, style, kind, menuActions }) => {
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={rowKey} style={style}>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink
-          kind={kind}
-          name={obj.metadata.name}
-          namespace={obj.metadata.namespace}
-          title={obj.metadata.uid}
-        />
+        <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.uid} />
       </TableData>
       <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
-        <ResourceLink
-          kind="Namespace"
-          name={obj.metadata.namespace}
-          title={obj.metadata.namespace}
-        />
+        <ResourceLink kind="Namespace" name={obj.metadata.namespace} title={obj.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
-        <Link
-          to={`${resourcePath(kind, obj.metadata.name, obj.metadata.namespace)}/pods`}
-          title="pods"
-        >
+        <Link to={`${resourcePath(kind, obj.metadata.name, obj.metadata.namespace)}/pods`} title="pods">
           {obj.status.replicas || 0} of {obj.spec.replicas} pods
         </Link>
       </TableData>
@@ -79,34 +45,34 @@ type WorkloadTableRowProps = {
   menuActions: KebabAction[];
 };
 
-export const WorkloadTableHeader = () => {
+export const WorkloadTableHeader = (t?: TFunction) => {
   return [
     {
-      title: 'Name',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_1'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: 'Namespace',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_2'),
       sortField: 'metadata.namespace',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Status',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_3'),
       sortFunc: 'numReplicas',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'Labels',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_15'),
       sortField: 'metadata.labels',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
     },
     {
-      title: 'Pod Selector',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_16'),
       sortField: 'spec.selector',
       transforms: [sortable],
       props: { className: tableColumnClasses[4] },

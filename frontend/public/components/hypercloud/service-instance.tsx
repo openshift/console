@@ -198,7 +198,7 @@ const ServiceInstancesPage: React.FC<ServiceInstancesPageProps> = props => {
           reducer: serviceInstanceStatusReducer,
           items: [
             { id: 'Ready', title: t('COMMON:MSG_MAIN_FILTER_2') },
-            { id: 'Error', title: 'Error' },
+            { id: 'Error', title: t('COMMON:MSG_COMMON_BUTTON_FILTER_CHECKBOX_4') },
           ],
         },
       ]}
