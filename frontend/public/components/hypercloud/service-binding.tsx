@@ -4,6 +4,8 @@ import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { ServiceBindingModel } from '../../models';
 import { K8sResourceKind } from '../../module/k8s';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { DetailsPage, ListPage, Table, TableData, TableRow } from '../factory';
 import { Kebab, ResourceKebab, navFactory, SectionHeading, ResourceSummary, ResourceLink, Timestamp } from '../utils';
 
@@ -14,21 +16,22 @@ const kind = ServiceBindingModel.kind;
 export const serviceBindingMenuActions = [...Kebab.getExtensionsActionsForKind(ServiceBindingModel), common[0], common[1], common[3]];
 
 const ServiceBindingDetails: React.FC<ServiceBindingDetailsProps> = ({ obj: serviceBinding }) => {
+  const { t } = useTranslation();
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Service Binding Details" />
+        <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_18')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
         <div className="row">
           <div className="col-md-6">
             <ResourceSummary resource={serviceBinding} showPodSelector showNodeSelector showOwner={false}></ResourceSummary>
           </div>
           <div className="col-md-6">
             <dl className="co-m-pane__details">
-              <dt> SERVICE INSTANCE</dt>
+              <dt>{t('COMMON:MSG_LNB_MENU_18')}</dt>
               <dd>
                 <ResourceLink kind="ServiceInstance" name={serviceBinding.spec.instanceRef.name} namespace={serviceBinding.metadata.namespace} title={serviceBinding.spec.instanceRef.name} />
               </dd>
-              <dt> SECRET</dt>
+              <dt>{t('COMMON:MSG_MAIN_TABLEHEADER_34')}</dt>
               <dd>
                 <ResourceLink kind="Secret" name={serviceBinding.spec.secretName} namespace={serviceBinding.metadata.namespace} title={serviceBinding.spec.secretName} />
               </dd>
@@ -82,34 +85,34 @@ const ServiceBindingTableRow = ({ obj, index, key, style }) => {
   );
 };
 
-const ServiceBindingTableHeader = () => {
+const ServiceBindingTableHeader = (t?: TFunction) => {
   return [
     {
-      title: 'Name',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_1'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: 'Namespace',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_2'),
       sortField: 'metadata.namespace',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Service Instance',
+      title: t('COMMON:MSG_LNB_MENU_18'),
       sortField: 'spec.instanceRef.name',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'Secret',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_34'),
       sortField: 'spec.secretName',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
     },
     {
-      title: 'Created',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_12'),
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: tableColumnClasses[4] },
@@ -123,7 +126,10 @@ const ServiceBindingTableHeader = () => {
 
 ServiceBindingTableHeader.displayName = 'ServiceBindingTableHeader';
 
-const ServiceBindingsList: React.FC = props => <Table {...props} aria-label="Service Binding" Header={ServiceBindingTableHeader} Row={ServiceBindingTableRow} />;
+const ServiceBindingsList: React.FC = props => {
+  const { t } = useTranslation();
+  return <Table {...props} aria-label="Service Binding" Header={ServiceBindingTableHeader.bind(null, t)} Row={ServiceBindingTableRow} />;
+};
 ServiceBindingsList.displayName = 'ServiceBindingsList';
 
 const ServiceBindingsPage: React.FC<ServiceBindingsPageProps> = props => {

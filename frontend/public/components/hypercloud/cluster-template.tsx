@@ -3,6 +3,8 @@ import * as _ from 'lodash-es';
 import { sortable } from '@patternfly/react-table';
 import { ClusterTemplateModel } from '../../models';
 import { K8sResourceKind } from '../../module/k8s';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { DetailsPage, ListPage, Table, TableData, TableRow } from '../factory';
 import { ResourceKebab, Kebab, navFactory, SectionHeading, ResourceSummary, ResourceLink, Timestamp } from '../utils';
 
@@ -36,6 +38,7 @@ const objectKinds = clustertemplate => {
 };
 
 const ClusterTemplateDetails: React.FC<ClusterTemplateDetailsProps> = ({ obj: clusterTemplate }) => {
+  const { t } = useTranslation();
   const objectSummary = objectKinds(clusterTemplate);
   return (
     <>
@@ -47,7 +50,7 @@ const ClusterTemplateDetails: React.FC<ClusterTemplateDetailsProps> = ({ obj: cl
           </div>
           <div className="col-md-6">
             <dl className="co-m-pane__details">
-              <dt>Resource Summary</dt>
+              <dt>{t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_104')}</dt>
               <dd>{objectSummary}</dd>
             </dl>
           </div>
@@ -92,24 +95,24 @@ const ClusterTemplateTableRow = ({ obj, index, key, style }) => {
   );
 };
 
-const ClusterTemplateTableHeader = () => {
+const ClusterTemplateTableHeader = (t?: TFunction) => {
   return [
     {
-      title: 'Name',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_1'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: 'Namespace',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_2'),
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Resource Summary',
+      title: t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_104'),
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'Created',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_12'),
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
@@ -123,7 +126,10 @@ const ClusterTemplateTableHeader = () => {
 
 ClusterTemplateTableHeader.displayName = 'ClusterTemplateTableHeader';
 
-const ClusterTemplatesList: React.FC = props => <Table {...props} aria-label="Cluster Template" Header={ClusterTemplateTableHeader} Row={ClusterTemplateTableRow} />;
+const ClusterTemplatesList: React.FC = props => {
+  const { t } = useTranslation();
+  return <Table {...props} aria-label="Cluster Template" Header={ClusterTemplateTableHeader.bind(null, t)} Row={ClusterTemplateTableRow} />;
+};
 ClusterTemplatesList.displayName = 'ClusterTemplatesList';
 
 const ClusterTemplatesPage: React.FC<ClusterTemplatesPageProps> = props => {

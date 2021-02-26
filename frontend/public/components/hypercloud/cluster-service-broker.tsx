@@ -4,6 +4,8 @@ import { Status } from '@console/shared';
 import { sortable } from '@patternfly/react-table';
 import { ClusterServiceBrokerModel } from '../../models';
 import { K8sResourceKind } from '../../module/k8s';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { DetailsPage, ListPage, Table, TableData, TableRow } from '../factory';
 import { DetailsItem, Kebab, navFactory, SectionHeading, ResourceSummary, ResourceLink, ResourceKebab, Timestamp } from '../utils';
 
@@ -12,17 +14,18 @@ const kind = ClusterServiceBrokerModel.kind;
 
 export const clusterServiceBrokerMenuActions = [...Kebab.getExtensionsActionsForKind(ClusterServiceBrokerModel), ...common];
 const ClusterServiceBrokerDetails: React.FC<ClusterServiceBrokerDetailsProps> = ({ obj: clusterServiceBroker }) => {
+  const { t } = useTranslation();
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Cluster Service Broker Details" />
+        <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_14')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
         <div className="row">
           <div className="col-md-6">
             <ResourceSummary resource={clusterServiceBroker} showPodSelector showNodeSelector></ResourceSummary>
           </div>
           <div className="col-md-6">
             <dl className="co-m-pane__details">
-              <DetailsItem label="Status" obj={clusterServiceBroker} path="status.phase">
+              <DetailsItem label={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_13')} obj={clusterServiceBroker} path="status.phase">
                 <Status status={ClusterServiceBrokerPhase(clusterServiceBroker)} />
               </DetailsItem>
               <dt>URL</dt>
@@ -82,28 +85,28 @@ const ClusterServiceBrokerTableRow = ({ obj, index, key, style }) => {
   );
 };
 
-const ClusterServiceBrokerTableHeader = () => {
+const ClusterServiceBrokerTableHeader = (t?: TFunction) => {
   return [
     {
-      title: 'Name',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_1'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: 'Url',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_4'),
       sortField: 'spec.url',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Status',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_3'),
       sortFunc: 'ServiceBrokerPhase',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'Created',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_12'),
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
@@ -116,7 +119,10 @@ const ClusterServiceBrokerTableHeader = () => {
 };
 ClusterServiceBrokerTableHeader.displayName = 'ClusterServiceBrokerTableHeader';
 
-const ClusterServiceBrokersList: React.FC = props => <Table {...props} aria-label="Cluster Service Broker" Header={ClusterServiceBrokerTableHeader} Row={ClusterServiceBrokerTableRow} virtualize />;
+const ClusterServiceBrokersList: React.FC = props => {
+  const { t } = useTranslation();
+  return <Table {...props} aria-label="Cluster Service Broker" Header={ClusterServiceBrokerTableHeader.bind(null, t)} Row={ClusterServiceBrokerTableRow} virtualize />;
+};
 ClusterServiceBrokersList.displayName = 'ClusterServiceBrokersList';
 
 const ClusterServiceBrokersPage: React.FC<ClusterServiceBrokersPageProps> = props => {

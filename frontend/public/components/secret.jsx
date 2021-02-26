@@ -4,28 +4,21 @@ import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import { SecretData } from './configmap-and-secret-data';
-import {
-  Kebab,
-  SectionHeading,
-  ResourceKebab,
-  ResourceLink,
-  ResourceSummary,
-  Timestamp,
-  detailsPage,
-  navFactory,
-  resourceObjPath,
-} from './utils';
+import { Kebab, SectionHeading, ResourceKebab, ResourceLink, ResourceSummary, Timestamp, detailsPage, navFactory, resourceObjPath } from './utils';
 import { SecretType } from './secrets/create-secret';
 import { configureAddSecretToWorkloadModal } from './modals/add-secret-to-workload';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 
 export const WebHookSecretKey = 'WebHookSecretKey';
 
 export const addSecretToWorkload = (kindObj, secret) => {
+  const { t } = useTranslation();
   const { name: secretName, namespace } = secret.metadata;
 
   return {
     callback: () => configureAddSecretToWorkloadModal({ secretName, namespace, blocking: true }),
-    label: 'Add Secret to Workload',
+    label: t('SINGLE:MSG_SECRETS_SECRETDETAILS_DIV1_BUTTON_1'),
   };
 };
 
@@ -50,43 +43,36 @@ const menuActions = [
 
 const kind = 'Secret';
 
-const tableColumnClasses = [
-  classNames('col-md-3', 'col-sm-4', 'col-xs-6'),
-  classNames('col-md-3', 'col-sm-4', 'col-xs-6'),
-  classNames('col-md-3', 'col-sm-4', 'hidden-xs'),
-  classNames('col-lg-1', 'hidden-md', 'hidden-sm', 'hidden-xs'),
-  classNames('col-md-3', 'hidden-sm', 'hidden-xs'),
-  Kebab.columnClass,
-];
+const tableColumnClasses = [classNames('col-md-3', 'col-sm-4', 'col-xs-6'), classNames('col-md-3', 'col-sm-4', 'col-xs-6'), classNames('col-md-3', 'col-sm-4', 'hidden-xs'), classNames('col-lg-1', 'hidden-md', 'hidden-sm', 'hidden-xs'), classNames('col-md-3', 'hidden-sm', 'hidden-xs'), Kebab.columnClass];
 
-const SecretTableHeader = () => {
+const SecretTableHeader = t => {
   return [
     {
-      title: 'Name',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_1'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: 'Namespace',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_2'),
       sortField: 'metadata.namespace',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Type',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_17'),
       sortField: 'type',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'Size',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_18'),
       sortFunc: 'dataSize',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
     },
     {
-      title: 'Created',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_12'),
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: tableColumnClasses[4] },
@@ -104,23 +90,12 @@ const SecretTableRow = ({ obj: secret, index, key, style }) => {
   return (
     <TableRow id={secret.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink
-          kind="Secret"
-          name={secret.metadata.name}
-          namespace={secret.metadata.namespace}
-          title={secret.metadata.uid}
-        />
+        <ResourceLink kind="Secret" name={secret.metadata.name} namespace={secret.metadata.namespace} title={secret.metadata.uid} />
       </TableData>
       <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
-        <ResourceLink
-          kind="Namespace"
-          name={secret.metadata.namespace}
-          title={secret.metadata.namespace}
-        />
+        <ResourceLink kind="Namespace" name={secret.metadata.namespace} title={secret.metadata.namespace} />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
-        {secret.type}
-      </TableData>
+      <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>{secret.type}</TableData>
       <TableData className={tableColumnClasses[3]}>{data}</TableData>
       <TableData className={tableColumnClasses[4]}>
         <Timestamp timestamp={secret.metadata.creationTimestamp} />
@@ -133,10 +108,11 @@ const SecretTableRow = ({ obj: secret, index, key, style }) => {
 };
 
 const SecretDetails = ({ obj: secret }) => {
+  const { t } = useTranslation();
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Secret Details" />
+        <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_26')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
         <ResourceSummary resource={secret} />
       </div>
       <div className="co-m-pane__body">
@@ -146,15 +122,10 @@ const SecretDetails = ({ obj: secret }) => {
   );
 };
 
-const SecretsList = (props) => (
-  <Table
-    {...props}
-    aria-label="Secrets"
-    Header={SecretTableHeader}
-    Row={SecretTableRow}
-    virtualize
-  />
-);
+const SecretsList = props => {
+  const { t } = useTranslation();
+  return <Table {...props} aria-label="Secrets" Header={SecretTableHeader.bind(null, t)} Row={SecretTableRow} virtualize />;
+};
 SecretsList.displayName = 'SecretsList';
 
 const IMAGE_FILTER_VALUE = 'Image';
@@ -163,15 +134,9 @@ const TLS_FILTER_VALUE = 'TLS';
 const SA_TOKEN_FILTER_VALUE = 'Service Account Token';
 const OPAQUE_FILTER_VALUE = 'Opaque';
 
-const secretTypeFilterValues = [
-  IMAGE_FILTER_VALUE,
-  SOURCE_FILTER_VALUE,
-  TLS_FILTER_VALUE,
-  SA_TOKEN_FILTER_VALUE,
-  OPAQUE_FILTER_VALUE,
-];
+const secretTypeFilterValues = [IMAGE_FILTER_VALUE, SOURCE_FILTER_VALUE, TLS_FILTER_VALUE, SA_TOKEN_FILTER_VALUE, OPAQUE_FILTER_VALUE];
 
-export const secretTypeFilterReducer = (secret) => {
+export const secretTypeFilterReducer = secret => {
   switch (secret.type) {
     case SecretType.dockercfg:
     case SecretType.dockerconfigjson:
@@ -199,44 +164,29 @@ const filters = [
     filterGroupName: 'Type',
     type: 'secret-type',
     reducer: secretTypeFilterReducer,
-    items: secretTypeFilterValues.map((filterValue) => ({ id: filterValue, title: filterValue })),
+    items: secretTypeFilterValues.map(filterValue => ({ id: filterValue, title: filterValue })),
   },
 ];
 
-const SecretsPage = (props) => {
+const SecretsPage = props => {
+  const { t } = useTranslation();
+
   const createItems = {
-    generic: 'Key/Value Secret',
-    image: 'Image Pull Secret',
-    source: 'Source Secret',
-    webhook: 'Webhook Secret',
-    yaml: 'From YAML',
+    generic: t('SINGLE:MSG_SECRETS_MAIN_BUTTON_1'),
+    image: t('SINGLE:MSG_SECRETS_MAIN_BUTTON_2'),
+    source: t('SINGLE:MSG_SECRETS_MAIN_BUTTON_3'),
+    webhook: t('SINGLE:MSG_SECRETS_MAIN_BUTTON_4'),
+    yaml: t('SINGLE:MSG_SECRETS_MAIN_BUTTON_5'),
   };
 
   const createProps = {
     items: createItems,
-    createLink: (type) =>
-      `/k8s/ns/${props.namespace || 'default'}/secrets/~new/${type !== 'yaml' ? type : ''}`,
+    createLink: type => `/k8s/ns/${props.namespace || 'default'}/secrets/~new/${type !== 'yaml' ? type : ''}`,
   };
 
-  return (
-    <ListPage
-      ListComponent={SecretsList}
-      canCreate={true}
-      rowFilters={filters}
-      createButtonText="Create"
-      createProps={createProps}
-      {...props}
-    />
-  );
+  return <ListPage ListComponent={SecretsList} canCreate={true} rowFilters={filters} createButtonText={t('COMMON:MSG_COMMON_BUTTON_COMMIT_1')} createProps={createProps} {...props} />;
 };
 
-const SecretsDetailsPage = (props) => (
-  <DetailsPage
-    {...props}
-    buttonActions={actionButtons}
-    menuActions={menuActions}
-    pages={[navFactory.details(detailsPage(SecretDetails)), navFactory.editYaml()]}
-  />
-);
+const SecretsDetailsPage = props => <DetailsPage {...props} buttonActions={actionButtons} menuActions={menuActions} pages={[navFactory.details(detailsPage(SecretDetails)), navFactory.editYaml()]} />;
 
 export { SecretsList, SecretsPage, SecretsDetailsPage };
