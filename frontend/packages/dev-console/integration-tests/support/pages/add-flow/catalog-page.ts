@@ -58,6 +58,43 @@ export const catalogPage = {
       }
     }
   },
+  selectTemplateTypes: (type: string | catalogTypes) => {
+    switch (type) {
+      case 'CI/CD': {
+        cy.get('li.vertical-tabs-pf-tab.shown.text-capitalize.co-catalog-tab__empty')
+          .contains('CI/CD')
+          .click();
+        break;
+      }
+      case 'Databases': {
+        cy.get('li.vertical-tabs-pf-tab.shown.text-capitalize.co-catalog-tab__empty')
+          .contains('Databases')
+          .click();
+        break;
+      }
+      case 'Languages': {
+        cy.get('li.vertical-tabs-pf-tab.shown.text-capitalize.co-catalog-tab__empty')
+          .contains('Languages')
+          .click();
+        break;
+      }
+      case 'Middleware': {
+        cy.get('li.vertical-tabs-pf-tab.shown.text-capitalize.co-catalog-tab__empty')
+          .contains('Middleware')
+          .click();
+        break;
+      }
+      case 'Other': {
+        cy.get('li.vertical-tabs-pf-tab.shown.text-capitalize.co-catalog-tab__empty')
+          .contains('Other')
+          .click();
+        break;
+      }
+      default: {
+        throw new Error("Couldn't find that type");
+      }
+    }
+  },
   selectKnativeServingCard: () =>
     cy
       .get(cardTitle, { timeout: 40000 })
@@ -90,6 +127,25 @@ export const catalogPage = {
       }
       case catalogCards.nodeJs || 'Node.js': {
         cy.get(catalogPO.cards.nodeJsBuilderImage).click();
+        break;
+      }
+      case catalogCards.nodeJsPostgreSQL: {
+        cy.get(catalogPO.cards.nodejsPostgreSQL).click();
+        break;
+      }
+      case catalogCards.apacheHTTPServer: {
+        cy.get(catalogPO.cards.apacheHTTPServer).click();
+        break;
+      }
+      case catalogCards.nginxHTTPServer: {
+        cy.get(catalogPO.cards.nginxHTTPServer).click();
+        break;
+      }
+      case catalogCards.jenkins: {
+        cy.get('div.catalog-tile-pf-title')
+          .contains('Jenkins')
+          .first()
+          .click();
         break;
       }
       default: {

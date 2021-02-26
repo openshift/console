@@ -1,10 +1,10 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { gitPage } from '../../pages/add-flow/git-page';
-import { navigateTo } from '../../pages/app';
+import { perspective, navigateTo } from '../../pages/app';
 import { addPage } from '../../pages/add-flow/add-page';
 import { addOptions } from '../../constants/add';
 import { createGitWorkload } from '../../pages/functions/createGitWorkload';
-import { devNavigationMenu } from '../../constants/global';
+import { switchPerspective, devNavigationMenu } from '../../constants/global';
 import { pageTitle } from '../../constants/pageTitle';
 import { catalogPage } from '../../pages/add-flow/catalog-page';
 import { topologyPO } from '../../pageObjects/topology-po';
@@ -50,15 +50,13 @@ Given('user has opened application {string} in topology page', (componentName: s
 });
 
 Given('user is at Developer Catalog page', () => {
+  perspective.switchTo(switchPerspective.Developer);
+  navigateTo(devNavigationMenu.Add);
   addPage.selectCardFromOptions(addOptions.DeveloperCatalog);
 });
 
 When('user clicks Instantiate Template button on side bar', () => {
   catalogPage.clickButtonOnCatalogPageSidePane();
-});
-
-Given('user is at Developer Catalog page', () => {
-  addPage.selectCardFromOptions(addOptions.DeveloperCatalog);
 });
 
 Given('user is at DevFile page', () => {

@@ -100,6 +100,11 @@ export const catalogPO = {
     mariaDBTemplate: 'a[data-test="Template-MariaDB"] .catalog-tile-pf-title',
     phpCakeTemplate: '[data-test="Template-CakePHP + MySQL"] .catalog-tile-pf-title',
     nodeJsBuilderImage: 'a[data-test="BuilderImage-Node.js"] .catalog-tile-pf-title',
+    nodejsPostgreSQL:
+      'a[data-test="Template-Node.js + PostgreSQL (Ephemeral)"] .catalog-tile-pf-title',
+    apacheHTTPServer: 'a[data-test="Template-Apache HTTP Server"] .catalog-tile-pf-title',
+    nginxHTTPServer:
+      'a[data-test="Template-Nginx HTTP server and a reverse proxy"] .catalog-tile-pf-title',
   },
   sidePane: {
     dialog: '[role="dialog"]',
