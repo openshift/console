@@ -3,6 +3,8 @@ import * as _ from 'lodash-es';
 import { sortable } from '@patternfly/react-table';
 import { CatalogServiceClaimModel } from '../../models';
 import { CatalogServiceClaimKind } from '../../module/k8s';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { DetailsPage, ListPage, Table, TableData, TableRow } from '../factory';
 import { Kebab, navFactory, SectionHeading, ResourceSummary, ResourceLink, ResourceKebab, Timestamp } from '../utils';
 
@@ -13,21 +15,22 @@ const kind = CatalogServiceClaimModel.kind;
 export const catalogServiceClaimMenuActions = [...Kebab.getExtensionsActionsForKind(CatalogServiceClaimModel), ...common, Kebab.factory.ModifyStatus];
 
 const CatalogServiceClaimDetails: React.FC<CatalogServiceClaimDetailsProps> = ({ obj: catalogServiceClaim }) => {
+  const { t } = useTranslation();
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Catalog Service Claim Details" />
+        <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_19')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
         <div className="row">
           <div className="col-md-6">
             <ResourceSummary resource={catalogServiceClaim} showPodSelector showNodeSelector></ResourceSummary>
           </div>
           <div className="col-md-6">
             <dl className="co-m-pane__details">
-              <dt>RESOURCENAME</dt>
+              <dt>{t('COMMON:MSG_DETAILS_TABOVERVIEW_TABLEHEADER_1')}</dt>
               <dd>{catalogServiceClaim.resourceName}</dd>
-              <dt>STATUS</dt>
+              <dt>{t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_13')}</dt>
               <dd>{catalogServiceClaim.status && catalogServiceClaim.status.status}</dd>
-              {catalogServiceClaim.status && catalogServiceClaim.status.reason && <dt>REASON</dt>}
+              {catalogServiceClaim.status && catalogServiceClaim.status.reason && <dt>{t('COMMON:MSG_DETAILS_TABDETAILS_CONDITIONS_TABLEHEADER_5')}</dt>}
               {catalogServiceClaim.status && catalogServiceClaim.status.reason && <dd>{catalogServiceClaim.status.reason}</dd>}
             </dl>
           </div>
@@ -69,22 +72,22 @@ const CatalogServiceClaimTableRow = ({ obj, index, key, style }) => {
   );
 };
 
-const CatalogServiceClaimTableHeader = () => {
+const CatalogServiceClaimTableHeader = (t?: TFunction) => {
   return [
     {
-      title: 'Name',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_1'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: 'Status',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_3'),
       sortField: 'status',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Created',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_12'),
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
@@ -98,7 +101,10 @@ const CatalogServiceClaimTableHeader = () => {
 
 CatalogServiceClaimTableHeader.displayName = 'CatalogServiceClaimTableHeader';
 
-const CatalogServiceClaimsList: React.FC = props => <Table {...props} aria-label="Catalog Service Claim" Header={CatalogServiceClaimTableHeader} Row={CatalogServiceClaimTableRow} />;
+const CatalogServiceClaimsList: React.FC = props => {
+  const { t } = useTranslation();
+  return <Table {...props} aria-label="Catalog Service Claim" Header={CatalogServiceClaimTableHeader.bind(null, t)} Row={CatalogServiceClaimTableRow} />;
+};
 CatalogServiceClaimsList.displayName = 'CatalogServiceClaimsList';
 
 const CatalogServiceClaimsPage: React.FC<CatalogServiceClaimsPageProps> = props => {

@@ -39,11 +39,12 @@ const objectKinds = template => {
 };
 
 const TemplateDetails: React.FC<TemplateDetailsProps> = ({ obj: template }) => {
+  const { t } = useTranslation();
   const objectSummary = objectKinds(template);
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Template Details" />
+        <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_20')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
         <div className="row">
           <div className="col-md-6">
             <ResourceSummary resource={template} showPodSelector showOwner={false}></ResourceSummary>

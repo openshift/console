@@ -4,6 +4,8 @@ import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { ClusterServiceClassModel } from '../../models';
 import { K8sResourceKind } from '../../module/k8s';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { DetailsPage, ListPage, Table, TableData, TableRow } from '../factory';
 import { navFactory, SectionHeading, ResourceSummary, ResourceLink, Timestamp } from '../utils';
 import { ClusterServicePlansPage } from './cluster-service-plan';
@@ -11,21 +13,22 @@ import { ClusterServicePlansPage } from './cluster-service-plan';
 const kind = ClusterServiceClassModel.kind;
 
 const ClusterServiceClassDetails: React.FC<ClusterServiceClassDetailsProps> = ({ obj: clusterServiceClass }) => {
+  const { t } = useTranslation();
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Cluster Service Class Details" />
+        <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_12')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
         <div className="row">
           <div className="col-md-6">
             <ResourceSummary resource={clusterServiceClass} showPodSelector showNodeSelector></ResourceSummary>
           </div>
           <div className="col-md-6">
             <dl className="co-m-pane__details">
-              <dt>Bindable</dt>
+              <dt>{t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_16')}</dt>
               <dd>{clusterServiceClass.spec.bindable ? 'True' : 'False'}</dd>
-              <dt>External Name</dt>
+              <dt>{t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_17')}</dt>
               <dd>{clusterServiceClass.spec.externalName}</dd>
-              <dt>Service Broker</dt>
+              <dt>{t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_18')}</dt>
               <dd>
                 <ResourceLink kind="ClusterServiceBroker" name={clusterServiceClass.spec.clusterServiceBrokerName} title={clusterServiceClass.spec.clusterServiceBrokerName} />
               </dd>
@@ -41,35 +44,37 @@ type ClusterServiceClassDetailsProps = {
   obj: K8sResourceKind;
 };
 
-
 const ClusterServicePlanTab: React.FC<ClusterServicePlansTabProps> = ({ obj }) => {
-  const serviceClassRef = obj.spec.externalMetadata.serviceClassRefName
+  const serviceClassRef = obj.spec.externalMetadata.serviceClassRefName;
 
   const selector = {
     matchLabels: {
-      'servicecatalog.k8s.io/spec.clusterServiceClassRef.name': serviceClassRef
-    }
+      'servicecatalog.k8s.io/spec.clusterServiceClassRef.name': serviceClassRef,
+    },
   };
 
   return <ClusterServicePlansPage showTitle={false} canCreate={false} selector={selector} />;
 };
 
 const { details, editYaml } = navFactory;
-const ClusterServiceClassesDetailsPage: React.FC<ClusterServiceClassesDetailsPageProps> = props => (
-  <DetailsPage
-    {...props}
-    kind={kind}
-    pages={[
-      details(ClusterServiceClassDetails),
-      editYaml(),
-      {
-        href: 'clusterserviceplan',
-        name: 'Cluster Service Plan',
-        component: ClusterServicePlanTab
-      }
-    ]}
-  />
-);
+const ClusterServiceClassesDetailsPage: React.FC<ClusterServiceClassesDetailsPageProps> = props => {
+  const { t } = useTranslation();
+  return (
+    <DetailsPage
+      {...props}
+      kind={kind}
+      pages={[
+        details(ClusterServiceClassDetails),
+        editYaml(),
+        {
+          href: 'clusterserviceplan',
+          name: t('COMMON:MSG_LNB_MENU_16'),
+          component: ClusterServicePlanTab,
+        },
+      ]}
+    />
+  );
+};
 ClusterServiceClassesDetailsPage.displayName = 'ClusterServiceClassesDetailsPage';
 
 const tableColumnClasses = [
@@ -98,34 +103,34 @@ const ClusterServiceClassTableRow = ({ obj, index, key, style }) => {
   );
 };
 
-const ClusterServiceClassTableHeader = () => {
+const ClusterServiceClassTableHeader = (t?: TFunction) => {
   return [
     {
-      title: 'Name',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_1'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: 'Bindable',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_5'),
       sortField: 'spec.bindable',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'External Name',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_6'),
       sortField: 'spec.externalName',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'Cluster Service Broker',
+      title: t('COMMON:MSG_LNB_MENU_14'),
       sortField: 'spec.clusterServiceBrokerName',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
     },
     {
-      title: 'Created',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_12'),
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: tableColumnClasses[4] },
@@ -135,7 +140,10 @@ const ClusterServiceClassTableHeader = () => {
 
 ClusterServiceClassTableHeader.displayName = 'ClusterServiceClassTableHeader';
 
-const ClusterServiceClassesList: React.FC = props => <Table {...props} aria-label="Cluster Service Class" Header={ClusterServiceClassTableHeader} Row={ClusterServiceClassTableRow} />;
+const ClusterServiceClassesList: React.FC = props => {
+  const { t } = useTranslation();
+  return <Table {...props} aria-label="Cluster Service Class" Header={ClusterServiceClassTableHeader.bind(null, t)} Row={ClusterServiceClassTableRow} />;
+};
 ClusterServiceClassesList.displayName = 'ClusterServiceClassesList';
 
 const ClusterServiceClassesPage: React.FC<ClusterServiceClassesPageProps> = props => {
