@@ -58,7 +58,6 @@ const ClusterServicePlanTab: React.FC<ClusterServicePlansTabProps> = ({ obj }) =
 
 const { details, editYaml } = navFactory;
 const ClusterServiceClassesDetailsPage: React.FC<ClusterServiceClassesDetailsPageProps> = props => {
-  const { t } = useTranslation();
   return (
     <DetailsPage
       {...props}
@@ -68,7 +67,7 @@ const ClusterServiceClassesDetailsPage: React.FC<ClusterServiceClassesDetailsPag
         editYaml(),
         {
           href: 'clusterserviceplan',
-          name: t('COMMON:MSG_LNB_MENU_16'),
+          name: 'Cluster Service Plan',
           component: ClusterServicePlanTab,
         },
       ]}
