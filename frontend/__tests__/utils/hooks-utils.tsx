@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { mount } from 'enzyme';
+import { mount, MountRendererProps } from 'enzyme';
 
 const useRerender = () => {
   const [, setState] = React.useState(0);
@@ -21,11 +21,11 @@ const TestHook: React.FC<TestComponentProps> = ({ hook, result, rerenderRef }) =
   return null;
 };
 
-export const testHook = <T extends any>(hook: () => T) => {
+export const testHook = <T extends any>(hook: () => T, options?: MountRendererProps) => {
   // Inspired by https://github.com/testing-library/react-hooks-testing-library
   const result = { current: undefined as T };
   const rerenderRef: RerenderRef = {};
   const rerender = () => rerenderRef.current();
-  mount(<TestHook hook={hook} result={result} rerenderRef={rerenderRef} />);
+  mount(<TestHook hook={hook} result={result} rerenderRef={rerenderRef} />, options);
   return { result, rerender };
 };

@@ -30,6 +30,7 @@ import { useExtensions, withExtensions, isContextProvider } from '@console/plugi
 import { GuidedTour } from '@console/app/src/components/tour';
 import { isStandaloneRoutePage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
 import QuickStartDrawer from '@console/app/src/components/quick-starts/QuickStartDrawer';
+import ToastProvider from '@console/shared/src/components/toast/ToastProvider';
 import '../i18n';
 import '../vendor.scss';
 import '../style.scss';
@@ -302,7 +303,9 @@ graphQLReady.onReady(() => {
   render(
     <React.Suspense fallback={<LoadingBox />}>
       <Provider store={store}>
-        <AppRouter />
+        <ToastProvider>
+          <AppRouter />
+        </ToastProvider>
       </Provider>
     </React.Suspense>,
     document.getElementById('app'),
