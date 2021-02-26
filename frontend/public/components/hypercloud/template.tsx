@@ -39,18 +39,19 @@ const objectKinds = template => {
 };
 
 const TemplateDetails: React.FC<TemplateDetailsProps> = ({ obj: template }) => {
+  const { t } = useTranslation();
   const objectSummary = objectKinds(template);
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Template Details" />
+        <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_20')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
         <div className="row">
           <div className="col-md-6">
             <ResourceSummary resource={template} showPodSelector showOwner={false}></ResourceSummary>
           </div>
           <div className="col-md-6">
             <dl className="co-m-pane__details">
-              <dt>Resource Summary</dt>
+              <dt>{t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_104')}</dt>
               <dd>{objectSummary}</dd>
             </dl>
           </div>
@@ -112,7 +113,7 @@ const TemplateTableHeader = (t?: TFunction) => {
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Resource Summary',
+      title: t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_104'),
       props: { className: tableColumnClasses[2] },
     },
     {

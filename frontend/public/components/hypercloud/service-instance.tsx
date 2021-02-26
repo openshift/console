@@ -7,6 +7,8 @@ import { sortable } from '@patternfly/react-table';
 import { Status } from '@console/shared';
 import { ServiceInstanceModel } from '../../models';
 import { K8sResourceKind, modelFor, k8sGet } from '../../module/k8s';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { DetailsPage, ListPage, Table, TableData, TableRow } from '../factory';
 import { Kebab, ResourceKebab, navFactory, SectionHeading, ResourceSummary, ResourceLink, Timestamp } from '../utils';
 import { ResourceSidebar } from '../sidebars/resource-sidebar';
@@ -18,6 +20,7 @@ const kind = ServiceInstanceModel.kind;
 export const serviceInstanceMenuActions = [...Kebab.getExtensionsActionsForKind(ServiceInstanceModel), ...common];
 
 const ServiceInstanceDetails: React.FC<ServiceInstanceDetailsProps> = props => {
+  const { t } = useTranslation();
   const { obj: serviceInstance, match } = props;
   const [showSidebar, setShowSidebar] = useState(false);
   const [sidebarDetails, setSidebarDetails] = useState({});
@@ -44,20 +47,20 @@ const ServiceInstanceDetails: React.FC<ServiceInstanceDetailsProps> = props => {
     <>
       <div className="co-p-has-sidebar">
         <div className="co-m-pane__body">
-          <SectionHeading text="Service Instance Details" />
+          <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_17')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
           <div className="row">
             <div className="col-md-6">
               <ResourceSummary resource={serviceInstance} showPodSelector showNodeSelector></ResourceSummary>
             </div>
             <div className="col-md-6">
               <dl className="co-m-pane__details">
-                <dt>Status</dt>
+                <dt>{t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_13')}</dt>
                 <dd>
                   <Status status={serviceInstance.status.lastConditionState} />
                 </dd>
-                <dt>Service Class</dt>
+                <dt>{t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_19')}</dt>
                 <SidebarLink name={serviceInstance.spec.clusterServiceClassRef?.name ? serviceInstance.spec.clusterServiceClassRef?.name : serviceInstance.spec?.serviceClassExternalName} kind={serviceInstance.spec.clusterServiceClassRef?.name ? 'ClusterServiceClass' : 'ServiceClass'}></SidebarLink>
-                <dt>Service Plan</dt>
+                <dt>{t('COMMON:MSG_LNB_MENU_13')}</dt>
                 <dd>
                   <SidebarLink name={serviceInstance.spec.clusterServicePlanRef?.name ? serviceInstance.spec.clusterServicePlanRef?.name : serviceInstance.spec?.servicePlanRef?.name} kind={serviceInstance.spec.clusterServiceClassRef?.name ? 'ClusterServicePlan' : 'ServicePlan'}></SidebarLink>
                 </dd>
@@ -130,34 +133,34 @@ const ServiceInstanceTableRow = ({ obj, index, key, style }) => {
   );
 };
 
-const ServiceInstanceTableHeader = () => {
+const ServiceInstanceTableHeader = (t?: TFunction) => {
   return [
     {
-      title: 'Name',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_1'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: 'Namespace',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_2'),
       sortField: 'metadata.namespace',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Status',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_3'),
       sortField: 'status.lastConditionState',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'Service Plan',
+      title: t('COMMON:MSG_LNB_MENU_13'),
       sortField: 'spec.servicePlanName',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
     },
     {
-      title: 'Created',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_12'),
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: tableColumnClasses[4] },
@@ -171,27 +174,37 @@ const ServiceInstanceTableHeader = () => {
 
 ServiceInstanceTableHeader.displayName = 'ServiceInstanceTableHeader';
 
-const ServiceInstancesList: React.FC = props => <Table {...props} aria-label="Service Instance" Header={ServiceInstanceTableHeader} Row={ServiceInstanceTableRow} />;
+const ServiceInstancesList: React.FC = props => {
+  const { t } = useTranslation();
+  return <Table {...props} aria-label="Service Instance" Header={ServiceInstanceTableHeader.bind(null, t)} Row={ServiceInstanceTableRow} />;
+};
 ServiceInstancesList.displayName = 'ServiceInstancesList';
 
 const serviceInstanceStatusReducer = (serviceInstance: any): string => {
   return serviceInstance.status.lastConditionState;
 };
 
-const filters = [
-  {
-    filterGroupName: 'Status',
-    type: 'service-instance-status',
-    reducer: serviceInstanceStatusReducer,
-    items: [
-      { id: 'Ready', title: 'Ready' },
-      { id: 'Error', title: 'Error' },
-    ],
-  },
-];
-
 const ServiceInstancesPage: React.FC<ServiceInstancesPageProps> = props => {
-  return <ListPage canCreate={true} kind={kind} ListComponent={ServiceInstancesList} rowFilters={filters} {...props} />;
+  const { t } = useTranslation();
+  return (
+    <ListPage
+      canCreate={true}
+      kind={kind}
+      ListComponent={ServiceInstancesList}
+      rowFilters={[
+        {
+          filterGroupName: 'Status',
+          type: 'service-instance-status',
+          reducer: serviceInstanceStatusReducer,
+          items: [
+            { id: 'Ready', title: t('COMMON:MSG_MAIN_FILTER_2') },
+            { id: 'Error', title: t('COMMON:MSG_COMMON_BUTTON_FILTER_CHECKBOX_4') },
+          ],
+        },
+      ]}
+      {...props}
+    />
+  );
 };
 ServiceInstancesPage.displayName = 'ServiceInstancesPage';
 

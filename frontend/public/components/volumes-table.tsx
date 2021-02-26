@@ -3,33 +3,19 @@ import { Link } from 'react-router-dom';
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 
-import {
-  ContainerSpec,
-  K8sKind,
-  K8sResourceKind,
-  K8sResourceKindReference,
-  PodKind,
-  PodTemplate,
-  Volume,
-  VolumeMount,
-} from '../module/k8s';
-import {
-  asAccessReview,
-  EmptyBox,
-  Kebab,
-  KebabOption,
-  ResourceIcon,
-  SectionHeading,
-  VolumeType,
-} from './utils';
+import { ContainerSpec, K8sKind, K8sResourceKind, K8sResourceKindReference, PodKind, PodTemplate, Volume, VolumeMount } from '../module/k8s';
+import { asAccessReview, EmptyBox, Kebab, KebabOption, ResourceIcon, SectionHeading, VolumeType } from './utils';
 import { Table } from './factory';
 import { sortable } from '@patternfly/react-table';
 import { removeVolumeModal } from './modals';
 import { connectToModel } from '../kinds';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 
 const removeVolume = (kind: K8sKind, obj: K8sResourceKind, volume: RowVolumeData): KebabOption => {
+  const { t } = useTranslation();
   return {
-    label: 'Remove Volume',
+    label: t('COMMON:MSG_DETAILS_TABDETAILS_VOLUMES_TABLEHEADER_8'),
     callback: () =>
       removeVolumeModal({
         kind,
@@ -81,55 +67,45 @@ const getRowVolumeData = (resource: K8sResourceKind): RowVolumeData[] => {
 const ContainerLink: React.FC<ContainerLinkProps> = ({ name, pod }) => (
   <span className="co-resource-item co-resource-item--inline">
     <ResourceIcon kind="Container" />
-    <Link to={`/k8s/ns/${pod.metadata.namespace}/pods/${pod.metadata.name}/containers/${name}`}>
-      {name}
-    </Link>
+    <Link to={`/k8s/ns/${pod.metadata.namespace}/pods/${pod.metadata.name}/containers/${name}`}>{name}</Link>
   </span>
 );
 ContainerLink.displayName = 'ContainerLink';
 
-const volumeRowColumnClasses = [
-  classNames('col-lg-2', 'col-md-3', 'col-sm-4', 'col-xs-5'),
-  classNames('col-lg-2', 'col-md-3', 'col-sm-4', 'col-xs-7'),
-  classNames('col-lg-2', 'col-md-2', 'col-sm-4', 'hidden-xs'),
-  classNames('col-lg-2', 'col-md-2', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-2', 'col-md-2', 'hidden-sm', 'hidden-xs'),
-  classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
-  Kebab.columnClass,
-];
+const volumeRowColumnClasses = [classNames('col-lg-2', 'col-md-3', 'col-sm-4', 'col-xs-5'), classNames('col-lg-2', 'col-md-3', 'col-sm-4', 'col-xs-7'), classNames('col-lg-2', 'col-md-2', 'col-sm-4', 'hidden-xs'), classNames('col-lg-2', 'col-md-2', 'hidden-sm', 'hidden-xs'), classNames('col-lg-2', 'col-md-2', 'hidden-sm', 'hidden-xs'), classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'), Kebab.columnClass];
 
-const VolumesTableHeader = () => {
+const VolumesTableHeader = (t?: TFunction) => {
   return [
     {
-      title: 'Name',
+      title: t('COMMON:MSG_DETAILS_TABDETAILS_VOLUMES_TABLEHEADER_2'),
       sortField: 'name',
       transforms: [sortable],
       props: { className: volumeRowColumnClasses[0] },
     },
     {
-      title: 'Mount Path',
+      title: t('COMMON:MSG_DETAILS_TABDETAILS_VOLUMES_TABLEHEADER_3'),
       sortField: 'mountPath',
       transforms: [sortable],
       props: { className: volumeRowColumnClasses[1] },
     },
     {
-      title: 'SubPath',
+      title: t('COMMON:MSG_DETAILS_TABDETAILS_VOLUMES_TABLEHEADER_4'),
       sortField: 'subPath',
       transforms: [sortable],
       props: { className: volumeRowColumnClasses[2] },
     },
     {
-      title: 'Type',
+      title: t('COMMON:MSG_DETAILS_TABDETAILS_VOLUMES_TABLEHEADER_5'),
       props: { className: volumeRowColumnClasses[3] },
     },
     {
-      title: 'Permissions',
+      title: t('COMMON:MSG_DETAILS_TABDETAILS_VOLUMES_TABLEHEADER_6'),
       sortField: 'readOnly',
       transforms: [sortable],
       props: { className: volumeRowColumnClasses[4] },
     },
     {
-      title: 'Utilized By',
+      title: t('COMMON:MSG_DETAILS_TABDETAILS_VOLUMES_TABLEHEADER_7'),
       sortField: 'container',
       transforms: [sortable],
       props: { className: volumeRowColumnClasses[5] },
@@ -180,25 +156,13 @@ const VolumesTableRows = ({ componentProps: { data } }) => {
         },
       },
       {
-        title:
-          _.get(pod, 'kind') === 'Pod' ? (
-            <ContainerLink name={container} pod={pod as PodKind} />
-          ) : (
-            container
-          ),
+        title: _.get(pod, 'kind') === 'Pod' ? <ContainerLink name={container} pod={pod as PodKind} /> : container,
         props: {
           classname: volumeRowColumnClasses[5],
         },
       },
       {
-        title: (
-          <VolumeKebab
-            actions={menuActions}
-            kind={resource.kind}
-            resource={resource}
-            rowVolumeData={volume}
-          />
-        ),
+        title: <VolumeKebab actions={menuActions} kind={resource.kind} resource={resource} rowVolumeData={volume} />,
         props: {
           classname: volumeRowColumnClasses[6],
         },
@@ -207,27 +171,15 @@ const VolumesTableRows = ({ componentProps: { data } }) => {
   });
 };
 
-export const VolumesTable = (props) => {
+export const VolumesTable = props => {
+  const { t } = useTranslation();
   const { resource, ...tableProps } = props;
   const data: RowVolumeData[] = getRowVolumeData(resource);
   const pod: PodTemplate = getPodTemplate(resource);
   return (
     <>
       {props.heading && <SectionHeading text={props.heading} />}
-      {_.isEmpty(pod.spec.volumes) && !anyContainerWithVolumeMounts(pod.spec.containers) ? (
-        <EmptyBox label="Volumes" />
-      ) : (
-        <Table
-          {...tableProps}
-          aria-label="Volumes"
-          loaded={true}
-          label={props.heading}
-          data={data}
-          Header={VolumesTableHeader}
-          Rows={VolumesTableRows}
-          virtualize={false}
-        />
-      )}
+      {_.isEmpty(pod.spec.volumes) && !anyContainerWithVolumeMounts(pod.spec.containers) ? <EmptyBox label={t('COMMON:MSG_DETAILS_TABDETAILS_VOLUMES_TABLEHEADER_1')} /> : <Table {...tableProps} aria-label="Volumes" loaded={true} label={props.heading} data={data} Header={VolumesTableHeader.bind(null, t)} Rows={VolumesTableRows} virtualize={false} />}
     </>
   );
 };
@@ -239,22 +191,11 @@ const VolumeKebab = connectToModel((props: VolumeKebabProps) => {
   if (!kindObj || kindObj.kind === 'Pod') {
     return null;
   }
-  const options = actions.map((b) => b(kindObj, resource, rowVolumeData));
-  return (
-    <Kebab
-      options={options}
-      isDisabled={
-        isDisabled !== undefined ? isDisabled : _.get(resource.metadata, 'deletionTimestamp')
-      }
-    />
-  );
+  const options = actions.map(b => b(kindObj, resource, rowVolumeData));
+  return <Kebab options={options} isDisabled={isDisabled !== undefined ? isDisabled : _.get(resource.metadata, 'deletionTimestamp')} />;
 });
 
-type VolumeKebabAction = (
-  kind: K8sKind,
-  obj: K8sResourceKind,
-  rowVolumeData: RowVolumeData,
-) => KebabOption;
+type VolumeKebabAction = (kind: K8sKind, obj: K8sResourceKind, rowVolumeData: RowVolumeData) => KebabOption;
 type VolumeKebabProps = {
   kindObj: K8sKind;
   actions: VolumeKebabAction[];
