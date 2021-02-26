@@ -21,6 +21,7 @@ import { GrafanaPage } from './hypercloud/grafana';
 
 //PF4 Imports
 import { PageSection, PageSectionVariants } from '@patternfly/react-core';
+import { WelcomePage } from './hypercloud/login/welcome';
 
 const RedirectComponent = props => {
   const to = `/k8s${props.location.pathname}`;
@@ -152,6 +153,7 @@ const AppContents_: React.FC<AppContentsProps> = ({ activePerspective }) => (
           <Route path="/search/all-namespaces" exact component={NamespaceFromURL(SearchPage)} />
           <Route path="/search/ns/:ns" exact component={NamespaceFromURL(SearchPage)} />
           <Route path="/search" exact component={NamespaceRedirect} />
+          <Route path="/welcome" exact component={WelcomePage} />
 
           <LazyRoute path="/kiali/all-namespaces" exact loader={() => import('./hypercloud/kiali' /* webpackChunkName: "kiali" */).then(m => NamespaceFromURL(m.KialiPage))} />
           <LazyRoute path="/kiali/ns/:ns" exact loader={() => import('./hypercloud/kiali' /* webpackChunkName: "kiali" */).then(m => NamespaceFromURL(m.KialiPage))} />

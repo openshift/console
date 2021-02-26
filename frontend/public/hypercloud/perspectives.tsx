@@ -6,42 +6,42 @@ import { Perspective } from '@console/plugin-sdk';
 // TODO:  싱글 클러스터 증가시 동적 생성하는 방법 확인
 //        getK8sLandingPageURL, getImportRedirectURL 하는 상황 파악 및 수정
 const perspectives: Perspective[] = [
-    {
-        type: 'Perspective',
-        properties: {
-            id: 'mc',
-            name: 'Multi Cluster',
-            icon: <CogsIcon />,
-            default: true,
-            getLandingPageURL: (flags) => '/k8s/cluster/clustermanagers',
-            getK8sLandingPageURL: (flags) => '/k8s/cluster/clustermanagers',
-            getImportRedirectURL: (project) => `/k8s/cluster/projects/${project}/workloads`,
-        },
+  {
+    type: 'Perspective',
+    properties: {
+      id: 'mc',
+      name: 'Multi Cluster',
+      icon: <CogsIcon />,
+      default: true,
+      getLandingPageURL: flags => '/k8s/cluster/clustermanagers',
+      getK8sLandingPageURL: flags => '/k8s/cluster/clustermanagers',
+      getImportRedirectURL: project => `/k8s/cluster/projects/${project}/workloads`,
     },
-    {
-        type: 'Perspective',
-        properties: {
-            id: 'master',
-            name: 'Master Cluster',
-            icon: <CogsIcon />,
-            getLandingPageURL: (flags) => '/master/dashboards',
-            getK8sLandingPageURL: (flags) => '/master/dashboards',
-            getImportRedirectURL: (project) => `/k8s/cluster/projects/${project}/workloads`,
-        },
+  },
+  {
+    type: 'Perspective',
+    properties: {
+      id: 'master',
+      name: 'Master Cluster',
+      icon: <CogsIcon />,
+      getLandingPageURL: flags => (localStorage.getItem('flag/first-time-login') ? '/master/dashboards' : '/welcome'),
+      getK8sLandingPageURL: flags => (localStorage.getItem('flag/first-time-login') ? '/master/dashboards' : '/welcome'),
+      getImportRedirectURL: project => `/k8s/cluster/projects/${project}/workloads`,
     },
-    {
-        type: 'Perspective',
-        properties: {
-            id: 'hc',
-            name: 'Single Cluster',
-            icon: <CogsIcon />,
-            getLandingPageURL: (flags) => '/single/dashboards',
-            getK8sLandingPageURL: (flags) => '/single/dashboards',
-            getImportRedirectURL: (project) => `/k8s/cluster/projects/${project}/workloads`,
-        },
+  },
+  {
+    type: 'Perspective',
+    properties: {
+      id: 'hc',
+      name: 'Single Cluster',
+      icon: <CogsIcon />,
+      getLandingPageURL: flags => (localStorage.getItem('flag/first-time-login') ? '/single/dashboards' : '/welcome'),
+      getK8sLandingPageURL: flags => (localStorage.getItem('flag/first-time-login') ? '/single/dashboards' : '/welcome'),
+      getImportRedirectURL: project => `/k8s/cluster/projects/${project}/workloads`,
     },
-]
+  },
+];
 
 export const getPerspectives: () => Perspective[] = () => {
-    return perspectives;
-}
+  return perspectives;
+};
