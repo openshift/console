@@ -16,8 +16,7 @@ import {
   LABEL_OPERATOR,
 } from '@console/local-storage-operator-plugin/src/constants';
 import { getNodeCPUCapacity, getNodeAllocatableMemory, getName } from '@console/shared';
-import { ocsTaint, NO_PROVISIONER, AVAILABLE, MINIMUM_NODES, ZONE_LABELS } from '../constants';
-import { Discoveries } from '../components/ocs-install/attached-devices-mode/create-sc/state';
+import { ocsTaint, NO_PROVISIONER, MINIMUM_NODES, ZONE_LABELS } from '../constants';
 import { getSCAvailablePVs } from '../selectors';
 
 export const hasNoTaints = (node: NodeKind) => {
@@ -41,14 +40,6 @@ export const filterSCWithoutNoProv = (sc: StorageClassResourceKind) =>
 
 export const getZone = (node: NodeKind) =>
   node.metadata.labels?.[ZONE_LABELS[0]] || node.metadata.labels?.[ZONE_LABELS[1]];
-
-export const getTotalDeviceCapacity = (list: Discoveries[]): number =>
-  list.reduce((res, device) => {
-    if (device?.status?.state === AVAILABLE) {
-      return res + device.size;
-    }
-    return res;
-  }, 0);
 
 export const getAssociatedNodes = (pvs: K8sResourceKind[]): string[] => {
   const nodes = pvs.reduce((res, pv) => {

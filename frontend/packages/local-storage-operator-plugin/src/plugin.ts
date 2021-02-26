@@ -22,7 +22,7 @@ type ConsumedExtensions =
   | ModelDefinition
   | RoutePage;
 
-const LSO_FLAG = 'LSO';
+const LSO_LOCAL_VOLUME_SET = 'LSO_LOCAL_VOLUME_SET';
 export const LSO_DEVICE_DISCOVERY = 'LSO_DEVICE_DISCOVERY';
 
 const plugin: Plugin<ConsumedExtensions> = [
@@ -35,8 +35,8 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'FeatureFlag/Model',
     properties: {
-      model: models.LocalVolumeModel,
-      flag: LSO_FLAG,
+      model: models.LocalVolumeSetModel,
+      flag: LSO_LOCAL_VOLUME_SET,
     },
   },
   {
@@ -65,7 +65,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         ).then((m) => m.default),
     },
     flags: {
-      required: [LSO_FLAG],
+      required: [LSO_LOCAL_VOLUME_SET],
     },
   },
   {
@@ -96,11 +96,11 @@ const plugin: Plugin<ConsumedExtensions> = [
       )}/~new`,
       loader: () =>
         import(
-          './components/auto-detect-volume/auto-detect-volume' /* webpackChunkName: "lso-auto-detect-volume" */
-        ).then((m) => m.default),
+          './components/local-volume-discovery/create-local-volume-discovery' /* webpackChunkName: "lso-create-local-volume-discovery" */
+        ).then((m) => m.CreateLocalVolumeDiscovery),
     },
     flags: {
-      required: [LSO_FLAG],
+      required: [LSO_DEVICE_DISCOVERY],
     },
   },
 ];

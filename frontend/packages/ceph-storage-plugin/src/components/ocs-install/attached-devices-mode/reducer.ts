@@ -1,47 +1,33 @@
-import { HostNamesMap } from '@console/local-storage-operator-plugin/src/components/auto-detect-volume/types';
-import { diskModeDropdownItems, KMSEmptyState } from '../../../../constants';
+import { diskModeDropdownItems, KMSEmptyState } from '../../../constants';
 import { deviceTypeDropdownItems } from '@console/local-storage-operator-plugin/src/constants';
 import { StorageClassResourceKind, NodeKind } from '@console/internal/module/k8s';
-import { EncryptionType, KMSConfig, NetworkType } from '../../../../types';
+import { EncryptionType, KMSConfig, NetworkType } from '../../../types';
 
 export const initialState: State = {
-  // states for step 1
-  showNodesListOnADV: false,
-  nodeNamesForLVS: [], // nodes selected on discovery step, used in LVS step
-  allNodeNamesOnADV: [], // all nodes present in the env
-  hostNamesMapForADV: {},
-
-  // states for step 2
+  // Step 1: Discover disks
+  lvdIsSelectNodes: false,
+  lvdAllNodes: [],
+  lvdSelectNodes: [],
+  lvdError: '',
+  lvdInProgress: false,
+  // Step 2: Create storage class
+  lvsIsSelectNodes: false,
+  lvsAllNodes: [],
+  lvsSelectNodes: [],
   volumeSetName: '',
   storageClassName: '',
-  showNodesListOnLVS: false,
   isValidDiskSize: true,
   diskType: 'All',
   diskMode: diskModeDropdownItems.BLOCK,
   deviceType: [deviceTypeDropdownItems.DISK, deviceTypeDropdownItems.PART],
   maxDiskLimit: '',
-  nodeNames: [], // nodes selected on the LVS step
   minDiskSize: '1',
   maxDiskSize: '',
   diskSizeUnit: 'Gi',
   isValidMaxSize: true,
-  hostNamesMapForLVS: {},
-  // states for chart
-  nodesDiscoveries: [],
-  filteredDiscoveries: [],
-  filteredNodes: [],
-  chartSelectedData: 0,
-  chartTotalData: 0,
   showConfirmModal: false,
-  finalStep: false,
-  showDiskList: false,
-  showNodeList: false,
-
-  // common states
-  isLoading: false,
-  error: '',
-
-  // states for step 3-5
+  chartNodes: new Set(),
+  // Steps 3-5:
   enableMinimal: false,
   enableFlexibleScaling: false,
   storageClass: { provisioner: '', reclaimPolicy: '' },
@@ -89,51 +75,31 @@ export const initialState: State = {
   selectedArbiterZone: '',
 };
 
-export type Discoveries = {
-  size: number;
-  path: string;
-  fstype: string;
-  vendor: string;
-  model: string;
-  status: {
-    state: string;
-  };
-  deviceID: string;
-  type: string;
-  property: string;
-  node: string;
-};
-
 export type State = {
+  // Step 1: Discover disks
+  lvdIsSelectNodes: boolean;
+  lvdAllNodes: NodeKind[];
+  lvdSelectNodes: NodeKind[];
+  lvdInProgress: boolean;
+  lvdError: string;
+  // Step 2: Create storage class
+  lvsIsSelectNodes: boolean;
+  lvsAllNodes: NodeKind[];
+  lvsSelectNodes: NodeKind[];
   volumeSetName: string;
   storageClassName: string;
-  showNodesListOnLVS: boolean;
   isValidDiskSize: boolean;
   diskType: string;
   diskMode: string;
   deviceType: string[];
   maxDiskLimit: string;
-  nodeNames: string[];
   minDiskSize: string;
   maxDiskSize: string;
   diskSizeUnit: string;
   isValidMaxSize: boolean;
-  chartSelectedData: number;
-  chartTotalData: number;
-  showNodesListOnADV: boolean;
-  nodeNamesForLVS: string[];
-  isLoading: boolean;
-  error: string;
-  allNodeNamesOnADV: string[];
-  nodesDiscoveries: Discoveries[];
   showConfirmModal: boolean;
-  filteredDiscoveries: Discoveries[];
-  filteredNodes: string[];
-  finalStep: boolean;
-  showDiskList: boolean;
-  hostNamesMapForADV: HostNamesMap;
-  hostNamesMapForLVS: HostNamesMap;
-  showNodeList: boolean;
+  chartNodes: Set<string>;
+  // Steps 3-5:
   enableMinimal: boolean;
   enableFlexibleScaling: boolean;
   storageClass: StorageClassResourceKind;
@@ -149,9 +115,19 @@ export type State = {
 };
 
 export type Action =
+  // Step 1: Discover disks
+  | { type: 'setLvdIsSelectNodes'; value: boolean }
+  | { type: 'setLvdAllNodes'; value: NodeKind[] }
+  | { type: 'setLvdSelectNodes'; value: NodeKind[] }
+  | { type: 'setLvdError'; value: string }
+  | { type: 'setLvdInProgress'; value: boolean }
+  // Step 2: Create storage class
+  | { type: 'setLvsSelectNodes'; value: NodeKind[] }
+  | { type: 'setLvsAllNodes'; value: NodeKind[] }
+  | { type: 'setLvsIsSelectNodes'; value: boolean }
+  | { type: 'setShowConfirmModal'; value: boolean }
   | { type: 'setVolumeSetName'; name: string }
   | { type: 'setStorageClassName'; name: string }
-  | { type: 'setShowNodesListOnLVS'; value: boolean }
   | { type: 'setIsValidDiskSize'; value: boolean }
   | { type: 'setDiskType'; value: string }
   | { type: 'setDeviceType'; value: string[] }
@@ -162,23 +138,8 @@ export type Action =
   | { type: 'setMaxDiskSize'; value: number | string }
   | { type: 'setDiskSizeUnit'; value: string }
   | { type: 'setIsValidMaxSize'; value: boolean }
-  | { type: 'setAllNodeNames'; value: string[] }
-  | { type: 'setShowNodesListOnADV'; value: boolean }
-  | { type: 'setNodeNamesForLVS'; value: string[] }
-  | { type: 'setIsLoading'; value: boolean }
-  | { type: 'setError'; value: string }
-  | { type: 'setAllNodeNamesOnADV'; value: string[] }
-  | { type: 'setNodesDiscoveries'; value: Discoveries[] }
-  | { type: 'setChartSelectedData'; value: number }
-  | { type: 'setChartTotalData'; value: number }
-  | { type: 'setShowConfirmModal'; value: boolean }
-  | { type: 'setFilteredDiscoveries'; value: Discoveries[] }
-  | { type: 'setFinalStep'; value: boolean }
-  | { type: 'setShowDiskList'; value: boolean }
-  | { type: 'setHostNamesMapForADV'; value: HostNamesMap }
-  | { type: 'setHostNamesMapForLVS'; value: HostNamesMap }
-  | { type: 'setShowNodeList'; value: boolean }
-  | { type: 'setFilteredNodes'; value: string[] }
+  | { type: 'setChartNodes'; value: Set<string> }
+  // Steps 3-5:
   | { type: 'setEnableMinimal'; value: boolean }
   | { type: 'setEnableFlexibleScaling'; value: boolean }
   | { type: 'setStorageClass'; value: StorageClassResourceKind }
@@ -195,12 +156,30 @@ export type Action =
 
 export const reducer = (state: State, action: Action) => {
   switch (action.type) {
+    // Step 1: Discover disks
+    case 'setLvdIsSelectNodes':
+      return Object.assign({}, state, { lvdIsSelectNodes: action.value });
+    case 'setLvdAllNodes':
+      return Object.assign({}, state, { lvdAllNodes: action.value });
+    case 'setLvdSelectNodes':
+      return Object.assign({}, state, { lvdSelectNodes: action.value });
+    case 'setLvdError':
+      return Object.assign({}, state, { lvdError: action.value });
+    case 'setLvdInProgress':
+      return Object.assign({}, state, { lvdInProgress: action.value });
+    // Step 2: Create storage class
+    case 'setLvsAllNodes':
+      return Object.assign({}, state, { lvsAllNodes: action.value });
+    case 'setLvsSelectNodes':
+      return Object.assign({}, state, { lvsSelectNodes: action.value });
+    case 'setLvsIsSelectNodes':
+      return Object.assign({}, state, { lvsIsSelectNodes: action.value });
+    case 'setShowConfirmModal':
+      return Object.assign({}, state, { showConfirmModal: action.value });
     case 'setVolumeSetName':
       return Object.assign({}, state, { volumeSetName: action.name });
     case 'setStorageClassName':
       return Object.assign({}, state, { storageClassName: action.name });
-    case 'setShowNodesListOnLVS':
-      return Object.assign({}, state, { showNodesListOnLVS: action.value });
     case 'setIsValidDiskSize':
       return Object.assign({}, state, { isValidDiskSize: action.value });
     case 'setDiskType':
@@ -211,8 +190,6 @@ export const reducer = (state: State, action: Action) => {
       return Object.assign({}, state, { deviceType: action.value });
     case 'setMaxDiskLimit':
       return Object.assign({}, state, { maxDiskLimit: action.value });
-    case 'setNodeNames':
-      return Object.assign({}, state, { nodeNames: action.value });
     case 'setMinDiskSize':
       return Object.assign({}, state, { minDiskSize: action.value });
     case 'setMaxDiskSize':
@@ -221,38 +198,9 @@ export const reducer = (state: State, action: Action) => {
       return Object.assign({}, state, { diskSizeUnit: action.value });
     case 'setIsValidMaxSize':
       return Object.assign({}, state, { isValidMaxSize: action.value });
-    case 'setShowNodesListOnADV':
-      return Object.assign({}, state, { showNodesListOnADV: action.value });
-    case 'setNodeNamesForLVS':
-      return Object.assign({}, state, { nodeNamesForLVS: action.value });
-    case 'setIsLoading':
-      return Object.assign({}, state, { isLoading: action.value });
-    case 'setError':
-      return Object.assign({}, state, { error: action.value });
-    case 'setAllNodeNamesOnADV':
-      return Object.assign({}, state, { allNodeNamesOnADV: action.value });
-    case 'setNodesDiscoveries':
-      return Object.assign({}, state, { nodesDiscoveries: action.value });
-    case 'setChartSelectedData':
-      return Object.assign({}, state, { chartSelectedData: action.value });
-    case 'setChartTotalData':
-      return Object.assign({}, state, { chartTotalData: action.value });
-    case 'setShowConfirmModal':
-      return Object.assign({}, state, { showConfirmModal: action.value });
-    case 'setFilteredDiscoveries':
-      return Object.assign({}, state, { filteredDiscoveries: action.value });
-    case 'setFinalStep':
-      return Object.assign({}, state, { finalStep: action.value });
-    case 'setShowDiskList':
-      return Object.assign({}, state, { showDiskList: action.value });
-    case 'setHostNamesMapForADV':
-      return Object.assign({}, state, { hostNamesMapForADV: action.value });
-    case 'setHostNamesMapForLVS':
-      return Object.assign({}, state, { hostNamesMapForLVS: action.value });
-    case 'setShowNodeList':
-      return Object.assign({}, state, { showNodeList: action.value });
-    case 'setFilteredNodes':
-      return Object.assign({}, state, { filteredNodes: action.value });
+    case 'setChartNodes':
+      return Object.assign({}, state, { chartNodes: action.value });
+    // Steps 3-5:
     case 'setEnableMinimal':
       return Object.assign({}, state, { enableMinimal: action.value });
     case 'setEnableFlexibleScaling':
@@ -280,6 +228,7 @@ export const reducer = (state: State, action: Action) => {
       return Object.assign({}, state, { stretchClusterChecked: action.value });
     case 'setSelectedArbiterZone':
       return Object.assign({}, state, { selectedArbiterZone: action.value });
+
     default:
       return initialState;
   }

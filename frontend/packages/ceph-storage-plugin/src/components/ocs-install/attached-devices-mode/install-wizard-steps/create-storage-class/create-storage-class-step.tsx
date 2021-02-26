@@ -10,15 +10,13 @@ import {
   WizardContextConsumer,
 } from '@patternfly/react-core';
 import { Modal, useFlag } from '@console/shared';
-import { k8sCreate } from '@console/internal/module/k8s';
+import { k8sCreate, NodeKind } from '@console/internal/module/k8s';
 import { LocalVolumeSetModel } from '@console/local-storage-operator-plugin/src/models';
 
 import { GUARDED_FEATURES } from '../../../../../features';
-import {
-  LocalVolumeSetInner,
-  LocalVolumeSetHeader,
-} from '@console/local-storage-operator-plugin/src/components/local-volume-set/local-volume-set-inner';
-import { getLocalVolumeSetRequestData } from '@console/local-storage-operator-plugin/src/components/local-volume-set/local-volume-set-request-data';
+import { LocalVolumeSetHeader } from '@console/local-storage-operator-plugin/src/components/local-volume-set/header';
+import { LocalVolumeSetBody } from '@console/local-storage-operator-plugin/src/components/local-volume-set/body';
+import { getLocalVolumeSetRequestData } from '@console/local-storage-operator-plugin/src/components/local-volume-set/request';
 import { hasOCSTaint } from '../../../../../utils/install';
 import {
   MINIMUM_NODES,
@@ -28,8 +26,9 @@ import {
 } from '../../../../../constants';
 import { RequestErrors } from '../../../install-wizard/review-and-create';
 import '../../attached-devices.scss';
-import { State, Action } from '../state';
-import { DiscoveryDonutChart } from './donut-chart';
+import { State, Action } from '../../reducer';
+import { getNodesByHostNameLabel } from '@console/local-storage-operator-plugin/src/utils';
+import { SelectedCapacity } from './selected-capacity';
 
 const makeLocalVolumeSetCall = (
   state: State,
@@ -38,10 +37,13 @@ const makeLocalVolumeSetCall = (
   setErrorMessage: React.Dispatch<React.SetStateAction<string>>,
   ns: string,
   onNext: () => void,
+  lvsNodes: NodeKind[],
 ) => {
   setInProgress(true);
 
-  const requestData = getLocalVolumeSetRequestData(state, ns, OCS_TOLERATION);
+  const nodes = getNodesByHostNameLabel(lvsNodes);
+
+  const requestData = getLocalVolumeSetRequestData(state, nodes, ns, OCS_TOLERATION);
   k8sCreate(LocalVolumeSetModel, requestData)
     .then(() => {
       dispatch({
@@ -57,11 +59,7 @@ const makeLocalVolumeSetCall = (
     });
 };
 
-export const CreateLocalVolumeSet: React.FC<CreateLocalVolumeSetProps> = ({
-  state,
-  dispatch,
-  ns,
-}) => {
+export const CreateStorageClass: React.FC<CreateStorageClassProps> = ({ state, dispatch, ns }) => {
   const { t } = useTranslation();
 
   const [inProgress, setInProgress] = React.useState(false);
@@ -70,6 +68,7 @@ export const CreateLocalVolumeSet: React.FC<CreateLocalVolumeSetProps> = ({
   const allNodesSelectorTxt = t(
     'ceph-storage-plugin~Selecting all nodes will use the available disks that match the selected filters on all nodes selected on previous step.',
   );
+  const lvsNodes = state.lvsIsSelectNodes ? state.lvsSelectNodes : state.lvsAllNodes;
 
   return (
     <>
@@ -77,7 +76,7 @@ export const CreateLocalVolumeSet: React.FC<CreateLocalVolumeSetProps> = ({
       <Grid className="ceph-ocs-install__form-wrapper">
         <GridItem lg={10} md={12} sm={12}>
           <Form noValidate={false}>
-            <LocalVolumeSetInner
+            <LocalVolumeSetBody
               state={state}
               dispatch={dispatch}
               diskModeOptions={diskModeDropdownItems}
@@ -95,17 +94,18 @@ export const CreateLocalVolumeSet: React.FC<CreateLocalVolumeSetProps> = ({
           smOffset={4}
           className="ceph-ocs-install__donut-chart"
         >
-          <DiscoveryDonutChart state={state} dispatch={dispatch} />
+          <SelectedCapacity dispatch={dispatch} state={state} ns={ns} />
         </GridItem>
       </Grid>
       <ConfirmationModal
         ns={ns}
+        lvsNodes={lvsNodes}
         state={state}
         dispatch={dispatch}
         setInProgress={setInProgress}
         setErrorMessage={setErrorMessage}
       />
-      {state.filteredNodes.length < MINIMUM_NODES && (
+      {state.chartNodes.size < MINIMUM_NODES && (
         <Alert
           className="co-alert ceph-ocs-install__wizard-alert"
           variant="danger"
@@ -114,7 +114,7 @@ export const CreateLocalVolumeSet: React.FC<CreateLocalVolumeSetProps> = ({
         >
           {t(
             'ceph-storage-plugin~The OCS storage cluster require a minimum of 3 nodes for the intial deployment. Only {{nodes}} node match to the selected filters. Please adjust the filters to include more nodes.',
-            { nodes: state.filteredNodes.length },
+            { nodes: state.chartNodes.size },
           )}
         </Alert>
       )}
@@ -123,13 +123,13 @@ export const CreateLocalVolumeSet: React.FC<CreateLocalVolumeSetProps> = ({
   );
 };
 
-type CreateLocalVolumeSetProps = {
+type CreateStorageClassProps = {
   state: State;
   dispatch: React.Dispatch<Action>;
   ns: string;
 };
 
-const ConfirmationModal = ({ state, dispatch, setInProgress, setErrorMessage, ns }) => {
+const ConfirmationModal = ({ state, dispatch, setInProgress, setErrorMessage, ns, lvsNodes }) => {
   const { t } = useTranslation();
   const isArbiterSupported = useFlag(GUARDED_FEATURES.OCS_ARBITER);
   return (
@@ -137,7 +137,15 @@ const ConfirmationModal = ({ state, dispatch, setInProgress, setErrorMessage, ns
       {({ onNext }) => {
         const makeLVSCall = () => {
           dispatch({ type: 'setShowConfirmModal', value: false });
-          makeLocalVolumeSetCall(state, dispatch, setInProgress, setErrorMessage, ns, onNext);
+          makeLocalVolumeSetCall(
+            state,
+            dispatch,
+            setInProgress,
+            setErrorMessage,
+            ns,
+            onNext,
+            lvsNodes,
+          );
         };
 
         const cancel = () => {

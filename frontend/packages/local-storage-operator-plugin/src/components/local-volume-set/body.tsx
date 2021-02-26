@@ -7,7 +7,6 @@ import {
   ExpandableSection,
   TextInputTypes,
   Text,
-  TextContent,
   TextVariants,
   Tooltip,
 } from '@patternfly/react-core';
@@ -16,7 +15,7 @@ import { ListPage } from '@console/internal/components/factory';
 import { NodeKind } from '@console/internal/module/k8s';
 import { getName, MultiSelectDropdown } from '@console/shared';
 import { NodeModel } from '@console/internal/models';
-import { NodesSelectionList } from './nodes-selection-list';
+import { NodesTable } from '../tables/nodes-table';
 import { State, Action } from './state';
 import {
   diskModeDropdownItems,
@@ -26,7 +25,7 @@ import {
 } from '../../constants';
 import './create-local-volume-set.scss';
 
-export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = ({
+export const LocalVolumeSetBody: React.FC<LocalVolumeSetBodyProps> = ({
   dispatch,
   state,
   taintsFilter,
@@ -37,22 +36,6 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = ({
   const { t } = useTranslation();
 
   const diskDropdownOptions = diskTypeDropdownItems(t);
-
-  React.useEffect(() => {
-    if (!state.showNodesListOnLVS) {
-      // explicitly needs to set this in order to make the validation works
-      dispatch({ type: 'setNodeNames', value: [] });
-      dispatch({ type: 'setNodeNamesForLVS', value: state.nodeNamesForLVS });
-    } else {
-      dispatch({ type: 'setNodeNames', value: state.nodeNames });
-    }
-    // TODO: Neha- Find out a better way
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, state.nodeNamesForLVS, state.showNodesListOnLVS]);
-
-  const toggleShowNodesList = () => {
-    dispatch({ type: 'setShowNodesListOnLVS', value: !state.showNodesListOnLVS });
-  };
 
   const INTEGER_MAX_REGEX = /^\+?([1-9]\d*)$/;
   const INTEGER_MIN_REGEX = /^\+?([0-9]\d*)$/;
@@ -65,6 +48,9 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = ({
     state.minDiskSize !== '' &&
     state.maxDiskSize !== '' &&
     Number(state.minDiskSize) > Number(state.maxDiskSize);
+
+  const toggleShowNodesList = () =>
+    dispatch({ type: 'setLvsIsSelectNodes', value: !state.lvsIsSelectNodes });
 
   React.useEffect(() => {
     if (!validMinDiskSize || !validMaxDiskSize || !validMaxDiskLimit || invalidMinGreaterThanMax) {
@@ -109,11 +95,10 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = ({
           <Radio
             label={
               <>
-                {t('lso-plugin~All nodes')}
-                {'('}
+                {t('lso-plugin~All nodes')} {'('}
                 {t('lso-plugin~{{nodes, number}} node', {
-                  nodes: state.nodeNamesForLVS.length,
-                  count: state.nodeNamesForLVS.length,
+                  nodes: state.lvsAllNodes.length,
+                  count: state.lvsAllNodes.length,
                 })}
                 {')'}
               </>
@@ -124,7 +109,7 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = ({
             value="allNodes"
             onChange={toggleShowNodesList}
             description={allNodesHelpTxt}
-            checked={!state.showNodesListOnLVS}
+            checked={!state.lvsIsSelectNodes}
           />
           <Radio
             label={t('lso-plugin~Select nodes')}
@@ -135,22 +120,22 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = ({
             description={t(
               'lso-plugin~Selecting all nodes will use the available disks that match the selected filters only on selected nodes.',
             )}
-            checked={state.showNodesListOnLVS}
+            checked={state.lvsIsSelectNodes}
           />
         </div>
       </FormGroup>
-      {state.showNodesListOnLVS && (
+      {state.lvsIsSelectNodes && (
         <ListPage
           showTitle={false}
           kind={NodeModel.kind}
-          ListComponent={NodesSelectionList}
+          ListComponent={NodesTable}
           customData={{
             onRowSelected: (selectedNodes: NodeKind[]) => {
-              const nodes = selectedNodes.map(getName);
-              dispatch({ type: 'setNodeNames', value: nodes });
+              dispatch({ type: 'setLvsSelectNodes', value: selectedNodes });
             },
-            filteredNodes: state.nodeNamesForLVS,
-            preSelected: state.nodeNames,
+            filteredNodes: state.lvsAllNodes.map(getName),
+            preSelectedNodes: state.lvsSelectNodes.map(getName),
+            hasOnSelect: true,
             taintsFilter,
           }}
         />
@@ -307,38 +292,11 @@ export const LocalVolumeSetInner: React.FC<LocalVolumeSetInnerProps> = ({
   );
 };
 
-type LocalVolumeSetInnerProps = {
+type LocalVolumeSetBodyProps = {
   state: State;
   dispatch: React.Dispatch<Action>;
   diskModeOptions?: { [key: string]: string };
   deviceTypeOptions?: { [key: string]: string };
   allNodesHelpTxt?: string;
   taintsFilter?: (node: NodeKind) => boolean;
-};
-
-export const LocalVolumeSetHeader: React.FC<LocalVolumeSetHeaderProps> = ({
-  className,
-  variant,
-}) => {
-  const { t } = useTranslation();
-
-  return (
-    <>
-      <TextContent>
-        <Text component={variant} className={className}>
-          {t('lso-plugin~Local Volume Set')}
-        </Text>
-      </TextContent>
-      <p className="help-block">
-        {t(
-          'lso-plugin~A Local Volume Set allows you to filter a set of storage volumes group them and create a dedicated storage class to consume storage for them.',
-        )}
-      </p>
-    </>
-  );
-};
-
-type LocalVolumeSetHeaderProps = {
-  variant: any;
-  className?: string;
 };
