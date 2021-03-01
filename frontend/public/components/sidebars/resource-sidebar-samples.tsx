@@ -138,7 +138,7 @@ export const ResourceSidebarSnippets: React.FC<ResourceSidebarSnippetsProps> = (
 }) => {
   return (
     <ul className="co-resource-sidebar-list" style={{ listStyle: 'none', paddingLeft: 0 }}>
-      {_.map(snippets, (snippet) => (
+      {_.map(_.sortBy(snippets, 'title'), (snippet) => (
         <ResourceSidebarSnippet
           key={snippet.id}
           snippet={snippet}
@@ -156,7 +156,7 @@ export const ResourceSidebarSamples: React.FC<ResourceSidebarSamplesProps> = ({
 }) => {
   return (
     <ol className="co-resource-sidebar-list">
-      {_.map(samples, (sample) => (
+      {_.map(_.sortBy(samples, 'title'), (sample) => (
         <ResourceSidebarSample
           key={sample.id}
           sample={sample}
