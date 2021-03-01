@@ -16,11 +16,8 @@ import { getFlavorData } from '../../selectors/vm/flavor-data';
 
 const DEFAULT_OS_VARIANT = 'template.kubevirt.io/default-os-variant';
 
-export const filterTemplates = (
-  userTemplates: TemplateKind[],
-  commonTemplates: TemplateKind[],
-): TemplateItem[] => {
-  const userTemplateItems: TemplateItem[] = userTemplates
+export const filterTemplates = (templates: TemplateKind[]): TemplateItem[] => {
+  const userTemplateItems: TemplateItem[] = templates
     .filter((t) => !isCommonTemplate(t) && !isDeprecatedTemplate(t))
     .map((t) => ({
       metadata: {
@@ -32,8 +29,8 @@ export const filterTemplates = (
       variants: [t],
     }));
 
-  const commonTemplateItems = commonTemplates
-    .filter((t) => !isDeprecatedTemplate(t))
+  const commonTemplateItems = templates
+    .filter((t) => isCommonTemplate(t) && !isDeprecatedTemplate(t))
     .reduce((acc, t) => {
       const name = getTemplateName(t);
       if (acc[name]) {
@@ -73,7 +70,7 @@ export const filterTemplates = (
 };
 
 export const createVMAction = (
-  template: TemplateItem,
+  template: TemplateKind,
   sourceStatus: TemplateSourceStatus,
   namespace: string,
 ) => {
@@ -83,7 +80,7 @@ export const createVMAction = (
     history.push(
       getVMWizardCreateLink({
         wizardName: VMWizardName.BASIC,
-        template: template.variants[0],
+        template,
         namespace,
       }),
     );

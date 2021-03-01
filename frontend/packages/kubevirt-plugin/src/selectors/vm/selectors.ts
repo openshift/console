@@ -27,6 +27,7 @@ import {
 import { VMGenericLikeEntityKind } from '../../types/vmLike';
 import { RunStrategy, StateChangeRequest } from '../../constants/vm/vm';
 import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
+import { Devices } from '../../types/vm/devices';
 
 export const getMemory = (vm: VMKind) =>
   _.get(vm, 'spec.template.spec.domain.resources.requests.memory');
@@ -49,6 +50,11 @@ export const getInterfaces = (
   _.get(vm, 'spec.template.spec.domain.devices.interfaces') == null
     ? defaultValue
     : vm.spec.template.spec.domain.devices.interfaces;
+
+export const getDevices = (vm: VMKind, defaultValue: Devices = {}): Devices =>
+  vm?.spec?.template?.spec?.domain?.devices
+    ? _.pick(vm.spec.template.spec.domain.devices, ['disks', 'interfaces'])
+    : defaultValue;
 
 export const getNetworks = (vm: VMKind, defaultValue: V1Network[] = []): V1Network[] =>
   _.get(vm, 'spec.template.spec.networks') == null ? defaultValue : vm.spec.template.spec.networks;

@@ -1,27 +1,29 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
-import { navFactory } from '@console/internal/components/utils';
-import { DetailsPage } from '@console/internal/components/factory';
+import { match as routerMatch } from 'react-router';
+import { navFactory } from '@console/internal/components/utils/horizontal-nav';
+import { DetailsPage } from '@console/internal/components/factory/details';
 import {
   K8sResourceKindReference,
   PersistentVolumeClaimKind,
   PodKind,
   TemplateKind,
-} from '@console/internal/module/k8s';
+} from '@console/internal/module/k8s/types';
 import { PersistentVolumeClaimModel, PodModel, TemplateModel } from '@console/internal/models';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+
 import { VMDisksFirehose } from '../vm-disks';
 import { VMNics } from '../vm-nics';
 import { VMTemplateDetails } from './vm-template-details';
-import { match as routerMatch } from 'react-router';
 import { menuActionsCreator } from './menu-actions';
 import { useSupportModal } from '../../hooks/use-support-modal';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { V1alpha1DataVolume } from '../../types/api';
 import { useBaseImages } from '../../hooks/use-base-images';
 import { DataVolumeModel } from '../../models';
 import { isCommonTemplate } from '../../selectors/vm-template/basic';
 import { getTemplateSourceStatus } from '../../statuses/template/template-source-status';
+import { V1alpha1DataVolume } from '../../types/api';
+import { useCustomizeSourceModal } from '../../hooks/use-customize-source-modal';
 
 export const breadcrumbsForVMTemplatePage = (t: TFunction, match: VMTemplateMatch) => () => [
   {
@@ -78,6 +80,7 @@ export const VMTemplateDetailsPage: React.FC<VMTemplateDetailsPageProps> = (prop
       : null;
 
   const withSupportModal = useSupportModal();
+  const withCustomizeModal = useCustomizeSourceModal();
   const sourceLoaded = dvLoaded && podsLoaded && pvcsLoaded && templateLoaded && imagesLoaded;
   const sourceLoadError = dvError || podsError || pvcsError || templateError || error;
 
@@ -111,6 +114,7 @@ export const VMTemplateDetailsPage: React.FC<VMTemplateDetailsPageProps> = (prop
         sourceLoaded,
         sourceLoadError,
         withCreate: true,
+        withCustomizeModal,
       }}
     />
   );

@@ -208,7 +208,7 @@ const useCatalogVmTemplates: CatalogExtensionHook<CatalogItem[]> = ({
   } = useVmTemplatesResources(namespace);
 
   return React.useMemo(() => {
-    const templates = filterTemplates(userTemplates, baseTemplates).filter((tmp) => {
+    const templates = filterTemplates([...userTemplates, ...baseTemplates]).filter((tmp) => {
       const tempSourceStatus = getTemplateSourceStatus({
         pods,
         pvcs,

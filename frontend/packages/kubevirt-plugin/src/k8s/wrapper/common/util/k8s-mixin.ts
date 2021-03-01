@@ -54,5 +54,6 @@ export const clearRuntimeMetadata = (base: K8sResourceCommon) => {
     delete metadata.creationTimestamp;
     delete metadata.deletionTimestamp;
     delete metadata.generation;
+    delete metadata.managedFields;
   }
 };

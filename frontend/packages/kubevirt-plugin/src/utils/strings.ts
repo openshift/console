@@ -1,4 +1,10 @@
 import { TFunction } from 'i18next';
+import { TemplateKind } from '@console/internal/module/k8s';
+import { uniqueNamesGenerator, animals, adjectives } from 'unique-names-generator';
+import { TEMPLATE_BASE_IMAGE_NAME_PARAMETER } from '../constants';
+import { getTemplateName } from '../selectors/vm-template/basic';
+import { alignWithDNS1123 } from '@console/shared/src/utils/validation/validation';
+import { getParameterValue } from '../selectors/selectors';
 
 export const COULD_NOT_LOAD_DATA = 'Could not load data';
 
@@ -83,3 +89,12 @@ export const createUniqueNameResolver = (data: { name: string }[]) => {
     return `${name}-${nameCounts[name].next - 1}`;
   };
 };
+
+export const generateVMName = (template: TemplateKind): string =>
+  alignWithDNS1123(
+    `${getParameterValue(template, TEMPLATE_BASE_IMAGE_NAME_PARAMETER) ||
+      getTemplateName(template)}-${uniqueNamesGenerator({
+      dictionaries: [adjectives, animals],
+      separator: '-',
+    })}`,
+  );

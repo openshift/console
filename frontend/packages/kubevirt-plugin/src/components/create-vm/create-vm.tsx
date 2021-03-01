@@ -120,7 +120,7 @@ const Footer: React.FC<FooterProps> = ({
             isReview
               ? onFinish
               : isSelectTemplate
-              ? () => withSupportModal(template, onNext)
+              ? () => withSupportModal(template.variants[0], onNext)
               : onNext
           }
           isDisabled={!canContinue || isCreating}
@@ -176,7 +176,7 @@ export const CreateVM: React.FC<RouteComponentProps> = ({ location }) => {
     resourcesLoadError,
   } = useVmTemplatesResources(namespace);
 
-  const templates = filterTemplates(userTemplates, baseTemplates);
+  const templates = filterTemplates([...userTemplates, ...baseTemplates]);
 
   const loaded = resourcesLoaded && projectsLoaded && scLoaded;
   const loadError = resourcesLoadError || projectsError || scError;

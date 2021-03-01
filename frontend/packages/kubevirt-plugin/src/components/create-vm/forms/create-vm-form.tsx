@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { uniqueNamesGenerator, animals, adjectives } from 'unique-names-generator';
 import {
   Alert,
   Form,
@@ -21,8 +20,7 @@ import {
   useAccessReview2,
 } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { alignWithDNS1123, BlueInfoCircleIcon, FLAGS, useFlag } from '@console/shared';
-import { TemplateKind } from '@console/internal/module/k8s';
+import { BlueInfoCircleIcon, FLAGS, useFlag } from '@console/shared';
 
 import { DataVolumeModel, VirtualMachineModel } from '../../../models';
 import { VMKind } from '../../../types';
@@ -52,19 +50,10 @@ import { ROOT_DISK_INSTALL_NAME } from '../../../constants';
 import { getCPU, getWorkloadProfile, vCPUCount } from '../../../selectors/vm';
 import { FormPFSelect } from '../../form/form-pf-select';
 import { preventDefault } from '../../form/utils';
-import { getParameterValue } from '../../../selectors/selectors';
-import { DataVolumeSourceType, TEMPLATE_BASE_IMAGE_NAME_PARAMETER } from '../../../constants/vm';
+import { DataVolumeSourceType, DEFAULT_DISK_SIZE } from '../../../constants/vm';
+import { generateVMName } from '../../../utils/strings';
 
 import './create-vm-form.scss';
-
-const generateName = (template: TemplateKind): string =>
-  alignWithDNS1123(
-    `${getParameterValue(template, TEMPLATE_BASE_IMAGE_NAME_PARAMETER) ||
-      getTemplateName(template)}-${uniqueNamesGenerator({
-      dictionaries: [adjectives, animals],
-      separator: '-',
-    })}`,
-  );
 
 export type CreateVMFormProps = {
   template: TemplateItem;
@@ -131,7 +120,7 @@ export const CreateVMForm: React.FC<CreateVMFormProps> = ({
 
   React.useEffect(() => {
     if (loaded && namespace && !name && template) {
-      const initName = generateName(template);
+      const initName = generateVMName(template);
       onNameChange(initName);
     }
     // eslint-disable-next-line
@@ -300,8 +289,8 @@ export const CreateVMForm: React.FC<CreateVMFormProps> = ({
                       </StackItem>
                       <StackItem>
                         <ExpandableSection toggleText={t('kubevirt-plugin~Disk details')}>
-                          {ROOT_DISK_INSTALL_NAME} - {t('kubevirt-plugin~Blank')} - 20GiB -{' '}
-                          {t(getDefaultDiskBus(template).toString())} -{' '}
+                          {ROOT_DISK_INSTALL_NAME} - {t('kubevirt-plugin~Blank')} -{' '}
+                          {`${DEFAULT_DISK_SIZE}B`} - {t(getDefaultDiskBus(template).toString())} -{' '}
                           {t('kubevirt-plugin~default Storage class')}
                         </ExpandableSection>
                       </StackItem>
