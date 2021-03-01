@@ -50,9 +50,9 @@ const ConnectedTopologyOperatorBackedPanel: React.FC<PropsFromState &
   PropsFromDispatch &
   TopologyOperatorBackedPanelProps> = ({ item, onClickTab, selectedDetailsTab }) => {
   const { t } = useTranslation();
-  const { name, resource } = item;
+  const { name, resource, data } = item;
   const { namespace } = resource.metadata;
-  const csvName = resource.metadata.selfLink.split('/').pop();
+  const { csvName } = data;
   const reference = referenceFor(resource);
   const actionExtensions = useExtensions<ClusterServiceVersionAction>(
     isClusterServiceVersionAction,
