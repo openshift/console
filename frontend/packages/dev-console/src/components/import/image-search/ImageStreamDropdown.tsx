@@ -18,7 +18,7 @@ const ImageStreamDropdown: React.FC = () => {
   const { state, dispatch, hasImageStreams, setHasImageStreams } = React.useContext(
     ImageStreamContext,
   );
-  const { accessLoading, loading, hasCreateAccess } = state;
+  const { accessLoading, loading } = state;
   const isNamespaceSelected = imageStream.namespace !== '' && !accessLoading;
   const isStreamsAvailable = isNamespaceSelected && hasImageStreams && !loading;
   const collectImageStreams = (namespace: string, resource: K8sResourceKind): void => {
@@ -30,7 +30,7 @@ const ImageStreamDropdown: React.FC = () => {
   const getTitle = () => {
     return loading && !isStreamsAvailable
       ? ''
-      : !isStreamsAvailable || !hasCreateAccess
+      : !isStreamsAvailable
       ? 'No Image Stream'
       : 'Select Image Stream';
   };
@@ -87,7 +87,7 @@ const ImageStreamDropdown: React.FC = () => {
       fullWidth
       required
       title={imageStream.image || getTitle()}
-      disabled={!hasCreateAccess || !isStreamsAvailable}
+      disabled={!isStreamsAvailable}
       onChange={onDropdownChange}
       onLoad={onLoad}
       resourceFilter={resourceFilter}
