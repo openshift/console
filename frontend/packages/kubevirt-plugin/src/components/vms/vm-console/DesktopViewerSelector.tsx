@@ -2,15 +2,16 @@ import * as React from 'react';
 import { Form, FormGroup, Alert } from '@patternfly/react-core';
 import { DesktopViewer } from '@patternfly/react-console';
 import { Dropdown } from '@console/internal/components/utils';
-import { getName } from '@console/shared';
-import { DEFAULT_RDP_PORT, TEMPLATE_VM_NAME_LABEL, NetworkType } from '../../constants';
-import { VMKind, VMIKind } from '../../types';
-import { getNetworks } from '../../selectors/vm';
-import {
-  getVMIAvailableStatusInterfaces,
-  RDPConnectionDetailsManualType,
-  VNCConnectionDetailsManualType,
-} from '../../selectors/vmi';
+import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { ServiceModel } from '@console/internal/models';
+
+import { DEFAULT_RDP_PORT, TEMPLATE_VM_NAME_LABEL, NetworkType } from '../../../constants';
+import { VMKind, VMIKind } from '../../../types';
+import { getNetworks } from '../../../selectors/vm';
+import { getVMIAvailableStatusInterfaces, isGuestAgentConnected } from '../../../selectors/vmi';
+import { getRdpAddressPort } from '../../../selectors/service';
+
 import './desktop-viewer-selector.scss';
 
 const SELECT_NETWORK_INTERFACE = '--- Select Network Interface ---';
@@ -54,47 +55,65 @@ const getDefaultNetwork = (networks: Network[]) => {
   return null;
 };
 
-const RdpServiceNotConfigured: React.FC<RdpServiceNotConfiguredProps> = ({ vm }) => (
-  <div className="kubevirt-vm-consoles__rdp">
-    <span>
-      This is a Windows virtual machine but no Service for the RDP (Remote Desktop Protocol) can be
-      found.
-    </span>
-    <br />
-    <span>
-      For better experience accessing Windows console, it is recommended to use the RDP. To do so,
-      create a service:
-      <ul>
-        <li>
-          exposing the{' '}
-          <b>
-            {DEFAULT_RDP_PORT}
-            /tcp
-          </b>{' '}
-          port of the virtual machine
-        </li>
-        <li>
-          using selector:{' '}
-          <b>
-            {TEMPLATE_VM_NAME_LABEL}: {getName(vm)}
-          </b>
-        </li>
-        <li>
-          Example: virtctl expose virtualmachine {getName(vm)} --name {getName(vm)}
-          -rdp --port [UNIQUE_PORT] --target-port {DEFAULT_RDP_PORT} --type NodePort
-        </li>
-      </ul>
-      Make sure, the VM object has <b>spec.template.metadata.labels</b> set to{' '}
-      <b>
-        {TEMPLATE_VM_NAME_LABEL}: {getName(vm)}
-      </b>
-    </span>
-  </div>
-);
+const RdpServiceNotConfigured: React.FC<RdpServiceNotConfiguredProps> = ({ vm }) => {
+  const name = vm?.metadata?.name;
+  return (
+    <div data-test="rdp-console-desc">
+      <span>
+        This is a Windows virtual machine but no Service for the RDP (Remote Desktop Protocol) can
+        be found.
+      </span>
+      <br />
+      <span>
+        For better experience accessing Windows console, it is recommended to use the RDP. To do so,
+        create a service:
+        <ul>
+          <li>
+            exposing the{' '}
+            <b>
+              {DEFAULT_RDP_PORT}
+              /tcp
+            </b>{' '}
+            port of the virtual machine
+          </li>
+          <li>
+            using selector:{' '}
+            <b>
+              {TEMPLATE_VM_NAME_LABEL}: {name}
+            </b>
+          </li>
+          <li>
+            Example: virtctl expose virtualmachine {name} --name {name}
+            -rdp --port [UNIQUE_PORT] --target-port {DEFAULT_RDP_PORT} --type NodePort
+          </li>
+        </ul>
+        Make sure, the VM object has <b>spec.template.metadata.labels</b> set to{' '}
+        <b>
+          {TEMPLATE_VM_NAME_LABEL}: {name}
+        </b>
+      </span>
+    </div>
+  );
+};
 
-export const DesktopViewerSelector: React.FC<DesktopViewerSelectorProps> = (props) => {
-  const { vm, vmi, guestAgent, rdpServiceManual, vncServiceManual } = props;
+const DesktopViewerSelector: React.FC<DesktopViewerSelectorProps> = (props) => {
+  const { vm, vmi, vmPod } = props;
 
+  // We probably can not simply match on labels but on Service's spec.selector.[kubevirt/vm] to achieve robust pairing VM-Service.
+  // So read all services and filter on frontend.
+  const [services] = useK8sWatchResource<K8sResourceKind[]>(
+    vm?.metadata?.namespace
+      ? {
+          kind: ServiceModel.kind,
+          isList: true,
+          namespace: vm.metadata.namespace,
+        }
+      : null,
+  );
+
+  const rdpServiceAddressPort = getRdpAddressPort(vmi, services, vmPod);
+
+  const guestAgent = isGuestAgentConnected(vmi);
   const networks = React.useMemo(() => getVmRdpNetworks(vm, vmi), [vm, vmi]);
   const networkItems = networks.reduce((result, network) => {
     result[network.name] = network.name;
@@ -135,12 +154,11 @@ export const DesktopViewerSelector: React.FC<DesktopViewerSelectorProps> = (prop
       }
       break;
     case NetworkType.POD:
-      content =
-        rdpServiceManual || vncServiceManual ? (
-          <DesktopViewer rdp={rdpServiceManual} vnc={vncServiceManual} />
-        ) : (
-          <RdpServiceNotConfigured vm={vm} />
-        );
+      content = rdpServiceAddressPort ? (
+        <DesktopViewer rdp={rdpServiceAddressPort} />
+      ) : (
+        <RdpServiceNotConfigured vm={vm} />
+      );
       break;
     default:
       // eslint-disable-next-line no-console
@@ -148,13 +166,9 @@ export const DesktopViewerSelector: React.FC<DesktopViewerSelectorProps> = (prop
   }
 
   return (
-    <div className="kubevirt-desktop-viewer-selector">
-      <Form isHorizontal>
-        <FormGroup
-          className="kubevirt-desktop-viewer-selector__form-group"
-          fieldId="network-dropdown"
-          label={NIC}
-        >
+    <>
+      <Form isHorizontal className="kv-vm-consoles__rdp-actions">
+        <FormGroup fieldId="network-dropdown" label={NIC}>
           <Dropdown
             id="network-dropdown"
             onChange={onNetworkChange}
@@ -165,7 +179,7 @@ export const DesktopViewerSelector: React.FC<DesktopViewerSelectorProps> = (prop
         </FormGroup>
       </Form>
       {content}
-    </div>
+    </>
   );
 };
 DesktopViewerSelector.displayName = 'DesktopViewer';
@@ -173,9 +187,7 @@ DesktopViewerSelector.displayName = 'DesktopViewer';
 type DesktopViewerSelectorProps = {
   vm: VMKind;
   vmi: VMIKind;
-  guestAgent: boolean;
-  rdpServiceManual: RDPConnectionDetailsManualType;
-  vncServiceManual: VNCConnectionDetailsManualType;
+  vmPod: PodKind;
 };
 
 type RdpServiceNotConfiguredProps = {
@@ -187,3 +199,5 @@ type Network = {
   type: NetworkType;
   ip: string;
 };
+
+export default DesktopViewerSelector;

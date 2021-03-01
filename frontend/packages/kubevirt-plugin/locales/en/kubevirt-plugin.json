@@ -654,6 +654,7 @@
   "With Import wizard": "With Import wizard",
   "Virtual Machine": "Virtual Machine",
   "Template": "Template",
+  "This Virtual Machine is migrating and cannot be started at the moment": "This Virtual Machine is migrating and cannot be started at the moment",
   "Open Console in new Window": "Open Console in new Window",
   "Guest login credentials": "Guest login credentials",
   "The following credentials for this operating system were created via <2>Cloud-init</2>. If unsuccessful cloud-init could be improperly configured. Please contact the image provider for more information.": "The following credentials for this operating system were created via <2>Cloud-init</2>. If unsuccessful cloud-init could be improperly configured. Please contact the image provider for more information.",

@@ -5,17 +5,14 @@ import {
   click,
   createResource,
   deleteResource,
-  selectDropdownOption,
-  waitForStringNotInElement,
+  selectDropdownOptionById,
 } from '@console/shared/src/test-utils/utils';
 import {
   consoleTypeSelectorId,
   serialDisconnectButton,
-  serialReconnectButton,
+  serialResetButton,
   serialConnectButton,
   vncSendKeyButton,
-  vncConnectingBar,
-  serialConsoleWrapper,
   serialConsole,
   sendCommandToConsole,
   vncConsole,
@@ -81,13 +78,10 @@ describe('KubeVirt VM console - VNC/Serial', () => {
   });
 
   it('ID(CNV-3609) Serial Console connects', async () => {
-    await selectDropdownOption(consoleTypeSelectorId, 'Serial Console');
-
-    // Wait for Loading span element to disappear
-    await browser.wait(waitForStringNotInElement(serialConsoleWrapper, 'Loading'));
+    await selectDropdownOptionById(consoleTypeSelectorId, 'SerialConsole');
 
     // Ensure presence of control buttons
-    await browser.wait(until.presenceOf(serialReconnectButton), PAGE_LOAD_TIMEOUT_SECS);
+    await browser.wait(until.presenceOf(serialResetButton), PAGE_LOAD_TIMEOUT_SECS);
     await browser.wait(until.presenceOf(serialDisconnectButton), PAGE_LOAD_TIMEOUT_SECS);
     await browser.wait(until.elementToBeClickable(serialDisconnectButton), PAGE_LOAD_TIMEOUT_SECS);
 
@@ -97,16 +91,9 @@ describe('KubeVirt VM console - VNC/Serial', () => {
   });
 
   it('ID(CNV-872) VNC Console connects', async () => {
-    // WA for https://bugzilla.redhat.com/show_bug.cgi?id=1897003
-    await testVM.navigateToOverview();
-    await testVM.navigateToConsole();
+    await selectDropdownOptionById(consoleTypeSelectorId, 'VncConsole');
 
-    await selectDropdownOption(consoleTypeSelectorId, 'VNC Console');
-
-    // Wait for Connecting bar element to disappear
-    await browser.wait(until.invisibilityOf(vncConnectingBar));
     await browser.wait(until.presenceOf(vncSendKeyButton), PAGE_LOAD_TIMEOUT_SECS);
-
     await checkTouchedFile(testVM, vncConsole, vncTestFile);
   });
 
@@ -122,16 +109,15 @@ describe('KubeVirt VM console - VNC/Serial', () => {
     expect(getPopUpHandle).toEqual(popUpHandle);
 
     // verify it's connecting to vnc console in the new window.
-    await browser.wait(until.invisibilityOf(vncConnectingBar));
     await browser.wait(until.presenceOf(vncSendKeyButton), PAGE_LOAD_TIMEOUT_SECS);
     await checkTouchedFile(testVM, vncConsole, vncTestFile1);
 
     // verify it's connecting to serial console in the new window.
-    await selectDropdownOption(consoleTypeSelectorId, 'Serial Console');
+    await selectDropdownOptionById(consoleTypeSelectorId, 'SerialConsole');
     if (await serialConnectButton.isPresent()) {
       await click(serialConnectButton);
     }
-    await browser.wait(until.presenceOf(serialReconnectButton), PAGE_LOAD_TIMEOUT_SECS);
+    await browser.wait(until.presenceOf(serialResetButton), PAGE_LOAD_TIMEOUT_SECS);
     await browser.wait(until.presenceOf(serialDisconnectButton), PAGE_LOAD_TIMEOUT_SECS);
     await browser.wait(until.elementToBeClickable(serialDisconnectButton), PAGE_LOAD_TIMEOUT_SECS);
     await browser.wait(until.presenceOf(serialConsole), PAGE_LOAD_TIMEOUT_SECS);

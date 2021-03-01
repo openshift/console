@@ -1,10 +1,12 @@
 import * as React from 'react';
-import { AccessConsoles, SerialConsole } from '@patternfly/react-console';
+import { constants, SerialConsole } from '@patternfly/react-console';
 import { WSFactory } from '@console/internal/module/ws-factory';
 import { getName } from '@console/shared/src/selectors';
-import { VMIKind } from '../../types';
 
-const { CONNECTED, DISCONNECTED, LOADING } = AccessConsoles.constants;
+import { VMIKind } from '../../../../types';
+import { getSerialConsoleConnectionDetails } from '../../../../selectors/vmi';
+
+const { CONNECTED, DISCONNECTED, LOADING } = constants;
 
 // The protocol is complex and backend implementation not stable - let's keep logging to simplify debugging in production.
 const { debug, info, error } = console;
@@ -26,7 +28,8 @@ interface WebSocket {
 
 // KubeVirt serial console is accessed via WebSocket proxy in k8s API.
 // Protocol used is "plain.kubevirt.io", means binary and single channel - forwarding of unix socket only (vmhandler sources).
-export const SerialConsoleConnector: React.FC<SerialConsoleConnectorProps> = (props) => {
+const SerialConsoleConnector: React.FC<SerialConsoleConnectorProps> = ({ vmi }) => {
+  const { host, path } = getSerialConsoleConnectionDetails(vmi);
   const [status, setStatus] = React.useState(LOADING);
   const [passKeys, setPassKeys] = React.useState(false);
   const [ws, setWS] = React.useState<WebSocket>();
@@ -73,8 +76,6 @@ export const SerialConsoleConnector: React.FC<SerialConsoleConnectorProps> = (pr
 
   const onConnect = React.useCallback(() => {
     debug('SerialConsoleConnector.onConnect(), status = ', status, ', passKeys = ', passKeys);
-    const { vmi, host, path } = props;
-
     if (ws) {
       ws.destroy();
       setStatus(LOADING);
@@ -97,7 +98,17 @@ export const SerialConsoleConnector: React.FC<SerialConsoleConnectorProps> = (pr
           error('WS error received: ', event);
         }),
     );
-  }, [status, passKeys, props, ws, onDataFromBackend, setConnected, onBackendDisconnected]);
+  }, [
+    status,
+    passKeys,
+    ws,
+    host,
+    path,
+    vmi,
+    onDataFromBackend,
+    setConnected,
+    onBackendDisconnected,
+  ]);
 
   const onData = React.useCallback(
     (data) => {
@@ -124,10 +135,10 @@ export const SerialConsoleConnector: React.FC<SerialConsoleConnectorProps> = (pr
     />
   );
 };
-SerialConsoleConnector.displayName = AccessConsoles.constants.SERIAL_CONSOLE_TYPE; // for child-recognition by AccessConsoles
+SerialConsoleConnector.displayName = constants.SERIAL_CONSOLE_TYPE; // for child-recognition by AccessConsoles
 
 type SerialConsoleConnectorProps = {
   vmi: VMIKind;
-  host: string;
-  path: string;
 };
+
+export default SerialConsoleConnector;
