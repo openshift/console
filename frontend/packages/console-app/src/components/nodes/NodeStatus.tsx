@@ -14,8 +14,8 @@ import { nodeStatus } from '../../status/node';
 import { PressureQueries, Condition } from '../../queries';
 
 const conditionDescriptionMap = Object.freeze({
-  [Condition.DISK_PRESSURE]: 'available memory is low',
-  [Condition.MEM_PRESSURE]: 'available disk capacity is low',
+  [Condition.DISK_PRESSURE]: 'available disk capacity is low',
+  [Condition.MEM_PRESSURE]: 'available memory is low',
   [Condition.PID_PRESSURE]: 'CPU is running a large number of processes',
 });
 
