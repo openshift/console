@@ -11,7 +11,7 @@
   "scripts": {
     "postinstall": "yarn generate",
     "clean": "rm -rf ./public/dist",
-    "dev": "yarn clean && yarn generate && NODE_OPTIONS=--max-old-space-size=4096 yarn ts-node ./node_modules/.bin/webpack-dev-server",
+    "dev": "yarn clean && yarn generate && NODE_OPTIONS=--max-old-space-size=4096 yarn ts-node ./node_modules/.bin/webpack serve --mode=development --progress",
     "dev-once": "yarn clean && yarn generate && NODE_OPTIONS=--max-old-space-size=4096 yarn ts-node ./node_modules/.bin/webpack --mode=development",
     "build": "yarn clean && yarn generate && NODE_ENV=production NODE_OPTIONS=--max-old-space-size=4096 yarn ts-node ./node_modules/.bin/webpack --mode=production",
     "check-cycles": "CHECK_CYCLES=true yarn dev-once",
@@ -43,7 +43,7 @@
     "cypress-generate": "marge -o ./gui_test_screenshots/ -f cypress-report -t 'OpenShift Console Cypress Test Results' -p 'OpenShift Cypress Test Results' --showPassed false --assetsDir ./gui_test_screenshots/cypress/assets ./gui_test_screenshots/cypress.json",
     "cypress-a11y-report": "echo '\nA11y Test Results:' && mv packages/integration-tests-cypress/cypress-a11y-report.json ./gui_test_screenshots/ && node -e \"console.table(JSON.parse(require('fs').readFileSync(process.argv[1])));\" ./gui_test_screenshots/cypress-a11y-report.json",
     "cypress-postreport": "yarn cypress-merge && yarn cypress-generate",
-    "analyze": "NODE_ENV=production NODE_OPTIONS=--max-old-space-size=8192 yarn ts-node ./node_modules/.bin/webpack --mode=production --profile --json | sed '0,/^{/s/^[^{].*//g' > public/dist/stats.json && NODE_OPTIONS=--max-old-space-size=8192 yarn ts-node ./node_modules/.bin/webpack-bundle-analyzer --mode static -r public/dist/report.html public/dist/stats.json",
+    "analyze": "NODE_ENV=production NODE_OPTIONS=--max-old-space-size=8192 yarn ts-node ./node_modules/.bin/webpack --mode=production --progress=profile --json | sed '0,/^{/s/^[^{].*//g' > public/dist/stats.json && NODE_OPTIONS=--max-old-space-size=8192 yarn ts-node ./node_modules/.bin/webpack-bundle-analyzer --mode static -r public/dist/report.html public/dist/stats.json",
     "prettier-all": "prettier --write '**/*.{js,jsx,ts,tsx,json}'",
     "ts-node": "ts-node -O '{\"module\":\"commonjs\"}'",
     "generate": "yarn generate-gql && yarn generate-plugin-assets",
@@ -226,6 +226,7 @@
     "@types/react-virtualized": "9.x",
     "@types/semver": "^6.0.0",
     "@types/webpack": "4.x",
+    "@types/webpack-dev-server": "3.11.1",
     "acorn": "^7.0.0",
     "acorn-jsx": "5.2.0",
     "babel-loader": "^8.1.0",
@@ -295,8 +296,8 @@
     "typescript": "3.8.3",
     "webpack": "4.44.0",
     "webpack-bundle-analyzer": "^3.5.0",
-    "webpack-cli": "^3.3.9",
-    "webpack-dev-server": "^3.11.0",
+    "webpack-cli": "4.5.x",
+    "webpack-dev-server": "3.11.1",
     "webpack-virtual-modules": "0.3.x"
   },
   "engines": {
