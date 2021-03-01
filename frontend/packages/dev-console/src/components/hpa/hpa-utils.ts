@@ -10,6 +10,7 @@ import { HorizontalPodAutoscalerModel } from '@console/internal/models';
 import { baseTemplates } from '@console/internal/models/yaml-templates';
 import { LimitsData } from '@console/shared/src';
 import { HPAFormValues, SupportedMetricTypes } from './types';
+import i18next from 'i18next';
 
 export const VALID_HPA_TARGET_KINDS = ['Deployment', 'DeploymentConfig'];
 
@@ -29,17 +30,20 @@ export const getLimitWarning = (resource: K8sResourceKind): string => {
   const limits = getResourceLimitsData(resource);
 
   if (!limits) {
-    return `CPU and memory resource limits must be set if you want to use CPU and memory utilization. \
-    The ${HorizontalPodAutoscalerModel.label} will not have CPU or memory metrics until resource limits are set.`;
+    return i18next.t(
+      'devconsole~CPU and memory resource limits must be set if you want to use CPU and memory utilization. The HorizontalPodAutoscaler will not have CPU or memory metrics until resource limits are set.',
+    );
   }
 
   if (!hasCpuLimits(limits)) {
-    return `CPU resource limits must be set if you want to use CPU utilization. \
-    The ${HorizontalPodAutoscalerModel.label} will not have CPU metrics until resource limits are set.`;
+    return i18next.t(
+      'devconsole~CPU resource limits must be set if you want to use CPU utilization. The HorizontalPodAutoscaler will not have CPU metrics until resource limits are set.',
+    );
   }
   if (!hasMemoryLimits(limits)) {
-    return `Memory resource limits must be set if you want to use memory utilization. \
-    The ${HorizontalPodAutoscalerModel.label} will not have memory metrics until resource limits are set.`;
+    return i18next.t(
+      'devconsole~Memory resource limits must be set if you want to use memory utilization. The HorizontalPodAutoscaler will not have memory metrics until resource limits are set.',
+    );
   }
 
   return null;
@@ -148,16 +152,16 @@ export const getInvalidUsageError = (
   const invalidMemory = lackMemoryLimits && metricNames.includes('memory');
 
   if (metricNames.length === 0) {
-    return `Cannot create a ${HorizontalPodAutoscalerModel.label} with no valid metrics.`;
+    return i18next.t('devconsole~Cannot create a HorizontalPodAutoscaler with no valid metrics.');
   }
   if (invalidCPU && invalidMemory) {
-    return 'CPU and memory utilization cannot be used currently.';
+    return i18next.t('devconsole~CPU and memory utilization cannot be used currently.');
   }
   if (invalidCPU) {
-    return 'CPU utilization cannot be used currently.';
+    return i18next.t('devconsole~CPU utilization cannot be used currently.');
   }
   if (invalidMemory) {
-    return 'Memory utilization cannot be used currently.';
+    return i18next.t('devconsole~Memory utilization cannot be used currently.');
   }
 
   return null;

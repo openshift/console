@@ -5,6 +5,7 @@ import { PercentIcon } from '@patternfly/react-icons';
 import { HorizontalPodAutoscalerKind, HPAMetric } from '@console/internal/module/k8s';
 import { getMetricByType } from './hpa-utils';
 import { HPAFormValues, SupportedMetricTypes } from './types';
+import { useTranslation } from 'react-i18next';
 
 type HPAUtilizationFieldProps = {
   disabled?: boolean;
@@ -26,12 +27,15 @@ const HPAUtilizationField: React.FC<HPAUtilizationFieldProps> = ({
   const value: number = metric?.resource?.target?.averageUtilization;
   const thisErrorMetric = errors.formData?.spec?.metrics?.[index] as FormikErrors<HPAMetric>;
   const error: string = thisErrorMetric?.resource?.target?.averageUtilization;
-
+  const { t } = useTranslation();
   return (
     <FormGroup
       fieldId={`${type}-utilization`}
-      label={`${label} Utilization`}
-      helperText={`${label} request and limit must be set before ${label} utilization can be set.`}
+      label={t('devconsole~{{label}} Utilization', { label })}
+      helperText={t(
+        'devconsole~{{label}} request and limit must be set before {{label}} utilization can be set.',
+        { label },
+      )}
       helperTextInvalid={error}
       validated={error ? 'error' : null}
     >

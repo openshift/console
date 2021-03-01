@@ -15,6 +15,12 @@ import { deploymentConfigExamples, deploymentExamples, hpaExamples } from './hpa
 import { DeploymentKind, HorizontalPodAutoscalerKind } from '@console/internal/module/k8s';
 import { HPAFormValues } from '../types';
 
+jest.mock('i18next', () => ({
+  default: {
+    t: jest.fn((key) => key),
+  },
+}));
+
 describe('isCpuUtilizationPossible provides accurate checks', () => {
   it('expect an invalid resource to return no', () => {
     expect(isCpuUtilizationPossible(null)).toBe(false);
