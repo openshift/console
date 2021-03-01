@@ -235,17 +235,17 @@ const TimespanDropdown_: React.FC<TimespanDropdownProps> = ({ timespan, setTimes
   ]);
 
   const timespanOptions = {
-    '5m': t('public~{{count}} minute', { count: 5 }),
-    '15m': t('public~{{count}} minute', { count: 15 }),
-    '30m': t('public~{{count}} minute', { count: 30 }),
-    '1h': t('public~{{count}} hour', { count: 1 }),
-    '2h': t('public~{{count}} hour', { count: 2 }),
-    '6h': t('public~{{count}} hour', { count: 6 }),
-    '12h': t('public~{{count}} hour', { count: 12 }),
-    '1d': t('public~{{count}} day', { count: 1 }),
-    '2d': t('public~{{count}} day', { count: 2 }),
-    '1w': t('public~{{count}} week', { count: 1 }),
-    '2w': t('public~{{count}} week', { count: 2 }),
+    '5m': t('public~Last {{count}} minute', { count: 5 }),
+    '15m': t('public~Last {{count}} minute', { count: 15 }),
+    '30m': t('public~Last {{count}} minute', { count: 30 }),
+    '1h': t('public~Last {{count}} hour', { count: 1 }),
+    '2h': t('public~Last {{count}} hour', { count: 2 }),
+    '6h': t('public~Last {{count}} hour', { count: 6 }),
+    '12h': t('public~Last {{count}} hour', { count: 12 }),
+    '1d': t('public~Last {{count}} day', { count: 1 }),
+    '2d': t('public~Last {{count}} day', { count: 2 }),
+    '1w': t('public~Last {{count}} week', { count: 1 }),
+    '2w': t('public~Last {{count}} week', { count: 2 }),
   };
 
   return (
