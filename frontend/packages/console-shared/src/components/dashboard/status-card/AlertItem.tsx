@@ -49,7 +49,7 @@ export const StatusItem: React.FC<StatusItemProps> = ({ Icon, timestamp, message
   );
 };
 
-const AlertItem: React.FC<AlertItemProps> = ({ alert, hideLink }) => {
+const AlertItem: React.FC<AlertItemProps> = ({ alert }) => {
   const actionsExtensions = useExtensions<AlertAction>(isAlertAction);
   const action = getAlertActions(actionsExtensions).get(alert.rule.name);
   const { t } = useTranslation();
@@ -62,7 +62,7 @@ const AlertItem: React.FC<AlertItemProps> = ({ alert, hideLink }) => {
       {action ? (
         <Link to={_.isFunction(action.path) ? action.path(alert) : action.path}>{action.text}</Link>
       ) : (
-        !hideLink && <Link to={alertURL(alert, alert.rule.id)}>{t('dashboard~View details')}</Link>
+        <Link to={alertURL(alert, alert.rule.id)}>{t('dashboard~View details')}</Link>
       )}
     </StatusItem>
   );
@@ -78,5 +78,4 @@ type StatusItemProps = {
 
 type AlertItemProps = {
   alert: Alert;
-  hideLink?: boolean;
 };
