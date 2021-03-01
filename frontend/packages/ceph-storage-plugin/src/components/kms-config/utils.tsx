@@ -13,7 +13,7 @@ import {
 import { Action } from '../ocs-install/attached-devices-mode/reducer';
 import { InternalClusterAction } from '../ocs-install/internal-mode/reducer';
 import { KMSConfig, KMSConfigMap } from '../../types';
-import { StorageClassClusterAction } from '../../utils/storage-pool';
+import { StorageClassClusterAction } from '../../utils/kms-encryption';
 
 export const parseURL = (url: string) => {
   try {

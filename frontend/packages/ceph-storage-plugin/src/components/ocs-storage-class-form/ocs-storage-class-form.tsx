@@ -40,10 +40,10 @@ import {
 } from '../../constants';
 import { cephBlockPoolResource, cephClusterResource } from '../../resources';
 import { CephClusterKind, StoragePoolKind, KMSConfig, KMSConfigMap } from '../../types';
-import { storagePoolModal } from '../modals/storage-pool-modal/storage-pool-modal';
+import { createBlockPoolModal } from '../modals/block-pool-modal/create-block-pool-modal';
 import { POOL_STATE } from '../../constants/storage-pool-const';
 import { KMSConfigure } from '../kms-config/kms-config';
-import { scReducer, scInitialState, SCActionType } from '../../utils/storage-pool';
+import { scReducer, scInitialState, SCActionType } from '../../utils/kms-encryption';
 import {
   createKmsResources,
   setEncryptionDispatch,
@@ -61,7 +61,7 @@ export const PoolResourceComponent: React.FC<ProvisionerProps> = ({ onParamChang
     cephBlockPoolResource,
   );
 
-  const [cephClusterObj, loaded, loadError] = useK8sWatchResource<CephClusterKind[]>(
+  const [cephClusters, loaded, loadError] = useK8sWatchResource<CephClusterKind[]>(
     cephClusterResource,
   );
 
@@ -93,7 +93,7 @@ export const PoolResourceComponent: React.FC<ProvisionerProps> = ({ onParamChang
           : t('ceph-storage-plugin~with compression');
       if (
         pool?.status?.phase === POOL_STATE.READY &&
-        cephClusterObj[0]?.status?.phase === CLUSTER_STATUS.READY
+        cephClusters[0]?.status?.phase === CLUSTER_STATUS.READY
       ) {
         res.push(
           <DropdownItem
@@ -119,8 +119,8 @@ export const PoolResourceComponent: React.FC<ProvisionerProps> = ({ onParamChang
         key="first-item"
         component="button"
         onClick={() =>
-          storagePoolModal({
-            cephClusterObj,
+          createBlockPoolModal({
+            cephClusters,
             onPoolCreation,
           })
         }
@@ -131,10 +131,10 @@ export const PoolResourceComponent: React.FC<ProvisionerProps> = ({ onParamChang
     ],
   );
 
-  if (cephClusterObj[0]?.metadata.name === CEPH_INTERNAL_CR_NAME) {
+  if (cephClusters[0]?.metadata.name === CEPH_INTERNAL_CR_NAME) {
     return (
       <>
-        {!poolDataLoadError && cephClusterObj && (
+        {!poolDataLoadError && cephClusters && (
           <div className="form-group">
             <label className="co-required" htmlFor="ocs-storage-pool">
               {t('ceph-storage-plugin~Storage Pool')}
@@ -172,7 +172,7 @@ export const PoolResourceComponent: React.FC<ProvisionerProps> = ({ onParamChang
       </>
     );
   }
-  if (cephClusterObj[0]?.metadata.name === CEPH_EXTERNAL_CR_NAME) {
+  if (cephClusters[0]?.metadata.name === CEPH_EXTERNAL_CR_NAME) {
     return (
       <div className="form-group">
         <label className="co-required" htmlFor="ocs-storage-pool">

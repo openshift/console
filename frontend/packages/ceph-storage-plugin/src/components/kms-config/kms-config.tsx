@@ -26,7 +26,7 @@ import {
 import { KMSProviders } from '../../constants';
 import { KMSConfig } from '../../types';
 import { State, Action } from '../ocs-install/attached-devices-mode/reducer';
-import { StorageClassState, StorageClassClusterAction } from '../../utils/storage-pool';
+import { StorageClassState, StorageClassClusterAction } from '../../utils/kms-encryption';
 
 import './kms-config.scss';
 

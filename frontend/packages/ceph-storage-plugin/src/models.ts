@@ -27,8 +27,8 @@ export const OCSServiceModel: K8sKind = {
 };
 
 export const CephBlockPoolModel: K8sKind = {
-  label: 'Ceph Block Pool',
-  labelPlural: 'Ceph Block Pools',
+  label: 'Block Pool',
+  labelPlural: 'Block Pools',
   apiVersion: 'v1',
   apiGroup: 'ceph.rook.io',
   plural: 'cephblockpools',

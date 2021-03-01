@@ -1,0 +1,202 @@
+import * as React from 'react';
+import { useTranslation } from 'react-i18next';
+
+import { TFunction } from 'i18next';
+import { apiVersionForModel } from '@console/internal/module/k8s';
+import {
+  CheckCircleIcon,
+  ExclamationCircleIcon,
+  DisconnectedIcon,
+  LockIcon,
+} from '@patternfly/react-icons';
+
+import { StoragePoolKind } from '../types';
+import { CephBlockPoolModel } from '../models';
+import { CEPH_STORAGE_NAMESPACE } from '../constants/index';
+import { COMPRESSION_ON, ROOK_MODEL, POOL_PROGRESS } from '../constants/storage-pool-const';
+
+export const LoadingComponent: React.FC = () => {
+  const { t } = useTranslation();
+
+  return (
+    <span
+      className="pf-c-spinner"
+      role="progressbar"
+      aria-valuetext={t('ceph-storage-plugin~Loading...')}
+    >
+      <span className="pf-c-spinner__clipper" />
+      <span className="pf-c-spinner__lead-ball" />
+      <span className="pf-c-spinner__tail-ball" />
+    </span>
+  );
+};
+
+export const PROGRESS_STATUS = (t: TFunction): ProgressStatusProps[] => [
+  {
+    name: POOL_PROGRESS.PROGRESS,
+    icon: LoadingComponent,
+    desc: t('ceph-storage-plugin~Pool {name} creation in progress'),
+    className: '',
+  },
+  {
+    name: POOL_PROGRESS.CREATED,
+    icon: CheckCircleIcon,
+    desc: t('ceph-storage-plugin~Pool {name} was successfully created'),
+    className: 'ceph-block-pool__check-icon',
+  },
+  {
+    name: POOL_PROGRESS.FAILED,
+    icon: ExclamationCircleIcon,
+    desc: t('ceph-storage-plugin~An error occurred Pool {name} was not created'),
+    className: 'ceph-block-pool__error-icon',
+  },
+  {
+    name: POOL_PROGRESS.TIMEOUT,
+    icon: DisconnectedIcon,
+    desc: t(
+      'ceph-storage-plugin~Pool {name} creation timed out. Please check if ocs-operator and rook operator are running',
+    ),
+    className: '',
+  },
+  {
+    name: POOL_PROGRESS.NOTREADY,
+    icon: LockIcon,
+    desc: t(
+      'ceph-storage-plugin~The creation of an OCS storage cluster is still in progress or has failed. Please try again after the storage cluster is ready to use.',
+    ),
+    className: '',
+  },
+];
+
+export type ProgressStatusProps = {
+  name: string;
+  icon: React.ComponentClass | React.FC;
+  desc: string;
+  className: string;
+};
+
+export type BlockPoolState = {
+  poolName: string;
+  poolStatus: string;
+  replicaSize: string;
+  isCompressed: boolean;
+  isArbiterCluster: boolean;
+  volumeType: string;
+  inProgress: boolean;
+  errorMessage: string;
+};
+
+export enum BlockPoolActionType {
+  SET_POOL_NAME = 'SET_POOL_NAME',
+  SET_POOL_STATUS = 'SET_POOL_STATUS',
+  SET_POOL_REPLICA_SIZE = 'SET_POOL_REPLICA_SIZE',
+  SET_POOL_COMPRESSED = 'SET_POOL_COMPRESSED',
+  SET_POOL_ARBITER = 'SET_POOL_ARBITER',
+  SET_POOL_VOLUME_TYPE = 'SET_POOL_VOLUME_TYPE',
+  SET_INPROGRESS = 'SET_INPROGRESS',
+  SET_ERROR_MESSAGE = 'SET_ERROR_MESSAGE',
+}
+
+export type BlockPoolAction =
+  | { type: BlockPoolActionType.SET_POOL_NAME; payload: string }
+  | { type: BlockPoolActionType.SET_POOL_STATUS; payload: string }
+  | { type: BlockPoolActionType.SET_POOL_REPLICA_SIZE; payload: string }
+  | { type: BlockPoolActionType.SET_POOL_COMPRESSED; payload: boolean }
+  | { type: BlockPoolActionType.SET_POOL_ARBITER; payload: boolean }
+  | { type: BlockPoolActionType.SET_POOL_VOLUME_TYPE; payload: string }
+  | { type: BlockPoolActionType.SET_INPROGRESS; payload: boolean }
+  | { type: BlockPoolActionType.SET_ERROR_MESSAGE; payload: string };
+
+export const blockPoolInitialState: BlockPoolState = {
+  poolName: '',
+  poolStatus: '',
+  replicaSize: '',
+  isCompressed: false,
+  isArbiterCluster: false,
+  volumeType: '',
+  inProgress: false,
+  errorMessage: '',
+};
+
+export const blockPoolReducer = (state: BlockPoolState, action: BlockPoolAction) => {
+  switch (action.type) {
+    case BlockPoolActionType.SET_POOL_NAME: {
+      return {
+        ...state,
+        poolName: action.payload,
+      };
+    }
+    case BlockPoolActionType.SET_POOL_STATUS: {
+      return {
+        ...state,
+        poolStatus: action.payload,
+      };
+    }
+    case BlockPoolActionType.SET_POOL_REPLICA_SIZE: {
+      return {
+        ...state,
+        replicaSize: action.payload,
+      };
+    }
+    case BlockPoolActionType.SET_POOL_COMPRESSED: {
+      return {
+        ...state,
+        isCompressed: action.payload,
+      };
+    }
+    case BlockPoolActionType.SET_POOL_ARBITER: {
+      return {
+        ...state,
+        isArbiterCluster: action.payload,
+      };
+    }
+    case BlockPoolActionType.SET_POOL_VOLUME_TYPE: {
+      return {
+        ...state,
+        volumeType: action.payload,
+      };
+    }
+    case BlockPoolActionType.SET_INPROGRESS: {
+      return {
+        ...state,
+        inProgress: action.payload,
+      };
+    }
+    case BlockPoolActionType.SET_ERROR_MESSAGE: {
+      return {
+        ...state,
+        errorMessage: action.payload,
+      };
+    }
+    default:
+      return state;
+  }
+};
+
+export const getErrorMessage = (error: string): string => error.replace(ROOK_MODEL, 'Pool');
+
+export const getPoolKindObj = (state: BlockPoolState): StoragePoolKind => ({
+  apiVersion: apiVersionForModel(CephBlockPoolModel),
+  kind: CephBlockPoolModel.kind,
+  metadata: {
+    name: state.poolName,
+    namespace: CEPH_STORAGE_NAMESPACE,
+  },
+  spec: {
+    compressionMode: state.isCompressed ? COMPRESSION_ON : '',
+    deviceClass: state.volumeType || '',
+    parameters: {
+      compression_mode: state.isCompressed ? COMPRESSION_ON : '', // eslint-disable-line @typescript-eslint/camelcase
+    },
+    replicated: {
+      size: Number(state.replicaSize),
+    },
+  },
+});
+
+export const checkRequiredValues = (
+  poolName: string,
+  replicaSize: string,
+  volumeType: string,
+  isPoolManagementSupported: boolean,
+): boolean => !poolName || !replicaSize || (isPoolManagementSupported && !volumeType);

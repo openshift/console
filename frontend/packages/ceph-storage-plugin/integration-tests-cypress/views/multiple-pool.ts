@@ -1,17 +1,8 @@
 import { NS } from '../utils/consts';
 import { modal } from '../../../integration-tests-cypress/views/modal';
 
-// Create storage class from
 export const storagePoolDropdown: string = 'pool-dropdown-toggle';
-
-// Create new pool form
-export const poolNameTextBox: string = 'new-pool-name-textbox';
-export const replicaDropdown: string = 'replica-dropdown';
 export const confirmAction: string = 'confirm-action';
-
-// Pool status
-export const emptyStateBody: string = 'empty-state-body';
-
 export enum PoolState {
   DUPLICATED = 'DUPLICATED',
   CREATED = 'CREATED',
@@ -39,26 +30,27 @@ export const storagePool = {
   },
   create: (poolName: string, replicaCount: string, poolCreationJobStatus: PoolState) => {
     // Make sure the storage pool creation form is open
-    modal.modalTitleShouldContain('Create New Storage Pool');
+    modal.modalTitleShouldContain('Create New Block Pool');
     modal.submitShouldBeDisabled();
     modal.shouldBeOpened();
 
-    cy.byTestID(poolNameTextBox)
+    cy.byTestID('new-pool-name-textbox')
       .clear()
       .type(poolName);
-    cy.byTestID(replicaDropdown).click();
+    cy.byTestID('replica-dropdown').click();
     cy.byLegacyTestID(replicaCount)
       .last()
       .contains(`${replicaCount}-way Replication`)
       .click();
+    cy.byTestID('compression-checkbox').check();
 
     // Create new pool
-    cy.byTestID(confirmAction)
+    cy.byTestID('modal-create-action')
       .last()
       .click();
 
     // Validations
-    storagePool.validate(emptyStateBody, poolMessage[poolCreationJobStatus](poolName));
+    storagePool.validate('empty-state-body', poolMessage[poolCreationJobStatus](poolName));
 
     // Close a pool creation form
     cy.byTestID(confirmAction)
