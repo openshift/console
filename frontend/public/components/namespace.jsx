@@ -503,12 +503,14 @@ const namespaceBarDropdownDispatchToProps = dispatch => ({
   showStartGuide: show => dispatch(setFlag(FLAGS.SHOW_OPENSHIFT_START_GUIDE, show)),
 });
 
+const clusterMenu = ['namespaces', 'namespaceclaims'];
+
 class NamespaceBarDropdowns_ extends React.Component {
   componentDidUpdate() {
     const { namespace, showStartGuide } = this.props;
     if (namespace.loaded) {
-      const noProjects = _.isEmpty(namespace.data);
-      showStartGuide(noProjects);
+      const noNamespace = _.isEmpty(namespace.data);
+      showStartGuide(noNamespace); // namespace 없으면 noNamespace창 보이도록
     }
   }
 
@@ -522,6 +524,7 @@ class NamespaceBarDropdowns_ extends React.Component {
     const model = getModel(useProjects);
     const allNamespacesTitle = `all ${model.labelPlural.toLowerCase()}`;
     const items = {};
+
     if (canListNS) {
       items[ALL_NAMESPACES_KEY] = allNamespacesTitle;
     }

@@ -10,6 +10,8 @@ import { DeploymentConfigModel } from '../models';
 import { Conditions } from './conditions';
 import { ResourceEventStream } from './events';
 import { VolumesTable } from './volumes-table';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { DetailsPage, ListPage, Table, RowFunction } from './factory';
 import {
   AsyncComponent,
@@ -286,20 +288,22 @@ const DeploymentConfigTableRow: RowFunction<K8sResourceKind> = ({ obj, index, ke
   );
 };
 
-const DeploymentConfigTableHeader = () => {
-  return WorkloadTableHeader();
+const DeploymentConfigTableHeader = (t?: TFunction) => {
+  return WorkloadTableHeader(t);
 };
 DeploymentConfigTableHeader.displayName = 'DeploymentConfigTableHeader';
 
-export const DeploymentConfigsList: React.FC = (props) => (
+export const DeploymentConfigsList: React.FC = (props) => {
+  const { t } = useTranslation();
+  return (
   <Table
     {...props}
     aria-label="Deployment Configs"
-    Header={DeploymentConfigTableHeader}
+    Header={DeploymentConfigTableHeader.bind(null, t)}
     Row={DeploymentConfigTableRow}
     virtualize
   />
-);
+)};
 DeploymentConfigsList.displayName = 'DeploymentConfigsList';
 
 export const DeploymentConfigsPage: React.FC<DeploymentConfigsPageProps> = (props) => (

@@ -74,7 +74,7 @@ $co-external-link-padding-right: 15px;
 
 .co-m-pane__filter-bar-group--badge,
 .co-m-pane__filter-bar-group--filter {
-  @media(min-width: $screen-xs-min) {
+  @media (min-width: $screen-xs-min) {
     flex: 1 0 auto;
     justify-content: flex-end;
   }
@@ -173,7 +173,7 @@ $co-external-link-padding-right: 15px;
 
 .co-m-pane__details-popover-button {
   // Use `background-image: linear-gradient` to draw a dotted underline. This gives us more control over the styling.
-  background-image: linear-gradient(to right, var(--pf-c-button--m-plain--Color) 33%, rgba(255,255,255,0) 0%);
+  background-image: linear-gradient(to right, var(--pf-c-button--m-plain--Color) 33%, rgba(255, 255, 255, 0) 0%);
   background-position: bottom;
   background-size: 3px 1px;
   background-repeat: repeat-x;
@@ -183,7 +183,7 @@ $co-external-link-padding-right: 15px;
   padding: 0 !important;
   &:focus,
   &:hover {
-    background-image: linear-gradient(to right, var(--pf-c-button--m-tertiary--Color) 33%, rgba(255,255,255,0) 0%);
+    background-image: linear-gradient(to right, var(--pf-c-button--m-tertiary--Color) 33%, rgba(255, 255, 255, 0) 0%);
   }
 }
 
@@ -218,8 +218,10 @@ $co-external-link-padding-right: 15px;
 }
 
 // Prevent iOS phones from zooming on form inputs
-@supports (-webkit-overflow-scrolling: touch) { // Target mobile Safari
-  @media (max-width: $grid-float-breakpoint-max) { // Target phones
+@supports (-webkit-overflow-scrolling: touch) {
+  // Target mobile Safari
+  @media (max-width: $grid-float-breakpoint-max) {
+    // Target phones
     input,
     select,
     .tag-item,
@@ -237,7 +239,7 @@ $co-external-link-padding-right: 15px;
 .error-message {
   color: #fff;
   padding: 2px 12px;
-  background-color: #D64456;
+  background-color: #d64456;
 }
 
 .co-action-divider {
@@ -302,11 +304,12 @@ $co-external-link-padding-right: 15px;
   .close {
     font-size: 16px;
     // adjustments to increase click target and default color contrast because it's on a grey background
-    opacity: .3;
+    opacity: 0.3;
     padding: 10px 15px;
 
-    &:hover, &:focus {
-      opacity: .6;
+    &:hover,
+    &:focus {
+      opacity: 0.6;
     }
   }
 }
@@ -375,7 +378,7 @@ $co-external-link-padding-right: 15px;
   margin-bottom: 5px;
 
   + .radio {
-    margin-top :0;
+    margin-top: 0;
   }
 }
 
@@ -463,7 +466,7 @@ $co-external-link-padding-right: 15px;
     position: relative;
     width: 100%;
     .row {
-      padding: 10px 20px 10px 0;  // right padding creates space for .co-resource-kebab
+      padding: 10px 20px 10px 0; // right padding creates space for .co-resource-kebab
     }
   }
   &__head {
@@ -556,4 +559,38 @@ $co-external-link-padding-right: 15px;
 
 .no-margin {
   margin: 0 !important;
+}
+
+.co-datepicker {
+  height: 100%;
+  border: 0px;
+  border-radius: 2px;
+  color: #4d5258;
+}
+
+.react-datepicker__input-container {
+  height: 100%;
+}
+
+.co-datepicker-wrapper {
+  border: 1px solid;
+  border-color: #ededed #ededed #808080 #ededed;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  padding-right: 8px;
+  display: flex;
+  align-items: center;
+}
+.react-datepicker-ignore-onclickoutside {
+  border: 0px;
+}
+.co-datepicker {
+  border: 0px;
+  margin-right: 2px;
+}
+.react-datepicker-ignore-onclickoutside:active {
+  border: 0px;
+}
+.co-datepicker:active {
+  border: 0px;
 }
