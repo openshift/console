@@ -21,7 +21,7 @@ import { GrafanaPage } from './hypercloud/grafana';
 
 //PF4 Imports
 import { PageSection, PageSectionVariants } from '@patternfly/react-core';
-import { WelcomePage } from './hypercloud/login/welcome';
+import WelcomePage from './hypercloud/login/welcome';
 
 const RedirectComponent = props => {
   const to = `/k8s${props.location.pathname}`;

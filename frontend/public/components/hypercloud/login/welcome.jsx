@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
+import { withRouter } from 'react-router';
 
-export const WelcomePage = () => {
+const WelcomePage = ({ history }) => {
   localStorage.setItem('flag/first-time-login', true);
   return (
     <>
@@ -19,8 +20,17 @@ export const WelcomePage = () => {
           </a>
           을 참조하세요.
         </p>
-        <button className="welcome__button">HyperCloud 시작하기</button>
+        <button
+          className="welcome__button"
+          onClick={() => {
+            history.push('/k8s/cluster/namespaces');
+          }}
+        >
+          HyperCloud 시작하기
+        </button>
       </div>
     </>
   );
 };
+
+export default withRouter(WelcomePage);
