@@ -81,7 +81,7 @@ const MasterNav = () => (
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_56')}>
           <ResourceNSLink resource="tasks" name={t('COMMON:MSG_LNB_MENU_57')} />
-          <ResourceClusterLink resource="clustertasks" name="Cluster Task" />
+          <ResourceClusterLink resource="clustertasks" name={t('COMMON:MSG_LNB_MENU_94')} />
           <ResourceNSLink resource="taskruns" name={t('COMMON:MSG_LNB_MENU_58')} />
           <ResourceNSLink resource="pipelines" name={t('COMMON:MSG_LNB_MENU_59')} />
           <ResourceNSLink resource="pipelineruns" name={t('COMMON:MSG_LNB_MENU_60')} />
@@ -101,8 +101,8 @@ const MasterNav = () => (
         <NavSection title="Image">
           <ResourceNSLink resource="registries" name={t('COMMON:MSG_LNB_MENU_71')} />
           <ResourceNSLink resource="externalregistries" name="External Registries" />
-          <ResourceClusterLink resource="imagesigners" name="Image Signer" />
-          <ResourceNSLink resource="imagesignrequests" name="Image Sign Request" />
+          <ResourceClusterLink resource="imagesigners" name={t('COMMON:MSG_LNB_MENU_91')} />
+          <ResourceNSLink resource="imagesignrequests" name={t('COMMON:MSG_LNB_MENU_92')} />
           <ResourceNSLink resource="imagescanrequests" name="Image Scan Request" />
           <ResourceNSLink resource="signerpolicies" name="Signer Policy" />
           {/* <ResourceNSLink resource="imagetransfers" name="Image Transfer" /> */}

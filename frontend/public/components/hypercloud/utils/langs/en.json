@@ -585,7 +585,11 @@
     "MSG_LNB_MENU_87": "Volume Snapshots",
     "MSG_LNB_MENU_88": "Volume Snapshot Classes",
     "MSG_LNB_MENU_89": "Volume Snapshot Contents",
-    "MSG_LNB_MENU_90": "Overview"
+    "MSG_LNB_MENU_90": "Overview",
+    "MSG_LNB_MENU_91": "Image Signers",
+    "MSG_LNB_MENU_92": "Image Sign Requests",
+    "MSG_LNB_MENU_93": "Image Transfers",
+    "MSG_LNB_MENU_94": "Cluster Tasks"
   },
   "SINGLE": {
     "MSG_SEARCH_MAIN_NORESOURCES_1": "No resources selected",

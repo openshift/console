@@ -585,7 +585,11 @@
     "MSG_LNB_MENU_87": "볼륨 스냅샷",
     "MSG_LNB_MENU_88": "볼륨 스냅샷 클래스",
     "MSG_LNB_MENU_89": "볼륨 스냅샷 컨텐츠",
-    "MSG_LNB_MENU_90": "개요"
+    "MSG_LNB_MENU_90": "개요",
+    "MSG_LNB_MENU_91": "이미지 서명자",
+    "MSG_LNB_MENU_92": "이미지 서명 요청",
+    "MSG_LNB_MENU_93": "이미지 전송",
+    "MSG_LNB_MENU_94": "클러스터 태스크"
   },
   "SINGLE": {
     "MSG_SEARCH_MAIN_NORESOURCES_1": "선택한 리소스 없음",
