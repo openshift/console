@@ -51,7 +51,7 @@ describe('Namespace', () => {
     cy.resourceShouldBeDeleted(testName, 'namespaces', newName);
   });
 
-  it('nav and breadcrumbs restores last selected "All Projects" when navigating from details to list view', () => {
+  xit('nav and breadcrumbs restores last selected "All Projects" when navigating from details to list view', () => {
     nav.sidenav.clickNavLink(['Workloads', 'Secrets']);
     projectDropdown.selectProject('All Projects');
     projectDropdown.shouldContain('All Projects');
@@ -82,7 +82,7 @@ describe('Namespace', () => {
     projectDropdown.shouldContain('All Projects');
   });
 
-  it('nav and breadcrumbs restores last selected Project when navigating from details to list view', () => {
+  xit('nav and breadcrumbs restores last selected Project when navigating from details to list view', () => {
     nav.sidenav.clickNavLink(['Workloads', 'Secrets']);
     projectDropdown.selectProject('default');
     projectDropdown.shouldContain('default');
