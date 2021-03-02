@@ -2,6 +2,8 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 
 import { K8sResourceKind } from '../../module/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from '../factory';
@@ -15,22 +17,22 @@ const kind = FederatedCronJobModel.kind;
 
 const tableColumnClasses = ['', '', classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-lg'), Kebab.columnClass];
 
-const FederatedCronJobTableHeader = () => {
+const FederatedCronJobTableHeader = (t?: TFunction) => {
   return [
     {
-      title: 'Name',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_1'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: 'Status',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_3'),
       sortFunc: 'cronjobPhase',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Labels',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_15'),
       sortField: 'metadata.labels',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
@@ -40,7 +42,7 @@ const FederatedCronJobTableHeader = () => {
       props: { className: tableColumnClasses[3] },
     },
     {
-      title: 'Created',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_12'),
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: tableColumnClasses[4] },
@@ -54,6 +56,7 @@ const FederatedCronJobTableHeader = () => {
 FederatedCronJobTableHeader.displayName = 'FederatedCronJobTableHeader';
 
 const FederatedCronJobTableRow: RowFunction<K8sResourceKind> = ({ obj: cronjob, index, key, style }) => {
+  const { t } = useTranslation();
   return (
     <TableRow id={cronjob.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
@@ -66,7 +69,7 @@ const FederatedCronJobTableRow: RowFunction<K8sResourceKind> = ({ obj: cronjob, 
         <LabelList kind={kind} labels={cronjob.metadata.labels} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>
-        {`${_.size(cronjob.metadata.annotations)} Annotation`}
+        {t('MSG_DETAILS_TABDETAILS_DETAILS_100', { 0: _.size(cronjob.metadata.annotations) })}
       </TableData>
       <TableData className={tableColumnClasses[4]}>
         <Timestamp timestamp={cronjob.metadata.creationTimestamp} />
@@ -101,15 +104,17 @@ export const ClusterRow: React.FC<ClusterRowProps> = ({ cronjob }) => {
 export const CronJobDistributionTable: React.FC<CronJobDistributionTableProps> = ({
   heading,
   cronjob
-}) => (
+}) => {
+  const { t } = useTranslation();
+  return (
     <>
       <SectionHeading text={heading} />
       <div className="co-m-table-grid co-m-table-grid--bordered">
         <div className="row co-m-table-grid__head">
-          <div className="col-lg-2 col-md-3 col-sm-4 col-xs-5">Resource Name</div>
-          <div className="col-lg-2 col-md-3 col-sm-5 col-xs-7">Cluster Name</div>
+          <div className="col-lg-2 col-md-3 col-sm-4 col-xs-5">{t('COMMON:MSG_DETAILS_TABOVERVIEW_TABLEHEADER_1')}</div>
+          <div className="col-lg-2 col-md-3 col-sm-5 col-xs-7">{t('COMMON:MSG_DETAILS_TABOVERVIEW_TABLEHEADER_2')}</div>
           <div className="col-lg-2 col-md-2 col-sm-3 hidden-xs">Result</div>
-          <div className="col-lg-1 col-md-2 hidden-sm hidden-xs">Time</div>
+          <div className="col-lg-1 col-md-2 hidden-sm hidden-xs">{t('COMMON:MSG_DETAILS_TABOVERVIEW_TABLEHEADER_3')}</div>
         </div>
         <div className="co-m-table-grid__body">
           {/*containers.map((c: any, i: number) => (
@@ -119,12 +124,14 @@ export const CronJobDistributionTable: React.FC<CronJobDistributionTableProps> =
         </div>
       </div>
     </>
-  );
+  );}
 
-const FederatedCronJobDetails: React.FC<FederatedCronJobDetailsProps> = ({ obj: cronjob }) => (
+const FederatedCronJobDetails: React.FC<FederatedCronJobDetailsProps> = ({ obj: cronjob }) => {
+  const { t } = useTranslation();
+  return (
   <>
     <div className="co-m-pane__body">
-      <SectionHeading text="Federated Cron Job Details" />
+    <SectionHeading text={`${t('COMMON:MSG_MAIN_DIV1_3', { 0: t('COMMON:MSG_LNB_MENU_28') })} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
       <div className="row">
         <div className="col-lg-6">
           <ResourceSummary resource={cronjob} />
@@ -138,7 +145,7 @@ const FederatedCronJobDetails: React.FC<FederatedCronJobDetailsProps> = ({ obj: 
         cronjob={cronjob} />
     </div>
   </>
-);
+);}
 
 const { details, editYaml } = navFactory;
 export const FederatedCronJobs: React.FC = props => <Table {...props} aria-label="Federated Cron Jobs" Header={FederatedCronJobTableHeader} Row={FederatedCronJobTableRow} virtualize />;

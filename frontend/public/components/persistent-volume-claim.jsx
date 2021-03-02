@@ -3,6 +3,7 @@ import * as _ from 'lodash-es';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 
 import { Status, FLAGS } from '@console/shared';
 import { connectToFlags } from '../reducers/features';
@@ -160,7 +161,7 @@ const Details_ = ({ flags, obj: pvc }) => {
         <div className="row">
           <div className="col-sm-6">
             <ResourceSummary resource={pvc}>
-              <dt>Label Selector</dt>
+              <dt>{t('COMMON:MSG_DETAILS_TABDETAILS_38')}</dt>
               <dd data-test-id="pvc-name">
                 <Selector selector={labelSelector} kind="PersistentVolume" />
               </dd>
@@ -213,9 +214,9 @@ const Details_ = ({ flags, obj: pvc }) => {
 const Details = connectToFlags(FLAGS.CAN_LIST_PV)(Details_);
 
 const allPhases = ['Pending', 'Bound', 'Lost'];
-const filters = [
+const filters = (t) => [
   {
-    filterGroupName: 'Status',
+    filterGroupName: t('COMMON:MSG_COMMON_FILTER_10'),
     type: 'pvc-status',
     reducer: (pvc) => pvc.status.phase,
     items: _.map(allPhases, (phase) => ({
@@ -246,7 +247,7 @@ export const PersistentVolumeClaimsPage = (props) => {
       title={t('COMMON:MSG_LNB_MENU_52')}
       createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:MSG_LNB_MENU_52') })} 
       canCreate={true}
-      rowFilters={filters}
+      rowFilters={filters.bind(null, t)()}
     />
   );
 };

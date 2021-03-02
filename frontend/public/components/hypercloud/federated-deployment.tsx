@@ -1,6 +1,8 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 
 import { AddHealthChecks, EditHealthChecks } from '@console/app/src/actions/modify-health-checks';
 import { K8sResourceKind } from '../../module/k8s';
@@ -15,28 +17,28 @@ const kind = FederatedDeploymentModel.kind;
 
 const tableColumnClasses = ['', '', classNames('pf-m-hidden', 'pf-m-visible-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-lg'), Kebab.columnClass];
 
-const FederatedDeploymentTableHeader = () => {
+const FederatedDeploymentTableHeader = (t?: TFunction) => {
   return [
     {
-      title: 'Name',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_1'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: 'Namespace',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_2'),
       sortField: 'metadata.namespace',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Labels',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_15'),
       sortField: 'metadata.labels',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'Pod Selector',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_16'),
       sortField: 'spec.selector',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
@@ -71,21 +73,27 @@ const FederatedDeploymentTableRow: RowFunction<K8sResourceKind> = ({ obj: deploy
   );
 };
 
-const FederatedDeploymentDetails: React.FC<FederatedDeploymentDetailsProps> = ({ obj: deployment }) => (
-  <>
-    <div className="co-m-pane__body">
-      <SectionHeading text="Federated Deployment Details" />
-      <div className="row">
-        <div className="col-lg-6">
-          <ResourceSummary resource={deployment} showPodSelector showNodeSelector showTolerations />
+const FederatedDeploymentDetails: React.FC<FederatedDeploymentDetailsProps> = ({ obj: deployment }) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <div className="co-m-pane__body">
+        <SectionHeading text={`${t('COMMON:MSG_MAIN_DIV1_3', { 0: t('COMMON:MSG_LNB_MENU_24') })} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
+        <div className="row">
+          <div className="col-lg-6">
+            <ResourceSummary resource={deployment} showPodSelector showNodeSelector showTolerations />
+          </div>
         </div>
       </div>
-    </div>
-  </>
-);
+    </>
+  );
+}
 
 const { details, editYaml, events } = navFactory;
-export const FederatedDeployments: React.FC = props => <Table {...props} aria-label="Federated Deployments" Header={FederatedDeploymentTableHeader} Row={FederatedDeploymentTableRow} virtualize />;
+export const FederatedDeployments: React.FC = props => {
+  const { t } = useTranslation();
+  return <Table {...props} aria-label="Federated Deployments" Header={FederatedDeploymentTableHeader.bind(null, t)} Row={FederatedDeploymentTableRow} virtualize />;
+}
 
 export const FederatedDeploymentsPage: React.FC<FederatedDeploymentsPageProps> = props => <ListPage canCreate={true} ListComponent={FederatedDeployments} kind={kind} {...props} />;
 

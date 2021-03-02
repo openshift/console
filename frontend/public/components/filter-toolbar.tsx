@@ -278,7 +278,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
                       iconComponent={CaretDownIcon}
                     >
                       <FilterIcon className="span--icon__right-margin" />
-                      Filter
+                      {t('COMMON:MSG_COMMON_FILTER_7')}
                     </DropdownToggle>
                   }
                 />,
