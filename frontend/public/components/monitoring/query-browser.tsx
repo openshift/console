@@ -539,13 +539,16 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   defaultTimespan = parsePrometheusDuration('30m'),
   deleteAllSeries,
   disabledSeries = [],
+  disableZoom,
   filterLabels,
+  fixedEndTime,
   formatLegendLabel,
   GraphLink,
   hideControls,
   hideGraphs,
   isStack = false,
   namespace,
+  onZoom,
   patchQuery,
   queries,
   showStackedControl = false,
@@ -586,6 +589,12 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
       setSamples(defaultSamples || getMaxSamplesForSpan(timespan));
     }
   }, [defaultSamples, timespan]);
+
+  React.useEffect(() => {
+    if (fixedEndTime) {
+      setXDomain(getXDomain(fixedEndTime, span));
+    }
+  }, [fixedEndTime, span]);
 
   // Clear any existing series data when the namespace is changed
   React.useEffect(() => {
@@ -731,10 +740,11 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
     );
   }
 
-  const onZoom = (from: number, to: number) => {
+  const zoomableGraphOnZoom = (from: number, to: number) => {
     setXDomain([from, to]);
     setSpan(to - from);
     setSamples(defaultSamples || getMaxSamplesForSpan(to - from));
+    onZoom?.(from, to);
   };
 
   const isGraphDataEmpty = !graphData || graphData.every((d) => d.length === 0);
@@ -787,7 +797,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
             <div ref={containerRef} style={{ width: '100%' }}>
               {width > 0 && (
                 <>
-                  {hideControls ? (
+                  {disableZoom ? (
                     <Graph
                       allSeries={graphData}
                       disabledSeries={disabledSeries}
@@ -804,7 +814,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
                       fixedXDomain={xDomain}
                       formatLegendLabel={formatLegendLabel}
                       isStack={canStack && isStacked}
-                      onZoom={onZoom}
+                      onZoom={zoomableGraphOnZoom}
                       span={span}
                       width={width}
                     />
@@ -873,20 +883,25 @@ type GraphProps = {
   width: number;
 };
 
-type ZoomableGraphProps = GraphProps & { onZoom: (from: number, to: number) => void };
+type GraphOnZoom = (from: number, to: number) => void;
+
+type ZoomableGraphProps = GraphProps & { onZoom: GraphOnZoom };
 
 export type QueryBrowserProps = {
   defaultSamples?: number;
   defaultTimespan?: number;
   deleteAllSeries: () => never;
   disabledSeries?: PrometheusLabels[][];
+  disableZoom?: boolean;
   filterLabels?: PrometheusLabels;
+  fixedEndTime?: number;
   formatLegendLabel?: FormatLegendLabel;
   GraphLink?: React.ComponentType<{}>;
   hideControls?: boolean;
   hideGraphs: boolean;
   isStack?: boolean;
   namespace?: string;
+  onZoom?: GraphOnZoom;
   patchQuery: PatchQuery;
   pollInterval?: number;
   queries: string[];

@@ -3,7 +3,9 @@ import { Dropdown, DropdownToggle, DropdownItem } from '@patternfly/react-core';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore
+import { connect, useDispatch } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
 
 import { RedExclamationCircleIcon } from '@console/shared';
@@ -27,7 +29,7 @@ import BarChart from './bar-chart';
 import Graph from './graph';
 import SingleStat from './single-stat';
 import Table from './table';
-import { Panel } from './types';
+import { MONITORING_DASHBOARDS_DEFAULT_TIMESPAN, Panel } from './types';
 
 const NUM_SAMPLES = 30;
 
@@ -456,6 +458,7 @@ const MonitoringDashboardsPage_: React.FC<MonitoringDashboardsPageProps> = ({
   match,
   patchAllVariables,
 }) => {
+  const dispatch = useDispatch();
   const { t } = useTranslation();
 
   const [board, setBoard] = React.useState<string>();
@@ -525,11 +528,16 @@ const MonitoringDashboardsPage_: React.FC<MonitoringDashboardsPageProps> = ({
         });
         patchAllVariables(allVariables);
 
+        // Set time range options to their defaults since they may have been changed on the
+        // previous dashboard
+        dispatch(UIActions.monitoringDashboardsSetEndTime(null));
+        dispatch(UIActions.monitoringDashboardsSetTimespan(MONITORING_DASHBOARDS_DEFAULT_TIMESPAN));
+
         setBoard(newBoard);
         history.replace(`/monitoring/dashboards/${newBoard}`);
       }
     },
-    [board, boards, patchAllVariables],
+    [board, boards, dispatch, patchAllVariables],
   );
 
   // Default to displaying the first board
