@@ -265,11 +265,12 @@ export const createOrUpdateDeployment = (
 
   const imageStreamName = imageStream && imageStream.metadata.name;
   const defaultLabels = getAppLabels({ name, applicationName, imageStreamName, selectedTag });
+  const imageName = name;
   const annotations = {
     ...getGitAnnotations(repository, ref),
     ...getCommonAnnotations(),
     'alpha.image.policy.openshift.io/resolve-names': '*',
-    ...getTriggerAnnotation(name, namespace, imageChange),
+    ...getTriggerAnnotation(name, imageName, namespace, imageChange),
   };
   const podLabels = getPodLabels(name);
   const templateLabels = getTemplateLabels(originalDeployment);
@@ -630,6 +631,7 @@ export const createOrUpdateResources = async (
 
     const originalAnnotations = appResources?.editAppResource?.data?.metadata?.annotations || {};
     const triggerAnnotations = getTriggerAnnotation(
+      name,
       generatedImageStreamName || name,
       namespace,
       imageChange,

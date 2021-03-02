@@ -57,15 +57,16 @@ export const getCommonAnnotations = () => {
 };
 
 export const getTriggerAnnotation = (
-  name: string,
-  namespace: string,
+  containerName: string,
+  imageName: string,
+  imageNamespace: string,
   imageTrigger: boolean,
-  tag: string = 'latest',
+  imageTag: string = 'latest',
 ) => ({
   [TRIGGERS_ANNOTATION]: JSON.stringify([
     {
-      from: { kind: 'ImageStreamTag', name: `${name}:${tag}`, namespace },
-      fieldPath: `spec.template.spec.containers[?(@.name=="${name}")].image`,
+      from: { kind: 'ImageStreamTag', name: `${imageName}:${imageTag}`, namespace: imageNamespace },
+      fieldPath: `spec.template.spec.containers[?(@.name=="${containerName}")].image`,
       pause: `${!imageTrigger}`,
     },
   ]),
@@ -96,8 +97,21 @@ export const mergeData = (originalResource: K8sResourceKind, newResource: K8sRes
   if (mergedData.spec?.template?.metadata?.labels) {
     mergedData.spec.template.metadata.labels = newResource.spec?.template?.metadata?.labels;
   }
-  if (mergedData.spec?.template?.spec?.containers) {
-    mergedData.spec.template.spec.containers = newResource.spec.template.spec.containers;
+  if (!_.isEmpty(originalResource.spec?.template?.spec?.containers)) {
+    mergedData.spec.template.spec.containers = originalResource.spec.template.spec.containers;
+    const index = _.findIndex(originalResource.spec.template.spec.containers, {
+      name: originalResource.metadata.name,
+    });
+    if (index >= 0) {
+      mergedData.spec.template.spec.containers[index] = {
+        ...originalResource.spec.template.spec.containers[index],
+        ...newResource.spec.template.spec.containers[0],
+        // Keep the volumeMounts as is since we do not give an option to edit these currently
+        volumeMounts: originalResource.spec.template.spec.containers[index].volumeMounts,
+      };
+    } else {
+      mergedData.spec.template.spec.containers.push(newResource.spec.template.spec.containers[0]);
+    }
   }
   if (mergedData?.spec?.hasOwnProperty('strategy')) {
     mergedData.spec.strategy = newResource.spec?.strategy ?? originalResource.spec?.strategy;
@@ -107,8 +121,6 @@ export const mergeData = (originalResource: K8sResourceKind, newResource: K8sRes
   }
   if (mergedData.spec?.template?.spec?.hasOwnProperty('volumes')) {
     mergedData.spec.template.spec.volumes = originalResource.spec?.template?.spec?.volumes;
-    mergedData.spec.template.spec.containers[0].volumeMounts =
-      originalResource.spec?.template?.spec?.containers?.[0]?.volumeMounts;
   }
   return mergedData;
 };

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { CheckboxField, EnvironmentField } from '@console/shared';
 import { K8sResourceKind } from '@console/internal/module/k8s';
@@ -18,7 +17,10 @@ const DeploymentConfigSection: React.FC<DeploymentConfigSectionProps> = ({
 }) => {
   const { t } = useTranslation();
   const {
-    values: { resources },
+    values: {
+      resources,
+      deployment: { env },
+    },
   } = useFormikContext<FormikValues>();
   const deploymentConfigObj = resource || {
     kind: 'DeploymentConfig',
@@ -26,7 +28,7 @@ const DeploymentConfigSection: React.FC<DeploymentConfigSectionProps> = ({
       namespace,
     },
   };
-  const envs = _.get(deploymentConfigObj, 'spec.template.spec.containers[0].env', []);
+
   return (
     <FormSection title={t('devconsole~Deployment')} fullWidth>
       <CheckboxField
@@ -42,7 +44,7 @@ const DeploymentConfigSection: React.FC<DeploymentConfigSectionProps> = ({
       <EnvironmentField
         name="deployment.env"
         label={t('devconsole~Environment variables (runtime only)')}
-        envs={envs}
+        envs={env}
         obj={deploymentConfigObj}
         envPath={['spec', 'template', 'spec', 'containers']}
       />
