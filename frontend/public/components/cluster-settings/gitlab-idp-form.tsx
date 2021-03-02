@@ -143,7 +143,7 @@ class AddGitLabPageWithTranslation extends PromiseComponent<
   render() {
     const { name, clientID, clientSecret, url, caFileContent } = this.state;
     const { t } = this.props;
-    const title = t('gitlab-idp-form~Add Identity Provider: GitLab');
+    const title = t('public~Add Identity Provider: GitLab');
     return (
       <div className="co-m-pane__body">
         <Helmet>
@@ -153,13 +153,13 @@ class AddGitLabPageWithTranslation extends PromiseComponent<
           <h1 className="co-m-pane__heading">{title}</h1>
           <p className="co-m-pane__explanation">
             {t(
-              'gitlab-idp-form~You can use GitLab integration for users authenticating with GitLab credentials.',
+              'public~You can use GitLab integration for users authenticating with GitLab credentials.',
             )}
           </p>
           <IDPNameInput value={name} onChange={this.nameChanged} />
           <div className="form-group">
             <label className="control-label co-required" htmlFor="url">
-              {t('gitlab-idp-form~URL')}
+              {t('public~URL')}
             </label>
             <input
               className="pf-c-form-control"
@@ -171,12 +171,12 @@ class AddGitLabPageWithTranslation extends PromiseComponent<
               required
             />
             <p className="help-block" id="idp-url-help">
-              {t('gitlab-idp-form~The OAuth server base URL.')}
+              {t('public~The OAuth server base URL.')}
             </p>
           </div>
           <div className="form-group">
             <label className="control-label co-required" htmlFor="client-id">
-              {t('gitlab-idp-form~Client ID')}
+              {t('public~Client ID')}
             </label>
             <input
               className="pf-c-form-control"
@@ -189,7 +189,7 @@ class AddGitLabPageWithTranslation extends PromiseComponent<
           </div>
           <div className="form-group">
             <label className="control-label co-required" htmlFor="client-secret">
-              {t('gitlab-idp-form~Client secret')}
+              {t('public~Client secret')}
             </label>
             <input
               className="pf-c-form-control"

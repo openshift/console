@@ -55,13 +55,13 @@ export const NameKeyDropdownPair = ({
   const getHeaders = (configMap, secret, serviceAccount) => {
     const headers = {};
     if (configMap && !_.isEmpty(configMap)) {
-      headers[configMap] = t('environment~ConfigMaps');
+      headers[configMap] = t('public~ConfigMaps');
     }
     if (secret && !_.isEmpty(secret)) {
-      headers[secret] = t('environment~Secrets');
+      headers[secret] = t('public~Secrets');
     }
     if (serviceAccount && !_.isEmpty(serviceAccount)) {
-      headers[serviceAccount] = t('environment~ServiceAccounts');
+      headers[serviceAccount] = t('public~ServiceAccounts');
     }
 
     return headers;
@@ -74,7 +74,7 @@ export const NameKeyDropdownPair = ({
   const saItems = {};
   const nameAutocompleteFilter = (text, item) => fuzzy(text, item.props.name);
   const keyAutocompleteFilter = (text, item) => fuzzy(text, item);
-  const keyTitle = _.isEmpty(key) ? t('environment~Select a key') : key;
+  const keyTitle = _.isEmpty(key) ? t('public~Select a key') : key;
   const cmRefProperty = isKeyRef ? 'configMapKeyRef' : 'configMapRef';
   const secretRefProperty = isKeyRef ? 'secretKeyRef' : 'secretRef';
   const serviceAccountRefProperty = isKeyRef ? 'serviceAccountKeyRef' : 'serviceAccountRef';
@@ -140,7 +140,7 @@ export const NameKeyDropdownPair = ({
           menuClassName="value-from__menu dropdown-menu--text-wrap"
           className="value-from value-from--key"
           autocompleteFilter={keyAutocompleteFilter}
-          autocompletePlaceholder={t('environment~Key')}
+          autocompletePlaceholder={t('public~Key')}
           items={itemKeys}
           selectedKey={key}
           title={keyTitle}
@@ -172,9 +172,9 @@ const ConfigMapSecretKeyRef = ({
   kind,
 }) => {
   const { t } = useTranslation();
-  const placeholderString = t('environment~ConfigMap or Secret');
+  const placeholderString = t('public~ConfigMap or Secret');
   const nameTitle = _.isEmpty(name) ? (
-    t('environment~Select a resource')
+    t('public~Select a resource')
   ) : (
     <ResourceName kind={kind} name={name} />
   );
@@ -214,9 +214,9 @@ const ConfigMapSecretRef = ({
   kind,
 }) => {
   const { t } = useTranslation();
-  const placeholderString = t('environment~ConfigMap or Secret');
+  const placeholderString = t('public~ConfigMap or Secret');
   const nameTitle = _.isEmpty(name) ? (
-    t('environment~Select a resource')
+    t('public~Select a resource')
   ) : (
     <ResourceName kind={kind} name={name} />
   );
@@ -231,7 +231,7 @@ const ConfigMapSecretRef = ({
           className="pf-c-form-control"
           value={nameString}
           disabled
-          placeholder={t('environment~ConfigMap/Secret')}
+          placeholder={t('public~ConfigMap/Secret')}
         />
       </div>
     );

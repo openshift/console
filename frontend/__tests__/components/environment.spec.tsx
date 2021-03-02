@@ -9,7 +9,7 @@ import * as utils from '../../public/components/utils';
 import { DeploymentModel } from '../../public/models';
 import * as k8s from '../../public/module/k8s';
 
-const i18nNS = 'environment';
+const i18nNS = 'public';
 
 describe(EnvironmentPage.name, () => {
   const configMaps = {},

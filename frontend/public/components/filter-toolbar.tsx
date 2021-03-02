@@ -104,16 +104,16 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
   const translateFilterType = (value: string) => {
     switch (value) {
       case 'Name':
-        return t('filter-toolbar~Name');
+        return t('public~Name');
       case 'Label':
-        return t('filter-toolbar~Label');
+        return t('public~Label');
       default:
         return value;
     }
   };
   const filterDropdownItems = {
-    NAME: t('filter-toolbar~Name'),
-    LABEL: t('filter-toolbar~Label'),
+    NAME: t('public~Name'),
+    LABEL: t('public~Label'),
   };
 
   // use unique name only when only when more than 1 table is in the view
@@ -124,7 +124,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
   const [filterType, setFilterType] = React.useState(FilterType.NAME);
   const [isOpen, setOpen] = React.useState(false);
   const [placeholder, setPlaceholder] = React.useState(
-    nameFilterPlaceholder || t('filter-toolbar~Search by name...'),
+    nameFilterPlaceholder || t('public~Search by name...'),
   );
 
   // (rowFilters) => {'rowFilterTypeA': ['staA', 'staB'], 'rowFilterTypeB': ['stbA'] }
@@ -284,10 +284,10 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
     setFilterType(FilterType[type]);
     switch (FilterType[type]) {
       case 'Name':
-        setPlaceholder(nameFilterPlaceholder || t('filter-toolbar~Search by name...'));
+        setPlaceholder(nameFilterPlaceholder || t('public~Search by name...'));
         break;
       case 'Label':
-        setPlaceholder(labelFilterPlaceholder || t('filter-toolbar~Search by label...'));
+        setPlaceholder(labelFilterPlaceholder || t('public~Search by label...'));
         break;
       default:
         setPlaceholder('app=frontend');
@@ -301,7 +301,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
       data-test="filter-toolbar"
       id="filter-toolbar"
       clearAllFilters={clearAll}
-      clearFiltersButtonText={t('filter-toolbar~Clear all filters')}
+      clearFiltersButtonText={t('public~Clear all filters')}
     >
       <ToolbarContent>
         {rowFilters?.length > 0 && (
@@ -332,7 +332,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
                     toggleIndicator={CaretDownIcon}
                   >
                     <FilterIcon className="span--icon__right-margin" />
-                    {t('filter-toolbar~Filter')}
+                    {t('public~Filter')}
                   </DropdownToggle>
                 }
               />,
@@ -347,12 +347,12 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
               deleteChip={(filter, chip: string) =>
                 updateLabelFilter(_.difference(labelFilters, [chip]))
               }
-              categoryName={t('filter-toolbar~Label')}
+              categoryName={t('public~Label')}
             >
               <ToolbarFilter
                 chips={nameFilter && nameFilter.length > 0 ? [nameFilter] : []}
                 deleteChip={() => updateNameFilter('')}
-                categoryName={t('filter-toolbar~Name')}
+                categoryName={t('public~Name')}
               >
                 <div className="pf-c-input-group">
                   {!hideLabelFilter && (
@@ -382,7 +382,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
         )}
         {columnLayout?.id && !hideColumnManagement && (
           <ToolbarItem>
-            <Tooltip content={t('filter-toolbar~Manage columns')}>
+            <Tooltip content={t('public~Manage columns')}>
               <Button
                 variant="plain"
                 onClick={() =>
@@ -390,7 +390,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
                     columnLayout,
                   })
                 }
-                aria-label={t('filter-toolbar~Column management')}
+                aria-label={t('public~Column management')}
               >
                 <ColumnsIcon />
               </Button>

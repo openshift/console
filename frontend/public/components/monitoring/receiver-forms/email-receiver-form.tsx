@@ -33,7 +33,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
     <div data-test-id="email-receiver-form">
       <div className="form-group">
         <label className="control-label co-required" htmlFor="email-to">
-          {t('email-receiver-form~To address')}
+          {t('public~To address')}
         </label>
         <input
           className="pf-c-form-control"
@@ -50,31 +50,31 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
           }
         />
         <div className="help-block" id="email-to-help">
-          {t('email-receiver-form~The email address to send notifications to.')}
+          {t('public~The email address to send notifications to.')}
         </div>
       </div>
       <div className="form-group">
         <div className="co-m-pane__body--section-heading">
           <div className="row">
             <div className="col-sm-6">
-              <SectionHeading text={t('email-receiver-form~SMTP configuration')} />
+              <SectionHeading text={t('public~SMTP configuration')} />
             </div>
             <div className="col-sm-6">
               <SaveAsDefaultCheckbox
                 formField="emailSaveAsDefault"
                 disabled={disableSaveAsDefault}
-                label={t('email-receiver-form~Save as default SMTP configuration')}
+                label={t('public~Save as default SMTP configuration')}
                 formValues={formValues}
                 dispatchFormChange={dispatchFormChange}
                 tooltip={t(
-                  'email-receiver-form~Checking this box will write these values to the global section of the configuration file where they will become defaults for future email receivers.',
+                  'public~Checking this box will write these values to the global section of the configuration file where they will become defaults for future email receivers.',
                 )}
               />
             </div>
           </div>
           <div className="form-group">
             <label className="control-label co-required" htmlFor="email-from">
-              {t('email-receiver-form~From address')}
+              {t('public~From address')}
             </label>
             <input
               className="pf-c-form-control"
@@ -91,14 +91,14 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
               }
             />
             <div className="help-block" id="email-from-help">
-              {t('email-receiver-form~The email address to send notifications from.')}
+              {t('public~The email address to send notifications from.')}
             </div>
           </div>
           <div className="row">
             <div className="col-sm-6">
               <div className="form-group">
                 <label className="control-label co-required" htmlFor="email-smarthost">
-                  {t('email-receiver-form~SMTP smarthost')}
+                  {t('public~SMTP smarthost')}
                 </label>
                 <input
                   className="pf-c-form-control"
@@ -115,16 +115,14 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
                   }
                 />
                 <div className="help-block" id="email-smarthost-help">
-                  {t(
-                    'email-receiver-form~Smarthost used for sending emails, including port number.',
-                  )}
+                  {t('public~Smarthost used for sending emails, including port number.')}
                 </div>
               </div>
             </div>
             <div className="col-sm-6">
               <div className="form-group">
                 <label className="control-label co-required" htmlFor="email-hello">
-                  {t('email-receiver-form~SMTP hello')}
+                  {t('public~SMTP hello')}
                 </label>
                 <input
                   className="pf-c-form-control"
@@ -141,7 +139,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
                   }
                 />
                 <div className="help-block" id="email-hello-help">
-                  {t('email-receiver-form~The hostname to identify to the SMTP server.')}
+                  {t('public~The hostname to identify to the SMTP server.')}
                 </div>
               </div>
             </div>
@@ -150,7 +148,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
             <div className="col-sm-6">
               <div className="form-group">
                 <label className="control-label" htmlFor="email-auth-username">
-                  {t('email-receiver-form~Auth username')}
+                  {t('public~Auth username')}
                 </label>
                 <input
                   className="pf-c-form-control"
@@ -170,7 +168,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
             <div className="col-sm-6">
               <div className="form-group">
                 <label className="control-label" htmlFor="email-auth-password">
-                  {t('email-receiver-form~Auth password (using LOGIN and PLAIN)')}
+                  {t('public~Auth password (using LOGIN and PLAIN)')}
                 </label>
                 <input
                   className="pf-c-form-control"
@@ -192,7 +190,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
             <div className="col-sm-6">
               <div className="form-group">
                 <label className="control-label" htmlFor="email-auth-identity">
-                  {t('email-receiver-form~Auth identity (using PLAIN)')}
+                  {t('public~Auth identity (using PLAIN)')}
                 </label>
                 <input
                   className="pf-c-form-control"
@@ -212,7 +210,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
             <div className="col-sm-6">
               <div className="form-group">
                 <label className="control-label" htmlFor="email-auth-secret">
-                  {t('email-receiver-form~Auth secret (CRAM-MDS)')}
+                  {t('public~Auth secret (CRAM-MDS)')}
                 </label>
                 <input
                   className="pf-c-form-control"
@@ -247,15 +245,15 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
                 checked={formValues.smtp_require_tls}
                 aria-checked={formValues.smtp_require_tls}
               />
-              {t('email-receiver-form~Require TLS')}
+              {t('public~Require TLS')}
             </label>
           </div>
         </div>
       </div>
       <div className="form-group">
         <ExpandCollapse
-          textCollapsed={t('email-receiver-form~Show advanced configuration')}
-          textExpanded={t('email-receiver-form~Hide advanced configuration')}
+          textCollapsed={t('public~Show advanced configuration')}
+          textExpanded={t('public~Hide advanced configuration')}
         >
           <div className="co-form-subsection">
             <div className="form-group">
@@ -267,7 +265,7 @@ export const Form: React.FC<FormProps> = ({ globals, formValues, dispatchFormCha
             </div>
             <div className="form-group">
               <label className="control-label co-required" htmlFor="email-html">
-                {t('email-receiver-form~Body of email notifications (HTML)')}
+                {t('public~Body of email notifications (HTML)')}
               </label>
               <input
                 className="pf-c-form-control"

@@ -21,7 +21,7 @@ jest.mock('react-i18next', () => {
   };
 });
 
-const i18nNS = 'github-idp-form';
+const i18nNS = 'public';
 
 describe('Add Identity Provider: GitHub', () => {
   let wrapper: ShallowWrapper<{}, AddGitHubPageState>;

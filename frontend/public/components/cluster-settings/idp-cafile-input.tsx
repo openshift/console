@@ -21,7 +21,7 @@ export const IDPCAFileInput: React.FC<IDPCAFileInputProps> = ({
         onChange={onChange}
         inputFileData={value}
         id="idp-file-input"
-        label={t('idp-cafile-input~CA file')}
+        label={t('public~CA file')}
         isRequired={isRequired}
         hideContents
       />

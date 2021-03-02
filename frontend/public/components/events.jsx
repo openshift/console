@@ -123,11 +123,11 @@ const Inner = withTranslation()(
                 <div className="co-sysevent__details">
                   <small className="co-sysevent__source">
                     {source.component !== 'kubelet' &&
-                      t('events~Generated from {{ sourceComponent }}', {
+                      t('public~Generated from {{ sourceComponent }}', {
                         sourceComponent: source.component,
                       })}
                     {source.component === 'kubelet' && flags[FLAGS.CAN_LIST_NODE] && (
-                      <Trans ns="events">
+                      <Trans ns="public">
                         Generated from {{ sourceComponent: source.component }} on{' '}
                         <Link to={resourcePathFromModel(NodeModel, source.host)}>
                           {{ sourceHost: source.host }}
@@ -136,13 +136,13 @@ const Inner = withTranslation()(
                     )}
                     {source.component === 'kubelet' &&
                       !flags[FLAGS.CAN_LIST_NODE] &&
-                      t('events~Generated from {{ sourceComponent }} on {{ sourceHost }}', {
+                      t('public~Generated from {{ sourceComponent }} on {{ sourceHost }}', {
                         sourceComponent: source.component,
                         sourceHost: source.host,
                       })}
                   </small>
                   {count > 1 && firstTime && (
-                    <Trans ns="events">
+                    <Trans ns="public">
                       <small className="co-sysevent__count text-secondary">
                         {{ eventCount: count }} times in the last{' '}
                         <Timestamp timestamp={firstTime} simple={true} omitSuffix={true} />
@@ -150,7 +150,7 @@ const Inner = withTranslation()(
                     </Trans>
                   )}
                   {count > 1 && !firstTime && (
-                    <Trans ns="events">
+                    <Trans ns="public">
                       <small className="co-sysevent__count text-secondary">
                         {{ eventCount: count }} times
                       </small>
@@ -174,9 +174,9 @@ export const EventsList = (props) => {
   const resourceTypeAll = 'all';
   const [selected, setSelected] = React.useState(new Set([resourceTypeAll]));
   const eventTypes = {
-    all: t('events~All types'),
-    normal: t('events~Normal'),
-    warning: t('events~Warning'),
+    all: t('public~All types'),
+    normal: t('public~Normal'),
+    warning: t('public~Warning'),
   };
 
   const toggleSelected = (selection) => {
@@ -214,11 +214,11 @@ export const EventsList = (props) => {
             items={eventTypes}
             onChange={(v) => setType(v)}
             selectedKey={type}
-            title={t('events~All types')}
+            title={t('public~All types')}
           />
           <TextFilter
             autoFocus={props.autoFocus}
-            label={t('events~Events by name or message')}
+            label={t('public~Events by name or message')}
             onChange={(val) => setTextFilter(val || '')}
           />
         </div>
@@ -226,11 +226,11 @@ export const EventsList = (props) => {
           {selected.size > 0 && (
             <ChipGroup
               key="resources-category"
-              categoryName={t('events~Resource')}
+              categoryName={t('public~Resource')}
               defaultIsOpen={false}
             >
               {[...selected].map((chip) => {
-                const chipString = chip === resourceTypeAll ? t('events~All') : chip;
+                const chipString = chip === resourceTypeAll ? t('public~All') : chip;
                 return (
                   <Chip key={chip} onClick={() => removeResource(chip)}>
                     <ResourceIcon kind={chipString} />
@@ -238,7 +238,7 @@ export const EventsList = (props) => {
                   </Chip>
                 );
               })}
-              <Button variant="plain" aria-label={t('events~Close')} onClick={clearSelection}>
+              <Button variant="plain" aria-label={t('public~Close')} onClick={clearSelection}>
                 <CloseIcon />
               </Button>
             </ChipGroup>
@@ -265,7 +265,7 @@ export const NoEvents = () => {
   const { t } = useTranslation();
   return (
     <Box className="co-sysevent-stream__status-box-empty">
-      <div className="text-center cos-status-box__detail">{t('events~No events')}</div>
+      <div className="text-center cos-status-box__detail">{t('public~No events')}</div>
     </Box>
   );
 };
@@ -274,11 +274,11 @@ export const NoMatchingEvents = ({ allCount }) => {
   const { t } = useTranslation();
   return (
     <Box className="co-sysevent-stream__status-box-empty">
-      <div className="cos-status-box__title">{t('events~No matching events')}</div>
+      <div className="cos-status-box__title">{t('public~No matching events')}</div>
       <div className="text-center cos-status-box__detail">
         {allCount >= maxMessages
-          ? t('events~{{allCount}}+ events exist, but none match the current filter', { allCount })
-          : t('events~{{allCount}} events exist, but none match the current filter', { allCount })}
+          ? t('public~{{allCount}}+ events exist, but none match the current filter', { allCount })
+          : t('public~{{allCount}} events exist, but none match the current filter', { allCount })}
       </div>
     </Box>
   );
@@ -289,10 +289,10 @@ export const ErrorLoadingEvents = () => {
   return (
     <Box>
       <div className="cos-status-box__title cos-error-title">
-        {t('events~Error loading events')}
+        {t('public~Error loading events')}
       </div>
       <div className="cos-status-box__detail text-center">
-        {t('events~An error occurred during event retrieval. Attempting to reconnect...')}
+        {t('public~An error occurred during event retrieval. Attempting to reconnect...')}
       </div>
     </Box>
   );
@@ -300,7 +300,7 @@ export const ErrorLoadingEvents = () => {
 
 export const EventStreamPage = withStartGuide(({ noProjectsAvailable, ...rest }) => {
   const { t } = useTranslation();
-  const title = t('events~Events');
+  const title = t('public~Events');
   return (
     <>
       <Helmet>
@@ -374,7 +374,7 @@ class EventStream extends React.Component {
       })
       .onclose((evt) => {
         if (evt && evt.wasClean === false) {
-          this.setState({ error: evt.reason || t('events~Connection did not close cleanly.') });
+          this.setState({ error: evt.reason || t('public~Connection did not close cleanly.') });
         }
       })
       .onerror(() => {
@@ -506,18 +506,18 @@ class EventStream extends React.Component {
       statusBtnTxt = (
         <span className="co-sysevent-stream__connection-error">
           {_.isString(error)
-            ? t('events~Error connecting to event stream: { error }', { error })
-            : t('events~Error connecting to event stream')}
+            ? t('public~Error connecting to event stream: { error }', { error })
+            : t('public~Error connecting to event stream')}
         </span>
       );
       sysEventStatus = <ErrorLoadingEvents />;
     } else if (loading) {
-      statusBtnTxt = <span>{t('events~Loading events...')}</span>;
+      statusBtnTxt = <span>{t('public~Loading events...')}</span>;
       sysEventStatus = <Loading />;
     } else if (active) {
-      statusBtnTxt = <span>{t('events~Streaming events...')}</span>;
+      statusBtnTxt = <span>{t('public~Streaming events...')}</span>;
     } else {
-      statusBtnTxt = <span>{t('events~Event stream is paused.')}</span>;
+      statusBtnTxt = <span>{t('public~Event stream is paused.')}</span>;
     }
 
     const klass = classNames('co-sysevent-stream__timeline', {
@@ -525,8 +525,8 @@ class EventStream extends React.Component {
     });
     const messageCount =
       count < maxMessages
-        ? t('events~Showing {{count}} event', { count })
-        : t('events~Showing {{messageCount}} of {{allCount}}+ events', {
+        ? t('public~Showing {{count}} event', { count })
+        : t('public~Showing {{messageCount}} of {{allCount}}+ events', {
             messageCount: count,
             allCount,
           });
@@ -546,7 +546,7 @@ class EventStream extends React.Component {
               className="co-sysevent-stream__timeline__btn"
             />
             <div className="co-sysevent-stream__timeline__end-message">
-              {t('events~Older events are not stored.')}
+              {t('public~Older events are not stored.')}
             </div>
           </div>
           {count > 0 && <EventStreamList events={filteredEvents} EventComponent={Inner} />}

@@ -68,7 +68,7 @@ class AddHTPasswdPageWithTranslation extends PromiseComponent<
     e.preventDefault();
     if (!this.state.htpasswdFileContent) {
       this.setState({
-        errorMessage: this.props.t('htpasswd-idp-form~You must specify an HTPasswd file.'),
+        errorMessage: this.props.t('public~You must specify an HTPasswd file.'),
       });
       return;
     }
@@ -99,7 +99,7 @@ class AddHTPasswdPageWithTranslation extends PromiseComponent<
   render() {
     const { name, htpasswdFileContent } = this.state;
     const { t } = this.props;
-    const title = t('htpasswd-idp-form~Add Identity Provider: HTPasswd');
+    const title = t('public~Add Identity Provider: HTPasswd');
 
     return (
       <div className="co-m-pane__body">
@@ -110,7 +110,7 @@ class AddHTPasswdPageWithTranslation extends PromiseComponent<
           <h1 className="co-m-pane__heading">{title}</h1>
           <p className="co-m-pane__explanation">
             {t(
-              'htpasswd-idp-form~HTPasswd validates usernames and passwords against a flat file generated using the htpasswd command.',
+              'public~HTPasswd validates usernames and passwords against a flat file generated using the htpasswd command.',
             )}
           </p>
           <IDPNameInput value={name} onChange={this.nameChanged} />
@@ -119,9 +119,9 @@ class AddHTPasswdPageWithTranslation extends PromiseComponent<
               onChange={this.htpasswdFileChanged}
               inputFileData={htpasswdFileContent}
               id="htpasswd-file"
-              label={t('htpasswd-idp-form~HTPasswd file')}
+              label={t('public~HTPasswd file')}
               inputFieldHelpText={t(
-                'htpasswd-idp-form~Upload an HTPasswd file created using the htpasswd command.',
+                'public~Upload an HTPasswd file created using the htpasswd command.',
               )}
               isRequired
               hideContents

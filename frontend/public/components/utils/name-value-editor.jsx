@@ -90,8 +90,8 @@ const NameValueEditor_ = withDragDropContext(
         toolTip,
         t,
       } = this.props;
-      const nameString = this.props.nameString || t('environment~Key');
-      const valueString = this.props.valueString || t('environment~Value');
+      const nameString = this.props.nameString || t('public~Key');
+      const valueString = this.props.valueString || t('public~Value');
       const pairElems = nameValuePairs.map((pair, i) => {
         const key = _.get(pair, [NameValueEditorPair.Index], i);
         const isEmpty = nameValuePairs.length === 1 && nameValuePairs[0].every((value) => !value);
@@ -140,7 +140,7 @@ const NameValueEditor_ = withDragDropContext(
                       data-test-id="pairs-list__add-icon"
                       className="co-icon-space-r"
                     />
-                    {addString ? addString : t('environment~Add more')}
+                    {addString ? addString : t('public~Add more')}
                   </Button>
                   {addConfigMapSecret && (
                     <>
@@ -154,7 +154,7 @@ const NameValueEditor_ = withDragDropContext(
                           data-test-id="pairs-list__add-icon"
                           className="co-icon-space-r"
                         />
-                        {t('environment~Add from ConfigMap or Secret')}
+                        {t('public~Add from ConfigMap or Secret')}
                       </Button>
                     </>
                   )}
@@ -277,7 +277,7 @@ const EnvFromEditor_ = withDragDropContext(
           <EnvFromPairElement
             onChange={this._change}
             index={i}
-            nameString={t('environment~ConfigMap/Secret')}
+            nameString={t('public~ConfigMap/Secret')}
             valueString=""
             readOnly={readOnly}
             pair={pair}
@@ -297,10 +297,10 @@ const EnvFromEditor_ = withDragDropContext(
           <div className="row pairs-list__heading">
             {!readOnly && <div className="col-xs-1 co-empty__header" />}
             <div className="col-xs-5 text-secondary text-uppercase">
-              {firstTitle || t('environment~ConfigMap/Secret')}
+              {firstTitle || t('public~ConfigMap/Secret')}
             </div>
             <div className="col-xs-5 text-secondary text-uppercase">
-              {secondTitle || t('environment~Prefix (optional)')}
+              {secondTitle || t('public~Prefix (optional)')}
             </div>
             <div className="col-xs-1 co-empty__header" />
           </div>
@@ -316,7 +316,7 @@ const EnvFromEditor_ = withDragDropContext(
                   isDisabled={addButtonDisabled}
                 >
                   <PlusCircleIcon />{' '}
-                  {addButtonLabel || t('environment~Add all from ConfigMap or Secret')}
+                  {addButtonLabel || t('public~Add all from ConfigMap or Secret')}
                 </Button>
               )}
             </div>
@@ -469,7 +469,7 @@ const PairElement_ = DragSource(
         const deleteIcon = (
           <>
             <MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />
-            <span className="sr-only">{t('environment~Delete')}</span>
+            <span className="sr-only">{t('public~Delete')}</span>
           </>
         );
         const dragButton = (
@@ -480,7 +480,7 @@ const PairElement_ = DragSource(
               tabIndex="-1"
               isDisabled={disableReorder}
               variant="plain"
-              aria-label={t('environment~Drag to reorder')}
+              aria-label={t('public~Drag to reorder')}
             >
               <PficonDragdropIcon className="pairs-list__action-icon--reorder" />
             </Button>
@@ -538,7 +538,7 @@ const PairElement_ = DragSource(
               )}
               {!readOnly && (
                 <div className="col-xs-1 pairs-list__action">
-                  <Tooltip content={toolTip || t('environment~Remove')}>
+                  <Tooltip content={toolTip || t('public~Remove')}>
                     <Button
                       type="button"
                       data-test="delete-button"
@@ -629,7 +629,7 @@ const EnvFromPairElement_ = DragSource(
         const deleteButton = (
           <>
             <MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />
-            <span className="sr-only">{t('environment~Delete')}</span>
+            <span className="sr-only">{t('public~Delete')}</span>
           </>
         );
         return connectDropTarget(
@@ -649,7 +649,7 @@ const EnvFromPairElement_ = DragSource(
                       className="pairs-list__action-icon"
                       tabIndex="-1"
                       variant="plain"
-                      aria-label={t('environment~Drag to reorder')}
+                      aria-label={t('public~Drag to reorder')}
                     >
                       <PficonDragdropIcon className="pairs-list__action-icon--reorder" />
                     </Button>
@@ -678,7 +678,7 @@ const EnvFromPairElement_ = DragSource(
               </div>
               {readOnly ? null : (
                 <div className="col-xs-1 pairs-list__action">
-                  <Tooltip content={t('environment~Remove')}>
+                  <Tooltip content={t('public~Remove')}>
                     <Button
                       type="button"
                       data-test-id="pairs-list__delete-from-btn"

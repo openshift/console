@@ -20,7 +20,7 @@ jest.mock('react-i18next', () => {
   };
 });
 
-const i18nNS = 'gitlab-idp-form';
+const i18nNS = 'public';
 
 describe('Add Identity Provider: GitLab', () => {
   let wrapper: ShallowWrapper<{}, AddGitLabPageState>;

@@ -26,7 +26,7 @@ import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 
 const addUsers: KebabAction = (kind: K8sKind, group: GroupKind) => ({
-  label: i18next.t('group~Add Users'),
+  label: i18next.t('public~Add Users'),
   callback: () =>
     addUsersModal({
       group,
@@ -36,7 +36,7 @@ const addUsers: KebabAction = (kind: K8sKind, group: GroupKind) => ({
 
 const removeUser = (group: GroupKind, user: string): KebabOption => {
   return {
-    label: i18next.t('group~Remove User'),
+    label: i18next.t('public~Remove User'),
     callback: () =>
       removeUserModal({
         group,
@@ -77,19 +77,19 @@ export const GroupList: React.FC = (props) => {
   const GroupTableHeader = () => {
     return [
       {
-        title: t('group~Name'),
+        title: t('public~Name'),
         sortField: 'metadata.name',
         transforms: [sortable],
         props: { className: tableColumnClasses[0] },
       },
       {
-        title: t('group~Users'),
+        title: t('public~Users'),
         sortField: 'users.length',
         transforms: [sortable],
         props: { className: tableColumnClasses[1] },
       },
       {
-        title: t('group~Created'),
+        title: t('public~Created'),
         sortField: 'metadata.creationTimestamp',
         transforms: [sortable],
         props: { className: tableColumnClasses[2] },
@@ -104,7 +104,7 @@ export const GroupList: React.FC = (props) => {
   return (
     <Table
       {...props}
-      aria-label={t('group~Groups')}
+      aria-label={t('public~Groups')}
       Header={GroupTableHeader}
       Row={GroupTableRow}
       virtualize
@@ -117,7 +117,7 @@ export const GroupPage: React.FC<GroupPageProps> = (props) => {
   return (
     <ListPage
       {...props}
-      title={t('group~Groups')}
+      title={t('public~Groups')}
       kind={referenceForModel(GroupModel)}
       ListComponent={GroupList}
       canCreate
@@ -133,12 +133,12 @@ const UserKebab: React.FC<UserKebabProps> = ({ group, user }) => {
 const UsersTable: React.FC<UsersTableProps> = ({ group, users }) => {
   const { t } = useTranslation();
   return _.isEmpty(users) ? (
-    <EmptyBox label={t('group~Users')} />
+    <EmptyBox label={t('public~Users')} />
   ) : (
     <table className="table">
       <thead>
         <tr>
-          <th>{t('group~Name')}</th>
+          <th>{t('public~Name')}</th>
           <th />
         </tr>
       </thead>
@@ -164,7 +164,7 @@ const GroupDetails: React.FC<GroupDetailsProps> = ({ obj }) => {
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={t('group~Group details')} />
+        <SectionHeading text={t('public~Group details')} />
         <div className="row">
           <div className="col-md-6">
             <ResourceSummary resource={obj} />
@@ -172,7 +172,7 @@ const GroupDetails: React.FC<GroupDetailsProps> = ({ obj }) => {
         </div>
       </div>
       <div className="co-m-pane__body">
-        <SectionHeading text={t('group~Users')} />
+        <SectionHeading text={t('public~Users')} />
         <UsersTable group={obj} users={users} />
       </div>
     </>
