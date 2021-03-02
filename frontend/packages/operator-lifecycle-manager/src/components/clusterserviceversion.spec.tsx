@@ -538,14 +538,14 @@ describe(ClusterServiceVersionsDetailsPage.displayName, () => {
   it('renders a `DetailsPage` with the correct subpages', () => {
     const detailsPage = wrapper.find(DetailsPage);
     expect(detailsPage.props().pagesFor(testClusterServiceVersion)[0].nameKey).toEqual(
-      'details-page~Details',
+      'public~Details',
     );
     expect(detailsPage.props().pagesFor(testClusterServiceVersion)[0].href).toEqual('');
     expect(detailsPage.props().pagesFor(testClusterServiceVersion)[0].component).toEqual(
       ClusterServiceVersionDetails,
     );
     expect(detailsPage.props().pagesFor(testClusterServiceVersion)[1].nameKey).toEqual(
-      `details-page~YAML`,
+      `public~YAML`,
     );
     expect(detailsPage.props().pagesFor(testClusterServiceVersion)[1].href).toEqual('yaml');
     expect(detailsPage.props().pagesFor(testClusterServiceVersion)[2].nameKey).toEqual(
@@ -553,7 +553,7 @@ describe(ClusterServiceVersionsDetailsPage.displayName, () => {
     );
     expect(detailsPage.props().pagesFor(testClusterServiceVersion)[2].href).toEqual('subscription');
     expect(detailsPage.props().pagesFor(testClusterServiceVersion)[3].nameKey).toEqual(
-      `details-page~Events`,
+      `public~Events`,
     );
     expect(detailsPage.props().pagesFor(testClusterServiceVersion)[3].href).toEqual('events');
   });

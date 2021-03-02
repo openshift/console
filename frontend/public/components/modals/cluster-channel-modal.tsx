@@ -40,25 +40,23 @@ const ClusterChannelModal = withHandlePromise((props: ClusterChannelModalProps) 
   return (
     <form onSubmit={submit} name="form" className="modal-content modal-content--no-inner-scroll">
       <ModalTitle>
-        {channelsExist
-          ? t('cluster-channel-modal~Select channel')
-          : t('cluster-channel-modal~Input channel')}
+        {channelsExist ? t('public~Select channel') : t('public~Input channel')}
       </ModalTitle>
       <ModalBody>
         <p>
           {channelsExist
             ? t(
-                'cluster-channel-modal~The current version is available in the channels listed in the dropdown below. Select a channel that reflects the desired version. Critical security updates will be delivered to any vulnerable channels.',
+                'public~The current version is available in the channels listed in the dropdown below. Select a channel that reflects the desired version. Critical security updates will be delivered to any vulnerable channels.',
               )
             : t(
-                'cluster-channel-modal~Input a channel that reflects the desired version. To verify if the version exists in a channel, save and check the update status. Critical security updates will be delivered to any vulnerable channels.',
+                'public~Input a channel that reflects the desired version. To verify if the version exists in a channel, save and check the update status. Critical security updates will be delivered to any vulnerable channels.',
               )}
         </p>
         <p>
           <ChannelDocLink />
         </p>
         <div className="form-group">
-          <label htmlFor="channel">{t('cluster-channel-modal~Channel')}</label>
+          <label htmlFor="channel">{t('public~Channel')}</label>
           {channelsExist ? (
             <Dropdown
               className="cluster-channel-modal__dropdown"
@@ -66,7 +64,7 @@ const ClusterChannelModal = withHandlePromise((props: ClusterChannelModalProps) 
               items={availableChannels}
               onChange={(newChannel: string) => setChannel(newChannel)}
               selectedKey={channel}
-              title={t('cluster-channel-modal~Channel')}
+              title={t('public~Channel')}
             />
           ) : (
             <>
@@ -74,19 +72,16 @@ const ClusterChannelModal = withHandlePromise((props: ClusterChannelModalProps) 
                 id="channel"
                 onChange={(newChannel) => setChannel(newChannel)}
                 value={channel}
-                placeholder={t(`cluster-channel-modal~e.g., {{version}}`, {
+                placeholder={t(`public~e.g., {{version}}`, {
                   version: `stable-${version.major}.${version.minor}`,
                 })}
               />
               <p className="help-block">
-                {t(
-                  `cluster-channel-modal~Potential channels are {{stable}}, {{fast}}, or {{candidate}}.`,
-                  {
-                    stable: `stable-${version.major}.${version.minor}`,
-                    fast: `fast-${version.major}.${version.minor}`,
-                    candidate: `candidate-${version.major}.${version.minor}`,
-                  },
-                )}
+                {t(`public~Potential channels are {{stable}}, {{fast}}, or {{candidate}}.`, {
+                  stable: `stable-${version.major}.${version.minor}`,
+                  fast: `fast-${version.major}.${version.minor}`,
+                  candidate: `candidate-${version.major}.${version.minor}`,
+                })}
               </p>
             </>
           )}

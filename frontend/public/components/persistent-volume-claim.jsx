@@ -55,7 +55,7 @@ const menuActions = [
   ModifyAnnotations,
   Edit,
   (kind, obj) => ({
-    label: i18next.t('details-page~Delete PersistentVolumeClaim'),
+    label: i18next.t('public~Delete PersistentVolumeClaim'),
     callback: () =>
       deletePVCModal({
         pvc: obj,

@@ -46,7 +46,7 @@ export const MonitoringDashboardGraph: React.FC<MonitoringDashboardGraphProps> =
       <DashboardCardBody>
         <PrometheusGraphLink
           query={query}
-          ariaChartLinkLabel={t('dashboard~View metrics for {{title}}', {
+          ariaChartLinkLabel={t('devconsole~View metrics for {{title}}', {
             title,
           })}
         >

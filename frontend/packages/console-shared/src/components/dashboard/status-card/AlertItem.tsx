@@ -70,7 +70,7 @@ const AlertItem: React.FC<AlertItemProps> = ({ alert }) => {
           {text}
         </Button>
       ) : (
-        <Link to={alertURL(alert, alert.rule.id)}>{t('dashboard~View details')}</Link>
+        <Link to={alertURL(alert, alert.rule.id)}>{t('console-shared~View details')}</Link>
       )}
     </StatusItem>
   );

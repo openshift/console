@@ -225,7 +225,7 @@ export const DeploymentsDetailsPage: React.FC<DeploymentsDetailsPageProps> = (pr
   const ns = useSelector((state: RootState) => getActiveNamespace(state));
 
   const { csvData } = useCsvWatchResource(ns);
-  // t('details-page~ReplicaSets')
+  // t('public~ReplicaSets')
   return (
     <DetailsPage
       {...props}
@@ -236,7 +236,7 @@ export const DeploymentsDetailsPage: React.FC<DeploymentsDetailsPageProps> = (pr
         editYaml(),
         {
           href: 'replicasets',
-          nameKey: 'details-page~ReplicaSets',
+          nameKey: 'public~ReplicaSets',
           component: ReplicaSetsTab,
         },
         pods(),

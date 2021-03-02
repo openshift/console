@@ -14,7 +14,7 @@ const UtilizationAxis: React.FC<UtilizationAxisProps> = ({ timestamps = [] }) =>
     <div ref={containerRef}>
       {!!timestamps.length && (
         <ChartAxis
-          containerComponent={<ChartContainer title={t('dashboard~time axis')} />}
+          containerComponent={<ChartContainer title={t('console-shared~time axis')} />}
           scale={{ x: 'time' }}
           domain={{ x: [timestamps[0], timestamps[timestamps.length - 1]] }}
           tickFormat={timeFormatter.format}
@@ -38,10 +38,10 @@ export const UtilizationBody: React.FC<UtilizationBodyProps> = ({ timestamps, ch
     <div className="co-utilization-card__item">
       <div className="co-utilization-card__item-section co-u-hidden co-u-visible-on-xl">
         <span className="co-utilization-card__item-text" data-test="utilization-card-item-text">
-          {t('public~Resource')}
+          {t('console-shared~Resource')}
         </span>
         <span className="co-utilization-card__item-text" data-test="utilization-card-item-text">
-          {t('dashboard~Usage')}
+          {t('console-shared~Usage')}
         </span>
       </div>
       <div className="co-utilization-card__item-chart co-utilization-card__item-chart--times">

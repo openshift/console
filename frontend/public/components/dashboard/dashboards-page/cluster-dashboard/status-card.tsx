@@ -108,9 +108,9 @@ const ClusterAlerts = withDashboardResources(
         <StatusItem
           key="clusterUpdate"
           Icon={UpdateIcon}
-          message={t('dashboard~A cluster version update is available')}
+          message={t('public~A cluster version update is available')}
         >
-          <Link to="/settings/cluster?showVersions">{t('dashboard~Update cluster')}</Link>
+          <Link to="/settings/cluster?showVersions">{t('public~Update cluster')}</Link>
         </StatusItem>,
       );
     }
@@ -183,8 +183,8 @@ export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels
   return (
     <DashboardCard gradient data-test-id="status-card">
       <DashboardCardHeader>
-        <DashboardCardTitle>{t('dashboard~Status')}</DashboardCardTitle>
-        <DashboardCardLink to="/monitoring/alerts">{t('dashboard~View alerts')}</DashboardCardLink>
+        <DashboardCardTitle>{t('public~Status')}</DashboardCardTitle>
+        <DashboardCardLink to="/monitoring/alerts">{t('public~View alerts')}</DashboardCardLink>
       </DashboardCardHeader>
       <DashboardCardBody>
         <HealthBody>

@@ -7,11 +7,11 @@ const ResourceQuotaBody: React.FC<ResourceQuotaBodyProps> = ({ error, isLoading,
   let body: React.ReactNode;
   const { t } = useTranslation();
   if (error) {
-    body = <div className="text-secondary">{t('dashboard~Not available')}</div>;
+    body = <div className="text-secondary">{t('console-shared~Not available')}</div>;
   } else if (isLoading) {
     body = <div className="skeleton-quota" />;
   } else if (!React.Children.count(children)) {
-    body = <div className="text-secondary">{t('dashboard~No resource quotas')}</div>;
+    body = <div className="text-secondary">{t('console-shared~No resource quotas')}</div>;
   }
 
   return <div className="co-dashboard-card__body--top-margin">{body || children}</div>;

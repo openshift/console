@@ -9,7 +9,7 @@ import TaskRunEvents from '../TaskRunEvents';
 
 const breadCrumbs = jest.spyOn(hookUtils, 'useTasksBreadcrumbsFor');
 type TaskRunDetailsPageProps = React.ComponentProps<typeof TaskRunDetailsPage>;
-const i18nNS = 'details-page';
+const i18nNS = 'public';
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');

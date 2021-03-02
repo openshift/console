@@ -52,7 +52,7 @@ jest.mock('react-redux', () => {
   };
 });
 
-const i18nNS = 'cluster-settings';
+const i18nNS = 'public';
 
 describe('Cluster Settings page', () => {
   let wrapper: ShallowWrapper<any>;
@@ -327,7 +327,7 @@ describe('Updates Graph', () => {
         .find(ChannelName)
         .at(1)
         .text(),
-    ).toBe('cluster-settings~{{newerChannel}} channel');
+    ).toBe('public~{{newerChannel}} channel');
   });
 });
 

@@ -59,7 +59,7 @@ export const getPluginTabPages = (
 
 const DashboardsPage_: React.FC<DashboardsPageProps> = ({ match, kindsInFlight, k8sModels }) => {
   const { t } = useTranslation();
-  const title = t('dashboard~Overview');
+  const title = t('public~Overview');
   const tabExtensions = useExtensions<DashboardsTab>(isDashboardsTab);
   const cardExtensions = useExtensions<DashboardsCard>(isDashboardsCard);
 
@@ -72,7 +72,7 @@ const DashboardsPage_: React.FC<DashboardsPageProps> = ({ match, kindsInFlight, 
     () => [
       {
         href: '',
-        name: t('dashboard~Cluster'),
+        name: t('public~Cluster'),
         component: ClusterDashboard,
       },
       ...pluginPages,

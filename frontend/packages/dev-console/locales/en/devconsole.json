@@ -394,6 +394,7 @@
   "Silence for": "Silence for",
   "Dashboard": "Dashboard",
   "Workload": "Workload",
+  "View metrics for {{title}}": "View metrics for {{title}}",
   "All workloads": "All workloads",
   "Filter by workload": "Filter by workload",
   "Select a query or enter your own to view metrics for this Project": "Select a query or enter your own to view metrics for this Project",

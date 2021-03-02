@@ -1067,7 +1067,7 @@ class NamespaceBarDropdowns_ extends React.Component {
     const { loaded, data } = this.props.namespace;
     const model = getModel(useProjects);
     const allNamespacesTitle =
-      model.label === 'Project' ? t('dropdown~All Projects') : t('dropdown~All Namespaces');
+      model.label === 'Project' ? t('public~All Projects') : t('public~All Namespaces');
     const items = {};
     if (canListNS) {
       items[ALL_NAMESPACES_KEY] = allNamespacesTitle;
@@ -1120,15 +1120,15 @@ class NamespaceBarDropdowns_ extends React.Component {
           canFavorite
           items={items}
           actionItems={defaultActionItem}
-          titlePrefix={model.label === 'Project' ? t('dropdown~Project') : t('dropdown~Namespace')}
+          titlePrefix={model.label === 'Project' ? t('public~Project') : t('public~Namespace')}
           title={title}
           onChange={onChange}
           selectedKey={activeNamespace || ALL_NAMESPACES_KEY}
           autocompleteFilter={autocompleteFilter}
           autocompletePlaceholder={
             model.label === 'Project'
-              ? t('dropdown~Select Project...')
-              : t('dropdown~Select Namespace...')
+              ? t('public~Select Project...')
+              : t('public~Select Namespace...')
           }
           userSettingsPrefix={NAMESPACE_USERSETTINGS_PREFIX}
           storageKey={NAMESPACE_LOCAL_STORAGE_KEY}

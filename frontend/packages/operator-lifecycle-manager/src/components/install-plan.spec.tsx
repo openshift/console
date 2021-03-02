@@ -50,7 +50,7 @@ jest.mock('react-i18next', () => {
   };
 });
 
-const i18nNS = 'details-page';
+const i18nNS = 'public';
 
 describe('InstallPlanTableRow', () => {
   let obj: InstallPlanKind;
