@@ -8,7 +8,6 @@ export const clusterVersionProps: ClusterVersionKind = {
     generation: 1,
     name: 'version',
     resourceVersion: '22513',
-    selfLink: '/apis/config.openshift.io/v1/clusterversions/version',
     uid: '21194fa6-7058-47cb-9d45-782a666dd146',
   },
   spec: {
@@ -79,7 +78,6 @@ export const clusterVersionUpdatingProps: ClusterVersionKind = {
     generation: 2,
     name: 'version',
     resourceVersion: '88518',
-    selfLink: '/apis/config.openshift.io/v1/clusterversions/version',
     uid: '21194fa6-7058-47cb-9d45-782a666dd146',
   },
   spec: {
@@ -165,7 +163,6 @@ export const clusterVersionUpdatedProps: ClusterVersionKind = {
     generation: 2,
     name: 'version',
     resourceVersion: '80882',
-    selfLink: '/apis/config.openshift.io/v1/clusterversions/version',
     uid: '3c79e278-3e59-4438-92c8-1125bbf41a6c',
   },
   spec: {
@@ -245,7 +242,6 @@ export const workerMachineConfigPoolProp: MachineConfigPoolKind = {
     labels: { 'machineconfiguration.openshift.io/mco-built-in': '' },
     name: 'worker',
     resourceVersion: '79610',
-    selfLink: '/apis/machineconfiguration.openshift.io/v1/machineconfigpools/worker',
     uid: '195b087d-796f-4970-bbf9-bdf3d8989f14',
   },
   spec: {
@@ -377,7 +373,6 @@ export const machineConfigPoolsProps: ListKind<MachineConfigPoolKind> = {
         },
         name: 'master',
         resourceVersion: '80196',
-        selfLink: '/apis/machineconfiguration.openshift.io/v1/machineconfigpools/master',
         uid: 'c34d2940-6dfb-4196-966f-4617e508fdbd',
       },
       spec: {
@@ -498,6 +493,5 @@ export const machineConfigPoolsProps: ListKind<MachineConfigPoolKind> = {
   kind: 'MachineConfigPoolList',
   metadata: {
     resourceVersion: '167399',
-    selfLink: '/apis/machineconfiguration.openshift.io/v1/machineconfigpools',
   },
 };

@@ -151,7 +151,6 @@ export const sampleHelmChartDeploymentConfig = {
   metadata: {
     name: 'nodejs-helm',
     namespace: 'testproject1',
-    selfLink: '/apis/apps.openshift.io/v1/namespaces/testproject1/deploymentconfigs/nodejs',
     uid: 'b69ey0df-3f9382-11e9-02f68-525400680f2',
     resourceVersion: '732186',
     generation: 2,

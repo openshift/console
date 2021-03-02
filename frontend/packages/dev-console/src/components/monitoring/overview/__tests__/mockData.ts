@@ -60,8 +60,6 @@ export const mockPodEvents = {
         metadata: {
           name: 'dotnet-7b49587c68-6lmp2.15faadb15a3f19d0',
           namespace: 'jeff-project',
-          selfLink:
-            '/api/v1/namespaces/jeff-project/events/dotnet-7b49587c68-6lmp2.15faadb15a3f19d0',
           uid: '51530dae-67e2-4c6f-8127-8a00a946debe',
           resourceVersion: '324654',
           creationTimestamp: '2020-03-09T15:53:16Z',
@@ -92,8 +90,6 @@ export const mockPodEvents = {
         metadata: {
           name: 'dotnet-7b49587c68-6lmp2.15faadb1cf84a063',
           namespace: 'jeff-project',
-          selfLink:
-            '/api/v1/namespaces/jeff-project/events/dotnet-7b49587c68-6lmp2.15faadb1cf84a063',
           uid: '8e05d361-e780-4c16-8b8b-2baf72d264d9',
           resourceVersion: '324693',
           creationTimestamp: '2020-03-09T15:53:18Z',
@@ -129,8 +125,6 @@ export const mockPodEvents = {
         metadata: {
           name: 'dotnet-7b49587c68-6lmp2.15faadb15a3f19d0',
           namespace: 'jeff-project',
-          selfLink:
-            '/api/v1/namespaces/jeff-project/events/dotnet-7b49587c68-6lmp2.15faadb15a3f19d0',
           uid: '51530dae-67e2-4c6f-8127-8a00a946debe',
           resourceVersion: '324654',
           creationTimestamp: '2020-03-09T15:53:16Z',
@@ -161,8 +155,6 @@ export const mockPodEvents = {
         metadata: {
           name: 'dotnet-7b49587c68-6lmp2.15faadb1cf84a063',
           namespace: 'jeff-project',
-          selfLink:
-            '/api/v1/namespaces/jeff-project/events/dotnet-7b49587c68-6lmp2.15faadb1cf84a063',
           uid: '8e05d361-e780-4c16-8b8b-2baf72d264d9',
           resourceVersion: '324693',
           creationTimestamp: '2020-03-09T15:53:18Z',
@@ -192,8 +184,6 @@ export const mockPodEvents = {
         metadata: {
           name: 'dotnet-7b49587c68-6lmp2.15faadb80ac3a336',
           namespace: 'jeff-project',
-          selfLink:
-            '/api/v1/namespaces/jeff-project/events/dotnet-7b49587c68-6lmp2.15faadb80ac3a336',
           uid: 'a49cc309-5f6d-498d-a128-d0b51bff6c77',
           resourceVersion: '325018',
           creationTimestamp: '2020-03-09T15:53:44Z',
@@ -224,8 +214,6 @@ export const mockPodEvents = {
         metadata: {
           name: 'dotnet-7b49587c68-6lmp2.15faadb82da5529e',
           namespace: 'jeff-project',
-          selfLink:
-            '/api/v1/namespaces/jeff-project/events/dotnet-7b49587c68-6lmp2.15faadb82da5529e',
           uid: '3c682033-506b-46de-b263-5f20bcf03737',
           resourceVersion: '325030',
           creationTimestamp: '2020-03-09T15:53:45Z',
@@ -256,8 +244,6 @@ export const mockPodEvents = {
         metadata: {
           name: 'dotnet-7b49587c68-6lmp2.15faadb82f9fb72c',
           namespace: 'jeff-project',
-          selfLink:
-            '/api/v1/namespaces/jeff-project/events/dotnet-7b49587c68-6lmp2.15faadb82f9fb72c',
           uid: 'a95efb56-e3de-4f91-a9af-e3d1a5df3636',
           resourceVersion: '325031',
           creationTimestamp: '2020-03-09T15:53:45Z',
@@ -297,7 +283,6 @@ export const mockResourceEvents = {
       metadata: {
         name: 'cassandra.15fb3a6908d6a3bb',
         namespace: 'jeff-project',
-        selfLink: '/api/v1/namespaces/jeff-project/events/cassandra.15fb3a6908d6a3bb',
         uid: 'd95d5d5b-05bb-4045-8e3e-5521c610b01a',
         resourceVersion: '123723',
         creationTimestamp: '2020-03-11T10:51:56Z',
@@ -325,7 +310,6 @@ export const mockResourceEvents = {
       metadata: {
         name: 'cassandra.15fb3a690b2def3f',
         namespace: 'jeff-project',
-        selfLink: '/api/v1/namespaces/jeff-project/events/cassandra.15fb3a690b2def3f',
         uid: '5f637ab1-73bc-4542-ae57-c6b4ffa9b406',
         resourceVersion: '123729',
         creationTimestamp: '2020-03-11T10:51:56Z',

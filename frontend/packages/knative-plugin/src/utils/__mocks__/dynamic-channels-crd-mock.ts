@@ -2,7 +2,6 @@ export const mockChannelCRDData = {
   kind: 'CustomResourceDefinitionList',
   apiVersion: 'apiextensions.k8s.io/v1',
   metadata: {
-    selfLink: '/apis/apiextensions.k8s.io/v1/customresourcedefinitions',
     resourceVersion: '300390',
   },
   items: [

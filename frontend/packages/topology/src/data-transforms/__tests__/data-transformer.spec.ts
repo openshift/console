@@ -84,7 +84,7 @@ describe('data transformer ', () => {
     expect(graphData.nodes.filter((n) => n.group)).toHaveLength(0);
   });
 
-  xit('should match the previous snapshot', () => {
+  it('should match the previous snapshot', () => {
     expect(
       getTransformedTopologyData(mockResources, ['deployments', 'deploymentConfigs']),
     ).toMatchSnapshot();

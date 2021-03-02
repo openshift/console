@@ -8,7 +8,6 @@ const pods = {
             '[{\n    "name": "openshift-sdn",\n    "interface": "eth0",\n    "ips": [\n        "10.128.2.151"\n    ],\n    "dns": {},\n    "default-route": [\n        "10.128.2.1"\n    ]\n}]',
           'openshift.io/scc': 'restricted',
         },
-        selfLink: '/api/v1/namespaces/demo/pods/dotnet-6b456f47fb-8chdt',
         resourceVersion: '32468951',
         name: 'dotnet-6b456f47fb-8chdt',
         uid: 'bb99cc0f-c938-40ae-9598-697262b32c6a',
@@ -172,7 +171,6 @@ const pods = {
           'openshift.io/deployment.name': 'mysql-1',
           'openshift.io/scc': 'restricted',
         },
-        selfLink: '/api/v1/namespaces/demo/pods/mysql-1-deploy',
         resourceVersion: '19721758',
         name: 'mysql-1-deploy',
         uid: '49e0b045-dbf3-4e39-844c-671efb7ef117',
@@ -348,7 +346,6 @@ const pods = {
           'openshift.io/deployment.name': 'mysql-1',
           'openshift.io/scc': 'restricted',
         },
-        selfLink: '/api/v1/namespaces/demo/pods/mysql-1-lf6c5',
         resourceVersion: '19721730',
         name: 'mysql-1-lf6c5',
         uid: 'dee5c49f-3a45-41ca-91cd-11f8963fedac',
@@ -583,7 +580,6 @@ const pods = {
           'openshift.io/scc': 'kubevirt-controller',
           'traffic.sidecar.istio.io/kubevirtInterfaces': 'k6t-eth0',
         },
-        selfLink: '/api/v1/namespaces/demo/pods/virt-launcher-rhel-8-vm-7zb7k',
         resourceVersion: '13068424',
         name: 'virt-launcher-rhel-8-vm-7zb7k',
         uid: 'ce1713e4-473b-4b63-aabf-3006321c6797',
@@ -919,7 +915,6 @@ const replicationControllers = {
           'openshift.io/deployment.replicas': '1',
           'openshift.io/deployer-pod.name': 'mysql-1-deploy',
         },
-        selfLink: '/api/v1/namespaces/demo/replicationcontrollers/mysql-1',
         resourceVersion: '19721744',
         name: 'mysql-1',
         uid: 'f118e585-9bdc-4608-8ac3-e5baf646508e',
@@ -1076,7 +1071,6 @@ const routes = {
       metadata: {
         name: 'cakephp-mysql-example',
         namespace: 'demo',
-        selfLink: '/apis/route.openshift.io/v1/namespaces/demo/routes/cakephp-mysql-example',
         uid: '7f807304-719a-4eb7-81d0-e3cbc6ef97bc',
         resourceVersion: '19719013',
         creationTimestamp: '2020-04-06T19:03:53Z',
@@ -1120,7 +1114,6 @@ const routes = {
       metadata: {
         name: 'dotnet',
         namespace: 'demo',
-        selfLink: '/apis/route.openshift.io/v1/namespaces/demo/routes/dotnet',
         uid: '00381f03-ceae-41ca-8f39-94c66e47bc70',
         resourceVersion: '19625859',
         creationTimestamp: '2020-04-03T16:33:36Z',
@@ -1180,7 +1173,6 @@ const services = {
       metadata: {
         name: 'cakephp-mysql-example',
         namespace: 'demo',
-        selfLink: '/api/v1/namespaces/demo/services/cakephp-mysql-example',
         uid: '87c2e127-f2f4-49c1-89f8-73eb59a0bf54',
         resourceVersion: '19718997',
         creationTimestamp: '2020-04-06T19:03:53Z',
@@ -1218,7 +1210,6 @@ const services = {
       metadata: {
         name: 'dotnet',
         namespace: 'demo',
-        selfLink: '/api/v1/namespaces/demo/services/dotnet',
         uid: '1aae0d14-b36b-445c-ba3d-afc8b14a18f6',
         resourceVersion: '19625858',
         creationTimestamp: '2020-04-03T16:33:36Z',
@@ -1262,7 +1253,6 @@ const services = {
       metadata: {
         name: 'example',
         namespace: 'demo',
-        selfLink: '/api/v1/namespaces/demo/services/example',
         uid: '2b8b7070-36af-4d95-9b5f-aaa5223eabe3',
         resourceVersion: '12936764',
         creationTimestamp: '2020-03-31T11:32:09Z',
@@ -1290,7 +1280,6 @@ const services = {
       metadata: {
         name: 'mysql',
         namespace: 'demo',
-        selfLink: '/api/v1/namespaces/demo/services/mysql',
         uid: '3be5e519-6e26-480a-a9a0-78178c6f6bfe',
         resourceVersion: '19719009',
         creationTimestamp: '2020-04-06T19:03:53Z',
@@ -1346,7 +1335,6 @@ const replicaSets = {
             '[{"from":{"kind":"ImageStreamTag","name":"dotnet:latest"},"fieldPath":"spec.template.spec.containers[?(@.name==\\"dotnet\\")].image"}]',
           'app.openshift.io/vcs-uri': 'https://github.com/redhat-developer/s2i-dotnetcore-ex.git',
         },
-        selfLink: '/apis/apps/v1/namespaces/demo/replicasets/dotnet-6b456f47fb',
         resourceVersion: '16374780',
         name: 'dotnet-6b456f47fb',
         uid: 'a549ca01-0141-4104-b1b2-7407e619a246',
@@ -1430,7 +1418,6 @@ const buildConfigs = {
       metadata: {
         name: 'cakephp-mysql-example',
         namespace: 'demo',
-        selfLink: '/apis/build.openshift.io/v1/namespaces/demo/buildconfigs/cakephp-mysql-example',
         uid: '6551125f-b893-4014-a307-8d574f4c6b28',
         resourceVersion: '19719019',
         creationTimestamp: '2020-04-06T19:03:53Z',
@@ -1507,7 +1494,6 @@ const buildConfigs = {
       metadata: {
         name: 'dotnet',
         namespace: 'demo',
-        selfLink: '/apis/build.openshift.io/v1/namespaces/demo/buildconfigs/dotnet',
         uid: 'f826be9e-c226-4c2a-a905-cdb2109d2aaf',
         resourceVersion: '19625865',
         creationTimestamp: '2020-04-03T16:33:36Z',
@@ -1605,7 +1591,6 @@ const builds = {
           'openshift.io/build-config.name': 'cakephp-mysql-example',
           'openshift.io/build.number': '1',
         },
-        selfLink: '/apis/build.openshift.io/v1/namespaces/demo/builds/cakephp-mysql-example-1',
         resourceVersion: '19719027',
         name: 'cakephp-mysql-example-1',
         uid: 'e8054236-c028-4680-a9bc-4e173003bd6c',
@@ -1706,7 +1691,6 @@ const builds = {
           'openshift.io/build-config.name': 'dotnet',
           'openshift.io/build.number': '1',
         },
-        selfLink: '/apis/build.openshift.io/v1/namespaces/demo/builds/dotnet-1',
         resourceVersion: '19625864',
         name: 'dotnet-1',
         uid: 'fe8d5ff2-6c6d-475c-ab9a-b60a688095f7',
@@ -1822,7 +1806,6 @@ const secrets = {
         name: 'cakephp-mysql-example-parameters-mqf92',
         generateName: 'cakephp-mysql-example-parameters-',
         namespace: 'demo',
-        selfLink: '/api/v1/namespaces/demo/secrets/cakephp-mysql-example-parameters-mqf92',
         uid: '6dd82b8b-a4ba-4d20-a087-e9fcc042499d',
         resourceVersion: '19718982',
         creationTimestamp: '2020-04-06T19:03:52Z',
@@ -1846,7 +1829,6 @@ const secrets = {
       metadata: {
         name: 'cakephp-mysql-example',
         namespace: 'demo',
-        selfLink: '/api/v1/namespaces/demo/secrets/cakephp-mysql-example',
         uid: '16d3c142-b3cc-42ae-bc77-b84b1e0937d8',
         resourceVersion: '19718995',
         creationTimestamp: '2020-04-06T19:03:53Z',
@@ -1869,7 +1851,6 @@ const secrets = {
       metadata: {
         name: 'dotnet-github-webhook-secret',
         namespace: 'demo',
-        selfLink: '/api/v1/namespaces/demo/secrets/dotnet-github-webhook-secret',
         uid: 'cc033735-f31c-40a2-92ef-a12bd2747855',
         resourceVersion: '16189863',
         creationTimestamp: '2020-04-03T16:33:36Z',
@@ -1883,7 +1864,6 @@ const secrets = {
       metadata: {
         name: 'default-dockercfg-9f9w5',
         namespace: 'demo',
-        selfLink: '/api/v1/namespaces/demo/secrets/default-dockercfg-9f9w5',
         uid: '017b9a3d-47e4-4290-889f-6dacba0cbf04',
         resourceVersion: '12928435',
         creationTimestamp: '2020-03-31T11:20:40Z',
@@ -1912,7 +1892,6 @@ const secrets = {
       metadata: {
         name: 'dotnet-generic-webhook-secret',
         namespace: 'demo',
-        selfLink: '/api/v1/namespaces/demo/secrets/dotnet-generic-webhook-secret',
         uid: 'fda28c00-4a94-454f-910b-83fe25abc965',
         resourceVersion: '16189858',
         creationTimestamp: '2020-04-03T16:33:36Z',
@@ -1926,7 +1905,6 @@ const secrets = {
       metadata: {
         name: 'deployer-token-7r8n8',
         namespace: 'demo',
-        selfLink: '/api/v1/namespaces/demo/secrets/deployer-token-7r8n8',
         uid: '24258215-7646-4fc6-8b24-acc2bc71c7b9',
         resourceVersion: '12928432',
         creationTimestamp: '2020-03-31T11:20:40Z',
@@ -1941,7 +1919,6 @@ const secrets = {
       metadata: {
         name: 'default-token-657jj',
         namespace: 'demo',
-        selfLink: '/api/v1/namespaces/demo/secrets/default-token-657jj',
         uid: 'b9831243-c536-47f4-916f-7122244d5a37',
         resourceVersion: '12928431',
         creationTimestamp: '2020-03-31T11:20:40Z',
@@ -1956,7 +1933,6 @@ const secrets = {
       metadata: {
         name: 'builder-token-79skx',
         namespace: 'demo',
-        selfLink: '/api/v1/namespaces/demo/secrets/builder-token-79skx',
         uid: 'd6dee81c-004b-4fde-a6b3-1ead50a7f2b8',
         resourceVersion: '12928438',
         creationTimestamp: '2020-03-31T11:20:39Z',
@@ -1972,7 +1948,6 @@ const secrets = {
       metadata: {
         name: 'builder-token-tlrn9',
         namespace: 'demo',
-        selfLink: '/api/v1/namespaces/demo/secrets/builder-token-tlrn9',
         uid: 'ba1fb262-81d0-4748-b704-41bf263a4ac3',
         resourceVersion: '12928434',
         creationTimestamp: '2020-03-31T11:20:40Z',
@@ -1987,7 +1962,6 @@ const secrets = {
       metadata: {
         name: 'builder-dockercfg-m287b',
         namespace: 'demo',
-        selfLink: '/api/v1/namespaces/demo/secrets/builder-dockercfg-m287b',
         uid: 'dbd41d6d-b8be-4423-a26a-e963a200f733',
         resourceVersion: '12928439',
         creationTimestamp: '2020-03-31T11:20:40Z',
@@ -2016,7 +1990,6 @@ const secrets = {
       metadata: {
         name: 'deployer-token-56677',
         namespace: 'demo',
-        selfLink: '/api/v1/namespaces/demo/secrets/deployer-token-56677',
         uid: 'db0a315a-4abd-4a96-ac78-b186b5d00d8a',
         resourceVersion: '12928433',
         creationTimestamp: '2020-03-31T11:20:39Z',
@@ -2032,7 +2005,6 @@ const secrets = {
       metadata: {
         name: 'deployer-dockercfg-kbqb9',
         namespace: 'demo',
-        selfLink: '/api/v1/namespaces/demo/secrets/deployer-dockercfg-kbqb9',
         uid: 'a0b8f20a-9c52-46aa-8abf-9204f149f742',
         resourceVersion: '12928437',
         creationTimestamp: '2020-03-31T11:20:40Z',
@@ -2061,7 +2033,6 @@ const secrets = {
       metadata: {
         name: 'default-token-n4cwh',
         namespace: 'demo',
-        selfLink: '/api/v1/namespaces/demo/secrets/default-token-n4cwh',
         uid: '7633333d-cbed-4858-96b6-a3c32fe9cec8',
         resourceVersion: '12928430',
         creationTimestamp: '2020-03-31T11:20:39Z',
@@ -2102,7 +2073,6 @@ const virtualmachines = {
           'kubevirt.io/storage-observed-api-version': 'v1alpha3',
           'name.os.template.kubevirt.io/fedora31': 'Fedora 31',
         },
-        selfLink: '/apis/kubevirt.io/v1alpha3/namespaces/demo/virtualmachines/rhel-8-vm',
         resourceVersion: '19721276',
         name: 'rhel-8-vm',
         uid: 'da7ac419-97b1-45dd-9f47-e15f77ddbb11',
@@ -2217,7 +2187,6 @@ const virtualmachines = {
           'kubevirt.io/storage-observed-api-version': 'v1alpha3',
           'name.os.template.kubevirt.io/fedora31': 'Fedora 31',
         },
-        selfLink: '/apis/kubevirt.io/v1alpha3/namespaces/demo/virtualmachines/rhel-8-vm',
         resourceVersion: '32488379',
         name: 'rhel-8-vm-grouped',
         uid: 'da7ac419-97b1-45dd-9f47-e15f77ddbb11-2',
@@ -2341,7 +2310,6 @@ const virtualmachineinstances = {
           'kubevirt.io/latest-observed-api-version': 'v1alpha3',
           'kubevirt.io/storage-observed-api-version': 'v1alpha3',
         },
-        selfLink: '/apis/kubevirt.io/v1alpha3/namespaces/demo/virtualmachineinstances/rhel-8-vm',
         resourceVersion: '13068442',
         name: 'rhel-8-vm',
         uid: 'e2ec8a25-ef0c-47a0-8afe-5b58570f97b0',
@@ -2497,8 +2465,6 @@ const deploymentConfigs = {
           description: 'Defines how to deploy the application server',
           'template.alpha.openshift.io/wait-for-ready': 'true',
         },
-        selfLink:
-          '/apis/apps.openshift.io/v1/namespaces/demo/deploymentconfigs/cakephp-mysql-example',
         resourceVersion: '19721350',
         name: 'cakephp-mysql-example',
         uid: '1e7e7767-0da2-4aac-97e9-bcf1ac4bfcac',
@@ -2690,7 +2656,6 @@ const deploymentConfigs = {
           description: 'Defines how to deploy the database',
           'template.alpha.openshift.io/wait-for-ready': 'true',
         },
-        selfLink: '/apis/apps.openshift.io/v1/namespaces/demo/deploymentconfigs/mysql',
         resourceVersion: '19721745',
         name: 'mysql',
         uid: '9f4dc0f6-4eb0-4558-a33a-8b37bd18fab1',
@@ -2881,7 +2846,6 @@ const deploymentConfigs = {
           description: 'Defines how to deploy the database',
           'template.alpha.openshift.io/wait-for-ready': 'true',
         },
-        selfLink: '/apis/apps.openshift.io/v1/namespaces/demo/deploymentconfigs/mysql',
         resourceVersion: '32488590',
         name: 'mysql-connected',
         uid: '9f4dc0f6-4eb0-4558-a33a-8b37bd18fab1-2',
@@ -3084,7 +3048,6 @@ const deployments = {
             '[{"from":{"kind":"ImageStreamTag","name":"dotnet:latest"},"fieldPath":"spec.template.spec.containers[?(@.name==\\"dotnet\\")].image"}]',
           'openshift.io/generated-by': 'OpenShiftWebConsole',
         },
-        selfLink: '/apis/apps/v1/namespaces/demo/deployments/dotnet',
         resourceVersion: '19625850',
         name: 'dotnet',
         uid: '1b516e94-2fa2-4446-b84c-ef179a81aae3',
@@ -3214,8 +3177,6 @@ const virtualmachinetemplates = {
           iconClass: 'icon-centos',
           'openshift.io/provider-display-name': 'KubeVirt',
         },
-        selfLink:
-          '/apis/template.openshift.io/v1/namespaces/openshift/templates/centos8-server-small-v0.7.0',
         resourceVersion: '31735',
         name: 'centos8-server-small-v0.7.0',
         uid: '04e18320-1942-40d9-a8fe-bb816128030d',
@@ -3263,8 +3224,6 @@ const virtualmachinetemplates = {
           iconClass: 'icon-fedora',
           'openshift.io/provider-display-name': 'KubeVirt',
         },
-        selfLink:
-          '/apis/template.openshift.io/v1/namespaces/openshift/templates/fedora-server-tiny-v0.7.0',
         resourceVersion: '31945',
         name: 'fedora-server-tiny-v0.7.0',
         uid: '2b354e0d-08a0-476d-a852-c452e8ef5707',

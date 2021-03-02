@@ -10,7 +10,6 @@ export const subscriptionData: K8sResourceKind = {
       'messaging.knative.dev/creator': 'kube:admin',
       'messaging.knative.dev/lastModifier': 'kube:admin',
     },
-    selfLink: '/apis/messaging.knative.dev/v1beta1/namespaces/sample-app/subscriptions/sub1',
     resourceVersion: '43908',
     name: 'sub1',
     uid: '26152eb3-f36b-4b13-b26f-3ba165642b01',
@@ -129,8 +128,6 @@ export const triggerData: K8sResourceKind = {
       'kubectl.kubernetes.io/last-applied-configuration':
         '{"apiVersion":"eventing.knative.dev/v1beta1","kind":"Trigger","metadata":{"annotations":{},"name":"testevents-trigger0","namespace":"sample-app"},"spec":{"broker":"default","filter":{"attributes":{"type":"dev.knative.sources.ping"}},"subscriber":{"ref":{"apiVersion":"serving.knative.dev/v1","kind":"Service","name":"broker-display"}}}}\n',
     },
-    selfLink:
-      '/apis/eventing.knative.dev/v1beta1/namespaces/sample-app/triggers/testevents-trigger0',
     resourceVersion: '483312',
     name: 'testevents-trigger0',
     uid: 'f600e386-90d3-4405-a28a-9c96b7a286ab',

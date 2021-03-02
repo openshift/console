@@ -29,10 +29,4 @@ export interface V1ListMeta {
    * @memberof V1ListMeta
    */
   resourceVersion?: string;
-  /**
-   * selfLink is a URL representing this object. Populated by the system. Read-only.
-   * @type {string}
-   * @memberof V1ListMeta
-   */
-  selfLink?: string;
 }

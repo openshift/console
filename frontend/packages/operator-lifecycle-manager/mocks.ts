@@ -440,8 +440,6 @@ const amqPackageManifest = {
   metadata: {
     name: 'amq-streams',
     namespace: 'openshift-operator-lifecycle-manager',
-    selfLink:
-      '/apis/packages.apps.redhat.com/v1alpha1/namespaces/openshift-operator-lifecycle-manager/packagemanifests/amq-streams',
     creationTimestamp: '2018-10-23T12:50:22Z',
     labels: {
       catalog: 'rh-operators',
@@ -492,8 +490,6 @@ const etcdPackageManifest = {
   metadata: {
     name: 'etcd',
     namespace: 'openshift-operator-lifecycle-manager',
-    selfLink:
-      '/apis/packages.apps.redhat.com/v1alpha1/namespaces/openshift-operator-lifecycle-manager/packagemanifests/etcd',
     creationTimestamp: '2018-10-23T12:50:22Z',
     labels: {
       catalog: 'rh-operators',
@@ -546,8 +542,6 @@ const federationv2PackageManifest = {
   metadata: {
     name: 'federationv2',
     namespace: 'openshift-operator-lifecycle-manager',
-    selfLink:
-      '/apis/packages.apps.redhat.com/v1alpha1/namespaces/openshift-operator-lifecycle-manager/packagemanifests/federationv2',
     creationTimestamp: '2018-10-23T12:50:22Z',
     labels: {
       catalog: 'rh-operators',
@@ -595,8 +589,6 @@ const prometheusPackageManifest = {
   metadata: {
     name: 'prometheus',
     namespace: 'openshift-operator-lifecycle-manager',
-    selfLink:
-      '/apis/packages.apps.redhat.com/v1alpha1/namespaces/openshift-operator-lifecycle-manager/packagemanifests/prometheus',
     creationTimestamp: '2018-10-23T12:50:22Z',
     labels: {
       catalog: 'rh-operators',
@@ -647,8 +639,6 @@ const svcatPackageManifest = {
   metadata: {
     name: 'svcat',
     namespace: 'openshift-operator-lifecycle-manager',
-    selfLink:
-      '/apis/packages.apps.redhat.com/v1alpha1/namespaces/openshift-operator-lifecycle-manager/packagemanifests/svcat',
     creationTimestamp: '2018-10-23T12:50:22Z',
     labels: {
       catalog: 'rh-operators',
@@ -697,8 +687,6 @@ export const dummyPackageManifest = {
   metadata: {
     name: 'dummy',
     namespace: 'openshift-operator-lifecycle-manager',
-    selfLink:
-      '/apis/packages.apps.redhat.com/v1alpha1/namespaces/openshift-operator-lifecycle-manager/packagemanifests/dummy',
     creationTimestamp: '2018-10-23T12:50:22Z',
     labels: {
       catalog: 'dummy-operators',

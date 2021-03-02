@@ -16,7 +16,6 @@ export const sampleDeploymentConfigs: FirehoseResult = {
       metadata: {
         name: 'nodejs',
         namespace: 'testproject1',
-        selfLink: '/apis/apps.openshift.io/v1/namespaces/testproject1/deploymentconfigs/nodejs',
         uid: '02f680df-680f-11e9-b69e-5254003f9382',
         resourceVersion: '732186',
         generation: 2,
@@ -78,7 +77,6 @@ export const sampleDeploymentConfigs: FirehoseResult = {
       metadata: {
         name: 'nodejs-ex',
         namespace: 'testproject1',
-        selfLink: '/apis/apps.openshift.io/v1/namespaces/testproject1/deploymentconfigs/nodejs',
         uid: '02f680df-b69e-5254003f9382',
         resourceVersion: '732186',
         generation: 2,
@@ -130,7 +128,6 @@ export const sampleDeployments: FirehoseResult<DeploymentKind[]> = {
         annotations: {
           'app.openshift.io/connects-to': '["wit"]',
         },
-        selfLink: '/apis/apps/v1/namespaces/testproject1/deployments/analytics-deployment',
         resourceVersion: '753748',
         name: 'analytics-deployment',
         uid: '5ca9ae28-680d-11e9-8c69-5254003f9382',
@@ -190,7 +187,6 @@ export const sampleDeployments: FirehoseResult<DeploymentKind[]> = {
         annotations: {
           'deployment.kubernetes.io/revision': '1',
         },
-        selfLink: '/apis/apps/v1/namespaces/testproject1/deployments/wit-deployment',
         resourceVersion: '726179',
         name: 'wit-deployment',
         uid: '60a9b423-680d-11e9-8c69-5254003f9382',
@@ -282,7 +278,6 @@ export const sampleDeployments: FirehoseResult<DeploymentKind[]> = {
           'prometheus.io/scrape': 'true',
           'sidecar.istio.io/inject': 'false',
         },
-        selfLink: '/apis/apps/v1/namespaces/myproj/deployments/jaeger-all-in-one-inmemory',
         resourceVersion: '120365',
         name: 'jaeger-all-in-one-inmemory',
         uid: 'c73277f2-e85c-477c-a43d-330a5d0b2cf6',
@@ -413,7 +408,6 @@ export const samplePods: FirehoseResult<PodKind[]> = {
             '[{\n    "name": "openshift-sdn",\n    "interface": "eth0",\n    "ips": [\n        "10.128.2.50"\n    ],\n    "default": true,\n    "dns": {}\n}]',
           'openshift.io/scc': 'restricted',
         },
-        selfLink: '/api/v1/namespaces/jeff-project/pods/py-cron-1593000600-pq8jn',
         resourceVersion: '104969',
         name: 'py-cron-1593000600-pq8jn',
         uid: 'd09c22d8-4d12-465c-b178-fbd76db43ed8',
@@ -453,7 +447,6 @@ export const samplePods: FirehoseResult<PodKind[]> = {
             '[{\n    "name": "openshift-sdn",\n    "interface": "eth0",\n    "ips": [\n        "10.128.2.48"\n    ],\n    "default": true,\n    "dns": {}\n}]',
           'openshift.io/scc': 'restricted',
         },
-        selfLink: '/api/v1/namespaces/jeff-project/pods/py-cron-1593000600-9v5lq',
         resourceVersion: '104275',
         name: 'py-cron-1593000600-9v5lq',
         uid: 'f680a75a-9bd5-4b72-a5da-62477f0a4573',
@@ -493,7 +486,6 @@ export const samplePods: FirehoseResult<PodKind[]> = {
             '[{\n    "name": "openshift-sdn",\n    "interface": "eth0",\n    "ips": [\n        "10.128.2.96"\n    ],\n    "default": true,\n    "dns": {}\n}]',
           'openshift.io/scc': 'restricted',
         },
-        selfLink: '/api/v1/namespaces/jeff-project/pods/py-cron-1593002400-bzzmm',
         resourceVersion: '132152',
         name: 'py-cron-1593002400-bzzmm',
         uid: 'c5f81e7f-a373-41f7-912a-55940642cc4e',
@@ -533,7 +525,6 @@ export const samplePods: FirehoseResult<PodKind[]> = {
           'openshift.io/build.name': 'py-cron-1',
           'openshift.io/scc': 'privileged',
         },
-        selfLink: '/api/v1/namespaces/jeff-project/pods/py-cron-1-build',
         resourceVersion: '60137',
         name: 'py-cron-1-build',
         uid: '67120da8-0c67-4158-892e-d7278d62795d',
@@ -571,7 +562,6 @@ export const samplePods: FirehoseResult<PodKind[]> = {
             '[{\n    "name": "openshift-sdn",\n    "interface": "eth0",\n    "ips": [\n        "10.128.2.91"\n    ],\n    "default": true,\n    "dns": {}\n}]',
           'openshift.io/scc': 'restricted',
         },
-        selfLink: '/api/v1/namespaces/jeff-project/pods/py-cron-1593002400-hcnrb',
         resourceVersion: '129932',
         name: 'py-cron-1593002400-hcnrb',
         uid: '1bb8b0f1-be63-4e41-b37c-88778fea1722',
@@ -611,7 +601,6 @@ export const samplePods: FirehoseResult<PodKind[]> = {
             '[{\n    "name": "openshift-sdn",\n    "interface": "eth0",\n    "ips": [\n        "10.128.2.94"\n    ],\n    "default": true,\n    "dns": {}\n}]',
           'openshift.io/scc': 'restricted',
         },
-        selfLink: '/api/v1/namespaces/jeff-project/pods/py-cron-1593002400-pvcgm',
         resourceVersion: '130695',
         name: 'py-cron-1593002400-pvcgm',
         uid: '7f65e6ef-26a2-4c55-9665-cc57a6ba7ebe',
@@ -651,7 +640,6 @@ export const samplePods: FirehoseResult<PodKind[]> = {
             '[{\n    "name": "openshift-sdn",\n    "interface": "eth0",\n    "ips": [\n        "10.129.2.16"\n    ],\n    "default": true,\n    "dns": {}\n}]',
           'openshift.io/scc': 'restricted',
         },
-        selfLink: '/api/v1/namespaces/jeff-project/pods/standalone-job-jchzw',
         resourceVersion: '59798',
         name: 'standalone-job-jchzw',
         uid: '100afa1b-58fd-40cc-b428-6c9c939c4e15',
@@ -805,7 +793,6 @@ export const samplePods: FirehoseResult<PodKind[]> = {
             '[{\n    "name": "openshift-sdn",\n    "interface": "eth0",\n    "ips": [\n        "10.128.2.20"\n    ],\n    "default": true,\n    "dns": {}\n}]',
           'openshift.io/scc': 'anyuid',
         },
-        selfLink: '/api/v1/namespaces/jeff-project/pods/standalone-pod',
         resourceVersion: '59106',
         name: 'standalone-pod',
         uid: 'ef598095-c5d7-413f-8f41-e2b1da622dee',
@@ -830,7 +817,6 @@ export const samplePods: FirehoseResult<PodKind[]> = {
         annotations: {
           'openshift.io/scc': 'restricted',
         },
-        selfLink: '/api/v1/namespaces/testproject3/pods/analytics-deployment-59dd7c47d4-2jp7t',
         resourceVersion: '1395096',
         name: 'analytics-deployment-59dd7c47d4-2jp7t',
         uid: '5cec460e-680d-11e9-8c69-5254003f9382',
@@ -870,7 +856,6 @@ export const samplePods: FirehoseResult<PodKind[]> = {
         annotations: {
           'openshift.io/scc': 'restricted',
         },
-        selfLink: '/api/v1/namespaces/testproject3/pods/analytics-deployment-59dd7c47d4-6btjb',
         resourceVersion: '1394896',
         name: 'analytics-deployment-59dd7c47d4-6btjb',
         uid: 'c4592a49-683c-11e9-8c69-5254003f9382',
@@ -911,7 +896,6 @@ export const samplePods: FirehoseResult<PodKind[]> = {
         annotations: {
           'openshift.io/scc': 'restricted',
         },
-        selfLink: '/api/v1/namespaces/testproject3/pods/analytics-deployment-59dd7c47d4-n4zrh',
         resourceVersion: '1394826',
         name: 'analytics-deployment-59dd7c47d4-n4zrh',
         uid: '5cec1049-680d-11e9-8c69-5254003f9382',
@@ -955,7 +939,6 @@ export const samplePods: FirehoseResult<PodKind[]> = {
           'openshift.io/deployment.name': 'nodejs-1',
           'openshift.io/scc': 'restricted',
         },
-        selfLink: '/api/v1/namespaces/testproject3/pods/nodejs-1-2v82p',
         resourceVersion: '1161178',
         name: 'nodejs-1-2v82p',
         uid: '19e6c6a5-680f-11e9-8c69-5254003f9382',
@@ -993,7 +976,6 @@ export const samplePods: FirehoseResult<PodKind[]> = {
           'openshift.io/build.name': 'nodejs-1',
           'openshift.io/scc': 'privileged',
         },
-        selfLink: '/api/v1/namespaces/testproject3/pods/nodejs-1-build',
         resourceVersion: '1161133',
         name: 'nodejs-1-build',
         uid: '0361f689-680f-11e9-8c69-5254003f9382',
@@ -1028,7 +1010,6 @@ export const samplePods: FirehoseResult<PodKind[]> = {
         annotations: {
           'openshift.io/scc': 'restricted',
         },
-        selfLink: '/api/v1/namespaces/testproject3/pods/wit-deployment-656cc8b469-2n6nl',
         resourceVersion: '1394776',
         name: 'wit-deployment-656cc8b469-2n6nl',
         uid: '610c7d95-680d-11e9-8c69-5254003f9382',
@@ -1069,7 +1050,6 @@ export const samplePods: FirehoseResult<PodKind[]> = {
         annotations: {
           'openshift.io/scc': 'restricted',
         },
-        selfLink: '/api/v1/namespaces/testproject3/pods/wit-deployment-656cc8b469-kzh9c',
         resourceVersion: '1394914',
         name: 'wit-deployment-656cc8b469-kzh9c',
         uid: '60dbfd78-680d-11e9-8c69-5254003f9382',
@@ -1109,7 +1089,6 @@ export const samplePods: FirehoseResult<PodKind[]> = {
         annotations: {
           'openshift.io/scc': 'restricted',
         },
-        selfLink: '/api/v1/namespaces/testproject3/pods/wit-deployment-656cc8b469-r5nlj',
         resourceVersion: '1395115',
         name: 'wit-deployment-656cc8b469-r5nlj',
         uid: '610bbd96-680d-11e9-8c69-5254003f9382',
@@ -1151,7 +1130,6 @@ export const samplePods: FirehoseResult<PodKind[]> = {
             '[{\n    "name": "openshift-sdn",\n    "interface": "eth0",\n    "ips": [\n        "10.128.0.89"\n    ],\n    "default": true,\n    "dns": {}\n}]',
           'openshift.io/scc': 'restricted',
         },
-        selfLink: '/api/v1/namespaces/testing/pods/daemonset-testing-62h94',
         resourceVersion: '700638',
         name: 'daemonset-testing-62h94',
         uid: '0c4dd58f-a6e6-11e9-a20f-52fdfc072182',
@@ -1188,7 +1166,6 @@ export const samplePods: FirehoseResult<PodKind[]> = {
         name: 'alertmanager-main-0',
         generateName: 'alertmanager-main-',
         namespace: 'openshift-monitoring',
-        selfLink: '/api/v1/namespaces/openshift-monitoring/pods/alertmanager-main-0',
         uid: 'db4924ec-adfb-11e9-ac86-062ae0b85aca',
         resourceVersion: '14171',
         creationTimestamp: '2019-07-24T10:14:43Z',
@@ -1236,7 +1213,6 @@ export const sampleReplicationControllers: FirehoseResult = {
           'openshift.io/deployer-pod.completed-at': '2019-04-26 10:36:10 +0000 UTC',
           'openshift.io/deployment.phase': 'Complete',
         },
-        selfLink: '/api/v1/namespaces/testproject3/replicationcontrollers/nodejs-1',
         resourceVersion: '1161189',
         name: 'nodejs-1',
         uid: '18c94ccd-680f-11e9-8c69-5254003f9382',
@@ -1285,8 +1261,6 @@ export const sampleReplicaSets: FirehoseResult = {
           'deployment.kubernetes.io/revision': '1',
           'deployment.kubernetes.io/revision-history': '1,1,1',
         },
-        selfLink:
-          '/apis/apps/v1/namespaces/testproject3/replicasets/analytics-deployment-59dd7c47d4',
         resourceVersion: '1398999',
         name: 'analytics-deployment-59dd7c47d4',
         uid: '5cad37cb-680d-11e9-8c69-5254003f9382',
@@ -1327,7 +1301,6 @@ export const sampleReplicaSets: FirehoseResult = {
           'deployment.kubernetes.io/max-replicas': '4',
           'deployment.kubernetes.io/revision': '1',
         },
-        selfLink: '/apis/apps/v1/namespaces/testproject3/replicasets/wit-deployment-656cc8b469',
         resourceVersion: '1389053',
         name: 'wit-deployment-656cc8b469',
         uid: '60a9b423-680d-11e9-8c69-5254003f9382',
@@ -1372,7 +1345,6 @@ export const sampleServices: FirehoseResult = {
       metadata: {
         name: 'analytics-service',
         namespace: 'testproject3',
-        selfLink: '/api/v1/namespaces/testproject3/services/analytics-service',
         uid: '5cb930e0-680d-11e9-8c69-5254003f9382',
         resourceVersion: '1157349',
         creationTimestamp: '2019-04-26T10:23:41Z',
@@ -1406,7 +1378,6 @@ export const sampleServices: FirehoseResult = {
       metadata: {
         name: 'nodejs',
         namespace: 'testproject3',
-        selfLink: '/api/v1/namespaces/testproject3/services/nodejs',
         uid: '02f53542-680f-11e9-8c69-5254003f9382',
         resourceVersion: '1160881',
         creationTimestamp: '2019-04-26T10:35:29Z',
@@ -1429,7 +1400,6 @@ export const sampleServices: FirehoseResult = {
       metadata: {
         name: 'wit-service',
         namespace: 'testproject3',
-        selfLink: '/api/v1/namespaces/testproject3/services/wit-service',
         uid: '60e010cc-680d-11e9-8c69-5254003f9382',
         resourceVersion: '1157449',
         creationTimestamp: '2019-04-26T10:23:48Z',
@@ -1469,7 +1439,6 @@ export const sampleRoutes: FirehoseResult = {
       metadata: {
         name: 'analytics-route',
         namespace: 'testproject3',
-        selfLink: '/apis/route.openshift.io/v1/namespaces/testproject3/routes/analytics-route',
         uid: '5cb4135f-680d-11e9-b69e-5254003f9382',
         resourceVersion: '1157355',
         creationTimestamp: '2019-04-26T10:23:41Z',
@@ -1500,7 +1469,6 @@ export const sampleRoutes: FirehoseResult = {
       metadata: {
         name: 'nodejs',
         namespace: 'testproject3',
-        selfLink: '/apis/route.openshift.io/v1/namespaces/testproject3/routes/nodejs',
         uid: '02f63696-680f-11e9-b69e-5254003f9382',
         resourceVersion: '1160889',
         creationTimestamp: '2019-04-26T10:35:29Z',
@@ -1526,7 +1494,6 @@ export const sampleRoutes: FirehoseResult = {
       metadata: {
         name: 'wit-route',
         namespace: 'testproject3',
-        selfLink: '/apis/route.openshift.io/v1/namespaces/testproject3/routes/wit-route',
         uid: '60dba9b8-680d-11e9-b69e-5254003f9382',
         resourceVersion: '1157450',
         creationTimestamp: '2019-04-26T10:23:48Z',
@@ -1563,7 +1530,6 @@ export const sampleBuildConfigs: FirehoseResult = {
       metadata: {
         name: 'py-cron',
         namespace: 'jeff-project',
-        selfLink: '/apis/build.openshift.io/v1/namespaces/jeff-project/buildconfigs/py-cron',
         uid: '73d2d812-29aa-4b6a-87e0-d69fcf3ed0cd',
         resourceVersion: '58983',
         creationTimestamp: '2020-06-24T11:17:40Z',
@@ -1611,8 +1577,6 @@ export const sampleBuildConfigs: FirehoseResult = {
       metadata: {
         name: 'analytics-build',
         namespace: 'testproject3',
-        selfLink:
-          '/apis/build.openshift.io/v1/namespaces/testproject3/buildconfigs/analytics-build',
         uid: '5ca46c49-680d-11e9-b69e-5254003f9382',
         resourceVersion: '1772624',
         creationTimestamp: '2019-04-26T10:23:40Z',
@@ -1640,7 +1604,6 @@ export const sampleBuildConfigs: FirehoseResult = {
       metadata: {
         name: 'nodejs',
         namespace: 'testproject3',
-        selfLink: '/apis/build.openshift.io/v1/namespaces/testproject3/buildconfigs/nodejs',
         uid: '02fc958f-680f-11e9-b69e-5254003f9382',
         resourceVersion: '1160891',
         creationTimestamp: '2019-04-26T10:35:29Z',
@@ -1669,7 +1632,6 @@ export const sampleBuildConfigs: FirehoseResult = {
       metadata: {
         name: 'wit-build',
         namespace: 'testproject3',
-        selfLink: '/apis/build.openshift.io/v1/namespaces/testproject3/buildconfigs/wit-build',
         uid: '608914d2-680d-11e9-b69e-5254003f9382',
         resourceVersion: '1157436',
         creationTimestamp: '2019-04-26T10:23:47Z',
@@ -1706,7 +1668,6 @@ export const sampleBuilds: FirehoseResult = {
           'openshift.io/build-config.name': 'analytics-build',
           'openshift.io/build.number': '1',
         },
-        selfLink: '/apis/build.openshift.io/v1/namespaces/testproject3/builds/analytics-build-1',
         resourceVersion: '358822',
         name: 'analytics-build-1',
         uid: '58d6b528-9c89-11e9-80f4-0a580a82001a',
@@ -1801,7 +1762,6 @@ export const sampleDaemonSets: FirehoseResult = {
       metadata: {
         name: 'daemonset-testing',
         namespace: 'testing',
-        selfLink: '/apis/apps/v1/namespaces/testing/daemonsets/daemonset-testing',
         uid: '0c4a82c9-a6e6-11e9-a20f-52fdfc072182',
         resourceVersion: '700614',
         generation: 1,
@@ -1878,7 +1838,6 @@ export const sampleStatefulSets: FirehoseResult = {
       metadata: {
         name: 'alertmanager-main',
         namespace: 'openshift-monitoring',
-        selfLink: '/apis/apps/v1/namespaces/openshift-monitoring/statefulsets/alertmanager-main',
         uid: 'db365c19-adfb-11e9-ac86-062ae0b85aca',
         resourceVersion: '14506',
         generation: 1,
@@ -2023,7 +1982,6 @@ export const sampleJobs: FirehoseResult = {
         annotations: {
           'alpha.image.policy.openshift.io/resolve-names': '*',
         },
-        selfLink: '/apis/batch/v1/namespaces/jeff-project/jobs/py-cron-1593000600',
         resourceVersion: '108691',
         name: 'py-cron-1593000600',
         uid: 'c9a27ca7-d258-4acf-a915-a146cacd6924',
@@ -2207,7 +2165,6 @@ export const sampleJobs: FirehoseResult = {
       metadata: {
         name: 'standalone-job',
         namespace: 'jeff-project',
-        selfLink: '/apis/batch/v1/namespaces/jeff-project/jobs/standalone-job',
         uid: 'c1a988ed-3fd6-4a10-a4a5-7612a28eb48e',
         resourceVersion: '59800',
         creationTimestamp: '2020-06-24T11:17:41Z',
@@ -2340,7 +2297,6 @@ export const sampleJobs: FirehoseResult = {
         annotations: {
           'alpha.image.policy.openshift.io/resolve-names': '*',
         },
-        selfLink: '/apis/batch/v1/namespaces/jeff-project/jobs/py-cron-1593002100',
         resourceVersion: '125142',
         name: 'py-cron-1593002100',
         uid: '39d16c87-00b8-4423-a66a-ac712cda7701',
@@ -2509,7 +2465,6 @@ export const sampleCronJobs: FirehoseResult = {
       metadata: {
         name: 'py-cron',
         namespace: 'jeff-project',
-        selfLink: '/apis/batch/v1beta1/namespaces/jeff-project/cronjobs/py-cron',
         uid: 'be644703-be4b-4ee5-9d86-fdeb9495569c',
         resourceVersion: '125137',
         creationTimestamp: '2020-06-24T11:17:41Z',
@@ -2692,7 +2647,6 @@ export const samplePipeline: FirehoseResult = {
         name: 'hello-world-pipeline',
         namespace: 't-s',
         resourceVersion: '371236',
-        selfLink: '/apis/tekton.dev/v1alpha1/namespaces/t-s/pipelines/hello-world-pipeline',
         uid: '73d7842d-975f-44ab-99e4-727b7cf097b6',
         labels: {
           'app.kubernetes.io/instance': 'nodejs',
@@ -2728,7 +2682,6 @@ export const samplePipelineRun: FirehoseResult = {
         name: 'hello-world-pipeline',
         namespace: 't-s',
         resourceVersion: '371822',
-        selfLink: '/apis/tekton.dev/v1alpha1/namespaces/t-s/pipelineruns/hello-world-pipeline',
         uid: 'a049c81e-ba40-4248-ac54-a2728893afcb',
       },
       spec: {
@@ -2811,8 +2764,6 @@ export const sampleClusterServiceVersions: FirehoseResult = {
             'Provides tracing, monitoring and troubleshooting microservices-based distributed systems',
           'olm.operatorGroup': 'global-operators',
         },
-        selfLink:
-          '/apis/operators.coreos.com/v1alpha1/namespaces/newproj/clusterserviceversions/jaeger-operator.v1.13.1',
         resourceVersion: '205414',
         name: 'jaeger-operator.v1.13.1',
         uid: '777f23e6-42fa-419d-b2ee-592c1b0001ae',

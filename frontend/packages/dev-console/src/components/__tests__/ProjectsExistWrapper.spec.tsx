@@ -45,7 +45,6 @@ describe('ProjectsExistWrapper', () => {
       {
         metadata: {
           name: 'test-project',
-          selfLink: '/apis/project.openshift.io/v1/projects/test-project',
           uid: '3afaa628-fde7-4afa-8800-281b7b11f4bf',
           resourceVersion: '91841',
           creationTimestamp: '2019-12-19T16:08:38Z',

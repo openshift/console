@@ -7,8 +7,6 @@ export const ImageStreamTagData: ImageTag = {
   metadata: {
     name: 'os-test-image:latest',
     namespace: 'rhd-devproject',
-    selfLink:
-      '/apis/image.openshift.io/v1/namespaces/rhd-devproject/imagestreamtags/os-test-image%3Alatest',
     uid: '0a7cfc61-03ed-11ea-a8ff-0a580a80013c',
     resourceVersion: '808616',
     creationTimestamp: '2019-11-10T19:05:22Z',
@@ -108,7 +106,6 @@ export const sampleImageStreams: K8sResourceKind[] = [
   {
     metadata: {
       annotations: { 'openshift.io/image.dockerRepositoryCheck': '2019-11-10T19:24:36Z' },
-      selfLink: '/apis/image.openshift.io/v1/namespaces/project-1/imagestreams/os-test-image',
       resourceVersion: '811634',
       name: 'os-test-image',
       uid: 'b8c35c06-03ef-11ea-a8ff-0a580a80013c',
@@ -164,7 +161,6 @@ export const sampleImageStreams: K8sResourceKind[] = [
   {
     metadata: {
       annotations: { 'openshift.io/image.dockerRepositoryCheck': '2019-11-10T19:24:36Z' },
-      selfLink: '/apis/image.openshift.io/v1/namespaces/project-2/imagestreams/os-test-image',
       resourceVersion: '811634',
       name: 'os-test-image',
       uid: 'b8c35c06-03ef-11ea-a8ff-0a580a80013c',

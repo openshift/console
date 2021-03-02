@@ -44,7 +44,6 @@ export const sampleDeploymentsCamelConnector: FirehoseResult<DeploymentKind[]> =
       apiVersion: 'apps/v1',
       metadata: {
         annotations: { 'deployment.kubernetes.io/revision': '1' },
-        selfLink: '/apis/apps/v1/namespaces/testproject1/deployments/overlayimage-f56hh',
         resourceVersion: '466744',
         name: 'overlayimage-f56hh',
         uid: '644ee7d3-83ce-442c-b478-492bc92d8959',
@@ -196,7 +195,6 @@ export const sampleKnativeDeployments: FirehoseResult<DeploymentKind[]> = {
         annotations: {
           'deployment.kubernetes.io/revision': '1',
         },
-        selfLink: '/apis/apps/v1/namespaces/testproject1/deployments/default-ingress',
         resourceVersion: '726179',
         name: 'default-ingress',
         uid: 'bccad3e4-8ce0-11e9-bb7b-0ebb55b110b8',
@@ -268,7 +266,6 @@ export const sampleKnativeDeployments: FirehoseResult<DeploymentKind[]> = {
         annotations: {
           'deployment.kubernetes.io/revision': '1',
         },
-        selfLink: '/apis/apps/v1/namespaces/testproject1/deployments/default-ingress',
         resourceVersion: '726179',
         name: 'default-ingress',
         uid: 'bccad3e4-8ce0-11e9-bb7b-0ebb55b110b8',
@@ -342,7 +339,6 @@ export const sampleKnativeReplicaSets: FirehoseResult = {
           'deployment.kubernetes.io/max-replicas': '0',
           'deployment.kubernetes.io/revision': '1',
         },
-        selfLink: '/apis/apps/v1/namespaces/testproject3/replicasets/default-ingress-5d9685cc74',
         resourceVersion: '1389053',
         name: 'default-ingress-5d9685cc74',
         uid: 'bccd5351-8ce0-11e9-9020-0ab4b49bd478',
@@ -430,7 +426,6 @@ export const sampleKnativeConfigurations: FirehoseResult = {
       metadata: {
         name: 'overlayimage',
         namespace: 'testproject3',
-        selfLink: '/api/v1/namespaces/testproject3/configurations/overlayimage',
         uid: '1317f615-9636-11e9-b134-06a61d886b62',
         resourceVersion: '1157349',
         labels: {
@@ -464,7 +459,6 @@ export const revisionObj: RevisionKind = {
   metadata: {
     name: 'overlayimage-fdqsf',
     namespace: 'testproject3',
-    selfLink: '/api/v1/namespaces/testproject3/revisions/overlayimage',
     uid: '02c34a0e-9638-11e9-b134-06a61d886b62',
     resourceVersion: '1157349',
     creationTimestamp: '2019-06-12T07:07:57Z',
@@ -532,7 +526,6 @@ export const knativeRouteObj: RouteKind = {
   metadata: {
     name: 'overlayimage',
     namespace: 'testproject3',
-    selfLink: '/api/v1/namespaces/testproject3/routes/overlayimage',
     uid: '1317f615-9636-11e9-b134-06a61d886b62',
     resourceVersion: '1157349',
     creationTimestamp: '2019-06-12T07:07:57Z',
@@ -579,7 +572,6 @@ export const knativeServiceObj: knativeServiceKind = {
     },
     name: 'overlayimage',
     namespace: 'testproject3',
-    selfLink: '/api/v1/namespaces/testproject3/services/overlayimage',
     uid: 'cea9496b-8ce0-11e9-bb7b-0ebb55b110b8',
     resourceVersion: '1157349',
     generation: 1,
@@ -696,8 +688,6 @@ export const sampleSourceKameletBinding: FirehoseResult = {
           'camel.apache.org/kamelet.icon':
             'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNDAgMjQwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImEiIHgxPSIuNjY3IiB4Mj0iLjQxNyIgeTE9Ii4xNjciIHkyPSIuNzUiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzM3YWVlMiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzFlOTZjOCIvPjwvbGluZWFyR3JhZGllbnQ+PGxpbmVhckdyYWRpZW50IGlkPSJiIiB4MT0iLjY2IiB4Mj0iLjg1MSIgeTE9Ii40MzciIHkyPSIuODAyIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNlZmY3ZmMiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNmZmYiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48Y2lyY2xlIGN4PSIxMjAiIGN5PSIxMjAiIHI9IjEyMCIgZmlsbD0idXJsKCNhKSIvPjxwYXRoIGZpbGw9IiNjOGRhZWEiIGQ9Ik05OCAxNzVjLTMuODg4IDAtMy4yMjctMS40NjgtNC41NjgtNS4xN0w4MiAxMzIuMjA3IDE3MCA4MCIvPjxwYXRoIGZpbGw9IiNhOWM5ZGQiIGQ9Ik05OCAxNzVjMyAwIDQuMzI1LTEuMzcyIDYtM2wxNi0xNS41NTgtMTkuOTU4LTEyLjAzNSIvPjxwYXRoIGZpbGw9InVybCgjYikiIGQ9Ik0xMDAuMDQgMTQ0LjQxbDQ4LjM2IDM1LjcyOWM1LjUxOSAzLjA0NSA5LjUwMSAxLjQ2OCAxMC44NzYtNS4xMjNsMTkuNjg1LTkyLjc2M2MyLjAxNS04LjA4LTMuMDgtMTEuNzQ2LTguMzYtOS4zNDlsLTExNS41OSA0NC41NzFjLTcuODkgMy4xNjUtNy44NDMgNy41NjctMS40MzggOS41MjhsMjkuNjYzIDkuMjU5IDY4LjY3My00My4zMjVjMy4yNDItMS45NjYgNi4yMTgtLjkxIDMuNzc2IDEuMjU4Ii8+PC9zdmc+',
         },
-        selfLink:
-          '/apis/camel.apache.org/v1alpha1/namespaces/jai-test/kameletbindings/overlayimage',
         resourceVersion: '267611',
         name: 'overlayimage',
         uid: '3343caf6-f23f-420a-888e-e2c06aaaa843',
@@ -742,7 +732,6 @@ export const sampleServices: FirehoseResult = {
       metadata: {
         name: 'overlayimage',
         namespace: 'testproject3',
-        selfLink: '/api/v1/namespaces/testproject3/services/overlayimage',
         uid: 'cea9496b-8ce0-11e9-bb7b-0ebb55b110b8',
         resourceVersion: '1157349',
         creationTimestamp: '2019-06-12T07:07:57Z',
@@ -774,7 +763,6 @@ export const sampleServices: FirehoseResult = {
       metadata: {
         name: 'overlayimage-9jsl8',
         namespace: 'testproject3',
-        selfLink: '/api/v1/namespaces/testproject3/services/overlayimage-9jsl8',
         uid: 'bd1b788b-8ce0-11e9-bb7b-0ebb55b110b8',
         resourceVersion: '1160881',
         creationTimestamp: '2019-04-26T10:35:29Z',
@@ -864,8 +852,6 @@ export const sampleEventSourceDeployments: FirehoseResult<DeploymentKind[]> = {
         annotations: {
           'deployment.kubernetes.io/revision': '1',
         },
-        selfLink:
-          '/apis/apps/v1/namespaces/testproject1/deployments/apiserversource-testevents-88eb61d1-b52e-4836-829c-6821e346ecf6',
         resourceVersion: '726179',
         name: 'apiserversource-testevents-88eb61d1-b52e-4836-829c-6821e346ecf6',
         uid: 'bccad3e4-8ce0-11e9-bb7b-0ebb55b110b8',
@@ -931,7 +917,6 @@ export const EventSubscriptionObj: EventSubscriptionKind = {
   metadata: {
     name: 'sub1',
     namespace: 'testproject3',
-    selfLink: '/apis/messaging.knative.dev/v1beta1/namespaces/testproject3/subscriptions/sub2',
     uid: '4de9aba5-432c-46d8-8492-a5bedb10c89a',
     resourceVersion: '235775100',
     generation: 1,
@@ -960,8 +945,6 @@ export const EventIMCObj: EventChannelKind = {
   metadata: {
     name: 'testchannel',
     namespace: 'testproject3',
-    selfLink:
-      '/apis/messaging.knative.dev/v1beta1/namespaces/testproject3/inmemorychannels/testchannel',
     uid: 'a35e6244-3233-473d-9120-ed274c7ae811',
     resourceVersion: '235628221',
     generation: 1,
@@ -1075,7 +1058,6 @@ export const MockKnativeBuildConfig = {
       'openshift.io/build.number': '1',
       'openshift.io/build.pod-name': 'react-web-app-1-build',
     },
-    selfLink: '/apis/build.openshift.io/v1/namespaces/andrew-test/builds/react-web-app-1',
     resourceVersion: '696608',
     name: 'react-web-app-1',
     uid: 'fd52472d-f752-11e9-81ae-0a580a810022',

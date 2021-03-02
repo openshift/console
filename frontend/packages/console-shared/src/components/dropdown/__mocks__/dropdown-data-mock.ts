@@ -7,7 +7,6 @@ export const mockDropdownData = [
             'app.openshift.io/vcs-ref': 'master',
             'app.openshift.io/vcs-uri': 'https://github.com/nodeshift-starters/react-web-app',
           },
-          selfLink: '/apis/apps.openshift.io/v1/namespaces/gjohn/deploymentconfigs/react-web-app',
           resourceVersion: '479854',
           name: 'react-web-app',
           uid: '936560e7-ce52-11e9-8773-0a580a820023',
@@ -37,8 +36,6 @@ export const mockDropdownData = [
             'app.openshift.io/vcs-uri':
               'https://github.com/nodeshift-starters/react-countdown-timer',
           },
-          selfLink:
-            '/apis/apps.openshift.io/v1/namespaces/gjohn/deploymentconfigs/react-countdown-timer',
           resourceVersion: '479855',
           name: 'react-countdown-timer',
           uid: '936560e7-ce52-11e9-8773-0a581a820023',
@@ -67,8 +64,6 @@ export const mockDropdownData = [
             'app.openshift.io/vcs-uri':
               'https://github.com/nodeshift-starters/react-countdown-timer',
           },
-          selfLink:
-            '/apis/apps.openshift.io/v1/namespaces/gjohn/deploymentconfigs/react-countdown-timer',
           resourceVersion: '479855',
           name: 'react-countdown-timer',
           uid: '936560e7-ce52-11e9-8773-0a581a820023',

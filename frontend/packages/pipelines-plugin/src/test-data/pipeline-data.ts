@@ -1006,8 +1006,6 @@ export const pipelineTestData: PipelineTestData = {
         name: 'cluster-mock-app-pipeline',
         namespace: 'openshift',
         resourceVersion: '672093',
-        selfLink:
-          '/apis/tekton.dev/v1alpha1/namespaces/openshift/pipelines/cluster-mock-app-pipeline',
         uid: 'd22b9451-cd71-47f3-be1a-4ca93647b76e',
       },
       spec: pipelineSpec[PipelineExampleNames.CLUSTER_PIPELINE],
@@ -1027,8 +1025,6 @@ export const pipelineTestData: PipelineTestData = {
           name: 'react-web-app-cluster-mock-app-pipeline-aaz5bv',
           namespace: 'andrew-test',
           resourceVersion: '677828',
-          selfLink:
-            '/apis/tekton.dev/v1alpha1/namespaces/andrew-test/pipelineruns/react-web-app-cluster-mock-app-pipeline-aaz5bv',
           uid: 'd067dfb0-dc9d-49b2-a998-c93636c50b7d',
         },
         spec: {
@@ -1682,8 +1678,6 @@ export const pipelineTestData: PipelineTestData = {
               '{"apiVersion":"tekton.dev/v1beta1","kind":"Task","metadata":{"annotations":{},"name":"fetch-secure-data","namespace":"karthik"},"spec":{"steps":[{"image":"ubuntu","name":"fetch-and-write","script":"if [ \\"hunter2\\" = \\"$(cat $(workspaces.super-secret-password.path)/password)\\" ]; then\\n  cp $(workspaces.secure-store.path)/recipe.txt $(workspaces.filedrop.path)\\nelse\\n  echo \\"wrong password!\\"\\n  exit 1\\nfi\\n"}],"workspaces":[{"name":"super-secret-password"},{"name":"secure-store"},{"name":"filedrop"}]}}\n',
             'pipeline.tekton.dev/release': 'devel',
           },
-          selfLink:
-            '/apis/tekton.dev/v1beta1/namespaces/karthik/taskruns/fetch-and-print-recipe-sn3peo-fetch-the-recipe-2rjgw',
           resourceVersion: '527180',
           name: 'fetch-and-print-recipe-sn3peo-fetch-the-recipe-2rjgw',
           uid: '8eab0635-3d63-4f5b-b1a5-48bc6f2fab60',
