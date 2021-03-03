@@ -32,7 +32,7 @@
   "Multiple types of backing stores are supported: asws-s3 s3-compatiblegoogle-cloud-storage azure-blob obc PVC.": "Multiple types of backing stores are supported: asws-s3 s3-compatiblegoogle-cloud-storage azure-blob obc PVC.",
   "Learn More": "Learn More",
   "What is a Bucket Class?": "What is a Bucket Class?",
-  "An Multicloud Object Gateway Buckets data location is determined by a policy called a Bucket Class": "An Multicloud Object Gateway Buckets data location is determined by a policy called a Bucket Class",
+  "A Multicloud Object Gateway bucket's data location is determined by a policy called a Bucket Class": "A Multicloud Object Gateway bucket's data location is determined by a policy called a Bucket Class",
   "Bucket Class Name": "Bucket Class Name",
   "A unique name for the bucket class within the project.": "A unique name for the bucket class within the project.",
   "my-multi-cloud-mirror": "my-multi-cloud-mirror",
