@@ -162,9 +162,9 @@ const registryCreateAction = (history, item) => {
     case 'generic':
       history.push('/');
       if (allNS === 'all-namespaces') {
-        history.push('/k8s/ns/default/registries/~new');
+        history.push('/k8s/ns/default/externalregistries/~new');
       } else {
-        history.push(`/k8s/ns/${ns}/registries/~new`);
+        history.push(`/k8s/ns/${ns}/externalregistries/~new`);
       }
       break;
   }

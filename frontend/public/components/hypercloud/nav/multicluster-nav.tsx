@@ -4,6 +4,7 @@ import { NavItemSeparator } from '@patternfly/react-core';
 // import { ExternalLink, HrefLink, ResourceNSLink, ResourceClusterLink } from './items';
 import { ResourceClusterLink } from '../../nav/items';
 import { NavSection } from '../../nav/section';
+import { Translation } from 'react-i18next';
 
 type SeparatorProps = {
   name: string;
@@ -13,37 +14,41 @@ type SeparatorProps = {
 const Separator: React.FC<SeparatorProps> = ({ name }) => <NavItemSeparator name={name} />;
 
 const MulticlusterNav = () => (
-  <>
-    <ResourceClusterLink resource="clusterclaims" name="Clusters Claims" />
-    <ResourceClusterLink resource="clustermanagers" name="Clusters" />
-    {/* <ResourceClusterLink resource="clustergroups" name="Cluster Groups" /> */}
-    <NavSection title="Federation">
-      <h3 style={{ paddingLeft: '28px' }}>Workloads</h3>
-      <ResourceClusterLink resource="federatedpods" name="Pods" />
-      <ResourceClusterLink resource="federateddeployments" name="Deployments" />
-      <ResourceClusterLink resource="federatedreplicasets" name="Replica Sets" />
-      <ResourceClusterLink resource="federatedhorizontalpodautoscalers" name="Horizontal Pod Autoscalers" />
-      <ResourceClusterLink resource="federateddaemonsets" name="Daemon Sets" />
-      <ResourceClusterLink resource="federatedstatefulsets" name="Stateful Sets" />
-      <ResourceClusterLink resource="federatedconfigmaps" name="Config Maps" />
-      <ResourceClusterLink resource="federatedsecrets" name="Secrets" />
-      <ResourceClusterLink resource="federatedjobs" name="Jobs" />
-      <ResourceClusterLink resource="federatedcronjobs" name="Cron Jobs" />
-      <Separator name="WorkloadsSeparator" />
-      <h3 style={{ paddingLeft: '28px' }}>Network</h3>
-      <ResourceClusterLink resource="federatedingresses" name="Ingresses" />
-      <ResourceClusterLink resource="federatedservices" name="Services" />
-      <Separator name="NetworksSeparator" />
-      <h3 style={{ paddingLeft: '28px' }}>Management</h3>
-      <ResourceClusterLink resource="federatednamespaces" name="Namespaces" />
-    </NavSection>
-    {/* <NavSection title="Image">
+  <Translation>
+    {t => (
+      <>
+        <ResourceClusterLink resource="clusterclaims" name="Clusters Claims" />
+        <ResourceClusterLink resource="clustermanagers" name="Clusters" />
+        {/* <ResourceClusterLink resource="clustergroups" name="Cluster Groups" /> */}
+        <NavSection title="Federation">
+          <h3 style={{ paddingLeft: '28px' }}>Workloads</h3>
+          <ResourceClusterLink resource="federatedpods" name="Pods" />
+          <ResourceClusterLink resource="federateddeployments" name="Deployments" />
+          <ResourceClusterLink resource="federatedreplicasets" name="Replica Sets" />
+          <ResourceClusterLink resource="federatedhorizontalpodautoscalers" name="Horizontal Pod Autoscalers" />
+          <ResourceClusterLink resource="federateddaemonsets" name="Daemon Sets" />
+          <ResourceClusterLink resource="federatedstatefulsets" name="Stateful Sets" />
+          <ResourceClusterLink resource="federatedconfigmaps" name="Config Maps" />
+          <ResourceClusterLink resource="federatedsecrets" name="Secrets" />
+          <ResourceClusterLink resource="federatedjobs" name="Jobs" />
+          <ResourceClusterLink resource="federatedcronjobs" name="Cron Jobs" />
+          <Separator name="WorkloadsSeparator" />
+          <h3 style={{ paddingLeft: '28px' }}>{t('COMMON:MSG_LNB_MENU_46')}</h3>
+          <ResourceClusterLink resource="federatedingresses" name={t('COMMON:MSG_LNB_MENU_48')} />
+          <ResourceClusterLink resource="federatedservices" name={t('COMMON:MSG_LNB_MENU_47')} />
+          <Separator name="NetworksSeparator" />
+          <h3 style={{ paddingLeft: '28px' }}>{t('COMMON:MSG_LNB_MENU_79')}</h3>
+          <ResourceClusterLink resource="federatednamespaces" name={t('COMMON:MSG_LNB_MENU_3')} />
+        </NavSection>
+        {/* <NavSection title="Image">
       <ResourceClusterLink resource="federatedregistries" name="Registry" />
       <ResourceClusterLink resource="federatedimagesigners" name="Image Signer" />
       <ResourceClusterLink resource="federatedimagesignrequests" name="Image Sign Request" />
       <ResourceClusterLink resource="federatedimagetransfers" name="Image Transfer" />
     </NavSection> */}
-  </>
+      </>
+    )}
+  </Translation>
 );
 
 export default MulticlusterNav;
