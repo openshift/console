@@ -112,17 +112,17 @@ const ServiceAddress = ({ s }) => {
   const ServiceType = type => {
     switch (type) {
       case 'NodePort':
-        return ServiceIPsRow('Node Port', 'Accessible outside the cluster', _.map(s.spec.ports, 'nodePort'), '(all nodes): ');
+        return ServiceIPsRow(t('SINGLE:MSG_SERVICES_SERVICESDETAILS_TABDETAILS_SERVICEROUTING_10'), t('SINGLE:MSG_SERVICES_SERVICESDETAILS_TABDETAILS_SERVICEROUTING_11'), _.map(s.spec.ports, 'nodePort'), '(all nodes): ');
       case 'LoadBalancer':
         return ServiceIPsRow(
-          'External Load Balancer',
-          'Ingress point(s) of load balancer',
+          t('SINGLE:MSG_SERVICES_SERVICESDETAILS_TABDETAILS_SERVICEROUTING_12'),
+          t('SINGLE:MSG_SERVICES_SERVICESDETAILS_TABDETAILS_SERVICEROUTING_13'),
           _.map(s.status.loadBalancer.ingress, i => i.hostname || i.ip || '-'),
         );
       case 'ExternalName':
-        return ServiceIPsRow('External Service Name', 'Location of the resource that backs the service', [s.spec.externalName]);
+        return ServiceIPsRow(t('SINGLE:MSG_SERVICES_SERVICESDETAILS_TABDETAILS_SERVICEROUTING_14'), t('SINGLE:MSG_SERVICES_SERVICESDETAILS_TABDETAILS_SERVICEROUTING_15'), [s.spec.externalName]);
       default:
-        return ServiceIPsRow('Cluster IP', 'Accessible within the cluster only', [s.spec.clusterIP]);
+        return ServiceIPsRow(t('SINGLE:MSG_SERVICES_SERVICESDETAILS_TABDETAILS_SERVICEROUTING_16'), t('SINGLE:MSG_SERVICES_SERVICESDETAILS_TABDETAILS_SERVICEROUTING_17'), [s.spec.clusterIP]);
     }
   };
 
