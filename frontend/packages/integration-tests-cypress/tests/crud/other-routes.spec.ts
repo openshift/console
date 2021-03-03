@@ -1,4 +1,5 @@
 import { checkErrors } from '../../support';
+import { nav } from '../../views/nav';
 
 describe('Visiting other routes', () => {
   before(() => {
@@ -50,5 +51,33 @@ describe('Visiting other routes', () => {
       cy.byLegacyTestID('error-page').should('not.exist');
       cy.testA11y(`${route} page`);
     });
+  });
+});
+
+describe.only('Test perspective query parameters', () => {
+  before(() => {
+    cy.login();
+    cy.visit('/k8s/cluster/projects');
+  });
+
+  afterEach(() => {
+    checkErrors();
+  });
+
+  after(() => {
+    cy.logout();
+  });
+
+  it('tests Developer query parameter', () => {
+    nav.sidenav.switcher.changePerspectiveTo('Administrator');
+    nav.sidenav.switcher.shouldHaveText('Administrator');
+    cy.visit('/topology/all-namespaces?view=graph&perspective=dev');
+    nav.sidenav.switcher.shouldHaveText('Developer');
+  });
+  it('tests Administrator query parameter', () => {
+    nav.sidenav.switcher.changePerspectiveTo('Developer');
+    nav.sidenav.switcher.shouldHaveText('Developer');
+    cy.visit('/k8s/all-namespaces/pods?perspective=admin');
+    nav.sidenav.switcher.shouldHaveText('Administrator');
   });
 });
