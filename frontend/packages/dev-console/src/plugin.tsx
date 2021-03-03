@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { CodeIcon } from '@patternfly/react-icons';
+import { CodeIcon, FileUploadIcon } from '@patternfly/react-icons';
 import {
   Plugin,
   ModelFeatureFlag,
@@ -207,6 +207,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         '/project-details',
         '/dev-monitoring',
         '/helm-releases',
+        '/upload-jar',
       ],
       component: NamespaceRedirect,
     },
@@ -341,6 +342,19 @@ const plugin: Plugin<ConsumedExtensions> = [
         (
           await import(
             './components/import/DeployImagePage' /* webpackChunkName: "dev-console-deployImage" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: ['/upload-jar/all-namespaces', '/upload-jar/ns/:ns'],
+      loader: async () =>
+        (
+          await import(
+            './components/import/jar/UploadJarPage' /* webpackChunkName: "dev-console-uploadjar" */
           )
         ).default,
     },
