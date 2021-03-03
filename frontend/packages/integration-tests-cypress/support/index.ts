@@ -6,6 +6,8 @@ import './resources';
 import './i18n';
 import { a11yTestResults } from './a11y';
 
+Cypress.Cookies.debug(true);
+
 Cypress.Cookies.defaults({
   preserve: ['openshift-session-token', 'csrf-token'],
 });
