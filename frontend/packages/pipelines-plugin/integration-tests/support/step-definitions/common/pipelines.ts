@@ -1,4 +1,4 @@
-import { Given, When } from 'cypress-cucumber-preprocessor/steps';
+import { Given, Then, When } from 'cypress-cucumber-preprocessor/steps';
 import { pipelinesPage, startPipelineInPipelinesPage } from '../../pages/pipelines/pipelines-page';
 import { pipelineBuilderPage } from '../../pages/pipelines/pipelineBuilder-page';
 import { modal } from '../../../../../integration-tests-cypress/views/modal';
@@ -6,6 +6,8 @@ import { pipelineRunDetailsPage } from '../../pages/pipelines/pipelineRun-detail
 import { navigateTo } from '@console/dev-console/integration-tests/support/pages/app';
 import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants/global';
 import { pipelineBuilderPO, pipelinesPO } from '../../page-objects/pipelines-po';
+import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
+import { pageTitle } from '@console/dev-console/integration-tests/support/constants/pageTitle';
 
 When(
   'user selects {string} option from kebab menu for pipeline {string}',
@@ -50,4 +52,8 @@ Given('user has installed OpenShift Pipelines operator using cli', () => {
   cy.exec(
     `oc patch OperatorHub cluster --type json -p '[{"op": "add", "path": "/spec/disableAllDefaultSources", "value": true}]'`,
   );
+});
+
+Then('user redirects to Pipelines page', () => {
+  detailsPage.titleShouldContain(pageTitle.Pipelines);
 });

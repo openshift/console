@@ -5,6 +5,7 @@ import { addPage } from '../../pages/add-flow/add-page';
 import { operatorsPage } from '../../pages/operators-page';
 import { operatorsPO } from '../../pageObjects/operators-po';
 import { gitPage } from '../../pages/add-flow/git-page';
+import { addOptions } from '../../constants/add';
 
 Given('cluster is not installed with any operators', () => {
   perspective.switchTo(switchPerspective.Administrator);
@@ -22,13 +23,13 @@ When('user selects Add option from left side navigation menu', () => {
 Then(
   'page contains From Git, Container Image, From Dockerfile, YAML, From Catalog, Database, Helm Chart cards',
   () => {
-    addPage.verifyCard('From Git');
-    addPage.verifyCard('Container Image');
-    addPage.verifyCard('From Dockerfile');
-    addPage.verifyCard('YAML');
-    addPage.verifyCard('From Catalog');
-    addPage.verifyCard('Database');
-    addPage.verifyCard('Helm Chart');
+    addPage.verifyCard(addOptions.Git);
+    addPage.verifyCard(addOptions.ContainerImage);
+    addPage.verifyCard(addOptions.DockerFile);
+    addPage.verifyCard(addOptions.YAML);
+    addPage.verifyCard(addOptions.DeveloperCatalog);
+    addPage.verifyCard(addOptions.Database);
+    addPage.verifyCard(addOptions.HelmChart);
   },
 );
 

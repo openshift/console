@@ -6,6 +6,12 @@ Feature: Create the pipeline from builder page
             Given user has created or selected namespace "aut-pipe-builder"
 
 
+        @smoke
+        Scenario: user navigates to pipelines page from Add page on selecting Pipeline card  : A-02-TC01
+             When user selects "Pipeline" card from add page
+             Then user redirects to Pipelines page
+
+
         @regression
         Scenario: Pipeline Builder page : P-03-TC02
             Given user is at pipelines page

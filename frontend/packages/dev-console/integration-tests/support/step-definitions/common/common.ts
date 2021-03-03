@@ -37,6 +37,7 @@ Given('user is at Monitoring page', () => {
 });
 
 Given('user is at namespace {string}', (projectName: string) => {
+  Cypress.env('NAMESPACE', projectName);
   projectNameSpace.selectOrCreateProject(projectName);
 });
 

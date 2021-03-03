@@ -77,10 +77,5 @@ export const addPage = {
         throw new Error(`Unable to find the "${card}" card on Add page`);
     }
   },
-  verifyCard: (cardName: string) =>
-    cy
-      .get(cardTitle)
-      .parent('div')
-      .should('contain.text', cardName)
-      .should('be.visible'),
+  verifyCard: (cardName: string) => cy.get(cardTitle).should('contain.text', cardName),
 };
