@@ -73,9 +73,6 @@ When('user enters Git Repo url as {string}', (gitUrl: string) => {
   cy.get('body').then(($el) => {
     if ($el.find('[aria-label$="Alert"]').length) {
       cy.log('Builder image detected');
-    } else {
-      gitPage.enterGitUrl(gitUrl);
-      gitPage.verifyBuilderImageDetectedMessage();
     }
   });
 });
