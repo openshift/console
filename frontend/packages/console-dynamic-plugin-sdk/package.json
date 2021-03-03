@@ -5,12 +5,12 @@
   "private": true,
   "scripts": {
     "clean": "rm -rf ./dist",
-    "schema": "yarn clean && yarn ts-node ./generate-schema.ts",
+    "schema": "yarn clean && yarn ts-node ./scripts/generate-schema.ts",
     "ts-node": "ts-node -O '{\"module\":\"commonjs\"}'"
   },
   "devDependencies": {
     "comment-json": "4.x",
-    "ts-json-schema-generator": "0.71.x",
+    "ts-json-schema-generator": "0.x",
     "webpack": "5.0.0-beta.16"
   }
 }
