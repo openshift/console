@@ -80,6 +80,7 @@
   "Not available": "Not available",
   "No StorageClass selected": "No StorageClass selected",
   "Add Capacity": "Add Capacity",
+  "Enable Ceph Dashboard": "Enable Ceph Dashboard",
   "Adding capacity for <1>{{name}}</1>, may increase your expenses.": "Adding capacity for <1>{{name}}</1>, may increase your expenses.",
   "Storage Class": "Storage Class",
   "x {{ replica, number }} replicas =": "x {{ replica, number }} replicas =",

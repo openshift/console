@@ -202,3 +202,10 @@ export type ResourceConstraints = {
     memory: string;
   };
 };
+
+export type CephDashboardSet = {
+  cephDashboard: {
+    enable: boolean;
+    ssl: boolean;
+  };
+};

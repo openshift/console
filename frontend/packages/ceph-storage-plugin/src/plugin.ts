@@ -20,14 +20,15 @@ import {
 } from '@console/plugin-sdk';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
 import { GridPosition } from '@console/shared/src/components/dashboard/DashboardGrid';
-import { referenceForModel } from '@console/internal/module/k8s';
+import { referenceForModel, k8sPatch } from '@console/internal/module/k8s';
 import { NodeModel } from '@console/internal/models';
 import { LSO_DEVICE_DISCOVERY } from '@console/local-storage-operator-plugin/src/plugin';
 import { OCS_ATTACHED_DEVICES_FLAG } from '@console/local-storage-operator-plugin/src/features';
 import { getCephHealthState } from './components/dashboards/persistent-internal/status-card/utils';
 import { isClusterExpandActivity } from './components/dashboards/persistent-internal/activity-card/cluster-expand-activity';
 import { StorageClassFormProvisoners } from './utils/ocs-storage-class-params';
-import { WatchCephResource } from './types';
+import { WatchCephResource, CephDashboardSet } from './types';
+
 import {
   detectOCS,
   detectOCSSupportedFeatures,
@@ -59,6 +60,13 @@ type ConsumedExtensions =
   | StorageClassProvisioner;
 
 const apiObjectRef = referenceForModel(models.OCSServiceModel);
+
+export const createDashboardFlags = (): CephDashboardSet => ({
+  cephDashboard: {
+    enable: true,
+    ssl: true,
+  },
+});
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -292,6 +300,30 @@ const plugin: Plugin<ConsumedExtensions> = [
           .catch((e) => {
             throw e;
           });
+      },
+    },
+    flags: {
+      disallowed: [OCS_INDEPENDENT_FLAG],
+    },
+  },
+  {
+    type: 'ClusterServiceVersion/Action',
+    properties: {
+      kind: 'StorageCluster',
+      // t('ceph-storage-plugin~Enable Ceph Dashboard')
+      label: '%ceph-storage-plugin~Enable Ceph Dashboard%',
+      apiGroup: models.OCSServiceModel.apiGroup,
+      callback: (kind, ocsConfig) => () => {
+        const patch = [
+          {
+            op: 'replace',
+            path: `/spec/managedResources`,
+            value: createDashboardFlags(),
+          },
+        ];
+        k8sPatch(models.OCSServiceModel, ocsConfig, patch).catch((e) => {
+          throw e;
+        });
       },
     },
     flags: {
