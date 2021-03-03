@@ -177,7 +177,7 @@ const Details = ({ obj: ingress }) => {
         </ResourceSummary>
       </div>
       <div className="co-m-pane__body">
-        <SectionHeading text="Ingress Rules" />
+        <SectionHeading text={t('COMMON:MSG_DETAILS_TABDETAILS_INGRESSRULES_1')} />
         <p className="co-m-pane__explanation">{t('COMMON:MSG_DETAILS_TABDETAILS_INGRESSRULES_2')}</p>
         <div className="co-m-table-grid co-m-table-grid--bordered">
           <RulesHeader />

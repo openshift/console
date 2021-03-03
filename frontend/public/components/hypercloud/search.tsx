@@ -158,7 +158,7 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = props =>
         <title>{t('COMMON:MSG_LNB_MENU_4')}</title>
       </Helmet>
       <PageHeading detail={true} title={t('COMMON:MSG_LNB_MENU_4')}>
-        <DataToolbar id="search-toolbar" clearAllFilters={clearAll}>
+        <DataToolbar id="search-toolbar" clearAllFilters={clearAll} clearFiltersButtonText={t('COMMON:MSG_COMMON_FILTER_11')}>
           <DataToolbarContent>
             <DataToolbarItem>
               <DataToolbarFilter
@@ -173,14 +173,14 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = props =>
                   ),
                 }))}
                 deleteChip={updateNewItems}
-                categoryName="Resource"
+                categoryName={t('COMMON:MSG_COMMON_FILTER_1')}
               >
                 <ResourceListDropdown selected={[...selectedItems]} onChange={updateSelectedItems} type="multiple" />
               </DataToolbarFilter>
             </DataToolbarItem>
             <DataToolbarItem className="co-search-group__filter">
-              <DataToolbarFilter deleteChipGroup={clearLabelFilter} chips={[...labelFilter]} deleteChip={removeLabelFilter} categoryName="Label">
-                <DataToolbarFilter chips={typeaheadNameFilter.length > 0 ? [typeaheadNameFilter] : []} deleteChip={clearNameFilter} categoryName="Name">
+              <DataToolbarFilter deleteChipGroup={clearLabelFilter} chips={[...labelFilter]} deleteChip={removeLabelFilter} categoryName={t('COMMON:MSG_COMMON_SEARCH_FILTER_2')}>
+                <DataToolbarFilter chips={typeaheadNameFilter.length > 0 ? [typeaheadNameFilter] : []} deleteChip={clearNameFilter} categoryName={t('COMMON:MSG_COMMON_SEARCH_FILTER_1')}>
                   <SearchFilterDropdown onChange={updateSearchFilter} nameFilterInput={typeaheadNameFilter} labelFilterInput={labelFilterInput} />
                 </DataToolbarFilter>
               </DataToolbarFilter>
