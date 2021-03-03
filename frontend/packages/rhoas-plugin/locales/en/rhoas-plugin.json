@@ -35,5 +35,7 @@
   "Reduce operational complexity and focus on building and scaling applications that add more value.": "Reduce operational complexity and focus on building and scaling applications that add more value.",
   "Browse managed services to connect applications and microservices to other services and support services to create a full solution.": "Browse managed services to connect applications and microservices to other services and support services to create a full solution.",
   "RHOAS can include Managed Kafka, Service Registry, custom resources for Managed Kafka, and Open Data Hub.": "RHOAS can include Managed Kafka, Service Registry, custom resources for Managed Kafka, and Open Data Hub.",
-  "Installed cluster-side, creates resources in specific namespaces. The RHOAS operator could include these services below:": "Installed cluster-side, creates resources in specific namespaces. The RHOAS operator could include these services below:"
+  "Installed cluster-side, creates resources in specific namespaces. The RHOAS operator could include these services below:": "Installed cluster-side, creates resources in specific namespaces. The RHOAS operator could include these services below:",
+  "No results found": "No results found",
+  "No results match the filter criteria. Remove all filters or clear all filters to show results.": "No results match the filter criteria. Remove all filters or clear all filters to show results."
 }

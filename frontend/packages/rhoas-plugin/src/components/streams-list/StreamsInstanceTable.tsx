@@ -15,7 +15,10 @@ import {
   TableHeader,
   TableBody,
   RowSelectVariant,
-  SortByDirection
+  SortByDirection,
+  Tbody,
+  Tr,
+  Td
 } from '@patternfly/react-table';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import { Timestamp } from '@console/internal/components/utils';
@@ -94,30 +97,26 @@ const StreamsInstanceTable = ({
     handleTextInputNameChange(value);
   }
 
-  const emptyStateRows = [
-    {
-      heightAuto: true,
-      cells: [
-        {
-          props: { colSpan: 6 },
-          title: (
-            <Bullseye>
-              <EmptyState variant={EmptyStateVariant.small}>
-                <EmptyStateIcon icon={SearchIcon} />
-                <Title headingLevel="h2" size="lg">
-                  No Managed Kafka clusters found 
-                </Title>
-                <EmptyStateBody>
-                  No results match the filter criteria
-                </EmptyStateBody>
-                <Button variant="link" onClick={clearFilters}>Clear filters</Button>
-              </EmptyState>
-            </Bullseye>
-          )
-        }
-      ]
-    }
-  ]
+  const emptyStateRows = (
+    <Tbody>
+      <Tr>
+        <Td colSpan={7}>
+          <Bullseye>
+            <EmptyState variant={EmptyStateVariant.small}>
+              <EmptyStateIcon icon={SearchIcon} />
+              <Title headingLevel="h2" size="lg">
+                {t('No results found')}
+              </Title>
+              <EmptyStateBody>
+                {t('No results match the filter criteria. Remove all filters or clear all filters to show results.')}
+              </EmptyStateBody>
+              <Button variant="link" onClick={clearFilters}>Clear all filters</Button>
+            </EmptyState>
+          </Bullseye>
+        </Td>
+      </Tr>
+    </Tbody>
+  );
 
   const onSelectTableRow = (event, isSelected, rowId) => {
     let rows = formattedKafkas.map((row, index) => {
@@ -177,7 +176,7 @@ const StreamsInstanceTable = ({
       <Table
         aria-label={t('rhoas-plugin~List of Kafka Instances')}
         cells={tableColumns}
-        rows={pageKafkas.length === 0 ? emptyStateRows : formattedKafkas}
+        rows={formattedKafkas}
         onSelect={onSelectTableRow}
         selectVariant={RowSelectVariant.radio}
         className="mk-streams-table"
@@ -185,7 +184,11 @@ const StreamsInstanceTable = ({
         sortBy={sortBy}
       >
         <TableHeader />
-        <TableBody />
+        {pageKafkas.length === 0 ? (
+          emptyStateRows
+        ) : (
+          <TableBody />
+        )}
       </Table>
     )}
     </>

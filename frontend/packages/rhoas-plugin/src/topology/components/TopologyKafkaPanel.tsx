@@ -39,7 +39,7 @@ type TopologyRhoasPanelProps = PropsFromState & PropsFromDispatch & OwnProps;
 
 const DetailsComponent: React.FC<any> = ({ obj }) => {
   const { t } = useTranslation();
-  const host = obj.status?.boostrapServer?.host || '';
+  const boostrapServerHost = obj.status?.bootstrapServerHost;
 
   return (
     <div className="co-m-pane__body">
@@ -47,10 +47,12 @@ const DetailsComponent: React.FC<any> = ({ obj }) => {
         <div className="col-sm-6">
           <ResourceSummary resource={obj} />
         </div>
-        <dl className="co-m-pane__details">
-          <dt>{t('rhoas-plugin~Bootstrap Server')}</dt>
-          <dd>{host}</dd>
-        </dl>
+        {boostrapServerHost && 
+          <dl className="co-m-pane__details">
+            <dt>{t('rhoas-plugin~Bootstrap Server')}</dt>
+            <dd>{boostrapServerHost}</dd>
+          </dl>
+        }
       </div>
     </div>
   );
