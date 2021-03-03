@@ -144,6 +144,7 @@ export interface PipelineSpec {
   workspaces?: PipelineWorkspace[];
   tasks: PipelineTask[];
   serviceAccountName?: string;
+  finally?: PipelineTask[];
 }
 export interface Pipeline extends K8sResourceKind {
   latestRun?: PipelineRun;
@@ -491,9 +492,18 @@ export const getPipelineFromPipelineRun = (pipelineRun: PipelineRun): Pipeline =
   };
 };
 
-export const getTaskStatus = (pipelinerun: PipelineRun): TaskStatus => {
+export const totalPipelineRunTasks = (pipelinerun: PipelineRun): number => {
   const executedPipeline = getPipelineFromPipelineRun(pipelinerun);
-  const totalTasks = (executedPipeline?.spec?.tasks || []).length ?? 0;
+  if (!executedPipeline) {
+    return 0;
+  }
+  const totalTasks = (executedPipeline.spec?.tasks || []).length ?? 0;
+  const finallyTasks = (executedPipeline.spec?.finally || []).length ?? 0;
+  return totalTasks + finallyTasks;
+};
+
+export const getTaskStatus = (pipelinerun: PipelineRun): TaskStatus => {
+  const totalTasks = totalPipelineRunTasks(pipelinerun);
   const plrTasks =
     pipelinerun && pipelinerun.status && pipelinerun.status.taskRuns
       ? Object.keys(pipelinerun.status.taskRuns)
