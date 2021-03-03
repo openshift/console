@@ -10,6 +10,7 @@ import { useActivePerspective } from '@console/shared';
 import { K8sResourceKind, referenceForModel } from '../../module/k8s';
 import { ConsoleLinkModel } from '../../models';
 import { useK8sWatchResource } from '../utils/k8s-watch-hook';
+import { useTranslation } from 'react-i18next';
 
 type StateProps = {
   flags: FlagsObject;
@@ -35,6 +36,7 @@ const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({ onPerspectiveSelect
     kind: referenceForModel(ConsoleLinkModel),
     optional: true,
   });
+  const { t } = useTranslation();
   const acmLink: K8sResourceKind = getACMConsoleLink(consoleLinks);
   const togglePerspectiveOpen = React.useCallback(() => {
     setPerspectiveDropdownOpen(!isPerspectiveDropdownOpen);
@@ -99,13 +101,13 @@ const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({ onPerspectiveSelect
             <span className="oc-nav-header__icon">
               <DomainIcon />
             </span>
-            Advanced Cluster Management
+            {t('public~Advanced Cluster Management')}
           </Title>
         </DropdownItem>,
       );
     }
     return items;
-  }, [acmLink, activePerspective, onPerspectiveSelect, perspectiveExtensions]);
+  }, [acmLink, activePerspective, onPerspectiveSelect, perspectiveExtensions, t]);
 
   const { icon, name } = React.useMemo(
     () => perspectiveExtensions.find((p) => p.properties.id === activePerspective).properties,

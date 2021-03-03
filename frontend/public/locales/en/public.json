@@ -392,6 +392,7 @@
   "LimitRanges": "LimitRanges",
   "Chargeback": "Chargeback",
   "CustomResourceDefinitions": "CustomResourceDefinitions",
+  "Advanced Cluster Management": "Advanced Cluster Management",
   "View logs": "View logs",
   "No Pods found for this resource.": "No Pods found for this resource.",
   "Waiting for the build": "Waiting for the build",
