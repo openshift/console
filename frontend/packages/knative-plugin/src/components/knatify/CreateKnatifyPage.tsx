@@ -107,30 +107,28 @@ const CreateKnatifyPage: React.FunctionComponent<CreateKnatifyPageProps> = ({
         <title>{t('knative-plugin~Create Knative service')}</title>
       </Helmet>
       <PageHeading title={t('knative-plugin~Create Knative service')} />
-      <div className="co-m-pane__body" style={{ paddingBottom: 0 }}>
-        {isResourcesLoaded() ? (
-          <Formik
-            initialValues={getInitialValuesKnatify(
-              getKnatifyWorkloadData(resources?.workloadResource?.data as K8sResourceKind),
-              appName,
-              namespace,
-              resources?.imageStream?.data as K8sResourceKind[],
-            )}
-            validationSchema={deployValidationSchema(t)}
-            onSubmit={handleSubmit}
-            onReset={history.goBack}
-          >
-            {(formikProps) => (
-              <KnatifyForm
-                {...formikProps}
-                projects={(resources?.projects as WatchK8sResultsObject<K8sResourceKind[]>) ?? {}}
-              />
-            )}
-          </Formik>
-        ) : (
-          <LoadingBox />
-        )}
-      </div>
+      {isResourcesLoaded() ? (
+        <Formik
+          initialValues={getInitialValuesKnatify(
+            getKnatifyWorkloadData(resources?.workloadResource?.data as K8sResourceKind),
+            appName,
+            namespace,
+            resources?.imageStream?.data as K8sResourceKind[],
+          )}
+          validationSchema={deployValidationSchema(t)}
+          onSubmit={handleSubmit}
+          onReset={history.goBack}
+        >
+          {(formikProps) => (
+            <KnatifyForm
+              {...formikProps}
+              projects={(resources?.projects as WatchK8sResultsObject<K8sResourceKind[]>) ?? {}}
+            />
+          )}
+        </Formik>
+      ) : (
+        <LoadingBox />
+      )}
     </NamespacedPage>
   );
 };
