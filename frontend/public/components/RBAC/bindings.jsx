@@ -285,10 +285,8 @@ export const RoleBindingsPage = ({
   staticFilters = undefined,
   name,
   kind,
-  createPath = `/k8s/${
-    namespace
-      ? `ns/${namespace}/rolebindings/~new?namespace=${namespace}`
-      : `cluster/rolebindings/~new${name && kind ? `?subjectName=${name}&subjectKind=${kind}` : ''}`
+  createPath = `/k8s/cluster/rolebindings/~new${
+    name && kind ? `?subjectName=${name}&subjectKind=${kind}` : ''
   }`,
 }) => {
   const { t } = useTranslation();
