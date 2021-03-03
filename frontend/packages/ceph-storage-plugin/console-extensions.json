@@ -20,5 +20,27 @@
     "flags": {
       "required": ["LSO_DEVICE_DISCOVERY", "OCS_ATTACHED_DEVICES"]
     }
+  },
+  {
+    "type": "console.alert-action",
+    "properties": {
+      "alert": "CephClusterNearFull",
+      "text": "%ceph-storage-plugin~Add Capacity%",
+      "action": { "$codeRef": "alert.launchClusterExpansionModal" }
+    },
+    "flags": {
+      "required": ["OCS"]
+    }
+  },
+  {
+    "type": "console.alert-action",
+    "properties": {
+      "alert": "CephClusterCriticallyFull",
+      "text": "%ceph-storage-plugin~Add Capacity%",
+      "action": { "$codeRef": "alert.launchClusterExpansionModal" }
+    },
+    "flags": {
+      "required": ["OCS"]
+    }
   }
 ]
