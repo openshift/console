@@ -371,7 +371,6 @@ export const getExternalImageInitialValues = (appResources: AppResources) => {
     allowInsecureRegistry: isAllowInsecureRegistry,
     imageStream: {
       ...deployImageInitialValues.imageStream,
-      grantAccess: true,
     },
   };
 };
@@ -410,7 +409,6 @@ export const getExternalImagelValues = (appResource: K8sResourceKind) => {
     registry: RegistryType.External,
     imageStream: {
       ...deployImageInitialValues.imageStream,
-      grantAccess: true,
     },
   };
 };
