@@ -20,7 +20,7 @@ export const isObjectStorageEvent = (event: EventKind): boolean => {
   ];
   if (eventKind !== PersistentVolumeClaimModel.kind && eventKind !== PersistentVolumeModel.kind) {
     const eventName: string = event?.involvedObject?.name;
-    return _.startsWith(eventName, 'noobaa') || eventName.includes('rgw');
+    return _.startsWith(eventName, 'noobaa') || eventName?.includes('rgw');
   }
   return objectStorageResources.includes(eventKind);
 };
