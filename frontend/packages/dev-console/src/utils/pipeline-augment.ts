@@ -133,6 +133,7 @@ export interface PipelineSpec {
   workspaces?: PipelineWorkspace[];
   tasks: PipelineTask[];
   serviceAccountName?: string;
+  finally?: PipelineTask[];
 }
 
 export interface Pipeline extends K8sResourceKind {
@@ -412,9 +413,17 @@ export const getRunStatusColor = (status: string): StatusMessage => {
 export const truncateName = (name: string, length: number): string =>
   name.length < length ? name : `${name.slice(0, length - 1)}...`;
 
+export const totalPipelineTasks = (pipeline: Pipeline): number => {
+  if (!pipeline) {
+    return 0;
+  }
+  const totalTasks = (pipeline.spec?.tasks || []).length ?? 0;
+  const finallyTasks = (pipeline.spec?.finally || []).length ?? 0;
+  return totalTasks + finallyTasks;
+};
+
 export const getTaskStatus = (pipelinerun: PipelineRun, pipeline: Pipeline): TaskStatus => {
-  const totalTasks =
-    pipeline && pipeline.spec && pipeline.spec.tasks ? pipeline.spec.tasks.length : 0;
+  const totalTasks = totalPipelineTasks(pipeline);
   const plrTasks =
     pipelinerun && pipelinerun.status && pipelinerun.status.taskRuns
       ? Object.keys(pipelinerun.status.taskRuns)
