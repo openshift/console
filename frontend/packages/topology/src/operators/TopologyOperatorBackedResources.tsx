@@ -77,7 +77,15 @@ const OperatorResourcesGetter: React.FC<OperatorResourcesGetterProps> = ({
   const linkForResource = (obj: K8sResourceKind) => {
     return linkForCsvResource(obj, providedAPI, csv.metadata.name);
   };
-  const defaultResources = ['Deployment', 'Service', 'ReplicaSet', 'Pod', 'Secret', 'ConfigMap'];
+  const defaultResources = [
+    'Deployment',
+    'Service',
+    'ReplicaSet',
+    'Pod',
+    'Secret',
+    'ConfigMap',
+    'Job',
+  ];
   const resourcesToGet =
     providedAPI?.resources ??
     (defaultResources.map((kind) => ({
