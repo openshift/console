@@ -24,5 +24,8 @@
   "Owner": "Owner",
   "Created": "Created",
   "List of Kafka Instances": "List of Kafka Instances",
-  "Bootstrap Server": "Bootstrap Server"
+  "Bootstrap Server": "Bootstrap Server",
+  "Managed Services": "Managed Services",
+  "Browse managed services to connect applications and microservices to other services and support services to create a full solution.": "Browse managed services to connect applications and microservices to other services and support services to create a full solution.",
+  "Reduce operational complexity and focus on building and scaling applications that add more value.": "Reduce operational complexity and focus on building and scaling applications that add more value."
 }

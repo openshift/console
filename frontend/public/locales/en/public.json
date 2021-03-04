@@ -728,5 +728,7 @@
   "OK": "OK",
   "Last updated": "Last updated",
   "Disabled": "Disabled",
-  "Enabled": "Enabled"
+  "Enabled": "Enabled",
+  "No results found": "No results found",
+  "No results match the filter criteria. Remove all filters or clear all filters to show results.": "No results match the filter criteria. Remove all filters or clear all filters to show results."
 }
