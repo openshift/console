@@ -12,9 +12,12 @@ import { KEYBOARD_SHORTCUTS } from '@console/shared';
 type StreamsInstanceFilterProps = {
   textInputNameValue: string;
   handleTextInputNameChange: (textInputNameValue: string) => void;
-}
+};
 
-const StreamsInstanceFilter = ({ textInputNameValue, handleTextInputNameChange }: StreamsInstanceFilterProps) => {
+const StreamsInstanceFilter = ({
+  textInputNameValue,
+  handleTextInputNameChange,
+}: StreamsInstanceFilterProps) => {
   const { t } = useTranslation();
 
   return (

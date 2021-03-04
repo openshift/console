@@ -13,7 +13,7 @@ import { ManagedServicesRequestCRName } from '../../const';
 import {
   createManagedKafkaConnection,
   createManagedServicesRequestIfNeeded,
-  listOfCurrentKafkaConnectionsById
+  listOfCurrentKafkaConnectionsById,
 } from './resourceCreators';
 import { KafkaRequest } from '../../types/rhoas-types';
 
@@ -25,14 +25,14 @@ const ManagedKafkas = () => {
   const createKafkaRequestFlow = async () => {
     await createManagedServicesRequestIfNeeded(currentNamespace);
 
-    const currentKafka = await listOfCurrentKafkaConnectionsById(currentNamespace)
+    const currentKafka = await listOfCurrentKafkaConnectionsById(currentNamespace);
     if (currentKafka) {
       setCurrentKafkaConnections(currentKafka);
     }
-  }
+  };
 
   React.useEffect(() => {
-    createKafkaRequestFlow()
+    createKafkaRequestFlow();
   }, []);
 
   const [watchedKafkaRequest] = useK8sWatchResource<KafkaRequest>({
@@ -40,16 +40,16 @@ const ManagedKafkas = () => {
     name: ManagedServicesRequestCRName,
     namespace: currentNamespace,
     isList: false,
-    optional: true
-  })
+    optional: true,
+  });
 
   // TO DO: Replace this once we get error handling from operator
   if (!watchedKafkaRequest || !watchedKafkaRequest.status) {
     return (
       <div>
-        <LoadingBox/>
+        <LoadingBox />
       </div>
-    )
+    );
   }
 
   let remoteKafkaInstances = watchedKafkaRequest.status.userKafkas;
@@ -71,11 +71,10 @@ const ManagedKafkas = () => {
     }
     if (currentKafkaConnections.length === remoteKafkaInstances.length) {
       return true;
-    }
-    else {
+    } else {
       return false;
     }
-  }
+  };
 
   return (
     <>

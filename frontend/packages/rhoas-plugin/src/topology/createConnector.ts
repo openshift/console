@@ -13,7 +13,6 @@ export const getCreateConnector = (createHints: string[]) => {
   return null;
 };
 
-
 const createServiceBindingConnection = (source: Node, target: Node) => {
   const sourceResource = source.getData().resource || source.getData().resources?.obj;
   const targetResource = target.getData().resource || target.getData().resources?.obj;

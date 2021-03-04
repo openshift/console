@@ -4,4 +4,4 @@ export const KAFKA_WIDTH = NODE_WIDTH;
 export const KAFKA_HEIGHT = NODE_HEIGHT;
 export const KAFKA_PADDING = NODE_PADDING;
 
-export const TYPE_MANAGED_KAFKA_CONNECTION = "ManagedKafkaConnection"
+export const TYPE_MANAGED_KAFKA_CONNECTION = 'ManagedKafkaConnection';

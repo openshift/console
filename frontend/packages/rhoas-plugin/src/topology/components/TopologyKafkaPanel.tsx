@@ -47,12 +47,12 @@ const DetailsComponent: React.FC<any> = ({ obj }) => {
         <div className="col-sm-6">
           <ResourceSummary resource={obj} />
         </div>
-        {boostrapServerHost && 
+        {boostrapServerHost && (
           <dl className="co-m-pane__details">
             <dt>{t('rhoas-plugin~Bootstrap Server')}</dt>
             <dd>{boostrapServerHost}</dd>
           </dl>
-        }
+        )}
       </div>
     </div>
   );

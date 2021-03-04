@@ -1,16 +1,11 @@
 import { Model, NodeModel } from '@patternfly/react-topology';
 import { apiVersionForModel, K8sResourceKind } from '@console/internal/module/k8s';
-import {
-  getTopologyNodeItem,
-} from '@console/topology/src/data-transforms/transform-utils';
+import { getTopologyNodeItem } from '@console/topology/src/data-transforms/transform-utils';
 import { OverviewItem } from '@console/shared/src';
-import {
-  TopologyDataObject,
-  TopologyDataResources
-} from '@console/topology/src/topology-types';
-import { KAFKA_WIDTH, KAFKA_HEIGHT, KAFKA_PADDING } from "./components/const"
-import { ManagedKafkaConnectionModel } from '../models'
-import { MANAGED_KAFKA_TOPOLOGY_TYPE } from "./rhoas-topology-plugin"
+import { TopologyDataObject, TopologyDataResources } from '@console/topology/src/topology-types';
+import { KAFKA_WIDTH, KAFKA_HEIGHT, KAFKA_PADDING } from './components/const';
+import { ManagedKafkaConnectionModel } from '../models';
+import { MANAGED_KAFKA_TOPOLOGY_TYPE } from './rhoas-topology-plugin';
 
 const KAFKA_PROPS = {
   width: KAFKA_WIDTH,
@@ -33,12 +28,10 @@ export const createOverviewItem = (obj: K8sResourceKind): OverviewItem<K8sResour
   return {
     isOperatorBackedService: true,
     obj,
-  }
+  };
 };
 
-export const getTopologyRhoasNodes = (
-  kafkaConnections: K8sResourceKind[]
-): NodeModel[] => {
+export const getTopologyRhoasNodes = (kafkaConnections: K8sResourceKind[]): NodeModel[] => {
   const nodes = [];
   for (const obj of kafkaConnections) {
     const data: TopologyDataObject = {
@@ -50,7 +43,7 @@ export const getTopologyRhoasNodes = (
       resources: createOverviewItem(obj),
       data: {
         resource: obj,
-      }
+      },
     };
     nodes.push(getTopologyNodeItem(obj, ManagedKafkaConnectionModel.kind, data, KAFKA_PROPS));
   }
@@ -58,8 +51,10 @@ export const getTopologyRhoasNodes = (
   return nodes;
 };
 
-export const getRhoasTopologyDataModel = () =>
-  (namespace: string, resources: TopologyDataResources): Promise<Model> =>
-    Promise.resolve({
-      nodes: getTopologyRhoasNodes(resources.kafkaConnections.data)
-    });
+export const getRhoasTopologyDataModel = () => (
+  namespace: string,
+  resources: TopologyDataResources,
+): Promise<Model> =>
+  Promise.resolve({
+    nodes: getTopologyRhoasNodes(resources.kafkaConnections.data),
+  });

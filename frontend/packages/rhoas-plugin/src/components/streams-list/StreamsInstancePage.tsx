@@ -18,18 +18,19 @@ type StreamsInstancePageProps = {
   currentKafkaConnections: Array<string>;
   createManagedKafkaConnectionFlow: () => {};
   disableCreateButton: () => boolean;
-}
+};
 
-const StreamsInstancePage = ({ kafkaArray,
+const StreamsInstancePage = ({
+  kafkaArray,
   selectedKafka,
   setSelectedKafka,
   currentKafkaConnections,
   createManagedKafkaConnectionFlow,
-  disableCreateButton }: StreamsInstancePageProps) => {
-
+  disableCreateButton,
+}: StreamsInstancePageProps) => {
   const [currentNamespace] = useActiveNamespace();
   const [allKafkasConnected, setAllKafkasConnected] = React.useState<boolean>(false);
-  const [textInputNameValue, setTextInputNameValue] = React.useState<string>("");
+  const [textInputNameValue, setTextInputNameValue] = React.useState<string>('');
   const [pageKafkas, setPageKafkas] = React.useState<ManagedKafka[]>(kafkaArray);
   const { t } = useTranslation();
 
@@ -39,10 +40,10 @@ const StreamsInstancePage = ({ kafkaArray,
 
   const goToTopology = () => {
     history.push(`/topology/ns/${currentNamespace}`);
-  }
+  };
 
   const handleTextInputNameChange = (value: string) => {
-    let filteredKafkas = kafkaArray.filter(kafka => kafka.name.includes(value));
+    let filteredKafkas = kafkaArray.filter((kafka) => kafka.name.includes(value));
     setPageKafkas(filteredKafkas);
     setTextInputNameValue(value);
   };
@@ -56,10 +57,14 @@ const StreamsInstancePage = ({ kafkaArray,
         className="rhoas__page-heading"
         title={t('rhoas-plugin~Select Managed Kafka Cluster')}
       >
-        <p>{t('rhoas-plugin~The managed Kafka cluster selected below will appear on the topology view.')}</p>
+        <p>
+          {t(
+            'rhoas-plugin~The managed Kafka cluster selected below will appear on the topology view.',
+          )}
+        </p>
       </PageHeading>
       <PageBody>
-        { allKafkasConnected ? (
+        {allKafkasConnected ? (
           <ManagedKafkaEmptyState
             title={t('rhoas-plugin~All Managed Kafka clusters are in use')}
             actionInfo={t('rhoas-plugin~See Managed Kafka clusters in Topology view')}
@@ -72,36 +77,39 @@ const StreamsInstancePage = ({ kafkaArray,
             actionInfo={t('rhoas-plugin~Go back to Managed Services Catalog')}
             icon="CubesIcon"
           />
-          ) : (
-              <>
-                <StreamsInstanceFilter
-                  textInputNameValue={textInputNameValue}
-                  handleTextInputNameChange={handleTextInputNameChange}
-                />
-                <StreamsInstanceTable
-                  kafkaArray={kafkaArray}
-                  pageKafkas={pageKafkas}
-                  handleTextInputNameChange={handleTextInputNameChange}
-                  selectedKafka={selectedKafka}
-                  setSelectedKafka={setSelectedKafka}
-                  currentKafkaConnections={currentKafkaConnections}
-                  allKafkasConnected={allKafkasConnected}
-                  setAllKafkasConnected={setAllKafkasConnected}
-                />
-                <div className="co-m-pane__body" style={{ borderTop: 0, paddingTop: 0, paddingBottom: 0 }}>
-                  <FormFooter
-                    handleSubmit={() => createManagedKafkaConnectionFlow()}
-                    isSubmitting={false}
-                    errorMessage=""
-                    submitLabel={t('rhoas-plugin~Create')}
-                    disableSubmit={disableCreateButton()}
-                    resetLabel={t('rhoas-plugin~Reset')}
-                    sticky
-                    handleCancel={history.goBack}
-                  />
-                </div>
-              </>
-            )}
+        ) : (
+          <>
+            <StreamsInstanceFilter
+              textInputNameValue={textInputNameValue}
+              handleTextInputNameChange={handleTextInputNameChange}
+            />
+            <StreamsInstanceTable
+              kafkaArray={kafkaArray}
+              pageKafkas={pageKafkas}
+              handleTextInputNameChange={handleTextInputNameChange}
+              selectedKafka={selectedKafka}
+              setSelectedKafka={setSelectedKafka}
+              currentKafkaConnections={currentKafkaConnections}
+              allKafkasConnected={allKafkasConnected}
+              setAllKafkasConnected={setAllKafkasConnected}
+            />
+            <div
+              className="co-m-pane__body"
+              style={{ borderTop: 0, paddingTop: 0, paddingBottom: 0 }}
+            >
+              <FormFooter
+                handleSubmit={() => createManagedKafkaConnectionFlow()}
+                isSubmitting={false}
+                errorMessage=""
+                submitLabel={t('rhoas-plugin~Create')}
+                disableSubmit={disableCreateButton()}
+                resetLabel={t('rhoas-plugin~Reset')}
+                sticky
+                handleCancel={history.goBack}
+              />
+            </div>
+          </>
+        )}
       </PageBody>
     </>
   );

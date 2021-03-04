@@ -16,7 +16,7 @@ import {
   nodeDropTargetSpec,
   withContextMenu,
   CreateConnector,
-  createMenuItems
+  createMenuItems,
 } from '@console/topology/src/components/graph-view';
 import { kebabOptionsToMenu } from '@console/internal/components/utils';
 import KafkaNode from './KafkaNode';
@@ -51,7 +51,6 @@ export const getRhoasComponentFactory = (): ComponentFactory => {
         );
       default:
         return undefined;
-
     }
   };
 };

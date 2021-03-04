@@ -1,6 +1,14 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Flex, FlexItem, Divider, Label, TextContent, Text, TextVariants } from '@patternfly/react-core';
+import {
+  Flex,
+  FlexItem,
+  Divider,
+  Label,
+  TextContent,
+  Text,
+  TextVariants,
+} from '@patternfly/react-core';
 import { LockIcon } from '@patternfly/react-icons';
 import { CatalogExtensionHook, CatalogItem } from '@console/plugin-sdk';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -14,44 +22,47 @@ const useRhoasCatalog: CatalogExtensionHook<CatalogItem[]> = (): [CatalogItem[],
   const [currentNamespace] = useActiveNamespace();
   const href = '/managedServices/managedkafka'; // `/catalog/ns/${namespace}/rhoas/kafka`;
   const { t } = useTranslation();
-  const [tokenSecret] = useK8sWatchResource({ kind: SecretModel.kind, isList: false, name: AccessTokenSecretName, namespace: currentNamespace, namespaced: true })
+  const [tokenSecret] = useK8sWatchResource({
+    kind: SecretModel.kind,
+    isList: false,
+    name: AccessTokenSecretName,
+    namespace: currentNamespace,
+    namespaced: true,
+  });
 
   const tokenStatusFooter = () => {
     let token;
-    if (tokenSecret === null || tokenSecret !== null && Object.keys(tokenSecret).length === 0) {
+    if (tokenSecret === null || (tokenSecret !== null && Object.keys(tokenSecret).length === 0)) {
       token = (
         <Label variant="outline" color="orange" icon={<LockIcon />}>
           {t('rhoas-plugin~Unlock with token')}
         </Label>
-      )
-    }
-    else {
-      token = t('rhoas-plugin~Unlocked')
+      );
+    } else {
+      token = t('rhoas-plugin~Unlocked');
     }
     return (
       <Flex direction={{ default: 'column' }}>
         <FlexItem>
-          {t('rhoas-plugin~RHOAS can include Managed Kafka, Service Registry, custom resources for Managed Kafka, and Open Data Hub.')}
+          {t(
+            'rhoas-plugin~RHOAS can include Managed Kafka, Service Registry, custom resources for Managed Kafka, and Open Data Hub.',
+          )}
         </FlexItem>
-        <FlexItem>
-          {token}
-        </FlexItem>
+        <FlexItem>{token}</FlexItem>
       </Flex>
-    )
-  }
+    );
+  };
 
   const drawerDescription = (
     <Flex direction={{ default: 'column' }}>
       <FlexItem>
         <TextContent>
-          <Text component={TextVariants.p}>
-            TO DO: Add description
-          </Text>
+          <Text component={TextVariants.p}>TO DO: Add description</Text>
         </TextContent>
       </FlexItem>
-      <Divider component="li"/>
+      <Divider component="li" />
       <FlexItem>
-        <AccessManagedServices/>
+        <AccessManagedServices />
       </FlexItem>
     </Flex>
   );
@@ -61,7 +72,6 @@ const useRhoasCatalog: CatalogExtensionHook<CatalogItem[]> = (): [CatalogItem[],
       value: drawerDescription,
     },
   ];
-
 
   const managedServicesCard: CatalogItem[] = [
     {
@@ -86,7 +96,7 @@ const useRhoasCatalog: CatalogExtensionHook<CatalogItem[]> = (): [CatalogItem[],
       },
       details: {
         properties: [{ label: 'Type', value: 'Red Hat Managed Service' }],
-        descriptions: detailsDescriptions
+        descriptions: detailsDescriptions,
       },
     },
   ];
@@ -117,13 +127,15 @@ const useRhoasCatalog: CatalogExtensionHook<CatalogItem[]> = (): [CatalogItem[],
         descriptions: [
           {
             value: <p>TO DO: Add description</p>,
-          }
-        ]
+          },
+        ],
       },
     },
   ];
 
-  const services = React.useMemo(() => (tokenSecret ? managedKafkaCard : managedServicesCard), [tokenSecret]);
+  const services = React.useMemo(() => (tokenSecret ? managedKafkaCard : managedServicesCard), [
+    tokenSecret,
+  ]);
   return [services, true, undefined];
 };
 

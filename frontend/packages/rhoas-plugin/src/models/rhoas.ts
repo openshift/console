@@ -39,4 +39,3 @@ export const ManagedServiceAccountRequest: K8sKind = {
   namespaced: true,
   crd: true,
 };
-
