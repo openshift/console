@@ -25,6 +25,8 @@ import {
   TEMPLATE_OS_NAME_ANNOTATION,
   TEMPLATE_CUSTOMIZED_ANNOTATION,
   VM_CUSTOMIZE_LABEL,
+  TEMPLATE_PROVIDER_ANNOTATION,
+  TEMPLATE_SUPPORT_LEVEL,
 } from '../../../constants';
 import { DataVolumeSourceType } from '../../../constants/vm/storage';
 import { DataVolumeModel, VirtualMachineModel } from '../../../models';
@@ -34,6 +36,7 @@ import { DataVolumeWrapper } from '../../wrapper/vm/data-volume-wrapper';
 import { isCommonTemplate } from '../../../selectors/vm-template/basic';
 import { initializeCommonMetadata, initializeCommonTemplateMetadata } from '../vm/create/common';
 import { VMSettingsField } from '../../../components/create-vm-wizard/types';
+import { TemplateSupport } from '../../../constants/vm-templates/support';
 
 export const createTemplateFromVM = (vm: VMKind): Promise<TemplateKind> => {
   const template = JSON.parse(
@@ -141,6 +144,8 @@ export const createVMForCustomization = async (
   name: string,
   size: string,
   pvcs: PersistentVolumeClaimKind[],
+  provider: string,
+  support: string,
 ): Promise<VMKind> => {
   const templateWrapper = new VMTemplateWrapper(template, true);
 
@@ -182,6 +187,9 @@ export const createVMForCustomization = async (
     false,
   );
 
+  const templateSupport =
+    TemplateSupport.fromString(support) === TemplateSupport.FULL_SUPPORT ? support : undefined;
+
   if (isCommonTemplate(template)) {
     templateWrapper.removeParameter(TEMPLATE_BASE_IMAGE_NAME_PARAMETER);
     templateWrapper.removeParameter(TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER);
@@ -195,8 +203,8 @@ export const createVMForCustomization = async (
       [VMSettingsField.DESCRIPTION]: undefined,
       [VMSettingsField.FLAVOR]: flavor,
       [VMSettingsField.WORKLOAD_PROFILE]: workloadProfile,
-      [VMSettingsField.TEMPLATE_PROVIDER]: undefined,
-      [VMSettingsField.TEMPLATE_SUPPORTED]: undefined,
+      [VMSettingsField.TEMPLATE_PROVIDER]: provider,
+      [VMSettingsField.TEMPLATE_SUPPORTED]: templateSupport,
       osID,
       osName: annotations[`${TEMPLATE_OS_NAME_ANNOTATION}/${osID}`],
     };
@@ -206,6 +214,11 @@ export const createVMForCustomization = async (
 
     initializeCommonMetadata(settings, templateWrapper);
     initializeCommonTemplateMetadata(settings, templateWrapper, template);
+  } else {
+    templateWrapper.addAnotation(TEMPLATE_PROVIDER_ANNOTATION, provider);
+    templateSupport
+      ? templateWrapper.addAnotation(TEMPLATE_SUPPORT_LEVEL, templateSupport)
+      : templateWrapper.removeAnnotation(TEMPLATE_SUPPORT_LEVEL);
   }
 
   templateWrapper.clearRuntimeMetadata();

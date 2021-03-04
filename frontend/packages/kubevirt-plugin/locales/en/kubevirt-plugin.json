@@ -631,6 +631,8 @@
   "Boot source customization will apply to a boot source copy, saved on a new template. This template will be a clone of the original boot source template {{templateName}}. The customized boot source will be saved to the new template.": "Boot source customization will apply to a boot source copy, saved on a new template. This template will be a clone of the original boot source template {{templateName}}. The customized boot source will be saved to the new template.",
   "New template namespace": "New template namespace",
   "New template name": "New template name",
+  "New template provider": "New template provider",
+  "New template support": "New template support",
   "New template flavor": "New template flavor",
   "Prepare boot source for customization": "Prepare boot source for customization",
   "This boot source is marked as CD-ROM, and requires allocated resources (disk) to customize it. Please allocate Persistent Volume Claim for customization process.": "This boot source is marked as CD-ROM, and requires allocated resources (disk) to customize it. Please allocate Persistent Volume Claim for customization process.",

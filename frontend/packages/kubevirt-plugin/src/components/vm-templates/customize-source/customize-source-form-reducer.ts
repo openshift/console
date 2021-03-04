@@ -1,4 +1,5 @@
 import { TemplateKind } from '@console/internal/module/k8s';
+import { TemplateSupport } from '../../../constants/vm-templates/support';
 
 type CustomizeSourceFormState = {
   name: string;
@@ -7,6 +8,8 @@ type CustomizeSourceFormState = {
   size: { unit: string; value: string };
   selectedTemplate: TemplateKind;
   injectCloudInit: boolean;
+  provider: string;
+  support: string;
 };
 
 export enum FORM_ACTION_TYPE {
@@ -16,6 +19,8 @@ export enum FORM_ACTION_TYPE {
   INJECT_CLOUD_INIT = 'injectCloudInit',
   SET_SIZE = 'size',
   SET_SELECTED_TEMPLATE = 'selectedTemplate',
+  SET_PROVIDER = 'provider',
+  SET_SUPPORT = 'support',
 }
 
 type CustomizeSourceFormAction =
@@ -42,6 +47,14 @@ type CustomizeSourceFormAction =
   | {
       type: FORM_ACTION_TYPE.SET_SELECTED_TEMPLATE;
       payload: CustomizeSourceFormState['selectedTemplate'];
+    }
+  | {
+      type: FORM_ACTION_TYPE.SET_PROVIDER;
+      payload: CustomizeSourceFormState['provider'];
+    }
+  | {
+      type: FORM_ACTION_TYPE.SET_SUPPORT;
+      payload: CustomizeSourceFormState['support'];
     };
 
 export const initFormState = (namespace: string): CustomizeSourceFormState => ({
@@ -51,6 +64,8 @@ export const initFormState = (namespace: string): CustomizeSourceFormState => ({
   size: { unit: 'Gi', value: '20' },
   selectedTemplate: undefined,
   injectCloudInit: undefined,
+  provider: undefined,
+  support: TemplateSupport.NO_SUPPORT.getValue(),
 });
 
 export const formReducer = (

@@ -40,13 +40,21 @@ import { preventDefault } from '../../form/utils';
 import { VMTemplateWrapper } from '../../../k8s/wrapper/vm/vm-template-wrapper';
 import { CloudInitDataHelper } from '../../../k8s/wrapper/vm/cloud-init-data-helper';
 import { filterTemplates } from '../utils';
-import { TEMPLATE_TYPE_BASE, TEMPLATE_TYPE_VM, TEMPLATE_TYPE_LABEL } from '../../../constants';
+import {
+  TEMPLATE_TYPE_BASE,
+  TEMPLATE_TYPE_VM,
+  TEMPLATE_TYPE_LABEL,
+  TEMPLATE_PROVIDER_ANNOTATION,
+  TEMPLATE_SUPPORT_LEVEL,
+} from '../../../constants';
 import { FormPFSelect } from '../../form/form-pf-select';
 import { getTemplateFlavorData, getTemplateMemory } from '../../../selectors/vm-template/advanced';
 import { getCPU, vCPUCount } from '../../../selectors/vm';
 import { selectVM } from '../../../selectors/vm-template/basic';
 import { createVMForCustomization } from '../../../k8s/requests/vmtemplate/customize';
 import { formReducer, initFormState, FORM_ACTION_TYPE } from './customize-source-form-reducer';
+import { getAnnotation } from '../../../selectors/selectors';
+import { TemplateSupport } from '../../../constants/vm-templates/support';
 
 import './customize-source.scss';
 
@@ -59,7 +67,7 @@ const CustomizeSourceForm: React.FC<RouteComponentProps> = ({ location }) => {
   const [creatingVM, setCreatingVM] = React.useState(false);
   const [vmError, setVMError] = React.useState();
   const [
-    { name, namespace, cloudInit, injectCloudInit, selectedTemplate, size },
+    { name, namespace, cloudInit, injectCloudInit, selectedTemplate, size, provider, support },
     formDispatch,
   ] = React.useReducer(formReducer, initFormState(urlParams.get('ns')));
 
@@ -101,8 +109,20 @@ const CustomizeSourceForm: React.FC<RouteComponentProps> = ({ location }) => {
     if (!selectedTemplate && template) {
       formDispatch({
         type: FORM_ACTION_TYPE.SET_SELECTED_TEMPLATE,
-        payload: template?.variants[0],
+        payload: template.variants[0],
       });
+      if (!template.isCommon) {
+        formDispatch({
+          type: FORM_ACTION_TYPE.SET_PROVIDER,
+          payload: getAnnotation(template.variants[0], TEMPLATE_PROVIDER_ANNOTATION),
+        });
+        if (getAnnotation(template.variants[0], TEMPLATE_SUPPORT_LEVEL) === 'Full') {
+          formDispatch({
+            type: FORM_ACTION_TYPE.SET_SUPPORT,
+            payload: TemplateSupport.FULL_SUPPORT.getValue(),
+          });
+        }
+      }
     }
   }, [selectedTemplate, template]);
 
@@ -170,6 +190,8 @@ const CustomizeSourceForm: React.FC<RouteComponentProps> = ({ location }) => {
         name,
         `${size.value}${size.unit}`,
         template?.isCommon ? baseImages : pvcs,
+        provider,
+        support,
       );
       const vmParams = new URLSearchParams();
       vmParams.append('vm', vm.metadata.name);
@@ -256,6 +278,51 @@ const CustomizeSourceForm: React.FC<RouteComponentProps> = ({ location }) => {
                         })
                       }
                     />
+                  </FormRow>
+                  <FormRow
+                    fieldId="vmt-provider"
+                    title={t('kubevirt-plugin~New template provider')}
+                    isRequired
+                  >
+                    <TextInput
+                      isRequired
+                      type="text"
+                      id="vmt-provider"
+                      name="vmt-provider"
+                      aria-describedby="vmt-provider-helper"
+                      value={provider}
+                      onChange={(payload) =>
+                        formDispatch({
+                          type: FORM_ACTION_TYPE.SET_PROVIDER,
+                          payload,
+                        })
+                      }
+                    />
+                  </FormRow>
+                  <FormRow
+                    fieldId="vmt-support"
+                    title={t('kubevirt-plugin~New template support')}
+                    isRequired
+                  >
+                    <FormPFSelect
+                      id="vmt-support"
+                      onSelect={(e, v) => {
+                        formDispatch({
+                          type: FORM_ACTION_TYPE.SET_SUPPORT,
+                          payload: v.toString(),
+                        });
+                      }}
+                      selections={[t(TemplateSupport.fromString(support).toString())]}
+                    >
+                      {TemplateSupport.getAll().map((templateSupport) => (
+                        <SelectOption
+                          key={templateSupport.getValue()}
+                          value={templateSupport.getValue()}
+                        >
+                          {t(templateSupport.toString())}
+                        </SelectOption>
+                      ))}
+                    </FormPFSelect>
                   </FormRow>
                   {template?.variants.length > 1 && (
                     <FormRow
@@ -364,7 +431,7 @@ const CustomizeSourceForm: React.FC<RouteComponentProps> = ({ location }) => {
             <ActionGroup className="pf-c-form">
               <Button
                 data-test="start-customize"
-                isDisabled={creatingVM || !namespace || !!nameValidation}
+                isDisabled={creatingVM || !namespace || !name || !!nameValidation || !provider}
                 onClick={submitForm}
               >
                 {t('kubevirt-plugin~Start customization')}
