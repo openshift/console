@@ -23,6 +23,8 @@ Cypress.Commands.add('login', (provider: string, username: string, password: str
     cy.task('log', '  skipping login, no BRIDGE_KUBEADMIN_PASSWORD set');
     return;
   }
+  // Make sure the cookie is reset from a previous test before continuing.
+  cy.setCookie('openshift-session-token', '');
   const idp = provider || KUBEADMIN_IDP;
   cy.task('log', `  Logging in as ${username || KUBEADMIN_USERNAME}`);
   cy.visit(''); // visits baseUrl which is set in plugins/index.js
