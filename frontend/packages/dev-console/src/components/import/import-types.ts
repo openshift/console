@@ -91,6 +91,30 @@ export interface DeployImageFormData {
   healthChecks: HealthChecksData;
 }
 
+export type FileUploadData = {
+  name: string;
+  value: File | '';
+  javaArgs?: string;
+};
+export interface UploadJarFormData {
+  formType?: string;
+  name: string;
+  project: ProjectData;
+  application: ApplicationData;
+  fileUpload: FileUploadData;
+  serverless?: ServerlessData;
+  image: ImageData;
+  runtimeIcon?: string;
+  route: RouteData;
+  resources: Resources;
+  resourceTypesNotValid?: Resources[];
+  build: BuildData;
+  deployment: DeploymentData;
+  labels: { [name: string]: string };
+  limits: LimitsData;
+  healthChecks: HealthChecksData;
+}
+
 export interface GitImportFormData {
   formType?: string;
   name: string;

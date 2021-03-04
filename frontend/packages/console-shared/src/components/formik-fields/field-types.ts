@@ -146,3 +146,16 @@ export interface SelectInputFieldProps extends FieldProps {
   isCreatable?: boolean;
   hasOnCreateOption?: boolean;
 }
+
+export interface BaseFileUploadProps extends FieldProps {
+  filename?: string;
+  value?: File;
+  hideDefaultPreview?: boolean;
+  filenamePlaceholder?: string;
+  onChange?: (value: File, fileName: string) => void;
+  dropzoneProps?: {
+    accept?: string;
+    maxSize?: number;
+    onDropRejected?: () => void;
+  };
+}

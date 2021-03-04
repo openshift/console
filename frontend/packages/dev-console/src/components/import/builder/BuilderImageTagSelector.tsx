@@ -17,11 +17,13 @@ import ImageStreamInfo from './ImageStreamInfo';
 export interface BuilderImageTagSelectorProps {
   selectedBuilderImage: BuilderImage;
   selectedImageTag: string;
+  showImageInfo?: boolean;
 }
 
 const BuilderImageTagSelector: React.FC<BuilderImageTagSelectorProps> = ({
   selectedBuilderImage,
   selectedImageTag,
+  showImageInfo = true,
 }) => {
   const { t } = useTranslation();
   const { setFieldValue, setFieldError } = useFormikContext<FormikValues>();
@@ -68,7 +70,7 @@ const BuilderImageTagSelector: React.FC<BuilderImageTagSelectorProps> = ({
         fullWidth
         required
       />
-      {imageTag && <ImageStreamInfo displayName={displayName} tag={imageTag} />}
+      {imageTag && showImageInfo && <ImageStreamInfo displayName={displayName} tag={imageTag} />}
     </>
   );
 };

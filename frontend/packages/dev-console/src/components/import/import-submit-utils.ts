@@ -43,6 +43,7 @@ import {
   GitReadableTypes,
   Resources,
   DevfileSuggestedResources,
+  UploadJarFormData,
 } from './import-types';
 
 export const generateSecret = () => {
@@ -105,7 +106,7 @@ export const createOrUpdateImageStream = (
 };
 
 export const createWebhookSecret = (
-  formData: GitImportFormData,
+  formData: GitImportFormData | UploadJarFormData,
   secretType: string,
   dryRun: boolean,
 ): Promise<K8sResourceKind> => {

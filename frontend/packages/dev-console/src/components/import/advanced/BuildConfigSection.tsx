@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { FormikValues, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { CheckboxField, EnvironmentField } from '@console/shared';
 import { K8sResourceKind } from '@console/internal/module/k8s';
@@ -13,6 +14,9 @@ export interface BuildConfigSectionProps {
 
 const BuildConfigSection: React.FC<BuildConfigSectionProps> = ({ namespace, resource }) => {
   const { t } = useTranslation();
+  const {
+    values: { build },
+  } = useFormikContext<FormikValues>();
   const buildConfigObj = resource || {
     kind: 'BuildConfig',
     metadata: {
@@ -23,18 +27,24 @@ const BuildConfigSection: React.FC<BuildConfigSectionProps> = ({ namespace, reso
   const envs = _.get(buildConfigObj, `spec.strategy.${strategyType}.env`, []);
   return (
     <FormSection title={t('devconsole~Build configuration')} fullWidth>
-      <CheckboxField
-        name="build.triggers.webhook"
-        label={t('devconsole~Configure a webhook build trigger')}
-      />
-      <CheckboxField
-        name="build.triggers.image"
-        label={t('devconsole~Automatically build a new Image when the Builder Image changes')}
-      />
-      <CheckboxField
-        name="build.triggers.config"
-        label={t('devconsole~Launch the first build when the build configuration is created')}
-      />
+      {typeof build?.triggers?.webhook === 'boolean' && (
+        <CheckboxField
+          name="build.triggers.webhook"
+          label={t('devconsole~Configure a webhook build trigger')}
+        />
+      )}
+      {typeof build?.triggers?.image === 'boolean' && (
+        <CheckboxField
+          name="build.triggers.image"
+          label={t('devconsole~Automatically build a new Image when the Builder Image changes')}
+        />
+      )}
+      {typeof build?.triggers?.config === 'boolean' && (
+        <CheckboxField
+          name="build.triggers.config"
+          label={t('devconsole~Launch the first build when the build configuration is created')}
+        />
+      )}
       <EnvironmentField
         name="build.env"
         label={t('devconsole~Environment variables (build and runtime)')}
