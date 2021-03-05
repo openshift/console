@@ -61,7 +61,6 @@ export const operatorsPage = {
   },
 
   selectOperator: (opt: operators | string) => {
-    operatorsPage.selectSourceType('redHat');
     switch (opt) {
       case 'OpenShift Pipelines Operator':
       case operators.PipelinesOperator: {

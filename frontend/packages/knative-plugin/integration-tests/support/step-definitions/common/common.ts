@@ -1,4 +1,4 @@
-import { Given, When } from 'cypress-cucumber-preprocessor/steps';
+import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import {
   perspective,
   projectNameSpace,
@@ -15,16 +15,11 @@ import {
   operators,
   resourceTypes,
 } from '@console/dev-console/integration-tests/support/constants';
-import { guidedTour } from '../../../../../integration-tests-cypress/views/guided-tour';
 import { operatorsPO } from '@console/dev-console/integration-tests/support/pageObjects';
+import { modal } from '@console/cypress-integration-tests/views/modal';
 
 Given('user is at developer perspective', () => {
   perspective.switchTo(switchPerspective.Developer);
-  // Bug: 1890676 is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
-  // cy.testA11y('Developer perspective with guider tour modal');
-  guidedTour.close();
-  // Bug: 1890678 is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
-  // cy.testA11y('Developer perspective');
 });
 
 Given('user is at administrator perspective', () => {
@@ -130,4 +125,21 @@ Given('user has created knative service {string}', (knativeServiceName: string) 
     knativeServiceName,
     resourceTypes.knativeService,
   );
+});
+
+Given(
+  'user has created knative revision with knative service {string}',
+  (knativeServiceName: string) => {
+    createGitWorkloadIfNotExistsOnTopologyPage(
+      'https://github.com/sclorg/nodejs-ex.git',
+      knativeServiceName,
+      resourceTypes.knativeService,
+    );
+    topologyPage.waitForKnativeRevision();
+  },
+);
+
+Then('modal with {string} appears', (header: string) => {
+  modal.modalTitleShouldContain(header);
+  modal.cancel();
 });

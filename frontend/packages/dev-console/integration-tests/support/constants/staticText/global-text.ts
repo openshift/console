@@ -13,5 +13,6 @@ export const messages = {
     privateGitRepoMessage:
       'URL is valid but cannot be reached. If this is a private repository, enter a source Secret in advanced Git options',
     rateLimitExceeded: 'Rate limit exceeded',
+    unableToDetectBuilderImage: 'Unable to detect the Builder Image.',
   },
 };

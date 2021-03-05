@@ -23,7 +23,7 @@ export const topologyPage = {
   verifyContextMenu: () => cy.get(topologyPO.graph.contextMenu).should('be.visible'),
   verifyNoWorkLoadsText: (text: string) =>
     cy.get('h3.pf-c-title.pf-m-lg').should('contain.text', text),
-  verifyWorkLoads: () => cy.get('g[data-surface="true"]').should('be.visible'),
+  verifyWorkLoads: () => cy.get(topologyPO.graph.workloads).should('be.visible'),
   search: (name: string) => {
     topologyHelper.search(name);
   },
@@ -80,12 +80,12 @@ export const topologyPage = {
     topologyHelper.search(name);
     // eslint-disable-next-line promise/catch-or-return
     cy.get('[data-kind="node"]').then(($el) => {
-      if ($el.find('g.is-filtered').length === 0) {
+      if ($el.find(topologyPO.highlightNode).length === 0) {
         createHelmRelease(name);
       } else {
         cy.log('Helm Release is already available');
       }
-      cy.get('[data-kind="node"] g.is-filtered').should('be.visible');
+      topologyPage.verifyWorkloadInTopologyPage(name);
     });
   },
   verifyHelmReleaseSidePaneTabs: () => {
@@ -99,7 +99,7 @@ export const topologyPage = {
       .eq(2)
       .should('contain.text', sideBarTabs.releaseNotes);
   },
-  appNode: (appName: string) => {
+  getAppNode: (appName: string) => {
     return cy.get(`[data-id="group:${appName}"] g.odc-resource-icon text`).contains('A');
   },
   getRoute: (nodeName: string) => {
@@ -120,11 +120,10 @@ export const topologyPage = {
     return cy.get('[data-type="event-source"] g.odc-base-node__label > text').contains(eventSource);
   },
   getRevisionNode: (serviceName: string) => {
-    return cy
-      .get('g.odc-base-node__label > text')
+    cy.get('[data-type="knative-service"] g.odc-base-node__label > text')
       .contains(serviceName)
-      .parentsUntil('[data-type="knative-service"]')
-      .children('[data-type="knative-revision"] circle[filter$="graph#NodeShadowsFilterId)"]');
+      .should('be.visible');
+    return cy.get('[data-type="knative-revision"] circle[filter$="graph#NodeShadowsFilterId)"]');
   },
   verifyContextMenuOptions: (...options: string[]) => {
     cy.get('#popper-container li[role="menuitem"]').each(($el) => {
@@ -142,28 +141,22 @@ export const topologyPage = {
       .click();
   },
   getNode: (nodeName: string) => {
-    return cy.get(topologyPO.graph.nodeLabel).contains(nodeName);
+    return cy
+      .get(topologyPO.graph.nodeLabel)
+      .should('be.visible')
+      .contains(nodeName);
   },
   rightClickOnNode: (releaseName: string) => {
-    cy.get(topologyPO.graph.nodeLabel)
-      .should('be.visible')
-      .contains(releaseName)
-      .trigger('contextmenu', { force: true });
+    topologyPage.getNode(releaseName).trigger('contextmenu', { force: true });
   },
   clickOnNode: (releaseName: string) => {
-    cy.get(topologyPO.graph.nodeLabel)
-      .should('be.visible')
-      .contains(releaseName)
-      .click({ force: true });
+    topologyPage.getNode(releaseName).click({ force: true });
   },
   clickOnSinkBinding: (nodeName: string = 'sink-binding') => {
-    cy.get(topologyPO.graph.nodeLabel)
-      .should('be.visible')
-      .contains(nodeName)
-      .click({ force: true });
+    topologyPage.getNode(nodeName).click({ force: true });
   },
-  getKnativeRevision: () => {
-    return cy.get(topologyPO.graph.node).find('g.odc-resource-icon');
+  getKnativeService: (serviceName: string) => {
+    return cy.get('[data-type="knative-service"]').contains(serviceName);
   },
   waitForKnativeRevision: () => {
     cy.get(topologyPO.graph.node, { timeout: 300000 }).should('be.visible');
@@ -187,12 +180,10 @@ export const topologyPage = {
       .click({ force: true });
   },
   clickOnKnativeService: (knativeService: string) => {
-    cy.get(`[data-id="group:${knativeService}"]`).click({ force: true });
+    topologyPage.getKnativeService(knativeService).click({ force: true });
   },
   rightClickOnKnativeService: (knativeService: string) => {
-    cy.get(
-      `[data-layer-id="groups"] [data-kind="node"][data-id="group:${knativeService}"]`,
-    ).trigger('contextmenu', { force: true });
+    topologyPage.getKnativeService(knativeService).trigger('contextmenu', { force: true });
   },
   addStorage: {
     pvc: {

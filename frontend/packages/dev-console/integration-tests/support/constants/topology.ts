@@ -31,4 +31,6 @@ export enum nodeActions {
   AddSubscription = 'Add Subscription',
   EditInMemoryChannel = 'Edit InMemoryChannel',
   DeleteInMemoryChannel = 'Delete InMemoryChannel',
+  EditRevision = 'Edit Revision',
+  DeleteRevision = 'Delete Revision',
 }

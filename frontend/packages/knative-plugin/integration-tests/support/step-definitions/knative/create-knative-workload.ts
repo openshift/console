@@ -1,17 +1,19 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { addPage } from '@console/dev-console/integration-tests/support/pages/add-flow/add-page';
-import { gitPage } from '@console/dev-console/integration-tests/support/pages/add-flow/git-page';
-import { containerImagePage } from '@console/dev-console/integration-tests/support/pages/add-flow/container-image-page';
-import { catalogPage } from '@console/dev-console/integration-tests/support/pages/add-flow/catalog-page';
+import {
+  addPage,
+  gitPage,
+  containerImagePage,
+  catalogPage,
+  navigateTo,
+} from '@console/dev-console/integration-tests/support/pages';
 import {
   addOptions,
   catalogCards,
   catalogTypes,
-} from '@console/dev-console/integration-tests/support/constants/add';
-import { navigateTo } from '@console/dev-console/integration-tests/support/pages/app';
-import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants/global';
-import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
-import { gitPO } from '@console/dev-console/integration-tests/support/pageObjects/add-flow-po';
+  devNavigationMenu,
+} from '@console/dev-console/integration-tests/support/constants';
+import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
+import { gitPO } from '@console/dev-console/integration-tests/support/pageObjects';
 
 Given('user is on {string} form', (formName: string) => {
   navigateTo(devNavigationMenu.Add);

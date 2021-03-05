@@ -198,11 +198,10 @@ export const gitPage = {
         $body
           .find(gitPO.gitSection.validatedMessage)
           .text()
-          .includes(messages.addFlow.rateLimitExceeded)
+          .includes(messages.addFlow.rateLimitExceeded) ||
+        $body.find('[aria-label="Warning Alert"]').length
       ) {
         gitPage.selectBuilderImageForGitUrl(gitUrl);
-      } else {
-        cy.log(`git url validated`);
       }
     });
   },

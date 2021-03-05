@@ -61,9 +61,14 @@ export const setTrafficDistribution = {
       .get('form [type="button"]')
       .contains('Add')
       .click(),
-  enterSplit: (split: string) => cy.get('#form-input-trafficSplitting-0-percent-field').type(split),
+  enterSplit: (split: string) =>
+    cy
+      .get('[id$="percent-field"]')
+      .last()
+      .clear()
+      .type(split),
   selectRevision: (revisionName: string) => {
-    cy.get('#form-dropdown-trafficSplitting-0-revisionName-field').click();
+    cy.get('[id$="revisionName-field"]').click();
     cy.get(`[data-test-dropdown-menu^="${revisionName}"]`).click();
   },
 };
