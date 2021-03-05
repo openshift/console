@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: console
+  namespace: console-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: console
+      hypercloud: ui
+  template:
+    metadata:
+      labels:
+        app: console
+        hypercloud: ui
+      name: hypercloud-ui
+    spec:
+      containers:
+      - command:
+        - /manager
+        args:
+        - --pwd=/var/tmp/configs/
+        image: tmaxcloudck/console-operator:5.1.0.1
+        name: manager
+        volumeMounts: 
+        - mountPath: /var/tmp/configs
+          name: dynamic-config        
+      - command:  
+        - /opt/bridge/bin/bridge
+        - --public-dir=/opt/bridge/static
+        - --listen=https://0.0.0.0:6443
+        - --base-address=https://0.0.0.0:6443
+        - --tls-cert-file=/var/https-cert/cert
+        - --tls-key-file=/var/https-cert/key
+        - --keycloak-realm=tmax
+        - --keycloak-auth-url=https://hyperauth.org/auth
+        - --keycloak-client-id=ck-integration-hypercloud5
+        - --mc-mode=true
+        - --grafana-endpoint=http://grafana.monitoring.svc:3000/api/grafana/
+        - --kiali-endpoint=https://kiali.istio-system.220.90.208.239.nip.io/api/kiali/
+        - --kibana-endpoint=https://opendistro-kibana.efk.svc.cluster.local:5601/api/kibana/
+        - --user-auth=hypercloud
+        - --k8s-auth=hypercloud
+        - --release-mode=false
+        image: tmaxcloudck/hypercloud-console:0.5.1.30
+        imagePullPolicy: Always
+        name: console
+        ports:
+        - containerPort: 6443
+          protocol: TCP
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /var/https-cert
+          name: https-cert
+          readOnly: true
+        - mountPath: /etc/localtime
+          name: localtime
+          readOnly: true
+        - mountPath: /etc/timezone
+          name: timezone
+          readOnly: true
+        - mountPath: /opt/bridge/configs
+          name: dynamic-config 
+      serviceAccount: console-system-admin
+      volumes:
+      - name: https-cert
+        secret:
+          defaultMode: 288
+          secretName: console-https-secret
+      - hostPath:
+          path: /etc/localtime
+          type: ""
+        name: localtime
+      - hostPath:
+          path: /etc/timezone
+          type: ""
+        name: timezone
+      - emptyDir:
+          medium: "Memory"
+        name: dynamic-config

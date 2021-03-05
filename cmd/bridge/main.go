@@ -151,8 +151,8 @@ func main() {
 	fKeycloakClientId := fs.String("keycloak-client-id", "", "Keycloak Client Id")
 
 	//NOTE: proxy config // jinsoo
-	fGrafanaEndpoint := fs.String("grafana-endpoint", "", "URL of the Grafana API server.")
-	fKialiEndpoint := fs.String("kiali-endpoint", "", "URL of the KIALI Portal")
+	fGrafanaEndpoint := fs.String("grafana-endpoint", "http://grafana.monitoring.svc:3000/api/grafana/", "URL of the Grafana API server.")
+	fKialiEndpoint := fs.String("kiali-endpoint", "http://0.0.0.0:33333", "URL of the KIALI Portal")
 	// NOTE: webhook 연동 추1가
 	fwebhookEndpoint := fs.String("webhook-endpoint", "https://0.0.0.0:33333", "URL of the hypercloud webhook endpoint")
 	fKibanaEndpoint := fs.String("kibana-endpoint", "https://opendistro-kibana.efk.svc.cluster.local:5601/api/kibana/", "URL of the KIALI Portal")
