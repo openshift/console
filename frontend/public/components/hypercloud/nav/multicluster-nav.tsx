@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { NavItemSeparator } from '@patternfly/react-core';
+import { NavItemSeparator, NavGroup } from '@patternfly/react-core';
 // import { referenceForModel } from '../../module/k8s';
 // import { ExternalLink, HrefLink, ResourceNSLink, ResourceClusterLink } from './items';
 import { ResourceClusterLink } from '../../nav/items';
@@ -21,24 +21,27 @@ const MulticlusterNav = () => (
         <ResourceClusterLink resource="clustermanagers" name="Clusters" />
         {/* <ResourceClusterLink resource="clustergroups" name="Cluster Groups" /> */}
         <NavSection title="Federation">
-          <h3 style={{ paddingLeft: '28px' }}>Workloads</h3>
-          <ResourceClusterLink resource="federatedpods" name="Pods" />
-          <ResourceClusterLink resource="federateddeployments" name="Deployments" />
-          <ResourceClusterLink resource="federatedreplicasets" name="Replica Sets" />
-          <ResourceClusterLink resource="federatedhorizontalpodautoscalers" name="Horizontal Pod Autoscalers" />
-          <ResourceClusterLink resource="federateddaemonsets" name="Daemon Sets" />
-          <ResourceClusterLink resource="federatedstatefulsets" name="Stateful Sets" />
-          <ResourceClusterLink resource="federatedconfigmaps" name="Config Maps" />
-          <ResourceClusterLink resource="federatedsecrets" name="Secrets" />
-          <ResourceClusterLink resource="federatedjobs" name="Jobs" />
-          <ResourceClusterLink resource="federatedcronjobs" name="Cron Jobs" />
+          <NavGroup title="Workloads">
+            <ResourceClusterLink resource="federatedpods" name="Pods" />
+            <ResourceClusterLink resource="federateddeployments" name="Deployments" />
+            <ResourceClusterLink resource="federatedreplicasets" name="Replica Sets" />
+            <ResourceClusterLink resource="federatedhorizontalpodautoscalers" name="Horizontal Pod Autoscalers" />
+            <ResourceClusterLink resource="federateddaemonsets" name="Daemon Sets" />
+            <ResourceClusterLink resource="federatedstatefulsets" name="Stateful Sets" />
+            <ResourceClusterLink resource="federatedconfigmaps" name="Config Maps" />
+            <ResourceClusterLink resource="federatedsecrets" name="Secrets" />
+            <ResourceClusterLink resource="federatedjobs" name="Jobs" />
+            <ResourceClusterLink resource="federatedcronjobs" name="Cron Jobs" />
+          </NavGroup>
           <Separator name="WorkloadsSeparator" />
-          <h3 style={{ paddingLeft: '28px' }}>{t('COMMON:MSG_LNB_MENU_46')}</h3>
-          <ResourceClusterLink resource="federatedingresses" name={t('COMMON:MSG_LNB_MENU_48')} />
-          <ResourceClusterLink resource="federatedservices" name={t('COMMON:MSG_LNB_MENU_47')} />
+          <NavGroup title={t('COMMON:MSG_LNB_MENU_46')}>\
+            <ResourceClusterLink resource="federatedingresses" name={t('COMMON:MSG_LNB_MENU_48')} />
+            <ResourceClusterLink resource="federatedservices" name={t('COMMON:MSG_LNB_MENU_47')} />
+          </NavGroup>
           <Separator name="NetworksSeparator" />
-          <h3 style={{ paddingLeft: '28px' }}>{t('COMMON:MSG_LNB_MENU_79')}</h3>
-          <ResourceClusterLink resource="federatednamespaces" name={t('COMMON:MSG_LNB_MENU_3')} />
+          <NavGroup title={t('COMMON:MSG_LNB_MENU_79')}>\
+            <ResourceClusterLink resource="federatednamespaces" name={t('COMMON:MSG_LNB_MENU_3')} />
+          </NavGroup>
         </NavSection>
         {/* <NavSection title="Image">
       <ResourceClusterLink resource="federatedregistries" name="Registry" />

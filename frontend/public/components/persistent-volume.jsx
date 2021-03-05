@@ -175,7 +175,7 @@ const Details = ({ obj: pv }) => {
             </dd>
             {pvcName && (
               <>
-                <dt>Persistent Volume Claim</dt>
+                <dt>{t('SINGLE:MSG_PERSISTENTVOLUMES_PERSISTENTVOLUMEDETAILS_TABDETAILS_1')}</dt>
                 <dd>
                   <ResourceLink kind="PersistentVolumeClaim" name={pvcName} namespace={namespace} />
                 </dd>

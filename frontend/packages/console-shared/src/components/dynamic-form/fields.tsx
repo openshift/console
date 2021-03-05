@@ -120,7 +120,11 @@ export const MatchExpressionsField: React.FC<FieldProps> = ({ formData, idSchema
 
 export const BooleanField: React.FC<FieldProps> = ({ formData, idSchema, name, onChange, uiSchema }) => {
   const { labelOn = 'true', labelOff = 'false' } = getUiOptions(uiSchema);
-  return <Switch id={idSchema?.$id || name} key={idSchema?.$id || name} isChecked={_.isNil(formData) ? false : formData} onChange={v => onChange(v)} label={labelOn as string} labelOff={labelOff as string} />;
+  return (
+    <div>
+      <Switch id={idSchema?.$id || name} key={idSchema?.$id || name} isChecked={_.isNil(formData) ? false : formData} onChange={v => onChange(v)} label={labelOn as string} labelOff={labelOff as string} />
+    </div>
+  );
 };
 
 export const LabelsField: React.FC<FieldProps> = ({ formData, idSchema, name, onChange, required, schema, uiSchema }) => (
