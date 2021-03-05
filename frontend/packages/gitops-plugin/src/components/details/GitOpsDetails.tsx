@@ -1,16 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import {
-  Stack,
-  StackItem,
-  Card,
-  CardTitle,
-  CardBody,
-  SplitItem,
-  Split,
-  Label,
-} from '@patternfly/react-core';
+import { Stack, StackItem, Card, CardTitle, CardBody, Label } from '@patternfly/react-core';
 import { ExternalLink, ResourceIcon } from '@console/internal/components/utils';
 import { ConsoleLinkModel } from '@console/internal/models';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -46,21 +37,20 @@ const GitOpsDetails: React.FC<GitOpsDetailsProps> = ({ envs, appName }) => {
               <StackItem>
                 <Card>
                   <CardTitle className="odc-gitops-details__env-section__header">
-                    <Split style={{ alignItems: 'center' }} hasGutter>
-                      <SplitItem
-                        className="odc-gitops-details__env-section__title co-truncate co-nowrap"
-                        isFilled
-                      >
-                        {env.environment}
-                      </SplitItem>
-                      <SplitItem>
+                    <Stack>
+                      <StackItem className="co-truncate co-nowrap odc-gitops-details__env-section__title">
+                        <Label className="odc-gitops-details__env-section__env" isTruncated>
+                          {env.environment}
+                        </Label>
+                      </StackItem>
+                      <StackItem className="co-truncate co-nowrap odc-gitops-details__env-section__time">
                         <Label className="odc-gitops-details__env-section__timestamp" color="grey">
                           <span style={{ color: 'var(--pf-global--palette--black-600)' }}>
                             {env.timestamp}
                           </span>
                         </Label>
-                      </SplitItem>
-                    </Split>
+                      </StackItem>
+                    </Stack>
                   </CardTitle>
                   <CardBody>
                     <Stack>
@@ -69,8 +59,14 @@ const GitOpsDetails: React.FC<GitOpsDetailsProps> = ({ envs, appName }) => {
                           <ExternalLink
                             additionalClassName="odc-gitops-details__env-section__url"
                             href={env.cluster}
-                            text={env.cluster}
-                          />
+                          >
+                            <Label
+                              className="odc-gitops-details__env-section__url-label"
+                              isTruncated
+                            >
+                              {env.cluster}
+                            </Label>
+                          </ExternalLink>
                         ) : (
                           <div className="odc-gitops-details__env-section__url-empty-state">
                             {t('gitops-plugin~Cluster URL not available')}
@@ -80,7 +76,9 @@ const GitOpsDetails: React.FC<GitOpsDetailsProps> = ({ envs, appName }) => {
                       <StackItem className="co-truncate co-nowrap">
                         <span className="co-resource-item odc-gitops-details__env-section__co-resource-item">
                           <ResourceIcon kind="Project" />
-                          <span className="co-resource-item__resource-name">{env.environment}</span>
+                          <Label className="co-resource-item__resource-name" isTruncated>
+                            {env.environment}
+                          </Label>
                         </span>
                       </StackItem>
                       {env.environment && argocdLink && (
