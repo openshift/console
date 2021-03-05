@@ -7,7 +7,7 @@ export const ServiceBindingModel: K8sKind = {
   label: 'ServiceBinding',
   labelPlural: 'ServiceBindings',
   abbr: 'SB',
-  apiGroup: 'operators.coreos.com',
+  apiGroup: 'binding.operators.coreos.com',
   apiVersion: 'v1alpha1',
   namespaced: true,
   crd: true,
