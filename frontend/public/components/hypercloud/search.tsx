@@ -16,7 +16,7 @@ import { withStartGuide } from '../start-guide';
 import { split, selectorFromString } from '../../module/k8s/selector';
 import { kindForReference, modelFor, referenceForModel } from '../../module/k8s';
 import { LoadingBox, MsgBox, PageHeading, ResourceIcon, setQueryArgument, AsyncComponent } from '../utils';
-import { SearchFilterDropdown, searchFilterValues } from '../search-filter-dropdown';
+import { SearchFilterDropdown } from '../search-filter-dropdown';
 import { useTranslation } from 'react-i18next';
 
 const ResourceList = connectToModel(({ kindObj, mock, namespace, selector, nameFilter }) => {
@@ -126,7 +126,7 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = props =>
   };
 
   const updateSearchFilter = (type: string, value: string, endOfString: boolean) => {
-    type === searchFilterValues.Label ? updateLabelFilter(value, endOfString) : updateNameFilter(value);
+    type === t('COMMON:MSG_COMMON_SEARCH_FILTER_2') ? updateLabelFilter(value, endOfString) : updateNameFilter(value);
   };
 
   const removeLabelFilter = (filter: string, value: string) => {

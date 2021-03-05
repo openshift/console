@@ -2,29 +2,43 @@ import * as React from 'react';
 import { Dropdown, DropdownToggle, DropdownItem } from '@patternfly/react-core';
 import { CaretDownIcon, FilterIcon } from '@patternfly/react-icons';
 import { TextFilter } from './factory';
+import { useTranslation } from 'react-i18next';
 
 export enum searchFilterValues {
   Label = 'Label',
   Name = 'Name',
 }
 
-export const SearchFilterDropdown: React.SFC<SearchFilterDropdownProps> = (props) => {
+export const SearchFilterDropdown: React.SFC<SearchFilterDropdownProps> = props => {
   const [isOpen, setOpen] = React.useState(false);
-  const [selected, setSelected] = React.useState(searchFilterValues.Label);
+  const { t } = useTranslation();
+  const LABEL = t('COMMON:MSG_COMMON_SEARCH_FILTER_2');
+  const NAME = t('COMMON:MSG_COMMON_SEARCH_FILTER_1');
+  const [selected, setSelected] = React.useState(LABEL);
+
+  React.useEffect(() => {
+    // 언어 변경시에 dropdown title이 변경이 안되서 넣어둠.
+    if (selected === LABEL) {
+      setSelected(LABEL);
+    } else {
+      setSelected(NAME);
+    }
+  }, [LABEL, NAME]);
 
   const { onChange, nameFilterInput, labelFilterInput } = props;
 
   const onToggle = (open: boolean) => setOpen(open);
-  const onSelect = (event: React.SyntheticEvent) => {
-    setSelected((event.target as HTMLInputElement).name as searchFilterValues);
+  const onSelect = event => {
+    const selectedName = event.target.name;
+    setSelected(selectedName);
     setOpen(!isOpen);
   };
   const dropdownItems = [
-    <DropdownItem key="label-action" name={searchFilterValues.Label} component="button">
-      {searchFilterValues.Label}
+    <DropdownItem key="label-action" name={t('COMMON:MSG_COMMON_SEARCH_FILTER_2')} component="button">
+      {t('COMMON:MSG_COMMON_SEARCH_FILTER_2')}
     </DropdownItem>,
-    <DropdownItem key="name-action" name={searchFilterValues.Name} component="button">
-      {searchFilterValues.Name}
+    <DropdownItem key="name-action" name={t('COMMON:MSG_COMMON_SEARCH_FILTER_1')} component="button">
+      {t('COMMON:MSG_COMMON_SEARCH_FILTER_1')}
     </DropdownItem>,
   ];
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -52,16 +66,7 @@ export const SearchFilterDropdown: React.SFC<SearchFilterDropdownProps> = (props
         isOpen={isOpen}
         dropdownItems={dropdownItems}
       />
-      <TextFilter
-        parentClassName="co-search__filter-input"
-        onChange={handleInputValue}
-        placeholder={selected === searchFilterValues.Label ? 'app=frontend' : 'my-resource'}
-        name="search-filter-input"
-        id="search-filter-input"
-        value={selected === searchFilterValues.Label ? labelFilterInput : nameFilterInput}
-        onKeyDown={handleKeyDown}
-        aria-labelledby="toggle-id"
-      />
+      <TextFilter parentClassName="co-search__filter-input" onChange={handleInputValue} placeholder={selected === t('COMMON:MSG_COMMON_SEARCH_FILTER_2') ? 'app=frontend' : 'my-resource'} name="search-filter-input" id="search-filter-input" value={selected === t('COMMON:MSG_COMMON_SEARCH_FILTER_2') ? labelFilterInput : nameFilterInput} onKeyDown={handleKeyDown} aria-labelledby="toggle-id" />
     </div>
   );
 };

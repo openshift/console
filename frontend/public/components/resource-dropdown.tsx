@@ -8,6 +8,7 @@ import * as fuzzy from 'fuzzysearch';
 import { Dropdown, ResourceIcon } from './utils';
 import { apiVersionForReference, K8sKind, K8sResourceKindReference, modelFor, referenceForModel } from '../module/k8s';
 import { Badge, Checkbox } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 
 // Blacklist known duplicate resources.
 const blacklistGroups = ImmutableSet([
@@ -58,6 +59,7 @@ const DropdownResourceItem: React.SFC<DropdownResourceItemProps> = ({ name, chec
 
 const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = props => {
   const { selected, onChange, allModels, showAll, className, preferredVersions, type } = props;
+  const { t } = useTranslation();
 
   const resources = allModels
     .filter(({ apiGroup, apiVersion, kind, verbs }) => {
@@ -127,12 +129,12 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = props => {
       items={allItems}
       title={
         <div key="title-resource">
-          Resources <Badge isRead>{selected.length === 1 && selected[0] === 'All' ? 'All' : selected.length}</Badge>
+          {t('COMMON:MSG_COMMON_FILTER_1')} <Badge isRead>{selected.length === 1 && selected[0] === 'All' ? 'All' : selected.length}</Badge>
         </div>
       }
       onChange={handleSelected}
       autocompleteFilter={autocompleteFilter}
-      autocompletePlaceholder="Select Resource"
+      autocompletePlaceholder={t('COMMON:MSG_COMMON_FILTER_2')}
       type={type}
     />
   );
