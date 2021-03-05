@@ -225,6 +225,19 @@ export const AddTemplateSourceModal: React.FC<ModalComponentProps &
                   disabled={isCheckingCert}
                 />
               </StackItem>
+              <StackItem>
+                <Alert
+                  variant="info"
+                  isInline
+                  title={t(
+                    'kubevirt-plugin~Customizing boot source will be available after the source is added',
+                  )}
+                >
+                  {t(
+                    "kubevirt-plugin~For customizing boot source, select 'Customize boot source' from the template actions menu.",
+                  )}
+                </Alert>
+              </StackItem>
             </Stack>
           )}
           <UploadPVCFormStatus
