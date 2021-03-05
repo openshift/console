@@ -68,27 +68,34 @@ export const hasNoFields = (jsonSchema: JSONSchema6 = {}): boolean => {
 };
 
 // Map json schema to default ui schema
-export const getDefaultUISchema = (jsonSchema: JSONSchema6): UiSchema => {
+export const getDefaultUISchema = (jsonSchema: JSONSchema6, jsonSchemaName: string): UiSchema => {
   const type = getSchemaType(jsonSchema ?? {});
   if (hasNoFields(jsonSchema)) {
     return HIDDEN_UI_SCHEMA;
   }
 
   const handleArray = () => {
-    const itemsUISchema = getDefaultUISchema(jsonSchema.items as JSONSchema6);
+    const itemsUISchema = getDefaultUISchema(jsonSchema.items as JSONSchema6, '');
     return !_.isEmpty(itemsUISchema) ? { items: itemsUISchema } : {};
   };
 
   const handleObject = () => {
-    if (jsonSchema.propertyNames) {
+    if (!!jsonSchema?.additionalProperties) {
+      if (jsonSchemaName.toLowerCase().indexOf('label') >= 0 || jsonSchemaName.toLowerCase().indexOf('annotation') >= 0 || jsonSchemaName.toLowerCase().indexOf('selector') >= 0) {
+        console.log('label', jsonSchema);
+        return {
+          'ui:field': 'LabelsField',
+        };
+      }
+      console.log('additional: ', jsonSchema);
       return {
-        'ui:field': 'LabelsField',
+        'ui:field': 'AdditionalPropertyField',
       };
     }
     return _.reduce(
       jsonSchema.properties,
       (uiSchemaAccumulator: UiSchema, property: JSONSchema6, name: string) => {
-        const propertyUISchema = getDefaultUISchema(property);
+        const propertyUISchema = getDefaultUISchema(property, name);
         return _.isEmpty(propertyUISchema)
           ? uiSchemaAccumulator
           : {
@@ -379,6 +386,6 @@ export const getUISchema = (jsonSchema, providedAPI) => {
       },
       'ui:order': ['metadata', 'spec', '*'],
     },
-    getDefaultUISchema(jsonSchema),
+    getDefaultUISchema(jsonSchema, ''),
   );
 };
