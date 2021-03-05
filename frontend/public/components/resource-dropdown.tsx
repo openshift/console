@@ -6,13 +6,7 @@ import * as classNames from 'classnames';
 import * as fuzzy from 'fuzzysearch';
 
 import { Dropdown, ResourceIcon } from './utils';
-import {
-  apiVersionForReference,
-  K8sKind,
-  K8sResourceKindReference,
-  modelFor,
-  referenceForModel,
-} from '../module/k8s';
+import { apiVersionForReference, K8sKind, K8sResourceKindReference, modelFor, referenceForModel } from '../module/k8s';
 import { Badge, Checkbox } from '@patternfly/react-core';
 
 // Blacklist known duplicate resources.
@@ -29,11 +23,7 @@ const blacklistResources = ImmutableSet([
 const DropdownItem: React.SFC<DropdownItemProps> = ({ model, showGroup, checked }) => (
   <>
     <span className={'co-resource-item'}>
-      <Checkbox
-        tabIndex={-1}
-        id={`${model.apiGroup}:${model.apiVersion}:${model.kind}`}
-        checked={checked}
-      />
+      <Checkbox tabIndex={-1} id={`${model.apiGroup}:${model.apiVersion}:${model.kind}`} checked={checked} />
       <span className="co-resource-icon--fixed-width">
         <ResourceIcon kind={referenceForModel(model)} />
       </span>
@@ -55,33 +45,24 @@ const DropdownItem: React.SFC<DropdownItemProps> = ({ model, showGroup, checked 
 const DropdownResourceItem: React.SFC<DropdownResourceItemProps> = ({ name, checked, kind }) => (
   <>
     <span className={'co-resource-item'}>
-      <Checkbox
-        tabIndex={-1}
-        id={name}
-        checked={checked}
-      />
+      <Checkbox tabIndex={-1} id={name} checked={checked} />
       <span className="co-resource-icon--fixed-width">
         <ResourceIcon kind={kind} />
       </span>
       <span className="co-resource-item__resource-name">
-        <span>
-          {name}
-        </span>
+        <span>{name}</span>
       </span>
     </span>
   </>
 );
 
-const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
+const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = props => {
   const { selected, onChange, allModels, showAll, className, preferredVersions, type } = props;
 
   const resources = allModels
     .filter(({ apiGroup, apiVersion, kind, verbs }) => {
       // Remove blacklisted items.
-      if (
-        blacklistGroups.has(apiGroup) ||
-        blacklistResources.has(`${apiGroup}/${apiVersion}.${kind}`)
-      ) {
+      if (blacklistGroups.has(apiGroup) || blacklistResources.has(`${apiGroup}/${apiVersion}.${kind}`)) {
         return false;
       }
 
@@ -91,49 +72,38 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
       }
 
       // Only show preferred version for resources in the same API group.
-      const preferred = (m: K8sKind) =>
-        preferredVersions.some(
-          (v) => v.groupVersion === apiVersionForReference(referenceForModel(m)),
-        );
-      const sameGroupKind = (m: K8sKind) =>
-        m.kind === kind && m.apiGroup === apiGroup && m.apiVersion !== apiVersion;
+      const preferred = (m: K8sKind) => preferredVersions.some(v => v.groupVersion === apiVersionForReference(referenceForModel(m)));
+      const sameGroupKind = (m: K8sKind) => m.kind === kind && m.apiGroup === apiGroup && m.apiVersion !== apiVersion;
 
-      return !allModels.find((m) => sameGroupKind(m) && preferred(m));
+      return !allModels.find(m => sameGroupKind(m) && preferred(m));
     })
     .toOrderedMap()
     .sortBy(({ kind, apiGroup }) => `${kind} ${apiGroup}`);
 
   // Track duplicate names so we know when to show the group.
-  const kinds = resources.groupBy((m) => m.kind);
-  const isDup = (kind) => kinds.get(kind).size > 1;
+  const kinds = resources.groupBy(m => m.kind);
+  const isDup = kind => kinds.get(kind).size > 1;
 
   const isKindSelected = (kind: string) => {
     return _.includes(selected, kind);
   };
   // Create dropdown items for each resource.
-  const items = resources.map((model) => (
-    <DropdownItem
-      key={referenceForModel(model)}
-      model={model}
-      showGroup={isDup(model.kind)}
-      checked={isKindSelected(referenceForModel(model))}
-    />
-  )) as OrderedMap<string, JSX.Element>;
+  const items = resources.map(model => <DropdownItem key={referenceForModel(model)} model={model} showGroup={isDup(model.kind)} checked={isKindSelected(referenceForModel(model))} />) as OrderedMap<string, JSX.Element>;
   // Add an "All" item to the top if `showAll`.
   const allItems = (showAll
     ? OrderedMap({
-      All: (
-        <>
-          <span className="co-resource-item">
-            <Checkbox id="all-resources" isChecked={isKindSelected('All')} />
-            <span className="co-resource-icon--fixed-width">
-              <ResourceIcon kind="All" />
+        All: (
+          <>
+            <span className="co-resource-item">
+              <Checkbox id="all-resources" isChecked={isKindSelected('All')} />
+              <span className="co-resource-icon--fixed-width">
+                <ResourceIcon kind="All" />
+              </span>
+              <span className="co-resource-item__resource-name">All Resources</span>
             </span>
-            <span className="co-resource-item__resource-name">All Resources</span>
-          </span>
-        </>
-      ),
-    }).concat(items)
+          </>
+        ),
+      }).concat(items)
     : items
   ).toJS() as { [s: string]: JSX.Element };
 
@@ -157,10 +127,7 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = (props) => {
       items={allItems}
       title={
         <div key="title-resource">
-          Resources{' '}
-          <Badge isRead>
-            {selected.length === 1 && selected[0] === 'All' ? 'All' : selected.length}
-          </Badge>
+          Resources <Badge isRead>{selected.length === 1 && selected[0] === 'All' ? 'All' : selected.length}</Badge>
         </div>
       }
       onChange={handleSelected}
@@ -176,16 +143,14 @@ const resourceListDropdownStateToProps = ({ k8s }) => ({
   preferredVersions: k8s.getIn(['RESOURCES', 'preferredVersions']),
 });
 
-export const ResourceListDropdown = connect(resourceListDropdownStateToProps)(
-  ResourceListDropdown_,
-);
+export const ResourceListDropdown = connect(resourceListDropdownStateToProps)(ResourceListDropdown_);
 
-export const RegistryListDropdown_: React.SFC<RegistryListDropdownProps> = (props) => {
+export const RegistryListDropdown_: React.SFC<RegistryListDropdownProps> = props => {
   const { selected, onChange, /*setAllData, */ allData, showAll, className, type } = props;
 
-  const getName = (map) => {
+  const getName = map => {
     return map.get('metadata').get('name');
-  }
+  };
 
   const resources = [];
   for (let item of Array.from(allData)) {
@@ -196,29 +161,22 @@ export const RegistryListDropdown_: React.SFC<RegistryListDropdownProps> = (prop
     return _.includes(selected, resource);
   };
 
-  const items = allData.map((resource) => (
-    <DropdownResourceItem
-      key={getName(resource)}
-      name={getName(resource)}
-      checked={isResourceSelected(getName(resource))}
-      kind='Registry'
-    />
-  )) as OrderedMap<string, JSX.Element>;
+  const items = allData.map(resource => <DropdownResourceItem key={getName(resource)} name={getName(resource)} checked={isResourceSelected(getName(resource))} kind="Registry" />) as OrderedMap<string, JSX.Element>;
 
   const allItems = (showAll
     ? OrderedMap({
-      All: (
-        <>
-          <span className="co-resource-item">
-            <Checkbox id="all-resources" isChecked={isResourceSelected('All')} />
-            <span className="co-resource-icon--fixed-width">
-              <ResourceIcon kind="All" />
+        All: (
+          <>
+            <span className="co-resource-item">
+              <Checkbox id="all-resources" isChecked={isResourceSelected('All')} />
+              <span className="co-resource-icon--fixed-width">
+                <ResourceIcon kind="All" />
+              </span>
+              <span className="co-resource-item__resource-name">All Registries</span>
             </span>
-            <span className="co-resource-item__resource-name">All Registries</span>
-          </span>
-        </>
-      ),
-    }).concat(items)
+          </>
+        ),
+      }).concat(items)
     : items
   ).toJS() as { [s: string]: JSX.Element };
 
@@ -247,10 +205,7 @@ export const RegistryListDropdown_: React.SFC<RegistryListDropdownProps> = (prop
       items={allItems}
       title={
         <div key="title-resource">
-          Registries{' '}
-          <Badge isRead>
-            {selected.length === 1 && selected[0] === 'All' ? 'All' : selected.length}
-          </Badge>
+          Registries <Badge isRead>{selected.length === 1 && selected[0] === 'All' ? 'All' : selected.length}</Badge>
         </div>
       }
       onChange={handleSelected}
@@ -259,8 +214,7 @@ export const RegistryListDropdown_: React.SFC<RegistryListDropdownProps> = (prop
       type={type}
     />
   );
-
-}
+};
 
 const registryListDropdownStateToProps = ({ k8s, UI }) => {
   let namespace = UI.getIn(['activeNamespace']);
@@ -268,9 +222,9 @@ const registryListDropdownStateToProps = ({ k8s, UI }) => {
   if (namespace !== '#ALL_NS#') {
     registryKey += `---{"ns":"${namespace}"}`;
   }
-  return ({
+  return {
     allData: k8s.getIn([registryKey, 'data']),
-  });
+  };
 };
 
 export const RegistryListDropdown = connect(registryListDropdownStateToProps)(RegistryListDropdown_);
@@ -284,7 +238,7 @@ export type RegistryListDropdownProps = {
   id?: string;
   showAll?: boolean;
   type?: string;
-}
+};
 
 export type ResourceListDropdownProps = {
   selected: K8sResourceKindReference[];
@@ -294,7 +248,7 @@ export type ResourceListDropdownProps = {
   className?: string;
   id?: string;
   showAll?: boolean;
-  type?: string
+  type?: string;
 };
 
 type DropdownItemProps = {
@@ -307,4 +261,4 @@ type DropdownResourceItemProps = {
   name: string;
   checked?: boolean;
   kind: string;
-}
+};
