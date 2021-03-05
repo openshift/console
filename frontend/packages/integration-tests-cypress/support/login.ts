@@ -16,33 +16,42 @@ const KUBEADMIN_IDP = 'kube:admin';
 // any command added below, must be added to global Cypress interface above
 
 // This will add 'cy.login(...)'
-// ex: cy.login('test', 'test', 'test')
+// ex: cy.login('my-idp', 'my-user', 'my-password')
 Cypress.Commands.add('login', (provider: string, username: string, password: string) => {
-  // if local, no need to login
-  if (!Cypress.env('BRIDGE_KUBEADMIN_PASSWORD')) {
-    cy.task('log', '  skipping login, no BRIDGE_KUBEADMIN_PASSWORD set');
-    return;
-  }
-  const idp = provider || KUBEADMIN_IDP;
-  cy.task('log', `  Logging in as ${username || KUBEADMIN_USERNAME}`);
-  cy.visit(''); // visits baseUrl which is set in plugins/index.js
-  cy.byLegacyTestID('login').should('be.visible');
-  cy.contains(idp)
-    .should('be.visible')
-    .click();
-  cy.get('#inputUsername').type(username || KUBEADMIN_USERNAME);
-  cy.get('#inputPassword').type(password || Cypress.env('BRIDGE_KUBEADMIN_PASSWORD'));
-  cy.get(submitButton).click();
-  masthead.username.shouldBeVisible();
+  // Check if auth is disabled (for a local development environment).
+  cy.window().then((win: any) => {
+    if (win.SERVER_FLAGS?.authDisabled) {
+      cy.task('log', '  skipping login, console is running with auth disabled');
+      return;
+    }
+
+    // Make sure we clear the cookie in case a previous test failed to logout.
+    cy.clearCookie('openshift-session-token');
+
+    const idp = provider || KUBEADMIN_IDP;
+    cy.task('log', `  Logging in as ${username || KUBEADMIN_USERNAME}`);
+    cy.visit(''); // visits baseUrl which is set in plugins/index.js
+    cy.byLegacyTestID('login').should('be.visible');
+    cy.contains(idp)
+      .should('be.visible')
+      .click();
+    cy.get('#inputUsername').type(username || KUBEADMIN_USERNAME);
+    cy.get('#inputPassword').type(password || Cypress.env('BRIDGE_KUBEADMIN_PASSWORD'));
+    cy.get(submitButton).click();
+    masthead.username.shouldBeVisible();
+  });
 });
 
 Cypress.Commands.add('logout', () => {
-  if (!Cypress.env('BRIDGE_KUBEADMIN_PASSWORD')) {
-    cy.task('log', '  skipping logout');
-    return;
-  }
-  cy.task('log', '  Logging out');
-  cy.byTestID('user-dropdown').click();
-  cy.byTestID('log-out').click();
-  cy.byLegacyTestID('login').should('be.visible');
+  // Check if auth is disabled (for a local development environment).
+  cy.window().then((win: any) => {
+    if (win.SERVER_FLAGS?.authDisabled) {
+      cy.task('log', '  skipping logout, console is running with auth disabled');
+      return;
+    }
+    cy.task('log', '  Logging out');
+    cy.byTestID('user-dropdown').click();
+    cy.byTestID('log-out').click();
+    cy.byLegacyTestID('login').should('be.visible');
+  });
 });
