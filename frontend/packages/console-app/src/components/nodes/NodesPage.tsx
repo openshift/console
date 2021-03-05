@@ -269,7 +269,7 @@ const NodesTableRow = connect<NodesRowMapFromStateProps, null, NodesTableRowProp
     const totalCores = metrics?.totalCPU?.[nodeName];
     const cpu =
       Number.isFinite(cores) && Number.isFinite(totalCores)
-        ? `${formatCores(cores)} / ${totalCores} cores`
+        ? `${formatCores(cores)} cores / ${totalCores} cores`
         : '-';
     const usedStrg = metrics?.usedStorage?.[nodeName];
     const totalStrg = metrics?.totalStorage?.[nodeName];
