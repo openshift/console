@@ -1,6 +1,7 @@
 import { addPage } from '../add-flow/add-page';
 import { gitPage } from '../add-flow/git-page';
 import { addOptions } from '../../constants/add';
+import { createForm } from '../app';
 
 export const createGitWorkload = (
   gitUrl: string = 'https://github.com/sclorg/nodejs-ex.git',
@@ -18,5 +19,7 @@ export const createGitWorkload = (
   if (isPipelineSelected === true) {
     gitPage.selectAddPipeline();
   }
-  gitPage.clickCreate();
+  createForm.clickCreate().then(() => {
+    cy.log(`Workload "${componentName}" with resource type "${resourceType}" is created`);
+  });
 };

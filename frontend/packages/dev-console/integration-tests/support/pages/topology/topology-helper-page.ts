@@ -1,16 +1,15 @@
 import { topologyPO } from '../../pageObjects/topology-po';
+import { app } from '../app';
 
 export const topologyHelper = {
   search: (name: string) =>
     cy
-      .byLegacyTestID('item-filter')
+      .get(topologyPO.search)
       .clear()
       .type(name),
   verifyWorkloadInTopologyPage: (appName: string) => {
     topologyHelper.search(appName);
-    cy.get(topologyPO.search).should('be.visible');
-    cy.document()
-      .its('readyState')
-      .should('eq', 'complete');
+    cy.get(topologyPO.highlightNode).should('be.visible');
+    app.waitForDocumentLoaded();
   },
 };

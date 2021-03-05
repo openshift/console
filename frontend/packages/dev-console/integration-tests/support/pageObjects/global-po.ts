@@ -27,3 +27,12 @@ export const createSourceSecret = {
     sshPrivateKey: '[data-test-id="file-input-textarea"]',
   },
 };
+
+export const formPO = {
+  configureVia: {
+    formView: '#form-radiobutton-editorType-form-field',
+    yamlView: '#form-radiobutton-editorType-yaml-field',
+  },
+  create: '[data-test-id="submit-button"]',
+  cancel: '[data-test-id="reset-button"]',
+};

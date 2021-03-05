@@ -1,6 +1,7 @@
 import { gitAdvancedOptions, buildConfigOptions } from '../../constants/add';
 import { messages } from '../../constants/staticText/addFlow-text';
 import { gitPO } from '../../pageObjects/add-flow-po';
+import { app } from '../app';
 
 export const gitPage = {
   unselectRoute: () => cy.get(gitPO.advancedOptions.createRoute).uncheck(),
@@ -19,9 +20,7 @@ export const gitPage = {
     cy.get(gitPO.gitRepoUrl)
       .clear()
       .type(gitUrl);
-    cy.document()
-      .its('readyState')
-      .should('eq', 'complete');
+    app.waitForDocumentLoaded();
   },
 
   verifyPipelineCheckBox: () => {
@@ -86,6 +85,7 @@ export const gitPage = {
         throw new Error('Resource option is not available');
         break;
     }
+    cy.log(`Resource type "${resource}" is selected`);
   },
   selectAdvancedOptions: (opt: gitAdvancedOptions) => {
     switch (opt) {

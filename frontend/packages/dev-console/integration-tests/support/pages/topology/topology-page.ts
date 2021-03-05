@@ -11,6 +11,9 @@ export const topologyObj = {
 };
 
 export const topologyPage = {
+  waitForLoad: (timeout = 50000) => {
+    cy.get('.loading-box.loading-box__loaded', { timeout }).should('exist');
+  },
   verifyTitle: () => {
     cy.get('h1.ocs-page-layout__title').should('have.text', 'Topology');
     cy.get(topologyPO.title).should('have.text', 'Topology');
@@ -104,7 +107,7 @@ export const topologyPage = {
     return cy
       .get('[data-test-id="base-node-handler"] > text')
       .contains(nodeName)
-      .parentsUntil('[data-test-id="base-node-handler"]')
+      .parentsUntil(topologyPO.graph.node)
       .next('a')
       .eq(2);
   },

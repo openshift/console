@@ -2,6 +2,7 @@ export const topologyPO = {
   switcher: '[data-test-id="topology-switcher-view"]',
   noWorkLoadsText: 'h2.co-hint-block__title',
   title: 'h1.ocs-page-layout__title',
+  search: '[data-test-id="item-filter"]',
   graph: {
     reset: '#reset-view',
     zoomIn: '#zoom-in',
@@ -14,6 +15,7 @@ export const topologyPO = {
     workloads: 'g[data-surface="true"]',
     node: '[data-test-id="base-node-handler"]',
     workload: '[data-type="workload"]',
+    eventSourceWorkload: '[data-type="event-source"]',
     contextMenuOptions: {
       addToProject: '.pf-topology-context-sub-menu',
     },
@@ -84,5 +86,5 @@ export const topologyPO = {
       cancel: '[data-test="cancel"]',
     },
   },
-  search: 'g.is-filtered',
+  highlightNode: 'g.is-filtered',
 };
