@@ -2,9 +2,8 @@ import * as React from 'react';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
-import { history } from '@console/internal/components/utils';
+import { history, LoadingBox } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { LoadingBox } from '@console/internal/components/utils';
 import { useActiveNamespace } from '@console/shared';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import StreamsInstancePage from '../streams-list/StreamsInstancePage';
@@ -20,7 +19,7 @@ import { KafkaRequest } from '../../types/rhoas-types';
 const ManagedKafkas = () => {
   const [currentNamespace] = useActiveNamespace();
   const [selectedKafka, setSelectedKafka] = React.useState<number>();
-  const [currentKafkaConnections, setCurrentKafkaConnections] = React.useState<Array<string>>([]);
+  const [currentKafkaConnections, setCurrentKafkaConnections] = React.useState<string[]>([]);
 
   const createKafkaRequestFlow = async () => {
     await createManagedServicesRequestIfNeeded(currentNamespace);
@@ -43,16 +42,27 @@ const ManagedKafkas = () => {
     optional: true,
   });
 
-  // TO DO: Replace this once we get error handling from operator
   if (!watchedKafkaRequest || !watchedKafkaRequest.status) {
     return (
-      <div>
+      <>
         <LoadingBox />
-      </div>
+      </>
     );
   }
 
-  let remoteKafkaInstances = watchedKafkaRequest.status.userKafkas;
+  if (watchedKafkaRequest.status.conditions) {
+    for (const condition of watchedKafkaRequest.status.conditions) {
+      if (condition.type === "Finished" && condition.status === "False") {
+        return (<>
+          Failed to load Managed Services.
+          Message: {condition.message}
+          Reason: {condition.reason}
+        </>)
+      }
+    }
+  }
+
+  const remoteKafkaInstances = watchedKafkaRequest.status.userKafkas;
 
   const createManagedKafkaConnectionFlow = async () => {
     const kafkaId = remoteKafkaInstances[selectedKafka].id;
@@ -71,9 +81,8 @@ const ManagedKafkas = () => {
     }
     if (currentKafkaConnections.length === remoteKafkaInstances.length) {
       return true;
-    } else {
-      return false;
     }
+    return false;
   };
 
   return (
