@@ -57,17 +57,17 @@ const StreamsInstanceTable = ({
   const formatTableRowData = (updatedRows) => {
     const tableRow =
       updatedRows &&
-      updatedRows.map(({ id, name, bootstrapServerHost, provider, region, owner, createdAt }) => {
+      updatedRows.map(({ id, name, status, provider, region, owner, createdAt }) => {
         return {
           cells: [
             { title: name },
-            { title: <a href="/">{bootstrapServerHost}</a> },
             { title: provider },
             { title: region },
             { title: <a href="/">{owner}</a> },
+            { title: status[0].toUpperCase() + status.substring(1) },
             { title: <Timestamp timestamp={createdAt} /> },
           ],
-          ...((currentKafkaConnections.includes(id) || bootstrapServerHost.length < 1) && {
+          ...((currentKafkaConnections.includes(id) || status !== "ready") && {
             disableSelection: true,
           }),
         };
@@ -81,16 +81,16 @@ const StreamsInstanceTable = ({
   };
 
   React.useEffect(() => {
-    setKafkaRows(pageKafkas);
+    //setKafkaRows(pageKafkas);
     formatTableRowData(kafkaRows);
-  }, [pageKafkas, kafkaRows, currentKafkaConnections]);
+  }, [pageKafkas, currentKafkaConnections]);
 
   const tableColumns = [
     { title: t('rhoas-plugin~Cluster Name'), transforms: [sortable] },
-    { title: t('rhoas-plugin~Bootstrap URL'), transforms: [sortable] },
     { title: t('rhoas-plugin~Provider'), transforms: [sortable] },
     { title: t('rhoas-plugin~Region'), transforms: [sortable] },
     { title: t('rhoas-plugin~Owner'), transforms: [sortable] },
+    { title: t('rhoas-plugin~Status'), transforms: [sortable] },
     { title: t('rhoas-plugin~Created'), transforms: [sortable] },
   ];
 
@@ -100,9 +100,9 @@ const StreamsInstanceTable = ({
   };
 
   const emptyStateRows = (
-    <Tbody>
-      <Tr>
-        <Td colSpan={7}>
+    <Tbody translate>
+      <Tr translate>
+        <Td translate colSpan={7}>
           <Bullseye>
             <EmptyState variant={EmptyStateVariant.small}>
               <EmptyStateIcon icon={SearchIcon} />
@@ -135,30 +135,10 @@ const StreamsInstanceTable = ({
 
   const onSort = (_event, index, direction) => {
     let filterKey = '';
-    switch (index) {
-      case 1:
-        filterKey = 'name';
-        break;
-      case 2:
-        filterKey = 'bootstrapServerHost';
-        break;
-      case 3:
-        filterKey = 'provider';
-        break;
-      case 4:
-        filterKey = 'region';
-        break;
-      case 5:
-        filterKey = 'owner';
-        break;
-      case 6:
-        filterKey = 'createdAt';
-        break;
-      default:
-        return;
-    }
+    let filterColumns = ['name', 'provider', 'region', 'owner', 'status', 'createdAt']
+    filterKey = filterColumns[index - 1];
 
-    const sortedRows = kafkaRows.sort(function(a, b) {
+    const sortedRows = kafkaRows.sort(function (a, b) {
       const keyA = a[filterKey];
       const keyB = b[filterKey];
       if (keyA < keyB) {
