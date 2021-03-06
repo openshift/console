@@ -23,7 +23,7 @@ import { arbiterText } from '../../../constants';
 import { getZone, isArbiterSC } from '../../../utils/install';
 import { AdvancedSubscription } from '../subscription-icon';
 
-export const SelectNodesText: React.FC<SelectNodesTextProps> = React.memo(({ text, replica }) => {
+export const SelectNodesText: React.FC<SelectNodesTextProps> = React.memo(({ text }) => {
   const { t } = useTranslation();
   const label = 'cluster.ocs.openshift.io/openshift-storage=""';
   return (
@@ -31,17 +31,15 @@ export const SelectNodesText: React.FC<SelectNodesTextProps> = React.memo(({ tex
       <Text>{text}</Text>
       <Text>
         <Trans t={t} ns="ceph-storage-plugin">
-          The selected nodes will be labeled with <Label color="blue">{{ label }}</Label> (unless
-          they are already labeled). {{ replica }} of the selected nodes will be used for initial
-          deployment. The remaining nodes will be used by OpenShift as scheduling targets for OCS
-          scaling.
+          If not labeled, the selected nodes are labeled <Label color="blue">{{ label }}</Label> to
+          make them target hosts for OCS components.
         </Trans>
       </Text>
     </TextContent>
   );
 });
 
-type SelectNodesTextProps = { text: string; replica: number };
+type SelectNodesTextProps = { text: string };
 
 export const SelectNodesDetails: React.FC<SelectNodesDetailsProps> = React.memo(
   ({ nodes, cpu, zones, memory }) => {
