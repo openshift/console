@@ -16,6 +16,11 @@
     width: 30%;
   }
 
+  &__form-token {
+    display: flex;
+    align-items: center;
+  }
+
   &__save-button {
     margin-left: var(--pf-global--spacer--md);
     margin-bottom: var(--pf-global--spacer--md);
