@@ -379,6 +379,10 @@ dl.co-inline {
   font-size: $font-size-base;
   margin-bottom: 5px;
 
+  &--nested {
+    margin-top: 10px;
+  }
+
   + .radio {
     margin-top: 0;
   }

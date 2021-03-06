@@ -27,6 +27,7 @@ import {
   testCatalogSource,
   testInstallPlan,
   testModel,
+  testSubscriptions,
 } from '../../mocks';
 import { ClusterServiceVersionModel } from '../models';
 import { ClusterServiceVersionKind, ClusterServiceVersionPhase } from '../types';
@@ -308,7 +309,10 @@ describe(ClusterServiceVersionDetails.displayName, () => {
 
   beforeEach(() => {
     wrapper = shallow(
-      <ClusterServiceVersionDetails obj={_.cloneDeep(testClusterServiceVersion)} />,
+      <ClusterServiceVersionDetails
+        obj={_.cloneDeep(testClusterServiceVersion)}
+        subscriptions={testSubscriptions}
+      />,
     );
   });
 

@@ -1180,7 +1180,7 @@ export const InfrastructureModel: K8sKind = {
   crd: true,
 };
 
-export const ConsoleModel: K8sKind = {
+export const ConsoleOperatorConfigModel: K8sKind = {
   label: 'Console',
   labelPlural: 'Consoles',
   apiVersion: 'v1',

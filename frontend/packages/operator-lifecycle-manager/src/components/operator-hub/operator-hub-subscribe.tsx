@@ -24,14 +24,24 @@ import {
   k8sCreate,
   k8sGet,
   k8sListPartialMetadata,
+  k8sPatch,
+  K8sResourceKind,
   kindForReference,
   referenceFor,
   referenceForModel,
 } from '@console/internal/module/k8s';
 import { RadioGroup, RadioInput } from '@console/internal/components/radio';
 import { fromRequirements } from '@console/internal/module/k8s/selector';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { useAccessReview } from '@console/internal/components/utils/rbac';
+import { CONSOLE_OPERATOR_CONFIG_NAME } from '@console/shared/src/constants';
 import { SubscriptionModel, OperatorGroupModel, PackageManifestModel } from '../../models';
-import { NamespaceModel, RoleBindingModel, RoleModel } from '@console/internal/models';
+import {
+  ConsoleOperatorConfigModel,
+  NamespaceModel,
+  RoleBindingModel,
+  RoleModel,
+} from '@console/internal/models';
 import {
   OperatorGroupKind,
   PackageManifestKind,
@@ -53,6 +63,8 @@ import { installedFor, supports, providedAPIsForOperatorGroup, isGlobal } from '
 import { CRDCard } from '../clusterserviceversion';
 import { OperatorInstallStatusPage } from '../operator-install-page';
 import { parseJSONAnnotation } from '@console/shared/src/utils/annotations';
+import { getClusterServiceVersionPlugins, isCatalogSourceTrusted } from '../../utils';
+import { ConsolePluginFormGroup } from '../../utils/console-plugin-form-group';
 
 export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> = (props) => {
   const [targetNamespace, setTargetNamespace] = React.useState(null);
@@ -68,7 +80,21 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
   ] = React.useState(true);
   const [enableMonitoring, setEnableMonitoring] = React.useState(false);
   const [error, setError] = React.useState('');
+  const [consoleOperatorConfig] = useK8sWatchResource<K8sResourceKind>({
+    kind: referenceForModel(ConsoleOperatorConfigModel),
+    isList: false,
+    name: CONSOLE_OPERATOR_CONFIG_NAME,
+  });
+  const [enabledPlugins, setEnabledPlugins] = React.useState<string[]>([]);
   const { t } = useTranslation();
+
+  const setPluginEnabled = (plugin: string, enabled: boolean) => {
+    if (enabled) {
+      setEnabledPlugins([...enabledPlugins, plugin]);
+    } else {
+      setEnabledPlugins(enabledPlugins.filter((p: string) => p !== plugin));
+    }
+  };
 
   const { name: pkgName } = props.packageManifest.data[0].metadata;
   const {
@@ -109,6 +135,13 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
     // eslint-disable-next-line no-console
     () => console.error('Operator Hub Subscribe: Could not get initialization resource.'),
   );
+  const canPatchConsoleOperatorConfig = useAccessReview({
+    group: ConsoleOperatorConfigModel.apiGroup,
+    resource: ConsoleOperatorConfigModel.plural,
+    verb: 'patch',
+    name: CONSOLE_OPERATOR_CONFIG_NAME,
+  });
+  const csvPlugins = getClusterServiceVersionPlugins(currentCSVDesc?.annotations);
 
   const initializationResourceReference = React.useMemo(
     () => (initializationResource ? referenceFor(initializationResource) : null),
@@ -173,6 +206,12 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
     props.packageManifest.data,
     selectedTargetNamespace,
   ]);
+
+  React.useEffect(() => {
+    setEnabledPlugins(isCatalogSourceTrusted(catalogSource) ? csvPlugins : []);
+    // Use the JSON string directly from the annotation so the dependency is compared using string comparison
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [catalogSource, currentCSVDesc?.annotations?.['console.openshift.io/plugins']]);
 
   const singleInstallMode = installModes.find(
     (m) => m.type === InstallModeType.InstallModeTypeOwnNamespace,
@@ -334,6 +373,20 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
         await k8sCreate(OperatorGroupModel, operatorGroup);
       }
       await k8sCreate(SubscriptionModel, subscription);
+      const previousPlugins: string[] = consoleOperatorConfig?.spec?.plugins || [];
+      const updatedPlugins: string[] = [
+        ...previousPlugins.filter((plugin: string) => !csvPlugins.includes(plugin)),
+        ...enabledPlugins,
+      ];
+      if (!_.isEqual(previousPlugins.sort(), updatedPlugins.sort())) {
+        await k8sPatch(ConsoleOperatorConfigModel, consoleOperatorConfig, [
+          {
+            path: '/spec/plugins',
+            value: updatedPlugins,
+            op: 'add',
+          },
+        ]);
+      }
       setShowInstallStatusPage(true);
     } catch (err) {
       setError(err.message || t('olm~Could not create Operator Subscription.'));
@@ -734,6 +787,14 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
                   )}
                 </fieldset>
               </div>
+              {csvPlugins.length > 0 && consoleOperatorConfig && canPatchConsoleOperatorConfig && (
+                <ConsolePluginFormGroup
+                  catalogSource={catalogSource}
+                  csvPlugins={csvPlugins}
+                  enabledPlugins={enabledPlugins}
+                  setPluginEnabled={setPluginEnabled}
+                />
+              )}
             </>
             <div className="co-form-section__separator" />
             {formError()}
