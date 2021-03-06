@@ -29,9 +29,9 @@ describe('Interacting with OperatorHub', () => {
       .should('be.gt', 0);
   });
 
-  it('displays OperatorHub tiles filtered by "Provider Type"', () => {
+  it('displays OperatorHub tiles filtered by "Source"', () => {
     cy.log('enable the Red Hat filter');
-    cy.byTestID('providerType-red-hat').click();
+    cy.byTestID('catalogSourceDisplayName-red-hat').click();
     cy.log('more than one tile should be present');
     cy.get('.catalog-tile-pf')
       .its('length')
@@ -44,9 +44,9 @@ describe('Interacting with OperatorHub', () => {
         const origCatalogTitleTxt = $origCatalogTitle.find('.catalog-tile-pf-title').text();
         cy.log(`first Red Hat filtered tile title text is ${origCatalogTitleTxt}`);
         cy.log('disable the Red Hat filter');
-        cy.byTestID('providerType-red-hat').click();
+        cy.byTestID('catalogSourceDisplayName-red-hat').click();
         cy.log('enable the Certified filter');
-        cy.byTestID('providerType-certified').click();
+        cy.byTestID('catalogSourceDisplayName-certified').click();
         cy.log('more than one tile should be present');
         cy.get('.catalog-tile-pf')
           .its('length')

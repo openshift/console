@@ -1,14 +1,6 @@
 import { K8sResourceKind, ObjectMetadata } from '@console/internal/module/k8s';
 import { PackageManifestKind, SubscriptionKind } from '../../types';
 
-export enum ProviderType {
-  RedHat = 'Red Hat',
-  Certified = 'Certified',
-  Community = 'Community',
-  Custom = 'Custom',
-  Marketplace = 'Marketplace',
-}
-
 export enum InstalledState {
   Installed = 'Installed',
   NotInstalled = 'Not Installed',
@@ -35,13 +27,14 @@ export type OperatorHubItem = {
   installed: boolean;
   installState?: InstalledState;
   subscription?: SubscriptionKind;
-  provider: ProviderType;
+  provider: string;
   longDescription: string;
   description: string;
   createdAt?: string;
   tags: string[];
   categories: string[];
   catalogSource: string;
+  catalogSourceDisplayName?: string;
   catalogSourceNamespace: string;
   [key: string]: any;
   validSubscription: string[];

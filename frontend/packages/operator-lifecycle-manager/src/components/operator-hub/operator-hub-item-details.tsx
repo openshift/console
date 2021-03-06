@@ -13,6 +13,7 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import { ClusterServiceVersionModel } from '../../models';
 import { ClusterServiceVersionKind, SubscriptionKind } from '../../types';
 import { Trans, useTranslation } from 'react-i18next';
+import { DefaultCatalogSource } from '../../const';
 
 // t('olm~Basic Install'),
 // t('olm~Seamless Upgrades'),
@@ -101,12 +102,12 @@ const InstalledHintBlock: React.FC<OperatorHubItemDetailsHintBlockProps> = ({
 
 const OperatorHubItemDetailsHintBlock: React.FC<OperatorHubItemDetailsHintBlockProps> = (props) => {
   const { t } = useTranslation();
-  const { installed, providerType } = props;
+  const { installed, catalogSource } = props;
   if (installed) {
     return <InstalledHintBlock {...props} />;
   }
 
-  if (providerType === 'Community') {
+  if (catalogSource === DefaultCatalogSource.CommunityOperators) {
     return (
       <HintBlock className="co-catalog-page__hint" title={t('olm~Community Operator')}>
         <p>
@@ -126,7 +127,7 @@ const OperatorHubItemDetailsHintBlock: React.FC<OperatorHubItemDetailsHintBlockP
     );
   }
 
-  if (providerType === 'Marketplace') {
+  if (catalogSource === DefaultCatalogSource.RedHatMarketPlace) {
     return (
       <HintBlock title={t('olm~Marketplace Operator')}>
         <p>
@@ -154,6 +155,8 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
   const { t } = useTranslation();
   const {
     capabilityLevel,
+    catalogSource,
+    catalogSourceDisplayName,
     containerImage,
     createdAt,
     description,
@@ -162,7 +165,6 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
     longDescription,
     marketplaceSupportWorkflow,
     provider,
-    providerType,
     repository,
     subscription,
     support,
@@ -210,7 +212,10 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
                   )
                 }
               />
-              <PropertyItem label={t('olm~Provider type')} value={providerType || notAvailable} />
+              <PropertyItem
+                label={t('olm~Source')}
+                value={catalogSourceDisplayName || notAvailable}
+              />
               <PropertyItem label={t('olm~Provider')} value={provider || notAvailable} />
               {infraFeatures && (
                 <PropertyItem
@@ -246,7 +251,7 @@ export const OperatorHubItemDetails: React.FC<OperatorHubItemDetailsProps> = ({
                 installed={installed}
                 latestVersion={version}
                 namespace={namespace}
-                providerType={providerType}
+                catalogSource={catalogSource}
                 subscription={subscription}
               />
               {longDescription ? <MarkdownView content={longDescription} /> : description}
@@ -265,7 +270,7 @@ type OperatorHubItemDetailsHintBlockProps = {
   installed: boolean;
   latestVersion: string;
   namespace: string;
-  providerType: string;
+  catalogSource: string;
   subscription: SubscriptionKind;
 };
 

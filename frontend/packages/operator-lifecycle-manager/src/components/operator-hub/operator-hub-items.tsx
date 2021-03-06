@@ -24,14 +24,9 @@ import { TileViewPage } from '@console/internal/components/utils/tile-view-page'
 import { SubscriptionModel } from '../../models';
 import { OperatorHubItemDetails } from './operator-hub-item-details';
 import { communityOperatorWarningModal } from './operator-hub-community-provider-modal';
-import {
-  OperatorHubItem,
-  InstalledState,
-  ProviderType,
-  CapabilityLevel,
-  InfraFeatures,
-} from './index';
+import { OperatorHubItem, InstalledState, CapabilityLevel, InfraFeatures } from './index';
 import { useTranslation } from 'react-i18next';
+import { DefaultCatalogSource, DefaultCatalogSourceDisplayName } from '../../const';
 
 const osBaseLabel = 'operatorframework.io/os.';
 const targetGOOSLabel = window.SERVER_FLAGS.GOOS ? `${osBaseLabel}${window.SERVER_FLAGS.GOOS}` : '';
@@ -91,30 +86,25 @@ const Badge = ({ text }) => (
  * Filter property white list
  */
 const operatorHubFilterGroups = [
-  'providerType',
+  'catalogSourceDisplayName',
   'provider',
   'installState',
   'capabilityLevel',
   'infraFeatures',
 ];
 
-// t('olm~Provider type')
+// t('olm~Source')
 // t('olm~Provider')
 // t('olm~Install state')
 // t('olm~Capability level')
 // t('olm~Infrastructure features')
 const operatorHubFilterMap = {
-  providerType: 'Provider type',
+  catalogSourceDisplayName: 'Source',
   provider: 'Provider',
   installState: 'Install state',
   capabilityLevel: 'Capability level',
   infraFeatures: 'Infrastructure features',
 };
-
-// t('olm~Community')
-// t('olm~Marketplace')
-const COMMUNITY_PROVIDER_TYPE = 'Community';
-const MARKETPLACE_PROVIDER_TYPE = 'Marketplace';
 
 const ignoredProviderTails = [', Inc.', ', Inc', ' Inc.', ' Inc', ', LLC', ' LLC'];
 
@@ -167,15 +157,15 @@ const providerSort = (provider) => {
   return provider.value;
 };
 
-const providerTypeSort = (provider) => {
-  switch (provider.value) {
-    case ProviderType.RedHat:
+const catalogSourceDisplayNameSort = (catalogSourceDisplayName) => {
+  switch (catalogSourceDisplayName.value) {
+    case DefaultCatalogSourceDisplayName.RedHatOperators:
       return 0;
-    case ProviderType.Certified:
+    case DefaultCatalogSourceDisplayName.CertifiedOperators:
       return 1;
-    case ProviderType.Community:
+    case DefaultCatalogSourceDisplayName.CommunityOperators:
       return 2;
-    case ProviderType.Marketplace:
+    case DefaultCatalogSourceDisplayName.RedHatMarketplace:
       return 3;
     default:
       return 4;
@@ -228,8 +218,8 @@ const sortFilterValues = (values, field) => {
     sorter = providerSort;
   }
 
-  if (field === 'providerType') {
-    return _.sortBy(values, [providerTypeSort, 'value']);
+  if (field === 'catalogSourceDisplayName') {
+    return _.sortBy(values, [catalogSourceDisplayNameSort, 'value']);
   }
 
   if (field === 'installState') {
@@ -341,8 +331,11 @@ const OperatorHubTile: React.FC<OperatorHubTileProps> = ({ item, onClick }) => {
 
   const { uid, name, imgUrl, provider, description, installed } = item;
   const vendor = provider ? t('olm~provided by {{provider}}', { provider }) : null;
-  const badges = [COMMUNITY_PROVIDER_TYPE, MARKETPLACE_PROVIDER_TYPE].includes(item.providerType)
-    ? [<Badge text={item.providerType} />]
+  const badges = ([
+    DefaultCatalogSource.CommunityOperators,
+    DefaultCatalogSource.RedHatMarketPlace,
+  ] as string[]).includes(item.catalogSource)
+    ? [<Badge text={item.catalogSourceDisplayName} />]
     : [];
   const icon = (
     <img
@@ -412,7 +405,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
   };
 
   const openOverlay = (item: OperatorHubItem) => {
-    if (!ignoreOperatorWarning && item.providerType === COMMUNITY_PROVIDER_TYPE) {
+    if (!ignoreOperatorWarning && item.catalogSource === DefaultCatalogSource.CommunityOperators) {
       communityOperatorWarningModal({
         showCommunityOperators: (ignore) => showCommunityOperator(item)(ignore),
       });
