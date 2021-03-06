@@ -1,24 +1,25 @@
+@knative-eventing
 Feature: Event Sources can able sink to URI as well as Resource
     User should be able to sink Event Sources with resource as well as with URI
 
 
         Background:
             Given user has installed OpenShift Serverless Operator
-              And user is at Developer perspective
+              And user is at developer perspective
 
 
         @regression
         Scenario: Resource and URI radio button on Event Sources Cards page
-            Given user is at +Add page
+            Given user is at Add page
              When user clicks on Event Sources card
               And user selects an event source card
              Then user will see the Resource radio button
               And user will see URI radio button
 
 
-        @regression, @manual
+        @smoke
         Scenario: Event Source sink to Resource
-            Given user is at +Add page
+            Given user is at Add page
              When user clicks on Event Sources card
               And user selects an event source card
               And user selects sink to Resource option
@@ -29,9 +30,9 @@ Feature: Event Sources can able sink to URI as well as Resource
               And user will see that event source is sinked with selected resource
 
 
-        @regression, @manual
+        @regression @manual
         Scenario: Event Source sink to URI
-            Given user is at +Add page
+            Given user is at Add page
              When user clicks on Event Sources card
               And user selects an event source card
               And user selects sink to URI option
@@ -43,12 +44,14 @@ Feature: Event Sources can able sink to URI as well as Resource
               And user will see that event source is sinked with URI
 
 
+
         @regression
         Scenario: Context Menu for URI
             Given user has sinked an event source to URI
               And user is at Topology page
              When user right-clicks on URI
              Then user will see a context menu opened for URI
+
 
 
         @regression
@@ -60,7 +63,7 @@ Feature: Event Sources can able sink to URI as well as Resource
              Then user will be shown with modal to edit the URI
 
 
-        @regression, @manual
+        @regression @manual
         Scenario: Sidebar for URI
             Given user has sinked an event source to URI
               And user is at Topology page
@@ -70,7 +73,7 @@ Feature: Event Sources can able sink to URI as well as Resource
               And user will see the associated resources on the Resources tab
 
 
-        @regression, @manual
+        @regression @manual
         Scenario: Sidebar for Event Source sinked with URI
             Given user has sinked an event source to URI
               And user is at Topology page
@@ -79,7 +82,7 @@ Feature: Event Sources can able sink to URI as well as Resource
              Then user will Sink URI option on the Resources tab
 
 
-        @regression, @manual
+        @regression @manual
         Scenario: Sidebar for Connector
             Given user has sinked an event source to URI
               And user is at Topology page
@@ -89,7 +92,6 @@ Feature: Event Sources can able sink to URI as well as Resource
               And user will see the associated Connections on the Resources tab
 
 
-        @regression, @manual
         Scenario: Manually drag a Connector from URI to Knative Service
             Given user has sinked an event source to URI
               And user has a Knative Service
@@ -109,6 +111,7 @@ Feature: Event Sources can able sink to URI as well as Resource
               And user will see URI radio button
 
 
+
         @regression
         Scenario: Move sink from URI to new Resource
             Given user has sinked an event source to URI
@@ -120,6 +123,7 @@ Feature: Event Sources can able sink to URI as well as Resource
               And user clicks on Save button
              Then user will see that event source is now connected to new resource
               And user will see that the already existed URI will get vanished
+
 
 
         @regression
@@ -135,7 +139,7 @@ Feature: Event Sources can able sink to URI as well as Resource
              Then user will see that event source is now connected to new URI
 
 
-        @regression, @manual
+        @regression @manual
         Scenario: Move sink from Resource to same Resource
             Given user has sinked an event source to Resource
               And user is at Topology page
@@ -146,7 +150,7 @@ Feature: Event Sources can able sink to URI as well as Resource
              Then user will see that save button is disabled
 
 
-        @regression, @manual
+        @regression @manual
         Scenario: Move sink from Resource to new Resource
             Given user has sinked an event source to Resource
               And user is at Topology page
@@ -157,7 +161,7 @@ Feature: Event Sources can able sink to URI as well as Resource
              Then user will see that event source is now connected to new resource
 
 
-        @regression, @manual
+        @regression @manual
         Scenario: Move sink from Resource to URI
             Given user has sinked an event source to Resource
               And user is at Topology page
