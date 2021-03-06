@@ -1,10 +1,16 @@
 import * as _ from 'lodash';
+import { JSONSchema6 } from 'json-schema';
+import { getSchemaType } from 'react-jsonschema-form/lib/utils';
 import {
+  ARRAY_COMPATIBLE_CAPABILITIES,
+  DEPRECATED_CAPABILITIES,
+  OBJECT_COMPATIBLE_CAPABILITIES,
+  PRIMITIVE_COMPATIBLE_CAPABILITIES,
   REGEXP_ARRAY_PATH,
   REGEXP_CAPTURE_GROUP_SUBGROUP,
   REGEXP_NESTED_ARRAY_PATH,
 } from './const';
-import { Descriptor } from './types';
+import { Descriptor, SpecCapability, StatusCapability } from './types';
 
 // Creates a structure for rendering grouped descriptors on the operand details page.
 export const groupDescriptorDetails = (
@@ -89,6 +95,105 @@ export const groupDescriptorDetails = (
 // Replace '.', '[', and '].' with '/'.
 export const getPatchPathFromDescriptor = (descriptor: Descriptor): string =>
   _.toPath(descriptor.path).join('/');
+
+// Given a type, return a static list of x-descriptors that are compatible
+const getCompatibleCapabilities = (type: string): (StatusCapability | SpecCapability)[] => {
+  switch (type) {
+    case 'object':
+      return OBJECT_COMPATIBLE_CAPABILITIES;
+    case 'array':
+      return ARRAY_COMPATIBLE_CAPABILITIES;
+    default:
+      return PRIMITIVE_COMPATIBLE_CAPABILITIES;
+  }
+};
+
+// Given type and descriptor, return a list of non-deprecated x-descriptors compatible with type.
+// Deprecated and incompatible x-descriptors are logged as warnings in console. If
+// 'allowDeprecated' is true, deprecated x-descriptors are logged but still returned as valid.
+export function getValidCapabilitiesForDataType<CapabilityType extends string = SpecCapability>(
+  descriptor: Descriptor<CapabilityType>,
+  type: string,
+  allowDeprecated?: boolean,
+): CapabilityType[] {
+  const compatibleCapabilities = getCompatibleCapabilities(type);
+  const [valid, invalid, deprecated] = _.reduce(
+    descriptor?.['x-descriptors'] ?? [],
+    ([validAccumulator, invalidAccumulator, deprecatedAccumulator], capability) => {
+      const isDeprecated = DEPRECATED_CAPABILITIES.some((deprecatedCapability) =>
+        capability.startsWith(deprecatedCapability),
+      );
+
+      const isCompatible =
+        type === 'any' ||
+        compatibleCapabilities.some((compatibleCapability) =>
+          capability.startsWith(compatibleCapability),
+        );
+
+      const isValid = (!isDeprecated || allowDeprecated) && isCompatible;
+      return [
+        [...(validAccumulator ?? []), ...(isValid ? [capability] : [])],
+        [...(invalidAccumulator ?? []), ...(!isValid ? [capability] : [])],
+        [...(deprecatedAccumulator ?? []), ...(isDeprecated ? [capability] : [])],
+      ];
+    },
+    [[], [], []],
+  );
+
+  if (invalid?.length) {
+    invalid.forEach((invalidCapability) => {
+      // eslint-disable-next-line no-console
+      console.warn(
+        `[Invalid x-descriptor] "${invalidCapability}" is incompatible with ${type} values and will have no effect`,
+        descriptor,
+      );
+    });
+  }
+
+  if (deprecated?.length) {
+    deprecated.forEach((deprecatedCapability) => {
+      // eslint-disable-next-line no-console
+      console.warn(
+        `[Deprecated x-descriptor] "${deprecatedCapability}" is no longer supported ${!allowDeprecated &&
+          'and will have no effect'}`,
+        descriptor,
+      );
+    });
+  }
+
+  return valid ?? [];
+}
+
+const getValueType = (value: any): string => {
+  // Consider nil values 'any' since every descriptor should render empty state in this case
+  if (_.isNil(value)) {
+    return 'any';
+  }
+
+  // Array check must come before object check because _.isObject will return true on array values
+  return _.isArray(value) ? 'array' : _.isObject(value) ? 'object' : 'primitive';
+};
+
+export function getValidCapabilitiesForValue<CapabilityType extends string = SpecCapability>(
+  descriptor: Descriptor<CapabilityType>,
+  value: any,
+  allowDeprecated?: boolean,
+): CapabilityType[] {
+  const type = getValueType(value);
+  return getValidCapabilitiesForDataType<CapabilityType>(descriptor, type, allowDeprecated);
+}
+
+export function getValidCapabilitiesForSchema<CapabilityType extends string = SpecCapability>(
+  descriptor: Descriptor<CapabilityType>,
+  schema: JSONSchema6,
+  allowDeprecated?: boolean,
+): CapabilityType[] {
+  const type = getSchemaType(schema);
+  return getValidCapabilitiesForDataType<CapabilityType>(descriptor, type, allowDeprecated);
+}
+
+export const isMainStatusDescriptor = (descriptor: Descriptor): boolean =>
+  descriptor.path === 'status' || descriptor.displayName === 'Status';
 
 export type DescriptorGroup = {
   arrayGroupPath?: string; // Path to the array that this descriptor group represents

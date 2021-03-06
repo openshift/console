@@ -18,7 +18,7 @@ import { EndpointList } from './endpoint';
 import { configureSizeModal } from './configure-size';
 import { configureUpdateStrategyModal } from './configure-update-strategy';
 import { DefaultCapability, K8sResourceLinkCapability } from '../common';
-import { getPatchPathFromDescriptor } from '../utils';
+import { getPatchPathFromDescriptor, getValidCapabilitiesForValue } from '../utils';
 import { useTranslation } from 'react-i18next';
 
 const PodCount: React.FC<SpecCapabilityProps> = ({
@@ -316,23 +316,14 @@ const UpdateStrategy: React.FC<SpecCapabilityProps> = ({
 };
 
 export const SpecDescriptorDetailsItem: React.FC<SpecCapabilityProps> = (props) => {
-  const capability = (props.descriptor?.['x-descriptors'] ?? []).find(
-    (c) =>
-      !c.startsWith(SpecCapability.fieldGroup) &&
-      !c.startsWith(SpecCapability.arrayFieldGroup) &&
-      !c.startsWith(SpecCapability.advanced) &&
-      !c.startsWith(SpecCapability.fieldDependency),
-  ) as SpecCapability;
+  const [capability] =
+    getValidCapabilitiesForValue<SpecCapability>(props.descriptor, props.value, true) ?? [];
 
-  if (_.isEmpty(capability)) {
-    return <DefaultCapability {...props} />;
-  }
-
-  if (capability.startsWith(SpecCapability.k8sResourcePrefix)) {
+  if (capability?.startsWith(SpecCapability.k8sResourcePrefix)) {
     return <K8sResourceLinkCapability capability={capability} {...props} />;
   }
 
-  if (capability.startsWith(SpecCapability.selector)) {
+  if (capability?.startsWith(SpecCapability.selector)) {
     return <BasicSelector capability={capability} {...props} />;
   }
 
@@ -358,6 +349,13 @@ export const SpecDescriptorDetailsItem: React.FC<SpecCapabilityProps> = (props) 
     case SpecCapability.hidden:
       return null;
     default:
+      if (_.isObject(props.value)) {
+        // eslint-disable-next-line no-console
+        console.warn(
+          `[Invalid SpecDescriptor] Descriptor is incompatible with non-primitive value.`,
+          props.descriptor,
+        );
+      }
       return <DefaultCapability {...props} />;
   }
 };

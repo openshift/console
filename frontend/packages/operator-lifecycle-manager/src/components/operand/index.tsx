@@ -65,6 +65,7 @@ import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 import { useK8sModels } from '@console/shared/src/hooks/useK8sModels';
 import { DescriptorDetailsItem, DescriptorDetailsItemList } from '../descriptors';
 import { useTranslation } from 'react-i18next';
+import { isMainStatusDescriptor } from '../descriptors/utils';
 
 export const getOperandActions = (
   ref: K8sResourceKindReference,
@@ -489,7 +490,7 @@ export const OperandDetails = connectToModel(({ crd, csv, kindObj, obj }: Operan
       };
     }
 
-    if (descriptor.path === 'status' || descriptor.displayName === 'Status') {
+    if (isMainStatusDescriptor(descriptor)) {
       return {
         ...acc,
         mainStatusDescriptor: descriptor,
