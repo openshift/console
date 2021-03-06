@@ -8,6 +8,7 @@ import { getNamespace } from '../components/utils/link';
 import { OverviewSpecialGroup } from '../components/overview/constants';
 import { RootState } from '../redux';
 import { Alert, AlertStates, RuleStates, SilenceStates } from '../components/monitoring/types';
+import { MONITORING_DASHBOARDS_DEFAULT_TIMESPAN } from '../components/monitoring/dashboards/types';
 
 export type UIState = ImmutableMap<string, any>;
 
@@ -64,8 +65,9 @@ export default (state: UIState, action: UIAction): UIState => {
       }),
       user: {},
       monitoringDashboards: ImmutableMap({
+        endTime: null,
         pollInterval: 30 * 1000,
-        timespan: 30 * 60 * 1000,
+        timespan: MONITORING_DASHBOARDS_DEFAULT_TIMESPAN,
         variables: ImmutableMap(),
       }),
       queryBrowser: ImmutableMap({
@@ -138,6 +140,9 @@ export default (state: UIState, action: UIAction): UIState => {
         ['monitoringDashboards', 'variables'],
         ImmutableMap(action.payload.variables),
       );
+
+    case ActionType.MonitoringDashboardsSetEndTime:
+      return state.setIn(['monitoringDashboards', 'endTime'], action.payload.endTime);
 
     case ActionType.MonitoringDashboardsSetPollInterval:
       return state.setIn(['monitoringDashboards', 'pollInterval'], action.payload.pollInterval);

@@ -1,3 +1,5 @@
+export const MONITORING_DASHBOARDS_DEFAULT_TIMESPAN = 30 * 60 * 1000;
+
 export type ColumnStyle = {
   alias?: string;
   decimals?: number;
