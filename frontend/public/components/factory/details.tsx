@@ -31,11 +31,11 @@ import {
   K8sKind,
   referenceForModel,
   referenceFor,
-  modelFor,
 } from '../../module/k8s';
 import { ErrorBoundaryFallback } from '../error';
 import { breadcrumbsForDetailsPage } from '../utils/breadcrumbs';
 import DetailsBreadcrumbResolver from './details-breadcrumb-resolver';
+import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
 
 const useBreadCrumbsForDetailPage = (
   kindObj: K8sKind,
@@ -49,17 +49,19 @@ const useBreadCrumbsForDetailPage = (
         ? breadCrumbsExtension.find(({ properties: { getModels } }) => {
             const models = getModels();
             return Array.isArray(models)
-              ? models.findIndex((model: K8sKind) => model.kind === kindObj.kind) !== -1
-              : models.kind === kindObj.kind;
+              ? models.findIndex((model: K8sKind) => model.kind === kindObj?.kind) !== -1
+              : models.kind === kindObj?.kind;
           })
         : undefined,
-    [breadCrumbsResolved, breadCrumbsExtension, kindObj.kind],
+    [breadCrumbsResolved, breadCrumbsExtension, kindObj],
   );
 };
 
 export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...props }) => {
   const resourceKeys = _.map(props.resources, 'prop');
   const [pluginBreadcrumbs, setPluginBreadcrumbs] = React.useState(undefined);
+  const [model] = useK8sModel(props.kind);
+  const kindObj = props.kindObj ?? model;
   const renderAsyncComponent = (page: ResourceTabPage, cProps: PageComponentProps) => (
     <AsyncComponent loader={page.properties.loader} {...cProps} />
   );
@@ -81,7 +83,6 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
         })),
     [resourcePageExtensions, props],
   );
-  const kindObj = props.kindObj ?? modelFor(props.kind);
   const resolvedBreadcrumbExtension = useBreadCrumbsForDetailPage(kindObj);
   const onBreadcrumbsResolved = React.useCallback((breadcrumbs) => {
     setPluginBreadcrumbs(breadcrumbs || undefined);
