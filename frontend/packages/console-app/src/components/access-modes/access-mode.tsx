@@ -24,8 +24,7 @@ export const getPVCAccessModes = (resource: PersistentVolumeClaimKind, key: stri
   );
 
 export const AccessModeSelector: React.FC<AccessModeSelectorProps> = (props) => {
-  const { formClassName, pvcResource, onChange, loadError, loaded, provisioner } = props;
-
+  const { formClassName, pvcResource, onChange, loaded, provisioner } = props;
   const pvcInitialAccessMode = pvcResource ? getPVCAccessModes(pvcResource, 'value') : '';
 
   const [allowedAccessModes, setAllowedAccessModes] = React.useState<string[]>();
@@ -69,24 +68,19 @@ export const AccessModeSelector: React.FC<AccessModeSelectorProps> = (props) => 
       {loaded &&
         allowedAccessModes &&
         accessModeRadios.map((radio) => {
-          let radioObj = null;
           const disabled = !allowedAccessModes.includes(radio.value);
-          allowedAccessModes.forEach((mode) => {
-            const checked =
-              !disabled && !loadError ? radio.value === accessMode : radio.value === mode;
-            radioObj = (
-              <RadioInput
-                {...radio}
-                key={radio.value}
-                onChange={onAccessModeChange}
-                inline
-                disabled={disabled}
-                checked={checked}
-                name="accessMode"
-              />
-            );
-          });
-          return radioObj;
+          const checked = radio.value === accessMode;
+          return (
+            <RadioInput
+              {...radio}
+              key={radio.value}
+              onChange={onAccessModeChange}
+              inline
+              disabled={disabled}
+              checked={checked}
+              name="accessMode"
+            />
+          );
         })}
       {(!loaded || !allowedAccessModes) && <div className="skeleton-text" />}
     </FormGroup>
