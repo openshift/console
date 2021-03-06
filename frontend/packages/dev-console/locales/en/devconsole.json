@@ -271,7 +271,7 @@
   "Path that the router watches to route traffic to the service.": "Path that the router watches to route traffic to the service.",
   "Target port": "Target port",
   "Target port for traffic.": "Target port for traffic.",
-  "Create a Route to the Application": "Create a Route to the Application",
+  "Create a route to the Application": "Create a route to the Application",
   "Exposes your Application at a public URL": "Exposes your Application at a public URL",
   "Secure Route": "Secure Route",
   "Security": "Security",
