@@ -93,7 +93,7 @@ export const operatorsDataModelReconciler = (
       const operatorNodes = operatorGroupNodes[key];
 
       const baseNode = operatorNodes[0] as OdcNodeModel;
-      const operatorGroupItem = getOperatorGroupResource(baseNode.resource, resources);
+      const { operatorGroupItem, csvName } = getOperatorGroupResource(baseNode.resource, resources);
       if (operatorGroupItem) {
         const data = {
           id: operatorGroupItem.metadata.uid,
@@ -109,6 +109,7 @@ export const operatorsDataModelReconciler = (
           resource: operatorGroupItem,
           groupResources: operatorNodes,
           data: {
+            csvName,
             operatorKind: operatorGroupItem.kind,
             builderImage:
               getImageForCSVIcon(operatorGroupItem?.spec?.icon?.[0]) || getDefaultOperatorIcon(),

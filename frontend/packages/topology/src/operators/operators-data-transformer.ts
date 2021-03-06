@@ -85,7 +85,7 @@ export const getServiceBindingEdges = (
 export const getOperatorGroupResource = (
   resource: K8sResourceKind,
   resources?: TopologyDataResources,
-): K8sResourceKind => {
+): { operatorGroupItem: K8sResourceKind; csvName: string } => {
   const installedOperators = resources?.clusterServiceVersions?.data as ClusterServiceVersionKind[];
   const operatorBackedServiceKindMap = getOperatorBackedServiceKindMap(installedOperators);
   // added this as needs to hide operator backed if belong to source
@@ -102,14 +102,14 @@ export const getOperatorGroupResource = (
     const operator: K8sResourceKind =
       (installedOperators.find((op) => op.metadata.uid === ownerUid) as K8sResourceKind) ||
       operatorBackedServiceKind;
-
+    const csvName = operator.metadata.name;
     const operatorName =
       ownerReference?.name ?? appGroup
         ? `${appGroup}:${operator.metadata.name}`
         : operator.metadata.name;
 
     const groupUid = ownerReference?.uid ?? `${operatorName}:${operator.metadata.uid}`;
-    return _.merge({}, operator, {
+    const operatorGroupItem = _.merge({}, operator, {
       apiVersion: ownerReference?.apiVersion ?? '',
       kind: ownerReference?.kind ?? 'Operator',
       metadata: {
@@ -117,6 +117,7 @@ export const getOperatorGroupResource = (
         uid: groupUid,
       },
     });
+    return { operatorGroupItem, csvName };
   }
   return null;
 };
@@ -126,11 +127,11 @@ export const getOperatorGroupResources = (resources: TopologyDataResources) => {
   WORKLOAD_TYPES.forEach((key) => {
     if (resources[key]?.data && resources[key].data.length) {
       resources[key].data.forEach((resource) => {
-        const group = getOperatorGroupResource(resource, resources);
-        if (!group) {
+        const groupResource = getOperatorGroupResource(resource, resources);
+        if (!groupResource?.operatorGroupItem) {
           return;
         }
-        obsGroups.push(group);
+        obsGroups.push(groupResource.operatorGroupItem);
       });
     }
   });
