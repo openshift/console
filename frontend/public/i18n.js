@@ -162,6 +162,12 @@ i18n
       moment.locale(i18n.language === 'zh' ? 'zh-cn' : i18n.language);
       // set default in case the i18n.language isn't a language we currently support -- otherwise Moment.js will default to the last region import
       moment.locale() !== i18n.language && i18n.language !== 'zh' && moment.locale('en');
+      // set override for date format for English
+      moment.updateLocale('en', {
+        longDateFormat: {
+          LLL: 'MMM D, h:mm a',
+        },
+      });
     },
   );
 

@@ -1,4 +1,0 @@
-{
-  "{{date, MMM D, h:mm a}}": "{{date, D MMM, H:mm}}",
-  "{{date, MMM D, h:mm a z}}": "{{date, D MMM, H:mm z}}"
-}

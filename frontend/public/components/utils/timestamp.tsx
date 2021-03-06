@@ -3,12 +3,11 @@ import { connect } from 'react-redux';
 import { Tooltip } from '@patternfly/react-core';
 import * as classNames from 'classnames';
 import { GlobeAmericasIcon } from '@patternfly/react-icons';
-import { useTranslation } from 'react-i18next';
 import * as moment from 'moment';
 
 import * as dateTime from './datetime';
 
-const timestampFor = (mdate: Date, now: Date, omitSuffix: boolean, t: any) => {
+const timestampFor = (mdate: Date, now: Date, omitSuffix: boolean) => {
   if (!dateTime.isValid(mdate)) {
     return '-';
   }
@@ -24,7 +23,7 @@ const timestampFor = (mdate: Date, now: Date, omitSuffix: boolean, t: any) => {
   }
 
   // Apr 23, 4:33 pm
-  return t('{{date, MMM D, h:mm a}}', { date: mdate });
+  return moment(mdate).format('LLL');
 };
 
 const nowStateToProps = ({ UI }) => ({ now: UI.get('lastTick') });
@@ -38,8 +37,8 @@ export const Timestamp = connect(nowStateToProps)((props: TimestampProps) => {
   const mdate = props.isUnix
     ? new Date((props.timestamp as number) * 1000)
     : new Date(props.timestamp);
-  const { t } = useTranslation();
-  const timestamp = timestampFor(mdate, new Date(props.now), props.omitSuffix, t);
+
+  const timestamp = timestampFor(mdate, new Date(props.now), props.omitSuffix);
 
   if (!dateTime.isValid(mdate)) {
     return <div className="co-timestamp">-</div>;
@@ -55,11 +54,9 @@ export const Timestamp = connect(nowStateToProps)((props: TimestampProps) => {
       <Tooltip
         content={[
           <span className="co-nowrap" key="co-timestamp">
-            {t('{{date, MMM D, h:mm a z}}', {
-              date: moment(mdate)
-                .utc()
-                .format('MMM D, h:mm a z'),
-            })}
+            {moment(mdate)
+              .utc()
+              .format('LLL z')}
           </span>,
         ]}
       >
