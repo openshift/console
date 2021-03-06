@@ -65,9 +65,10 @@ export class ConsoleRemotePlugin {
     });
 
     // Post-process generated remote entry source
+    // TODO(vojtech): fix 'webpack-sources' type incompatibility when updating to latest webpack 5
     compiler.hooks.emit.tap(ConsoleRemotePlugin.name, (compilation) => {
       compilation.updateAsset(remoteEntryFile, (source) => {
-        const newSource = new ReplaceSource(source);
+        const newSource = new ReplaceSource(source as any);
         newSource.insert(
           remoteEntryCallback.length + 1,
           `'${this.pkg.consolePlugin.name}@${this.pkg.consolePlugin.version}',`,

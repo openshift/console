@@ -47,7 +47,6 @@ const config: Configuration = {
   },
   devServer: {
     writeToDisk: true,
-    progress: true,
     hot: HOT_RELOAD !== 'false',
     inline: HOT_RELOAD !== 'false',
     contentBase: false,
