@@ -8,31 +8,53 @@ import {
   TextContent,
   Text,
   TextVariants,
+  AlertVariant,
 } from '@patternfly/react-core';
 import { LockIcon } from '@patternfly/react-icons';
 import { CatalogExtensionHook, CatalogItem } from '@console/plugin-sdk';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { SecretModel } from '@console/internal/models';
-import { useActiveNamespace } from '@console/shared';
+import { useActiveNamespace, useToast } from '@console/shared';
 import { AccessManagedServices } from '../../components/access-managed-services/AccessManagedServices';
 import { CATALOG_TYPE } from '../rhoas-catalog-plugin';
-import { AccessTokenSecretName, managedKafkaIcon, operatorIcon } from '../../const';
+import { ManagedServiceAccountCRName, AccessTokenSecretName, managedKafkaIcon, operatorIcon } from '../../const';
+import { ManagedServiceAccountRequest } from '../../models';
+import { getFinishedCondition } from '../../utils/conditionHandler';
+import { referenceForModel } from '@console/internal/module/k8s';
 
 const useRhoasCatalog: CatalogExtensionHook<CatalogItem[]> = (): [CatalogItem[], boolean, any] => {
   const [currentNamespace] = useActiveNamespace();
+  const [toastId, setToastEnabled] = React.useState("")
   const href = '/managedServices/managedkafka'; // `/catalog/ns/${namespace}/rhoas/kafka`;
   const { t } = useTranslation();
-  const [tokenSecret] = useK8sWatchResource({
-    kind: SecretModel.kind,
+  const [serviceAccount] = useK8sWatchResource({
+    kind: referenceForModel(ManagedServiceAccountRequest),
     isList: false,
-    name: AccessTokenSecretName,
+    name: ManagedServiceAccountCRName,
     namespace: currentNamespace,
     namespaced: true,
   });
 
+  const condition = getFinishedCondition(serviceAccount)
+  console.log("condition", serviceAccount, condition)
+  const isServiceAccountValid = condition && condition.status === "True";
+  const toast = useToast();
+  if (!isServiceAccountValid) {
+    if (!toastId) {
+      const toastID = toast.addToast({
+        title: "Invalid service account",
+        content: `You need to regenerate your Service Account and ${AccessTokenSecretName} secret`,
+        variant: AlertVariant.warning,
+      });
+
+      setToastEnabled(toastID);
+    }
+  } else {
+    toast.removeToast(toastId)
+  }
+
   const tokenStatusFooter = () => {
     let token;
-    if (tokenSecret === null || (tokenSecret !== null && Object.keys(tokenSecret).length === 0)) {
+    if (serviceAccount === null || !isServiceAccountValid) {
       token = (
         <Label variant="outline" color="orange" icon={<LockIcon />}>
           {t('rhoas-plugin~Unlock with token')}
@@ -45,7 +67,7 @@ const useRhoasCatalog: CatalogExtensionHook<CatalogItem[]> = (): [CatalogItem[],
       <Flex direction={{ default: 'column' }}>
         <FlexItem>
           {t(
-            'rhoas-plugin~RHOAS can include Managed Kafka, Service Registry, custom resources for Managed Kafka, and Open Data Hub.',
+            'rhoas-plugin~RHOAS can include Streams for Kafka, Service Registry',
           )}
         </FlexItem>
         <FlexItem>{token}</FlexItem>
@@ -75,7 +97,7 @@ const useRhoasCatalog: CatalogExtensionHook<CatalogItem[]> = (): [CatalogItem[],
 
   const managedServicesCard: CatalogItem[] = [
     {
-      name: 'Red Hat OpenShift Application Services',
+      name: 'Red Hat Application Services',
       type: CATALOG_TYPE,
       uid: new Date().getTime().toString(),
       description: tokenStatusFooter(),
@@ -103,10 +125,10 @@ const useRhoasCatalog: CatalogExtensionHook<CatalogItem[]> = (): [CatalogItem[],
 
   const managedKafkaCard: CatalogItem[] = [
     {
-      name: 'Red Hat OpenShift Streams for Apache Kafka',
+      name: 'Streams for Apache Kafka',
       type: CATALOG_TYPE,
       uid: new Date().getTime().toString(),
-      description: 'OpenShift Streams for Apache Kafka',
+      description: 'Streams for Apache Kafka',
       provider: 'Red Hat',
       tags: ['Kafka', 'service', 'managed'],
       creationTimestamp: '2019-09-04T13:56:06Z',
@@ -133,8 +155,8 @@ const useRhoasCatalog: CatalogExtensionHook<CatalogItem[]> = (): [CatalogItem[],
     },
   ];
 
-  const services = React.useMemo(() => (tokenSecret ? managedKafkaCard : managedServicesCard), [
-    tokenSecret,
+  const services = React.useMemo(() => (isServiceAccountValid ? managedKafkaCard : managedServicesCard), [
+    serviceAccount,
   ]);
   return [services, true, undefined];
 };

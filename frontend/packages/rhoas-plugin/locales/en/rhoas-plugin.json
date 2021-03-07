@@ -1,7 +1,7 @@
 {
   "Unlock with token": "Unlock with token",
   "Unlocked": "Unlocked",
-  "RHOAS can include Managed Kafka, Service Registry, custom resources for Managed Kafka, and Open Data Hub.": "RHOAS can include Managed Kafka, Service Registry, custom resources for Managed Kafka, and Open Data Hub.",
+  "RHOAS can include Streams for Kafka, Service Registry": "RHOAS can include Managed Kafka, Service Registry and other Red Hat Services",
   "Access Red Hat application services with API Token": "Access Red Hat application services with API Token",
   "To access this application service, input the API token which can be located at": "To access this application service, input the API token which can be located at",
   "API token can be accessed at": "API token can be accessed at",

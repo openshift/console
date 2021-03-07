@@ -10,7 +10,7 @@ import {
   TextVariants,
 } from '@patternfly/react-core';
 import { SecretModel } from '@console/internal/models';
-import { k8sCreate } from '@console/internal/module/k8s/resource';
+import { k8sCreate, k8sKillByName } from '@console/internal/module/k8s/resource';
 import { useActiveNamespace } from '@console/shared';
 import { AccessTokenSecretName } from '../../const';
 import { createServiceAccountIfNeeded } from '../managed-services-kafka/resourceCreators';
@@ -35,9 +35,13 @@ export const AccessManagedServices: any = () => {
       },
       type: 'Opaque',
     };
-
-    await k8sCreate(SecretModel, secret);
-    await createServiceAccountIfNeeded(namespace);
+    try{
+      await k8sCreate(SecretModel, secret);
+      await createServiceAccountIfNeeded(namespace);
+    }catch(error){
+      k8sKillByName(SecretModel, AccessTokenSecretName, namespace);
+      console.log("rhoas: cannot create service account", error)
+    }
   };
 
   const handleApiTokenValueChange = (value) => {
@@ -70,8 +74,6 @@ export const AccessManagedServices: any = () => {
           helperText={`${t(
             'rhoas-plugin~API token can be accessed at',
           )} cloud.redhat.com/openshift/token`}
-          // helperTextInvalid=""
-          // helperTextInvalidIcon={}
         >
           <TextInput
             value={apiTokenValue}
@@ -92,11 +94,13 @@ export const AccessManagedServices: any = () => {
             key="confirm"
             variant="primary"
             onClick={onCreate}
-            isDisabled={apiTokenValue.length < 1 ? true : false}
+            isDisabled={apiTokenValue.length < 500 ? true : false}
           >
             {t('rhoas-plugin~Create')}
           </Button>
-          <Button key="cancel" variant="link">
+          <Button key="cancel"
+            variant="link">
+
             {t('rhoas-plugin~Cancel')}
           </Button>
         </FormGroup>

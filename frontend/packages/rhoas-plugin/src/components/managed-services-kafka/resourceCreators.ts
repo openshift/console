@@ -1,4 +1,4 @@
-import { k8sCreate, k8sGet, k8sPatch } from '@console/internal/module/k8s/resource';
+import { k8sCreate, k8sGet, k8sPatch, k8sWaitForUpdate, k8sWatch } from '@console/internal/module/k8s/resource';
 import * as _ from 'lodash';
 import {
   AccessTokenSecretName,
@@ -12,6 +12,7 @@ import {
   ManagedServiceAccountRequest,
   ManagedKafkaConnectionModel,
 } from '../../models/rhoas';
+import { getFinishedCondition } from '../../utils/conditionHandler';
 
 /**
  * Create service account for purpose of supplying connection credentials
@@ -25,6 +26,9 @@ export const createManagedServiceAccount = async (currentNamespace: string) => {
     metadata: {
       name: ManagedServiceAccountCRName,
       namespace: currentNamespace,
+      annotations: {
+        refreshTime: new Date().toISOString()
+      },
     },
     spec: {
       accessTokenSecretName: AccessTokenSecretName,
@@ -64,6 +68,20 @@ export const createManagedServicesRequest = async function (currentNamespace: st
 /**
  * Create request to fetch all managed kafkas from upstream
  */
+export const patchServiceAccountRequest = async function (request: any) {
+  const path = '/metadata/annotations/refreshTime';
+  return await k8sPatch(ManagedServiceAccountRequest, request, [
+    {
+      path,
+      op: "replace",
+      value: new Date().toISOString(),
+    },
+  ]);
+};
+
+/**
+ * Create request to fetch all managed kafkas from upstream
+ */
 export const patchManagedServicesRequest = async function (request: any) {
   const path = '/metadata/annotations/refreshTime';
   console.log(request)
@@ -89,15 +107,13 @@ export const createManagedServicesRequestIfNeeded = async (currentNamespace) => 
     console.log("rhoas: ManagedServicesRequest already exist")
   }
   try {
-    let createdRequest;
     if (currentRequest) {
-      createdRequest = await patchManagedServicesRequest(currentRequest);
+      return await patchManagedServicesRequest(currentRequest);
     } else {
-      createdRequest = await createManagedServicesRequest(currentNamespace);
+      return await createManagedServicesRequest(currentNamespace);
     }
-    console.log(createdRequest);
   } catch (error) {
-    return error;
+    return;
   }
 };
 
@@ -113,15 +129,15 @@ export const createServiceAccountIfNeeded = async (currentNamespace) => {
     // eslint-disable-next-line no-console
     console.log("rhoas: ServiceAccount already exist")
   }
-  if (!managedServiceAccount) {
-    await createManagedServiceAccount(currentNamespace);
-    return true;
+  if (managedServiceAccount) {
+    return await patchServiceAccountRequest(managedServiceAccount)
+  } else {
+    return await createManagedServiceAccount(currentNamespace);
   }
-  return false;
 };
 
 /**
- * Create
+ * createManagedKafkaConnection
  * @param kafkaId
  * @param kafkaName
  * @param currentNamespace
@@ -147,7 +163,20 @@ export const createManagedKafkaConnection = async (
     },
   };
 
-  await k8sCreate(ManagedKafkaConnectionModel, kafkaConnection);
+  const createdConnection = await k8sCreate(ManagedKafkaConnectionModel, kafkaConnection);
+  return await k8sWaitForUpdate(ManagedKafkaConnectionModel, createdConnection, (resource) => {
+    const condition = getFinishedCondition(resource);
+    console.log("checking MKC")
+    if (condition) {
+      console.log("condition MKC", condition)
+      if (condition.status === "True") {
+        return true
+      } else {
+        throw new Error(`Message: ${condition.message} reason: ${condition.reason}`)
+      }
+    }
+    return false
+  }, 10000)
 };
 
 export const listOfCurrentKafkaConnectionsById = async (currentNamespace: string) => {

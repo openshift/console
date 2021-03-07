@@ -15,6 +15,7 @@ import {
   listOfCurrentKafkaConnectionsById,
 } from './resourceCreators';
 import { KafkaRequest } from '../../types/rhoas-types';
+import { getCondition, getFinishedCondition } from '../../utils/conditionHandler';
 
 const ManagedKafkas = () => {
   const [currentNamespace] = useActiveNamespace();
@@ -50,15 +51,18 @@ const ManagedKafkas = () => {
     );
   }
 
-  if (watchedKafkaRequest.status.conditions) {
-    for (const condition of watchedKafkaRequest.status.conditions) {
-      if (condition.type === "Finished" && condition.status === "False") {
-        return (<>
-          Failed to load Managed Services.
-          Message: {condition.message}
-          Reason: {condition.reason}
-        </>)
-      }
+  const condition = getFinishedCondition(watchedKafkaRequest);
+  if (condition && condition.status === "False") {
+    if (getCondition(watchedKafkaRequest, "AcccesTokenSecretValid")?.status == "False") {
+      return (<>
+        <p>Invalid access token</p>
+      </>)
+    } else {
+      return (<>
+        <p>Failed to load list of services</p>
+        <p>Message: {condition.message}</p>
+        <p>Reason: {condition.reason}</p>
+      </>)
     }
   }
 
@@ -67,12 +71,12 @@ const ManagedKafkas = () => {
   const createManagedKafkaConnectionFlow = async () => {
     const kafkaId = remoteKafkaInstances[selectedKafka].id;
     const kafkaName = remoteKafkaInstances[selectedKafka].name;
-    if (currentKafkaConnections) {
-      if (!currentKafkaConnections.includes(kafkaId)) {
-        createManagedKafkaConnection(kafkaId, kafkaName, currentNamespace);
-      }
+    try{
+      await createManagedKafkaConnection(kafkaId, kafkaName, currentNamespace);
+      history.push(`/topology/ns/${currentNamespace}`);
+    }catch(error){
+      // TODO :)
     }
-    history.push(`/topology/ns/${currentNamespace}`);
   };
 
   const disableCreateButton = () => {
