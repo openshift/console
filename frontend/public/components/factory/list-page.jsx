@@ -17,7 +17,7 @@ import { FilterToolbar } from '../filter-toolbar';
 
 /** @type {React.SFC<{disabled?: boolean, label?: string, onChange: (value: string) => void;, defaultValue?: string, value?: string, placeholder?: string, autoFocus?: boolean, onFocus?:any, name?:string, id?: string, onKeyDown?: any, parentClassName?: string }}>} */
 export const TextFilter = props => {
-  const { label, className, placeholder = `Filter ${label}...`, autoFocus = false, parentClassName } = props;
+  const { label, className, placeholder = `${label}...`, autoFocus = false, parentClassName } = props;
   const { ref } = useDocumentListener();
 
   return (

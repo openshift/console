@@ -22,7 +22,7 @@ const MasterNav = () => (
         <NavSection title={t('COMMON:MSG_LNB_MENU_1')}>
           <HrefLink href="/dashboards" activePath="/dashboards/" name={t('COMMON:MSG_LNB_MENU_2')} />
           <HrefLink href="/search" name={t('COMMON:MSG_LNB_MENU_4')} startsWith={searchStartsWith} />
-          <ResourceClusterLink resource="audits" name={t('COMMON:MSG_LNB_MENU_5')} />
+          <ResourceNSLink resource="audits" name={t('COMMON:MSG_LNB_MENU_5')} />
           <ResourceNSLink resource="events" name={t('COMMON:MSG_LNB_MENU_6')} />
           <HrefLink href="/grafana" name="Grafana" />
           <HrefLink href="/kibana" name="Kibana" />
