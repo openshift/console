@@ -3,7 +3,7 @@ import { JSONSchema6 } from 'json-schema';
 import { UiSchema } from 'react-jsonschema-form';
 import { getUiOptions } from 'react-jsonschema-form/lib/utils';
 
-const UNSUPPORTED_SCHEMA_PROPERTIES = ['allOf', 'anyOf', 'oneOf'];
+const UNSUPPORTED_SCHEMA_PROPERTIES = [];
 
 export const useSchemaLabel = (schema: JSONSchema6, uiSchema: UiSchema, defaultLabel?: string) => {
   const options = getUiOptions(uiSchema ?? {});
