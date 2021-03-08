@@ -78,6 +78,11 @@ export const operatorsPage = {
         cy.get(operatorsPO.operatorHub.gitOpsOperatorCard).click();
         break;
       }
+      case 'Web Terminal':
+      case operators.WebTerminalOperator: {
+        cy.get(operatorsPO.operatorHub.webTerminalOperatorCard).click();
+        break;
+      }
       default: {
         throw new Error('operator is not available');
       }
