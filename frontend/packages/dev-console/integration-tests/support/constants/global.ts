@@ -26,6 +26,7 @@ export enum operators {
   KnativeCamelOperator = 'Knative Apache Camel K',
   EclipseCheOperator = 'Eclipse Che',
   GitOpsOperator = 'GitOps',
+  WebTerminalOperator = 'Web Terminal',
 }
 
 export enum authenticationType {

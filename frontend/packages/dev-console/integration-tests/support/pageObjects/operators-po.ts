@@ -16,6 +16,7 @@ export const operatorsPO = {
     knativeCamelOperatorCard: '[data-test^="red-hat-camel-k"]',
     installingOperatorModal: '#operator-install-page',
     gitOpsOperatorCard: '[data-test^="openshift-gitops-operator"]',
+    webTerminalOperatorCard: '[data-test="web-terminal-redhat-operators-openshift-marketplace"]',
   },
   subscription: {
     logo: 'h1.co-clusterserviceversion-logo__name__clusterserviceversion',
