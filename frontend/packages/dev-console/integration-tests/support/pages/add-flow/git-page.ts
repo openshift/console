@@ -1,4 +1,4 @@
-import { gitAdvancedOptions, buildConfigOptions } from '../../constants/add';
+import { gitAdvancedOptions, buildConfigOptions, builderImages } from '../../constants/add';
 import { messages } from '../../constants/staticText/addFlow-text';
 import { gitPO } from '../../pageObjects/add-flow-po';
 
@@ -130,8 +130,80 @@ export const gitPage = {
       .get(gitPO.cancel)
       .should('be.enabled')
       .click(),
-  verifyValidatedMessage: () =>
-    cy.get(gitPO.gitSection.validatedMessage).should('have.text', messages.gitUrlValidated),
+  selectBuilderImageForGitUrl: (gitUrl: string) => {
+    switch (gitUrl) {
+      case 'https://github.com/sclorg/dancer-ex.git':
+        cy.get(`[aria-label="${builderImages.Perl}"]`).click();
+        cy.log(`Selecting builder image "${builderImages.Perl}" to avoid the git rate limit issue`);
+        break;
+      case 'https://github.com/sclorg/cakephp-ex.git':
+        cy.get(`[aria-label="${builderImages.PHP}"]`).click();
+        cy.log(`Selecting builder image "${builderImages.PHP}" to avoid the git rate limit issue`);
+        break;
+      case 'https://github.com/sclorg/nginx-ex.git':
+        cy.get(`[aria-label="${builderImages.Nginx}"]`).click();
+        cy.log(
+          `Selecting builder image "${builderImages.Nginx}" to avoid the git rate limit issue`,
+        );
+        break;
+      case 'https://github.com/sclorg/httpd-ex.git':
+        cy.get(`[aria-label="${builderImages.Httpd}"]`).click();
+        cy.log(
+          `Selecting builder image "${builderImages.Httpd}" to avoid the git rate limit issue`,
+        );
+        break;
+      case 'https://github.com/redhat-developer/s2i-dotnetcore-ex.git':
+        cy.get(`[aria-label="${builderImages.NETCore}"]`).click();
+        cy.log(
+          `Selecting builder image "${builderImages.NETCore}" to avoid the git rate limit issue`,
+        );
+        break;
+      case 'https://github.com/sclorg/golang-ex.git':
+        cy.get(`[aria-label="${builderImages.Go}"]`).click();
+        cy.log(`Selecting builder image "${builderImages.Go}" to avoid the git rate limit issue`);
+        break;
+      case 'https://github.com/sclorg/ruby-ex.git':
+        cy.get(`[aria-label="${builderImages.Ruby}"]`).click();
+        cy.log(`Selecting builder image "${builderImages.Ruby}" to avoid the git rate limit issue`);
+        break;
+      case 'https://github.com/sclorg/django-ex.git':
+        cy.get(`[aria-label="${builderImages.Python}"]`).click();
+        cy.log(
+          `Selecting builder image "${builderImages.Python}" to avoid the git rate limit issue`,
+        );
+        break;
+      case 'https://github.com/jboss-openshift/openshift-quickstarts':
+        cy.get(`[aria-label="${builderImages.Java}"]`).click();
+        cy.log(`Selecting builder image "${builderImages.Java}" to avoid the git rate limit issue`);
+        break;
+      case 'https://github.com/sclorg/nodejs-ex.git':
+        cy.get(`[aria-label="${builderImages.NodeJs}"]`).click();
+        cy.log(
+          `Selecting builder image "${builderImages.NodeJs}" to avoid the git rate limit issue`,
+        );
+        break;
+      default:
+        cy.log(
+          `Unable to find the builder image for git url: ${gitUrl}, so selecting node.js builder by default `,
+        );
+    }
+  },
+  verifyValidatedMessage: (gitUrl = 'https://github.com/sclorg/nodejs-ex.git') => {
+    cy.get(gitPO.gitSection.validatedMessage).should('not.have.text', 'Validating...');
+    cy.get('body').then(($body) => {
+      if (
+        $body
+          .find(gitPO.gitSection.validatedMessage)
+          .text()
+          .includes(messages.privateGitRepoMessage)
+      ) {
+        gitPage.selectBuilderImageForGitUrl(gitUrl);
+      } else {
+        cy.log(`git url validated`);
+      }
+    });
+  },
+
   verifyBuilderImageDetectedMessage: () =>
     cy.get(gitPO.builderSection.builderImageDetected).should('be.visible'),
   verifyBuilderImageVersion: () =>

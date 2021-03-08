@@ -4,6 +4,7 @@ export const gitPO = {
   noWorkLoadsText: 'h2.co-hint-block__title',
   sectionTitle: '.odc-form-section__heading',
   gitRepoUrl: '[data-test-id="git-form-input-url"]',
+  builderImageCard: '.odc-selector-card',
   nodeName: '[data-test-id="application-form-app-name"]',
   appName: '[id$=application-name-field]',
   create: '[data-test-id="submit-button"]',

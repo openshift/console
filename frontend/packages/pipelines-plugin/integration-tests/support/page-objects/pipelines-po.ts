@@ -10,7 +10,7 @@ export const pipelineBuilderPO = {
   formView: {
     name: '#form-input-formData-name-field',
     taskDropdown: '[data-id="initial-node"]',
-    task: '[data-type="builder"]',
+    task: '[data-type="builder"]] .odc-pipeline-vis-task',
     plusTaskIcon: 'g.odc-plus-node-decorator',
     seriesTask: '[data-id^="has-run-after-"][data-kind="node"]',
     parallelTask: '[data-id^="shared-parallel-"][data-kind="node"]',
@@ -30,6 +30,9 @@ export const pipelineBuilderPO = {
       displayName: '#task-name',
       inputResource: 'div.pf-c-form [data-test-id="dropdown-button"]',
       imageName: '#IMAGE',
+      script: '#SCRIPT',
+      args: '#ARGS-0',
+      actions: '[data-test-id="actions-menu-button"]',
     },
   },
   yamlView: {
@@ -63,11 +66,6 @@ export const pipelineBuilderPO = {
       s2iPipelineWithResource:
         'div.osc-yaml-editor__sidebar ol li:nth-child(5) > button:nth-child(3)',
     },
-  },
-  sidePane: {
-    dialog: 'div.odc-sidebar',
-    displayName: '#task-name',
-    inputResource: 'div.pf-c-form [data-test-id="dropdown-button"]',
   },
 };
 

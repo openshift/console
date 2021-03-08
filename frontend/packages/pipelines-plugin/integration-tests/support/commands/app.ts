@@ -35,10 +35,6 @@ before(() => {
   });
 });
 
-after(() => {
-  cy.exec(`oc delete namespace ${Cypress.env('NAMESPACE')}`);
-});
-
 beforeEach(() => {
   perspective.switchTo(switchPerspective.Developer);
   guidedTour.close();

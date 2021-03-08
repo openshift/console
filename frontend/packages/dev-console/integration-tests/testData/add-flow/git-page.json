@@ -1,0 +1,12 @@
+{
+  "Perl": "https://github.com/sclorg/dancer-ex.git",
+  "PHP": "https://github.com/sclorg/cakephp-ex.git",
+  "Nginx": "https://github.com/sclorg/nginx-ex.git",
+  "Httpd": "https://github.com/sclorg/httpd-ex.git",
+  "NETCore": "https://github.com/redhat-developer/s2i-dotnetcore-ex.git",
+  "Go": "https://github.com/sclorg/golang-ex.git",
+  "Ruby": "https://github.com/sclorg/ruby-ex.git",
+  "Python": "https://github.com/sclorg/django-ex.git",
+  "Java": "https://github.com/jboss-openshift/openshift-quickstarts",
+  "NodeJs": "https://github.com/sclorg/nodejs-ex.git"
+}

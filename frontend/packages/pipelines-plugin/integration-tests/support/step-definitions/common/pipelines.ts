@@ -38,7 +38,7 @@ When('user adds another task {string} in parallel', (taskName: string) => {
   pipelineBuilderPage.selectParallelTask(taskName);
   pipelineBuilderPage.addResource('git resource');
   pipelineBuilderPage.clickOnTask(taskName);
-  cy.get(pipelineBuilderPO.sidePane.inputResource).click();
+  cy.get(pipelineBuilderPO.formView.sidePane.inputResource).click();
   cy.byTestDropDownMenu('git resource').click();
   pipelineBuilderPage.clickCreateButton();
 });

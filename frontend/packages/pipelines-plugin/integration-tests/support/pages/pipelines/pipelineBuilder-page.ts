@@ -3,6 +3,20 @@ import { pipelineBuilderText } from '../../constants/static-text/pipeline-text';
 import { pipelineBuilderPO, pipelineDetailsPO, pipelinesPO } from '../../page-objects/pipelines-po';
 import { pipelineDetailsPage } from './pipelineDetails-page';
 
+export const pipelineBuilderSidePane = {
+  verifyDialog: () => cy.get(pipelineBuilderPO.formView.sidePane.dialog).should('be.visible'),
+  selectInputResource: (resourceName: string) => {
+    pipelineBuilderSidePane.verifyDialog();
+    cy.get(pipelineBuilderPO.formView.sidePane.inputResource).click();
+    cy.byTestDropDownMenu(resourceName).click();
+  },
+  removeTask: () => {
+    pipelineBuilderSidePane.verifyDialog();
+    cy.get(pipelineBuilderPO.formView.sidePane.actions).click();
+    cy.byTestActionID('Remove Task').click();
+  },
+};
+
 export const pipelineBuilderPage = {
   verifyTitle: () => {
     cy.get(pipelineBuilderPO.title).should('have.text', pageTitle.PipelineBuilder);
@@ -23,7 +37,7 @@ export const pipelineBuilderPage = {
     cy
       .get(pipelineBuilderPO.formView.task)
       .contains(taskName)
-      .click(),
+      .click({ force: true }),
   selectParallelTask: (taskName: string) => {
     cy.mouseHover(pipelineBuilderPO.formView.task);
     cy.get(pipelineBuilderPO.formView.plusTaskIcon)
@@ -108,8 +122,7 @@ export const pipelineBuilderPage = {
     pipelineBuilderPage.selectTask(taskName);
     pipelineBuilderPage.addResource(resourceName);
     pipelineBuilderPage.clickOnTask(taskName);
-    cy.get(pipelineBuilderPO.formView.sidePane.inputResource).click();
-    cy.byTestDropDownMenu(resourceName).click();
+    pipelineBuilderSidePane.selectInputResource(resourceName);
     pipelineBuilderPage.clickCreateButton();
     pipelineDetailsPage.verifyTitle(pipelineName);
   },

@@ -81,10 +81,6 @@ Given('pipeline {string} is executed for 5 times', (pipelineName: string) => {
   cy.get(pipelineRunDetailsPO.pipelineRunStatus).should('not.have.text', 'Running');
 });
 
-When('user enters Git Repo url as {string}', (gitUrl: string) => {
-  gitPage.enterGitUrl(gitUrl);
-});
-
 Then('Add pipeline checkbox is displayed', () => {
   gitPage.verifyPipelineCheckBox();
   gitPage.clickCancel();
@@ -131,6 +127,7 @@ Given('workload {string} is created from add page with pipeline', (pipelineName:
   navigateTo(devNavigationMenu.Add);
   addPage.selectCardFromOptions(addOptions.Git);
   gitPage.enterGitUrl('https://github.com/sclorg/nodejs-ex.git');
+  gitPage.verifyValidatedMessage();
   gitPage.enterComponentName(pipelineName);
   gitPage.selectAddPipeline();
   gitPage.clickCreate();

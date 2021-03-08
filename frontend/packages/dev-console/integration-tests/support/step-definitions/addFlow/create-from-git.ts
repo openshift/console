@@ -13,13 +13,10 @@ Given('user is at Import from git page', () => {
 
 When('user enters Git Repo url as {string}', (gitUrl: string) => {
   gitPage.enterGitUrl(gitUrl);
-  gitPage.verifyValidatedMessage();
+  gitPage.verifyValidatedMessage(gitUrl);
   cy.get('body').then(($el) => {
     if ($el.find('[aria-label$="Alert"]').length) {
       cy.log('Builder image detected');
-    } else {
-      gitPage.enterGitUrl(gitUrl);
-      gitPage.verifyBuilderImageDetectedMessage();
     }
   });
 });
