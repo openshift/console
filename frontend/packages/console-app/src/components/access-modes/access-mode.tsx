@@ -24,8 +24,18 @@ export const getPVCAccessModes = (resource: PersistentVolumeClaimKind, key: stri
   );
 
 export const AccessModeSelector: React.FC<AccessModeSelectorProps> = (props) => {
-  const { formClassName, pvcResource, onChange, loaded, provisioner } = props;
-  const pvcInitialAccessMode = pvcResource ? getPVCAccessModes(pvcResource, 'value') : '';
+  const {
+    formClassName,
+    pvcResource,
+    onChange,
+    loaded,
+    provisioner,
+    availableAccessModes = [],
+  } = props;
+
+  const pvcInitialAccessMode = pvcResource
+    ? getPVCAccessModes(pvcResource, 'value')
+    : availableAccessModes;
 
   const [allowedAccessModes, setAllowedAccessModes] = React.useState<string[]>();
   const [accessMode, setAccessMode] = React.useState<string>('');
@@ -91,6 +101,7 @@ type AccessModeSelectorProps = {
   formClassName?: string;
   pvcResource?: PersistentVolumeClaimKind;
   onChange: Function;
+  availableAccessModes?: string[];
   loaded: boolean;
   loadError: any;
   provisioner: string;

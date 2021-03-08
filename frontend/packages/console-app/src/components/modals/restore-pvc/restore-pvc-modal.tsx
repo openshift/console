@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 
 import { Form, FormGroup, Grid, GridItem, TextInput } from '@patternfly/react-core';
@@ -34,20 +33,25 @@ import {
   VolumeSnapshotModel,
   VolumeSnapshotClassModel,
 } from '@console/internal/models';
-import { getName, getNamespace, Status, isCephProvisioner } from '@console/shared';
+import { getName, getNamespace, Status, isCephProvisioner, getAnnotations } from '@console/shared';
 import { StorageClassDropdown } from '@console/internal/components/utils/storage-class-dropdown';
 import {
   dropdownUnits,
-  cephRBDProvisionerSuffix,
+  snapshotPVCStorageClassAnnotation,
+  snapshotPVCAccessModeAnnotation,
+  snapshotPVCVolumeModeAnnotation,
+  volumeModeRadios,
 } from '@console/internal/components/storage/shared';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { AccessModeSelector } from '../../access-modes/access-mode';
 import './restore-pvc-modal.scss';
+import { RadioInput } from '@console/internal/components/radio';
 
 const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
   ({ close, cancel, resource, errorMessage, inProgress, handlePromise }) => {
     const { t } = useTranslation();
     const [restorePVCName, setPVCName] = React.useState(`${getName(resource) || 'pvc'}-restore`);
+    const volumeSnapshotAnnotations = getAnnotations(resource);
     const defaultSize: string[] = resource?.status?.restoreSize
       ? validate.split(resource?.status?.restoreSize)
       : [null, null];
@@ -76,6 +80,9 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
       resource?.spec?.volumeSnapshotClassName,
     );
 
+    const [volumeMode, setVolumeMode] = React.useState(
+      volumeSnapshotAnnotations?.[snapshotPVCVolumeModeAnnotation] ?? 'Filesystem',
+    );
     const onlyPvcSCs = (scObj: StorageClassResourceKind) =>
       !snapshotClassResourceLoadError
         ? scObj.provisioner.includes(snapshotClassResource?.driver)
@@ -95,6 +102,8 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
       setUpdatedProvisioner(updatedStorageClass?.provisioner);
     };
 
+    const handleVolumeMode: React.ReactEventHandler<HTMLInputElement> = (event) =>
+      setVolumeMode(event.currentTarget.value);
     const handleAccessMode = (value: string) => setRestoreAccessMode(value);
 
     const submit = (event: React.FormEvent<EventTarget>) => {
@@ -114,6 +123,7 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
             apiGroup: VolumeSnapshotModel.apiGroup,
           },
           accessModes: [restoreAccessMode],
+          volumeMode,
           resources: {
             requests: {
               storage: `${requestedSize}${requestedUnit}`,
@@ -121,18 +131,6 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
           },
         },
       };
-
-      if (pvcResource) {
-        // should set block only for RBD + RWX
-        if (
-          _.endsWith(snapshotClassResource?.driver, cephRBDProvisionerSuffix) &&
-          restoreAccessMode === 'ReadWriteMany'
-        ) {
-          restorePVCTemplate.spec.volumeMode = 'Block';
-        } else {
-          restorePVCTemplate.spec.volumeMode = pvcResource?.spec?.volumeMode;
-        }
-      }
 
       // eslint-disable-next-line promise/catch-or-return
       handlePromise(
@@ -181,6 +179,7 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
                   filter={onlyPvcSCs}
                   id="restore-storage-class"
                   required
+                  selectedKey={volumeSnapshotAnnotations?.[snapshotPVCStorageClassAnnotation]}
                 />
               )}
             </FormGroup>
@@ -191,7 +190,27 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
               loaded={pvcResourceLoaded}
               loadError={pvcResourceLoadError}
               pvcResource={pvcResource}
+              availableAccessModes={volumeSnapshotAnnotations?.[
+                snapshotPVCAccessModeAnnotation
+              ]?.split(',')}
             />
+            <FormGroup
+              fieldId="pvc-volume-mode"
+              className="co-restore-pvc-modal__input"
+              label={t('console-app~Volume Mode')}
+              isRequired
+            >
+              {volumeModeRadios.map((radio) => (
+                <RadioInput
+                  {...radio}
+                  key={radio.value}
+                  onChange={handleVolumeMode}
+                  inline
+                  checked={radio.value === volumeMode}
+                  name="volumeMode"
+                />
+              ))}
+            </FormGroup>
             <FormGroup
               label={t('console-app~Size')}
               isRequired

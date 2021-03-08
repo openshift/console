@@ -37,7 +37,12 @@ import {
   StorageClassModel,
   NamespaceModel,
 } from '@console/internal/models';
-import { accessModeRadios } from '@console/internal/components/storage/shared';
+import {
+  accessModeRadios,
+  snapshotPVCStorageClassAnnotation,
+  snapshotPVCAccessModeAnnotation,
+  snapshotPVCVolumeModeAnnotation,
+} from '@console/internal/components/storage/shared';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { PVCDropdown } from '@console/internal/components/utils/pvc-dropdown';
 import { getName, getNamespace, getAnnotations } from '@console/shared';
@@ -201,6 +206,11 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
       metadata: {
         name: snapshotName,
         namespace: getNamespace(pvcObj),
+        annotations: {
+          [snapshotPVCAccessModeAnnotation]: pvcObj.spec.accessModes.join(','),
+          [snapshotPVCStorageClassAnnotation]: pvcObj.spec.storageClassName,
+          [snapshotPVCVolumeModeAnnotation]: pvcObj.spec.volumeMode,
+        },
       },
       spec: {
         volumeSnapshotClassName: snapshotClassName,
