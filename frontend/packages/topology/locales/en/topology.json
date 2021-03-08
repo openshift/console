@@ -63,6 +63,8 @@
   "Provided by {{provider}}": "Provided by {{provider}}",
   "Quick search list": "Quick search list",
   "Quick search": "Quick search",
+  "Prerequisites": "Prerequisites",
+  "Start": "Start",
   "Visual connector": "Visual connector",
   "Binding connector": "Binding connector",
   "Traffic connector": "Traffic connector",

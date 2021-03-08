@@ -22,25 +22,27 @@ const QuickStartTileDescription: React.FC<QuickStartTileDescriptionProps> = ({
   prerequisites,
 }) => {
   const { t } = useTranslation();
+  const prereqs = prerequisites?.filter((p) => p);
   return (
     <>
       <Text component={TextVariants.p} className="oc-quick-start-tile-description">
         {description}
       </Text>
-      {prerequisites?.length > 0 && (
+      {prereqs?.length > 0 && (
         <div className="co-quick-start-tile-prerequisites">
           <Text component={TextVariants.h5} className="co-quick-start-tile-prerequisites__text">
             {t('quickstart~Prerequisites ({{totalPrereqs}})', {
-              totalPrereqs: prerequisites.length,
+              totalPrereqs: prereqs.length,
             })}{' '}
           </Text>
           <Popover
-            aria-label="Prerequisites"
-            headerContent={<Text component={TextVariants.h5}>{t('quickstart~Prerequisites')}</Text>}
+            aria-label={t('quickstart~Prerequisites')}
+            headerContent={t('quickstart~Prerequisites')}
             bodyContent={
-              <TextList aria-label="Prerequisites">
-                {prerequisites.map((prerequisite, index) => (
-                  <TextListItem key={index}>{prerequisite}</TextListItem> // eslint-disable-line react/no-array-index-key
+              <TextList aria-label={t('quickstart~Prerequisites')}>
+                {prereqs.map((prerequisite, index) => (
+                  // eslint-disable-next-line react/no-array-index-key
+                  <TextListItem key={index}>{prerequisite}</TextListItem>
                 ))}
               </TextList>
             }
