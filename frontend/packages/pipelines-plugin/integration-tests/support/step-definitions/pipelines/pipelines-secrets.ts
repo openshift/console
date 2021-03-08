@@ -78,7 +78,14 @@ When('user clicks on tick mark', () => {
 });
 
 Then('{string} is added under secrets section', (secretName: string) => {
-  cy.byLegacyTestID(secretName).should('be.visible');
+  cy.get(pipelinesPO.startPipeline.advancedOptions.tickIcon).should('not.exist');
+  cy.get('.odc-secrets-list').then(($secretsList) => {
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(3000);
+    if ($secretsList.find('span.co-resource-item').length) {
+      cy.byLegacyTestID(secretName).should('be.visible');
+    }
+  });
   startPipelineInPipelinesPage.clickCancel();
 });
 

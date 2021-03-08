@@ -6,7 +6,7 @@
   },
   "mochawesomeReporterOptions": {
     "reportDir": "../../../gui_test_screenshots/",
-    "reportFilename": "cypress_report_devconsole",
+    "reportFilename": "cypress_report_helm",
     "overwrite": false,
     "html": false,
     "json": true

@@ -51,4 +51,12 @@ elif [ "$SCENARIO" == "ceph" ]; then
   ./test-cypress.sh -p ceph -h true
 elif [ "$SCENARIO" == "kubevirt-gating" ]; then
   ./test-cypress.sh -p kubevirt -h true
+elif [ "$SCENARIO" == "dev-console" ]; then
+ ./test-cypress.sh -p dev-console -h true
+elif [ "$SCENARIO" == "pipelines" ]; then
+ ./test-cypress.sh -p pipelines -h true
+elif [ "$SCENARIO" == "gitops" ]; then
+ ./test-cypress.sh -p gitops -h true
+ elif [ "$SCENARIO" == "knative" ]; then
+ ./test-cypress.sh -p knative -h true
 fi

@@ -6,7 +6,7 @@
   },
   "mochawesomeReporterOptions": {
     "reportDir": "../../../gui_test_screenshots/",
-    "reportFilename": "cypress_report_pipelines",
+    "reportFilename": "cypress_report_gitops",
     "overwrite": false,
     "html": false,
     "json": true

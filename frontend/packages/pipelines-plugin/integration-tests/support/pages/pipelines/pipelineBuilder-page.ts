@@ -6,12 +6,14 @@ import { pipelineDetailsPage } from './pipelineDetails-page';
 export const pipelineBuilderSidePane = {
   verifyDialog: () => cy.get(pipelineBuilderPO.formView.sidePane.dialog).should('be.visible'),
   selectInputResource: (resourceName: string) => {
-    pipelineBuilderSidePane.verifyDialog();
-    cy.selectByDropDownText(pipelineBuilderPO.formView.sidePane.inputResource, resourceName);
+    cy.get(pipelineBuilderPO.formView.sidePane.dialog).within(() => {
+      cy.get(pipelineBuilderPO.formView.sidePane.inputResource).select(resourceName);
+    });
   },
   removeTask: () => {
-    pipelineBuilderSidePane.verifyDialog();
-    cy.selectByDropDownText(pipelineBuilderPO.formView.sidePane.actions, 'Remove Task');
+    cy.get(pipelineBuilderPO.formView.sidePane.dialog).within(() => {
+      cy.selectByDropDownText(pipelineBuilderPO.formView.sidePane.actions, 'Remove Task');
+    });
   },
 };
 
@@ -63,7 +65,7 @@ export const pipelineBuilderPage = {
       .eq(1)
       .click();
     cy.get(pipelineBuilderPO.formView.addResources.name).type(resourceName);
-    cy.selectByDropDownText(pipelineBuilderPO.formView.addResources.resourceType, resourceType);
+    cy.get(pipelineBuilderPO.formView.addResources.resourceType).select(resourceType);
   },
   verifySection: () => {
     cy.get(pipelineBuilderPO.formView.sectionTitle).as('sectionTitle');
@@ -124,24 +126,13 @@ export const pipelineBuilderPage = {
     pipelineDetailsPage.verifyTitle(pipelineName);
   },
   selectSampleInYamlView: (yamlSample: string) => {
-    switch (yamlSample) {
-      case 's2i-build-and-deploy-pipeline-using-workspace':
-        cy.get(pipelineBuilderPO.yamlCreatePipeline.samples.s2iPipelineWithWorkspace).click();
-        break;
-      case 'docker-build-and-deploy-pipeline-using-pipeline-resource':
-        cy.get(pipelineBuilderPO.yamlCreatePipeline.samples.dockerPipelineWithResource).click();
-        break;
-      case 'docker-build-and-deploy-pipeline':
-        cy.get(pipelineBuilderPO.yamlCreatePipeline.samples.dockerBuildAndDeployPipeline).click();
-        break;
-      case 'simple-pipeline':
-        cy.get(pipelineBuilderPO.yamlCreatePipeline.samples.simplePipeline).click();
-        break;
-      case 's2i-build-and-deploy-pipeline-using-pipeline-resource':
-        cy.get(pipelineBuilderPO.yamlCreatePipeline.samples.s2iPipelineWithResource).click();
-        break;
-      default:
-        break;
-    }
+    cy.get(pipelineBuilderPO.yamlCreatePipeline.samples.sidebar).within(() => {
+      cy.get('li.co-resource-sidebar-item')
+        .contains(yamlSample)
+        .parent()
+        .find('button')
+        .contains('Try it')
+        .click();
+    });
   },
 };

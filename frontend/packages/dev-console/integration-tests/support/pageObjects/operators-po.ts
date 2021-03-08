@@ -1,9 +1,10 @@
 export const operatorsPO = {
-  search: 'input[type="text"]',
+  search: '[data-test="search-operatorhub"]',
   nav: {
     operators: '[data-quickstart-id="qs-nav-operators"]',
-    operatorHub: 'a[href="/operatorhub"]',
-    installedOperators: 'a[href$="/operators.coreos.com~v1alpha1~ClusterServiceVersion"]',
+    operatorHub: 'a[data-test="nav"][href="/operatorhub"]',
+    installedOperators:
+      'a[data-test="nav"][href$="/operators.coreos.com~v1alpha1~ClusterServiceVersion"]',
     link: 'li.pf-c-nav__item.pf-m-expandable',
     menuItems: '#page-sidebar ul li',
     serverless: '[data-quickstart-id="qs-nav-serverless"]',
@@ -31,6 +32,7 @@ export const operatorsPO = {
     title: 'h1.co-m-pane__heading',
     operatorsNameRow: 'div[aria-label="Installed Operators"] td:nth-child(1) h1',
     noOperatorsFound: '[data-test="msg-box-title"]',
+    noOperatorsDetails: '[data-test="msg-box-detail"]',
     search: 'input[data-test-id="item-filter"]',
     noOperatorFoundMessage: 'div.cos-status-box__title',
     knativeServingLink: '[title="knativeservings.operator.knative.dev"]',

@@ -8,11 +8,13 @@ export const operatorsPage = {
     cy.get(operatorsPO.nav.operators).click();
     cy.get(operatorsPO.nav.operatorHub).click({ force: true });
     detailsPage.titleShouldContain(pageTitle.OperatorHub);
+    cy.get('.skeleton-catalog--grid').should('not.exist');
   },
 
   navigateToInstallOperatorsPage: () => {
     cy.get(operatorsPO.nav.operators).click();
     cy.get(operatorsPO.nav.installedOperators).click({ force: true });
+    cy.reload();
     detailsPage.titleShouldContain(pageTitle.InstalledOperators);
   },
 
@@ -35,6 +37,21 @@ export const operatorsPage = {
       .should('be.visible')
       .clear()
       .type(operatorName);
+  },
+
+  searchOperatorInInstallPage: (operatorName: string | operators) => {
+    cy.get('body').then(($body) => {
+      if ($body.find(operatorsPO.installOperators.noOperatorsDetails).length === 0) {
+        cy.get(operatorsPO.installOperators.search)
+          .should('be.visible')
+          .clear()
+          .type(operatorName);
+      } else {
+        cy.log(
+          `Operators are not installed in this cluster, so lets install the operator from operator Hub`,
+        );
+      }
+    });
   },
 
   verifySubscriptionPage: (operatorLogo: string) =>

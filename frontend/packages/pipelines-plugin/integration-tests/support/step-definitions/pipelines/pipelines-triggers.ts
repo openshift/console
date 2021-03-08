@@ -73,6 +73,7 @@ When('user selects the {string} from Git Provider Type field', (gitProviderType:
 
 When('user clicks on Add button present in Add Trigger modal', () => {
   cy.get(pipelinesPO.addTrigger.add).click();
+  modal.shouldBeClosed();
 });
 
 Then('pipelines page is displayed', () => {

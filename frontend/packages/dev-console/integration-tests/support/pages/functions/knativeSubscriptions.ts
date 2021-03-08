@@ -8,7 +8,14 @@ import { pageTitle } from '../../constants';
 export const createKnativeServing = () => {
   operatorsPage.navigateToInstallOperatorsPage();
   projectNameSpace.selectProject('knative-serving');
-  operatorsPage.searchOperator(operators.ServerlessOperator);
+  cy.get('body').then(($body) => {
+    if ($body.find(operatorsPO.installOperators.search)) {
+      cy.get(operatorsPO.installOperators.search)
+        .should('be.visible')
+        .clear()
+        .type(operators.ServerlessOperator);
+    }
+  });
   cy.get(operatorsPO.installOperators.knativeServingLink)
     .should('be.visible')
     .click();
@@ -30,7 +37,14 @@ export const createKnativeServing = () => {
 export const createKnativeEventing = () => {
   operatorsPage.navigateToInstallOperatorsPage();
   projectNameSpace.selectProject('knative-eventing');
-  operatorsPage.searchOperator(operators.ServerlessOperator);
+  cy.get('body').then(($body) => {
+    if ($body.find(operatorsPO.installOperators.search)) {
+      cy.get(operatorsPO.installOperators.search)
+        .should('be.visible')
+        .clear()
+        .type(operators.ServerlessOperator);
+    }
+  });
   cy.get(operatorsPO.installOperators.knativeEventingLink)
     .should('be.visible')
     .click();

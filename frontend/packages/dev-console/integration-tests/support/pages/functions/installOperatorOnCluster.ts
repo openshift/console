@@ -25,6 +25,7 @@ export const installOperator = (operatorName: operators) => {
   });
 };
 
+// If pipelines not available in left side navigation menu of developer navigation menu, then install from Operator Hub
 export const verifyAndInstallPipelinesOperator = () => {
   perspective.switchTo(switchPerspective.Developer);
   app.waitForNameSpacesToLoad();
@@ -35,12 +36,15 @@ export const verifyAndInstallPipelinesOperator = () => {
     } else {
       perspective.switchTo(switchPerspective.Administrator);
       operatorsPage.navigateToInstallOperatorsPage();
-      operatorsPage.searchOperator(operators.PipelinesOperator);
+      operatorsPage.searchOperatorInInstallPage(operators.PipelinesOperator);
       cy.get('body', {
         timeout: 50000,
       }).then(($body) => {
         if ($body.find(operatorsPO.installOperators.noOperatorsFound)) {
           installOperator(operators.PipelinesOperator);
+          // After https://issues.redhat.com/browse/SRVKP-1379 issue fix, will remove below wait time
+          // eslint-disable-next-line cypress/no-unnecessary-waiting
+          cy.wait(30000);
         }
       });
       perspective.switchTo(switchPerspective.Developer);
@@ -51,7 +55,7 @@ export const verifyAndInstallPipelinesOperator = () => {
 export const verifyAndInstallKnativeOperator = () => {
   perspective.switchTo(switchPerspective.Administrator);
   operatorsPage.navigateToInstallOperatorsPage();
-  operatorsPage.searchOperator(operators.ServerlessOperator);
+  operatorsPage.searchOperatorInInstallPage(operators.ServerlessOperator);
   cy.get('body', {
     timeout: 50000,
   }).then(($ele) => {
