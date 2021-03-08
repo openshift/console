@@ -8,39 +8,29 @@ import {
   TextContent,
   Text,
   TextVariants,
+  Alert,
 } from '@patternfly/react-core';
-import { SecretModel } from '@console/internal/models';
-import { k8sCreate, k8sKillByName } from '@console/internal/module/k8s/resource';
 import { useActiveNamespace } from '@console/shared';
-import { AccessTokenSecretName } from '../../const';
-import { createServiceAccountIfNeeded } from '../managed-services-kafka/resourceCreators';
+import { createServiceAccountIfNeeded, createSecretIfNeeded } from '../../utils/resourceCreators';
 
-export const AccessManagedServices: any = () => {
+export const ServiceToken: any = () => {
   const [apiTokenValue, setApiTokenValue] = React.useState<string>('');
-
+  const [errorMessage, setErrorMessage] = React.useState<string>('');
   const [currentNamespace] = useActiveNamespace();
   const namespace = currentNamespace;
   const { t } = useTranslation();
 
   const onCreate = async () => {
-    const secret = {
-      apiVersion: SecretModel.apiVersion,
-      kind: SecretModel.kind,
-      metadata: {
-        name: AccessTokenSecretName,
-        namespace,
-      },
-      stringData: {
-        value: apiTokenValue,
-      },
-      type: 'Opaque',
-    };
-    try{
-      await k8sCreate(SecretModel, secret);
+    try {
+      await createSecretIfNeeded(namespace, apiTokenValue);
+    } catch (error) {
+      setErrorMessage(`Problem with creating secret: ${error}`);
+      return;
+    }
+    try {
       await createServiceAccountIfNeeded(namespace);
-    }catch(error){
-      k8sKillByName(SecretModel, AccessTokenSecretName, namespace);
-      console.log("rhoas: cannot create service account", error)
+    } catch (error) {
+      setErrorMessage(`Cannot create service account: ${error}`);
     }
   };
 
@@ -52,14 +42,18 @@ export const AccessManagedServices: any = () => {
     <>
       <TextContent>
         <Text component={TextVariants.h2}>
-          {t('rhoas-plugin~Access Red Hat application services with API Token')}
+          {t('rhoas-plugin~Access Red Hat Cloud Services with API Token')}
         </Text>
         <Text component={TextVariants.p}>
           <span>
             {t(
-              'rhoas-plugin~To access this application service, input the API token which can be located at',
+              'rhoas-plugin~To access this Cloud Service, input the API token which can be located at',
             )}
-            <a href="https://cloud.redhat.com/openshift/token" target="_blank">
+            <a
+              href="https://cloud.redhat.com/openshift/token"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
               {' '}
               https://cloud.redhat.com/openshift/token
             </a>
@@ -78,9 +72,9 @@ export const AccessManagedServices: any = () => {
           <TextInput
             value={apiTokenValue}
             onChange={(value: string) => handleApiTokenValueChange(value)}
-            type="text"
-            id=""
-            name=""
+            type="password"
+            id="offlinetoken"
+            name="apitoken"
             placeholder=""
           />
         </FormGroup>
@@ -89,19 +83,29 @@ export const AccessManagedServices: any = () => {
             {t('rhoas-plugin~Cant create an access token? Contact your administrator')}
           </Text>
         </TextContent>
+        {errorMessage && (
+          <TextContent>
+            <Alert variant="danger" isInline title={errorMessage}/>
+          </TextContent>
+        )}
         <FormGroup fieldId="action-group">
           <Button
             key="confirm"
             variant="primary"
             onClick={onCreate}
-            isDisabled={apiTokenValue.length < 500 ? true : false}
+            isDisabled={apiTokenValue.length < 500}
           >
             {t('rhoas-plugin~Create')}
           </Button>
-          <Button key="cancel"
-            variant="link">
-
-            {t('rhoas-plugin~Cancel')}
+          <Button
+            key="reset"
+            variant="link"
+            onClick={() => {
+              setApiTokenValue('');
+              setErrorMessage('');
+            }}
+          >
+            {t('rhoas-plugin~Reset')}
           </Button>
         </FormGroup>
       </Form>

@@ -1,6 +1,4 @@
-import {
-  k8sWatch,
-} from '@console/internal/module/k8s';
+import { k8sWatch } from '@console/internal/module/k8s';
 
 /**
  * Use k8sWatch to wait for a resource to get into an expected condition.
@@ -13,6 +11,9 @@ import {
  * @returns {Promise<K8sResourceKind>}
  */
 export const k8sWaitForUpdate = (kind, resource, checkCondition, timeoutInMs) => {
+  if (!resource || !resource.metadata) {
+    return Promise.reject(new Error('Provided resource is undefined'));
+  }
   const { namespace, name, resourceVersion } = resource.metadata;
 
   if (checkCondition(resource)) {
@@ -28,13 +29,13 @@ export const k8sWaitForUpdate = (kind, resource, checkCondition, timeoutInMs) =>
   const waitForCondition = new Promise((resolve, reject) => {
     watcher.onbulkmessage((messages) => {
       messages.forEach(({ object }) => {
-        if ((!name || name === object.metadata?.name)) {
+        if (!name || name === object.metadata?.name) {
           try {
             if (checkCondition(object)) {
               resolve(object);
             }
           } catch (err) {
-            reject(err)
+            reject(err);
           }
         }
       });

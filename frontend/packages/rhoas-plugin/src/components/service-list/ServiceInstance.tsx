@@ -1,34 +1,31 @@
+/* eslint-disable prettier/prettier */
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet';
-import { PageBody } from '@console/shared';
-import { history } from '@console/internal/components/utils';
-import { FormFooter } from '@console/shared';
-import { PageHeading } from '@console/internal/components/utils';
-import StreamsInstanceFilter from './StreamsInstanceFilter';
-import StreamsInstanceTable from './StreamsInstanceTable';
-import { ManagedKafkaEmptyState } from './../empty-state/ManagedKafkaEmptyState';
-import { useActiveNamespace } from '@console/shared';
-import { ManagedKafka } from '../../types/rhoas-types';
+import { PageBody, FormFooter } from '@console/shared';
+import { history, PageHeading } from '@console/internal/components/utils';
+import StreamsInstanceFilter from '../service-table/StreamsInstanceFilter';
+import StreamsInstanceTable from '../service-table/StreamsInstanceTable';
+import { ServicesEmptyState } from '../states/ServicesEmptyState';
+import { ManagedKafka } from '../../utils/rhoas-types';
 
-type StreamsInstancePageProps = {
+type ServiceInstanceProps = {
   kafkaArray: ManagedKafka[];
   selectedKafka: number;
   setSelectedKafka: (selectedKafka: number) => void;
-  currentKafkaConnections: Array<string>;
+  currentKafkaConnections: string[];
   createManagedKafkaConnectionFlow: () => {};
   disableCreateButton: () => boolean;
 };
 
-const StreamsInstancePage = ({
+const ServiceInstance = ({
   kafkaArray,
   selectedKafka,
   setSelectedKafka,
   currentKafkaConnections,
   createManagedKafkaConnectionFlow,
   disableCreateButton,
-}: StreamsInstancePageProps) => {
-  const [currentNamespace] = useActiveNamespace();
+}: ServiceInstanceProps) => {
   const [allKafkasConnected, setAllKafkasConnected] = React.useState<boolean>(false);
   const [textInputNameValue, setTextInputNameValue] = React.useState<string>('');
   const [pageKafkas, setPageKafkas] = React.useState<ManagedKafka[]>(kafkaArray);
@@ -38,12 +35,8 @@ const StreamsInstancePage = ({
     setPageKafkas(kafkaArray);
   }, [kafkaArray]);
 
-  const goToTopology = () => {
-    history.push(`/topology/ns/${currentNamespace}`);
-  };
-
   const handleTextInputNameChange = (value: string) => {
-    let filteredKafkas = kafkaArray.filter((kafka) => kafka.name.includes(value));
+    const filteredKafkas = kafkaArray.filter((kafka) => kafka.name.includes(value));
     setPageKafkas(filteredKafkas);
     setTextInputNameValue(value);
   };
@@ -65,14 +58,13 @@ const StreamsInstancePage = ({
       </PageHeading>
       <PageBody>
         {allKafkasConnected ? (
-          <ManagedKafkaEmptyState
+          <ServicesEmptyState
             title={t('rhoas-plugin~All Managed Kafka clusters are in use')}
             actionInfo={t('rhoas-plugin~See Managed Kafka clusters in Topology view')}
-            action={() => goToTopology()}
             icon="CubesIcon"
           />
         ) : kafkaArray.length === 0 ? (
-          <ManagedKafkaEmptyState
+          <ServicesEmptyState
             title={t('rhoas-plugin~No Managed Kafka Clusters found')}
             actionInfo={t('rhoas-plugin~Go back to Managed Services Catalog')}
             icon="CubesIcon"
@@ -115,4 +107,4 @@ const StreamsInstancePage = ({
   );
 };
 
-export default StreamsInstancePage;
+export default ServiceInstance;

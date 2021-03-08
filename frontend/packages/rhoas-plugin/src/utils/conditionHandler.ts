@@ -1,7 +1,11 @@
-import { StatusCondition } from "../types/rhoas-types";
+import { StatusCondition } from './rhoas-types';
 
-export const getFinishedCondition = (request: any) => {
-  return getCondition(request, "Finished");
+export class ResourceConditionError extends Error {
+  public conditionContext: StatusCondition[];
+
+  public isTokenValid: boolean;
+
+  public isGenericProblem: boolean;
 }
 
 export const getCondition = (request: any, name: string) => {
@@ -12,4 +16,14 @@ export const getCondition = (request: any, name: string) => {
       }
     }
   }
-}
+  return undefined;
+};
+
+export const getFinishedCondition = (request: any) => {
+  return getCondition(request, 'Finished');
+};
+
+export const isSuccessfull = (request: any) => {
+  const condition = getCondition(request, 'Finished');
+  return condition && condition.status === 'True';
+};

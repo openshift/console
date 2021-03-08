@@ -46,11 +46,11 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Page/Route',
     properties: {
       exact: true,
-      path: ['/managedServices/managedkafka', '/managedServices/managedkafka/ns/:ns'],
+      path: ['/cloudServices/kafka', '/cloudServices/kafka/ns/:ns'],
       loader: async () =>
         (
           await import(
-            './components/managed-services-kafka/ManagedKafkas' /* webpackChunkName: "managedservices-kafka-plugin-releases-kafka-page" */
+            './components/service-list/ServiceListPage' /* webpackChunkName: "services-kafka-plugin-releases-kafka-page" */
           )
         ).default,
     },

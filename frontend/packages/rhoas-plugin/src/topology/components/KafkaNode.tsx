@@ -3,7 +3,7 @@ import { observer } from '@patternfly/react-topology';
 import { BaseNode } from '@console/topology/src/components/graph-view';
 import { calculateRadius } from '@console/shared';
 import { ManagedKafkaConnectionModel } from '../../models';
-import { managedKafkaIcon } from '../../const';
+import { kafkaIcon } from '../../const';
 
 const KafkaNode: React.FC<any> = ({ element, selected, onSelect, ...props }) => {
   const { width, height } = element.getBounds();
@@ -15,7 +15,7 @@ const KafkaNode: React.FC<any> = ({ element, selected, onSelect, ...props }) => 
     <BaseNode
       className="KafkaNode"
       onSelect={onSelect}
-      icon={managedKafkaIcon}
+      icon={kafkaIcon}
       innerRadius={iconRadius}
       selected={selected}
       kind={ManagedKafkaConnectionModel.kind}

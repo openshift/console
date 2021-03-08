@@ -6,18 +6,19 @@ import { history, LoadingBox } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { useActiveNamespace } from '@console/shared';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import StreamsInstancePage from '../streams-list/StreamsInstancePage';
+import ServiceInstance from './ServiceInstance';
 import { ManagedServicesRequestModel } from '../../models/rhoas';
-import { ManagedServicesRequestCRName } from '../../const';
+import { ServicesRequestCRName } from '../../const';
 import {
   createManagedKafkaConnection,
   createManagedServicesRequestIfNeeded,
   listOfCurrentKafkaConnectionsById,
-} from './resourceCreators';
-import { KafkaRequest } from '../../types/rhoas-types';
+} from '../../utils/resourceCreators';
+import { KafkaRequest } from '../../utils/rhoas-types';
 import { getCondition, getFinishedCondition } from '../../utils/conditionHandler';
+import { ServicesErrorState } from '../states/ServicesErrorState';
 
-const ManagedKafkas = () => {
+const ServiceListPage = () => {
   const [currentNamespace] = useActiveNamespace();
   const [selectedKafka, setSelectedKafka] = React.useState<number>();
   const [currentKafkaConnections, setCurrentKafkaConnections] = React.useState<string[]>([]);
@@ -33,11 +34,11 @@ const ManagedKafkas = () => {
 
   React.useEffect(() => {
     createKafkaRequestFlow();
-  }, []);
+  });
 
   const [watchedKafkaRequest] = useK8sWatchResource<KafkaRequest>({
     kind: referenceForModel(ManagedServicesRequestModel),
-    name: ManagedServicesRequestCRName,
+    name: ServicesRequestCRName,
     namespace: currentNamespace,
     isList: false,
     optional: true,
@@ -52,18 +53,25 @@ const ManagedKafkas = () => {
   }
 
   const condition = getFinishedCondition(watchedKafkaRequest);
-  if (condition && condition.status === "False") {
-    if (getCondition(watchedKafkaRequest, "AcccesTokenSecretValid")?.status == "False") {
-      return (<>
-        <p>Invalid access token</p>
-      </>)
-    } else {
-      return (<>
-        <p>Failed to load list of services</p>
-        <p>Message: {condition.message}</p>
-        <p>Reason: {condition.reason}</p>
-      </>)
+  if (condition && condition.status === 'False') {
+    if (getCondition(watchedKafkaRequest, 'AcccesTokenSecretValid')?.status === 'False') {
+      return (
+        <ServicesErrorState
+          title={'Connection failed'}
+          message={'Could not connect to RHOAS with API Token. Is your API token valid?'}
+        ></ServicesErrorState>
+      );
     }
+    return (
+      <>
+        <ServicesErrorState
+          title={'Could not fetch services'}
+          message={`Failed to load list of services: ${condition.message}`}
+        ></ServicesErrorState>
+        <div></div>
+        <div>{}</div>
+      </>
+    );
   }
 
   const remoteKafkaInstances = watchedKafkaRequest.status.userKafkas;
@@ -71,11 +79,11 @@ const ManagedKafkas = () => {
   const createManagedKafkaConnectionFlow = async () => {
     const kafkaId = remoteKafkaInstances[selectedKafka].id;
     const kafkaName = remoteKafkaInstances[selectedKafka].name;
-    try{
+    try {
       await createManagedKafkaConnection(kafkaId, kafkaName, currentNamespace);
       history.push(`/topology/ns/${currentNamespace}`);
-    }catch(error){
-      // TODO :)
+    } catch (error) {
+      // TODO
     }
   };
 
@@ -92,7 +100,7 @@ const ManagedKafkas = () => {
   return (
     <>
       <NamespacedPage variant={NamespacedPageVariants.light} disabled hideApplications>
-        <StreamsInstancePage
+        <ServiceInstance
           kafkaArray={remoteKafkaInstances}
           selectedKafka={selectedKafka}
           setSelectedKafka={setSelectedKafka}
@@ -105,4 +113,4 @@ const ManagedKafkas = () => {
   );
 };
 
-export default ManagedKafkas;
+export default ServiceListPage;

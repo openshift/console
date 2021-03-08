@@ -2,8 +2,8 @@
   "Unlock with token": "Unlock with token",
   "Unlocked": "Unlocked",
   "RHOAS can include Streams for Kafka, Service Registry": "RHOAS can include Managed Kafka, Service Registry and other Red Hat Services",
-  "Access Red Hat application services with API Token": "Access Red Hat application services with API Token",
-  "To access this application service, input the API token which can be located at": "To access this application service, input the API token which can be located at",
+  "Access Red Hat Cloud Services with API Token": "Access Red Hat Cloud Services with API Token",
+  "To access this Cloud Service, input the API token which can be located at": "To access this Cloud Service, input the API token which can be located at",
   "API token can be accessed at": "API token can be accessed at",
   "Cant create an access token? Contact your administrator": "Cant create an access token? Contact your administrator",
   "Create": "Create",
@@ -24,6 +24,7 @@
   "Created": "Created",
   "List of Kafka Instances": "List of Kafka Instances",
   "Status": "Status",
+  "Loading Services": "Loading Services",
   "Managed Services": "Managed Services",
   "Browse managed services to connect applications and microservices to other services and support services to create a full solution.": "Browse managed services to connect applications and microservices to other services and support services to create a full solution.",
   "Reduce operational complexity and focus on building and scaling applications that add more value.": "Reduce operational complexity and focus on building and scaling applications that add more value."

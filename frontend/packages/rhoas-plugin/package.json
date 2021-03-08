@@ -5,8 +5,9 @@
   "private": true,
   "scripts": {
     "coverage": "yarn test --coverage --collectCoverageFrom='[\"packages/rhoas-plugin/src/**\",\"!**/__tests__/**\",\"!packages/rhoas-plugin/src/test/**\"]'",
-    "lint": "yarn --cwd ../.. eslint packages/rhoas-plugin",
-    "test": "yarn --cwd ../.. test packages/rhoas-plugin"
+    "lint": "yarn --cwd ../.. eslint packages/rhoas-plugin --fix",
+    "test": "yarn --cwd ../.. test packages/rhoas-plugin",
+    "prettier": "yarn --cwd ../.. prettier --write  packages/rhoas-plugin/**/*.{js,jsx,ts,tsx,json}"
   },
   "consolePlugin": {
     "entry": "src/plugin.ts"

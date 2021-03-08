@@ -17,14 +17,14 @@ export interface ManagedKafka {
 
 export interface KafkaRequest extends K8sResourceCommon {
   spec: {
-    accessTokenSecretName: string
-  },
-  status: { userKafkas: ManagedKafka[], conditions: StatusCondition[] };
+    accessTokenSecretName: string;
+  };
+  status: { userKafkas: ManagedKafka[]; conditions: StatusCondition[] };
 }
 
 export interface StatusCondition {
-  type: string | "Finished" | "UserKafkasUpToDate" | "AcccesTokenSecretValid"
-  status: "True" | "False"
-  message: string
-  reason: string
+  type: string | 'Finished' | 'UserKafkasUpToDate' | 'AcccesTokenSecretValid';
+  status: 'True' | 'False';
+  message: string;
+  reason: string;
 }
