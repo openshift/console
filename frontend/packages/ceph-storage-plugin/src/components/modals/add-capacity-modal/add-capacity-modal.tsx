@@ -11,11 +11,14 @@ import {
   ModalBody,
 } from '@console/internal/components/factory';
 import { usePrometheusPoll } from '@console/internal/components/graphs/prometheus-poll-hook';
-import { k8sPatch, StorageClassResourceKind } from '@console/internal/module/k8s';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { K8sResourceKind, k8sPatch, StorageClassResourceKind } from '@console/internal/module/k8s';
+
 import { getName, getRequestedPVCSize } from '@console/shared';
 import { OCSServiceModel } from '../../../models';
 import { getCurrentDeviceSetIndex } from '../../../utils/add-capacity';
 import { OSD_CAPACITY_SIZES } from '../../../utils/osd-size-dropdown';
+import { getSCAvailablePVs } from '../../../selectors';
 import {
   NO_PROVISIONER,
   OCS_DEVICE_SET_ARBITER_REPLICA,
@@ -26,8 +29,8 @@ import {
 } from '../../../constants';
 import { OCSStorageClassDropdown } from '../storage-class-dropdown';
 import { PVsAvailableCapacity } from '../../ocs-install/pvs-available-capacity';
-import { createDeviceSet } from '../../ocs-install/ocs-request-data';
-import { cephCapacityResource } from '../../../resources';
+import { pvResource, cephCapacityResource } from '../../../resources';
+import { createDeviceSet, getDeviceSetCount } from '../../ocs-install/ocs-request-data';
 import { DeviceSet } from '../../../types';
 import './add-capacity-modal.scss';
 import { checkArbiterCluster, checkFlexibleScaling } from '../../../utils/common';
@@ -48,6 +51,8 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
   const [inProgress, setProgress] = React.useState(false);
   const [errorMessage, setError] = React.useState('');
 
+  const [pvData, pvLoaded, pvLoadError] = useK8sWatchResource<K8sResourceKind[]>(pvResource);
+
   const cephCapacity: string = response?.data?.result?.[0]?.value[1];
   const osdSizeWithUnit = getRequestedPVCSize(deviceSets[0].dataPVCTemplate);
   const osdSizeWithoutUnit: number = OSD_CAPACITY_SIZES[osdSizeWithUnit];
@@ -61,6 +66,12 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
   const name = getName(ocsConfig);
 
   let currentCapacity: React.ReactNode;
+  let availablePvsCount: number = 0;
+
+  if (!pvLoadError && pvData.length && pvLoaded) {
+    const pvs: K8sResourceKind[] = getSCAvailablePVs(pvData, selectedSCName);
+    availablePvsCount = pvs.length;
+  }
 
   if (loading) {
     currentCapacity = (
@@ -93,11 +104,13 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
     let deviceSetReplica = replica;
     let deviceSetCount = 1;
 
+    if (hasFlexibleScaling) {
+      portable = false;
+      deviceSetReplica = 1;
+    }
+    if (isNoProvionerSC) deviceSetCount = getDeviceSetCount(availablePvsCount, deviceSetReplica);
+
     if (deviceSetIndex === -1) {
-      if (hasFlexibleScaling) {
-        portable = false;
-        deviceSetReplica = 1;
-      }
       patch.op = 'add';
       patch.path = `/spec/storageDeviceSets/-`;
       patch.value = createDeviceSet(
@@ -108,7 +121,6 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
         deviceSetCount,
       );
     } else {
-      if (hasFlexibleScaling) deviceSetCount = 3;
       patch.op = 'replace';
       patch.path = `/spec/storageDeviceSets/${deviceSetIndex}/count`;
       patch.value = deviceSets[deviceSetIndex].count + deviceSetCount;
@@ -161,6 +173,9 @@ export const AddCapacityModal = (props: AddCapacityModalProps) => {
             replica={replica}
             data-test-id="ceph-add-capacity-pvs-available-capacity"
             storageClass={storageClass}
+            data={pvData}
+            loaded={pvLoaded}
+            loadError={pvLoadError}
           />
         ) : (
           <>
