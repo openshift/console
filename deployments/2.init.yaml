@@ -6,19 +6,6 @@ metadata:
 ---
 
 apiVersion: v1
-kind: ResourceQuota
-metadata:
-  name: console-system-quota
-  namespace: console-system
-spec:
-  hard:
-    limits.cpu: "2"
-    limits.memory: "5Gi"
-    requests.storage: "10Gi"
-
----
-
-apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: console-system-admin

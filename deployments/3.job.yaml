@@ -1,5 +1,4 @@
-# Source: ingress-nginx/templates/admission-webhooks/job-patch/job-createSecret.yaml
-apiVersion: batch/v1
+console-system.apiVersion: batch/v1
 kind: Job
 metadata:
   name: console-https-secret-create
@@ -17,16 +16,12 @@ spec:
             - create
             - --host=console,console.$(POD_NAMESPACE).svc
             - --namespace=$(POD_NAMESPACE)
-            - --secret-name=console-https-scret
+            - --secret-name=console-https-secret
           env:
             - name: POD_NAMESPACE
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
-          resources:
-            limits:
-              cpu: '1'
-              memory: '1Gi'                  
       restartPolicy: OnFailure
       serviceAccountName: console-system-admin
       securityContext:

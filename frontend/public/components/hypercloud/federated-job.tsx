@@ -2,6 +2,8 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 
 import { AddHealthChecks, EditHealthChecks } from '@console/app/src/actions/modify-health-checks';
 import { K8sResourceKind } from '../../module/k8s';
@@ -16,34 +18,34 @@ const kind = FederatedJobModel.kind;
 
 const tableColumnClasses = ['', '', classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-lg'), Kebab.columnClass];
 
-const FederatedJobTableHeader = () => {
+const FederatedJobTableHeader = (t?: TFunction) => {
   return [
     {
-      title: 'Name',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_1'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: 'Namespace',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_2'),
       sortField: 'metadata.namespace',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Status',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_3'),
       sortFunc: 'jobNumScheduled',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'Labels',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_15'),
       sortField: 'metadata.labels',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
     },
     {
-      title: 'Pod Selector',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_16'),
       sortField: 'spec.selector',
       transforms: [sortable],
       props: { className: tableColumnClasses[4] },
@@ -83,17 +85,21 @@ const FederatedJobTableRow: RowFunction<K8sResourceKind> = ({ obj: job, index, k
   );
 };
 
-export const FederatedJobDetailsList: React.FC<FederatedJobDetailsListProps> = ({ ds }) => (
+export const FederatedJobDetailsList: React.FC<FederatedJobDetailsListProps> = ({ ds }) => {
+  const { t } = useTranslation();
+  return (
   <dl className="co-m-pane__details">
-    <DetailsItem label="Current Count" obj={ds} path="status.currentNumberScheduled" />
-    <DetailsItem label="Desired Count" obj={ds} path="status.desiredNumberScheduled" />
+  <DetailsItem label={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_38')} obj={ds} path="status.currentNumberScheduled" />
+  <DetailsItem label={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_39')} obj={ds} path="status.desiredNumberScheduled" />
   </dl>
-);
+);}
 
-const FederatedJobDetails: React.FC<FederatedJobDetailsProps> = ({ obj: job }) => (
+const FederatedJobDetails: React.FC<FederatedJobDetailsProps> = ({ obj: job }) => {
+  const { t } = useTranslation();
+  return (
   <>
     <div className="co-m-pane__body">
-      <SectionHeading text="Federated Job Details" />
+    <SectionHeading text={`${t('COMMON:MSG_MAIN_DIV1_3', { 0: t('COMMON:MSG_LNB_MENU_29') })} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
       <div className="row">
         <div className="col-lg-6">
           <ResourceSummary resource={job} showPodSelector showNodeSelector showTolerations />
@@ -104,10 +110,10 @@ const FederatedJobDetails: React.FC<FederatedJobDetailsProps> = ({ obj: job }) =
       </div>
     </div>
     <div className="co-m-pane__body">
-      <SectionHeading text="Containers" />
+      <SectionHeading text={t('COMMON:MSG_DETAILS_TABDETAILS_CONTAINERS_TABLEHEADER_1')} />
     </div>
   </>
-);
+);}
 
 const { details, editYaml, events } = navFactory;
 export const FederatedJobs: React.FC = props => <Table {...props} aria-label="Federated Jobs" Header={FederatedJobTableHeader} Row={FederatedJobTableRow} virtualize />;
