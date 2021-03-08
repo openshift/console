@@ -25,6 +25,7 @@
   "Volume mode": "Volume mode",
   "Restore as new PVC": "Restore as new PVC",
   "When restore action for snapshot <1>{{snapshotName}}</1> is finished a new crash-consistent PVC copy will be created.": "When restore action for snapshot <1>{{snapshotName}}</1> is finished a new crash-consistent PVC copy will be created.",
+  "Volume Mode": "Volume Mode",
   "Size should be equal or greater than the restore size of snapshot": "Size should be equal or greater than the restore size of snapshot",
   "{{resourceKind}} details": "{{resourceKind}} details",
   "Created at": "Created at",
