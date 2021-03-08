@@ -18,7 +18,7 @@ Feature: Create the pipeline from builder page
              When user clicks Create Pipeline button on Pipelines page
              Then user will be redirected to Pipeline Builder page
               And user is able to see pipeline name with default value "new-pipeline"
-              And Tasks, Parameters and Resources sections are displayed
+              And Tasks, Parameters, Resources and Workspaces sections are displayed
               And Yaml view configuration is displayed
               And Create button is in disabled state
 
@@ -97,3 +97,36 @@ Feature: Create the pipeline from builder page
              When user selects YAML view
               And user clicks Create button on Pipeline Yaml page
              Then user will be redirected to Pipeline Details page with header name "new-pipeline"
+
+
+        @regression
+        Scenario: Create pipeline with Workspaces
+            Given user is at Pipeline Builder page
+             When user enters pipeline name as "pipeline-workspace"
+              And user selects "git-clone" from Task drop down
+              And user selects the "git-clone" node
+              And user adds the git url in the url Parameter in cluster task sidebar
+              And user clicks on Add workspace
+              And user adds the Workspace name as "git"
+              And user selects the "git-clone" node
+              And user selects the "git" workspace in the Output of Workspaces in cluster task sidebar
+              And user clicks Create button on Pipeline Builder page
+             Then user will be redirected to Pipeline Details page with header name "pipeline-workspace"
+              And user will see workspace mentioned as "git" in the Workspaces section of Pipeline Details page
+
+
+        @regression
+        Scenario: Create pipeline with optional Workspaces
+            Given user is at Pipeline Builder page
+             When user enters pipeline name as "pipeline-workspace"
+              And user selects "git-clone" from Task drop down
+              And user selects the "git-clone" node
+              And user adds the git url in the url Parameter in cluster task sidebar
+              And user clicks on Add workspace
+              And user adds the Workspace name as "git-opt"
+              And user clicks on Optional Workspace checkbox
+              And user selects the "git-clone" node
+              And user selects the "git" workspace in the Output of Workspaces in cluster task sidebar
+              And user clicks Create button on Pipeline Builder page
+             Then user will be redirected to Pipeline Details page with header name "pipeline-workspace"
+              And user will see workspace mentioned as "git-opt (optional)" in the Workspaces section of Pipeline Details page

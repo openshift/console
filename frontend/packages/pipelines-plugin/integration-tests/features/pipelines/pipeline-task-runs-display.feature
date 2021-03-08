@@ -46,3 +46,19 @@ Feature: Display task runs page
              Then user is redirected to Task Run Details tab
               And user can see "Details", "Log", "YAML" and "Events" tab
               And user can see Status, Message and Log snippet in "Details" tab
+
+
+        @regression, @manual
+        Scenario Outline: Task Runs Details page with Workspaces
+            Given user is at Task Runs tab of pipeline run with all kind of Workspaces
+             When user clicks on a task run associated with "<workspace_name>" "<resource>" Resources
+             Then user is redirected to Task Run Details tab
+              And user will see "<workspace_type>" label with "<workspace_name>" Workspace "shared-task-storage" mentioned in the "<resource>" Resources section of Task Run Details page
+
+        Examples:
+                  | workspace_type | workspace_name | resource            |
+                  | PVC            | PVC            | Workspace           |
+                  | CM             | Config Map     | Workspace           |
+                  | S              | Secret         | Workspace           |
+                  |                | Empty Directory| Workspace           |
+                  | PVC            | PVC            | VolumeClaimTemplate |

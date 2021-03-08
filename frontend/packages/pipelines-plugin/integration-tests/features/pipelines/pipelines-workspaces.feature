@@ -26,16 +26,17 @@ Feature: Workspaces
 
 
         @regression, @to-do
-        Scenario Outline: Start the pipeline with "<volume_tyoe>" : P-12-TC03
+        Scenario Outline: Start the pipeline with "<volume_type>" : P-12-TC03
             Given user created pipeline with workspace
              When user selects "Start" option from kebab menu for pipeline "test-workspace-pipeline"
               And user fills the Parameters in Start Pipeline modal
-              And user selects volume type "<volume_tyoe>" from workspaces dorp down
+              And user selects volume type "<volume_type>" from workspaces drop down
               And user selects Start button
              Then user will be redirected to Pipeline Run Details page
+              And user will see volume_type mentioned in the Workspace Resources section of Pipeline Run Details page
 
         Examples:
-                  | volume_tyoe     |
+                  | volume_type     |
                   | Empty Directory |
 
 
@@ -49,6 +50,7 @@ Feature: Workspaces
               And user selects "sensitive-recipe-storage" from Config Map drop down
               And user selects Start button
              Then user will be redirected to Pipeline Run Details page
+              And user will see Config Map Workspace "sensitive-recipe-storage" mentioned in the Workspace Resources section of Pipeline Run Details page
 
 
         @to-do
@@ -61,6 +63,7 @@ Feature: Workspaces
               And user selects "secret-password" from Secret drop down
               And user selects Start button
              Then user will be redirected to Pipeline Run Details page
+              And user will see Secret Workspace "secret-password" mentioned in the Workspace Resources section of Pipeline Run Details page
 
 
         @to-do
@@ -73,3 +76,4 @@ Feature: Workspaces
               And user selects "shared-task-storage" from PVC drop down
               And user selects Start button
              Then user will be redirected to Pipeline Run Details page
+              And user will see PVC Workspace "shared-task-storage" mentioned in the Workspace Resources section of Pipeline Run Details page
