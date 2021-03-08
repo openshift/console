@@ -229,12 +229,17 @@ const AllVariableDropdowns = connect(({ UI }: RootState) => ({
   variables: UI.getIn(['monitoringDashboards', 'variables']),
 }))(AllVariableDropdowns_);
 
-const TimespanDropdown_: React.FC<TimespanDropdownProps> = ({ timespan, setTimespan }) => {
+const TimespanDropdown_: React.FC<TimespanDropdownProps> = ({ timespan }) => {
+  const dispatch = useDispatch();
   const { t } = useTranslation();
 
-  const onChange = React.useCallback((v: string) => setTimespan(parsePrometheusDuration(v)), [
-    setTimespan,
-  ]);
+  const onChange = React.useCallback(
+    (v: string) => {
+      dispatch(UIActions.monitoringDashboardsSetTimespan(parsePrometheusDuration(v)));
+      dispatch(UIActions.monitoringDashboardsSetEndTime(null));
+    },
+    [dispatch],
+  );
 
   const timespanOptions = {
     '5m': t('public~Last {{count}} minute', { count: 5 }),
@@ -261,14 +266,9 @@ const TimespanDropdown_: React.FC<TimespanDropdownProps> = ({ timespan, setTimes
   );
 };
 
-export const TimespanDropdown = connect(
-  ({ UI }: RootState) => ({
-    timespan: UI.getIn(['monitoringDashboards', 'timespan']),
-  }),
-  {
-    setTimespan: UIActions.monitoringDashboardsSetTimespan,
-  },
-)(TimespanDropdown_);
+export const TimespanDropdown = connect(({ UI }: RootState) => ({
+  timespan: UI.getIn(['monitoringDashboards', 'timespan']),
+}))(TimespanDropdown_);
 
 const PollIntervalDropdown_ = ({ interval, setInterval }) => {
   const { t } = useTranslation();
@@ -658,7 +658,6 @@ type AllVariableDropdownsProps = {
 
 type TimespanDropdownProps = {
   timespan: number;
-  setTimespan: (v: number) => never;
 };
 
 type CardProps = {
