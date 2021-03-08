@@ -3,7 +3,7 @@ import { JSONSchema6 } from 'json-schema';
 import { UiSchema } from 'react-jsonschema-form';
 import { getUiOptions } from 'react-jsonschema-form/lib/utils';
 
-const UNSUPPORTED_SCHEMA_PROPERTIES = [];
+const UNSUPPORTED_SCHEMA_PROPERTIES = []; // Openshift에서는 oneOf, allOf, anyOf에 대한 schema 무시하도록 해놈. 이거 일단 이유를 모르겠어서 없애놈. 나중에 문제 생기면 다시 봐야할듯.
 
 export const useSchemaLabel = (schema: JSONSchema6, uiSchema: UiSchema, defaultLabel?: string) => {
   const options = getUiOptions(uiSchema ?? {});
