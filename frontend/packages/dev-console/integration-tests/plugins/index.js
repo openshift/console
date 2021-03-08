@@ -1,5 +1,9 @@
+/* eslint-disable global-require */
+/* eslint-disable import/no-dynamic-require */
 const webpack = require('@cypress/webpack-preprocessor');
 const fs = require('fs');
+const deepmerge = require('deepmerge');
+const path = require('path');
 
 module.exports = (on, config) => {
   const options = {
@@ -7,13 +11,19 @@ module.exports = (on, config) => {
       resolve: {
         extensions: ['.ts', '.tsx', '.js'],
       },
-      node: { fs: 'empty', child_process: 'empty', readline: 'empty' },
+      node: {
+        fs: 'empty',
+        child_process: 'empty',
+        readline: 'empty',
+      },
       module: {
         rules: [
           {
             test: /\.tsx?$/,
             loader: 'ts-loader',
-            options: { transpileOnly: true },
+            options: {
+              transpileOnly: true,
+            },
           },
           {
             test: /\.feature$/,
@@ -74,5 +84,14 @@ module.exports = (on, config) => {
   config.env.BRIDGE_HTPASSWD_USERNAME = process.env.BRIDGE_HTPASSWD_USERNAME;
   config.env.BRIDGE_HTPASSWD_PASSWORD = process.env.BRIDGE_HTPASSWD_PASSWORD;
   config.env.BRIDGE_KUBEADMIN_PASSWORD = process.env.BRIDGE_KUBEADMIN_PASSWORD;
+  // eslint-disable-next-line global-require
+  const configJson = require(config.configFile);
+  if (configJson.extends) {
+    const baseConfigFilename = path.join(config.projectRoot, configJson.extends);
+    // eslint-disable-next-line import/no-dynamic-require
+    const baseConfig = require(baseConfigFilename);
+    console.log('merging %s with %s', baseConfigFilename, config.configFile);
+    return deepmerge(baseConfig, configJson);
+  }
   return config;
 };

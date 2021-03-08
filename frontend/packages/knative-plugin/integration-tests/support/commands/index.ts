@@ -7,3 +7,4 @@ import '../../../../integration-tests-cypress/support/project';
 import '../../../../integration-tests-cypress/support/index';
 import '../../../../dev-console/integration-tests/support/step-definitions/common/addFlow';
 import './app';
+import './hooks';

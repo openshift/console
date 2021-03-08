@@ -4,9 +4,6 @@
   "defaultCommandTimeout": 40000,
   "viewportWidth": 1920,
   "viewportHeight": 1080,
-  "watchForFileChanges": true,
-  "chromeWebSecurity": true,
-  "waitForAnimation": true,
   "animationDistanceThreshold": 20,
   "execTimeout": 150000,
   "pageLoadTimeout": 90000,
@@ -15,7 +12,6 @@
   "supportFile": "support/commands/index.ts",
   "pluginsFile": "plugins/index.js",
   "fixturesFolder": "testData",
-  "video": true,
   "reporter": "../../../node_modules/cypress-multi-reporters",
   "reporterOptions": {
     "configFile": "reporter-config.json"

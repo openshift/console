@@ -1,5 +1,4 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { guidedTour } from '../../../../../integration-tests-cypress/views/guided-tour';
 import {
   navigateTo,
   perspective,
@@ -20,11 +19,6 @@ import { modal } from '../../../../../integration-tests-cypress/views/modal';
 
 Given('user is at developer perspective', () => {
   perspective.switchTo(switchPerspective.Developer);
-  // Bug: 1890676 is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
-  // cy.testA11y('Developer perspective with guider tour modal');
-  guidedTour.close();
-  // Bug: 1890678 is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
-  // cy.testA11y('Developer perspective');
 });
 
 Given('user has created or selected namespace {string}', (projectName: string) => {
@@ -98,4 +92,8 @@ When('user switches to the {string} tab', (tab: string) => {
 
 When('user clicks on the link for the {string} of helm release', (resource: string) => {
   topologySidePane.selectResource(resource);
+});
+
+Given('user is at Add page', () => {
+  navigateTo(devNavigationMenu.Add);
 });
