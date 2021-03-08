@@ -25,16 +25,16 @@ const HyperCloudNav = () => (
           <ResourceNSLink resource="events" name={t('COMMON:MSG_LNB_MENU_6')} />
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_22')}>
-          <ResourceNSLink resource="pods" name="Pods" />
-          <ResourceNSLink resource="deployments" name="Deployments" />
-          <ResourceNSLink resource="replicasets" name="Replica Sets" />
-          <ResourceNSLink resource="horizontalpodautoscalers" name="Horizontal Pod Autoscalers" />
-          <ResourceNSLink resource="daemonsets" name="Daemon Sets" />
-          <ResourceNSLink resource="statefulsets" name="Stateful Sets" />
-          <ResourceNSLink resource="configmaps" name="Config Maps" />
-          <ResourceNSLink resource="secrets" name="Secrets" />
-          <ResourceNSLink resource="jobs" name="Jobs" />
-          <ResourceNSLink resource="cronjobs" name="Cron Jobs" />
+          <ResourceNSLink resource="pods" name={t('COMMON:MSG_LNB_MENU_23')} />
+          <ResourceNSLink resource="deployments" name={t('COMMON:MSG_LNB_MENU_24')} />
+          <ResourceNSLink resource="replicasets" name={t('COMMON:MSG_LNB_MENU_31')} />
+          <ResourceNSLink resource="horizontalpodautoscalers" name={t('COMMON:MSG_LNB_MENU_32')} />
+          <ResourceNSLink resource="daemonsets" name={t('COMMON:MSG_LNB_MENU_30')} />
+          <ResourceNSLink resource="statefulsets" name={t('COMMON:MSG_LNB_MENU_25')} />
+          <ResourceNSLink resource="configmaps" name={t('COMMON:MSG_LNB_MENU_27')} />
+          <ResourceNSLink resource="secrets" name={t('COMMON:MSG_LNB_MENU_26')} />
+          <ResourceNSLink resource="jobs" name={t('COMMON:MSG_LNB_MENU_29')} />
+          <ResourceNSLink resource="cronjobs" name={t('COMMON:MSG_LNB_MENU_28')} />
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_46')}>
           <ResourceNSLink resource="services" name="Services" />

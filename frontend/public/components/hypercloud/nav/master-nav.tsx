@@ -29,32 +29,32 @@ const MasterNav = () => (
         </NavSection>
         {/* <NavSection title="Operators" /> */}
         <NavSection title={t('COMMON:MSG_LNB_MENU_10')}>
-          <ResourceNSLink resource="servicebrokers" name="Service Broker" />
-          <ResourceNSLink resource="serviceclasses" name="Service Class" />
+          <ResourceNSLink resource="servicebrokers" name={t('COMMON:MSG_LNB_MENU_11')} />
+          <ResourceNSLink resource="serviceclasses" name={t('COMMON:MSG_LNB_MENU_12')} />
           {/* <ResourceNSLink resource="serviceplans" name="Service Plan" /> */}
-          <ResourceClusterLink resource="clusterservicebrokers" name="Cluster Service Broker" />
-          <ResourceClusterLink resource="clusterserviceclasses" name="Cluster Service Class" />
+          <ResourceClusterLink resource="clusterservicebrokers" name={t('COMMON:MSG_LNB_MENU_14')} />
+          <ResourceClusterLink resource="clusterserviceclasses" name={t('COMMON:MSG_LNB_MENU_15')} />
           {/* <ResourceClusterLink resource="clusterserviceplans" name="Cluster Service Plan" /> */}
-          <ResourceNSLink resource="serviceinstances" name="Service Instance" />
-          <ResourceNSLink resource="servicebindings" name="Service Binding" />
-          <ResourceNSLink resource="catalogserviceclaims" name="Catalog Service Claim" />
-          <ResourceNSLink resource="templates" name="Template" />
+          <ResourceNSLink resource="serviceinstances" name={t('COMMON:MSG_LNB_MENU_17')} />
+          <ResourceNSLink resource="servicebindings" name={t('COMMON:MSG_LNB_MENU_18')} />
+          <ResourceNSLink resource="catalogserviceclaims" name={t('COMMON:MSG_LNB_MENU_19')} />
+          <ResourceNSLink resource="templates" name={t('COMMON:MSG_LNB_MENU_20')} />
           <ResourceClusterLink resource="clustertemplates" name="Cluster Template" />
-          <ResourceNSLink resource="templateinstances" name="Template Instance" />
+          <ResourceNSLink resource="templateinstances" name={t('COMMON:MSG_LNB_MENU_21')} />
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_22')}>
-          <ResourceNSLink resource="pods" name="Pods" />
-          <ResourceNSLink resource="deployments" name="Deployments" />
-          <ResourceNSLink resource="replicasets" name="Replica Sets" />
-          <ResourceNSLink resource="horizontalpodautoscalers" name="Horizontal Pod Autoscalers" />
-          <ResourceNSLink resource="daemonsets" name="Daemon Sets" />
-          <ResourceNSLink resource="statefulsets" name="Stateful Sets" />
+          <ResourceNSLink resource="pods" name={t('COMMON:MSG_LNB_MENU_23')} />
+          <ResourceNSLink resource="deployments" name={t('COMMON:MSG_LNB_MENU_24')} />
+          <ResourceNSLink resource="replicasets" name={t('COMMON:MSG_LNB_MENU_31')} />
+          <ResourceNSLink resource="horizontalpodautoscalers" name={t('COMMON:MSG_LNB_MENU_32')} />
+          <ResourceNSLink resource="daemonsets" name={t('COMMON:MSG_LNB_MENU_30')} />
+          <ResourceNSLink resource="statefulsets" name={t('COMMON:MSG_LNB_MENU_25')} />
           {/* <ResourceNSLink resource="virtualmachines" name={t('COMMON:MSG_LNB_MENU_33')} />
           <ResourceNSLink resource="virtualmachineinstances" name={t('COMMON:MSG_LNB_MENU_34')} /> */}
-          <ResourceNSLink resource="configmaps" name="Config Maps" />
-          <ResourceNSLink resource="secrets" name="Secrets" />
-          <ResourceNSLink resource="jobs" name="Jobs" />
-          <ResourceNSLink resource="cronjobs" name="Cron Jobs" />
+          <ResourceNSLink resource="configmaps" name={t('COMMON:MSG_LNB_MENU_27')} />
+          <ResourceNSLink resource="secrets" name={t('COMMON:MSG_LNB_MENU_26')} />
+          <ResourceNSLink resource="jobs" name={t('COMMON:MSG_LNB_MENU_29')} />
+          <ResourceNSLink resource="cronjobs" name={t('COMMON:MSG_LNB_MENU_28')} />
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_35')}>
           <ResourceNSLink resource="virtualservices" name={t('COMMON:MSG_LNB_MENU_36')} />
