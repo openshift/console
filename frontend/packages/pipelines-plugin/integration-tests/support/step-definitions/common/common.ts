@@ -24,6 +24,7 @@ import { gitPage } from '@console/dev-console/integration-tests/support/pages/ad
 import { catalogPage } from '@console/dev-console/integration-tests/support/pages/add-flow/catalog-page';
 import { catalogCards } from '@console/dev-console/integration-tests/support/constants/add';
 import { modal } from '../../../../../integration-tests-cypress/views/modal';
+import { addPage } from '@console/dev-console/integration-tests/support/pages/add-flow/add-page';
 
 Given('user has installed OpenShift Serverless Operator', () => {
   perspective.switchTo(switchPerspective.Administrator);
@@ -120,4 +121,8 @@ Then('modal with {string} appears', (header: string) => {
 
 When('user clicks on workload {string}', (workloadName: string) => {
   topologyPage.componentNode(workloadName).click({ force: true });
+});
+
+When('user selects {string} card from add page', (cardName: string) => {
+  addPage.selectCardFromOptions(cardName);
 });

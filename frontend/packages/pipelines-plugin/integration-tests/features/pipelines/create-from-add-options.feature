@@ -5,7 +5,7 @@ Feature: Create Pipeline from Add Options
         Background:
             Given user has created or selected namespace "aut-pipe-add-options"
 
-
+      
         @regression
         Scenario: Pipelines section on git form: P-01-TC03
              When user clicks From Git card on the Add page
