@@ -12,14 +12,7 @@ export const useSchemaLabel = (schema: JSONSchema6, uiSchema: UiSchema, defaultL
   return [showLabel, label] as [boolean, string];
 };
 
-export const useSchemaDescription = (
-  schema: JSONSchema6,
-  uiSchema: UiSchema,
-  defaultDescription?: string,
-) =>
-  (getUiOptions(uiSchema ?? {})?.description ||
-    schema?.description ||
-    defaultDescription) as string;
+export const useSchemaDescription = (schema: JSONSchema6, uiSchema: UiSchema, defaultDescription?: string) => (getUiOptions(uiSchema ?? {})?.description || schema?.description || defaultDescription) as string;
 
 export const getSchemaErrors = (schema: JSONSchema6): SchemaError[] => {
   return [
@@ -31,27 +24,20 @@ export const getSchemaErrors = (schema: JSONSchema6): SchemaError[] => {
           },
         ]
       : []),
-    ..._.map(
-      _.intersection(_.keys(schema), UNSUPPORTED_SCHEMA_PROPERTIES),
-      (unsupportedProperty) => ({
-        title: 'Unsupported Property',
-        message: `Cannot generate form fields for JSON schema with ${unsupportedProperty} property.`,
-      }),
-    ),
+    ..._.map(_.intersection(_.keys(schema), UNSUPPORTED_SCHEMA_PROPERTIES), unsupportedProperty => ({
+      title: 'Unsupported Property',
+      message: `Cannot generate form fields for JSON schema with ${unsupportedProperty} property.`,
+    })),
   ];
 };
 
 // Returns true if a value is not nil and is empty
-const definedAndEmpty = (value) => !_.isNil(value) && _.isEmpty(value);
+const definedAndEmpty = value => !_.isNil(value) && _.isEmpty(value);
 
 // Helper function for prune
 // TODO (jon) Make this pure
 const pruneRecursive = (current: any, sample: any): any => {
-  const valueIsEmpty = (value, key) =>
-    _.isNil(value) ||
-    _.isNaN(value) ||
-    (_.isString(value) && _.isEmpty(value)) ||
-    (_.isObject(value) && _.isEmpty(pruneRecursive(value, sample?.[key])));
+  const valueIsEmpty = (value, key) => _.isNil(value) || _.isNaN(value) || (_.isString(value) && _.isEmpty(value)) || (_.isObject(value) && _.isEmpty(pruneRecursive(value, sample?.[key])));
 
   // Value should be pruned if it is empty and the correspondeing sample is not explicitly
   // defined as an empty value.
