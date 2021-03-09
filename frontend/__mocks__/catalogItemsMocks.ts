@@ -296,7 +296,6 @@ export const catalogListPageProps = {
       metadata: {
         name: 'amq63-basic',
         namespace: 'openshift',
-        selfLink: '/apis/template.openshift.io/v1/namespaces/openshift/templates/amq63-basic',
         uid: 'effe623a-682c-11e9-be91-0a580a82000e',
         resourceVersion: '9593',
         creationTimestamp: '2019-04-26T14:09:42Z',
@@ -321,7 +320,6 @@ export const catalogListPageProps = {
       metadata: {
         name: 'amq63-persistent',
         namespace: 'openshift',
-        selfLink: '/apis/template.openshift.io/v1/namespaces/openshift/templates/amq63-persistent',
         uid: 'f2469368-682c-11e9-994a-0a580a80000a',
         resourceVersion: '10083',
         creationTimestamp: '2019-04-26T14:09:46Z',
@@ -832,8 +830,6 @@ export const catalogListPageProps = {
             'olm.operatorNamespace': 'openshift-operator-lifecycle-manager',
             'olm.targetNamespaces': 'openshift-operator-lifecycle-manager',
           },
-          selfLink:
-            '/apis/operators.coreos.com/v1alpha1/namespaces/openshift-operator-lifecycle-manager/clusterserviceversions/packageserver.v0.8.0',
           resourceVersion: '11112',
           name: 'packageserver.v0.8.0',
           uid: '63ba72dc-1404-11e9-99d5-027d9941c4da',
@@ -1111,8 +1107,6 @@ export const catalogListPageProps = {
             'olm.operatorNamespace': 'openshift-operator-lifecycle-manager',
             'olm.targetNamespaces': 'openshift-operator-lifecycle-manager',
           },
-          selfLink:
-            '/apis/operators.coreos.com/v1alpha1/namespaces/openshift-operator-lifecycle-manager/clusterserviceversions/svcat.v0.1.34',
           resourceVersion: '121331',
           name: 'svcat.v0.1.34',
           uid: 'ae8afaee-1407-11e9-8620-027d9941c4da',

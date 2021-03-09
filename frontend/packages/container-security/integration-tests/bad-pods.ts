@@ -16,8 +16,6 @@ export const fakeVulnFor = (priority: Priority): ImageManifestVuln => {
       }`,
       namespace: 'default',
       resourceVersion: '3082821',
-      selfLink:
-        '/apis/secscan.quay.redhat.com/v1alpha1/namespaces/default/imagemanifestvulns/sha256.e94c22ba519b1e0ae035e1786a7d2eb9425d62ff60be8ba2dc6b86234540bcbf',
       uid: `74b640b4-0503-4fbe-9354-1939630e082${vulnPriority.get(priority).index}`,
     },
     spec: {

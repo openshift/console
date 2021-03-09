@@ -14,8 +14,6 @@ export const MockGraphResources: TopologyDataResources = {
             description: 'Defines how to deploy the application server',
             'template.alpha.openshift.io/wait-for-ready': 'true',
           },
-          selfLink:
-            '/apis/apps.openshift.io/v1/namespaces/jeff-project/deploymentconfigs/cakephp-mysql-example',
           resourceVersion: '460792',
           name: 'cakephp-mysql-example',
           uid: '86ddea2d-ddf4-11e9-b72f-0a580a810024',
@@ -164,8 +162,6 @@ export const MockGraphResources: TopologyDataResources = {
         kind: 'deploymentconfig',
         metadata: {
           annotations: { description: 'Defines how to deploy the application server' },
-          selfLink:
-            '/apis/apps.openshift.io/v1/namespaces/jeff-project/deploymentconfigs/dotnet-example',
           resourceVersion: '17190',
           name: 'dotnet-example',
           uid: '7f4ffb69-ddf4-11e9-b72f-0a580a810024',
@@ -277,7 +273,6 @@ export const MockGraphResources: TopologyDataResources = {
             description: 'Defines how to deploy the database',
             'template.alpha.openshift.io/wait-for-ready': 'true',
           },
-          selfLink: '/apis/apps.openshift.io/v1/namespaces/jeff-project/deploymentconfigs/mysql',
           resourceVersion: '460861',
           name: 'mysql',
           uid: '86e228cb-ddf4-11e9-a662-0a580a820020',
@@ -397,7 +392,6 @@ export const MockGraphResources: TopologyDataResources = {
         kind: 'deploymentconfig',
         metadata: {
           annotations: { 'openshift.io/generated-by': 'OpenShiftWebConsole' },
-          selfLink: '/apis/apps.openshift.io/v1/namespaces/jeff-project/deploymentconfigs/perl',
           resourceVersion: '29644',
           name: 'perl',
           uid: 'b69703c0-ddf9-11e9-b72f-0a580a810024',
@@ -505,7 +499,6 @@ export const MockGraphResources: TopologyDataResources = {
         apiVersion: 'apps/v1',
         metadata: {
           annotations: { 'deployment.kubernetes.io/revision': '1' },
-          selfLink: '/apis/apps/v1/namespaces/jeff-project/deployments/test-deployment-1',
           resourceVersion: '471849',
           name: 'test-deployment-1',
           uid: '64b34874-debd-11e9-8cdf-0a0700ae5e38',
@@ -584,7 +577,6 @@ export const MockGraphResources: TopologyDataResources = {
             'app.openshift.io/connects-to': 'test-deployment-1',
             'deprecated.daemonset.template.generation': '1',
           },
-          selfLink: '/apis/apps/v1/namespaces/jeff-project/daemonsets/test-daemonset-1',
           resourceVersion: '471360',
           name: 'test-daemonset-1',
           uid: '909bc726-debd-11e9-b95e-02de4f087472',
@@ -645,7 +637,6 @@ export const MockGraphResources: TopologyDataResources = {
               '[{\n    "name": "openshift-sdn",\n    "interface": "eth0",\n    "ips": [\n        "10.128.2.20"\n    ],\n    "default": true,\n    "dns": {}\n}]',
             'openshift.io/scc': 'restricted',
           },
-          selfLink: '/api/v1/namespaces/jeff-project/pods/test-deployment-1-54b47fbb75-d4sg7',
           resourceVersion: '470619',
           name: 'test-deployment-1-54b47fbb75-d4sg7',
           uid: '64b9cf32-debd-11e9-b22b-06b197463f30',
@@ -776,7 +767,6 @@ export const MockGraphResources: TopologyDataResources = {
               '[{\n    "name": "openshift-sdn",\n    "interface": "eth0",\n    "ips": [\n        "10.128.2.22"\n    ],\n    "default": true,\n    "dns": {}\n}]',
             'openshift.io/scc': 'restricted',
           },
-          selfLink: '/api/v1/namespaces/jeff-project/pods/test-deployment-1-54b47fbb75-cfrkq',
           resourceVersion: '471828',
           name: 'test-deployment-1-54b47fbb75-cfrkq',
           uid: 'eb11d324-debd-11e9-b22b-06b197463f30',
@@ -907,7 +897,6 @@ export const MockGraphResources: TopologyDataResources = {
               '[{\n    "name": "openshift-sdn",\n    "interface": "eth0",\n    "ips": [\n        "10.128.2.21"\n    ],\n    "default": true,\n    "dns": {}\n}]',
             'openshift.io/scc': 'restricted',
           },
-          selfLink: '/api/v1/namespaces/jeff-project/pods/test-daemonset-1-ngjfn',
           resourceVersion: '471027',
           name: 'test-daemonset-1-ngjfn',
           uid: '90a149a4-debd-11e9-b22b-06b197463f30',
@@ -1053,7 +1042,6 @@ export const MockGraphResources: TopologyDataResources = {
               '[{\n    "name": "openshift-sdn",\n    "interface": "eth0",\n    "ips": [\n        "10.129.2.20"\n    ],\n    "default": true,\n    "dns": {}\n}]',
             'openshift.io/scc': 'restricted',
           },
-          selfLink: '/api/v1/namespaces/jeff-project/pods/test-daemonset-1-72zfc',
           resourceVersion: '471035',
           name: 'test-daemonset-1-72zfc',
           uid: '90a1d40a-debd-11e9-b22b-06b197463f30',
@@ -1199,7 +1187,6 @@ export const MockGraphResources: TopologyDataResources = {
             'openshift.io/deployment.name': 'perl-1',
             'openshift.io/scc': 'restricted',
           },
-          selfLink: '/api/v1/namespaces/jeff-project/pods/perl-1-deploy',
           resourceVersion: '29637',
           name: 'perl-1-deploy',
           uid: 'b75a3a67-ddf9-11e9-8d63-02de4f087472',
@@ -1348,7 +1335,6 @@ export const MockGraphResources: TopologyDataResources = {
               '[{\n    "name": "openshift-sdn",\n    "interface": "eth0",\n    "ips": [\n        "10.131.0.21"\n    ],\n    "default": true,\n    "dns": {}\n}]',
             'openshift.io/scc': 'restricted',
           },
-          selfLink: '/api/v1/namespaces/jeff-project/pods/test-daemonset-1-hpjv7',
           resourceVersion: '471041',
           name: 'test-daemonset-1-hpjv7',
           uid: '909f68be-debd-11e9-b22b-06b197463f30',
@@ -1494,7 +1480,6 @@ export const MockGraphResources: TopologyDataResources = {
               '[{\n    "name": "openshift-sdn",\n    "interface": "eth0",\n    "ips": [\n        "10.131.0.22"\n    ],\n    "default": true,\n    "dns": {}\n}]',
             'openshift.io/scc': 'restricted',
           },
-          selfLink: '/api/v1/namespaces/jeff-project/pods/test-deployment-1-54b47fbb75-rbf4d',
           resourceVersion: '471840',
           name: 'test-deployment-1-54b47fbb75-rbf4d',
           uid: 'eb44c495-debd-11e9-b22b-06b197463f30',
@@ -1621,7 +1606,6 @@ export const MockGraphResources: TopologyDataResources = {
         metadata: {
           generateName: 'test-statefulset-1-',
           annotations: { 'openshift.io/scc': 'restricted' },
-          selfLink: '/api/v1/namespaces/jeff-project/pods/test-statefulset-1-0',
           resourceVersion: '470712',
           name: 'test-statefulset-1-0',
           uid: '75c306e4-debd-11e9-b22b-06b197463f30',
@@ -1726,7 +1710,6 @@ export const MockGraphResources: TopologyDataResources = {
               '[{\n    "name": "openshift-sdn",\n    "interface": "eth0",\n    "ips": [\n        "10.129.2.21"\n    ],\n    "default": true,\n    "dns": {}\n}]',
             'openshift.io/scc': 'restricted',
           },
-          selfLink: '/api/v1/namespaces/jeff-project/pods/test-deployment-1-54b47fbb75-whl8h',
           resourceVersion: '471846',
           name: 'test-deployment-1-54b47fbb75-whl8h',
           uid: 'eb264e6e-debd-11e9-b22b-06b197463f30',
@@ -1857,7 +1840,6 @@ export const MockGraphResources: TopologyDataResources = {
               '[{\n    "name": "openshift-sdn",\n    "interface": "eth0",\n    "ips": [\n        "10.129.2.19"\n    ],\n    "default": true,\n    "dns": {}\n}]',
             'openshift.io/scc': 'restricted',
           },
-          selfLink: '/api/v1/namespaces/jeff-project/pods/test-deployment-1-54b47fbb75-jfxdt',
           resourceVersion: '470632',
           name: 'test-deployment-1-54b47fbb75-jfxdt',
           uid: '64ba1932-debd-11e9-b22b-06b197463f30',
@@ -1988,7 +1970,6 @@ export const MockGraphResources: TopologyDataResources = {
               '[{\n    "name": "openshift-sdn",\n    "interface": "eth0",\n    "ips": [\n        "10.131.0.20"\n    ],\n    "default": true,\n    "dns": {}\n}]',
             'openshift.io/scc': 'restricted',
           },
-          selfLink: '/api/v1/namespaces/jeff-project/pods/test-deployment-1-54b47fbb75-7s8ct',
           resourceVersion: '470626',
           name: 'test-deployment-1-54b47fbb75-7s8ct',
           uid: '64b786cf-debd-11e9-b22b-06b197463f30',
@@ -2128,10 +2109,9 @@ export const MockGraphResources: TopologyDataResources = {
             'kubectl.kubernetes.io/desired-replicas': '1',
             'openshift.io/deployment.replicas': '0',
             'openshift.io/encoded-deployment-config':
-              '{"kind":"DeploymentConfig","apiVersion":"apps.openshift.io/v1","metadata":{"name":"perl","namespace":"jeff-project","selfLink":"/apis/apps.openshift.io/v1/namespaces/jeff-project/deploymentconfigs/perl","uid":"b69703c0-ddf9-11e9-b72f-0a580a810024","resourceVersion":"26857","generation":2,"creationTimestamp":"2019-09-23T12:00:19Z","labels":{"app":"perl","app.kubernetes.io/component":"perl","app.kubernetes.io/instance":"perl"},"annotations":{"openshift.io/generated-by":"OpenShiftWebConsole"}},"spec":{"strategy":{"type":"Rolling","rollingParams":{"updatePeriodSeconds":1,"intervalSeconds":1,"timeoutSeconds":600,"maxUnavailable":"25%","maxSurge":"25%"},"resources":{},"activeDeadlineSeconds":21600},"triggers":[{"type":"ImageChange","imageChangeParams":{"automatic":true,"containerNames":["perl"],"from":{"kind":"ImageStreamTag","namespace":"jeff-project","name":"perl:latest"},"lastTriggeredImage":"perl@sha256:711837fda379e492e351c0379ab697effc7e9c61dac2bef731073ac1138baad1"}},{"type":"ConfigChange"}],"replicas":1,"revisionHistoryLimit":10,"test":false,"selector":{"app":"perl","deploymentconfig":"perl"},"template":{"metadata":{"creationTimestamp":null,"labels":{"app":"perl","deploymentconfig":"perl"},"annotations":{"openshift.io/generated-by":"OpenShiftWebConsole"}},"spec":{"containers":[{"name":"perl","image":"perl@sha256:711837fda379e492e351c0379ab697effc7e9c61dac2bef731073ac1138baad1","ports":[{"containerPort":8080,"protocol":"TCP"}],"resources":{},"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"File","imagePullPolicy":"IfNotPresent"}],"restartPolicy":"Always","terminationGracePeriodSeconds":30,"dnsPolicy":"ClusterFirst","securityContext":{},"schedulerName":"default-scheduler"}}},"status":{"latestVersion":1,"observedGeneration":1,"replicas":0,"updatedReplicas":0,"availableReplicas":0,"unavailableReplicas":0,"details":{"message":"config change","causes":[{"type":"ConfigChange"}]},"conditions":[{"type":"Available","status":"False","lastUpdateTime":"2019-09-23T12:00:19Z","lastTransitionTime":"2019-09-23T12:00:19Z","message":"Deployment config does not have minimum availability."}]}}\n',
+              '{"kind":"DeploymentConfig","apiVersion":"apps.openshift.io/v1","metadata":{"name":"perl","namespace":"jeff-project","uid":"b69703c0-ddf9-11e9-b72f-0a580a810024","resourceVersion":"26857","generation":2,"creationTimestamp":"2019-09-23T12:00:19Z","labels":{"app":"perl","app.kubernetes.io/component":"perl","app.kubernetes.io/instance":"perl"},"annotations":{"openshift.io/generated-by":"OpenShiftWebConsole"}},"spec":{"strategy":{"type":"Rolling","rollingParams":{"updatePeriodSeconds":1,"intervalSeconds":1,"timeoutSeconds":600,"maxUnavailable":"25%","maxSurge":"25%"},"resources":{},"activeDeadlineSeconds":21600},"triggers":[{"type":"ImageChange","imageChangeParams":{"automatic":true,"containerNames":["perl"],"from":{"kind":"ImageStreamTag","namespace":"jeff-project","name":"perl:latest"},"lastTriggeredImage":"perl@sha256:711837fda379e492e351c0379ab697effc7e9c61dac2bef731073ac1138baad1"}},{"type":"ConfigChange"}],"replicas":1,"revisionHistoryLimit":10,"test":false,"selector":{"app":"perl","deploymentconfig":"perl"},"template":{"metadata":{"creationTimestamp":null,"labels":{"app":"perl","deploymentconfig":"perl"},"annotations":{"openshift.io/generated-by":"OpenShiftWebConsole"}},"spec":{"containers":[{"name":"perl","image":"perl@sha256:711837fda379e492e351c0379ab697effc7e9c61dac2bef731073ac1138baad1","ports":[{"containerPort":8080,"protocol":"TCP"}],"resources":{},"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"File","imagePullPolicy":"IfNotPresent"}],"restartPolicy":"Always","terminationGracePeriodSeconds":30,"dnsPolicy":"ClusterFirst","securityContext":{},"schedulerName":"default-scheduler"}}},"status":{"latestVersion":1,"observedGeneration":1,"replicas":0,"updatedReplicas":0,"availableReplicas":0,"unavailableReplicas":0,"details":{"message":"config change","causes":[{"type":"ConfigChange"}]},"conditions":[{"type":"Available","status":"False","lastUpdateTime":"2019-09-23T12:00:19Z","lastTransitionTime":"2019-09-23T12:00:19Z","message":"Deployment config does not have minimum availability."}]}}\n',
             'openshift.io/deployer-pod.name': 'perl-1-deploy',
           },
-          selfLink: '/api/v1/namespaces/jeff-project/replicationcontrollers/perl-1',
           resourceVersion: '29639',
           name: 'perl-1',
           uid: 'b74b9c2b-ddf9-11e9-8d63-02de4f087472',
@@ -2203,8 +2183,6 @@ export const MockGraphResources: TopologyDataResources = {
         metadata: {
           name: 'cakephp-mysql-example',
           namespace: 'jeff-project',
-          selfLink:
-            '/apis/route.openshift.io/v1/namespaces/jeff-project/routes/cakephp-mysql-example',
           uid: '86d5f6f5-ddf4-11e9-a662-0a580a820020',
           resourceVersion: '17026',
           creationTimestamp: '2019-09-23T11:23:11Z',
@@ -2240,7 +2218,6 @@ export const MockGraphResources: TopologyDataResources = {
         metadata: {
           name: 'dotnet-example',
           namespace: 'jeff-project',
-          selfLink: '/apis/route.openshift.io/v1/namespaces/jeff-project/routes/dotnet-example',
           uid: '7f419151-ddf4-11e9-a662-0a580a820020',
           resourceVersion: '16945',
           creationTimestamp: '2019-09-23T11:22:58Z',
@@ -2274,7 +2251,6 @@ export const MockGraphResources: TopologyDataResources = {
         metadata: {
           name: 'perl',
           namespace: 'jeff-project',
-          selfLink: '/apis/route.openshift.io/v1/namespaces/jeff-project/routes/perl',
           uid: 'b69e6da1-ddf9-11e9-b981-0a580a800015',
           resourceVersion: '26846',
           creationTimestamp: '2019-09-23T12:00:19Z',
@@ -2320,7 +2296,6 @@ export const MockGraphResources: TopologyDataResources = {
         metadata: {
           name: 'cakephp-mysql-example',
           namespace: 'jeff-project',
-          selfLink: '/api/v1/namespaces/jeff-project/services/cakephp-mysql-example',
           uid: '86d4216e-ddf4-11e9-8d63-02de4f087472',
           resourceVersion: '17014',
           creationTimestamp: '2019-09-23T11:23:11Z',
@@ -2348,7 +2323,6 @@ export const MockGraphResources: TopologyDataResources = {
         metadata: {
           name: 'dotnet-example',
           namespace: 'jeff-project',
-          selfLink: '/api/v1/namespaces/jeff-project/services/dotnet-example',
           uid: '7f438a59-ddf4-11e9-8d63-02de4f087472',
           resourceVersion: '16937',
           creationTimestamp: '2019-09-23T11:22:58Z',
@@ -2371,7 +2345,6 @@ export const MockGraphResources: TopologyDataResources = {
         metadata: {
           name: 'mysql',
           namespace: 'jeff-project',
-          selfLink: '/api/v1/namespaces/jeff-project/services/mysql',
           uid: '86df9dbf-ddf4-11e9-8d63-02de4f087472',
           resourceVersion: '17021',
           creationTimestamp: '2019-09-23T11:23:11Z',
@@ -2396,7 +2369,6 @@ export const MockGraphResources: TopologyDataResources = {
         metadata: {
           name: 'perl',
           namespace: 'jeff-project',
-          selfLink: '/api/v1/namespaces/jeff-project/services/perl',
           uid: 'b69e4877-ddf9-11e9-b012-0a0700ae5e38',
           resourceVersion: '26842',
           creationTimestamp: '2019-09-23T12:00:19Z',
@@ -2431,8 +2403,6 @@ export const MockGraphResources: TopologyDataResources = {
             'deployment.kubernetes.io/max-replicas': '8',
             'deployment.kubernetes.io/revision': '1',
           },
-          selfLink:
-            '/apis/apps/v1/namespaces/jeff-project/replicasets/test-deployment-1-54b47fbb75',
           resourceVersion: '471848',
           name: 'test-deployment-1-54b47fbb75',
           uid: '64b4abd7-debd-11e9-b22b-06b197463f30',
@@ -2498,8 +2468,6 @@ export const MockGraphResources: TopologyDataResources = {
         metadata: {
           name: 'cakephp-mysql-example',
           namespace: 'jeff-project',
-          selfLink:
-            '/apis/build.openshift.io/v1/namespaces/jeff-project/buildconfigs/cakephp-mysql-example',
           uid: '86da21d7-ddf4-11e9-a662-0a580a820020',
           resourceVersion: '17018',
           creationTimestamp: '2019-09-23T11:23:11Z',
@@ -2542,8 +2510,6 @@ export const MockGraphResources: TopologyDataResources = {
         metadata: {
           name: 'dotnet-example',
           namespace: 'jeff-project',
-          selfLink:
-            '/apis/build.openshift.io/v1/namespaces/jeff-project/buildconfigs/dotnet-example',
           uid: '7f4a56aa-ddf4-11e9-b981-0a580a800015',
           resourceVersion: '16940',
           creationTimestamp: '2019-09-23T11:22:58Z',
@@ -2603,7 +2569,6 @@ export const MockGraphResources: TopologyDataResources = {
         metadata: {
           name: 'test-statefulset-1',
           namespace: 'jeff-project',
-          selfLink: '/apis/apps/v1/namespaces/jeff-project/statefulsets/test-statefulset-1',
           uid: '75c049b5-debd-11e9-8cdf-0a0700ae5e38',
           resourceVersion: '471258',
           generation: 1,

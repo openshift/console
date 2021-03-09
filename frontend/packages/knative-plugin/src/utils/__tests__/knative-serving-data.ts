@@ -126,7 +126,6 @@ export const deploymentData: K8sResourceKind = {
   apiVersion: 'apps/v1',
   metadata: {
     annotations: { 'deployment.kubernetes.io/revision': '1' },
-    selfLink: '/apis/apps/v1/namespaces/testproject3/deployments/overlayimage',
     resourceVersion: '471849',
     name: 'overlayimage',
     uid: '64b34874-debd-11e9-8cdf-0a0700ae5e38',
@@ -198,7 +197,6 @@ export const deploymentKnativeData: K8sResourceKind = {
   apiVersion: 'apps/v1',
   metadata: {
     annotations: { 'deployment.kubernetes.io/revision': '1' },
-    selfLink: '/apis/apps/v1/namespaces/testproject3/deployments/overlayimage',
     resourceVersion: '471849',
     name: 'overlayimage',
     uid: '64b34874-debd-11e9-8cdf-0a0700ae5e38',
@@ -427,7 +425,6 @@ export const Kafkas: K8sResourceKind[] = [
       name: 'my-cluster',
       namespace: 'div',
       resourceVersion: '142204',
-      selfLink: '/apis/kafka.strimzi.io/v1beta1/namespaces/div/kafkas/my-cluster',
       uid: '56c871cf-e649-4c7e-8ac6-8fafc933c96f',
     },
     spec: {
@@ -500,7 +497,6 @@ export const Kafkas: K8sResourceKind[] = [
       name: 'my-cluster2',
       namespace: 'div',
       resourceVersion: '152566',
-      selfLink: '/apis/kafka.strimzi.io/v1beta1/namespaces/div/kafkas/my-cluster2',
       uid: '219842be-00df-4e30-9c15-fce4b7438244',
     },
     spec: {

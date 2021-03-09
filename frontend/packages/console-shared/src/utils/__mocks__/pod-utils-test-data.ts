@@ -101,7 +101,6 @@ export const mockPod: K8sResourceKind = {
     annotations: {
       'openshift.io/scc': 'restricted',
     },
-    selfLink: '/api/v1/namespaces/testproject3/pods/analytics-deployment-59dd7c47d4-2jp7t',
     resourceVersion: '1395096',
     name: 'analytics-deployment-59dd7c47d4-2jp7t',
     uid: '5cec460e-680d-11e9-8c69-5254003f9382',

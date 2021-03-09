@@ -6,7 +6,6 @@ export const podData: PodKind = {
   metadata: {
     name: 'nodejs-ex-git-d0sjao-deploy-jb79p-pod-gxdcp',
     namespace: 'default',
-    selfLink: '/api/v1/namespaces/default/pods/nodejs-ex-git-d0sjao-deploy-jb79p-pod-gxdcp',
     uid: '10686a51-74ad-4ec0-8a1d-e618a86b6098',
     resourceVersion: '70112',
     creationTimestamp: '2020-03-30T15:14:13Z',

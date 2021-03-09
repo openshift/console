@@ -52,7 +52,6 @@ export class VMClone {
     const { metadata, spec } = data;
 
     if (metadata) {
-      delete metadata.selfLink;
       delete metadata.resourceVersion;
       delete metadata.uid;
       delete metadata.creationTimestamp;

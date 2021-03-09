@@ -36,7 +36,6 @@ export type ObjectMetadata = {
   namespace?: string;
   ownerReferences?: OwnerReference[];
   resourceVersion?: string;
-  selfLink?: string;
   uid?: string;
 };
 

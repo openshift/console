@@ -182,7 +182,6 @@ export const nodeJsBuilderImage = {
         'openshift.io/image.dockerRepositoryCheck': '2019-11-05T16:52:18Z',
         'samples.operator.openshift.io/version': '4.3.0-0.ci-2019-11-05-141931',
       },
-      selfLink: '/apis/image.openshift.io/v1/namespaces/openshift/imagestreams/nodejs',
       resourceVersion: '13443',
       name: 'nodejs',
       uid: 'a244e124-4a42-4248-bbcf-868b39791164',
