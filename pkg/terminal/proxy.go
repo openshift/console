@@ -79,13 +79,13 @@ func (p *Proxy) HandleProxy(user *auth.User, w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	operatorRunning, err := workspaceOperatorIsRunning()
+	isWebTerminalOperatorRunning, err := checkWebTerminalOperatorIsRunning()
 	if err != nil {
-		http.Error(w, "Failed to check workspace operator state. Cause: "+err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Failed to check web terminal operator state. Cause: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
-	if !operatorRunning {
-		http.Error(w, "Terminal endpoint is disabled: workspace operator is not deployed.", http.StatusForbidden)
+	if !isWebTerminalOperatorRunning {
+		http.Error(w, "Terminal endpoint is disabled: web terminal operator is not deployed.", http.StatusForbidden)
 		return
 	}
 
@@ -181,13 +181,24 @@ func (p *Proxy) HandleProxyEnabled(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	enabled, err := workspaceOperatorIsRunning()
+	isWebTerminalOperatorInstalled, err := checkWebTerminalOperatorIsInstalled()
 	if err != nil {
-		klog.Errorf("Failed to check if workspace operator is running: %s", err)
+		klog.Errorf("Failed to check if the web terminal operator is installed: %s", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	if !enabled {
+	if !isWebTerminalOperatorInstalled {
+		klog.Error("web terminal operator is not installed")
+		w.WriteHeader(http.StatusServiceUnavailable)
+		return
+	}
+	isWebTerminalOperatorRunning, err := checkWebTerminalOperatorIsRunning()
+	if err != nil {
+		klog.Errorf("Failed to check if web terminal operator is running: %s", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	if !isWebTerminalOperatorRunning {
 		w.WriteHeader(http.StatusServiceUnavailable)
 		return
 	}
