@@ -134,12 +134,12 @@ export const getDynamicExtensions = (
     ext.data,
     (key, value) =>
       isEncodedCodeRef(value)
-        ? `%${codeRefTransformer(
+        ? `@${codeRefTransformer(
             getExecutableCodeRefSource(value, key, pkg, codeRefValidationResult),
-          )}%`
+          )}@`
         : value,
     2,
-  ).replace(/"%(.*)%"/g, '$1');
+  ).replace(/"@(.*)@"/g, '$1');
 
   if (codeRefValidationResult.hasErrors()) {
     errorCallback(codeRefValidationResult.formatErrors());
