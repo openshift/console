@@ -36,7 +36,7 @@ export const AdditionalPropertyFields: React.FC<AdditionalPropertyProps> = props
 const AdditionalPropertyItem = props => {
   const { index, items, data, onChange, onRemove } = props;
   const [additionalKey, setKey] = React.useState(Object.keys(data)[0]);
-  const [additionalValue, setValue] = React.useState(Object.values(data)[0]);
+  const [additionalValue, setValue] = React.useState(Object.values(data)[0] || ' ');
   React.useEffect(() => {
     setKey(Object.keys(data)[0]);
     setValue(Object.values(data)[0]);
@@ -68,14 +68,14 @@ const AdditionalPropertyItem = props => {
       </div>
       <div className="col-xs-4">
         <input
-          value={additionalValue}
+          value={additionalValue as string}
           onChange={e => {
             const value = e.target.value;
             setValue(value);
             console.log(value);
             items.splice(index, 1, { [additionalKey]: value });
           }}
-          id={additionalValue}
+          id={'value' + additionalValue}
           type="text"
           className="pf-c-form-control"
           key={`value-${index}`}
