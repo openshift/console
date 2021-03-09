@@ -146,8 +146,9 @@ const ReplicaSetsList = props => {
   return <Table {...props} aria-label="Replica Sets" Header={ReplicaSetTableHeader.bind(null, t)} Row={ReplicaSetTableRow} virtualize />;
 };
 const ReplicaSetsPage = props => {
+  const { t } = useTranslation();
   const { canCreate = true } = props;
-  return <ListPage canCreate={canCreate} kind="ReplicaSet" ListComponent={ReplicaSetsList} {...props} />;
+  return <ListPage title={t('COMMON:MSG_LNB_MENU_31')} createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:MSG_LNB_MENU_31') })} canCreate={canCreate} kind="ReplicaSet" ListComponent={ReplicaSetsList} {...props} />;
 };
 
 export { ReplicaSetsList, ReplicaSetsPage, ReplicaSetsDetailsPage };

@@ -121,7 +121,10 @@ export const CronJobsList: React.FC = props => {
   return <Table {...props} aria-label={CronJobModel.labelPlural} Header={CronJobTableHeader.bind(null, t)} Row={CronJobTableRow} virtualize />;
 };
 
-export const CronJobsPage: React.FC<CronJobsPageProps> = props => <ListPage {...props} ListComponent={CronJobsList} kind={kind} canCreate={true} />;
+export const CronJobsPage: React.FC<CronJobsPageProps> = props => {
+  const { t } = useTranslation();
+  return <ListPage {...props} title={t('COMMON:MSG_LNB_MENU_28')} createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:MSG_LNB_MENU_28') })} ListComponent={CronJobsList} kind={kind} canCreate={true} />;
+};
 
 export const CronJobsDetailsPage: React.FC<CronJobsDetailsPageProps> = props => <DetailsPage {...props} kind={kind} menuActions={menuActions} pages={[navFactory.details(CronJobDetails), navFactory.editYaml(), navFactory.events(ResourceEventStream)]} />;
 

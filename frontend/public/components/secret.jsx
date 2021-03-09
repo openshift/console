@@ -184,7 +184,7 @@ const SecretsPage = props => {
     createLink: type => `/k8s/ns/${props.namespace || 'default'}/secrets/~new/${type !== 'yaml' ? type : ''}`,
   };
 
-  return <ListPage ListComponent={SecretsList} canCreate={true} rowFilters={filters} createButtonText={t('COMMON:MSG_COMMON_BUTTON_COMMIT_1')} createProps={createProps} {...props} />;
+  return <ListPage title={t('COMMON:MSG_LNB_MENU_26')} createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:MSG_LNB_MENU_26') })} ListComponent={SecretsList} canCreate={true} rowFilters={filters} createProps={createProps} {...props} />;
 };
 
 const SecretsDetailsPage = props => <DetailsPage {...props} buttonActions={actionButtons} menuActions={menuActions} pages={[navFactory.details(detailsPage(SecretDetails)), navFactory.editYaml()]} />;

@@ -139,7 +139,10 @@ export const DaemonSets: React.FC = props => {
   return <Table {...props} aria-label="Daemon Sets" Header={DaemonSetTableHeader.bind(null, t)} Row={DaemonSetTableRow} virtualize />;
 };
 
-export const DaemonSetsPage: React.FC<DaemonSetsPageProps> = props => <ListPage canCreate={true} ListComponent={DaemonSets} kind={kind} {...props} />;
+export const DaemonSetsPage: React.FC<DaemonSetsPageProps> = props => {
+  const { t } = useTranslation();
+  return <ListPage title={t('COMMON:MSG_LNB_MENU_30')} createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:MSG_LNB_MENU_30') })} canCreate={true} ListComponent={DaemonSets} kind={kind} {...props} />;
+};
 
 const DaemonSetPods: React.FC<DaemonSetPodsProps> = props => <PodsComponent {...props} customData={{ showNodes: true }} />;
 

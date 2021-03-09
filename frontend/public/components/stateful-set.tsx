@@ -63,7 +63,10 @@ export const StatefulSetsList: React.FC = props => {
   const { t } = useTranslation();
   return <Table {...props} aria-label="Stateful Sets" Header={StatefulSetTableHeader.bind(null, t)} Row={StatefulSetTableRow} virtualize />;
 };
-export const StatefulSetsPage: React.FC<StatefulSetsPageProps> = props => <ListPage {...props} ListComponent={StatefulSetsList} kind={kind} canCreate={true} />;
+export const StatefulSetsPage: React.FC<StatefulSetsPageProps> = props => {
+  const { t } = useTranslation();
+  return <ListPage {...props} title={t('COMMON:MSG_LNB_MENU_25')} createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:MSG_LNB_MENU_25') })} ListComponent={StatefulSetsList} kind={kind} canCreate={true} />;
+};
 
 const StatefulSetPods: React.FC<StatefulSetPodsProps> = props => <PodsComponent {...props} customData={{ showNodes: true }} />;
 
