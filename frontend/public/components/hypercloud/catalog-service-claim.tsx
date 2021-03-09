@@ -108,7 +108,8 @@ const CatalogServiceClaimsList: React.FC = props => {
 CatalogServiceClaimsList.displayName = 'CatalogServiceClaimsList';
 
 const CatalogServiceClaimsPage: React.FC<CatalogServiceClaimsPageProps> = props => {
-  return <ListPage canCreate={true} kind={kind} ListComponent={CatalogServiceClaimsList} {...props} />;
+  const { t } = useTranslation();
+  return <ListPage title={t('COMMON:MSG_LNB_MENU_19')} createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:MSG_LNB_MENU_19') })} canCreate={true} kind={kind} ListComponent={CatalogServiceClaimsList} {...props} />;
 };
 CatalogServiceClaimsPage.displayName = 'CatalogServiceClaimsPage';
 

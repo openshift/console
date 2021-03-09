@@ -174,7 +174,10 @@ const JobsList: React.FC = props => {
   return <Table {...props} aria-label={JobModel.labelPlural} Header={JobTableHeader.bind(null, t)} Row={JobTableRow} virtualize />;
 };
 
-const JobsPage: React.FC<JobsPageProps> = props => <ListPage ListComponent={JobsList} kind={kind} canCreate={true} {...props} />;
+const JobsPage: React.FC<JobsPageProps> = props => {
+  const { t } = useTranslation();
+  return <ListPage title={t('COMMON:MSG_LNB_MENU_29')} createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:MSG_LNB_MENU_29') })} ListComponent={JobsList} kind={kind} canCreate={true} {...props} />;
+};
 export { JobsList, JobsPage, JobsDetailsPage };
 
 type JobsDetailsProps = {

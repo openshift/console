@@ -185,7 +185,10 @@ export const DeploymentsList: React.FC = props => {
 };
 DeploymentsList.displayName = 'DeploymentsList';
 
-export const DeploymentsPage: React.FC<DeploymentsPageProps> = props => <ListPage kind={deploymentsReference} canCreate={true} ListComponent={DeploymentsList} {...props} />;
+export const DeploymentsPage: React.FC<DeploymentsPageProps> = props => {
+  const { t } = useTranslation();
+  return <ListPage title={t('COMMON:MSG_LNB_MENU_24')} createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:MSG_LNB_MENU_24') })} kind={deploymentsReference} canCreate={true} ListComponent={DeploymentsList} {...props} />;
+};
 DeploymentsPage.displayName = 'DeploymentsPage';
 
 type ReplicaSetsTabProps = {

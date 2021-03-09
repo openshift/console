@@ -133,7 +133,8 @@ const ServiceBindingsList: React.FC = props => {
 ServiceBindingsList.displayName = 'ServiceBindingsList';
 
 const ServiceBindingsPage: React.FC<ServiceBindingsPageProps> = props => {
-  return <ListPage canCreate={true} kind={kind} ListComponent={ServiceBindingsList} {...props} />;
+  const { t } = useTranslation();
+  return <ListPage title={t('COMMON:MSG_LNB_MENU_18')} createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:MSG_LNB_MENU_18') })} canCreate={true} kind={kind} ListComponent={ServiceBindingsList} {...props} />;
 };
 ServiceBindingsPage.displayName = 'ServiceBindingsPage';
 

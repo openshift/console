@@ -139,6 +139,8 @@ const ServiceBrokersPage: React.FC<ServiceBrokersPageProps> = props => {
   const { t } = useTranslation();
   return (
     <ListPage
+      title={t('COMMON:MSG_LNB_MENU_11')}
+      createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:MSG_LNB_MENU_11') })}
       canCreate={true}
       kind={kind}
       ListComponent={ServiceBrokersList}
