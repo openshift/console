@@ -16,7 +16,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/coreos/dex/api"
 	"github.com/coreos/pkg/health"
 
 	"github.com/openshift/console/pkg/auth"
@@ -113,7 +112,6 @@ type Server struct {
 	CustomLogoFile       string
 	StatuspageID         string
 	LoadTestFactor       int
-	DexClient            api.DexClient
 	InactivityTimeout    int
 	// Map that contains list of enabled plugins and their endpoints.
 	EnabledConsolePlugins map[string]string
