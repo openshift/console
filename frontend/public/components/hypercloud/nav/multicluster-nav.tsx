@@ -34,12 +34,12 @@ const MulticlusterNav = () => (
             <ResourceClusterLink resource="federatedcronjobs" name="Cron Jobs" />
           </NavGroup>
           <Separator name="WorkloadsSeparator" />
-          <NavGroup title={t('COMMON:MSG_LNB_MENU_46')}>\
+          <NavGroup title={t('COMMON:MSG_LNB_MENU_46')}>
             <ResourceClusterLink resource="federatedingresses" name={t('COMMON:MSG_LNB_MENU_48')} />
             <ResourceClusterLink resource="federatedservices" name={t('COMMON:MSG_LNB_MENU_47')} />
           </NavGroup>
           <Separator name="NetworksSeparator" />
-          <NavGroup title={t('COMMON:MSG_LNB_MENU_79')}>\
+          <NavGroup title={t('COMMON:MSG_LNB_MENU_79')}>
             <ResourceClusterLink resource="federatednamespaces" name={t('COMMON:MSG_LNB_MENU_3')} />
           </NavGroup>
         </NavSection>

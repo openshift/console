@@ -116,7 +116,10 @@ const FederatedReplicaSetDetails: React.FC<FederatedReplicaSetDetailsProps> = ({
 );}
 
 const { details, editYaml, events } = navFactory;
-export const FederatedReplicaSets: React.FC = props => <Table {...props} aria-label="Federated Replica Sets" Header={FederatedReplicaSetTableHeader} Row={FederatedReplicaSetTableRow} virtualize />;
+export const FederatedReplicaSets: React.FC = props => {
+  const { t } = useTranslation();
+  return <Table {...props} aria-label="Federated Replica Sets" Header={FederatedReplicaSetTableHeader.bind(null, t)} Row={FederatedReplicaSetTableRow} virtualize />;
+}
 
 export const FederatedReplicaSetsPage: React.FC<FederatedReplicaSetsPageProps> = props => <ListPage canCreate={true} ListComponent={FederatedReplicaSets} kind={kind} {...props} />;
 
