@@ -125,6 +125,7 @@ const AttachDeploymentToOBCModal = withHandlePromise((props: AttachDeploymentToO
           items={deploymentNames}
           dropDownClassName="dropdown--full-width"
           id="dropdown-selectbox"
+          dataTest="dropdown-selectbox"
           onChange={(deploymentName) => setRequestedDeployment(deploymentObjects[deploymentName])}
         />
       </ModalBody>

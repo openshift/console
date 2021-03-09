@@ -63,7 +63,11 @@ export const GetSecret: React.FC<GetSecretProps> = ({ obj }) => {
   const dl = secretValues.length
     ? secretValues.reduce((acc, datum) => {
         const { field, value } = datum;
-        acc.push(<dt key={`${field}-k`}>{field}</dt>);
+        acc.push(
+          <dt key={`${field}-k`} data-test="secret-data">
+            {field}
+          </dt>,
+        );
         acc.push(
           <dd key={`${field}-v`}>
             <SecretValue value={value} reveal={reveal} encoded={false} />
