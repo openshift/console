@@ -5,7 +5,6 @@ import { ConsoleExtensionsJSON } from '../schema/console-extensions';
 import { ConsolePluginManifestJSON } from '../schema/plugin-manifest';
 import { SchemaValidator } from '../validation/SchemaValidator';
 import { ExtensionValidator } from '../validation/ExtensionValidator';
-import consoleExtensionsSchema from '../../dist/schema/console-extensions';
 import { extensionsFile, pluginManifestFile } from '../constants';
 import { parseJSONC } from '../utils/jsonc';
 
@@ -13,7 +12,8 @@ export const validateExtensionsFileSchema = (
   ext: ConsoleExtensionsJSON,
   description = extensionsFile,
 ) => {
-  return new SchemaValidator(description).validate(consoleExtensionsSchema, ext);
+  const schema = require('../../dist/schema/console-extensions').default;
+  return new SchemaValidator(description).validate(schema, ext);
 };
 
 const emitJSON = (compilation: webpack.Compilation, filename: string, data: any) => {

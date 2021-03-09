@@ -11,7 +11,7 @@
     "experimentalDecorators": true,
     "sourceMap": true,
     "noUnusedLocals": true,
-    "types": ["node", "jest", "cypress", "cypress-axe"],
+    "types": ["node", "jest", "cypress", "cypress-axe", "console"],
     "typeRoots": ["node_modules/@types", "@types"]
   },
   "exclude": [".yarn", "**/node_modules", "**/dist", "dynamic-demo-plugin"],

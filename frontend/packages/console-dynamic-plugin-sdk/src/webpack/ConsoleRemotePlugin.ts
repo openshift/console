@@ -5,7 +5,6 @@ import * as _ from 'lodash';
 import { ConsoleAssetPlugin } from './ConsoleAssetPlugin';
 import { ConsolePackageJSON } from '../schema/plugin-package';
 import { SchemaValidator } from '../validation/SchemaValidator';
-import consolePkgMetadataSchema from '../../dist/schema/plugin-package';
 import { sharedVendorModules } from '../shared-modules';
 import { remoteEntryFile } from '../constants';
 
@@ -13,10 +12,11 @@ export const validatePackageFileSchema = (
   pkg: ConsolePackageJSON,
   description = 'package.json',
 ) => {
+  const schema = require('../../dist/schema/plugin-package').default;
   const validator = new SchemaValidator(description);
 
   if (pkg.consolePlugin) {
-    validator.validate(consolePkgMetadataSchema, pkg.consolePlugin, 'pkg.consolePlugin');
+    validator.validate(schema, pkg.consolePlugin, 'pkg.consolePlugin');
 
     validator.assert.validDNSSubdomainName(pkg.consolePlugin.name, 'pkg.consolePlugin.name');
     validator.assert.validSemverString(pkg.consolePlugin.version, 'pkg.consolePlugin.version');

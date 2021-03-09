@@ -8,7 +8,7 @@ import { split } from 'apollo-link';
 import { getK8sResourcePath } from '../module/k8s/resource';
 import { K8sKind, K8sResourceCommon } from '../module/k8s/types';
 import { URLQuery } from './client.gql';
-import { URLQueryType, URLQueryVariables } from '../../@types/gql/schema';
+import { URLQueryType, URLQueryVariables } from '../../@types/console/generated/graphql-schema';
 import { getImpersonateHeaders, coFetch } from '../co-fetch';
 
 let wssErrors = 0;

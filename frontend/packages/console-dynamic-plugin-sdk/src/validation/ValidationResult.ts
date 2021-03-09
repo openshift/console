@@ -24,7 +24,7 @@ export class ValidationResult {
   }
 
   formatErrors() {
-    const prefix = `${chalk.bold(this.description)} (${this.errors.length} errors)\n\n`;
+    const prefix = `${chalk.bold(this.description)} (${this.errors.length} errors)\n`;
     const errorLines = this.errors.map((e) => `    ${chalk.red(e)}`);
     return prefix + errorLines.join('\n');
   }
