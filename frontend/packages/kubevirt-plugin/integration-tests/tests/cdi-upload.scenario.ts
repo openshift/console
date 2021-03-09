@@ -161,9 +161,7 @@ describe('KubeVirt Auto Clone', () => {
         async () => {
           await rhel7PVC.create();
           await vm1.create();
-          await vm1.navigateToDetail();
           await vm2.create();
-          await vm2.navigateToDetail();
           await vm1.start();
         },
       );
@@ -190,12 +188,13 @@ describe('KubeVirt Auto Clone', () => {
       );
     }, 1200000);
 
-    xit('ID(CNV-5043) Create Fedora/RHEL/Windows VMs from golden os template', async () => {
+    it('ID(CNV-5043) Create Fedora/RHEL/Windows VMs from golden os template', async () => {
       // skip creating fedora/rhel vm here as it's covered above.
       const win10 = new VMBuilder(getBasicVMBuilder())
         .setFlavor({ flavor: Flavor.MEDIUM }) // Win does not have tiny flavor
         .setSelectTemplateName(TemplateByName.WINDOWS_10)
         .generateNameForPrefix('auto-clone-win10-vm')
+        .setStartOnCreation(false)
         .build();
 
       await withResources(
@@ -204,6 +203,8 @@ describe('KubeVirt Auto Clone', () => {
         async () => {
           await win10PVC.create();
           await win10.create();
+          await win10.waitForStatus(VM_STATUS.Off, VM_IMPORT_TIMEOUT_SECS);
+          await win10.start();
           await win10.navigateToDetail();
         },
       );

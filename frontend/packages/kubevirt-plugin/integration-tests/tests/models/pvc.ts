@@ -8,7 +8,7 @@ import {
   pvcStatus,
 } from '@console/ceph-storage-plugin/integration-tests/views/pvc.view';
 import { clickNavLink } from '@console/internal-integration-tests/views/sidenav.view';
-import { listViewAction } from '@console/shared/src/test-utils/actions.view';
+import { listViewAction } from '../../views/actions.view';
 import * as pvcView from '../../views/pvc.view';
 import { PVC_ACTION } from '../utils/constants/pvc';
 import { PVC_STATUS } from '@console/ceph-storage-plugin/integration-tests/utils/consts';

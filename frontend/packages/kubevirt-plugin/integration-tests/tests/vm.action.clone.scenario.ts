@@ -251,6 +251,7 @@ describe('Test clone VM.', () => {
         .build();
       await vm.create();
       clonedVM = await vm.clone();
+      await clonedVM.waitForStatus(VM_STATUS.Off, VM_IMPORT_TIMEOUT_SECS);
       await clonedVM.start();
     }, CLONED_VM_BOOTUP_TIMEOUT_SECS + VM_IMPORT_TIMEOUT_SECS);
 
