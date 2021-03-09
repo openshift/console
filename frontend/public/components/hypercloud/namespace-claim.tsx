@@ -6,6 +6,8 @@ import { fromNow } from '@console/internal/components/utils/datetime';
 import { K8sResourceKind, K8sClaimResourceKind, modelFor } from '../../module/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from '../factory';
 import { Kebab, navFactory, ResourceSummary, SectionHeading, ResourceLink, ResourceKebab } from '../utils';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 // import { WorkloadTableRow, WorkloadTableHeader } from '../workload-table';
 
 const { common } = Kebab.factory;
@@ -16,22 +18,22 @@ export const menuActions = [...Kebab.getExtensionsActionsForKind(modelFor('Names
 
 const kind = 'NamespaceClaim';
 
-const NamespaceClaimTableHeader = () => {
+const NamespaceClaimTableHeader = (t?: TFunction) => {
   return [
     {
-      title: 'Name',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_1'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: 'Namespace',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_2'),
       sortField: 'resourceName',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Status',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_3'),
       sortFunc: 'status.status',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
@@ -43,7 +45,7 @@ const NamespaceClaimTableHeader = () => {
       props: { className: tableColumnClasses[3] },
     },
     {
-      title: 'Created',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_12'),
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: tableColumnClasses[4] },
@@ -75,12 +77,16 @@ const NamespaceClaimTableRow: RowFunction<K8sClaimResourceKind> = ({ obj: namesp
   );
 };
 
-export const NamespaceClaimsList: React.FC = props => <Table {...props} aria-label="NamespaceClaims" Header={NamespaceClaimTableHeader} Row={NamespaceClaimTableRow} virtualize />;
+export const NamespaceClaimsList: React.FC = props => {
+  const { t } = useTranslation();
+  return <Table {...props} aria-label="NamespaceClaims" Header={NamespaceClaimTableHeader.bind(null, t)} Row={NamespaceClaimTableRow} virtualize />;
+};
 NamespaceClaimsList.displayName = 'NamespaceClaimsList';
 
 export const NamespaceClaimsPage: React.FC<NamespaceClaimsPageProps> = props => <ListPage kind={'NamespaceClaim'} canCreate={true} ListComponent={NamespaceClaimsList} {...props} />;
 NamespaceClaimsPage.displayName = 'NamespaceClaimsPage';
 const NamespaceClaimsDetails: React.FC<NamespaceClaimDetailsProps> = ({ obj: namespaceclaims }) => {
+  const { t } = useTranslation();
   return (
     <>
       <div className="co-m-pane__body">
@@ -89,12 +95,12 @@ const NamespaceClaimsDetails: React.FC<NamespaceClaimDetailsProps> = ({ obj: nam
           <div className="row">
             <div className="col-sm-6">
               <ResourceSummary resource={namespaceclaims} showOwner={false}></ResourceSummary>
-              <dt>Owner</dt>
+              <dt>{t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_44')}</dt>
               <dd>{namespaceclaims.metadata.annotations.owner}</dd>
             </div>
             <div className="col-md-6">
               <dl className="co-m-pane__details">
-                <dt>Status</dt>
+                <dt>{t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_45')}</dt>
                 <dd>{namespaceclaims?.status?.status}</dd>
                 <dt> Reason</dt>
                 <dd>{namespaceclaims?.status?.reason}</dd>

@@ -135,50 +135,50 @@ class Details extends React.Component {
 
 const bindingsColumnClasses = [classNames('col-xs-4'), classNames('col-xs-2'), classNames('col-xs-4'), classNames('col-xs-2')];
 
-const BindingsTableHeader = () => {
-  return [
-    {
-      title: 'Name',
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: bindingsColumnClasses[0] },
-    },
-    {
-      title: 'Subject Kind',
-      sortField: 'subject.kind',
-      transforms: [sortable],
-      props: { className: bindingsColumnClasses[1] },
-    },
-    {
-      title: 'Subject Name',
-      sortField: 'subject.name',
-      transforms: [sortable],
-      props: { className: bindingsColumnClasses[2] },
-    },
-    {
-      title: 'Namespace',
-      sortField: 'metadata.namespace',
-      transforms: [sortable],
-      props: { className: bindingsColumnClasses[3] },
-    },
-  ];
-};
-BindingsTableHeader.displayName = 'BindingsTableHeader';
+// const BindingsTableHeader = () => {
+//   return [
+//     {
+//       title: 'Name',
+//       sortField: 'metadata.name',
+//       transforms: [sortable],
+//       props: { className: bindingsColumnClasses[0] },
+//     },
+//     {
+//       title: 'Subject Kind',
+//       sortField: 'subject.kind',
+//       transforms: [sortable],
+//       props: { className: bindingsColumnClasses[1] },
+//     },
+//     {
+//       title: 'Subject Name',
+//       sortField: 'subject.name',
+//       transforms: [sortable],
+//       props: { className: bindingsColumnClasses[2] },
+//     },
+//     {
+//       title: 'Namespace',
+//       sortField: 'metadata.namespace',
+//       transforms: [sortable],
+//       props: { className: bindingsColumnClasses[3] },
+//     },
+//   ];
+// };
+// BindingsTableHeader.displayName = 'BindingsTableHeader';
 
-const BindingsTableRow = ({ obj: binding, index, key, style }) => {
-  return (
-    <TableRow id={binding.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={bindingsColumnClasses[0]}>
-        <BindingName binding={binding} />
-      </TableData>
-      <TableData className={bindingsColumnClasses[1]}>{binding.subject.kind}</TableData>
-      <TableData className={bindingsColumnClasses[2]}>{binding.subject.name}</TableData>
-      <TableData className={bindingsColumnClasses[3]}>{binding.namespace || 'All Namespaces'}</TableData>
-    </TableRow>
-  );
-};
+// const BindingsTableRow = ({ obj: binding, index, key, style }) => {
+//   return (
+//     <TableRow id={binding.metadata.uid} index={index} trKey={key} style={style}>
+//       <TableData className={bindingsColumnClasses[0]}>
+//         <BindingName binding={binding} />
+//       </TableData>
+//       <TableData className={bindingsColumnClasses[1]}>{binding.subject.kind}</TableData>
+//       <TableData className={bindingsColumnClasses[2]}>{binding.subject.name}</TableData>
+//       <TableData className={bindingsColumnClasses[3]}>{binding.namespace || 'All Namespaces'}</TableData>
+//     </TableRow>
+//   );
+// };
 
-const BindingsListComponent = props => <BindingsList {...props} Header={BindingsTableHeader} Row={BindingsTableRow} virtualize />;
+const BindingsListComponent = props => <BindingsList {...props} virtualize />;
 
 export const BindingsForRolePage = props => {
   const {
