@@ -469,6 +469,11 @@ export const ResourceEventStream = ({
     kind,
     metadata: { name, namespace, uid },
   },
-}) => <_EventStream fieldSelector={`involvedObject.uid=${uid},involvedObject.name=${name},involvedObject.kind=${kind}`} namespace={namespace} resourceEventStream />;
-
-export const ResourcesEventStream = ({ filters, namespace }) => <_EventStream filter={filters} resourceEventStream namespace={namespace} />;
+}) => {
+  const { t } = useTranslation();
+  return <_EventStream t={t} fieldSelector={`involvedObject.uid=${uid},involvedObject.name=${name},involvedObject.kind=${kind}`} namespace={namespace} resourceEventStream />;
+};
+export const ResourcesEventStream = ({ filters, namespace }) => {
+  const { t } = useTranslation();
+  return <_EventStream filter={filters} resourceEventStream namespace={namespace} />;
+};
