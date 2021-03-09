@@ -25,7 +25,7 @@ import {
 } from '../../utils/resource-label-utils';
 import { createRoute, createService, dryRunOpt } from '../../utils/shared-submit-utils';
 import { getProbesData } from '../health-checks/create-health-checks-probe-utils';
-import { RegistryType, getRuntime } from '../../utils/imagestream-utils';
+import { RegistryType } from '../../utils/imagestream-utils';
 import { AppResources } from '../edit-application/edit-application-types';
 import { DeployImageFormData, Resources } from './import-types';
 
@@ -366,7 +366,6 @@ export const createOrUpdateDeployImageResources = async (
       triggers: { image: imageChange },
     },
   } = formData;
-  const internalImageName = getRuntime(image.metadata?.labels);
   const requests: Promise<K8sResourceKind>[] = [];
 
   const imageStreamList = appResources?.imageStream?.data;
@@ -454,7 +453,7 @@ export const createOrUpdateDeployImageResources = async (
     const knDeploymentResource = getKnativeServiceDepResource(
       formData,
       imageStreamUrl,
-      internalImageName || name,
+      internalImageStreamName || name,
       imageStreamTag,
       internalImageStreamNamespace,
       annotations,
