@@ -116,7 +116,10 @@ const FederatedJobDetails: React.FC<FederatedJobDetailsProps> = ({ obj: job }) =
 );}
 
 const { details, editYaml, events } = navFactory;
-export const FederatedJobs: React.FC = props => <Table {...props} aria-label="Federated Jobs" Header={FederatedJobTableHeader} Row={FederatedJobTableRow} virtualize />;
+export const FederatedJobs: React.FC = props => {
+  const { t } = useTranslation();
+  return <Table {...props} aria-label="Federated Jobs" Header={FederatedJobTableHeader.bind(null, t)} Row={FederatedJobTableRow} virtualize />;
+}
 
 export const FederatedJobsPage: React.FC<FederatedJobsPageProps> = props => <ListPage canCreate={true} ListComponent={FederatedJobs} kind={kind} {...props} />;
 

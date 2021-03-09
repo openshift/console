@@ -116,7 +116,10 @@ const FederatedSecretDetails: React.FC<FederatedSecretDetailsProps> = ({ obj: se
 );}
 
 const { details, editYaml, events } = navFactory;
-export const FederatedSecrets: React.FC = props => <Table {...props} aria-label="Federated Secrets" Header={FederatedSecretTableHeader} Row={FederatedSecretTableRow} virtualize />;
+export const FederatedSecrets: React.FC = props => {
+  const { t } = useTranslation();
+  return <Table {...props} aria-label="Federated Secrets" Header={FederatedSecretTableHeader.bind(null, t)} Row={FederatedSecretTableRow} virtualize />;
+}
 
 export const FederatedSecretsPage: React.FC<FederatedSecretsPageProps> = props => <ListPage canCreate={true} ListComponent={FederatedSecrets} kind={kind} {...props} />;
 

@@ -117,7 +117,10 @@ const FederatedConfigMapDetails: React.FC<FederatedConfigMapDetailsProps> = ({ o
 );}
 
 const { details, editYaml, events } = navFactory;
-export const FederatedConfigMaps: React.FC = props => <Table {...props} aria-label="Federated Config Maps" Header={FederatedConfigMapTableHeader} Row={FederatedConfigMapTableRow} virtualize />;
+export const FederatedConfigMaps: React.FC = props => {
+  const { t } = useTranslation();
+  return <Table {...props} aria-label="Federated Config Maps" Header={FederatedConfigMapTableHeader.bind(null, t)} Row={FederatedConfigMapTableRow} virtualize />;
+}
 
 export const FederatedConfigMapsPage: React.FC<FederatedConfigMapsPageProps> = props => <ListPage canCreate={true} ListComponent={FederatedConfigMaps} kind={kind} {...props} />;
 
