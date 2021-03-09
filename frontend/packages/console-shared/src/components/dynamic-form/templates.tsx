@@ -67,7 +67,6 @@ export const ObjectFieldTemplate: React.FC<ObjectFieldTemplateProps> = ({ idSche
 
 export const ArrayFieldTemplate: React.FC<ArrayFieldTemplateProps> = ({ idSchema, items, onAddClick, required, schema, title, uiSchema }) => {
   const [, label] = useSchemaLabel(schema, uiSchema, title ?? 'Items');
-  const singularLabel = label.replace(/s$/, '');
   return (
     <FieldSet defaultLabel={label} idSchema={idSchema} required={required} schema={schema} uiSchema={uiSchema}>
       {_.map(items ?? [], item => {
@@ -78,7 +77,7 @@ export const ArrayFieldTemplate: React.FC<ArrayFieldTemplateProps> = ({ idSchema
               <div className="row co-dynamic-form__array-field-group-remove">
                 <Button id={`${item.key}_remove-btn`} type="button" onClick={item.onDropIndexClick(item.index)} variant="link">
                   <MinusCircleIcon className="co-icon-space-r" />
-                  Remove {singularLabel}
+                  Remove {label}
                 </Button>
               </div>
             )}
@@ -89,7 +88,7 @@ export const ArrayFieldTemplate: React.FC<ArrayFieldTemplateProps> = ({ idSchema
       <div className="row">
         <Button id={`${idSchema.$id}_add-btn`} type="button" onClick={onAddClick} variant="link">
           <PlusCircleIcon className="co-icon-space-r" />
-          Add {singularLabel}
+          Add {label}
         </Button>
       </div>
     </FieldSet>
@@ -98,7 +97,7 @@ export const ArrayFieldTemplate: React.FC<ArrayFieldTemplateProps> = ({ idSchema
 
 export const AdditionalFieldTemplate: React.FC<ArrayFieldTemplateProps> = ({ idSchema, items, onAddClick, required, schema, title, uiSchema }) => {
   const [, label] = useSchemaLabel(schema, uiSchema, title ?? 'Items');
-  const singularLabel = label.replace(/s$/, '');
+
   return (
     <FieldSet defaultLabel={label} idSchema={idSchema} required={required} schema={schema} uiSchema={uiSchema}>
       {_.map(items ?? [], item => {
@@ -109,7 +108,7 @@ export const AdditionalFieldTemplate: React.FC<ArrayFieldTemplateProps> = ({ idS
               <div className="row co-dynamic-form__array-field-group-remove">
                 <Button id={`${item.key}_remove-btn`} type="button" onClick={item.onDropIndexClick(item.index)} variant="link">
                   <MinusCircleIcon className="co-icon-space-r" />
-                  Remove {singularLabel}
+                  Remove {label}
                 </Button>
               </div>
             )}
@@ -122,7 +121,7 @@ export const AdditionalFieldTemplate: React.FC<ArrayFieldTemplateProps> = ({ idS
       <div className="row">
         <Button id={`${idSchema.$id}_add-btn`} type="button" onClick={onAddClick} variant="link">
           <PlusCircleIcon className="co-icon-space-r" />
-          Add {singularLabel}
+          Add {label}
         </Button>
       </div>
     </FieldSet>
