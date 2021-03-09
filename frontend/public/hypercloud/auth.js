@@ -9,7 +9,7 @@ export const getId = function() {
 export const getUserGroup = function() {
   let usergroups = getParsedAccessToken().group;
   let result = '';
-  if (usergroups.length > 0) {
+  if (usergroups?.length > 0) {
     result = '&' + usergroups.map(cur => `userGroup=${cur}`).join('&');
   }
   return result;
