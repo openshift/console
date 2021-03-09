@@ -7,6 +7,7 @@ import { taskRunFilterReducer } from '../../utils/pipeline-filter-reducer';
 import RunDetailsErrorLog from '../pipelineruns/logs/RunDetailsErrorLog';
 import { getTRLogSnippet } from './logs/taskRunLogSnippet';
 import { TaskRunKind } from '../../types';
+import WorkspaceResourceLinkList from '../shared/workspaces/WorkspaceResourceLinkList';
 
 export interface TaskRunDetailsStatusProps {
   taskRun: TaskRunKind;
@@ -14,6 +15,7 @@ export interface TaskRunDetailsStatusProps {
 
 const TaskRunDetailsStatus = ({ taskRun }) => {
   const { t } = useTranslation();
+
   return (
     <>
       <dl>
@@ -38,6 +40,12 @@ const TaskRunDetailsStatus = ({ taskRun }) => {
           </dd>
         </dl>
       )}
+      <WorkspaceResourceLinkList
+        workspaces={taskRun.spec.workspaces}
+        namespace={taskRun.metadata.namespace}
+        ownerResourceName={taskRun.metadata.name}
+        ownerResourceKind={taskRun.kind}
+      />
     </>
   );
 };

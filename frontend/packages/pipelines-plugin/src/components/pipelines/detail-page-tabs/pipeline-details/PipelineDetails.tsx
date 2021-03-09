@@ -4,6 +4,7 @@ import { SectionHeading, ResourceSummary } from '@console/internal/components/ut
 import { TriggerTemplateModel } from '../../../../models';
 import { PipelineKind, PipelineTask } from '../../../../types';
 import { getResourceModelFromTaskKind } from '../../../../utils/pipeline-augment';
+import WorkspaceDefinitionList from '../../../shared/workspaces/WorkspaceDefinitionList';
 import { RouteTemplate } from '../../utils/triggers';
 import DynamicResourceLinkList from '../../resource-overview/DynamicResourceLinkList';
 import TriggerTemplateResourceLink from '../../resource-overview/TriggerTemplateResourceLink';
@@ -45,6 +46,7 @@ const PipelineDetails: React.FC<PipelineDetailsProps> = ({
             links={taskLinks}
             title={t('pipelines-plugin~Tasks')}
           />
+          <WorkspaceDefinitionList workspaces={pipeline.spec.workspaces} />
         </div>
       </div>
     </div>

@@ -1,4 +1,5 @@
 {
+  "{{clusterTaskLabel}} details": "{{clusterTaskLabel}} details",
   "Pipelines": "Pipelines",
   "Select a Builder Image and resource to see if there is a pipeline template available for this runtime.": "Select a Builder Image and resource to see if there is a pipeline template available for this runtime.",
   "The pipeline template for Dockerfiles is not available at this time.": "The pipeline template for Dockerfiles is not available at this time.",
@@ -212,6 +213,7 @@
   "Task Run": "Task Run",
   "Cluster Task": "Cluster Task",
   "Cluster Tasks": "Cluster Tasks",
+  "{{taskLabel}} details": "{{taskLabel}} details",
   "Event Listener": "Event Listener",
   "Trigger Template": "Trigger Template",
   "Trigger Binding": "Trigger Binding",
