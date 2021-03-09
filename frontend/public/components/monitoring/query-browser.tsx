@@ -568,7 +568,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   const [xDomain, setXDomain] = React.useState<AxisDomain>();
   const [error, setError] = React.useState<PrometheusAPIError>();
   const [isDatasetTooBig, setIsDatasetTooBig] = React.useState(false);
-  const [graphData, setGraphData] = React.useState(null);
+  const [graphData, setGraphData] = React.useState<Series[][]>(null);
   const [samples, setSamples] = React.useState(maxSamplesForSpan);
   const [updating, setUpdating] = React.useState(true);
 
@@ -591,6 +591,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   }, [defaultSamples, timespan]);
 
   React.useEffect(() => {
+    setGraphData(null);
     if (fixedEndTime) {
       setXDomain(getXDomain(fixedEndTime, span));
     }
@@ -653,12 +654,15 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
           setSamples(newSamples);
         } else {
           const newGraphData = _.map(newResults, (result: PrometheusResult[]) => {
-            return _.map(result, ({ metric, values }) => {
-              // If filterLabels is specified, ignore all series that don't match
-              return _.some(filterLabels, (v, k) => _.has(metric, k) && metric[k] !== v)
-                ? []
-                : [metric, formatSeriesValues(values, samples, span)];
-            });
+            return _.map(
+              result,
+              ({ metric, values }): Series => {
+                // If filterLabels is specified, ignore all series that don't match
+                return _.some(filterLabels, (v, k) => _.has(metric, k) && metric[k] !== v)
+                  ? []
+                  : [metric, formatSeriesValues(values, samples, span)];
+              },
+            );
           });
           setGraphData(newGraphData);
 
@@ -697,6 +701,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
 
   const onSpanChange = React.useCallback(
     (newSpan: number) => {
+      setGraphData(null);
       setXDomain(undefined);
       setSpan(newSpan);
       setSamples(defaultSamples || getMaxSamplesForSpan(newSpan));
@@ -741,6 +746,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   }
 
   const zoomableGraphOnZoom = (from: number, to: number) => {
+    setGraphData(null);
     setXDomain([from, to]);
     setSpan(to - from);
     setSamples(defaultSamples || getMaxSamplesForSpan(to - from));
@@ -848,7 +854,7 @@ type GraphDataPoint = {
   y: number;
 };
 
-type Series = [PrometheusLabels, GraphDataPoint[]];
+type Series = [PrometheusLabels, GraphDataPoint[]] | [];
 
 export type QueryObj = {
   disabledSeries?: PrometheusLabels[];
