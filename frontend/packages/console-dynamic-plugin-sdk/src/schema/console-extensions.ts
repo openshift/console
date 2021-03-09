@@ -27,6 +27,17 @@ import { StorageProvider } from '../extensions/storage-provider';
 import { TelemetryListener } from '../extensions/telemetry';
 import { SupportedActionExtensions } from '../extensions/actions';
 import { SupportedTopologyDetailsExtensions } from '../extensions/topology-details';
+import {
+  DashboardsTab,
+  DashboardsCard,
+  DashboardsOverviewHealthPrometheusSubsystem,
+  DashboardsOverviewURLSubsystem,
+  DashboardsOverviewHealthResourceSubsystem,
+  DashboardsOverviewHealthOperator,
+  DashboardsInventoryItemGroup,
+  DashboardsOverviewInventoryItem,
+  DashboardsOverviewResourceActivity,
+} from '../extensions/dashboards';
 
 export type SupportedExtension =
   | FeatureFlag
@@ -57,7 +68,16 @@ export type SupportedExtension =
   | RoutePage
   | ResourceListPage
   | ResourceTabPage
-  | ResourceDetailsPage;
+  | ResourceDetailsPage
+  | DashboardsTab
+  | DashboardsCard
+  | DashboardsOverviewHealthPrometheusSubsystem
+  | DashboardsOverviewURLSubsystem
+  | DashboardsOverviewHealthResourceSubsystem
+  | DashboardsOverviewHealthOperator
+  | DashboardsInventoryItemGroup
+  | DashboardsOverviewInventoryItem
+  | DashboardsOverviewResourceActivity;
 
 /**
  * Schema of Console plugin's `console-extensions.json` file.

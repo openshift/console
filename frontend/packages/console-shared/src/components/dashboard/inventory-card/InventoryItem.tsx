@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { InProgressIcon, QuestionCircleIcon } from '@patternfly/react-icons';
-import { K8sResourceKind, K8sKind } from '@console/internal/module/k8s';
+import { K8sResourceKind, K8sKind, K8sResourceCommon } from '@console/internal/module/k8s';
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
 import {
   Accordion,
@@ -310,10 +310,10 @@ type StatusGroup = {
   };
 };
 
-export type StatusGroupMapper = (
-  resources: K8sResourceKind[],
-  additionalResources?: { [key: string]: K8sResourceKind[] },
-) => StatusGroup;
+export type StatusGroupMapper<
+  T extends K8sResourceCommon = K8sResourceCommon,
+  R extends { [key: string]: K8sResourceCommon[] } = { [key: string]: K8sResourceCommon[] }
+> = (resources: T[], additionalResources?: R) => StatusGroup;
 
 type InventoryItemProps = {
   isLoading: boolean;
