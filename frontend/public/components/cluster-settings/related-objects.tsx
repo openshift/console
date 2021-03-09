@@ -19,6 +19,16 @@ const tableColumnClasses = [
   '', // NS
 ];
 
+const ResourceObjectName: React.FC<ResourceObjectNameProps> = ({ gsv, name, namespace }) => {
+  if (!name) {
+    return <>-</>;
+  }
+  if (gsv) {
+    return <ResourceLink kind={gsv} name={name} namespace={namespace} />;
+  }
+  return <>{name}</>;
+};
+
 const Row: React.FC<RowFunctionArgs> = ({ obj, index, key, style, customData: { findModel } }) => {
   const { name, resource, namespace, group } = obj;
   const model = findModel(group, resource);
@@ -27,7 +37,7 @@ const Row: React.FC<RowFunctionArgs> = ({ obj, index, key, style, customData: { 
   return (
     <TableRow id={key} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
-        {gsv ? <ResourceLink kind={gsv} name={name} namespace={namespace} /> : name}
+        <ResourceObjectName gsv={gsv} name={name} namespace={namespace} />
       </TableData>
       <TableData className={tableColumnClasses[1]}>
         {resource}
@@ -88,11 +98,17 @@ const RelatedObjects: React.FC<RelatedObjectsProps> = (props) => {
 
 const RelatedObjectsPage: React.FC<RelatedObjectsPageProps> = (props) => {
   const relatedObject: ClusterOperatorObjectReference[] = props.obj?.status?.relatedObjects;
-  const data = relatedObject?.filter(({ name, resource }) => name && resource);
+  const data = relatedObject?.filter(({ resource }) => resource);
   return <RelatedObjects {...props} data={data} />;
 };
 
 export default RelatedObjectsPage;
+
+type ResourceObjectNameProps = {
+  gsv: string;
+  name: string;
+  namespace: string;
+};
 
 type RelatedObjectsPageProps = {
   obj: ClusterOperator;
