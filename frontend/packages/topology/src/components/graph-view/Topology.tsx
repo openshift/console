@@ -61,12 +61,13 @@ const setTopologyLayout = (namespace: string, nodes: NodeModel[], layout: string
 interface TopologyGraphViewProps {
   visualizationReady: boolean;
   visualization: Visualization;
+  controlsDisabled?: boolean;
   selectedId?: string;
   dragHint?: string;
 }
 
 const TopologyGraphView: React.FC<TopologyGraphViewProps> = React.memo(
-  ({ visualizationReady, visualization, selectedId, dragHint }) => {
+  ({ visualizationReady, visualization, controlsDisabled, selectedId, dragHint }) => {
     if (!visualizationReady) {
       return null;
     }
@@ -79,7 +80,7 @@ const TopologyGraphView: React.FC<TopologyGraphViewProps> = React.memo(
               <div className="odc-topology__hint-background">{dragHint}</div>
             </div>
           )}
-          <TopologyControlBar visualization={visualization} />
+          <TopologyControlBar visualization={visualization} isDisabled={controlsDisabled} />
         </VisualizationProvider>
       </div>
     );
@@ -301,6 +302,7 @@ const Topology: React.FC<TopologyProps &
     <TopologyGraphView
       visualizationReady={visualizationReady}
       visualization={visualization}
+      controlsDisabled={!model?.nodes.length}
       dragHint={dragHint}
       selectedId={selectedId}
     />

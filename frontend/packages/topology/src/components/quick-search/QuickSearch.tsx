@@ -11,6 +11,8 @@ import { QuickSearchProviders } from './utils/quick-search-types';
 interface QuickSearchProps {
   namespace: string;
   viewContainer?: HTMLElement;
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
 }
 
 const Contents: React.FC<{
@@ -23,6 +25,8 @@ const Contents: React.FC<{
   catalogService,
   namespace,
   viewContainer,
+  isOpen,
+  setIsOpen,
 }) => {
   const quickStartItems = useTransformedQuickStarts(quickStarts);
   const quickSearchProviders: QuickSearchProviders = [
@@ -49,18 +53,33 @@ const Contents: React.FC<{
       allItemsLoaded={catalogService.loaded && quickStartsLoaded}
       namespace={namespace}
       viewContainer={viewContainer}
+      isOpen={isOpen}
+      setIsOpen={setIsOpen}
     />
   );
 };
 
-const QuickSearch: React.FC<QuickSearchProps> = ({ namespace, viewContainer }) => {
+const QuickSearch: React.FC<QuickSearchProps> = ({
+  namespace,
+  viewContainer,
+  isOpen,
+  setIsOpen,
+}) => {
   return (
     <CatalogServiceProvider namespace={namespace}>
       {(catalogService: CatalogService) => (
         <QuickStartsLoader>
           {(quickStarts, quickStartsLoaded) => (
             <Contents
-              {...{ namespace, viewContainer, catalogService, quickStarts, quickStartsLoaded }}
+              {...{
+                namespace,
+                viewContainer,
+                isOpen,
+                setIsOpen,
+                catalogService,
+                quickStarts,
+                quickStartsLoaded,
+              }}
             />
           )}
         </QuickStartsLoader>

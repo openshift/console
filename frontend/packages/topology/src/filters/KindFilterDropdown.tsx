@@ -11,6 +11,7 @@ type KindFilterDropdownProps = {
   filters: DisplayFilters;
   supportedKinds: { [key: string]: number };
   onChange: (filter: DisplayFilters) => void;
+  isDisabled?: boolean;
   opened?: boolean; // Use only for testing
 };
 
@@ -18,6 +19,7 @@ const KindFilterDropdown: React.FC<KindFilterDropdownProps> = ({
   filters,
   supportedKinds,
   onChange,
+  isDisabled = false,
   opened = false,
 }) => {
   const { t } = useTranslation();
@@ -85,6 +87,7 @@ const KindFilterDropdown: React.FC<KindFilterDropdownProps> = ({
       onToggle={onToggle}
       customContent={selectContent}
       isOpen={isOpen}
+      isDisabled={isDisabled}
       onSelect={onSelect}
       placeholderText={
         <span>

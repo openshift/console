@@ -38,7 +38,7 @@ describe('DataModelProvider', () => {
     spyUseURLPoll.mockReturnValue([{}, null, false]);
     wrapper = mount(
       <DataModelProvider namespace="test-project">
-        <TopologyDataRenderer viewType={TopologyViewType.graph} title="Topology" />
+        <TopologyDataRenderer viewType={TopologyViewType.graph} />
       </DataModelProvider>,
       {
         wrappingComponent: ({ children }) => <Provider store={store}>{children}</Provider>,

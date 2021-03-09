@@ -58,24 +58,19 @@ describe('Topology page tests', () => {
   });
 
   it('should render topology page', () => {
-    const wrapper = shallow(<TopologyPage match={match} title="Topology" hideProjects={false} />);
+    const wrapper = shallow(<TopologyPage match={match} hideProjects={false} />);
     expect(wrapper.find(NamespacedPage).exists()).toBe(true);
   });
 
   it('should default to graph view', () => {
     (useUserSettingsCompatibility as jest.Mock).mockReturnValue(['', () => {}, true]);
-    const wrapper = shallow(<TopologyPage match={match} title="Topology" hideProjects={false} />);
+    const wrapper = shallow(<TopologyPage match={match} hideProjects={false} />);
     expect(wrapper.find('[data-test-id="topology-list-page"]').exists()).toBe(false);
   });
 
   it('should allow setting default to list view', () => {
     const wrapper = shallow(
-      <TopologyPage
-        match={match}
-        title="Topology"
-        hideProjects={false}
-        defaultViewType={TopologyViewType.list}
-      />,
+      <TopologyPage match={match} hideProjects={false} defaultViewType={TopologyViewType.list} />,
     );
     expect(wrapper.find('[data-test-id="topology-list-page"]').exists()).toBe(true);
   });
@@ -83,23 +78,13 @@ describe('Topology page tests', () => {
   it('should use useUserSettingsCompatibility setting', () => {
     (useUserSettingsCompatibility as jest.Mock).mockReturnValue(['graph', () => {}, true]);
     let wrapper = shallow(
-      <TopologyPage
-        match={match}
-        title="Topology"
-        hideProjects={false}
-        activeViewStorageKey="fake-key"
-      />,
+      <TopologyPage match={match} hideProjects={false} activeViewStorageKey="fake-key" />,
     );
     expect(wrapper.find('[data-test-id="topology-list-page"]').exists()).toBe(false);
 
     (useUserSettingsCompatibility as jest.Mock).mockReturnValue(['list', () => {}, true]);
     wrapper = shallow(
-      <TopologyPage
-        match={match}
-        title="Topology"
-        hideProjects={false}
-        activeViewStorageKey="fake-key"
-      />,
+      <TopologyPage match={match} hideProjects={false} activeViewStorageKey="fake-key" />,
     );
     expect(wrapper.find('[data-test-id="topology-list-page"]').exists()).toBe(true);
   });
@@ -112,11 +97,11 @@ describe('Topology page tests', () => {
       path: '/topology/graph',
       url: '',
     };
-    let wrapper = shallow(<TopologyPage match={viewMatch} title="Topology" hideProjects={false} />);
+    let wrapper = shallow(<TopologyPage match={viewMatch} hideProjects={false} />);
     expect(wrapper.find('[data-test-id="topology-list-page"]').exists()).toBe(false);
 
     viewMatch.path = '/topology/list';
-    wrapper = shallow(<TopologyPage match={viewMatch} title="Topology" hideProjects={false} />);
+    wrapper = shallow(<TopologyPage match={viewMatch} hideProjects={false} />);
     expect(wrapper.find('[data-test-id="topology-list-page"]').exists()).toBe(true);
   });
 });
