@@ -356,7 +356,8 @@ export const descriptorsToUISchema = (descriptors: Descriptor<SpecCapability>[],
     },
     Immutable.Map(),
   ).toJS();
-  return _.merge(uiSchemaFromDescriptors, getJSONSchemaOrder(jsonSchema, uiSchemaFromDescriptors));
+  return _.merge(uiSchemaFromDescriptors, jsonSchema);
+  // return _.merge(uiSchemaFromDescriptors, getJSONSchemaOrder(jsonSchema, uiSchemaFromDescriptors));
 };
 
 // Use jsonSchema, descriptors, and some defaults to generate a uiSchema
