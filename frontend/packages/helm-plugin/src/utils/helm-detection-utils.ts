@@ -27,5 +27,6 @@ export const detectHelmChartRepositories: FeatureDetector = async (dispatch: Dis
           : handleError(error, FLAG_OPENSHIFT_HELM, dispatch, detectHelmChartRepositories);
         clearInterval(id);
       });
+  fetchHelmChartRepositories();
   id = setInterval(fetchHelmChartRepositories, 10 * 1000);
 };
