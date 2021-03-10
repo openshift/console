@@ -69,7 +69,9 @@ const Link: React.FC<StatusCapabilityProps> = ({ description, fullPath, label, o
   return (
     <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
       {!_.isNil(value) ? (
-        <a href={value}>{value.replace(/https?:\/\//, '')}</a>
+        <a href={value} rel="noopener noreferrer" target="_blank">
+          {value.replace(/https?:\/\//, '')}
+        </a>
       ) : (
         <span className="text-muted">{t('public~None')}</span>
       )}
