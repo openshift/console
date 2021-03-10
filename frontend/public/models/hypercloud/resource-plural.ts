@@ -86,7 +86,7 @@ const ResourceStringKeyMap = {
     labelPlural: "COMMON:MSG_LNB_MENU_20",
   },
   ClusterTemplate: {
-    //labelPlural: "COMMON:MSG_LNB_MENU_23",
+    labelPlural: "COMMON:MSG_LNB_MENU_104",
   },
   TemplateInstance: {
     labelPlural: "COMMON:MSG_LNB_MENU_21",
@@ -197,7 +197,7 @@ const ResourceStringKeyMap = {
     labelPlural: "COMMON:MSG_LNB_MENU_71",
   },
   ExternalRegistry: {
-    //labelPlural: "COMMON:MSG_LNB_MENU_",
+    labelPlural: "COMMON:MSG_LNB_MENU_97",
   },
   ImageSigner: {
     labelPlural: "COMMON:MSG_LNB_MENU_91",
@@ -212,7 +212,7 @@ const ResourceStringKeyMap = {
     labelPlural: "COMMON:MSG_LNB_MENU_3",
   },
   NamespaceClaim: {
-    //labelPlural: "COMMON:MSG_LNB_MENU_",
+    labelPlural: "COMMON:MSG_LNB_MENU_103",
   },
   LimitRange: {
     labelPlural: "COMMON:MSG_LNB_MENU_81",
@@ -221,13 +221,13 @@ const ResourceStringKeyMap = {
     labelPlural: "COMMON:MSG_LNB_MENU_80",
   },
   ResourceQuotaClaim: {
-    //labelPlural: "COMMON:MSG_LNB_MENU_",
+    labelPlural: "COMMON:MSG_LNB_MENU_102",
   },
   CustomResourceDefinition: {
     labelPlural: "COMMON:MSG_LNB_MENU_82",
   },
   Node: {
-    //labelPlural: "COMMON:MSG_LNB_MENU_",
+    labelPlural: "COMMON:MSG_LNB_MENU_100",
   },
   Role: {
     labelPlural: "COMMON:MSG_LNB_MENU_75",
@@ -236,7 +236,7 @@ const ResourceStringKeyMap = {
     labelPlural: "COMMON:MSG_LNB_MENU_76",
   },
   RoleBindingClaim: {
-    //labelPlural: "COMMON:MSG_LNB_MENU_",
+    labelPlural: "COMMON:MSG_LNB_MENU_101",
   },
   ServiceAccount: {
     labelPlural: "COMMON:MSG_LNB_MENU_74",
