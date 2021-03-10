@@ -3,6 +3,7 @@ import { ReduxReducer } from '../extensions/redux';
 import { ContextProvider } from '../extensions/context-providers';
 import { StandaloneRoutePage } from '../extensions/pages';
 import { PVCCreateProp, PVCStatus, PVCAlert, PVCDelete } from '../extensions/pvc';
+import { YAMLTemplate } from '../extensions/yaml-templates';
 
 export type SupportedExtension =
   | FeatureFlag
@@ -13,7 +14,8 @@ export type SupportedExtension =
   | PVCCreateProp
   | PVCStatus
   | PVCAlert
-  | PVCDelete;
+  | PVCDelete
+  | YAMLTemplate;
 
 /**
  * Schema of Console plugin's `console-extensions.json` file.
