@@ -119,7 +119,7 @@ ServiceClassesList.displayName = 'ServiceClassesList';
 
 const ServiceClassesPage: React.FC<ServiceClassesPageProps> = props => {
   const { t } = useTranslation();
-  return <ListPage title={t('COMMON:MSG_LNB_MENU_12')} createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:MSG_LNB_MENU_12') })} canCreate={true} kind={kind} ListComponent={ServiceClassesList} {...props} />;
+  return <ListPage title={t('COMMON:MSG_LNB_MENU_12')} createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:MSG_LNB_MENU_12') })} canCreate={false} kind={kind} ListComponent={ServiceClassesList} {...props} />;
 };
 ServiceClassesPage.displayName = 'ServiceClassesPage';
 

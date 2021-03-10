@@ -147,7 +147,7 @@ ClusterServiceClassesList.displayName = 'ClusterServiceClassesList';
 
 const ClusterServiceClassesPage: React.FC<ClusterServiceClassesPageProps> = props => {
   const { t } = useTranslation();
-  return <ListPage title={t('COMMON:MSG_LNB_MENU_15')} createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:MSG_LNB_MENU_15') })} canCreate={true} kind={kind} ListComponent={ClusterServiceClassesList} {...props} />;
+  return <ListPage title={t('COMMON:MSG_LNB_MENU_15')} createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:MSG_LNB_MENU_15') })} canCreate={false} kind={kind} ListComponent={ClusterServiceClassesList} {...props} />;
 };
 ClusterServiceClassesPage.displayName = 'ClusterServiceClassesPage';
 
