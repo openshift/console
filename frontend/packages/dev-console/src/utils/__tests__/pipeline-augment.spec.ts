@@ -11,6 +11,7 @@ import {
   runStatus,
   getResourceModelFromTask,
   pipelineRefExists,
+  totalPipelineTasks,
 } from '../pipeline-augment';
 import { ClusterTaskModel, PipelineRunModel, TaskModel } from '../../models';
 import { testData } from './pipeline-augment-test-data';
@@ -120,7 +121,8 @@ describe('PipelineAugment test correct task status state is pulled from pipeline
     });
   });
 
-  const getExpectedTaskCount = (pipeline: Pipeline): number => pipeline.spec.tasks.length;
+  const getExpectedTaskCount = (pipeline: Pipeline): number =>
+    pipeline.spec.tasks.length + (pipeline.spec.finally?.length || 0);
   const sumTaskStatuses = (status: TaskStatus): number =>
     Object.values(status).reduce((acc, v) => acc + v, 0);
 
@@ -150,6 +152,20 @@ describe('PipelineAugment test correct task status state is pulled from pipeline
 
       expect(taskStatus.Succeeded).toEqual(taskCount);
       expect(sumTaskStatuses(taskStatus)).toEqual(taskCount);
+    });
+
+    it('expect a pipeline to consider finally tasks in task-count', () => {
+      const finallyTestData = pipelineTestData[PipelineExampleNames.PIPELINE_WITH_FINALLY];
+
+      const expectedTaskCount = getExpectedTaskCount(finallyTestData.pipeline);
+      const taskStatus = getTaskStatus(
+        finallyTestData.pipelineRuns[DataState.SUCCESS],
+        finallyTestData.pipeline,
+      );
+      const taskCount = totalPipelineTasks(finallyTestData.pipeline);
+
+      expect(taskStatus.Succeeded).toEqual(expectedTaskCount);
+      expect(taskCount).toEqual(expectedTaskCount);
     });
   });
 
