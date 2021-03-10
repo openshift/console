@@ -18,9 +18,9 @@ const MulticlusterNav = () => (
     {t => (
       <>
         <ResourceClusterLink resource="clusterclaims" name="Clusters Claims" />
-        <ResourceClusterLink resource="clustermanagers" name="Clusters" />
+        <ResourceClusterLink resource="clustermanagers" name={t('COMMON:MSG_LNB_MENU_84')} />
         {/* <ResourceClusterLink resource="clustergroups" name="Cluster Groups" /> */}
-        <NavSection title="Federation">
+        <NavSection title={t('COMMON:MSG_LNB_MENU_86')}>
           <NavGroup title="Workloads">
             <ResourceClusterLink resource="federatedpods" name="Pods" />
             <ResourceClusterLink resource="federateddeployments" name="Deployments" />
