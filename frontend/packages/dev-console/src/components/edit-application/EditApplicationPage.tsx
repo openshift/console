@@ -91,11 +91,9 @@ const EditApplicationPage: React.FunctionComponent<ImportPageProps> = ({ match, 
       <Helmet>
         <title>{t('devconsole~Edit')}</title>
       </Helmet>
-      <div className="co-m-pane__body">
-        <Firehose resources={appResources}>
-          <EditApplicationComponentLoader namespace={namespace} appName={appName} />
-        </Firehose>
-      </div>
+      <Firehose resources={appResources}>
+        <EditApplicationComponentLoader namespace={namespace} appName={appName} />
+      </Firehose>
     </NamespacedPage>
   );
 };
