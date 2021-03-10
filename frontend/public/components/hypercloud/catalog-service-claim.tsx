@@ -26,7 +26,7 @@ const CatalogServiceClaimDetails: React.FC<CatalogServiceClaimDetailsProps> = ({
           </div>
           <div className="col-md-6">
             <dl className="co-m-pane__details">
-              <dt>{t('COMMON:MSG_DETAILS_TABOVERVIEW_TABLEHEADER_1')}</dt>
+              <dt>{t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_118')}</dt>
               <dd>{catalogServiceClaim.resourceName}</dd>
               <dt>{t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_13')}</dt>
               <dd>{catalogServiceClaim.status && catalogServiceClaim.status.status}</dd>

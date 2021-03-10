@@ -60,7 +60,7 @@ const ServiceInstanceDetails: React.FC<ServiceInstanceDetailsProps> = props => {
                 </dd>
                 <dt>{t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_19')}</dt>
                 <SidebarLink name={serviceInstance.spec.clusterServiceClassRef?.name ? serviceInstance.spec.clusterServiceClassRef?.name : serviceInstance.spec?.serviceClassExternalName} kind={serviceInstance.spec.clusterServiceClassRef?.name ? 'ClusterServiceClass' : 'ServiceClass'}></SidebarLink>
-                <dt>{t('COMMON:MSG_LNB_MENU_13')}</dt>
+                <dt>{t('COMMON:MSG_DETAILS_TABSERVICEPLANS_1')}</dt>
                 <dd>
                   <SidebarLink name={serviceInstance.spec.clusterServicePlanRef?.name ? serviceInstance.spec.clusterServicePlanRef?.name : serviceInstance.spec?.servicePlanRef?.name} kind={serviceInstance.spec.clusterServiceClassRef?.name ? 'ClusterServicePlan' : 'ServicePlan'}></SidebarLink>
                 </dd>
@@ -154,7 +154,7 @@ const ServiceInstanceTableHeader = (t?: TFunction) => {
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: t('COMMON:MSG_LNB_MENU_13'),
+      title: t('COMMON:MSG_DETAILS_TABSERVICEPLANS_1'),
       sortField: 'spec.servicePlanName',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
@@ -200,7 +200,7 @@ const ServiceInstancesPage: React.FC<ServiceInstancesPageProps> = props => {
           reducer: serviceInstanceStatusReducer,
           items: [
             { id: 'Ready', title: t('COMMON:MSG_MAIN_FILTER_2') },
-            { id: 'Error', title: t('COMMON:MSG_COMMON_BUTTON_FILTER_CHECKBOX_4') },
+            { id: 'Error', title: t('COMMON:MSG_MAIN_FILTER_3') },
           ],
         },
       ]}
