@@ -31,6 +31,7 @@ import { useTranslation } from 'react-i18next';
 import {
   ConfigMapModel,
   DeploymentModel,
+  JobModel,
   PodModel,
   ReplicaSetModel,
   SecretModel,
@@ -44,6 +45,7 @@ const DEFAULT_RESOURCES: CRDDescription['resources'] = [
   { kind: PodModel.kind, version: PodModel.apiVersion },
   { kind: SecretModel.kind, version: SecretModel.apiVersion },
   { kind: ConfigMapModel.kind, version: ConfigMapModel.apiVersion },
+  { kind: JobModel.kind, version: JobModel.apiVersion },
 ];
 
 const tableColumnClasses = [
