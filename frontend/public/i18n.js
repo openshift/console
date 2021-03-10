@@ -100,7 +100,6 @@ i18n
         'network-route',
         'network-service',
         'nodes',
-        'noobaa-storage-plugin',
         'notification-drawer',
         'oauth',
         'olm',

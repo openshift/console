@@ -28,3 +28,5 @@ export const OSD_DOWN_ALERT = 'CephOSDDiskNotResponding';
 export const OSD_DOWN_AND_OUT_ALERT = 'CephOSDDiskUnavailable';
 export const MINIMUM_NODES = 3;
 export const SECOND = 1000;
+export const OCS_NS = 'openshift-storage';
+export const NB_PROVISIONER = 'noobaa.io/obc';

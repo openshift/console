@@ -17,6 +17,10 @@ import {
   DashboardsOverviewResourceActivity,
   CustomFeatureFlag,
   StorageClassProvisioner,
+  ProjectDashboardInventoryItem,
+  ResourceClusterNavItem,
+  ResourceNSNavItem,
+  ResourceListPage,
 } from '@console/plugin-sdk';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src/models';
 import { GridPosition } from '@console/shared/src/components/dashboard/DashboardGrid';
@@ -36,9 +40,11 @@ import {
   OCS_INDEPENDENT_FLAG,
   OCS_CONVERGED_FLAG,
   OCS_FLAG,
+  NOOBAA_FLAG,
 } from './features';
 import { getAlertActionPath } from './utils/alert-action-path';
 import { OSD_DOWN_ALERT, OSD_DOWN_AND_OUT_ALERT } from './constants';
+import { getObcStatusGroups } from './components/dashboards/object-service/buckets-card/utils';
 
 type ConsumedExtensions =
   | AlertAction
@@ -56,7 +62,11 @@ type ConsumedExtensions =
   | ResourceTabPage
   | ClusterServiceVersionAction
   | DashboardsOverviewResourceActivity
-  | StorageClassProvisioner;
+  | StorageClassProvisioner
+  | ProjectDashboardInventoryItem
+  | ResourceClusterNavItem
+  | ResourceNSNavItem
+  | ResourceListPage;
 
 const apiObjectRef = referenceForModel(models.OCSServiceModel);
 
@@ -455,6 +465,279 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [LSO_DEVICE_DISCOVERY, OCS_ATTACHED_DEVICES_FLAG],
+    },
+  },
+  // Noobaa Related Plugins
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: `/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/${referenceForModel(
+        models.NooBaaBucketClassModel,
+      )}/~new`,
+      loader: () =>
+        import('./components/bucket-class/create-bc' /* webpackChunkName: "create-bc" */).then(
+          (m) => m.default,
+        ),
+    },
+    flags: {
+      required: [NOOBAA_FLAG],
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: [
+        `/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/${referenceForModel(
+          models.NooBaaBackingStoreModel,
+        )}/~new`,
+        `/k8s/ns/:ns/${referenceForModel(models.NooBaaBackingStoreModel)}/~new`,
+      ],
+      loader: () =>
+        import(
+          './components/create-backingstore-page/create-bs-page' /* webpackChunkName: "create-bs" */
+        ).then((m) => m.default),
+    },
+    flags: {
+      required: [NOOBAA_FLAG],
+    },
+  },
+  {
+    type: 'FeatureFlag/Model',
+    properties: {
+      model: models.NooBaaSystemModel,
+      flag: NOOBAA_FLAG,
+    },
+  },
+  {
+    type: 'Dashboards/Tab',
+    properties: {
+      id: 'object-service',
+      // t('ceph-storage-plugin~Object Service')
+      title: '%ceph-storage-plugin~Object Service%',
+    },
+    flags: {
+      required: [NOOBAA_FLAG, OCS_FLAG],
+    },
+  },
+  {
+    type: 'Dashboards/Card',
+    properties: {
+      tab: 'object-service',
+      position: GridPosition.MAIN,
+      loader: () =>
+        import(
+          './components/dashboards/object-service/status-card/status-card' /* webpackChunkName: "object-service-status-card" */
+        ).then((m) => m.default),
+    },
+    flags: {
+      required: [NOOBAA_FLAG],
+    },
+  },
+  {
+    type: 'Dashboards/Card',
+    properties: {
+      tab: 'object-service',
+      position: GridPosition.LEFT,
+      loader: () =>
+        import(
+          './components/dashboards/object-service/details-card/details-card' /* webpackChunkName: "object-service-details-card" */
+        ).then((m) => m.DetailsCard),
+    },
+    flags: {
+      required: [NOOBAA_FLAG],
+    },
+  },
+  {
+    type: 'Dashboards/Card',
+    properties: {
+      tab: 'object-service',
+      position: GridPosition.LEFT,
+      loader: () =>
+        import(
+          './components/dashboards/object-service/storage-efficiency-card/storage-efficiency-card' /* webpackChunkName: "object-service-storage-efficiency-card" */
+        ).then((m) => m.default),
+    },
+    flags: {
+      required: [NOOBAA_FLAG],
+    },
+  },
+  {
+    type: 'Dashboards/Card',
+    properties: {
+      tab: 'object-service',
+      position: GridPosition.LEFT,
+      loader: () =>
+        import(
+          './components/dashboards/object-service/buckets-card/buckets-card' /* webpackChunkName: "object-service-buckets-card" */
+        ).then((m) => m.BucketsCard),
+    },
+    flags: {
+      required: [NOOBAA_FLAG],
+    },
+  },
+  {
+    type: 'Dashboards/Card',
+    properties: {
+      tab: 'object-service',
+      position: GridPosition.MAIN,
+      loader: () =>
+        import(
+          './components/dashboards/object-service/capacity-breakdown/capacity-breakdown-card' /* webpackChunkName: "object-service-capacity-breakdown-card" */
+        ).then((m) => m.default),
+    },
+    flags: {
+      required: [NOOBAA_FLAG],
+    },
+  },
+  {
+    type: 'Dashboards/Card',
+    properties: {
+      tab: 'object-service',
+      position: GridPosition.MAIN,
+      loader: () =>
+        import(
+          './components/dashboards/object-service/data-consumption-card/data-consumption-card' /* webpackChunkName: "object-service-data-consumption-card" */
+        ).then((m) => m.default),
+    },
+    flags: {
+      required: [NOOBAA_FLAG],
+    },
+  },
+  {
+    type: 'Dashboards/Card',
+    properties: {
+      tab: 'object-service',
+      position: GridPosition.RIGHT,
+      loader: () =>
+        import(
+          './components/dashboards/object-service/activity-card/activity-card' /* webpackChunkName: "object-service-activity-card" */
+        ).then((m) => m.default),
+    },
+    flags: {
+      required: [NOOBAA_FLAG],
+    },
+  },
+  {
+    type: 'Dashboards/Card',
+    properties: {
+      tab: 'object-service',
+      position: GridPosition.LEFT,
+      loader: () =>
+        import(
+          './components/dashboards/object-service/resource-providers-card/resource-providers-card' /* webpackChunkName: "object-service-resource-providers-card" */
+        ).then((m) => m.ResourceProvidersCard),
+    },
+    flags: {
+      required: [NOOBAA_FLAG],
+    },
+  },
+  {
+    type: 'NavItem/ResourceCluster',
+    properties: {
+      id: 'objectbuckets',
+      section: 'storage',
+      componentProps: {
+        // t('ceph-storage-plugin~Object Buckets')
+        name: '%ceph-storage-plugin~Object Buckets%',
+        resource: models.NooBaaObjectBucketModel.plural,
+      },
+    },
+    flags: {
+      required: [NOOBAA_FLAG],
+    },
+  },
+  {
+    type: 'Page/Resource/List',
+    properties: {
+      model: models.NooBaaObjectBucketModel,
+      loader: () =>
+        import(
+          './components/object-bucket-page/object-bucket' /* webpackChunkName: "object-bucket-page" */
+        ).then((m) => m.ObjectBucketsPage),
+    },
+  },
+  {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: models.NooBaaObjectBucketModel,
+      loader: () =>
+        import(
+          './components/object-bucket-page/object-bucket' /* webpackChunkName: "object-bucket-page" */
+        ).then((m) => m.ObjectBucketDetailsPage),
+    },
+  },
+  {
+    type: 'NavItem/ResourceNS',
+    properties: {
+      id: 'objectbucketclaims',
+      section: 'storage',
+      componentProps: {
+        // t('ceph-storage-plugin~Object Bucket Claims')
+        name: '%ceph-storage-plugin~Object Bucket Claims%',
+        resource: models.NooBaaObjectBucketClaimModel.plural,
+      },
+    },
+    flags: {
+      required: [NOOBAA_FLAG],
+    },
+  },
+  {
+    type: 'Page/Resource/List',
+    properties: {
+      model: models.NooBaaObjectBucketClaimModel,
+      loader: () =>
+        import(
+          './components/object-bucket-claim-page/object-bucket-claim' /* webpackChunkName: "object-bucket-claim-page" */
+        ).then((m) => m.ObjectBucketClaimsPage),
+    },
+  },
+  {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: models.NooBaaObjectBucketClaimModel,
+      loader: () =>
+        import(
+          './components/object-bucket-claim-page/object-bucket-claim' /* webpackChunkName: "object-bucket-claim-page" */
+        ).then((m) => m.ObjectBucketClaimsDetailsPage),
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      path: `/k8s/ns/:ns/${referenceForModel(models.NooBaaObjectBucketClaimModel)}/~new/form`,
+      loader: () =>
+        import(
+          './components/object-bucket-claim-page/create-obc' /* webpackChunkName: "create-obc" */
+        ).then((m) => m.CreateOBCPage),
+    },
+    flags: {
+      required: [NOOBAA_FLAG],
+    },
+  },
+  {
+    type: 'Project/Dashboard/Inventory/Item',
+    properties: {
+      model: models.NooBaaObjectBucketClaimModel,
+      mapper: getObcStatusGroups,
+    },
+    flags: {
+      required: [NOOBAA_FLAG],
+    },
+  },
+  {
+    type: 'ClusterServiceVersion/Action',
+    properties: {
+      kind: models.NooBaaBucketClassModel.kind,
+      // t('ceph-storage-plugin~Edit Bucket Class Resources')
+      label: '%ceph-storage-plugin~Edit Bucket Class Resources%',
+      apiGroup: models.NooBaaBucketClassModel.apiGroup,
+      callback: (kind, obj) => () =>
+        import('./components/bucket-class/modals/edit-backingstore-modal')
+          .then((m) => m.default({ bucketClass: obj, modalClassName: 'nb-modal' }))
+          // eslint-disable-next-line no-console
+          .catch((e) => console.error(e)),
     },
   },
 ];

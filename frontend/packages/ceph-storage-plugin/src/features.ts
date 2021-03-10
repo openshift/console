@@ -23,6 +23,7 @@ import { StorageClusterKind } from './types';
 
 export const OCS_INDEPENDENT_FLAG = 'OCS_INDEPENDENT';
 export const OCS_CONVERGED_FLAG = 'OCS_CONVERGED';
+export const NOOBAA_FLAG = 'NOOBAA';
 
 // Used to activate NooBaa dashboard
 export const OCS_FLAG = 'OCS';

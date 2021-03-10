@@ -39,7 +39,7 @@ import {
   CEPH_STORAGE_NAMESPACE,
   KMSConfigMapCSIName,
 } from '../../constants';
-import { cephBlockPoolResource, cephClusterResource } from '../../constants/resources';
+import { cephBlockPoolResource, cephClusterResource } from '../../resources';
 import { CephClusterKind, StoragePoolKind, KMSConfig, KMSConfigMap } from '../../types';
 import { storagePoolModal } from '../modals/storage-pool-modal/storage-pool-modal';
 import { POOL_STATE } from '../../constants/storage-pool-const';

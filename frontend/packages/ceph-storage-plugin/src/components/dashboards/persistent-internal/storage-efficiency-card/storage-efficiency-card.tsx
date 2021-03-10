@@ -10,10 +10,7 @@ import {
 } from '@console/internal/components/dashboard/with-dashboard-resources';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 
-import {
-  POOL_STORAGE_EFFICIENCY_QUERIES,
-  StorageDashboardQuery,
-} from '../../../../constants/queries';
+import { POOL_STORAGE_EFFICIENCY_QUERIES, StorageDashboardQuery } from '../../../../queries';
 import { EfficiencyItemBody } from '../../common/storage-efficiency/storage-efficiency-card-item';
 import { getGaugeValue } from '../../../../utils';
 import { humanizeBinaryBytes } from '@console/internal/components/utils';

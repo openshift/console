@@ -20,7 +20,7 @@ import {
   osdDiskInfoMetric,
   DATA_RESILIENCY_QUERY,
   StorageDashboardQuery,
-} from '@console/ceph-storage-plugin/src/constants/queries';
+} from '@console/ceph-storage-plugin/src/queries';
 import { TemplateInstanceModel } from '@console/internal/models';
 import { TemplateInstanceKind } from '@console/internal/module/k8s';
 import { PrometheusResult } from '@console/internal/components/graphs';

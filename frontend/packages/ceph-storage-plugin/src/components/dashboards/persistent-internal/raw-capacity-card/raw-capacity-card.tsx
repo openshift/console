@@ -10,7 +10,7 @@ import DashboardCardBody from '@console/shared/src/components/dashboard/dashboar
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import { humanizeBinaryBytes } from '@console/internal/components/utils';
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
-import { CAPACITY_INFO_QUERIES } from '../../../../constants/queries';
+import { CAPACITY_INFO_QUERIES } from '../../../../queries';
 import './raw-capacity-card.scss';
 
 const queries = (() => Object.values(CAPACITY_INFO_QUERIES))();

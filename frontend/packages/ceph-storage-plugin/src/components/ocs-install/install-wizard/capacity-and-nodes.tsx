@@ -18,7 +18,7 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { StorageClassResourceKind, NodeKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { useDeepCompareMemoize } from '@console/shared';
 import { State, Action } from '../attached-devices-mode/create-sc/state';
-import { scResource } from '../../../constants/resources';
+import { scResource } from '../../../resources';
 import { arbiterText } from '../../../constants';
 import { getZone, isArbiterSC } from '../../../utils/install';
 import { AdvancedSubscription } from '../subscription-icon';
