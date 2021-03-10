@@ -24,8 +24,8 @@ const MasterNav = () => (
           <HrefLink href="/search" name={t('COMMON:MSG_LNB_MENU_4')} startsWith={searchStartsWith} />
           <ResourceNSLink resource="audits" name={t('COMMON:MSG_LNB_MENU_5')} />
           <ResourceNSLink resource="events" name={t('COMMON:MSG_LNB_MENU_6')} />
-          <HrefLink href="/grafana" name="Grafana" />
-          <HrefLink href="/kibana" name="Kibana" />
+          <HrefLink href="/grafana" name={t('COMMON:MSG_LNB_MENU_98')} />
+          <HrefLink href="/kibana" name={t('COMMON:MSG_LNB_MENU_99')} />
         </NavSection>
         {/* <NavSection title="Operators" /> */}
         <NavSection title={t('COMMON:MSG_LNB_MENU_10')}>
@@ -109,19 +109,19 @@ const MasterNav = () => (
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_79')}>
           <ResourceClusterLink resource="namespaces" name={t('COMMON:MSG_LNB_MENU_3')} />
-          <ResourceClusterLink resource="namespaceclaims" name="Namespace Claims" />
+          <ResourceClusterLink resource="namespaceclaims" name={t('COMMON:MSG_LNB_MENU_103')} />
           <ResourceNSLink resource="limitranges" name={t('COMMON:MSG_LNB_MENU_81')} />
           <ResourceNSLink resource="resourcequotas" name={t('COMMON:MSG_LNB_MENU_80')} startsWith={quotaStartsWith} />
-          <ResourceNSLink resource="resourcequotaclaims" name="Resource Quota Claims" startsWith={quotaStartsWith} />
+          <ResourceNSLink resource="resourcequotaclaims" name={t('COMMON:MSG_LNB_MENU_102')} startsWith={quotaStartsWith} />
           <ResourceClusterLink resource="customresourcedefinitions" name={t('COMMON:MSG_LNB_MENU_82')} />
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_72')}>
-          <ResourceClusterLink resource="nodes" name="Nodes" />
+          <ResourceClusterLink resource="nodes" name={t('COMMON:MSG_LNB_MENU_100')} />
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_73')}>
           <ResourceNSLink resource="roles" name={t('COMMON:MSG_LNB_MENU_75')} startsWith={rolesStartsWith} />
           <ResourceNSLink resource="rolebindings" name={t('COMMON:MSG_LNB_MENU_76')} startsWith={rolebindingsStartsWith} />
-          <ResourceNSLink resource="rolebindingclaims" name="Role Binding Claims" startsWith={rolebindingsStartsWith} />
+          <ResourceNSLink resource="rolebindingclaims" name={t('COMMON:MSG_LNB_MENU_101')} startsWith={rolebindingsStartsWith} />
           <ResourceNSLink resource="serviceaccounts" name={t('COMMON:MSG_LNB_MENU_74')} />
           <ResourceClusterLink resource="podsecuritypolicies" name={t('COMMON:MSG_LNB_MENU_78')} />
           {/* <AuthAdminLink resource={referenceForModel(UserModel)} name="Users" />
