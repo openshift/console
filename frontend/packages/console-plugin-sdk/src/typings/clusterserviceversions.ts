@@ -9,6 +9,8 @@ namespace ExtensionProperties {
     label: string;
     /** API group of the resource */
     apiGroup: string;
+    /** override default actions */
+    override?: 'Edit' | 'Delete';
     /** action callback */
     callback: (kind: K8sResourceKindReference, obj: any) => () => any;
   }

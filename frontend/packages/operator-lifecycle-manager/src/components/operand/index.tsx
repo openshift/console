@@ -81,9 +81,10 @@ export const getOperandActions = (
     label: action.properties.label,
     callback: action.properties.callback(kind, ocsObj),
   }));
-  return [
-    ...pluginActions,
-    (kind, obj) => {
+  const defaultActions = [];
+  const defaultOverrideActions = actions.map((action) => action.properties.override);
+  if (!defaultOverrideActions.includes('Edit')) {
+    defaultActions.push((kind, obj) => {
       const reference = referenceFor(obj);
       const href = kind.namespaced
         ? `/k8s/ns/${obj.metadata.namespace}/${ClusterServiceVersionModel.plural}/${csvName ||
@@ -102,8 +103,10 @@ export const getOperandActions = (
           verb: 'update',
         },
       };
-    },
-    (kind, obj) => ({
+    });
+  }
+  if (!defaultOverrideActions.includes('Delete')) {
+    defaultActions.push((kind, obj) => ({
       // t('olm~Delete {{item}}')
       labelKey: 'olm~Delete {{item}}',
       labelKind: { item: kind.label },
@@ -123,8 +126,9 @@ export const getOperandActions = (
         namespace: obj.metadata.namespace,
         verb: 'delete',
       },
-    }),
-  ] as KebabAction[];
+    }));
+  }
+  return [...pluginActions, ...defaultActions] as KebabAction[];
 };
 
 const tableColumnClasses = [
