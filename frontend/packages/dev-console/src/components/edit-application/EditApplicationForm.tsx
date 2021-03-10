@@ -2,9 +2,8 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { FormikProps, FormikValues } from 'formik';
-import { Form } from '@patternfly/react-core';
 import { PageHeading } from '@console/internal/components/utils';
-import { FormFooter } from '@console/shared';
+import { FormFooter, FlexForm, FormBody } from '@console/shared';
 import PipelineSection from '@console/pipelines-plugin/src/components/import/pipeline/PipelineSection';
 import GitSection from '../import/git/GitSection';
 import BuilderSection from '../import/builder/BuilderSection';
@@ -38,31 +37,33 @@ const EditApplicationForm: React.FC<FormikProps<FormikValues> & EditApplicationF
   const { t } = useTranslation();
   return (
     <>
-      <PageHeading title={createFlowType} style={{ padding: '0px' }} />
-      <Form onSubmit={handleSubmit}>
-        {createFlowType !== CreateApplicationFlow.Container && (
-          <GitSection builderImages={builderImages} />
-        )}
-        {createFlowType === CreateApplicationFlow.Git && (
-          <BuilderSection
-            image={values.image}
-            builderImages={builderImages}
-            existingPipeline={appResources?.pipeline?.data}
-          />
-        )}
-        {createFlowType === CreateApplicationFlow.Dockerfile && (
-          <DockerSection buildStrategy={values.build.strategy} />
-        )}
-        {createFlowType === CreateApplicationFlow.Container && <ImageSearchSection />}
-        {createFlowType === CreateApplicationFlow.Container && <IconSection />}
-        <AppSection project={values.project} />
-        {createFlowType !== CreateApplicationFlow.Container && (
-          <PipelineSection
-            builderImages={builderImages}
-            existingPipeline={appResources?.pipeline?.data}
-          />
-        )}
-        <AdvancedSection values={values} appResources={appResources} />
+      <PageHeading title={createFlowType} />
+      <FlexForm onSubmit={handleSubmit}>
+        <FormBody flexLayout>
+          {createFlowType !== CreateApplicationFlow.Container && (
+            <GitSection builderImages={builderImages} />
+          )}
+          {createFlowType === CreateApplicationFlow.Git && (
+            <BuilderSection
+              image={values.image}
+              builderImages={builderImages}
+              existingPipeline={appResources?.pipeline?.data}
+            />
+          )}
+          {createFlowType === CreateApplicationFlow.Dockerfile && (
+            <DockerSection buildStrategy={values.build.strategy} />
+          )}
+          {createFlowType === CreateApplicationFlow.Container && <ImageSearchSection />}
+          {createFlowType === CreateApplicationFlow.Container && <IconSection />}
+          <AppSection project={values.project} />
+          {createFlowType !== CreateApplicationFlow.Container && (
+            <PipelineSection
+              builderImages={builderImages}
+              existingPipeline={appResources?.pipeline?.data}
+            />
+          )}
+          <AdvancedSection values={values} appResources={appResources} />
+        </FormBody>
         <FormFooter
           handleReset={handleReset}
           errorMessage={status && status.submitError}
@@ -72,7 +73,7 @@ const EditApplicationForm: React.FC<FormikProps<FormikValues> & EditApplicationF
           resetLabel={t('devconsole~Cancel')}
           sticky
         />
-      </Form>
+      </FlexForm>
     </>
   );
 };
