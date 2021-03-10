@@ -64,31 +64,28 @@ for details on the `consolePlugin` object and its schema.
 
 ## `console-extensions.json`
 
-Declares all extensions contributed by the plugin. The `$schema` property is optional but recommended.
+Declares all extensions contributed by the plugin.
 
 ```jsonc
-{
-  "$schema": "/path/to/schema/console-extensions.json",
-  "data": [
-    {
-      "type": "console.flag",
-      "properties": {
-        "handler": { "$codeRef": "barUtils.testHandler" }
-      }
-    },
-    {
-      "type": "console.flag/model",
-      "properties": {
-        "flag": "EXAMPLE",
-        "model": {
-          "group": "kubevirt.io",
-          "version": "v1alpha3",
-          "kind": "ExampleModel"
-        }
+[
+  {
+    "type": "console.flag",
+    "properties": {
+      "handler": { "$codeRef": "barUtils.testHandler" }
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "flag": "EXAMPLE",
+      "model": {
+        "group": "kubevirt.io",
+        "version": "v1alpha3",
+        "kind": "ExampleModel"
       }
     }
-  ]
-}
+  }
+]
 ```
 
 Depending on extension `type`, the `properties` object may contain code references, encoded as object

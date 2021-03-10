@@ -1,24 +1,21 @@
-{
-  "$schema": "../console-dynamic-plugin-sdk/dist/schema/console-extensions.json",
-  "data": [
-    {
-      "type": "console.flag/model",
-      "properties": {
-        "model": {
-          "group": "kubevirt.io",
-          "version": "v1alpha3",
-          "kind": "VirtualMachine"
-        },
-        "flag": "KUBEVIRT"
-      }
-    },
-    {
-      "type": "console.page/route/standalone",
-      "properties": {
-        "exact": false,
-        "path": "/k8s/ns/:ns/virtualmachineinstances/:name/standaloneconsole",
-        "component": { "$codeRef": "standaloneConsole" }
-      }
+[
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "kubevirt.io",
+        "version": "v1alpha3",
+        "kind": "VirtualMachine"
+      },
+      "flag": "KUBEVIRT"
     }
-  ]
-}
+  },
+  {
+    "type": "console.page/route/standalone",
+    "properties": {
+      "exact": false,
+      "path": "/k8s/ns/:ns/virtualmachineinstances/:name/standaloneconsole",
+      "component": { "$codeRef": "standaloneConsole" }
+    }
+  }
+]

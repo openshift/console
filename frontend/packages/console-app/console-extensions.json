@@ -1,16 +1,13 @@
-{
-  "$schema": "../console-dynamic-plugin-sdk/dist/schema/console-extensions.json",
-  "data": [
-    {
-      "type": "console.flag/model",
-      "properties": {
-        "flag": "DEVWORKSPACE",
-        "model": {
-          "group": "workspace.devfile.io",
-          "version": "v1alpha1",
-          "kind": "DevWorkspace"
-        }
+[
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "flag": "DEVWORKSPACE",
+      "model": {
+        "group": "workspace.devfile.io",
+        "version": "v1alpha1",
+        "kind": "DevWorkspace"
       }
     }
-  ]
-}
+  }
+]

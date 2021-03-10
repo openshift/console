@@ -59,6 +59,12 @@
   "files.associations": {
     "**/console-extensions.json": "jsonc"
   },
+  "json.schemas": [
+    {
+      "fileMatch": ["**/console-extensions.json"],
+      "url": "./packages/console-dynamic-plugin-sdk/dist/schema/console-extensions.json"
+    }
+  ],
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
   },

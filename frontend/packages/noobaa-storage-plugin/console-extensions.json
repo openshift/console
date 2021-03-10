@@ -1,4 +1,1 @@
-{
-  "$schema": "../console-dynamic-plugin-sdk/dist/schema/console-extensions.json",
-  "data": []
-}
+[]
