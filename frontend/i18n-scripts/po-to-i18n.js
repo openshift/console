@@ -11,22 +11,22 @@ function save(target) {
 
 function processFile(fileName, language) {
   let newFilePath;
-  const package =
+  const packageDir =
     fileName.includes('_package=') && path.basename(fileName, '.po').split('_package=')[1];
-  const newFileName = package
+  const newFileName = packageDir
     ? path.basename(fileName, '.po').split('_package=')[0]
     : path.basename(fileName, '.po');
-  if (package) {
-    if (!fs.existsSync(path.join(__dirname, `./../packages/${package}/locales/${language}`))) {
-      fs.mkdirSync(path.join(__dirname, `./../packages/${package}/locales/${language}`), {
+  if (packageDir) {
+    if (!fs.existsSync(path.join(__dirname, `./../packages/${packageDir}/locales/${language}`))) {
+      fs.mkdirSync(path.join(__dirname, `./../packages/${packageDir}/locales/${language}`), {
         recursive: true,
       });
     }
     newFilePath = path.join(
       __dirname,
-      `./../packages/${package}/locales/${language}/${newFileName}.json`,
+      `./../packages/${packageDir}/locales/${language}/${newFileName}.json`,
     );
-    console.log(`Saving packages/${package}/locales/${language}/${newFileName}.json`);
+    console.log(`Saving packages/${packageDir}/locales/${language}/${newFileName}.json`);
   } else {
     if (!fs.existsSync(path.join(__dirname, `../public/locales/${language}/`))) {
       fs.mkdirSync(path.join(__dirname, `../public/locales/${language}/`), { recursive: true });
@@ -34,7 +34,9 @@ function processFile(fileName, language) {
     newFilePath = path.join(__dirname, `../public/locales/${language}/${newFileName}.json`);
     console.log(`Saving public/locales/${language}/${newFileName}.json`);
   }
-  gettextToI18next(language, fs.readFileSync(fileName)).then(save(newFilePath));
+  gettextToI18next(language, fs.readFileSync(fileName))
+    .then(save(newFilePath))
+    .catch((e) => console.error(fileName, e));
 }
 
 function processDirectory(directory, language) {
@@ -68,11 +70,9 @@ const options = {
 const args = minimist(process.argv.slice(2), options);
 
 if (args.help) {
-  return console.log(
+  console.log(
     "-h: help\n-l: language (i.e. 'ja')\n-d: directory to convert files in (i.e. './new-pos')",
   );
-}
-
-if (args.directory && args.language) {
+} else if (args.directory && args.language) {
   processDirectory(args.directory, args.language);
 }

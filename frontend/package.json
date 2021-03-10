@@ -275,6 +275,7 @@
     "jest-transform-graphql": "^2.1.0",
     "lint-staged": "^10.2.2",
     "mini-css-extract-plugin": "0.4.x",
+    "minimist": "1.2.5",
     "mocha-junit-reporter": "^1.23.3",
     "mochawesome": "^6.1.1",
     "mochawesome-merge": "^4.1.0",
