@@ -160,7 +160,7 @@
   "Configure a webhook build trigger": "Webhook ビルドトリガーの設定",
   "Automatically build a new Image when the Builder Image changes": "ビルダーイメージが変更されると新規イメージを自動的にビルドします。",
   "Launch the first build when the build configuration is created": "ビルド設定の作成時に最初のビルドを起動します。",
-  "Environment variables (build and runtime)": "環境変数（Build および Runtime）",
+  "Environment variables (build and runtime)": "環境変数 (Build および Runtime)",
   "Auto deploy when new Image is available": "新規イメージが利用可能になる際の自動デプロイ",
   "Auto deploy when deployment configuration changes": "デプロイメント設定の変更時の自動デプロイ",
   "Environment variables (runtime only)": "環境変数 (Runtime のみ)",

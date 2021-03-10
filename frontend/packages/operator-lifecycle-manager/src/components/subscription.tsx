@@ -341,7 +341,9 @@ export const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
     ({ type, status }) => type === 'Installed' && status === 'False',
   );
   const installFailedMessage =
-    installFailedCondition?.message || installFailedCondition?.reason || t('olm~InstalPlan failed');
+    installFailedCondition?.message ||
+    installFailedCondition?.reason ||
+    t('olm~InstallPlan failed');
 
   const pkg = packageForSubscription(packageManifests, obj);
   if (new URLSearchParams(window.location.search).has('showDelete')) {

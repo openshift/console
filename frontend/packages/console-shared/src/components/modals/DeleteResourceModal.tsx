@@ -50,7 +50,7 @@ const DeleteResourceForm: React.FC<FormikProps<FormikValues> & DeleteResourceMod
       <ModalBody>
         <p>
           {t(
-            `console-shared~This action cannot be undone. All associated Deployments, Routes, Builds, Pipelines, Storage/PVC's, Secrets, and ConfigMaps will be deleted.`,
+            `console-shared~This action cannot be undone. All associated Deployments, Routes, Builds, Pipelines, Storage/PVCs, Secrets, and ConfigMaps will be deleted.`,
           )}
         </p>
         <p>

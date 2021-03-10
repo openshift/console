@@ -77,7 +77,7 @@ export const VALIDATIONS = (type: keyof typeof ValidationType, t: TFunction): Va
         variant: AlertVariant.danger,
         title: t('ceph-storage-plugin~All required fields are not set'),
         text: t(
-          'ceph-storage-plugin~In order to create the storage cluster you must set the storage class select at least 3 nodes (preferably in 3 different zones) and meet the minimum or recommended requirement',
+          'ceph-storage-plugin~In order to create the storage cluster you must set the storage class, select at least 3 nodes (preferably in 3 different zones) and meet the minimum or recommended requirement',
         ),
       };
     case ValidationType.MINIMUMNODES:

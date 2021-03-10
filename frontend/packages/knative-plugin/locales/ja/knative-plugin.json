@@ -177,6 +177,6 @@
   "Move sink to {{resourceObjKind}}": "シンクを {{resourceObjKind}} に移動",
   "Move sink to URI": "シンクを URI に移動",
   "Open URI": "URI を開く",
-  "Knative Services": "Knative Services",
+  "Knative Services": "Knative サービス",
   "Creation of Event sources are not currently supported on this Cluster.": "イベントソースの作成は、このクラスターでは現在サポートされていません。"
 }

@@ -1,0 +1,19 @@
+{
+  "{{id}} by {{author}}": "{{id}} ({{author}} 별)",
+  "Commit details not available": "커밋 세부 정보를 사용할 수 없습니다.",
+  "Cluster URL not available": "클러스터 URL을 사용할 수 없습니다.",
+  "Environments": "환경",
+  "Application environments": "애플리케이션 환경",
+  "Manifest file repo": "매니페스트 파일 저장소",
+  "Image not available": "이미지를 사용할 수 없습니다",
+  "Service source URL not available": "서비스 소스 URL을 사용할 수 없습니다.",
+  "Pod info not available": "Pod 정보를 사용할 수 없습니다",
+  "Info not available": "정보를 사용할 수 없습니다",
+  "Environment details were not found. Try reloading the page or contacting an administrator.": "환경 세부 정보를 찾을 수 없습니다. 페이지를 새로 고침하거나 관리자에게 문의하십시오.",
+  "{{appName}} · Details": "{{appName}} · 세부 정보",
+  "Argo CD": "Argo CD",
+  "{{count, number}} item_0": "{{count, number}} 항목",
+  "{{count, number}} Environment_0": " 환경",
+  "No GitOps manifest URLs found": "GitOps 매니페스트 URL을 찾을 수 없습니다",
+  "No Application groups found": "애플리케이션 그룹을 찾을 수 없습니다"
+}

@@ -124,7 +124,7 @@ const handleNameChange = (enteredName, fieldErrors, setName, setFieldErrors) => 
 
   const nameValidation = validateDNS1123SubdomainValue(enteredName, {
     // t('kubevirt-plugin~Network attachment definition name cannot be empty')
-    // t('kubevirt-plugin~Network attachment definition name name can contain only alphanumeric characters')
+    // t('kubevirt-plugin~Network attachment definition name can contain only alphanumeric characters')
     // t('kubevirt-plugin~Network attachment definition name must start/end with alphanumeric character')
     // t('kubevirt-plugin~Network attachment definition name cannot contain uppercase characters')
     // t('kubevirt-plugin~Network attachment definition name is too long')

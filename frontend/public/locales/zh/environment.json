@@ -29,7 +29,7 @@
   "Remove": "删除",
   "ConfigMaps": "ConfigMaps",
   "Secrets": "Secrets",
-  "ServiceAccounts": "ServiceAccounts",
+  "ServiceAccounts": "服务帐户",
   "Select a key": "选择一个键",
   "ConfigMap or Secret": "ConfigMap 或 Secret",
   "Select a resource": "选择一个资源"
