@@ -81,6 +81,7 @@ export const NameValueEditor = withDragDropContext(
         nameString,
         valueString,
         addString,
+        addSecondString,
         nameValuePairs,
         allowSorting,
         readOnly,
@@ -151,7 +152,7 @@ export const NameValueEditor = withDragDropContext(
                           data-test-id="pairs-list__add-icon"
                           className="co-icon-space-r"
                         />
-                        Add from Config Map or Secret
+                        {addSecondString}
                       </Button>
                     </>
                   )}
@@ -168,6 +169,7 @@ NameValueEditor.propTypes = {
   nameString: PropTypes.string,
   valueString: PropTypes.string,
   addString: PropTypes.string,
+  addSecondString: PropTypes.string,
   allowSorting: PropTypes.bool,
   readOnly: PropTypes.bool,
   nameValueId: PropTypes.number,
@@ -189,6 +191,7 @@ NameValueEditor.defaultProps = {
   nameString: 'Key',
   valueString: 'Value',
   addString: 'Add More',
+  addSecondString: 'Add from Config Map or Secret',
   allowSorting: false,
   readOnly: false,
   nameValueId: 0,

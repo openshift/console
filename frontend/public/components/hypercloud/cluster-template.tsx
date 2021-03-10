@@ -43,7 +43,7 @@ const ClusterTemplateDetails: React.FC<ClusterTemplateDetailsProps> = ({ obj: cl
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Cluster Template Details" />
+        <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_104')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
         <div className="row">
           <div className="col-md-6">
             <ResourceSummary resource={clusterTemplate} showPodSelector showOwner={false}></ResourceSummary>
@@ -133,7 +133,8 @@ const ClusterTemplatesList: React.FC = props => {
 ClusterTemplatesList.displayName = 'ClusterTemplatesList';
 
 const ClusterTemplatesPage: React.FC<ClusterTemplatesPageProps> = props => {
-  return <ListPage canCreate={true} kind={kind} ListComponent={ClusterTemplatesList} {...props} />;
+  const { t } = useTranslation();
+  return <ListPage title={t('COMMON:MSG_LNB_MENU_104')} createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:MSG_LNB_MENU_104') })} canCreate={true} kind={kind} ListComponent={ClusterTemplatesList} {...props} />;
 };
 ClusterTemplatesPage.displayName = 'ClusterTemplatesPage';
 

@@ -37,7 +37,7 @@ const UpdateStrategy: KebabAction = (kind: K8sKind, deployment: DeploymentKind) 
 const PauseAction: KebabAction = (kind: K8sKind, obj: DeploymentKind) => {
   const { t } = useTranslation();
   return {
-    label: obj.spec.paused ? 'Resume Rollouts' : t('COMMON:MSG_MAIN_ACTIONBUTTON_12'),
+    label: obj.spec.paused ? t('COMMON:MSG_MAIN_ACTIONBUTTON_37') : t('COMMON:MSG_MAIN_ACTIONBUTTON_12'),
     callback: () => togglePaused(kind, obj).catch(err => errorModal({ error: err.message })),
     accessReview: {
       group: kind.apiGroup,

@@ -447,7 +447,7 @@ class EnvironmentPage_ extends PromiseComponent {
         )}
         {currentEnvVars.isContainerArray && (
           <div className="co-toolbar__group co-toolbar__group--left">
-            <div className="co-toolbar__item">{containerType === 'containers' ? t('COMMON:MSG_DETAILS_TABENVIRONMENT_3') : 'Init Container:'}</div>
+            <div className="co-toolbar__item">{containerType === 'containers' ? t('COMMON:MSG_DETAILS_TABENVIRONMENT_3') : t('COMMON:MSG_DETAILS_TABENVIRONMENT_10')}</div>
             <div className="co-toolbar__item">{containerDropdown}</div>
           </div>
         )}
@@ -462,7 +462,7 @@ class EnvironmentPage_ extends PromiseComponent {
               )}
             </h3>
           )}
-          <NameValueEditorComponent nameValueId={containerIndex} nameValuePairs={envVar[EnvType.ENV]} updateParentData={this.updateEnvVars} addString="Add Value" nameString="Name" readOnly={readOnly} allowSorting={true} configMaps={configMaps} secrets={secrets} addConfigMapSecret={addConfigMapSecret} />
+          <NameValueEditorComponent nameValueId={containerIndex} nameValuePairs={envVar[EnvType.ENV]} updateParentData={this.updateEnvVars} addString={t('COMMON:MSG_DETAILS_TABENVIRONMENT_11')} addSecondString={t('COMMON:MSG_DETAILS_TABENVIRONMENT_12')} nameString="Name" readOnly={readOnly} allowSorting={true} configMaps={configMaps} secrets={secrets} addConfigMapSecret={addConfigMapSecret} />
         </div>
         {currentEnvVars.isContainerArray && (
           <div className="co-m-pane__body-group environment-buttons">
@@ -476,7 +476,7 @@ class EnvironmentPage_ extends PromiseComponent {
                 </FieldLevelHelp>
               )}
             </h3>
-            <EnvFromEditorComponent nameValueId={containerIndex} nameValuePairs={envVar[EnvType.ENV_FROM]} updateParentData={this.updateEnvVars} readOnly={readOnly} configMaps={configMaps} secrets={secrets} />
+            <EnvFromEditorComponent nameValueId={containerIndex} nameValuePairs={envVar[EnvType.ENV_FROM]} updateParentData={this.updateEnvVars} readOnly={readOnly} configMaps={configMaps} secrets={secrets} addButtonLabel={t('COMMON:MSG_DETAILS_TABENVIRONMENT_13')} />
           </div>
         )}
       </>

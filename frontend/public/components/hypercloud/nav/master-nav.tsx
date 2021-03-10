@@ -39,7 +39,7 @@ const MasterNav = () => (
           <ResourceNSLink resource="servicebindings" name={t('COMMON:MSG_LNB_MENU_18')} />
           <ResourceNSLink resource="catalogserviceclaims" name={t('COMMON:MSG_LNB_MENU_19')} />
           <ResourceNSLink resource="templates" name={t('COMMON:MSG_LNB_MENU_20')} />
-          <ResourceClusterLink resource="clustertemplates" name="Cluster Template" />
+          <ResourceClusterLink resource="clustertemplates" name={t('COMMON:MSG_LNB_MENU_104')} />
           <ResourceNSLink resource="templateinstances" name={t('COMMON:MSG_LNB_MENU_21')} />
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_22')}>
