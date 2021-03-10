@@ -107,3 +107,17 @@ Feature: Create a workload of 'knative Service' type resource
               And user clicks on the Knative Service workload "dancer-ex-git"
               And user clicks on name KSVC "dancer-ex-git"
              Then user will see value of autoscaling.knative.dev/maxScale, autoscaling.knative.dev/minScale, autoscaling.knative.dev/target, autoscaling.knative.dev/targetUtilizationPercentage, autoscaling.knative.dev/window under annotation and containerConcurrency under spec as under spec 5, 1, 3, 70, 9s and 15 respectively
+
+
+        @regression @manual
+        Scenario: knative resource type in upload JAR file
+            Given user is at the Add page
+             When user clicks on the Upload JAR file card
+              And user drag and drop the file in JAR file section
+              And user selects appropriate Build image version
+              And user gives Application name as "sample-upload-app" and workload Name as "sample-yaml-upload"
+              And user selects resource type as "knative"
+              And user clicks on Create
+             Then user will be redirected to Topology page
+              And user can see a toast notification of JAR file uploading with link to build logs
+              And user can see knative service "sample-yaml-upload" in application "sample-upload-app" is created in topology
