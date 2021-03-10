@@ -1,5 +1,3 @@
-/* eslint-env node */
-
 import * as tsj from 'ts-json-schema-generator';
 import * as ts from 'ts-json-schema-generator/node_modules/typescript';
 
