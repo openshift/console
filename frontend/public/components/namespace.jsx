@@ -528,7 +528,7 @@ class NamespaceBarDropdowns_ extends React.Component {
 
     const { loaded, data } = this.props.namespace;
     const model = getModel(useProjects);
-    const allNamespacesTitle = `all ${model.labelPlural.toLowerCase()}`;
+    const allNamespacesTitle = t('COMMON:MSG_NNB__3');
     const items = {};
 
     if (canListNS) {
@@ -583,12 +583,12 @@ class NamespaceBarDropdowns_ extends React.Component {
           // canFavorite
           items={items}
           actionItems={defaultActionItem}
-          titlePrefix={model.label}
+          titlePrefix={t('COMMON:MSG_NNB__2')}
           title={title}
           onChange={onChange}
           selectedKey={activeNamespace || ALL_NAMESPACES_KEY}
           autocompleteFilter={autocompleteFilter}
-          autocompletePlaceholder={`Select ${model.label.toLowerCase()}...`}
+          autocompletePlaceholder={t('COMMON:MSG_NNB__1')}
           noBookmark={true}
           defaultBookmarks={defaultBookmarks}
           storageKey={NAMESPACE_LOCAL_STORAGE_KEY}
