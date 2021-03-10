@@ -110,13 +110,13 @@ export const resolveEncodedCodeRefs = (
   });
 
 /**
- * Returns an object representing resolved `CodeRef` properties for the given extension.
+ * Returns the properties of extension `E` with `CodeRef` functions replaced with referenced objects.
  */
 export const resolveCodeRefProperties = async <E extends Extension<P>, P = ExtensionProperties<E>>(
   extension: E,
 ): Promise<ResolvedCodeRefProperties<P>> => {
   const refs = filterExecutableCodeRefProperties(extension.properties);
-  const resolvedValues = {} as ResolvedCodeRefProperties<P>;
+  const resolvedValues = Object.assign({}, extension.properties);
 
   await Promise.all(
     Object.entries(refs).map(async ([propName, ref]) => {
@@ -124,5 +124,5 @@ export const resolveCodeRefProperties = async <E extends Extension<P>, P = Exten
     }),
   );
 
-  return resolvedValues;
+  return resolvedValues as ResolvedCodeRefProperties<P>;
 };

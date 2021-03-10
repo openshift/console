@@ -79,7 +79,6 @@ export const useResolvedExtensions = <E extends Extension>(
   return [resolvedExtensions, resolved, error];
 };
 
-export type ResolvedExtension<
-  E extends Extension,
-  P = ExtensionProperties<E>
-> = UpdateExtensionProperties<LoadedExtension<E>, ResolvedCodeRefProperties<P>>;
+export type ResolvedExtension<E extends Extension, P = ExtensionProperties<E>> = LoadedExtension<
+  UpdateExtensionProperties<E, ResolvedCodeRefProperties<P>>
+>;

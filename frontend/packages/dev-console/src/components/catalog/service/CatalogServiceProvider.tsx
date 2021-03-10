@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { CatalogExtensionHookOptions, CatalogItem } from '@console/plugin-sdk';
+import { CatalogExtensionHookOptions, CatalogItem, CatalogItemType } from '@console/plugin-sdk';
 import { ResolvedExtension } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import { keywordCompare } from '../utils/catalog-utils';
 import useCatalogExtensions from '../hooks/useCatalogExtensions';
@@ -13,7 +13,7 @@ export type CatalogService = {
   loaded: boolean;
   loadError: any;
   searchCatalog: (query: string) => CatalogItem[];
-  catalogExtensions: ResolvedExtension<any>;
+  catalogExtensions: ResolvedExtension<CatalogItemType>[];
 };
 
 type CatalogServiceProviderProps = {
@@ -36,7 +36,7 @@ const CatalogServiceProvider: React.FC<CatalogServiceProviderProps> = ({
   ] = useCatalogExtensions(catalogType);
 
   const [extItemsMap, setExtItemsMap] = React.useState<{ [uid: string]: CatalogItem[] }>({});
-  const [loadError, setLoadError] = React.useState();
+  const [loadError, setLoadError] = React.useState<any>();
 
   const loaded =
     extensionsResolved &&
