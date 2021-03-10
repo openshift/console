@@ -306,9 +306,15 @@ const MAX_COL_MD = 4;
 const MAX_COL_LG = 6;
 const MAX_COL_XL = 8;
 
-const isColumnVisible = (columnID: string, columns: Set<string> = new Set()) => {
+const isColumnVisible = (
+  columnID: string,
+  columns: Set<string> = new Set(),
+  showNamespaceOverride,
+) => {
   const showNamespace =
-    columnID !== 'namespace' || UIActions.getActiveNamespace() === ALL_NAMESPACES_KEY;
+    columnID !== 'namespace' ||
+    UIActions.getActiveNamespace() === ALL_NAMESPACES_KEY ||
+    showNamespaceOverride;
   if (_.isEmpty(columns) && showNamespace) {
     return true;
   }
@@ -339,9 +345,10 @@ export const TableData: React.SFC<TableDataProps> = ({
   className,
   columnID,
   columns,
+  showNamespaceOverride,
   ...props
 }) => {
-  return isColumnVisible(columnID, columns) ? (
+  return isColumnVisible(columnID, columns, showNamespaceOverride) ? (
     <td {...props} className={className} role="gridcell" />
   ) : null;
 };
@@ -351,6 +358,7 @@ export type TableDataProps = {
   columnID?: string;
   columns?: Set<string>;
   id?: string;
+  showNamespaceOverride?: boolean;
 };
 
 const TableWrapper: React.SFC<TableWrapperProps> = ({
@@ -472,6 +480,7 @@ export type TableProps = {
   defaultSortFunc?: string;
   defaultSortField?: string;
   defaultSortOrder?: SortByDirection;
+  showNamespaceOverride?: boolean;
   filters?: { [key: string]: any };
   Header: (...args) => any[];
   loadError?: string | Object;
@@ -515,6 +524,7 @@ const getActiveColumns = (
   componentProps: ComponentProps,
   activeColumns: Set<string>,
   columnManagementID: string,
+  showNamespaceOverride: boolean,
 ) => {
   let columns = Header(componentProps);
   if (_.isEmpty(activeColumns)) {
@@ -527,12 +537,15 @@ const getActiveColumns = (
     );
   }
   if (columnManagementID) {
-    columns = columns?.filter((col) => isColumnVisible(col.id, activeColumns) || col.title === '');
+    columns = columns?.filter(
+      (col) => isColumnVisible(col.id, activeColumns, showNamespaceOverride) || col.title === '',
+    );
   } else {
     columns = columns?.filter((col) => activeColumns.has(col.id) || col.title === '');
   }
 
-  const showNamespace = UIActions.getActiveNamespace() === ALL_NAMESPACES_KEY;
+  const showNamespace =
+    UIActions.getActiveNamespace() === ALL_NAMESPACES_KEY || showNamespaceOverride;
   if (!showNamespace) {
     columns = columns.filter((column) => column.id !== 'namespace');
   }
@@ -552,6 +565,7 @@ export const Table = connect<
       static propTypes = {
         customData: PropTypes.any,
         data: PropTypes.array,
+        showNamespaceOverride: PropTypes.bool,
         unfilteredData: PropTypes.array,
         NoDataEmptyMsg: PropTypes.func,
         EmptyMsg: PropTypes.func,
@@ -598,6 +612,7 @@ export const Table = connect<
           componentProps,
           this.props.activeColumns,
           this.props.columnManagementID,
+          this.props.showNamespaceOverride,
         );
         const { currentSortField, currentSortFunc, currentSortOrder } = props;
 
@@ -639,6 +654,7 @@ export const Table = connect<
           componentProps,
           this.props.activeColumns,
           this.props.columnManagementID,
+          this.props.showNamespaceOverride,
         );
         const sp = new URLSearchParams(window.location.search);
         const columnIndex = _.findIndex(columns, { title: sp.get('sortBy') });
@@ -687,6 +703,7 @@ export const Table = connect<
           componentProps,
           this.props.activeColumns,
           this.props.columnManagementID,
+          this.props.showNamespaceOverride,
         );
         const sortColumn = columns[index - this._columnShift];
         this._applySort(sortColumn.sortField, sortColumn.sortFunc, direction, sortColumn.title);
@@ -715,6 +732,7 @@ export const Table = connect<
           gridBreakPoint = TableGridBreakpoint.none,
           Header,
           activeColumns,
+          showNamespaceOverride,
         } = this.props;
         const { sortBy } = this.state;
         const componentProps: any = _.pick(this.props, [
@@ -724,7 +742,13 @@ export const Table = connect<
           'match',
           'kindObj',
         ]);
-        const columns = getActiveColumns(Header, componentProps, activeColumns, columnManagementID);
+        const columns = getActiveColumns(
+          Header,
+          componentProps,
+          activeColumns,
+          columnManagementID,
+          showNamespaceOverride,
+        );
         const ariaRowCount = componentProps.data && componentProps.data.length;
         const scrollNode = typeof scrollElement === 'function' ? scrollElement() : scrollElement;
         const renderVirtualizedTable = (scrollContainer) => (
@@ -804,6 +828,7 @@ export type TableInnerProps = {
   data?: any[];
   defaultSortField?: string;
   defaultSortFunc?: string;
+  showNamespaceOverride?: boolean;
   activeColumns?: Set<string>;
   unfilteredData?: any[];
   NoDataEmptyMsg?: React.ComponentType<{}>;
