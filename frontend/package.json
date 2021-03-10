@@ -242,6 +242,7 @@
     "chalk": "2.4.x",
     "chromedriver": "77.x",
     "circular-dependency-plugin": "5.x",
+    "comment-json": "4.x",
     "copy-webpack-plugin": "^5.1.1",
     "css-loader": "0.28.x",
     "cypress": "^6.0.0",
