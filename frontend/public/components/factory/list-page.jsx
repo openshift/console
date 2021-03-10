@@ -291,7 +291,7 @@ export const ListPage = withFallback(props => {
       autoFocus={autoFocus}
       canCreate={canCreate}
       createAccessReview={createAccessReview}
-      createButtonText={createButtonText || `Create ${label}`}
+      createButtonText={createButtonText || t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: label })}
       createProps={createProps}
       customData={customData}
       filterLabel={filterLabel || 'by name'}
