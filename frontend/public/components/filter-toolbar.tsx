@@ -213,7 +213,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = props
 
   return (
     !hideToolbar && (
-      <DataToolbar id="filter-toolbar" clearAllFilters={clearAll}>
+      <DataToolbar id="filter-toolbar" clearAllFilters={clearAll} clearFiltersButtonText={t('COMMON:MSG_COMMON_FILTER_11')}>
         <DataToolbarContent>
           {rowFilters.length > 0 && (
             <DataToolbarItem>

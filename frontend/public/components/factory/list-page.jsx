@@ -14,6 +14,8 @@ import { ErrorPage404, ErrorBoundaryFallback } from '../error';
 import { referenceForModel } from '../../module/k8s';
 import { Dropdown, Firehose, history, inject, kindObj, makeQuery, makeReduxID, PageHeading, RequireCreatePermission } from '../utils';
 import { FilterToolbar } from '../filter-toolbar';
+import { ResourceLabel, ResourceLabelPlural } from '../../models/hypercloud/resource-plural';
+import { useTranslation } from 'react-i18next';
 
 /** @type {React.SFC<{disabled?: boolean, label?: string, onChange: (value: string) => void;, defaultValue?: string, value?: string, placeholder?: string, autoFocus?: boolean, onFocus?:any, name?:string, id?: string, onKeyDown?: any, parentClassName?: string }}>} */
 export const TextFilter = props => {
@@ -245,8 +247,11 @@ FireMan_.propTypes = {
 export const ListPage = withFallback(props => {
   const { autoFocus, canCreate, createButtonText, createHandler, customData, fieldSelector, filterLabel, filters, helpText, kind, limit, ListComponent, mock, name, nameFilter, namespace, selector, showTitle = true, skipAccessReview, textFilter, match, badge, hideToolbar, hideLabelFilter, setSidebarDetails, setShowSidebar, setSidebarTitle } = props;
   let { createProps } = props;
+  const { t } = useTranslation();
   const ko = kindObj(kind);
-  const { label, labelPlural, namespaced, plural } = ko;
+  const { namespaced, plural } = ko;
+  const label = ResourceLabel(ko, t);
+  const labelPlural = ResourceLabelPlural(ko, t);
   const title = props.title || labelPlural;
   const usedNamespace = !namespace && namespaced ? _.get(match, 'params.ns') : namespace;
 
