@@ -14,15 +14,14 @@ import { CatalogExtensionHook, CatalogItem } from '@console/plugin-sdk';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { useActiveNamespace } from '@console/shared';
 import { ServiceToken } from '../../components/access-services/ServicesToken';
-import { CATALOG_TYPE } from '../rhoas-catalog-plugin';
 import { ServiceAccountCRName, kafkaIcon, operatorIcon } from '../../const';
 import { ManagedServiceAccountRequest } from '../../models';
-import { isSuccessfull } from '../../utils/conditionHandler';
+import { isResourceStatusSuccessfull } from '../../utils/conditionHandler';
 import { referenceForModel } from '@console/internal/module/k8s';
+import { CATALOG_TYPE } from '../const';
 
 const useRhoasCatalog: CatalogExtensionHook<CatalogItem[]> = (): [CatalogItem[], boolean, any] => {
   const [currentNamespace] = useActiveNamespace();
-  const href = '/managedServices/managedkafka'; // `/catalog/ns/${namespace}/rhoas/kafka`;
   const { t } = useTranslation();
   const [serviceAccount] = useK8sWatchResource({
     kind: referenceForModel(ManagedServiceAccountRequest),
@@ -32,7 +31,7 @@ const useRhoasCatalog: CatalogExtensionHook<CatalogItem[]> = (): [CatalogItem[],
     namespaced: true,
   });
 
-  const isServiceAccountValid = isSuccessfull(serviceAccount);
+  const isServiceAccountValid = isResourceStatusSuccessfull(serviceAccount);
 
   const tokenStatusFooter = () => {
     let token;
@@ -75,7 +74,7 @@ const useRhoasCatalog: CatalogExtensionHook<CatalogItem[]> = (): [CatalogItem[],
     },
   ];
 
-  const managedServicesCard: CatalogItem[] = [
+  const cloudServicesCard: CatalogItem[] = [
     // TODO internationalize this
     {
       name: 'Red Hat Cloud Services',
@@ -87,9 +86,10 @@ const useRhoasCatalog: CatalogExtensionHook<CatalogItem[]> = (): [CatalogItem[],
       creationTimestamp: '2019-09-04T13:56:06Z',
       attributes: {
         version: '1',
+        type: 'kafka',
       },
       icon: {
-        class: 'ManagedServicesIcon',
+        class: 'CloudServicesIcon',
         url: operatorIcon,
       },
       cta: {
@@ -97,7 +97,7 @@ const useRhoasCatalog: CatalogExtensionHook<CatalogItem[]> = (): [CatalogItem[],
         href: '',
       },
       details: {
-        properties: [{ label: 'Type', value: 'Red Hat Managed Service' }],
+        properties: [{ label: 'Type', value: 'Red Hat Cloud Service' }],
         descriptions: detailsDescriptions,
       },
     },
@@ -110,10 +110,11 @@ const useRhoasCatalog: CatalogExtensionHook<CatalogItem[]> = (): [CatalogItem[],
       uid: 'streams-1615213269575',
       description: 'Streams for Apache Kafka',
       provider: 'Red Hat',
-      tags: ['Kafka', 'service', 'managed'],
+      tags: ['kafka', 'service'],
       creationTimestamp: '2019-09-04T13:56:06Z',
       attributes: {
         version: '1',
+        type: 'kafka',
       },
       icon: {
         class: 'kafkaIcon',
@@ -121,10 +122,10 @@ const useRhoasCatalog: CatalogExtensionHook<CatalogItem[]> = (): [CatalogItem[],
       },
       cta: {
         label: 'Connect',
-        href,
+        href: `/rhoas/kafka/ns/${currentNamespace}`,
       },
       details: {
-        properties: [{ label: 'Type', value: 'Red Hat Managed Service' }],
+        properties: [{ label: 'Type', value: 'Red Hat Cloud Service' }],
         descriptions: [
           {
             value: <p>TO DO: Add description</p>,
@@ -133,12 +134,13 @@ const useRhoasCatalog: CatalogExtensionHook<CatalogItem[]> = (): [CatalogItem[],
       },
     },
   ];
-
+  // eslint-disable-next-line no-console
+  console.log('rhoas: Is ServiceAccount valid', isServiceAccountValid);
   const services = React.useMemo(
-    () => (isServiceAccountValid ? serviceKafkaCard : managedServicesCard),
-    // Prevent automatically filling the dependencies
+    () => (isServiceAccountValid ? serviceKafkaCard : cloudServicesCard),
+    // Prevent automatically filling other the dependencies
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
+    [isServiceAccountValid],
   );
   return [services, true, undefined];
 };

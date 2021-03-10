@@ -4,7 +4,7 @@ import {
   k8sGet,
   k8sPatch,
   k8sUpdate,
-  k8sWaitForUpdate,
+  k8sKillByName,
 } from '@console/internal/module/k8s/resource';
 
 import {
@@ -18,7 +18,8 @@ import {
   ManagedServiceAccountRequest,
   ManagedServicesRequestModel,
 } from '../models/rhoas';
-import { getFinishedCondition, isSuccessfull, ResourceConditionError } from './conditionHandler';
+import { getFinishedCondition, isResourceStatusSuccessfull } from './conditionHandler';
+import { k8sWaitForUpdate } from './k8sUtils';
 
 /**
  * Create service account for purpose of supplying connection credentials
@@ -39,8 +40,7 @@ export const createManagedServiceAccount = async (currentNamespace: string) => {
     spec: {
       accessTokenSecretName: AccessTokenSecretName,
       serviceAccountName: `RHOASOperator-ServiceAccount-${currentNamespace}`,
-      serviceAccountDescription:
-        'Service account created by RHOASOperator to access managed services',
+      serviceAccountDescription: 'Service account created by RHOASOperator to access services',
       serviceAccountSecretName: ServiceAccountSecretName,
       reset: false,
     },
@@ -50,7 +50,7 @@ export const createManagedServiceAccount = async (currentNamespace: string) => {
 };
 
 /**
- * Create request to fetch all managed kafkas from upstream
+ * Create request to fetch all kafkas from upstream
  */
 export const createManagedServicesRequest = async function(currentNamespace: string) {
   const mkRequest = {
@@ -71,9 +71,6 @@ export const createManagedServicesRequest = async function(currentNamespace: str
   return k8sCreate(ManagedServicesRequestModel, mkRequest);
 };
 
-/**
- * Create request to fetch all managed kafkas from upstream
- */
 export const patchServiceAccountRequest = async function(request: any) {
   const path = '/metadata/annotations/refreshTime';
   return k8sPatch(ManagedServiceAccountRequest, request, [
@@ -85,9 +82,6 @@ export const patchServiceAccountRequest = async function(request: any) {
   ]);
 };
 
-/**
- * Create request to fetch all managed kafkas from upstream
- */
 export const patchManagedServicesRequest = async function(request: any) {
   const path = '/metadata/annotations/refreshTime';
 
@@ -176,11 +170,11 @@ export const createServiceAccountIfNeeded = async (currentNamespace) => {
       const condition = getFinishedCondition(resource);
 
       if (condition) {
-        if (isSuccessfull(resource)) {
+        if (isResourceStatusSuccessfull(resource)) {
           return true;
         }
         const errorToLog = condition.message;
-        throw new ResourceConditionError(errorToLog);
+        throw new Error(errorToLog);
       }
       return false;
     },
@@ -226,12 +220,29 @@ export const createManagedKafkaConnection = async (
         if (condition.status === 'True') {
           return true;
         }
-        throw new Error(`Message: ${condition.message} reason: ${condition.reason}`);
+        throw new Error(condition.message);
       }
       return false;
     },
     10000,
   );
+};
+
+/**
+ * createManagedKafkaConnection
+ *
+ * @param kafkaId
+ * @param kafkaName
+ * @param currentNamespace
+ */
+export const deleteManagedKafkaConnection = async (kafkaName: string, currentNamespace: string) => {
+  try {
+    return k8sKillByName(ManagedKafkaConnectionModel, kafkaName, currentNamespace);
+  } catch {
+    // eslint-disable-next-line no-console
+    console.log('rhoas: failed to delete kafka connection');
+  }
+  return Promise.resolve();
 };
 
 export const listOfCurrentKafkaConnectionsById = async (currentNamespace: string) => {

@@ -44,29 +44,24 @@ const ServiceInstance = ({
   return (
     <>
       <Helmet>
-        <title>{t('rhoas-plugin~Select Managed Kafka Cluster')}</title>
+        <title>{t('rhoas-plugin~Select Kafka Cluster')}</title>
       </Helmet>
-      <PageHeading
-        className="rhoas__page-heading"
-        title={t('rhoas-plugin~Select Managed Kafka Cluster')}
-      >
+      <PageHeading className="rhoas__page-heading" title={t('rhoas-plugin~Select Kafka Cluster')}>
         <p>
-          {t(
-            'rhoas-plugin~The managed Kafka cluster selected below will appear on the topology view.',
-          )}
+          {t('rhoas-plugin~The Kafka cluster selected below will appear on the topology view.')}
         </p>
       </PageHeading>
       <PageBody>
         {allKafkasConnected ? (
           <ServicesEmptyState
-            title={t('rhoas-plugin~All Managed Kafka clusters are in use')}
-            actionInfo={t('rhoas-plugin~See Managed Kafka clusters in Topology view')}
+            title={t('rhoas-plugin~All Kafka clusters are in use')}
+            actionInfo={t('rhoas-plugin~Go back to Services Catalog')}
             icon="CubesIcon"
           />
         ) : kafkaArray.length === 0 ? (
           <ServicesEmptyState
-            title={t('rhoas-plugin~No Managed Kafka Clusters found')}
-            actionInfo={t('rhoas-plugin~Go back to Managed Services Catalog')}
+            title={t('rhoas-plugin~No Kafka Clusters found')}
+            actionInfo={t('rhoas-plugin~Go back to Services Catalog')}
             icon="CubesIcon"
           />
         ) : (

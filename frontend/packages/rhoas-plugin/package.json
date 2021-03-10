@@ -1,7 +1,7 @@
 {
   "name": "@console/rhoas-plugin",
   "version": "0.0.0-fixed",
-  "description": "RHOAS plugin provides number of components for Red Hat Managed Services",
+  "description": "RHOAS plugin provides number of components for Red Hat Cloud Services",
   "private": true,
   "scripts": {
     "coverage": "yarn test --coverage --collectCoverageFrom='[\"packages/rhoas-plugin/src/**\",\"!**/__tests__/**\",\"!packages/rhoas-plugin/src/test/**\"]'",

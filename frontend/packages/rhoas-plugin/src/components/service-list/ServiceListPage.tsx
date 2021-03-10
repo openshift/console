@@ -12,29 +12,36 @@ import { ServicesRequestCRName } from '../../const';
 import {
   createManagedKafkaConnection,
   createManagedServicesRequestIfNeeded,
+  deleteManagedKafkaConnection,
   listOfCurrentKafkaConnectionsById,
 } from '../../utils/resourceCreators';
 import { KafkaRequest } from '../../utils/rhoas-types';
-import { getCondition, getFinishedCondition } from '../../utils/conditionHandler';
+import {
+  isResourceStatusSuccessfull,
+  isAcccesTokenSecretValid,
+  getFinishedCondition,
+} from '../../utils/conditionHandler';
 import { ServicesErrorState } from '../states/ServicesErrorState';
+import { useTranslation } from 'react-i18next';
 
 const ServiceListPage = () => {
   const [currentNamespace] = useActiveNamespace();
   const [selectedKafka, setSelectedKafka] = React.useState<number>();
   const [currentKafkaConnections, setCurrentKafkaConnections] = React.useState<string[]>([]);
-
-  const createKafkaRequestFlow = async () => {
-    await createManagedServicesRequestIfNeeded(currentNamespace);
-
-    const currentKafka = await listOfCurrentKafkaConnectionsById(currentNamespace);
-    if (currentKafka) {
-      setCurrentKafkaConnections(currentKafka);
-    }
-  };
+  const { t } = useTranslation();
+  const [managedKafkaCreateError, setManagedKafkaCreateError] = React.useState<string>();
 
   React.useEffect(() => {
+    const createKafkaRequestFlow = async () => {
+      await createManagedServicesRequestIfNeeded(currentNamespace);
+
+      const currentKafka = await listOfCurrentKafkaConnectionsById(currentNamespace);
+      if (currentKafka) {
+        setCurrentKafkaConnections(currentKafka);
+      }
+    };
     createKafkaRequestFlow();
-  });
+  }, [currentNamespace]);
 
   const [watchedKafkaRequest] = useK8sWatchResource<KafkaRequest>({
     kind: referenceForModel(ManagedServicesRequestModel),
@@ -44,6 +51,16 @@ const ServiceListPage = () => {
     optional: true,
   });
 
+  if (managedKafkaCreateError) {
+    return (
+      <ServicesErrorState
+        title={t('Failed to create connection')}
+        message={managedKafkaCreateError + t('Please try again')}
+        actionInfo={t('rhoas-plugin~Go back to Services Catalog')}
+      />
+    );
+  }
+
   if (!watchedKafkaRequest || !watchedKafkaRequest.status) {
     return (
       <>
@@ -52,24 +69,27 @@ const ServiceListPage = () => {
     );
   }
 
-  const condition = getFinishedCondition(watchedKafkaRequest);
-  if (condition && condition.status === 'False') {
-    if (getCondition(watchedKafkaRequest, 'AcccesTokenSecretValid')?.status === 'False') {
+  if (!isResourceStatusSuccessfull(watchedKafkaRequest)) {
+    if (!isAcccesTokenSecretValid(watchedKafkaRequest)) {
       return (
         <ServicesErrorState
-          title={'Connection failed'}
-          message={'Could not connect to RHOAS with API Token. Is your API token valid?'}
-        ></ServicesErrorState>
+          title={t('Could not fetch services')}
+          message={t('Could not connect to RHOAS with API Token')}
+          actionInfo={t('rhoas-plugin~Go back to Services Catalog')}
+        />
       );
     }
     return (
       <>
         <ServicesErrorState
-          title={'Could not fetch services'}
-          message={`Failed to load list of services: ${condition.message}`}
-        ></ServicesErrorState>
-        <div></div>
-        <div>{}</div>
+          title={t('Could not fetch services')}
+          message={
+            t('Failed to load list of services') +
+            getFinishedCondition(watchedKafkaRequest)?.message
+          }
+          actionInfo={t('rhoas-plugin~Go back to Services Catalog')}
+        />
+        <div />
       </>
     );
   }
@@ -83,7 +103,8 @@ const ServiceListPage = () => {
       await createManagedKafkaConnection(kafkaId, kafkaName, currentNamespace);
       history.push(`/topology/ns/${currentNamespace}`);
     } catch (error) {
-      // TODO
+      deleteManagedKafkaConnection(kafkaName, currentNamespace);
+      setManagedKafkaCreateError(error);
     }
   };
 

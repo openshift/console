@@ -6,7 +6,7 @@ import { history } from '@console/internal/components/utils';
 
 type ServicesEmptyStateProps = {
   title: string;
-  message: string
+  message: string;
   actionInfo?: string;
   action?: () => void;
 };
@@ -17,8 +17,11 @@ export const ServicesErrorState = ({
   actionInfo,
   action,
 }: ServicesEmptyStateProps) => {
-  if (!action) {
-    action = () => {
+  let stateAction;
+  if (action) {
+    stateAction = action;
+  } else {
+    stateAction = () => {
       history.goBack();
     };
   }
@@ -32,7 +35,7 @@ export const ServicesErrorState = ({
       <Title headingLevel="h5" size="md">
         {message}
       </Title>
-      <Button variant="link" onClick={action}>
+      <Button variant="link" onClick={stateAction}>
         {actionInfo}
       </Button>
     </EmptyState>

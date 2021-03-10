@@ -14,6 +14,7 @@ import { useActiveNamespace } from '@console/shared';
 import { createServiceAccountIfNeeded, createSecretIfNeeded } from '../../utils/resourceCreators';
 
 export const ServiceToken: any = () => {
+  const [sendDisabled, setSendDisabled] = React.useState(false);
   const [apiTokenValue, setApiTokenValue] = React.useState<string>('');
   const [errorMessage, setErrorMessage] = React.useState<string>('');
   const [currentNamespace] = useActiveNamespace();
@@ -21,10 +22,12 @@ export const ServiceToken: any = () => {
   const { t } = useTranslation();
 
   const onCreate = async () => {
+    setSendDisabled(true);
     try {
       await createSecretIfNeeded(namespace, apiTokenValue);
     } catch (error) {
       setErrorMessage(`Problem with creating secret: ${error}`);
+      setSendDisabled(false);
       return;
     }
     try {
@@ -32,6 +35,7 @@ export const ServiceToken: any = () => {
     } catch (error) {
       setErrorMessage(`Cannot create service account: ${error}`);
     }
+    setSendDisabled(false);
   };
 
   const handleApiTokenValueChange = (value) => {
@@ -85,7 +89,7 @@ export const ServiceToken: any = () => {
         </TextContent>
         {errorMessage && (
           <TextContent>
-            <Alert variant="danger" isInline title={errorMessage}/>
+            <Alert variant="danger" isInline title={errorMessage} />
           </TextContent>
         )}
         <FormGroup fieldId="action-group">
@@ -93,7 +97,7 @@ export const ServiceToken: any = () => {
             key="confirm"
             variant="primary"
             onClick={onCreate}
-            isDisabled={apiTokenValue.length < 500}
+            isDisabled={apiTokenValue.length < 500 ? true : sendDisabled}
           >
             {t('rhoas-plugin~Create')}
           </Button>

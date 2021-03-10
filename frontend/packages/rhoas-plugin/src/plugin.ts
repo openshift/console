@@ -7,7 +7,7 @@ import {
   Plugin,
   HrefNavItem,
 } from '@console/plugin-sdk';
-import { FLAG_RHOAS_KAFKA, FLAG_RHOAS, managedServicesIcon } from './const';
+import { FLAG_RHOAS_KAFKA, FLAG_RHOAS, cloudServicesIcon } from './const';
 import { rhoasTopologyPlugin, TopologyConsumedExtensions } from './topology/rhoas-topology-plugin';
 import * as models from './models';
 import { rhoasCatalogPlugin, CatalogConsumedExtensions } from './catalog/rhoas-catalog-plugin';
@@ -46,7 +46,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Page/Route',
     properties: {
       exact: true,
-      path: ['/cloudServices/kafka', '/cloudServices/kafka/ns/:ns'],
+      path: ['/rhoas/:service/ns/:ns/'],
       loader: async () =>
         (
           await import(
@@ -69,7 +69,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       label: '%rhoas-plugin~Managed Services%',
       description:
         '%rhoas-plugin~Reduce operational complexity and focus on building and scaling applications that add more value.%',
-      icon: managedServicesIcon,
+      icon: cloudServicesIcon,
     },
   },
   ...rhoasTopologyPlugin,

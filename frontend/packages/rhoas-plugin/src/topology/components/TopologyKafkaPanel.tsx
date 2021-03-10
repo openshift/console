@@ -61,6 +61,7 @@ const DetailsComponent: React.FC<any> = ({ obj }) => {
 const ResourcesComponent = ({ obj }) => {
   const serviceAccountSecretName = obj?.spec?.credentials?.serviceAccountSecretName;
   const { namespace } = obj.metadata;
+  // const t = useTranslation();
   const link = (
     <>
       <h3>Secret</h3>
@@ -108,14 +109,14 @@ export const ConnectedTopologyRhoasPanel: React.FC<TopologyRhoasPanelProps> = ({
         <h1 className="co-m-pane__heading">
           <div className="co-m-pane__name co-resource-item">
             <ResourceIcon className="co-m-resource-icon--lg" kind="MKC" />
-            <h3>Managed Kafka Connection</h3>
+            <h3>Kafka Connection</h3>
           </div>
         </h1>
         {showAlert && (
           <div className="kafka-panel-alert">
             <Alert
               variant="default"
-              title="Managed Service"
+              title="Cloud Service"
               actionClose={<AlertActionCloseButton onClick={handleAlertFunction} />}
               isInline
             >

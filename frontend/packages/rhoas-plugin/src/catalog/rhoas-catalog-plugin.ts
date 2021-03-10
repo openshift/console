@@ -1,10 +1,9 @@
 import { CatalogItemProvider, CatalogItemType, Plugin } from '@console/plugin-sdk';
 import { FLAG_RHOAS } from '../const';
 import { rhoasProvider } from './providers';
+import { CATALOG_TYPE } from './const';
 
 export type CatalogConsumedExtensions = CatalogItemProvider | CatalogItemType;
-
-export const CATALOG_TYPE = 'managedservices';
 
 export const rhoasCatalogPlugin: Plugin<CatalogConsumedExtensions> = [
   {
@@ -13,9 +12,9 @@ export const rhoasCatalogPlugin: Plugin<CatalogConsumedExtensions> = [
       type: CATALOG_TYPE,
       title: '%rhoas-plugin~Managed Services%',
       catalogDescription:
-        '%rhoas-plugin~Browse managed services to connect applications and microservices to other services and support services to create a full solution.%',
+        '%rhoas-plugin~Browse services to connect applications and microservices to other services and support services to create a full solution.%',
       typeDescription: '%rhoas-plugin~Managed Services%',
-      filters: [{ label: 'Managed', attribute: 'Managed' }],
+      filters: [{ label: 'Types', attribute: 'type' }],
     },
     flags: {
       required: [FLAG_RHOAS],

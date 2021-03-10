@@ -27,9 +27,11 @@ export const ServicesEmptyState = ({
         return undefined;
     }
   };
-
-  if (!action) {
-    action = () => {
+  let stateAction;
+  if (action) {
+    stateAction = action;
+  } else {
+    stateAction = () => {
       history.goBack();
     };
   }
@@ -40,7 +42,7 @@ export const ServicesEmptyState = ({
       <Title headingLevel="h4" size="lg">
         {title}
       </Title>
-      <Button variant="link" onClick={action}>
+      <Button variant="link" onClick={stateAction}>
         {actionInfo}
       </Button>
     </EmptyState>
