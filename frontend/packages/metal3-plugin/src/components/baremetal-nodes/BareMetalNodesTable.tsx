@@ -3,13 +3,7 @@ import * as classNames from 'classnames';
 import { Kebab, ResourceLink } from '@console/internal/components/utils';
 import { sortable } from '@patternfly/react-table';
 import { DASH, getName, getUID, getNamespace, SecondaryStatus } from '@console/shared';
-import {
-  TableRow,
-  TableData,
-  Table,
-  RowFunction,
-  RowFunctionArgs,
-} from '@console/internal/components/factory';
+import { TableRow, TableData, Table, RowFunction, RowFunctionArgs } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
 import NodeRoles from '@console/app/src/components/nodes/NodeRoles';
 import { useFlag } from '@console/shared/src/hooks/flag';
@@ -68,12 +62,7 @@ const BareMetalNodesTableHeader = () => [
   },
 ];
 
-const BareMetalNodesTableRow: React.FC<RowFunctionArgs<BareMetalNodeBundle>> = ({
-  obj: { host, node, nodeMaintenance, machine, status },
-  index,
-  key,
-  style,
-}) => {
+const BareMetalNodesTableRow: React.FC<RowFunctionArgs<BareMetalNodeBundle>> = ({ obj: { host, node, nodeMaintenance, machine, status }, index, key, style }) => {
   const hasNodeMaintenanceCapability = useFlag(NODE_MAINTENANCE_FLAG);
   const nodeName = getName(node);
   const hostName = getName(host);
@@ -83,17 +72,7 @@ const BareMetalNodesTableRow: React.FC<RowFunctionArgs<BareMetalNodeBundle>> = (
 
   return (
     <TableRow id={uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses.name}>
-        {node ? (
-          <ResourceLink kind="Node" name={nodeName} />
-        ) : (
-          <ResourceLink
-            kind={referenceForModel(BareMetalHostModel)}
-            name={hostName}
-            namespace={namespace}
-          />
-        )}
-      </TableData>
+      <TableData className={tableColumnClasses.name}>{node ? <ResourceLink kind="Node" name={nodeName} /> : <ResourceLink kind={referenceForModel(BareMetalHostModel)} name={hostName} namespace={namespace} />}</TableData>
       <TableData className={tableColumnClasses.status}>
         <BareMetalNodeStatus {...status} nodeMaintenance={nodeMaintenance} />
         <SecondaryStatus status={baremetalNodeSecondaryStatus({ node, nodeMaintenance, host })} />
@@ -101,26 +80,10 @@ const BareMetalNodesTableRow: React.FC<RowFunctionArgs<BareMetalNodeBundle>> = (
       <TableData className={tableColumnClasses.role}>
         <NodeRoles node={node} />
       </TableData>
-      <TableData className={tableColumnClasses.machine}>
-        {machine ? (
-          <ResourceLink
-            kind={referenceForModel(MachineModel)}
-            name={getName(machine)}
-            namespace={getNamespace(machine)}
-          />
-        ) : (
-          DASH
-        )}
-      </TableData>
+      <TableData className={tableColumnClasses.machine}>{machine ? <ResourceLink kind={referenceForModel(MachineModel)} name={getName(machine)} namespace={getNamespace(machine)} /> : DASH}</TableData>
       <TableData className={tableColumnClasses.address}>{address}</TableData>
       <TableData className={tableColumnClasses.kebab}>
-        <Kebab
-          options={menuActions.map((action) =>
-            action(NodeModel, node, null, { nodeMaintenance, hasNodeMaintenanceCapability }),
-          )}
-          key={`kebab-for-${uid}`}
-          id={`kebab-for-${uid}`}
-        />
+        <Kebab options={menuActions.map(action => action(NodeModel, node, null, { nodeMaintenance, hasNodeMaintenanceCapability }))} key={`kebab-for-${uid}`} id={`kebab-for-${uid}`} />
       </TableData>
     </TableRow>
   );
@@ -130,21 +93,9 @@ type BareMetalNodesTableProps = React.ComponentProps<typeof Table> & {
   data: BareMetalNodeBundle[];
 };
 
-const BareMetalNodesTable: React.FC<BareMetalNodesTableProps> = (props) => {
-  const row = React.useCallback<RowFunction<BareMetalNodeBundle>>(
-    (rowProps) => <BareMetalNodesTableRow {...rowProps} />,
-    [],
-  );
-  return (
-    <Table
-      {...props}
-      defaultSortField="node.metadata.name"
-      aria-label="Nodes"
-      Header={BareMetalNodesTableHeader}
-      Row={row}
-      virtualize
-    />
-  );
+const BareMetalNodesTable: React.FC<BareMetalNodesTableProps> = props => {
+  const row = React.useCallback<RowFunction<BareMetalNodeBundle>>(rowProps => <BareMetalNodesTableRow {...rowProps} />, []);
+  return <Table {...props} defaultSortField="node.metadata.name" aria-label="Nodes" Header={BareMetalNodesTableHeader} Row={row} virtualize />;
 };
 
 export default BareMetalNodesTable;
