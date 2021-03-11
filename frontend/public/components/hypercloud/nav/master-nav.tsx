@@ -4,7 +4,7 @@ import { Translation } from 'react-i18next';
 // import { GroupModel, UserModel } from '../../../models';
 
 // import { referenceForModel } from '../../../module/k8s';
-import { HrefLink, ResourceNSLink, ResourceClusterLink } from '../../nav/items';
+import { HrefLink, ResourceNSLink, ResourceClusterLink, NewTabLink } from '../../nav/items';
 // import { AuthAdminLink } from './items';
 import { NavSection } from '../../nav/section';
 
@@ -24,8 +24,10 @@ const MasterNav = () => (
           <HrefLink href="/search" name={t('COMMON:MSG_LNB_MENU_4')} startsWith={searchStartsWith} />
           <ResourceNSLink resource="audits" name={t('COMMON:MSG_LNB_MENU_5')} />
           <ResourceNSLink resource="events" name={t('COMMON:MSG_LNB_MENU_6')} />
-          <HrefLink href="/grafana" name={t('COMMON:MSG_LNB_MENU_98')} />
-          <HrefLink href="/kibana" name={t('COMMON:MSG_LNB_MENU_99')} />
+          {/* <HrefLink href="/grafana" name="Grafana" />
+          <HrefLink href="/kibana" name="Kibana" /> */}
+          <NewTabLink name={t('COMMON:MSG_LNB_MENU_98')} type="grafana" />
+          <NewTabLink name={t('COMMON:MSG_LNB_MENU_99')} type="kibana" />
         </NavSection>
         {/* <NavSection title="Operators" /> */}
         <NavSection title={t('COMMON:MSG_LNB_MENU_10')}>
@@ -66,7 +68,8 @@ const MasterNav = () => (
           <ResourceNSLink resource="requestauthentications" name={t('COMMON:MSG_LNB_MENU_42')} />
           <ResourceNSLink resource="peerauthentications" name={t('COMMON:MSG_LNB_MENU_43')} />
           <ResourceNSLink resource="authorizationpolicies" name={t('COMMON:MSG_LNB_MENU_44')} />
-          <HrefLink href="/kiali" name={t('COMMON:MSG_LNB_MENU_45')} />
+          {/* <HrefLink href="/kiali" name={t('COMMON:MSG_LNB_MENU_45')} /> */}
+          <NewTabLink name={t('COMMON:MSG_LNB_MENU_45')} type="kiali" />
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_46')}>
           <ResourceNSLink resource="services" name={t('COMMON:MSG_LNB_MENU_47')} />
@@ -87,7 +90,7 @@ const MasterNav = () => (
           <ResourceNSLink resource="pipelineruns" name={t('COMMON:MSG_LNB_MENU_60')} />
           <ResourceNSLink resource="approvals" name={t('COMMON:MSG_LNB_MENU_61')} />
           <ResourceNSLink resource="pipelineresources" name={t('COMMON:MSG_LNB_MENU_62')} />
-          <ResourceNSLink resource="integrationjobs" name="IntegrationJob" />
+          <ResourceNSLink resource="integrationjobs" name={t('SINGLE:MSG_CI/CD_MAILFORM_REQUEST_7')} />
           <ResourceNSLink resource="integrationconfigs" name="IntegrationConfig" />
         </NavSection>
         {/* <NavSection title="AI DevOps">
@@ -98,7 +101,7 @@ const MasterNav = () => (
           <ResourceNSLink resource="workflowtemplates" name='WorkflowTemplate' />
           <ResourceNSLink resource="workflows" name='Workflow' />
         </NavSection> */}
-        <NavSection title="Image">
+        <NavSection title={t('COMMON:MSG_DETAILS_TABDETAILS_CONTAINERS_TABLEHEADER_3')}>
           <ResourceNSLink resource="registries" name={t('COMMON:MSG_LNB_MENU_71')} />
           <ResourceNSLink resource="externalregistries" name={t('COMMON:MSG_LNB_MENU_97')} />
           <ResourceClusterLink resource="imagesigners" name={t('COMMON:MSG_LNB_MENU_91')} />

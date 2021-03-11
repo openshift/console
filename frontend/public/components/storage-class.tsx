@@ -122,12 +122,12 @@ const StorageClassDetails: React.SFC<StorageClassDetailsProps> = ({ obj }) => {
 export const StorageClassList: React.SFC = (props) => {
   const { t } = useTranslation();
   return <Table
-      {...props}
-      aria-label="Storage Classes"
-      Header={StorageClassTableHeader.bind(null, t)}
-      Row={StorageClassTableRow}
-      virtualize
-    />;
+    {...props}
+    aria-label="Storage Classes"
+    Header={StorageClassTableHeader.bind(null, t)}
+    Row={StorageClassTableRow}
+    virtualize
+  />;
 };
 
 StorageClassList.displayName = 'StorageClassList';
@@ -139,7 +139,7 @@ export const StorageClassPage: React.SFC<StorageClassPageProps> = (props) => {
     <ListPage
       {..._.omit(props, 'mock')}
       title={t('COMMON:MSG_LNB_MENU_53')}
-      createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:MSG_LNB_MENU_53') })} 
+      createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:MSG_LNB_MENU_53') })}
       kind={StorageClassReference}
       ListComponent={StorageClassList}
       canCreate={true}

@@ -9,6 +9,8 @@ import { Kebab, KebabAction, detailsPage, Timestamp, navFactory, ResourceKebab, 
 import { SignerPolicyModel } from '../../models';
 import { Status } from '@console/shared';
 import { ImageSignersPage } from './image-signer';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 
 export const menuActions: KebabAction[] = [...Kebab.getExtensionsActionsForKind(SignerPolicyModel), ...Kebab.factory.common];
 
@@ -16,28 +18,28 @@ const kind = SignerPolicyModel.kind;
 
 const tableColumnClasses = ['', classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-lg'), Kebab.columnClass];
 
-const SignerPolicyTableHeader = () => {
+const SignerPolicyTableHeader = (t?: TFunction) => {
   return [
     {
-      title: 'Name',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_1'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: 'Namespace',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_2'),
       sortField: 'metadata.namespace',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Signer',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_74'),
       sortField: 'status.imageSignResponse.result',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'Created',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_12'),
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
@@ -73,27 +75,45 @@ const SignerPolicyTableRow: RowFunction<K8sResourceKind> = ({ obj: signerpolicy,
 
 export const SignerPolicyStatus: React.FC<SignerPolicyStatusStatusProps> = ({ result }) => <Status status={result} />;
 
-const SignerPolicyDetails: React.FC<SignerPolicyDetailsProps> = ({ obj: signerpolicy }) => (
-  <>
-    <div className="co-m-pane__body">
-      <SectionHeading text="Image Sign Request Details" />
-      <div className="row">
-        <div className="col-lg-6">
-          <ResourceSummary resource={signerpolicy} />
+const SignerPolicyDetails: React.FC<SignerPolicyDetailsProps> = ({ obj: signerpolicy }) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <div className="co-m-pane__body">
+        <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_96')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
+        <div className="row">
+          <div className="col-lg-6">
+            <ResourceSummary resource={signerpolicy} />
+          </div>
         </div>
       </div>
-    </div>
-    <div className="co-m-pane__body" style={{ paddingLeft: '0px' }}>
-      <ImageSignersPage isDetailPage={true} />
-    </div>
-  </>
-);
+      <div className="co-m-pane__body" style={{ paddingLeft: '0px' }}>
+        <ImageSignersPage isDetailPage={true} />
+      </div>
+    </>
+  );
+}
 
 const { details, editYaml } = navFactory;
 
-export const SignerPolicies: React.FC = props => <Table {...props} aria-label="SignerPolicies" Header={SignerPolicyTableHeader} Row={SignerPolicyTableRow} virtualize />;
+export const SignerPolicies: React.FC = props => {
+  const { t } = useTranslation();
 
-export const SignerPoliciesPage: React.FC<SignerPoliciesPageProps> = props => <ListPage canCreate={true} ListComponent={SignerPolicies} kind={kind} {...props} />;
+  return <Table {...props} aria-label="SignerPolicies" Header={SignerPolicyTableHeader.bind(null, t)} Row={SignerPolicyTableRow} virtualize />;
+}
+
+export const SignerPoliciesPage: React.FC<SignerPoliciesPageProps> = props => {
+  const { t } = useTranslation();
+
+  return <ListPage
+    title={t('COMMON:MSG_LNB_MENU_96')}
+    createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:MSG_LNB_MENU_96') })}
+    canCreate={true}
+    ListComponent={SignerPolicies}
+    kind={kind}
+    {...props}
+  />;
+}
 
 export const SignerPoliciesDetailsPage: React.FC<SignerPoliciesDetailsPageProps> = props => <DetailsPage {...props} kind={kind} menuActions={menuActions} pages={[details(detailsPage(SignerPolicyDetails)), editYaml()]} />;
 

@@ -91,36 +91,40 @@ const ExternalRegistryTableRow: RowFunction<K8sResourceKind> = ({ obj: registry,
 };
 
 export const ExternalRegistryDetailsList: React.FC<ExternalRegistryDetailsListProps> = ({ ds }) => {
+  const { t } = useTranslation();
   return (
     <dl className="co-m-pane__details">
-      <DetailsItem label='Registry URL' obj={ds} path="spec.registryUrl">
+      <DetailsItem label={`${t('SINGLE:MSG_VIRTUALMACHINES_CREATEFORM_STEP1_DIV2_6')} ${t('SINGLE:MSG_VIRTUALMACHINES_CREATEFORM_STEP1_DIV2_5')}`} obj={ds} path="spec.registryUrl">
         {ds.spec.registryUrl}
       </DetailsItem>
-      <DetailsItem label='Registry Type' obj={ds} path="spec.registryType">
+      <DetailsItem label={`${t('SINGLE:MSG_VIRTUALMACHINES_CREATEFORM_STEP1_DIV2_6')} ${t('SINGLE:MSG_VIRTUALMACHINES_CREATEFORM_STEP2_POPUP_5')}`} obj={ds} path="spec.registryType">
         {ds.spec.registryType}
       </DetailsItem>
-      <DetailsItem label='State' obj={ds} path="status.state">
+      <DetailsItem label={`${t('COMMON:MSG_DETAILS_TABDETAILS_CONTAINERS_TABLEHEADER_4')}`} obj={ds} path="status.state">
         <Status status={ds.status.state} />
       </DetailsItem>
     </dl>
   );
 };
 
-const ExternalRegistryDetails: React.FC<ExternalRegistryDetailsProps> = ({ obj: registry }) => (
-  <>
-    <div className="co-m-pane__body">
-      <SectionHeading text="External Registry Details" />
-      <div className="row">
-        <div className="col-lg-6">
-          <ResourceSummary resource={registry} />
-        </div>
-        <div className="col-lg-6">
-          <ExternalRegistryDetailsList ds={registry} />
+const ExternalRegistryDetails: React.FC<ExternalRegistryDetailsProps> = ({ obj: registry }) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <div className="co-m-pane__body">
+        <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_97')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
+        <div className="row">
+          <div className="col-lg-6">
+            <ResourceSummary resource={registry} />
+          </div>
+          <div className="col-lg-6">
+            <ExternalRegistryDetailsList ds={registry} />
+          </div>
         </div>
       </div>
-    </div>
-  </>
-);
+    </>
+  );
+}
 
 const { details, editYaml } = navFactory;
 

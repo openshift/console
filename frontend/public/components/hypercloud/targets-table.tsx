@@ -8,6 +8,7 @@ import { EyeIcon, EyeSlashIcon } from '@patternfly/react-icons';
 import { Button } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import { SecretValue } from './image-signer-key';
+import { useTranslation } from 'react-i18next';
 
 const targetRowColumnClasses = [classNames('col-lg-2', 'col-md-3', 'col-sm-4', 'col-xs-5'), classNames('col-lg-2', 'col-md-3', 'col-sm-4', 'col-xs-7'), classNames('col-lg-2', 'col-md-2', 'col-sm-4', 'hidden-xs')];
 
@@ -52,6 +53,7 @@ const TargetsTableRows = props => {
 };
 
 export const TargetsTable = props => {
+  const { t } = useTranslation();
   const { resource, ...tableProps } = props;
   const [reveal, setReveal] = React.useState(false);
   const data: RowTargetData[] = resource;
@@ -64,12 +66,12 @@ export const TargetsTable = props => {
               {reveal ? (
                 <>
                   <EyeSlashIcon className="co-icon-space-r" />
-                  Hide Values
+                  {`${t('COMMON:MSG_DETAILS_TABSIGNERKEY_3')}`}
                 </>
               ) : (
                 <>
                   <EyeIcon className="co-icon-space-r" />
-                  Reveal Values
+                  {`${t('COMMON:MSG_DETAILS_TABSIGNERKEY_2')}`}
                 </>
               )}
             </Button>

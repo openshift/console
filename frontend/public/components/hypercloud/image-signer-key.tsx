@@ -6,6 +6,7 @@ import { Button } from '@patternfly/react-core';
 
 import { CopyToClipboard } from './utils/copy-to-clipboard';
 import { EmptyBox, SectionHeading } from '../utils';
+import { useTranslation } from 'react-i18next';
 
 export const MaskedData: React.FC<{}> = () => (
   <>
@@ -75,6 +76,7 @@ SecretValue.displayName = 'SecretValue';
 
 export const SecretData: React.FC<SecretDataProps> = ({ data, title, isTable }) => {
   const [reveal, setReveal] = React.useState(false);
+  const { t } = useTranslation();
 
   const dl = [];
   Object.keys(data || {})
@@ -92,12 +94,12 @@ export const SecretData: React.FC<SecretDataProps> = ({ data, title, isTable }) 
             {reveal ? (
               <>
                 <EyeSlashIcon className="co-icon-space-r" />
-                Hide Values
+                {`${t('COMMON:MSG_DETAILS_TABSIGNERKEY_3')}`}
               </>
             ) : (
               <>
                 <EyeIcon className="co-icon-space-r" />
-                Reveal Values
+                {`${t('COMMON:MSG_DETAILS_TABSIGNERKEY_2')}`}
               </>
             )}
           </Button>

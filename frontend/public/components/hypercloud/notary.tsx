@@ -15,7 +15,7 @@ export const NotaryDetailsList: React.FC<NotaryDetailsListProps> = ({ ds }) => {
             <DetailsItem label="Server URL" obj={ds} path="status.notaryURL">
                 {ds.status.notaryURL}
             </DetailsItem>
-            <DetailsItem label={t('COMMON:MSG_LNB_MENU_73')} obj={ds} path="spec.authConfig">
+            <DetailsItem label={t('COMMON:MSG_DETAILS_TABNOTARY_2')} obj={ds} path="spec.authConfig">
                 <div>
                     realm: {ds.spec.authConfig.realm}
                 </div>
@@ -39,12 +39,14 @@ export const NotaryDetailsList: React.FC<NotaryDetailsListProps> = ({ ds }) => {
 
 
 export const NotaryDetails: React.FC<NotaryDetailsProps> = props => {
+    const { t } = useTranslation();
+
     const obj = props.resources.obj.data;
 
     return (
         Object.keys(obj).length !== 0 && <>
             <div className="co-m-pane__body">
-                <SectionHeading text="Notary Details" />
+                <SectionHeading text={`${t('COMMON:MSG_DETAILS_TABNOTARY_1')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
                 <div className="row">
                     <div className="col-lg-6">
                         <NotaryDetailsList ds={obj} />
@@ -52,7 +54,7 @@ export const NotaryDetails: React.FC<NotaryDetailsProps> = props => {
                 </div>
             </div>
             <div className="co-m-pane__body">
-                <SectionHeading text="Conditions" />
+                <SectionHeading text={`${t('COMMON:MSG_DETAILS_TABNOTARY_5')}`} />
                 <Conditions conditions={obj.status?.conditions} showMessage={false} showReason={false} />
             </div>
         </>
