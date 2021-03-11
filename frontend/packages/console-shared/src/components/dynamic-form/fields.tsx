@@ -144,6 +144,10 @@ export const DropdownField: React.FC<FieldProps> = ({ formData, idSchema, name, 
   return <Dropdown id={idSchema.$id} key={idSchema.$id} title={`Select ${title || schema?.title || name}`} selectedKey={formData} items={items ?? {}} onChange={val => onChange(val)} />;
 };
 
+export const TextField: React.FC<FieldProps> = ({ formData, idSchema, name, onChange, onBlur, schema, uiSchema = {}, disabled = false, required = false, readonly = false }) => {
+  return <input className="pf-c-form-control" disabled={disabled} id={idSchema.$id} key={idSchema.$id} onBlur={onBlur && (event => onBlur(idSchema.$id, event.target.value))} onChange={({ currentTarget }) => onChange(currentTarget.value)} readOnly={readonly} required={required} type="text" value={formData} />;
+};
+
 export const CustomSchemaField: React.FC<SchemaFieldProps> = props => {
   const errors = getSchemaErrors(props.schema ?? {});
   if (errors.length) {
@@ -158,6 +162,8 @@ export const CustomSchemaField: React.FC<SchemaFieldProps> = props => {
 export const NullField = () => null;
 
 export default {
+  TextField,
+  AdditionalPropertyField,
   BooleanField,
   DescriptionField,
   DropdownField,
@@ -166,7 +172,6 @@ export default {
   NodeAffinityField,
   NullField,
   PodAffinityField,
-  AdditionalPropertyField,
   ResourceRequirementsField,
   SchemaField: CustomSchemaField,
   UpdateStrategyField,
