@@ -13,6 +13,7 @@ import { WorkloadTableRow, WorkloadTableHeader } from './workload-table';
 import { AsyncComponent, Kebab, KebabAction, ContainerTable, ResourceSummary, SectionHeading, navFactory, LoadingInline, PodsComponent } from './utils';
 import { VolumesTable } from './volumes-table';
 import { StatefulSetModel } from '../models';
+import { ResourceLabel } from '../models/hypercloud/resource-plural';
 
 const { AddStorage, common, ModifyCount } = Kebab.factory;
 export const menuActions: KebabAction[] = [AddHealthChecks, ModifyCount, AddStorage, ...Kebab.getExtensionsActionsForKind(StatefulSetModel), EditHealthChecks, ...common];
@@ -33,7 +34,7 @@ const StatefulSetDetails: React.FC<StatefulSetDetailsProps> = ({ obj: ss }) => {
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_25')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
+        <SectionHeading text={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_1', {0: ResourceLabel(ss, t)})} />
         <PodRingController
           namespace={ss.metadata.namespace}
           kind={ss.kind}

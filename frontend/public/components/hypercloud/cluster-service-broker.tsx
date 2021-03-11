@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import { DetailsPage, ListPage, Table, TableData, TableRow } from '../factory';
 import { DetailsItem, Kebab, navFactory, SectionHeading, ResourceSummary, ResourceLink, ResourceKebab, Timestamp } from '../utils';
+import { ResourceLabel } from '../../models/hypercloud/resource-plural';
 
 const { common } = Kebab.factory;
 const kind = ClusterServiceBrokerModel.kind;
@@ -18,7 +19,7 @@ const ClusterServiceBrokerDetails: React.FC<ClusterServiceBrokerDetailsProps> = 
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_14')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
+        <SectionHeading text={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_1', {0: ResourceLabel(clusterServiceBroker, t)})} />
         <div className="row">
           <div className="col-md-6">
             <ResourceSummary resource={clusterServiceBroker} showPodSelector showNodeSelector></ResourceSummary>

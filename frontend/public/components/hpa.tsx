@@ -10,6 +10,7 @@ import { Conditions } from './conditions';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from './factory';
 import { DetailsItem, Kebab, LabelList, ResourceKebab, ResourceLink, ResourceSummary, SectionHeading, Timestamp, navFactory } from './utils';
 import { ResourceEventStream } from './events';
+import { ResourceLabel } from '../models/hypercloud/resource-plural';
 
 const HorizontalPodAutoscalersReference: K8sResourceKindReference = 'HorizontalPodAutoscaler';
 
@@ -131,7 +132,7 @@ export const HorizontalPodAutoscalersDetails: React.FC<HorizontalPodAutoscalersD
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_32')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
+        <SectionHeading text={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_1', { 0: ResourceLabel(hpa, t) })} />
         <div className="row">
           <div className="col-sm-6">
             <ResourceSummary resource={hpa} />

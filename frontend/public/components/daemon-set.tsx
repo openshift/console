@@ -12,6 +12,7 @@ import { ResourceEventStream } from './events';
 import { VolumesTable } from './volumes-table';
 import { DaemonSetModel } from '../models';
 import { PodRingController, PodRing } from '@console/shared';
+import { ResourceLabel } from '../models/hypercloud/resource-plural';
 
 export const menuActions: KebabAction[] = [AddHealthChecks, Kebab.factory.AddStorage, ...Kebab.getExtensionsActionsForKind(DaemonSetModel), EditHealthChecks, ...Kebab.factory.common];
 
@@ -101,7 +102,7 @@ const DaemonSetDetails: React.FC<DaemonSetDetailsProps> = ({ obj: daemonset }) =
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_30')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
+        <SectionHeading text={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_1', { 0: ResourceLabel(daemonset, t) })} />
         <PodRingController
           namespace={daemonset.metadata.namespace}
           kind={daemonset.kind}
