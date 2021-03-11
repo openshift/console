@@ -3,61 +3,17 @@ import * as _ from 'lodash';
 import { CogsIcon } from '@patternfly/react-icons';
 import { FLAGS } from '@console/shared/src/constants';
 import { FLAG_DEVWORKSPACE } from './consts';
-import {
-  Plugin,
-  Perspective,
-  ModelFeatureFlag,
-  ModelDefinition,
-  DashboardsOverviewResourceActivity,
-  DashboardsOverviewHealthURLSubsystem,
-  DashboardsOverviewHealthPrometheusSubsystem,
-  DashboardsOverviewInventoryItem,
-  DashboardsOverviewHealthOperator,
-  ReduxReducer,
-} from '@console/plugin-sdk';
-import {
-  ClusterVersionModel,
-  NodeModel,
-  PodModel,
-  StorageClassModel,
-  PersistentVolumeClaimModel,
-  ClusterOperatorModel,
-} from '@console/internal/models';
+import { Plugin, Perspective, ModelFeatureFlag, ModelDefinition, DashboardsOverviewResourceActivity, DashboardsOverviewHealthURLSubsystem, DashboardsOverviewHealthPrometheusSubsystem, DashboardsOverviewInventoryItem, DashboardsOverviewHealthOperator, ReduxReducer } from '@console/plugin-sdk';
+import { ClusterVersionModel, NodeModel, PodModel, StorageClassModel, PersistentVolumeClaimModel, ClusterOperatorModel } from '@console/internal/models';
 import { referenceForModel, ClusterOperator } from '@console/internal/module/k8s';
-import {
-  getNodeStatusGroups,
-  getPodStatusGroups,
-  getPVCStatusGroups,
-} from '@console/shared/src/components/dashboard/inventory-card/utils';
-import {
-  fetchK8sHealth,
-  getK8sHealthState,
-  getControlPlaneHealth,
-  getClusterOperatorHealthStatus,
-} from './components/dashboards-page/status';
-import {
-  API_SERVERS_UP,
-  API_SERVER_REQUESTS_SUCCESS,
-  CONTROLLER_MANAGERS_UP,
-  SCHEDULERS_UP,
-} from './queries';
-import {
-  getClusterUpdateTimestamp,
-  isClusterUpdateActivity,
-} from './components/dashboards-page/activity';
+import { getNodeStatusGroups, getPodStatusGroups, getPVCStatusGroups } from '@console/shared/src/components/dashboard/inventory-card/utils';
+import { fetchK8sHealth, getK8sHealthState, getControlPlaneHealth, getClusterOperatorHealthStatus } from './components/dashboards-page/status';
+import { API_SERVERS_UP, API_SERVER_REQUESTS_SUCCESS, CONTROLLER_MANAGERS_UP, SCHEDULERS_UP } from './queries';
+import { getClusterUpdateTimestamp, isClusterUpdateActivity } from './components/dashboards-page/activity';
 import reducer from './redux/reducer';
 import * as models from './models';
 
-type ConsumedExtensions =
-  | Perspective
-  | ModelDefinition
-  | ModelFeatureFlag
-  | DashboardsOverviewResourceActivity
-  | DashboardsOverviewHealthURLSubsystem<any>
-  | DashboardsOverviewHealthPrometheusSubsystem
-  | DashboardsOverviewInventoryItem
-  | DashboardsOverviewHealthOperator<ClusterOperator>
-  | ReduxReducer;
+type ConsumedExtensions = Perspective | ModelDefinition | ModelFeatureFlag | DashboardsOverviewResourceActivity | DashboardsOverviewHealthURLSubsystem<any> | DashboardsOverviewHealthPrometheusSubsystem | DashboardsOverviewInventoryItem | DashboardsOverviewHealthOperator<ClusterOperator> | ReduxReducer;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -80,10 +36,9 @@ const plugin: Plugin<ConsumedExtensions> = [
       name: 'Administrator',
       icon: <CogsIcon />,
       default: true,
-      getLandingPageURL: (flags) =>
-        flags[FLAGS.CAN_LIST_NS] ? '/dashboards' : '/k8s/cluster/projects',
+      getLandingPageURL: flags => (flags[FLAGS.CAN_LIST_NS] ? '/dashboards' : '/k8s/cluster/projects'),
       getK8sLandingPageURL: () => '/search',
-      getImportRedirectURL: (project) => `/k8s/cluster/projects/${project}/workloads`,
+      getImportRedirectURL: project => `/k8s/cluster/projects/${project}/workloads`,
     },
   },
   {
@@ -97,10 +52,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       },
       isActivity: isClusterUpdateActivity,
       getTimestamp: getClusterUpdateTimestamp,
-      loader: () =>
-        import(
-          './components/dashboards-page/ClusterUpdateActivity' /* webpackChunkName: "console-app" */
-        ).then((m) => m.default),
+      loader: () => import('./components/dashboards-page/ClusterUpdateActivity' /* webpackChunkName: "console-app" */).then(m => m.default),
     },
     flags: {
       required: [FLAGS.CLUSTER_VERSION],
@@ -129,10 +81,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       title: 'Control Plane',
       queries: [API_SERVERS_UP, CONTROLLER_MANAGERS_UP, SCHEDULERS_UP, API_SERVER_REQUESTS_SUCCESS],
       healthHandler: getControlPlaneHealth,
-      popupComponent: () =>
-        import(
-          './components/dashboards-page/ControlPlaneStatus' /* webpackChunkName: "console-app" */
-        ).then((m) => m.default),
+      popupComponent: () => import('./components/dashboards-page/ControlPlaneStatus' /* webpackChunkName: "console-app" */).then(m => m.default),
       popupTitle: 'Control Plane status',
       disallowedProviders: ['IBMCloud'],
     },
@@ -178,10 +127,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         },
       ],
       getOperatorsWithStatuses: getClusterOperatorHealthStatus,
-      operatorRowLoader: () =>
-        import(
-          './components/dashboards-page/OperatorStatus' /* webpackChunkName: "console-app" */
-        ).then((c) => c.default),
+      operatorRowLoader: () => import('./components/dashboards-page/OperatorStatus' /* webpackChunkName: "console-app" */).then(c => c.default),
       viewAllLink: '/settings/cluster/clusteroperators',
     },
     flags: {

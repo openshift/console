@@ -3,44 +3,21 @@ import * as _ from 'lodash-es';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import UtilizationItem, {
-  TopConsumerPopoverProp,
-  MultilineUtilizationItem,
-  QueryWithDescription,
-  LimitRequested,
-} from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
+import UtilizationItem, { TopConsumerPopoverProp, MultilineUtilizationItem, QueryWithDescription, LimitRequested } from '@console/shared/src/components/dashboard/utilization-card/UtilizationItem';
 import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
 import ConsumerPopover from '@console/shared/src/components/dashboard/utilization-card/TopConsumerPopover';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
-import {
-  useExtensions,
-  DashboardsOverviewUtilizationItem,
-  isDashboardsOverviewUtilizationItem,
-} from '@console/plugin-sdk';
+import { useExtensions, DashboardsOverviewUtilizationItem, isDashboardsOverviewUtilizationItem } from '@console/plugin-sdk';
 import { PopoverPosition } from '@patternfly/react-core';
 import { DashboardItemProps, withDashboardResources } from '../../with-dashboard-resources';
-import {
-  humanizeBinaryBytes,
-  humanizeCpuCores,
-  humanizeNumber,
-  humanizeDecimalBytesPerSec,
-} from '../../../utils/units';
+import { humanizeBinaryBytes, humanizeCpuCores, humanizeNumber, humanizeDecimalBytesPerSec } from '../../../utils/units';
 import { getRangeVectorStats, getInstantVectorStats } from '../../../graphs/utils';
 import { Dropdown } from '../../../utils/dropdown';
-import {
-  OverviewQuery,
-  utilizationQueries,
-  top25ConsumerQueries,
-  multilineQueries,
-} from './queries';
+import { OverviewQuery, utilizationQueries, top25ConsumerQueries, multilineQueries } from './queries';
 import { NodeModel, PodModel, ProjectModel } from '../../../../models';
 import { getPrometheusQueryResponse } from '../../../../actions/dashboards';
 import { Humanize } from '../../../utils/types';
-import {
-  useMetricDuration,
-  UTILIZATION_QUERY_HOUR_MAP,
-  Duration,
-} from '@console/shared/src/components/dashboard/duration-hook';
+import { useMetricDuration, UTILIZATION_QUERY_HOUR_MAP, Duration } from '@console/shared/src/components/dashboard/duration-hook';
 import { DataPoint, PrometheusResponse } from '../../../graphs';
 
 const cpuQueriesPopup = [
@@ -146,11 +123,8 @@ const networkOutQueriesPopup = [
   },
 ];
 
-const mapStatsWithDesc = (
-  stats: PrometheusResponse,
-  description: DataPoint['description'],
-): DataPoint[] =>
-  getRangeVectorStats(stats).map((dp) => {
+const mapStatsWithDesc = (stats: PrometheusResponse, description: DataPoint['description']): DataPoint[] =>
+  getRangeVectorStats(stats).map(dp => {
     dp.x.setSeconds(0, 0);
     return {
       ...dp,
@@ -158,204 +132,95 @@ const mapStatsWithDesc = (
     };
   });
 
-export const PrometheusUtilizationItem = withDashboardResources<PrometheusUtilizationItemProps>(
-  ({
-    watchPrometheus,
-    stopWatchPrometheusQuery,
-    prometheusResults,
-    utilizationQuery,
-    totalQuery,
-    duration,
-    adjustDuration,
-    title,
-    TopConsumerPopover,
-    humanizeValue,
-    byteDataType,
-    setTimestamps,
-    namespace,
-    isDisabled = false,
-    limitQuery,
-    requestQuery,
-    setLimitReqState,
-  }) => {
-    let stats: DataPoint[] = [];
-    let limitStats: DataPoint[];
-    let requestStats: DataPoint[];
-    let utilization: PrometheusResponse, utilizationError: any;
-    let total: PrometheusResponse, totalError: any;
-    let max: DataPoint<number>[];
-    let limit: PrometheusResponse, limitError: any;
-    let request: PrometheusResponse, requestError: any;
-    let isLoading = false;
+export const PrometheusUtilizationItem = withDashboardResources<PrometheusUtilizationItemProps>(({ watchPrometheus, stopWatchPrometheusQuery, prometheusResults, utilizationQuery, totalQuery, duration, adjustDuration, title, TopConsumerPopover, humanizeValue, byteDataType, setTimestamps, namespace, isDisabled = false, limitQuery, requestQuery, setLimitReqState }) => {
+  let stats: DataPoint[] = [];
+  let limitStats: DataPoint[];
+  let requestStats: DataPoint[];
+  let utilization: PrometheusResponse, utilizationError: any;
+  let total: PrometheusResponse, totalError: any;
+  let max: DataPoint<number>[];
+  let limit: PrometheusResponse, limitError: any;
+  let request: PrometheusResponse, requestError: any;
+  let isLoading = false;
 
-    const effectiveDuration = React.useMemo(
-      () =>
-        adjustDuration
-          ? adjustDuration(UTILIZATION_QUERY_HOUR_MAP[duration])
-          : UTILIZATION_QUERY_HOUR_MAP[duration],
-      [adjustDuration, duration],
-    );
-    React.useEffect(() => {
-      if (!isDisabled) {
-        watchPrometheus(utilizationQuery, namespace, effectiveDuration);
-        totalQuery && watchPrometheus(totalQuery, namespace);
-        limitQuery && watchPrometheus(limitQuery, namespace, effectiveDuration);
-        requestQuery && watchPrometheus(requestQuery, namespace, effectiveDuration);
-        return () => {
-          stopWatchPrometheusQuery(utilizationQuery, effectiveDuration);
-          totalQuery && stopWatchPrometheusQuery(totalQuery);
-          limitQuery && stopWatchPrometheusQuery(limitQuery, effectiveDuration);
-          requestQuery && stopWatchPrometheusQuery(requestQuery, effectiveDuration);
-        };
-      }
-    }, [
-      watchPrometheus,
-      stopWatchPrometheusQuery,
-      effectiveDuration,
-      utilizationQuery,
-      totalQuery,
-      namespace,
-      isDisabled,
-      limitQuery,
-      requestQuery,
-    ]);
-
+  const effectiveDuration = React.useMemo(() => (adjustDuration ? adjustDuration(UTILIZATION_QUERY_HOUR_MAP[duration]) : UTILIZATION_QUERY_HOUR_MAP[duration]), [adjustDuration, duration]);
+  React.useEffect(() => {
     if (!isDisabled) {
-      [utilization, utilizationError] = getPrometheusQueryResponse(
-        prometheusResults,
-        utilizationQuery,
-        effectiveDuration,
-      );
-      [total, totalError] = getPrometheusQueryResponse(prometheusResults, totalQuery);
-      [limit, limitError] = getPrometheusQueryResponse(
-        prometheusResults,
-        limitQuery,
-        effectiveDuration,
-      );
-      [request, requestError] = getPrometheusQueryResponse(
-        prometheusResults,
-        requestQuery,
-        effectiveDuration,
-      );
+      watchPrometheus(utilizationQuery, namespace, effectiveDuration);
+      totalQuery && watchPrometheus(totalQuery, namespace);
+      limitQuery && watchPrometheus(limitQuery, namespace, effectiveDuration);
+      requestQuery && watchPrometheus(requestQuery, namespace, effectiveDuration);
+      return () => {
+        stopWatchPrometheusQuery(utilizationQuery, effectiveDuration);
+        totalQuery && stopWatchPrometheusQuery(totalQuery);
+        limitQuery && stopWatchPrometheusQuery(limitQuery, effectiveDuration);
+        requestQuery && stopWatchPrometheusQuery(requestQuery, effectiveDuration);
+      };
+    }
+  }, [watchPrometheus, stopWatchPrometheusQuery, effectiveDuration, utilizationQuery, totalQuery, namespace, isDisabled, limitQuery, requestQuery]);
 
-      stats = mapStatsWithDesc(utilization, (date, value) => `${value} at ${date}`);
-      max = getInstantVectorStats(total);
-      if (limit) {
-        limitStats = mapStatsWithDesc(limit, (date, value) => `${value} total limit`);
-      }
-      if (request) {
-        requestStats = mapStatsWithDesc(request, (date, value) => `${value} total requested`);
-      }
+  if (!isDisabled) {
+    [utilization, utilizationError] = getPrometheusQueryResponse(prometheusResults, utilizationQuery, effectiveDuration);
+    [total, totalError] = getPrometheusQueryResponse(prometheusResults, totalQuery);
+    [limit, limitError] = getPrometheusQueryResponse(prometheusResults, limitQuery, effectiveDuration);
+    [request, requestError] = getPrometheusQueryResponse(prometheusResults, requestQuery, effectiveDuration);
 
-      setTimestamps && setTimestamps(stats.map((stat) => stat.x as Date));
-      isLoading = !utilization || (totalQuery && !total) || (limitQuery && !limit);
+    stats = mapStatsWithDesc(utilization, (date, value) => `${value} at ${date}`);
+    max = getInstantVectorStats(total);
+    if (limit) {
+      limitStats = mapStatsWithDesc(limit, (date, value) => `${value} total limit`);
+    }
+    if (request) {
+      requestStats = mapStatsWithDesc(request, (date, value) => `${value} total requested`);
     }
 
-    return (
-      <UtilizationItem
-        title={title}
-        data={stats}
-        limit={limitStats}
-        requested={requestStats}
-        error={utilizationError || totalError || limitError || requestError}
-        isLoading={isLoading}
-        humanizeValue={humanizeValue}
-        byteDataType={byteDataType}
-        query={utilizationQuery}
-        max={max && max.length ? max[0].y : null}
-        TopConsumerPopover={TopConsumerPopover}
-        setLimitReqState={setLimitReqState}
-      />
-    );
-  },
-);
+    setTimestamps && setTimestamps(stats.map(stat => stat.x as Date));
+    isLoading = !utilization || (totalQuery && !total) || (limitQuery && !limit);
+  }
 
-export const PrometheusMultilineUtilizationItem = withDashboardResources<
-  PrometheusMultilineUtilizationItemProps
->(
-  ({
-    watchPrometheus,
-    stopWatchPrometheusQuery,
-    prometheusResults,
-    queries,
-    duration,
-    adjustDuration,
-    title,
-    TopConsumerPopovers,
-    humanizeValue,
-    byteDataType,
-    namespace,
-    isDisabled = false,
-  }) => {
-    const effectiveDuration = React.useMemo(
-      () =>
-        adjustDuration
-          ? adjustDuration(UTILIZATION_QUERY_HOUR_MAP[duration])
-          : UTILIZATION_QUERY_HOUR_MAP[duration],
-      [adjustDuration, duration],
-    );
-    React.useEffect(() => {
-      if (!isDisabled) {
-        queries.forEach((q) => watchPrometheus(q.query, namespace, effectiveDuration));
-        return () => {
-          queries.forEach((q) => stopWatchPrometheusQuery(q.query, effectiveDuration));
-        };
-      }
-    }, [
-      watchPrometheus,
-      stopWatchPrometheusQuery,
-      duration,
-      queries,
-      namespace,
-      isDisabled,
-      effectiveDuration,
-    ]);
+  return <UtilizationItem title={title} data={stats} limit={limitStats} requested={requestStats} error={utilizationError || totalError || limitError || requestError} isLoading={isLoading} humanizeValue={humanizeValue} byteDataType={byteDataType} query={utilizationQuery} max={max && max.length ? max[0].y : null} TopConsumerPopover={TopConsumerPopover} setLimitReqState={setLimitReqState} />;
+});
 
-    const stats = [];
-    let hasError = false;
-    let isLoading = false;
+export const PrometheusMultilineUtilizationItem = withDashboardResources<PrometheusMultilineUtilizationItemProps>(({ watchPrometheus, stopWatchPrometheusQuery, prometheusResults, queries, duration, adjustDuration, title, TopConsumerPopovers, humanizeValue, byteDataType, namespace, isDisabled = false }) => {
+  const effectiveDuration = React.useMemo(() => (adjustDuration ? adjustDuration(UTILIZATION_QUERY_HOUR_MAP[duration]) : UTILIZATION_QUERY_HOUR_MAP[duration]), [adjustDuration, duration]);
+  React.useEffect(() => {
     if (!isDisabled) {
-      _.forEach(queries, (query, index) => {
-        const [response, responseError] = getPrometheusQueryResponse(
-          prometheusResults,
-          query.query,
-          effectiveDuration,
-        );
-        if (responseError) {
-          hasError = true;
-          return false;
-        }
-        if (!response) {
-          isLoading = true;
-          return false;
-        }
-        stats.push(
-          mapStatsWithDesc(response, (date, value) => {
-            const text = `${query.desc.toUpperCase()}: ${value}`;
-            return index ? text : `${date}\n${text}`;
-          }),
-        );
-      });
+      queries.forEach(q => watchPrometheus(q.query, namespace, effectiveDuration));
+      return () => {
+        queries.forEach(q => stopWatchPrometheusQuery(q.query, effectiveDuration));
+      };
     }
+  }, [watchPrometheus, stopWatchPrometheusQuery, duration, queries, namespace, isDisabled, effectiveDuration]);
 
-    return (
-      <MultilineUtilizationItem
-        title={title}
-        data={stats}
-        error={hasError}
-        isLoading={isLoading}
-        humanizeValue={humanizeValue}
-        byteDataType={byteDataType}
-        queries={queries}
-        TopConsumerPopovers={TopConsumerPopovers}
-      />
-    );
-  },
-);
+  const stats = [];
+  let hasError = false;
+  let isLoading = false;
+  if (!isDisabled) {
+    _.forEach(queries, (query, index) => {
+      const [response, responseError] = getPrometheusQueryResponse(prometheusResults, query.query, effectiveDuration);
+      if (responseError) {
+        hasError = true;
+        return false;
+      }
+      if (!response) {
+        isLoading = true;
+        return false;
+      }
+      stats.push(
+        mapStatsWithDesc(response, (date, value) => {
+          const text = `${query.desc.toUpperCase()}: ${value}`;
+          return index ? text : `${date}\n${text}`;
+        }),
+      );
+    });
+  }
+
+  return <MultilineUtilizationItem title={title} data={stats} error={hasError} isLoading={isLoading} humanizeValue={humanizeValue} byteDataType={byteDataType} queries={queries} TopConsumerPopovers={TopConsumerPopovers} />;
+});
 
 const getQueries = (itemExtensions: DashboardsOverviewUtilizationItem[]) => {
   const pluginQueries = {};
-  itemExtensions.forEach((e) => {
+  itemExtensions.forEach(e => {
     if (!pluginQueries[e.properties.id]) {
       pluginQueries[e.properties.id] = {
         utilization: e.properties.query,
@@ -367,9 +232,7 @@ const getQueries = (itemExtensions: DashboardsOverviewUtilizationItem[]) => {
 };
 
 export const UtilizationCard = () => {
-  const itemExtensions = useExtensions<DashboardsOverviewUtilizationItem>(
-    isDashboardsOverviewUtilizationItem,
-  );
+  const itemExtensions = useExtensions<DashboardsOverviewUtilizationItem>(isDashboardsOverviewUtilizationItem);
 
   const queries = React.useMemo(() => getQueries(itemExtensions), [itemExtensions]);
 
@@ -377,80 +240,32 @@ export const UtilizationCard = () => {
   const [duration, setDuration] = useMetricDuration();
 
   const cpuPopover = React.useCallback(
-    React.memo<TopConsumerPopoverProp>(({ current }) => (
-      <ConsumerPopover
-        title="CPU"
-        current={current}
-        consumers={cpuQueriesPopup}
-        humanize={humanizeCpuCores}
-        position={PopoverPosition.top}
-      />
-    )),
+    React.memo<TopConsumerPopoverProp>(({ current }) => <ConsumerPopover title="CPU" current={current} consumers={cpuQueriesPopup} humanize={humanizeCpuCores} position={PopoverPosition.top} />),
     [],
   );
 
   const memPopover = React.useCallback(
-    React.memo<TopConsumerPopoverProp>(({ current }) => (
-      <ConsumerPopover
-        title="Memory"
-        current={current}
-        consumers={memQueriesPopup}
-        humanize={humanizeBinaryBytes}
-        position={PopoverPosition.top}
-      />
-    )),
+    React.memo<TopConsumerPopoverProp>(({ current }) => <ConsumerPopover title="Memory" current={current} consumers={memQueriesPopup} humanize={humanizeBinaryBytes} position={PopoverPosition.top} />),
     [],
   );
 
   const storagePopover = React.useCallback(
-    React.memo<TopConsumerPopoverProp>(({ current }) => (
-      <ConsumerPopover
-        title="Filesystem"
-        current={current}
-        consumers={storageQueriesPopup}
-        humanize={humanizeBinaryBytes}
-        position={PopoverPosition.top}
-      />
-    )),
+    React.memo<TopConsumerPopoverProp>(({ current }) => <ConsumerPopover title="Filesystem" current={current} consumers={storageQueriesPopup} humanize={humanizeBinaryBytes} position={PopoverPosition.top} />),
     [],
   );
 
   const podPopover = React.useCallback(
-    React.memo<TopConsumerPopoverProp>(({ current }) => (
-      <ConsumerPopover
-        title="Pod count"
-        current={current}
-        consumers={podQueriesPopup}
-        humanize={humanizeNumber}
-        position={PopoverPosition.top}
-      />
-    )),
+    React.memo<TopConsumerPopoverProp>(({ current }) => <ConsumerPopover title="Pod count" current={current} consumers={podQueriesPopup} humanize={humanizeNumber} position={PopoverPosition.top} />),
     [],
   );
 
   const networkInPopover = React.useCallback(
-    React.memo<TopConsumerPopoverProp>(({ current }) => (
-      <ConsumerPopover
-        title="Network in"
-        current={current}
-        consumers={networkInQueriesPopup}
-        humanize={humanizeDecimalBytesPerSec}
-        position={PopoverPosition.top}
-      />
-    )),
+    React.memo<TopConsumerPopoverProp>(({ current }) => <ConsumerPopover title="Network in" current={current} consumers={networkInQueriesPopup} humanize={humanizeDecimalBytesPerSec} position={PopoverPosition.top} />),
     [],
   );
 
   const networkOutPopover = React.useCallback(
-    React.memo<TopConsumerPopoverProp>(({ current }) => (
-      <ConsumerPopover
-        title="Network out"
-        current={current}
-        consumers={networkOutQueriesPopup}
-        humanize={humanizeDecimalBytesPerSec}
-        position={PopoverPosition.top}
-      />
-    )),
+    React.memo<TopConsumerPopoverProp>(({ current }) => <ConsumerPopover title="Network out" current={current} consumers={networkOutQueriesPopup} humanize={humanizeDecimalBytesPerSec} position={PopoverPosition.top} />),
     [],
   );
 
@@ -461,47 +276,11 @@ export const UtilizationCard = () => {
         <Dropdown items={Duration} onChange={setDuration} selectedKey={duration} title={duration} />
       </DashboardCardHeader>
       <UtilizationBody timestamps={timestamps}>
-        <PrometheusUtilizationItem
-          title="CPU"
-          utilizationQuery={queries[OverviewQuery.CPU_UTILIZATION].utilization}
-          totalQuery={queries[OverviewQuery.CPU_UTILIZATION].total}
-          TopConsumerPopover={cpuPopover}
-          duration={duration}
-          humanizeValue={humanizeCpuCores}
-          setTimestamps={setTimestamps}
-        />
-        <PrometheusUtilizationItem
-          title="Memory"
-          utilizationQuery={queries[OverviewQuery.MEMORY_UTILIZATION].utilization}
-          totalQuery={queries[OverviewQuery.MEMORY_UTILIZATION].total}
-          TopConsumerPopover={memPopover}
-          duration={duration}
-          humanizeValue={humanizeBinaryBytes}
-          byteDataType={ByteDataTypes.BinaryBytes}
-        />
-        <PrometheusUtilizationItem
-          title="Filesystem"
-          utilizationQuery={queries[OverviewQuery.STORAGE_UTILIZATION].utilization}
-          totalQuery={queries[OverviewQuery.STORAGE_UTILIZATION].total}
-          TopConsumerPopover={storagePopover}
-          duration={duration}
-          humanizeValue={humanizeBinaryBytes}
-          byteDataType={ByteDataTypes.BinaryBytes}
-        />
-        <PrometheusMultilineUtilizationItem
-          title="Network Transfer"
-          queries={multilineQueries[OverviewQuery.NETWORK_UTILIZATION]}
-          duration={duration}
-          humanizeValue={humanizeDecimalBytesPerSec}
-          TopConsumerPopovers={[networkInPopover, networkOutPopover]}
-        />
-        <PrometheusUtilizationItem
-          title="Pod count"
-          utilizationQuery={queries[OverviewQuery.POD_UTILIZATION].utilization}
-          TopConsumerPopover={podPopover}
-          duration={duration}
-          humanizeValue={humanizeNumber}
-        />
+        <PrometheusUtilizationItem title="CPU" utilizationQuery={queries[OverviewQuery.CPU_UTILIZATION].utilization} totalQuery={queries[OverviewQuery.CPU_UTILIZATION].total} TopConsumerPopover={cpuPopover} duration={duration} humanizeValue={humanizeCpuCores} setTimestamps={setTimestamps} />
+        <PrometheusUtilizationItem title="Memory" utilizationQuery={queries[OverviewQuery.MEMORY_UTILIZATION].utilization} totalQuery={queries[OverviewQuery.MEMORY_UTILIZATION].total} TopConsumerPopover={memPopover} duration={duration} humanizeValue={humanizeBinaryBytes} byteDataType={ByteDataTypes.BinaryBytes} />
+        <PrometheusUtilizationItem title="Filesystem" utilizationQuery={queries[OverviewQuery.STORAGE_UTILIZATION].utilization} totalQuery={queries[OverviewQuery.STORAGE_UTILIZATION].total} TopConsumerPopover={storagePopover} duration={duration} humanizeValue={humanizeBinaryBytes} byteDataType={ByteDataTypes.BinaryBytes} />
+        <PrometheusMultilineUtilizationItem title="Network Transfer" queries={multilineQueries[OverviewQuery.NETWORK_UTILIZATION]} duration={duration} humanizeValue={humanizeDecimalBytesPerSec} TopConsumerPopovers={[networkInPopover, networkOutPopover]} />
+        <PrometheusUtilizationItem title="Pod count" utilizationQuery={queries[OverviewQuery.POD_UTILIZATION].utilization} TopConsumerPopover={podPopover} duration={duration} humanizeValue={humanizeNumber} />
       </UtilizationBody>
     </DashboardCard>
   );

@@ -2,17 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { connect } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
-import {
-  useExtensions,
-  DashboardsOverviewHealthSubsystem,
-  DashboardsOverviewHealthPrometheusSubsystem,
-  isDashboardsOverviewHealthSubsystem,
-  isDashboardsOverviewHealthURLSubsystem,
-  DashboardsOverviewHealthURLSubsystem,
-  isDashboardsOverviewHealthPrometheusSubsystem,
-  isDashboardsOverviewHealthResourceSubsystem,
-  isDashboardsOverviewHealthOperator,
-} from '@console/plugin-sdk';
+import { useExtensions, DashboardsOverviewHealthSubsystem, DashboardsOverviewHealthPrometheusSubsystem, isDashboardsOverviewHealthSubsystem, isDashboardsOverviewHealthURLSubsystem, DashboardsOverviewHealthURLSubsystem, isDashboardsOverviewHealthPrometheusSubsystem, isDashboardsOverviewHealthResourceSubsystem, isDashboardsOverviewHealthOperator } from '@console/plugin-sdk';
 import { ArrowCircleUpIcon } from '@patternfly/react-icons';
 import { Gallery, GalleryItem, Button } from '@patternfly/react-core';
 import { FLAGS, getInfrastructurePlatform } from '@console/shared';
@@ -24,45 +14,21 @@ import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboa
 import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
 import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
 import { withDashboardResources } from '../../with-dashboard-resources';
-import AlertItem, {
-  StatusItem,
-} from '@console/shared/src/components/dashboard/status-card/AlertItem';
+import AlertItem, { StatusItem } from '@console/shared/src/components/dashboard/status-card/AlertItem';
 import { alertURL } from '../../../monitoring';
-import {
-  ClusterVersionKind,
-  referenceForModel,
-  hasAvailableUpdates,
-  K8sKind,
-} from '../../../../module/k8s';
+import { ClusterVersionKind, referenceForModel, hasAvailableUpdates, K8sKind } from '../../../../module/k8s';
 import { ClusterVersionModel } from '../../../../models';
 import { clusterUpdateModal } from '../../../modals/cluster-update-modal';
 import { RootState } from '../../../../redux';
-import {
-  OperatorHealthItem,
-  PrometheusHealthItem,
-  URLHealthItem,
-  ResourceHealthItem,
-} from './health-item';
+import { OperatorHealthItem, PrometheusHealthItem, URLHealthItem, ResourceHealthItem } from './health-item';
 import { WatchK8sResource, useK8sWatchResource } from '../../../utils/k8s-watch-hook';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { ClusterDashboardContext } from './context';
-
-const filterSubsystems = (
-  subsystems: DashboardsOverviewHealthSubsystem[],
-  k8sModels: ImmutableMap<string, K8sKind>,
-) =>
-  subsystems.filter((s) => {
-    if (
-      isDashboardsOverviewHealthURLSubsystem(s) ||
-      isDashboardsOverviewHealthPrometheusSubsystem(s)
-    ) {
-      const subsystem = s as
-        | DashboardsOverviewHealthPrometheusSubsystem
-        | DashboardsOverviewHealthURLSubsystem;
-      return subsystem.properties.additionalResource &&
-        !subsystem.properties.additionalResource.optional
-        ? !!k8sModels.get(subsystem.properties.additionalResource.kind)
-        : true;
+const filterSubsystems = (subsystems: DashboardsOverviewHealthSubsystem[], k8sModels: ImmutableMap<string, K8sKind>) =>
+  subsystems.filter(s => {
+    if (isDashboardsOverviewHealthURLSubsystem(s) || isDashboardsOverviewHealthPrometheusSubsystem(s)) {
+      const subsystem = s as DashboardsOverviewHealthPrometheusSubsystem | DashboardsOverviewHealthURLSubsystem;
+      return subsystem.properties.additionalResource && !subsystem.properties.additionalResource.optional ? !!k8sModels.get(subsystem.properties.additionalResource.kind) : true;
     }
     return true;
   });
@@ -74,69 +40,51 @@ const cvResource: WatchK8sResource = {
   isList: false,
 };
 
-const ClusterAlerts = withDashboardResources(
-  ({ watchAlerts, stopWatchAlerts, notificationAlerts }) => {
-    const hasCVResource = useFlag(FLAGS.CLUSTER_VERSION);
-    const [cv, cvLoaded] = useK8sWatchResource<ClusterVersionKind>(
-      hasCVResource ? cvResource : ({} as WatchK8sResource),
+const ClusterAlerts = withDashboardResources(({ watchAlerts, stopWatchAlerts, notificationAlerts }) => {
+  const hasCVResource = useFlag(FLAGS.CLUSTER_VERSION);
+  const [cv, cvLoaded] = useK8sWatchResource<ClusterVersionKind>(hasCVResource ? cvResource : ({} as WatchK8sResource));
+  React.useEffect(() => {
+    watchAlerts();
+    return stopWatchAlerts;
+  }, [watchAlerts, stopWatchAlerts]);
+
+  const { data: alerts, loaded: alertsLoaded, loadError: alertsResponseError } = notificationAlerts || {};
+
+  const UpdateIcon = React.useCallback(() => <ArrowCircleUpIcon className="update-pending" />, []);
+
+  const items: React.ReactNode[] = [];
+
+  if (hasCVResource && cvLoaded && hasAvailableUpdates(cv)) {
+    items.push(
+      <StatusItem Icon={UpdateIcon} message="A cluster version update is available">
+        <Button variant="link" onClick={() => clusterUpdateModal({ cv })} isInline>
+          View details
+        </Button>
+      </StatusItem>,
     );
-    React.useEffect(() => {
-      watchAlerts();
-      return stopWatchAlerts;
-    }, [watchAlerts, stopWatchAlerts]);
+  }
 
-    const { data: alerts, loaded: alertsLoaded, loadError: alertsResponseError } =
-      notificationAlerts || {};
+  if (alertsLoaded && !_.isEmpty(alerts)) {
+    items.push(...alerts.map(alert => <AlertItem key={alertURL(alert, alert.rule.id)} alert={alert} />));
+  }
 
-    const UpdateIcon = React.useCallback(
-      () => <ArrowCircleUpIcon className="update-pending" />,
-      [],
-    );
-
-    const items: React.ReactNode[] = [];
-
-    if (hasCVResource && cvLoaded && hasAvailableUpdates(cv)) {
-      items.push(
-        <StatusItem Icon={UpdateIcon} message="A cluster version update is available">
-          <Button variant="link" onClick={() => clusterUpdateModal({ cv })} isInline>
-            View details
-          </Button>
-        </StatusItem>,
-      );
-    }
-
-    if (alertsLoaded && !_.isEmpty(alerts)) {
-      items.push(
-        ...alerts.map((alert) => <AlertItem key={alertURL(alert, alert.rule.id)} alert={alert} />),
-      );
-    }
-
-    return <AlertsBody error={!_.isEmpty(alertsResponseError)}>{items}</AlertsBody>;
-  },
-);
+  return <AlertsBody error={!_.isEmpty(alertsResponseError)}>{items}</AlertsBody>;
+});
 
 const mapStateToProps = (state: RootState) => ({
   k8sModels: state.k8s.getIn(['RESOURCES', 'models']),
 });
 
 export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels }) => {
-  const subsystemExtensions = useExtensions<DashboardsOverviewHealthSubsystem>(
-    isDashboardsOverviewHealthSubsystem,
-  );
+  const subsystemExtensions = useExtensions<DashboardsOverviewHealthSubsystem>(isDashboardsOverviewHealthSubsystem);
 
-  const subsystems = React.useMemo(() => filterSubsystems(subsystemExtensions, k8sModels), [
-    subsystemExtensions,
-    k8sModels,
-  ]);
+  const subsystems = React.useMemo(() => filterSubsystems(subsystemExtensions, k8sModels), [subsystemExtensions, k8sModels]);
 
-  const operatorSubsystemIndex = React.useMemo(
-    () => subsystems.findIndex(isDashboardsOverviewHealthOperator),
-    [subsystems],
-  );
+  const operatorSubsystemIndex = React.useMemo(() => subsystems.findIndex(isDashboardsOverviewHealthOperator), [subsystems]);
   const { infrastructure, infrastructureLoaded } = React.useContext(ClusterDashboardContext);
 
   const healthItems: { title: string; Component: React.ReactNode }[] = [];
-  subsystems.forEach((subsystem) => {
+  subsystems.forEach(subsystem => {
     if (isDashboardsOverviewHealthURLSubsystem(subsystem)) {
       healthItems.push({
         title: subsystem.properties.title,
@@ -144,11 +92,7 @@ export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels
       });
     } else if (isDashboardsOverviewHealthPrometheusSubsystem(subsystem)) {
       const { disallowedProviders } = subsystem.properties;
-      if (
-        disallowedProviders?.length &&
-        (!infrastructureLoaded ||
-          disallowedProviders.includes(getInfrastructurePlatform(infrastructure)))
-      ) {
+      if (disallowedProviders?.length && (!infrastructureLoaded || disallowedProviders.includes(getInfrastructurePlatform(infrastructure)))) {
         return;
       }
       healthItems.push({
@@ -179,7 +123,7 @@ export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels
       <DashboardCardBody>
         <HealthBody>
           <Gallery className="co-overview-status__health" gutter="md">
-            {healthItems.map((item) => {
+            {healthItems.map(item => {
               return <GalleryItem key={item.title}>{item.Component}</GalleryItem>;
             })}
           </Gallery>
