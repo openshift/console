@@ -18,6 +18,7 @@ import {
 } from './utils';
 import { StorageClassResourceKind, K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { StorageClassModel } from '../models';
+import { ResourceLabel } from '../models/hypercloud/resource-plural';
 
 export const StorageClassReference: K8sResourceKindReference = 'StorageClass';
 
@@ -99,7 +100,7 @@ const StorageClassDetails: React.SFC<StorageClassDetailsProps> = ({ obj }) => {
   const { t } = useTranslation();
   return <>
     <div className="co-m-pane__body">
-      <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_53')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
+      <SectionHeading text={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_1', {0: ResourceLabel(obj, t)})} />
       <div className="row">
         <div className="col-sm-6">
           <ResourceSummary resource={obj}>
