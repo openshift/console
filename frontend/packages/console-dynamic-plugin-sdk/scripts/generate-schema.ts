@@ -1,5 +1,3 @@
-/* eslint-env node */
-
 import * as path from 'path';
 import * as fs from 'fs';
 import * as findUp from 'find-up';
@@ -47,11 +45,9 @@ const writeSchema = (gs: GeneratedSchema) => {
   fs.writeFileSync(`${outPath}.js`, `export default ${schemaString};`);
 };
 
-// eslint-disable-next-line no-console
 console.log('Generating Console plugin JSON schemas');
 
 schemas.forEach((gs, index) => {
-  // eslint-disable-next-line no-console
   console.log(
     `[${index + 1}/${schemas.length}] ${chalk.cyan(gs.srcFile)}:${chalk.bold.cyan(gs.type)}`,
   );
