@@ -31,9 +31,8 @@ $tooltip-background-color: #151515;
   padding-right: 10px;
 }
 
-.graph-wrapper--query-browser {
-  padding-left: 50px;
-  padding-right: 10px;
+.graph-wrapper.graph-wrapper--query-browser {
+  padding: 5px 10px 15px 50px;
 
   &--with-legend {
     min-height: 305px;

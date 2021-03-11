@@ -1,9 +1,15 @@
 import * as _ from 'lodash-es';
 import * as moment from 'moment';
 
+const getLocale = () => localStorage.getItem('bridge/language');
+
+export const getLocaleDate = (date: Date, options): string =>
+  date.toLocaleDateString(getLocale() || undefined, options);
+
 // Behaves like moment.js's fromNow
 export const fromNow = (dateTime, now = undefined, options = { omitSuffix: false }) => {
-  // Check for null. If dateTime is null, it returns incorrect date and time of Wed Dec 31 1969 19:00:00 GMT-0500 (Eastern Standard Time)
+  // Check for null. If dateTime is null, it returns incorrect date and time of Wed Dec 31 1969
+  // 19:00:00 GMT-0500 (Eastern Standard Time)
   if (!dateTime) {
     return '-';
   }
@@ -67,7 +73,8 @@ export const formatPrometheusDuration = (ms: number) => {
   return _.trim(str);
 };
 
-// Converts a duration like "1h 10m 23s" to milliseconds or returns 0 if the duration could not be parsed
+// Converts a duration like "1h 10m 23s" to milliseconds or returns 0 if the duration could not be
+// parsed
 export const parsePrometheusDuration = (duration: string): number => {
   try {
     const parts = duration
