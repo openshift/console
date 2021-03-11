@@ -212,6 +212,11 @@ const kebabFactory: KebabFactory = {
     // TODO: Fallback to "View YAML"? We might want a similar fallback for annotations, labels, etc.
     accessReview: asAccessReview(kind, obj, 'update'),
   }),
+  EditSecret: (kind, obj) => ({
+    label: `COMMON:MSG_MAIN_ACTIONBUTTON_15**${ResourceStringKeyMap[kind.kind]?.labelPlural ?? kind.label}`,
+    href: `${resourceObjPath(obj, kind.kind)}/edit`,
+    accessReview: asAccessReview(kind, obj, 'update'),
+  }),
   ModifyLabels: (kind, obj) => ({
     label: 'COMMON:MSG_MAIN_ACTIONBUTTON_4',
     callback: () =>
