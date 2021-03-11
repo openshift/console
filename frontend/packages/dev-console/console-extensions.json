@@ -183,5 +183,12 @@
     "flags": {
       "required": ["OPENSHIFT"]
     }
+  },
+  {
+    "type": "console.file-upload",
+    "properties": {
+      "fileExtensions": ["jar"],
+      "handler": { "$codeRef": "fileUpload.jarFileUploadHandler" }
+    }
   }
 ]

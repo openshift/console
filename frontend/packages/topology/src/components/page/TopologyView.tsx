@@ -1,6 +1,8 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import * as classNames from 'classnames';
 import { connect } from 'react-redux';
+import { ConnectDropTarget, DropTargetMonitor } from 'react-dnd';
 import { Stack, StackItem } from '@patternfly/react-core';
 import { GraphElement, isGraph, Model, Visualization } from '@patternfly/react-topology';
 import { useDeepCompareMemoize, useQueryParams } from '@console/shared';
@@ -15,6 +17,10 @@ import {
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import { useAddToProjectAccess } from '@console/dev-console/src/utils/useAddToProjectAccess';
 import { getEventSourceStatus } from '@console/knative-plugin/src/topology/knative-topology-utils';
+import {
+  FileUploadContextType,
+  FileUploadContext,
+} from '@console/app/src/components/file-upload/file-upload-context';
 import {
   GraphData,
   TopologyDecorator,
@@ -46,20 +52,25 @@ import './TopologyView.scss';
 const FILTER_ACTIVE_CLASS = 'odc-m-filter-active';
 
 interface StateProps {
-  application: string;
-  eventSourceEnabled: boolean;
+  application?: string;
+  eventSourceEnabled?: boolean;
 }
 
 interface DispatchProps {
   onSelectTab?: (name: string) => void;
-  onSupportedFiltersChange: (supportedFilterIds: string[]) => void;
-  onSupportedKindsChange: (supportedKinds: { [key: string]: number }) => void;
+  onSupportedFiltersChange?: (supportedFilterIds: string[]) => void;
+  onSupportedKindsChange?: (supportedKinds: { [key: string]: number }) => void;
 }
 
-interface TopologyViewProps {
+export interface TopologyViewProps {
   model: Model;
   namespace: string;
   viewType: TopologyViewType;
+  connectDropTarget?: ConnectDropTarget;
+  isOver?: boolean;
+  canDrop?: boolean;
+  onDrop?: (monitor: DropTargetMonitor) => void;
+  canDropFile?: boolean;
 }
 
 type ComponentProps = TopologyViewProps & StateProps & DispatchProps;
@@ -72,7 +83,11 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
   application,
   onSupportedFiltersChange,
   onSupportedKindsChange,
+  connectDropTarget,
+  isOver,
+  canDrop,
 }) => {
+  const { t } = useTranslation();
   const [viewContainer, setViewContainer] = React.useState<HTMLElement>(null);
   const { setTopologyFilters: onFiltersChange } = React.useContext(FilterContext);
   const [filteredModel, setFilteredModel] = React.useState<Model>();
@@ -100,7 +115,12 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
   }>({});
   const [filtersLoaded, setFiltersLoaded] = React.useState<boolean>(false);
   const queryParams = useQueryParams();
+  const { extensions: supportedFileExtensions } = React.useContext<FileUploadContextType>(
+    FileUploadContext,
+  );
+
   const searchParams = queryParams.get('searchQuery');
+  const fileTypes = supportedFileExtensions.map((ex) => `.${ex}`).toString();
 
   const onSelect = React.useCallback((entity?: GraphElement) => {
     // set empty selection when selecting the graph
@@ -261,7 +281,7 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
     'pf-topology-container__with-sidebar--open': topologySideBar.shown,
   });
 
-  return (
+  const topologyViewComponent = (
     <div className="odc-topology">
       <Stack>
         <StackItem isFilled={false}>
@@ -269,15 +289,30 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
             viewType={viewType}
             visualization={visualization}
             setIsQuickSearchOpen={setIsQuickSearchOpen}
-            isDisabled={!model?.nodes?.length}
+            isDisabled={!model.nodes?.length}
           />
         </StackItem>
         <StackItem isFilled className={containerClasses}>
-          <div ref={setViewContainer} className="pf-topology-content">
-            {viewContent}
-            {!model?.nodes?.length ? (
-              <TopologyEmptyState setIsQuickSearchOpen={setIsQuickSearchOpen} />
-            ) : null}
+          <div className="co-file-dropzone co-file-dropzone__flex">
+            <div ref={setViewContainer} className="pf-topology-content">
+              {canDrop && isOver && (
+                <div
+                  className={classNames(
+                    'co-file-dropzone-container',
+                    'co-file-dropzone--drop-over',
+                    'odc-topology__dropzone',
+                  )}
+                >
+                  <span className="co-file-dropzone__drop-text odc-topology__dropzone-text">
+                    {t('topology~Drop file ({{fileTypes}}) here', { fileTypes })}
+                  </span>
+                </div>
+              )}
+              {viewContent}
+              {!model.nodes?.length ? (
+                <TopologyEmptyState setIsQuickSearchOpen={setIsQuickSearchOpen} />
+              ) : null}
+            </div>
           </div>
           {topologySideBar.sidebar}
         </StackItem>
@@ -290,6 +325,10 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
       </Stack>
     </div>
   );
+
+  return typeof connectDropTarget === 'function'
+    ? connectDropTarget(topologyViewComponent)
+    : topologyViewComponent;
 };
 
 const TopologyStateToProps = (state: RootState): StateProps => {

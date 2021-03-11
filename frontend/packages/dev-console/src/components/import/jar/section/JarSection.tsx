@@ -4,6 +4,10 @@ import { useTranslation } from 'react-i18next';
 import { FormGroup, TextInputTypes } from '@patternfly/react-core';
 import { FileUploadField, InputField } from '@console/shared/src';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
+import {
+  FileUploadContext,
+  FileUploadContextType,
+} from '@console/app/src/components/file-upload/file-upload-context';
 import FormSection from '../../section/FormSection';
 import { getAppName } from '../../upload-jar-validation-utils';
 
@@ -19,25 +23,39 @@ const JarSection: React.FunctionComponent = () => {
     setFieldTouched,
     touched,
   } = useFormikContext<FormikValues>();
+  const { fileUpload, setFileUpload } = React.useContext<FileUploadContextType>(FileUploadContext);
+
   const { name: nameTouched } = touched;
 
-  const updatedJarFile = (value: File, filename: string): void => {
-    if (filename) {
-      const appName = getAppName(filename);
-      setFieldValue('fileUpload.name', filename);
-      setFieldTouched('fileUpload.name', true);
-      value && setFieldValue('fileUpload.value', value);
-      appName && !nameTouched && !name && setFieldValue('name', appName);
-      !name && setFieldValue('name', appName);
-      appName &&
-        !appGroupName &&
-        appGroupSelectedKey !== UNASSIGNED_KEY &&
-        setFieldValue('application.name', `${appName}-app`);
-    } else {
-      setFieldValue('fileUpload.name', '');
-      setFieldValue('fileUpload.value', '');
+  const updatedJarFile = React.useCallback(
+    (value: File, filename: string): void => {
+      if (filename) {
+        const appName = getAppName(filename);
+        setFieldValue('fileUpload.name', filename);
+        setFieldTouched('fileUpload.name', true);
+        value && setFieldValue('fileUpload.value', value);
+        appName && !nameTouched && !name && setFieldValue('name', appName);
+        !name && setFieldValue('name', appName);
+        appName &&
+          !appGroupName &&
+          appGroupSelectedKey !== UNASSIGNED_KEY &&
+          setFieldValue('application.name', `${appName}-app`);
+      } else {
+        setFieldValue('fileUpload.name', '');
+        setFieldValue('fileUpload.value', '');
+      }
+    },
+    [appGroupName, appGroupSelectedKey, setFieldValue, setFieldTouched, name, nameTouched],
+  );
+
+  React.useEffect(() => {
+    if (fileUpload) {
+      updatedJarFile(fileUpload, fileUpload.name);
+      if (fileName) {
+        setFileUpload(undefined);
+      }
     }
-  };
+  }, [fileUpload, updatedJarFile, setFileUpload, fileName]);
 
   return (
     <FormSection title={t('devconsole~JAR')}>

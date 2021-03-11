@@ -4,6 +4,10 @@ import { observer } from '@patternfly/react-topology';
 import { Tooltip, Popover, Button } from '@patternfly/react-core';
 import { ListIcon, TopologyIcon, QuestionCircleIcon } from '@patternfly/react-icons';
 import { useIsMobile } from '@console/shared';
+import {
+  FileUploadContext,
+  FileUploadContextType,
+} from '@console/app/src/components/file-upload/file-upload-context';
 import { getTopologyShortcuts } from '../graph-view/TopologyShortcuts';
 import { ModelContext, ExtensibleModel } from '../../data-transforms/ModelContext';
 import { TopologyViewType } from '../../topology-types';
@@ -17,6 +21,7 @@ const TopologyPageToolbar: React.FC<TopologyPageToolbarProps> = observer(
   ({ viewType, onViewChange }) => {
     const { t } = useTranslation();
     const isMobile = useIsMobile();
+    const { extensions } = React.useContext<FileUploadContextType>(FileUploadContext);
     const showGraphView = viewType === TopologyViewType.graph;
     const dataModelContext = React.useContext<ExtensibleModel>(ModelContext);
     const { namespace, isEmptyModel } = dataModelContext;
@@ -33,7 +38,7 @@ const TopologyPageToolbar: React.FC<TopologyPageToolbarProps> = observer(
         {showGraphView && !isMobile ? (
           <Popover
             aria-label={t('topology~Shortcuts')}
-            bodyContent={getTopologyShortcuts(t)}
+            bodyContent={getTopologyShortcuts(t, { supportedFileTypes: extensions })}
             position="left"
             maxWidth="100vw"
           >

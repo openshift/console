@@ -87,6 +87,16 @@
     margin-right: var(--pf-global--spacer--2xl);
   }
 
+  &__dropzone {
+    background-color: rgba(0, 102, 204, 0.1) !important;
+    color: var(--pf-global--palette--black-900) !important;
+  }
+
+  &__dropzone-text {
+    top: 0%;
+    padding-top: var(--pf-global--spacer--lg);
+  }
+
   .pf-topology-container {
     display: flex;
   }

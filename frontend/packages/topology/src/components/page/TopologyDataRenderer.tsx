@@ -3,9 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { observer } from '@patternfly/react-topology';
 import { StatusBox } from '@console/internal/components/utils';
 import { ModelContext, ExtensibleModel } from '../../data-transforms/ModelContext';
-import TopologyView from './TopologyView';
 import { TopologyViewType } from '../../topology-types';
 import { FilterProvider } from '../../filters/FilterProvider';
+import { DroppableTopologyComponent } from './DroppableTopologyComponent';
 
 interface TopologyDataRendererProps {
   viewType: TopologyViewType;
@@ -33,7 +33,7 @@ const TopologyDataRenderer: React.FC<TopologyDataRendererProps> = observer(({ vi
       loadError={loadError}
     >
       <FilterProvider>
-        <TopologyView viewType={viewType} model={model} namespace={namespace} />
+        <DroppableTopologyComponent viewType={viewType} model={model} namespace={namespace} />
       </FilterProvider>
     </StatusBox>
   );
