@@ -5,10 +5,13 @@ import { TFunction } from 'i18next';
 import { SecretModel, ConfigMapModel } from '@console/internal/models';
 import { DropdownField } from '@console/shared';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
+import { Alert } from '@patternfly/react-core';
 import { VolumeTypes } from '../../const';
+import VolumeClaimTemplateForm from './VolumeClaimTemplateForm';
 import PVCDropdown from './PVCDropdown';
 import MultipleResourceKeySelector from './MultipleResourceKeySelector';
 import { PipelineModalFormWorkspace } from './types';
+import './PipelineWorkspacesSection.scss';
 
 const getVolumeTypeFields = (volumeType: VolumeTypes, index: number, t: TFunction) => {
   switch (VolumeTypes[volumeType]) {
@@ -33,6 +36,26 @@ const getVolumeTypeFields = (volumeType: VolumeTypes, index: number, t: TFunctio
           resourceModel={ConfigMapModel}
           addString={t('pipelines-plugin~Add item')}
           required
+        />
+      );
+    }
+    case VolumeTypes.EmptyDirectory: {
+      return (
+        <div className="odc-PipelineWorkspacesSection__emptydir">
+          <Alert
+            isInline
+            variant="info"
+            title={t("pipelines-plugin~Empty Directory doesn't support shared data between tasks.")}
+          />
+        </div>
+      );
+    }
+    case VolumeTypes.VolumeClaimTemplate: {
+      return (
+        <VolumeClaimTemplateForm
+          name={`workspaces.${index}.data.volumeClaimTemplate`}
+          initialSizeValue="1"
+          initialSizeUnit="Gi"
         />
       );
     }

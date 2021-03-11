@@ -336,6 +336,8 @@ describe('convertPipelineToModalData', () => {
   it('expect to return workspaces with type PVC, if preselect PVC argument is passed', () => {
     const { workspaces } = convertPipelineToModalData(workspacePipeline, false, 'test-pvc');
     expect(workspaces.filter((workspace) => workspace.type === 'EmptyDirectory')).toHaveLength(0);
-    expect(workspaces.filter((workspace) => workspace.type === 'PVC')).toHaveLength(3);
+    expect(
+      workspaces.filter((workspace) => workspace.type === 'PersistentVolumeClaim'),
+    ).toHaveLength(3);
   });
 });
