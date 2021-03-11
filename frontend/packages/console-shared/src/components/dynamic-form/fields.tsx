@@ -13,7 +13,7 @@ import { AdditionalPropertyFields } from '@console/operator-lifecycle-manager/sr
 import { ConfigureUpdateStrategy, UPDATE_STRATEGY_DESCRIPTION } from '@console/internal/components/modals/configure-update-strategy-modal';
 import { NodeAffinity, PodAffinity } from '@console/operator-lifecycle-manager/src/components/descriptors/spec/affinity';
 import { getSchemaErrors, useSchemaDescription, useSchemaLabel } from './utils';
-
+// import { useTranslation } from 'react-i18next';
 const Description = ({ id, description }) =>
   description ? (
     <span id={id} className="help-block">
@@ -23,7 +23,11 @@ const Description = ({ id, description }) =>
     </span>
   ) : null;
 
-export const DescriptionField: React.FC<FieldProps> = ({ id, description }) => <Description id={id} description={description} />;
+export const DescriptionField: React.FC<FieldProps> = ({ id, description }) => {
+  // const { t } = useTranslation();
+  // return <Description id={id} description={t(`COMMON:${description}`)} />;
+  return <Description id={id} description={description} />;
+};
 
 export const FormField: React.FC<FormFieldProps> = ({ children, id, defaultLabel, required, schema, uiSchema }) => {
   const [showLabel, label] = useSchemaLabel(schema, uiSchema, defaultLabel || 'Value');
