@@ -62,7 +62,7 @@ const StreamsInstanceTable = ({
           return {
             cells: [
               { title: name },
-              { title: provider },
+              { title: provider === 'aws' ? 'Amazon Web Services' : provider },
               { title: region },
               { title: <a href="/">{owner}</a> },
               { title: status[0].toUpperCase() + status.substring(1) },
