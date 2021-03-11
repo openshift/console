@@ -10,6 +10,7 @@ import { history } from './router';
 import { KebabItems } from './kebab';
 import { ResourceName } from './resource-icon';
 import { useSafetyFirst } from '../safety-first';
+import { useTranslation } from 'react-i18next';
 
 export class DropdownMixin extends React.PureComponent {
   constructor(props) {
@@ -487,7 +488,7 @@ Dropdown.defaultProps = {
 
 class ActionsMenuDropdown extends DropdownMixin {
   render() {
-    const { actions, title = undefined } = this.props;
+    const { actions, title = undefined, t } = this.props;
     const onClick = (event, option) => {
       event.preventDefault();
 
@@ -510,7 +511,7 @@ class ActionsMenuDropdown extends DropdownMixin {
         })}
       >
         <button type="button" aria-haspopup="true" aria-label="Actions" aria-expanded={this.state.active} className="pf-c-dropdown__toggle" onClick={this.toggle} data-test-id="actions-menu-button">
-          <span className="pf-c-dropdown__toggle-text">{title || 'Actions'}</span>
+          <span className="pf-c-dropdown__toggle-text">{title || t('COMMON:MSG_MAIN_ACTIONBUTTON_1')}</span>
           <CaretDownIcon className="pf-c-dropdown__toggle-icon" />
         </button>
         {this.state.active && <KebabItems options={actions} onClick={onClick} />}
@@ -520,6 +521,7 @@ class ActionsMenuDropdown extends DropdownMixin {
 }
 
 const ActionsMenu_ = ({ actions, impersonate, title = undefined }) => {
+  const { t } = useTranslation();
   const [isVisible, setVisible] = useSafetyFirst(false);
 
   // Check if any actions are visible when actions have access reviews.
@@ -547,7 +549,7 @@ const ActionsMenu_ = ({ actions, impersonate, title = undefined }) => {
       .catch(() => setVisible(true));
   }, [actions, impersonate, setVisible]);
 
-  return isVisible ? <ActionsMenuDropdown actions={actions} title={title} /> : null;
+  return isVisible ? <ActionsMenuDropdown actions={actions} title={title} t={t} /> : null;
 };
 export const ActionsMenu = connect(impersonateStateToProps)(ActionsMenu_);
 

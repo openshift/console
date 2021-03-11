@@ -13,6 +13,7 @@ import { configureJobParallelismModal } from './modals';
 import { ContainerTable, DetailsItem, Kebab, KebabAction, LabelList, PodsComponent, ResourceKebab, ResourceLink, ResourceSummary, SectionHeading, Timestamp, navFactory, pluralize } from './utils';
 import { ResourceEventStream } from './events';
 import { JobModel } from '../models';
+import { ResourceLabel } from '../models/hypercloud/resource-plural';
 
 const ModifyJobParallelism: KebabAction = (kind: K8sKind, obj: JobKind) => {
   const { t } = useTranslation();
@@ -124,7 +125,7 @@ const JobDetails: React.FC<JobsDetailsProps> = ({ obj: job }) => {
       <div className="co-m-pane__body">
         <div className="row">
           <div className="col-md-6">
-            <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_29')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
+            <SectionHeading text={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_1', { 0: ResourceLabel(job, t) })} />
             <ResourceSummary resource={job} showPodSelector>
               <DetailsItem label={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_35')} obj={job} path="spec.completions" />
               <DetailsItem label={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_36')} obj={job} path="spec.parallelism" />

@@ -9,6 +9,7 @@ import { CronJobKind } from '../module/k8s';
 import { ContainerTable, DetailsItem, Kebab, ResourceKebab, ResourceLink, ResourceSummary, SectionHeading, Timestamp, navFactory, pluralize } from './utils';
 import { ResourceEventStream } from './events';
 import { CronJobModel } from '../models';
+import { ResourceLabel } from '../models/hypercloud/resource-plural';
 
 const { common } = Kebab.factory;
 const menuActions = [...Kebab.getExtensionsActionsForKind(CronJobModel), ...common];
@@ -84,7 +85,7 @@ const CronJobDetails: React.FC<CronJobDetailsProps> = ({ obj: cronjob }) => {
       <div className="co-m-pane__body">
         <div className="row">
           <div className="col-md-6">
-            <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_28')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
+            <SectionHeading text={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_1', { 0: ResourceLabel(cronjob, t) })} />
             <ResourceSummary resource={cronjob}>
               <DetailsItem label={t('COMMON:MSG_MAIN_TABLEHEADER_19')} obj={cronjob} path="spec.schedule" />
               <DetailsItem label={t('COMMON:MSG_MAIN_TABLEHEADER_20')} obj={cronjob} path="spec.concurrencyPolicy" />

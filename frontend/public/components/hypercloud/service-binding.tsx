@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import { DetailsPage, ListPage, Table, TableData, TableRow } from '../factory';
 import { Kebab, ResourceKebab, navFactory, SectionHeading, ResourceSummary, ResourceLink, Timestamp } from '../utils';
+import { ResourceLabel } from '../../models/hypercloud/resource-plural';
 
 const { common } = Kebab.factory;
 
@@ -20,7 +21,7 @@ const ServiceBindingDetails: React.FC<ServiceBindingDetailsProps> = ({ obj: serv
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_18')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
+        <SectionHeading text={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_1', { 0: ResourceLabel(serviceBinding, t) })} />
         <div className="row">
           <div className="col-md-6">
             <ResourceSummary resource={serviceBinding} showPodSelector showNodeSelector showOwner={false}></ResourceSummary>
