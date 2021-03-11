@@ -8,6 +8,8 @@ import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from '
 import { Kebab, KebabAction, detailsPage, Timestamp, navFactory, ResourceKebab, ResourceLink, ResourceSummary, SectionHeading } from '../utils';
 import { ImageScanRequestModel } from '../../models';
 import { Status } from '@console/shared';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 
 export const menuActions: KebabAction[] = [...Kebab.getExtensionsActionsForKind(ImageScanRequestModel), ...Kebab.factory.common];
 
@@ -15,28 +17,28 @@ const kind = ImageScanRequestModel.kind;
 
 const tableColumnClasses = ['', '', classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-lg'), Kebab.columnClass];
 
-const ImageScanRequestTableHeader = () => {
+const ImageScanRequestTableHeader = (t?: TFunction) => {
   return [
     {
-      title: 'Name',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_1'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: 'Namespace',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_2'),
       sortField: 'metadata.namespace',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Status',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_3'),
       sortField: 'status.status',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'Created',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_12'),
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
@@ -75,9 +77,11 @@ const ImageScanRequestTableRow: RowFunction<K8sResourceKind> = ({ obj: scanreque
 export const ImageScanRequestStatus: React.FC<ImageScanRequestStatusStatusProps> = ({ result }) => <Status status={result} />;
 
 export const ImageScanRequestDetailsList: React.FC<ImageScanRequestDetailsListProps> = ({ ds }) => {
+  const { t } = useTranslation();
+
   return (
     <dl className="co-m-pane__details">
-      <dt>Status</dt>
+      <dt>{t('COMMON:MSG_MAIN_TABLEHEADER_3')}</dt>
       <dd>
         <ImageScanRequestStatus result={ds?.status?.status} />
       </dd>
@@ -125,6 +129,7 @@ export const ScanResultTable: React.FC<ScanResultTableProps> = ({ heading, scanL
 );
 
 const ImageScanRequestDetails: React.FC<ImageScanRequestDetailsProps> = ({ obj: scanrequest }) => {
+  const { t } = useTranslation();
   const summaries = [];
   for (const key in scanrequest.status?.results) {
     let summary = { image: '', summary: '' };
@@ -135,10 +140,11 @@ const ImageScanRequestDetails: React.FC<ImageScanRequestDetailsProps> = ({ obj: 
     summary.summary = summary.summary.substr(0, summary.summary.length - 2);
     summaries.push(summary);
   }
+
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Image Sign Request Details" />
+        <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_95')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
         <div className="row">
           <div className="col-lg-6">
             <ResourceSummary resource={scanrequest} />
@@ -157,9 +163,30 @@ const ImageScanRequestDetails: React.FC<ImageScanRequestDetailsProps> = ({ obj: 
 
 const { details, editYaml } = navFactory;
 
-export const ImageScanRequests: React.FC = props => <Table {...props} aria-label="ImageScanRequests" Header={ImageScanRequestTableHeader} Row={ImageScanRequestTableRow} virtualize />;
+export const ImageScanRequests: React.FC = props => {
+  const { t } = useTranslation();
 
-export const ImageScanRequestsPage: React.FC<ImageScanRequestsPageProps> = props => <ListPage canCreate={true} ListComponent={ImageScanRequests} kind={kind} {...props} />;
+  return <Table
+    {...props}
+    aria-label="ImageScanRequests"
+    Header={ImageScanRequestTableHeader.bind(null, t)}
+    Row={ImageScanRequestTableRow}
+    virtualize
+  />;
+}
+
+export const ImageScanRequestsPage: React.FC<ImageScanRequestsPageProps> = props => {
+  const { t } = useTranslation();
+
+  return <ListPage
+    title={t('COMMON:MSG_LNB_MENU_95')}
+    createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:MSG_LNB_MENU_95') })}
+    canCreate={true}
+    ListComponent={ImageScanRequests}
+    kind={kind}
+    {...props}
+  />;
+}
 
 export const ImageScanRequestsDetailsPage: React.FC<ImageScanRequestsDetailsPageProps> = props => <DetailsPage {...props} kind={kind} menuActions={menuActions} pages={[details(detailsPage(ImageScanRequestDetails)), editYaml()]} />;
 

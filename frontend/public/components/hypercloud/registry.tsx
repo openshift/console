@@ -109,25 +109,29 @@ export const RegistryDetailsList: React.FC<RegistryDetailsListProps> = ({ ds }) 
   );
 };
 
-const RegistryDetails: React.FC<RegistryDetailsProps> = ({ obj: registry }) => (
-  <>
-    <div className="co-m-pane__body">
-      <SectionHeading text="Registry Details" />
-      <div className="row">
-        <div className="col-lg-6">
-          <ResourceSummary resource={registry} />
-        </div>
-        <div className="col-lg-6">
-          <RegistryDetailsList ds={registry} />
+const RegistryDetails: React.FC<RegistryDetailsProps> = ({ obj: registry }) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <div className="co-m-pane__body">
+        <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_71')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
+        {/* <SectionHeading text="aaaa" /> */}
+        <div className="row">
+          <div className="col-lg-6">
+            <ResourceSummary resource={registry} />
+          </div>
+          <div className="col-lg-6">
+            <RegistryDetailsList ds={registry} />
+          </div>
         </div>
       </div>
-    </div>
-    <div className="co-m-pane__body">
-      <SectionHeading text="Resources" />
-      <Resources conditions={registry.status.conditions} registry={registry.metadata.name} namespace={registry.metadata.namespace} />
-    </div>
-  </>
-);
+      <div className="co-m-pane__body">
+        <SectionHeading text={`${t('COMMON:MSG_DETAILS_TABDETAILS_RESOURCES_1')}`} />
+        <Resources conditions={registry.status.conditions} registry={registry.metadata.name} namespace={registry.metadata.namespace} />
+      </div>
+    </>
+  );
+}
 
 const { details, editYaml } = navFactory;
 
@@ -178,6 +182,8 @@ const registryCreateAction = (history, item) => {
 }
 
 export const RegistriesPage = withRouter(props => {
+  const { t } = useTranslation();
+
   const createItems = {
     generic: 'Create Registry',
     scan: 'Image Scan Request',
@@ -188,7 +194,16 @@ export const RegistriesPage = withRouter(props => {
     action: registryCreateAction.bind(null, props.history)
   }
 
-  return <ListPage canCreate={true} createProps={createProps} ListComponent={Registries} rowFilters={filters} kind={kind} {...props} />;
+  return <ListPage
+    title={t('COMMON:MSG_LNB_MENU_71')}
+    createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:MSG_LNB_MENU_71') })}
+    canCreate={true}
+    createProps={createProps}
+    ListComponent={Registries}
+    rowFilters={filters}
+    kind={kind}
+    {...props}
+  />;
 });
 
 const RepositoriesTab: React.FC<RepositoriesTabProps> = ({ obj }) => {

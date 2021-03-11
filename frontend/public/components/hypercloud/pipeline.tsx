@@ -14,6 +14,8 @@ import { PipelineForm, PipelineParametersForm, PipelineResourcesForm, parameters
 import { addTrigger } from '../../../packages/dev-console/src/utils/pipeline-actions';
 import { PipelineRunsPage } from './pipeline-run';
 import PipelineRowKebabActions from './pipelines/pipeline-row-kebab-actions';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 
 export const menuActions: KebabAction[] = [addTrigger, ...Kebab.getExtensionsActionsForKind(PipelineModel), ...Kebab.factory.common];
 
@@ -26,22 +28,22 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const PipelineTableHeader = () => {
+const PipelineTableHeader = (t?: TFunction) => {
   return [
     {
-      title: 'Name',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_1'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: 'Namespace',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_2'),
       sortField: 'metadata.namespace',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Created',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_12'),
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
@@ -112,9 +114,23 @@ const PipelineDetails: React.FC<PipelineDetailsProps> = ({ obj: pipeline }) => (
 
 const { details, editYaml } = navFactory;
 
-export const Pipelines: React.FC = props => <Table {...props} aria-label="Pipelines" Header={PipelineTableHeader} Row={PipelineTableRow} virtualize />;
+export const Pipelines: React.FC = props => {
+  const { t } = useTranslation();
+  return <Table {...props} aria-label="Pipelines" Header={PipelineTableHeader.bind(null, t)} Row={PipelineTableRow} virtualize />
+};
 
-export const PipelinesPage: React.FC<PipelinesPageProps> = props => <ListPage canCreate={true} ListComponent={Pipelines} kind={kind} {...props} />;
+export const PipelinesPage: React.FC<PipelinesPageProps> = props => {
+  const { t } = useTranslation();
+
+  return <ListPage
+    title={t('COMMON:MSG_LNB_MENU_59')}
+    createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:MSG_LNB_MENU_59') })}
+    canCreate={true}
+    ListComponent={Pipelines}
+    kind={kind}
+    {...props}
+  />;
+}
 
 export const PipelinesDetailsPage: React.FC<PipelinesDetailsPageProps> = props => (
   <DetailsPage

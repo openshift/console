@@ -2,8 +2,11 @@ import * as React from 'react';
 import { K8sResourceCondition /* , modelFor */ } from '../../module/k8s';
 import { ResourceLink } from '@console/internal/components/utils';
 import { referenceFor } from '@console/internal/module/k8s';
+import { useTranslation } from 'react-i18next';
 
 export const Resources: React.SFC<ResourcesProps> = ({ conditions, registry, namespace }) => {
+  const { t } = useTranslation();
+
   const rows = conditions?.map?.((condition: K8sResourceCondition, i: number) => {
 
     if (condition.type.includes('Exist')) {
@@ -51,17 +54,17 @@ export const Resources: React.SFC<ResourcesProps> = ({ conditions, registry, nam
       {conditions?.length ? (
         <div className="co-m-table-grid co-m-table-grid--bordered">
           <div className="row co-m-table-grid__head">
-            <div className="col-xs-6 col-sm-4 col-md-4">Resource</div>
-            <div className="col-xs-6 col-sm-4 col-md-4">Resource Name</div>
-            <div className="col-xs-6 col-sm-4 col-md-4">Status</div>
+            <div className="col-xs-6 col-sm-4 col-md-4">{t('COMMON:MSG_DETAILS_TABDETAILS_RESOURCES_TABLEHEADER_1')}</div>
+            <div className="col-xs-6 col-sm-4 col-md-4">{t('COMMON:MSG_DETAILS_TABDETAILS_RESOURCES_TABLEHEADER_2')}</div>
+            <div className="col-xs-6 col-sm-4 col-md-4">{t('COMMON:MSG_DETAILS_TABDETAILS_RESOURCES_TABLEHEADER_3')}</div>
           </div>
           <div className="co-m-table-grid__body">{rows}</div>
         </div>
       ) : (
-          <div className="cos-status-box">
-            <div className="text-center">No Conditions Found</div>
-          </div>
-        )}
+        <div className="cos-status-box">
+          <div className="text-center">No Conditions Found</div>
+        </div>
+      )}
     </>
   );
 };

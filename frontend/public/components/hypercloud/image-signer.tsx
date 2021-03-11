@@ -28,19 +28,19 @@ const ImageSignerTableHeader = (t?: TFunction) => {
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: 'Team',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_71'),
       sortField: 'spec.team',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Email',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_72'),
       sortField: 'spec.email',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'phone',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_73'),
       sortField: 'spec.phone',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
@@ -162,7 +162,16 @@ export const ImageSigners: React.FC = props => {
 };
 
 export const ImageSignersPage: React.FC<ImageSignersPageProps> = props => {
-  return <ListPage canCreate={props.isDetailPage ? false : true} ListComponent={ImageSigners} kind={kind} {...props} />;
+  const { t } = useTranslation();
+
+  return <ListPage
+    title={t('COMMON:MSG_LNB_MENU_91')}
+    createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:MSG_LNB_MENU_91') })}
+    canCreate={props.isDetailPage ? false : true}
+    ListComponent={ImageSigners}
+    kind={kind}
+    {...props}
+  />;
 };
 
 export const ImageSignersDetailsPage: React.FC<ImageSignersDetailsPageProps> = props => <DetailsPage {...props} kind={kind} menuActions={menuActions} pages={[details(detailsPage(ImageSignerDetails)), editYaml(), signerKey(SignerKeyDetails)]} />;

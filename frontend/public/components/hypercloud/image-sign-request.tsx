@@ -32,19 +32,19 @@ const ImageSignRequestTableHeader = (t?: TFunction) => {
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Status',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_3'),
       sortField: 'status.imageSignResponse.result',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'Image',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_38'),
       sortField: 'spec.image',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
     },
     {
-      title: 'Signer',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_74'),
       sortField: 'spec.signer',
       transforms: [sortable],
       props: { className: tableColumnClasses[4] },
@@ -124,7 +124,18 @@ export const ImageSignRequests: React.FC = props => {
   return <Table {...props} aria-label="ImageSignRequests" Header={ImageSignRequestTableHeader.bind(null, t)} Row={ImageSignRequestTableRow} virtualize />;
 };
 
-export const ImageSignRequestsPage: React.FC<ImageSignRequestsPageProps> = props => <ListPage canCreate={true} ListComponent={ImageSignRequests} kind={kind} {...props} />;
+export const ImageSignRequestsPage: React.FC<ImageSignRequestsPageProps> = props => {
+  const { t } = useTranslation();
+
+  return <ListPage
+    title={t('COMMON:MSG_LNB_MENU_92')}
+    createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:MSG_LNB_MENU_92') })}
+    canCreate={true}
+    ListComponent={ImageSignRequests}
+    kind={kind}
+    {...props}
+  />;
+}
 
 export const ImageSignRequestsDetailsPage: React.FC<ImageSignRequestsDetailsPageProps> = props => <DetailsPage {...props} kind={kind} menuActions={menuActions} pages={[details(detailsPage(ImageSignRequestDetails)), editYaml()]} />;
 

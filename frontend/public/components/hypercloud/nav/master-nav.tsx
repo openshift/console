@@ -103,8 +103,8 @@ const MasterNav = () => (
           <ResourceNSLink resource="externalregistries" name="External Registries" />
           <ResourceClusterLink resource="imagesigners" name={t('COMMON:MSG_LNB_MENU_91')} />
           <ResourceNSLink resource="imagesignrequests" name={t('COMMON:MSG_LNB_MENU_92')} />
-          <ResourceNSLink resource="imagescanrequests" name="Image Scan Request" />
-          <ResourceNSLink resource="signerpolicies" name="Signer Policy" />
+          <ResourceNSLink resource="imagescanrequests" name={t('COMMON:MSG_LNB_MENU_95')} />
+          <ResourceNSLink resource="signerpolicies" name={t('COMMON:MSG_LNB_MENU_96')} />
           {/* <ResourceNSLink resource="imagetransfers" name="Image Transfer" /> */}
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_79')}>
