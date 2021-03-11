@@ -4,6 +4,7 @@ import { Grid } from '@patternfly/react-core';
 import { useRefWidth } from '@console/internal/components/utils/ref-width-hook';
 
 import './utilization-card.scss';
+import { useTranslation } from 'react-i18next';
 
 const formatDate = (date: Date): string => {
   const minutes = `0${date.getMinutes()}`.slice(-2);
@@ -34,11 +35,12 @@ const UtilizationAxis: React.FC<UtilizationAxisProps> = ({ timestamps = [] }) =>
 };
 
 export const UtilizationBody: React.FC<UtilizationBodyProps> = ({ timestamps, children }) => {
+  const { t } = useTranslation();
   const axis = (
     <div className="co-utilization-card__item">
       <div className="co-utilization-card__item-section co-u-hidden co-u-visible-on-xl">
-        <span className="co-utilization-card__item-text">Resource</span>
-        <span className="co-utilization-card__item-text">Usage</span>
+        <span className="co-utilization-card__item-text">{t('SINGLE:MSG_OVERVIEW_MAIN_CARDCLUSTERUTILIZATION_RESOURCE_1')}</span>
+        <span className="co-utilization-card__item-text">{t('SINGLE:MSG_OVERVIEW_MAIN_CARDCLUSTERUTILIZATION_USAGE_1')}</span>
       </div>
       <div className="co-utilization-card__item-chart co-utilization-card__item-chart--times">
         <UtilizationAxis timestamps={timestamps} />

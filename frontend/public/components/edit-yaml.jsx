@@ -26,6 +26,7 @@ import { yamlTemplates } from '../models/yaml-templates';
 
 import { definitionFor } from '../module/k8s/swagger';
 import YAMLEditor from '@console/shared/src/components/editor/YAMLEditor';
+import { withTranslation } from 'react-i18next';
 
 const generateObjToLoad = (kind, id, yaml, namespace = 'default') => {
   const sampleObj = safeLoad(yaml ? yaml : yamlTemplates.getIn([kind, id]));
@@ -406,6 +407,7 @@ export const EditYAML_ = connect(stateToProps)(
         yamlSamplesList,
         customClass,
         onChange = () => null,
+        t,
       } = this.props;
       const klass = classNames('co-file-dropzone-container', {
         'co-file-dropzone--drop-over': isOver,
@@ -432,7 +434,7 @@ export const EditYAML_ = connect(stateToProps)(
         !showSidebar && hasSidebarContent ? (
           <Button type="button" variant="link" isInline onClick={this.toggleSidebar}>
             <InfoCircleIcon className="co-icon-space-r co-p-has-sidebar__sidebar-link-icon" />
-            View sidebar
+            {t('COMMON:MSG_COMMON_BUTTON_ETC_11')}
           </Button>
         ) : null;
 
@@ -453,8 +455,7 @@ export const EditYAML_ = connect(stateToProps)(
                 <SplitItem>{getBadgeFromType(model && model.badge)}</SplitItem>
               </Split>
               <p className="help-block">
-                Create by manually entering YAML or JSON definitions, or by dragging and dropping a
-                file into the editor.
+                {t('COMMON:MSG_CREATEYAML_DIV1_DESCRIPTION_1')}
               </p>
             </div>
           )}
@@ -511,7 +512,7 @@ export const EditYAML_ = connect(stateToProps)(
                           id="save-changes"
                           onClick={() => this.save()}
                         >
-                          Create
+                          {t('COMMON:MSG_COMMON_BUTTON_ETC_9')}
                         </Button>
                       )}
                       {!create && !readOnly && (
@@ -521,7 +522,7 @@ export const EditYAML_ = connect(stateToProps)(
                           id="save-changes"
                           onClick={() => this.save()}
                         >
-                          Save
+                        {t('COMMON:MSG_COMMON_BUTTON_COMMIT_3')}
                         </Button>
                       )}
                       {!create && !genericYAML && (
@@ -531,11 +532,11 @@ export const EditYAML_ = connect(stateToProps)(
                           id="reload-object"
                           onClick={() => this.reload()}
                         >
-                          Reload
+                        {t('COMMON:MSG_COMMON_BUTTON_ETC_13')}
                         </Button>
                       )}
                       <Button variant="secondary" id="cancel" onClick={() => this.onCancel()}>
-                        Cancel
+                        {t('COMMON:MSG_COMMON_BUTTON_COMMIT_2')}
                       </Button>
                       {download && (
                         <Button
@@ -544,7 +545,7 @@ export const EditYAML_ = connect(stateToProps)(
                           className="pf-c-button--align-right hidden-sm hidden-xs"
                           onClick={() => this.download()}
                         >
-                          <DownloadIcon /> Download
+                          <DownloadIcon /> {t('COMMON:MSG_COMMON_BUTTON_ETC_12')}
                         </Button>
                       )}
                     </ActionGroup>
@@ -577,7 +578,7 @@ export const EditYAML_ = connect(stateToProps)(
   },
 );
 
-export const EditYAML = connectToFlags(FLAGS.CONSOLE_YAML_SAMPLE)(({ flags, ...props }) => {
+export const EditYAML = connectToFlags(FLAGS.CONSOLE_YAML_SAMPLE)(withTranslation()(({ flags, ...props }) => {
   const resources = flags[FLAGS.CONSOLE_YAML_SAMPLE]
     ? [
         {
@@ -593,4 +594,4 @@ export const EditYAML = connectToFlags(FLAGS.CONSOLE_YAML_SAMPLE)(({ flags, ...p
       <EditYAML_ {...props} />
     </Firehose>
   );
-});
+}));

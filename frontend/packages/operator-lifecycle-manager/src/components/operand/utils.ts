@@ -60,8 +60,8 @@ export const hasNoFields = (jsonSchema: JSONSchema6 = {}): boolean => {
       return handleArray();
     case SchemaType.object:
       return handleObject();
-    case '':
-      return true;
+    // case '':
+    //   return true; // type이 없는 parameter에 경우 form editor 안그리는 로직 있던 거 제거
     default:
       return false;
   }
@@ -73,6 +73,21 @@ export const getDefaultUISchema = (jsonSchema: JSONSchema6, jsonSchemaName: stri
   if (hasNoFields(jsonSchema)) {
     return HIDDEN_UI_SCHEMA;
   }
+  if (!!jsonSchema?.additionalProperties) {
+    if (jsonSchemaName.toLowerCase().indexOf('label') >= 0 || jsonSchemaName.toLowerCase().indexOf('annotation') >= 0 || jsonSchemaName.toLowerCase().indexOf('selector') >= 0) {
+      return {
+        'ui:field': 'LabelsField',
+      };
+    }
+    return {
+      'ui:field': 'AdditionalPropertyField',
+    };
+  } else if (jsonSchema?.['x-kubernetes-int-or-string']) {
+    delete jsonSchema?.anyOf; // 너무 야매이긴 한데 지금 상황에서는 최선... 추후에 더 고민해봐야할듯..
+    return {
+      'ui:field': 'TextField',
+    };
+  }
 
   const handleArray = () => {
     const itemsUISchema = getDefaultUISchema(jsonSchema.items as JSONSchema6, '');
@@ -80,18 +95,6 @@ export const getDefaultUISchema = (jsonSchema: JSONSchema6, jsonSchemaName: stri
   };
 
   const handleObject = () => {
-    if (!!jsonSchema?.additionalProperties) {
-      if (jsonSchemaName.toLowerCase().indexOf('label') >= 0 || jsonSchemaName.toLowerCase().indexOf('annotation') >= 0 || jsonSchemaName.toLowerCase().indexOf('selector') >= 0) {
-        console.log('label', jsonSchema);
-        return {
-          'ui:field': 'LabelsField',
-        };
-      }
-      console.log('additional: ', jsonSchema);
-      return {
-        'ui:field': 'AdditionalPropertyField',
-      };
-    }
     return _.reduce(
       jsonSchema.properties,
       (uiSchemaAccumulator: UiSchema, property: JSONSchema6, name: string) => {
@@ -106,12 +109,6 @@ export const getDefaultUISchema = (jsonSchema: JSONSchema6, jsonSchemaName: stri
       {},
     );
   };
-  // if (jsonSchema.propertyNames === 'matchLabels') {
-  //   return {
-  //     'ui:title': 'Match Labels',
-  //     'ui:field': 'LabelsField',
-  //   };
-  // }
   switch (type) {
     case SchemaType.array:
       return handleArray();
@@ -356,8 +353,7 @@ export const descriptorsToUISchema = (descriptors: Descriptor<SpecCapability>[],
     },
     Immutable.Map(),
   ).toJS();
-  return _.merge(uiSchemaFromDescriptors, jsonSchema);
-  // return _.merge(uiSchemaFromDescriptors, getJSONSchemaOrder(jsonSchema, uiSchemaFromDescriptors));
+  return _.merge(uiSchemaFromDescriptors, getJSONSchemaOrder(jsonSchema, uiSchemaFromDescriptors)); // schema 우선순위 정렬 로직
 };
 
 // Use jsonSchema, descriptors, and some defaults to generate a uiSchema

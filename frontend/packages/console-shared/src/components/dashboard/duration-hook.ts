@@ -1,4 +1,7 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
+
+// duration dropdown 컴포넌트 i18n 적용...
 
 export enum Duration {
   ONE_HR = '1 Hour',
@@ -15,11 +18,16 @@ export const UTILIZATION_QUERY_HOUR_MAP = {
 };
 
 export const useMetricDuration = (): MetricDuration => {
-  const [duration, setDuration] = React.useState(Duration.ONE_HR);
-  const setMetricDuration = React.useCallback((d: Duration) => setDuration(Duration[d]), [
-    setDuration,
-  ]);
+  const { t } = useTranslation();
+  const durationItems = {
+    ['ONE_HR']: t('SINGLE:MSG_OVERVIEW_MAIN_CARDCLUSTERUTILIZATION_1_1'),
+    ['SIX_HR']: t('SINGLE:MSG_OVERVIEW_MAIN_CARDCLUSTERUTILIZATION_6_1'),
+    ['TWENTY_FOUR_HR']: t('SINGLE:MSG_OVERVIEW_MAIN_CARDCLUSTERUTILIZATION_24_1'),
+  };
+
+  const [duration, setDuration] = React.useState(durationItems['ONE_HR']);
+  const setMetricDuration = React.useCallback(d => setDuration(durationItems[d]), [setDuration]);
   return [duration, setMetricDuration];
 };
 
-type MetricDuration = [Duration, (duration: Duration) => void];
+type MetricDuration = [string, (duration: string) => void];

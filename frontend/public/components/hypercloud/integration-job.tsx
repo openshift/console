@@ -6,13 +6,13 @@ import { sortable } from '@patternfly/react-table';
 import { K8sResourceKind } from '../../module/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from '../factory';
 import { Kebab, KebabAction, detailsPage, Timestamp, navFactory, ResourceKebab, ResourceLink, ResourceSummary, SectionHeading } from '../utils';
-import { TaskRunModel } from '../../models';
+import { IntegrationJobModel } from '../../models/hypercloud';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 
-export const menuActions: KebabAction[] = [...Kebab.getExtensionsActionsForKind(TaskRunModel), ...Kebab.factory.common];
+export const menuActions: KebabAction[] = [...Kebab.getExtensionsActionsForKind(IntegrationJobModel), ...Kebab.factory.common];
 
-const kind = TaskRunModel.kind;
+const kind = IntegrationJobModel.kind;
 
 const tableColumnClasses = [
   classNames('col-xs-6', 'col-sm-4'),
@@ -21,8 +21,7 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-
-const TaskRunTableHeader = (t?: TFunction) => {
+const IntegrationJobTableHeader = (t?: TFunction) => {
   return [
     {
       title: t('COMMON:MSG_MAIN_TABLEHEADER_1'),
@@ -49,39 +48,37 @@ const TaskRunTableHeader = (t?: TFunction) => {
   ];
 };
 
-TaskRunTableHeader.displayName = 'TaskRunTableHeader';
+IntegrationJobTableHeader.displayName = 'IntegrationJobTableHeader';
 
 
-const TaskRunTableRow: RowFunction<K8sResourceKind> = ({ obj: taskRun, index, key, style }) => {
+const IntegrationJobTableRow: RowFunction<K8sResourceKind> = ({ obj: registry, index, key, style }) => {
   return (
-    <TableRow id={taskRun.metadata.uid} index={index} trKey={key} style={style}>
+    <TableRow id={registry.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink kind={kind} name={taskRun.metadata.name} namespace={taskRun.metadata.namespace} title={taskRun.metadata.uid} />
+        <ResourceLink kind={kind} name={registry.metadata.name} namespace={registry.metadata.namespace} title={registry.metadata.uid} />
       </TableData>
       <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
-        <ResourceLink kind="Namespace" name={taskRun.metadata.namespace} title={taskRun.metadata.namespace} />
+        <ResourceLink kind="Namespace" name={registry.metadata.namespace} title={registry.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
-        <Timestamp timestamp={taskRun.metadata.creationTimestamp} />
+        <Timestamp timestamp={registry.metadata.creationTimestamp} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>
-        <ResourceKebab actions={menuActions} kind={kind} resource={taskRun} />
+        <ResourceKebab actions={menuActions} kind={kind} resource={registry} />
       </TableData>
     </TableRow>
   );
 };
 
-
-const TaskRunDetails: React.FC<TaskRunDetailsProps> = ({ obj: taskRun }) => {
+const IntegrationJobDetails: React.FC<IntegrationJobDetailsProps> = ({ obj: registry }) => {
   const { t } = useTranslation();
-
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_58')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
+        <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_95')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
         <div className="row">
           <div className="col-lg-6">
-            <ResourceSummary resource={taskRun} />
+            <ResourceSummary resource={registry} />
           </div>
         </div>
       </div>
@@ -91,37 +88,36 @@ const TaskRunDetails: React.FC<TaskRunDetailsProps> = ({ obj: taskRun }) => {
 
 const { details, editYaml } = navFactory;
 
-export const TaskRuns: React.FC = props => {
+export const IntegrationJobs: React.FC = props => {
   const { t } = useTranslation();
-  return <Table {...props} aria-label="Task Runs" Header={TaskRunTableHeader.bind(null, t)} Row={TaskRunTableRow} virtualize />;
+  return <Table {...props} aria-label="IntegrationJobs" Header={IntegrationJobTableHeader.bind(null, t)} Row={IntegrationJobTableRow} virtualize />;
 }
 
 
-export const TaskRunsPage: React.FC<TaskRunsPageProps> = props => {
+export const IntegrationJobsPage: React.FC<IntegrationJobsPageProps> = props => {
   const { t } = useTranslation();
 
   return <ListPage
-    title={t('COMMON:MSG_LNB_MENU_58')}
-    createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:MSG_LNB_MENU_58') })}
-    canCreate={true}
-    ListComponent={TaskRuns}
+    title={t('SINGLE:MSG_CI/CD_MAILFORM_REQUEST_7')}
+    canCreate={false}
+    ListComponent={IntegrationJobs}
     kind={kind}
     {...props}
   />;
 }
 
-export const TaskRunsDetailsPage: React.FC<TaskRunsDetailsPageProps> = props => <DetailsPage {...props} kind={kind} menuActions={menuActions} pages={[details(detailsPage(TaskRunDetails)), editYaml()]} />;
+export const IntegrationJobsDetailsPage: React.FC<IntegrationJobsDetailsPageProps> = props => <DetailsPage {...props} kind={kind} menuActions={menuActions} pages={[details(detailsPage(IntegrationJobDetails)), editYaml()]} />;
 
-type TaskRunsPageProps = {
+type IntegrationJobsPageProps = {
   showTitle?: boolean;
   namespace?: string;
   selector?: any;
 };
 
-type TaskRunDetailsProps = {
+type IntegrationJobDetailsProps = {
   obj: K8sResourceKind;
 };
 
-type TaskRunsDetailsPageProps = {
+type IntegrationJobsDetailsPageProps = {
   match: any;
 };

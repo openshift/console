@@ -5,6 +5,7 @@ import { Alert, Button } from '@patternfly/react-core';
 
 import * as restrictedSignImg from '../../imgs/restricted-sign.svg';
 import { TimeoutError } from '../../co-fetch';
+import { useTranslation } from 'react-i18next';
 
 export const Box: React.FC<BoxProps> = ({ children, className }) => (
   <div className={classNames('cos-status-box', className)}>{children}</div>
@@ -59,11 +60,14 @@ export const LoadingBox: React.FC<LoadingBoxProps> = ({ className, message }) =>
 );
 LoadingBox.displayName = 'LoadingBox';
 
-export const EmptyBox: React.FC<EmptyBoxProps> = ({ label }) => (
-  <Box>
-    <div className="text-center">{label ? `No ${label} Found` : 'Not Found'}</div>
-  </Box>
-);
+export const EmptyBox: React.FC<EmptyBoxProps> = ({ label }) => {
+  const { t } = useTranslation();
+  return (
+    <Box>
+      <div className="text-center">{label ? t('COMMON:MSG_COMMON_ERROR_MESSAGE_22', { something: label }) : t('COMMON:MSG_COMMON_ERROR_MESSAGE_23')}</div>
+    </Box>
+  );
+}
 EmptyBox.displayName = 'EmptyBox';
 
 export const MsgBox: React.FC<MsgBoxProps> = ({ title, detail, className = '' }) => (

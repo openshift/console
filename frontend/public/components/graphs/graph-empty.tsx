@@ -11,11 +11,7 @@ export const GraphEmpty: React.FC<GraphEmptyProps> = ({ height = 180, loading = 
       width: '100%',
     }}
   >
-    {loading ? (
-      <div className="skeleton-chart" />
-    ) : (
-      <div className="text-secondary">No datapoints found.</div>
-    )}
+    {loading ? <div className="skeleton-chart" /> : <div className="text-secondary">No datapoints found.</div>}
   </div>
 );
 

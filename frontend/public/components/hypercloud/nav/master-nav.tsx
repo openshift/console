@@ -20,7 +20,7 @@ const MasterNav = () => (
     {t => (
       <>
         <NavSection title={t('COMMON:MSG_LNB_MENU_1')}>
-          <HrefLink href="/dashboards" activePath="/dashboards/" name={t('COMMON:MSG_LNB_MENU_2')} />
+          <HrefLink href="/dashboards" activePath="/dashboards/" name={t('COMMON:MSG_LNB_MENU_90')} />
           <HrefLink href="/search" name={t('COMMON:MSG_LNB_MENU_4')} startsWith={searchStartsWith} />
           <ResourceNSLink resource="audits" name={t('COMMON:MSG_LNB_MENU_5')} />
           <ResourceNSLink resource="events" name={t('COMMON:MSG_LNB_MENU_6')} />
@@ -90,7 +90,7 @@ const MasterNav = () => (
           <ResourceNSLink resource="pipelineruns" name={t('COMMON:MSG_LNB_MENU_60')} />
           <ResourceNSLink resource="approvals" name={t('COMMON:MSG_LNB_MENU_61')} />
           <ResourceNSLink resource="pipelineresources" name={t('COMMON:MSG_LNB_MENU_62')} />
-          <ResourceNSLink resource="integrationjobs" name="IntegrationJob" />
+          <ResourceNSLink resource="integrationjobs" name={t('SINGLE:MSG_CI/CD_MAILFORM_REQUEST_7')} />
           <ResourceNSLink resource="integrationconfigs" name="IntegrationConfig" />
         </NavSection>
         {/* <NavSection title="AI DevOps">
@@ -101,30 +101,30 @@ const MasterNav = () => (
           <ResourceNSLink resource="workflowtemplates" name='WorkflowTemplate' />
           <ResourceNSLink resource="workflows" name='Workflow' />
         </NavSection> */}
-        <NavSection title="Image">
+        <NavSection title={t('COMMON:MSG_DETAILS_TABDETAILS_CONTAINERS_TABLEHEADER_3')}>
           <ResourceNSLink resource="registries" name={t('COMMON:MSG_LNB_MENU_71')} />
-          <ResourceNSLink resource="externalregistries" name="External Registries" />
+          <ResourceNSLink resource="externalregistries" name={t('COMMON:MSG_LNB_MENU_97')} />
           <ResourceClusterLink resource="imagesigners" name={t('COMMON:MSG_LNB_MENU_91')} />
           <ResourceNSLink resource="imagesignrequests" name={t('COMMON:MSG_LNB_MENU_92')} />
-          <ResourceNSLink resource="imagescanrequests" name="Image Scan Request" />
-          <ResourceNSLink resource="signerpolicies" name="Signer Policy" />
+          <ResourceNSLink resource="imagescanrequests" name={t('COMMON:MSG_LNB_MENU_95')} />
+          <ResourceNSLink resource="signerpolicies" name={t('COMMON:MSG_LNB_MENU_96')} />
           {/* <ResourceNSLink resource="imagetransfers" name="Image Transfer" /> */}
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_79')}>
           <ResourceClusterLink resource="namespaces" name={t('COMMON:MSG_LNB_MENU_3')} />
-          <ResourceClusterLink resource="namespaceclaims" name="Namespace Claims" />
+          <ResourceClusterLink resource="namespaceclaims" name={t('COMMON:MSG_LNB_MENU_103')} />
           <ResourceNSLink resource="limitranges" name={t('COMMON:MSG_LNB_MENU_81')} />
           <ResourceNSLink resource="resourcequotas" name={t('COMMON:MSG_LNB_MENU_80')} startsWith={quotaStartsWith} />
-          <ResourceNSLink resource="resourcequotaclaims" name="Resource Quota Claims" startsWith={quotaStartsWith} />
+          <ResourceNSLink resource="resourcequotaclaims" name={t('COMMON:MSG_LNB_MENU_102')} startsWith={quotaStartsWith} />
           <ResourceClusterLink resource="customresourcedefinitions" name={t('COMMON:MSG_LNB_MENU_82')} />
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_72')}>
-          <ResourceClusterLink resource="nodes" name="Nodes" />
+          <ResourceClusterLink resource="nodes" name={t('COMMON:MSG_LNB_MENU_100')} />
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_73')}>
           <ResourceNSLink resource="roles" name={t('COMMON:MSG_LNB_MENU_75')} startsWith={rolesStartsWith} />
           <ResourceNSLink resource="rolebindings" name={t('COMMON:MSG_LNB_MENU_76')} startsWith={rolebindingsStartsWith} />
-          <ResourceNSLink resource="rolebindingclaims" name="Role Binding Claims" startsWith={rolebindingsStartsWith} />
+          <ResourceNSLink resource="rolebindingclaims" name={t('COMMON:MSG_LNB_MENU_101')} startsWith={rolebindingsStartsWith} />
           <ResourceNSLink resource="serviceaccounts" name={t('COMMON:MSG_LNB_MENU_74')} />
           <ResourceClusterLink resource="podsecuritypolicies" name={t('COMMON:MSG_LNB_MENU_78')} />
           {/* <AuthAdminLink resource={referenceForModel(UserModel)} name="Users" />

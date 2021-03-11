@@ -18,6 +18,7 @@ import { createLink, NavLinkComponent, ResourceClusterLink, ResourceNSLink, Root
 
 import './_perspective-nav.scss';
 import { getPerspectives } from '../../hypercloud/perspectives';
+import { useTranslation } from 'react-i18next';
 
 type StateProps = {
   perspective: string;
@@ -34,8 +35,9 @@ const getLabelForResource = (resource: string): string => {
 };
 
 const PerspectiveNav: React.FC<StateProps & DispatchProps> = ({ perspective, pinnedResources, onPinnedResourcesChange }) => {
+  const { t } = useTranslation();
   const navItemExtensions = useExtensions<NavItem>(isNavItem);
-  const perspectives = React.useMemo(() => getPerspectives(), []);
+  const perspectives = React.useMemo(() => getPerspectives.bind(null, t)(), []);
 
   const matchingNavItems = React.useMemo(() => navItemExtensions.filter(item => item.properties.perspective === perspective), [navItemExtensions, perspective]);
 

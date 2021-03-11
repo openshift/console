@@ -10,6 +10,7 @@ import { getActivePerspective } from '../../reducers/ui';
 import * as UIActions from '../../actions/ui';
 import { history } from '../utils';
 import ClusterDropdown from '../hypercloud/nav/cluster-dropdown';
+import { useTranslation } from 'react-i18next';
 
 type StateProps = {
   activePerspective: string;
@@ -87,7 +88,8 @@ const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({
     [activePerspective, onPerspectiveSelect],
   );
 
-  const perspectives = React.useMemo(() => getPerspectives(), []);
+  const { t } = useTranslation();
+  const perspectives = React.useMemo(() => getPerspectives.bind(null, t)(), []);
   const { icon, name } = React.useMemo(
     () => perspectives.find((p) => p.properties.id === activePerspective).properties,
     [activePerspective, perspectives],
@@ -97,7 +99,7 @@ const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({
     <>
       {window.SERVER_FLAGS.McMode && (
         <div className="oc-nav-header">
-          <div className="hc-dropdown__title">Application</div>
+          <div className="hc-dropdown__title">{t('COMMON:MSG_LNB_MENU_CONSOLE_1')}</div>
           <Dropdown
             isOpen={isPerspectiveDropdownOpen}
             toggle={renderToggle(icon, name)}
@@ -106,7 +108,7 @@ const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({
           />
           {activePerspective == "hc" &&
             <>
-              <div className="hc-dropdown__title">Cluster</div>
+              <div className="hc-dropdown__title">{t('COMMON:MSG_LNB_MENU_CONSOLE_2')}</div>
               <ClusterDropdown onClusterSelected={onClusterSelected} />
             </>
           }

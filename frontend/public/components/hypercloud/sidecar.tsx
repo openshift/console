@@ -10,6 +10,7 @@ import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from '
 import { Kebab, KebabAction, detailsPage, Timestamp, navFactory, ResourceKebab, ResourceLink, ResourceSummary, SectionHeading } from '../utils';
 import { Status } from '@console/shared';
 import { SidecarModel } from '../../models';
+import { ResourceLabel } from '../../models/hypercloud/resource-plural';
 
 export const menuActions: KebabAction[] = [...Kebab.getExtensionsActionsForKind(SidecarModel), ...Kebab.factory.common];
 
@@ -68,7 +69,7 @@ const SidecarDetails: React.FC<SidecarDetailsProps> = ({ obj: sidecar }) => {
   const { t } = useTranslation();
   return <>
     <div className="co-m-pane__body">
-      <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_40')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
+    <SectionHeading text={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_1', {0: ResourceLabel(sidecar, t)})} />
       <div className="row">
         <div className="col-lg-6">
           <ResourceSummary resource={sidecar} />
