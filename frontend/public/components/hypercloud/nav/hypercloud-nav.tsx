@@ -37,9 +37,9 @@ const HyperCloudNav = () => (
           <ResourceNSLink resource="cronjobs" name={t('COMMON:MSG_LNB_MENU_28')} />
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_46')}>
-          <ResourceNSLink resource="services" name="Services" />
-          <ResourceNSLink resource="ingresses" name="Ingresses" />
-          <ResourceNSLink resource="networkpolicies" name="Network Policies" />
+          <ResourceNSLink resource="services" name={t('COMMON:MSG_LNB_MENU_47')} />
+          <ResourceNSLink resource="ingresses" name={t('COMMON:MSG_LNB_MENU_48')} />
+          <ResourceNSLink resource="networkpolicies" name={t('COMMON:MSG_LNB_MENU_49')} />
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_50')}>
           <ResourceClusterLink resource="storageclasses" name={t('COMMON:MSG_LNB_MENU_53')} />
@@ -47,19 +47,19 @@ const HyperCloudNav = () => (
           <ResourceClusterLink resource="persistentvolumes" name={t('COMMON:MSG_LNB_MENU_51')} />
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_79')}>
-          <ResourceClusterLink resource="namespaces" name="Namespaces" />
-          <ResourceNSLink resource="limitranges" name="Limit Ranges" />
-          <ResourceNSLink resource="resourcequotas" name="Resource Quotas" startsWith={quotaStartsWith} />
-          <ResourceClusterLink resource="customresourcedefinitions" name="Custom Resource Definitions" />
+          <ResourceClusterLink resource="namespaces" name={t('COMMON:MSG_LNB_MENU_3')} />
+          <ResourceNSLink resource="limitranges" name={t('COMMON:MSG_LNB_MENU_81')} />
+          <ResourceNSLink resource="resourcequotas" name={t('COMMON:MSG_LNB_MENU_80')} startsWith={quotaStartsWith} />
+          <ResourceClusterLink resource="customresourcedefinitions" name={t('COMMON:MSG_LNB_MENU_82')} />
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_72')}>
-          <ResourceClusterLink resource="nodes" name="Nodes" />
+          <ResourceClusterLink resource="nodes" name={t('COMMON:MSG_LNB_MENU_100')} />
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_73')}>
-          <ResourceNSLink resource="roles" name="Roles" startsWith={rolesStartsWith} />
-          <ResourceNSLink resource="rolebindings" name="Role Bindings" startsWith={rolebindingsStartsWith} />
-          <ResourceNSLink resource="serviceaccounts" name="Service Accounts" />
-          <ResourceClusterLink resource="podsecuritypolicies" name="PodSecurityPolicy" />
+          <ResourceNSLink resource="roles" name={t('COMMON:MSG_LNB_MENU_75')} startsWith={rolesStartsWith} />
+          <ResourceNSLink resource="rolebindings" name={t('COMMON:MSG_LNB_MENU_76')} startsWith={rolebindingsStartsWith} />
+          <ResourceNSLink resource="serviceaccounts" name={t('COMMON:MSG_LNB_MENU_74')} />
+          <ResourceClusterLink resource="podsecuritypolicies" name={t('COMMON:MSG_LNB_MENU_78')} />
         </NavSection>
       </>
     )}
