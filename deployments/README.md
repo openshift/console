@@ -22,7 +22,7 @@
 	  ```bash
 	  mkdir -p ~/console-install
       export CONSOLE_HOME=~/console-install 
-	  export CONSOLE_VERSION=0.5.1.30
+      export CONSOLE_VERSION=0.5.1.30
       export OPERATOR_VERSION=5.1.0.1
       cd $CONSOLE_HOME
 	  ```
@@ -61,12 +61,12 @@
 ## Step 1. CRD 생성 
 * 목적 : console-operator 동작에 필요한 console CRD를 생성한다. 
 * 순서: 
-    1. 작업 폴더에 [1.crd.yaml]() 파일을 생성한다. 
+    1. deployments 폴더에 [1.crd.yaml](https://raw.githubusercontent.com/tmax-cloud/install-console/5.0/deployments/1.crd.yaml) 파일을 생성한다. 
     2. `kubectl apply -f 1.crd.yaml` 실행합니다. 
 ## Step 2. Namespace, ServiceAccount, ClusterRole, ClusterRoleBinding 생성
 * 목적 : console에 필요한 Namespace, ResourceQuota, ServiceAccount, ClusterRole, ClusterRoleBinding을 생성한다.
 * 순서 : 
-    1. 작업 폴더에 [2.init.yaml](https://raw.githubusercontent.com/tmax-cloud/hypercloud-console4.1/hc-dev/install-yaml/1.initialization.yaml) 파일을 생성한다. 
+    1. deployments 폴더에 [2.init.yaml](https://raw.githubusercontent.com/tmax-cloud/install-console/5.0/deployments/2.init.yaml) 파일을 생성한다. 
 	    * 기본 namespace는 console-system으로 설정됩니다. 
     2. `kubectl apply -f 2.init.yaml` 을 실행합니다.
 
@@ -75,30 +75,31 @@
     * Job으로 self signing 인증서를 만들어 console-https-secret 이란 이름으로 secret에 저장한다. 
     * (옵션) self signing 인증서이므로 별도의 ca 인증서로 인증을 받기 위해서 [kubernetes.io](https://kubernetes.io/docs/reference/access-authn-authz/certificate-signing-requests/)를 참고해서 생성한다. 
 * 순서 : 
-    1. deployments 폴더 안의 [3.job.yaml]() 파일을 실행한다. 
+    1. deployments 폴더 안의 [3.job.yaml](https://raw.githubusercontent.com/tmax-cloud/install-console/5.0/deployments/3.job.yaml) 파일을 실행한다. 
 	   * `kubectl apply -f 3.job.yaml`
 
 ## Step 4. Service (Load Balancer) 생성
 * 목적 : 브라우저를 통해 console에 접속할 수 있게 한다.
 * 순서 : 
-    1. 작업 폴더에 [4.svc-lb.yaml](https://raw.githubusercontent.com/tmax-cloud/hypercloud-console4.1/hc-dev/install-yaml/2.svc-lb.yaml) 파일을 실행한다. (기본 서비스 이름은 console.console-system.svc로 만들어진다.)
+    1. deployments 폴더에 [4.svc-lb.yaml](https://raw.githubusercontent.com/tmax-cloud/install-console/5.0/deployments/4.svc-lb.yaml) 파일을 실행한다. (기본 서비스 이름은 console.console-system.svc로 만들어진다.)
     * `kubectl apply -f 4.svc-lb.yaml` 을 실행합니다.
 
 ## Step 5. Deployment (with Pod Template) 생성
 * 목적 : console 웹서버를 호스팅할 pod를 생성한다.
 * 순서 : 
-    1. deployments 폴더에 [5.deploy.yaml](https://raw.githubusercontent.com/tmax-cloud/hypercloud-console4.1/hc-dev/install-yaml/3.deployment-pod.yaml) 파일에 다음의 문자열들을 교체해줍니다.
+    1. deployments 폴더에 [5.deploy.yaml](https://github.com/tmax-cloud/install-console/blob/5.0/deployments/5.deploy.yaml) 파일에 다음의 문자열들을 교체해줍니다.
     
     | 문자열 | 상세내용 | 형식예시 |
     | ---- | ---- | ---- |
+    | `@@OPERATOR-VER@@` | hypercloud-console 이미지 태그 입력 | `5.1.x.x` |
     | `@@GRAFANA@@` | `kubectl get svc -n monitoring grafana` 에서 CLUSTER-IP와 PORT(S) 확인하여 입력 (포트는 `:` 왼쪽 값 사용) | `10.x.x.x:3000` |
-    | `@@KIALI@@` | `kubectl get svc -n istio-system kiali` 에서 CLUSTER-IP와 PORT(S) 확인하여 입력 (포트는 `:` 왼쪽 값 사용) | `10.x.x.x:20001` |
+    | `@@KIALI@@` | `kubectl get ingress -n istio-system kiali` 에서 ADDRESS와 PORT(S) 확인하여 입력 (포트는 `:` 왼쪽 값 사용) | `10.x.x.x:20001` |
     | `@@KIBANA@@` | `kubectl get svc -n efk opendistro-kibana` 에서 CLUSTER-IP와 PORT(S) 확인하여 입력 (포트는 `:` 왼쪽 값 사용) | `10.x.x.x:80` |
     | `@@REALM@@` | hyperauth이용하여 로그인 시 필요한 정보 입력 | `tmax` |
     | `@@KEYCLOAK@@` | `kubectl get svc -n hyperauth hyperauth` 에서 EXTERNAL-IP 확인하여 입력 | `10.x.x.x` |
-    | `@@CLIENTID@@` | hyperauth이용하여 로그인 시 필요한 client 정보 입력 | `hypercloud4` | 
+    | `@@CLIENTID@@` | hyperauth이용하여 로그인 시 필요한 client 정보 입력 | `hypercloud5` | 
     | `@@MC-MODE@@` | Multi Cluster 모드로 설치하려는 경우 `true` 입력 (아닌 경우 행 삭제) | `true` |
-    | `@@VER@@` | hypercloud-console 이미지 태그 입력 | `1.1.x.x` |
+    | `@@CONSOLE-VER@@` | hypercloud-console 이미지 태그 입력 | `0.5.x.x` |
     
     * `kubectl apply -f 5.deploy.yaml` 을 실행합니다.
 * 비고

@@ -9,6 +9,7 @@ import { LinkifyExternal, SelectorInput, Dropdown } from '@console/internal/comp
 import { AccordionContent, AccordionItem, AccordionToggle, Switch } from '@patternfly/react-core';
 import { MatchExpressions } from '@console/operator-lifecycle-manager/src/components/descriptors/spec/match-expressions';
 import { ResourceRequirements } from '@console/operator-lifecycle-manager/src/components/descriptors/spec/resource-requirements';
+import { AdditionalPropertyFields } from '@console/operator-lifecycle-manager/src/components/descriptors/spec/additional-properties';
 import { ConfigureUpdateStrategy, UPDATE_STRATEGY_DESCRIPTION } from '@console/internal/components/modals/configure-update-strategy-modal';
 import { NodeAffinity, PodAffinity } from '@console/operator-lifecycle-manager/src/components/descriptors/spec/affinity';
 import { getSchemaErrors, useSchemaDescription, useSchemaLabel } from './utils';
@@ -65,21 +66,6 @@ export const FieldSet: React.FC<FieldSetProps> = ({ children, defaultLabel, idSc
   );
 };
 
-export const ResourceRequirementsField: React.FC<FieldProps> = ({ formData, idSchema, name, onChange, required, schema, uiSchema }) => (
-  <FieldSet defaultLabel={name || 'Resource Requirements'} idSchema={idSchema} required={required} schema={schema} uiSchema={uiSchema}>
-    <dl id={idSchema.$id}>
-      <dt>Limits</dt>
-      <dd>
-        <ResourceRequirements cpu={formData?.limits?.cpu || ''} memory={formData?.limits?.memory || ''} storage={formData?.limits?.['ephemeral-storage'] || ''} onChangeCPU={cpu => onChange(_.set(_.cloneDeep(formData), 'limits.cpu', cpu))} onChangeMemory={mem => onChange(_.set(_.cloneDeep(formData), 'limits.memory', mem))} onChangeStorage={sto => onChange(_.set(_.cloneDeep(formData), 'limits.ephemeral-storage', sto))} path={`${idSchema.$id}.limits`} />
-      </dd>
-      <dt>Requests</dt>
-      <dd>
-        <ResourceRequirements cpu={formData?.requests?.cpu || ''} memory={formData?.requests?.memory || ''} storage={formData?.requests?.['ephemeral-storage'] || ''} onChangeCPU={cpu => onChange(_.set(_.cloneDeep(formData), 'requests.cpu', cpu))} onChangeMemory={mem => onChange(_.set(_.cloneDeep(formData), 'requests.memory', mem))} onChangeStorage={sto => onChange(_.set(_.cloneDeep(formData), 'requests.ephemeral-storage', sto))} path={`${idSchema.$id}.requests`} />
-      </dd>
-    </dl>
-  </FieldSet>
-);
-
 export const UpdateStrategyField: React.FC<FieldProps> = ({ formData, idSchema, name, onChange, required, schema, uiSchema }) => {
   const description = useSchemaDescription(schema, uiSchema, UPDATE_STRATEGY_DESCRIPTION);
   return (
@@ -133,6 +119,26 @@ export const LabelsField: React.FC<FieldProps> = ({ formData, idSchema, name, on
   </FormField>
 );
 
+export const ResourceRequirementsField: React.FC<FieldProps> = ({ formData, idSchema, name, onChange, required, schema, uiSchema }) => (
+  <FieldSet defaultLabel={name || 'Resource Requirements'} idSchema={idSchema} required={required} schema={schema} uiSchema={uiSchema}>
+    <dl id={idSchema.$id}>
+      <dt>Limits</dt>
+      <dd>
+        <ResourceRequirements cpu={formData?.limits?.cpu || ''} memory={formData?.limits?.memory || ''} storage={formData?.limits?.['ephemeral-storage'] || ''} onChangeCPU={cpu => onChange(_.set(_.cloneDeep(formData), 'limits.cpu', cpu))} onChangeMemory={mem => onChange(_.set(_.cloneDeep(formData), 'limits.memory', mem))} onChangeStorage={sto => onChange(_.set(_.cloneDeep(formData), 'limits.ephemeral-storage', sto))} path={`${idSchema.$id}.limits`} />
+      </dd>
+      <dt>Requests</dt>
+      <dd>
+        <ResourceRequirements cpu={formData?.requests?.cpu || ''} memory={formData?.requests?.memory || ''} storage={formData?.requests?.['ephemeral-storage'] || ''} onChangeCPU={cpu => onChange(_.set(_.cloneDeep(formData), 'requests.cpu', cpu))} onChangeMemory={mem => onChange(_.set(_.cloneDeep(formData), 'requests.memory', mem))} onChangeStorage={sto => onChange(_.set(_.cloneDeep(formData), 'requests.ephemeral-storage', sto))} path={`${idSchema.$id}.requests`} />
+      </dd>
+    </dl>
+  </FieldSet>
+);
+export const AdditionalPropertyField: React.FC<FieldProps> = ({ formData, idSchema, name, onChange, required, schema, uiSchema }) => (
+  <FieldSet defaultLabel={name || 'Resource Requirements'} idSchema={idSchema} required={required} schema={schema} uiSchema={uiSchema}>
+    <AdditionalPropertyFields data={formData} onChange={onChange} path={`${idSchema.$id}`}></AdditionalPropertyFields>
+  </FieldSet>
+);
+
 export const DropdownField: React.FC<FieldProps> = ({ formData, idSchema, name, onChange, schema, uiSchema = {} }) => {
   const { items, title } = getUiOptions(uiSchema);
   return <Dropdown id={idSchema.$id} key={idSchema.$id} title={`Select ${title || schema?.title || name}`} selectedKey={formData} items={items ?? {}} onChange={val => onChange(val)} />;
@@ -160,6 +166,7 @@ export default {
   NodeAffinityField,
   NullField,
   PodAffinityField,
+  AdditionalPropertyField,
   ResourceRequirementsField,
   SchemaField: CustomSchemaField,
   UpdateStrategyField,

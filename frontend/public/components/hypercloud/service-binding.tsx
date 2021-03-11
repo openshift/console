@@ -27,11 +27,11 @@ const ServiceBindingDetails: React.FC<ServiceBindingDetailsProps> = ({ obj: serv
           </div>
           <div className="col-md-6">
             <dl className="co-m-pane__details">
-              <dt>{t('COMMON:MSG_LNB_MENU_18')}</dt>
+              <dt>{t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_105')}</dt>
               <dd>
                 <ResourceLink kind="ServiceInstance" name={serviceBinding.spec.instanceRef.name} namespace={serviceBinding.metadata.namespace} title={serviceBinding.spec.instanceRef.name} />
               </dd>
-              <dt>{t('COMMON:MSG_MAIN_TABLEHEADER_34')}</dt>
+              <dt>{t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_117')}</dt>
               <dd>
                 <ResourceLink kind="Secret" name={serviceBinding.spec.secretName} namespace={serviceBinding.metadata.namespace} title={serviceBinding.spec.secretName} />
               </dd>
@@ -100,7 +100,7 @@ const ServiceBindingTableHeader = (t?: TFunction) => {
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: t('COMMON:MSG_LNB_MENU_18'),
+      title: t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_105'),
       sortField: 'spec.instanceRef.name',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
@@ -133,7 +133,8 @@ const ServiceBindingsList: React.FC = props => {
 ServiceBindingsList.displayName = 'ServiceBindingsList';
 
 const ServiceBindingsPage: React.FC<ServiceBindingsPageProps> = props => {
-  return <ListPage canCreate={true} kind={kind} ListComponent={ServiceBindingsList} {...props} />;
+  const { t } = useTranslation();
+  return <ListPage title={t('COMMON:MSG_LNB_MENU_18')} createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:MSG_LNB_MENU_18') })} canCreate={true} kind={kind} ListComponent={ServiceBindingsList} {...props} />;
 };
 ServiceBindingsPage.displayName = 'ServiceBindingsPage';
 

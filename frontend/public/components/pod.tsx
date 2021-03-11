@@ -429,6 +429,8 @@ export const PodsPage = connect<{}, PodPagePropsFromDispatch, PodPageProps>(
   return (
     <ListPage
       {...listProps}
+      title={t('COMMON:MSG_LNB_MENU_23')}
+      createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:MSG_LNB_MENU_23') })}
       canCreate={canCreate}
       kind="Pod"
       ListComponent={PodList}

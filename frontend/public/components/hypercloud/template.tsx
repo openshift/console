@@ -138,7 +138,8 @@ const TemplatesList: React.FC = props => {
 TemplatesList.displayName = 'TemplatesList';
 
 const TemplatesPage: React.FC<TemplatesPageProps> = props => {
-  return <ListPage canCreate={true} kind={kind} ListComponent={TemplatesList} {...props} />;
+  const { t } = useTranslation();
+  return <ListPage title={t('COMMON:MSG_LNB_MENU_20')} createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:MSG_LNB_MENU_20') })} canCreate={true} kind={kind} ListComponent={TemplatesList} {...props} />;
 };
 TemplatesPage.displayName = 'TemplatesPage';
 

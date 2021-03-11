@@ -2,19 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { connect } from 'react-redux';
-import {
-  Checkbox,
-  DataToolbar,
-  DataToolbarContent,
-  DataToolbarFilter,
-  DataToolbarChip,
-  DataToolbarItem,
-  DropdownItem,
-  Dropdown,
-  DropdownToggle,
-  DropdownGroup,
-  Badge,
-} from '@patternfly/react-core';
+import { Checkbox, DataToolbar, DataToolbarContent, DataToolbarFilter, DataToolbarChip, DataToolbarItem, DropdownItem, Dropdown, DropdownToggle, DropdownGroup, Badge } from '@patternfly/react-core';
 import { CaretDownIcon, FilterIcon } from '@patternfly/react-icons';
 import { Dropdown as DropdownInternal } from '@console/internal/components/utils';
 import { setQueryArgument, removeQueryArgument } from './utils';
@@ -46,22 +34,12 @@ type FilterKeys = {
 };
 
 const getDropdownItems = (rowFilters: RowFilter[], selectedItems, data, props) =>
-  rowFilters.map((grp) => {
+  rowFilters.map(grp => {
     const items = grp.itemsGenerator ? grp.itemsGenerator(props, props.kind) : grp.items;
     return (
-      <DropdownGroup
-        key={grp.filterGroupName}
-        label={grp.filterGroupName}
-        className="co-filter-dropdown-group"
-      >
-        {_.map(items, (item) => (
-          <DropdownItem
-            data-test-row-filter={item.id}
-            key={item.id}
-            id={item.id}
-            className="co-filter-dropdown__item"
-            listItemClassName="co-filter-dropdown__list-item"
-          >
+      <DropdownGroup key={grp.filterGroupName} label={grp.filterGroupName} className="co-filter-dropdown-group">
+        {_.map(items, item => (
+          <DropdownItem data-test-row-filter={item.id} key={item.id} id={item.id} className="co-filter-dropdown__item" listItemClassName="co-filter-dropdown__list-item">
             <div className="co-filter-dropdown-item">
               <span className="co-filter-dropdown-item__checkbox">
                 <Checkbox isChecked={selectedItems.includes(item.id)} id={`${item.id}-checkbox`} />
@@ -77,15 +55,8 @@ const getDropdownItems = (rowFilters: RowFilter[], selectedItems, data, props) =
     );
   });
 
-const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (props) => {
-  const {
-    rowFilters = [],
-    data,
-    hideToolbar,
-    hideLabelFilter,
-    location,
-    textFilter = filterTypeMap[FilterType.NAME],
-  } = props;
+const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = props => {
+  const { rowFilters = [], data, hideToolbar, hideLabelFilter, location, textFilter = filterTypeMap[FilterType.NAME] } = props;
 
   const [inputText, setInputText] = React.useState('');
   const [filterType, setFilterType] = React.useState(FilterType.NAME);
@@ -122,7 +93,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
     const params = new URLSearchParams(location.search);
     const q = params.get('label');
     const name = params.get(textFilter);
-    _.map(filterKeys, (f) => {
+    _.map(filterKeys, f => {
       const vals = params.get(f);
       if (vals) {
         rowFiltersFromURL.push(...vals.split(','));
@@ -137,7 +108,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
   const applyFilter = (input: string | string[], type: FilterType) => {
     const filter = type === FilterType.NAME ? textFilter : filterTypeMap[FilterType.LABEL];
     const value = type === FilterType.NAME ? input : { all: input };
-    props.reduxIDs.forEach((id) => props.filterList(id, filter, value));
+    props.reduxIDs.forEach(id => props.filterList(id, filter, value));
   };
 
   const updateLabelFilter = (filterValues: string[]) => {
@@ -176,22 +147,18 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
   /* Logic Related to Row Filters Ex:(Status, Type) */
 
   const applyRowFilter = (selected: string[]) => {
-    rowFilters.forEach((filter) => {
-      const rowItems = filter.itemsGenerator
-        ? filter.itemsGenerator(props, props?.kinds)
-        : filter.items;
+    rowFilters.forEach(filter => {
+      const rowItems = filter.itemsGenerator ? filter.itemsGenerator(props, props?.kinds) : filter.items;
       const all = _.map(rowItems, 'id');
       const recognized = _.intersection(selected, all);
-      (props.reduxIDs || []).forEach((id) =>
-        props.filterList(id, filter.type, { selected: new Set(recognized), all }),
-      );
+      (props.reduxIDs || []).forEach(id => props.filterList(id, filter.type, { selected: new Set(recognized), all }));
     });
   };
 
   const setQueryParameters = (selected: string[]) => {
     if (!_.isEmpty(selectedRowFilters) || !_.isEmpty(selected)) {
       _.forIn(filters, (value, key) => {
-        const recognized = _.filter(selected, (item) => value.includes(item));
+        const recognized = _.filter(selected, item => value.includes(item));
         if (recognized.length > 0) {
           setQueryArgument(filterKeys[key], recognized.join(','));
         } else {
@@ -212,7 +179,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
     updateRowFilterSelected(_.intersection(filters[f], selectedRowFilters));
   };
 
-  const onRowFilterSelect = (event) => {
+  const onRowFilterSelect = event => {
     event.preventDefault();
     updateRowFilterSelected([event?.target?.id]);
   };
@@ -231,7 +198,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const switchFilter = (type) => {
+  const switchFilter = type => {
     setFilterType(type);
     setInputText(nameFilter && type === FilterType.NAME ? nameFilter : '');
   };
@@ -246,7 +213,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
 
   return (
     !hideToolbar && (
-      <DataToolbar id="filter-toolbar" clearAllFilters={clearAll}>
+      <DataToolbar id="filter-toolbar" clearAllFilters={clearAll} clearFiltersButtonText={t('COMMON:MSG_COMMON_FILTER_11')}>
         <DataToolbarContent>
           {rowFilters.length > 0 && (
             <DataToolbarItem>
@@ -255,12 +222,10 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
                 (acc, key) => (
                   <DataToolbarFilter
                     key={key}
-                    chips={_.intersection(selectedRowFilters, filters[key]).map((item) => {
+                    chips={_.intersection(selectedRowFilters, filters[key]).map(item => {
                       return { key: item, node: filtersNameMap[item] };
                     })}
-                    deleteChip={(filter, chip: DataToolbarChip) =>
-                      updateRowFilterSelected([chip.key])
-                    }
+                    deleteChip={(filter, chip: DataToolbarChip) => updateRowFilterSelected([chip.key])}
                     categoryName={key}
                     deleteChipGroup={() => clearAllRowFilter(key)}
                   >
@@ -272,11 +237,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
                   onSelect={onRowFilterSelect}
                   isOpen={isOpen}
                   toggle={
-                    <DropdownToggle
-                      data-test-id="filter-dropdown-toggle"
-                      onToggle={() => setOpen(!isOpen)}
-                      iconComponent={CaretDownIcon}
-                    >
+                    <DropdownToggle data-test-id="filter-dropdown-toggle" onToggle={() => setOpen(!isOpen)} iconComponent={CaretDownIcon}>
                       <FilterIcon className="span--icon__right-margin" />
                       {t('COMMON:MSG_COMMON_FILTER_7')}
                     </DropdownToggle>
@@ -286,39 +247,19 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
             </DataToolbarItem>
           )}
           <DataToolbarItem className="co-filter-search--full-width">
-            <DataToolbarFilter
-              deleteChipGroup={() => updateLabelFilter([])}
-              chips={!hideLabelFilter ? [...labelFilters] : []}
-              deleteChip={(filter, chip: string) =>
-                updateLabelFilter(_.difference(labelFilters, [chip]))
-              }
-              categoryName={t('COMMON:MSG_COMMON_SEARCH_FILTER_2')}
-            >
-              <DataToolbarFilter
-                chips={nameFilter?.length ? [nameFilter] : []}
-                deleteChip={() => updateNameFilter('')}
-                categoryName={t('COMMON:MSG_COMMON_SEARCH_FILTER_1')}
-              >
+            <DataToolbarFilter deleteChipGroup={() => updateLabelFilter([])} chips={!hideLabelFilter ? [...labelFilters] : []} deleteChip={(filter, chip: string) => updateLabelFilter(_.difference(labelFilters, [chip]))} categoryName={t('COMMON:MSG_COMMON_SEARCH_FILTER_2')}>
+              <DataToolbarFilter chips={nameFilter?.length ? [nameFilter] : []} deleteChip={() => updateNameFilter('')} categoryName={t('COMMON:MSG_COMMON_SEARCH_FILTER_1')}>
                 <div className="pf-c-input-group">
-                  {!hideLabelFilter && (
-                    <DropdownInternal
-                      items={searchFilterTitle}
-                      onChange={switchFilter}
-                      selectedKey={filterType}
-                      title={searchFilterTitle[filterType]}
-                    />
-                  )}
+                  {!hideLabelFilter && <DropdownInternal items={searchFilterTitle} onChange={switchFilter} selectedKey={filterType} title={searchFilterTitle[filterType]} />}
                   <AutocompleteInput
                     className="co-text-node"
-                    onSuggestionSelect={(selected) => {
+                    onSuggestionSelect={selected => {
                       updateLabelFilter(_.uniq([...labelFilters, selected]));
                     }}
                     showSuggestions={FilterType.LABEL === filterType}
                     textValue={inputText}
                     setTextValue={updateSearchFilter}
-                    placeholder={
-                      FilterType.NAME === filterType ? t('COMMON:MSG_COMMON_SEARCH_PLACEHOLDER_1') : 'app=frontend'
-                    }
+                    placeholder={FilterType.NAME === filterType ? t('COMMON:MSG_COMMON_SEARCH_PLACEHOLDER_1') : 'app=frontend'}
                     data={data}
                   />
                 </div>

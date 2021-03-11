@@ -13,7 +13,7 @@ import { Dropdown, Box, Timestamp, PageHeading } from '../utils';
 import { coFetchJSON } from '../../co-fetch';
 import { getId, getUserGroup } from '../../hypercloud/auth';
 import { setQueryArgument, getQueryArgument, removeQueryArgument } from '../utils/router.ts';
-// import { withTranslation } from 'react-i18next';
+import { useTranslation, withTranslation } from 'react-i18next';
 
 // TODO
 
@@ -104,11 +104,12 @@ class AuditPage_ extends React.Component {
     super(props);
     let date = new Date();
     date.setDate(date.getDate() - 7);
+    const { t } = props;
 
-    this.codeList = { all: 'All Codes', 100: '100 (Informational)', 200: '200 (Successful)', 300: '300 (Redirection)', 400: '400 (Client error)', 500: '500 (Server error)' };
-    this.statuslist = { all: 'All Status', Success: 'Success', Failure: 'Failure' };
+    this.codeList = { all: t('SINGLE:MSG_AUDITLOGS_MAIN_CODEFILTER_1'), 100: t('SINGLE:MSG_AUDITLOGS_MAIN_CODEFILTER_2'), 200: t('SINGLE:MSG_AUDITLOGS_MAIN_CODEFILTER_3'), 300: t('SINGLE:MSG_AUDITLOGS_MAIN_CODEFILTER_4'), 400: t('SINGLE:MSG_AUDITLOGS_MAIN_CODEFILTER_5'), 500: t('SINGLE:MSG_AUDITLOGS_MAIN_CODEFILTER_6') };
+    this.statuslist = { all: t('SINGLE:MSG_AUDITLOGS_MAIN_STATUSFILTER_1'), Success: t('SINGLE:MSG_AUDITLOGS_MAIN_STATUSFILTER_2'), Failure: t('SINGLE:MSG_AUDITLOGS_MAIN_STATUSFILTER_3') };
     this.resourcelist = {
-      all: 'All Resource Types',
+      all: t('SINGLE:MSG_AUDITLOGS_MAIN_RESOURCEFILTER_1'),
       mutatingwebhookconfigurations: 'mutatingwebhookconfigurations',
       validatingwebhookconfigurations: 'validatingwebhookconfigurations',
       customresourcedefinitions: 'customresourcedefinitions',
@@ -202,9 +203,10 @@ class AuditPage_ extends React.Component {
 
     this.state = {
       namespace: '',
-      actionList: { all: 'All Actions' },
+      language: this.props.i18n.language,
+      actionList: { all: t('SINGLE:MSG_AUDITLOGS_MAIN_ACTIONFILTER_1') },
       resourceType: this.resourcelist.all,
-      action: 'All Actions',
+      action: t('SINGLE:MSG_AUDITLOGS_MAIN_ACTIONFILTER_1'),
       status: this.statuslist.all,
       code: this.codeList.all,
       textFilter: '',
@@ -227,6 +229,7 @@ class AuditPage_ extends React.Component {
   }
 
   onChangeResourceType_(e) {
+    const { t } = this.props;
     if (e !== 'all') {
       this.setState({ resourceType: e });
     } else {
@@ -237,15 +240,15 @@ class AuditPage_ extends React.Component {
     // 리소스 타입 선택에 따라 액션 드롭다운 항목 설정
     if (e === 'all') {
       this.setState({
-        actionList: { all: 'All Actions' },
+        actionList: { all: t('SINGLE:MSG_AUDITLOGS_MAIN_ACTIONFILTER_1') },
       });
     } else if (e === 'users') {
       this.setState({
-        actionList: { all: 'All Actions', create: 'Create', delete: 'Delete', patch: 'Patch', update: 'Update', login: 'Login', logout: 'Logout' },
+        actionList: { all: t('SINGLE:MSG_AUDITLOGS_MAIN_ACTIONFILTER_1'), create: t('SINGLE:MSG_AUDITLOGS_MAIN_ACTIONFILTER_2'), delete: t('SINGLE:MSG_AUDITLOGS_MAIN_ACTIONFILTER_3'), patch: t('SINGLE:MSG_AUDITLOGS_MAIN_ACTIONFILTER_6'), update: t('SINGLE:MSG_AUDITLOGS_MAIN_ACTIONFILTER_7'), login: t('SINGLE:MSG_AUDITLOGS_MAIN_ACTIONFILTER_4'), logout: t('SINGLE:MSG_AUDITLOGS_MAIN_ACTIONFILTER_5') },
       });
     } else {
       this.setState({
-        actionList: { all: 'All Actions', create: 'Create', delete: 'Delete', patch: 'Patch', update: 'Update' },
+        actionList: { all: t('SINGLE:MSG_AUDITLOGS_MAIN_ACTIONFILTER_1'), create: t('SINGLE:MSG_AUDITLOGS_MAIN_ACTIONFILTER_2'), delete: t('SINGLE:MSG_AUDITLOGS_MAIN_ACTIONFILTER_3'), patch: t('SINGLE:MSG_AUDITLOGS_MAIN_ACTIONFILTER_6'), update: t('SINGLE:MSG_AUDITLOGS_MAIN_ACTIONFILTER_7') },
       });
     }
     const search = getQueryArgument('user');
@@ -593,42 +596,70 @@ class AuditPage_ extends React.Component {
 
   componentDidUpdate() {
     const namespace = _.get(this.props, 'match.params.ns');
-    if (namespace === this.state.namespace) {
-      return;
-    }
-    this.setState({
-      namespace: namespace,
-      offset: 0,
-      resourceType: this.resourcelist.all,
-      action: this.state.actionList.all,
-      status: this.statuslist.all,
-      code: this.codeList.all,
-    });
-    const search = getQueryArgument('user');
-
-    let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=0&startTime=${this.state.start.getTime() / 1000}&endTime=${this.state.end.getTime() / 1000}&userId=${getId()}${getUserGroup()}`;
-
-    if (search) {
-      uri += `&search=${search}`;
-    }
-    if (namespace === undefined) {
-      // all namespace
-      coFetchJSON(uri).then(response => {
-        // console.log(response.items);
+    const { t, i18n } = this.props;
+    console.log(this.props.i18n.language);
+    if (i18n.language !== this.state.language) {
+      this.resourcelist.all = t('SINGLE:MSG_AUDITLOGS_MAIN_RESOURCEFILTER_1');
+      this.codeList = { all: t('SINGLE:MSG_AUDITLOGS_MAIN_CODEFILTER_1'), 100: t('SINGLE:MSG_AUDITLOGS_MAIN_CODEFILTER_2'), 200: t('SINGLE:MSG_AUDITLOGS_MAIN_CODEFILTER_3'), 300: t('SINGLE:MSG_AUDITLOGS_MAIN_CODEFILTER_4'), 400: t('SINGLE:MSG_AUDITLOGS_MAIN_CODEFILTER_5'), 500: t('SINGLE:MSG_AUDITLOGS_MAIN_CODEFILTER_6') };
+      this.statuslist = { all: t('SINGLE:MSG_AUDITLOGS_MAIN_STATUSFILTER_1'), Success: t('SINGLE:MSG_AUDITLOGS_MAIN_STATUSFILTER_2'), Failure: t('SINGLE:MSG_AUDITLOGS_MAIN_STATUSFILTER_3') };
+      if (this.state.resourceType === 'All Resource Types' || '전체 리소스 타입') {
         this.setState({
-          data: response.eventList.Items,
-          pages: Math.ceil(response.rowsCount / 100),
+          actionList: { all: t('SINGLE:MSG_AUDITLOGS_MAIN_ACTIONFILTER_1') },
         });
-      });
-    } else {
-      uri += `&namespace=${namespace}`;
-      coFetchJSON(uri).then(response => {
-        // console.log(response.items);
+      } else if (this.state.resourceType === 'users') {
         this.setState({
-          data: response.eventList.Items,
-          pages: Math.ceil(response.rowsCount / 100),
+          actionList: { all: t('SINGLE:MSG_AUDITLOGS_MAIN_ACTIONFILTER_1'), create: t('SINGLE:MSG_AUDITLOGS_MAIN_ACTIONFILTER_2'), delete: t('SINGLE:MSG_AUDITLOGS_MAIN_ACTIONFILTER_3'), patch: t('SINGLE:MSG_AUDITLOGS_MAIN_ACTIONFILTER_6'), update: t('SINGLE:MSG_AUDITLOGS_MAIN_ACTIONFILTER_7'), login: t('SINGLE:MSG_AUDITLOGS_MAIN_ACTIONFILTER_4'), logout: t('SINGLE:MSG_AUDITLOGS_MAIN_ACTIONFILTER_5') },
         });
+      } else {
+        this.setState({
+          actionList: { all: t('SINGLE:MSG_AUDITLOGS_MAIN_ACTIONFILTER_1'), create: t('SINGLE:MSG_AUDITLOGS_MAIN_ACTIONFILTER_2'), delete: t('SINGLE:MSG_AUDITLOGS_MAIN_ACTIONFILTER_3'), patch: t('SINGLE:MSG_AUDITLOGS_MAIN_ACTIONFILTER_6'), update: t('SINGLE:MSG_AUDITLOGS_MAIN_ACTIONFILTER_7') },
+        });
+      }
+      this.setState({
+        namespace: namespace,
+        offset: 0,
+        resourceType: this.state.resourceType === 'All Resource Types' || '전체 리소스 타입' ? t('SINGLE:MSG_AUDITLOGS_MAIN_RESOURCEFILTER_1') : this.state.resourceType,
+        action: this.state.actionList.all === 'All Actions' || '전체 액션' ? t('SINGLE:MSG_AUDITLOGS_MAIN_ACTIONFILTER_1') : this.state.actionList.all,
+        status: this.statuslist.all === 'All Status' || '전체 상태' ? t('SINGLE:MSG_AUDITLOGS_MAIN_STATUSFILTER_1') : this.state.statuslist.all,
+        code: this.codeList.all === 'All Codes' || '전체 코드' ? t('SINGLE:MSG_AUDITLOGS_MAIN_CODEFILTER_1') : this.state.statuslist.all,
+        language: i18n.language,
       });
+    }
+    if (namespace !== this.state.namespace) {
+      this.setState({
+        namespace: namespace,
+        offset: 0,
+        resourceType: this.resourcelist.all,
+        action: this.state.actionList.all,
+        status: this.statuslist.all,
+        code: this.codeList.all,
+      });
+      const search = getQueryArgument('user');
+
+      let uri = `${document.location.origin}/api/webhook/audit?limit=100&offset=0&startTime=${this.state.start.getTime() / 1000}&endTime=${this.state.end.getTime() / 1000}&userId=${getId()}${getUserGroup()}`;
+
+      if (search) {
+        uri += `&search=${search}`;
+      }
+      if (namespace === undefined) {
+        // all namespace
+        coFetchJSON(uri).then(response => {
+          // console.log(response.items);
+          this.setState({
+            data: response.eventList.Items,
+            pages: Math.ceil(response.rowsCount / 100),
+          });
+        });
+      } else {
+        uri += `&namespace=${namespace}`;
+        coFetchJSON(uri).then(response => {
+          // console.log(response.items);
+          this.setState({
+            data: response.eventList.Items,
+            pages: Math.ceil(response.rowsCount / 100),
+          });
+        });
+      }
     }
   }
 
@@ -668,34 +699,35 @@ class AuditPage_ extends React.Component {
   };
 
   render() {
+    const { t } = this.props;
     const { data, start, end, textFilter, actionList } = this.state;
 
     return (
       <React.Fragment>
         <div>
           <Helmet>
-            <title>Audit</title>
+            <title>{t('COMMON:MSG_LNB_MENU_5')}</title>
           </Helmet>
-          <PageHeading detail={true} title="Audit">
+          <PageHeading detail={true} title={t('COMMON:MSG_LNB_MENU_5')}>
             <div className="co-m-pane__filter-bar" style={{ marginBottom: 0, marginLeft: 0 }}>
               <div className="co-m-pane__filter-bar-group">
                 <Dropdown title={this.state.resourceType} className="btn-group btn-group-audit" items={this.resourcelist} onChange={this.onChangeResourceType} />
                 <Dropdown title={this.state.action} className="btn-group" items={actionList} onChange={this.onChangeAction} />
                 <Dropdown title={this.state.status} className="btn-group" items={this.statuslist} onChange={this.onChangeStatus} />
                 <Dropdown style={{ marginRight: '30px' }} title={this.state.code} className="btn-group" items={this.codeList} onChange={this.onChangeCode} />
-                <p style={{ marginRight: '10px', lineHeight: '30px' }}>Inquiry Period</p>
+                <p style={{ marginRight: '10px', lineHeight: '30px' }}>{t('SINGLE:MSG_AUDITLOGS_MAIN_SEARCHPERIOD_1')}</p>
                 <div className="co-datepicker-wrapper">
                   <DatePicker className="co-datepicker" placeholderText="From" startDate={start} endDate={end} selected={start} onChange={this.onChangeStartDate} />
                   <i className="fa fa-calendar" aria-hidden="true" onClick={this.onIconClick}></i>
                 </div>
-                <p style={{ marginRight: '10px', lineHeight: '30px' }}>to</p>
+                <p style={{ marginRight: '10px', lineHeight: '30px' }}>{t('SINGLE:MSG_AUDITLOGS_MAIN_SEARCHPERIOD_2')}</p>
                 <div className="co-datepicker-wrapper">
                   <DatePicker className="co-datepicker" placeholderText="To" startDate={start} endDate={end} selected={end} onChange={this.onChangeEndDate} minDate={start} maxDate={new Date()} />
                   <i className="fa fa-calendar" aria-hidden="true" onClick={this.onIconClick}></i>
                 </div>
               </div>
               <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
-                <TextFilter id="audit" label="User Account" autoFocus={true} onChange={this.onSearch} />
+                <TextFilter id="audit" label="Filter User Account" autoFocus={true} onChange={this.onSearch} />
               </div>
             </div>
           </PageHeading>
@@ -814,4 +846,4 @@ AuditList.propTypes = {
   textFilter: PropTypes.string,
 };
 
-export const AuditPage = AuditPage_;
+export const AuditPage = withTranslation()(AuditPage_);

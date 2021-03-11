@@ -247,7 +247,10 @@ const HorizontalPodAutoscalersList: React.SFC = props => {
 };
 HorizontalPodAutoscalersList.displayName = 'HorizontalPodAutoscalersList';
 
-export const HorizontalPodAutoscalersPage: React.FC<HorizontalPodAutoscalersPageProps> = props => <ListPage {...props} kind={HorizontalPodAutoscalersReference} ListComponent={HorizontalPodAutoscalersList} canCreate={true} />;
+export const HorizontalPodAutoscalersPage: React.FC<HorizontalPodAutoscalersPageProps> = props => {
+  const { t } = useTranslation();
+  return <ListPage {...props} title={t('COMMON:MSG_LNB_MENU_32')} createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:MSG_LNB_MENU_32') })} kind={HorizontalPodAutoscalersReference} ListComponent={HorizontalPodAutoscalersList} canCreate={true} />;
+};
 HorizontalPodAutoscalersPage.displayName = 'HorizontalPodAutoscalersListPage';
 
 export type HorizontalPodAutoscalersDetailsProps = {

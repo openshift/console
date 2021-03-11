@@ -21,7 +21,7 @@ import { GrafanaPage } from './hypercloud/grafana';
 
 //PF4 Imports
 import { PageSection, PageSectionVariants } from '@patternfly/react-core';
-import { WelcomePage } from './hypercloud/login/welcome';
+import WelcomePage from './hypercloud/login/welcome';
 
 const RedirectComponent = props => {
   const to = `/k8s${props.location.pathname}`;
@@ -170,7 +170,7 @@ const AppContents_: React.FC<AppContentsProps> = ({ activePerspective }) => (
             // <LazyRoute path="/k8s/ns/:ns/roles/:name/add-rule" exact loader={() => import('./RBAC' /* webpackChunkName: "rbac" */).then(m => m.EditRulePage)} />
             // <LazyRoute path="/k8s/ns/:ns/roles/:name/:rule/edit" exact loader={() => import('./RBAC' /* webpackChunkName: "rbac" */).then(m => m.EditRulePage)} />
           }
-          <LazyRoute path="/k8s/cluster/audits" exact loader={() => import('./hypercloud/audit').then(m => NamespaceFromURL(m.AuditPage))} />
+          <LazyRoute path="/k8s/ns/:ns/audits" exact loader={() => import('./hypercloud/audit').then(m => NamespaceFromURL(m.AuditPage))} />
           <LazyRoute path="/k8s/all-namespaces/audits" exact loader={() => import('./hypercloud/audit').then(m => NamespaceFromURL(m.AuditPage))} />
           <Route path="/grafana/all-namespaces" exact component={NamespaceFromURL(GrafanaPage)} />
           <Route path="/grafana/ns/:ns" exact component={NamespaceFromURL(GrafanaPage)} />

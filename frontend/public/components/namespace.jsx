@@ -389,24 +389,30 @@ export const NamespaceLineCharts = ({ ns }) => {
   return (
     <div className="row">
       <div className="col-md-6 col-sm-12">
-        <Area title="CPU Usage" humanize={humanizeCpuCores} namespace={ns.metadata.name} query={`namespace:container_cpu_usage:sum{namespace='${ns.metadata.name}'}`} />
+        <Area title={t('SINGLE:MSG_NAMESPACES_NAMESPACEDETAILS_TABDETAILS_RESOURCEUSAGE_2')} humanize={humanizeCpuCores} namespace={ns.metadata.name} query={`namespace:container_cpu_usage:sum{namespace='${ns.metadata.name}'}`} />
       </div>
       <div className="col-md-6 col-sm-12">
-        <Area title="Memory Usage" humanize={humanizeBinaryBytes} byteDataType={ByteDataTypes.BinaryBytes} namespace={ns.metadata.name} query={`sum by(namespace) (container_memory_working_set_bytes{namespace="${ns.metadata.name}",container="",pod!=""})`} />
+        <Area title={t('SINGLE:MSG_NAMESPACES_NAMESPACEDETAILS_TABDETAILS_RESOURCEUSAGE_3')} humanize={humanizeBinaryBytes} byteDataType={ByteDataTypes.BinaryBytes} namespace={ns.metadata.name} query={`sum by(namespace) (container_memory_working_set_bytes{namespace="${ns.metadata.name}",container="",pod!=""})`} />
       </div>
     </div>
   );
 };
 
-export const TopPodsBarChart = ({ ns }) => <Bar title="Memory Usage by Pod (Top 10)" namespace={ns.metadata.name} query={`sort_desc(topk(10, sum by (pod)(container_memory_working_set_bytes{container="",pod!="",namespace="${ns.metadata.name}"})))`} humanize={humanizeBinaryBytes} metric="pod" />;
+export const TopPodsBarChart = ({ ns }) => {
+  const { t } = useTranslation();
+  return <Bar title={t('SINGLE:MSG_NAMESPACES_NAMESPACEDETAILS_TABDETAILS_RESOURCEUSAGE_4')} namespace={ns.metadata.name} query={`sort_desc(topk(10, sum by (pod)(container_memory_working_set_bytes{container="",pod!="",namespace="${ns.metadata.name}"})))`} humanize={humanizeBinaryBytes} metric="pod" />;
+};
 
-const ResourceUsage = requirePrometheus(({ ns }) => (
-  <div className="co-m-pane__body">
-    <SectionHeading text="Resource Usage" />
-    <NamespaceLineCharts ns={ns} />
-    <TopPodsBarChart ns={ns} />
-  </div>
-));
+const ResourceUsage = requirePrometheus(({ ns }) => {
+  const { t } = useTranslation();
+  return (
+    <div className="co-m-pane__body">
+      <SectionHeading text={t('SINGLE:MSG_NAMESPACES_NAMESPACEDETAILS_TABDETAILS_RESOURCEUSAGE_1')} />
+      <NamespaceLineCharts ns={ns} />
+      <TopPodsBarChart ns={ns} />
+    </div>
+  );
+});
 
 export const NamespaceSummary = ({ ns }) => {
   const { t } = useTranslation();
@@ -522,7 +528,7 @@ class NamespaceBarDropdowns_ extends React.Component {
 
     const { loaded, data } = this.props.namespace;
     const model = getModel(useProjects);
-    const allNamespacesTitle = `all ${model.labelPlural.toLowerCase()}`;
+    const allNamespacesTitle = t('COMMON:MSG_NNB__3');
     const items = {};
 
     if (canListNS) {
@@ -577,12 +583,12 @@ class NamespaceBarDropdowns_ extends React.Component {
           // canFavorite
           items={items}
           actionItems={defaultActionItem}
-          titlePrefix={model.label}
+          titlePrefix={t('COMMON:MSG_NNB__2')}
           title={title}
           onChange={onChange}
           selectedKey={activeNamespace || ALL_NAMESPACES_KEY}
           autocompleteFilter={autocompleteFilter}
-          autocompletePlaceholder={`Select ${model.label.toLowerCase()}...`}
+          autocompletePlaceholder={t('COMMON:MSG_NNB__1')}
           noBookmark={true}
           defaultBookmarks={defaultBookmarks}
           storageKey={NAMESPACE_LOCAL_STORAGE_KEY}

@@ -26,7 +26,7 @@ const CatalogServiceClaimDetails: React.FC<CatalogServiceClaimDetailsProps> = ({
           </div>
           <div className="col-md-6">
             <dl className="co-m-pane__details">
-              <dt>{t('COMMON:MSG_DETAILS_TABOVERVIEW_TABLEHEADER_1')}</dt>
+              <dt>{t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_118')}</dt>
               <dd>{catalogServiceClaim.resourceName}</dd>
               <dt>{t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_13')}</dt>
               <dd>{catalogServiceClaim.status && catalogServiceClaim.status.status}</dd>
@@ -108,7 +108,8 @@ const CatalogServiceClaimsList: React.FC = props => {
 CatalogServiceClaimsList.displayName = 'CatalogServiceClaimsList';
 
 const CatalogServiceClaimsPage: React.FC<CatalogServiceClaimsPageProps> = props => {
-  return <ListPage canCreate={true} kind={kind} ListComponent={CatalogServiceClaimsList} {...props} />;
+  const { t } = useTranslation();
+  return <ListPage title={t('COMMON:MSG_LNB_MENU_19')} createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:MSG_LNB_MENU_19') })} canCreate={true} kind={kind} ListComponent={CatalogServiceClaimsList} {...props} />;
 };
 CatalogServiceClaimsPage.displayName = 'CatalogServiceClaimsPage';
 

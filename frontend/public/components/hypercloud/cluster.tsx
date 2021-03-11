@@ -99,15 +99,14 @@ ClusterTableHeader.displayName = 'ClusterTableHeader';
 
 const ClusterTableRow: RowFunction<IClusterTableRow> = ({ obj: cluster, index, key, style }) => {
   const owner = Object.keys(cluster.status?.owner)[0];
-  const { t } = useTranslation();
   return (
     <TableRow id={cluster.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink kind={kind} name={cluster.metadata.name} displayName={cluster.fakeMetadata.fakename} title={cluster.metadata.uid} />
       </TableData>
       <TableData className={classNames(tableColumnClasses[1])}>{cluster.spec.provider}</TableData>
-      <TableData className={classNames(tableColumnClasses[2])}>{cluster.spec.provider ? t('MULTI:MSG_MULTI_CLUSTERS_TABLECONTENTS_TYPE_1') : t('MULTI:MSG_MULTI_CLUSTERS_TABLECONTENTS_TYPE_2')}</TableData>
-      <TableData className={tableColumnClasses[3]}>{cluster.status?.ready ? t('MULTI:MSG_MULTI_CLUSTERS_TABLECONTENTS_STATUS_1') : t('MULTI:MSG_MULTI_CLUSTERS_TABLECONTENTS_STATUS_2')}</TableData>
+      <TableData className={classNames(tableColumnClasses[2])}>{cluster.spec.provider ? "생성" : "등록"}</TableData>
+      <TableData className={tableColumnClasses[3]}>{cluster.status?.ready ? "준비" : "생성 중"}</TableData>
       <TableData className={tableColumnClasses[4]}>{cluster.spec.version}</TableData>
       <TableData className={tableColumnClasses[5]}>{`${cluster.status?.masterRun ?? 0} / ${cluster.spec?.masterNum ?? 0}`}</TableData>
       <TableData className={tableColumnClasses[6]}>{`${cluster.status?.workerRun ?? 0} / ${cluster.spec?.workerNum ?? 0}`}</TableData>

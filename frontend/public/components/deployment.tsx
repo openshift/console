@@ -37,7 +37,7 @@ const UpdateStrategy: KebabAction = (kind: K8sKind, deployment: DeploymentKind) 
 const PauseAction: KebabAction = (kind: K8sKind, obj: DeploymentKind) => {
   const { t } = useTranslation();
   return {
-    label: obj.spec.paused ? 'Resume Rollouts' : t('COMMON:MSG_MAIN_ACTIONBUTTON_12'),
+    label: obj.spec.paused ? t('COMMON:MSG_MAIN_ACTIONBUTTON_37') : t('COMMON:MSG_MAIN_ACTIONBUTTON_12'),
     callback: () => togglePaused(kind, obj).catch(err => errorModal({ error: err.message })),
     accessReview: {
       group: kind.apiGroup,
@@ -185,7 +185,10 @@ export const DeploymentsList: React.FC = props => {
 };
 DeploymentsList.displayName = 'DeploymentsList';
 
-export const DeploymentsPage: React.FC<DeploymentsPageProps> = props => <ListPage kind={deploymentsReference} canCreate={true} ListComponent={DeploymentsList} {...props} />;
+export const DeploymentsPage: React.FC<DeploymentsPageProps> = props => {
+  const { t } = useTranslation();
+  return <ListPage title={t('COMMON:MSG_LNB_MENU_24')} createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:MSG_LNB_MENU_24') })} kind={deploymentsReference} canCreate={true} ListComponent={DeploymentsList} {...props} />;
+};
 DeploymentsPage.displayName = 'DeploymentsPage';
 
 type ReplicaSetsTabProps = {

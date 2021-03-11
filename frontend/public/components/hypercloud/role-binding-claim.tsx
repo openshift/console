@@ -6,7 +6,8 @@ import { fromNow } from '@console/internal/components/utils/datetime';
 import { sortable } from '@patternfly/react-table';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from '../factory';
 import { Kebab, navFactory, ResourceSummary, SectionHeading, ResourceLink, ResourceKebab } from '../utils';
-
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 const { common } = Kebab.factory;
 
 const tableColumnClasses = ['', '', classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-16-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-lg'), classNames('pf-m-hidden', 'pf-m-visible-on-lg'), Kebab.columnClass];
@@ -15,22 +16,22 @@ export const menuActions = [...Kebab.getExtensionsActionsForKind(modelFor('RoleB
 
 const kind = 'RoleBindingClaim';
 
-const RoleBindingClaimTableHeader = () => {
+const RoleBindingClaimTableHeader = (t?: TFunction) => {
   return [
     {
-      title: 'Name',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_1'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: 'Namespace',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_2'),
       sortField: 'metadata.namespace',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Status',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_3'),
       sortFunc: 'status.status',
       transforms: [sortable],
       props: { className: tableColumnClasses[2] },
@@ -42,7 +43,7 @@ const RoleBindingClaimTableHeader = () => {
       props: { className: tableColumnClasses[3] },
     },
     {
-      title: 'Created',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_12'),
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: tableColumnClasses[4] },
@@ -73,7 +74,10 @@ const RoleBindingClaimTableRow: RowFunction<K8sClaimResourceKind> = ({ obj: role
     </TableRow>
   );
 };
-export const RoleBindingClaimsList: React.FC = props => <Table {...props} aria-label="RoleBindingClaims" Header={RoleBindingClaimTableHeader} Row={RoleBindingClaimTableRow} virtualize />;
+export const RoleBindingClaimsList: React.FC = props => {
+  const { t } = useTranslation();
+  return <Table {...props} aria-label="RoleBindingClaims" Header={RoleBindingClaimTableHeader.bind(null, t)} Row={RoleBindingClaimTableRow} virtualize />;
+};
 RoleBindingClaimsList.displayName = 'RoleBindingClaimsList';
 
 export const RoleBindingClaimsPage: React.FC<RoleBindingClaimsPageProps> = props => <ListPage kind={'RoleBindingClaim'} canCreate={true} ListComponent={RoleBindingClaimsList} {...props} />;

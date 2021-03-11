@@ -94,7 +94,10 @@ const ConfigMaps = props => {
   return <Table {...props} aria-label="Config Maps" Header={ConfigMapTableHeader.bind(null, t)} Row={ConfigMapTableRow} virtualize />;
 };
 
-const ConfigMapsPage = props => <ListPage ListComponent={ConfigMaps} canCreate={true} {...props} />;
+const ConfigMapsPage = props => {
+  const { t } = useTranslation();
+  return <ListPage title={t('COMMON:MSG_LNB_MENU_27')} createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:MSG_LNB_MENU_27') })} ListComponent={ConfigMaps} canCreate={true} {...props} />;
+};
 const ConfigMapsDetailsPage = props => <DetailsPage {...props} menuActions={menuActions} pages={[navFactory.details(ConfigMapDetails), navFactory.editYaml()]} />;
 
 export { ConfigMaps, ConfigMapsPage, ConfigMapsDetailsPage };

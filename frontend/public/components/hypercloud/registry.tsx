@@ -76,11 +76,11 @@ const RegistryTableRow: RowFunction<K8sResourceKind> = ({ obj: registry, index, 
       <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
         <ResourceLink kind="Namespace" name={registry.metadata.namespace} title={registry.metadata.namespace} />
       </TableData>
-      <TableData className={tableColumnClasses[2]}>{registry.status.serverURL}</TableData>
+      <TableData className={tableColumnClasses[2]}>{registry?.status?.serverURL}</TableData>
       <TableData className={classNames(tableColumnClasses[3], 'co-break-word')}>
-        <Status status={registry.status.phase} />
+        <Status status={registry?.status?.phase} />
       </TableData>
-      <TableData className={tableColumnClasses[4]}>{registry.status.capacity}</TableData>
+      <TableData className={tableColumnClasses[4]}>{registry?.status?.capacity}</TableData>
       <TableData className={tableColumnClasses[5]}>
         <Timestamp timestamp={registry.metadata.creationTimestamp} />
       </TableData>
@@ -97,7 +97,7 @@ export const RegistryDetailsList: React.FC<RegistryDetailsListProps> = ({ ds }) 
   return (
     <dl className="co-m-pane__details">
       <DetailsItem label={t('COMMON:MSG_MAIN_TABLEHEADER_3')} obj={ds} path="status.phase">
-        <Status status={ds.status.phase} />
+        <Status status={ds?.status?.phase} />
       </DetailsItem>
       <DetailsItem label={t('COMMON:MSG_DETAILS_TABDETAILS_CONTAINERS_TABLEHEADER_3')} obj={ds} path="spec.image">
         {ds.spec.image}
@@ -141,7 +141,7 @@ export const Registries: React.FC = props => {
 };
 
 const registryStatusReducer = (registry: any): string => {
-  return registry.status.phase;
+  return registry?.status?.phase;
 };
 
 const filters = [
@@ -179,7 +179,7 @@ const registryCreateAction = (history, item) => {
       }
       break;
   }
-}
+};
 
 export const RegistriesPage = withRouter(props => {
   const { t } = useTranslation();
@@ -187,12 +187,12 @@ export const RegistriesPage = withRouter(props => {
   const createItems = {
     generic: 'Create Registry',
     scan: 'Image Scan Request',
-  }
+  };
 
   const createProps = {
     items: createItems,
-    action: registryCreateAction.bind(null, props.history)
-  }
+    action: registryCreateAction.bind(null, props.history),
+  };
 
   return <ListPage
     title={t('COMMON:MSG_LNB_MENU_71')}

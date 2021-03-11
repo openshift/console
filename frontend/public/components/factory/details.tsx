@@ -23,6 +23,7 @@ import {
 } from '../../module/k8s';
 import { ErrorBoundaryFallback } from '../error';
 import { breadcrumbsForDetailsPage } from '../utils/breadcrumbs';
+import { useTranslation } from 'react-i18next';
 
 export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...props }) => {
   const resourceKeys = _.map(props.resources, 'prop');
@@ -52,6 +53,7 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
   let allPages = [...pages, ...pluginPages];
   allPages = allPages.length ? allPages : null;
 
+  const { t } = useTranslation();
   return (
     <Firehose
       resources={[
@@ -75,7 +77,7 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
         breadcrumbsFor={
           props.breadcrumbsFor
             ? props.breadcrumbsFor
-            : breadcrumbsForDetailsPage(props.kindObj, props.match)
+            : breadcrumbsForDetailsPage.bind(null, props.kindObj, props.match, t)()
         }
         resourceKeys={resourceKeys}
         getResourceStatus={props.getResourceStatus}

@@ -28,7 +28,7 @@ export const ClusterClaimModel: K8sKind = {
   label: 'ClusterClaim',
   labelPlural: 'Clusters Claims',
   apiVersion: 'v1alpha1',
-  apiGroup: 'claims.tmax.io',
+  apiGroup: 'claim.tmax.io',
   plural: 'clusterclaims',
   abbr: 'CC',
   kind: 'ClusterClaim',

@@ -18,6 +18,7 @@ import { connectToFlags } from '../reducers/features';
 import { FLAGS } from '@console/shared/src/constants';
 import { Box, Dropdown, Loading, PageHeading, pluralize, ResourceIcon, ResourceLink, resourcePathFromModel, Timestamp, TogglePlay } from './utils';
 import { EventStreamList } from './utils/event-stream';
+import { useTranslation, withTranslation } from 'react-i18next';
 
 const maxMessages = 500;
 const flushInterval = 500;
@@ -114,9 +115,7 @@ const Inner = connectToFlags(FLAGS.CAN_LIST_NODE)(
   },
 );
 
-const eventTypes = { all: 'All Types', normal: 'Normal', warning: 'Warning' };
-
-export class EventsList extends React.Component {
+class _EventsList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -142,19 +141,21 @@ export class EventsList extends React.Component {
 
   render() {
     const { type, selected, textFilter } = this.state;
-    const { autoFocus = true } = this.props;
+    const { autoFocus = true, t } = this.props;
 
+    const eventTypes = { all: t('SINGLE:MSG_EVENTS_MAIN_TYPES_1'), normal: t('SINGLE:MSG_EVENTS_MAIN_TYPES_2'), warning: t('SINGLE:MSG_EVENTS_MAIN_TYPES_3') };
+    const selectedType = eventTypes[type];
     return (
       <>
         <PageHeading detail={true} title={this.props.title}>
           <div className="co-search-group">
             <ResourceListDropdown onChange={this.toggleSelected} selected={Array.from(selected)} showAll clearSelection={this.clearSelection} className="co-search-group__resource" />
-            <Dropdown className="btn-group co-search-group__resource" items={eventTypes} onChange={v => this.setState({ type: v })} selectedKey={type} title="All Types" />
-            <TextFilter autoFocus={autoFocus} label="Events by name or message" onChange={val => this.setState({ textFilter: val || '' })} />
+            <Dropdown className="btn-group co-search-group__resource" items={eventTypes} onChange={v => this.setState({ type: v })} selectedKey={type} title={selectedType} />
+            <TextFilter autoFocus={autoFocus} label={t('SINGLE:MSG_EVENTS_MAIN_PLACEHOLDER_1')} onChange={val => this.setState({ textFilter: val || '' })} />
           </div>
           <div className="form-group">
             <ChipGroup withToolbar defaultIsOpen={false}>
-              <ChipGroupToolbarItem key="resources-category" categoryName="Resource">
+              <ChipGroupToolbarItem key="resources-category" categoryName={t('COMMON:MSG_COMMON_FILTER_1')}>
                 {[...selected].map(chip => (
                   <Chip key={chip} onClick={() => this.toggleSelected(chip)}>
                     <ResourceIcon kind={chip} />
@@ -172,11 +173,13 @@ export class EventsList extends React.Component {
             </ChipGroup>
           </div>
         </PageHeading>
-        <EventStream {...this.props} key={[...selected].join(',')} type={type} kind={selected.has('All') || selected.size === 0 ? 'all' : [...selected].join(',')} mock={this.props.mock} textFilter={textFilter} />
+        <_EventStream {...this.props} key={[...selected].join(',')} type={type} kind={selected.has('All') || selected.size === 0 ? 'all' : [...selected].join(',')} mock={this.props.mock} textFilter={textFilter} />
       </>
     );
   }
 }
+
+export const EventsList = withTranslation()(_EventsList);
 
 export const NoEvents = () => (
   <Box className="co-sysevent-stream__status-box-empty">
@@ -184,33 +187,42 @@ export const NoEvents = () => (
   </Box>
 );
 
-export const NoMatchingEvents = ({ allCount }) => (
-  <Box className="co-sysevent-stream__status-box-empty">
-    <div className="cos-status-box__title">No matching events</div>
-    <div className="text-center cos-status-box__detail">
-      {allCount}
-      {allCount >= maxMessages && '+'} events exist, but none match the current filter
-    </div>
-  </Box>
-);
+export const NoMatchingEvents = ({ allCount }) => {
+  const { t } = useTranslation();
+  return (
+    <Box className="co-sysevent-stream__status-box-empty">
+      <div className="cos-status-box__title">{t('SINGLE:MSG_EVENTS_MAIN_RESULT_2')}</div>
+      <div className="text-center cos-status-box__detail">
+        {allCount}
+        {allCount >= maxMessages && '+'} {t('SINGLE:MSG_EVENTS_MAIN_RESULT_3', { 0: '' })}
+      </div>
+    </Box>
+  );
+};
 
-export const ErrorLoadingEvents = () => (
-  <Box>
-    <div className="cos-status-box__title cos-error-title">Error loading events</div>
-    <div className="cos-status-box__detail text-center">An error occurred during event retrieval. Attempting to reconnect...</div>
-  </Box>
-);
+export const ErrorLoadingEvents = () => {
+  const { t } = useTranslation();
+  return (
+    <Box>
+      <div className="cos-status-box__title cos-error-title">{t('SINGLE:MSG_EVENTS_MAIN_ERROR_3')}</div>
+      <div className="cos-status-box__detail text-center">{t('SINGLE:MSG_EVENTS_MAIN_ERROR_4')}</div>
+    </Box>
+  );
+};
 
-export const EventStreamPage = withStartGuide(({ noProjectsAvailable, ...rest }) => (
-  <>
-    <Helmet>
-      <title>Events</title>
-    </Helmet>
-    <EventsList {...rest} autoFocus={!noProjectsAvailable} mock={noProjectsAvailable} title="Events" />
-  </>
-));
+export const EventStreamPage = withStartGuide(({ noProjectsAvailable, ...rest }) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <Helmet>
+        <title>{t('COMMON:MSG_LNB_MENU_6')}</title>
+      </Helmet>
+      <EventsList {...rest} autoFocus={!noProjectsAvailable} mock={noProjectsAvailable} title={t('COMMON:MSG_LNB_MENU_6')} />
+    </>
+  );
+});
 
-class EventStream extends React.Component {
+class _EventStream extends React.Component {
   constructor(props) {
     super(props);
     this.messages = {};
@@ -334,7 +346,7 @@ class EventStream extends React.Component {
       active: !nextProps.mock,
       loading: !nextProps.mock && loading,
       // update the filteredEvents
-      filteredEvents: EventStream.filterEvents(prevState.sortedMessages, nextProps),
+      filteredEvents: _EventStream.filterEvents(prevState.sortedMessages, nextProps),
       // we need these for bookkeeping because getDerivedStateFromProps doesn't get prevProps
       textFilter: nextProps.textFilter,
       kind: nextProps.kind,
@@ -361,7 +373,7 @@ class EventStream extends React.Component {
     this.setState({
       oldestTimestamp,
       sortedMessages: sorted,
-      filteredEvents: EventStream.filterEvents(sorted, this.props),
+      filteredEvents: _EventStream.filterEvents(sorted, this.props),
     });
 
     // Shrink this.messages back to maxMessages messages, to stop it growing indefinitely
@@ -379,7 +391,7 @@ class EventStream extends React.Component {
   }
 
   render() {
-    const { mock, resourceEventStream } = this.props;
+    const { mock, resourceEventStream, t } = this.props;
     const { active, error, loading, filteredEvents, sortedMessages } = this.state;
     const count = filteredEvents.length;
     const allCount = sortedMessages.length;
@@ -398,18 +410,19 @@ class EventStream extends React.Component {
       statusBtnTxt = <span className="co-sysevent-stream__connection-error">Error connecting to event stream{_.isString(error) && `: ${error}`}</span>;
       sysEventStatus = <ErrorLoadingEvents />;
     } else if (loading) {
-      statusBtnTxt = <span>Loading events...</span>;
+      statusBtnTxt = <span>{t('SINGLE:MSG_EVENTS_MAIN_STATUS_1')}</span>;
       sysEventStatus = <Loading />;
     } else if (active) {
-      statusBtnTxt = <span>Streaming events...</span>;
+      statusBtnTxt = <span>{t('SINGLE:MSG_EVENTS_MAIN_STATUS_1')}</span>;
     } else {
-      statusBtnTxt = <span>Event stream is paused.</span>;
+      statusBtnTxt = <span>{t('SINGLE:MSG_EVENTS_MAIN_STATUS_2')}</span>;
     }
 
     const klass = classNames('co-sysevent-stream__timeline', {
       'co-sysevent-stream__timeline--empty': !allCount || !count,
     });
-    const messageCount = count < maxMessages ? `Showing ${pluralize(count, 'event')}` : `Showing ${count} of ${allCount}+ events`;
+    // const messageCount = count < maxMessages ? `Showing ${pluralize(count, 'event')}` : `Showing ${count} of ${allCount}+ events`;
+    const messageCount = count < maxMessages ? t('SINGLE:MSG_EVENTS_MAIN_COUNT_1', { something: count }) : `Showing ${count} of ${allCount}+ events`;
 
     return (
       <div className="co-m-pane__body">
@@ -433,13 +446,15 @@ class EventStream extends React.Component {
   }
 }
 
-EventStream.defaultProps = {
+const EventStream = withTranslation()(_EventStream);
+
+_EventStream.defaultProps = {
   type: 'all',
   kind: 'all',
   mock: false,
 };
 
-EventStream.propTypes = {
+_EventStream.propTypes = {
   type: PropTypes.string,
   filter: PropTypes.array,
   kind: PropTypes.string.isRequired,
@@ -454,6 +469,11 @@ export const ResourceEventStream = ({
     kind,
     metadata: { name, namespace, uid },
   },
-}) => <EventStream fieldSelector={`involvedObject.uid=${uid},involvedObject.name=${name},involvedObject.kind=${kind}`} namespace={namespace} resourceEventStream />;
-
-export const ResourcesEventStream = ({ filters, namespace }) => <EventStream filter={filters} resourceEventStream namespace={namespace} />;
+}) => {
+  const { t } = useTranslation();
+  return <_EventStream t={t} fieldSelector={`involvedObject.uid=${uid},involvedObject.name=${name},involvedObject.kind=${kind}`} namespace={namespace} resourceEventStream />;
+};
+export const ResourcesEventStream = ({ filters, namespace }) => {
+  const { t } = useTranslation();
+  return <_EventStream filter={filters} resourceEventStream namespace={namespace} />;
+};

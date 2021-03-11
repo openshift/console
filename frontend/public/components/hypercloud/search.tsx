@@ -16,7 +16,7 @@ import { withStartGuide } from '../start-guide';
 import { split, selectorFromString } from '../../module/k8s/selector';
 import { kindForReference, modelFor, referenceForModel } from '../../module/k8s';
 import { LoadingBox, MsgBox, PageHeading, ResourceIcon, setQueryArgument, AsyncComponent } from '../utils';
-import { SearchFilterDropdown, searchFilterValues } from '../search-filter-dropdown';
+import { SearchFilterDropdown } from '../search-filter-dropdown';
 import { useTranslation } from 'react-i18next';
 
 const ResourceList = connectToModel(({ kindObj, mock, namespace, selector, nameFilter }) => {
@@ -126,7 +126,7 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = props =>
   };
 
   const updateSearchFilter = (type: string, value: string, endOfString: boolean) => {
-    type === searchFilterValues.Label ? updateLabelFilter(value, endOfString) : updateNameFilter(value);
+    type === t('COMMON:MSG_COMMON_SEARCH_FILTER_2') ? updateLabelFilter(value, endOfString) : updateNameFilter(value);
   };
 
   const removeLabelFilter = (filter: string, value: string) => {
@@ -158,7 +158,7 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = props =>
         <title>{t('COMMON:MSG_LNB_MENU_4')}</title>
       </Helmet>
       <PageHeading detail={true} title={t('COMMON:MSG_LNB_MENU_4')}>
-        <DataToolbar id="search-toolbar" clearAllFilters={clearAll}>
+        <DataToolbar id="search-toolbar" clearAllFilters={clearAll} clearFiltersButtonText={t('COMMON:MSG_COMMON_FILTER_11')}>
           <DataToolbarContent>
             <DataToolbarItem>
               <DataToolbarFilter
@@ -173,14 +173,14 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = props =>
                   ),
                 }))}
                 deleteChip={updateNewItems}
-                categoryName="Resource"
+                categoryName={t('COMMON:MSG_COMMON_FILTER_1')}
               >
                 <ResourceListDropdown selected={[...selectedItems]} onChange={updateSelectedItems} type="multiple" />
               </DataToolbarFilter>
             </DataToolbarItem>
             <DataToolbarItem className="co-search-group__filter">
-              <DataToolbarFilter deleteChipGroup={clearLabelFilter} chips={[...labelFilter]} deleteChip={removeLabelFilter} categoryName="Label">
-                <DataToolbarFilter chips={typeaheadNameFilter.length > 0 ? [typeaheadNameFilter] : []} deleteChip={clearNameFilter} categoryName="Name">
+              <DataToolbarFilter deleteChipGroup={clearLabelFilter} chips={[...labelFilter]} deleteChip={removeLabelFilter} categoryName={t('COMMON:MSG_COMMON_SEARCH_FILTER_2')}>
+                <DataToolbarFilter chips={typeaheadNameFilter.length > 0 ? [typeaheadNameFilter] : []} deleteChip={clearNameFilter} categoryName={t('COMMON:MSG_COMMON_SEARCH_FILTER_1')}>
                   <SearchFilterDropdown onChange={updateSearchFilter} nameFilterInput={typeaheadNameFilter} labelFilterInput={labelFilterInput} />
                 </DataToolbarFilter>
               </DataToolbarFilter>

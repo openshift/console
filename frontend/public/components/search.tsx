@@ -2,17 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { connect, Dispatch } from 'react-redux';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionToggle,
-  DataToolbar,
-  DataToolbarChip,
-  DataToolbarContent,
-  DataToolbarFilter,
-  DataToolbarItem,
-} from '@patternfly/react-core';
+import { Accordion, AccordionContent, AccordionItem, AccordionToggle, DataToolbar, DataToolbarChip, DataToolbarContent, DataToolbarFilter, DataToolbarItem } from '@patternfly/react-core';
 import { PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
 import { getBadgeFromType } from '@console/shared';
 import { RootState } from '../redux';
@@ -26,14 +16,7 @@ import { resourceListPages } from './resource-pages';
 import { withStartGuide } from './start-guide';
 import { split, selectorFromString } from '../module/k8s/selector';
 import { kindForReference, modelFor, referenceForModel } from '../module/k8s';
-import {
-  LoadingBox,
-  MsgBox,
-  PageHeading,
-  ResourceIcon,
-  setQueryArgument,
-  AsyncComponent,
-} from './utils';
+import { LoadingBox, MsgBox, PageHeading, ResourceIcon, setQueryArgument, AsyncComponent } from './utils';
 import confirmNavUnpinModal from './nav/confirmNavUnpinModal';
 import { SearchFilterDropdown, searchFilterValues } from './search-filter-dropdown';
 
@@ -42,26 +25,10 @@ const ResourceList = connectToModel(({ kindObj, mock, namespace, selector, nameF
     return <LoadingBox />;
   }
 
-  const componentLoader = resourceListPages.get(referenceForModel(kindObj), () =>
-    Promise.resolve(DefaultPage),
-  );
+  const componentLoader = resourceListPages.get(referenceForModel(kindObj), () => Promise.resolve(DefaultPage));
   const ns = kindObj.namespaced ? namespace : undefined;
 
-  return (
-    <AsyncComponent
-      loader={componentLoader}
-      namespace={ns}
-      selector={selector}
-      nameFilter={nameFilter}
-      kind={kindObj.crd ? referenceForModel(kindObj) : kindObj.kind}
-      showTitle={false}
-      hideTextFilter
-      autoFocus={false}
-      mock={mock}
-      badge={getBadgeFromType(kindObj.badge)}
-      hideToolbar
-    />
-  );
+  return <AsyncComponent loader={componentLoader} namespace={ns} selector={selector} nameFilter={nameFilter} kind={kindObj.crd ? referenceForModel(kindObj) : kindObj.kind} showTitle={false} hideTextFilter autoFocus={false} mock={mock} badge={getBadgeFromType(kindObj.badge)} hideToolbar />;
 });
 
 interface StateProps {
@@ -73,7 +40,7 @@ interface DispatchProps {
   onPinnedResourcesChange: (searches: string[]) => void;
 }
 
-const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = (props) => {
+const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = props => {
   const [selectedItems, setSelectedItems] = React.useState(new Set<string>([]));
   const [collapsedKinds, setCollapsedKinds] = React.useState(new Set<string>([]));
   const [labelFilter, setLabelFilter] = React.useState([]);
@@ -97,7 +64,7 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = (props) 
       setSelectedItems(new Set(kind.split(',')));
     }
     const tags = split(q || '');
-    const validTags = _.reject(tags, (tag) => requirementFromString(tag) === undefined);
+    const validTags = _.reject(tags, tag => requirementFromString(tag) === undefined);
     setLabelFilter(validTags);
     setTypeaheadNameFilter(name || '');
   }, []);
@@ -171,9 +138,7 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = (props) 
   };
 
   const updateSearchFilter = (type: string, value: string, endOfString: boolean) => {
-    type === searchFilterValues.Label
-      ? updateLabelFilter(value, endOfString)
-      : updateNameFilter(value);
+    type === searchFilterValues.Label ? updateLabelFilter(value, endOfString) : updateNameFilter(value);
   };
 
   const removeLabelFilter = (filter: string, value: string) => {
@@ -210,7 +175,7 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = (props) 
             <DataToolbarItem>
               <DataToolbarFilter
                 deleteChipGroup={clearSelectedItems}
-                chips={[...selectedItems].map((resourceKind) => ({
+                chips={[...selectedItems].map(resourceKind => ({
                   key: resourceKind,
                   node: (
                     <>
@@ -222,29 +187,13 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = (props) 
                 deleteChip={updateNewItems}
                 categoryName="Resource"
               >
-                <ResourceListDropdown
-                  selected={[...selectedItems]}
-                  onChange={updateSelectedItems}
-                />
+                <ResourceListDropdown selected={[...selectedItems]} onChange={updateSelectedItems} />
               </DataToolbarFilter>
             </DataToolbarItem>
             <DataToolbarItem className="co-search-group__filter">
-              <DataToolbarFilter
-                deleteChipGroup={clearLabelFilter}
-                chips={[...labelFilter]}
-                deleteChip={removeLabelFilter}
-                categoryName="Label"
-              >
-                <DataToolbarFilter
-                  chips={typeaheadNameFilter.length > 0 ? [typeaheadNameFilter] : []}
-                  deleteChip={clearNameFilter}
-                  categoryName="Name"
-                >
-                  <SearchFilterDropdown
-                    onChange={updateSearchFilter}
-                    nameFilterInput={typeaheadNameFilter}
-                    labelFilterInput={labelFilterInput}
-                  />
+              <DataToolbarFilter deleteChipGroup={clearLabelFilter} chips={[...labelFilter]} deleteChip={removeLabelFilter} categoryName="Label">
+                <DataToolbarFilter chips={typeaheadNameFilter.length > 0 ? [typeaheadNameFilter] : []} deleteChip={clearNameFilter} categoryName="Name">
+                  <SearchFilterDropdown onChange={updateSearchFilter} nameFilterInput={typeaheadNameFilter} labelFilterInput={labelFilterInput} />
                 </DataToolbarFilter>
               </DataToolbarFilter>
             </DataToolbarItem>
@@ -253,22 +202,14 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = (props) 
       </PageHeading>
       <div className="co-search">
         <Accordion className="co-search__accordion" asDefinitionList={false} noBoxShadow>
-          {[...selectedItems].map((resource) => {
+          {[...selectedItems].map(resource => {
             const isCollapsed = collapsedKinds.has(resource);
             return (
               <AccordionItem key={resource}>
-                <AccordionToggle
-                  className="co-search-group__accordion-toggle"
-                  onClick={() => toggleKindExpanded(resource)}
-                  isExpanded={!isCollapsed}
-                  id={`${resource}-toggle`}
-                >
+                <AccordionToggle className="co-search-group__accordion-toggle" onClick={() => toggleKindExpanded(resource)} isExpanded={!isCollapsed} id={`${resource}-toggle`}>
                   {getToggleText(resource)}
                   {props.perspective !== 'admin' && pinnedResources && (
-                    <a
-                      className="pf-c-button pf-m-link co-search-group__pin-toggle"
-                      onClick={(e) => pinToggle(e, resource)}
-                    >
+                    <a className="pf-c-button pf-m-link co-search-group__pin-toggle" onClick={e => pinToggle(e, resource)}>
                       {pinnedResources.includes(resource) ? (
                         <>
                           <MinusCircleIcon className="co-search-group__pin-toggle__icon" />
@@ -283,28 +224,12 @@ const SearchPage_: React.FC<SearchProps & StateProps & DispatchProps> = (props) 
                     </a>
                   )}
                 </AccordionToggle>
-                <AccordionContent isHidden={isCollapsed}>
-                  {!isCollapsed && (
-                    <ResourceList
-                      kind={resource}
-                      selector={selectorFromString(labelFilter.join(','))}
-                      nameFilter={typeaheadNameFilter}
-                      namespace={namespace}
-                      mock={noProjectsAvailable}
-                      key={resource}
-                    />
-                  )}
-                </AccordionContent>
+                <AccordionContent isHidden={isCollapsed}>{!isCollapsed && <ResourceList kind={resource} selector={selectorFromString(labelFilter.join(','))} nameFilter={typeaheadNameFilter} namespace={namespace} mock={noProjectsAvailable} key={resource} />}</AccordionContent>
               </AccordionItem>
             );
           })}
         </Accordion>
-        {selectedItems.size === 0 && (
-          <MsgBox
-            title="No resources selected"
-            detail={<p>Select one or more resources from the dropdown.</p>}
-          />
-        )}
+        {selectedItems.size === 0 && <MsgBox title="No resources selected" detail={<p>Select one or more resources from the dropdown.</p>} />}
       </div>
     </>
   );

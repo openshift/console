@@ -22,39 +22,39 @@ const MasterNav = () => (
         <NavSection title={t('COMMON:MSG_LNB_MENU_1')}>
           <HrefLink href="/dashboards" activePath="/dashboards/" name={t('COMMON:MSG_LNB_MENU_2')} />
           <HrefLink href="/search" name={t('COMMON:MSG_LNB_MENU_4')} startsWith={searchStartsWith} />
-          <ResourceClusterLink resource="audits" name={t('COMMON:MSG_LNB_MENU_5')} />
+          <ResourceNSLink resource="audits" name={t('COMMON:MSG_LNB_MENU_5')} />
           <ResourceNSLink resource="events" name={t('COMMON:MSG_LNB_MENU_6')} />
-          <HrefLink href="/grafana" name="Grafana" />
-          <HrefLink href="/kibana" name="Kibana" />
+          <HrefLink href="/grafana" name={t('COMMON:MSG_LNB_MENU_98')} />
+          <HrefLink href="/kibana" name={t('COMMON:MSG_LNB_MENU_99')} />
         </NavSection>
         {/* <NavSection title="Operators" /> */}
         <NavSection title={t('COMMON:MSG_LNB_MENU_10')}>
-          <ResourceNSLink resource="servicebrokers" name="Service Broker" />
-          <ResourceNSLink resource="serviceclasses" name="Service Class" />
+          <ResourceNSLink resource="servicebrokers" name={t('COMMON:MSG_LNB_MENU_11')} />
+          <ResourceNSLink resource="serviceclasses" name={t('COMMON:MSG_LNB_MENU_12')} />
           {/* <ResourceNSLink resource="serviceplans" name="Service Plan" /> */}
-          <ResourceClusterLink resource="clusterservicebrokers" name="Cluster Service Broker" />
-          <ResourceClusterLink resource="clusterserviceclasses" name="Cluster Service Class" />
+          <ResourceClusterLink resource="clusterservicebrokers" name={t('COMMON:MSG_LNB_MENU_14')} />
+          <ResourceClusterLink resource="clusterserviceclasses" name={t('COMMON:MSG_LNB_MENU_15')} />
           {/* <ResourceClusterLink resource="clusterserviceplans" name="Cluster Service Plan" /> */}
-          <ResourceNSLink resource="serviceinstances" name="Service Instance" />
-          <ResourceNSLink resource="servicebindings" name="Service Binding" />
-          <ResourceNSLink resource="catalogserviceclaims" name="Catalog Service Claim" />
-          <ResourceNSLink resource="templates" name="Template" />
-          <ResourceClusterLink resource="clustertemplates" name="Cluster Template" />
-          <ResourceNSLink resource="templateinstances" name="Template Instance" />
+          <ResourceNSLink resource="serviceinstances" name={t('COMMON:MSG_LNB_MENU_17')} />
+          <ResourceNSLink resource="servicebindings" name={t('COMMON:MSG_LNB_MENU_18')} />
+          <ResourceNSLink resource="catalogserviceclaims" name={t('COMMON:MSG_LNB_MENU_19')} />
+          <ResourceNSLink resource="templates" name={t('COMMON:MSG_LNB_MENU_20')} />
+          <ResourceClusterLink resource="clustertemplates" name={t('COMMON:MSG_LNB_MENU_104')} />
+          <ResourceNSLink resource="templateinstances" name={t('COMMON:MSG_LNB_MENU_21')} />
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_22')}>
-          <ResourceNSLink resource="pods" name="Pods" />
-          <ResourceNSLink resource="deployments" name="Deployments" />
-          <ResourceNSLink resource="replicasets" name="Replica Sets" />
-          <ResourceNSLink resource="horizontalpodautoscalers" name="Horizontal Pod Autoscalers" />
-          <ResourceNSLink resource="daemonsets" name="Daemon Sets" />
-          <ResourceNSLink resource="statefulsets" name="Stateful Sets" />
+          <ResourceNSLink resource="pods" name={t('COMMON:MSG_LNB_MENU_23')} />
+          <ResourceNSLink resource="deployments" name={t('COMMON:MSG_LNB_MENU_24')} />
+          <ResourceNSLink resource="replicasets" name={t('COMMON:MSG_LNB_MENU_31')} />
+          <ResourceNSLink resource="horizontalpodautoscalers" name={t('COMMON:MSG_LNB_MENU_32')} />
+          <ResourceNSLink resource="daemonsets" name={t('COMMON:MSG_LNB_MENU_30')} />
+          <ResourceNSLink resource="statefulsets" name={t('COMMON:MSG_LNB_MENU_25')} />
           {/* <ResourceNSLink resource="virtualmachines" name={t('COMMON:MSG_LNB_MENU_33')} />
           <ResourceNSLink resource="virtualmachineinstances" name={t('COMMON:MSG_LNB_MENU_34')} /> */}
-          <ResourceNSLink resource="configmaps" name="Config Maps" />
-          <ResourceNSLink resource="secrets" name="Secrets" />
-          <ResourceNSLink resource="jobs" name="Jobs" />
-          <ResourceNSLink resource="cronjobs" name="Cron Jobs" />
+          <ResourceNSLink resource="configmaps" name={t('COMMON:MSG_LNB_MENU_27')} />
+          <ResourceNSLink resource="secrets" name={t('COMMON:MSG_LNB_MENU_26')} />
+          <ResourceNSLink resource="jobs" name={t('COMMON:MSG_LNB_MENU_29')} />
+          <ResourceNSLink resource="cronjobs" name={t('COMMON:MSG_LNB_MENU_28')} />
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_35')}>
           <ResourceNSLink resource="virtualservices" name={t('COMMON:MSG_LNB_MENU_36')} />
@@ -69,9 +69,9 @@ const MasterNav = () => (
           <HrefLink href="/kiali" name={t('COMMON:MSG_LNB_MENU_45')} />
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_46')}>
-          <ResourceNSLink resource="services" name="Services" />
-          <ResourceNSLink resource="ingresses" name="Ingresses" />
-          <ResourceNSLink resource="networkpolicies" name="Network Policies" />
+          <ResourceNSLink resource="services" name={t('COMMON:MSG_LNB_MENU_47')} />
+          <ResourceNSLink resource="ingresses" name={t('COMMON:MSG_LNB_MENU_48')} />
+          <ResourceNSLink resource="networkpolicies" name={t('COMMON:MSG_LNB_MENU_49')} />
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_50')}>
           <ResourceClusterLink resource="storageclasses" name={t('COMMON:MSG_LNB_MENU_53')} />
@@ -100,7 +100,7 @@ const MasterNav = () => (
         </NavSection> */}
         <NavSection title="Image">
           <ResourceNSLink resource="registries" name={t('COMMON:MSG_LNB_MENU_71')} />
-          <ResourceNSLink resource="externalregistries" name="External Registries" />
+          <ResourceNSLink resource="externalregistries" name={t('COMMON:MSG_LNB_MENU_97')} />
           <ResourceClusterLink resource="imagesigners" name={t('COMMON:MSG_LNB_MENU_91')} />
           <ResourceNSLink resource="imagesignrequests" name={t('COMMON:MSG_LNB_MENU_92')} />
           <ResourceNSLink resource="imagescanrequests" name={t('COMMON:MSG_LNB_MENU_95')} />
@@ -108,22 +108,22 @@ const MasterNav = () => (
           {/* <ResourceNSLink resource="imagetransfers" name="Image Transfer" /> */}
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_79')}>
-          <ResourceClusterLink resource="namespaces" name="Namespaces" />
-          <ResourceClusterLink resource="namespaceclaims" name="Namespace Claims" />
-          <ResourceNSLink resource="limitranges" name="Limit Ranges" />
-          <ResourceNSLink resource="resourcequotas" name="Resource Quotas" startsWith={quotaStartsWith} />
-          <ResourceNSLink resource="resourcequotaclaims" name="Resource Quota Claims" startsWith={quotaStartsWith} />
-          <ResourceClusterLink resource="customresourcedefinitions" name="Custom Resource Definitions" />
+          <ResourceClusterLink resource="namespaces" name={t('COMMON:MSG_LNB_MENU_3')} />
+          <ResourceClusterLink resource="namespaceclaims" name={t('COMMON:MSG_LNB_MENU_103')} />
+          <ResourceNSLink resource="limitranges" name={t('COMMON:MSG_LNB_MENU_81')} />
+          <ResourceNSLink resource="resourcequotas" name={t('COMMON:MSG_LNB_MENU_80')} startsWith={quotaStartsWith} />
+          <ResourceNSLink resource="resourcequotaclaims" name={t('COMMON:MSG_LNB_MENU_102')} startsWith={quotaStartsWith} />
+          <ResourceClusterLink resource="customresourcedefinitions" name={t('COMMON:MSG_LNB_MENU_82')} />
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_72')}>
-          <ResourceClusterLink resource="nodes" name="Nodes" />
+          <ResourceClusterLink resource="nodes" name={t('COMMON:MSG_LNB_MENU_100')} />
         </NavSection>
         <NavSection title={t('COMMON:MSG_LNB_MENU_73')}>
-          <ResourceNSLink resource="roles" name="Roles" startsWith={rolesStartsWith} />
-          <ResourceNSLink resource="rolebindings" name="Role Bindings" startsWith={rolebindingsStartsWith} />
-          <ResourceNSLink resource="rolebindingclaims" name="Role Binding Claims" startsWith={rolebindingsStartsWith} />
-          <ResourceNSLink resource="serviceaccounts" name="Service Accounts" />
-          <ResourceClusterLink resource="podsecuritypolicies" name="PodSecurityPolicy" />
+          <ResourceNSLink resource="roles" name={t('COMMON:MSG_LNB_MENU_75')} startsWith={rolesStartsWith} />
+          <ResourceNSLink resource="rolebindings" name={t('COMMON:MSG_LNB_MENU_76')} startsWith={rolebindingsStartsWith} />
+          <ResourceNSLink resource="rolebindingclaims" name={t('COMMON:MSG_LNB_MENU_101')} startsWith={rolebindingsStartsWith} />
+          <ResourceNSLink resource="serviceaccounts" name={t('COMMON:MSG_LNB_MENU_74')} />
+          <ResourceClusterLink resource="podsecuritypolicies" name={t('COMMON:MSG_LNB_MENU_78')} />
           {/* <AuthAdminLink resource={referenceForModel(UserModel)} name="Users" />
           <AuthAdminLink resource={referenceForModel(GroupModel)} name="User Groups" /> */}
         </NavSection>
