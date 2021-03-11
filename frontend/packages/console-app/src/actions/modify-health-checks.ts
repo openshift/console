@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import { K8sKind, K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
 import { KebabOption } from '@console/internal/components/utils';
+import { useTranslation } from 'react-i18next';
 
 const healthChecksAdded = (resource: K8sResourceKind): boolean => {
   const containers = resource?.spec?.template?.spec?.containers;
@@ -22,8 +23,9 @@ const healthChecksUrl = (model: K8sKind, obj: K8sResourceKind): string => {
 };
 
 export const AddHealthChecks = (model: K8sKind, obj: K8sResourceKind): KebabOption => {
+  const { t } = useTranslation();
   return {
-    label: 'Add Health Checks',
+    label: t('COMMON:MSG_MAIN_ACTIONBUTTON_14'),
     hidden: healthChecksAdded(obj),
     href: healthChecksUrl(model, obj),
     accessReview: {
@@ -37,8 +39,9 @@ export const AddHealthChecks = (model: K8sKind, obj: K8sResourceKind): KebabOpti
 };
 
 export const EditHealthChecks = (model: K8sKind, obj: K8sResourceKind): KebabOption => {
+  const { t } = useTranslation();
   return {
-    label: 'Edit Health Checks',
+    label: t('COMMON:MSG_MAIN_ACTIONBUTTON_9'),
     hidden: !healthChecksAdded(obj),
     href: healthChecksUrl(model, obj),
     accessReview: {

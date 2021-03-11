@@ -127,9 +127,7 @@ export class NewTabLink<P extends NewTabLinkProps> extends React.PureComponent<P
         };
         return (
           <NavItem isActive={false} onClick={onClick}>
-            <a href="javascript:void(0)" className="pf-c-nav__link">
-              {name}
-            </a>
+            <Link to="#" onClick={e => {e.preventDefault();}} className="pf-c-nav__link">{name}</Link>
           </NavItem>
         );
       }
@@ -140,9 +138,7 @@ export class NewTabLink<P extends NewTabLinkProps> extends React.PureComponent<P
         };
         return (
           <NavItem isActive={false} onClick={onClick}>
-            <a href="javascript:void(0)" className="pf-c-nav__link">
-              {name}
-            </a>
+            <Link to="#" onClick={e => {e.preventDefault();}} className="pf-c-nav__link">{name}</Link>
           </NavItem>
         );
       }
@@ -153,9 +149,7 @@ export class NewTabLink<P extends NewTabLinkProps> extends React.PureComponent<P
         };
         return (
           <NavItem isActive={false} onClick={onClick}>
-            <a href="javascript:void(0)" className="pf-c-nav__link">
-              {name}
-            </a>
+            <Link to="#" onClick={e => {e.preventDefault();}} className="pf-c-nav__link">{name}</Link>
           </NavItem>
         );
       }

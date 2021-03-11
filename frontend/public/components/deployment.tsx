@@ -138,6 +138,7 @@ const ReplicaSetsTab: React.FC<ReplicaSetsTabProps> = ({ obj }) => {
 
 const { details, editYaml, pods, envEditor, events } = navFactory;
 export const DeploymentsDetailsPage: React.FC<DeploymentsDetailsPageProps> = props => {
+  const { t } = useTranslation();
   return (
     <DetailsPage
       {...props}
@@ -148,7 +149,7 @@ export const DeploymentsDetailsPage: React.FC<DeploymentsDetailsPageProps> = pro
         editYaml(),
         {
           href: 'replicasets',
-          name: 'Replica Sets',
+          name: t('COMMON:MSG_LNB_MENU_31'),
           component: ReplicaSetsTab,
         },
         pods(),

@@ -27,17 +27,7 @@ const actionButtons = [addSecretToWorkload];
 const menuActions = [
   Kebab.factory.ModifyLabels,
   Kebab.factory.ModifyAnnotations,
-  (kind, obj) => ({
-    label: `Edit ${kind.label}`,
-    href: `${resourceObjPath(obj, kind.kind)}/edit`,
-    accessReview: {
-      group: kind.apiGroup,
-      resource: kind.plural,
-      name: obj.metadata.name,
-      namespace: obj.metadata.namespace,
-      verb: 'update',
-    },
-  }),
+  Kebab.factory.EditSecret,
   Kebab.factory.Delete,
 ];
 

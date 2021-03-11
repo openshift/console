@@ -16,7 +16,7 @@ export const ResourceLabelPlural = (kindObj, t?: TFunction) => {
   return t(ResourceStringKeyMap[kindObj.kind].labelPlural);
 };
 
-const ResourceStringKeyMap = {
+export const ResourceStringKeyMap = {
   ClusterClaim: {
   },
   ClusterManager: {

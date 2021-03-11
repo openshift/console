@@ -11,6 +11,7 @@ import { AsyncComponent } from './async';
 import { K8sResourceKind, K8sResourceCommon } from '../../module/k8s';
 import { referenceForModel, referenceFor } from '../../module/k8s/k8s';
 import { useExtensions, HorizontalNavTab, isHorizontalNavTab } from '@console/plugin-sdk';
+import { useTranslation } from 'react-i18next';
 
 const editYamlComponent = props => <AsyncComponent loader={() => import('../edit-yaml').then(c => c.EditYAML)} obj={props.obj} />;
 export const viewYamlComponent = props => <AsyncComponent loader={() => import('../edit-yaml').then(c => c.EditYAML)} obj={props.obj} readOnly={true} />;
@@ -50,17 +51,17 @@ type NavFactory = { [name: string]: (c?: React.ComponentType<any>) => Page };
 export const navFactory: NavFactory = {
   details: component => ({
     href: '',
-    name: 'Details',
+    name: 'COMMON:MSG_DETAILS_TABOVERVIEW_1',
     component,
   }),
   events: component => ({
     href: 'events',
-    name: 'Events',
+    name: '이벤트',
     component,
   }),
   logs: component => ({
     href: 'logs',
-    name: 'Logs',
+    name: '로그',
     component,
   }),
   editYaml: (component = editYamlComponent) => ({
@@ -70,72 +71,72 @@ export const navFactory: NavFactory = {
   }),
   pods: component => ({
     href: 'pods',
-    name: 'Pods',
+    name: '파드',
     component: component || PodsComponent,
   }),
   nodes: component => ({
     href: 'nodes',
-    name: 'Nodes',
+    name: '노드',
     component: component || NodesComponent,
   }),
   roles: component => ({
     href: 'roles',
-    name: 'Role Bindings',
+    name: '롤 바인딩',
     component,
   }),
   builds: component => ({
     href: 'builds',
-    name: 'Builds',
+    name: '빌드',
     component,
   }),
   envEditor: component => ({
     href: 'environment',
-    name: 'Environment',
+    name: '환경 변수',
     component,
   }),
   clusterServiceClasses: component => ({
     href: 'serviceclasses',
-    name: 'Service Classes',
+    name: '서비스 클래스',
     component,
   }),
   clusterServicePlans: component => ({
     href: 'serviceplans',
-    name: 'Service Plans',
+    name: '서비스 플랜',
     component,
   }),
   serviceBindings: component => ({
     href: 'servicebindings',
-    name: 'Service Bindings',
+    name: '서비스 바인딩',
     component,
   }),
   clusterOperators: component => ({
     href: 'clusteroperators',
-    name: 'Cluster Operators',
+    name: '클러스터 오퍼레이터',
     component,
   }),
   machineConfigs: component => ({
     href: 'machineconfigs',
-    name: 'Machine Configs',
+    name: '머신 컨피그',
     component,
   }),
   machines: component => ({
     href: 'machines',
-    name: 'Machines',
+    name: '머신',
     component,
   }),
   workloads: component => ({
     href: 'workloads',
-    name: 'Workloads',
+    name: '워크로드',
     component,
   }),
   history: component => ({
     href: 'history',
-    name: 'History',
+    name: '히스토리',
     component,
   }),
   signerKey: component => ({
     href: 'signerkeys',
-    name: 'Signer Key',
+    name: '서명자 키',
     component,
   }),
 };
@@ -143,6 +144,7 @@ export const navFactory: NavFactory = {
 export const NavBar = withRouter<NavBarProps>(({ pages, baseURL, basePath }) => {
   basePath = basePath.replace(/\/$/, '');
 
+  const { t } = useTranslation();
   const tabs = (
     <>
       {pages.map(({ name, href, path }) => {
@@ -156,7 +158,7 @@ export const NavBar = withRouter<NavBarProps>(({ pages, baseURL, basePath }) => 
         return (
           <li className={klass} key={name}>
             <Link to={`${baseURL.replace(/\/$/, '')}/${href}`} data-test-id={`horizontal-link-${name}`}>
-              {name}
+              {t(name)}
             </Link>
           </li>
         );
