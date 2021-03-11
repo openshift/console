@@ -253,7 +253,7 @@ describe('resolveCodeRefProperties', () => {
       },
     ];
 
-    expect(await resolveCodeRefProperties(extensions[0])).toEqual({});
-    expect(await resolveCodeRefProperties(extensions[1])).toEqual({ qux: 'value' });
+    expect(await resolveCodeRefProperties(extensions[0])).toEqual({ test: true });
+    expect(await resolveCodeRefProperties(extensions[1])).toEqual({ baz: 1, qux: 'value' });
   });
 });

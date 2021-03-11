@@ -38,7 +38,7 @@ export type CodeRef<T = any> = () => Promise<T>;
  * Infer resolved `CodeRef` properties from object `O`.
  */
 export type ResolvedCodeRefProperties<O extends {}> = {
-  [K in keyof O]: O[K] extends CodeRef<infer T> ? T : never;
+  [K in keyof O]: O[K] extends CodeRef<infer T> ? T : O[K];
 };
 
 /**
