@@ -1,6 +1,11 @@
 import { modal } from '../../../../../integration-tests-cypress/views/modal';
 import { pipelineActions } from '../../constants/pipelines';
-import { pipelineRunDetailsPO, pipelinesPO } from '../../page-objects/pipelines-po';
+import {
+  pipelineRunDetailsPO,
+  pipelinesPO,
+  pipelineBuilderPO,
+} from '../../page-objects/pipelines-po';
+import * as yamlEditor from '../../../../../integration-tests-cypress/views/yaml-editor';
 
 export const pipelinesPage = {
   clickOnCreatePipeline: () => cy.get(pipelinesPO.createPipeline).click(),
@@ -82,6 +87,20 @@ export const pipelinesPage = {
       .clear()
       .type(pipelineName);
     cy.get(pipelinesPO.pipelinesTable.table).should('be.visible');
+  },
+
+  clearYAMLEditor: () => {
+    cy.get(pipelineBuilderPO.yamlView.yamlEditor)
+      .click()
+      .focused()
+      .type('{ctrl}a')
+      .clear();
+  },
+
+  setEditorContent: (yamlLocation: string) => {
+    cy.readFile(yamlLocation).then((str) => {
+      yamlEditor.setEditorContent(str);
+    });
   },
 
   selectPipeline: (pipelineName: string) => cy.byLegacyTestID(pipelineName).click(),
@@ -250,6 +269,19 @@ export const startPipelineInPipelinesPage = {
         break;
       case 'PVC':
         cy.byTestDropDownMenu('PVC').click();
+        break;
+      default:
+        break;
+    }
+  },
+
+  selectView: (option: string) => {
+    switch (option) {
+      case 'Form View':
+        cy.get(pipelineBuilderPO.formView.switchToFormView).click();
+        break;
+      case 'YAML View':
+        cy.get(pipelineBuilderPO.yamlView.switchToYAMLView).click();
         break;
       default:
         break;
