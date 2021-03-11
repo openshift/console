@@ -90,32 +90,38 @@ const ImageSignRequestTableRow: RowFunction<K8sResourceKind> = ({ obj: signreque
 
 export const ImageSignRequestStatus: React.FC<ImageSignRequestStatusStatusProps> = ({ result }) => <Status status={result} />;
 
-export const ImageSignRequestDetailsList: React.FC<ImageSignRequestDetailsListProps> = ({ ds }) => (
-  <dl className="co-m-pane__details">
-    <dt>Status</dt>
-    <dd>
-      <ImageSignRequestStatus result={ds.status.imageSignResponse.result} />
-    </dd>
-    <DetailsItem label="Image" obj={ds} path="spec.image" />
-    <DetailsItem label="Signer" obj={ds} path="spec.signer" />
-  </dl>
-);
+export const ImageSignRequestDetailsList: React.FC<ImageSignRequestDetailsListProps> = ({ ds }) => {
+  const { t } = useTranslation();
+  return (
+    <dl className="co-m-pane__details">
+      <dt>{`${t('SINGLE:MSG_JOBS_JOBDETAILS_TABDETAILS_JOBSTATUS_2')}`}</dt>
+      <dd>
+        <ImageSignRequestStatus result={ds.status.imageSignResponse.result} />
+      </dd>
+      <DetailsItem label={`${t('COMMON:MSG_DETAILS_TABDETAILS_CONTAINERS_TABLEHEADER_3')}`} obj={ds} path="spec.image" />
+      <DetailsItem label={`${t('COMMON:MSG_DETAILS_TABDETAILS_SIGNERS_1')}`} obj={ds} path="spec.signer" />
+    </dl>
+  );
+}
 
-const ImageSignRequestDetails: React.FC<ImageSignRequestDetailsProps> = ({ obj: signrequest }) => (
-  <>
-    <div className="co-m-pane__body">
-      <SectionHeading text="Image Sign Request Details" />
-      <div className="row">
-        <div className="col-lg-6">
-          <ResourceSummary resource={signrequest} />
-        </div>
-        <div className="col-lg-6">
-          <ImageSignRequestDetailsList ds={signrequest} />
+const ImageSignRequestDetails: React.FC<ImageSignRequestDetailsProps> = ({ obj: signrequest }) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <div className="co-m-pane__body">
+        <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_92')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
+        <div className="row">
+          <div className="col-lg-6">
+            <ResourceSummary resource={signrequest} />
+          </div>
+          <div className="col-lg-6">
+            <ImageSignRequestDetailsList ds={signrequest} />
+          </div>
         </div>
       </div>
-    </div>
-  </>
-);
+    </>
+  );
+}
 
 const { details, editYaml } = navFactory;
 

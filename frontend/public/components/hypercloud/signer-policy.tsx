@@ -75,21 +75,24 @@ const SignerPolicyTableRow: RowFunction<K8sResourceKind> = ({ obj: signerpolicy,
 
 export const SignerPolicyStatus: React.FC<SignerPolicyStatusStatusProps> = ({ result }) => <Status status={result} />;
 
-const SignerPolicyDetails: React.FC<SignerPolicyDetailsProps> = ({ obj: signerpolicy }) => (
-  <>
-    <div className="co-m-pane__body">
-      <SectionHeading text="Image Sign Request Details" />
-      <div className="row">
-        <div className="col-lg-6">
-          <ResourceSummary resource={signerpolicy} />
+const SignerPolicyDetails: React.FC<SignerPolicyDetailsProps> = ({ obj: signerpolicy }) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <div className="co-m-pane__body">
+        <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_96')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
+        <div className="row">
+          <div className="col-lg-6">
+            <ResourceSummary resource={signerpolicy} />
+          </div>
         </div>
       </div>
-    </div>
-    <div className="co-m-pane__body" style={{ paddingLeft: '0px' }}>
-      <ImageSignersPage isDetailPage={true} />
-    </div>
-  </>
-);
+      <div className="co-m-pane__body" style={{ paddingLeft: '0px' }}>
+        <ImageSignersPage isDetailPage={true} />
+      </div>
+    </>
+  );
+}
 
 const { details, editYaml } = navFactory;
 

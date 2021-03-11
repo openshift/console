@@ -10,6 +10,8 @@ import { RepositoryModel } from '../../models/hypercloud';
 import { Tags } from './tags';
 import { scanningModal } from './modals';
 import { k8sGet } from '../../module/k8s';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 
 export const menuActions = [...Kebab.factory.common, Kebab.factory.ModifyScanning];
 
@@ -43,16 +45,16 @@ const RepositoryTableRow: RowFunction<K8sResourceKind> = ({ obj, index, key, sty
   );
 };
 
-const RepositoryTableHeader = () => {
+const RepositoryTableHeader = (t?: TFunction) => {
   return [
     {
-      title: 'Name',
+      title: t('COMMON:MSG_DETAILS_TABREPLICASETS_1'),
       sortField: 'metadata.name',
       transforms: [sortable],
       props: { className: tableColumnClasses[0] },
     },
     {
-      title: 'Created',
+      title: t('COMMON:MSG_DETAILS_TABREPLICASETS_6'),
       sortField: 'metadata.creationTimestamp',
       transforms: [sortable],
       props: { className: tableColumnClasses[1] },
@@ -68,17 +70,19 @@ RepositoryTableHeader.displayName = 'RepositoryTableHeader';
 
 
 const RepositoriesList = (props) => {
+  const { t } = useTranslation();
+
   return (<Table
     {...props}
     aria-label="Repositories"
-    Header={RepositoryTableHeader}
+    Header={RepositoryTableHeader.bind(null, t)}
     Row={RepositoryTableRow}
     virtualize
   />
   );
 }
 const RepositoriesPage = (props) => {
-
+  const { t } = useTranslation();
 
   const { canCreate = true, namespace, isExtRegistry } = props;
   let registry;
@@ -92,10 +96,10 @@ const RepositoriesPage = (props) => {
     <>
       <div className="pf-m-expanded" style={{ padding: '30px 0 0 30px' }}>
         {isExtRegistry ? <button className="pf-c-dropdown__toggle pf-m-primary" style={{ backgroundColor: '#0066cc', color: 'white', fontSize: '14px', width: '150px', height: '25px', display: 'flex', justifyContent: 'center' }} onClick={scanningModal.bind(null, { kind: 'Repository', ns: namespace, showNs: false, labelSelector: { 'ext-registry': registry }, isExtRegistry })}>
-          Image Scan Request
-      </button> : <button className="pf-c-dropdown__toggle pf-m-primary" style={{ backgroundColor: '#0066cc', color: 'white', fontSize: '14px', width: '150px', height: '25px', display: 'flex', justifyContent: 'center' }} onClick={scanningModal.bind(null, { kind: 'Repository', ns: namespace, showNs: false, labelSelector: { registry }, isExtRegistry })}>
-            Image Scan Request
-      </button>}
+          {t('COMMON:MSG_DETAILS_TABREPOSITORIES_2')}
+        </button> : <button className="pf-c-dropdown__toggle pf-m-primary" style={{ backgroundColor: '#0066cc', color: 'white', fontSize: '14px', width: '150px', height: '25px', display: 'flex', justifyContent: 'center' }} onClick={scanningModal.bind(null, { kind: 'Repository', ns: namespace, showNs: false, labelSelector: { registry }, isExtRegistry })}>
+          {t('COMMON:MSG_DETAILS_TABREPOSITORIES_2')}
+        </button>}
       </div>
       <ListPage canCreate={canCreate} kind="Repository" ListComponent={RepositoriesList} {...props} />
     </>

@@ -111,22 +111,25 @@ export const ScanResultRow: React.FC<ScanResultRowProps> = ({ scanList }) => {
     </div>
   );
 };
-export const ScanResultTable: React.FC<ScanResultTableProps> = ({ heading, scanList }) => (
-  <>
-    <SectionHeading text={heading} />
-    <div className="co-m-table-grid co-m-table-grid--bordered">
-      <div className="row co-m-table-grid__head">
-        <div className="col-lg-6 col-md-6 col-sm-6 col-xs-6">Image</div>
-        <div className="col-lg-6 col-md-6 col-sm-6 col-xs-6">Summary</div>
+export const ScanResultTable: React.FC<ScanResultTableProps> = ({ heading, scanList }) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <SectionHeading text={heading} />
+      <div className="co-m-table-grid co-m-table-grid--bordered">
+        <div className="row co-m-table-grid__head">
+          <div className="col-lg-6 col-md-6 col-sm-6 col-xs-6">{`${t('COMMON:MSG_DETAILS_CONTAINER_IMAGEDETAILS_1')}`}</div>
+          <div className="col-lg-6 col-md-6 col-sm-6 col-xs-6">{`${t('COMMON:MSG_DETAILS_TABDETAILS_21')}`}</div>
+        </div>
+        <div className="co-m-table-grid__body">
+          {scanList.map((c: any, i: number) => (
+            <ScanResultRow key={i} scanList={c} />
+          ))}
+        </div>
       </div>
-      <div className="co-m-table-grid__body">
-        {scanList.map((c: any, i: number) => (
-          <ScanResultRow key={i} scanList={c} />
-        ))}
-      </div>
-    </div>
-  </>
-);
+    </>
+  );
+}
 
 const ImageScanRequestDetails: React.FC<ImageScanRequestDetailsProps> = ({ obj: scanrequest }) => {
   const { t } = useTranslation();

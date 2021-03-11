@@ -87,7 +87,7 @@ const MasterNav = () => (
           <ResourceNSLink resource="pipelineruns" name={t('COMMON:MSG_LNB_MENU_60')} />
           <ResourceNSLink resource="approvals" name={t('COMMON:MSG_LNB_MENU_61')} />
           <ResourceNSLink resource="pipelineresources" name={t('COMMON:MSG_LNB_MENU_62')} />
-          <ResourceNSLink resource="integrationjobs" name="IntegrationJob" />
+          <ResourceNSLink resource="integrationjobs" name={t('SINGLE:MSG_CI/CD_MAILFORM_REQUEST_7')} />
           <ResourceNSLink resource="integrationconfigs" name="IntegrationConfig" />
         </NavSection>
         {/* <NavSection title="AI DevOps">
@@ -98,7 +98,7 @@ const MasterNav = () => (
           <ResourceNSLink resource="workflowtemplates" name='WorkflowTemplate' />
           <ResourceNSLink resource="workflows" name='Workflow' />
         </NavSection> */}
-        <NavSection title="Image">
+        <NavSection title={t('COMMON:MSG_DETAILS_TABDETAILS_CONTAINERS_TABLEHEADER_3')}>
           <ResourceNSLink resource="registries" name={t('COMMON:MSG_LNB_MENU_71')} />
           <ResourceNSLink resource="externalregistries" name={t('COMMON:MSG_LNB_MENU_97')} />
           <ResourceClusterLink resource="imagesigners" name={t('COMMON:MSG_LNB_MENU_91')} />

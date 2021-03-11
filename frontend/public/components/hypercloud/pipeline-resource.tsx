@@ -5,7 +5,7 @@ import { sortable } from '@patternfly/react-table';
 
 import { K8sResourceKind } from '../../module/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData, RowFunction } from '../factory';
-import { DetailsItem, Kebab, KebabAction, detailsPage, Timestamp, navFactory, ResourceKebab, ResourceLink, ResourceSummary, SectionHeading } from '../utils';
+import { Kebab, KebabAction, detailsPage, Timestamp, navFactory, ResourceKebab, ResourceLink, ResourceSummary, SectionHeading } from '../utils';
 import { PipelineResourceModel } from '../../models';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
@@ -71,24 +71,13 @@ const PipelineResourceTableRow: RowFunction<K8sResourceKind> = ({ obj: pipelineR
   );
 };
 
-export const PipelineResourceDetailsList: React.FC<PipelineResourceDetailsListProps> = ({ ds }) => (
-  <dl className="co-m-pane__details">
-    <DetailsItem label="Current Count" obj={ds} path="status.currentNumberScheduled" />
-    <DetailsItem label="Desired Count" obj={ds} path="status.desiredNumberScheduled" />
-  </dl>
-);
-
-
 const PipelineResourceDetails: React.FC<PipelineResourceDetailsProps> = ({ obj: pipelineResource }) => (
   <>
     <div className="co-m-pane__body">
       <SectionHeading text="Pipeline Resource Details" />
       <div className="row">
         <div className="col-lg-6">
-          <ResourceSummary resource={pipelineResource} showPodSelector showNodeSelector showTolerations />
-        </div>
-        <div className="col-lg-6">
-          <PipelineResourceDetailsList ds={pipelineResource} />
+          <ResourceSummary resource={pipelineResource} />
         </div>
       </div>
     </div>
@@ -122,11 +111,6 @@ export const PipelineResourcesPage: React.FC<PipelineResourcesPageProps> = props
 }
 
 export const PipelineResourcesDetailsPage: React.FC<PipelineResourcesDetailsPageProps> = props => <DetailsPage {...props} kind={kind} menuActions={menuActions} pages={[details(detailsPage(PipelineResourceDetails)), editYaml()]} />;
-
-
-type PipelineResourceDetailsListProps = {
-  ds: K8sResourceKind;
-};
 
 type PipelineResourcesPageProps = {
   showTitle?: boolean;

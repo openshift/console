@@ -79,33 +79,39 @@ const ImageSignerTableRow: RowFunction<K8sResourceKind> = ({ obj: imagesigner, i
   );
 };
 
-export const ImageSignerDetailsList: React.FC<ImageSignerDetailsListProps> = ({ ds: imagesigner }) => (
-  <dl className="co-m-pane__details">
-    <DetailsItem label="Team" obj={imagesigner} path="spec.team" />
-    <DetailsItem label="Email" obj={imagesigner} path="spec.email" />
-    <DetailsItem label="Phone" obj={imagesigner} path="spec.phone" />
-    <DetailsItem label="Description" obj={imagesigner} path="spec.description" />
-  </dl>
-);
+export const ImageSignerDetailsList: React.FC<ImageSignerDetailsListProps> = ({ ds: imagesigner }) => {
+  const { t } = useTranslation();
+  return (
+    <dl className="co-m-pane__details">
+      <DetailsItem label={t('COMMON:MSG_DETAILS_TABDETAILS_7')} obj={imagesigner} path="spec.team" />
+      <DetailsItem label={t('COMMON:MSG_DETAILS_TABDETAILS_8')} obj={imagesigner} path="spec.email" />
+      <DetailsItem label={t('COMMON:MSG_DETAILS_TABDETAILS_9')} obj={imagesigner} path="spec.phone" />
+      <DetailsItem label={t('COMMON:MSG_DETAILS_TABDETAILS_10')} obj={imagesigner} path="spec.description" />
+    </dl>
+  );
+}
 
 // const TargetsTable: React.FC = props => <Table {...props} aria-label="ImageSigners" Header={ImageSignerKeyTargetTableHeader} Row={ImageSignerKeyTargetTableRow} virtualize />;
 
-const ImageSignerDetails: React.FC<ImageSignerDetailsProps> = ({ obj: imagesigner }) => (
-  <>
-    <div className="co-m-pane__body">
-      <SectionHeading text="Image Signer Details" />
-      <div className="row">
-        <div className="col-lg-6">
-          <ResourceSummary resource={imagesigner} showOwner={false} />
-          <DetailsItem label="Owner" obj={imagesigner} path="spec.owner" />
-        </div>
-        <div className="col-lg-6">
-          <ImageSignerDetailsList ds={imagesigner} />
+const ImageSignerDetails: React.FC<ImageSignerDetailsProps> = ({ obj: imagesigner }) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <div className="co-m-pane__body">
+        <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_91')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
+        <div className="row">
+          <div className="col-lg-6">
+            <ResourceSummary resource={imagesigner} showOwner={false} />
+            <DetailsItem label={t('COMMON:MSG_DETAILS_TABREPLICASETS_5')} obj={imagesigner} path="spec.owner" />
+          </div>
+          <div className="col-lg-6">
+            <ImageSignerDetailsList ds={imagesigner} />
+          </div>
         </div>
       </div>
-    </div>
-  </>
-);
+    </>
+  );
+}
 
 const fetchSignerKey = singerkey => {
   const url = `/api/kubernetes/apis/tmax.io/v1/signerkeys/${singerkey}`;
@@ -116,6 +122,8 @@ const fetchSignerKey = singerkey => {
 };
 
 const SignerKeyDetails: React.FC<SignerKeyDetailsProps> = ({ obj: imagesigner }) => {
+  const { t } = useTranslation();
+
   const [data, setData] = React.useState([]);
   const [root, setRoot] = React.useState({
     id: '',
@@ -143,12 +151,12 @@ const SignerKeyDetails: React.FC<SignerKeyDetailsProps> = ({ obj: imagesigner })
       <div className="co-m-pane__body">
         <div className="row">
           <div className="col-lg-12">
-            <SecretData data={root} title="Signer Key Details" isTable={false} />
+            <SecretData data={root} title={`${t('COMMON:MSG_DETAILS_TABSIGNERKEY_1')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} isTable={false} />
           </div>
         </div>
       </div>
       <div className="co-m-pane__body">
-        <TargetsTable resource={data} heading="Target" />
+        <TargetsTable resource={data} heading={`${t('COMMON:MSG_DETAILS_TABDETAILS_METRICS_TABLEHEADER_5')}`} />
       </div>
     </>
   );

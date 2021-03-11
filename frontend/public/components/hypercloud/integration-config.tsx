@@ -110,37 +110,42 @@ const IntegrationConfigTableRow: RowFunction<K8sResourceKind> = ({ obj: registry
 };
 
 export const IntegrationConfigDetailsList: React.FC<IntegrationConfigDetailsListProps> = ({ ds }) => {
+  const { t } = useTranslation();
+
   const readyCondition = ds.status.conditions.find(obj => _.lowerCase(obj.type) === 'ready');
   const time = readyCondition?.lastTransitionTime?.replace('T', ' ').replaceAll('-', '.').replace('Z', '');
   const phase = IntegrationConfigPhase(ds);
 
   return (
     <dl className="co-m-pane__details">
-      <DetailsItem label='Last Transition Time' obj={ds} path="status.transitionTime">
+      <DetailsItem label={`${t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_109')}`} obj={ds} path="status.transitionTime">
         {time}
       </DetailsItem>
-      <DetailsItem label='Status' obj={ds} path="status.result">
+      <DetailsItem label={`${t('COMMON:MSG_COMMON_TABLEHEADER_2')}`} obj={ds} path="status.result">
         <Status status={phase} />
       </DetailsItem>
     </dl>
   );
 }
 
-const IntegrationConfigDetails: React.FC<IntegrationConfigDetailsProps> = ({ obj: registry }) => (
-  <>
-    <div className="co-m-pane__body">
-      <SectionHeading text="IntegrationConfig Details" />
-      <div className="row">
-        <div className="col-lg-6">
-          <ResourceSummary resource={registry} showPodSelector showNodeSelector showTolerations />
-        </div>
-        <div className="col-lg-6">
-          <IntegrationConfigDetailsList ds={registry} />
+const IntegrationConfigDetails: React.FC<IntegrationConfigDetailsProps> = ({ obj: registry }) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <div className="co-m-pane__body">
+        <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_95')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
+        <div className="row">
+          <div className="col-lg-6">
+            <ResourceSummary resource={registry} />
+          </div>
+          <div className="col-lg-6">
+            <IntegrationConfigDetailsList ds={registry} />
+          </div>
         </div>
       </div>
-    </div>
-  </>
-);
+    </>
+  );
+}
 
 
 const { details, editYaml } = navFactory;
@@ -155,8 +160,8 @@ export const IntegrationConfigsPage: React.FC<IntegrationConfigsPageProps> = pro
   // const { t } = useTranslation();
 
   return <ListPage
-    // title={t('COMMON:MSG_LNB_MENU_60')}
-    // createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:MSG_LNB_MENU_60') })}
+    // title={t('COMMON:CD_MAILFORM_REQUEST_7')}
+    // createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:CD_MAILFORM_REQUEST_7') })}
     canCreate={true}
     ListComponent={IntegrationConfigs}
     kind={kind}

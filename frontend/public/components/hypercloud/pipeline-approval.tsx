@@ -91,13 +91,13 @@ export const PipelineApprovalDetailsList: React.FC<PipelineApprovalDetailsListPr
       <DetailsItem label={t('COMMON:MSG_MAIN_TABLEHEADER_3')} obj={ds} path="status.result">
         <Status status={ds.status.result} />
       </DetailsItem>
-      <DetailsItem label='Approval/Rejection Time' obj={ds} path="status.decisionTime">
+      <DetailsItem label={t('COMMON:MSG_DETAILS_TABDETAILS_18')} obj={ds} path="status.decisionTime">
         {time}
       </DetailsItem>
-      <DetailsItem label='Acceptable Users' obj={ds} path="spec.users">
+      <DetailsItem label={t('COMMON:MSG_DETAILS_TABDETAILS_19')} obj={ds} path="spec.users">
         {ds.spec.users.map(user => <div>{user}</div>)}
       </DetailsItem>
-      <DetailsItem label='Reason for approval/rejection' obj={ds} path="status.reason">
+      <DetailsItem label={t('COMMON:MSG_DETAILS_TABDETAILS_20')} obj={ds} path="status.reason">
         {ds.status.reason}
       </DetailsItem>
     </dl>
