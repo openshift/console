@@ -16,6 +16,7 @@ import ActivityBody, { RecentEventsBody, OngoingActivityBody } from '@console/sh
 import { useExtensions, DashboardsOverviewResourceActivity, DashboardsOverviewPrometheusActivity, isDashboardsOverviewResourceActivity, isDashboardsOverviewPrometheusActivity } from '@console/plugin-sdk';
 import { uniqueResource } from './utils';
 import { PrometheusResponse } from '../../../graphs';
+import { useTranslation } from 'react-i18next';
 
 const eventsResource: FirehoseResource = { isList: true, kind: EventModel.kind, prop: 'events' };
 const viewEvents = '/k8s/all-namespaces/events';
@@ -104,20 +105,23 @@ const OngoingActivity = connect(mapStateToProps)(
   }),
 );
 
-export const ActivityCard: React.FC<{}> = React.memo(() => (
-  <DashboardCard gradient data-test-id="activity-card">
-    <DashboardCardHeader>
-      <DashboardCardTitle>Activity</DashboardCardTitle>
-      <DashboardCardLink to={viewEvents}>View events</DashboardCardLink>
-    </DashboardCardHeader>
-    <DashboardCardBody>
-      <ActivityBody className="co-overview-dashboard__activity-body">
-        <OngoingActivity />
-        <RecentEvent />
-      </ActivityBody>
-    </DashboardCardBody>
-  </DashboardCard>
-));
+export const ActivityCard: React.FC<{}> = React.memo(() => {
+  const { t } = useTranslation();
+  return (
+    <DashboardCard gradient data-test-id="activity-card">
+      <DashboardCardHeader>
+        <DashboardCardTitle>{t('SINGLE:MSG_OVERVIEW_MAIN_CARDACTIVITY_TITLE_1')}</DashboardCardTitle>
+        <DashboardCardLink to={viewEvents}>{t('SINGLE:MSG_OVERVIEW_MAIN_CARDACTIVITY_ALL_1')}</DashboardCardLink>
+      </DashboardCardHeader>
+      <DashboardCardBody>
+        <ActivityBody className="co-overview-dashboard__activity-body">
+          <OngoingActivity />
+          <RecentEvent />
+        </ActivityBody>
+      </DashboardCardBody>
+    </DashboardCard>
+  );
+});
 
 type OngoingActivityProps = {
   models: ImmutableMap<string, K8sKind>;

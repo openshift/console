@@ -24,6 +24,8 @@ import { OperatorHealthItem, PrometheusHealthItem, URLHealthItem, ResourceHealth
 import { WatchK8sResource, useK8sWatchResource } from '../../../utils/k8s-watch-hook';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { ClusterDashboardContext } from './context';
+import { useTranslation } from 'react-i18next';
+
 const filterSubsystems = (subsystems: DashboardsOverviewHealthSubsystem[], k8sModels: ImmutableMap<string, K8sKind>) =>
   subsystems.filter(s => {
     if (isDashboardsOverviewHealthURLSubsystem(s) || isDashboardsOverviewHealthPrometheusSubsystem(s)) {
@@ -76,6 +78,7 @@ const mapStateToProps = (state: RootState) => ({
 });
 
 export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels }) => {
+  const { t } = useTranslation();
   const subsystemExtensions = useExtensions<DashboardsOverviewHealthSubsystem>(isDashboardsOverviewHealthSubsystem);
 
   const subsystems = React.useMemo(() => filterSubsystems(subsystemExtensions, k8sModels), [subsystemExtensions, k8sModels]);
@@ -109,7 +112,7 @@ export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels
   if (operatorSubsystemIndex !== -1) {
     const operatorSubsystems = subsystems.filter(isDashboardsOverviewHealthOperator);
     healthItems.splice(operatorSubsystemIndex, 0, {
-      title: 'Operators',
+      title: t('SINGLE:MSG_OVERVIEW_MAIN_CARDSTATUS_OPERATORS_1'),
       Component: <OperatorHealthItem operatorExtensions={operatorSubsystems} />,
     });
   }
@@ -117,7 +120,7 @@ export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels
   return (
     <DashboardCard gradient data-test-id="status-card">
       <DashboardCardHeader>
-        <DashboardCardTitle>Status</DashboardCardTitle>
+        <DashboardCardTitle>{t('SINGLE:MSG_OVERVIEW_MAIN_CARDSTATUS_TITLE_1')}</DashboardCardTitle>
         <DashboardCardLink to="/monitoring/alerts">View alerts</DashboardCardLink>
       </DashboardCardHeader>
       <DashboardCardBody>

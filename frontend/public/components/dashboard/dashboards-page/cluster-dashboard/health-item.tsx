@@ -11,8 +11,10 @@ import { useK8sWatchResources } from '../../../utils/k8s-watch-hook';
 import { withDashboardResources, DashboardItemProps } from '../../with-dashboard-resources';
 import { uniqueResource } from './utils';
 import { getPrometheusQueryResponse } from '../../../../actions/dashboards';
+import { useTranslation } from 'react-i18next';
 
 export const OperatorsPopup: React.FC<OperatorsPopupProps> = ({ resources, operatorExtensions }) => {
+  const { t } = useTranslation();
   const sections = operatorExtensions
     .map((o, index) => {
       const operatorResources = o.properties.resources.reduce((acc, r) => {
@@ -24,7 +26,7 @@ export const OperatorsPopup: React.FC<OperatorsPopupProps> = ({ resources, opera
     .reverse();
   return (
     <>
-      Operators create, configure, and manage applications by extending the Kubernetes API.
+      {t('SINGLE:MSG_OVERVIEW_MAIN_POPOVEROPERATOR_DESCRIPTION_1')}
       {sections}
     </>
   );
@@ -37,7 +39,7 @@ export const OperatorHealthItem = withDashboardResources<OperatorHealthItemProps
       operatorExtensions.forEach((o, index) => o.properties.resources.forEach(r => stopWatchK8sResource(uniqueResource(r, index))));
     };
   }, [watchK8sResource, stopWatchK8sResource, operatorExtensions]);
-
+  const { t } = useTranslation();
   const healthStatuses = operatorExtensions.map((o, index) => {
     const operatorResources = o.properties.resources.reduce((acc, r) => {
       acc[r.prop] = resources[uniqueResource(r, index).prop] || {};
@@ -60,13 +62,14 @@ export const OperatorHealthItem = withDashboardResources<OperatorHealthItemProps
   const operatorsHealth = getOperatorsHealthState(healthStatuses);
 
   return (
-    <HealthItem title="Operators" state={operatorsHealth.health} details={operatorsHealth.detailMessage} popupTitle="Operator status">
+    <HealthItem title={t('SINGLE:MSG_OVERVIEW_MAIN_CARDSTATUS_OPERATORS_1')} state={operatorsHealth.health} details={operatorsHealth.detailMessage} popupTitle={t('SINGLE:MSG_OVERVIEW_MAIN_POPOVEROPERATOR_TITLE_1')}>
       <OperatorsPopup resources={resources} operatorExtensions={operatorExtensions} />
     </HealthItem>
   );
 });
 
 export const URLHealthItem = withDashboardResources<URLHealthItemProps>(({ watchURL, stopWatchURL, urlResults, resources, watchK8sResource, stopWatchK8sResource, subsystem, models }) => {
+  const { t } = useTranslation();
   const modelExists = subsystem.additionalResource && !!models.get(subsystem.additionalResource.kind);
   React.useEffect(() => {
     watchURL(subsystem.url, subsystem.fetch);
@@ -86,6 +89,10 @@ export const URLHealthItem = withDashboardResources<URLHealthItemProps>(({ watch
 
   const k8sResult = subsystem.additionalResource ? resources[subsystem.additionalResource.prop] : null;
   const healthState = subsystem.healthHandler(healthResult, healthResultError, k8sResult);
+
+  if (subsystem.title === 'Cluster') {
+    subsystem.title = t('SINGLE:MSG_OVERVIEW_MAIN_TABCLUSTER_1');
+  }
 
   return (
     <HealthItem title={subsystem.title} state={healthState.state} details={healthState.message} popupTitle={subsystem.popupTitle}>

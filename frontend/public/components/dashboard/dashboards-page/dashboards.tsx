@@ -36,7 +36,7 @@ const getPluginTabPages = (tabs: DashboardsTab[], cards: DashboardsCard[]): Page
 
 const DashboardsPage_: React.FC<DashboardsPageProps> = ({ match, kindsInFlight, k8sModels }) => {
   const { t } = useTranslation();
-  const title = 'Overview';
+  const title = t('COMMON:MSG_LNB_MENU_90');
   const tabExtensions = useExtensions<DashboardsTab>(isDashboardsTab);
   const cardExtensions = useExtensions<DashboardsCard>(isDashboardsCard);
 
