@@ -13,6 +13,8 @@ import { AccessReviewResourceAttributes, K8sKind, K8sResourceKind, K8sResourceKi
 import { impersonateStateToProps } from '../../reducers/ui';
 import { connectToModel } from '../../kinds';
 import * as plugins from '../../plugins';
+import { useTranslation } from 'react-i18next';
+import { ResourceStringKeyMap } from '../../models/hypercloud/resource-plural';
 
 export const kebabOptionsToMenu = (options: KebabOption[]): KebabMenuOption[] => {
   const subs: { [key: string]: KebabSubMenu } = {};
@@ -47,6 +49,7 @@ export const kebabOptionsToMenu = (options: KebabOption[]): KebabMenuOption[] =>
 };
 
 const KebabItem_: React.FC<KebabItemProps & { isAllowed: boolean }> = ({ option, onClick, onEscape, autoFocus, isAllowed }) => {
+  const { t } = useTranslation();
   const handleEscape = e => {
     if (e.keyCode === KEY_CODES.ESCAPE_KEY) {
       onEscape();
@@ -54,10 +57,12 @@ const KebabItem_: React.FC<KebabItemProps & { isAllowed: boolean }> = ({ option,
   };
   const disabled = !isAllowed || option.isDisabled;
   const classes = classNames('pf-c-dropdown__menu-item', { 'pf-m-disabled': disabled });
+  // MEMO : i18n 키 값과 변수 값을 한번에 String으로 받아올 수 밖에 없어서 불가피하게 여기서 split으로 나눠서 넣어준다..
+  const labelSplit = option?.label?.split('**');
   return (
     <button className={classes} onClick={e => !disabled && onClick(e, option)} autoFocus={autoFocus} onKeyDown={onEscape && handleEscape} data-test-action={option.label}>
       {option.icon && <span className="oc-kebab__icon">{option.icon}</span>}
-      {option.label}
+      {!!labelSplit[1] ? t(labelSplit[0], { 0: t(labelSplit[1]) }) : t(labelSplit[0])}
     </button>
   );
 };
@@ -193,7 +198,7 @@ export const KebabItems: React.FC<KebabItemsProps> = ({ options, ...props }) => 
 
 const kebabFactory: KebabFactory = {
   Delete: (kind, obj) => ({
-    label: `Delete ${kind.label}`,
+    label: `COMMON:MSG_MAIN_ACTIONBUTTON_16**${ResourceStringKeyMap[kind.kind]?.labelPlural ?? kind.label}`,
     callback: () =>
       deleteModal({
         kind,
@@ -202,13 +207,13 @@ const kebabFactory: KebabFactory = {
     accessReview: asAccessReview(kind, obj, 'delete'),
   }),
   Edit: (kind, obj) => ({
-    label: `Edit ${kind.label}`,
+    label: `COMMON:MSG_MAIN_ACTIONBUTTON_15**${ResourceStringKeyMap[kind.kind]?.labelPlural ?? kind.label}`,
     href: `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/yaml`,
     // TODO: Fallback to "View YAML"? We might want a similar fallback for annotations, labels, etc.
     accessReview: asAccessReview(kind, obj, 'update'),
   }),
   ModifyLabels: (kind, obj) => ({
-    label: 'Edit Labels',
+    label: 'COMMON:MSG_MAIN_ACTIONBUTTON_4',
     callback: () =>
       labelsModal({
         kind,
@@ -218,7 +223,7 @@ const kebabFactory: KebabFactory = {
     accessReview: asAccessReview(kind, obj, 'patch'),
   }),
   ModifyStatus: (kind, obj) => ({
-    label: 'Approval Processing',
+    label: 'COMMON:MSG_MAIN_ACTIONBUTTON_31',
     callback: () =>
       statusModal({
         kind,
@@ -228,7 +233,7 @@ const kebabFactory: KebabFactory = {
     accessReview: asAccessReview(kind, obj, 'patch'),
   }),
   ModifyClaim: (kind, obj) => ({
-    label: 'Approval Processing',
+    label: 'COMMON:MSG_MAIN_ACTIONBUTTON_31',
     callback: () =>
       claimModal({
         kind,
@@ -243,7 +248,7 @@ const kebabFactory: KebabFactory = {
       isExtRegistry = true;
     }
     return {
-      label: 'Image Scan Request Creation',
+      label: 'COMMON:MSG_COMMON_ACTIONBUTTON_20',
       callback: () =>
         scanningModal({
           modelKind: kind,
@@ -254,7 +259,7 @@ const kebabFactory: KebabFactory = {
     };
   },
   ModifyPodSelector: (kind, obj) => ({
-    label: 'Edit Pod Selector',
+    label: 'COMMON:MSG_MAIN_ACTIONBUTTON_6',
     callback: () =>
       podSelectorModal({
         kind,
@@ -264,7 +269,7 @@ const kebabFactory: KebabFactory = {
     accessReview: asAccessReview(kind, obj, 'patch'),
   }),
   ModifyAnnotations: (kind, obj) => ({
-    label: 'Edit Annotations',
+    label: 'COMMON:MSG_MAIN_ACTIONBUTTON_5',
     callback: () =>
       annotationsModal({
         kind,
@@ -274,7 +279,7 @@ const kebabFactory: KebabFactory = {
     accessReview: asAccessReview(kind, obj, 'patch'),
   }),
   ModifyCount: (kind, obj) => ({
-    label: 'Edit Pod Count',
+    label: 'COMMON:MSG_MAIN_ACTIONBUTTON_7',
     callback: () =>
       configureReplicaCountModal({
         resourceKind: kind,
@@ -303,12 +308,12 @@ const kebabFactory: KebabFactory = {
     accessReview: asAccessReview(kind, obj, 'patch'),
   }),
   AddStorage: (kind, obj) => ({
-    label: 'Add Storage',
+    label: 'COMMON:MSG_MAIN_ACTIONBUTTON_13',
     href: `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/attach-storage`,
     accessReview: asAccessReview(kind, obj, 'patch'),
   }),
   ExpandPVC: (kind, obj) => ({
-    label: 'Expand PVC',
+    label: 'COMMON:MSG_MAIN_ACTIONBUTTON_3',
     callback: () =>
       expandPVCModal({
         kind,
