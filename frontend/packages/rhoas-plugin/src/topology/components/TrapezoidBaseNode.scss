@@ -1,0 +1,66 @@
+@import '../../../../topology/src/components/topology-utils.scss';
+
+.odc-trapezoid-node {
+  outline: none;
+  cursor: pointer;
+
+  .odc-m-drag-active & {
+    pointer-events: none;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &__bg {
+    fill: var(--pf-global--BackgroundColor--light-100);
+  }
+
+  &.is-filtered &__bg {
+    stroke-width: 2px;
+    stroke: $filtered-stroke-color;
+  }
+  &.is-selected &__bg {
+    stroke-width: 2px;
+    stroke: $selected-stroke-color;
+  }
+  &.is-highlight &__bg {
+    stroke-width: 0;
+  }
+  &.is-dropTarget &__bg {
+    stroke-width: 4px;
+    stroke: $interactive-stroke-color;
+  }
+
+  &__label {
+    fill: var(--pf-global--Color--light-100);
+    font-size: var(--pf-global--FontSize--md);
+    text {
+      pointer-events: none;
+      fill: var(--pf-global--Color--300);
+    }
+  }
+}
+
+.odc-m-drag-active,
+.odc-m-filter-active {
+  .odc-trapezoid-node {
+    opacity: $de-emphasize-opacity;
+    &.is-dragging,
+    &.is-highlight {
+      opacity: 1;
+    }
+  }
+}
+
+.odc-m-filter-active:not(.odc-m-drag-active) {
+  .odc-trapezoid-node {
+    &.is-filtered {
+      opacity: 1;
+    }
+  }
+}
+
+.co-m-resource-managed-kafka-connection {
+  background-color: --pf-global--palette--red-300;
+}

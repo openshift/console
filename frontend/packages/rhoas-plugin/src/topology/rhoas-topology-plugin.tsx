@@ -17,8 +17,6 @@ export type TopologyConsumedExtensions =
   | TopologyDataModelFactory
   | TopologyCreateConnector;
 
-export const MANAGED_KAFKA_TOPOLOGY_TYPE = ManagedKafkaConnectionModel.kind;
-
 const getRhoasWatchedResources = (namespace: string): WatchK8sResources<any> => {
   return {
     kafkaConnections: {

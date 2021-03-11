@@ -31,5 +31,6 @@
   "Could not connect to RHOAS with API Token": "Could not connect to RHOAS with API Token",
   "Failed to load list of services": "Failed to load list of services",
   "Failed to create Kafka": "Failed to create Kafka",
-  "Please try again": " Please try again"
+  "Please try again": " Please try again",
+  "Delete Kafka Connection": "Delete Kafka Connection"
 }

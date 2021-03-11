@@ -20,8 +20,8 @@ import {
 } from '@console/topology/src/components/graph-view';
 import { kebabOptionsToMenu } from '@console/internal/components/utils';
 import KafkaNode from './KafkaNode';
-import { MANAGED_KAFKA_TOPOLOGY_TYPE } from '../rhoas-topology-plugin';
 import { rhoasActions } from '../actions/rhoasActions';
+import { MANAGED_KAFKA_TOPOLOGY_TYPE } from '../const';
 
 export const rhoasContextMenu = (element: Node) => {
   return createMenuItems(kebabOptionsToMenu(rhoasActions(element)));
