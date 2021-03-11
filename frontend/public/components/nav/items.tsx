@@ -116,6 +116,55 @@ export class HrefLink extends NavLink<HrefLinkProps> {
   }
 }
 
+export class NewTabLink<P extends NewTabLinkProps> extends React.PureComponent<P> {
+  render() {
+    const { name, type } = this.props;
+    switch (type) {
+      case 'grafana': {
+        const onClick = () => {
+          let ns = localStorage.getItem('bridge/last-namespace-name') === '#ALL_NS#' ? 'all-namespaces' : localStorage.getItem('bridge/last-namespace-name') ?? 'all-namespaces';
+          window.open(`${document.location.origin}/api/grafana/d/k8s-namespace/?var-namespace=${ns}`);
+        };
+        return (
+          <NavItem isActive={false} onClick={onClick}>
+            <a href="javascript:void(0)" className="pf-c-nav__link">
+              {name}
+            </a>
+          </NavItem>
+        );
+      }
+
+      case 'kibana': {
+        const onClick = () => {
+          window.open(`${document.location.origin}/api/kibana/`);
+        };
+        return (
+          <NavItem isActive={false} onClick={onClick}>
+            <a href="javascript:void(0)" className="pf-c-nav__link">
+              {name}
+            </a>
+          </NavItem>
+        );
+      }
+
+      case 'kiali': {
+        const onClick = () => {
+          window.open(`${document.location.origin}/api/kiali/`);
+        };
+        return (
+          <NavItem isActive={false} onClick={onClick}>
+            <a href="javascript:void(0)" className="pf-c-nav__link">
+              {name}
+            </a>
+          </NavItem>
+        );
+      }
+      default: {
+      }
+    }
+  }
+}
+
 export type NavLinkProps = {
   name: string;
   id?: LinkProps['id'];
@@ -143,6 +192,11 @@ export type ResourceClusterLinkProps = NavLinkProps & {
 
 export type HrefLinkProps = NavLinkProps & {
   href: string;
+};
+
+export type NewTabLinkProps = NavLinkProps & {
+  name: string;
+  type: string;
 };
 
 export type NavLinkComponent<T extends NavLinkProps = NavLinkProps> = React.ComponentType<T> & {
