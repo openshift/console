@@ -9,6 +9,7 @@ import { SecretType } from './secrets/create-secret';
 import { configureAddSecretToWorkloadModal } from './modals/add-secret-to-workload';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
+import { ResourceLabel } from '../models/hypercloud/resource-plural';
 
 export const WebHookSecretKey = 'WebHookSecretKey';
 
@@ -24,22 +25,7 @@ export const addSecretToWorkload = (kindObj, secret) => {
 
 const actionButtons = [addSecretToWorkload];
 
-const menuActions = [
-  Kebab.factory.ModifyLabels,
-  Kebab.factory.ModifyAnnotations,
-  (kind, obj) => ({
-    label: `Edit ${kind.label}`,
-    href: `${resourceObjPath(obj, kind.kind)}/edit`,
-    accessReview: {
-      group: kind.apiGroup,
-      resource: kind.plural,
-      name: obj.metadata.name,
-      namespace: obj.metadata.namespace,
-      verb: 'update',
-    },
-  }),
-  Kebab.factory.Delete,
-];
+const menuActions = [Kebab.factory.ModifyLabels, Kebab.factory.ModifyAnnotations, Kebab.factory.EditSecret, Kebab.factory.Delete];
 
 const kind = 'Secret';
 
@@ -112,7 +98,7 @@ const SecretDetails = ({ obj: secret }) => {
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_26')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
+        <SectionHeading text={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_1', { 0: ResourceLabel(secret, t) })} />
         <ResourceSummary resource={secret} />
       </div>
       <div className="co-m-pane__body">

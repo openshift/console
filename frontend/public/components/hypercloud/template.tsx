@@ -8,6 +8,7 @@ import { TemplateModel } from '../../models';
 import { K8sResourceKind } from '../../module/k8s';
 import { DetailsPage, ListPage, Table, TableData, TableRow } from '../factory';
 import { Kebab, navFactory, SectionHeading, ResourceSummary, ResourceLink, ResourceKebab, Timestamp } from '../utils';
+import { ResourceLabel } from '../../models/hypercloud/resource-plural';
 
 const { common } = Kebab.factory;
 const kind = TemplateModel.kind;
@@ -44,7 +45,7 @@ const TemplateDetails: React.FC<TemplateDetailsProps> = ({ obj: template }) => {
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_20')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
+        <SectionHeading text={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_1', { 0: ResourceLabel(template, t) })} />
         <div className="row">
           <div className="col-md-6">
             <ResourceSummary resource={template} showPodSelector showOwner={false}></ResourceSummary>

@@ -12,6 +12,7 @@ import { TFunction } from 'i18next';
 import { RepositoriesPage } from './repository';
 import { scanningModal } from './modals';
 import { withRouter } from 'react-router-dom';
+import { ResourceLabel } from '../../models/hypercloud/resource-plural';
 
 export const menuActions: KebabAction[] = [...Kebab.getExtensionsActionsForKind(ExternalRegistryModel), ...Kebab.factory.common, Kebab.factory.ModifyScanning];
 
@@ -66,25 +67,25 @@ const ExternalRegistryTableHeader = (t?: TFunction) => {
 
 ExternalRegistryTableHeader.displayName = 'ExternalRegistryTableHeader';
 
-const ExternalRegistryTableRow: RowFunction<K8sResourceKind> = ({ obj: registry, index, key, style }) => {
+const ExternalRegistryTableRow: RowFunction<K8sResourceKind> = ({ obj: externalRegistry, index, key, style }) => {
   return (
-    <TableRow id={registry.metadata.uid} index={index} trKey={key} style={style}>
+    <TableRow id={externalRegistry.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink kind={kind} name={registry.metadata.name} namespace={registry.metadata.namespace} title={registry.metadata.uid} />
+        <ResourceLink kind={kind} name={externalRegistry.metadata.name} namespace={externalRegistry.metadata.namespace} title={externalRegistry.metadata.uid} />
       </TableData>
       <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
-        <ResourceLink kind="Namespace" name={registry.metadata.namespace} title={registry.metadata.namespace} />
+        <ResourceLink kind="Namespace" name={externalRegistry.metadata.namespace} title={externalRegistry.metadata.namespace} />
       </TableData>
-      <TableData className={tableColumnClasses[2]}>{registry.spec.registryUrl}</TableData>
-      <TableData className={tableColumnClasses[3]}>{registry.spec.registryType}</TableData>
+      <TableData className={tableColumnClasses[2]}>{externalRegistry.spec.registryUrl}</TableData>
+      <TableData className={tableColumnClasses[3]}>{externalRegistry.spec.registryType}</TableData>
       <TableData className={classNames(tableColumnClasses[4], 'co-break-word')}>
-        <Status status={registry.status.state} />
+        <Status status={externalRegistry.status.state} />
       </TableData>
       <TableData className={tableColumnClasses[5]}>
-        <Timestamp timestamp={registry.metadata.creationTimestamp} />
+        <Timestamp timestamp={externalRegistry.metadata.creationTimestamp} />
       </TableData>
       <TableData className={tableColumnClasses[6]}>
-        <ResourceKebab actions={menuActions} kind={kind} resource={registry} />
+        <ResourceKebab actions={menuActions} kind={kind} resource={externalRegistry} />
       </TableData>
     </TableRow>
   );
@@ -107,18 +108,18 @@ export const ExternalRegistryDetailsList: React.FC<ExternalRegistryDetailsListPr
   );
 };
 
-const ExternalRegistryDetails: React.FC<ExternalRegistryDetailsProps> = ({ obj: registry }) => {
+const ExternalRegistryDetails: React.FC<ExternalRegistryDetailsProps> = ({ obj: externalRegistry }) => {
   const { t } = useTranslation();
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_97')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
+        <SectionHeading text={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_1', { 0: ResourceLabel(externalRegistry, t) })} />
         <div className="row">
           <div className="col-lg-6">
-            <ResourceSummary resource={registry} />
+            <ResourceSummary resource={externalRegistry} />
           </div>
           <div className="col-lg-6">
-            <ExternalRegistryDetailsList ds={registry} />
+            <ExternalRegistryDetailsList ds={externalRegistry} />
           </div>
         </div>
       </div>
@@ -133,8 +134,8 @@ export const ExternalRegistries: React.FC = props => {
   return <Table {...props} aria-label="ExternalRegistries" Header={ExternalRegistryTableHeader.bind(null, t)} Row={ExternalRegistryTableRow} virtualize />;
 };
 
-const registryStatusReducer = (registry: any): string => {
-  return registry.status.state;
+const registryStatusReducer = (externalRegistry: any): string => {
+  return externalRegistry.status.state;
 };
 
 const filters = [

@@ -15,6 +15,7 @@ import { DetailsPage, ListPage, Table, RowFunction } from './factory';
 import { AsyncComponent, DetailsItem, Kebab, KebabAction, ContainerTable, navFactory, pluralize, ResourceSummary, SectionHeading, togglePaused, WorkloadPausedAlert, LoadingInline } from './utils';
 import { ReplicaSetsPage } from './replicaset';
 import { WorkloadTableRow, WorkloadTableHeader } from './workload-table';
+import { ResourceLabel } from '../models/hypercloud/resource-plural';
 
 const deploymentsReference: K8sResourceKindReference = 'Deployment';
 const { ModifyCount, AddStorage, common } = Kebab.factory;
@@ -82,7 +83,7 @@ const DeploymentDetails: React.FC<DeploymentDetailsProps> = ({ obj: deployment }
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_24')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
+        <SectionHeading text={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_1', { 0: ResourceLabel(deployment, t) })} />
         {deployment.spec.paused && <WorkloadPausedAlert obj={deployment} model={DeploymentModel} />}
         <PodRingController
           namespace={deployment.metadata.namespace}
@@ -138,6 +139,7 @@ const ReplicaSetsTab: React.FC<ReplicaSetsTabProps> = ({ obj }) => {
 
 const { details, editYaml, pods, envEditor, events } = navFactory;
 export const DeploymentsDetailsPage: React.FC<DeploymentsDetailsPageProps> = props => {
+  const { t } = useTranslation();
   return (
     <DetailsPage
       {...props}
@@ -148,7 +150,7 @@ export const DeploymentsDetailsPage: React.FC<DeploymentsDetailsPageProps> = pro
         editYaml(),
         {
           href: 'replicasets',
-          name: 'Replica Sets',
+          name: t('COMMON:MSG_LNB_MENU_31'),
           component: ReplicaSetsTab,
         },
         pods(),

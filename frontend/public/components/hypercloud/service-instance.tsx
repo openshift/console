@@ -12,6 +12,7 @@ import { TFunction } from 'i18next';
 import { DetailsPage, ListPage, Table, TableData, TableRow } from '../factory';
 import { Kebab, ResourceKebab, navFactory, SectionHeading, ResourceSummary, ResourceLink, Timestamp } from '../utils';
 import { ResourceSidebar } from '../sidebars/resource-sidebar';
+import { ResourceLabel } from '../../models/hypercloud/resource-plural';
 
 const { common } = Kebab.factory;
 
@@ -47,7 +48,7 @@ const ServiceInstanceDetails: React.FC<ServiceInstanceDetailsProps> = props => {
     <>
       <div className="co-p-has-sidebar">
         <div className="co-m-pane__body">
-          <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_17')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
+          <SectionHeading text={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_1', {0: ResourceLabel(serviceInstance, t)})} />
           <div className="row">
             <div className="col-md-6">
               <ResourceSummary resource={serviceInstance} showPodSelector showNodeSelector></ResourceSummary>

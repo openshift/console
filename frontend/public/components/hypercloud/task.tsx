@@ -9,6 +9,7 @@ import { Kebab, KebabAction, detailsPage, Timestamp, navFactory, ResourceKebab, 
 import { TaskModel } from '../../models';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
+import { ResourceLabel } from '../../models/hypercloud/resource-plural';
 
 export const menuActions: KebabAction[] = [...Kebab.getExtensionsActionsForKind(TaskModel), ...Kebab.factory.common];
 
@@ -78,7 +79,7 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ obj: task }) => {
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_57')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
+        <SectionHeading text={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_1', { 0: ResourceLabel(task, t) })} />
         <div className="row">
           <div className="col-lg-6">
             <ResourceSummary resource={task} />

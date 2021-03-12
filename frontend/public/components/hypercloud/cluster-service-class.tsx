@@ -9,6 +9,7 @@ import { TFunction } from 'i18next';
 import { DetailsPage, ListPage, Table, TableData, TableRow } from '../factory';
 import { navFactory, SectionHeading, ResourceSummary, ResourceLink, Timestamp } from '../utils';
 import { ClusterServicePlansPage } from './cluster-service-plan';
+import { ResourceLabel } from '../../models/hypercloud/resource-plural';
 
 const kind = ClusterServiceClassModel.kind;
 
@@ -17,7 +18,7 @@ const ClusterServiceClassDetails: React.FC<ClusterServiceClassDetailsProps> = ({
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_12')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
+        <SectionHeading text={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_1', { 0: ResourceLabel(clusterServiceClass, t) })} />
         <div className="row">
           <div className="col-md-6">
             <ResourceSummary resource={clusterServiceClass} showPodSelector showNodeSelector></ResourceSummary>

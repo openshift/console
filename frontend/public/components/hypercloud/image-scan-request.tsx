@@ -10,6 +10,7 @@ import { ImageScanRequestModel } from '../../models';
 import { Status } from '@console/shared';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
+import { ResourceLabel } from '../../models/hypercloud/resource-plural';
 
 export const menuActions: KebabAction[] = [...Kebab.getExtensionsActionsForKind(ImageScanRequestModel), ...Kebab.factory.common];
 
@@ -147,7 +148,7 @@ const ImageScanRequestDetails: React.FC<ImageScanRequestDetailsProps> = ({ obj: 
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_95')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
+        <SectionHeading text={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_1', { 0: ResourceLabel(scanrequest, t) })} />
         <div className="row">
           <div className="col-lg-6">
             <ResourceSummary resource={scanrequest} />

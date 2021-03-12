@@ -12,6 +12,7 @@ import { SecretData } from './image-signer-key';
 import { TargetsTable } from './targets-table';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
+import { ResourceLabel } from '../../models/hypercloud/resource-plural';
 
 export const menuActions: KebabAction[] = [...Kebab.getExtensionsActionsForKind(ImageSignerModel), ...Kebab.factory.common];
 
@@ -98,7 +99,7 @@ const ImageSignerDetails: React.FC<ImageSignerDetailsProps> = ({ obj: imagesigne
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_91')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
+        <SectionHeading text={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_1', { 0: ResourceLabel(imagesigner, t) })} />
         <div className="row">
           <div className="col-lg-6">
             <ResourceSummary resource={imagesigner} showOwner={false} />

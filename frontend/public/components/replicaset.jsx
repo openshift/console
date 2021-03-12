@@ -11,6 +11,7 @@ import { Kebab, ContainerTable, navFactory, SectionHeading, ResourceSummary, Res
 import { ResourceEventStream } from './events';
 import { VolumesTable } from './volumes-table';
 import { ReplicaSetModel } from '../models';
+import { ResourceLabel } from '../models/hypercloud/resource-plural';
 
 const { ModifyCount, AddStorage, common } = Kebab.factory;
 
@@ -22,7 +23,7 @@ const Details = ({ obj: replicaSet }) => {
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_31')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
+        <SectionHeading text={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_1', { 0: ResourceLabel(replicaSet, t) })} />
         <div className="row">
           <div className="col-md-6">
             <ResourceSummary resource={replicaSet} showPodSelector showNodeSelector showTolerations>

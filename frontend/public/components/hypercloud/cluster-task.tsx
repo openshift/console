@@ -9,6 +9,7 @@ import { Kebab, KebabAction, detailsPage, Timestamp, navFactory, ResourceKebab, 
 import { ClusterTaskModel } from '../../models';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
+import { ResourceLabel } from '../../models/hypercloud/resource-plural';
 
 export const menuActions: KebabAction[] = [...Kebab.getExtensionsActionsForKind(ClusterTaskModel), ...Kebab.factory.common];
 
@@ -71,18 +72,21 @@ const ClusterTaskTableRow: RowFunction<K8sResourceKind> = ({ obj: clusterTask, i
   );
 };
 
-const ClusterTaskDetails: React.FC<ClusterTaskDetailsProps> = ({ obj: clusterTask }) => (
-  <>
-    <div className="co-m-pane__body">
-      <SectionHeading text="ClusterTask Details" />
-      <div className="row">
-        <div className="col-lg-6">
-          <ResourceSummary resource={clusterTask} />
+const ClusterTaskDetails: React.FC<ClusterTaskDetailsProps> = ({ obj: clusterTask }) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <div className="co-m-pane__body">
+        <SectionHeading text={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_1', { 0: ResourceLabel(clusterTask, t) })} />
+        <div className="row">
+          <div className="col-lg-6">
+            <ResourceSummary resource={clusterTask} />
+          </div>
         </div>
       </div>
-    </div>
-  </>
-);
+    </>
+  );
+}
 
 
 const { details, editYaml } = navFactory;

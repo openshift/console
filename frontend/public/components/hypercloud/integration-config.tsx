@@ -10,6 +10,7 @@ import { DetailsItem, Kebab, KebabAction, detailsPage, Timestamp, navFactory, Re
 import { IntegrationConfigModel } from '../../models/hypercloud';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
+import { ResourceLabel } from '../../models/hypercloud/resource-plural';
 
 export const menuActions: KebabAction[] = [...Kebab.getExtensionsActionsForKind(IntegrationConfigModel), ...Kebab.factory.common];
 
@@ -83,27 +84,27 @@ const IntegrationConfigTableHeader = (t?: TFunction) => {
 IntegrationConfigTableHeader.displayName = 'IntegrationConfigTableHeader';
 
 
-const IntegrationConfigTableRow: RowFunction<K8sResourceKind> = ({ obj: registry, index, key, style }) => {
-  const phase = IntegrationConfigPhase(registry);
+const IntegrationConfigTableRow: RowFunction<K8sResourceKind> = ({ obj: integrationConfig, index, key, style }) => {
+  const phase = IntegrationConfigPhase(integrationConfig);
   return (
-    <TableRow id={registry.metadata.uid} index={index} trKey={key} style={style}>
+    <TableRow id={integrationConfig.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink kind={kind} name={registry.metadata.name} namespace={registry.metadata.namespace} title={registry.metadata.uid} />
+        <ResourceLink kind={kind} name={integrationConfig.metadata.name} namespace={integrationConfig.metadata.namespace} title={integrationConfig.metadata.uid} />
       </TableData>
       <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
-        <ResourceLink kind="Namespace" name={registry.metadata.namespace} title={registry.metadata.namespace} />
+        <ResourceLink kind="Namespace" name={integrationConfig.metadata.namespace} title={integrationConfig.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
-        {registry.spec.image}
+        {integrationConfig.spec.image}
       </TableData>
       <TableData className={tableColumnClasses[3]}>
         <Status status={phase} />
       </TableData>
       <TableData className={tableColumnClasses[4]}>
-        <Timestamp timestamp={registry.metadata.creationTimestamp} />
+        <Timestamp timestamp={integrationConfig.metadata.creationTimestamp} />
       </TableData>
       <TableData className={tableColumnClasses[5]}>
-        <ResourceKebab actions={menuActions} kind={kind} resource={registry} />
+        <ResourceKebab actions={menuActions} kind={kind} resource={integrationConfig} />
       </TableData>
     </TableRow>
   );
@@ -128,18 +129,18 @@ export const IntegrationConfigDetailsList: React.FC<IntegrationConfigDetailsList
   );
 }
 
-const IntegrationConfigDetails: React.FC<IntegrationConfigDetailsProps> = ({ obj: registry }) => {
+const IntegrationConfigDetails: React.FC<IntegrationConfigDetailsProps> = ({ obj: integrationConfig }) => {
   const { t } = useTranslation();
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_95')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
+        <SectionHeading text={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_1', { 0: ResourceLabel(integrationConfig, t) })} />
         <div className="row">
           <div className="col-lg-6">
-            <ResourceSummary resource={registry} />
+            <ResourceSummary resource={integrationConfig} />
           </div>
           <div className="col-lg-6">
-            <IntegrationConfigDetailsList ds={registry} />
+            <IntegrationConfigDetailsList ds={integrationConfig} />
           </div>
         </div>
       </div>

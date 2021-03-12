@@ -9,6 +9,7 @@ import { Kebab, KebabAction, detailsPage, Timestamp, navFactory, ResourceKebab, 
 import { PipelineResourceModel } from '../../models';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
+import { ResourceLabel } from '../../models/hypercloud/resource-plural';
 
 export const menuActions: KebabAction[] = [...Kebab.getExtensionsActionsForKind(PipelineResourceModel), ...Kebab.factory.common];
 
@@ -71,21 +72,24 @@ const PipelineResourceTableRow: RowFunction<K8sResourceKind> = ({ obj: pipelineR
   );
 };
 
-const PipelineResourceDetails: React.FC<PipelineResourceDetailsProps> = ({ obj: pipelineResource }) => (
-  <>
-    <div className="co-m-pane__body">
-      <SectionHeading text="Pipeline Resource Details" />
-      <div className="row">
-        <div className="col-lg-6">
-          <ResourceSummary resource={pipelineResource} />
+const PipelineResourceDetails: React.FC<PipelineResourceDetailsProps> = ({ obj: pipelineResource }) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <div className="co-m-pane__body">
+        <SectionHeading text={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_1', { 0: ResourceLabel(pipelineResource, t) })} />
+        <div className="row">
+          <div className="col-lg-6">
+            <ResourceSummary resource={pipelineResource} />
+          </div>
         </div>
       </div>
-    </div>
-    <div className="co-m-pane__body">
-      <SectionHeading text="Containers" />
-    </div>
-  </>
-);
+      <div className="co-m-pane__body">
+        <SectionHeading text="Containers" />
+      </div>
+    </>
+  );
+}
 
 
 const { details, editYaml } = navFactory;

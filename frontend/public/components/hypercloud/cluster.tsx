@@ -11,6 +11,7 @@ import { DetailsItem, Kebab, KebabAction, detailsPage, navFactory, ResourceKebab
 import { ClusterManagerModel } from '../../models';
 import { configureClusterNodesModal } from './modals';
 import { MembersPage } from './members';
+import { ResourceLabel } from '../../models/hypercloud/resource-plural';
 
 const ModifyClusterNodes: KebabAction = (kind: K8sKind, obj: any) => ({
   label: 'Edit Nodes',
@@ -165,7 +166,7 @@ const ClusterDetails: React.FC<ClusterDetailsProps> = ({ obj: cluster }) => {
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_84')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
+        <SectionHeading text={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_1', {0: ResourceLabel(cluster, t)})} />
         <div className="row">
           <div className="col-lg-6">
             <ResourceSummary resource={cluster} customPathName={'fakeMetadata.fakename'} showOwner={false} />
