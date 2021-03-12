@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 module.exports = {
-  isDirectory: function(filePath) {
+  isDirectory(filePath) {
     try {
       const stat = fs.lstatSync(filePath);
       return stat.isDirectory();
@@ -11,26 +11,27 @@ module.exports = {
       return false;
     }
   },
-  findLocalesFolder: function(directory, argFunction, package) {
+  findLocalesFolder(directory, argFunction, packageDir) {
     const localesFolder = path.join(directory, 'locales');
     if (fs.existsSync(localesFolder)) {
-      return argFunction(localesFolder, package);
+      return argFunction(localesFolder, packageDir);
     }
+    return undefined;
   },
-  parseFolder: function(directory, argFunction, package) {
+  parseFolder(directory, argFunction, packageDir) {
     (async () => {
       try {
         const files = await fs.promises.readdir(directory);
         for (const file of files) {
           const filePath = path.join(directory, file);
-          argFunction(filePath, package);
+          argFunction(filePath, packageDir);
         }
       } catch (e) {
         console.error(e);
       }
     })();
   },
-  deleteFile: function(filePath) {
+  deleteFile(filePath) {
     try {
       fs.unlinkSync(filePath);
     } catch (e) {

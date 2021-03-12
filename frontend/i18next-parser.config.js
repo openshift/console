@@ -1,3 +1,5 @@
+const { CustomJSONLexer } = require('./i18n-scripts/lexers');
+
 const FALLBACK_LOCALE = 'en';
 
 /*eslint no-undef: "error"*/
@@ -41,6 +43,7 @@ module.exports = {
     ts: ['JavascriptLexer'],
     jsx: ['JsxLexer'],
     tsx: ['JsxLexer'],
+    json: [CustomJSONLexer],
 
     default: ['JavascriptLexer'],
   },

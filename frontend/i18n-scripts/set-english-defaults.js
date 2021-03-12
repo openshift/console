@@ -3,8 +3,8 @@ const path = require('path');
 const pluralize = require('pluralize');
 const common = require('./common.js');
 
-const public = path.join(__dirname, './../public/locales/');
-const packages = path.join(__dirname, './../packages');
+const publicDir = path.join(__dirname, './../public/locales/');
+const packagesDir = path.join(__dirname, './../packages');
 
 function determineRule(key) {
   if (key.includes('WithCount_plural')) {
@@ -36,15 +36,15 @@ function updateFile(fileName) {
       // "keyWithCount_plural": "{{count}} items"
       switch (determineRule(keys[i])) {
         case 0:
-          originalKey = keys[i].split('WithCount_plural')[0];
+          [originalKey] = keys[i].split('WithCount_plural');
           updatedFile[keys[i]] = `{{count}} ${pluralize(originalKey)}`;
           break;
         case 1:
-          originalKey = keys[i].split('WithCount')[0];
+          [originalKey] = keys[i].split('WithCount');
           updatedFile[keys[i]] = `{{count}} ${originalKey}`;
           break;
         case 2:
-          originalKey = keys[i].split('_plural')[0];
+          [originalKey] = keys[i].split('_plural');
           updatedFile[keys[i]] = pluralize(originalKey);
           break;
         default:
@@ -55,11 +55,9 @@ function updateFile(fileName) {
     }
   }
 
-  fs.writeFile(fileName, JSON.stringify(updatedFile, null, 2), function writeJSON(e) {
-    if (e) {
-      return console.error(e);
-    }
-  });
+  fs.promises
+    .writeFile(fileName, JSON.stringify(updatedFile, null, 2))
+    .catch((e) => console.error(fileName, e));
 }
 
 function processLocalesFolder(filePath) {
@@ -78,5 +76,5 @@ function processPackages(filePath) {
   }
 }
 
-common.parseFolder(public, processLocalesFolder);
-common.parseFolder(packages, processPackages);
+common.parseFolder(publicDir, processLocalesFolder);
+common.parseFolder(packagesDir, processPackages);

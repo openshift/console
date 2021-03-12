@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const common = require('./common.js');
 
-const public = path.join(__dirname, './../public/locales/');
+const publicDir = path.join(__dirname, './../public/locales/');
 const packages = path.join(__dirname, './../packages');
 
 const publicFileNames = {};
@@ -73,5 +73,5 @@ function processPublic(filePath) {
   }
 }
 
-common.parseFolder(public, processPublic);
+common.parseFolder(publicDir, processPublic);
 common.parseFolder(packages, processPackages);

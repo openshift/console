@@ -2,7 +2,7 @@
 
 set -exuo pipefail
 
-FILE_PATTERN="!(dist|node_modules)**/**/*.{js,jsx,ts,tsx}"
+FILE_PATTERN="{!(dist|node_modules)/**/*.{js,jsx,ts,tsx,json},*.{js,jsx,ts,tsx,json}}"
 
 i18next "public/${FILE_PATTERN}" [-oc] -c "./i18next-parser.config.js" -o "public/locales/\$LOCALE/\$NAMESPACE.json"
 
