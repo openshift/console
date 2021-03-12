@@ -36,11 +36,7 @@ const DetailsCard: React.FC = () => {
             <NodeRoles node={obj} />
           </DetailItem>
           <DetailItem isLoading={!host} title="Bare Metal Host">
-            <ResourceLink
-              kind={referenceForModel(BareMetalHostModel)}
-              name={host?.metadata?.name}
-              namespace={host?.metadata?.namespace}
-            />
+            <ResourceLink kind={referenceForModel(BareMetalHostModel)} name={host?.metadata?.name} namespace={host?.metadata?.namespace} />
           </DetailItem>
           <DetailItem isLoading={!obj} title="Node Addresses">
             <NodeIPList ips={getNodeAddresses(obj)} expand />

@@ -271,24 +271,43 @@ export const UtilizationCard = () => {
     [],
   );
 
-  const durationItems = {
+  let durationItems = {
     ['ONE_HR']: t('SINGLE:MSG_OVERVIEW_MAIN_CARDCLUSTERUTILIZATION_1_1'),
     ['SIX_HR']: t('SINGLE:MSG_OVERVIEW_MAIN_CARDCLUSTERUTILIZATION_6_1'),
     ['TWENTY_FOUR_HR']: t('SINGLE:MSG_OVERVIEW_MAIN_CARDCLUSTERUTILIZATION_24_1'),
   };
 
+  let durationValues = {
+    [t('SINGLE:MSG_OVERVIEW_MAIN_CARDCLUSTERUTILIZATION_1_1')]: '1 Hour',
+    [t('SINGLE:MSG_OVERVIEW_MAIN_CARDCLUSTERUTILIZATION_6_1')]: '6 Hours',
+    [t('SINGLE:MSG_OVERVIEW_MAIN_CARDCLUSTERUTILIZATION_24_1')]: '24 Hours',
+  };
+
+  React.useEffect(() => {
+    durationItems = {
+      ['ONE_HR']: t('SINGLE:MSG_OVERVIEW_MAIN_CARDCLUSTERUTILIZATION_1_1'),
+      ['SIX_HR']: t('SINGLE:MSG_OVERVIEW_MAIN_CARDCLUSTERUTILIZATION_6_1'),
+      ['TWENTY_FOUR_HR']: t('SINGLE:MSG_OVERVIEW_MAIN_CARDCLUSTERUTILIZATION_24_1'),
+    };
+    durationValues = {
+      [t('SINGLE:MSG_OVERVIEW_MAIN_CARDCLUSTERUTILIZATION_1_1')]: '1 Hour',
+      [t('SINGLE:MSG_OVERVIEW_MAIN_CARDCLUSTERUTILIZATION_6_1')]: '6 Hours',
+      [t('SINGLE:MSG_OVERVIEW_MAIN_CARDCLUSTERUTILIZATION_24_1')]: '24 Hours',
+    };
+  }, [duration]);
+
   return (
     <DashboardCard data-test-id="utilization-card">
       <DashboardCardHeader>
         <DashboardCardTitle>{t('SINGLE:MSG_OVERVIEW_MAIN_CARDCLUSTERUTILIZATION_CLUSTERUTILIZATION_1')}</DashboardCardTitle>
-        <Dropdown items={durationItems} onChange={setDuration} selectedKey={duration} title={duration} />
+        <Dropdown items={durationItems} onChange={setDuration} selectedKey={durationValues[duration]} title={duration} />
       </DashboardCardHeader>
       <UtilizationBody timestamps={timestamps}>
-        <PrometheusUtilizationItem title={t('SINGLE:MSG_OVERVIEW_MAIN_CARDCLUSTERUTILIZATION_CPU_1')} utilizationQuery={queries[OverviewQuery.CPU_UTILIZATION].utilization} totalQuery={queries[OverviewQuery.CPU_UTILIZATION].total} TopConsumerPopover={cpuPopover} duration={duration} humanizeValue={humanizeCpuCores} setTimestamps={setTimestamps} />
-        <PrometheusUtilizationItem title={t('SINGLE:MSG_OVERVIEW_MAIN_CARDCLUSTERUTILIZATION_MEMORY_1')} utilizationQuery={queries[OverviewQuery.MEMORY_UTILIZATION].utilization} totalQuery={queries[OverviewQuery.MEMORY_UTILIZATION].total} TopConsumerPopover={memPopover} duration={duration} humanizeValue={humanizeBinaryBytes} byteDataType={ByteDataTypes.BinaryBytes} />
-        <PrometheusUtilizationItem title={'Filesystem'} utilizationQuery={queries[OverviewQuery.STORAGE_UTILIZATION].utilization} totalQuery={queries[OverviewQuery.STORAGE_UTILIZATION].total} TopConsumerPopover={storagePopover} duration={duration} humanizeValue={humanizeBinaryBytes} byteDataType={ByteDataTypes.BinaryBytes} />
-        <PrometheusMultilineUtilizationItem title={t('SINGLE:MSG_OVERVIEW_MAIN_CARDCLUSTERUTILIZATION_NETWORK_1')} queries={multilineQueries[OverviewQuery.NETWORK_UTILIZATION]} duration={duration} humanizeValue={humanizeDecimalBytesPerSec} TopConsumerPopovers={[networkInPopover, networkOutPopover]} />
-        <PrometheusUtilizationItem title="Pod count" utilizationQuery={queries[OverviewQuery.POD_UTILIZATION].utilization} TopConsumerPopover={podPopover} duration={duration} humanizeValue={humanizeNumber} />
+        <PrometheusUtilizationItem title={t('SINGLE:MSG_OVERVIEW_MAIN_CARDCLUSTERUTILIZATION_CPU_1')} utilizationQuery={queries[OverviewQuery.CPU_UTILIZATION].utilization} totalQuery={queries[OverviewQuery.CPU_UTILIZATION].total} TopConsumerPopover={cpuPopover} duration={durationValues[duration]} humanizeValue={humanizeCpuCores} setTimestamps={setTimestamps} />
+        <PrometheusUtilizationItem title={t('SINGLE:MSG_OVERVIEW_MAIN_CARDCLUSTERUTILIZATION_MEMORY_1')} utilizationQuery={queries[OverviewQuery.MEMORY_UTILIZATION].utilization} totalQuery={queries[OverviewQuery.MEMORY_UTILIZATION].total} TopConsumerPopover={memPopover} duration={durationValues[duration]} humanizeValue={humanizeBinaryBytes} byteDataType={ByteDataTypes.BinaryBytes} />
+        <PrometheusUtilizationItem title={'Filesystem'} utilizationQuery={queries[OverviewQuery.STORAGE_UTILIZATION].utilization} totalQuery={queries[OverviewQuery.STORAGE_UTILIZATION].total} TopConsumerPopover={storagePopover} duration={durationValues[duration]} humanizeValue={humanizeBinaryBytes} byteDataType={ByteDataTypes.BinaryBytes} />
+        <PrometheusMultilineUtilizationItem title={t('SINGLE:MSG_OVERVIEW_MAIN_CARDCLUSTERUTILIZATION_NETWORK_1')} queries={multilineQueries[OverviewQuery.NETWORK_UTILIZATION]} duration={durationValues[duration]} humanizeValue={humanizeDecimalBytesPerSec} TopConsumerPopovers={[networkInPopover, networkOutPopover]} />
+        <PrometheusUtilizationItem title="Pod count" utilizationQuery={queries[OverviewQuery.POD_UTILIZATION].utilization} TopConsumerPopover={podPopover} duration={durationValues[duration]} humanizeValue={humanizeNumber} />
       </UtilizationBody>
     </DashboardCard>
   );
