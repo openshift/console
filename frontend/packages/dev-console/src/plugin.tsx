@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { CodeIcon, FileUploadIcon } from '@patternfly/react-icons';
+import { CodeIcon } from '@patternfly/react-icons';
 import {
   Plugin,
   ModelFeatureFlag,

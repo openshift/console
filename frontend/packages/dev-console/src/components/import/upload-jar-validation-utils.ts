@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import * as yup from 'yup';
 import { TFunction } from 'i18next';
 import {
@@ -14,19 +15,18 @@ import {
 } from './validation-schema';
 import { healthChecksProbesValidationSchema } from '../health-checks/health-checks-probe-validation-utils';
 
-const fileNameRegex = /^(.*)+(\.jar)$/;
+export const fileNameRegex = /\.(jar)$/i;
 
 export const fileUploadValidationSchema = (t: TFunction) =>
   yup.object().shape({
     name: yup
       .string()
       .matches(fileNameRegex, {
-        message: t('devconsole~Must be a valid JAR file.'),
-        excludeEmptyString: true,
+        message: t('devconsole~Must be a JAR file.'),
       })
       .max(253, t('devconsole~Cannot be longer than 253 characters.'))
       .required(t('devconsole~Required')),
-    javaArgs: yup.string().max(253, t('devconsole~Cannot be longer than 253 characters.')),
+    javaArgs: yup.string(),
   });
 
 export const validationSchema = (t: TFunction) =>
@@ -44,3 +44,10 @@ export const validationSchema = (t: TFunction) =>
     resources: resourcesValidationSchema,
     healthChecks: healthChecksProbesValidationSchema(t),
   });
+
+export const getAppName = (name: string) => {
+  if (!fileNameRegex.test(name)) {
+    return undefined;
+  }
+  return _.kebabCase(name.split('.').shift());
+};

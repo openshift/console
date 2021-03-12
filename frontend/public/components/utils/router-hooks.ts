@@ -13,8 +13,6 @@ export const usePreventDataLossLock = (lock: boolean) => {
     };
     if (lock) {
       window.addEventListener('beforeunload', onBeforeUnload);
-    } else {
-      window.removeEventListener('beforeunload', onBeforeUnload);
     }
     return () => {
       window.removeEventListener('beforeunload', onBeforeUnload);

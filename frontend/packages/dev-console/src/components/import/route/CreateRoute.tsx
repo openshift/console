@@ -3,7 +3,7 @@ import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { TextInputTypes } from '@patternfly/react-core';
 import { InputField } from '@console/shared';
-import { DeployImageFormData, GitImportFormData } from '../import-types';
+import { DeployImageFormData, GitImportFormData, UploadJarFormData } from '../import-types';
 import PortInputField from './PortInputField';
 
 const CreateRoute: React.FC = () => {
@@ -13,7 +13,7 @@ const CreateRoute: React.FC = () => {
       image: { ports },
       route: { defaultUnknownPort },
     },
-  } = useFormikContext<DeployImageFormData | GitImportFormData>();
+  } = useFormikContext<DeployImageFormData | GitImportFormData | UploadJarFormData>();
   const portOptions = ports.map((port) => port.containerPort.toString());
   const placeholderPort = ports[0]?.containerPort || defaultUnknownPort;
 

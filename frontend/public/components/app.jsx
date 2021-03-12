@@ -31,7 +31,6 @@ import { GuidedTour } from '@console/app/src/components/tour';
 import { isStandaloneRoutePage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
 import QuickStartDrawer from '@console/app/src/components/quick-starts/QuickStartDrawer';
 import ToastProvider from '@console/shared/src/components/toast/ToastProvider';
-import BeforeUnloadWatchResProvider from '@console/shared/src/components/before-unload-watch-resource/BeforeUnloadWatchResProvider';
 import '../i18n';
 import '../vendor.scss';
 import '../style.scss';
@@ -305,9 +304,7 @@ graphQLReady.onReady(() => {
     <React.Suspense fallback={<LoadingBox />}>
       <Provider store={store}>
         <ToastProvider>
-          <BeforeUnloadWatchResProvider>
-            <AppRouter />
-          </BeforeUnloadWatchResProvider>
+          <AppRouter />
         </ToastProvider>
       </Provider>
     </React.Suspense>,

@@ -25,7 +25,7 @@ import { createRoute, createService, dryRunOpt } from '../../utils/shared-submit
 import { getProbesData } from '../health-checks/create-health-checks-probe-utils';
 import { AppResources } from '../edit-application/edit-application-types';
 
-const createOrUpdateDeployment = (
+export const createOrUpdateDeployment = (
   formData: UploadJarFormData,
   imageStream: K8sResourceKind,
   dryRun: boolean,
@@ -73,7 +73,7 @@ const createOrUpdateDeployment = (
       name,
       namespace,
       labels: { ...defaultLabels, ...userLabels },
-      annotations,
+      annotations: { ...annotations, isFromJarUpload: 'true' },
     },
     spec: {
       selector: {
@@ -142,7 +142,6 @@ const createOrUpdateDeploymentConfig = (
 
   const imageStreamName = imageStream && imageStream.metadata.name;
   const defaultLabels = getAppLabels({ name, applicationName, imageStreamName, selectedTag });
-  const defaultAnnotations = { ...getCommonAnnotations() };
   const podLabels = getPodLabels(name);
   const templateLabels = getTemplateLabels(originalDeploymentConfig);
 
@@ -153,7 +152,7 @@ const createOrUpdateDeploymentConfig = (
       name,
       namespace,
       labels: { ...defaultLabels, ...userLabels },
-      annotations: defaultAnnotations,
+      annotations: { ...getCommonAnnotations(), isFromJarUpload: 'true' },
     },
     spec: {
       selector: podLabels,
@@ -324,12 +323,19 @@ export const createOrUpdateBuildConfig = (
 
 export const instantiateBinaryBuild = (
   namespace: string,
-  buildConfigName: string,
+  buildConfigResponse: K8sResourceKind,
   filename: string,
   value: File,
-) =>
+) => {
+  const onBeforeUnload = (e: BeforeUnloadEvent) => {
+    e.preventDefault();
+    // Chrome requires returnValue to be set
+    // from https://developer.mozilla.org/en-US/docs/Web/API/WindowEventHandlers/onbeforeunload
+    e.returnValue = '';
+  };
+  window.addEventListener('beforeunload', onBeforeUnload);
   coFetch(
-    `/api/kubernetes/apis/build.openshift.io/v1/namespaces/${namespace}/buildconfigs/${buildConfigName}/instantiatebinary?asFile=${filename}`,
+    `/api/kubernetes/apis/build.openshift.io/v1/namespaces/${namespace}/buildconfigs/${buildConfigResponse.metadata.name}/instantiatebinary?asFile=${filename}`,
     {
       method: 'POST',
       body: value,
@@ -338,7 +344,16 @@ export const instantiateBinaryBuild = (
       },
     },
     0,
-  );
+  )
+    .then(() => {
+      window.removeEventListener('beforeunload', onBeforeUnload);
+    })
+    .catch((err) => {
+      // eslint-disable-next-line no-console
+      console.log(err);
+      window.removeEventListener('beforeunload', onBeforeUnload);
+    });
+};
 
 export const createOrUpdateJarFile = async (
   formData: UploadJarFormData,
@@ -395,12 +410,7 @@ export const createOrUpdateJarFile = async (
 
   buildConfigResponse &&
     !dryRun &&
-    instantiateBinaryBuild(
-      namespace,
-      buildConfigResponse.metadata.name,
-      fileName,
-      fileValue as File,
-    );
+    instantiateBinaryBuild(namespace, buildConfigResponse, fileName, fileValue as File);
 
   responses.push(buildConfigResponse);
 
@@ -436,11 +446,12 @@ export const createOrUpdateJarFile = async (
       editAppResource?.data,
       formData.fileUpload,
     );
-    return Promise.all([
-      verb === 'update'
-        ? k8sUpdate(KnServiceModel, knDeploymentResource)
-        : k8sCreate(KnServiceModel, knDeploymentResource),
-    ]);
+    if (verb === 'update') {
+      responses.push(await k8sUpdate(KnServiceModel, knDeploymentResource));
+    } else {
+      responses.push(await k8sCreate(KnServiceModel, knDeploymentResource));
+    }
+    return responses;
   }
   if (resources === Resources.Kubernetes) {
     responses.push(

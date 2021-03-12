@@ -5,6 +5,7 @@ import {
   DatabaseIcon,
   LaptopCodeIcon,
   OsImageIcon,
+  FileUploadIcon,
 } from '@patternfly/react-icons';
 
 import * as yamlIcon from '../images/yaml.svg';
@@ -29,3 +30,5 @@ export const devCatalogIconElement = <CatalogIcon />;
 export const databaseCatalogIconElement = <DatabaseIcon />;
 
 export const operatorCatalogIconElement = <BoltIcon />;
+
+export const uploadJarIconElement = <FileUploadIcon />;

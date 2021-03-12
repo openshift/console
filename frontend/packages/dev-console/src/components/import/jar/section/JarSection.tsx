@@ -5,25 +5,32 @@ import { FormGroup, TextInputTypes } from '@patternfly/react-core';
 import { FileUploadField, InputField } from '@console/shared/src';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
 import FormSection from '../../section/FormSection';
+import { getAppName } from '../../upload-jar-validation-utils';
 
 const JarSection: React.FunctionComponent = () => {
   const { t } = useTranslation();
   const {
     values: {
+      name,
       fileUpload: { name: fileName, value: fileValue },
       application: { name: appGroupName, selectedKey: appGroupSelectedKey },
     },
     setFieldValue,
     setFieldTouched,
+    touched,
   } = useFormikContext<FormikValues>();
-  const updatedJarFile = (value: File, filename: string) => {
+  const { name: nameTouched } = touched;
+
+  const updatedJarFile = (value: File, filename: string): void => {
     if (filename) {
-      const appName = filename.split('.')[0];
+      const appName = getAppName(filename);
       setFieldValue('fileUpload.name', filename);
       setFieldTouched('fileUpload.name', true);
-      setFieldValue('fileUpload.value', value);
-      setFieldValue('name', appName);
-      !appGroupName &&
+      value && setFieldValue('fileUpload.value', value);
+      appName && !nameTouched && !name && setFieldValue('name', appName);
+      !name && setFieldValue('name', appName);
+      appName &&
+        !appGroupName &&
         appGroupSelectedKey !== UNASSIGNED_KEY &&
         setFieldValue('application.name', `${appName}-app`);
     } else {
@@ -31,9 +38,11 @@ const JarSection: React.FunctionComponent = () => {
       setFieldValue('fileUpload.value', '');
     }
   };
+
   return (
     <FormSection title={t('devconsole~JAR')}>
       <FileUploadField
+        id="upload-jar-field"
         name="fileUpload.name"
         value={fileValue}
         filename={fileName}
@@ -42,7 +51,7 @@ const JarSection: React.FunctionComponent = () => {
         onChange={updatedJarFile}
         hideDefaultPreview
         dropzoneProps={{
-          accept: '.jar',
+          accept: '.jar,.JAR',
         }}
         required
       />
@@ -51,10 +60,10 @@ const JarSection: React.FunctionComponent = () => {
           type={TextInputTypes.text}
           name="fileUpload.javaArgs"
           helpText={t(
-            'devconsole~Java commands are Application specific and can be added to customize your Application.',
+            'devconsole~Java commands are application specific and can be added to customize your application.',
           )}
           data-test-id="upload-jar-form-java-args"
-          placeholder={t('devconsole~Enter Java command here')}
+          placeholder={t('devconsole~Enter Java commands here')}
         />
       </FormGroup>
     </FormSection>

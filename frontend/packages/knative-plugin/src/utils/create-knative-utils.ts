@@ -81,7 +81,7 @@ export const getKnativeServiceDepResource = (
         ...labels,
         ...(!create && { 'serving.knative.dev/visibility': `cluster-local` }),
       },
-      annotations,
+      annotations: fileUpload ? { ...annotations, isFromJarUpload: 'true' } : annotations,
     },
     spec: {
       template: {

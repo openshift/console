@@ -15,7 +15,7 @@ import NamespacedPage, { NamespacedPageVariants } from '../../NamespacedPage';
 import QueryFocusApplication from '../../QueryFocusApplication';
 import { normalizeBuilderImages, NormalizedBuilderImages } from '../../../utils/imagestream-utils';
 
-export type UploadJarPageProps = RouteComponentProps<{ ns?: string }>;
+type UploadJarPageProps = RouteComponentProps<{ ns?: string }>;
 
 type watchResource = {
   [key: string]: K8sResourceKind[] | K8sResourceKind;
@@ -37,18 +37,11 @@ const UploadJarPage: React.FunctionComponent<UploadJarPageProps> = ({ match }) =
     },
   });
 
-  const isResourceLoaded = () => {
-    const resKeys = Object.keys(resources);
-    if (
-      resKeys.length > 0 &&
-      resKeys.every((key) => resources[key].loaded || !!resources[key].loadError)
-    ) {
-      return true;
-    }
-    return false;
-  };
+  const isResourceLoaded =
+    Object.keys(resources).length > 0 &&
+    Object.values(resources).every((value) => value.loaded || !!value.loadError);
 
-  if (!isResourceLoaded()) return <LoadingBox />;
+  if (!isResourceLoaded) return <LoadingBox />;
 
   const { [imageStreamName]: builderImage }: NormalizedBuilderImages = normalizeBuilderImages(
     resources.imagestream.data,

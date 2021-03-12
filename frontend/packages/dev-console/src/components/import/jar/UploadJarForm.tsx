@@ -39,7 +39,7 @@ const UploadJarForm: React.FunctionComponent<FormikProps<FormikValues> & UploadJ
   } = values;
 
   return (
-    <FlexForm className="co-deploy-image" data-test-id="pload-jar-form" onSubmit={handleSubmit}>
+    <FlexForm className="co-deploy-image" data-test-id="upload-jar-form" onSubmit={handleSubmit}>
       <FormBody flexLayout>
         <JarSection />
         <IconSection />

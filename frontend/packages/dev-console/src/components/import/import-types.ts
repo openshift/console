@@ -96,12 +96,12 @@ export type FileUploadData = {
   value: File | '';
   javaArgs?: string;
 };
-export interface UploadJarFormData {
+
+export interface BaseFormData {
   formType?: string;
   name: string;
   project: ProjectData;
   application: ApplicationData;
-  fileUpload: FileUploadData;
   serverless?: ServerlessData;
   image: ImageData;
   runtimeIcon?: string;
@@ -114,27 +114,16 @@ export interface UploadJarFormData {
   limits: LimitsData;
   healthChecks: HealthChecksData;
 }
+export interface UploadJarFormData extends BaseFormData {
+  fileUpload: FileUploadData;
+}
 
-export interface GitImportFormData {
-  formType?: string;
-  name: string;
-  project: ProjectData;
-  application: ApplicationData;
+export interface GitImportFormData extends BaseFormData {
+  pipeline?: PipelineData;
+  resourceTypesNotValid?: Resources[];
   git: GitData;
   docker: DockerData;
   devfile?: DevfileData;
-  serverless?: ServerlessData;
-  pipeline?: PipelineData;
-  image: ImageData;
-  runtimeIcon?: string;
-  route: RouteData;
-  resources: Resources;
-  resourceTypesNotValid?: Resources[];
-  build: BuildData;
-  deployment: DeploymentData;
-  labels: { [name: string]: string };
-  limits: LimitsData;
-  healthChecks: HealthChecksData;
 }
 
 export interface ApplicationData {
