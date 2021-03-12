@@ -107,6 +107,7 @@ export const PipelineApprovalDetailsList: React.FC<PipelineApprovalDetailsListPr
 
 
 const PipelineApprovalDetails: React.FC<PipelineApprovalDetailsProps> = ({ obj: pipelineApproval }) => {
+  const { t } = useTranslation();
   return (
     <>
       <div className="co-m-pane__body">
