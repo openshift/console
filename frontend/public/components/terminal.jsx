@@ -1,14 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Terminal as XTerminal } from 'xterm';
-import * as fit from 'xterm/lib/addons/fit/fit';
-import * as full from 'xterm/lib/addons/fullscreen/fullscreen';
+import { FitAddon } from 'xterm-addon-fit';
+import { withTranslation } from 'react-i18next';
 import { CompressIcon } from '@patternfly/react-icons';
 import { Button } from '@patternfly/react-core';
-import { withTranslation } from 'react-i18next';
-
-XTerminal.applyAddon(fit);
-XTerminal.applyAddon(full);
+import { XtermAddonFullscreen } from '@console/shared';
 
 class Terminal_ extends React.Component {
   constructor(props) {
@@ -21,7 +18,11 @@ class Terminal_ extends React.Component {
     this.onDataReceived = (data) => this.terminal && this.terminal.write(data);
 
     this.terminal = new XTerminal(Object.assign({}, this.props.options));
-    this.terminal.on('data', this.props.onData);
+    this.fitAddon = new FitAddon();
+    this.fullscreenAddon = new XtermAddonFullscreen();
+    this.terminal.loadAddon(this.fitAddon);
+    this.terminal.loadAddon(this.fullscreenAddon);
+    this.terminal.onData(this.props.onData);
   }
 
   reset() {
@@ -49,7 +50,7 @@ class Terminal_ extends React.Component {
   }
 
   setFullscreen(fullscreen) {
-    this.terminal.toggleFullScreen(fullscreen);
+    this.fullscreenAddon.toggleFullScreen(fullscreen);
     this.isFullscreen = fullscreen;
     this.focus();
     this.onResize();
@@ -78,7 +79,7 @@ class Terminal_ extends React.Component {
   }
 
   componentWillUnmount() {
-    this.terminal && this.terminal.destroy();
+    this.terminal && this.terminal.dispose();
     window.removeEventListener('resize', this.onResize);
   }
 
@@ -112,7 +113,7 @@ class Terminal_ extends React.Component {
         return;
       }
       // tell the terminal to resize itself
-      terminal.fit();
+      this.fitAddon.fit();
       // update the pty
       this.props.onResize(terminal.rows, terminal.cols);
     });

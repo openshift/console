@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Terminal as XTerminal, ITerminalOptions } from 'xterm';
-import { fit } from 'xterm/lib/addons/fit/fit';
+import { Terminal as XTerminal, ITerminalOptions, ITerminalAddon } from 'xterm';
+import { FitAddon } from 'xterm-addon-fit';
 
 import './Terminal.scss';
 
@@ -21,6 +21,7 @@ export type ImperativeTerminalType = {
   reset: () => void;
   onDataReceived: (data) => void;
   onConnectionClosed: (msg: string) => void;
+  loadAttachAddon: (addOn: ITerminalAddon) => void;
 };
 
 const Terminal = React.forwardRef<ImperativeTerminalType, TerminalProps>(({ onData }, ref) => {
@@ -29,33 +30,31 @@ const Terminal = React.forwardRef<ImperativeTerminalType, TerminalProps>(({ onDa
 
   React.useEffect(() => {
     const term: XTerminal = new XTerminal(terminalOptions);
+    const fitAddon = new FitAddon();
     term.open(terminalRef.current);
+    term.loadAddon(fitAddon);
     term.focus();
 
     const resizeObserver: ResizeObserver = new ResizeObserver(() => {
-      window.requestAnimationFrame(() => fit(term));
+      window.requestAnimationFrame(() => fitAddon.fit());
     });
 
     resizeObserver.observe(terminalRef.current);
 
     if (terminal.current !== term) {
-      terminal.current && terminal.current.destroy();
+      terminal.current && terminal.current.dispose();
       terminal.current = term;
     }
 
     return () => {
-      term.destroy();
+      term.dispose();
       resizeObserver.disconnect();
     };
   }, []);
 
   React.useEffect(() => {
     const term = terminal.current;
-    term.on('data', onData);
-
-    return () => {
-      term.off('data', onData);
-    };
+    term.onData(onData);
   }, [onData]);
 
   React.useImperativeHandle(ref, () => ({
@@ -75,6 +74,10 @@ const Terminal = React.forwardRef<ImperativeTerminalType, TerminalProps>(({ onDa
       if (!terminal.current) return;
       terminal.current.write(`\x1b[31m${msg || 'disconnected'}\x1b[m\r\n`);
       terminal.current.setOption('disableStdin', true);
+    },
+    loadAttachAddon: (addOn: ITerminalAddon) => {
+      if (!terminal.current) return;
+      terminal.current.loadAddon(addOn);
     },
   }));
 

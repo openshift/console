@@ -196,7 +196,9 @@
     "victory-core": "^35.3.5",
     "vscode-languageserver-types": "^3.10.0",
     "whatwg-fetch": "2.x",
-    "xterm": "^3.12.2",
+    "xterm": "^4.10.0",
+    "xterm-addon-attach": "0.6.0",
+    "xterm-addon-fit": "0.5.0",
     "yaml-language-server": "0.13.0",
     "yup": "^0.27.0"
   },
