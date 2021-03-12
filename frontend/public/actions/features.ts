@@ -15,7 +15,7 @@ import { receivedResources } from './k8s';
 import { setClusterID, setCreateProjectMessage, setUser } from './common';
 import client, { fetchURL } from '../graphql/client';
 import { SSARQuery } from './features.gql';
-import { SSARQueryType, SSARQueryVariables } from '../../@types/gql/schema';
+import { SSARQueryType, SSARQueryVariables } from '../../@types/console/generated/graphql-schema';
 import {
   ResolvedFeatureFlag as DynamicFeatureFlag,
   isFeatureFlag as isDynamicFeatureFlag,

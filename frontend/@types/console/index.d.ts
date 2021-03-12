@@ -1,4 +1,7 @@
-// Allow importing other file types
+/// <reference path="./react.d.ts" />
+/// <reference path="./ResizeObserver.d.ts" />
+/// <reference path="./generated/graphql-queries.d.ts" />
+
 declare module '*.svg' {
   const value: any;
   export = value;
