@@ -12,3 +12,22 @@ export type ExtensionCommonK8sResource = {
     }[];
   };
 };
+
+export type ExtensionAccessReviewResourceAttributes = {
+  group?: string;
+  resource?: string;
+  subresource?: string;
+  verb?: ExtensionK8sVerb;
+  name?: string;
+  namespace?: string;
+};
+
+export type ExtensionK8sVerb =
+  | 'create'
+  | 'get'
+  | 'list'
+  | 'update'
+  | 'patch'
+  | 'delete'
+  | 'deletecollection'
+  | 'watch';
