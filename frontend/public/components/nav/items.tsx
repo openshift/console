@@ -11,7 +11,10 @@ import {
   isResourceNSNavItem,
   isResourceClusterNavItem,
 } from '@console/plugin-sdk';
-import { formatNamespacedRouteForResource } from '@console/shared/src/utils';
+import {
+  formatNamespacedRouteForResource,
+  formatNamespacedRouteForHref,
+} from '@console/shared/src/utils';
 import { referenceForModel, K8sKind } from '../../module/k8s';
 import { stripBasePath } from '../utils';
 import { featureReducerName } from '../../reducers/features';
@@ -142,7 +145,11 @@ export class HrefLink extends NavLink<HrefLinkProps> {
   }
 
   get to() {
-    return this.props.href;
+    const { href, namespaced, activeNamespace } = this.props;
+    if (namespaced) {
+      return formatNamespacedRouteForHref(href, activeNamespace);
+    }
+    return href;
   }
 }
 
@@ -175,6 +182,8 @@ export type ResourceClusterLinkProps = NavLinkProps & {
 
 export type HrefLinkProps = NavLinkProps & {
   href: string;
+  namespaced?: boolean;
+  activeNamespace?: string;
 };
 
 export type NavLinkComponent<T extends NavLinkProps = NavLinkProps> = React.ComponentType<T> & {

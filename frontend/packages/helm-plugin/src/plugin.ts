@@ -46,6 +46,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         // t('helm-plugin~Helm')
         name: '%helm-plugin~Helm%',
         href: '/helm-releases',
+        namespaced: true,
         testID: 'helm-releases-header',
         'data-quickstart-id': 'qs-nav-helm',
       },

@@ -127,6 +127,7 @@ const AdminNav = () => {
         <HrefLink
           id="search"
           href="/search"
+          namespaced
           name={t('public~Search')}
           startsWith={searchStartsWith}
         />
@@ -268,6 +269,7 @@ const AdminNav = () => {
         <HrefLink
           id="provisionedservices"
           href="/provisionedservices"
+          namespaced
           name={t('public~Provisioned Services')}
           activePath="/provisionedservices/"
           startsWith={provisionedServicesStartsWith}

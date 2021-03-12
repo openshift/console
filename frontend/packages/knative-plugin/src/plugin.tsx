@@ -160,6 +160,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         // t('knative-plugin~Serving')
         name: '%knative-plugin~Serving%',
         href: '/serving',
+        namespaced: true,
       },
     },
     flags: {
@@ -180,6 +181,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         // t('knative-plugin~Eventing')
         name: '%knative-plugin~Eventing%',
         href: '/eventing',
+        namespaced: true,
       },
     },
     flags: {

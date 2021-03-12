@@ -38,7 +38,8 @@ namespace ExtensionProperties {
   }
 
   export interface HrefNavItem extends NavItem {
-    componentProps: NavItem['componentProps'] & Pick<HrefLinkProps, 'href' | 'activePath'>;
+    componentProps: NavItem['componentProps'] &
+      Pick<HrefLinkProps, 'namespaced' | 'href' | 'activePath'>;
   }
 
   export interface ResourceNSNavItem extends NavItem {
