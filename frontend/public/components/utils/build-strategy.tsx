@@ -109,7 +109,7 @@ export const BuildStrategy: React.SFC<BuildStrategyProps> = ({ resource, childre
           {buildFrom.name}
         </DetailsItem>
       )}
-      {outputTo && (
+      {outputTo && outputTo.kind === 'ImageStreamTag' && (
         <DetailsItem label={t('build-strategy~Output to')} obj={resource} path="spec.output.to">
           <ResourceLink
             kind={ImageStreamTagsReference}
@@ -117,6 +117,11 @@ export const BuildStrategy: React.SFC<BuildStrategyProps> = ({ resource, childre
             namespace={outputTo.namespace || resource.metadata.namespace}
             title={outputTo.name}
           />
+        </DetailsItem>
+      )}
+      {outputTo && outputTo.kind === 'DockerImage' && (
+        <DetailsItem label={t('build-strategy~Output to')} obj={resource} path="spec.output.to">
+          {outputTo.name}
         </DetailsItem>
       )}
       {pushSecret && (
