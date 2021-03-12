@@ -3,14 +3,20 @@ import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Gallery, GalleryItem } from '@patternfly/react-core';
 import { CatalogTile } from '@patternfly/react-catalog-view-extension';
-import { history, useAccessReview } from '@console/internal/components/utils';
-import { useExtensions } from '@console/plugin-sdk';
+import { history, LoadingBox, useAccessReview } from '@console/internal/components/utils';
 import { RootState } from '@console/internal/redux';
 import { ALL_NAMESPACES_KEY, PageLayout } from '@console/shared';
 import { HIDE_QUICK_START_ADD_TILE_STORAGE_KEY } from '@console/shared/src/components/quick-starts/quick-starts-catalog-card-constants';
 import QuickStartsLoader from '@console/app/src/components/quick-starts/loader/QuickStartsLoader';
 import QuickStartsCatalogCard from '@console/shared/src/components/quick-starts/QuickStartsCatalogCard';
-import { isAddAction, AddAction } from '../extensions/add-actions';
+import {
+  ResolvedExtension,
+  useResolvedExtensions,
+} from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
+import {
+  isAddAction,
+  ResolvedAddAction,
+} from '@console/dynamic-plugin-sdk/src/extensions/add-actions';
 
 const navigateTo = (e: React.SyntheticEvent, url: string) => {
   history.push(url);
@@ -18,13 +24,13 @@ const navigateTo = (e: React.SyntheticEvent, url: string) => {
 };
 
 interface ItemProps {
-  action: AddAction;
+  action: ResolvedExtension<ResolvedAddAction>;
   namespace: string;
 }
 
 const Item: React.FC<ItemProps> = ({
   action: {
-    properties: { id, label, description, icon, iconClass, url, accessReview },
+    properties: { id, label, description, icon, href, accessReview },
   },
   namespace,
 }) => {
@@ -33,21 +39,20 @@ const Item: React.FC<ItemProps> = ({
     // Defined extensions are immutable. This check will be consistent.
     // eslint-disable-next-line react-hooks/rules-of-hooks
     accessReview.map((descriptor) => useAccessReview({ namespace, ...descriptor })).every((x) => x);
-  if (namespace === ALL_NAMESPACES_KEY && url.match(/:namespace\b/)) {
+  if (namespace === ALL_NAMESPACES_KEY && href.match(/:namespace\b/)) {
     // URL expects namespace scope
     return null;
   }
-  const resolvedUrl = url.replace(/:namespace\b/g, namespace);
+  const resolvedHref = href.replace(/:namespace\b/g, namespace);
   return access ? (
     <GalleryItem>
       <CatalogTile
         data-test-id={id}
         className="co-catalog-tile"
-        onClick={(e: React.SyntheticEvent) => navigateTo(e, resolvedUrl)}
-        href={resolvedUrl}
+        onClick={(e: React.SyntheticEvent) => navigateTo(e, resolvedHref)}
+        href={resolvedHref}
         title={label}
         iconImg={typeof icon === 'string' ? icon : undefined}
-        iconClass={iconClass}
         icon={React.isValidElement(icon) ? icon : undefined}
         description={description}
       />
@@ -73,9 +78,9 @@ const ODCEmptyState: React.FC<Props> = ({ title, activeNamespace, hintBlock }) =
   const defaultHintBlockText = t(
     'devconsole~Select a way to create an Application, component or service from one of the options.',
   );
-  const addActionExtensions = useExtensions<AddAction>(
-    isAddAction,
-  ).filter(({ properties: { hide } }) => (hide ? hide() : true));
+  const [addActionExtensions, resolved] = useResolvedExtensions<ResolvedAddAction>(isAddAction);
+
+  if (!resolved) return <LoadingBox />;
 
   return (
     <PageLayout title={title} hint={hintBlock || defaultHintBlockText} isDark>

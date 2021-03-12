@@ -19,7 +19,6 @@ import {
   DetailPageBreadCrumbs,
 } from '@console/plugin-sdk';
 import { NamespaceRedirect } from '@console/internal/components/utils/namespace-redirect';
-import { AddAction } from '@console/dev-console/src/extensions/add-actions';
 import * as models from './models';
 import { yamlTemplates } from './yaml-templates';
 import {
@@ -35,8 +34,7 @@ import {
 } from './const';
 import { getKebabActionsForKind, getKebabActionsForWorkload } from './utils/kebab-actions';
 import { TopologyConsumedExtensions, topologyPlugin } from './topology/topology-plugin';
-import * as eventSourceIcon from './imgs/event-source.svg';
-import * as channelIcon from './imgs/channel.svg';
+
 import { eventSourceProvider, kameletsProvider } from './catalog';
 import {
   eventSourceBreadcrumbsProvider,
@@ -60,7 +58,6 @@ type ConsumedExtensions =
   | HrefNavItem
   | YAMLTemplate
   | ResourceDetailsPage
-  | AddAction
   | TopologyConsumedExtensions
   | HorizontalNavTab
   | CatalogItemProvider
@@ -456,38 +453,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     properties: {
       getKebabActionsForKind: getKebabActionsForWorkload,
-    },
-  },
-  {
-    type: 'AddAction',
-    flags: {
-      required: [FLAG_KNATIVE_EVENTING],
-    },
-    properties: {
-      id: 'knative-event-source',
-      url: '/catalog?catalogType=EventSource',
-      // t('knative-plugin~Event Source')
-      label: '%knative-plugin~Event Source%',
-      // t('knative-plugin~Create an Event source to register interest in a class of events from a particular system')
-      description:
-        '%knative-plugin~Create an Event source to register interest in a class of events from a particular system%',
-      icon: eventSourceIcon,
-    },
-  },
-  {
-    type: 'AddAction',
-    flags: {
-      required: [FLAG_KNATIVE_EVENTING, FLAG_KNATIVE_EVENTING_CHANNEL],
-    },
-    properties: {
-      id: 'knative-eventing-channel',
-      url: '/channel',
-      // t('knative-plugin~Channel')
-      label: '%knative-plugin~Channel%',
-      // t('knative-plugin~Create a Knative Channel to create an event forwarding and persistence layer with in-memory and reliable implementations')
-      description:
-        '%knative-plugin~Create a Knative Channel to create an event forwarding and persistence layer with in-memory and reliable implementations%',
-      icon: channelIcon,
     },
   },
   {

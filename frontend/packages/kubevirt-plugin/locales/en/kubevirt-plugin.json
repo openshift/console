@@ -1,4 +1,6 @@
 {
+  "Virtual Machines": "Virtual Machines",
+  "Create a Virtual Machine from a template": "Create a Virtual Machine from a template",
   "Access and Volume modes should follow storage feature matrix": "Access and Volume modes should follow storage feature matrix",
   "Learn more": "Learn more",
   "Warning": "Warning",
@@ -277,7 +279,6 @@
   "Virtual machine template {{ templateParam }} not found.": "Virtual machine template {{ templateParam }} not found.",
   "Back to templates catalog": "Back to templates catalog",
   "Review and create virtual machine": "Review and create virtual machine",
-  "Virtual Machines": "Virtual Machines",
   "Virtual Machine Template": "Virtual Machine Template",
   "Learn more about operating system support": "Learn more about operating system support",
   "This template's boot source is defined by {{providerParam}}": "This template's boot source is defined by {{providerParam}}",
@@ -744,7 +745,6 @@
   "High-performance": "High-performance",
   "Optimized for High resource consumption workloads": "Optimized for High resource consumption workloads",
   "Data Volume failed to initiate upload.": "Data Volume failed to initiate upload.",
-  "Create a Virtual Machine from a template": "Create a Virtual Machine from a template",
   "Quickly create a virtual machine from a template.": "Quickly create a virtual machine from a template.",
   "**Virtual Machines** are templates for quickly creating a virtual machine.": "**Virtual Machines** are templates for quickly creating a virtual machine.",
   "Template Providers": "Template Providers",

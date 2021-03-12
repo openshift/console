@@ -17,5 +17,18 @@
       "path": "/k8s/ns/:ns/virtualmachineinstances/:name/standaloneconsole",
       "component": { "$codeRef": "standaloneConsole" }
     }
+  },
+  {
+    "type": "dev-console.add/action",
+    "properties": {
+      "id": "dev-catalog-virtualization",
+      "href": "/catalog?catalogType=VmTemplate",
+      "label": "%kubevirt-plugin~Virtual Machines%",
+      "description": "%kubevirt-plugin~Create a Virtual Machine from a template%",
+      "icon": { "$codeRef": "icons.vmIconElement" }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
   }
 ]

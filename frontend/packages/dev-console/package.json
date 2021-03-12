@@ -21,6 +21,9 @@
       "devconsole": [
         "integration-tests/**/*.scenario.ts"
       ]
+    },
+    "exposedModules": {
+      "icons": "src/utils/icons.tsx"
     }
   }
 }

@@ -1,4 +1,6 @@
 {
+  "Helm Chart": "Helm Chart",
+  "Browse the catalog to discover and install Helm Charts": "Browse the catalog to discover and install Helm Charts",
   "Uninstall Helm Release": "Uninstall Helm Release",
   "Uninstall": "Uninstall",
   "Upgrade": "Upgrade",
@@ -44,7 +46,6 @@
   "Select the chart version.": "Select the chart version.",
   "Select the version to upgrade to.": "Select the version to upgrade to.",
   "No versions available": "No versions available",
-  "Helm Chart": "Helm Chart",
   "For more information on the chart, refer to this <2>README</2>": "For more information on the chart, refer to this <2>README</2>",
   "Helm Chart cannot be installed": "Helm Chart cannot be installed",
   "The Helm Chart is currently unavailable. {{chartError}}": "The Helm Chart is currently unavailable. {{chartError}}",
@@ -60,7 +61,6 @@
   "Install a Helm Chart from the developer catalog": "Install a Helm Chart from the developer catalog",
   "Select a Project to view the list of Helm Releases or <2>create a Project</2>.": "Select a Project to view the list of Helm Releases or <2>create a Project</2>.",
   "Helm": "Helm",
-  "Browse the catalog to discover and install Helm Charts": "Browse the catalog to discover and install Helm Charts",
   "Unable to find resource for {{helmLabel}}": "Unable to find resource for {{helmLabel}}",
   "Details": "Details",
   " / App Version {{appVersion}}": " / App Version {{appVersion}}",
