@@ -8,4 +8,3 @@ Scenario: Create the namespace
     And user enters project name as "aut-project" in Create Project modal
     And user clicks Create button present in Create Project modal
     Then modal will get closed
-    And topology page displays with the empty state

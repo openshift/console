@@ -188,7 +188,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       name: '%devconsole~Developer%',
       icon: <CodeIcon />,
       defaultPins: [referenceForModel(ConfigMapModel), referenceForModel(SecretModel)],
-      getLandingPageURL: () => '/topology',
+      getLandingPageURL: (flags, isFirstVisit) => (isFirstVisit ? '/add' : '/topology'),
       getK8sLandingPageURL: () => '/add',
       getImportRedirectURL: (project) => `/topology/ns/${project}`,
       usePerspectiveDetection,

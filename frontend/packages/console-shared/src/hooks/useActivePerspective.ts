@@ -4,6 +4,12 @@ import {
   PerspectiveContextType,
   PerspectiveType,
 } from '@console/app/src/components/detect-perspective/perspective-context';
+import { USERSETTINGS_PREFIX } from '../constants';
+
+const PERSPECTIVE_VISITED_FEATURE_KEY = 'perspective.visited';
+
+export const getPerspectiveVisitedKey = (perspective: PerspectiveType): string =>
+  `${USERSETTINGS_PREFIX}.${PERSPECTIVE_VISITED_FEATURE_KEY}.${perspective}`;
 
 export const useActivePerspective = (): [
   PerspectiveType,
