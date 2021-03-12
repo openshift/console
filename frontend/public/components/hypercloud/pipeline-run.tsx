@@ -19,6 +19,7 @@ import TriggeredBySection from '../../../packages/dev-console/src/components/pip
 import { Status } from '@console/shared';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
+import { ResourceLabel } from '../../models/hypercloud/resource-plural';
 
 const kind = PipelineRunModel.kind;
 
@@ -144,7 +145,7 @@ const PipelineRunDetails: React.FC<PipelineRunDetailsProps> = ({ obj: pipelineRu
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={`${t('COMMON:MSG_LNB_MENU_60')} ${t('COMMON:MSG_DETAILS_TABOVERVIEW_1')}`} />
+        <SectionHeading text={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_1', { 0: ResourceLabel(pipelineRun, t) })} />
         <PipelineRunVisualization pipelineRun={pipelineRun} />
         <div className="row">
           <div className="col-lg-6">

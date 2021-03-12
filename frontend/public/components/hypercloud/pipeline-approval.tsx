@@ -9,6 +9,7 @@ import { DetailsItem, Kebab, KebabAction, detailsPage, Timestamp, navFactory, Re
 import { ApprovalModel } from '../../models';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
+import { ResourceLabel } from '../../models/hypercloud/resource-plural';
 
 export const menuActions: KebabAction[] = [...Kebab.getExtensionsActionsForKind(ApprovalModel), ...Kebab.factory.common, Kebab.factory.ModifyStatus];
 
@@ -105,21 +106,23 @@ export const PipelineApprovalDetailsList: React.FC<PipelineApprovalDetailsListPr
 }
 
 
-const PipelineApprovalDetails: React.FC<PipelineApprovalDetailsProps> = ({ obj: pipelineApproval }) => (
-  <>
-    <div className="co-m-pane__body">
-      <SectionHeading text="Pipeline Approval Details" />
-      <div className="row">
-        <div className="col-lg-6">
-          <ResourceSummary resource={pipelineApproval} showPodSelector={false} showNodeSelector={false} showTolerations={false} />
-        </div>
-        <div className="col-lg-6">
-          <PipelineApprovalDetailsList ds={pipelineApproval} />
+const PipelineApprovalDetails: React.FC<PipelineApprovalDetailsProps> = ({ obj: pipelineApproval }) => {
+  return (
+    <>
+      <div className="co-m-pane__body">
+        <SectionHeading text={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_1', { 0: ResourceLabel(pipelineApproval, t) })} />
+        <div className="row">
+          <div className="col-lg-6">
+            <ResourceSummary resource={pipelineApproval} showPodSelector={false} showNodeSelector={false} showTolerations={false} />
+          </div>
+          <div className="col-lg-6">
+            <PipelineApprovalDetailsList ds={pipelineApproval} />
+          </div>
         </div>
       </div>
-    </div>
-  </>
-);
+    </>
+  );
+}
 
 
 const { details, editYaml } = navFactory;
