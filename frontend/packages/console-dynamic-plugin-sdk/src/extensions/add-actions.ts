@@ -14,13 +14,13 @@ namespace ExtensionProperties {
     /** The href to navigate to. */
     href: string;
     /** The perspective display icon. */
-    icon?: EncodedCodeRef;
+    icon?: string | EncodedCodeRef;
     /** Optional access review to control visibility / enablement of the action. */
     accessReview?: ExtensionAccessReviewResourceAttributes[];
   };
 
   export type AddActionCodeRefs = {
-    icon?: CodeRef<React.ReactElement>;
+    icon?: CodeRef<React.ReactNode>;
   };
 }
 

@@ -1,1 +1,133 @@
-[]
+[
+  {
+    "type": "dev-console.add/action",
+    "properties": {
+      "id": "import-from-samples",
+      "href": "/samples",
+      "label": "%devconsole~Samples%",
+      "description": "%devconsole~Create an Application from a code sample%",
+      "icon": { "$codeRef": "icons.samplesIconElement" },
+      "accessReview": [
+        { "group": "build.openshift.io", "resource": "buildconfigs", "verb": "create" },
+        { "group": "image.openshift.io", "resource": "imagestreams", "verb": "create" },
+        { "group": "apps.openshift.io", "resource": "deploymentconfigs", "verb": "create" },
+        { "group": "", "resource": "secrets", "verb": "create" },
+        { "group": "route.openshift.io", "resource": "routes", "verb": "create" },
+        { "group": "", "resource": "services", "verb": "create" }
+      ]
+    }
+  },
+  {
+    "type": "dev-console.add/action",
+    "properties": {
+      "id": "import-from-git",
+      "href": "/import",
+      "label": "%devconsole~From Git%",
+      "description": "%devconsole~Import code from your Git repository to be built and deployed%",
+      "icon": { "$codeRef": "icons.gitIconSVG" },
+      "accessReview": [
+        { "group": "build.openshift.io", "resource": "buildconfigs", "verb": "create" },
+        { "group": "image.openshift.io", "resource": "imagestreams", "verb": "create" },
+        { "group": "apps.openshift.io", "resource": "deploymentconfigs", "verb": "create" },
+        { "group": "", "resource": "secrets", "verb": "create" },
+        { "group": "route.openshift.io", "resource": "routes", "verb": "create" },
+        { "group": "", "resource": "services", "verb": "create" }
+      ]
+    }
+  },
+  {
+    "type": "dev-console.add/action",
+    "properties": {
+      "id": "import-from-devfile",
+      "href": "/import?importType=devfile",
+      "label": "%devconsole~From Devfile%",
+      "description": "%devconsole~Import your Devfile from your Git repository to be built and deployed%",
+      "icon": { "$codeRef": "icons.devfileIconSVG" },
+      "accessReview": [
+        { "group": "build.openshift.io", "resource": "buildconfigs", "verb": "create" },
+        { "group": "image.openshift.io", "resource": "imagestreams", "verb": "create" },
+        { "group": "apps", "resource": "deployments", "verb": "create" },
+        { "group": "", "resource": "secrets", "verb": "create" },
+        { "group": "route.openshift.io", "resource": "routes", "verb": "create" },
+        { "group": "", "resource": "services", "verb": "create" }
+      ]
+    }
+  },
+  {
+    "type": "dev-console.add/action",
+    "properties": {
+      "id": "deploy-image",
+      "href": "/deploy-image",
+      "label": "%devconsole~Container Image%",
+      "description": "%devconsole~Deploy an existing Image from an Image registry or Image stream tag%",
+      "icon": { "$codeRef": "icons.deployIconElement" },
+      "accessReview": [
+        { "group": "build.openshift.io", "resource": "buildconfigs", "verb": "create" },
+        { "group": "image.openshift.io", "resource": "imagestreams", "verb": "create" },
+        { "group": "apps.openshift.io", "resource": "deploymentconfigs", "verb": "create" },
+        { "group": "image.openshift.io", "resource": "imagestreamimports", "verb": "create" },
+        { "group": "", "resource": "secrets", "verb": "create" },
+        { "group": "route.openshift.io", "resource": "routes", "verb": "create" },
+        { "group": "", "resource": "services", "verb": "create" }
+      ]
+    }
+  },
+  {
+    "type": "dev-console.add/action",
+    "properties": {
+      "id": "import-from-dockerfile",
+      "href": "/import?importType=docker",
+      "label": "%devconsole~From Dockerfile%",
+      "description": "%devconsole~Import your Dockerfile from your Git repository to be built and deployed%",
+      "icon": { "$codeRef": "icons.dockerfileIconSVG" },
+      "accessReview": [
+        { "group": "build.openshift.io", "resource": "buildconfigs", "verb": "create" },
+        { "group": "image.openshift.io", "resource": "imagestreams", "verb": "create" },
+        { "group": "apps.openshift.io", "resource": "deploymentconfigs", "verb": "create" },
+        { "group": "", "resource": "secrets", "verb": "create" },
+        { "group": "route.openshift.io", "resource": "routes", "verb": "create" },
+        { "group": "", "resource": "services", "verb": "create" }
+      ]
+    }
+  },
+  {
+    "type": "dev-console.add/action",
+    "properties": {
+      "id": "import-yaml",
+      "href": "/k8s/ns/:namespace/import",
+      "label": "%devconsole~YAML%",
+      "description": "%devconsole~Create resources from their YAML or JSON definitions%",
+      "icon": { "$codeRef": "icons.yamlIconSVG" }
+    }
+  },
+  {
+    "type": "dev-console.add/action",
+    "properties": {
+      "id": "dev-catalog",
+      "href": "/catalog",
+      "label": "%devconsole~From Catalog%",
+      "description": "%devconsole~Browse the catalog to discover, deploy and connect to services%",
+      "icon": { "$codeRef": "icons.devCatalogIconElement" }
+    }
+  },
+  {
+    "type": "dev-console.add/action",
+    "properties": {
+      "id": "dev-catalog-databases",
+      "href": "/catalog?category=databases",
+      "label": "%devconsole~Database%",
+      "description": "%devconsole~Browse the catalog to discover database services to add to your Application%",
+      "icon": { "$codeRef": "icons.databaseCatalogIconElement" }
+    }
+  },
+  {
+    "type": "dev-console.add/action",
+    "properties": {
+      "id": "operator-backed",
+      "href": "/catalog?catalogType=OperatorBackedService",
+      "label": "%devconsole~Operator Backed%",
+      "description": "%devconsole~Browse the catalog to discover and deploy operator managed services%",
+      "icon": { "$codeRef": "icons.operatorCatalogIconElement" }
+    }
+  }
+]

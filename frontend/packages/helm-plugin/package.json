@@ -9,6 +9,9 @@
     "test": "yarn --cwd ../.. test packages/helm-plugin"
   },
   "consolePlugin": {
-    "entry": "src/plugin.ts"
+    "entry": "src/plugin.ts",
+    "exposedModules": {
+      "icons": "src/utils/icons.ts"
+    }
   }
 }

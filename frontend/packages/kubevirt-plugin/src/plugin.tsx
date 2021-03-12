@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { AlertVariant } from '@patternfly/react-core';
-import { VirtualMachineIcon } from '@patternfly/react-icons';
 import {
   Plugin,
   ResourceNSNavItem,
@@ -45,7 +44,6 @@ import {
 } from './components/cdi-upload-provider/cdi-upload-provider';
 import { killCDIBoundPVC } from './components/cdi-upload-provider/pvc-delete-extension';
 import { isPvcBoundToCDI, isPvcUploading } from './selectors/pvc/selectors';
-import { AddAction } from '../../dev-console/src/extensions/add-actions';
 import './style.scss';
 import { getExecutableCodeRef } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-utils';
 
@@ -69,7 +67,6 @@ type ConsumedExtensions =
   | PVCAlert
   | PVCStatus
   | PVCDelete
-  | AddAction
   | CatalogItemProvider
   | CatalogItemType
   | CatalogItemFilter;
@@ -519,21 +516,6 @@ const plugin: Plugin<ConsumedExtensions> = [
             (m) => m.PVCDeleteAlertExtension,
           ),
       },
-    },
-    flags: {
-      required: [FLAG_KUBEVIRT],
-    },
-  },
-  {
-    type: 'AddAction',
-    properties: {
-      id: 'dev-catalog-virtualization',
-      url: '/catalog?catalogType=VmTemplate',
-      // t('kubevirt-plugin~Virtual Machines')
-      label: '%kubevirt-plugin~Virtual Machines%',
-      // t('kubevirt-plugin~Create a Virtual Machine from a template')
-      description: '%kubevirt-plugin~Create a Virtual Machine from a template%',
-      icon: <VirtualMachineIcon />,
     },
     flags: {
       required: [FLAG_KUBEVIRT],
