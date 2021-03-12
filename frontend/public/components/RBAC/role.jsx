@@ -90,7 +90,7 @@ class Details extends React.Component {
           <div className="row">
             <div className="col-xs-6">
               <dl className="co-m-pane__details">
-                <dt>Role Name</dt>
+                <dt>{t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_115')}</dt>
                 <dd>{name}</dd>
                 {namespace && (
                   <div>
@@ -187,6 +187,7 @@ export const BindingsForRolePage = props => {
     },
     obj: { kind },
   } = props;
+  const { t } = useTranslation();
   const resources = [{ kind: 'RoleBinding', namespaced: true }];
   if (!ns) {
     resources.push({ kind: 'ClusterRoleBinding', namespaced: false, optional: true });
@@ -194,7 +195,7 @@ export const BindingsForRolePage = props => {
   return (
     <MultiListPage
       canCreate={true}
-      createButtonText="Create Binding"
+      createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: 'Binding' })}
       createProps={{
         to: `/k8s/${ns ? `ns/${ns}` : 'cluster'}/rolebindings/~new?rolekind=${kind}&rolename=${name}`,
       }}

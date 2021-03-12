@@ -83,10 +83,11 @@ RoleBindingClaimsList.displayName = 'RoleBindingClaimsList';
 export const RoleBindingClaimsPage: React.FC<RoleBindingClaimsPageProps> = props => <ListPage kind={'RoleBindingClaim'} canCreate={true} ListComponent={RoleBindingClaimsList} {...props} />;
 RoleBindingClaimsPage.displayName = 'RoleBindingClaimsPage';
 const RoleBindingClaimsDetails: React.FC<RoleBindingClaimDetailsProps> = ({ obj: rolebindingclaims }) => {
+  const { t } = useTranslation();
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Namespace Claim Details" />
+        <SectionHeading text={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_1', { 0: t('COMMON:MSG_LNB_MENU_101') })} />
         <div className="co-m-pane__body-group">
           <div className="row">
             <div className="col-sm-6">

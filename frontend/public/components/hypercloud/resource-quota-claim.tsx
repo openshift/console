@@ -88,7 +88,7 @@ const ResourceQuotaClaimsDetails: React.FC<ResourceQuotaClaimDetailsProps> = ({ 
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Resource Quota Claim Details" />
+        <SectionHeading text={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_1', { 0: t('COMMON:MSG_LNB_MENU_102') })} />
         <div className="co-m-pane__body-group">
           <div className="row">
             <div className="col-sm-6">
@@ -100,11 +100,11 @@ const ResourceQuotaClaimsDetails: React.FC<ResourceQuotaClaimDetailsProps> = ({ 
               <dl className="co-m-pane__details">
                 <dt>{t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_45')}</dt>
                 <dd>{resourcequotaclaims?.status?.status}</dd>
-                <dt> Reason</dt>
+                <dt>{t('SINGLE:MSG_RESOURCEQUOTACLAIMS_RESOURCEQUOTACLAIMDETAILS_TABDETAILS_2')}</dt>
                 <dd>{resourcequotaclaims?.status?.reason}</dd>
-                <dt>CPU request limit</dt>
+                <dt>{t('SINGLE:MSG_RESOURCEQUOTACLAIMS_RESOURCEQUOTACLAIMDETAILS_TABDETAILS_3')}</dt>
                 <dd>{resourcequotaclaims?.specLimit?.limitCpu}</dd>
-                <dt>Memory request limit</dt>
+                <dt>{t('SINGLE:MSG_RESOURCEQUOTACLAIMS_RESOURCEQUOTACLAIMDETAILS_TABDETAILS_4')}</dt>
                 <dd>{resourcequotaclaims?.specLimit?.limitMemory}</dd>
               </dl>
             </div>

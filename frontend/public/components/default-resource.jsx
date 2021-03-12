@@ -5,25 +5,13 @@ import { sortable } from '@patternfly/react-table';
 import { Conditions } from './conditions';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import { referenceFor, kindForReference } from '../module/k8s';
-import {
-  Kebab,
-  kindObj,
-  navFactory,
-  ResourceKebab,
-  ResourceLink,
-  ResourceSummary,
-  SectionHeading,
-  Timestamp,
-} from './utils';
+import { Kebab, kindObj, navFactory, ResourceKebab, ResourceLink, ResourceSummary, SectionHeading, Timestamp } from './utils';
+import { ResourceLabel } from '../models/hypercloud/resource-plural';
+import { useTranslation } from 'react-i18next';
 
 const { common } = Kebab.factory;
 
-const tableColumnClasses = [
-  classNames('col-xs-6', 'col-sm-4'),
-  classNames('col-xs-6', 'col-sm-4'),
-  classNames('col-sm-4', 'hidden-xs'),
-  Kebab.columnClass,
-];
+const tableColumnClasses = [classNames('col-xs-6', 'col-sm-4'), classNames('col-xs-6', 'col-sm-4'), classNames('col-sm-4', 'hidden-xs'), Kebab.columnClass];
 
 const TableHeader = () => {
   return [
@@ -60,24 +48,9 @@ const TableRowForKind = ({ obj, index, key, style, customData }) => {
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink
-          kind={customData.kind}
-          name={obj.metadata.name}
-          namespace={obj.metadata.namespace}
-          title={obj.metadata.name}
-        />
+        <ResourceLink kind={customData.kind} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
-        {obj.metadata.namespace ? (
-          <ResourceLink
-            kind="Namespace"
-            name={obj.metadata.namespace}
-            title={obj.metadata.namespace}
-          />
-        ) : (
-          'None'
-        )}
-      </TableData>
+      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>{obj.metadata.namespace ? <ResourceLink kind="Namespace" name={obj.metadata.namespace} title={obj.metadata.namespace} /> : 'None'}</TableData>
       <TableData className={tableColumnClasses[2]}>
         <Timestamp timestamp={obj.metadata.creationTimestamp} />
       </TableData>
@@ -88,12 +61,16 @@ const TableRowForKind = ({ obj, index, key, style, customData }) => {
   );
 };
 
-export const DetailsForKind = (kind) =>
+export const DetailsForKind = kind =>
   function DetailsForKind_({ obj }) {
+    const { t } = useTranslation();
+    const ko = kindObj(kind);
+    const label = ResourceLabel(ko, t);
     return (
       <>
         <div className="co-m-pane__body">
-          <SectionHeading text={`${kindForReference(kind)} Details`} />
+          {/* <SectionHeading text={`${kindForReference(kind)} Details`} /> */}
+          <SectionHeading text={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_1', { 0: label })} />
           <ResourceSummary resource={obj} podSelector="spec.podSelector" showNodeSelector={false} />
         </div>
         {_.isArray(obj?.status?.conditions) && (
@@ -106,33 +83,17 @@ export const DetailsForKind = (kind) =>
     );
   };
 
-export const DefaultList = (props) => {
+export const DefaultList = props => {
   const { kinds } = props;
 
-  return (
-    <Table
-      {...props}
-      aria-label="Default Resource"
-      kinds={[kinds[0]]}
-      customData={{ kind: kinds[0] }}
-      Header={TableHeader}
-      Row={TableRowForKind}
-      virtualize
-    />
-  );
+  return <Table {...props} aria-label="Default Resource" kinds={[kinds[0]]} customData={{ kind: kinds[0] }} Header={TableHeader} Row={TableRowForKind} virtualize />;
 };
 DefaultList.displayName = 'DefaultList';
 
-export const DefaultPage = (props) => (
-  <ListPage
-    {...props}
-    ListComponent={DefaultList}
-    canCreate={props.canCreate || _.get(kindObj(props.kind), 'crd')}
-  />
-);
+export const DefaultPage = props => <ListPage {...props} ListComponent={DefaultList} canCreate={props.canCreate || _.get(kindObj(props.kind), 'crd')} />;
 DefaultPage.displayName = 'DefaultPage';
 
-export const DefaultDetailsPage = (props) => {
+export const DefaultDetailsPage = props => {
   const pages = [navFactory.details(DetailsForKind(props.kind)), navFactory.editYaml()];
   const menuActions = [...Kebab.getExtensionsActionsForKind(kindObj(props.kind)), ...common];
 
