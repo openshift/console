@@ -4,8 +4,8 @@ import { getTopologyNodeItem } from '@console/topology/src/data-transforms/trans
 import { OverviewItem } from '@console/shared/src';
 import { TopologyDataObject, TopologyDataResources } from '@console/topology/src/topology-types';
 import { KAFKA_WIDTH, KAFKA_HEIGHT, KAFKA_PADDING } from './components/const';
-import { ManagedKafkaConnectionModel } from '../models';
 import { MANAGED_KAFKA_TOPOLOGY_TYPE } from './const';
+import { KafkaConnectionModel } from '../models';
 
 const KAFKA_PROPS = {
   width: KAFKA_WIDTH,
@@ -19,10 +19,10 @@ const KAFKA_PROPS = {
 
 export const createOverviewItem = (obj: K8sResourceKind): OverviewItem<K8sResourceKind> => {
   if (!obj.apiVersion) {
-    obj.apiVersion = apiVersionForModel(ManagedKafkaConnectionModel);
+    obj.apiVersion = apiVersionForModel(KafkaConnectionModel);
   }
   if (!obj.kind) {
-    obj.kind = ManagedKafkaConnectionModel.kind;
+    obj.kind = KafkaConnectionModel.kind;
   }
 
   return {
@@ -45,7 +45,7 @@ export const getTopologyRhoasNodes = (kafkaConnections: K8sResourceKind[]): Node
         resource: obj,
       },
     };
-    nodes.push(getTopologyNodeItem(obj, ManagedKafkaConnectionModel.kind, data, KAFKA_PROPS));
+    nodes.push(getTopologyNodeItem(obj, MANAGED_KAFKA_TOPOLOGY_TYPE, data, KAFKA_PROPS));
   }
 
   return nodes;

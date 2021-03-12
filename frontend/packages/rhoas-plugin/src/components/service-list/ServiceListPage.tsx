@@ -7,12 +7,12 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import { useActiveNamespace } from '@console/shared';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import ServiceInstance from './ServiceInstance';
-import { ManagedServicesRequestModel } from '../../models/rhoas';
+import { CloudServicesRequestModel } from '../../models/rhoas';
 import { ServicesRequestCRName } from '../../const';
 import {
-  createManagedKafkaConnection,
-  createManagedServicesRequestIfNeeded,
-  deleteManagedKafkaConnection,
+  createKafkaConnection,
+  createCloudServicesRequestIfNeeded,
+  deleteKafkaConnection,
   listOfCurrentKafkaConnectionsById,
 } from '../../utils/resourceCreators';
 import { KafkaRequest } from '../../utils/rhoas-types';
@@ -29,11 +29,11 @@ const ServiceListPage = () => {
   const [selectedKafka, setSelectedKafka] = React.useState<number>();
   const [currentKafkaConnections, setCurrentKafkaConnections] = React.useState<string[]>([]);
   const { t } = useTranslation();
-  const [managedKafkaCreateError, setManagedKafkaCreateError] = React.useState<string>();
+  const [kafkaCreateError, setKafkaCreateError] = React.useState<string>();
 
   React.useEffect(() => {
     const createKafkaRequestFlow = async () => {
-      await createManagedServicesRequestIfNeeded(currentNamespace);
+      await createCloudServicesRequestIfNeeded(currentNamespace);
 
       const currentKafka = await listOfCurrentKafkaConnectionsById(currentNamespace);
       if (currentKafka) {
@@ -44,18 +44,18 @@ const ServiceListPage = () => {
   }, [currentNamespace]);
 
   const [watchedKafkaRequest] = useK8sWatchResource<KafkaRequest>({
-    kind: referenceForModel(ManagedServicesRequestModel),
+    kind: referenceForModel(CloudServicesRequestModel),
     name: ServicesRequestCRName,
     namespace: currentNamespace,
     isList: false,
     optional: true,
   });
 
-  if (managedKafkaCreateError) {
+  if (kafkaCreateError) {
     return (
       <ServicesErrorState
         title={t('Failed to create connection')}
-        message={managedKafkaCreateError + t('Please try again')}
+        message={kafkaCreateError + t('Please try again')}
         actionInfo={t('rhoas-plugin~Go back to Services Catalog')}
       />
     );
@@ -96,15 +96,15 @@ const ServiceListPage = () => {
 
   const remoteKafkaInstances = watchedKafkaRequest.status.userKafkas;
 
-  const createManagedKafkaConnectionFlow = async () => {
+  const createKafkaConnectionFlow = async () => {
     const kafkaId = remoteKafkaInstances[selectedKafka].id;
     const kafkaName = remoteKafkaInstances[selectedKafka].name;
     try {
-      await createManagedKafkaConnection(kafkaId, kafkaName, currentNamespace);
+      await createKafkaConnection(kafkaId, kafkaName, currentNamespace);
       history.push(`/topology/ns/${currentNamespace}`);
     } catch (error) {
-      deleteManagedKafkaConnection(kafkaName, currentNamespace);
-      setManagedKafkaCreateError(error);
+      deleteKafkaConnection(kafkaName, currentNamespace);
+      setKafkaCreateError(error);
     }
   };
 
@@ -126,7 +126,7 @@ const ServiceListPage = () => {
           selectedKafka={selectedKafka}
           setSelectedKafka={setSelectedKafka}
           currentKafkaConnections={currentKafkaConnections}
-          createManagedKafkaConnectionFlow={createManagedKafkaConnectionFlow}
+          createKafkaConnectionFlow={createKafkaConnectionFlow}
           disableCreateButton={disableCreateButton}
         />
       </NamespacedPage>

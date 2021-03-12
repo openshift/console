@@ -7,14 +7,14 @@ import { history, PageHeading } from '@console/internal/components/utils';
 import StreamsInstanceFilter from '../service-table/StreamsInstanceFilter';
 import StreamsInstanceTable from '../service-table/StreamsInstanceTable';
 import { ServicesEmptyState } from '../states/ServicesEmptyState';
-import { ManagedKafka } from '../../utils/rhoas-types';
+import { CloudKafka } from '../../utils/rhoas-types';
 
 type ServiceInstanceProps = {
-  kafkaArray: ManagedKafka[];
+  kafkaArray: CloudKafka[];
   selectedKafka: number;
   setSelectedKafka: (selectedKafka: number) => void;
   currentKafkaConnections: string[];
-  createManagedKafkaConnectionFlow: () => {};
+  createKafkaConnectionFlow: () => {};
   disableCreateButton: () => boolean;
 };
 
@@ -23,12 +23,12 @@ const ServiceInstance = ({
   selectedKafka,
   setSelectedKafka,
   currentKafkaConnections,
-  createManagedKafkaConnectionFlow,
+  createKafkaConnectionFlow,
   disableCreateButton,
 }: ServiceInstanceProps) => {
   const [allKafkasConnected, setAllKafkasConnected] = React.useState<boolean>(false);
   const [textInputNameValue, setTextInputNameValue] = React.useState<string>('');
-  const [pageKafkas, setPageKafkas] = React.useState<ManagedKafka[]>(kafkaArray);
+  const [pageKafkas, setPageKafkas] = React.useState<CloudKafka[]>(kafkaArray);
   const { t } = useTranslation();
 
   React.useEffect(() => {
@@ -85,7 +85,7 @@ const ServiceInstance = ({
               style={{ borderTop: 0, paddingTop: 0, paddingBottom: 0 }}
             >
               <FormFooter
-                handleSubmit={() => createManagedKafkaConnectionFlow()}
+                handleSubmit={() => createKafkaConnectionFlow()}
                 isSubmitting={false}
                 errorMessage=""
                 submitLabel={t('rhoas-plugin~Create')}

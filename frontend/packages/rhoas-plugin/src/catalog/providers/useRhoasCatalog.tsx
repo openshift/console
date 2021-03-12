@@ -15,7 +15,7 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { useActiveNamespace } from '@console/shared';
 import { ServiceToken } from '../../components/access-services/ServicesToken';
 import { ServiceAccountCRName, kafkaIcon, operatorIcon } from '../../const';
-import { ManagedServiceAccountRequest } from '../../models';
+import { CloudServiceAccountRequest } from '../../models';
 import { isResourceStatusSuccessfull } from '../../utils/conditionHandler';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { CATALOG_TYPE } from '../const';
@@ -24,7 +24,7 @@ const useRhoasCatalog: CatalogExtensionHook<CatalogItem[]> = (): [CatalogItem[],
   const [currentNamespace] = useActiveNamespace();
   const { t } = useTranslation();
   const [serviceAccount] = useK8sWatchResource({
-    kind: referenceForModel(ManagedServiceAccountRequest),
+    kind: referenceForModel(CloudServiceAccountRequest),
     isList: false,
     name: ServiceAccountCRName,
     namespace: currentNamespace,

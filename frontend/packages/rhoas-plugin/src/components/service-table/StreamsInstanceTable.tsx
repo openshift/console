@@ -23,7 +23,7 @@ import {
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import { Timestamp } from '@console/internal/components/utils';
 import './StreamsInstanceTable.css';
-import { ManagedKafka } from '../../utils/rhoas-types';
+import { CloudKafka } from '../../utils/rhoas-types';
 
 type FormattedKafkas = {
   cells: JSX.Element[];
@@ -31,8 +31,8 @@ type FormattedKafkas = {
 };
 
 type StreamsInstanceTableProps = {
-  kafkaArray: ManagedKafka[];
-  pageKafkas: ManagedKafka[];
+  kafkaArray: CloudKafka[];
+  pageKafkas: CloudKafka[];
   selectedKafka: number;
   setSelectedKafka: (selectedKafka: number) => void;
   currentKafkaConnections: string[];

@@ -1,6 +1,7 @@
 import { K8sResourceCommon } from '@console/internal/module/k8s';
 
-export interface ManagedKafka {
+// FIXME replace with generic type
+export interface CloudKafka {
   id: string;
   kind: string;
   href: string;
@@ -19,7 +20,7 @@ export interface KafkaRequest extends K8sResourceCommon {
   spec: {
     accessTokenSecretName: string;
   };
-  status: { userKafkas: ManagedKafka[]; conditions: StatusCondition[] };
+  status: { userKafkas: CloudKafka[]; conditions: StatusCondition[] };
 }
 
 export interface StatusCondition {

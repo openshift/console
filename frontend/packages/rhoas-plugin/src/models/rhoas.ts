@@ -1,41 +1,41 @@
 import { K8sKind } from '@console/internal/module/k8s';
 import { API_GROUP, API_VERSION } from '../const';
 
-export const ManagedServicesRequestModel: K8sKind = {
+export const CloudServicesRequestModel: K8sKind = {
   apiGroup: API_GROUP,
   apiVersion: API_VERSION,
-  kind: 'ManagedServicesRequest',
-  id: 'managedservicesrequest',
-  plural: 'managedservicesrequests',
-  label: 'Managed Services Request',
-  labelPlural: 'Managed Services Requests',
-  abbr: 'MSCR',
+  kind: 'CloudServicesRequest',
+  id: 'cloudservicesrequest',
+  plural: 'cloudservicesrequests',
+  label: 'Cloud Services Request',
+  labelPlural: 'Cloud Services Requests',
+  abbr: 'CSCR',
   namespaced: true,
   crd: true,
 };
 
-export const ManagedKafkaConnectionModel: K8sKind = {
+export const KafkaConnectionModel: K8sKind = {
   apiGroup: API_GROUP,
   apiVersion: API_VERSION,
-  kind: 'ManagedKafkaConnection',
-  id: 'managedkafkaconnection',
-  plural: 'managedkafkaconnections',
-  label: 'Managed Kafka Connection',
-  labelPlural: 'Managed Kafka Connections',
-  abbr: 'MKC',
+  kind: 'KafkaConnection',
+  id: 'kafkaconnection',
+  plural: 'kafkaconnections',
+  label: 'Kafka Connection',
+  labelPlural: 'Kafka Connections',
+  abbr: 'AKC',
   namespaced: true,
   crd: true,
 };
 
-export const ManagedServiceAccountRequest: K8sKind = {
+export const CloudServiceAccountRequest: K8sKind = {
   apiGroup: API_GROUP,
   apiVersion: API_VERSION,
-  kind: 'ManagedServiceAccountRequest',
-  id: 'managedserviceaccountrequest',
-  plural: 'managedserviceaccountrequests',
-  label: 'Managed Service Account Request',
-  labelPlural: 'Managed Service Account Requests',
-  abbr: 'MSAR',
+  kind: 'CloudServiceAccountRequest',
+  id: 'cloudserviceaccountrequest',
+  plural: 'cloudserviceaccountrequests',
+  label: 'Cloud service Account Request',
+  labelPlural: 'Cloud Service Account Requests',
+  abbr: 'CSAR',
   namespaced: true,
   crd: true,
 };

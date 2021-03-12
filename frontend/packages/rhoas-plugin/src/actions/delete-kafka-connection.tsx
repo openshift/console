@@ -1,12 +1,12 @@
 import { k8sKill } from '@console/internal/module/k8s';
 import { KebabOption } from '@console/internal/components/utils';
-import { ManagedKafkaConnectionModel } from '../models/rhoas';
+import { KafkaConnectionModel } from '../models/rhoas';
 
-export const deleteManagedKafkaConnection = (name: string, namespace: string): KebabOption => {
+export const deleteKafkaConnection = (name: string, namespace: string): KebabOption => {
   return {
     labelKey: 'rhoas-plugin~Delete Kafka Connection',
     callback: async () => {
-      await k8sKill(ManagedKafkaConnectionModel, {
+      await k8sKill(KafkaConnectionModel, {
         metadata: {
           name,
           namespace,

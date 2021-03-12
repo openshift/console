@@ -14,9 +14,9 @@ import {
   ServicesRequestCRName,
 } from '../const';
 import {
-  ManagedKafkaConnectionModel,
-  ManagedServiceAccountRequest,
-  ManagedServicesRequestModel,
+  KafkaConnectionModel,
+  CloudServiceAccountRequest,
+  CloudServicesRequestModel,
 } from '../models/rhoas';
 import { getFinishedCondition, isResourceStatusSuccessfull } from './conditionHandler';
 import { k8sWaitForUpdate } from './k8sUtils';
@@ -28,8 +28,8 @@ import { k8sWaitForUpdate } from './k8sUtils';
  */
 export const createManagedServiceAccount = async (currentNamespace: string) => {
   const serviceAcct = {
-    apiVersion: `${ManagedServicesRequestModel.apiGroup}/${ManagedServicesRequestModel.apiVersion}`,
-    kind: ManagedServiceAccountRequest.kind,
+    apiVersion: `${CloudServicesRequestModel.apiGroup}/${CloudServicesRequestModel.apiVersion}`,
+    kind: CloudServiceAccountRequest.kind,
     metadata: {
       name: ServiceAccountCRName,
       namespace: currentNamespace,
@@ -46,16 +46,16 @@ export const createManagedServiceAccount = async (currentNamespace: string) => {
     },
   };
 
-  return k8sCreate(ManagedServiceAccountRequest, serviceAcct);
+  return k8sCreate(CloudServiceAccountRequest, serviceAcct);
 };
 
 /**
  * Create request to fetch all kafkas from upstream
  */
-export const createManagedServicesRequest = async function(currentNamespace: string) {
+export const createCloudServicesRequest = async function(currentNamespace: string) {
   const mkRequest = {
-    apiVersion: `${ManagedServicesRequestModel.apiGroup}/${ManagedServicesRequestModel.apiVersion}`,
-    kind: ManagedServicesRequestModel.kind,
+    apiVersion: `${CloudServicesRequestModel.apiGroup}/${CloudServicesRequestModel.apiVersion}`,
+    kind: CloudServicesRequestModel.kind,
     metadata: {
       annotations: {
         refreshTime: new Date().toISOString(),
@@ -68,12 +68,12 @@ export const createManagedServicesRequest = async function(currentNamespace: str
     },
   };
 
-  return k8sCreate(ManagedServicesRequestModel, mkRequest);
+  return k8sCreate(CloudServicesRequestModel, mkRequest);
 };
 
 export const patchServiceAccountRequest = async function(request: any) {
   const path = '/metadata/annotations/refreshTime';
-  return k8sPatch(ManagedServiceAccountRequest, request, [
+  return k8sPatch(CloudServiceAccountRequest, request, [
     {
       path,
       op: 'replace',
@@ -82,10 +82,10 @@ export const patchServiceAccountRequest = async function(request: any) {
   ]);
 };
 
-export const patchManagedServicesRequest = async function(request: any) {
+export const patchCloudServicesRequest = async function(request: any) {
   const path = '/metadata/annotations/refreshTime';
 
-  return k8sPatch(ManagedServicesRequestModel, request, [
+  return k8sPatch(CloudServicesRequestModel, request, [
     {
       path,
       op: 'replace',
@@ -94,23 +94,23 @@ export const patchManagedServicesRequest = async function(request: any) {
   ]);
 };
 
-export const createManagedServicesRequestIfNeeded = async (currentNamespace) => {
+export const createCloudServicesRequestIfNeeded = async (currentNamespace) => {
   let currentRequest;
   try {
     currentRequest = await k8sGet(
-      ManagedServicesRequestModel,
+      CloudServicesRequestModel,
       ServicesRequestCRName,
       currentNamespace,
     );
   } catch (error) {
     // eslint-disable-next-line no-console
-    console.info('rhoas: ManagedServicesRequest already exist');
+    console.info('rhoas: CloudServicesRequest already exist');
   }
 
   if (currentRequest) {
-    return patchManagedServicesRequest(currentRequest);
+    return patchCloudServicesRequest(currentRequest);
   }
-  return createManagedServicesRequest(currentNamespace);
+  return createCloudServicesRequest(currentNamespace);
 };
 
 export const createSecretIfNeeded = async function(
@@ -145,10 +145,10 @@ export const createSecretIfNeeded = async function(
 };
 
 export const createServiceAccountIfNeeded = async (currentNamespace) => {
-  let managedServiceAccount;
+  let rhoasServiceAccount;
   try {
-    managedServiceAccount = await k8sGet(
-      ManagedServiceAccountRequest,
+    rhoasServiceAccount = await k8sGet(
+      CloudServiceAccountRequest,
       ServiceAccountCRName,
       currentNamespace,
     );
@@ -157,14 +157,14 @@ export const createServiceAccountIfNeeded = async (currentNamespace) => {
     // console.info("rhoas: ServiceAccount doesn't exist. Creating new ServiceAccount");
   }
   let request;
-  if (managedServiceAccount) {
-    request = await patchServiceAccountRequest(managedServiceAccount);
+  if (rhoasServiceAccount) {
+    request = await patchServiceAccountRequest(rhoasServiceAccount);
   } else {
     request = await createManagedServiceAccount(currentNamespace);
   }
 
   await k8sWaitForUpdate(
-    ManagedServiceAccountRequest,
+    CloudServiceAccountRequest,
     request,
     (resource) => {
       const condition = getFinishedCondition(resource);
@@ -183,19 +183,19 @@ export const createServiceAccountIfNeeded = async (currentNamespace) => {
 };
 
 /**
- * createManagedKafkaConnection
+ * createKafkaConnection
  * @param kafkaId
  * @param kafkaName
  * @param currentNamespace
  */
-export const createManagedKafkaConnection = async (
+export const createKafkaConnection = async (
   kafkaId: string,
   kafkaName: string,
   currentNamespace: string,
 ) => {
   const kafkaConnection = {
-    apiVersion: `${ManagedServicesRequestModel.apiGroup}/${ManagedServicesRequestModel.apiVersion}`,
-    kind: ManagedKafkaConnectionModel.kind,
+    apiVersion: `${CloudServicesRequestModel.apiGroup}/${CloudServicesRequestModel.apiVersion}`,
+    kind: KafkaConnectionModel.kind,
     metadata: {
       name: kafkaName,
       namespace: currentNamespace,
@@ -209,9 +209,9 @@ export const createManagedKafkaConnection = async (
     },
   };
 
-  const createdConnection = await k8sCreate(ManagedKafkaConnectionModel, kafkaConnection);
+  const createdConnection = await k8sCreate(KafkaConnectionModel, kafkaConnection);
   return k8sWaitForUpdate(
-    ManagedKafkaConnectionModel,
+    KafkaConnectionModel,
     createdConnection,
     (resource) => {
       const condition = getFinishedCondition(resource);
@@ -229,15 +229,15 @@ export const createManagedKafkaConnection = async (
 };
 
 /**
- * createManagedKafkaConnection
+ * createKafkaConnection
  *
  * @param kafkaId
  * @param kafkaName
  * @param currentNamespace
  */
-export const deleteManagedKafkaConnection = async (kafkaName: string, currentNamespace: string) => {
+export const deleteKafkaConnection = async (kafkaName: string, currentNamespace: string) => {
   try {
-    return k8sKillByName(ManagedKafkaConnectionModel, kafkaName, currentNamespace);
+    return k8sKillByName(KafkaConnectionModel, kafkaName, currentNamespace);
   } catch {
     // eslint-disable-next-line no-console
     console.log('rhoas: failed to delete kafka connection');
@@ -247,7 +247,7 @@ export const deleteManagedKafkaConnection = async (kafkaName: string, currentNam
 
 export const listOfCurrentKafkaConnectionsById = async (currentNamespace: string) => {
   const localArray = [];
-  const kafkaConnections = await k8sGet(ManagedKafkaConnectionModel, null, currentNamespace);
+  const kafkaConnections = await k8sGet(KafkaConnectionModel, null, currentNamespace);
   if (kafkaConnections) {
     const callback = (kafka) => {
       const { kafkaId } = kafka.spec;

@@ -9,7 +9,7 @@ import {
 } from '@console/topology/src/extensions/topology';
 import { getRhoasComponentFactory, getRhoasTopologyDataModel } from './index';
 import { WatchK8sResources } from 'public/components/utils/k8s-watch-hook';
-import { ManagedKafkaConnectionModel } from '../models';
+import { KafkaConnectionModel } from '../models';
 import { FLAG_RHOAS } from '../const';
 
 export type TopologyConsumedExtensions =
@@ -21,7 +21,7 @@ const getRhoasWatchedResources = (namespace: string): WatchK8sResources<any> => 
   return {
     kafkaConnections: {
       isList: true,
-      kind: referenceForModel(ManagedKafkaConnectionModel),
+      kind: referenceForModel(KafkaConnectionModel),
       namespace,
       optional: true,
     },

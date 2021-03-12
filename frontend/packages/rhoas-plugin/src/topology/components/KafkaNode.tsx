@@ -1,9 +1,11 @@
 import * as React from 'react';
 import { observer } from '@patternfly/react-topology';
 import { calculateRadius } from '@console/shared';
-import { ManagedKafkaConnectionModel } from '../../models';
+import { KafkaConnectionModel } from '../../models';
 import { kafkaIcon } from '../../const';
 import TrapezoidBaseNode from './TrapezoidBaseNode';
+
+import './KafkaNode.scss';
 
 const KafkaNode: React.FC<any> = ({ element, selected, onSelect, ...props }) => {
   const { width, height } = element.getBounds();
@@ -18,7 +20,7 @@ const KafkaNode: React.FC<any> = ({ element, selected, onSelect, ...props }) => 
       icon={kafkaIcon}
       innerRadius={iconRadius}
       selected={selected}
-      kind={ManagedKafkaConnectionModel.kind}
+      kind={KafkaConnectionModel.kind}
       element={element}
       decoratorRadius={decoratorRadius}
       outerRadius={radius}

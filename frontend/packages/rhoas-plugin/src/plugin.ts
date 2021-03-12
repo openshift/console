@@ -31,14 +31,14 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'FeatureFlag/Model',
     properties: {
-      model: models.ManagedKafkaConnectionModel,
+      model: models.KafkaConnectionModel,
       flag: FLAG_RHOAS_KAFKA,
     },
   },
   {
     type: 'FeatureFlag/Model',
     properties: {
-      model: models.ManagedServiceAccountRequest,
+      model: models.CloudServiceAccountRequest,
       flag: FLAG_RHOAS,
     },
   },

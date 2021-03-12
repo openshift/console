@@ -6,7 +6,7 @@ import { Node } from '@patternfly/react-topology';
 import {
   navFactory,
   SimpleTabNav,
-  ResourceIcon,
+  // ResourceIcon,
   ResourceSummary,
   ResourceLink,
 } from '@console/internal/components/utils';
@@ -14,6 +14,7 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import { SecretModel } from '@console/internal/models';
 import * as UIActions from '@console/internal/actions/ui';
 import './TopologyKafkaPanel.css';
+// import { KafkaConnectionModel } from '../../models';
 
 type PropsFromState = {
   selectedDetailsTab?: any;
@@ -92,8 +93,8 @@ export const ConnectedTopologyRhoasPanel: React.FC<TopologyRhoasPanelProps> = ({
   const [showAlert, setShowAlert] = React.useState(true);
 
   // Resource
-  const mkc = item?.getData().resource;
-  if (!mkc) {
+  const akc = item?.getData().resource;
+  if (!akc) {
     return <>No data</>;
   }
 
@@ -108,7 +109,10 @@ export const ConnectedTopologyRhoasPanel: React.FC<TopologyRhoasPanelProps> = ({
       <div className="overview__sidebar-pane-head resource-overview__heading">
         <h1 className="co-m-pane__heading">
           <div className="co-m-pane__name co-resource-item">
-            <ResourceIcon className="co-m-resource-icon--lg" kind="MKC" />
+            {/* <ResourceIcon
+              className="co-m-resource-icon--lg co-m-resource-kafka-connection"
+              kind={KafkaConnectionModel.abbr}
+            /> */}
             <h3>Kafka Connection</h3>
           </div>
         </h1>
@@ -139,7 +143,7 @@ export const ConnectedTopologyRhoasPanel: React.FC<TopologyRhoasPanelProps> = ({
           { name: 'Details', component: navFactory.details(DetailsComponent).component },
           { name: 'Resources', component: ResourcesComponent },
         ]}
-        tabProps={{ obj: mkc }}
+        tabProps={{ obj: akc }}
         additionalClassNames="co-m-horizontal-nav__menu--within-sidebar co-m-horizontal-nav__menu--within-overview-sidebar"
       />
     </div>
