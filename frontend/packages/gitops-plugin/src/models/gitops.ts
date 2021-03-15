@@ -9,6 +9,6 @@ export const GitOpsServiceModel: K8sKind = {
   label: 'Gitops Service',
   labelPlural: 'Gitops Services',
   abbr: 'GS',
-  namespaced: true,
+  namespaced: false,
   crd: true,
 };
