@@ -8,7 +8,7 @@ import { calculateRadius, Modal } from '@console/shared';
 import { convertToBaseValue, humanizeBinaryBytes } from '@console/internal/components/utils/';
 import { NodeModel } from '@console/internal/models';
 import { ListPage } from '@console/internal/components/factory';
-import { getNodesByHostNameLabel } from '@console/local-storage-operator-plugin/src/utils';
+import { getName } from '@console/shared/src/selectors/common';
 import {
   DISK_TYPES,
   deviceTypeDropdownItems,
@@ -37,8 +37,8 @@ const getTotalCapacity = (disks: DiscoveredDisk[]): number =>
   disks.reduce((total: number, disk: DiskMetadata) => total + disk.size, 0);
 
 const isAvailableDisk = (disk: DiscoveredDisk): boolean =>
-  (disk?.status?.state === AVAILABLE && disk.type === DiskType.RawDisk) ||
-  disk.type === DiskType.Partition;
+  disk?.status?.state === AVAILABLE &&
+  (disk.type === DiskType.RawDisk || disk.type === DiskType.Partition);
 
 const isValidSize = (disk: DiscoveredDisk, minSize: number, maxSize: number) =>
   Number(disk.size) >= minSize && (maxSize ? Number(disk.size) <= maxSize : true);
@@ -67,8 +67,8 @@ const createDiscoveredDiskData = (results: LocalVolumeDiscoveryResultKind[]): Di
   }, []);
 
 export const SelectedCapacity: React.FC<SelectedCapacityProps> = ({ ns, state, dispatch }) => {
-  const allLvsNodes = getNodesByHostNameLabel(state.lvsAllNodes);
-  const selectedLvsNodes = getNodesByHostNameLabel(state.lvsSelectNodes);
+  const allLvsNodes = state.lvsAllNodes.map(getName);
+  const selectedLvsNodes = state.lvsSelectNodes.map(getName);
   /**
    * Fetching discovery results for all nodes passed
    * for local volume set creation.
