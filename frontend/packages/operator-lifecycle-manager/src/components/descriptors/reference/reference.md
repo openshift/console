@@ -15,7 +15,7 @@
   12. [podAffinity](#12-podaffinity)
   13. [podAntiAffinity](#13-podantiaffinity)
   14. [selector](#14-selector)
-  15. [_DEPRECATED_ fieldGroup](#fieldGroup) 
+  15. [_DEPRECATED_ fieldGroup](#fieldGroup)
   16. [_DEPRECATED_ arrayFieldGroup](#arrayFieldGroup)
   17. [select](#17-select)
   18. [advanced](#18-advanced)
@@ -391,7 +391,7 @@ This descriptor allows you to specify which nodes your pod is eligible to be sch
 - displayName: Node Affinity
   description: Node affinity is a group of node affinity scheduling
   path: affinity.nodeAffinity
-  x-descriptors:    
+  x-descriptors:
     - 'urn:alm:descriptor:com.tectonic.ui:nodeAffinity'
 …
 ```
@@ -425,7 +425,7 @@ This descriptor allows you to specify which nodes your pod is eligible to be sch
 - displayName: Pod Affinity
   description: Pod affinity is a group of inter pod affinity scheduling rules.
   path: affinity.podAffinity
-  x-descriptors:     
+  x-descriptors:
     - 'urn:alm:descriptor:com.tectonic.ui:podAffinity'
 …
 ```
@@ -645,9 +645,8 @@ This descriptor allows you to specify a field as the dependent of a Control Fiel
 3. Replace &quot;EXPECTED_VALUE&quot; with the actual expected value.
 
 **Requirements**
-1. &quot;Field dependency&quot; only exists between sibling fields in CRD's schema.
-2. The Dependent Field will be exposed right after the Control Field on the form (_ignores the rules mentioned in [Ordering of Form Fields](../../descriptors#ordering-of-form-fields)_).
-3. The Dependent Field doesn't have to be a &quot;leaf&quot; in the schema.
+1. The Dependent Field will be exposed right after the Control Field on the form (_ignores the rules mentioned in [Ordering of Form Fields](../../descriptors#ordering-of-form-fields)_).
+2. The Dependent Field doesn't have to be a &quot;leaf&quot; in the schema.
 
 The Dependent Field(s) will be displayed only when the current value of the Control Field is equal to the expected value.
 
