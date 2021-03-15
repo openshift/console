@@ -44,11 +44,11 @@ const BareMetalNodeDetailsOverview: React.FC<BareMetalNodeDetailsOverviewProps> 
             </dd>
             <dt>{t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_65')}</dt>
             <dd>{_.get(node, 'spec.externalID', '-')}</dd>
-            <dt>Node Addresses</dt>
+            <dt>{t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_119')}</dt>
             <dd>
               <NodeIPList ips={getNodeAddresses(node)} expand />
             </dd>
-            <dt>Node Labels</dt>
+            <dt>{t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_120')}</dt>
             <dd>
               <LabelList kind="Node" labels={node.metadata.labels} />
             </dd>

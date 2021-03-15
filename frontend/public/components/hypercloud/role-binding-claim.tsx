@@ -37,7 +37,7 @@ const RoleBindingClaimTableHeader = (t?: TFunction) => {
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'ResourceName',
+      title: t('COMMON:MSG_MAIN_TABLEHEADER_98'),
       sortField: 'resourceName',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },

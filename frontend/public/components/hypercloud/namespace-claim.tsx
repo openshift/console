@@ -39,7 +39,7 @@ const NamespaceClaimTableHeader = (t?: TFunction) => {
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'UserName',
+      title: t('SINGLE:MSG_MAIN_TABLEHEADER_97'),
       sortField: 'metadata.annotations.owner',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },

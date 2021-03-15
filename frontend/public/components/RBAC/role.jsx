@@ -123,7 +123,7 @@ class Details extends React.Component {
         </div>
         */}
             <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
-              <TextFilter label="Rules by action or resource" onChange={this.changeFilter} />
+              <TextFilter label={t('COMMON:MSG_COMMON_SEARCH_PLACEHOLDER_2')} onChange={this.changeFilter} />
             </div>
           </div>
           <RulesList rules={rules} name={name} namespace={namespace} />

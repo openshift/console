@@ -174,7 +174,10 @@ const RoleBindingsTableRow = ({ obj: binding, index, key, style }) => {
   );
 };
 
-const EmptyMsg = () => <MsgBox title="No Role Bindings Found" detail="Roles grant access to types of objects in the cluster. Roles are applied to a group or user via a Role Binding." />;
+const EmptyMsg = () => {
+  const { t } = useTranslation();
+  return <MsgBox title={t('COMMON:MSG_DETAILS_TABDETAILS_ROLEBINDINGS_1')} detail={t('COMMON:MSG_DETAILS_TABDETAILS_ROLEBINDINGS_2')} />;
+};
 
 export const BindingsList = props => {
   const { t } = useTranslation();
@@ -219,7 +222,7 @@ export const RoleBindingsPage = ({ namespace = undefined, showTitle = true, mock
   return (
     <MultiListPage
       canCreate={!mock}
-      createButtonText="Create Binding"
+      createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:MSG_DETAILS_TABDETAILS_ROLEBINDINGS_3') })}
       createProps={{
         to: createPath,
       }}

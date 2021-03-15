@@ -120,12 +120,12 @@ const Resources = connect(({ k8s }) => ({ allModels: k8s.getIn(['RESOURCES', 'mo
 const DeleteRule = (name, namespace, i) => {
   const { t } = useTranslation();
   return {
-    label: 'Delete Rule',
+    label: t('COMMON:MSG_COMMON_ACTIONBUTTON_65'),
     callback: () =>
       confirmModal({
-        title: 'Delete Rule',
+        title: t('COMMON:MSG_COMMON_ACTIONBUTTON_65'),
         message: t('SINGLE:MSG_ROLES_ROLEDETAILS_TABDETAILS_RULES_2', { 0: `#${i}` }),
-        btnText: 'Delete Rule',
+        btnText: t('COMMON:MSG_COMMON_ACTIONBUTTON_65'),
         executeFn: () => {
           const kind = namespace ? RoleModel : ClusterRoleModel;
           return k8sPatch(kind, { metadata: { name, namespace } }, [

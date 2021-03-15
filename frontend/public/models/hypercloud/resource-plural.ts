@@ -209,11 +209,14 @@ export const ResourceStringKeyMap = {
   RoleBinding: {
     labelPlural: 'COMMON:MSG_LNB_MENU_76',
   },
+  ClusterRole: {
+    labelPlural: 'MSG_DETAILS_TABDETAILS_DETAILS_124',
+  },
   RoleBindingClaim: {
     labelPlural: 'COMMON:MSG_LNB_MENU_101',
   },
   ClusterRoleBinding: {
-    labelPlural: 'Cluster Role Binding',
+    labelPlural: 'MSG_DETAILS_TABDETAILS_DETAILS_123',
   },
   ServiceAccount: {
     labelPlural: 'COMMON:MSG_LNB_MENU_74',
