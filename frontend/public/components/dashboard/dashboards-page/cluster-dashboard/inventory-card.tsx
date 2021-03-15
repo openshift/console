@@ -3,34 +3,14 @@ import DashboardCard from '@console/shared/src/components/dashboard/dashboard-ca
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import {
-  ResourceInventoryItem,
-  StatusGroupMapper,
-} from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
+import { ResourceInventoryItem, StatusGroupMapper } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
 import { DashboardItemProps, withDashboardResources } from '../../with-dashboard-resources';
 import { K8sKind, referenceForModel, K8sResourceCommon } from '../../../../module/k8s';
 import { AsyncComponent } from '../../../utils';
-import {
-  useExtensions,
-  DashboardsOverviewInventoryItem,
-  DashboardsOverviewInventoryItemReplacement,
-  isDashboardsOverviewInventoryItem,
-  isDashboardsOverviewInventoryItemReplacement,
-  LazyLoader,
-} from '@console/plugin-sdk';
-import {
-  useK8sWatchResource,
-  useK8sWatchResources,
-  WatchK8sResources,
-} from '../../../utils/k8s-watch-hook';
+import { useExtensions, DashboardsOverviewInventoryItem, DashboardsOverviewInventoryItemReplacement, isDashboardsOverviewInventoryItem, isDashboardsOverviewInventoryItemReplacement, LazyLoader } from '@console/plugin-sdk';
+import { useK8sWatchResource, useK8sWatchResources, WatchK8sResources } from '../../../utils/k8s-watch-hook';
 
-const mergeItems = (
-  items: DashboardsOverviewInventoryItem[],
-  replacements: DashboardsOverviewInventoryItemReplacement[],
-) =>
-  items.map(
-    (item) => replacements.find((r) => r.properties.model === item.properties.model) || item,
-  );
+const mergeItems = (items: DashboardsOverviewInventoryItem[], replacements: DashboardsOverviewInventoryItemReplacement[]) => items.map(item => replacements.find(r => r.properties.model === item.properties.model) || item);
 
 const getFirehoseResource = (model: K8sKind) => ({
   isList: true,
@@ -39,76 +19,39 @@ const getFirehoseResource = (model: K8sKind) => ({
 });
 
 const ClusterInventoryItem = withDashboardResources<ClusterInventoryItemProps>(
-  React.memo(
-    ({
-      model,
-      mapper,
-      useAbbr,
-      additionalResources,
-      expandedComponent,
-    }: ClusterInventoryItemProps) => {
-      const mainResource = React.useMemo(() => getFirehoseResource(model), [model]);
-      const otherResources = React.useMemo(() => additionalResources || {}, [additionalResources]);
-      const [resourceData, resourceLoaded, resourceLoadError] = useK8sWatchResource<
-        K8sResourceCommon[]
-      >(mainResource);
-      const resources = useK8sWatchResources(otherResources);
+  React.memo(({ model, mapper, useAbbr, additionalResources, expandedComponent }: ClusterInventoryItemProps) => {
+    const mainResource = React.useMemo(() => getFirehoseResource(model), [model]);
+    const otherResources = React.useMemo(() => additionalResources || {}, [additionalResources]);
+    const [resourceData, resourceLoaded, resourceLoadError] = useK8sWatchResource<K8sResourceCommon[]>(mainResource);
+    const resources = useK8sWatchResources(otherResources);
 
-      const additionalResourcesData = {};
-      let additionalResourcesLoaded = true;
-      let additionalResourcesLoadError = false;
-      if (additionalResources) {
-        additionalResourcesLoaded = Object.keys(additionalResources)
-          .filter((key) => !additionalResources[key].optional)
-          .every((key) => resources[key].loaded);
-        Object.keys(additionalResources).forEach((key) => {
-          additionalResourcesData[key] = resources[key].data;
-        });
-        additionalResourcesLoadError = Object.keys(additionalResources)
-          .filter((key) => !additionalResources[key].optional)
-          .some((key) => !!resources[key].loadError);
-      }
+    const additionalResourcesData = {};
+    let additionalResourcesLoaded = true;
+    let additionalResourcesLoadError = false;
+    if (additionalResources) {
+      additionalResourcesLoaded = Object.keys(additionalResources)
+        .filter(key => !additionalResources[key].optional)
+        .every(key => resources[key].loaded);
+      Object.keys(additionalResources).forEach(key => {
+        additionalResourcesData[key] = resources[key].data;
+      });
+      additionalResourcesLoadError = Object.keys(additionalResources)
+        .filter(key => !additionalResources[key].optional)
+        .some(key => !!resources[key].loadError);
+    }
 
-      const ExpandedComponent = React.useCallback(
-        () => (
-          <AsyncComponent
-            loader={expandedComponent}
-            resource={resourceData}
-            additionalResources={additionalResourcesData}
-          />
-        ),
-        [resourceData, additionalResourcesData, expandedComponent],
-      );
+    const ExpandedComponent = React.useCallback(() => <AsyncComponent loader={expandedComponent} resource={resourceData} additionalResources={additionalResourcesData} />, [resourceData, additionalResourcesData, expandedComponent]);
 
-      return (
-        <ResourceInventoryItem
-          isLoading={!resourceLoaded || !additionalResourcesLoaded}
-          error={!!resourceLoadError || additionalResourcesLoadError}
-          kind={model}
-          resources={resourceData}
-          mapper={mapper}
-          useAbbr={useAbbr}
-          additionalResources={additionalResourcesData}
-          ExpandedComponent={expandedComponent ? ExpandedComponent : null}
-        />
-      );
-    },
-  ),
+    return <ResourceInventoryItem isLoading={!resourceLoaded || !additionalResourcesLoaded} error={!!resourceLoadError || additionalResourcesLoadError} kind={model} resources={resourceData} mapper={mapper} useAbbr={useAbbr} additionalResources={additionalResourcesData} ExpandedComponent={expandedComponent ? ExpandedComponent : null} />;
+  }),
 );
 
 export const InventoryCard = () => {
-  const itemExtensions = useExtensions<DashboardsOverviewInventoryItem>(
-    isDashboardsOverviewInventoryItem,
-  );
+  const itemExtensions = useExtensions<DashboardsOverviewInventoryItem>(isDashboardsOverviewInventoryItem);
 
-  const replacementExtensions = useExtensions<DashboardsOverviewInventoryItemReplacement>(
-    isDashboardsOverviewInventoryItemReplacement,
-  );
+  const replacementExtensions = useExtensions<DashboardsOverviewInventoryItemReplacement>(isDashboardsOverviewInventoryItemReplacement);
 
-  const mergedItems = React.useMemo(() => mergeItems(itemExtensions, replacementExtensions), [
-    itemExtensions,
-    replacementExtensions,
-  ]);
+  const mergedItems = React.useMemo(() => mergeItems(itemExtensions, replacementExtensions), [itemExtensions, replacementExtensions]);
 
   return (
     <DashboardCard data-test-id="inventory-card">
@@ -116,15 +59,8 @@ export const InventoryCard = () => {
         <DashboardCardTitle>Cluster Inventory</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody>
-        {mergedItems.map((item) => (
-          <ClusterInventoryItem
-            key={item.properties.model.kind}
-            model={item.properties.model}
-            mapper={item.properties.mapper}
-            additionalResources={item.properties.additionalResources}
-            useAbbr={item.properties.useAbbr}
-            expandedComponent={item.properties.expandedComponent}
-          />
+        {mergedItems.map(item => (
+          <ClusterInventoryItem key={item.properties.model.kind} model={item.properties.model} mapper={item.properties.mapper} additionalResources={item.properties.additionalResources} useAbbr={item.properties.useAbbr} expandedComponent={item.properties.expandedComponent} />
         ))}
       </DashboardCardBody>
     </DashboardCard>
