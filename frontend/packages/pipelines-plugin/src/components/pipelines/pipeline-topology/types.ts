@@ -17,6 +17,49 @@ export type PipelineRunAfterNodeModelData = {
     runAfter?: string[];
   };
 };
+
+type FinallyTask = {
+  name: string;
+  runAfter?: string[];
+  error?: string;
+  selected?: boolean;
+  disableTooltip?: boolean;
+  onTaskSelection?: () => void;
+};
+type FinallyListTask = {
+  name: string;
+  convertList: (resource: TaskKind) => void;
+  onRemoveTask: () => void;
+};
+type FinallyNodeTask = {
+  name: string;
+  runAfter: string[];
+  selected?: boolean;
+  isFinallyTask: boolean;
+  finallyTasks: FinallyTask[];
+};
+export type FinallyNodeData = {
+  task: FinallyNodeTask;
+};
+export type BuilderFinallyNodeData = {
+  task: FinallyNodeTask & {
+    finallyListTasks?: FinallyListTask[];
+    addNewFinallyListNode?: () => void;
+  };
+};
+export type FinallyNodeModel = FinallyNodeData & {
+  pipeline: PipelineKind;
+  pipelineRun?: PipelineRunKind;
+  isFinallyTask: boolean;
+};
+
+export type BuilderFinallyNodeModel = BuilderFinallyNodeData & {
+  clusterTaskList: TaskKind[];
+  namespaceTaskList: TaskKind[];
+  namespace: string;
+  isFinallyTask: boolean;
+};
+
 export type TaskListNodeModelData = PipelineRunAfterNodeModelData & {
   clusterTaskList: TaskKind[];
   namespaceTaskList: TaskKind[];
@@ -45,6 +88,8 @@ export type PipelineMixedNodeModel = PipelineNodeModel<PipelineRunAfterNodeModel
 export type PipelineTaskNodeModel = PipelineNodeModel<TaskNodeModelData>;
 export type PipelineBuilderTaskNodeModel = PipelineNodeModel<BuilderNodeModelData>;
 export type PipelineTaskListNodeModel = PipelineNodeModel<TaskListNodeModelData>;
+export type PipelineFinallyNodeModel = PipelineNodeModel<FinallyNodeModel>;
+export type PipelineBuilderFinallyNodeModel = PipelineNodeModel<BuilderFinallyNodeModel>;
 
 export type PipelineEdgeModel = EdgeModel;
 
@@ -56,4 +101,5 @@ export type NodeCreator<D extends PipelineRunAfterNodeModelData> = (
 export type NodeCreatorSetup = (
   type: NodeType,
   width?: number,
+  height?: number,
 ) => NodeCreator<PipelineRunAfterNodeModelData>;

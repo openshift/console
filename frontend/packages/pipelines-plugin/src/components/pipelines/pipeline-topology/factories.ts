@@ -14,6 +14,8 @@ import TaskNode from './TaskNode';
 import TaskEdge from './TaskEdge';
 import TaskListNode from './TaskListNode';
 import { getLayoutData } from './utils';
+import FinallyNode from './FinallyNode';
+import BuilderFinallyNode from './BuilderFinallyNode';
 
 export const componentFactory: ComponentFactory = (kind: ModelKind, type: string) => {
   switch (kind) {
@@ -33,6 +35,10 @@ export const componentFactory: ComponentFactory = (kind: ModelKind, type: string
           return InvalidTaskListNode;
         case NodeType.BUILDER_NODE:
           return BuilderNode;
+        case NodeType.FINALLY_NODE:
+          return FinallyNode;
+        case NodeType.BUILDER_FINALLY_NODE:
+          return BuilderFinallyNode;
         default:
           return undefined;
       }

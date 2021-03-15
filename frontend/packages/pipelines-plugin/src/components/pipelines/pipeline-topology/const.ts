@@ -9,13 +9,19 @@ export const BUILDER_NODE_ADD_PADDING = 4;
 
 export const NODE_WIDTH = 120;
 export const NODE_HEIGHT = 30;
+export const FINALLY_NODE_PADDING = 30;
+export const FINALLY_NODE_VERTICAL_SPACING = 20;
 
+export const FINALLY_ADD_LINK_TEXT_HEIGHT = 10;
+export const FINALLY_ADD_LINK_SIZE = 15;
 export enum NodeType {
   TASK_NODE = 'task',
   SPACER_NODE = 'spacer',
   TASK_LIST_NODE = 'task-list',
   BUILDER_NODE = 'builder',
   INVALID_TASK_LIST_NODE = 'invalid-task-list',
+  FINALLY_NODE = 'finally-node',
+  BUILDER_FINALLY_NODE = 'builder-finally-node',
 }
 export enum DrawDesign {
   INTEGRAL_SHAPE = 'integral-shape',
