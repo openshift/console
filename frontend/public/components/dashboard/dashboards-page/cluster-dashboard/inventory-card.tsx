@@ -9,6 +9,7 @@ import { K8sKind, referenceForModel, K8sResourceCommon } from '../../../../modul
 import { AsyncComponent } from '../../../utils';
 import { useExtensions, DashboardsOverviewInventoryItem, DashboardsOverviewInventoryItemReplacement, isDashboardsOverviewInventoryItem, isDashboardsOverviewInventoryItemReplacement, LazyLoader } from '@console/plugin-sdk';
 import { useK8sWatchResource, useK8sWatchResources, WatchK8sResources } from '../../../utils/k8s-watch-hook';
+import { useTranslation } from 'react-i18next';
 
 const mergeItems = (items: DashboardsOverviewInventoryItem[], replacements: DashboardsOverviewInventoryItemReplacement[]) => items.map(item => replacements.find(r => r.properties.model === item.properties.model) || item);
 
@@ -52,11 +53,11 @@ export const InventoryCard = () => {
   const replacementExtensions = useExtensions<DashboardsOverviewInventoryItemReplacement>(isDashboardsOverviewInventoryItemReplacement);
 
   const mergedItems = React.useMemo(() => mergeItems(itemExtensions, replacementExtensions), [itemExtensions, replacementExtensions]);
-
+  const { t } = useTranslation();
   return (
     <DashboardCard data-test-id="inventory-card">
       <DashboardCardHeader>
-        <DashboardCardTitle>Cluster Inventory</DashboardCardTitle>
+        <DashboardCardTitle>{t('SINGLE:MSG_OVERVIEW_MAIN_CARDCLUSTERINVENTORY_1')}</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody>
         {mergedItems.map(item => (

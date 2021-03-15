@@ -21,6 +21,7 @@ import { useK8sWatchResource, WatchK8sResource } from '../../../utils/k8s-watch-
 import { ClusterDashboardContext } from './context';
 import { getAccessToken } from '../../../../hypercloud/auth';
 import { getActivePerspective, getActiveCluster } from '../../../../actions/ui';
+import { useTranslation } from 'react-i18next';
 
 const ClusterVersion: React.FC<ClusterVersionProps> = ({ cv }) => {
   const desiredVersion = getDesiredClusterVersion(cv);
@@ -71,7 +72,7 @@ export const DetailsCard_ = connect(mapStateToProps)(({ watchK8sResource, stopWa
   const { infrastructure, infrastructureLoaded, infrastructureError } = React.useContext(ClusterDashboardContext);
   const [k8sVersion, setK8sVersion] = React.useState<Response>();
   const [k8sVersionError, setK8sVersionError] = React.useState();
-
+  const { t } = useTranslation();
   const [clusterVersionData, clusterVersionLoaded, clusterVersionError] = useK8sWatchResource<ClusterVersionKind>(clusterVersionResource);
   React.useEffect(() => {
     if (flagPending(openshiftFlag)) {
@@ -109,7 +110,7 @@ export const DetailsCard_ = connect(mapStateToProps)(({ watchK8sResource, stopWa
   return (
     <DashboardCard data-test-id="details-card">
       <DashboardCardHeader>
-        <DashboardCardTitle>Details</DashboardCardTitle>
+        <DashboardCardTitle>{t('COMMON:MSG_DETAILS_TAB_1')}</DashboardCardTitle>
         {/* <DashboardCardLink to="/settings/cluster/">View settings</DashboardCardLink> */}
       </DashboardCardHeader>
       <DashboardCardBody isLoading={flagPending(openshiftFlag)}>
@@ -134,7 +135,7 @@ export const DetailsCard_ = connect(mapStateToProps)(({ watchK8sResource, stopWa
               </DetailItem>
             </>
           ) : (
-            <DetailItem key="kubernetes" title="Kubernetes version" error={!!k8sVersionError || (k8sVersion && !k8sGitVersion)} isLoading={!k8sVersion} valueClassName="co-select-to-copy">
+            <DetailItem key="kubernetes" title={t('SINGLE:MSG_OVERVIEW_MAIN_CARDDETAILS_1')} error={!!k8sVersionError || (k8sVersion && !k8sGitVersion)} isLoading={!k8sVersion} valueClassName="co-select-to-copy">
               {k8sGitVersion}
             </DetailItem>
           )}

@@ -13,6 +13,7 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import NodeIPList from '@console/app/src/components/nodes/NodeIPList';
 import { NodeDashboardContext } from '@console/app/src/components/nodes/node-dashboard/NodeDashboardContext';
 import NodeRoles from '@console/app/src/components/nodes/NodeRoles';
+import { useTranslation } from 'react-i18next';
 
 import { BareMetalNodeDashboardContext } from './BareMetalNodeDashboardContext';
 import { BareMetalHostModel } from '../../../models';
@@ -21,24 +22,25 @@ const DetailsCard: React.FC = () => {
   const { obj } = React.useContext(NodeDashboardContext);
   const { host } = React.useContext(BareMetalNodeDashboardContext);
   const detailsLink = `${resourcePathFromModel(NodeModel, obj.metadata.name)}/details`;
+  const { t } = useTranslation();
   return (
     <DashboardCard data-test-id="details-card">
       <DashboardCardHeader>
-        <DashboardCardTitle>Details</DashboardCardTitle>
-        <DashboardCardLink to={detailsLink}>View all</DashboardCardLink>
+        <DashboardCardTitle>{t('COMMON:MSG_DETAILS_TAB_1')}</DashboardCardTitle>
+        <DashboardCardLink to={detailsLink}>{t('SINGLE:MSG_OVERVIEW_MAIN_POPOVEROPERATOR_ALL_1')}</DashboardCardLink>
       </DashboardCardHeader>
       <DashboardCardBody>
         <DetailsBody>
-          <DetailItem isLoading={!obj} title="Node Name">
+          <DetailItem isLoading={!obj} title={t('SINGLE:MSG_OVERVIEW_MAIN_CARDDETAILS_3')}>
             {obj.metadata.name}
           </DetailItem>
-          <DetailItem isLoading={!obj} title="Role">
+          <DetailItem isLoading={!obj} title={t('SINGLE:MSG_OVERVIEW_MAIN_CARDDETAILS_4')}>
             <NodeRoles node={obj} />
           </DetailItem>
-          <DetailItem isLoading={!host} title="Bare Metal Host">
+          <DetailItem isLoading={!host} title={t('SINGLE:MSG_OVERVIEW_MAIN_CARDDETAILS_5')}>
             <ResourceLink kind={referenceForModel(BareMetalHostModel)} name={host?.metadata?.name} namespace={host?.metadata?.namespace} />
           </DetailItem>
-          <DetailItem isLoading={!obj} title="Node Addresses">
+          <DetailItem isLoading={!obj} title={t('SINGLE:MSG_OVERVIEW_MAIN_CARDDETAILS_2')}>
             <NodeIPList ips={getNodeAddresses(obj)} expand />
           </DetailItem>
         </DetailsBody>

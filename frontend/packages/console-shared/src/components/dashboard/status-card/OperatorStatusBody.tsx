@@ -25,7 +25,7 @@ export const OperatorsSection: React.FC<OperatorsSectionProps> = ({ resources, g
         </div>
         <div className="text-secondary">{t('SINGLE:MSG_OVERVIEW_MAIN_POPOVEROPERATOR_STATUS_1')}</div>
       </div>
-      {error ? <div className="text-secondary">Not Available</div> : !operatorsHealthy && sortedOperatorStatuses.map(operatorStatus => <AsyncComponent key={operatorStatus.operators[0].metadata.uid} operatorStatus={operatorStatus} loader={rowLoader} LoadingComponent={RowLoading} />)}
+      {error ? <div className="text-secondary">{t('SINGLE:MSG_OVERVIEW_MAIN_CARDSTATUS_1')}</div> : !operatorsHealthy && sortedOperatorStatuses.map(operatorStatus => <AsyncComponent key={operatorStatus.operators[0].metadata.uid} operatorStatus={operatorStatus} loader={rowLoader} LoadingComponent={RowLoading} />)}
       <div className="co-status-popup__row">
         <Link to={linkTo}>{t('SINGLE:MSG_OVERVIEW_MAIN_POPOVEROPERATOR_ALL_1')}</Link>
         {!error && operatorsHealthy && operatorStatuses.length && (

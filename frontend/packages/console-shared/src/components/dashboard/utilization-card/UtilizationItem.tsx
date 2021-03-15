@@ -5,6 +5,7 @@ import { AreaChart, AreaChartStatus, chartStatusColors } from '@console/internal
 import { DataPoint } from '@console/internal/components/graphs';
 import { ByteDataTypes } from 'packages/console-shared/src/graph-helper/data-utils';
 import { YellowExclamationTriangleIcon, RedExclamationCircleIcon, ColoredIconProps } from '../../status';
+import { useTranslation } from 'react-i18next';
 
 export enum LIMIT_STATE {
   ERROR = 'ERROR',
@@ -29,7 +30,7 @@ const getCurrentData = (humanizeValue: Humanize, description: string, data?: Dat
 export const MultilineUtilizationItem: React.FC<MultilineUtilizationItemProps> = React.memo(({ title, data, dataUnits, humanizeValue, isLoading = false, queries, error, TopConsumerPopovers, byteDataType }) => {
   const current = data.map((datum, index) => getCurrentData(humanizeValue, queries[index].desc, datum, dataUnits && dataUnits[index]));
   const chart = <AreaChart data={error ? [[]] : data} loading={!error && isLoading} query={queries[0].query} xAxis={false} humanize={humanizeValue} padding={{ top: 13, left: 70, bottom: 0, right: 0 }} height={70} byteDataType={byteDataType} />;
-
+  const { t } = useTranslation();
   const currentValue = current.map((curr, index) => {
     const TopConsumerPopover = TopConsumerPopovers && TopConsumerPopovers[index];
     return TopConsumerPopover ? <TopConsumerPopover key={queries[index].desc} current={curr} /> : <div key={queries[index].desc}>{curr}</div>;
@@ -40,7 +41,7 @@ export const MultilineUtilizationItem: React.FC<MultilineUtilizationItemProps> =
       <div className="co-utilization-card__item-description">
         <div className="co-utilization-card__item-section-multiline">
           <h4 className="pf-c-title pf-m-md">{title}</h4>
-          {error || (!isLoading && !data.every(datum => datum.length)) ? <div className="text-secondary">Not available</div> : <div className="co-utilization-card__item-description">{currentValue}</div>}
+          {error || (!isLoading && !data.every(datum => datum.length)) ? <div className="text-secondary">{t('SINGLE:MSG_OVERVIEW_MAIN_CARDSTATUS_1')}</div> : <div className="co-utilization-card__item-description">{currentValue}</div>}
         </div>
       </div>
       <div className="co-utilization-card__item-chart">{chart}</div>
