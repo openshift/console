@@ -6,7 +6,8 @@ import { sortable, SortByDirection } from '@patternfly/react-table';
 import { Button } from '@patternfly/react-core';
 import { Modal } from '@console/shared';
 import { humanizeBinaryBytes } from '@console/internal/components/utils';
-import { Discoveries, State, Action } from '../state';
+import { DiskMetadata } from '@console/local-storage-operator-plugin/src/components/disks-list/types';
+import { DiscoveredDisk } from 'packages/ceph-storage-plugin/src/types';
 
 const tableColumnClasses = [
   '',
@@ -16,7 +17,7 @@ const tableColumnClasses = [
   cx('pf-m-hidden', 'pf-m-visible-on-lg'),
 ];
 
-const DiskRow: RowFunction<Discoveries> = ({ obj, index, key, style }) => {
+const DiskRow: RowFunction<DiscoveredDisk> = ({ obj, index, key, style }) => {
   return (
     <TableRow id={obj.deviceID} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>{obj.path}</TableData>
@@ -32,7 +33,7 @@ const DiskRow: RowFunction<Discoveries> = ({ obj, index, key, style }) => {
   );
 };
 
-export const DiskListModal: React.FC<DiskListModalProps> = ({ state, dispatch }) => {
+export const DiskListModal: React.FC<DiskListModalProps> = ({ showDiskList, onCancel, disks }) => {
   const { t } = useTranslation();
 
   const DiskHeader = () => {
@@ -69,30 +70,27 @@ export const DiskListModal: React.FC<DiskListModalProps> = ({ state, dispatch })
       },
     ];
   };
-  const cancel = () => {
-    dispatch({ type: 'setShowDiskList', value: false });
-  };
 
   return (
     <Modal
       title={t('ceph-storage-plugin~Selected Disks')}
-      isOpen={state.showDiskList}
-      onClose={cancel}
+      isOpen={showDiskList}
+      onClose={onCancel}
       className="ceph-ocs-install__filtered-modal"
       actions={[
-        <Button key="confirm" variant="primary" onClick={cancel}>
+        <Button key="confirm" variant="primary" onClick={onCancel}>
           {t('ceph-storage-plugin~Close')}
         </Button>,
       ]}
     >
       <Table
-        data={state.filteredDiscoveries}
+        data={disks}
         defaultSortField="node"
         defaultSortOrder={SortByDirection.asc}
         aria-label={t('ceph-storage-plugin~Disk List')}
         Header={DiskHeader}
         Row={DiskRow}
-        loaded={!!state.filteredDiscoveries}
+        loaded={!!disks}
         virtualize
       />
     </Modal>
@@ -100,6 +98,7 @@ export const DiskListModal: React.FC<DiskListModalProps> = ({ state, dispatch })
 };
 
 type DiskListModalProps = {
-  state: State;
-  dispatch: React.Dispatch<Action>;
+  showDiskList: boolean;
+  disks: DiskMetadata[];
+  onCancel: () => void;
 };

@@ -1,13 +1,4 @@
-import { IRow } from '@patternfly/react-table';
-import { NodeKind, K8sResourceCommon, Toleration } from '@console/internal/module/k8s';
-
-export type NodeTableRow = {
-  cells: IRow['cells'];
-  props: {
-    id: string;
-  };
-  selected: boolean;
-};
+import { K8sResourceCommon, Toleration } from '@console/internal/module/k8s';
 
 export enum DiskType {
   RawDisk = 'disk',
@@ -38,21 +29,3 @@ export type LocalVolumeSetKind = K8sResourceCommon & {
     tolerations?: Toleration[];
   };
 };
-
-export type GetRows = (
-  {
-    componentProps,
-    customData,
-  }: {
-    componentProps: { data: NodeKind[] };
-    customData?: {
-      filteredNodes: string[];
-      preSelected?: string[];
-      taintsFilter?: (node: NodeKind) => boolean;
-    };
-  },
-  visibleRows: Set<string>,
-  setVisibleRows: React.Dispatch<React.SetStateAction<Set<string>>>,
-  selectedNodes: Set<string>,
-  setSelectedNodes?: (nodes: NodeKind[]) => void,
-) => NodeTableRow[];

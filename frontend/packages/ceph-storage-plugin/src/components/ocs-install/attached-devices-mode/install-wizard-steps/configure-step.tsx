@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { Form } from '@patternfly/react-core';
 import { useFlag } from '@console/shared';
-import { State, Action } from '../state';
-import { EncryptionFormGroup, NetworkFormGroup } from '../../../install-wizard/configure';
-import { NetworkType } from '../../../../../types';
-import { GUARDED_FEATURES } from '../../../../../features';
+import { State, Action } from '../reducer';
+import { EncryptionFormGroup, NetworkFormGroup } from '../../install-wizard/configure';
+import { NetworkType } from '../../../../types';
+import { GUARDED_FEATURES } from '../../../../features';
 
 export const Configure: React.FC<ConfigureProps> = ({ state, dispatch, mode }) => {
   const isMultusSupported = useFlag(GUARDED_FEATURES.OCS_MULTUS);

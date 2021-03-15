@@ -23,7 +23,7 @@ import {
   attachDevicesWithArbiter,
   attachDevices,
   OCS_DEVICE_SET_ARBITER_REPLICA,
-} from '../../../../../constants';
+} from '../../../../constants';
 import {
   getNodeInfo,
   shouldDeployAsMinimal,
@@ -31,19 +31,19 @@ import {
   filterSCWithNoProv,
   getAssociatedNodes,
   isArbiterSC,
-} from '../../../../../utils/install';
-import { ValidationMessage, ValidationType } from '../../../../../utils/common-ocs-install-el';
+} from '../../../../utils/install';
+import { ValidationMessage, ValidationType } from '../../../../utils/common-ocs-install-el';
 import {
   SelectNodesText,
   SelectNodesDetails,
   StretchClusterFormGroup,
-} from '../../../install-wizard/capacity-and-nodes';
-import { State, Action } from '../state';
-import AttachedDevicesNodeTable from '../../sc-node-list';
-import { PVsAvailableCapacity } from '../../../pvs-available-capacity';
-import { getSCAvailablePVs } from '../../../../../selectors';
-import { nodeResource, pvResource } from '../../../../../resources';
-import { GUARDED_FEATURES } from '../../../../../features';
+} from '../../install-wizard/capacity-and-nodes';
+import { State, Action } from '../reducer';
+import AttachedDevicesNodeTable from '../sc-node-list';
+import { PVsAvailableCapacity } from '../../pvs-available-capacity';
+import { getSCAvailablePVs } from '../../../../selectors';
+import { nodeResource, pvResource } from '../../../../resources';
+import { GUARDED_FEATURES } from '../../../../features';
 
 const validate = (
   scName: string,

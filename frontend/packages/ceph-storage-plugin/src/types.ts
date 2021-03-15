@@ -6,6 +6,7 @@ import {
   SecretKind,
 } from '@console/internal/module/k8s';
 import { TableProps } from '@console/internal/components/factory';
+import { DiskMetadata } from 'packages/local-storage-operator-plugin/src/components/disks-list/types';
 import { PROVIDERS_NOOBAA_MAP, NOOBAA_TYPE_MAP } from './constants/providers';
 
 export type SpecProvider = typeof PROVIDERS_NOOBAA_MAP[keyof typeof PROVIDERS_NOOBAA_MAP];
@@ -236,3 +237,7 @@ export type ResourceConstraints = {
     memory: string;
   };
 };
+
+export type DiscoveredDisk = {
+  node: string;
+} & DiskMetadata;

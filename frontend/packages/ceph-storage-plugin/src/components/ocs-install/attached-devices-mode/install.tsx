@@ -13,7 +13,7 @@ import { fetchK8s } from '@console/internal/graphql/client';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
 import { LSOSubscriptionResource } from '../../../resources';
 import { filterSCWithNoProv } from '../../../utils/install';
-import CreateSC from './create-sc/create-sc';
+import CreateStorageClusterWizard from './install-wizard';
 import './attached-devices.scss';
 
 const goToLSOInstallationPage = () =>
@@ -92,7 +92,7 @@ export const CreateAttachedDevicesCluster: React.FC<CreateAttachedDevicesCluster
       </Trans>
     </Alert>
   ) : (
-    <CreateSC
+    <CreateStorageClusterWizard
       hasNoProvSC={hasNoProvSC}
       setHasNoProvSC={setHasNoProvSC}
       match={match}

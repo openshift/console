@@ -7,7 +7,7 @@ import { NetworkAttachmentDefinitionKind } from '@console/network-attachment-def
 import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { InternalClusterState, InternalClusterAction, ActionType } from '../internal-mode/reducer';
-import { State, Action } from '../attached-devices-mode/create-sc/state';
+import { State, Action } from '../attached-devices-mode/reducer';
 import { KMSConfigure } from '../../kms-config/kms-config';
 import { NetworkType } from '../../../types';
 import { ValidationMessage, ValidationType } from '../../../utils/common-ocs-install-el';

@@ -1,4 +1,5 @@
 import { K8sResourceCommon } from '@console/internal/module/k8s';
+import { DiskMechanicalProperties } from '../local-volume-set/types';
 
 export enum DiskStates {
   Available = 'Available',
@@ -18,6 +19,7 @@ export type DiskMetadata = {
   };
   type: string;
   vendor: string;
+  property: keyof typeof DiskMechanicalProperties;
 };
 
 export type LocalVolumeDiscoveryResultKind = K8sResourceCommon & {

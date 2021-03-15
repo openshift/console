@@ -15,7 +15,7 @@ import {
   withHandlePromise,
 } from '@console/internal/components/utils/promise-component';
 
-import { State, Action } from '../../ocs-install/attached-devices-mode/create-sc/state';
+import { State, Action } from '../../ocs-install/attached-devices-mode/reducer';
 import {
   InternalClusterState,
   InternalClusterAction,

@@ -19,10 +19,9 @@ import {
   getNodeAllocatableMemory,
 } from '@console/shared';
 import { useSelectList } from '@console/shared/src/hooks/select-list';
-import { hasNoTaints, getZone } from '../../utils';
-import { GetRows } from './types';
-
-import './node-selection-list.scss';
+import { getZone, hasNoTaints } from '../../utils';
+import { NodesTableRowsFunction, NodesTableCustomData } from './types';
+import './nodes-table.scss';
 
 const tableColumnClasses = [
   classNames('pf-u-w-40-on-sm'),
@@ -32,7 +31,7 @@ const tableColumnClasses = [
   classNames('pf-m-hidden', 'pf-m-visible-on-sm', 'pf-u-w-10-on-sm'),
 ];
 
-const getRows: GetRows = (
+const getRows: NodesTableRowsFunction = (
   { componentProps, customData },
   visibleRows,
   setVisibleRows,
@@ -40,14 +39,22 @@ const getRows: GetRows = (
   setSelectedNodes,
 ) => {
   const { data } = componentProps;
-  const { filteredNodes, preSelected, taintsFilter } = customData;
+  const { filteredNodes, preSelectedNodes, taintsFilter } = customData;
+  let filteredData: NodeKind[] = data;
 
-  const nodeList = filteredNodes?.length ? filteredNodes : data.map(getName);
-  const filteredData = data.filter((node: NodeKind) =>
-    taintsFilter
-      ? (taintsFilter(node) || hasNoTaints(node)) && nodeList.includes(getName(node))
-      : hasNoTaints(node) && nodeList.includes(getName(node)),
-  );
+  if (filteredNodes?.length) {
+    /**
+     * Only the nodes present in `filteredNodes` will be displayed.
+     * These nodes are already filtered for taints e.g nodes passed
+     * from discovery step to create storage class in ocs.
+     */
+    filteredData = data.filter((node: NodeKind) => filteredNodes.includes(getName(node)));
+  } else {
+    /* Remove all tainted nodes, or allow some tainted nodes based on `taintsFilter` */
+    filteredData = filteredData.filter(
+      (node) => hasNoTaints(node) || (taintsFilter && taintsFilter(node)),
+    );
+  }
 
   const rows = filteredData.map((node: NodeKind) => {
     const cpuSpec: string = getNodeCPUCapacity(node);
@@ -61,7 +68,7 @@ const getRows: GetRows = (
         title: roles.join(', ') ?? '-',
       },
       {
-        title: getZone(node) || '-',
+        title: getZone(node) ?? '-',
       },
       {
         title: `${humanizeCpuCores(cpuSpec).string || '-'}`,
@@ -83,23 +90,27 @@ const getRows: GetRows = (
 
   if (!_.isEqual(uids, visibleRows)) {
     setVisibleRows(uids);
-    if (preSelected && !selectedNodes?.size && filteredData.length) {
-      const preSelectedRows = filteredData.filter((node) => preSelected.includes(getName(node)));
+    if (preSelectedNodes?.length && !selectedNodes?.size && filteredData.length) {
+      const preSelectedRows = filteredData.filter((node) =>
+        preSelectedNodes.includes(getName(node)),
+      );
       setSelectedNodes(preSelectedRows);
     }
   }
   return rows;
 };
 
-export const NodesSelectionList: React.FC<NodesSelectionListProps> = (props) => {
+export const NodesTable: React.FC<NodesTableProps> = (props) => {
   const { t } = useTranslation();
   const [visibleRows, setVisibleRows] = React.useState<Set<string>>(new Set());
+
+  const { hasOnSelect, onRowSelected } = props.customData;
 
   const {
     onSelect,
     selectedRows: selectedNodes,
     updateSelectedRows: setSelectedNodes,
-  } = useSelectList<NodeKind>(props.data, visibleRows, props.customData.onRowSelected);
+  } = useSelectList<NodeKind>(props.data, visibleRows, onRowSelected);
 
   const getColumns = () => [
     {
@@ -128,12 +139,7 @@ export const NodesSelectionList: React.FC<NodesSelectionListProps> = (props) => 
 
   return (
     <>
-      <div
-        className={classNames(
-          'lso-node-selection-table__table--scroll',
-          props.customData.className,
-        )}
-      >
+      <div className="lso-node-selection-table__table--scroll">
         <Table
           {...props}
           aria-label={t('lso-plugin~Select nodes for creating volume filter')}
@@ -143,26 +149,24 @@ export const NodesSelectionList: React.FC<NodesSelectionListProps> = (props) => 
             getRows(rowProps, visibleRows, setVisibleRows, selectedNodes, setSelectedNodes)
           }
           customData={props.customData}
+          onSelect={hasOnSelect && onSelect}
           virtualize={false}
-          onSelect={onSelect}
         />
       </div>
-      <Text data-test-id="create-lvs-form-selected-nodes" component="h6">
-        {t('lso-plugin~{{nodeCount, number}} node', {
-          nodeCount: selectedNodes?.size,
-          count: selectedNodes?.size,
-        })}{' '}
-        {t('lso-plugin~selected')}
-      </Text>
+      {hasOnSelect && (
+        <Text data-test-id="create-lvs-form-selected-nodes" component="h6">
+          {t('lso-plugin~{{nodeCount, number}} node', {
+            nodeCount: selectedNodes?.size,
+            count: selectedNodes?.size,
+          })}{' '}
+          {t('lso-plugin~selected')}
+        </Text>
+      )}
     </>
   );
 };
 
-type NodesSelectionListProps = {
+type NodesTableProps = {
   data: NodeKind[];
-  customData: {
-    onRowSelected: (nodes: NodeKind[]) => void;
-    className?: string;
-    preSelected?: string[];
-  };
+  customData: NodesTableCustomData;
 };

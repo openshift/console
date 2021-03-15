@@ -3,7 +3,6 @@ import { apiVersionForModel, Toleration } from '@console/internal/module/k8s';
 import { LocalVolumeSetModel } from '../../models';
 import { LocalVolumeSetKind, DiskType } from './types';
 import { State } from './state';
-import { getNodes, getHostNames } from '../../utils';
 import {
   DISK_TYPES,
   HOSTNAME_LABEL_KEY,
@@ -24,10 +23,10 @@ const getDeviceTypes = (deviceType: string[]) => {
 
 export const getLocalVolumeSetRequestData = (
   state: State,
+  nodes: string[],
   ns: string,
   toleration?: Toleration,
 ): LocalVolumeSetKind => {
-  const nodes = getNodes(state.showNodesListOnLVS, state.nodeNamesForLVS, state.nodeNames);
   const deviceTypes = getDeviceTypes(state.deviceType);
   const requestData = {
     apiVersion: apiVersionForModel(LocalVolumeSetModel),
@@ -46,7 +45,7 @@ export const getLocalVolumeSetRequestData = (
               {
                 key: HOSTNAME_LABEL_KEY,
                 operator: LABEL_OPERATOR,
-                values: getHostNames(nodes, state.hostNamesMapForLVS),
+                values: nodes,
               },
             ],
           },

@@ -1,67 +1,65 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { match as RouterMatch } from 'react-router';
-import { ActionGroup, Button, Form, TextVariants } from '@patternfly/react-core';
-import {
-  resourcePathFromModel,
-  BreadCrumbs,
-  withHandlePromise,
-  HandlePromiseProps,
-  ButtonBar,
-} from '@console/internal/components/utils';
+import { Form, TextVariants } from '@patternfly/react-core';
+import { resourcePathFromModel, BreadCrumbs } from '@console/internal/components/utils';
 import { history } from '@console/internal/components/utils/router';
 import { k8sCreate, NodeKind, referenceForModel } from '@console/internal/module/k8s';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { getName } from '@console/shared';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
 import { LocalVolumeSetModel } from '../../models';
-import { LocalVolumeSetHeader, LocalVolumeSetInner } from './local-volume-set-inner';
 import { reducer, initialState } from './state';
-import { nodeResource } from '../../constants/resources';
-import { hasNoTaints, createMapForHostNames } from '../../utils';
-import { getLocalVolumeSetRequestData } from './local-volume-set-request-data';
-
+import { nodeResource } from '../../resources';
+import { hasNoTaints, getNodesByHostNameLabel } from '../../utils';
+import { getLocalVolumeSetRequestData } from './request';
+import { LocalVolumeSetBody } from './body';
+import { LocalVolumeSetHeader } from './header';
+import { FormFooter } from '../common/form-footer';
 import './create-local-volume-set.scss';
 
-const CreateLocalVolumeSet: React.FC = withHandlePromise<
-  CreateLocalVolumeSetProps & HandlePromiseProps
->((props) => {
-  const { t } = useTranslation();
-
-  const { match, handlePromise, inProgress, errorMessage } = props;
-  const [state, dispatch] = React.useReducer(reducer, initialState);
-  const [nodeData, nodeLoaded, nodeLoadError] = useK8sWatchResource<NodeKind[]>(nodeResource);
-
+const CreateLocalVolumeSet: React.FC<CreateLocalVolumeSetProps> = ({ match }) => {
   const { appName, ns } = match.params;
+  const resourcePath = resourcePathFromModel(ClusterServiceVersionModel, appName, ns);
+
+  const { t } = useTranslation();
+  const [state, dispatch] = React.useReducer(reducer, initialState);
+  const [nodesData, nodesLoaded, nodesLoadError] = useK8sWatchResource<NodeKind[]>(nodeResource);
+  const [inProgress, setInProgress] = React.useState(false);
+  const [errorMessage, setError] = React.useState('');
 
   React.useEffect(() => {
-    if ((nodeLoadError || nodeData.length === 0) && nodeLoaded) {
-      dispatch({ type: 'setNodeNamesForLVS', value: [] });
-    } else if (nodeLoaded) {
-      const allNodeNames = nodeData.filter(hasNoTaints).map(getName);
-      const hostNames = createMapForHostNames(nodeData);
-      dispatch({ type: 'setNodeNamesForLVS', value: allNodeNames });
-      dispatch({ type: 'setHostNamesMapForLVS', value: hostNames });
+    if (nodesLoaded && !nodesLoadError && nodesData?.length !== 0) {
+      const filteredNodes: NodeKind[] = nodesData.filter(hasNoTaints);
+      dispatch({ type: 'setLvsAllNodes', value: filteredNodes });
     }
-  }, [nodeData, nodeLoaded, nodeLoadError]);
+  }, [nodesData, nodesLoadError, nodesLoaded]);
 
-  const onSubmit = (event: React.FormEvent<EventTarget>) => {
+  const onSubmit = async (event: React.FormEvent<EventTarget>) => {
     event.preventDefault();
+    setInProgress(true);
 
-    const requestData = getLocalVolumeSetRequestData(state, ns);
+    const lvsNodes = state.lvsIsSelectNodes ? state.lvsSelectNodes : nodesData;
+    const nodesByHostNameLabel = getNodesByHostNameLabel(lvsNodes);
+    const requestData = getLocalVolumeSetRequestData(state, nodesByHostNameLabel, ns);
 
-    handlePromise(k8sCreate(LocalVolumeSetModel, requestData), () =>
+    try {
+      await k8sCreate(LocalVolumeSetModel, ns, requestData);
+      setInProgress(false);
       history.push(
         `/k8s/ns/${ns}/clusterserviceversions/${appName}/${referenceForModel(
           LocalVolumeSetModel,
         )}/${state.volumeSetName}`,
-      ),
-    );
+      );
+    } catch (err) {
+      setError(err.message);
+      setInProgress(false);
+    }
   };
 
   const getDisabledCondition = () => {
+    const nodes = state.lvsIsSelectNodes ? state.lvsSelectNodes : state.lvsAllNodes;
     if (!state.volumeSetName.trim().length) return true;
-    if (state.showNodesListOnLVS && state.nodeNames.length < 1) return true;
+    if (nodes.length < 1) return true;
     if (!state.isValidDiskSize) return true;
     return false;
   };
@@ -74,7 +72,7 @@ const CreateLocalVolumeSet: React.FC = withHandlePromise<
             breadcrumbs={[
               {
                 name: t('lso-plugin~Local Storage'),
-                path: resourcePathFromModel(ClusterServiceVersionModel, appName, ns),
+                path: resourcePath,
               },
               { name: t('lso-plugin~Create Local Volume Set'), path: '' },
             ]}
@@ -84,33 +82,23 @@ const CreateLocalVolumeSet: React.FC = withHandlePromise<
       </div>
       <Form
         noValidate={false}
-        className="co-m-pane__body lso-create-lvs__node-list"
+        className="co-m-pane__body lso-form-body__node-list"
         onSubmit={onSubmit}
       >
-        <LocalVolumeSetInner dispatch={dispatch} state={state} />
-        <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
-          <ActionGroup>
-            <Button type="submit" variant="primary" isDisabled={getDisabledCondition()}>
-              {t('lso-plugin~Create')}
-            </Button>
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={() =>
-                history.push(resourcePathFromModel(ClusterServiceVersionModel, appName, ns))
-              }
-            >
-              {t('lso-plugin~Cancel')}
-            </Button>
-          </ActionGroup>
-        </ButtonBar>
+        <LocalVolumeSetBody dispatch={dispatch} state={state} />
+        <FormFooter
+          errorMessage={errorMessage}
+          inProgress={inProgress}
+          cancelUrl={resourcePath}
+          disableNext={getDisabledCondition()}
+        />
       </Form>
     </>
   );
-});
+};
 
 type CreateLocalVolumeSetProps = {
   match: RouterMatch<{ appName: string; ns: string }>;
-} & HandlePromiseProps;
+};
 
 export default CreateLocalVolumeSet;

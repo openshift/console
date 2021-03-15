@@ -7,18 +7,18 @@ import {
   ValidationMessage,
   getEncryptionLevel,
   ValidationType,
-} from '../../../../../utils/common-ocs-install-el';
-import { getNodeInfo } from '../../../../../utils/install';
-import { MINIMUM_NODES, NetworkTypeLabels } from '../../../../../constants';
-import { State } from '../state';
+} from '../../../../utils/common-ocs-install-el';
+import { getNodeInfo } from '../../../../utils/install';
+import { MINIMUM_NODES, NetworkTypeLabels } from '../../../../constants';
+import { State } from '../reducer';
 import {
   ReviewListTitle,
   ReviewListBody,
   NodesCard,
   RequestErrors,
-} from '../../../install-wizard/review-and-create';
-import { NetworkType } from '../../../../../types';
-import { GUARDED_FEATURES } from '../../../../../features';
+} from '../../install-wizard/review-and-create';
+import { NetworkType } from '../../../../types';
+import { GUARDED_FEATURES } from '../../../../features';
 
 export const ReviewAndCreate: React.FC<ReviewAndCreateProps> = ({
   state,
