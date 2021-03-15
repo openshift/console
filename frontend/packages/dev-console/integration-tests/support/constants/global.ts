@@ -15,8 +15,8 @@ export enum devNavigationMenu {
 }
 
 export enum switchPerspective {
-  Developer = 'Developer Perspective',
-  Administrator = ' Administrator Perspective',
+  Developer = 'Developer',
+  Administrator = ' Administrator',
 }
 
 export enum operators {

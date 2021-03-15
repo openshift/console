@@ -6,32 +6,25 @@ import { pageTitle } from '../constants/pageTitle';
 import { modal } from '../../../../integration-tests-cypress/views/modal';
 
 export const app = {
+  waitForDocumentLoad: () => {
+    cy.document()
+      .its('readyState')
+      .should('eq', 'complete');
+  },
   waitForLoad: (timeout: number = 80000) => {
     cy.get('.co-m-loader', { timeout }).should('not.exist');
     cy.get('.pf-c-spinner', { timeout }).should('not.exist');
+    app.waitForDocumentLoad();
   },
 };
 export const sidePane = {
-  close: () => {
-    cy.get('button[aria-label="Close"]').click({ force: true });
-  },
+  close: () => cy.get('button[aria-label="Close"]').click({ force: true }),
 };
 
 export const perspective = {
   switchTo: (perspectiveName: switchPerspective) => {
-    switch (perspectiveName) {
-      case switchPerspective.Administrator: {
-        nav.sidenav.switcher.changePerspectiveTo('Administrator');
-        break;
-      }
-      case switchPerspective.Developer: {
-        nav.sidenav.switcher.changePerspectiveTo('Developer');
-        break;
-      }
-      default: {
-        throw new Error('Option is not available');
-      }
-    }
+    app.waitForLoad();
+    nav.sidenav.switcher.changePerspectiveTo(perspectiveName);
   },
 };
 
