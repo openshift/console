@@ -84,16 +84,49 @@ export const getDefaultUISchema = (jsonSchema: JSONSchema6, jsonSchemaName: stri
       'ui:field': 'AdditionalPropertyField',
     };
   } else if (jsonSchema?.['x-kubernetes-int-or-string'] || jsonSchema?.['anyOf']) {
-    delete jsonSchema?.anyOf; // 너무 야매이긴 한데 지금 상황에서는 최선... 추후에 더 고민해봐야할듯..
-    return {
-      'ui:field': 'TextField',
-    };
+    if (
+      isArray(jsonSchema.anyOf) &&
+      jsonSchema.anyOf.every(cur => {
+        if (isArray(cur?.['type'])) {
+          return cur['type'][0] === 'string' || cur['type'][0] === 'number' || cur['type'][0] === 'null' || cur['type'][0] === 'integer';
+        } else if (cur?.['type']){
+          return cur['type'] === 'string' || cur['type'] === 'number' || cur['type'] === 'null' || cur['type'] === 'integer';
+        }
+      })
+    ) {
+      delete jsonSchema?.anyOf;
+      jsonSchema.type = 'string';
+    }
+    delete jsonSchema?.anyOf;
   } else if (jsonSchema?.['oneOf']) {
-    if (isArray(jsonSchema.oneOf) && jsonSchema.oneOf[0]?.['type']) {
+    if (
+      isArray(jsonSchema.oneOf) &&
+      jsonSchema.oneOf.every(cur => {
+        if (isArray(cur?.['type'])) {
+          return cur['type'][0] === 'string' || cur['type'][0] === 'number' || cur['type'][0] === 'null' || cur['type'][0] === 'integer';
+        } else if (cur?.['type']){
+          return cur['type'] === 'string' || cur['type'] === 'number' || cur['type'] === 'null' || cur['type'] === 'integer';
+        }
+      })
+    ) {
+      delete jsonSchema?.oneOf;
       jsonSchema.type = 'string';
     }
     delete jsonSchema?.oneOf;
   } else if (jsonSchema?.['allOf']) {
+    if (
+      isArray(jsonSchema.allOf) &&
+      jsonSchema.allOf.every(cur => {
+        if (isArray(cur?.['type'])) {
+          return cur['type'][0] === 'string' || cur['type'][0] === 'number' || cur['type'][0] === 'null' || cur['type'][0] === 'integer';
+        } else if (cur?.['type']){
+          return cur['type'] === 'string' || cur['type'] === 'number' || cur['type'] === 'null' || cur['type'] === 'integer';
+        }
+      })
+    ) {
+      delete jsonSchema?.allOf;
+      jsonSchema.type = 'string';
+    }
     delete jsonSchema?.allOf;
   }
 
