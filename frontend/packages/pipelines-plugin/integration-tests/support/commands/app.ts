@@ -12,7 +12,8 @@ import { operatorsPage } from '@console/dev-console/integration-tests/support/pa
 import { guidedTour } from '../../../../integration-tests-cypress/views/guided-tour';
 
 before(() => {
-  cy.login();
+  // login script is changed by console team, due to that unable to execute the scripts in local. So commenting below function until that issue is resolved
+  // cy.login();
   cy.visit('');
   cy.document()
     .its('readyState')
