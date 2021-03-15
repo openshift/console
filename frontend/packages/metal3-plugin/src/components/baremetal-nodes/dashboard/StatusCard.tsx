@@ -8,6 +8,7 @@ import HealthBody from '@console/shared/src/components/dashboard/status-card/Hea
 import { NodeDashboardContext } from '@console/app/src/components/nodes/node-dashboard/NodeDashboardContext';
 import { HealthChecksItem } from '@console/app/src/components/nodes/node-dashboard/NodeHealth';
 
+import { useTranslation } from 'react-i18next';
 import { BareMetalNodeDashboardContext } from './BareMetalNodeDashboardContext';
 import { bareMetalNodeStatus } from '../../../status/baremetal-node-status';
 import BareMetalNodeStatus from '../BareMetalNodeStatus';
@@ -17,10 +18,11 @@ const StatusCard: React.FC = () => {
   const { obj } = React.useContext(NodeDashboardContext);
   const { nodeMaintenance } = React.useContext(BareMetalNodeDashboardContext);
   const status = bareMetalNodeStatus({ node: obj, nodeMaintenance });
+  const { t } = useTranslation();
   return (
     <DashboardCard gradient data-test-id="status-card">
       <DashboardCardHeader>
-        <DashboardCardTitle>Status</DashboardCardTitle>
+        <DashboardCardTitle>{t('COMMON:MSG_MAIN_TABLEHEADER_3')}</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody isLoading={!obj}>
         <HealthBody>
