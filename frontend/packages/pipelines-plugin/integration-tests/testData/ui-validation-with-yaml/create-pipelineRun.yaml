@@ -1,0 +1,14 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: pipeline-level-results
+spec:
+  pipelineRef:
+    name: sum-three-pipeline
+  params:
+    - name: first
+      value: "2"
+    - name: second
+      value: "10"
+    - name: third
+      value: "10"
