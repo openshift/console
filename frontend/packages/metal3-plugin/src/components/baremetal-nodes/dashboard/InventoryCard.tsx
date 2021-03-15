@@ -18,19 +18,9 @@ const InventoryCard: React.FC = () => {
   const { obj } = React.useContext(NodeDashboardContext);
   const { host } = React.useContext(BareMetalNodeDashboardContext);
 
-  const NICTitleComponent = React.useCallback(
-    ({ children }) => (
-      <Link to={`${resourcePathFromModel(NodeModel, obj.metadata.name)}/nics`}>{children}</Link>
-    ),
-    [obj.metadata.name],
-  );
+  const NICTitleComponent = React.useCallback(({ children }) => <Link to={`${resourcePathFromModel(NodeModel, obj.metadata.name)}/nics`}>{children}</Link>, [obj.metadata.name]);
 
-  const DiskTitleComponent = React.useCallback(
-    ({ children }) => (
-      <Link to={`${resourcePathFromModel(NodeModel, obj.metadata.name)}/disks`}>{children}</Link>
-    ),
-    [obj.metadata.name],
-  );
+  const DiskTitleComponent = React.useCallback(({ children }) => <Link to={`${resourcePathFromModel(NodeModel, obj.metadata.name)}/disks`}>{children}</Link>, [obj.metadata.name]);
 
   return (
     <DashboardCard data-test-id="inventory-card">
@@ -38,30 +28,10 @@ const InventoryCard: React.FC = () => {
         <DashboardCardTitle>Inventory</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody>
-        <NodeInventoryItem
-          nodeName={obj.metadata.name}
-          model={PodModel}
-          mapper={getPodStatusGroups}
-        />
-        <InventoryItem
-          isLoading={!obj}
-          title="Image"
-          titlePlural="Images"
-          count={obj.status?.images?.length}
-          error={!obj.status?.images}
-        />
-        <InventoryItem
-          title="Disk"
-          isLoading={!obj}
-          count={getHostStorage(host).length}
-          TitleComponent={DiskTitleComponent}
-        />
-        <InventoryItem
-          title="NIC"
-          isLoading={!obj}
-          count={getHostNICs(host).length}
-          TitleComponent={NICTitleComponent}
-        />
+        <NodeInventoryItem nodeName={obj.metadata.name} model={PodModel} mapper={getPodStatusGroups} />
+        <InventoryItem isLoading={!obj} title="Image" titlePlural="Images" count={obj.status?.images?.length} error={!obj.status?.images} />
+        <InventoryItem title="Disk" isLoading={!obj} count={getHostStorage(host).length} TitleComponent={DiskTitleComponent} />
+        <InventoryItem title="NIC" isLoading={!obj} count={getHostNICs(host).length} TitleComponent={NICTitleComponent} />
         <InventoryItem title="CPU" isLoading={!obj} count={getHostCPU(host).count} />
       </DashboardCardBody>
     </DashboardCard>
