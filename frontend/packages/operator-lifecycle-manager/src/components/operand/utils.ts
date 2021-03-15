@@ -9,6 +9,7 @@ import { UiSchema } from 'react-jsonschema-form';
 import { SchemaType } from '@console/shared/src/components/dynamic-form';
 import { getSchemaType } from 'react-jsonschema-form/lib/utils';
 import { getSchemaErrors } from '@console/shared/src/components/dynamic-form/utils';
+import { isArray } from 'lodash';
 
 // Transform a path string from a descriptor to a JSON schema path array
 export const descriptorPathToUISchemaPath = (path: string): string[] =>
@@ -82,11 +83,18 @@ export const getDefaultUISchema = (jsonSchema: JSONSchema6, jsonSchemaName: stri
     return {
       'ui:field': 'AdditionalPropertyField',
     };
-  } else if (jsonSchema?.['x-kubernetes-int-or-string']) {
+  } else if (jsonSchema?.['x-kubernetes-int-or-string'] || jsonSchema?.['anyOf']) {
     delete jsonSchema?.anyOf; // 너무 야매이긴 한데 지금 상황에서는 최선... 추후에 더 고민해봐야할듯..
     return {
       'ui:field': 'TextField',
     };
+  } else if (jsonSchema?.['oneOf']) {
+    if (isArray(jsonSchema.oneOf) && jsonSchema.oneOf[0]?.['type']) {
+      jsonSchema.type = 'string';
+    }
+    delete jsonSchema?.oneOf;
+  } else if (jsonSchema?.['allOf']) {
+    delete jsonSchema?.allOf;
   }
 
   const handleArray = () => {
