@@ -1,4 +1,4 @@
-import { isCephProvisioner } from '@console/shared/src/utils';
+import { isCephProvisioner, cephProvisionerAccessModes } from '@console/shared/src/utils';
 
 export const cephRBDProvisionerSuffix = 'rbd.csi.ceph.com';
 
@@ -39,6 +39,7 @@ export const accessModeRadios = [
     title: 'Read Only (ROX)',
   },
 ];
+
 export const volumeModeRadios = [
   {
     value: 'Filesystem',
@@ -58,4 +59,12 @@ export const getAccessModeForProvisioner = (provisioner: string) => {
   return provisioner && isCephProvisioner(provisioner)
     ? ['ReadWriteOnce', 'ReadWriteMany']
     : ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'];
+};
+
+export const getVolumeModeForProvisioner = (provisioner: string, accessMode: string): string[] => {
+  return provisioner && isCephProvisioner(provisioner)
+    ? Object.keys(cephProvisionerAccessModes[provisioner]).map((volumeMode) =>
+        cephProvisionerAccessModes[provisioner][volumeMode].includes(accessMode) ? volumeMode : '',
+      )
+    : volumeModeRadios.map((mode) => mode.value);
 };
