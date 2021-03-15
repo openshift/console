@@ -1,0 +1,24 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: add-task
+spec:
+  params:
+    - name: first
+      description: the first operand
+    - name: second
+      description: the second operand
+  results:
+    - name: sum
+      description: the sum of the first and second operand
+  steps:
+    - name: add
+      image: registry.redhat.io/ubi8/ubi-minimal
+      env:
+        - name: OP1
+          value: $(params.first)
+        - name: OP2
+          value: $(params.second)
+      command: ["/bin/sh", "-c"]
+      args:
+        - echo -n $((${OP1}+${OP2})) | tee $(results.sum.path);

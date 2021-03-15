@@ -8,6 +8,7 @@ export const pipelineBuilderPO = {
     yamlView: '#form-radiobutton-editorType-yaml-field',
   },
   formView: {
+    switchToFormView: '[id="form-radiobutton-editorType-form-field"]',
     name: '#form-input-formData-name-field',
     taskDropdown: '[data-id="initial-node"]',
     task: '[data-type="builder"]] .odc-pipeline-vis-task',
@@ -36,8 +37,11 @@ export const pipelineBuilderPO = {
     },
   },
   yamlView: {
+    switchToYAMLView: '[id="form-radiobutton-editorType-yaml-field"]',
     editor: 'div.react-monaco-editor-container',
+    yamlEditor: 'div.monaco-scrollable-element.editor-scrollable.vs-dark',
     sideBar: '[data-test="resource-sidebar"]',
+    createButton: '[data-test-id="submit-button"]',
     sidePane: {
       samples: '',
       snippets: '',
