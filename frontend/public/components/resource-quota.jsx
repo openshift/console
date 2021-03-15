@@ -13,6 +13,7 @@ import { LoadingBox } from './utils/status-box';
 import { referenceForModel } from '../module/k8s';
 import { ResourceQuotaModel, ClusterResourceQuotaModel } from '../models';
 import { useTranslation } from 'react-i18next';
+import {ResourceLabel} from '../models/hypercloud/resource-plural'
 
 const { common } = Kebab.factory;
 const resourceQuotaMenuActions = [...Kebab.getExtensionsActionsForKind(ResourceQuotaModel), ...common];
@@ -325,7 +326,7 @@ export const ResourceQuotasPage = connectToFlags(FLAGS.OPENSHIFT)(({ namespace, 
     model: ResourceQuotaModel,
     namespace: createNS,
   };
-  return <MultiListPage canCreate={true} createAccessReview={accessReview} createButtonText="Create Resource Quota" createProps={{ to: `/k8s/ns/${createNS}/resourcequotas/~new` }} ListComponent={ResourceQuotasList} resources={resources} label="Resource Quotas" namespace={namespace} flatten={flatten} title={t('COMMON:MSG_LNB_MENU_80')} rowFilters={rowFilters} mock={mock} />;
+  return <MultiListPage canCreate={true} createAccessReview={accessReview} createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', {0:ResourceLabel(ResourceQuotaModel, t)})} createProps={{ to: `/k8s/ns/${createNS}/resourcequotas/~new` }} ListComponent={ResourceQuotasList} resources={resources} label="Resource Quotas" namespace={namespace} flatten={flatten} title={t('COMMON:MSG_LNB_MENU_80')} rowFilters={rowFilters} mock={mock} />;
 });
 
 export const ResourceQuotasDetailsPage = props => <DetailsPage {...props} menuActions={resourceQuotaMenuActions} pages={[navFactory.details(Details), navFactory.editYaml()]} />;

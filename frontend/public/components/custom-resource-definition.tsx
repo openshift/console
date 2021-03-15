@@ -103,11 +103,11 @@ const CRDVersionTable: React.FC<CRDVersionProps> = ({ versions }) => {
       transforms: [sortable],
     },
     {
-      title: 'Served',
+      title: t('COMMON:MSG_DETAILS_TABDETAILS_VERSIONS_TABLEHEADER_1'),
       transforms: [sortable],
     },
     {
-      title: 'Storage',
+      title: t('COMMON:MSG_DETAILS_TABDETAILS_VERSIONS_TABLEHEADER_2'),
       transforms: [sortable],
     },
   ];
