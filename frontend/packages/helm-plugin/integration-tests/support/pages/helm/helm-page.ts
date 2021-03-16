@@ -1,5 +1,5 @@
-import { helmPO } from '../../pageObjects';
-import { messages } from '../../constants';
+import { helmPO } from '@console/dev-console/integration-tests/support/pageObjects';
+import { messages } from '@console/dev-console/integration-tests/support/constants';
 
 export const helmPage = {
   verifyMessage: () =>

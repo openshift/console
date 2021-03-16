@@ -1,6 +1,5 @@
 export * from './add-flow/index';
 export * from './topology/index';
-export * from './helm/index';
 export * from './monitoring/index';
 export * from './addHealthChecks-page';
 export * from './app';

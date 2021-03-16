@@ -1,0 +1,9 @@
+{
+  "name": "@helm-plugin/integration-tests",
+  "version": "0.0.1",
+  "description": "Helm Cypress tests",
+  "private": true,
+  "cypress-cucumber-preprocessor": {
+    "step_definitions": "support/step-definitions/*/"
+  }
+}
