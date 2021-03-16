@@ -373,17 +373,20 @@ export const ProvidedAPIsPage = connect(inFlightStateToProps)((props: ProvidedAP
         owners(metadata.ownerReferences || [], allResources).length > 0,
     );
 
-  const rowFilters = [
-    {
-      filterGroupName: 'Resource Kind',
-      type: 'clusterserviceversion-resource-kind',
-      reducer: ({ kind }) => kind,
-      items: firehoseResources.map(({ kind }) => ({
-        id: kindForReference(kind),
-        title: kindForReference(kind),
-      })),
-    },
-  ];
+  const rowFilters =
+    firehoseResources.length > 1
+      ? [
+          {
+            filterGroupName: 'Resource Kind',
+            type: 'clusterserviceversion-resource-kind',
+            reducer: ({ kind }) => kind,
+            items: firehoseResources.map(({ kind }) => ({
+              id: kindForReference(kind),
+              title: kindForReference(kind),
+            })),
+          },
+        ]
+      : [];
 
   if (props.inFlight) {
     return null;
@@ -400,7 +403,7 @@ export const ProvidedAPIsPage = connect(inFlightStateToProps)((props: ProvidedAP
       createProps={createProps}
       createButtonText={owned.length > 1 ? 'Create New' : `Create ${owned[0].displayName}`}
       flatten={flatten}
-      rowFilters={firehoseResources.length > 1 ? rowFilters : null}
+      rowFilters={rowFilters}
     />
   ) : (
     <StatusBox loaded EmptyMsg={EmptyMsg} />

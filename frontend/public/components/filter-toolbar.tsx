@@ -85,7 +85,7 @@ const getDropdownItems = (rowFilters: RowFilter[], selectedItems, data, props) =
 
 const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (props) => {
   const {
-    rowFilters = [],
+    rowFilters,
     data,
     hideColumnManagement,
     hideLabelFilter,
@@ -106,7 +106,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
   );
 
   // (rowFilters) => {'rowFilterTypeA': ['staA', 'staB'], 'rowFilterTypeB': ['stbA'] }
-  const filters: Filter = rowFilters.reduce((acc, curr) => {
+  const filters: Filter = (rowFilters ?? [])?.reduce((acc, curr) => {
     const rowItems = curr.itemsGenerator ? curr.itemsGenerator(props, props?.kinds) : curr.items;
     const items = _.map(rowItems, 'id');
     acc[curr.filterGroupName] = items;
@@ -114,7 +114,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
   }, {});
 
   // {id: 'a' , title: 'A'} => filterNameMap['a'] = A
-  const filtersNameMap: FilterKeys = rowFilters.reduce((acc, curr) => {
+  const filtersNameMap: FilterKeys = (rowFilters ?? []).reduce((acc, curr) => {
     const rowItems = curr.itemsGenerator ? curr.itemsGenerator(props, props?.kinds) : curr.items;
     const items = rowItems.reduce((itemAcc, itemCurr) => {
       itemAcc[itemCurr.id] = itemCurr.title;
@@ -124,7 +124,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
   }, {});
 
   // (storagePrefix, rowFilters) => { 'rowFilterTypeA' = 'storagePrefix-filterTypeA' ...}
-  const filterKeys: FilterKeys = rowFilters.reduce((acc, curr) => {
+  const filterKeys: FilterKeys = (rowFilters ?? []).reduce((acc, curr) => {
     const str = `${storagePrefix}${curr.type}`;
     acc[curr.filterGroupName] = str;
     return acc;
@@ -190,7 +190,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
   /* Logic Related to Row Filters Ex:(Status, Type) */
 
   const applyRowFilter = (selected: string[]) => {
-    rowFilters.forEach((filter) => {
+    rowFilters?.forEach((filter) => {
       const rowItems = filter.itemsGenerator
         ? filter.itemsGenerator(props, props?.kinds)
         : filter.items;
@@ -251,7 +251,7 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
       applyFilter(nameFilter, FilterType.NAME);
     }
     if (_.isEmpty(selectedRowFilters)) {
-      updateRowFilterSelected(_.uniq(_.flatMap(rowFilters, 'defaultSelected')));
+      updateRowFilterSelected(_.uniq(_.flatMap(rowFilters ?? [], 'defaultSelected')));
     } else {
       applyRowFilter(selectedRowFilters);
     }
@@ -273,11 +273,11 @@ const FilterToolbar_: React.FC<FilterToolbarProps & RouteComponentProps> = (prop
     setInputText(nameFilter && FilterType[type] === FilterType.NAME ? nameFilter : '');
   };
 
-  const dropdownItems = getDropdownItems(rowFilters, selectedRowFilters, data, props);
+  const dropdownItems = getDropdownItems(rowFilters ?? [], selectedRowFilters, data, props);
   return (
     <Toolbar id="filter-toolbar" clearAllFilters={clearAll}>
       <ToolbarContent>
-        {rowFilters.length > 0 && (
+        {rowFilters?.length && (
           <ToolbarItem>
             {_.reduce(
               Object.keys(filters),
