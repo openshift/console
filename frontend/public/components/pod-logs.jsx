@@ -98,12 +98,14 @@ export class PodLogs extends React.Component {
 
     return (
       <div className="co-m-pane__body">
-        <ResourceLog
-          containerName={currentContainer ? currentContainer.name : ''}
-          dropdown={containerDropdown}
-          resource={this.props.obj}
-          resourceStatus={currentContainerStatus}
-        />
+        {_.isEmpty(this.props.obj) === false && (
+          <ResourceLog
+            containerName={currentContainer ? currentContainer.name : ''}
+            dropdown={containerDropdown}
+            resource={this.props.obj}
+            resourceStatus={currentContainerStatus}
+          />
+        )}
       </div>
     );
   }
