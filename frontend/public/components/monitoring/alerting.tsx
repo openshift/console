@@ -763,6 +763,21 @@ export const AlertsDetailsPage = withFallback(
   }),
 );
 
+// Renders Prometheus template text and highlights any {{ ... }} tags that it contains
+const PrometheusTemplate = ({ text }) => (
+  <>
+    {text
+      ?.split(/(\{\{[^{}]*\}\})/)
+      ?.map((part: string) =>
+        part.match(/^\{\{[^{}]*\}\}$/) ? (
+          <code className="prometheus-template-tag">{part}</code>
+        ) : (
+          part
+        ),
+      )}
+  </>
+);
+
 const ActiveAlerts = ({ alerts, ruleID, namespace }) => (
   <div className="co-m-table-grid co-m-table-grid--bordered">
     <div className="row co-m-table-grid__head">
@@ -874,10 +889,12 @@ export const AlertRulesDetailsPage = withFallback(
                       <Severity severity={severity} />
                     </dd>
                     <Annotation title={t('public~Description')}>
-                      {annotations?.description}
+                      <PrometheusTemplate text={annotations?.description} />
                     </Annotation>
                     <Annotation title={t('public~Summary')}>{annotations?.summary}</Annotation>
-                    <Annotation title={t('public~Message')}>{annotations?.message}</Annotation>
+                    <Annotation title={t('public~Message')}>
+                      <PrometheusTemplate text={annotations?.message} />
+                    </Annotation>
                   </dl>
                 </div>
                 <div className="col-sm-6">
