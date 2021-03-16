@@ -1,34 +1,19 @@
 import { Provider } from 'react';
 import { Extension } from '@console/plugin-sdk/src/typings/base';
-import { CodeRef, EncodedCodeRef, UpdateExtensionProperties } from '../types';
+import { ExtensionDeclaration, CodeRef } from '../types';
 
-namespace ExtensionProperties {
-  /** Adds new React context provider to Console application root. */
-  export type ContextProvider = {
-    /** Context Provider Exotic Component. */
-    provider: EncodedCodeRef;
-    /** Hook for the Context value. */
-    useValueHook: EncodedCodeRef;
-  };
-
-  export type ContextProviderCodeRefs<T> = {
+/** Adds new React context provider to Console application root. */
+export type ContextProvider<T = any> = ExtensionDeclaration<
+  'console.context-provider',
+  {
+    /** Context Provider component. */
     provider: CodeRef<Provider<T>>;
+    /** Hook for the Context value. */
     useValueHook: CodeRef<() => T>;
-  };
-}
-
-// Extension types
-
-export type ContextProvider = Extension<ExtensionProperties.ContextProvider> & {
-  type: 'console.context-provider';
-};
-
-export type ResolvedContextProvider<R = any> = UpdateExtensionProperties<
-  ContextProvider,
-  ExtensionProperties.ContextProviderCodeRefs<R>
+  }
 >;
 
 // Type guards
 
-export const isContextProvider = (e: Extension): e is ResolvedContextProvider =>
+export const isContextProvider = (e: Extension): e is ContextProvider =>
   e.type === 'console.context-provider';

@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { Extension } from '@console/plugin-sdk/src/typings/base';
-import { CodeRef, EncodedCodeRef, UpdateExtensionProperties } from '../types';
+import { ExtensionDeclaration, CodeRef } from '../types';
 import { ExtensionAccessReviewResourceAttributes } from '../utils/common';
 
-namespace ExtensionProperties {
-  export type AddAction = {
+export type AddAction = ExtensionDeclaration<
+  'dev-console.add/action',
+  {
     /** ID used to identify the action. */
     id: string;
     /** The label of the action */
@@ -14,25 +15,14 @@ namespace ExtensionProperties {
     /** The href to navigate to. */
     href: string;
     /** The perspective display icon. */
-    icon?: string | EncodedCodeRef;
+    icon?: CodeRef<React.ReactNode>;
     /** Optional access review to control visibility / enablement of the action. */
     accessReview?: ExtensionAccessReviewResourceAttributes[];
-  };
-
-  export type AddActionCodeRefs = {
-    icon?: CodeRef<React.ReactNode>;
-  };
-}
-
-export type AddAction = Extension<ExtensionProperties.AddAction> & {
-  type: 'dev-console.add/action';
-};
-
-export type ResolvedAddAction = UpdateExtensionProperties<
-  AddAction,
-  ExtensionProperties.AddActionCodeRefs
+  }
 >;
 
-export const isAddAction = (e: Extension): e is ResolvedAddAction => {
+// Type guards
+
+export const isAddAction = (e: Extension): e is AddAction => {
   return e.type === 'dev-console.add/action';
 };

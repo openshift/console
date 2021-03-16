@@ -17,7 +17,7 @@ import client, { fetchURL } from '../graphql/client';
 import { SSARQuery } from './features.gql';
 import { SSARQueryType, SSARQueryVariables } from '../../@types/console/generated/graphql-schema';
 import {
-  ResolvedFeatureFlag as DynamicFeatureFlag,
+  FeatureFlag as DynamicFeatureFlag,
   isFeatureFlag as isDynamicFeatureFlag,
   SetFeatureFlag,
 } from '@console/dynamic-plugin-sdk/src/extensions/feature-flags';
@@ -268,6 +268,7 @@ const featureFlagController: SetFeatureFlag = (flag, enabled) => {
 
 const processedExtensions: DynamicFeatureFlag[] = [];
 
+// TODO(vojtech): use resolveExtension function from #8224 instead of resolving manually
 subscribeToExtensions<DynamicFeatureFlag>(
   extensionDiffListener((added) => {
     added.forEach((e) => {

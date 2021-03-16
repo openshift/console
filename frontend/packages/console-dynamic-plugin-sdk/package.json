@@ -6,11 +6,19 @@
   "main": "src/index.ts",
   "scripts": {
     "clean": "rm -rf ./dist",
-    "schema": "yarn clean && yarn ts-node ./scripts/generate-schema.ts",
+    "build": "yarn clean && yarn validate && yarn generate",
+    "generate": "yarn generate-schema && yarn generate-doc",
+    "generate-schema": "yarn ts-node ./scripts/generate-schema.ts",
+    "generate-doc": "yarn ts-node ./scripts/generate-doc.ts",
+    "validate": "yarn ts-node ./scripts/validate-extensions.ts",
     "ts-node": "ts-node -O '{\"module\":\"commonjs\"}'"
   },
   "devDependencies": {
-    "ts-json-schema-generator": "0.x",
+    "@types/ejs": "3.x",
+    "ejs": "3.x",
+    "ts-json-schema-generator": "0.89.0",
+    "tsutils": "3.x",
+    "typescript": "4.2.x",
     "webpack": "5.0.0-beta.16"
   }
 }

@@ -1,56 +1,79 @@
 import * as path from 'path';
 import * as fs from 'fs';
-import * as findUp from 'find-up';
 import * as tsj from 'ts-json-schema-generator';
 import chalk from 'chalk';
-import { ConstructorTypeNodeParser } from './generate-schema.parsers';
+import { ConstructorTypeParser } from './parsers/ConstructorTypeParser';
+import { CodeRefTypeReferenceParser } from './parsers/CodeRefTypeReferenceParser';
+import { ExtensionDeclarationParser } from './parsers/ExtensionDeclarationParser';
+import { getSchemaGeneratorConfig, getProgram } from './utils/typescript';
+import { getConsoleTypeResolver } from './utils/type-resolver';
+import { resolvePath, relativePath } from './utils/path';
 
-type GeneratedSchema = {
+type SchemaTypeConfig = {
   srcFile: string;
-  type: string;
+  typeName: string;
+  /** Set to `true` when the generated schema references SupportedExtension union type. */
+  handleConsoleExtensions?: boolean;
 };
 
-const schemas: GeneratedSchema[] = [
-  { srcFile: 'src/schema/plugin-package.ts', type: 'ConsolePluginMetadata' },
-  { srcFile: 'src/schema/console-extensions.ts', type: 'ConsoleExtensionsJSON' },
-  { srcFile: 'src/schema/plugin-manifest.ts', type: 'ConsolePluginManifestJSON' },
+const typeConfigs: SchemaTypeConfig[] = [
+  {
+    srcFile: 'src/schema/plugin-package.ts',
+    typeName: 'ConsolePluginMetadata',
+  },
+  {
+    srcFile: 'src/schema/console-extensions.ts',
+    typeName: 'ConsoleExtensionsJSON',
+    handleConsoleExtensions: true,
+  },
+  {
+    srcFile: 'src/schema/plugin-manifest.ts',
+    typeName: 'ConsolePluginManifestJSON',
+    handleConsoleExtensions: true,
+  },
 ];
 
-const resolvePath = (to: string, from = process.cwd()) => path.resolve(from, to);
+const generateSchema = ({ srcFile, typeName, handleConsoleExtensions }: SchemaTypeConfig) => {
+  const config = getSchemaGeneratorConfig(srcFile, typeName);
+  const program = getProgram(config);
+  const typeChecker = program.getTypeChecker();
+  const annotationsReader = new tsj.ExtendedAnnotationsReader(typeChecker);
+  const consoleTypeResolver = getConsoleTypeResolver(program);
 
-const newGenerator = (gs: GeneratedSchema): tsj.SchemaGenerator => {
-  const config: tsj.Config = {
-    path: resolvePath(gs.srcFile),
-    tsconfig: findUp.sync('tsconfig.json'),
-    type: gs.type,
-    topRef: false,
-  };
-
-  const program = tsj.createProgram(config);
   const parser = tsj.createParser(program, config, (p) => {
-    p.addNodeParser(new ConstructorTypeNodeParser());
+    p.addNodeParser(new ConstructorTypeParser());
+
+    if (handleConsoleExtensions) {
+      const consoleTypeDeclarations = consoleTypeResolver.getDeclarations();
+      const consoleExtensions = consoleTypeResolver.getConsoleExtensions();
+      const getMainParser = () => parser;
+
+      p.addNodeParser(
+        new CodeRefTypeReferenceParser(typeChecker, consoleTypeDeclarations, getMainParser),
+      );
+      p.addNodeParser(
+        new ExtensionDeclarationParser(annotationsReader, consoleExtensions, getMainParser),
+      );
+    }
   });
 
   const formatter = tsj.createFormatter(config);
-  return new tsj.SchemaGenerator(program, parser, formatter, config);
-};
+  const generator = new tsj.SchemaGenerator(program, parser, formatter, config);
 
-const writeSchema = (gs: GeneratedSchema) => {
-  const schema = newGenerator(gs).createSchema(gs.type);
-  const schemaString = JSON.stringify(schema, null, 2);
-  const outPath = resolvePath(`dist/schema/${path.parse(gs.srcFile).name}`);
-
-  fs.mkdirSync(path.dirname(outPath), { recursive: true });
-  fs.writeFileSync(`${outPath}.json`, schemaString);
-  fs.writeFileSync(`${outPath}.js`, `export default ${schemaString};`);
+  return generator.createSchema(typeName);
 };
 
 console.log('Generating Console plugin JSON schemas');
 
-schemas.forEach((gs, index) => {
-  console.log(
-    `[${index + 1}/${schemas.length}] ${chalk.cyan(gs.srcFile)}:${chalk.bold.cyan(gs.type)}`,
-  );
+typeConfigs.forEach((tc) => {
+  const schema = generateSchema(tc);
+  const schemaString = JSON.stringify(schema, null, 2);
+  const outPath = resolvePath(`dist/schema/${path.parse(tc.srcFile).name}`);
 
-  writeSchema(gs);
+  fs.mkdirSync(path.dirname(outPath), { recursive: true });
+  fs.writeFileSync(`${outPath}.json`, schemaString);
+  fs.writeFileSync(`${outPath}.js`, `export default ${schemaString};`);
+
+  console.log(chalk.green(relativePath(`${outPath}.json`)));
+  console.log(chalk.green(relativePath(`${outPath}.js`)));
 });

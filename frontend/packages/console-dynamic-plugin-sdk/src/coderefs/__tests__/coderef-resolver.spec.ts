@@ -207,7 +207,7 @@ describe('loadReferencedObject', () => {
 });
 
 describe('resolveEncodedCodeRefs', () => {
-  it('replaces encoded code references with executable CodeRef functions', () => {
+  it('replaces encoded code references with CodeRef functions', () => {
     const extensions: Extension[] = [
       {
         type: 'Foo',
@@ -241,7 +241,7 @@ describe('resolveEncodedCodeRefs', () => {
 });
 
 describe('resolveCodeRefProperties', () => {
-  it('replaces executable CodeRef functions with corresponding objects', async () => {
+  it('replaces CodeRef functions with referenced objects', async () => {
     const extensions: Extension[] = [
       {
         type: 'Foo',
