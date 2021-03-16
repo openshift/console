@@ -1,18 +1,18 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import * as cx from 'classnames';
+import { Link } from 'react-router-dom';
+import { TFunction } from 'i18next';
 import {
   Alert,
   AlertVariant,
   AlertActionLink,
   WizardContextConsumer,
 } from '@patternfly/react-core';
-import { Link } from 'react-router-dom';
 import { TechPreviewBadge } from '@console/shared';
 import { CreateStepsSC } from '../constants';
 import '../components/ocs-install/ocs-install.scss';
 import { EncryptionType } from '../types';
-import { TFunction } from 'i18next';
 
 export type Validation = {
   title: React.ReactNode;

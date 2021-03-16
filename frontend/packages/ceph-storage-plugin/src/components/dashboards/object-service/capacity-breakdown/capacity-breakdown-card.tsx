@@ -9,15 +9,15 @@ import DashboardCard from '@console/shared/src/components/dashboard/dashboard-ca
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import { SubscriptionModel, SubscriptionKind } from '@console/operator-lifecycle-manager/src';
-import { BreakdownCardBody } from '../../common/capacity-breakdown/breakdown-body';
-import { Colors } from '../../common/capacity-breakdown/consts';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { usePrometheusQueries } from '@console/shared/src/components/dashboard/utilization-card/prometheus-hook';
 import { OCS_OPERATOR } from '@console/ceph-storage-plugin/src/constants';
-import { getStackChartStats } from '../../common/capacity-breakdown/utils';
 import { PrometheusResponse, DataPoint } from '@console/internal/components/graphs';
 import { getInstantVectorStats } from '@console/internal/components/graphs/utils';
 import { useFlag } from '@console/shared/src/hooks/flag';
+import { getStackChartStats } from '../../common/capacity-breakdown/utils';
+import { Colors } from '../../common/capacity-breakdown/consts';
+import { BreakdownCardBody } from '../../common/capacity-breakdown/breakdown-body';
 import { RGW_FLAG } from '../../../../features';
 import { getGroupedSelectOptions } from '../../common/capacity-breakdown/breakdown-dropdown';
 import { ServiceType, CapacityBreakdown, Groups } from '../../../../constants';

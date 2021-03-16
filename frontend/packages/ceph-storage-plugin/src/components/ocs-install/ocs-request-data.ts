@@ -6,6 +6,7 @@ import {
   K8sKind,
 } from '@console/internal/module/k8s';
 import { NodeModel, NamespaceModel } from '@console/internal/models';
+import { hasLabel, getName } from '@console/shared';
 import {
   NO_PROVISIONER,
   OCS_INTERNAL_CR_NAME,
@@ -14,7 +15,6 @@ import {
   ATTACHED_DEVICES_ANNOTATION,
   OCS_DEVICE_SET_ARBITER_REPLICA,
 } from '../../constants';
-import { hasLabel, getName } from '@console/shared';
 import { cephStorageLabel } from '../../selectors';
 import {
   StorageClusterKind,

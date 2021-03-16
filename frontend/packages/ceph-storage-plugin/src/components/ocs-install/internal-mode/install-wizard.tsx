@@ -17,13 +17,13 @@ import { setFlag } from '@console/internal/actions/features';
 import { k8sCreate, referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { getName } from '@console/shared';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
+import { SelectCapacityAndNodes, Configure, ReviewAndCreate } from './install-wizard-steps';
+import { initialState, reducer, InternalClusterState } from './reducer';
 import { OCSServiceModel } from '../../../models';
 import { OCS_CONVERGED_FLAG, OCS_INDEPENDENT_FLAG, OCS_FLAG } from '../../../features';
 import { OCS_INTERNAL_CR_NAME, MINIMUM_NODES, CreateStepsSC } from '../../../constants';
 import { StorageClusterKind, NetworkType } from '../../../types';
 import { labelNodes, getOCSRequestData, labelOCSNamespace } from '../ocs-request-data';
-import { SelectCapacityAndNodes, Configure, ReviewAndCreate } from './install-wizard-steps';
-import { initialState, reducer, InternalClusterState } from './reducer';
 import { createKmsResources } from '../../kms-config/utils';
 import '../install-wizard/install-wizard.scss';
 

@@ -1,6 +1,6 @@
-import { diskModeDropdownItems, KMSEmptyState } from '../../../constants';
 import { deviceTypeDropdownItems } from '@console/local-storage-operator-plugin/src/constants';
 import { StorageClassResourceKind, NodeKind } from '@console/internal/module/k8s';
+import { diskModeDropdownItems, KMSEmptyState } from '../../../constants';
 import { EncryptionType, KMSConfig, NetworkType } from '../../../types';
 
 export const initialState: State = {

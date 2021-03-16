@@ -1,5 +1,5 @@
-import { $, ExpectedConditions as until, browser, $$ } from 'protractor';
 import * as path from 'path';
+import { $, ExpectedConditions as until, browser, $$ } from 'protractor';
 import * as crudView from '@console/internal-integration-tests/views/crud.view';
 import * as sideNavView from '@console/internal-integration-tests/views/sidenav.view';
 import { click, getOperatorHubCardIndex } from '@console/shared/src/test-utils/utils';

@@ -23,9 +23,9 @@ import {
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
+import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
 import { getOCSVersion } from '../../../../selectors';
 import { RGW_FLAG } from '../../../../features';
-import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
 import { CEPH_STORAGE_NAMESPACE } from '../../../../constants';
 import { getMetric } from '../../../../utils';
 import './details-card.scss';

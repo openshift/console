@@ -28,9 +28,9 @@ import {
 } from '@console/local-storage-operator-plugin/src/components/disks-list/types';
 import { DiskType } from '@console/local-storage-operator-plugin/src/components/local-volume-set/types';
 import { AVAILABLE } from '@console/ceph-storage-plugin/src/constants';
+import { DiscoveredDisk } from '@console/ceph-storage-plugin/src/types';
 import { DiskListModal } from './disk-list-modal';
 import { State, Action } from '../../reducer';
-import { DiscoveredDisk } from '@console/ceph-storage-plugin/src/types';
 import '../../attached-devices.scss';
 
 const getTotalCapacity = (disks: DiscoveredDisk[]): number =>

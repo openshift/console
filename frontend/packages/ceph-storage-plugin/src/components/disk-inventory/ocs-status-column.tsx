@@ -3,7 +3,6 @@ import { TFunction } from 'i18next';
 import { Trans, useTranslation } from 'react-i18next';
 import { OffIcon } from '@patternfly/react-icons';
 import { TableData } from '@console/internal/components/factory';
-import { OCSColumnState, Status, OCSDiskStatus, getOCSColumnStatus } from './state-reducer';
 import { ExternalLink } from '@console/internal/components/utils';
 import {
   ErrorStatus,
@@ -12,6 +11,7 @@ import {
   ProgressStatus,
   StatusIconAndText,
 } from '@console/shared';
+import { OCSColumnState, Status, OCSDiskStatus, getOCSColumnStatus } from './state-reducer';
 import './ocs-status-column.scss';
 
 const getOCSStatusBody = (

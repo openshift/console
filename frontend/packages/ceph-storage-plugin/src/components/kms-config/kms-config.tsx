@@ -16,6 +16,7 @@ import {
 import { global_palette_blue_300 as blueInfoColor } from '@patternfly/react-tokens/dist/js/global_palette_blue_300';
 import { PencilAltIcon, EyeIcon, EyeSlashIcon } from '@patternfly/react-icons';
 
+import { setEncryptionDispatch, parseURL, kmsConfigValidation } from './utils';
 import { advancedKMSModal } from '../modals/advanced-kms-modal/advanced-kms-modal';
 import {
   InternalClusterState,
@@ -25,7 +26,6 @@ import {
 import { KMSProviders } from '../../constants';
 import { KMSConfig } from '../../types';
 import { State, Action } from '../ocs-install/attached-devices-mode/reducer';
-import { setEncryptionDispatch, parseURL, kmsConfigValidation } from './utils';
 import { StorageClassState, StorageClassClusterAction } from '../../utils/storage-pool';
 
 import './kms-config.scss';

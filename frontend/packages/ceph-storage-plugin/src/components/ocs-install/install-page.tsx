@@ -16,11 +16,11 @@ import {
 import { getRequiredKeys, createDownloadFile } from './external-mode/utils';
 import CreateExternalCluster from './external-mode/install';
 import { CreateInternalCluster } from './internal-mode/install-wizard';
-import { CEPH_STORAGE_NAMESPACE, MODES } from '../../constants';
 import { CreateAttachedDevicesCluster } from './attached-devices-mode/install';
+import ExistingClusterModal from './existing-cluster-modal';
+import { CEPH_STORAGE_NAMESPACE, MODES } from '../../constants';
 import { StorageClusterKind } from '../../types';
 import { OCSServiceModel } from '../../models';
-import ExistingClusterModal from './existing-cluster-modal';
 import './install-page.scss';
 
 const INDEP_MODE_SUPPORTED_PLATFORMS = ['BareMetal', 'None', 'VSphere', 'OpenStack', 'oVirt'];

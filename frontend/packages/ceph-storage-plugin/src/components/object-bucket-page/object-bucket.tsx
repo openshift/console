@@ -20,9 +20,9 @@ import {
   SectionHeading,
 } from '@console/internal/components/utils';
 import { ResourceEventStream } from '@console/internal/components/events';
-import { NooBaaObjectBucketClaimModel, NooBaaObjectBucketModel } from '../../models';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { sortable } from '@patternfly/react-table';
+import { NooBaaObjectBucketClaimModel, NooBaaObjectBucketModel } from '../../models';
 import { getPhase } from '../../utils';
 import { obStatusFilter } from '../../utils/table-filters';
 

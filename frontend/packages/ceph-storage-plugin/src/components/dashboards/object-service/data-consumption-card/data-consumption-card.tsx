@@ -15,8 +15,11 @@ import {
   ClusterServiceVersionModel,
   ClusterServiceVersionKind,
 } from '@console/operator-lifecycle-manager';
-import { RGW_FLAG } from '../../../../features';
 import { useFlag } from '@console/shared/src/hooks/flag';
+import { DataConsumptionDropdown } from './data-consumption-card-dropdown';
+import DataConsumptionGraph from './data-consumption-graph';
+import PerformanceGraph from './performance-graph';
+import { DATA_CONSUMPTION_QUERIES } from '../../../../queries/object-storage-queries';
 import {
   CEPH_STORAGE_NAMESPACE,
   OCS_OPERATOR,
@@ -24,10 +27,7 @@ import {
   Metrics,
   ServiceType,
 } from '../../../../constants';
-import { DataConsumptionDropdown } from './data-consumption-card-dropdown';
-import { DATA_CONSUMPTION_QUERIES } from '../../../../queries/object-storage-queries';
-import DataConsumptionGraph from './data-consumption-graph';
-import PerformanceGraph from './performance-graph';
+import { RGW_FLAG } from '../../../../features';
 import './data-consumption-card.scss';
 
 const timeSpan = {

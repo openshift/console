@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
+import { TFunction } from 'i18next';
 import { RowFilter } from '@console/internal/components/filter-toolbar';
 import { getPhase } from './noobaa-utils';
-import { TFunction } from 'i18next';
 
 const allPhases = ['Pending', 'Bound', 'Lost'];
 

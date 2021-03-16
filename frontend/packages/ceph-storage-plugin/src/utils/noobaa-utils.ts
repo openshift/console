@@ -1,11 +1,11 @@
 import * as _ from 'lodash';
+import { TFunction } from 'i18next';
 import { Alert } from '@console/internal/components/monitoring/types';
 import { PrometheusResponse, DataPoint } from '@console/internal/components/graphs';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { StorageClass } from '@console/internal/components/storage-class-form';
 import { PROVIDERS_NOOBAA_MAP, BUCKET_LABEL_NOOBAA_MAP, BC_PROVIDERS } from '../constants';
 import { BackingStoreKind, BucketClassKind, PlacementPolicy } from '../types';
-import { TFunction } from 'i18next';
 
 export const filterNooBaaAlerts = (alerts: Alert[]): Alert[] =>
   alerts.filter((alert) => _.get(alert, 'annotations.storage_type') === 'NooBaa');

@@ -13,12 +13,12 @@ import { history } from '@console/internal/components/utils/router';
 import { BreadCrumbs, resourcePathFromModel } from '@console/internal/components/utils';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
 import { getName } from '@console/shared';
-import { NooBaaBucketClassModel } from '../../models';
 import GeneralPage from './wizard-pages/general-page';
 import PlacementPolicyPage from './wizard-pages/placement-policy-page';
 import BackingStorePage from './wizard-pages/backingstore-page';
 import ReviewPage from './wizard-pages/review-page';
 import { initialState, reducer } from './state';
+import { NooBaaBucketClassModel } from '../../models';
 import { PlacementPolicy } from '../../types';
 import './create-bc.scss';
 

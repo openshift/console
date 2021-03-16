@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { TFunction } from 'i18next';
 import {
   CheckCircleIcon,
   ExclamationCircleIcon,
   DisconnectedIcon,
   LockIcon,
 } from '@patternfly/react-icons';
-import { TFunction } from 'i18next';
 import { POOL_PROGRESS } from '../constants/storage-pool-const';
 import { KMSConfig } from '../types';
 

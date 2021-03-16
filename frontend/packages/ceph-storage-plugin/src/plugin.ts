@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-import * as models from './models';
 import {
   AlertAction,
   ClusterServiceVersionAction,
@@ -28,6 +27,7 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import { NodeModel } from '@console/internal/models';
 import { LSO_DEVICE_DISCOVERY } from '@console/local-storage-operator-plugin/src/plugin';
 import { OCS_ATTACHED_DEVICES_FLAG } from '@console/local-storage-operator-plugin/src/features';
+import * as models from './models';
 import { getCephHealthState } from './components/dashboards/persistent-internal/status-card/utils';
 import { isClusterExpandActivity } from './components/dashboards/persistent-internal/activity-card/cluster-expand-activity';
 import { StorageClassFormProvisoners } from './utils/ocs-storage-class-params';

@@ -22,6 +22,8 @@ import {
   withDashboardResources,
 } from '@console/internal/components/dashboard/with-dashboard-resources';
 import { SubscriptionKind } from '@console/operator-lifecycle-manager';
+import { isClusterExpandActivity, ClusterExpandActivity } from './cluster-expand-activity';
+import { isOCSUpgradeActivity, OCSUpgradeActivity } from './ocs-upgrade-activity';
 import { OCS_OPERATOR, PVC_PROVISIONER_ANNOTATION } from '../../../../constants/index';
 import { DATA_RESILIENCY_QUERY, StorageDashboardQuery } from '../../../../queries';
 import {
@@ -31,8 +33,6 @@ import {
   eventsResource,
 } from '../../../../resources';
 import { getResiliencyProgress, isPersistentStorageEvent } from '../../../../utils';
-import { isClusterExpandActivity, ClusterExpandActivity } from './cluster-expand-activity';
-import { isOCSUpgradeActivity, OCSUpgradeActivity } from './ocs-upgrade-activity';
 import './activity-card.scss';
 
 export const getOCSSubscription = (subscriptions: FirehoseResult): SubscriptionKind => {
