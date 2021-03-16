@@ -3,6 +3,7 @@ import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import { Helmet } from 'react-helmet';
 import {
+  Alert,
   Button,
   Popover,
   Progress,
@@ -86,6 +87,7 @@ import {
 } from '@console/internal/components/utils/k8s-watch-hook';
 import {
   BlueArrowCircleUpIcon,
+  BlueInfoCircleIcon,
   GreenCheckCircleIcon,
   RedExclamationCircleIcon,
   YellowExclamationTriangleIcon,
@@ -143,9 +145,8 @@ const calculatePercentage = (numerator: number, denominator: number): number =>
   Math.round((numerator / denominator) * 100);
 
 export const CurrentChannel: React.FC<CurrentChannelProps> = ({ cv, clusterVersionIsEditable }) => {
-  // TODO: use a more informative empty state label
-  const label = cv.spec.channel || '-';
-  // TODO: do not show #current-channel-update-link when no channels are present in CV (e.g., a nightly build)
+  const { t } = useTranslation();
+  const label = cv.spec.channel || t('cluster-settings~Not configured');
   return clusterVersionIsEditable ? (
     <Button
       type="button"
@@ -244,7 +245,10 @@ const ErrorRetrievingMessage: React.FC<CVStatusMessageProps> = ({ cv }) => {
   );
   const { t } = useTranslation();
   return retrievedUpdatesCondition.reason === 'NoChannel' ? (
-    <span className="text-muted">{t('cluster-settings~No update channel selected')}</span>
+    <>
+      <BlueInfoCircleIcon />{' '}
+      {t('cluster-settings~Not configured to request update recommedations.')}
+    </>
   ) : (
     <Tooltip content={truncateMiddle(retrievedUpdatesCondition.message, { length: 256 })}>
       <span>
@@ -772,6 +776,27 @@ export const ClusterVersionDetailsTable: React.FC<ClusterVersionDetailsTableProp
     <>
       <div className="co-m-pane__body">
         <div className="co-m-pane__body-group">
+          {!cv.spec.channel && (
+            <Alert
+              variant="info"
+              isInline
+              title={t(
+                'cluster-settings~This cluster is not currently requesting update notifications. To request update recommendations, configure a channel.',
+              )}
+              className="co-alert"
+            />
+          )}
+          {cv.spec.channel && status === ClusterUpdateStatus.ErrorRetrieving && (
+            <Alert
+              variant="danger"
+              isInline
+              title={t(
+                'cluster-settings~Version {{version}} not found in channel {{channel}}.  To request update recommendations, configure a channel that supports your version.',
+                { version: getLastCompletedUpdate(cv), channel: cv.spec.channel },
+              )}
+              className="co-alert"
+            />
+          )}
           <div className="co-cluster-settings">
             <div className="co-cluster-settings__row">
               <div className="co-cluster-settings__section co-cluster-settings__section--current">

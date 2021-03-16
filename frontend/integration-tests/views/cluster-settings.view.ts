@@ -6,8 +6,6 @@ export const heading = element(
 );
 export const isLoaded = async () => await browser.wait(waitForNone($$('.co-m-loader')));
 export const channelUpdateLink = $('[data-test-id="current-channel-update-link"]');
-export const channelDropdownButton = $('[data-test-id="dropdown-button"]');
-export const getSelectedChannel = $$('[data-test-id="dropdown-menu"]');
 export const channelPopupCancelButton = $('[data-test-id="modal-cancel-action"]');
 export const globalConfigResourceRow = $('[data-test-action="Console"]').$$(
   '[data-test-id="kebab-button"]',
