@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
@@ -36,13 +37,19 @@ export const MonitoringDashboardGraph: React.FC<MonitoringDashboardGraphProps> =
   timespan,
   pollInterval,
 }) => {
+  const { t } = useTranslation();
   return (
     <DashboardCard className="monitoring-dashboards__card odc-monitoring-dashboard-graph">
       <DashboardCardHeader>
         <DashboardCardTitle>{title}</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody>
-        <PrometheusGraphLink query={query}>
+        <PrometheusGraphLink
+          query={query}
+          ariaChartLinkLabel={t('dashboard~View metrics for {{title}}', {
+            title,
+          })}
+        >
           <QueryBrowser
             hideControls
             defaultTimespan={DEFAULT_TIME_SPAN}

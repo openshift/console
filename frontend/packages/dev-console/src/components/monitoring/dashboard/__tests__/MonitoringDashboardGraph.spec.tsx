@@ -8,6 +8,14 @@ import { MonitoringDashboardGraph, GraphTypes } from '../MonitoringDashboardGrap
 
 const t = (key: TFunction) => key;
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key: string) => key }),
+  };
+});
+
 describe('Monitoring Dashboard graph', () => {
   let monitoringDashboardGraphProps: React.ComponentProps<typeof MonitoringDashboardGraph>;
 

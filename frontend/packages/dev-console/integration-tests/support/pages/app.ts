@@ -57,8 +57,7 @@ export const navigateTo = (opt: devNavigationMenu) => {
     case devNavigationMenu.Monitoring: {
       cy.get(devNavigationMenuPO.monitoring).click();
       detailsPage.titleShouldContain(pageTitle.Monitoring);
-      // Bug: ODC-5119 is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
-      // cy.testA11y('Monitoring Page in dev perspective');
+      cy.testA11y('Monitoring Page in dev perspective');
       break;
     }
     case devNavigationMenu.Builds: {
