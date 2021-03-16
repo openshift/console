@@ -1,14 +1,11 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, AlertActionLink, Stack, StackItem } from '@patternfly/react-core';
-import {
-  ScrollToTopOnMount,
-  SectionHeading,
-  useAccessReview,
-  asAccessReview,
-  history,
-} from '@console/internal/components/utils';
-import { TemplateKind } from '@console/internal/module/k8s';
+import { ScrollToTopOnMount } from '@console/internal/components/utils/scroll-to-top-on-mount';
+import { SectionHeading } from '@console/internal/components/utils/headings';
+import { history } from '@console/internal/components/utils/router';
+import { useAccessReview, asAccessReview } from '@console/internal/components/utils/rbac';
+import { TemplateKind } from '@console/internal/module/k8s/types';
 import { TemplateModel } from '@console/internal/models';
 
 import {

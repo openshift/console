@@ -15,7 +15,16 @@ import {
   YellowExclamationTriangleIcon,
 } from '@console/shared/src/components/status/icons';
 import GenericStatus from '@console/shared/src/components/status/GenericStatus';
-import { Progress, ProgressSize, Button, ButtonVariant } from '@patternfly/react-core';
+import {
+  Progress,
+  ProgressSize,
+  Button,
+  ButtonVariant,
+  Stack,
+  StackItem,
+  Level,
+  LevelItem,
+} from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
 import { ResourceLink, resourcePath } from '@console/internal/components/utils';
 import { PersistentVolumeClaimModel, PodModel } from '@console/internal/models';
@@ -52,34 +61,46 @@ const getStatusSuffixLabelKey = (vmStatusBundle: VMStatusBundle) => {
   return undefined;
 };
 
-type LinkType = {
+export type LinkType = {
   to: string;
+  action?: VoidFunction;
   message?: string;
 };
 
-const VMStatusPopoverContent: React.FC<VMStatusPopoverContentProps> = ({
+export const VMStatusPopoverContent: React.FC<VMStatusPopoverContentProps> = ({
   message,
   children,
   progress,
   links,
 }) => (
-  <>
-    {message}
-    {children && <div className="kubevirt-vm-status__detail-section">{children}</div>}
+  <Stack hasGutter>
+    {message && <StackItem>{message}</StackItem>}
+    {children && <StackItem>{children}</StackItem>}
     {progress != null && (
-      <div className="kubevirt-vm-status__detail-section">
+      <StackItem>
         <Progress value={progress} size={ProgressSize.sm} />
-      </div>
+      </StackItem>
     )}
-    {links &&
-      links.map(({ to, message: linkMessage }) => (
-        <div className="kubevirt-vm-status__detail-section" key={to}>
-          <Link to={to} title={linkMessage}>
-            {linkMessage || to}
-          </Link>
-        </div>
-      ))}
-  </>
+    {!!links?.length && (
+      <StackItem>
+        <Level>
+          {links.map(({ to, action, message: linkMessage }) => (
+            <LevelItem key={to}>
+              {action ? (
+                <Button variant="link" isInline onClick={action}>
+                  {linkMessage}
+                </Button>
+              ) : (
+                <Link to={to} title={linkMessage}>
+                  {linkMessage || to}
+                </Link>
+              )}
+            </LevelItem>
+          ))}
+        </Level>
+      </StackItem>
+    )}
+  </Stack>
 );
 
 type PendingChangesPopoverContentProps = {
@@ -121,7 +142,7 @@ type ImporterPodsProps = {
   statuses: VMStatusBundle['importerPodsStatuses'];
 };
 
-const ImporterPods: React.FC<ImporterPodsProps> = ({ statuses }) => (
+export const ImporterPods: React.FC<ImporterPodsProps> = ({ statuses }) => (
   <>
     {statuses && (
       <ul>
@@ -160,13 +181,13 @@ const ImporterPods: React.FC<ImporterPodsProps> = ({ statuses }) => (
   </>
 );
 
-const VIEW_POD_LOGS = 'View Pod logs';
-const VIEW_VM_EVENTS = 'View VM events';
+export const VIEW_POD_LOGS = 'View Pod logs';
+export const VIEW_VM_EVENTS = 'View VM events';
 
-const getPodLink = (pod: PodKind) =>
+export const getPodLink = (pod: PodKind) =>
   `${resourcePath(PodModel.kind, getName(pod), getNamespace(pod))}`; // to default tab
 
-const getVMILikeLink = (vmLike: VMILikeEntityKind) =>
+export const getVMILikeLink = (vmLike: VMILikeEntityKind) =>
   `${resourcePath(
     getVMLikeModel(vmLike).kind,
     getName(vmLike),

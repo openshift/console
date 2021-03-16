@@ -17,7 +17,7 @@ import { getTemplateOperatingSystems } from '../../selectors/vm-template/advance
 import { vmFlavorModal } from '../modals';
 import { EditButton } from '../edit-button';
 import VMDetailsItem from '../vms/VMDetailsItem';
-import { asVM, getDevices, getVMLikeModel } from '../../selectors/vm';
+import { asVM, getTransformedDevices, getVMLikeModel } from '../../selectors/vm';
 import { BootOrderSummary } from '../boot-order';
 import { VMTemplateLink } from './vm-template-link';
 import { TemplateSource } from './vm-template-source';
@@ -131,7 +131,7 @@ export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
   const { t } = useTranslation();
 
   const id = getBasicID(template);
-  const devices = getDevices(template);
+  const devices = getTransformedDevices(template);
 
   return (
     <dl className="co-m-pane__details">

@@ -288,6 +288,32 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
+    type: 'Page/Route',
+    properties: {
+      path: '/virtualization/new-customize-source',
+      loader: () =>
+        import(
+          './components/vm-templates/customize-source/CustomizeSourceForm' /* webpackChunkName: "kubevirt" */
+        ).then((m) => m.default),
+    },
+    flags: {
+      required: [FLAG_KUBEVIRT],
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      path: '/virtualization/customize-source',
+      loader: () =>
+        import(
+          './components/vm-templates/customize-source/CustomizeSource' /* webpackChunkName: "kubevirt" */
+        ).then((m) => m.default),
+    },
+    flags: {
+      required: [FLAG_KUBEVIRT],
+    },
+  },
+  {
     type: 'Dashboards/Overview/Health/URL',
     properties: {
       title: 'Virtualization',

@@ -21,9 +21,10 @@ import {
   getNodeSelector,
   getTolerations,
   getAffinity,
+  getDevices,
 } from '../../../selectors/vm/selectors';
 import { VMWizardNetwork, VMWizardStorage } from '../../../components/create-vm-wizard/types';
-import { VMILikeMethods } from './types';
+import { VMILikeMethods, BootDevice } from './types';
 import { findKeySuffixValue } from '../../../selectors/utils';
 import {
   TEMPLATE_FLAVOR_LABEL,
@@ -57,6 +58,8 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
     getLabels(_.get(this.data, 'spec.template'), defaultValue);
 
   getDataVolumeTemplates = (defaultValue = []) => getDataVolumeTemplates(this.data, defaultValue);
+
+  getDevices = (defaultValue = {}) => getDevices(this.data, defaultValue);
 
   getNetworkInterfaces = (defaultValue = []) => getInterfaces(this.data, defaultValue);
 
@@ -121,6 +124,41 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
     return disks.find((d) => d.bootOrder === 1) || disks[0];
   };
 
+  getBootDevice = (): BootDevice => {
+    const devices = this.getDevices();
+    if (devices.disks) {
+      const bootDisk = devices.disks.find((d) => d.bootOrder === 1);
+      if (bootDisk) {
+        return {
+          device: bootDisk,
+          type: 'disk',
+        };
+      }
+    }
+
+    if (devices.interfaces) {
+      const bootInterface = devices.interfaces.find((i) => i.bootOrder === 1);
+      if (bootInterface) {
+        return {
+          device: bootInterface,
+          type: 'interface',
+        };
+      }
+    }
+
+    const devicesKeys = Object.keys(devices);
+    const deviceIndex = _.toArray(devices).findIndex((d) => d.length > 0);
+
+    if (deviceIndex !== -1) {
+      const deviceKey = devicesKeys[deviceIndex];
+      return {
+        device: devices[deviceKey][0],
+        type: deviceKey === 'disks' ? 'disk' : 'interface',
+      };
+    }
+    return null;
+  };
+
   addTemplateAnnotation = (key: string, value: string) => {
     if (key) {
       this.ensurePath('spec.template.metadata.annotations');
@@ -175,6 +213,23 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
     return this;
   };
 
+  setStorage = (
+    storages: {
+      disk: V1Disk;
+      volume: V1Volume;
+      dataVolume?: V1alpha1DataVolume;
+    }[],
+  ) => {
+    this.ensurePath('spec.template.spec.domain.devices');
+    this.data.spec.template.spec.domain.devices.disks = _.compact(
+      storages.map((storage) => storage.disk),
+    );
+    this.data.spec.template.spec.volumes = _.compact(storages.map((storage) => storage.volume));
+    this.data.spec.dataVolumeTemplates = _.compact(storages.map((storage) => storage.dataVolume));
+    this.ensureStorageConsistency();
+    return this;
+  };
+
   prependStorage = ({
     disk,
     volume,
@@ -190,6 +245,23 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
     if (dataVolume) {
       this.getDataVolumeTemplates().unshift(dataVolume);
     }
+    this.ensureStorageConsistency();
+    return this;
+  };
+
+  appendStorage = ({
+    disk,
+    volume,
+    dataVolume,
+  }: {
+    disk?: V1Disk;
+    volume?: V1Volume;
+    dataVolume?: V1alpha1DataVolume;
+  }) => {
+    this.ensureStorages();
+    disk && this.getDisks().push(disk);
+    volume && this.getVolumes().push(volume);
+    dataVolume && this.getDataVolumeTemplates().push(dataVolume);
     this.ensureStorageConsistency();
     return this;
   };
@@ -216,33 +288,11 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
     return this;
   };
 
-  removeDiskByPVC = (nameParam: string, namespaceParam: string) => {
+  removeInterface = (interfaceName: string) => {
     this.ensurePath('spec.template.spec.domain.devices', {});
-    const metaDataNames: string[] = [];
-
-    this.data.spec.dataVolumeTemplates = this.data?.spec?.dataVolumeTemplates?.filter(
-      (dataVolume) => {
-        const { name, namespace } = dataVolume?.spec?.source?.pvc;
-        if (name === nameParam && namespace === namespaceParam) {
-          metaDataNames.push(dataVolume?.metadata?.name);
-          return false;
-        }
-        return true;
-      },
+    this.data.spec.template.spec.domain.devices.interfaces = this.getNetworkInterfaces().filter(
+      (i) => i.name !== interfaceName,
     );
-
-    this.data.spec.template.spec.volumes = this.data?.spec?.template?.spec?.volumes.filter(
-      (volume) => {
-        return !metaDataNames.find((metaDataName) => volume.name === metaDataName);
-      },
-    );
-
-    this.data.spec.template.spec.domain.devices.disks = this.data?.spec?.template?.spec?.domain?.devices?.disks?.filter(
-      (disk) => !disk.name || !metaDataNames.find((metaDataName) => disk.name === metaDataName),
-    );
-
-    this.ensureStorageConsistency();
-
     return this;
   };
 

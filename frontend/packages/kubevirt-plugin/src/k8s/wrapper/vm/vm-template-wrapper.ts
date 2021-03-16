@@ -4,7 +4,7 @@ import { TemplateModel } from '@console/internal/models';
 import { K8sResourceWrapper } from '../common/k8s-resource-wrapper';
 import { VMWrapper } from './vm-wrapper';
 import { selectVM } from '../../../selectors/vm-template/basic';
-import { findKeySuffixValue } from '../../../selectors/utils';
+import { findHighestKeyBySuffixValue, findKeySuffixValue } from '../../../selectors/utils';
 import {
   TEMPLATE_FLAVOR_LABEL,
   TEMPLATE_OS_LABEL,
@@ -30,7 +30,7 @@ export class VMTemplateWrapper extends K8sResourceWrapper<TemplateKind, VMTempla
     return this;
   }
 
-  getOperatingSystem = () => findKeySuffixValue(this.getLabels(), TEMPLATE_OS_LABEL);
+  getOperatingSystem = () => findHighestKeyBySuffixValue(this.getLabels(), TEMPLATE_OS_LABEL);
   getWorkloadProfile = () => findKeySuffixValue(this.getLabels(), TEMPLATE_WORKLOAD_LABEL);
   getFlavor = () => findKeySuffixValue(this.getLabels(), TEMPLATE_FLAVOR_LABEL);
 
@@ -52,6 +52,17 @@ export class VMTemplateWrapper extends K8sResourceWrapper<TemplateKind, VMTempla
       .forEach((param) => {
         delete param.required;
       });
+    return this;
+  };
+
+  removeParameter = (parameterName: string) => {
+    const index = this.data.parameters
+      ? this.data.parameters.findIndex((p) => p.name === parameterName)
+      : -1;
+    if (index !== -1) {
+      this.data.parameters.splice(index, 1);
+    }
+    this.clearIfEmpty('parameters');
     return this;
   };
 }

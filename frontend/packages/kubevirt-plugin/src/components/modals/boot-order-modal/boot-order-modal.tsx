@@ -21,7 +21,7 @@ import { BootableDeviceType, VMIKind } from '../../../types';
 import { VMLikeEntityKind } from '../../../types/vmLike';
 import {
   getVMLikeModel,
-  getDevices,
+  getTransformedDevices,
   getBootableDevices,
   asVM,
   isVMRunningOrExpectedRunning,
@@ -96,7 +96,7 @@ const BootOrderModalComponent = withHandlePromise(
 
     const saveChanges = () => {
       // Copy only bootOrder from devices to current device list.
-      const currentDevices = _.cloneDeep(getDevices(vmLikeEntity));
+      const currentDevices = _.cloneDeep(getTransformedDevices(vmLikeEntity));
       const devicesMap = createBasicLookup(currentDevices, deviceKey);
       devices.forEach((d) => {
         // Find the device to update.

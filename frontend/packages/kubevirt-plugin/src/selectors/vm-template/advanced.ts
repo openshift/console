@@ -21,6 +21,7 @@ import {
   DiskBus,
   ROOT_DISK_NAME,
   DataVolumeSourceType,
+  DEFAULT_DISK_SIZE,
 } from '../../constants/vm';
 import {
   getCloudInitVolume,
@@ -163,7 +164,7 @@ export const getTemplateSizeRequirementInBytes = (
     sourceSize = convertToBaseValue(getDataVolumeStorageSize(templateSource.dvTemplate));
   }
 
-  return templatesSize + sourceSize + (isCDRom ? convertToBaseValue('20Gi') : 0);
+  return templatesSize + sourceSize + (isCDRom ? convertToBaseValue(DEFAULT_DISK_SIZE) : 0);
 };
 
 export const getTemplateMemory = (template: TemplateKind): string => {

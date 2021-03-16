@@ -66,7 +66,7 @@ export const DevConsoleCreateVmForm: React.FC<RouteComponentProps> = () => {
     resourcesLoadError,
   } = useVmTemplatesResources(namespace);
 
-  const selectedTemplate = filterTemplates(userTemplates, baseTemplates)
+  const selectedTemplate = filterTemplates([...userTemplates, ...baseTemplates])
     .filter((tmp) => {
       const tempSourceStatus = getTemplateSourceStatus({
         pods,

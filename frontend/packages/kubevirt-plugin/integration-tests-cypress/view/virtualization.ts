@@ -55,7 +55,21 @@ export const virtualization = {
       cy.byTestID('delete-template-source').click();
       cy.byTestID('confirm-action').click();
     },
+    customizeSource: (templateName: string) => {
+      getRow(templateName, () =>
+        cy.byTestID('template-source').within(() => cy.get('button').click()),
+      );
+      cy.byTestID('customize-template-source').click();
+      cy.get('#confirm-action').click();
+    },
+    launchConsole: (templateName: string) => {
+      getRow(templateName, () =>
+        cy.byTestID('template-source').within(() => cy.get('button').click()),
+      );
+      cy.byTestID('launch-console').click();
+    },
     clickCreate: (templateName: string) =>
       getRow(templateName, () => cy.byTestID('create-from-template').click()),
+    filter: (templateName: string) => cy.byLegacyTestID('item-filter').type(templateName),
   },
 };

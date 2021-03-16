@@ -6,6 +6,7 @@ import {
   getLabels,
   getOwnerReferences,
   getCreationTimestamp,
+  getAnnotations,
 } from '@console/shared/src';
 import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
 import { K8sKind, K8sResourceCommon, OwnerReference } from '@console/internal/module/k8s';
@@ -42,6 +43,7 @@ export abstract class K8sResourceWrapper<
   getNamespace = () => getNamespace(this.data);
   getCreationTimestamp = () => getCreationTimestamp(this.data);
   getLabels = (defaultValue = {}) => getLabels(this.data, defaultValue);
+  getAnnotations = (defaultValue = {}) => getAnnotations(this.data, defaultValue);
   hasLabel = (label: string) => hasLabel(this.data, label);
   getOwnerReferences = () => getOwnerReferences(this.data);
 
@@ -73,11 +75,39 @@ export abstract class K8sResourceWrapper<
     return (this as any) as SELF;
   };
 
+  removeAnnotation = (key: string) => {
+    if (key) {
+      this.ensurePath('metadata.annotations');
+      delete this.data.metadata.annotations[key];
+      this.clearIfEmpty('metadata.annotations');
+    }
+    return (this as any) as SELF;
+  };
+
+  removeAnnotations = () => {
+    delete this.data.metadata.annotations;
+    return (this as any) as SELF;
+  };
+
   addLabel = (key: string, value: string) => {
     if (key) {
       this.ensurePath('metadata.labels');
       this.data.metadata.labels[key] = value;
     }
+    return (this as any) as SELF;
+  };
+
+  removeLabel = (key: string) => {
+    if (key) {
+      this.ensurePath('metadata.labels');
+      delete this.data.metadata.labels[key];
+      this.clearIfEmpty('metadata.labels');
+    }
+    return (this as any) as SELF;
+  };
+
+  removeLabels = () => {
+    delete this.data.metadata.labels;
     return (this as any) as SELF;
   };
 

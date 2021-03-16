@@ -36,6 +36,8 @@ export const TEMPLATE_PARENT_PROVIDER_ANNOTATION = 'template.kubevirt.ui/parent-
 export const TEMPLATE_PARENT_SUPPORT_LEVEL = 'template.kubevirt.ui/parent-support-level';
 export const TEMPLATE_PARENT_PROVIDER_URL = 'template.kubevirt.ui/parent-provider-url';
 export const TEMPLATE_DEPRECATED_ANNOTATION = 'template.kubevirt.io/deprecated';
+export const TEMPLATE_CUSTOMIZED_ANNOTATION = 'template.kubevirt.ui/customized-template';
+export const VM_CUSTOMIZE_LABEL = 'template.kubevirt.ui/customize-vm';
 
 export const LABEL_USED_TEMPLATE_NAME = 'vm.kubevirt.io/template';
 export const LABEL_USED_TEMPLATE_NAMESPACE = 'vm.kubevirt.io/template.namespace';
@@ -76,8 +78,11 @@ export const getPVCUploadURL = (pvcNamespace: string): string =>
   `/k8s/ns/${pvcNamespace}/persistentvolumeclaims/~new/upload-form`;
 
 export const ROOT_DISK_NAME = 'rootdisk';
-export const ROOT_DISK_INSTALL_NAME = 'rootdisk-install';
+export const ROOT_DISK_INSTALL_NAME = 'install';
 
 export const TEMPLATE_PIN = 'kubevirt.templates.pins';
 export const TEMPLATE_PIN_PROMOTED = 'kubevirt.templates.pins.promoted';
 export const TEMPLATE_WARN_SUPPORT = 'kubevirt.templates.warnSupport';
+export const TEMPLATE_CUSTOMIZE_SOURCE = 'kubevirt.templates.customizeSource';
+
+export const DEFAULT_DISK_SIZE = '20Gi';

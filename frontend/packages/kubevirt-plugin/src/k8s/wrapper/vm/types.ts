@@ -28,3 +28,13 @@ export interface VMILikeMethods extends K8sResourceKindMethods {
 
   getCPU: () => CPURaw;
 }
+
+export type BootDevice =
+  | {
+      device: V1Disk;
+      type: 'disk';
+    }
+  | {
+      device: V1NetworkInterface;
+      type: 'interface';
+    };

@@ -2,7 +2,16 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { PlusCircleIcon, InProgressIcon } from '@patternfly/react-icons';
 import { referenceForModel, TemplateKind } from '@console/internal/module/k8s';
-import { Alert, Button, ButtonVariant, Label, Stack, StackItem } from '@patternfly/react-core';
+import {
+  Alert,
+  Button,
+  ButtonVariant,
+  Label,
+  Stack,
+  StackItem,
+  Level,
+  LevelItem,
+} from '@patternfly/react-core';
 import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
 import { ExternalLink, LoadingInline, ResourceLink } from '@console/internal/components/utils';
 import {
@@ -29,6 +38,7 @@ import {
 } from '../../statuses/template/types';
 import { DataVolumeWrapper } from '../../k8s/wrapper/vm/data-volume-wrapper';
 import { BOOT_SOURCE_AVAILABLE, DataVolumeSourceType } from '../../constants';
+import { useCustomizeSourceModal } from '../../hooks/use-customize-source-modal';
 
 import './vm-template-source.scss';
 
@@ -62,14 +72,16 @@ const AddSourceButton: React.FC<AddSourceButtonProps> = ({ template }) => {
   const uploadContextProps = React.useContext(CDIUploadContext);
   return (
     isCommonTemplate(template) && (
-      <Button
-        isInline
-        variant={ButtonVariant.link}
-        onClick={() => addTemplateSourceModal({ template, ...uploadContextProps })}
-      >
-        <PlusCircleIcon className="co-icon-and-text__icon" />
-        {t('kubevirt-plugin~Add source')}
-      </Button>
+      <LevelItem>
+        <Button
+          isInline
+          variant={ButtonVariant.link}
+          onClick={() => addTemplateSourceModal({ template, ...uploadContextProps })}
+        >
+          <PlusCircleIcon className="co-icon-and-text__icon" />
+          {t('kubevirt-plugin~Add source')}
+        </Button>
+      </LevelItem>
     )
   );
 };
@@ -84,7 +96,7 @@ const DeleteSourceButton: React.FC<DeleteSourceButtonProps> = ({ template, sourc
   return (
     isCommonTemplate(template) &&
     (sourceStatus.dataVolume || sourceStatus.pvc) && (
-      <StackItem>
+      <LevelItem>
         <Button
           isInline
           variant={ButtonVariant.link}
@@ -93,7 +105,25 @@ const DeleteSourceButton: React.FC<DeleteSourceButtonProps> = ({ template, sourc
         >
           {t('kubevirt-plugin~Delete source')}
         </Button>
-      </StackItem>
+      </LevelItem>
+    )
+  );
+};
+
+const CustomizeSourceButton: React.FC<DeleteSourceButtonProps> = ({ template, sourceStatus }) => {
+  const { t } = useTranslation();
+  const customize = useCustomizeSourceModal();
+  return (
+    !isTemplateSourceError(sourceStatus) &&
+    sourceStatus.source !== SOURCE_TYPE.CONTAINER && (
+      <Button
+        isInline
+        variant={ButtonVariant.link}
+        onClick={() => customize(template)}
+        data-test="customize-template-source"
+      >
+        {t('kubevirt-plugin~Customize source')}
+      </Button>
     )
   );
 };
@@ -309,8 +339,6 @@ export const TemplateSource: React.FC<TemplateSourceProps> = ({
   const { isReady, dataVolume, pod, addedOn, provider } = sourceStatus;
 
   if (isReady) {
-    // t('kubevirt-plugin~Available')
-    // t('kubevirt-plugin~{{provider}} defined')
     return (
       <SuccessStatus
         popoverTitle={
@@ -332,7 +360,10 @@ export const TemplateSource: React.FC<TemplateSourceProps> = ({
           <StackItem>
             <SourceDescription template={template} sourceStatus={sourceStatus} />
           </StackItem>
-          <DeleteSourceButton template={template} sourceStatus={sourceStatus} />
+          <Level>
+            <CustomizeSourceButton template={template} sourceStatus={sourceStatus} />
+            <DeleteSourceButton template={template} sourceStatus={sourceStatus} />
+          </Level>
         </Stack>
       </SuccessStatus>
     );

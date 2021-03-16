@@ -1,0 +1,33 @@
+.kv-customize-source {
+  padding: var(--pf-global--spacer--lg);
+}
+
+.kv-customize-source__cloud-init {
+  min-height: 10rem;
+}
+
+.kv-customize-source__status {
+  margin-top: var(--pf-global--spacer--3xl);
+}
+
+.kv-customize-source__status--center {
+  text-align: center;
+}
+
+.kv-customize-source__status-link {
+  display: block;
+  text-align: center;
+}
+
+.kv-customize-source__footer {
+  position: fixed;
+  z-index: 1000;
+  width: 100%;
+  background: rgba(255,255,255,0.8);
+  bottom: 0;
+  padding: var(--pf-global--spacer--md) 0;
+}
+
+.kv-customize-source__console {
+  padding-bottom: var(--pf-global--spacer--2xl);
+}

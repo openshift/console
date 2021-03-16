@@ -4,6 +4,7 @@ import { Stack, StackItem } from '@patternfly/react-core';
 import { getNamespace } from '@console/shared';
 import { K8sKind, TemplateKind } from '@console/internal/module/k8s';
 import { asAccessReview, Kebab, KebabOption } from '@console/internal/components/utils';
+
 import { VMWizardName, VMWizardMode } from '../../constants/vm';
 import { VirtualMachineModel } from '../../models';
 import { getVMWizardCreateLink } from '../../utils/url';
@@ -12,8 +13,15 @@ import { TemplateItem } from '../../types/template';
 import { isCommonTemplate } from '../../selectors/vm-template/basic';
 import { PinnedIcon } from './os-icons';
 import { SupportModalFunction } from '../../hooks/use-support-modal';
-import { TemplateSourceStatus } from '../../statuses/template/types';
+import { CustomizeSourceFunction } from '../../hooks/use-customize-source-modal';
+import {
+  TemplateSourceStatus,
+  isTemplateSourceError,
+  SOURCE_TYPE,
+} from '../../statuses/template/types';
 import { createVMAction } from './utils';
+import { VMKind } from '../../types';
+import deleteVMTCustomizationModal from '../modals/menu-actions-modals/DeleteVMTCustomizationModal';
 
 type CustomData = {
   togglePin?: (template: TemplateItem) => void;
@@ -24,6 +32,7 @@ type CustomData = {
   sourceLoaded: boolean;
   sourceLoadError: any;
   withCreate?: boolean;
+  withCustomizeModal: CustomizeSourceFunction;
 };
 
 type MenuAction = (kind: K8sKind, vmTemplate: TemplateItem, customData?: CustomData) => KebabOption;
@@ -46,7 +55,10 @@ const vmTemplateCreateVMAction: MenuAction = (
 ) => ({
   // t('kubevirt-plugin~Create Virtual Machine')
   labelKey: 'kubevirt-plugin~Create Virtual Machine',
-  callback: () => withSupportModal(obj, () => createVMAction(obj, sourceStatus, namespace)),
+  callback: () =>
+    withSupportModal(obj.variants[0], () =>
+      createVMAction(obj.variants[0], sourceStatus, namespace),
+    ),
   accessReview: asAccessReview(
     VirtualMachineModel,
     { metadata: { namespace: getNamespace(obj) } },
@@ -54,6 +66,22 @@ const vmTemplateCreateVMAction: MenuAction = (
   ),
   isDisabled: !sourceLoaded || !!sourceLoadError,
   hidden: !withCreate,
+});
+
+const customizeTemplate: MenuAction = (
+  kind,
+  obj,
+  { sourceStatus, sourceLoaded, sourceLoadError, withCustomizeModal },
+) => ({
+  // t('kubevirt-plugin~Customize boot source')
+  labelKey: 'kubevirt-plugin~Customize boot source',
+  callback: () => withCustomizeModal(obj.variants[0]),
+  isDisabled:
+    !sourceLoaded ||
+    !!sourceLoadError ||
+    isTemplateSourceError(sourceStatus) ||
+    !sourceStatus ||
+    sourceStatus.source === SOURCE_TYPE.CONTAINER,
 });
 
 const MenuActionDeleteVMTemplateLabelDisabled: React.FC = () => {
@@ -132,11 +160,17 @@ export const menuActionsCreator = (
         variants: [template],
       };
   const actions = templateItem.isCommon
-    ? [vmTemplateCreateVMAction, newTemplateFromCommon, menuActionDeleteVMTemplate]
+    ? [
+        vmTemplateCreateVMAction,
+        newTemplateFromCommon,
+        customizeTemplate,
+        menuActionDeleteVMTemplate,
+      ]
     : [
         vmTemplateCreateVMAction,
         Kebab.factory.ModifyLabels,
         Kebab.factory.ModifyAnnotations,
+        customizeTemplate,
         menuActionDeleteVMTemplate,
       ];
 
@@ -145,3 +179,12 @@ export const menuActionsCreator = (
   }
   return actions.map((a) => a(kindObj, templateItem, customData));
 };
+
+export const customizeTemplateActions = (vm: VMKind): KebabOption[] => [
+  {
+    // t('kubevirt-plugin~Delete Template')
+    labelKey: 'kubevirt-plugin~Delete Template',
+    callback: () => deleteVMTCustomizationModal({ vm }),
+    accessReview: asAccessReview(VirtualMachineModel, vm, 'delete'),
+  },
+];

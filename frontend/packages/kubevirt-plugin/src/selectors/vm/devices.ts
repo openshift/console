@@ -38,7 +38,7 @@ export const transformDevices = (
   return [...transformedDisks, ...transformedNics];
 };
 
-export const getDevices = (vmLikeEntity: VMLikeEntityKind): BootableDeviceType[] => {
+export const getTransformedDevices = (vmLikeEntity: VMLikeEntityKind): BootableDeviceType[] => {
   const vm = asVM(vmLikeEntity);
   return transformDevices(getDisks(vm), getInterfaces(vm));
 };

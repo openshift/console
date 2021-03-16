@@ -3,6 +3,7 @@ import { ConfigMapKind } from '@console/internal/module/k8s';
 import { generateDataVolumeName } from '.';
 import {
   DataVolumeSourceType,
+  DEFAULT_DISK_SIZE,
   DiskBus,
   DiskType,
   DUMMY_VM_NAME,
@@ -21,6 +22,7 @@ export const getEmptyInstallStorage = (
   scConfigMap: ConfigMapKind,
   bus = DiskBus.VIRTIO,
   vmName = DUMMY_VM_NAME,
+  size = DEFAULT_DISK_SIZE,
 ) => {
   const dataVolumeName = generateDataVolumeName(vmName, ROOT_DISK_INSTALL_NAME);
   return {
@@ -33,7 +35,8 @@ export const getEmptyInstallStorage = (
       .setType(VolumeType.DATA_VOLUME, { name: dataVolumeName })
       .asResource(),
     dataVolume: new DataVolumeWrapper()
-      .init({ name: dataVolumeName, size: 20, unit: 'Gi' })
+      .init({ name: dataVolumeName })
+      .setRawSize(size)
       .setType(DataVolumeSourceType.BLANK)
       .setAccessModes(getDefaultSCAccessModes(scConfigMap))
       .setVolumeMode(getDefaultSCVolumeMode(scConfigMap))

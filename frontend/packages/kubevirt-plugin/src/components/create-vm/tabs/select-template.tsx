@@ -52,7 +52,7 @@ import { isTemplateSourceError, TemplateSourceStatus } from '../../../statuses/t
 import { usePinnedTemplates } from '../../../hooks/use-pinned-templates';
 import { BOOT_SOURCE_AVAILABLE, BOOT_SOURCE_REQUIRED } from '../../../constants';
 import { FormPFSelect } from '../../form/form-pf-select';
-import { VMTemplateSupport } from '../../vm-templates/vm-template';
+import VMTemplateSupport from '../../vm-templates/VMTemplateSupport';
 import { useVmTemplatesFilters } from '../hooks/use-vm-templates-filters';
 
 import './select-template.scss';

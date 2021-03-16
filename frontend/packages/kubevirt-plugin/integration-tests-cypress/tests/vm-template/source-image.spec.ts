@@ -7,7 +7,6 @@ const TEMPLATE = Cypress.env('TEMPLATE_NAME');
 
 describe('test vm template source image', () => {
   before(() => {
-    cy.login();
     cy.visit('');
     cy.createProject(testName);
   });
