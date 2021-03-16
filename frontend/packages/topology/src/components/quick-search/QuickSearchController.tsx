@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { getQueryArgument } from '@console/internal/components/utils';
 import { quickSearch } from './utils/quick-search-utils';
-import QuickSearchButton from './QuickSearchButton';
 import QuickSearchModal from './QuickSearchModal';
 import { QuickSearchData, QuickSearchProviders } from './utils/quick-search-types';
 
@@ -11,6 +9,8 @@ type QuickSearchControllerProps = {
   viewContainer?: HTMLElement;
   quickSearchProviders: QuickSearchProviders;
   allItemsLoaded: boolean;
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
 };
 
 const QuickSearchController: React.FC<QuickSearchControllerProps> = ({
@@ -18,10 +18,9 @@ const QuickSearchController: React.FC<QuickSearchControllerProps> = ({
   quickSearchProviders,
   viewContainer,
   allItemsLoaded,
+  isOpen,
+  setIsOpen,
 }) => {
-  const [isQuickSearchActive, setIsQuickSearchActive] = React.useState<boolean>(
-    !!getQueryArgument('catalogSearch'),
-  );
   const { t } = useTranslation();
 
   const searchCatalog = React.useCallback(
@@ -64,7 +63,7 @@ const QuickSearchController: React.FC<QuickSearchControllerProps> = ({
 
       if (e.code === 'Space' && e.ctrlKey) {
         e.preventDefault();
-        setIsQuickSearchActive(true);
+        setIsOpen(true);
       }
     };
 
@@ -73,20 +72,17 @@ const QuickSearchController: React.FC<QuickSearchControllerProps> = ({
     return () => {
       window.removeEventListener('keydown', onKeyDown);
     };
-  }, []);
+  }, [setIsOpen]);
 
   return (
-    <>
-      <QuickSearchButton onClick={() => setIsQuickSearchActive(true)} />
-      <QuickSearchModal
-        isOpen={isQuickSearchActive}
-        closeModal={() => setIsQuickSearchActive(false)}
-        namespace={namespace}
-        allCatalogItemsLoaded={allItemsLoaded}
-        searchCatalog={searchCatalog}
-        viewContainer={viewContainer}
-      />
-    </>
+    <QuickSearchModal
+      isOpen={isOpen}
+      closeModal={() => setIsOpen(false)}
+      namespace={namespace}
+      allCatalogItemsLoaded={allItemsLoaded}
+      searchCatalog={searchCatalog}
+      viewContainer={viewContainer}
+    />
   );
 };
 

@@ -98,7 +98,7 @@ describe('TopologyPageToolbar tests', () => {
     expect(wrapper.find(Button).exists()).toBe(false);
   });
 
-  it('should not contain view switcher when no model', () => {
+  it('should disable view switcher when no model', () => {
     const mockViewChange = jest.fn();
     spyOn(React, 'useContext').and.returnValue({
       isEmptyModel: true,
@@ -107,6 +107,9 @@ describe('TopologyPageToolbar tests', () => {
     const wrapper = shallow(
       <TopologyPageToolbar viewType={TopologyViewType.graph} onViewChange={mockViewChange} />,
     );
-    expect(wrapper.find(Button).exists()).toBe(false);
+    const switcher = wrapper.find(Button);
+    expect(switcher.exists()).toBe(true);
+    expect(switcher.at(0).props().isDisabled).toBe(true);
+    expect(switcher.at(1).props().isDisabled).toBe(true);
   });
 });

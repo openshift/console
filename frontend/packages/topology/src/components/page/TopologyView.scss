@@ -2,6 +2,12 @@
   display: grid;
   height: 100%;
 
+  &__empty-state {
+    padding-top: 0;
+    position: absolute;
+    top: 15%;
+  }
+
   .pf-topology-container__with-sidebar .pf-topology-content {
     position: relative;
   }

@@ -28,8 +28,8 @@ import {
 } from './filter-utils';
 import FilterDropdown from './FilterDropdown';
 import KindFilterDropdown from './KindFilterDropdown';
-import QuickSearch from '../components/quick-search/QuickSearch';
 import { getNamespaceDashboardKialiLink } from '../utils/topology-utils';
+import QuickSearchButton from '../components/quick-search/QuickSearchButton';
 import { FilterContext } from './FilterProvider';
 
 import './TopologyFilterBar.scss';
@@ -41,9 +41,10 @@ type StateProps = {
 };
 
 type OwnProps = {
+  isDisabled: boolean;
   visualization?: Visualization;
   viewType: TopologyViewType;
-  viewContainer?: HTMLElement;
+  setIsQuickSearchOpen: (isOpen: boolean) => void;
 };
 
 type TopologyFilterBarProps = StateProps & OwnProps;
@@ -51,10 +52,11 @@ type TopologyFilterBarProps = StateProps & OwnProps;
 const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
   supportedFilters,
   supportedKinds,
+  isDisabled,
   visualization,
   viewType,
   namespace,
-  viewContainer,
+  setIsQuickSearchOpen,
 }) => {
   const { t } = useTranslation();
   const { filters, setTopologyFilters: onFiltersChange } = React.useContext(FilterContext);
@@ -76,7 +78,7 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
     <Toolbar className="co-namespace-bar odc-topology-filter-bar">
       <ToolbarContent>
         <ToolbarItem>
-          <QuickSearch namespace={namespace} viewContainer={viewContainer} />
+          <QuickSearchButton onClick={() => setIsQuickSearchOpen(true)} />
         </ToolbarItem>
         <ToolbarGroup variant={ToolbarGroupVariant['filter-group']}>
           <ToolbarItem>
@@ -85,6 +87,7 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
               viewType={viewType}
               supportedFilters={supportedFilters}
               onChange={onFiltersChange}
+              isDisabled={isDisabled}
             />
           </ToolbarItem>
         </ToolbarGroup>
@@ -94,6 +97,7 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
               filters={filters}
               supportedKinds={supportedKinds}
               onChange={onFiltersChange}
+              isDisabled={isDisabled}
             />
           </ToolbarItem>
         </ToolbarGroup>
@@ -105,6 +109,7 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
               autoFocus
               onChange={onTextFilterChange}
               className="odc-topology-filter-bar__text-filter"
+              isDisabled={isDisabled}
             />
           </ToolbarItem>
           {viewType === TopologyViewType.graph ? (
@@ -130,6 +135,7 @@ const TopologyFilterBar: React.FC<TopologyFilterBarProps> = ({
                   variant="link"
                   className="odc-topology-filter-bar__info-icon"
                   aria-label={t('topology~Find by name')}
+                  isDisabled={isDisabled}
                 >
                   <InfoCircleIcon />
                 </Button>

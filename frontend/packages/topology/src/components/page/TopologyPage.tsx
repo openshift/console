@@ -27,7 +27,6 @@ interface TopologyPageProps {
     name?: string;
   }>;
   activeViewStorageKey?: string;
-  title?: string;
   hideProjects?: boolean;
   defaultViewType?: TopologyViewType;
 }
@@ -35,7 +34,6 @@ interface TopologyPageProps {
 const TopologyPage: React.FC<TopologyPageProps> = ({
   match,
   activeViewStorageKey = LAST_TOPOLOGY_VIEW_LOCAL_STORAGE_KEY,
-  title,
   hideProjects = false,
   defaultViewType = TopologyViewType.graph,
 }) => {
@@ -105,10 +103,7 @@ const TopologyPage: React.FC<TopologyPageProps> = ({
       >
         <ProjectsExistWrapper title={t('topology~Topology')} projects={projects}>
           {namespace ? (
-            <TopologyDataRenderer
-              viewType={viewType}
-              title={title !== undefined ? title : t('topology~Topology')}
-            />
+            <TopologyDataRenderer viewType={viewType} />
           ) : (
             <CreateProjectListPage title={t('topology~Topology')}>
               {(openProjectModal) => (

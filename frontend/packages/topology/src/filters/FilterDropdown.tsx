@@ -18,6 +18,7 @@ type FilterDropdownProps = {
   viewType: TopologyViewType;
   supportedFilters: string[];
   onChange: (filter: DisplayFilters) => void;
+  isDisabled?: boolean;
   opened?: boolean; // Use only for testing
 };
 
@@ -26,6 +27,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
   viewType,
   supportedFilters,
   onChange,
+  isDisabled = false,
   opened = false,
 }) => {
   const { t } = useTranslation();
@@ -144,6 +146,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
       className="odc-topology-filter-dropdown__select"
       variant={SelectVariant.checkbox}
       customContent={selectContent}
+      isDisabled={isDisabled}
       onToggle={onToggle}
       isOpen={isOpen}
       onSelect={onSelect}

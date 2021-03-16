@@ -13,11 +13,12 @@ import {
 } from '@patternfly/react-topology';
 import { COLA_FORCE_LAYOUT, COLA_LAYOUT } from './layouts/layoutFactory';
 
-interface TopologyControlBarProps {
+interface ControlBarProps {
   visualization: Visualization;
+  isDisabled: boolean;
 }
 
-const TopologyControlBar: React.FC<TopologyControlBarProps> = observer(({ visualization }) => {
+const TopologyControlBar: React.FC<ControlBarProps> = observer(({ visualization, isDisabled }) => {
   const { t } = useTranslation();
   const layout = visualization.getGraph()?.getLayout() ?? COLA_LAYOUT;
   return (
@@ -31,22 +32,26 @@ const TopologyControlBar: React.FC<TopologyControlBarProps> = observer(({ visual
             }),
             zoomInTip: t('topology~Zoom in'),
             zoomInAriaLabel: t('topology~Zoom in'),
+            zoomInDisabled: isDisabled,
             zoomOutCallback: action(() => {
               visualization.getGraph().scaleBy(0.75);
             }),
             zoomOutTip: t('topology~Zoom out'),
             zoomOutAriaLabel: t('topology~Zoom out'),
+            zoomOutDisabled: isDisabled,
             fitToScreenCallback: action(() => {
               visualization.getGraph().fit(80);
             }),
             fitToScreenTip: t('topology~Fit to screen'),
             fitToScreenAriaLabel: t('topology~Fit to screen'),
+            fitToScreenDisabled: isDisabled,
             resetViewCallback: action(() => {
               visualization.getGraph().reset();
               visualization.getGraph().layout();
             }),
             resetViewTip: t('topology~Reset view'),
             resetViewAriaLabel: t('topology~Reset view'),
+            resetViewDisabled: isDisabled,
             legend: false,
           }),
         ]}
@@ -59,6 +64,7 @@ const TopologyControlBar: React.FC<TopologyControlBarProps> = observer(({ visual
                   'pf-m-active': layout === COLA_LAYOUT,
                 })}
                 variant="tertiary"
+                isDisabled={isDisabled}
                 onClick={() => {
                   visualization.getGraph().setLayout(COLA_LAYOUT);
                   visualization.getGraph().layout();
@@ -79,6 +85,7 @@ const TopologyControlBar: React.FC<TopologyControlBarProps> = observer(({ visual
                   'pf-m-active': layout === COLA_FORCE_LAYOUT,
                 })}
                 variant="tertiary"
+                isDisabled={isDisabled}
                 onClick={() => {
                   visualization.getGraph().setLayout(COLA_FORCE_LAYOUT);
                   visualization.getGraph().layout();

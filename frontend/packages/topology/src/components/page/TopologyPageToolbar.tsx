@@ -24,7 +24,7 @@ const TopologyPageToolbar: React.FC<TopologyPageToolbarProps> = observer(
       ? t('topology~List view')
       : t('topology~Graph view');
 
-    if (!namespace || isEmptyModel) {
+    if (!namespace) {
       return null;
     }
 
@@ -42,6 +42,7 @@ const TopologyPageToolbar: React.FC<TopologyPageToolbarProps> = observer(
               variant="link"
               className="odc-topology__shortcuts-button"
               icon={<QuestionCircleIcon />}
+              isDisabled={isEmptyModel}
               data-test-id="topology-view-shortcuts"
             >
               {t('topology~View shortcuts')}
@@ -54,6 +55,7 @@ const TopologyPageToolbar: React.FC<TopologyPageToolbarProps> = observer(
             aria-label={viewChangeTooltipContent}
             className="pf-m-plain odc-topology__view-switcher"
             data-test-id="topology-switcher-view"
+            isDisabled={isEmptyModel}
             onClick={() =>
               onViewChange(showGraphView ? TopologyViewType.list : TopologyViewType.graph)
             }

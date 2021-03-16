@@ -7,7 +7,12 @@ import { useDeepCompareMemoize, useQueryParams } from '@console/shared';
 import { RootState } from '@console/internal/redux';
 import { selectOverviewDetailsTab } from '@console/internal/actions/ui';
 import { getActiveApplication } from '@console/internal/reducers/ui';
-import { removeQueryArgument, setQueryArgument } from '@console/internal/components/utils';
+import {
+  getQueryArgument,
+  removeQueryArgument,
+  setQueryArgument,
+} from '@console/internal/components/utils';
+import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import { useAddToProjectAccess } from '@console/dev-console/src/utils/useAddToProjectAccess';
 import { getEventSourceStatus } from '@console/knative-plugin/src/topology/knative-topology-utils';
 import {
@@ -33,8 +38,10 @@ import TopologyListView from '../list-view/TopologyListView';
 import TopologyFilterBar from '../../filters/TopologyFilterBar';
 import { getTopologySideBar } from '../side-bar/TopologySideBar';
 import { FilterContext } from '../../filters/FilterProvider';
+import TopologyEmptyState from './TopologyEmptyState';
+import QuickSearch from '../quick-search/QuickSearch';
+
 import './TopologyView.scss';
-import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 
 const FILTER_ACTIVE_CLASS = 'odc-m-filter-active';
 
@@ -75,6 +82,9 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
   const filters = useDeepCompareMemoize(displayFilters);
   const applicationRef = React.useRef<string>(null);
   const createResourceAccess: string[] = useAddToProjectAccess(namespace);
+  const [isQuickSearchOpen, setIsQuickSearchOpen] = React.useState<boolean>(
+    !!getQueryArgument('catalogSearch'),
+  );
   const appliedFilters = useAppliedDisplayFilters();
   const [displayFilterExtensions, displayFilterExtensionsResolved] = useResolvedExtensions<
     TopologyDisplayFilters
@@ -258,15 +268,25 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
           <TopologyFilterBar
             viewType={viewType}
             visualization={visualization}
-            viewContainer={viewContainer}
+            setIsQuickSearchOpen={setIsQuickSearchOpen}
+            isDisabled={!model?.nodes?.length}
           />
         </StackItem>
         <StackItem isFilled className={containerClasses}>
           <div ref={setViewContainer} className="pf-topology-content">
             {viewContent}
+            {!model?.nodes?.length ? (
+              <TopologyEmptyState setIsQuickSearchOpen={setIsQuickSearchOpen} />
+            ) : null}
           </div>
           {topologySideBar.sidebar}
         </StackItem>
+        <QuickSearch
+          namespace={namespace}
+          viewContainer={viewContainer}
+          isOpen={isQuickSearchOpen}
+          setIsOpen={setIsQuickSearchOpen}
+        />
       </Stack>
     </div>
   );
