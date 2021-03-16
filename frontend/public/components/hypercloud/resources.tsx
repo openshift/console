@@ -11,6 +11,7 @@ export const Resources: React.SFC<ResourcesProps> = ({ conditions, registry, nam
 
     if (condition.type.includes('Exist')) {
       let kind = condition.type.replace('Exist', '');
+      kind = kind.replace('Realm', 'Resources');
       let name;
       if (kind === 'SecretTls') {
         name = `hpcd-tls-${registry}`;
