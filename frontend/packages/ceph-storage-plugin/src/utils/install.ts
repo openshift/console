@@ -119,8 +119,8 @@ export const isArbiterSC = (
   );
   const uniqZones: Set<string> = new Set(nodesData.map(getZone));
   const uniqSelectedNodesZones: Set<string> = new Set(tableData.map(getZone));
-  if (uniqZones.size < 3) return false;
-  if (uniqSelectedNodesZones.size !== 2) return false;
+  if (_.compact([...uniqZones]).length < 3) return false;
+  if (_.compact([...uniqSelectedNodesZones]).length !== 2) return false;
   const zonePerNode = countNodesPerZone(tableData);
   return Object.keys(zonePerNode).every((zone) => zonePerNode[zone] >= 2);
 };
