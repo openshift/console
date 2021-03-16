@@ -555,6 +555,8 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   tickInterval,
   timespan,
 }) => {
+  const { t } = useTranslation();
+
   // For the default time span, use the first of the suggested span options that is at least as long
   // as defaultTimespan
   const defaultSpanText = spans.find((s) => parsePrometheusDuration(s) >= defaultTimespan);
@@ -776,7 +778,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
               <Checkbox
                 id="stacked"
                 isChecked={isStacked}
-                label="Stacked"
+                label={t('public~Stacked')}
                 onChange={(v) => setIsStacked(v)}
               />
             )}

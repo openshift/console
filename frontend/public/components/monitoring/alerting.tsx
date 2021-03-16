@@ -1184,7 +1184,7 @@ export const severityRowFilter: RowFilter = {
   type: 'alert-severity',
 };
 
-export const alertsRowFilters: RowFilter[] = [
+const alertsRowFilters: RowFilter[] = [
   {
     defaultSelected: [AlertStates.Firing],
     filterGroupName: 'Alert State',
