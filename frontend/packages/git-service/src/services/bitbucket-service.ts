@@ -6,6 +6,7 @@ import {
   BranchList,
   RepoLanguageList,
   RepoFileList,
+  RepoStatus,
 } from '../types';
 import { BaseService } from './base-service';
 import { coFetchJSON } from '@console/internal/co-fetch';
@@ -45,14 +46,19 @@ export class BitbucketService extends BaseService {
     };
   };
 
-  isRepoReachable = async (): Promise<boolean> => {
+  isRepoReachable = async (): Promise<RepoStatus> => {
     const url = `${this.baseURL}/repositories/${this.metadata.owner}/${this.metadata.repoName}`;
     try {
       const data = await coFetchJSON(url);
-      return data.slug === this.metadata.repoName;
+      if (data.slug === this.metadata.repoName) {
+        return RepoStatus.Reachable;
+      }
     } catch (e) {
-      return false;
+      if (e.response.status === 429) {
+        return RepoStatus.RateLimitExceeded;
+      }
     }
+    return RepoStatus.Unreachable;
   };
 
   getRepoBranchList = async (): Promise<BranchList> => {

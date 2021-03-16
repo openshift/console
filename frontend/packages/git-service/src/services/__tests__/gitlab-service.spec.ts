@@ -1,5 +1,12 @@
 import * as nock from 'nock';
-import { GitSource, BranchList, RepoFileList, BuildType, RepoLanguageList } from '../../types';
+import {
+  GitSource,
+  BranchList,
+  RepoFileList,
+  BuildType,
+  RepoLanguageList,
+  RepoStatus,
+} from '../../types';
 import { GitlabService } from '../gitlab-service';
 import { DockerFileParser } from '../../utils';
 
@@ -25,8 +32,8 @@ describe('Gitlab Service', () => {
     });
 
     return nockBack('repo.json').then(async ({ nockDone, context }) => {
-      const isReachable = await gitService.isRepoReachable();
-      expect(isReachable).toEqual(true);
+      const repoStatus = await gitService.isRepoReachable();
+      expect(repoStatus).toEqual(RepoStatus.Reachable);
       context.assertScopesFinished();
       nockDone();
     });
@@ -48,8 +55,8 @@ describe('Gitlab Service', () => {
     });
 
     return nockBack('repo-not-reachable.json').then(async ({ nockDone, context }) => {
-      const isReachable = await gitService.isRepoReachable();
-      expect(isReachable).toEqual(false);
+      const repoStatus = await gitService.isRepoReachable();
+      expect(repoStatus).toEqual(RepoStatus.Unreachable);
       context.assertScopesFinished();
       nockDone();
     });
@@ -71,8 +78,8 @@ describe('Gitlab Service', () => {
     });
 
     return nockBack('custom-domain-with-subdomain.json').then(async ({ nockDone, context }) => {
-      const isReachable = await gitService.isRepoReachable();
-      expect(isReachable).toEqual(true);
+      const repoStatus = await gitService.isRepoReachable();
+      expect(repoStatus).toEqual(RepoStatus.Reachable);
       context.assertScopesFinished();
       nockDone();
     });

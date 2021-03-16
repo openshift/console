@@ -18,3 +18,9 @@ export interface RepoLanguageList {
 export interface RepoFileList {
   files: string[];
 }
+
+export enum RepoStatus {
+  Reachable,
+  Unreachable,
+  RateLimitExceeded,
+}

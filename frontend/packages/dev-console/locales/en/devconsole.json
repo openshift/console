@@ -234,6 +234,7 @@
   "Validating": "Validating",
   "No Devfile present, unable to continue": "No Devfile present, unable to continue",
   "Validated": "Validated",
+  "Rate limit exceeded": "Rate limit exceeded",
   "URL is valid but cannot be reached. If this is a private repository, enter a source Secret in advanced Git options": "URL is valid but cannot be reached. If this is a private repository, enter a source Secret in advanced Git options",
   "Git": "Git",
   "Git Repo URL": "Git Repo URL",

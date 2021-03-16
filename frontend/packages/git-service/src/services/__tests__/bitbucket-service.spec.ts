@@ -1,5 +1,12 @@
 import * as nock from 'nock';
-import { GitSource, RepoFileList, BuildType, BranchList, RepoLanguageList } from '../../types';
+import {
+  GitSource,
+  RepoFileList,
+  BuildType,
+  BranchList,
+  RepoLanguageList,
+  RepoStatus,
+} from '../../types';
 import { BitbucketService } from '../bitbucket-service';
 import { DockerFileParser } from '../../utils';
 
@@ -17,8 +24,8 @@ describe('Bitbucket Service', () => {
     const gitService = new BitbucketService(gitSource);
 
     return nockBack('repo.json').then(async ({ nockDone, context }) => {
-      const isReachable = await gitService.isRepoReachable();
-      expect(isReachable).toEqual(true);
+      const repoStatus = await gitService.isRepoReachable();
+      expect(repoStatus).toEqual(RepoStatus.Reachable);
       context.assertScopesFinished();
       nockDone();
     });
@@ -32,8 +39,8 @@ describe('Bitbucket Service', () => {
     const gitService = new BitbucketService(gitSource);
 
     return nockBack('repo-not-reachable.json').then(async ({ nockDone, context }) => {
-      const isReachable = await gitService.isRepoReachable();
-      expect(isReachable).toEqual(false);
+      const repoStatus = await gitService.isRepoReachable();
+      expect(repoStatus).toEqual(RepoStatus.Unreachable);
       context.assertScopesFinished();
       nockDone();
     });
