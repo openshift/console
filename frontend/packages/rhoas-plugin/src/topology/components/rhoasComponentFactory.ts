@@ -21,7 +21,7 @@ import {
 import { kebabOptionsToMenu } from '@console/internal/components/utils';
 import KafkaNode from './KafkaNode';
 import { rhoasActions } from '../actions/rhoasActions';
-import { MANAGED_KAFKA_TOPOLOGY_TYPE } from '../const';
+import { TYPE_MANAGED_KAFKA_CONNECTION } from './const';
 
 export const rhoasContextMenu = (element: Node) => {
   return createMenuItems(kebabOptionsToMenu(rhoasActions(element)));
@@ -31,7 +31,7 @@ export const getRhoasComponentFactory = (): ComponentFactory => {
   return (kind, type): React.ComponentType<{ element: GraphElement }> | undefined => {
     switch (type) {
       // Using resource kind as model kind for simplicity
-      case MANAGED_KAFKA_TOPOLOGY_TYPE:
+      case TYPE_MANAGED_KAFKA_CONNECTION:
         return withCreateConnector(
           createConnectorCallback(),
           CreateConnector,
