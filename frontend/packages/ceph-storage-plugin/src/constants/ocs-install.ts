@@ -7,8 +7,8 @@ export const ZONE_LABELS = [
 
 export enum MODES {
   INTERNAL = 'Internal',
-  EXTERNAL = 'External',
   ATTACHED_DEVICES = 'Internal - Attached Devices',
+  EXTERNAL = 'External',
 }
 
 export enum OCS_PROVISIONER {

@@ -241,3 +241,10 @@ export type ResourceConstraints = {
 export type DiscoveredDisk = {
   node: string;
 } & DiskMetadata;
+
+export type NavUtils = {
+  getStep: (offset?: number) => number;
+  getParamString: (step: number, mode: number) => string;
+  getIndex: (searchSpace: any, search: string, offset?: number) => number;
+  getAnchor: (step: number, mode: number) => string;
+};
