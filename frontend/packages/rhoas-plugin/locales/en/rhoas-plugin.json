@@ -32,5 +32,8 @@
   "Failed to load list of services": "Failed to load list of services",
   "Failed to create Kafka": "Failed to create Kafka",
   "Please try again": " Please try again",
-  "Delete Kafka Connection": "Delete Kafka Connection"
+  "Delete Kafka Connection": "Delete Kafka Connection",
+  "URL": "URL",
+  "Streams for Apache Kafka": "Streams for Apache Kafka",
+  "Connect": "Connect"
 }

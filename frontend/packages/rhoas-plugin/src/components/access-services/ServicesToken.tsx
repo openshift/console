@@ -87,11 +87,7 @@ export const ServiceToken: any = () => {
             {t('rhoas-plugin~Cant create an access token? Contact your administrator')}
           </Text>
         </TextContent>
-        {errorMessage && (
-          <TextContent>
-            <Alert variant="danger" isInline title={errorMessage} />
-          </TextContent>
-        )}
+        {errorMessage && <Alert variant="danger" isInline title={errorMessage} />}
         <FormGroup fieldId="action-group">
           <Button
             key="confirm"

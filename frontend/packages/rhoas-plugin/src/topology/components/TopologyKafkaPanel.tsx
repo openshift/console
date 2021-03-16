@@ -41,6 +41,7 @@ type TopologyRhoasPanelProps = PropsFromState & PropsFromDispatch & OwnProps;
 const DetailsComponent: React.FC<any> = ({ obj }) => {
   const { t } = useTranslation();
   const boostrapServerHost = obj.status?.bootstrapServerHost;
+  const url = obj.status?.metadata?.cloudUI;
 
   return (
     <div className="co-m-pane__body">
@@ -54,6 +55,14 @@ const DetailsComponent: React.FC<any> = ({ obj }) => {
             <dd>{boostrapServerHost}</dd>
           </dl>
         )}
+        {url && (
+          <dl className="co-m-pane__details">
+            <dt>{t('rhoas-plugin~URL')}</dt>
+            <dd>
+              <a href={url}>{url}</a>
+            </dd>
+          </dl>
+        )}
       </div>
     </div>
   );
@@ -64,18 +73,16 @@ const ResourcesComponent = ({ obj }) => {
   const { namespace } = obj.metadata;
   // const t = useTranslation();
   const link = (
-    <>
-      <h3>Secret</h3>
-      <ResourceLink
-        kind={referenceForModel(SecretModel)}
-        name={serviceAccountSecretName}
-        namespace={namespace}
-      />
-    </>
+    <ResourceLink
+      kind={referenceForModel(SecretModel)}
+      name={serviceAccountSecretName}
+      namespace={namespace}
+    />
   );
 
   return (
     <ul>
+      <h3>Secret</h3>
       <li className="list-group-item container-fluid">
         <div className="row">
           <span className="col-xs-12">{link}</span>

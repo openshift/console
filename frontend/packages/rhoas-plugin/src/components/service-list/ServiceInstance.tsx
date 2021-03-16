@@ -1,13 +1,13 @@
 /* eslint-disable prettier/prettier */
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Helmet } from 'react-helmet';
-import { PageBody, FormFooter } from '@console/shared';
-import { history, PageHeading } from '@console/internal/components/utils';
+import { FormFooter, FormHeader, FlexForm, FormBody } from '@console/shared';
+import { history } from '@console/internal/components/utils';
 import StreamsInstanceFilter from '../service-table/StreamsInstanceFilter';
 import StreamsInstanceTable from '../service-table/StreamsInstanceTable';
 import { ServicesEmptyState } from '../states/ServicesEmptyState';
 import { CloudKafka } from '../../utils/rhoas-types';
+import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 
 type ServiceInstanceProps = {
   kafkaArray: CloudKafka[];
@@ -43,61 +43,59 @@ const ServiceInstance = ({
 
   return (
     <>
-      <Helmet>
-        <title>{t('rhoas-plugin~Select Kafka Cluster')}</title>
-      </Helmet>
-      <PageHeading className="rhoas__page-heading" title={t('rhoas-plugin~Select Kafka Cluster')}>
-        <p>
-          {t('rhoas-plugin~The Kafka cluster selected below will appear on the topology view.')}
-        </p>
-      </PageHeading>
-      <PageBody>
-        {allKafkasConnected ? (
-          <ServicesEmptyState
-            title={t('rhoas-plugin~All Kafka clusters are in use')}
-            actionInfo={t('rhoas-plugin~Go back to Services Catalog')}
-            icon="CubesIcon"
+      <FlexForm>
+        <FormBody flexLayout>
+          <FormHeader
+            title={t('rhoas-plugin~Select Kafka Cluster')}
+            helpText={t(
+              'rhoas-plugin~The Kafka cluster selected below will appear on the topology view.',
+            )}
+            marginBottom="lg"
           />
-        ) : kafkaArray.length === 0 ? (
-          <ServicesEmptyState
-            title={t('rhoas-plugin~No Kafka Clusters found')}
-            actionInfo={t('rhoas-plugin~Go back to Services Catalog')}
-            icon="CubesIcon"
-          />
-        ) : (
-          <>
-            <StreamsInstanceFilter
-              textInputNameValue={textInputNameValue}
-              handleTextInputNameChange={handleTextInputNameChange}
-            />
-            <StreamsInstanceTable
-              kafkaArray={kafkaArray}
-              pageKafkas={pageKafkas}
-              handleTextInputNameChange={handleTextInputNameChange}
-              selectedKafka={selectedKafka}
-              setSelectedKafka={setSelectedKafka}
-              currentKafkaConnections={currentKafkaConnections}
-              allKafkasConnected={allKafkasConnected}
-              setAllKafkasConnected={setAllKafkasConnected}
-            />
-            <div
-              className="co-m-pane__body"
-              style={{ borderTop: 0, paddingTop: 0, paddingBottom: 0 }}
-            >
-              <FormFooter
-                handleSubmit={() => createKafkaConnectionFlow()}
-                isSubmitting={false}
-                errorMessage=""
-                submitLabel={t('rhoas-plugin~Create')}
-                disableSubmit={disableCreateButton()}
-                resetLabel={t('rhoas-plugin~Reset')}
-                sticky
-                handleCancel={history.goBack}
+          <FormSection fullWidth flexLayout extraMargin>
+            {allKafkasConnected ? (
+              <ServicesEmptyState
+                title={t('rhoas-plugin~All Kafka clusters are in use')}
+                actionInfo={t('rhoas-plugin~Go back to Services Catalog')}
+                icon="CubesIcon"
               />
-            </div>
-          </>
-        )}
-      </PageBody>
+            ) : kafkaArray.length === 0 ? (
+              <ServicesEmptyState
+                title={t('rhoas-plugin~No Kafka Clusters found')}
+                actionInfo={t('rhoas-plugin~Go back to Services Catalog')}
+                icon="CubesIcon"
+              />
+            ) : (
+              <>
+                <StreamsInstanceFilter
+                  textInputNameValue={textInputNameValue}
+                  handleTextInputNameChange={handleTextInputNameChange}
+                />
+                <StreamsInstanceTable
+                  kafkaArray={kafkaArray}
+                  pageKafkas={pageKafkas}
+                  handleTextInputNameChange={handleTextInputNameChange}
+                  selectedKafka={selectedKafka}
+                  setSelectedKafka={setSelectedKafka}
+                  currentKafkaConnections={currentKafkaConnections}
+                  allKafkasConnected={allKafkasConnected}
+                  setAllKafkasConnected={setAllKafkasConnected}
+                />
+              </>
+            )}
+          </FormSection>
+        </FormBody>
+        <FormFooter
+          handleSubmit={() => createKafkaConnectionFlow()}
+          isSubmitting={false}
+          errorMessage=""
+          submitLabel={t('rhoas-plugin~Create')}
+          disableSubmit={disableCreateButton()}
+          resetLabel={t('rhoas-plugin~Reset')}
+          sticky
+          handleCancel={history.goBack}
+        />
+      </FlexForm>
     </>
   );
 };

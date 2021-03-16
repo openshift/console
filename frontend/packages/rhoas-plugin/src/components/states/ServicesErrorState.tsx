@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Button, EmptyState, EmptyStateIcon, Title } from '@patternfly/react-core';
 import ErrorCircle from '@patternfly/react-icons/dist/js/icons/error-circle-o-icon';
-
 import { history } from '@console/internal/components/utils';
+import './ServicesErrorState.css';
 
 type ServicesEmptyStateProps = {
   title: string;
@@ -28,7 +28,7 @@ export const ServicesErrorState = ({
 
   return (
     <EmptyState>
-      <EmptyStateIcon icon={ErrorCircle} />
+      <EmptyStateIcon className="rhoas-plugin--empty-state--error-icon" icon={ErrorCircle} />
       <Title headingLevel="h4" size="lg">
         {title}
       </Title>
