@@ -33,11 +33,9 @@ export const createManagedServiceAccount = async (currentNamespace: string) => {
     metadata: {
       name: ServiceAccountCRName,
       namespace: currentNamespace,
-      annotations: {
-        refreshTime: new Date().toISOString(),
-      },
     },
     spec: {
+      forceRefresh: new Date().toISOString(),
       accessTokenSecretName: AccessTokenSecretName,
       serviceAccountName: `RHOASOperator-ServiceAccount-${currentNamespace}`,
       serviceAccountDescription: 'Service account created by RHOASOperator to access services',
@@ -57,13 +55,11 @@ export const createCloudServicesRequest = async function(currentNamespace: strin
     apiVersion: `${CloudServicesRequestModel.apiGroup}/${CloudServicesRequestModel.apiVersion}`,
     kind: CloudServicesRequestModel.kind,
     metadata: {
-      annotations: {
-        refreshTime: new Date().toISOString(),
-      },
       name: ServicesRequestCRName,
       namespace: currentNamespace,
     },
     spec: {
+      forceRefresh: new Date().toISOString(),
       accessTokenSecretName: AccessTokenSecretName,
     },
   };
@@ -72,7 +68,7 @@ export const createCloudServicesRequest = async function(currentNamespace: strin
 };
 
 export const patchServiceAccountRequest = async function(request: any) {
-  const path = '/metadata/annotations/refreshTime';
+  const path = '/spec/forceRefresh';
   return k8sPatch(CloudServiceAccountRequest, request, [
     {
       path,
@@ -83,7 +79,7 @@ export const patchServiceAccountRequest = async function(request: any) {
 };
 
 export const patchCloudServicesRequest = async function(request: any) {
-  const path = '/metadata/annotations/refreshTime';
+  const path = '/spec/forceRefresh';
 
   return k8sPatch(CloudServicesRequestModel, request, [
     {
