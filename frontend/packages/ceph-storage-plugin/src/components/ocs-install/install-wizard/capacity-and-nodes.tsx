@@ -19,9 +19,11 @@ import { StorageClassResourceKind, NodeKind, K8sResourceKind } from '@console/in
 import { useDeepCompareMemoize } from '@console/shared';
 import { State, Action } from '../attached-devices-mode/reducer';
 import { scResource } from '../../../resources';
-import { arbiterText } from '../../../constants';
+import { arbiterText, MODES } from '../../../constants';
 import { getZone, isArbiterSC } from '../../../utils/install';
 import { AdvancedSubscription } from '../subscription-icon';
+import { ActionType, InternalClusterAction, InternalClusterState } from '../internal-mode/reducer';
+import './_capacity-and-nodes.scss';
 
 export const SelectNodesText: React.FC<SelectNodesTextProps> = React.memo(({ text }) => {
   const { t } = useTranslation();
@@ -68,7 +70,32 @@ type SelectNodesDetailsProps = {
   memory: number;
 };
 
-export const StretchClusterFormGroup: React.FC<stretchClusterFormGroupProps> = ({
+export const EnableTaintNodes: React.FC<EnableTaintNodesProps> = ({ state, dispatch, mode }) => {
+  const { t } = useTranslation();
+
+  return (
+    <Checkbox
+      label={t('ceph-storage-plugin~Enable taint nodes')}
+      description={t('ceph-storage-plugin~Selected nodes will be dedicated to OCS use only')}
+      className="ocs-install__enable-taint"
+      id="taint-nodes"
+      isChecked={state.enableTaint}
+      onChange={() =>
+        mode === MODES.INTERNAL
+          ? dispatch({ type: ActionType.SET_ENABLE_TAINT, payload: !state.enableTaint })
+          : dispatch({ type: 'setEnableTaint', value: !state.enableTaint })
+      }
+    />
+  );
+};
+
+type EnableTaintNodesProps = {
+  state: State | InternalClusterState;
+  dispatch: React.Dispatch<Action | InternalClusterAction>;
+  mode: string;
+};
+
+export const StretchClusterFormGroup: React.FC<StretchClusterFormGroupProps> = ({
   state,
   dispatch,
   pvData,
@@ -160,7 +187,7 @@ export const StretchClusterFormGroup: React.FC<stretchClusterFormGroupProps> = (
   );
 };
 
-type stretchClusterFormGroupProps = {
+type StretchClusterFormGroupProps = {
   state: State;
   dispatch: React.Dispatch<Action>;
   pvData: K8sResourceKind[];

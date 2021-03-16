@@ -5,7 +5,7 @@ The OCS UI requires some annotations in the OCS Operator CSV and Storage Cluster
 Following table maps the annotation to its use case and accepted values:
 |Annotation Name|Purpose|Accepted Values |CR/CSV
 |---------------------------------------|---------------------------|--------|----------------|
-| `features.ocs.openshift.io/enabled`| Activates Optional Features | "multus", "flexible-scaling", "kms", "arbiter" | Operator CSV
+| `features.ocs.openshift.io/enabled`| Activates Optional Features | "multus", "flexible-scaling", "kms", "arbiter", "taint-nodes" | Operator CSV
 | `cluster.ocs.openshift.io/local-devices`| Activates disk replacement and ocs status column in disk inventory | "true" | Storage Cluster CR
 | `external.features.ocs.openshift.io/validation`| Mininum required keys to be supplied by the admin to connect to an external cluster | Array of Keys that need to be validated in UI | Operator CSV
 ||||
@@ -19,6 +19,7 @@ UI features are activated based on the annotations. The following table maps a f
 | KMS encryption |`features.ocs.openshift.io/enabled` | `kms` |
 | Arbiter |`features.ocs.openshift.io/enabled` | `arbiter` |
 | Multus |`features.ocs.openshift.io/enabled` | `multus` |
+| Taint nodes |`features.ocs.openshift.io/enabled` | `taint-nodes` |
 | Disk Replacement Action| `cluster.ocs.openshift.io/local-devices` | `true`|
 | Disk Inventory OCS Status Column | `cluster.ocs.openshift.io/local-devices` | `true`|
 

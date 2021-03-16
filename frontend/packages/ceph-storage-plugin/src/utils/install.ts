@@ -5,6 +5,7 @@ import {
   StorageClassResourceKind,
   K8sResourceKind,
   MatchExpression,
+  k8sPatch,
 } from '@console/internal/module/k8s';
 import {
   humanizeBinaryBytes,
@@ -16,6 +17,7 @@ import {
   LABEL_OPERATOR,
 } from '@console/local-storage-operator-plugin/src/constants';
 import { getNodeCPUCapacity, getNodeAllocatableMemory, getName } from '@console/shared';
+import { NodeModel } from '@console/internal/models';
 import { ocsTaint, NO_PROVISIONER, MINIMUM_NODES, ZONE_LABELS } from '../constants';
 import { getSCAvailablePVs } from '../selectors';
 
@@ -26,6 +28,21 @@ export const hasNoTaints = (node: NodeKind) => {
 export const hasOCSTaint = (node: NodeKind) => {
   const taints: Taint[] = node.spec?.taints || [];
   return taints.some((taint: Taint) => _.isEqual(taint, ocsTaint));
+};
+
+export const taintNodes = (selectedNodes: NodeKind[]): Promise<NodeKind>[] => {
+  const taintNodesRequest = selectedNodes.map((node) => {
+    const taints = node?.spec?.taints ? [...node.spec.taints, ocsTaint] : [ocsTaint];
+    const patch = [
+      {
+        value: taints,
+        path: '/spec/taints',
+        op: node.spec.taints ? 'replace' : 'add',
+      },
+    ];
+    return k8sPatch(NodeModel, node, patch);
+  });
+  return taintNodesRequest;
 };
 
 export const getConvertedUnits = (value: string) => {
