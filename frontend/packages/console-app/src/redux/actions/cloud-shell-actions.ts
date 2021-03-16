@@ -1,12 +1,16 @@
-import { RootState } from '@console/internal/redux';
 import { Dispatch } from 'react-redux';
+import { RootState } from '@console/internal/redux';
 import { action, ActionType } from 'typesafe-actions';
 import { isCloudShellExpanded, isCloudShellActive } from '../reducers/cloud-shell-selectors';
 
 export enum Actions {
   SetCloudShellExpanded = 'setCloudShellExpanded',
   SetCloudShellActive = 'setCloudShellActive',
+  SetCloudShellCommand = 'setCloudShellCommand',
 }
+
+export const setCloudShellCommand = (command: string | null) =>
+  action(Actions.SetCloudShellCommand, { command });
 
 export const setCloudShellExpanded = (isExpanded: boolean) =>
   action(Actions.SetCloudShellExpanded, { isExpanded });
@@ -31,6 +35,7 @@ export const setCloudShellActive = (isActive: boolean) =>
 const actions = {
   setCloudShellExpanded,
   setCloudShellActive,
+  setCloudShellCommand,
 };
 
 export type CloudShellActions = ActionType<typeof actions>;

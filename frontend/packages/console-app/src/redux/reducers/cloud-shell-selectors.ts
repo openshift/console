@@ -7,3 +7,6 @@ export const isCloudShellExpanded = (state: RootState): boolean =>
 
 export const isCloudShellActive = (state: RootState): boolean =>
   !!state.plugins?.console?.[cloudShellReducerName]?.isActive;
+
+export const getCloudShellCommand = (state: RootState): string | null =>
+  state.plugins?.console?.[cloudShellReducerName]?.command ?? null;

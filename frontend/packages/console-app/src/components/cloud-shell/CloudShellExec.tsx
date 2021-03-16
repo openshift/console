@@ -13,6 +13,7 @@ import { setCloudShellActive } from '../../redux/actions/cloud-shell-actions';
 import Terminal, { ImperativeTerminalType } from './Terminal';
 import TerminalLoadingBox from './TerminalLoadingBox';
 import useActivityTick from './useActivityTick';
+import ExecuteCommand from './ExecuteCommand';
 import {
   getCloudShellCR,
   CLOUD_SHELL_STOPPED_BY_ANNOTATION,
@@ -78,6 +79,10 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
     },
     [tick],
   );
+
+  const onCommand = React.useCallback((command: string): void => {
+    ws.current && ws.current.send(`0${Base64.encode(`${command}\n`)}`);
+  }, []);
 
   React.useEffect(() => {
     onActivate(true);
@@ -238,9 +243,12 @@ const CloudShellExec: React.FC<CloudShellExecProps> = ({
 
   if (wsOpen) {
     return (
-      <div className="co-cloudshell-terminal__container">
-        <Terminal onData={onData} ref={terminal} />
-      </div>
+      <>
+        <div className="co-cloudshell-terminal__container">
+          <Terminal onData={onData} ref={terminal} />
+        </div>
+        <ExecuteCommand onCommand={onCommand} />
+      </>
     );
   }
 

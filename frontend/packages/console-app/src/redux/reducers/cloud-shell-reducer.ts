@@ -3,11 +3,13 @@ import { CloudShellActions, Actions } from '../actions/cloud-shell-actions';
 type State = {
   isExpanded: boolean;
   isActive: boolean;
+  command: string | null;
 };
 
 const initialState: State = {
   isExpanded: false,
   isActive: false,
+  command: null,
 };
 
 export default (state = initialState, action: CloudShellActions): State => {
@@ -22,6 +24,17 @@ export default (state = initialState, action: CloudShellActions): State => {
         ...state,
         isActive: action.payload.isActive,
       };
+    case Actions.SetCloudShellCommand: {
+      const { isExpanded } = state;
+      const {
+        payload: { command },
+      } = action;
+      return {
+        ...state,
+        isExpanded: !!command || isExpanded,
+        command,
+      };
+    }
     default:
       return state;
   }
