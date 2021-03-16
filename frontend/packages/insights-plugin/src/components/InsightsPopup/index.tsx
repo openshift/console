@@ -13,7 +13,7 @@ import {
 } from './mappers';
 import { PrometheusHealthPopupProps } from '@console/plugin-sdk';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { ExternalLink } from '@console/internal/components/utils';
+import { ExternalLink, openshiftHelpBase } from '@console/internal/components/utils';
 import './style.scss';
 
 const DataComponent: React.FC<DataComponentProps> = ({ x, y, datum }) => {
@@ -112,7 +112,7 @@ export const InsightsPopup: React.FC<PrometheusHealthPopupProps> = ({ responses,
         )}
         {!hasIssues && (isWaitingOrDisabled || isError) && (
           <ExternalLink
-            href="https://docs.openshift.com/container-platform/latest/support/getting-support.html"
+            href={`${openshiftHelpBase}support/remote_health_monitoring/using-insights-to-identify-issues-with-your-cluster.html`}
             text={t('insights-plugin~More about Insights')}
           />
         )}
