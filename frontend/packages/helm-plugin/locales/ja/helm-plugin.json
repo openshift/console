@@ -34,7 +34,7 @@
   "Type": "タイプ",
   "Created": "作成",
   "No resources found": "リソースが見つかりません",
-  "Pods": "Pod",
+  "Pods": "pod",
   "{{chartVersion}} provided by {{provider}}": "{{provider}} で指定される{{chartVersion}} ",
   "Change chart version?": "チャートのバージョンを変更しますか?",
   "Are you sure you want to change the chart version from <2>{{currentVersion}}</2> to <4>{{newVersion}}</4>? ": "チャートのバージョンを <2>{{currentVersion}}</2> から ©© に変更してもよいですか?<4>{{newVersion}}</4> ",
@@ -54,11 +54,11 @@
   "Invalid YAML - {{err}}": "無効な YAML: {{err}}",
   "README": "README",
   "Select the version to rollback <1>{{releaseName}}</1> to, from the table below:": "以下の表から、<1>{{releaseName}}</1> をロールバックするバージョンを選択します。",
-  "CustomResources": "CustomResources",
+  "CustomResources": "カスタムリソース",
   "Unable to load Helm Releases": "Helm リリースを読み込むことができません",
   "No Helm Releases found": "Helm リリースが見つかりません",
   "Install a Helm Chart from the developer catalog": "開発者カタログからの Helm チャートのインストール",
-  "Select a Project to view the list of Helm Releases": "Helm リリースの一覧を表示するためにプロジェクトを選択します。",
+  "Select a Project to view the list of Helm Releases or <2>create a Project</2>.": "Helm リリースの一覧を表示するためにプロジェクトを選択するか、または<2>プロジェクトを作成</2>します。",
   "Helm": "Helm",
   "Browse the catalog to discover and install Helm Charts": "カタログを参照して Helm チャートを検出し、インストールします。",
   "Unable to find resource for {{helmLabel}}": "{{helmLabel}} のリソースが見つかりません",
@@ -72,5 +72,6 @@
   "Upgrade by selecting a new chart version or manually changing YAML.": "新規チャートバージョンを選択するか、または YAML を手動で変更してアップグレードします。",
   "Rollback Helm Release": "Helm リリースのロールバック",
   "Install": "インストール",
-  "Required": "必須"
+  "Required": "必須",
+  "Select a Project to view the list of Helm Releases": "Helm リリースの一覧を表示するためにプロジェクトを選択します。"
 }

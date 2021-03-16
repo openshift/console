@@ -16,5 +16,9 @@
   "Username": "ユーザー名",
   "The displayed username.": "表示されるユーザー名。",
   "Link names": "リンク名",
-  "Find and link channel names and usernames.": "チャネル名とユーザー名を検索してリンクします。"
+  "Find and link channel names and usernames.": "チャネル名とユーザー名を検索してリンクします。",
+  "Title": "タイトル",
+  "The title of the Slack message.": "Slack メッセージのタイトル。",
+  "Text": "テキスト",
+  "The text of the Slack message.": "Slack メッセージのテキスト。"
 }

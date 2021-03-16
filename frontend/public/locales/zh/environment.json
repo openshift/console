@@ -28,7 +28,7 @@
   "Drag to reorder": "拖动以重新排序",
   "Remove": "删除",
   "ConfigMaps": "ConfigMaps",
-  "Secrets": "Secrets",
+  "Secrets": "Secret",
   "ServiceAccounts": "服务帐户",
   "Select a key": "选择一个键",
   "ConfigMap or Secret": "ConfigMap 或 Secret",

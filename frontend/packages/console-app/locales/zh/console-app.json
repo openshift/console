@@ -4,6 +4,13 @@
   "Add HorizontalPodAutoscaler": "添加 HorizontalPodAutoscaler",
   "Edit HorizontalPodAutoscaler": "编辑 HorizontalPodAutoscaler",
   "Remove HorizontalPodAutoscaler": "删除 HorizontalPodAutoscaler",
+  "API Servers": "API 服务器",
+  "Controller Managers": "Controller Managers",
+  "Schedulers": "调度程序",
+  "API Request Success Rate": "API 请求成功率",
+  "Components of the Control Plane are responsible for maintaining and reconciling the state of the cluster.": "Control Plane 的组件负责维护并协调集群的状态。",
+  "Components": "组件",
+  "Response rate": "响应率",
   "Clone": "克隆",
   "Name": "名称",
   "Clone PVC": "克隆 PVC",
@@ -24,5 +31,10 @@
   "Status": "状态",
   "API version": "API 版本",
   "Restore": "恢复",
-  "Administrator": "管理员"
+  "Administrator": "管理员",
+  "Cluster": "集群",
+  "Control Plane": "Control Plane",
+  "Control Plane status": "Control Plane 状态",
+  "Cluster operators": "集群 operator",
+  "VolumeSnapshotContents": "VolumeSnapshotContents"
 }

@@ -10,7 +10,7 @@
   "Close terminal": "ターミナルを閉じる",
   "The terminal connection has closed due to {{reason}}.": "{{reason}} によりターミナル接続が閉じました。",
   "The terminal connection has closed.": "ターミナル接続が閉じました。",
-  "connecting to {{container}}": "{{container}} に接続中",
+  "connecting to {{container}}": "{{container}} への接続",
   "Reconnect to terminal": "ターミナルへの再接続",
   "Restart terminal": "ターミナルの再起動",
   "OpenShift command line": "OpenShift コマンドライン",

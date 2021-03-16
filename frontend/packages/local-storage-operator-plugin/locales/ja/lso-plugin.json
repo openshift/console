@@ -31,7 +31,7 @@
   "Selecting all nodes will use the available disks that match the selected filters only on selected nodes.": "すべてのノードを選択すると、選択されたノードのみの選択されたフィルターに一致する利用可能なディスクが使用されます。",
   "Disk Type": "ディスクタイプ",
   "Advanced": "詳細",
-  "Disk Mode": "ディスクモード",
+  "Volume Mode": "ボリュームモード",
   "Disk Size": "ディスクサイズ",
   "Min": "最小",
   "Max": "最大",
@@ -49,5 +49,6 @@
   "{{nodeCount, number}} node_1": "{{nodeCount, number}} ノード",
   "selected": "選択済み",
   "SSD / NVMe": "SSD / NVMe",
-  "HDD": "HDD"
+  "HDD": "HDD",
+  "Disk Mode": "ディスクモード"
 }

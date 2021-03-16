@@ -13,5 +13,6 @@
   "The list of claims whose values should be used as the display name.": "其值应用于显示名称的声明列表。",
   "Email": "电子邮件",
   "The list of claims whose values should be used as the email address.": "其值应用作电子邮件地址的声明列表。",
+  "More options": "更多选项",
   "Extra scopes": "额外范围"
 }

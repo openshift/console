@@ -102,7 +102,7 @@
   "Annotations": "アノテーション",
   "Bare Metal Host": "ベアメタルホスト",
   "Provider ID": "プロバイダー ID",
-  "Created": "作成済み",
+  "Created": "作成",
   "Operating System": "オペレーティングシステム",
   "OS Image": "OS イメージ",
   "Architecture": "アーキテクチャー",
@@ -150,7 +150,7 @@
   "all workloads have already been moved, but {{length}} daemon sets have been skipped.": "すべてのワークロードはすでに移動していますが、{{length}} デーモンセットは省略されています。",
   "all workloads have already been moved, but {{podListlength}} static pods and {{daemonListlength}} daemon sets have been skipped.": "すべてのワークロードはすでに移動していますが、{{podListlength}} の静的 Pod および {{daemonListlength}} デーモンセットは省略されています。",
   "The host will be powered off gracefully.": "ホストの電源は正常にオフになります。",
-  "To power off gracefully, <1>start maintenance</1> on this host to move all managed workloads to other nodes in the cluster.": "電源を正常にオフするには、このホストで <1>メンテナンスを開始</1>して、すべての管理対象ワークロードをクラスター内の他のノードに移動します。",
+  "To power off gracefully, <2>start maintenance</2> on this host to move all managed workloads to other nodes in the cluster.": "電源を正常にオフするには、このホストで <2>メンテナンスを開始</2>して、すべての管理対象ワークロードをクラスター内の他のノードに移動します。",
   "Workloads will not be moved before the host powers off.": "ホストの電源がオフになる前にワークロードは移動しません。",
   "The host will power off immediately as if it were unplugged.": "ホストは取り外されているかのように、即時に電源オフになります。",
   "Power off immediately": "即時の電源オフ",
@@ -199,6 +199,7 @@
   "Power operations cannot be performed on this host until Baseboard Management Controller (BMC) credentials are provided.": "Baseboard Management Controller (BMC) の認証情報が提供されるまで、このホストで電源操作を行うことはできません。",
   "Under maintenance": "メンテナンス中",
   "Stopping maintenance": "メンテナンスの停止",
+  "To power off gracefully, <1>start maintenance</1> on this host to move all managed workloads to other nodes in the cluster.": "電源を正常にオフするには、このホストで <1>メンテナンスを開始</1>して、すべての管理対象ワークロードをクラスター内の他のノードに移動します。",
   "The bare metal host {{name}} will be restarted gracefully after all managed workloads are moved.": "ベアメタルホスト {{name}} は、すべての管理対象ワークロードを移動すると正常に再起動されます。",
   "The bare metal host {{name}} will be restarted gracefully.": "ベアメタルホスト {{name}} は正常に再起動されます。"
 }

@@ -6,7 +6,7 @@
   "Namespace": "namespace",
   "Created at": "作成:",
   "Rules": "ルール",
-  "Rules by action or resource": "アクションまたはリソース別のルール",
+  "rules by action or resource": "アクションまたはリソース別のルール",
   "Name": "名前",
   "Subject kind": "サブジェクトの種類",
   "Subject name": "サブジェクトの名前",
@@ -20,5 +20,6 @@
   "Role": "ロール",
   "Cluster-wide Roles": "クラスター全体のロール",
   "Namespace Roles": "namespace ロール",
-  "System Roles": "システムロール"
+  "System Roles": "システムロール",
+  "Rules by action or resource": "アクションまたはリソース別のルール"
 }

@@ -16,5 +16,9 @@
   "Username": "用户名",
   "The displayed username.": "显示的用户名。",
   "Link names": "链接名称",
-  "Find and link channel names and usernames.": "查找并链接频道名和用户名。"
+  "Find and link channel names and usernames.": "查找并链接频道名和用户名。",
+  "Title": "标题",
+  "The title of the Slack message.": "Slack 信息的标题。",
+  "Text": "内容",
+  "The text of the Slack message.": "Slack 信息的内容。"
 }
