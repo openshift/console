@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
+import { Tooltip } from '@patternfly/react-core';
 import {
   Node,
-  useAnchor,
-  EllipseAnchor,
   WithCreateConnectorProps,
   WithDndDropProps,
   WithDragNodeProps,
@@ -13,6 +13,7 @@ import {
   useHover,
   observer,
   createSvgIdUrl,
+  useSvgAnchor,
 } from '@patternfly/react-topology';
 import { modelFor, referenceFor } from '@console/internal/module/k8s';
 import { useAccessReview } from '@console/internal/components/utils';
@@ -74,8 +75,9 @@ const TrapezoidBaseNode: React.FC<TrapezoidBaseNodeProps> = ({
   onContextMenu,
   contextMenuOpen,
 }) => {
+  const { t } = useTranslation();
   const [hover, hoverRef] = useHover();
-  useAnchor(EllipseAnchor);
+  const anchorRef = useSvgAnchor();
   const { width, height } = element.getDimensions();
   const cx = width / 2;
   const cy = height / 2;
@@ -95,6 +97,7 @@ const TrapezoidBaseNode: React.FC<TrapezoidBaseNodeProps> = ({
   const showLabels = showLabelsFilter?.value || hover;
   const refs = useCombineRefs<SVGEllipseElement>(hoverRef, dragNodeRef);
   const allowEdgeCreation = useAllowEdgeCreation();
+  const pathRefs = useCombineRefs(anchorRef, dndDropRef);
 
   React.useLayoutEffect(() => {
     if (editAccess && allowEdgeCreation) {
@@ -107,67 +110,74 @@ const TrapezoidBaseNode: React.FC<TrapezoidBaseNodeProps> = ({
   }, [hover, onShowCreateConnector, onHideCreateConnector, editAccess, allowEdgeCreation]);
 
   return (
-    <g
-      className={classNames('odc-trapezoid-node', className, {
-        'is-hover': hover || contextMenuOpen,
-        'is-highlight': canDrop,
-        'is-dragging': dragging || edgeDragging,
-        'is-dropTarget': canDrop && dropTarget,
-        'is-filtered': filtered,
-        'is-selected': selected,
-      })}
+    <Tooltip
+      content={t('topology~Create a binding connector')}
+      trigger="manual"
+      isVisible={dropTarget && canDrop}
+      animationDuration={0}
+      position="top"
     >
-      <NodeShadows />
       <g
-        data-test-id="base-node-handler"
-        onClick={onSelect}
-        onContextMenu={onContextMenu}
-        ref={refs}
+        className={classNames('odc-trapezoid-node', className, {
+          'is-hover': hover || contextMenuOpen,
+          'is-highlight': canDrop,
+          'is-dragging': dragging || edgeDragging,
+          'is-dropTarget': canDrop && dropTarget,
+          'is-filtered': filtered,
+          'is-selected': selected,
+        })}
       >
-        <path
-          d="M23,12h58c4.9-0.1,9.1,3.3,10.2,8l12.6,60c1.1,5.4-2.5,10.7-7.9,11.7c0,0,0,0,0,0l-0.3,0.1
-	c-0.7,0.1-1.3,0.2-2,0.2H10.4C4.8,92.1,0.1,87.6,0,82c0-0.7,0.1-1.3,0.2-2l12.5-60C13.8,15.2,18.1,11.9,23,12z"
-          key={
-            hover || dragging || edgeDragging || dropTarget || contextMenuOpen
-              ? 'circle-hover'
-              : 'circle'
-          }
-          className="odc-trapezoid-node__bg"
-          ref={dndDropRef}
-          cx={cx}
-          cy={cy}
-          filter={createSvgIdUrl(
-            hover || dragging || edgeDragging || dropTarget || contextMenuOpen
-              ? NODE_SHADOW_FILTER_ID_HOVER
-              : NODE_SHADOW_FILTER_ID,
-          )}
-        />
-
-        {icon && (
-          <image
-            x={cx - iconRadius}
-            y={cy - iconRadius}
-            width={iconRadius * 2}
-            height={iconRadius * 2}
-            xlinkHref={icon}
+        <NodeShadows />
+        <g
+          data-test-id="base-node-handler"
+          onClick={onSelect}
+          onContextMenu={onContextMenu}
+          ref={refs}
+        >
+          <path
+            d="M23,12h58c4.9-0.1,9.1,3.3,10.2,8l12.6,60c1.1,5.4-2.5,10.7-7.9,11.7c0,0,0,0,0,0l-0.3,0.1
+    c-0.7,0.1-1.3,0.2-2,0.2H10.4C4.8,92.1,0.1,87.6,0,82c0-0.7,0.1-1.3,0.2-2l12.5-60C13.8,15.2,18.1,11.9,23,12z"
+            key={
+              hover || dragging || edgeDragging || dropTarget || contextMenuOpen
+                ? 'circle-hover'
+                : 'circle'
+            }
+            className="odc-trapezoid-node__bg"
+            ref={pathRefs}
+            cx={cx}
+            cy={cy}
+            filter={createSvgIdUrl(
+              hover || dragging || edgeDragging || dropTarget || contextMenuOpen
+                ? NODE_SHADOW_FILTER_ID_HOVER
+                : NODE_SHADOW_FILTER_ID,
+            )}
           />
-        )}
-        {showLabels && (kind || element.getLabel()) && (
-          <SvgBoxedText
-            className="odc-trapezoid-node__label"
-            x={cx}
-            y={cy + outerRadius + 24}
-            paddingX={8}
-            paddingY={4}
-            kind={kind}
-          >
-            {element.getLabel()}
-          </SvgBoxedText>
-        )}
-        {children}
+          {icon && (
+            <image
+              x={cx - iconRadius}
+              y={cy - iconRadius}
+              width={iconRadius * 2}
+              height={iconRadius * 2}
+              xlinkHref={icon}
+            />
+          )}
+          {showLabels && (kind || element.getLabel()) && (
+            <SvgBoxedText
+              className="odc-trapezoid-node__label"
+              x={cx}
+              y={cy + outerRadius + 24}
+              paddingX={8}
+              paddingY={4}
+              kind={kind}
+            >
+              {element.getLabel()}
+            </SvgBoxedText>
+          )}
+          {children}
+        </g>
+        {attachments}
       </g>
-      {attachments}
-    </g>
+    </Tooltip>
   );
 };
 

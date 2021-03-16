@@ -4,16 +4,13 @@ import {
   ComponentFactory,
   withDragNode,
   withSelection,
-  withDndDrop,
   withCreateConnector,
   Node,
 } from '@patternfly/react-topology';
 import { withEditReviewAccess } from '@console/topology/src/utils';
 import {
   createConnectorCallback,
-  NodeComponentProps,
   nodeDragSourceSpec,
-  nodeDropTargetSpec,
   withContextMenu,
   CreateConnector,
   createMenuItems,
@@ -36,16 +33,9 @@ export const getRhoasComponentFactory = (): ComponentFactory => {
           createConnectorCallback(),
           CreateConnector,
         )(
-          withDndDrop<
-            any,
-            any,
-            { droppable?: boolean; hover?: boolean; canDrop?: boolean },
-            NodeComponentProps
-          >(nodeDropTargetSpec)(
-            withEditReviewAccess('patch')(
-              withDragNode(nodeDragSourceSpec(type))(
-                withSelection({ controlled: true })(withContextMenu(rhoasContextMenu)(KafkaNode)),
-              ),
+          withEditReviewAccess('patch')(
+            withDragNode(nodeDragSourceSpec(type))(
+              withSelection({ controlled: true })(withContextMenu(rhoasContextMenu)(KafkaNode)),
             ),
           ),
         );
