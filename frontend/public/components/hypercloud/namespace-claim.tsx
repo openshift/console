@@ -39,7 +39,7 @@ const NamespaceClaimTableHeader = (t?: TFunction) => {
       props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'UserName',
+      title: t('SINGLE:MSG_MAIN_TABLEHEADER_97'),
       sortField: 'metadata.annotations.owner',
       transforms: [sortable],
       props: { className: tableColumnClasses[3] },
@@ -90,7 +90,7 @@ const NamespaceClaimsDetails: React.FC<NamespaceClaimDetailsProps> = ({ obj: nam
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text="Namespace Claim Details" />
+        <SectionHeading text={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_1', { 0: t('COMMON:MSG_LNB_MENU_103') })} />
         <div className="co-m-pane__body-group">
           <div className="row">
             <div className="col-sm-6">
@@ -102,13 +102,13 @@ const NamespaceClaimsDetails: React.FC<NamespaceClaimDetailsProps> = ({ obj: nam
               <dl className="co-m-pane__details">
                 <dt>{t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_45')}</dt>
                 <dd>{namespaceclaims?.status?.status}</dd>
-                <dt> Reason</dt>
+                <dt>{t('SINGLE:MSG_NAMESPACECLAIMS_NAMESPACEDETAILS_TABDETAILS_1')}</dt>
                 <dd>{namespaceclaims?.status?.reason}</dd>
-                <dt>CPU request limit</dt>
+                <dt>{t('SINGLE:MSG_NAMESPACECLAIMS_NAMESPACEDETAILS_TABDETAILS_2')}</dt>
                 <dd>{namespaceclaims?.specLimit?.limitCpu}</dd>
-                <dt>Memory request limit</dt>
+                <dt>{t('SINGLE:MSG_NAMESPACECLAIMS_NAMESPACEDETAILS_TABDETAILS_3')}</dt>
                 <dd>{namespaceclaims?.specLimit?.limitMemory}</dd>
-                <dt>Namespace name</dt>
+                <dt>{t('SINGLE:MSG_NAMESPACECLAIMS_NAMESPACEDETAILS_TABDETAILS_4')}</dt>
                 <dd>{namespaceclaims?.resourceName}</dd>
               </dl>
             </div>

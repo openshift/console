@@ -3,9 +3,7 @@ import DashboardCard from '@console/shared/src/components/dashboard/dashboard-ca
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import InventoryItem, {
-  ResourceInventoryItem,
-} from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
+import InventoryItem, { ResourceInventoryItem } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
 import { PodModel, NodeModel } from '@console/internal/models';
 import { getNamespace, getName } from '@console/shared/src/selectors/common';
 import { getPodStatusGroups } from '@console/shared/src/components/dashboard/inventory-card/utils';
@@ -41,16 +39,7 @@ const PodInventoryItem: React.FC = () => {
 
   const basePath = `${resourcePathFromModel(NodeModel, nodeName)}/pods`;
 
-  return (
-    <ResourceInventoryItem
-      resources={pods}
-      basePath={basePath}
-      mapper={getPodStatusGroups}
-      kind={PodModel}
-      isLoading={!podsLoaded}
-      error={!!podsError}
-    />
-  );
+  return <ResourceInventoryItem resources={pods} basePath={basePath} mapper={getPodStatusGroups} kind={PodModel} isLoading={!podsLoaded} error={!!podsError} />;
 };
 
 const InventoryCard: React.FC = () => {
@@ -59,23 +48,9 @@ const InventoryCard: React.FC = () => {
   const namespace = getNamespace(obj);
   const hostName = getName(obj);
 
-  const NICTitleComponent = React.useCallback(
-    ({ children }) => (
-      <Link to={`${resourcePathFromModel(BareMetalHostModel, hostName, namespace)}/nics`}>
-        {children}
-      </Link>
-    ),
-    [hostName, namespace],
-  );
+  const NICTitleComponent = React.useCallback(({ children }) => <Link to={`${resourcePathFromModel(BareMetalHostModel, hostName, namespace)}/nics`}>{children}</Link>, [hostName, namespace]);
 
-  const DiskTitleComponent = React.useCallback(
-    ({ children }) => (
-      <Link to={`${resourcePathFromModel(BareMetalHostModel, hostName, namespace)}/disks`}>
-        {children}
-      </Link>
-    ),
-    [hostName, namespace],
-  );
+  const DiskTitleComponent = React.useCallback(({ children }) => <Link to={`${resourcePathFromModel(BareMetalHostModel, hostName, namespace)}/disks`}>{children}</Link>, [hostName, namespace]);
 
   return (
     <DashboardCard>
@@ -84,18 +59,8 @@ const InventoryCard: React.FC = () => {
       </DashboardCardHeader>
       <DashboardCardBody>
         <PodInventoryItem />
-        <InventoryItem
-          title="Disk"
-          isLoading={!obj}
-          count={getHostStorage(obj).length}
-          TitleComponent={DiskTitleComponent}
-        />
-        <InventoryItem
-          title="NIC"
-          isLoading={!obj}
-          count={getHostNICs(obj).length}
-          TitleComponent={NICTitleComponent}
-        />
+        <InventoryItem title="Disk" isLoading={!obj} count={getHostStorage(obj).length} TitleComponent={DiskTitleComponent} />
+        <InventoryItem title="NIC" isLoading={!obj} count={getHostNICs(obj).length} TitleComponent={NICTitleComponent} />
         <InventoryItem title="CPU" isLoading={!obj} count={getHostCPU(obj).count} />
       </DashboardCardBody>
     </DashboardCard>

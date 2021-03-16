@@ -65,54 +65,55 @@ const kindFilter = (reference, { involvedObject }) => {
 };
 
 const Inner = connectToFlags(FLAGS.CAN_LIST_NODE)(
-  class Inner extends React.PureComponent {
-    render() {
-      const { event, flags } = this.props;
-      const { involvedObject: obj, source, message, reason, series } = event;
-      const tooltipMsg = `${reason} (${obj.kind})`;
-      const isWarning = typeFilter('warning', event);
-      const firstTime = getFirstTime(event);
-      const lastTime = getLastTime(event);
-      const count = series ? series.count : event.count;
-
-      return (
-        <div className={classNames('co-sysevent', { 'co-sysevent--warning': isWarning })}>
-          <div className="co-sysevent__icon-box">
-            <i className="co-sysevent-icon" title={tooltipMsg} />
-            <div className="co-sysevent__icon-line" />
-          </div>
-          <div className="co-sysevent__box" role="gridcell">
-            <div className="co-sysevent__header">
-              <div className="co-sysevent__subheader">
-                <ResourceLink className="co-sysevent__resourcelink" kind={referenceFor(obj)} namespace={obj.namespace} name={obj.name} />
-                {obj.namespace && <ResourceLink className="co-sysevent__resourcelink hidden-xs" kind="Namespace" name={obj.namespace} />}
-                {lastTime && <Timestamp className="co-sysevent__timestamp" timestamp={lastTime} />}
-              </div>
-              <div className="co-sysevent__details">
-                <small className="co-sysevent__source">
-                  Generated from <span>{source.component}</span>
-                  {source.component === 'kubelet' && <span> on {flags[FLAGS.CAN_LIST_NODE] ? <Link to={resourcePathFromModel(NodeModel, source.host)}>{source.host}</Link> : <>{source.host}</>}</span>}
-                </small>
-                {count > 1 && (
-                  <small className="co-sysevent__count text-secondary">
-                    {count} times
-                    {firstTime && (
-                      <>
-                        {' '}
-                        in the last <Timestamp timestamp={firstTime} simple={true} omitSuffix={true} />
-                      </>
-                    )}
-                  </small>
-                )}
-              </div>
+  withTranslation()(
+    class Inner extends React.PureComponent {
+      render() {
+        const { event, flags, t } = this.props;
+        const { involvedObject: obj, source, message, reason, series } = event;
+        const tooltipMsg = `${reason} (${obj.kind})`;
+        const isWarning = typeFilter('warning', event);
+        const firstTime = getFirstTime(event);
+        const lastTime = getLastTime(event);
+        const count = series ? series.count : event.count;
+        return (
+          <div className={classNames('co-sysevent', { 'co-sysevent--warning': isWarning })}>
+            <div className="co-sysevent__icon-box">
+              <i className="co-sysevent-icon" title={tooltipMsg} />
+              <div className="co-sysevent__icon-line" />
             </div>
+            <div className="co-sysevent__box" role="gridcell">
+              <div className="co-sysevent__header">
+                <div className="co-sysevent__subheader">
+                  <ResourceLink className="co-sysevent__resourcelink" kind={referenceFor(obj)} namespace={obj.namespace} name={obj.name} />
+                  {obj.namespace && <ResourceLink className="co-sysevent__resourcelink hidden-xs" kind="Namespace" name={obj.namespace} />}
+                  {lastTime && <Timestamp className="co-sysevent__timestamp" timestamp={lastTime} />}
+                </div>
+                <div className="co-sysevent__details">
+                  <small className="co-sysevent__source">
+                    {t('SINGLE:MSG_EVENTS_MAIN_1', { something: source.component })}
+                    {source.component === 'kubelet' && <span> on {flags[FLAGS.CAN_LIST_NODE] ? <Link to={resourcePathFromModel(NodeModel, source.host)}>{source.host}</Link> : <>{source.host}</>}</span>}
+                  </small>
+                  {count > 1 && (
+                    <small className="co-sysevent__count text-secondary">
+                      {count} times
+                      {firstTime && (
+                        <>
+                          {' '}
+                          in the last <Timestamp timestamp={firstTime} simple={true} omitSuffix={true} />
+                        </>
+                      )}
+                    </small>
+                  )}
+                </div>
+              </div>
 
-            <div className="co-sysevent__message">{message}</div>
+              <div className="co-sysevent__message">{message}</div>
+            </div>
           </div>
-        </div>
-      );
-    }
-  },
+        );
+      }
+    },
+  ),
 );
 
 class _EventsList extends React.Component {
@@ -422,7 +423,7 @@ class _EventStream extends React.Component {
       'co-sysevent-stream__timeline--empty': !allCount || !count,
     });
     // const messageCount = count < maxMessages ? `Showing ${pluralize(count, 'event')}` : `Showing ${count} of ${allCount}+ events`;
-    const messageCount = count < maxMessages ? t('SINGLE:MSG_EVENTS_MAIN_COUNT_1', { something: count }) : `Showing ${count} of ${allCount}+ events`;
+    const messageCount = count < maxMessages ? t('SINGLE:MSG_EVENTS_MAIN_COUNT_1', { something: count }) : t('SINGLE:MSG_EVENTS_MAIN_2', { something1: count, something2: allCount });
 
     return (
       <div className="co-m-pane__body">

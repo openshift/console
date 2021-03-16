@@ -14,14 +14,13 @@ import { bareMetalNodeStatus } from '../../status/baremetal-node-status';
 import BareMetalNodesTable from './BareMetalNodesTable';
 import { bareMetalNodeStatusFilter } from './table-filters';
 import { NODE_MAINTENANCE_FLAG } from '../../features';
+import { ResourceLabelPlural } from '@console/internal/models/hypercloud/resource-plural';
+import { useTranslation } from 'react-i18next';
 
-const flattenResources = (resources) => {
+const flattenResources = resources => {
   // TODO(jtomasek): Remove loaded check once ListPageWrapper_ is updated to call flatten only
   // when resources are loaded
-  const loaded = _.every(
-    resources,
-    (resource) => resource.loaded || (resource.optional && !_.isEmpty(resource.loadError)),
-  );
+  const loaded = _.every(resources, resource => resource.loaded || (resource.optional && !_.isEmpty(resource.loadError)));
   const {
     hosts,
     machines,
@@ -49,7 +48,7 @@ const flattenResources = (resources) => {
   );
 };
 
-const BareMetalNodesPage: React.FC = (props) => {
+const BareMetalNodesPage: React.FC = props => {
   const hasNodeMaintenanceCapability = useFlag(NODE_MAINTENANCE_FLAG);
   const resources: FirehoseResource[] = [
     {
@@ -77,21 +76,14 @@ const BareMetalNodesPage: React.FC = (props) => {
       optional: true,
     });
   }
+  const { t } = useTranslation();
 
   return (
     <div className="co-m-list">
       <Helmet>
-        <title>Nodes</title>
+        <title>{ResourceLabelPlural(NodeModel, t)}</title>
       </Helmet>
-      <MultiListPage
-        {...props}
-        rowFilters={[bareMetalNodeStatusFilter]}
-        createButtonText="Add Host"
-        resources={resources}
-        flatten={flattenResources}
-        ListComponent={BareMetalNodesTable}
-        title="Nodes"
-      />
+      <MultiListPage {...props} rowFilters={[bareMetalNodeStatusFilter]} createButtonText="Add Host" resources={resources} flatten={flattenResources} ListComponent={BareMetalNodesTable} title={ResourceLabelPlural(NodeModel, t)} />
     </div>
   );
 };

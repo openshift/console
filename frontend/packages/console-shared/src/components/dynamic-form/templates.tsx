@@ -67,6 +67,19 @@ export const ObjectFieldTemplate: React.FC<ObjectFieldTemplateProps> = ({ idSche
 
 export const ArrayFieldTemplate: React.FC<ArrayFieldTemplateProps> = ({ idSchema, items, onAddClick, required, schema, title, uiSchema }) => {
   const [, label] = useSchemaLabel(schema, uiSchema, title ?? 'Items');
+  let singularLabel = label;
+  if (label.match('ss$')) {
+  } else if (label.match('ies$')) {
+    singularLabel = singularLabel.replace(/ies$/, 'y');
+  } else if (label.match('es$')) {
+    if (label.match('oes$') || label.match('ses$') || label.match('xes$') || label.match('ches$') || label.match('shes$')) {
+      singularLabel = singularLabel.replace(/es$/, '');
+    } else {
+      singularLabel = singularLabel.replace(/s$/, '');
+    }
+  } else if (label.match('s$')) {
+    singularLabel = singularLabel.replace(/s$/, '');
+  }
   return (
     <FieldSet defaultLabel={label} idSchema={idSchema} required={required} schema={schema} uiSchema={uiSchema}>
       {_.map(items ?? [], item => {
@@ -77,7 +90,7 @@ export const ArrayFieldTemplate: React.FC<ArrayFieldTemplateProps> = ({ idSchema
               <div className="row co-dynamic-form__array-field-group-remove">
                 <Button id={`${item.key}_remove-btn`} type="button" onClick={item.onDropIndexClick(item.index)} variant="link">
                   <MinusCircleIcon className="co-icon-space-r" />
-                  Remove {label}
+                  Remove {singularLabel}
                 </Button>
               </div>
             )}
@@ -88,7 +101,7 @@ export const ArrayFieldTemplate: React.FC<ArrayFieldTemplateProps> = ({ idSchema
       <div className="row">
         <Button id={`${idSchema.$id}_add-btn`} type="button" onClick={onAddClick} variant="link">
           <PlusCircleIcon className="co-icon-space-r" />
-          Add {label}
+          Add {singularLabel}
         </Button>
       </div>
     </FieldSet>

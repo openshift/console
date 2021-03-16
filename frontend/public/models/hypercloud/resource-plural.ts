@@ -17,175 +17,149 @@ export const ResourceLabelPlural = (kindObj, t?: TFunction) => {
 };
 
 export const ResourceStringKeyMap = {
-  ClusterClaim: {
-  },
+  ClusterClaim: {},
   ClusterManager: {
-    labelPlural: "COMMON:MSG_LNB_MENU_84",
+    labelPlural: 'COMMON:MSG_LNB_MENU_84',
   },
-  FederatedPod: {
-  },
-  FederatedDeployment: {
-
-  },
-  FederatedReplicaSet:{
-
-  },
-  FederatedHorizontalPodAutoscaler:{
-
-  },
-  FederatedDaemonSet:{
-
-  },
-  FederatedStatefulSet:{
-
-  },
-  FederatedConfigMap:{
-
-  },
-  FederatedSecret:{
-
-  },
-  FederatedJob:{
-
-  },
-  FederatedCronJob:{
-
-  },
-  FederatedIngress:{
-
-  },
-  FederatedService:{
-
-  },
-  FederatedNamespace:{
-
-  },
+  FederatedPod: {},
+  FederatedDeployment: {},
+  FederatedReplicaSet: {},
+  FederatedHorizontalPodAutoscaler: {},
+  FederatedDaemonSet: {},
+  FederatedStatefulSet: {},
+  FederatedConfigMap: {},
+  FederatedSecret: {},
+  FederatedJob: {},
+  FederatedCronJob: {},
+  FederatedIngress: {},
+  FederatedService: {},
+  FederatedNamespace: {},
   //
   ServiceBroker: {
-    labelPlural: "COMMON:MSG_LNB_MENU_11",
+    labelPlural: 'COMMON:MSG_LNB_MENU_11',
   },
   ServiceClass: {
-    labelPlural: "COMMON:MSG_LNB_MENU_12",
+    labelPlural: 'COMMON:MSG_LNB_MENU_12',
   },
   ClusterServiceBroker: {
-    labelPlural: "COMMON:MSG_LNB_MENU_14",
+    labelPlural: 'COMMON:MSG_LNB_MENU_14',
   },
   ClusterServiceClass: {
-    labelPlural: "COMMON:MSG_LNB_MENU_15",
+    labelPlural: 'COMMON:MSG_LNB_MENU_15',
   },
   ServiceInstance: {
-    labelPlural: "COMMON:MSG_LNB_MENU_17",
+    labelPlural: 'COMMON:MSG_LNB_MENU_17',
   },
   ServiceBinding: {
-    labelPlural: "COMMON:MSG_LNB_MENU_18",
+    labelPlural: 'COMMON:MSG_LNB_MENU_18',
   },
   CatalogServiceClaim: {
-    labelPlural: "COMMON:MSG_LNB_MENU_19",
+    labelPlural: 'COMMON:MSG_LNB_MENU_19',
   },
   Template: {
-    labelPlural: "COMMON:MSG_LNB_MENU_20",
+    labelPlural: 'COMMON:MSG_LNB_MENU_20',
   },
   ClusterTemplate: {
-    labelPlural: "COMMON:MSG_LNB_MENU_104",
+    labelPlural: 'COMMON:MSG_LNB_MENU_104',
   },
   TemplateInstance: {
-    labelPlural: "COMMON:MSG_LNB_MENU_21",
+    labelPlural: 'COMMON:MSG_LNB_MENU_21',
   },
   Pod: {
-    labelPlural: "COMMON:MSG_LNB_MENU_23",
+    labelPlural: 'COMMON:MSG_LNB_MENU_23',
   },
   Deployment: {
-    labelPlural: "COMMON:MSG_LNB_MENU_24",
+    labelPlural: 'COMMON:MSG_LNB_MENU_24',
   },
   ReplicaSet: {
-    labelPlural: "COMMON:MSG_LNB_MENU_31",
+    labelPlural: 'COMMON:MSG_LNB_MENU_31',
   },
   HorizontalPodAutoscaler: {
-    labelPlural: "COMMON:MSG_LNB_MENU_32",
+    labelPlural: 'COMMON:MSG_LNB_MENU_32',
   },
   DaemonSet: {
-    labelPlural: "COMMON:MSG_LNB_MENU_30",
+    labelPlural: 'COMMON:MSG_LNB_MENU_30',
   },
   StatefulSet: {
-    labelPlural: "COMMON:MSG_LNB_MENU_25",
+    labelPlural: 'COMMON:MSG_LNB_MENU_25',
   },
   ConfigMap: {
-    labelPlural: "COMMON:MSG_LNB_MENU_27",
+    labelPlural: 'COMMON:MSG_LNB_MENU_27',
   },
   Secret: {
-    labelPlural: "COMMON:MSG_LNB_MENU_26",
+    labelPlural: 'COMMON:MSG_LNB_MENU_26',
   },
   Job: {
-    labelPlural: "COMMON:MSG_LNB_MENU_29",
+    labelPlural: 'COMMON:MSG_LNB_MENU_29',
   },
   CronJob: {
-    labelPlural: "COMMON:MSG_LNB_MENU_28",
+    labelPlural: 'COMMON:MSG_LNB_MENU_28',
   },
   VirtualService: {
-    labelPlural: "COMMON:MSG_LNB_MENU_36",
+    labelPlural: 'COMMON:MSG_LNB_MENU_36',
   },
   DestinationRule: {
-    labelPlural: "COMMON:MSG_LNB_MENU_37",
+    labelPlural: 'COMMON:MSG_LNB_MENU_37',
   },
   EnvoyFilter: {
-    labelPlural: "COMMON:MSG_LNB_MENU_38",
+    labelPlural: 'COMMON:MSG_LNB_MENU_38',
   },
   Gateway: {
-    labelPlural: "COMMON:MSG_LNB_MENU_39",
+    labelPlural: 'COMMON:MSG_LNB_MENU_39',
   },
   Sidecar: {
-    labelPlural: "COMMON:MSG_LNB_MENU_40",
+    labelPlural: 'COMMON:MSG_LNB_MENU_40',
   },
   ServiceEntry: {
-    labelPlural: "COMMON:MSG_LNB_MENU_41",
+    labelPlural: 'COMMON:MSG_LNB_MENU_41',
   },
   RequestAuthentication: {
-    labelPlural: "COMMON:MSG_LNB_MENU_42",
+    labelPlural: 'COMMON:MSG_LNB_MENU_42',
   },
   PeerAuthentication: {
-    labelPlural: "COMMON:MSG_LNB_MENU_43",
+    labelPlural: 'COMMON:MSG_LNB_MENU_43',
   },
   AuthorizationPolicy: {
-    labelPlural: "COMMON:MSG_LNB_MENU_44",
+    labelPlural: 'COMMON:MSG_LNB_MENU_44',
   },
   Service: {
-    labelPlural: "COMMON:MSG_LNB_MENU_47",
+    labelPlural: 'COMMON:MSG_LNB_MENU_47',
   },
   Ingress: {
-    labelPlural: "COMMON:MSG_LNB_MENU_48",
+    labelPlural: 'COMMON:MSG_LNB_MENU_48',
   },
   NetworkPolicy: {
-    labelPlural: "COMMON:MSG_LNB_MENU_49",
+    labelPlural: 'COMMON:MSG_LNB_MENU_49',
   },
   StorageClass: {
-    labelPlural: "COMMON:MSG_LNB_MENU_53",
+    labelPlural: 'COMMON:MSG_LNB_MENU_53',
   },
   PersistentVolume: {
-    labelPlural: "COMMON:MSG_LNB_MENU_51",
+    labelPlural: 'COMMON:MSG_LNB_MENU_51',
   },
   PersistentVolumeClaim: {
-    labelPlural: "COMMON:MSG_LNB_MENU_52",
+    labelPlural: 'COMMON:MSG_LNB_MENU_52',
   },
   Task: {
-    labelPlural: "COMMON:MSG_LNB_MENU_57",
+    labelPlural: 'COMMON:MSG_LNB_MENU_57',
   },
   ClusterTask: {
-    labelPlural: "COMMON:MSG_LNB_MENU_94",
+    labelPlural: 'COMMON:MSG_LNB_MENU_94',
   },
   TaskRun: {
-    labelPlural: "COMMON:MSG_LNB_MENU_58",
+    labelPlural: 'COMMON:MSG_LNB_MENU_58',
   },
   Pipeline: {
-    labelPlural: "COMMON:MSG_LNB_MENU_59",
+    labelPlural: 'COMMON:MSG_LNB_MENU_59',
   },
   PipelineRun: {
-    labelPlural: "COMMON:MSG_LNB_MENU_60",
+    labelPlural: 'COMMON:MSG_LNB_MENU_60',
   },
   Approval: {
-    labelPlural: "COMMON:MSG_LNB_MENU_61",
+    labelPlural: 'COMMON:MSG_LNB_MENU_61',
   },
   PipelineResource: {
-    labelPlural: "COMMON:MSG_LNB_MENU_62",
+    labelPlural: 'COMMON:MSG_LNB_MENU_62',
   },
   IntegrationJob: {
     //labelPlural: "COMMON:MSG_LNB_MENU_",
@@ -194,54 +168,60 @@ export const ResourceStringKeyMap = {
     //labelPlural: "COMMON:MSG_LNB_MENU_",
   },
   Registry: {
-    labelPlural: "COMMON:MSG_LNB_MENU_71",
+    labelPlural: 'COMMON:MSG_LNB_MENU_71',
   },
   ExternalRegistry: {
-    labelPlural: "COMMON:MSG_LNB_MENU_97",
+    labelPlural: 'COMMON:MSG_LNB_MENU_97',
   },
   ImageSigner: {
-    labelPlural: "COMMON:MSG_LNB_MENU_91",
+    labelPlural: 'COMMON:MSG_LNB_MENU_91',
   },
   ImageSignRequest: {
-    labelPlural: "COMMON:MSG_LNB_MENU_92",
+    labelPlural: 'COMMON:MSG_LNB_MENU_92',
   },
   SignerPolicy: {
-    labelPlural: "COMMON:MSG_LNB_MENU_96",
+    labelPlural: 'COMMON:MSG_LNB_MENU_96',
   },
   Namespace: {
-    labelPlural: "COMMON:MSG_LNB_MENU_3",
+    labelPlural: 'COMMON:MSG_LNB_MENU_3',
   },
   NamespaceClaim: {
-    labelPlural: "COMMON:MSG_LNB_MENU_103",
+    labelPlural: 'COMMON:MSG_LNB_MENU_103',
   },
   LimitRange: {
-    labelPlural: "COMMON:MSG_LNB_MENU_81",
+    labelPlural: 'COMMON:MSG_LNB_MENU_81',
   },
   ResourceQuota: {
-    labelPlural: "COMMON:MSG_LNB_MENU_80",
+    labelPlural: 'COMMON:MSG_LNB_MENU_80',
   },
   ResourceQuotaClaim: {
-    labelPlural: "COMMON:MSG_LNB_MENU_102",
+    labelPlural: 'COMMON:MSG_LNB_MENU_102',
   },
   CustomResourceDefinition: {
-    labelPlural: "COMMON:MSG_LNB_MENU_82",
+    labelPlural: 'COMMON:MSG_LNB_MENU_82',
   },
   Node: {
-    labelPlural: "COMMON:MSG_LNB_MENU_100",
+    labelPlural: 'COMMON:MSG_LNB_MENU_100',
   },
   Role: {
-    labelPlural: "COMMON:MSG_LNB_MENU_75",
+    labelPlural: 'COMMON:MSG_LNB_MENU_75',
   },
   RoleBinding: {
-    labelPlural: "COMMON:MSG_LNB_MENU_76",
+    labelPlural: 'COMMON:MSG_LNB_MENU_76',
+  },
+  ClusterRole: {
+    labelPlural: 'MSG_DETAILS_TABDETAILS_DETAILS_124',
   },
   RoleBindingClaim: {
-    labelPlural: "COMMON:MSG_LNB_MENU_101",
+    labelPlural: 'COMMON:MSG_LNB_MENU_101',
+  },
+  ClusterRoleBinding: {
+    labelPlural: 'MSG_DETAILS_TABDETAILS_DETAILS_123',
   },
   ServiceAccount: {
-    labelPlural: "COMMON:MSG_LNB_MENU_74",
+    labelPlural: 'COMMON:MSG_LNB_MENU_74',
   },
   PodSecurityPolicy: {
-    labelPlural: "COMMON:MSG_LNB_MENU_78",
-  }
-}
+    labelPlural: 'COMMON:MSG_LNB_MENU_78',
+  },
+};

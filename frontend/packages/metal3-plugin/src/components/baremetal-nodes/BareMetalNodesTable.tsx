@@ -15,6 +15,7 @@ import { baremetalNodeSecondaryStatus } from '../../status/baremetal-node-status
 import { menuActions } from './menu-actions';
 import BareMetalNodeStatus from './BareMetalNodeStatus';
 import { NODE_MAINTENANCE_FLAG } from '../../features';
+import { useTranslation } from 'react-i18next';
 
 const tableColumnClasses = {
   name: classNames('col-lg-3', 'col-md-4', 'col-sm-12', 'col-xs-12'),
@@ -25,15 +26,15 @@ const tableColumnClasses = {
   kebab: Kebab.columnClass,
 };
 
-const BareMetalNodesTableHeader = () => [
+const BareMetalNodesTableHeader = t => [
   {
-    title: 'Name',
+    title: t('COMMON:MSG_MAIN_TABLEHEADER_1'),
     sortField: 'node.metadata.name',
     transforms: [sortable],
     props: { className: tableColumnClasses.name },
   },
   {
-    title: 'Status',
+    title: t('COMMON:MSG_MAIN_TABLEHEADER_3'),
     sortField: 'status.status',
     transforms: [sortable],
     props: { className: tableColumnClasses.status },
@@ -45,13 +46,13 @@ const BareMetalNodesTableHeader = () => [
     props: { className: tableColumnClasses.role },
   },
   {
-    title: 'Machine',
+    title: t('COMMON:MSG_MAIN_TABLEHEADER_92'),
     sortField: "metadata.annotations['machine.openshift.io/machine']",
     transforms: [sortable],
     props: { className: tableColumnClasses.machine },
   },
   {
-    title: 'Management Address',
+    title: t('COMMON:MSG_MAIN_TABLEHEADER_93'),
     sortField: 'host.spec.bmc.address',
     transforms: [sortable],
     props: { className: tableColumnClasses.address },
@@ -94,8 +95,9 @@ type BareMetalNodesTableProps = React.ComponentProps<typeof Table> & {
 };
 
 const BareMetalNodesTable: React.FC<BareMetalNodesTableProps> = props => {
+  const { t } = useTranslation();
   const row = React.useCallback<RowFunction<BareMetalNodeBundle>>(rowProps => <BareMetalNodesTableRow {...rowProps} />, []);
-  return <Table {...props} defaultSortField="node.metadata.name" aria-label="Nodes" Header={BareMetalNodesTableHeader} Row={row} virtualize />;
+  return <Table {...props} defaultSortField="node.metadata.name" aria-label="Nodes" Header={BareMetalNodesTableHeader.bind(null, t)} Row={row} virtualize />;
 };
 
 export default BareMetalNodesTable;

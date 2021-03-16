@@ -9,6 +9,7 @@ import { UiSchema } from 'react-jsonschema-form';
 import { SchemaType } from '@console/shared/src/components/dynamic-form';
 import { getSchemaType } from 'react-jsonschema-form/lib/utils';
 import { getSchemaErrors } from '@console/shared/src/components/dynamic-form/utils';
+import { isArray } from 'lodash';
 
 // Transform a path string from a descriptor to a JSON schema path array
 export const descriptorPathToUISchemaPath = (path: string): string[] =>
@@ -82,11 +83,51 @@ export const getDefaultUISchema = (jsonSchema: JSONSchema6, jsonSchemaName: stri
     return {
       'ui:field': 'AdditionalPropertyField',
     };
-  } else if (jsonSchema?.['x-kubernetes-int-or-string']) {
-    delete jsonSchema?.anyOf; // 너무 야매이긴 한데 지금 상황에서는 최선... 추후에 더 고민해봐야할듯..
-    return {
-      'ui:field': 'TextField',
-    };
+  } else if (jsonSchema?.['x-kubernetes-int-or-string'] || jsonSchema?.['anyOf']) {
+    if (
+      isArray(jsonSchema.anyOf) &&
+      jsonSchema.anyOf.every(cur => {
+        if (isArray(cur?.['type'])) {
+          return cur['type'][0] === 'string' || cur['type'][0] === 'number' || cur['type'][0] === 'null' || cur['type'][0] === 'integer';
+        } else if (cur?.['type']){
+          return cur['type'] === 'string' || cur['type'] === 'number' || cur['type'] === 'null' || cur['type'] === 'integer';
+        }
+      })
+    ) {
+      delete jsonSchema?.anyOf;
+      jsonSchema.type = 'string';
+    }
+    delete jsonSchema?.anyOf;
+  } else if (jsonSchema?.['oneOf']) {
+    if (
+      isArray(jsonSchema.oneOf) &&
+      jsonSchema.oneOf.every(cur => {
+        if (isArray(cur?.['type'])) {
+          return cur['type'][0] === 'string' || cur['type'][0] === 'number' || cur['type'][0] === 'null' || cur['type'][0] === 'integer';
+        } else if (cur?.['type']){
+          return cur['type'] === 'string' || cur['type'] === 'number' || cur['type'] === 'null' || cur['type'] === 'integer';
+        }
+      })
+    ) {
+      delete jsonSchema?.oneOf;
+      jsonSchema.type = 'string';
+    }
+    delete jsonSchema?.oneOf;
+  } else if (jsonSchema?.['allOf']) {
+    if (
+      isArray(jsonSchema.allOf) &&
+      jsonSchema.allOf.every(cur => {
+        if (isArray(cur?.['type'])) {
+          return cur['type'][0] === 'string' || cur['type'][0] === 'number' || cur['type'][0] === 'null' || cur['type'][0] === 'integer';
+        } else if (cur?.['type']){
+          return cur['type'] === 'string' || cur['type'] === 'number' || cur['type'] === 'null' || cur['type'] === 'integer';
+        }
+      })
+    ) {
+      delete jsonSchema?.allOf;
+      jsonSchema.type = 'string';
+    }
+    delete jsonSchema?.allOf;
   }
 
   const handleArray = () => {

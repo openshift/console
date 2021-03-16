@@ -117,24 +117,27 @@ const Resources = connect(({ k8s }) => ({ allModels: k8s.getIn(['RESOURCES', 'mo
   return <div className="rbac-rule-resources">{allResources}</div>;
 });
 
-const DeleteRule = (name, namespace, i) => ({
-  label: 'Delete Rule',
-  callback: () =>
-    confirmModal({
-      title: 'Delete Rule',
-      message: `Are you sure you want to delete Rule #${i}?`,
-      btnText: 'Delete Rule',
-      executeFn: () => {
-        const kind = namespace ? RoleModel : ClusterRoleModel;
-        return k8sPatch(kind, { metadata: { name, namespace } }, [
-          {
-            op: 'remove',
-            path: `/rules/${i}`,
-          },
-        ]);
-      },
-    }),
-});
+const DeleteRule = (name, namespace, i) => {
+  const { t } = useTranslation();
+  return {
+    label: t('COMMON:MSG_COMMON_ACTIONBUTTON_65'),
+    callback: () =>
+      confirmModal({
+        title: t('COMMON:MSG_COMMON_ACTIONBUTTON_65'),
+        message: t('SINGLE:MSG_ROLES_ROLEDETAILS_TABDETAILS_RULES_2', { 0: `#${i}` }),
+        btnText: t('COMMON:MSG_COMMON_ACTIONBUTTON_65'),
+        executeFn: () => {
+          const kind = namespace ? RoleModel : ClusterRoleModel;
+          return k8sPatch(kind, { metadata: { name, namespace } }, [
+            {
+              op: 'remove',
+              path: `/rules/${i}`,
+            },
+          ]);
+        },
+      }),
+  };
+};
 
 // This page is temporarily disabled until we update the safe resources list.
 // const EditRule = (name, namespace, i) => ({

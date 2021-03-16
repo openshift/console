@@ -3,23 +3,25 @@ import * as React from 'react';
 import { NodeKind } from '@console/internal/module/k8s';
 import { SectionHeading, Timestamp, CamelCaseWrap } from '@console/internal/components/utils';
 
+import { useTranslation } from 'react-i18next';
 type NodeDetailsConditionsProps = {
   node: NodeKind;
 };
 
 const NodeDetailsConditions: React.FC<NodeDetailsConditionsProps> = ({ node }) => {
+  const { t } = useTranslation();
   return (
     <div className="co-m-pane__body">
-      <SectionHeading text="Node Conditions" />
+      <SectionHeading text={t('COMMON:MSG_DETAILS_TABDETAILS_NODECONDITIONS_1')} />
       <div className="co-table-container">
         <table className="table">
           <thead>
             <tr>
-              <th>Type</th>
-              <th>Status</th>
-              <th>Reason</th>
-              <th>Updated</th>
-              <th>Changed</th>
+              <th>{t('COMMON:MSG_DETAILS_TABDETAILS_NODECONDITIONS_TABLEHEADER_1')}</th>
+              <th>{t('COMMON:MSG_DETAILS_TABDETAILS_NODECONDITIONS_TABLEHEADER_2')}</th>
+              <th>{t('COMMON:MSG_DETAILS_TABDETAILS_NODECONDITIONS_TABLEHEADER_3')}</th>
+              <th>{t('COMMON:MSG_DETAILS_TABDETAILS_NODECONDITIONS_TABLEHEADER_4')}</th>
+              <th>{t('COMMON:MSG_DETAILS_TABDETAILS_NODECONDITIONS_TABLEHEADER_5')}</th>
             </tr>
           </thead>
           <tbody>

@@ -3,36 +3,25 @@ import { Link } from 'react-router-dom';
 import { InProgressIcon, QuestionCircleIcon } from '@patternfly/react-icons';
 import { K8sResourceKind, K8sKind } from '@console/internal/module/k8s';
 import { resourcePathFromModel } from '@console/internal/components/utils/resource-link';
-import {
-  Accordion,
-  AccordionItem,
-  AccordionToggle,
-  AccordionContent,
-} from '@patternfly/react-core';
+import { Accordion, AccordionItem, AccordionToggle, AccordionContent } from '@patternfly/react-core';
 import { pluralize } from '@console/internal/components/utils';
-import {
-  useExtensions,
-  DashboardsInventoryItemGroup,
-  isDashboardsInventoryItemGroup,
-} from '@console/plugin-sdk';
+import { useExtensions, DashboardsInventoryItemGroup, isDashboardsInventoryItemGroup } from '@console/plugin-sdk';
 import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '../../status/icons';
 import { InventoryStatusGroup } from './status-group';
+import { ResourceLabel, ResourceLabelPlural } from '@console/internal/models/hypercloud/resource-plural';
+import { useTranslation } from 'react-i18next';
 import './inventory-card.scss';
 
 const defaultStatusGroupIcons = {
   [InventoryStatusGroup.WARN]: <YellowExclamationTriangleIcon />,
   [InventoryStatusGroup.ERROR]: <RedExclamationCircleIcon />,
-  [InventoryStatusGroup.PROGRESS]: (
-    <InProgressIcon className="co-inventory-card__status-icon--progress" />
-  ),
-  [InventoryStatusGroup.UNKNOWN]: (
-    <QuestionCircleIcon className="co-inventory-card__status-icon--question" />
-  ),
+  [InventoryStatusGroup.PROGRESS]: <InProgressIcon className="co-inventory-card__status-icon--progress" />,
+  [InventoryStatusGroup.UNKNOWN]: <QuestionCircleIcon className="co-inventory-card__status-icon--question" />,
 };
 
 const getStatusGroupIcons = (groups: DashboardsInventoryItemGroup[]) => {
   const groupStatusIcons = { ...defaultStatusGroupIcons };
-  groups.forEach((group) => {
+  groups.forEach(group => {
     if (!groupStatusIcons[group.properties.id]) {
       groupStatusIcons[group.properties.id] = group.properties.icon;
     }
@@ -41,12 +30,8 @@ const getStatusGroupIcons = (groups: DashboardsInventoryItemGroup[]) => {
 };
 
 const getTop3Groups = (groups: DashboardsInventoryItemGroup[], groupIDs: string[]) => {
-  const groupStatuses: (InventoryStatusGroup | string)[] = [
-    InventoryStatusGroup.ERROR,
-    InventoryStatusGroup.WARN,
-    InventoryStatusGroup.PROGRESS,
-  ];
-  groups.forEach((group) => {
+  const groupStatuses: (InventoryStatusGroup | string)[] = [InventoryStatusGroup.ERROR, InventoryStatusGroup.WARN, InventoryStatusGroup.PROGRESS];
+  groups.forEach(group => {
     if (!groupStatuses.includes(group.properties.id)) {
       groupStatuses.push(group.properties.id);
     }
@@ -55,82 +40,42 @@ const getTop3Groups = (groups: DashboardsInventoryItemGroup[], groupIDs: string[
   return groupIDs.sort((a, b) => groupStatuses.indexOf(a) - groupStatuses.indexOf(b)).slice(0, 3);
 };
 
-export const InventoryItem: React.FC<InventoryItemProps> = React.memo(
-  ({
-    isLoading,
-    title,
-    titlePlural,
-    count,
-    children,
-    error = false,
-    TitleComponent,
-    ExpandedComponent,
-  }) => {
-    const [expanded, setExpanded] = React.useState(false);
-    const onClick = React.useCallback(() => setExpanded(!expanded), [expanded]);
-    const titleMessage = pluralize(count, title, titlePlural, !isLoading && !error);
-    return ExpandedComponent ? (
-      <Accordion
-        asDefinitionList={false}
-        headingLevel="h5"
-        className="co-inventory-card__accordion"
-      >
-        <AccordionItem>
-          <AccordionToggle
-            onClick={onClick}
-            isExpanded={expanded}
-            id={title}
-            className="co-inventory-card__accordion-toggle"
-          >
-            <div className="co-inventory-card__item">
-              <div className="co-inventory-card__item-title">
-                {isLoading && !error && <div className="skeleton-inventory" />}
-                {TitleComponent ? <TitleComponent>{titleMessage}</TitleComponent> : titleMessage}
-              </div>
-              {!expanded && (error || !isLoading) && (
-                <div className="co-inventory-card__item-status">
-                  {error ? (
-                    <div className="co-dashboard-text--small text-secondary">Not available</div>
-                  ) : (
-                    children
-                  )}
-                </div>
-              )}
+export const InventoryItem: React.FC<InventoryItemProps> = React.memo(({ isLoading, title, titlePlural, count, children, error = false, TitleComponent, ExpandedComponent }) => {
+  const [expanded, setExpanded] = React.useState(false);
+  const onClick = React.useCallback(() => setExpanded(!expanded), [expanded]);
+  const titleMessage = pluralize(count, title, titlePlural, !isLoading && !error);
+  return ExpandedComponent ? (
+    <Accordion asDefinitionList={false} headingLevel="h5" className="co-inventory-card__accordion">
+      <AccordionItem>
+        <AccordionToggle onClick={onClick} isExpanded={expanded} id={title} className="co-inventory-card__accordion-toggle">
+          <div className="co-inventory-card__item">
+            <div className="co-inventory-card__item-title">
+              {isLoading && !error && <div className="skeleton-inventory" />}
+              {TitleComponent ? <TitleComponent>{titleMessage}</TitleComponent> : titleMessage}
             </div>
-          </AccordionToggle>
-          <AccordionContent isHidden={!expanded} className="co-inventory-card__accordion-body">
-            <ExpandedComponent />
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
-    ) : (
-      <div className="co-inventory-card__item">
-        <div className="co-inventory-card__item-title">
-          {isLoading && !error && <div className="skeleton-inventory" />}
-          {TitleComponent ? <TitleComponent>{titleMessage}</TitleComponent> : titleMessage}
-        </div>
-        {(error || !isLoading) && (
-          <div className="co-inventory-card__item-status">
-            {error ? (
-              <div className="co-dashboard-text--small text-secondary">Not available</div>
-            ) : (
-              children
-            )}
+            {!expanded && (error || !isLoading) && <div className="co-inventory-card__item-status">{error ? <div className="co-dashboard-text--small text-secondary">Not available</div> : children}</div>}
           </div>
-        )}
+        </AccordionToggle>
+        <AccordionContent isHidden={!expanded} className="co-inventory-card__accordion-body">
+          <ExpandedComponent />
+        </AccordionContent>
+      </AccordionItem>
+    </Accordion>
+  ) : (
+    <div className="co-inventory-card__item">
+      <div className="co-inventory-card__item-title">
+        {isLoading && !error && <div className="skeleton-inventory" />}
+        {TitleComponent ? <TitleComponent>{titleMessage}</TitleComponent> : titleMessage}
       </div>
-    );
-  },
-);
+      {(error || !isLoading) && <div className="co-inventory-card__item-status">{error ? <div className="co-dashboard-text--small text-secondary">Not available</div> : children}</div>}
+    </div>
+  );
+});
 
 export const Status: React.FC<StatusProps> = ({ groupID, count }) => {
-  const groupExtensions = useExtensions<DashboardsInventoryItemGroup>(
-    isDashboardsInventoryItemGroup,
-  );
+  const groupExtensions = useExtensions<DashboardsInventoryItemGroup>(isDashboardsInventoryItemGroup);
 
-  const statusGroupIcons = React.useMemo(() => getStatusGroupIcons(groupExtensions), [
-    groupExtensions,
-  ]);
+  const statusGroupIcons = React.useMemo(() => getStatusGroupIcons(groupExtensions), [groupExtensions]);
 
   if (groupID === InventoryStatusGroup.NOT_MAPPED || !count) {
     return null;
@@ -146,22 +91,10 @@ export const Status: React.FC<StatusProps> = ({ groupID, count }) => {
   );
 };
 
-const StatusLink: React.FC<StatusLinkProps> = ({
-  groupID,
-  count,
-  statusIDs,
-  kind,
-  namespace,
-  filterType,
-  basePath,
-}) => {
-  const groupExtensions = useExtensions<DashboardsInventoryItemGroup>(
-    isDashboardsInventoryItemGroup,
-  );
+const StatusLink: React.FC<StatusLinkProps> = ({ groupID, count, statusIDs, kind, namespace, filterType, basePath }) => {
+  const groupExtensions = useExtensions<DashboardsInventoryItemGroup>(isDashboardsInventoryItemGroup);
 
-  const statusGroupIcons = React.useMemo(() => getStatusGroupIcons(groupExtensions), [
-    groupExtensions,
-  ]);
+  const statusGroupIcons = React.useMemo(() => getStatusGroupIcons(groupExtensions), [groupExtensions]);
 
   if (groupID === InventoryStatusGroup.NOT_MAPPED || !count) {
     return null;
@@ -170,8 +103,7 @@ const StatusLink: React.FC<StatusLinkProps> = ({
   const groupIcon = statusGroupIcons[groupID] || statusGroupIcons[InventoryStatusGroup.NOT_MAPPED];
   const statusItems = encodeURIComponent(statusIDs.join(','));
   const path = basePath || resourcePathFromModel(kind, null, namespace);
-  const to =
-    filterType && statusItems.length > 0 ? `${path}?rowFilter-${filterType}=${statusItems}` : path;
+  const to = filterType && statusItems.length > 0 ? `${path}?rowFilter-${filterType}=${statusItems}` : path;
 
   return (
     <div className="co-inventory-card__status">
@@ -183,90 +115,33 @@ const StatusLink: React.FC<StatusLinkProps> = ({
   );
 };
 
-const ResourceTitleComponent: React.FC<ResourceTitleComponentComponent> = ({
-  kind,
-  namespace,
-  children,
-  basePath,
-}) => <Link to={basePath || resourcePathFromModel(kind, null, namespace)}>{children}</Link>;
+const ResourceTitleComponent: React.FC<ResourceTitleComponentComponent> = ({ kind, namespace, children, basePath }) => <Link to={basePath || resourcePathFromModel(kind, null, namespace)}>{children}</Link>;
 
-export const ResourceInventoryItem: React.FC<ResourceInventoryItemProps> = ({
-  kind,
-  useAbbr,
-  TitleComponent,
-  resources = [],
-  additionalResources,
-  isLoading,
-  mapper,
-  namespace,
-  error,
-  showLink = true,
-  ExpandedComponent,
-  basePath,
-}) => {
-  let Title: React.ComponentType = React.useCallback(
-    (props) => (
-      <ResourceTitleComponent kind={kind} namespace={namespace} basePath={basePath} {...props} />
-    ),
-    [kind, namespace, basePath],
-  );
+export const ResourceInventoryItem: React.FC<ResourceInventoryItemProps> = ({ kind, useAbbr, TitleComponent, resources = [], additionalResources, isLoading, mapper, namespace, error, showLink = true, ExpandedComponent, basePath }) => {
+  let Title: React.ComponentType = React.useCallback(props => <ResourceTitleComponent kind={kind} namespace={namespace} basePath={basePath} {...props} />, [kind, namespace, basePath]);
+  const { t } = useTranslation();
 
   if (TitleComponent) Title = TitleComponent;
 
-  const groupExtensions = useExtensions<DashboardsInventoryItemGroup>(
-    isDashboardsInventoryItemGroup,
-  );
+  const groupExtensions = useExtensions<DashboardsInventoryItemGroup>(isDashboardsInventoryItemGroup);
 
-  const groups = React.useMemo(() => (mapper ? mapper(resources, additionalResources) : {}), [
-    mapper,
-    resources,
-    additionalResources,
-  ]);
+  const groups = React.useMemo(() => (mapper ? mapper(resources, additionalResources) : {}), [mapper, resources, additionalResources]);
 
   const top3Groups = React.useMemo(
     () =>
       getTop3Groups(
         groupExtensions,
-        Object.keys(groups).filter((key) => groups[key].count > 0),
+        Object.keys(groups).filter(key => groups[key].count > 0),
       ),
     [groupExtensions, groups],
   );
 
   // The count can depend on additionalResources (like mixing of VM and VMI for kubevirt-plugin)
-  const totalCount = React.useMemo(
-    () =>
-      mapper
-        ? Object.keys(groups).reduce((acc, cur) => groups[cur].count + acc, 0)
-        : resources.length,
-    [mapper, groups, resources],
-  );
+  const totalCount = React.useMemo(() => (mapper ? Object.keys(groups).reduce((acc, cur) => groups[cur].count + acc, 0) : resources.length), [mapper, groups, resources]);
 
   return (
-    <InventoryItem
-      isLoading={isLoading}
-      title={useAbbr ? kind.abbr : kind.label}
-      titlePlural={useAbbr ? undefined : kind.labelPlural}
-      count={totalCount}
-      error={error}
-      TitleComponent={showLink ? Title : null}
-      ExpandedComponent={ExpandedComponent}
-    >
-      {top3Groups.map((key) =>
-        showLink ? (
-          <StatusLink
-            key={key}
-            kind={kind}
-            namespace={namespace}
-            groupID={key}
-            count={groups[key].count}
-            statusIDs={groups[key].statusIDs}
-            filterType={groups[key].filterType}
-            basePath={basePath}
-          />
-        ) : (
-          <Status key={key} groupID={key} count={groups[key].count} />
-        ),
-      )}
+    <InventoryItem isLoading={isLoading} title={ResourceLabel(kind, t)} titlePlural={ResourceLabelPlural(kind, t)} count={totalCount} error={error} TitleComponent={showLink ? Title : null} ExpandedComponent={ExpandedComponent}>
+      {top3Groups.map(key => (showLink ? <StatusLink key={key} kind={kind} namespace={namespace} groupID={key} count={groups[key].count} statusIDs={groups[key].statusIDs} filterType={groups[key].filterType} basePath={basePath} /> : <Status key={key} groupID={key} count={groups[key].count} />))}
     </InventoryItem>
   );
 };
@@ -281,10 +156,7 @@ type StatusGroup = {
   };
 };
 
-export type StatusGroupMapper = (
-  resources: K8sResourceKind[],
-  additionalResources?: { [key: string]: K8sResourceKind[] },
-) => StatusGroup;
+export type StatusGroupMapper = (resources: K8sResourceKind[], additionalResources?: { [key: string]: K8sResourceKind[] }) => StatusGroup;
 
 type InventoryItemProps = {
   isLoading: boolean;
