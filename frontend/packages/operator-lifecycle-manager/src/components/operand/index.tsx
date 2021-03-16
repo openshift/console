@@ -370,17 +370,20 @@ export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
         owners(metadata.ownerReferences || [], allResources).length > 0,
     );
 
-  const rowFilters = [
-    {
-      filterGroupName: 'Resource Kind',
-      type: 'clusterserviceversion-resource-kind',
-      reducer: ({ kind }) => kind,
-      items: firehoseResources.map(({ kind }) => ({
-        id: kindForReference(kind),
-        title: kindForReference(kind),
-      })),
-    },
-  ];
+  const rowFilters =
+    firehoseResources.length > 1
+      ? [
+          {
+            filterGroupName: 'Resource Kind',
+            type: 'clusterserviceversion-resource-kind',
+            reducer: ({ kind }) => kind,
+            items: firehoseResources.map(({ kind }) => ({
+              id: kindForReference(kind),
+              title: kindForReference(kind),
+            })),
+          },
+        ]
+      : [];
 
   return firehoseResources.length > 0 ? (
     <MultiListPage
@@ -399,7 +402,7 @@ export const ProvidedAPIsPage = (props: ProvidedAPIsPageProps) => {
             })
       }
       flatten={flatten}
-      rowFilters={firehoseResources.length > 1 ? rowFilters : null}
+      rowFilters={rowFilters}
     />
   ) : (
     <StatusBox loaded EmptyMsg={EmptyMsg} />
