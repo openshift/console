@@ -178,11 +178,7 @@ export const PrometheusUtilizationItem = withDashboardResources<PrometheusUtiliz
 
     const { t } = useTranslation();
 
-    const UTILIZATION_QUERY_DURATION = {
-      ONE_HR: t('public~1 hour'),
-      SIX_HR: t('public~6 hours'),
-      TWENTY_FOUR_HR: t('public~24 hours'),
-    };
+    const UTILIZATION_QUERY_DURATION = Duration(t);
 
     const UTILIZATION_QUERY_HOUR_MAP = {
       [UTILIZATION_QUERY_DURATION.ONE_HR]: ONE_HOUR,
@@ -283,11 +279,7 @@ export const PrometheusMultilineUtilizationItem = withDashboardResources<
   }) => {
     const { t } = useTranslation();
 
-    const UTILIZATION_QUERY_DURATION = {
-      ONE_HR: t('public~1 hour'),
-      SIX_HR: t('public~6 hours'),
-      TWENTY_FOUR_HR: t('public~24 hours'),
-    };
+    const UTILIZATION_QUERY_DURATION = Duration(t);
 
     const UTILIZATION_QUERY_HOUR_MAP = {
       [UTILIZATION_QUERY_DURATION.ONE_HR]: ONE_HOUR,

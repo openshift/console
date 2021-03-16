@@ -1,9 +1,6 @@
 {
   "An error occurred": "An error occurred",
   "No resources found": "No resources found",
-  "1 hour": "1 hour",
-  "6 hours": "6 hours",
-  "24 hours": "24 hours",
   "({{operatorStatusLength}} installed)": "({{operatorStatusLength}} installed)",
   "Status": "Status",
   "Not available": "Not available",
