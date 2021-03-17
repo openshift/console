@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
-import { CatalogExtensionHook, CatalogItem } from '@console/plugin-sdk';
+import { CatalogExtensionHook, CatalogItem } from '@console/dynamic-plugin-sdk';
 import { k8sListPartialMetadata, PartialObjectMetadata } from '@console/internal/module/k8s';
 import { TemplateModel } from '@console/internal/models';
 import { ANNOTATIONS, APIError } from '@console/shared';

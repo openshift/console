@@ -24,5 +24,43 @@
       "description": "%knative-plugin~Create a Knative Channel to create an event forwarding and persistence layer with in-memory and reliable implementations%",
       "icon": { "$codeRef": "icons.channelIconSVG" }
     }
+  },
+  {
+    "type": "console.catalog/item-type",
+    "properties": {
+      "type": "EventSource",
+      "title": "%knative-plugin~Event Sources%",
+      "catalogDescription": "%knative-plugin~Event sources are objects that link to an event producer and an event sink or consumer. Cluster administrators can customize the content made available in the catalog.%",
+      "typeDescription": "%knative-plugin~**Event sources** are objects that link to an event producer and an event sink or consumer.%",
+      "filters": [
+        {
+          "label": "%knative-plugin~Provider%",
+          "attribute": "provider"
+        }
+      ]
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.catalog/item-provider",
+    "properties": {
+      "type": "EventSource",
+      "provider": { "$codeRef": "catalog.eventSourceProvider" }
+    },
+    "flags": {
+      "required": ["KNATIVE_EVENTING"]
+    }
+  },
+  {
+    "type": "console.catalog/item-provider",
+    "properties": {
+      "type": "EventSource",
+      "provider": { "$codeRef": "catalog.kameletsProvider" }
+    },
+    "flags": {
+      "required": ["FLAG_CAMEL_KAMELETS"]
+    }
   }
 ]

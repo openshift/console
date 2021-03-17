@@ -28,7 +28,6 @@ import { getKebabActionsForKind } from './utils/kebab-actions';
 import { INCONTEXT_ACTIONS_CONNECTS_TO } from './const';
 import { usePerspectiveDetection } from './utils/usePerspectiveDetection';
 import { getGuidedTour } from './components/guided-tour';
-import { CatalogConsumedExtensions, catalogPlugin } from './components/catalog/catalog-plugin';
 
 type ConsumedExtensions =
   | ModelFeatureFlag
@@ -46,8 +45,7 @@ type ConsumedExtensions =
   | YAMLTemplate
   | OverviewTabSection
   | GuidedTour
-  | PostFormSubmissionAction
-  | CatalogConsumedExtensions;
+  | PostFormSubmissionAction;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -471,7 +469,6 @@ const plugin: Plugin<ConsumedExtensions> = [
       callback: doConnectsToBinding,
     },
   },
-  ...catalogPlugin,
 ];
 
 export default plugin;

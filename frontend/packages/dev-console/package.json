@@ -23,7 +23,8 @@
       ]
     },
     "exposedModules": {
-      "icons": "src/utils/icons.tsx"
+      "icons": "src/utils/icons.tsx",
+      "catalog": "src/components/catalog"
     }
   }
 }

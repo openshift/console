@@ -11,7 +11,6 @@ import {
   HelmTopologyConsumedExtensions,
   helmTopologyPlugin,
 } from './topology/helm-topology-plugin';
-import { HelmCatalogConsumedExtensions, helmCatalogPlugin } from './catalog/helm-catalog-plugin';
 import { detectHelmChartRepositories } from './utils/helm-detection-utils';
 import { FLAG_OPENSHIFT_HELM } from './const';
 import * as models from './models';
@@ -21,7 +20,6 @@ type ConsumedExtensions =
   | CustomFeatureFlag
   | HrefNavItem
   | RoutePage
-  | HelmCatalogConsumedExtensions
   | HelmTopologyConsumedExtensions;
 
 const plugin: Plugin<ConsumedExtensions> = [
@@ -147,7 +145,6 @@ const plugin: Plugin<ConsumedExtensions> = [
       required: [FLAG_OPENSHIFT_HELM],
     },
   },
-  ...helmCatalogPlugin,
   ...helmTopologyPlugin,
 ];
 

@@ -3,7 +3,7 @@ import {
   CatalogItem,
   CatalogExtensionHook,
   CatalogExtensionHookOptions,
-} from '@console/plugin-sdk';
+} from '@console/dynamic-plugin-sdk';
 
 type CatalogExtensionHookResolverProps = {
   id: string;

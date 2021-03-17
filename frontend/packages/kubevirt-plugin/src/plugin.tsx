@@ -20,9 +20,6 @@ import {
   PVCAlert,
   PVCStatus,
   PVCDelete,
-  CatalogItemProvider,
-  CatalogItemType,
-  CatalogItemFilter,
 } from '@console/plugin-sdk';
 import { DashboardsStorageCapacityDropdownItem } from '@console/ceph-storage-plugin';
 import { TemplateModel, PodModel, PersistentVolumeClaimModel } from '@console/internal/models';
@@ -45,7 +42,6 @@ import {
 import { killCDIBoundPVC } from './components/cdi-upload-provider/pvc-delete-extension';
 import { isPvcBoundToCDI, isPvcUploading } from './selectors/pvc/selectors';
 import './style.scss';
-import { getExecutableCodeRef } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-utils';
 
 type ConsumedExtensions =
   | ResourceNSNavItem
@@ -66,10 +62,7 @@ type ConsumedExtensions =
   | PVCCreateProp
   | PVCAlert
   | PVCStatus
-  | PVCDelete
-  | CatalogItemProvider
-  | CatalogItemType
-  | CatalogItemFilter;
+  | PVCDelete;
 
 export const FLAG_KUBEVIRT = 'KUBEVIRT';
 
@@ -545,55 +538,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [FLAG_KUBEVIRT],
-    },
-  },
-  {
-    type: 'Catalog/ItemType',
-    properties: {
-      type: 'VmTemplate',
-      // t('kubevirt-plugin~Virtual Machines')
-      title: '%kubevirt-plugin~Virtual Machines%',
-      // t('kubevirt-plugin~Quickly create a virtual machine from a template.')
-      catalogDescription: '%kubevirt-plugin~Quickly create a virtual machine from a template.%',
-      // t('kubevirt-plugin~**Virtual Machines** are templates for quickly creating a virtual machine.')
-      typeDescription:
-        '%kubevirt-plugin~**Virtual Machines** are templates for quickly creating a virtual machine.%',
-      filters: [
-        {
-          // t('kubevirt-plugin~Template Providers')
-          label: '%kubevirt-plugin~Template Providers%',
-          attribute: 'templateProvider',
-        },
-      ],
-    },
-    flags: {
-      required: [FLAG_KUBEVIRT],
-    },
-  },
-  {
-    type: 'Catalog/ItemProvider',
-    properties: {
-      type: 'VmTemplate',
-      provider: getExecutableCodeRef(() =>
-        import(
-          './components/create-vm/dev-console/use-catalog-vm-templates' /* webpackChunkName: "kubevirt" */
-        ).then((m) => m.default),
-      ),
-    },
-    flags: {
-      required: [FLAG_KUBEVIRT],
-    },
-  },
-
-  {
-    type: 'Catalog/ItemFilter',
-    properties: {
-      type: 'Template',
-      filter: getExecutableCodeRef(() =>
-        import(
-          './components/create-vm/dev-console/dev-catalog-vm-templates-filter' /* webpackChunkName: "kubevirt" */
-        ).then((m) => m.default),
-      ),
     },
   },
 ];

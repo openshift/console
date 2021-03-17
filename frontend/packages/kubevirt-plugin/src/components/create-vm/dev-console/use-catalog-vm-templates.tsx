@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import { Form, Stack, StackItem } from '@patternfly/react-core';
 import { getNamespace } from '@console/shared';
-import { CatalogExtensionHook, CatalogItem } from '@console/plugin-sdk';
+import { CatalogExtensionHook, CatalogItem } from '@console/dynamic-plugin-sdk';
 import { humanizeBinaryBytes, SectionHeading } from '@console/internal/components/utils';
 import { PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
 import { FormRow } from '../../form/form-row';

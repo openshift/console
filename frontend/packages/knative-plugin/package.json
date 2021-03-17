@@ -21,7 +21,8 @@
       ]
     },
     "exposedModules": {
-      "icons": "src/utils/icons.ts"
+      "icons": "src/utils/icons.ts",
+      "catalog": "src/catalog"
     }
   }
 }

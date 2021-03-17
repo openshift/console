@@ -1,6 +1,6 @@
 import * as React from 'react';
 import cx from 'classnames';
-import { CatalogItem } from '@console/plugin-sdk';
+import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { Split, SplitItem, Divider } from '@patternfly/react-core';
 import QuickSearchDetails from './QuickSearchDetails';
 import QuickSearchList from './QuickSearchList';

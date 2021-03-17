@@ -1,5 +1,5 @@
 import { PartialObjectMetadata } from '@console/internal/module/k8s';
-import { CatalogItem } from '@console/plugin-sdk';
+import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { TEMPLATE_TYPE_BASE, TEMPLATE_TYPE_VM, TEMPLATE_TYPE_LABEL } from '../../../constants';
 
 // removes all Templates identified as VM templates

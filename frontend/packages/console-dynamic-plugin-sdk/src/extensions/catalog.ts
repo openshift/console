@@ -40,7 +40,7 @@ namespace ExtensionProperties {
   };
 
   export type CatalogItemFilterCodeRefs = {
-    filter: CodeRef<(items: CatalogItem[]) => CatalogItem[]>;
+    filter: CodeRef<(item: CatalogItem) => boolean>;
   };
 }
 

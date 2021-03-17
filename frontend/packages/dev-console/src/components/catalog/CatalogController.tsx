@@ -10,7 +10,7 @@ import {
   removeQueryArgument,
   setQueryArgument,
 } from '@console/internal/components/utils';
-import { CatalogItem, CatalogItemAttribute } from '@console/plugin-sdk';
+import { CatalogItem, CatalogItemAttribute } from '@console/dynamic-plugin-sdk';
 import { useQueryParams } from '@console/shared';
 
 import { CatalogService } from './service/CatalogServiceProvider';

@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import * as cx from 'classnames';
 import { useTranslation } from 'react-i18next';
-import { CatalogItem } from '@console/plugin-sdk';
+import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { isModalOpen } from '@console/internal/components/modals';
 import { useQueryParams } from '@console/shared';
 
