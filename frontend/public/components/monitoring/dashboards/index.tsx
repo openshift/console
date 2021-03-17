@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
-import { Dropdown, DropdownToggle, DropdownItem } from '@patternfly/react-core';
+import { Button, Dropdown, DropdownToggle, DropdownItem } from '@patternfly/react-core';
+import { AngleDownIcon, AngleRightIcon } from '@patternfly/react-icons';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
@@ -434,14 +435,44 @@ const Card = connect(({ UI }: RootState) => ({
   variables: UI.getIn(['monitoringDashboards', 'variables']),
 }))(Card_);
 
+const PanelsRow: React.FC<{ row: Row }> = ({ row }) => {
+  const showButton = row.showTitle && !_.isEmpty(row.title);
+
+  const [isExpanded, toggleIsExpanded] = useBoolean(showButton ? !row.collapse : true);
+
+  const Icon = isExpanded ? AngleDownIcon : AngleRightIcon;
+  const title = isExpanded ? 'Hide' : 'Show';
+
+  return (
+    <div>
+      {showButton && (
+        <Button
+          aria-label={title}
+          className="pf-m-link--align-left"
+          onClick={toggleIsExpanded}
+          style={{ fontSize: 24 }}
+          title={title}
+          variant="plain"
+        >
+          <Icon />
+          &nbsp;{row.title}
+        </Button>
+      )}
+      {isExpanded && (
+        <div className="monitoring-dashboards__row">
+          {_.map(row.panels, (panel) => (
+            <Card key={panel.id} panel={panel} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 const Board: React.FC<BoardProps> = ({ rows }) => (
   <>
-    {_.map(rows, (row, i) => (
-      <div className="monitoring-dashboards__row" key={i}>
-        {_.map(row.panels, (panel) => (
-          <Card key={panel.id} panel={panel} />
-        ))}
-      </div>
+    {_.map(rows, (row) => (
+      <PanelsRow key={_.map(row.panels, 'id').join()} row={row} />
     ))}
   </>
 );
@@ -552,7 +583,22 @@ const MonitoringDashboardsPage_: React.FC<MonitoringDashboardsPageProps> = ({
   }
 
   const data = _.find(boards, { name: board })?.data;
-  const rows = _.isEmpty(data?.rows) ? [{ panels: data?.panels }] : data?.rows;
+
+  // If we don't find any rows, build the rows array based on what we have in `data.panels`
+  const rows = data?.rows?.length
+    ? data.rows
+    : data?.panels?.reduce((acc, panel) => {
+        if (panel.type === 'row' || acc.length === 0) {
+          acc.push(panel);
+        } else {
+          const row = acc[acc.length - 1];
+          if (_.isNil(row.panels)) {
+            row.panels = [];
+          }
+          row.panels.push(panel);
+        }
+        return acc;
+      }, []);
 
   return (
     <>
@@ -602,7 +648,10 @@ type TemplateVariable = {
 };
 
 type Row = {
+  collapse?: boolean;
   panels: Panel[];
+  showTitle?: boolean;
+  title?: string;
 };
 
 type Board = {
