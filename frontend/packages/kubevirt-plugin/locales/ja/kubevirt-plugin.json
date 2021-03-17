@@ -793,7 +793,7 @@
   "Invalid MAC address format": "無効な MAC アドレス形式",
   "VM name cannot be empty": "仮想マシン名は空にできません。",
   "VM name name can contain only alphanumeric characters": "仮想マシン名には英数字のみを含めることができます。",
-  "VM name must start/end with alphanumeric character": "仮想マシン名は、英数字で開始/終了する必要があります。",
+  "VM name must start/end with alphanumeric characters": "仮想マシン名は、英数字で開始/終了する必要があります。",
   "VM name cannot contain uppercase characters": "仮想マシン名には大文字を使用できません",
   "VM name is too long": "仮想マシン名が長すぎます",
   "VM name is too short": "仮想マシン名が短すぎます",

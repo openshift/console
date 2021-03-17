@@ -782,7 +782,7 @@
   "Invalid MAC address format": "无效的 MAC 地址格式",
   "VM name cannot be empty": "虚拟机名不能为空。",
   "VM name name can contain only alphanumeric characters": "虚拟机名只能包含字母数字",
-  "VM name must start/end with alphanumeric character": "虚拟机名称必须使用字母数字开始和结束",
+  "VM name must start/end with alphanumeric characters": "虚拟机名称必须使用字母数字开始和结束",
   "VM name cannot contain uppercase characters": "虚拟机名称不能包含大写字符",
   "VM name is too long": "虚拟机名称太长",
   "VM name is too short": "虚拟机名称太短"

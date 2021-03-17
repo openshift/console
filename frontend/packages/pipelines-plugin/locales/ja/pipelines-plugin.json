@@ -36,7 +36,7 @@
   "Log snippet": "ログスニペット",
   "Task Runs": "タスク実行",
   "Logs": "ログ",
-  "Select a Project to view the list of{{pipelineRunLabel}} or <4>create a Project</4>.": "{{pipelineRunLabel}} の一覧を表示するためにプロジェクトを選択するか、または<4>プロジェクトを作成</4>します。",
+  "Select a Project to view the list of {{pipelineRunLabel}} or <4>create a Project</4>.": "{{pipelineRunLabel}} の一覧を表示するためにプロジェクトを選択するか、または<4>プロジェクトを作成</4>します。",
   "View logs": "ログの表示",
   "Pipeline Run": "Pipeline Run",
   "Pipeline Resource": "Pipeline リソース",

@@ -36,7 +36,7 @@
   "Log snippet": "日志片断",
   "Task Runs": "任务运行",
   "Logs": "日志",
-  "Select a Project to view the list of{{pipelineRunLabel}} or <4>create a Project</4>.": "选择一个项目来查看 {{pipelineRunLabel}} 列表或<4>创建一个项目</4>。",
+  "Select a Project to view the list of {{pipelineRunLabel}} or <4>create a Project</4>.": "选择一个项目来查看 {{pipelineRunLabel}} 列表或<4>创建一个项目</4>。",
   "View logs": "查看日志",
   "Pipeline Run": "管道运行",
   "Pipeline Resource": "管道资源",

@@ -147,14 +147,14 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
   return (
     <Form className={classNames('nb-endpoints-form', className)} onSubmit={onSubmit}>
       <FormGroup
-        label={t('ceph-storage-plugin~Backing Store Name')}
+        label={t('ceph-storage-plugin~Backing Store name')}
         fieldId="backingstore-name"
         className="nb-endpoints-form-entry"
         helperText={t('ceph-storage-plugin~A unique name for the backing store within the project')}
         isRequired
       >
         <Tooltip
-          content="Name can contain a max of 43 characters"
+          content={t('ceph-storage-plugin~Name can contain a max of 43 characters')}
           isVisible={bsName.length > 42}
           trigger="manual"
         >
@@ -164,7 +164,7 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
             maxLength={43}
             data-test="backingstore-name"
             placeholder="my-backingstore"
-            aria-label={t('ceph-storage-plugin~Backing Store Name')}
+            aria-label={t('ceph-storage-plugin~Backing Store name')}
           />
         </Tooltip>
       </FormGroup>

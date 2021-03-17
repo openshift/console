@@ -136,7 +136,7 @@ const DiskReplacementAction = (props: DiskReplacementActionProps) => {
         )}
         <p>
           <Trans t={t} ns="ceph-storage-plugin">
-            Are you sure you want to replace <strong>{{ diskName }}</strong> ?
+            Are you sure you want to replace <strong>{{ diskName }}</strong>?
           </Trans>
         </p>
       </ModalBody>

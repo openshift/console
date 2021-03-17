@@ -280,7 +280,7 @@ describe('ValidationUtils', () => {
       await validationSchema(t)
         .validate(mockData)
         .catch((err) => {
-          expect(err.message).toBe('devconsole~Port must be an Integer.');
+          expect(err.message).toBe('devconsole~Port must be an integer.');
         });
     });
 

@@ -782,7 +782,7 @@
   "Invalid MAC address format": "잘못된 MAC 주소 형식",
   "VM name cannot be empty": "가상 머신 이름은 비워 둘 수 없습니다.",
   "VM name name can contain only alphanumeric characters": "가상 머신 이름에는 영숫자만 사용할 수 있습니다.",
-  "VM name must start/end with alphanumeric character": "가상 머신 이름은 영숫자로 시작/종료해야 합니다.",
+  "VM name must start/end with alphanumeric characters": "가상 머신 이름은 영숫자로 시작/종료해야 합니다.",
   "VM name cannot contain uppercase characters": "가상 머신 이름에는 대문자를 사용할 수 없습니다.",
   "VM name is too long": "가상 머신 이름이 너무 깁니다.",
   "VM name is too short": "가상 머신 이름이 너무 짧습니다."

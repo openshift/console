@@ -25,8 +25,7 @@ const PipelineRunsPage: React.FC<PipelineRunsPageProps> = (props) => {
     <CreateProjectListPage title={pipelineRunLabel} badge={getBadgeFromType(badge)}>
       {(openProjectModal) => (
         <Trans t={t} ns="pipelines-plugin" values={{ pipelineRunLabel }}>
-          Select a Project to view the list of
-          {{ pipelineRunLabel }} or{' '}
+          Select a Project to view the list of {{ pipelineRunLabel }} or{' '}
           <Button isInline variant="link" onClick={openProjectModal}>
             create a Project
           </Button>

@@ -36,7 +36,7 @@
   "Log snippet": "로그 스니펫",
   "Task Runs": "작업 실행",
   "Logs": "로그",
-  "Select a Project to view the list of{{pipelineRunLabel}} or <4>create a Project</4>.": "프로젝트를 선택하여 {{pipelineRunLabel}} 목록을 보거나 <4>프로젝트를 생성</4>합니다.",
+  "Select a Project to view the list of {{pipelineRunLabel}} or <4>create a Project</4>.": "프로젝트를 선택하여 {{pipelineRunLabel}} 목록을 보거나 <4>프로젝트를 생성</4>합니다.",
   "View logs": "로그보기",
   "Pipeline Run": "파이프 라인 실행",
   "Pipeline Resource": "파이프 라인 리소스",

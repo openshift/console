@@ -177,8 +177,8 @@ export const routeValidationSchema = (t: TFunction) =>
     }),
     unknownTargetPort: yup
       .number()
-      .typeError(t('devconsole~Port must be an Integer.'))
-      .integer(t('devconsole~Port must be an Integer.'))
+      .typeError(t('devconsole~Port must be an integer.'))
+      .integer(t('devconsole~Port must be an integer.'))
       .min(1, t('devconsole~Port must be between 1 and 65535.'))
       .max(65535, t('devconsole~Port must be between 1 and 65535.')),
   });

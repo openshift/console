@@ -964,10 +964,10 @@ export const NamespaceSummary = ({ ns }) => {
               </dd>
             </>
           )}
-          <dt>{t('public~Network policies')}</dt>
+          <dt>{t('public~NetworkPolicies')}</dt>
           <dd>
             <Link to={`/k8s/ns/${ns.metadata.name}/networkpolicies`}>
-              {t('public~Network policies')}
+              {t('public~NetworkPolicies')}
             </Link>
           </dd>
           {serviceMeshEnabled && (
