@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { FormGroup, Checkbox, Radio } from '@patternfly/react-core';
 import { FieldLevelHelp, Firehose } from '@console/internal/components/utils';
-import { TechPreviewBadge, getName, ResourceDropdown, useFlag } from '@console/shared';
+import { getName, ResourceDropdown, useFlag } from '@console/shared';
 import { NetworkAttachmentDefinitionKind } from '@console/network-attachment-definition-plugin/src/types';
 import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
 import { referenceForModel } from '@console/internal/module/k8s';
@@ -25,7 +25,6 @@ const StorageClassEncryptionLabel: React.FC = () => {
       <span className="ocs-install-encryption__pv-title--padding">
         {t('ceph-storage-plugin~Storage class encryption')}
       </span>
-      <TechPreviewBadge />
       <AdvancedSubscription />
     </div>
   );

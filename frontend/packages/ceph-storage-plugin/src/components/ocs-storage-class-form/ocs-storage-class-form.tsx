@@ -27,7 +27,6 @@ import {
 } from '@console/internal/components/utils/k8s-watch-hook';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { ProvisionerProps } from '@console/plugin-sdk';
-import TechPreviewBadge from '@console/shared/src/components/badges/TechPreviewBadge';
 import { ConfigMapKind, K8sResourceKind } from '@console/internal/module/k8s/types';
 import { ButtonBar } from '@console/internal/components/utils/button-bar';
 import { ConfigMapModel } from '@console/internal/models';
@@ -206,7 +205,6 @@ const StorageClassEncryptionLabel: React.FC = () => {
       <span className="ocs-storageClass-encryption__pv-title--padding">
         {t('ceph-storage-plugin~Enable Encryption')}
       </span>
-      <TechPreviewBadge />
     </div>
   );
 };
