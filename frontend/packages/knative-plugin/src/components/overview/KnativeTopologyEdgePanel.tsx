@@ -11,7 +11,11 @@ import {
 } from '@console/internal/components/utils';
 import { edgeActions } from '@console/topology/src/actions';
 import { TopologyDataObject } from '@console/topology/src/topology-types';
-import { TYPE_EVENT_SOURCE_LINK, TYPE_REVISION_TRAFFIC } from '../../topology/const';
+import {
+  TYPE_EVENT_SOURCE_LINK,
+  TYPE_KAFKA_CONNECTION_LINK,
+  TYPE_REVISION_TRAFFIC,
+} from '../../topology/const';
 import { setSinkSource } from '../../actions/sink-source';
 
 export type TopologyEdgePanelProps = {
@@ -24,6 +28,8 @@ const connectorTypeToTitle = (type: string): string => {
       return 'Traffic distribution connector';
     case TYPE_EVENT_SOURCE_LINK:
       return 'Event source connector';
+    case TYPE_KAFKA_CONNECTION_LINK:
+      return 'Kafka connector';
     default:
       return '';
   }
