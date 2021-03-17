@@ -12,3 +12,5 @@ spec:
   config: '{}'
 `,
 );
+
+export const defaultYamlTemplate = NetworkAttachmentDefinitionsYAMLTemplates.getIn(['default']);

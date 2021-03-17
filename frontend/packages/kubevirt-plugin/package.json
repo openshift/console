@@ -63,7 +63,8 @@
       "SnapshotDetailsPage": "src/components/vm-snapshots/vm-snapshot-details.tsx",
       "DevConsoleCreateVmForm": "src/components/create-vm/dev-console/dev-console-create-vm-form.tsx",
       "CustomizeSourceForm": "src/components/vm-templates/customize-source/CustomizeSourceForm.tsx",
-      "CustomizeSource": "src/components/vm-templates/customize-source/CustomizeSource.tsx"
+      "CustomizeSource": "src/components/vm-templates/customize-source/CustomizeSource.tsx",
+      "yamlTemplates": "src/models/templates/index.ts"
     }
   }
 }

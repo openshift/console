@@ -1,9 +1,6 @@
-import { Map as ImmutableMap } from 'immutable';
 import { ServiceModel } from './models';
 
-export const yamlTemplates = ImmutableMap().setIn(
-  [ServiceModel, 'default'],
-  `
+export const defaultYamlTemplate = `
 apiVersion: ${ServiceModel.apiGroup}/${ServiceModel.apiVersion}
 kind: ${ServiceModel.kind}
 metadata:
@@ -14,5 +11,4 @@ spec:
     spec:
       containers:
       - image: openshift/hello-openshift
-`,
-);
+`;

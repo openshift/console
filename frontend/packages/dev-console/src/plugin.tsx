@@ -9,7 +9,6 @@ import {
   Perspective,
   RoutePage,
   OverviewResourceTab,
-  YAMLTemplate,
   OverviewTabSection,
   GuidedTour,
   PostFormSubmissionAction,
@@ -33,7 +32,6 @@ type ConsumedExtensions =
   | RoutePage
   | KebabActions
   | OverviewResourceTab
-  | YAMLTemplate
   | OverviewTabSection
   | GuidedTour
   | PostFormSubmissionAction;

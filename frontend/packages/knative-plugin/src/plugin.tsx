@@ -8,13 +8,11 @@ import {
   ResourceDetailsPage,
   RoutePage,
   KebabActions,
-  YAMLTemplate,
   HorizontalNavTab,
   DetailPageBreadCrumbs,
 } from '@console/plugin-sdk';
 import { NamespaceRedirect } from '@console/internal/components/utils/namespace-redirect';
 import * as models from './models';
-import { yamlTemplates } from './yaml-templates';
 import {
   FLAG_KNATIVE_SERVING_CONFIGURATION,
   FLAG_KNATIVE_SERVING,
@@ -45,7 +43,6 @@ type ConsumedExtensions =
   | ResourceListPage
   | RoutePage
   | KebabActions
-  | YAMLTemplate
   | ResourceDetailsPage
   | TopologyConsumedExtensions
   | HorizontalNavTab
@@ -266,13 +263,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [FLAG_KNATIVE_EVENTING],
-    },
-  },
-  {
-    type: 'YAMLTemplate',
-    properties: {
-      model: models.ServiceModel,
-      template: yamlTemplates.getIn([models.ServiceModel, 'default']),
     },
   },
   {

@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import { DashboardsStorageCapacityDropdownItem } from '@console/ceph-storage-plugin';
-import { PersistentVolumeClaimModel, PodModel, TemplateModel } from '@console/internal/models';
+import { PersistentVolumeClaimModel, PodModel } from '@console/internal/models';
 import {
   Plugin,
   ModelDefinition,
@@ -10,7 +10,6 @@ import {
   DashboardsOverviewInventoryItem,
   DashboardsOverviewResourceActivity,
   ProjectDashboardInventoryItem,
-  YAMLTemplate,
 } from '@console/plugin-sdk';
 import { getName } from '@console/shared/src/selectors/common';
 import { getKubevirtHealthState } from './components/dashboards-page/overview-dashboard/health';
@@ -20,14 +19,12 @@ import {
 } from './components/dashboards-page/overview-dashboard/inventory';
 import { diskImportKindMapping } from './components/dashboards-page/overview-dashboard/utils';
 import * as models from './models';
-import { VirtualMachineYAMLTemplates, VMTemplateYAMLTemplates } from './models/templates';
 import { getTopologyPlugin, TopologyConsumedExtensions } from './topology/topology-plugin';
 
 import '@console/internal/i18n.js';
 import './style.scss';
 
 type ConsumedExtensions =
-  | YAMLTemplate
   | ModelDefinition
   | DashboardsOverviewHealthURLSubsystem
   | DashboardsOverviewInventoryItem
@@ -44,21 +41,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'ModelDefinition',
     properties: {
       models: _.values(models),
-    },
-  },
-  {
-    type: 'YAMLTemplate',
-    properties: {
-      model: models.VirtualMachineModel,
-      template: VirtualMachineYAMLTemplates.getIn(['default']),
-    },
-  },
-  {
-    type: 'YAMLTemplate',
-    properties: {
-      model: TemplateModel,
-      template: VMTemplateYAMLTemplates.getIn(['vm-template']),
-      templateName: 'vm-template',
     },
   },
   {
