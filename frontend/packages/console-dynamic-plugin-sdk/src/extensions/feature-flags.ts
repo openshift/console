@@ -1,7 +1,7 @@
 import { Extension } from '@console/plugin-sdk/src/typings/base';
 import { CodeRef, EncodedCodeRef, UpdateExtensionProperties } from '../types';
 
-export namespace ExtensionProperties {
+namespace ExtensionProperties {
   /** Gives full control over Console feature flags. */
   export type FeatureFlag = {
     /** Used to set/unset arbitrary feature flags. */

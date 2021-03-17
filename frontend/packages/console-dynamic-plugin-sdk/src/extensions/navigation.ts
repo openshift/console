@@ -1,6 +1,6 @@
 import { Extension } from '@console/plugin-sdk/src/typings/base';
 
-export namespace ExtensionProperties {
+namespace ExtensionProperties {
   export type NavItem = {
     /** A unique identifier for this item. */
     id: string;

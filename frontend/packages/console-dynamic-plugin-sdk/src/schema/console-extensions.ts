@@ -12,6 +12,7 @@ import {
   ResourceNSNavItem,
   Separator,
 } from '../extensions/navigation';
+import { CatalogItemFilter, CatalogItemProvider, CatalogItemType } from '../extensions/catalog';
 
 export type SupportedExtension =
   | FeatureFlag
@@ -29,7 +30,10 @@ export type SupportedExtension =
   | Separator
   | HrefNavItem
   | ResourceNSNavItem
-  | ResourceClusterNavItem;
+  | ResourceClusterNavItem
+  | CatalogItemType
+  | CatalogItemProvider
+  | CatalogItemFilter;
 
 /**
  * Schema of Console plugin's `console-extensions.json` file.

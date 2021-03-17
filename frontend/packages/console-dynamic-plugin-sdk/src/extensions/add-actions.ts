@@ -24,9 +24,9 @@ namespace ExtensionProperties {
   };
 }
 
-export interface AddAction extends Extension<ExtensionProperties.AddAction> {
+export type AddAction = Extension<ExtensionProperties.AddAction> & {
   type: 'dev-console.add/action';
-}
+};
 
 export type ResolvedAddAction = UpdateExtensionProperties<
   AddAction,
