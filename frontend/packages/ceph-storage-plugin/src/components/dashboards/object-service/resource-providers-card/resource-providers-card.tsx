@@ -11,9 +11,9 @@ import {
   withDashboardResources,
 } from '@console/internal/components/dashboard/with-dashboard-resources';
 import { PrometheusResponse } from '@console/internal/components/graphs';
-import { getMetric } from '../../../../utils';
 import { ResourceProvidersBody } from './resource-providers-card-body';
 import { ResourceProvidersItem, ProviderType } from './resource-providers-card-item';
+import { getMetric } from '../../../../utils';
 import './resource-providers-card.scss';
 
 const RESOURCE_PROVIDERS_QUERY = {

@@ -15,10 +15,10 @@ import {
   K8sResourceKind,
   referenceFor,
 } from '@console/internal/module/k8s';
-import { NooBaaObjectBucketModel } from '../../models';
 import { getName } from '@console/shared';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { commonReducer, defaultState } from './state';
+import { NooBaaObjectBucketModel } from '../../models';
 
 export const CreateOBPage: React.FC = () => {
   const { t } = useTranslation();

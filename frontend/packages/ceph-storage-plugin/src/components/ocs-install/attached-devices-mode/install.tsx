@@ -11,9 +11,9 @@ import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watc
 import { StorageClassModel } from '@console/internal/models';
 import { fetchK8s } from '@console/internal/graphql/client';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
+import CreateStorageClusterWizard from './install-wizard';
 import { LSOSubscriptionResource } from '../../../resources';
 import { filterSCWithNoProv } from '../../../utils/install';
-import CreateStorageClusterWizard from './install-wizard';
 import './attached-devices.scss';
 
 const goToLSOInstallationPage = () =>

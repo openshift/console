@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
-import { IRow, sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
+import { IRow, sortable } from '@patternfly/react-table';
 import {
   getName,
   getNodeRoles,

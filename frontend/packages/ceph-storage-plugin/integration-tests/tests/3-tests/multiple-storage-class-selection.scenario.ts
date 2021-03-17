@@ -1,5 +1,5 @@
-import { ExpectedConditions as until, browser } from 'protractor';
 import { execSync } from 'child_process';
+import { ExpectedConditions as until, browser } from 'protractor';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { appHost } from '@console/internal-integration-tests/protractor.conf';
 import { click } from '@console/shared/src/test-utils/utils';

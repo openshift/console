@@ -21,13 +21,13 @@ import {
   SectionHeading,
 } from '@console/internal/components/utils';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
-import { NooBaaObjectBucketClaimModel, NooBaaObjectBucketModel } from '../../models';
 import { Status } from '@console/shared';
 import { sortable } from '@patternfly/react-table';
-import { obcStatusFilter } from '../../utils/table-filters';
-import { isBound, getPhase } from '../../utils';
 import { GetSecret } from './secret';
 import { menuActionCreator, menuActions } from './menu-actions';
+import { obcStatusFilter } from '../../utils/table-filters';
+import { isBound, getPhase } from '../../utils';
+import { NooBaaObjectBucketClaimModel, NooBaaObjectBucketModel } from '../../models';
 
 const kind = referenceForModel(NooBaaObjectBucketClaimModel);
 

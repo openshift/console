@@ -15,10 +15,10 @@ import { PrometheusResponse } from '@console/internal/components/graphs';
 import InventoryItem, {
   ResourceInventoryItem,
 } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
-import { NooBaaObjectBucketClaimModel, NooBaaObjectBucketModel } from '../../../../models';
-import { getGaugeValue } from '../../../../utils';
 import { BucketsTitle } from './buckets-card-item';
 import { getObcStatusGroups, getObStatusGroups } from './utils';
+import { NooBaaObjectBucketClaimModel, NooBaaObjectBucketModel } from '../../../../models';
+import { getGaugeValue } from '../../../../utils';
 import './buckets-card.scss';
 
 enum BucketsCardQueries {

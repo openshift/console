@@ -1,5 +1,8 @@
 import * as React from 'react';
 import { ShallowWrapper, shallow } from 'enzyme';
+import { Link } from 'react-router-dom';
+import { Chart, ChartBar } from '@patternfly/react-charts';
+import { Tooltip } from '@patternfly/react-core';
 import {
   addAvailable,
   getStackChartStats,
@@ -12,9 +15,6 @@ import {
   LinkableLegend,
   LinkableLegendProps,
 } from '../components/dashboards/common/capacity-breakdown/breakdown-chart';
-import { Link } from 'react-router-dom';
-import { Chart, ChartBar } from '@patternfly/react-charts';
-import { Tooltip } from '@patternfly/react-core';
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');

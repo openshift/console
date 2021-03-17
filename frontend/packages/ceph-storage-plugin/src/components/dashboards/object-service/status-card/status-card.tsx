@@ -23,6 +23,8 @@ import { CephObjectStoreModel } from '@console/ceph-storage-plugin/src/models';
 import { RGW_FLAG } from '@console/ceph-storage-plugin/src/features';
 import { useFlag } from '@console/shared/src/hooks/flag';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { getNooBaaState, getRGWHealthState } from './statuses';
+import { ObjectServiceStatus } from './object-service-health';
 import { filterNooBaaAlerts, filterRGWAlerts, decodeRGWPrefix } from '../../../../utils';
 import {
   StatusCardQueries,
@@ -30,8 +32,6 @@ import {
   ObjectServiceDashboardQuery,
 } from '../../../../queries/object-storage-queries';
 import { NooBaaSystemModel } from '../../../../models';
-import { getNooBaaState, getRGWHealthState } from './statuses';
-import { ObjectServiceStatus } from './object-service-health';
 import { StatusType } from '../../../../constants';
 import { secretResource } from '../../../../resources';
 import './status-card.scss';

@@ -21,27 +21,27 @@ import { k8sCreate, K8sResourceKind, referenceForModel } from '@console/internal
 import { OCS_ATTACHED_DEVICES_FLAG } from '@console/local-storage-operator-plugin/src/features';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
 import { resourcePathFromModel } from '@console/internal/components/utils';
+import { getName } from '@console/shared';
 import { initialState, reducer } from './reducer';
 import {
   DiscoverDisks,
   makeLocalVolumeDiscoverRequest,
 } from './install-wizard-steps/discover-disks-step';
 import { CreateStorageClass } from './install-wizard-steps/create-storage-class/create-storage-class-step';
+import { StorageAndNodes } from './install-wizard-steps/storage-and-nodes-step';
+import { ReviewAndCreate } from './install-wizard-steps/review-and-create-step';
+import { Configure } from './install-wizard-steps/configure-step';
 import {
   CreateStepsSC,
   MINIMUM_NODES,
   defaultRequestSize,
   OCS_INTERNAL_CR_NAME,
 } from '../../../constants';
-import { StorageAndNodes } from './install-wizard-steps/storage-and-nodes-step';
-import { getName } from '@console/shared';
 import { StorageClusterKind } from '../../../types';
 import { getOCSRequestData, labelNodes, labelOCSNamespace } from '../ocs-request-data';
 import { OCSServiceModel } from '../../../models';
 import { OCS_CONVERGED_FLAG, OCS_INDEPENDENT_FLAG, OCS_FLAG } from '../../../features';
 import { createKmsResources } from '../../kms-config/utils';
-import { ReviewAndCreate } from './install-wizard-steps/review-and-create-step';
-import { Configure } from './install-wizard-steps/configure-step';
 import '../install-wizard/install-wizard.scss';
 import './attached-devices.scss';
 

@@ -9,8 +9,8 @@ import {
   withDashboardResources,
 } from '@console/internal/components/dashboard/with-dashboard-resources';
 import { PrometheusResponse } from '@console/internal/components/graphs';
-import { EfficiencyItemBody } from '../../common/storage-efficiency/storage-efficiency-card-item';
 import { humanizeBinaryBytes, humanizePercentage } from '@console/internal/components/utils';
+import { EfficiencyItemBody } from '../../common/storage-efficiency/storage-efficiency-card-item';
 import { getGaugeValue } from '../../../../utils';
 import { ObjectStorageEfficiencyQueries } from '../../../../queries/object-storage-queries';
 

@@ -18,9 +18,9 @@ import {
   referenceFor,
   referenceForModel,
 } from '@console/internal/module/k8s';
-import { NooBaaObjectBucketClaimModel, NooBaaBucketClassModel } from '../../models';
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { getName, ResourceDropdown, isObjectSC } from '@console/shared';
+import { NooBaaObjectBucketClaimModel, NooBaaBucketClassModel } from '../../models';
 import { commonReducer, defaultState } from '../object-bucket-page/state';
 import { OCS_NS, NB_PROVISIONER } from '../../constants';
 import './create-obc.scss';

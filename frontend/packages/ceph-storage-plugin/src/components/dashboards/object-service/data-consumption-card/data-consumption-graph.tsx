@@ -13,8 +13,8 @@ import {
 } from '@patternfly/react-charts';
 import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
 import { PrometheusResponse } from '@console/internal/components/graphs';
-import { CHART_LABELS, Breakdown, Metrics, ServiceType } from '../../../../constants';
 import { getDataConsumptionChartData, numberInWords } from './data-consumption-card-utils';
+import { CHART_LABELS, Breakdown, Metrics, ServiceType } from '../../../../constants';
 import { DATA_CONSUMPTION_QUERIES } from '../../../../queries/object-storage-queries';
 import './data-consumption-card.scss';
 

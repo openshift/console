@@ -13,10 +13,12 @@ import { Modal, useFlag } from '@console/shared';
 import { k8sCreate, NodeKind } from '@console/internal/module/k8s';
 import { LocalVolumeSetModel } from '@console/local-storage-operator-plugin/src/models';
 
-import { GUARDED_FEATURES } from '../../../../../features';
 import { LocalVolumeSetHeader } from '@console/local-storage-operator-plugin/src/components/local-volume-set/header';
 import { LocalVolumeSetBody } from '@console/local-storage-operator-plugin/src/components/local-volume-set/body';
 import { getLocalVolumeSetRequestData } from '@console/local-storage-operator-plugin/src/components/local-volume-set/request';
+import { getNodesByHostNameLabel } from '@console/local-storage-operator-plugin/src/utils';
+import { SelectedCapacity } from './selected-capacity';
+import { GUARDED_FEATURES } from '../../../../../features';
 import { hasOCSTaint } from '../../../../../utils/install';
 import {
   MINIMUM_NODES,
@@ -27,8 +29,6 @@ import {
 import { RequestErrors } from '../../../install-wizard/review-and-create';
 import '../../attached-devices.scss';
 import { State, Action } from '../../reducer';
-import { getNodesByHostNameLabel } from '@console/local-storage-operator-plugin/src/utils';
-import { SelectedCapacity } from './selected-capacity';
 
 const makeLocalVolumeSetCall = (
   state: State,

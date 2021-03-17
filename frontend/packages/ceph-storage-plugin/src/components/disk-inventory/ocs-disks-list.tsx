@@ -36,7 +36,6 @@ import {
   NodesDisksListPage,
   NodesDisksListPageProps,
 } from '@console/local-storage-operator-plugin/src/components/disks-list/disks-list-page';
-import { CEPH_STORAGE_NAMESPACE, OSD_DOWN_ALERT, OSD_DOWN_AND_OUT_ALERT } from '../../constants';
 import { OCSKebabOptions } from './ocs-kebab-options';
 import { OCSStatus } from './ocs-status-column';
 import {
@@ -49,6 +48,7 @@ import {
   Status,
   OCSDiskStatus,
 } from './state-reducer';
+import { CEPH_STORAGE_NAMESPACE, OSD_DOWN_ALERT, OSD_DOWN_AND_OUT_ALERT } from '../../constants';
 
 const getTiBasedStatus = (status: string): OCSDiskStatus => {
   switch (status) {

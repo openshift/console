@@ -1,0 +1,29 @@
+{
+  "root": true,
+  extends: ['plugin:console/react-typescript-prettier'],
+  "rules": {
+    "import/order": [
+      "error",
+      {
+        "pathGroups": [
+          {
+            "pattern": "@*/**",
+            "group": "external",
+            "position": "after",
+          },
+        ],
+        "pathGroupsExcludedImportTypes": ["builtin"],
+        "groups": [
+          "builtin",
+          "external",
+          "internal",
+          "index",
+          "sibling",
+          "parent",
+          "object",
+          "unknown",
+        ],
+      },
+    ],
+  },
+}

@@ -16,12 +16,12 @@ import {
   useMetricDuration,
   Duration,
 } from '@console/shared/src/components/dashboard/duration-hook';
+import { humanizeIOPS, humanizeLatency } from './utils';
 import {
   StorageDashboardQuery,
   UTILIZATION_QUERY,
   utilizationPopoverQueryMap,
 } from '../../../../queries';
-import { humanizeIOPS, humanizeLatency } from './utils';
 
 const UtilizationCard: React.FC = () => {
   const { t } = useTranslation();
