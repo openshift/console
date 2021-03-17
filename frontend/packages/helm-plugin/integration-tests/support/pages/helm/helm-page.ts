@@ -13,30 +13,40 @@ export const helmPage = {
     cy.get(helmPO.search)
       .clear()
       .type(name);
-    cy.get(helmPO.table).should('be.visible');
   },
   verifyHelmReleasesDisplayed: () => cy.get(helmPO.table).should('be.visible'),
   clickHelmReleaseName: (name: string) => cy.get(`a[title="${name}"]`).click(),
+  selectFilterCheckbox: (checkbox: string, option: string) => {
+    // eslint-disable-next-line promise/catch-or-return
+    cy.get('body').then((body) => {
+      if (body.find('checked').length) {
+        cy.get(option).click();
+      }
+    });
+  },
+  selectAllHelmFilter: () => {
+    helmPage.selectFilterCheckbox(helmPO.deployedCheckbox, '#deployed');
+    helmPage.selectFilterCheckbox(helmPO.failedCheckbox, '#failed');
+    helmPage.selectFilterCheckbox(helmPO.otherCheckbox, '#other');
+  },
   selectHelmFilter: (filterName: string) => {
-    cy.get(helmPO.filterDropdown).click();
     switch (filterName) {
       case 'Deployed': {
-        cy.get('#deployed').click();
+        helmPage.selectFilterCheckbox(helmPO.deployedCheckbox, '#deployed');
         break;
       }
       case 'Failed': {
-        cy.get('#failed').click();
+        helmPage.selectFilterCheckbox(helmPO.failedCheckbox, '#failed');
         break;
       }
       case 'Other': {
-        cy.get('#other').click();
+        helmPage.selectFilterCheckbox(helmPO.otherCheckbox, '#other');
         break;
       }
       default: {
         throw new Error(`${filterName} filter is not available in filter drop down`);
       }
     }
-    cy.byButtonText('Clear all filters').should('be.visible');
   },
   verifyStatusInHelmReleasesTable: (helmReleaseName: string = 'Nodejs Ex K v0.2.1') => {
     cy.get(helmPO.table).should('exist');
@@ -53,5 +63,105 @@ export const helmPage = {
   selectKebabMenu: () => {
     cy.get(helmPO.table).should('exist');
     cy.byLegacyTestID('kebab-button').click();
+  },
+  verifyHelmChartsListed: () => {
+    cy.get(helmPO.noHelmSearchMessage)
+      .get(helmPO.table)
+      .get('table')
+      .its('length')
+      .should('be.greaterThan', 0);
+  },
+  verifySearchMessage: (message: string) =>
+    cy.get(helmPO.noHelmSearchMessage).should('contain.text', message),
+  selectHelmFilterDropDown: () => {
+    // eslint-disable-next-line promise/catch-or-return
+    cy.get(helmPO.filterToolBar).then((body) => {
+      if (body.find(helmPO.filterDropdownDialog).length <= 0) {
+        cy.get(helmPO.filterDropdown).click();
+      }
+    });
+  },
+
+  getItemFromReleaseTable: (header: string) => {
+    cy.get(helmPO.table)
+      .find(`[data-index="0"]`)
+      .should('be.visible')
+      .find(`[role=gridcell]`)
+      .should('contain.text', header);
+  },
+  verifyHelmFilterUnSelected: (filterName: string) => {
+    helmPage.selectHelmFilterDropDown();
+    switch (filterName) {
+      case 'Deployed': {
+        cy.get('#deployed-checkbox')
+          .uncheck()
+          .should('not.be.checked');
+        break;
+      }
+      case 'Failed': {
+        cy.get('#failed-checkbox')
+          .uncheck()
+          .should('not.be.checked');
+        break;
+      }
+      case 'Other': {
+        cy.get('#other-checkbox')
+          .uncheck()
+          .should('not.be.checked');
+        break;
+      }
+      case 'all': {
+        cy.get('#deployed-checkbox')
+          .uncheck()
+          .should('not.be.checked');
+        cy.get('#failed-checkbox')
+          .uncheck()
+          .should('not.be.checked');
+        cy.get('#other-checkbox')
+          .uncheck()
+          .should('not.be.checked');
+        break;
+      }
+      default: {
+        throw new Error(`${filterName} filter is not available in filter drop down`);
+      }
+    }
+  },
+  verifyHelmFilterSelected: (filterName: string) => {
+    helmPage.selectHelmFilterDropDown();
+    switch (filterName) {
+      case 'Deployed': {
+        cy.get('#deployed-checkbox').should('be.checked');
+        break;
+      }
+      case 'Failed': {
+        cy.get('#failed-checkbox').should('be.checked');
+        break;
+      }
+      case 'Other': {
+        cy.get('#other-checkbox').should('be.checked');
+        break;
+      }
+      case 'all': {
+        cy.get('#deployed-checkbox').should('be.checked');
+        cy.get('#failed-checkbox').should('be.checked');
+        cy.get('#other-checkbox').should('be.checked');
+        break;
+      }
+      default: {
+        throw new Error(`${filterName} filter is not available in filter drop down`);
+      }
+    }
+    helmPage.clearAllFilter();
+  },
+  clearAllFilter: () => {
+    // eslint-disable-next-line promise/catch-or-return
+    cy.get(helmPO.filterToolBar).then((body) => {
+      if (body.find(helmPO.clearAllFilter).length >= 0) {
+        cy.get(helmPO.clearAllFilter)
+          .eq(1)
+          .click();
+      }
+    });
   },
 };

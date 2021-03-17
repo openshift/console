@@ -3,8 +3,15 @@ import {
   catalogPage,
   catalogInstallPageObj,
   topologyHelper,
+  createHelmReleaseWithName,
+  navigateTo,
 } from '@console/dev-console/integration-tests/support/pages';
 import { catalogPO } from '@console/dev-console/integration-tests/support/pageObjects';
+import {
+  pageTitle,
+  devNavigationMenu,
+} from '@console/dev-console/integration-tests/support/constants';
+import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
 
 When('user selects YAML view', () => {
   cy.document()
@@ -39,4 +46,30 @@ When('user enters Release Name as {string}', (releaseName: string) => {
 
 Then('user will see the chart version dropdown', () => {
   catalogInstallPageObj.verifyChartVersionDropdownAvailable();
+});
+
+Then('user has added multiple helm charts repositories', () => {
+  createHelmReleaseWithName('Nodejs Ex K v0.2.1', 'nodejs-example');
+  createHelmReleaseWithName('Quarkus v0.0.3', 'quarkus');
+  navigateTo(devNavigationMenu.Add);
+});
+
+Then('user will get redirected to Helm Charts page', () => {
+  detailsPage.titleShouldContain(pageTitle.HelmCharts);
+});
+
+Then('user will see the list of Chart Repositories', () => {
+  catalogPage.verifyChartListAvailable();
+});
+
+Then('user will see the cards of Helm Charts', () => {
+  catalogPage.verifyChartCardsAvailable();
+});
+
+Then('user will see Filter by Keyword field', () => {
+  catalogPage.verifyFilterByKeywordField();
+});
+
+Then('user will see A-Z, Z-A sort by dropdown', () => {
+  catalogPage.verifySortDropdown();
 });

@@ -28,9 +28,8 @@ export const helmDetailsPage = {
   },
   uninstallHelmRelease: () => {
     modal.modalTitleShouldContain('Uninstall Helm Release?');
-    cy.byTestID('confirm-action')
-      .should('be.enabled')
-      .click();
+    modal.submit();
+    modal.shouldBeClosed();
   },
   enterReleaseNameInUninstallPopup: (releaseName: string = 'nodejs-ex-k') => {
     modal.modalTitleShouldContain('Uninstall Helm Release?');
