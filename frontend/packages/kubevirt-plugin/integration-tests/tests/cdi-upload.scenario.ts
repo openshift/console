@@ -4,6 +4,7 @@ import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { browser, ExpectedConditions as until } from 'protractor';
 import {
   click,
+  createResource,
   removeLeakedResources,
   withResource,
   withResources,
@@ -40,6 +41,7 @@ import { VMBuilder } from './models/vmBuilder';
 import { VMTemplateBuilder } from './models/vmtemplateBuilder';
 import { getBasicVMBuilder, getBasicVMTBuilder } from './mocks/vmBuilderPresets';
 import { uploadOSImage } from './utils/utils';
+import { AccessMode, VolumeMode, getTestDataVolume } from './mocks/mocks';
 
 function imagePull(src, dest) {
   if (src === CIRROS_IMAGE) {
@@ -215,9 +217,22 @@ describe('KubeVirt Auto Clone', () => {
     const vmTemplate = new VMTemplateBuilder(getBasicVMTBuilder())
       .setName(TemplateByName.RHEL8)
       .build();
+    let volumeMode;
+    if (VolumeMode === 'Filesystem') {
+      volumeMode = false;
+    }
+    if (VolumeMode === 'Block') {
+      volumeMode = true;
+    }
 
     beforeAll(async () => {
-      uploadOSImage('rhel8', GOLDEN_OS_IMAGES_NS, cirrosPVC.image, 'ReadWriteMany', true);
+      if (STORAGE_CLASS === 'ocs-storagecluster-ceph-rbd') {
+        uploadOSImage('rhel8', GOLDEN_OS_IMAGES_NS, cirrosPVC.image, AccessMode, volumeMode);
+      }
+      if (STORAGE_CLASS === 'hostpath-provisioner') {
+        const testDV = getTestDataVolume('rhel8', GOLDEN_OS_IMAGES_NS);
+        createResource(testDV);
+      }
     });
 
     afterAll(async () => {

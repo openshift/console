@@ -56,6 +56,9 @@ export const dataVolumeManifest = ({ name, namespace, sourceURL, accessMode, vol
     metadata: {
       name,
       namespace,
+      annotations: {
+        'cdi.kubevirt.io/storage.bind.immediate.requested': 'true',
+      },
     },
     spec: {
       pvc: {
