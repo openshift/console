@@ -99,12 +99,7 @@ const ClusterTableHeader = (t?: TFunction) => {
 ClusterTableHeader.displayName = 'ClusterTableHeader';
 
 const ClusterTableRow: RowFunction<IClusterTableRow> = ({ obj: cluster, index, key, style }) => {
-  let owner;
-  if (cluster.status?.owner) {
-    owner = Object.keys(cluster.status?.owner)[0];
-  } else {
-    owner = '';
-  }
+  const owner = cluster.status.owner && Object.keys(cluster.status.owner)[0];
   return (
     <TableRow id={cluster.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
@@ -131,7 +126,7 @@ export const ClusterDetailsList: React.FC<ClusterDetailsListProps> = ({ cl }) =>
   const { t } = useTranslation();
   return (
     <dl className="co-m-pane__details">
-      <DetailsItem label={t("MSG_DETAILS_TABDETAILS_1")} obj={cl} path="spec.provider" />
+      <DetailsItem label={t("COMMON:MSG_DETAILS_TABDETAILS_1")} obj={cl} path="spec.provider" />
       <DetailsItem label={t('COMMON:MSG_DETAILS_TABDETAILS_2')} obj={cl} path="spec.provider">
         {cl.spec.provider ? t('MULTI:MSG_MULTI_CLUSTERS_TABLECONTENTS_TYPE_1') : t('MULTI:MSG_MULTI_CLUSTERS_TABLECONTENTS_TYPE_2')}
       </DetailsItem>
