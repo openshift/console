@@ -95,7 +95,7 @@ export const StretchClusterFormGroup: React.FC<stretchClusterFormGroupProps> = (
     if (stretchClusterChecked) {
       const uniqZones: Set<string> = new Set(nodesDataMemoized.map((node) => getZone(node)));
       const uniqSelectedNodesZones: Set<string> = new Set(nodes.map((node) => getZone(node)));
-      setZones(_.difference([...uniqZones], [...uniqSelectedNodesZones]));
+      setZones(_.difference(_.compact([...uniqZones]), _.compact([...uniqSelectedNodesZones])));
     }
   }, [storageClass, stretchClusterChecked, nodes, isArbiterDisabled, dispatch, nodesDataMemoized]);
 
