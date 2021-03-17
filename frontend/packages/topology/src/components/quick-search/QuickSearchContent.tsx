@@ -17,6 +17,7 @@ interface QuickSearchContentProps {
   selectedItem: CatalogItem;
   onSelect: (itemId: string) => void;
   viewAll?: CatalogLinkData[];
+  closeModal: () => void;
 }
 
 const QuickSearchContent: React.FC<QuickSearchContentProps> = ({
@@ -27,6 +28,7 @@ const QuickSearchContent: React.FC<QuickSearchContentProps> = ({
   selectedItem,
   selectedItemId,
   onSelect,
+  closeModal,
 }) => {
   return (
     <Split className="odc-quick-search-content">
@@ -43,11 +45,12 @@ const QuickSearchContent: React.FC<QuickSearchContentProps> = ({
           searchTerm={searchTerm}
           namespace={namespace}
           onSelectListItem={onSelect}
+          closeModal={closeModal}
         />
       </SplitItem>
       <Divider component="div" isVertical />
       <SplitItem className="odc-quick-search-content__details">
-        <QuickSearchDetails selectedItem={selectedItem} />
+        <QuickSearchDetails selectedItem={selectedItem} closeModal={closeModal} />
       </SplitItem>
     </Split>
   );

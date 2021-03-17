@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { TextList, TextListItem } from '@patternfly/react-core';
+import { history, removeQueryArgument } from '@console/internal/components/utils';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { keywordCompare } from '@console/dev-console/src/components/catalog/utils/catalog-utils';
 import { QuickStart } from '@console/app/src/components/quick-starts/utils/quick-start-types';
@@ -52,4 +53,14 @@ export const useTransformedQuickStarts = (quickStarts: QuickStart[]): CatalogIte
       }),
     [t, quickStarts, setActiveQuickStart],
   );
+};
+
+export const handleCta = (e: React.SyntheticEvent, item: CatalogItem, closeModal: () => void) => {
+  e.preventDefault();
+  const { href, callback } = item.cta;
+  if (callback) {
+    closeModal();
+    callback();
+    removeQueryArgument('catalogSearch');
+  } else history.push(href);
 };

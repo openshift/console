@@ -1,15 +1,16 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { history } from '@console/internal/components/utils';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { Button, ButtonVariant, TextContent, Title } from '@patternfly/react-core';
 import './QuickSearchDetails.scss';
+import { handleCta } from './utils/quick-search-utils';
 
 interface QuickSearchDetailsProps {
   selectedItem: CatalogItem;
+  closeModal: () => void;
 }
 
-const QuickSearchDetails: React.FC<QuickSearchDetailsProps> = ({ selectedItem }) => {
+const QuickSearchDetails: React.FC<QuickSearchDetailsProps> = ({ selectedItem, closeModal }) => {
   const { t } = useTranslation();
 
   return (
@@ -23,9 +24,8 @@ const QuickSearchDetails: React.FC<QuickSearchDetailsProps> = ({ selectedItem })
       <Button
         variant={ButtonVariant.primary}
         className="odc-quick-search-details__form-button"
-        onClick={() => {
-          const { href, callback } = selectedItem.cta;
-          callback ? callback() : history.push(href);
+        onClick={(e) => {
+          handleCta(e, selectedItem, closeModal);
         }}
       >
         {selectedItem.cta.label}

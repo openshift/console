@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import cx from 'classnames';
-import { history } from '@console/internal/components/utils';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import {
   DataList,
@@ -20,6 +19,7 @@ import { getIconProps } from '@console/dev-console/src/components/catalog/utils/
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import './QuickSearchList.scss';
 import { CatalogLinkData } from './utils/quick-search-types';
+import { handleCta } from './utils/quick-search-utils';
 import { Link } from 'react-router-dom';
 
 interface QuickSearchListProps {
@@ -29,6 +29,7 @@ interface QuickSearchListProps {
   searchTerm: string;
   namespace: string;
   onSelectListItem: (itemId: string) => void;
+  closeModal: () => void;
 }
 
 const QuickSearchList: React.FC<QuickSearchListProps> = ({
@@ -36,14 +37,9 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
   viewAll,
   selectedItemId,
   onSelectListItem,
+  closeModal,
 }) => {
   const { t } = useTranslation();
-
-  const handleCta = (e: React.SyntheticEvent, item: CatalogItem) => {
-    e.preventDefault();
-    const { href, callback } = item.cta;
-    callback ? callback() : history.push(href);
-  };
 
   const getIcon = (item: CatalogItem) => {
     const { iconImg, iconClass } = getIconProps(item);
@@ -73,7 +69,7 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
             className={cx('odc-quick-search-list__item', {
               'odc-quick-search-list__item--highlight': item.uid === selectedItemId,
             })}
-            onDoubleClick={(e: React.SyntheticEvent) => handleCta(e, item)}
+            onDoubleClick={(e: React.SyntheticEvent) => handleCta(e, item, closeModal)}
           >
             <DataListItemRow className="odc-quick-search-list__item-row">
               <DataListItemCells
