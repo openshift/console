@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { CatalogItem } from '@console/plugin-sdk';
+import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import {
   history,
   getQueryArgument,

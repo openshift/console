@@ -1,32 +1,30 @@
 import {
-  CatalogItemProvider,
-  CatalogItemType,
-  CatalogItemFilter,
-  isCatalogItemProvider,
-  isCatalogItemType,
-  isCatalogItemFilter,
-} from '@console/plugin-sdk';
-import {
   ResolvedExtension,
   useResolvedExtensions,
-} from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
+  ResolvedCatalogItemFilter,
+  ResolvedCatalogItemProvider,
+  CatalogItemType,
+  isCatalogItemFilter,
+  isCatalogItemProvider,
+  isCatalogItemType,
+} from '@console/dynamic-plugin-sdk';
 
 const useCatalogExtensions = (
   catalogType: string,
 ): [
   ResolvedExtension<CatalogItemType>[],
-  ResolvedExtension<CatalogItemProvider>[],
-  ResolvedExtension<CatalogItemFilter>[],
+  ResolvedExtension<ResolvedCatalogItemProvider>[],
+  ResolvedExtension<ResolvedCatalogItemFilter>[],
   boolean,
 ] => {
   const [itemTypeExtensions, typesResolved] = useResolvedExtensions<CatalogItemType>(
     isCatalogItemType,
   );
-  const [itemProviderExtensions, providersResolved] = useResolvedExtensions<CatalogItemProvider>(
-    isCatalogItemProvider,
-  );
+  const [itemProviderExtensions, providersResolved] = useResolvedExtensions<
+    ResolvedCatalogItemProvider
+  >(isCatalogItemProvider);
 
-  const [itemFilterExtensions, filtersResolved] = useResolvedExtensions<CatalogItemFilter>(
+  const [itemFilterExtensions, filtersResolved] = useResolvedExtensions<ResolvedCatalogItemFilter>(
     isCatalogItemFilter,
   );
 

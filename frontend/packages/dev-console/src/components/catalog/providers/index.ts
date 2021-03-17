@@ -1,11 +1,3 @@
-import { getExecutableCodeRef } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-utils';
+export { default as builderImageProvider } from './useBuilderImages';
 
-export const builderImageProvider = getExecutableCodeRef(() =>
-  import('./useBuilderImages' /* webpackChunkName: "builder-image-provider" */).then(
-    (m) => m.default,
-  ),
-);
-
-export const templateProvider = getExecutableCodeRef(() =>
-  import('./useTemplates' /* webpackChunkName: "template-provider" */).then((m) => m.default),
-);
+export { default as templateProvider } from './useTemplates';

@@ -1,6 +1,6 @@
 import { history } from '@console/internal/components/utils';
 import { normalizeIconClass } from '@console/internal/components/catalog/catalog-item-icon';
-import { CatalogItem } from '@console/plugin-sdk';
+import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import * as catalogImg from '@console/internal/imgs/logos/catalog-icon.svg';
 import { CatalogType, CatalogTypeCounts } from './types';
 

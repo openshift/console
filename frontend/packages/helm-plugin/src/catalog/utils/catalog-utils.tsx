@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { TFunction } from 'i18next';
-import { CatalogItem } from '@console/plugin-sdk';
+import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { toTitleCase } from '@console/shared';
 import { ExternalLink } from '@console/internal/components/utils';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';

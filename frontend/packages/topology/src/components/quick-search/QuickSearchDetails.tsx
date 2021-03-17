@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { history } from '@console/internal/components/utils';
-import { CatalogItem } from '@console/plugin-sdk';
+import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { Button, ButtonVariant, TextContent, Title } from '@patternfly/react-core';
 import './QuickSearchDetails.scss';
 

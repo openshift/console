@@ -129,5 +129,49 @@
       "description": "%devconsole~Browse the catalog to discover and deploy operator managed services%",
       "icon": { "$codeRef": "icons.operatorCatalogIconElement" }
     }
+  },
+  {
+    "type": "console.catalog/item-type",
+    "properties": {
+      "type": "BuilderImage",
+      "title": "%devconsole~Builder Images%",
+      "catalogDescription": "%devconsole~Browse for container images that support a particular language or framework. Cluster administrators can customize the content made available in the catalog.%",
+      "typeDescription": "%devconsole~**Builder Images** are container images that build source code for a particular language or framework.%"
+    },
+    "flags": {
+      "required": ["OPENSHIFT"]
+    }
+  },
+  {
+    "type": "console.catalog/item-provider",
+    "properties": {
+      "type": "BuilderImage",
+      "provider": { "$codeRef": "catalog.builderImageProvider" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT"]
+    }
+  },
+  {
+    "type": "console.catalog/item-type",
+    "properties": {
+      "type": "Template",
+      "title": "%devconsole~Templates%",
+      "catalogDescription": "%devconsole~Browse for templates that can deploy services, create builds, or create any resources the template enables. Cluster administrators can customize the content made available in the catalog.%",
+      "typeDescription": "%devconsole~**Templates** are sets of objects for creating services, build configurations, and anything you have permission to create within a Project.%"
+    },
+    "flags": {
+      "required": ["OPENSHIFT"]
+    }
+  },
+  {
+    "type": "console.catalog/item-provider",
+    "properties": {
+      "type": "Template",
+      "provider": { "$codeRef": "catalog.templateProvider" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT"]
+    }
   }
 ]

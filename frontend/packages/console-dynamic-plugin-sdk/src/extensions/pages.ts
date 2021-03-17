@@ -2,7 +2,7 @@ import { RouteComponentProps } from 'react-router';
 import { Extension } from '@console/plugin-sdk/src/typings/base';
 import { CodeRef, EncodedCodeRef, UpdateExtensionProperties } from '../types';
 
-export namespace ExtensionProperties {
+namespace ExtensionProperties {
   /** Adds new standalone page (rendered outside the common page layout) to Console router. */
   export type StandaloneRoutePage = {
     /** The component to be rendered when the route matches. */

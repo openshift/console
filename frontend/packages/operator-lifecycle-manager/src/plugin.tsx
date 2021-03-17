@@ -9,11 +9,8 @@ import {
   ResourceDetailsPage,
   RoutePage,
   DashboardsOverviewHealthOperator,
-  CatalogItemProvider,
-  CatalogItemType,
 } from '@console/plugin-sdk';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { getExecutableCodeRef } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-utils';
 import { FLAGS } from '@console/shared/src/constants';
 import * as models from './models';
 import { Flags } from './const';
@@ -21,12 +18,6 @@ import { getClusterServiceVersionsWithStatuses } from './components/dashboard/ut
 import { ClusterServiceVersionKind } from './types';
 
 import './style.scss';
-
-const catalogCSVProvider = getExecutableCodeRef(() =>
-  import('./utils/useClusterServiceVersions' /* webpackChunkName: "catalog-csv-provider" */).then(
-    (m) => m.default,
-  ),
-);
 
 type ConsumedExtensions =
   | ModelDefinition
@@ -36,8 +27,6 @@ type ConsumedExtensions =
   | ResourceListPage
   | ResourceDetailsPage
   | RoutePage
-  | CatalogItemProvider
-  | CatalogItemType
   | DashboardsOverviewHealthOperator<ClusterServiceVersionKind>;
 
 const plugin: Plugin<ConsumedExtensions> = [
@@ -52,39 +41,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: models.ClusterServiceVersionModel,
       flag: Flags.OPERATOR_LIFECYCLE_MANAGER,
-    },
-  },
-  {
-    type: 'Catalog/ItemType',
-    properties: {
-      type: 'OperatorBackedService',
-      // t('olm~Operator Backed')
-      title: '%olm~Operator Backed%',
-      // t('olm~Browse for a variety of managed services that are installed by cluster administrators. Cluster administrators can customize the content made available in the catalog.')
-      catalogDescription:
-        '%olm~Browse for a variety of managed services that are installed by cluster administrators. Cluster administrators can customize the content made available in the catalog.%',
-      // t('olm~**Operator backed** includes a variety of services managed by Kubernetes controllers.')
-      typeDescription:
-        '%olm~**Operator backed** includes a variety of services managed by Kubernetes controllers.%',
-      groupings: [
-        {
-          label: 'Operators',
-          attribute: 'operatorName',
-        },
-      ],
-    },
-    flags: {
-      required: [Flags.OPERATOR_LIFECYCLE_MANAGER],
-    },
-  },
-  {
-    type: 'Catalog/ItemProvider',
-    properties: {
-      type: 'OperatorBackedService',
-      provider: catalogCSVProvider,
-    },
-    flags: {
-      required: [Flags.OPERATOR_LIFECYCLE_MANAGER],
     },
   },
   {

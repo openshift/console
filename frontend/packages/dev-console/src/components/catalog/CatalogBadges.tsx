@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { CatalogItemBadge } from '@console/plugin-sdk';
+import { CatalogItemBadge } from '@console/dynamic-plugin-sdk';
 import { Label } from '@patternfly/react-core';
 import './CatalogBadges.scss';
 

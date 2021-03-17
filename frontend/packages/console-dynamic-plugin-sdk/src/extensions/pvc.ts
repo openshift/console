@@ -2,7 +2,7 @@ import { Extension } from '@console/plugin-sdk/src/typings/base';
 import { CodeRef, EncodedCodeRef, UpdateExtensionProperties } from '../types';
 import { ExtensionCommonK8sResource } from '../utils/common';
 
-export namespace ExtensionProperties {
+namespace ExtensionProperties {
   export type PVCCreateProp = {
     /** label for the create prop */
     label: string;

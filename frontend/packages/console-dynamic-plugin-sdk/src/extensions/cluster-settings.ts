@@ -1,6 +1,6 @@
 import { Extension } from '@console/plugin-sdk/src/typings/base';
 
-export namespace ExtensionProperties {
+namespace ExtensionProperties {
   export type ClusterGlobalConfig = {
     /** Unique identifier for the cluster config resource instance. */
     id: string;

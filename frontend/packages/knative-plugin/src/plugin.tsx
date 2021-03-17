@@ -14,8 +14,6 @@ import {
   YAMLTemplate,
   HrefNavItem,
   HorizontalNavTab,
-  CatalogItemProvider,
-  CatalogItemType,
   DetailPageBreadCrumbs,
 } from '@console/plugin-sdk';
 import { NamespaceRedirect } from '@console/internal/components/utils/namespace-redirect';
@@ -35,7 +33,6 @@ import {
 import { getKebabActionsForKind, getKebabActionsForWorkload } from './utils/kebab-actions';
 import { TopologyConsumedExtensions, topologyPlugin } from './topology/topology-plugin';
 
-import { eventSourceProvider, kameletsProvider } from './catalog';
 import {
   eventSourceBreadcrumbsProvider,
   channelBreadcrumbsProvider,
@@ -60,8 +57,6 @@ type ConsumedExtensions =
   | ResourceDetailsPage
   | TopologyConsumedExtensions
   | HorizontalNavTab
-  | CatalogItemProvider
-  | CatalogItemType
   | DetailPageBreadCrumbs;
 
 const plugin: Plugin<ConsumedExtensions> = [
@@ -557,50 +552,6 @@ const plugin: Plugin<ConsumedExtensions> = [
             './components/eventing/triggers-list/TriggerListPage' /* webpackChunkName: "knative-triggers-page" */
           )
         ).default,
-    },
-  },
-  {
-    type: 'Catalog/ItemType',
-    properties: {
-      type: 'EventSource',
-      // t('knative-plugin~Event Sources')
-      title: '%knative-plugin~Event Sources%',
-      // t('knative-plugin~Event sources are objects that link to an event producer and an event sink or consumer. Cluster administrators can customize the content made available in the catalog.')
-      catalogDescription:
-        '%knative-plugin~Event sources are objects that link to an event producer and an event sink or consumer. Cluster administrators can customize the content made available in the catalog.%',
-      // t('knative-plugin~**Event sources** are objects that link to an event producer and an event sink or consumer.')
-      typeDescription:
-        '%knative-plugin~**Event sources** are objects that link to an event producer and an event sink or consumer.%',
-      filters: [
-        {
-          // t('knative-plugin~Provider')
-          label: '%knative-plugin~Provider%',
-          attribute: 'provider',
-        },
-      ],
-    },
-    flags: {
-      required: [FLAG_KNATIVE_EVENTING],
-    },
-  },
-  {
-    type: 'Catalog/ItemProvider',
-    properties: {
-      type: 'EventSource',
-      provider: eventSourceProvider,
-    },
-    flags: {
-      required: [FLAG_KNATIVE_EVENTING],
-    },
-  },
-  {
-    type: 'Catalog/ItemProvider',
-    properties: {
-      type: 'EventSource',
-      provider: kameletsProvider,
-    },
-    flags: {
-      required: [FLAG_CAMEL_KAMELETS],
     },
   },
   {

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { TextList, TextListItem } from '@patternfly/react-core';
-import { CatalogItem } from '@console/plugin-sdk';
+import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { keywordCompare } from '@console/dev-console/src/components/catalog/utils/catalog-utils';
 import { QuickStart } from '@console/app/src/components/quick-starts/utils/quick-start-types';
 import {

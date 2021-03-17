@@ -6,7 +6,7 @@ import {
   CatalogTile as PfCatalogTile,
 } from '@patternfly/react-catalog-view-extension';
 import { Badge } from '@patternfly/react-core';
-import { CatalogItem } from '@console/plugin-sdk';
+import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { getIconProps } from './utils/catalog-utils';
 import { CatalogType } from './utils/types';
 import CatalogBadges from './CatalogBadges';

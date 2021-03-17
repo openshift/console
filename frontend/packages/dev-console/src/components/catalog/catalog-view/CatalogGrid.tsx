@@ -1,4 +1,4 @@
-import { CatalogItem } from '@console/plugin-sdk';
+import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { VirtualizedGrid } from '@console/shared';
 import { Title } from '@patternfly/react-core';
 import * as _ from 'lodash';

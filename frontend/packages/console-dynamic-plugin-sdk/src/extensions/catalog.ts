@@ -1,8 +1,9 @@
-import { CodeRef } from '@console/dynamic-plugin-sdk/src/types';
-import { Extension } from './base';
+import * as React from 'react';
+import { Extension } from '@console/plugin-sdk/src/typings/base';
+import { CodeRef, EncodedCodeRef, UpdateExtensionProperties } from '../types';
 
 namespace ExtensionProperties {
-  export interface CatalogItemType {
+  export type CatalogItemType = {
     /** Type for the catalog item. */
     type: string;
     /** Title fpr the catalog item. */
@@ -15,49 +16,73 @@ namespace ExtensionProperties {
     filters?: CatalogItemAttribute[];
     /** Custom groupings specific to the catalog item. */
     groupings?: CatalogItemAttribute[];
-  }
+  };
 
-  export interface CatalogItemProvider {
+  export type CatalogItemProvider = {
     /** Type ID for the catalog item type. */
     type: string;
     /** Fetch items and normalize it for the catalog. Value is a react effect hook. */
-    provider: CodeRef<CatalogExtensionHook<CatalogItem[]>>;
+    provider: EncodedCodeRef;
     /** Priority for this provider. Defaults to 0. Higher priority providers may override catalog
         items provided by other providers. */
     priority?: number;
-  }
+  };
 
-  export interface CatalogItemFilter {
+  export type CatalogItemFilter = {
     /** Type ID for the catalog item type. */
     type: string;
     /** Filters items of a specific type. Value is a function that takes CatalogItem[] and returns a subset based on the filter criteria. */
-    filter: CodeRef<(items: CatalogItem[]) => CatalogItem[]>;
-  }
+    filter: EncodedCodeRef;
+  };
+
+  export type CatalogItemProviderCodeRefs = {
+    provider: CodeRef<CatalogExtensionHook<CatalogItem[]>>;
+  };
+
+  export type CatalogItemFilterCodeRefs = {
+    filter: CodeRef<(item: CatalogItem) => boolean>;
+  };
 }
 
-export interface CatalogItemType extends Extension<ExtensionProperties.CatalogItemType> {
-  type: 'Catalog/ItemType';
-}
+// Extension types
 
-export interface CatalogItemProvider extends Extension<ExtensionProperties.CatalogItemProvider> {
-  type: 'Catalog/ItemProvider';
-}
+export type CatalogItemType = Extension<ExtensionProperties.CatalogItemType> & {
+  type: 'console.catalog/item-type';
+};
 
-export interface CatalogItemFilter extends Extension<ExtensionProperties.CatalogItemFilter> {
-  type: 'Catalog/ItemFilter';
-}
+export type CatalogItemProvider = Extension<ExtensionProperties.CatalogItemProvider> & {
+  type: 'console.catalog/item-provider';
+};
+
+export type CatalogItemFilter = Extension<ExtensionProperties.CatalogItemFilter> & {
+  type: 'console.catalog/item-filter';
+};
+
+export type ResolvedCatalogItemProvider = UpdateExtensionProperties<
+  CatalogItemProvider,
+  ExtensionProperties.CatalogItemProviderCodeRefs
+>;
+
+export type ResolvedCatalogItemFilter = UpdateExtensionProperties<
+  CatalogItemFilter,
+  ExtensionProperties.CatalogItemFilterCodeRefs
+>;
+
+// Type guards
 
 export const isCatalogItemType = (e: Extension): e is CatalogItemType => {
-  return e.type === 'Catalog/ItemType';
+  return e.type === 'console.catalog/item-type';
 };
 
-export const isCatalogItemProvider = (e: Extension): e is CatalogItemProvider => {
-  return e.type === 'Catalog/ItemProvider';
+export const isCatalogItemProvider = (e: Extension): e is ResolvedCatalogItemProvider => {
+  return e.type === 'console.catalog/item-provider';
 };
 
-export const isCatalogItemFilter = (e: Extension): e is CatalogItemFilter => {
-  return e.type === 'Catalog/ItemFilter';
+export const isCatalogItemFilter = (e: Extension): e is ResolvedCatalogItemFilter => {
+  return e.type === 'console.catalog/item-filter';
 };
+
+// Support types
 
 export type CatalogExtensionHookResult<T> = [T, boolean, any];
 

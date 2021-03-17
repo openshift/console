@@ -3,6 +3,7 @@
   "version": "0.0.0-fixed",
   "description": "Tools and APIs for building OpenShift Console dynamic plugins",
   "private": true,
+  "main": "src/index.ts",
   "scripts": {
     "clean": "rm -rf ./dist",
     "schema": "yarn clean && yarn ts-node ./scripts/generate-schema.ts",

@@ -2,7 +2,7 @@ import { Reducer } from 'redux';
 import { Extension } from '@console/plugin-sdk/src/typings/base';
 import { CodeRef, EncodedCodeRef, UpdateExtensionProperties } from '../types';
 
-export namespace ExtensionProperties {
+namespace ExtensionProperties {
   /** Adds new reducer to Console Redux store which operates on `plugins.<scope>` substate. */
   export type ReduxReducer = {
     /** The key to represent the reducer-managed substate within the Redux state object. */

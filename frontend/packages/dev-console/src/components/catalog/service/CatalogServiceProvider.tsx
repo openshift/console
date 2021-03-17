@@ -1,7 +1,11 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { CatalogExtensionHookOptions, CatalogItem, CatalogItemType } from '@console/plugin-sdk';
-import { ResolvedExtension } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
+import {
+  ResolvedExtension,
+  CatalogExtensionHookOptions,
+  CatalogItem,
+  CatalogItemType,
+} from '@console/dynamic-plugin-sdk';
 import { keywordCompare } from '../utils/catalog-utils';
 import useCatalogExtensions from '../hooks/useCatalogExtensions';
 import CatalogExtensionHookResolver from './CatalogExtensionHookResolver';
@@ -52,7 +56,7 @@ const CatalogServiceProvider: React.FC<CatalogServiceProviderProps> = ({
       catalogProviderExtensions.map((e) =>
         catalogFilterExtensions
           .filter((fe) => fe.properties.type === e.properties.type)
-          .reduce((acc, ext) => ext.properties.filter(acc), extItemsMap[e.uid]),
+          .reduce((acc, ext) => acc.filter(ext.properties.filter), extItemsMap[e.uid]),
       ),
     ).reduce((acc, item) => {
       acc[item.uid] = item;
@@ -84,7 +88,7 @@ const CatalogServiceProvider: React.FC<CatalogServiceProviderProps> = ({
     return result;
   }, [catalogProviderExtensions, catalogItems]);
 
-  const catalogService = {
+  const catalogService: CatalogService = {
     type: catalogType,
     items: catalogItems,
     itemsMap: catalogItemsMap,

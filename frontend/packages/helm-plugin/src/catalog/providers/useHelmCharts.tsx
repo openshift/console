@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { safeLoad } from 'js-yaml';
 import { coFetch } from '@console/internal/co-fetch';
 import { APIError } from '@console/shared';
-import { CatalogExtensionHook, CatalogItem } from '@console/plugin-sdk';
+import { CatalogExtensionHook, CatalogItem } from '@console/dynamic-plugin-sdk';
 import {
   useK8sWatchResource,
   WatchK8sResource,

@@ -1,5 +1,5 @@
 import { TFunction } from 'i18next';
-import { CatalogItem } from '@console/plugin-sdk';
+import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import {
   EventSourceApiServerModel,
   EventSourceContainerModel,
