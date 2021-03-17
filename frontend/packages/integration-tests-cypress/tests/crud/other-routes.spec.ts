@@ -43,7 +43,7 @@ describe('Visiting other routes', () => {
       : []),
   ];
   otherRoutes.forEach((route) => {
-    it(`successfully displays view for route: ${route}`, () => {
+    it(`successfully visited route: '${route.replace(/\//g, ' ')}'`, () => {
       cy.visit(route);
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(5000); // wait for page to load
