@@ -99,7 +99,12 @@ const ClusterTableHeader = (t?: TFunction) => {
 ClusterTableHeader.displayName = 'ClusterTableHeader';
 
 const ClusterTableRow: RowFunction<IClusterTableRow> = ({ obj: cluster, index, key, style }) => {
-  const owner = Object.keys(cluster.status?.owner)[0];
+  let owner;
+  if (cluster.status?.owner) {
+    owner = Object.keys(cluster.status?.owner)[0];
+  } else {
+    owner = '';
+  }
   return (
     <TableRow id={cluster.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
@@ -166,7 +171,7 @@ const ClusterDetails: React.FC<ClusterDetailsProps> = ({ obj: cluster }) => {
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_1', {0: ResourceLabel(cluster, t)})} />
+        <SectionHeading text={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_1', { 0: ResourceLabel(cluster, t) })} />
         <div className="row">
           <div className="col-lg-6">
             <ResourceSummary resource={cluster} customPathName={'fakeMetadata.fakename'} showOwner={false} />
