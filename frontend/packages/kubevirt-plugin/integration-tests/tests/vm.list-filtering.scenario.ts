@@ -1,7 +1,7 @@
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { createResource, deleteResource } from '@console/shared/src/test-utils/utils';
 import { getVMManifest } from './mocks/mocks';
-import { VM_IMPORT_TIMEOUT_SECS } from './utils/constants/common';
+import { STORAGE_CLASS, VM_IMPORT_TIMEOUT_SECS } from './utils/constants/common';
 import { VM_STATUS } from './utils/constants/vm';
 import { VirtualMachine } from './models/virtualMachine';
 import { filterCount } from '../views/vms.list.view';
@@ -20,10 +20,11 @@ describe('Test List View Filtering', () => {
   });
 
   it('ID(CNV-3614) Displays correct count of importing VMs', async () => {
-    await vm.waitForStatus(VM_STATUS.Importing, VM_IMPORT_TIMEOUT_SECS);
-    await vm.navigateToListView();
-    const importingCount = await filterCount(VM_STATUS.Importing);
-    expect(importingCount).toEqual(1);
+    if (STORAGE_CLASS === 'ocs-storagecluster-ceph-rbd') {
+      await vm.navigateToListView();
+      const importingCount = await filterCount(VM_STATUS.Importing);
+      expect(importingCount).toEqual(1);
+    }
   });
 
   it('ID(CNV-3615) Displays correct count of Off VMs', async () => {
