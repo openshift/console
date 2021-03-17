@@ -1,11 +1,13 @@
 import * as React from 'react';
 import { useFormikContext, FormikValues } from 'formik';
 import { useTranslation } from 'react-i18next';
+import * as _ from 'lodash';
 import { RadioGroupField } from '@console/shared';
 import FormSection from '../section/FormSection';
 import { imageRegistryType } from '../../../utils/imagestream-utils';
 import ImageStream from './ImageStream';
 import ImageSearch from './ImageSearch';
+import { ResourceLink } from '@console/internal/components/utils';
 
 const ImageSearchSection: React.FC<{ disabled?: boolean }> = ({ disabled = false }) => {
   const { t } = useTranslation();
@@ -32,6 +34,12 @@ const ImageSearchSection: React.FC<{ disabled?: boolean }> = ({ disabled = false
       title={t('devconsole~Image')}
       subTitle={t('devconsole~Deploy an existing Image from an Image Stream or Image registry.')}
     >
+      {!_.isEmpty(values.containers) && (
+        <div className="co-section-heading-tertiary">
+          {t('devconsole~Container')}
+          <ResourceLink kind="Container" name={values.containers[0].name} linkTo={false} />
+        </div>
+      )}
       <RadioGroupField
         name="registry"
         options={[
