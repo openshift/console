@@ -54,6 +54,7 @@ import {
   navFactory,
   units,
   LabelList,
+  RuntimeClass,
 } from './utils';
 import { PodLogs } from './pod-logs';
 import {
@@ -659,6 +660,7 @@ export const PodDetailsList: React.FC<PodDetailsListProps> = ({ pod }) => {
       <DetailsItem label={t('public~Node')} obj={pod} path="spec.nodeName" hideEmpty>
         <NodeLink name={pod.spec.nodeName} />
       </DetailsItem>
+      <RuntimeClass obj={pod} path="spec.runtimeClassName" />
     </dl>
   );
 };

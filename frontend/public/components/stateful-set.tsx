@@ -17,6 +17,7 @@ import {
   SectionHeading,
   navFactory,
   PodsComponent,
+  RuntimeClass,
 } from './utils';
 import { VolumesTable } from './volumes-table';
 import { StatefulSetModel } from '../models';
@@ -60,7 +61,9 @@ const StatefulSetDetails: React.FC<StatefulSetDetailsProps> = ({ obj: ss }) => {
         <PodRingSet key={ss.metadata.uid} obj={ss} path="/spec/replicas" />
         <div className="row">
           <div className="col-md-6">
-            <ResourceSummary resource={ss} showPodSelector showNodeSelector showTolerations />
+            <ResourceSummary resource={ss} showPodSelector showNodeSelector showTolerations>
+              <RuntimeClass obj={ss} />
+            </ResourceSummary>
           </div>
         </div>
       </div>
