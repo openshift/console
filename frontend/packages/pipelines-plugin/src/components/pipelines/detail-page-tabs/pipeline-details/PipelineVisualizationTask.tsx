@@ -35,6 +35,7 @@ interface TaskProps {
   selected?: boolean;
   width: number;
   height: number;
+  isFinallyTask?: boolean;
 }
 
 interface PipelineVisualizationTaskProp {
@@ -53,6 +54,7 @@ interface PipelineVisualizationTaskProp {
   isSkipped?: boolean;
   width: number;
   height: number;
+  isFinallyTask?: boolean;
 }
 
 const FILTER_ID = 'SvgTaskDropShadowFilterId';
@@ -67,6 +69,7 @@ export const PipelineVisualizationTask: React.FC<PipelineVisualizationTaskProp> 
   isSkipped,
   width,
   height,
+  isFinallyTask,
 }) => {
   const taskStatus = task.status || {
     duration: '',
@@ -93,6 +96,7 @@ export const PipelineVisualizationTask: React.FC<PipelineVisualizationTaskProp> 
       selected={selected}
       width={width}
       height={height}
+      isFinallyTask={isFinallyTask}
     />
   );
 
@@ -132,6 +136,7 @@ const TaskComponent: React.FC<TaskProps> = ({
   selected,
   width,
   height,
+  isFinallyTask,
 }) => {
   const { t } = useTranslation();
   const stepList = task?.data?.spec?.steps || [];
@@ -211,6 +216,7 @@ const TaskComponent: React.FC<TaskProps> = ({
             isSpecOverview={!isPipelineRun}
             taskName={visualName}
             steps={stepStatusList}
+            isFinallyTask={isFinallyTask}
           />
         }
       >

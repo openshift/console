@@ -1,10 +1,10 @@
-.odc-pipeline-vis-steps-list {
+.odc-pipeline-visualization-step-list {
   min-width: 10em;
 
   &__task-name {
     font-weight: var(--pf-global--FontWeight--bold);
-    line-height: 1.5em;
-    max-height: 3em;
+    line-height: var(--pf-global--spacer--lg);
+    max-height: var(--pf-global--spacer--2xl);
 
     // Limit the size of the title so the content doesn't have unnecessary whitespace in the middle
     max-width: 15em;
@@ -16,6 +16,12 @@
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
     overflow: hidden;
+  }
+
+  &__task-type {
+    line-height: var(--pf-global--spacer--xs);
+    max-height: var(--pf-global--spacer--2xl);
+    margin: 0 auto 10px auto;
   }
 
   &__step {

@@ -1,7 +1,11 @@
 import * as dagre from 'dagre';
 import * as _ from 'lodash';
 import { PipelineKind, PipelineRunKind } from '../../../types';
-import { getPipelineTasks, PipelineVisualizationTaskItem } from '../../../utils/pipeline-utils';
+import {
+  getPipelineTasks,
+  getFinallyTasksWithStatus,
+  PipelineVisualizationTaskItem,
+} from '../../../utils/pipeline-utils';
 import {
   NODE_HEIGHT,
   NodeType,
@@ -262,7 +266,9 @@ export const connectFinallyTasksToNodes = (
   if (!pipeline.spec?.finally) {
     return nodes;
   }
-  const finallyTasks = pipeline.spec.finally;
+  const finallyTasks = pipelineRun
+    ? getFinallyTasksWithStatus(pipeline, pipelineRun)
+    : pipeline.spec.finally;
   const regularRunAfters = getLastRegularTasks(nodes);
   const name = 'finally-node';
   const finallyGroupNode: PipelineFinallyNodeModel = createFinallyNode(

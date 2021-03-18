@@ -258,4 +258,25 @@ describe('pipeline-utils ', () => {
     const taskList = appendPipelineRunStatus(pipeline, pipelineRun);
     expect(taskList.filter((t) => t.status.reason === runStatus.Running)).toHaveLength(2);
   });
+
+  it('should append status to only pipeline tasks if isFinallyTasks is false', () => {
+    const { pipeline, pipelineRuns } = pipelineTestData[PipelineExampleNames.PIPELINE_WITH_FINALLY];
+    const pipelineRun = pipelineRuns[DataState.SUCCESS];
+    const taskList = appendPipelineRunStatus(pipeline, pipelineRun);
+    expect(taskList).toHaveLength(2);
+  });
+
+  it('should append status to only finally tasks if isFinallyTasks is true', () => {
+    const { pipeline, pipelineRuns } = pipelineTestData[PipelineExampleNames.PIPELINE_WITH_FINALLY];
+    const pipelineRun = pipelineRuns[DataState.SUCCESS];
+    const taskList = appendPipelineRunStatus(pipeline, pipelineRun, true);
+    expect(taskList).toHaveLength(1);
+  });
+
+  it('should return empty array if there are no finally tasks but isFinallyTasks is true', () => {
+    const { pipeline, pipelineRuns } = pipelineTestData[PipelineExampleNames.SIMPLE_PIPELINE];
+    const pipelineRun = pipelineRuns[DataState.IN_PROGRESS];
+    const taskList = appendPipelineRunStatus(pipeline, pipelineRun, true);
+    expect(taskList).toHaveLength(0);
+  });
 });

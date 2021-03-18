@@ -44,6 +44,7 @@ const FinallyNode: React.FC<FinallyNodeProps> = ({ element }) => {
             selected={ft.selected}
             width={NODE_WIDTH}
             height={NODE_HEIGHT}
+            isFinallyTask
           />
         </g>
       ))}
