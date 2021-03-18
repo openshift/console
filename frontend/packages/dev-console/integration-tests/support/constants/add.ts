@@ -10,6 +10,7 @@ export enum addOptions {
   Pipeline = 'Pipeline',
   EventSource = 'Event Source',
   DevFile = 'Import from Devfile',
+  Channel = 'Channel',
 }
 
 export enum buildConfigOptions {
@@ -65,4 +66,11 @@ export enum builderImages {
   Python = 'Python',
   Java = 'Java',
   NodeJs = 'Node.js',
+}
+
+export enum eventSourceCards {
+  ApiServerSource = 'Api Server Source',
+  ContainerSource = 'Container Source',
+  PingSource = 'Ping Source',
+  SinkBinding = 'Sink Binding',
 }

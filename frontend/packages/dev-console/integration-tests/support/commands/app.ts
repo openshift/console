@@ -5,10 +5,10 @@ export {}; // needed in files which don't have an import to trigger ES6 module u
 declare global {
   namespace Cypress {
     interface Chainable<Subject> {
-      pageTitleShouldContain(title: string): Chainable<Element>;
       alertTitleShouldContain(title: string): Chainable<Element>;
       clickNavLink(path: [string, string]): Chainable<Element>;
       selectByDropDownText(selector: string, dropdownText: string): Chainable<Element>;
+      selectByAutoCompleteDropDownText(selector: string, dropdownText: string): Chainable<Element>;
       verifyDropdownselected(selector: string): Chainable<Element>;
       mouseHover(selector: string): Chainable<Element>;
       selectValueFromAutoCompleteDropDown(
@@ -31,18 +31,8 @@ before(() => {
 });
 
 after(() => {
-  cy.exec(`oc delete namespace ${Cypress.env('NAMESPACE')}`, { failOnNonZeroExit: true });
+  cy.exec(`oc delete namespace ${Cypress.env('NAMESPACE')}`, { failOnNonZeroExit: false });
   cy.logout();
-});
-
-afterEach(() => {
-  // checkErrors();
-});
-
-Cypress.Commands.add('pageTitleShouldContain', (title: string) => {
-  cy.get('[data-test-id ="resource-title"]')
-    .should('be.visible')
-    .and('contain.text', title);
 });
 
 Cypress.Commands.add('alertTitleShouldContain', (alertTitle: string) => {
@@ -60,10 +50,19 @@ Cypress.Commands.add('clickNavLink', (path: [string, string]) => {
 
 Cypress.Commands.add('selectByDropDownText', (selector: string, dropdownText: string) => {
   cy.get(selector).click();
-  cy.get('ul.pf-c-dropdown__menu li button')
+  cy.get('li')
     .contains(dropdownText)
     .click({ force: true });
 });
+
+Cypress.Commands.add(
+  'selectByAutoCompleteDropDownText',
+  (selector: string, dropdownText: string) => {
+    cy.get(selector).click();
+    cy.byLegacyTestID('dropdown-text-filter').type(dropdownText);
+    cy.get(`[id*="${dropdownText}-link"]`).click({ force: true });
+  },
+);
 
 Cypress.Commands.add('verifyDropdownselected', (selector: string) => {
   cy.get(selector).should('be.visible');

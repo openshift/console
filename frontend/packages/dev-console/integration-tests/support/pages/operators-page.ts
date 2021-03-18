@@ -1,4 +1,5 @@
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
+import { modal } from '@console/cypress-integration-tests/views/modal';
 import { operatorsPO } from '../pageObjects';
 import { operators, pageTitle } from '../constants';
 
@@ -13,6 +14,20 @@ export const operatorsPage = {
     cy.get(operatorsPO.nav.operators).click();
     cy.get(operatorsPO.nav.installedOperators).click({ force: true });
     detailsPage.titleShouldContain(pageTitle.InstalledOperators);
+  },
+
+  navigateToEventingPage: () => {
+    cy.get(operatorsPO.nav.serverless).click();
+    cy.get(operatorsPO.nav.eventing).click({ force: true });
+    detailsPage.titleShouldContain(pageTitle.Eventing);
+  },
+
+  selectSourceType: (sourceType: string = 'redHat') => {
+    if (sourceType === 'redHat') {
+      cy.get(operatorsPO.operatorHub.redHatSourceType)
+        .scrollIntoView()
+        .click();
+    }
   },
 
   searchOperator: (operatorName: string | operators) => {
@@ -46,6 +61,7 @@ export const operatorsPage = {
   },
 
   selectOperator: (opt: operators | string) => {
+    operatorsPage.selectSourceType('redHat');
     switch (opt) {
       case 'OpenShift Pipelines Operator':
       case operators.PipelinesOperator: {
@@ -62,9 +78,30 @@ export const operatorsPage = {
         cy.get(operatorsPO.operatorHub.virtualizationOperatorCard).click();
         break;
       }
-      case 'knative Apache Camel Operator':
-      case operators.KnativeCamelOperator: {
-        cy.get(operatorsPO.operatorHub.knativeCamelOperatorCard).click();
+      case 'Red Hat Integration - AMQ Streams':
+      case operators.ApacheKafka: {
+        cy.get(operatorsPO.operatorHub.apacheKafkaOperatorCard).click();
+        break;
+      }
+      case 'Red Hat Camel K Operator':
+      case operators.RedHatIntegrationCamelK: {
+        cy.get(operatorsPO.operatorHub.redHatCamelKOperatorCard).click();
+        break;
+      }
+      case 'Apache Camel K Operator':
+      case operators.ApacheCamelKOperator: {
+        cy.get(operatorsPO.operatorHub.apacheCamelKOperatorCard).click();
+        modal.shouldBeOpened();
+        modal.submit();
+        modal.shouldBeClosed();
+        break;
+      }
+      case 'Knative Apache Camel K Operator':
+      case operators.KnativeApacheCamelOperator: {
+        cy.get(operatorsPO.operatorHub.knativeApacheCamelKOperatorCard).click();
+        modal.shouldBeOpened();
+        modal.submit();
+        modal.shouldBeClosed();
         break;
       }
       case 'Eclipse Che':

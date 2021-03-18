@@ -8,13 +8,6 @@ Feature: side bar details
               And user has created or selected namespace "aut-knative-side-pane-details"
 
 
-        @regression
-        Scenario: side bar display for knative service : Kn-06-TC01
-            Given user has created knative service "nodejs-ex-git"
-             When user clicks on the knative service "nodejs-ex-git"
-             Then side bar is displayed with heading name same as knative service name "nodejs-ex-git"
-
-
         @smoke
         Scenario: side bar details of knative Service : Kn-06-TC02
             Given user has created knative service "nodejs-ex-git"
@@ -30,7 +23,7 @@ Feature: side bar details
 
 
         @smoke
-        Scenario: side bar details of for knative Revision : Kn-05-TC01, Kn-05-TC02
+        Scenario: side bar details of knative Revision : Kn-05-TC01, Kn-05-TC02
             Given user has created knative service "nodejs-ex-git"
              When user clicks on the revision of knative service "nodejs-ex-git"
              Then side bar is displayed with heading name as "nodejs-ex-git"

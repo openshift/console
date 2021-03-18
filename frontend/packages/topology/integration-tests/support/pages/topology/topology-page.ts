@@ -4,18 +4,20 @@ import {
   sideBarTabs,
 } from '@console/dev-console/integration-tests/support/constants';
 import { topologyPO } from '@console/dev-console/integration-tests/support/pageObjects';
-import { createHelmRelease } from '@console/dev-console/integration-tests/support/pages/functions/createHelmRelease';
+import { createHelmRelease, app } from '@console/dev-console/integration-tests/support/pages';
 import { topologyHelper } from './topology-helper-page';
 
 export const topologyPage = {
+  waitForLoad: (timeout = 50000) => {
+    app.waitForLoad();
+    cy.get('.loading-box.loading-box__loaded', { timeout }).should('exist');
+    cy.get('[data-surface="true"]').should('be.visible');
+  },
   verifyTitle: () => {
-    cy.get('h1.ocs-page-layout__title').should('have.text', 'Topology');
     cy.get(topologyPO.title).should('have.text', 'Topology');
   },
   verifyTopologyPage: () => {
-    cy.document()
-      .its('readyState')
-      .should('eq', 'complete');
+    app.waitForDocumentLoad();
     cy.url().should('include', 'topology');
   },
   verifyContextMenu: () => cy.get(topologyPO.graph.contextMenu).should('be.visible'),
@@ -104,7 +106,7 @@ export const topologyPage = {
     return cy
       .get('[data-test-id="base-node-handler"] > text')
       .contains(nodeName)
-      .parentsUntil('[data-test-id="base-node-handler"]')
+      .parentsUntil(topologyPO.graph.node)
       .next('a')
       .eq(2);
   },
@@ -117,7 +119,7 @@ export const topologyPage = {
   getEventSource: (eventSource: string) => {
     return cy.get('[data-type="event-source"] g.odc-base-node__label > text').contains(eventSource);
   },
-  revisionNode: (serviceName: string) => {
+  getRevisionNode: (serviceName: string) => {
     return cy
       .get('g.odc-base-node__label > text')
       .contains(serviceName)
@@ -129,18 +131,19 @@ export const topologyPage = {
       expect(options).toContain($el.text());
     });
   },
-  clickContextMenuOption: (menuOption: string) =>
-    cy.byTestActionID(menuOption).click({ force: true }),
   verifyDecorators: (nodeName: string, numOfDecorators: number) =>
     topologyPage
       .componentNode(nodeName)
       .siblings('a')
       .should('have.length', numOfDecorators),
-  selectContextMenuAction: (action: nodeActions | string) =>
-    cy
-      .byTestActionID(action)
+  selectContextMenuAction: (action: nodeActions | string) => {
+    cy.byTestActionID(action)
       .should('be.visible')
-      .click(),
+      .click();
+  },
+  getNode: (nodeName: string) => {
+    return cy.get(topologyPO.graph.nodeLabel).contains(nodeName);
+  },
   rightClickOnNode: (releaseName: string) => {
     cy.get(topologyPO.graph.nodeLabel)
       .should('be.visible')
@@ -153,27 +156,19 @@ export const topologyPage = {
       .contains(releaseName)
       .click({ force: true });
   },
-  clickOnSinkBinding: () => {
+  clickOnSinkBinding: (nodeName: string = 'sink-binding') => {
     cy.get(topologyPO.graph.nodeLabel)
       .should('be.visible')
-      .contains('sink-binding')
+      .contains(nodeName)
       .click({ force: true });
   },
-  rightClickOnKnativeRevision: () => {
-    cy.get(topologyPO.graph.node)
-      .find('g.odc-resource-icon')
-      .trigger('contextmenu', { force: true });
-  },
-  clickOnKnativeRevision: () => {
-    cy.get(topologyPO.graph.node)
-      .find('g.odc-resource-icon')
-      .click({ force: true });
+  getKnativeRevision: () => {
+    return cy.get(topologyPO.graph.node).find('g.odc-resource-icon');
   },
   waitForKnativeRevision: () => {
     cy.get(topologyPO.graph.node, { timeout: 300000 }).should('be.visible');
   },
   rightClickOnHelmWorkload: () => {
-    cy.byLegacyTestID('base-node-handler');
     cy.get(topologyPO.graph.node)
       .find('circle')
       .trigger('contextmenu', { force: true });
@@ -195,7 +190,9 @@ export const topologyPage = {
     cy.get(`[data-id="group:${knativeService}"]`).click({ force: true });
   },
   rightClickOnKnativeService: (knativeService: string) => {
-    cy.get(`[data-id="group:${knativeService}"]`).trigger('contextmenu', { force: true });
+    cy.get(
+      `[data-layer-id="groups"] [data-kind="node"][data-id="group:${knativeService}"]`,
+    ).trigger('contextmenu', { force: true });
   },
   addStorage: {
     pvc: {

@@ -3,14 +3,10 @@ import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour
 import { nav } from '@console/cypress-integration-tests/views/nav';
 import {
   devNavigationMenu,
-  operators,
   switchPerspective,
   catalogCards,
 } from '@console/dev-console/integration-tests/support/constants';
-import { operatorsPO } from '@console/dev-console/integration-tests/support/pageObjects';
 import {
-  installOperator,
-  operatorsPage,
   topologyPage,
   gitPage,
   catalogPage,
@@ -18,32 +14,12 @@ import {
   navigateTo,
   perspective,
   projectNameSpace,
+  verifyAndInstallKnativeOperator,
 } from '@console/dev-console/integration-tests/support/pages';
-import {
-  createKnativeEventing,
-  createKnativeServing,
-} from '@console/knative-plugin/integration-tests/support/pages';
 import { modal } from '@console/cypress-integration-tests/views/modal';
 
 Given('user has installed OpenShift Serverless Operator', () => {
-  perspective.switchTo(switchPerspective.Administrator);
-  nav.sidenav.switcher.shouldHaveText(switchPerspective.Administrator);
-  operatorsPage.navigateToInstallOperatorsPage();
-  cy.get(operatorsPO.installOperators.search)
-    .should('be.visible')
-    .clear()
-    .type(operators.ServerlessOperator);
-  cy.get('body', {
-    timeout: 50000,
-  }).then(($ele) => {
-    if ($ele.find(operatorsPO.installOperators.noOperatorsFound)) {
-      installOperator(operators.ServerlessOperator);
-      createKnativeEventing();
-      createKnativeServing();
-    } else {
-      cy.log('Serverless operator is installed in cluster');
-    }
-  });
+  verifyAndInstallKnativeOperator();
 });
 
 Given('user is at developer perspective', () => {

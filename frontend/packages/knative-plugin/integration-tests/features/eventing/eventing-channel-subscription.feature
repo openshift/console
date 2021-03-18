@@ -9,14 +9,15 @@ Feature: Knative Eventing Channel and Subscription
 
         @smoke
         Scenario: Add Subscription to channel
-            Given user is having Channel on the Topology page
-             When user right clicks on the Channel to open the context menu
-              And user clicks on the Add Subscription
-              And user selects the auto populated name of subscription
-              And user will click on the Subscriber dropdown on the modal
-              And user selects the Subscriber
+            Given user has created knative service "nodejs-ex-git"
+              And user has created channel "channel-test"
+              And user is at Topology page
+             When user right clicks on the Channel "channel-test" to open the context menu
+              And user selects "Add Subscription" from Context Menu
+              And user enters Name as "channel-subscrip" on Add Subscription modal
+              And user selects Subscriber "nodejs-ex-git" on Add Subscription modal
               And user clicks on Add button
-             Then user will see connection between Channel and Subscriber
+             Then user will see connection between Channel "channel-test" and Subscriber "nodejs-ex-git"
 
 
         @regression @manual
