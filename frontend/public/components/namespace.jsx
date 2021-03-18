@@ -1088,9 +1088,7 @@ class NamespaceBarDropdowns_ extends React.Component {
       ? [
           {
             actionTitle:
-              model.label === 'Project'
-                ? t('dropdown~Create Project')
-                : t('dropdown~Create Namespace'),
+              model.label === 'Project' ? t('public~Create Project') : t('public~Create Namespace'),
             actionKey: CREATE_NEW_RESOURCE,
           },
         ]

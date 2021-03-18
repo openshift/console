@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation, Trans } from 'react-i18next';
 import { k8sKill, K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import {
   createModalLauncher,
@@ -21,6 +22,7 @@ export const DeleteNamespaceModal: React.FC<DeleteNamespaceModalProps> = ({
   kind,
   resource,
 }) => {
+  const { t } = useTranslation();
   const [activeNamespace, setActiveNamespace] = useActiveNamespace();
   const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
   const [confirmed, setConfirmed] = React.useState(false);
@@ -46,29 +48,37 @@ export const DeleteNamespaceModal: React.FC<DeleteNamespaceModalProps> = ({
   return (
     <form onSubmit={onSubmit} name="form" className="modal-content ">
       <ModalTitle className="modal-header">
-        <YellowExclamationTriangleIcon className="co-icon-space-r" /> Delete {kind.label}?
+        <YellowExclamationTriangleIcon className="co-icon-space-r" />{' '}
+        {t('public~Delete {{label}}?', { label: t(kind.labelKey) })}
       </ModalTitle>
       <ModalBody>
         <p>
-          This action cannot be undone. It will destroy all pods, services and other objects in the
-          namespace <strong className="co-break-word">{resource.metadata.name}</strong>.
+          <Trans t={t} ns="public">
+            This action cannot be undone. It will destroy all pods, services and other objects in
+            the namespace{' '}
+            <strong className="co-break-word">{{ name: resource.metadata.name }}</strong>.
+          </Trans>
         </p>
         <p>
-          Confirm deletion by typing{' '}
-          <strong className="co-break-word">{resource.metadata.name}</strong> below:
+          <Trans t={t} ns="public">
+            Confirm deletion by typing{' '}
+            <strong className="co-break-word">{{ name: resource.metadata.name }}</strong> below:
+          </Trans>
         </p>
         <input
           type="text"
           data-test="project-name-input"
           className="pf-c-form-control"
           onKeyUp={onKeyUp}
-          placeholder="Enter name"
-          aria-label={`Enter the name of the ${kind.label} to delete`}
+          placeholder={t('public~Enter name')}
+          aria-label={t('public~Enter the name of the {{label}} to delete}', {
+            label: t(kind.labelKey),
+          })}
           autoFocus={true}
         />
       </ModalBody>
       <ModalSubmitFooter
-        submitText="Delete"
+        submitText={t('public~Delete')}
         submitDisabled={!confirmed}
         cancel={() => cancel?.()}
         errorMessage={errorMessage}

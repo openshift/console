@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { withTranslation } from 'react-i18next';
 
 import { FLAGS } from '@console/shared';
 import { k8sCreate, referenceFor } from '../../module/k8s';
@@ -23,11 +24,11 @@ const mapDispatchToProps = (dispatch) => ({
   hideStartGuide: () => setFlag(dispatch, FLAGS.SHOW_OPENSHIFT_START_GUIDE, false),
 });
 
-const CreateNamespaceModal = connect(
+const CreateNamespaceModalWithTranslation = connect(
   null,
   mapDispatchToProps,
 )(
-  class CreateNamespaceModal extends PromiseComponent {
+  class CreateNamespaceModalWithTranslation extends PromiseComponent {
     constructor(props) {
       super(props);
       this.state.np = allow;
@@ -108,10 +109,10 @@ const CreateNamespaceModal = connect(
     }
 
     render() {
-      const label = this.props.createProject ? 'Project' : 'Namespace';
+      const { t } = this.props;
       const defaultNetworkPolicies = {
-        [allow]: 'No restrictions',
-        [deny]: 'Deny all inbound traffic',
+        [allow]: t('public~No restrictions'),
+        [deny]: t('public~Deny all inbound traffic'),
       };
       return (
         <form
@@ -119,11 +120,13 @@ const CreateNamespaceModal = connect(
           name="form"
           className="modal-content modal-content--no-inner-scroll"
         >
-          <ModalTitle>Create {label}</ModalTitle>
+          <ModalTitle>
+            {this.props.createProject ? t('public~Create Project') : t('public~Create Namespace')}
+          </ModalTitle>
           <ModalBody>
             <div className="form-group">
               <label htmlFor="input-name" className="control-label co-required">
-                Name
+                {t('public~Name')}
               </label>
               <div className="modal-body__field">
                 <input
@@ -142,7 +145,7 @@ const CreateNamespaceModal = connect(
             {this.props.createProject && (
               <div className="form-group">
                 <label htmlFor="input-display-name" className="control-label">
-                  Display Name
+                  {t('public~Display name')}
                 </label>
                 <div className="modal-body__field">
                   <input
@@ -159,7 +162,7 @@ const CreateNamespaceModal = connect(
             {this.props.createProject && (
               <div className="form-group">
                 <label htmlFor="input-description" className="control-label">
-                  Description
+                  {t('public~Description')}
                 </label>
                 <div className="modal-body__field">
                   <textarea
@@ -175,7 +178,7 @@ const CreateNamespaceModal = connect(
             {!this.props.createProject && (
               <div className="form-group">
                 <label htmlFor="tags-input" className="control-label">
-                  Labels
+                  {t('public~Labels')}
                 </label>
                 <div className="modal-body__field">
                   <SelectorInput
@@ -189,7 +192,7 @@ const CreateNamespaceModal = connect(
             {!this.props.createProject && (
               <div className="form-group">
                 <label htmlFor="network-policy" className="control-label">
-                  Default Network Policy
+                  {t('public~Default network policy')}
                 </label>
                 <div className="modal-body__field ">
                   <Dropdown
@@ -206,7 +209,7 @@ const CreateNamespaceModal = connect(
           <ModalSubmitFooter
             errorMessage={this.state.errorMessage}
             inProgress={this.state.inProgress}
-            submitText="Create"
+            submitText={t('public~Create')}
             cancel={this.props.cancel.bind(this)}
           />
         </form>
@@ -214,6 +217,8 @@ const CreateNamespaceModal = connect(
     }
   },
 );
+
+const CreateNamespaceModal = withTranslation()(CreateNamespaceModalWithTranslation);
 
 export const createNamespaceModal = createModalLauncher(CreateNamespaceModal);
 export const createProjectModal = createModalLauncher((props) => (
