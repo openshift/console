@@ -105,7 +105,7 @@ const CustomizeSourceConsole: React.FC<CustomizeSourceConsoleProps> = ({
         </StackItem>
         <Divider component="div" />
         <StackItem className="kv-customize-source">
-          <div className="kv-customize-source__console">
+          <div className="kv-customize-source__form-body">
             <VMConsoles
               vm={vm}
               vmStatusBundle={vmStatusBundle}
