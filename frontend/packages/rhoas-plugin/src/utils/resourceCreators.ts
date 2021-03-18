@@ -150,7 +150,7 @@ export const createServiceAccountIfNeeded = async (currentNamespace) => {
     );
   } catch (error) {
     // eslint-disable-next-line no-console
-    // console.info("rhoas: ServiceAccount doesn't exist. Creating new ServiceAccount");
+    console.info("rhoas: ServiceAccount doesn't exist. Creating new ServiceAccount");
   }
   let request;
   if (rhoasServiceAccount) {
@@ -174,7 +174,7 @@ export const createServiceAccountIfNeeded = async (currentNamespace) => {
       }
       return false;
     },
-    10000,
+    50000,
   );
 };
 
@@ -220,7 +220,7 @@ export const createKafkaConnection = async (
       }
       return false;
     },
-    10000,
+    20000,
   );
 };
 
