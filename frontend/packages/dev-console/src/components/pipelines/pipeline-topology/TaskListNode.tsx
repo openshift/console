@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import * as FocusTrap from 'focus-trap-react';
 import { Button, Flex, FlexItem } from '@patternfly/react-core';
 import { CaretDownIcon } from '@patternfly/react-icons';
@@ -42,10 +43,13 @@ const TaskListNode: React.FC<TaskListNodeProps> = ({ element, unselectedText }) 
   const { height, width } = element.getBounds();
   const { clusterTaskList, namespaceTaskList, onNewTask, onRemoveTask } = element.getData();
 
-  const options = [
-    ...namespaceTaskList.map((task) => taskToOption(task, onNewTask)),
-    ...clusterTaskList.map((task) => taskToOption(task, onNewTask)),
-  ];
+  const options = _.sortBy(
+    [
+      ...namespaceTaskList.map((task) => taskToOption(task, onNewTask)),
+      ...clusterTaskList.map((task) => taskToOption(task, onNewTask)),
+    ],
+    (o) => o.label,
+  );
 
   return (
     <foreignObject width={width} height={height} className="odc-task-list-node">
