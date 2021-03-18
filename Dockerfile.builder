@@ -17,8 +17,8 @@ RUN go get -u golang.org/x/lint/golint
 RUN go get github.com/jstemmer/go-junit-report
 
 ### Install NodeJS and yarn
-ENV NODE_VERSION="v10.17.0"
-ENV YARN_VERSION="v1.7.0"
+ENV NODE_VERSION="v14.16.0"
+ENV YARN_VERSION="v1.22.10"
 
 # yarn needs a home writable by any user running the container
 ENV HOME /opt/home
@@ -27,11 +27,11 @@ RUN chmod 777 -R ${HOME}
 
 RUN apt-get update \
     && apt-get install --no-install-recommends -y -q \
-    curl wget git unzip bzip2 jq \
+    curl wget git unzip bzip2 jq expect \
     libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
     # ^^ additional Cypress dependencies: https://docs.cypress.io/guides/guides/continuous-integration.html#Dependencies
 
-RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.18.0/bin/linux/amd64/kubectl && \
+RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.20.4/bin/linux/amd64/kubectl && \
     chmod +x ./kubectl && \
     mv ./kubectl /usr/local/bin/kubectl
 
