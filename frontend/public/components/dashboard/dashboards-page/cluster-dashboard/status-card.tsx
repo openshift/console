@@ -95,12 +95,13 @@ export const StatusCard = connect<StatusCardProps>(mapStateToProps)(({ k8sModels
       });
     } else if (isDashboardsOverviewHealthPrometheusSubsystem(subsystem)) {
       const { disallowedProviders } = subsystem.properties;
+      const subsystemItem = {...subsystem.properties, title: t('SINGLE:MSG_OVERVIEW_MAIN_CARDSTATUS_CONTROLPLANE_1'), popupTitle: t('SINGLE:MSG_OVERVIEW_MAIN_POPOVERCONTROLPLANE_TITLE_1')};
       if (disallowedProviders?.length && (!infrastructureLoaded || disallowedProviders.includes(getInfrastructurePlatform(infrastructure)))) {
         return;
       }
       healthItems.push({
-        title: subsystem.properties.title,
-        Component: <PrometheusHealthItem subsystem={subsystem.properties} models={k8sModels} />,
+        title: subsystemItem.title,
+        Component: <PrometheusHealthItem subsystem={subsystemItem} models={k8sModels} />,
       });
     } else if (isDashboardsOverviewHealthResourceSubsystem(subsystem)) {
       healthItems.push({

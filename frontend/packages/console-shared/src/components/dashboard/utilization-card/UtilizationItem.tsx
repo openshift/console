@@ -55,6 +55,7 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(({ tit
     const latestData = data[data.length - 1];
     current = humanizeValue(latestData.y).string;
   }
+  const {t} = useTranslation();
 
   let humanMax: string;
   const chartStyle = [null, null, null];
@@ -126,7 +127,7 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(({ tit
         <div className="co-utilization-card__item-section">
           <h4 className="pf-c-title pf-m-md">{title}</h4>
           {error || (!isLoading && !data.length) ? (
-            <div className="text-secondary">Not available</div>
+            <div className="text-secondary">{t('SINGLE:MSG_OVERVIEW_MAIN_CARDSTATUS_1')}</div>
           ) : (
             <div>
               {LimitIcon && <LimitIcon className="co-utilization-card__item-icon" />}
