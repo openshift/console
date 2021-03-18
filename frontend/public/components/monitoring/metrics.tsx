@@ -33,10 +33,13 @@ import {
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore
+import { connect, useDispatch, useSelector } from 'react-redux';
 
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '@console/shared';
+
 import * as UIActions from '../../actions/ui';
 import { RootState } from '../../redux';
 import { fuzzyCaseInsensitive } from '../factory/table-filters';
@@ -992,14 +995,17 @@ const QueriesList = connect(({ UI }: RootState) => ({
   count: UI.getIn(['queryBrowser', 'queries']).size,
 }))(QueriesList_);
 
-const PollIntervalDropdown = connect(
-  ({ UI }: RootState) => ({
-    interval: UI.getIn(['queryBrowser', 'pollInterval']),
-  }),
-  {
-    setInterval: UIActions.queryBrowserSetPollInterval,
-  },
-)(IntervalDropdown);
+const PollIntervalDropdown = () => {
+  const interval = useSelector(({ UI }: RootState) => UI.getIn(['queryBrowser', 'pollInterval']));
+
+  const dispatch = useDispatch();
+  const setInterval = React.useCallback(
+    (v: number) => dispatch(UIActions.queryBrowserSetPollInterval(v)),
+    [dispatch],
+  );
+
+  return <IntervalDropdown interval={interval} setInterval={setInterval} />;
+};
 
 const QueryBrowserPage_: React.FC<QueryBrowserPageProps> = ({ deleteAll }) => {
   const { t } = useTranslation();

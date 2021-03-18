@@ -27,11 +27,14 @@ import {
 } from '@patternfly/react-core';
 import { ChartLineIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore
+import { useDispatch, useSelector } from 'react-redux';
 import { VictoryPortal } from 'victory-core';
+
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 
-import * as UIActions from '../../actions/ui';
+import { queryBrowserDeleteAllSeries, queryBrowserPatchQuery } from '../../actions/ui';
 import { RootState } from '../../redux';
 import { PrometheusLabels, PrometheusResponse, PrometheusResult, PrometheusValue } from '../graphs';
 import { GraphEmpty } from '../graphs/graph-empty';
@@ -531,7 +534,6 @@ const getMaxSamplesForSpan = (span) => _.clamp(Math.round(span / minStep), minSa
 const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   defaultSamples,
   defaultTimespan = parsePrometheusDuration('30m'),
-  deleteAllSeries,
   disabledSeries = [],
   disableZoom,
   filterLabels,
@@ -539,17 +541,22 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   formatLegendLabel,
   GraphLink,
   hideControls,
-  hideGraphs,
   isStack = false,
   namespace,
   onZoom,
-  patchQuery,
+  pollInterval,
   queries,
   showStackedControl = false,
-  tickInterval,
   timespan,
 }) => {
   const { t } = useTranslation();
+
+  const hideGraphs = useSelector(({ UI }: RootState) => !!UI.getIn(['monitoring', 'hideGraphs']));
+  const tickInterval = useSelector(
+    ({ UI }: RootState) => pollInterval ?? UI.getIn(['queryBrowser', 'pollInterval']),
+  );
+
+  const dispatch = useDispatch();
 
   // For the default time span, use the first of the suggested span options that is at least as long
   // as defaultTimespan
@@ -595,8 +602,8 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
 
   // Clear any existing series data when the namespace is changed
   React.useEffect(() => {
-    deleteAllSeries();
-  }, [deleteAllSeries, namespace]);
+    dispatch(queryBrowserDeleteAllSeries());
+  }, [dispatch, namespace]);
 
   const tick = () => {
     if (hideGraphs) {
@@ -663,9 +670,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
           setGraphData(newGraphData);
 
           _.each(newResults, (r, i) =>
-            patchQuery(i, {
-              series: r ? _.map(r, 'metric') : undefined,
-            }),
+            dispatch(queryBrowserPatchQuery(i, { series: r ? _.map(r, 'metric') : undefined })),
           );
           setUpdating(false);
         }
@@ -830,18 +835,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
     </div>
   );
 };
-export const QueryBrowser = withFallback(
-  connect(
-    ({ UI }: RootState, { pollInterval }: { pollInterval?: number }) => ({
-      hideGraphs: !!UI.getIn(['monitoring', 'hideGraphs']),
-      tickInterval: pollInterval ?? UI.getIn(['queryBrowser', 'pollInterval']),
-    }),
-    {
-      deleteAllSeries: UIActions.queryBrowserDeleteAllSeries,
-      patchQuery: UIActions.queryBrowserPatchQuery,
-    },
-  )(QueryBrowser_),
-);
+export const QueryBrowser = withFallback(QueryBrowser_);
 
 type AxisDomain = [number, number];
 
@@ -862,8 +856,6 @@ export type QueryObj = {
 };
 
 export type FormatLegendLabel = (labels: PrometheusLabels, i?: number) => string;
-
-export type PatchQuery = (index: number, patch: QueryObj) => any;
 
 type ErrorProps = {
   error: PrometheusAPIError;
@@ -892,7 +884,6 @@ type ZoomableGraphProps = GraphProps & { onZoom: GraphOnZoom };
 export type QueryBrowserProps = {
   defaultSamples?: number;
   defaultTimespan?: number;
-  deleteAllSeries: () => never;
   disabledSeries?: PrometheusLabels[][];
   disableZoom?: boolean;
   filterLabels?: PrometheusLabels;
@@ -900,15 +891,12 @@ export type QueryBrowserProps = {
   formatLegendLabel?: FormatLegendLabel;
   GraphLink?: React.ComponentType<{}>;
   hideControls?: boolean;
-  hideGraphs: boolean;
   isStack?: boolean;
   namespace?: string;
   onZoom?: GraphOnZoom;
-  patchQuery: PatchQuery;
   pollInterval?: number;
   queries: string[];
   showStackedControl?: boolean;
-  tickInterval: number;
   timespan?: number;
 };
 

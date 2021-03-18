@@ -8,11 +8,11 @@ const OFF_KEY = 'OFF_KEY';
 
 type Props = {
   interval: number;
-  setInterval: (v: number) => never;
+  setInterval: (v: number) => void;
   id?: string;
 };
 
-const IntervalDropdown: React.FC<Props> = ({ interval, setInterval, id }) => {
+const IntervalDropdown: React.FC<Props> = ({ id, interval, setInterval }) => {
   const { t } = useTranslation();
 
   const onChange = React.useCallback(
