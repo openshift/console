@@ -10,12 +10,14 @@ export const TYPE_APPLICATION_GROUP = 'part-of';
 export const TYPE_TRAFFIC_CONNECTOR = 'traffic-connector';
 export const LAST_TOPOLOGY_VIEW_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/last-topology-view`;
 export const TOPOLOGY_LAYOUT_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/topology-layout`;
+export const TOPOLOGY_SIDE_PANEL_SIZE_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/topology-side-panel-size`;
 
 const STORAGE_TOPOLOGY = 'topology';
 const CONFIG_STORAGE_DEVCONSOLE = 'devconsole';
 
 export const TOPOLOGY_VIEW_CONFIG_STORAGE_KEY = `${CONFIG_STORAGE_DEVCONSOLE}.${STORAGE_TOPOLOGY}.lastView`;
 export const TOPOLOGY_LAYOUT_CONFIG_STORAGE_KEY = `${CONFIG_STORAGE_DEVCONSOLE}.${STORAGE_TOPOLOGY}.layout`;
+export const TOPOLOGY_SIDE_PANEL_SIZE_STORAGE_KEY = `${CONFIG_STORAGE_DEVCONSOLE}.${STORAGE_TOPOLOGY}.sizePanelSize`;
 
 export const DEFAULT_NODE_PAD = 20;
 export const DEFAULT_GROUP_PAD = 40;

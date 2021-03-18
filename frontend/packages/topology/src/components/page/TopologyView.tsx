@@ -1,8 +1,14 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
 import { connect } from 'react-redux';
-import { Stack, StackItem } from '@patternfly/react-core';
-import { GraphElement, isGraph, Model, Visualization } from '@patternfly/react-topology';
+import { Drawer, DrawerContent, DrawerContentBody, Stack, StackItem } from '@patternfly/react-core';
+import {
+  GraphElement,
+  isEdge,
+  isGraph,
+  isNode,
+  Model,
+  Visualization,
+} from '@patternfly/react-topology';
 import { useDeepCompareMemoize, useQueryParams } from '@console/shared';
 import { RootState } from '@console/internal/redux';
 import { selectOverviewDetailsTab } from '@console/internal/actions/ui';
@@ -36,7 +42,7 @@ import { setSupportedTopologyFilters, setSupportedTopologyKinds } from '../../re
 import Topology from '../graph-view/Topology';
 import TopologyListView from '../list-view/TopologyListView';
 import TopologyFilterBar from '../../filters/TopologyFilterBar';
-import { getTopologySideBar } from '../side-bar/TopologySideBar';
+import TopologySideBar from '../side-bar/TopologySideBar';
 import { FilterContext } from '../../filters/FilterProvider';
 import TopologyEmptyState from './TopologyEmptyState';
 import QuickSearch from '../quick-search/QuickSearch';
@@ -247,19 +253,9 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
     [filteredModel, namespace, onSelect, viewType],
   );
 
-  const topologySideBar = React.useMemo(
-    () => getTopologySideBar(visualization, selectedEntity, () => onSelect()),
-    [onSelect, selectedEntity, visualization],
-  );
-
   if (!filteredModel) {
     return null;
   }
-
-  const containerClasses = classNames('pf-topology-container', {
-    'pf-topology-container__with-sidebar': topologySideBar.shown,
-    'pf-topology-container__with-sidebar--open': topologySideBar.shown,
-  });
 
   return (
     <div className="odc-topology">
@@ -272,14 +268,23 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
             isDisabled={!model?.nodes?.length}
           />
         </StackItem>
-        <StackItem isFilled className={containerClasses}>
-          <div ref={setViewContainer} className="pf-topology-content">
-            {viewContent}
-            {!model?.nodes?.length ? (
-              <TopologyEmptyState setIsQuickSearchOpen={setIsQuickSearchOpen} />
-            ) : null}
-          </div>
-          {topologySideBar.sidebar}
+        <StackItem isFilled className="pf-topology-container">
+          <Drawer isExpanded={isNode(selectedEntity) || isEdge(selectedEntity)} isInline>
+            <DrawerContent
+              panelContent={
+                <TopologySideBar onClose={() => onSelect()} selectedEntity={selectedEntity} />
+              }
+            >
+              <DrawerContentBody>
+                <div ref={setViewContainer} className="pf-topology-content">
+                  {viewContent}
+                  {!model?.nodes?.length ? (
+                    <TopologyEmptyState setIsQuickSearchOpen={setIsQuickSearchOpen} />
+                  ) : null}
+                </div>
+              </DrawerContentBody>
+            </DrawerContent>
+          </Drawer>
         </StackItem>
         <QuickSearch
           namespace={namespace}

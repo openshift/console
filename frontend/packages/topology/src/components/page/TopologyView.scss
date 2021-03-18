@@ -8,10 +8,6 @@
     top: 15%;
   }
 
-  .pf-topology-container__with-sidebar .pf-topology-content {
-    position: relative;
-  }
-
   &__hint-container {
     justify-content: center;
     display: flex;
@@ -87,9 +83,6 @@
     margin-right: var(--pf-global--spacer--2xl);
   }
 
-  .pf-topology-container {
-    display: flex;
-  }
   .pf-topology-side-bar {
     display: flex;
     flex-direction: column;

@@ -95,6 +95,6 @@ export const groupActions = (
   application: TopologyApplicationObject,
   connectorSource?: Node,
 ): KebabOption[] => {
-  const addItems = addResourcesMenu(graphData, application, connectorSource);
+  const addItems = graphData ? addResourcesMenu(graphData, application, connectorSource) : [];
   return !connectorSource ? [deleteGroup(application), ...addItems] : addItems;
 };
