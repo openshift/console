@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { AddAction } from '@console/dev-console/src/extensions/add-actions';
+import { AddAction } from '@console/dynamic-plugin-sdk/src/extensions/add-actions';
 import {
   ModelDefinition,
   ModelFeatureFlag,
@@ -7,10 +7,9 @@ import {
   Plugin,
   HrefNavItem,
 } from '@console/plugin-sdk';
-import { FLAG_RHOAS_KAFKA, FLAG_RHOAS, cloudServicesIcon } from './const';
+import { FLAG_RHOAS_KAFKA, FLAG_RHOAS } from './const';
 import { rhoasTopologyPlugin, TopologyConsumedExtensions } from './topology/rhoas-topology-plugin';
 import * as models from './models';
-import { rhoasCatalogPlugin, CatalogConsumedExtensions } from './catalog/rhoas-catalog-plugin';
 
 type ConsumedExtensions =
   | ModelDefinition
@@ -18,8 +17,7 @@ type ConsumedExtensions =
   | RoutePage
   | AddAction
   | HrefNavItem
-  | TopologyConsumedExtensions
-  | CatalogConsumedExtensions;
+  | TopologyConsumedExtensions;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -58,22 +56,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       required: [FLAG_RHOAS_KAFKA],
     },
   },
-  {
-    type: 'AddAction',
-    flags: {
-      required: [FLAG_RHOAS],
-    },
-    properties: {
-      id: 'rhoasAddAction',
-      url: '/catalog?catalogType=managedservices',
-      label: '%rhoas-plugin~Managed Services%',
-      description:
-        '%rhoas-plugin~Reduce operational complexity and focus on building and scaling applications that add more value.%',
-      icon: cloudServicesIcon,
-    },
-  },
   ...rhoasTopologyPlugin,
-  ...rhoasCatalogPlugin,
 ];
 
 export default plugin;

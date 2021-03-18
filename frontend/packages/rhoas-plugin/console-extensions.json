@@ -1,4 +1,43 @@
-{
-  "$schema": "../console-dynamic-plugin-sdk/dist/schema/console-extensions.json",
-  "data": []
-}
+[
+  {
+    "type": "dev-console.add/action",
+    "flags": {
+      "required": ["RHOAS_FLAG"]
+    },
+    "properties": {
+      "id": "rhoasAddAction",
+      "href": "/catalog?catalogType=managedservices",
+      "label": "%rhoas-plugin~Managed Services%",
+      "description": "%rhoas-plugin~Reduce operational complexity and focus on building and scaling applications that add more value.%",
+      "icon": { "$codeRef": "constants.cloudServicesIcon" }
+    }
+  },
+  {
+    "type": "console.catalog/item-type",
+    "properties": {
+      "type": "managedservices",
+      "title": "%rhoas-plugin~Managed Services%",
+      "catalogDescription": "%rhoas-plugin~Browse services to connect applications and microservices to other services and support services to create a full solution.%",
+      "typeDescription": "%rhoas-plugin~Managed Services%",
+      "filters": [
+        {
+          "label": "Types",
+          "attribute": "type"
+        }
+      ]
+    },
+    "flags": {
+      "required": ["RHOAS_FLAG"]
+    }
+  },
+  {
+    "type": "console.catalog/item-provider",
+    "properties": {
+      "type": "managedservices",
+      "provider": { "$codeRef": "catalog.rhoasProvider" }
+    },
+    "flags": {
+      "required": ["RHOAS_FLAG"]
+    }
+  }
+]

@@ -10,7 +10,7 @@ import {
   TextVariants,
 } from '@patternfly/react-core';
 import { LockIcon } from '@patternfly/react-icons';
-import { CatalogExtensionHook, CatalogItem } from '@console/plugin-sdk';
+import { CatalogExtensionHook, CatalogItem } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { useActiveNamespace } from '@console/shared';
 import { ServiceToken } from '../../components/access-services/ServicesToken';

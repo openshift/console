@@ -51,7 +51,7 @@ export enum catalogTypes {
   BuilderImage = 'Builder Image',
   Template = 'Template',
   ServiceClass = 'Service Class',
-  ManagedServices = 'Managed Services'
+  ManagedServices = 'Managed Services',
 }
 
 export enum builderImages {
