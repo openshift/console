@@ -8,7 +8,9 @@ export const pageTitle = {
   Pipelines: 'Pipelines',
   PipelineBuilder: 'Pipeline builder',
   EventSource: 'Event Sources',
+  CreateEventSource: 'Create Event Source',
   upgradeHelmRelease: 'Upgrade Helm Release',
+  Channel: 'Channel',
   Add: 'Add',
   GitOPs: 'GitOps',
   Monitoring: 'Monitoring',
@@ -36,4 +38,8 @@ export const pageTitle = {
   InstalledOperators: 'Installed Operators',
   Environments: 'Environments',
   PipelineRuns: 'PipelineRuns',
+  Eventing: 'Eventing',
+  RedHatOpenShiftServerless: 'Red Hat OpenShift Serverless',
+  CreateKnativeServing: 'Create Knative Serving',
+  CreateKnativeEventing: 'Create Knative Eventing',
 };

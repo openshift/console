@@ -177,27 +177,38 @@ export const containerImagePO = {
 export const eventSourcePO = {
   search: '[placeholder="Filter by type..."]',
   apiServerSource: {
-    apiVersion: 'input[placeholder="apiversion"]',
-    kind: 'input[placeholder="kind"]',
-    serviceAccountName: '#form-ns-dropdown-data-apiserversource-serviceAccountName-field',
-    sinkResource: '#form-ns-dropdown-sink-key-field',
+    apiVersion: '[data-test=pairs-list-name]',
+    kind: '[data-test=pairs-list-value]',
+    serviceAccountName: '[id$=ApiServerSource-serviceAccountName-field]',
     name: '[data-test-id="application-form-app-name"]',
-    mode: '#form-dropdown-data-apiserversource-mode-field',
+    mode: '[id$=ApiServerSource-mode-field]',
   },
   sinkBinding: {
     apiVersion: '[data-test-id="sinkbinding-apiversion-field"]',
     kind: '[data-test-id="sinkbinding-kind-field"]',
-    sinkResource: '[id*=sink-key-field]',
+    matchLabels: {
+      name: '[data-test="pairs-list-name"]',
+      value: '[data-test="pairs-list-value"]',
+    },
+    sink: {
+      resourceRadioButton: '[id$=sinkType-resource-field]',
+      uriRadioButton: '[id$="sinkType-uri-field"]',
+      resource: {
+        resourceDropdown: '[id*=sink-key-field]',
+      },
+      uri: {
+        uriName: '[data-test-id="sink-section-uri"]',
+      },
+    },
     name: '[data-test-id="application-form-app-name"]',
-    resource: '#form-radiobutton-sinkType-resource-field',
-    uri: '#form-radiobutton-sinkType-uri-field',
+    appName: '[data-test-id="application-form-app-input"]',
     notifierHeader: 'div[aria-label="Default Alert"] h4',
     notifierMessage: 'div[aria-label="Default Alert"] div.pf-c-alert__description',
   },
   pingSource: {
-    data: '#form-input-data-pingsource-jsonData-field',
-    schedule: '#form-input-data-pingsource-schedule-field',
-    name: '[data-test-id="application-form-app-name"]',
+    data: '[id$="PingSource-jsonData-field"]',
+    schedule: '[id$="PingSource-schedule-field"]',
+    name: '[id$="name-field"]',
   },
   containerImage: {
     image: '[data-test-id="container-image-field"]',
@@ -214,4 +225,10 @@ export const devFilePO = {
       sourceSecret: '',
     },
   },
+};
+
+export const channelPO = {
+  channelType: '[data-test-id="dropdown-button"]',
+  channelName: '[data-test-id="channel-name"]',
+  appName: '#form-dropdown-application-name-field',
 };

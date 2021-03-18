@@ -18,6 +18,20 @@ export const editLabels = {
   },
 };
 
+export const addSubscription = {
+  enterSubscriberName: (name: string) =>
+    cy
+      .get('#form-input-metadata-name-field')
+      .clear()
+      .type(name),
+  selectKnativeService: (knativeService: string = 'nodejs-ex-git') => {
+    cy.get('[id$="subscriber-ref-name-field"]').click();
+    cy.get('li')
+      .contains(knativeService)
+      .click();
+  },
+};
+
 export const editAnnotations = {
   add: () => cy.byTestID('add-button').click(),
   enterKey: (key: string) => {
@@ -94,17 +108,18 @@ export const deleteRevision = {
 
 export const moveSink = {
   selectResource: (resourceName: string) => {
-    cy.get(eventSourcePO.sinkBinding.resource).should('be.checked');
-    cy.get(eventSourcePO.sinkBinding.sinkResource).click();
+    cy.get(eventSourcePO.sinkBinding.sink.resourceRadioButton).should('be.checked');
+    cy.get(eventSourcePO.sinkBinding.sink.resource.resourceDropdown).click();
     cy.get(`[id*="${resourceName}-link"]`).click();
   },
   enterURI: (uri: string) => {
-    cy.get(eventSourcePO.sinkBinding.uri).should('be.checked');
+    cy.get(eventSourcePO.sinkBinding.sink.uriRadioButton).should('be.checked');
     cy.byLegacyTestID('sink-section-uri')
       .clear()
       .type(uri);
   },
-  verifyResourceDropDown: () => cy.get(eventSourcePO.sinkBinding.sinkResource).should('be.visible'),
+  verifyResourceDropDown: () =>
+    cy.get(eventSourcePO.sinkBinding.sink.resource.resourceDropdown).should('be.visible'),
 };
 
 export const editPodCount = {

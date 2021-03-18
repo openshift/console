@@ -3,34 +3,46 @@ import {
   perspective,
   projectNameSpace,
   navigateTo,
-} from '@console/dev-console/integration-tests/support/pages/app';
+  installOperator,
+  operatorsPage,
+  topologyPage,
+  createGitWorkloadIfNotExistsOnTopologyPage,
+  createEventSourcePage,
+} from '@console/dev-console/integration-tests/support/pages';
 import {
   switchPerspective,
   devNavigationMenu,
-} from '@console/dev-console/integration-tests/support/constants/global';
+  operators,
+  resourceTypes,
+} from '@console/dev-console/integration-tests/support/constants';
 import { guidedTour } from '../../../../../integration-tests-cypress/views/guided-tour';
-import { nav } from '../../../../../integration-tests-cypress/views/nav';
-import { perspectiveName } from '@console/dev-console/integration-tests/support/constants/staticText/global-text';
+import { operatorsPO } from '@console/dev-console/integration-tests/support/pageObjects';
 
 Given('user is at developer perspective', () => {
   perspective.switchTo(switchPerspective.Developer);
   // Bug: 1890676 is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
   // cy.testA11y('Developer perspective with guider tour modal');
   guidedTour.close();
-  nav.sidenav.switcher.shouldHaveText(perspectiveName.developer);
   // Bug: 1890678 is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
   // cy.testA11y('Developer perspective');
 });
 
+Given('user is at administrator perspective', () => {
+  perspective.switchTo(switchPerspective.Administrator);
+  cy.testA11y('Administrator perspective');
+});
+
 Given('user has created or selected namespace {string}', (projectName: string) => {
-  perspective.switchTo(switchPerspective.Developer);
-  guidedTour.close();
+  Cypress.env('NAMESPACE', projectName);
   projectNameSpace.selectOrCreateProject(`${projectName}`);
-  cy.log(`User has selected namespace "${projectName}"`);
 });
 
 Given('user is at pipelines page', () => {
   navigateTo(devNavigationMenu.Pipelines);
+});
+
+Given('user is at Topology page', () => {
+  navigateTo(devNavigationMenu.Topology);
 });
 
 Given('user is at Monitoring page', () => {
@@ -39,4 +51,83 @@ Given('user is at Monitoring page', () => {
 
 When('user clicks create button', () => {
   cy.get('button[type="submit"]').click();
+});
+
+When('user selects {string} from Context Menu', (menuOption: string) => {
+  topologyPage.selectContextMenuAction(menuOption);
+});
+
+Given('user has installed eventing operator', () => {
+  perspective.switchTo(switchPerspective.Administrator);
+  operatorsPage.navigateToInstallOperatorsPage();
+  operatorsPage.searchOperator(operators.ServerlessOperator);
+  cy.get('body', {
+    timeout: 50000,
+  }).then(($ele) => {
+    if ($ele.find(operatorsPO.installOperators.noOperatorsFound)) {
+      installOperator(operators.ServerlessOperator);
+    } else {
+      cy.log('Eventing operator is installed in cluster');
+    }
+  });
+});
+
+Given('user has installed knative Apache camel operator', () => {
+  perspective.switchTo(switchPerspective.Administrator);
+  operatorsPage.navigateToInstallOperatorsPage();
+  operatorsPage.searchOperator(operators.KnativeApacheCamelOperator);
+  cy.get('body', {
+    timeout: 50000,
+  }).then(($ele) => {
+    if ($ele.find(operatorsPO.installOperators.noOperatorsFound)) {
+      installOperator(operators.KnativeApacheCamelOperator);
+    } else {
+      cy.log(`${operators.KnativeApacheCamelOperator} operator is installed in cluster`);
+    }
+  });
+});
+
+Given('user has installed Knative Apache Camelk Integration Operator', () => {
+  perspective.switchTo(switchPerspective.Administrator);
+  operatorsPage.navigateToInstallOperatorsPage();
+  operatorsPage.searchOperator(operators.RedHatIntegrationCamelK);
+  cy.get('body', {
+    timeout: 50000,
+  }).then(($ele) => {
+    if ($ele.find(operatorsPO.installOperators.noOperatorsFound)) {
+      installOperator(operators.RedHatIntegrationCamelK);
+    } else {
+      cy.log(`${operators.RedHatIntegrationCamelK} operator is installed in cluster`);
+    }
+  });
+});
+
+Given('user has installed Knative Apache Kafka Operator', () => {
+  perspective.switchTo(switchPerspective.Administrator);
+  operatorsPage.navigateToInstallOperatorsPage();
+  operatorsPage.searchOperator(operators.ApacheKafka);
+  cy.get('body', {
+    timeout: 50000,
+  }).then(($ele) => {
+    if ($ele.find(operatorsPO.installOperators.noOperatorsFound)) {
+      installOperator(operators.ApacheKafka);
+    } else {
+      cy.log(`${operators.ApacheKafka} operator is installed in cluster`);
+    }
+  });
+});
+
+Given(
+  'user has created Sink Binding event source {string} with knative resource {string}',
+  (eventSourceName: string, resourceName: string) => {
+    createEventSourcePage.createSinkBindingIfNotExistsOnTopologyPage(eventSourceName, resourceName);
+  },
+);
+
+Given('user has created knative service {string}', (knativeServiceName: string) => {
+  createGitWorkloadIfNotExistsOnTopologyPage(
+    'https://github.com/sclorg/nodejs-ex.git',
+    knativeServiceName,
+    resourceTypes.knativeService,
+  );
 });

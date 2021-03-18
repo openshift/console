@@ -31,3 +31,11 @@ export const createSourceSecret = {
 export const actionsMenu = '[data-test-id="actions-menu-button"]';
 export const search = '[data-test-id="item-filter"]';
 export const table = '[role="grid"]';
+export const formPO = {
+  configureVia: {
+    formView: '#form-radiobutton-editorType-form-field',
+    yamlView: '#form-radiobutton-editorType-yaml-field',
+  },
+  create: '[data-test-id="submit-button"]',
+  cancel: '[data-test-id="reset-button"]',
+};

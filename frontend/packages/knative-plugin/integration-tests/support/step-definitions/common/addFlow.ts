@@ -1,6 +1,6 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { gitPage } from '@console/dev-console/integration-tests/support/pages/add-flow/git-page';
-import { navigateTo } from '@console/dev-console/integration-tests/support/pages/app';
+import { createForm, navigateTo } from '@console/dev-console/integration-tests/support/pages/app';
 import { addPage } from '@console/dev-console/integration-tests/support/pages/add-flow/add-page';
 import { topologyPage } from '@console/dev-console/integration-tests/support/pages/topology/topology-page';
 import { addOptions } from '@console/dev-console/integration-tests/support/constants/add';
@@ -9,6 +9,7 @@ import { devNavigationMenu } from '@console/dev-console/integration-tests/suppor
 import { pageTitle } from '@console/dev-console/integration-tests/support/constants/pageTitle';
 import { catalogPage } from '@console/dev-console/integration-tests/support/pages/add-flow/catalog-page';
 import { topologyPO } from '@console/dev-console/integration-tests/support/pageObjects/topology-po';
+import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
 
 Given('user is at Add page', () => {
   navigateTo(devNavigationMenu.Add);
@@ -17,19 +18,6 @@ Given('user is at Add page', () => {
 Given('user is at Import from git page', () => {
   addPage.selectCardFromOptions(addOptions.Git);
 });
-
-Given(
-  'user has created workload {string} with resource type {string}',
-  (componentName: string, resourceType: string = 'Deployment') => {
-    createGitWorkload(
-      'https://github.com/sclorg/nodejs-ex.git',
-      componentName,
-      resourceType,
-      'nodejs-ex-git-app',
-    );
-    topologyPage.verifyWorkloadInTopologyPage(componentName);
-  },
-);
 
 Given('user has opened application {string} in topology page', (componentName: string) => {
   cy.get('body').then(($body) => {
@@ -65,16 +53,15 @@ When('user navigates to Add page', () => {
 });
 
 When('user clicks Create button on Add page', () => {
-  gitPage.clickCreate();
+  createForm.clickCreate();
 });
 
 Then('user will be redirected to Add page', () => {
-  // detailsPage.titleShouldContain(pageTitle.Add);
   cy.get('.ocs-page-layout__title').should('contain.text', pageTitle.Add);
 });
 
 When('user clicks Cancel button on Add page', () => {
-  gitPage.clickCancel();
+  createForm.clickCancel();
 });
 
 When('user enters Git Repo url as {string}', (gitUrl: string) => {
@@ -97,4 +84,21 @@ When('user enters Name as {string}', (name: string) => {
 
 When('user selects resource type as {string}', (resourceType: string) => {
   gitPage.selectResource(resourceType);
+});
+
+Then('user will be redirected to {string} page', (title: string) => {
+  detailsPage.titleShouldContain(title);
+});
+
+When('user clicks EventSource card on Add page', () => {
+  addPage.selectCardFromOptions(addOptions.EventSource);
+  detailsPage.titleShouldContain(pageTitle.EventSource);
+});
+
+When('user navigates to Add page', () => {
+  navigateTo(devNavigationMenu.Add);
+});
+
+Then('user will see the Channel card on the Add page', () => {
+  addPage.verifyCard('Channel');
 });

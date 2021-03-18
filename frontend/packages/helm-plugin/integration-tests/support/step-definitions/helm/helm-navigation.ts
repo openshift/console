@@ -7,13 +7,14 @@ import { addOptions } from '@console/dev-console/integration-tests/support/const
 import { topologyPage } from '@console/dev-console/integration-tests/support/pages/topology/topology-page';
 import { catalogPage } from '@console/dev-console/integration-tests/support/pages/add-flow/catalog-page';
 import { catalogPO } from '@console/dev-console/integration-tests/support/pageObjects/add-flow-po';
+import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 
 When('user clicks on the Helm tab', () => {
   navigateTo(devNavigationMenu.Helm);
 });
 
 Then('user will be redirected to Helm releases page', () => {
-  cy.pageTitleShouldContain('Helm Releases');
+  detailsPage.titleShouldContain('Helm Releases');
 });
 
 Then('user is able to see the message as no helm charts present', () => {

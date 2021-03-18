@@ -23,10 +23,13 @@ export enum operators {
   PipelinesOperator = 'Pipeline',
   ServerlessOperator = 'Serverless',
   VirtualizationOperator = 'Virtualization',
-  KnativeCamelOperator = 'Knative Apache Camel K',
+  RedHatIntegrationCamelK = 'Red Hat Integration - Camel K',
+  ApacheCamelKOperator = 'Camel K Operator',
+  KnativeApacheCamelOperator = 'Knative Apache Camel Operator',
   EclipseCheOperator = 'Eclipse Che',
   GitOpsOperator = 'GitOps',
   WebTerminalOperator = 'Web Terminal',
+  ApacheKafka = 'Red Hat Integration - AMQ Streams',
 }
 
 export enum authenticationType {

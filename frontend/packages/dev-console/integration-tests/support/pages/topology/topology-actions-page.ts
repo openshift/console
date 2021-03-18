@@ -64,7 +64,7 @@ export const topologyActions = {
           .click();
         break;
       }
-      case 'Move Sink':
+      case 'Move sink':
       case nodeActions.MoveSink: {
         cy.byTestActionID(action)
           .should('be.visible')

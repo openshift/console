@@ -22,7 +22,7 @@ export const containerImagePage = {
     cy
       .get(containerImagePO.imageSection.externalRegistry.validatedMessage)
       .should('have.text', messages.addFlow.gitUrlValidated),
-  enterGitUrl: (gitUrl: string) => {
+  enterAppName: (gitUrl: string) => {
     cy.byLegacyTestID('application-form-app-name')
       .clear()
       .type(gitUrl);

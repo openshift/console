@@ -1,9 +1,8 @@
 import { operatorsPage } from '../operators-page';
-import { pageTitle } from '../../constants/pageTitle';
-import { operators, switchPerspective } from '../../constants/global';
-import { operatorsPO } from '../../pageObjects/operators-po';
+import { pageTitle, operators, switchPerspective } from '../../constants';
+import { devNavigationMenuPO, operatorsPO } from '../../pageObjects';
 import { app, perspective, sidePane } from '../app';
-import { devNavigationMenuPO } from '../../pageObjects';
+import { createKnativeEventing, createKnativeServing } from './knativeSubscriptions';
 
 export const installOperator = (operatorName: operators) => {
   operatorsPage.navigateToOperatorHubPage();
@@ -46,5 +45,22 @@ export const verifyAndInstallPipelinesOperator = () => {
       });
       perspective.switchTo(switchPerspective.Developer);
     }
+  });
+};
+
+export const verifyAndInstallKnativeOperator = () => {
+  perspective.switchTo(switchPerspective.Administrator);
+  operatorsPage.navigateToInstallOperatorsPage();
+  operatorsPage.searchOperator(operators.ServerlessOperator);
+  cy.get('body', {
+    timeout: 50000,
+  }).then(($ele) => {
+    if ($ele.find(operatorsPO.installOperators.noOperatorsFound).length) {
+      installOperator(operators.ServerlessOperator);
+    } else {
+      cy.log(`${operators.ServerlessOperator} operator is installed in cluster`);
+    }
+    createKnativeEventing();
+    createKnativeServing();
   });
 };
