@@ -19,6 +19,7 @@ import { getName } from '@console/shared';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
 import { SelectCapacityAndNodes, Configure, ReviewAndCreate } from './install-wizard-steps';
 import { initialState, reducer, InternalClusterState } from './reducer';
+import { taintNodes } from '../../../utils/install';
 import { OCSServiceModel } from '../../../models';
 import { OCS_CONVERGED_FLAG, OCS_INDEPENDENT_FLAG, OCS_FLAG } from '../../../features';
 import { OCS_INTERNAL_CR_NAME, MINIMUM_NODES, CreateStepsSC } from '../../../constants';
@@ -38,6 +39,7 @@ const makeOCSRequest = (state: InternalClusterState): Promise<StorageClusterKind
     clusterNetwork,
     encryption,
     kms,
+    enableTaint,
   } = state;
   const storageCluster: StorageClusterKind = getOCSRequestData(
     storageClass,
@@ -52,6 +54,9 @@ const makeOCSRequest = (state: InternalClusterState): Promise<StorageClusterKind
   const promises: Promise<K8sResourceKind>[] = [...labelNodes(nodes), labelOCSNamespace()];
   if (encryption.advanced && kms.hasHandled) {
     promises.push(...createKmsResources(kms));
+  }
+  if (enableTaint) {
+    promises.push(...taintNodes(nodes));
   }
   return Promise.all(promises).then(() => k8sCreate(OCSServiceModel, storageCluster));
 };
@@ -78,7 +83,7 @@ export const CreateInternalCluster: React.FC<CreateInternalClusterProps> = ({ ma
     {
       name: t('ceph-storage-plugin~Select capacity and nodes'),
       id: CreateStepsSC.STORAGEANDNODES,
-      component: <SelectCapacityAndNodes state={state} dispatch={dispatch} />,
+      component: <SelectCapacityAndNodes state={state} dispatch={dispatch} mode={mode} />,
       enableNext: !!(state.nodes.length >= MINIMUM_NODES && scName),
     },
     {

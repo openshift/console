@@ -37,6 +37,7 @@ import {
   SelectNodesText,
   SelectNodesDetails,
   StretchClusterFormGroup,
+  EnableTaintNodes,
 } from '../../install-wizard/capacity-and-nodes';
 import { State, Action } from '../reducer';
 import AttachedDevicesNodeTable from '../sc-node-list';
@@ -68,10 +69,11 @@ const validate = (
   return validations;
 };
 
-export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatch }) => {
+export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatch, mode }) => {
   const { t } = useTranslation();
   const isFlexibleScalingSupported = useFlag(GUARDED_FEATURES.OCS_FLEXIBLE_SCALING);
   const isArbiterSupported = useFlag(GUARDED_FEATURES.OCS_ARBITER);
+  const isTaintSupported = useFlag(GUARDED_FEATURES.OCS_TAINT_NODES);
   const [pvData, pvLoaded, pvLoadError] = useK8sWatchResource<K8sResourceKind[]>(pvResource);
   const [nodesData, nodesLoaded, nodesError] = useK8sWatchResource<NodeKind[]>(nodeResource);
 
@@ -199,6 +201,7 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
           {!!nodesCount && (
             <SelectNodesDetails cpu={cpu} memory={memory} zones={zones.size} nodes={nodesCount} />
           )}
+          {isTaintSupported && <EnableTaintNodes state={state} dispatch={dispatch} mode={mode} />}
           {!!validations.length &&
             validations.map((validation) => (
               <ValidationMessage key={validation} validation={validation} />
@@ -212,4 +215,5 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
 type StorageAndNodesProps = {
   state: State;
   dispatch: React.Dispatch<Action>;
+  mode: string;
 };

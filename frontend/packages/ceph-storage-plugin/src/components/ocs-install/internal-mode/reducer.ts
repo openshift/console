@@ -8,6 +8,7 @@ export type InternalClusterState = {
   nodes: NodeKind[];
   enableMinimal: boolean;
   enableFlexibleScaling: boolean;
+  enableTaint: boolean;
   // Encryption state declare
   encryption: EncryptionType;
   kms: KMSConfig;
@@ -22,6 +23,7 @@ export enum ActionType {
   SET_NODES = 'SET_NODES',
   SET_ENABLE_MINIMAL = 'SET_ENABLE_MINIMAL',
   SET_ENABLE_FLEXIBLE_SCALING = 'SET_ENABLE_FLEXIBLE_SCALING',
+  SET_ENABLE_TAINT = 'SET_ENABLE_TAINT',
   // Encryption state actions
   SET_ENABLE_ENCRYPTION = 'SET_ENABLE_ENCRYPTION',
   SET_ENCRYPTION = 'SET_ENCRYPTION',
@@ -39,6 +41,7 @@ export type InternalClusterAction =
   | { type: ActionType.SET_NODES; payload: NodeKind[] }
   | { type: ActionType.SET_ENABLE_MINIMAL; payload: boolean }
   | { type: ActionType.SET_ENABLE_FLEXIBLE_SCALING; payload: boolean }
+  | { type: ActionType.SET_ENABLE_TAINT; payload: boolean }
   // Encryption actions
   | { type: ActionType.SET_ENCRYPTION; payload: EncryptionType }
   // KMS action
@@ -56,6 +59,7 @@ export const initialState: InternalClusterState = {
   nodes: [],
   enableMinimal: false,
   enableFlexibleScaling: false,
+  enableTaint: false,
   // Encryption state initialization
   encryption: {
     clusterWide: false,
@@ -127,6 +131,12 @@ export const reducer = (state: InternalClusterState, action: InternalClusterActi
       return {
         ...state,
         enableFlexibleScaling: action.payload,
+      };
+    }
+    case ActionType.SET_ENABLE_TAINT: {
+      return {
+        ...state,
+        enableTaint: action.payload,
       };
     }
     // Encryption state reducer

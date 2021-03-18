@@ -32,6 +32,7 @@ export const initialState: State = {
   enableFlexibleScaling: false,
   storageClass: { provisioner: '', reclaimPolicy: '' },
   nodes: [],
+  enableTaint: false,
   // Encryption state initialization
   encryption: {
     clusterWide: false,
@@ -104,6 +105,7 @@ export type State = {
   enableFlexibleScaling: boolean;
   storageClass: StorageClassResourceKind;
   nodes: NodeKind[];
+  enableTaint: boolean;
   // Encryption state declare
   encryption: EncryptionType;
   kms: KMSConfig;
@@ -144,6 +146,7 @@ export type Action =
   | { type: 'setEnableFlexibleScaling'; value: boolean }
   | { type: 'setStorageClass'; value: StorageClassResourceKind }
   | { type: 'setNodes'; value: NodeKind[] }
+  | { type: 'setEnableTaint'; value: boolean }
   // Encryption state actions
   | { type: 'setEncryption'; value: EncryptionType }
   | { type: 'setKmsEncryption'; value: KMSConfig }
@@ -209,6 +212,8 @@ export const reducer = (state: State, action: Action) => {
       return Object.assign({}, state, { storageClass: action.value });
     case 'setNodes':
       return Object.assign({}, state, { nodes: action.value });
+    case 'setEnableTaint':
+      return Object.assign({}, state, { enableTaint: action.value });
     // Encryption state reducer
     case 'setEncryption':
       return Object.assign({}, state, { encryption: action.value });

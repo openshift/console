@@ -14,7 +14,8 @@ import { StorageClassResourceKind, NodeKind } from '@console/internal/module/k8s
 import { StorageClassDropdown } from '@console/internal/components/utils/storage-class-dropdown';
 import { ListPage } from '@console/internal/components/factory';
 import { NodeModel } from '@console/internal/models';
-import { getName, getUID } from '@console/shared';
+import { getName, getUID, useFlag } from '@console/shared';
+import { GUARDED_FEATURES } from '@console/ceph-storage-plugin/src/features';
 import { storageClassTooltip, requestedCapacityTooltip } from '../../../../constants';
 import { OSDSizeDropdown, TotalCapacityText } from '../../../../utils/osd-size-dropdown';
 import { InternalClusterState, InternalClusterAction, ActionType } from '../reducer';
@@ -25,7 +26,11 @@ import {
 } from '../../../../utils/install';
 import { ValidationMessage, ValidationType } from '../../../../utils/common-ocs-install-el';
 import InternalNodeTable from '../../node-list';
-import { SelectNodesText, SelectNodesDetails } from '../../install-wizard/capacity-and-nodes';
+import {
+  SelectNodesText,
+  SelectNodesDetails,
+  EnableTaintNodes,
+} from '../../install-wizard/capacity-and-nodes';
 
 const validate = (scName, enableMinimal): ValidationType[] => {
   const validations = [];
@@ -42,6 +47,7 @@ const validate = (scName, enableMinimal): ValidationType[] => {
 export const SelectCapacityAndNodes: React.FC<SelectCapacityAndNodesProps> = ({
   state,
   dispatch,
+  mode,
 }) => {
   const { t } = useTranslation();
   const { nodes: selectedNodes, capacity: selectedCapacity, storageClass, enableMinimal } = state;
@@ -50,6 +56,7 @@ export const SelectCapacityAndNodes: React.FC<SelectCapacityAndNodesProps> = ({
   const scName: string = getName(storageClass);
   const nodesCount = selectedNodes.length;
   const validations = validate(scName, enableMinimal);
+  const isTaintSupported = useFlag(GUARDED_FEATURES.OCS_TAINT_NODES);
 
   React.useEffect(() => {
     const isMinimal = shouldDeployAsMinimal(cpu, memory, nodesCount);
@@ -134,6 +141,7 @@ export const SelectCapacityAndNodes: React.FC<SelectCapacityAndNodesProps> = ({
           {!!nodesCount && (
             <SelectNodesDetails cpu={cpu} memory={memory} zones={zones.size} nodes={nodesCount} />
           )}
+          {isTaintSupported && <EnableTaintNodes state={state} dispatch={dispatch} mode={mode} />}
           {!!validations.length &&
             validations.map((validation) => (
               <ValidationMessage key={validation} validation={validation} />
@@ -147,4 +155,5 @@ export const SelectCapacityAndNodes: React.FC<SelectCapacityAndNodesProps> = ({
 type SelectCapacityAndNodesProps = {
   state: InternalClusterState;
   dispatch: React.Dispatch<InternalClusterAction>;
+  mode: string;
 };

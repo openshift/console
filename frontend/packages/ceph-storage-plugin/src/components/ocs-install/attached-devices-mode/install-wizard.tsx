@@ -31,6 +31,7 @@ import { CreateStorageClass } from './install-wizard-steps/create-storage-class/
 import { StorageAndNodes } from './install-wizard-steps/storage-and-nodes-step';
 import { ReviewAndCreate } from './install-wizard-steps/review-and-create-step';
 import { Configure } from './install-wizard-steps/configure-step';
+import { taintNodes } from '../../../utils/install';
 import {
   CreateStepsSC,
   MINIMUM_NODES,
@@ -57,6 +58,7 @@ const createCluster = async (
     clusterNetwork,
     selectedArbiterZone,
     stretchClusterChecked,
+    enableTaint,
   },
   setInProgress,
   flagDispatcher,
@@ -82,6 +84,9 @@ const createCluster = async (
     const promises: Promise<K8sResourceKind>[] = [...labelNodes(nodes), labelOCSNamespace()];
     if (encryption.advanced && kms.hasHandled) {
       promises.push(...createKmsResources(kms));
+    }
+    if (enableTaint) {
+      promises.push(...taintNodes(nodes));
     }
     await Promise.all(promises).then(() => k8sCreate(OCSServiceModel, storageCluster));
     flagDispatcher(setFlag(OCS_ATTACHED_DEVICES_FLAG, true));
@@ -208,7 +213,7 @@ const CreateStorageClusterWizard: React.FC<CreateStorageClusterWizardProps> = ({
     {
       id: CreateStepsSC.STORAGEANDNODES,
       name: t('ceph-storage-plugin~Storage and Nodes'),
-      component: <StorageAndNodes dispatch={dispatch} state={state} />,
+      component: <StorageAndNodes dispatch={dispatch} state={state} mode={mode} />,
     },
     {
       id: CreateStepsSC.CONFIGURE,
