@@ -121,7 +121,7 @@ const useRhoasCatalog: CatalogExtensionHook<CatalogItem[]> = (): [CatalogItem[],
       },
       cta: {
         label: 'Connect',
-        href: `/rhoas/kafka/ns/${currentNamespace}`,
+        href: `/rhoas/ns/${currentNamespace}/kafka`,
       },
       details: {
         properties: [{ label: 'Type', value: 'Red Hat Cloud Service' }],

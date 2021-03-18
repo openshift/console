@@ -46,7 +46,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Page/Route',
     properties: {
       exact: true,
-      path: ['/rhoas/:service/ns/:ns/'],
+      path: ['/rhoas/ns/:ns/:service'],
       loader: async () =>
         (
           await import(
