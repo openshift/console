@@ -55,48 +55,37 @@ describe(`Interacting with a global install mode Operator (${operatorName})`, ()
     cy.byTestID('view-installed-operators-btn').click();
     cy.log(`verify the ClusterServiceVersion row for ${operatorRow} exists`);
     cy.byTestOperatorRow(operatorRow, { timeout: 60000 }).should('exist');
-  });
-
-  it(`displays details about ${operatorName} ClusterServiceVersion on the "Details" tab`, () => {
-    cy.log(`navigate to the ${operatorName} details page`);
+    cy.log(`displays details about ${operatorName} ClusterServiceVersion on the "Details" tab`);
     cy.byTestOperatorRow(operatorRow).click();
     cy.byTestSectionHeading('Provided APIs').should('exist');
     cy.byTestSectionHeading('ClusterServiceVersion details').should('exist');
     cy.byLegacyTestID('resource-summary').should('exist');
-  });
-
-  it(`displays empty message on the ${operatorName} ClusterServiceVersion "All Instances" tab`, () => {
-    cy.log('navigate to the "All instances" tab');
+    cy.log(
+      `displays empty message on the ${operatorName} ClusterServiceVersion "All Instances" tab`,
+    );
     cy.byLegacyTestID('horizontal-link-olm~All instances').click();
     cy.byTestID('msg-box-title').should('contain', 'No operands found');
     cy.byTestID('msg-box-detail').should(
       'contain',
       'Operands are declarative components used to define the behavior of the application.',
     );
-  });
-
-  it(`displays ${operatorName} ${operatorInstance} creation form`, () => {
-    cy.log('navigate to the form');
+    cy.log(`displays ${operatorName} ${operatorInstance} creation form`);
     cy.byLegacyTestID('dropdown-button')
       .click()
       .get('[data-test-dropdown-menu="storageclusters.core.libopenstorage.org"]')
       .click();
+    cy.byTestID('loading-indicator').should('not.exist');
+    cy.url().should('include', '~new');
     cy.byLegacyTestID('resource-title').should('contain', `Create ${operatorInstance}`);
-  });
-
-  it(`creates a ${operatorName} ${operatorInstance} instance via the form`, () => {
-    cy.log('create a new instance');
+    cy.log(`creates a ${operatorName} ${operatorInstance} instance via the form`);
     cy.byTestID('create-dynamic-form').click();
     cy.byTestOperandLink(operandLink).should('contain', 'portworx');
-  });
-
-  it(`displays details about ${operatorName} ${operatorInstance} instance on the "Details" tab`, () => {
-    cy.log(`navigate to the "Details" tab`);
+    cy.log(
+      `displays details about ${operatorName} ${operatorInstance} instance on the "Details" tab`,
+    );
     cy.byTestOperandLink(operandLink).click();
     cy.byTestSectionHeading('Storage Cluster overview').should('exist');
-  });
-
-  it(`deletes the ${operatorName} ${operatorInstance} instance`, () => {
+    cy.log(`deletes the ${operatorName} ${operatorInstance} instance`);
     detailsPage.clickPageActionFromDropdown(`Delete ${operatorInstance}`);
     modal.shouldBeOpened();
     modal.submit();
