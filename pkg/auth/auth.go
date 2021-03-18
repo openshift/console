@@ -16,12 +16,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/coreos/dex/api"
 	oidc "github.com/coreos/go-oidc"
 	"golang.org/x/oauth2"
-
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
 
 	oscrypto "github.com/openshift/library-go/pkg/crypto"
 
@@ -487,38 +483,4 @@ func (a *Authenticator) VerifyCSRFToken(r *http.Request) (err error) {
 	}
 
 	return fmt.Errorf("CSRF token does not match CSRF cookie")
-}
-
-func NewDexClient(hostAndPort string, caCrt, clientCrt, clientKey string) (api.DexClient, error) {
-	clientCert, err := tls.LoadX509KeyPair(clientCrt, clientKey)
-	if err != nil {
-		return nil, fmt.Errorf("invalid client crt file: %s", err)
-	}
-
-	var certPool *x509.CertPool
-	if caCrt != "" {
-		var caPEM []byte
-		var err error
-
-		if caPEM, err = ioutil.ReadFile(caCrt); err != nil {
-			klog.Fatalf("Failed to read cert file: %v", err)
-		}
-
-		certPool = x509.NewCertPool()
-		if !certPool.AppendCertsFromPEM(caPEM) {
-			klog.Fatalf("No certs found in %q", caCrt)
-		}
-	}
-
-	clientTLSConfig := oscrypto.SecureTLSConfig(&tls.Config{
-		RootCAs:      certPool,
-		Certificates: []tls.Certificate{clientCert},
-	})
-	creds := credentials.NewTLS(clientTLSConfig)
-
-	conn, err := grpc.Dial(hostAndPort, grpc.WithTransportCredentials(creds))
-	if err != nil {
-		return nil, fmt.Errorf("dail: %v", err)
-	}
-	return api.NewDexClient(conn), nil
 }
