@@ -2,7 +2,12 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 
-import { FLAGS, useActivePerspective } from '@console/shared';
+import {
+  FLAGS,
+  useActivePerspective,
+  useUserSettings,
+  getPerspectiveVisitedKey,
+} from '@console/shared';
 import { connectToFlags, flagPending, FlagsObject } from '../reducers/features';
 import { GlobalNotifications } from './global-notifications';
 import { NamespaceBar } from './namespace';
@@ -56,15 +61,35 @@ type DefaultPageProps = {
 const DefaultPage_: React.FC<DefaultPageProps> = ({ flags }) => {
   const [activePerspective] = useActivePerspective();
   const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
-  if (Object.keys(flags).some((key) => flagPending(flags[key]))) {
+  const [visited, setVisited, visitedLoaded] = useUserSettings<boolean>(
+    getPerspectiveVisitedKey(activePerspective),
+    false,
+  );
+  const firstVisit = React.useRef<boolean>();
+
+  // First time thru, capture first visit status
+  if (firstVisit.current == null && visitedLoaded) {
+    firstVisit.current = !visited;
+  }
+
+  React.useEffect(() => {
+    if (visitedLoaded && !visited) {
+      // Mark perspective as visited
+      setVisited(true);
+    }
+  }, [visitedLoaded, visited, setVisited]);
+
+  if (Object.keys(flags).some((key) => flagPending(flags[key])) || !visitedLoaded) {
     return <LoadingBox />;
   }
+
   const perspective = perspectiveExtensions.find((p) => p.properties.id === activePerspective);
+
   // support redirecting to perspective landing page
   return flags[FLAGS.OPENSHIFT] ? (
-    <Redirect to={perspective.properties.getLandingPageURL(flags)} />
+    <Redirect to={perspective.properties.getLandingPageURL(flags, firstVisit.current)} />
   ) : (
-    <Redirect to={perspective.properties.getK8sLandingPageURL(flags)} />
+    <Redirect to={perspective.properties.getK8sLandingPageURL(flags, firstVisit.current)} />
   );
 };
 

@@ -1,22 +1,15 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import { Dropdown, DropdownItem, DropdownToggle, Title } from '@patternfly/react-core';
 import { CaretDownIcon } from '@patternfly/react-icons';
 import { Perspective, useExtensions, isPerspective } from '@console/plugin-sdk';
-import { RootState } from '../../redux';
-import { featureReducerName, getFlagsObject, FlagsObject } from '../../reducers/features';
 import { history } from '../utils';
 import { useActivePerspective } from '@console/shared';
-
-type StateProps = {
-  flags: FlagsObject;
-};
 
 export type NavHeaderProps = {
   onPerspectiveSelected: () => void;
 };
 
-const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({ onPerspectiveSelected, flags }) => {
+const NavHeader: React.FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
   const [activePerspective, setActivePerspective] = useActivePerspective();
   const [isPerspectiveDropdownOpen, setPerspectiveDropdownOpen] = React.useState(false);
   const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
@@ -29,13 +22,14 @@ const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({ onPerspectiveSelect
       event.preventDefault();
       if (perspective.properties.id !== activePerspective) {
         setActivePerspective(perspective.properties.id);
-        history.push(perspective.properties.getLandingPageURL(flags));
+        // Navigate to root and let the default page determine where to go to next
+        history.push('/');
       }
 
       setPerspectiveDropdownOpen(false);
       onPerspectiveSelected && onPerspectiveSelected();
     },
-    [activePerspective, flags, onPerspectiveSelected, setActivePerspective],
+    [activePerspective, onPerspectiveSelected, setActivePerspective],
   );
 
   const renderToggle = React.useCallback(
@@ -96,10 +90,4 @@ const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({ onPerspectiveSelect
   );
 };
 
-const mapStateToProps = (state: RootState): StateProps => ({
-  flags: getFlagsObject(state),
-});
-
-export default connect<StateProps, {}, NavHeaderProps, RootState>(mapStateToProps, null, null, {
-  areStatesEqual: (next, prev) => next[featureReducerName] === prev[featureReducerName],
-})(NavHeader_);
+export default NavHeader;

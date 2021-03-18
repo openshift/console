@@ -33,4 +33,4 @@ export const isPerspective = (e: Extension): e is Perspective => {
   return e.type === 'Perspective';
 };
 
-export type GetLandingPage = (flags: FlagsObject) => string;
+export type GetLandingPage = (flags: FlagsObject, isFirstVisit: boolean) => string;
