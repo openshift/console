@@ -8,7 +8,7 @@ import { Resources } from './import-types';
 
 const hostnameRegex = /^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$/;
 const pathRegex = /^\/.*$/;
-const nameRegex = /^([a-z]([-a-z0-9]*[a-z0-9])?)*$/;
+export const nameRegex = /^([a-z]([-a-z0-9]*[a-z0-9])?)*$/;
 const projectNameRegex = /^[a-z0-9]([-a-z0-9]*[a-z0-9])?$/;
 
 export const gitUrlRegex = /^((((ssh|git|https?:?):\/\/:?)(([^\s@]+@|[^@]:?)[-\w.]+(:\d\d+:?)?(\/[-\w.~/?[\]!$&'()*+,;=:@%]*:?)?:?))|([^\s@]+@[-\w.]+:[-\w.~/?[\]!$&'()*+,;=:@%]*?:?))$/;

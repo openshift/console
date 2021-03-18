@@ -13,7 +13,7 @@ import {
 import { UNASSIGNED_KEY, CREATE_APPLICATION_KEY } from '@console/topology/src/const';
 import { BuildStrategyType } from '@console/internal/components/build';
 import { GitReadableTypes, GitTypes } from '../import-types';
-import { detectGitType, detectGitRepoName } from '../import-validation-utils';
+import { detectGitType, detectGitRepoName, createComponentName } from '../import-validation-utils';
 import {
   getSampleRepo,
   getSampleRef,
@@ -90,7 +90,10 @@ const GitSection: React.FC<GitSectionProps> = ({
         return;
       }
 
-      gitRepoName && !nameTouched && !values.name && setFieldValue('name', gitRepoName);
+      gitRepoName &&
+        !nameTouched &&
+        !values.name &&
+        setFieldValue('name', createComponentName(gitRepoName));
       gitRepoName &&
         values.formType !== 'edit' &&
         !values.application.name &&
@@ -167,7 +170,10 @@ const GitSection: React.FC<GitSectionProps> = ({
   const handleGitUrlBlur = React.useCallback(() => {
     const { url } = values.git;
     const gitRepoName = detectGitRepoName(url);
-    values.formType !== 'edit' && gitRepoName && !nameTouched && setFieldValue('name', gitRepoName);
+    values.formType !== 'edit' &&
+      gitRepoName &&
+      !nameTouched &&
+      setFieldValue('name', createComponentName(gitRepoName));
     gitRepoName &&
       values.formType !== 'edit' &&
       !values.application.name &&
