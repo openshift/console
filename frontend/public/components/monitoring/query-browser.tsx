@@ -47,6 +47,7 @@ import {
 } from '../utils';
 import {
   formatPrometheusDuration,
+  getLocaleDate,
   parsePrometheusDuration,
   twentyFourHourTime,
 } from '../utils/datetime';
@@ -226,7 +227,7 @@ const LegendContainer = ({ children }: { children?: React.ReactNode }) => {
   // The first child should be a <rect> with a `width` prop giving the legend's content width
   const width = children?.[0]?.[0]?.props?.width ?? '100%';
   return (
-    <foreignObject height={75} width="100%" y={230}>
+    <foreignObject height={75} width="100%" y={245}>
       <div className="monitoring-dashboards__legend-wrap">
         <svg width={width}>{children}</svg>
       </div>
@@ -312,18 +313,11 @@ const Graph: React.FC<GraphProps> = React.memo(
         yTickFormat = (v: number) => (v === 0 ? '0' : v.toExponential(1));
       }
     }
-    const xTickFormat = (d) => twentyFourHourTime(d, span < 5 * ONE_MINUTE);
-    let xAxisStyle;
-    if (width < 225) {
-      xAxisStyle = {
-        tickLabels: {
-          angle: 45,
-          fontSize: 10,
-          textAnchor: 'start',
-          verticalAnchor: 'middle',
-        },
-      };
-    }
+
+    const xTickFormat =
+      span > parsePrometheusDuration('1d')
+        ? (d) => `${getLocaleDate(d, { month: 'short', day: 'numeric' })}\n${twentyFourHourTime(d)}`
+        : (d) => twentyFourHourTime(d, span < 5 * ONE_MINUTE);
 
     const GroupComponent = isStack ? ChartStack : ChartGroup;
     const ChartComponent = isStack ? ChartArea : ChartLine;
@@ -339,7 +333,7 @@ const Graph: React.FC<GraphProps> = React.memo(
         theme={theme}
         width={width}
       >
-        <ChartAxis style={xAxisStyle} tickCount={5} tickFormat={xTickFormat} />
+        <ChartAxis tickCount={Math.round(width / 100)} tickFormat={xTickFormat} />
         <ChartAxis
           crossAxis={false}
           dependentAxis
