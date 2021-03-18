@@ -13,6 +13,8 @@ import { TemplateKind } from '@console/internal/module/k8s';
 
 import { ModalFooter } from '../modal/modal-footer';
 
+import './finish-customization-modal.scss';
+
 const FinishCustomizationModal: React.FC<FinishCustomizationModalProps> = ({
   close,
   setFinish,
@@ -49,6 +51,7 @@ const FinishCustomizationModal: React.FC<FinishCustomizationModalProps> = ({
               )}
               onChange={setConfirmed}
               isChecked={confirmed}
+              className="kv-finish-modal__checkbox"
             />
             <ExternalLink href="foo">
               {t('kubevirt-plugin~How to seal boot source for template usage')}
