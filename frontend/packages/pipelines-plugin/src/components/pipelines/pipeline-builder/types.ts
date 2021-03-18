@@ -21,6 +21,8 @@ export type PipelineBuilderListTask = PipelineBuilderTaskBase;
 export type PipelineBuilderTaskGrouping = {
   tasks: PipelineTask[];
   listTasks: PipelineBuilderListTask[];
+  finallyTasks: PipelineTask[];
+  finallyListTasks: PipelineBuilderListTask[];
 };
 
 export type PipelineBuilderTaskGroup = PipelineBuilderTaskGrouping & {
@@ -45,6 +47,7 @@ export type PipelineBuilderFormikValues = FormikValues & PipelineBuilderFormYaml
 export type SelectedBuilderTask = {
   resource: TaskKind;
   taskIndex: number;
+  isFinallyTask: boolean;
 };
 
 export type TaskErrorMap = {
@@ -54,6 +57,7 @@ export type TaskErrorMap = {
 export type SelectTaskCallback = (
   task: PipelineVisualizationTaskItem,
   taskResource: TaskKind,
+  isFinallyTask: boolean,
 ) => void;
 
 export type UpdateOperation<D extends UpdateOperationBaseData = UpdateOperationBaseData> = {
@@ -76,6 +80,9 @@ export type UpdateOperationConvertToTaskData = UpdateOperationBaseData & {
   name: string;
   resource: TaskKind;
   runAfter?: string[];
+};
+export type UpdateOperationConvertToFinallyTaskData = {
+  listTaskName: string;
 };
 export type UpdateOperationFixInvalidTaskListData = UpdateOperationBaseData & {
   existingName: string;
@@ -118,11 +125,12 @@ export type UpdateOperationUpdateTaskData = UpdateOperationBaseData & {
 export type CleanupResults = {
   tasks: PipelineTask[];
   listTasks: PipelineBuilderListTask[];
+  finallyTasks: PipelineTask[];
+  finallyListTasks: PipelineBuilderListTask[];
   errors?: TaskErrorMap;
 };
 
 export type UpdateOperationAction<D extends UpdateOperationBaseData> = (
-  tasks: PipelineTask[],
-  listTasks: PipelineBuilderListTask[],
+  taskGrouping: PipelineBuilderTaskGrouping,
   data: D,
 ) => CleanupResults;

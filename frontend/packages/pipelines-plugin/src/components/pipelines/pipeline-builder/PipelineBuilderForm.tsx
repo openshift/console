@@ -83,14 +83,21 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
     [setStatus],
   );
 
-  const onTaskSelection = (task: PipelineVisualizationTaskItem, resource: TaskKind) => {
+  const onTaskSelection = (
+    task: PipelineVisualizationTaskItem,
+    resource: TaskKind,
+    isFinallyTask: boolean,
+  ) => {
+    const builderNodes = isFinallyTask ? values.formData.finallyTasks : values.formData.tasks;
     setSelectedTask({
-      taskIndex: values.formData.tasks.findIndex(({ name }) => name === task.name),
+      isFinallyTask,
+      taskIndex: builderNodes.findIndex(({ name }) => name === task.name),
       resource,
     });
   };
 
   useResourceValidation(
+    values.formData.finallyTasks,
     values.formData.tasks,
     values.formData.resources,
     values.formData.workspaces,
@@ -98,20 +105,25 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
   );
 
   const updateTasks = (changes: CleanupResults): void => {
-    const { tasks, listTasks, errors: taskErrors } = changes;
+    const { tasks, listTasks, finallyTasks, finallyListTasks, errors: taskErrors } = changes;
 
     setFieldValue('formData.tasks', tasks);
     setFieldValue('formData.listTasks', listTasks);
+    setFieldValue('formData.finallyTasks', finallyTasks);
+    setFieldValue('formData.finallyListTasks', finallyListTasks);
     updateErrors(taskErrors);
   };
 
-  const selectedId = values.formData.tasks[selectedTask?.taskIndex]?.name;
+  const nodeType = selectedTask?.isFinallyTask ? 'finallyTasks' : 'tasks';
+  const selectedId = values.formData[nodeType][selectedTask?.taskIndex]?.name;
   const selectedIds = selectedId ? [selectedId] : [];
 
   const taskGroup: PipelineBuilderTaskGroup = {
     tasks: values.formData.tasks,
     listTasks: values.formData.listTasks,
     highlightedIds: selectedIds,
+    finallyTasks: values.formData.finallyTasks,
+    finallyListTasks: values.formData.finallyListTasks,
   };
 
   const closeSidebarAndHandleReset = React.useCallback(() => {
@@ -141,6 +153,8 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
       ...newFormData.spec,
       name: newFormData.metadata?.name,
       listTasks: values.formData.listTasks,
+      finallyTasks: newFormData.spec.finally,
+      finallyListTasks: values.formData.finallyListTasks,
     };
     return _.merge({}, initialPipelineFormData, formData);
   };
@@ -230,6 +244,7 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
                   t,
                 );
               }}
+              isFinallyTask={selectedTask.isFinallyTask}
               selectedPipelineTaskIndex={selectedTask.taskIndex}
               taskResource={selectedTask.resource}
             />

@@ -29,6 +29,7 @@ type TaskSidebarProps = {
   workspaceList: PipelineWorkspace[];
   selectedPipelineTaskIndex: number;
   taskResource: TaskKind;
+  isFinallyTask: boolean;
   onClose: () => void;
 };
 
@@ -40,10 +41,12 @@ const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
     workspaceList,
     selectedPipelineTaskIndex,
     taskResource,
+    isFinallyTask,
     onClose,
   } = props;
   const { t } = useTranslation();
-  const formikTaskReference = `formData.tasks.${selectedPipelineTaskIndex}`;
+  const taskType = isFinallyTask ? 'finallyTasks' : 'tasks';
+  const formikTaskReference = `formData.${taskType}.${selectedPipelineTaskIndex}`;
   const [taskField] = useField<PipelineTask>(formikTaskReference);
 
   const updateTask = (newData: Partial<UpdateOperationUpdateTaskData>) => {

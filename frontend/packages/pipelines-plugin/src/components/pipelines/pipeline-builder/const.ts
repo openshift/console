@@ -5,7 +5,9 @@ export const TASK_INCOMPLETE_ERROR_MESSAGE = 'Incomplete Task';
 
 export enum UpdateOperationType {
   ADD_LIST_TASK,
+  ADD_FINALLY_LIST_TASK,
   CONVERT_LIST_TO_TASK,
+  CONVERT_LIST_TO_FINALLY_TASK,
   UPDATE_TASK,
   REMOVE_TASK,
   DELETE_LIST_TASK,
@@ -39,4 +41,6 @@ export const initialPipelineFormData: PipelineBuilderFormValues = {
   workspaces: [],
   tasks: [],
   listTasks: [],
+  finallyTasks: [],
+  finallyListTasks: [],
 };
