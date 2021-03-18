@@ -108,7 +108,8 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({ state, dispatch, disa
       if (defaultSCName) {
         handleStorageClass(defaultSCName);
       } else {
-        handleStorageClass(storageClasses?.[0]?.metadata?.name);
+        const firstSc = storageClasses?.[0]?.metadata?.name;
+        firstSc && handleStorageClass(firstSc);
       }
     }
   }, [
@@ -156,7 +157,7 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({ state, dispatch, disa
 
   return cmLoaded && scLoaded && !scAllowedLoading ? (
     <Form>
-      {scAllowed && (
+      {scAllowed && !!storageClasses?.length && (
         <FormRow fieldId="form-ds-sc" title={t('kubevirt-plugin~Storage class')} isRequired>
           <FormPFSelect
             value={state.storageClass?.value}
