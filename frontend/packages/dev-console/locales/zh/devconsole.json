@@ -218,7 +218,7 @@
   "Optional branch, tag, or commit.": "可选 branch、tag 或 commit。",
   "Context dir": "Context dir",
   "Optional subdirectory for the Application source code, used as a context directory for build.": "可选的应用程序源代码的子目录，用作构建的上下文目录。",
-  "Dockerfile": "Docker",
+  "Dockerfile": "Dockerfile",
   "Dockerfile path": "Dockerfile 路径",
   "Allows the builds to use a different path to locate your Dockerfile, relative to the Context Dir field.": "允许构建使用不同的路径来定位您的 Dockerfile，相对于 Context Dir 字段。",
   "Validating": "验证",

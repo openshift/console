@@ -385,7 +385,7 @@
   "Select one of the following options to create an Application, component or service. As part of the creation process a Project and Application will be created.": "다음 옵션 중 하나를 선택하여 애플리케이션, 구성 요소 또는 서비스를 만듭니다. 생성 프로세스의 일부로 프로젝트 및 애플리케이션이 생성됩니다.",
   "+Add": "+ 추가",
   "Topology": "토폴로지",
-  "Developer": "Developer",
+  "Developer": "개발자",
   "Create an Application from a code sample": "코드 샘플에서 애플리케이션 만들기",
   "Import code from your Git repository to be built and deployed": "빌드 및 배포할 Git 리포지토리에서 코드 가져 오기",
   "Import your Devfile from your Git repository to be built and deployed": "빌드 및 배포할 Git 리포지토리에서 Devfile 가져 오기",

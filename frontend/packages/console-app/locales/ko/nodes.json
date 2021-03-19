@@ -45,7 +45,7 @@
   "Name": "이름",
   "Size": "크기",
   "Node details": "노드 세부 정보",
-  "External ID": "외부 IP",
+  "External ID": "외부 ID",
   "Node labels": "노드 레이블",
   "Taints": "테인트",
   "Taint_0": "테인트",
