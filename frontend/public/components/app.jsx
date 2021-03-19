@@ -162,7 +162,6 @@ keycloak
       keycloak.login();
       return;
     }
-
     render(
       <Provider store={store}>
         <Router history={history} basename={window.SERVER_FLAGS.basePath}>
@@ -175,8 +174,16 @@ keycloak
       document.getElementById('app'),
     );
   })
-  .catch(function() {
-    render(<div>Failed to initialize Keycloak</div>, document.getElementById('app'));
+  .catch(error => {
+    // render(<div>{!!error ? error : 'Failed to initialize Keycloak'}</div>, document.getElementById('app'));
+    render(
+      <div className="co-m-pane__body">
+        <h1 className="co-m-pane__heading co-m-pane__heading--center">Oh no! Something went wrong.</h1>
+        <label htmlFor="description">Description: </label>
+        <p>{!!error ? error.message : 'Failed to initialize keycloak'}</p>
+      </div>,
+      document.getElementById('app'),
+    );
   });
 
 keycloak.onReady = function() {
@@ -184,7 +191,7 @@ keycloak.onReady = function() {
 };
 keycloak.onAuthSuccess = function() {
   console.log('[keycloak] onAuthSuccess');
-  
+
   setAccessToken(keycloak.idToken);
   setId(keycloak.idTokenParsed.preferred_username);
 
@@ -206,8 +213,8 @@ keycloak.onAuthSuccess = function() {
   // Global timer to ensure all <Timestamp> components update in sync
   setInterval(() => store.dispatch(UIActions.updateTimestamps(Date.now())), 10000);
 
-  fetchEventSourcesCrd(); 
-  
+  fetchEventSourcesCrd();
+
   // Fetch swagger on load if it's stale.
   fetchSwagger();
 
