@@ -99,7 +99,7 @@ const ClusterTableHeader = (t?: TFunction) => {
 ClusterTableHeader.displayName = 'ClusterTableHeader';
 
 const ClusterTableRow: RowFunction<IClusterTableRow> = ({ obj: cluster, index, key, style }) => {
-  const owner = Object.keys(cluster.status?.owner)[0];
+  const owner = cluster.status.owner && Object.keys(cluster.status.owner)[0];
   return (
     <TableRow id={cluster.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
@@ -126,7 +126,7 @@ export const ClusterDetailsList: React.FC<ClusterDetailsListProps> = ({ cl }) =>
   const { t } = useTranslation();
   return (
     <dl className="co-m-pane__details">
-      <DetailsItem label={t("MSG_DETAILS_TABDETAILS_1")} obj={cl} path="spec.provider" />
+      <DetailsItem label={t("COMMON:MSG_DETAILS_TABDETAILS_1")} obj={cl} path="spec.provider" />
       <DetailsItem label={t('COMMON:MSG_DETAILS_TABDETAILS_2')} obj={cl} path="spec.provider">
         {cl.spec.provider ? t('MULTI:MSG_MULTI_CLUSTERS_TABLECONTENTS_TYPE_1') : t('MULTI:MSG_MULTI_CLUSTERS_TABLECONTENTS_TYPE_2')}
       </DetailsItem>
@@ -166,7 +166,7 @@ const ClusterDetails: React.FC<ClusterDetailsProps> = ({ obj: cluster }) => {
   return (
     <>
       <div className="co-m-pane__body">
-        <SectionHeading text={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_1', {0: ResourceLabel(cluster, t)})} />
+        <SectionHeading text={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_1', { 0: ResourceLabel(cluster, t) })} />
         <div className="row">
           <div className="col-lg-6">
             <ResourceSummary resource={cluster} customPathName={'fakeMetadata.fakename'} showOwner={false} />
