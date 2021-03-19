@@ -3,9 +3,9 @@ Feature: Improve the integration of Pipelines & Builds.
               As a user, I want to see pipelines instead of build
 
         Background:
-            Given user has installed Openshift Pipelines Operator
+            Given user has installed OpenShift Pipelines operator
               And user is at developer perspective
-              And user has selected namespace "aut-topology-pipeline"
+              And user has created or selected namespace "aut-topology-pipeline"
 
 
         @regression
@@ -36,7 +36,7 @@ Feature: Improve the integration of Pipelines & Builds.
                   | deployment config | dancer-ex-git-1           | Perl          |
 
 
-        @regression, @manual
+        @regression @manual
         Scenario Outline: Pipeline start modal on clicking pipeline icon of application node in topology page
             Given user created workload "<workload_name>" with resource type "<resource_type>" with pipeline
              When user hovers on the bottom-left decorator on the workload "<workload_name>"

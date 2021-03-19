@@ -1,18 +1,19 @@
+@topology
 Feature: Topology chart area
-	As a user, I want to verify topology chart visuals    
+              As a user, I want to verify topology chart visuals
 
         Background:
             Given user is at developer perspective
-              And user has selected namespace "aut-topology-delete-workload"
+              And user has created or selected namespace "aut-topology-delete-workload"
 
 
-        @regression, @smoke
+        @smoke
         Scenario: Empty state of topology : T-01-TC01
              When user navigates to Topology page
-             Then user sees Topology page with message on the top "No workloads found"
+             Then user sees Topology page with message on the top "No resources found"
 
 
-        @regression, @smoke
+        @smoke
         Scenario: Topology with workloads : T-02-TC01
             Given user has created a workload named "nodejs-ex-git"
               And user has created knative workload "nodejs-ex-git-1"
@@ -20,7 +21,7 @@ Feature: Topology chart area
              Then user sees different workloads in topology chart area
 
 
-        @regression, @smoke, @manual
+        @regression @manual
         Scenario: Visual for deployment : T-02-TC01
             Given user has created a workload named "nodejs-ex-git"
               And user is at the Topology page
@@ -33,7 +34,7 @@ Feature: Topology chart area
               And user checks node label having "D" for deployment and then name of node
 
 
-        @regression, @smoke, @manual
+        @regression @manual
         Scenario: Visual for deployment-config : T-02-TC01
             Given user is at the Topology page
               And deployment-config workload is present in topology
@@ -46,7 +47,7 @@ Feature: Topology chart area
               And user checks node label having "DC" for deployment-config and then name of node
 
 
-        @regression, @smoke, @manual
+        @regression @manual
         Scenario: Visual for knative service with no revision : T-02-TC03
             Given user is at the Topology page
               And knative workload without revision is present in topology
@@ -58,7 +59,7 @@ Feature: Topology chart area
               And user checks knative service having label "KSVC" and then the name of service
 
 
-        @regression, @smoke, @manual
+        @regression @manual
         Scenario: Visual for knative service with revisions : T-02-TC03
             Given user is at the Topology page
               And knative workload with revison is present in topology
@@ -75,7 +76,7 @@ Feature: Topology chart area
               And user checks knative service having label "KSVC" and then the name of service
 
 
-        @regression, @smoke
+        @smoke
         Scenario: Context menu of node : T-06-TC10
             Given user has created a workload named "nodejs-ex-git"
               And user is at the Topology page
@@ -83,7 +84,7 @@ Feature: Topology chart area
              Then user is able to see context menu options like Edit Application Grouping, Edit Pod Count, Pause Rollouts, Add Health Checks, Add Horizontal Pod Autoscaler, Add Storage, Edit Update Strategy, Edit Labels, Edit Annotations, Edit Deployment, Delete Deployment
 
 
-        @regression, @smoke, @manual
+        @regression @manual
         Scenario: Zoom In in topology : T-07-TC01
             Given user has created a workload named "nodejs-ex-git"
               And user is at the Topology page
@@ -91,7 +92,7 @@ Feature: Topology chart area
              Then user sees the chart area is zoomed
 
 
-        @regression, @smoke, @manual
+        @regression @manual
         Scenario: Zoom Out in topology : T-07-TC01
             Given user has created a workload named "nodejs-ex-git"
               And user is at the Topology page
@@ -99,7 +100,7 @@ Feature: Topology chart area
              Then user sees the chart area is zoomed out
 
 
-        @regression, @manual
+        @regression @manual
         Scenario: Fit to Screen in topology : T-07-TC03
             Given user has created a workload named "nodejs-ex-git"
               And user is at the Topology page
@@ -109,7 +110,7 @@ Feature: Topology chart area
              Then user sees the nodes fitting within chart area
 
 
-        @regression, @manual
+        @regression @manual
         Scenario: Reset view in topology: T-07-TC02
             Given user has created a workload named "nodejs-ex-git"
               And user is at the Topology page

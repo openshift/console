@@ -14,7 +14,7 @@ Feature: Operators
              Then OpenShift Pipeline operator subscription page will be displayed
 
 
-        @regression, @smoke
+        @smoke
         Scenario: Install the Pipeline Operator from Operator Hub page : P-01-TC02
             Given user executed command "oc apply -f https://gist.githubusercontent.com/nikhil-thomas/f6069b00b0e3b0359ae1cbdb929a04d6/raw/7b19be0c52355d041bf3d6a883db06b578f15f0d/openshift-pipelines-early-release-catalog-source.yaml"
               And user is at OpenShift Pipeline Operator subscription page
@@ -23,7 +23,7 @@ Feature: Operators
               And user will see a View Operator button
 
 
-        @regression, @smoke
+        @smoke
         Scenario: Install the Serverless Operator from Operator Hub page : Kn-01-TC01, Kn-01-TC02
             Given user is at OpenShift Serverless Operator subscription page
              When user installs the OpenShift Serverless operator with default values
@@ -32,7 +32,7 @@ Feature: Operators
               And user will see serverless option on left side navigation menu
 
 
-        @regression, @smoke
+        @smoke
         Scenario: Install the knative eventing operator : Kn-07-TC01, Kn-07-TC02
             Given user has installed OpenShift Serverless Operator
               And user is on the knative-eventing namespace
@@ -43,7 +43,7 @@ Feature: Operators
              Then Event sources card display in Add page in dev perspective
 
 
-        @regression, @smoke
+        @smoke
         Scenario: Install the knative apache camel operator : Kn-08-TC01
             Given user has installed OpenShift Serverless and eventing operator
               And user is at Operator Hub page with the header name "OperatorHub"
@@ -52,7 +52,7 @@ Feature: Operators
               And user will see a View Operator button
 
 
-        @regression, @smoke
+        @smoke
         Scenario: Install the dynamic event operator : Kn-09-TC01, Kn-09-TC02
             Given user has installed OpenShift Serverless Operator
              When user executes commands from cli as "kubectl apply -f https://github.com/knative/eventing-contrib/releases/download/v0.14.1/github.yaml"
@@ -62,7 +62,7 @@ Feature: Operators
               And GitHub Source is displayed in types section
 
 
-        @regression, @smoke
+        @smoke
         Scenario: Install the Che Operator from Operator Hub page : CRW-01-TC01
             Given user is at Eclipse che Operator subscription page
              When user installs the Eclipse che operator with default values
@@ -70,7 +70,7 @@ Feature: Operators
               And user will see a View Operator button
 
 
-        @regression, @smoke
+        @smoke
         Scenario: Install OpenShift Virtualization Operator: VM-01-TC01
             Given user is at Operator Hub page with the header name "OperatorHub"
               And user has selected namespace "openshift-cnv"
@@ -82,7 +82,7 @@ Feature: Operators
               And user will see a View Operator button
 
 
-        @regression, @smoke
+        @smoke
         Scenario: Create OpenShift Virtualization Deployment
             Given user has installed OpenShift Virtualization Operator
               And user is at Installed Operator page
@@ -93,7 +93,7 @@ Feature: Operators
              Then user will see a HyperConverged type created
 
 
-        @regression, @smoke
+        @smoke
         Scenario: Create HostPathProvisioner Deployment
             Given user has installed OpenShift Virtualization Operator
               And user is at Installed Operator page
@@ -120,7 +120,7 @@ Feature: Operators
             Given user is at OpenShift Serverless Operator subscription page
 
 
-        @regression, @smoke
+        @smoke
         Scenario: Install Web Terminal operator from Operator Hub page
             Given user is at Operator Hub page with the header name "OperatorHub"
              When user searches for "Web Terminal"
@@ -131,7 +131,7 @@ Feature: Operators
               And user will see a View Operator button
 
 
-        @regression, @smoke
+        @smoke
         Scenario: Install Red Hat Integration - Camel K Operator
             Given user has installed OpenShift Serverless Operator
               And user is at Operator Hub page with the header name "OperatorHub"
@@ -140,7 +140,7 @@ Feature: Operators
               And user will see a View Operator button
 
 
-        @regression, @smoke
+        @smoke
         Scenario: Create Integration Platform CR
             Given user has installed OpenShift Serverless Operator
               And user has installed Red Hat Integration - Camel K Operator
@@ -153,7 +153,7 @@ Feature: Operators
               And user will see Integration Platform created with name example
 
 
-        @regression, @smoke
+        @smoke
         Scenario: Install Sealed Secrets Operator
             Given user has created namespace "cicd"
               And user is at Operator Hub page with the header name "OperatorHub"
@@ -165,7 +165,7 @@ Feature: Operators
               And user will see a View Operator button
 
    
-        @regression, @smoke
+        @smoke
         Scenario: Create SealedSecretController CR
             Given user has installed Sealed Secrets Operator
               And user has selected "cicd" namespace
@@ -178,7 +178,7 @@ Feature: Operators
               And user will see sealedsecretcontroller created with name sealedsecretcontroller
 
    
-        @regression, @smoke
+        @smoke
         Scenario: Install Argo CD Operator
             Given user has created namespace "argocd"
               And user is at Operator Hub page with the header name "OperatorHub"
