@@ -172,3 +172,86 @@ Feature: Topology chart area
               And user hovers on Add to Project and clicks on From Channel
               And user clicks on Create
              Then user is able to see different applications created from Samples, From Git, Container Image, From Dockerfile, From Devfile, From Catalog, Database, Operator Backed, Helm Charts, Event Source, Channel
+
+
+        @regression, @manual
+        Scenario: Upload JAR file form
+            Given user has a jar file named "sample_yaml_upload.yaml"
+              And user is at the Topology page
+             When user drags and drop jar file on topology
+             Then user sees Upload JAR file form
+              And user can see JAR section with jar file name with Browse and Clear button associated with it
+              And user can see Optional java commands, Runtime icon and Build image version under JAR section
+              And user can see General section with Application name and Name under it
+              And user can see Resources and Advanced options sections
+
+
+        @regression, @manual
+        Scenario: Drag and drop jar file in topology chart view
+            Given user has a jar file named "sample_yaml_upload.yaml"
+              And user is at the Topology page
+             When user drags and drop jar file on topology
+              And user gives Application name as "sample-upload-app" and workload Name as "sample-yaml-upload"
+              And user clicks on Create in Upload JAR file form
+             Then user is redirected to topology
+              And user can see a toast notification of JAR file uploading with link to build logs
+              And user can see deployment "sample-yaml-upload" in application "sample-upload-app" is created in topology
+
+
+        @regression @manual
+        Scenario: Add to Project to upload JAR file in topology
+            Given user is at the Topology page
+             When user right clicks on the empty chart area
+              And user clicks on Add to Project
+              And user clicks on Upload JAR file
+              And user clicks on Browse in JAR file section
+              And user selects file to upload
+              And user clicks Clear and reupload the file
+              And user gives Application name as "sample-upload-app" and workload Name as "sample-yaml-upload-1"
+              And user clicks on Create
+             Then user is redirected to topology
+              And user can see a toast notification of JAR file uploading with link to build logs
+              And user can see deployment "sample-yaml-upload-1" in application "sample-upload-app" is created in topology
+
+
+        @regression @manual
+        Scenario: Add to Project through drag and drop to upload JAR file in topology
+            Given user is at the Topology page
+             When user right clicks on the empty chart area
+              And user clicks on Add to Project
+              And user clicks on Upload JAR file
+              And user drag and drop the file in JAR file section
+              And user gives Application name as "sample-upload-app" and workload Name as "sample-yaml-upload-1"
+              And user clicks on Create
+             Then user is redirected to topology
+              And user can see a toast notification of JAR file uploading with link to build logs
+              And user can see deployment "sample-yaml-upload-1" in application "sample-upload-app" is created in topology
+
+
+        @regression, @manual
+        Scenario: Drag and drop Incompatible file in topology chart view
+            Given user has a incompatible file
+              And user is at the Topology chart view
+             When user drags and drops the file on topology
+             Then a toast warning message will appear stating that the file is invalid.
+
+
+        @regression, @manual
+        Scenario: Exiting the browser while an upload is in progress
+            Given user is uploading a jar file
+              And user is at the Topology chart view
+             When user tries to exist the browser
+             Then a web alert would appear asking the user if they really wanted to leave the page with Leave and Skip button
+
+
+        @regression, @manual
+        Scenario: View shortcuts menu
+            Given user has uploaded a jar file
+             When user clicks on View shortcuts
+             Then user sees shortcut for Move
+              And user sees shortcut for Edit Application grouping
+              And user sees shortcut for Access context menu
+              And user sees shortcut for View details in side panel
+              And user sees shortcut for Access create connector handle
+              And user sees shortcut for Qpen quick search modal
+              And user sees shortcut for Drag and drop a JAR file into Topology
