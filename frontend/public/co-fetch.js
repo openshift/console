@@ -36,9 +36,7 @@ const validateStatus = (response, url) => {
 
   if (response.status === 401) {
     //authSvc.logout(window.location.pathname);
-    
     //keycloak.logout();
-    
     // return response.json().then(json => {
     //   const error = new Error(json.message || 'Authorization failed.');
     //   error.response = response;
@@ -117,32 +115,8 @@ export const coFetch = (url, options = {}, timeout = 60000) => {
     delete allOptions.headers['X-CSRFToken'];
   }
 
-  if (window.SERVER_FLAGS.releaseModeFlag) {
-    if (!!getAccessToken()) {
-      allOptions.headers.Authorization = 'Bearer ' + getAccessToken();
-      const fetchPromise = fetch(url, allOptions).then(response => validateStatus(response, url));
-
-      // return fetch promise directly if timeout <= 0
-      if (timeout < 1) {
-        return fetchPromise;
-      }
-
-      const timeoutPromise = new Promise((unused, reject) => setTimeout(() => reject(new TimeoutError(url, timeout)), timeout));
-
-      // Initiate both the fetch promise and a timeout promise
-      return Promise.race([fetchPromise, timeoutPromise]);
-    } else {
-      // return fetch promise directly if timeout <= 0
-      if (timeout < 1) {
-        return fetchPromise;
-      }
-
-      const timeoutPromise = new Promise((unused, reject) => setTimeout(() => reject(new TimeoutError(url, timeout)), timeout));
-
-      // Initiate both the fetch promise and a timeout promise
-      return Promise.race([timeoutPromise]);
-    }
-  } else {
+  if (!!getAccessToken()) {
+    allOptions.headers.Authorization = 'Bearer ' + getAccessToken();
     const fetchPromise = fetch(url, allOptions).then(response => validateStatus(response, url));
 
     // return fetch promise directly if timeout <= 0
@@ -154,6 +128,16 @@ export const coFetch = (url, options = {}, timeout = 60000) => {
 
     // Initiate both the fetch promise and a timeout promise
     return Promise.race([fetchPromise, timeoutPromise]);
+  } else {
+    // return fetch promise directly if timeout <= 0
+    if (timeout < 1) {
+      return fetchPromise;
+    }
+
+    const timeoutPromise = new Promise((unused, reject) => setTimeout(() => reject(new TimeoutError(url, timeout)), timeout));
+
+    // Initiate both the fetch promise and a timeout promise
+    return Promise.race([timeoutPromise]);
   }
 };
 

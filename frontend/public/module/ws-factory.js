@@ -21,7 +21,7 @@ function createURL(host, path) {
   }
 
   if (path) {
-    if (window.SERVER_FLAGS.releaseModeFlag && !!getAccessToken()) {
+    if (!!getAccessToken()) {
       if (path.indexOf('?') !== -1) {
         url += path + '&token=' + getAccessToken();
       } else {
