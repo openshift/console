@@ -129,9 +129,12 @@ export const PipelineResourceListFilterLabels = {
  * Appends the pipeline run status to each tasks in the pipeline.
  * @param pipeline
  * @param pipelineRun
+ * @param isFinallyTasks
  */
-export const appendPipelineRunStatus = (pipeline, pipelineRun) => {
-  return _.map(pipeline.spec.tasks, (task) => {
+export const appendPipelineRunStatus = (pipeline, pipelineRun, isFinallyTasks = false) => {
+  const tasks = (isFinallyTasks ? pipeline.spec.finally : pipeline.spec.tasks) || [];
+
+  return tasks.map((task) => {
     if (!pipelineRun.status) {
       return task;
     }
@@ -246,6 +249,9 @@ export const getPipelineTasks = (
   });
   return out;
 };
+
+export const getFinallyTasksWithStatus = (pipeline: PipelineKind, pipelineRun: PipelineRunKind) =>
+  appendPipelineRunStatus(pipeline, pipelineRun, true);
 
 export const containerToLogSourceStatus = (container: ContainerStatus): string => {
   if (!container) {
