@@ -68,10 +68,10 @@ const validateStatus = (response, url) => {
       reason = `Error "${cause.message}" for field "${cause.field}".`;
     }
     if (!reason) {
-      reason = json.message;
+      reason = json?.message;
     }
     if (!reason) {
-      reason = json.error;
+      reason = json?.error;
     }
     if (!reason) {
       reason = response.statusText;
