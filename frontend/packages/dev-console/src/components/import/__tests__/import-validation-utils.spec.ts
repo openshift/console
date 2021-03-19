@@ -1,7 +1,12 @@
 import { cloneDeep } from 'lodash';
 import { TFunction } from 'i18next';
 import { CREATE_APPLICATION_KEY, UNASSIGNED_KEY } from '@console/topology/src/const';
-import { validationSchema, detectGitType, detectGitRepoName } from '../import-validation-utils';
+import {
+  validationSchema,
+  detectGitType,
+  detectGitRepoName,
+  createComponentName,
+} from '../import-validation-utils';
 import { mockFormData } from '../__mocks__/import-validation-mock';
 import { GitTypes } from '../import-types';
 import { serverlessCommonTests } from './serverless-common-tests';
@@ -36,6 +41,32 @@ describe('ValidationUtils', () => {
 
       const gitType3 = detectGitType('git@bitbucket.org:atlassian_tutorial/helloworld.git');
       expect(gitType3).toEqual(GitTypes.bitbucket);
+    });
+  });
+
+  describe('createComponentName', () => {
+    const invalidConvertedtoValidNamePair: { [key: string]: string } = {
+      '0name': 'ocp-0name',
+      '-name': 'ocp--name',
+      'name-': 'ocp-name',
+      'invalid&name': 'ocp-invalidname',
+      'invalid name': 'ocp-invalidname',
+      'invalid-Name': 'ocp-invalid-name',
+    };
+    const validNames: string[] = ['name', 'valid-name', 'name0', 'name-0'];
+
+    Object.keys(invalidConvertedtoValidNamePair).forEach((invalidName) => {
+      it(`should convert ${invalidName} to a valid k8s name`, () => {
+        expect(createComponentName(invalidName)).toEqual(
+          invalidConvertedtoValidNamePair[invalidName],
+        );
+      });
+    });
+
+    validNames.forEach((validName) => {
+      it(`should leave ${validName} unchanged`, () => {
+        expect(createComponentName(validName)).toEqual(validName);
+      });
     });
   });
 

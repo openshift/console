@@ -17,6 +17,7 @@ import {
   gitUrlRegex,
   resourcesValidationSchema,
   devfileValidationSchema,
+  nameRegex,
 } from './validation-schema';
 import { healthChecksProbesValidationSchema } from '../health-checks/health-checks-probe-validation-utils';
 
@@ -70,4 +71,12 @@ export const detectGitRepoName = (url: string): string | undefined => {
   }
 
   return _.kebabCase(url.split('/').pop());
+};
+
+export const createComponentName = (nameString: string): string => {
+  const prefixToValidate = 'ocp-';
+  if (!nameRegex.test(nameString)) {
+    return `${prefixToValidate}${nameString.replace(/[^-a-zA-Z0-9]|(-*)$/g, '').toLowerCase()}`;
+  }
+  return nameString;
 };
