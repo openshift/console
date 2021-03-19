@@ -177,4 +177,14 @@ describe('ResourceDropdown test suite', () => {
     component.setProps({ resources: [] });
     expect(spy).toHaveBeenCalledWith('#CREATE_APPLICATION_KEY#', undefined, undefined);
   });
+
+  it('should show error if loadError', () => {
+    const spy = jest.fn();
+    const component = shallow(componentFactory({ onChange: spy }));
+    mockDropdownData[0].data = [];
+    mockDropdownData[0].loadError = 'Error in loading';
+    component.setProps({ resources: mockDropdownData, loadError: 'Error in loading' });
+    const titleWraper = shallow(component.state('title'));
+    expect(titleWraper.text()).toBe('console-shared~Error loading - {{placeholder}}');
+  });
 });

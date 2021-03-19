@@ -109,13 +109,13 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
       title,
       actionItems,
     } = nextProps;
-    if (!loaded) {
+    if (!loaded && !loadError) {
       this.setState({ title: <LoadingInline /> });
       return;
     }
 
     // If autoSelect is true only then have an item pre-selected based on selectedKey.
-    if (!autoSelect && (!this.props.loaded || !selectedKey)) {
+    if (!this.props.loadError && !autoSelect && (!this.props.loaded || !selectedKey)) {
       this.setState({
         title: <span className="btn-dropdown__item--placeholder">{placeholder}</span>,
       });
@@ -129,11 +129,12 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
           </span>
         ),
       });
+      return;
     }
 
     const resourceList = this.getDropdownList({ ...this.props, ...nextProps }, true);
     // set placeholder as title if resourceList is empty no actionItems are there
-    if (loaded && _.isEmpty(resourceList) && !actionItems && placeholder && !title) {
+    if (loaded && !loadError && _.isEmpty(resourceList) && !actionItems && placeholder && !title) {
       this.setState({
         title: <span className="btn-dropdown__item--placeholder">{placeholder}</span>,
       });
