@@ -44,7 +44,11 @@ export const ImageStreamReducer = (state: ImageStreamState, action: ImageStreamA
   }
 };
 
-const ImageStream: React.FC<{ disabled?: boolean }> = ({ disabled = false }) => {
+const ImageStream: React.FC<{ disabled?: boolean; label?: string; required?: boolean }> = ({
+  disabled = false,
+  label,
+  required = false,
+}) => {
   const { t } = useTranslation();
   const {
     values: { imageStream, project, registry, isi },
@@ -82,6 +86,8 @@ const ImageStream: React.FC<{ disabled?: boolean }> = ({ disabled = false }) => 
           fieldId="image-stream-dropdowns"
           validated={validated}
           helperTextInvalid={helperTextInvalid}
+          label={label}
+          required={required}
         >
           <div className="row">
             <div className="col-lg-4 col-md-4 col-sm-4 col-xs-12">
