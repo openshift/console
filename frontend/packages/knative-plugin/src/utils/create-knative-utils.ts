@@ -4,18 +4,21 @@ import { getAppLabels, mergeData } from '@console/dev-console/src/utils/resource
 import { getProbesData } from '@console/dev-console/src/components/health-checks/create-health-checks-probe-utils';
 import {
   DeployImageFormData,
+  FileUploadData,
   GitImportFormData,
+  UploadJarFormData,
 } from '@console/dev-console/src/components/import/import-types';
 import { ServiceModel } from '../models';
 
 export const getKnativeServiceDepResource = (
-  formData: GitImportFormData | DeployImageFormData,
+  formData: GitImportFormData | DeployImageFormData | UploadJarFormData,
   imageStreamUrl: string,
   imageStreamName?: string,
   imageStreamTag?: string,
   imageNamespace?: string,
   annotations?: { [name: string]: string },
   originalKnativeService?: K8sResourceKind,
+  fileUpload?: FileUploadData,
 ): K8sResourceKind => {
   const {
     name,
@@ -78,7 +81,7 @@ export const getKnativeServiceDepResource = (
         ...labels,
         ...(!create && { 'serving.knative.dev/visibility': `cluster-local` }),
       },
-      annotations,
+      annotations: fileUpload ? { ...annotations, isFromJarUpload: 'true' } : annotations,
     },
     spec: {
       template: {
@@ -116,7 +119,9 @@ export const getKnativeServiceDepResource = (
                 ],
               }),
               imagePullPolicy: imgPullPolicy,
-              env,
+              env: fileUpload?.javaArgs
+                ? [...env, { name: 'JAVA_ARGS', value: fileUpload.javaArgs }]
+                : env,
               resources: {
                 ...((cpuLimit || memoryLimit) && {
                   limits: {

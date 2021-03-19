@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { GitImportFormData, DeployImageFormData } from '../import-types';
+import { GitImportFormData, DeployImageFormData, UploadJarFormData } from '../import-types';
 import PortInputField from '../route/PortInputField';
 
 const ServerlessRouteSection: React.FC = () => {
@@ -11,7 +11,7 @@ const ServerlessRouteSection: React.FC = () => {
       image: { ports },
       route: { defaultUnknownPort },
     },
-  } = useFormikContext<DeployImageFormData | GitImportFormData>();
+  } = useFormikContext<DeployImageFormData | GitImportFormData | UploadJarFormData>();
   const placeholderPort = defaultUnknownPort;
   const portOptions = ports.map((port) => port?.containerPort.toString());
   return (

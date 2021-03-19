@@ -1,6 +1,10 @@
 import * as _ from 'lodash';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { GitImportFormData, DeployImageFormData } from '../components/import/import-types';
+import {
+  GitImportFormData,
+  DeployImageFormData,
+  UploadJarFormData,
+} from '../components/import/import-types';
 import {
   getAppLabels,
   getPodLabels,
@@ -13,13 +17,13 @@ import { makePortName } from './imagestream-utils';
 export const dryRunOpt = { queryParams: { dryRun: 'All' } };
 
 const isDeployImageFormData = (
-  formData: DeployImageFormData | GitImportFormData,
+  formData: DeployImageFormData | GitImportFormData | UploadJarFormData,
 ): formData is DeployImageFormData => {
   return 'isi' in (formData as DeployImageFormData);
 };
 
 export const createService = (
-  formData: DeployImageFormData | GitImportFormData,
+  formData: DeployImageFormData | GitImportFormData | UploadJarFormData,
   imageStreamData?: K8sResourceKind,
   originalService?: K8sResourceKind,
 ): K8sResourceKind => {
@@ -98,7 +102,7 @@ export const createService = (
 };
 
 export const createRoute = (
-  formData: GitImportFormData | DeployImageFormData,
+  formData: GitImportFormData | DeployImageFormData | UploadJarFormData,
   imageStreamData?: K8sResourceKind,
   originalRoute?: K8sResourceKind,
 ): K8sResourceKind => {

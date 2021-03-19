@@ -19,12 +19,12 @@ import {
   getSampleRef,
   getSampleContextDir,
 } from '../../utils/imagestream-utils';
-import { healthChecksProbeInitialData } from '../health-checks/health-checks-probe-utils';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import { detectGitType, validationSchema } from './import-validation-utils';
 import { createOrUpdateResources } from './import-submit-utils';
-import { GitImportFormData, Resources } from './import-types';
+import { BaseFormData, GitImportFormData } from './import-types';
 import ImportSampleForm from './ImportSampleForm';
+import { getBaseInitialValues } from './form-initial-values';
 
 type ImportSamplePageProps = RouteComponentProps<{ ns?: string; is?: string; isNs?: string }>;
 
@@ -59,13 +59,10 @@ const ImportSamplePage: React.FC<ImportSamplePageProps> = ({ match }) => {
   const gitDir = getSampleContextDir(tag);
   const gitType = detectGitType(gitUrl);
 
+  const initialBaseValues: BaseFormData = getBaseInitialValues(namespace, defaultApplicationGroup);
   const initialValues: GitImportFormData = {
+    ...initialBaseValues,
     name: `${imageName}-sample`,
-    project: {
-      name: namespace || '',
-      displayName: '',
-      description: '',
-    },
     application: {
       initial: defaultApplicationGroup,
       name: defaultApplicationGroup,
@@ -84,86 +81,22 @@ const ImportSamplePage: React.FC<ImportSamplePageProps> = ({ match }) => {
       dockerfilePath: 'Dockerfile',
     },
     image: {
+      ...initialBaseValues.image,
       selected: imageName,
-      recommended: '',
       tag: tag.name,
       tagObj: tag,
-      ports: [],
-      isRecommending: false,
-      couldNotRecommend: false,
-    },
-    route: {
-      disable: false,
-      create: true,
-      targetPort: '',
-      defaultUnknownPort: 8080,
-      path: '',
-      hostname: '',
-      secure: false,
-      tls: {
-        termination: '',
-        insecureEdgeTerminationPolicy: '',
-        caCertificate: '',
-        certificate: '',
-        destinationCACertificate: '',
-        privateKey: '',
-      },
-    },
-    resources: Resources.Kubernetes,
-    serverless: {
-      scaling: {
-        minpods: '',
-        maxpods: '',
-        concurrencytarget: '',
-        concurrencylimit: '',
-        autoscale: {
-          autoscalewindow: '',
-          autoscalewindowUnit: '',
-          defaultAutoscalewindowUnit: 's',
-        },
-        concurrencyutilization: '',
-      },
     },
     pipeline: {
       enabled: false,
     },
     build: {
-      env: [],
+      ...initialBaseValues.build,
       triggers: {
         webhook: true,
         image: true,
         config: true,
       },
-      strategy: 'Source',
     },
-    deployment: {
-      env: [],
-      triggers: {
-        image: true,
-        config: true,
-      },
-      replicas: 1,
-    },
-    labels: {},
-    limits: {
-      cpu: {
-        request: '',
-        requestUnit: 'm',
-        defaultRequestUnit: 'm',
-        limit: '',
-        limitUnit: 'm',
-        defaultLimitUnit: 'm',
-      },
-      memory: {
-        request: '',
-        requestUnit: 'Mi',
-        defaultRequestUnit: 'Mi',
-        limit: '',
-        limitUnit: 'Mi',
-        defaultLimitUnit: 'Mi',
-      },
-    },
-    healthChecks: healthChecksProbeInitialData,
   };
 
   const handleSubmit = (values, actions) => {
