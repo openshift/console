@@ -356,9 +356,9 @@ const createConnectorCallback = () => (
     return Promise.resolve(createVisualConnector(source, target));
   }
 
-  const creator = createConnectors.find((getter) => !!getter(dropHints));
+  const creator = createConnectors.find((getter) => !!getter(dropHints, source, target));
   if (creator) {
-    return creator(dropHints)(source, target);
+    return creator(dropHints, source, target)(source, target);
   }
   return Promise.resolve(createVisualConnector(source, target));
 };
