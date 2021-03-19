@@ -1,13 +1,14 @@
+@topology
 Feature: Editing an application
-	As a user, I want to edit an application   
+              As a user, I want to edit an application
 
         Background:
             Given user is at developer perspective
-              And user has selected namespace "aut-topology-editing-app-node"
+              And user has created or selected namespace "aut-topology-editing-app-node"
 
 
-        @regression, @smoke
-        Scenario: Editing a workload : T-06-TC14, T-06-TC15
+        @smoke
+        Scenario Outline: Editing a workload : T-06-TC14, T-06-TC15
             Given user has created workload "<workload_name>"  with resource type "<resource_type>"
               And user is at the Topolgy page
              When user right clicks on the node "<workload_name>" to open context menu
