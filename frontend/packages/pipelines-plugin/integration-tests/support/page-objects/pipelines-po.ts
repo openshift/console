@@ -11,7 +11,7 @@ export const pipelineBuilderPO = {
     switchToFormView: '[id="form-radiobutton-editorType-form-field"]',
     name: '#form-input-formData-name-field',
     taskDropdown: '[data-id="initial-node"]',
-    task: '[data-type="builder"]] .odc-pipeline-vis-task',
+    task: '[data-type="builder"] .odc-pipeline-vis-task',
     plusTaskIcon: 'g.odc-plus-node-decorator',
     seriesTask: '[data-id^="has-run-after-"][data-kind="node"]',
     parallelTask: '[data-id^="shared-parallel-"][data-kind="node"]',
@@ -29,7 +29,8 @@ export const pipelineBuilderPO = {
     sidePane: {
       dialog: 'div.odc-sidebar',
       displayName: '#task-name',
-      inputResource: 'div.pf-c-form [data-test-id="dropdown-button"]',
+      inputResource: '.odc-task-sidebar__resource [data-test-id="dropdown-button"]',
+      workSpace: '.odc-task-sidebar__workspace [data-test-id="dropdown-button"] span',
       imageName: '#IMAGE',
       script: '#SCRIPT',
       args: '#ARGS-0',
@@ -52,7 +53,6 @@ export const pipelineBuilderPO = {
     alertDialog: 'form[name="form"]',
     title: 'form[name="form"] h2',
     continue: '#confirm-action',
-    cancel: '[data-test-id="modal-cancel-action"]',
   },
   yamlCreatePipeline: {
     helpText: 'p.help-block',
@@ -75,14 +75,14 @@ export const pipelineBuilderPO = {
 
 export const pipelineDetailsPO = {
   title: '[data-test-section-heading="Pipeline details"]',
-  actionsMenu: '[data-test-id="actions-menu-button"]',
   detailsTab: '[data-test-id="horizontal-link-details-page~Details"]',
   metricsTab: '[data-test-id="horizontal-link-Metrics"]',
   yamlTab: '[data-test-id="horizontal-link-details-page~YAML"]',
   pipelineRunsTab: '[data-test-id="horizontal-link-Pipeline Runs"]',
   parametersTab: '[data-test-id="horizontal-link-Parameters"]',
-  ResourcesTab: '[data-test-id="horizontal-link-Resources"]',
+  resourcesTab: '[data-test-id="horizontal-link-Resources"]',
   details: {
+    sectionTitle: '[data-test-section-heading="Pipeline details"]',
     triggerTemplateSection: 'div.odc-trigger-template-list',
     triggerTemplateLink: 'a[data-test-id^="trigger-template-"]',
     fieldNames: {
@@ -107,11 +107,22 @@ export const pipelineDetailsPO = {
       tasks: '.odc-dynamic-resource-link-list--addSpaceBelow',
     },
   },
+  yaml: {
+    yamlEditor: '[data-mode-id="yaml"]',
+  },
+  metrics: {
+    emptyMessage: '.pf-c-empty-state__body',
+    timeRange: '',
+    refreshInterval: '',
+    graphTitle: '.co-dashboard-card__title',
+  },
+  pipelineRuns: {
+    pipelineRunIcon: '[title="PipelineRun"]',
+  },
 };
 
 export const triggerTemplateDetailsPO = {
   title: '[data-test-section-heading="Trigger Template details"]',
-  actions: '[data-test-id="actions-menu-button"]',
   detailsTab: '[data-test-id="horizontal-link-details-page~Details"]',
   yamlTab: '[data-test-id="horizontal-link-details-page~YAML"]',
   details: {
@@ -138,7 +149,6 @@ export const triggerTemplateDetailsPO = {
 
 export const eventListenerDetailsPO = {
   title: '[data-test-section-heading="Event Listener details"]',
-  actions: '[data-test-id="actions-menu-button"]',
   details: {
     triggerBindingLink: '[data-test-id="github-pullreq"]',
     triggerTemplateIcon: '[title="TriggerTemplate"]',
@@ -148,11 +158,9 @@ export const eventListenerDetailsPO = {
 
 export const clusterTriggerBindingDetailsPO = {
   title: '[data-test-section-heading="ClusterTriggerBinding details"]',
-  actions: '[data-test-id="actions-menu-button"]',
 };
 
 export const pipelineRunDetailsPO = {
-  actions: '[data-test-id="actions-menu-button"]',
   logsTab: '[data-test-id="horizontal-link-Logs"]',
   yamlTab: '[data-test-id="horizontal-link-details-page~YAML"]',
   detailsTab: '[data-test-id="horizontal-link-details-page~Details"]',
@@ -171,6 +179,15 @@ export const pipelineRunDetailsPO = {
   },
   logs: {
     logPage: '[data-test-id="logs-task-container"]',
+  },
+  taskRuns: {
+    columnNames: {
+      name: '[data-label="Name"]',
+      task: '[data-label="Task"]',
+      pod: '[data-label="Pod"]',
+      status: '[data-label="Status"]',
+      started: '[data-label="Started"]',
+    },
   },
 };
 
@@ -196,7 +213,6 @@ export const pipelinesPO = {
   },
   addTrigger: {
     add: '#confirm-action',
-    cancel: '[data-test-id="modal-cancel-action"]',
     gitProviderType: '[id$="triggerBinding-name-field"]',
     gitUrl: '#form-input-resources-0-data-params-url-field',
     revision: '#form-input-resources-0-data-params-revision-field',
@@ -210,7 +226,6 @@ export const pipelinesPO = {
   removeTrigger: {
     triggerTemplate: '#form-dropdown-selectedTrigger-field',
     remove: '#confirm-action',
-    cancel: '[data-test-id="modal-cancel-action"]',
   },
   startPipeline: {
     sectionTitle: 'h2.odc-form-section__heading',
@@ -219,7 +234,6 @@ export const pipelinesPO = {
     revision: '#form-input-resources-0-data-params-revision-field',
     sharedWorkspace: '#form-dropdown-workspaces-0-type-field',
     start: '#confirm-action',
-    cancel: '[data-test-id="modal-cancel-action"]',
     secretForm: '.odc-secret-form',
     advancedOptions: {
       secretFormTitle: 'h1.odc-secret-form__title',
@@ -238,6 +252,5 @@ export const pipelinesPO = {
   },
   deletePipeline: {
     delete: '#confirm-action',
-    cancel: '[data-test-id="modal-cancel-action"]',
   },
 };

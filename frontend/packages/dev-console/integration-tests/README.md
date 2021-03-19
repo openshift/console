@@ -74,56 +74,53 @@ frontend/packages/dev-console/integration-tests/
 
 ## This file consists of guide lines to create automation scripts
 
-## Designing Gherkin scripts
+## Designing Gherkin scripts [.feature]
 
-### Feature files
+1. Design the gherkin scripts as per the [Best Practices](frontend/packages/dev-console/integration-tests/features/BestPractices.md)
+2. Design Gherkin scripts in same repo, where intellisense is provided by installed plugins to select the existing steps
+3. Execute `yarn run gherkin-lint` which scans the feature files as per the linter [configuration file](frontend/.gherkin-lintrc)
+4. Always comment the existing steps if it is related to older versions
 
-1. Below practices helpful to design the gherkin scripts
-   [Best Practices for writing gherkin scripts](frontend/packages/dev-console/integration-tests/features/BestPractices.md)
-2. Use the same repo for writing gherkin scripts, so that installed plugins gives you the intellisense to select the existing steps which helps to improve re-usability.
-3. To maintain gherkin standards, linter is used [configuration file](frontend/.gherkin-lintrc) is available
-4. Execute the `yarn run gherkin-lint` command for every pr related to feature file, this helps in maintaining consistency
-5. Always comment the steps if not useful [Don't delete them]
+### Designing Step Definition files [.ts]
 
-## Scenario files
+#### Generate Step Definition files
 
-### Generate Step Definition files
+1. Navigate to the "login.feature" file
+2. Select the command "Generate Steps from feature file" (By pressing "Ctrl+Shift+P" keys, commands will appear in vs code),
+3. "login" folder is generated with "login.ts" step definition file
+4. Add the comments wherever required
+
+#### Guidelines to design Step Definition files
 
 1. Only validations should be present
 2. Don't use test data directly - It needs to be passed via data files (will use .ts files for now )
-3. Navigate to the "login.feature" file
-4. Select the command "Generate Steps from feature file" (By pressing "Ctrl+Shift+P" keys, commands will appear in vs code),
-5. "login" folder is generated with "login.ts" step definition file
-6. Add the comments wherever required
-7. Avoid hard coded sleep statements like `cy.wait()`
-
-## View files
+3. Avoid hard coded sleep statements like `cy.wait()`
 
 ### pages
 
-1. Page objects should be id, css selectors, buttontext etc.. [No XPath]- Already following
-1. Use arrow functions which helps to reduce the lines of code and it has other benefits as well
-1. Logics should be implemented within this files
-1. Don't use hard coded values like `waitTime`
+1. Use arrow functions
+2. Implement the logics
+3. Don't use hard coded values like `waitTime`
 
 ### page objects
 
-1. Page objects should be id, css selectors etc.. [No XPath]- Already following
+1. Page objects should be id, css selectors etc.. [No XPath]
 
    - Each section should have one object as shown below (It helps to reduce the import list in scenarios)
 
 ```ts
-export const deleteDeployPopupObj = {
-   form: element(by.css('form.modal-content')),
-   checkbox: element(by.css('input[type="checkbox"]')),
-   cancel: element(by.css('[data-test-id="modal-cancel-action"]')),
-   delete: element(by.css('#confirm-action'))
-}
+export const devFilePO = {
+  form: '[data-test-id="import-devfile-form"]',
+  formFields: {
+    validatedMessage: '#form-input-git-url-field-helper',
+    advancedGitOptions: {
+      gitReference: '#form-input-git-ref-field',
+      contextDir: 'form-input-git-dir-field',
+      sourceSecret: '',
+    },
+  },
+};
 ```
-
-2. Use arrow functions which helps to reduce the lines of code and it has other benefits as well
-3. Logics should be implemented within these files
-4. Don't use hard coded values [like waitTime]
 
 ### TestData files
 
@@ -194,50 +191,56 @@ export const deleteDeployPopupObj = {
 
 ## Scripts Execution
 
-To execute the scripts, always update config file [Cypress.json file](frontend/packages/dev-console/integration-tests/cypress.json) as per the requirement
-
-### Execute single file :
-
-If you need to execute "regression" tagged scripts present in single feature file then follow below process
-
-## TestData files
+### Pre-Condition to run on localhost
 
 1. Build the environment in your local as per the README.md present in console
-2. Update the TAGS under env section in config file [Cypress.json file](frontend/packages/dev-console/integration-tests/cypress.json) as
+2. To execute the scripts, always update config file [Cypress.json file](frontend/packages/dev-console/integration-tests/cypress.json) as per the requirement
+
+### Execute cypress scripts from cypress Dashboard
+
+If you need to execute "regression" tagged scripts follow below process
+
+1. Update the TAGS under env section in config file [Cypress.json file](frontend/packages/dev-console/integration-tests/cypress.json) as
    "env": {
    "TAGS": "@regression and not @manual"
    },
-3. In command prompt, navigate to frontend folder and execute the command "yarn test-cypress-devconsole"
-4. Select the feature file and regression scripts get executed
+2. In command prompt, navigate to frontend folder and execute the command "yarn test-cypress-devconsole"
+3. Select the browser present on top right corner of the dashboard [Note: it displays all installed browsers in your local machine]
 
-5. All test data should be maintained in these files
-6. Comment the scenario file name, If data is relevant to specific scenario
+#### Single file execution
 
-### Execute multiple file :
+Select the appropriate feature file and regression scripts get executed
 
-## Utilities
+#### Multiple files execution
 
-If you need to execute "regression" tagged scripts present in single feature file then follow below process
+Select the Run button present on top right corner
 
-1. If there is any functions which needs to be used in multiple files, include it in appFunctions file
-2. If functions are generic, include it in elementInteractions file
-3. Build the environment in your local as per the README.md present in console
-4. Update the TAGS under env section in config file [Cypress.json file](frontend/packages/dev-console/integration-tests/cypress.json) as
+### Execute cypress scripts from CLI
+
+If you need to execute "smoke" tagged scripts present in single feature file then follow below process
+
+1. Update the TAGS under env section in config file [Cypress.json file](frontend/packages/dev-console/integration-tests/cypress.json) as
    "env": {
-   "TAGS": "@regression and not @manual"
+   "TAGS": "@smoke and not @manual"
    },
-5. Navigate to [package.json](frontend/package.json) and update command "test-cypress-devconsole-headless" as per requirement
-6. In command prompt, navigate to frontend folder and execute the command "yarn test-cypress-devconsole-headless"
-7. All the regression scenarios get executed [Note: currently implementation is not done]
+2. In command prompt, navigate to frontend folder and execute the command "yarn test-cypress-devconsole-headless"
+3. All the regression scenarios get executed [Note: currently implementation is not done]
 
-## Generic standards
+#### Reporting
 
-## References
+1. [Reports](frontend/gui_test_screenshots) are generated
+2. In command prompt, navigate to frontend folder and execute the command `yarn run cypress-merge`
+3. Then execute command `yarn run cypress-generate`
+4. cypress-report.html file is generated
+
+## Generic Guidelines
 
 1. Don't use static sleep statements (browser.sleep)
 2. Comments should be included wherever required
 3. Don't include console.log statements while raising PR
 4. .gherkin-lintrc configuration file present in frontend folder is used to set Gherkin standards
 5. Execute the "yarn run gherkin-lint" command for every QE pr
+
+## References
    [Cypress Cucumber Handbook](https://docs.google.com/document/d/1hL_k5r6CVxbY5va6RPPCJfndQjLwSdt6SUKj-kWLqig/edit#)
    [Cypress Cucumber Implementation](https://docs.google.com/presentation/d/1GyF3WWDnmNVsEn_zIPO3ZyLjSjV3B5RVEdlauiZonP8/edit#slide=id.p1)

@@ -3,16 +3,16 @@ Feature: Create the pipeline from builder page
               As a user, I want to create the pipeline with different set of series & parallel tasks
 
         Background:
-            Given user has created or selected namespace "aut-pipe-builder"
+            Given user has created or selected namespace "aut-pipelines"
 
 
         @smoke
         Scenario: user navigates to pipelines page from Add page on selecting Pipeline card  : A-02-TC01
              When user selects "Pipeline" card from add page
-             Then user redirects to Pipelines page
+             Then user redirects to Pipeline Builder page
 
 
-        @regression
+        @regression @to-do
         Scenario: Pipeline Builder page : P-03-TC02
             Given user is at pipelines page
              When user clicks Create Pipeline button on Pipelines page
@@ -75,7 +75,7 @@ Feature: Create the pipeline from builder page
         Examples:
                   | pipeline_name | task_name        | resource_type | resource_name | tc_no     |
                   | p-git         | openshift-client | Git           | git repo      | P-03-TC11 |
-                  | p-img         | task-image       | Image         | image repo    | P-03-TC05 |
+                  | p-img         | buildah          | Image         | image repo    | P-03-TC05 |
                   | p-storage     | task-storage     | Storage       | storage repo  | P-03-TC06 |
                   | p-cluster     | task-cluster     | Cluster       | cluster repo  | P-03-TC07 |
 
@@ -99,7 +99,7 @@ Feature: Create the pipeline from builder page
              Then user will be redirected to Pipeline Details page with header name "new-pipeline"
 
 
-        @regression
+        @regression @to-do
         Scenario: Create pipeline with Workspaces
             Given user is at Pipeline Builder page
              When user enters pipeline name as "pipeline-workspace"
@@ -115,7 +115,7 @@ Feature: Create the pipeline from builder page
               And user will see workspace mentioned as "git" in the Workspaces section of Pipeline Details page
 
 
-        @regression
+        @regression @to-do
         Scenario: Create pipeline with optional Workspaces
             Given user is at Pipeline Builder page
              When user enters pipeline name as "pipeline-workspace"

@@ -4,6 +4,7 @@ import { navigateTo } from '@console/dev-console/integration-tests/support/pages
 import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants';
 import { modal } from '@console/cypress-integration-tests/views/modal';
 import { pipelinesPO } from '../../page-objects/pipelines-po';
+import { pipelineActions } from '../../constants';
 
 Given('user has created pipeline {string} with git resources', (pipelineName: string) => {
   pipelinesPage.clickOnCreatePipeline();
@@ -34,8 +35,8 @@ Then(
 
 Given('user is at Start Pipeline modal for pipeline {string}', (pipelineName: string) => {
   navigateTo(devNavigationMenu.Pipelines);
-  pipelinesPage.selectKebabMenu(pipelineName);
-  cy.byTestActionID('Start').click();
+  pipelinesPage.search(pipelineName);
+  pipelinesPage.selectActionForPipeline(pipelineName, pipelineActions.Start);
   modal.modalTitleShouldContain('Start Pipeline');
 });
 

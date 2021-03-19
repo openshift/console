@@ -13,6 +13,8 @@ import { devNavigationMenu } from '@console/dev-console/integration-tests/suppor
 import { modal } from '@console/cypress-integration-tests/views/modal';
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 import { pipelinesPO } from '../../page-objects/pipelines-po';
+import { pipelineActions } from '../../constants';
+import { actionsDropdownMenu } from '../../pages/functions/common';
 
 When(
   'user selects {string} from the kebab menu for {string}',
@@ -28,7 +30,7 @@ Then('Git provider type field is enabled', () => {
 
 Then('Add button is disabled', () => {
   cy.get(pipelinesPO.addTrigger.add).should('be.disabled');
-  cy.get(pipelinesPO.addTrigger.cancel).click();
+  modal.cancel();
 });
 
 Given('user selected Add Trigger from kebab menu of pipeline {string}', (pipelineName: string) => {
@@ -54,7 +56,7 @@ Then('variables section displayed with message {string}', (text: string) => {
 
 Then('Add button is enabled', () => {
   cy.get(pipelinesPO.addTrigger.add).should('be.enabled');
-  cy.get(pipelinesPO.addTrigger.cancel).click();
+  modal.cancel();
 });
 
 Given('{string} is displayed on pipelines page', (pipelineName: string) => {
@@ -87,8 +89,7 @@ Given('pipeline {string} with trigger in pipelines page', (pipelineName: string)
   pipelineBuilderPage.createPipelineFromBuilderPage(pipelineName);
   cy.byLegacyTestID('breadcrumb-link-0').click();
   pipelinesPage.verifyNameInPipelinesTable(pipelineName);
-  pipelinesPage.selectKebabMenu(pipelineName);
-  cy.byTestActionID('Add Trigger').click();
+  pipelinesPage.selectActionForPipeline(pipelineName, pipelineActions.AddTrigger);
   pipelinesPage.addTrigger();
 });
 
@@ -129,7 +130,7 @@ Then(
 );
 
 Then('Actions dropdown display on the top right corner of the page', () => {
-  triggerTemplateDetailsPage.verifyActionsDropdown();
+  actionsDropdownMenu.verifyActionsMenu();
 });
 
 Given('user is at Trigger Template Details page of pipeline {string}', (pipelineName: string) => {
@@ -179,7 +180,7 @@ Then(
 );
 
 Then('Actions dropdown display on Cluster Trigger Binding page', () => {
-  clusterTriggerBindingDetailsPage.verifyActionsDropdown();
+  actionsDropdownMenu.verifyActionsMenu();
   navigateTo(devNavigationMenu.Pipelines);
 });
 
@@ -207,7 +208,7 @@ Then('trigger template dropdown displayed with help text Select Trigger Template
 
 Then('Remove button will be disabled', () => {
   cy.get(pipelinesPO.removeTrigger.remove).should('be.disabled');
-  cy.get(pipelinesPO.removeTrigger.cancel).click();
+  modal.cancel();
 });
 
 Then(

@@ -5,7 +5,7 @@
     "toConsole": false
   },
   "mochawesomeReporterOptions": {
-    "reportDir": "../../../gui_test_screenshots/",
+    "reportDir": "../../../gui_test_screenshots/pipelines-plugin",
     "reportFilename": "cypress_report_pipelines",
     "overwrite": false,
     "html": false,

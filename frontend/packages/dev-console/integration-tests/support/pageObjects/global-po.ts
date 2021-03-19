@@ -27,3 +27,7 @@ export const createSourceSecret = {
     sshPrivateKey: '[data-test-id="file-input-textarea"]',
   },
 };
+
+export const actionsMenu = '[data-test-id="actions-menu-button"]';
+export const search = '[data-test-id="item-filter"]';
+export const table = '[role="grid"]';

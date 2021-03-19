@@ -3,6 +3,7 @@ import { nav } from '@console/cypress-integration-tests/views/nav';
 import { devNavigationMenu, switchPerspective, pageTitle } from '../constants';
 import { devNavigationMenuPO } from '../pageObjects';
 import { modal } from '@console/cypress-integration-tests/views/modal';
+import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
 
 export const app = {
   waitForDocumentLoad: () => {
@@ -15,6 +16,9 @@ export const app = {
     cy.get('.pf-c-spinner', { timeout }).should('not.exist');
     app.waitForDocumentLoad();
   },
+  waitForNameSpacesToLoad: () => {
+    cy.byLegacyTestID('namespace-bar-dropdown').should('be.visible');
+  },
 };
 export const sidePane = {
   close: () => cy.get('button[aria-label="Close"]').click({ force: true }),
@@ -22,8 +26,12 @@ export const sidePane = {
 
 export const perspective = {
   switchTo: (perspectiveName: switchPerspective) => {
-    app.waitForLoad();
     nav.sidenav.switcher.changePerspectiveTo(perspectiveName);
+    app.waitForLoad();
+    if (switchPerspective.Developer) {
+      guidedTour.close();
+    }
+    nav.sidenav.switcher.shouldHaveText(perspectiveName);
   },
 };
 

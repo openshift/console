@@ -10,15 +10,6 @@ import {
 export const pipelineDetailsPage = {
   verifyTitle: (pipelineName: string) => detailsPage.titleShouldContain(pipelineName),
 
-  clickActionMenu: () => cy.byLegacyTestID('actions-menu-button').click(),
-
-  selectFromActionsDropdown: (action: string) => {
-    cy.get(pipelineDetailsPO.actionsMenu)
-      .should('be.enabled')
-      .click();
-    cy.byTestActionID(action).click();
-  },
-
   verifyTriggerTemplateSection: () =>
     cy.get(pipelineDetailsPO.details.triggerTemplateSection).should('be.visible'),
   verifyPage: () =>
@@ -30,7 +21,7 @@ export const pipelineDetailsPage = {
     cy.get(pipelineDetailsPO.yamlTab).should('be.visible');
     cy.get(pipelineDetailsPO.pipelineRunsTab).should('be.visible');
     cy.get(pipelineDetailsPO.parametersTab).should('be.visible');
-    cy.get(pipelineDetailsPO.ResourcesTab).should('be.visible');
+    cy.get(pipelineDetailsPO.resourcesTab).should('be.visible');
   },
 
   verifyFieldsInDetailsTab: () => {
@@ -44,6 +35,51 @@ export const pipelineDetailsPage = {
   },
 
   selectTriggerTemplateLink: () => cy.get(pipelineDetailsPO.details.triggerTemplateLink).click(),
+
+  selectTab: (tabName: string) => {
+    cy.log(`Selecting the ${tabName} tab`);
+    switch (tabName) {
+      case 'Details': {
+        cy.get(pipelineDetailsPO.detailsTab).click();
+        cy.get(pipelineDetailsPO.details.sectionTitle).should('be.visible');
+        break;
+      }
+      case 'YAML': {
+        cy.get(pipelineDetailsPO.yamlTab).click();
+        cy.get(pipelineDetailsPO.yaml.yamlEditor).should('be.visible');
+        break;
+      }
+      case 'Pipeline Runs': {
+        cy.get(pipelineDetailsPO.pipelineRunsTab).click();
+        cy.url().should('include', 'Runs');
+        break;
+      }
+      case 'Parameters': {
+        cy.get(pipelineDetailsPO.parametersTab).click();
+        cy.url().should('include', 'Parameters');
+        break;
+      }
+      case 'Resources': {
+        cy.get(pipelineDetailsPO.resourcesTab).click();
+        cy.url().should('include', 'resources');
+        break;
+      }
+      case 'Metrics': {
+        cy.get(pipelineDetailsPO.metricsTab).click();
+        cy.url().should('include', 'metrics');
+        break;
+      }
+      default: {
+        throw new Error(`tab doesn't exists, please check once again`);
+      }
+    }
+  },
+
+  selectPipelineRun: () => {
+    cy.get(pipelineDetailsPO.pipelineRuns.pipelineRunIcon)
+      .next('a')
+      .click();
+  },
 };
 
 export const triggerTemplateDetailsPage = {
@@ -71,7 +107,6 @@ export const triggerTemplateDetailsPage = {
       // );
     });
   },
-  verifyActionsDropdown: () => cy.get(triggerTemplateDetailsPO.actions).should('be.visible'),
   selectEventListener: () => cy.get(triggerTemplateDetailsPO.details.eventListenerLink).click(),
 };
 
@@ -97,7 +132,6 @@ export const eventListenerDetailsPage = {
       // cy.get(eventListenerDetailsPO.details.triggerTemplateIcon).should('be.visible');
     });
   },
-  verifyActionsDropdown: () => cy.get(eventListenerDetailsPO.actions).should('be.visible'),
   selectTriggerBindingLink: () => cy.get(eventListenerDetailsPO.details.triggerBindingLink).click(),
 };
 
@@ -122,5 +156,4 @@ export const clusterTriggerBindingDetailsPage = {
       cy.get(triggerTemplateDetailsPO.details.fieldNames.owner).should('be.visible');
     });
   },
-  verifyActionsDropdown: () => cy.get(clusterTriggerBindingDetailsPO.actions).should('be.visible'),
 };

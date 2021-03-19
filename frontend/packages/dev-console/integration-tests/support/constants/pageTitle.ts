@@ -35,4 +35,5 @@ export const pageTitle = {
   InstallOperator: 'Install Operator',
   InstalledOperators: 'Installed Operators',
   Environments: 'Environments',
+  PipelineRuns: 'PipelineRuns',
 };

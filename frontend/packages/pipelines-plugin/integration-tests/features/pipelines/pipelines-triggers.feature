@@ -3,13 +3,13 @@ Feature: Triggers
               As a user, I want to add or remove trigger details and verify the trigger for the git web hooks from pipeline
 
         Background:
-            Given user has created or selected namespace "aut-pipe-triggers"
+            Given user has created or selected namespace "aut-pipelines"
               And user is at pipelines page
 
 
         @regression
         Scenario: Variables section in Add Trigger modal details : P-09-TC02
-            Given user has created pipeline "pipe-task-with-resource" with git resources
+            Given user has created pipeline "pipe-trigger-one" with git resources
               And user selected Add Trigger from kebab menu of pipeline "pipe-task-with-resource"
              When user selects the "github-pullreq" from Git Provider Type field
               And user clicks on "Show Variables" link
@@ -47,7 +47,7 @@ Feature: Triggers
                   | trigger-three |
 
 
-        @smoke
+        @regression
         Scenario: Trigger template details page : P-09-TC05
             Given pipeline "git-pipeline" with trigger in pipelines page
               And user is at pipeline Details page of pipeline "git-pipeline"
@@ -58,7 +58,7 @@ Feature: Triggers
               And Actions dropdown display on the top right corner of the page
 
 
-        @smoke
+        @regression
         Scenario: Event Listener Details page : P-09-TC06, P-09-TC07
             Given pipeline "git-pipeline-events" with trigger in pipelines page
               And user is at Trigger Template Details page of pipeline "git-pipeline-events"
@@ -69,7 +69,7 @@ Feature: Triggers
               And Actions dropdown display on the top right corner of the page
 
 
-        @smoke
+        @regression
         Scenario: Cluster Trigger Binding Details page : P-09-TC08, P-09-TC09
             Given pipeline "git-pipeline-triggerbinding" with trigger in pipelines page
               And user is at Event Listener Details page of pipeline "git-pipeline-triggerbinding"
@@ -93,7 +93,7 @@ Feature: Triggers
                   | trigger-four  |
 
 
-        @smoke
+        # @smoke - Bug: ODC-5716 is raised for this scenario
         Scenario Outline: Remove the trigger from pipelines page : P-09-TC11
             Given pipeline "<pipeline_name>" with trigger in pipelines page
              When user selects "Remove Trigger" from the kebab menu for "<pipeline_name>"
@@ -108,7 +108,7 @@ Feature: Triggers
 
         @regression, @manual
         Scenario: Start the pipeline with secret by updating the git repo : P-10-TC01
-            Given pipeline "git-pipeline" with trigger in pipelines page
+            Given pipeline "trigger-six" with trigger in pipelines page
               And user is at pipeline trigger template page for pipeline "trigger-six"
              When user navigates to github repo url
               And user selects webhooks from github settings page

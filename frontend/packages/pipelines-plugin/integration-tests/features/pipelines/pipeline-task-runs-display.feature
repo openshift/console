@@ -3,17 +3,19 @@ Feature: Display task runs page
               As a developer, I would like to navigate from a PipelineRun to the related TaskRuns and their associated pods so that I can debug my pipelines by looking at the volumes, secrets, etc that are made available to the taskruns and pods.
 
         Background:
-            Given user has created or selected namespace "aut-pipe-task-runs"
+            Given user has created or selected namespace "aut-pipelines"
+              And user is at pipelines page
 
 
-        @regression, @to-do
+        @smoke
         Scenario: Task runs tab
-            Given user is at pipeline details page with pipeline runs
-             When user clicks on pipeline runs tab
-              And user clicks on a pipeline run to see Task Runs tab
+            Given pipeline run is displayed for "pipeline-tasks-one" with resource
+             When user clicks on pipeline "pipeline-tasks-one"
+              And user clicks on Pipeline Runs tab
+              And user clicks on a Pipeline Run
               And user clicks on Task Runs tab
              Then user can see different task runs based on number of tasks executed in pipeline
-              And user can see "Name", "Task", "Pod", "Status" and "Started" columns
+              And user can see Name, Task, Pod, Status and Started columns
 
 
         @regression, @to-do

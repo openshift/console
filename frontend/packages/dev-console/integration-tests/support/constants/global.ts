@@ -1,6 +1,6 @@
 export enum devNavigationMenu {
   Add = '+Add',
-  Topology = ' Topology',
+  Topology = 'Topology',
   Monitoring = 'Monitoring',
   Builds = 'Builds',
   Search = 'Search',
@@ -16,7 +16,7 @@ export enum devNavigationMenu {
 
 export enum switchPerspective {
   Developer = 'Developer',
-  Administrator = ' Administrator',
+  Administrator = 'Administrator',
 }
 
 export enum operators {

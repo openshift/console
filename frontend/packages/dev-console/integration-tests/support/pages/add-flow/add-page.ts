@@ -59,10 +59,13 @@ export const addPage = {
         cy.byLegacyTestID('operator-backed').click();
         detailsPage.titleShouldContain(pageTitle.OperatorBacked);
         break;
-      case 'Pipelines':
+      case 'Pipeline':
       case addOptions.Pipeline:
         cy.byLegacyTestID('pipeline').click();
-        cy.get('h1.odc-pipeline-builder-header__title').should('have.text', 'Pipeline Builder');
+        cy.get('.odc-pipeline-builder-header__title').should(
+          'have.text',
+          pageTitle.PipelineBuilder,
+        );
         break;
       case 'Yaml':
       case addOptions.YAML:

@@ -1,8 +1,9 @@
 import { operatorsPage } from '../operators-page';
 import { pageTitle } from '../../constants/pageTitle';
-import { operators } from '../../constants/global';
+import { operators, switchPerspective } from '../../constants/global';
 import { operatorsPO } from '../../pageObjects/operators-po';
-import { app, sidePane } from '../app';
+import { app, perspective, sidePane } from '../app';
+import { devNavigationMenuPO } from '../../pageObjects';
 
 export const installOperator = (operatorName: operators) => {
   operatorsPage.navigateToOperatorHubPage();
@@ -21,6 +22,29 @@ export const installOperator = (operatorName: operators) => {
     } else {
       cy.log(`${operatorName} Operator is already installed`);
       sidePane.close();
+    }
+  });
+};
+
+export const verifyAndInstallPipelinesOperator = () => {
+  perspective.switchTo(switchPerspective.Developer);
+  app.waitForNameSpacesToLoad();
+  app.waitForLoad();
+  cy.get(devNavigationMenuPO.pageSideBar).then(($ele) => {
+    if ($ele.find(devNavigationMenuPO.pipelines).length) {
+      cy.log(`${operators.PipelinesOperator} operator is already installed in the cluster`);
+    } else {
+      perspective.switchTo(switchPerspective.Administrator);
+      operatorsPage.navigateToInstallOperatorsPage();
+      operatorsPage.searchOperator(operators.PipelinesOperator);
+      cy.get('body', {
+        timeout: 50000,
+      }).then(($body) => {
+        if ($body.find(operatorsPO.installOperators.noOperatorsFound)) {
+          installOperator(operators.PipelinesOperator);
+        }
+      });
+      perspective.switchTo(switchPerspective.Developer);
     }
   });
 };

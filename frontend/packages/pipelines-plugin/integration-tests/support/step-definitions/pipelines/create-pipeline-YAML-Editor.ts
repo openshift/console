@@ -19,13 +19,13 @@ When('user creates pipeline resource using YAML editor from {string}', (yamlLoca
 });
 
 When(
-  'user creates pipeline using YAML and CLI {string} in {string}',
+  'user creates pipeline using YAML and CLI {string} in namespace {string}',
   (yamlFile: string, namespace: string) => {
     cy.exec(`oc apply -f ${yamlFile} -n ${namespace}`);
   },
 );
 
-Then('user will see pipeline {string} is displayed in pipelines page', (pipelineName: string) => {
+Then('user will see pipeline {string} in pipelines page', (pipelineName: string) => {
   navigateTo(devNavigationMenu.Add);
   navigateTo(devNavigationMenu.Pipelines);
   pipelinesPage.search(pipelineName);

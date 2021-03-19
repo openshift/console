@@ -4,40 +4,35 @@ Feature: Pipeline metrics
 
 
         Background:
-            Given user has created or selected namespace "aut-pipe-metrics"
+            Given user has created or selected namespace "aut-pipelines"
               And user is at pipelines page
 
 
-        @regression, @to-do
-        Scenario: Pipeline metrics tab
-            Given pipeline is present
-             When user clicks on available pipeline
-             Then user is able to see Dashboard tab in pipeline details page
-
-
-        @regression, @to-do
-        Scenario: Graphs in dashboard tab
-            Given user is in pipeline details tab
-              And pipeline run is present
-             When user clicks on dashboard tab
-             Then user can see Time Range and Refresh Interval dropdowns with a default value of 1 day and 30 seconds respectively
-              And user can see Pipeline success ratio, Number of Pipeline Runs, Pipeline Run duration, Task Run duration graphs
-              And user can see tooltips for each datapoint that include both x and y values when hover over it
-
-
-        @regression, @to-do
-        Scenario: Empty dashboard tab
-            Given user is in pipeline details tab
-              And no pipeline runs are present
-             When user clicks on dashboard tab
+        @regression
+        Scenario: Pipeline metrics dashboard display for no pipeline runs
+            Given pipeline "pipeline-metrics" is present on Pipeline Details page
+             When user clicks on Metrics tab
              Then user can see empty page with message "Start your pipeline to view pipeline metrics"
 
 
+        @smoke
+        Scenario: Graphs in metrics tab
+            Given pipeline run is displayed for "pipeline-metrics-one" with resource
+             When user clicks on pipeline "pipeline-metrics-one"
+              And user clicks on Metrics tab
+             Then user can see Time Range with a default value of "1 week"
+              And user can see and Refresh Interval with a default value of "30 seconds"
+              And user can see Pipeline success ratio, Number of Pipeline Runs, Pipeline Run duration, Task Run duration graphs
+
+
         @regression, @to-do
-        Scenario: No datapoint graphs in dashboard tab
-            Given user is in pipeline details tab
-              And pipeline run has just started
-             When user clicks on dashboard tab
-             Then user can see Time Range and Refresh Interval dropdowns with a default value of 1 day and 30 seconds respectively
+        Scenario: No datapoint graphs in metrics tab
+            Given pipeline "pipeline-metrics-two" is present on Pipeline Details page
+             When user clicks on pipeline "pipeline-metrics-two"
+              And user selects option "Start" from Actions menu drop down
+              And user navigates to Pipelines page
+              And user clicks on pipeline "pipeline-metrics-two"
+             Then user can see Time Range with a default value of "1 day"
+              And user can see and Refresh Interval with a default value of "30 seconds"
               And user can see Pipeline success ratio, Number of Pipeline Runs, Pipeline Run duration, Task Run duration graphs
               And user can see message "No datapoints found" inside graphs
