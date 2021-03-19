@@ -7,6 +7,7 @@ import {
   BranchList,
   RepoLanguageList,
   RepoFileList,
+  RepoStatus,
 } from '../types';
 import { BaseService } from './base-service';
 
@@ -47,16 +48,22 @@ export class GithubService extends BaseService {
     };
   };
 
-  isRepoReachable = async (): Promise<boolean> => {
+  isRepoReachable = async (): Promise<RepoStatus> => {
     try {
       const resp = await this.client.repos.get({
         owner: this.metadata.owner,
         repo: this.metadata.repoName,
       });
-      return resp.status === 200;
+
+      if (resp.status === 200) {
+        return RepoStatus.Reachable;
+      }
     } catch (e) {
-      return false;
+      if (e.status === 403) {
+        return RepoStatus.RateLimitExceeded;
+      }
     }
+    return RepoStatus.Unreachable;
   };
 
   getRepoBranchList = async (): Promise<BranchList> => {

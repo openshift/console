@@ -6,6 +6,7 @@ import {
   RepoFileList,
   RepoLanguageList,
   RepoMetadata,
+  RepoStatus,
 } from '../types';
 
 export abstract class BaseService {
@@ -28,7 +29,7 @@ export abstract class BaseService {
   /**
    * Returns if repo reachable or not along with the api response.
    */
-  abstract async isRepoReachable(): Promise<boolean>;
+  abstract async isRepoReachable(): Promise<RepoStatus>;
 
   /**
    * Returns list of branches for given gitsource.

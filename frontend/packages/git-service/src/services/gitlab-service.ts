@@ -8,6 +8,7 @@ import {
   BranchList,
   RepoLanguageList,
   RepoFileList,
+  RepoStatus,
 } from '../types';
 import { BaseService } from './base-service';
 
@@ -88,13 +89,16 @@ export class GitlabService extends BaseService {
     }
   };
 
-  isRepoReachable = async (): Promise<boolean> => {
+  isRepoReachable = async (): Promise<RepoStatus> => {
     try {
       await this.getRepo();
-      return true;
+      return RepoStatus.Reachable;
     } catch (e) {
-      return false;
+      if (e.response.status === 429) {
+        return RepoStatus.RateLimitExceeded;
+      }
     }
+    return RepoStatus.Unreachable;
   };
 
   getRepoBranchList = async (): Promise<BranchList> => {
