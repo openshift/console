@@ -64,6 +64,8 @@ const dropdownItems = _.zipObject(spans, spans);
 const theme = getCustomTheme(ChartThemeColor.multi, ChartThemeVariant.light, queryBrowserTheme);
 export const colors = theme.line.colorScale;
 
+const formatDate = (date) => getLocaleDate(date, { month: 'short', day: 'numeric' });
+
 // Use exponential notation for small or very large numbers to avoid labels with too many characters
 const formatPositiveValue = (v: number): string =>
   v === 0 || (0.001 <= v && v < 1e23) ? humanizeNumberSI(v).string : v.toExponential(1);
@@ -194,7 +196,9 @@ const Tooltip_: React.FC<TooltipProps> = ({ activePoints, center, height, style,
             <div className="query-browser__tooltip-arrow" />
             <div className="query-browser__tooltip">
               <div className="query-browser__tooltip-group">
-                <div className="query-browser__tooltip-time">{twentyFourHourTime(time, true)}</div>
+                <div className="query-browser__tooltip-time">
+                  {`${formatDate(time)} ${twentyFourHourTime(time, true)}`}
+                </div>
               </div>
               {allSeries.map((s, i) => (
                 <div className="query-browser__tooltip-group" key={i}>
@@ -321,7 +325,7 @@ const Graph: React.FC<GraphProps> = React.memo(
     const xAxisTickShowSeconds = span < xAxisTickCount * ONE_MINUTE;
     const xAxisTickFormat =
       span > parsePrometheusDuration('1d')
-        ? (d) => `${getLocaleDate(d, { month: 'short', day: 'numeric' })}\n${twentyFourHourTime(d)}`
+        ? (d) => `${formatDate(d)}\n${twentyFourHourTime(d)}`
         : (d) => twentyFourHourTime(d, xAxisTickShowSeconds);
 
     const GroupComponent = isStack ? ChartStack : ChartGroup;
