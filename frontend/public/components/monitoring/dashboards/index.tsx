@@ -501,9 +501,7 @@ const MonitoringDashboardsPage: React.FC<MonitoringDashboardsPageProps> = ({ mat
   const safeFetch = React.useCallback(useSafeFetch(), []);
 
   // Clear queries on unmount
-  React.useEffect(() => {
-    dispatch(queryBrowserDeleteAllQueries());
-  }, [dispatch]);
+  React.useEffect(() => () => dispatch(queryBrowserDeleteAllQueries()), [dispatch]);
 
   React.useEffect(() => {
     safeFetch('/api/console/monitoring-dashboard-config')
