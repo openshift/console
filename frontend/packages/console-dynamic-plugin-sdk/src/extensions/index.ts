@@ -8,3 +8,4 @@ export * from './pages';
 export * from './pvc';
 export * from './redux';
 export * from './yaml-templates';
+export * from './file-upload';

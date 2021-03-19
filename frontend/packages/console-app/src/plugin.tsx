@@ -29,6 +29,7 @@ import {
   ClusterOperatorModel,
 } from '@console/internal/models';
 import { referenceForModel, ClusterOperator } from '@console/internal/module/k8s';
+import '@console/internal/i18n.js';
 import {
   fetchK8sHealth,
   getK8sHealthState,
@@ -52,7 +53,10 @@ import {
   QuickStartContext,
   useValuesForQuickStartContext,
 } from './components/quick-starts/utils/quick-start-context';
-import '@console/internal/i18n.js';
+import {
+  FileUploadContext,
+  useValuesFileUploadContext,
+} from './components/file-upload/file-upload-context';
 
 type ConsumedExtensions =
   | Perspective
@@ -290,6 +294,13 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       Provider: QuickStartContext.Provider,
       useValueHook: useValuesForQuickStartContext,
+    },
+  },
+  {
+    type: 'ContextProvider',
+    properties: {
+      Provider: FileUploadContext.Provider,
+      useValueHook: useValuesFileUploadContext,
     },
   },
 ];

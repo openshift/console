@@ -15,6 +15,7 @@ interface ShortcutProps {
   keyName?: string;
   rightClick?: boolean;
   shift?: boolean;
+  dragNdrop?: boolean;
 }
 
 export const ShortcutCommand: React.FC = ({ children }) => (
@@ -36,6 +37,7 @@ const Shortcut: React.FC<ShortcutProps> = ({
   keyName,
   rightClick,
   shift,
+  dragNdrop,
 }) => {
   const { t } = useTranslation();
   return (
@@ -68,6 +70,11 @@ const Shortcut: React.FC<ShortcutProps> = ({
         {rightClick && (
           <ShortcutCommand>
             <MouseIcon /> {t('console-shared~Right click')}
+          </ShortcutCommand>
+        )}
+        {dragNdrop && (
+          <ShortcutCommand>
+            <MouseIcon /> {t('console-shared~Drag + Drop')}
           </ShortcutCommand>
         )}
       </td>

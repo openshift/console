@@ -13,6 +13,7 @@ import {
   Separator,
 } from '../extensions/navigation';
 import { CatalogItemFilter, CatalogItemProvider, CatalogItemType } from '../extensions/catalog';
+import { FileUpload } from '../extensions/file-upload';
 
 export type SupportedExtension =
   | FeatureFlag
@@ -33,7 +34,8 @@ export type SupportedExtension =
   | ResourceClusterNavItem
   | CatalogItemType
   | CatalogItemProvider
-  | CatalogItemFilter;
+  | CatalogItemFilter
+  | FileUpload;
 
 /**
  * Schema of Console plugin's `console-extensions.json` file.
