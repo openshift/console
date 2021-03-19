@@ -99,6 +99,10 @@
   margin: var(--pf-global--spacer--md) var(--pf-global--spacer--xl);
 }
 
+.ceph-ocs-install__lso_storageclass-donut_spinner {
+  margin-top: 50%;
+}
+
 // inner class of modal for modifying margin
 .pf-c-modal-box__body {
   margin-top: var(--pf-global--spacer--md);

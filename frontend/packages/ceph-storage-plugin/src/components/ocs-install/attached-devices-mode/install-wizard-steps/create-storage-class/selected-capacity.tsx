@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Button } from '@patternfly/react-core';
+import { Button, Spinner } from '@patternfly/react-core';
 import { ChartDonut, ChartLabel } from '@patternfly/react-charts';
 
 import { calculateRadius, Modal } from '@console/shared';
@@ -69,6 +69,7 @@ const createDiscoveredDiskData = (results: LocalVolumeDiscoveryResultKind[]): Di
 export const SelectedCapacity: React.FC<SelectedCapacityProps> = ({ ns, state, dispatch }) => {
   const allLvsNodes = state.lvsAllNodes.map(getName);
   const selectedLvsNodes = state.lvsSelectNodes.map(getName);
+  const [isLoadingDonutChart, setIsLoadingDonutChart] = React.useState(true);
   /**
    * Fetching discovery results for all nodes passed
    * for local volume set creation.
@@ -105,8 +106,10 @@ export const SelectedCapacity: React.FC<SelectedCapacityProps> = ({ ns, state, d
     : undefined;
 
   const allDiscoveredDisks: DiscoveredDisk[] = React.useMemo(() => {
-    if (allLvsNodes.length === lvdResults.length && !lvdResultsLoadError && lvdResultsLoaded)
+    if (!lvdResultsLoadError && lvdResultsLoaded && allLvsNodes.length === lvdResults.length) {
+      setIsLoadingDonutChart(false);
       return createDiscoveredDiskData(lvdResults);
+    }
     return [];
   }, [allLvsNodes.length, lvdResults, lvdResultsLoadError, lvdResultsLoaded]);
 
@@ -174,23 +177,29 @@ export const SelectedCapacity: React.FC<SelectedCapacityProps> = ({ ns, state, d
           })}
         </Button>
       </div>
-      <ChartDonut
-        ariaDesc={t('ceph-storage-plugin~Selected versus Available Capacity')}
-        ariaTitle={t('ceph-storage-plugin~Selected versus Available Capacity')}
-        height={220}
-        width={220}
-        radius={radius}
-        data={donutData}
-        labels={({ datum }) => `${humanizeBinaryBytes(datum.y).string} ${datum.x}`}
-        subTitle={t('ceph-storage-plugin~Out of {{capacity}}', {
-          capacity: humanizeBinaryBytes(totalCapacity).string,
-        })}
-        title={humanizeBinaryBytes(selectedCapacity).string}
-        constrainToVisibleArea
-        subTitleComponent={
-          <ChartLabel dy={5} style={{ fill: `var(--pf-global--palette--black-500)` }} />
-        }
-      />
+      {isLoadingDonutChart ? (
+        <div className="ceph-ocs-install__lso_storageclass-donut_spinner">
+          <Spinner size="md" />
+        </div>
+      ) : (
+        <ChartDonut
+          ariaDesc={t('ceph-storage-plugin~Selected versus Available Capacity')}
+          ariaTitle={t('ceph-storage-plugin~Selected versus Available Capacity')}
+          height={220}
+          width={220}
+          radius={radius}
+          data={donutData}
+          labels={({ datum }) => `${humanizeBinaryBytes(datum.y).string} ${datum.x}`}
+          subTitle={t('ceph-storage-plugin~Out of {{capacity}}', {
+            capacity: humanizeBinaryBytes(totalCapacity).string,
+          })}
+          title={humanizeBinaryBytes(selectedCapacity).string}
+          constrainToVisibleArea
+          subTitleComponent={
+            <ChartLabel dy={5} style={{ fill: `var(--pf-global--palette--black-500)` }} />
+          }
+        />
+      )}
       <DiskListModal
         showDiskList={showDiskList}
         disks={chartDisks}
