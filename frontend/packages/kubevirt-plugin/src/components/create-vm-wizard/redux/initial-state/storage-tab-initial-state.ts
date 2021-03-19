@@ -55,7 +55,7 @@ export const windowsToolsStorage: VMWizardStorage = {
     name: WINTOOLS_DISK_NAME,
     type: VolumeType.CONTAINER_DISK,
     typeData: {
-      image: WINTOOLS_CONTAINER_NAMES[window.SERVER_FLAGS.branding] || WINTOOLS_CONTAINER_NAMES.okd,
+      image: WINTOOLS_CONTAINER_NAMES.okd,
     },
   }).asResource(),
 };

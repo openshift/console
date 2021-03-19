@@ -38,7 +38,7 @@ const { common } = Kebab.factory;
 const menuActions = [...Kebab.getExtensionsActionsForKind(ChargebackReportModel), ...common];
 
 const dataURL = (obj: K8sResourceKind, format = 'json') => {
-  return `${window.SERVER_FLAGS.meteringBaseURL}/api/v2/reports/${obj.metadata.namespace}/${obj.metadata.name}/table?format=${format}`;
+  return `/api/v2/reports/${obj.metadata.namespace}/${obj.metadata.name}/table?format=${format}`;
 };
 
 const removeLastPathElement = (path: string) =>

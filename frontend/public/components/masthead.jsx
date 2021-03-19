@@ -14,31 +14,8 @@ import dedicatedLogoImg from '../imgs/openshift-dedicated-logo.svg';
 export const getBrandingDetails = () => {
   let logoImg, productName;
   // Webpack won't bundle these images if we don't directly reference them, hence the switch
-  switch (window.SERVER_FLAGS.branding) {
-    case 'openshift':
-      logoImg = openshiftLogoImg;
-      productName = 'Red Hat OpenShift';
-      break;
-    case 'ocp':
-      logoImg = ocpLogoImg;
-      productName = 'Red Hat OpenShift Container Platform';
-      break;
-    case 'online':
-      logoImg = onlineLogoImg;
-      productName = 'Red Hat OpenShift Online';
-      break;
-    case 'dedicated':
-      logoImg = dedicatedLogoImg;
-      productName = 'Red Hat OpenShift Dedicated';
-      break;
-    case 'azure':
-      logoImg = openshiftLogoImg;
-      productName = 'Azure Red Hat OpenShift';
-      break;
-    default:
-      logoImg = hcLogoImg;
-      productName = 'HyperCloud';
-  }
+  logoImg = hcLogoImg;
+  productName = 'HyperCloud';
   if (window.SERVER_FLAGS.customLogoURL) {
     logoImg = window.SERVER_FLAGS.customLogoURL;
   }
