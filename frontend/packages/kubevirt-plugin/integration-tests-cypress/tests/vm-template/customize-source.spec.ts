@@ -2,7 +2,7 @@ import { testName } from '../../support';
 import { virtualization } from '../../view/virtualization';
 import { addSource } from '../../view/add-source';
 import { ProvisionSource } from '../../enums/provisionSource';
-import { customizeSource } from '../../view/customize-source';
+import { customizeSource, PROVIDER } from '../../view/customize-source';
 
 const TEMPLATE = Cypress.env('TEMPLATE_NAME');
 
@@ -48,7 +48,7 @@ describe('test vm template source image', () => {
     virtualization.templates.launchConsole(vmtName);
     customizeSource.finishCustomization();
     virtualization.templates.filter(vmtName);
-    virtualization.templates.testSource(vmtName, 'Available');
+    virtualization.templates.testSource(vmtName, PROVIDER);
   });
 
   it('customize user template source', () => {
@@ -65,6 +65,6 @@ describe('test vm template source image', () => {
     virtualization.templates.launchConsole(vmtName);
     customizeSource.finishCustomization();
     virtualization.templates.filter(vmtName);
-    virtualization.templates.testSource(vmtName, 'Available');
+    virtualization.templates.testSource(vmtName, PROVIDER);
   });
 });
