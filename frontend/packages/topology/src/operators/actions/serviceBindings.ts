@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { Node } from '@patternfly/react-topology';
 import {
   k8sCreate,
   K8sResourceKind,
@@ -6,9 +7,8 @@ import {
   referenceFor,
   apiVersionForModel,
 } from '@console/internal/module/k8s';
-import { Node } from '@patternfly/react-topology';
-
 import { ServiceBindingModel } from '../../models';
+import { TYPE_OPERATOR_BACKED_SERVICE } from '../components/const';
 
 export const createServiceBinding = (
   source: K8sResourceKind,
@@ -62,11 +62,11 @@ const createServiceBindingConnection = (source: Node, target: Node) => {
   return createServiceBinding(sourceResource, targetResource).then(() => null);
 };
 
-export const getCreateConnector = (createHints: string[]) => {
+export const getCreateConnector = (createHints: string[], source: Node, target: Node) => {
   if (
     createHints &&
     createHints.includes('createServiceBinding') &&
-    !createHints.includes('operator-workload')
+    target.getType() === TYPE_OPERATOR_BACKED_SERVICE
   ) {
     return createServiceBindingConnection;
   }

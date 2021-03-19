@@ -54,7 +54,11 @@ export type CreateConnection = (
   target: Node | Graph,
 ) => Promise<React.ReactElement[] | null>;
 
-export type CreateConnectionGetter = (createHints: string[]) => CreateConnection;
+export type CreateConnectionGetter = (
+  createHints: string[],
+  source?: Node,
+  target?: Node,
+) => CreateConnection;
 
 export enum TopologyDisplayFilterType {
   show = 'show',
