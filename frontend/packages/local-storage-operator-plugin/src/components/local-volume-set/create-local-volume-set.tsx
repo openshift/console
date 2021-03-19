@@ -7,6 +7,7 @@ import { history } from '@console/internal/components/utils/router';
 import { k8sCreate, NodeKind, referenceForModel } from '@console/internal/module/k8s';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
+import { usePromiseHandler } from '@console/shared/src/hooks/promise-handler';
 import { LocalVolumeSetModel } from '../../models';
 import { reducer, initialState } from './state';
 import { nodeResource } from '../../resources';
@@ -24,8 +25,7 @@ const CreateLocalVolumeSet: React.FC<CreateLocalVolumeSetProps> = ({ match }) =>
   const { t } = useTranslation();
   const [state, dispatch] = React.useReducer(reducer, initialState);
   const [nodesData, nodesLoaded, nodesLoadError] = useK8sWatchResource<NodeKind[]>(nodeResource);
-  const [inProgress, setInProgress] = React.useState(false);
-  const [errorMessage, setError] = React.useState('');
+  const [handlePromise, inProgress, errorMessage] = usePromiseHandler();
 
   React.useEffect(() => {
     if (nodesLoaded && !nodesLoadError && nodesData?.length !== 0) {
@@ -36,24 +36,20 @@ const CreateLocalVolumeSet: React.FC<CreateLocalVolumeSetProps> = ({ match }) =>
 
   const onSubmit = async (event: React.FormEvent<EventTarget>) => {
     event.preventDefault();
-    setInProgress(true);
 
     const lvsNodes = state.lvsIsSelectNodes ? state.lvsSelectNodes : nodesData;
     const nodesByHostNameLabel = getNodesByHostNameLabel(lvsNodes);
     const requestData = getLocalVolumeSetRequestData(state, nodesByHostNameLabel, ns);
 
-    try {
-      await k8sCreate(LocalVolumeSetModel, ns, requestData);
-      setInProgress(false);
-      history.push(
-        `/k8s/ns/${ns}/clusterserviceversions/${appName}/${referenceForModel(
-          LocalVolumeSetModel,
-        )}/${state.volumeSetName}`,
-      );
-    } catch (err) {
-      setError(err.message);
-      setInProgress(false);
-    }
+    handlePromise(k8sCreate(LocalVolumeSetModel, requestData))
+      .then(() => {
+        history.push(
+          `/k8s/ns/${ns}/clusterserviceversions/${appName}/${referenceForModel(
+            LocalVolumeSetModel,
+          )}/${state.volumeSetName}`,
+        );
+      })
+      .catch(() => {});
   };
 
   const getDisabledCondition = () => {
