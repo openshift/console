@@ -317,10 +317,12 @@ const Graph: React.FC<GraphProps> = React.memo(
       }
     }
 
-    const xTickFormat =
+    const xAxisTickCount = Math.round(width / 100);
+    const xAxisTickShowSeconds = span < xAxisTickCount * ONE_MINUTE;
+    const xAxisTickFormat =
       span > parsePrometheusDuration('1d')
         ? (d) => `${getLocaleDate(d, { month: 'short', day: 'numeric' })}\n${twentyFourHourTime(d)}`
-        : (d) => twentyFourHourTime(d, span < 5 * ONE_MINUTE);
+        : (d) => twentyFourHourTime(d, xAxisTickShowSeconds);
 
     const GroupComponent = isStack ? ChartStack : ChartGroup;
     const ChartComponent = isStack ? ChartArea : ChartLine;
@@ -336,7 +338,7 @@ const Graph: React.FC<GraphProps> = React.memo(
         theme={theme}
         width={width}
       >
-        <ChartAxis tickCount={Math.round(width / 100)} tickFormat={xTickFormat} />
+        <ChartAxis tickCount={xAxisTickCount} tickFormat={xAxisTickFormat} />
         <ChartAxis
           crossAxis={false}
           dependentAxis
