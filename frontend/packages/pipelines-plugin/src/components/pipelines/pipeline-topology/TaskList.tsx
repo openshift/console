@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import * as cx from 'classnames';
-import { FocusTrap } from '@patternfly/react-core';
+import { FocusTrap, Tooltip } from '@patternfly/react-core';
 import { CaretDownIcon } from '@patternfly/react-icons';
 import { useHover } from '@patternfly/react-topology';
 import Popper from '@console/shared/src/components/popper/Popper';
@@ -50,12 +50,20 @@ const TaskList: React.FC<any> = ({
     listOptions.map((task) => taskToOption(task, onNewTask)),
     (o) => o.label,
   );
+  const unselectedTaskText = unselectedText || t('pipelines-plugin~Select Task');
 
-  const unselectedTaskText = React.useMemo(
+  const truncatedTaskText = React.useMemo(
     () =>
-      truncateMiddle(unselectedText, { length: 10, truncateEnd: true }) ||
-      t('pipelines-plugin~Select Task'),
-    [unselectedText, t],
+      truncateMiddle(unselectedTaskText, {
+        length: 10,
+        truncateEnd: true,
+      }),
+    [unselectedTaskText],
+  );
+  const renderText = (
+    <text x={width / 2 - 10} y={height / 2 + 1}>
+      {truncatedTaskText}
+    </text>
   );
 
   return (
@@ -89,9 +97,11 @@ const TaskList: React.FC<any> = ({
               width={width}
               height={hover ? 2 : 1}
             />
-            <text x={width / 2 - 10} y={height / 2 + 1}>
-              {unselectedTaskText}
-            </text>
+            {unselectedTaskText !== truncatedTaskText ? (
+              <Tooltip content={unselectedTaskText}>{renderText}</Tooltip>
+            ) : (
+              renderText
+            )}
             <g transform={`translate(${width - 30}, ${height / 4})`}>
               <CaretDownIcon />
             </g>

@@ -31,7 +31,7 @@ interface TaskProps {
   status?: TaskStatus;
   namespace: string;
   isPipelineRun: boolean;
-  disableTooltip?: boolean;
+  disableVisualizationTooltip?: boolean;
   selected?: boolean;
   width: number;
   height: number;
@@ -92,7 +92,7 @@ export const PipelineVisualizationTask: React.FC<PipelineVisualizationTaskProp> 
       namespace={namespace}
       status={taskStatus}
       isPipelineRun={!!pipelineRunStatus}
-      disableTooltip={disableTooltip}
+      disableVisualizationTooltip={disableTooltip}
       selected={selected}
       width={width}
       height={height}
@@ -132,7 +132,7 @@ const TaskComponent: React.FC<TaskProps> = ({
   status,
   name,
   isPipelineRun,
-  disableTooltip,
+  disableVisualizationTooltip,
   selected,
   width,
   height,
@@ -158,6 +158,19 @@ const TaskComponent: React.FC<TaskProps> = ({
     [visualName, showStatusState],
   );
 
+  const renderVisualName = (
+    <text
+      x={showStatusState ? 30 : width / 2}
+      y={height / 2 + 1}
+      className={cx('odc-pipeline-vis-task-text', {
+        'is-text-center': !isPipelineRun,
+        'is-linked': enableLogLink,
+      })}
+    >
+      {truncatedVisualName}
+    </text>
+  );
+
   let taskPill = (
     <g ref={hoverRef}>
       <SvgDropShadowFilter dy={1} id={FILTER_ID} />
@@ -171,16 +184,12 @@ const TaskComponent: React.FC<TaskProps> = ({
           'is-linked': enableLogLink,
         })}
       />
-      <text
-        x={showStatusState ? 30 : width / 2}
-        y={height / 2 + 1}
-        className={cx('odc-pipeline-vis-task-text', {
-          'is-text-center': !isPipelineRun,
-          'is-linked': enableLogLink,
-        })}
-      >
-        {truncatedVisualName}
-      </text>
+      {visualName !== truncatedVisualName && disableVisualizationTooltip ? (
+        <Tooltip content={visualName}>{renderVisualName}</Tooltip>
+      ) : (
+        renderVisualName
+      )}
+
       {isPipelineRun && showStatusState && (
         <g
           className={cx({
@@ -206,7 +215,7 @@ const TaskComponent: React.FC<TaskProps> = ({
       )}
     </g>
   );
-  if (!disableTooltip) {
+  if (!disableVisualizationTooltip) {
     taskPill = (
       <Tooltip
         position="bottom"
