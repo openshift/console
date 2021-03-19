@@ -52,7 +52,6 @@ export const storagePool = {
       .click();
 
     // Validations
-    storagePool.validate(emptyStateBody, poolMessage.POOL_START(poolName));
     storagePool.validate(emptyStateBody, poolMessage[poolCreationJobStatus](poolName));
 
     // Close a pool creation form
