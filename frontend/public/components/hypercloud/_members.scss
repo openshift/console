@@ -1,3 +1,14 @@
+.hc-members__header {
+  padding: 30px 30px 10px 30px;
+  display: flex;
+  flex-direction: row;
+
+  .hc-members__search {
+    max-width: 400px;
+    margin-right: auto;
+  }
+}
+
 .hc-members__body {
   padding: 0px 30px 30px 30px;
 
@@ -17,4 +28,42 @@
 .hc-invite-modal__input-members {
   display: flex;
   flex-direction: column;
+
+  .hc-invite-modal__search-list {
+    background-color: gray;
+    z-index: 200;
+
+    &--disabled {
+      .pf-c-select__toggle {
+        --pf-c-select__toggle--BackgroundColor: var(--pf-c-select__toggle--disabled--BackgroundColor);
+        cursor: auto;
+      }
+
+      .pf-c-select__toggle-wrapper > .pf-c-select__toggle-typeahead {
+        pointer-events: none;
+      }
+    }
+
+    .pf-c-select__toggle-wrapper {
+      max-width: 100%;
+    }
+
+    .pf-c-select__toggle-button {
+      display: none;
+    }
+
+    .hc-invite-modal__member-item {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+}
+
+.hc-invite-modal__dropdown__toggle {
+  display: flex;
+  align-items: center;
+}
+
+.hc-member__group-icon {
+  margin-right: 10px;
 }
