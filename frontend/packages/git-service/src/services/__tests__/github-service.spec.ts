@@ -162,4 +162,18 @@ describe('Github Service', () => {
       nockDone();
     });
   });
+
+  it('should use persisted git service metadata and detect java build type', () => {
+    const gitSource: GitSource = { url: 'https://github.com/rohitkrai03/spring-petclinic' };
+
+    const gitService = new GithubService(gitSource);
+
+    return nockBack('files-java.json').then(async ({ nockDone, context }) => {
+      const buildTypes: BuildType[] = await gitService.detectBuildTypes();
+      expect(buildTypes.length).toBeGreaterThanOrEqual(1);
+      expect(buildTypes[0].buildType).toBe('java');
+      context.assertScopesFinished();
+      nockDone();
+    });
+  });
 });

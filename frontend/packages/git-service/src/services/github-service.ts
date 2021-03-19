@@ -37,7 +37,7 @@ export class GithubService extends BaseService {
 
   protected getRepoMetadata = (): RepoMetadata => {
     const { name, owner, source } = GitUrlParse(this.gitsource.url);
-    return { repoName: name, owner, host: source, defaultBranch: this.gitsource.ref || 'master' };
+    return { repoName: name, owner, host: source, defaultBranch: this.gitsource.ref };
   };
 
   isRepoReachable = async (): Promise<boolean> => {
@@ -69,15 +69,15 @@ export class GithubService extends BaseService {
 
   getRepoFileList = async (): Promise<RepoFileList> => {
     try {
-      const resp = await this.client.git.getTree({
-        // eslint-disable-next-line @typescript-eslint/camelcase
-        tree_sha: this.metadata.defaultBranch,
+      const resp = await this.client.repos.getContents({
         owner: this.metadata.owner,
         repo: this.metadata.repoName,
+        path: '',
+        ...(this.metadata.defaultBranch ? { ref: this.metadata.defaultBranch } : {}),
       });
       let files = [];
-      if (resp.status === 200) {
-        files = resp.data.tree.map((t) => t.path);
+      if (resp.status === 200 && Array.isArray(resp.data)) {
+        files = resp.data.map((t) => t.path);
       }
       return { files };
     } catch (e) {
@@ -106,6 +106,7 @@ export class GithubService extends BaseService {
         owner: this.metadata.owner,
         repo: this.metadata.repoName,
         path: 'Dockerfile',
+        ...(this.metadata.defaultBranch ? { ref: this.metadata.defaultBranch } : {}),
       });
       return resp.status === 200;
     } catch (e) {
@@ -119,6 +120,7 @@ export class GithubService extends BaseService {
         owner: this.metadata.owner,
         repo: this.metadata.repoName,
         path: 'Dockerfile',
+        ...(this.metadata.defaultBranch ? { ref: this.metadata.defaultBranch } : {}),
       });
       if (resp.status === 200) {
         // eslint-disable-next-line dot-notation
@@ -136,6 +138,7 @@ export class GithubService extends BaseService {
         owner: this.metadata.owner,
         repo: this.metadata.repoName,
         path: 'package.json',
+        ...(this.metadata.defaultBranch ? { ref: this.metadata.defaultBranch } : {}),
       });
       if (resp.status === 200) {
         // eslint-disable-next-line dot-notation
