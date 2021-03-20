@@ -1,12 +1,9 @@
 import { get } from 'lodash';
 import { getName, getNamespace, getOwnerReferences, getUID } from '@console/shared/src/selectors';
-import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
 import { createBasicLookup } from '@console/shared/src/utils/utils';
 import { PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
 import { VMKind, VMIKind } from '../../types';
 import { VIRT_LAUNCHER_POD_PREFIX } from '../../constants';
-import { buildOwnerReferenceForModel } from '../../utils';
-import { VirtualMachineInstanceModel } from '../../models';
 import { getPvcImportPodName, getPvcUploadPodName } from '../pvc/selectors';
 import { getDataVolumeTemplates } from '../vm';
 
@@ -55,12 +52,7 @@ export const findVMIPod = (
     return null;
   }
 
-  // the UID is not set as we mimic VMI here
-  const vmOwnerReference = buildOwnerReferenceForModel(
-    VirtualMachineInstanceModel,
-    getName(vmi),
-    getUID(vmi),
-  );
+  const vmUID = getUID(vmi);
   const prefix = `${podNamePrefix}${getName(vmi)}-`;
   const prefixedPods = pods.filter((p) => {
     const podOwnerReferences = getOwnerReferences(p);
@@ -68,9 +60,7 @@ export const findVMIPod = (
       getNamespace(p) === getNamespace(vmi) &&
       getName(p).startsWith(prefix) &&
       podOwnerReferences &&
-      podOwnerReferences.some((podOwnerReference) =>
-        compareOwnerReference(podOwnerReference, vmOwnerReference),
-      )
+      podOwnerReferences.some((podOwnerReference) => podOwnerReference.uid === vmUID)
     );
   });
 
