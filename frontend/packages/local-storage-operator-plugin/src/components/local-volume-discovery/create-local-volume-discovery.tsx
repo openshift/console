@@ -101,7 +101,7 @@ export const CreateLocalVolumeDiscovery: React.FC<CreateLocalVolumeDiscoveryProp
           allNodes={allNodes}
           selectNodes={selectNodes}
           showSelectNodes={showSelectNodes}
-          setShowSelectNodes={setShowSelectNodes}
+          setShowSelectNodes={() => setShowSelectNodes(!showSelectNodes)}
           setSelectNodes={setSelectNodes}
         />
         <FormFooter
