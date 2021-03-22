@@ -119,6 +119,50 @@ describe('getPipelineOperatorVersion', () => {
     expect(k8sList).toHaveBeenCalledTimes(1);
   });
 
+  it('should return the installed version for the old name of pipeline ClusterServiceVersion', async () => {
+    const csvs = [
+      {
+        metadata: { name: 'redhat-openshift-pipelines.v1.3.1' },
+        spec: { version: '1.3.1' },
+        status: { phase: 'Deleting' },
+      } as ClusterServiceVersionKind,
+      {
+        metadata: { name: 'openshift-pipelines-operator.v1.1.1' },
+        spec: { version: '1.1.1' },
+        status: { phase: 'Succeeded' },
+      } as ClusterServiceVersionKind,
+    ];
+    k8sListMock.mockReturnValueOnce(Promise.resolve(csvs));
+    const version = await getPipelineOperatorVersion('unit-test');
+    expect(version.raw).toBe('1.1.1');
+    expect(version.major).toBe(1);
+    expect(version.minor).toBe(1);
+    expect(version.patch).toBe(1);
+    expect(k8sList).toHaveBeenCalledTimes(1);
+  });
+
+  it('should return installed version for the new name of pipeline ClusterServiceVersion', async () => {
+    const csvs = [
+      {
+        metadata: { name: 'redhat-openshift-pipelines.v1.3.1' },
+        spec: { version: '1.3.1' },
+        status: { phase: 'Succeeded' },
+      } as ClusterServiceVersionKind,
+      {
+        metadata: { name: 'openshift-pipelines-operator.v1.1.1' },
+        spec: { version: '1.1.1' },
+        status: { phase: 'Deleting' },
+      } as ClusterServiceVersionKind,
+    ];
+    k8sListMock.mockReturnValueOnce(Promise.resolve(csvs));
+    const version = await getPipelineOperatorVersion('unit-test');
+    expect(version.raw).toBe('1.3.1');
+    expect(version.major).toBe(1);
+    expect(version.minor).toBe(3);
+    expect(version.patch).toBe(1);
+    expect(k8sList).toHaveBeenCalledTimes(1);
+  });
+
   it('should return null if there is no matching ClusterServiceVersion available', async () => {
     const csvs = [
       {
