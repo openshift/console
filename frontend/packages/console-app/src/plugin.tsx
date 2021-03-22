@@ -14,7 +14,6 @@ import {
   DashboardsOverviewHealthOperator,
   ResourceDetailsPage,
   ResourceListPage,
-  ResourceClusterNavItem,
   ResourceTabPage,
 } from '@console/plugin-sdk';
 import {
@@ -57,7 +56,6 @@ type ConsumedExtensions =
   | DashboardsOverviewHealthOperator<ClusterOperator>
   | ResourceListPage
   | ResourceDetailsPage
-  | ResourceClusterNavItem
   | ResourceTabPage;
 
 const plugin: Plugin<ConsumedExtensions> = [
@@ -206,21 +204,6 @@ const plugin: Plugin<ConsumedExtensions> = [
             './components/quick-starts/QuickStartCatalogPage' /* webpackChunkName: "co-quick-start" */
           )
         ).default,
-    },
-  },
-  {
-    type: 'NavItem/ResourceCluster',
-    properties: {
-      id: 'volumesnapshots',
-      section: 'storage',
-      componentProps: {
-        // t('console-app~VolumeSnapshotContents')
-        name: '%console-app~VolumeSnapshotContents%',
-        resource: referenceForModel(VolumeSnapshotContentModel),
-      },
-    },
-    flags: {
-      required: [FLAGS.CAN_LIST_VSC],
     },
   },
   {

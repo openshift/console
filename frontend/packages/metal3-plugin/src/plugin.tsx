@@ -4,7 +4,6 @@ import { MaintenanceIcon } from '@patternfly/react-icons';
 import {
   DashboardsOverviewInventoryItem,
   Plugin,
-  HrefNavItem,
   ResourceListPage,
   ResourceDetailsPage,
   RoutePage,
@@ -21,7 +20,6 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import { MachineModel, NodeModel, CertificateSigningRequestModel } from '@console/internal/models';
 // TODO(jtomasek): change this to '@console/shared/src/utils' once @console/shared/src/utils modules
 // no longer import from @console/internal (cyclic deps issues)
-import { formatNamespacedRouteForResource } from '@console/shared/src/utils/namespace';
 import { BareMetalHostModel, NodeMaintenanceModel, NodeMaintenanceOldModel } from './models';
 import { getHostPowerStatus, hasPowerManagement } from './selectors';
 import { HOST_POWER_STATUS_POWERING_OFF, HOST_POWER_STATUS_POWERING_ON } from './constants';
@@ -38,7 +36,6 @@ type ConsumedExtensions =
   | DashboardsOverviewInventoryItem
   | DashboardsOverviewInventoryItemReplacement
   | DashboardsInventoryItemGroup
-  | HrefNavItem
   | ResourceListPage
   | ResourceDetailsPage
   | RoutePage
@@ -88,25 +85,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'FeatureFlag/Custom',
     properties: {
       detect: detectBMOEnabled,
-    },
-  },
-  {
-    type: 'NavItem/Href',
-    properties: {
-      id: 'baremetal',
-      section: 'compute',
-      componentProps: {
-        // t('metal3-plugin~Bare Metal Hosts')
-        name: '%metal3-plugin~Bare Metal Hosts%',
-        href: formatNamespacedRouteForResource(
-          referenceForModel(BareMetalHostModel),
-          'openshift-machine-api',
-        ),
-      },
-      insertBefore: 'computeseparator',
-    },
-    flags: {
-      required: [BAREMETAL_FLAG, METAL3_FLAG],
     },
   },
   {

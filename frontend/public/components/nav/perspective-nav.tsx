@@ -2,15 +2,15 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavItemSeparator, NavGroup, Button } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons';
+import { useExtensions } from '@console/plugin-sdk';
 import {
-  useExtensions,
-  NavSection as PluginNavSection,
+  Separator,
   NavItem,
-  SeparatorNavItem,
+  isSeparator,
   isNavSection,
+  NavSection as PluginNavSection,
   isNavItem,
-  isSeparatorNavItem,
-} from '@console/plugin-sdk';
+} from '@console/dynamic-plugin-sdk/src';
 import { useActivePerspective, usePinnedResources } from '@console/shared';
 import { K8sKind, modelFor, referenceForModel } from '../../module/k8s';
 import { getSortedNavItems } from './navSortUtils';
@@ -30,10 +30,7 @@ import './_perspective-nav.scss';
 const PerspectiveNav: React.FC<{}> = () => {
   const { t } = useTranslation();
   const [perspective] = useActivePerspective();
-  const allItems = useExtensions<PluginNavSection | NavItem | SeparatorNavItem>(
-    isNavSection,
-    isNavItem,
-  );
+  const allItems = useExtensions<PluginNavSection | NavItem | Separator>(isNavSection, isNavItem);
   const [pinnedResources, setPinnedResources, pinnedResourcesLoaded] = usePinnedResources();
   const orderedNavItems = React.useMemo(() => {
     const topLevelItems = allItems.filter(
@@ -120,7 +117,7 @@ const PerspectiveNav: React.FC<{}> = () => {
           const { id, name } = item.properties;
           return <NavSection id={id} title={name} key={id} isGrouped={!name} />;
         }
-        if (isSeparatorNavItem(item)) {
+        if (isSeparator(item)) {
           return <NavItemSeparator key={`separator-${index}`} />;
         }
         return createLink(item, true);

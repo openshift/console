@@ -1,12 +1,13 @@
 import {
   NavSection as PluginNavSection,
   NavItem as PluginNavItem,
-  SeparatorNavItem,
-} from '@console/plugin-sdk';
+  Separator,
+} from '@console/dynamic-plugin-sdk';
+import { LoadedExtension } from '@console/dynamic-plugin-sdk/src/types';
 
 const toArray = (val) => (val ? (Array.isArray(val) ? val : [val]) : []);
 
-type NavItem = PluginNavSection | PluginNavItem | SeparatorNavItem;
+type NavItem = PluginNavSection | PluginNavItem | Separator;
 
 const itemDependsOnItem = (s1: NavItem, s2: NavItem): boolean => {
   if (!s1.properties.insertBefore && !s1.properties.insertAfter) {
@@ -68,14 +69,18 @@ const insertPositionedItems = (insertItems: NavItem[], currentItems: NavItem[]):
   insertPositionedItems(positionedItems, currentItems);
 };
 
-export const getSortedNavItems = (navItems: NavItem[]): NavItem[] => {
+export const getSortedNavItems = (
+  navItems: LoadedExtension<NavItem>[],
+): LoadedExtension<NavItem>[] => {
   const sortedItems = navItems.filter((item) => !isPositioned(item, navItems));
   const positionedItems = navItems.filter((item) => isPositioned(item, navItems));
   insertPositionedItems(positionedItems, sortedItems);
   return sortedItems;
 };
 
-export const sortExtensionItems = (extensionItems: NavItem[]): NavItem[] => {
+export const sortExtensionItems = <E extends NavItem>(
+  extensionItems: LoadedExtension<E>[],
+): LoadedExtension<E>[] => {
   // Mapped by item id
   const mappedIds = extensionItems.reduce((mem, i) => {
     mem[i.properties.id] = i;

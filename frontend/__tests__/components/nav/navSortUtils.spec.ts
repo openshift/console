@@ -2,11 +2,12 @@ import {
   getSortedNavItems,
   sortExtensionItems,
 } from '@console/internal/components/nav/navSortUtils';
-import { LoadedExtension, NavItem, NavSection, SeparatorNavItem } from '@console/plugin-sdk/src';
+import { LoadedExtension } from '@console/plugin-sdk/src';
+import { NavItem, NavSection, Separator } from '@console/dynamic-plugin-sdk/src';
 
-const mockNavItems: LoadedExtension<NavSection | NavItem | SeparatorNavItem>[] = [
+const mockNavItems: LoadedExtension<NavSection | NavItem | Separator>[] = [
   {
-    type: 'Nav/Section',
+    type: 'console.navigation/section',
     properties: {
       id: 'test1',
     },
@@ -15,7 +16,7 @@ const mockNavItems: LoadedExtension<NavSection | NavItem | SeparatorNavItem>[] =
     uid: 'test-plugin-uid',
   },
   {
-    type: 'Nav/Section',
+    type: 'console.navigation/section',
     properties: {
       id: 'test2',
     },
@@ -24,7 +25,7 @@ const mockNavItems: LoadedExtension<NavSection | NavItem | SeparatorNavItem>[] =
     uid: 'test-plugin-uid',
   },
   {
-    type: 'Nav/Section',
+    type: 'console.navigation/section',
     properties: {
       id: 'test3',
     },
@@ -33,7 +34,7 @@ const mockNavItems: LoadedExtension<NavSection | NavItem | SeparatorNavItem>[] =
     uid: 'test-plugin-uid',
   },
   {
-    type: 'Nav/Section',
+    type: 'console.navigation/section',
     properties: {
       id: 'test4',
     },
@@ -42,7 +43,7 @@ const mockNavItems: LoadedExtension<NavSection | NavItem | SeparatorNavItem>[] =
     uid: 'test-plugin-uid',
   },
   {
-    type: 'Nav/Section',
+    type: 'console.navigation/section',
     properties: {
       id: 'test5',
     },
@@ -51,7 +52,7 @@ const mockNavItems: LoadedExtension<NavSection | NavItem | SeparatorNavItem>[] =
     uid: 'test-plugin-uid',
   },
   {
-    type: 'Nav/Section',
+    type: 'console.navigation/section',
     properties: {
       id: 'test6',
     },
@@ -60,12 +61,9 @@ const mockNavItems: LoadedExtension<NavSection | NavItem | SeparatorNavItem>[] =
     uid: 'test-plugin-uid',
   },
   {
-    type: 'NavItem/Separator',
+    type: 'console.navigation/separator',
     properties: {
       id: 'test7',
-      componentProps: {
-        testID: 'test-sep',
-      },
     },
     pluginID: 'test-plugin-id',
     pluginName: 'test-plugin-name',

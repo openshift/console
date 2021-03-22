@@ -1,8 +1,8 @@
 {
+  "Environments": "Environments",
   "by {{author}}": "by {{author}}",
   "Commit details not available": "Commit details not available",
   "Cluster URL not available": "Cluster URL not available",
-  "Environments": "Environments",
   "Application environments": "Application environments",
   "Manifest file repo": "Manifest file repo",
   "Image not available": "Image not available",

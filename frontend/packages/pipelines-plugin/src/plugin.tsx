@@ -3,10 +3,6 @@ import {
   Plugin,
   ModelDefinition,
   ModelFeatureFlag,
-  NavSection,
-  HrefNavItem,
-  ResourceNSNavItem,
-  ResourceClusterNavItem,
   ResourceListPage,
   ResourceDetailsPage,
   Perspective,
@@ -48,10 +44,6 @@ const {
 type ConsumedExtensions =
   | ModelDefinition
   | ModelFeatureFlag
-  | NavSection
-  | HrefNavItem
-  | ResourceClusterNavItem
-  | ResourceNSNavItem
   | ResourceListPage
   | ResourceDetailsPage
   | Perspective
@@ -73,77 +65,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: PipelineModel,
       flag: FLAG_OPENSHIFT_PIPELINE,
-    },
-  },
-  {
-    type: 'NavItem/ResourceNS',
-    properties: {
-      id: 'pipelines',
-      perspective: 'dev',
-      section: 'resources',
-      insertAfter: 'builds',
-      componentProps: {
-        // t('pipelines-plugin~Pipelines')
-        name: '%pipelines-plugin~Pipelines%',
-        resource: referenceForModel(PipelineModel),
-        testID: 'pipeline-header',
-        'data-quickstart-id': 'qs-nav-pipelines',
-      },
-    },
-    flags: {
-      required: [FLAG_OPENSHIFT_PIPELINE],
-    },
-  },
-  {
-    type: 'NavItem/Href',
-    properties: {
-      id: 'pipelines',
-      perspective: 'admin',
-      section: 'pipelines',
-      componentProps: {
-        // t('pipelines-plugin~Pipelines')
-        name: '%pipelines-plugin~Pipelines%',
-        href: '/pipelines',
-        namespaced: true,
-        'data-quickstart-id': 'qs-nav-pipelines',
-      },
-    },
-    flags: {
-      required: [FLAG_OPENSHIFT_PIPELINE],
-    },
-  },
-  {
-    type: 'NavItem/Href',
-    properties: {
-      id: 'pipelinetasks',
-      perspective: 'admin',
-      section: 'pipelines',
-      componentProps: {
-        // t('pipelines-plugin~Tasks')
-        name: '%pipelines-plugin~Tasks%',
-        href: '/tasks',
-        namespaced: true,
-      },
-    },
-    flags: {
-      required: [FLAG_OPENSHIFT_PIPELINE],
-    },
-  },
-  {
-    type: 'NavItem/Href',
-    properties: {
-      id: 'pipelinetriggers',
-      perspective: 'admin',
-      section: 'pipelines',
-      componentProps: {
-        // t('pipelines-plugin~Triggers')
-        name: '%pipelines-plugin~Triggers%',
-        href: '/triggers',
-        namespaced: true,
-      },
-    },
-    flags: {
-      required: [FLAG_OPENSHIFT_PIPELINE],
     },
   },
   {

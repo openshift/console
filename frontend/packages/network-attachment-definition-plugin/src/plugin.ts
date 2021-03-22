@@ -1,7 +1,6 @@
 import * as _ from 'lodash';
 import {
   Plugin,
-  ResourceNSNavItem,
   ResourceDetailsPage,
   ResourceListPage,
   ModelFeatureFlag,
@@ -10,12 +9,10 @@ import {
   RoutePage,
 } from '@console/plugin-sdk';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { FLAG_KUBEVIRT } from '@console/kubevirt-plugin/src/plugin';
 import * as models from './models';
 import { NetworkAttachmentDefinitionsYAMLTemplates } from './models/templates';
 
 type ConsumedExtensions =
-  | ResourceNSNavItem
   | ResourceDetailsPage
   | ResourceListPage
   | ModelFeatureFlag
@@ -37,20 +34,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: models.NetworkAttachmentDefinitionModel,
       flag: FLAG_NET_ATTACH_DEF,
-    },
-  },
-  {
-    type: 'NavItem/ResourceNS',
-    properties: {
-      id: 'networkattachmentdefinitions',
-      section: 'networking',
-      componentProps: {
-        name: 'Network Attachment Definitions',
-        resource: referenceForModel(models.NetworkAttachmentDefinitionModel),
-      },
-    },
-    flags: {
-      required: [FLAG_NET_ATTACH_DEF, FLAG_KUBEVIRT],
     },
   },
   {

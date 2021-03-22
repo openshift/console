@@ -1,1 +1,19 @@
-[]
+[
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "id": "baremetal",
+      "section": "compute",
+      "name": "%metal3-plugin~Bare Metal Hosts%",
+      "insertBefore": "computeseparator",
+      "model": {
+        "kind": "BareMetalHost",
+        "version": "v1alpha1",
+        "group": "metal3.io"
+      }
+    },
+    "flags": {
+      "required": ["BAREMETAL", "METAL3"]
+    }
+  }
+]

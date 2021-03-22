@@ -3,8 +3,6 @@ import {
   Plugin,
   ModelDefinition,
   ModelFeatureFlag,
-  HrefNavItem,
-  ResourceNSNavItem,
   ResourceListPage,
   ResourceDetailsPage,
   RoutePage,
@@ -22,8 +20,6 @@ import './style.scss';
 type ConsumedExtensions =
   | ModelDefinition
   | ModelFeatureFlag
-  | HrefNavItem
-  | ResourceNSNavItem
   | ResourceListPage
   | ResourceDetailsPage
   | RoutePage
@@ -41,37 +37,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: models.ClusterServiceVersionModel,
       flag: Flags.OPERATOR_LIFECYCLE_MANAGER,
-    },
-  },
-  {
-    type: 'NavItem/Href',
-    properties: {
-      id: 'operatorhub',
-      section: 'operators',
-      componentProps: {
-        // t('olm~OperatorHub')
-        name: '%olm~OperatorHub%',
-        href: '/operatorhub',
-      },
-    },
-    flags: {
-      required: [FLAGS.CAN_LIST_PACKAGE_MANIFEST, FLAGS.CAN_LIST_OPERATOR_GROUP],
-    },
-  },
-  {
-    type: 'NavItem/ResourceNS',
-    properties: {
-      id: 'operators',
-      section: 'operators',
-      componentProps: {
-        // t('olm~Installed Operators')
-        name: '%olm~Installed Operators%',
-        resource: referenceForModel(models.ClusterServiceVersionModel),
-        startsWith: [
-          models.ClusterServiceVersionModel.apiGroup,
-          models.ClusterServiceVersionModel.plural,
-        ],
-      },
     },
   },
   {

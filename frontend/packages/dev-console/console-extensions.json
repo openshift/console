@@ -213,5 +213,131 @@
       "fileExtensions": ["jar"],
       "handler": { "$codeRef": "fileUpload.jarFileUploadHandler" }
     }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "add",
+      "perspective": "dev",
+      "section": "top",
+      "name": "%devconsole~+Add%",
+      "href": "/add",
+      "namespaced": true,
+      "dataAttributes": {
+        "data-quickstart-id": "qs-nav-add",
+        "data-test-id": "+Add-header"
+      }
+    },
+    "flags": {
+      "required": ["OPENSHIFT"]
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "topology",
+      "perspective": "dev",
+      "section": "top",
+      "name": "%devconsole~Topology%",
+      "href": "/topology",
+      "namespaced": true,
+      "dataAttributes": {
+        "data-quickstart-id": "qs-nav-topology",
+        "data-test-id": "topology-header"
+      }
+    },
+    "flags": {
+      "required": ["OPENSHIFT"]
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "monitoring",
+      "perspective": "dev",
+      "section": "top",
+      "name": "%devconsole~Monitoring%",
+      "href": "/monitoring",
+      "dataAttributes": {
+        "data-quickstart-id": "qs-nav-monitoring",
+        "data-tour-id": "tour-monitoring-nav",
+        "data-test-id": "monitoring-header"
+      }
+    },
+    "flags": {
+      "required": ["OPENSHIFT"]
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "search",
+      "perspective": "dev",
+      "section": "top",
+      "name": "%devconsole~Search%",
+      "href": "/search",
+      "namespaced": true,
+      "dataAttributes": {
+        "data-quickstart-id": "qs-nav-search",
+        "data-tour-id": "tour-search-nav",
+        "data-test-id": "search-header"
+      }
+    },
+    "flags": {
+      "required": ["OPENSHIFT"]
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "project",
+      "perspective": "dev",
+      "section": "resources",
+      "name": "%devconsole~+Project%",
+      "href": "/project-details",
+      "namespaced": true,
+      "dataAttributes": {
+        "data-quickstart-id": "qs-nav-project",
+        "data-test-id": "project-details-header"
+      }
+    },
+    "flags": {
+      "required": ["OPENSHIFT"]
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "id": "builds",
+      "perspective": "dev",
+      "section": "resources",
+      "name": "%devconsole~+Builds%",
+      "model": {
+        "kind": "BuildConfig",
+        "version": "v1",
+        "group": "build.openshift.io"
+      },
+      "dataAttributes": {
+        "data-quickstart-id": "qs-nav-builds",
+        "data-test-id": "build-header"
+      }
+    },
+    "flags": {
+      "required": ["OPENSHIFT"]
+    }
+  },
+  {
+    "type": "console.navigation/section",
+    "properties": {
+      "id": "top",
+      "perspective": "dev"
+    }
+  },
+  {
+    "type": "console.navigation/section",
+    "properties": {
+      "id": "top",
+      "perspective": "resources"
+    }
   }
 ]

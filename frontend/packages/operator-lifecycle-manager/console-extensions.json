@@ -27,5 +27,31 @@
     "flags": {
       "required": ["OPERATOR_LIFECYCLE_MANAGER"]
     }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "operatorhub",
+      "section": "operators",
+      "name": "%olm~OperatorHub%",
+      "href": "/operatorhub"
+    },
+    "flags": {
+      "required": ["CAN_LIST_PACKAGE_MANIFEST", "CAN_LIST_OPERATOR_GROUP"]
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "id": "operators",
+      "section": "operators",
+      "name": "%olm~Installed Operators%",
+      "model": {
+        "kind": "ClusterServiceVersion",
+        "version": "v1alpha1",
+        "group": "operators.coreos.com"
+      },
+      "startsWith": ["operators.coreos.com", "clusterserviceversions"]
+    }
   }
 ]
