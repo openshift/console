@@ -21,7 +21,7 @@ const UPDATE_TABS = [
   VMWizardTab.VM_SETTINGS,
   VMWizardTab.NETWORKING,
   VMWizardTab.STORAGE,
-  VMWizardTab.ADVANCED_CLOUD_INIT,
+  VMWizardTab.ADVANCED,
 ];
 
 const updaterResolver = {
@@ -42,7 +42,7 @@ const isTabValidResolver = {
   [VMWizardTab.VM_SETTINGS]: setVmSettingsTabValidity,
   [VMWizardTab.NETWORKING]: setNetworksTabValidity,
   [VMWizardTab.STORAGE]: setStoragesTabValidity,
-  [VMWizardTab.ADVANCED_CLOUD_INIT]: setAdvancedTabValidity,
+  [VMWizardTab.ADVANCED]: setAdvancedTabValidity,
 };
 
 const finalizeTabResolver = {

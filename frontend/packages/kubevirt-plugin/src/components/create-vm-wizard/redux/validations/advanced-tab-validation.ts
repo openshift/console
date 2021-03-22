@@ -27,7 +27,7 @@ export const setAdvancedTabValidity = (options: UpdateOptions) => {
     checkTabValidityChanged(
       state,
       id,
-      VMWizardTab.ADVANCED_CLOUD_INIT,
+      VMWizardTab.ADVANCED,
       isValid,
       isValid, // hasAllRequiredFilled
       errorKey,
@@ -37,7 +37,7 @@ export const setAdvancedTabValidity = (options: UpdateOptions) => {
     dispatch(
       vmWizardInternalActions[InternalActionType.SetTabValidity](
         id,
-        VMWizardTab.ADVANCED_CLOUD_INIT,
+        VMWizardTab.ADVANCED,
         isValid,
         isValid, // hasAllRequiredFilled
         errorKey,

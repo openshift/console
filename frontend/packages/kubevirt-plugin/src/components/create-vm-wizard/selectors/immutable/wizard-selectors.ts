@@ -46,6 +46,9 @@ export const getStepError = (state, wizardID: string, stepId: VMWizardTab) =>
 export const isLastStepErrorFatal = (state, wizardID: string) =>
   iGetIn(iGetCreateVMWizardTabs(state, wizardID), [VMWizardTab.RESULT, 'value', 'isFatal']);
 
+export const getEnableSSHService = (state): boolean =>
+  state?.plugins?.kubevirt?.authorizedSSHKeys?.enableSSHService;
+
 export const getStepsMetadata = (state, wizardID: string): VMWizardTabsMetadata => {
   const stepData = iGetCreateVMWizardTabs(state, wizardID);
   if (!stepData) {

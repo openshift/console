@@ -1,0 +1,18 @@
+.SSHWizard-authorized-key-title {
+  display: flex;
+  align-items: center;
+}
+
+.SSHWizard-authorized-key {
+  cursor: pointer;
+}
+
+.SSHWizard-enable-ssh-title {
+  display: flex;
+  align-items: center;
+}
+
+.SSHWizard-authorized-key-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

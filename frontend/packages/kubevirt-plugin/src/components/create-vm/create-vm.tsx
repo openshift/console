@@ -39,6 +39,10 @@ import { useStorageClassConfigMap } from '../../hooks/storage-class-config-map';
 import { createVM } from '../../k8s/requests/vm/create/simple-create';
 import { useErrorTranslation } from '../../hooks/use-error-translation';
 import { useVmTemplatesResources } from './hooks/use-vm-templates-resources';
+import { isEmpty } from 'lodash';
+import useSSHKeys from '../../hooks/use-ssh-keys';
+import useSSHService from '../../hooks/use-ssh-service';
+import { AUTHORIZED_SSH_KEYS } from '../ssh-service/SSHForm/ssh-form-utils';
 
 import '../create-vm-wizard/create-vm-wizard.scss';
 import './create-vm.scss';
@@ -160,6 +164,15 @@ export const CreateVM: React.FC<RouteComponentProps> = ({ location }) => {
   const [templatePreselectError, setTemplatePreselectError] = React.useState<string>();
   const [selectedTemplate, selectTemplate] = React.useState<TemplateItem>();
   const [bootState, bootDispatch] = React.useReducer(bootFormReducer, initBootFormState);
+  const {
+    enableSSHService,
+    tempSSHKey,
+    isValidSSHKey,
+    createOrUpdateSecret,
+    updateSSHKeyInGlobalNamespaceSecret,
+    restoreDefaultSSHSettings,
+  } = useSSHKeys();
+  const { createOrDeleteSSHService } = useSSHService();
 
   const [projects, projectsLoaded, projectsError] = useK8sWatchResource<K8sResourceCommon[]>({
     kind: ProjectModel.kind,
@@ -366,7 +379,7 @@ export const CreateVM: React.FC<RouteComponentProps> = ({ location }) => {
             {(footerProps) => (
               <Footer
                 {...footerProps}
-                formIsValid={state.isValid}
+                formIsValid={state.isValid && isValidSSHKey}
                 isCreating={isCreating}
                 createError={createError}
                 cleanError={() => setCreateError(undefined)}
@@ -374,7 +387,25 @@ export const CreateVM: React.FC<RouteComponentProps> = ({ location }) => {
                   resetError();
                   setCreating(true);
                   try {
-                    await createVM(state.template, sourceStatus, bootState, state, scConfigMap);
+                    const vm = await createVM(
+                      state.template,
+                      sourceStatus,
+                      bootState,
+                      state,
+                      scConfigMap,
+                      tempSSHKey,
+                    );
+                    if (vm) {
+                      enableSSHService && createOrDeleteSSHService(vm);
+                      if (!isEmpty(tempSSHKey)) {
+                        createOrUpdateSecret(tempSSHKey, vm?.metadata?.namespace, {
+                          secretName: `${AUTHORIZED_SSH_KEYS}-${vm?.metadata?.name}`,
+                        });
+                        updateSSHKeyInGlobalNamespaceSecret &&
+                          createOrUpdateSecret(tempSSHKey, vm?.metadata?.namespace);
+                      }
+                      restoreDefaultSSHSettings();
+                    }
                     setCreated(true);
                   } catch (err) {
                     // t('kubevirt-plugin~Error occured while creating VM.')

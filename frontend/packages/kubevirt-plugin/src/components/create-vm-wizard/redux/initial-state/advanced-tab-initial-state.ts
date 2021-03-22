@@ -1,7 +1,7 @@
 import { CloudInitField, CommonData } from '../../types';
 import { InitialStepStateGetter } from './types';
 
-export const getCloudInitInitialState: InitialStepStateGetter = (data: CommonData) => ({
+export const getAdvancedTabInitialData: InitialStepStateGetter = (data: CommonData) => ({
   value: {
     [CloudInitField.IS_FORM]: {
       value: true,

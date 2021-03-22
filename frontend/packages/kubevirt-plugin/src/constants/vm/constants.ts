@@ -52,6 +52,8 @@ export const VM_DETAIL_ENVIRONMENT = 'environment';
 export const VM_DETAIL_SNAPSHOTS = 'snapshots';
 
 export const CLOUDINIT_DISK = 'cloudinitdisk';
+export const CLOUD_INIT_CONFIG_DRIVE = 'cloudInitConfigDrive';
+export const CLOUD_INIT_NO_CLOUD = 'cloudInitNoCloud';
 
 export const OS_WINDOWS_PREFIX = 'win';
 

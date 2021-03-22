@@ -62,7 +62,7 @@ import { NetworkingTab } from './tabs/networking-tab/networking-tab';
 import { ReviewTab } from './tabs/review-tab/review-tab';
 import { ResultTab } from './tabs/result-tab/result-tab';
 import { StorageTab } from './tabs/storage-tab/storage-tab';
-import { CloudInitTab } from './tabs/cloud-init-tab/cloud-init-tab';
+import AdvancedTab from './tabs/advanced-tab/AdvancedTab';
 import { useStorageClassConfigMapWrapped } from '../../hooks/storage-class-config-map';
 import { ValidTabGuard } from './tabs/valid-tab-guard';
 import { FirehoseResourceEnhanced } from '../../types/custom';
@@ -250,14 +250,14 @@ const CreateVMWizardComponent: React.FC<CreateVMWizardComponentProps> = (props) 
       ),
     },
     {
-      id: VMWizardTab.ADVANCED_CLOUD_INIT,
-      name: t(TabTitleKeyResolver[VMWizardTab.ADVANCED_CLOUD_INIT]),
-      canJumpTo: tabsMetadata[VMWizardTab.ADVANCED_CLOUD_INIT]?.canJumpTo,
+      id: VMWizardTab.ADVANCED,
+      name: t(TabTitleKeyResolver[VMWizardTab.ADVANCED]),
+      canJumpTo: tabsMetadata[VMWizardTab.ADVANCED]?.canJumpTo,
       component: (
         <>
           <ResourceLoadErrors wizardReduxID={reduxID} key="errors" />
           <WizardErrors wizardReduxID={reduxID} key="wizard-errors" />
-          <CloudInitTab wizardReduxID={reduxID} key={VMWizardTab.ADVANCED_CLOUD_INIT} />
+          <AdvancedTab wizardReduxID={reduxID} key={VMWizardTab.ADVANCED} />
         </>
       ),
     },

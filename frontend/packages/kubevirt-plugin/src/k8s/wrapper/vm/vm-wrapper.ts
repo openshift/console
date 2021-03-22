@@ -27,6 +27,7 @@ import { VMWizardNetwork, VMWizardStorage } from '../../../components/create-vm-
 import { VMILikeMethods, BootDevice } from './types';
 import { findKeySuffixValue } from '../../../selectors/utils';
 import {
+  CLOUD_INIT_CONFIG_DRIVE,
   TEMPLATE_FLAVOR_LABEL,
   TEMPLATE_OS_LABEL,
   TEMPLATE_WORKLOAD_LABEL,
@@ -329,6 +330,17 @@ export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements 
     this.ensurePath('spec.template.spec');
     this.data.spec.template.spec.hostname = hostname;
     return this;
+  };
+
+  setSSHKey = (secretNames: string[]) => {
+    this.ensurePath('spec.template.spec');
+    const accessCredentialsKeys = secretNames.map((secretName) => ({
+      sshPublicKey: {
+        propagationMethod: { configDrive: { name: CLOUD_INIT_CONFIG_DRIVE } },
+        source: { secret: { secretName } },
+      },
+    }));
+    this.data.spec.template.spec.accessCredentials = accessCredentialsKeys;
   };
 
   ensureDataVolumeTemplates = (): V1DataVolumeTemplateSpec[] =>

@@ -28,6 +28,7 @@ export type VMISpec = {
   terminationGracePeriodSeconds: number;
   tolerations: any[];
   volumes?: any[];
+  accessCredentials?: any;
 };
 
 // https://kubevirt.io/api-reference/v0.38.1/definitions.html#_v1_virtualmachineinstancestatus

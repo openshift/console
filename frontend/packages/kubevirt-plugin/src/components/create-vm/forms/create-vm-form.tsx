@@ -52,6 +52,7 @@ import { FormPFSelect } from '../../form/form-pf-select';
 import { preventDefault } from '../../form/utils';
 import { DataVolumeSourceType, DEFAULT_DISK_SIZE } from '../../../constants/vm';
 import { generateVMName } from '../../../utils/strings';
+import SSHWizard from '../../ssh-service/SSHWizard/SSHWizard';
 
 import './create-vm-form.scss';
 
@@ -300,6 +301,9 @@ export const CreateVMForm: React.FC<CreateVMFormProps> = ({
               </Stack>
             </FormRow>
           )}
+          <FormRow fieldId="ssh-vm">
+            <SSHWizard />
+          </FormRow>
           <FormRow fieldId="start-vm">
             <Checkbox
               isChecked={startVM}

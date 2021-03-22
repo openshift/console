@@ -3,7 +3,7 @@ import { Popover, PopoverPosition, Stack, StackItem } from '@patternfly/react-co
 import { HelpIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { ExternalLink } from '@console/internal/components/utils';
-import { CLOUD_INIT_DOC_LINK } from '../../../../utils/strings';
+import { CLOUD_INIT_DOC_LINK } from '../../../../../utils/strings';
 
 export const CloudInitInfoHelper = () => {
   const { t } = useTranslation();
@@ -33,7 +33,10 @@ export const CloudInitInfoHelper = () => {
     >
       <button
         type="button"
-        onClick={(e) => e.preventDefault()}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        }}
         className="pf-c-form__group-label-help"
         aria-label={t('kubevirt-plugin~cloud init help')}
       >

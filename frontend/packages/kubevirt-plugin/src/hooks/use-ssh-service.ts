@@ -1,32 +1,32 @@
 import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
-import { useDispatch, useSelector, RootStateOrAny } from 'react-redux';
-import { K8sResourceKind, k8sCreate } from '@console/internal/module/k8s';
+import { useDispatch } from 'react-redux';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { ServiceModel } from '@console/internal/models';
 import { sshActions, SSHActionsNames } from '../components/ssh-service/redux/actions';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { VMIKind, VMKind } from '@console/kubevirt-plugin/src/types';
 import { useActiveNamespace } from '@console/shared';
+import { getServicePort } from '../selectors/service/selectors';
+import useSSHSelectors from './use-ssh-selectors';
+import {
+  TARGET_PORT,
+  createOrDeleteSSHService,
+} from '../components/ssh-service/SSHForm/ssh-form-utils';
 
-const PORT = 22000;
-const TARGET_PORT = 22;
-
-type SSHReduxStructure = {
-  isSSHServiceRunning: string | null;
+export type useSSHServiceResult = {
+  sshServices: { running: boolean; port: number };
+  createOrDeleteSSHService: (vm: VMKind | VMIKind) => void;
 };
 
-export const useSSHService = (vm: VMIKind | VMKind) => {
+const useSSHService = (vm?: VMKind | VMIKind): useSSHServiceResult => {
   const dispatch = useDispatch();
   const { metadata } = vm || {};
   const [activeNamespace] = useActiveNamespace();
-  const namespace = activeNamespace || metadata?.namespace;
-  const { isSSHServiceRunning } = useSelector(
-    (state: RootStateOrAny): SSHReduxStructure => ({
-      isSSHServiceRunning:
-        state?.plugins?.kubevirt?.authorizedSSHKeys?.isSSHServiceRunning?.[metadata?.name],
-    }),
-  );
+  const namespace = metadata?.namespace || activeNamespace;
+
+  const { sshServices, enableSSHService } = useSSHSelectors();
 
   const sshServiceModal = React.useMemo(
     () => ({
@@ -40,55 +40,28 @@ export const useSSHService = (vm: VMIKind | VMKind) => {
   const [services, isServicesLoaded] = useK8sWatchResource<K8sResourceKind[]>(sshServiceModal);
 
   React.useEffect(() => {
-    metadata?.name &&
-      isServicesLoaded &&
+    if (metadata?.name && isServicesLoaded) {
+      const service = services.find(
+        ({ metadata: serviceMetadata }) =>
+          serviceMetadata?.name === `${metadata?.name}-ssh-service`,
+      );
       dispatch(
-        sshActions[SSHActionsNames.updateIsSSHServiceRunning](
-          !!services.find(
-            ({ metadata: serviceMetadata }) =>
-              serviceMetadata?.name === `${metadata?.name}-ssh-service`,
-          ),
+        sshActions[SSHActionsNames.updateSSHServices](
+          !!service,
+          getServicePort(service, TARGET_PORT)?.nodePort,
           metadata?.name,
         ),
       );
+    }
   }, [metadata, services, isServicesLoaded, dispatch]);
 
-  const createSSHService = React.useCallback(async () => {
-    try {
-      await k8sCreate(ServiceModel, {
-        kind: ServiceModel.kind,
-        apiVersion: ServiceModel.apiVersion,
-        metadata: {
-          name: `${metadata?.name}-ssh-service`,
-          namespace,
-        },
-        spec: {
-          ports: [
-            {
-              port: PORT,
-              targetPort: TARGET_PORT,
-            },
-          ],
-          type: 'NodePort',
-          selector: {
-            ...Object.fromEntries(
-              Object.entries(metadata?.labels).filter(
-                ([objectKey]) => !objectKey.startsWith('vm') && !objectKey.startsWith('app'),
-              ),
-            ),
-            'kubevirt.io/domain': metadata?.name,
-            'vm.kubevirt.io/name': metadata?.name,
-          },
-        },
-      });
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.log(e.message);
-    }
-  }, [metadata, namespace]);
+  const createOrDeleteSSHServiceWithEnableSSHService = (virtualMachine: VMKind | VMIKind) =>
+    createOrDeleteSSHService(virtualMachine, enableSSHService);
 
   return {
-    isSSHServiceRunning,
-    createSSHService,
+    sshServices: sshServices?.[metadata?.name],
+    createOrDeleteSSHService: createOrDeleteSSHServiceWithEnableSSHService,
   };
 };
+
+export default useSSHService;

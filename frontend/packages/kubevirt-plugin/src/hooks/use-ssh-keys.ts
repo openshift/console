@@ -1,74 +1,75 @@
 import * as React from 'react';
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
-import { useDispatch, useSelector, RootStateOrAny } from 'react-redux';
-import { SecretKind, k8sCreate } from '@console/internal/module/k8s';
-import { SecretModel } from '@console/internal/models';
-import { sshActions, SSHActionsNames } from '../components/ssh-service/redux/actions';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { VMIKind, VMKind } from '@console/kubevirt-plugin/src/types';
 import { useActiveNamespace } from '@console/shared';
+import useSSHSelectors, { useSSHSelectorsResult } from './use-ssh-selectors';
+import useSecret, { useSecretResult } from './use-secret';
+import { AUTHORIZED_SSH_KEYS } from '../components/ssh-service/SSHForm/ssh-form-utils';
 
-const AUTHORIZED_SSH_KEYS = 'authorized-ssh-keys';
-type SSHReduxStructure = {
-  key: string | null;
-};
+export type useSSHResult = useSecretResult &
+  Omit<useSSHSelectorsResult, 'globalKeys' | 'sshServices'> & { key: string };
 
-export const useSSHKeys = (vm?: VMIKind | VMKind) => {
-  const dispatch = useDispatch();
+const useSSHKeys = (vm?: VMIKind | VMKind): useSSHResult => {
   const { metadata } = vm || {};
-  const [tempKeyBeforeUpdate, setTempKeyBeforeUpdate] = React.useState<string>();
   const [activeNamespace] = useActiveNamespace();
-  const namespace = activeNamespace || metadata?.namespace;
-  const { key } = useSelector(
-    (state: RootStateOrAny): SSHReduxStructure => ({
-      key: atob(state?.plugins?.kubevirt?.authorizedSSHKeys?.globalKeys?.[namespace] || ''),
-    }),
-  );
-  const [secret, isSecretLoaded, secretLoadingError] = useK8sWatchResource<SecretKind>({
-    kind: SecretModel.kind,
-    name: AUTHORIZED_SSH_KEYS,
+  const namespace = metadata?.namespace || activeNamespace;
+  const {
+    globalKeys,
+    disableSaveInNamespaceCheckbox,
+    showRestoreKeyButton,
+    enableSSHService,
+    tempSSHKey,
+    isValidSSHKey,
+    updateSSHKeyInGlobalNamespaceSecret,
+    updateSSHKey,
+    updateSSHTempKey,
+    setIsValidSSHKey,
+    setUpdateSSHKeyInSecret,
+    restoreDefaultSSHSettings,
+  } = useSSHSelectors();
+
+  const { secret, isSecretLoaded, secretLoadingError, createOrUpdateSecret } = useSecret({
+    secretName: AUTHORIZED_SSH_KEYS,
     namespace,
   });
 
-  const saveOrUpdateSecret = React.useCallback(
-    async (keyValue) => {
+  const updateSSHKeys = React.useCallback(
+    (sshKey?: string) => {
+      let decodedKey = '';
       try {
-        await k8sCreate(SecretModel, {
-          kind: SecretModel.kind,
-          apiVersion: SecretModel.apiVersion,
-          metadata: {
-            name: AUTHORIZED_SSH_KEYS,
-            namespace,
-          },
-          data: { key: btoa(keyValue) },
-        });
-      } catch (e) {
-        // eslint-disable-next-line no-console
-        console.log(e.message);
+        decodedKey = atob(sshKey);
+      } catch {
+        decodedKey = sshKey;
+      }
+      if (namespace) {
+        updateSSHKey(namespace, decodedKey);
+        updateSSHTempKey(decodedKey);
       }
     },
-    [namespace],
-  );
-
-  const updateSSHKey = React.useCallback(
-    (sshKey?: string) => {
-      dispatch(sshActions[SSHActionsNames.updateKey](namespace, sshKey));
-    },
-    [dispatch, namespace],
+    [namespace, updateSSHKey, updateSSHTempKey],
   );
 
   React.useEffect(() => {
-    updateSSHKey(secret?.data?.key);
-  }, [secret, isSecretLoaded, updateSSHKey]);
+    namespace && updateSSHKeys(secret?.data?.key);
+  }, [secret, isSecretLoaded, namespace, updateSSHKey, updateSSHKeys]);
 
   return {
-    key,
+    key: globalKeys?.[namespace],
+    secret,
     isSecretLoaded,
     secretLoadingError,
     updateSSHKey,
-    saveOrUpdateSecret,
-    tempKeyBeforeUpdate,
-    setTempKeyBeforeUpdate,
+    createOrUpdateSecret,
+    disableSaveInNamespaceCheckbox,
+    showRestoreKeyButton,
+    enableSSHService,
+    tempSSHKey,
+    updateSSHTempKey,
+    isValidSSHKey,
+    setIsValidSSHKey,
+    updateSSHKeyInGlobalNamespaceSecret,
+    setUpdateSSHKeyInSecret,
+    restoreDefaultSSHSettings,
   };
 };
+
+export default useSSHKeys;

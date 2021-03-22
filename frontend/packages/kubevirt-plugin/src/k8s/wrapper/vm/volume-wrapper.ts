@@ -137,6 +137,7 @@ export class VolumeWrapper extends ObjectWithTypePropertyWrapper<
         return { claimName };
       case VolumeType.CONTAINER_DISK:
         return { image };
+      case VolumeType.CLOUD_INIT_CONFIG_DRIVE:
       case VolumeType.CLOUD_INIT_NO_CLOUD:
         return userDataBase64 ? { userDataBase64 } : { userData };
       default:

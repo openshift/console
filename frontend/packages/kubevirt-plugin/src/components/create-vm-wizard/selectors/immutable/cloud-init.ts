@@ -10,6 +10,6 @@ export const iGetCloudInitValue = (
 ) =>
   iGetIn(
     iGetCreateVMWizardTabs(state, id),
-    [VMWizardTab.ADVANCED_CLOUD_INIT, 'value', key, 'value'],
+    [VMWizardTab.ADVANCED, 'value', key, 'value'],
     defaultValue,
   );
