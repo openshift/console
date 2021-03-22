@@ -55,6 +55,7 @@ const GeneralPage: React.FC<GeneralPageProps> = ({ dispatch, state }) => {
             data-test="bucket-class-name"
             placeholder={t('ceph-storage-plugin~my-multi-cloud-mirror')}
             type="text"
+            id="bucketclassname-input"
             value={state.bucketClassName}
             onChange={onChange}
             aria-label={t('ceph-storage-plugin~Bucket Class Name')}
@@ -67,6 +68,7 @@ const GeneralPage: React.FC<GeneralPageProps> = ({ dispatch, state }) => {
         >
           <TextArea
             data-test="bucket-class-description"
+            id="bc-description"
             value={state.description}
             onChange={(data) => dispatch({ type: 'setDescription', value: data })}
             aria-label={t('ceph-storage-plugin~Description of bucket class')}
