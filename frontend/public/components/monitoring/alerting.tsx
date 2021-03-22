@@ -8,7 +8,7 @@ import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
-import { connect, useSelector } from 'react-redux';
+import { connect, useDispatch, useSelector } from 'react-redux';
 import { Link, Redirect, Route, Switch } from 'react-router-dom';
 import {
   BanIcon,
@@ -46,7 +46,7 @@ import {
   alertState,
   silenceState,
 } from '../../reducers/monitoring';
-import store, { RootState } from '../../redux';
+import { RootState } from '../../redux';
 import { RowFunction, Table, TableData, TableRow } from '../factory';
 import { FilterToolbar, RowFilter } from '../filter-toolbar';
 import { confirmModal } from '../modals';
@@ -1632,31 +1632,33 @@ const AlertingPage: React.FC<AlertingPageProps> = ({ match }) => {
 };
 
 const PollerPages = () => {
+  const dispatch = useDispatch();
+
   React.useEffect(() => {
     const { prometheusBaseURL } = window.SERVER_FLAGS;
 
     if (prometheusBaseURL) {
       const alertsKey = 'alerts';
       const rulesKey = 'rules';
-      store.dispatch(UIActions.monitoringLoading(alertsKey));
+      dispatch(UIActions.monitoringLoading(alertsKey));
       const url = getPrometheusURL({ endpoint: PrometheusEndpoint.RULES });
       const poller = (): void => {
         coFetchJSON(url)
           .then(({ data }) => {
             const { alerts, rules } = getAlertsAndRules(data);
-            store.dispatch(UIActions.monitoringLoaded(alertsKey, alerts));
-            store.dispatch(UIActions.monitoringSetRules(rulesKey, rules));
+            dispatch(UIActions.monitoringLoaded(alertsKey, alerts));
+            dispatch(UIActions.monitoringSetRules(rulesKey, rules));
           })
-          .catch((e) => store.dispatch(UIActions.monitoringErrored(alertsKey, e)))
+          .catch((e) => dispatch(UIActions.monitoringErrored(alertsKey, e)))
           .then(() => (pollerTimeouts[alertsKey] = setTimeout(poller, 15 * 1000)));
       };
       pollers[alertsKey] = poller;
       poller();
     } else {
-      store.dispatch(UIActions.monitoringErrored('alerts', new Error('prometheusBaseURL not set')));
+      dispatch(UIActions.monitoringErrored('alerts', new Error('prometheusBaseURL not set')));
     }
     return () => _.each(pollerTimeouts, clearTimeout);
-  }, []);
+  }, [dispatch]);
 
   return (
     <Switch>
