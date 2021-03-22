@@ -365,13 +365,13 @@ func (a *Authenticator) CallbackFunc(fn func(loginInfo LoginJSON, successURL str
 		}
 
 		if code == "" {
-			klog.Info("missing auth code in query param")
+			klog.Error("missing auth code in query param")
 			a.redirectAuthError(w, errorMissingCode)
 			return
 		}
 
 		if urlState != cookieState.Value {
-			klog.Error("State in url does not match State cookie")
+			klog.Error("state in url does not match State cookie")
 			a.redirectAuthError(w, errorInvalidState)
 			return
 		}
@@ -379,7 +379,7 @@ func (a *Authenticator) CallbackFunc(fn func(loginInfo LoginJSON, successURL str
 		oauthConfig, lm := a.authFunc()
 		token, err := oauthConfig.Exchange(ctx, code)
 		if err != nil {
-			klog.Infof("unable to verify auth code with issuer: %v", err)
+			klog.Errorf("unable to verify auth code with issuer: %v", err)
 			a.redirectAuthError(w, errorInvalidCode)
 			return
 		}
