@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
+import { Trans, useTranslation } from 'react-i18next';
 
 import { Status } from '@console/shared';
 import {
@@ -44,6 +45,7 @@ const getResourceLimitsValue = (container: ContainerSpec) => {
 };
 
 const Lifecycle: React.FC<LifecycleProps> = ({ lifecycle }) => {
+  const { t } = useTranslation();
   const fields = lifecycle && k8sProbe.mapLifecycleConfigToFields(lifecycle);
   const postStart = _.get(fields, 'postStart.cmd');
   const preStop = _.get(fields, 'preStop.cmd');
@@ -54,12 +56,16 @@ const Lifecycle: React.FC<LifecycleProps> = ({ lifecycle }) => {
     <div>
       {postStart && (
         <div>
-          <span>PostStart: {label('postStart')}</span> <code>{postStart}</code>
+          <Trans t={t} ns="public">
+            PostStart: {label('postStart')} <code>{postStart}</code>
+          </Trans>
         </div>
       )}
       {preStop && (
         <div>
-          <span>PreStop: {label('preStop')}</span> <code>{preStop}</code>
+          <Trans t={t} ns="public">
+            PreStop: {label('preStop')} <code>{preStop}</code>
+          </Trans>
         </div>
       )}
       {!postStart && !preStop && '-'}
@@ -85,12 +91,13 @@ const Probe: React.FC<ProbeProps> = ({ probe, podIP }) => {
 Probe.displayName = 'Probe';
 
 const Ports: React.FC<PortsProps> = ({ ports }) => {
+  const { t } = useTranslation();
   if (!ports || !ports.length) {
     return (
       <MsgBox
         className="co-sysevent-stream__status-box-empty"
-        title="No ports have been exposed"
-        detail="Ports allow for traffic to enter this container"
+        title={t('public~No ports have been exposed')}
+        detail={t('public~Ports allow for traffic to enter this container')}
       />
     );
   }
@@ -99,8 +106,8 @@ const Ports: React.FC<PortsProps> = ({ ports }) => {
     <table className="table">
       <thead>
         <tr>
-          <th>Name</th>
-          <th>Container</th>
+          <th>{t('public~Name')}</th>
+          <th>{t('public~Container')}</th>
         </tr>
       </thead>
       <tbody>
@@ -116,12 +123,13 @@ const Ports: React.FC<PortsProps> = ({ ports }) => {
 };
 
 const VolumeMounts: React.FC<VolumeMountProps> = ({ volumeMounts }) => {
+  const { t } = useTranslation();
   if (!volumeMounts || !volumeMounts.length) {
     return (
       <MsgBox
         className="co-sysevent-stream__status-box-empty"
-        title="No volumes have been mounted"
-        detail="Volumes allow data to be shared as files with the pod"
+        title={t('public~No volumes have been mounted')}
+        detail={t('public~Volumes allow data to be shared as files with the pod')}
       />
     );
   }
@@ -130,15 +138,15 @@ const VolumeMounts: React.FC<VolumeMountProps> = ({ volumeMounts }) => {
     <table className="table table--layout-fixed">
       <thead>
         <tr>
-          <th>Access</th>
-          <th>Location</th>
-          <th>Mount Path</th>
+          <th>{t('public~Access')}</th>
+          <th>{t('public~Location')}</th>
+          <th>{t('public~Mount path')}</th>
         </tr>
       </thead>
       <tbody>
         {volumeMounts.map((v: VolumeMount) => (
           <tr key={v.name}>
-            <td>{v.readOnly === true ? 'Read Only' : 'Read / Write'}</td>
+            <td>{v.readOnly === true ? t('public~Read only') : t('public~Read/write')}</td>
             <td className="co-break-all co-select-to-copy">{v.name}</td>
             <td>
               {v.mountPath ? (
@@ -156,12 +164,13 @@ const VolumeMounts: React.FC<VolumeMountProps> = ({ volumeMounts }) => {
 VolumeMounts.displayName = 'VolumeMounts';
 
 const Env: React.FC<EnvProps> = ({ env }) => {
+  const { t } = useTranslation();
   if (!env || !env.length) {
     return (
       <MsgBox
         className="co-sysevent-stream__status-box-empty"
-        title="No variables have been set"
-        detail="An easy way to pass configuration values"
+        title={t('public~No variables have been set')}
+        detail={t('public~An easy way to pass configuration values')}
       />
     );
   }
@@ -169,13 +178,13 @@ const Env: React.FC<EnvProps> = ({ env }) => {
   const value = (e: EnvVar) => {
     const v = e.valueFrom;
     if (_.has(v, 'fieldRef')) {
-      return `field: ${v.fieldRef.fieldPath}`;
+      return t('public~field: {{fieldPath}}', v.fieldRef);
     } else if (_.has(v, 'resourceFieldRef')) {
-      return `resource: ${v.resourceFieldRef.resource}`;
+      return t('public~resource: {{resource}}', v.resourceFieldRef);
     } else if (_.has(v, 'configMapKeyRef')) {
-      return `config-map: ${v.configMapKeyRef.name}/${v.configMapKeyRef.key}`;
+      return t('public~config-map: {{name}}/{{key}}', v.configMapKeyRef);
     } else if (_.has(v, 'secretKeyRef')) {
-      return `secret: ${v.secretKeyRef.name}/${v.secretKeyRef.key}`;
+      return t('public~secret: {{name}}/{{key}}', v.secretKeyRef);
     }
     return e.value;
   };
@@ -184,8 +193,8 @@ const Env: React.FC<EnvProps> = ({ env }) => {
     <table className="table">
       <thead>
         <tr>
-          <th>Name</th>
-          <th>Value</th>
+          <th>{t('public~Name')}</th>
+          <th>{t('public~Value')}</th>
         </tr>
       </thead>
       <tbody>
@@ -216,6 +225,7 @@ const getImageNameAndTag = (image: string) => {
 };
 
 const ContainerDetails: React.FC<ContainerDetailsProps> = (props) => {
+  const { t } = useTranslation();
   const pod = props.obj;
   const container =
     (_.find(pod.spec.containers, { name: props.match.params.name }) as ContainerSpec) ||
@@ -229,7 +239,7 @@ const ContainerDetails: React.FC<ContainerDetailsProps> = (props) => {
   const state = getContainerState(status);
   const stateValue =
     state.value === 'terminated' && _.isFinite(state.exitCode)
-      ? `${state.label} with exit code ${state.exitCode}`
+      ? t('public~{{label}} with exit code {{exitCode}}', { state })
       : state.label;
   const { imageName, imageTag } = getImageNameAndTag(container.image);
 
@@ -239,13 +249,13 @@ const ContainerDetails: React.FC<ContainerDetailsProps> = (props) => {
 
       <div className="row">
         <div className="col-lg-4">
-          <SectionHeading text="Container Details" />
+          <SectionHeading text={t('public~Container details')} />
           <dl className="co-m-pane__details">
-            <dt>State</dt>
+            <dt>{t('public~State')}</dt>
             <dd>
               <Status status={stateValue} />
             </dd>
-            <dt>ID</dt>
+            <dt>{t('public~ID')}</dt>
             <dd>
               {status.containerID ? (
                 <div className="co-break-all co-select-to-copy">{status.containerID}</div>
@@ -253,33 +263,33 @@ const ContainerDetails: React.FC<ContainerDetailsProps> = (props) => {
                 '-'
               )}
             </dd>
-            <dt>Restarts</dt>
+            <dt>{t('public~Restarts')}</dt>
             <dd>{status.restartCount}</dd>
-            <dt>Resource Requests</dt>
+            <dt>{t('public~Resource requests')}</dt>
             <dd>{getResourceRequestsValue(container) || '-'}</dd>
-            <dt>Resource Limits</dt>
+            <dt>{t('public~Resource limits')}</dt>
             <dd>{getResourceLimitsValue(container) || '-'}</dd>
-            <dt>Lifecycle Hooks</dt>
+            <dt>{t('public~Lifecycle hooks')}</dt>
             <dd>
               <Lifecycle lifecycle={container.lifecycle} />
             </dd>
-            <dt>Readiness Probe</dt>
+            <dt>{t('public~Readiness probe')}</dt>
             <dd>
               <Probe probe={container.readinessProbe} podIP={pod.status.podIP || '-'} />
             </dd>
-            <dt>Liveness Probe</dt>
+            <dt>{t('public~Liveness probe')}</dt>
             <dd>
               <Probe probe={container.livenessProbe} podIP={pod.status.podIP || '-'} />
             </dd>
-            <dt>Started</dt>
+            <dt>{t('public~Started')}</dt>
             <dd>
               <Timestamp timestamp={state.startedAt} />
             </dd>
-            <dt>Finished</dt>
+            <dt>{t('public~Finished')}</dt>
             <dd>
               <Timestamp timestamp={state.finishedAt} />
             </dd>
-            <dt>Pod</dt>
+            <dt>{t('public~Pod')}</dt>
             <dd>
               <ResourceLink
                 kind="Pod"
@@ -291,15 +301,15 @@ const ContainerDetails: React.FC<ContainerDetailsProps> = (props) => {
         </div>
 
         <div className="col-lg-4">
-          <SectionHeading text="Image Details" />
+          <SectionHeading text={t('public~Image details')} />
           <dl className="co-m-pane__details">
-            <dt>Image</dt>
+            <dt>{t('public~Image')}</dt>
             <dd>
               {imageName ? <div className="co-break-all co-select-to-copy">{imageName}</div> : '-'}
             </dd>
-            <dt>Image Version/Tag</dt>
+            <dt>{t('public~Image version/tag')}</dt>
             <dd>{imageTag || '-'}</dd>
-            <dt>Command</dt>
+            <dt>{t('public~Command')}</dt>
             <dd>
               {container.command ? (
                 <pre>
@@ -309,7 +319,7 @@ const ContainerDetails: React.FC<ContainerDetailsProps> = (props) => {
                 <span>-</span>
               )}
             </dd>
-            <dt>Args</dt>
+            <dt>{t('public~Args')}</dt>
             <dd>
               {container.args ? (
                 <pre>
@@ -319,19 +329,19 @@ const ContainerDetails: React.FC<ContainerDetailsProps> = (props) => {
                 <span>-</span>
               )}
             </dd>
-            <dt>Pull Policy</dt>
+            <dt>{t('public~Pull policy')}</dt>
             <dd>{getPullPolicyLabel(container)}</dd>
           </dl>
         </div>
 
         <div className="col-lg-4">
-          <SectionHeading text="Network" />
+          <SectionHeading text={t('public~Network')} />
           <dl className="co-m-pane__details">
-            <dt>Node</dt>
+            <dt>{t('public~Node')}</dt>
             <dd>
               <NodeLink name={pod.spec.nodeName} />
             </dd>
-            <dt>Pod IP</dt>
+            <dt>{t('public~Pod IP')}</dt>
             <dd>{pod.status.podIP || '-'}</dd>
           </dl>
         </div>
@@ -341,21 +351,21 @@ const ContainerDetails: React.FC<ContainerDetailsProps> = (props) => {
 
       <div className="row">
         <div className="col-lg-4">
-          <SectionHeading text="Ports" />
+          <SectionHeading text={t('public~Ports')} />
           <div className="co-table-container">
             <Ports ports={container.ports} />
           </div>
         </div>
 
         <div className="col-lg-4">
-          <SectionHeading text="Mounted Volumes" />
+          <SectionHeading text={t('public~Mounted volumes')} />
           <div className="co-table-container">
             <VolumeMounts volumeMounts={container.volumeMounts} />
           </div>
         </div>
 
         <div className="col-lg-4">
-          <SectionHeading text="Environment Variables" />
+          <SectionHeading text={t('public~Environment variables')} />
           <div className="co-table-container">
             <Env env={container.env} />
           </div>
@@ -366,40 +376,44 @@ const ContainerDetails: React.FC<ContainerDetailsProps> = (props) => {
 };
 ContainerDetails.displayName = 'ContainerDetails';
 
-export const ContainersDetailsPage: React.FC<ContainerDetailsPageProps> = (props) => (
-  <div>
-    <Firehose
-      resources={[
-        {
-          name: props.match.params.podName,
-          namespace: props.match.params.ns,
-          kind: 'Pod',
-          isList: false,
-          prop: 'obj',
-        },
-      ]}
-    >
-      <PageHeading
-        detail={true}
-        title={props.match.params.name}
-        kind="Container"
-        breadcrumbsFor={() => [
-          { name: 'Pods', path: getBreadcrumbPath(props.match, 'pods') },
+export const ContainersDetailsPage: React.FC<ContainerDetailsPageProps> = (props) => {
+  const { t } = useTranslation();
+  return (
+    <div>
+      <Firehose
+        resources={[
           {
             name: props.match.params.podName,
-            path: resourcePath('Pod', props.match.params.podName, props.match.params.ns),
+            namespace: props.match.params.ns,
+            kind: 'Pod',
+            isList: false,
+            prop: 'obj',
           },
-          { name: 'Container Details', path: props.match.url },
         ]}
-      />
-      <HorizontalNav
-        hideNav={true}
-        pages={[{ name: 'container', href: '', component: ContainerDetails }]}
-        match={props.match}
-      />
-    </Firehose>
-  </div>
-);
+      >
+        <PageHeading
+          detail={true}
+          title={props.match.params.name}
+          kind="Container"
+          breadcrumbsFor={() => [
+            { name: t('public~Pods'), path: getBreadcrumbPath(props.match, 'pods') },
+            {
+              name: props.match.params.podName,
+              path: resourcePath('Pod', props.match.params.podName, props.match.params.ns),
+            },
+            { name: t('public~Container details'), path: props.match.url },
+          ]}
+        />
+        <HorizontalNav
+          hideNav={true}
+          pages={[{ name: 'container', href: '', component: ContainerDetails }]}
+          match={props.match}
+        />
+      </Firehose>
+    </div>
+  );
+};
+
 ContainersDetailsPage.displayName = 'ContainersDetailsPage';
 
 type LifecycleProps = {

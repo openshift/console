@@ -330,6 +330,7 @@ const PodTableRow = connect<PodTableRowPropsFromState, null, PodTableRowProps>(p
       loaded && tableColumns?.[columnManagementID]?.length > 0
         ? new Set(tableColumns[columnManagementID])
         : getSelectedColumns(showNodes);
+    const { t } = useTranslation();
     return (
       <TableRow id={pod.metadata.uid} index={index} trKey={rowKey} style={style}>
         <TableData className={podColumnInfo.name.classes}>
@@ -387,7 +388,7 @@ const PodTableRow = connect<PodTableRowPropsFromState, null, PodTableRowProps>(p
           columns={columns}
           columnID={podColumnInfo.cpu.id}
         >
-          {cores ? `${formatCores(cores)} cores` : '-'}
+          {cores ? t('public~{{numCores}} cores', { numCores: formatCores(cores) }) : '-'}
         </TableData>
         <TableData
           className={podColumnInfo.created.classes}
@@ -839,9 +840,9 @@ export const PodList: React.FC<PodListProps> = withUserSettingsCompatibility<
 });
 PodList.displayName = 'PodList';
 
-export const filters = [
+export const getFilters = () => [
   {
-    filterGroupName: 'Status',
+    filterGroupName: i18next.t('public~Status'),
     type: 'pod-status',
     reducer: podPhaseFilterReducer,
     items: [
@@ -889,6 +890,7 @@ export const PodsPage = connect<{}, PodPagePropsFromDispatch, PodPageProps>(
         ...listProps
       } = props;
       const { t } = useTranslation();
+
       /* eslint-disable react-hooks/exhaustive-deps */
       React.useEffect(() => {
         if (showMetrics) {
@@ -915,7 +917,7 @@ export const PodsPage = connect<{}, PodPagePropsFromDispatch, PodPageProps>(
           canCreate={canCreate}
           kind={kind}
           ListComponent={PodList}
-          rowFilters={filters}
+          rowFilters={getFilters()}
           namespace={namespace}
           customData={customData}
           columnLayout={{
