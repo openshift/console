@@ -3,7 +3,15 @@ import { testName } from '../../support';
 import { addSource } from '../../view/add-source';
 import { customizeSource, PROVIDER } from '../../view/customize-source';
 import { virtualization } from '../../view/virtualization';
-import { TEMPLATE_NAME, TEMPLATE_BASE_IMAGE, OS_IMAGES_NS } from '../../const/index';
+import {
+  IMPORTING,
+  TEMPLATE_NAME,
+  TEMPLATE_BASE_IMAGE,
+  OS_IMAGES_NS,
+  PREPARING_FOR_CUSTOMIZATION,
+  READY_FOR_CUSTOMIZATION,
+  TEST_PROVIDER,
+} from '../../const/index';
 
 describe('test vm template source image', () => {
   before(() => {
@@ -35,15 +43,15 @@ describe('test vm template source image', () => {
     virtualization.templates.visit();
     virtualization.templates.addSource(TEMPLATE_NAME);
     addSource.addBootSource(ProvisionSource.REGISTRY);
-    virtualization.templates.testSource(TEMPLATE_NAME, 'Importing');
-    virtualization.templates.testSource(TEMPLATE_NAME, 'test-provider');
+    virtualization.templates.testSource(TEMPLATE_NAME, IMPORTING);
+    virtualization.templates.testSource(TEMPLATE_NAME, TEST_PROVIDER);
 
     virtualization.templates.customizeSource(TEMPLATE_NAME);
     customizeSource.fillForm({ vmtName });
 
     virtualization.templates.visit();
-    virtualization.templates.testSource(vmtName, 'Preparing for customization');
-    virtualization.templates.testSource(vmtName, 'Ready for customization');
+    virtualization.templates.testSource(vmtName, PREPARING_FOR_CUSTOMIZATION);
+    virtualization.templates.testSource(vmtName, READY_FOR_CUSTOMIZATION);
     virtualization.templates.launchConsole(vmtName);
     customizeSource.finishCustomization();
     virtualization.templates.filter(vmtName);
@@ -59,8 +67,8 @@ describe('test vm template source image', () => {
     customizeSource.fillForm({ vmtName });
 
     virtualization.templates.visit();
-    virtualization.templates.testSource(vmtName, 'Preparing for customization');
-    virtualization.templates.testSource(vmtName, 'Ready for customization');
+    virtualization.templates.testSource(vmtName, PREPARING_FOR_CUSTOMIZATION);
+    virtualization.templates.testSource(vmtName, READY_FOR_CUSTOMIZATION);
     virtualization.templates.launchConsole(vmtName);
     customizeSource.finishCustomization();
     virtualization.templates.filter(vmtName);

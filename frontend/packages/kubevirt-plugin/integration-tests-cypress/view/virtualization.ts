@@ -1,4 +1,6 @@
-const getRow = (templateName: string, within: VoidFunction) =>
+import { ADD_SOURCE, COMMUNITY } from '../const/index';
+
+export const getRow = (templateName: string, within: VoidFunction) =>
   cy
     .get(`[data-test-rows="resource-row"]`)
     .contains(templateName)
@@ -13,6 +15,8 @@ export const virtualization = {
       clickCreate: () => cy.byTestID('create-vm-empty').click(),
       clickTemplatesTab: () => cy.byTestID('vm-empty-templates').click(),
     },
+    testStatus: (vmName: string, status: string, timeout: number = 60000) =>
+      getRow(vmName, () => cy.byTestID('status-text', { timeout }).should('have.text', status)),
   },
   templates: {
     visit: () => {
@@ -24,7 +28,7 @@ export const virtualization = {
         cy
           .byTestID('template-source')
           .find('button')
-          .should('have.text', 'Add source')
+          .should('have.text', ADD_SOURCE)
           .click(),
       ),
     testProvider: (templateName: string, provider: string) =>
@@ -36,7 +40,7 @@ export const virtualization = {
         cy.byTestID('template-provider').should('include.text', support);
       } else {
         cy.byTestID('template-support').should('exist');
-        cy.byTestID('template-provider').should('include.text', 'Community');
+        cy.byTestID('template-provider').should('include.text', COMMUNITY);
       }
       if (parentSupport) {
         cy.byTestID('template-support-parent').should('exist');
@@ -72,5 +76,9 @@ export const virtualization = {
     clickCreate: (templateName: string) =>
       getRow(templateName, () => cy.byTestID('create-from-template').click()),
     filter: (templateName: string) => cy.byLegacyTestID('item-filter').type(templateName),
+    clickCreateNewTemplateFrom: (templateName: string) => {
+      getRow(templateName, () => cy.byLegacyTestID('kebab-button').click());
+      cy.byTestActionID('Create new Template from').click();
+    },
   },
 };
