@@ -134,7 +134,7 @@ export type PrometheusRulesResponse = {
 export type ListPageProps = {
   CreateButton?: React.ComponentType<{}>;
   data: Alert[] | Rule[] | Silence[];
-  filters: { [key: string]: any };
+  defaultSortField: string;
   Header: (...args) => any[];
   hideLabelFilter?: boolean;
   kindPlural: string;

@@ -6,7 +6,9 @@ import { sortable } from '@patternfly/react-table';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore
+import { connect, useSelector } from 'react-redux';
 import { Link, Redirect, Route, Switch } from 'react-router-dom';
 import {
   BanIcon,
@@ -1226,16 +1228,10 @@ const alertsRowFilters: RowFilter[] = [
   },
 ];
 
-// Row filter settings are stored in "k8s"
-const filtersToProps = ({ k8s }, { reduxID }) => {
-  const filtersMap = k8s.getIn([reduxID, 'filters']);
-  return { filters: filtersMap ? filtersMap.toJS() : null };
-};
-
-const MonitoringListPage_: React.FC<ListPageProps> = ({
+const MonitoringListPage: React.FC<ListPageProps> = ({
   CreateButton,
   data,
-  filters,
+  defaultSortField,
   Header,
   hideLabelFilter,
   kindPlural,
@@ -1248,13 +1244,7 @@ const MonitoringListPage_: React.FC<ListPageProps> = ({
   Row,
   rowFilters,
 }) => {
-  React.useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (!params.get('sortBy')) {
-      // Sort by rule name by default
-      store.dispatch(UIActions.sortList(reduxID, 'name', undefined, 'asc', 'Name'));
-    }
-  }, [reduxID]);
+  const filters = useSelector(({ k8s }: RootState) => k8s.getIn([reduxID, 'filters']));
 
   return (
     <>
@@ -1281,7 +1271,8 @@ const MonitoringListPage_: React.FC<ListPageProps> = ({
             <Table
               aria-label={kindPlural}
               data={data}
-              filters={filters}
+              defaultSortField={defaultSortField}
+              filters={filters?.toJS()}
               Header={Header}
               loaded={loaded}
               loadError={loadError}
@@ -1296,8 +1287,6 @@ const MonitoringListPage_: React.FC<ListPageProps> = ({
     </>
   );
 };
-
-const MonitoringListPage = connect(filtersToProps)(MonitoringListPage_);
 
 const AlertsPage_: React.FC<Alerts> = ({ data, loaded, loadError }) => {
   const { t } = useTranslation();
@@ -1336,6 +1325,7 @@ const AlertsPage_: React.FC<Alerts> = ({ data, loaded, loadError }) => {
   return (
     <MonitoringListPage
       data={data}
+      defaultSortField="labels.alertname"
       Header={Header}
       kindPlural={t('public~Alerts')}
       labelFilter="alerts"
@@ -1455,6 +1445,7 @@ const RulesPage_: React.FC<Rules> = ({ data, loaded, loadError }) => {
   return (
     <MonitoringListPage
       data={data}
+      defaultSortField="name"
       Header={Header}
       kindPlural={t('public~Alerting rules')}
       labelFilter="alerts"
@@ -1503,6 +1494,7 @@ const SilencesPage_: React.FC<Silences> = ({ data, loaded, loadError }) => {
     <MonitoringListPage
       CreateButton={CreateButton}
       data={data}
+      defaultSortField="name"
       Header={Header}
       hideLabelFilter
       kindPlural={t('public~Silences')}
