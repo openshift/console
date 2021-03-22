@@ -10,8 +10,7 @@ export const useK8sModel = (groupVersionKind: GroupVersionKind): [K8sKind, boole
   useSelector<RootState, K8sKind>(
     ({ k8s }) =>
       k8s.getIn(['RESOURCES', 'models', groupVersionKind]) ??
-      k8s.getIn(['RESOURCES', 'models', kindForReference(groupVersionKind)]) ??
-      {},
+      k8s.getIn(['RESOURCES', 'models', kindForReference(groupVersionKind)]),
   ),
   useSelector<RootState, boolean>(({ k8s }) => k8s.getIn(['RESOURCES', 'inFlight']) ?? false),
 ];

@@ -91,7 +91,7 @@ export const DetailsItem: React.FC<DetailsItemProps> = ({
                     </LinkifyExternal>
                   ),
                 })}
-                {...(path && { footerContent: <PropertyPath kind={model.kind} path={path} /> })}
+                {...(path && { footerContent: <PropertyPath kind={model?.kind} path={path} /> })}
                 maxWidth="30rem"
               >
                 <Button data-test={label} variant="plain" className="details-item__popover-button">

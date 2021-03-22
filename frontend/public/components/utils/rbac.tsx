@@ -168,8 +168,8 @@ const RequireCreatePermission_: React.FC<RequireCreatePermissionProps> = ({
 }) => {
   const isAllowed = useAccessReview(
     {
-      group: model.apiGroup,
-      resource: model.plural,
+      group: model?.apiGroup,
+      resource: model?.plural,
       verb: 'create',
       namespace,
     },
