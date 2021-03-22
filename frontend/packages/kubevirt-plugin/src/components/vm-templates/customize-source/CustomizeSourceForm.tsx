@@ -228,7 +228,7 @@ const CustomizeSourceForm: React.FC<RouteComponentProps> = ({ location }) => {
             loadError={loadError || error || pvcsError}
             data={selectedTemplate}
           >
-            <Stack hasGutter>
+            <Stack hasGutter className="kv-customize-source__form-body">
               <StackItem>
                 <Form onSubmit={preventDefault}>
                   <Stack hasGutter>
@@ -428,7 +428,7 @@ const CustomizeSourceForm: React.FC<RouteComponentProps> = ({ location }) => {
                 </StackItem>
               )}
             </Stack>
-            <ActionGroup className="pf-c-form">
+            <ActionGroup className="pf-c-form kv-customize-source__footer">
               <Button
                 data-test="start-customize"
                 isDisabled={creatingVM || !namespace || !name || !!nameValidation || !provider}
