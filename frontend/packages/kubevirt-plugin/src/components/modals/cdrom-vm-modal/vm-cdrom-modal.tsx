@@ -12,8 +12,7 @@ import { WINTOOLS_CONTAINER_NAMES } from './constants';
 const CDRomModalFirehose: React.FC<CDRomModalFirehoseProps> = (props) => {
   const { vmLikeEntity } = props;
 
-  const winToolsContainer =
-    WINTOOLS_CONTAINER_NAMES[window.SERVER_FLAGS.branding] || WINTOOLS_CONTAINER_NAMES.okd;
+  const winToolsContainer = WINTOOLS_CONTAINER_NAMES.okd;
 
   const resources = [
     {

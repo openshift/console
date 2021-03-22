@@ -122,7 +122,7 @@ export const DetailsCard_ = connect(mapStateToProps)(({ watchK8sResource, stopWa
               </DetailItem>
               <DetailItem title="Cluster ID" error={!!clusterVersionError || (clusterVersionLoaded && !clusterId)} isLoading={!clusterVersionLoaded}>
                 <div className="co-select-to-copy">{clusterId}</div>
-                {window.SERVER_FLAGS.branding !== 'okd' && window.SERVER_FLAGS.branding !== 'azure' && <ExternalLink text="OpenShift Cluster Manager" href={getOCMLink(clusterId)} />}
+                <ExternalLink text="OpenShift Cluster Manager" href={getOCMLink(clusterId)} />
               </DetailItem>
               <DetailItem title="Provider" error={!!infrastructureError || (infrastructure && !infrastructurePlatform)} isLoading={!infrastructureLoaded} valueClassName="co-select-to-copy">
                 {infrastructurePlatform}
