@@ -25,8 +25,13 @@ export const WithCommonForm = (SubForm, params, defaultValues, modal?: boolean) 
     const onClick = methods.handleSubmit(data => {
       let inDo = _.defaultsDeep(props.fixed, data);
       inDo = props.onSubmitCallback(inDo);
-      k8sCreate(model, inDo);
-      history.push(resourceObjPath(inDo, referenceFor(model)));
+      k8sCreate(model, inDo)
+        .then(() => {
+          history.push(resourceObjPath(inDo, referenceFor(model)));
+        })
+        .catch(e => {
+          console.error(e.message);
+        });
     });
     return (
       <FormProvider {...methods}>

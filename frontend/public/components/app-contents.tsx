@@ -85,14 +85,14 @@ const DefaultPage = connect((state: RootState) => ({
 const LazyRoute = props => {
   let { kind, loader } = props;
   let plural = props.computedMatch.params.plural;
-  if (kind === 'form') {
-    kind = pluralToKind.get(plural)['kind'];
-    loader = () => import(`./hypercloud/form/${plural}/create-${kind.toLowerCase()}` /* webpackChunkName: "create-secret" */).then(m => m[`Create${kind}`]);
-  } else if (kind === 'CustomResourceDefinition') {
-    if (props.computedMatch.params.plural === 'secrets') {
-      loader = () => import('./create-yaml' /* webpackChunkName: "create-yaml" */).then(m => m.CreateYAML);
-    }
-    if (props.path.indexOf('all-namespaces')) {
+  kind = pluralToKind.get(plural)?.['createType'] ? 'form' : kind;
+  // 생성페이지 분기
+  if (props.computedMatch.url.split('/').indexOf('~new') > 0 && !loader) {
+    if (kind === 'form') {
+      kind = pluralToKind.get(plural)['kind'];
+      loader = () => import(`./hypercloud/form/${plural}/create-${kind.toLowerCase()}` /* webpackChunkName: "create-secret" */).then(m => m[`Create${kind}`]);
+    } else {
+      loader = () => import('./hypercloud/crd/create-pinned-resource').then(m => m.CreateDefaultPage);
     }
   }
   return <Route {...props} component={undefined} render={componentProps => <AsyncComponent loader={loader} kind={kind} {...componentProps} />} />;
@@ -185,10 +185,12 @@ const AppContents_: React.FC<AppContentsProps> = ({ activePerspective }) => (
           {/*Create Form */}
           <LazyRoute path="/k8s/cluster/rolebindings/~new" exact loader={() => import('./RBAC' /* webpackChunkName: "rbac" */).then(m => m.CreateRoleBinding)} kind="RoleBinding" />
           <LazyRoute path="/k8s/ns/:ns/rolebindings/~new" exact loader={() => import('./RBAC' /* webpackChunkName: "rbac" */).then(m => m.CreateRoleBinding)} kind="RoleBinding" />
-          <LazyRoute path="/k8s/ns/:ns/:plural/~new" kind="CustomResourceDefinition" exact loader={() => import('./hypercloud/crd/create-pinned-resource').then(m => m.CreateDefaultPage)} />
+          <LazyRoute path="/k8s/ns/:ns/:plural/~new/" exact />
+          <LazyRoute path="/k8s/cluster/:plural/~new/" exact />
+          {/* <LazyRoute path="/k8s/ns/:ns/:plural/~new" kind="CustomResourceDefinition" exact loader={() => import('./hypercloud/crd/create-pinned-resource').then(m => m.CreateDefaultPage)} />
           <LazyRoute path="/k8s/cluster/:plural/~new" kind="CustomResourceDefinition" exact loader={() => import('./hypercloud/crd/create-pinned-resource').then(m => m.CreateDefaultPage)} />
           <LazyRoute path="/k8s/ns/:ns/customresourcedefinitions/:plural/~new" kind="CustomResourceDefinition" exact loader={() => import('./hypercloud/crd/create-custom-resource-definition').then(m => m.CreateCRDPage)} />
-          <LazyRoute path="/k8s/cluster/customresourcedefinitions/:plural/~new" kind="CustomResourceDefinition" exact loader={() => import('./hypercloud/crd/create-custom-resource-definition').then(m => m.CreateCRDPage)} />
+          <LazyRoute path="/k8s/cluster/customresourcedefinitions/:plural/~new" kind="CustomResourceDefinition" exact loader={() => import('./hypercloud/crd/create-custom-resource-definition').then(m => m.CreateCRDPage)} /> */}
           <LazyRoute path="/k8s/ns/:ns/routes/~new/form" exact kind="Route" loader={() => import('./routes/create-route' /* webpackChunkName: "create-route" */).then(m => m.CreateRoute)} />
           <LazyRoute path="/k8s/ns/:ns/persistentvolumeclaims/~new/form" exact kind="PersistentVolumeClaim" loader={() => import('./storage/create-pvc' /* webpackChunkName: "create-pvc" */).then(m => m.CreatePVC)} />
           <LazyRoute path="/monitoring/alertmanagerconfig/receivers/~new" exact loader={() => import('./monitoring/receiver-forms/alert-manager-receiver-forms' /* webpackChunkName: "receiver-forms" */).then(m => m.CreateReceiver)} />
@@ -196,8 +198,6 @@ const AppContents_: React.FC<AppContentsProps> = ({ activePerspective }) => (
           <LazyRoute path="/k8s/cluster/:plural/~new" exact loader={() => import('./create-yaml' /* webpackChunkName: "create-yaml" */).then(m => m.CreateYAML)} />
           <LazyRoute path="/k8s/ns/:ns/:plural/~new" exact loader={() => import('./create-yaml' /* webpackChunkName: "create-yaml" */).then(m => NamespaceFromURL(m.CreateYAML))} />
           <LazyRoute path="/k8s/ns/:ns/secrets/~new/:type" exact kind="Secret" loader={() => import('./secrets/create-secret' /* webpackChunkName: "create-secret" */).then(m => m.CreateSecret)} />
-          <LazyRoute path="/k8s/ns/:ns/:plural/~new/:type" exact kind="form" />
-          <LazyRoute path="/k8s/cluster/:plural/~new/:type" exact kind="form" />
           <LazyRoute path="/k8s/ns/:ns/secrets/:name/edit" exact kind="Secret" loader={() => import('./secrets/create-secret' /* webpackChunkName: "create-secret" */).then(m => m.EditSecret)} />
           <LazyRoute path="/k8s/ns/:ns/secrets/:name/edit-yaml" exact kind="Secret" loader={() => import('./create-yaml').then(m => m.EditYAMLPage)} />
           <LazyRoute path="/k8s/ns/:ns/rolebindings/:name/copy" exact kind="RoleBinding" loader={() => import('./RBAC' /* webpackChunkName: "rbac" */).then(m => m.CopyRoleBinding)} />
