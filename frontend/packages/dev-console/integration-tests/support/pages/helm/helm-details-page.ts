@@ -1,7 +1,7 @@
-import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
+import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 import { pageTitle as helmPageTitle } from '../../constants/pageTitle';
-import { helmPO } from '../../pageObjects/helm-po';
-import { modal } from '../../../../../integration-tests-cypress/views/modal';
+import { helmPO } from '../../pageObjects';
+import { modal } from '@console/cypress-integration-tests/views/modal';
 
 export const helmDetailsPage = {
   verifyTitle: () => detailsPage.titleShouldContain(helmPageTitle.HelmReleaseDetails),

@@ -1,6 +1,5 @@
-import { devFilePO } from '../../pageObjects/add-flow-po';
-import { createSourceSecret } from '../../pageObjects/global-po';
-import { authenticationType } from '../../constants/global';
+import { devFilePO, createSourceSecret } from '../../pageObjects';
+import { authenticationType } from '../../constants';
 
 export const devFilePage = {
   clickTrySample: () =>

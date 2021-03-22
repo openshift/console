@@ -1,19 +1,16 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
-import { addOptions } from '../../constants/add';
-import { pageTitle } from '../../constants/pageTitle';
-import { sideBarTabs } from '../../constants/staticText/topology-text';
-import { nodeActions } from '../../constants/topology';
-import { monitoringPO } from '../../pageObjects/monitoring-po';
-import { topologyPO } from '../../pageObjects/topology-po';
-import { addPage } from '../../pages/add-flow/add-page';
-import { addHealthChecksPage } from '../../pages/addHealthChecks-page';
-import { createGitWorkload } from '../../pages/functions/createGitWorkload';
-import { createHelmChartFromAddPage } from '../../pages/functions/createHelmChartFromAddPage';
-import { monitoringPage } from '../../pages/monitoring/monitoring-page';
-import { topologyPage } from '../../pages/topology/topology-page';
-import { topologySidePane } from '../../pages/topology/topology-side-pane-page';
-import { addHealthChecksPO } from '../../pageObjects/addHealthChecks-po';
+import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
+import { addOptions, pageTitle, sideBarTabs, nodeActions } from '../../constants';
+import { monitoringPO, topologyPO, addHealthChecksPO } from '../../pageObjects';
+import {
+  addPage,
+  addHealthChecksPage,
+  createGitWorkload,
+  createHelmChartFromAddPage,
+  monitoringPage,
+  topologyPage,
+  topologySidePane,
+} from '../../pages';
 
 Given(
   'workload {string} with resource type {string} is present in topology page',

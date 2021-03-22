@@ -1,5 +1,5 @@
-import { nodeActions } from '../../constants/topology';
-import { modal } from '../../../../../integration-tests-cypress/views/modal';
+import { modal } from '@console/cypress-integration-tests/views/modal';
+import { nodeActions } from '../../constants';
 
 export const topologyActions = {
   selectAction: (action: nodeActions | string) => {

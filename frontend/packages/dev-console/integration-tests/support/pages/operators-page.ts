@@ -1,7 +1,6 @@
-import { operators } from '../constants/global';
-import { detailsPage } from '../../../../integration-tests-cypress/views/details-page';
-import { operatorsPO } from '../pageObjects/operators-po';
-import { pageTitle } from '../constants/pageTitle';
+import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
+import { operatorsPO } from '../pageObjects';
+import { operators, pageTitle } from '../constants';
 
 export const operatorsPage = {
   navigateToOperatorHubPage: () => {

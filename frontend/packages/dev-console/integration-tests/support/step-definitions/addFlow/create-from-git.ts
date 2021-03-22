@@ -1,11 +1,6 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { gitPage } from '../../pages/add-flow/git-page';
-import { addPage } from '../../pages/add-flow/add-page';
-import { addOptions, buildConfigOptions } from '../../constants/add';
-import { topologyPage } from '../../pages/topology/topology-page';
-import { topologySidePane } from '../../pages/topology/topology-side-pane-page';
-import { messages } from '../../constants/staticText/addFlow-text';
-import { addHealthChecksPage } from '../../pages/addHealthChecks-page';
+import { gitPage, addPage, topologyPage, addHealthChecksPage, topologySidePane } from '../../pages';
+import { addOptions, buildConfigOptions, messages } from '../../constants';
 
 Given('user is at Import from git page', () => {
   addPage.selectCardFromOptions(addOptions.Git);
@@ -189,7 +184,7 @@ Then('public url is not created for node {string}', (nodeName: string) => {
   cy.get('[role="dialog"] h2')
     .contains('Routes')
     .next('span')
-    .should('contain.text', messages.noRoutesFound);
+    .should('contain.text', messages.addFlow.noRoutesFound);
 });
 
 Then(

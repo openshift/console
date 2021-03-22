@@ -1,14 +1,7 @@
-import { displayOptions, nodeActions } from '../../constants/topology';
-import { topologyPO } from '../../pageObjects/topology-po';
+import { displayOptions, nodeActions, sideBarTabs } from '../../constants';
+import { topologyPO } from '../../pageObjects';
 import { createHelmRelease } from '../functions/createHelmRelease';
-import { sideBarTabs } from '../../constants/staticText/topology-text';
 import { topologyHelper } from './topology-helper-page';
-
-export const topologyObj = {
-  sidePane: {
-    dialog: '[role="dialog"]',
-  },
-};
 
 export const topologyPage = {
   verifyTitle: () => {
@@ -242,8 +235,4 @@ export const topologyPage = {
       clickOnSave: () => cy.get(topologyPO.revisionDetails.yaml.save).click(),
     },
   },
-};
-
-export const topologySidePane = {
-  verify: () => cy.get(topologyObj.sidePane.dialog).should('be.visible'),
 };

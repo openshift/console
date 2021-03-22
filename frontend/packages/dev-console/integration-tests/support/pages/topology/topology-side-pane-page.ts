@@ -1,7 +1,7 @@
-import { topologyPO } from '../../pageObjects/topology-po';
+import { topologyPO } from '../../pageObjects';
 import { topologyActions } from './topology-actions-page';
-import { nodeActions } from '../../constants/topology';
-import { modal } from '../../../../../integration-tests-cypress/views/modal';
+import { nodeActions } from '../../constants';
+import { modal } from '@console/cypress-integration-tests/views/modal';
 
 export const topologySidePane = {
   verify: () => cy.get(topologyPO.sidePane.dialog).should('be.visible'),

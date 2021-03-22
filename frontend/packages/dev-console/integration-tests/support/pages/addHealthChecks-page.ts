@@ -1,6 +1,6 @@
-import { detailsPage } from '../../../../integration-tests-cypress/views/details-page';
-import { pageTitle } from '../constants/pageTitle';
-import { addHealthChecksPO } from '../pageObjects/addHealthChecks-po';
+import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
+import { pageTitle } from '../constants';
+import { addHealthChecksPO } from '../pageObjects';
 
 export const addHealthChecksPage = {
   verifyTitle: () => detailsPage.titleShouldContain(pageTitle.AddHealthChecks),

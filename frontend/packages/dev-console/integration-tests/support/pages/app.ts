@@ -1,9 +1,8 @@
-import { detailsPage } from '../../../../integration-tests-cypress/views/details-page';
-import { nav } from '../../../../integration-tests-cypress/views/nav';
-import { devNavigationMenu, switchPerspective } from '../constants/global';
-import { devNavigationMenuPO } from '../pageObjects/global-po';
-import { pageTitle } from '../constants/pageTitle';
-import { modal } from '../../../../integration-tests-cypress/views/modal';
+import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
+import { nav } from '@console/cypress-integration-tests/views/nav';
+import { devNavigationMenu, switchPerspective, pageTitle } from '../constants';
+import { devNavigationMenuPO } from '../pageObjects';
+import { modal } from '@console/cypress-integration-tests/views/modal';
 
 export const app = {
   waitForDocumentLoad: () => {

@@ -1,11 +1,11 @@
-import { modal } from '../../../../../integration-tests-cypress/views/modal';
+import { modal } from '@console/cypress-integration-tests/views/modal';
+import * as yamlEditor from '@console/cypress-integration-tests/views/yaml-editor';
 import { pipelineActions } from '../../constants/pipelines';
 import {
   pipelineRunDetailsPO,
   pipelinesPO,
   pipelineBuilderPO,
 } from '../../page-objects/pipelines-po';
-import * as yamlEditor from '../../../../../integration-tests-cypress/views/yaml-editor';
 
 export const pipelinesPage = {
   clickOnCreatePipeline: () => cy.get(pipelinesPO.createPipeline).click(),

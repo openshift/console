@@ -1,6 +1,6 @@
 import { When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { monitoringPO } from '../../pageObjects/monitoring-po';
-import { monitoringPage } from '../../pages/monitoring/monitoring-page';
+import { monitoringPO } from '../../pageObjects';
+import { monitoringPage } from '../../pages';
 
 When('user selects {string} Query from Select Query dropdown', (queryName: string) => {
   monitoringPage.metrics.selectQuery(queryName);

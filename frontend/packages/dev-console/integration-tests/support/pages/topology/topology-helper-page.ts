@@ -1,4 +1,4 @@
-import { topologyPO } from '../../pageObjects/topology-po';
+import { topologyPO } from '../../pageObjects';
 
 export const topologyHelper = {
   search: (name: string) =>

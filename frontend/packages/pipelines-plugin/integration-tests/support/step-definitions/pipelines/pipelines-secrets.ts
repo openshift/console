@@ -1,9 +1,8 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { pipelinesPage, startPipelineInPipelinesPage } from '../../pages/pipelines/pipelines-page';
-import { pipelineBuilderPage } from '../../pages/pipelines/pipelineBuilder-page';
-import { navigateTo } from '@console/dev-console/integration-tests/support/pages/app';
-import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants/global';
-import { modal } from '../../../../../integration-tests-cypress/views/modal';
+import { pipelinesPage, startPipelineInPipelinesPage, pipelineBuilderPage } from '../../pages';
+import { navigateTo } from '@console/dev-console/integration-tests/support/pages';
+import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants';
+import { modal } from '@console/cypress-integration-tests/views/modal';
 import { pipelinesPO } from '../../page-objects/pipelines-po';
 
 Given('user has created pipeline {string} with git resources', (pipelineName: string) => {

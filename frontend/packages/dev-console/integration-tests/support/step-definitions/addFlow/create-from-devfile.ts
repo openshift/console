@@ -1,12 +1,7 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { addPage } from '../../pages/add-flow/add-page';
-import { addOptions } from '../../constants/add';
-import { topologyPO } from '../../pageObjects/topology-po';
-import { gitPage } from '../../pages/add-flow/git-page';
-import { topologyPage } from '../../pages/topology/topology-page';
-import { devFilePage } from '../../pages/add-flow/dev-file-page';
-import { devFilePO, gitPO } from '../../pageObjects/add-flow-po';
-import { messages } from '../../constants/staticText/addFlow-text';
+import { addPage, gitPage, topologyPage, devFilePage } from '../../pages';
+import { addOptions, messages } from '../../constants';
+import { devFilePO, gitPO, topologyPO } from '../../pageObjects';
 
 Given('user is at Import from Devfile page', () => {
   addPage.selectCardFromOptions(addOptions.DevFile);
@@ -49,5 +44,8 @@ When('user clicks Create button on Devfile page', () => {
 
 When('user enters Git Repo url {string}', (privateGitRepoUrl: string) => {
   gitPage.enterGitUrl(privateGitRepoUrl);
-  cy.get(devFilePO.formFields.validatedMessage).should('have.text', messages.privateGitRepoMessage);
+  cy.get(devFilePO.formFields.validatedMessage).should(
+    'have.text',
+    messages.addFlow.privateGitRepoMessage,
+  );
 });

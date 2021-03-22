@@ -1,17 +1,20 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { gitPage } from '@console/dev-console/integration-tests/support/pages/add-flow/git-page';
-import { navigateTo } from '@console/dev-console/integration-tests/support/pages/app';
-import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants/global';
-import { addOptions } from '@console/dev-console/integration-tests/support/constants/add';
-import { topologyPage } from '@console/dev-console/integration-tests/support/pages/topology/topology-page';
-import { topologySidePane } from '@console/dev-console/integration-tests/support/pages/topology/topology-side-pane-page';
-import { pipelinesPage } from '../../pages/pipelines/pipelines-page';
-import { catalogPage } from '@console/dev-console/integration-tests/support/pages/add-flow/catalog-page';
-import { pipelineRunDetailsPage } from '../../pages/pipelines/pipelineRun-details-page';
-import { addPage } from '@console/dev-console/integration-tests/support/pages/add-flow/add-page';
-import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
+import {
+  devNavigationMenu,
+  addOptions,
+} from '@console/dev-console/integration-tests/support/constants';
+import {
+  topologyPage,
+  topologySidePane,
+  navigateTo,
+  gitPage,
+  catalogPage,
+  addPage,
+  createGitWorkload,
+} from '@console/dev-console/integration-tests/support/pages';
+import { pipelinesPage, pipelineRunDetailsPage } from '../../pages';
+import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 import { pipelineRunDetailsPO } from '../../page-objects/pipelines-po';
-import { createGitWorkload } from '@console/dev-console/integration-tests/support/pages/functions/createGitWorkload';
 
 Given('user is at Add page', () => {
   navigateTo(devNavigationMenu.Add);

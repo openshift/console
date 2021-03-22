@@ -1,6 +1,5 @@
-import { gitAdvancedOptions, buildConfigOptions, builderImages } from '../../constants/add';
-import { messages } from '../../constants/staticText/addFlow-text';
-import { gitPO } from '../../pageObjects/add-flow-po';
+import { gitAdvancedOptions, buildConfigOptions, builderImages, messages } from '../../constants';
+import { gitPO } from '../../pageObjects';
 
 export const gitPage = {
   unselectRoute: () => cy.get(gitPO.advancedOptions.createRoute).uncheck(),
@@ -195,7 +194,11 @@ export const gitPage = {
         $body
           .find(gitPO.gitSection.validatedMessage)
           .text()
-          .includes(messages.privateGitRepoMessage)
+          .includes(messages.addFlow.privateGitRepoMessage) ||
+        $body
+          .find(gitPO.gitSection.validatedMessage)
+          .text()
+          .includes(messages.addFlow.rateLimitExceeded)
       ) {
         gitPage.selectBuilderImageForGitUrl(gitUrl);
       } else {

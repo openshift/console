@@ -1,5 +1,5 @@
-import { messages } from '../../constants/staticText/addFlow-text';
-import { containerImagePO } from '../../pageObjects/add-flow-po';
+import { messages } from '../../constants';
+import { containerImagePO } from '../../pageObjects';
 
 export const containerImagePage = {
   enterExternalRegistryImageName: (imageName: string) =>
@@ -21,7 +21,7 @@ export const containerImagePage = {
   verifyValidatedMessage: () =>
     cy
       .get(containerImagePO.imageSection.externalRegistry.validatedMessage)
-      .should('have.text', messages.gitUrlValidated),
+      .should('have.text', messages.addFlow.gitUrlValidated),
   enterGitUrl: (gitUrl: string) => {
     cy.byLegacyTestID('application-form-app-name')
       .clear()

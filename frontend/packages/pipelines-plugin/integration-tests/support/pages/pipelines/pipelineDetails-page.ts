@@ -1,4 +1,4 @@
-import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
+import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 import { pageTitle } from '@console/dev-console/integration-tests/support/constants/pageTitle';
 import {
   clusterTriggerBindingDetailsPO,

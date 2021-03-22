@@ -1,34 +1,33 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { guidedTour } from '../../../../../integration-tests-cypress/views/guided-tour';
-import {
-  navigateTo,
-  perspective,
-  projectNameSpace,
-} from '@console/dev-console/integration-tests/support/pages/app';
-import { nav } from '../../../../../integration-tests-cypress/views/nav';
+import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
+import { nav } from '@console/cypress-integration-tests/views/nav';
 import {
   devNavigationMenu,
   operators,
   switchPerspective,
-} from '@console/dev-console/integration-tests/support/constants/global';
-import { perspectiveName } from '@console/dev-console/integration-tests/support/constants/staticText/global-text';
-import { operatorsPO } from '@console/dev-console/integration-tests/support/pageObjects/operators-po';
-import { installOperator } from '@console/dev-console/integration-tests/support/pages/functions/installOperatorOnCluster';
-import { operatorsPage } from '@console/dev-console/integration-tests/support/pages/operators-page';
+  catalogCards,
+} from '@console/dev-console/integration-tests/support/constants';
+import { operatorsPO } from '@console/dev-console/integration-tests/support/pageObjects';
+import {
+  installOperator,
+  operatorsPage,
+  topologyPage,
+  gitPage,
+  catalogPage,
+  addPage,
+  navigateTo,
+  perspective,
+  projectNameSpace,
+} from '@console/dev-console/integration-tests/support/pages';
 import {
   createKnativeEventing,
   createKnativeServing,
-} from '@console/knative-plugin/integration-tests/support/pages/functions/knativeSubscriptions';
-import { topologyPage } from '@console/dev-console/integration-tests/support/pages/topology/topology-page';
-import { gitPage } from '@console/dev-console/integration-tests/support/pages/add-flow/git-page';
-import { catalogPage } from '@console/dev-console/integration-tests/support/pages/add-flow/catalog-page';
-import { catalogCards } from '@console/dev-console/integration-tests/support/constants/add';
-import { modal } from '../../../../../integration-tests-cypress/views/modal';
-import { addPage } from '@console/dev-console/integration-tests/support/pages/add-flow/add-page';
+} from '@console/knative-plugin/integration-tests/support/pages';
+import { modal } from '@console/cypress-integration-tests/views/modal';
 
 Given('user has installed OpenShift Serverless Operator', () => {
   perspective.switchTo(switchPerspective.Administrator);
-  nav.sidenav.switcher.shouldHaveText(perspectiveName.administrator);
+  nav.sidenav.switcher.shouldHaveText(switchPerspective.Administrator);
   operatorsPage.navigateToInstallOperatorsPage();
   cy.get(operatorsPO.installOperators.search)
     .should('be.visible')
@@ -52,7 +51,7 @@ Given('user is at developer perspective', () => {
   // Bug: 1890676 is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
   // cy.testA11y('Developer perspective with guider tour modal');
   guidedTour.close();
-  nav.sidenav.switcher.shouldHaveText(perspectiveName.developer);
+  nav.sidenav.switcher.shouldHaveText(switchPerspective.Developer);
   // Bug: 1890678 is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
   // cy.testA11y('Developer perspective');
 });

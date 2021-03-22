@@ -1,18 +1,17 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { perspective, projectNameSpace, navigateTo } from '../../pages/app';
-import { switchPerspective, devNavigationMenu } from '../../constants/global';
-import { guidedTour } from '../../../../../integration-tests-cypress/views/guided-tour';
-import { nav } from '../../../../../integration-tests-cypress/views/nav';
-import { modal } from '../../../../../integration-tests-cypress/views/modal';
-import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
-import { adminNavigationMenu, perspectiveName } from '../../constants/staticText/global-text';
+import { perspective, projectNameSpace, navigateTo } from '../../pages';
+import { switchPerspective, devNavigationMenu, adminNavigationMenu } from '../../constants';
+import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
+import { nav } from '@console/cypress-integration-tests/views/nav';
+import { modal } from '@console/cypress-integration-tests/views/modal';
+import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 
 Given('user is at developer perspective', () => {
   perspective.switchTo(switchPerspective.Developer);
   // Bug: 1890676 is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
   // cy.testA11y('Developer perspective with guider tour modal');
   guidedTour.close();
-  nav.sidenav.switcher.shouldHaveText(perspectiveName.developer);
+  nav.sidenav.switcher.shouldHaveText(switchPerspective.Developer);
   // Bug: 1890678 is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
   // cy.testA11y('Developer perspective');
 });

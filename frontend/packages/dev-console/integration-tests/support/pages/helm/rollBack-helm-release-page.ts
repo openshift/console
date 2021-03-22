@@ -1,4 +1,4 @@
-import { helmPO } from '../../pageObjects/helm-po';
+import { helmPO } from '../../pageObjects';
 
 export const rollBackHelmRelease = {
   selectRevision: () => cy.get(helmPO.rollBackHelmRelease.revision1).check(),

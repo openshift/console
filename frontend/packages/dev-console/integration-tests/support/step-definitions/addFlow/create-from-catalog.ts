@@ -1,10 +1,8 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { addPage } from '../../pages/add-flow/add-page';
-import { addOptions } from '../../constants/add';
-import { catalogPage } from '../../pages/add-flow/catalog-page';
-import { catalogPO } from '../../pageObjects/add-flow-po';
-import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
-import { pageTitle } from '../../constants/pageTitle';
+import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
+import { addPage, catalogPage } from '../../pages';
+import { addOptions, pageTitle } from '../../constants';
+import { catalogPO } from '../../pageObjects';
 
 When('user selects From Catalog card from add page', () => {
   addPage.selectCardFromOptions(addOptions.DeveloperCatalog);

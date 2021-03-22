@@ -1,5 +1,5 @@
-import { eventSourcePO } from '../pageObjects/add-flow-po';
-import { modal } from '../../../../integration-tests-cypress/views/modal';
+import { modal } from '@console/cypress-integration-tests/views/modal';
+import { eventSourcePO } from '../pageObjects';
 
 export const editLabels = {
   enterLabel: (labelName: string) =>
