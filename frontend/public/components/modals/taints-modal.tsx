@@ -16,7 +16,6 @@ import {
 
 const TaintsModal = withHandlePromise((props: TaintsModalProps) => {
   const [taints, setTaints] = React.useState(props.resource.spec.taints || []);
-  const [errorMessage] = React.useState<string>();
 
   const { t } = useTranslation();
 
@@ -62,6 +61,8 @@ const TaintsModal = withHandlePromise((props: TaintsModalProps) => {
     PreferNoSchedule: 'PreferNoSchedule',
     NoExecute: 'NoExecute',
   };
+
+  const { errorMessage } = props;
 
   return (
     <form
