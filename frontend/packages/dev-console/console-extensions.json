@@ -135,7 +135,7 @@
     "properties": {
       "id": "upload-jar",
       "href": "/upload-jar",
-      "label": "%devconsole~Upload a JAR file%",
+      "label": "%devconsole~Upload JAR file%",
       "description": "%devconsole~Upload a JAR file from your local desktop to OpenShift%",
       "icon": { "$codeRef": "icons.uploadJarIconElement" }
     }

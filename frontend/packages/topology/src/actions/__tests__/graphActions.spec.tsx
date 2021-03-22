@@ -16,7 +16,7 @@ describe('graphActions: ', () => {
       createResourceAccess: [allCatalogImageResourceAccess, allImportResourceAccess],
     };
     const actions = graphActions(graphData);
-    expect(actions).toHaveLength(9);
+    expect(actions).toHaveLength(10);
   });
 
   it('should return the correct menu items when all only import resources are allowed', () => {
@@ -48,7 +48,7 @@ describe('graphActions: ', () => {
     const connectorSource = new OdcBaseNode();
     connectorSource.setData(topologyDataModel.nodes[0].data);
     const actions = graphActions(graphData, connectorSource);
-    expect(actions).toHaveLength(5);
+    expect(actions).toHaveLength(6);
   });
 
   it('should return the event source menu item when connector source is passed and event source is enabled', () => {
@@ -62,7 +62,7 @@ describe('graphActions: ', () => {
       knativeTopologyDataModel.topology['e187afa2-53b1-406d-a619-cf9ff1468031'],
     );
     const actions = graphActions(graphData, connectorSource);
-    expect(actions).toHaveLength(6);
+    expect(actions).toHaveLength(7);
     expect(
       actions.filter((action) => action.labelKey === 'knative-plugin~Event Source'),
     ).toHaveLength(1);
@@ -75,7 +75,7 @@ describe('graphActions: ', () => {
       createResourceAccess: [allCatalogImageResourceAccess, allImportResourceAccess],
     };
     const actions = graphActions(graphData);
-    expect(actions).toHaveLength(11);
+    expect(actions).toHaveLength(12);
   });
 
   it('should return the correct number of items when all permission are not allowed and eventSource is enabled', () => {

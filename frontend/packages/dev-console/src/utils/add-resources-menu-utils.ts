@@ -94,6 +94,14 @@ export const getAddPageUrl = (
     case ImportOptions.EVENTCHANNEL:
       pageUrl = `/channel/ns/${ns}`;
       break;
+    case ImportOptions.UPLOADJAR:
+      pageUrl = `/upload-jar/ns/${ns}`;
+      contextSource &&
+        params.append(
+          QUERY_PROPERTIES.CONTEXT_ACTION,
+          JSON.stringify({ type: INCONTEXT_ACTIONS_CONNECTS_TO, payload: contextSource }),
+        );
+      break;
     default:
       throw new Error(i18next.t('devconsole~Invalid import option provided'));
   }
