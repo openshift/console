@@ -157,7 +157,7 @@ export const EncryptionFormGroup: React.FC<EncryptionFormGroupProps> = ({
               label={<StorageClassEncryptionLabel />}
               aria-label={t('ceph-storage-plugin~Storage class encryption')}
               description={t(
-                'ceph-storage-plugin~A new storage class will be created with encryption enabled. Encryption key for each Persistent volume (block only) will be generated.',
+                'ceph-storage-plugin~An encryption key will be generated for each persistent volume (block) created using an encryption enabled storageclass.',
               )}
               onChange={toggleStorageClassEncryption}
               className="ocs-install-encryption__form-checkbox"
