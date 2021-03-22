@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { ShallowWrapper, shallow } from 'enzyme';
 import Spy = jasmine.Spy;
+import { TFunction } from 'i18next';
 
 import {
   StorageClassProvisioner,
@@ -13,6 +14,19 @@ import {
   StorageClassFormState,
   StorageClassFormExtensionProps,
 } from '../../public/components/storage-class-form';
+
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    withTranslation: () => (Component) => {
+      Component.defaultProps = { ...Component.defaultProps, t: (s) => s };
+      return Component;
+    },
+  };
+});
+
+const i18nNS = 'public';
 
 describe(ConnectedStorageClassForm.displayName, () => {
   const Component: React.ComponentType<StorageClassFormProps &
@@ -45,13 +59,16 @@ describe(ConnectedStorageClassForm.displayName, () => {
         watchK8sList={watchK8sList}
         stopK8sWatch={stopK8sWatch}
         k8s={k8s}
+        t={((key) => key) as TFunction}
+        i18n={null}
+        tReady={true}
         params={params}
       />,
     );
   });
 
   it('renders the proper header', () => {
-    expect(wrapper.find('.co-m-pane__name').text()).toEqual('Create Storage Class');
+    expect(wrapper.find('.co-m-pane__name').text()).toEqual(`${i18nNS}~StorageClass`);
   });
 
   it('renders a form', () => {
@@ -59,7 +76,7 @@ describe(ConnectedStorageClassForm.displayName, () => {
   });
 
   it('renders a dropdown for selecting the reclaim policy', () => {
-    expect(wrapper.find({ title: 'Select Reclaim Policy' }).exists()).toBe(true);
+    expect(wrapper.find({ title: 'Select reclaim policy' }).exists()).toBe(true);
   });
 
   it('renders a text box for selecting the storage class name', () => {

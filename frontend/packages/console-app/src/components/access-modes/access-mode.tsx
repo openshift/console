@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { RadioInput } from '@console/internal/components/radio';
 import { FormGroup } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import {
   provisionerAccessModeMapping,
   getAccessModeForProvisioner,
@@ -32,6 +33,8 @@ export const AccessModeSelector: React.FC<AccessModeSelectorProps> = (props) => 
     provisioner,
     availableAccessModes = [],
   } = props;
+
+  const { t } = useTranslation();
 
   const pvcInitialAccessMode = pvcResource
     ? getPVCAccessModes(pvcResource, 'value')
@@ -74,7 +77,12 @@ export const AccessModeSelector: React.FC<AccessModeSelectorProps> = (props) => 
   };
 
   return (
-    <FormGroup label="Access Mode" isRequired fieldId="access-mode" className={formClassName}>
+    <FormGroup
+      label={t('console-app~Access Mode')}
+      isRequired
+      fieldId="access-mode"
+      className={formClassName}
+    >
       {loaded &&
         allowedAccessModes &&
         accessModeRadios.map((radio) => {

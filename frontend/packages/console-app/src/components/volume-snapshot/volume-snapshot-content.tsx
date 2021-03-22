@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
+import { useTranslation } from 'react-i18next';
 import { referenceForModel, VolumeSnapshotContentKind } from '@console/internal/module/k8s';
 import {
   ResourceLink,
@@ -32,49 +33,6 @@ const tableColumnClasses = [
   classNames('pf-m-hidden', 'pf-m-visible-on-2xl'), // Snapshot Class
   classNames('pf-m-hidden', 'pf-m-visible-on-2xl'), // Created At
   Kebab.columnClass,
-];
-
-const Header = () => [
-  {
-    title: 'Name',
-    sortField: 'metadata.name',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[0] },
-  },
-  {
-    title: 'Status',
-    sortFunc: 'snapshotStatus',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[1] },
-  },
-  {
-    title: 'Size',
-    sortFunc: 'volumeSnapshotSize',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[2] },
-  },
-  {
-    title: 'Volume Snapshot',
-    sortField: 'spec.volumeSnapshotRef.name',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[3] },
-  },
-  {
-    title: 'Snapshot Class',
-    sortField: 'spec.volumeSnapshotClassName',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[4] },
-  },
-  {
-    title: 'Created At',
-    sortField: 'metadata.creationTimeStamp',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[5] },
-  },
-  {
-    title: '',
-    props: { className: tableColumnClasses[6] },
-  },
 ];
 
 const Row: RowFunction<VolumeSnapshotContentKind> = ({ key, obj, style, index }) => {
@@ -118,15 +76,62 @@ const Row: RowFunction<VolumeSnapshotContentKind> = ({ key, obj, style, index })
   );
 };
 
-const VolumeSnapshotContentTable: React.FC = (props) => (
-  <Table
-    {...props}
-    aria-label="Volume Snapshot Content Table"
-    Header={Header}
-    Row={Row}
-    virtualize
-  />
-);
+const VolumeSnapshotContentTable: React.FC = (props) => {
+  const { t } = useTranslation();
+  const VolumeSnapshotContentTableHeader = () => {
+    return [
+      {
+        title: t('console-app~Name'),
+        sortField: 'metadata.name',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[0] },
+      },
+      {
+        title: t('console-app~Status'),
+        sortFunc: 'snapshotStatus',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[1] },
+      },
+      {
+        title: t('console-app~Size'),
+        sortFunc: 'volumeSnapshotSize',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[2] },
+      },
+      {
+        title: t('console-app~VolumeSnapshot'),
+        sortField: 'spec.volumeSnapshotRef.name',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[3] },
+      },
+      {
+        title: t('console-app~SnapshotClass'),
+        sortField: 'spec.volumeSnapshotClassName',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[4] },
+      },
+      {
+        title: t('console-app~Created at'),
+        sortField: 'metadata.creationTimeStamp',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[5] },
+      },
+      {
+        title: '',
+        props: { className: tableColumnClasses[6] },
+      },
+    ];
+  };
+  return (
+    <Table
+      {...props}
+      aria-label={VolumeSnapshotContentModel.labelPlural}
+      Header={VolumeSnapshotContentTableHeader}
+      Row={Row}
+      virtualize
+    />
+  );
+};
 
 const VolumeSnapshotContentPage: React.FC = (props) => {
   return (

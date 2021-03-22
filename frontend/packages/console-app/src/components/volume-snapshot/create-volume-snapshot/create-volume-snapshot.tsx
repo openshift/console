@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { match } from 'react-router';
+import { Trans, useTranslation } from 'react-i18next';
 
 import { Grid, GridItem, ActionGroup, Button, Alert } from '@patternfly/react-core';
 
@@ -67,10 +68,11 @@ const SnapshotClassDropdown: React.FC<SnapshotClassDropdownProps> = (props) => {
   const { selectedKey, filter } = props;
   const kind = referenceForModel(VolumeSnapshotClassModel);
   const resources = [{ kind }];
+  const { t } = useTranslation();
   return (
     <ListDropdown
       {...props}
-      desc="Volume Snapshot Class with same provisioner as claim"
+      desc={t('console-app~VolumeSnapshotClass with same provisioner as claim')}
       dataFilter={filter}
       resources={resources}
       selectedKeyKind={kind}
@@ -81,6 +83,7 @@ const SnapshotClassDropdown: React.FC<SnapshotClassDropdownProps> = (props) => {
 };
 
 const PVCSummary: React.FC<PVCSummaryProps> = ({ persistentVolumeClaim }) => {
+  const { t } = useTranslation();
   const storageClass = persistentVolumeClaim?.spec?.storageClassName;
   const requestedCapacity = persistentVolumeClaim?.spec?.resources?.requests?.storage;
   const sizeBase = convertToBaseValue(requestedCapacity);
@@ -92,32 +95,32 @@ const PVCSummary: React.FC<PVCSummaryProps> = ({ persistentVolumeClaim }) => {
   return (
     <dl>
       <dt className="co-volume-snapshot__details-body">
-        {PersistentVolumeClaimModel.label} Details
+        {t('console-app~PersistentVolumeClaim details')}
       </dt>
-      <dt>Name</dt>
+      <dt>{t('console-app~Name')}</dt>
       <dd>
         <ResourceIcon kind={PersistentVolumeClaimModel.kind} />
         {getName(persistentVolumeClaim)}
       </dd>
-      <dt>Namespace</dt>
+      <dt>{t('console-app~Namespace')}</dt>
       <dd>
         <ResourceIcon kind={NamespaceModel.kind} />
         {getNamespace(persistentVolumeClaim)}
       </dd>
-      <dt>Status</dt>
+      <dt>{t('console-app~Status')}</dt>
       <dd>
         <PVCStatus pvc={persistentVolumeClaim} />
       </dd>
-      <dt>Storage Class</dt>
+      <dt>{t('console-app~StorageClass')}</dt>
       <dd>
         <ResourceIcon kind={StorageClassModel.kind} />
         {storageClass}
       </dd>
-      <dt>Requested Capacity</dt>
+      <dt>{t('console-app~Requested capacity')}</dt>
       <dd>{sizeMetrics}</dd>
-      <dt>Access Mode</dt>
+      <dt>{t('console-app~Access mode')}</dt>
       <dd>{accessModes.title}</dd>
-      <dt>Volume Mode</dt>
+      <dt>{t('console-app~Volume mode')}</dt>
       <dd>{volumeMode}</dd>
     </dl>
   );
@@ -140,6 +143,7 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
     errorMessage,
   } = props;
 
+  const { t } = useTranslation();
   const [pvcName, setPVCName] = React.useState(resourceName);
   const [pvcObj, setPVCObj] = React.useState<PersistentVolumeClaimKind>(null);
   const [snapshotName, setSnapshotName] = React.useState(`${pvcName || 'pvc'}-snapshot`);
@@ -150,7 +154,7 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
   const [scObjList, scObjListLoaded, scObjListErr] = useK8sGet<ListKind<StorageClassResourceKind>>(
     StorageClassModel,
   );
-  const title = 'Create VolumeSnapshot';
+  const title = t('console-app~Create VolumeSnapshot');
   const resourceWatch = React.useMemo(() => {
     return Object.assign(
       {
@@ -242,21 +246,23 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
               data-test="yaml-link"
               replace
             >
-              Edit YAML
+              {t('public~Edit YAML')}
             </Link>
           </div>
         </h1>
         <form className="co-m-pane__body-group" onSubmit={create}>
           {kindObj.kind === PersistentVolumeClaimModel.kind && (
             <p>
-              Creating snapshot for claim <strong>{resourceName}</strong>
+              <Trans ns="console-app">
+                Creating snapshot for claim <strong>{resourceName}</strong>
+              </Trans>
             </p>
           )}
           {kindObj.kind === VolumeSnapshotModel.kind && (
             /* eslint-disable jsx-a11y/label-has-associated-control */
             <>
               <label className="control-label co-required" html-for="claimName">
-                {PersistentVolumeClaimModel.label}
+                {t('console-app~PersistentVolumeClaim')}
               </label>
               <PVCDropdown
                 dataTest="pvc-dropdown"
@@ -270,7 +276,7 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
           )}
           <div className="form-group co-volume-snapshot__form">
             <label className="control-label co-required" htmlFor="snapshot-name">
-              Name
+              {t('console-app~Name')}
             </label>
             <input
               className="pf-c-form-control"
@@ -285,7 +291,7 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
           {pvcObj && (
             <div className="form-group co-volume-snapshot__form">
               <label className="control-label co-required" htmlFor="snapshot-class">
-                Snapshot Class
+                {t('console-app~Snapshot Class')}
               </label>
               {vscErr || scObjListErr ? (
                 <Alert
@@ -312,10 +318,10 @@ const CreateSnapshotForm = withHandlePromise<SnapshotResourceProps>((props) => {
                 id="save-changes"
                 isDisabled={!snapshotClassName || !snapshotName || !pvcName}
               >
-                Create
+                {t('console-app~Create')}
               </Button>
               <Button type="button" variant="secondary" onClick={history.goBack}>
-                Cancel
+                {t('console-app~Cancel')}
               </Button>
             </ActionGroup>
           </ButtonBar>

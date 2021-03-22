@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import { Kebab, ResourceKebab, ResourceLink } from '@console/internal/components/utils';
 import { sortable } from '@patternfly/react-table';
+import { useTranslation } from 'react-i18next';
 import { referenceForModel, VolumeSnapshotClassKind } from '@console/internal/module/k8s';
 import {
   TableRow,
@@ -24,30 +25,6 @@ export const isDefaultSnapshotClass = (volumeSnapshotClass: VolumeSnapshotClassK
   getAnnotations(volumeSnapshotClass, { defaultSnapshotClassAnnotation: 'false' })[
     defaultSnapshotClassAnnotation
   ] === 'true';
-const Header = () => [
-  {
-    title: 'Name',
-    sortField: 'metadata.name',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[0] },
-  },
-  {
-    title: 'Driver',
-    sortField: 'driver',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[1] },
-  },
-  {
-    title: 'Deletion Policy',
-    sortField: 'deletionPolicy',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[2] },
-  },
-  {
-    title: '',
-    props: { className: tableColumnClasses[3] },
-  },
-];
 
 const Row: RowFunction<VolumeSnapshotClassKind> = ({ obj, index, style, key }) => {
   const { name } = obj?.metadata || {};
@@ -74,9 +51,37 @@ const Row: RowFunction<VolumeSnapshotClassKind> = ({ obj, index, style, key }) =
   );
 };
 
-const VolumeSnapshotClassTable: React.FC = (props) => (
-  <Table {...props} aria-label="Volume Snapshot Class Table" Header={Header} Row={Row} />
-);
+const VolumeSnapshotClassTable: React.FC = (props) => {
+  const { t } = useTranslation();
+  const Header = () => {
+    return [
+      {
+        title: t('console-app~Name'),
+        sortField: 'metadata.name',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[0] },
+      },
+      {
+        title: t('console-app~Driver'),
+        sortField: 'driver',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[1] },
+      },
+      {
+        title: t('console-app~Deletion policy'),
+        sortField: 'deletionPolicy',
+        transforms: [sortable],
+        props: { className: tableColumnClasses[2] },
+      },
+      {
+        title: '',
+        props: { className: tableColumnClasses[3] },
+      },
+    ];
+  };
+
+  return <Table {...props} aria-label={VolumeSnapshotClassModel.label} Header={Header} Row={Row} />;
+};
 
 const VolumeSnapshotClassPage: React.FC = (props) => (
   <ListPage

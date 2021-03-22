@@ -275,7 +275,8 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       href: 'volumesnapshots',
       model: PersistentVolumeClaimModel,
-      name: 'Volume Snapshots',
+      // t('console-app~VolumeSnapshots')
+      name: '%console-app~VolumeSnapshots%',
       loader: () =>
         import(
           './components/volume-snapshot/volume-snapshot' /* webpackChunkName: "volume-snapshot-page" */
