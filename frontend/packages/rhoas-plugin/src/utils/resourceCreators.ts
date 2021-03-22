@@ -40,7 +40,6 @@ export const createManagedServiceAccount = async (currentNamespace: string) => {
       serviceAccountName: `RHOASOperator-ServiceAccount-${currentNamespace}`,
       serviceAccountDescription: 'Service account created by RHOASOperator to access services',
       serviceAccountSecretName: ServiceAccountSecretName,
-      reset: false,
     },
   };
 
@@ -231,26 +230,14 @@ export const createKafkaConnection = async (
  * @param kafkaName
  * @param currentNamespace
  */
-export const deleteKafkaConnection = async (kafkaName: string, currentNamespace: string) => {
-  try {
-    return k8sKillByName(KafkaConnectionModel, kafkaName, currentNamespace);
-  } catch {
-    // eslint-disable-next-line no-console
-    console.log('rhoas: failed to delete kafka connection');
-  }
-  return Promise.resolve();
+export const deleteKafkaConnection = (kafkaName: string, currentNamespace: string) => {
+  return k8sKillByName(KafkaConnectionModel, kafkaName, currentNamespace);
 };
 
 export const listOfCurrentKafkaConnectionsById = async (currentNamespace: string) => {
-  const localArray = [];
   const kafkaConnections = await k8sGet(KafkaConnectionModel, null, currentNamespace);
   if (kafkaConnections) {
-    const callback = (kafka) => {
-      const { kafkaId } = kafka.spec;
-      localArray.push(kafkaId);
-    };
-    kafkaConnections.items.map(callback);
-    return localArray;
+    return kafkaConnections.items.map((kafka) => kafka.spec.kafkaId);
   }
 
   return Promise.resolve([]);

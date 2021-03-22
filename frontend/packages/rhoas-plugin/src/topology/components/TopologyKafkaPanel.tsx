@@ -6,7 +6,6 @@ import { Node } from '@patternfly/react-topology';
 import {
   navFactory,
   SimpleTabNav,
-  // ResourceIcon,
   ResourceSummary,
   ResourceLink,
 } from '@console/internal/components/utils';
@@ -14,7 +13,7 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import { SecretModel } from '@console/internal/models';
 import * as UIActions from '@console/internal/actions/ui';
 import './TopologyKafkaPanel.css';
-// import { KafkaConnectionModel } from '../../models';
+import { KafkaConnection } from '../../utils/rhoas-types';
 
 type PropsFromState = {
   selectedDetailsTab?: any;
@@ -38,7 +37,7 @@ type OwnProps = {
 
 type TopologyRhoasPanelProps = PropsFromState & PropsFromDispatch & OwnProps;
 
-const DetailsComponent: React.FC<any> = ({ obj }) => {
+const DetailsComponent: React.FC<{ obj: KafkaConnection }> = ({ obj }) => {
   const { t } = useTranslation();
   const boostrapServerHost = obj.status?.bootstrapServerHost;
   const url = obj.status?.metadata?.cloudUI;
@@ -59,7 +58,9 @@ const DetailsComponent: React.FC<any> = ({ obj }) => {
           <dl className="co-m-pane__details">
             <dt>{t('rhoas-plugin~URL')}</dt>
             <dd>
-              <a href={url}>{url}</a>
+              <a href={url} rel="noopener noreferrer" target="_blank">
+                {url}
+              </a>
             </dd>
           </dl>
         )}
@@ -68,10 +69,10 @@ const DetailsComponent: React.FC<any> = ({ obj }) => {
   );
 };
 
-const ResourcesComponent = ({ obj }) => {
+const ResourcesComponent: React.FC<{ obj: KafkaConnection }> = ({ obj }) => {
   const serviceAccountSecretName = obj?.spec?.credentials?.serviceAccountSecretName;
   const { namespace } = obj.metadata;
-  // const t = useTranslation();
+
   const link = (
     <ResourceLink
       kind={referenceForModel(SecretModel)}
@@ -96,9 +97,9 @@ export const ConnectedTopologyRhoasPanel: React.FC<TopologyRhoasPanelProps> = ({
   item,
   selectedDetailsTab,
   onClickTab,
-}: TopologyRhoasPanelProps) => {
+}) => {
   const [showAlert, setShowAlert] = React.useState(true);
-
+  const { t } = useTranslation();
   // Resource
   const akc = item?.getData().resource;
   if (!akc) {
@@ -116,28 +117,18 @@ export const ConnectedTopologyRhoasPanel: React.FC<TopologyRhoasPanelProps> = ({
       <div className="overview__sidebar-pane-head resource-overview__heading">
         <h1 className="co-m-pane__heading">
           <div className="co-m-pane__name co-resource-item">
-            {/* <ResourceIcon
-              className="co-m-resource-icon--lg co-m-resource-kafka-connection"
-              kind={KafkaConnectionModel.abbr}
-            /> */}
             <h3>Kafka Connection</h3>
           </div>
         </h1>
         {showAlert && (
-          <div className="kafka-panel-alert">
+          <div className="rhoas-topology-kafka-panel-alert">
             <Alert
               variant="default"
-              title="Cloud Service"
+              title={t('rhoas-plugin~Cloud Service')}
               actionClose={<AlertActionCloseButton onClick={handleAlertFunction} />}
               isInline
             >
-              This resource represents service that exist outside your cluster. To view details
-              about resource please go to
-              <a href="https://cloud.redhat.com/beta/application-services/openshift-streams/">
-                {' '}
-                OpenShift Streams Apache Kafka{' '}
-              </a>{' '}
-              console.
+              {t('rhoas-plugin~This resource represents service that exist outside your cluster')}
             </Alert>
           </div>
         )}

@@ -70,8 +70,7 @@
   },
   "cucumberautocomplete.steps": ["./packages/*/integration-tests/support/step-definitions/*/*.ts"],
   "cucumberautocomplete.strictGherkinCompletion": true,
-  "editor.quickSuggestions": true,
-  "typescript.format.insertSpaceAfterFunctionKeywordForAnonymousFunctions": false
+  "editor.quickSuggestions": true
   // TODO support prettier + stylelint
   // "prettier.stylelintIntegration": true,
   // "css.validate": false,

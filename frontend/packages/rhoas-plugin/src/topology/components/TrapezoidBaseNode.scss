@@ -1,6 +1,6 @@
 @import '../../../../topology/src/components/topology-utils.scss';
 
-.odc-trapezoid-node {
+.rhoas-plugin--trapezoid-node {
   outline: none;
   cursor: pointer;
 
@@ -44,7 +44,7 @@
 
 .odc-m-drag-active,
 .odc-m-filter-active {
-  .odc-trapezoid-node {
+  .rhoas-plugin---trapezoid-node {
     opacity: $de-emphasize-opacity;
     &.is-dragging,
     &.is-highlight {
@@ -54,7 +54,7 @@
 }
 
 .odc-m-filter-active:not(.odc-m-drag-active) {
-  .odc-trapezoid-node {
+  .rhoas-plugin--trapezoid-node {
     &.is-filtered {
       opacity: 1;
     }

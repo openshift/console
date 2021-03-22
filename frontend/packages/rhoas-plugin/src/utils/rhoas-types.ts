@@ -1,6 +1,5 @@
 import { K8sResourceCommon } from '@console/internal/module/k8s';
 
-// FIXME replace with generic type
 export interface CloudKafka {
   id: string;
   kind: string;
@@ -14,6 +13,20 @@ export interface CloudKafka {
   bootstrapServerHost: string;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface KafkaConnection extends K8sResourceCommon {
+  spec: {
+    accessTokenSecretName: string;
+    credentials: {
+      serviceAccountSecretName: string;
+    };
+  };
+  status: {
+    bootstrapServerHost: string;
+    conditions: StatusCondition[];
+    metadata: any;
+  };
 }
 
 export interface KafkaRequest extends K8sResourceCommon {

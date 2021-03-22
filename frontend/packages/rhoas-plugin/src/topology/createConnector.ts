@@ -9,13 +9,7 @@ const createServiceBindingConnection = (source: Node, target: Node) => {
 };
 
 export const getCreateConnector = (createHints: string[]) => {
-  if (
-    createHints
-    // Enabling hints and drop targets requires copying
-    // a large amount of code from topology core.
-    // createHints.includes('createServiceBinding') &&
-    // !createHints.includes('operator-workload')
-  ) {
+  if (createHints) {
     return createServiceBindingConnection;
   }
   return null;

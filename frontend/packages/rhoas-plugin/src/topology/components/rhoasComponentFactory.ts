@@ -5,7 +5,6 @@ import {
   withDragNode,
   withSelection,
   withCreateConnector,
-  Node,
 } from '@patternfly/react-topology';
 import { withEditReviewAccess } from '@console/topology/src/utils';
 import {
@@ -13,16 +12,10 @@ import {
   nodeDragSourceSpec,
   withContextMenu,
   CreateConnector,
-  createMenuItems,
+  noRegroupWorkloadContextMenu,
 } from '@console/topology/src/components/graph-view';
-import { kebabOptionsToMenu } from '@console/internal/components/utils';
 import KafkaNode from './KafkaNode';
-import { rhoasActions } from '../actions/rhoasActions';
 import { TYPE_MANAGED_KAFKA_CONNECTION } from './const';
-
-export const rhoasContextMenu = (element: Node) => {
-  return createMenuItems(kebabOptionsToMenu(rhoasActions(element)));
-};
 
 export const getRhoasComponentFactory = (): ComponentFactory => {
   return (kind, type): React.ComponentType<{ element: GraphElement }> | undefined => {
@@ -35,7 +28,9 @@ export const getRhoasComponentFactory = (): ComponentFactory => {
         )(
           withEditReviewAccess('patch')(
             withDragNode(nodeDragSourceSpec(type))(
-              withSelection({ controlled: true })(withContextMenu(rhoasContextMenu)(KafkaNode)),
+              withSelection({ controlled: true })(
+                withContextMenu(noRegroupWorkloadContextMenu)(KafkaNode),
+              ),
             ),
           ),
         );

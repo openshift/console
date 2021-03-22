@@ -22,7 +22,7 @@ import {
 } from '@patternfly/react-table';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import { Timestamp } from '@console/internal/components/utils';
-import './StreamsInstanceTable.css';
+import './ServiceInstanceTable.css';
 import { CloudKafka } from '../../utils/rhoas-types';
 
 type FormattedKafkas = {
@@ -30,25 +30,21 @@ type FormattedKafkas = {
   selected: boolean;
 };
 
-type StreamsInstanceTableProps = {
+type ServiceInstanceTableProps = {
   kafkaArray: CloudKafka[];
   pageKafkas: CloudKafka[];
   selectedKafka: number;
   setSelectedKafka: (selectedKafka: number) => void;
   currentKafkaConnections: string[];
-  allKafkasConnected: boolean;
-  setAllKafkasConnected: (allKafkasConnected: boolean) => void;
-  handleTextInputNameChange: (arg0: string) => void;
+  setTextInputNameValue: (input: string) => void;
 };
 
-const StreamsInstanceTable = ({
-  kafkaArray,
+const ServiceInstanceTable: React.FC<ServiceInstanceTableProps> = ({
   pageKafkas,
   setSelectedKafka,
   currentKafkaConnections,
-  setAllKafkasConnected,
-  handleTextInputNameChange,
-}: StreamsInstanceTableProps) => {
+  setTextInputNameValue,
+}: ServiceInstanceTableProps) => {
   const [formattedKafkas, setFormattedKafkas] = React.useState<FormattedKafkas[]>([]);
   const [kafkaRows, setKafkaRows] = React.useState(pageKafkas);
   const [sortBy, setSortBy] = React.useState({});
@@ -74,13 +70,9 @@ const StreamsInstanceTable = ({
           };
         });
 
-      if (kafkaArray && kafkaArray.length === currentKafkaConnections.length) {
-        setAllKafkasConnected(true);
-      } else {
-        setFormattedKafkas(tableRow);
-      }
+      setFormattedKafkas(tableRow);
     },
-    [currentKafkaConnections, kafkaArray, setAllKafkasConnected],
+    [currentKafkaConnections],
   );
 
   React.useEffect(() => {
@@ -99,7 +91,7 @@ const StreamsInstanceTable = ({
 
   const clearFilters = () => {
     const value = '';
-    handleTextInputNameChange(value);
+    setTextInputNameValue(value);
   };
 
   const emptyStateRows = (
@@ -157,25 +149,23 @@ const StreamsInstanceTable = ({
     setKafkaRows(direction === SortByDirection.asc ? sortedRows : sortedRows.reverse());
   };
 
-  return (
+  return formattedKafkas && pageKafkas ? (
     <>
-      {formattedKafkas && pageKafkas && (
-        <Table
-          aria-label={t('rhoas-plugin~List of Kafka Instances')}
-          cells={tableColumns}
-          rows={formattedKafkas}
-          onSelect={onSelectTableRow}
-          selectVariant={RowSelectVariant.radio}
-          className="mk-streams-table"
-          onSort={onSort}
-          sortBy={sortBy}
-        >
-          <TableHeader />
-          {pageKafkas.length === 0 ? emptyStateRows : <TableBody />}
-        </Table>
-      )}
+      <Table
+        aria-label={t('rhoas-plugin~List of Kafka Instances')}
+        cells={tableColumns}
+        rows={formattedKafkas}
+        onSelect={onSelectTableRow}
+        selectVariant={RowSelectVariant.radio}
+        className="rhoas-plugin--service-table"
+        onSort={onSort}
+        sortBy={sortBy}
+      >
+        <TableHeader />
+        {pageKafkas.length === 0 ? emptyStateRows : <TableBody />}
+      </Table>
     </>
-  );
+  ) : null;
 };
 
-export default StreamsInstanceTable;
+export default ServiceInstanceTable;

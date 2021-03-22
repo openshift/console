@@ -13,7 +13,7 @@
     "entry": "src/plugin.ts",
     "exposedModules": {
       "constants": "src/const.ts",
-      "catalog": "src/catalog"
+      "catalog": "src/catalog.tsx"
     }
   }
 }
