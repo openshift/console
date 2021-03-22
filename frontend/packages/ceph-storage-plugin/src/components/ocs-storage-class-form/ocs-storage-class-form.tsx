@@ -402,7 +402,7 @@ export const StorageClassEncryption: React.FC<ProvisionerProps> = ({ onParamChan
             label={<StorageClassEncryptionLabel />}
             aria-label={t('ceph-storage-plugin~Storage class encryption')}
             description={t(
-              'ceph-storage-plugin~An encryption key for each Persistent volume (block only) will be generated.',
+              'ceph-storage-plugin~An encryption key will be generated for each persistent volume created using this storageclass.',
             )}
             onChange={setChecked}
             className="ocs-storageClass-encryption__form-checkbox"
