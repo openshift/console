@@ -1,0 +1,164 @@
+{
+  "properties": {
+    "CustomResourceDefinitionSpec": {
+      "description": "CustomResourceDefinitionSpec describes how a user wants their resource to appear",
+      "properties": {
+        "conversion": {
+          "description": "conversion defines conversion settings for the CRD."
+        },
+        "group": {
+          "description": "group is the API group of the defined custom resource. The custom resources are served under `/apis/<group>/...`. Must match the name of the CustomResourceDefinition (in the form `<names.plural>.<group>`).",
+          "type": ["string", "null"]
+        },
+        "names": {
+          "description": "names specify the resource and kind names for the custom resource."
+        },
+        "preserveUnknownFields": {
+          "description": "preserveUnknownFields indicates that object fields which are not specified in the OpenAPI schema should be preserved when persisting to storage. apiVersion, kind, metadata and known fields inside metadata are always preserved. This field is deprecated in favor of setting `x-preserve-unknown-fields` to true in `spec.versions[*].schema.openAPIV3Schema`. See https://kubernetes.io/docs/tasks/access-kubernetes-api/custom-resources/custom-resource-definitions/#pruning-versus-preserving-unknown-fields for details.",
+          "type": ["boolean", "null"]
+        },
+        "scope": {
+          "description": "scope indicates whether the defined custom resource is cluster- or namespace-scoped. Allowed values are `Cluster` and `Namespaced`.",
+          "type": ["string", "null"]
+        },
+        "versions": {
+          "description": "versions is the list of all API versions of the defined custom resource. Version names are used to compute the order in which served versions are listed in API discovery. If the version string is \"kube-like\", it will sort above non \"kube-like\" version strings, which are ordered lexicographically. \"Kube-like\" versions start with a \"v\", then are followed by a number (the major version), then optionally the string \"alpha\" or \"beta\" and another number (the minor version). These are sorted first by GA > beta > alpha (where GA is a version with no suffix such as beta or alpha), and then by comparing major version, then minor version. An example sorted list of versions: v10, v2, v1, v11beta2, v10beta3, v3beta1, v12alpha1, v11alpha2, foo1, foo10.",
+          "items": {},
+          "type": ["array", "null"]
+        }
+      },
+      "required": ["group", "names", "scope", "versions"],
+      "type": "object",
+      "$schema": "http://json-schema.org/schema#"
+    },
+    "CustomResourceConversion": {
+      "description": "CustomResourceConversion describes how to convert different versions of a CR.",
+      "properties": {
+        "strategy": {
+          "description": "strategy specifies how custom resources are converted between versions. Allowed values are: - `None`: The converter only change the apiVersion and would not touch any other field in the custom resource. - `Webhook`: API Server will call to an external webhook to do the conversion. Additional information\n  is needed for this option. This requires spec.preserveUnknownFields to be false, and spec.conversion.webhook to be set.",
+          "type": ["string", "null"]
+        },
+        "webhook": {
+          "description": "WebhookConversion describes how to call a conversion webhook",
+          "properties": {
+            "clientConfig": {
+              "description": "WebhookClientConfig contains the information to make a TLS connection with the webhook.",
+              "properties": {
+                "caBundle": {
+                  "description": "caBundle is a PEM encoded CA bundle which will be used to validate the webhook's server certificate. If unspecified, system trust roots on the apiserver are used.",
+                  "format": "byte",
+                  "type": ["string", "null"]
+                },
+                "service": {
+                  "description": "ServiceReference holds a reference to Service.legacy.k8s.io",
+                  "properties": {
+                    "name": {
+                      "description": "name is the name of the service. Required",
+                      "type": "string"
+                    },
+                    "namespace": {
+                      "description": "namespace is the namespace of the service. Required",
+                      "type": "string"
+                    },
+                    "path": {
+                      "description": "path is an optional URL path at which the webhook will be contacted.",
+                      "type": ["string", "null"]
+                    },
+                    "port": {
+                      "description": "port is an optional service port at which the webhook will be contacted. `port` should be a valid port number (1-65535, inclusive). Defaults to 443 for backward compatibility.",
+                      "format": "int32",
+                      "type": ["integer", "null"]
+                    }
+                  },
+                  "required": ["namespace", "name"],
+                  "type": ["object", "null"]
+                },
+                "url": {
+                  "description": "url gives the location of the webhook, in standard URL form (`scheme://host:port/path`). Exactly one of `url` or `service` must be specified.\n\nThe `host` should not refer to a service running in the cluster; use the `service` field instead. The host might be resolved via external DNS in some apiservers (e.g., `kube-apiserver` cannot resolve in-cluster DNS as that would be a layering violation). `host` may also be an IP address.\n\nPlease note that using `localhost` or `127.0.0.1` as a `host` is risky unless you take great care to run this webhook on all hosts which run an apiserver which might need to make calls to this webhook. Such installs are likely to be non-portable, i.e., not easy to turn up in a new cluster.\n\nThe scheme must be \"https\"; the URL must begin with \"https://\".\n\nA path is optional, and if present may be any string permissible in a URL. You may use the path to pass an arbitrary string to the webhook, for example, a cluster identifier.\n\nAttempting to use a user or basic auth e.g. \"user:password@\" is not allowed. Fragments (\"#...\") and query parameters (\"?...\") are not allowed, either.",
+                  "type": ["string", "null"]
+                }
+              },
+              "type": ["object", "null"]
+            },
+            "conversionReviewVersions": {
+              "description": "conversionReviewVersions is an ordered list of preferred `ConversionReview` versions the Webhook expects. The API server will use the first version in the list which it supports. If none of the versions specified in this list are supported by API server, conversion will fail for the custom resource. If a persisted Webhook configuration specifies allowed versions and does not include any versions known to the API Server, calls to the webhook will fail.",
+              "items": { "type": ["string", "null"] },
+              "type": "array"
+            }
+          },
+          "required": ["conversionReviewVersions"],
+          "type": ["object", "null"]
+        }
+      },
+      "required": ["strategy"],
+      "type": "object",
+      "$schema": "http://json-schema.org/schema#"
+    },
+    "CustomResourceDefinitionNames": {
+      "description": "CustomResourceDefinitionNames indicates the names to serve this CustomResourceDefinition",
+      "properties": {
+        "categories": {
+          "description": "categories is a list of grouped resources this custom resource belongs to (e.g. 'all'). This is published in API discovery documents, and used by clients to support invocations like `kubectl get all`.",
+          "items": { "type": ["string", "null"] },
+          "type": ["array", "null"]
+        },
+        "kind": {
+          "description": "kind is the serialized kind of the resource. It is normally CamelCase and singular. Custom resource instances will use this value as the `kind` attribute in API calls.",
+          "type": ["string", "null"]
+        },
+        "listKind": {
+          "description": "listKind is the serialized kind of the list for this resource. Defaults to \"`kind`List\".",
+          "type": ["string", "null"]
+        },
+        "plural": {
+          "description": "plural is the plural name of the resource to serve. The custom resources are served under `/apis/<group>/<version>/.../<plural>`. Must match the name of the CustomResourceDefinition (in the form `<names.plural>.<group>`). Must be all lowercase.",
+          "type": ["string", "null"]
+        },
+        "shortNames": {
+          "description": "shortNames are short names for the resource, exposed in API discovery documents, and used by clients to support invocations like `kubectl get <shortname>`. It must be all lowercase.",
+          "items": { "type": ["string", "null"] },
+          "type": ["array", "null"]
+        },
+        "singular": {
+          "description": "singular is the singular name of the resource. It must be all lowercase. Defaults to lowercased `kind`.",
+          "type": ["string", "null"]
+        }
+      },
+      "required": ["plural", "kind"],
+      "type": "object",
+      "$schema": "http://json-schema.org/schema#"
+    },
+    "CustomResourceDefinitionVersion": {
+      "description": "CustomResourceDefinitionVersion describes a version for CRD.",
+      "properties": {
+        "additionalPrinterColumns": {
+          "description": "additionalPrinterColumns specifies additional columns returned in Table output. See https://kubernetes.io/docs/reference/using-api/api-concepts/#receiving-resources-as-tables for details. If no columns are specified, a single column displaying the age of the custom resource is used.",
+          "items": {},
+          "type": ["array", "null"]
+        },
+        "name": {
+          "description": "name is the version name, e.g. “v1”, “v2beta1”, etc. The custom resources are served under this version at `/apis/<group>/<version>/...` if `served` is true.",
+          "type": ["string", "null"]
+        },
+        "schema": {
+          "description": "schema describes the schema used for validation, pruning, and defaulting of this version of the custom resource."
+        },
+        "served": {
+          "description": "served is a flag enabling/disabling this version from being served via REST APIs",
+          "type": ["boolean", "null"]
+        },
+        "storage": {
+          "description": "storage indicates this version should be used when persisting custom resources to storage. There must be exactly one version with storage=true.",
+          "type": ["boolean", "null"]
+        },
+        "subresources": {
+          "description": "subresources specify what subresources this version of the defined custom resource have."
+        }
+      },
+      "required": ["name", "served", "storage"],
+      "type": "object",
+      "$schema": "http://json-schema.org/schema#"
+    }
+  },
+  "type": "object"
+}

@@ -289,6 +289,9 @@ func (s *Server) HTTPHandler() http.Handler {
 	staticHandler := http.StripPrefix(proxy.SingleJoiningSlash(s.BaseURL.Path, "/static/"), http.FileServer(http.Dir(s.PublicDir)))
 	handle("/static/", gzipHandler(securityHeadersMiddleware(staticHandler)))
 
+	k8sApiHandler := http.StripPrefix(proxy.SingleJoiningSlash(s.BaseURL.Path, "/api/resource/"), http.FileServer(http.Dir("./api")))
+	handle("/api/resource/", gzipHandler(securityHeadersMiddleware(k8sApiHandler)))
+
 	if s.CustomLogoFile != "" {
 		handleFunc(customLogoEndpoint, func(w http.ResponseWriter, r *http.Request) {
 			http.ServeFile(w, r, s.CustomLogoFile)
