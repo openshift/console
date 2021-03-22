@@ -447,6 +447,7 @@
   "Non-printable file detected.": "Non-printable file detected.",
   "File contains non-printable characters. Preview is not available.": "File contains non-printable characters. Preview is not available.",
   "Select {{item}}": "Select {{item}}",
+  "An error occurred. Please try again.": "An error occurred. Please try again.",
   "Remove volume": "Remove volume",
   "Mount path": "Mount path",
   "SubPath": "SubPath",
