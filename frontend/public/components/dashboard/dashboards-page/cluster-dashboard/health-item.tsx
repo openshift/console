@@ -26,6 +26,7 @@ import {
 import { withDashboardResources, DashboardItemProps } from '../../with-dashboard-resources';
 import { uniqueResource } from './utils';
 import { getPrometheusQueryResponse } from '../../../../actions/dashboards';
+import { ClusterDashboardContext } from './context';
 
 export const OperatorsPopup: React.FC<OperatorsPopupProps> = ({
   resources,
@@ -176,6 +177,7 @@ export const PrometheusHealthItem = withDashboardResources<PrometheusHealthItemP
     models,
   }) => {
     const { t } = useTranslation();
+    const { infrastructure } = React.useContext(ClusterDashboardContext);
 
     const modelExists =
       subsystem.additionalResource && !!models.get(subsystem.additionalResource.kind);
@@ -213,7 +215,7 @@ export const PrometheusHealthItem = withDashboardResources<PrometheusHealthItemP
     const k8sResult = subsystem.additionalResource
       ? resources[subsystem.additionalResource.prop]
       : null;
-    const healthState = subsystem.healthHandler(queryResults, t, k8sResult);
+    const healthState = subsystem.healthHandler(queryResults, t, k8sResult, infrastructure);
 
     return (
       <HealthItem

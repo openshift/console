@@ -12,6 +12,8 @@
   "Provider": "Provider",
   "OpenShift version": "OpenShift version",
   "Update channel": "Update channel",
+  "Control plane high availability": "Control plane high availability",
+  "No (single master)": "No (single master)",
   "Kubernetes version": "Kubernetes version",
   "Operators create, configure, and manage applications by extending the Kubernetes API.": "Operators create, configure, and manage applications by extending the Kubernetes API.",
   "Operators": "Operators",

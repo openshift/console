@@ -11,6 +11,7 @@
   "Components of the Control Plane are responsible for maintaining and reconciling the state of the cluster.": "Components of the Control Plane are responsible for maintaining and reconciling the state of the cluster.",
   "Components": "Components",
   "Response rate": "Response rate",
+  "Single master": "Single master",
   "Incompatible file type": "Incompatible file type",
   "{{fileName}} cannot be uploaded. Only {{fileExtensions}} files are supported currently. Try another file.": "{{fileName}} cannot be uploaded. Only {{fileExtensions}} files are supported currently. Try another file.",
   "Clone": "Clone",
