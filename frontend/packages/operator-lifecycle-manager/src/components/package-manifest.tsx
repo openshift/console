@@ -3,7 +3,12 @@ import * as _ from 'lodash';
 import { Link, match } from 'react-router-dom';
 import * as classNames from 'classnames';
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
-import { MsgBox, Timestamp, ResourceLink } from '@console/internal/components/utils';
+import {
+  MsgBox,
+  Timestamp,
+  ResourceLink,
+  resourcePathFromModel,
+} from '@console/internal/components/utils';
 import {
   MultiListPage,
   Table,
@@ -66,11 +71,19 @@ export const PackageManifestTableRow: RowFunction<
   return (
     <TableRow id={packageManifest.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
-        <ClusterServiceVersionLogo
-          displayName={displayName}
-          icon={iconFor(packageManifest)}
-          provider={provider.name}
-        />
+        <Link
+          to={resourcePathFromModel(
+            PackageManifestModel,
+            packageManifest.metadata.name,
+            packageManifest.metadata.namespace,
+          )}
+        >
+          <ClusterServiceVersionLogo
+            displayName={displayName}
+            icon={iconFor(packageManifest)}
+            provider={provider.name}
+          />
+        </Link>
       </TableData>
       <TableData className={tableColumnClasses[1]}>
         {version} ({channel.name})

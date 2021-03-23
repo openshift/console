@@ -102,7 +102,7 @@ export const iconFor = (pkg: PackageManifestKind) => {
   });
 };
 
-export const ClusterServiceVersionLogo: React.SFC<ClusterServiceVersionLogoProps> = (props) => {
+export const ClusterServiceVersionLogo: React.FC<ClusterServiceVersionLogoProps> = (props) => {
   const { icon, displayName, provider, version } = props;
   const imgSrc: string = _.isString(icon)
     ? icon
@@ -215,13 +215,6 @@ export const NamespaceIncludesManualApproval: React.FC<NamespaceIncludesManualAp
   </Trans>
 );
 
-export type ClusterServiceVersionLogoProps = {
-  displayName: string;
-  icon: ClusterServiceVersionIcon | string;
-  provider: { name: string } | string;
-  version?: string;
-};
-
 const InstallPlanCSVNames: React.FC<InstallPlanReviewProps> = ({ installPlan }) =>
   installPlan?.spec.clusterServiceVersionNames
     .sort()
@@ -238,6 +231,13 @@ export const InstallPlanReview: React.FC<InstallPlanReviewProps> = ({ installPla
     </Trans>
   </p>
 );
+
+export type ClusterServiceVersionLogoProps = {
+  displayName: string;
+  icon: ClusterServiceVersionIcon | string;
+  provider: { name: string } | string;
+  version?: string;
+};
 
 export type OperatorsWithManualApprovalProps = {
   subscriptions: SubscriptionKind[];
