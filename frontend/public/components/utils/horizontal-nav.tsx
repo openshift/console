@@ -12,6 +12,7 @@ import { K8sResourceKind, K8sResourceCommon } from '../../module/k8s';
 import { referenceForModel, referenceFor } from '../../module/k8s/k8s';
 import { useExtensions, HorizontalNavTab, isHorizontalNavTab } from '@console/plugin-sdk';
 import { PodLogs } from '../pod-logs';
+import { Alert, Rule } from '../monitoring/types';
 
 const editYamlComponent = (props) => (
   <AsyncComponent loader={() => import('../edit-yaml').then((c) => c.EditYAML)} obj={props.obj} />
@@ -291,12 +292,7 @@ export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
     <div className={classNames('co-m-page__body', props.className)}>
       <div className="co-m-horizontal-nav">
         {!props.hideNav && (
-          <NavBar
-            pages={pages}
-            baseURL={props.match.url}
-            basePath={props.match.path}
-            alertURL={props.alertURL}
-          />
+          <NavBar pages={pages} baseURL={props.match.url} basePath={props.match.path} />
         )}
       </div>
       {isAlertsDetailPage && (
@@ -324,7 +320,6 @@ export type NavBarProps = {
   history: History;
   location: Location<any>;
   match: match<any>;
-  alertURL?: string;
 };
 
 export type HorizontalNavProps = {
@@ -340,6 +335,12 @@ export type HorizontalNavProps = {
   noStatusBox?: boolean;
   customData?: any;
   alertURL?: string;
+  alert?: Alert;
+  rule?: Rule;
+  loaded?: boolean;
+  loadError?: string;
+  namespace?: string;
+  silencesLoaded?: boolean;
 };
 
 export type PageComponentProps<R extends K8sResourceCommon = K8sResourceKind> = {
