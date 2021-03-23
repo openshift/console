@@ -1,6 +1,7 @@
+import { SemVer } from 'semver';
 import { k8sList } from '@console/internal/module/k8s';
 import { ClusterServiceVersionKind } from '@console/operator-lifecycle-manager';
-import { getPipelineOperatorVersion } from '../pipeline-operator';
+import { getPipelineOperatorVersion, isGAVersionInstalled } from '../pipeline-operator';
 
 jest.mock('@console/internal/module/k8s', () => ({
   k8sList: jest.fn(),
@@ -11,6 +12,20 @@ beforeEach(() => {
 });
 
 const k8sListMock = k8sList as jest.Mock;
+
+describe('isGAVersionInstalled', () => {
+  it('should return false if the operator is not identified', () => {
+    expect(isGAVersionInstalled(null)).toBe(false);
+  });
+
+  it('should return true if the installed operator is below 1.4.0', () => {
+    expect(isGAVersionInstalled(new SemVer('1.3.1'))).toBe(false);
+  });
+
+  it('should return true if the installed operator is above 1.4.0', () => {
+    expect(isGAVersionInstalled(new SemVer('1.5.1'))).toBe(true);
+  });
+});
 
 describe('getPipelineOperatorVersion', () => {
   it('should fetch the ClusterServiceVersion from the api', async () => {

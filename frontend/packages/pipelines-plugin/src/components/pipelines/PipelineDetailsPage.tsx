@@ -19,7 +19,10 @@ import {
 } from './detail-page-tabs';
 import PipelineMetrics from './pipeline-metrics/PipelineMetrics';
 import { usePipelineTriggerTemplateNames } from './utils/triggers';
+import { isGAVersionInstalled, usePipelineOperatorVersion } from './utils/pipeline-operator';
+import { MetricsQueryPrefix } from './pipeline-metrics/pipeline-metrics-utils';
 import { usePipelinesBreadcrumbsFor, useLatestPipelineRun } from './hooks';
+import { PipelineDetailsTabProps } from './detail-page-tabs/types';
 
 const PipelineDetailsPage: React.FC<DetailsPageProps> = (props) => {
   const { t } = useTranslation();
@@ -28,6 +31,11 @@ const PipelineDetailsPage: React.FC<DetailsPageProps> = (props) => {
   const breadcrumbsFor = usePipelinesBreadcrumbsFor(kindObj, match);
   const [, pipelineLoaded, pipelineError] = useK8sGet<PipelineKind>(PipelineModel, name, namespace);
   const latestPipelineRun = useLatestPipelineRun(name, namespace);
+  const pipelineOperator = usePipelineOperatorVersion(namespace);
+  const queryPrefix =
+    pipelineOperator && !isGAVersionInstalled(pipelineOperator)
+      ? MetricsQueryPrefix.TEKTON
+      : MetricsQueryPrefix.TEKTON_PIPELINES_CONTROLLER;
 
   const augmentedMenuActions: KebabAction[] = useMenuActionsWithUserAnnotation(
     getPipelineKebabActions(latestPipelineRun, templateNames.length > 0),
@@ -39,7 +47,7 @@ const PipelineDetailsPage: React.FC<DetailsPageProps> = (props) => {
     <DetailsPage
       {...props}
       menuActions={augmentedMenuActions}
-      customData={templateNames}
+      customData={{ templateNames, queryPrefix }}
       breadcrumbsFor={() => breadcrumbsFor}
       pages={[
         navFactory.details(PipelineDetails),
@@ -57,7 +65,7 @@ const PipelineDetailsPage: React.FC<DetailsPageProps> = (props) => {
         {
           href: 'parameters',
           name: t('pipelines-plugin~Parameters'),
-          component: (pageProps) => (
+          component: (pageProps: PipelineDetailsTabProps) => (
             <PipelineForm
               PipelineFormComponent={PipelineParametersForm}
               formName="parameters"
@@ -70,7 +78,7 @@ const PipelineDetailsPage: React.FC<DetailsPageProps> = (props) => {
         {
           href: 'resources',
           name: t('pipelines-plugin~Resources'),
-          component: (pageProps) => (
+          component: (pageProps: PipelineDetailsTabProps) => (
             <PipelineForm
               PipelineFormComponent={PipelineResourcesForm}
               formName="resources"

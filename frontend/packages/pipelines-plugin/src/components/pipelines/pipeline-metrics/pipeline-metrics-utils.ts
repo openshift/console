@@ -13,6 +13,7 @@ export interface GraphData {
 export interface PipelineMetricsGraphProps {
   pipeline: PipelineKind;
   timespan: number;
+  queryPrefix: string;
   interval: number;
   width?: number;
 
@@ -25,20 +26,25 @@ export enum PipelineQuery {
   PIPELINE_RUN_TASK_RUN_DURATION = 'PIPELINE_RUN_TASK_RUN_DURATION',
   PIPELINE_SUCCESS_RATIO = 'PIPELINE_SUCCESS_RATIO',
 }
-export const metricQueries = {
+
+export enum MetricsQueryPrefix {
+  TEKTON = 'tekton',
+  TEKTON_PIPELINES_CONTROLLER = 'tekton_pipelines_controller',
+}
+export const metricQueries = (prefix: string = MetricsQueryPrefix.TEKTON_PIPELINES_CONTROLLER) => ({
   [PipelineQuery.NUMBER_OF_PIPELINE_RUNS]: _.template(
-    `sum(count by (pipelinerun) (tekton_pipelinerun_duration_seconds_count{pipeline="<%= name %>",exported_namespace="<%= namespace %>"}))`,
+    `sum(count by (pipelinerun) (${prefix}_pipelinerun_duration_seconds_count{pipeline="<%= name %>",exported_namespace="<%= namespace %>"}))`,
   ),
   [PipelineQuery.PIPELINE_RUN_TASK_RUN_DURATION]: _.template(
-    `sum(tekton_pipelinerun_taskrun_duration_seconds_sum{pipeline="<%= name %>",exported_namespace="<%= namespace %>"})  by (pipelinerun, task)`,
+    `sum(${prefix}_pipelinerun_taskrun_duration_seconds_sum{pipeline="<%= name %>",exported_namespace="<%= namespace %>"})  by (pipelinerun, task)`,
   ),
   [PipelineQuery.PIPELINE_RUN_DURATION]: _.template(
-    `sum(tekton_pipelinerun_duration_seconds_sum{pipeline="<%= name %>",exported_namespace="<%= namespace %>"})  by (pipelinerun)`,
+    `sum(${prefix}_pipelinerun_duration_seconds_sum{pipeline="<%= name %>",exported_namespace="<%= namespace %>"})  by (pipelinerun)`,
   ),
   [PipelineQuery.PIPELINE_SUCCESS_RATIO]: _.template(
-    `count(sort_desc(tekton_pipelinerun_duration_seconds_count{pipeline="<%= name %>",exported_namespace="<%= namespace %>"})) by (status)`,
+    `count(sort_desc(${prefix}_pipelinerun_duration_seconds_count{pipeline="<%= name %>",exported_namespace="<%= namespace %>"})) by (status)`,
   ),
-};
+});
 
 const formatPositiveValue = (v: number): string =>
   v === 0 || (v >= 0.001 && v < 1e23) ? humanizeNumberSI(v).string : v.toExponential(1);

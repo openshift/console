@@ -10,6 +10,7 @@ import { LineChart } from '../charts/lineChart';
 import { DEFAULT_REFRESH_INTERVAL } from '../../const';
 import { PipelineExampleNames, pipelineTestData } from '../../../../test-data/pipeline-data';
 import PipelineRunTaskRunGraph from '../PipelineRunTaskRunGraph';
+import { MetricsQueryPrefix } from '../pipeline-metrics-utils';
 
 jest.mock('@console/internal/components/utils/k8s-get-hook', () => ({
   useK8sGet: jest.fn(),
@@ -37,6 +38,7 @@ describe('TaskRun Duration Graph', () => {
       pipeline,
       timespan: DEFAULT_PROMETHEUS_TIMESPAN,
       interval: parsePrometheusDuration(DEFAULT_REFRESH_INTERVAL),
+      queryPrefix: MetricsQueryPrefix.TEKTON_PIPELINES_CONTROLLER,
     };
   });
 

@@ -6,7 +6,6 @@ import DashboardCardBody from '@console/shared/src/components/dashboard/dashboar
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import { parsePrometheusDuration } from '@console/internal/components/utils/datetime';
-import { PipelineKind } from '../../../types';
 import PipelineMetricsTimeRangeDropdown from './PipelineMetricsTimeRangeDropdown';
 import PipelineMetricsRefreshDropdown from './PipelineMetricsRefreshDropdown';
 import PipelineMetricsEmptyState from './PipelineMetricsEmptyState';
@@ -15,18 +14,16 @@ import PipelineRunDurationGraph from './PipelineRunDurationGraph';
 import PipelineRunTaskRunGraph from './PipelineRunTaskRunGraph';
 import { GraphData } from './pipeline-metrics-utils';
 import PipelineRunCount from './PipelineRunCount';
+import { PipelineDetailsTabProps } from '../detail-page-tabs/types';
 import { useLatestPipelineRun } from '../hooks';
 
 import './PipelineMetrics.scss';
 
-interface PipelineMeticsProps {
-  obj: PipelineKind;
-}
-
-const PipelineMetrics: React.FC<PipelineMeticsProps> = ({ obj }) => {
+const PipelineMetrics: React.FC<PipelineDetailsTabProps> = ({ obj, customData }) => {
   const {
     metadata: { name, namespace },
   } = obj;
+  const { queryPrefix } = customData;
   const { t } = useTranslation();
   const latestPipelineRun = useLatestPipelineRun(name, namespace);
   const [timespan, setTimespan] = React.useState(parsePrometheusDuration('1w'));
@@ -85,6 +82,7 @@ const PipelineMetrics: React.FC<PipelineMeticsProps> = ({ obj }) => {
                   pipeline={obj}
                   loaded={loaded}
                   onLoad={graphOnLoad}
+                  queryPrefix={queryPrefix}
                 />
               </DashboardCardBody>
             </DashboardCard>
@@ -103,6 +101,7 @@ const PipelineMetrics: React.FC<PipelineMeticsProps> = ({ obj }) => {
                   pipeline={obj}
                   loaded={loaded}
                   onLoad={graphOnLoad}
+                  queryPrefix={queryPrefix}
                 />
               </DashboardCardBody>
             </DashboardCard>
@@ -122,6 +121,7 @@ const PipelineMetrics: React.FC<PipelineMeticsProps> = ({ obj }) => {
                   timespan={timespan}
                   loaded={loaded}
                   onLoad={graphOnLoad}
+                  queryPrefix={queryPrefix}
                 />
               </DashboardCardBody>
             </DashboardCard>
@@ -138,6 +138,7 @@ const PipelineMetrics: React.FC<PipelineMeticsProps> = ({ obj }) => {
                   pipeline={obj}
                   loaded={loaded}
                   onLoad={graphOnLoad}
+                  queryPrefix={queryPrefix}
                 />
               </DashboardCardBody>
             </DashboardCard>

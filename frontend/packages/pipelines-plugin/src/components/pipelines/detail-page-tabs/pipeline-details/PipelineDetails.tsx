@@ -3,22 +3,13 @@ import { useTranslation } from 'react-i18next';
 import { SectionHeading, ResourceSummary } from '@console/internal/components/utils';
 import { TriggerTemplateModel } from '../../../../models';
 import WorkspaceDefinitionList from '../../../shared/workspaces/WorkspaceDefinitionList';
-import { PipelineKind } from '../../../../types';
-import { RouteTemplate } from '../../utils/triggers';
 import DynamicResourceLinkList from '../../resource-overview/DynamicResourceLinkList';
 import TriggerTemplateResourceLink from '../../resource-overview/TriggerTemplateResourceLink';
 import PipelineVisualization from './PipelineVisualization';
 import { getPipelineTaskLinks } from '../utils';
+import { PipelineDetailsTabProps } from '../types';
 
-interface PipelineDetailsProps {
-  obj: PipelineKind;
-  customData: RouteTemplate[];
-}
-
-const PipelineDetails: React.FC<PipelineDetailsProps> = ({
-  obj: pipeline,
-  customData: routeTemplates,
-}) => {
+const PipelineDetails: React.FC<PipelineDetailsTabProps> = ({ obj: pipeline, customData }) => {
   const { t } = useTranslation();
   const { taskLinks, finallyTaskLinks } = getPipelineTaskLinks(pipeline);
 
@@ -34,7 +25,7 @@ const PipelineDetails: React.FC<PipelineDetailsProps> = ({
           <TriggerTemplateResourceLink
             namespace={pipeline.metadata.namespace}
             model={TriggerTemplateModel}
-            links={routeTemplates}
+            links={customData.templateNames}
           />
           <DynamicResourceLinkList
             namespace={pipeline.metadata.namespace}
