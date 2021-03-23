@@ -847,10 +847,6 @@ class StorageClassFormWithTranslation extends React.Component<
   getProvisionerElements = () => {
     const parameters = this.storageTypes[this.state.newStorageClass.type].parameters;
 
-    if (_.isEmpty(parameters)) {
-      return null;
-    }
-
     const dynamicContent = _.map(parameters, (parameter, key) => {
       const paramId = `storage-class-provisioner-${_.kebabCase(_.get(parameter, 'name', key))}`;
       const validationMsg = _.get(parameter, 'validationMsg', null);
@@ -943,29 +939,29 @@ class StorageClassFormWithTranslation extends React.Component<
     const { t } = this.props;
     return (
       <>
-        {dynamicContent}
+        {!_.isEmpty(parameters) && dynamicContent}
 
-        {this.storageTypes[this.state.newStorageClass.type].documentationLink && (
-          <div className="form-group">
-            <label>{t('public~Additional parameters')}</label>
-            <p>
-              {t('public~Specific fields for the selected provisioner.')}
-              &nbsp;
+        <div className="form-group">
+          <label>{t('public~Additional parameters')}</label>
+          <p>
+            {t('public~Specific fields for the selected provisioner.')}
+            &nbsp;
+            {this.storageTypes[this.state.newStorageClass.type].documentationLink && (
               <ExternalLink
                 href={this.storageTypes[this.state.newStorageClass.type].documentationLink}
                 text={t('public~What should I enter here?')}
               />
-            </p>
-            <NameValueEditorComponent
-              nameValuePairs={this.state.customParams}
-              nameString="Parameter"
-              nameParameter="parameter"
-              valueString="Value"
-              addString="Add Parameter"
-              updateParentData={this.updateCustomParams}
-            />
-          </div>
-        )}
+            )}
+          </p>
+          <NameValueEditorComponent
+            nameValuePairs={this.state.customParams}
+            nameString="Parameter"
+            nameParameter="parameter"
+            valueString="Value"
+            addString="Add Parameter"
+            updateParentData={this.updateCustomParams}
+          />
+        </div>
       </>
     );
   };
