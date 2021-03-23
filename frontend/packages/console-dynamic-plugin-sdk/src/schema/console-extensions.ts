@@ -14,6 +14,7 @@ import {
 } from '../extensions/navigation';
 import { CatalogItemFilter, CatalogItemProvider, CatalogItemType } from '../extensions/catalog';
 import { FileUpload } from '../extensions/file-upload';
+import { ModelMetadata } from '../extensions/resource-metadata';
 
 export type SupportedExtension =
   | FeatureFlag
@@ -35,7 +36,8 @@ export type SupportedExtension =
   | CatalogItemType
   | CatalogItemProvider
   | CatalogItemFilter
-  | FileUpload;
+  | FileUpload
+  | ModelMetadata;
 
 /**
  * Schema of Console plugin's `console-extensions.json` file.
