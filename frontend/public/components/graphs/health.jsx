@@ -8,7 +8,7 @@ import { FLAGS } from '@console/shared';
 import { k8sBasePath } from '../../module/k8s';
 
 // Use the shorter 'OpenShift Console' instead of 'OpenShift Container Platform Console' since the title appears in the chart.
-const consoleName = window.SERVER_FLAGS.branding === 'okd' ? 'OKD Console' : 'OpenShift Console';
+const consoleName = 'HyperCloud Console';
 
 const fetchHealth = () =>
   coFetch(`${k8sBasePath}/healthz`)

@@ -12,13 +12,7 @@ import { FLAGS, ALL_NAMESPACES_KEY, getBadgeFromType } from '@console/shared';
 import { connectToFlags } from '../reducers/features';
 import { errorModal } from './modals';
 import { Firehose, checkAccess, history, Loading, resourceObjPath } from './utils';
-import {
-  referenceForModel,
-  k8sCreate,
-  k8sUpdate,
-  referenceFor,
-  groupVersionFor,
-} from '../module/k8s';
+import { referenceForModel, k8sCreate, k8sUpdate, referenceFor, groupVersionFor } from '../module/k8s';
 import { ConsoleYAMLSampleModel } from '../models';
 import { getResourceSidebarSamples } from './sidebars/resource-sidebar-samples';
 import { ResourceSidebar } from './sidebars/resource-sidebar';
@@ -105,10 +99,7 @@ export const EditYAML_ = connect(stateToProps)(
       if (nextProps.sampleObj) {
         this.loadYaml(!_.isEqual(this.state.sampleObj, nextProps.sampleObj), nextProps.sampleObj);
       } else if (nextProps.fileUpload) {
-        this.loadYaml(
-          !_.isEqual(this.state.fileUpload, nextProps.fileUpload),
-          nextProps.fileUpload,
-        );
+        this.loadYaml(!_.isEqual(this.state.fileUpload, nextProps.fileUpload), nextProps.fileUpload);
       } else {
         this.loadYaml();
       }
@@ -143,7 +134,7 @@ export const EditYAML_ = connect(stateToProps)(
         name,
         namespace,
       };
-      checkAccess(resourceAttributes, impersonate).then((resp) => {
+      checkAccess(resourceAttributes, impersonate).then(resp => {
         const notAllowed = !resp.status.allowed;
         this.setState({ notAllowed });
         if (this.monacoRef.current) {
@@ -159,7 +150,17 @@ export const EditYAML_ = connect(stateToProps)(
           yaml = obj;
         } else {
           try {
-            yaml = safeDump(obj);
+            yaml = safeDump(obj, {
+              sortKeys: function(a, b) {
+                let order = ['spec', 'metadata', 'kind', 'apiVersion'];
+                const orderA = order.indexOf(a);
+                const orderB = order.indexOf(b);
+                if (orderA < 0 && orderB < 0) {
+                  return a > b ? 1 : -1;
+                }
+                return orderA > orderB ? -1 : 1;
+              },
+            });
             this.checkEditAccess(obj);
           } catch (e) {
             yaml = `Error getting YAML: ${e}`;
@@ -185,12 +186,7 @@ export const EditYAML_ = connect(stateToProps)(
       const yaml = this.convertObjToYAMLString(obj);
 
       const selection = this.monacoRef.current.editor.getSelection();
-      const range = new window.monaco.Range(
-        selection.startLineNumber,
-        selection.startColumn,
-        selection.endLineNumber,
-        selection.endColumn,
-      );
+      const range = new window.monaco.Range(selection.startLineNumber, selection.startColumn, selection.endLineNumber, selection.endColumn);
 
       // Grab the current position and indent every row to left-align the text at the same indentation
       const indentSize = new Array(selection.startColumn).join(' ');
@@ -207,12 +203,7 @@ export const EditYAML_ = connect(stateToProps)(
         .join('\n');
 
       // Grab the selection size of what we are about to add
-      const newContentSelection = new window.monaco.Selection(
-        selection.startLineNumber,
-        0,
-        selection.startLineNumber + lineCount - 1,
-        lines[lines.length - 1].length,
-      );
+      const newContentSelection = new window.monaco.Selection(selection.startLineNumber, 0, selection.startLineNumber + lineCount - 1, lines[lines.length - 1].length);
 
       const op = { range, text: indentedText, forceMoveMarkers: true };
       this.monacoRef.current.editor.executeEdits(id, [op], [newContentSelection]);
@@ -254,9 +245,7 @@ export const EditYAML_ = connect(stateToProps)(
 
       const model = this.getModel(obj);
       if (!model) {
-        this.handleError(
-          `The server doesn't have a resource type "kind: ${obj.kind}, apiVersion: ${obj.apiVersion}".`,
-        );
+        this.handleError(`The server doesn't have a resource type "kind: ${obj.kind}, apiVersion: ${obj.apiVersion}".`);
         return;
       }
 
@@ -280,30 +269,22 @@ export const EditYAML_ = connect(stateToProps)(
         const { namespace, name } = this.props.obj.metadata;
 
         if (name !== newName) {
-          this.handleError(
-            `Cannot change resource name (original: "${name}", updated: "${newName}").`,
-          );
+          this.handleError(`Cannot change resource name (original: "${name}", updated: "${newName}").`);
           return;
         }
         if (namespace !== newNamespace) {
-          this.handleError(
-            `Cannot change resource namespace (original: "${namespace}", updated: "${newNamespace}").`,
-          );
+          this.handleError(`Cannot change resource namespace (original: "${namespace}", updated: "${newNamespace}").`);
           return;
         }
         if (this.props.obj.kind !== obj.kind) {
-          this.handleError(
-            `Cannot change resource kind (original: "${this.props.obj.kind}", updated: "${obj.kind}").`,
-          );
+          this.handleError(`Cannot change resource kind (original: "${this.props.obj.kind}", updated: "${obj.kind}").`);
           return;
         }
 
         const apiGroup = groupVersionFor(this.props.obj.apiVersion).group;
         const newAPIGroup = groupVersionFor(obj.apiVersion).group;
         if (apiGroup !== newAPIGroup) {
-          this.handleError(
-            `Cannot change API group (original: "${apiGroup}", updated: "${newAPIGroup}").`,
-          );
+          this.handleError(`Cannot change API group (original: "${apiGroup}", updated: "${newAPIGroup}").`);
           return;
         }
       }
@@ -317,13 +298,11 @@ export const EditYAML_ = connect(stateToProps)(
           redirect = true;
         }
         action(model, obj, newNamespace, newName)
-          .then((o) => {
+          .then(o => {
             if (redirect) {
               let url = this.props.redirectURL;
               if (!url) {
-                const path = _.isFunction(this.props.resourceObjPath)
-                  ? this.props.resourceObjPath
-                  : resourceObjPath;
+                const path = _.isFunction(this.props.resourceObjPath) ? this.props.resourceObjPath : resourceObjPath;
                 url = path(o, referenceFor(o));
               }
               history.push(url);
@@ -334,7 +313,7 @@ export const EditYAML_ = connect(stateToProps)(
             this.setState({ success, error: null });
             this.loadYaml(true, o);
           })
-          .catch((e) => this.handleError(e.message));
+          .catch(e => this.handleError(e.message));
       });
     }
 
@@ -360,9 +339,7 @@ export const EditYAML_ = connect(stateToProps)(
       } catch (error) {
         errorModal({
           title: 'Failed to Parse YAML Sample',
-          error: (
-            <div className="co-pre-line">{error.message || error.name || 'An error occurred.'}</div>
-          ),
+          error: <div className="co-pre-line">{error.message || error.name || 'An error occurred.'}</div>,
         });
       }
     }
@@ -388,7 +365,7 @@ export const EditYAML_ = connect(stateToProps)(
     }
 
     toggleSidebar = () => {
-      this.setState((state) => {
+      this.setState(state => {
         return { showSidebar: !state.showSidebar };
       });
       window.dispatchEvent(new Event('sidebar_toggle'));
@@ -399,34 +376,17 @@ export const EditYAML_ = connect(stateToProps)(
         return <Loading />;
       }
 
-      const {
-        connectDropTarget,
-        isOver,
-        canDrop,
-        create,
-        yamlSamplesList,
-        customClass,
-        onChange = () => null,
-        t,
-      } = this.props;
+      const { connectDropTarget, isOver, canDrop, create, yamlSamplesList, customClass, onChange = () => null, t } = this.props;
       const klass = classNames('co-file-dropzone-container', {
         'co-file-dropzone--drop-over': isOver,
       });
 
       const { error, success, stale, yaml, showSidebar } = this.state;
-      const {
-        obj,
-        download = true,
-        header,
-        genericYAML = false,
-        children: customAlerts,
-      } = this.props;
+      const { obj, download = true, header, genericYAML = false, children: customAlerts } = this.props;
       const readOnly = this.props.readOnly || this.state.notAllowed;
       const options = { readOnly, scrollBeyondLastLine: false };
       const model = this.getModel(obj);
-      const { samples, snippets } = model
-        ? getResourceSidebarSamples(model, yamlSamplesList)
-        : { samples: [], snippets: [] };
+      const { samples, snippets } = model ? getResourceSidebarSamples(model, yamlSamplesList) : { samples: [], snippets: [] };
       const definition = model ? definitionFor(model) : { properties: [] };
       const showSchema = definition && !_.isEmpty(definition.properties);
       const hasSidebarContent = showSchema || !_.isEmpty(samples) || !_.isEmpty(snippets);
@@ -454,97 +414,49 @@ export const EditYAML_ = connect(stateToProps)(
                 </SplitItem>
                 <SplitItem>{getBadgeFromType(model && model.badge)}</SplitItem>
               </Split>
-              <p className="help-block">
-                {t('COMMON:MSG_CREATEYAML_DIV1_DESCRIPTION_1')}
-              </p>
+              <p className="help-block">{t('COMMON:MSG_CREATEYAML_DIV1_DESCRIPTION_1')}</p>
             </div>
           )}
 
           <div className="pf-c-form co-m-page__body">
             <div className="co-p-has-sidebar">
               <div className="co-p-has-sidebar__body">
-                <div
-                  className={classNames('yaml-editor', customClass)}
-                  ref={(r) => (this.editor = r)}
-                >
-                  <YAMLEditor
-                    ref={this.monacoRef}
-                    value={yaml}
-                    options={options}
-                    showShortcuts={!genericYAML}
-                    minHeight="100px"
-                    toolbarLinks={sidebarLink ? [sidebarLink] : []}
-                    onChange={(newValue) =>
-                      this.setState({ yaml: newValue }, () => onChange(newValue))
-                    }
-                    onSave={() => this.save()}
-                  />
-                  <div className="yaml-editor__buttons" ref={(r) => (this.buttons = r)}>
+                <div className={classNames('yaml-editor', customClass)} ref={r => (this.editor = r)}>
+                  <YAMLEditor ref={this.monacoRef} value={yaml} options={options} showShortcuts={!genericYAML} minHeight="100px" toolbarLinks={sidebarLink ? [sidebarLink] : []} onChange={newValue => this.setState({ yaml: newValue }, () => onChange(newValue))} onSave={() => this.save()} />
+                  <div className="yaml-editor__buttons" ref={r => (this.buttons = r)}>
                     {customAlerts}
                     {error && (
-                      <Alert
-                        isInline
-                        className="co-alert co-alert--scrollable"
-                        variant="danger"
-                        title="An error occurred"
-                      >
+                      <Alert isInline className="co-alert co-alert--scrollable" variant="danger" title="An error occurred">
                         <div className="co-pre-line">{error}</div>
                       </Alert>
                     )}
-                    {success && (
-                      <Alert isInline className="co-alert" variant="success" title={success} />
-                    )}
+                    {success && <Alert isInline className="co-alert" variant="success" title={success} />}
                     {stale && (
-                      <Alert
-                        isInline
-                        className="co-alert"
-                        variant="info"
-                        title="This object has been updated."
-                      >
+                      <Alert isInline className="co-alert" variant="info" title="This object has been updated.">
                         Click reload to see the new version.
                       </Alert>
                     )}
                     <ActionGroup className="pf-c-form__group--no-top-margin">
                       {create && (
-                        <Button
-                          type="submit"
-                          variant="primary"
-                          id="save-changes"
-                          onClick={() => this.save()}
-                        >
+                        <Button type="submit" variant="primary" id="save-changes" onClick={() => this.save()}>
                           {t('COMMON:MSG_COMMON_BUTTON_ETC_9')}
                         </Button>
                       )}
                       {!create && !readOnly && (
-                        <Button
-                          type="submit"
-                          variant="primary"
-                          id="save-changes"
-                          onClick={() => this.save()}
-                        >
-                        {t('COMMON:MSG_COMMON_BUTTON_COMMIT_3')}
+                        <Button type="submit" variant="primary" id="save-changes" onClick={() => this.save()}>
+                          {t('COMMON:MSG_COMMON_BUTTON_COMMIT_3')}
                         </Button>
                       )}
                       {!create && !genericYAML && (
-                        <Button
-                          type="submit"
-                          variant="secondary"
-                          id="reload-object"
-                          onClick={() => this.reload()}
-                        >
-                        {t('COMMON:MSG_COMMON_BUTTON_ETC_13')}
+                        <Button type="submit" variant="secondary" id="reload-object" onClick={() => this.reload()}>
+                          {t('COMMON:MSG_COMMON_BUTTON_ETC_13')}
                         </Button>
                       )}
                       <Button variant="secondary" id="cancel" onClick={() => this.onCancel()}>
                         {t('COMMON:MSG_COMMON_BUTTON_COMMIT_2')}
                       </Button>
                       {download && (
-                        <Button
-                          type="submit"
-                          variant="secondary"
-                          className="pf-c-button--align-right hidden-sm hidden-xs"
-                          onClick={() => this.download()}
-                        >
+                        <Button type="submit" variant="secondary" className="pf-c-button--align-right hidden-sm hidden-xs" onClick={() => this.download()}>
                           <DownloadIcon /> {t('COMMON:MSG_COMMON_BUTTON_ETC_12')}
                         </Button>
                       )}
@@ -552,46 +464,33 @@ export const EditYAML_ = connect(stateToProps)(
                   </div>
                 </div>
               </div>
-              {hasSidebarContent && (
-                <ResourceSidebar
-                  isCreateMode={create}
-                  kindObj={model}
-                  loadSampleYaml={this.replaceYamlContent_}
-                  insertSnippetYaml={this.insertYamlContent_}
-                  downloadSampleYaml={this.downloadSampleYaml_}
-                  showSidebar={showSidebar}
-                  toggleSidebar={this.toggleSidebar}
-                  samples={samples}
-                  snippets={snippets}
-                  showSchema={showSchema}
-                />
-              )}
+              {hasSidebarContent && <ResourceSidebar isCreateMode={create} kindObj={model} loadSampleYaml={this.replaceYamlContent_} insertSnippetYaml={this.insertYamlContent_} downloadSampleYaml={this.downloadSampleYaml_} showSidebar={showSidebar} toggleSidebar={this.toggleSidebar} samples={samples} snippets={snippets} showSchema={showSchema} />}
             </div>
           </div>
         </div>
       );
 
-      return _.isFunction(connectDropTarget)
-        ? connectDropTarget(editYamlComponent)
-        : editYamlComponent;
+      return _.isFunction(connectDropTarget) ? connectDropTarget(editYamlComponent) : editYamlComponent;
     }
   },
 );
 
-export const EditYAML = connectToFlags(FLAGS.CONSOLE_YAML_SAMPLE)(withTranslation()(({ flags, ...props }) => {
-  const resources = flags[FLAGS.CONSOLE_YAML_SAMPLE]
-    ? [
-        {
-          kind: referenceForModel(ConsoleYAMLSampleModel),
-          isList: true,
-          prop: 'yamlSamplesList',
-        },
-      ]
-    : [];
+export const EditYAML = connectToFlags(FLAGS.CONSOLE_YAML_SAMPLE)(
+  withTranslation()(({ flags, ...props }) => {
+    const resources = flags[FLAGS.CONSOLE_YAML_SAMPLE]
+      ? [
+          {
+            kind: referenceForModel(ConsoleYAMLSampleModel),
+            isList: true,
+            prop: 'yamlSamplesList',
+          },
+        ]
+      : [];
 
-  return (
-    <Firehose resources={resources}>
-      <EditYAML_ {...props} />
-    </Firehose>
-  );
-}));
+    return (
+      <Firehose resources={resources}>
+        <EditYAML_ {...props} />
+      </Firehose>
+    );
+  }),
+);

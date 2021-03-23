@@ -185,50 +185,6 @@ class MastheadToolbarContents_ extends React.Component {
     }
   }
 
-  _launchActions = () => {
-    const { clusterID, consoleLinks } = this.props;
-    const launcherItems = this._getAdditionalLinks(consoleLinks, 'ApplicationMenu');
-
-    const sections = [];
-    if (clusterID && window.SERVER_FLAGS.branding !== 'okd' && window.SERVER_FLAGS.branding !== 'azure') {
-      sections.push({
-        name: 'Red Hat Applications',
-        isSection: true,
-        actions: [
-          {
-            label: 'OpenShift Cluster Manager',
-            externalLink: true,
-            href: getOCMLink(clusterID),
-            image: <img src={redhatLogoImg} alt="" />,
-          },
-        ],
-      });
-    }
-
-    _.each(launcherItems, item => {
-      const sectionName = _.get(item, 'spec.applicationMenu.section', '');
-      if (!_.find(sections, { name: sectionName })) {
-        sections.push({ name: sectionName, isSection: true, actions: [] });
-      }
-    });
-
-    const sortedSections = _.sortBy(sections, [this._sectionSort, 'name']);
-
-    _.each(sortedSections, section => {
-      const sectionItems = this._getSectionLauncherItems(launcherItems, section.name);
-      _.each(sectionItems, item => {
-        section.actions.push({
-          label: _.get(item, 'spec.text'),
-          externalLink: true,
-          href: _.get(item, 'spec.href'),
-          image: <img src={_.get(item, 'spec.applicationMenu.imageURL')} alt="" />,
-        });
-      });
-    });
-
-    return sections;
-  };
-
   _helpActions(additionalHelpActions) {
     const { flags, cv } = this.props;
     const helpActions = [];
@@ -330,7 +286,6 @@ class MastheadToolbarContents_ extends React.Component {
     const { isUserDropdownOpen, isKebabDropdownOpen } = this.state;
     const additionalUserActions = this._getAdditionalActions(this._getAdditionalLinks(consoleLinks, 'UserMenu'));
     const helpActions = this._helpActions(this._getAdditionalActions(this._getAdditionalLinks(consoleLinks, 'HelpMenu')));
-    const launchActions = this._launchActions();
 
     const actions = [];
     const userActions = [];
@@ -380,10 +335,6 @@ class MastheadToolbarContents_ extends React.Component {
       //     },
       //   ],
       // });
-
-      if (!_.isEmpty(launchActions)) {
-        actions.unshift(...launchActions);
-      }
 
       return <ApplicationLauncher aria-label="Utility menu" className="co-app-launcher" onSelect={this._onKebabDropdownSelect} onToggle={this._onKebabDropdownToggle} isOpen={isKebabDropdownOpen} items={this._renderApplicationItems(actions)} position="right" toggleIcon={<EllipsisVIcon />} isGrouped />;
     }
@@ -490,7 +441,6 @@ class MastheadToolbarContents_ extends React.Component {
   render() {
     const { isApplicationLauncherDropdownOpen, isHelpDropdownOpen, showAboutModal, statuspageData } = this.state;
     const { consoleLinks, drawerToggle, notificationsRead, canAccessNS, keycloak, t } = this.props;
-    const launchActions = this._launchActions();
     // TODO: notificatoin 기능 완료 되면 추가하기.
     const alertAccess = false; //canAccessNS && !!window.SERVER_FLAGS.prometheusBaseURL;
     return (
@@ -523,19 +473,14 @@ class MastheadToolbarContents_ extends React.Component {
             {/* desktop -- (system status button) */}
             <SystemStatusButton statuspageData={statuspageData} />
             {/* desktop -- (application launcher dropdown), import yaml, help dropdown [documentation, about] */}
-            {!_.isEmpty(launchActions) && (
-              <ToolbarItem>
-                <ApplicationLauncher className="co-app-launcher" data-test-id="application-launcher" onSelect={this._onApplicationLauncherDropdownSelect} onToggle={this._onApplicationLauncherDropdownToggle} isOpen={isApplicationLauncherDropdownOpen} items={this._renderApplicationItems(this._launchActions())} position="right" isGrouped />
-              </ToolbarItem>
-            )}
             <ToolbarItem>
               <div className="co-masthead__line"></div>
             </ToolbarItem>
             {/* desktop -- (user dropdown [logout]) */}
-            <ToolbarItem className="hidden-xs">{this._renderLanguageMenu(false)}</ToolbarItem>
+            {/* <ToolbarItem className="hidden-xs">{this._renderLanguageMenu(false)}</ToolbarItem>
             <ToolbarItem>
               <div className="co-masthead__line"></div>
-            </ToolbarItem>{' '}
+            </ToolbarItem>{' '} */}
             {/* desktop -- (notification drawer button) */
             alertAccess && (
               <ToolbarItem>
