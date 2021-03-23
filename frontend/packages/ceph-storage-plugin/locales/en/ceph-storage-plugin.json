@@ -420,7 +420,7 @@
   "Provided": "Provided",
   "KMS service {{value}} already exist": "KMS service {{value}} already exist",
   "An encryption key will be generated for each persistent volume created using this storageclass.": "An encryption key will be generated for each persistent volume created using this storageclass.",
-  "Encrypted PVs cannot be cloned expanded or create snapshots.": "Encrypted PVs cannot be cloned expanded or create snapshots.",
+  "PV expansion operation is not supported for encrypted PVs.": "PV expansion operation is not supported for encrypted PVs.",
   "The last saved values will be updated": "The last saved values will be updated",
   "Logical used capacity per account": "Logical used capacity per account",
   "Egress Per Provider": "Egress Per Provider",
