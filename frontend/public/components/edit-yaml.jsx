@@ -156,9 +156,16 @@ export const EditYAML_ = connect(stateToProps)(
         }
 
         checkEditAccess(obj) {
-          const { readOnly, impersonate } = this.props;
+          const { create, readOnly, impersonate } = this.props;
           if (readOnly) {
             // We're already read-only. No need for the access review.
+            return;
+          }
+
+          if (create) {
+            // No need to check edit access if creating a resource.
+            // Note that the Create button is only displayed for users with
+            // correct permissions.
             return;
           }
 
