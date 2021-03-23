@@ -6,7 +6,9 @@ import { sortable } from '@patternfly/react-table';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore
+import { connect, useDispatch, useSelector } from 'react-redux';
 import { Link, Redirect, Route, Switch } from 'react-router-dom';
 import {
   BanIcon,
@@ -44,7 +46,7 @@ import {
   alertState,
   silenceState,
 } from '../../reducers/monitoring';
-import store, { RootState } from '../../redux';
+import { RootState } from '../../redux';
 import { RowFunction, Table, TableData, TableRow } from '../factory';
 import { FilterToolbar, RowFilter } from '../filter-toolbar';
 import { confirmModal } from '../modals';
@@ -1226,16 +1228,10 @@ const alertsRowFilters: RowFilter[] = [
   },
 ];
 
-// Row filter settings are stored in "k8s"
-const filtersToProps = ({ k8s }, { reduxID }) => {
-  const filtersMap = k8s.getIn([reduxID, 'filters']);
-  return { filters: filtersMap ? filtersMap.toJS() : null };
-};
-
-const MonitoringListPage_: React.FC<ListPageProps> = ({
+const MonitoringListPage: React.FC<ListPageProps> = ({
   CreateButton,
   data,
-  filters,
+  defaultSortField,
   Header,
   hideLabelFilter,
   kindPlural,
@@ -1248,13 +1244,7 @@ const MonitoringListPage_: React.FC<ListPageProps> = ({
   Row,
   rowFilters,
 }) => {
-  React.useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (!params.get('sortBy')) {
-      // Sort by rule name by default
-      store.dispatch(UIActions.sortList(reduxID, 'name', undefined, 'asc', 'Name'));
-    }
-  }, [reduxID]);
+  const filters = useSelector(({ k8s }: RootState) => k8s.getIn([reduxID, 'filters']));
 
   return (
     <>
@@ -1281,7 +1271,8 @@ const MonitoringListPage_: React.FC<ListPageProps> = ({
             <Table
               aria-label={kindPlural}
               data={data}
-              filters={filters}
+              defaultSortField={defaultSortField}
+              filters={filters?.toJS()}
               Header={Header}
               loaded={loaded}
               loadError={loadError}
@@ -1296,8 +1287,6 @@ const MonitoringListPage_: React.FC<ListPageProps> = ({
     </>
   );
 };
-
-const MonitoringListPage = connect(filtersToProps)(MonitoringListPage_);
 
 const AlertsPage_: React.FC<Alerts> = ({ data, loaded, loadError }) => {
   const { t } = useTranslation();
@@ -1336,6 +1325,7 @@ const AlertsPage_: React.FC<Alerts> = ({ data, loaded, loadError }) => {
   return (
     <MonitoringListPage
       data={data}
+      defaultSortField="labels.alertname"
       Header={Header}
       kindPlural={t('public~Alerts')}
       labelFilter="alerts"
@@ -1455,6 +1445,7 @@ const RulesPage_: React.FC<Rules> = ({ data, loaded, loadError }) => {
   return (
     <MonitoringListPage
       data={data}
+      defaultSortField="name"
       Header={Header}
       kindPlural={t('public~Alerting rules')}
       labelFilter="alerts"
@@ -1503,6 +1494,7 @@ const SilencesPage_: React.FC<Silences> = ({ data, loaded, loadError }) => {
     <MonitoringListPage
       CreateButton={CreateButton}
       data={data}
+      defaultSortField="name"
       Header={Header}
       hideLabelFilter
       kindPlural={t('public~Silences')}
@@ -1640,31 +1632,33 @@ const AlertingPage: React.FC<AlertingPageProps> = ({ match }) => {
 };
 
 const PollerPages = () => {
+  const dispatch = useDispatch();
+
   React.useEffect(() => {
     const { prometheusBaseURL } = window.SERVER_FLAGS;
 
     if (prometheusBaseURL) {
       const alertsKey = 'alerts';
       const rulesKey = 'rules';
-      store.dispatch(UIActions.monitoringLoading(alertsKey));
+      dispatch(UIActions.monitoringLoading(alertsKey));
       const url = getPrometheusURL({ endpoint: PrometheusEndpoint.RULES });
       const poller = (): void => {
         coFetchJSON(url)
           .then(({ data }) => {
             const { alerts, rules } = getAlertsAndRules(data);
-            store.dispatch(UIActions.monitoringLoaded(alertsKey, alerts));
-            store.dispatch(UIActions.monitoringSetRules(rulesKey, rules));
+            dispatch(UIActions.monitoringLoaded(alertsKey, alerts));
+            dispatch(UIActions.monitoringSetRules(rulesKey, rules));
           })
-          .catch((e) => store.dispatch(UIActions.monitoringErrored(alertsKey, e)))
+          .catch((e) => dispatch(UIActions.monitoringErrored(alertsKey, e)))
           .then(() => (pollerTimeouts[alertsKey] = setTimeout(poller, 15 * 1000)));
       };
       pollers[alertsKey] = poller;
       poller();
     } else {
-      store.dispatch(UIActions.monitoringErrored('alerts', new Error('prometheusBaseURL not set')));
+      dispatch(UIActions.monitoringErrored('alerts', new Error('prometheusBaseURL not set')));
     }
     return () => _.each(pollerTimeouts, clearTimeout);
-  }, []);
+  }, [dispatch]);
 
   return (
     <Switch>
