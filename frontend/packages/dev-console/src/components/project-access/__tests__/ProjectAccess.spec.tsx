@@ -7,6 +7,14 @@ import ProjectAccess from '../ProjectAccess';
 type ProjectAccessProps = React.ComponentProps<typeof ProjectAccess>;
 let projectAccessProps: ProjectAccessProps;
 
+jest.mock('react-i18next', () => {
+  const reactI18next = require.requireActual('react-i18next');
+  return {
+    ...reactI18next,
+    useTranslation: () => ({ t: (key) => key.split('~')[1] }),
+  };
+});
+
 describe('Project Access', () => {
   beforeEach(() => {
     projectAccessProps = {
