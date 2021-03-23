@@ -120,7 +120,7 @@ then get the secret contents:
 kubectl describe secrets/<secret-id-obtained-previously>
 ```
 
-Use this token value to set the `BRIDGE_K8S_BEARER_TOKEN` environment variable when running Bridge.
+Use this token value to set the `BRIDGE_K8S_AUTH_BEARER_TOKEN` environment variable when running Bridge.
 
 ## Operator
 
