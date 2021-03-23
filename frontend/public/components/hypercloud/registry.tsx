@@ -145,9 +145,9 @@ const registryStatusReducer = (registry: any): string => {
   return registry?.status?.phase;
 };
 
-const filters = [
+const filters = (t) => [
   {
-    filterGroupName: 'Status',
+    filterGroupName: t('COMMON:MSG_COMMON_FILTER_10'),
     type: 'registry-status',
     reducer: registryStatusReducer,
     items: [
@@ -201,7 +201,7 @@ export const RegistriesPage = withRouter(props => {
     canCreate={true}
     createProps={createProps}
     ListComponent={Registries}
-    rowFilters={filters}
+    rowFilters={filters.bind(null, t)()}
     kind={kind}
     {...props}
   />;

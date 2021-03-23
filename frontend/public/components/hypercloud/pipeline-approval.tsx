@@ -137,9 +137,9 @@ const pipelineApprovalStatusReducer = (pipelineApproval: any): string => {
   return pipelineApproval.status.result;
 }
 
-const filters = [
+const filters = (t) => [
   {
-    filterGroupName: 'Status',
+    filterGroupName: t('COMMON:MSG_COMMON_FILTER_10'),
     type: 'pipeline-approval-status',
     reducer: pipelineApprovalStatusReducer,
     items: [
@@ -160,7 +160,7 @@ export const PipelineApprovalsPage: React.FC<PipelineApprovalsPageProps> = props
     ListComponent={PipelineApprovals}
     kind={kind}
     {...props}
-    rowFilters={filters}
+    rowFilters={filters.bind(null, t)()}
   />;
 }
 
