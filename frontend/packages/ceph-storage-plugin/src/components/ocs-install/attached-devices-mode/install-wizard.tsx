@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { match as RouterMatch } from 'react-router';
+import { Link } from 'react-router-dom';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import { useDispatch } from 'react-redux';
@@ -37,8 +38,9 @@ import {
   MINIMUM_NODES,
   defaultRequestSize,
   OCS_INTERNAL_CR_NAME,
+  MODES,
 } from '../../../constants';
-import { StorageClusterKind } from '../../../types';
+import { StorageClusterKind, NavUtils } from '../../../types';
 import { getOCSRequestData, labelNodes, labelOCSNamespace } from '../ocs-request-data';
 import { OCSServiceModel } from '../../../models';
 import { OCS_CONVERGED_FLAG, OCS_INDEPENDENT_FLAG, OCS_FLAG } from '../../../features';
@@ -110,6 +112,7 @@ const CreateStorageClusterWizard: React.FC<CreateStorageClusterWizardProps> = ({
   hasNoProvSC,
   mode,
   lsoNs,
+  navUtils,
 }) => {
   const { t } = useTranslation();
   const { appName, ns } = match.params;
@@ -120,6 +123,8 @@ const CreateStorageClusterWizard: React.FC<CreateStorageClusterWizardProps> = ({
   const flagDispatcher = useDispatch();
 
   const discoveryNodes = state.lvdIsSelectNodes ? state.lvdSelectNodes : state.lvdAllNodes;
+
+  const { getStep, getParamString, getIndex, getAnchor } = navUtils;
 
   /**
    * This custom footer for wizard provides a control over the movement to next step.
@@ -190,10 +195,18 @@ const CreateStorageClusterWizard: React.FC<CreateStorageClusterWizardProps> = ({
     </WizardFooter>
   );
 
+  const toLink = (steps: any, currentStep: string, modes: any) =>
+    getAnchor(getIndex(steps, currentStep), getIndex(modes, modes.ATTACHED_DEVICES));
+
   const steps: WizardStep[] = [
     {
       id: CreateStepsSC.DISCOVER,
-      name: t('ceph-storage-plugin~Discover Disks'),
+      name: (
+        <Link to={toLink(CreateStepsSC, CreateStepsSC.DISCOVER, MODES)}>
+          {' '}
+          {t('ceph-storage-plugin~Discover Disks')}{' '}
+        </Link>
+      ),
       component: (
         <DiscoverDisks
           inProgress={state.lvdInProgress}
@@ -207,22 +220,42 @@ const CreateStorageClusterWizard: React.FC<CreateStorageClusterWizardProps> = ({
     },
     {
       id: CreateStepsSC.STORAGECLASS,
-      name: t('ceph-storage-plugin~Create Storage Class'),
+      name: (
+        <Link to={toLink(CreateStepsSC, CreateStepsSC.STORAGECLASS, MODES)}>
+          {' '}
+          {t('ceph-storage-plugin~Create Storage Class')}{' '}
+        </Link>
+      ),
       component: <CreateStorageClass dispatch={dispatch} state={state} ns={lsoNs} />,
     },
     {
       id: CreateStepsSC.STORAGEANDNODES,
-      name: t('ceph-storage-plugin~Storage and Nodes'),
+      name: (
+        <Link to={toLink(CreateStepsSC, CreateStepsSC.STORAGEANDNODES, MODES)}>
+          {' '}
+          {t('ceph-storage-plugin~Storage and Nodes')}{' '}
+        </Link>
+      ),
       component: <StorageAndNodes dispatch={dispatch} state={state} mode={mode} />,
     },
     {
       id: CreateStepsSC.CONFIGURE,
-      name: t('ceph-storage-plugin~Configure'),
+      name: (
+        <Link to={toLink(CreateStepsSC, CreateStepsSC.CONFIGURE, MODES)}>
+          {' '}
+          {t('ceph-storage-plugin~Configure')}{' '}
+        </Link>
+      ),
       component: <Configure dispatch={dispatch} state={state} mode={mode} />,
     },
     {
       id: CreateStepsSC.REVIEWANDCREATE,
-      name: t('ceph-storage-plugin~Review and Create'),
+      name: (
+        <Link to={toLink(CreateStepsSC, CreateStepsSC.REVIEWANDCREATE, MODES)}>
+          {' '}
+          {t('ceph-storage-plugin~Review and Create')}{' '}
+        </Link>
+      ),
       nextButtonText: t('ceph-storage-plugin~Create'),
       component: (
         <ReviewAndCreate state={state} inProgress={inProgress} errorMessage={errorMessage} />
@@ -259,7 +292,17 @@ const CreateStorageClusterWizard: React.FC<CreateStorageClusterWizardProps> = ({
         <Wizard
           className="ocs-install-wizard"
           steps={steps}
-          startAtStep={hasNoProvSC ? 3 : 1}
+          startAtStep={getStep()}
+          onBack={() => {
+            history.push(
+              `~new?${getParamString(getStep() - 1, getIndex(MODES, MODES.ATTACHED_DEVICES))}`,
+            );
+          }}
+          onNext={() => {
+            history.push(
+              `~new?${getParamString(getStep() + 1, getIndex(MODES, MODES.ATTACHED_DEVICES))}`,
+            );
+          }}
           onClose={() =>
             history.push(resourcePathFromModel(ClusterServiceVersionModel, appName, ns))
           }
@@ -274,6 +317,7 @@ const CreateStorageClusterWizard: React.FC<CreateStorageClusterWizardProps> = ({
 };
 
 type CreateStorageClusterWizardProps = {
+  navUtils: NavUtils;
   match: RouterMatch<{ appName: string; ns: string }>;
   hasNoProvSC: boolean;
   setHasNoProvSC: React.Dispatch<React.SetStateAction<boolean>>;

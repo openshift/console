@@ -13,6 +13,7 @@ import { fetchK8s } from '@console/internal/graphql/client';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager';
 import CreateStorageClusterWizard from './install-wizard';
 import { LSOSubscriptionResource } from '../../../resources';
+import { NavUtils } from '../../../types';
 import { filterSCWithNoProv } from '../../../utils/install';
 import './attached-devices.scss';
 
@@ -24,6 +25,7 @@ const goToLSOInstallationPage = () =>
 export const CreateAttachedDevicesCluster: React.FC<CreateAttachedDevicesClusterProps> = ({
   match,
   mode,
+  navUtils,
 }) => {
   const { t } = useTranslation();
 
@@ -59,7 +61,7 @@ export const CreateAttachedDevicesCluster: React.FC<CreateAttachedDevicesCluster
   }, [subscription, subscriptionLoaded, subscriptionLoadError]);
 
   React.useEffect(() => {
-    /* this call can't be watched here as watching will take the user back to this view 
+    /* this call can't be watched here as watching will take the user back to this view
     once a sc gets created from ocs install in case of no sc present */
     k8sList(StorageClassModel)
       .then((storageClasses: StorageClassResourceKind[]) => {
@@ -93,6 +95,7 @@ export const CreateAttachedDevicesCluster: React.FC<CreateAttachedDevicesCluster
     </Alert>
   ) : (
     <CreateStorageClusterWizard
+      navUtils={navUtils}
       hasNoProvSC={hasNoProvSC}
       setHasNoProvSC={setHasNoProvSC}
       match={match}
@@ -103,6 +106,7 @@ export const CreateAttachedDevicesCluster: React.FC<CreateAttachedDevicesCluster
 };
 
 type CreateAttachedDevicesClusterProps = {
+  navUtils: NavUtils;
   match: RouterMatch<{ appName: string; ns: string }>;
   mode: string;
 };
