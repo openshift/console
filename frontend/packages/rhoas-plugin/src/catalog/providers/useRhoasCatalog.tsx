@@ -111,7 +111,6 @@ const useRhoasCatalog: CatalogExtensionHook<CatalogItem[]> = ({
             href: `/rhoas/ns/${namespace}/kafka`,
           },
           details: {
-            properties: [{ label: 'Type', value: 'Red Hat Cloud Service' }],
             descriptions: serviceKafkaCardDetailsDescription,
           },
         },
@@ -131,7 +130,6 @@ const useRhoasCatalog: CatalogExtensionHook<CatalogItem[]> = ({
           url: operatorIcon,
         },
         details: {
-          properties: [{ label: 'Type', value: 'Red Hat Cloud Service' }],
           descriptions: cloudServicesCardDetailsDescription,
         },
       },

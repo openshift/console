@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import {
   Button,
   Form,
@@ -20,7 +20,6 @@ export const ServiceToken: React.FC<ServiceTokenProps> = ({ namespace }: Service
   const [sendDisabled, setSendDisabled] = React.useState(false);
   const [apiTokenValue, setApiTokenValue] = React.useState<string>('');
   const [errorMessage, setErrorMessage] = React.useState<string>('');
-
   const { t } = useTranslation();
 
   const onCreate = async () => {
@@ -44,18 +43,16 @@ export const ServiceToken: React.FC<ServiceTokenProps> = ({ namespace }: Service
     <>
       <TextContent>
         <Text component={TextVariants.p}>
-          {t(
-            'rhoas-plugin~To access this Cloud Service, input the API token which can be located at',
-          )}
-
-          <a
-            href="https://cloud.redhat.com/openshift/token"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            {' '}
-            https://cloud.redhat.com/openshift/token
-          </a>
+          <Trans t={t} ns="rhoas-plugin">
+            To access this Cloud Service, input the API token which can be located at{' '}
+            <a
+              href="https://cloud.redhat.com/openshift/token"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              https://cloud.redhat.com/openshift/token
+            </a>
+          </Trans>
         </Text>
       </TextContent>
       <Form>

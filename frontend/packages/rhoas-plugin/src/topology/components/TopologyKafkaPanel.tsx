@@ -3,17 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
 import { Node } from '@patternfly/react-topology';
-import {
-  navFactory,
-  SimpleTabNav,
-  ResourceSummary,
-  ResourceLink,
-} from '@console/internal/components/utils';
-import { referenceForModel } from '@console/internal/module/k8s';
-import { SecretModel } from '@console/internal/models';
 import * as UIActions from '@console/internal/actions/ui';
 import './TopologyKafkaPanel.css';
-import { KafkaConnection } from '../../utils/rhoas-types';
+import { navFactory, SimpleTabNav } from '@console/internal/components/utils';
+import { ResourcesComponent } from './ResourceComponent';
+import { DetailsComponent } from './DetailsComponent';
 
 type PropsFromState = {
   selectedDetailsTab?: any;
@@ -36,62 +30,6 @@ type OwnProps = {
 };
 
 type TopologyRhoasPanelProps = PropsFromState & PropsFromDispatch & OwnProps;
-
-const DetailsComponent: React.FC<{ obj: KafkaConnection }> = ({ obj }) => {
-  const { t } = useTranslation();
-  const boostrapServerHost = obj.status?.bootstrapServerHost;
-  const url = obj.status?.metadata?.cloudUI;
-
-  return (
-    <div className="co-m-pane__body">
-      <div className="row">
-        <div className="col-sm-6">
-          <ResourceSummary resource={obj} />
-        </div>
-        {boostrapServerHost && (
-          <dl className="co-m-pane__details">
-            <dt>{t('rhoas-plugin~Bootstrap Server')}</dt>
-            <dd>{boostrapServerHost}</dd>
-          </dl>
-        )}
-        {url && (
-          <dl className="co-m-pane__details">
-            <dt>{t('rhoas-plugin~URL')}</dt>
-            <dd>
-              <a href={url} rel="noopener noreferrer" target="_blank">
-                {url}
-              </a>
-            </dd>
-          </dl>
-        )}
-      </div>
-    </div>
-  );
-};
-
-const ResourcesComponent: React.FC<{ obj: KafkaConnection }> = ({ obj }) => {
-  const serviceAccountSecretName = obj?.spec?.credentials?.serviceAccountSecretName;
-  const { namespace } = obj.metadata;
-
-  const link = (
-    <ResourceLink
-      kind={referenceForModel(SecretModel)}
-      name={serviceAccountSecretName}
-      namespace={namespace}
-    />
-  );
-
-  return (
-    <ul>
-      <h3>Secret</h3>
-      <li className="list-group-item container-fluid">
-        <div className="row">
-          <span className="col-xs-12">{link}</span>
-        </div>
-      </li>
-    </ul>
-  );
-};
 
 export const ConnectedTopologyRhoasPanel: React.FC<TopologyRhoasPanelProps> = ({
   item,
