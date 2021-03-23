@@ -8,6 +8,7 @@ import { Status, useCsvWatchResource } from '@console/shared';
 import { useTranslation } from 'react-i18next';
 import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
 import { AddHealthChecks, EditHealthChecks } from '@console/app/src/actions/modify-health-checks';
+import { EditResourceLimits } from '@console/app/src/actions/edit-resource-limits';
 import {
   AddHorizontalPodAutoScaler,
   DeleteHorizontalPodAutoScaler,
@@ -100,6 +101,7 @@ export const menuActions: KebabAction[] = [
   EditHorizontalPodAutoScaler,
   AddStorage,
   DeleteHorizontalPodAutoScaler,
+  EditResourceLimits,
   ...getExtensionsKebabActionsForKind(DeploymentConfigModel),
   EditHealthChecks,
   ...common,

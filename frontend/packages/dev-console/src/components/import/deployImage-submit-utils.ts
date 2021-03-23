@@ -15,7 +15,7 @@ import {
 } from '@console/internal/module/k8s';
 import { ServiceModel as KnServiceModel } from '@console/knative-plugin';
 import { getKnativeServiceDepResource } from '@console/knative-plugin/src/utils/create-knative-utils';
-import { getRandomChars } from '@console/shared/src/utils';
+import { getRandomChars, getResourceLimitsData } from '@console/shared/src/utils';
 import {
   getAppLabels,
   getPodLabels,
@@ -206,20 +206,7 @@ export const createOrUpdateDeployment = (
               ports,
               volumeMounts,
               env,
-              resources: {
-                ...((cpu.limit || memory.limit) && {
-                  limits: {
-                    ...(cpu.limit && { cpu: `${cpu.limit}${cpu.limitUnit}` }),
-                    ...(memory.limit && { memory: `${memory.limit}${memory.limitUnit}` }),
-                  },
-                }),
-                ...((cpu.request || memory.request) && {
-                  requests: {
-                    ...(cpu.request && { cpu: `${cpu.request}${cpu.requestUnit}` }),
-                    ...(memory.request && { memory: `${memory.request}${memory.requestUnit}` }),
-                  },
-                }),
-              },
+              resources: getResourceLimitsData({ cpu, memory }),
               ...getProbesData(healthChecks),
             },
           ],
@@ -280,20 +267,7 @@ export const createOrUpdateDeploymentConfig = (
               ports,
               volumeMounts,
               env,
-              resources: {
-                ...((cpu.limit || memory.limit) && {
-                  limits: {
-                    ...(cpu.limit && { cpu: `${cpu.limit}${cpu.limitUnit}` }),
-                    ...(memory.limit && { memory: `${memory.limit}${memory.limitUnit}` }),
-                  },
-                }),
-                ...((cpu.request || memory.request) && {
-                  requests: {
-                    ...(cpu.request && { cpu: `${cpu.request}${cpu.requestUnit}` }),
-                    ...(memory.request && { memory: `${memory.request}${memory.requestUnit}` }),
-                  },
-                }),
-              },
+              resources: getResourceLimitsData({ cpu, memory }),
               ...getProbesData(healthChecks),
             },
           ],

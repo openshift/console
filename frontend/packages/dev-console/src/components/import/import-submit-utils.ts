@@ -15,7 +15,7 @@ import { ServiceModel as KnServiceModel } from '@console/knative-plugin';
 import { getKnativeServiceDepResource } from '@console/knative-plugin/src/utils/create-knative-utils';
 import { SecretType } from '@console/internal/components/secrets/create-secret';
 import { history } from '@console/internal/components/utils';
-import { getRandomChars } from '@console/shared/src/utils';
+import { getRandomChars, getResourceLimitsData } from '@console/shared/src/utils';
 import {
   createPipelineForImportFlow,
   createPipelineRunForImportFlow,
@@ -303,20 +303,7 @@ export const createOrUpdateDeployment = (
               image: `${name}:latest`,
               ports,
               env,
-              resources: {
-                ...((cpu.limit || memory.limit) && {
-                  limits: {
-                    ...(cpu.limit && { cpu: `${cpu.limit}${cpu.limitUnit}` }),
-                    ...(memory.limit && { memory: `${memory.limit}${memory.limitUnit}` }),
-                  },
-                }),
-                ...((cpu.request || memory.request) && {
-                  requests: {
-                    ...(cpu.request && { cpu: `${cpu.request}${cpu.requestUnit}` }),
-                    ...(memory.request && { memory: `${memory.request}${memory.requestUnit}` }),
-                  },
-                }),
-              },
+              resources: getResourceLimitsData({ cpu, memory }),
               ...getProbesData(healthChecks),
             },
           ],
@@ -379,20 +366,7 @@ export const createOrUpdateDeploymentConfig = (
               image: `${name}:latest`,
               ports,
               env,
-              resources: {
-                ...((cpu.limit || memory.limit) && {
-                  limits: {
-                    ...(cpu.limit && { cpu: `${cpu.limit}${cpu.limitUnit}` }),
-                    ...(memory.limit && { memory: `${memory.limit}${memory.limitUnit}` }),
-                  },
-                }),
-                ...((cpu.request || memory.request) && {
-                  requests: {
-                    ...(cpu.request && { cpu: `${cpu.request}${cpu.requestUnit}` }),
-                    ...(memory.request && { memory: `${memory.request}${memory.requestUnit}` }),
-                  },
-                }),
-              },
+              resources: getResourceLimitsData({ cpu, memory }),
               ...getProbesData(healthChecks),
             },
           ],

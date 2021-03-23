@@ -205,6 +205,7 @@
   "Environment variables (runtime only)": "Environment variables (runtime only)",
   "Each label is applied to each created resource.": "Each label is applied to each created resource.",
   "Resource limit": "Resource limit",
+  "Resource limits control how much CPU and memory a container will consume on a node.": "Resource limits control how much CPU and memory a container will consume on a node.",
   "Request": "Request",
   "The minimum amount of CPU the Container is guaranteed.": "The minimum amount of CPU the Container is guaranteed.",
   "Limit": "Limit",

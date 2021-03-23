@@ -1,19 +1,38 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { ResourceLimitField } from '@console/shared';
 import { useFormikContext, FormikValues } from 'formik';
+import { ResourceLimitField } from '@console/shared';
+import { ResourceIcon } from '@console/internal/components/utils';
+import { ContainerModel } from '@console/internal/models';
 import FormSection from '../section/FormSection';
 import { MemoryUnits, CPUUnits } from '../import-types';
 
-const ResourceLimitSection: React.FC = () => {
+export type ResourceLimitSectionProps = {
+  hideTitle?: boolean;
+};
+
+const ResourceLimitSection: React.FC<ResourceLimitSectionProps> = ({ hideTitle }) => {
   const { t } = useTranslation();
   const {
     values: {
       limits: { cpu, memory },
+      container,
     },
   } = useFormikContext<FormikValues>();
   return (
-    <FormSection title={t('devconsole~Resource limit')}>
+    <FormSection
+      title={!hideTitle && t('devconsole~Resource limit')}
+      subTitle={t(
+        'devconsole~Resource limits control how much CPU and memory a container will consume on a node.',
+      )}
+      fullWidth
+    >
+      {container && (
+        <span>
+          {t('devconsole~Container')} &nbsp;
+          <ResourceIcon kind={ContainerModel.kind} /> {container}
+        </span>
+      )}
       <div className="co-section-heading-tertiary">{t('devconsole~CPU')}</div>
       <ResourceLimitField
         name="limits.cpu.request"
@@ -35,7 +54,7 @@ const ResourceLimitSection: React.FC = () => {
         )}
       />
 
-      <div className="co-section-heading-tertiary">Memory</div>
+      <div className="co-section-heading-tertiary">{t('devconsole~Memory')}</div>
       <ResourceLimitField
         name="limits.memory.request"
         label={t('devconsole~Request')}

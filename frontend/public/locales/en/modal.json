@@ -61,5 +61,6 @@
   "Add more": "Add more",
   "Edit tolerations": "Edit tolerations",
   "Tolerations": "Tolerations",
-  "Operator": "Operator"
+  "Operator": "Operator",
+  "Edit resource limits": "Edit resource limits"
 }

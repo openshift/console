@@ -15,10 +15,10 @@ import {
   getExternalImagelValues,
   getIconInitialValues,
   getKsvcRouteData,
-  getLimitsData,
   getServerlessData,
   getUserLabels,
 } from '@console/dev-console/src/components/edit-application/edit-application-utils';
+import { getLimitsDataFromResource } from '@console/shared/src';
 import { RegistryType } from '@console/dev-console/src/utils/imagestream-utils';
 import { ServiceModel } from '../models';
 import { getKnativeServiceDepResource } from './create-knative-utils';
@@ -126,7 +126,7 @@ export const getCommonInitialValues = (
     },
     deployment: getDeploymentData(ksvcResourceData),
     labels: getUserLabels(ksvcResourceData),
-    limits: getLimitsData(ksvcResourceData),
+    limits: getLimitsDataFromResource(ksvcResourceData),
     healthChecks: getHealthChecksData(ksvcResourceData),
   };
   return commonInitialValues;

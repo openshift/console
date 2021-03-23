@@ -13,7 +13,11 @@ import {
 } from '@console/knative-plugin/src/topology/__tests__/topology-knative-test-data';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { Alert } from '@console/internal/components/monitoring/types';
-import { createOverviewItemsForType, getWorkloadMonitoringAlerts } from '../resource-utils';
+import {
+  createOverviewItemsForType,
+  getResourceData,
+  getWorkloadMonitoringAlerts,
+} from '../resource-utils';
 import { mockAlerts } from '../__mocks__/alerts-and-rules-data';
 
 declare global {
@@ -171,5 +175,22 @@ describe('TransformResourceData', () => {
     const alerts: Alert[] = getWorkloadMonitoringAlerts(deploymentResource, mockAlerts);
     const expectedAlerts: Alert[] = _.pullAt(mockAlerts.data, [0, 1, 4]);
     expect(alerts).toEqual(expectedAlerts);
+  });
+
+  it('should return proper limit with unit data', () => {
+    let limit;
+    let unit;
+    [limit, unit] = getResourceData('3Mi');
+    expect(limit).toBe('3');
+    expect(unit).toBe('Mi');
+    [limit, unit] = getResourceData('5');
+    expect(limit).toBe('5');
+    expect(unit).toBe('');
+    [limit, unit] = getResourceData('4m');
+    expect(limit).toBe('4');
+    expect(unit).toBe('m');
+    [limit, unit] = getResourceData('2Gi');
+    expect(limit).toBe('2');
+    expect(unit).toBe('Gi');
   });
 });
