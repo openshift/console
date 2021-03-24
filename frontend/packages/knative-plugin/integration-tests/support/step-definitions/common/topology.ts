@@ -37,3 +37,11 @@ Then('side bar is displayed with the pipelines section', () => {
   topologySidePane.verifyTab('Resources');
   topologySidePane.verifySection('Pipeline Runs');
 });
+
+When('user switches to the {string} tab', (tab: string) => {
+  topologySidePane.selectTab(tab);
+});
+
+When('user clicks on the link for the {string} of helm release', (resource: string) => {
+  topologySidePane.selectResource(resource);
+});
