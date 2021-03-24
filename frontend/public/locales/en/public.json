@@ -453,6 +453,7 @@
   "Pod details": "Pod details",
   "Init containers": "Init containers",
   "Pod": "Pod",
+  "Rollback": "Rollback",
   "ReplicaSet details": "ReplicaSet details",
   "Deployment revision": "Deployment revision",
   "{{count1}} of {{count2}} pods": "{{count1}} of {{count2}} pods",
