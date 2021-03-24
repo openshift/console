@@ -9,6 +9,8 @@ import {
   getExternalImagelValues,
   getServerlessData,
   getKsvcRouteData,
+  getFileUploadValues,
+  BuildSourceType,
 } from '../edit-application-utils';
 import { GitImportFormData, Resources } from '../../import/import-types';
 import {
@@ -31,6 +33,12 @@ describe('Edit Application Utils', () => {
     expect(getPageHeading(BuildStrategyType.Source)).toEqual(CreateApplicationFlow.Git);
   });
 
+  it('getPageHeading should return JarUpload based on the build type of resource', () => {
+    expect(getPageHeading(BuildStrategyType.Source, BuildSourceType.Binary)).toEqual(
+      CreateApplicationFlow.JarUpload,
+    );
+  });
+
   it('getInitialValues should return values based on the resources and the create flow used to create the application', () => {
     const { route, editAppResource, buildConfig, pipeline, imageStream } = appResources;
     const gitImportValues: GitImportFormData = {
@@ -44,6 +52,7 @@ describe('Edit Application Utils', () => {
       },
       build: {
         ...gitImportInitialValues.build,
+        source: { type: undefined },
         triggers: { config: false, image: false, webhook: false },
       },
       image: {
@@ -106,6 +115,14 @@ describe('Edit Application Utils', () => {
     expect(
       getInitialValues({ editAppResource, buildConfig, route }, 'nationalparks-py', 'div'),
     ).toEqual(gitImportInitialValuesWithHealthChecksEnabled);
+  });
+
+  it('should get correct data for fileupload values', () => {
+    const { buildConfig, editAppResource } = appResources;
+    expect(getFileUploadValues(editAppResource.data, buildConfig.data)).toEqual({
+      fileUpload: { name: 'demo-app.jar', value: '', javaArgs: '' },
+      runtimeIcon: 'python',
+    });
   });
 
   describe('getServerlessData', () => {

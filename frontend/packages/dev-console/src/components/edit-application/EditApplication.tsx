@@ -12,12 +12,17 @@ import {
   createOrUpdateResources as createOrUpdateGitResources,
   handleRedirect,
 } from '../import/import-submit-utils';
-import { validationSchema as gitValidationSchema } from '../import/import-validation-utils';
 import { createOrUpdateDeployImageResources } from '../import/deployImage-submit-utils';
-import { deployValidationSchema } from '../import/deployImage-validation-utils';
 import EditApplicationForm from './EditApplicationForm';
 import { EditApplicationProps } from './edit-application-types';
-import { getPageHeading, getInitialValues, CreateApplicationFlow } from './edit-application-utils';
+import {
+  getPageHeading,
+  getInitialValues,
+  CreateApplicationFlow,
+  getValidationSchema,
+} from './edit-application-utils';
+import { createOrUpdateJarFile } from '../import/upload-jar-submit-utils';
+import { useUploadJarFormToast } from '../import/jar/useUploadJarFormToast';
 
 export interface StateProps {
   perspective: string;
@@ -31,8 +36,12 @@ const EditApplication: React.FC<EditApplicationProps> = ({
   const { t } = useTranslation();
   const [perspective] = useActivePerspective();
   const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
+  const uploadJarFormToastCallback = useUploadJarFormToast();
   const initialValues = getInitialValues(appResources, appName, namespace);
-  const pageHeading = getPageHeading(_.get(initialValues, 'build.strategy', ''));
+  const buildStrategy = _.get(initialValues, 'build.strategy', '');
+  const buildSourceType = _.get(initialValues, 'build.source.type', undefined);
+  const pageHeading = getPageHeading(buildStrategy, buildSourceType);
+  const validationSchema = getValidationSchema(buildStrategy, buildSourceType);
   const imageStreamsData =
     appResources.imageStreams && appResources.imageStreams.loaded
       ? appResources.imageStreams.data
@@ -44,6 +53,22 @@ const EditApplication: React.FC<EditApplicationProps> = ({
     if (values.build.strategy) {
       const imageStream =
         values.image.selected && builderImages ? builderImages[values.image.selected].obj : null;
+      if (pageHeading === CreateApplicationFlow.JarUpload) {
+        const isNewFileUploaded = values.fileUpload.value !== '';
+        return createOrUpdateJarFile(
+          values,
+          imageStream,
+          false,
+          false,
+          'update',
+          appResources,
+        ).then((resp) => {
+          if (isNewFileUploaded) {
+            uploadJarFormToastCallback(resp);
+          }
+          return resp;
+        });
+      }
       return createOrUpdateGitResources(
         t,
         values,
@@ -66,18 +91,6 @@ const EditApplication: React.FC<EditApplicationProps> = ({
       .catch((err) => {
         actions.setStatus({ submitError: err.message });
       });
-  };
-
-  const renderForm = (formikProps: FormikProps<any>) => {
-    return (
-      <EditApplicationForm
-        {...formikProps}
-        appResources={appResources}
-        enableReinitialize
-        createFlowType={pageHeading}
-        builderImages={builderImages}
-      />
-    );
   };
 
   React.useEffect(() => {
@@ -110,7 +123,10 @@ const EditApplication: React.FC<EditApplicationProps> = ({
       setBuilderImages(!_.isEmpty(allBuilderImages) ? allBuilderImages : null);
     };
 
-    if (pageHeading === CreateApplicationFlow.Git) {
+    if (
+      pageHeading === CreateApplicationFlow.Git ||
+      pageHeading === CreateApplicationFlow.JarUpload
+    ) {
       getBuilderImages();
     }
 
@@ -124,14 +140,22 @@ const EditApplication: React.FC<EditApplicationProps> = ({
     pageHeading,
   ]);
 
+  const renderForm = (formikProps: FormikProps<any>) => (
+    <EditApplicationForm
+      {...formikProps}
+      appResources={appResources}
+      enableReinitialize
+      createFlowType={pageHeading}
+      builderImages={builderImages}
+    />
+  );
+
   return (
     <Formik
       initialValues={initialValues}
       onSubmit={handleSubmit}
       onReset={history.goBack}
-      validationSchema={
-        _.get(initialValues, 'build.strategy') ? gitValidationSchema(t) : deployValidationSchema(t)
-      }
+      validationSchema={validationSchema(t)}
     >
       {renderForm}
     </Formik>

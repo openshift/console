@@ -4,11 +4,11 @@ import { getAppLabels, mergeData } from '@console/dev-console/src/utils/resource
 import { getProbesData } from '@console/dev-console/src/components/health-checks/create-health-checks-probe-utils';
 import {
   DeployImageFormData,
-  FileUploadData,
   GitImportFormData,
   UploadJarFormData,
 } from '@console/dev-console/src/components/import/import-types';
 import { ServiceModel } from '../models';
+import { NameValuePair } from 'packages/console-shared/src';
 
 export const getKnativeServiceDepResource = (
   formData: GitImportFormData | DeployImageFormData | UploadJarFormData,
@@ -18,7 +18,6 @@ export const getKnativeServiceDepResource = (
   imageNamespace?: string,
   annotations?: { [name: string]: string },
   originalKnativeService?: K8sResourceKind,
-  fileUpload?: FileUploadData,
 ): K8sResourceKind => {
   const {
     name,
@@ -37,6 +36,7 @@ export const getKnativeServiceDepResource = (
     healthChecks,
     resources,
   } = formData;
+  const { fileUpload } = formData as UploadJarFormData;
   const contTargetPort = parseInt(unknownTargetPort, 10) || defaultUnknownPort;
   const imgPullPolicy = imagePolicy ? ImagePullPolicy.Always : ImagePullPolicy.IfNotPresent;
   const {
@@ -70,6 +70,16 @@ export const getKnativeServiceDepResource = (
     runtimeIcon,
   });
   delete defaultLabel.app;
+  if (fileUpload) {
+    const jArgsIndex = env?.findIndex((e) => e.name === 'JAVA_ARGS');
+    if (jArgsIndex !== -1 && fileUpload.javaArgs !== '') {
+      (env[jArgsIndex] as NameValuePair).value = fileUpload.javaArgs;
+    } else if (jArgsIndex !== -1 && fileUpload.javaArgs === '') {
+      env.splice(jArgsIndex, 1);
+    } else {
+      env.push({ name: 'JAVA_ARGS', value: fileUpload.javaArgs });
+    }
+  }
   const newKnativeDeployResource: K8sResourceKind = {
     kind: ServiceModel.kind,
     apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
@@ -81,7 +91,7 @@ export const getKnativeServiceDepResource = (
         ...labels,
         ...(!create && { 'serving.knative.dev/visibility': `cluster-local` }),
       },
-      annotations: fileUpload ? { ...annotations, isFromJarUpload: 'true' } : annotations,
+      annotations: fileUpload ? { ...annotations, jarFileName: fileUpload.name } : annotations,
     },
     spec: {
       template: {
@@ -119,9 +129,7 @@ export const getKnativeServiceDepResource = (
                 ],
               }),
               imagePullPolicy: imgPullPolicy,
-              env: fileUpload?.javaArgs
-                ? [...env, { name: 'JAVA_ARGS', value: fileUpload.javaArgs }]
-                : env,
+              env,
               resources: {
                 ...((cpuLimit || memoryLimit) && {
                   limits: {

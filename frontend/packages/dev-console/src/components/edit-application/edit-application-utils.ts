@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { TFunction } from 'i18next';
 import {
   K8sResourceKind,
   referenceFor,
@@ -33,14 +34,30 @@ import {
 import { AppResources } from './edit-application-types';
 import { RegistryType } from '../../utils/imagestream-utils';
 import { getHealthChecksData } from '../health-checks/create-health-checks-probe-utils';
-import { detectGitType } from '../import/import-validation-utils';
+import {
+  detectGitType,
+  validationSchema as importValidationSchema,
+} from '../import/import-validation-utils';
 import { getAutoscaleWindow } from '../import/serverless/serverless-utils';
+import { deployValidationSchema } from '../import/deployImage-validation-utils';
+import { validationSchema as jarValidationSchema } from '../import/upload-jar-validation-utils';
 
 export enum CreateApplicationFlow {
   Git = 'Import from Git',
   Dockerfile = 'Import from Dockerfile',
   Container = 'Deploy Image',
+  JarUpload = 'Upload JAR file',
 }
+
+export enum BuildSourceType {
+  Git = 'Git',
+  Binary = 'Binary',
+}
+
+const isFromJarUpload = (type: string): boolean => type === BuildSourceType.Binary;
+
+const getBuildSourceType = (buildConfig: K8sResourceKind): string =>
+  buildConfig?.spec?.source?.type;
 
 export const getResourcesType = (resource: K8sResourceKind): Resources => {
   switch (resource.kind) {
@@ -55,14 +72,30 @@ export const getResourcesType = (resource: K8sResourceKind): Resources => {
   }
 };
 
-export const getPageHeading = (buildStrategy: string): string => {
+export const getPageHeading = (buildStrategy: string, buildType?: string): string => {
   switch (buildStrategy) {
     case BuildStrategyType.Source:
-      return CreateApplicationFlow.Git;
+      return buildType === BuildSourceType.Binary
+        ? CreateApplicationFlow.JarUpload
+        : CreateApplicationFlow.Git;
     case BuildStrategyType.Docker:
       return CreateApplicationFlow.Dockerfile;
     default:
       return CreateApplicationFlow.Container;
+  }
+};
+
+export const getValidationSchema = (
+  buildStrategy: string,
+  buildType?: string,
+): ((t: TFunction) => any) => {
+  switch (buildStrategy) {
+    case BuildStrategyType.Source:
+      return buildType === BuildSourceType.Binary ? jarValidationSchema : importValidationSchema;
+    case BuildStrategyType.Docker:
+      return importValidationSchema;
+    default:
+      return deployValidationSchema;
   }
 };
 
@@ -178,6 +211,7 @@ export const getBuildData = (
     strategy:
       buildStrategyType ||
       (isDockerPipeline(pipeline) ? BuildStrategyType.Docker : BuildStrategyType.Source),
+    source: { type: getBuildSourceType(buildConfig) },
   };
   return buildData;
 };
@@ -482,6 +516,23 @@ export const getExternalImagelValues = (appResource: K8sResourceKind) => {
   };
 };
 
+export const getFileUploadValues = (resource: K8sResourceKind, buildConfig: K8sResourceKind) => {
+  const resourceName = resource.metadata.name;
+  const fileName = buildConfig.metadata?.annotations?.jarFileName ?? '';
+  const javaArgs: string =
+    resource.spec?.template?.spec?.containers
+      ?.find((container) => container.name === resourceName)
+      ?.env?.find((args) => args.name === 'JAVA_ARGS')?.value ?? '';
+  return {
+    fileUpload: {
+      name: fileName,
+      value: '',
+      javaArgs,
+    },
+    ...getIconInitialValues(resource),
+  };
+};
+
 export const getInitialValues = (
   appResources: AppResources,
   appName: string,
@@ -500,7 +551,7 @@ export const getInitialValues = (
     namespace,
   );
   const gitDockerValues = getGitAndDockerfileInitialValues(buildConfigData, pipelineData);
-
+  let fileUploadValues = {};
   let iconValues = {};
   let externalImageValues = {};
   let internalImageValues = {};
@@ -520,11 +571,14 @@ export const getInitialValues = (
         externalImageValues = getExternalImagelValues(editAppResourceData);
       }
     }
+  } else if (isFromJarUpload(getBuildSourceType(buildConfigData))) {
+    fileUploadValues = getFileUploadValues(editAppResourceData, buildConfigData);
   }
 
   return {
     ...commonValues,
     ...iconValues,
+    ...fileUploadValues,
     ...gitDockerValues,
     ...externalImageValues,
     ...internalImageValues,
