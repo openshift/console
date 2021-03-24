@@ -30,6 +30,11 @@ export const helmPage = {
       .type(name);
     cy.get(helmPO.table).should('be.visible');
   },
+  verifyChartVersionInReadme: (chartVersion: string) => {
+    cy.get(helmPO.readmeCSV)
+      .parent('div')
+      .should('contain.text', chartVersion);
+  },
   verifyHelmReleasesDisplayed: () => cy.get(helmPO.table).should('be.visible'),
   clickHelmReleaseName: (name: string) => cy.get(`a[title="${name}"]`).click(),
   selectHelmFilter: (filterName: string) => {

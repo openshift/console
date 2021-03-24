@@ -7,6 +7,7 @@ export const helmPO = {
   revisionHistoryTab: '[data-test-id="horizontal-link-Revision History"]',
   releaseNotesTab: '[data-test-id="horizontal-link-Release Notes"]',
   filterDropdown: 'button[data-test-id="filter-dropdown-toggle"]',
+  readmeCSV: '.co-clusterserviceversion-logo',
   details: {
     title: '[data-test-section-heading="Helm Release Details"]',
   },
