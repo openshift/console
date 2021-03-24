@@ -1,82 +1,82 @@
-.nb-bs-form-entry {
+.nb-endpoints-form-entry {
     width:100%;
 }
 
-.nb-bs-form-entry input {
+.nb-endpoints-form-entry input {
     max-width: unset;
 }
 
-.nb-bs-form-entry--short {
+.nb-endpoints-form-entry--short {
     width:20%;
 }
-.nb-bs-form-entry--full-width {
+.nb-endpoints-form-entry--full-width {
     width:100%;
 }
 
-.nb-bs-form-entry__dropdown, .nb-bs-form-entry__dropdown > div {
+.nb-endpoints-form-entry__dropdown, .nb-endpoints-form-entry__dropdown > div {
     width:100%;
 }
 
-.nb-bs-page {
+.nb-endpoints-page {
     margin-left: var(--pf-global--spacer--lg);
     margin-right: var(--pf-global--spacer--lg);
     margin-top: var(--pf-global--spacer--lg);
 }
 
-.nb-bs-page__breadcrumbs {
+.nb-endpoints-page__breadcrumbs {
     margin-top: var(--pf-global--spacer--sm);
     margin-bottom: var(--pf-global--spacer--sm);
 }
 
-.nb-bs-page-title {
+.nb-endpoints-page-title {
     margin-bottom: var(--pf-global--spacer--lg);
 }
 
-.nb-bs-page-title__main {
+.nb-endpoints-page-title__main {
     margin-bottom: var(--pf-global--spacer--sm);
 }
 
-.nb-bs-page-title__info {
+.nb-endpoints-page-title__info {
     color: var(--pf-global--disabled-color--100);
 }
 
-.nb-bs-form {
+.nb-endpoints-form {
     width:100%;
     margin-top: var(--pf-global--spacer--lg);
     margin-bottom: var(--pf-global--spacer--lg);
 }
 
-.nb-bs-form-entry {
-    margin-top: var(--pfd-global-space-sm);
-    margin-bottom: var(--pfd-global-space-sm);
+.nb-endpoints-form-entry {
+    margin-top: var(--pf-global--spacer--sm);
+    margin-bottom: var(--pf-global--spacer--sm);
 }
 
-.nb-bs-form-entry__file-upload {
+.nb-endpoints-form-entry__file-upload {
     border:none;
 }
 
-.nb-bs-form-entry__data-dump {
+.nb-endpoints-form-entry__data-dump {
     min-height:5em;
 }
 
-.nb-bs-form-entry-upload-btn__input {
+.nb-endpoints-form-entry-upload-btn__input {
     position: absolute;
     opacity: 0;
 }
 
-.nb-bs-form-entry-upload-btn {
+.nb-endpoints-form-entry-upload-btn {
     display: flex;
 }
 
-.nb-create-bs__modal {
+.nb-endpoints__modal {
     background-color: var(--pf-global--BackgroundColor--100);
 }
 
-.nb-bs-page-form__short {
+.nb-endpoints-page-form__short {
     width: 80%;
 }
 
-.nb-bs-form-entry__dropdown--short {
+.nb-endpoints-form-entry__dropdown--short {
     overflow-y: auto;
     max-height: 30vh;
 }

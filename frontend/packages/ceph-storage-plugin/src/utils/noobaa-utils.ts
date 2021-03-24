@@ -2,10 +2,18 @@ import * as _ from 'lodash';
 import { TFunction } from 'i18next';
 import { Alert } from '@console/internal/components/monitoring/types';
 import { PrometheusResponse, DataPoint } from '@console/internal/components/graphs';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sResourceKind } from '@console/internal/module/k8s/types';
 import { StorageClass } from '@console/internal/components/storage-class-form';
-import { PROVIDERS_NOOBAA_MAP, BUCKET_LABEL_NOOBAA_MAP, BC_PROVIDERS } from '../constants';
+import { SecretModel } from '@console/internal/models';
+import { getAPIVersion } from '@console/shared/src/selectors/common';
 import { BackingStoreKind, BucketClassKind, PlacementPolicy } from '../types';
+import { StoreType } from '../constants/common';
+import {
+  PROVIDERS_NOOBAA_MAP,
+  BUCKET_LABEL_NOOBAA_MAP,
+  BC_PROVIDERS,
+  AWS_REGIONS,
+} from '../constants/providers';
 
 export const filterNooBaaAlerts = (alerts: Alert[]): Alert[] =>
   alerts.filter((alert) => _.get(alert, 'annotations.storage_type') === 'NooBaa');
@@ -76,3 +84,62 @@ export const getBSLabel = (policy: PlacementPolicy, t: TFunction) =>
   policy === PlacementPolicy.Mirror
     ? t('ceph-storage-plugin~Select at least 2 Backing Store resources')
     : t('ceph-storage-plugin~Select at least 1 Backing Store resource');
+
+export const awsRegionItems = _.zipObject(AWS_REGIONS, AWS_REGIONS);
+export const endpointsSupported = [BC_PROVIDERS.S3, BC_PROVIDERS.IBM];
+export const getProviders = (type: StoreType) => {
+  const values =
+    type === StoreType.BS
+      ? Object.values(BC_PROVIDERS)
+      : Object.values(BC_PROVIDERS).filter(
+          (provider) => provider !== BC_PROVIDERS.GCP && provider !== BC_PROVIDERS.PVC,
+        );
+  return _.zipObject(values, values);
+};
+
+export const getExternalProviders = (type: StoreType) => {
+  return type === StoreType.NS
+    ? [BC_PROVIDERS.AWS, BC_PROVIDERS.AZURE, BC_PROVIDERS.S3, BC_PROVIDERS.IBM]
+    : [BC_PROVIDERS.AWS, BC_PROVIDERS.AZURE, BC_PROVIDERS.S3, BC_PROVIDERS.GCP, BC_PROVIDERS.IBM];
+};
+
+export const secretPayloadCreator = (
+  provider: string,
+  namespace: string,
+  secretName: string,
+  field1: string,
+  field2 = '',
+) => {
+  const payload = {
+    apiVersion: getAPIVersion(SecretModel),
+    kind: SecretModel.kind,
+    stringData: {},
+    metadata: {
+      name: secretName,
+      namespace,
+    },
+    type: 'Opaque',
+  };
+
+  switch (provider) {
+    case BC_PROVIDERS.AZURE:
+      payload.stringData = {
+        AccountName: field1,
+        AccountKey: field2,
+      };
+      break;
+    case BC_PROVIDERS.IBM:
+      payload.stringData = {
+        IBM_COS_ACCESS_KEY_ID: field1,
+        IBM_COS_SECRET_ACCESS_KEY: field2,
+      };
+      break;
+    default:
+      payload.stringData = {
+        AWS_ACCESS_KEY_ID: field1,
+        AWS_SECRET_ACCESS_KEY: field2,
+      };
+      break;
+  }
+  return payload;
+};
