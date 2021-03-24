@@ -109,7 +109,6 @@ const createCluster = async (
 
 const CreateStorageClusterWizard: React.FC<CreateStorageClusterWizardProps> = ({
   match,
-  hasNoProvSC,
   mode,
   lsoNs,
   navUtils,
@@ -271,20 +270,12 @@ const CreateStorageClusterWizard: React.FC<CreateStorageClusterWizardProps> = ({
             className="co-alert ocs-install-info-alert"
             variant="info"
             isInline
-            title={
-              !hasNoProvSC
-                ? t('ceph-storage-plugin~Missing storage class')
-                : 'Internal - Attached devices'
-            }
+            title="Internal - Attached devices"
             actionClose={<AlertActionCloseButton onClose={() => setShowInfoAlert(false)} />}
           >
-            {!hasNoProvSC
-              ? t(
-                  'ceph-storage-plugin~The storage cluster needs to use a storage class to consume the local storage. In order to create one you need to discover the available disks and create a storage class using the filters to select the disks you wish to use',
-                )
-              : t(
-                  'ceph-storage-plugin~Can be used on any platform. It means that OCS uses attached disks, via Local Storage Operator. In this case, the infrastructure storage class is actually provided by LSO, on top of attached drives.',
-                )}
+            {t(
+              'ceph-storage-plugin~Can be used on any platform. It means that OCS uses attached disks, via Local Storage Operator. In this case, the infrastructure storage class is actually provided by LSO, on top of attached drives.',
+            )}
           </Alert>
         )}
       </StackItem>
@@ -319,8 +310,6 @@ const CreateStorageClusterWizard: React.FC<CreateStorageClusterWizardProps> = ({
 type CreateStorageClusterWizardProps = {
   navUtils: NavUtils;
   match: RouterMatch<{ appName: string; ns: string }>;
-  hasNoProvSC: boolean;
-  setHasNoProvSC: React.Dispatch<React.SetStateAction<boolean>>;
   mode: string;
   lsoNs: string;
 };

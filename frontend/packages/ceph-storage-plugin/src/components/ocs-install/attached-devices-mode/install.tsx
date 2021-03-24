@@ -4,23 +4,16 @@ import { match as RouterMatch } from 'react-router';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
 import { Alert, Button } from '@patternfly/react-core';
-import {
-  StorageClassResourceKind,
-  K8sResourceKind,
-  k8sList,
-  referenceForModel,
-} from '@console/internal/module/k8s';
+import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { history, LoadingBox } from '@console/internal/components/utils';
 import {
   useK8sWatchResource,
   WatchK8sResource,
 } from '@console/internal/components/utils/k8s-watch-hook';
-import { StorageClassModel } from '@console/internal/models';
 import { ClusterServiceVersionModel, SubscriptionModel } from '@console/operator-lifecycle-manager';
 import { getNamespace } from '@console/shared';
 import CreateStorageClusterWizard from './install-wizard';
 import { NavUtils } from '../../../types';
-import { filterSCWithNoProv } from '../../../utils/install';
 import { getOperatorVersion } from '../../../selectors';
 import { LSO_OPERATOR } from '../../../constants';
 import './attached-devices.scss';
@@ -37,8 +30,6 @@ export const CreateAttachedDevicesCluster: React.FC<CreateAttachedDevicesCluster
 }) => {
   const { t } = useTranslation();
 
-  const { appName, ns } = match.params;
-  const [hasNoProvSC, setHasNoProvSC] = React.useState(false);
   const [lsoSubscription, setLsoSubscription] = React.useState<K8sResourceKind>();
   const isDataLoaded = React.useRef(false);
   const lsoNs = getNamespace(lsoSubscription);
@@ -68,19 +59,6 @@ export const CreateAttachedDevicesCluster: React.FC<CreateAttachedDevicesCluster
     setLsoSubscription(subscriptions.find((item) => item?.spec?.name === LSO_OPERATOR));
   }, [subscriptions]);
 
-  React.useEffect(() => {
-    /* this call can't be watched here as watching will take the user back to this view
-    once a sc gets created from ocs install in case of no sc present */
-    k8sList(StorageClassModel)
-      .then((storageClasses: StorageClassResourceKind[]) => {
-        const filteredSCData = storageClasses.filter(filterSCWithNoProv);
-        if (filteredSCData.length) {
-          setHasNoProvSC(true);
-        }
-      })
-      .catch(() => setHasNoProvSC(false));
-  }, [appName, ns]);
-
   return !isDataLoaded.current && !subscriptionsLoadError && !csvLoadError ? (
     <LoadingBox />
   ) : subscriptionsLoadError || csvLoadError || !isLsoCsvSucceeded ? (
@@ -102,14 +80,7 @@ export const CreateAttachedDevicesCluster: React.FC<CreateAttachedDevicesCluster
       </Trans>
     </Alert>
   ) : (
-    <CreateStorageClusterWizard
-      navUtils={navUtils}
-      hasNoProvSC={hasNoProvSC}
-      setHasNoProvSC={setHasNoProvSC}
-      match={match}
-      lsoNs={lsoNs}
-      mode={mode}
-    />
+    <CreateStorageClusterWizard navUtils={navUtils} match={match} lsoNs={lsoNs} mode={mode} />
   );
 };
 

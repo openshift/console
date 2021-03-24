@@ -331,8 +331,6 @@
   "Discover Disks": "Discover Disks",
   "Storage and Nodes": "Storage and Nodes",
   "Review and Create": "Review and Create",
-  "Missing storage class": "Missing storage class",
-  "The storage cluster needs to use a storage class to consume the local storage. In order to create one you need to discover the available disks and create a storage class using the filters to select the disks you wish to use": "The storage cluster needs to use a storage class to consume the local storage. In order to create one you need to discover the available disks and create a storage class using the filters to select the disks you wish to use",
   "Can be used on any platform. It means that OCS uses attached disks, via Local Storage Operator. In this case, the infrastructure storage class is actually provided by LSO, on top of attached drives.": "Can be used on any platform. It means that OCS uses attached disks, via Local Storage Operator. In this case, the infrastructure storage class is actually provided by LSO, on top of attached drives.",
   "Before we can create a storage cluster, the local storage operator needs to be installed. When installation is finished come back to OpenShift Container Storage to create a storage cluster.<1><0>Install</0></1>": "Before we can create a storage cluster, the local storage operator needs to be installed. When installation is finished come back to OpenShift Container Storage to create a storage cluster.<1><0>Install</0></1>",
   "Role": "Role",
