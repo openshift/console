@@ -41,6 +41,7 @@ export enum GUARDED_FEATURES {
   OCS_KMS = 'OCS_KMS',
   OCS_FLEXIBLE_SCALING = 'OCS_FLEXIBLE_SCALING',
   OCS_TAINT_NODES = 'OCS_TAINT_NODES',
+  OCS_THICK_PROVISION = 'OCS_THICK_PROVISION',
 }
 
 const OCS_FEATURE_FLAGS = {
@@ -50,6 +51,7 @@ const OCS_FEATURE_FLAGS = {
   [GUARDED_FEATURES.OCS_KMS]: 'kms',
   [GUARDED_FEATURES.OCS_FLEXIBLE_SCALING]: 'flexible-scaling',
   [GUARDED_FEATURES.OCS_TAINT_NODES]: 'taint-nodes',
+  [GUARDED_FEATURES.OCS_THICK_PROVISION]: 'thick-provision',
 };
 
 const handleError = (res: any, flags: string[], dispatch: Dispatch, cb: FeatureDetector) => {
