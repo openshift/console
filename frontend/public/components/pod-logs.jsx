@@ -1,5 +1,14 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import {
+  Form,
+  FormGroup,
+  TextInput,
+  Checkbox,
+  Popover,
+  ActionGroup,
+  Button
+} from '@patternfly/react-core';
 
 import {
   ContainerDropdown,
@@ -53,6 +62,8 @@ const containerToLogSourceStatus = (container) => {
   return LOG_SOURCE_RUNNING;
 };
 
+
+
 export class PodLogs extends React.Component {
   constructor(props) {
     super(props);
@@ -61,8 +72,38 @@ export class PodLogs extends React.Component {
       containers: {},
       currentKey: getQueryArgument('container') || '',
       initContainers: {},
+      val: "",
     };
   }
+
+   handleTextInputChange = value1 => {
+    this.setState({val: value1});
+  };
+  
+  handleSubmit = async () => {
+    console.log(this.state.val);
+    const url = 'https://jsonplaceholder.typicode.com/todos/1';
+      const postData = {
+        title: 'foo',
+        body: 'bar',
+        userId: 1,
+      };
+  
+      try {
+        const response = await fetch(url);
+        let responseData;
+        await response.json().then((json) => {
+          responseData = json;
+        });
+        console.log(responseData);
+        //sc(responseData);
+        return responseData;
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.error(err);
+        throw err;
+      }
+  };
 
   static getDerivedStateFromProps({ obj: build }, { currentKey }) {
     const newState = {};
@@ -97,6 +138,21 @@ export class PodLogs extends React.Component {
     );
 
     return (
+      <>
+      <div className="row">
+      <div className="col-sm-4">
+    <TextInput
+            isRequired
+            type="text"
+            id="simple-form-name"
+            name="simple-form-name"
+            aria-describedby="simple-form-name-helper"
+            value={this.state.val}
+            onChange={this.handleTextInputChange}
+          />
+          </div>
+          <Button variant="primary" onClick={this.handleSubmit}>Submit form</Button>
+          </div>
       <div className="co-m-pane__body">
         {_.isEmpty(this.props.obj) === false && (
           <ResourceLog
@@ -107,6 +163,7 @@ export class PodLogs extends React.Component {
           />
         )}
       </div>
+      </>
     );
   }
 }
