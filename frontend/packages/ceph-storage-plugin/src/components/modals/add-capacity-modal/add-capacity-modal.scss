@@ -4,6 +4,10 @@
   display: flex;
 }
 
+.ceph-add-capacity__provisioned-capacity {
+  display: inline;
+}
+
 .ceph-add-capacity__current-capacity--loading {
   width: 9rem;
   margin-top: 0.2rem;
