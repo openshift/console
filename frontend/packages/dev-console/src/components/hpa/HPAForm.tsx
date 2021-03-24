@@ -2,7 +2,13 @@ import * as React from 'react';
 import { isEmpty } from 'lodash';
 import { FormikProps } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { FlexForm, FormFooter, SyncedEditorField, YAMLEditorField } from '@console/shared';
+import {
+  FlexForm,
+  FormBody,
+  FormFooter,
+  SyncedEditorField,
+  YAMLEditorField,
+} from '@console/shared';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { HorizontalPodAutoscalerKind, K8sResourceCommon } from '@console/internal/module/k8s';
 import HPADetailsForm from './HPADetailsForm';
@@ -44,17 +50,19 @@ const HPAForm: React.FC<FormikProps<HPAFormValues> & HPAFormProps> = ({
 
   return (
     <FlexForm onSubmit={handleSubmit}>
-      <SyncedEditorField
-        name="editorType"
-        formContext={{
-          name: 'formData',
-          editor: formEditor,
-          isDisabled: customMetrics,
-          sanitizeTo: (newFormData: Partial<HorizontalPodAutoscalerKind>) =>
-            sanitizeHPAToForm(newFormData, targetResource),
-        }}
-        yamlContext={{ name: 'yamlData', editor: yamlEditor }}
-      />
+      <FormBody flexLayout>
+        <SyncedEditorField
+          name="editorType"
+          formContext={{
+            name: 'formData',
+            editor: formEditor,
+            isDisabled: customMetrics,
+            sanitizeTo: (newFormData: Partial<HorizontalPodAutoscalerKind>) =>
+              sanitizeHPAToForm(newFormData, targetResource),
+          }}
+          yamlContext={{ name: 'yamlData', editor: yamlEditor }}
+        />
+      </FormBody>
       <FormFooter
         handleReset={handleReset}
         errorMessage={status?.submitError}
