@@ -149,6 +149,7 @@ func main() {
 	fKeycloakRealm := fs.String("keycloak-realm", "", "Keycloak Realm Name")
 	fKeycloakAuthURL := fs.String("keycloak-auth-url", "", "URL of the Keycloak Auth server.")
 	fKeycloakClientId := fs.String("keycloak-client-id", "", "Keycloak Client Id")
+	fKeycloakUseHiddenIframe := fs.Bool("keycloak-use-hidden-iframe", false, "Use keycloak Hidden Iframe")
 
 	//NOTE: proxy config // jinsoo
 	fGrafanaEndpoint := fs.String("grafana-endpoint", "http://grafana.monitoring.svc:3000/api/grafana/", "URL of the Grafana API server.")
@@ -273,9 +274,10 @@ func main() {
 		LoadTestFactor:        *fLoadTestFactor,
 
 		// NOTE: return keycloak infor
-		KeycloakRealm:    *fKeycloakRealm,
-		KeycloakAuthURL:  *fKeycloakAuthURL,
-		KeycloakClientId: *fKeycloakClientId,
+		KeycloakRealm:           *fKeycloakRealm,
+		KeycloakAuthURL:         *fKeycloakAuthURL,
+		KeycloakClientId:        *fKeycloakClientId,
+		KeycloakUseHiddenIframe: *fKeycloakUseHiddenIframe,
 
 		ReleaseModeFlag: *fReleaseModeFlag,
 	}

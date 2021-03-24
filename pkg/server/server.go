@@ -87,9 +87,10 @@ type jsGlobals struct {
 	GOARCH              string `json:"GOARCH"`
 	GOOS                string `json:"GOOS"`
 
-	KeycloakRealm    string `json:keycloakRealm`
-	KeycloakAuthURL  string `json:keycloakAuthURL`
-	KeycloakClientId string `json:keycloakClientId`
+	KeycloakRealm           string `json:keycloakRealm`
+	KeycloakAuthURL         string `json:keycloakAuthURL`
+	KeycloakClientId        string `json:keycloakClientId`
+	KeycloakUseHiddenIframe bool   `json:keycloakUseHiddenIframe`
 
 	McMode         bool   `json:mcMode`
 	McModeFile     string `json:mcModeFile`
@@ -136,9 +137,10 @@ type Server struct {
 	ThanosPublicURL       *url.URL
 
 	// Add keycloak info for auth
-	KeycloakRealm    string
-	KeycloakAuthURL  string
-	KeycloakClientId string
+	KeycloakRealm           string
+	KeycloakAuthURL         string
+	KeycloakClientId        string
+	KeycloakUseHiddenIframe bool
 
 	// Add proxy config
 	GrafanaProxyConfig               *hproxy.Config
