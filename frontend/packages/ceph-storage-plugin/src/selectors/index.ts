@@ -61,13 +61,16 @@ export const getCephSC = (scData: K8sResourceKind[]): K8sResourceKind[] =>
     );
   });
 
+export const getOperatorVersion = (operator: K8sResourceKind): string =>
+  operator?.status?.installedCSV;
+
 export const getOCSVersion = (items: FirehoseResult): string => {
   const itemsData: K8sResourceKind[] = _.get(items, 'data');
   const operator: K8sResourceKind = _.find(
     itemsData,
     (item) => _.get(item, 'spec.name') === OCS_OPERATOR,
   );
-  return _.get(operator, 'status.installedCSV');
+  return getOperatorVersion(operator);
 };
 
 export const calcPVsCapacity = (pvs: K8sResourceKind[]): number =>

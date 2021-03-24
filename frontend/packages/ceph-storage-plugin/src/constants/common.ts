@@ -9,6 +9,7 @@ export const PODS = 'Pods';
 export const BY_USED = 'By Used Capacity';
 export const BY_REQUESTED = 'By Requested Capacity';
 export const OCS_OPERATOR = 'ocs-operator';
+export const LSO_OPERATOR = 'local-storage-operator';
 export const OCS_EXTERNAL_CR_NAME = 'ocs-external-storagecluster';
 export const OCS_INTERNAL_CR_NAME = 'ocs-storagecluster';
 export const NO_PROVISIONER = 'kubernetes.io/no-provisioner';
