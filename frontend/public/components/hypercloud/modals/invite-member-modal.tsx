@@ -1,6 +1,5 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import * as classNames from 'classnames';
 
 import {
   ModalBody,
@@ -15,7 +14,7 @@ import { RadioGroup } from '@console/internal/components/radio';
 import { Select, SelectOption, SelectVariant } from '@patternfly/react-core';
 import { coFetchJSON } from '../../../co-fetch';
 import { getId, getUserGroup } from '../../../hypercloud/auth';
-import { UsersIcon } from '@patternfly/react-icons';
+import { UsersIcon, TimesIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 
@@ -54,7 +53,7 @@ export const InviteMemberModal = withHandlePromise((props: InviteMemberModalProp
   const [role, setRole] = React.useState('admin');
   const [errorMsg, setError] = React.useState('');
   const [memberList, setMemberList] = React.useState(null);
-  const [selectedMember, setMember] = React.useState('');
+  const [selectedMember, setMember] = React.useState({name:'', email:''});
   const [isExpanded, setExpanded] = React.useState(false);
   const [isDisabled, setDisabled] = React.useState(false);
   const [searchKey, setSearchKey] = React.useState('');
@@ -83,15 +82,14 @@ export const InviteMemberModal = withHandlePromise((props: InviteMemberModalProp
   const onSelect = (event, selection, isPlaceholder) => {
     if (isPlaceholder) clearSelection();
     else {
-      setMember(selection);
+      setMember(JSON.parse(selection));
       setExpanded(false);
       setDisabled(true);
-      console.log('selected:', selection);
     }
   };
 
   const clearSelection = () => {
-    setMember(null);
+    setMember({name:'', email:''});
     setDisabled(false);
   };
 
@@ -112,7 +110,7 @@ export const InviteMemberModal = withHandlePromise((props: InviteMemberModalProp
   const submit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     // Append to an existing array, but handle the special case when the array is null.
-    coFetchJSON(`/api/multi-hypercloud/cluster/${props.clusterName}/member_invitation/${type}/${selectedMember}?userId=${getId()}${getUserGroup()}&remoteRole=${role}&memberName=chosangwon`, 'POST')
+    coFetchJSON(`/api/multi-hypercloud/cluster/${props.clusterName}/member_invitation/${type}/${type === 'user' ? selectedMember.email : selectedMember.name}?userId=${getId()}${getUserGroup()}&remoteRole=${role}&memberName=chosangwon`, 'POST')
       .then((res) => {
         props.close();
       })
@@ -136,33 +134,41 @@ export const InviteMemberModal = withHandlePromise((props: InviteMemberModalProp
               onChange={({ currentTarget }) => { setType(currentTarget.value); clearSelection() }}
               inline
             />
-            <Select
-              variant={SelectVariant.typeahead}
-              ariaLabelTypeAhead='Select a state'
-              onToggle={onToggle}
-              onSelect={onSelect}
-              onClear={clearSelection}
-              onFilter={customFilter}
-              selections={selectedMember}
-              isExpanded={isExpanded}
-              ariaLabelledBy='typeahead-select'
-              placeholderText='Select a state'
-              className={classNames('hc-invite-modal__search-list', { 'hc-invite-modal__search-list--disabled': isDisabled })}
-              noResultsFoundText={t('MULTI:MSG_MULTI_CLUSTERS_INVITEPEOPLEPOPUP_SEARCHBAR_2', { 0: '' })}
-            >
-              {memberList ?
-                memberList.length > 0 ?
-                  memberList.map((member, index) => (
-                    <SelectOption key={member.email ?? member.name} id={member.email ?? member.name} value={member.email ?? member.name}>
-                      <div className='hc-invite-modal__member-item'>
-                        <span>{type === 'group' && <UsersIcon className='hc-member__group-icon' />}{member.name}</span>
-                        <span>{member.email}</span>
-                      </div>
-                    </SelectOption>
-                  ))
-                  : <div>{t('MULTI:MSG_MULTI_CLUSTERS_INVITEPEOPLEPOPUP_SEARCHBAR_2', { 0: searchKey })}</div>
-                : <Loading />}
-            </Select>
+            <div className='hc-invite-modal__members'>
+              {isDisabled ?
+                <div className='hc-invite-modal__selectedMember'>
+                  <span className='hc-invite-modal__selectedMember__name'>{type === 'group' && <UsersIcon className='hc-member__group-icon' />}{selectedMember.name}<TimesIcon onClick={clearSelection} className='hc-member__close-icon' /></span>
+                  <span className='hc-invite-modal__selectedMember__email'>{selectedMember.email}</span>
+                </div> :
+                <Select
+                  variant={SelectVariant.typeahead}
+                  ariaLabelTypeAhead='Select a state'
+                  onToggle={onToggle}
+                  onSelect={onSelect}
+                  onClear={clearSelection}
+                  onFilter={customFilter}
+                  selections={type === 'user' ? selectedMember.email : selectedMember.name}
+                  isExpanded={isExpanded}
+                  ariaLabelledBy='typeahead-select'
+                  placeholderText='Select a state'
+                  className='hc-invite-modal__search-list'
+                  noResultsFoundText={t('MULTI:MSG_MULTI_CLUSTERS_INVITEPEOPLEPOPUP_SEARCHBAR_2', { 0: '' })}
+                >
+                  {memberList ?
+                    memberList.length > 0 ?
+                      memberList.map((member, index) => {
+                        const key = type === 'user' ? member.email : member.name
+                        return <SelectOption id={key} value={JSON.stringify(member)}>
+                          <div className='hc-invite-modal__member-item'>
+                            <span>{type === 'group' && <UsersIcon className='hc-member__group-icon' />}{member.name}</span>
+                            <span>{member.email}</span>
+                          </div>
+                        </SelectOption>
+                      })
+                      : <div>{t('MULTI:MSG_MULTI_CLUSTERS_INVITEPEOPLEPOPUP_SEARCHBAR_2', { 0: searchKey })}</div>
+                    : <Loading />}
+                </Select>}
+            </div>
             <div>
               {type === 'user' ? t('MULTI:MSG_MULTI_CLUSTERS_INVITEPEOPLEPOPUP_SUBMESSAGE_1') : t('MULTI:MSG_MULTI_CLUSTERS_INVITEPEOPLEPOPUP_SUBMESSAGE_2')}
             </div>

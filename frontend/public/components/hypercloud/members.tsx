@@ -171,6 +171,7 @@ export const MembersPage = (props) => {
   const onSelect = event => {
     const selectedName = event.currentTarget.id;
     setSearchType(selectedName);
+    setSearchKey('');
     setOpen(!isOpen);
   };
   const handleTextInputChange = value => {
@@ -179,10 +180,10 @@ export const MembersPage = (props) => {
 
   const dropdownItems = (t?: TFunction) => [
     <DropdownItem key="name" id="name" component="button">
-      {t('Search By name')}
+      {t('Name')}
     </DropdownItem>,
     <DropdownItem key="email" id="email" component="button">
-      {t('Search By email')}
+      {t('Email')}
     </DropdownItem>,
   ];
 
@@ -195,12 +196,12 @@ export const MembersPage = (props) => {
           onSelect={onSelect}
           toggle={
             <DropdownToggle id="toggle-id" onToggle={onToggle} iconComponent={CaretDownIcon}>
-              {searchType === 'email' ? t('Search By email') : t('Search By name')}
+              {searchType === 'email' ? t('Email') : t('Name')}
             </DropdownToggle>}
           isOpen={isOpen}
           dropdownItems={dropdownItems.bind(null, t)()}
         />
-        <TextInput className='hc-members__search' value={searchKey} onChange={handleTextInputChange}></TextInput>
+        <TextInput className='hc-members__search' value={searchKey} onChange={handleTextInputChange} placeholder={searchType === 'email' ? t('search by email'): t('search by name')}></TextInput>
         {isOwner &&
           <div className="co-m-primary-action">
             <Button variant="primary" id="yaml-create" onClick={() => inviteMemberModal({ clusterName: props.resource.metadata.name, modalClassName: 'modal-lg', existMembers: props.resource.status.members, existGroups: props.resource.status.groups })}>
