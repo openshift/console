@@ -3,6 +3,7 @@ import { OverviewResourceUtil } from '@console/plugin-sdk';
 import {
   DeploymentKind,
   K8sResourceKind,
+  K8sResourceCommon,
   LabelSelector,
   PodKind,
   CronJobKind,
@@ -150,7 +151,7 @@ const sortByRevision = (
 };
 
 const getAnnotation = (obj: K8sResourceKind, annotation: string): string => {
-  return _.get(obj, ['metadata', 'annotations', annotation]);
+  return obj?.metadata?.annotations?.[annotation];
 };
 
 export const parseJSONAnnotation = (
@@ -169,18 +170,23 @@ export const parseJSONAnnotation = (
   }
 };
 
-const getDeploymentRevision = (obj: K8sResourceKind): number => {
+export const getDeploymentRevision = (obj: K8sResourceKind): number => {
   const revision = getAnnotation(obj, DEPLOYMENT_REVISION_ANNOTATION);
   return revision && parseInt(revision, 10);
 };
 
-const getDeploymentConfigVersion = (obj: K8sResourceKind): number => {
+export const getDeploymentConfigVersion = (obj: K8sResourceCommon): number => {
   const version = getAnnotation(obj, DEPLOYMENT_CONFIG_LATEST_VERSION_ANNOTATION);
   return version && parseInt(version, 10);
 };
 
-const getDeploymentConfigName = (obj: K8sResourceKind): string => {
-  return _.get(obj, 'metadata.ownerReferences[0].name', null);
+export const getOwnerNameByKind = (obj: K8sResourceCommon, kind: K8sKind): string => {
+  return obj?.metadata?.ownerReferences?.find(
+    (ref) =>
+      ref.kind === kind.kind &&
+      ((!kind.apiGroup && ref.apiVersion === 'v1') ||
+        ref.apiVersion?.startsWith(`${kind.apiGroup}/`)),
+  )?.name;
 };
 
 export const sortReplicaSetsByRevision = (replicaSets: K8sResourceKind[]): K8sResourceKind[] => {
@@ -277,7 +283,7 @@ const combinePodAlerts = (pods: K8sResourceKind[]): OverviewItemAlerts =>
 export const getReplicationControllerAlerts = (rc: K8sResourceKind): OverviewItemAlerts => {
   const phase = getDeploymentPhase(rc);
   const version = getDeploymentConfigVersion(rc);
-  const name = getDeploymentConfigName(rc);
+  const name = getOwnerNameByKind(rc, DeploymentConfigModel);
   const label = _.isFinite(version) ? `${name} #${version}` : rc.metadata.name;
   const key = `${rc.metadata.uid}--Rollout${phase}`;
   switch (phase) {
