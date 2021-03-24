@@ -7,10 +7,18 @@ import {
 } from '@console/internal/module/k8s';
 import { TableProps } from '@console/internal/components/factory';
 import { DiskMetadata } from 'packages/local-storage-operator-plugin/src/components/disks-list/types';
-import { PROVIDERS_NOOBAA_MAP, NOOBAA_TYPE_MAP } from './constants/providers';
+import {
+  PROVIDERS_NOOBAA_MAP,
+  NOOBAA_TYPE_MAP,
+  NS_PROVIDERS_NOOBAA_MAP,
+  NS_NOOBAA_TYPE_MAP,
+} from './constants/providers';
 
 export type SpecProvider = typeof PROVIDERS_NOOBAA_MAP[keyof typeof PROVIDERS_NOOBAA_MAP];
 export type SpecType = typeof NOOBAA_TYPE_MAP[keyof typeof NOOBAA_TYPE_MAP];
+
+export type nsSpecProvider = typeof NS_PROVIDERS_NOOBAA_MAP[keyof typeof NS_PROVIDERS_NOOBAA_MAP];
+export type nsSpecType = typeof NS_NOOBAA_TYPE_MAP[keyof typeof NS_NOOBAA_TYPE_MAP];
 
 export enum PlacementPolicy {
   Spread = 'Spread',
@@ -28,6 +36,16 @@ export type BackingStoreKind = K8sResourceCommon & {
     };
   } & {
     type: SpecType;
+  };
+};
+
+export type NamespaceStoreKind = K8sResourceCommon & {
+  spec: {
+    [key in nsSpecProvider]: {
+      [key: string]: string;
+    };
+  } & {
+    type: nsSpecType;
   };
 };
 
@@ -247,4 +265,12 @@ export type NavUtils = {
   getParamString: (step: number, mode: number) => string;
   getIndex: (searchSpace: any, search: string, offset?: number) => number;
   getAnchor: (step: number, mode: number) => string;
+};
+
+export type Payload = K8sResourceCommon & {
+  spec: {
+    type: string;
+    ssl: boolean;
+    [key: string]: any;
+  };
 };

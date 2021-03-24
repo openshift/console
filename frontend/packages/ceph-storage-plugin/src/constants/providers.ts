@@ -33,6 +33,20 @@ export const NOOBAA_TYPE_MAP = {
   [BC_PROVIDERS.IBM]: 'ibm-cos' as const,
 };
 
+export const NS_PROVIDERS_NOOBAA_MAP = {
+  [BC_PROVIDERS.AWS]: 'awsS3' as const,
+  [BC_PROVIDERS.S3]: 's3Compatible' as const,
+  [BC_PROVIDERS.AZURE]: 'azureBlob' as const,
+  [BC_PROVIDERS.IBM]: 'ibmCos' as const,
+};
+
+export const NS_NOOBAA_TYPE_MAP = {
+  [BC_PROVIDERS.AWS]: 'aws-s3' as const,
+  [BC_PROVIDERS.S3]: 's3-compatible' as const,
+  [BC_PROVIDERS.AZURE]: 'azure-blob' as const,
+  [BC_PROVIDERS.IBM]: 'ibm-cos' as const,
+};
+
 export const AWS_REGIONS = [
   'us-east-1',
   'us-east-2',
