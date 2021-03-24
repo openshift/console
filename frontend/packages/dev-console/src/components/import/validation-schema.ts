@@ -8,7 +8,6 @@ import { Resources } from './import-types';
 
 const hostnameRegex = /^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$/;
 const pathRegex = /^\/.*$/;
-export const nameRegex = /^([a-z]([-a-z0-9]*[a-z0-9])?)*$/;
 const projectNameRegex = /^[a-z0-9]([-a-z0-9]*[a-z0-9])?$/;
 
 export const gitUrlRegex = /^((((ssh|git|https?:?):\/\/:?)(([^\s@]+@|[^@]:?)[-\w.]+(:\d\d+:?)?(\/[-\w.~/?[\]!$&'()*+,;=:@%]*:?)?:?))|([^\s@]+@[-\w.]+:[-\w.~/?[\]!$&'()*+,;=:@%]*?:?))$/;
@@ -26,16 +25,6 @@ const convertToSec = (value: number, unit: string): number => {
     }
   }
 };
-
-export const nameValidationSchema = yup
-  .string()
-  .matches(nameRegex, {
-    message:
-      'Name must consist of lower-case letters, numbers and hyphens. It must start with a letter and end with a letter or number.',
-    excludeEmptyString: true,
-  })
-  .max(253, 'Cannot be longer than 253 characters.')
-  .required('Required');
 
 export const projectNameValidationSchema = yup.object().shape({
   name: yup

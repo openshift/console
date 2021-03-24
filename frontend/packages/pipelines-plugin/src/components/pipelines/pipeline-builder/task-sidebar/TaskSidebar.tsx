@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useField } from 'formik';
+import { FormikErrors, useField } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { ActionsMenu, ResourceIcon, CloseButton } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
@@ -7,13 +7,14 @@ import { getResourceModelFromTaskKind } from '../../../../utils/pipeline-augment
 import {
   PipelineTask,
   PipelineTaskParam,
-  PipelineTaskResource,
   TektonResource,
-  TaskKind,
-  PipelineWorkspace,
+  TektonWorkspace,
+  TektonParam,
+  PipelineTaskResource,
+  ResourceTarget,
 } from '../../../../types';
-import { getTaskParameters, getTaskResources } from '../../resource-utils';
-import { ResourceTarget, TaskErrorMap, UpdateOperationUpdateTaskData } from '../types';
+import { getTaskParameters, getTaskResources, InputOutputResources } from '../../resource-utils';
+import { SelectedBuilderTask, TaskType, UpdateOperationRenameTaskData } from '../types';
 import TaskSidebarParam from './TaskSidebarParam';
 import TaskSidebarResource from './TaskSidebarResource';
 import TaskSidebarName from './TaskSidebarName';
@@ -22,62 +23,50 @@ import TaskSidebarWorkspace from './TaskSidebarWorkspace';
 import './TaskSidebar.scss';
 
 type TaskSidebarProps = {
-  errorMap: TaskErrorMap;
+  errorMap: FormikErrors<PipelineTask>[];
   onRemoveTask: (taskName: string) => void;
-  onUpdateTask: (data: UpdateOperationUpdateTaskData) => void;
+  onRenameTask: (data: UpdateOperationRenameTaskData) => void;
   resourceList: TektonResource[];
-  workspaceList: PipelineWorkspace[];
-  selectedPipelineTaskIndex: number;
-  taskResource: TaskKind;
-  isFinallyTask: boolean;
+  workspaceList: TektonWorkspace[];
+  selectedData: SelectedBuilderTask;
   onClose: () => void;
 };
 
+/** Protect against -1 index for Formik 'name' use-cases */
+function safeIndex<T>(list: T[], comparatorFunc: (v: T) => boolean): number {
+  const idx = list.findIndex(comparatorFunc);
+  return idx === -1 ? list.length : idx;
+}
+
 const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
+  const { t } = useTranslation();
   const {
     onRemoveTask,
-    onUpdateTask,
+    onRenameTask,
     resourceList,
     workspaceList,
-    selectedPipelineTaskIndex,
-    taskResource,
-    isFinallyTask,
+    selectedData: { isFinallyTask, taskIndex, resource: taskResource },
     onClose,
   } = props;
-  const { t } = useTranslation();
-  const taskType = isFinallyTask ? 'finallyTasks' : 'tasks';
-  const formikTaskReference = `formData.${taskType}.${selectedPipelineTaskIndex}`;
-  const [taskField] = useField<PipelineTask>(formikTaskReference);
+  const taskType: TaskType = isFinallyTask ? 'finallyTasks' : 'tasks';
+  const formikTaskReference = `formData.${taskType}.${taskIndex}`;
+  const [{ value: thisTask }] = useField<PipelineTask>(formikTaskReference);
 
-  const updateTask = (newData: Partial<UpdateOperationUpdateTaskData>) => {
-    onUpdateTask({ thisPipelineTask: taskField.value, taskResource, ...newData });
-  };
-
-  const params = getTaskParameters(taskResource);
-  const resources = getTaskResources(taskResource);
-  const inputResources = resources.inputs;
-  const outputResources = resources.outputs;
-  const workspaces = taskResource.spec.workspaces || [];
+  const params: TektonParam[] = getTaskParameters(taskResource) || [];
+  const resources: InputOutputResources = getTaskResources(taskResource);
+  const inputResources: TektonResource[] = resources.inputs || [];
+  const outputResources: TektonResource[] = resources.outputs || [];
+  const workspaces: TektonWorkspace[] = taskResource.spec.workspaces || [];
 
   const renderResource = (type: ResourceTarget) => (resource: TektonResource) => {
-    const taskResources: PipelineTaskResource[] = taskField.value?.resources?.[type] || [];
-    const thisResource = taskResources.find(
-      (taskFieldResource) => taskFieldResource.name === resource.name,
-    );
+    const taskResources: PipelineTaskResource[] = thisTask.resources?.[type] || [];
+    const resourceIdx = safeIndex(taskResources, (thisParam) => thisParam.name === resource.name);
     return (
       <div key={resource.name} className="odc-task-sidebar__resource">
         <TaskSidebarResource
           availableResources={resourceList}
-          onChange={(resourceName, selectedResource) => {
-            updateTask({
-              resources: {
-                resourceTarget: type,
-                selectedPipelineResource: selectedResource,
-                taskResourceName: resourceName,
-              },
-            });
-          }}
-          taskResource={thisResource}
+          hasResource={!!taskResources[resourceIdx]}
+          name={`${formikTaskReference}.resources.${type}.${resourceIdx}`}
           resource={resource}
         />
       </div>
@@ -103,7 +92,7 @@ const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
               actions={[
                 {
                   label: t('pipelines-plugin~Remove Task'),
-                  callback: () => onRemoveTask(taskField.value.name),
+                  callback: () => onRemoveTask(thisTask.name),
                 },
               ]}
             />
@@ -114,32 +103,25 @@ const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
 
       <div className="odc-task-sidebar__content">
         <TaskSidebarName
-          initialName={taskField.value.name}
+          initialName={thisTask.name}
           taskName={taskResource.metadata.name}
-          onChange={(newName) => updateTask({ newName })}
+          // We need to do this through an update call because runAfters are tied to the name and we need to fix those
+          // with this change to maintain a healthy and stable graph
+          onChange={(newName) => onRenameTask({ preChangePipelineTask: thisTask, newName })}
         />
 
-        {params && (
+        {params.length > 0 && (
           <>
             <h2>{t('pipelines-plugin~Parameters')}</h2>
             {params.map((param) => {
-              const taskParams: PipelineTaskParam[] = taskField.value?.params || [];
-              const thisParam = taskParams.find(
-                (taskFieldParam) => taskFieldParam.name === param.name,
-              );
+              const taskParams: PipelineTaskParam[] = thisTask.params || [];
+              const paramIdx = safeIndex(taskParams, (thisParam) => thisParam.name === param.name);
               return (
                 <div key={param.name} className="odc-task-sidebar__param">
                   <TaskSidebarParam
+                    hasParam={!!taskParams[paramIdx]}
+                    name={`${formikTaskReference}.params.${paramIdx}`}
                     resourceParam={param}
-                    taskParam={thisParam}
-                    onChange={(value) => {
-                      updateTask({
-                        params: {
-                          newValue: value,
-                          taskParamName: param.name,
-                        },
-                      });
-                    }}
                   />
                 </div>
               );
@@ -147,27 +129,22 @@ const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
           </>
         )}
 
-        {workspaces.length !== 0 && (
+        {workspaces.length > 0 && (
           <>
             <h2>{t('pipelines-plugin~Workspaces')}</h2>
             {workspaces.map((workspace) => {
-              const selectedWorkspace = taskField.value?.workspaces?.find(
-                ({ name }) => name === workspace.name,
+              const taskWorkspaces: TektonWorkspace[] = thisTask.workspaces || [];
+              const workspaceIdx = safeIndex(
+                taskWorkspaces,
+                (thisWorkspace) => thisWorkspace.name === workspace.name,
               );
               return (
                 <div key={workspace.name} className="odc-task-sidebar__workspace">
                   <TaskSidebarWorkspace
                     availableWorkspaces={workspaceList}
-                    taskWorkspace={workspace}
-                    selectedWorkspace={selectedWorkspace}
-                    onChange={(workspaceName, pipelineWorkspace) => {
-                      updateTask({
-                        workspaces: {
-                          workspaceName,
-                          selectedWorkspace: pipelineWorkspace,
-                        },
-                      });
-                    }}
+                    hasWorkspace={!!taskWorkspaces[workspaceIdx]}
+                    name={`${formikTaskReference}.workspaces.${workspaceIdx}`}
+                    resourceWorkspace={workspace}
                   />
                 </div>
               );
@@ -175,13 +152,13 @@ const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
           </>
         )}
 
-        {inputResources && (
+        {inputResources.length > 0 && (
           <>
             <h2>{t('pipelines-plugin~Input resources')}</h2>
             {inputResources.map(renderResource('inputs'))}
           </>
         )}
-        {outputResources && (
+        {outputResources.length > 0 && (
           <>
             <h2>{t('pipelines-plugin~Output resources')}</h2>
             {outputResources.map(renderResource('outputs'))}

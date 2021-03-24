@@ -1,13 +1,5 @@
 import { K8sResourceCommon } from '@console/internal/module/k8s';
-import { TektonParam, TektonResource } from './coreTekton';
-
-export type PipelineTaskWorkspace = {
-  description?: string;
-  mountPath?: string;
-  name: string;
-  readOnly?: boolean;
-  workspace?: string;
-};
+import { TektonParam, TektonResource, TektonTaskSteps, TektonWorkspace } from './coreTekton';
 
 export type PipelineTaskRef = {
   kind?: string;
@@ -18,12 +10,12 @@ export type PipelineTaskSpec = {
   metadata?: {
     labels?: { [key: string]: string };
   };
-  steps: {
-    name: string;
-    image?: string;
-    args?: string[];
-    script?: string[];
-  }[];
+  steps: TektonTaskSteps[];
+};
+
+export type PipelineTaskWorkspace = {
+  name: string;
+  workspace: string;
 };
 
 export type PipelineTaskResource = {
@@ -65,16 +57,12 @@ export type PipelineTask = {
   workspaces?: PipelineTaskWorkspace[];
 };
 
-export type PipelineWorkspace = {
-  name: string;
-};
-
 export type PipelineSpec = {
   params?: TektonParam[];
   resources?: TektonResource[];
   serviceAccountName?: string;
   tasks: PipelineTask[];
-  workspaces?: PipelineWorkspace[];
+  workspaces?: TektonWorkspace[];
   finally?: PipelineTask[];
   results?: PipelineResult[];
 };

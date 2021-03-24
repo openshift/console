@@ -385,6 +385,7 @@ export const appResources: AppResources = {
             workspaces: [
               {
                 name: 'output',
+                workspace: 'workspace',
               },
             ],
           },
@@ -408,6 +409,7 @@ export const appResources: AppResources = {
             workspaces: [
               {
                 name: 'source',
+                workspace: 'workspace',
               },
             ],
           },

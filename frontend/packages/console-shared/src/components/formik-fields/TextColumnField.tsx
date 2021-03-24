@@ -24,6 +24,7 @@ export interface TextColumnFieldProps extends FieldProps {
   addLabel?: string;
   tooltip?: string;
   placeholder?: string;
+  onChange?: (newValue: string[]) => void;
 }
 
 const TextColumnField: React.FC<TextColumnFieldProps> = ({
@@ -36,11 +37,12 @@ const TextColumnField: React.FC<TextColumnFieldProps> = ({
   isReadOnly,
   disableDeleteRow,
   tooltip,
+  onChange,
 }) => {
   const [field, { touched, error }] = useField<string[]>(name);
   const { t } = useTranslation();
   useFormikValidationFix(field.value);
-  const rowValues = field.value ?? [''];
+  const rowValues = field.value ?? [];
   const fieldId = getFieldId(name, 'single-column');
   const isValid = !(touched && error);
   return (
@@ -68,6 +70,13 @@ const TextColumnField: React.FC<TextColumnFieldProps> = ({
                         name={`${name}.${idx}`}
                         placeholder={placeholder}
                         isReadOnly={isReadOnly}
+                        onChange={(e) => {
+                          if (onChange) {
+                            const values = [...rowValues];
+                            values[idx] = e.target.value;
+                            onChange(values);
+                          }
+                        }}
                       />
                     </FlexItem>
                     {!isReadOnly && (
@@ -81,6 +90,12 @@ const TextColumnField: React.FC<TextColumnFieldProps> = ({
                             isDisabled={disableDeleteRow}
                             onClick={() => {
                               arrayHelpers.remove(idx);
+
+                              if (onChange) {
+                                const values = [...rowValues];
+                                values.splice(idx, 1);
+                                onChange(values);
+                              }
                             }}
                           >
                             <MinusCircleIcon />
@@ -96,7 +111,10 @@ const TextColumnField: React.FC<TextColumnFieldProps> = ({
               <MultiColumnFieldFooter
                 addLabel={addLabel}
                 onAdd={() => {
-                  arrayHelpers.push('');
+                  const newValue = '';
+                  arrayHelpers.push(newValue);
+
+                  onChange && onChange([...rowValues, newValue]);
                 }}
               />
             )}

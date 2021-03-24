@@ -1,7 +1,7 @@
 import * as yup from 'yup';
 import { TFunction } from 'i18next';
+import { nameValidationSchema } from '@console/shared';
 import {
-  nameValidationSchema,
   projectNameValidationSchema,
   applicationNameValidationSchema,
   deploymentValidationSchema,
@@ -17,7 +17,7 @@ export const deployValidationSchema = (t: TFunction) =>
   yup.object().shape({
     project: projectNameValidationSchema,
     application: applicationNameValidationSchema,
-    name: nameValidationSchema,
+    name: nameValidationSchema(t),
     isi: isiValidationSchema(t),
     serverless: serverlessValidationSchema(t),
     deployment: deploymentValidationSchema(t),

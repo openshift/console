@@ -34,6 +34,8 @@ export interface TextAreaProps extends FieldProps {
   placeholder?: string;
   onChange?: (event) => void;
   onBlur?: (event) => void;
+  rows?: number;
+  resizeOrientation?: 'vertical' | 'horizontal' | 'both';
 }
 
 export enum GroupTextType {

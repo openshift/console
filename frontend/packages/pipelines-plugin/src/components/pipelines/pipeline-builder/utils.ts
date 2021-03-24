@@ -1,26 +1,193 @@
 import * as _ from 'lodash';
-import { apiVersionForModel, referenceForModel } from '@console/internal/module/k8s';
+import { FormikErrors } from 'formik';
+import { apiVersionForModel } from '@console/internal/module/k8s';
 import { getRandomChars } from '@console/shared';
-import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
-import { PipelineModel, TaskModel } from '../../../models';
-import { PipelineKind, PipelineTask, TaskKind, TektonParam } from '../../../types';
-import { removeEmptyDefaultFromPipelineParams } from '../detail-page-tabs/utils';
+import { ClusterTaskModel, PipelineModel, TaskModel } from '../../../models';
+import {
+  PipelineKind,
+  PipelineTask,
+  PipelineTaskParam,
+  PipelineTaskRef,
+  TaskKind,
+  TektonParam,
+} from '../../../types';
+import { removeEmptyDefaultFromPipelineParams } from '../detail-page-tabs';
 import { getTaskParameters } from '../resource-utils';
-import { TASK_ERROR_STRINGS, TaskErrorType } from './const';
-import { PipelineBuilderFormValues, PipelineBuilderFormYamlValues, TaskErrorMap } from './types';
+import { TASK_ERROR_STRINGS, TASK_FIELD_ERROR_TYPE_MAPPING, TaskErrorType } from './const';
+import {
+  BuilderTasksErrorGroup,
+  GetErrorMessage,
+  PipelineBuilderFormValues,
+  PipelineBuilderFormYamlValues,
+  PipelineBuilderTaskBase,
+  PipelineBuilderTaskResources,
+  TaskErrors,
+} from './types';
 
-export const getErrorMessage = (errorTypes: TaskErrorType[], errorMap: TaskErrorMap) => (
-  taskName: string,
-): string => {
-  if (!taskName) {
-    return TASK_ERROR_STRINGS[TaskErrorType.MISSING_NAME];
+const isTaskArrayErrors = (errors: string | string[] | TaskErrors): errors is TaskErrors => {
+  return Array.isArray(errors) && errors.some((value) => typeof value === 'object');
+};
+
+export const getBuilderTasksErrorGroup = (
+  formikFormErrors: FormikErrors<PipelineBuilderFormValues>,
+): BuilderTasksErrorGroup => ({
+  tasks: isTaskArrayErrors(formikFormErrors?.tasks) ? formikFormErrors?.tasks : [],
+  finally: isTaskArrayErrors(formikFormErrors?.finallyTasks) ? formikFormErrors?.finallyTasks : [],
+});
+
+export const getTopLevelErrorMessage: GetErrorMessage = (errors) => (taskIndex) => {
+  const errorObj = errors[taskIndex] || {};
+  const taskErrors = Object.values(errorObj);
+
+  if (taskErrors.length === 0) return null;
+
+  // Check if it's one of the known error messages
+  const errorMsg = Object.values(TASK_ERROR_STRINGS).find((value) => taskErrors.includes(value));
+  if (errorMsg) return errorMsg;
+
+  // Not one of the top-level known ones, is it a problem with a known area?
+  const keys = Object.keys(TASK_FIELD_ERROR_TYPE_MAPPING) as TaskErrorType[];
+  const errorType = keys.find((key) => {
+    const properties: string[] = TASK_FIELD_ERROR_TYPE_MAPPING[key];
+    return properties?.some((propertyPath) => _.get(errorObj, propertyPath));
+  }, '');
+  if (!errorType) return null;
+
+  // Problem with a known area, get the area based error for a high-level error (more specific error will be on the field)
+  return TASK_ERROR_STRINGS[errorType];
+};
+
+export const findTask = (
+  resourceTasks: PipelineBuilderTaskResources,
+  taskRef: PipelineTaskRef,
+): TaskKind => {
+  if (
+    !taskRef?.kind ||
+    !resourceTasks?.tasksLoaded ||
+    !resourceTasks.clusterTasks ||
+    !resourceTasks.namespacedTasks
+  ) {
+    return null;
   }
 
-  const errorList: TaskErrorType[] | undefined = errorMap?.[taskName];
-  if (!errorList) return null;
+  if (taskRef.kind === ClusterTaskModel.kind) {
+    return resourceTasks.clusterTasks.find((task) => task.metadata.name === taskRef.name);
+  }
+  return resourceTasks.namespacedTasks.find((task) => task.metadata.name === taskRef.name);
+};
 
-  const hasRequestedError = errorList.filter((error) => errorTypes.includes(error));
-  return hasRequestedError.length > 0 ? TASK_ERROR_STRINGS[hasRequestedError[0]] : null;
+export const findTaskFromFormikData = (
+  formikData: PipelineBuilderFormYamlValues,
+  taskRef: PipelineTaskRef,
+): TaskKind => {
+  const { taskResources } = formikData;
+  return findTask(taskResources, taskRef);
+};
+
+/**
+ * Swaps one runAfter (relatedTaskName) for another (taskName).
+ */
+export const mapReplaceRelatedInOthers = <TaskType extends PipelineBuilderTaskBase>(
+  taskName: string,
+  relatedTaskName: string,
+  iterationTask: TaskType,
+): TaskType => {
+  if (!iterationTask?.runAfter?.includes(relatedTaskName)) {
+    return iterationTask;
+  }
+
+  const remainingRunAfters = iterationTask.runAfter.filter(
+    (runAfterName) => runAfterName !== relatedTaskName,
+  );
+
+  return {
+    ...iterationTask,
+    runAfter: [...remainingRunAfters, taskName],
+  };
+};
+
+/**
+ * Finds and removes a related runAfter (taskName).
+ */
+export const mapRemoveRelatedInOthers = <TaskType extends PipelineBuilderTaskBase>(
+  taskName: string,
+  iterationTask: TaskType,
+): TaskType => {
+  if (!iterationTask?.runAfter?.includes(taskName)) {
+    return iterationTask;
+  }
+
+  return {
+    ...iterationTask,
+    runAfter: iterationTask.runAfter.filter((runAfterName) => runAfterName !== taskName),
+  };
+};
+
+/**
+ * Removes reference of a task (removalTask) in the other task (iterationTask) & combines the task
+ * (removalTask) runAfters in the other task (iterationTask).
+ */
+export const mapStitchReplaceInOthers = <TaskType extends PipelineBuilderTaskBase>(
+  removalTask: PipelineBuilderTaskBase,
+  iterationTask: TaskType,
+): TaskType => {
+  if (!removalTask?.name) {
+    return iterationTask;
+  }
+  if (!removalTask?.runAfter) {
+    return mapRemoveRelatedInOthers<TaskType>(removalTask.name, iterationTask);
+  }
+  if (!iterationTask?.runAfter?.includes(removalTask.name)) {
+    return iterationTask;
+  }
+
+  const updatedIterationTask = mapRemoveRelatedInOthers(removalTask.name, iterationTask);
+  let newRunAfter: string[] = removalTask.runAfter;
+  if (updatedIterationTask.runAfter.length > 0) {
+    newRunAfter = [...updatedIterationTask.runAfter, ...newRunAfter];
+  }
+
+  return {
+    ...updatedIterationTask,
+    runAfter: _.uniq(newRunAfter),
+  };
+};
+
+/**
+ * Simply add a runAfter (of newTaskName) to a task (iterationTask) on matching names (relatedTaskName).
+ */
+export const mapBeRelated = <TaskType extends PipelineBuilderTaskBase>(
+  newTaskName: string,
+  relatedTaskName: string,
+  iterationTask: TaskType,
+): TaskType => {
+  if (iterationTask?.name !== relatedTaskName) {
+    return iterationTask;
+  }
+
+  return {
+    ...iterationTask,
+    runAfter: [newTaskName],
+  };
+};
+
+/**
+ * Adds a task (taskName) to an existing runAfter (iterationTask.runAfter) if a related name
+ * (relatedTaskName) is already part of the runAfter.
+ */
+export const mapAddRelatedToOthers = <TaskType extends PipelineBuilderTaskBase>(
+  taskName: string,
+  relatedTaskName: string,
+  iterationTask: TaskType,
+): TaskType => {
+  if (!iterationTask?.runAfter?.includes(relatedTaskName)) {
+    return iterationTask;
+  }
+
+  return {
+    ...iterationTask,
+    runAfter: [...iterationTask.runAfter, taskName],
+  };
 };
 
 export const taskParamIsRequired = (param: TektonParam): boolean => {
@@ -51,15 +218,13 @@ export const convertResourceToTask = (
       kind,
       name: resource.metadata.name,
     },
-    params: getTaskParameters(resource).map((param) => ({
-      name: param.name,
-      value: param.default,
-    })),
+    params: getTaskParameters(resource).map(
+      (param: TektonParam): PipelineTaskParam => ({
+        name: param.name,
+        value: param.default,
+      }),
+    ),
   };
-};
-
-export const getPipelineURL = (namespace: string) => {
-  return `/k8s/ns/${namespace}/${referenceForModel(PipelineModel)}`;
 };
 
 const removeListRunAfters = (task: PipelineTask, listIds: string[]): PipelineTask => {
@@ -103,10 +268,11 @@ export const convertBuilderFormToPipeline = (
     tasks,
     listTasks,
     finallyTasks,
-    ...unhandledSpec
+    ...others
   } = formValues;
   const listIds = listTasks.map((listTask) => listTask.name);
-  const extraYamlSpec = _.omit(unhandledSpec, 'finallyListTasks');
+  // Strip remaining builder-only properties
+  const unhandledSpec = _.omit(others, 'finallyListTasks');
 
   return {
     ...existingPipeline,
@@ -119,7 +285,7 @@ export const convertBuilderFormToPipeline = (
     },
     spec: {
       ...existingPipeline?.spec,
-      ...extraYamlSpec,
+      ...unhandledSpec,
       params: removeEmptyDefaultFromPipelineParams(params),
       resources,
       workspaces,
@@ -129,9 +295,7 @@ export const convertBuilderFormToPipeline = (
   };
 };
 
-export const convertPipelineToBuilderForm = (
-  pipeline: PipelineKind,
-): PipelineBuilderFormYamlValues => {
+export const convertPipelineToBuilderForm = (pipeline: PipelineKind): PipelineBuilderFormValues => {
   if (!pipeline) return null;
 
   const {
@@ -140,18 +304,14 @@ export const convertPipelineToBuilderForm = (
   } = pipeline;
 
   return {
-    editorType: EditorType.Form,
-    yamlData: '',
-    formData: {
-      name,
-      params,
-      resources,
-      workspaces,
-      tasks,
-      listTasks: [],
-      finallyTasks: pipeline.spec?.finally ?? [],
-      finallyListTasks: [],
-    },
+    name,
+    params,
+    resources,
+    workspaces,
+    tasks,
+    listTasks: [],
+    finallyTasks: pipeline.spec?.finally ?? [],
+    finallyListTasks: [],
   };
 };
 

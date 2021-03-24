@@ -1,13 +1,13 @@
 import * as yup from 'yup';
 import { TFunction } from 'i18next';
-import { nameValidationSchema } from '@console/dev-console/src/components/import/validation-schema';
+import { nameValidationSchema } from '@console/shared';
 import { HelmActionType } from '../types/helm-types';
 
 export const getHelmActionValidationSchema = (helmAction: HelmActionType, t: TFunction) => {
   switch (helmAction) {
     case HelmActionType.Install:
       return yup.object().shape({
-        releaseName: nameValidationSchema,
+        releaseName: nameValidationSchema(t),
       });
     case HelmActionType.Upgrade:
       return yup.object().shape({

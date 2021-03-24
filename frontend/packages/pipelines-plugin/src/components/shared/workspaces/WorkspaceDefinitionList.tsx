@@ -1,11 +1,9 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { PipelineWorkspace, PipelineTaskWorkspace } from 'packages/pipelines-plugin/src/types';
-
-type WorkspaceDefinition = PipelineWorkspace | PipelineTaskWorkspace;
+import { TektonWorkspace } from '../../../types';
 
 export interface WorkspaceDefinitionListProps {
-  workspaces: WorkspaceDefinition[];
+  workspaces: TektonWorkspace[];
 }
 
 const WorkspaceDefinitionList: React.FC<WorkspaceDefinitionListProps> = ({ workspaces }) => {

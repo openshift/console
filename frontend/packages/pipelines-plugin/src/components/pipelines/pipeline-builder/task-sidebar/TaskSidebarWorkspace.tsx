@@ -1,46 +1,45 @@
 import * as React from 'react';
+import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { FormGroup, ValidatedOptions } from '@patternfly/react-core';
-import { Dropdown } from '@console/internal/components/utils';
-import { PipelineTaskWorkspace, PipelineWorkspace } from '../../../../types';
-import { SidebarInputWrapper } from './temp-utils';
+import { DropdownField } from '@console/shared';
+import { TektonWorkspace } from '../../../../types';
+import { PipelineBuilderFormikValues } from '../types';
 
 type TaskSidebarWorkspaceProps = {
-  availableWorkspaces: PipelineWorkspace[];
-  taskWorkspace: PipelineTaskWorkspace;
-  selectedWorkspace?: PipelineTaskWorkspace;
-  onChange: (workspaceName: string, workspace: string) => void;
+  availableWorkspaces: TektonWorkspace[];
+  hasWorkspace: boolean;
+  name: string;
+  resourceWorkspace: TektonWorkspace;
 };
 
 const TaskSidebarWorkspace: React.FC<TaskSidebarWorkspaceProps> = (props) => {
-  const { availableWorkspaces, taskWorkspace, selectedWorkspace, onChange } = props;
+  const {
+    availableWorkspaces,
+    hasWorkspace,
+    name,
+    resourceWorkspace: { name: workspaceName },
+  } = props;
   const { t } = useTranslation();
+  const { setFieldValue } = useFormikContext<PipelineBuilderFormikValues>();
 
   return (
-    <FormGroup
-      fieldId={taskWorkspace.name}
-      label={taskWorkspace.name}
-      helperTextInvalid={
-        availableWorkspaces.length === 0
-          ? t('pipelines-plugin~No workspaces available. Add pipeline workspaces.')
-          : ''
-      }
-      validated={availableWorkspaces.length > 0 ? ValidatedOptions.default : ValidatedOptions.error}
-      isRequired
-    >
-      <SidebarInputWrapper>
-        <Dropdown
-          title={t('pipelines-plugin~Select workspace...')}
-          items={availableWorkspaces.reduce((acc, { name }) => ({ ...acc, [name]: name }), {})}
-          disabled={availableWorkspaces.length === 0}
-          selectedKey={selectedWorkspace?.workspace}
-          dropDownClassName="dropdown--full-width"
-          onChange={(value: string) => {
-            onChange(taskWorkspace.name, value);
-          }}
-        />
-      </SidebarInputWrapper>
-    </FormGroup>
+    <DropdownField
+      name={`${name}.workspace`}
+      label={workspaceName}
+      title={t('pipelines-plugin~Select workspace...')}
+      disabled={availableWorkspaces.length === 0}
+      items={availableWorkspaces.reduce(
+        (acc, workspace) => ({ ...acc, [workspace.name]: workspace.name }),
+        {},
+      )}
+      onChange={(selectedWorkspace: string) => {
+        if (!hasWorkspace) {
+          setFieldValue(name, { name: workspaceName, workspace: selectedWorkspace });
+        }
+      }}
+      fullWidth
+      required
+    />
   );
 };
 
