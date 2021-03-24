@@ -11,6 +11,7 @@ import { PipelineExampleNames, pipelineTestData } from '../../../../test-data/pi
 import PipelineSuccessRatioDonut from '../PipelineSuccessRatioDonut';
 import SuccessRatioDonut from '../charts/successRatioDonut';
 import { TimeSeriesChart } from '../charts/TimeSeriesChart';
+import { MetricsQueryPrefix } from '../pipeline-metrics-utils';
 
 jest.mock('@console/internal/components/utils/k8s-get-hook', () => ({
   useK8sGet: jest.fn(),
@@ -38,6 +39,7 @@ describe('Pipeline Success Ratio Graph', () => {
       pipeline,
       timespan: DEFAULT_PROMETHEUS_TIMESPAN,
       interval: parsePrometheusDuration(DEFAULT_REFRESH_INTERVAL),
+      queryPrefix: MetricsQueryPrefix.TEKTON_PIPELINES_CONTROLLER,
     };
   });
 

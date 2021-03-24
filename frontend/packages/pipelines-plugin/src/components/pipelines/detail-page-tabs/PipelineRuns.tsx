@@ -8,6 +8,7 @@ import {
 } from '../../../utils/pipeline-filter-reducer';
 import { ListFilterId, ListFilterLabels } from '../../../utils/pipeline-utils';
 import { PipelineRunModel } from '../../../models';
+import { PipelineDetailsTabProps } from './types';
 
 export const runFilters = [
   {
@@ -30,11 +31,7 @@ export const runFilters = [
   },
 ];
 
-interface PipelineRunsProps {
-  obj: any;
-}
-
-const PipelineRuns: React.FC<PipelineRunsProps> = ({ obj }) => (
+const PipelineRuns: React.FC<PipelineDetailsTabProps> = ({ obj }) => (
   <ListPage
     showTitle={false}
     canCreate={false}
