@@ -11,36 +11,38 @@ import {
 import { HandlePromiseProps, withHandlePromise } from '../../utils';
 import { YellowExclamationTriangleIcon } from '@console/shared';
 import { coFetchJSON } from '../../../co-fetch';
-import { getId } from '../../../hypercloud/auth';
+import { getId, getUserGroup } from '../../../hypercloud/auth';
+import { useTranslation } from 'react-i18next';
 
 export const RemoveMemberModal = withHandlePromise((props: RemoveMemberModalProps) => {
   const [errorMsg, setError] = React.useState('')
 
   const submit: React.FormEventHandler<HTMLFormElement> = (e) => {
-    e.preventDefault();
-    // Append to an existing array, but handle the special case when the array is null.
-    coFetchJSON(`/api/multi-hypercloud/cluster/remove_member?userId=${getId()}&cluster=${props.clusterName}&target${props.type}=${props.member}`, 'POST')
+    e.preventDefault(); ///cluster/cho/remove_member/group/ck1-3?userId=kubernetes-admin&userGroup=hypercloud5
+    coFetchJSON(`/api/multi-hypercloud/cluster/${props.clusterName}/remove_member/${props.member.type}/${props.member.type === 'user' ? props.member.email : props.member.name}?userId=${getId()}${getUserGroup()}`, 'POST')
       .then((res) => {
         props.close();
       })
       .catch((err) => {
-        setError("Fail to remove member(s). " + err);
+        setError(err);
       })
   };
 
+  const { t } = useTranslation();
+
   return (
     <form onSubmit={submit} name="form" className="modal-content ">
-        <ModalTitle>
-          <YellowExclamationTriangleIcon className="co-icon-space-r" />
-          {`Delete ${props.member}?`}
-        </ModalTitle>
-        <ModalBody className="modal-body">
-          <div>
-            Are you sure you want to delete {props.type} <strong className="co-break-word">{props.member}</strong> in cluster <strong>{props.clusterName}</strong>?
-          </div>
-        </ModalBody>
-        <ModalSubmitFooter errorMessage={errorMsg} inProgress={props.inProgress} submitText='Delete' cancel={props.cancel} />
-      </form>
+      <ModalTitle>
+        <YellowExclamationTriangleIcon className="co-icon-space-r" />
+        {t('MULTI:MSG_MULTI_CLUSTERS_DELETEPEPLEPOPUP_TITLE_1')}
+      </ModalTitle>
+      <ModalBody className="modal-body">
+        <div>
+          {t('MULTI:MSG_MULTI_CLUSTERS_DELETEPEPLEPOPUP_MAINMESSAGE_1', { 0: props.member.email.length > 0 ? `${props.member.name}(${props.member.email})` : props.member.name, 1: props.clusterName })}
+        </div>
+      </ModalBody>
+      <ModalSubmitFooter errorMessage={errorMsg} inProgress={props.inProgress} submitText='Delete' cancelText={t('MULTI:MSG_MULTI_CLUSTERS_INVITEPEOPLEPOPUP_BUTTON_2')} cancel={props.cancel} />
+    </form>
   );
 });
 
@@ -48,7 +50,11 @@ export const removeMemberModal = createModalLauncher(RemoveMemberModal);
 
 export type RemoveMemberModalProps = {
   clusterName: string;
-  type: string;
-  member: string;
+  member: {
+    name: string,
+    role: string,
+    type: 'user' | 'group',
+    email: string
+  };
 } & ModalComponentProps &
   HandlePromiseProps;

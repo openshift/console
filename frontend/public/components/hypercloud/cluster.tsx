@@ -12,6 +12,7 @@ import { ClusterManagerModel } from '../../models';
 import { configureClusterNodesModal } from './modals';
 import { MembersPage } from './members';
 import { ResourceLabel } from '../../models/hypercloud/resource-plural';
+import { ResourceEventStream } from '../events';
 
 const ModifyClusterNodes: KebabAction = (kind: K8sKind, obj: any) => ({
   label: 'Edit Nodes',
@@ -133,7 +134,6 @@ export const ClusterDetailsList: React.FC<ClusterDetailsListProps> = ({ cl }) =>
       <DetailsItem label={t('COMMON:MSG_DETAILS_TABDETAILS_DETAILS_13')} obj={cl} path="status.ready">
         <Status status={cl.status.ready ? t('MULTI:MSG_MULTI_CLUSTERS_TABLECONTENTS_STATUS_1') : t('MULTI:MSG_MULTI_CLUSTERS_TABLECONTENTS_STATUS_2')} />
       </DetailsItem>
-      <DetailsItem label="Provider" obj={cl} path="spec.provider" />
       <DetailsItem label="Version" obj={cl} path="spec.version" />
       <DetailsItem label="Region" obj={cl} path="spec.region" />
       <DetailsItem label="Master Node" obj={cl} path="spec.masterNum">
@@ -183,7 +183,7 @@ const ClusterDetails: React.FC<ClusterDetailsProps> = ({ obj: cluster }) => {
   );
 };
 
-const { details, /* nodes, */ editYaml /*, events */ } = navFactory;
+const { details, /* nodes, */ editYaml , events } = navFactory;
 export const Clusters: React.FC = props => {
   const { t } = useTranslation();
   return <Table {...props} aria-label="Clusters" Header={ClusterTableHeader.bind(null, t)} Row={ClusterTableRow} virtualize />;
@@ -195,6 +195,7 @@ export const ClustersPage: React.FC<ClustersPageProps> = props => {
 };
 
 export const ClustersDetailsPage: React.FC<ClustersDetailsPageProps> = props => {
+  const { t } = useTranslation();
   return (
     <DetailsPage
       {...props}
@@ -204,10 +205,26 @@ export const ClustersDetailsPage: React.FC<ClustersDetailsPageProps> = props => 
       pages={[
         details(detailsPage(ClusterDetails)),
         editYaml() /* nodes(ClusterNodes),  events(ResourceEventStream) */,
-        {
-          href: 'members',
-          name: 'Members',
+        /*{
+          href: 'node',
+          name: 'Node',
           component: pageProps => <MembersPage resource={pageProps.obj} title="Members" userHeading="Users" userGroupHeading="User Groups" />,
+        },
+        {
+          href: 'namespace',
+          name: 'Namespace',
+          component: pageProps => <MembersPage resource={pageProps.obj} title="Members" userHeading="Users" userGroupHeading="User Groups" />,
+        },
+        {
+          href: 'federation',
+          name: 'Federation',
+          component: pageProps => <MembersPage resource={pageProps.obj} title="Members" userHeading="Users" userGroupHeading="User Groups" />,
+        },*/
+        events(ResourceEventStream),
+        {
+          href: 'access',
+          name: t('COMMON:MSG_DETAILS_TABACCESSPERMISSIONS_1'),
+          component: pageProps => <MembersPage resource={pageProps.obj} title="Members" />,
         },
       ]}
     />

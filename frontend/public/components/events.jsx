@@ -239,8 +239,8 @@ class _EventStream extends React.Component {
   }
 
   wsInit(ns) {
-    const { fieldSelector } = this.props;
-    const params = { ns };
+    const { fieldSelector, cluster } = this.props;
+    const params = { ns, cluster };
     if (fieldSelector) {
       params.queryParams = { fieldSelector: encodeURIComponent(fieldSelector) };
     }
@@ -472,7 +472,7 @@ export const ResourceEventStream = ({
   },
 }) => {
   const { t } = useTranslation();
-  return <_EventStream t={t} fieldSelector={`involvedObject.uid=${uid},involvedObject.name=${name},involvedObject.kind=${kind}`} namespace={namespace} resourceEventStream />;
+  return <_EventStream t={t} fieldSelector={`involvedObject.uid=${uid},involvedObject.name=${name},involvedObject.kind=${kind}`} namespace={namespace} cluster={kind === "ClusterManager" && name} resourceEventStream />;
 };
 export const ResourcesEventStream = ({ filters, namespace }) => {
   const { t } = useTranslation();
