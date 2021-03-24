@@ -11,15 +11,15 @@ import {
 import { HandlePromiseProps, withHandlePromise } from '../../utils';
 import { YellowExclamationTriangleIcon } from '@console/shared';
 import { coFetchJSON } from '../../../co-fetch';
-import { getId } from '../../../hypercloud/auth';
+import { getId, getUserGroup } from '../../../hypercloud/auth';
 import { useTranslation } from 'react-i18next';
 
 export const RemoveMemberModal = withHandlePromise((props: RemoveMemberModalProps) => {
   const [errorMsg, setError] = React.useState('')
 
   const submit: React.FormEventHandler<HTMLFormElement> = (e) => {
-    e.preventDefault();
-    coFetchJSON(`/api/multi-hypercloud/cluster/remove_member?userId=${getId()}&cluster=${props.clusterName}&target${props.member.type}=${props.member.type === 'user' ? props.member.email : props.member.name}`, 'POST')
+    e.preventDefault(); ///cluster/cho/remove_member/group/ck1-3?userId=kubernetes-admin&userGroup=hypercloud5
+    coFetchJSON(`/api/multi-hypercloud/cluster/${props.clusterName}/remove_member/${props.member.type}/${props.member.type === 'user' ? props.member.email : props.member.name}?userId=${getId()}${getUserGroup()}`, 'POST')
       .then((res) => {
         props.close();
       })
@@ -38,7 +38,7 @@ export const RemoveMemberModal = withHandlePromise((props: RemoveMemberModalProp
       </ModalTitle>
       <ModalBody className="modal-body">
         <div>
-          {t('MULTI:MSG_MULTI_CLUSTERS_DELETEPEPLEPOPUP_MAINMESSAGE_1', { 0: props.member.name, 1: props.clusterName })}
+          {t('MULTI:MSG_MULTI_CLUSTERS_DELETEPEPLEPOPUP_MAINMESSAGE_1', { 0: props.member.email.length > 0 ? `${props.member.name}(${props.member.email})` : props.member.name, 1: props.clusterName })}
         </div>
       </ModalBody>
       <ModalSubmitFooter errorMessage={errorMsg} inProgress={props.inProgress} submitText='Delete' cancelText={t('MULTI:MSG_MULTI_CLUSTERS_INVITEPEOPLEPOPUP_BUTTON_2')} cancel={props.cancel} />

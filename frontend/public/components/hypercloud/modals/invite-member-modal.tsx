@@ -155,11 +155,8 @@ export const InviteMemberModal = withHandlePromise((props: InviteMemberModalProp
                   memberList.map((member, index) => (
                     <SelectOption key={member.email ?? member.name} id={member.email ?? member.name} value={member.email ?? member.name}>
                       <div className='hc-invite-modal__member-item'>
+                        <span>{type === 'group' && <UsersIcon className='hc-member__group-icon' />}{member.name}</span>
                         <span>{member.email}</span>
-                        {type === 'user'
-                          ? <span>{member.name}</span>
-                          : <span><UsersIcon className='hc-member__group-icon' />{member.name}</span>
-                        }
                       </div>
                     </SelectOption>
                   ))

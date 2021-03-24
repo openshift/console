@@ -12,7 +12,7 @@ import { HandlePromiseProps, withHandlePromise } from '../../utils';
 import { Section } from '../utils/section';
 import { RadioGroup } from '@console/internal/components/radio';
 import { coFetchJSON } from '../../../co-fetch';
-import { getId } from '../../../hypercloud/auth';
+import { getId, getUserGroup } from '../../../hypercloud/auth';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 
@@ -38,7 +38,7 @@ export const ModifyMemberModal = withHandlePromise((props: ModifyMemberModalProp
 
   const submit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-    coFetchJSON(`/api/multi-hypercloud/cluster/member?userId=${getId()}&cluster=${props.clusterName}&target${props.member.type}=${props.member.type === 'user' ? props.member.email : props.member.name}&remoteRole=${role}`, 'PUT')
+    coFetchJSON(`/api/multi-hypercloud/cluster/${props.clusterName}/update_role/${props.member.type}/${props.member.type === 'user' ? props.member.email : props.member.name}?userId=${getId()}${getUserGroup}&remoteRole=${role}`, 'PUT')
       .then((res) => {
         props.close();
       })
