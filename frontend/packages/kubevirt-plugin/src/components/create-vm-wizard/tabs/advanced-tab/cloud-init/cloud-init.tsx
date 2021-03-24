@@ -11,7 +11,6 @@ import {
   SplitItem,
   TextArea,
   TextInput,
-  Title,
   Alert,
 } from '@patternfly/react-core';
 import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
@@ -24,36 +23,35 @@ import {
   VMWizardStorageType,
   VMWizardTab,
   VMWizardProps,
-} from '../../types';
-import { vmWizardActions } from '../../redux/actions';
-import { ActionType } from '../../redux/types';
-import { iGetCloudInitNoCloudStorage } from '../../selectors/immutable/storage';
-import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
-import { iGet, iGetIn, ihasIn, toJS, toShallowJS } from '../../../../utils/immutable';
-import { DiskBus, DiskType, VolumeType } from '../../../../constants/vm/storage';
-import { FormRow } from '../../../form/form-row';
-import { joinIDs, prefixedID } from '../../../../utils';
-import { Errors } from '../../../errors/errors';
-import { CLOUDINIT_DISK } from '../../../../constants/vm';
-import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
-import { InlineBooleanRadio } from '../../../inline-boolean-radio';
-import { iGetCloudInitValue } from '../../selectors/immutable/cloud-init';
+} from '../../../types';
+import { vmWizardActions } from '../../../redux/actions';
+import { ActionType } from '../../../redux/types';
+import { iGetCloudInitNoCloudStorage } from '../../../selectors/immutable/storage';
+import { VolumeWrapper } from '../../../../../k8s/wrapper/vm/volume-wrapper';
+import { iGet, iGetIn, ihasIn, toJS, toShallowJS } from '../../../../../utils/immutable';
+import { DiskBus, DiskType, VolumeType } from '../../../../../constants/vm/storage';
+import { FormRow } from '../../../../form/form-row';
+import { joinIDs, prefixedID } from '../../../../../utils';
+import { Errors } from '../../../../errors/errors';
+import { CLOUDINIT_DISK } from '../../../../../constants/vm';
+import { DiskWrapper } from '../../../../../k8s/wrapper/vm/disk-wrapper';
+import { InlineBooleanRadio } from '../../../../inline-boolean-radio';
+import { iGetCloudInitValue } from '../../../selectors/immutable/cloud-init';
 import {
   CloudInitDataFormKeys,
   CloudInitDataHelper,
   formAllowedKeys,
-} from '../../../../k8s/wrapper/vm/cloud-init-data-helper';
+} from '../../../../../k8s/wrapper/vm/cloud-init-data-helper';
 import {
   hasStepCreateDisabled,
   hasStepDeleteDisabled,
   hasStepUpdateDisabled,
-} from '../../selectors/immutable/wizard-selectors';
-import { iGetCommonData } from '../../selectors/immutable/selectors';
-import { getAuthKeyError } from '../../redux/validations/advanced-tab-validation';
-import { CloudInitInfoHelper } from './cloud-init-info-helper';
+} from '../../../selectors/immutable/wizard-selectors';
+import { iGetCommonData } from '../../../selectors/immutable/selectors';
+import { getAuthKeyError } from '../../../redux/validations/advanced-tab-validation';
 
-import '../../create-vm-wizard-footer.scss';
-import './cloud-init-tab.scss';
+import '../../../create-vm-wizard-footer.scss';
+import './cloud-init.scss';
 
 type CustomScriptProps = {
   id: string;
@@ -136,7 +134,7 @@ const CloudInitFormRows: React.FC<CloudInitFormRowsProps> = ({
         />
       </FormRow>
       <FormRow
-        title={t('kubevirt-plugin~Authorized SSH Keys')}
+        title={t('kubevirt-plugin~Authorized SSH Key')}
         fieldId={asId(CloudInitDataFormKeys.SSH_AUTHORIZED_KEYS)}
         validation={authKeyvalidation}
       >
@@ -203,7 +201,7 @@ const CloudInitFormRows: React.FC<CloudInitFormRowsProps> = ({
   );
 };
 
-const CloudInitTabComponent: React.FC<ResultTabComponentProps> = ({
+const CloudInitComponent: React.FC<ResultTabComponentProps> = ({
   iCloudInitStorage,
   isForm,
   isProviderImport,
@@ -337,9 +335,6 @@ const CloudInitTabComponent: React.FC<ResultTabComponentProps> = ({
         />
       )}
       <Form>
-        <Title headingLevel="h5" size="lg">
-          {t('kubevirt-plugin~Cloud-init')} <CloudInitInfoHelper />
-        </Title>
         {isDisabled && isProviderImport && (
           <Alert
             title={t('kubevirt-plugin~Partial data available prior to the import')}
@@ -414,9 +409,9 @@ const stateToProps = (state, { wizardReduxID }) => {
     isForm,
     isProviderImport: iGetCommonData(state, wizardReduxID, VMWizardProps.isProviderImport),
     isDisabled:
-      hasStepCreateDisabled(state, wizardReduxID, VMWizardTab.ADVANCED_CLOUD_INIT) ||
-      hasStepUpdateDisabled(state, wizardReduxID, VMWizardTab.ADVANCED_CLOUD_INIT) ||
-      hasStepDeleteDisabled(state, wizardReduxID, VMWizardTab.ADVANCED_CLOUD_INIT),
+      hasStepCreateDisabled(state, wizardReduxID, VMWizardTab.ADVANCED) ||
+      hasStepUpdateDisabled(state, wizardReduxID, VMWizardTab.ADVANCED) ||
+      hasStepDeleteDisabled(state, wizardReduxID, VMWizardTab.ADVANCED),
   };
 };
 
@@ -447,4 +442,4 @@ const dispatchToProps = (dispatch, props) => ({
   },
 });
 
-export const CloudInitTab = connect(stateToProps, dispatchToProps)(CloudInitTabComponent);
+export const CloudInitWizardForm = connect(stateToProps, dispatchToProps)(CloudInitComponent);

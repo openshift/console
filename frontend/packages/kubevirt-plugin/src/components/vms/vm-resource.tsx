@@ -39,6 +39,8 @@ import { getFlavorData } from '../../selectors/vm/flavor-data';
 import { LABEL_USED_TEMPLATE_NAME, LABEL_USED_TEMPLATE_NAMESPACE } from '../../constants';
 import VMDetailsItemTemplate from './VMDetailsItemTemplate';
 import VMDetailsItem from './VMDetailsItem';
+import { ServiceKind } from '@console/knative-plugin/src/types';
+import SSHDetailsPage from '../ssh-service/SSHDetailsPage/SSHDetailsPage';
 
 export const VMResourceSummary: React.FC<VMResourceSummaryProps> = ({
   vm,
@@ -208,6 +210,13 @@ export const VMDetailsList: React.FC<VMResourceListProps> = ({
       >
         {workloadProfile}
       </VMDetailsItem>
+
+      <VMDetailsItem
+        title={t('kubevirt-plugin~User credentials')}
+        idValue={prefixedID(id, 'authorized-ssh-key')}
+      >
+        <SSHDetailsPage vm={vmiLike} />
+      </VMDetailsItem>
     </dl>
   );
 };
@@ -359,6 +368,7 @@ type VMResourceListProps = {
   vmi?: VMIKind;
   canUpdateVM: boolean;
   vmStatusBundle: VMStatusBundle;
+  vmSSHService?: ServiceKind;
 };
 
 type VMSchedulingListProps = {

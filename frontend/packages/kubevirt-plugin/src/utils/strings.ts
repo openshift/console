@@ -17,6 +17,9 @@ export const DYNAMIC = 'Dynamic';
 
 export const READY = 'Ready';
 
+export const CLOUD = 'cloud';
+export const SSH = 'ssh';
+
 export const EXAMPLE_CONTAINER = 'kubevirt/fedora-cloud-container-disk-demo';
 export const FEDORA_IMAGE_LINK = 'https://alt.fedoraproject.org/cloud/';
 export const RHEL_IMAGE_LINK =

@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { Tooltip } from '@patternfly/react-core';
+import cn from 'classnames';
 import { asAccessReview, Kebab, KebabOption } from '@console/internal/components/utils';
 import {
   K8sKind,
@@ -35,6 +37,8 @@ import { VMImportWrappper } from '../../k8s/wrapper/vm-import/vm-import-wrapper'
 import { StatusGroup } from '../../constants/status-group';
 import { cancelVMImport } from '../../k8s/requests/vmimport';
 import { ActionMessage } from './constants';
+import useSSHService from '../../hooks/use-ssh-service';
+import useSSHCommand from '../../hooks/use-ssh-command';
 
 import './menu-actions.scss';
 
@@ -342,7 +346,7 @@ export const menuActionOpenConsole = (kindObj: K8sKind, vmi: VMIKind): KebabOpti
     return (
       <>
         {t('kubevirt-plugin~Open Console')}
-        <span className="kubevirt-menu-actions__ext-link-icon">
+        <span className="kubevirt-menu-actions__icon-spacer">
           <ExternalLinkAltIcon />
         </span>
       </>
@@ -360,6 +364,44 @@ export const menuActionOpenConsole = (kindObj: K8sKind, vmi: VMIKind): KebabOpti
   };
 };
 
+export const menuActionCopySSHCommand = (kindObj: K8sKind, vm: VMIKind): KebabOption => {
+  let sshCommand = '';
+  let isDisabled = false;
+  const CopySSHCommand: React.FC = () => {
+    const { sshServices } = useSSHService(vm);
+    const { command } = useSSHCommand(vm);
+    const { t } = useTranslation();
+
+    sshCommand = command;
+    isDisabled = !sshServices?.running;
+
+    return (
+      <div className={cn({ 'CopySSHCommand-disabled': isDisabled })}>
+        {t('kubevirt-plugin~Copy SSH Command')}
+        {isDisabled && (
+          <div>
+            <Tooltip
+              position="left"
+              content={t('kubevirt-plugin~SSH Service can be managed in the VMs details page')}
+            />
+          </div>
+        )}
+        <div className="kubevirt-menu-actions__secondary-title">
+          {isDisabled
+            ? t('kubevirt-plugin~Requires SSH Service')
+            : t('kubevirt-plugin~will copy to clipboard')}
+        </div>
+      </div>
+    );
+  };
+
+  return {
+    label: <CopySSHCommand />,
+    callback: () => !isDisabled && navigator.clipboard.writeText(sshCommand),
+    isDisabled,
+  };
+};
+
 export const vmMenuActions = [
   menuActionStart,
   menuActionStop,
@@ -371,6 +413,7 @@ export const vmMenuActions = [
   menuActionOpenConsole,
   Kebab.factory.ModifyLabels,
   Kebab.factory.ModifyAnnotations,
+  menuActionCopySSHCommand,
   menuActionDeleteVMorCancelImport,
 ];
 

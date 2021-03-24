@@ -29,6 +29,10 @@ import { useStorageClassConfigMap } from '../../../hooks/storage-class-config-ma
 import { BOOT_SOURCE_AVAILABLE, SUPPORT_URL } from '../../../constants/vm-templates';
 import { useVmTemplatesResources } from '../hooks/use-vm-templates-resources';
 import { getDescription } from '../../../selectors/selectors';
+import useSSHKeys from '../../../hooks/use-ssh-keys';
+import useSSHService from '../../../hooks/use-ssh-service';
+import { isEmpty } from 'lodash';
+import { AUTHORIZED_SSH_KEYS } from '../../ssh-service/SSHForm/ssh-form-utils';
 
 const DevConsoleCreateVmFormEmptyState: React.FC<{ templateParam: string; t: TFunction }> = ({
   templateParam,
@@ -98,6 +102,14 @@ export const DevConsoleCreateVmForm: React.FC<RouteComponentProps> = () => {
     dataVolumes,
     template,
   });
+  const {
+    enableSSHService,
+    updateSSHKeyInGlobalNamespaceSecret,
+    createOrUpdateSecret,
+    restoreDefaultSSHSettings,
+    tempSSHKey,
+  } = useSSHKeys();
+  const { createOrDeleteSSHService } = useSSHService();
   const sourceProvider = !isTemplateSourceError(sourceStatus) && sourceStatus?.provider;
 
   return (
@@ -215,7 +227,19 @@ export const DevConsoleCreateVmForm: React.FC<RouteComponentProps> = () => {
                                   undefined,
                                   state,
                                   scConfigMap,
+                                  tempSSHKey,
                                 );
+                                if (vm) {
+                                  enableSSHService && createOrDeleteSSHService(vm);
+                                  if (!isEmpty(tempSSHKey)) {
+                                    createOrUpdateSecret(tempSSHKey, vm?.metadata?.namespace, {
+                                      secretName: `${AUTHORIZED_SSH_KEYS}-${vm?.metadata?.name}`,
+                                    });
+                                    updateSSHKeyInGlobalNamespaceSecret &&
+                                      createOrUpdateSecret(tempSSHKey, vm?.metadata?.namespace);
+                                  }
+                                  restoreDefaultSSHSettings();
+                                }
                                 history.push(
                                   `/topology/ns/${getNamespace(vm)}?selectId=${getUID(vm)}`,
                                 );

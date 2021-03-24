@@ -15,6 +15,8 @@ import { iGetStorages } from '../../selectors/immutable/storage';
 import { iGetImportProviders } from '../../selectors/immutable/import-providers';
 import { iGetCommonData, iGetLoadedCommonData } from '../../selectors/immutable/selectors';
 import { ImportProvidersSettings, VMSettings } from '../initial-state/types';
+import { createOrDeleteSSHService } from '../../../ssh-service/SSHForm/ssh-form-utils';
+import { getEnableSSHService } from '../../selectors/immutable/wizard-selectors';
 
 export const createVMAction = (id: string) => (dispatch, getState) => {
   dispatch(
@@ -29,6 +31,7 @@ export const createVMAction = (id: string) => (dispatch, getState) => {
 
   const state = getState();
 
+  const enableSSHService = getEnableSSHService(state);
   const enhancedK8sMethods = new EnhancedK8sMethods();
 
   const importProviders = iGetImportProviders(state, id).toJS() as ImportProvidersSettings;
@@ -64,10 +67,13 @@ export const createVMAction = (id: string) => (dispatch, getState) => {
     .catch((error) =>
       cleanupAndGetResults(enhancedK8sMethods, error, { prettyPrintPermissionErrors: false }),
     )
-    .then(({ isValid, ...tabState }: ResultsWrapper) =>
+    .then(({ isValid, ...tabState }: ResultsWrapper) => {
+      if (enableSSHService) {
+        createOrDeleteSSHService(tabState.requestResults[0]?.content?.data, enableSSHService);
+      }
       dispatch(
         vmWizardInternalActions[InternalActionType.SetResults](id, tabState, isValid, false, false),
-      ),
-    )
+      );
+    })
     .catch((e) => console.error(e)); // eslint-disable-line no-console
 };

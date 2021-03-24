@@ -1,13 +1,18 @@
 export enum SSHActionsNames {
   updateKey = 'UPDATE_KEY',
-  updateIsSSHServiceRunning = 'UPDATE_IS_SSH_SERVICE_RUNNING',
-  showRestoreKey = 'SHOW_RESTORE_KEY',
-  setTempKey = 'SET_TEMP_KEY',
-  createSSHService = 'CREATE_SSH_SERVICE',
+  updateSSHServices = 'UPDATE_SSH_SERVICES',
+  disableSaveInNamespaceCheckbox = 'DISABLE_SAVE_IN_NAMESPACE_CHECKBOX',
+  showRestoreKeyButton = 'SHOW_RESTORE_KEY_BUTTON',
+  setTempSSHKey = 'SET_TEMP_KEY',
+  enableSSHService = 'ENABLE_SSH_SERVICE',
+  setIsValidSSHKey = 'SET_IS_VALID_SSH_KEY',
+  updateSSHKeyInGlobalNamespaceSecret = 'UPDATE_SSH_KEY_IN_GLOBAL_NAMESPACE_SECRET',
+  restoreDefaultSSHSettings = 'RESTORE_DEFAULT_SSH_SETTINGS',
 }
 
 type SSHActionsObject = (
   val?: string | boolean,
+  port?: number | string,
   machineName?: string,
 ) => {
   type: string;
@@ -21,20 +26,40 @@ export const sshActions: SSHActions = {
     type: SSHActionsNames.updateKey,
     payload: { namespace, key },
   }),
-  [SSHActionsNames.updateIsSSHServiceRunning]: (isRunning: boolean, machineName: string) => ({
-    type: SSHActionsNames.updateIsSSHServiceRunning,
-    payload: { machineName, isRunning },
+  [SSHActionsNames.updateSSHServices]: (
+    isRunning: boolean,
+    port: number | string,
+    machineName: string,
+  ) => ({
+    type: SSHActionsNames.updateSSHServices,
+    payload: { machineName, isRunning, port },
   }),
-  [SSHActionsNames.showRestoreKey]: (value: boolean) => ({
-    type: SSHActionsNames.showRestoreKey,
+  [SSHActionsNames.showRestoreKeyButton]: (value: boolean) => ({
+    type: SSHActionsNames.showRestoreKeyButton,
     payload: value,
   }),
-  [SSHActionsNames.setTempKey]: (value: string) => ({
-    type: SSHActionsNames.setTempKey,
+  [SSHActionsNames.setTempSSHKey]: (value: string) => ({
+    type: SSHActionsNames.setTempSSHKey,
     payload: value,
   }),
-  [SSHActionsNames.createSSHService]: (value: boolean) => ({
-    type: SSHActionsNames.createSSHService,
+  [SSHActionsNames.enableSSHService]: (value: boolean) => ({
+    type: SSHActionsNames.enableSSHService,
     payload: value,
+  }),
+  [SSHActionsNames.disableSaveInNamespaceCheckbox]: (value: boolean) => ({
+    type: SSHActionsNames.disableSaveInNamespaceCheckbox,
+    payload: value,
+  }),
+  [SSHActionsNames.setIsValidSSHKey]: (value: boolean) => ({
+    type: SSHActionsNames.setIsValidSSHKey,
+    payload: value,
+  }),
+  [SSHActionsNames.updateSSHKeyInGlobalNamespaceSecret]: (value: boolean) => ({
+    type: SSHActionsNames.updateSSHKeyInGlobalNamespaceSecret,
+    payload: value,
+  }),
+  [SSHActionsNames.restoreDefaultSSHSettings]: () => ({
+    type: SSHActionsNames.restoreDefaultSSHSettings,
+    payload: null,
   }),
 };

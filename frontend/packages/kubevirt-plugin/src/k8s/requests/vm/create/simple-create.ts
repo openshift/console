@@ -33,6 +33,9 @@ import { getEmptyInstallStorage } from '../../../../utils/storage';
 import { ignoreCaseSort } from '../../../../utils/sort';
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { VMKind } from '../../../../types';
+import { isEmpty } from 'lodash';
+import { CLOUDINIT_DISK } from '../../../../constants/vm/constants';
+import { AUTHORIZED_SSH_KEYS } from '../../../../components/ssh-service/SSHForm/ssh-form-utils';
 
 type GetRootDataVolume = (args: {
   name: string;
@@ -98,6 +101,7 @@ export const prepareVM = async (
   customSource: BootSourceState,
   { namespace, name, startVM }: { namespace: string; name: string; startVM: boolean },
   scConfigMap: ConfigMapKind,
+  sshKey?: string,
   emptyDiskSize?: string,
   referenceTemplate = true,
 ): Promise<VMKind> => {
@@ -190,6 +194,18 @@ export const prepareVM = async (
         disk: windowsToolsStorage.disk,
         volume: windowsToolsStorage.volume,
       });
+    } else if (!isEmpty(sshKey)) {
+      vmWrapper.updateVolume(
+        new VolumeWrapper()
+          .init({ name: CLOUDINIT_DISK })
+          .setType(VolumeType.CLOUD_INIT_CONFIG_DRIVE)
+          .setTypeData(
+            vmWrapper.getVolumes().find(({ name: volumeName }) => volumeName === CLOUDINIT_DISK)
+              ?.cloudInitNoCloud,
+          )
+          .asResource(),
+      );
+      vmWrapper.setSSHKey([`${AUTHORIZED_SSH_KEYS}-${name}`]);
     }
   }
 
@@ -221,7 +237,8 @@ export const createVM = async (
   customSource: BootSourceState,
   opts: { namespace: string; name: string; startVM: boolean },
   scConfigMap: ConfigMapKind,
+  sshKey?: string,
 ) => {
-  const vm = await prepareVM(template, sourceStatus, customSource, opts, scConfigMap);
+  const vm = await prepareVM(template, sourceStatus, customSource, opts, scConfigMap, sshKey);
   return k8sCreate(VirtualMachineModel, vm);
 };

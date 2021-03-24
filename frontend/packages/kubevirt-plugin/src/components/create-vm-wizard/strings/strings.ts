@@ -10,7 +10,7 @@ export const TabTitleKeyResolver = {
   // t('kubevirt-plugin~Storage')
   [VMWizardTab.STORAGE]: 'kubevirt-plugin~Storage',
   // t('kubevirt-plugin~Advanced')
-  [VMWizardTab.ADVANCED_CLOUD_INIT]: 'kubevirt-plugin~Advanced',
+  [VMWizardTab.ADVANCED]: 'kubevirt-plugin~Advanced',
   // t('kubevirt-plugin~Review')
   [VMWizardTab.REVIEW]: 'kubevirt-plugin~Review',
   // t('kubevirt-plugin~Result')
