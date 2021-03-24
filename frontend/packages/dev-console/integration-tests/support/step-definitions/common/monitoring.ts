@@ -1,8 +1,6 @@
 import { Given, When } from 'cypress-cucumber-preprocessor/steps';
-import { devNavigationMenu } from '../../constants/global';
-import { monitoringTabs } from '../../constants/monitoring';
-import { navigateTo } from '../../pages/app';
-import { monitoringPage } from '../../pages/monitoring/monitoring-page';
+import { devNavigationMenu, monitoringTabs } from '../../constants';
+import { navigateTo, monitoringPage } from '../../pages';
 
 Given('user is on Monitoring page', () => {
   navigateTo(devNavigationMenu.Monitoring);

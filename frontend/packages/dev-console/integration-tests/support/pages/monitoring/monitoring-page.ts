@@ -1,5 +1,5 @@
-import { monitoringTabs } from '../../constants/monitoring';
-import { monitoringPO } from '../../pageObjects/monitoring-po';
+import { monitoringTabs } from '../../constants';
+import { monitoringPO } from '../../pageObjects';
 
 export const detailsPage = {
   isTabSelected: (tabSelector: string) =>

@@ -1,6 +1,6 @@
-import { addOptions } from '../../constants/add';
-import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
-import { eventSourcePO } from '../../pageObjects/add-flow-po';
+import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
+import { addOptions } from '../../constants';
+import { eventSourcePO } from '../../pageObjects';
 import { addPage } from './add-page';
 
 export const eventSourcesPage = {

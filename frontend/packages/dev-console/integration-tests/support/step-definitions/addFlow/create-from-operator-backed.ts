@@ -1,11 +1,8 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { catalogPage } from '../../pages/add-flow/catalog-page';
-import { addPage } from '../../pages/add-flow/add-page';
-import { catalogTypes, addOptions } from '../../constants/add';
-import { topologyPage } from '../../pages/topology/topology-page';
-import { catalogPO } from '../../pageObjects/add-flow-po';
-import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
-import { pageTitle } from '../../constants/pageTitle';
+import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
+import { catalogPage, addPage, topologyPage } from '../../pages';
+import { catalogTypes, addOptions, pageTitle } from '../../constants';
+import { catalogPO } from '../../pageObjects';
 
 const d = new Date();
 const timestamp = d.getTime();

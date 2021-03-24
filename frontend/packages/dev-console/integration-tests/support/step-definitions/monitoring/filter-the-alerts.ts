@@ -1,6 +1,6 @@
-import { monitoringTabs } from '../../constants/monitoring';
-import { monitoringPage } from '../../pages/monitoring/monitoring-page';
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
+import { monitoringTabs } from '../../constants';
+import { monitoringPage } from '../../pages';
 
 Given('user is on the Alerts tab', () => {
   monitoringPage.selectTab(monitoringTabs.Alerts);

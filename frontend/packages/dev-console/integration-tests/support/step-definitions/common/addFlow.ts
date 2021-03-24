@@ -1,15 +1,16 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { gitPage } from '../../pages/add-flow/git-page';
-import { perspective, navigateTo } from '../../pages/app';
-import { addPage } from '../../pages/add-flow/add-page';
-import { addOptions } from '../../constants/add';
-import { createGitWorkload } from '../../pages/functions/createGitWorkload';
-import { switchPerspective, devNavigationMenu } from '../../constants/global';
-import { pageTitle } from '../../constants/pageTitle';
-import { catalogPage } from '../../pages/add-flow/catalog-page';
-import { topologyPO } from '../../pageObjects/topology-po';
-import { topologyHelper } from '../../pages/topology/topology-helper-page';
-import { topologyPage } from '../../pages/topology/topology-page';
+import {
+  gitPage,
+  addPage,
+  createGitWorkload,
+  catalogPage,
+  topologyPage,
+  topologyHelper,
+  perspective,
+  navigateTo,
+} from '../../pages';
+import { switchPerspective, devNavigationMenu, pageTitle, addOptions } from '../../constants';
+import { topologyPO } from '../../pageObjects';
 
 Given('user is at Add page', () => {
   navigateTo(devNavigationMenu.Add);

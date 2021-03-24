@@ -1,7 +1,6 @@
 import { When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { catalogPage, catalogInstallPageObj } from '../../pages/add-flow/catalog-page';
-import { catalogPO } from '../../pageObjects/add-flow-po';
-import { topologyHelper } from '../../pages/topology/topology-helper-page';
+import { catalogPO } from '../../pageObjects';
+import { topologyHelper, catalogPage, catalogInstallPageObj } from '../../pages';
 
 When('user selects YAML view', () => {
   cy.document()

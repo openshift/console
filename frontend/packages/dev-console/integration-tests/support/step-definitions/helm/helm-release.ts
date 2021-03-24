@@ -1,14 +1,15 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { catalogPage } from '../../pages/add-flow/catalog-page';
-import { topologyPage, topologySidePane } from '../../pages/topology/topology-page';
-import { navigateTo } from '../../pages/app';
-import { devNavigationMenu } from '../../constants/global';
 import {
+  topologyPage,
+  topologySidePane,
   upgradeHelmRelease,
   helmDetailsPage,
   rollBackHelmRelease,
   helmPage,
-} from '../../pages/helm/helm-page';
+  catalogPage,
+  navigateTo,
+} from '../../pages';
+import { devNavigationMenu } from '../../constants';
 
 Given('helm release {string} is present in topology page', (workloadName: string) => {
   catalogPage.createHelmChartFromAddPage(workloadName);

@@ -1,7 +1,6 @@
 import { When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { projectNameSpace } from '../../pages/app';
-import { modal } from '../../../../../integration-tests-cypress/views/modal';
-import { topologyPage } from '../../pages/topology/topology-page';
+import { modal } from '@console/cypress-integration-tests/views/modal';
+import { topologyPage, projectNameSpace } from '../../pages';
 
 When('user enters project name as {string} in Create Project modal', (projectName: string) => {
   const d = new Date();

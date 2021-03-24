@@ -1,11 +1,8 @@
 import { Given } from 'cypress-cucumber-preprocessor/steps';
-import { nav } from '../../../../../integration-tests-cypress/views/nav';
-import { operators, switchPerspective } from '../../constants/global';
-import { perspectiveName } from '../../constants/staticText/global-text';
-import { perspective } from '../../pages/app';
-import { operatorsPage } from '../../pages/operators-page';
-import { operatorsPO } from '@console/dev-console/integration-tests/support/pageObjects/operators-po';
-import { installOperator } from '@console/dev-console/integration-tests/support/pages/functions/installOperatorOnCluster';
+import { nav } from '@console/cypress-integration-tests/views/nav';
+import { operators, switchPerspective, perspectiveName } from '../../constants';
+import { perspective, operatorsPage, installOperator } from '../../pages';
+import { operatorsPO } from '@console/dev-console/integration-tests/support/pageObjects';
 
 Given('user has installed Web Terminal operator', () => {
   perspective.switchTo(switchPerspective.Administrator);

@@ -1,5 +1,5 @@
-import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
-import { modal } from '../../../../../integration-tests-cypress/views/modal';
+import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
+import { modal } from '@console/cypress-integration-tests/views/modal';
 import { pageTitle } from '@console/dev-console/integration-tests/support/constants/pageTitle';
 import {
   pipelineDetailsPO,

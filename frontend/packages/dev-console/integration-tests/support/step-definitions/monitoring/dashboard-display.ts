@@ -1,9 +1,7 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { monitoringPO } from '../../pageObjects/monitoring-po';
-import { monitoringPage } from '../../pages/monitoring/monitoring-page';
-import { topologyPage } from '../../pages/topology/topology-page';
+import { monitoringPage, topologyPage, navigateTo } from '../../pages';
 import { devNavigationMenu } from '../../constants/global';
-import { navigateTo } from '../../pages/app';
 
 Given('user opened the url of the workload {string} in topology page', (workloadName: string) => {
   topologyPage.clickWorkloadUrl(workloadName);

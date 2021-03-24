@@ -1,15 +1,18 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { pipelinesPage } from '../../pages/pipelines/pipelines-page';
-import { pipelineBuilderPage } from '../../pages/pipelines/pipelineBuilder-page';
-import { pipelineDetailsPage } from '../../pages/pipelines/pipelineDetails-page';
-import { pipelineRunDetailsPage } from '../../pages/pipelines/pipelineRun-details-page';
-import { navigateTo } from '@console/dev-console/integration-tests/support/pages/app';
-import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants/global';
-import { topologySidePane } from '@console/dev-console/integration-tests/support/pages/topology/topology-side-pane-page';
-import { modal } from '../../../../../integration-tests-cypress/views/modal';
+import { navigateTo, topologySidePane } from '@console/dev-console/integration-tests/support/pages';
+import {
+  devNavigationMenu,
+  adminNavigationMenu,
+} from '@console/dev-console/integration-tests/support/constants';
+import { modal } from '@console/cypress-integration-tests/views/modal';
+import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 import { pipelineBuilderPO, pipelinesPO } from '../../page-objects/pipelines-po';
-import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
-import { adminNavigationMenu } from '@console/dev-console/integration-tests/support/constants/staticText/global-text';
+import {
+  pipelinesPage,
+  pipelineBuilderPage,
+  pipelineDetailsPage,
+  pipelineRunDetailsPage,
+} from '../../pages';
 
 Given('pipeline run is available for {string}', (pipelineName: string) => {
   // TODO: implement step

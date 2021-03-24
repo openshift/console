@@ -3,7 +3,7 @@ import { navigateTo } from '@console/dev-console/integration-tests/support/pages
 import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants/global';
 import { pipelinesPage, startPipelineInPipelinesPage } from '../../pages/pipelines/pipelines-page';
 import { pipelineBuilderPO } from '../../page-objects/pipelines-po';
-import * as yamlEditor from '../../../../../integration-tests-cypress/views/yaml-editor';
+import * as yamlEditor from '@console/cypress-integration-tests/views/yaml-editor';
 
 Given('user is at {string} on Pipeline Builder page', (view: string) => {
   navigateTo(devNavigationMenu.Pipelines);

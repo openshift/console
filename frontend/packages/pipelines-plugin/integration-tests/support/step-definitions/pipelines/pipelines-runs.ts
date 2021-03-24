@@ -1,20 +1,25 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { pipelinesPage, startPipelineInPipelinesPage } from '../../pages/pipelines/pipelines-page';
-import { pipelineBuilderPage } from '../../pages/pipelines/pipelineBuilder-page';
 import {
+  pipelinesPage,
+  startPipelineInPipelinesPage,
+  pipelineBuilderPage,
   pipelineRunDetailsPage,
+  pipelineDetailsPage,
   pipelineRunsPage,
-} from '../../pages/pipelines/pipelineRun-details-page';
-import { navigateTo } from '@console/dev-console/integration-tests/support/pages/app';
-import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants/global';
-import { pipelineDetailsPage } from '../../pages/pipelines/pipelineDetails-page';
-import { addPage } from '@console/dev-console/integration-tests/support/pages/add-flow/add-page';
-import { addOptions } from '@console/dev-console/integration-tests/support/constants/add';
-import { topologyPage } from '@console/dev-console/integration-tests/support/pages/topology/topology-page';
-import { topologySidePane } from '@console/dev-console/integration-tests/support/pages/topology/topology-side-pane-page';
+} from '../../pages';
+import {
+  devNavigationMenu,
+  addOptions,
+} from '@console/dev-console/integration-tests/support/constants';
+import {
+  topologyPage,
+  topologySidePane,
+  navigateTo,
+  gitPage,
+  addPage,
+} from '@console/dev-console/integration-tests/support/pages';
 import { modal } from '../../../../../integration-tests-cypress/views/modal';
 import { pipelineRunDetailsPO, pipelinesPO } from '../../page-objects/pipelines-po';
-import { gitPage } from '@console/dev-console/integration-tests/support/pages/add-flow/git-page';
 import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
 
 Given(

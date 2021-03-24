@@ -1,16 +1,17 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { pipelinesPage, startPipelineInPipelinesPage } from '../../pages/pipelines/pipelines-page';
-import { pipelineBuilderPage } from '../../pages/pipelines/pipelineBuilder-page';
 import {
+  pipelinesPage,
+  startPipelineInPipelinesPage,
+  pipelineBuilderPage,
   pipelineDetailsPage,
   triggerTemplateDetailsPage,
   eventListenerDetailsPage,
   clusterTriggerBindingDetailsPage,
-} from '../../pages/pipelines/pipelineDetails-page';
-import { navigateTo } from '@console/dev-console/integration-tests/support/pages/app';
-import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants/global';
-import { modal } from '../../../../../integration-tests-cypress/views/modal';
-import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
+} from '../../pages';
+import { navigateTo } from '@console/dev-console/integration-tests/support/pages';
+import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants';
+import { modal } from '@console/cypress-integration-tests/views/modal';
+import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 import { pipelinesPO } from '../../page-objects/pipelines-po';
 
 When(

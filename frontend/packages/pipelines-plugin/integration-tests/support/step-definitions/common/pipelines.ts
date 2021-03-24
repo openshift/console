@@ -1,13 +1,18 @@
 import { Given, Then, When } from 'cypress-cucumber-preprocessor/steps';
-import { pipelinesPage, startPipelineInPipelinesPage } from '../../pages/pipelines/pipelines-page';
-import { pipelineBuilderPage } from '../../pages/pipelines/pipelineBuilder-page';
-import { modal } from '../../../../../integration-tests-cypress/views/modal';
-import { pipelineRunDetailsPage } from '../../pages/pipelines/pipelineRun-details-page';
-import { navigateTo } from '@console/dev-console/integration-tests/support/pages/app';
-import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants/global';
-import { pipelineBuilderPO, pipelinesPO } from '../../page-objects/pipelines-po';
-import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
-import { pageTitle } from '@console/dev-console/integration-tests/support/constants/pageTitle';
+import { modal } from '@console/cypress-integration-tests/views/modal';
+import {
+  pipelineRunDetailsPage,
+  pipelineBuilderPage,
+  pipelinesPage,
+  startPipelineInPipelinesPage,
+} from '../../pages';
+import { navigateTo } from '@console/dev-console/integration-tests/support/pages';
+import {
+  devNavigationMenu,
+  pageTitle,
+} from '@console/dev-console/integration-tests/support/constants';
+import { pipelineBuilderPO, pipelinesPO } from '../../page-objects';
+import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 
 When(
   'user selects {string} option from kebab menu for pipeline {string}',
