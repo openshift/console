@@ -274,9 +274,6 @@ describe('CRD extensions', () => {
         { metadata: { name: podName, labels: { app: name } } },
         safeLoad(content),
       );
-      // TODO: Remove when the default `registry.redhat.io/openshift4/ose-hello-openshift-rhel8`
-      // image is published.
-      newContent.spec.containers[0].image = 'openshift/hello-openshift:latest';
       await yamlView.setEditorContent(safeDump(newContent));
       await yamlView.saveButton.click();
       expect(crudView.errorMessage.isPresent()).toBe(false);
