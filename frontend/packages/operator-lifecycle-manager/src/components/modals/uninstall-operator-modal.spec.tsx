@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ShallowWrapper, shallow } from 'enzyme';
+import { ReactWrapper, mount } from 'enzyme';
 import * as _ from 'lodash';
 import { ModalTitle, ModalSubmitFooter } from '@console/internal/components/factory/modal';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
@@ -14,6 +14,7 @@ jest.mock('react-i18next', () => {
   return {
     ...reactI18next,
     useTranslation: () => ({ t: (key) => key }),
+    Trans: () => null,
   };
 });
 
@@ -22,7 +23,7 @@ jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
 }));
 
 describe(UninstallOperatorModal.name, () => {
-  let wrapper: ShallowWrapper<UninstallOperatorModalProps>;
+  let wrapper: ReactWrapper<UninstallOperatorModalProps>;
   let k8sKill: Spy;
   let k8sGet: Spy;
   let k8sPatch: Spy;
@@ -48,7 +49,8 @@ describe(UninstallOperatorModal.name, () => {
 
     (useK8sWatchResource as jest.Mock).mockReturnValue([dummyPackageManifest, true, null]);
 
-    wrapper = shallow(
+    // React.useEffect is not supported by Enzyme's shallow rendering, switching to mount
+    wrapper = mount(
       <UninstallOperatorModal
         subscription={subscription}
         k8sKill={k8sKill}

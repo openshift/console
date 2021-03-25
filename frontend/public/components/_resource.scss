@@ -118,6 +118,10 @@
     display: inline-flex;
     margin: 0 20px 0 0;
   }
+  &--inline-close {
+    display: inline-flex;
+    margin: 0 2px 0 0;
+  }
   &--truncate {
     white-space: nowrap;
     .co-resource-item__resource-name {
