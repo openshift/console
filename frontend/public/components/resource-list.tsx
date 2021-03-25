@@ -73,6 +73,7 @@ export const ResourceListPage = connectToPlural(
 export const ResourceDetailsPage = connectToPlural((props: ResourceDetailsPageProps) => {
   const detailsPageExtensions = useExtensions<ResourceDetailsPageExt>(isResourceDetailsPage);
   const { name, ns, kindObj, kindsInFlight } = allParams(props);
+  const decodedName = decodeURIComponent(name);
 
   if (!name || !kindObj) {
     if (kindsInFlight) {
@@ -92,7 +93,7 @@ export const ResourceDetailsPage = connectToPlural((props: ResourceDetailsPagePr
   return (
     <>
       <Helmet>
-        <title>{`${name} · Details`}</title>
+        <title>{`${decodedName} · Details`}</title>
       </Helmet>
       <AsyncComponent
         loader={componentLoader}
@@ -100,7 +101,7 @@ export const ResourceDetailsPage = connectToPlural((props: ResourceDetailsPagePr
         namespace={ns}
         kind={props.modelRef}
         kindObj={kindObj}
-        name={decodeURIComponent(name)}
+        name={decodedName}
         badge={getBadgeFromType(kindObj.badge)}
       />
     </>
