@@ -415,6 +415,7 @@ export type ResourceLinkProps = {
   hideIcon?: boolean;
   title?: string;
   dataTest?: string;
+  onClick?: () => void;
 };
 
 export type UseK8sModel = (groupVersionKind?: GroupVersionKind) => [K8sKind, boolean];
