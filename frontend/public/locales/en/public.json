@@ -260,6 +260,7 @@
   "Ends at": "Ends at",
   "Created by": "Created by",
   "Comment": "Comment",
+  "Error loading silences from Alertmanager. Some of the alerts below may actually be silenced.": "Error loading silences from Alertmanager. Some of the alerts below may actually be silenced.",
   "Alert state": "Alert state",
   "Create silence": "Create silence",
   "Error loading options": "Error loading options",

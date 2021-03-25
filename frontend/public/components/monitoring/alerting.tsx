@@ -1,7 +1,7 @@
 import * as classNames from 'classnames';
 import i18next from 'i18next';
 import * as _ from 'lodash-es';
-import { Button, Popover, Split, SplitItem } from '@patternfly/react-core';
+import { Alert as PFAlert, Button, Popover, Split, SplitItem } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
@@ -1244,7 +1244,13 @@ const MonitoringListPage: React.FC<ListPageProps> = ({
   Row,
   rowFilters,
 }) => {
+  const { t } = useTranslation();
+
   const filters = useSelector(({ k8s }: RootState) => k8s.getIn([reduxID, 'filters']));
+
+  const silencesLoadError = useSelector(
+    ({ UI }: RootState) => UI.getIn(['monitoring', 'silences'])?.loadError,
+  );
 
   return (
     <>
@@ -1266,6 +1272,18 @@ const MonitoringListPage: React.FC<ListPageProps> = ({
           rowFilters={rowFilters}
           textFilter={nameFilterID}
         />
+        {silencesLoadError && !loadError && (
+          <PFAlert
+            className="co-alert"
+            isInline
+            title={t(
+              'public~Error loading silences from Alertmanager. Some of the alerts below may actually be silenced.',
+            )}
+            variant="warning"
+          >
+            {silencesLoadError.toString()}
+          </PFAlert>
+        )}
         <div className="row">
           <div className="col-xs-12">
             <Table
