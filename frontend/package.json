@@ -121,7 +121,7 @@
     "@patternfly/react-core": "4.101.2",
     "@patternfly/react-table": "4.23.13",
     "@patternfly/react-tokens": "4.10.4",
-    "@patternfly/react-topology": "4.7.44",
+    "@patternfly/react-topology": "4.8.7",
     "@patternfly/react-virtualized-extension": "4.6.45",
     "abort-controller": "3.0.0",
     "ajv": "^6.12.3",
