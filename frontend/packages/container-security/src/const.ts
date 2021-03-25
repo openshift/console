@@ -124,5 +124,12 @@ export const totalFor = (priority: Priority) => (obj: ImageManifestVuln) => {
   }
 };
 
-export const priorityFor = (severity: string) =>
-  vulnPriority.find(({ title }) => title === severity) || vulnPriority.get(Priority.Unknown);
+const vulnPriorityByTitle = vulnPriority.mapEntries(
+  ([, vulnPriorityDescription]: [Priority, VulnPriorityDescription]) => [
+    vulnPriorityDescription.title,
+    vulnPriorityDescription,
+  ],
+) as ImmutableMap<string, VulnPriorityDescription>;
+
+export const priorityFor = (severityTitle: string) =>
+  vulnPriorityByTitle.get(severityTitle) || vulnPriority.get(Priority.Unknown);
