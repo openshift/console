@@ -443,7 +443,7 @@ export const StorageClassEncryption: React.FC<ProvisionerProps> = ({ onParamChan
                 className="co-alert"
                 variant="warning"
                 title={t(
-                  'ceph-storage-plugin~Encrypted PVs cannot be cloned expanded or create snapshots.',
+                  'ceph-storage-plugin~PV expansion, snapshot and cloning operations are not supported for encrypted PVs.',
                 )}
                 aria-label={t('ceph-storage-plugin~The last saved values will be updated')}
                 isInline
