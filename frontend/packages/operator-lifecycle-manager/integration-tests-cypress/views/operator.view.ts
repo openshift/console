@@ -174,10 +174,17 @@ export const operator = {
     cy.byLegacyTestID(`horizontal-link-${tabName}`).click();
     cy.byTestOperandLink(exampleName).should('not.exist');
   },
-  uninstall: (operatorName: string, installedNamespace: string = GlobalInstalledNamespace) => {
+  uninstall: (
+    operatorName: string,
+    installedNamespace: string = GlobalInstalledNamespace,
+    deleteAllOperands: boolean = false,
+  ) => {
     cy.log(`uninstall operator "${operatorName}" in ${installedNamespace}`);
     operator.navToDetailsPage(operatorName, installedNamespace);
     operator.uninstallModal.open(operatorName, installedNamespace);
+    if (deleteAllOperands) {
+      operator.uninstallModal.checkDeleteAllOperands();
+    }
     modal.submit(true);
     modal.shouldBeClosed();
   },
@@ -193,4 +200,5 @@ export type TestOperandProps = {
   kind: string;
   tabName: string;
   exampleName: string;
+  deleteUrl?: string;
 };

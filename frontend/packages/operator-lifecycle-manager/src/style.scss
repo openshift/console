@@ -312,3 +312,17 @@ $co-affinity-row-margin: 15px;
   display: flex;
   align-items: center;
 }
+
+.co-operator-uninstall-alert__list {
+  padding-left: 0;
+}
+
+.co-operator-uninstall-alert__list-item {
+  padding-bottom: var(--pf-global--spacer--sm);
+}
+
+.co-operator-uninstall__operands-section {
+  .loading-skeleton--table::after {
+    min-height: 160px;
+  }
+}

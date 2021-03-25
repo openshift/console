@@ -21,7 +21,9 @@ Cypress.Commands.add('createProject', (name: string, devConsole: boolean = false
   listPage.rows.shouldBeLoaded();
   listPage.clickCreateYAMLbutton();
   modal.shouldBeOpened();
-  cy.byTestID('input-name').type(name);
+  cy.byTestID('input-name')
+    .click()
+    .type(name);
   cy.testA11y('Create Project modal');
   modal.submit();
   modal.shouldBeClosed();
