@@ -28,7 +28,7 @@ import {
   generateClientSecret,
   generateClientKeySecret,
 } from '../../kms-config/utils';
-import { StorageClassState, StorageClassClusterAction } from '../../../utils/storage-pool';
+import { StorageClassState, StorageClassClusterAction } from '../../../utils/kms-encryption';
 import './advanced-kms-modal.scss';
 
 export const AdvancedKMSModal = withHandlePromise((props: AdvancedKMSModalProps) => {
