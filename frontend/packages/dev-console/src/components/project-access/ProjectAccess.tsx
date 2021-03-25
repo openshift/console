@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { useTranslation, Trans } from 'react-i18next';
 import { Formik } from 'formik';
 import { Link } from 'react-router-dom';
 import {
@@ -31,6 +32,7 @@ export interface ProjectAccessProps {
 }
 
 const ProjectAccess: React.FC<ProjectAccessProps> = ({ formName, namespace, roleBindings }) => {
+  const { t } = useTranslation();
   if (!roleBindings.loaded && _.isEmpty(roleBindings.loadError)) {
     return <LoadingBox />;
   }
@@ -105,16 +107,19 @@ const ProjectAccess: React.FC<ProjectAccessProps> = ({ formName, namespace, role
   return (
     <>
       <PageHeading>
-        Project Access allows you to add or remove a user&apos;s access to the project. More
-        advanced management of role-based access control appear in{' '}
-        <Link to={`/k8s/ns/${getActiveNamespace()}/${RoleModel.plural}`}>Roles</Link> and{' '}
-        <Link to={`/k8s/ns/${getActiveNamespace()}/${RoleBindingModel.plural}`}>Role Bindings</Link>
-        . For more information, see the{' '}
-        <ExternalLink
-          href={`${openshiftHelpBase}authentication/using-rbac.html`}
-          text="role-based access control documentation"
-        />{' '}
-        .
+        <Trans t={t} ns="devconsole">
+          Project access allows you to add or remove a user&apos;s access to the project. More
+          advanced management of role-based access control appear in{' '}
+          <Link to={`/k8s/ns/${getActiveNamespace()}/${RoleModel.plural}`}>Roles</Link> and{' '}
+          <Link to={`/k8s/ns/${getActiveNamespace()}/${RoleBindingModel.plural}`}>
+            Role Bindings
+          </Link>
+          . For more information, see the{' '}
+          <ExternalLink href={`${openshiftHelpBase}authentication/using-rbac.html`}>
+            role-based access control documentation
+          </ExternalLink>{' '}
+          .
+        </Trans>
       </PageHeading>
       <div className="co-m-pane__body">
         {roleBindings.loadError ? (
