@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { Kebab, LoadingBox } from '@console/internal/components/utils';
 import { ResourceOverviewDetails } from '@console/internal/components/overview/resource-overview-details';
 import { groupVersionFor, K8sKind, referenceForModel } from '@console/internal/module/k8s';
@@ -34,22 +35,13 @@ export interface KnativeResourceOverviewPageProps extends StateProps {
   item?: OverviewItem;
 }
 
-const tabs = [
-  {
-    name: 'Details',
-    component: KnativeOverview,
-  },
-  {
-    name: 'Resources',
-    component: OverviewDetailsKnativeResourcesTab,
-  },
-];
-
 export const KnativeResourceOverviewPage: React.ComponentType<KnativeResourceOverviewPageProps> = ({
   item,
   knativeModels,
   kindsInFlight,
 }: KnativeResourceOverviewPageProps) => {
+  const { t } = useTranslation();
+
   if (item?.obj?.kind === URI_KIND) {
     return <SinkUriResourcesTab itemData={item} menuAction={editSinkUri} />;
   }
@@ -69,6 +61,17 @@ export const KnativeResourceOverviewPage: React.ComponentType<KnativeResourceOve
   if (!resourceModel) {
     return null;
   }
+
+  const tabs = [
+    {
+      name: t('knative-plugin~Details'),
+      component: KnativeOverview,
+    },
+    {
+      name: t('knative-plugin~Resources'),
+      component: OverviewDetailsKnativeResourcesTab,
+    },
+  ];
 
   const actions = [];
   if (resourceModel.kind === RevisionModel.kind) {

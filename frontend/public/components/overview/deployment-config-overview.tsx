@@ -1,17 +1,17 @@
 import * as React from 'react';
-
+import { useTranslation } from 'react-i18next';
+import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
+import { OverviewItem } from '@console/shared';
 import { DeploymentConfigModel } from '../../models';
 import { DeploymentConfigDetailsList, menuActions } from '../deployment-config';
 import { KebabAction, LoadingInline, ResourceSummary, WorkloadPausedAlert } from '../utils';
-
 import { OverviewDetailsResourcesTab } from './resource-overview-page';
 import { ResourceOverviewDetails } from './resource-overview-details';
-import PodRingSet from '@console/shared/src/components/pod/PodRingSet';
-import { OverviewItem } from '@console/shared';
 
 const DeploymentConfigOverviewDetails: React.SFC<DeploymentConfigOverviewDetailsProps> = ({
   item: { obj: dc },
 }) => {
+  const { t } = useTranslation();
   return (
     <div className="overview__sidebar-pane-body resource-overview__body">
       {dc.spec.paused && <WorkloadPausedAlert obj={dc} model={DeploymentConfigModel} />}
@@ -20,16 +20,16 @@ const DeploymentConfigOverviewDetails: React.SFC<DeploymentConfigOverviewDetails
       </div>
       <div className="resource-overview__summary">
         <ResourceSummary resource={dc} showPodSelector showNodeSelector showTolerations>
-          <dt>Status</dt>
+          <dt>{t('public~Status')}</dt>
           <dd>
             {dc.status.availableReplicas === dc.status.updatedReplicas ? (
-              'Active'
+              t('public~Active')
             ) : (
               <div>
                 <span className="co-icon-space-r">
                   <LoadingInline />
                 </span>{' '}
-                Updating
+                {t('public~Updating')}
               </div>
             )}
           </dd>
@@ -42,28 +42,30 @@ const DeploymentConfigOverviewDetails: React.SFC<DeploymentConfigOverviewDetails
   );
 };
 
-const tabs = [
-  {
-    name: 'Details',
-    component: DeploymentConfigOverviewDetails,
-  },
-  {
-    name: 'Resources',
-    component: OverviewDetailsResourcesTab,
-  },
-];
-
 export const DeploymentConfigOverviewPage: React.SFC<DeploymentConfigOverviewProps> = ({
   item,
   customActions,
-}) => (
-  <ResourceOverviewDetails
-    item={item}
-    kindObj={DeploymentConfigModel}
-    menuActions={customActions ? [...customActions, ...menuActions] : menuActions}
-    tabs={tabs}
-  />
-);
+}) => {
+  const { t } = useTranslation();
+  const tabs = [
+    {
+      name: t('public~Details'),
+      component: DeploymentConfigOverviewDetails,
+    },
+    {
+      name: t('public~Resources'),
+      component: OverviewDetailsResourcesTab,
+    },
+  ];
+  return (
+    <ResourceOverviewDetails
+      item={item}
+      kindObj={DeploymentConfigModel}
+      menuActions={customActions ? [...customActions, ...menuActions] : menuActions}
+      tabs={tabs}
+    />
+  );
+};
 
 type DeploymentConfigOverviewDetailsProps = {
   item: OverviewItem;

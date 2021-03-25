@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-
+import { useTranslation } from 'react-i18next';
 import * as UIActions from '@console/internal/actions/ui';
 import {
   ActionsMenu,
@@ -44,6 +44,7 @@ export const ConnectedTopologyVmPanel: React.FC<TopologyVmPanelProps> = ({
   vmNode,
   onClickTab,
 }: TopologyVmPanelProps) => {
+  const { t } = useTranslation();
   const name = vmNode.getLabel();
   const vmData = vmNode.getData();
   const vmObj = getResource(vmNode);
@@ -75,8 +76,8 @@ export const ConnectedTopologyVmPanel: React.FC<TopologyVmPanelProps> = ({
       <SimpleTabNav
         onClickTab={onClickTab}
         tabs={[
-          { name: 'Details', component: TopologyVmDetailsPanel },
-          { name: 'Resources', component: TopologyVmResourcesPanel },
+          { name: t('kubevirt-plugin~Details'), component: TopologyVmDetailsPanel },
+          { name: t('kubevirt-plugin~Resources'), component: TopologyVmResourcesPanel },
         ]}
         tabProps={{ vmNode }}
         additionalClassNames="co-m-horizontal-nav__menu--within-sidebar co-m-horizontal-nav__menu--within-overview-sidebar"

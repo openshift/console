@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { OverviewItem, PodRing, usePodsWatcher } from '@console/shared';
 import { DaemonSetModel } from '../../models';
 import { KebabAction, ResourceSummary, StatusBox } from '../utils';
@@ -32,25 +33,29 @@ const DaemonSetOverviewDetails: React.SFC<DaemonSetOverviewDetailsProps> = ({ it
   );
 };
 
-const tabs = [
-  {
-    name: 'Details',
-    component: DaemonSetOverviewDetails,
-  },
-  {
-    name: 'Resources',
-    component: OverviewDetailsResourcesTab,
-  },
-];
+export const DaemonSetOverview: React.SFC<DaemonSetOverviewProps> = ({ item, customActions }) => {
+  const { t } = useTranslation();
 
-export const DaemonSetOverview: React.SFC<DaemonSetOverviewProps> = ({ item, customActions }) => (
-  <ResourceOverviewDetails
-    item={item}
-    kindObj={DaemonSetModel}
-    menuActions={customActions ? [...customActions, ...menuActions] : menuActions}
-    tabs={tabs}
-  />
-);
+  const tabs = [
+    {
+      name: t('public~Details'),
+      component: DaemonSetOverviewDetails,
+    },
+    {
+      name: t('public~Resources'),
+      component: OverviewDetailsResourcesTab,
+    },
+  ];
+
+  return (
+    <ResourceOverviewDetails
+      item={item}
+      kindObj={DaemonSetModel}
+      menuActions={customActions ? [...customActions, ...menuActions] : menuActions}
+      tabs={tabs}
+    />
+  );
+};
 
 type DaemonSetOverviewDetailsProps = {
   item: OverviewItem;

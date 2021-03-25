@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import * as classNames from 'classnames';
 import * as _ from 'lodash';
 import { Edge, Node, isNode } from '@patternfly/react-topology';
@@ -22,20 +24,21 @@ export type TopologyEdgePanelProps = {
   edge: Edge;
 };
 
-const connectorTypeToTitle = (type: string): string => {
+const connectorTypeToTitle = (type: string, t: TFunction): string => {
   switch (type) {
     case TYPE_REVISION_TRAFFIC:
-      return 'Traffic distribution connector';
+      return t('knative-plugin~Traffic distribution connector');
     case TYPE_EVENT_SOURCE_LINK:
-      return 'Event source connector';
+      return t('knative-plugin~Event source connector');
     case TYPE_KAFKA_CONNECTION_LINK:
-      return 'Kafka connector';
+      return t('knative-plugin~Kafka connector');
     default:
       return '';
   }
 };
 
 const KnativeTopologyEdgePanel: React.FC<TopologyEdgePanelProps> = ({ edge }) => {
+  const { t } = useTranslation();
   const source: TopologyDataObject = edge.getSource().getData();
   const target: TopologyDataObject = edge.getTarget().getData();
   const resources = [source?.resources?.obj, target?.resources?.obj];
@@ -45,6 +48,7 @@ const KnativeTopologyEdgePanel: React.FC<TopologyEdgePanelProps> = ({ edge }) =>
     .filter((e) => isNode(e) && !e.isGroup()) as Node[];
   const isEventSourceConnector = edge.getType() === TYPE_EVENT_SOURCE_LINK;
   const actions = [];
+
   if (isEventSourceConnector && source.resource) {
     const sourceModel = modelFor(referenceFor(source.resource));
     actions.push(setSinkSource(sourceModel, source.resource));
@@ -55,7 +59,7 @@ const KnativeTopologyEdgePanel: React.FC<TopologyEdgePanelProps> = ({ edge }) =>
       <div className="overview__sidebar-pane-head resource-overview__heading">
         <h1 className="co-m-pane__heading">
           <div className="co-m-pane__name co-resource-item">
-            {connectorTypeToTitle(edge.getType())}
+            {connectorTypeToTitle(edge.getType(), t)}
           </div>
           <div className="co-actions">
             <ActionsMenu actions={!isEventSourceConnector ? edgeActions(edge, nodes) : actions} />
@@ -71,11 +75,11 @@ const KnativeTopologyEdgePanel: React.FC<TopologyEdgePanelProps> = ({ edge }) =>
         )}
       >
         <li className="co-m-horizontal-nav__menu-item">
-          <button type="button">Resources</button>
+          <button type="button">{t('knative-plugin~Resources')}</button>
         </li>
       </ul>
       <div className="overview__sidebar-pane-body">
-        <SidebarSectionHeading text="Connections" />
+        <SidebarSectionHeading text={t('knative-plugin~Connections')} />
         <ul className="list-group">
           {_.map(resources, (resource) => {
             if (!resource) {

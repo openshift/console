@@ -211,7 +211,7 @@ describe('EventSinkServicesOverviewList', () => {
     expect(findSidebarSectionHeading).toHaveLength(2);
     expect(findResourceLink).toHaveLength(2);
     expect(findResourceLink.at(1).props().kind).toEqual('Deployment');
-    expect(findSidebarSectionHeading.at(1).props().text).toEqual('Deployment');
+    expect(findSidebarSectionHeading.at(1).props().text).toEqual('knative-plugin~Deployment');
   });
 
   it('should show pods if present', () => {
