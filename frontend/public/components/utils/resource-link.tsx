@@ -81,6 +81,7 @@ export const ResourceLink: React.FC<ResourceLinkProps> = ({
   title,
   children,
   dataTest,
+  onClick,
 }) => {
   if (!kind) {
     return null;
@@ -101,6 +102,7 @@ export const ResourceLink: React.FC<ResourceLinkProps> = ({
           className="co-resource-item__resource-name"
           data-test-id={value}
           data-test={dataTest}
+          onClick={onClick}
         >
           {value}
         </Link>
