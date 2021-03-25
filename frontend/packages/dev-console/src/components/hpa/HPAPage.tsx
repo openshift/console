@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
-import { PageBody, useRelatedHPA } from '@console/shared';
+import { useRelatedHPA } from '@console/shared';
 import { useTranslation } from 'react-i18next';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { LoadingBox, LoadingInline, PageComponentProps } from '@console/internal/components/utils';
@@ -50,7 +50,7 @@ const HPAPage: React.FC<PageComponentProps> = (props) => {
         <title>{fullyLoaded ? title : HorizontalPodAutoscalerModel.label}</title>
       </Helmet>
       {fullyLoaded || error ? (
-        <PageBody flexLayout>
+        <>
           <HPAPageHeader
             kind={kind}
             limitWarning={workloadLoaded && validSupportedType ? getLimitWarning(data) : null}
@@ -68,7 +68,7 @@ const HPAPage: React.FC<PageComponentProps> = (props) => {
               )}
             </>
           )}
-        </PageBody>
+        </>
       ) : (
         <LoadingBox />
       )}

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, Flex } from '@patternfly/react-core';
-import { ResourceLink } from '@console/internal/components/utils';
+import { PageHeading, ResourceLink } from '@console/internal/components/utils';
 
 type HPAPageHeaderProps = {
   kind: string;
@@ -22,30 +22,36 @@ const HPAPageHeader: React.FC<HPAPageHeaderProps> = ({
 }) => {
   const { t } = useTranslation();
   return (
-    <Flex direction={{ default: 'column' }}>
-      <h1 className="pf-c-title pf-m-2xl">{title}</h1>
-      {validSupportedType ? (
-        <>
-          <div>
-            {t('devconsole~Resource')}{' '}
-            <ResourceLink inline linkTo={false} kind={kind} name={name} />
-          </div>
-          {loadError ? (
-            <Alert isInline variant="danger" title={t('devconsole~This resource is not available')}>
-              {loadError}
-            </Alert>
-          ) : (
-            limitWarning && <Alert isInline variant="warning" title={limitWarning} />
-          )}
-        </>
-      ) : (
-        <Alert
-          isInline
-          variant="danger"
-          title={t('devconsole~This is not a supported in-context type')}
-        />
-      )}
-    </Flex>
+    <PageHeading>
+      <Flex direction={{ default: 'column' }}>
+        <h1 className="pf-c-title pf-m-2xl">{title}</h1>
+        {validSupportedType ? (
+          <>
+            <div>
+              {t('devconsole~Resource')}{' '}
+              <ResourceLink inline linkTo={false} kind={kind} name={name} />
+            </div>
+            {loadError ? (
+              <Alert
+                isInline
+                variant="danger"
+                title={t('devconsole~This resource is not available')}
+              >
+                {loadError}
+              </Alert>
+            ) : (
+              limitWarning && <Alert isInline variant="warning" title={limitWarning} />
+            )}
+          </>
+        ) : (
+          <Alert
+            isInline
+            variant="danger"
+            title={t('devconsole~This is not a supported in-context type')}
+          />
+        )}
+      </Flex>
+    </PageHeading>
   );
 };
 
