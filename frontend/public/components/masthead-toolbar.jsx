@@ -477,10 +477,10 @@ class MastheadToolbarContents_ extends React.Component {
               <div className="co-masthead__line"></div>
             </ToolbarItem>
             {/* desktop -- (user dropdown [logout]) */}
-            {/* <ToolbarItem className="hidden-xs">{this._renderLanguageMenu(false)}</ToolbarItem>
+            <ToolbarItem className="hidden-xs">{this._renderLanguageMenu(false)}</ToolbarItem>
             <ToolbarItem>
               <div className="co-masthead__line"></div>
-            </ToolbarItem>{' '} */}
+            </ToolbarItem>{' '}
             {/* desktop -- (notification drawer button) */
             alertAccess && (
               <ToolbarItem>
