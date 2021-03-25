@@ -53,7 +53,7 @@ export const vulnPriority = ImmutableMap<Priority, VulnPriorityDescription>()
     value: 'High',
   })
   .set(Priority.Medium, {
-    color: gold400,
+    color: orange300,
     description:
       'Medium is a real security problem, and is exploitable for many people. Includes network daemon denial of service attacks, cross-site scripting, and gaining user privileges.',
     index: 3,
@@ -63,7 +63,7 @@ export const vulnPriority = ImmutableMap<Priority, VulnPriorityDescription>()
     value: 'Medium',
   })
   .set(Priority.Low, {
-    color: orange300,
+    color: gold400,
     description:
       'Low is a security problem, but is hard to exploit due to environment, requires a user-assisted attack, a small install base, or does very little damage.',
     index: 4,
