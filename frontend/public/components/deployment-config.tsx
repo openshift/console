@@ -104,6 +104,27 @@ export const menuActions: KebabAction[] = [
   ...common,
 ];
 
+const getDeploymentConfigStatus = (dc: K8sResourceKind): string => {
+  const conditions = _.get(dc, 'status.conditions');
+  const progressingFailure = _.some(conditions, {
+    type: 'Progressing',
+    reason: 'ProgressDeadlineExceeded',
+    status: 'False',
+  });
+  const replicaFailure = _.some(conditions, { type: 'ReplicaFailure', status: 'True' });
+  if (progressingFailure || replicaFailure) {
+    return 'Failed';
+  }
+
+  if (
+    dc.status.availableReplicas === dc.status.updatedReplicas &&
+    dc.spec.replicas === dc.status.availableReplicas
+  ) {
+    return 'Up to date';
+  }
+  return 'Updating';
+};
+
 export const DeploymentConfigDetailsList = ({ dc }) => {
   const { t } = useTranslation();
   const timeout = _.get(dc, 'spec.strategy.rollingParams.timeoutSeconds');
@@ -189,12 +210,7 @@ export const DeploymentConfigsDetails: React.FC<{ obj: K8sResourceKind }> = ({ o
               <ResourceSummary resource={dc} showPodSelector showNodeSelector showTolerations>
                 <dt>{t('public~Status')}</dt>
                 <dd>
-                  {dc.status.availableReplicas === dc.status.updatedReplicas &&
-                  dc.spec.replicas === dc.status.availableReplicas ? (
-                    <Status status="Up to date" />
-                  ) : (
-                    <Status status="Updating" />
-                  )}
+                  <Status status={getDeploymentConfigStatus(dc)} />
                 </dd>
               </ResourceSummary>
             </div>
