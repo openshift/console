@@ -53,7 +53,7 @@ export class CreateOBCHandler {
   }
 
   deleteBucketClaim() {
-    cy.byTestID('co-m-loader').should('not.exist');
+    cy.byTestID('loading-indicator').should('not.exist');
     cy.byLegacyTestID('details-actions')
       .byLegacyTestID('actions-menu-button')
       .should('be.visible')

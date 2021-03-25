@@ -41,7 +41,10 @@ export const LoadError: React.FC<LoadErrorProps> = ({
 LoadError.displayName = 'LoadError';
 
 export const Loading: React.FC<LoadingProps> = ({ className }) => (
-  <div className={classNames('co-m-loader co-an-fade-in-out', className)} data-test="co-m-loader">
+  <div
+    className={classNames('co-m-loader co-an-fade-in-out', className)}
+    data-test="loading-indicator"
+  >
     <div className="co-m-loader-dot__one" />
     <div className="co-m-loader-dot__two" />
     <div className="co-m-loader-dot__three" />

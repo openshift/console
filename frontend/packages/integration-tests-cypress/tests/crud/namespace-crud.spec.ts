@@ -1,5 +1,6 @@
 import { checkErrors, testName } from '../../support';
 import { listPage } from '../../views/list-page';
+import { detailsPage } from '../../views/details-page';
 import { modal } from '../../views/modal';
 import { nav } from '../../views/nav';
 import { projectDropdown } from '../../views/common';
@@ -20,10 +21,12 @@ describe('Namespace', () => {
   });
 
   const newName = `${testName}-ns`;
+  const defaultProjectName = 'default';
+  const allProjectsDropdownLabel = 'All Projects';
 
   it('lists, creates, and deletes', () => {
     cy.log('test Namespace list page');
-    cy.visit('/k8s/cluster/namespaces');
+    nav.sidenav.clickNavLink(['Administration', 'Namespaces']);
     listPage.rows.shouldNotExist(newName);
     listPage.filter.byName(testName);
     listPage.rows.shouldExist(testName); // created via cy.createProject(testName) above
@@ -39,7 +42,7 @@ describe('Namespace', () => {
     cy.url().should('include', `/k8s/cluster/namespaces/${newName}`);
 
     cy.log('delete the Namespace');
-    cy.visit('/k8s/cluster/namespaces');
+    nav.sidenav.clickNavLink(['Administration', 'Namespaces']);
     listPage.filter.byName(newName);
     listPage.rows.shouldExist(newName);
     listPage.rows.clickKebabAction(newName, 'Delete Namespace');
@@ -51,56 +54,51 @@ describe('Namespace', () => {
     cy.resourceShouldBeDeleted(testName, 'namespaces', newName);
   });
 
-  it('nav and breadcrumbs restores last selected "All Projects" when navigating from details to list view', () => {
-    nav.sidenav.clickNavLink(['Workloads', 'Secrets']);
-    projectDropdown.selectProject('All Projects');
-    projectDropdown.shouldContain('All Projects');
+  it('Nav and breadcrumbs restores last selected "All Projects" when navigating from details to list view', () => {
+    nav.sidenav.clickNavLink(['Networking', 'Services']);
+    projectDropdown.selectProject(allProjectsDropdownLabel);
+    projectDropdown.shouldContain(allProjectsDropdownLabel);
+    listPage.rows.shouldBeLoaded();
     cy.log(
-      'Nav from list page to details page should change Project from "All Projects" to resource specific project',
+      'List page to details page should change Project from "All Projects" to resource specific project',
     );
-    cy.get(`[data-test-rows="resource-row"]`)
-      .first()
-      .find('a')
-      .first()
+    listPage.filter.byName('kubernetes');
+    listPage.rows.clickRowByName('kubernetes');
+    detailsPage.isLoaded();
+    projectDropdown.shouldContain(defaultProjectName);
+    nav.sidenav.clickNavLink(['Networking', 'Services']);
+    listPage.rows.shouldBeLoaded();
+    projectDropdown.shouldContain(allProjectsDropdownLabel);
+    cy.log('Details page to list page via breadcrumb should change Project back to "All Projects"');
+    listPage.filter.byName('kubernetes');
+    listPage.rows.clickRowByName('kubernetes');
+    detailsPage.isLoaded();
+    projectDropdown.shouldContain(defaultProjectName);
+    detailsPage
+      .breadcrumb(0)
+      .contains('Services')
       .click();
-    projectDropdown.shouldNotContain('All Projects'); // after drilldown to Details page, project should be specific to resource
-    cy.log(
-      'Nav back to list page from details page via sidebar nav menu should change Project back to "All Projects"',
-    );
-    nav.sidenav.clickNavLink(['Workloads', 'Secrets']);
-    projectDropdown.shouldContain('All Projects');
-    cy.log(
-      'Nav back to list page from details page via breadcrumb should change Project back to "All Projects"',
-    );
-    cy.get(`[data-test-rows="resource-row"]`)
-      .first()
-      .find('a')
-      .first()
-      .click();
-    projectDropdown.shouldNotContain('All Projects'); // after drilldown to Details page, project should be specific to resource
-    cy.byLegacyTestID('breadcrumb-link-0').click();
-    projectDropdown.shouldContain('All Projects');
+    listPage.rows.shouldBeLoaded();
+    projectDropdown.shouldContain(allProjectsDropdownLabel);
   });
 
-  it('nav and breadcrumbs restores last selected Project when navigating from details to list view', () => {
+  it('Nav and breadcrumbs restores last selected project when navigating from details to list view', () => {
     nav.sidenav.clickNavLink(['Workloads', 'Secrets']);
-    projectDropdown.selectProject('default');
-    projectDropdown.shouldContain('default');
-    cy.get(`[data-test-rows="resource-row"]`)
-      .first()
-      .find('a')
-      .first()
-      .click();
-    projectDropdown.shouldContain('default');
+    projectDropdown.selectProject(defaultProjectName);
+    projectDropdown.shouldContain(defaultProjectName);
+    listPage.rows.clickFirstLinkInFirstRow();
+    detailsPage.isLoaded();
+    projectDropdown.shouldContain(defaultProjectName);
     nav.sidenav.clickNavLink(['Workloads', 'Secrets']);
-    projectDropdown.shouldContain('default');
-    cy.get(`[data-test-rows="resource-row"]`)
-      .first()
-      .find('a')
-      .first()
+    projectDropdown.shouldContain(defaultProjectName);
+    listPage.rows.clickFirstLinkInFirstRow();
+    detailsPage.isLoaded();
+    projectDropdown.shouldContain(defaultProjectName);
+    detailsPage
+      .breadcrumb(0)
+      .contains('Secrets')
       .click();
-    projectDropdown.shouldContain('default');
-    cy.byLegacyTestID('breadcrumb-link-0').click();
-    projectDropdown.shouldContain('default');
+    listPage.rows.shouldBeLoaded();
+    projectDropdown.shouldContain(defaultProjectName);
   });
 });

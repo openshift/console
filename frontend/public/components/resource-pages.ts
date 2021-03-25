@@ -61,6 +61,7 @@ import {
   UserModel,
   VolumeSnapshotModel,
   VolumeSnapshotClassModel,
+  ClusterRoleBindingModel,
 } from '../models';
 
 const addResourcePage = (
@@ -228,6 +229,11 @@ export const baseDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
   )
   .set(referenceForModel(RoleModel), () =>
     import('./RBAC/role' /* webpackChunkName: "role" */).then((m) => m.RolesDetailsPage),
+  )
+  .set(referenceForModel(ClusterRoleBindingModel), () =>
+    import('./RBAC/role' /* webpackChunkName: "role" */).then(
+      (m) => m.ClusterRoleBindingsDetailsPage,
+    ),
   )
   .set(referenceForModel(UserModel), () =>
     import('./user' /* webpackChunkName: "user" */).then((m) => m.UserDetailsPage),
