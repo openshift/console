@@ -318,7 +318,7 @@ export const ImageManifestVulnList: React.FC<ImageManifestVulnListProps> = (prop
 export const ImageManifestVulnPage: React.FC<ImageManifestVulnPageProps> = (props) => {
   const { t } = useTranslation();
   const { showTitle = true, hideNameLabelFilters = true } = props;
-  const namespace = props.namespace || props.match.params.ns || props.match.params.name;
+  const namespace = props.namespace || props.match?.params?.ns || props.match?.params?.name;
   return (
     <MultiListPage
       {...props}
