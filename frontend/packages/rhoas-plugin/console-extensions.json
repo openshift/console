@@ -1,5 +1,16 @@
 [
   {
+    "type": "console.flag/model",
+    "properties": {
+      "flag": "RHOAS_FLAG",
+      "model": {
+        "group": "rhoas.redhat.com",
+        "version": "v1alpha1",
+        "kind": "CloudServiceAccountRequest"
+      }
+    }
+  },
+  {
     "type": "dev-console.add/action",
     "flags": {
       "required": ["RHOAS_FLAG"]

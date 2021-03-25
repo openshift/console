@@ -1,4 +1,3 @@
-export const FLAG_RHOAS_KAFKA = 'RHOAS_KAFKA_FLAG';
 export const FLAG_RHOAS = 'RHOAS_FLAG';
 
 export const API_GROUP = 'rhoas.redhat.com';

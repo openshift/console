@@ -49,7 +49,11 @@ const CatalogDetailsPanel: React.FC<CatalogDetailsPanelProps> = ({ item }) => {
             {(details?.descriptions?.length || description) && (
               <div className="co-catalog-page__overlay-description">
                 <Stack hasGutter>
-                  <SectionHeading text={t('devconsole~Description')} />
+                  {details.customHeader ? (
+                    <SectionHeading text={details.customHeader} />
+                  ) : (
+                    <SectionHeading text={t('devconsole~Description')} />
+                  )}
                   {!details?.descriptions?.length && description && <p>{description}</p>}
                   {details?.descriptions?.map((desc, index) => (
                     <StackItem key={index}>

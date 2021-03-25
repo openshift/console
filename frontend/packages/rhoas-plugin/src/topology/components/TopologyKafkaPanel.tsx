@@ -4,17 +4,18 @@ import { connect } from 'react-redux';
 import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
 import { Node } from '@patternfly/react-topology';
 import * as UIActions from '@console/internal/actions/ui';
-import './TopologyKafkaPanel.css';
 import { navFactory, SimpleTabNav } from '@console/internal/components/utils';
 import { ResourcesComponent } from './ResourceComponent';
 import { DetailsComponent } from './DetailsComponent';
+
+import './TopologyKafkaPanel.css';
 
 type PropsFromState = {
   selectedDetailsTab?: string;
 };
 
 type PropsFromDispatch = {
-  onClickTab?: (name: string) => void;
+  onClickTab: (name: string) => void;
 };
 
 const stateToProps = ({ UI }): PropsFromState => ({
@@ -87,7 +88,7 @@ export const ConnectedTopologyRhoasPanel: React.FC<TopologyRhoasPanelProps> = ({
   );
 };
 
-export default connect<PropsFromState, PropsFromDispatch, TopologyRhoasPanelProps>(
+export default connect<PropsFromState, PropsFromDispatch, OwnProps>(
   stateToProps,
   dispatchToProps,
 )(ConnectedTopologyRhoasPanel);

@@ -19,7 +19,7 @@ import {
   CloudServicesRequestModel,
 } from '../models/rhoas';
 import { getFinishedCondition, isResourceStatusSuccessfull } from './conditionHandler';
-import { k8sWaitForUpdate } from './k8sUtils';
+import { k8sWaitForUpdate } from '@console/internal/module/k8s';
 
 /**
  * Create service account for purpose of supplying connection credentials

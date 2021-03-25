@@ -7,7 +7,7 @@ import {
   Plugin,
   HrefNavItem,
 } from '@console/plugin-sdk';
-import { FLAG_RHOAS_KAFKA, FLAG_RHOAS } from './const';
+import { FLAG_RHOAS } from './const';
 import { rhoasTopologyPlugin, TopologyConsumedExtensions } from './topology/rhoas-topology-plugin';
 import * as models from './models';
 
@@ -27,20 +27,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
-    type: 'FeatureFlag/Model',
-    properties: {
-      model: models.KafkaConnectionModel,
-      flag: FLAG_RHOAS_KAFKA,
-    },
-  },
-  {
-    type: 'FeatureFlag/Model',
-    properties: {
-      model: models.CloudServiceAccountRequest,
-      flag: FLAG_RHOAS,
-    },
-  },
-  {
     type: 'Page/Route',
     properties: {
       exact: true,
@@ -53,7 +39,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         ).default,
     },
     flags: {
-      required: [FLAG_RHOAS_KAFKA],
+      required: [FLAG_RHOAS],
     },
   },
   ...rhoasTopologyPlugin,

@@ -55,7 +55,7 @@ export const rhoasTopologyPlugin: Plugin<TopologyConsumedExtensions> = [
     type: 'Topology/CreateConnector',
     properties: {
       getCreateConnector: getExecutableCodeRef(() =>
-        import('./createConnector' /* webpackChunkName: "operators-service-bindings" */).then(
+        import('./createConnector' /* webpackChunkName: "rhoas-create-connector" */).then(
           (m) => m.getCreateConnector,
         ),
       ),
