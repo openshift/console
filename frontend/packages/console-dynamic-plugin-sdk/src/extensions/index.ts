@@ -9,4 +9,5 @@ export * from './pages';
 export * from './pvc';
 export * from './redux';
 export * from './yaml-templates';
+export * from './topology-details';
 export * from './file-upload';

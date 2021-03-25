@@ -12,7 +12,7 @@ namespace ExtensionProperties {
     /** A react hook which creates and returns action for the given scope.
      * If contextId = `resource` then the scope will always be a K8s resource object
      * */
-    creator?: EncodedCodeRef;
+    creator: EncodedCodeRef;
   };
 
   export type ActionProvider = {
@@ -21,7 +21,7 @@ namespace ExtensionProperties {
     /** A react hook which returns action for the given scope.
      * If contextId = `resource` then the scope will always be a K8s resource object
      * */
-    provider?: EncodedCodeRef;
+    provider: EncodedCodeRef;
   };
 
   export type ResourceActionProvider = {
@@ -32,14 +32,18 @@ namespace ExtensionProperties {
       kind?: string;
     };
     /** The action ids to contribute to */
-    provider?: string[];
+    actions: string[];
   };
 
-  export type ActionSection = {
+  export type ActionGroup = {
     /** ID used to identify the action section. */
     id: string;
-    /** The label to display in the UI. */
-    label: string;
+    /** The label to display in the UI.
+     * Required for submenus.
+     * */
+    label?: string;
+    /** Whether this group should be displayed as submenu */
+    submenu?: boolean;
     /** Insert this item before the item referenced here.
      * For arrays, the first one found in order is used.
      * */
@@ -62,15 +66,15 @@ namespace ExtensionProperties {
   };
 
   export type ActionCreatorCodeRefs = {
-    creator?: CodeRef<ExtensionHook<Action>>;
+    creator: CodeRef<ExtensionHook<Action>>;
   };
 
   export type ActionProviderCodeRefs = {
-    provider?: CodeRef<ExtensionHook<string[]>>;
+    provider: CodeRef<ExtensionHook<string[]>>;
   };
 
   export type ActionFilterCodeRefs = {
-    filter?: CodeRef<(scope: any, action: Action) => boolean>;
+    filter: CodeRef<(scope: any, action: Action) => boolean>;
   };
 }
 
@@ -86,8 +90,8 @@ export type ResourceActionProvider = Extension<ExtensionProperties.ResourceActio
   type: 'console.action/resource-provider';
 };
 
-export type ActionSection = Extension<ExtensionProperties.ActionSection> & {
-  type: 'console.action/section';
+export type ActionGroup = Extension<ExtensionProperties.ActionGroup> & {
+  type: 'console.action/group';
 };
 
 export type ActionFilter = Extension<ExtensionProperties.ActionFilter> & {
@@ -121,8 +125,8 @@ export const isResourceActionProvider = (e: Extension): e is ResourceActionProvi
   return e.type === 'console.action/resource-provider';
 };
 
-export const isActionSection = (e: Extension): e is ActionSection => {
-  return e.type === 'console.action/section';
+export const isActionGroup = (e: Extension): e is ActionGroup => {
+  return e.type === 'console.action/group';
 };
 
 export const isActionFilter = (e: Extension): e is ResolvedActionFilter => {
@@ -137,7 +141,7 @@ export type Action = {
   /** Executable callback or href.
    * External links should automatically provide an external link icon on action.
    * */
-  cta: () => void | { href: string; external: boolean };
+  cta: () => void | { href: string; external?: boolean };
   /** Whether the action is disabled. */
   disabled?: boolean;
   /** The tooltip for this action. */
