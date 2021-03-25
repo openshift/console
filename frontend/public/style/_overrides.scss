@@ -515,3 +515,7 @@ button.pf-c-dropdown__menu-item.pf-m-disabled {
 .text-muted {
   color: var(--pf-global--Color--200);
 }
+
+.form-group--doubled-bottom-margin {
+  margin-bottom: ($form-group-margin-bottom * 2);
+}
