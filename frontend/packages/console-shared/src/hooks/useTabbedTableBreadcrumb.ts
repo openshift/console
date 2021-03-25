@@ -22,7 +22,7 @@ export const useTabbedTableBreadcrumbsFor = (
   customBreadcrumbName?: string,
 ) => {
   const { t } = useTranslation();
-  const { label, labelPlural } = kindObj;
+  const { label, labelKey, labelPlural, labelPluralKey } = kindObj;
   const currentNamespace = useSelector((state: RootState) => getActiveNamespace(state));
   const isAdminPerspective = useActivePerspective()[0] === 'admin';
   const nsURL =
@@ -33,22 +33,29 @@ export const useTabbedTableBreadcrumbsFor = (
         ? []
         : [
             {
-              name: customBreadcrumbName || labelPlural,
+              name: customBreadcrumbName || labelPluralKey ? t(labelPluralKey) : labelPlural,
               path: isAdminPerspective
                 ? `/${navOption}/${nsURL}/${subTab}`
                 : getBreadcrumbPath(match),
             },
-            { name: t('console-shared~{{label}} details', { label }), path: match.url },
+            {
+              name: t('console-shared~{{label}} details', {
+                label: labelKey ? t(labelKey) : label,
+              }),
+              path: match.url,
+            },
           ],
     [
       subTab,
       customBreadcrumbName,
+      labelPluralKey,
+      t,
       labelPlural,
       isAdminPerspective,
       navOption,
       nsURL,
       match,
-      t,
+      labelKey,
       label,
     ],
   );
