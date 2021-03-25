@@ -1,3 +1,4 @@
+export * from './actions';
 export * from './add-actions';
 export * from './catalog';
 export * from './cluster-settings';

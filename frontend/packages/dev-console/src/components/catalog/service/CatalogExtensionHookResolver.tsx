@@ -1,13 +1,13 @@
 import * as React from 'react';
 import {
   CatalogItem,
-  CatalogExtensionHook,
+  ExtensionHook,
   CatalogExtensionHookOptions,
 } from '@console/dynamic-plugin-sdk';
 
 type CatalogExtensionHookResolverProps = {
   id: string;
-  useValue: CatalogExtensionHook<CatalogItem[]>;
+  useValue: ExtensionHook<CatalogItem[]>;
   options: CatalogExtensionHookOptions;
   onValueResolved: (value: CatalogItem[], id: string) => void;
   onValueError: (error: any) => void;

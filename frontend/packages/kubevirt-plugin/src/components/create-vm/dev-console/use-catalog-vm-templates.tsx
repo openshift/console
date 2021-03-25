@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import { Form, Stack, StackItem } from '@patternfly/react-core';
 import { getNamespace } from '@console/shared';
-import { CatalogExtensionHook, CatalogItem } from '@console/dynamic-plugin-sdk';
+import { ExtensionHook, CatalogItem } from '@console/dynamic-plugin-sdk';
 import { humanizeBinaryBytes, SectionHeading } from '@console/internal/components/utils';
 import { PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
 import { FormRow } from '../../form/form-row';
@@ -193,7 +193,7 @@ const normalizeVmTemplates = (
     };
   });
 
-const useCatalogVmTemplates: CatalogExtensionHook<CatalogItem[]> = ({
+const useCatalogVmTemplates: ExtensionHook<CatalogItem[]> = ({
   namespace,
 }): [CatalogItem[], boolean, any] => {
   const { t } = useTranslation();

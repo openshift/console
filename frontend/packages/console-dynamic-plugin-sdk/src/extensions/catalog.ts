@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Extension } from '@console/plugin-sdk/src/typings/base';
 import { CodeRef, EncodedCodeRef, UpdateExtensionProperties } from '../types';
+import { ExtensionHook } from '../utils/common';
 
 namespace ExtensionProperties {
   export type CatalogItemType = {
@@ -36,7 +37,7 @@ namespace ExtensionProperties {
   };
 
   export type CatalogItemProviderCodeRefs = {
-    provider: CodeRef<CatalogExtensionHook<CatalogItem[]>>;
+    provider: CodeRef<ExtensionHook<CatalogItem[], CatalogExtensionHookOptions>>;
   };
 
   export type CatalogItemFilterCodeRefs = {
@@ -84,15 +85,9 @@ export const isCatalogItemFilter = (e: Extension): e is ResolvedCatalogItemFilte
 
 // Support types
 
-export type CatalogExtensionHookResult<T> = [T, boolean, any];
-
 export type CatalogExtensionHookOptions = {
   namespace: string;
 };
-
-export type CatalogExtensionHook<T> = (
-  options: CatalogExtensionHookOptions,
-) => CatalogExtensionHookResult<T>;
 
 export type CatalogItem<T extends any = any> = {
   uid: string;

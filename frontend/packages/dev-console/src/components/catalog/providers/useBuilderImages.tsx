@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { Trans, useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
-import { CatalogExtensionHook, CatalogItem } from '@console/dynamic-plugin-sdk';
+import { ExtensionHook, CatalogItem } from '@console/dynamic-plugin-sdk';
 import {
   getAnnotationTags,
   getMostRecentBuilderTag,
@@ -122,7 +122,7 @@ const normalizeBuilderImages = (
   return normalizedBuilderImages;
 };
 
-const useBuilderImages: CatalogExtensionHook<CatalogItem[]> = ({
+const useBuilderImages: ExtensionHook<CatalogItem[]> = ({
   namespace,
 }): [CatalogItem[], boolean, any] => {
   const { t } = useTranslation();

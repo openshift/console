@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { CatalogExtensionHook, CatalogItem } from '@console/dynamic-plugin-sdk';
+import { ExtensionHook, CatalogItem } from '@console/dynamic-plugin-sdk';
 import { getImageForCSVIcon } from '@console/shared';
 import { SyncMarkdownView } from '@console/internal/components/markdown-view';
 import { ExpandCollapse } from '@console/internal/components/utils';
@@ -133,7 +133,7 @@ const normalizeClusterServiceVersions = (
   return operatorProvidedAPIs;
 };
 
-const useClusterServiceVersions: CatalogExtensionHook<CatalogItem[]> = ({
+const useClusterServiceVersions: ExtensionHook<CatalogItem[]> = ({
   namespace,
 }): [CatalogItem[], boolean, any] => {
   const { t } = useTranslation();
