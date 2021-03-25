@@ -19,20 +19,10 @@ type ServiceInstanceProps = {
   disableCreateButton: boolean;
 };
 
-function areAllServicesSelected(currentServices: string[], listOfServices: CloudKafka[]) {
-  const selectedServices = listOfServices.reduce((count, service) => {
-    if (service.status !== 'ready') {
-      return count;
-    }
-    for (const selectedService of currentServices) {
-      if (selectedService === service.id) {
-        return count;
-      }
-    }
-    return count + 1;
-  }, 0);
-  return selectedServices === 0;
-}
+const areAllServicesSelected = (currentServices: string[], listOfServices: CloudKafka[]) =>
+  listOfServices.some(
+    (service) => service.status !== 'ready' || !currentServices.includes(service.id),
+  );
 
 const ServiceInstance: React.FC<ServiceInstanceProps> = ({
   kafkaArray,
@@ -43,7 +33,6 @@ const ServiceInstance: React.FC<ServiceInstanceProps> = ({
   disableCreateButton,
 }: ServiceInstanceProps) => {
   const [textInputNameValue, setTextInputNameValue] = React.useState<string>('');
-  // const [pageKafkas, setPageKafkas] = React.useState<CloudKafka[]>(kafkaArray);
 
   const pageKafkas = React.useMemo(
     () => kafkaArray.filter((kafka) => kafka.name.includes(textInputNameValue)),
@@ -51,10 +40,6 @@ const ServiceInstance: React.FC<ServiceInstanceProps> = ({
   );
 
   const { t } = useTranslation();
-
-  const handleTextInputNameChange = (value: string) => {
-    setTextInputNameValue(value);
-  };
 
   return (
     <FlexForm>
@@ -67,7 +52,7 @@ const ServiceInstance: React.FC<ServiceInstanceProps> = ({
           marginBottom="lg"
         />
         <FormSection fullWidth flexLayout extraMargin>
-          {areAllServicesSelected(currentKafkaConnections, kafkaArray) ? (
+          {!areAllServicesSelected(currentKafkaConnections, kafkaArray) ? (
             <ServicesEmptyState
               title={t('rhoas-plugin~All Kafka clusters are in use')}
               actionLabel={t('rhoas-plugin~Go back to Services Catalog')}
@@ -83,7 +68,7 @@ const ServiceInstance: React.FC<ServiceInstanceProps> = ({
             <>
               <ServiceInstanceFilter
                 textInputNameValue={textInputNameValue}
-                handleTextInputNameChange={handleTextInputNameChange}
+                setTextInputNameValue={setTextInputNameValue}
               />
               <ServiceInstanceTable
                 kafkaArray={kafkaArray}

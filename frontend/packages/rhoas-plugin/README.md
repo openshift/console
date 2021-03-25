@@ -1,3 +1,3 @@
 ## ROAS OpenShift Console Plugin
 
-RHOAS plugin provides number of components for Red Hat Cloud Services
+RHOAS plugin provides a number of components for Red Hat Cloud Services

@@ -11,12 +11,12 @@ import { KEYBOARD_SHORTCUTS } from '@console/shared';
 
 type ServiceInstanceFilterProps = {
   textInputNameValue: string;
-  handleTextInputNameChange: (textInputNameValue: string) => void;
+  setTextInputNameValue: (textInputNameValue: string) => void;
 };
 
 const ServiceInstanceFilter: React.FC<ServiceInstanceFilterProps> = ({
   textInputNameValue,
-  handleTextInputNameChange,
+  setTextInputNameValue,
 }: ServiceInstanceFilterProps) => {
   const { t } = useTranslation();
 
@@ -29,9 +29,9 @@ const ServiceInstanceFilter: React.FC<ServiceInstanceFilterProps> = ({
               <TextInput
                 value={textInputNameValue}
                 type="text"
-                onChange={handleTextInputNameChange}
+                onChange={(value) => setTextInputNameValue(value)}
                 aria-label={t('rhoas-plugin~Search by name')}
-                placeholder={t('rhoas-plugin~Search by name...')}
+                placeholder={`${t('rhoas-plugin~Search by name')}...`}
                 className="co-text-filter"
               />
               <span className="form-control-feedback form-control-feedback--keyboard-hint">

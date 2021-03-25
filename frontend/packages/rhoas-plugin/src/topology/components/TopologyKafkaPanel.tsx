@@ -10,7 +10,7 @@ import { ResourcesComponent } from './ResourceComponent';
 import { DetailsComponent } from './DetailsComponent';
 
 type PropsFromState = {
-  selectedDetailsTab?: any;
+  selectedDetailsTab?: string;
 };
 
 type PropsFromDispatch = {
@@ -41,13 +41,11 @@ export const ConnectedTopologyRhoasPanel: React.FC<TopologyRhoasPanelProps> = ({
   // Resource
   const akc = item?.getData().resource;
   if (!akc) {
-    return <>No data</>;
+    return <>{t('rhoas-plugin~No data')}</>;
   }
 
   const handleAlertFunction = () => {
-    if (showAlert) {
-      setShowAlert(false);
-    }
+    setShowAlert(false);
   };
 
   return (
@@ -55,7 +53,7 @@ export const ConnectedTopologyRhoasPanel: React.FC<TopologyRhoasPanelProps> = ({
       <div className="overview__sidebar-pane-head resource-overview__heading">
         <h1 className="co-m-pane__heading">
           <div className="co-m-pane__name co-resource-item">
-            <h3>Kafka Connection</h3>
+            <h3>{t('rhoas-plugin~Kafka Connection')}</h3>
           </div>
         </h1>
         {showAlert && (
@@ -76,8 +74,11 @@ export const ConnectedTopologyRhoasPanel: React.FC<TopologyRhoasPanelProps> = ({
         selectedTab={selectedDetailsTab}
         onClickTab={onClickTab}
         tabs={[
-          { name: 'Details', component: navFactory.details(DetailsComponent).component },
-          { name: 'Resources', component: ResourcesComponent },
+          {
+            name: t('rhoas-plugin~Details'),
+            component: navFactory.details(DetailsComponent).component,
+          },
+          { name: t('rhoas-plugin~Resources'), component: ResourcesComponent },
         ]}
         tabProps={{ obj: akc }}
         additionalClassNames="co-m-horizontal-nav__menu--within-sidebar co-m-horizontal-nav__menu--within-overview-sidebar"

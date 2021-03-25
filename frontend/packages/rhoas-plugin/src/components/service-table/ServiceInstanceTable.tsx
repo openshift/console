@@ -59,8 +59,8 @@ const ServiceInstanceTable: React.FC<ServiceInstanceTableProps> = ({
             cells: [
               { title: name },
               { title: provider === 'aws' ? 'Amazon Web Services' : provider },
-              { title: region },
-              { title: <a href="/">{owner}</a> },
+              { title: region === 'us-east-1' ? 'US East, N.Virginia' : region },
+              { title: owner },
               { title: status[0].toUpperCase() + status.substring(1) },
               { title: <Timestamp timestamp={createdAt} /> },
             ],
@@ -102,15 +102,15 @@ const ServiceInstanceTable: React.FC<ServiceInstanceTableProps> = ({
             <EmptyState variant={EmptyStateVariant.small}>
               <EmptyStateIcon icon={SearchIcon} />
               <Title headingLevel="h2" size="lg">
-                {t('No results found')}
+                {t('rhoas-plugin~No results found')}
               </Title>
               <EmptyStateBody>
                 {t(
-                  'No results match the filter criteria. Remove all filters or clear all filters to show results.',
+                  'rhoas-plugin~No results match the filter criteria. Remove all filters or clear all filters to show results.',
                 )}
               </EmptyStateBody>
               <Button variant="link" onClick={clearFilters}>
-                Clear all filters
+                {t('rhoas-plugin~Clear all filters')}
               </Button>
             </EmptyState>
           </Bullseye>
@@ -150,21 +150,19 @@ const ServiceInstanceTable: React.FC<ServiceInstanceTableProps> = ({
   };
 
   return formattedKafkas && pageKafkas ? (
-    <>
-      <Table
-        aria-label={t('rhoas-plugin~List of Kafka Instances')}
-        cells={tableColumns}
-        rows={formattedKafkas}
-        onSelect={onSelectTableRow}
-        selectVariant={RowSelectVariant.radio}
-        className="rhoas-plugin--service-table"
-        onSort={onSort}
-        sortBy={sortBy}
-      >
-        <TableHeader />
-        {pageKafkas.length === 0 ? emptyStateRows : <TableBody />}
-      </Table>
-    </>
+    <Table
+      aria-label={t('rhoas-plugin~List of Kafka Instances')}
+      cells={tableColumns}
+      rows={formattedKafkas}
+      onSelect={onSelectTableRow}
+      selectVariant={RowSelectVariant.radio}
+      className="rhoas-service-instance-table"
+      onSort={onSort}
+      sortBy={sortBy}
+    >
+      <TableHeader />
+      {pageKafkas.length === 0 ? emptyStateRows : <TableBody />}
+    </Table>
   ) : null;
 };
 

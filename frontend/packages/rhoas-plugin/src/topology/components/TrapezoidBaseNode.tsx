@@ -118,7 +118,7 @@ const TrapezoidBaseNode: React.FC<TrapezoidBaseNodeProps> = ({
       position="top"
     >
       <g
-        className={classNames('rhoas-plugin--trapezoid-node', className, {
+        className={classNames('rhoas-trapezoid-base-node', className, {
           'is-hover': hover || contextMenuOpen,
           'is-highlight': canDrop,
           'is-dragging': dragging || edgeDragging,
@@ -142,7 +142,7 @@ const TrapezoidBaseNode: React.FC<TrapezoidBaseNodeProps> = ({
                 ? 'circle-hover'
                 : 'circle'
             }
-            className="rhoas-plugin--trapezoid-node__bg"
+            className="rhoas-trapezoid-base-node__bg"
             ref={pathRefs}
             cx={cx}
             cy={cy}
@@ -163,7 +163,7 @@ const TrapezoidBaseNode: React.FC<TrapezoidBaseNodeProps> = ({
           )}
           {showLabels && (kind || element.getLabel()) && (
             <SvgBoxedText
-              className="rhoas-plugin--trapezoid-node__label"
+              className="rhoas-trapezoid-base-node__label"
               x={cx}
               y={cy + outerRadius + 24}
               paddingX={8}

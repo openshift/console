@@ -11,6 +11,7 @@ import {
   Alert,
 } from '@patternfly/react-core';
 import { createServiceAccountIfNeeded, createSecretIfNeeded } from '../../utils/resourceCreators';
+import { APITokenLengthMinimum } from '../../const';
 
 type ServiceTokenProps = {
   namespace: string;
@@ -62,7 +63,7 @@ export const ServiceToken: React.FC<ServiceTokenProps> = ({ namespace }: Service
             onChange={setApiTokenValue}
             type="password"
             name="apitoken"
-            aria-label="rhoas-token"
+            aria-label={t('rhoas-plugin~API Token')}
           />
         </FormGroup>
         <TextContent>
@@ -76,19 +77,9 @@ export const ServiceToken: React.FC<ServiceTokenProps> = ({ namespace }: Service
             key="confirm"
             variant="primary"
             onClick={onCreate}
-            isDisabled={apiTokenValue.length < 500 ? true : sendDisabled}
+            isDisabled={apiTokenValue.length < APITokenLengthMinimum ? true : sendDisabled}
           >
             {t('rhoas-plugin~Create')}
-          </Button>
-          <Button
-            key="reset"
-            variant="link"
-            onClick={() => {
-              setApiTokenValue('');
-              setErrorMessage('');
-            }}
-          >
-            {t('rhoas-plugin~Reset')}
           </Button>
         </FormGroup>
       </Form>

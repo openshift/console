@@ -51,7 +51,7 @@ const ServiceListPage: React.FC = () => {
     optional: true,
   });
 
-  let remoteKafkaInstances;
+  const remoteKafkaInstances = watchedKafkaRequest?.status?.userKafkas;
 
   const createKafkaConnectionFlow = React.useCallback(async () => {
     const { id, name } = remoteKafkaInstances[selectedKafka];
@@ -67,8 +67,8 @@ const ServiceListPage: React.FC = () => {
   if (kafkaCreateError) {
     return (
       <ServicesErrorState
-        title={t('Failed to create connection')}
-        message={kafkaCreateError + t('Please try again')}
+        title={t('rhoas-plugin~Failed to create connection')}
+        message={kafkaCreateError + t('rhoas-plugin~Please try again')}
         actionInfo={t('rhoas-plugin~Go back to Services Catalog')}
       />
     );
@@ -97,12 +97,11 @@ const ServiceListPage: React.FC = () => {
           })}
           actionInfo={t('rhoas-plugin~Go back to Services Catalog')}
         />
-        <div />
       </>
     );
   }
 
-  remoteKafkaInstances = watchedKafkaRequest.status.userKafkas;
+  // remoteKafkaInstances = watchedKafkaRequest.status.userKafkas;
 
   const disableCreateButton = () => {
     if (selectedKafka === null || selectedKafka === undefined) {
@@ -115,18 +114,16 @@ const ServiceListPage: React.FC = () => {
   };
 
   return (
-    <>
-      <NamespacedPage variant={NamespacedPageVariants.light} disabled hideApplications>
-        <ServiceInstance
-          kafkaArray={remoteKafkaInstances}
-          selectedKafka={selectedKafka}
-          setSelectedKafka={setSelectedKafka}
-          currentKafkaConnections={currentKafkaConnections}
-          createKafkaConnectionFlow={createKafkaConnectionFlow}
-          disableCreateButton={disableCreateButton()}
-        />
-      </NamespacedPage>
-    </>
+    <NamespacedPage variant={NamespacedPageVariants.light} disabled hideApplications>
+      <ServiceInstance
+        kafkaArray={remoteKafkaInstances}
+        selectedKafka={selectedKafka}
+        setSelectedKafka={setSelectedKafka}
+        currentKafkaConnections={currentKafkaConnections}
+        createKafkaConnectionFlow={createKafkaConnectionFlow}
+        disableCreateButton={disableCreateButton()}
+      />
+    </NamespacedPage>
   );
 };
 

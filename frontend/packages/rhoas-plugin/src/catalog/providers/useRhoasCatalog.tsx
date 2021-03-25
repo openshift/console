@@ -23,6 +23,8 @@ const useRhoasCatalog: CatalogExtensionHook<CatalogItem[]> = ({
   namespace,
 }): [CatalogItem[], boolean, any] => {
   const { t } = useTranslation();
+  const connectLabel = t('rhoas-plugin~Connect');
+
   const [serviceAccount, loaded, errorMsg] = useK8sWatchResource({
     kind: referenceForModel(CloudServiceAccountRequest),
     isList: false,
@@ -63,25 +65,6 @@ const useRhoasCatalog: CatalogExtensionHook<CatalogItem[]> = ({
       </TextContent>
     );
 
-    const cloudServicesCardDescription = (
-      <Flex direction={{ default: 'column' }}>
-        <FlexItem>
-          <TextContent>
-            <Text component={TextVariants.p}>
-              {t('rhoas-plugin~ManagedServices-card-description')}
-            </Text>
-          </TextContent>
-        </FlexItem>
-        <Divider component="li" />
-        <FlexItem>
-          <Text component={TextVariants.h2}>
-            {t('rhoas-plugin~Access Red Hat Cloud Services with API Token')}
-          </Text>
-          <ServiceToken namespace={namespace} />
-        </FlexItem>
-      </Flex>
-    );
-
     const serviceKafkaCardDetailsDescription = [
       {
         value: serviceKafkaCardDescription,
@@ -90,7 +73,14 @@ const useRhoasCatalog: CatalogExtensionHook<CatalogItem[]> = ({
 
     const cloudServicesCardDetailsDescription = [
       {
-        value: cloudServicesCardDescription,
+        value: t('rhoas-plugin~ManagedServices-card-description'),
+      },
+      {
+        value: <Divider component="li" />,
+      },
+      {
+        label: t('rhoas-plugin~Access Red Hat Cloud Services with API Token'),
+        value: <ServiceToken namespace={namespace} />,
       },
     ];
 
@@ -107,7 +97,7 @@ const useRhoasCatalog: CatalogExtensionHook<CatalogItem[]> = ({
             url: kafkaIcon,
           },
           cta: {
-            label: 'Connect',
+            label: connectLabel,
             href: `/rhoas/ns/${namespace}/kafka`,
           },
           details: {
@@ -135,7 +125,7 @@ const useRhoasCatalog: CatalogExtensionHook<CatalogItem[]> = ({
       },
     ];
     return cloudServicesCard;
-  }, [namespace, errorMsg, isServiceAccountValid, loaded, serviceAccount, t]);
+  }, [loaded, errorMsg, t, namespace, isServiceAccountValid, serviceAccount, connectLabel]);
 
   return [services, loadedOrError, undefined];
 };

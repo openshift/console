@@ -28,10 +28,7 @@ export const ServicesErrorState = ({
 
   return (
     <EmptyState>
-      <EmptyStateIcon
-        className="rhoas-plugin--services-empty-state--error-icon"
-        icon={ErrorCircle}
-      />
+      <EmptyStateIcon className="rhoas-services-error-state-icon" icon={ErrorCircle} />
       <Title headingLevel="h4" size="lg">
         {title}
       </Title>
