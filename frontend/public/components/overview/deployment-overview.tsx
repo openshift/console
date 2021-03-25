@@ -1,5 +1,5 @@
 import * as React from 'react';
-
+import { useTranslation } from 'react-i18next';
 import { DeploymentModel } from '../../models';
 import { DeploymentKind } from '../../module/k8s';
 import { DeploymentDetailsList, menuActions } from '../deployment';
@@ -13,6 +13,7 @@ import { OverviewItem } from '@console/shared';
 const DeploymentOverviewDetails: React.SFC<DeploymentOverviewDetailsProps> = ({
   item: { obj: d },
 }) => {
+  const { t } = useTranslation();
   return (
     <div className="overview__sidebar-pane-body resource-overview__body">
       {d.spec.paused && <WorkloadPausedAlert obj={d} model={DeploymentModel} />}
@@ -21,16 +22,16 @@ const DeploymentOverviewDetails: React.SFC<DeploymentOverviewDetailsProps> = ({
       </div>
       <div className="resource-overview__summary">
         <ResourceSummary resource={d} showPodSelector showNodeSelector showTolerations>
-          <dt>Status</dt>
+          <dt>{t('public~Status')}</dt>
           <dd>
             {d.status.availableReplicas === d.status.updatedReplicas ? (
-              'Active'
+              t('public~Active')
             ) : (
               <div>
                 <span className="co-icon-space-r">
                   <LoadingInline />
                 </span>{' '}
-                Updating
+                {t('public~Updating')}
               </div>
             )}
           </dd>
@@ -43,28 +44,32 @@ const DeploymentOverviewDetails: React.SFC<DeploymentOverviewDetailsProps> = ({
   );
 };
 
-const tabs = [
-  {
-    name: 'Details',
-    component: DeploymentOverviewDetails,
-  },
-  {
-    name: 'Resources',
-    component: OverviewDetailsResourcesTab,
-  },
-];
-
 export const DeploymentOverviewPage: React.SFC<DeploymentOverviewProps> = ({
   item,
   customActions,
-}) => (
-  <ResourceOverviewDetails
-    item={item}
-    kindObj={DeploymentModel}
-    menuActions={customActions ? [...customActions, ...menuActions] : menuActions}
-    tabs={tabs}
-  />
-);
+}) => {
+  const { t } = useTranslation();
+
+  const tabs = [
+    {
+      name: t('public~Details'),
+      component: DeploymentOverviewDetails,
+    },
+    {
+      name: t('public~Resources'),
+      component: OverviewDetailsResourcesTab,
+    },
+  ];
+
+  return (
+    <ResourceOverviewDetails
+      item={item}
+      kindObj={DeploymentModel}
+      menuActions={customActions ? [...customActions, ...menuActions] : menuActions}
+      tabs={tabs}
+    />
+  );
+};
 
 type DeploymentOverviewDetailsProps = {
   item: OverviewItem<DeploymentKind>;

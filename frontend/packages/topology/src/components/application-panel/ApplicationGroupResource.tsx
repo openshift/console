@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { K8sResourceKind, referenceFor } from '@console/internal/module/k8s';
 import { SidebarSectionHeading } from '@console/internal/components/utils';
 import { getActiveNamespace } from '@console/internal/actions/ui';
@@ -18,8 +19,9 @@ const ApplicationGroupResource: React.FC<ApplicationGroupResourceProps> = ({
   title,
   resourcesData,
   group,
-}) =>
-  !_.isEmpty(resourcesData) ? (
+}) => {
+  const { t } = useTranslation();
+  return !_.isEmpty(resourcesData) ? (
     <div className="overview__sidebar-pane-body">
       <SidebarSectionHeading text={title}>
         {_.size(resourcesData) > MAX_RESOURCES && (
@@ -29,12 +31,13 @@ const ApplicationGroupResource: React.FC<ApplicationGroupResourceProps> = ({
               resourcesData[0],
             )}&q=${encodeURIComponent(`app.kubernetes.io/part-of=${group}`)}`}
           >
-            {`View all (${_.size(resourcesData)})`}
+            {t('topology~View all {{size}}', { size: _.size(resourcesData) })}
           </Link>
         )}
       </SidebarSectionHeading>
       <TopologyApplicationResourceList resources={_.take(resourcesData, MAX_RESOURCES)} />
     </div>
   ) : null;
+};
 
 export default ApplicationGroupResource;

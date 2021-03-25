@@ -82,7 +82,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
   const selectContent = (
     <div className="odc-topology-filter-dropdown">
       <div className="odc-topology-filter-dropdown__group">
-        <span className="pf-c-select__menu-group-title">Mode</span>
+        <span className="pf-c-select__menu-group-title">{t('topology~Mode')}</span>
         <div className="odc-topology-filter-dropdown__radio-group">
           <Radio
             className="odc-topology-filter-dropdown__radio"
@@ -105,7 +105,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
       {expandFilters.length ? (
         <div className="odc-topology-filter-dropdown__group">
           <span className="odc-topology-filter-dropdown__expand-groups-switcher">
-            <span className="pf-c-select__menu-group-title">Expand</span>
+            <span className="pf-c-select__menu-group-title">{t('topology~Expand')}</span>
             <Switch
               aria-label={t('topology~Collapse groups')}
               isChecked={groupsExpanded}

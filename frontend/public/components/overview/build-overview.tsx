@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 import { SyncAltIcon } from '@patternfly/react-icons';
 import { Button } from '@patternfly/react-core';
 import { LogSnippet, Status, StatusIconAndText, BuildConfigOverviewItem } from '@console/shared';
@@ -11,20 +12,62 @@ import { BuildConfigModel } from '../../models';
 import { BuildPhase, startBuild } from '../../module/k8s/builds';
 import { ResourceLink, SidebarSectionHeading, useAccessReview } from '../utils';
 
-const conjugateBuildPhase = (phase: BuildPhase): string => {
-  switch (phase) {
+const StatusTitle = ({ build }: { build: K8sResourceKind }) => {
+  const { t } = useTranslation();
+  const link = <BuildNumberLink build={build} />;
+  switch (build.status.phase) {
     case BuildPhase.Cancelled:
-      return 'was cancelled';
+      return (
+        <Trans t={t} ns="public">
+          Build {link} was cancelled
+        </Trans>
+      );
+    case BuildPhase.Complete:
+      return (
+        <Trans t={t} ns="public">
+          Build {link} was complete
+        </Trans>
+      );
     case BuildPhase.Error:
-      return 'encountered an error';
+      return (
+        <Trans t={t} ns="public">
+          Build {link} encountered an error
+        </Trans>
+      );
     case BuildPhase.Failed:
-      return 'failed';
+      return (
+        <Trans t={t} ns="public">
+          Build {link} failed
+        </Trans>
+      );
+    case BuildPhase.New:
+      return (
+        <Trans t={t} ns="public">
+          Build {link} is new
+        </Trans>
+      );
+    case BuildPhase.Pending:
+      return (
+        <Trans t={t} ns="public">
+          Build {link} is pending
+        </Trans>
+      );
+    case BuildPhase.Running:
+      return (
+        <Trans t={t} ns="public">
+          Build {link} is running
+        </Trans>
+      );
     default:
-      return `is ${_.toLower(phase)}`;
+      return (
+        <Trans t={t} ns="public">
+          Build {link} is {_.toLower(build.status.phase)}
+        </Trans>
+      );
   }
 };
 
-const BuildStatus = ({ build }) => {
+const BuildStatus = ({ build }: { build: K8sResourceKind }) => {
   const {
     status: { logSnippet, message, phase },
   } = build;
@@ -38,19 +81,6 @@ const BuildOverviewItem: React.SFC<BuildOverviewListItemProps> = ({ build }) => 
     status: { completionTimestamp, startTimestamp, phase },
   } = build;
   const lastUpdated = completionTimestamp || startTimestamp || creationTimestamp;
-
-  const statusTitle = (
-    <div>
-      Build <BuildNumberLink build={build} /> {conjugateBuildPhase(phase)}
-      {lastUpdated && (
-        <>
-          {' '}
-          <span className="build-overview__item-time text-muted">({fromNow(lastUpdated)})</span>
-        </>
-      )}
-    </div>
-  );
-
   return (
     <li className="list-group-item build-overview__item">
       <div className="build-overview__item-title">
@@ -62,7 +92,17 @@ const BuildOverviewItem: React.SFC<BuildOverviewListItemProps> = ({ build }) => 
               <Status status={phase} iconOnly />
             )}
           </div>
-          {statusTitle}
+          <div>
+            <StatusTitle build={build} />
+            {lastUpdated && (
+              <>
+                {' '}
+                <span className="build-overview__item-time text-muted">
+                  ({fromNow(lastUpdated)})
+                </span>
+              </>
+            )}
+          </div>
         </div>
         <div>
           <BuildLogLink build={build} />
@@ -78,6 +118,7 @@ const BuildOverviewList: React.SFC<BuildOverviewListProps> = ({ buildConfig }) =
     metadata: { name, namespace },
     builds,
   } = buildConfig;
+  const { t } = useTranslation();
 
   const canStartBuild = useAccessReview({
     group: BuildConfigModel.apiGroup,
@@ -87,14 +128,12 @@ const BuildOverviewList: React.SFC<BuildOverviewListProps> = ({ buildConfig }) =
     namespace,
     verb: 'create',
   });
-
   const onClick = () => {
     startBuild(buildConfig).catch((err) => {
       const error = err.message;
       errorModal({ error });
     });
   };
-
   return (
     <ul className="list-group">
       <li className="list-group-item build-overview__item">
@@ -105,7 +144,7 @@ const BuildOverviewList: React.SFC<BuildOverviewListProps> = ({ buildConfig }) =
           {canStartBuild && (
             <div>
               <Button variant="secondary" onClick={onClick}>
-                Start Build
+                {t('public~Start Build')}
               </Button>
             </div>
           )}
@@ -113,7 +152,7 @@ const BuildOverviewList: React.SFC<BuildOverviewListProps> = ({ buildConfig }) =
       </li>
       {_.isEmpty(builds) ? (
         <li className="list-group-item">
-          <span className="text-muted">No Builds found for this Build Config.</span>
+          <span className="text-muted">{t('public~No Builds found for this Build Config.')}</span>
         </li>
       ) : (
         _.map(builds, (build) => <BuildOverviewItem key={build.metadata.uid} build={build} />)
@@ -121,30 +160,26 @@ const BuildOverviewList: React.SFC<BuildOverviewListProps> = ({ buildConfig }) =
     </ul>
   );
 };
-
 export const BuildOverview: React.SFC<BuildConfigsOverviewProps> = ({ buildConfigs }) => {
+  const { t } = useTranslation();
   if (_.isEmpty(buildConfigs)) {
     return null;
   }
-
   return (
     <div className="build-overview">
-      <SidebarSectionHeading text="Builds" />
+      <SidebarSectionHeading text={t('public~Builds')} />
       {_.map(buildConfigs, (buildConfig) => (
         <BuildOverviewList key={buildConfig.metadata.uid} buildConfig={buildConfig} />
       ))}
     </div>
   );
 };
-
 type BuildOverviewListItemProps = {
   build: K8sResourceKind;
 };
-
 type BuildOverviewListProps = {
   buildConfig: BuildConfigOverviewItem;
 };
-
 type BuildConfigsOverviewProps = {
   buildConfigs: BuildConfigOverviewItem[];
 };

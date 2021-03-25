@@ -24,6 +24,7 @@ import OverviewDetailsKnativeResourcesTab from './OverviewDetailsKnativeResource
 import KnativeOverview from './KnativeOverview';
 import SinkUriResourcesTab from './SinkUriResourcesTab';
 import { NodeType } from '../../topology/topology-types';
+import { useTranslation } from 'react-i18next';
 
 interface StateProps {
   kindsInFlight?: boolean;
@@ -34,22 +35,12 @@ export interface KnativeResourceOverviewPageProps extends StateProps {
   item?: OverviewItem;
 }
 
-const tabs = [
-  {
-    name: 'Details',
-    component: KnativeOverview,
-  },
-  {
-    name: 'Resources',
-    component: OverviewDetailsKnativeResourcesTab,
-  },
-];
-
 export const KnativeResourceOverviewPage: React.ComponentType<KnativeResourceOverviewPageProps> = ({
   item,
   knativeModels,
   kindsInFlight,
 }: KnativeResourceOverviewPageProps) => {
+  const { t } = useTranslation();
   if (NodeType.SinkUri === item?.obj?.type?.nodeType) {
     return <SinkUriResourcesTab itemData={item} menuAction={editSinkUri} />;
   }
@@ -69,6 +60,17 @@ export const KnativeResourceOverviewPage: React.ComponentType<KnativeResourceOve
   if (!resourceModel) {
     return null;
   }
+
+  const tabs = [
+    {
+      name: t('knative-plugin~Details'),
+      component: KnativeOverview,
+    },
+    {
+      name: t('knative-plugin~Resources'),
+      component: OverviewDetailsKnativeResourcesTab,
+    },
+  ];
 
   const actions = [];
   if (resourceModel.kind === RevisionModel.kind) {
