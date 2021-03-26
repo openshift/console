@@ -89,7 +89,7 @@ const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({
   );
 
   const { t } = useTranslation();
-  const perspectives = React.useMemo(() => getPerspectives.bind(null, t)(), []);
+  const perspectives = getPerspectives.bind(null, t)();
   const { icon, name } = React.useMemo(
     () => perspectives.find((p) => p.properties.id === activePerspective).properties,
     [activePerspective, perspectives],

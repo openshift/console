@@ -17,7 +17,7 @@ const MulticlusterNav = () => (
   <Translation>
     {t => (
       <>
-        <ResourceClusterLink resource="clusterclaims" name="Clusters Claims" />
+        <ResourceClusterLink resource="clusterclaims" name={t('COMMON:MSG_LNB_MENU_105')} />
         <ResourceClusterLink resource="clustermanagers" name={t('COMMON:MSG_LNB_MENU_84')} />
         {/* <ResourceClusterLink resource="clustergroups" name="Cluster Groups" /> */}
         <NavSection title={t('COMMON:MSG_LNB_MENU_86')}>

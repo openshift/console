@@ -105,6 +105,16 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
             </div>
 
             <div>
+              <h2>Parameters</h2>
+              <PipelineParameters addLabel="Add Parameters" fieldName="params" />
+            </div>
+
+            <div>
+              <h2>Resources</h2>
+              <PipelineResources addLabel="Add Resources" fieldName="resources" />
+            </div>
+
+            <div>
               <h2>Tasks</h2>
               <PipelineBuilderVisualization
                 namespace={namespace}
@@ -120,17 +130,11 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
                 }
                 taskGroup={taskGroup}
               />
+              <p className="help-block">
+                노드 간 순차 혹은 병렬 배치를 통해 연결하여 파이프라인을 생성할 수 있습니다.
+              </p>
             </div>
 
-            <div>
-              <h2>Parameters</h2>
-              <PipelineParameters addLabel="Add Parameters" fieldName="params" />
-            </div>
-
-            <div>
-              <h2>Resources</h2>
-              <PipelineResources addLabel="Add Resources" fieldName="resources" />
-            </div>
             <FormFooter
               handleReset={closeSidebarAndHandleReset}
               errorMessage={status?.submitError}

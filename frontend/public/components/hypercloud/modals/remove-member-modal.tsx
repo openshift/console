@@ -41,7 +41,7 @@ export const RemoveMemberModal = withHandlePromise((props: RemoveMemberModalProp
           {t('MULTI:MSG_MULTI_CLUSTERS_DELETEPEPLEPOPUP_MAINMESSAGE_1', { 0: props.member.email.length > 0 ? `${props.member.name}(${props.member.email})` : props.member.name, 1: props.clusterName })}
         </div>
       </ModalBody>
-      <ModalSubmitFooter errorMessage={errorMsg} inProgress={props.inProgress} submitText='Delete' cancelText={t('MULTI:MSG_MULTI_CLUSTERS_INVITEPEOPLEPOPUP_BUTTON_2')} cancel={props.cancel} />
+      <ModalSubmitFooter errorMessage={errorMsg} inProgress={props.inProgress} submitText={t('MULTI:MSG_MULTI_CLUSTERS_DELETEACCESSMEMBER_2')} cancelText={t('MULTI:MSG_MULTI_CLUSTERS_DELETEACCESSMEMBER_1')} cancel={props.cancel} />
     </form>
   );
 });
