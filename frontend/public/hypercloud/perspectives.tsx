@@ -24,7 +24,7 @@ export const getPerspectives: (t?: TFunction) => Perspective[] = (t?: TFunction)
       type: 'Perspective',
       properties: {
         id: 'master',
-        name: '마스터 클러스터',
+        name: t ? t('COMMON:MSG_LNB_MENU_CONSOLE_LIST_3') : 'Master-Cluster',
         icon: <CogsIcon />,
         getLandingPageURL: flags => (localStorage.getItem('flag/first-time-login') ? '/master/dashboards' : '/welcome'),
         getK8sLandingPageURL: flags => (localStorage.getItem('flag/first-time-login') ? '/master/dashboards' : '/welcome'),

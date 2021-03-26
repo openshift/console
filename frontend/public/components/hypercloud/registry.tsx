@@ -196,8 +196,8 @@ export const RegistriesPage = withRouter(props => {
   };
 
   return <ListPage
-    title={t('COMMON:MSG_LNB_MENU_71')}
-    createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:MSG_LNB_MENU_71') })}
+    title={t('COMMON:MSG_LNB_MENU_187')}
+    createButtonText={t('COMMON:MSG_MAIN_CREATEBUTTON_1', { 0: t('COMMON:MSG_LNB_MENU_187') })}
     canCreate={true}
     createProps={createProps}
     ListComponent={Registries}

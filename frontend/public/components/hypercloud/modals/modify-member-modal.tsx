@@ -63,7 +63,7 @@ export const ModifyMemberModal = withHandlePromise((props: ModifyMemberModalProp
           />
         </Section>
       </ModalBody>
-      <ModalSubmitFooter errorMessage={errorMsg} inProgress={props.inProgress} submitText='Save' cancelText={t('MULTI:MSG_MULTI_CLUSTERS_INVITEPEOPLEPOPUP_BUTTON_2')} cancel={props.cancel} />
+      <ModalSubmitFooter errorMessage={errorMsg} inProgress={props.inProgress} submitText={t('COMMON:MSG_COMMON_BUTTON_COMMIT_3')} cancelText={t('COMMON:MSG_COMMON_BUTTON_COMMIT_2')} cancel={props.cancel} />
     </form>
   );
 });
