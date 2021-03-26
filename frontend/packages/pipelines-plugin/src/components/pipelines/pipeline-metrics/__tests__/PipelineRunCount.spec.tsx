@@ -9,6 +9,7 @@ import { PipelineExampleNames, pipelineTestData } from '../../../../test-data/pi
 import PipelineRunCount from '../PipelineRunCount';
 import { DEFAULT_REFRESH_INTERVAL } from '../../const';
 import { TimeSeriesChart } from '../charts/TimeSeriesChart';
+import { MetricsQueryPrefix } from '../pipeline-metrics-utils';
 
 jest.mock('@console/internal/components/utils/k8s-get-hook', () => ({
   useK8sGet: jest.fn(),
@@ -34,6 +35,7 @@ describe('Pipeline Run Count Graph', () => {
       pipeline,
       timespan: DEFAULT_PROMETHEUS_TIMESPAN,
       interval: parsePrometheusDuration(DEFAULT_REFRESH_INTERVAL),
+      queryPrefix: MetricsQueryPrefix.TEKTON_PIPELINES_CONTROLLER,
     };
   });
 

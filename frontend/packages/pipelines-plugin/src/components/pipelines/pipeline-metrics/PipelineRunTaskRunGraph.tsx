@@ -29,6 +29,7 @@ const PipelineRunTaskRunGraph: React.FC<PipelineMetricsGraphProps> = ({
   interval,
   loaded = true,
   onLoad: onInitialLoad,
+  queryPrefix,
 }) => {
   const {
     metadata: { name, namespace },
@@ -41,6 +42,7 @@ const PipelineRunTaskRunGraph: React.FC<PipelineMetricsGraphProps> = ({
     namespace,
     timespan,
     delay: interval,
+    queryPrefix,
   });
 
   const taskNameMap = pipeline.spec.tasks

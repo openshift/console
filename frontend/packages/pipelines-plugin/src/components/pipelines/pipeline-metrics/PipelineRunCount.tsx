@@ -22,6 +22,7 @@ const PipelineRunCount: React.FC<PipelineMetricsGraphProps> = ({
   interval,
   loaded = true,
   onLoad: onInitialLoad,
+  queryPrefix,
 }) => {
   const {
     metadata: { name, namespace },
@@ -32,6 +33,7 @@ const PipelineRunCount: React.FC<PipelineMetricsGraphProps> = ({
     namespace,
     timespan,
     delay: interval,
+    queryPrefix,
   });
   const pipelineRunResultData = pipelineRunResult?.data?.result ?? [];
 
