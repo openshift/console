@@ -280,7 +280,7 @@ const ConsolePlugins: React.FC<ConsolePluginsProps> = ({ csvPlugins, subscriptio
     <>
       {consoleOperatorConfig && canPatchConsoleOperatorConfig && (
         <dl className="co-clusterserviceversion-details__field">
-          <dt>{t('olm~Console UI extension', { count: csvPluginsCount })}</dt>
+          <dt>{t('olm~Console plugin', { count: csvPluginsCount })}</dt>
           {csvPlugins.map((plugin) => (
             <dd key={plugin} className="co-clusterserviceversion-details__field-description">
               {csvPluginsCount > 1 && (
@@ -338,12 +338,12 @@ const ConsolePluginStatus: React.FC<ConsolePluginStatusProps> = ({ csv, csvPlugi
     canPatchConsoleOperatorConfig &&
     aPluginIsDisabled && (
       <Popover
-        headerContent={<div>{t('olm~Console UI extension available')}</div>}
+        headerContent={<div>{t('olm~Console plugin available')}</div>}
         bodyContent={
           <div>
             <p>
               {t(
-                'olm~To let this operator provide a custom interface and run its own code in your console, enable its UI extension in the operator details.',
+                'olm~To let this operator provide a custom interface and run its own code in your console, enable its console plugin in the operator details.',
               )}
             </p>
             <Link to={resourceObjPath(csv, referenceFor(csv))}>
@@ -353,7 +353,7 @@ const ConsolePluginStatus: React.FC<ConsolePluginStatusProps> = ({ csv, csvPlugi
         }
       >
         <Button variant="link" isInline>
-          {t('olm~UI extension available')}
+          {t('olm~Plugin available')}
         </Button>
       </Popover>
     )
