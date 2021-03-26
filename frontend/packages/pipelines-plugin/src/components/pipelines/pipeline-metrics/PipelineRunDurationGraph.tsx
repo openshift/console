@@ -5,7 +5,7 @@ import { ChartThemeColor, ChartVoronoiContainer } from '@patternfly/react-charts
 import { Bullseye, Flex, FlexItem, Grid, GridItem } from '@patternfly/react-core';
 import { LoadingInline, truncateMiddle } from '@console/internal/components/utils';
 import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
-import { formatDuration } from '@console/internal/components/utils/datetime';
+import { formatPrometheusDuration } from '@console/internal/components/utils/datetime';
 import { usePipelineRunDurationPoll } from '../hooks';
 import { DEFAULT_LEGEND_CHART_HEIGHT } from '../const';
 import { getRangeVectorData, PipelineMetricsGraphProps } from './pipeline-metrics-utils';
@@ -63,13 +63,13 @@ const PipelineRunDurationGraph: React.FC<PipelineMetricsGraphProps> = ({
       if (!prun) return acc;
       const obj = prun[prun.length - 1];
       acc.totalDuration += obj.y;
-      acc.duration.push({ ...obj, time: formatDuration(obj.y * 1000) });
+      acc.duration.push({ ...obj, time: formatPrometheusDuration(obj.y * 1000) });
       return acc;
     },
     { totalDuration: 0, duration: [] },
   );
   const averageDuration = finalArray.totalDuration
-    ? formatDuration((finalArray.totalDuration * 1000) / finalArray.duration.length)
+    ? formatPrometheusDuration((finalArray.totalDuration * 1000) / finalArray.duration.length)
     : 0;
 
   return (

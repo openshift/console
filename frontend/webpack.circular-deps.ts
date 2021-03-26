@@ -4,7 +4,6 @@
 import * as webpack from 'webpack';
 import * as path from 'path';
 import * as fs from 'fs';
-import * as moment from 'moment';
 import * as CircularDependencyPlugin from 'circular-dependency-plugin';
 import chalk from 'chalk';
 
@@ -122,7 +121,7 @@ export class CircularDependencyPreset {
             }
 
             const hash = compilation.getStats().hash;
-            const builtAt = moment(compilation.getStats().endTime).format('MM/DD/YYYY HH:mm:ss');
+            const builtAt = compilation.getStats().endTime.toString();
             const header = `webpack compilation ${hash} built at ${builtAt}\n`;
 
             const reportPath = path.resolve(__dirname, this.options.reportFile);

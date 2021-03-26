@@ -2,7 +2,7 @@ import * as React from 'react';
 import { AccordionContent, AccordionItem, AccordionToggle } from '@patternfly/react-core';
 import classNames from 'classnames';
 import { typeFilter, getLastTime } from '@console/internal/components/events';
-import { twentyFourHourTime } from '@console/internal/components/utils/datetime';
+import { timeFormatter } from '@console/internal/components/utils/datetime';
 import { ResourceIcon } from '@console/internal/components/utils/resource-icon';
 import { ResourceLink } from '@console/internal/components/utils/resource-link';
 import { EventKind, referenceFor } from '@console/internal/module/k8s';
@@ -35,7 +35,7 @@ const EventItem: React.FC<EventItemProps> = React.memo(({ event, isExpanded, onT
           <div className="co-recent-item__title">
             <div className="co-recent-item__title-timestamp text-secondary">
               {lastTime ? (
-                <span title={lastTime}>{twentyFourHourTime(new Date(lastTime))}</span>
+                <span title={lastTime}>{timeFormatter.format(new Date(lastTime))}</span>
               ) : (
                 '-'
               )}

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { PrometheusResponse } from '@console/internal/components/graphs';
-import { formatDuration } from '@console/internal/components/utils/datetime';
+import { formatPrometheusDuration } from '@console/internal/components/utils/datetime';
 import { DataResiliency } from '../../../common/data-resiliency/data-resiliency-activity';
 import { getGaugeValue } from '../../../../../utils';
 import './data-resiliency-activity.scss';
@@ -10,7 +10,7 @@ export const NoobaaDataResiliency: React.FC<DataResiliencyProps> = ({ results })
   const { t } = useTranslation();
 
   const eta = getGaugeValue(results[1]);
-  const formattedEta = formatDuration(parseInt(eta, 10) * 1000);
+  const formattedEta = formatPrometheusDuration(parseInt(eta, 10) * 1000);
 
   return (
     <>

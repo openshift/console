@@ -43,7 +43,7 @@ import { BuildLogs } from './build-logs';
 import { ResourceEventStream } from './events';
 import { Area, requirePrometheus } from './graphs';
 import { BuildModel } from '../models';
-import { twentyFourHourTime } from './utils/datetime';
+import { timeFormatter, timeFormatterWithSeconds } from './utils/datetime';
 
 const BuildsReference: K8sResourceKindReference = 'Build';
 
@@ -155,7 +155,8 @@ const BuildGraphs = requirePrometheus(({ build }) => {
       namespace,
       endTime,
       timespan,
-      formatDate: (d) => twentyFourHourTime(d, timespan < 5 * ONE_MINUTE),
+      formatDate: (d) =>
+        timespan < 5 * ONE_MINUTE ? timeFormatterWithSeconds.format(d) : timeFormatter.format(d),
       domain, // force domain to match queried timespan
     }),
     [domain, endTime, namespace, timespan],

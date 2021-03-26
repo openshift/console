@@ -1,7 +1,7 @@
 import {
-  isValid,
-  formatDuration,
   formatPrometheusDuration,
+  getDuration,
+  isValid,
   parsePrometheusDuration,
 } from '../../../public/components/utils/datetime';
 
@@ -19,46 +19,23 @@ describe('isValid', () => {
   });
 });
 
-describe('formatDuration', () => {
-  const toMS = (h: number, m: number, s: number) => (h * 60 * 60 + m * 60 + s) * 1000;
-
-  it('prints durations correctly', () => {
-    expect(formatDuration(toMS(0, 0, 1))).toEqual('1s');
-    expect(formatDuration(toMS(0, 0, 23))).toEqual('23s');
-    expect(formatDuration(toMS(0, 3, 42))).toEqual('3m 42s');
-    expect(formatDuration(toMS(2, 0, 0))).toEqual('2h 0m 0s');
-    expect(formatDuration(toMS(1, 0, 4))).toEqual('1h 0m 4s');
-    expect(formatDuration(toMS(13, 10, 23))).toEqual('13h 10m 23s');
-  });
-
-  it('handles hours greater than 24', () => {
-    expect(formatDuration(toMS(273, 18, 3))).toEqual('273h 18m 3s');
-  });
-
-  it('handles 0 values', () => {
-    expect(formatDuration(0)).toEqual('0s');
-  });
-
-  it('returns the empty string for negative values', () => {
-    expect(formatDuration(-88210)).toEqual('');
-  });
-
-  it('handles null and undefined values', () => {
-    expect(formatDuration(null)).toEqual('');
-    expect(formatDuration(undefined)).toEqual('');
-  });
-
-  it('rounds seconds correctly', () => {
-    expect(formatDuration(499)).toEqual('0s');
-    expect(formatDuration(500)).toEqual('1s');
-    expect(formatDuration(toMS(0, 3, 42) + 499)).toEqual('3m 42s');
-    expect(formatDuration(toMS(0, 3, 42) + 500)).toEqual('3m 43s');
-  });
-});
-
 // Converts time durations to milliseconds
 const ms = (s = 0, m = 0, h = 0, d = 0, w = 0) =>
   ((((w * 7 + d) * 24 + h) * 60 + m) * 60 + s) * 1000;
+
+describe('getDuration', () => {
+  it('returns correct durations', () => {
+    expect(getDuration(ms(1))).toEqual({ days: 0, hours: 0, minutes: 0, seconds: 1 });
+    expect(getDuration(ms(2, 1))).toEqual({ days: 0, hours: 0, minutes: 1, seconds: 2 });
+    expect(getDuration(ms(3, 2, 1))).toEqual({ days: 0, hours: 1, minutes: 2, seconds: 3 });
+    expect(getDuration(ms(4, 3, 2, 1))).toEqual({ days: 1, hours: 2, minutes: 3, seconds: 4 });
+  });
+  it('handles invalid values', () => {
+    [null, undefined, 0, -1, -9999].forEach((v) =>
+      expect(getDuration(v)).toEqual({ days: 0, hours: 0, minutes: 0, seconds: 0 }),
+    );
+  });
+});
 
 describe('formatPrometheusDuration', () => {
   it('formats durations correctly', () => {

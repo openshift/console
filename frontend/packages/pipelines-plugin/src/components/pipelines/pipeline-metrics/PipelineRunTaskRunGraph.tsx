@@ -11,7 +11,7 @@ import {
 } from '@patternfly/react-charts';
 import { PipelineTask } from '../../../types';
 import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
-import { formatDuration } from '@console/internal/components/utils/datetime';
+import { formatPrometheusDuration } from '@console/internal/components/utils/datetime';
 import { LoadingInline, truncateMiddle } from '@console/internal/components/utils';
 import { usePipelineRunTaskRunPoll } from '../hooks';
 import {
@@ -148,7 +148,7 @@ const PipelineRunTaskRunGraph: React.FC<PipelineMetricsGraphProps> = ({
                   datum.childName.includes('line-') && datum.y !== null
                     ? `${datum?.metric?.pipelinerun}
                 ${getCustomTaskName(datum?.metric?.task)}
-            ${formatDuration(datum?.y * 1000)}`
+            ${formatPrometheusDuration(datum?.y * 1000)}`
                     : null
                 }
               />
