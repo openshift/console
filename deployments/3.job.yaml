@@ -1,4 +1,4 @@
-console-system.apiVersion: batch/v1
+apiVersion: batch/v1
 kind: Job
 metadata:
   name: console-https-secret-create

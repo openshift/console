@@ -21,7 +21,7 @@ spec:
         - /manager
         args:
         - --pwd=/var/tmp/configs/
-        image: tmaxcloudck/console-operator:@@OPERATOR-VER@@
+        image: tmaxcloudck/console-operator:@@OPERATOR_VER@@
         name: manager
         volumeMounts: 
         - mountPath: /var/tmp/configs
@@ -36,11 +36,10 @@ spec:
         - --keycloak-realm=@@REALM@@
         - --keycloak-auth-url=https://@@KEYCLOAK@@/auth
         - --keycloak-client-id=@@CLIENTID@@
-        - --mc-mode=@@MC-MODE@@
-        - --grafana-endpoint=http://@@GRAFANA@@/api/grafana/
+        - --mc-mode=@@MC_MODE@@
         - --kiali-endpoint=https://@@KIALI@@/api/kiali/
         - --kibana-endpoint=https://@@KIBANA@@/api/kibana/
-        image: tmaxcloudck/hypercloud-console:@@CONSOLE-VER@@
+        image: tmaxcloudck/hypercloud-console:@@CONSOLE_VER@@
         imagePullPolicy: Always
         name: console
         ports:
