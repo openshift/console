@@ -6,7 +6,7 @@ import { getBadgeFromType } from '@console/shared';
 import {
   useExtensions,
   ResourceTabPage,
-  isResourceTabPage,
+  isResourceTabPage as isStaticTab,
   isDetailPageBreadCrumbs,
   DetailPageBreadCrumbs,
 } from '@console/plugin-sdk';
@@ -36,6 +36,7 @@ import { ErrorBoundaryFallback } from '../error';
 import { breadcrumbsForDetailsPage } from '../utils/breadcrumbs';
 import DetailsBreadcrumbResolver from './details-breadcrumb-resolver';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
+import { isResourceTab, ResolvedResourceTab } from '@console/dynamic-plugin-sdk';
 
 const useBreadCrumbsForDetailPage = (
   kindObj: K8sKind,
@@ -62,11 +63,23 @@ export const DetailsPage = withFallback<DetailsPageProps>(({ pages = [], ...prop
   const [pluginBreadcrumbs, setPluginBreadcrumbs] = React.useState(undefined);
   const [model] = useK8sModel(props.kind);
   const kindObj = props.kindObj ?? model;
-  const renderAsyncComponent = (page: ResourceTabPage, cProps: PageComponentProps) => (
-    <AsyncComponent loader={page.properties.loader} {...cProps} />
+  const renderAsyncComponent = (
+    page: ResourceTabPage | ResolvedResourceTab,
+    cProps: PageComponentProps,
+  ) => (
+    <AsyncComponent
+      loader={
+        (page as ResourceTabPage).properties?.loader ||
+        (page as ResolvedResourceTab).properties?.component
+      }
+      {...cProps}
+    />
   );
 
-  const resourcePageExtensions = useExtensions<ResourceTabPage>(isResourceTabPage);
+  const resourcePageExtensions = useExtensions<ResourceTabPage | ResolvedResourceTab>(
+    isStaticTab,
+    isResourceTab,
+  );
 
   const pluginPages = React.useMemo(
     () =>

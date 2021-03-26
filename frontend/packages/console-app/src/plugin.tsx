@@ -271,19 +271,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
-    type: 'Page/Resource/Tab',
-    properties: {
-      href: 'volumesnapshots',
-      model: PersistentVolumeClaimModel,
-      // t('console-app~VolumeSnapshots')
-      name: '%console-app~VolumeSnapshots%',
-      loader: () =>
-        import(
-          './components/volume-snapshot/volume-snapshot' /* webpackChunkName: "volume-snapshot-page" */
-        ).then((m) => m.VolumeSnapshotPVCPage),
-    },
-  },
-  {
     type: 'ContextProvider',
     properties: {
       Provider: TourContext.Provider,

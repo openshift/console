@@ -9,5 +9,25 @@
         "kind": "DevWorkspace"
       }
     }
+  },
+  {
+    "type": "console.page/resource/tab",
+    "properties": {
+      "model": {
+        "label": "PersistentVolumeClaim",
+        "labelKey": "public~PersistentVolumeClaim",
+        "apiVersion": "v1",
+        "plural": "persistentvolumeclaims",
+        "abbr": "PVC",
+        "namespaced": true,
+        "kind": "PersistentVolumeClaim",
+        "id": "persistentvolumeclaim",
+        "labelPlural": "PersistentVolumeClaims",
+        "labelPluralKey": "public~PersistentVolumeClaims"
+      },
+      "name": "VolumeSnapshots",
+      "href": "volumesnapshots",
+      "component": { "$codeRef": "volumeSnapshot.VolumeSnapshotPVCPage" }
+    }
   }
 ]

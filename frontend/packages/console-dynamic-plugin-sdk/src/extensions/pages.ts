@@ -1,7 +1,7 @@
 import { RouteComponentProps } from 'react-router';
 import { Extension } from '@console/plugin-sdk/src/typings/base';
 import { CodeRef, EncodedCodeRef, UpdateExtensionProperties } from '../types';
-import { ExtensionsK8sKind } from '../utils/common';
+import { ExtensionsK8sKind, ExtensionCommonK8sResource } from '../utils/common';
 
 namespace ExtensionProperties {
   /** Adds a page for Resource, be it List/Details/Tab */
@@ -36,6 +36,15 @@ namespace ExtensionProperties {
     component: ResourcePageCommon<ResourcePageCommonProps>;
   };
 
+  export type ResourceTab = ResourcePage & {
+    href: string;
+    name: string;
+  };
+
+  export type ResourceTabCodeRefs<R extends ExtensionCommonK8sResource> = {
+    component: ResourcePageCommon<R & ResourcePageCommonProps>;
+  };
+
   export type StandaloneRoutePageCodeRefs = {
     component: CodeRef<React.FC<RouteComponentProps>>;
   };
@@ -51,6 +60,10 @@ export type ResourceListPage = Extension<ExtensionProperties.ResourcePage> & {
   type: 'console.page/resource/list';
 };
 
+export type ResourceTab = Extension<ExtensionProperties.ResourceTab> & {
+  type: 'console.page/resource/tab';
+};
+
 export type ResolvedStandaloneRoutePage = UpdateExtensionProperties<
   StandaloneRoutePage,
   ExtensionProperties.StandaloneRoutePageCodeRefs
@@ -61,6 +74,10 @@ export type ResolvedResourceListPage = UpdateExtensionProperties<
   ExtensionProperties.ResourceListPageCodeRefs
 >;
 
+export type ResolvedResourceTab<
+  R extends ExtensionCommonK8sResource = ExtensionCommonK8sResource
+> = UpdateExtensionProperties<ResourceTab, ExtensionProperties.ResourceTabCodeRefs<R>>;
+
 // Type guards
 
 export const isStandaloneRoutePage = (e: Extension): e is ResolvedStandaloneRoutePage =>
@@ -68,3 +85,6 @@ export const isStandaloneRoutePage = (e: Extension): e is ResolvedStandaloneRout
 
 export const isResourceListPage = (e: Extension): e is ResolvedResourceListPage =>
   e.type === 'console.page/resource/list';
+
+export const isResourceTab = (e: Extension): e is ResolvedResourceTab =>
+  e.type === 'console.page/resource/tab';
