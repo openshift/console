@@ -1124,8 +1124,8 @@
     "MSG_MAIN_POPUP_DESCRIPTION_4": "This action cannot be undone. Deleting a node will instruct Kubernetes that the node\nis down or unrecoverable and delete all pods scheduled to that node. If the node is still\nrunning but unresponsive and the node is deleted, stateful workloads and persistent\nvolumes may suffer corruption or data loss. Only delete a node that you have\nconfirmed is completely stopped and cannot be restored.\nAre you sure you want to delete {{0}}?",
     "MSG_LNB_MENU_187": "Container Registries",
     "MSG_LNB_MENU_188": "Container Registry",
-    "MSG_LNB_MENU_189": "",
-    "MSG_LNB_MENU_190": ""
+    "MSG_LNB_MENU_189": "레지스트리 연동",
+    "MSG_LNB_MENU_190": "레지스트리 연동"
   },
   "SINGLE": {
     "MSG_SEARCH_MAIN_NORESOURCES_1": "No resources selected",
