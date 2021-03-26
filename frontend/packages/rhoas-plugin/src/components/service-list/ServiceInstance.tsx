@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { FormFooter, FormHeader, FlexForm, FormBody } from '@console/shared';

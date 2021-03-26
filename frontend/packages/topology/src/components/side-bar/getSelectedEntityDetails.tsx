@@ -25,6 +25,8 @@ import { OperatorGroupData } from '../../operators/operator-topology-types';
 import TopologyServiceBindingRequestPanel from '../../operators/TopologyServiceBindingRequestPanel';
 import TopologyOperatorBackedPanel from '../../operators/TopologyOperatorBackedPanel';
 import TopologyResourcePanel from './TopologyResourcePanel';
+import { TYPE_MANAGED_KAFKA_CONNECTION } from '@console/rhoas-plugin/src/topology/components/const';
+import TopologyKafkaPanel from '@console/rhoas-plugin/src/topology/components/TopologyKafkaPanel';
 
 export const getSelectedEntityDetails = (selectedEntity: GraphElement) => {
   if (!selectedEntity) {
@@ -47,6 +49,9 @@ export const getSelectedEntityDetails = (selectedEntity: GraphElement) => {
     // TODO: Use Plugins
     if (selectedEntity.getType() === TYPE_HELM_RELEASE) {
       return <TopologyHelmReleasePanel helmRelease={selectedEntity} />;
+    }
+    if (selectedEntity.getType() === TYPE_MANAGED_KAFKA_CONNECTION) {
+      return <TopologyKafkaPanel item={selectedEntity} />;
     }
     if (selectedEntity.getType() === TYPE_HELM_WORKLOAD) {
       return <TopologyHelmWorkloadPanel item={selectedEntity.getData() as TopologyDataObject} />;

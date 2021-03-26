@@ -20,7 +20,13 @@
       "href": "/catalog?catalogType=managedservices",
       "label": "%rhoas-plugin~Managed Services%",
       "description": "%rhoas-plugin~Reduce operational complexity and focus on building and scaling applications that add more value.%",
-      "icon": { "$codeRef": "constants.cloudServicesIcon" }
+      "icon": { "$codeRef": "constants.cloudServicesIcon" },
+      "accessReview": [
+        { "group": "apps.openshift.io", "resource": "deploymentconfigs", "verb": "create" },
+        { "group": "route.openshift.io", "resource": "routes", "verb": "create" },
+        { "group": "", "resource": "secrets", "verb": "create" },
+        { "group": "", "resource": "services", "verb": "create" }
+      ]
     }
   },
   {

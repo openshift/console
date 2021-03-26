@@ -122,7 +122,6 @@ export type CatalogItem<T extends any = any> = {
   details?: {
     properties?: CatalogItemDetailsProperty[];
     descriptions?: CatalogItemDetailsDescription[];
-    customHeader?: string;
   };
   // Optional text only badges for the catalog item which will be rendered on the tile and details panel.
   badges?: CatalogItemBadge[];

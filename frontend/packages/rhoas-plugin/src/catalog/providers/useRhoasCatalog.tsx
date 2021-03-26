@@ -72,6 +72,7 @@ const useRhoasCatalog: CatalogExtensionHook<CatalogItem[]> = ({
 
     const cloudServicesCardDetailsDescription = [
       {
+        label: t('rhoas-plugin~Access Red Hat Cloud Services with API Token'),
         value: <ServiceToken namespace={namespace} />,
       },
       {
@@ -120,7 +121,6 @@ const useRhoasCatalog: CatalogExtensionHook<CatalogItem[]> = ({
         },
         details: {
           descriptions: cloudServicesCardDetailsDescription,
-          customHeader: t('rhoas-plugin~Access Red Hat Cloud Services with API Token'),
         },
       },
     ];

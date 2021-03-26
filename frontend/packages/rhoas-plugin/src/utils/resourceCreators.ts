@@ -37,8 +37,8 @@ export const createManagedServiceAccount = async (currentNamespace: string) => {
     spec: {
       forceRefresh: new Date().toISOString(),
       accessTokenSecretName: AccessTokenSecretName,
-      serviceAccountName: `RHOASOperator-ServiceAccount-${currentNamespace}`,
-      serviceAccountDescription: 'Service account created by RHOASOperator to access services',
+      serviceAccountName: `rhoas-operator-${currentNamespace}`,
+      serviceAccountDescription: 'Created by rhoas operator',
       serviceAccountSecretName: ServiceAccountSecretName,
     },
   };
@@ -177,12 +177,6 @@ export const createServiceAccountIfNeeded = async (currentNamespace) => {
   );
 };
 
-/**
- * createKafkaConnection
- * @param kafkaId
- * @param kafkaName
- * @param currentNamespace
- */
 export const createKafkaConnection = async (
   kafkaId: string,
   kafkaName: string,

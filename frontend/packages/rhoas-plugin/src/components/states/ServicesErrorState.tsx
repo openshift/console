@@ -1,43 +1,16 @@
 import * as React from 'react';
-import { Button, EmptyState, EmptyStateIcon, Title } from '@patternfly/react-core';
 import ErrorCircle from '@patternfly/react-icons/dist/js/icons/error-circle-o-icon';
-import { history } from '@console/internal/components/utils';
 import './ServicesErrorState.css';
+import { ServicesEmptyState, ServicesEmptyStateProps } from './ServicesEmptyState';
 
-type ServicesEmptyStateProps = {
-  title: string;
-  message: string;
-  actionInfo?: string;
-  action?: () => void;
-};
-
-export const ServicesErrorState = ({
-  title,
-  message,
-  actionInfo,
-  action,
-}: ServicesEmptyStateProps) => {
-  let stateAction;
-  if (action) {
-    stateAction = action;
-  } else {
-    stateAction = () => {
-      history.goBack();
-    };
-  }
-
+export const ServicesErrorState = ({ title, message, actionLabel }: ServicesEmptyStateProps) => {
   return (
-    <EmptyState>
-      <EmptyStateIcon className="rhoas-services-error-state-icon" icon={ErrorCircle} />
-      <Title headingLevel="h4" size="lg">
-        {title}
-      </Title>
-      <Title headingLevel="h5" size="md">
-        {message}
-      </Title>
-      <Button variant="link" onClick={stateAction}>
-        {actionInfo}
-      </Button>
-    </EmptyState>
+    <ServicesEmptyState
+      title={title}
+      message={message}
+      actionLabel={actionLabel}
+      icon={ErrorCircle}
+      iconClass={'rhoas-services-error-state-icon'}
+    />
   );
 };

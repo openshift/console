@@ -25,7 +25,7 @@ export interface KafkaConnection extends K8sResourceCommon {
   status: {
     bootstrapServerHost: string;
     conditions: StatusCondition[];
-    metadata: any;
+    metadata: { [key: string]: any };
   };
 }
 
