@@ -109,8 +109,9 @@ export const MemoryPopover: React.FC<PopoverProps> = ({
 };
 
 const UtilizationCard: React.FC = () => {
+  const { t } = useTranslation();
   const [timestamps, setTimestamps] = React.useState<Date[]>();
-  const [duration, setDuration] = useMetricDuration();
+  const [duration, setDuration] = useMetricDuration(t);
 
   const { obj, setCPULimit, setMemoryLimit } = React.useContext(NodeDashboardContext);
 
@@ -153,7 +154,7 @@ const UtilizationCard: React.FC = () => {
     ),
     [nodeIp, nodeName],
   );
-  const { t } = useTranslation();
+
   const filesystemPopover = React.useCallback(
     ({ current }: TopConsumerPopoverProp) => (
       <ConsumerPopover
@@ -202,7 +203,12 @@ const UtilizationCard: React.FC = () => {
     <DashboardCard data-test-id="utilization-card">
       <DashboardCardHeader>
         <DashboardCardTitle>{t('nodes~Utilization')}</DashboardCardTitle>
-        <Dropdown items={Duration} onChange={setDuration} selectedKey={duration} title={duration} />
+        <Dropdown
+          items={Duration(t)}
+          onChange={setDuration}
+          selectedKey={duration}
+          title={duration}
+        />
       </DashboardCardHeader>
       <UtilizationBody timestamps={timestamps}>
         <PrometheusUtilizationItem

@@ -40,10 +40,11 @@ import { getPrometheusQueryResponse } from '../../../../actions/dashboards';
 import { Humanize } from '../../../utils/types';
 import {
   useMetricDuration,
-  UTILIZATION_QUERY_HOUR_MAP,
   Duration,
 } from '@console/shared/src/components/dashboard/duration-hook';
 import { DataPoint, PrometheusResponse } from '../../../graphs';
+
+const ONE_HOUR = 60 * 60 * 1000;
 
 const cpuQueriesPopup = [
   {
@@ -175,12 +176,22 @@ export const PrometheusUtilizationItem = withDashboardResources<PrometheusUtiliz
     let request: PrometheusResponse, requestError: any;
     let isLoading = false;
 
+    const { t } = useTranslation();
+
+    const UTILIZATION_QUERY_DURATION = Duration(t);
+
+    const UTILIZATION_QUERY_HOUR_MAP = {
+      [UTILIZATION_QUERY_DURATION.ONE_HR]: ONE_HOUR,
+      [UTILIZATION_QUERY_DURATION.SIX_HR]: 6 * ONE_HOUR,
+      [UTILIZATION_QUERY_DURATION.TWENTY_FOUR_HR]: 24 * ONE_HOUR,
+    };
+
     const effectiveDuration = React.useMemo(
       () =>
         adjustDuration
           ? adjustDuration(UTILIZATION_QUERY_HOUR_MAP[duration])
           : UTILIZATION_QUERY_HOUR_MAP[duration],
-      [adjustDuration, duration],
+      [UTILIZATION_QUERY_HOUR_MAP, adjustDuration, duration],
     );
     React.useEffect(() => {
       if (!isDisabled) {
@@ -266,12 +277,22 @@ export const PrometheusMultilineUtilizationItem = withDashboardResources<
     namespace,
     isDisabled = false,
   }) => {
+    const { t } = useTranslation();
+
+    const UTILIZATION_QUERY_DURATION = Duration(t);
+
+    const UTILIZATION_QUERY_HOUR_MAP = {
+      [UTILIZATION_QUERY_DURATION.ONE_HR]: ONE_HOUR,
+      [UTILIZATION_QUERY_DURATION.SIX_HR]: 6 * ONE_HOUR,
+      [UTILIZATION_QUERY_DURATION.TWENTY_FOUR_HR]: 24 * ONE_HOUR,
+    };
+
     const effectiveDuration = React.useMemo(
       () =>
         adjustDuration
           ? adjustDuration(UTILIZATION_QUERY_HOUR_MAP[duration])
           : UTILIZATION_QUERY_HOUR_MAP[duration],
-      [adjustDuration, duration],
+      [UTILIZATION_QUERY_HOUR_MAP, adjustDuration, duration],
     );
     React.useEffect(() => {
       if (!isDisabled) {
@@ -341,6 +362,8 @@ const getQueries = (itemExtensions: DashboardsOverviewUtilizationItem[]) => {
 };
 
 export const UtilizationCard = () => {
+  const { t } = useTranslation();
+
   const itemExtensions = useExtensions<DashboardsOverviewUtilizationItem>(
     isDashboardsOverviewUtilizationItem,
   );
@@ -348,8 +371,7 @@ export const UtilizationCard = () => {
   const queries = React.useMemo(() => getQueries(itemExtensions), [itemExtensions]);
 
   const [timestamps, setTimestamps] = React.useState<Date[]>();
-  const [duration, setDuration] = useMetricDuration();
-  const { t } = useTranslation();
+  const [duration, setDuration] = useMetricDuration(t);
 
   const cpuPopover = React.useCallback(
     React.memo<TopConsumerPopoverProp>(({ current }) => (
@@ -433,7 +455,12 @@ export const UtilizationCard = () => {
     <DashboardCard data-test-id="utilization-card">
       <DashboardCardHeader>
         <DashboardCardTitle>{t('dashboard~Cluster utilization')}</DashboardCardTitle>
-        <Dropdown items={Duration} onChange={setDuration} selectedKey={duration} title={duration} />
+        <Dropdown
+          items={Duration(t)}
+          onChange={setDuration}
+          selectedKey={duration}
+          title={duration}
+        />
       </DashboardCardHeader>
       <UtilizationBody timestamps={timestamps}>
         <PrometheusUtilizationItem

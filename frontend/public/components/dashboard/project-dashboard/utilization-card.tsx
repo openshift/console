@@ -34,13 +34,13 @@ import {
 } from '../dashboards-page/cluster-dashboard/utilization-card';
 
 export const UtilizationCard: React.FC = () => {
+  const { t } = useTranslation();
   const [timestamps, setTimestamps] = React.useState<Date[]>();
-  const [duration, setDuration] = useMetricDuration();
+  const [duration, setDuration] = useMetricDuration(t);
   const { obj } = React.useContext(ProjectDashboardContext);
   const projectName = getName(obj);
   const queries = React.useMemo(() => getUtilizationQueries(projectName), [projectName]);
   const multilineQueries = React.useMemo(() => getMultilineQueries(projectName), [projectName]);
-  const { t } = useTranslation();
 
   const cpuPopover = React.useCallback(
     React.memo<TopConsumerPopoverProp>(({ current }) => (
@@ -151,7 +151,12 @@ export const UtilizationCard: React.FC = () => {
     <DashboardCard data-test-id="utilization-card">
       <DashboardCardHeader>
         <DashboardCardTitle>{t('public~Utilization')}</DashboardCardTitle>
-        <Dropdown items={Duration} onChange={setDuration} selectedKey={duration} title={duration} />
+        <Dropdown
+          items={Duration(t)}
+          onChange={setDuration}
+          selectedKey={duration}
+          title={duration}
+        />
       </DashboardCardHeader>
       <UtilizationBody timestamps={timestamps}>
         <PrometheusUtilizationItem

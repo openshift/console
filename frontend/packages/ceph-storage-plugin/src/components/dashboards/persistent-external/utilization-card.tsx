@@ -16,14 +16,19 @@ import { StorageDashboardQuery, INDEPENDENT_UTILIZATION_QUERIES } from '../../..
 
 export const UtilizationCard: React.FC = () => {
   const { t } = useTranslation();
-  const [duration, setDuration] = useMetricDuration();
+  const [duration, setDuration] = useMetricDuration(t);
   const [timestamps, setTimestamps] = React.useState<Date[]>();
 
   return (
     <DashboardCard>
       <DashboardCardHeader>
         <DashboardCardTitle>{t('ceph-storage-plugin~Utilization')}</DashboardCardTitle>
-        <Dropdown items={Duration} onChange={setDuration} selectedKey={duration} title={duration} />
+        <Dropdown
+          items={Duration(t)}
+          onChange={setDuration}
+          selectedKey={duration}
+          title={duration}
+        />
       </DashboardCardHeader>
       <DashboardCardBody>
         <UtilizationBody timestamps={timestamps}>
