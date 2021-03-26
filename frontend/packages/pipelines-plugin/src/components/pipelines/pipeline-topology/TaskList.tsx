@@ -6,12 +6,14 @@ import { FocusTrap, Tooltip } from '@patternfly/react-core';
 import { CaretDownIcon } from '@patternfly/react-icons';
 import { useHover } from '@patternfly/react-topology';
 import Popper from '@console/shared/src/components/popper/Popper';
+import { referenceForModel } from '@console/internal/module/k8s';
 import {
   KebabItem,
   KebabOption,
   ResourceIcon,
   truncateMiddle,
 } from '@console/internal/components/utils';
+import { getResourceModelFromTaskKind } from '../../../utils/pipeline-augment';
 import { TaskKind } from '../../../types';
 import { NewTaskNodeCallback } from './types';
 
@@ -26,7 +28,7 @@ const taskToOption = (task: TaskKind, callback: NewTaskNodeCallback): KeyedKebab
   return {
     key: `${name}-${kind}`,
     label: name,
-    icon: <ResourceIcon kind={kind} />,
+    icon: <ResourceIcon kind={referenceForModel(getResourceModelFromTaskKind(kind))} />,
     callback: () => {
       callback(task);
     },
