@@ -55,6 +55,11 @@ export const podSelectorModal = (props) =>
     m.podSelectorModal(props),
   );
 
+export const rollbackModal = (props) =>
+  import('./rollback-modal' /* webpackChunkName: "rollback-modal" */).then((m) =>
+    m.rollbackModal(props),
+  );
+
 export const configureUpdateStrategyModal = (props) =>
   import(
     './configure-update-strategy-modal' /* webpackChunkName: "configure-update-strategy-modal" */
