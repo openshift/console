@@ -31,6 +31,7 @@ import { GuidedTour } from '@console/app/src/components/tour';
 import { isStandaloneRoutePage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
 import QuickStartDrawer from '@console/app/src/components/quick-starts/QuickStartDrawer';
 import ToastProvider from '@console/shared/src/components/toast/ToastProvider';
+import { exposePluginAPI } from '@console/dynamic-plugin-sdk/src/runtime/plugin-api';
 import '../i18n';
 import '../vendor.scss';
 import '../style.scss';
@@ -203,6 +204,7 @@ class App_ extends React.PureComponent {
 }
 
 initConsolePlugins(store);
+exposePluginAPI();
 
 const App = withExtensions({ contextProviderExtensions: isContextProvider })(App_);
 

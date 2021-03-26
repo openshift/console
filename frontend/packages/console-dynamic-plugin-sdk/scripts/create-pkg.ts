@@ -4,6 +4,7 @@ import * as readPkg from 'read-pkg';
 const PKG_NAME = '@openshift-console/dynamic-plugin-sdk';
 const EXTENSIONS_EXPORT = 'lib/extensions/index.js';
 const WEBPACK_PLUGIN_EXPORTS = './lib/webpack/ConsoleRemotePlugin.js';
+const API_EXPORT = './lib/api/api.js';
 
 const createPackageJson = () => {
   const packageJson = readPkg.sync({ normalize: false });
@@ -14,6 +15,7 @@ const createPackageJson = () => {
   packageJson.exports = {
     './': `./${EXTENSIONS_EXPORT}`,
     './webpack': WEBPACK_PLUGIN_EXPORTS,
+    './api': API_EXPORT,
   };
   packageJson.readme = './README.md';
   packageJson.peerDependencies = packageJson.dependencies;

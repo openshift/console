@@ -60,3 +60,32 @@ export type AccessReviewResourceAttributes = {
   name?: string;
   namespace?: string;
 };
+
+export type MatchExpression = {
+  key: string;
+  operator: 'Exists' | 'DoesNotExist' | 'In' | 'NotIn' | 'Equals' | 'NotEqual';
+  values?: string[];
+  value?: string;
+};
+
+export type MatchLabels = {
+  [key: string]: string;
+};
+
+export type Selector = {
+  matchLabels?: MatchLabels;
+  matchExpressions?: MatchExpression[];
+};
+
+/**
+ * GroupVersionKind unambiguously identifies a kind.
+ * https://godoc.org/k8s.io/apimachinery/pkg/runtime/schema#GroupVersionKind
+ * TODO: Change this to a regex-type if it ever becomes a thing (https://github.com/Microsoft/TypeScript/issues/6579)
+ */
+export type GroupVersionKind = string;
+
+/**
+ * The canonical, unique identifier for a Kubernetes resource type.
+ * Maintains backwards-compatibility with references using the `kind` string field.
+ */
+export type K8sResourceKindReference = GroupVersionKind | string;

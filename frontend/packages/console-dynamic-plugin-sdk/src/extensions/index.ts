@@ -10,3 +10,4 @@ export * from './pvc';
 export * from './redux';
 export * from './resource-metadata';
 export * from './yaml-templates';
+export * from './console-types';
