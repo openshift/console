@@ -50,6 +50,10 @@ const BaseRollbackModal = withHandlePromise((props) => {
       spec: {
         from: {},
         revision: dcVersion,
+        includeTemplate: true,
+        includeReplicationMeta: changeScaleSettings,
+        includeStrategy: changeStrategy,
+        includeTriggers: changeTriggers,
       },
     };
     const opts = {
