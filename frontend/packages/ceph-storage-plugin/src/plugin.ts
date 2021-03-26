@@ -704,16 +704,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
-    type: 'Page/Resource/List',
-    properties: {
-      model: models.NooBaaObjectBucketClaimModel,
-      loader: () =>
-        import(
-          './components/object-bucket-claim-page/object-bucket-claim' /* webpackChunkName: "object-bucket-claim-page" */
-        ).then((m) => m.ObjectBucketClaimsPage),
-    },
-  },
-  {
     type: 'Page/Resource/Details',
     properties: {
       model: models.NooBaaObjectBucketClaimModel,
