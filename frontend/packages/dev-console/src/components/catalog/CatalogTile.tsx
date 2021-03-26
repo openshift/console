@@ -7,6 +7,7 @@ import {
 } from '@patternfly/react-catalog-view-extension';
 import { Badge } from '@patternfly/react-core';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
+import { history } from '@console/internal/components/utils';
 import { getIconProps } from './utils/catalog-utils';
 import { CatalogType } from './utils/types';
 import CatalogBadges from './CatalogBadges';
@@ -16,10 +17,11 @@ import './CatalogTile.scss';
 type CatalogTileProps = {
   item: CatalogItem;
   catalogTypes: CatalogType[];
-  onClick: (item: CatalogItem) => void;
+  onClick?: (item: CatalogItem) => void;
+  href?: string;
 };
 
-const CatalogTile: React.FC<CatalogTileProps> = ({ item, catalogTypes, onClick }) => {
+const CatalogTile: React.FC<CatalogTileProps> = ({ item, catalogTypes, onClick, href }) => {
   const { t } = useTranslation();
   const { name, provider, description, type, badges } = item;
 
@@ -36,7 +38,15 @@ const CatalogTile: React.FC<CatalogTileProps> = ({ item, catalogTypes, onClick }
   return (
     <PfCatalogTile
       className="odc-catalog-tile co-catalog-tile"
-      onClick={() => onClick(item)}
+      onClick={(e) => {
+        e.preventDefault();
+        if (onClick) {
+          onClick(item);
+        } else if (href) {
+          history.push(href);
+        }
+      }}
+      href={href}
       title={name}
       badges={typeBadges}
       vendor={vendor}

@@ -45,12 +45,13 @@ type CatalogViewProps = {
   items: CatalogItem[];
   catalogType: string;
   catalogTypes: CatalogType[];
-  categories: CatalogCategory[];
+  categories?: CatalogCategory[];
   filters: FiltersType;
   filterGroups: string[];
   filterGroupNameMap: CatalogStringMap;
   groupings: CatalogStringMap;
   renderTile: (item: CatalogItem) => React.ReactNode;
+  hideSidebar?: boolean;
 };
 
 const CatalogView: React.FC<CatalogViewProps> = ({
@@ -63,6 +64,7 @@ const CatalogView: React.FC<CatalogViewProps> = ({
   filterGroupNameMap,
   groupings,
   renderTile,
+  hideSidebar,
 }) => {
   const { t } = useTranslation();
   const queryParams = useQueryParams();
@@ -147,7 +149,7 @@ const CatalogView: React.FC<CatalogViewProps> = ({
   const catalogCategories = React.useMemo<CatalogCategory[]>(() => {
     const allCategory = { id: ALL_CATEGORY, label: t('devconsole~All items') };
     const otherCategory = { id: OTHER_CATEGORY, label: t('devconsole~Other') };
-    return [allCategory, ...categories, otherCategory];
+    return [allCategory, ...(categories ?? []), otherCategory];
   }, [categories, t]);
 
   const categorizedIds = React.useMemo(() => categorize(items, catalogCategories), [
@@ -208,7 +210,7 @@ const CatalogView: React.FC<CatalogViewProps> = ({
     [catalogType, catalogTypeCounts, catalogTypes],
   );
 
-  const showSidebar = showCategories || showFilters || showTypeSelector;
+  const showSidebar = !hideSidebar && (showCategories || showFilters || showTypeSelector);
 
   const catalogItems = React.useMemo(() => {
     if (!isGrouped) return filteredItems;

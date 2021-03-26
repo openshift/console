@@ -8,12 +8,12 @@ export type CatalogItemType = ExtensionDeclaration<
   {
     /** Type for the catalog item. */
     type: string;
-    /** Title fpr the catalog item. */
+    /** Title for the catalog item. */
     title: string;
     /** Description for the type specific catalog. */
-    catalogDescription: string;
+    catalogDescription?: string;
     /** Description for the catalog item type. */
-    typeDescription: string;
+    typeDescription?: string;
     /** Custom filters specific to the catalog item.  */
     filters?: CatalogItemAttribute[];
     /** Custom groupings specific to the catalog item. */
@@ -24,6 +24,8 @@ export type CatalogItemType = ExtensionDeclaration<
 export type CatalogItemProvider = ExtensionDeclaration<
   'console.catalog/item-provider',
   {
+    /** The unique identifier for the catalog this provider contributes to. */
+    catalogId: string | string[];
     /** Type ID for the catalog item type. */
     type: string;
     /** Fetch items and normalize it for the catalog. Value is a react effect hook. */
@@ -37,6 +39,8 @@ export type CatalogItemProvider = ExtensionDeclaration<
 export type CatalogItemFilter = ExtensionDeclaration<
   'console.catalog/item-filter',
   {
+    /** The unique identifier for the catalog this provider contributes to. */
+    catalogId: string | string[];
     /** Type ID for the catalog item type. */
     type: string;
     /** Filters items of a specific type. Value is a function that takes CatalogItem[] and returns a subset based on the filter criteria. */

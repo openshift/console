@@ -15,13 +15,24 @@ import { useQueryParams } from '@console/shared';
 
 import { CatalogService } from './service/CatalogServiceProvider';
 import CatalogView from './catalog-view/CatalogView';
-import useCatalogCategories from './hooks/useCatalogCategories';
 import CatalogDetailsModal from './details/CatalogDetailsModal';
 import CatalogTile from './CatalogTile';
 import { determineAvailableFilters } from './utils/filter-utils';
-import { CatalogFilters, CatalogQueryParams, CatalogStringMap, CatalogType } from './utils/types';
+import {
+  CatalogCategory,
+  CatalogFilters,
+  CatalogQueryParams,
+  CatalogStringMap,
+  CatalogType,
+} from './utils/types';
 
-type CatalogControllerProps = CatalogService;
+type CatalogControllerProps = CatalogService & {
+  enableDetailsPanel?: boolean;
+  hideSidebar?: boolean;
+  title: string;
+  description: string;
+  categories?: CatalogCategory[];
+};
 
 const CatalogController: React.FC<CatalogControllerProps> = ({
   type,
@@ -30,15 +41,15 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
   loaded,
   loadError,
   catalogExtensions,
+  enableDetailsPanel,
+  title: defaultTitle,
+  description: defaultDescription,
+  hideSidebar,
+  categories,
 }) => {
   const { t } = useTranslation();
   const { pathname } = useLocation();
   const queryParams = useQueryParams();
-
-  const defaultTitle = t('devconsole~Developer Catalog');
-  const defaultDescription = t(
-    'devconsole~Add shared applications, services, event sources, or source-to-image builders to your Project from the developer catalog. Cluster administrators can customize the content made available in the catalog.',
-  );
 
   const typeExtension = React.useMemo(
     () => catalogExtensions?.find((extension) => extension.properties.type === type),
@@ -99,8 +110,6 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
     return crumbs;
   }, [pathname, queryParams, t, title, type]);
 
-  const availableCategories = useCatalogCategories();
-
   const selectedItem = React.useMemo(() => {
     const selectedId = queryParams.get(CatalogQueryParams.SELECTED_ID);
     return items.find((it) => selectedId === it.uid);
@@ -137,9 +146,20 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
 
   const renderTile = React.useCallback(
     (item: CatalogItem) => (
-      <CatalogTile item={item} onClick={openDetailsPanel} catalogTypes={catalogTypes} />
+      <CatalogTile
+        item={item}
+        catalogTypes={catalogTypes}
+        onClick={
+          enableDetailsPanel
+            ? openDetailsPanel
+            : item.cta?.callback
+            ? () => item.cta.callback()
+            : null
+        }
+        href={!enableDetailsPanel ? item.cta?.href : null}
+      />
     ),
-    [catalogTypes, openDetailsPanel],
+    [catalogTypes, openDetailsPanel, enableDetailsPanel],
   );
 
   return (
@@ -163,12 +183,13 @@ const CatalogController: React.FC<CatalogControllerProps> = ({
                 catalogType={type}
                 catalogTypes={catalogTypes}
                 items={catalogItems}
-                categories={availableCategories}
+                categories={categories}
                 filters={availableFilters}
                 filterGroups={filterGroups}
                 filterGroupNameMap={filterGroupNameMap}
                 groupings={groupings}
                 renderTile={renderTile}
+                hideSidebar={hideSidebar}
               />
               <CatalogDetailsModal item={selectedItem} onClose={closeDetailsPanel} />
             </StatusBox>

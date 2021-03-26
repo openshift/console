@@ -46,6 +46,7 @@
   {
     "type": "console.catalog/item-provider",
     "properties": {
+      "catalogId": "dev-catalog",
       "type": "EventSource",
       "provider": { "$codeRef": "catalog.eventSourceProvider" }
     },
@@ -56,6 +57,7 @@
   {
     "type": "console.catalog/item-provider",
     "properties": {
+      "catalogId": "dev-catalog",
       "type": "EventSource",
       "provider": { "$codeRef": "catalog.kameletsProvider" }
     },

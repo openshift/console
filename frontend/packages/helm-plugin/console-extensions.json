@@ -33,6 +33,7 @@
   {
     "type": "console.catalog/item-provider",
     "properties": {
+      "catalogId": "dev-catalog",
       "type": "HelmChart",
       "provider": { "$codeRef": "catalog.helmChartProvider" }
     },

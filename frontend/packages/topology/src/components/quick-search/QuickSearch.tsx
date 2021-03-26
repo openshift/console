@@ -66,7 +66,7 @@ const QuickSearch: React.FC<QuickSearchProps> = ({
   setIsOpen,
 }) => {
   return (
-    <CatalogServiceProvider namespace={namespace}>
+    <CatalogServiceProvider namespace={namespace} catalogId="dev-catalog">
       {(catalogService: CatalogService) => (
         <QuickStartsLoader>
           {(quickStarts, quickStartsLoaded) => (
