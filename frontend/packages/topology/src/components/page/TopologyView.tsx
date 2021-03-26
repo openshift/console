@@ -42,7 +42,8 @@ import { setSupportedTopologyFilters, setSupportedTopologyKinds } from '../../re
 import Topology from '../graph-view/Topology';
 import TopologyListView from '../list-view/TopologyListView';
 import TopologyFilterBar from '../../filters/TopologyFilterBar';
-import { getTopologySideBar } from '../side-bar/TopologySideBar';
+import TopologySideBar from '../side-bar/TopologySideBar';
+import { getSelectedEntityDetails } from '../side-bar/getSelectedEntityDetails';
 import { FilterContext } from '../../filters/FilterProvider';
 import TopologyEmptyState from './TopologyEmptyState';
 import QuickSearch from '../quick-search/QuickSearch';
@@ -267,18 +268,16 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
     [filteredModel, namespace, onSelect, viewType],
   );
 
-  const topologySideBar = React.useMemo(
-    () => getTopologySideBar(visualization, selectedEntity, () => onSelect()),
-    [onSelect, selectedEntity, visualization],
-  );
+  const topologySideBarDetails = React.useMemo(() => getSelectedEntityDetails(selectedEntity), [
+    selectedEntity,
+  ]);
 
   if (!filteredModel) {
     return null;
   }
 
-  const containerClasses = classNames('pf-topology-container', {
-    'pf-topology-container__with-sidebar': topologySideBar.shown,
-    'pf-topology-container__with-sidebar--open': topologySideBar.shown,
+  const containerClasses = classNames('pf-topology-container pf-topology-container__with-sidebar', {
+    'pf-topology-container__with-sidebar--open': topologySideBarDetails,
   });
 
   const topologyViewComponent = (
@@ -314,7 +313,9 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
               ) : null}
             </div>
           </div>
-          {topologySideBar.sidebar}
+          <TopologySideBar show={!!topologySideBarDetails} onClose={() => onSelect()}>
+            {topologySideBarDetails}
+          </TopologySideBar>
         </StackItem>
         <QuickSearch
           namespace={namespace}
