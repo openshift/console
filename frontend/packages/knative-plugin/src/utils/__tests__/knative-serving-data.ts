@@ -192,6 +192,71 @@ export const deploymentData: K8sResourceKind = {
   },
 };
 
+export const hpaData: K8sResourceKind = {
+  kind: 'HorizontalPodAutoscaler',
+  apiVersion: 'autoscaling/v2beta2',
+  metadata: {
+    name: 'example',
+    namespace: 'testproject3',
+    uid: 'c5c6e70e-5a95-4851-9027-ece28739378a',
+    resourceVersion: '36526',
+    creationTimestamp: '2021-03-25T05:23:38Z',
+  },
+  spec: {
+    scaleTargetRef: { kind: 'Deployment', name: 'overlayimage', apiVersion: 'apps/v1' },
+    minReplicas: 1,
+    maxReplicas: 3,
+    metrics: [
+      {
+        type: 'Resource',
+        resource: { name: 'memory', target: { type: 'Utilization', averageUtilization: 70 } },
+      },
+      {
+        type: 'Resource',
+        resource: { name: 'cpu', target: { type: 'Utilization', averageUtilization: 70 } },
+      },
+    ],
+  },
+  status: {
+    currentReplicas: 1,
+    desiredReplicas: 1,
+    currentMetrics: [
+      {
+        type: 'Resource',
+        resource: { name: 'memory', current: { averageValue: '1630208', averageUtilization: 0 } },
+      },
+      {
+        type: 'Resource',
+        resource: { name: 'cpu', current: { averageValue: '0', averageUtilization: 0 } },
+      },
+    ],
+    conditions: [
+      {
+        type: 'AbleToScale',
+        status: 'True',
+        lastTransitionTime: '2021-03-25T05:23:53Z',
+        reason: 'ReadyForNewScale',
+        message: 'recommended size matches current size',
+      },
+      {
+        type: 'ScalingActive',
+        status: 'True',
+        lastTransitionTime: '2021-03-25T05:24:23Z',
+        reason: 'ValidMetricFound',
+        message:
+          'the HPA was able to successfully calculate a replica count from cpu resource utilization (percentage of request)',
+      },
+      {
+        type: 'ScalingLimited',
+        status: 'True',
+        lastTransitionTime: '2021-03-25T05:28:54Z',
+        reason: 'TooFewReplicas',
+        message: 'the desired replica count is less than the minimum replica count',
+      },
+    ],
+  },
+};
+
 export const deploymentKnativeData: K8sResourceKind = {
   kind: 'Deployment',
   apiVersion: 'apps/v1',

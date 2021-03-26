@@ -10,12 +10,13 @@ export const hideKnatifyAction = (resource: K8sResourceKind): boolean => {
 };
 
 export const setKnatify = (model: K8sKind, obj: K8sResourceKind): KebabOption => {
+  const kind = obj.kind || model.kind;
+  const apiVersion = obj.apiVersion || `${model.apiGroup}/${model.apiVersion}`;
   return {
     // t('knative-plugin~Create Knative service')
     labelKey: 'knative-plugin~Create Knative service',
     hidden: hideKnatifyAction(obj),
-    href: `/knatify/ns/${obj.metadata.namespace}?name=${obj.metadata.name}&kind=${obj.kind ||
-      model.kind}`,
+    href: `/knatify/ns/${obj.metadata.namespace}?name=${obj.metadata.name}&kind=${kind}&apiversion=${apiVersion}`,
     accessReview: {
       group: ServiceModel.apiGroup,
       resource: ServiceModel.plural,

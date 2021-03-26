@@ -1,3 +1,4 @@
+import { K8sResourceKind } from 'public/module/k8s';
 import {
   getKnatifyWorkloadData,
   getCommonInitialValues,
@@ -8,11 +9,31 @@ import {
   knatifyFormCommonInitailValues,
   ksvcData,
 } from '../__mocks__/knatify-mock';
-import { deploymentData } from './knative-serving-data';
+import { deploymentData, hpaData } from './knative-serving-data';
 
 describe('knatify-utils', () => {
   it('getKnatifyWorkloadData should return valid knative service spec', () => {
     expect(getKnatifyWorkloadData(deploymentData)).toEqual(ksvcData);
+  });
+
+  it('getKnatifyWorkloadData should return valid knative service spec with associated min/max pods based on related HPA', () => {
+    const mockKsvcData: K8sResourceKind = {
+      ...ksvcData,
+      spec: {
+        ...ksvcData.spec,
+        template: {
+          ...ksvcData.spec.template,
+          metadata: {
+            ...ksvcData.spec.template.metadata,
+            annotations: {
+              'autoscaling.knative.dev/minScale': '1',
+              'autoscaling.knative.dev/maxScale': '3',
+            },
+          },
+        },
+      },
+    };
+    expect(getKnatifyWorkloadData(deploymentData, hpaData)).toEqual(mockKsvcData);
   });
 
   it('getCommonInitialValues should return valid formik common initial values', () => {

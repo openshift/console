@@ -4,7 +4,7 @@ import { RouteComponentProps } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { useActivePerspective } from '@console/shared';
+import { BadgeType, getBadgeFromType, useActivePerspective, useRelatedHPA } from '@console/shared';
 import { useExtensions, Perspective, isPerspective } from '@console/plugin-sdk';
 import { ProjectModel } from '@console/internal/models';
 import { LoadingBox, history, PageHeading } from '@console/internal/components/utils';
@@ -41,8 +41,10 @@ const CreateKnatifyPage: React.FunctionComponent<CreateKnatifyPageProps> = ({
   const queryParams = new URLSearchParams(location.search);
   const kind = queryParams.get('kind');
   const appName = queryParams.get('name');
+  const apiVersion = queryParams.get('apiversion');
   const [perspective] = useActivePerspective();
   const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
+  const [hpa, hpaLoaded, hpaError] = useRelatedHPA(apiVersion, kind, appName, namespace);
 
   const watchedResources = React.useMemo(
     () => ({
@@ -76,16 +78,10 @@ const CreateKnatifyPage: React.FunctionComponent<CreateKnatifyPageProps> = ({
     watchedResources,
   );
 
-  const isResourcesLoaded = (): boolean => {
-    const resKeys = Object.keys(resources);
-    if (
-      resKeys.length > 0 &&
-      resKeys.every((key) => resources[key].loaded || !!resources[key].loadError)
-    ) {
-      return true;
-    }
-    return false;
-  };
+  const isResourceLoaded =
+    Object.keys(resources).length > 0 &&
+    Object.values(resources).every((value) => value.loaded || !!value.loadError) &&
+    (hpaLoaded || !!hpaError);
 
   const handleSubmit = (
     values: DeployImageFormData,
@@ -106,11 +102,14 @@ const CreateKnatifyPage: React.FunctionComponent<CreateKnatifyPageProps> = ({
       <Helmet>
         <title>{t('knative-plugin~Create Knative service')}</title>
       </Helmet>
-      <PageHeading title={t('knative-plugin~Create Knative service')} />
-      {isResourcesLoaded() ? (
+      <PageHeading
+        title={t('knative-plugin~Create Knative service')}
+        badge={getBadgeFromType(BadgeType.TECH)}
+      />
+      {isResourceLoaded ? (
         <Formik
           initialValues={getInitialValuesKnatify(
-            getKnatifyWorkloadData(resources?.workloadResource?.data as K8sResourceKind),
+            getKnatifyWorkloadData(resources?.workloadResource?.data as K8sResourceKind, hpa),
             appName,
             namespace,
             resources?.imageStream?.data as K8sResourceKind[],

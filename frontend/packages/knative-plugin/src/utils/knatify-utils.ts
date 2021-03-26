@@ -22,15 +22,17 @@ import {
 import { RegistryType } from '@console/dev-console/src/utils/imagestream-utils';
 import { ServiceModel } from '../models';
 import { getKnativeServiceDepResource } from './create-knative-utils';
+import { KNATIVE_MAXSCALE_ANNOTATION, KNATIVE_MINSCALE_ANNOTATION } from '../const';
 
 const PART_OF = 'app.kubernetes.io/part-of';
 const knatify = 'knatify';
 
-export const getKnatifyWorkloadData = (obj: K8sResourceKind) => {
+export const getKnatifyWorkloadData = (obj: K8sResourceKind, relatedHpa?: K8sResourceKind) => {
   const { metadata, spec } = obj || {};
   const { name = '', namespace = '', labels = {}, annotations = {} } = metadata || {};
   const { metadata: templateMetadata, spec: templateSpec } = spec?.template || {};
   const { image, ports, imagePullPolicy, env, resources } = templateSpec?.containers[0] || {};
+  const { spec: hpaSpec } = relatedHpa ?? {};
 
   const healthChecks = getHealthChecksData(obj, 0);
   const { readinessProbe, livenessProbe } = getProbesData(healthChecks, Resources.KnativeService);
@@ -48,7 +50,15 @@ export const getKnatifyWorkloadData = (obj: K8sResourceKind) => {
       template: {
         metadata: {
           labels: templateMetadata?.labels ?? {},
-          annotations: templateMetadata?.annotations ?? {},
+          annotations: {
+            ...templateMetadata?.annotations,
+            ...(hpaSpec?.minReplicas && {
+              [KNATIVE_MINSCALE_ANNOTATION]: `${hpaSpec.minReplicas}`,
+            }),
+            ...(hpaSpec?.maxReplicas && {
+              [KNATIVE_MAXSCALE_ANNOTATION]: `${hpaSpec.maxReplicas}`,
+            }),
+          },
         },
         spec: {
           containers: [
