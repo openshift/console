@@ -218,6 +218,7 @@ export const ObjectBucketClaimsPage: React.FC = (props) => {
       canCreate
       createProps={createProps}
       rowFilters={[obcStatusFilter(t)]}
+      autoFocus
     />
   );
 };

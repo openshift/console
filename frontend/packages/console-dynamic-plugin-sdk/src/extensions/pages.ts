@@ -15,7 +15,32 @@ export type StandaloneRoutePage = ExtensionDeclaration<
   }
 >;
 
+type ResourcePageCommonProps = {
+  /** See https://reacttraining.com/react-router/web/api/match */
+  match: RouteComponentProps['match'];
+  /** The resource kind scope. */
+  kind: string;
+  /** The namespace scope. */
+  namespace: string;
+};
+
+export type ResourceListPage = ExtensionDeclaration<
+  'console.page/resource/list',
+  {
+    /** The model for which component is related to */
+    model: {
+      apiGroup: string;
+      apiVersion: string;
+      kind: string;
+    };
+    component: CodeRef<React.FC<ResourcePageCommonProps>>;
+  }
+>;
+
 // Type guards
 
 export const isStandaloneRoutePage = (e: Extension): e is StandaloneRoutePage =>
   e.type === 'console.page/route/standalone';
+
+export const isResourceListPage = (e: Extension): e is ResourceListPage =>
+  e.type === 'console.page/resource/list';

@@ -1,1 +1,13 @@
-[]
+[
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "apiVersion": "v1alpha1",
+        "apiGroup": "objectbucket.io",
+        "kind": "ObjectBucketClaim"
+      },
+      "component": { "$codeRef": "objectBucketClaims.ObjectBucketClaimsPage" }
+    }
+  }
+]

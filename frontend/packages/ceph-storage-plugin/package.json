@@ -23,6 +23,9 @@
       "ceph-storage": [
         "integration-tests/**/*.scenario.ts"
       ]
+    },
+    "exposedModules": {
+      "objectBucketClaims": "src/components/object-bucket-claim-page/object-bucket-claim.tsx"
     }
   }
 }

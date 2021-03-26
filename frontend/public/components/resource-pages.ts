@@ -1,8 +1,12 @@
 import { Map as ImmutableMap } from 'immutable';
-import { ResourceDetailsPage, ResourcePage, ResourceListPage } from '@console/plugin-sdk';
+import {
+  ResourceDetailsPage,
+  ResourcePage,
+  ResourceListPage as StaticResourceListPage,
+} from '@console/plugin-sdk';
 
 import { ReportReference, ReportGenerationQueryReference } from './chargeback';
-import { referenceForModel, GroupVersionKind } from '../module/k8s';
+import { referenceForModel, GroupVersionKind, K8sKind } from '../module/k8s';
 import {
   AlertmanagerModel,
   BuildConfigModel,
@@ -63,16 +67,24 @@ import {
   VolumeSnapshotClassModel,
   ClusterRoleBindingModel,
 } from '../models';
+import { ResourceListPage as DynamicResourceListPage } from '@console/dynamic-plugin-sdk';
+
+type AllResourcePage = ResourcePage | DynamicResourceListPage;
 
 const addResourcePage = (
   map: ImmutableMap<ResourceMapKey, ResourceMapValue>,
-  page: ResourcePage,
+  page: AllResourcePage,
 ) => {
-  const key = page.properties?.modelParser
-    ? page.properties?.modelParser(page.properties.model)
-    : referenceForModel(page.properties.model);
+  const key = (page as ResourcePage).properties?.modelParser
+    ? (page as ResourcePage).properties?.modelParser(page.properties.model)
+    : // Dynamic plugin will have apiVersion, apiGroup and kind so this is safe
+      referenceForModel(page.properties.model as K8sKind);
   if (!map.has(key)) {
-    map.set(key, page.properties.loader);
+    if (page.properties.hasOwnProperty('loader')) {
+      map.set(key, (page as ResourcePage).properties.loader);
+    } else {
+      map.set(key, (page as DynamicResourceListPage).properties.component);
+    }
   }
 };
 
@@ -554,7 +566,9 @@ export const baseListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
     ).then((m) => m.default),
   );
 
-export const getResourceListPages = (pluginPages: ResourceListPage[] = []) =>
+export const getResourceListPages = (
+  pluginPages: Array<StaticResourceListPage | DynamicResourceListPage> = [],
+) =>
   ImmutableMap<ResourceMapKey, ResourceMapValue>()
     .merge(baseListPages)
     .withMutations((map) => {

@@ -313,7 +313,7 @@ FireMan_.propTypes = {
   title: PropTypes.string,
 };
 
-/** @type {React.SFC<{ListComponent: React.ComponentType<any>, kind: string, helpText?: any, namespace?: string, filterLabel?: string, textFilter?: string, title?: string, showTitle?: boolean, rowFilters?: any[], selector?: any, fieldSelector?: string, canCreate?: boolean, createButtonText?: string, createProps?: any, mock?: boolean, badge?: React.ReactNode, createHandler?: any, hideNameLabelFilters?: boolean, hideLabelFilter?: boolean, columnLayout?: ColumnLayout, customData?: any, hideColumnManagement?: boolean, labelFilterPlaceholder?: string, nameFilterPlaceholder?: string, flatten?: any, name?: string } >} */
+/** @type {React.SFC<{ListComponent: React.ComponentType<any>, kind: string, helpText?: any, namespace?: string, filterLabel?: string, textFilter?: string, title?: string, showTitle?: boolean, rowFilters?: any[], selector?: any, fieldSelector?: string, canCreate?: boolean, createButtonText?: string, createProps?: any, mock?: boolean, badge?: React.ReactNode, createHandler?: any, hideNameLabelFilters?: boolean, hideLabelFilter?: boolean, columnLayout?: ColumnLayout, customData?: any, hideColumnManagement?: boolean, labelFilterPlaceholder?: string, nameFilterPlaceholder?: string, flatten?: any, name?: string, autoFocus?: boolean } >} */
 export const ListPage = withFallback((props) => {
   const {
     autoFocus,
