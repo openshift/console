@@ -4,6 +4,7 @@ import { Base64 } from 'js-base64';
 import { PasteIcon } from '@patternfly/react-icons';
 import { Button, AlertVariant } from '@patternfly/react-core';
 import * as classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
 
 import { K8sResourceKind, k8sGet } from '../../module/k8s';
 import { ExpandableAlert } from './alerts';
@@ -48,6 +49,7 @@ const getTableColumnClasses = (canGetSecret: boolean) => {
 };
 
 export const WebhookTriggers: React.FC<WebhookTriggersProps> = (props) => {
+  const { t } = useTranslation();
   const { resource } = props;
   const { name, namespace } = resource.metadata;
   const { triggers } = resource.spec;
@@ -152,7 +154,10 @@ export const WebhookTriggers: React.FC<WebhookTriggersProps> = (props) => {
     );
     if (!_.has(webhookSecret, 'data.WebHookSecretKey')) {
       errorModal({
-        error: `Secret referenced in the ${triggerProperty} webhook trigger does not contain 'WebHookSecretKey' key. Webhook trigger won’t work due to the invalid secret reference`,
+        error: t(
+          "public~Secret referenced in the {{triggerProperty}} webhook trigger does not contain 'WebHookSecretKey' key. Webhook trigger won’t work due to the invalid secret reference",
+          { triggerProperty },
+        ),
       });
       return;
     }
@@ -171,7 +176,8 @@ export const WebhookTriggers: React.FC<WebhookTriggersProps> = (props) => {
     return webhookSecret || plainSecret ? (
       <Button variant="link" type="button" onClick={() => copyWebhookToClipboard(trigger)}>
         <PasteIcon />
-        &nbsp;Copy URL with Secret
+        &nbsp;
+        {t('public~Copy URL with Secret')}
       </Button>
     ) : null;
   };
@@ -188,7 +194,7 @@ export const WebhookTriggers: React.FC<WebhookTriggersProps> = (props) => {
           ))}
         />
       )}
-      <SectionHeading text="Webhooks" />
+      <SectionHeading text={t('public~Webhooks')} />
       <div className="co-table-container">
         <table className="table table--layout-fixed">
           <colgroup>
@@ -199,9 +205,9 @@ export const WebhookTriggers: React.FC<WebhookTriggersProps> = (props) => {
           </colgroup>
           <thead>
             <tr>
-              <th className={tableColumnClasses[0]}>Type</th>
-              <th className={tableColumnClasses[1]}>Webhook URL</th>
-              <th className={tableColumnClasses[2]}>Secret</th>
+              <th className={tableColumnClasses[0]}>{t('public~Type')}</th>
+              <th className={tableColumnClasses[1]}>{t('public~Webhook URL')}</th>
+              <th className={tableColumnClasses[2]}>{t('public~Secret')}</th>
               <th className={tableColumnClasses[3]} />
             </tr>
           </thead>

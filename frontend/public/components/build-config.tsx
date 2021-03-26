@@ -69,7 +69,7 @@ export const BuildConfigsDetails: React.SFC<BuildConfigsDetailsProps> = ({ obj: 
     <>
       <div className="co-m-pane__body">
         {hasPipeline && <PipelineBuildStrategyAlert obj={buildConfig} />}
-        <SectionHeading text={t('public~Build Config details')} />
+        <SectionHeading text={t('public~BuildConfig details')} />
         <div className="row">
           <div className="col-sm-6">
             <ResourceSummary resource={buildConfig} />
@@ -195,7 +195,7 @@ export const BuildConfigsList: React.SFC = (props) => {
   return (
     <Table
       {...props}
-      aria-label={t('public~Build Configs')}
+      aria-label={t('public~BuildConfigs')}
       Header={BuildConfigsTableHeader}
       Row={BuildConfigsTableRow}
       virtualize
@@ -221,7 +221,7 @@ export const BuildConfigsPage: React.FC<BuildConfigsPageProps> = (props) => {
   return (
     <ListPage
       {...props}
-      title={t('public~Build Configs')}
+      title={t('public~BuildConfigs')}
       kind={BuildConfigsReference}
       ListComponent={BuildConfigsList}
       canCreate={true}

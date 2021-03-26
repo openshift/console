@@ -55,7 +55,9 @@ export const CreateYAML = connectToPlural((props: CreateYAMLProps) => {
     obj.apiVersion = apiVersionForModel(kindObj);
     obj.spec = obj.spec || {};
   }
-  const header = t('public~Create {{objLabel}}', { objLabel: kindObj.label });
+  const header = t('public~Create {{objLabel}}', {
+    objLabel: kindObj.labelKey ? t(kindObj.labelKey) : kindObj.label,
+  });
 
   // TODO: if someone edits namespace, we'll redirect to old namespace
 

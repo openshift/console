@@ -451,21 +451,9 @@ BuildsList.displayName = 'BuildsList';
 export const buildPhase = (build) => build.status.phase;
 
 const allPhases = ['New', 'Pending', 'Running', 'Complete', 'Failed', 'Error', 'Cancelled'];
-const filters = [
-  {
-    filterGroupName: 'Status',
-    type: 'build-status',
-    reducer: buildPhase,
-    items: _.map(allPhases, (phase) => ({
-      id: phase,
-      title: phase,
-    })),
-  },
-];
 
 export const BuildsPage: React.SFC<BuildsPageProps> = (props) => {
   const { t } = useTranslation();
-
   return (
     <ListPage
       {...props}
@@ -473,7 +461,17 @@ export const BuildsPage: React.SFC<BuildsPageProps> = (props) => {
       kind={BuildsReference}
       ListComponent={BuildsList}
       canCreate={false}
-      rowFilters={filters}
+      rowFilters={[
+        {
+          filterGroupName: t('public~Status'),
+          type: 'build-status',
+          reducer: buildPhase,
+          items: _.map(allPhases, (phase) => ({
+            id: phase,
+            title: phase,
+          })),
+        },
+      ]}
     />
   );
 };
