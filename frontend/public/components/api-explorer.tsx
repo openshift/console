@@ -48,7 +48,15 @@ import {
   ScrollToTopOnMount,
   setQueryArgument,
 } from './utils';
-import { isResourceListPage, useExtensions, ResourceListPage } from '@console/plugin-sdk';
+import {
+  isResourceListPage as isStaticListPage,
+  useExtensions,
+  ResourceListPage,
+} from '@console/plugin-sdk';
+import {
+  isResourceListPage as isDynamicListPage,
+  ResolvedResourceListPage as DynamicListPage,
+} from '@console/dynamic-plugin-sdk';
 
 const mapStateToProps = (state: RootState): APIResourceLinkStateProps => {
   return {
@@ -415,7 +423,10 @@ const APIResourceSchema: React.FC<APIResourceTabProps> = ({ customData: { kindOb
 const APIResourceInstances: React.FC<APIResourceTabProps> = ({
   customData: { kindObj, namespace },
 }) => {
-  const resourceListPageExtensions = useExtensions<ResourceListPage>(isResourceListPage);
+  const resourceListPageExtensions = useExtensions<ResourceListPage | DynamicListPage>(
+    isStaticListPage,
+    isDynamicListPage,
+  );
   const componentLoader = getResourceListPages(resourceListPageExtensions).get(
     referenceForModel(kindObj),
     () => Promise.resolve(DefaultPage),

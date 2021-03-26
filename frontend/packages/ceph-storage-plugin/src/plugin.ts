@@ -668,16 +668,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
-    type: 'Page/Resource/List',
-    properties: {
-      model: models.NooBaaObjectBucketModel,
-      loader: () =>
-        import(
-          './components/object-bucket-page/object-bucket' /* webpackChunkName: "object-bucket-page" */
-        ).then((m) => m.ObjectBucketsPage),
-    },
-  },
-  {
     type: 'Page/Resource/Details',
     properties: {
       model: models.NooBaaObjectBucketModel,

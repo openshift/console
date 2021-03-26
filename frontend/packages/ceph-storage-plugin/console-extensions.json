@@ -1,1 +1,21 @@
-[]
+[
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "abbr": "OBC",
+        "label": "ObjectBucketClaim",
+        "labelPlural": "ObjectBucketClaims",
+        "apiVersion": "v1alpha1",
+        "apiGroup": "objectbucket.io",
+        "plural": "objectbucketclaims",
+        "namespaced": true,
+        "kind": "ObjectBucketClaim",
+        "id": "objectbucketclaims",
+        "crd": true,
+        "legacyPluralURL": true
+      },
+      "component": { "$codeRef": "objectBucketClaims.ObjectBucketClaimsPage" }
+    }
+  }
+]

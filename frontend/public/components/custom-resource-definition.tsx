@@ -39,7 +39,15 @@ import { Conditions } from './conditions';
 import { getResourceListPages } from './resource-pages';
 import { DefaultPage } from './default-resource';
 import { GreenCheckCircleIcon } from '@console/shared';
-import { useExtensions, isResourceListPage, ResourceListPage } from '@console/plugin-sdk';
+import {
+  useExtensions,
+  isResourceListPage as isStaticListPage,
+  ResourceListPage,
+} from '@console/plugin-sdk';
+import {
+  isResourceListPage as isDynamicListPage,
+  ResolvedResourceListPage as DynamicListPage,
+} from '@console/dynamic-plugin-sdk';
 
 const { common } = Kebab.factory;
 
@@ -201,7 +209,10 @@ const Details: React.FC<{ obj: CustomResourceDefinitionKind }> = ({ obj: crd }) 
 };
 
 const Instances: React.FC<InstancesProps> = ({ obj, namespace }) => {
-  const resourceListPageExtensions = useExtensions<ResourceListPage>(isResourceListPage);
+  const resourceListPageExtensions = useExtensions<ResourceListPage | DynamicListPage>(
+    isStaticListPage,
+    isDynamicListPage,
+  );
   const crdKind = referenceForCRD(obj);
   const componentLoader = getResourceListPages(resourceListPageExtensions).get(crdKind, () =>
     Promise.resolve(DefaultPage),

@@ -1,7 +1,7 @@
 import { FeatureFlag, ModelFeatureFlag } from '../extensions/feature-flags';
 import { ReduxReducer } from '../extensions/redux';
 import { ContextProvider } from '../extensions/context-providers';
-import { StandaloneRoutePage } from '../extensions/pages';
+import { StandaloneRoutePage, ResourceListPage } from '../extensions/pages';
 import { PVCCreateProp, PVCStatus, PVCAlert, PVCDelete } from '../extensions/pvc';
 import { YAMLTemplate } from '../extensions/yaml-templates';
 import { AddAction } from '../extensions/add-actions';
@@ -37,7 +37,8 @@ export type SupportedExtension =
   | CatalogItemProvider
   | CatalogItemFilter
   | FileUpload
-  | ModelMetadata;
+  | ModelMetadata
+  | ResourceListPage;
 
 /**
  * Schema of Console plugin's `console-extensions.json` file.

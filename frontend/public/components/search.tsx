@@ -40,10 +40,21 @@ import {
 } from './utils';
 import confirmNavUnpinModal from './nav/confirmNavUnpinModal';
 import { SearchFilterDropdown, searchFilterValues } from './search-filter-dropdown';
-import { useExtensions, isResourceListPage, ResourceListPage } from '@console/plugin-sdk';
+import {
+  useExtensions,
+  isResourceListPage as isStaticListPage,
+  ResourceListPage,
+} from '@console/plugin-sdk';
+import {
+  isResourceListPage as isDynamicListPage,
+  ResolvedResourceListPage as DynamicListPage,
+} from '@console/dynamic-plugin-sdk';
 
 const ResourceList = connectToModel(({ kindObj, mock, namespace, selector, nameFilter }) => {
-  const resourceListPageExtensions = useExtensions<ResourceListPage>(isResourceListPage);
+  const resourceListPageExtensions = useExtensions<ResourceListPage | DynamicListPage>(
+    isStaticListPage,
+    isDynamicListPage,
+  );
   if (!kindObj) {
     return <LoadingBox />;
   }

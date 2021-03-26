@@ -21,17 +21,24 @@ import {
   useExtensions,
   isResourceDetailsPage,
   ResourceDetailsPage as ResourceDetailsPageExt,
-  ResourceListPage as ResourceListPageExt,
-  isResourceListPage,
+  isResourceListPage as isStaticResourceListPage,
+  ResourceListPage as StaticListPage,
 } from '@console/plugin-sdk';
+import {
+  isResourceListPage,
+  ResolvedResourceListPage as DynamicListPage,
+} from '@console/dynamic-plugin-sdk';
 
 // Parameters can be in pros.params (in URL) or in props.route (attribute of Route tag)
 const allParams = (props) => Object.assign({}, _.get(props, 'match.params'), props);
 
 export const ResourceListPage = connectToPlural(
   withStartGuide((props: ResourceListPageProps) => {
-    const resourceListPageExtensions = useExtensions<ResourceListPageExt>(isResourceListPage);
-    const { kindObj, kindsInFlight, modelRef, noProjectsAvailable, ns, plural } = allParams(props);
+    const resourceListPageExtensions = useExtensions<DynamicListPage | StaticListPage>(
+      isStaticResourceListPage,
+      isResourceListPage,
+    );
+    const { kindObj, kindsInFlight, modelRef, ns, plural } = allParams(props);
 
     if (!kindObj) {
       if (kindsInFlight) {
@@ -57,11 +64,9 @@ export const ResourceListPage = connectToPlural(
           <title>{kindObj.labelPlural}</title>
         </Helmet>
         <AsyncComponent
-          autoFocus={!noProjectsAvailable}
           kind={modelRef}
           loader={componentLoader}
           match={props.match}
-          mock={noProjectsAvailable}
           namespace={ns}
           badge={getBadgeFromType(kindObj.badge)}
         />
