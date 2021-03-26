@@ -29,7 +29,7 @@ const MasterNav = () => (
           <NewTabLink name={t('COMMON:MSG_LNB_MENU_98')} type="grafana" />
           <NewTabLink name={t('COMMON:MSG_LNB_MENU_99')} type="kibana" />
         </NavSection>
-        {/* <NavSection title="Operators" /> */}
+        <NavSection title="Operators" />
         <NavSection title={t('COMMON:MSG_LNB_MENU_10')}>
           <ResourceNSLink resource="servicebrokers" name={t('COMMON:MSG_LNB_MENU_11')} />
           <ResourceNSLink resource="serviceclasses" name={t('COMMON:MSG_LNB_MENU_12')} />
