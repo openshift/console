@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import {
-  history,
   getQueryArgument,
   removeQueryArgument,
   setQueryArgument,
@@ -12,6 +11,7 @@ import './QuickSearchButton.scss';
 
 import './QuickSearchModalBody.scss';
 import { CatalogLinkData, QuickSearchData } from './utils/quick-search-types';
+import { handleCta } from './utils/quick-search-utils';
 
 interface QuickSearchModalBodyProps {
   allCatalogItemsLoaded: boolean;
@@ -85,12 +85,14 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
     [listCatalogItems, selectedItemId],
   );
 
-  const onEnter = React.useCallback(() => {
-    if (selectedItem) {
-      const { href, callback } = selectedItem.cta;
-      callback ? callback() : history.push(href);
-    }
-  }, [selectedItem]);
+  const onEnter = React.useCallback(
+    (e) => {
+      if (selectedItem) {
+        handleCta(e, selectedItem, closeModal);
+      }
+    },
+    [closeModal, selectedItem],
+  );
 
   const selectPrevious = React.useCallback(() => {
     let index = getIndexOfSelectedItem();
@@ -123,7 +125,7 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
           break;
         }
         case 'Enter': {
-          onEnter();
+          onEnter(e);
           break;
         }
         default:
@@ -168,6 +170,7 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
           viewAll={viewAll}
           searchTerm={searchTerm}
           selectedItemId={selectedItemId}
+          closeModal={closeModal}
           selectedItem={selectedItem}
           namespace={namespace}
           onSelect={(itemId) => {
