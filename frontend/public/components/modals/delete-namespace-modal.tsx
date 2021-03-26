@@ -71,7 +71,7 @@ export const DeleteNamespaceModal: React.FC<DeleteNamespaceModalProps> = ({
           className="pf-c-form-control"
           onKeyUp={onKeyUp}
           placeholder={t('public~Enter name')}
-          aria-label={t('public~Enter the name of the {{label}} to delete}', {
+          aria-label={t('public~Enter the name of the {{label}} to delete', {
             label: t(kind.labelKey),
           })}
           autoFocus={true}

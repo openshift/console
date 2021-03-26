@@ -198,7 +198,7 @@
   "This action cannot be undone. It will destroy all pods, services and other objects in the namespace <2>{{name}}</2>.": "This action cannot be undone. It will destroy all pods, services and other objects in the namespace <2>{{name}}</2>.",
   "Confirm deletion by typing <2>{{name}}</2> below:": "Confirm deletion by typing <2>{{name}}</2> below:",
   "Enter name": "Enter name",
-  "Enter the name of the {{label}} to delete}": "Enter the name of the {{label}} to delete}",
+  "Enter the name of the {{label}} to delete": "Enter the name of the {{label}} to delete",
   "Delete": "Delete",
   "Delete PersistentVolumeClaim": "Delete PersistentVolumeClaim",
   "Are you sure you want to delete <2>{{pvcName}}</2> PersistentVolumeClaim?": "Are you sure you want to delete <2>{{pvcName}}</2> PersistentVolumeClaim?",
