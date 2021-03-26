@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useField } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { ActionsMenu, ResourceIcon, CloseButton } from '@console/internal/components/utils';
-import { referenceFor } from '@console/internal/module/k8s';
+import { referenceForModel } from '@console/internal/module/k8s';
 import { getResourceModelFromTaskKind } from '../../../../utils/pipeline-augment';
 import {
   PipelineTask,
@@ -64,7 +64,6 @@ const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
     const thisResource = taskResources.find(
       (taskFieldResource) => taskFieldResource.name === resource.name,
     );
-
     return (
       <div key={resource.name} className="odc-task-sidebar__resource">
         <TaskSidebarResource
@@ -95,7 +94,7 @@ const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
           <div className="co-m-pane__name co-resource-item">
             <ResourceIcon
               className="co-m-resource-icon--lg"
-              kind={referenceFor(getResourceModelFromTaskKind(taskResource.kind))}
+              kind={referenceForModel(getResourceModelFromTaskKind(taskResource.kind))}
             />
             {taskResource.metadata.name}
           </div>
