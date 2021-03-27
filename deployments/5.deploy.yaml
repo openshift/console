@@ -21,7 +21,7 @@ spec:
         - /manager
         args:
         - --pwd=/var/tmp/configs/
-        image: tmaxcloudck/console-operator:@@OPERATOR_VER@@
+        image: tmaxcloudck/console-operator:5.1.0.1
         name: manager
         volumeMounts: 
         - mountPath: /var/tmp/configs
