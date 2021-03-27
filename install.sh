@@ -43,7 +43,7 @@ echo "kibana Addr = ${KIBANA} <- default"
 rm -rf $temp_Dir
 cp -r $file_Dir $temp_Dir
 
-sed -i "s%@@OPERATOR_VER@@%${OPERATOR_VER}%g" ${deploy_temp}
+# sed -i "s%@@OPERATOR_VER@@%${OPERATOR_VER}%g" ${deploy_temp}
 sed -i "s%@@CONSOLE_VER@@%${CONSOLE_VER}%g" ${deploy_temp}
 
 sed -i "s%@@CLIENTID@@%${CLIENTID}%g" ${deploy_temp}
