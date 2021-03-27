@@ -14,5 +14,5 @@ prev_version=5.0.0.0
 fi
 
 echo '# hypercloud-console patch note' > ./docs-internal/CHANGELOG.md
-echo '$version' >> ./docs-internal/CHANGELOG.md
-echo '$pre_version' >> ./docs-internal/CHANGELOG.md
+echo "${version}" >> ./docs-internal/CHANGELOG.md
+echo "${prev_version}" >> ./docs-internal/CHANGELOG.md
