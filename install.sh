@@ -9,11 +9,12 @@ init_temp="$temp_Dir/2.init.yaml"
 job_temp="$temp_Dir/3.job.yaml"
 svc_temp="$temp_Dir/4.svc-lb.yaml"
 deploy_temp="$temp_Dir/5.deploy.yaml"
-KIBANA="opendistro-kibana.efk.svc.cluster.local:5601"
+# KIBANA="opendistro-kibana.efk.svc.cluster.local:5601"
+KIBANA="kibana.kube-logging.svc.cluster.local:5601"
 
 # GET ENV 
 # image version 
-OPERATOR_VER=$OPERATOR_VER  # OPERATOR_VER="latest"
+# OPERATOR_VER=$OPERATOR_VER  # OPERATOR_VER="latest"
 CONSOLE_VER=$CONSOLE_VER    # CONSOLE_VER="0.5.1.32"
 # Necessary to auth 
 REALM=$REALM                # REALM="tmax"
