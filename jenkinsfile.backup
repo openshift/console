@@ -1,0 +1,252 @@
+pipeline {
+  parameters {
+    choice(name: 'BUILD_MODE', choices:['PATCH','IMAGE','HOTFIX'], description: 'Select the mode you want to act')
+    choice(name: 'DEPLOY', choices:['ck2-1', 'ck1-1', 'keycloak'], description: 'Select k8s env you want to deploy the console')
+    
+    //VESION 
+    string(name: 'MAJOR_VER', defaultValue: '5', description: 'major version')
+    string(name: 'MINOR_VER', defaultValue: '1', description: 'minor version')
+    string(name: 'PATCH_VER', defaultValue: '1', description: 'patch version')
+    string(name: 'HOTFIX_VER', defaultValue: '1', description: 'hotfix version')
+    
+    string(name: 'OPERATOR_VER', defaultValue: '5.1.0.1', description: 'Console Operator Version')
+    string(name: 'CONSOLE_VER', defaultValue: '0.0.0.2', description: 'Console version')
+
+    string(name: 'KEYCLOAK', defaultValue: 'hyperauth.org', description: 'hyperauth url for login')
+    string(name: 'REALM', defaultValue: 'tmax', description: 'hyperauth realm info')
+    string(name: 'CLIENTID', defaultValue: 'ck-integration-hypercloud5', description: 'hyperauth client id info')
+    
+    string(name: 'MC_MODE', defaultValue: 'true', description: 'Choice multi cluster mode')    
+  }
+  environment { 
+    BUILD_MODE = "${params.BUILD_MODE}"
+    DOCKER_REGISTRY="tmaxcloudck"
+    PRODUCT = "hypercloud-console"
+
+    VER = "${params.MAJOR_VER}.${params.MINOR_VER}.${params.PATCH_VER}.${params.HOTFIX_VER}"
+
+    OPERATOR_VER = "${params.OPERATOR_VER}"
+    CONSOLE_VER = "${params.MAJOR_VER}.${params.MINOR_VER}.${params.PATCH_VER}.${params.HOTFIX_VER}"
+    KEYCLOAK = "${params.KEYCLOAK}"
+    REALM = "${params.REALM}"
+    CLIENTID = "${params.CLIENTID}"
+    MC_MODE = "${params.MC_MODE}"
+    DEPLOY = "${params.DEPLOY}"
+    BRANCH = "dev/jinsoo"
+  }
+  agent {
+    kubernetes {
+      cloud 'ck1-1'
+      // yamlFile './KubernetesPod.yaml'
+      yaml '''\
+        apiVersion: v1
+        kind: Pod      
+        metadata:
+          labels:
+            some-label: some-label-value
+            class: KubernetesDeclarativeAgentTest
+        spec:
+          containers:
+          - name: docker 
+            image: docker 
+            command: 
+            - cat 
+            tty: true
+            volumeMounts: 
+            - mountPath: /var/run/docker.sock
+              name: docker-volume
+          - name: kubectl
+            image: lachlanevenson/k8s-kubectl:v1.19.1
+            command:
+            - sh
+            tty: true
+          volumes:
+          - name: docker-volume 
+            hostPath: 
+              path: /var/run/docker.sock 
+              type: ""  
+        '''.stripIndent()      
+    }
+  }
+
+  stages {
+
+    // When using SCM, the checkout stage can be completely omitted 
+    stage('Checkout') {
+      steps {
+        git branch: "${BRANCH}", credentialsId: 'jinsoo-youn', url: 'https://github.com/tmax-cloud/hypercloud-console5.0.git'
+        sh '''
+        git branch
+        '''
+      }
+    }
+
+    stage('Env Setup') {
+      when {
+        anyOf{
+          environment name: 'BUILD_MODE', value: 'HOTFIX'
+          environment name: 'BUILD_MODE', value: 'PATCH'
+        }
+      }
+      steps {
+        script {
+          println("SWITCH")
+          switch(BUILD_MODE) {
+            case "IMAGE":
+              println("image")
+              sh "echo ${BUILD_NUMBER}"
+              break;
+            case "HOTFIX":
+              println("hot-fix")
+              break;
+            case "PATCH":
+              println("patch")
+              def TEMP = (("${params.PATCH_VER}" as int) -1).toString()
+              def PRE_VER = "${params.MAJOR_VER}.${params.MINOR_VER}.${TEMP}.${params.HOTFIX_VER}"
+              println("${VER}")
+              println("${PRE_VER}")
+              break;
+            break
+          }
+        }
+      }
+    }
+
+    // stage('Build') {
+    //   steps{
+    //     container('docker'){
+    //       withCredentials([usernamePassword(
+    //         credentialsId: 'tmaxcloudck',
+    //         usernameVariable: 'DOCKER_USER',
+    //         passwordVariable: 'DOCKER_PWD')]){
+    //         sh "docker login -u ${DOCKER_USER} -p ${DOCKER_PWD}"
+    //         sh "docker build -t ${DOCKER_REGISTRY}/${PRODUCT}:${CONSOLE_VER} -f ./Dockerfile ."
+    //         sh "docker push ${DOCKER_REGISTRY}/${PRODUCT}:${CONSOLE_VER}"
+    //       }          
+    //     }
+    //   }
+    // }
+
+    // stage('Deploy') {
+    //   steps {
+    //     container('kubectl') {
+    //       withKubeConfig([credentialsId: "${DEPLOY}"]) {
+    //       sh "./install.sh"
+    //       }
+    //     }
+    //   }
+    // }
+    stage('test') {
+      stages {
+        stage('Patch Note'){
+          when {
+            anyOf {
+              environment name: 'BUILD_MODE', value: 'PATCH'
+              environment name: 'BUILD_MODE', value: 'HOTFIX'
+            }
+          }
+          parallel {
+            stage('HOTFIX') {
+              when {
+                environment name: 'BUILD_MODE', value: 'HOTFIX'
+              }
+              steps {
+                  sh """
+                    echo "PATCH stage"
+                  """
+                // script {
+
+                // }
+              }
+            }
+            stage('PATCH') {
+              when {
+                environment name: 'BUILD_MODE', value: 'PATCH'
+              }
+              steps {
+                sh """
+                  echo "PATCH stage"
+                  git branch
+                """
+                script {
+                  if (BUILD_MODE == 'PATCH') {
+                    TEMP = (("${params.PATCH_VER}" as int) -1).toString()
+                    PRE_VER = "${params.MAJOR_VER}.${params.MINOR_VER}.${TEMP}.${params.HOTFIX_VER}"
+                  } else if (BUILD_MODE == 'HOTFIX') {
+                    TEMP = (("${params.HOTFIX_VER}" as int) -1).toString()
+                    PRE_VER = "${params.MAJOR_VER}.${params.MINOR_VER}.${params.PATCH_VER}.${TEMP}"
+                  }
+                  // println("${VER}")
+                  // println("${PRE_VER}")
+                  // sh "./log.sh ${VER} ${PRE_VER}"
+                  // sh "cat ./docs-internal/CHANGELOG.md" 
+                }
+                sh "echo ${VER}"
+                sh "echo ${PRE_VER}"
+                sh "./log.sh ${VER} ${PRE_VER}"
+                sh "cat ./docs-internal/CHANGELOG.md"
+                
+              }
+            }
+          }
+        }
+        stage('RESULT'){
+          steps{
+            sh "echo RESULT"
+            // sh "${PRE_VER}"
+          }
+        }
+
+
+      }
+      
+    }
+    
+  }
+
+
+
+
+
+    // stage('Doc') {
+    //   steps {
+    //     withCredentials([usernamePassword(credentialsId: 'jinsoo-youn', usernameVariable: 'username', passwordVariable: 'password')]) {      
+    //       sh """
+    //         git config --global user.name ${username}
+    //         git config --global user.email jinsoo_youn@tmax.co.kr
+    //         git config --global credential.username ${username}
+    //         git config --global credential.helper "!echo password=${password}; echo"          
+    //       """
+    //       sh "git tag ${PRODUCT}_${VER}"
+    //       sh "git push origin HEAD:${BRANCH} --tags"    
+
+    //       sh """
+    //         echo '# hypercloud-console patch note' > ./docs-internal/CHANGELOG.md
+    //         echo '## [Product Name]_[major].[minor].[patch].[hotfix]' >> ./docs-internal/CHANGELOG.md
+    //         echo 'Version: ${PRODUCT}_${VER}' >> ./docs-internal/CHANGELOG.md
+    //         date '+%F  %r' >> ./docs-internal/CHANGELOG.md
+
+    //         git log --grep=[patch] -F --all-match --no-merges --date-order --reverse \
+    //         --pretty=format:\"- %s (%cn) %n    Message: %b\" \
+    //         --simplify-merges ${PRE_VER}..${VER} \
+    //         >> ./docs-internal/CHANGELOG.md
+    //       """
+
+    //       //// sh "rm -r ./temp-yaml"
+    //       sh "git add -A"
+    //       sh "git commit -m 'build ${PRODUCT}_${VER}' "
+    //       sh "git push origin HEAD:${BRANCH}"        
+    //     }
+    //   }
+    // }
+
+  post {
+    success {
+      sh "echo Success"
+    } 
+    failure {
+      sh "echo fail"
+      // mail body: "buildNumber = ${BUILD_NUMBER}", subject: 'The pipeline failed :(', to: 'yjs890403@naver.com'
+    }
+  }
+}

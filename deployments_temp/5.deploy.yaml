@@ -33,13 +33,13 @@ spec:
         - --base-address=https://0.0.0.0:6443
         - --tls-cert-file=/var/https-cert/cert
         - --tls-key-file=/var/https-cert/key
-        - --keycloak-realm=@@REALM@@
-        - --keycloak-auth-url=https://@@KEYCLOAK@@/auth
-        - --keycloak-client-id=@@CLIENTID@@
-        - --mc-mode=@@MC_MODE@@
-        - --kiali-endpoint=https://@@KIALI@@/api/kiali/
-        - --kibana-endpoint=https://@@KIBANA@@/api/kibana/
-        image: tmaxcloudck/hypercloud-console:@@CONSOLE_VER@@
+        - --keycloak-realm=tmax
+        - --keycloak-auth-url=https://hyperauth.org/auth
+        - --keycloak-client-id=ck-integration-hypercloud5
+        - --mc-mode=true
+        - --kiali-endpoint=https://0.0.0.0:20001/api/kiali/
+        - --kibana-endpoint=https://opendistro-kibana.efk.svc.cluster.local:5601/api/kibana/
+        image: tmaxcloudck/hypercloud-console:
         imagePullPolicy: Always
         name: console
         ports:
