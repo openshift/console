@@ -38,8 +38,8 @@ spec:
         - --keycloak-client-id=ck-integration-hypercloud5
         - --mc-mode=true
         - --kiali-endpoint=https://0.0.0.0:20001/api/kiali/
-        - --kibana-endpoint=https://opendistro-kibana.efk.svc.cluster.local:5601/api/kibana/
-        image: tmaxcloudck/hypercloud-console:
+        - --kibana-endpoint=https://kibana.kube-logging.svc.cluster.local:5601/api/kibana/
+        image: tmaxcloudck/hypercloud-console:5.1.1.0
         imagePullPolicy: Always
         name: console
         ports:
