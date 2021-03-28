@@ -1,0 +1,205 @@
+pipeline {
+  parameters {
+    choice(name: 'BUILD_MODE', choices:['PATCH','IMAGE','HOTFIX'], description: 'Select the mode you want to act')
+    choice(name: 'DEPLOY', choices:['ck2-1', 'ck1-1', 'keycloak'], description: 'Select k8s env you want to deploy the console')
+    
+    //VESION 
+    string(name: 'MAJOR_VER', defaultValue: '5', description: 'major version')
+    string(name: 'MINOR_VER', defaultValue: '1', description: 'minor version')
+    string(name: 'PATCH_VER', defaultValue: '0', description: 'patch version')
+    string(name: 'HOTFIX_VER', defaultValue: '0', description: 'hotfix version')
+    
+    // string(name: 'OPERATOR_VER', defaultValue: '5.1.0.1', description: 'Console Operator Version')
+    // string(name: 'CONSOLE_VER', defaultValue: '0.0.0.2', description: 'Console version')
+
+    string(name: 'KEYCLOAK', defaultValue: 'hyperauth.org', description: 'hyperauth url for login')
+    string(name: 'REALM', defaultValue: 'tmax', description: 'hyperauth realm info')
+    string(name: 'CLIENTID', defaultValue: 'ck-integration-hypercloud5', description: 'hyperauth client id info')
+    string(name: 'MC_MODE', defaultValue: 'true', description: 'Choice multi cluster mode')    
+  }
+  environment { 
+    BRANCH = "dev/jinsoo"
+    BUILD_MODE = "${params.BUILD_MODE}"
+    DEPLOY = "${params.DEPLOY}"
+
+    DOCKER_REGISTRY="tmaxcloudck"
+    PRODUCT = "hypercloud-console"
+    VER = "${params.MAJOR_VER}.${params.MINOR_VER}.${params.PATCH_VER}.${params.HOTFIX_VER}"
+
+    // OPERATOR_VER = "${params.OPERATOR_VER}"
+    // CONSOLE_VER = "${params.MAJOR_VER}.${params.MINOR_VER}.${params.PATCH_VER}.${params.HOTFIX_VER}"
+    KEYCLOAK = "${params.KEYCLOAK}"
+    REALM = "${params.REALM}"
+    CLIENTID = "${params.CLIENTID}"
+    MC_MODE = "${params.MC_MODE}"
+
+    GUIDE_URL = "https://github.com/tmax-cloud/install-console/blob/5.0/README.md"
+
+  }
+  agent {
+    kubernetes {
+      cloud 'ck1-1'
+      // yamlFile './KubernetesPod.yaml'
+      yaml '''\
+        apiVersion: v1
+        kind: Pod      
+        metadata:
+          labels:
+            some-label: some-label-value
+            class: KubernetesDeclarativeAgentTest
+        spec:
+          containers:
+          - name: docker 
+            image: docker 
+            command: 
+            - cat 
+            tty: true
+            volumeMounts: 
+            - mountPath: /var/run/docker.sock
+              name: docker-volume
+          - name: kubectl
+            image: lachlanevenson/k8s-kubectl:v1.19.1
+            command:
+            - sh
+            tty: true
+          volumes:
+          - name: docker-volume 
+            hostPath: 
+              path: /var/run/docker.sock 
+              type: ""  
+        '''.stripIndent()      
+    }
+  }
+
+  stages {
+
+    // When using SCM, the checkout stage can be completely omitted 
+    stage('Git') {
+      steps {
+        git branch: "${BRANCH}", credentialsId: 'jinsoo-youn', url: 'https://github.com/tmax-cloud/hypercloud-console5.0.git'
+        sh '''
+        git branch
+        '''
+      }
+    }
+
+    stage('Build') {
+      steps{
+        container('docker'){
+          withCredentials([usernamePassword(
+            credentialsId: 'tmaxcloudck',
+            usernameVariable: 'DOCKER_USER',
+            passwordVariable: 'DOCKER_PWD')]){
+            sh "docker login -u ${DOCKER_USER} -p ${DOCKER_PWD}"
+            sh "docker build -t ${DOCKER_REGISTRY}/${PRODUCT}:${VER} -f ./Dockerfile ."
+            sh "docker push ${DOCKER_REGISTRY}/${PRODUCT}:${VER}"
+          }          
+        }
+      }
+    }
+
+    stage('Deploy') {
+      when {
+        anyOf {
+          environment name: 'BUILD_MODE', value: 'PATCH'
+          environment name: 'BUILD_MODE', value: 'HOTFIX'
+        }
+      }
+      steps {
+        container('kubectl') {
+          withKubeConfig([credentialsId: "${DEPLOY}"]) {
+          sh "./install.sh"
+          }
+        }
+      }
+    }
+        
+    stage('Changelog'){
+      when {
+        anyOf {
+          environment name: 'BUILD_MODE', value: 'PATCH'
+          environment name: 'BUILD_MODE', value: 'HOTFIX'
+        }
+      }
+      steps {
+        script {
+          if (BUILD_MODE == 'PATCH') {
+            TEMP = (("${params.PATCH_VER}" as int) -1).toString()
+            PRE_VER = "${params.MAJOR_VER}.${params.MINOR_VER}.${TEMP}.${params.HOTFIX_VER}"
+          } else if (BUILD_MODE == 'HOTFIX') {
+            TEMP = (("${params.HOTFIX_VER}" as int) -1).toString()
+            PRE_VER = "${params.MAJOR_VER}.${params.MINOR_VER}.${params.PATCH_VER}.${TEMP}"
+          }
+        }
+        withCredentials([usernamePassword(credentialsId: 'jinsoo-youn', usernameVariable: 'username', passwordVariable: 'password')]) {      
+          sh """
+            git config --global user.name ${username}
+            git config --global user.email jinsoo_youn@tmax.co.kr
+            git config --global credential.username ${username}
+            git config --global credential.helper "!echo password=${password}; echo"          
+          """
+          sh "git tag ${PRE_VER}"
+          sh "git tag ${VER}"
+          sh "git push origin HEAD:${BRANCH} --tags"    
+          // Creat CHANGELOG-${VER}.md
+          sh """
+            echo '# hypercloud-console patch note' > ./CHANGELOG/CHANGELOG-${VER}.md
+            echo '## hypercloud-console_[major].[minor].[patch].[hotfix]' >> ./CHANGELOG/CHANGELOG-${VER}.md
+            echo 'Version: ${PRODUCT}_${VER}' >> ./CHANGELOG/CHANGELOG-${VER}.md
+            date '+%F  %r' >> ./CHANGELOG/CHANGELOG-${VER}.md
+            git log --grep=[patch] -F --all-match --no-merges --date-order --reverse \
+            --pretty=format:\"- %s (%cn) %n    Message: %b\" \
+            --simplify-merges ${PRE_VER}..${VER} \
+            >> ./CHANGELOG/CHANGELOG-${VER}.md
+          """
+          sh "git add -A"
+          sh "git commit -m 'build ${PRODUCT}_${VER}' "
+          sh "git push origin HEAD:${BRANCH}"        
+        }
+      }
+    }
+
+    stage('Email'){
+      when {
+        anyOf {
+          environment name: 'BUILD_MODE', value: 'PATCH'
+          environment name: 'BUILD_MODE', value: 'HOTFIX'
+        }
+      }
+      steps {
+        emailext (
+          to: 'yjs890403@gmail.com',
+          subject: "[${PRODUCT}] Release Update - ${PRODUCT}:${VER}", 
+          attachmentsPattern: "**/CHANGELOG/CHANGELOG-${VER}.md",
+          body: "안녕하세요. \n\n${PRODUCT} Release Update 입니다. \n\n변경사항 파일로 첨부합니다. \n\n감사합니다.\n\n" +
+                "※ 이미지 : ${DOCKER_REGISTRY}/${PRODUCT}:${VER} \n\n※ 설치 가이드 : ${GUIDE_URL} ",
+          mimeType: 'text/plain'  
+        )
+      }
+    }
+
+  }
+
+  post {
+    success {
+      sh "echo SUCCESSFUL"
+      emailext (
+        to: "yjs890403@gmail.com",
+        subject: "SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+        body:  """<p>SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p>
+            <p>Check console output at &QUOT;<a href='${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>&QUOT;</p>""",
+        mimeType: 'text/html',    
+      )
+    } 
+    failure {
+      sh "echo FAILED"
+      emailext (
+        to: "yjs890403@gmail.com",
+        subject: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+        body: """<p>FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p>
+          <p>Check console output at &QUOT;<a href='${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>&QUOT;</p>""",
+        mimeType: 'text/html'
+      )
+    }
+  }
+}
