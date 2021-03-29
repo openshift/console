@@ -32,6 +32,7 @@ describe('Create knative Utils', () => {
       'my-cluster-kafka-bootstrap.div.svc:9093',
       'my-cluster2-kafka-bootstrap.div.svc:9092',
       'my-cluster2-kafka-bootstrap.div.svc:9093',
+      'jai-test--qcxzgigqva-d-bxib-gn-g--ni.kafka.devshift.org:443',
     ]);
   });
 
