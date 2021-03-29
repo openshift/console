@@ -18,7 +18,10 @@ const ResourceProvidersItemStatus: React.FC<ResourceProvidersRowStatusProps> = R
 export const ResourceProvidersItem: React.FC<ResourceProvidersRowProps> = React.memo(
   ({ title, count, unhealthyProviders, link }) => (
     <div className="co-inventory-card__item">
-      <div className="nb-resource-providers-card__row-title">{`${count} ${title}`}</div>
+      <div
+        className="nb-resource-providers-card__row-title"
+        data-test="nb-resource-providers-card"
+      >{`${count} ${title}`}</div>
       {!_.isNil(unhealthyProviders[title]) && unhealthyProviders[title] > 0 ? (
         <ResourceProvidersItemStatus status={unhealthyProviders[title]} link={link} />
       ) : null}

@@ -5,8 +5,8 @@ import { DashboardCardPopupLink } from '../dashboard-card/DashboardCardLink';
 import { HealthState, healthStateMapping, healthStateMessage } from './states';
 import { SecondaryStatus } from '../../status';
 
-const HealthItemIcon: React.FC<HealthItemIconProps> = ({ state }) => (
-  <div className="co-dashboard-icon">
+const HealthItemIcon: React.FC<HealthItemIconProps> = ({ state, dataTest }) => (
+  <div data-test={dataTest} className="co-dashboard-icon">
     {(healthStateMapping[state] || healthStateMapping[HealthState.UNKNOWN]).icon}
   </div>
 );
@@ -18,7 +18,10 @@ const HealthItem: React.FC<HealthItemProps> = React.memo(
     const detailMessage = details || healthStateMessage(state, t);
 
     return (
-      <div className={classNames('co-status-card__health-item', className)}>
+      <div
+        className={classNames('co-status-card__health-item', className)}
+        data-test={`${title}-health-item`}
+      >
         {state === HealthState.LOADING ? (
           <div className="skeleton-health">
             <span className="pf-u-screen-reader">
@@ -26,7 +29,7 @@ const HealthItem: React.FC<HealthItemProps> = React.memo(
             </span>
           </div>
         ) : (
-          !noIcon && <HealthItemIcon state={state} />
+          !noIcon && <HealthItemIcon state={state} dataTest={`${title}-health-item-icon`} />
         )}
         <div>
           <span className="co-dashboard-text--small co-status-card__health-item-text">
@@ -64,4 +67,5 @@ type HealthItemProps = {
 
 type HealthItemIconProps = {
   state?: HealthState;
+  dataTest?: string;
 };

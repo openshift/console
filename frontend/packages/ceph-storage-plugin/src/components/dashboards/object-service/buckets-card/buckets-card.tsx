@@ -135,6 +135,7 @@ const ObjectDashboardBucketsCard: React.FC<DashboardItemProps> = ({
           mapper={getObStatusGroups}
         />
         <ResourceInventoryItem
+          dataTest="resource-inventory-item-obc"
           isLoading={!obcLoaded}
           error={!!obcLoadError}
           kind={NooBaaObjectBucketClaimModel}
