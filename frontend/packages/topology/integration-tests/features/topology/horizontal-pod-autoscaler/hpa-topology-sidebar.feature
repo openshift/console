@@ -1,9 +1,8 @@
-@topology
 Feature: Add HPA action and topology sidebar modifications
               As a user, I want to add a HPA to a workload
  
         Background:
-            Given user is in developer perspective
+            Given user is at developer perspective
               And user has created a deployment/deployment-config
               And user has assigned values to cpu and memory value in resource limit section of advanced option
               And user has a workload with HPA assigned to it

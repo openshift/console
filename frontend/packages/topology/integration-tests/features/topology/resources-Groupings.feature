@@ -5,6 +5,7 @@ Feature: Resources Groupings in Topology
 
         Background:
             Given user is at developer perspective
+              And user has created or selected namespace "aut-topology"
 
 
         @regression

@@ -4,4 +4,4 @@ export * from './global-po';
 export * from './helm-po';
 export * from './monitoring-po';
 export * from './operators-po';
-export * from './topology-po';
+export * from '@console/topology/integration-tests/support/page-objects/topology-po';

@@ -4,21 +4,19 @@ import {
   navigateTo,
   perspective,
   projectNameSpace,
-} from '@console/dev-console/integration-tests/support/pages/app';
+  topologyPage,
+  topologySidePane,
+  gitPage,
+  catalogPage,
+  addPage,
+} from '@console/dev-console/integration-tests/support/pages';
 import {
   devNavigationMenu,
   switchPerspective,
-} from '@console/dev-console/integration-tests/support/constants/global';
-import { topologyPage } from '@console/dev-console/integration-tests/support/pages/topology/topology-page';
-import { topologySidePane } from '@console/dev-console/integration-tests/support/pages/topology/topology-side-pane-page';
-import { gitPage } from '@console/dev-console/integration-tests/support/pages/add-flow/git-page';
-import { catalogPage } from '@console/dev-console/integration-tests/support/pages/add-flow/catalog-page';
-import {
   addOptions,
   catalogCards,
-} from '@console/dev-console/integration-tests/support/constants/add';
+} from '@console/dev-console/integration-tests/support/constants';
 import { modal } from '../../../../../integration-tests-cypress/views/modal';
-import { addPage } from '@console/dev-console/integration-tests/support/pages/add-flow/add-page';
 
 Given('user is at developer perspective', () => {
   perspective.switchTo(switchPerspective.Developer);

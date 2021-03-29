@@ -27,7 +27,7 @@ Feature: List view in topology
              Then user can see only the deployment-config workload
 
 
-        @regression, @manual
+        @regression @manual
         Scenario: Drag and drop jar file in topology list view
             Given user has a jar file named "sample_yaml_upload.yaml"
               And user is at the Topology list view page
@@ -39,7 +39,7 @@ Feature: List view in topology
               And user can see deployment "sample-yaml-upload" in application "sample-upload-app" is created in topology
 
 
-        @regression, @manual
+        @regression @manual
         Scenario: Drag and drop Incompatible file in topology list view
             Given user has a incompatible file
               And user is at the Topology list view
@@ -47,16 +47,8 @@ Feature: List view in topology
              Then the curser will show the action is not available
 
 
-        @regression, @manual
+        @regression @manual
         Scenario: View shortcuts menu
             Given user has uploaded a jar file
              When user clicks on View shortcuts in topology list view
              Then user sees shortcut for Drag and drop a JAR file into Topology
-
-
-        @regression, @manual
-        Scenario: Drag and drop Incompatible file in topology list view
-            Given user has a incompatible file
-              And user is at the Topology list view
-             When user drags and drop the file on topology
-             Then a toast warning message will appear stating that the file is invalid.

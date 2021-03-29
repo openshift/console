@@ -7,9 +7,5 @@
     "types": ["cypress"],
     "lib": ["es6", "dom", "es2017"]
   },
-  "include": [
-    "**/*.ts",
-    "./support/commands/index.ts",
-    "../../topology/integration-tests/support/page-objects/topology-po.ts"
-  ]
+  "include": ["**/*.ts", "./support/commands/index.ts"]
 }

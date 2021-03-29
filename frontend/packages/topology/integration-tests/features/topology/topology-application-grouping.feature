@@ -6,7 +6,6 @@ Feature: Application groupings in topology
             Given user has installed OpenShift Serverless Operator
               And user is at developer perspective
               And user has created or selected namespace "aut-topology-grouping"
-    #  
 
 
         @smoke
