@@ -1,0 +1,50 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  generateName: optional-workspace-when-
+spec:
+  serviceAccountName: 'default'
+  workspaces:
+  - name: message-of-the-day
+    configMap:
+      name: test-motd
+  pipelineSpec:
+    workspaces:
+    - name: message-of-the-day
+      optional: true
+      description: |
+        If a workspace is provided here then every file at the root of the workspace
+        will be printed.
+    tasks:
+    - name: print-motd
+      when:
+      - input: "$(workspaces.message-of-the-day.bound)"
+        operator: in
+        values: ["true"]
+      workspaces:
+      - name: message-of-the-day
+        workspace: message-of-the-day
+      taskSpec:
+        workspaces:
+        - name: message-of-the-day
+          optional: true
+        steps:
+        - image: alpine
+          script: |
+            #!/usr/bin/env ash
+            for f in "$(workspaces.message-of-the-day.path)"/* ; do
+              echo "Message from $f:"
+              cat "$f"
+              echo "" # add newline
+            done
+    - name: print-default-motd
+      when:
+      - input: "$(workspaces.message-of-the-day.bound)"
+        operator: in
+        values: ["false"]
+      taskSpec:
+        steps:
+        - name: print-default
+          image: alpine
+          script: |
+            echo "No message-of-the-day workspace was provided. This is the default MOTD instead!"
