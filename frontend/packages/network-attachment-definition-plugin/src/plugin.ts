@@ -4,7 +4,6 @@ import {
   ResourceNSNavItem,
   ResourceDetailsPage,
   ResourceListPage,
-  ModelFeatureFlag,
   YAMLTemplate,
   ModelDefinition,
   RoutePage,
@@ -18,7 +17,6 @@ type ConsumedExtensions =
   | ResourceNSNavItem
   | ResourceDetailsPage
   | ResourceListPage
-  | ModelFeatureFlag
   | YAMLTemplate
   | ModelDefinition
   | RoutePage;
@@ -30,13 +28,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'ModelDefinition',
     properties: {
       models: _.values(models),
-    },
-  },
-  {
-    type: 'FeatureFlag/Model',
-    properties: {
-      model: models.NetworkAttachmentDefinitionModel,
-      flag: FLAG_NET_ATTACH_DEF,
     },
   },
   {

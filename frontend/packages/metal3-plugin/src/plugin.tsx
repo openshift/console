@@ -8,7 +8,6 @@ import {
   ResourceListPage,
   ResourceDetailsPage,
   RoutePage,
-  ModelFeatureFlag,
   ModelDefinition,
   DashboardsOverviewResourceActivity,
   DashboardsOverviewInventoryItemReplacement,
@@ -42,7 +41,6 @@ type ConsumedExtensions =
   | ResourceListPage
   | ResourceDetailsPage
   | RoutePage
-  | ModelFeatureFlag
   | ModelDefinition
   | CustomFeatureFlag
   | DashboardsOverviewResourceActivity
@@ -55,27 +53,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'ModelDefinition',
     properties: {
       models: [BareMetalHostModel, NodeMaintenanceModel, NodeMaintenanceOldModel],
-    },
-  },
-  {
-    type: 'FeatureFlag/Model',
-    properties: {
-      model: BareMetalHostModel,
-      flag: METAL3_FLAG,
-    },
-  },
-  {
-    type: 'FeatureFlag/Model',
-    properties: {
-      model: NodeMaintenanceModel,
-      flag: NODE_MAINTENANCE_FLAG,
-    },
-  },
-  {
-    type: 'FeatureFlag/Model',
-    properties: {
-      model: NodeMaintenanceOldModel,
-      flag: NODE_MAINTENANCE_OLD_FLAG,
     },
   },
   {

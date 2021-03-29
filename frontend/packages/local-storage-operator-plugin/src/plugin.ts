@@ -3,7 +3,6 @@ import {
   AlertAction,
   CustomFeatureFlag,
   ModelDefinition,
-  ModelFeatureFlag,
   Plugin,
   RoutePage,
   HorizontalNavTab,
@@ -18,7 +17,6 @@ type ConsumedExtensions =
   | AlertAction
   | CustomFeatureFlag
   | HorizontalNavTab
-  | ModelFeatureFlag
   | ModelDefinition
   | RoutePage;
 
@@ -30,20 +28,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'ModelDefinition',
     properties: {
       models: _.values(models),
-    },
-  },
-  {
-    type: 'FeatureFlag/Model',
-    properties: {
-      model: models.LocalVolumeSetModel,
-      flag: LSO_LOCAL_VOLUME_SET,
-    },
-  },
-  {
-    type: 'FeatureFlag/Model',
-    properties: {
-      model: models.LocalVolumeDiscovery,
-      flag: LSO_DEVICE_DISCOVERY,
     },
   },
   {

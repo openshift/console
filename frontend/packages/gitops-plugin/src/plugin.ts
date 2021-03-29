@@ -1,28 +1,15 @@
 import * as _ from 'lodash';
-import {
-  ModelDefinition,
-  HrefNavItem,
-  RoutePage,
-  Plugin,
-  ModelFeatureFlag,
-} from '@console/plugin-sdk';
+import { ModelDefinition, HrefNavItem, RoutePage, Plugin } from '@console/plugin-sdk';
 import { FLAG_OPENSHIFT_GITOPS } from './const';
 import * as models from './models';
 
-type ConsumedExtensions = ModelDefinition | ModelFeatureFlag | HrefNavItem | RoutePage;
+type ConsumedExtensions = ModelDefinition | HrefNavItem | RoutePage;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'ModelDefinition',
     properties: {
       models: _.values(models),
-    },
-  },
-  {
-    type: 'FeatureFlag/Model',
-    properties: {
-      model: models.GitOpsServiceModel,
-      flag: FLAG_OPENSHIFT_GITOPS,
     },
   },
   {

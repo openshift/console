@@ -1,1 +1,13 @@
-[]
+[
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "secscan.quay.redhat.com",
+        "version": "v1alpha1",
+        "kind": "ImageManifestVuln"
+      },
+      "flag": "SECURITY_LABELLER"
+    }
+  }
+]

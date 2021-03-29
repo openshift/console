@@ -1,1 +1,24 @@
-[]
+[
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "local.storage.openshift.io",
+        "version": "v1alpha1",
+        "kind": "LocalVolumeSet"
+      },
+      "flag": "LSO_LOCAL_VOLUME_SET"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "local.storage.openshift.io",
+        "version": "v1alpha1",
+        "kind": "LocalVolumeDiscovery"
+      },
+      "flag": "LSO_DEVICE_DISCOVERY"
+    }
+  }
+]

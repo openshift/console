@@ -1,1 +1,13 @@
-[]
+[
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "binding.operators.coreos.com",
+        "version": "v1alpha1",
+        "kind": "ServiceBinding"
+      },
+      "flag": "ALLOW_SERVICE_BINDING"
+    }
+  }
+]

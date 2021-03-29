@@ -2,7 +2,6 @@ import * as _ from 'lodash';
 import {
   Plugin,
   ModelDefinition,
-  ModelFeatureFlag,
   NavSection,
   HrefNavItem,
   ResourceNSNavItem,
@@ -47,7 +46,6 @@ const {
 
 type ConsumedExtensions =
   | ModelDefinition
-  | ModelFeatureFlag
   | NavSection
   | HrefNavItem
   | ResourceClusterNavItem
@@ -66,13 +64,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'ModelDefinition',
     properties: {
       models: _.values(models),
-    },
-  },
-  {
-    type: 'FeatureFlag/Model',
-    properties: {
-      model: PipelineModel,
-      flag: FLAG_OPENSHIFT_PIPELINE,
     },
   },
   {

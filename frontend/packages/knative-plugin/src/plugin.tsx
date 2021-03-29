@@ -3,7 +3,6 @@ import {
   Plugin,
   NavSection,
   ResourceNSNavItem,
-  ModelFeatureFlag,
   ModelDefinition,
   OverviewResourceTab,
   ResourceListPage,
@@ -20,7 +19,6 @@ import { NamespaceRedirect } from '@console/internal/components/utils/namespace-
 import * as models from './models';
 import { yamlTemplates } from './yaml-templates';
 import {
-  FLAG_KNATIVE_SERVING_CONFIGURATION,
   FLAG_KNATIVE_SERVING,
   FLAG_KNATIVE_SERVING_REVISION,
   FLAG_KNATIVE_SERVING_ROUTE,
@@ -28,7 +26,6 @@ import {
   FLAG_KNATIVE_EVENTING,
   FLAG_KNATIVE_EVENTING_CHANNEL,
   FLAG_KNATIVE_EVENTING_BROKER,
-  FLAG_CAMEL_KAMELETS,
 } from './const';
 import { getKebabActionsForKind, getKebabActionsForWorkload } from './utils/kebab-actions';
 import { TopologyConsumedExtensions, topologyPlugin } from './topology/topology-plugin';
@@ -45,7 +42,6 @@ import {
 type ConsumedExtensions =
   | NavSection
   | ResourceNSNavItem
-  | ModelFeatureFlag
   | ModelDefinition
   | GlobalConfig
   | OverviewResourceTab
@@ -64,69 +60,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'ModelDefinition',
     properties: {
       models: _.values(models),
-    },
-  },
-  {
-    type: 'FeatureFlag/Model',
-    properties: {
-      model: models.ConfigurationModel,
-      flag: FLAG_KNATIVE_SERVING_CONFIGURATION,
-    },
-  },
-  {
-    type: 'FeatureFlag/Model',
-    properties: {
-      model: models.KnativeServingModel,
-      flag: FLAG_KNATIVE_SERVING,
-    },
-  },
-  {
-    type: 'FeatureFlag/Model',
-    properties: {
-      model: models.KnativeEventingModel,
-      flag: FLAG_KNATIVE_EVENTING,
-    },
-  },
-  {
-    type: 'FeatureFlag/Model',
-    properties: {
-      model: models.RevisionModel,
-      flag: FLAG_KNATIVE_SERVING_REVISION,
-    },
-  },
-  {
-    type: 'FeatureFlag/Model',
-    properties: {
-      model: models.RouteModel,
-      flag: FLAG_KNATIVE_SERVING_ROUTE,
-    },
-  },
-  {
-    type: 'FeatureFlag/Model',
-    properties: {
-      model: models.ServiceModel,
-      flag: FLAG_KNATIVE_SERVING_SERVICE,
-    },
-  },
-  {
-    type: 'FeatureFlag/Model',
-    properties: {
-      model: models.EventingBrokerModel,
-      flag: FLAG_KNATIVE_EVENTING_BROKER,
-    },
-  },
-  {
-    type: 'FeatureFlag/Model',
-    properties: {
-      model: models.EventingChannelModel,
-      flag: FLAG_KNATIVE_EVENTING_CHANNEL,
-    },
-  },
-  {
-    type: 'FeatureFlag/Model',
-    properties: {
-      model: models.CamelKameletModel,
-      flag: FLAG_CAMEL_KAMELETS,
     },
   },
   {

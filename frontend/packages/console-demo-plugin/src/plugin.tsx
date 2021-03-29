@@ -3,7 +3,6 @@ import * as _ from 'lodash';
 import {
   Plugin,
   ModelDefinition,
-  ModelFeatureFlag,
   HrefNavItem,
   ResourceNSNavItem,
   ResourceClusterNavItem,
@@ -37,7 +36,6 @@ import { DemoGroupIcon } from './components/dashboards/inventory';
 
 type ConsumedExtensions =
   | ModelDefinition
-  | ModelFeatureFlag
   | HrefNavItem
   | ResourceNSNavItem
   | ResourceClusterNavItem
@@ -65,13 +63,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'ModelDefinition',
     properties: {
       models: [FooBarModel],
-    },
-  },
-  {
-    type: 'FeatureFlag/Model',
-    properties: {
-      model: PodModel,
-      flag: TEST_MODEL_FLAG,
     },
   },
   {

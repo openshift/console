@@ -8,7 +8,6 @@ import {
   DashboardsTab,
   HorizontalNavTab,
   ModelDefinition,
-  ModelFeatureFlag,
   Plugin,
   ResourceTabPage,
   RoutePage,
@@ -48,7 +47,6 @@ import { getObcStatusGroups } from './components/dashboards/object-service/bucke
 
 type ConsumedExtensions =
   | AlertAction
-  | ModelFeatureFlag
   | HorizontalNavTab
   | ModelDefinition
   | DashboardsTab
@@ -76,13 +74,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'ModelDefinition',
     properties: {
       models: _.values(models),
-    },
-  },
-  {
-    type: 'FeatureFlag/Model',
-    properties: {
-      model: models.OCSServiceModel,
-      flag: CEPH_FLAG,
     },
   },
   {
@@ -521,13 +512,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [NOOBAA_FLAG],
-    },
-  },
-  {
-    type: 'FeatureFlag/Model',
-    properties: {
-      model: models.NooBaaSystemModel,
-      flag: NOOBAA_FLAG,
     },
   },
   {

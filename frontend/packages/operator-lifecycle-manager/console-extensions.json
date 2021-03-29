@@ -26,5 +26,16 @@
     "flags": {
       "required": ["OPERATOR_LIFECYCLE_MANAGER"]
     }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "operators.coreos.com",
+        "version": "v1alpha1",
+        "kind": "ClusterServiceVersion"
+      },
+      "flag": "OPERATOR_LIFECYCLE_MANAGER"
+    }
   }
 ]

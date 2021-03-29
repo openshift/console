@@ -1,1 +1,24 @@
-[]
+[
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "ocs.openshift.io",
+        "version": "v1",
+        "kind": "StorageCluster"
+      },
+      "flag": "CEPH"
+    }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "noobaa.io",
+        "version": "v1alpha1",
+        "kind": "NooBaa"
+      },
+      "flag": "NOOBAA"
+    }
+  }
+]

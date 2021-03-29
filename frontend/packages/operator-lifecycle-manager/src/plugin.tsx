@@ -2,7 +2,6 @@ import * as _ from 'lodash';
 import {
   Plugin,
   ModelDefinition,
-  ModelFeatureFlag,
   HrefNavItem,
   ResourceNSNavItem,
   ResourceListPage,
@@ -13,7 +12,6 @@ import {
 import { referenceForModel } from '@console/internal/module/k8s';
 import { FLAGS } from '@console/shared/src/constants';
 import * as models from './models';
-import { Flags } from './const';
 import { getClusterServiceVersionsWithStatuses } from './components/dashboard/utils';
 import { ClusterServiceVersionKind } from './types';
 
@@ -21,7 +19,6 @@ import './style.scss';
 
 type ConsumedExtensions =
   | ModelDefinition
-  | ModelFeatureFlag
   | HrefNavItem
   | ResourceNSNavItem
   | ResourceListPage
@@ -34,13 +31,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'ModelDefinition',
     properties: {
       models: _.values(models),
-    },
-  },
-  {
-    type: 'FeatureFlag/Model',
-    properties: {
-      model: models.ClusterServiceVersionModel,
-      flag: Flags.OPERATOR_LIFECYCLE_MANAGER,
     },
   },
   {

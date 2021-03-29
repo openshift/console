@@ -1,1 +1,13 @@
-[]
+[
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "pipelines.openshift.io",
+        "version": "v1alpha1",
+        "kind": "GitopsService"
+      },
+      "flag": "OPENSHIFT_GITOPS"
+    }
+  }
+]

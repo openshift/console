@@ -2,7 +2,6 @@ import { referenceForModel } from '@console/internal/module/k8s';
 import {
   Plugin,
   ModelDefinition,
-  ModelFeatureFlag,
   ResourceListPage,
   DashboardsOverviewHealthURLSubsystem,
   DashboardsOverviewHealthResourceSubsystem,
@@ -20,7 +19,6 @@ import { WatchImageVuln } from './types';
 
 type ConsumedExtensions =
   | ModelDefinition
-  | ModelFeatureFlag
   | ResourceListPage
   | ResourceDetailsPage
   | DashboardsOverviewHealthURLSubsystem
@@ -34,13 +32,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'ModelDefinition',
     properties: {
       models: [ImageManifestVulnModel],
-    },
-  },
-  {
-    type: 'FeatureFlag/Model',
-    properties: {
-      model: ImageManifestVulnModel,
-      flag: ContainerSecurityFlag,
     },
   },
   {

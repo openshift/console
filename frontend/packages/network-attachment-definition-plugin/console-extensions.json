@@ -1,1 +1,13 @@
-[]
+[
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "k8s.cni.cncf.io",
+        "version": "v1",
+        "kind": "NetworkAttachmentDefinition"
+      },
+      "flag": "NET_ATTACH_DEF"
+    }
+  }
+]

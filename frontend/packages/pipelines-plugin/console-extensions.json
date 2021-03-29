@@ -18,5 +18,16 @@
         }
       ]
     }
+  },
+  {
+    "type": "console.flag/model",
+    "properties": {
+      "model": {
+        "group": "tekton.dev",
+        "version": "v1beta1",
+        "kind": "Pipeline"
+      },
+      "flag": "OPENSHIFT_PIPELINE"
+    }
   }
 ]
