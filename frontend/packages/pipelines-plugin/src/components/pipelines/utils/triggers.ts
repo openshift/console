@@ -12,7 +12,12 @@ import {
   WatchK8sResults,
   WatchK8sResultsObject,
 } from '@console/internal/components/utils/k8s-watch-hook';
-import { EventListenerModel, PipelineRunModel, TriggerTemplateModel } from '../../../models';
+import {
+  EventListenerModel,
+  PipelineRunModel,
+  TriggerModel,
+  TriggerTemplateModel,
+} from '../../../models';
 import { PipelineRunKind } from '../../../types';
 import { getResourceModelFromBindingKind } from '../../../utils/pipeline-augment';
 import {
@@ -21,6 +26,7 @@ import {
   TriggerBindingKind,
   TriggerTemplateKind,
   EventListenerKindBindingReference,
+  TriggerKind,
 } from '../resource-types';
 import { ResourceModelLink } from '../resource-overview/DynamicResourceLinkList';
 
@@ -30,6 +36,12 @@ type TriggerTemplateMapping = { [key: string]: TriggerTemplateKind };
 const getResourceName = (resource: K8sResourceCommon): string => resource.metadata.name;
 const getEventListenerTemplateNames = (el: EventListenerKind): string[] =>
   el.spec.triggers?.map((elTrigger: EventListenerKindTrigger) => elTrigger.template?.name) || [];
+const getEventListenerTriggerRefs = (el: EventListenerKind): string[] =>
+  el.spec.triggers?.map((elTrigger: EventListenerKindTrigger) => elTrigger.triggerRef) || [];
+
+const getTriggerTemplateRef = (trigger: TriggerKind): string =>
+  trigger.spec?.template?.name || trigger.spec?.template.ref;
+
 const getEventListenerGeneratedName = (eventListener: EventListenerKind) =>
   eventListener.status?.configuration.generatedName;
 
@@ -66,11 +78,25 @@ const useAllEventListeners = (namespace: string) => {
     }),
     [namespace],
   );
-  const [resources, eventListenerLoaded] = useK8sWatchResource<EventListenerKind[]>(
+  const [resources, eventListenerLoaded, error] = useK8sWatchResource<EventListenerKind[]>(
     eventListenerResource,
   );
 
-  return eventListenerLoaded ? resources : null;
+  return eventListenerLoaded && !error ? resources : null;
+};
+
+const useAllTriggers = (namespace: string) => {
+  const triggerResource: WatchK8sResource = React.useMemo(
+    () => ({
+      kind: referenceForModel(TriggerModel),
+      isList: true,
+      namespace,
+    }),
+    [namespace],
+  );
+  const [resources, triggerLoaded, error] = useK8sWatchResource<TriggerKind[]>(triggerResource);
+
+  return triggerLoaded && !error ? resources : null;
 };
 
 export type RouteTemplate = {
@@ -83,23 +109,38 @@ export const usePipelineTriggerTemplateNames = (
   namespace: string,
 ): RouteTemplate[] | null => {
   const eventListenerResources = useAllEventListeners(namespace);
+  const triggerResources = useAllTriggers(namespace) || [];
+
+  const triggers: string[] =
+    flatten(eventListenerResources?.map(getEventListenerTriggerRefs))?.map((name) => name) || [];
+
+  const triggerTemplatesFromTriggers: string[] =
+    triggerResources
+      .filter((tr) => triggers.includes(tr.metadata.name))
+      .map(getTriggerTemplateRef) || [];
+
   const triggerTemplateResources: WatchK8sResources<TriggerTemplateMapping> = React.useMemo(() => {
     if (!eventListenerResources) {
       return {};
     }
-    return flatten(eventListenerResources.map(getEventListenerTemplateNames)).reduce(
-      (resourceMap, triggerTemplateName: string) => ({
-        ...resourceMap,
-        [triggerTemplateName]: {
-          kind: referenceForModel(TriggerTemplateModel),
-          name: triggerTemplateName,
-          namespace,
-          optional: true,
-        },
-      }),
-      {},
-    );
-  }, [namespace, eventListenerResources]);
+    return flatten([
+      ...eventListenerResources.map(getEventListenerTemplateNames),
+      ...triggerTemplatesFromTriggers,
+    ])
+      .filter((t) => !!t)
+      .reduce(
+        (resourceMap, triggerTemplateName: string) => ({
+          ...resourceMap,
+          [triggerTemplateName]: {
+            kind: referenceForModel(TriggerTemplateModel),
+            name: triggerTemplateName,
+            namespace,
+            optional: true,
+          },
+        }),
+        {},
+      );
+  }, [eventListenerResources, triggerTemplatesFromTriggers, namespace]);
   const triggerTemplates: WatchK8sResults<TriggerTemplateMapping> = useK8sWatchResources(
     triggerTemplateResources,
   );
@@ -128,10 +169,17 @@ export const usePipelineTriggerTemplateNames = (
   return (eventListenerResources || []).reduce((acc, ev: EventListenerKind) => {
     const eventListenerTemplateNames = getEventListenerTemplateNames(ev);
     const generatedRouteName = getEventListenerGeneratedName(ev);
+    const eventListenerTriggers = getEventListenerTriggerRefs(ev);
 
-    const triggerTemplateName = matchingTriggerTemplateNames.find((name) =>
-      eventListenerTemplateNames.includes(name),
-    );
+    const triggerTemplateName = matchingTriggerTemplateNames.find((name) => {
+      if (triggerResources.length) {
+        const templateTriggerNames = triggerResources
+          .filter((allTrigger) => eventListenerTriggers.includes(allTrigger.metadata.name))
+          .map(getTriggerTemplateRef);
+        return templateTriggerNames.includes(name);
+      }
+      return eventListenerTemplateNames.includes(name);
+    });
     const route: RouteKind = routes[generatedRouteName];
 
     if (!triggerTemplateName) {
