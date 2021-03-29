@@ -17,9 +17,9 @@ import {
   cephRBDProvisionerSuffix,
   provisionerAccessModeMapping,
   initialAccessModes,
-  accessModeRadios,
-  volumeModeRadios,
   dropdownUnits,
+  getAccessModeRadios,
+  getVolumeModeRadios,
   getAccessModeForProvisioner,
 } from './shared';
 
@@ -117,6 +117,7 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
   ]);
 
   const { t } = useTranslation();
+
   const handleNameValuePairs = ({ nameValuePairs: updatedNameValuePairs }) => {
     setNameValuePairs(updatedNameValuePairs);
   };
@@ -203,7 +204,7 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
         {t('public~Access mode')}
       </label>
       <div className="form-group">
-        {accessModeRadios.map((radio) => {
+        {getAccessModeRadios().map((radio) => {
           let radioObj = null;
           const disabled = !allowedAccessModes.includes(radio.value);
 
@@ -276,11 +277,13 @@ export const CreatePVCForm: React.FC<CreatePVCFormProps> = (props) => {
       <div className="form-group">
         {storageProvisioner.includes(cephStorageProvisioners[1]) ? (
           <>
-            Filesystem
-            <FieldLevelHelp>Only filesystem volume mode is available for cephfs</FieldLevelHelp>
+            {t('public~Filesystem')}
+            <FieldLevelHelp>
+              {t('public~Only filesystem volume mode is available for cephfs')}
+            </FieldLevelHelp>
           </>
         ) : (
-          volumeModeRadios.map((radio) => (
+          getVolumeModeRadios().map((radio) => (
             <RadioInput
               {...radio}
               key={radio.value}

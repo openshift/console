@@ -1,11 +1,11 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { FormikErrors, useFormikContext } from 'formik';
 import { FormGroup, InputGroup, InputGroupText, TextInput } from '@patternfly/react-core';
 import { PercentIcon } from '@patternfly/react-icons';
 import { HorizontalPodAutoscalerKind, HPAMetric } from '@console/internal/module/k8s';
 import { getMetricByType } from './hpa-utils';
 import { HPAFormValues, SupportedMetricTypes } from './types';
-import { useTranslation } from 'react-i18next';
 
 type HPAUtilizationFieldProps = {
   disabled?: boolean;

@@ -6,7 +6,7 @@ import {
   provisionerAccessModeMapping,
   getAccessModeForProvisioner,
   cephRBDProvisionerSuffix,
-  accessModeRadios,
+  getAccessModeRadios,
 } from '@console/internal/components/storage/shared';
 import { PersistentVolumeClaimKind } from '@console/internal/module/k8s';
 import * as _ from 'lodash';
@@ -15,7 +15,7 @@ export const getPVCAccessModes = (resource: PersistentVolumeClaimKind, key: stri
   _.reduce(
     resource?.spec?.accessModes,
     (res, value) => {
-      const mode = accessModeRadios.find((accessMode) => accessMode.value === value);
+      const mode = getAccessModeRadios().find((accessMode) => accessMode.value === value);
       if (mode) {
         res.push(mode[key]);
       }
@@ -85,7 +85,7 @@ export const AccessModeSelector: React.FC<AccessModeSelectorProps> = (props) => 
     >
       {loaded &&
         allowedAccessModes &&
-        accessModeRadios.map((radio) => {
+        getAccessModeRadios().map((radio) => {
           const disabled = !allowedAccessModes.includes(radio.value);
           const checked = radio.value === accessMode;
           return (

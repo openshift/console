@@ -40,7 +40,7 @@ import {
   snapshotPVCStorageClassAnnotation,
   snapshotPVCAccessModeAnnotation,
   snapshotPVCVolumeModeAnnotation,
-  volumeModeRadios,
+  getVolumeModeRadios,
 } from '@console/internal/components/storage/shared';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { AccessModeSelector } from '../../access-modes/access-mode';
@@ -200,7 +200,7 @@ const RestorePVCModal = withHandlePromise<RestorePVCModalProps>(
               label={t('console-app~Volume Mode')}
               isRequired
             >
-              {volumeModeRadios.map((radio) => (
+              {getVolumeModeRadios().map((radio) => (
                 <RadioInput
                   {...radio}
                   key={radio.value}

@@ -118,7 +118,9 @@ const PodExec_ = connectToFlags(FLAGS.OPENSHIFT)(
             return;
           }
           const error = evt.reason || 'The terminal connection has closed.';
-          this.setState({ error });
+          const i18nError =
+            evt.reason || this.props.t('public~The terminal connection has closed.');
+          this.setState({ error: i18nError });
           this.terminal.current && this.terminal.current.onConnectionClosed(error);
           this.ws.destroy();
         }) // eslint-disable-next-line no-console

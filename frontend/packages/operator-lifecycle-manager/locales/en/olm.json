@@ -171,6 +171,8 @@
   "This will remove Operator <1>{{name}}</1> from <4>{{namespace}}</4>. Removing the Operator will not remove any of its custom resource definitions or managed resources. If your Operator has deployed applications on the cluster or configured off-cluster resources, these will continue to run and need to be cleaned up manually.": "This will remove Operator <1>{{name}}</1> from <4>{{namespace}}</4>. Removing the Operator will not remove any of its custom resource definitions or managed resources. If your Operator has deployed applications on the cluster or configured off-cluster resources, these will continue to run and need to be cleaned up manually.",
   "Message from Operator developer": "Message from Operator developer",
   "Uninstall": "Uninstall",
+  "Create by completing the form. Default values may be provided by the Operator authors.": "Create by completing the form. Default values may be provided by the Operator authors.",
+  "Create by manually entering YAML or JSON definitions, or by dragging and dropping a file into the editor.": "Create by manually entering YAML or JSON definitions, or by dragging and dropping a file into the editor.",
   "Create {{item}}": "Create {{item}}",
   "Limits": "Limits",
   "Requests": "Requests",
