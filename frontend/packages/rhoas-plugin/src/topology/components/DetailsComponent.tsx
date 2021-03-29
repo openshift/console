@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { ResourceSummary } from '@console/internal/components/utils';
 import { useTranslation } from 'react-i18next';
+import { ResourceSummary } from '@console/internal/components/utils';
 import { KafkaConnection } from '../../utils/rhoas-types';
 
 export const DetailsComponent: React.FC<{ obj: KafkaConnection }> = ({ obj }) => {

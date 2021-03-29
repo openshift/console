@@ -108,10 +108,7 @@ export const createCloudServicesRequestIfNeeded = async (currentNamespace) => {
   return createCloudServicesRequest(currentNamespace);
 };
 
-export const createSecretIfNeeded = async function(
-  currentNamespace: string,
-  apiTokenValue: string,
-) {
+export const createSecretIfNeeded = async (currentNamespace: string, apiTokenValue: string) => {
   let currentSecret;
   try {
     currentSecret = await k8sGet(SecretModel, AccessTokenSecretName, currentNamespace);

@@ -22,8 +22,9 @@ import {
 } from '@patternfly/react-table';
 import SearchIcon from '@patternfly/react-icons/dist/js/icons/search-icon';
 import { Timestamp } from '@console/internal/components/utils';
-import './ServiceInstanceTable.css';
 import { CloudKafka } from '../../utils/rhoas-types';
+
+import './ServiceInstanceTable.scss';
 
 type FormattedKafkas = {
   cells: JSX.Element[];

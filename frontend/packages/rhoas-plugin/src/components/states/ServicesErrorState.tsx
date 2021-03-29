@@ -10,7 +10,7 @@ export const ServicesErrorState = ({ title, message, actionLabel }: ServicesEmpt
       message={message}
       actionLabel={actionLabel}
       icon={ErrorCircle}
-      iconClass={'rhoas-services-error-state-icon'}
+      iconClass="rhoas-services-error-state-icon"
     />
   );
 };

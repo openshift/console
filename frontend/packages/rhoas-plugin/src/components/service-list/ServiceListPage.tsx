@@ -1,4 +1,5 @@
 import * as React from 'react';
+import ServiceInstance from './ServiceInstance';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
@@ -6,7 +7,7 @@ import { history, LoadingBox } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { useActiveNamespace } from '@console/shared';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import ServiceInstance from './ServiceInstance';
+import { useTranslation } from 'react-i18next';
 import { CloudServicesRequestModel } from '../../models/rhoas';
 import { ServicesRequestCRName } from '../../const';
 import {
@@ -22,7 +23,6 @@ import {
   getFinishedCondition,
 } from '../../utils/conditionHandler';
 import { ServicesErrorState } from '../states/ServicesErrorState';
-import { useTranslation } from 'react-i18next';
 
 const ServiceListPage: React.FC = () => {
   const [currentNamespace] = useActiveNamespace();
@@ -30,6 +30,7 @@ const ServiceListPage: React.FC = () => {
   const [currentKafkaConnections, setCurrentKafkaConnections] = React.useState<string[]>([]);
   const { t } = useTranslation();
   const [kafkaCreateError, setKafkaCreateError] = React.useState<string>();
+  const [isSubmitting, setSubmitting] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     const createKafkaRequestFlow = async () => {
@@ -54,13 +55,16 @@ const ServiceListPage: React.FC = () => {
   const remoteKafkaInstances = watchedKafkaRequest?.status?.userKafkas;
 
   const createKafkaConnectionFlow = React.useCallback(async () => {
+    setSubmitting(true);
     const { id, name } = remoteKafkaInstances[selectedKafka];
     try {
       await createKafkaConnection(id, name, currentNamespace);
       history.push(`/topology/ns/${currentNamespace}`);
+      setSubmitting(false);
     } catch (error) {
       deleteKafkaConnection(name, currentNamespace);
       setKafkaCreateError(error);
+      setSubmitting(false);
     }
   }, [currentNamespace, remoteKafkaInstances, selectedKafka]);
 
@@ -99,16 +103,6 @@ const ServiceListPage: React.FC = () => {
     );
   }
 
-  const disableCreateButton = () => {
-    if (selectedKafka === null || selectedKafka === undefined) {
-      return true;
-    }
-    if (currentKafkaConnections.length === remoteKafkaInstances.length) {
-      return true;
-    }
-    return false;
-  };
-
   return (
     <NamespacedPage variant={NamespacedPageVariants.light} disabled hideApplications>
       <ServiceInstance
@@ -117,7 +111,7 @@ const ServiceListPage: React.FC = () => {
         setSelectedKafka={setSelectedKafka}
         currentKafkaConnections={currentKafkaConnections}
         createKafkaConnectionFlow={createKafkaConnectionFlow}
-        disableCreateButton={disableCreateButton()}
+        isSubmitting={isSubmitting}
       />
     </NamespacedPage>
   );

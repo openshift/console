@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { FormFooter, FormHeader, FlexForm, FormBody } from '@console/shared';
-import { history } from '@console/internal/components/utils';
+import CubesIcon from '@patternfly/react-icons/dist/js/icons/cubes-icon';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import ServiceInstanceFilter from '../service-table/ServiceInstanceFilter';
 import ServiceInstanceTable from '../service-table/ServiceInstanceTable';
+import { history } from '@console/internal/components/utils';
 import { ServicesEmptyState } from '../states/ServicesEmptyState';
 import { CloudKafka } from '../../utils/rhoas-types';
-import CubesIcon from '@patternfly/react-icons/dist/js/icons/cubes-icon';
 
 type ServiceInstanceProps = {
   kafkaArray: CloudKafka[];
@@ -15,7 +15,7 @@ type ServiceInstanceProps = {
   setSelectedKafka: (selectedKafka: number) => void;
   currentKafkaConnections: string[];
   createKafkaConnectionFlow: () => void;
-  disableCreateButton: boolean;
+  isSubmitting: boolean;
 };
 
 const areAllServicesSelected = (currentServices: string[], listOfServices: CloudKafka[]) =>
@@ -29,10 +29,9 @@ const ServiceInstance: React.FC<ServiceInstanceProps> = ({
   setSelectedKafka,
   currentKafkaConnections,
   createKafkaConnectionFlow,
-  disableCreateButton,
+  isSubmitting,
 }: ServiceInstanceProps) => {
   const [textInputNameValue, setTextInputNameValue] = React.useState<string>('');
-
   const pageKafkas = React.useMemo(
     () => kafkaArray.filter((kafka) => kafka.name.includes(textInputNameValue)),
     [kafkaArray, textInputNameValue],
@@ -83,10 +82,10 @@ const ServiceInstance: React.FC<ServiceInstanceProps> = ({
       </FormBody>
       <FormFooter
         handleSubmit={createKafkaConnectionFlow}
-        isSubmitting={disableCreateButton}
+        isSubmitting={isSubmitting}
         errorMessage=""
         submitLabel={t('rhoas-plugin~Create')}
-        disableSubmit={disableCreateButton}
+        disableSubmit={selectedKafka === undefined || isSubmitting}
         resetLabel={t('rhoas-plugin~Cancel')}
         sticky
         handleCancel={history.goBack}

@@ -1,7 +1,8 @@
 import { Plugin } from '@console/plugin-sdk';
-import { referenceForModel } from '@console/internal/module/k8s';
+import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { ALLOW_SERVICE_BINDING_FLAG } from '@console/topology/src/const';
 import { getExecutableCodeRef } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-utils';
+
 import {
   TopologyComponentFactory,
   TopologyCreateConnector,
@@ -17,7 +18,9 @@ export type TopologyConsumedExtensions =
   | TopologyDataModelFactory
   | TopologyCreateConnector;
 
-const getRhoasWatchedResources = (namespace: string): WatchK8sResources<any> => {
+const getRhoasWatchedResources = (
+  namespace: string,
+): WatchK8sResources<{ kafkaConnections: K8sResourceKind[] }> => {
   return {
     kafkaConnections: {
       isList: true,
