@@ -1,3 +1,4 @@
+import { lt } from 'semver';
 import { getRandomChars } from '@console/shared';
 import { apiVersionForModel, RouteKind } from '@console/internal/module/k8s';
 import { RouteModel } from '@console/internal/models';
@@ -57,6 +58,14 @@ export const createEventListener = async (
       ref: triggerBinding.metadata.name,
     };
   };
+  const getTriggerTemplate = (name: string) => {
+    if (lt(pipelineOperatorVersion, '1.4.0')) {
+      return {
+        name,
+      };
+    }
+    return { ref: name };
+  };
 
   return {
     apiVersion: apiVersionForModel(EventListenerModel),
@@ -69,7 +78,7 @@ export const createEventListener = async (
       triggers: [
         {
           bindings: triggerBindings.map(mapTriggerBindings),
-          template: { name: triggerTemplate.metadata.name },
+          template: getTriggerTemplate(triggerTemplate.metadata.name),
         },
       ],
     },
