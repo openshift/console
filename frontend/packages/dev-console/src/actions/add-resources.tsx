@@ -8,6 +8,7 @@ import {
   DatabaseIcon,
   LaptopCodeIcon,
   BoltIcon,
+  FileUploadIcon,
 } from '@patternfly/react-icons';
 import * as helmIcon from '@console/internal/imgs/logos/helm.svg';
 import { ImportOptions } from '../components/import/import-types';
@@ -83,6 +84,14 @@ export const fromHelmCharts = createKebabAction(
   ImportOptions.HELMCHARTS,
 );
 
+export const uploadJarFile = createKebabAction(
+  // t('devconsole~Upload JAR file')
+  'devconsole~Upload JAR file',
+  <FileUploadIcon />,
+  ImportOptions.UPLOADJAR,
+  allCatalogImageResourceAccess,
+);
+
 export const addResourceMenu: KebabAction[] = [
   fromSamples,
   fromGit,
@@ -93,6 +102,7 @@ export const addResourceMenu: KebabAction[] = [
   fromDatabaseCatalog,
   fromOperatorBacked,
   fromHelmCharts,
+  uploadJarFile,
 ];
 
 export const addGroupResourceMenu: KebabAction[] = [
@@ -100,6 +110,7 @@ export const addGroupResourceMenu: KebabAction[] = [
   containerImage,
   fromDockerfile,
   fromDevfile,
+  uploadJarFile,
 ];
 
 export const addResourceMenuWithoutCatalog: KebabAction[] = [
@@ -108,4 +119,5 @@ export const addResourceMenuWithoutCatalog: KebabAction[] = [
   fromDockerfile,
   fromDevfile,
   fromOperatorBacked,
+  uploadJarFile,
 ];

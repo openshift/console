@@ -22,11 +22,11 @@ describe('groupActions: ', () => {
   };
   it('should return the correct menu and sub menu items when all permissions are allowed', () => {
     const actions = groupActions(graphData, application);
-    expect(actions).toHaveLength(5);
+    expect(actions).toHaveLength(6);
     expect(actions.filter((a) => !a.pathKey)).toHaveLength(1);
     expect(
       actions.filter((action) => action.pathKey === `devconsole~Add to Application`),
-    ).toHaveLength(4);
+    ).toHaveLength(5);
   });
 
   it('should return the correct menu items when import permissions are allowed', () => {
@@ -42,7 +42,7 @@ describe('groupActions: ', () => {
     connectorSource.setData(topologyDataModel.nodes[0].data);
     connectorSource.setResource((topologyDataModel.nodes[0] as OdcNodeModel).resource);
     const actions = groupActions(graphData, application, connectorSource);
-    expect(actions).toHaveLength(4);
+    expect(actions).toHaveLength(5);
     expect(actions.filter((a) => a.path)).toHaveLength(0);
   });
 
@@ -55,7 +55,7 @@ describe('groupActions: ', () => {
       knativeTopologyDataModel.topology['e187afa2-53b1-406d-a619-cf9ff1468031'],
     );
     const actions = groupActions(graphDataWithEventSourceEnabled, application, connectorSource);
-    expect(actions).toHaveLength(5);
+    expect(actions).toHaveLength(6);
   });
 
   it('should not return event source menu item when event source is enabled and context is not knative service', () => {
@@ -65,7 +65,7 @@ describe('groupActions: ', () => {
     };
     connectorSource.setData(application.resources[0]);
     const actions = groupActions(graphDataWithEventSourceEnabled, application, connectorSource);
-    expect(actions).toHaveLength(4);
+    expect(actions).toHaveLength(5);
     expect(actions.filter((a) => a.label === 'Event Source')).toHaveLength(0);
   });
 });

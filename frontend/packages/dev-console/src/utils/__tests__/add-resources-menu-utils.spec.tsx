@@ -134,6 +134,17 @@ describe('addResourceMenuUtils: ', () => {
     expect(Array.from(url.searchParams.entries())).toHaveLength(2);
   });
 
+  it('should return the page url with proper queryparams for upload JAR flow', async () => {
+    const resource = await getTopologyData(MockResources, 'analytics-deployment');
+    const url = new URL(
+      getAddPageUrl(resource, '', ImportOptions.UPLOADJAR, true),
+      'https://mock.test.com',
+    );
+    expect(url.pathname).toBe('/upload-jar/ns/testproject1');
+    expect(url.searchParams.get('application')).toBe('application-1');
+    expect(Array.from(url.searchParams.entries())).toHaveLength(1);
+  });
+
   it('it should return a valid kebabAction on invoking createKebabAction with connectorSourceObj', async () => {
     const primaryObj = await getTopologyData(MockResources, 'analytics-deployment');
     const connectorSourceObj = await getTopologyData(MockResources, 'nodejs');

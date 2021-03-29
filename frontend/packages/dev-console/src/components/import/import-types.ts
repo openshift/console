@@ -340,6 +340,7 @@ export enum ImportOptions {
   HELMCHARTS = 'HELMCHARTS',
   SAMPLES = 'SAMPLES',
   EVENTCHANNEL = 'EVENTCHANNEL',
+  UPLOADJAR = 'UPLOADJAR',
 }
 
 export interface HealthChecksData {

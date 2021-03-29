@@ -14,9 +14,16 @@ jest.mock('react-i18next', () => {
     useTranslation: () => ({ t: (key) => key }),
   };
 });
+
 jest.mock('@console/internal/components/utils/k8s-watch-hook', () => ({
   useK8sWatchResource: jest.fn(),
 }));
+
+jest.mock('@console/shared/src/hooks/post-form-submit-action', () => {
+  return {
+    usePostFormSubmitAction: () => () => {},
+  };
+});
 
 describe('UploadJar', () => {
   const tagData: ImageTag = {
@@ -47,7 +54,7 @@ describe('UploadJar', () => {
     useK8sWatchResourceMock.mockClear();
   });
 
-  it('Show render formik', () => {
+  it('Should render formik', () => {
     useK8sWatchResourceMock.mockReturnValue([]);
     const wrapper = shallow(<UploadJar {...UploadJarProps} />);
     expect(wrapper.find(Formik).exists()).toBe(true);

@@ -8,6 +8,7 @@ import {
   ALL_APPLICATIONS_KEY,
   getOwnedResources,
   useActivePerspective,
+  usePostFormSubmitAction,
   useToast,
 } from '@console/shared/src';
 import {
@@ -19,7 +20,7 @@ import { history, resourcePathFromModel } from '@console/internal/components/uti
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { sanitizeApplicationValue } from '@console/topology/src/utils';
 import { BuildModel, BuildConfigModel } from '@console/internal/models';
-import { BaseFormData, UploadJarFormData } from '../import-types';
+import { BaseFormData, Resources, UploadJarFormData } from '../import-types';
 import UploadJarForm from './UploadJarForm';
 import { BuilderImage } from '../../../utils/imagestream-utils';
 import { createOrUpdateJarFile } from '../upload-jar-submit-utils';
@@ -32,14 +33,17 @@ type UploadJarProps = {
   projects: WatchK8sResultsObject<K8sResourceKind[]>;
   builderImage: BuilderImage;
   forApplication?: string;
+  contextualSource?: string;
 };
 
 const UploadJar: React.FunctionComponent<UploadJarProps> = ({
   namespace,
   projects,
-  forApplication,
   builderImage,
+  forApplication,
+  contextualSource,
 }) => {
+  const postFormCallback = usePostFormSubmitAction();
   const { t } = useTranslation();
   const [perspective] = useActivePerspective();
   const perspectiveExtensions = useExtensions<Perspective>(isPerspective);
@@ -67,6 +71,7 @@ const UploadJar: React.FunctionComponent<UploadJarProps> = ({
       value: '',
       javaArgs: '',
     },
+    resourceTypesNotValid: contextualSource ? [Resources.KnativeService] : [],
     runtimeIcon: 'java',
     image: {
       ...initialBaseValues.image,
@@ -114,6 +119,7 @@ const UploadJar: React.FunctionComponent<UploadJarProps> = ({
             },
           ],
         });
+        postFormCallback(resp);
         handleRedirect(projectName, perspective, perspectiveExtensions);
       })
       .catch((err) => {
