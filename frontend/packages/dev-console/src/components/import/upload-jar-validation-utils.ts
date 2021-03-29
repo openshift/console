@@ -1,8 +1,8 @@
 import * as _ from 'lodash';
 import * as yup from 'yup';
 import { TFunction } from 'i18next';
+import { nameValidationSchema } from '@console/shared';
 import {
-  nameValidationSchema,
   projectNameValidationSchema,
   applicationNameValidationSchema,
   deploymentValidationSchema,
@@ -31,7 +31,7 @@ export const fileUploadValidationSchema = (t: TFunction) =>
 
 export const validationSchema = (t: TFunction) =>
   yup.object().shape({
-    name: nameValidationSchema,
+    name: nameValidationSchema(t),
     fileUpload: fileUploadValidationSchema(t),
     project: projectNameValidationSchema,
     application: applicationNameValidationSchema,

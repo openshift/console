@@ -1,22 +1,15 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { getRandomChars } from '@console/shared';
+import { useFormikContext } from 'formik';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { ClusterTaskModel, TaskModel } from '../../../models';
-import {
-  TektonResource,
-  TaskKind,
-  PipelineTask,
-  PipelineTaskRef,
-  PipelineWorkspace,
-} from '../../../types';
+import { TaskKind } from '../../../types';
 import { PipelineVisualizationTaskItem } from '../../../utils/pipeline-utils';
 import { AddNodeDirection } from '../pipeline-topology/const';
 import {
   PipelineBuilderTaskNodeModel,
-  PipelineBuilderFinallyNodeModel,
   PipelineMixedNodeModel,
   PipelineTaskListNodeModel,
 } from '../pipeline-topology/types';
@@ -30,57 +23,66 @@ import {
   tasksToBuilderNodes,
 } from '../pipeline-topology/utils';
 import {
+  PipelineBuilderFormikValues,
+  PipelineBuilderTaskResources,
   PipelineBuilderTaskGroup,
   SelectTaskCallback,
-  TaskErrorMap,
-  UpdateErrors,
   UpdateOperationAddData,
   UpdateOperationConvertToFinallyTaskData,
   UpdateOperationConvertToTaskData,
   UpdateOperationFixInvalidTaskListData,
   UpdateTasksCallback,
+  BuilderTasksErrorGroup,
+  TaskErrors,
 } from './types';
-import { nodeTaskErrors, TaskErrorType, UpdateOperationType } from './const';
-import { getErrorMessage } from './utils';
+import { UpdateOperationType } from './const';
+import { findTask, getTopLevelErrorMessage } from './utils';
 
-type UseTasks = {
-  namespacedTasks: TaskKind[] | null;
-  clusterTasks: TaskKind[] | null;
-  errorMsg?: string;
-};
-export const useTasks = (namespace?: string): UseTasks => {
+export const useFormikFetchAndSaveTasks = (namespace: string, validateForm: () => void) => {
   const { t } = useTranslation();
-  const memoizedResources = React.useMemo(
-    () => ({
-      tasks: { kind: referenceForModel(TaskModel), isList: true, namespace },
-      clusterTasks: {
-        kind: referenceForModel(ClusterTaskModel),
-        isList: true,
-        namespaced: false,
-      },
-    }),
-    [namespace],
-  );
-  const { tasks, clusterTasks } = useK8sWatchResources<{ [kind: string]: TaskKind[] }>(
-    memoizedResources,
-  );
-  let errorMsg: string;
-  if (tasks.loadError) {
-    errorMsg = t('pipelines-plugin~Failed to load namespace Tasks. {{tasksLoadError}}', {
-      tasksLoadError: tasks.loadError,
-    });
-  }
-  if (clusterTasks.loadError) {
-    errorMsg = t('pipelines-plugin~Failed to load ClusterTasks. {{clusterTasksLoadError}}', {
-      clusterTasksLoadError: clusterTasks.loadError,
-    });
-  }
+  const { setFieldValue, setStatus } = useFormikContext<PipelineBuilderFormikValues>();
 
-  return {
-    namespacedTasks: tasks.loaded && !tasks.loadError ? tasks.data : null,
-    clusterTasks: clusterTasks.loaded && !clusterTasks.loadError ? clusterTasks.data : null,
-    errorMsg,
-  };
+  const { namespacedTasks, clusterTasks } = useK8sWatchResources<{
+    namespacedTasks: TaskKind[];
+    clusterTasks: TaskKind[];
+  }>({
+    namespacedTasks: {
+      kind: referenceForModel(TaskModel),
+      isList: true,
+      namespace,
+    },
+    clusterTasks: {
+      kind: referenceForModel(ClusterTaskModel),
+      isList: true,
+      namespaced: false,
+    },
+  });
+  const namespacedTaskData = namespacedTasks.loaded ? namespacedTasks.data : null;
+  const clusterTaskData = clusterTasks.loaded ? clusterTasks.data : null;
+
+  React.useEffect(() => {
+    if (namespacedTaskData) {
+      setFieldValue('taskResources.namespacedTasks', namespacedTaskData, false);
+    }
+    if (clusterTaskData) {
+      setFieldValue('taskResources.clusterTasks', clusterTaskData, false);
+    }
+    const tasksLoaded = !!namespacedTaskData && !!clusterTaskData;
+    setFieldValue('taskResources.tasksLoaded', tasksLoaded, false);
+    if (tasksLoaded) {
+      // Wait for Formik to fully understand the set values (thread end) and then validate again
+      setTimeout(() => validateForm(), 0);
+    }
+  }, [setFieldValue, namespacedTaskData, clusterTaskData, validateForm]);
+
+  const error = namespacedTasks.loadError || clusterTasks.loadError;
+  React.useEffect(() => {
+    if (!error) return;
+
+    setStatus({
+      taskLoadingError: t('pipelines-plugin~Failed to load Tasks. {{error}}', { error }),
+    });
+  }, [t, setStatus, error]);
 };
 
 const useConnectFinally = (
@@ -89,9 +91,10 @@ const useConnectFinally = (
   taskGroup: PipelineBuilderTaskGroup,
   onTaskSelection: SelectTaskCallback,
   onUpdateTasks: UpdateTasksCallback,
-  tasksInError: TaskErrorMap,
+  taskResources: PipelineBuilderTaskResources,
+  tasksInError: TaskErrors,
 ): PipelineMixedNodeModel => {
-  const { clusterTasks, namespacedTasks } = useTasks(namespace);
+  const { clusterTasks, namespacedTasks } = taskResources;
   const taskGroupRef = React.useRef(taskGroup);
   taskGroupRef.current = taskGroup;
   const addNewFinallyListNode = () => {
@@ -99,13 +102,6 @@ const useConnectFinally = (
       listTaskName: `finally-list-${getRandomChars(6)}`,
     };
     onUpdateTasks(taskGroupRef.current, { type: UpdateOperationType.ADD_FINALLY_LIST_TASK, data });
-  };
-  // TODO: Cleanup in ODC-3165
-  const getTask = (taskRef: PipelineTaskRef) => {
-    if (taskRef?.kind === ClusterTaskModel.kind) {
-      return clusterTasks?.find((task) => task.metadata.name === taskRef?.name);
-    }
-    return namespacedTasks?.find((task) => task.metadata.name === taskRef?.name);
   };
 
   const convertListToFinallyTask = (resource: TaskKind, name: string) => {
@@ -119,9 +115,7 @@ const useConnectFinally = (
   const finallyNodeName = `finally-node-${taskGroup.finallyTasks.length}-${taskGroup.finallyListTasks.length}`;
   const regularRunAfters = getLastRegularTasks(nodes);
 
-  const finallyGroupNode: PipelineBuilderFinallyNodeModel = createBuilderFinallyNode(
-    getFinallyTaskHeight(allTasksLength, false),
-  )(finallyNodeName, {
+  return createBuilderFinallyNode(getFinallyTaskHeight(allTasksLength, false))(finallyNodeName, {
     isFinallyTask: true,
     namespace,
     namespaceTaskList: namespacedTasks,
@@ -131,10 +125,10 @@ const useConnectFinally = (
       name: finallyNodeName,
       runAfter: regularRunAfters,
       addNewFinallyListNode,
-      finallyTasks: taskGroup.finallyTasks.map((ft) => ({
+      finallyTasks: taskGroup.finallyTasks.map((ft, idx) => ({
         ...ft,
-        onTaskSelection: () => onTaskSelection(ft, getTask(ft.taskRef), true),
-        error: getErrorMessage(nodeTaskErrors, tasksInError)(ft.name),
+        onTaskSelection: () => onTaskSelection(ft, findTask(taskResources, ft.taskRef), true),
+        error: getTopLevelErrorMessage(tasksInError)(idx),
         selected: taskGroup.highlightedIds.includes(ft.name),
         disableTooltip: true,
       })),
@@ -150,29 +144,16 @@ const useConnectFinally = (
       })),
     },
   });
-  return finallyGroupNode;
 };
-type UseNodes = {
-  nodes: PipelineMixedNodeModel[];
-  tasksCount: number;
-  tasksLoaded: boolean;
-  loadingTasksError?: string;
-};
+
 export const useNodes = (
-  namespace: string,
   onTaskSelection: SelectTaskCallback,
   onUpdateTasks: UpdateTasksCallback,
   taskGroup: PipelineBuilderTaskGroup,
-  tasksInError: TaskErrorMap,
-): UseNodes => {
-  const { clusterTasks, namespacedTasks, errorMsg } = useTasks(namespace);
-
-  const getTask = (taskRef: PipelineTaskRef) => {
-    if (taskRef?.kind === ClusterTaskModel.kind) {
-      return clusterTasks?.find((task) => task.metadata.name === taskRef?.name);
-    }
-    return namespacedTasks?.find((task) => task.metadata.name === taskRef?.name);
-  };
+  taskResources: PipelineBuilderTaskResources,
+  tasksInError: BuilderTasksErrorGroup,
+): PipelineMixedNodeModel[] => {
+  const { clusterTasks, namespacedTasks } = taskResources;
 
   const taskGroupRef = React.useRef(taskGroup);
   taskGroupRef.current = taskGroup;
@@ -239,8 +220,8 @@ export const useNodes = (
       },
     });
 
-  const invalidTaskList = taskGroup.tasks.filter((task) => !getTask(task.taskRef));
-  const validTaskList = taskGroup.tasks.filter((task) => !!getTask(task.taskRef));
+  const invalidTaskList = taskGroup.tasks.filter((task) => !findTask(taskResources, task.taskRef));
+  const validTaskList = taskGroup.tasks.filter((task) => !!findTask(taskResources, task.taskRef));
 
   const invalidTaskListNodes: PipelineTaskListNodeModel[] = invalidTaskList.map((task) =>
     newInvalidListNode(task.name, task.runAfter),
@@ -250,8 +231,8 @@ export const useNodes = (
       ? tasksToBuilderNodes(
           validTaskList,
           onNewListNode,
-          (task) => onTaskSelection(task, getTask(task.taskRef), false),
-          getErrorMessage(nodeTaskErrors, tasksInError),
+          (task) => onTaskSelection(task, findTask(taskResources, task.taskRef), false),
+          getTopLevelErrorMessage(tasksInError.tasks),
           taskGroup.highlightedIds,
         )
       : [];
@@ -266,92 +247,15 @@ export const useNodes = (
     ...invalidTaskListNodes,
   ]);
 
-  const localTaskCount = namespacedTasks?.length || 0;
-  const clusterTaskCount = clusterTasks?.length || 0;
   const finallyNode = useConnectFinally(
-    namespace,
+    'namespace', // why is this needed?
     nodes,
     taskGroup,
     onTaskSelection,
     onUpdateTasks,
-    tasksInError,
+    taskResources,
+    tasksInError.finally,
   );
-  return {
-    tasksCount: localTaskCount + clusterTaskCount,
-    tasksLoaded: !!namespacedTasks && !!clusterTasks,
-    loadingTasksError: errorMsg,
-    nodes: [...nodes, finallyNode],
-  };
-};
 
-export const useResourceValidation = (
-  finallyTasks: PipelineTask[],
-  tasks: PipelineTask[],
-  resourceValues: TektonResource[],
-  workspaceValues: PipelineWorkspace[],
-  onError: UpdateErrors,
-) => {
-  const [previousErrorIds, setPreviousErrorIds] = React.useState<string[]>([]);
-
-  React.useEffect(() => {
-    const resourceNames = resourceValues.map((r) => r.name);
-
-    const errors = [...tasks, ...finallyTasks].reduce((acc, task) => {
-      const output = task.resources?.outputs || [];
-      const input = task.resources?.inputs || [];
-      const missingResources = [...output, ...input].filter(
-        (r) => !resourceNames.includes(r.resource),
-      );
-
-      const workspaceNames = workspaceValues.map((w) => w.name);
-      const missingWorkspaces =
-        task.workspaces?.filter((w) => !workspaceNames.includes(w.workspace)) || [];
-
-      if (missingResources.length === 0 && missingWorkspaces.length === 0) {
-        return acc;
-      }
-
-      const taskErrors: TaskErrorType[] = [];
-      if (missingResources.length > 0) {
-        taskErrors.push(TaskErrorType.MISSING_RESOURCES);
-      }
-      if (missingWorkspaces.length > 0) {
-        taskErrors.push(TaskErrorType.MISSING_WORKSPACES);
-      }
-
-      return {
-        ...acc,
-        [task.name]: taskErrors,
-      };
-    }, {});
-
-    if (!_.isEmpty(errors) || previousErrorIds.length > 0) {
-      const outputErrors = previousErrorIds.reduce((acc, id) => {
-        if (acc[id]) {
-          // Error exists, leave it alone
-          return acc;
-        }
-
-        // Error doesn't exist but we had it once, make sure it is cleared
-        return {
-          ...acc,
-          [id]: null,
-        };
-      }, errors);
-
-      const currentErrorIds = Object.keys(outputErrors).filter((id) => !!outputErrors[id]);
-      if (!_.isEqual(currentErrorIds, previousErrorIds)) {
-        setPreviousErrorIds(currentErrorIds);
-      }
-      onError(outputErrors);
-    }
-  }, [
-    tasks,
-    resourceValues,
-    workspaceValues,
-    onError,
-    previousErrorIds,
-    setPreviousErrorIds,
-    finallyTasks,
-  ]);
+  return [...nodes, finallyNode];
 };

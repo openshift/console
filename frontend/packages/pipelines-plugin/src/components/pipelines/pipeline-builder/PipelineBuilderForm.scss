@@ -1,5 +1,6 @@
 .odc-pipeline-builder-form {
   overflow: auto;
+  height: 100%;
 
   &__grid {
     grid-template-columns: minmax(0, 1fr);

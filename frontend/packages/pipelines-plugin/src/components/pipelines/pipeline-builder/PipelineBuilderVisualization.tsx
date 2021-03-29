@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useFormikContext } from 'formik';
 import { Alert } from '@patternfly/react-core';
 import { LoadingBox } from '@console/internal/components/utils';
 import { hasInlineTaskSpec } from '../../../utils/pipeline-utils';
@@ -8,47 +9,49 @@ import PipelineTopologyGraph from '../pipeline-topology/PipelineTopologyGraph';
 import { getEdgesFromNodes } from '../pipeline-topology/utils';
 import { useNodes } from './hooks';
 import {
+  PipelineBuilderFormikValues,
+  PipelineBuilderTaskResources,
   PipelineBuilderTaskGroup,
   SelectTaskCallback,
-  TaskErrorMap,
   UpdateTasksCallback,
 } from './types';
+import { getBuilderTasksErrorGroup } from './utils';
 
 type PipelineBuilderVisualizationProps = {
-  namespace: string;
   onTaskSelection: SelectTaskCallback;
   onUpdateTasks: UpdateTasksCallback;
   taskGroup: PipelineBuilderTaskGroup;
-  tasksInError: TaskErrorMap;
+  taskResources: PipelineBuilderTaskResources;
 };
 
 const PipelineBuilderVisualization: React.FC<PipelineBuilderVisualizationProps> = ({
-  namespace,
   onTaskSelection,
   onUpdateTasks,
   taskGroup,
-  tasksInError,
+  taskResources,
 }) => {
   const { t } = useTranslation();
-  const { tasksLoaded, tasksCount, nodes, loadingTasksError } = useNodes(
-    namespace,
+  const { errors, status } = useFormikContext<PipelineBuilderFormikValues>();
+  const nodes = useNodes(
     onTaskSelection,
     onUpdateTasks,
     taskGroup,
-    tasksInError,
+    taskResources,
+    getBuilderTasksErrorGroup(errors?.formData),
   );
+  const taskCount = taskResources.namespacedTasks.length + taskResources.clusterTasks.length;
 
-  if (loadingTasksError) {
+  if (status?.taskLoadingError) {
     return (
       <Alert variant="danger" isInline title={t('pipelines-plugin~Error loading the tasks.')}>
-        {loadingTasksError}
+        {status.taskLoadingError}
       </Alert>
     );
   }
-  if (!tasksLoaded) {
+  if (!taskResources.tasksLoaded) {
     return <LoadingBox />;
   }
-  if (tasksCount === 0 && taskGroup.tasks.length === 0) {
+  if (taskCount === 0 && taskGroup.tasks.length === 0) {
     // No tasks, nothing we can do here...
     return (
       <Alert variant="danger" isInline title={t('pipelines-plugin~Unable to locate any tasks.')} />

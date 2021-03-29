@@ -1,18 +1,27 @@
-import { FormikValues } from 'formik';
+import { FormikValues, FormikErrors } from 'formik';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import {
   PipelineTask,
   TektonParam,
   TektonResource,
-  PipelineWorkspace,
   TaskKind,
+  TektonWorkspace,
 } from '../../../types';
 import { PipelineVisualizationTaskItem } from '../../../utils/pipeline-utils';
 import { AddNodeDirection } from '../pipeline-topology/const';
 // eslint-disable-next-line import/no-cycle
-import { TaskErrorType, UpdateOperationType } from './const';
+import { UpdateOperationType } from './const';
 
-export type UpdateErrors = (errors?: TaskErrorMap) => void;
+export type TaskType = 'tasks' | 'finallyTasks';
+
+export type TaskErrors = FormikErrors<PipelineTask>[];
+export type BuilderTasksErrorGroup = {
+  tasks: TaskErrors;
+  finally: TaskErrors;
+};
+
+export type CheckTaskErrorMessage = (taskIndex: number) => string | null;
+export type GetErrorMessage = (errors: TaskErrors) => CheckTaskErrorMessage;
 
 export type PipelineBuilderTaskBase = { name: string; runAfter?: string[] };
 
@@ -25,6 +34,12 @@ export type PipelineBuilderTaskGrouping = {
   finallyListTasks: PipelineBuilderListTask[];
 };
 
+export type PipelineBuilderTaskResources = {
+  namespacedTasks: TaskKind[];
+  clusterTasks: TaskKind[];
+  tasksLoaded: boolean;
+};
+
 export type PipelineBuilderTaskGroup = PipelineBuilderTaskGrouping & {
   highlightedIds: string[];
 };
@@ -33,13 +48,14 @@ export type PipelineBuilderFormValues = PipelineBuilderTaskGrouping & {
   name: string;
   params: TektonParam[];
   resources: TektonResource[];
-  workspaces: PipelineWorkspace[];
+  workspaces: TektonWorkspace[];
 };
 
 export type PipelineBuilderFormYamlValues = {
   editorType: EditorType;
   yamlData: string;
   formData: PipelineBuilderFormValues;
+  taskResources: PipelineBuilderTaskResources;
 };
 
 export type PipelineBuilderFormikValues = FormikValues & PipelineBuilderFormYamlValues;
@@ -48,10 +64,6 @@ export type SelectedBuilderTask = {
   resource: TaskKind;
   taskIndex: number;
   isFinallyTask: boolean;
-};
-
-export type TaskErrorMap = {
-  [pipelineInErrorName: string]: TaskErrorType[];
 };
 
 export type SelectTaskCallback = (
@@ -96,30 +108,9 @@ export type UpdateOperationRemoveTaskData = UpdateOperationBaseData & {
   taskName: string;
 };
 
-export type ResourceTarget = 'inputs' | 'outputs';
-export type UpdateTaskResourceData = {
-  resourceTarget: ResourceTarget;
-  selectedPipelineResource: TektonResource;
-  taskResourceName: string;
-};
-export type UpdateTaskWorkspaceData = {
-  workspaceName: string;
-  selectedWorkspace: string;
-};
-export type UpdateTaskParamData = {
-  newValue: string;
-  taskParamName: string;
-};
-export type UpdateOperationUpdateTaskData = UpdateOperationBaseData & {
-  // Task information
-  thisPipelineTask: PipelineTask;
-  taskResource: TaskKind;
-
-  // Change information
-  newName?: string;
-  params?: UpdateTaskParamData;
-  resources?: UpdateTaskResourceData;
-  workspaces?: UpdateTaskWorkspaceData;
+export type UpdateOperationRenameTaskData = UpdateOperationBaseData & {
+  preChangePipelineTask: PipelineTask;
+  newName: string;
 };
 
 export type CleanupResults = {
@@ -127,7 +118,6 @@ export type CleanupResults = {
   listTasks: PipelineBuilderListTask[];
   finallyTasks: PipelineTask[];
   finallyListTasks: PipelineBuilderListTask[];
-  errors?: TaskErrorMap;
 };
 
 export type UpdateOperationAction<D extends UpdateOperationBaseData> = (

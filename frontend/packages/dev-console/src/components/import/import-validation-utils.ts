@@ -1,9 +1,9 @@
 import * as yup from 'yup';
 import * as _ from 'lodash';
 import { TFunction } from 'i18next';
+import { nameValidationSchema, nameRegex } from '@console/shared';
 import { GitTypes } from './import-types';
 import {
-  nameValidationSchema,
   projectNameValidationSchema,
   applicationNameValidationSchema,
   deploymentValidationSchema,
@@ -17,13 +17,12 @@ import {
   gitUrlRegex,
   resourcesValidationSchema,
   devfileValidationSchema,
-  nameRegex,
 } from './validation-schema';
 import { healthChecksProbesValidationSchema } from '../health-checks/health-checks-probe-validation-utils';
 
 export const validationSchema = (t: TFunction) =>
   yup.object().shape({
-    name: nameValidationSchema,
+    name: nameValidationSchema(t),
     project: projectNameValidationSchema,
     application: applicationNameValidationSchema,
     image: imageValidationSchema(t),

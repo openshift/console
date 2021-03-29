@@ -10,8 +10,8 @@ import {
   PipelineRunInlineResourceParam,
   PipelineRunReferenceResource,
   PipelineRunResource,
-  PipelineWorkspace,
   VolumeClaimTemplateType,
+  TektonWorkspace,
 } from '../../../../types';
 import { getPipelineRunParams, getPipelineRunWorkspaces } from '../../../../utils/pipeline-utils';
 import { TektonResourceLabel, VolumeTypes, preferredNameAnnotation } from '../../const';
@@ -172,7 +172,7 @@ export const convertPipelineToModalData = (
         type: resource.type,
       },
     })),
-    workspaces: (pipeline.spec.workspaces || []).map((workspace: PipelineWorkspace) => ({
+    workspaces: (pipeline.spec.workspaces || []).map((workspace: TektonWorkspace) => ({
       ...workspace,
       type: preselectPVC ? VolumeTypes.PVC : 'EmptyDirectory',
       data: preselectPVC ? getDefaultPVC(preselectPVC) : { emptyDir: {} },

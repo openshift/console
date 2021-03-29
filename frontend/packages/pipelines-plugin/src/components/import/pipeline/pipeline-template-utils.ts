@@ -7,7 +7,7 @@ import {
   PIPELINE_STRATEGY_LABEL,
 } from '../../../const';
 import { PipelineModel } from '../../../models';
-import { PipelineKind, PipelineRunKind, PipelineWorkspace, TektonParam } from '../../../types';
+import { PipelineKind, PipelineRunKind, TektonParam, TektonWorkspace } from '../../../types';
 import { createPipelineResource } from '../../pipelines/pipeline-resource/pipelineResource-utils';
 import {
   convertPipelineToModalData,
@@ -122,7 +122,7 @@ export const createPipelineRunForImportFlow = async (
 ): Promise<PipelineRunKind> => {
   const pipelineInitialValues: StartPipelineFormValues = {
     ...convertPipelineToModalData(pipeline),
-    workspaces: (pipeline.spec.workspaces || []).map((workspace: PipelineWorkspace) => ({
+    workspaces: (pipeline.spec.workspaces || []).map((workspace: TektonWorkspace) => ({
       ...workspace,
       type: 'volumeClaimTemplate',
       data: getDefaultVolumeClaimTemplate(pipeline?.metadata?.name),

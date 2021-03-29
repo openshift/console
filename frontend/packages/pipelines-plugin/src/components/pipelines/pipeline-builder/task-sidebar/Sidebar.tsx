@@ -6,26 +6,17 @@ import './Sidebar.scss';
 type LazyRender = () => React.ReactNode;
 type SidebarProps = {
   children: React.ReactNode | LazyRender;
-  onRequestClose: () => void;
+  closeAreaNode?: Node;
+  onRequestClose?: () => void;
   open: boolean;
 };
 
 const DURATION = 225;
 
 const Sidebar: React.FC<SidebarProps> = (props) => {
-  const { children, onRequestClose, open } = props;
+  const { children, closeAreaNode = null, onRequestClose, open } = props;
 
   const [canClose, setCanClose] = React.useState(false);
-  const contentRef = React.useRef(null);
-  const closeRef = React.useCallback(
-    (e) => {
-      if (canClose && !contentRef?.current?.contains(e?.target)) {
-        onRequestClose();
-      }
-    },
-    [canClose, onRequestClose],
-  );
-
   React.useEffect(() => {
     let timeout = null;
     if (open) {
@@ -38,13 +29,23 @@ const Sidebar: React.FC<SidebarProps> = (props) => {
       clearTimeout(timeout);
     };
   }, [open, setCanClose]);
+
+  const closeRef = React.useCallback(() => {
+    if (canClose && !!closeAreaNode && onRequestClose) {
+      onRequestClose();
+    }
+  }, [canClose, closeAreaNode, onRequestClose]);
   React.useEffect(() => {
-    window.addEventListener('click', closeRef);
+    if (typeof closeAreaNode?.addEventListener === 'function') {
+      closeAreaNode.addEventListener('click', closeRef);
+    }
 
     return () => {
-      window.removeEventListener('click', closeRef);
+      if (typeof closeAreaNode?.removeEventListener === 'function') {
+        closeAreaNode.removeEventListener('click', closeRef);
+      }
     };
-  }, [closeRef]);
+  }, [closeAreaNode, closeRef]);
 
   const render = () => {
     if (typeof children === 'function') {
@@ -59,9 +60,7 @@ const Sidebar: React.FC<SidebarProps> = (props) => {
 
   return (
     <CSSTransition in={open} timeout={DURATION} classNames="odc-sidebar">
-      <div ref={contentRef} className="odc-sidebar odc-sidebar__content">
-        {render()}
-      </div>
+      <div className="odc-sidebar">{render()}</div>
     </CSSTransition>
   );
 };

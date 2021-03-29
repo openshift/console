@@ -1,58 +1,52 @@
 import * as React from 'react';
+import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { FormGroup } from '@patternfly/react-core';
-import { Dropdown } from '@console/internal/components/utils';
-import { TektonResource, PipelineTaskResource } from '../../../../types';
-import { SidebarInputWrapper } from './temp-utils';
+import { DropdownField } from '@console/shared';
+import { TektonResource } from '../../../../types';
+import { PipelineBuilderFormikValues } from '../types';
 
 type TaskSidebarResourceProps = {
   availableResources: TektonResource[];
-  onChange: (resourceName: string, resource: TektonResource) => void;
+  hasResource: boolean;
+  name: string;
   resource: TektonResource;
-  taskResource?: PipelineTaskResource;
 };
 
 const TaskSidebarResource: React.FC<TaskSidebarResourceProps> = (props) => {
   const { t } = useTranslation();
-  const { availableResources, onChange, resource, taskResource } = props;
+  const { setFieldValue } = useFormikContext<PipelineBuilderFormikValues>();
+  const {
+    availableResources,
+    hasResource,
+    name,
+    resource: { name: resourceName, type: resourceType },
+  } = props;
 
   const dropdownResources = availableResources.filter(
-    ({ name, type }) => resource.type === type && !!name,
+    (resource) => resourceType === resource.type && !!resource.name,
   );
 
   return (
-    <FormGroup
-      fieldId={resource.name}
-      label={resource.name}
-      helperText={t('pipelines-plugin~Only showing resources for this type ({{resourceType}}).', {
-        resourceType: resource.type,
+    <DropdownField
+      name={`${name}.resource`}
+      label={resourceName}
+      title={t('pipelines-plugin~Select {{resourceType}} resource...', { resourceType })}
+      helpText={t('pipelines-plugin~Only showing resources for this type ({{resourceType}}).', {
+        resourceType,
       })}
-      helperTextInvalid={
-        dropdownResources.length === 0
-          ? t('pipelines-plugin~No resources available. Add pipeline resources.')
-          : ''
-      }
-      validated={dropdownResources.length > 0 ? 'default' : 'error'}
-      isRequired={!resource?.optional}
-    >
-      <SidebarInputWrapper>
-        <Dropdown
-          title={t('pipelines-plugin~Select {{resourceType}} resource...', {
-            resourceType: resource.type,
-          })}
-          items={dropdownResources.reduce((acc, { name }) => ({ ...acc, [name]: name }), {})}
-          disabled={dropdownResources.length === 0}
-          selectedKey={taskResource?.resource || ''}
-          dropDownClassName="dropdown--full-width"
-          onChange={(value: string) => {
-            onChange(
-              resource.name,
-              dropdownResources.find(({ name }) => name === value),
-            );
-          }}
-        />
-      </SidebarInputWrapper>
-    </FormGroup>
+      disabled={dropdownResources.length === 0}
+      items={dropdownResources.reduce(
+        (acc, resource) => ({ ...acc, [resource.name]: resource.name }),
+        {},
+      )}
+      onChange={(selectedResource: string) => {
+        if (!hasResource) {
+          setFieldValue(name, { name: resourceName, resource: selectedResource });
+        }
+      }}
+      fullWidth
+      required
+    />
   );
 };
 

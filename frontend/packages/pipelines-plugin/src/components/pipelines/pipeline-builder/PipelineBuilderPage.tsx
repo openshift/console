@@ -6,16 +6,12 @@ import { Formik, FormikBag } from 'formik';
 import { safeLoad } from 'js-yaml';
 import { history } from '@console/internal/components/utils';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
-import { k8sCreate, k8sUpdate } from '@console/internal/module/k8s';
+import { k8sCreate, k8sUpdate, referenceForModel } from '@console/internal/module/k8s';
 import { PipelineModel } from '../../../models';
 import { PipelineKind } from '../../../types';
 import PipelineBuilderForm from './PipelineBuilderForm';
 import { PipelineBuilderFormYamlValues, PipelineBuilderFormikValues } from './types';
-import {
-  convertBuilderFormToPipeline,
-  convertPipelineToBuilderForm,
-  getPipelineURL,
-} from './utils';
+import { convertBuilderFormToPipeline, convertPipelineToBuilderForm } from './utils';
 import { initialPipelineFormData } from './const';
 import { validationSchema } from './validation-utils';
 
@@ -37,8 +33,15 @@ const PipelineBuilderPage: React.FC<PipelineBuilderPageProps> = (props) => {
   const initialValues: PipelineBuilderFormYamlValues = {
     editorType: EditorType.Form,
     yamlData: '',
-    formData: initialPipelineFormData,
-    ...(convertPipelineToBuilderForm(existingPipeline) || {}),
+    formData: {
+      ...initialPipelineFormData,
+      ...(convertPipelineToBuilderForm(existingPipeline) || {}),
+    },
+    taskResources: {
+      clusterTasks: [],
+      namespacedTasks: [],
+      tasksLoaded: false,
+    },
   };
 
   const handleSubmit = (
@@ -70,7 +73,7 @@ const PipelineBuilderPage: React.FC<PipelineBuilderPageProps> = (props) => {
     return resourceCall
       .then(() => {
         actions.setSubmitting(false);
-        history.push(`${getPipelineURL(ns)}/${pipeline.metadata.name}`);
+        history.push(`/k8s/ns/${ns}/${referenceForModel(PipelineModel)}/${pipeline.metadata.name}`);
       })
       .catch((e) => {
         actions.setStatus({ submitError: e.message });
