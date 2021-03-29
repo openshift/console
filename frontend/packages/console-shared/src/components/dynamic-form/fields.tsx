@@ -9,7 +9,7 @@ import SchemaField, {
   SchemaFieldProps,
 } from 'react-jsonschema-form/lib/components/fields/SchemaField';
 import { LinkifyExternal, SelectorInput, Dropdown } from '@console/internal/components/utils';
-import { AccordionContent, AccordionItem, AccordionToggle, Switch } from '@patternfly/react-core';
+import { AccordionContent, AccordionItem, AccordionToggle } from '@patternfly/react-core';
 import { MatchExpressions } from '@console/operator-lifecycle-manager/src/components/descriptors/spec/match-expressions';
 import { ResourceRequirements } from '@console/operator-lifecycle-manager/src/components/descriptors/spec/resource-requirements';
 import {
@@ -275,28 +275,6 @@ export const MatchExpressionsField: React.FC<FieldProps> = ({
     </FieldSet>
   );
 };
-export const BooleanField: React.FC<FieldProps> = ({
-  formData,
-  idSchema,
-  name,
-  onChange,
-  uiSchema,
-}) => {
-  const { t } = useTranslation();
-  const { labelOn = t('console-shared~true'), labelOff = t('console-shared~false') } = getUiOptions(
-    uiSchema,
-  );
-  return (
-    <Switch
-      id={idSchema?.$id || name}
-      key={idSchema?.$id || name}
-      isChecked={_.isNil(formData) ? false : formData}
-      onChange={(v) => onChange(v)}
-      label={labelOn as string}
-      labelOff={labelOff as string}
-    />
-  );
-};
 
 export const LabelsField: React.FC<FieldProps> = ({
   formData,
@@ -375,7 +353,6 @@ export const CustomSchemaField: React.FC<SchemaFieldProps> = (props) => {
 export const NullField = () => null;
 
 export default {
-  BooleanField,
   DescriptionField,
   DropdownField,
   LabelsField,
