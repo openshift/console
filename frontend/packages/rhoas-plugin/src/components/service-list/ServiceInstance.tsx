@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { FormFooter, FormHeader, FlexForm, FormBody } from '@console/shared';
 import CubesIcon from '@patternfly/react-icons/dist/js/icons/cubes-icon';
+import { FormFooter, FormHeader, FlexForm, FormBody } from '@console/shared';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
+import { history } from '@console/internal/components/utils';
 import ServiceInstanceFilter from '../service-table/ServiceInstanceFilter';
 import ServiceInstanceTable from '../service-table/ServiceInstanceTable';
-import { history } from '@console/internal/components/utils';
 import { ServicesEmptyState } from '../states/ServicesEmptyState';
 import { CloudKafka } from '../../utils/rhoas-types';
 

@@ -8,7 +8,7 @@ import { navFactory, SimpleTabNav } from '@console/internal/components/utils';
 import { ResourcesComponent } from './ResourceComponent';
 import { DetailsComponent } from './DetailsComponent';
 
-import './TopologyKafkaPanel.css';
+import './TopologyKafkaPanel.scss';
 
 type PropsFromState = {
   selectedDetailsTab?: string;

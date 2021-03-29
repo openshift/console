@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button, EmptyState, EmptyStateIcon, Title } from '@patternfly/react-core';
 import { history } from '@console/internal/components/utils';
 
-export type ServicesEmptyStateProps = {
+type ServicesEmptyStateProps = {
   title: string;
   message?: string;
   actionLabel: string;
@@ -16,21 +16,19 @@ export const ServicesEmptyState = ({
   actionLabel,
   icon,
   iconClass,
-}: ServicesEmptyStateProps) => {
-  return (
-    <EmptyState>
-      <EmptyStateIcon className={iconClass} icon={icon} />
-      <Title headingLevel="h4" size="lg">
-        {title}
+}: ServicesEmptyStateProps) => (
+  <EmptyState>
+    <EmptyStateIcon className={iconClass} icon={icon} />
+    <Title headingLevel="h4" size="lg">
+      {title}
+    </Title>
+    {message || (
+      <Title headingLevel="h5" size="md">
+        {message}
       </Title>
-      {message || (
-        <Title headingLevel="h5" size="md">
-          {message}
-        </Title>
-      )}
-      <Button variant="link" onClick={history.goBack}>
-        {actionLabel}
-      </Button>
-    </EmptyState>
-  );
-};
+    )}
+    <Button variant="link" onClick={history.goBack}>
+      {actionLabel}
+    </Button>
+  </EmptyState>
+);

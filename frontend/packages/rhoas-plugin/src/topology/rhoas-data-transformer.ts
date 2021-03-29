@@ -2,6 +2,8 @@ import { EdgeModel, Model, NodeModel } from '@patternfly/react-topology';
 import { apiVersionForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { getTopologyNodeItem } from '@console/topology/src/data-transforms/transform-utils';
 import { OverviewItem } from '@console/shared/src';
+import { TYPE_SERVICE_BINDING } from '@console/topology/src/const';
+import { edgesFromServiceBinding } from '@console/topology/src/operators/operators-data-transformer';
 import { TopologyDataObject, TopologyDataResources } from '@console/topology/src/topology-types';
 import {
   KAFKA_WIDTH,
@@ -10,8 +12,6 @@ import {
   TYPE_MANAGED_KAFKA_CONNECTION,
 } from './components/const';
 import { KafkaConnectionModel } from '../models';
-import { edgesFromServiceBinding } from '@console/topology/src/operators/operators-data-transformer';
-import { TYPE_SERVICE_BINDING } from '@console/topology/src/const';
 
 const KAFKA_PROPS = {
   width: KAFKA_WIDTH,
@@ -107,7 +107,7 @@ export const getRhoasTopologyDataModel = () => (
   if (rhoasDataModel.nodes?.length) {
     workloads.forEach((dc) => {
       rhoasDataModel.edges.push(
-        ...[...getRhoasServiceBindingEdges(dc, rhoasDataModel.nodes, serviceBindingRequests)],
+        ...getRhoasServiceBindingEdges(dc, rhoasDataModel.nodes, serviceBindingRequests),
       );
     });
   }

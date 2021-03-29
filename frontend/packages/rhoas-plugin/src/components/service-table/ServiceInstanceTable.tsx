@@ -134,7 +134,7 @@ const ServiceInstanceTable: React.FC<ServiceInstanceTableProps> = ({
     const filterColumns = ['name', 'provider', 'region', 'owner', 'status', 'createdAt'];
     filterKey = filterColumns[index - 1];
 
-    const sortedRows = kafkaRows.sort(function(a, b) {
+    const sortedRows = kafkaRows.sort((a, b) => {
       const keyA = a[filterKey];
       const keyB = b[filterKey];
       if (keyA < keyB) {
