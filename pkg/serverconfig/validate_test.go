@@ -151,3 +151,23 @@ func TestValidAddPage(t *testing.T) {
 		})
 	}
 }
+
+func TestValidEmptyProjectAccessClusterRoles(t *testing.T) {
+	_, err := validateProjectAccessClusterRolesJSON("")
+	if err != nil {
+		t.Error("Unexpected error when parsing an empty string.", err)
+	}
+}
+
+func TestValidObjectForProjectAccessClusterRoles(t *testing.T) {
+	projectAccess, err := validateProjectAccessClusterRolesJSON("[ \"View\", \"Edit\", \"Admin\" ]")
+	if err != nil {
+		t.Error("Unexpected error when parsing data.", err)
+	}
+	if projectAccess == nil {
+		t.Errorf("Unexpected value: actual %v, expected array of strings", projectAccess)
+	}
+	if len(projectAccess) != 3 {
+		t.Errorf("Unexpected value: actual %v, expected %v", len(projectAccess), 3)
+	}
+}

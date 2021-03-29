@@ -59,41 +59,42 @@ const (
 )
 
 type jsGlobals struct {
-	ConsoleVersion           string   `json:"consoleVersion"`
-	AuthDisabled             bool     `json:"authDisabled"`
-	KubectlClientID          string   `json:"kubectlClientID"`
-	BasePath                 string   `json:"basePath"`
-	LoginURL                 string   `json:"loginURL"`
-	LoginSuccessURL          string   `json:"loginSuccessURL"`
-	LoginErrorURL            string   `json:"loginErrorURL"`
-	LogoutURL                string   `json:"logoutURL"`
-	LogoutRedirect           string   `json:"logoutRedirect"`
-	RequestTokenURL          string   `json:"requestTokenURL"`
-	KubeAdminLogoutURL       string   `json:"kubeAdminLogoutURL"`
-	KubeAPIServerURL         string   `json:"kubeAPIServerURL"`
-	PrometheusBaseURL        string   `json:"prometheusBaseURL"`
-	PrometheusTenancyBaseURL string   `json:"prometheusTenancyBaseURL"`
-	AlertManagerBaseURL      string   `json:"alertManagerBaseURL"`
-	MeteringBaseURL          string   `json:"meteringBaseURL"`
-	Branding                 string   `json:"branding"`
-	CustomProductName        string   `json:"customProductName"`
-	CustomLogoURL            string   `json:"customLogoURL"`
-	StatuspageID             string   `json:"statuspageID"`
-	DocumentationBaseURL     string   `json:"documentationBaseURL"`
-	AlertManagerPublicURL    string   `json:"alertManagerPublicURL"`
-	GrafanaPublicURL         string   `json:"grafanaPublicURL"`
-	PrometheusPublicURL      string   `json:"prometheusPublicURL"`
-	ThanosPublicURL          string   `json:"thanosPublicURL"`
-	LoadTestFactor           int      `json:"loadTestFactor"`
-	InactivityTimeout        int      `json:"inactivityTimeout"`
-	GOARCH                   string   `json:"GOARCH"`
-	GOOS                     string   `json:"GOOS"`
-	GraphQLBaseURL           string   `json:"graphqlBaseURL"`
-	DevCatalogCategories     string   `json:"developerCatalogCategories"`
-	UserSettingsLocation     string   `json:"userSettingsLocation"`
-	AddPage                  string   `json:"addPage"`
-	ConsolePlugins           []string `json:"consolePlugins"`
-	QuickStarts              string   `json:"quickStarts"`
+	ConsoleVersion            string   `json:"consoleVersion"`
+	AuthDisabled              bool     `json:"authDisabled"`
+	KubectlClientID           string   `json:"kubectlClientID"`
+	BasePath                  string   `json:"basePath"`
+	LoginURL                  string   `json:"loginURL"`
+	LoginSuccessURL           string   `json:"loginSuccessURL"`
+	LoginErrorURL             string   `json:"loginErrorURL"`
+	LogoutURL                 string   `json:"logoutURL"`
+	LogoutRedirect            string   `json:"logoutRedirect"`
+	RequestTokenURL           string   `json:"requestTokenURL"`
+	KubeAdminLogoutURL        string   `json:"kubeAdminLogoutURL"`
+	KubeAPIServerURL          string   `json:"kubeAPIServerURL"`
+	PrometheusBaseURL         string   `json:"prometheusBaseURL"`
+	PrometheusTenancyBaseURL  string   `json:"prometheusTenancyBaseURL"`
+	AlertManagerBaseURL       string   `json:"alertManagerBaseURL"`
+	MeteringBaseURL           string   `json:"meteringBaseURL"`
+	Branding                  string   `json:"branding"`
+	CustomProductName         string   `json:"customProductName"`
+	CustomLogoURL             string   `json:"customLogoURL"`
+	StatuspageID              string   `json:"statuspageID"`
+	DocumentationBaseURL      string   `json:"documentationBaseURL"`
+	AlertManagerPublicURL     string   `json:"alertManagerPublicURL"`
+	GrafanaPublicURL          string   `json:"grafanaPublicURL"`
+	PrometheusPublicURL       string   `json:"prometheusPublicURL"`
+	ThanosPublicURL           string   `json:"thanosPublicURL"`
+	LoadTestFactor            int      `json:"loadTestFactor"`
+	InactivityTimeout         int      `json:"inactivityTimeout"`
+	GOARCH                    string   `json:"GOARCH"`
+	GOOS                      string   `json:"GOOS"`
+	GraphQLBaseURL            string   `json:"graphqlBaseURL"`
+	DevCatalogCategories      string   `json:"developerCatalogCategories"`
+	UserSettingsLocation      string   `json:"userSettingsLocation"`
+	AddPage                   string   `json:"addPage"`
+	ConsolePlugins            []string `json:"consolePlugins"`
+	QuickStarts               string   `json:"quickStarts"`
+	ProjectAccessClusterRoles string   `json:"projectAccessClusterRoles"`
 }
 
 type Server struct {
@@ -135,14 +136,15 @@ type Server struct {
 	GOARCH                             string
 	GOOS                               string
 	// Monitoring and Logging related URLs
-	AlertManagerPublicURL *url.URL
-	GrafanaPublicURL      *url.URL
-	PrometheusPublicURL   *url.URL
-	ThanosPublicURL       *url.URL
-	DevCatalogCategories  string
-	UserSettingsLocation  string
-	QuickStarts           string
-	AddPage               string
+	AlertManagerPublicURL     *url.URL
+	GrafanaPublicURL          *url.URL
+	PrometheusPublicURL       *url.URL
+	ThanosPublicURL           *url.URL
+	DevCatalogCategories      string
+	UserSettingsLocation      string
+	QuickStarts               string
+	AddPage                   string
+	ProjectAccessClusterRoles string
 }
 
 func (s *Server) authDisabled() bool {
@@ -498,34 +500,35 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	jsg := &jsGlobals{
-		ConsoleVersion:        version.Version,
-		AuthDisabled:          s.authDisabled(),
-		KubectlClientID:       s.KubectlClientID,
-		BasePath:              s.BaseURL.Path,
-		LoginURL:              proxy.SingleJoiningSlash(s.BaseURL.String(), authLoginEndpoint),
-		LoginSuccessURL:       proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginSuccessEndpoint),
-		LoginErrorURL:         proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginErrorEndpoint),
-		LogoutURL:             proxy.SingleJoiningSlash(s.BaseURL.String(), authLogoutEndpoint),
-		LogoutRedirect:        s.LogoutRedirect.String(),
-		KubeAPIServerURL:      s.KubeAPIServerURL,
-		Branding:              s.Branding,
-		CustomProductName:     s.CustomProductName,
-		StatuspageID:          s.StatuspageID,
-		InactivityTimeout:     s.InactivityTimeout,
-		DocumentationBaseURL:  s.DocumentationBaseURL.String(),
-		AlertManagerPublicURL: s.AlertManagerPublicURL.String(),
-		GrafanaPublicURL:      s.GrafanaPublicURL.String(),
-		PrometheusPublicURL:   s.PrometheusPublicURL.String(),
-		ThanosPublicURL:       s.ThanosPublicURL.String(),
-		GOARCH:                s.GOARCH,
-		GOOS:                  s.GOOS,
-		LoadTestFactor:        s.LoadTestFactor,
-		GraphQLBaseURL:        proxy.SingleJoiningSlash(s.BaseURL.Path, graphQLEndpoint),
-		DevCatalogCategories:  s.DevCatalogCategories,
-		UserSettingsLocation:  s.UserSettingsLocation,
-		ConsolePlugins:        getMapKeys(s.EnabledConsolePlugins),
-		QuickStarts:           s.QuickStarts,
-		AddPage:               s.AddPage,
+		ConsoleVersion:            version.Version,
+		AuthDisabled:              s.authDisabled(),
+		KubectlClientID:           s.KubectlClientID,
+		BasePath:                  s.BaseURL.Path,
+		LoginURL:                  proxy.SingleJoiningSlash(s.BaseURL.String(), authLoginEndpoint),
+		LoginSuccessURL:           proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginSuccessEndpoint),
+		LoginErrorURL:             proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginErrorEndpoint),
+		LogoutURL:                 proxy.SingleJoiningSlash(s.BaseURL.String(), authLogoutEndpoint),
+		LogoutRedirect:            s.LogoutRedirect.String(),
+		KubeAPIServerURL:          s.KubeAPIServerURL,
+		Branding:                  s.Branding,
+		CustomProductName:         s.CustomProductName,
+		StatuspageID:              s.StatuspageID,
+		InactivityTimeout:         s.InactivityTimeout,
+		DocumentationBaseURL:      s.DocumentationBaseURL.String(),
+		AlertManagerPublicURL:     s.AlertManagerPublicURL.String(),
+		GrafanaPublicURL:          s.GrafanaPublicURL.String(),
+		PrometheusPublicURL:       s.PrometheusPublicURL.String(),
+		ThanosPublicURL:           s.ThanosPublicURL.String(),
+		GOARCH:                    s.GOARCH,
+		GOOS:                      s.GOOS,
+		LoadTestFactor:            s.LoadTestFactor,
+		GraphQLBaseURL:            proxy.SingleJoiningSlash(s.BaseURL.Path, graphQLEndpoint),
+		DevCatalogCategories:      s.DevCatalogCategories,
+		UserSettingsLocation:      s.UserSettingsLocation,
+		ConsolePlugins:            getMapKeys(s.EnabledConsolePlugins),
+		QuickStarts:               s.QuickStarts,
+		AddPage:                   s.AddPage,
+		ProjectAccessClusterRoles: s.ProjectAccessClusterRoles,
 	}
 
 	if !s.authDisabled() {
