@@ -1,12 +1,12 @@
 import { ResolvedExtension } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
-import { ResolvedFileUpload } from '@console/dynamic-plugin-sdk/src/extensions/file-upload';
+import { FileUpload } from '@console/dynamic-plugin-sdk/src/extensions/file-upload';
 import { getFileType, getRequiredFileUploadExtension, isFileSupported } from '../file-upload-utils';
 
 describe('file-upload-utils', () => {
   const fileExtensions = ['jar', 'yaml'];
   const handler1 = () => {};
   const handler2 = () => {};
-  const fileUploadExtensions: ResolvedExtension<ResolvedFileUpload>[] = [
+  const fileUploadExtensions: ResolvedExtension<FileUpload>[] = [
     {
       pluginID: '@console/dev-console',
       pluginName: '@console/dev-console',

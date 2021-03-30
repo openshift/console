@@ -8,7 +8,7 @@ import { resolvePath, relativePath } from './utils/path';
 
 const getConsoleExtensions = () => {
   const program = getProgramFromFile(resolvePath('src/schema/console-extensions.ts'));
-  return getConsoleTypeResolver(program).getConsoleExtensions();
+  return getConsoleTypeResolver(program).getConsoleExtensions(true).result;
 };
 
 const renderTemplate = (srcFile: string, data: {}) => {
@@ -28,7 +28,7 @@ const renderTemplate = (srcFile: string, data: {}) => {
 console.log('Generating Console plugin documentation');
 
 renderTemplate('scripts/templates/console-extensions.md.ejs', {
-  extensions: getConsoleExtensions(),
+  extensions: getConsoleExtensions().sort((a, b) => a.type.localeCompare(b.type)),
   printComments: printJSDocComments,
   escapeTableCell: (value: string) => value.replace(/\|/g, '\\|'),
 });

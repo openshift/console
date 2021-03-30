@@ -3,11 +3,7 @@ import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { AlertVariant } from '@patternfly/react-core';
 import { useToast } from '@console/shared/src/components/toast';
-import {
-  ResolvedFileUpload,
-  isFileUpload,
-  useResolvedExtensions,
-} from '@console/dynamic-plugin-sdk';
+import { FileUpload, isFileUpload, useResolvedExtensions } from '@console/dynamic-plugin-sdk';
 import { useActiveNamespace } from '@console/shared/src/hooks/useActiveNamespace';
 import { getRequiredFileUploadExtension } from './file-upload-utils';
 
@@ -25,7 +21,7 @@ export const FileUploadContext = React.createContext<FileUploadContextType>({
 
 export const useValuesFileUploadContext = (): FileUploadContextType => {
   const { t } = useTranslation();
-  const [fileUploadExtensions, resolved] = useResolvedExtensions<ResolvedFileUpload>(isFileUpload);
+  const [fileUploadExtensions, resolved] = useResolvedExtensions<FileUpload>(isFileUpload);
   const toastContext = useToast();
   const [namespace] = useActiveNamespace();
   const [file, setFile] = React.useState<File>(undefined);

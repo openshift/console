@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Extension } from '@console/plugin-sdk/src/typings/base';
 import { ExtensionDeclaration, CodeRef } from '../types';
-import { ExtensionAccessReviewResourceAttributes } from '../utils/common';
+import { AccessReviewResourceAttributes } from './console-internal-types';
 
 export type AddAction = ExtensionDeclaration<
   'dev-console.add/action',
@@ -17,7 +17,7 @@ export type AddAction = ExtensionDeclaration<
     /** The perspective display icon. */
     icon?: CodeRef<React.ReactNode>;
     /** Optional access review to control visibility / enablement of the action. */
-    accessReview?: ExtensionAccessReviewResourceAttributes[];
+    accessReview?: AccessReviewResourceAttributes[];
   }
 >;
 

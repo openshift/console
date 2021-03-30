@@ -42,4 +42,4 @@ export const getJSDoc = (node: ts.Node): ts.JSDoc[] =>
 
 export const getJSDocComments = (node: ts.Node) => _.compact(getJSDoc(node).map((d) => d.comment));
 
-export const printJSDocComments = (docComments: string[]) => docComments.join('\n\n');
+export const printJSDocComments = (docComments: string[]) => docComments.join('\n\n').trim();

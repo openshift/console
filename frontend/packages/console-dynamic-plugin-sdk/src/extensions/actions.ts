@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { Extension } from '@console/plugin-sdk/src/typings/base';
 import { CodeRef, EncodedCodeRef, UpdateExtensionProperties } from '../types';
-import { ExtensionAccessReviewResourceAttributes, ExtensionHook } from '../utils/common';
+import { ExtensionHook } from '../utils/common';
+import { AccessReviewResourceAttributes } from './console-internal-types';
 
 namespace ExtensionProperties {
   export type ActionCreator = {
@@ -162,5 +163,5 @@ export type Action = {
    * */
   insertAfter?: string | string[];
   /** Describes the access check to perform. */
-  accessReview?: ExtensionAccessReviewResourceAttributes[];
+  accessReview?: AccessReviewResourceAttributes[];
 };

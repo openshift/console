@@ -6,6 +6,7 @@ import {
   getTypeReferenceNode,
   getUnionMemberTypes,
   getJSDocComments,
+  printJSDocComments,
 } from './typescript';
 
 export type ConsoleTypeDeclarations = Record<'CodeRef' | 'EncodedCodeRef', ts.Declaration>;
@@ -31,58 +32,69 @@ export type ExtensionTypeInfo = {
   properties: ExtensionPropertyInfo[];
 } & ContainsJSDoc;
 
-type ErrorCallback = (errorMessage: string) => void;
-
 type ConsoleTypeResolver = {
   getDeclarations: () => ConsoleTypeDeclarations;
-  getConsoleExtensions: (errorCallback?: ErrorCallback) => ExtensionTypeInfo[];
+
+  getConsoleExtensions: (
+    exitOnErrors?: boolean,
+  ) => {
+    result: ExtensionTypeInfo[];
+    diagnostics: {
+      errors: string[];
+      warnings: string[];
+    };
+  };
 };
 
 const parseExtensionTypeInfo = (
   type: ts.Type,
   typeChecker: ts.TypeChecker,
-  errorCallback: ErrorCallback,
+  errors: string[],
 ): ExtensionTypeInfo => {
   const typeString = typeChecker.typeToString(type);
   const typeDeclaration = _.head(type.aliasSymbol?.declarations);
 
   if (!typeDeclaration || !ts.isTypeAliasDeclaration(typeDeclaration)) {
-    errorCallback(`Extension type '${typeString}' must be declared as type alias`);
+    errors.push(`Extension type '${typeString}' must be declared as type alias`);
     return null;
   }
 
   const refToExtensionDeclaration = getTypeReferenceNode(typeDeclaration, 'ExtensionDeclaration');
 
   if (refToExtensionDeclaration?.typeArguments?.length !== 2) {
-    errorCallback(`Extension type '${typeString}' must reference ExtensionDeclaration<T, P> type`);
+    errors.push(`Extension type '${typeString}' must reference ExtensionDeclaration<T, P> type`);
     return null;
   }
 
-  const typeArgT = refToExtensionDeclaration.typeArguments[0];
-  const typeArgP = refToExtensionDeclaration.typeArguments[1];
+  const [typeArgT, typeArgP] = refToExtensionDeclaration.typeArguments;
 
-  let consoleExtensionType: string;
+  if (!ts.isLiteralTypeNode(typeArgT) || !ts.isStringLiteral(typeArgT.literal)) {
+    errors.push(`Extension type '${typeString}' must declare T type parameter as string literal`);
+    return null;
+  }
+
+  const consoleExtensionType = typeArgT.literal.text;
   const consoleExtensionProperties: ExtensionPropertyInfo[] = [];
 
-  if (ts.isLiteralTypeNode(typeArgT) && ts.isStringLiteral(typeArgT.literal)) {
-    consoleExtensionType = typeArgT.literal.text;
-  } else {
-    errorCallback(`Extension type '${typeString}' must declare T type parameter as string literal`);
-    return null;
-  }
-
-  if (ts.isTypeLiteralNode(typeArgP)) {
-    typeArgP.members.filter(ts.isPropertySignature).forEach((ps) => {
+  typeChecker
+    .getTypeFromTypeNode(typeArgP)
+    .getProperties()
+    .forEach((p) => {
       consoleExtensionProperties.push({
-        name: ps.name.getText(),
-        valueType: typeChecker.typeToString(typeChecker.getTypeAtLocation(ps)),
-        docComments: getJSDocComments(ps),
+        name: p.getName(),
+        // TODO(vojtech): using ts.TypeFormatFlags.MultilineObjectLiterals flag doesn't seem
+        // to insert newline characters as expected, should revisit this issue in the future
+        valueType: typeChecker.typeToString(
+          typeChecker.getTypeOfSymbolAtLocation(p, typeArgP),
+          typeArgP,
+          // eslint-disable-next-line no-bitwise
+          ts.TypeFormatFlags.AllowUniqueESSymbolType |
+            ts.TypeFormatFlags.UseAliasDefinedOutsideCurrentScope |
+            ts.TypeFormatFlags.UseSingleQuotesForStringLiteralType,
+        ),
+        docComments: getJSDocComments(_.head(p.declarations)),
       });
     });
-  } else {
-    errorCallback(`Extension type '${typeString}' must declare P type parameter as object literal`);
-    return null;
-  }
 
   return {
     name: typeDeclaration.name.text,
@@ -90,6 +102,32 @@ const parseExtensionTypeInfo = (
     properties: consoleExtensionProperties,
     docComments: getJSDocComments(typeDeclaration),
   };
+};
+
+const validateExtensionTypes = (
+  types: ExtensionTypeInfo[],
+  errors: string[],
+  warnings: string[],
+) => {
+  const getDuplicates = (arr: string[]) => Object.keys(_.pickBy(_.countBy(arr), (c) => c > 1));
+
+  getDuplicates(types.map((t) => t.name)).forEach((typeName) => {
+    errors.push(`Extension type '${typeName}' has multiple declarations`);
+  });
+
+  const checkComments = (prefix: string, docComments: string[]) => {
+    if (!printJSDocComments(docComments)) {
+      warnings.push(`${prefix} has no JSDoc comments`);
+    }
+  };
+
+  types.forEach((t) => {
+    checkComments(`Extension type '${t.name}'`, t.docComments);
+
+    t.properties.forEach((p) => {
+      checkComments(`Extension type '${t.name}' property '${p.name}'`, p.docComments);
+    });
+  });
 };
 
 export const getConsoleTypeResolver = (program: ts.Program): ConsoleTypeResolver => {
@@ -102,18 +140,28 @@ export const getConsoleTypeResolver = (program: ts.Program): ConsoleTypeResolver
       EncodedCodeRef: getTypeAliasDeclaration(srcFile('src/types.ts'), 'EncodedCodeRef'),
     }),
 
-    getConsoleExtensions: (errorCallback = _.noop) => {
+    getConsoleExtensions: (exitOnErrors = false) => {
       const types = getUnionMemberTypes(
         typeChecker,
         getTypeAliasDeclaration(srcFile('src/schema/console-extensions.ts'), 'SupportedExtension'),
       );
 
+      const errors: string[] = [];
+      const warnings: string[] = [];
+
       if (types.length === 0) {
-        errorCallback('Union type SupportedExtension has no members');
-        return [];
+        errors.push('Union type SupportedExtension has no members');
       }
 
-      return _.compact(types.map((t) => parseExtensionTypeInfo(t, typeChecker, errorCallback)));
+      const result = _.compact(types.map((t) => parseExtensionTypeInfo(t, typeChecker, errors)));
+      validateExtensionTypes(result, errors, warnings);
+
+      if (errors.length > 0 && exitOnErrors) {
+        console.error('Detected errors while parsing Console extension type declarations');
+        process.exit(1);
+      }
+
+      return { result, diagnostics: { errors, warnings } };
     },
   };
 };

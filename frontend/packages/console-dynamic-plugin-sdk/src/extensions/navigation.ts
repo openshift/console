@@ -18,11 +18,6 @@ type NavItemProperties = {
   insertAfter?: string | string[];
 };
 
-export type Separator = ExtensionDeclaration<
-  'console.navigation/separator',
-  Omit<NavItemProperties, 'startsWith'>
->;
-
 export type HrefNavItem = ExtensionDeclaration<
   'console.navigation/href',
   NavItemProperties & {
@@ -61,6 +56,11 @@ export type ResourceClusterNavItem = ExtensionDeclaration<
   }
 >;
 
+export type Separator = ExtensionDeclaration<
+  'console.navigation/separator',
+  Omit<NavItemProperties, 'startsWith'>
+>;
+
 export type NavSection = ExtensionDeclaration<
   'console.navigation/section',
   Omit<NavItemProperties, 'startsWith' | 'section'> & {
@@ -71,9 +71,6 @@ export type NavSection = ExtensionDeclaration<
 
 // Type guards
 
-export const isSeparator = (e: Extension): e is Separator =>
-  e.type === 'console.navigation/separator';
-
 export const isHrefNavItem = (e: Extension): e is HrefNavItem =>
   e.type === 'console.navigation/href';
 
@@ -82,6 +79,9 @@ export const isResourceNSNavItem = (e: Extension): e is ResourceNSNavItem =>
 
 export const isResourceClusterNavItem = (e: Extension): e is ResourceClusterNavItem =>
   e.type === 'console.navigation/resource-cluster';
+
+export const isSeparator = (e: Extension): e is Separator =>
+  e.type === 'console.navigation/separator';
 
 export const isNavSection = (e: Extension): e is NavSection =>
   e.type === 'console.navigation/section';

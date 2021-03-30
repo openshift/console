@@ -45,7 +45,7 @@ const generateSchema = ({ srcFile, typeName, handleConsoleExtensions }: SchemaTy
 
     if (handleConsoleExtensions) {
       const consoleTypeDeclarations = consoleTypeResolver.getDeclarations();
-      const consoleExtensions = consoleTypeResolver.getConsoleExtensions();
+      const consoleExtensions = consoleTypeResolver.getConsoleExtensions(true).result;
       const getMainParser = () => parser;
 
       p.addNodeParser(

@@ -1,6 +1,6 @@
 import { Extension } from '@console/plugin-sdk/src/typings/base';
 import { ExtensionDeclaration, CodeRef } from '../types';
-import { ExtensionCommonK8sResource as PVCResource } from '../utils/common';
+import { K8sResource } from './console-internal-types';
 
 export type PVCCreateProp = ExtensionDeclaration<
   'console.pvc/create-prop',
@@ -16,7 +16,7 @@ export type PVCAlert = ExtensionDeclaration<
   'console.pvc/alert',
   {
     /** The alert component. */
-    alert: CodeRef<React.ComponentType<{ pvc: PVCResource }>>;
+    alert: CodeRef<React.ComponentType<{ pvc: K8sResource }>>;
   }
 >;
 
@@ -26,9 +26,9 @@ export type PVCStatus = ExtensionDeclaration<
     /** Priority for the status component. Bigger value means higher priority. */
     priority: number;
     /** The status component. */
-    status: CodeRef<React.ComponentType<{ pvc: PVCResource }>>;
+    status: CodeRef<React.ComponentType<{ pvc: K8sResource }>>;
     /** Predicate that tells whether to render the status component or not. */
-    predicate: CodeRef<(pvc: PVCResource) => boolean>;
+    predicate: CodeRef<(pvc: K8sResource) => boolean>;
   }
 >;
 
@@ -36,11 +36,11 @@ export type PVCDelete = ExtensionDeclaration<
   'console.pvc/delete',
   {
     /** Predicate that tells whether to use the extension or not. */
-    predicate: CodeRef<(pvc: PVCResource) => boolean>;
+    predicate: CodeRef<(pvc: K8sResource) => boolean>;
     /** Method for the PVC delete operation. */
-    onPVCKill: CodeRef<(pvc: PVCResource) => Promise<void>>;
+    onPVCKill: CodeRef<(pvc: K8sResource) => Promise<void>>;
     /** Alert component to show additional information. */
-    alert: CodeRef<React.ComponentType<{ pvc: PVCResource }>>;
+    alert: CodeRef<React.ComponentType<{ pvc: K8sResource }>>;
   }
 >;
 
