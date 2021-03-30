@@ -37,6 +37,7 @@ import {
   KNATIVE_GROUP_NODE_HEIGHT,
   KNATIVE_GROUP_NODE_PADDING,
   KNATIVE_GROUP_NODE_WIDTH,
+  URI_KIND,
 } from './const';
 import {
   getDynamicEventSourcesModelRefs,
@@ -996,8 +997,7 @@ const sinkURIDataModel = (
           namespace: data.resources.obj.metadata.namespace || '',
         },
         spec: { sinkUri },
-        type: { nodeType: NodeType.SinkUri },
-        kind: 'URI',
+        kind: URI_KIND,
       };
       const sinkData: KnativeTopologyDataObject<KnativeServiceOverviewItem> = {
         id: sinkTargetUid,
@@ -1140,7 +1140,7 @@ export const createKnativeEventSourceSink = (
   }
   const eventSourceObj = _.omit(source, 'status');
   let sink = {};
-  if (NodeType.SinkUri === target.type?.nodeType) {
+  if (target.kind === URI_KIND) {
     sink = {
       uri: target?.spec?.sinkUri,
     };
@@ -1246,13 +1246,12 @@ export const createSinkPubSubConnection = (
   return createEventingPubSubSink(resources.obj, targetObj);
 };
 
-export const isServerlessFunction = (element: Node): boolean => {
+export const isServerlessFunction = (element: K8sResourceKind): boolean => {
   if (!element) {
     return false;
   }
-
   const {
     metadata: { labels },
-  } = getResource(element);
+  } = element;
   return !!labels?.[SERVERLESS_FUNCTION_LABEL];
 };

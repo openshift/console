@@ -60,7 +60,7 @@ export const ResourceSummary: React.FC<ResourceSummaryProps> = ({
   nodeSelector = 'spec.template.spec.nodeSelector',
 }) => {
   const { t } = useTranslation();
-  const { metadata, type } = resource;
+  const { metadata } = resource;
   const reference = referenceFor(resource);
   const model = modelFor(reference);
   const tolerationsPath = getTolerationsPath(resource);
@@ -91,8 +91,6 @@ export const ResourceSummary: React.FC<ResourceSummaryProps> = ({
           />
         </DetailsItem>
       )}
-      {type ? <dt>{t('details-page~Type')}</dt> : null}
-      {type ? <dd>{type}</dd> : null}
       <DetailsItem
         label={t('details-page~Labels')}
         obj={resource}

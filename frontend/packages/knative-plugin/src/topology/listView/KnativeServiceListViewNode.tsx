@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Node, observer } from '@patternfly/react-topology';
-import { getResourceKind } from '@console/topology/src/utils';
+import { getResource, getResourceKind } from '@console/topology/src/utils';
 import {
   TopologyListViewNode,
   TypedResourceBadgeCell,
@@ -21,7 +21,7 @@ const ObservedKnativeServiceListViewNode: React.FC<KnativeServiceListViewNodePro
 }) => {
   const kind = getResourceKind(item);
 
-  const typeIconClass: string = isServerlessFunction(item)
+  const typeIconClass: string = isServerlessFunction(getResource(item))
     ? 'icon-serverless-function'
     : 'icon-knative';
 

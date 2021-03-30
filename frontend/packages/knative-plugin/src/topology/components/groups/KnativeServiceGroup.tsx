@@ -33,6 +33,7 @@ import {
 } from '@console/topology/src/filters';
 import SvgBoxedText from '@console/topology/src/components/svg/SvgBoxedText';
 import { getNodeDecorators } from '@console/topology/src/components/graph-view/components/nodes/decorators/getNodeDecorators';
+import { getResource } from '@console/topology/src/utils/topology-utils';
 import { TYPE_KNATIVE_SERVICE, EVENT_MARKER_RADIUS } from '../../const';
 import RevisionTrafficSourceAnchor from '../anchors/RevisionTrafficSourceAnchor';
 import { isServerlessFunction } from '../../knative-topology-utils';
@@ -120,7 +121,7 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
     height,
   );
 
-  const typeIconClass: string = isServerlessFunction(element)
+  const typeIconClass: string = isServerlessFunction(getResource(element))
     ? 'icon-serverless-function'
     : 'icon-knative';
 
@@ -155,7 +156,7 @@ const KnativeServiceGroup: React.FC<KnativeServiceGroupProps> = ({
               'is-highlight': canDrop || edgeDragging,
               'is-dropTarget': canDrop && dropTarget,
               'is-filtered': filtered,
-              'is-function': isServerlessFunction(element),
+              'is-function': isServerlessFunction(getResource(element)),
             })}
           >
             <rect

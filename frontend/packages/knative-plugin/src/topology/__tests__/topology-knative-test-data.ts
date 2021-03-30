@@ -5,6 +5,7 @@ import {
   K8sResourceConditionStatus,
   referenceForModel,
   K8sKind,
+  K8sResourceKind,
 } from '@console/internal/module/k8s';
 import { TopologyDataResources } from '@console/topology/src/topology-types';
 import {
@@ -34,6 +35,9 @@ import {
   EventChannelKind,
   EventTriggerKind,
 } from '../../types';
+import { SERVERLESS_FUNCTION_LABEL } from '../../const';
+import { KnativeServiceOverviewItem, KnativeTopologyDataObject, NodeType } from '../topology-types';
+import { URI_KIND } from '../const';
 
 export const sampleDeploymentsCamelConnector: FirehoseResult<DeploymentKind[]> = {
   loaded: true,
@@ -603,6 +607,11 @@ export const knativeServiceObj: knativeServiceKind = {
       { lastTransitionTime: '2019-12-27T05:07:29Z', status: 'True', type: 'RoutesReady' },
     ],
   },
+};
+
+export const serverlessFunctionObj = {
+  ...knativeServiceObj,
+  metadata: { ...knativeServiceObj.metadata, labels: { [SERVERLESS_FUNCTION_LABEL]: 'true' } },
 };
 
 export const sampleKnativeServices: FirehoseResult = {
@@ -1179,4 +1188,32 @@ export const MockKnativeBuildConfig = {
       },
     ],
   },
+};
+
+export const sinkUriUid = '1317f615-9636-11e9-b134-06a61d886b689_1_nodesinkuri';
+const sinkUri = 'http://overlayimage.testproject3.svc.cluster.local';
+
+export const eventSourceWithSinkUri: K8sResourceKind = {
+  ...getEventSourceResponse(EventSourceCronJobModel).data[0],
+  spec: { sink: { uri: sinkUri } },
+};
+
+export const sinkUriObj: K8sResourceKind = {
+  kind: URI_KIND,
+  metadata: {
+    uid: sinkUriUid,
+  },
+  spec: { sinkUri },
+};
+
+export const sinkUriData: KnativeTopologyDataObject<KnativeServiceOverviewItem> = {
+  id: sinkUriUid,
+  name: 'URI',
+  type: NodeType.SinkUri,
+  resources: {
+    obj: sinkUriObj,
+    eventSources: [eventSourceWithSinkUri],
+  },
+  resource: sinkUriObj,
+  data: { sinkUri },
 };

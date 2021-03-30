@@ -41,7 +41,10 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-export const DetailsForKind = (kind: string) =>
+export const DetailsForKind = (
+  kind: string,
+  additionalDetailsCallback?: (obj: K8sResourceKind) => React.ReactNode,
+) =>
   function DetailsForKind_({ obj }) {
     const { t } = useTranslation();
 
@@ -49,6 +52,9 @@ export const DetailsForKind = (kind: string) =>
       const model = modelFor(item);
       return model?.labelKey ? t(model.labelKey) : kindForReference(item);
     };
+
+    const additionalDetails: React.ReactNode =
+      additionalDetailsCallback && additionalDetailsCallback(obj);
 
     return (
       <>
@@ -64,6 +70,7 @@ export const DetailsForKind = (kind: string) =>
                 showNodeSelector={false}
               />
             </div>
+            {additionalDetails && <div className="col-md-6">{additionalDetails}</div>}
           </div>
         </div>
         {_.isArray(obj?.status?.conditions) && (

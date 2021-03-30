@@ -21,3 +21,6 @@ export const KNATIVE_GROUP_NODE_PADDING = [
 ];
 
 export const EVENT_MARKER_RADIUS = 6;
+
+// URI Kind
+export const URI_KIND = 'URI';
