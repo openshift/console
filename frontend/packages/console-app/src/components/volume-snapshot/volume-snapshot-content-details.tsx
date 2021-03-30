@@ -53,7 +53,7 @@ const Details: React.FC<DetailsProps> = ({ obj }) => {
                 namespace={snapshotNamespace}
               />
             </dd>
-            <dt>{t('console-app~VolumeSnapshotContent')}</dt>
+            <dt>{t('console-app~VolumeSnapshotClass')}</dt>
             <dd>
               <ResourceLink
                 kind={referenceForModel(VolumeSnapshotClassModel)}
