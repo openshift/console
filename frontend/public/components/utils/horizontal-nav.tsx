@@ -243,7 +243,18 @@ export const HorizontalNav = React.memo((props: HorizontalNavProps) => {
   };
 
   const componentProps = {
-    ..._.pick(props, ['filters', 'selected', 'match', 'loaded']),
+    ..._.pick(props, [
+      'filters',
+      'selected',
+      'match',
+      'loaded',
+      'alert',
+      'rule',
+      'loadError',
+      'namespace',
+      'silencesLoaded',
+      'name',
+    ]),
     obj: _.get(props.obj, 'data'),
   };
   const extraResources = _.reduce(
@@ -341,6 +352,7 @@ export type HorizontalNavProps = {
   loadError?: string;
   namespace?: string;
   silencesLoaded?: boolean;
+  name?: string;
 };
 
 export type PageComponentProps<R extends K8sResourceCommon = K8sResourceKind> = {

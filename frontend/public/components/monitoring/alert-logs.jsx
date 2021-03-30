@@ -10,7 +10,7 @@ import {
   LOG_SOURCE_WAITING,
   ResourceLog,
   setQueryArgument,
-} from './utils';
+} from '../utils';
 
 const containersToStatuses = ({ status }, containers) => {
   return _.reduce(
@@ -53,7 +53,7 @@ const containerToLogSourceStatus = (container) => {
   return LOG_SOURCE_RUNNING;
 };
 
-export class PodLogs extends React.Component {
+export class AlertLogs extends React.Component {
   constructor(props) {
     super(props);
     this._selectContainer = this._selectContainer.bind(this);
@@ -97,14 +97,21 @@ export class PodLogs extends React.Component {
     );
 
     return (
-      <div className="co-m-pane__body">
-        <ResourceLog
-          containerName={currentContainer ? currentContainer.name : ''}
-          dropdown={containerDropdown}
-          resource={this.props.obj}
-          resourceStatus={currentContainerStatus}
-        />
-      </div>
+      <>
+        {this.props.namespace !== undefined && (
+          <div className="co-m-pane__body">
+            {_.isEmpty(this.props.obj) === false && (
+              <ResourceLog
+                containerName={currentContainer ? currentContainer.name : ''}
+                dropdown={containerDropdown}
+                resource={this.props.obj}
+                resourceStatus={currentContainerStatus}
+                alertLogs={this.state.alertLogs}
+              />
+            )}
+          </div>
+        )}
+      </>
     );
   }
 }
