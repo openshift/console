@@ -30,15 +30,20 @@ const ServiceListPage: React.FC = () => {
   const [currentKafkaConnections, setCurrentKafkaConnections] = React.useState<string[]>();
   const { t } = useTranslation();
   const [kafkaCreateError, setKafkaCreateError] = React.useState<string>();
+  const [kafkaListError, setKafkaListError] = React.useState<string>();
   const [isSubmitting, setSubmitting] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     const createKafkaRequestFlow = async () => {
-      await createCloudServicesRequestIfNeeded(currentNamespace);
+      try {
+        await createCloudServicesRequestIfNeeded(currentNamespace);
 
-      const currentKafka = await listOfCurrentKafkaConnectionsById(currentNamespace);
-      if (currentKafka) {
-        setCurrentKafkaConnections(currentKafka);
+        const currentKafka = await listOfCurrentKafkaConnectionsById(currentNamespace);
+        if (currentKafka) {
+          setCurrentKafkaConnections(currentKafka);
+        }
+      } catch (error) {
+        setKafkaListError(error);
       }
     };
     createKafkaRequestFlow();
@@ -52,7 +57,7 @@ const ServiceListPage: React.FC = () => {
     optional: true,
   });
 
-  const remoteKafkaInstances = watchedKafkaRequest?.status?.userKafkas;
+  const remoteKafkaInstances = watchedKafkaRequest?.status?.userKafkas || [];
 
   const createKafkaConnectionFlow = React.useCallback(async () => {
     setSubmitting(true);
@@ -73,6 +78,18 @@ const ServiceListPage: React.FC = () => {
       <ServicesErrorState
         title={t('rhoas-plugin~Failed to create connection')}
         message={kafkaCreateError + t('rhoas-plugin~Please try again')}
+        actionLabel={t('rhoas-plugin~Go back to Services Catalog')}
+      />
+    );
+  }
+
+  if (kafkaListError) {
+    return (
+      <ServicesErrorState
+        title={t('rhoas-plugin~Could not fetch services')}
+        message={t('rhoas-plugin~Failed to load list of services', {
+          error: kafkaListError,
+        })}
         actionLabel={t('rhoas-plugin~Go back to Services Catalog')}
       />
     );
