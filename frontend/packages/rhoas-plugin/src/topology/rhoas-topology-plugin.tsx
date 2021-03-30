@@ -9,7 +9,7 @@ import {
   TopologyDataModelFactory,
 } from '@console/topology/src/extensions/topology';
 import { getRhoasComponentFactory, getRhoasTopologyDataModel } from './index';
-import { WatchK8sResources } from 'public/components/utils/k8s-watch-hook';
+import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { KafkaConnectionModel } from '../models';
 import { FLAG_RHOAS } from '../const';
 

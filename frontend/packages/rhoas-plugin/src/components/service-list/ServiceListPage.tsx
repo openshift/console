@@ -27,7 +27,7 @@ import { ServicesErrorState } from '../states/ServicesErrorState';
 const ServiceListPage: React.FC = () => {
   const [currentNamespace] = useActiveNamespace();
   const [selectedKafka, setSelectedKafka] = React.useState<number>();
-  const [currentKafkaConnections, setCurrentKafkaConnections] = React.useState<string[]>([]);
+  const [currentKafkaConnections, setCurrentKafkaConnections] = React.useState<string[]>();
   const { t } = useTranslation();
   const [kafkaCreateError, setKafkaCreateError] = React.useState<string>();
   const [isSubmitting, setSubmitting] = React.useState<boolean>(false);
@@ -78,7 +78,11 @@ const ServiceListPage: React.FC = () => {
     );
   }
 
-  if (!watchedKafkaRequest || !watchedKafkaRequest.status) {
+  if (
+    !watchedKafkaRequest ||
+    !watchedKafkaRequest.status ||
+    currentKafkaConnections === undefined
+  ) {
     return <LoadingBox />;
   }
 
