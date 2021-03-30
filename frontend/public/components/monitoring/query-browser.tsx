@@ -59,9 +59,11 @@ import { ONE_MINUTE } from '@console/shared/src/constants/time';
 
 const spans = ['5m', '15m', '30m', '1h', '2h', '6h', '12h', '1d', '2d', '1w', '2w'];
 const dropdownItems = _.zipObject(spans, spans);
-// Note: Victory incorrectly typed ThemeBaseProps.padding as number instead of PaddingProps
-// @ts-ignore
-const theme = getCustomTheme(ChartThemeColor.multi, ChartThemeVariant.light, queryBrowserTheme);
+const theme = getCustomTheme(
+  ChartThemeColor.multiUnordered,
+  ChartThemeVariant.light,
+  queryBrowserTheme,
+);
 export const colors = theme.line.colorScale;
 
 const formatDate = (date) => getLocaleDate(date, { month: 'short', day: 'numeric' });
