@@ -8,7 +8,7 @@ import {
   FileUploadContextType,
   FileUploadContext,
 } from '@console/app/src/components/file-upload/file-upload-context';
-import { ConnectedTopologyView, TopologyViewProps } from './TopologyView';
+import TopologyView, { TopologyViewProps } from './TopologyView';
 import { TopologyViewType } from '../../topology-types';
 
 const boxTarget = {
@@ -29,7 +29,7 @@ const DroppableTopology = DropTarget(
       canDrop: monitor.canDrop() && props.canDropFile,
     };
   },
-)(ConnectedTopologyView);
+)(TopologyView);
 
 export const DroppableTopologyComponent = withDragDropContext<DroppableTopologyComponentProps>(
   (props) => {
