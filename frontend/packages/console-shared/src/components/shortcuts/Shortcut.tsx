@@ -43,37 +43,43 @@ const Shortcut: React.FC<ShortcutProps> = ({
   return (
     <tr>
       <td className="ocs-shortcut__cell">
-        {(ctrl || (!isMac && ctrlCmd)) && <ShortcutCommand>Ctrl</ShortcutCommand>}
-        {alt && <ShortcutCommand>{isMac ? '⌥ Opt' : 'Alt'}</ShortcutCommand>}
-        {shift && <ShortcutCommand>Shift</ShortcutCommand>}
-        {isMac && ctrlCmd && <ShortcutCommand>⌘ Cmd</ShortcutCommand>}
+        {(ctrl || (!isMac && ctrlCmd)) && (
+          <ShortcutCommand data-test-id="ctrl-button">Ctrl</ShortcutCommand>
+        )}
+        {alt && (
+          <ShortcutCommand data-test-id={isMac ? 'opt-button' : 'alt-button'}>
+            {isMac ? '⌥ Opt' : 'Alt'}
+          </ShortcutCommand>
+        )}
+        {shift && <ShortcutCommand data-test-id="shift-button">Shift</ShortcutCommand>}
+        {isMac && ctrlCmd && <ShortcutCommand data-test-id="cmd-button">⌘ Cmd</ShortcutCommand>}
         {hover && (
-          <ShortcutCommand>
+          <ShortcutCommand data-test-id="hover">
             <MouseIcon /> {t('console-shared~Hover')}
           </ShortcutCommand>
         )}
         {keyName && (
-          <ShortcutCommand>
+          <ShortcutCommand data-test-id={`${keyName}-button`}>
             {keyName.length === 1 ? keyName.toUpperCase() : _.upperFirst(keyName.toLowerCase())}
           </ShortcutCommand>
         )}
         {drag && (
-          <ShortcutCommand>
+          <ShortcutCommand data-test-id="drag">
             <MouseIcon /> {t('console-shared~Drag')}
           </ShortcutCommand>
         )}
         {click && (
-          <ShortcutCommand>
+          <ShortcutCommand data-test-id="click">
             <MouseIcon /> {t('console-shared~Click')}
           </ShortcutCommand>
         )}
         {rightClick && (
-          <ShortcutCommand>
+          <ShortcutCommand data-test-id="right-click">
             <MouseIcon /> {t('console-shared~Right click')}
           </ShortcutCommand>
         )}
         {dragNdrop && (
-          <ShortcutCommand>
+          <ShortcutCommand data-test-id="drag-and-drop">
             <MouseIcon /> {t('console-shared~Drag + Drop')}
           </ShortcutCommand>
         )}
