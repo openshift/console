@@ -77,7 +77,7 @@ const DeleteModal = withHandlePromise((props: DeleteModalProps) => {
     <form onSubmit={submit} name="form" className="modal-content ">
       <ModalTitle>
         <YellowExclamationTriangleIcon className="co-icon-space-r" />{' '}
-        {t('modal~Delete {{kind}}?', { kind: kind.label })}
+        {t('modal~Delete {{kind}}?', { kind: kind.labelKey ? t(kind.labelKey) : kind.label })}
       </ModalTitle>
       <ModalBody className="modal-body">
         {message}
