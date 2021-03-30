@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Checkbox, Alert, Stack, StackItem } from '@patternfly/react-core';
 import { ResourceIcon } from '@console/internal/components/utils';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useDispatch } from 'react-redux';
@@ -33,17 +33,13 @@ const SSHCreateService: React.FC<SSHCreateServiceProps> = ({
         <Checkbox
           id="ssh-service-checkbox"
           label={
-            <>
-              {t('kubevirt-plugin~Expose SSH access ')}
-              {vmName ? (
-                <>
-                  {t('kubevirt-plugin~for')} <ResourceIcon kind={VirtualMachineModel.kind} />
-                  {vmName}
-                </>
-              ) : (
-                t('kubevirt-plugin~to this virtual machine')
-              )}
-            </>
+            vmName ? (
+              <Trans ns="kubevirt-plugin" t={t}>
+                Expose SSH access for <ResourceIcon kind={VirtualMachineModel.kind} /> {vmName}
+              </Trans>
+            ) : (
+              t('kubevirt-plugin~Expose SSH access to this virtual machine')
+            )
           }
           isChecked={enableSSHService}
           onChange={(checked) => {
