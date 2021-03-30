@@ -16,6 +16,7 @@ import {
 import { CatalogItemType, CatalogItemProvider, CatalogItemFilter } from '../extensions/catalog';
 import { FileUpload } from '../extensions/file-upload';
 import { ModelMetadata } from '../extensions/resource-metadata';
+import { TelemetryListener } from '../extensions/telemetry';
 
 export type SupportedExtension =
   | FeatureFlag
@@ -39,7 +40,8 @@ export type SupportedExtension =
   | CatalogItemProvider
   | CatalogItemFilter
   | FileUpload
-  | ModelMetadata;
+  | ModelMetadata
+  | TelemetryListener;
 
 /**
  * Schema of Console plugin's `console-extensions.json` file.

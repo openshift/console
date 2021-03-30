@@ -15,4 +15,5 @@ export * from './extensions/pages';
 export * from './extensions/pvc';
 export * from './extensions/redux';
 export * from './extensions/resource-metadata';
+export * from './extensions/telemetry';
 export * from './extensions/yaml-templates';

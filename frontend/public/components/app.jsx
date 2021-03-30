@@ -3,7 +3,7 @@ import * as React from 'react';
 import { render } from 'react-dom';
 import { Helmet } from 'react-helmet';
 import { linkify } from 'react-linkify';
-import { Provider } from 'react-redux';
+import { Provider, useSelector } from 'react-redux';
 import { Route, Router, Switch } from 'react-router-dom';
 // AbortController is not supported in some older browser versions
 import 'abort-controller/polyfill';
@@ -31,6 +31,8 @@ import { GuidedTour } from '@console/app/src/components/tour';
 import { isStandaloneRoutePage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
 import QuickStartDrawer from '@console/app/src/components/quick-starts/QuickStartDrawer';
 import ToastProvider from '@console/shared/src/components/toast/ToastProvider';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
+import { useDebounceCallback } from '@console/shared/src/hooks/debounce';
 import '../i18n';
 import '../vendor.scss';
 import '../style.scss';
@@ -232,6 +234,46 @@ const AppRouter = () => {
   );
 };
 
+const CaptureTelemetry = React.memo(() => {
+  // TODO notify of url changes only after we've identified the user....
+  // although we cannot prevent the rest of app from notifying before the user loads
+  // so perhaps this is useless?
+  const [identityNotified, setIdentityNotified] = React.useState(false);
+
+  const fireTelemetryEvent = useTelemetry();
+
+  // notify of identity change
+  const user = useSelector(({ UI }) => UI.get('user'));
+  const userId = user?.metadata?.uid ?? user?.metadata?.name;
+  React.useEffect(() => {
+    if (userId) {
+      fireTelemetryEvent('identify', { userId });
+      setIdentityNotified(true);
+    }
+  }, [userId, fireTelemetryEvent]);
+
+  // notify url change events
+
+  // Debouncing the url change events so that redirects don't fire multiple events.
+  // Also because some pages update the URL as the user enters a search term.
+  const fireUrlChangeEvent = useDebounceCallback(fireTelemetryEvent);
+  React.useEffect(() => {
+    if (identityNotified) {
+      fireUrlChangeEvent('url', history.location);
+
+      let { pathname, search } = history.location;
+      history.listen((location) => {
+        const { pathname: nextPathname, search: nextSearch } = history.location;
+        if (pathname !== nextPathname || search !== nextSearch) {
+          pathname = nextPathname;
+          search = nextSearch;
+          fireUrlChangeEvent('url', location);
+        }
+      });
+    }
+  }, [fireUrlChangeEvent, identityNotified]);
+});
+
 graphQLReady.onReady(() => {
   const startDiscovery = () => store.dispatch(watchAPIServices());
 
@@ -303,6 +345,7 @@ graphQLReady.onReady(() => {
   render(
     <React.Suspense fallback={<LoadingBox />}>
       <Provider store={store}>
+        <CaptureTelemetry />
         <ToastProvider>
           <AppRouter />
         </ToastProvider>
