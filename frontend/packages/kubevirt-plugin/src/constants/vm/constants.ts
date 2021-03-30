@@ -66,13 +66,18 @@ export const VM_DETAIL_EVENTS_HREF = 'events';
 
 export const DUMMY_VM_NAME = 'vm';
 
+// NOTE(yaacov): BZ 1944273, wintool container version should matches the "latest" image at the time of the release.
+// https://catalog.redhat.com/software/containers/container-native-virtualization/virtio-win/5c8a9ce65a13464733ed0946
+export const WINTOOLS_CONTAINER_VERSION = 'v2.6.0';
+export const WINTOOLS_CONTAINER_NAME_DOWNSTREAM = `registry.redhat.io/container-native-virtualization/virtio-win:${WINTOOLS_CONTAINER_VERSION}`;
+
 export const WINTOOLS_CONTAINER_NAMES = {
-  openshift: 'registry.redhat.io/container-native-virtualization/virtio-win',
-  ocp: 'registry.redhat.io/container-native-virtualization/virtio-win',
-  online: 'registry.redhat.io/container-native-virtualization/virtio-win',
-  dedicated: 'registry.redhat.io/container-native-virtualization/virtio-win',
-  azure: 'registry.redhat.io/container-native-virtualization/virtio-win',
-  okd: 'kubevirt/virtio-container-disk',
+  openshift: WINTOOLS_CONTAINER_NAME_DOWNSTREAM,
+  ocp: WINTOOLS_CONTAINER_NAME_DOWNSTREAM,
+  online: WINTOOLS_CONTAINER_NAME_DOWNSTREAM,
+  dedicated: WINTOOLS_CONTAINER_NAME_DOWNSTREAM,
+  azure: WINTOOLS_CONTAINER_NAME_DOWNSTREAM,
+  okd: 'kubevirt/virtio-container-disk', // comunity version is always "latest"
 };
 
 export const PENDING_RESTART_LABEL = '(pending restart)';
