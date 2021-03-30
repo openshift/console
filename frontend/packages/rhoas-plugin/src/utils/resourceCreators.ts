@@ -1,4 +1,5 @@
 import { SecretModel } from '@console/internal/models';
+import { getRandomChars } from '@console/shared';
 import { k8sWaitForUpdate } from '@console/internal/module/k8s';
 import {
   k8sCreate,
@@ -36,7 +37,7 @@ export const createManagedServiceAccount = async (currentNamespace: string) => {
     spec: {
       forceRefresh: new Date().toISOString(),
       accessTokenSecretName: AccessTokenSecretName,
-      serviceAccountName: `rhoas-operator-${currentNamespace}`,
+      serviceAccountName: `rhoas-operator-${getRandomChars(4)}`,
       serviceAccountDescription: 'Created by rhoas operator',
       serviceAccountSecretName: ServiceAccountSecretName,
     },
