@@ -1,23 +1,6 @@
 import { K8sResourceCommon, K8sResourceKind, Toleration } from '@console/internal/module/k8s';
 import { PipelineRunKind } from '../../../types';
 
-export type TriggerKind = K8sResourceCommon & {
-  spec: {
-    serviceAccountName: string;
-    bindings?: EventListenerKindBindingReference[];
-    interceptors?: TriggerInterceptor;
-    template?: {
-      // Ref is used since Tekton Triggers 0.10.x (part of OpenShift Pipeline Operator 1.3)
-      ref?: string;
-      // We also support older operators, so need to show & save the old field as well.
-      // TriggerTemplateKind name reference
-      // https://github.com/tektoncd/triggers/pull/898/files
-      // name will be deprecated in TP1.4
-      name?: string;
-    };
-    triggerRef?: string;
-  };
-};
 export type TriggerBindingParam = {
   name: string;
   value: string;
