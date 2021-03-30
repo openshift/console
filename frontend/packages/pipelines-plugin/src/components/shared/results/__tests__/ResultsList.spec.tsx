@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ShallowWrapper, shallow } from 'enzyme';
-import { Table } from '@patternfly/react-table';
+import { TableComposable } from '@patternfly/react-table';
 import { EmptyState } from '@patternfly/react-core';
 import ResultsList, { ResultsListProps } from '../ResultsList';
 import { runStatus } from '../../../../utils/pipeline-augment';
@@ -28,7 +28,7 @@ describe('ResultsList', () => {
   });
 
   it('Should render Results Table', () => {
-    expect(resultsListWrapper.find(Table).exists()).toBe(true);
+    expect(resultsListWrapper.find(TableComposable).exists()).toBe(true);
     expect(resultsListWrapper.find(EmptyState).exists()).toBe(false);
   });
   it('Should render an EmptyState instead', () => {
@@ -38,7 +38,7 @@ describe('ResultsList', () => {
       results: taskRunWithResults.status.taskResults,
     };
     resultsListWrapper = shallow(<ResultsList {...resultsListProps} />);
-    expect(resultsListWrapper.find(Table).exists()).toBe(false);
+    expect(resultsListWrapper.find(TableComposable).exists()).toBe(false);
     expect(resultsListWrapper.find(EmptyState).exists()).toBe(true);
   });
 });
