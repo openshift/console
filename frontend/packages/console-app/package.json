@@ -13,6 +13,7 @@
     "@console/dev-console": "0.0.0-fixed",
     "@console/gitops-plugin": "0.0.0-fixed",
     "@console/helm-plugin": "0.0.0-fixed",
+    "@console/rhoas-plugin": "0.0.0-fixed",
     "@console/internal": "0.0.0-fixed",
     "@console/insights-plugin": "0.0.0-fixed",
     "@console/knative-plugin": "0.0.0-fixed",

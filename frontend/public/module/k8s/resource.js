@@ -197,10 +197,16 @@ export const k8sWatch = (kind, query = {}, wsOptions = {}) => {
  * @returns {Promise<K8sResourceKind>}
  */
 export const k8sWaitForUpdate = (kind, resource, checkCondition, timeoutInMs) => {
+  if (!resource || !resource.metadata) {
+    return Promise.reject(new Error('Provided resource is undefined'));
+  }
   const { namespace, name, resourceVersion } = resource.metadata;
-
-  if (checkCondition(resource)) {
-    return Promise.resolve(resource);
+  try {
+    if (checkCondition(resource)) {
+      return Promise.resolve(resource);
+    }
+  } catch (error) {
+    return Promise.reject(error);
   }
 
   const watcher = k8sWatch(kind, {
@@ -211,11 +217,18 @@ export const k8sWaitForUpdate = (kind, resource, checkCondition, timeoutInMs) =>
 
   const waitForCondition = new Promise((resolve, reject) => {
     watcher.onbulkmessage((messages) => {
-      messages.forEach(({ object }) => {
-        if ((!name || name === object.metadata?.name) && checkCondition(object)) {
-          resolve(object);
+      for (const message of messages) {
+        const { object } = message;
+        if (!name || name === object?.metadata?.name) {
+          try {
+            if (checkCondition(object)) {
+              resolve(object);
+            }
+          } catch (err) {
+            reject(err);
+          }
         }
-      });
+      }
     });
     watcher.onclose(() => reject(new Error('Connection closed')));
     watcher.ondestroy(() => reject(new Error('Connection destroyed')));

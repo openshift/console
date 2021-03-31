@@ -96,6 +96,7 @@ export const catalogPO = {
     builderImage: 'ul:nth-child(3) > li:nth-child(1) > a', // This needs to be changed
     template: 'a[href="/?catalogType=Template"]',
     serviceClass: '[data-test="kind-cluster-service-class"]',
+    managedServices: '[data-test="kind-managed-service"]',
   },
   cards: {
     mariaDBTemplate: 'a[data-test="Template-MariaDB"] .catalog-tile-pf-title',

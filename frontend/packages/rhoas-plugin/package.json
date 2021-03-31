@@ -1,0 +1,19 @@
+{
+  "name": "@console/rhoas-plugin",
+  "version": "0.0.0-fixed",
+  "description": "RHOAS plugin provides a number of components for Red Hat Cloud Services",
+  "private": true,
+  "scripts": {
+    "coverage": "yarn test --coverage --collectCoverageFrom='[\"packages/rhoas-plugin/src/**\",\"!**/__tests__/**\",\"!packages/rhoas-plugin/src/test/**\"]'",
+    "lint": "yarn --cwd ../.. eslint packages/rhoas-plugin --fix",
+    "test": "yarn --cwd ../.. test packages/rhoas-plugin",
+    "prettier": "yarn --cwd ../.. prettier --write  packages/rhoas-plugin/**/*.{js,jsx,ts,tsx,json}"
+  },
+  "consolePlugin": {
+    "entry": "src/plugin.ts",
+    "exposedModules": {
+      "constants": "src/const.ts",
+      "catalog": "src/catalog"
+    }
+  }
+}

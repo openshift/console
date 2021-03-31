@@ -24,7 +24,7 @@ import OperatorBackedServiceNode from './OperatorBackedServiceNode';
 
 import './OperatorBackedService.scss';
 
-const obsDropTargetSpec = (
+export const obsDropTargetSpec = (
   serviceBinding: boolean,
 ): DropTargetSpec<
   GraphElement,

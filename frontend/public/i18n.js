@@ -113,6 +113,7 @@ i18n
         'remove-user-modal',
         'request-header-idp-form',
         'resource-quota',
+        'rhoas-plugin',
         'role',
         'routing-labels-editor',
         'rules',
