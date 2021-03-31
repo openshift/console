@@ -174,7 +174,7 @@ export const convertPipelineToModalData = (
     })),
     workspaces: (pipeline.spec.workspaces || []).map((workspace: TektonWorkspace) => ({
       ...workspace,
-      type: preselectPVC ? VolumeTypes.PVC : 'EmptyDirectory',
+      type: preselectPVC ? VolumeTypes.PVC : VolumeTypes.EmptyDirectory,
       data: preselectPVC ? getDefaultPVC(preselectPVC) : { emptyDir: {} },
     })),
   };

@@ -1,10 +1,10 @@
-import { PipelineRunKind, PipelineKind } from '../../../../../types';
+import { PipelineKind, PipelineRunKind } from '../../../../../types';
 import {
-  pipelineTestData,
-  PipelineExampleNames,
   DataState,
+  PipelineExampleNames,
+  pipelineTestData,
 } from '../../../../../test-data/pipeline-data';
-import { TektonResourceLabel, preferredNameAnnotation } from '../../../const';
+import { preferredNameAnnotation, TektonResourceLabel, VolumeTypes } from '../../../const';
 import {
   convertPipelineToModalData,
   getPipelineName,
@@ -330,14 +330,16 @@ describe('convertPipelineToModalData', () => {
 
   it('expect to return workspaces with type EmptyDirectory, if preselect PVC argument is not passed', () => {
     const { workspaces } = convertPipelineToModalData(workspacePipeline);
-    expect(workspaces.filter((workspace) => workspace.type === 'EmptyDirectory')).toHaveLength(3);
+    expect(
+      workspaces.filter((workspace) => workspace.type === VolumeTypes.EmptyDirectory),
+    ).toHaveLength(3);
   });
 
   it('expect to return workspaces with type PVC, if preselect PVC argument is passed', () => {
     const { workspaces } = convertPipelineToModalData(workspacePipeline, false, 'test-pvc');
-    expect(workspaces.filter((workspace) => workspace.type === 'EmptyDirectory')).toHaveLength(0);
     expect(
-      workspaces.filter((workspace) => workspace.type === 'PersistentVolumeClaim'),
-    ).toHaveLength(3);
+      workspaces.filter((workspace) => workspace.type === VolumeTypes.EmptyDirectory),
+    ).toHaveLength(0);
+    expect(workspaces.filter((workspace) => workspace.type === VolumeTypes.PVC)).toHaveLength(3);
   });
 });
