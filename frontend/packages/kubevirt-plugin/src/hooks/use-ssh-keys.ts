@@ -23,6 +23,7 @@ const useSSHKeys = (vm?: VMIKind | VMKind): useSSHResult => {
     updateSSHKey,
     updateSSHTempKey,
     setIsValidSSHKey,
+    setEnableSSHService,
     setUpdateSSHKeyInSecret,
     restoreDefaultSSHSettings,
   } = useSSHSelectors();
@@ -67,6 +68,7 @@ const useSSHKeys = (vm?: VMIKind | VMKind): useSSHResult => {
     isValidSSHKey,
     setIsValidSSHKey,
     updateSSHKeyInGlobalNamespaceSecret,
+    setEnableSSHService,
     setUpdateSSHKeyInSecret,
     restoreDefaultSSHSettings,
   };
