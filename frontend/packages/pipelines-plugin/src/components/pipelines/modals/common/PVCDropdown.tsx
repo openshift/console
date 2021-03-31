@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as fuzzy from 'fuzzysearch';
 import { connect } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { ResourceDropdownField } from '@console/shared';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
 import { getActiveNamespace } from '@console/internal/reducers/ui';
@@ -16,6 +17,7 @@ interface StateProps {
 }
 
 const PVCDropdown: React.FC<PVCDropdownProps & StateProps> = ({ name, namespace }) => {
+  const { t } = useTranslation();
   const autocompleteFilter = (strText, item): boolean => fuzzy(strText, item?.props?.name);
   const resources = [
     {
@@ -32,7 +34,7 @@ const PVCDropdown: React.FC<PVCDropdownProps & StateProps> = ({ name, namespace 
       className="odc-pvc-dropdown"
       resources={resources}
       dataSelector={['metadata', 'name']}
-      placeholder="Select a PVC"
+      placeholder={t('pipelines-plugin~Select a PVC')}
       autocompleteFilter={autocompleteFilter}
       fullWidth
       showBadge

@@ -11,7 +11,7 @@ import MultipleResourceKeySelector from './MultipleResourceKeySelector';
 import { PipelineModalFormWorkspace } from './types';
 
 const getVolumeTypeFields = (volumeType: VolumeTypes, index: number, t: TFunction) => {
-  switch (VolumeTypes[volumeType]) {
+  switch (volumeType) {
     case VolumeTypes.Secret: {
       return (
         <MultipleResourceKeySelector
@@ -48,6 +48,12 @@ const PipelineWorkspacesSection: React.FC = () => {
   const { t } = useTranslation();
   const { setFieldValue } = useFormikContext<FormikValues>();
   const [{ value: workspaces }] = useField<PipelineModalFormWorkspace[]>('workspaces');
+  const volumeTypeItems = {
+    [VolumeTypes.EmptyDirectory]: t('pipelines-plugin~Empty Directory'),
+    [VolumeTypes.ConfigMap]: t('pipelines-plugin~Config Map'),
+    [VolumeTypes.Secret]: t('pipelines-plugin~Secret'),
+    [VolumeTypes.PVC]: t('pipelines-plugin~PVC'),
+  };
   return (
     workspaces.length > 0 && (
       <FormSection title={t('pipelines-plugin~Workspaces')} fullWidth>
@@ -56,11 +62,11 @@ const PipelineWorkspacesSection: React.FC = () => {
             <DropdownField
               name={`workspaces.${index}.type`}
               label={workspace.name}
-              items={VolumeTypes}
+              items={volumeTypeItems}
               onChange={(type) =>
                 setFieldValue(
                   `workspaces.${index}.data`,
-                  VolumeTypes[type] === VolumeTypes.EmptyDirectory ? { emptyDir: {} } : {},
+                  type === VolumeTypes.EmptyDirectory ? { emptyDir: {} } : {},
                   // Validation is automatically done by DropdownField useFormikValidationFix
                   false,
                 )
