@@ -3,6 +3,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { Tooltip } from '@patternfly/react-core';
 import cn from 'classnames';
+import * as copy from 'copy-to-clipboard';
 import { asAccessReview, Kebab, KebabOption } from '@console/internal/components/utils';
 import {
   K8sKind,
@@ -370,21 +371,27 @@ export const menuActionCopySSHCommand = (kindObj: K8sKind, vm: VMIKind): KebabOp
   const CopySSHCommand: React.FC = () => {
     const { sshServices } = useSSHService(vm);
     const { command } = useSSHCommand(vm);
+    const [showTooltip, setShowToolTip] = React.useState(false);
     const { t } = useTranslation();
-
     sshCommand = command;
     isDisabled = !sshServices?.running;
 
     return (
-      <div className={cn({ 'CopySSHCommand-disabled': isDisabled })}>
+      <div
+        id="SSHMenuLabel"
+        onMouseEnter={() => setShowToolTip(true)}
+        onMouseLeave={() => setShowToolTip(false)}
+        className={cn({ 'CopySSHCommand-disabled': isDisabled })}
+      >
         {t('kubevirt-plugin~Copy SSH Command')}
         {isDisabled && (
-          <div>
-            <Tooltip
-              position="left"
-              content={t('kubevirt-plugin~SSH Service can be managed in the VMs details page')}
-            />
-          </div>
+          <Tooltip
+            reference={() => document.getElementById('SSHMenuLabel')}
+            position="left"
+            trigger="manual"
+            isVisible={showTooltip}
+            content={t('kubevirt-plugin~SSH Service can be managed in the VMs details page')}
+          />
         )}
         <div className="kubevirt-menu-actions__secondary-title">
           {isDisabled
@@ -397,7 +404,7 @@ export const menuActionCopySSHCommand = (kindObj: K8sKind, vm: VMIKind): KebabOp
 
   return {
     label: <CopySSHCommand />,
-    callback: () => !isDisabled && navigator.clipboard.writeText(sshCommand),
+    callback: () => !isDisabled && copy(sshCommand),
     isDisabled,
   };
 };
