@@ -451,7 +451,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
           className="co-alert"
           variant="danger"
           title={t(
-            "olm~A Subscription for this Operator already exists in Namespace '{{namespace}}'",
+            'olm~A Subscription for this Operator already exists in Namespace "{{namespace}}"',
             {
               namespace: selectedTargetNamespace,
             },
@@ -529,8 +529,8 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
               title={t('olm~Namespace monitoring')}
             >
               <Trans ns="olm">
-                Please note that installing non Red Hat operators into openshift namespaces and
-                enabling monitoring voids user support. Enabling cluster monitoring for non Red Hat
+                Please note that installing non-Red Hat operators into OpenShift namespaces and
+                enabling monitoring voids user support. Enabling cluster monitoring for non-Red Hat
                 operators can lead to malicious metrics data overriding existing cluster metrics.
                 For more information, see the{' '}
                 <ExternalLink

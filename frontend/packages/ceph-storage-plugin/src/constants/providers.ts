@@ -2,7 +2,7 @@ export enum BC_PROVIDERS {
   AWS = 'AWS S3',
   S3 = 'S3 Compatible',
   PVC = 'PVC',
-  GCP = 'Google cloud storage',
+  GCP = 'Google Cloud Storage',
   AZURE = 'Azure Blob',
   IBM = 'IBM COS',
 }

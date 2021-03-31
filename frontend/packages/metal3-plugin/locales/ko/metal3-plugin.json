@@ -150,7 +150,7 @@
   "all workloads have already been moved, but {{length}} daemon sets have been skipped.": "모든 워크로드가 이미 이동되었지만{{length}} 데몬 세트는 생략되어 있습니다.",
   "all workloads have already been moved, but {{podListlength}} static pods and {{daemonListlength}} daemon sets have been skipped.": "모든 워크로드가 이미 이동되었지만{{podListlength}} 정적 Pod 및 {{daemonListlength}} 데몬 세트는 생략되어 있습니다.",
   "The host will be powered off gracefully.": "호스트의 전원이 정상적으로 꺼집니다.",
-  "To power off gracefully, <1>start maintenance</1> on this host to move all managed workloads to other nodes in the cluster.": "정상적으로 전원을 끄려면<1> 유지 관리를 시작</1>하여 호스트에서 모든 관리 워크로드를 클러스터의 다른 노드로 이동합니다.",
+  "To power off gracefully, <2>start maintenance</2> on this host to move all managed workloads to other nodes in the cluster.": "정상적으로 전원을 끄려면 <2>유지 관리를 시작</2>하여 호스트에서 모든 관리 워크로드를 클러스터의 다른 노드로 이동합니다.",
   "Workloads will not be moved before the host powers off.": "호스트의 전원이 꺼지기 전에는 워크로드가 이동되지 않습니다.",
   "The host will power off immediately as if it were unplugged.": "호스트는 플러그 해제된 것처럼 즉시 전원이 꺼집니다.",
   "Power off immediately": "즉시 전원 끄기",

@@ -64,7 +64,7 @@ const GeneralPage: React.FC<GeneralPageProps> = ({ dispatch, state }) => {
         <FormGroup
           className="nb-create-bc-step-page-form__element"
           fieldId="bc-description"
-          label={t('ceph-storage-plugin~Description(Optional)')}
+          label={t('ceph-storage-plugin~Description (Optional)')}
         >
           <TextArea
             data-test="bucket-class-description"

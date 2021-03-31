@@ -38,7 +38,7 @@ const AdvancedRouteOptions: React.FC<AdvancedRouteOptionsProps> = ({
             variant="info"
             isInline
             title={t(
-              "devconsole~Select the checkbox 'Create a route to the application' to edit advanced routing options",
+              'devconsole~Select the checkbox "Create a route to the application" to edit advanced routing options',
             )}
           />
         )}

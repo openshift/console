@@ -15,7 +15,7 @@
   "The list of attributes whose values should be used as the preferred username.": "優先ユーザー名として値を使用する必要がある属性の一覧。",
   "Name": "名前",
   "The list of attributes whose values should be used as the display name.": "表示名として使用する必要がある値の属性の一覧。",
-  "Email": "Email",
+  "Email": "メール",
   "The list of attributes whose values should be used as the email address.": "メールアドレスとして使用する必要がある値の属性の一覧。",
   "More options": "その他のオプション"
 }

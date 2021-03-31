@@ -1,5 +1,5 @@
 {
-  "{{id}} by {{author}}": "{{id}} ({{author}} 별)",
+  "by {{author}}": "{{author}} 별",
   "Commit details not available": "커밋 세부 정보를 사용할 수 없습니다.",
   "Cluster URL not available": "클러스터 URL을 사용할 수 없습니다.",
   "Environments": "환경",

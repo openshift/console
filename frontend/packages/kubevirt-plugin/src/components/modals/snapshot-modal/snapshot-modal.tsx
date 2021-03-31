@@ -101,7 +101,7 @@ const SnapshotsModal = withHandlePromise((props: SnapshotsModalProps) => {
               {supportedVolumes.length > 0 && (
                 <StackItem>
                   <ExpandableSection
-                    toggleText={t('kubevirt-plugin~Disks included in this Snapshot ({{count}})', {
+                    toggleText={t('kubevirt-plugin~Disks included in this snapshot ({{count}})', {
                       count: supportedVolumes?.length,
                     })}
                   >

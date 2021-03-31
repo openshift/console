@@ -16,5 +16,9 @@
   "Username": "사용자 이름",
   "The displayed username.": "표시되는 사용자 이름입니다.",
   "Link names": "링크 이름",
-  "Find and link channel names and usernames.": "채널 이름과 사용자 이름을 검색하여 연결합니다."
+  "Find and link channel names and usernames.": "채널 이름과 사용자 이름을 검색하여 연결합니다.",
+  "Title": "제목",
+  "The title of the Slack message.": "Slack 메시지의 제목입니다.",
+  "Text": "텍스트",
+  "The text of the Slack message.": "Slack 메시지의 텍스트입니다."
 }

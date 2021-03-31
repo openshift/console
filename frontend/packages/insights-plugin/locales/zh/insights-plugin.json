@@ -1,0 +1,18 @@
+{
+  "low": "低",
+  "moderate": "中",
+  "important": "重要",
+  "critical": "critical",
+  "Temporary unavailable.": "临时不可用。",
+  "Disabled or waiting for results.": "禁用或等待结果。",
+  "Total issue_0": "问题总数",
+  "Total Risk": "风险总数",
+  "Fixable issues": "可修复的问题",
+  "View all in OpenShift Cluster Manager": "在 OpenShift Cluster Manager 中查看所有",
+  "More about Insights": "更多有关 Insights 的信息",
+  "Not available": "不可用",
+  "{{issuesNumber}} issue found": "{{issuesNumber}} 个发现的问题",
+  "{{issuesNumber}} issues found": "{{issuesNumber}} 个发现的问题",
+  "Insights": "Insights",
+  "Insights status": "Insights 状态"
+}

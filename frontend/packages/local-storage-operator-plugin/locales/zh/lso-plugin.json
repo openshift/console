@@ -30,7 +30,7 @@
   "Selecting all nodes will use the available disks that match the selected filters only on selected nodes.": "选择所有节点将使用在所选节点上与所选过滤器相匹配的可用磁盘。",
   "Disk Type": "磁盘类型",
   "Advanced": "高级",
-  "Disk Mode": "磁盘模式",
+  "Volume Mode": "卷模式",
   "Disk Size": "磁盘大小",
   "Min": "最小",
   "Max": "最大",
@@ -44,7 +44,7 @@
   "CPU": "CPU",
   "Memory": "内存",
   "Select nodes for creating volume filter": "选择要创建卷过滤器的节点",
-  "{{nodeCount, number}} node_0": "{{nodeCount, number}} 节点",
+  "{{nodeCount, number}} node_0": "{{nodeCount, number}} 个节点",
   "selected": "已选择",
   "SSD / NVMe": "SSD / NVMe",
   "HDD": "HDD"

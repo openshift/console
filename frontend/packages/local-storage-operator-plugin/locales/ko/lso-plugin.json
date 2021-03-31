@@ -30,7 +30,7 @@
   "Selecting all nodes will use the available disks that match the selected filters only on selected nodes.": "모든 노드를 선택하면 선택한 노드에서만 선택한 필터와 일치하는 사용 가능한 디스크가 사용됩니다.",
   "Disk Type": "디스크 유형",
   "Advanced": "고급 옵션",
-  "Disk Mode": "디스크 모드",
+  "Volume Mode": "볼륨 모드",
   "Disk Size": "디스크 크기",
   "Min": "최소",
   "Max": "최대",

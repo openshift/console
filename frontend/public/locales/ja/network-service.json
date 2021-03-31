@@ -23,6 +23,6 @@
   "Service port mapping": "サービスポートマッピング",
   "Namespace": "namespace",
   "Labels": "ラベル",
-  "Pod selector": "Pod セレクター",
+  "Pod selector": "pod セレクター",
   "Services": "サービス"
 }

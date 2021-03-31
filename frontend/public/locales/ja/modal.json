@@ -40,7 +40,7 @@
   "Edit labels": "ラベルの編集",
   "Labels help you organize and select resources. Adding labels below will let you query for objects that have similar, overlapping or dissimilar labels.": "ラベルは、リソースの整理と選択に役立ちます。以下にラベルを追加すると、類似した、重複の、または類似していないラベルを持つオブジェクトをクエリーできます。",
   "Labels for": "ラベル:",
-  "Pod selector": "Pod セレクター",
+  "Pod selector": "pod セレクター",
   "Determines the set of pods targeted by this {{kind: props.kind.label.toLowerCase()}}.": "この {{kind: props.kind.label.toLowerCase()}}がターゲットとする Pod のセットを判別します。",
   "Duplicate keys found.": "重複するキーが見つかりました。",
   "Edit annotations": "アノテーションの編集",

@@ -101,7 +101,7 @@ const NetworkPoliciesList = (props) => {
   return (
     <Table
       {...props}
-      aria-label={t('network-policy~Network policies')}
+      aria-label={t('network-policy~NetworkPolicies')}
       Header={NetworkPolicyTableHeader}
       Row={NetworkPolicyTableRow}
       virtualize
@@ -199,11 +199,11 @@ const Details_ = ({ obj: np, flags }) => {
         <SectionHeading text={t('network-policy~Ingress rules')} />
         <p className="co-m-pane__explanation">
           {t(
-            'network-policy~Pods accept all traffic by default. They can be isolated via Network Policies which specify a whitelist of ingress rules. When a Pod is selected by a Network Policy, it will reject all traffic not explicitly allowed via a Network Policy. See more details in:',
+            'network-policy~Pods accept all traffic by default. They can be isolated via NetworkPolicies which specify a whitelist of ingress rules. When a Pod is selected by a NetworkPolicy, it will reject all traffic not explicitly allowed via a NetworkPolicy. See more details in:',
           )}
           <ExternalLink
             href={getNetworkPolicyDocLink(flags[FLAGS.OPENSHIFT])}
-            text={t('network-policy~Network Policies documentation')}
+            text={t('network-policy~NetworkPolicies documentation')}
           />
           .
         </p>

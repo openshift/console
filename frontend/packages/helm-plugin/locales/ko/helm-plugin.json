@@ -58,7 +58,7 @@
   "Unable to load Helm Releases": "Helm 릴리스를 로드할 수 없습니다.",
   "No Helm Releases found": "Helm 릴리스를 찾을 수 없습니다",
   "Install a Helm Chart from the developer catalog": "개발자 카탈로그에서 Helm 차트 설치",
-  "Select a Project to view the list of Helm Releases": "Helm 릴리스 목록을 보려면 프로젝트를 선택합니다.",
+  "Select a Project to view the list of Helm Releases or <2>create a Project</2>.": "프로젝트를 선택하여 Helm 릴리스 목록을 보거나 <2>프로젝트를 생성</2>합니다.",
   "Helm": "Helm",
   "Browse the catalog to discover and install Helm Charts": "카타로그를 참조하여 Helm 차트를 검색하고 설치합니다.",
   "Unable to find resource for {{helmLabel}}": "{{helmLabel}}의 리소스를 찾을 수 없습니다.",
