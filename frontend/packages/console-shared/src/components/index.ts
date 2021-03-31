@@ -25,3 +25,4 @@ export * from './spotlight';
 export * from './markdown-highlight-extension';
 export * from './custom-resource-list';
 export * from './toast';
+export * from './markdown-extensions';

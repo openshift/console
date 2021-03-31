@@ -29,3 +29,4 @@ export * from './useIsMobile';
 export * from './useResizeObserver';
 export * from './useBoundingClientRect';
 export * from './useScrollContainer';
+export * from './useEventListener';
