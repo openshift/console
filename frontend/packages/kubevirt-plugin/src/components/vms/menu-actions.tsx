@@ -39,6 +39,7 @@ import { cancelVMImport } from '../../k8s/requests/vmimport';
 import { ActionMessage } from './constants';
 import useSSHService from '../../hooks/use-ssh-service';
 import useSSHCommand from '../../hooks/use-ssh-command';
+import * as copy from 'copy-to-clipboard';
 
 import './menu-actions.scss';
 
@@ -403,7 +404,7 @@ export const menuActionCopySSHCommand = (kindObj: K8sKind, vm: VMIKind): KebabOp
 
   return {
     label: <CopySSHCommand />,
-    callback: () => !isDisabled && navigator.clipboard.writeText(sshCommand),
+    callback: () => !isDisabled && copy(sshCommand),
     isDisabled,
   };
 };
