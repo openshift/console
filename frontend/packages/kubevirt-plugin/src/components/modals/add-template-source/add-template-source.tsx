@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
-import { k8sCreate, TemplateKind } from '@console/internal/module/k8s';
+import { k8sCreate, StorageClassResourceKind, TemplateKind } from '@console/internal/module/k8s';
 import {
   ModalComponentProps,
   ModalTitle,
@@ -12,7 +12,8 @@ import {
 import { Alert, Button, ActionGroup, Stack, StackItem } from '@patternfly/react-core';
 import { useAccessReview2, LoadingBox } from '@console/internal/components/utils';
 import { coFetch } from '@console/internal/co-fetch';
-
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { StorageClassModel } from '@console/internal/models';
 import {
   UploadPVCFormStatus,
   uploadErrorType,
@@ -102,6 +103,23 @@ export const AddTemplateSourceModal: React.FC<ModalComponentProps &
     resource: DataVolumeModel.plural,
     verb: 'create',
   });
+
+  const [scAllowed, scAllowedLoading] = useAccessReview2({
+    group: StorageClassModel.apiGroup,
+    resource: StorageClassModel.plural,
+    verb: 'list',
+  });
+
+  const [storageClasses, scLoaded] = useK8sWatchResource<StorageClassResourceKind[]>(
+    scAllowed
+      ? {
+          kind: StorageClassModel.kind,
+          isList: true,
+          namespaced: false,
+        }
+      : null,
+  );
+  const isSCAvailable = storageClasses?.length > 0;
 
   const { dataSource, file, isValid } = state;
 
@@ -200,7 +218,7 @@ export const AddTemplateSourceModal: React.FC<ModalComponentProps &
         </ModalFooter>
       </>
     );
-  } else if (uploadAllowedLoading) {
+  } else if (uploadAllowedLoading || scAllowedLoading) {
     body = <LoadingBox />;
   } else if (!uploadAllowed) {
     body = <PermissionsError close={close} />;
@@ -223,8 +241,23 @@ export const AddTemplateSourceModal: React.FC<ModalComponentProps &
                   dispatch={dispatch}
                   withUpload
                   disabled={isCheckingCert}
+                  storageClasses={storageClasses}
+                  storageClassesLoaded={scLoaded}
+                  scAllowed={scAllowed}
+                  scAllowedLoading={scAllowedLoading}
                 />
               </StackItem>
+              {!isSCAvailable && scLoaded && (
+                <StackItem>
+                  <Alert
+                    variant="danger"
+                    isInline
+                    title={t(
+                      'kubevirt-plugin~ No Storage classes found in cluster, adding source is disabled.',
+                    )}
+                  />
+                </StackItem>
+              )}
               <StackItem>
                 <Alert
                   variant="info"
@@ -263,7 +296,7 @@ export const AddTemplateSourceModal: React.FC<ModalComponentProps &
             </Button>
             <Button
               variant="primary"
-              isDisabled={!isValid || isSubmitting}
+              isDisabled={!isValid || isSubmitting || !isSCAvailable}
               data-test="confirm-action"
               id="confirm-action"
               onClick={onSubmit}

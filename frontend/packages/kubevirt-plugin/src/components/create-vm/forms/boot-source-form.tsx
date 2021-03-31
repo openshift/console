@@ -12,19 +12,13 @@ import {
   PopoverPosition,
 } from '@patternfly/react-core';
 import { HelpIcon } from '@patternfly/react-icons';
-import { PersistentVolumeClaimModel, StorageClassModel } from '@console/internal/models';
-import {
-  ListDropdown,
-  LoadingInline,
-  RequestSizeInput,
-  useAccessReview2,
-} from '@console/internal/components/utils';
+import { PersistentVolumeClaimModel } from '@console/internal/models';
+import { ListDropdown, LoadingInline, RequestSizeInput } from '@console/internal/components/utils';
 import {
   dropdownUnits,
   getAccessModeForProvisioner,
   provisionerAccessModeMapping,
 } from '@console/internal/components/storage/shared';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 
 import { FormRow } from '../../form/form-row';
 import { ProjectDropdown } from '../../form/project-dropdown';
@@ -51,28 +45,26 @@ type AdvancedSectionProps = {
   state: BootSourceState;
   dispatch: React.Dispatch<BootSourceAction>;
   disabled?: boolean;
+  storageClasses: StorageClassResourceKind[];
+  storageClassesLoaded: boolean;
+  scAllowed: boolean;
+  scAllowedLoading: boolean;
 };
 
-const AdvancedSection: React.FC<AdvancedSectionProps> = ({ state, dispatch, disabled }) => {
+const AdvancedSection: React.FC<AdvancedSectionProps> = ({
+  state,
+  dispatch,
+  disabled,
+  storageClasses,
+  storageClassesLoaded,
+  scAllowed,
+  scAllowedLoading,
+}) => {
   const { t } = useTranslation();
-  const [scAllowed, scAllowedLoading] = useAccessReview2({
-    group: StorageClassModel.apiGroup,
-    resource: StorageClassModel.plural,
-    verb: 'list',
-  });
-  const [storageClasses, scLoaded] = useK8sWatchResource<StorageClassResourceKind[]>(
-    scAllowed
-      ? {
-          kind: StorageClassModel.kind,
-          isList: true,
-          namespaced: false,
-        }
-      : null,
-  );
+
   const [scConfigMap, cmLoaded] = useStorageClassConfigMap();
 
   const defaultSCName = getDefaultStorageClass(storageClasses)?.metadata.name;
-
   const updatedStorageClass = storageClasses?.find(
     (sc) => sc.metadata.name === state.storageClass?.value,
   );
@@ -104,7 +96,7 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({ state, dispatch, disa
   );
 
   React.useEffect(() => {
-    if (!scAllowedLoading && scLoaded && cmLoaded && !state.storageClass?.value) {
+    if (!scAllowedLoading && storageClassesLoaded && cmLoaded && !state.storageClass?.value) {
       if (defaultSCName) {
         handleStorageClass(defaultSCName);
       } else {
@@ -115,7 +107,7 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({ state, dispatch, disa
   }, [
     defaultSCName,
     handleStorageClass,
-    scLoaded,
+    storageClassesLoaded,
     state.storageClass,
     dispatch,
     scConfigMap,
@@ -155,7 +147,7 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({ state, dispatch, disa
     });
   }, [state.pvcVolumeMode, state.dataSource, dispatch, defaultVolumeMode]);
 
-  return cmLoaded && scLoaded && !scAllowedLoading ? (
+  return cmLoaded && storageClassesLoaded && !scAllowedLoading ? (
     <Form>
       {scAllowed && !!storageClasses?.length && (
         <FormRow fieldId="form-ds-sc" title={t('kubevirt-plugin~Storage class')} isRequired>
@@ -258,6 +250,10 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({
   dispatch,
   withUpload,
   disabled,
+  storageClasses,
+  storageClassesLoaded,
+  scAllowed,
+  scAllowedLoading,
 }) => {
   const { t } = useTranslation();
 
@@ -474,7 +470,15 @@ export const BootSourceForm: React.FC<BootSourceFormProps> = ({
         </FormRow>
       )}
       <ExpandableSection toggleText={t('kubevirt-plugin~Advanced')} data-test="advanced-section">
-        <AdvancedSection state={state} dispatch={dispatch} disabled={disabled} />
+        <AdvancedSection
+          state={state}
+          dispatch={dispatch}
+          disabled={disabled}
+          storageClasses={storageClasses}
+          storageClassesLoaded={storageClassesLoaded}
+          scAllowed={scAllowed}
+          scAllowedLoading={scAllowedLoading}
+        />
       </ExpandableSection>
     </Form>
   );
