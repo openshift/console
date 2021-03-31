@@ -6,15 +6,18 @@ import TaskRunDetails from './TaskRunDetails';
 import TaskRunEvents from './events/TaskRunEvents';
 import { useTasksBreadcrumbsFor } from '../pipelines/hooks';
 import TaskRunLog from './TaskRunLog';
+import { usePipelineTechPreviewBadge } from '../../utils/hooks';
 
 const TaskRunDetailsPage: React.FC<DetailsPageProps> = (props) => {
   const { t } = useTranslation();
   const { kindObj, match } = props;
   const breadcrumbsFor = useTasksBreadcrumbsFor(kindObj, match);
+  const badge = usePipelineTechPreviewBadge(props.namespace);
 
   return (
     <DetailsPage
       {...props}
+      badge={badge}
       breadcrumbsFor={() => breadcrumbsFor}
       pages={[
         navFactory.details(TaskRunDetails),

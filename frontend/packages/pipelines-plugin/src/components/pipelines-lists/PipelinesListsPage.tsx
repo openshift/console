@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { match as Rmatch } from 'react-router-dom';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { Page } from '@console/internal/components/utils';
-import { TechPreviewBadge, MenuAction, MenuActions, MultiTabListPage } from '@console/shared';
+import { MenuAction, MenuActions, MultiTabListPage } from '@console/shared';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
@@ -17,6 +17,7 @@ import PipelineRunsResourceList from '../pipelineruns/PipelineRunsResourceList';
 import { DefaultPage } from '@console/internal/components/default-resource';
 import PipelineResourcesListPage from '../pipeline-resources/list-page/PipelineResourcesListPage';
 import PipelinesList from '../pipelines/list-page/PipelinesList';
+import { usePipelineTechPreviewBadge } from '../../utils/hooks';
 
 interface PipelinesListPageProps {
   match: Rmatch<any>;
@@ -27,6 +28,7 @@ const PipelinesListPage: React.FC<PipelinesListPageProps> = ({ match }) => {
   const {
     params: { ns: namespace },
   } = match;
+  const badge = usePipelineTechPreviewBadge(namespace);
   const [showTitle, hideBadge, canCreate] = [false, true, false];
   const menuActions: MenuActions = {
     pipeline: {
@@ -78,7 +80,7 @@ const PipelinesListPage: React.FC<PipelinesListPageProps> = ({ match }) => {
         pages={pages}
         match={match}
         title={t('pipelines-plugin~Pipelines')}
-        badge={<TechPreviewBadge />}
+        badge={badge}
         menuActions={menuActions}
       />
     </NamespacedPage>

@@ -1,11 +1,10 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router';
-import { getBadgeFromType } from '@console/shared';
 import { withStartGuide } from '@console/internal/components/start-guide';
 import CreateProjectListPage from '@console/dev-console/src/components/projects/CreateProjectListPage';
-import { PipelineModel } from '../../models';
 import PipelinesResourceList from './PipelinesResourceList';
+import { usePipelineTechPreviewBadge } from '../../utils/hooks';
 
 type PipelinesPageProps = RouteComponentProps<{ ns: string }>;
 
@@ -16,20 +15,19 @@ export const PipelinesPage: React.FC<PipelinesPageProps> = (props) => {
       params: { ns: namespace },
     },
   } = props;
+  const badge = usePipelineTechPreviewBadge(namespace);
+
   return namespace ? (
     <div>
       <PipelinesResourceList
         {...props}
-        badge={getBadgeFromType(PipelineModel.badge)}
+        badge={badge}
         namespace={namespace}
         title={t('pipelines-plugin~Pipelines')}
       />
     </div>
   ) : (
-    <CreateProjectListPage
-      title={t('pipelines-plugin~Pipelines')}
-      badge={getBadgeFromType(PipelineModel.badge)}
-    >
+    <CreateProjectListPage title={t('pipelines-plugin~Pipelines')} badge={badge}>
       {t('pipelines-plugin~Select a Project to view the list of Pipelines')}
     </CreateProjectListPage>
   );

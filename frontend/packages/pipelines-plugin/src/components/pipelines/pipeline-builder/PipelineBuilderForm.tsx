@@ -147,7 +147,7 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
     <>
       <Stack className="odc-pipeline-builder-form">
         <StackItem>
-          <PipelineBuilderHeader />
+          <PipelineBuilderHeader namespace={namespace} />
         </StackItem>
         <FlexForm className="odc-pipeline-builder-form__grid" onSubmit={handleSubmit}>
           <SyncedEditorField

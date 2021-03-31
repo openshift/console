@@ -11,6 +11,7 @@ import FormSection from '@console/dev-console/src/components/import/section/Form
 import { PipelineModel, PipelineResourceModel } from '../../../models';
 import { FLAG_OPENSHIFT_PIPELINE, CLUSTER_PIPELINE_NS } from '../../../const';
 import { Pipeline } from '../../../utils/pipeline-augment';
+import { usePipelineTechPreviewBadge } from '../../../utils/hooks';
 import PipelineTemplate from './PipelineTemplate';
 
 import './PipelineSection.scss';
@@ -55,16 +56,18 @@ const PipelineSection: React.FC<PipelineSectionProps> = ({
   const { values } = useFormikContext<FormikValues>();
 
   const hasCreatePipelineAccess = usePipelineAccessReview();
-
+  const badge = usePipelineTechPreviewBadge(values.project.name);
   if (flags[FLAG_OPENSHIFT_PIPELINE] && hasCreatePipelineAccess) {
     const title = (
       <Split className="odc-form-section-pipeline" hasGutter>
         <SplitItem className="odc-form-section__heading">
           {t('pipelines-plugin~Pipelines')}
         </SplitItem>
-        <SplitItem>
-          <TechPreviewBadge />
-        </SplitItem>
+        {badge && (
+          <SplitItem>
+            <TechPreviewBadge />
+          </SplitItem>
+        )}
       </Split>
     );
     return (
