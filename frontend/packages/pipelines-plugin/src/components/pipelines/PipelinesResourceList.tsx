@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { getBadgeFromType } from '@console/shared';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { Firehose } from '@console/internal/components/utils';
 import { FireMan_ as FireMan } from '@console/internal/components/factory';
 import { PipelineModel } from '../../models';
 import PipelineAugmentRunsWrapper from './list-page/PipelineAugmentRunsWrapper';
 import { filters } from './list-page/PipelineAugmentRuns';
+import { usePipelineTechPreviewBadge } from '../../utils/hooks';
 
 interface PipelinesResourceListProps extends React.ComponentProps<typeof FireMan> {
   namespace: string;
@@ -15,7 +15,7 @@ interface PipelinesResourceListProps extends React.ComponentProps<typeof FireMan
 const PipelinesResourceList: React.FC<PipelinesResourceListProps> = (props) => {
   const { t } = useTranslation();
   const { namespace, showTitle = true, selector, name, nameFilter } = props;
-
+  const badge = usePipelineTechPreviewBadge(namespace);
   const resources = [
     {
       isList: true,
@@ -43,7 +43,7 @@ const PipelinesResourceList: React.FC<PipelinesResourceListProps> = (props) => {
       textFilter="name"
       resources={resources}
       title={showTitle ? t('pipelines-plugin~Pipelines') : null}
-      badge={getBadgeFromType(PipelineModel.badge)}
+      badge={badge}
     >
       <Firehose resources={resources}>
         <PipelineAugmentRunsWrapper hideNameLabelFilters={props.hideNameLabelFilters} />

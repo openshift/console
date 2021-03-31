@@ -319,6 +319,42 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
+    type: 'Page/Resource/List',
+    properties: {
+      model: ConditionModel,
+      loader: async () =>
+        (
+          await import(
+            './components/conditions/ConditionListPage' /* webpackChunkName: "condition-list" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Resource/List',
+    properties: {
+      model: TaskModel,
+      loader: async () =>
+        (
+          await import(
+            './components/tasks/TaskListPage' /* webpackChunkName: "task-resource-list" */
+          )
+        ).default,
+    },
+  },
+  {
+    type: 'Page/Resource/List',
+    properties: {
+      model: ClusterTaskModel,
+      loader: async () =>
+        (
+          await import(
+            './components/cluster-tasks/ClusterTaskListPage' /* webpackChunkName: "clustertask-resource-list" */
+          )
+        ).default,
+    },
+  },
+  {
     type: 'Page/Route',
     properties: {
       exact: true,

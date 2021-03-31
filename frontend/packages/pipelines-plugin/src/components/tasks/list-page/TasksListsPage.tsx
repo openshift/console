@@ -4,12 +4,13 @@ import { match as Rmatch } from 'react-router-dom';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { TaskModel, ClusterTaskModel, TaskRunModel } from '../../../models';
 import { Page } from '@console/internal/components/utils';
-import { TechPreviewBadge, MenuActions, MultiTabListPage } from '@console/shared';
+import { MenuActions, MultiTabListPage } from '@console/shared';
 import { DefaultPage } from '@console/internal/components/default-resource';
 import TaskRunsListPage from '../../taskruns/list-page/TaskRunsListPage';
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '@console/dev-console/src/components/NamespacedPage';
+import { usePipelineTechPreviewBadge } from '../../../utils/hooks';
 
 interface TasksListsPageProps {
   match: Rmatch<any>;
@@ -20,6 +21,7 @@ const TasksListsPage: React.FC<TasksListsPageProps> = ({ match }) => {
   const {
     params: { ns: namespace },
   } = match;
+  const badge = usePipelineTechPreviewBadge(namespace);
   const [showTitle, canCreate, hideBadge] = [false, false, true];
   const menuActions: MenuActions = {
     tasks: { label: t('pipelines-plugin~Task'), model: TaskModel },
@@ -65,7 +67,7 @@ const TasksListsPage: React.FC<TasksListsPageProps> = ({ match }) => {
         pages={pages}
         match={match}
         title={t('pipelines-plugin~Tasks')}
-        badge={<TechPreviewBadge />}
+        badge={badge}
         menuActions={menuActions}
       />
     </NamespacedPage>
