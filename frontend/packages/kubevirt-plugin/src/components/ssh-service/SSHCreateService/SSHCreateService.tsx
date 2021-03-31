@@ -2,10 +2,6 @@ import * as React from 'react';
 import { Checkbox, Alert, Stack, StackItem } from '@patternfly/react-core';
 import { ResourceIcon } from '@console/internal/components/utils';
 import { useTranslation, Trans } from 'react-i18next';
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
-import { useDispatch } from 'react-redux';
-import { SSHActionsNames, sshActions } from '../redux/actions';
 import { VirtualMachineModel } from '../../../models/index';
 import useSSHKeys from '../../../hooks/use-ssh-keys';
 import { isEmpty } from 'lodash';
@@ -20,12 +16,7 @@ const SSHCreateService: React.FC<SSHCreateServiceProps> = ({
   disableAuthorizedKeyMessage = false,
 }) => {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
-  const { enableSSHService, tempSSHKey } = useSSHKeys();
-  const onSSHServiceChange = React.useCallback(
-    (val: boolean) => dispatch(sshActions[SSHActionsNames.enableSSHService](val)),
-    [dispatch],
-  );
+  const { enableSSHService, tempSSHKey, setEnableSSHService } = useSSHKeys();
 
   return (
     <Stack hasGutter>
@@ -43,19 +34,17 @@ const SSHCreateService: React.FC<SSHCreateServiceProps> = ({
           }
           isChecked={enableSSHService}
           onChange={(checked) => {
-            onSSHServiceChange(checked);
+            setEnableSSHService(checked);
           }}
         />
       </StackItem>
       {isEmpty(tempSSHKey) && enableSSHService && !disableAuthorizedKeyMessage && (
         <StackItem>
-          <Alert
-            variant="info"
-            isInline
-            title={t(
+          <Alert variant="info" isInline title={t('kubevirt-plugin~Missing Authorized key')}>
+            {t(
               `kubevirt-plugin~We haven't detected authorized key for the SSH access. SSH access will be enabled without authorized key`,
             )}
-          />
+          </Alert>
         </StackItem>
       )}
     </Stack>

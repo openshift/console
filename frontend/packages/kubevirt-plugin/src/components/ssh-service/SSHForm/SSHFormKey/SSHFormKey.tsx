@@ -36,6 +36,25 @@ const SSHFormKey: React.FC = () => {
     [dispatch, updateSSHTempKey],
   );
 
+  const onChange = (val: string, name: string) => {
+    valueChanged(val);
+    setFilename(name);
+    setHelperText('');
+    setValidated(ValidatedOptions.default);
+    if (val) {
+      try {
+        const evaluatedKey = sshpk.parseKey(val, 'ssh');
+        setValidated(ValidatedOptions.success);
+        setHelperText(`Key Type is ${evaluatedKey.type}`);
+        setIsValidSSHKey(true);
+      } catch {
+        setValidated(ValidatedOptions.error);
+        setIsValidSSHKey(false);
+        setHelperText(t('kubevirt-plugin~Invalid SSH public key format'));
+      }
+    }
+  };
+
   return (
     <>
       <FileUpload
@@ -44,24 +63,7 @@ const SSHFormKey: React.FC = () => {
         type="text"
         value={tempSSHKey}
         filename={filename}
-        onChange={(val: string, name: string) => {
-          valueChanged(val);
-          setFilename(name);
-          setHelperText('');
-          setValidated(ValidatedOptions.default);
-          if (val) {
-            try {
-              const evaluatedKey = sshpk.parseKey(val, 'ssh');
-              setValidated(ValidatedOptions.success);
-              setHelperText(`Key Type is ${evaluatedKey.type}`);
-              setIsValidSSHKey(true);
-            } catch {
-              setValidated(ValidatedOptions.error);
-              setIsValidSSHKey(false);
-              setHelperText(t('kubevirt-plugin~Invalid SSH public key format'));
-            }
-          }
-        }}
+        onChange={onChange}
         onReadStarted={() => setIsLoading(true)}
         onReadFinished={() => setIsLoading(false)}
         isLoading={isLoading}
@@ -82,7 +84,7 @@ const SSHFormKey: React.FC = () => {
           <FlexItem>
             <Button
               className="SSHFormKey-restore-button"
-              onClick={() => valueChanged(key)}
+              onClick={() => onChange(key, '')}
               variant="link"
               isInline
             >
