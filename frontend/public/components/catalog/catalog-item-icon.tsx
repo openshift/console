@@ -46,7 +46,7 @@ import * as joomlaImg from '../../imgs/logos/joomla.svg';
 import * as jrubyImg from '../../imgs/logos/jruby.svg';
 import * as jsImg from '../../imgs/logos/js.svg';
 import * as knativeImg from '../../imgs/logos/knative.svg';
-import * as serverlessFuncImage from '../../imgs/logos/serverlessfx.png';
+import * as serverlessFuncImage from '../../imgs/logos/serverlessfx.svg';
 import * as kubevirtImg from '../../imgs/logos/kubevirt.svg';
 import * as laravelImg from '../../imgs/logos/laravel.svg';
 import * as loadBalancerImg from '../../imgs/logos/load-balancer.svg';
