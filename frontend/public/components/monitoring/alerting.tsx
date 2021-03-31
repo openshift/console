@@ -821,9 +821,6 @@ export const AlertsDetailsPage = withFallback(
 
     const { t } = useTranslation();
 
-    const silencesTableHeader = () =>
-      getSilenceTableHeader(t).map((h) => _.pick(h, ['title', 'props']));
-
     const labelsMemoKey = JSON.stringify(alert?.labels);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const labels: PrometheusLabels = React.useMemo(() => alert?.labels, [labelsMemoKey]);
@@ -847,7 +844,7 @@ export const AlertsDetailsPage = withFallback(
     );
 
     const alertPodObj = {
-      namespace: alert !== undefined ? alert.labels.namespace : undefined,
+      namespace: alert?.labels.namespace,
       kind: 'Pod',
       kindObj: {
         apiVersion: 'v1',
@@ -861,7 +858,7 @@ export const AlertsDetailsPage = withFallback(
         labelPlural: 'Pods',
         labelPluralKey: 'public~Pods',
       },
-      name: alert !== undefined ? alert.labels.pod : undefined,
+      name: alert?.labels.pod,
       badge: null,
     };
 

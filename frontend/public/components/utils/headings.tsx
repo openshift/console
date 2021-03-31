@@ -141,7 +141,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
           )}
         </Split>
       )}
-      {showHeading && (
+      {!props.ele && showHeading && (
         <h1
           className={classNames('co-m-pane__heading', { 'co-m-pane__heading--logo': props.icon })}
         >
@@ -184,6 +184,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
           )}
         </h1>
       )}
+      {props.ele}
       {props.children}
     </div>
   );
@@ -296,6 +297,7 @@ export type PageHeadingProps = {
   icon?: React.ComponentType<{ obj?: K8sResourceKind }>;
   getResourceStatus?: (resource: K8sResourceKind) => string;
   className?: string;
+  ele?: JSX.Element;
 };
 
 export type ResourceOverviewHeadingProps = {
