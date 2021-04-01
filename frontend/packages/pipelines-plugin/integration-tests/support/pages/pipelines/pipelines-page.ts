@@ -23,6 +23,11 @@ export const pipelinesPage = {
     });
   },
 
+  selectActionForPipeline: (pipelineName: string, action: string | pipelineActions) => {
+    pipelinesPage.selectKebabMenu(pipelineName);
+    cy.byTestActionID(action).click();
+  },
+
   verifyDefaultPipelineColumnValues: (defaultValue: string = '-') => {
     cy.get(pipelinesPO.pipelinesTable.columnValues).as('colValues');
     cy.get('@colValues')
@@ -168,6 +173,7 @@ export const pipelinesPage = {
     cy.get(pipelinesPO.addTrigger.gitProviderType).click();
     cy.get(`[id$="${gitProviderType}-link"]`).click({ force: true });
     cy.get(pipelinesPO.addTrigger.add).click();
+    modal.shouldBeClosed();
   },
 };
 

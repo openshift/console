@@ -3,7 +3,7 @@ Feature: Workspaces
               As a user, I want to add or remove secrets details to pipeline
 
         Background:
-            Given user has created or selected namespace "aut-pipe-workspaces"
+            Given user has created or selected namespace "aut-pipelines"
               And user is at pipelines page
 
 

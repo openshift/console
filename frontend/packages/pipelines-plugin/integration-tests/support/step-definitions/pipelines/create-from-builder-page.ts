@@ -19,7 +19,7 @@ Then(
   },
 );
 
-Then('Tasks, Parameters and Resources sections are displayed', () => {
+Then('Tasks, Parameters, Resources and Workspaces sections are displayed', () => {
   pipelineBuilderPage.verifySection();
 });
 

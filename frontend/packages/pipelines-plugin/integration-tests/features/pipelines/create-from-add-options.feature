@@ -3,7 +3,7 @@ Feature: Create Pipeline from Add Options
               As a user, I want to create, edit, delete and view the pipeline
 
         Background:
-            Given user has created or selected namespace "aut-pipe-add-options"
+            Given user has created or selected namespace "aut-pipelines"
 
       
         @regression
@@ -11,13 +11,6 @@ Feature: Create Pipeline from Add Options
              When user clicks From Git card on the Add page
              Then user will be redirected to Import from Git form
               And pipeline section is displayed with message "Select a Builder Image and resource to see if there is a pipeline template available for this runtime."
-
-
-        @regression
-        Scenario: Pipelines section on docker file : P-01-TC04
-             When user clicks From Dockerfile card on the Add page
-             Then user will be redirected to Import from Dockerfile form
-              And Add pipeline section is displayed
 
 
         @smoke
@@ -93,8 +86,8 @@ Feature: Create Pipeline from Add Options
               And user is able to see workload "<pipeline_name>" in topology page
 
         Examples:
-                  | docker_git_url                         | pipeline_name |
-                  | https://github.com/sclorg/nginx-ex.git | nginx-ex-git  |
+                  | docker_git_url                         | pipeline_name   |
+                  | https://github.com/sclorg/nginx-ex.git | docker-pipeline |
 
 
         @regression

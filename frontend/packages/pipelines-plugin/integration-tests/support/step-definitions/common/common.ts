@@ -59,7 +59,6 @@ Given('user is at developer perspective', () => {
 Given('user has created or selected namespace {string}', (projectName: string) => {
   Cypress.env('NAMESPACE', projectName);
   projectNameSpace.selectOrCreateProject(`${projectName}`);
-  cy.log(`User has selected namespace "${projectName}"`);
 });
 
 Given('user is at the Topology page', () => {

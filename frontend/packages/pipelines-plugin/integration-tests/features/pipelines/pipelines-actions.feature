@@ -3,7 +3,7 @@ Feature: Perform the actions on Pipelines page
               As a user, I want to view pipeline details, create, edit and delete the pipeline from Pipelines page
 
         Background:
-            Given user has created or selected namespace "aut-pipe-actions"
+            Given user has created or selected namespace "aut-pipelines"
               And user is at pipelines page
 
 
@@ -76,7 +76,7 @@ Feature: Perform the actions on Pipelines page
              When user searches pipeline "<pipeline_name>" in pipelines page
               And user clicks pipeline "<pipeline_name>" from searched results on Pipelines page
               And user selects option "Edit Pipeline" from Actions menu drop down
-             Then user is at the Pipeline Builder page
+             Then user redirects to Pipeline Builder page
               And Name field will be disabled
               And Add Parameters, Add Resources, Task should be displayed
 
@@ -114,16 +114,16 @@ Feature: Perform the actions on Pipelines page
 
         @regression
         Scenario: Delete the Pipeline from pipelines page
-            Given pipeline "pipeline-one" is present on Pipelines page
-             When user selects "Delete Pipeline" from the kebab menu for "pipeline-one"
+            Given pipeline "p-run-one" is present on Pipelines page
+             When user selects "Delete Pipeline" from the kebab menu for "p-run-one"
               And user clicks Delete button on Delete Pipeline modal
              Then user will be redirected to Pipelines page
 
 
         @regression
         Scenario: Edit the Pipeline from pipelines page
-            Given pipeline "pipeline-two" is present on Pipelines page
-             When user selects "Edit Pipeline" from the kebab menu for "pipeline-two"
+            Given pipeline "p-run-two" is present on Pipelines page
+             When user selects "Edit Pipeline" from the kebab menu for "p-run-two"
              Then user is at the Pipeline Builder page
               And Name field will be disabled
               And Add Parameters, Add Resources, Task should be displayed
@@ -142,6 +142,6 @@ Feature: Perform the actions on Pipelines page
 
         @regression
         Scenario: Start Last Run for the basic pipeline from pipelines page: P-05-TC03
-            Given pipeline run is displayed for "pipelines-fff" with resource
+            Given pipeline run is displayed for "pipeline-fff" with resource
              When user selects "Start Last Run" from the kebab menu for "pipeline-fff"
              Then user will be redirected to Pipeline Run Details page

@@ -75,3 +75,5 @@ Feature file - "regression" suite - execution from command line
 1. Open the [frontend/package.json](../../../package.json) and update `test-cypress-pipelines-headless` as per requirement
 2. In command line, navigate to frontend folder and execute the command `yarn run test-cypress-pipelines-headless`
 3. All the regression scenarios get executed as per the configuration.
+
+Note: User navigates to Developer perspective on every scenario

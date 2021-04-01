@@ -6,6 +6,8 @@ import {
   pipelineRunDetailsPO,
   pipelineRunsPO,
 } from '../../page-objects/pipelines-po';
+import { actionsDropdownMenu } from '../functions/common';
+import { pipelineActions } from '../../constants';
 
 export const pipelineRunDetailsPage = {
   verifyTitle: () => {
@@ -13,7 +15,7 @@ export const pipelineRunDetailsPage = {
       'have.text',
       pageTitle.PipelineRunDetails,
     );
-    cy.testA11y('Pipeline Run Details page');
+    cy.testA11y(`${pageTitle.PipelineRunDetails} page`);
   },
   verifyPipelineRunStatus: (status: string) =>
     cy.get(pipelineRunDetailsPO.pipelineRunStatus).should('have.text', status),
@@ -24,20 +26,20 @@ export const pipelineRunDetailsPage = {
       .next('dd')
       .should('have.text', expectedFieldValue),
   selectFromActionsDropdown: (action: string) => {
-    cy.get(pipelineRunDetailsPO.actions).click();
+    actionsDropdownMenu.clickActionMenu();
     switch (action) {
       case 'Rerun': {
-        cy.byTestActionID('Rerun').click();
+        cy.byTestActionID(pipelineActions.Rerun).click();
         cy.get(pipelineRunDetailsPO.details.sectionTitle).should('be.visible');
         break;
       }
       case 'Delete Pipeline Run': {
-        cy.byTestActionID('Delete Pipeline Run').click();
+        cy.byTestActionID(pipelineActions.DeletePipelineRun).click();
         modal.modalTitleShouldContain('Delete Pipeline?');
         break;
       }
       default: {
-        throw new Error('operator is not available');
+        throw new Error(`${action} is not available in dropdown menu`);
       }
     }
   },
@@ -69,7 +71,6 @@ export const pipelineRunDetailsPage = {
         .should('have.text', 'Triggered by:');
     });
   },
-  verifyActionsDropdown: () => cy.get(pipelineRunDetailsPO.actions).should('be.visible'),
   selectPipeline: () => cy.get(pipelineRunDetailsPO.details.pipelineLink).click(),
   clickOnDownloadLink: () => cy.byButtonText('Download').click(),
   clickOnExpandLink: () => cy.byButtonText('Expand').click(),
@@ -90,6 +91,16 @@ export const pipelineRunDetailsPage = {
         cy.get(pipelineRunDetailsPO.logs.logPage).should('be.visible');
         break;
       }
+      case 'Events': {
+        cy.get(pipelineRunDetailsPO.eventsTab).click();
+        cy.url().should('include', 'events');
+        break;
+      }
+      case 'Task Runs': {
+        cy.get(pipelineRunDetailsPO.taskRunsTab).click();
+        cy.url().should('include', 'task-runs');
+        break;
+      }
       default: {
         throw new Error('operator is not available');
       }
@@ -98,7 +109,7 @@ export const pipelineRunDetailsPage = {
 };
 
 export const pipelineRunsPage = {
-  verifyTitle: () => detailsPage.titleShouldContain('Pipeline Runs'),
+  verifyTitle: () => detailsPage.titleShouldContain(pageTitle.PipelineRuns),
   search: (pipelineRunName: string) => cy.byLegacyTestID('item-filter').type(pipelineRunName),
   selectKebabMenu: (pipelineRunName: string) => {
     cy.get(pipelineRunsPO.pipelineRunsTable.table).should('exist');

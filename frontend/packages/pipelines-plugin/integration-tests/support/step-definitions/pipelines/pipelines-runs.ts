@@ -7,20 +7,15 @@ import {
   pipelineDetailsPage,
   pipelineRunsPage,
 } from '../../pages';
-import {
-  devNavigationMenu,
-  addOptions,
-} from '@console/dev-console/integration-tests/support/constants';
+import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants';
 import {
   topologyPage,
   topologySidePane,
   navigateTo,
-  gitPage,
-  addPage,
 } from '@console/dev-console/integration-tests/support/pages';
 import { modal } from '../../../../../integration-tests-cypress/views/modal';
 import { pipelineRunDetailsPO, pipelinesPO } from '../../page-objects/pipelines-po';
-import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
+import { actionsDropdownMenu } from '../../pages/functions/common';
 
 Given(
   'pipeline {string} consists of task {string} with one git resource',
@@ -36,6 +31,14 @@ When('user fills the details in Start Pipeline popup', () => {
 });
 
 When('user enters git url as {string} in start pipeline modal', (gitUrl: string) => {
+  cy.get('.modal-body-content').then(($modal) => {
+    if ($modal.find(pipelinesPO.startPipeline.gitResourceDropdown).length) {
+      cy.get(pipelinesPO.startPipeline.gitResourceDropdown).click();
+      cy.get('[role="option"]')
+        .first()
+        .click();
+    }
+  });
   startPipelineInPipelinesPage.enterGitUrl(gitUrl);
 });
 
@@ -131,7 +134,7 @@ Then(
 );
 
 Then('Actions dropdown display on the top right corner of the page', () => {
-  pipelineRunDetailsPage.verifyActionsDropdown();
+  actionsDropdownMenu.verifyActionsMenu();
 });
 
 When('user selects the Pipeline Run for {string}', (pipelineName: string) => {
@@ -162,7 +165,7 @@ When('user selects {string} option from Actions menu', (option: string) => {
 });
 
 When('user selects {string} option from pipeline Details Actions menu', (option: string) => {
-  pipelineDetailsPage.selectFromActionsDropdown(option);
+  actionsDropdownMenu.selectAction(option);
 });
 
 When('user selects Rerun option from the Actions menu', () => {
@@ -215,7 +218,7 @@ Given('user is at the Pipeline Details page', () => {});
 Given('pipeline {string} is executed for 3 times', (pipelineName: string) => {
   pipelinesPage.clickOnCreatePipeline();
   pipelineBuilderPage.createPipelineFromBuilderPage(pipelineName);
-  pipelineDetailsPage.clickActionMenu();
+  actionsDropdownMenu.clickActionMenu();
   cy.byTestActionID('Start').click();
   pipelineRunDetailsPage.verifyTitle();
   pipelineRunDetailsPage.verifyPipelineRunStatus('Succeeded');
@@ -264,17 +267,6 @@ Given('one pipeline run is completed with the workload', () => {
   // TODO: implement step
 });
 
-Given('pipeline {string} is created from git page', (name: string) => {
-  navigateTo(devNavigationMenu.Add);
-  addPage.selectCardFromOptions(addOptions.Git);
-  detailsPage.titleShouldContain('Import from Git');
-  gitPage.enterGitUrl('https://github.com/sclorg/nodejs-ex.git');
-  gitPage.enterComponentName(name);
-  gitPage.selectAddPipeline();
-  gitPage.clickCreate();
-  topologyPage.verifyTopologyPage();
-});
-
 Given('pipeline run is displayed for {string} in pipelines page', (name: string) => {
   navigateTo(devNavigationMenu.Pipelines);
   pipelinesPage.search(name);
@@ -313,7 +305,7 @@ Given('pipeline run is available with failed tasks', () => {
 });
 
 When('user clicks Actions menu on the top right corner of the page', () => {
-  pipelineDetailsPage.clickActionMenu();
+  actionsDropdownMenu.clickActionMenu();
 });
 
 When('user clicks Last Run value of the pipeline {string}', (pipelineName: string) => {

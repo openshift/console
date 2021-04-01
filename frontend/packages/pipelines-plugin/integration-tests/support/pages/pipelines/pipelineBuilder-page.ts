@@ -7,20 +7,18 @@ export const pipelineBuilderSidePane = {
   verifyDialog: () => cy.get(pipelineBuilderPO.formView.sidePane.dialog).should('be.visible'),
   selectInputResource: (resourceName: string) => {
     pipelineBuilderSidePane.verifyDialog();
-    cy.get(pipelineBuilderPO.formView.sidePane.inputResource).click();
-    cy.byTestDropDownMenu(resourceName).click();
+    cy.selectByDropDownText(pipelineBuilderPO.formView.sidePane.inputResource, resourceName);
   },
   removeTask: () => {
     pipelineBuilderSidePane.verifyDialog();
-    cy.get(pipelineBuilderPO.formView.sidePane.actions).click();
-    cy.byTestActionID('Remove Task').click();
+    cy.selectByDropDownText(pipelineBuilderPO.formView.sidePane.actions, 'Remove Task');
   },
 };
 
 export const pipelineBuilderPage = {
   verifyTitle: () => {
     cy.get(pipelineBuilderPO.title).should('have.text', pageTitle.PipelineBuilder);
-    cy.testA11y('Pipeline Builder page');
+    cy.testA11y(pageTitle.PipelineBuilder);
   },
   verifyDefaultPipelineName: (pipelineName: string = pipelineBuilderText.pipelineName) =>
     cy.get(pipelineBuilderPO.formView.name).should('have.value', pipelineName),
@@ -33,11 +31,7 @@ export const pipelineBuilderPage = {
     cy.get(pipelineBuilderPO.formView.taskDropdown).click();
     cy.byTestActionID(taskName).click({ force: true });
   },
-  clickOnTask: (taskName: string) =>
-    cy
-      .get(pipelineBuilderPO.formView.task)
-      .contains(taskName)
-      .click({ force: true }),
+  clickOnTask: (taskName: string) => cy.get(`[data-id="${taskName}"] text`).click({ force: true }),
   selectParallelTask: (taskName: string) => {
     cy.mouseHover(pipelineBuilderPO.formView.task);
     cy.get(pipelineBuilderPO.formView.plusTaskIcon)
@@ -82,6 +76,9 @@ export const pipelineBuilderPage = {
     cy.get('@sectionTitle')
       .eq(2)
       .should('have.text', pipelineBuilderText.formView.Resources);
+    cy.get('@sectionTitle')
+      .eq(3)
+      .should('have.text', pipelineBuilderText.formView.Workspaces);
   },
   clickCreateButton: () => cy.get(pipelineBuilderPO.create).click(),
   clickYaml: () => {

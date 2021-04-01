@@ -130,7 +130,7 @@ Given('workload {string} is created from add page with pipeline', (pipelineName:
   navigateTo(devNavigationMenu.Add);
   addPage.selectCardFromOptions(addOptions.Git);
   gitPage.enterGitUrl('https://github.com/sclorg/nodejs-ex.git');
-  gitPage.verifyValidatedMessage();
+  gitPage.verifyValidatedMessage('https://github.com/sclorg/nodejs-ex.git');
   gitPage.enterComponentName(pipelineName);
   gitPage.selectAddPipeline();
   gitPage.clickCreate();

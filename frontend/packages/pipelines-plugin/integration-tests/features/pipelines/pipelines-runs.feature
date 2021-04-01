@@ -3,7 +3,7 @@ Feature: Pipeline Runs
               As a user, I want to start pipeline, rerun, delete pipeline run
 
         Background:
-            Given user has created or selected namespace "aut-pipe-runs"
+            Given user has created or selected namespace "aut-pipelines"
               And user is at pipelines page
 
 
@@ -37,7 +37,7 @@ Feature: Pipeline Runs
                   | pipe-task     | openshift-client |
 
 
-        @smoke
+        @regression
         Scenario Outline: Last Run Status of pipeline in pipelines page after starting pipeline Run : P-05-TC01
             Given pipeline run is displayed for "<pipeline_name>" with resource
               And user is at pipelines page
@@ -166,10 +166,10 @@ Feature: Pipeline Runs
 
         @regression
         Scenario: Start LastRun from topology page : P-05-TC04
-            Given workload "nodejs-ex-git" is created from add page with pipeline
-              And user started the pipeline "nodejs-ex-git" in pipelines page
+            Given workload "nodejs-last-run" is created from add page with pipeline
+              And user started the pipeline "nodejs-last-run" in pipelines page
              When user navigates to Topology page
-              And user clicks node "nodejs-ex-git" to open the side bar
+              And user clicks node "nodejs-last-run" to open the side bar
               And user selects Start LastRun from topology side bar
              Then user is able to see pipeline run in topology side bar
 
@@ -208,14 +208,14 @@ Feature: Pipeline Runs
               And user is able to see the pipelineRuns with status as "Running"
 
 
-        @smoke
+        @regression
         Scenario Outline: Pipeline status display in topology side bar : P-05-TC02
-            Given pipeline "<pipeline_name>" is created from git page
+            Given workload "<pipeline_name>" is created from add page with pipeline
               And user is at pipelines page
              When user selects "Start" option from kebab menu for pipeline "<pipeline_name>"
               And user starts the pipeline from start pipeline modal
               And user navigates to Topology page
-             Then Last Run status of the "<pipeline_name>" displays as "Running" in topology page
+             Then Last Run status of the "<pipeline_name>" displays as "Succeeded" in topology page
 
         Examples:
                   | pipeline_name |
@@ -257,7 +257,7 @@ Feature: Pipeline Runs
               And user will also see the log snippet
 
 
-        @regression
+        @regression @to-do
         Scenario Outline: Start pipeline modal with different Workspaces
             Given pipeline "pipeline-workspace" with PVC "git-PVC" workspace is present
              When user selects "Start" option from kebab menu for pipeline "pipeline-workspace"
@@ -266,7 +266,7 @@ Feature: Pipeline Runs
              Then user sees option Empty Directory, Config Map, Secret, PersistentVolumeClaim, VolumeClaimTemplate
 
 
-        @regression
+        @regression @to-do
         Scenario Outline: Start pipeline modal with Empty directory
             Given pipeline "pipeline-no-workspace" with at least one workspace and no previous Pipeline Runs
              When user selects "Start" option from kebab menu for pipeline "pipeline-no-workspace"
@@ -286,7 +286,7 @@ Feature: Pipeline Runs
               And user can see Volume Mode
 
 
-        @regression
+        @regression @to-do
         Scenario Outline: Create PVC workspace in Start pipeline modal
             Given pipeline "pipeline-no-workspace" with at least one workspace and no previous Pipeline Runs
              When user selects "Start" option from kebab menu for pipeline "pipeline-no-workspace"

@@ -4,5 +4,6 @@ export const pipelineBuilderText = {
     Tasks: 'Tasks',
     Parameters: 'Parameters',
     Resources: 'Resources',
+    Workspaces: 'Workspaces',
   },
 };

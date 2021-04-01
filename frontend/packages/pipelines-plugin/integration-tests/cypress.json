@@ -20,10 +20,10 @@
   "reporterOptions": {
     "configFile": "reporter-config.json"
   },
-  "screenshotsFolder": "../../../gui_test_screenshots/cypress/screenshots",
-  "videosFolder": "../../../gui_test_screenshots/cypress/videos",
+  "screenshotsFolder": "../../../gui_test_screenshots/pipelines-plugin/screenshots",
+  "videosFolder": "../../../gui_test_screenshots/pipelines-plugin/videos",
   "env": {
-    "TAGS": "@smoke and not @manual and not @to-do",
+    "TAGS": "@pipelines and @smoke and not @manual and not @to-do",
     "NAMESPACE": "aut-pipelines"
   },
   "retries": {

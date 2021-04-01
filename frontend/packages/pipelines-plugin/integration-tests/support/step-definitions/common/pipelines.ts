@@ -1,18 +1,18 @@
 import { Given, Then, When } from 'cypress-cucumber-preprocessor/steps';
 import { modal } from '@console/cypress-integration-tests/views/modal';
+import { app, navigateTo } from '@console/dev-console/integration-tests/support/pages';
+import {
+  devNavigationMenu,
+  pageTitle,
+} from '@console/dev-console/integration-tests/support/constants';
+import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 import {
   pipelineRunDetailsPage,
   pipelineBuilderPage,
   pipelinesPage,
   startPipelineInPipelinesPage,
 } from '../../pages';
-import { navigateTo } from '@console/dev-console/integration-tests/support/pages';
-import {
-  devNavigationMenu,
-  pageTitle,
-} from '@console/dev-console/integration-tests/support/constants';
 import { pipelineBuilderPO, pipelinesPO } from '../../page-objects';
-import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 
 When(
   'user selects {string} option from kebab menu for pipeline {string}',
@@ -61,4 +61,9 @@ Given('user has installed OpenShift Pipelines operator using cli', () => {
 
 Then('user redirects to Pipelines page', () => {
   detailsPage.titleShouldContain(pageTitle.Pipelines);
+});
+
+Then('user redirects to Pipeline Builder page', () => {
+  pipelineBuilderPage.verifyTitle();
+  app.waitForLoad();
 });

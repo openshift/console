@@ -1,10 +1,10 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { perspective, projectNameSpace, navigateTo } from '../../pages';
-import { switchPerspective, devNavigationMenu, adminNavigationMenu } from '../../constants';
 import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
 import { nav } from '@console/cypress-integration-tests/views/nav';
 import { modal } from '@console/cypress-integration-tests/views/modal';
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
+import { perspective, projectNameSpace, navigateTo } from '../../pages';
+import { switchPerspective, devNavigationMenu, adminNavigationMenu } from '../../constants';
 
 Given('user is at developer perspective', () => {
   perspective.switchTo(switchPerspective.Developer);
@@ -14,15 +14,6 @@ Given('user is at developer perspective', () => {
   nav.sidenav.switcher.shouldHaveText(switchPerspective.Developer);
   // Bug: 1890678 is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
   // cy.testA11y('Developer perspective');
-});
-
-Given('user has created namespace starts with {string}', (projectName: string) => {
-  const d = new Date();
-  const timestamp = d.getTime();
-  projectNameSpace.selectOrCreateProject(`${projectName}-${timestamp}-ns`);
-  // Bug: 1890678 is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
-  // cy.testA11y('Developer perspective display after creating or selecting project');
-  cy.log(`User has selected namespace "${projectName}-${timestamp}-ns"`);
 });
 
 Given('user has created or selected namespace {string}', (projectName: string) => {
