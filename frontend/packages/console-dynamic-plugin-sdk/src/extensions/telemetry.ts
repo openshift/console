@@ -1,4 +1,5 @@
 import { Extension } from '@console/plugin-sdk/src/typings/base';
+import { JSONSchema6Object } from 'json-schema';
 import { CodeRef, EncodedCodeRef, UpdateExtensionProperties } from '../types';
 
 namespace ExtensionProperties {
@@ -23,7 +24,11 @@ export type ResolvedTelemetryListener = UpdateExtensionProperties<
   ExtensionProperties.TelemetryListenerCodeRefs
 >;
 
-export type TelemetryEventListener = <P extends {} = {}>(eventType: string, properties: P) => void;
+// P should be valid JSON
+export type TelemetryEventListener = <P extends JSONSchema6Object = JSONSchema6Object>(
+  eventType: string,
+  properties: P,
+) => void;
 
 // Type guards
 

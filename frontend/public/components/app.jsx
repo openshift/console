@@ -235,43 +235,34 @@ const AppRouter = () => {
 };
 
 const CaptureTelemetry = React.memo(() => {
-  // TODO notify of url changes only after we've identified the user....
-  // although we cannot prevent the rest of app from notifying before the user loads
-  // so perhaps this is useless?
-  const [identityNotified, setIdentityNotified] = React.useState(false);
-
   const fireTelemetryEvent = useTelemetry();
 
   // notify of identity change
   const user = useSelector(({ UI }) => UI.get('user'));
-  const userId = user?.metadata?.uid ?? user?.metadata?.name;
+  const clusterId = useSelector(({ UI }) => UI.get('clusterID'));
   React.useEffect(() => {
-    if (userId) {
-      fireTelemetryEvent('identify', { userId });
-      setIdentityNotified(true);
+    if (user && clusterId) {
+      fireTelemetryEvent('identify', { clusterId, user });
     }
-  }, [userId, fireTelemetryEvent]);
+  }, [clusterId, user, fireTelemetryEvent]);
 
   // notify url change events
-
   // Debouncing the url change events so that redirects don't fire multiple events.
   // Also because some pages update the URL as the user enters a search term.
   const fireUrlChangeEvent = useDebounceCallback(fireTelemetryEvent);
   React.useEffect(() => {
-    if (identityNotified) {
-      fireUrlChangeEvent('url', history.location);
+    fireUrlChangeEvent('page', history.location);
 
-      let { pathname, search } = history.location;
-      history.listen((location) => {
-        const { pathname: nextPathname, search: nextSearch } = history.location;
-        if (pathname !== nextPathname || search !== nextSearch) {
-          pathname = nextPathname;
-          search = nextSearch;
-          fireUrlChangeEvent('url', location);
-        }
-      });
-    }
-  }, [fireUrlChangeEvent, identityNotified]);
+    let { pathname, search } = history.location;
+    history.listen((location) => {
+      const { pathname: nextPathname, search: nextSearch } = history.location;
+      if (pathname !== nextPathname || search !== nextSearch) {
+        pathname = nextPathname;
+        search = nextSearch;
+        fireUrlChangeEvent('page', location);
+      }
+    });
+  }, [fireUrlChangeEvent]);
 });
 
 graphQLReady.onReady(() => {
