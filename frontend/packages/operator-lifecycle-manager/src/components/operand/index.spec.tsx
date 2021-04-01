@@ -67,6 +67,25 @@ jest.mock('@console/shared/src/hooks/useK8sModels', () => ({
   ],
 }));
 
+jest.mock('@console/shared/src/hooks/useK8sModel', () => ({
+  useK8sModel: () => [
+    {
+      abbr: 'TR',
+      apiGroup: 'testapp.coreos.com',
+      apiVersion: 'v1alpha1',
+      crd: true,
+      kind: 'TestResource',
+      label: 'Test Resource',
+      labelPlural: 'Test Resources',
+      namespaced: true,
+      plural: 'testresources',
+      verbs: ['create'],
+    },
+    false,
+    null,
+  ],
+}));
+
 const i18nNS = 'details-page';
 
 describe(OperandTableRow.displayName, () => {

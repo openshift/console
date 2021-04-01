@@ -587,7 +587,7 @@ export const OperandDetailsPage = (props: OperandDetailsPageProps) => {
     () => getOperandActions(props.match.params.plural, actionExtensions),
     [props.match.params.plural, actionExtensions],
   );
-  return (
+  return model ? (
     <DetailsPage
       match={props.match}
       name={props.match.params.name}
@@ -636,6 +636,8 @@ export const OperandDetailsPage = (props: OperandDetailsPageProps) => {
         navFactory.events(ResourceEventStream),
       ]}
     />
+  ) : (
+    <ErrorPage404 />
   );
 };
 

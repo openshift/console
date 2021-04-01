@@ -11,9 +11,9 @@ export const getDefinitionKey = _.memoize(
     return _.findKey(definitions, (def: SwaggerDefinition) => {
       return _.some(def['x-kubernetes-group-version-kind'], ({ group, version, kind }) => {
         return (
-          (model.apiGroup || '') === (group || '') &&
-          model.apiVersion === version &&
-          model.kind === kind
+          (model?.apiGroup ?? '') === (group || '') &&
+          model?.apiVersion === version &&
+          model?.kind === kind
         );
       });
     });
