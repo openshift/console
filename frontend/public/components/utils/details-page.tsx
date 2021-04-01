@@ -49,6 +49,7 @@ export const ResourceSummary: React.FC<ResourceSummaryProps> = ({
   showAnnotations = true,
   showTolerations = false,
   showLabelEditor = true,
+  canUpdateResource = true,
   podSelector = 'spec.selector',
   nodeSelector = 'spec.template.spec.nodeSelector',
 }) => {
@@ -58,13 +59,14 @@ export const ResourceSummary: React.FC<ResourceSummaryProps> = ({
   const model = modelFor(reference);
   const tolerationsPath = getTolerationsPath(resource);
   const tolerations: Toleration[] = _.get(resource, tolerationsPath);
-  const canUpdate = useAccessReview({
+  const canUpdateAccess = useAccessReview({
     group: model.apiGroup,
     resource: model.plural,
     verb: 'patch',
     name: metadata.name,
     namespace: metadata.namespace,
   });
+  const canUpdate = canUpdateAccess && canUpdateResource;
 
   return (
     <dl data-test-id="resource-summary" className="co-m-pane__details">
@@ -190,6 +192,7 @@ export type ResourceSummaryProps = {
   showAnnotations?: boolean;
   showTolerations?: boolean;
   showLabelEditor?: boolean;
+  canUpdateResource?: boolean;
   podSelector?: string;
   nodeSelector?: string;
   children?: React.ReactNode;

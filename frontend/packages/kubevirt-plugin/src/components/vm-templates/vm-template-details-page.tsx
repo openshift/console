@@ -115,6 +115,7 @@ export const VMTemplateDetailsPage: React.FC<VMTemplateDetailsPageProps> = (prop
         sourceLoadError,
         withCreate: true,
         withCustomizeModal,
+        isCommonTemplate: isCommon,
       }}
     />
   );
