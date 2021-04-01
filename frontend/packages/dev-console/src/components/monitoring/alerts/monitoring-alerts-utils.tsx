@@ -16,10 +16,10 @@ import {
   alertState,
   alertSeverityOrder,
   alertingRuleStateOrder,
-} from '@console/internal/reducers/monitoring';
+  labelsToParams,
+} from '@console/internal/components/monitoring/utils';
 import { Alert, Rule, AlertStates } from '@console/internal/components/monitoring/types';
 import { YellowExclamationTriangleIcon } from '@console/shared';
-import { labelsToParams } from '@console/internal/components/monitoring/utils';
 import SilenceAlert from './SilenceAlert';
 
 const viewAlertRule = (rule: Rule, ns: string) => ({

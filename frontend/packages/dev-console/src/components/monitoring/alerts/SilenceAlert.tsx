@@ -6,6 +6,10 @@ import * as _ from 'lodash';
 import { useDispatch } from 'react-redux';
 import { Switch } from '@patternfly/react-core';
 import { Rule, RuleStates } from '@console/internal/components/monitoring/types';
+import {
+  alertingRuleStateOrder,
+  getAlertsAndRules,
+} from '@console/internal/components/monitoring/utils';
 import { StateTimestamp } from '@console/internal/components/monitoring/alerting';
 import { coFetchJSON } from '@console/internal/co-fetch';
 import SilenceDurationDropDown from './SilenceDurationDropdown';
@@ -14,8 +18,6 @@ import {
   ALERT_MANAGER_TENANCY_BASE_PATH,
   PROMETHEUS_TENANCY_BASE_PATH,
 } from '@console/internal/components/graphs';
-import { getAlertsAndRules } from '@console/internal/components/monitoring/utils';
-import { alertingRuleStateOrder } from '@console/internal/reducers/monitoring';
 import { refreshNotificationPollers } from '@console/internal/components/notification-drawer';
 
 type SilenceAlertProps = {

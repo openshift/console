@@ -11,8 +11,10 @@ import {
   AlertsDetailsPage,
   AlertRulesDetailsPage,
 } from '@console/internal/components/monitoring/alerting';
-import { getAlertsAndRules } from '@console/internal/components/monitoring/utils';
-import { alertingRuleStateOrder } from '@console/internal/reducers/monitoring';
+import {
+  alertingRuleStateOrder,
+  getAlertsAndRules,
+} from '@console/internal/components/monitoring/utils';
 import { monitoringSetRules, monitoringLoaded } from '@console/internal/actions/ui';
 import { usePrometheusRulesPoll } from '@console/internal/components/graphs/prometheus-rules-hook';
 

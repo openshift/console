@@ -39,13 +39,6 @@ import {
   StatefulSetModel,
 } from '../../models';
 import { K8sKind } from '../../module/k8s';
-import {
-  alertDescription,
-  alertingRuleSource,
-  alertSource,
-  alertState,
-  silenceState,
-} from '../../reducers/monitoring';
 import { RootState } from '../../redux';
 import { RowFunction, Table, TableData, TableRow } from '../factory';
 import { FilterToolbar, RowFilter } from '../filter-toolbar';
@@ -73,7 +66,11 @@ import {
   SilenceStates,
 } from '../monitoring/types';
 import {
+  alertDescription,
+  alertingRuleSource,
   AlertResource,
+  alertSource,
+  alertState,
   alertsToProps,
   alertURL,
   getAlertsAndRules,
@@ -82,6 +79,7 @@ import {
   rulesToProps,
   silenceParamToProps,
   SilenceResource,
+  silenceState,
   silencesToProps,
 } from '../monitoring/utils';
 import { refreshNotificationPollers } from '../notification-drawer';

@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
 
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import { coFetchJSON } from '../../co-fetch';
-import { silenceState } from '../../reducers/monitoring';
 import { RootState } from '../../redux';
 import { refreshNotificationPollers } from '../notification-drawer';
 import { ButtonBar } from '../utils/button-bar';
@@ -19,7 +18,7 @@ import { ExternalLink, getURLSearchParams } from '../utils/link';
 import { history } from '../utils/router';
 import { StatusBox } from '../utils/status-box';
 import { SilenceStates } from './types';
-import { silenceParamToProps, SilenceResource } from './utils';
+import { silenceParamToProps, SilenceResource, silenceState } from './utils';
 
 const pad = (i: number): string => (i < 10 ? `0${i}` : String(i));
 

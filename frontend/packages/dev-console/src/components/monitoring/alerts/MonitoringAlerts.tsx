@@ -9,13 +9,15 @@ import { useDispatch, connect } from 'react-redux';
 import { match as RMatch } from 'react-router-dom';
 import { Table, TableHeader, TableBody, SortByDirection } from '@patternfly/react-table';
 import { FilterToolbar } from '@console/internal/components/filter-toolbar';
-import { getAlertsAndRules } from '@console/internal/components/monitoring/utils';
 import { monitoringSetRules, monitoringLoaded, sortList } from '@console/internal/actions/ui';
 import { Rule } from '@console/internal/components/monitoring/types';
+import {
+  alertingRuleStateOrder,
+  getAlertsAndRules,
+} from '@console/internal/components/monitoring/utils';
 import { RootState } from '@console/internal/redux';
 import { getURLSearchParams, EmptyBox, LoadingBox } from '@console/internal/components/utils';
 import { getFilteredRows } from '@console/internal/components/factory';
-import { alertingRuleStateOrder } from '@console/internal/reducers/monitoring';
 import { usePrometheusRulesPoll } from '@console/internal/components/graphs/prometheus-rules-hook';
 import { monitoringAlertRows, alertFilters, applyListSort } from './monitoring-alerts-utils';
 import { MonitoringAlertColumn } from './MonitoringAlertColumn';

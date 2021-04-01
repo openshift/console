@@ -28,7 +28,7 @@ import {
   alertStateOrder,
   silenceFiringAlertsOrder,
   silenceStateOrder,
-} from '../../reducers/monitoring';
+} from '../monitoring/utils';
 import { ingressValidHosts } from '../ingress';
 import { convertToBaseValue, EmptyBox, StatusBox, WithScrollContainer } from '../utils';
 import {

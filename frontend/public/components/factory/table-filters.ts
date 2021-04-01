@@ -23,7 +23,7 @@ import {
   alertSource,
   alertState,
   silenceState,
-} from '../../reducers/monitoring';
+} from '../monitoring/utils';
 import { Alert, Rule, Silence } from '../monitoring/types';
 
 export const fuzzyCaseInsensitive = (a: string, b: string): boolean =>
