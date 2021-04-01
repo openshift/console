@@ -19,7 +19,7 @@ import {
   WatchK8sResource,
 } from '@console/internal/components/utils/k8s-watch-hook';
 
-import { BlockPoolModalFooter } from './footer';
+import { BlockPoolModalFooter } from './modal-footer';
 import { CephClusterKind, StoragePoolKind } from '../../../types';
 import { CephBlockPoolModel } from '../../../models';
 import { CEPH_STORAGE_NAMESPACE } from '../../../constants/index';
@@ -129,6 +129,8 @@ export const CreateBlockPoolModal = withHandlePromise((props: CreateBlockPoolMod
           onClick={onClick}
           cancel={props.cancel}
           close={props.close}
+          actionLabel={t('ceph-storage-plugin~Create')}
+          closeLabel={t('ceph-storage-plugin~Finish')}
         />
       </ModalFooter>
     </div>

@@ -15,7 +15,16 @@ import {
 } from '../../../utils/block-pool';
 
 export const BlockPoolModalFooter = (props: BlockPoolModalFooterProps) => {
-  const { state, dispatch, onPoolCreation, onClick, cancel, close } = props;
+  const {
+    state,
+    dispatch,
+    onPoolCreation,
+    onClick,
+    actionLabel,
+    closeLabel,
+    cancel,
+    close,
+  } = props;
   const { t } = useTranslation();
 
   const isPoolManagementSupported = useFlag(GUARDED_FEATURES.OCS_POOL_MANAGEMENT);
@@ -53,7 +62,7 @@ export const BlockPoolModalFooter = (props: BlockPoolModalFooterProps) => {
         id="confirm-action"
         onClick={handleFinishButton}
       >
-        {t('ceph-storage-plugin~Finish')}
+        {closeLabel}
       </Button>
     </ActionGroup>
   ) : (
@@ -73,7 +82,7 @@ export const BlockPoolModalFooter = (props: BlockPoolModalFooterProps) => {
           isPoolManagementSupported,
         )}
       >
-        {t('ceph-storage-plugin~Create')}
+        {actionLabel}
       </Button>
     </ActionGroup>
   );
@@ -82,6 +91,8 @@ export const BlockPoolModalFooter = (props: BlockPoolModalFooterProps) => {
 type BlockPoolModalFooterProps = {
   state: BlockPoolState;
   dispatch: React.Dispatch<BlockPoolAction>;
-  onPoolCreation: (name: string) => void;
   onClick: () => void;
+  actionLabel: string;
+  closeLabel: string;
+  onPoolCreation?: (name: string) => void;
 } & ModalComponentProps;
