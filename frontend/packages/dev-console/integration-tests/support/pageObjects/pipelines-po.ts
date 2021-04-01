@@ -27,7 +27,7 @@ export const pipelineBuilderPO = {
     sidePane: {
       dialog: 'div.odc-sidebar',
       displayName: '#task-name',
-      inputResource: 'div.pf-c-form [data-test-id="dropdown-button"]',
+      inputResource: '.odc-task-sidebar [data-test-id="dropdown-button"]',
     },
   },
   yamlView: {
@@ -72,9 +72,49 @@ export const pipelineBuilderPO = {
 export const pipelineDetailsPO = {
   title: '[data-test-section-heading="Pipeline details"]',
   actionsMenu: '[data-test-id="actions-menu-button"]',
+  pipelineRunsTab: '[data-test-id="horizontal-link-Pipeline Runs"]',
+  detailsTab: '[data-test-id="horizontal-link-details-page~Details"]',
+  metricsTab: '[data-test-id="horizontal-link-Metrics"]',
+  yamlTab: '[data-test-id="horizontal-link-details-page~YAML"]',
+  parametersTab: '[data-test-id="horizontal-link-Parameters"]',
+  resourcesTab: '[data-test-id="horizontal-link-Resources"]',
   details: {
     triggerTemplateSection: 'div.odc-trigger-template-list',
     triggerTemplateLink: 'a[data-test-id^="trigger-template-"]',
+    sectionTitle: '[data-test-section-heading="Pipeline details"]',
+    fieldNames: {
+      name: '[data-test="Name"]',
+      namespace: '[data-test="Namespace"]',
+      labels: '[data-test="Labels"]',
+      annotations: '[data-test="Annotations"]',
+      createdAt: '[data-test="Created at"]',
+      owner: '[data-test="Owner"]',
+      tasks: '.odc-dynamic-resource-link-list--addSpaceBelow dl dt',
+    },
+    fieldValues: {
+      name: '[data-test-selector="details-item-value__Name"]',
+      namespace: '[data-test-selector="details-item-value__Namespace"]',
+      labels: '[data-test-selector="details-item-value__Labels"]',
+      annotations: '[data-test-selector="details-item-value__Annotations"]',
+      createdAt: '[data-test-selector="details-item-value__Created at"]',
+      owner: '[data-test-selector="details-item-value__Owner"]',
+    },
+    sections: {
+      triggerTemplates: '.odc-trigger-template-list',
+      tasks: '.odc-dynamic-resource-link-list--addSpaceBelow',
+    },
+  },
+  yaml: {
+    yamlEditor: '[data-mode-id="yaml"]',
+  },
+  metrics: {
+    emptyMessage: '.pf-c-empty-state__body',
+    timeRange: '',
+    refreshInterval: '',
+    graphTitle: '.co-dashboard-card__title',
+  },
+  pipelineRuns: {
+    pipelineRunIcon: '[title="PipelineRun"]',
   },
 };
 
@@ -120,6 +160,15 @@ export const pipelineRunDetailsPO = {
   logs: {
     logPage: '[data-test-id="logs-task-container"]',
   },
+  taskRuns: {
+    columnNames: {
+      name: '[data-label="Name"]',
+      task: '[data-label="Task"]',
+      pod: '[data-label="Pod"]',
+      status: '[data-label="Status"]',
+      started: '[data-label="Started"]',
+    },
+  },
 };
 
 export const pipelineRunsPO = {
@@ -132,7 +181,8 @@ export const pipelineRunsPO = {
 
 export const pipelinesPO = {
   createPipeline: '#yaml-create',
-  search: 'input[data-test-id="item-filter"]',
+  search: '[data-test-id="item-filter"]',
+  emptyMessage: '[data-test="empty-message"]',
   pipelinesTable: {
     table: 'div[role="grid"]',
     pipelineName: 'tr td:nth-child(1)',

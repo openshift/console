@@ -1,10 +1,16 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { pipelineBuilderPage } from '../../pages/pipelines/pipelineBuilder-page';
-import { pipelinesPO, pipelineBuilderPO } from '../../pageObjects/pipelines-po';
-import { pipelineDetailsPage } from '../../pages/pipelines/pipelineDetails-page';
-import { startPipelineInPipelinesPage } from '../../pages/pipelines/pipelines-page';
+import {
+  pipelineBuilderPage,
+  pipelineDetailsPage,
+  startPipelineInPipelinesPage,
+} from '@console/dev-console/integration-tests/support/pages';
+import {
+  pipelinesPO,
+  pipelineBuilderPO,
+} from '@console/dev-console/integration-tests/support/pageObjects';
 
 When('user enters yaml content {string} in editor', (pipelineYamlFile: string) => {
+  // eslint-disable-next-line promise/catch-or-return
   cy.fixture(`pipelines/pipelines-workspaces/${pipelineYamlFile}`).then((yaml) => {
     cy.log(yaml);
     pipelineBuilderPage.enterYaml(yaml);

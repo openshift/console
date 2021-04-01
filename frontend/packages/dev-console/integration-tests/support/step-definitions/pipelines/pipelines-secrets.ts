@@ -1,17 +1,17 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { pipelinesPage, startPipelineInPipelinesPage } from '../../pages/pipelines/pipelines-page';
-import { pipelineBuilderPage } from '../../pages/pipelines/pipelineBuilder-page';
-import { navigateTo } from '../../pages/app';
-import { devNavigationMenu } from '../../constants/global';
-import { modal } from '../../../../../integration-tests-cypress/views/modal';
-import { pipelinesPO } from '../../pageObjects/pipelines-po';
-
-const store: Record<string, string> = {};
+import {
+  navigateTo,
+  pipelinesPage,
+  startPipelineInPipelinesPage,
+  pipelineBuilderPage,
+} from '@console/dev-console/integration-tests/support/pages';
+import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants';
+import { modal } from '@console/cypress-integration-tests/views/modal';
+import { pipelinesPO } from '@console/dev-console/integration-tests/support/pageObjects';
 
 Given('user has created pipeline {string} with git resources', (pipelineName: string) => {
   pipelinesPage.clickOnCreatePipeline();
   pipelineBuilderPage.createPipelineWithGitResources(pipelineName);
-  store.pipelineName = pipelineName;
 });
 
 When('user clicks on Show Credentials link present in Start Pipeline modal', () => {

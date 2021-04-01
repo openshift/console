@@ -2,20 +2,12 @@ import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { perspective, projectNameSpace, navigateTo } from '../../pages/app';
 import { switchPerspective, devNavigationMenu } from '../../constants/global';
 import { guidedTour } from '../../../../../integration-tests-cypress/views/guided-tour';
-import { nav } from '../../../../../integration-tests-cypress/views/nav';
 import { modal } from '../../../../../integration-tests-cypress/views/modal';
-import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
-import { adminNavigationMenu, perspectiveName } from '../../constants/staticText/global-text';
-import { pipelinesPage } from '../../pages/pipelines/pipelines-page';
+import { pipelinesPage } from '@console/dev-console/integration-tests/support/pages/pipelines/pipelines-page';
+import { pageTitle } from '../../constants';
 
 Given('user is at developer perspective', () => {
   perspective.switchTo(switchPerspective.Developer);
-  // Bug: 1890676 is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
-  // cy.testA11y('Developer perspective with guider tour modal');
-  guidedTour.close();
-  nav.sidenav.switcher.shouldHaveText(perspectiveName.developer);
-  // Bug: 1890678 is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
-  // cy.testA11y('Developer perspective');
 });
 
 Given('user has created namespace starts with {string}', (projectName: string) => {
@@ -24,12 +16,10 @@ Given('user has created namespace starts with {string}', (projectName: string) =
   projectNameSpace.selectOrCreateProject(`${projectName}-${timestamp}-ns`);
   // Bug: 1890678 is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
   // cy.testA11y('Developer perspective display after creating or selecting project');
-  cy.log(`User has selected namespace "${projectName}-${timestamp}-ns"`);
 });
 
 Given('user has created or selected namespace {string}', (projectName: string) => {
   projectNameSpace.selectOrCreateProject(`${projectName}`);
-  cy.log(`User has selected namespace "${projectName}"`);
 });
 
 Given('user is at pipelines page', () => {
@@ -66,7 +56,7 @@ Then('modal with {string} appears', (header: string) => {
 });
 
 Then('user will be redirected to Pipelines page', () => {
-  detailsPage.titleShouldContain(adminNavigationMenu.pipelines);
+  cy.byLegacyTestID('resource-title').should('contain.text', pageTitle.Pipelines);
 });
 
 When('user clicks create button', () => {

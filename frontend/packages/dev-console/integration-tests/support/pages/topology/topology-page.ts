@@ -24,10 +24,8 @@ export const topologyPage = {
       .clear()
       .type(name),
   verifyWorkloadInTopologyPage: (appName: string) => {
-    cy.get(topologyPO.switcher).click({ force: true });
     topologyPage.search(appName);
-    cy.get('div.is-filtered').should('be.visible');
-    cy.get(topologyPO.switcher).click({ force: true });
+    cy.get(topologyPO.highlightNode).should('be.visible');
   },
   clickDisplayOptionDropdown: () =>
     cy

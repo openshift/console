@@ -66,31 +66,31 @@ export const operatorsPage = {
   selectOperator: (opt: operators | string) => {
     switch (opt) {
       case 'OpenShift Pipelines Operator':
-      case operators.pipelineOperator: {
+      case operators.PipelineOperator: {
         cy.byTestID(
-          'openshift-pipelines-operator-midstr-openshift-pipelines-operators-openshift-marketplace',
+          'openshift-pipelines-operator-rh-redhat-operators-openshift-marketplace',
         ).click();
         break;
       }
       case 'OpenShift Serverless Operator':
-      case operators.serverlessOperator: {
+      case operators.ServerlessOperator: {
         cy.byTestID('serverless-operator-redhat-operators-openshift-marketplace').click();
         break;
       }
       case 'OpenShift Virtualization':
-      case operators.virtualizationOperator: {
+      case operators.VirtualizationOperator: {
         cy.byTestID('kubevirt-hyperconverged-redhat-operators-openshift-marketplace').click();
         break;
       }
       case 'knative Apache Camel Operator':
-      case operators.knativeCamelOperator: {
+      case operators.KnativeCamelOperator: {
         cy.byTestID('knative-camel-operator-community-operators-openshift-marketplace').click();
         modal.modalTitleShouldContain('Show Community Operator');
         cy.byTestID('confirm-action').click();
         break;
       }
       case 'Eclipse Che':
-      case operators.eclipseCheOperator: {
+      case operators.EclipseCheOperator: {
         cy.byTestID('eclipse-che-community-operators-openshift-marketplace').click();
         modal.modalTitleShouldContain('Show Community Operator');
         cy.byTestID('confirm-action').click();

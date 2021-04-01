@@ -1,5 +1,7 @@
 // import { checkErrors } from '../../../../integration-tests-cypress/support';
 
+import { verifyAndInstallPipelinesOperator } from '../pages';
+
 export {}; // needed in files which don't have an import to trigger ES6 module usage
 declare global {
   namespace Cypress {
@@ -21,9 +23,11 @@ before(() => {
   cy.document()
     .its('readyState')
     .should('eq', 'complete');
+  verifyAndInstallPipelinesOperator();
 });
 
 after(() => {
+  cy.exec(`oc delete namespace ${Cypress.env('NAMESPACE')}`, { failOnNonZeroExit: false });
   cy.logout();
 });
 

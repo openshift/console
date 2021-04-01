@@ -1,28 +1,36 @@
-import { detailsPage } from '../../../../integration-tests-cypress/views/details-page';
-import { nav } from '../../../../integration-tests-cypress/views/nav';
+import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
+import { nav } from '@console/cypress-integration-tests/views/nav';
 import { devNavigationMenu, switchPerspective } from '../constants/global';
 import { devNavigationMenuPO } from '../pageObjects/global-po';
 import { pageTitle } from '../constants/pageTitle';
-import { modal } from '../../../../integration-tests-cypress/views/modal';
+import { modal } from '@console/cypress-integration-tests/views/modal';
+import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
 
 export const app = {
   waitForLoad: (timeout: number = 30000) => cy.get('.co-m-loader', { timeout }).should('not.exist'),
+  waitForNameSpacesToLoad: () => {
+    cy.byLegacyTestID('namespace-bar-dropdown').should('be.visible');
+  },
 };
 
 export const perspective = {
   switchTo: (perspectiveName: switchPerspective) => {
     switch (perspectiveName) {
-      case switchPerspective.Administrator: {
-        nav.sidenav.switcher.changePerspectiveTo('Administrator');
+      case switchPerspective.Developer:
+        nav.sidenav.switcher.changePerspectiveTo(switchPerspective.Developer);
+        // Bug: 1890676 is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
+        // cy.testA11y('Developer perspective with guider tour modal');
+        guidedTour.close();
+        app.waitForNameSpacesToLoad();
+        // Bug: 1890678 is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
+        // cy.testA11y('Developer perspective');
         break;
-      }
-      case switchPerspective.Developer: {
-        nav.sidenav.switcher.changePerspectiveTo('Developer');
+      case switchPerspective.Administrator:
+        nav.sidenav.switcher.changePerspectiveTo(switchPerspective.Administrator);
+        nav.sidenav.switcher.shouldHaveText(perspectiveName);
         break;
-      }
-      default: {
-        throw new Error('Option is not available');
-      }
+      default:
+        break;
     }
   },
 };
@@ -140,11 +148,13 @@ export const projectNameSpace = {
         cy.byTestDropDownMenu('#CREATE_RESOURCE_ACTION#').click();
         cy.byTestID('input-name').type(projectName);
         cy.byTestID('confirm-action').click();
+        cy.log(`User has created namespace "${projectName}"`);
       } else {
         cy.get('[role="listbox"]')
           .find('li[role="option"]')
           .contains(projectName)
           .click();
+        cy.log(`User has selected namespace "${projectName}"`);
       }
     });
   },

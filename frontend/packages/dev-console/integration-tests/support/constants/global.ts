@@ -1,6 +1,6 @@
 export enum devNavigationMenu {
   Add = '+Add',
-  Topology = ' Topology',
+  Topology = 'Topology',
   Monitoring = 'Monitoring',
   Builds = 'Builds',
   Search = 'Search',
@@ -14,14 +14,14 @@ export enum devNavigationMenu {
 }
 
 export enum switchPerspective {
-  Developer = 'Developer Perspective',
-  Administrator = ' Administrator Perspective',
+  Developer = 'Developer',
+  Administrator = 'Administrator',
 }
 
 export enum operators {
-  pipelineOperator = 'Pipeline Operator',
-  serverlessOperator = 'Serverless Operator',
-  virtualizationOperator = 'Virtualization Operator',
-  knativeCamelOperator = 'knative Apache Camel Operator',
-  eclipseCheOperator = 'Eclipse Che',
+  PipelineOperator = 'Pipeline',
+  ServerlessOperator = 'Serverless',
+  VirtualizationOperator = 'Virtualization',
+  KnativeCamelOperator = 'knative Apache Camel',
+  EclipseCheOperator = 'Eclipse Che',
 }

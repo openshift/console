@@ -1,7 +1,10 @@
-import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
-import { modal } from '../../../../../integration-tests-cypress/views/modal';
-import { pageTitle } from '../../constants/pageTitle';
-import { pipelineRunDetailsPO, pipelineRunsPO } from '../../pageObjects/pipelines-po';
+import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
+import { modal } from '@console/cypress-integration-tests/views/modal';
+import { pageTitle } from '@console/dev-console/integration-tests/support/constants';
+import {
+  pipelineRunDetailsPO,
+  pipelineRunsPO,
+} from '@console/dev-console/integration-tests/support/pageObjects';
 
 export const pipelineRunDetailsPage = {
   verifyTitle: () =>
@@ -97,6 +100,11 @@ export const pipelineRunDetailsPage = {
         cy.get(pipelineRunDetailsPO.logs.logPage).should('be.visible');
         break;
       }
+      case 'Task Runs': {
+        cy.get(pipelineRunDetailsPO.taskRunsTab).click();
+        cy.url().should('include', 'task-runs');
+        break;
+      }
       default: {
         throw new Error('operator is not available');
       }
@@ -105,7 +113,7 @@ export const pipelineRunDetailsPage = {
 };
 
 export const pipelineRunsPage = {
-  verifyTitle: () => detailsPage.titleShouldContain('Pipeline Runs'),
+  verifyTitle: () => detailsPage.titleShouldContain(pageTitle.PipelineRuns),
   search: (pipelineRunName: string) => cy.byLegacyTestID('item-filter').type(pipelineRunName),
   selectKebabMenu: (pipelineRunName: string) => {
     cy.get(pipelineRunsPO.pipelineRunsTable.table).should('exist');

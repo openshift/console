@@ -1,24 +1,21 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { pipelinesPage } from '../../pages/pipelines/pipelines-page';
-import { pipelineBuilderPage } from '../../pages/pipelines/pipelineBuilder-page';
 import {
+  pipelinesPage,
+  pipelineBuilderPage,
   pipelineDetailsPage,
   triggerTemplateDetailsPage,
   eventListenerDetailsPage,
   clusterTriggerBindingDetailsPage,
-} from '../../pages/pipelines/pipelineDetails-page';
-import { navigateTo } from '../../pages/app';
-import { devNavigationMenu } from '../../constants/global';
-import { modal } from '../../../../../integration-tests-cypress/views/modal';
-import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
-import { pipelinesPO } from '../../pageObjects/pipelines-po';
-
-const store: Record<string, string> = {};
+  navigateTo,
+} from '@console/dev-console/integration-tests/support/pages';
+import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants';
+import { modal } from '@console/cypress-integration-tests/views/modal';
+import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
+import { pipelinesPO } from '@console/dev-console/integration-tests/support/pageObjects';
 
 Given('pipeline {string} is available with git resource', (pipelineName: string) => {
   pipelinesPage.clickOnCreatePipeline();
   pipelineBuilderPage.createPipelineWithGitResources(pipelineName);
-  store.pipelineName = pipelineName;
   cy.get('[data-test-id="breadcrumb-link-0"]').click();
 });
 
@@ -39,8 +36,8 @@ Then('Add button is disabled', () => {
   cy.get(pipelinesPO.addTrigger.cancel).click();
 });
 
-Given('user is at Add Trigger modal', () => {
-  pipelinesPage.selectKebabMenu(store.pipelineName);
+Given('user is at Add Trigger modal for pipeline {string}', (pipelineName: string) => {
+  pipelinesPage.selectKebabMenu(pipelineName);
   cy.byTestActionID('Add Trigger').click();
 });
 
@@ -122,12 +119,11 @@ Given(
     pipelinesPage.selectKebabMenu(pipelineName);
     cy.byTestActionID('Add Trigger').click();
     pipelinesPage.addTrigger();
-    store.pipeline1 = pipelineName;
   },
 );
 
-Given('user is at pipeline Details page', () => {
-  pipelinesPage.selectPipeline(store.pipeline1);
+Given('user is at pipeline Details page of pipeline {string}', (pipelineName: string) => {
+  pipelinesPage.selectPipeline(pipelineName);
   pipelineDetailsPage.verifyPage();
 });
 
@@ -154,8 +150,8 @@ Then('Actions dropdown display on the top right corner of the page', () => {
   triggerTemplateDetailsPage.verifyActionsDropdown();
 });
 
-Given('user is at Trigger Template Details page', () => {
-  pipelinesPage.selectPipeline(store.pipeline1);
+Given('user is at Trigger Template Details page of pipeline {string}', (pipelineName: string) => {
+  pipelinesPage.selectPipeline(pipelineName);
   pipelineDetailsPage.verifyPage();
   pipelineDetailsPage.selectTriggerTemplateLink();
   triggerTemplateDetailsPage.verifyPage();
@@ -176,8 +172,8 @@ Then(
   },
 );
 
-Given('user is at Event Listener Details page', () => {
-  pipelinesPage.selectPipeline(store.pipeline1);
+Given('user is at Event Listener Details page of pipeline {string}', (pipelineName: string) => {
+  pipelinesPage.selectPipeline(pipelineName);
   pipelineDetailsPage.verifyPage();
   pipelineDetailsPage.selectTriggerTemplateLink();
   triggerTemplateDetailsPage.verifyPage();
@@ -235,7 +231,7 @@ Then(
   'option {string} is not available in kebab menu for {string}',
   (option: string, pipelineName: string) => {
     pipelinesPage.selectKebabMenu(pipelineName);
-    cy.byTestActionID(option).should('not.be.visible');
+    cy.byTestActionID(option).should('not.exist');
   },
 );
 

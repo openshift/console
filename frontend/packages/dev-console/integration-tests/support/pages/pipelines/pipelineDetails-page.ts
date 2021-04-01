@@ -1,16 +1,22 @@
-import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
-import { pageTitle } from '../../constants/pageTitle';
+import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
+import { pageTitle } from '@console/dev-console/integration-tests/support/constants/pageTitle';
 import {
   clusterTriggerBindingDetailsPO,
   eventListenerDetailsPO,
   pipelineDetailsPO,
   triggerTemplateDetailsPO,
-} from '../../pageObjects/pipelines-po';
+} from '@console/dev-console/integration-tests/support/pageObjects';
 
 export const pipelineDetailsPage = {
   verifyTitle: (pipelineName: string) => detailsPage.titleShouldContain(pipelineName),
 
   clickActionMenu: () => cy.byLegacyTestID('actions-menu-button').click(),
+
+  selectPipelineRun: () => {
+    cy.get(pipelineDetailsPO.pipelineRuns.pipelineRunIcon)
+      .next('a')
+      .click();
+  },
 
   selectFromActionsDropdown: (action: string) => {
     cy.get(pipelineDetailsPO.actionsMenu)
@@ -31,6 +37,45 @@ export const pipelineDetailsPage = {
     cy.byLegacyTestID('horizontal-link-Pipeline Runs').should('be.visible');
     cy.byLegacyTestID('horizontal-link-Parameters').should('be.visible');
     cy.byLegacyTestID('horizontal-link-Resources').should('be.visible');
+  },
+
+  selectTab: (tabName: string) => {
+    cy.log(`Selecting the ${tabName} tab`);
+    switch (tabName) {
+      case 'Details': {
+        cy.get(pipelineDetailsPO.detailsTab).click();
+        cy.get(pipelineDetailsPO.details.sectionTitle).should('be.visible');
+        break;
+      }
+      case 'YAML': {
+        cy.get(pipelineDetailsPO.yamlTab).click();
+        cy.get(pipelineDetailsPO.yaml.yamlEditor).should('be.visible');
+        break;
+      }
+      case 'Pipeline Runs': {
+        cy.get(pipelineDetailsPO.pipelineRunsTab).click();
+        cy.url().should('include', 'Runs');
+        break;
+      }
+      case 'Parameters': {
+        cy.get(pipelineDetailsPO.parametersTab).click();
+        cy.url().should('include', 'Parameters');
+        break;
+      }
+      case 'Resources': {
+        cy.get(pipelineDetailsPO.resourcesTab).click();
+        cy.url().should('include', 'resources');
+        break;
+      }
+      case 'Metrics': {
+        cy.get(pipelineDetailsPO.metricsTab).click();
+        cy.url().should('include', 'metrics');
+        break;
+      }
+      default: {
+        throw new Error(`tab doesn't exists, please check once again`);
+      }
+    }
   },
 
   verifyFieldsInDetailsTab: () => {
@@ -76,7 +121,7 @@ export const triggerTemplateDetailsPage = {
       .should('have.text', 'Annotations');
     cy.get('@fieldNames')
       .eq(4)
-      .should('have.text', 'Created At');
+      .should('have.text', 'Created at');
     cy.get('@fieldNames')
       .eq(5)
       .should('have.text', 'Owner');
@@ -115,7 +160,7 @@ export const eventListenerDetailsPage = {
       .should('have.text', 'Annotations');
     cy.get('@fieldNames')
       .eq(4)
-      .should('have.text', 'Created At');
+      .should('have.text', 'Created at');
     cy.get('@fieldNames')
       .eq(5)
       .should('have.text', 'Owner');

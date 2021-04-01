@@ -84,4 +84,5 @@ export const topologyPO = {
       cancel: '[data-test="cancel"]',
     },
   },
+  highlightNode: 'g.is-filtered',
 };

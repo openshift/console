@@ -1,30 +1,34 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { pipelinesPage, startPipelineInPipelinesPage } from '../../pages/pipelines/pipelines-page';
-import { pipelineBuilderPage } from '../../pages/pipelines/pipelineBuilder-page';
 import {
+  navigateTo,
+  addPage,
+  topologyPage,
+  topologySidePane,
+  gitPage,
+  pipelinesPage,
+  startPipelineInPipelinesPage,
+  pipelineBuilderPage,
   pipelineRunDetailsPage,
   pipelineRunsPage,
-} from '../../pages/pipelines/pipelineRun-details-page';
-import { navigateTo } from '../../pages/app';
-import { devNavigationMenu } from '../../constants/global';
-import { pipelineDetailsPage } from '../../pages/pipelines/pipelineDetails-page';
-import { addPage } from '../../pages/add-flow/add-page';
-import { addOptions } from '../../constants/add';
-import { topologyPage } from '../../pages/topology/topology-page';
-import { topologySidePane } from '../../pages/topology/topology-side-pane-page';
-import { modal } from '../../../../../integration-tests-cypress/views/modal';
-import { pipelineRunDetailsPO, pipelinesPO } from '../../pageObjects/pipelines-po';
-import { gitPage } from '../../pages/add-flow/git-page';
-import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
-
-const store: Record<string, string> = {};
+  pipelineDetailsPage,
+} from '@console/dev-console/integration-tests/support/pages';
+import {
+  devNavigationMenu,
+  addOptions,
+  pageTitle,
+} from '@console/dev-console/integration-tests/support/constants';
+import { modal } from '@console/cypress-integration-tests/views/modal';
+import {
+  pipelineRunDetailsPO,
+  pipelinesPO,
+} from '@console/dev-console/integration-tests/support/pageObjects';
+import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 
 Given(
   'pipeline {string} consists of task {string} with one git resource',
   (pipelineName: string, taskName: string) => {
     pipelinesPage.clickOnCreatePipeline();
     pipelineBuilderPage.createPipelineWithGitResources(pipelineName, taskName);
-    store.pipelineWithOneGitResource = pipelineName;
   },
 );
 
@@ -35,6 +39,14 @@ When('user fills the details in Start Pipeline popup', () => {
 });
 
 When('user enters git url as {string} in start pipeline modal', (gitUrl: string) => {
+  cy.get('.modal-body-content').then(($modal) => {
+    if ($modal.find(pipelinesPO.startPipeline.gitResourceDropdown).length) {
+      cy.get(pipelinesPO.startPipeline.gitResourceDropdown).click();
+      cy.get('[role="option"]')
+        .first()
+        .click();
+    }
+  });
   startPipelineInPipelinesPage.enterGitUrl(gitUrl);
 });
 
@@ -73,7 +85,6 @@ Given('user started the pipeline {string} in pipelines page', (pipelineName: str
 Given('pipeline run is displayed for {string} without resource', (pipelineName: string) => {
   pipelinesPage.clickOnCreatePipeline();
   pipelineBuilderPage.createPipelineFromBuilderPage(pipelineName);
-  store.pipelineWithOutResource = pipelineName;
   cy.byLegacyTestID('breadcrumb-link-0').click();
   pipelinesPage.selectKebabMenu(pipelineName);
   cy.byTestActionID('Start').click();
@@ -145,10 +156,10 @@ When('user selects Rerun option from kebab menu of {string}', (pipelineName: str
   cy.byTestActionID('Rerun').click();
 });
 
-Given('user is at the Pipeline Run Details page', () => {
+Given('user is at the Pipeline Run Details page of pipeline {string}', (pipelineName: string) => {
   navigateTo(devNavigationMenu.Pipelines);
-  pipelinesPage.search(store.pipelineWithOutResource);
-  pipelinesPage.selectPipelineRun(store.pipelineWithOutResource);
+  pipelinesPage.search(pipelineName);
+  pipelinesPage.selectPipelineRun(pipelineName);
   pipelineRunDetailsPage.verifyTitle();
 });
 
@@ -268,8 +279,9 @@ Given('one pipeline run is completed with the workload', () => {
 Given('pipeline {string} is created from git page', (name: string) => {
   navigateTo(devNavigationMenu.Add);
   addPage.selectCardFromOptions(addOptions.Git);
-  detailsPage.titleShouldContain('Import from Git');
+  detailsPage.titleShouldContain(pageTitle.Git);
   gitPage.enterGitUrl('https://github.com/sclorg/nodejs-ex.git');
+  gitPage.verifyValidatedMessage();
   gitPage.enterComponentName(name);
   gitPage.selectAddPipeline();
   gitPage.clickCreate();
@@ -349,6 +361,7 @@ Given('pipeline {string} is present on Pipeline Details page', (pipelineName: st
   pipelinesPage.clickOnCreatePipeline();
   pipelineBuilderPage.createPipelineFromBuilderPage(pipelineName);
   navigateTo(devNavigationMenu.Pipelines);
+  pipelinesPage.search(pipelineName);
   pipelinesPage.selectPipeline(pipelineName);
   pipelineDetailsPage.verifyTitle(pipelineName);
 });

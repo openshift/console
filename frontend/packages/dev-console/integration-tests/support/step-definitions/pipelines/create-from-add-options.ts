@@ -1,17 +1,21 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
-import { gitPage } from '../../pages/add-flow/git-page';
-import { navigateTo } from '../../pages/app';
-import { devNavigationMenu as menu } from '../../constants/global';
-import { addOptions } from '../../constants/add';
-import { topologyPage } from '../../pages/topology/topology-page';
-import { topologySidePane } from '../../pages/topology/topology-side-pane-page';
-import { pipelinesPage } from '../../pages/pipelines/pipelines-page';
-import { catalogPage } from '../../pages/add-flow/catalog-page';
-import { pipelineRunDetailsPage } from '../../pages/pipelines/pipelineRun-details-page';
-import { addPage } from '../../pages/add-flow/add-page';
-import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
-import { pipelineRunDetailsPO } from '../../pageObjects/pipelines-po';
-import { createGitWorkload } from '../../pages/functions/createGitWorkload';
+import {
+  gitPage,
+  navigateTo,
+  topologyPage,
+  topologySidePane,
+  catalogPage,
+  addPage,
+  createGitWorkload,
+  pipelinesPage,
+  pipelineRunDetailsPage,
+} from '@console/dev-console/integration-tests/support/pages';
+import {
+  devNavigationMenu as menu,
+  addOptions,
+} from '@console/dev-console/integration-tests/support/constants';
+import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
+import { pipelineRunDetailsPO } from '@console/dev-console/integration-tests/support/pageObjects';
 
 Given('user is at Add page', () => {
   navigateTo(menu.Add);
@@ -134,6 +138,7 @@ Given('workload {string} is created from add page with pipeline', (pipelineName:
   navigateTo(menu.Add);
   addPage.selectCardFromOptions(addOptions.Git);
   gitPage.enterGitUrl('https://github.com/sclorg/nodejs-ex.git');
+  gitPage.verifyValidatedMessage('https://github.com/sclorg/nodejs-ex.git');
   gitPage.enterComponentName(pipelineName);
   gitPage.selectAddPipeline();
   gitPage.clickCreate();
