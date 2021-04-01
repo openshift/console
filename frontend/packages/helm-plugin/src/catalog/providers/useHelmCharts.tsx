@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { safeLoad } from 'js-yaml';
 import { coFetch } from '@console/internal/co-fetch';
 import { APIError } from '@console/shared';
-import { CatalogExtensionHook, CatalogItem } from '@console/dynamic-plugin-sdk';
+import { ExtensionHook, CatalogItem } from '@console/dynamic-plugin-sdk';
 import {
   useK8sWatchResource,
   WatchK8sResource,
@@ -13,7 +13,7 @@ import { HelmChartEntries } from '../../types/helm-types';
 import { normalizeHelmCharts } from '../utils/catalog-utils';
 import { HelmChartRepositoryModel } from '../../models';
 
-const useHelmCharts: CatalogExtensionHook<CatalogItem[]> = ({
+const useHelmCharts: ExtensionHook<CatalogItem[]> = ({
   namespace,
 }): [CatalogItem[], boolean, any] => {
   const { t } = useTranslation();

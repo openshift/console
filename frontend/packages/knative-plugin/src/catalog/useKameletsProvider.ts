@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
-import { CatalogItem } from '@console/dynamic-plugin-sdk';
+import { CatalogItem, ExtensionHook } from '@console/dynamic-plugin-sdk';
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import {
   useK8sWatchResource,
@@ -42,7 +42,9 @@ const normalizeKamelets = (
   return normalizedKamelets;
 };
 
-const useKameletsProvider = ({ namespace }): [CatalogItem[], boolean, any] => {
+const useKameletsProvider: ExtensionHook<CatalogItem[]> = ({
+  namespace,
+}): [CatalogItem[], boolean, any] => {
   const { t } = useTranslation();
   const canCreateKameletBinding = useAccessReview({
     group: CamelKameletBindingModel.apiGroup,

@@ -10,7 +10,7 @@ import {
   TextVariants,
 } from '@patternfly/react-core';
 import { LockIcon } from '@patternfly/react-icons';
-import { CatalogExtensionHook, CatalogItem } from '@console/dynamic-plugin-sdk';
+import { ExtensionHook, CatalogItem } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { ServiceToken } from '../../components/access-services/ServicesToken';
@@ -19,7 +19,7 @@ import { CloudServiceAccountRequest } from '../../models';
 import { isResourceStatusSuccessfull } from '../../utils/conditionHandler';
 import { CATALOG_TYPE } from '../const';
 
-const useRhoasCatalog: CatalogExtensionHook<CatalogItem[]> = ({
+const useRhoasCatalog: ExtensionHook<CatalogItem[]> = ({
   namespace,
 }): [CatalogItem[], boolean, any] => {
   const { t } = useTranslation();

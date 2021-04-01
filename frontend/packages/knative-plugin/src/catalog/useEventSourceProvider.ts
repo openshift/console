@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
-import { CatalogItem, CatalogExtensionHook } from '@console/dynamic-plugin-sdk';
+import { CatalogItem, ExtensionHook } from '@console/dynamic-plugin-sdk';
 import { K8sKind, referenceForModel } from '@console/internal/module/k8s';
 import { getEventSourceIcon } from '../utils/get-knative-icon';
 import { getEventSourceCatalogProviderData } from './event-source-data';
@@ -29,7 +29,7 @@ const normalizeEventSources = (
   return normalizedEventSources;
 };
 
-const useEventSourceProvider: CatalogExtensionHook<CatalogItem[]> = ({
+const useEventSourceProvider: ExtensionHook<CatalogItem[]> = ({
   namespace,
 }): [CatalogItem[], boolean, any] => {
   const { t } = useTranslation();
