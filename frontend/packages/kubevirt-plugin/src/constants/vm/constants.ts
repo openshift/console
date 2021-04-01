@@ -66,10 +66,24 @@ export const VM_DETAIL_EVENTS_HREF = 'events';
 
 export const DUMMY_VM_NAME = 'vm';
 
-// NOTE(yaacov): BZ 1944273, wintool container version should matches the "latest" image at the time of the release.
-// https://catalog.redhat.com/software/containers/container-native-virtualization/virtio-win/5c8a9ce65a13464733ed0946
-export const WINTOOLS_CONTAINER_VERSION = 'v2.6.0';
-export const WINTOOLS_CONTAINER_NAME_DOWNSTREAM = `registry.redhat.io/container-native-virtualization/virtio-win:${WINTOOLS_CONTAINER_VERSION}`;
+// NOTE(yaacov):
+// BZ 1944273, wintool container version should matches the "latest" image at the time of the release
+// Bug 1942839, container images should use digest for competability with disconnected enviorments
+//
+// To get the image's digest you could the following steps:
+//
+// * Step 1:
+// skopeo login registry.redhat.io
+// Login Succeeded!
+//
+// * Step 2: skopeo inspect docker://registry.redhat.io/container-native-virtualization/virtio-win:v2.6.0 | jq '.Digest'
+// "sha256:011060472f068e42e2c0c0b3451a99b5607dd037ba70945004f98b2de74b89a2"
+//
+// * Step 3:
+// podman pull --authfile /root/ocp4-disconnected/pull-secret.json registry.redhat.io/container-native-virtualization/virtio-win@sha256:<digest>
+export const WINTOOLS_CONTAINER_DIGEST =
+  '011060472f068e42e2c0c0b3451a99b5607dd037ba70945004f98b2de74b89a2';
+export const WINTOOLS_CONTAINER_NAME_DOWNSTREAM = `registry.redhat.io/container-native-virtualization/virtio-win@sha256:${WINTOOLS_CONTAINER_DIGEST}`;
 
 export const WINTOOLS_CONTAINER_NAMES = {
   openshift: WINTOOLS_CONTAINER_NAME_DOWNSTREAM,
