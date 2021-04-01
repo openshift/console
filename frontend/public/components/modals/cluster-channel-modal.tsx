@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
+import { TextInput } from '@patternfly/react-core';
+import * as semver from 'semver';
 
 import { ChannelDocLink } from '../cluster-settings/cluster-settings';
 import { ClusterVersionModel } from '../../models';
@@ -12,7 +14,12 @@ import {
   ModalSubmitFooter,
   ModalTitle,
 } from '../factory/modal';
-import { getAvailableClusterChannels, k8sPatch, K8sResourceKind } from '../../module/k8s';
+import {
+  ClusterVersionKind,
+  getAvailableClusterChannels,
+  getLastCompletedUpdate,
+  k8sPatch,
+} from '../../module/k8s';
 
 const ClusterChannelModal = withHandlePromise((props: ClusterChannelModalProps) => {
   const { cancel, close, cv, errorMessage, handlePromise, inProgress } = props;
@@ -22,6 +29,8 @@ const ClusterChannelModal = withHandlePromise((props: ClusterChannelModalProps) 
     o[val] = val;
     return o;
   }, {});
+  const version = semver.parse(getLastCompletedUpdate(cv));
+  const channelsExist = cv.status?.desired?.channels?.length;
   const submit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     const patch = [{ op: 'add', path: '/spec/channel', value: channel }];
@@ -30,26 +39,57 @@ const ClusterChannelModal = withHandlePromise((props: ClusterChannelModalProps) 
 
   return (
     <form onSubmit={submit} name="form" className="modal-content modal-content--no-inner-scroll">
-      <ModalTitle>{t('cluster-channel-modal~Update channel')}</ModalTitle>
+      <ModalTitle>
+        {channelsExist
+          ? t('cluster-channel-modal~Select channel')
+          : t('cluster-channel-modal~Input channel')}
+      </ModalTitle>
       <ModalBody>
         <p>
-          {t(
-            'cluster-channel-modal~Select a channel that reflects your desired version. Critical security updates will be delivered to any vulnerable channels.',
-          )}
+          {channelsExist
+            ? t(
+                'cluster-channel-modal~The current version is available in the channels listed in the dropdown below. Select a channel that reflects the desired channel. Critical security updates will be delivered to any vulnerable channels.',
+              )
+            : t(
+                'cluster-channel-modal~Input a channel that reflects the desired channel. To verify if the version exists in a channel, save and check the update status. Critical security updates will be delivered to any vulnerable channels.',
+              )}
         </p>
         <p>
           <ChannelDocLink />
         </p>
         <div className="form-group">
-          <label htmlFor="channel_dropdown">{t('cluster-channel-modal~Select channel')}</label>
-          <Dropdown
-            className="cluster-channel-modal__dropdown"
-            id="channel_dropdown"
-            items={availableChannels}
-            onChange={(newChannel: string) => setChannel(newChannel)}
-            selectedKey={channel}
-            title={t('cluster-channel-modal~Select channel')}
-          />
+          <label htmlFor="channel">{t('cluster-channel-modal~Channel')}</label>
+          {channelsExist ? (
+            <Dropdown
+              className="cluster-channel-modal__dropdown"
+              id="channel"
+              items={availableChannels}
+              onChange={(newChannel: string) => setChannel(newChannel)}
+              selectedKey={channel}
+              title={t('cluster-channel-modal~Channel')}
+            />
+          ) : (
+            <>
+              <TextInput
+                id="channel"
+                onChange={(newChannel) => setChannel(newChannel)}
+                value={channel}
+                placeholder={t(`cluster-channel-modal~e.g., {{version}}`, {
+                  version: `stable-${version.major}.${version.minor}`,
+                })}
+              />
+              <p className="help-block">
+                {t(
+                  `cluster-channel-modal~Potential channels are {{stable}}, {{fast}}, or {{candidate}}.`,
+                  {
+                    stable: `stable-${version.major}.${version.minor}`,
+                    fast: `fast-${version.major}.${version.minor}`,
+                    candidate: `candidate-${version.major}.${version.minor}`,
+                  },
+                )}
+              </p>
+            </>
+          )}
         </div>
       </ModalBody>
       <ModalSubmitFooter
@@ -66,7 +106,7 @@ const ClusterChannelModal = withHandlePromise((props: ClusterChannelModalProps) 
 export const clusterChannelModal = createModalLauncher(ClusterChannelModal);
 
 type ClusterChannelModalProps = {
-  cv: K8sResourceKind;
+  cv: ClusterVersionKind;
   t: TFunction;
 } & ModalComponentProps &
   HandlePromiseProps;

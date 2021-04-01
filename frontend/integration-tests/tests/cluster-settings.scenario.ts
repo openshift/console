@@ -25,19 +25,12 @@ describe('Cluster Settings', () => {
     await horizontalnavView.clickHorizontalTab('Global configuration');
     await crudView.isLoaded();
   });
-  it('display overview channel update modal, select value and click cancel', async () => {
+  it('display overview channel update modal and click cancel', async () => {
     await horizontalnavView.clickHorizontalTab('Details');
     await crudView.isLoaded();
     expect(clusterSettingsView.channelUpdateLink.isDisplayed()).toBe(true);
     await clusterSettingsView.channelUpdateLink.click();
     await crudView.isLoaded();
-
-    expect(clusterSettingsView.channelDropdownButton.isDisplayed()).toBe(true);
-    await clusterSettingsView.channelDropdownButton.click();
-    await crudView.isLoaded();
-
-    expect(clusterSettingsView.getSelectedChannel.get(0).isDisplayed()).toBe(true);
-    await clusterSettingsView.getSelectedChannel.get(0).click();
 
     expect(clusterSettingsView.channelPopupCancelButton.isDisplayed()).toBe(true);
     await clusterSettingsView.channelPopupCancelButton.click();

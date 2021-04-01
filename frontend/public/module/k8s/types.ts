@@ -784,6 +784,7 @@ export type ClusterUpdate = {
   force: boolean;
   image: string;
   version: string;
+  channels?: string[];
 };
 
 export type UpdateHistory = {

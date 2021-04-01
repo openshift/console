@@ -53,6 +53,7 @@ export const clusterVersionProps: ClusterVersionKind = {
       image:
         'registry.svc.ci.openshift.org/ocp/release@sha256:8f923b7b8efdeac619eb0e7697106c1d17dd3d262c49d8742b38600417cf7d1d',
       version: '4.5.2',
+      channels: ['stable-4.5', 'stable-4.6'],
     },
     history: [
       {
