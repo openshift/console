@@ -69,7 +69,14 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
             className={cx('odc-quick-search-list__item', {
               'odc-quick-search-list__item--highlight': item.uid === selectedItemId,
             })}
-            onDoubleClick={(e: React.SyntheticEvent) => handleCta(e, item, closeModal)}
+            onDoubleClick={(e: React.SyntheticEvent) => {
+              handleCta(e, item, closeModal);
+              fireTelemetryEvent('Quick Search Used', {
+                id: item.uid,
+                type: item.type,
+                name: item.name,
+              });
+            }}
           >
             <DataListItemRow className="odc-quick-search-list__item-row">
               <DataListItemCells

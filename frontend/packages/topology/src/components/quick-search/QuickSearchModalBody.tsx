@@ -89,6 +89,11 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
     (e) => {
       if (selectedItem) {
         handleCta(e, selectedItem, closeModal);
+        fireTelemetryEvent('Quick Search Used', {
+          id: selectedItem.uid,
+          type: selectedItem.type,
+          name: selectedItem.name,
+        });
       }
     },
     [closeModal, selectedItem],

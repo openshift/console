@@ -264,6 +264,11 @@ class MastheadToolbarContents_ extends React.Component {
             externalLink: true,
             href: getOCMLink(clusterID),
             image: <img src={redhatLogoImg} alt="" />,
+            callback: () => {
+              fireTelemetryEvent('Launcher Menu Accessed', {
+                item: 'OpenShift Cluster Manager',
+              });
+            },
           },
         ],
       });
@@ -286,6 +291,11 @@ class MastheadToolbarContents_ extends React.Component {
           externalLink: true,
           href: _.get(item, 'spec.href'),
           image: <img src={_.get(item, 'spec.applicationMenu.imageURL')} alt="" />,
+          callback: () => {
+            fireTelemetryEvent('Launcher Menu Accessed', {
+              item: _.get(item, 'spec.text'),
+            });
+          },
         });
       });
     });
@@ -309,11 +319,23 @@ class MastheadToolbarContents_ extends React.Component {
           label: t('masthead~Documentation'),
           externalLink: true,
           href: openshiftHelpBase,
+          callback: () => {
+            fireTelemetryEvent('Documentation Clicked');
+          },
         },
         ...(flags[FLAGS.CONSOLE_CLI_DOWNLOAD]
           ? [
               {
-                component: <Link to="/command-line-tools">{t('masthead~Command line tools')}</Link>,
+                component: (
+                  <Link
+                    onClick={() => {
+                      fireTelemetryEvent('CLI Clicked');
+                    }}
+                    to="/command-line-tools"
+                  >
+                    {t('masthead~Command line tools')}
+                  </Link>
+                ),
               },
             ]
           : []),

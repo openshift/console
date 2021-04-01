@@ -26,6 +26,11 @@ const QuickSearchDetails: React.FC<QuickSearchDetailsProps> = ({ selectedItem, c
         className="odc-quick-search-details__form-button"
         onClick={(e) => {
           handleCta(e, selectedItem, closeModal);
+          fireTelemetryEvent('Quick Search Used', {
+            id: selectedItem.uid,
+            type: selectedItem.type,
+            name: selectedItem.name,
+          });
         }}
       >
         {selectedItem.cta.label}
