@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { compare, parse, SemVer } from 'semver';
+import { compare, gte, parse, SemVer } from 'semver';
 import {
   ClusterServiceVersionKind,
   ClusterServiceVersionModel,
   ClusterServiceVersionPhase,
 } from '@console/operator-lifecycle-manager';
 import { k8sList } from '@console/internal/module/k8s';
+import { PIPELINE_GA_VERSION } from '../const';
 
 export const getPipelineOperatorVersion = async (namespace: string): Promise<SemVer | null> => {
   const allCSVs: ClusterServiceVersionKind[] = await k8sList(ClusterServiceVersionModel, {
@@ -37,4 +38,9 @@ export const usePipelineOperatorVersion = (namespace: string): SemVer | null => 
       );
   }, [namespace]);
   return version;
+};
+
+export const isGAVersionInstalled = (operator: SemVer): boolean => {
+  if (!operator) return false;
+  return gte(operator.version, PIPELINE_GA_VERSION);
 };

@@ -15,6 +15,7 @@ import PipelineRunDurationGraph from '../PipelineRunDurationGraph';
 import PipelineRunTaskRunGraph from '../PipelineRunTaskRunGraph';
 import PipelineMetricsTimeRangeDropdown from '../PipelineMetricsTimeRangeDropdown';
 import PipelineMetricsRefreshDropdown from '../PipelineMetricsRefreshDropdown';
+import { MetricsQueryPrefix } from '../pipeline-metrics-utils';
 
 jest.mock('@console/internal/components/utils/k8s-get-hook', () => ({
   useK8sGet: jest.fn(),
@@ -39,6 +40,10 @@ describe('Pipeline Metrics', () => {
   beforeEach(() => {
     PipelineMetricsProps = {
       obj: pipeline,
+      customData: {
+        templateNames: [],
+        queryPrefix: MetricsQueryPrefix.TEKTON_PIPELINES_CONTROLLER,
+      },
     };
   });
 

@@ -8,6 +8,13 @@ const pipelineRunProps: React.ComponentProps<typeof PipelineRuns> = {
     metadata: {
       name: 'pipeline-a',
     },
+    spec: {
+      tasks: [{ name: 'task1' }],
+    },
+  },
+  customData: {
+    templateNames: [],
+    queryPrefix: '',
   },
 };
 

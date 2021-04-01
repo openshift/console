@@ -64,11 +64,11 @@ export const usePipelinePVC = (
   return [!PVCError && PVC.length > 0 ? PVC[0] : null, PVCLoaded];
 };
 
-export const usePipelineSuccessRatioPoll = ({ delay, namespace, name, timespan }) => {
+export const usePipelineSuccessRatioPoll = ({ delay, namespace, name, timespan, queryPrefix }) => {
   return useURLPoll<PrometheusResponse>(
     getPrometheusURL({
       endpoint: PrometheusEndpoint.QUERY_RANGE,
-      query: metricQueries[PipelineQuery.PIPELINE_SUCCESS_RATIO]({ name, namespace }),
+      query: metricQueries(queryPrefix)[PipelineQuery.PIPELINE_SUCCESS_RATIO]({ name, namespace }),
       samples: 1,
       endTime: Date.now(),
       timespan,
@@ -79,11 +79,14 @@ export const usePipelineSuccessRatioPoll = ({ delay, namespace, name, timespan }
   );
 };
 
-export const usePipelineRunTaskRunPoll = ({ delay, namespace, name, timespan }) => {
+export const usePipelineRunTaskRunPoll = ({ delay, namespace, name, timespan, queryPrefix }) => {
   return useURLPoll<PrometheusResponse>(
     getPrometheusURL({
       endpoint: PrometheusEndpoint.QUERY_RANGE,
-      query: metricQueries[PipelineQuery.PIPELINE_RUN_TASK_RUN_DURATION]({ name, namespace }),
+      query: metricQueries(queryPrefix)[PipelineQuery.PIPELINE_RUN_TASK_RUN_DURATION]({
+        name,
+        namespace,
+      }),
       samples: DEFAULT_SAMPLES,
       endTime: Date.now(),
       timespan,
@@ -94,11 +97,17 @@ export const usePipelineRunTaskRunPoll = ({ delay, namespace, name, timespan }) 
   );
 };
 
-export const usePipelineRunDurationPoll = ({ delay, namespace, name, timespan }): any => {
+export const usePipelineRunDurationPoll = ({
+  delay,
+  namespace,
+  name,
+  timespan,
+  queryPrefix,
+}): any => {
   return useURLPoll<PrometheusResponse>(
     getPrometheusURL({
       endpoint: PrometheusEndpoint.QUERY_RANGE,
-      query: metricQueries[PipelineQuery.PIPELINE_RUN_DURATION]({ name, namespace }),
+      query: metricQueries(queryPrefix)[PipelineQuery.PIPELINE_RUN_DURATION]({ name, namespace }),
       samples: DEFAULT_SAMPLES,
       endTime: Date.now(),
       timespan,
@@ -109,11 +118,11 @@ export const usePipelineRunDurationPoll = ({ delay, namespace, name, timespan })
   );
 };
 
-export const usePipelineRunPoll = ({ delay, namespace, name, timespan }) => {
+export const usePipelineRunPoll = ({ delay, namespace, name, timespan, queryPrefix }) => {
   return useURLPoll<PrometheusResponse>(
     getPrometheusURL({
       endpoint: PrometheusEndpoint.QUERY_RANGE,
-      query: metricQueries[PipelineQuery.NUMBER_OF_PIPELINE_RUNS]({ name, namespace }),
+      query: metricQueries(queryPrefix)[PipelineQuery.NUMBER_OF_PIPELINE_RUNS]({ name, namespace }),
       samples: DEFAULT_SAMPLES,
       endTime: Date.now(),
       timespan,
