@@ -90,6 +90,9 @@ export const catalogPO = {
   cardType: 'span.pf-c-badge',
   create: 'button[type="submit"]',
   cancel: '[data-test-id="reset-button"]',
+  cardList: '[role="rowgroup"]',
+  cardHeader: '.pf-c-badge.pf-m-read',
+  groupByMenu: 'pf-c-dropdown__menu',
   catalogTypes: {
     operatorBacked: '[data-test="kind-cluster-service-version"]',
     helmCharts: 'a[href="/?catalogType=HelmChart"]',

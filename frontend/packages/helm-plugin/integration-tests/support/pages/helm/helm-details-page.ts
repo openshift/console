@@ -1,6 +1,6 @@
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
-import { pageTitle as helmPageTitle } from '../../constants/pageTitle';
-import { helmPO } from '../../pageObjects';
+import { pageTitle as helmPageTitle } from '@console/dev-console/integration-tests/support/constants';
+import { helmPO } from '@console/dev-console/integration-tests/support/pageObjects';
 import { modal } from '@console/cypress-integration-tests/views/modal';
 
 export const helmDetailsPage = {
@@ -28,9 +28,8 @@ export const helmDetailsPage = {
   },
   uninstallHelmRelease: () => {
     modal.modalTitleShouldContain('Uninstall Helm Release?');
-    cy.byTestID('confirm-action')
-      .should('be.enabled')
-      .click();
+    modal.submit();
+    modal.shouldBeClosed();
   },
   enterReleaseNameInUninstallPopup: (releaseName: string = 'nodejs-ex-k') => {
     modal.modalTitleShouldContain('Uninstall Helm Release?');

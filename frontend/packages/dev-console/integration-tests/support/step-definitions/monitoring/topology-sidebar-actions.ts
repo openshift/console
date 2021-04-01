@@ -20,7 +20,7 @@ Given(
   },
 );
 
-Given('helm release {string} is present in topology page', (helmReleaseName: string) => {
+Given('user has installed helm release {string}', (helmReleaseName: string) => {
   createHelmChartFromAddPage(helmReleaseName);
   topologyPage.verifyWorkloadInTopologyPage(helmReleaseName);
 });

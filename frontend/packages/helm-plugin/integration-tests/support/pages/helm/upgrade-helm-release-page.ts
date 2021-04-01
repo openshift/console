@@ -1,4 +1,4 @@
-import { helmPO } from '../../pageObjects';
+import { helmPO } from '@console/dev-console/integration-tests/support/pageObjects/helm-po';
 import { modal } from '@console/cypress-integration-tests/views/modal';
 
 export const upgradeHelmRelease = {
@@ -14,13 +14,11 @@ export const upgradeHelmRelease = {
       .type('2'),
   upgradeChartVersion: (yamlView: boolean = false) => {
     cy.get(helmPO.upgradeHelmRelease.chartVersion).click();
-    cy.byLegacyTestID('dropdown-menu').then((listing) => {
-      const count = Cypress.$(listing).length;
-      const randNum = Math.floor(Math.random() * count);
-      cy.byLegacyTestID('dropdown-menu')
-        .eq(randNum)
-        .click();
-    });
+    const count = Cypress.$('[data-test-id="dropdown-menu"]').length;
+    const randNum = Math.floor(Math.random() * count);
+    cy.byLegacyTestID('dropdown-menu')
+      .eq(randNum)
+      .click();
     if (yamlView === true) {
       modal.modalTitleShouldContain('Change Chart Version?');
       cy.byTestID('confirm-action').click();

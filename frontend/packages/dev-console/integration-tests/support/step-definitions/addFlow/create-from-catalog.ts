@@ -95,7 +95,8 @@ When('user selects {string} card from catalog page', (cardName: string) => {
   catalogPage.selectCardInCatalog(cardName);
 });
 
-When('user selects {string} helm chart from catalog page', (helmChartName: string) => {
+When('user searches and selects {string} helm chart from catalog page', (helmChartName: string) => {
+  catalogPage.search(helmChartName);
   catalogPage.selectHelmChartCard(helmChartName);
 });
 

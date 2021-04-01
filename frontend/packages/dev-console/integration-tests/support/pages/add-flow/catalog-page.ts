@@ -4,6 +4,7 @@ import { addPage } from './add-page';
 import { addOptions, catalogCards, catalogTypes } from '../../constants/add';
 import { topologyHelper } from '../topology/topology-helper-page';
 import { helmPO } from '../../pageObjects/helm-po';
+import { app } from '../app';
 
 export const catalogPage = {
   verifyTitle: () => cy.pageTitleShouldContain('Developer Catalog'),
@@ -161,13 +162,38 @@ export const catalogPage = {
   verifyCardName: (partialCardName: string) => {
     cy.get(cardTitle).contains(partialCardName, { matchCase: false });
   },
+  verifyChartListAvailable: () => {
+    cy.get(catalogPO.cardList)
+      .should('exist')
+      .find(catalogPO.cardHeader)
+      .its('length')
+      .should('be.greaterThan', 0);
+  },
+  verifyChartCardsAvailable: () => {
+    cy.get(catalogPO.cardList)
+      .should('exist')
+      .find(catalogPO.cardHeader)
+      .each(($el) => {
+        expect('Helm Charts').toContain($el.text());
+      });
+  },
+  verifyFilterByKeywordField: () => {
+    cy.get('.pf-c-search-input__text-input').should('be.visible');
+  },
+  verifySortDropdown: () => {
+    cy.get(catalogPO.groupBy).then((body) => {
+      if (body.find(catalogPO.groupByMenu).length <= 0) {
+        cy.get(catalogPO.groupBy).click();
+      }
+    });
+    cy.get(catalogPO.aToz).should('be.visible');
+    cy.get(catalogPO.zToA).should('be.visible');
+  },
   createHelmChartFromAddPage: (
     releaseName: string = 'nodejs-ex-k',
     helmChartName: string = 'Nodejs Ex K v0.2.1',
   ) => {
-    cy.document()
-      .its('readyState')
-      .should('eq', 'complete');
+    app.waitForDocumentLoad();
     addPage.selectCardFromOptions(addOptions.HelmChart);
     catalogPage.verifyPageTitle('Helm Charts');
     catalogPage.isCardsDisplayed();
@@ -178,9 +204,7 @@ export const catalogPage = {
     catalogPage.verifyInstallHelmChartPage();
     catalogPage.enterReleaseName(releaseName);
     catalogPage.clickOnInstallButton();
-    cy.document()
-      .its('readyState')
-      .should('eq', 'complete');
+    app.waitForDocumentLoad();
     topologyHelper.verifyWorkloadInTopologyPage(releaseName);
   },
 };

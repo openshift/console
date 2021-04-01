@@ -2,17 +2,19 @@ import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import {
   topologyPage,
   topologySidePane,
-  upgradeHelmRelease,
-  helmDetailsPage,
-  rollBackHelmRelease,
-  helmPage,
-  catalogPage,
+  app,
   navigateTo,
-} from '../../pages';
-import { devNavigationMenu } from '../../constants';
+  catalogPage,
+} from '@console/dev-console/integration-tests/support/pages';
+import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants';
+import { upgradeHelmRelease, helmDetailsPage, rollBackHelmRelease, helmPage } from '../../pages';
 
 Given('helm release {string} is present in topology page', (workloadName: string) => {
   catalogPage.createHelmChartFromAddPage(workloadName);
+});
+
+Given('user has installed helm release {string}', (helmReleaseName: string) => {
+  catalogPage.createHelmChartFromAddPage(helmReleaseName);
 });
 
 When(
@@ -98,9 +100,6 @@ When('user clicks on the Uninstall button', () => {
 });
 
 Then('user will be redirected to Topology page with no workloads', () => {
-  cy.document()
-    .its('readyState')
-    .should('eq', 'complete');
-  topologyPage.verifyTitle();
+  app.waitForDocumentLoad();
   topologyPage.verifyNoWorkLoadsText('No resources found');
 });
