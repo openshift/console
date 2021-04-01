@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as ejs from 'ejs';
 import chalk from 'chalk';
 import { getProgramFromFile, printJSDocComments } from './utils/typescript';
-import { getConsoleTypeResolver } from './utils/type-resolver';
+import { ExtensionTypeInfo, getConsoleTypeResolver } from './utils/type-resolver';
 import { resolvePath, relativePath } from './utils/path';
 
 const getConsoleExtensions = () => {
@@ -28,7 +28,16 @@ const renderTemplate = (srcFile: string, data: {}) => {
 console.log('Generating Console plugin documentation');
 
 renderTemplate('scripts/templates/console-extensions.md.ejs', {
-  extensions: getConsoleExtensions().sort((a, b) => a.type.localeCompare(b.type)),
-  printComments: printJSDocComments,
+  extensions: getConsoleExtensions()
+    // Sort extensions by their `type` value
+    .sort((a, b) => a.type.localeCompare(b.type))
+    // Sort extension properties by their optional modifier
+    .map<ExtensionTypeInfo>((e) => ({
+      ...e,
+      properties: e.properties.sort((a, b) =>
+        a.optional === b.optional ? 0 : a.optional ? 1 : -1,
+      ),
+    })),
+  printComments: (docComments: string[]) => printJSDocComments(docComments).replace(/\n/g, '<br/>'),
   escapeTableCell: (value: string) => value.replace(/\|/g, '\\|'),
 });
