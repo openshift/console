@@ -12,7 +12,7 @@ import {
   truncateMiddle,
 } from '@console/internal/components/utils';
 import { SvgDropShadowFilter } from '@console/topology/src/components/svg';
-import { PipelineTaskSpec, PipelineTaskRef, TaskKind } from '../../../../types';
+import { TektonTaskSpec, PipelineTaskRef, TaskKind } from '../../../../types';
 import { runStatus, getRunStatusColor } from '../../../../utils/pipeline-augment';
 import { PipelineRunModel, TaskModel, ClusterTaskModel } from '../../../../models';
 import { StatusIcon } from './StatusIcon';
@@ -43,7 +43,7 @@ interface PipelineVisualizationTaskProp {
   namespace: string;
   task: {
     name?: string;
-    taskSpec?: PipelineTaskSpec;
+    taskSpec?: TektonTaskSpec;
     taskRef?: PipelineTaskRef;
     status?: TaskStatus;
   };

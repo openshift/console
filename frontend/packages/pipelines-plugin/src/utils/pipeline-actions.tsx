@@ -17,7 +17,6 @@ import { StartedByAnnotation } from '../components/pipelines/const';
 import { EventListenerModel, PipelineModel, PipelineRunModel } from '../models';
 import { PipelineKind, PipelineRunKind } from '../types';
 import { pipelineRunFilterReducer } from './pipeline-filter-reducer';
-import { hasInlineTaskSpec } from './pipeline-utils';
 
 export const handlePipelineRunSubmit = (pipelineRun: PipelineRunKind) => {
   history.push(
@@ -62,7 +61,6 @@ export const reRunPipelineRun: KebabAction = (kind: K8sKind, pipelineRun: Pipeli
 export const editPipeline: KebabAction = (kind: K8sKind, pipeline: PipelineKind) => ({
   // t('pipelines-plugin~Edit Pipeline')
   labelKey: 'pipelines-plugin~Edit Pipeline',
-  hidden: hasInlineTaskSpec(pipeline.spec.tasks),
   callback: () => {
     const {
       metadata: { name, namespace },

@@ -1,3 +1,4 @@
+import { merge } from 'lodash';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { validationSchema } from '../validation-utils';
 import { initialPipelineFormData, TASK_ERROR_STRINGS, TaskErrorType } from '../const';
@@ -264,6 +265,18 @@ describe('Pipeline Build validation schema', () => {
           .then(hasResults)
           .catch(shouldHavePassed);
       });
+
+      it('should pass if runAfter is on a taskSpec task', async () => {
+        await withFormData({
+          ...initialPipelineFormData,
+          tasks: [
+            { name: 'first', taskSpec: embeddedTaskSpec },
+            { name: 'second', taskSpec: embeddedTaskSpec, runAfter: ['first'] },
+          ],
+        })
+          .then(hasResults)
+          .catch(shouldHavePassed);
+      });
     });
 
     describe('Validate Parameters', () => {
@@ -365,6 +378,53 @@ describe('Pipeline Build validation schema', () => {
               name: 'test-task',
               taskSpec: embeddedTaskSpec,
               params: [{ name: 'echo-value-no-task-ref' }],
+            },
+          ],
+        })
+          .then(hasResults)
+          .catch(shouldHavePassed);
+      });
+
+      it('should fail if the taskSpec params are required and not provided', async () => {
+        const taskSpecWithParam = merge({}, embeddedTaskSpec, {
+          params: [{ name: 'name', description: 'Your name to echo out' }],
+        });
+        await withFormData({
+          ...initialPipelineFormData,
+          tasks: [{ name: 'test', taskSpec: taskSpecWithParam }],
+        })
+          .then(shouldHaveFailed)
+          .catch(
+            hasError(
+              'formData.tasks[0].params',
+              TASK_ERROR_STRINGS[TaskErrorType.MISSING_REQUIRED_PARAMS],
+            ),
+          );
+      });
+
+      it('should pass if the taskSpec params have defaults', async () => {
+        const taskSpecWithDefaultParam = merge({}, embeddedTaskSpec, {
+          params: [{ name: 'name', description: 'Your name to echo out', default: 'John Doe' }],
+        });
+        await withFormData({
+          ...initialPipelineFormData,
+          tasks: [{ name: 'test', taskSpec: taskSpecWithDefaultParam }],
+        })
+          .then(hasResults)
+          .catch(shouldHavePassed);
+      });
+
+      it('should pass if the taskSpec params are required but a value is provided', async () => {
+        const taskSpecWithParam = merge({}, embeddedTaskSpec, {
+          params: [{ name: 'name', description: 'Your name to echo out' }],
+        });
+        await withFormData({
+          ...initialPipelineFormData,
+          tasks: [
+            {
+              name: 'test',
+              taskSpec: taskSpecWithParam,
+              params: [{ name: 'name', value: 'John Doe' }],
             },
           ],
         })
@@ -574,6 +634,63 @@ describe('Pipeline Build validation schema', () => {
             ),
           );
       });
+
+      it('should fail if the taskSpec has resources but the task does not', async () => {
+        const taskSpecResources = merge({}, embeddedTaskSpec, {
+          resources: {
+            inputs: [
+              {
+                name: 'resource',
+                type: 'git',
+              },
+            ],
+          },
+        });
+        await withFormData({
+          ...initialPipelineFormData,
+          tasks: [{ name: 'test', taskSpec: taskSpecResources }],
+        })
+          .then(shouldHaveFailed)
+          .catch(
+            hasError(
+              'formData.tasks[0].resources',
+              TASK_ERROR_STRINGS[TaskErrorType.MISSING_RESOURCES],
+            ),
+          );
+      });
+
+      it('should pass if the taskSpec has resources and the task provides it', async () => {
+        const taskSpecResources = merge({}, embeddedTaskSpec, {
+          resources: {
+            inputs: [
+              {
+                name: 'input',
+                type: 'git',
+              },
+            ],
+          },
+        });
+        await withFormData({
+          ...initialPipelineFormData,
+          resources: [
+            {
+              name: 'resource',
+              type: 'git',
+            },
+          ],
+          tasks: [
+            {
+              name: 'test',
+              taskSpec: taskSpecResources,
+              resources: {
+                inputs: [{ name: 'input', resource: 'resource' }],
+              },
+            },
+          ],
+        })
+          .then(hasResults)
+          .catch(shouldHavePassed);
+      });
     });
 
     describe('Validate Workspaces', () => {
@@ -678,6 +795,42 @@ describe('Pipeline Build validation schema', () => {
               'pipelines-plugin~Workspace name has changed, reselect',
             ),
           );
+      });
+
+      it('should fail if the taskSpec requests a workspace', async () => {
+        const taskSpecWithWorkspace = merge({}, embeddedTaskSpec, {
+          workspaces: [{ name: 'test' }],
+        });
+        await withFormData({
+          ...initialPipelineFormData,
+          tasks: [{ name: 'test', taskSpec: taskSpecWithWorkspace }],
+        })
+          .then(shouldHaveFailed)
+          .catch(
+            hasError(
+              'formData.tasks[0].workspaces',
+              TASK_ERROR_STRINGS[TaskErrorType.MISSING_WORKSPACES],
+            ),
+          );
+      });
+
+      it('should pass if the taskSpec requests a workspace and it is provided', async () => {
+        const taskSpecWithWorkspace = merge({}, embeddedTaskSpec, {
+          workspaces: [{ name: 'test' }],
+        });
+        await withFormData({
+          ...initialPipelineFormData,
+          workspaces: [{ name: 'workspace' }],
+          tasks: [
+            {
+              name: 'test',
+              taskSpec: taskSpecWithWorkspace,
+              workspaces: [{ name: 'test', workspace: 'workspace' }],
+            },
+          ],
+        })
+          .then(hasResults)
+          .catch(shouldHavePassed);
       });
     });
   });

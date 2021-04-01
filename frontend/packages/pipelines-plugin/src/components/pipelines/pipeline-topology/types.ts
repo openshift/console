@@ -1,6 +1,5 @@
 import { EdgeModel, NodeModel } from '@patternfly/react-topology';
-import { PipelineKind, TaskKind, PipelineRunKind } from '../../../types';
-import { PipelineVisualizationTaskItem } from '../../../utils/pipeline-utils';
+import { PipelineKind, TaskKind, PipelineRunKind, PipelineTask } from '../../../types';
 import { AddNodeDirection, NodeType } from './const';
 
 // Builder Callbacks
@@ -68,13 +67,13 @@ export type TaskListNodeModelData = PipelineRunAfterNodeModelData & {
 };
 export type BuilderNodeModelData = PipelineRunAfterNodeModelData & {
   error?: string;
-  task: PipelineVisualizationTaskItem;
+  task: PipelineTask;
   onAddNode: NewTaskListNodeCallback;
   onNodeSelection: NodeSelectionCallback;
 };
 export type SpacerNodeModelData = PipelineRunAfterNodeModelData & {};
 export type TaskNodeModelData = PipelineRunAfterNodeModelData & {
-  task: PipelineVisualizationTaskItem;
+  task: PipelineTask;
   pipeline?: PipelineKind;
   pipelineRun?: PipelineRunKind;
 };

@@ -1,6 +1,6 @@
 import { K8sResourceCommon, PersistentVolumeClaimKind } from '@console/internal/module/k8s';
-import { TektonResource, TektonResultsRun } from './coreTekton';
-import { PipelineTaskParam, PipelineTaskRef, PipelineTaskSpec } from './pipeline';
+import { TektonResource, TektonResultsRun, TektonTaskSpec } from './coreTekton';
+import { PipelineTaskParam, PipelineTaskRef } from './pipeline';
 
 import {
   Condition,
@@ -32,7 +32,7 @@ export type TaskRunStatus = {
 export type TaskRunKind = K8sResourceCommon & {
   spec: {
     taskRef?: PipelineTaskRef;
-    taskSpec?: PipelineTaskSpec;
+    taskSpec?: TektonTaskSpec;
     serviceAccountName?: string;
     params?: PipelineTaskParam[];
     resources?: TektonResource[];

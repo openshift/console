@@ -1918,11 +1918,6 @@ export const pipelineTestData: PipelineTestData = {
               {
                 name: 'echo-good-morning',
                 taskSpec: {
-                  metadata: {
-                    labels: {
-                      app: 'example',
-                    },
-                  },
                   steps: [
                     {
                       name: 'echo',
@@ -1957,11 +1952,6 @@ export const pipelineTestData: PipelineTestData = {
               {
                 name: 'echo-good-morning',
                 taskSpec: {
-                  metadata: {
-                    labels: {
-                      app: 'example',
-                    },
-                  },
                   steps: [
                     {
                       name: 'echo',

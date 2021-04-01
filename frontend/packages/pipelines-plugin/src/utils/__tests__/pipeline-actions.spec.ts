@@ -5,9 +5,7 @@ import {
   reRunPipelineRun,
   startPipeline,
   getPipelineKebabActions,
-  editPipeline,
 } from '../pipeline-actions';
-import { mockPipelinesJSON } from './pipeline-test-data';
 import { pipelineTestData, PipelineExampleNames, DataState } from '../../test-data/pipeline-data';
 
 const samplePipeline = pipelineTestData[PipelineExampleNames.SIMPLE_PIPELINE].pipeline;
@@ -93,11 +91,5 @@ describe('getPipelineKebabActions', () => {
     expect(pipelineKebabActions[1](PipelineRunModel, samplePipelineRun).labelKey).not.toBe(
       `${i18nNS}~Start last run`,
     );
-  });
-  it('expect Edit Pipeline option should be hidden when pipeline has inline taskSpec', () => {
-    const editPipelineAction = editPipeline(PipelineModel, mockPipelinesJSON[2]);
-    expect(editPipelineAction.labelKey).toBe(`${i18nNS}~Edit Pipeline`);
-    expect(editPipelineAction.callback).not.toBeNull();
-    expect(editPipelineAction.hidden).toBeTruthy();
   });
 });

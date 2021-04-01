@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { FormikErrors, useField } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { ActionsMenu, ResourceIcon, CloseButton } from '@console/internal/components/utils';
-import { referenceForModel } from '@console/internal/module/k8s';
-import { getResourceModelFromTaskKind } from '../../../../utils/pipeline-augment';
+import { CloseButton } from '@console/internal/components/utils';
 import {
   PipelineTask,
   PipelineTaskParam,
@@ -12,13 +10,15 @@ import {
   TektonParam,
   PipelineTaskResource,
   ResourceTarget,
+  TektonResourceGroup,
 } from '../../../../types';
-import { getTaskParameters, getTaskResources, InputOutputResources } from '../../resource-utils';
+import { getTaskParameters, getTaskResources } from '../../resource-utils';
 import { SelectedBuilderTask, TaskType, UpdateOperationRenameTaskData } from '../types';
 import TaskSidebarParam from './TaskSidebarParam';
 import TaskSidebarResource from './TaskSidebarResource';
 import TaskSidebarName from './TaskSidebarName';
 import TaskSidebarWorkspace from './TaskSidebarWorkspace';
+import TaskSidebarHeader from './TaskSidebarHeader';
 
 import './TaskSidebar.scss';
 
@@ -53,7 +53,7 @@ const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
   const [{ value: thisTask }] = useField<PipelineTask>(formikTaskReference);
 
   const params: TektonParam[] = getTaskParameters(taskResource) || [];
-  const resources: InputOutputResources = getTaskResources(taskResource);
+  const resources: TektonResourceGroup<TektonResource> = getTaskResources(taskResource);
   const inputResources: TektonResource[] = resources.inputs || [];
   const outputResources: TektonResource[] = resources.outputs || [];
   const workspaces: TektonWorkspace[] = taskResource.spec.workspaces || [];
@@ -78,28 +78,10 @@ const TaskSidebar: React.FC<TaskSidebarProps> = (props) => {
       <div className="co-sidebar-dismiss clearfix">
         <CloseButton onClick={onClose} />
       </div>
-      <div className="odc-task-sidebar__header">
-        <h1 className="co-m-pane__heading">
-          <div className="co-m-pane__name co-resource-item">
-            <ResourceIcon
-              className="co-m-resource-icon--lg"
-              kind={referenceForModel(getResourceModelFromTaskKind(taskResource.kind))}
-            />
-            {taskResource.metadata.name}
-          </div>
-          <div className="co-actions">
-            <ActionsMenu
-              actions={[
-                {
-                  label: t('pipelines-plugin~Remove Task'),
-                  callback: () => onRemoveTask(thisTask.name),
-                },
-              ]}
-            />
-          </div>
-        </h1>
-      </div>
-      <hr />
+      <TaskSidebarHeader
+        taskResource={taskResource}
+        removeThisTask={() => onRemoveTask(thisTask.name)}
+      />
 
       <div className="odc-task-sidebar__content">
         <TaskSidebarName

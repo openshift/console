@@ -19,7 +19,6 @@ import {
   pipelineRunDuration,
   getSecretAnnotations,
   calculateRelativeTime,
-  hasInlineTaskSpec,
   LatestPipelineRunStatus,
   updateServiceAccount,
   appendPipelineRunStatus,
@@ -168,16 +167,6 @@ describe('pipeline-utils ', () => {
   it('expected relative time should be "about 2 hours"', () => {
     const relativeTime = calculateRelativeTime('2020-05-22T10:57:53Z', '2020-05-22T12:57:57Z');
     expect(relativeTime).toBe('about 2 hours');
-  });
-
-  it('expect pipeline with inline task spec to return true', () => {
-    const hasSpec = hasInlineTaskSpec(mockPipelinesJSON[2].spec.tasks);
-    expect(hasSpec).toBe(true);
-  });
-
-  it('expect pipeline without inline task spec to return false', () => {
-    const hasSpec = hasInlineTaskSpec(mockPipelinesJSON[1].spec.tasks);
-    expect(hasSpec).toBe(false);
   });
 
   it('should return PVCs correctly matched with name and kind', () => {

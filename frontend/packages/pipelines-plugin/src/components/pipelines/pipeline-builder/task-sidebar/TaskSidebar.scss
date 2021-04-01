@@ -1,11 +1,5 @@
 .odc-task-sidebar {
-  &__header {
-    font-size: var(--pf-global--FontSize--md);
-    height: 33px; // fixed height header to avoid actions from bouncing the header
-    margin: 0;
-  }
-
-  &__header, &__content {
+  &__content {
     padding: 0 var(--pf-global--spacer--lg);
   }
 

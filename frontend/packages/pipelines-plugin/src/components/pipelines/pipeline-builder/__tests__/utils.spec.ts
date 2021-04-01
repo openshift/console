@@ -64,7 +64,10 @@ describe('findTaskFromFormikData / findTask', () => {
   it('should decompose formik state & handle nulls', () => {
     const formValues = createFormValues();
     expect(findTaskFromFormikData(formValues, null)).toBe(null);
-    expect(findTaskFromFormikData(formValues, { name: 'unavailable-task' })).toBe(null);
+    expect(findTaskFromFormikData(formValues, { name: 'test' })).toBe(null);
+    expect(findTaskFromFormikData(formValues, { name: 'test', taskRef: { name: 'test' } })).toBe(
+      null,
+    );
   });
 
   it('should handle fail states', () => {
@@ -75,17 +78,20 @@ describe('findTaskFromFormikData / findTask', () => {
     expect(
       findTask(
         { tasksLoaded: true, clusterTasks: [externalTask], namespacedTasks: [] },
-        { name: 'unavailable-task' },
+        { name: 'test', taskRef: { name: 'unavailable-task' } },
       ),
-    ).toBe(null);
+    ).toBe(undefined);
   });
 
   it('should be able to find a clusterTask', () => {
     const formValues = createFormValues([externalTask]);
     expect(
       findTask(formValues.taskResources, {
-        name: externalTask.metadata.name,
-        kind: externalTask.kind,
+        name: 'test',
+        taskRef: {
+          name: externalTask.metadata.name,
+          kind: externalTask.kind,
+        },
       }),
     ).toBe(externalTask);
   });
@@ -95,8 +101,11 @@ describe('findTaskFromFormikData / findTask', () => {
     const formValues = createFormValues([], [namespacedTask]);
     expect(
       findTask(formValues.taskResources, {
-        name: namespacedTask.metadata.name,
-        kind: namespacedTask.kind,
+        name: 'test',
+        taskRef: {
+          name: namespacedTask.metadata.name,
+          kind: namespacedTask.kind,
+        },
       }),
     ).toBe(namespacedTask);
   });

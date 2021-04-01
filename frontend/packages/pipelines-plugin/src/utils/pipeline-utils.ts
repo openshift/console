@@ -22,7 +22,6 @@ import { PipelineModalFormWorkspace } from '../components/pipelines/modals/commo
 import {
   PipelineRunKind,
   PipelineRunParam,
-  PipelineTaskRef,
   PipelineRunWorkspace,
   PipelineTask,
   PipelineKind,
@@ -45,17 +44,6 @@ import {
   EventListenerModel,
 } from '../models';
 
-interface Resources {
-  inputs?: Resource[];
-  outputs?: Resource[];
-}
-
-interface Resource {
-  name: string;
-  resource?: string;
-  from?: string[];
-}
-
 interface ServiceAccountSecretNames {
   [name: string]: string;
 }
@@ -65,14 +53,6 @@ export type ServiceAccountType = {
   imagePullSecrets: ServiceAccountSecretNames[];
 } & K8sResourceCommon;
 
-export interface PipelineVisualizationTaskItem {
-  name: string;
-  resources?: Resources;
-  params?: object;
-  runAfter?: string[];
-  taskRef?: PipelineTaskRef;
-}
-
 export const TaskStatusClassNameMap = {
   'In Progress': 'is-running',
   Succeeded: 'is-done',
@@ -81,13 +61,12 @@ export const TaskStatusClassNameMap = {
 };
 
 export const conditions = {
-  hasFromDependency: (task: PipelineVisualizationTaskItem): boolean =>
+  hasFromDependency: (task: PipelineTask): boolean =>
     task.resources &&
     task.resources.inputs &&
     task.resources.inputs.length > 0 &&
     !!task.resources.inputs[0].from,
-  hasRunAfterDependency: (task: PipelineVisualizationTaskItem): boolean =>
-    task.runAfter && task.runAfter.length > 0,
+  hasRunAfterDependency: (task: PipelineTask): boolean => task.runAfter && task.runAfter.length > 0,
 };
 
 export enum ListFilterId {
@@ -161,8 +140,6 @@ export const appendPipelineRunStatus = (pipeline, pipelineRun, isFinallyTasks = 
     return mTask;
   });
 };
-export const hasInlineTaskSpec = (tasks: PipelineTask[] = []): boolean =>
-  tasks.some((task) => !!(task.taskSpec && !task.taskRef));
 
 export const getPipelineTasks = (
   pipeline: PipelineKind,
@@ -172,7 +149,7 @@ export const getPipelineTasks = (
     kind: 'PipelineRun',
     spec: {},
   },
-): PipelineVisualizationTaskItem[][] => {
+): PipelineTask[][] => {
   // Each unit in 'out' array is termed as stage | out = [stage1 = [task1], stage2 = [task2,task3], stage3 = [task4]]
   const out = [];
   if (!pipeline.spec?.tasks || _.isEmpty(pipeline.spec.tasks)) {

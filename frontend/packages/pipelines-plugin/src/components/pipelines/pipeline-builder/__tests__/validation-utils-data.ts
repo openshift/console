@@ -1,7 +1,7 @@
 import { merge } from 'lodash';
 import { getRandomChars } from '@console/shared';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
-import { PipelineTask, PipelineTaskSpec, TaskKind, TektonTaskSteps } from '../../../../types';
+import { PipelineTask, TektonTaskSpec, TaskKind, TektonTaskSteps } from '../../../../types';
 import { initialPipelineFormData } from '../const';
 import { validationSchema } from '../validation-utils';
 
@@ -20,7 +20,7 @@ const taskSpecTemplate: TektonTaskSteps[] = [
     args: ['$(params.some-value-that-does-not-break-tests)'],
   },
 ];
-const embeddedTaskTemplate: PipelineTaskSpec = {
+const embeddedTaskTemplate: TektonTaskSpec = {
   steps: taskSpecTemplate,
 };
 const externalTaskTemplate: TaskKind = {

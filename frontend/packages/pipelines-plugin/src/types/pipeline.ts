@@ -1,16 +1,15 @@
 import { K8sResourceCommon } from '@console/internal/module/k8s';
-import { TektonParam, TektonResource, TektonTaskSteps, TektonWorkspace } from './coreTekton';
+import {
+  TektonParam,
+  TektonResource,
+  TektonResourceGroup,
+  TektonTaskSpec,
+  TektonWorkspace,
+} from './coreTekton';
 
 export type PipelineTaskRef = {
   kind?: string;
   name: string;
-};
-
-export type PipelineTaskSpec = {
-  metadata?: {
-    labels?: { [key: string]: string };
-  };
-  steps: TektonTaskSteps[];
 };
 
 export type PipelineTaskWorkspace = {
@@ -22,11 +21,6 @@ export type PipelineTaskResource = {
   name: string;
   resource?: string;
   from?: string[];
-};
-
-export type PipelineTaskResources = {
-  inputs?: PipelineTaskResource[];
-  outputs?: PipelineTaskResource[];
 };
 
 export type PipelineTaskParam = {
@@ -49,10 +43,10 @@ export type PipelineResult = {
 export type PipelineTask = {
   name: string;
   params?: PipelineTaskParam[];
-  resources?: PipelineTaskResources;
+  resources?: TektonResourceGroup<PipelineTaskResource>;
   runAfter?: string[];
   taskRef?: PipelineTaskRef;
-  taskSpec?: PipelineTaskSpec;
+  taskSpec?: TektonTaskSpec;
   when?: WhenExpression[];
   workspaces?: PipelineTaskWorkspace[];
 };

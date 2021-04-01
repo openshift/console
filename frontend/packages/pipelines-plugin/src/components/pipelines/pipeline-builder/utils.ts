@@ -7,7 +7,6 @@ import {
   PipelineKind,
   PipelineTask,
   PipelineTaskParam,
-  PipelineTaskRef,
   TaskKind,
   TektonParam,
 } from '../../../types';
@@ -59,29 +58,48 @@ export const getTopLevelErrorMessage: GetErrorMessage = (errors) => (taskIndex) 
 
 export const findTask = (
   resourceTasks: PipelineBuilderTaskResources,
-  taskRef: PipelineTaskRef,
+  task: PipelineTask,
 ): TaskKind => {
-  if (
-    !taskRef?.kind ||
-    !resourceTasks?.tasksLoaded ||
-    !resourceTasks.clusterTasks ||
-    !resourceTasks.namespacedTasks
-  ) {
-    return null;
+  if (task?.taskRef) {
+    if (
+      !resourceTasks?.tasksLoaded ||
+      !resourceTasks.clusterTasks ||
+      !resourceTasks.namespacedTasks
+    ) {
+      return null;
+    }
+
+    const {
+      taskRef: { kind, name },
+    } = task;
+    const matchingName = (taskResource: TaskKind) => taskResource.metadata.name === name;
+
+    if (kind === ClusterTaskModel.kind) {
+      return resourceTasks.clusterTasks.find(matchingName);
+    }
+    return resourceTasks.namespacedTasks.find(matchingName);
   }
 
-  if (taskRef.kind === ClusterTaskModel.kind) {
-    return resourceTasks.clusterTasks.find((task) => task.metadata.name === taskRef.name);
+  if (task?.taskSpec) {
+    return {
+      apiVersion: apiVersionForModel(TaskModel),
+      kind: 'EmbeddedTask',
+      metadata: {
+        name: 'Embedded Task',
+      },
+      spec: task.taskSpec,
+    };
   }
-  return resourceTasks.namespacedTasks.find((task) => task.metadata.name === taskRef.name);
+
+  return null;
 };
 
 export const findTaskFromFormikData = (
   formikData: PipelineBuilderFormYamlValues,
-  taskRef: PipelineTaskRef,
+  task: PipelineTask,
 ): TaskKind => {
   const { taskResources } = formikData;
-  return findTask(taskResources, taskRef);
+  return findTask(taskResources, task);
 };
 
 /**

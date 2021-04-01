@@ -276,11 +276,25 @@ export const getTaskStatus = (pipelinerun: PipelineRunKind): TaskStatus => {
   return taskStatus;
 };
 
-export const getResourceModelFromTaskKind = (kind: string): K8sKind =>
-  kind === ClusterTaskModel.kind ? ClusterTaskModel : TaskModel;
+export const getResourceModelFromTaskKind = (kind: string): K8sKind => {
+  if (kind === ClusterTaskModel.kind) {
+    return ClusterTaskModel;
+  }
+  if (kind === TaskModel.kind || kind === undefined) {
+    return TaskModel;
+  }
+  return null;
+};
 
-export const getResourceModelFromBindingKind = (kind: string): K8sKind =>
-  kind === ClusterTriggerBindingModel.kind ? ClusterTriggerBindingModel : TriggerBindingModel;
+export const getResourceModelFromBindingKind = (kind: string): K8sKind => {
+  if (kind === ClusterTriggerBindingModel.kind) {
+    return ClusterTriggerBindingModel;
+  }
+  if (kind === TriggerBindingModel.kind || kind === undefined) {
+    return TriggerBindingModel;
+  }
+  return null;
+};
 
 export const getResourceModelFromTask = (task: PipelineTask): K8sKind => {
   const {
