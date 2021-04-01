@@ -26,8 +26,6 @@ describe('Tests creation of Bucket Class', () => {
   beforeEach(() => {
     cy.visit('/');
     commonFlows.navigateToOCS();
-    // be.visible check added to wait for the page to load before clicking
-    cy.byLegacyTestID('horizontal-link-Bucket Class').should('be.visible');
     cy.byLegacyTestID('horizontal-link-Bucket Class').click();
     cy.byTestID('item-create').click();
   });

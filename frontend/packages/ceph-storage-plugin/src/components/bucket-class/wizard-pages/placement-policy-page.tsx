@@ -38,12 +38,12 @@ const PlacementPolicyPage: React.FC<PlacementPolicyPageProps> = ({ dispatch, sta
           <ul>
             <li>
               {t(
-                'ceph-storage-plugin~Spread Tier - list of backing stores aggregates the storage of multiple stores.',
+                'ceph-storage-plugin~Spread Tier - list of BackingStores aggregates the storage of multiple stores.',
               )}
             </li>
             <li>
               {t(
-                'ceph-storage-plugin~Mirroring Tier - list of spread-layers async-mirroring to all mirrors with locality optimization (will allocate on the closest region to the source endpoint) mirroring requires at least two backing stores.',
+                'ceph-storage-plugin~Mirroring Tier - list of spread-layers async-mirroring to all mirrors with locality optimization (will allocate on the closest region to the source endpoint) mirroring requires at least two BackingStores.',
               )}
             </li>
           </ul>

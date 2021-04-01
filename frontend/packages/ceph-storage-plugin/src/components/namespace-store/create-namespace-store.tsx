@@ -26,13 +26,13 @@ const CreateNamespaceStore: React.FC<CreateNamespaceStoreProps> = ({ match }) =>
                 name: 'Openshift Container Storage',
                 path: resourcePathFromModel(ClusterServiceVersionModel, appName, ns),
               },
-              { name: t('ceph-storage-plugin~Create Namespace Store'), path: match.url },
+              { name: t('ceph-storage-plugin~Create NamespaceStore '), path: match.url },
             ]}
           />
         </div>
         <div className="nb-endpoints-page-title">
           <Title size="2xl" headingLevel="h1" className="nb-endpoints-page-title__main">
-            {t('ceph-storage-plugin~Create Namespace Store')}
+            {t('ceph-storage-plugin~Create NamespaceStore ')}
           </Title>
           <p className="nb-endpoints-page-title__info">
             {t(
