@@ -12,7 +12,13 @@ import { ResourceLink } from './resource-link';
 import { Selector } from './selector';
 import { Timestamp } from './timestamp';
 import { useAccessReview } from './rbac';
-import { K8sResourceKind, modelFor, referenceFor, Toleration } from '../../module/k8s';
+import {
+  K8sResourceCommon,
+  K8sResourceKind,
+  modelFor,
+  referenceFor,
+  Toleration,
+} from '../../module/k8s';
 import { labelsModal } from '../modals';
 
 const editLabelsModal = (e, props) => {
@@ -166,7 +172,7 @@ export const ResourceSummary: React.FC<ResourceSummaryProps> = ({
 export const ResourcePodCount: React.SFC<ResourcePodCountProps> = ({ resource }) => {
   const { t } = useTranslation();
   return (
-    <dl>
+    <>
       <DetailsItem
         label={t('details-page~Current count')}
         obj={resource}
@@ -179,7 +185,19 @@ export const ResourcePodCount: React.SFC<ResourcePodCountProps> = ({ resource })
         path="spec.replicas"
         defaultValue="0"
       />
-    </dl>
+    </>
+  );
+};
+
+export const RuntimeClass: React.FC<RuntimeClassProps> = ({ obj, path }) => {
+  const { t } = useTranslation();
+  return (
+    <DetailsItem
+      label={t('public~Runtime class')}
+      obj={obj}
+      path={path || 'spec.template.spec.runtimeClassName'}
+      hideEmpty
+    />
   );
 };
 
@@ -198,6 +216,11 @@ export type ResourceSummaryProps = {
 
 export type ResourcePodCountProps = {
   resource: K8sResourceKind;
+};
+
+export type RuntimeClassProps = {
+  obj: K8sResourceCommon;
+  path?: string;
 };
 
 ResourceSummary.displayName = 'ResourceSummary';

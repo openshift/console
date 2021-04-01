@@ -22,6 +22,7 @@ import {
   OwnerReferences,
   Timestamp,
   PodsComponent,
+  RuntimeClass,
 } from './utils';
 import { ResourceEventStream } from './events';
 import { VolumesTable } from './volumes-table';
@@ -116,7 +117,10 @@ const Details = ({ obj: replicaSet }) => {
             </ResourceSummary>
           </div>
           <div className="col-md-6">
-            <ResourcePodCount resource={replicaSet} />
+            <dl className="co-m-pane__details">
+              <ResourcePodCount resource={replicaSet} />
+              <RuntimeClass obj={replicaSet} />
+            </dl>
           </div>
         </div>
       </div>

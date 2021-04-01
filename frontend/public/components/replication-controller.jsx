@@ -24,6 +24,7 @@ import {
   OwnerReferences,
   Timestamp,
   PodsComponent,
+  RuntimeClass,
 } from './utils';
 
 import { VolumesTable } from './volumes-table';
@@ -119,15 +120,18 @@ export const ReplicationControllersDetailsPage = (props) => {
               </ResourceSummary>
             </div>
             <div className="col-md-6">
-              {phase && (
-                <>
-                  <dt>{t('public~Phase')}</dt>
-                  <dd>
-                    <Status status={phase} />
-                  </dd>
-                </>
-              )}
-              <ResourcePodCount resource={replicationController} />
+              <dl className="co-m-pane__details">
+                {phase && (
+                  <>
+                    <dt>{t('public~Phase')}</dt>
+                    <dd>
+                      <Status status={phase} />
+                    </dd>
+                  </>
+                )}
+                <ResourcePodCount resource={replicationController} />
+                <RuntimeClass obj={replicationController} />
+              </dl>
             </div>
           </div>
         </div>

@@ -32,6 +32,7 @@ import {
   SectionHeading,
   togglePaused,
   WorkloadPausedAlert,
+  RuntimeClass,
 } from './utils';
 import { ReplicaSetsPage } from './replicaset';
 import { WorkloadTableRow, WorkloadTableHeader } from './workload-table';
@@ -127,6 +128,7 @@ export const DeploymentDetailsList: React.FC<DeploymentDetailsListProps> = ({ de
           ? t('public~{{count}} second', { count: deployment.spec.minReadySeconds })
           : t('public~Not configured')}
       </DetailsItem>
+      <RuntimeClass obj={deployment} />
     </dl>
   );
 };

@@ -34,6 +34,7 @@ import {
   getExtensionsKebabActionsForKind,
   navFactory,
   togglePaused,
+  RuntimeClass,
 } from './utils';
 import { ReplicationControllersPage } from './replication-controller';
 import { WorkloadTableRow, WorkloadTableHeader } from './workload-table';
@@ -192,6 +193,7 @@ export const DeploymentConfigDetailsList = ({ dc }) => {
       <DetailsItem label={t('public~Triggers')} obj={dc} path="spec.triggers" hideEmpty>
         {triggers}
       </DetailsItem>
+      <RuntimeClass obj={dc} />
     </dl>
   );
 };
