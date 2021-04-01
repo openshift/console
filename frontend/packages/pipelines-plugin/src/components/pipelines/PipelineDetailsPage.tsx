@@ -7,6 +7,7 @@ import { ErrorPage404 } from '@console/internal/components/error';
 import { getPipelineKebabActions } from '../../utils/pipeline-actions';
 import { Pipeline } from '../../utils/pipeline-augment';
 import { PipelineModel } from '../../models';
+import { usePipelineTechPreviewBadge } from '../../utils/hooks';
 import { useMenuActionsWithUserAnnotation } from '../pipelineruns/triggered-by';
 import {
   PipelineDetails,
@@ -27,6 +28,7 @@ import { PipelineDetailsTabProps } from './detail-page-tabs/types';
 const PipelineDetailsPage: React.FC<DetailsPageProps> = (props) => {
   const { t } = useTranslation();
   const { name, namespace, kindObj, match } = props;
+  const badge = usePipelineTechPreviewBadge(namespace);
   const templateNames = usePipelineTriggerTemplateNames(name, namespace) || [];
   const breadcrumbsFor = usePipelinesBreadcrumbsFor(kindObj, match);
   const [, pipelineLoaded, pipelineError] = useK8sGet<Pipeline>(PipelineModel, name, namespace);
@@ -46,6 +48,7 @@ const PipelineDetailsPage: React.FC<DetailsPageProps> = (props) => {
   return pipelineLoaded ? (
     <DetailsPage
       {...props}
+      badge={badge}
       menuActions={augmentedMenuActions}
       customData={{ templateNames, queryPrefix }}
       breadcrumbsFor={() => breadcrumbsFor}

@@ -15,7 +15,6 @@ export const PipelineModel: K8sKind = {
   id: 'pipeline',
   labelPlural: 'Pipelines',
   crd: true,
-  badge: BadgeType.TECH,
   color,
 };
 
@@ -30,7 +29,6 @@ export const PipelineRunModel: K8sKind = {
   id: 'pipelinerun',
   labelPlural: 'Pipeline Runs',
   crd: true,
-  badge: BadgeType.TECH,
   color,
 };
 
@@ -45,7 +43,6 @@ export const TaskModel: K8sKind = {
   id: 'task',
   labelPlural: 'Tasks',
   crd: true,
-  badge: BadgeType.TECH,
   color,
 };
 
@@ -60,7 +57,6 @@ export const TaskRunModel: K8sKind = {
   id: 'taskrun',
   labelPlural: 'Task Runs',
   crd: true,
-  badge: BadgeType.TECH,
   color,
 };
 
@@ -75,7 +71,6 @@ export const PipelineResourceModel: K8sKind = {
   id: 'pipelineresource',
   labelPlural: 'Pipeline Resources',
   crd: true,
-  badge: BadgeType.TECH,
   color,
 };
 
@@ -90,7 +85,6 @@ export const ClusterTaskModel: K8sKind = {
   id: 'clustertask',
   labelPlural: 'Cluster Tasks',
   crd: true,
-  badge: BadgeType.TECH,
   color,
 };
 
@@ -105,7 +99,6 @@ export const ConditionModel: K8sKind = {
   id: 'condition',
   labelPlural: 'Conditions',
   crd: true,
-  badge: BadgeType.TECH,
   color,
 };
 

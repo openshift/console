@@ -10,6 +10,7 @@ import { useMenuActionsWithUserAnnotation } from './triggered-by';
 import { usePipelinesBreadcrumbsFor } from '../pipelines/hooks';
 import TaskRuns from './detail-page-tabs/TaskRuns';
 import PipelineRunEvents from './events/PipelineRunEvents';
+import { usePipelineTechPreviewBadge } from '../../utils/hooks';
 
 const PipelineRunDetailsPage: React.FC<DetailsPageProps> = (props) => {
   const { t } = useTranslation();
@@ -18,10 +19,12 @@ const PipelineRunDetailsPage: React.FC<DetailsPageProps> = (props) => {
     getPipelineRunKebabActions(true),
   );
   const breadcrumbsFor = usePipelinesBreadcrumbsFor(kindObj, match);
+  const badge = usePipelineTechPreviewBadge(props.namespace);
 
   return (
     <DetailsPage
       {...props}
+      badge={badge}
       menuActions={menuActions}
       getResourceStatus={pipelineRunStatus}
       breadcrumbsFor={() => breadcrumbsFor}
