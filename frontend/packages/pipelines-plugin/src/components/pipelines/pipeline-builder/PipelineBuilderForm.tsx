@@ -146,7 +146,7 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
       <div ref={contentRef} className="odc-pipeline-builder-form">
         <Stack>
           <StackItem>
-            <PipelineBuilderHeader />
+            <PipelineBuilderHeader namespace={namespace} />
           </StackItem>
           <FlexForm onSubmit={handleSubmit}>
             <FormBody flexLayout disablePaneBody className="odc-pipeline-builder-form__grid">

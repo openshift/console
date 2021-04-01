@@ -2,7 +2,9 @@ import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { Button } from '@patternfly/react-core';
 import { ListPage } from '@console/internal/components/factory';
+import * as operatorUtils from '../../pipelines/utils/pipeline-operator';
 import PipelineRunsResourceList from '../PipelineRunsResourceList';
+import { PIPELINE_GA_VERSION } from '../../pipelines/const';
 
 type PipelineRunsResourceListProps = React.ComponentProps<typeof PipelineRunsResourceList>;
 
@@ -16,6 +18,7 @@ describe('PipelineRunsResourceList:', () => {
       canCreate: false,
     };
     wrapper = shallow(<PipelineRunsResourceList {...pipelineRunsResourceListProps} />);
+    jest.spyOn(operatorUtils, 'usePipelineOperatorVersion').mockReturnValue({ version: '1.3.1' });
   });
 
   it('Should render the badge in the list page', () => {
@@ -25,6 +28,14 @@ describe('PipelineRunsResourceList:', () => {
 
   it('Should not render the badge in the list page', () => {
     wrapper.setProps({ hideBadge: true });
+    expect(wrapper.find(ListPage).props().badge).toBeNull();
+  });
+
+  it('Should not render the badge in the list page if the pipeline GA operator is installed', () => {
+    jest
+      .spyOn(operatorUtils, 'usePipelineOperatorVersion')
+      .mockReturnValue({ version: PIPELINE_GA_VERSION });
+    wrapper.setProps({ hideBadge: false });
     expect(wrapper.find(ListPage).props().badge).toBeNull();
   });
 

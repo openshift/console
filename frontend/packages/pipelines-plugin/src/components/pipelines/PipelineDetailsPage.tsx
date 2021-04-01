@@ -23,6 +23,7 @@ import { isGAVersionInstalled, usePipelineOperatorVersion } from './utils/pipeli
 import { MetricsQueryPrefix } from './pipeline-metrics/pipeline-metrics-utils';
 import { usePipelinesBreadcrumbsFor, useLatestPipelineRun } from './hooks';
 import { PipelineDetailsTabProps } from './detail-page-tabs/types';
+import { usePipelineTechPreviewBadge } from '../../utils/hooks';
 
 const PipelineDetailsPage: React.FC<DetailsPageProps> = (props) => {
   const { t } = useTranslation();
@@ -32,6 +33,7 @@ const PipelineDetailsPage: React.FC<DetailsPageProps> = (props) => {
   const [, pipelineLoaded, pipelineError] = useK8sGet<PipelineKind>(PipelineModel, name, namespace);
   const latestPipelineRun = useLatestPipelineRun(name, namespace);
   const pipelineOperator = usePipelineOperatorVersion(namespace);
+  const badge = usePipelineTechPreviewBadge(namespace);
   const queryPrefix =
     pipelineOperator && !isGAVersionInstalled(pipelineOperator)
       ? MetricsQueryPrefix.TEKTON
@@ -46,6 +48,7 @@ const PipelineDetailsPage: React.FC<DetailsPageProps> = (props) => {
   return pipelineLoaded ? (
     <DetailsPage
       {...props}
+      badge={badge}
       menuActions={augmentedMenuActions}
       customData={{ templateNames, queryPrefix }}
       breadcrumbsFor={() => breadcrumbsFor}

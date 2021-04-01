@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { getBadgeFromType } from '@console/shared';
 import { ListPage } from '@console/internal/components/factory';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { getURLSearchParams } from '@console/internal/components/utils';
 import TaskRunsList from './TaskRunsList';
 import { TaskRunModel } from '../../../models';
 import { runFilters as taskRunFilters } from '../../pipelines/detail-page-tabs/PipelineRuns';
+import { usePipelineTechPreviewBadge } from '../../../utils/hooks';
 
 interface TaskRunsListPageProps {
   hideBadge?: boolean;
@@ -19,7 +19,7 @@ const TaskRunsListPage: React.FC<Omit<
   TaskRunsListPageProps> = ({ hideBadge, showPipelineColumn = true, ...props }) => {
   const searchParams = getURLSearchParams();
   const kind = searchParams?.kind;
-
+  const badge = usePipelineTechPreviewBadge(props.namespace);
   return (
     <ListPage
       {...props}
@@ -28,7 +28,7 @@ const TaskRunsListPage: React.FC<Omit<
       kind={referenceForModel(TaskRunModel)}
       ListComponent={TaskRunsList}
       rowFilters={taskRunFilters}
-      badge={hideBadge ? null : getBadgeFromType(TaskRunModel.badge)}
+      badge={hideBadge ? null : badge}
     />
   );
 };
