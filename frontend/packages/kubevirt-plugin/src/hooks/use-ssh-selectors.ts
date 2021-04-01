@@ -21,6 +21,7 @@ export type useSSHSelectorsResult = SSHState & {
   setIsValidSSHKey: (value: boolean) => void;
   setUpdateSSHKeyInSecret: (value: boolean) => void;
   restoreDefaultSSHSettings: () => void;
+  setEnableSSHService: (value: boolean) => void;
 };
 
 const useSSHSelectors = (): useSSHSelectorsResult => {
@@ -57,6 +58,11 @@ const useSSHSelectors = (): useSSHSelectorsResult => {
     [dispatch],
   );
 
+  const setEnableSSHService = React.useCallback(
+    (val: boolean) => dispatch(sshActions[SSHActionsNames.enableSSHService](val)),
+    [dispatch],
+  );
+
   const restoreDefaultSSHSettings = React.useCallback(() => {
     dispatch(sshActions[SSHActionsNames.restoreDefaultSSHSettings]());
   }, [dispatch]);
@@ -74,6 +80,7 @@ const useSSHSelectors = (): useSSHSelectorsResult => {
     updateSSHTempKey,
     setIsValidSSHKey,
     setUpdateSSHKeyInSecret,
+    setEnableSSHService,
     restoreDefaultSSHSettings,
   };
 };
