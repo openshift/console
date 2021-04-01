@@ -19,18 +19,18 @@ export const ConsolePluginFormGroup: React.FC<ConsolePluginFormGroupProps> = ({
     <div className="form-group">
       <fieldset>
         <Popover
-          headerContent={<div>{t('olm~Console UI extension', { count: csvPluginsCount })}</div>}
+          headerContent={<div>{t('olm~Console plugin', { count: csvPluginsCount })}</div>}
           bodyContent={
             <div>
               {t(
-                'olm~This operator provides a custom interface you can include in your console. Make sure you trust this operator before enabling its interface.',
+                'olm~This operator includes a console plugin which provides a custom interface that can be included in the console. The console plugin will prompt for the console to be refreshed once it has been enabled. Make sure you trust this console plugin before enabling.',
               )}
             </div>
           }
         >
           <h5 className="co-required co-form-heading__popover">
             <Button variant="plain" className="co-form-heading__popover-button">
-              {t('olm~Console UI extension', { count: csvPluginsCount })}
+              {t('olm~Console plugin', { count: csvPluginsCount })}
             </Button>
           </h5>
         </Popover>

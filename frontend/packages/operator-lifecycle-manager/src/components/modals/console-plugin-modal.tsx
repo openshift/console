@@ -40,13 +40,13 @@ export const ConsolePluginModal = withHandlePromise((props: ConsolePluginModalPr
   return (
     <form onSubmit={submit} name="form" className="modal-content">
       <ModalTitle>
-        {csvPluginsCount === 1 && <>{t('olm~Console UI extension')}</>}
-        {csvPluginsCount > 1 && <>{t('olm~Console UI extension - {{plugin}}', { plugin })}</>}
+        {csvPluginsCount === 1 && <>{t('olm~Console plugin enablement')}</>}
+        {csvPluginsCount > 1 && <>{t('olm~Console plugin enablement - {{plugin}}', { plugin })}</>}
       </ModalTitle>
       <ModalBody>
         <p>
           {t(
-            'olm~This operator provides a custom interface you can include in your console.  Make sure you trust this operator before enabling its interface.',
+            'olm~This operator includes a console plugin which provides a custom interface that can be included in the console. Updating the enablement of this console plugin will prompt for the console to be refreshed once it has been updated. Make sure you trust this console plugin before enabling.',
           )}
         </p>
         <ConsolePluginRadioInputs autofocus name={plugin} enabled={enabled} onChange={setEnabled} />
