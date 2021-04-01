@@ -13,7 +13,8 @@ export const getPipelineOperatorVersion = async (namespace: string): Promise<Sem
   });
   const matchingCSVs = allCSVs.filter(
     (csv) =>
-      csv.metadata?.name?.startsWith('openshift-pipelines-operator') &&
+      (csv.metadata?.name?.startsWith('openshift-pipelines-operator') ||
+        csv.metadata?.name?.startsWith('redhat-openshift-pipelines')) &&
       csv.status?.phase === ClusterServiceVersionPhase.CSVPhaseSucceeded,
   );
   const versions = matchingCSVs.map((csv) => parse(csv.spec.version)).filter(Boolean);

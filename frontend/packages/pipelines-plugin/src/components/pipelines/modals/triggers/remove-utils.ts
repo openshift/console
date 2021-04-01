@@ -1,7 +1,7 @@
 import { k8sKill, k8sList, k8sPatch } from '@console/internal/module/k8s';
 import { EventListenerModel, TriggerTemplateModel } from '../../../../models';
 import { Pipeline } from '../../../../utils/pipeline-augment';
-import { EventListenerKind } from '../../resource-types';
+import { EventListenerKind, EventListenerKindTrigger } from '../../resource-types';
 import { RemoveTriggerFormValues } from './types';
 
 export const removeTrigger = async (values: RemoveTriggerFormValues, pipeline: Pipeline) => {
@@ -13,8 +13,12 @@ export const removeTrigger = async (values: RemoveTriggerFormValues, pipeline: P
     metadata: { name: selectedTriggerTemplate, namespace: ns },
   });
 
-  const triggerMatchesTriggerTemplate = ({ template: { name } }) =>
-    name === selectedTriggerTemplate;
+  const triggerMatchesTriggerTemplate = ({ triggerRef, template }: EventListenerKindTrigger) => {
+    if (triggerRef) {
+      return triggerRef === selectedTriggerTemplate;
+    }
+    return template?.ref === selectedTriggerTemplate || template?.name === selectedTriggerTemplate;
+  };
 
   // Get all the event listeners so we can update their references
   const eventListeners: EventListenerKind[] = await k8sList(EventListenerModel, { ns });
