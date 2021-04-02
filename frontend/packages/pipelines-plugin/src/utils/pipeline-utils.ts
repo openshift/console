@@ -28,7 +28,6 @@ import {
   PipelineKind,
   TaskRunKind,
   TektonParam,
-  TektonResultsRun,
 } from '../types';
 import { getLatestRun, runStatus } from './pipeline-augment';
 import { pipelineRunFilterReducer, pipelineRunStatus } from './pipeline-filter-reducer';
@@ -433,21 +432,6 @@ export const pipelinesTab = (kindObj: K8sKind) => {
     default:
       return null;
   }
-};
-
-type ResultColumn = [string, string];
-
-export type ResultCells = {
-  rows: ResultColumn[];
-  columns: ResultColumn;
-};
-
-export const getCellsFromResults = (results: TektonResultsRun[]): ResultCells => {
-  // t('pipelines-plugin~Name') t('pipelines-plugin~Value')
-  return {
-    columns: ['pipelines-plugin~Name', 'pipelines-plugin~Value'],
-    rows: results.map((result) => [result.name, result.value]),
-  };
 };
 
 export const getMatchedPVCs = (

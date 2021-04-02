@@ -213,6 +213,7 @@
   "Create Pipeline": "Create Pipeline",
   "by name": "by name",
   "{{resourceName}} results": "{{resourceName}} results",
+  "Value": "Value",
   "No {{resourceName}} results available due to failure": "No {{resourceName}} results available due to failure",
   "Task": "Task",
   "Pod": "Pod",
@@ -245,6 +246,5 @@
   "Skipped": "Skipped",
   "Cancelled": "Cancelled",
   "Pending": "Pending",
-  "PipelineRun not started yet": "PipelineRun not started yet",
-  "Value": "Value"
+  "PipelineRun not started yet": "PipelineRun not started yet"
 }
