@@ -157,9 +157,15 @@ type VMDisksProps = {
   datavolumes?: FirehoseResult<V1alpha1DataVolume[]>;
   vmTemplate?: FirehoseResult<TemplateKind>;
   vmi?: VMIKind;
+  isCommonTemplate?: boolean;
 };
 
-export const VMDisks: React.FC<VMDisksProps> = ({ vmLikeEntity, vmTemplate, vmi }) => {
+export const VMDisks: React.FC<VMDisksProps> = ({
+  vmLikeEntity,
+  vmTemplate,
+  vmi,
+  isCommonTemplate,
+}) => {
   const { t } = useTranslation();
   const namespace = getNamespace(vmLikeEntity);
   const [isLocked, setIsLocked] = useSafetyFirst(false);
@@ -208,7 +214,7 @@ export const VMDisks: React.FC<VMDisksProps> = ({ vmLikeEntity, vmTemplate, vmi 
       createButtonText={t('kubevirt-plugin~Add Disk')}
       canCreate={!isVMI(vmLikeEntity)}
       createProps={{
-        isDisabled: isLocked,
+        isDisabled: isLocked || isCommonTemplate,
         onClick: createFn,
         id: 'add-disk',
       }}
@@ -216,7 +222,7 @@ export const VMDisks: React.FC<VMDisksProps> = ({ vmLikeEntity, vmTemplate, vmi 
       customData={{
         vmLikeEntity,
         withProgress,
-        isDisabled: isLocked,
+        isDisabled: isLocked || isCommonTemplate,
         templateValidations,
         columnClasses: diskTableColumnClasses,
         showGuestAgentHelp: true,
@@ -227,7 +233,10 @@ export const VMDisks: React.FC<VMDisksProps> = ({ vmLikeEntity, vmTemplate, vmi 
   );
 };
 
-export const VMDisksFirehose: React.FC<VMLikeEntityTabProps> = ({ obj: vmLikeEntity }) => {
+export const VMDisksFirehose: React.FC<VMLikeEntityTabProps> = ({
+  obj: vmLikeEntity,
+  customData: { isCommonTemplate },
+}) => {
   const vmTemplate = getVMTemplateNamespacedName(vmLikeEntity);
 
   const resources = [
@@ -241,7 +250,7 @@ export const VMDisksFirehose: React.FC<VMLikeEntityTabProps> = ({ obj: vmLikeEnt
 
   return (
     <Firehose resources={resources}>
-      <VMDisks vmLikeEntity={vmLikeEntity} />
+      <VMDisks vmLikeEntity={vmLikeEntity} isCommonTemplate={isCommonTemplate} />
     </Firehose>
   );
 };

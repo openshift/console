@@ -48,7 +48,7 @@ export const VMTemplateResourceSummary: React.FC<VMTemplateResourceSummaryProps>
   const workloadProfile = getWorkloadProfile(template);
 
   return (
-    <ResourceSummary resource={template}>
+    <ResourceSummary resource={template} canUpdateResource={canUpdateTemplate}>
       <VMDetailsItem
         title={t('kubevirt-plugin~Description')}
         idValue={prefixedID(id, 'description')}

@@ -110,7 +110,11 @@ export const VMNicsTable: React.FC<VMNicsTableProps> = ({
   );
 };
 
-export const VMNics: React.FC<VMTabProps> = ({ obj: vmLikeEntity, vmis: vmisProp }) => {
+export const VMNics: React.FC<VMTabProps> = ({
+  obj: vmLikeEntity,
+  vmis: vmisProp,
+  customData: { isCommonTemplate },
+}) => {
   const { t } = useTranslation();
   const [isLocked, setIsLocked] = useSafetyFirst(false);
   const withProgress = wrapWithProgress(setIsLocked);
@@ -137,7 +141,7 @@ export const VMNics: React.FC<VMTabProps> = ({ obj: vmLikeEntity, vmis: vmisProp
                   }).result,
                 )
               }
-              isDisabled={isLocked}
+              isDisabled={isLocked || isCommonTemplate}
             >
               {t('kubevirt-plugin~Add Network Interface')}
             </Button>
@@ -150,7 +154,7 @@ export const VMNics: React.FC<VMTabProps> = ({ obj: vmLikeEntity, vmis: vmisProp
           customData={{
             vmLikeEntity,
             withProgress,
-            isDisabled: isLocked,
+            isDisabled: isLocked || isCommonTemplate,
             pendingChangesNICs,
           }}
           row={NicRow}

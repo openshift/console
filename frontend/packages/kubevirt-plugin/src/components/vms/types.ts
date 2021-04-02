@@ -38,12 +38,16 @@ export type VMTabProps = {
   vmImports?: VMImportKind[];
   customData: {
     kindObj: K8sKind;
+    isCommonTemplate: boolean;
   };
   showOpenInNewWindow?: boolean;
 };
 
 export type VMLikeEntityTabProps = {
   obj?: VMGenericLikeEntityKind;
+  customData?: {
+    isCommonTemplate: boolean;
+  };
 };
 
 export enum IsPendingChange {
