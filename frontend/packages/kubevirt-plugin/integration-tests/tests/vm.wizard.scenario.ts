@@ -19,7 +19,6 @@ import {
   JASMINE_EXTENDED_TIMEOUT_INTERVAL,
 } from './utils/constants/common';
 import { multusNAD, cdGuestTools, getTestDataVolume } from './mocks/mocks';
-import { Workload } from './utils/constants/wizard';
 import { vmPresets, getBasicVMBuilder } from './mocks/vmBuilderPresets';
 import { VMBuilder } from './models/vmBuilder';
 import { ProvisionSource } from './utils/constants/enums/provisionSource';
@@ -94,7 +93,6 @@ describe('Kubevirt create VM using wizard', () => {
     const vm = new VMBuilder(getBasicVMBuilder())
       .setName(testName)
       .setProvisionSource(ProvisionSource.PXE)
-      .setWorkload(Workload.DESKTOP)
       .setCustomize(true)
       .build();
     const wizard = new Wizard();

@@ -63,6 +63,7 @@ export const diskWarning = (resourceName) =>
   $(`[data-id="${resourceName}"]`).$('.kv-validation-cell__cell--warning');
 
 // Advanced -- Cloud-init
+export const cloud = $('#cloud');
 export const cloudInitFormCheckbox = $('#cloud-init-edit-mode-first-option');
 export const cloudInitCustomScriptCheckbox = $('#cloud-init-edit-mode-second-option');
 export const customCloudInitScriptTextArea = $('#cloudinit-custom-custom-script');
