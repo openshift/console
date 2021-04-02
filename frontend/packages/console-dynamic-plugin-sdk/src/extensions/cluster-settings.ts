@@ -1,7 +1,9 @@
 import { Extension } from '@console/plugin-sdk/src/typings/base';
+import { ExtensionDeclaration } from '../types';
 
-namespace ExtensionProperties {
-  export type ClusterGlobalConfig = {
+export type ClusterGlobalConfig = ExtensionDeclaration<
+  'console.global-config',
+  {
     /** Unique identifier for the cluster config resource instance. */
     id: string;
     /** The name of the cluster config resource instance. */
@@ -14,14 +16,8 @@ namespace ExtensionProperties {
     };
     /** The namespace of the cluster config resource instance. */
     namespace: string;
-  };
-}
-
-// Extension types
-
-export type ClusterGlobalConfig = Extension<ExtensionProperties.ClusterGlobalConfig> & {
-  type: 'console.global-config';
-};
+  }
+>;
 
 // Type guards
 

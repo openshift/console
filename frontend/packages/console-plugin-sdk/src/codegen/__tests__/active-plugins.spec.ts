@@ -185,7 +185,7 @@ describe('getExecutableCodeRefSource', () => {
     consolePlugin: { entry: 'src/plugin.ts', exposedModules },
   });
 
-  it('transforms encoded code reference into executable CodeRef function source', () => {
+  it('transforms encoded code reference into CodeRef function source', () => {
     const validationResult = new ValidationResult('test');
 
     expect(

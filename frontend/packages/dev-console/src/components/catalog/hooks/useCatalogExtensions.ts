@@ -1,8 +1,8 @@
 import {
   ResolvedExtension,
   useResolvedExtensions,
-  ResolvedCatalogItemFilter,
-  ResolvedCatalogItemProvider,
+  CatalogItemFilter,
+  CatalogItemProvider,
   CatalogItemType,
   isCatalogItemFilter,
   isCatalogItemProvider,
@@ -13,18 +13,18 @@ const useCatalogExtensions = (
   catalogType: string,
 ): [
   ResolvedExtension<CatalogItemType>[],
-  ResolvedExtension<ResolvedCatalogItemProvider>[],
-  ResolvedExtension<ResolvedCatalogItemFilter>[],
+  ResolvedExtension<CatalogItemProvider>[],
+  ResolvedExtension<CatalogItemFilter>[],
   boolean,
 ] => {
   const [itemTypeExtensions, typesResolved] = useResolvedExtensions<CatalogItemType>(
     isCatalogItemType,
   );
-  const [itemProviderExtensions, providersResolved] = useResolvedExtensions<
-    ResolvedCatalogItemProvider
-  >(isCatalogItemProvider);
+  const [itemProviderExtensions, providersResolved] = useResolvedExtensions<CatalogItemProvider>(
+    isCatalogItemProvider,
+  );
 
-  const [itemFilterExtensions, filtersResolved] = useResolvedExtensions<ResolvedCatalogItemFilter>(
+  const [itemFilterExtensions, filtersResolved] = useResolvedExtensions<CatalogItemFilter>(
     isCatalogItemFilter,
   );
 

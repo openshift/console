@@ -7,12 +7,13 @@ import { YAMLTemplate } from '../extensions/yaml-templates';
 import { AddAction } from '../extensions/add-actions';
 import { ClusterGlobalConfig } from '../extensions/cluster-settings';
 import {
-  ResourceClusterNavItem,
   HrefNavItem,
   ResourceNSNavItem,
+  ResourceClusterNavItem,
   Separator,
+  NavSection,
 } from '../extensions/navigation';
-import { CatalogItemFilter, CatalogItemProvider, CatalogItemType } from '../extensions/catalog';
+import { CatalogItemType, CatalogItemProvider, CatalogItemFilter } from '../extensions/catalog';
 import { FileUpload } from '../extensions/file-upload';
 import { ModelMetadata } from '../extensions/resource-metadata';
 
@@ -29,10 +30,11 @@ export type SupportedExtension =
   | YAMLTemplate
   | AddAction
   | ClusterGlobalConfig
-  | Separator
   | HrefNavItem
   | ResourceNSNavItem
   | ResourceClusterNavItem
+  | Separator
+  | NavSection
   | CatalogItemType
   | CatalogItemProvider
   | CatalogItemFilter

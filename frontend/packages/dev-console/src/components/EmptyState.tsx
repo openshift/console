@@ -13,10 +13,7 @@ import {
   ResolvedExtension,
   useResolvedExtensions,
 } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
-import {
-  isAddAction,
-  ResolvedAddAction,
-} from '@console/dynamic-plugin-sdk/src/extensions/add-actions';
+import { AddAction, isAddAction } from '@console/dynamic-plugin-sdk/src/extensions/add-actions';
 
 const navigateTo = (e: React.SyntheticEvent, url: string) => {
   history.push(url);
@@ -24,7 +21,7 @@ const navigateTo = (e: React.SyntheticEvent, url: string) => {
 };
 
 interface ItemProps {
-  action: ResolvedExtension<ResolvedAddAction>;
+  action: ResolvedExtension<AddAction>;
   namespace: string;
 }
 
@@ -78,7 +75,7 @@ const ODCEmptyState: React.FC<Props> = ({ title, activeNamespace, hintBlock }) =
   const defaultHintBlockText = t(
     'devconsole~Select a way to create an Application, component or service from one of the options.',
   );
-  const [addActionExtensions, resolved] = useResolvedExtensions<ResolvedAddAction>(isAddAction);
+  const [addActionExtensions, resolved] = useResolvedExtensions<AddAction>(isAddAction);
 
   if (!resolved) return <LoadingBox />;
 

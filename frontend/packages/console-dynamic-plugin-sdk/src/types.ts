@@ -1,6 +1,13 @@
 import { Extension } from '@console/plugin-sdk/src/typings/base';
 
 /**
+ * Declaration of Console extension type.
+ */
+export type ExtensionDeclaration<T extends string, P extends {}> = Extension<P> & {
+  type: T;
+};
+
+/**
  * Remote (i.e. webpack container) entry module interface.
  */
 export type RemoteEntryModule = {

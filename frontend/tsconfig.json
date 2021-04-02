@@ -11,9 +11,15 @@
     "experimentalDecorators": true,
     "sourceMap": true,
     "noUnusedLocals": true,
-    "types": ["node", "jest", "cypress", "cypress-axe", "console"],
-    "typeRoots": ["node_modules/@types", "@types"]
+    "typeRoots": ["node_modules/@types", "@types"],
+    "types": ["node", "jest", "cypress", "cypress-axe", "console"]
   },
-  "exclude": [".yarn", "**/node_modules", "**/dist", "dynamic-demo-plugin"],
+  "exclude": [
+    ".yarn",
+    "**/node_modules",
+    "**/dist",
+    "dynamic-demo-plugin",
+    "packages/console-dynamic-plugin-sdk/scripts"
+  ],
   "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx", "**/*.json"]
 }
