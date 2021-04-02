@@ -73,6 +73,7 @@ export const PRIMITIVE_COMPATIBLE_CAPABILITIES: (SpecCapability | StatusCapabili
   SpecCapability.select,
   SpecCapability.text,
   StatusCapability.w3Link,
+  StatusCapability.w3ExternalLink,
   StatusCapability.text,
   StatusCapability.k8sPhase,
   StatusCapability.k8sPhaseReason,

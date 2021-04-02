@@ -36,6 +36,7 @@ export enum StatusCapability {
   podStatuses = 'urn:alm:descriptor:com.tectonic.ui:podStatuses',
   podCount = 'urn:alm:descriptor:com.tectonic.ui:podCount',
   w3Link = 'urn:alm:descriptor:org.w3:link',
+  w3ExternalLink = 'urn:alm:descriptor:org.w3:externalLink',
   conditions = 'urn:alm:descriptor:io.kubernetes.conditions',
   text = 'urn:alm:descriptor:text',
   prometheusEndpoint = 'urn:alm:descriptor:prometheusEndpoint',

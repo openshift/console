@@ -27,11 +27,12 @@
 #### [statusDescriptors](#statusDescriptors-1):
   1. [podStatuses](#1-podStatuses)
   2. [w3Link](#2-w3Link)
-  3. [conditions](#3-conditions)
-  4. [text](#4-text)
-  5. [k8sPhase](#5-k8sPhase)
-  6. [k8sPhaseReason](#6-k8sPhaseReason)
-  7. [k8sResourcePrefix](#7-k8sResourcePrefix)
+  3. [w3ExternalLink](#3-w3ExternalLink)
+  4. [conditions](#4-conditions)
+  5. [text](#5-text)
+  6. [k8sPhase](#6-k8sPhase)
+  7. [k8sPhaseReason](#7-k8sPhaseReason)
+  8. [k8sResourcePrefix](#8-k8sResourcePrefix)
 ---------------------------------------
 
 #### [DEPRECATED Descriptors](#deprecated-descriptors-1)
@@ -853,7 +854,55 @@ status:
   </tr>
 </table>
 
-#### 3. conditions
+#### 3. w3ExternalLink
+
+**x-descriptors**
+
+This descriptor allows you to expose an external link of your instance and open it in the separate browser tab or window. It expects the output format in the status block of your instance in:
+```yaml
+…
+status:
+  [PATH_TO_THE_FIELD]: [FIELD_VALUE]
+…
+```
+
+**Example**
+
+```yaml
+…
+- displayName: Eclipse Che URL
+  description: Route to access Eclipse Che
+  path: cheURL
+  x-descriptors:
+    - urn:alm:descriptor:org.w3:externalLink
+…
+```
+
+The status block of the field being specified:
+
+```yaml
+…
+status:
+  …
+  cheURL: 'http://che-tony.apps.rhamilto.devcluster.openshift.com'
+…
+```
+
+**On the DISPLAY VIEW:**
+<table style="width:100%">
+  <tr valign="top">
+    <td width="50%">
+      <img src="img/status/2-1_w3Link.png" />
+      <h6><small>Click on the link sends users to target URL.</small></h6>
+      </td>
+    <td width="50%">
+      <img src="img/status/2-2_w3Link.png" />
+      <h6><small>Hover over displayName shows descriptions on tooltip.</small></h6>
+      </td>
+  </tr>
+</table>
+
+#### 4. conditions
 
 **x-descriptors**
 
@@ -926,7 +975,7 @@ status:
   </tr>
 </table>
 
-#### 4. text
+#### 5. text
 
 **x-descriptors**
 
@@ -968,7 +1017,7 @@ status:
   </tr>
 </table>
 
-#### 5. k8sPhase
+#### 6. k8sPhase
 
 **x-descriptors**
 
@@ -1008,7 +1057,7 @@ status:
   </tr>
 </table>
 
-#### 6. k8sPhaseReason
+#### 7. k8sPhaseReason
 
 **x-descriptors**
 
@@ -1049,7 +1098,7 @@ status:
   </tr>
 </table>
 
-#### 7. k8sResourcePrefix
+#### 8. k8sResourcePrefix
 
 **x-descriptors**
 

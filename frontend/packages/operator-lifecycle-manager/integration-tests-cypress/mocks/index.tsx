@@ -39,6 +39,8 @@ const defaultValueFor = <C extends SpecCapability | StatusCapability>(capability
       return 3;
     case StatusCapability.w3Link:
       return 'https://google.com';
+    case StatusCapability.w3ExternalLink:
+      return 'https://google.com';
     case StatusCapability.conditions:
       return [
         {

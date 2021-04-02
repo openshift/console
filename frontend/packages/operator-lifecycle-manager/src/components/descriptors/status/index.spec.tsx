@@ -89,6 +89,14 @@ describe('Status descriptors', () => {
     expect(wrapper.find('dd').text()).toEqual('example.com');
   });
 
+  it('renders an external link status', () => {
+    descriptor['x-descriptors'] = [StatusCapability.w3ExternalLink];
+    descriptor.path = 'externalLink';
+    wrapper = wrapper.setProps({ descriptor });
+
+    expect(wrapper.find('dd').text()).toEqual('example.com');
+  });
+
   it('renders a resource status', () => {
     descriptor['x-descriptors'] = [
       `${StatusCapability.k8sResourcePrefix}Service`,

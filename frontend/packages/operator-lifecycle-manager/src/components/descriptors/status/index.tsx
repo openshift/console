@@ -64,6 +64,27 @@ const StatusConditions: React.FC<StatusCapabilityProps> = ({
   );
 };
 
+const ExternalLink: React.FC<StatusCapabilityProps> = ({
+  description,
+  fullPath,
+  label,
+  obj,
+  value,
+}) => {
+  const { t } = useTranslation();
+  return (
+    <DetailsItem description={description} label={label} obj={obj} path={fullPath}>
+      {!_.isNil(value) ? (
+        <a href={value} rel="noopener noreferrer" target="_blank">
+          {value.replace(/https?:\/\//, '')}
+        </a>
+      ) : (
+        <span className="text-muted">{t('public~None')}</span>
+      )}
+    </DetailsItem>
+  );
+};
+
 const Link: React.FC<StatusCapabilityProps> = ({ description, fullPath, label, obj, value }) => {
   const { t } = useTranslation();
   return (
@@ -167,6 +188,8 @@ export const StatusDescriptorDetailsItem: React.FC<StatusCapabilityProps> = (pro
       return <StatusConditions {...props} />;
     case StatusCapability.w3Link:
       return <Link {...props} />;
+    case StatusCapability.w3ExternalLink:
+      return <ExternalLink {...props} />;
     case StatusCapability.k8sPhase:
       return <K8sPhase {...props} />;
     case StatusCapability.k8sPhaseReason:
