@@ -1,4 +1,5 @@
 import { AddTriggerFormValues } from '../components/pipelines/modals/triggers/types';
+import { VolumeTypes } from '../components/pipelines/const';
 
 export const formValues: AddTriggerFormValues = {
   namespace: 'test-ns',
@@ -38,7 +39,7 @@ export const formValues: AddTriggerFormValues = {
   workspaces: [
     {
       name: 'workspace',
-      type: 'PVC',
+      type: VolumeTypes.PVC,
       data: {
         persistentVolumeClaim: {
           claimName: 'pvc-c9a548597b',

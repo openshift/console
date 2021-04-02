@@ -59,7 +59,7 @@ export type VolumeClaimTemplateType = {
   volumeClaimTemplate: VolumeTypeClaim;
 };
 export type VolumeTypeClaim = {
-  metadata: ObjectMetadata;
+  metadata?: ObjectMetadata;
   spec: {
     accessModes: string[];
     resources: {
@@ -67,6 +67,8 @@ export type VolumeTypeClaim = {
         storage: string;
       };
     };
+    storageClassName?: string;
+    volumeMode?: string;
   };
 };
 

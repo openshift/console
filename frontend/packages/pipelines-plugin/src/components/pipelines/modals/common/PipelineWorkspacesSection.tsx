@@ -5,13 +5,16 @@ import { TFunction } from 'i18next';
 import { SecretModel, ConfigMapModel } from '@console/internal/models';
 import { DropdownField } from '@console/shared';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
+import { Alert } from '@patternfly/react-core';
 import { VolumeTypes } from '../../const';
+import VolumeClaimTemplateForm from './VolumeClaimTemplateForm';
 import PVCDropdown from './PVCDropdown';
 import MultipleResourceKeySelector from './MultipleResourceKeySelector';
 import { PipelineModalFormWorkspace } from './types';
+import './PipelineWorkspacesSection.scss';
 
 const getVolumeTypeFields = (volumeType: VolumeTypes, index: number, t: TFunction) => {
-  switch (VolumeTypes[volumeType]) {
+  switch (volumeType) {
     case VolumeTypes.Secret: {
       return (
         <MultipleResourceKeySelector
@@ -36,6 +39,26 @@ const getVolumeTypeFields = (volumeType: VolumeTypes, index: number, t: TFunctio
         />
       );
     }
+    case VolumeTypes.EmptyDirectory: {
+      return (
+        <div className="odc-PipelineWorkspacesSection__emptydir">
+          <Alert
+            isInline
+            variant="info"
+            title={t("pipelines-plugin~Empty Directory doesn't support shared data between tasks.")}
+          />
+        </div>
+      );
+    }
+    case VolumeTypes.VolumeClaimTemplate: {
+      return (
+        <VolumeClaimTemplateForm
+          name={`workspaces.${index}.data.volumeClaimTemplate`}
+          initialSizeValue="1"
+          initialSizeUnit="Gi"
+        />
+      );
+    }
     case VolumeTypes.PVC: {
       return <PVCDropdown name={`workspaces.${index}.data.persistentVolumeClaim.claimName`} />;
     }
@@ -48,6 +71,15 @@ const PipelineWorkspacesSection: React.FC = () => {
   const { t } = useTranslation();
   const { setFieldValue } = useFormikContext<FormikValues>();
   const [{ value: workspaces }] = useField<PipelineModalFormWorkspace[]>('workspaces');
+
+  const volumeTypeOptions: { [type in VolumeTypes]: string } = {
+    [VolumeTypes.EmptyDirectory]: t('pipelines-plugin~Empty Directory'),
+    [VolumeTypes.ConfigMap]: t('pipelines-plugin~Config Map'),
+    [VolumeTypes.Secret]: t('pipelines-plugin~Secret'),
+    [VolumeTypes.PVC]: t('pipelines-plugin~PersistentVolumeClaim'),
+    [VolumeTypes.VolumeClaimTemplate]: t('pipelines-plugin~VolumeClaimTemplate'),
+  };
+
   return (
     workspaces.length > 0 && (
       <FormSection title={t('pipelines-plugin~Workspaces')} fullWidth>
@@ -56,11 +88,11 @@ const PipelineWorkspacesSection: React.FC = () => {
             <DropdownField
               name={`workspaces.${index}.type`}
               label={workspace.name}
-              items={VolumeTypes}
+              items={volumeTypeOptions}
               onChange={(type) =>
                 setFieldValue(
                   `workspaces.${index}.data`,
-                  VolumeTypes[type] === VolumeTypes.EmptyDirectory ? { emptyDir: {} } : {},
+                  type === VolumeTypes.EmptyDirectory ? { emptyDir: {} } : {},
                   // Validation is automatically done by DropdownField useFormikValidationFix
                   false,
                 )
@@ -68,7 +100,7 @@ const PipelineWorkspacesSection: React.FC = () => {
               fullWidth
               required
             />
-            {getVolumeTypeFields(workspace.type as VolumeTypes, index, t)}
+            {getVolumeTypeFields(workspace.type, index, t)}
           </div>
         ))}
       </FormSection>

@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import FormSection from '@console/dev-console/src/components/import/section/FormSection';
 import PipelineParameterSection from '../common/PipelineParameterSection';
 import PipelineResourceSection from '../common/PipelineResourceSection';
-import PipelineWorkspacesSection from '../common/PiplelineWorkspacesSection';
+import PipelineWorkspacesSection from '../common/PipelineWorkspacesSection';
 import PipelineSecretSection from '../common/PipelineSecretSection';
 
 const StartPipelineForm: React.FC<FormikValues> = ({ values }) => {

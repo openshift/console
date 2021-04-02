@@ -15,6 +15,7 @@ import {
 } from '../../pipelines/modals/common/utils';
 import { submitStartPipeline } from '../../pipelines/modals/start-pipeline/submit-utils';
 import { StartPipelineFormValues } from '../../pipelines/modals/start-pipeline/types';
+import { VolumeTypes } from '../../pipelines/const';
 
 const getImageUrl = (name: string, namespace: string) => {
   return `image-registry.openshift-image-registry.svc:5000/${namespace}/${name}`;
@@ -124,7 +125,7 @@ export const createPipelineRunForImportFlow = async (
     ...convertPipelineToModalData(pipeline),
     workspaces: (pipeline.spec.workspaces || []).map((workspace: TektonWorkspace) => ({
       ...workspace,
-      type: 'volumeClaimTemplate',
+      type: VolumeTypes.VolumeClaimTemplate,
       data: getDefaultVolumeClaimTemplate(pipeline?.metadata?.name),
     })),
     secretOpen: false,

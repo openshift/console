@@ -98,6 +98,23 @@ const volumeTypeSchema = (t: TFunction) =>
           claimName: yup.string().required(t('pipelines-plugin~Required')),
         }),
       }),
+    })
+    .when('type', {
+      is: (type) => VolumeTypes[type] === VolumeTypes.VolumeClaimTemplate,
+      then: yup.object().shape({
+        volumeClaimTemplate: yup.object().shape({
+          spec: yup.object().shape({
+            accessModes: yup.array().of(yup.string().required(t('pipelines-plugin~Required'))),
+            resources: yup.object().shape({
+              requests: yup
+                .object()
+                .shape({ storage: yup.string().required(t('pipelines-plugin~Required')) }),
+            }),
+            storageClassName: yup.string().required(t('pipelines-plugin~Required')),
+            volumeMode: yup.string().required(t('pipelines-plugin~Required')),
+          }),
+        }),
+      }),
     });
 
 const commonPipelineSchema = (t: TFunction) =>
