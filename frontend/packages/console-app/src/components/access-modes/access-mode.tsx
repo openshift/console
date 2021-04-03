@@ -1,15 +1,14 @@
+import * as _ from 'lodash';
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
+
 import { RadioInput } from '@console/internal/components/radio';
 import { FormGroup } from '@patternfly/react-core';
-import { useTranslation } from 'react-i18next';
+import { PersistentVolumeClaimKind } from '@console/internal/module/k8s';
 import {
-  provisionerAccessModeMapping,
   getAccessModeForProvisioner,
-  cephRBDProvisionerSuffix,
   getAccessModeRadios,
 } from '@console/internal/components/storage/shared';
-import { PersistentVolumeClaimKind } from '@console/internal/module/k8s';
-import * as _ from 'lodash';
 
 export const getPVCAccessModes = (resource: PersistentVolumeClaimKind, key: string) =>
   _.reduce(
@@ -26,62 +25,65 @@ export const getPVCAccessModes = (resource: PersistentVolumeClaimKind, key: stri
 
 export const AccessModeSelector: React.FC<AccessModeSelectorProps> = (props) => {
   const {
-    formClassName,
+    className,
     pvcResource,
+    filterByVolumeMode,
     onChange,
     loaded,
     provisioner,
     availableAccessModes = [],
+    description,
+    ignoreReadOnly,
   } = props;
 
   const { t } = useTranslation();
-
   const pvcInitialAccessMode = pvcResource
     ? getPVCAccessModes(pvcResource, 'value')
     : availableAccessModes;
+  const volumeMode: string = pvcResource?.spec?.volumeMode;
 
   const [allowedAccessModes, setAllowedAccessModes] = React.useState<string[]>();
-  const [accessMode, setAccessMode] = React.useState<string>('');
+  const [accessMode, setAccessMode] = React.useState<string>();
 
-  const updateAllowedAccessModes = (scProvisioner: string) =>
-    provisionerAccessModeMapping[scProvisioner] ?? getAccessModeForProvisioner('');
+  const changeAccessMode = React.useCallback(
+    (mode: string) => {
+      setAccessMode(mode);
+      onChange(mode);
+    },
+    [onChange],
+  );
 
   React.useEffect(() => {
     if (loaded) {
-      let currentModes: string[];
-      provisioner?.includes(cephRBDProvisionerSuffix) && pvcResource?.spec.volumeMode !== 'Block'
-        ? (currentModes = ['ReadWriteOnce', 'ReadOnlyMany'])
-        : (currentModes = updateAllowedAccessModes(provisioner));
-      setAllowedAccessModes(currentModes);
+      setAllowedAccessModes(
+        getAccessModeForProvisioner(
+          provisioner,
+          ignoreReadOnly,
+          filterByVolumeMode ? volumeMode : null,
+        ),
+      );
     }
-  }, [loaded, provisioner, pvcResource]);
+  }, [filterByVolumeMode, ignoreReadOnly, loaded, provisioner, volumeMode]);
 
   React.useEffect(() => {
-    // Makesure the default or already checked radio button value is from any one of allowed the access mode
+    // Make sure the default or already checked radio button value is from any one of allowed the access mode
     if (allowedAccessModes) {
-      if (accessMode === '' && allowedAccessModes.includes(pvcInitialAccessMode[0])) {
+      if (!accessMode && allowedAccessModes.includes(pvcInitialAccessMode[0])) {
         // To view the same access mode value of pvc
-        setAccessMode(pvcInitialAccessMode[0]);
-        onChange(pvcInitialAccessMode[0]);
+        changeAccessMode(pvcInitialAccessMode[0]);
       } else if (!allowedAccessModes.includes(accessMode)) {
         // Old access mode will be disabled
-        setAccessMode(allowedAccessModes[0]);
-        onChange(allowedAccessModes[0]);
+        changeAccessMode(allowedAccessModes[0]);
       }
     }
-  }, [accessMode, allowedAccessModes, onChange, pvcInitialAccessMode]);
-
-  const onAccessModeChange: React.ReactEventHandler<HTMLInputElement> = (event) => {
-    setAccessMode(event.currentTarget.value);
-    onChange(event.currentTarget.value);
-  };
+  }, [accessMode, allowedAccessModes, changeAccessMode, pvcInitialAccessMode]);
 
   return (
     <FormGroup
-      label={t('console-app~Access Mode')}
+      label={t('console-app~Access mode')}
       isRequired
       fieldId="access-mode"
-      className={formClassName}
+      className={className}
     >
       {loaded &&
         allowedAccessModes &&
@@ -92,7 +94,7 @@ export const AccessModeSelector: React.FC<AccessModeSelectorProps> = (props) => 
             <RadioInput
               {...radio}
               key={radio.value}
-              onChange={onAccessModeChange}
+              onChange={(event) => changeAccessMode(event.currentTarget.value)}
               inline
               disabled={disabled}
               checked={checked}
@@ -100,17 +102,25 @@ export const AccessModeSelector: React.FC<AccessModeSelectorProps> = (props) => 
             />
           );
         })}
+      {allowedAccessModes && allowedAccessModes && description && (
+        <p className="help-block" id="access-mode-help">
+          {description}
+        </p>
+      )}
       {(!loaded || !allowedAccessModes) && <div className="skeleton-text" />}
     </FormGroup>
   );
 };
 
 type AccessModeSelectorProps = {
-  formClassName?: string;
+  className?: string;
   pvcResource?: PersistentVolumeClaimKind;
-  onChange: Function;
+  filterByVolumeMode?: boolean;
+  onChange: (accessMode: string) => void;
   availableAccessModes?: string[];
   loaded: boolean;
-  loadError: any;
+  loadError?: any;
   provisioner: string;
+  description?: string;
+  ignoreReadOnly?: boolean;
 };

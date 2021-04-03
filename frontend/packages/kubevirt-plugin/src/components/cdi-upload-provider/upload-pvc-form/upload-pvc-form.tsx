@@ -9,7 +9,6 @@ import { match } from 'react-router';
 import {
   dropdownUnits,
   getAccessModeForProvisioner,
-  provisionerAccessModeMapping,
 } from '@console/internal/components/storage/shared';
 import {
   ButtonBar,
@@ -148,8 +147,7 @@ export const UploadPVCForm: React.FC<UploadPVCFormProps> = ({
   const defaultSCName = getDefaultStorageClass(storageClasses)?.metadata.name;
   const updatedStorageClass = storageClasses?.find((sc) => sc.metadata.name === storageClassName);
   const provisioner = updatedStorageClass?.provisioner || '';
-  let accessModes: string[] =
-    provisionerAccessModeMapping[provisioner] || getAccessModeForProvisioner(provisioner);
+  let accessModes: string[] = getAccessModeForProvisioner(provisioner);
 
   if (storageClasses?.length === 0 && scConfigMap) {
     accessModes = getDefaultSCAccessModes(scConfigMap).map((am) => am.getValue());
