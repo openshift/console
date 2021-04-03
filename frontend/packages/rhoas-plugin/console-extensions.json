@@ -44,6 +44,7 @@
   {
     "type": "console.catalog/item-provider",
     "properties": {
+      "catalogId": "dev-catalog",
       "type": "managedservices",
       "provider": { "$codeRef": "catalog.rhoasProvider" }
     },

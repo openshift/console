@@ -8,6 +8,7 @@ import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
 import CatalogServiceProvider from './service/CatalogServiceProvider';
 import CatalogController from './CatalogController';
 import { CatalogQueryParams } from './utils/types';
+import useCatalogCategories from './hooks/useCatalogCategories';
 
 type CatalogPageProps = RouteComponentProps<{
   ns?: string;
@@ -18,12 +19,27 @@ const CatalogPage: React.FC<CatalogPageProps> = ({ match }) => {
   const queryParams = useQueryParams();
   const catalogType = queryParams.get(CatalogQueryParams.TYPE);
   const namespace = match.params.ns;
+  const categories = useCatalogCategories();
 
   return (
     <NamespacedPage variant={NamespacedPageVariants.light} hideApplications>
       {namespace ? (
-        <CatalogServiceProvider namespace={namespace} catalogType={catalogType}>
-          {(service) => <CatalogController {...service} />}
+        <CatalogServiceProvider
+          namespace={namespace}
+          catalogId="dev-catalog"
+          catalogType={catalogType}
+        >
+          {(service) => (
+            <CatalogController
+              {...service}
+              enableDetailsPanel
+              categories={categories}
+              title={t('devconsole~Developer Catalog')}
+              description={t(
+                'devconsole~Add shared applications, services, event sources, or source-to-image builders to your Project from the developer catalog. Cluster administrators can customize the content made available in the catalog.',
+              )}
+            />
+          )}
         </CatalogServiceProvider>
       ) : (
         <CreateProjectListPage title={t('devconsole~Developer Catalog')}>

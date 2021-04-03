@@ -52,6 +52,7 @@
   {
     "type": "console.catalog/item-provider",
     "properties": {
+      "catalogId": "dev-catalog",
       "type": "VmTemplate",
       "provider": { "$codeRef": "createVM.catalogVMTemplateProvider" }
     },
@@ -63,6 +64,7 @@
   {
     "type": "console.catalog/item-filter",
     "properties": {
+      "catalogId": "dev-catalog",
       "type": "Template",
       "filter": { "$codeRef": "createVM.catalogVMTemplateFilter" }
     },

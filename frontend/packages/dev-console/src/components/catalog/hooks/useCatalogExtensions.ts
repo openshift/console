@@ -1,3 +1,5 @@
+import * as React from 'react';
+import * as _ from 'lodash';
 import {
   ResolvedExtension,
   useResolvedExtensions,
@@ -8,8 +10,10 @@ import {
   isCatalogItemProvider,
   isCatalogItemType,
 } from '@console/dynamic-plugin-sdk';
+import { useExtensions } from '@console/plugin-sdk';
 
 const useCatalogExtensions = (
+  catalogId: string,
   catalogType: string,
 ): [
   ResolvedExtension<CatalogItemType>[],
@@ -17,24 +21,31 @@ const useCatalogExtensions = (
   ResolvedExtension<CatalogItemFilter>[],
   boolean,
 ] => {
-  const [itemTypeExtensions, typesResolved] = useResolvedExtensions<CatalogItemType>(
-    isCatalogItemType,
-  );
-  const [itemProviderExtensions, providersResolved] = useResolvedExtensions<CatalogItemProvider>(
-    isCatalogItemProvider,
+  const itemTypeExtensions = useExtensions<CatalogItemType>(isCatalogItemType);
+
+  const [catalogProviderExtensions, providersResolved] = useResolvedExtensions<CatalogItemProvider>(
+    React.useCallback(
+      (e): e is CatalogItemProvider =>
+        isCatalogItemProvider(e) &&
+        _.castArray(e.properties.catalogId).includes(catalogId) &&
+        (!catalogType || e.properties.type === catalogType),
+      [catalogId, catalogType],
+    ),
   );
 
   const [itemFilterExtensions, filtersResolved] = useResolvedExtensions<CatalogItemFilter>(
-    isCatalogItemFilter,
+    React.useCallback(
+      (e): e is CatalogItemFilter =>
+        isCatalogItemFilter(e) &&
+        _.castArray(e.properties.catalogId).includes(catalogId) &&
+        (!catalogType || e.properties.type === catalogType),
+      [catalogId, catalogType],
+    ),
   );
 
   const catalogTypeExtensions = catalogType
     ? itemTypeExtensions.filter((e) => e.properties.type === catalogType)
     : itemTypeExtensions;
-
-  const catalogProviderExtensions = catalogType
-    ? itemProviderExtensions.filter((e) => e.properties.type === catalogType)
-    : itemProviderExtensions;
 
   catalogProviderExtensions.sort((a, b) => {
     const p1 = a.properties.priority ?? 0;
@@ -50,7 +61,7 @@ const useCatalogExtensions = (
     catalogTypeExtensions,
     catalogProviderExtensions,
     catalogFilterExtensions,
-    typesResolved && providersResolved && filtersResolved,
+    providersResolved && filtersResolved,
   ];
 };
 

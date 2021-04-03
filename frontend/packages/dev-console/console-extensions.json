@@ -155,6 +155,7 @@
   {
     "type": "console.catalog/item-provider",
     "properties": {
+      "catalogId": "dev-catalog",
       "type": "BuilderImage",
       "provider": { "$codeRef": "catalog.builderImageProvider" }
     },
@@ -177,8 +178,30 @@
   {
     "type": "console.catalog/item-provider",
     "properties": {
+      "catalogId": "dev-catalog",
       "type": "Template",
       "provider": { "$codeRef": "catalog.templateProvider" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT"]
+    }
+  },
+  {
+    "type": "console.catalog/item-type",
+    "properties": {
+      "type": "Sample",
+      "title": "%devconsole~Samples%"
+    },
+    "flags": {
+      "required": ["OPENSHIFT"]
+    }
+  },
+  {
+    "type": "console.catalog/item-provider",
+    "properties": {
+      "catalogId": "samples-catalog",
+      "type": "Sample",
+      "provider": { "$codeRef": "catalog.builderImageSamplesProvider" }
     },
     "flags": {
       "required": ["OPENSHIFT"]

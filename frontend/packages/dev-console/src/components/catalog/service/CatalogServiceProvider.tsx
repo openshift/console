@@ -22,11 +22,13 @@ export type CatalogService = {
 
 type CatalogServiceProviderProps = {
   namespace: string;
+  catalogId: string;
   catalogType?: string;
   children: (service: CatalogService) => React.ReactNode;
 };
 
 const CatalogServiceProvider: React.FC<CatalogServiceProviderProps> = ({
+  catalogId,
   catalogType,
   children,
   namespace,
@@ -37,7 +39,7 @@ const CatalogServiceProvider: React.FC<CatalogServiceProviderProps> = ({
     catalogProviderExtensions,
     catalogFilterExtensions,
     extensionsResolved,
-  ] = useCatalogExtensions(catalogType);
+  ] = useCatalogExtensions(catalogId, catalogType);
 
   const [extItemsMap, setExtItemsMap] = React.useState<{ [uid: string]: CatalogItem[] }>({});
   const [loadError, setLoadError] = React.useState<any>();
