@@ -24,12 +24,12 @@ const SSHDetailsPage: React.FC<SSHDetailsPageProps> = ({ vm }) => {
     <>
       <Stack hasGutter>
         <StackItem>
-          <Text component={TextVariants.p}>{t('kubevirt-plugin~user: {{user}}', { user })}</Text>
-          <div className="SSHDetailsPage-clipboard-command">
-            <ClipboardCopy isReadOnly>
-              {sshServices?.running ? command : `ssh ${user}@`}
-            </ClipboardCopy>
-          </div>
+          <Text component={TextVariants.p} data-test="SSHDetailsPage-user">
+            {t('kubevirt-plugin~user: {{user}}', { user })}
+          </Text>
+          <ClipboardCopy isReadOnly data-test="SSHDetailsPage-command">
+            {sshServices?.running ? command : `ssh ${user}@`}
+          </ClipboardCopy>
           {!sshServices?.running && (
             <span className="kubevirt-menu-actions__secondary-title">
               {t('kubevirt-plugin~Requires SSH Service')}
@@ -45,9 +45,11 @@ const SSHDetailsPage: React.FC<SSHDetailsPageProps> = ({ vm }) => {
               onClick={() => SSHModal({ vm })}
             />
           </div>
-          {sshServices?.running
-            ? t('kubevirt-plugin~port: {{port}}', { port: sshServices?.port })
-            : t('kubevirt-plugin~SSH Service unavailable')}
+          <Text component={TextVariants.p} data-test="SSHDetailsPage-port">
+            {sshServices?.running
+              ? t('kubevirt-plugin~port: {{port}}', { port: sshServices?.port })
+              : t('kubevirt-plugin~SSH Service unavailable')}
+          </Text>
         </StackItem>
       </Stack>
     </>

@@ -6,7 +6,7 @@ import { EXAMPLE_CONTAINER } from '../../../utils/strings';
 export const ContainerSourceHelp: React.FC = () => {
   const { t } = useTranslation();
   return (
-    <div className="pf-c-form__helper-text" aria-live="polite">
+    <div className="pf-c-form__helper-text" aria-live="polite" data-test="ContainerSourceHelp">
       {t('kubevirt-plugin~Example: {{container}}', { container: EXAMPLE_CONTAINER })}
     </div>
   );

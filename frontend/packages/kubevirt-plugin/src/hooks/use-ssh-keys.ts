@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { VMIKind, VMKind } from '@console/kubevirt-plugin/src/types';
-import { useActiveNamespace } from '@console/shared';
+import { useLocation } from 'react-router-dom';
 import useSSHSelectors, { useSSHSelectorsResult } from './use-ssh-selectors';
 import useSecret, { useSecretResult } from './use-secret';
 import { AUTHORIZED_SSH_KEYS } from '../components/ssh-service/SSHForm/ssh-form-utils';
@@ -10,8 +10,8 @@ export type useSSHResult = useSecretResult &
 
 const useSSHKeys = (vm?: VMIKind | VMKind): useSSHResult => {
   const { metadata } = vm || {};
-  const [activeNamespace] = useActiveNamespace();
-  const namespace = metadata?.namespace || activeNamespace;
+  const location = useLocation();
+  const namespace = metadata?.namespace || new URLSearchParams(location?.search)?.get('namespace');
   const {
     globalKeys,
     disableSaveInNamespaceCheckbox,

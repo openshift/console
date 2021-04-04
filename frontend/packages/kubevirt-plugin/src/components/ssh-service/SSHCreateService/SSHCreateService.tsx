@@ -42,7 +42,12 @@ const SSHCreateService: React.FC<SSHCreateServiceProps> = ({
       </StackItem>
       {isEmpty(tempSSHKey) && enableSSHService && !disableAuthorizedKeyMessage && (
         <StackItem>
-          <Alert variant="info" isInline title={t('kubevirt-plugin~Missing Authorized key')}>
+          <Alert
+            variant="info"
+            data-test="SSHCreateService-info-message"
+            isInline
+            title={t('kubevirt-plugin~Missing Authorized key')}
+          >
             {t(
               `kubevirt-plugin~We haven't detected authorized key for the SSH access. SSH access will be enabled without authorized key`,
             )}
