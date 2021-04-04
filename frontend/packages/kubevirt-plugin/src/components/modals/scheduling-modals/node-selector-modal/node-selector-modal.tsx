@@ -1,29 +1,31 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { ModalTitle, ModalBody, ModalComponentProps } from '@console/internal/components/factory';
-import { Button, ButtonVariant } from '@patternfly/react-core';
+
+import { ModalBody, ModalComponentProps, ModalTitle } from '@console/internal/components/factory';
 import {
   FirehoseResult,
-  withHandlePromise,
   HandlePromiseProps,
+  withHandlePromise,
 } from '@console/internal/components/utils';
-import { k8sPatch, NodeKind } from '@console/internal/module/k8s';
 import { NodeModel } from '@console/internal/models';
-import { isLoaded, getLoadedData, getLoadError } from '../../../../utils';
-import { ModalFooter } from '../../modal/modal-footer';
-import { VMLikeEntityKind } from '../../../../types/vmLike';
+import { k8sPatch, NodeKind } from '@console/internal/module/k8s';
+import { Button, ButtonVariant } from '@patternfly/react-core';
+
+import { useCollisionChecker } from '../../../../hooks/use-collision-checker';
+import { useIDEntities } from '../../../../hooks/use-id-entities';
+import { getNodeSelectorPatches } from '../../../../k8s/patches/vm/vm-scheduling-patches';
 import { getVMLikeModel } from '../../../../selectors/vm';
 import { getVMLikeNodeSelector } from '../../../../selectors/vm-like/selectors';
-import { getNodeSelectorPatches } from '../../../../k8s/patches/vm/vm-scheduling-patches';
-import { NodeChecker } from '../shared/NodeChecker/node-checker';
-import { useNodeQualifier } from '../shared/hooks';
-import { LabelsList } from '../../../LabelsList/labels-list';
+import { VMLikeEntityKind } from '../../../../types/vmLike';
+import { getLoadedData, getLoadError, isLoaded } from '../../../../utils';
 import { LabelRow } from '../../../LabelsList/LabelRow/label-row';
-import { nodeSelectorToIDLabels } from './helpers';
-import { useIDEntities } from '../../../../hooks/use-id-entities';
+import { LabelsList } from '../../../LabelsList/labels-list';
 import { IDLabel } from '../../../LabelsList/types';
-import { useCollisionChecker } from '../../../../hooks/use-collision-checker';
+import { ModalFooter } from '../../modal/modal-footer';
+import { useNodeQualifier } from '../shared/hooks';
+import { NodeChecker } from '../shared/NodeChecker/node-checker';
+import { nodeSelectorToIDLabels } from './helpers';
 import { NodeSelectorHeader } from './node-selector-header';
 
 export const NSModal = withHandlePromise(

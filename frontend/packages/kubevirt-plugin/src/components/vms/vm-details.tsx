@@ -1,33 +1,35 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+
+import { ServicesList } from '@console/internal/components/service';
 import {
+  asAccessReview,
   Firehose,
-  StatusBox,
+  FirehoseResult,
   ScrollToTopOnMount,
   SectionHeading,
-  FirehoseResult,
+  StatusBox,
   useAccessReview,
-  asAccessReview,
 } from '@console/internal/components/utils';
-import { getNamespace } from '@console/shared';
-import { K8sKind, PodKind } from '@console/internal/module/k8s';
 import { ServiceModel } from '@console/internal/models';
-import { ServicesList } from '@console/internal/components/service';
-import { VMKind, VMIKind } from '../../types';
-import { getLoadedData, getResource } from '../../utils';
-import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
-import { getServicesForVmi } from '../../selectors/service';
-import { VMResourceSummary, VMDetailsList, VMSchedulingList } from './vm-resource';
-import { VMUsersList } from './vm-users';
+import { K8sKind, PodKind } from '@console/internal/module/k8s';
+import { getNamespace } from '@console/shared';
+import { Alert } from '@patternfly/react-core';
+
 import { useGuestAgentInfo } from '../../hooks/use-guest-agent-info';
 import { GuestAgentInfoWrapper } from '../../k8s/wrapper/vm/guest-agent-info/guest-agent-info-wrapper';
-import { VMTabProps } from './types';
-import { getVMStatus } from '../../statuses/vm/vm-status';
-import { VMStatusBundle } from '../../statuses/vm/types';
-import { isWindows } from '../../selectors/vm/combined';
+import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
 import { isVM, isVMI } from '../../selectors/check-type';
+import { getServicesForVmi } from '../../selectors/service';
+import { isWindows } from '../../selectors/vm/combined';
+import { VMStatusBundle } from '../../statuses/vm/types';
+import { getVMStatus } from '../../statuses/vm/vm-status';
+import { VMIKind, VMKind } from '../../types';
+import { getLoadedData, getResource } from '../../utils';
 import { HashAnchor } from '../hash-anchor/hash-anchor';
-import { Alert } from '@patternfly/react-core';
+import { VMTabProps } from './types';
+import { VMDetailsList, VMResourceSummary, VMSchedulingList } from './vm-resource';
+import { VMUsersList } from './vm-users';
 
 export const VMDetailsFirehose: React.FC<VMTabProps> = ({
   obj: objProp,

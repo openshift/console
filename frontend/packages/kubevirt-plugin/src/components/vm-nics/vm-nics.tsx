@@ -1,27 +1,29 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Table, RowFunction } from '@console/internal/components/factory';
-import { sortable } from '@patternfly/react-table';
+
+import { RowFunction, Table } from '@console/internal/components/factory';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { createBasicLookup, dimensifyHeader } from '@console/shared';
 import { Button, ButtonVariant } from '@patternfly/react-core';
-import { VMGenericLikeEntityKind } from '../../types/vmLike';
-import { isVMI, isVM } from '../../selectors/check-type';
-import { VMTabProps } from '../vms/types';
+import { sortable } from '@patternfly/react-table';
+
+import { asVMILikeWrapper } from '../../k8s/wrapper/utils/convert';
 import { NetworkInterfaceWrapper } from '../../k8s/wrapper/vm/network-interface-wrapper';
-import { nicModalEnhanced } from '../modals/nic-modal/nic-modal-enhanced';
-import { getSimpleName } from '../../selectors/utils';
 import { NetworkWrapper } from '../../k8s/wrapper/vm/network-wrapper';
+import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
+import { VMIWrapper } from '../../k8s/wrapper/vm/vmi-wrapper';
+import { isVM, isVMI } from '../../selectors/check-type';
+import { getSimpleName } from '../../selectors/utils';
+import { asVM } from '../../selectors/vm';
+import { changedNics } from '../../selectors/vm-like/next-run-changes';
+import { isVMRunningOrExpectedRunning } from '../../selectors/vm/selectors';
+import { VMGenericLikeEntityKind } from '../../types/vmLike';
 import { wrapWithProgress } from '../../utils/utils';
+import { nicModalEnhanced } from '../modals/nic-modal/nic-modal-enhanced';
+import { VMTabProps } from '../vms/types';
 import { NicRow } from './nic-row';
 import { NetworkBundle } from './types';
 import { nicTableColumnClasses } from './utils';
-import { asVMILikeWrapper } from '../../k8s/wrapper/utils/convert';
-import { isVMRunningOrExpectedRunning } from '../../selectors/vm/selectors';
-import { asVM } from '../../selectors/vm';
-import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
-import { VMIWrapper } from '../../k8s/wrapper/vm/vmi-wrapper';
-import { changedNics } from '../../selectors/vm-like/next-run-changes';
 
 const getNicsData = (vmLikeEntity: VMGenericLikeEntityKind): NetworkBundle[] => {
   const vmiLikeWrapper = asVMILikeWrapper(vmLikeEntity);

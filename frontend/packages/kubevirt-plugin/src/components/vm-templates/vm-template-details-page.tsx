@@ -1,29 +1,30 @@
+import { TFunction } from 'i18next';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { TFunction } from 'i18next';
 import { match as routerMatch } from 'react-router';
-import { navFactory } from '@console/internal/components/utils/horizontal-nav';
+
 import { DetailsPage } from '@console/internal/components/factory/details';
+import { navFactory } from '@console/internal/components/utils/horizontal-nav';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { PersistentVolumeClaimModel, PodModel, TemplateModel } from '@console/internal/models';
 import {
   K8sResourceKindReference,
   PersistentVolumeClaimKind,
   PodKind,
   TemplateKind,
 } from '@console/internal/module/k8s/types';
-import { PersistentVolumeClaimModel, PodModel, TemplateModel } from '@console/internal/models';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 
-import { VMDisksFirehose } from '../vm-disks';
-import { VMNics } from '../vm-nics';
-import { VMTemplateDetails } from './vm-template-details';
-import { menuActionsCreator } from './menu-actions';
-import { useSupportModal } from '../../hooks/use-support-modal';
 import { useBaseImages } from '../../hooks/use-base-images';
+import { useCustomizeSourceModal } from '../../hooks/use-customize-source-modal';
+import { useSupportModal } from '../../hooks/use-support-modal';
 import { DataVolumeModel } from '../../models';
 import { isCommonTemplate } from '../../selectors/vm-template/basic';
 import { getTemplateSourceStatus } from '../../statuses/template/template-source-status';
 import { V1alpha1DataVolume } from '../../types/api';
-import { useCustomizeSourceModal } from '../../hooks/use-customize-source-modal';
+import { VMDisksFirehose } from '../vm-disks';
+import { VMNics } from '../vm-nics';
+import { menuActionsCreator } from './menu-actions';
+import { VMTemplateDetails } from './vm-template-details';
 
 export const breadcrumbsForVMTemplatePage = (t: TFunction, match: VMTemplateMatch) => () => [
   {

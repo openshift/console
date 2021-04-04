@@ -1,16 +1,18 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
+
 import {
   Accordion,
+  AccordionContent,
   AccordionItem,
   AccordionToggle,
-  AccordionContent,
 } from '@patternfly/react-core';
-import { useTranslation } from 'react-i18next';
+
+import { CLOUD, SSH } from '../../../../utils/strings';
+import SSHPopover from '../../../ssh-service/SSHPopover/SSHPopover';
 import { CloudInitWizardForm } from './cloud-init/cloud-init';
 import { CloudInitInfoHelper } from './cloud-init/cloud-init-info-helper';
-import SSHPopover from '../../../ssh-service/SSHPopover/SSHPopover';
 import SSHAdvancedTab from './ssh/SSHAdvancedTab';
-import { CLOUD, SSH } from '../../../../utils/strings';
 
 import './advanced-tab.scss';
 

@@ -1,13 +1,14 @@
 import * as React from 'react';
-import { MinusCircleIcon, PficonDragdropIcon } from '@patternfly/react-icons';
-import {
-  DataListItem,
-  DataListItemRow,
-  DataListItemCells,
-  DataListCell,
-  DataListItemProps,
-} from '@patternfly/react-core';
 import { useDrag, useDrop } from 'react-dnd';
+
+import {
+  DataListCell,
+  DataListItem,
+  DataListItemCells,
+  DataListItemProps,
+  DataListItemRow,
+} from '@patternfly/react-core';
+import { MinusCircleIcon, PficonDragdropIcon } from '@patternfly/react-icons';
 
 const DNDDataListItemTypeName = 'dnd-row';
 const DNDDataListCellMoveStyle = { cursor: 'move' };

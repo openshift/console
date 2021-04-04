@@ -1,12 +1,14 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Checkbox, Stack, StackItem } from '@patternfly/react-core';
+
 import {
   createModalLauncher,
   ModalBody,
   ModalComponentProps,
   ModalTitle,
 } from '@console/internal/components/factory';
+import { Checkbox, Stack, StackItem } from '@patternfly/react-core';
+
 import { ModalFooter } from '../modal/modal-footer';
 
 const CustomizeSourceModal: React.FC<CustomizeSourceModalProps> = ({ close, onConfirm }) => {

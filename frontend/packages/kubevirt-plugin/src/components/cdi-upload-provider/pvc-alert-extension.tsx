@@ -1,9 +1,11 @@
 import * as React from 'react';
+
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { getName, getNamespace } from '@console/shared';
 import { Alert, AlertVariant } from '@patternfly/react-core';
-import { UPLOAD_STATUS } from './consts';
+
 import { CDIUploadContext } from './cdi-upload-provider';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { UPLOAD_STATUS } from './consts';
 
 export const PVCAlertExtension: React.FC<PVCAlertExtension> = ({ pvc }) => {
   const { uploads } = React.useContext(CDIUploadContext);

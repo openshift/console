@@ -1,30 +1,33 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+
 import {
-  Alert,
-  Popover,
-  PopoverPosition,
-  Text,
-  TextVariants,
-  Button,
-  Stack,
-  StackItem,
-  Split,
-  SplitItem,
-} from '@patternfly/react-core';
-import {
-  ResourceLink,
   ExternalLink,
-  resourcePath,
   pluralize,
+  ResourceLink,
+  resourcePath,
 } from '@console/internal/components/utils';
 import { NodeKind } from '@console/internal/module/k8s';
 import { getName, Status } from '@console/shared';
 import {
+  Alert,
+  Button,
+  Popover,
+  PopoverPosition,
+  Split,
+  SplitItem,
+  Stack,
+  StackItem,
+  Text,
+  TextVariants,
+} from '@patternfly/react-core';
+
+import {
+  getSchedulingNodesMatchButtonLabel,
   getSchedulingNodesMatchMsg,
   getSchedulingWithPreferredNodesMatchMsg,
-  getSchedulingNodesMatchButtonLabel,
 } from '../consts';
+
 import './node-checker.scss';
 
 export const NodeChecker: React.FC<NodeCheckerProps> = ({

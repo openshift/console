@@ -1,10 +1,10 @@
-import { VMWizardProps, VMWizardTab } from '../../types';
-import { InternalActionType, UpdateOptions, Validation } from '../types';
-import { vmWizardInternalActions } from '../internal-actions';
-import { checkTabValidityChanged, iGetCommonData } from '../../selectors/immutable/selectors';
-import { iGetImportProviders } from '../../selectors/immutable/import-providers';
-import { getFieldsValidity } from './utils';
 import { getProviders } from '../../provider-definitions';
+import { iGetImportProviders } from '../../selectors/immutable/import-providers';
+import { checkTabValidityChanged, iGetCommonData } from '../../selectors/immutable/selectors';
+import { VMWizardProps, VMWizardTab } from '../../types';
+import { vmWizardInternalActions } from '../internal-actions';
+import { InternalActionType, UpdateOptions, Validation } from '../types';
+import { getFieldsValidity } from './utils';
 
 export const validateImportProviderTab = (options: UpdateOptions) => {
   for (const provider of getProviders()) {

@@ -1,17 +1,18 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Stack, StackItem } from '@patternfly/react-core';
+
 import {
   createModalLauncher,
   ModalBody,
   ModalComponentProps,
   ModalTitle,
 } from '@console/internal/components/factory';
+import { BlueInfoCircleIcon, RedExclamationCircleIcon } from '@console/shared';
+import { Stack, StackItem } from '@patternfly/react-core';
 
-import { ModalFooter } from '../modal/modal-footer';
 import { TemplateSourceStatusError } from '../../../statuses/template/types';
 import { SourceStatusErrorBody } from '../../vm-templates/vm-template-source';
-import { BlueInfoCircleIcon, RedExclamationCircleIcon } from '@console/shared';
+import { ModalFooter } from '../modal/modal-footer';
 
 type SourceErrorModalProps = ModalComponentProps & {
   sourceStatus: TemplateSourceStatusError;

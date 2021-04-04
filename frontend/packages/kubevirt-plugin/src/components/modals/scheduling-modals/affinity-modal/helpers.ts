@@ -1,26 +1,28 @@
-import * as _ from 'lodash';
 import * as classNames from 'classnames';
-import { getName } from '@console/shared';
+import * as _ from 'lodash';
+
 import { Kebab } from '@console/internal/components/utils';
 import { NodeKind } from '@console/internal/module/k8s';
+import { getName } from '@console/shared';
+
 import {
-  getNodeAffinityRequiredTerms,
   getNodeAffinityPreferredTerms,
-  getPodAffinityRequiredTerms,
+  getNodeAffinityRequiredTerms,
   getPodAffinityPreferredTerms,
+  getPodAffinityRequiredTerms,
 } from '../../../../selectors/affinity/selectors';
 import {
   Affinity,
+  AffinityCondition,
+  AffinityLabel,
+  AffinityRowData,
+  AffinityType,
   NodeAffinity,
+  NodeAffinityTerm,
   PodAffinity,
   PodAffinityTerm,
-  NodeAffinityTerm,
   PreferredNodeAffinityTerm,
   PreferredPodAffinityTerm,
-  AffinityRowData,
-  AffinityLabel,
-  AffinityType,
-  AffinityCondition,
 } from './types';
 
 export const defaultNewAffinity = {

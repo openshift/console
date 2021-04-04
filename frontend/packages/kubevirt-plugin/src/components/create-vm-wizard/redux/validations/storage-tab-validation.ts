@@ -1,20 +1,21 @@
-import { VMWizardTab } from '../../types';
-import { InternalActionType, UpdateOptions } from '../types';
-import { vmWizardInternalActions } from '../internal-actions';
-import { validateDisk } from '../../../../utils/validations/vm';
+import { getName } from '@console/shared/src';
+
+import { ProvisionSource } from '../../../../constants/vm/provision-source';
+import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';
+import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
+import { PersistentVolumeClaimWrapper } from '../../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
+import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
 import { iGetIn } from '../../../../utils/immutable';
+import { TemplateValidations } from '../../../../utils/validations/template/template-validations';
+import { validateDisk } from '../../../../utils/validations/vm';
 import { checkTabValidityChanged } from '../../selectors/immutable/selectors';
-import { getStorages } from '../../selectors/selectors';
 import { hasStoragesChanged, iGetStorages } from '../../selectors/immutable/storage';
 import { iGetProvisionSource } from '../../selectors/immutable/vm-settings';
-import { ProvisionSource } from '../../../../constants/vm/provision-source';
+import { getStorages } from '../../selectors/selectors';
 import { getTemplateValidation } from '../../selectors/template';
-import { TemplateValidations } from '../../../../utils/validations/template/template-validations';
-import { getName } from '@console/shared/src';
-import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';
-import { PersistentVolumeClaimWrapper } from '../../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
-import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
-import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
+import { VMWizardTab } from '../../types';
+import { vmWizardInternalActions } from '../internal-actions';
+import { InternalActionType, UpdateOptions } from '../types';
 
 export const validateStorages = (options: UpdateOptions) => {
   const { id, prevState, dispatch, getState } = options;

@@ -1,27 +1,29 @@
-import * as React from 'react';
 import * as _ from 'lodash';
-import { PendingChanges, PendingChangesByTab } from './types';
-import { FirehoseResult, Firehose } from '@console/internal/components/utils';
+import * as React from 'react';
+
+import { Firehose, FirehoseResult } from '@console/internal/components/utils';
+import {
+  Breadcrumb,
+  BreadcrumbHeading,
+  BreadcrumbItem,
+  Button,
+  ButtonVariant,
+  List,
+  ListItem,
+} from '@patternfly/react-core';
+
+import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
+import { VMIWrapper } from '../../k8s/wrapper/vm/vmi-wrapper';
+import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
+import { asVM } from '../../selectors/vm';
+import { isVMRunningOrExpectedRunning } from '../../selectors/vm/selectors';
+import { PENDING_CHANGES_WARNING_MESSAGE } from '../../strings/vm/status';
 import { VMIKind, VMKind } from '../../types';
 import { VMLikeEntityKind } from '../../types/vmLike';
 import { getLoadedData } from '../../utils';
-import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
-import { VMIWrapper } from '../../k8s/wrapper/vm/vmi-wrapper';
-import { PendingChangesAlert } from '../Alerts/PendingChangesAlert';
-import {
-  List,
-  ListItem,
-  Button,
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbHeading,
-  ButtonVariant,
-} from '@patternfly/react-core';
-import { asVM } from '../../selectors/vm';
-import { VirtualMachineModel, VirtualMachineInstanceModel } from '../../models';
-import { PENDING_CHANGES_WARNING_MESSAGE } from '../../strings/vm/status';
-import { isVMRunningOrExpectedRunning } from '../../selectors/vm/selectors';
 import { getPendingChanges, hasPendingChanges } from '../../utils/pending-changes';
+import { PendingChangesAlert } from '../Alerts/PendingChangesAlert';
+import { PendingChanges, PendingChangesByTab } from './types';
 
 import './pending-changes-warning.scss';
 

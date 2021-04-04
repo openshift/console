@@ -1,20 +1,22 @@
 import * as React from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Trans, useTranslation } from 'react-i18next';
-import { Alert, AlertVariant, Stack, StackItem } from '@patternfly/react-core';
-import { Table, TableBody, TableHeader, TableVariant } from '@patternfly/react-table';
+
 import { Firehose, FirehoseResult, resourcePath } from '@console/internal/components/utils';
+import { PersistentVolumeClaimModel, StorageClassModel } from '@console/internal/models';
 import { StorageClassResourceKind } from '@console/internal/module/k8s';
 import { createLookup, getName } from '@console/shared/src';
-import { PersistentVolumeClaimModel, StorageClassModel } from '@console/internal/models';
-import { VMWizardProps, VMWizardStorage } from '../../types';
-import { getStorages } from '../../selectors/selectors';
-import { iGetCommonData } from '../../selectors/immutable/selectors';
-import { getDefaultStorageClass } from '../../../../selectors/config-map/sc-defaults';
+import { Alert, AlertVariant, Stack, StackItem } from '@patternfly/react-core';
+import { Table, TableBody, TableHeader, TableVariant } from '@patternfly/react-table';
+
 import { CombinedDisk } from '../../../../k8s/wrapper/vm/combined-disk';
 import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
+import { getDefaultStorageClass } from '../../../../selectors/config-map/sc-defaults';
 import { getLoadedData } from '../../../../utils';
+import { iGetCommonData } from '../../selectors/immutable/selectors';
+import { getStorages } from '../../selectors/selectors';
+import { VMWizardProps, VMWizardStorage } from '../../types';
 
 import './storage-review.scss';
 

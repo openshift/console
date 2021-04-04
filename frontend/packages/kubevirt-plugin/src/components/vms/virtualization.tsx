@@ -1,32 +1,33 @@
-import * as React from 'react';
-import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
-import { Link, Redirect, RouteComponentProps } from 'react-router-dom';
+import * as React from 'react';
 import { Helmet } from 'react-helmet';
+import { useTranslation } from 'react-i18next';
+import { Link, Redirect, RouteComponentProps } from 'react-router-dom';
+
+import { useSafetyFirst } from '@console/internal/components/safety-first';
+import { withStartGuide } from '@console/internal/components/start-guide';
+import { checkAccess, HorizontalNav } from '@console/internal/components/utils';
+import { ConfigMapModel } from '@console/internal/models';
+import { FLAGS } from '@console/shared';
+import { useFlag } from '@console/shared/src/hooks/flag';
 import {
   Dropdown,
   DropdownGroup,
   DropdownItem,
-  DropdownToggle,
   DropdownPosition,
   DropdownSeparator,
+  DropdownToggle,
 } from '@patternfly/react-core';
-import { withStartGuide } from '@console/internal/components/start-guide';
-import { checkAccess, HorizontalNav } from '@console/internal/components/utils';
-import { FLAGS } from '@console/shared';
-import { ConfigMapModel } from '@console/internal/models';
-import { useFlag } from '@console/shared/src/hooks/flag';
-import { useSafetyFirst } from '@console/internal/components/safety-first';
 
-import { VirtualMachinesPage } from './vm';
-import { VirtualMachineTemplatesPage } from '../vm-templates/vm-template';
-import { VirtualMachineModel } from '../../models';
 import { VMWizardMode, VMWizardName } from '../../constants';
-import { getVMWizardCreateLink } from '../../utils/url';
 import {
   VMWARE_KUBEVIRT_VMWARE_CONFIG_MAP_NAME,
   VMWARE_KUBEVIRT_VMWARE_CONFIG_MAP_NAMESPACES,
 } from '../../constants/v2v';
+import { VirtualMachineModel } from '../../models';
+import { getVMWizardCreateLink } from '../../utils/url';
+import { VirtualMachineTemplatesPage } from '../vm-templates/vm-template';
+import { VirtualMachinesPage } from './vm';
 
 import './virtualization.scss';
 

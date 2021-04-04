@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { constants, SerialConsole } from '@patternfly/react-console';
+
 import { WSFactory } from '@console/internal/module/ws-factory';
 import { getName } from '@console/shared/src/selectors';
+import { constants, SerialConsole } from '@patternfly/react-console';
 
-import { VMIKind } from '../../../../types';
 import { getSerialConsoleConnectionDetails } from '../../../../selectors/vmi';
+import { VMIKind } from '../../../../types';
 
 const { CONNECTED, DISCONNECTED, LOADING } = constants;
 

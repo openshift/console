@@ -1,34 +1,36 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
+
 import { DashboardItemProps } from '@console/internal/components/dashboard/with-dashboard-resources';
+import {
+  NodeLink,
+  ResourceLink,
+  resourcePath,
+  Timestamp,
+} from '@console/internal/components/utils';
+import { getCreationTimestamp, getName, getNamespace, getNodeName, getUID } from '@console/shared';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
-import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import DashboardCardLink from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardLink';
-import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
+import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
 import DetailItem from '@console/shared/src/components/dashboard/details-card/DetailItem';
-import { getName, getNamespace, getUID, getCreationTimestamp, getNodeName } from '@console/shared';
-import {
-  ResourceLink,
-  Timestamp,
-  NodeLink,
-  resourcePath,
-} from '@console/internal/components/utils';
-import { VMDashboardContext } from '../../vms/vm-dashboard-context';
-import { VirtualMachineModel, VirtualMachineInstanceModel } from '../../../models';
-import { getVmiIpAddresses, getVMINodeName } from '../../../selectors/vmi';
+import DetailsBody from '@console/shared/src/components/dashboard/details-card/DetailsBody';
+
 import { VM_DETAIL_DETAILS_HREF } from '../../../constants';
-import { findVMIPod } from '../../../selectors/pod/selectors';
 import { useGuestAgentInfo } from '../../../hooks/use-guest-agent-info';
 import { GuestAgentInfoWrapper } from '../../../k8s/wrapper/vm/guest-agent-info/guest-agent-info-wrapper';
-import { isGuestAgentInstalled } from './vm-alerts';
-import { getOperatingSystemName, getOperatingSystem } from '../../../selectors/vm';
+import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../../models';
+import { findVMIPod } from '../../../selectors/pod/selectors';
+import { getOperatingSystem, getOperatingSystemName } from '../../../selectors/vm';
+import { getVmiIpAddresses, getVMINodeName } from '../../../selectors/vmi';
 import {
-  getNumLoggedInUsersMessage,
   getGuestAgentFieldNotAvailMsg,
+  getNumLoggedInUsersMessage,
 } from '../../../utils/guest-agent-strings';
+import { VMDashboardContext } from '../../vms/vm-dashboard-context';
+import { isGuestAgentInstalled } from './vm-alerts';
 
 export const VMDetailsCard: React.FC<VMDetailsCardProps> = () => {
   const { t } = useTranslation();

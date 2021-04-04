@@ -1,6 +1,6 @@
+import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { iGetIn } from '../../../../utils/immutable';
 import { VMSettingsField, VMWizardTab } from '../../types';
-import { ProvisionSource } from '../../../../constants/vm/provision-source';
 import { iGetCreateVMWizardTabs } from './common';
 
 export const iGetVmSettings = (state, id: string) =>

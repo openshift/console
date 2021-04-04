@@ -1,13 +1,15 @@
-import * as React from 'react';
 import * as classNames from 'classnames';
+import * as React from 'react';
+
 import { TextInput } from '@patternfly/react-core';
-import { getSequence, setNativeValue } from '../../../utils/utils';
+
 import {
+  INPUT_CTRL_COMBINATIONS_KEYS,
+  INPUT_NAVIGATION_KEYS,
   isMinus,
   KEY_CODES,
-  INPUT_NAVIGATION_KEYS,
-  INPUT_CTRL_COMBINATIONS_KEYS,
 } from '../../../constants/keys';
+import { getSequence, setNativeValue } from '../../../utils/utils';
 
 import './integer.scss';
 

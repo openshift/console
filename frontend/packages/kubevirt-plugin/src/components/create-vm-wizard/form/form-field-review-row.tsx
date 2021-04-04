@@ -1,12 +1,13 @@
 import * as React from 'react';
-import { getFieldTitleKey } from '../utils/renderable-field-utils';
-import { iGet } from '../../../utils/immutable';
+import { useTranslation } from 'react-i18next';
+
 import { prefixedID } from '../../../utils';
-import { FormFieldType } from './form-field';
+import { iGet } from '../../../utils/immutable';
 import { getReviewValue } from '../tabs/review-tab/utils';
+import { getFieldTitleKey } from '../utils/renderable-field-utils';
+import { FormFieldType } from './form-field';
 
 import './form-field-review-row.scss';
-import { useTranslation } from 'react-i18next';
 
 type FormFieldReviewRowProps = {
   field: any;

@@ -1,16 +1,18 @@
 import * as React from 'react';
-import { Button, Split, SplitItem, TextInput, ButtonVariant } from '@patternfly/react-core';
+import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+
 import { ValidationErrorType } from '@console/shared';
-import { OvirtProviderField, VMImportProvider, VMWareProviderField } from '../../../types';
-import { vmWizardActions } from '../../../redux/actions';
-import { ActionType } from '../../../redux/types';
-import { FormFieldRow } from '../../../form/form-field-row';
-import { FormField, FormFieldType } from '../../../form/form-field';
-import { isFieldDisabled } from '../../../selectors/immutable/field';
+import { Button, ButtonVariant, Split, SplitItem, TextInput } from '@patternfly/react-core';
+
 import { iGet } from '../../../../../utils/immutable';
+import { FormField, FormFieldType } from '../../../form/form-field';
+import { FormFieldRow } from '../../../form/form-field-row';
+import { vmWizardActions } from '../../../redux/actions';
 import { getCheckConnectionAction as ovirtGetCheckConnectionAction } from '../../../redux/state-update/providers/ovirt/ovirt-provider-actions';
 import { getCheckConnectionAction as vmwareGetCheckConnectionAction } from '../../../redux/state-update/providers/vmware/vmware-provider-actions';
+import { ActionType } from '../../../redux/types';
+import { isFieldDisabled } from '../../../selectors/immutable/field';
 import {
   iGetProviderField,
   iGetProviderFieldAttribute,
@@ -20,7 +22,7 @@ import {
   iGetOvirtFieldAttribute,
   iGetOvirtFieldValue,
 } from '../../../selectors/immutable/provider/ovirt/selectors';
-import { useTranslation } from 'react-i18next';
+import { OvirtProviderField, VMImportProvider, VMWareProviderField } from '../../../types';
 
 const VMImportPasswordConnected: React.FC<VMImportPasswordConnectedProps> = React.memo(
   ({

@@ -1,8 +1,13 @@
+import * as classNames from 'classnames';
+import { isEmpty } from 'lodash';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import * as classNames from 'classnames';
 import { RouteComponentProps } from 'react-router';
-import styles from '@patternfly/react-styles/css/components/Wizard/wizard';
+
+import { history, LoadingBox } from '@console/internal/components/utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { ProjectModel } from '@console/internal/models';
+import { K8sResourceCommon, TemplateKind } from '@console/internal/module/k8s';
 import {
   Alert,
   AlertActionCloseButton,
@@ -12,37 +17,33 @@ import {
   WizardContextConsumer,
   WizardContextType,
 } from '@patternfly/react-core';
-import { K8sResourceCommon, TemplateKind } from '@console/internal/module/k8s';
-import { ProjectModel } from '@console/internal/models';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { history, LoadingBox } from '@console/internal/components/utils';
+import styles from '@patternfly/react-styles/css/components/Wizard/wizard';
 
-import { ReviewAndCreate } from './tabs/review-create';
-import { SelectTemplate } from './tabs/select-template';
-import { formReducer, FORM_ACTION_TYPE, initFormState } from './forms/create-vm-form-reducer';
 import { DataVolumeSourceType, VMWizardMode, VMWizardName } from '../../constants';
-import { filterTemplates } from '../vm-templates/utils';
-import { getTemplateSourceStatus } from '../../statuses/template/template-source-status';
-import { isTemplateSourceError } from '../../statuses/template/types';
-import { SuccessResultsComponent } from '../create-vm-wizard/tabs/result-tab/success-results';
-import { getVMWizardCreateLink, parseVMWizardInitialData } from '../../utils/url';
-import { BootSource } from './tabs/boot-source';
-import { TemplateItem } from '../../types/template';
-import {
-  BOOT_ACTION_TYPE,
-  BootSourceState,
-  bootFormReducer,
-  initBootFormState,
-} from './forms/boot-source-form-reducer';
-import { useSupportModal } from '../../hooks/use-support-modal';
 import { useStorageClassConfigMap } from '../../hooks/storage-class-config-map';
-import { createVM } from '../../k8s/requests/vm/create/simple-create';
 import { useErrorTranslation } from '../../hooks/use-error-translation';
-import { useVmTemplatesResources } from './hooks/use-vm-templates-resources';
-import { isEmpty } from 'lodash';
 import useSSHKeys from '../../hooks/use-ssh-keys';
 import useSSHService from '../../hooks/use-ssh-service';
+import { useSupportModal } from '../../hooks/use-support-modal';
+import { createVM } from '../../k8s/requests/vm/create/simple-create';
+import { getTemplateSourceStatus } from '../../statuses/template/template-source-status';
+import { isTemplateSourceError } from '../../statuses/template/types';
+import { TemplateItem } from '../../types/template';
+import { getVMWizardCreateLink, parseVMWizardInitialData } from '../../utils/url';
+import { SuccessResultsComponent } from '../create-vm-wizard/tabs/result-tab/success-results';
 import { AUTHORIZED_SSH_KEYS } from '../ssh-service/SSHForm/ssh-form-utils';
+import { filterTemplates } from '../vm-templates/utils';
+import {
+  BOOT_ACTION_TYPE,
+  bootFormReducer,
+  BootSourceState,
+  initBootFormState,
+} from './forms/boot-source-form-reducer';
+import { FORM_ACTION_TYPE, formReducer, initFormState } from './forms/create-vm-form-reducer';
+import { useVmTemplatesResources } from './hooks/use-vm-templates-resources';
+import { BootSource } from './tabs/boot-source';
+import { ReviewAndCreate } from './tabs/review-create';
+import { SelectTemplate } from './tabs/select-template';
 
 import '../create-vm-wizard/create-vm-wizard.scss';
 import './create-vm.scss';

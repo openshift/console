@@ -1,11 +1,11 @@
 import * as React from 'react';
 
+import { ConsoleType } from '../../../constants/vm/console-type';
 import { useRenderVNCConsole } from '../../../hooks/use-render-vnc-console';
-import { VMTabProps } from '../types';
+import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../../models';
 import { isVM, isVMI } from '../../../selectors/check-type';
 import { getVMStatus } from '../../../statuses/vm/vm-status';
-import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../../models';
-import { ConsoleType } from '../../../constants/vm/console-type';
+import { VMTabProps } from '../types';
 import VMConsoles from './VMConsoles';
 
 const VMConsolePage: React.FC<VMTabProps> = ({

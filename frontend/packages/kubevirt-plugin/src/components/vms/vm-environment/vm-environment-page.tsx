@@ -1,75 +1,77 @@
+import * as _ from 'lodash';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { VMKind } from '../../../types/vm';
+
 import {
-  SecretKind,
-  ConfigMapKind,
-  EnvVarSource,
-  TemplateKind,
-  k8sPatch,
-  Patch,
-  ServiceAccountKind,
-} from '@console/internal/module/k8s';
-import { getNamespace, getRandomChars } from '@console/shared';
-import { getResource } from '../../../utils';
+  AsyncComponent,
+  FieldLevelHelp,
+  Firehose,
+  FirehoseResult,
+  HandlePromiseProps,
+  withHandlePromise,
+} from '@console/internal/components/utils';
 import {
-  SecretModel,
   ConfigMapModel,
+  SecretModel,
   ServiceAccountModel,
   TemplateModel,
 } from '@console/internal/models';
 import {
-  Firehose,
-  FirehoseResult,
-  FieldLevelHelp,
-  AsyncComponent,
-  HandlePromiseProps,
-  withHandlePromise,
-} from '@console/internal/components/utils';
-import { VMTabProps } from '../types';
-import { getVMLikeModel } from '../../../selectors/vm';
-import { isVM } from '../../../selectors/check-type';
-import * as _ from 'lodash';
-import {
-  areEnvDisksEqual,
-  getEnvDiskRefKind,
-  getAvailableSources,
-  getNewEnvVarSource,
-  toListObj,
-  getSourceName,
-  getNewDiskName,
-  setNewSourceDisk,
-  getSourceKind,
-  setNewSourceVolume,
-  areThereDupSerials,
-  getSerial,
-  getDiskNameBySource,
-} from './selectors';
-import { SOURCES, EnvDisk, NameValuePairs } from './types';
+  ConfigMapKind,
+  EnvVarSource,
+  k8sPatch,
+  Patch,
+  SecretKind,
+  ServiceAccountKind,
+  TemplateKind,
+} from '@console/internal/module/k8s';
+import { getNamespace, getRandomChars } from '@console/shared';
+import { PatchBuilder } from '@console/shared/src/k8s/patch';
+
+import { getVMLikePatches } from '../../../k8s/patches/vm-template';
 import { VMWrapper } from '../../../k8s/wrapper/vm/vm-wrapper';
-import {
-  configMapList,
-  secretList,
-  serviceAccountList,
-  secretKind,
-  configMapKind,
-  serviceAccountKind,
-  configMapRef,
-  secretRef,
-  serviceAccountRef,
-  duplicateSerialsErrorMsg,
-  emptySerialErrorMsg,
-  serialWithoutResourceErrorMsg,
-} from './constants';
-import { VMEnvironmentFooter } from './vm-environment-footer';
+import { VirtualMachineModel } from '../../../models';
+import { isVM } from '../../../selectors/check-type';
+import { getVMLikeModel } from '../../../selectors/vm';
 import {
   getTemplateValidationsFromTemplate,
   getVMTemplateNamespacedName,
 } from '../../../selectors/vm-template/selectors';
-import { PatchBuilder } from '@console/shared/src/k8s/patch';
-import { getVMLikePatches } from '../../../k8s/patches/vm-template';
-import { V1Volume, V1Disk } from '../../../types/api';
-import { VirtualMachineModel } from '../../../models';
+import { V1Disk, V1Volume } from '../../../types/api';
+import { VMKind } from '../../../types/vm';
+import { getResource } from '../../../utils';
+import { VMTabProps } from '../types';
+import {
+  configMapKind,
+  configMapList,
+  configMapRef,
+  duplicateSerialsErrorMsg,
+  emptySerialErrorMsg,
+  secretKind,
+  secretList,
+  secretRef,
+  serialWithoutResourceErrorMsg,
+  serviceAccountKind,
+  serviceAccountList,
+  serviceAccountRef,
+} from './constants';
+import {
+  areEnvDisksEqual,
+  areThereDupSerials,
+  getAvailableSources,
+  getDiskNameBySource,
+  getEnvDiskRefKind,
+  getNewDiskName,
+  getNewEnvVarSource,
+  getSerial,
+  getSourceKind,
+  getSourceName,
+  setNewSourceDisk,
+  setNewSourceVolume,
+  toListObj,
+} from './selectors';
+import { EnvDisk, NameValuePairs, SOURCES } from './types';
+import { VMEnvironmentFooter } from './vm-environment-footer';
 
 import './vm-environment.scss';
 

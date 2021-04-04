@@ -1,23 +1,25 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
-import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
-import { getName, getNamespace } from '@console/shared/src/selectors/common';
+
 import {
   createModalLauncher,
-  ModalTitle,
   ModalBody,
-  ModalSubmitFooter,
   ModalComponentProps,
+  ModalSubmitFooter,
+  ModalTitle,
 } from '@console/internal/components/factory';
+import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
 import { apiVersionForModel, k8sPatch } from '@console/internal/module/k8s';
-import { VMLikeEntityKind } from '../../../types/vmLike';
-import { getVMLikeModel } from '../../../selectors/vm';
-import { getRemoveDiskPatches } from '../../../k8s/patches/vm/vm-disk-patches';
-import { V1Disk, V1Volume } from '../../../types/api';
-import { DataVolumeModel } from '../../../models';
+import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
+import { getName, getNamespace } from '@console/shared/src/selectors/common';
+
 import { useOwnedVolumeReferencedResources } from '../../../hooks/use-owned-volume-referenced-resources';
+import { getRemoveDiskPatches } from '../../../k8s/patches/vm/vm-disk-patches';
 import { freeOwnedResources } from '../../../k8s/requests/free-owned-resources';
+import { DataVolumeModel } from '../../../models';
+import { getVMLikeModel } from '../../../selectors/vm';
+import { V1Disk, V1Volume } from '../../../types/api';
+import { VMLikeEntityKind } from '../../../types/vmLike';
 
 export const DeleteDiskModal = withHandlePromise((props: DeleteDiskModalProps) => {
   const {

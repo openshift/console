@@ -1,15 +1,17 @@
-import * as React from 'react';
 import * as _ from 'lodash';
+import * as React from 'react';
+
+import { ResourceLink } from '@console/internal/components/utils';
+import { TemplateModel } from '@console/internal/models';
+import { referenceForModel } from '@console/internal/module/k8s';
+import { K8sActivityProps } from '@console/plugin-sdk';
 import ActivityItem, {
   ActivityProgress,
 } from '@console/shared/src/components/dashboard/activity-card/ActivityItem';
-import { ResourceLink } from '@console/internal/components/utils';
-import { referenceForModel } from '@console/internal/module/k8s';
-import { K8sActivityProps } from '@console/plugin-sdk';
-import { TemplateModel } from '@console/internal/models';
+
 import { VirtualMachineModel } from '../../../models';
-import { diskImportKindMapping } from './utils';
 import { VMTemplateLink } from '../../vm-templates/vm-template-link';
+import { diskImportKindMapping } from './utils';
 
 export const DiskImportActivity: React.FC<K8sActivityProps> = ({ resource }) => {
   const progress = parseInt(resource?.status?.progress, 10);

@@ -1,38 +1,40 @@
-import * as React from 'react';
 import { TFunction } from 'i18next';
+import { isEmpty } from 'lodash';
+import * as React from 'react';
 import Helmet from 'react-helmet';
-import { RouteComponentProps } from 'react-router';
 import { Trans, useTranslation } from 'react-i18next';
+import { RouteComponentProps } from 'react-router';
+
+import { ButtonBar, ExternalLink, history, StatusBox } from '@console/internal/components/utils';
+import { getNamespace, getUID } from '@console/shared';
 import {
   ActionGroup,
   Button,
   EmptyState,
-  Title,
   EmptyStateBody,
   Stack,
   StackItem,
+  Title,
 } from '@patternfly/react-core';
-import { ButtonBar, StatusBox, history, ExternalLink } from '@console/internal/components/utils';
-import { getNamespace, getUID } from '@console/shared';
-import { isTemplateSourceError } from '../../../statuses/template/types';
-import { getTemplateSourceStatus } from '../../../statuses/template/template-source-status';
-import { filterTemplates } from '../../vm-templates/utils';
-import { getTemplateName } from '../../../selectors/vm-template/basic';
+
 import NamespacedPage, {
   NamespacedPageVariants,
 } from '../../../../../dev-console/src/components/NamespacedPage';
-import { createVM } from '../../../k8s/requests/vm/create/simple-create';
-import { CreateVMForm } from '../forms/create-vm-form';
-import { getTemplateOSIcon } from '../../vm-templates/os-icons';
-import { formReducer, initFormState } from '../forms/create-vm-form-reducer';
-import { useStorageClassConfigMap } from '../../../hooks/storage-class-config-map';
 import { BOOT_SOURCE_AVAILABLE, SUPPORT_URL } from '../../../constants/vm-templates';
-import { useVmTemplatesResources } from '../hooks/use-vm-templates-resources';
-import { getDescription } from '../../../selectors/selectors';
+import { useStorageClassConfigMap } from '../../../hooks/storage-class-config-map';
 import useSSHKeys from '../../../hooks/use-ssh-keys';
 import useSSHService from '../../../hooks/use-ssh-service';
-import { isEmpty } from 'lodash';
+import { createVM } from '../../../k8s/requests/vm/create/simple-create';
+import { getDescription } from '../../../selectors/selectors';
+import { getTemplateName } from '../../../selectors/vm-template/basic';
+import { getTemplateSourceStatus } from '../../../statuses/template/template-source-status';
+import { isTemplateSourceError } from '../../../statuses/template/types';
 import { AUTHORIZED_SSH_KEYS } from '../../ssh-service/SSHForm/ssh-form-utils';
+import { getTemplateOSIcon } from '../../vm-templates/os-icons';
+import { filterTemplates } from '../../vm-templates/utils';
+import { CreateVMForm } from '../forms/create-vm-form';
+import { formReducer, initFormState } from '../forms/create-vm-form-reducer';
+import { useVmTemplatesResources } from '../hooks/use-vm-templates-resources';
 
 const DevConsoleCreateVmFormEmptyState: React.FC<{ templateParam: string; t: TFunction }> = ({
   templateParam,

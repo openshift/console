@@ -1,10 +1,12 @@
-import * as React from 'react';
-import { Checkbox, Alert, Stack, StackItem } from '@patternfly/react-core';
-import { ResourceIcon } from '@console/internal/components/utils';
-import { useTranslation, Trans } from 'react-i18next';
-import { VirtualMachineModel } from '../../../models/index';
-import useSSHKeys from '../../../hooks/use-ssh-keys';
 import { isEmpty } from 'lodash';
+import * as React from 'react';
+import { Trans, useTranslation } from 'react-i18next';
+
+import { ResourceIcon } from '@console/internal/components/utils';
+import { Alert, Checkbox, Stack, StackItem } from '@patternfly/react-core';
+
+import useSSHKeys from '../../../hooks/use-ssh-keys';
+import { VirtualMachineModel } from '../../../models/index';
 
 type SSHCreateServiceProps = {
   vmName?: string;

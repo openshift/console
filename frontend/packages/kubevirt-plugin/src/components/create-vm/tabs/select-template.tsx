@@ -1,8 +1,13 @@
-import * as React from 'react';
 import * as classnames from 'classnames';
-import { Trans, useTranslation } from 'react-i18next';
 import * as fuzzy from 'fuzzysearch';
+import * as React from 'react';
+import { Trans, useTranslation } from 'react-i18next';
+
+import { humanizeBinaryBytes, ResourceName, StatusBox } from '@console/internal/components/utils';
+import { ProjectModel } from '@console/internal/models';
 import { PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
+import { FLAGS, VirtualizedGrid } from '@console/shared';
+import { useFlag } from '@console/shared/src/hooks/flag';
 import { CatalogTile } from '@patternfly/react-catalog-view-extension';
 import {
   Alert,
@@ -25,33 +30,29 @@ import {
   ToolbarItem,
 } from '@patternfly/react-core';
 import { SearchIcon } from '@patternfly/react-icons';
-import { FLAGS, VirtualizedGrid } from '@console/shared';
-import { StatusBox, ResourceName, humanizeBinaryBytes } from '@console/internal/components/utils';
-import { useFlag } from '@console/shared/src/hooks/flag';
-import { ProjectModel } from '@console/internal/models';
 
-import {
-  getTemplateName,
-  getTemplateProvider,
-  getTemplateProviderType,
-  templateProviders,
-} from '../../../selectors/vm-template/basic';
-import { getTemplateOSIcon, PinnedIcon } from '../../vm-templates/os-icons';
-import { VMTemplateLabel } from '../../vm-templates/label';
-import { V1alpha1DataVolume } from '../../../types/api';
-import { getTemplateSourceStatus } from '../../../statuses/template/template-source-status';
-import { TemplateSource } from '../../vm-templates/vm-template-source';
+import { BOOT_SOURCE_AVAILABLE, BOOT_SOURCE_REQUIRED } from '../../../constants';
+import { usePinnedTemplates } from '../../../hooks/use-pinned-templates';
 import { getWorkloadProfile } from '../../../selectors/vm';
 import {
   getTemplateFlavorData,
   getTemplateOperatingSystems,
   getTemplateSizeRequirementInBytes,
 } from '../../../selectors/vm-template/advanced';
-import { TemplateItem } from '../../../types/template';
+import {
+  getTemplateName,
+  getTemplateProvider,
+  getTemplateProviderType,
+  templateProviders,
+} from '../../../selectors/vm-template/basic';
+import { getTemplateSourceStatus } from '../../../statuses/template/template-source-status';
 import { isTemplateSourceError, TemplateSourceStatus } from '../../../statuses/template/types';
-import { usePinnedTemplates } from '../../../hooks/use-pinned-templates';
-import { BOOT_SOURCE_AVAILABLE, BOOT_SOURCE_REQUIRED } from '../../../constants';
+import { V1alpha1DataVolume } from '../../../types/api';
+import { TemplateItem } from '../../../types/template';
 import { FormPFSelect } from '../../form/form-pf-select';
+import { VMTemplateLabel } from '../../vm-templates/label';
+import { getTemplateOSIcon, PinnedIcon } from '../../vm-templates/os-icons';
+import { TemplateSource } from '../../vm-templates/vm-template-source';
 import VMTemplateSupport from '../../vm-templates/VMTemplateSupport';
 import { useVmTemplatesFilters } from '../hooks/use-vm-templates-filters';
 

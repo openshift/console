@@ -1,25 +1,27 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Table, RowFunction } from '@console/internal/components/factory';
-import { sortable } from '@patternfly/react-table';
-import { getName, getNamespace, dimensifyHeader } from '@console/shared';
+
+import { RowFunction, Table } from '@console/internal/components/factory';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
-import { Button } from '@patternfly/react-core';
 import {
-  WatchK8sResource,
   useK8sWatchResource,
+  WatchK8sResource,
 } from '@console/internal/components/utils/k8s-watch-hook';
-import { getVmSnapshotVmName } from '../../selectors/snapshot/snapshot';
-import { VMSnapshot } from '../../types';
-import { isVMI } from '../../selectors/check-type';
-import { wrapWithProgress } from '../../utils/utils';
-import { VMLikeEntityTabProps } from '../vms/types';
-import { snapshotsTableColumnClasses } from './utils';
+import { dimensifyHeader, getName, getNamespace } from '@console/shared';
+import { Button } from '@patternfly/react-core';
+import { sortable } from '@patternfly/react-table';
+
 import { VirtualMachineSnapshotModel } from '../../models';
-import { VMSnapshotRow } from './vm-snapshot-row';
-import SnapshotModal from '../modals/snapshot-modal/snapshot-modal';
+import { isVMI } from '../../selectors/check-type';
+import { getVmSnapshotVmName } from '../../selectors/snapshot/snapshot';
 import { asVM, isVMRunningOrExpectedRunning } from '../../selectors/vm';
+import { VMSnapshot } from '../../types';
+import { wrapWithProgress } from '../../utils/utils';
+import SnapshotModal from '../modals/snapshot-modal/snapshot-modal';
+import { VMLikeEntityTabProps } from '../vms/types';
 import { useMappedVMRestores } from './use-mapped-vm-restores';
+import { snapshotsTableColumnClasses } from './utils';
+import { VMSnapshotRow } from './vm-snapshot-row';
 
 export type VMSnapshotsTableProps = {
   data?: any[];

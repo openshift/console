@@ -1,17 +1,19 @@
 import * as React from 'react';
-import { k8sKill, PersistentVolumeClaimKind, TemplateKind } from '@console/internal/module/k8s';
-import { DataVolumeModel } from '../../models';
+
 import {
   useK8sWatchResource,
   WatchK8sResource,
 } from '@console/internal/components/utils/k8s-watch-hook';
 import { TemplateModel } from '@console/internal/models';
+import { k8sKill, PersistentVolumeClaimKind, TemplateKind } from '@console/internal/module/k8s';
+
 import {
   TEMPLATE_TYPE_BASE,
   TEMPLATE_TYPE_LABEL,
   TEMPLATE_VM_COMMON_NAMESPACE,
 } from '../../constants';
 import { useBaseImages } from '../../hooks/use-base-images';
+import { DataVolumeModel } from '../../models';
 
 export const killCDIBoundPVC = (pvc: PersistentVolumeClaimKind) =>
   k8sKill(DataVolumeModel, {

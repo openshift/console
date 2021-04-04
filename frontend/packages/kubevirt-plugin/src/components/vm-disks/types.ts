@@ -1,9 +1,10 @@
 import { ValidationObject } from '@console/shared';
-import { VMLikeEntityKind } from '../../types/vmLike';
-import { CombinedDisk } from '../../k8s/wrapper/vm/combined-disk';
-import { TemplateValidations } from '../../utils/validations/template/template-validations';
-import { UIStorageValidation } from '../../types/ui/storage';
+
 import { DiskType } from '../../constants';
+import { CombinedDisk } from '../../k8s/wrapper/vm/combined-disk';
+import { UIStorageValidation } from '../../types/ui/storage';
+import { VMLikeEntityKind } from '../../types/vmLike';
+import { TemplateValidations } from '../../utils/validations/template/template-validations';
 
 export type StorageSimpleData = {
   name?: string;

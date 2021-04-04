@@ -1,16 +1,18 @@
 import * as React from 'react';
+
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { PersistentVolumeClaimKind, PodKind, TemplateKind } from '@console/internal/module/k8s';
 import { PersistentVolumeClaimModel, PodModel, TemplateModel } from '@console/internal/models';
-import { DataVolumeModel } from '../../../models';
-import { V1alpha1DataVolume } from '../../../types/api';
+import { PersistentVolumeClaimKind, PodKind, TemplateKind } from '@console/internal/module/k8s';
+
 import {
-  TEMPLATE_TYPE_BASE,
-  TEMPLATE_TYPE_VM,
-  TEMPLATE_TYPE_LABEL,
   CDI_APP_LABEL,
+  TEMPLATE_TYPE_BASE,
+  TEMPLATE_TYPE_LABEL,
+  TEMPLATE_TYPE_VM,
 } from '../../../constants';
 import { useBaseImages } from '../../../hooks/use-base-images';
+import { DataVolumeModel } from '../../../models';
+import { V1alpha1DataVolume } from '../../../types/api';
 
 export const useVmTemplatesResources = (namespace: string): useVmTemplatesResourcesValues => {
   const [userTemplates, utLoaded, utError] = useK8sWatchResource<TemplateKind[]>({

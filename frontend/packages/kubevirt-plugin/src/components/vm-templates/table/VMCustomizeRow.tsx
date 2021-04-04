@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
+
+import { RowFunction, TableData, TableRow } from '@console/internal/components/factory';
 import {
   FirehoseResult,
   history,
@@ -8,23 +9,23 @@ import {
   LoadingInline,
   ResourceLink,
 } from '@console/internal/components/utils';
-import { dimensifyRow, PendingStatus } from '@console/shared';
-import { PersistentVolumeClaimKind, PodKind, TemplateKind } from '@console/internal/module/k8s';
 import { NamespaceModel } from '@console/internal/models';
+import { PersistentVolumeClaimKind, PodKind, TemplateKind } from '@console/internal/module/k8s';
+import { dimensifyRow, PendingStatus } from '@console/shared';
 import { SuccessStatus } from '@console/shared/src/components/status/statuses';
-import { Level, LevelItem, Button, Stack, StackItem } from '@patternfly/react-core';
+import { Button, Level, LevelItem, Stack, StackItem } from '@patternfly/react-core';
 
-import { VMIKind, VMKind } from '../../../types';
-import { tableColumnClasses } from './utils';
-import { VMTemplateRowProps } from './types';
 import { getTemplateProvider } from '../../../selectors/vm-template/basic';
-import { customizeTemplateActions } from '../menu-actions';
 import { isVMIRunning } from '../../../selectors/vmi';
-import { getTemplateOSIcon } from '../os-icons';
-import cancelCustomizationModal from '../../modals/template-customization/CancelCustomizationModal';
-import RowActions from './RowActions';
+import { VMIKind, VMKind } from '../../../types';
 import { V1alpha1DataVolume } from '../../../types/api';
+import cancelCustomizationModal from '../../modals/template-customization/CancelCustomizationModal';
+import { customizeTemplateActions } from '../menu-actions';
+import { getTemplateOSIcon } from '../os-icons';
 import CustomizeVMTStatus from './CustomizeVMTStatus';
+import RowActions from './RowActions';
+import { VMTemplateRowProps } from './types';
+import { tableColumnClasses } from './utils';
 
 import './vm-template-table.scss';
 

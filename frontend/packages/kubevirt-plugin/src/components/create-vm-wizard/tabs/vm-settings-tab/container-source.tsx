@@ -1,14 +1,16 @@
-import * as React from 'react';
 import * as _ from 'lodash';
+import * as React from 'react';
+
 import { TextInput } from '@patternfly/react-core';
-import { toShallowJS } from '../../../../utils/immutable';
-import { FormFieldRow } from '../../form/form-field-row';
-import { FormField, FormFieldType } from '../../form/form-field';
-import { VMWizardStorage } from '../../types';
-import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
+
 import { DataVolumeSourceType, VolumeType } from '../../../../constants/vm/storage';
 import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';
+import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
+import { toShallowJS } from '../../../../utils/immutable';
 import { ContainerSourceHelp } from '../../../form/helper/container-source-help';
+import { FormField, FormFieldType } from '../../form/form-field';
+import { FormFieldRow } from '../../form/form-field-row';
+import { VMWizardStorage } from '../../types';
 
 export const ContainerSource: React.FC<ContainerSourceProps> = React.memo(
   ({ field, provisionSourceStorage, onProvisionSourceStorageChange }) => {

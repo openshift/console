@@ -1,7 +1,9 @@
-import * as React from 'react';
 import * as _ from 'lodash';
-import { FormSelect, FormSelectOption, Button } from '@patternfly/react-core';
+import * as React from 'react';
+
+import { Button, FormSelect, FormSelectOption } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons';
+
 import { BootableDeviceType } from '../../types';
 import { deviceKey, deviceLabel } from './constants';
 

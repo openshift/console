@@ -1,6 +1,8 @@
 import * as _ from 'lodash';
+import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+
 import {
   Alert,
   AlertVariant,
@@ -10,16 +12,16 @@ import {
   Button,
   ButtonVariant,
 } from '@patternfly/react-core';
-import { VMWizardNetwork, VMWizardProps, VMWizardStorage, VMWizardTab } from '../types';
-import { iGetCommonData } from '../selectors/immutable/selectors';
-import * as React from 'react';
+
+import { toJS } from '../../../utils/immutable';
+import { wrapWithProgress } from '../../../utils/utils';
 import { vmWizardActions } from '../redux/actions';
 import { ActionType } from '../redux/types';
-import { toJS } from '../../../utils/immutable';
+import { iGetCommonData } from '../selectors/immutable/selectors';
 import { vmWizardNicModalEnhanced } from '../tabs/networking-tab/vm-wizard-nic-modal-enhanced';
-import { Action, Error } from './types';
-import { wrapWithProgress } from '../../../utils/utils';
 import { vmWizardStorageModalEnhanced } from '../tabs/storage-tab/vm-wizard-storage-modal-enhanced';
+import { VMWizardNetwork, VMWizardProps, VMWizardStorage, VMWizardTab } from '../types';
+import { Action, Error } from './types';
 import { computeNetworkErrors, computeStorageErrors, computeVMSettingsErrors } from './utils';
 
 import './wizard-errors.scss';

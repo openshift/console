@@ -1,4 +1,32 @@
 import * as _ from 'lodash';
+
+import { correctVMImportProviderSecretLabels } from '../../../../../../k8s/requests/v2v/correct-vm-import-provider-secret-labels';
+import { getSimpleName } from '../../../../../../selectors/utils';
+import { PodDeploymentStatus } from '../../../../../../statuses/pod-deployment/constants';
+import { getSimplePodDeploymentStatus } from '../../../../../../statuses/pod-deployment/pod-deployment-status';
+import {
+  getSimpleV2VPRoviderStatus,
+  V2V_PROVIDER_STATUS_ALL_OK,
+  V2VProviderStatus,
+} from '../../../../../../statuses/v2v';
+import {
+  iGet,
+  iGetIn,
+  immutableListToShallowJS,
+  toShallowJS,
+} from '../../../../../../utils/immutable';
+import { iGetCreateVMWizardTabs } from '../../../../selectors/immutable/common';
+import { hasImportProvidersChanged } from '../../../../selectors/immutable/import-providers';
+import {
+  hasVMWareSettingsChanged,
+  hasVMWareSettingsValueChanged,
+  iGetVMWareField,
+  iGetVMWareFieldAttribute,
+  iGetVMWareFieldValue,
+  isVMWareProvider,
+} from '../../../../selectors/immutable/provider/vmware/selectors';
+import { iGetCommonData, iGetLoadedCommonData } from '../../../../selectors/immutable/selectors';
+import { getLoadedVm, getThumbprint } from '../../../../selectors/provider/vmware/selectors';
 import {
   ImportProvidersField,
   VM_WIZARD_DIFFICULT_TABS,
@@ -8,43 +36,16 @@ import {
   VMWareProviderProps,
   VMWizardProps,
 } from '../../../../types';
-import { InternalActionType, UpdateOptions } from '../../../types';
-import { iGetCommonData, iGetLoadedCommonData } from '../../../../selectors/immutable/selectors';
-import {
-  hasVMWareSettingsChanged,
-  hasVMWareSettingsValueChanged,
-  iGetVMWareField,
-  iGetVMWareFieldAttribute,
-  iGetVMWareFieldValue,
-  isVMWareProvider,
-} from '../../../../selectors/immutable/provider/vmware/selectors';
-import { vmWizardInternalActions } from '../../../internal-actions';
 import { asDisabled, asHidden, asRequired } from '../../../../utils/utils';
-import { getSimplePodDeploymentStatus } from '../../../../../../statuses/pod-deployment/pod-deployment-status';
-import { PodDeploymentStatus } from '../../../../../../statuses/pod-deployment/constants';
-import {
-  iGet,
-  iGetIn,
-  immutableListToShallowJS,
-  toShallowJS,
-} from '../../../../../../utils/immutable';
-import {
-  getSimpleV2VPRoviderStatus,
-  V2V_PROVIDER_STATUS_ALL_OK,
-  V2VProviderStatus,
-} from '../../../../../../statuses/v2v';
-import { getThumbprint, getLoadedVm } from '../../../../selectors/provider/vmware/selectors';
-import { getSimpleName } from '../../../../../../selectors/utils';
-import { correctVMImportProviderSecretLabels } from '../../../../../../k8s/requests/v2v/correct-vm-import-provider-secret-labels';
+import { vmWizardInternalActions } from '../../../internal-actions';
+import { InternalActionType, UpdateOptions } from '../../../types';
+import { updateExtraWSQueries } from './update-ws-queries';
+import { cleanupVmWareProvider } from './vmware-cleanup';
+import { prefillUpdateCreator } from './vmware-prefill-vm';
 import {
   createConnectionObjects,
   startV2VVMWareControllerWithCleanup,
 } from './vmware-provider-actions';
-import { prefillUpdateCreator } from './vmware-prefill-vm';
-import { hasImportProvidersChanged } from '../../../../selectors/immutable/import-providers';
-import { updateExtraWSQueries } from './update-ws-queries';
-import { iGetCreateVMWizardTabs } from '../../../../selectors/immutable/common';
-import { cleanupVmWareProvider } from './vmware-cleanup';
 
 const startControllerAndCleanup = (options: UpdateOptions) => {
   const { id, prevState, getState } = options;

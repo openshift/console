@@ -1,11 +1,13 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { VMWizardNetwork } from '../../types';
-import { getNetworks } from '../../selectors/selectors';
+
+import { Table, TableBody, TableHeader, TableVariant } from '@patternfly/react-table';
+
 import { NetworkInterfaceWrapper } from '../../../../k8s/wrapper/vm/network-interface-wrapper';
 import { NetworkWrapper } from '../../../../k8s/wrapper/vm/network-wrapper';
-import { Table, TableBody, TableHeader, TableVariant } from '@patternfly/react-table';
-import { useTranslation } from 'react-i18next';
+import { getNetworks } from '../../selectors/selectors';
+import { VMWizardNetwork } from '../../types';
 
 const NetworkingReviewConnected: React.FC<NetworkingTabComponentProps> = ({ networks }) => {
   const { t } = useTranslation();

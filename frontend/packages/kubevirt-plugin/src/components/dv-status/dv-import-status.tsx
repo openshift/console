@@ -1,15 +1,16 @@
 import * as React from 'react';
-import { ProgressStatus, ErrorStatus } from '@console/shared';
-import { Progress, Alert, Stack, StackItem, ProgressSize } from '@patternfly/react-core';
+
 import { ResourceLink } from '@console/internal/components/utils';
 import { PodModel } from '@console/internal/models';
 import { PodKind } from '@console/internal/module/k8s';
+import { ErrorStatus, ProgressStatus } from '@console/shared';
+import { Alert, Progress, ProgressSize, Stack, StackItem } from '@patternfly/react-core';
 
-import { V1alpha1DataVolume } from '../../types/api';
-import { DataVolumeWrapper } from '../../k8s/wrapper/vm/data-volume-wrapper';
 import { DataVolumeSourceType } from '../../constants/vm';
-import { UploadPVCPopover } from '../cdi-upload-provider/upload-pvc-popover';
+import { DataVolumeWrapper } from '../../k8s/wrapper/vm/data-volume-wrapper';
 import { DVStatusType, getDVStatus } from '../../statuses/dv/dv-status';
+import { V1alpha1DataVolume } from '../../types/api';
+import { UploadPVCPopover } from '../cdi-upload-provider/upload-pvc-popover';
 
 export const DVImportStatus: React.FC<DVImportStatusProps> = ({ dataVolume, pod, children }) => {
   const dvWrapper = new DataVolumeWrapper(dataVolume);

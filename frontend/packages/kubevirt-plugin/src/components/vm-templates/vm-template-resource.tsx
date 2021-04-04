@@ -1,36 +1,38 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { ResourceSummary, LabelList } from '@console/internal/components/utils';
+
+import { LabelList, ResourceSummary } from '@console/internal/components/utils';
 import { TemplateKind } from '@console/internal/module/k8s';
-import { getBasicID, prefixedID } from '../../utils';
-import { descriptionModal } from '../modals/description-modal';
-import { BootOrderModal } from '../modals/boot-order-modal';
-import dedicatedResourcesModal from '../modals/scheduling-modals/dedicated-resources-modal/connected-dedicated-resources-modal';
-import tolerationsModal from '../modals/scheduling-modals/tolerations-modal/connected-tolerations-modal';
-import nodeSelectorModal from '../modals/scheduling-modals/node-selector-modal/connected-node-selector-modal';
-import affinityModal from '../modals/scheduling-modals/affinity-modal/connected-affinity-modal';
-import evictionStrategyModal from '../modals/scheduling-modals/eviction-strategy-modal/eviction-strategy-modal';
-import { getRowsDataFromAffinity } from '../modals/scheduling-modals/affinity-modal/helpers';
-import { getDescription } from '../../selectors/selectors';
-import { getWorkloadProfile, isDedicatedCPUPlacement } from '../../selectors/vm/selectors';
-import { getTemplateOperatingSystems } from '../../selectors/vm-template/advanced';
-import { vmFlavorModal } from '../modals';
-import { EditButton } from '../edit-button';
-import VMDetailsItem from '../vms/VMDetailsItem';
-import { asVM, getTransformedDevices, getVMLikeModel } from '../../selectors/vm';
-import { BootOrderSummary } from '../boot-order';
-import { VMTemplateLink } from './vm-template-link';
-import { TemplateSource } from './vm-template-source';
+
 import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
-import { getVMTemplateNamespacedName } from '../../selectors/vm-template/selectors';
-import { TemplateSourceStatus } from '../../statuses/template/types';
+import { getDescription } from '../../selectors/selectors';
+import { asVM, getTransformedDevices, getVMLikeModel } from '../../selectors/vm';
+import { getTemplateOperatingSystems } from '../../selectors/vm-template/advanced';
 import {
   getTemplateParentProvider,
   getTemplateProvider,
   getTemplateSupport,
   isCommonTemplate,
 } from '../../selectors/vm-template/basic';
+import { getVMTemplateNamespacedName } from '../../selectors/vm-template/selectors';
+import { getWorkloadProfile, isDedicatedCPUPlacement } from '../../selectors/vm/selectors';
+import { TemplateSourceStatus } from '../../statuses/template/types';
+import { getBasicID, prefixedID } from '../../utils';
+import { BootOrderSummary } from '../boot-order';
+import { EditButton } from '../edit-button';
+import { vmFlavorModal } from '../modals';
+import { BootOrderModal } from '../modals/boot-order-modal';
+import { descriptionModal } from '../modals/description-modal';
+import affinityModal from '../modals/scheduling-modals/affinity-modal/connected-affinity-modal';
+import { getRowsDataFromAffinity } from '../modals/scheduling-modals/affinity-modal/helpers';
+import dedicatedResourcesModal from '../modals/scheduling-modals/dedicated-resources-modal/connected-dedicated-resources-modal';
+import evictionStrategyModal from '../modals/scheduling-modals/eviction-strategy-modal/eviction-strategy-modal';
+import nodeSelectorModal from '../modals/scheduling-modals/node-selector-modal/connected-node-selector-modal';
+import tolerationsModal from '../modals/scheduling-modals/tolerations-modal/connected-tolerations-modal';
+import VMDetailsItem from '../vms/VMDetailsItem';
 import { getVMTemplateResourceFlavorData } from './utils';
+import { VMTemplateLink } from './vm-template-link';
+import { TemplateSource } from './vm-template-source';
 
 import './_vm-template-resource.scss';
 

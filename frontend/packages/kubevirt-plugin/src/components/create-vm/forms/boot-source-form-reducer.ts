@@ -1,12 +1,12 @@
 import { asValidationObject, ValidationObject } from '@console/shared';
 
+import { AccessMode } from '../../../constants';
+import { ProvisionSource } from '../../../constants/vm/provision-source';
 import {
   isPositiveNumber,
   validateContainer,
   validateURL,
 } from '../../../utils/validations/common';
-import { AccessMode } from '../../../constants';
-import { ProvisionSource } from '../../../constants/vm/provision-source';
 
 export type BootSourceState = {
   dataSource: {

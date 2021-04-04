@@ -1,15 +1,17 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
+
 import {
-  ModalComponentProps,
   createModalLauncher,
-  ModalTitle,
   ModalBody,
+  ModalComponentProps,
+  ModalTitle,
 } from '@console/internal/components/factory';
-import { ModalFooter } from '../modal/modal-footer';
-import { VMIKind } from '../../../types';
+import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
+
 import { unpauseVMI } from '../../../k8s/requests/vmi/actions';
+import { VMIKind } from '../../../types';
+import { ModalFooter } from '../modal/modal-footer';
 
 export const VMStatusModal = withHandlePromise(
   ({

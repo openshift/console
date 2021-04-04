@@ -1,19 +1,21 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
-import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
+
 import {
   createModalLauncher,
-  ModalTitle,
   ModalBody,
-  ModalSubmitFooter,
   ModalComponentProps,
+  ModalSubmitFooter,
+  ModalTitle,
 } from '@console/internal/components/factory';
+import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
 import { k8sPatch } from '@console/internal/module/k8s';
-import { VMLikeEntityKind } from '../../../types/vmLike';
-import { getVMLikeModel } from '../../../selectors/vm';
+import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
+
 import { getRemoveNICPatches } from '../../../k8s/patches/vm/vm-nic-patches';
+import { getVMLikeModel } from '../../../selectors/vm';
 import { V1NetworkInterface } from '../../../types/vm';
+import { VMLikeEntityKind } from '../../../types/vmLike';
 
 export const DeleteNICModal = withHandlePromise((props: DeleteNICModalProps) => {
   const { vmLikeEntity, nic, inProgress, errorMessage, handlePromise, close, cancel } = props;

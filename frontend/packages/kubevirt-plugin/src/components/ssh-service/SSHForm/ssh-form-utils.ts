@@ -1,12 +1,13 @@
-import { VMKind, VMIKind } from '@console/kubevirt-plugin/src/types';
-import { CloudInitDataHelper } from '../../../k8s/wrapper/vm/cloud-init-data-helper';
 import { ServiceModel } from '@console/internal/models';
 import { k8sCreate, k8sKill } from '@console/internal/module/k8s';
+import { VMIKind, VMKind } from '@console/kubevirt-plugin/src/types';
+
 import {
-  CLOUDINIT_DISK,
-  CLOUD_INIT_NO_CLOUD,
   CLOUD_INIT_CONFIG_DRIVE,
+  CLOUD_INIT_NO_CLOUD,
+  CLOUDINIT_DISK,
 } from '../../../constants/vm/constants';
+import { CloudInitDataHelper } from '../../../k8s/wrapper/vm/cloud-init-data-helper';
 
 export const AUTHORIZED_SSH_KEYS = 'authorizedsshkeys';
 

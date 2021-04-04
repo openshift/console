@@ -1,19 +1,21 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
-import { getName, getNamespace, getRandomChars } from '@console/shared';
+
 import {
   createModalLauncher,
   ModalBody,
   ModalComponentProps,
   ModalTitle,
 } from '@console/internal/components/factory';
+import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
 import { k8sCreate } from '@console/internal/module/k8s';
-import { ModalFooter } from '../modal/modal-footer';
+import { getName, getNamespace, getRandomChars } from '@console/shared';
+
 import { VMRestoreWrapper } from '../../../k8s/wrapper/vm/vm-restore-wrapper';
-import { VMSnapshot } from '../../../types';
 import { getVmSnapshotVmName } from '../../../selectors/snapshot/snapshot';
+import { VMSnapshot } from '../../../types';
 import { buildOwnerReference } from '../../../utils';
+import { ModalFooter } from '../modal/modal-footer';
 
 const SnapshotRestoreModal = withHandlePromise((props: SnapshotRestoreModalProps) => {
   const { t } = useTranslation();

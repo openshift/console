@@ -1,12 +1,14 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { K8sResourceKind, PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
-import { PersistentVolumeClaimModel, PodModel } from '@console/internal/models';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { LoadingBox } from '@console/internal/components/utils';
 
-import { getVMStatus } from '../../../statuses/vm/vm-status';
-import { VMImportKind } from '../../../types/vm-import/ovirt/vm-import';
+import { LoadingBox } from '@console/internal/components/utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { PersistentVolumeClaimModel, PodModel } from '@console/internal/models';
+import { K8sResourceKind, PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
+
+import { ConsoleType } from '../../../constants/vm/console-type';
+import { useEventListener } from '../../../hooks/use-event-listener';
+import { useRenderVNCConsole } from '../../../hooks/use-render-vnc-console';
 import {
   DataVolumeModel,
   VirtualMachineImportModel,
@@ -14,12 +16,11 @@ import {
   VirtualMachineInstanceModel,
   VirtualMachineModel,
 } from '../../../models';
-import { VMIKind, VMKind } from '../../../types/vm';
-import VMConsoles from './VMConsoles';
-import { useEventListener } from '../../../hooks/use-event-listener';
-import { useRenderVNCConsole } from '../../../hooks/use-render-vnc-console';
-import { ConsoleType } from '../../../constants/vm/console-type';
+import { getVMStatus } from '../../../statuses/vm/vm-status';
 import { V1alpha1DataVolume } from '../../../types/api';
+import { VMIKind, VMKind } from '../../../types/vm';
+import { VMImportKind } from '../../../types/vm-import/ovirt/vm-import';
+import VMConsoles from './VMConsoles';
 
 const StandaloneVMConsolePage: React.FC<RouteComponentProps<{ name: string; ns: string }>> = ({
   match,

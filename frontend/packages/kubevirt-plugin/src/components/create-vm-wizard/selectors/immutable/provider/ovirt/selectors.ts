@@ -1,10 +1,10 @@
+import { iGet, iGetIn } from '../../../../../../utils/immutable';
 import {
   ImportProvidersField,
-  VMImportProvider,
   OvirtProviderField,
+  VMImportProvider,
   VMWizardProps,
 } from '../../../../types';
-import { iGet, iGetIn } from '../../../../../../utils/immutable';
 import { iGetImportProviders, iGetImportProvidersValue } from '../../import-providers';
 import { iGetCommonData } from '../../selectors';
 

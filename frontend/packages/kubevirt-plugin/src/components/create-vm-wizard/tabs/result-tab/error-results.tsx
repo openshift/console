@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
-import { ExclamationCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+
 import {
   EmptyState,
   EmptyStateBody,
@@ -9,10 +9,12 @@ import {
   EmptyStateVariant,
   Title,
 } from '@patternfly/react-core';
-import { iGetCommonData } from '../../selectors/immutable/selectors';
-import { VMWizardProps, VMWizardTab } from '../../types';
+import { ExclamationCircleIcon } from '@patternfly/react-icons';
+
 import { iGet, iGetIn } from '../../../../utils/immutable';
 import { iGetCreateVMWizardTabs } from '../../selectors/immutable/common';
+import { iGetCommonData } from '../../selectors/immutable/selectors';
+import { VMWizardProps, VMWizardTab } from '../../types';
 
 const ErrorResultsComponent: React.FC<ErrorResultsProps> = ({
   isCreateTemplate,

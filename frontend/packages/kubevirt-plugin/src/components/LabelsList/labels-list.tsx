@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Grid, Button, Split, SplitItem } from '@patternfly/react-core';
-import { PlusCircleIcon } from '@patternfly/react-icons';
+
 import { ExternalLink, resourcePath } from '@console/internal/components/utils';
 import { K8sResourceKindReference } from '@console/internal/module/k8s';
+import { Button, Grid, Split, SplitItem } from '@patternfly/react-core';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 
 import './labels-list.scss';
 

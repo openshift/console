@@ -1,16 +1,18 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { MinusCircleIcon } from '@patternfly/react-icons';
+
 import {
-  GridItem,
-  TextInput,
   Button,
   FormSelect,
   FormSelectOption,
+  GridItem,
   Select,
-  SelectVariant,
   SelectOption,
+  SelectVariant,
+  TextInput,
 } from '@patternfly/react-core';
+import { MinusCircleIcon } from '@patternfly/react-icons';
+
 import { EXPRESSION_OPERATORS } from '../../../shared/consts';
 import { AffinityLabel } from '../../types';
 

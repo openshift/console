@@ -1,7 +1,8 @@
 import { safeDump } from 'js-yaml';
 import * as _ from 'lodash';
-import { VMSettingsField } from '../types';
+
 import { ResultContentType } from '../../../k8s/enhancedK8sMethods/types';
+import { VMSettingsField } from '../types';
 
 export const VM_SETTINGS_METADATA_ID = 'VM_SETTINGS_METADATA_ID';
 export const IMPORT_PROVIDES_METADATA_ID = 'IMPORT_PROVIDES_METADATA_ID';

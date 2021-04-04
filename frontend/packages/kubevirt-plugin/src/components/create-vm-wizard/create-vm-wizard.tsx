@@ -1,25 +1,25 @@
+import { Location } from 'history';
+import * as _ from 'lodash';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import * as _ from 'lodash';
-import { compose } from 'redux';
 import { connect } from 'react-redux';
-import { Wizard, WizardStep } from '@patternfly/react-core';
-import { FLAGS } from '@console/shared';
+import { match as RouterMatch } from 'react-router';
+import { compose } from 'redux';
+
+import { Firehose, history } from '@console/internal/components/utils';
+import { TemplateModel } from '@console/internal/models';
+import { referenceForModel } from '@console/internal/module/k8s';
 import {
   connectToFlags,
   featureReducerName,
   FlagsObject,
 } from '@console/internal/reducers/features';
-import { TemplateModel } from '@console/internal/models';
-import { Firehose, history } from '@console/internal/components/utils';
-import { usePrevious } from '@console/shared/src/hooks/previous';
-import { referenceForModel } from '@console/internal/module/k8s';
 import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
-import { Location } from 'history';
-import { match as RouterMatch } from 'react-router';
-import { withReduxID } from '../../utils/redux/common';
-import { VirtualMachineModel } from '../../models';
-import { ITemplate } from '../../types/template';
+import { FLAGS } from '@console/shared';
+import { usePrevious } from '@console/shared/src/hooks/previous';
+import { Wizard, WizardStep } from '@patternfly/react-core';
+
+import { VMWizardURLParams } from '../../constants/url-params';
 import {
   TEMPLATE_TYPE_BASE,
   TEMPLATE_TYPE_LABEL,
@@ -27,49 +27,51 @@ import {
   VMWizardMode,
   VMWizardView,
 } from '../../constants/vm';
-import { VMWizardURLParams } from '../../constants/url-params';
-import { getResource } from '../../utils';
-import { IDReferences, makeIDReferences } from '../../utils/redux/id-reference';
+import { useStorageClassConfigMapWrapped } from '../../hooks/storage-class-config-map';
 import { useBaseImages } from '../../hooks/use-base-images';
+import { useUpdateStorages } from '../../hooks/use-update-data-volume';
+import { VirtualMachineModel } from '../../models';
+import { getTemplateName } from '../../selectors/vm-template/basic';
+import { FirehoseResourceEnhanced } from '../../types/custom';
+import { ITemplate } from '../../types/template';
+import { VMWizardInitialData } from '../../types/url';
+import { getResource } from '../../utils';
 import { iGetLoadedData, immutableListToShallowJS } from '../../utils/immutable';
-import {
-  ChangedCommonData,
-  ChangedCommonDataProp,
-  CommonData,
-  DetectCommonDataChanges,
-  VMWizardProps,
-  VMWizardTab,
-  VMWizardTabsMetadata,
-  DirectCommonDataProps,
-} from './types';
-import { TabTitleKeyResolver } from './strings/strings';
+import { withReduxID } from '../../utils/redux/common';
+import { IDReferences, makeIDReferences } from '../../utils/redux/id-reference';
+import { parseVMWizardInitialData } from '../../utils/url';
+import { CreateVMWizardFooter } from './create-vm-wizard-footer';
+import { ResourceLoadErrors } from './error-components/resource-load-errors';
+import { WizardErrors } from './error-components/wizard-errors';
 import { vmWizardActions } from './redux/actions';
-import { ActionType } from './redux/types';
 import { getResultInitialState } from './redux/initial-state/result-tab-initial-state';
-import { iGetCommonData, iGetName, iGetLoadedCommonData } from './selectors/immutable/selectors';
-import { getExtraWSQueries } from './selectors/selectors';
+import { ActionType } from './redux/types';
+import { iGetCommonData, iGetLoadedCommonData, iGetName } from './selectors/immutable/selectors';
 import {
   getStepsMetadata,
   isLastStepErrorFatal,
   isStepValid,
 } from './selectors/immutable/wizard-selectors';
-import { ResourceLoadErrors } from './error-components/resource-load-errors';
-import { WizardErrors } from './error-components/wizard-errors';
-import { CreateVMWizardFooter } from './create-vm-wizard-footer';
-import { ImportProvidersTab } from './tabs/import-providers-tab/import-providers-tab';
-import { VMSettingsTab } from './tabs/vm-settings-tab/vm-settings-tab';
-import { NetworkingTab } from './tabs/networking-tab/networking-tab';
-import { ReviewTab } from './tabs/review-tab/review-tab';
-import { ResultTab } from './tabs/result-tab/result-tab';
-import { StorageTab } from './tabs/storage-tab/storage-tab';
+import { getExtraWSQueries } from './selectors/selectors';
+import { TabTitleKeyResolver } from './strings/strings';
 import AdvancedTab from './tabs/advanced-tab/AdvancedTab';
-import { useStorageClassConfigMapWrapped } from '../../hooks/storage-class-config-map';
+import { ImportProvidersTab } from './tabs/import-providers-tab/import-providers-tab';
+import { NetworkingTab } from './tabs/networking-tab/networking-tab';
+import { ResultTab } from './tabs/result-tab/result-tab';
+import { ReviewTab } from './tabs/review-tab/review-tab';
+import { StorageTab } from './tabs/storage-tab/storage-tab';
 import { ValidTabGuard } from './tabs/valid-tab-guard';
-import { FirehoseResourceEnhanced } from '../../types/custom';
-import { parseVMWizardInitialData } from '../../utils/url';
-import { VMWizardInitialData } from '../../types/url';
-import { getTemplateName } from '../../selectors/vm-template/basic';
-import { useUpdateStorages } from '../../hooks/use-update-data-volume';
+import { VMSettingsTab } from './tabs/vm-settings-tab/vm-settings-tab';
+import {
+  ChangedCommonData,
+  ChangedCommonDataProp,
+  CommonData,
+  DetectCommonDataChanges,
+  DirectCommonDataProps,
+  VMWizardProps,
+  VMWizardTab,
+  VMWizardTabsMetadata,
+} from './types';
 
 import './create-vm-wizard.scss';
 

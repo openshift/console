@@ -1,24 +1,26 @@
 import * as React from 'react';
-import { FormSelect, FormSelectOption } from '@patternfly/react-core';
-import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { iGetCommonData } from '../../../../selectors/immutable/selectors';
+import { connect } from 'react-redux';
+
 import { useAccessReview2 } from '@console/internal/components/utils';
-import { StorageClassResourceKind } from '@console/internal/module/k8s';
-import { StorageClassModel } from '@console/internal/models';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { VMImportProvider, VMWareProviderField, VMWareProviderProps } from '../../../../types';
-import { iGetVMWareField } from '../../../../selectors/immutable/provider/vmware/selectors';
-import { vmWizardActions } from '../../../../redux/actions';
-import { ActionType } from '../../../../redux/types';
-import { FormFieldRow } from '../../../../form/form-field-row';
-import { FormField, FormFieldType } from '../../../../form/form-field';
-import { iGet, iGetIn } from '../../../../../../utils/immutable';
-import { FormSelectPlaceholderOption } from '../../../../../form/form-select-placeholder-option';
-import { getPlaceholderKey } from '../../../../utils/renderable-field-utils';
-import { ignoreCaseSort } from '../../../../../../utils/sort';
-import { requestVmDetails } from '../../../../redux/state-update/providers/vmware/vmware-provider-actions';
+import { StorageClassModel } from '@console/internal/models';
+import { StorageClassResourceKind } from '@console/internal/module/k8s';
+import { FormSelect, FormSelectOption } from '@patternfly/react-core';
+
 import { getDefaultStorageClass } from '../../../../../../selectors/config-map/sc-defaults';
+import { iGet, iGetIn } from '../../../../../../utils/immutable';
+import { ignoreCaseSort } from '../../../../../../utils/sort';
+import { FormSelectPlaceholderOption } from '../../../../../form/form-select-placeholder-option';
+import { FormField, FormFieldType } from '../../../../form/form-field';
+import { FormFieldRow } from '../../../../form/form-field-row';
+import { vmWizardActions } from '../../../../redux/actions';
+import { requestVmDetails } from '../../../../redux/state-update/providers/vmware/vmware-provider-actions';
+import { ActionType } from '../../../../redux/types';
+import { iGetVMWareField } from '../../../../selectors/immutable/provider/vmware/selectors';
+import { iGetCommonData } from '../../../../selectors/immutable/selectors';
+import { VMImportProvider, VMWareProviderField, VMWareProviderProps } from '../../../../types';
+import { getPlaceholderKey } from '../../../../utils/renderable-field-utils';
 
 const VMWareVMsConnected: React.FC<VMWareVMsConnectedProps> = React.memo(
   ({ vmField, v2vvmware, onVMChange }) => {

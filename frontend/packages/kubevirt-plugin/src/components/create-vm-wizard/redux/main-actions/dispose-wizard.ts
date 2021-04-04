@@ -1,7 +1,7 @@
-import { InternalActionType } from '../types';
-import { vmWizardInternalActions } from '../internal-actions';
-import { ChangedCommonDataProp } from '../../types';
 import { getProviders } from '../../provider-definitions';
+import { ChangedCommonDataProp } from '../../types';
+import { vmWizardInternalActions } from '../internal-actions';
+import { InternalActionType } from '../types';
 
 export const disposeWizard = (id: string) => (dispatch, getState) => {
   const prevState = getState(); // must be called before dispatch

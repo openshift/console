@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { Popover, Text, TextVariants, PopoverPosition } from '@patternfly/react-core';
+import { Trans, useTranslation } from 'react-i18next';
+
+import { Popover, PopoverPosition, Text, TextVariants } from '@patternfly/react-core';
 import { HelpIcon } from '@patternfly/react-icons';
-import { useTranslation, Trans } from 'react-i18next';
 
 import './ssh-popover.scss';
 

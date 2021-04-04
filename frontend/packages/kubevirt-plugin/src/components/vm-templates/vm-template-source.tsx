@@ -1,33 +1,33 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { PlusCircleIcon, InProgressIcon } from '@patternfly/react-icons';
+
+import { ExternalLink, LoadingInline, ResourceLink } from '@console/internal/components/utils';
+import { PersistentVolumeClaimModel, PodModel } from '@console/internal/models';
 import { referenceForModel, TemplateKind } from '@console/internal/module/k8s';
+import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
+import {
+  ErrorStatus,
+  GreenCheckCircleIcon,
+  RedExclamationCircleIcon,
+  SuccessStatus,
+  WarningStatus,
+  YellowExclamationTriangleIcon,
+} from '@console/shared';
 import {
   Alert,
   Button,
   ButtonVariant,
   Label,
-  Stack,
-  StackItem,
   Level,
   LevelItem,
+  Stack,
+  StackItem,
 } from '@patternfly/react-core';
-import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
-import { ExternalLink, LoadingInline, ResourceLink } from '@console/internal/components/utils';
-import {
-  SuccessStatus,
-  ErrorStatus,
-  WarningStatus,
-  YellowExclamationTriangleIcon,
-  GreenCheckCircleIcon,
-  RedExclamationCircleIcon,
-} from '@console/shared';
-import { PersistentVolumeClaimModel, PodModel } from '@console/internal/models';
+import { InProgressIcon, PlusCircleIcon } from '@patternfly/react-icons';
 
-import { CDIUploadContext } from '../cdi-upload-provider/cdi-upload-provider';
-import { addTemplateSourceModal } from '../modals/add-template-source/add-template-source';
-import { DVImportStatus } from '../dv-status/dv-import-status';
-import { createDeleteSourceModal } from '../modals/delete-source/delete-source';
+import { BOOT_SOURCE_AVAILABLE, DataVolumeSourceType } from '../../constants';
+import { useCustomizeSourceModal } from '../../hooks/use-customize-source-modal';
+import { DataVolumeWrapper } from '../../k8s/wrapper/vm/data-volume-wrapper';
 import { isCommonTemplate } from '../../selectors/vm-template/basic';
 import {
   isTemplateSourceError,
@@ -36,9 +36,10 @@ import {
   TemplateSourceStatusBundle,
   TemplateSourceStatusError,
 } from '../../statuses/template/types';
-import { DataVolumeWrapper } from '../../k8s/wrapper/vm/data-volume-wrapper';
-import { BOOT_SOURCE_AVAILABLE, DataVolumeSourceType } from '../../constants';
-import { useCustomizeSourceModal } from '../../hooks/use-customize-source-modal';
+import { CDIUploadContext } from '../cdi-upload-provider/cdi-upload-provider';
+import { DVImportStatus } from '../dv-status/dv-import-status';
+import { addTemplateSourceModal } from '../modals/add-template-source/add-template-source';
+import { createDeleteSourceModal } from '../modals/delete-source/delete-source';
 
 import './vm-template-source.scss';
 

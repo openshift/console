@@ -1,36 +1,38 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  Alert,
-  AlertVariant,
-  ExpandableSection,
-  Form,
-  Stack,
-  StackItem,
-  TextArea,
-  Checkbox,
-  TextInput,
-} from '@patternfly/react-core';
-import {
-  ExternalLink,
-  HandlePromiseProps,
-  withHandlePromise,
-} from '@console/internal/components/utils';
-import { getName, getNamespace } from '@console/shared';
+
 import {
   createModalLauncher,
   ModalBody,
   ModalComponentProps,
   ModalTitle,
 } from '@console/internal/components/factory';
+import {
+  ExternalLink,
+  HandlePromiseProps,
+  withHandlePromise,
+} from '@console/internal/components/utils';
 import { k8sCreate } from '@console/internal/module/k8s';
-import { buildOwnerReference, prefixedID } from '../../../utils';
-import { VMLikeEntityKind } from '../../../types/vmLike';
-import { FormRow } from '../../form/form-row';
-import { ModalFooter } from '../modal/modal-footer';
+import { getName, getNamespace } from '@console/shared';
+import {
+  Alert,
+  AlertVariant,
+  Checkbox,
+  ExpandableSection,
+  Form,
+  Stack,
+  StackItem,
+  TextArea,
+  TextInput,
+} from '@patternfly/react-core';
+
+import { SNAPSHOT_SUPPORT_URL } from '../../../constants';
 import { VMSnapshotWrapper } from '../../../k8s/wrapper/vm/vm-snapshot-wrapper';
 import { asVM, getVolumeSnapshotStatuses } from '../../../selectors/vm';
-import { SNAPSHOT_SUPPORT_URL } from '../../../constants';
+import { VMLikeEntityKind } from '../../../types/vmLike';
+import { buildOwnerReference, prefixedID } from '../../../utils';
+import { FormRow } from '../../form/form-row';
+import { ModalFooter } from '../modal/modal-footer';
 
 import './snapshot-modal.scss';
 

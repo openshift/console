@@ -1,15 +1,15 @@
-import { VMWizardTab } from '../../types';
-import { InternalActionType, UpdateOptions } from '../types';
-import { vmWizardInternalActions } from '../internal-actions';
-import { validateNIC } from '../../../../utils/validations/vm';
+import { ProvisionSource } from '../../../../constants/vm/provision-source';
+import { NetworkInterfaceWrapper } from '../../../../k8s/wrapper/vm/network-interface-wrapper';
+import { NetworkWrapper } from '../../../../k8s/wrapper/vm/network-wrapper';
 import { iGetIn } from '../../../../utils/immutable';
+import { validateNIC } from '../../../../utils/validations/vm';
 import { hasNetworksChanged, iGetNetworks } from '../../selectors/immutable/networks';
 import { checkTabValidityChanged } from '../../selectors/immutable/selectors';
 import { iGetProvisionSource } from '../../selectors/immutable/vm-settings';
 import { getNetworks } from '../../selectors/selectors';
-import { ProvisionSource } from '../../../../constants/vm/provision-source';
-import { NetworkInterfaceWrapper } from '../../../../k8s/wrapper/vm/network-interface-wrapper';
-import { NetworkWrapper } from '../../../../k8s/wrapper/vm/network-wrapper';
+import { VMWizardTab } from '../../types';
+import { vmWizardInternalActions } from '../internal-actions';
+import { InternalActionType, UpdateOptions } from '../types';
 
 export const validateNetworks = (options: UpdateOptions) => {
   const { id, prevState, dispatch, getState } = options;

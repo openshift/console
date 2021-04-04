@@ -1,5 +1,7 @@
 import * as React from 'react';
-import { Button, ActionGroup } from '@patternfly/react-core';
+
+import { ActionGroup, Button } from '@patternfly/react-core';
+
 import { ModalErrorMessage, ModalSimpleMessage } from '../../modals/modal/modal-footer';
 
 export const VMEnvironmentFooter: React.FC<VMEnvironmentFooterProps> = ({

@@ -1,12 +1,13 @@
-import * as React from 'react';
 import * as _ from 'lodash';
+import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+
+import { WINTOOLS_CONTAINER_NAMES } from '../../constants';
 import {
   getContainerImageByDisk,
-  getURLSourceByDisk,
   getPVCSourceByDisk,
+  getURLSourceByDisk,
 } from '../../selectors/vm/selectors';
-import { WINTOOLS_CONTAINER_NAMES } from '../../constants';
 import { VMKind } from '../../types';
 import { V1Disk } from '../../types/api';
 

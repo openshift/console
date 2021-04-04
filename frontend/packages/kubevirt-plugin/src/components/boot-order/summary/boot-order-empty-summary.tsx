@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+
 import { ExpandableSection, Text, TextVariants } from '@patternfly/react-core';
+
 import { BootableDeviceType } from '../../../types';
-import { deviceLabel, deviceKey } from '../constants';
+import { deviceKey, deviceLabel } from '../constants';
 
 export const BootOrderEmptySummary: React.FC<BootOrderEmptySummaryProps> = ({ devices }) => {
   const { t } = useTranslation();

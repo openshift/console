@@ -1,18 +1,20 @@
 import * as _ from 'lodash';
+
 import { asValidationObject, ValidationErrorType } from '@console/shared';
-import { UpdateOptions, InternalActionType, ValidationConfig, Validation } from '../../types';
-import {
-  iGetVMwareData,
-  isVMWareProvider,
-  hasVMWareSettingsChanged,
-  iGetVMWareField,
-} from '../../../selectors/immutable/provider/vmware/selectors';
-import { VMWareProviderField, VMImportProvider } from '../../../types';
-import { getValidationUpdate } from '../utils';
-import { vmWizardInternalActions } from '../../internal-actions';
-import { iGetFieldValue } from '../../../selectors/immutable/field';
-import { iGet, iGetIn } from '../../../../../utils/immutable';
+
 import { VMwareFirmware } from '../../../../../constants/v2v-import/vmware/vmware-firmware';
+import { iGet, iGetIn } from '../../../../../utils/immutable';
+import { iGetFieldValue } from '../../../selectors/immutable/field';
+import {
+  hasVMWareSettingsChanged,
+  iGetVMwareData,
+  iGetVMWareField,
+  isVMWareProvider,
+} from '../../../selectors/immutable/provider/vmware/selectors';
+import { VMImportProvider, VMWareProviderField } from '../../../types';
+import { vmWizardInternalActions } from '../../internal-actions';
+import { InternalActionType, UpdateOptions, Validation, ValidationConfig } from '../../types';
+import { getValidationUpdate } from '../utils';
 
 const validationConfig: ValidationConfig<VMWareProviderField> = {
   [VMWareProviderField.HOSTNAME]: {

@@ -1,14 +1,15 @@
-import { FormFieldType } from '../../form/form-field';
-import { getBooleanReadableValue } from '../../../../utils/strings';
-import { iGetFieldValue } from '../../selectors/immutable/field';
-import { VMSettingsField } from '../../types';
-import { iGet, iGetIn, toShallowJS } from '../../../../utils/immutable';
-import { iGetRelevantTemplate } from '../../../../selectors/immutable/template/combined';
 import { Map as ImmutableMap } from 'immutable';
-import { ITemplate } from '../../../../types/template';
+
+import { CUSTOM_FLAVOR } from '../../../../constants';
+import { iGetRelevantTemplate } from '../../../../selectors/immutable/template/combined';
 import { isCustomFlavor } from '../../../../selectors/vm-like/flavor';
 import { getTemplateFlavorData } from '../../../../selectors/vm-template/advanced';
-import { CUSTOM_FLAVOR } from '../../../../constants';
+import { ITemplate } from '../../../../types/template';
+import { iGet, iGetIn, toShallowJS } from '../../../../utils/immutable';
+import { getBooleanReadableValue } from '../../../../utils/strings';
+import { FormFieldType } from '../../form/form-field';
+import { iGetFieldValue } from '../../selectors/immutable/field';
+import { VMSettingsField } from '../../types';
 
 export const getReviewValue = (field: any, fieldType: FormFieldType) => {
   const value = iGetFieldValue(field);

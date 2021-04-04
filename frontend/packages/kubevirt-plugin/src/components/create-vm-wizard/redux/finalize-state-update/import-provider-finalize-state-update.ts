@@ -1,17 +1,17 @@
-import { InternalActionType, UpdateOptions } from '../types';
+import { iGetCommonData } from '../../selectors/immutable/selectors';
+import {
+  isStepHidden,
+  isStepPending,
+  isStepValid,
+} from '../../selectors/immutable/wizard-selectors';
 import {
   ALL_VM_WIZARD_TABS,
   VM_WIZARD_DIFFICULT_TABS,
   VMWizardProps,
   VMWizardTab,
 } from '../../types';
-import {
-  isStepHidden,
-  isStepValid,
-  isStepPending,
-} from '../../selectors/immutable/wizard-selectors';
 import { vmWizardInternalActions } from '../internal-actions';
-import { iGetCommonData } from '../../selectors/immutable/selectors';
+import { InternalActionType, UpdateOptions } from '../types';
 
 export const finalizeImportProviderStateUpdate = (options: UpdateOptions) => {
   const { id, getState, dispatch } = options;

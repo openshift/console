@@ -1,8 +1,8 @@
-import { CloudInitField, VMWizardTab } from '../../types';
-import { InternalActionType, UpdateOptions } from '../types';
-import { vmWizardInternalActions } from '../internal-actions';
-import { checkTabValidityChanged } from '../../selectors/immutable/selectors';
 import { iGetCloudInitValue } from '../../selectors/immutable/cloud-init';
+import { checkTabValidityChanged } from '../../selectors/immutable/selectors';
+import { CloudInitField, VMWizardTab } from '../../types';
+import { vmWizardInternalActions } from '../internal-actions';
+import { InternalActionType, UpdateOptions } from '../types';
 
 const validAuthKey = (authKey: string): boolean => {
   return /^ssh-rsa AAAA[0-9A-Za-z+/]+[=]{0,3}([ ][^@ ]+@[^@ ]+)?$/.test(authKey);

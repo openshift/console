@@ -1,15 +1,17 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { VMSettingsField, VMSettingsRenderableField } from '../../types';
+import { connect } from 'react-redux';
+
 import { Checkbox, Form } from '@patternfly/react-core';
-import { getFieldId } from '../../utils/renderable-field-utils';
-import { iGetVmSettings } from '../../selectors/immutable/vm-settings';
+
+import { FormField, FormFieldType } from '../../form/form-field';
+import { FormFieldMemoRow } from '../../form/form-field-row';
 import { vmWizardActions } from '../../redux/actions';
 import { ActionType } from '../../redux/types';
-import { FormFieldMemoRow } from '../../form/form-field-row';
+import { iGetVmSettings } from '../../selectors/immutable/vm-settings';
+import { VMSettingsField, VMSettingsRenderableField } from '../../types';
+import { getFieldId } from '../../utils/renderable-field-utils';
 import { getField } from './utils';
-import { FormField, FormFieldType } from '../../form/form-field';
 
 import './review-options.scss';
 

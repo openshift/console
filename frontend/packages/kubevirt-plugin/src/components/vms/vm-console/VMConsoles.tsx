@@ -1,25 +1,27 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
+
+import { LoadingInline } from '@console/internal/components/utils';
 import { AccessConsoles } from '@patternfly/react-console';
 import { Alert, AlertActionCloseButton, Button, Stack, StackItem } from '@patternfly/react-core';
-import { LoadingInline } from '@console/internal/components/utils';
-import { isVMIRunning } from '../../../selectors/vmi';
+
+import { ConsoleType } from '../../../constants/vm/console-type';
+import { VMStatus } from '../../../constants/vm/vm-status';
+import { CloudInitDataHelper } from '../../../k8s/wrapper/vm/cloud-init-data-helper';
+import { VolumeWrapper } from '../../../k8s/wrapper/vm/volume-wrapper';
 import {
-  isWindows,
+  getCloudInitVolume,
   getIsGraphicsConsoleAttached,
   getIsSerialConsoleAttached,
-  getCloudInitVolume,
+  isWindows,
 } from '../../../selectors/vm';
-import SerialConsoleConnector from './connectors/SerialConsoleConnector';
-import DesktopViewerSelector from './DesktopViewerSelector';
-import VncConsoleConnector from './connectors/VncConsoleConnector';
-import { VMStatus } from '../../../constants/vm/vm-status';
-import { ConsoleType } from '../../../constants/vm/console-type';
-import { VolumeWrapper } from '../../../k8s/wrapper/vm/volume-wrapper';
-import { CloudInitDataHelper } from '../../../k8s/wrapper/vm/cloud-init-data-helper';
-import { CLOUD_INIT_MISSING_USERNAME } from '../../../utils/strings';
+import { isVMIRunning } from '../../../selectors/vmi';
 import { VMStatusBundle } from '../../../statuses/vm/types';
 import { VMIKind, VMKind } from '../../../types/vm';
+import { CLOUD_INIT_MISSING_USERNAME } from '../../../utils/strings';
+import SerialConsoleConnector from './connectors/SerialConsoleConnector';
+import VncConsoleConnector from './connectors/VncConsoleConnector';
+import DesktopViewerSelector from './DesktopViewerSelector';
 
 const VMIsDown: React.FC = () => (
   <div className="co-m-pane__body">

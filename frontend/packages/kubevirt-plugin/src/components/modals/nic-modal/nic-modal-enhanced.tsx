@@ -1,17 +1,19 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Firehose, FirehoseResource, FirehoseResult } from '@console/internal/components/utils';
+
 import { createModalLauncher, ModalComponentProps } from '@console/internal/components/factory';
+import { Firehose, FirehoseResource, FirehoseResult } from '@console/internal/components/utils';
 import { k8sPatch, referenceForModel } from '@console/internal/module/k8s';
 import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
 import { getName, getNamespace } from '@console/shared';
-import { getLoadedData } from '../../../utils';
-import { getInterfaces, getUsedNetworks, asVM, getVMLikeModel } from '../../../selectors/vm';
-import { NetworkInterfaceWrapper } from '../../../k8s/wrapper/vm/network-interface-wrapper';
-import { VMLikeEntityKind } from '../../../types/vmLike';
+
 import { getUpdateNICPatches } from '../../../k8s/patches/vm/vm-nic-patches';
-import { getSimpleName } from '../../../selectors/utils';
+import { NetworkInterfaceWrapper } from '../../../k8s/wrapper/vm/network-interface-wrapper';
 import { NetworkWrapper } from '../../../k8s/wrapper/vm/network-wrapper';
+import { getSimpleName } from '../../../selectors/utils';
+import { asVM, getInterfaces, getUsedNetworks, getVMLikeModel } from '../../../selectors/vm';
+import { VMLikeEntityKind } from '../../../types/vmLike';
+import { getLoadedData } from '../../../utils';
 import { NICModal } from './nic-modal';
 
 const NICModalFirehoseComponent: React.FC<NICModalFirehoseComponentProps> = (props) => {

@@ -1,27 +1,15 @@
-import { createBasicLookup, getName } from '@console/shared/src';
 import { Set } from 'immutable';
-import { InternalActionType, UpdateOptions } from '../types';
-import {
-  CloudInitField,
-  VMSettingsField,
-  VMWizardNetwork,
-  VMWizardNetworkType,
-  VMWizardProps,
-  VMWizardStorage,
-  VMWizardStorageType,
-} from '../../types';
-import {
-  getInitialData,
-  iGetCommonData,
-  iGetLoadedCommonData,
-  iGetName,
-} from '../../selectors/immutable/selectors';
-import { immutableListToShallowJS, toShallowJS } from '../../../../utils/immutable';
-import { iGetNetworks } from '../../selectors/immutable/networks';
-import { podNetwork } from '../initial-state/networks-tab-initial-state';
-import { vmWizardInternalActions } from '../internal-actions';
+
+import { createBasicLookup, getName } from '@console/shared/src';
+
+import { VM_TEMPLATE_NAME_PARAMETER } from '../../../../constants';
 import { DiskBus, DiskType, NetworkInterfaceModel, VolumeType } from '../../../../constants/vm';
 import { ROOT_DISK_NAME } from '../../../../constants/vm/constants';
+import { ProvisionSource } from '../../../../constants/vm/provision-source';
+import { CloudInitDataHelper } from '../../../../k8s/wrapper/vm/cloud-init-data-helper';
+import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
+import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
+import { getSimpleName } from '../../../../selectors/utils';
 import {
   DEFAULT_CPU,
   getCPU,
@@ -35,26 +23,40 @@ import {
   isWinToolsImage,
   parseCPU,
 } from '../../../../selectors/vm';
+import { isCustomFlavor, toUIFlavor } from '../../../../selectors/vm-like/flavor';
 import {
   getTemplateFlavors,
   getTemplateHostname,
   getTemplateOperatingSystems,
   getTemplateWorkloadProfiles,
 } from '../../../../selectors/vm-template/advanced';
-import { V1Network } from '../../../../types/vm';
-import { getSimpleName } from '../../../../selectors/utils';
-import { getNextIDResolver } from '../../../../utils/utils';
-import { ProvisionSource } from '../../../../constants/vm/provision-source';
-import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
-import { V1Volume, V1alpha1DataVolume } from '../../../../types/api';
-import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
-import { getNewProvisionSourceStorage } from '../initial-state/storage-tab-initial-state';
-import { CloudInitDataHelper } from '../../../../k8s/wrapper/vm/cloud-init-data-helper';
-import { getStorages } from '../../selectors/selectors';
 import { isCommonTemplate, selectVM } from '../../../../selectors/vm-template/basic';
+import { V1alpha1DataVolume, V1Volume } from '../../../../types/api';
+import { V1Network } from '../../../../types/vm';
+import { immutableListToShallowJS, toShallowJS } from '../../../../utils/immutable';
+import { getNextIDResolver } from '../../../../utils/utils';
 import { convertToHighestUnitFromUnknown } from '../../../form/size-unit-utils';
-import { isCustomFlavor, toUIFlavor } from '../../../../selectors/vm-like/flavor';
-import { VM_TEMPLATE_NAME_PARAMETER } from '../../../../constants';
+import { iGetNetworks } from '../../selectors/immutable/networks';
+import {
+  getInitialData,
+  iGetCommonData,
+  iGetLoadedCommonData,
+  iGetName,
+} from '../../selectors/immutable/selectors';
+import { getStorages } from '../../selectors/selectors';
+import {
+  CloudInitField,
+  VMSettingsField,
+  VMWizardNetwork,
+  VMWizardNetworkType,
+  VMWizardProps,
+  VMWizardStorage,
+  VMWizardStorageType,
+} from '../../types';
+import { podNetwork } from '../initial-state/networks-tab-initial-state';
+import { getNewProvisionSourceStorage } from '../initial-state/storage-tab-initial-state';
+import { vmWizardInternalActions } from '../internal-actions';
+import { InternalActionType, UpdateOptions } from '../types';
 
 export const prefillVmTemplateUpdater = ({ id, dispatch, getState }: UpdateOptions) => {
   const state = getState();

@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { FormGroup, Popover, PopoverPosition } from '@patternfly/react-core';
-import { HelpIcon } from '@patternfly/react-icons';
+
 import { LoadingInline } from '@console/internal/components/utils';
 import { ValidationErrorType, ValidationObject } from '@console/shared';
+import { FormGroup, Popover, PopoverPosition } from '@patternfly/react-core';
+import { HelpIcon } from '@patternfly/react-icons';
 
 import { preventDefault } from './utils';
 

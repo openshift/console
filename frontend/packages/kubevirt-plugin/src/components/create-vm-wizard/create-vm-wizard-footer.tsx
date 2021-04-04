@@ -1,13 +1,12 @@
 /* eslint-disable no-underscore-dangle */
 import * as _ from 'lodash';
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Prompt } from 'react-router';
-import { useTranslation } from 'react-i18next';
-import { useActiveNamespace } from '@console/shared';
+
 import { getActiveNamespace } from '@console/internal/actions/ui';
-import { css } from '@patternfly/react-styles';
-import styles from '@patternfly/react-styles/css/components/Wizard/wizard';
+import { useActiveNamespace } from '@console/shared';
 import {
   Alert,
   Button,
@@ -15,8 +14,21 @@ import {
   WizardContextConsumer,
   WizardStep,
 } from '@patternfly/react-core';
+import { css } from '@patternfly/react-styles';
+import styles from '@patternfly/react-styles/css/components/Wizard/wizard';
+
 import { useShowErrorToggler } from '../../hooks/use-show-error-toggler';
+import { iGetIsLoaded, iGetLoadError } from '../../utils/immutable';
 import { getDialogUIError, getSimpleDialogUIError } from '../../utils/strings';
+import { vmWizardActions } from './redux/actions';
+import { ActionType } from './redux/types';
+import { iGetCommonData } from './selectors/immutable/selectors';
+import {
+  getStepsMetadata,
+  isLastStepErrorFatal,
+  isWizardEmpty as _isWizardEmpty,
+} from './selectors/immutable/wizard-selectors';
+import { getGoToStep } from './selectors/selectors';
 import {
   ALL_VM_WIZARD_TABS,
   VM_WIZARD_DIFFICULT_TABS,
@@ -24,16 +36,6 @@ import {
   VMWizardTab,
   VMWizardTabsMetadata,
 } from './types';
-import {
-  getStepsMetadata,
-  isLastStepErrorFatal,
-  isWizardEmpty as _isWizardEmpty,
-} from './selectors/immutable/wizard-selectors';
-import { iGetCommonData } from './selectors/immutable/selectors';
-import { vmWizardActions } from './redux/actions';
-import { ActionType } from './redux/types';
-import { getGoToStep } from './selectors/selectors';
-import { iGetLoadError, iGetIsLoaded } from '../../utils/immutable';
 
 import './create-vm-wizard-footer.scss';
 

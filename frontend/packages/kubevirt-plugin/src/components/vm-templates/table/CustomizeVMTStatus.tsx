@@ -1,20 +1,21 @@
 import * as React from 'react';
-import { PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
 import { useTranslation } from 'react-i18next';
 
-import { VMIKind, VMKind } from '../../../types';
+import { PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
+
 import { getVMStatus } from '../../../statuses/vm/vm-status';
-import {
-  VMStatusPopoverContent,
-  ImporterPods,
-  LinkType,
-  getVMILikeLink,
-  getPodLink,
-  VIEW_VM_EVENTS,
-  VIEW_POD_LOGS,
-} from '../../vm-status/vm-status';
+import { VMIKind, VMKind } from '../../../types';
 import { V1alpha1DataVolume } from '../../../types/api';
 import cancelCustomizationModal from '../../modals/template-customization/CancelCustomizationModal';
+import {
+  getPodLink,
+  getVMILikeLink,
+  ImporterPods,
+  LinkType,
+  VIEW_POD_LOGS,
+  VIEW_VM_EVENTS,
+  VMStatusPopoverContent,
+} from '../../vm-status/vm-status';
 
 type CustomizeVMTStatusProps = {
   vmi: VMIKind;

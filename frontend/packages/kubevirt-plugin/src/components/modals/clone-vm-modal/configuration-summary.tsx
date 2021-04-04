@@ -1,8 +1,15 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { DASH, getName, getNamespace } from '@console/shared';
+
 import { PersistentVolumeClaimKind } from '@console/internal/module/k8s';
-import { VMKind } from '../../../types/vm';
+import { DASH, getName, getNamespace } from '@console/shared';
+
+import {
+  getDataVolumeResources,
+  getDataVolumeStorageClassName,
+} from '../../../selectors/dv/selectors';
+import { getPvcResources, getPvcStorageClassName } from '../../../selectors/pvc/selectors';
+import { getStorageSize } from '../../../selectors/selectors';
 import {
   getCPU,
   getDataVolumeTemplates,
@@ -14,14 +21,9 @@ import {
   getVolumes,
   getWorkloadProfile,
 } from '../../../selectors/vm';
-import { getStorageSize } from '../../../selectors/selectors';
-import {
-  getDataVolumeResources,
-  getDataVolumeStorageClassName,
-} from '../../../selectors/dv/selectors';
-import { getPvcResources, getPvcStorageClassName } from '../../../selectors/pvc/selectors';
-import { V1alpha1DataVolume } from '../../../types/api';
 import { getFlavorData } from '../../../selectors/vm/flavor-data';
+import { V1alpha1DataVolume } from '../../../types/api';
+import { VMKind } from '../../../types/vm';
 
 import './_clone-vm-modal.scss';
 

@@ -1,20 +1,20 @@
+import { getOvirtInitialState } from './redux/initial-state/providers/ovirt-initial-state';
 import { getVmWareInitialState } from './redux/initial-state/providers/vmware-initial-state';
-import { VMImportProvider } from './types';
+import { cleanupOvirtProvider } from './redux/state-update/providers/ovirt/ovirt-cleanup';
+import { getOvirtProviderStateUpdater } from './redux/state-update/providers/ovirt/ovirt-state-update';
+import { cleanupVmWareProvider } from './redux/state-update/providers/vmware/vmware-cleanup';
 import { getVMWareProviderStateUpdater } from './redux/state-update/providers/vmware/vmware-state-update';
 import { UpdateOptions, Validation } from './redux/types';
-import { cleanupVmWareProvider } from './redux/state-update/providers/vmware/vmware-cleanup';
-import {
-  getV2VVMwareImportProvidersTabValidity,
-  validateVMwareSettings,
-} from './redux/validations/providers/v2vvmware-tab-validation';
-import { getOvirtInitialState } from './redux/initial-state/providers/ovirt-initial-state';
-import { getOvirtProviderStateUpdater } from './redux/state-update/providers/ovirt/ovirt-state-update';
-import { getProviderName } from './strings/import-providers';
-import { cleanupOvirtProvider } from './redux/state-update/providers/ovirt/ovirt-cleanup';
 import {
   getOvirtProviderProvidersTabValidity,
   validateOvirtSettings,
 } from './redux/validations/providers/ovirt-provider-tab-validation';
+import {
+  getV2VVMwareImportProvidersTabValidity,
+  validateVMwareSettings,
+} from './redux/validations/providers/v2vvmware-tab-validation';
+import { getProviderName } from './strings/import-providers';
+import { VMImportProvider } from './types';
 
 type Provider = {
   id: VMImportProvider;

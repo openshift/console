@@ -1,42 +1,19 @@
-import * as React from 'react';
-import * as _ from 'lodash';
 import * as classNames from 'classnames';
-import { Trans, useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
+import * as _ from 'lodash';
+import * as React from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 import { match } from 'react-router';
 import { Link, useLocation } from 'react-router-dom';
-import { sortable } from '@patternfly/react-table';
+
+import { QuickStart } from '@console/app/src/components/quick-starts/utils/quick-start-types';
+import { QuickStartModel } from '@console/app/src/models';
 import {
-  Button,
-  EmptyState,
-  EmptyStateBody,
-  EmptyStateIcon,
-  EmptyStateSecondaryActions,
-  Title,
-} from '@patternfly/react-core';
-import { VirtualMachineIcon, RocketIcon } from '@patternfly/react-icons';
-import {
-  createLookup,
-  dimensifyHeader,
-  dimensifyRow,
-  getCreationTimestamp,
-  getName,
-  getNamespace,
-  getUID,
-  getLabels,
-} from '@console/shared';
-import {
-  NamespaceModel,
-  PodModel,
-  NodeModel,
-  PersistentVolumeClaimModel,
-} from '@console/internal/models';
-import {
-  Table,
   MultiListPage,
-  TableRow,
-  TableData,
   RowFunction,
+  Table,
+  TableData,
+  TableRow,
 } from '@console/internal/components/factory';
 import {
   FirehoseResult,
@@ -46,16 +23,44 @@ import {
   ResourceLink,
   Timestamp,
 } from '@console/internal/components/utils';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import {
+  NamespaceModel,
+  NodeModel,
+  PersistentVolumeClaimModel,
+  PodModel,
+} from '@console/internal/models';
 import {
   K8sKind,
   PersistentVolumeClaimKind,
   PodKind,
   referenceForModel,
 } from '@console/internal/module/k8s';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { QuickStart } from '@console/app/src/components/quick-starts/utils/quick-start-types';
-import { QuickStartModel } from '@console/app/src/models';
-import { VMStatus } from '../vm-status/vm-status';
+import {
+  createLookup,
+  dimensifyHeader,
+  dimensifyRow,
+  getCreationTimestamp,
+  getLabels,
+  getName,
+  getNamespace,
+  getUID,
+} from '@console/shared';
+import {
+  Button,
+  EmptyState,
+  EmptyStateBody,
+  EmptyStateIcon,
+  EmptyStateSecondaryActions,
+  Title,
+} from '@patternfly/react-core';
+import { RocketIcon, VirtualMachineIcon } from '@patternfly/react-icons';
+import { sortable } from '@patternfly/react-table';
+
+import { VMWizardMode, VMWizardName } from '../../constants';
+import { V2VVMImportStatus } from '../../constants/v2v-import/ovirt/v2v-vm-import-status';
+import { useNamespace } from '../../hooks/use-namespace';
+import { VMImportWrappper } from '../../k8s/wrapper/vm-import/vm-import-wrapper';
 import {
   DataVolumeModel,
   VirtualMachineImportModel,
@@ -63,24 +68,21 @@ import {
   VirtualMachineInstanceModel,
   VirtualMachineModel,
 } from '../../models';
-import { VMIKind, VMKind } from '../../types';
-import { getBasicID, getLoadedData } from '../../utils';
-import { getVMStatus } from '../../statuses/vm/vm-status';
+import { isVM, isVMI, isVMImport } from '../../selectors/check-type';
 import { getVmiIpAddresses, getVMINodeName } from '../../selectors/vmi';
-import { isVMImport, isVM, isVMI } from '../../selectors/check-type';
-import { vmStatusFilter } from './table-filters';
-import { vmiMenuActions, vmImportMenuActions, vmMenuActions } from './menu-actions';
-import { VMILikeEntityKind } from '../../types/vmLike';
-import { VMImportKind } from '../../types/vm-import/ovirt/vm-import';
-import { VMStatusBundle } from '../../statuses/vm/types';
-import { V1alpha1DataVolume } from '../../types/api';
-import { VMImportWrappper } from '../../k8s/wrapper/vm-import/vm-import-wrapper';
 import { getVMImportStatusAsVMStatus } from '../../statuses/vm-import/vm-import-status';
-import { V2VVMImportStatus } from '../../constants/v2v-import/ovirt/v2v-vm-import-status';
+import { VMStatusBundle } from '../../statuses/vm/types';
+import { getVMStatus } from '../../statuses/vm/vm-status';
+import { VMIKind, VMKind } from '../../types';
+import { V1alpha1DataVolume } from '../../types/api';
+import { VMImportKind } from '../../types/vm-import/ovirt/vm-import';
+import { VMILikeEntityKind } from '../../types/vmLike';
+import { getBasicID, getLoadedData } from '../../utils';
 import { hasPendingChanges } from '../../utils/pending-changes';
 import { getVMWizardCreateLink } from '../../utils/url';
-import { VMWizardMode, VMWizardName } from '../../constants';
-import { useNamespace } from '../../hooks/use-namespace';
+import { VMStatus } from '../vm-status/vm-status';
+import { vmiMenuActions, vmImportMenuActions, vmMenuActions } from './menu-actions';
+import { vmStatusFilter } from './table-filters';
 
 import './vm.scss';
 

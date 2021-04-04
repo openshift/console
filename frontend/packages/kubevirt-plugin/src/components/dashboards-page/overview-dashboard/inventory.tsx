@@ -1,20 +1,22 @@
 import * as _ from 'lodash';
 import * as React from 'react';
-import { OffIcon } from '@patternfly/react-icons';
-import { getNamespace } from '@console/shared/src/selectors/common';
-import { createBasicLookup } from '@console/shared/src/utils/utils';
+
 import { K8sResourceKind, PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
 import { StatusGroupMapper } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
 import { InventoryStatusGroup } from '@console/shared/src/components/dashboard/inventory-card/status-group';
-import { getVMStatus } from '../../../statuses/vm/vm-status';
-import { VMImportKind } from '../../../types/vm-import/ovirt/vm-import';
-import { VMIKind, VMKind } from '../../../types';
-import { VMStatusSimpleLabel } from '../../../constants/vm/vm-status';
+import { getNamespace } from '@console/shared/src/selectors/common';
+import { createBasicLookup } from '@console/shared/src/utils/utils';
+import { OffIcon } from '@patternfly/react-icons';
+
 import { StatusSimpleLabel } from '../../../constants/status-constants';
+import { VMStatusSimpleLabel } from '../../../constants/vm/vm-status';
 import { VMImportWrappper } from '../../../k8s/wrapper/vm-import/vm-import-wrapper';
-import { getVMImportStatus } from '../../../statuses/vm-import/vm-import-status';
-import { V1alpha1DataVolume } from '../../../types/api';
 import { isVM, isVMImport } from '../../../selectors/check-type';
+import { getVMImportStatus } from '../../../statuses/vm-import/vm-import-status';
+import { getVMStatus } from '../../../statuses/vm/vm-status';
+import { VMIKind, VMKind } from '../../../types';
+import { V1alpha1DataVolume } from '../../../types/api';
+import { VMImportKind } from '../../../types/vm-import/ovirt/vm-import';
 import { getBasicID } from '../../../utils';
 
 import './inventory.scss';

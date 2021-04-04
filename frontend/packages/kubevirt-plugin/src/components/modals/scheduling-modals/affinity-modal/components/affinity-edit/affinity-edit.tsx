@@ -1,29 +1,32 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+
+import { ModalBody } from '@console/internal/components/factory';
+import { FirehoseResult } from '@console/internal/components/utils';
+import { NodeKind } from '@console/internal/module/k8s';
+import { ValidationErrorType } from '@console/shared';
 import {
+  Divider,
   Form,
   FormSelect,
   FormSelectOption,
-  TextInput,
-  Divider,
   Text,
+  TextInput,
   TextVariants,
 } from '@patternfly/react-core';
-import { FirehoseResult } from '@console/internal/components/utils';
-import { NodeKind } from '@console/internal/module/k8s';
-import { ModalBody } from '@console/internal/components/factory';
-import { ValidationErrorType } from '@console/shared';
-import { isLoaded } from '../../../../../../utils';
-import { ModalFooter } from '../../../../modal/modal-footer';
-import { AFFINITY_TYPE_LABLES, AFFINITY_CONDITION_LABELS } from '../../../shared/consts';
-import { FormRow } from '../../../../../form/form-row';
-import { isWeightValid, isTermsInvalid, getTopologyKeyValidation } from '../../validations';
+
 import { useIDEntities } from '../../../../../../hooks/use-id-entities';
-import { NodeChecker } from '../../../shared/NodeChecker/node-checker';
+import { isLoaded } from '../../../../../../utils';
+import { FormRow } from '../../../../../form/form-row';
+import { ModalFooter } from '../../../../modal/modal-footer';
+import { AFFINITY_CONDITION_LABELS, AFFINITY_TYPE_LABLES } from '../../../shared/consts';
 import { useNodeQualifier } from '../../../shared/hooks';
-import { AffinityCondition, AffinityLabel, AffinityRowData } from '../../types';
-import { AffinityExpressionList } from '../affinity-expression-list/affinity-expression-list';
+import { NodeChecker } from '../../../shared/NodeChecker/node-checker';
 import { getIntersectedQualifiedNodes } from '../../helpers';
+import { AffinityCondition, AffinityLabel, AffinityRowData } from '../../types';
+import { getTopologyKeyValidation, isTermsInvalid, isWeightValid } from '../../validations';
+import { AffinityExpressionList } from '../affinity-expression-list/affinity-expression-list';
+
 import './affinity-edit.scss';
 
 export const AffinityEdit: React.FC<AffinityEditProps> = ({

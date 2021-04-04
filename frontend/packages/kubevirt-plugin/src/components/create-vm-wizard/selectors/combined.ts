@@ -1,9 +1,11 @@
 import { Map as ImmutableMap } from 'immutable';
+
 import { TemplateKind } from '@console/internal/module/k8s';
-import { ITemplate } from '../../../types/template';
-import { getTemplateOperatingSystems } from '../../../selectors/vm-template/advanced';
-import { immutableListToShallowJS, toShallowJS } from '../../../utils/immutable';
+
 import { operatingSystemsNative } from '../../../constants/vm-templates/os';
+import { getTemplateOperatingSystems } from '../../../selectors/vm-template/advanced';
+import { ITemplate } from '../../../types/template';
+import { immutableListToShallowJS, toShallowJS } from '../../../utils/immutable';
 
 export const getOS = ({ osID, iUserTemplate, openshiftFlag, iCommonTemplates }: GetOSParams) => {
   let operatingSystems = [];

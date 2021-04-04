@@ -1,23 +1,25 @@
 import * as React from 'react';
-import { TableData, TableRow, RowFunction } from '@console/internal/components/factory';
+
+import { RowFunction, TableData, TableRow } from '@console/internal/components/factory';
 import { asAccessReview, Kebab, KebabOption } from '@console/internal/components/utils';
 import { TemplateModel } from '@console/internal/models';
 import { DASH, dimensifyRow, getDeletetionTimestamp } from '@console/shared';
-import { deleteNICModal } from '../modals/delete-nic-modal/delete-nic-modal';
+
+import { PENDING_RESTART_LABEL } from '../../constants';
 import { VirtualMachineModel } from '../../models';
-import { asVM, isVMRunningOrExpectedRunning } from '../../selectors/vm';
 import { isVM, isVMI } from '../../selectors/check-type';
+import { asVM, isVMRunningOrExpectedRunning } from '../../selectors/vm';
 import { VMLikeEntityKind } from '../../types/vmLike';
+import { deleteNICModal } from '../modals/delete-nic-modal/delete-nic-modal';
 import { nicModalEnhanced } from '../modals/nic-modal/nic-modal-enhanced';
 import { ValidationCell } from '../table/validation-cell';
 import {
-  VMNicRowActionOpts,
   NetworkBundle,
   NetworkSimpleData,
   NetworkSimpleDataValidation,
+  VMNicRowActionOpts,
   VMNicRowCustomData,
 } from './types';
-import { PENDING_RESTART_LABEL } from '../../constants';
 
 const menuActionEdit = (
   nic,

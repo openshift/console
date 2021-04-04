@@ -1,4 +1,23 @@
-import { InternalActionType, UpdateOptions } from '../../../types';
+import { ConfigMapModel, DeploymentModel, PodModel, SecretModel } from '@console/internal/models';
+
+import {
+  V2V_TEMPORARY_LABEL,
+  V2VVMWARE_DEPLOYMENT_NAME,
+  VCENTER_TYPE_LABEL,
+  VMWARE_TO_KUBEVIRT_OS_CONFIG_MAP_NAME,
+  VMWARE_TO_KUBEVIRT_OS_CONFIG_MAP_NAMESPACE,
+} from '../../../../../../constants/v2v';
+import { V2VVMwareModel } from '../../../../../../models';
+import { FirehoseResourceEnhanced } from '../../../../../../types/custom';
+import { iGetIn } from '../../../../../../utils/immutable';
+import { iGetCreateVMWizard } from '../../../../selectors/immutable/common';
+import { hasImportProvidersChanged } from '../../../../selectors/immutable/import-providers';
+import {
+  hasVMWareSettingsChanged,
+  iGetVMWareField,
+  isVMWareProvider,
+} from '../../../../selectors/immutable/provider/vmware/selectors';
+import { iGetCommonData } from '../../../../selectors/immutable/selectors';
 import {
   ImportProvidersField,
   VMImportProvider,
@@ -6,26 +25,8 @@ import {
   VMWareProviderProps,
   VMWizardProps,
 } from '../../../../types';
-import {
-  hasVMWareSettingsChanged,
-  iGetVMWareField,
-  isVMWareProvider,
-} from '../../../../selectors/immutable/provider/vmware/selectors';
-import { hasImportProvidersChanged } from '../../../../selectors/immutable/import-providers';
-import { ConfigMapModel, DeploymentModel, PodModel, SecretModel } from '@console/internal/models';
-import {
-  V2VVMWARE_DEPLOYMENT_NAME,
-  V2V_TEMPORARY_LABEL,
-  VCENTER_TYPE_LABEL,
-  VMWARE_TO_KUBEVIRT_OS_CONFIG_MAP_NAME,
-  VMWARE_TO_KUBEVIRT_OS_CONFIG_MAP_NAMESPACE,
-} from '../../../../../../constants/v2v';
-import { V2VVMwareModel } from '../../../../../../models';
 import { vmWizardInternalActions } from '../../../internal-actions';
-import { iGetCommonData } from '../../../../selectors/immutable/selectors';
-import { iGetIn } from '../../../../../../utils/immutable';
-import { iGetCreateVMWizard } from '../../../../selectors/immutable/common';
-import { FirehoseResourceEnhanced } from '../../../../../../types/custom';
+import { InternalActionType, UpdateOptions } from '../../../types';
 
 type GetQueriesParams = {
   namespace: string;

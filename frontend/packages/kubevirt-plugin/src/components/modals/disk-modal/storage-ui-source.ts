@@ -1,13 +1,14 @@
 /* eslint-disable lines-between-class-members */
 import { ObjectEnum } from '@console/shared/src/constants/object-enum';
+
 import { VolumeType } from '../../../constants';
-import { DataVolumeSourceType, DiskType } from '../../../constants/vm/storage';
-import { getStringEnumValues } from '../../../utils/types';
-import { BinaryUnit } from '../../form/size-unit-utils';
 import {
   SelectDropdownData,
   SelectDropdownObjectEnum,
 } from '../../../constants/select-dropdown-object-enum';
+import { DataVolumeSourceType, DiskType } from '../../../constants/vm/storage';
+import { getStringEnumValues } from '../../../utils/types';
+import { BinaryUnit } from '../../form/size-unit-utils';
 
 export class StorageUISource extends SelectDropdownObjectEnum<string> {
   static readonly BLANK = StorageUISource.fromDataVolume(DataVolumeSourceType.BLANK, 1);

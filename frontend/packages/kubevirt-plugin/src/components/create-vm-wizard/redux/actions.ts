@@ -1,28 +1,28 @@
+import { DeviceType } from '../../../constants/vm';
+import { isStepHidden } from '../selectors/immutable/wizard-selectors';
 import {
   ALL_VM_WIZARD_TABS,
-  ChangedCommonDataProp,
   ChangedCommonData,
+  ChangedCommonDataProp,
+  CloudInitField,
   CommonData,
   DetectCommonDataChanges,
-  VMSettingsField,
-  VMWizardNetwork,
-  VMWizardTab,
-  VMWizardStorage,
-  CloudInitField,
-  VMWareProviderField,
-  VMImportProvider,
   ImportProvidersField,
   VM_WIZARD_DIFFICULT_TABS,
+  VMImportProvider,
+  VMSettingsField,
+  VMWareProviderField,
+  VMWizardNetwork,
+  VMWizardStorage,
+  VMWizardTab,
 } from '../types';
-import { DeviceType } from '../../../constants/vm';
 import { getTabInitialState } from './initial-state/initial-state';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { ActionType, InternalActionType, WizardActionDispatcher } from './types';
 import { vmWizardInternalActions } from './internal-actions';
-import { withUpdateAndValidateState } from './main-actions/utils';
 import { createVMAction } from './main-actions/create-vm';
 import { disposeWizard } from './main-actions/dispose-wizard';
-import { isStepHidden } from '../selectors/immutable/wizard-selectors';
+import { withUpdateAndValidateState } from './main-actions/utils';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { ActionType, InternalActionType, WizardActionDispatcher } from './types';
 
 type VMWizardActions = { [key in ActionType]: WizardActionDispatcher };
 

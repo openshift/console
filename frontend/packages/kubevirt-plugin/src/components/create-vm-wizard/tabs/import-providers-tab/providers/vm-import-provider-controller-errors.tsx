@@ -1,27 +1,29 @@
-import * as React from 'react';
-import { connect } from 'react-redux';
-import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
+import * as React from 'react';
+import { useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+
+import { ExternalLink } from '@console/internal/components/utils';
 import { AlertVariant } from '@patternfly/react-core';
+
+import {
+  OVIRT_DOCURL,
+  V2VProviderErrorSpecialUIMessageRequest,
+  VMWARE_DOCURL,
+} from '../../../../../constants/v2v';
+import { errorsFirstSort } from '../../../../../k8s/enhancedK8sMethods/k8sMethodsUtils';
+import { ResultsWrapper } from '../../../../../k8s/enhancedK8sMethods/types';
+import { iGetIn, toShallowJS } from '../../../../../utils/immutable';
+import { Errors } from '../../../../errors/errors';
+import { iGetImportProviders } from '../../../selectors/immutable/import-providers';
 import {
   ImportProvidersField,
   OvirtProviderField,
   VMImportProvider,
   VMWareProviderField,
 } from '../../../types';
-import { Errors } from '../../../../errors/errors';
-import { iGetIn, toShallowJS } from '../../../../../utils/immutable';
-import { ResultsWrapper } from '../../../../../k8s/enhancedK8sMethods/types';
-import { errorsFirstSort } from '../../../../../k8s/enhancedK8sMethods/k8sMethodsUtils';
-import { ResultTabRow } from '../../result-tab/result-tab-row';
 import { resultContentToString } from '../../../utils/utils';
-import { iGetImportProviders } from '../../../selectors/immutable/import-providers';
-import { ExternalLink } from '@console/internal/components/utils';
-import {
-  VMWARE_DOCURL,
-  OVIRT_DOCURL,
-  V2VProviderErrorSpecialUIMessageRequest,
-} from '../../../../../constants/v2v';
+import { ResultTabRow } from '../../result-tab/result-tab-row';
 
 const getDocURL = (providerType: VMImportProvider) =>
   providerType === VMImportProvider.VMWARE ? VMWARE_DOCURL : OVIRT_DOCURL;

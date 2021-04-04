@@ -1,11 +1,13 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+
+import { DashboardItemProps } from '@console/internal/components/dashboard/with-dashboard-resources';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
+import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import HealthBody from '@console/shared/src/components/dashboard/status-card/HealthBody';
-import { DashboardItemProps } from '@console/internal/components/dashboard/with-dashboard-resources';
+
 import { VMStatus } from '../../vm-status/vm-status';
 import { VMDashboardContext } from '../../vms/vm-dashboard-context';
 import { VMAlerts } from './vm-alerts';

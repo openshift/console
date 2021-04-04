@@ -1,10 +1,10 @@
+import { iGetIn } from '../../../../../utils/immutable';
 import {
   ImportProvidersField,
   OvirtProviderField,
   VMImportProvider,
   VMWareProviderField,
 } from '../../../types';
-import { iGetIn } from '../../../../../utils/immutable';
 import { iGetImportProviders } from '../import-providers';
 
 export const iGetProviderField = (

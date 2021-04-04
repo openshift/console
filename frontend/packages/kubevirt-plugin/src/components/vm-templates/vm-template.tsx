@@ -1,27 +1,28 @@
+import { TFunction } from 'i18next';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { TFunction } from 'i18next';
 import { match } from 'react-router';
+
 import { ListPage, MultiListPage } from '@console/internal/components/factory';
 import { RowFilter } from '@console/internal/components/filter-toolbar';
-import { TemplateModel, PersistentVolumeClaimModel, PodModel } from '@console/internal/models';
+import { PersistentVolumeClaimModel, PodModel, TemplateModel } from '@console/internal/models';
 import { TemplateKind } from '@console/internal/module/k8s';
 
-import { getLoadedData } from '../../utils';
+import { CDI_APP_LABEL } from '../../constants';
 import {
-  TEMPLATE_TYPE_LABEL,
+  TEMPLATE_CUSTOMIZED_ANNOTATION,
   TEMPLATE_TYPE_BASE,
+  TEMPLATE_TYPE_LABEL,
   TEMPLATE_TYPE_VM,
   VM_CUSTOMIZE_LABEL,
-  TEMPLATE_CUSTOMIZED_ANNOTATION,
 } from '../../constants/vm';
 import { DataVolumeModel, VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
 import { getTemplateProviderType, templateProviders } from '../../selectors/vm-template/basic';
-import { filterTemplates } from './utils';
-import { CDI_APP_LABEL } from '../../constants';
 import { VMKind } from '../../types';
-import VMTemplateTable from './table/VMTemplateTable';
+import { getLoadedData } from '../../utils';
 import { VirtualMachineTemplateBundle } from './table/types';
+import VMTemplateTable from './table/VMTemplateTable';
+import { filterTemplates } from './utils';
 
 // TODO
 const filters = (t: TFunction): RowFilter<VirtualMachineTemplateBundle>[] => [

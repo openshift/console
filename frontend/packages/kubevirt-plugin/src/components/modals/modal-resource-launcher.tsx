@@ -1,19 +1,20 @@
-import * as React from 'react';
 import * as _ from 'lodash';
+import * as React from 'react';
 import { Provider } from 'react-redux';
 import { Router } from 'react-router-dom';
-import store from '@console/internal/redux';
+
+import { createModal, GetModalContainer } from '@console/internal/components/factory';
+import { ModalErrorContent } from '@console/internal/components/modals/error-modal';
 import {
-  Firehose,
   AccessDenied,
-  history,
-  MsgBox,
   Box,
+  Firehose,
   FirehoseResource,
   FirehoseResult,
+  history,
+  MsgBox,
 } from '@console/internal/components/utils';
-import { ModalErrorContent } from '@console/internal/components/modals/error-modal';
-import { createModal, GetModalContainer } from '@console/internal/components/factory';
+import store from '@console/internal/redux';
 import { RedExclamationCircleIcon } from '@console/shared';
 
 const NotFound: React.FC<NotFoundProps> = ({ message }) => (

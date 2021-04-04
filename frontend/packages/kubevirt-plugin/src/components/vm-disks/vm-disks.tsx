@@ -1,40 +1,42 @@
+import { TFunction } from 'i18next';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { TFunction } from 'i18next';
-import { Button, Popover } from '@patternfly/react-core';
-import { sortable } from '@patternfly/react-table';
-import { QuestionCircleIcon } from '@patternfly/react-icons';
-import { RowFunction, Table, MultiListPage } from '@console/internal/components/factory';
-import { PersistentVolumeClaimModel, TemplateModel } from '@console/internal/models';
-import { Firehose, FirehoseResult } from '@console/internal/components/utils';
+
+import { MultiListPage, RowFunction, Table } from '@console/internal/components/factory';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
+import { Firehose, FirehoseResult } from '@console/internal/components/utils';
+import { PersistentVolumeClaimModel, TemplateModel } from '@console/internal/models';
 import { K8sResourceKind, TemplateKind } from '@console/internal/module/k8s';
 import { dimensifyHeader, getNamespace } from '@console/shared';
-import { DataVolumeModel, VirtualMachineModel, VirtualMachineInstanceModel } from '../../models';
-import { VMGenericLikeEntityKind } from '../../types/vmLike';
-import { getResource, getLoadedData } from '../../utils';
-import { wrapWithProgress } from '../../utils/utils';
-import { diskModalEnhanced } from '../modals/disk-modal/disk-modal-enhanced';
+import { Button, Popover } from '@patternfly/react-core';
+import { QuestionCircleIcon } from '@patternfly/react-icons';
+import { sortable } from '@patternfly/react-table';
+
 import { CombinedDiskFactory } from '../../k8s/wrapper/vm/combined-disk';
-import { V1alpha1DataVolume } from '../../types/api';
-import { StorageBundle } from './types';
-import { DiskRow } from './disk-row';
-import { diskTableColumnClasses } from './utils';
-import { isVMI, isVM } from '../../selectors/check-type';
-import {
-  getVMTemplateNamespacedName,
-  getTemplateValidationsFromTemplate,
-} from '../../selectors/vm-template/selectors';
-import { diskSourceFilter } from './table-filters';
-import { VMLikeEntityTabProps, VMTabProps } from '../vms/types';
-import { getVMStatus } from '../../statuses/vm/vm-status';
-import { FileSystemsList } from './guest-agent-file-systems';
-import { isVMRunningOrExpectedRunning } from '../../selectors/vm/selectors';
-import { asVM } from '../../selectors/vm';
-import { VMIKind } from '../../types';
 import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
 import { VMIWrapper } from '../../k8s/wrapper/vm/vmi-wrapper';
+import { DataVolumeModel, VirtualMachineInstanceModel, VirtualMachineModel } from '../../models';
+import { isVM, isVMI } from '../../selectors/check-type';
+import { asVM } from '../../selectors/vm';
 import { changedDisks } from '../../selectors/vm-like/next-run-changes';
+import {
+  getTemplateValidationsFromTemplate,
+  getVMTemplateNamespacedName,
+} from '../../selectors/vm-template/selectors';
+import { isVMRunningOrExpectedRunning } from '../../selectors/vm/selectors';
+import { getVMStatus } from '../../statuses/vm/vm-status';
+import { VMIKind } from '../../types';
+import { V1alpha1DataVolume } from '../../types/api';
+import { VMGenericLikeEntityKind } from '../../types/vmLike';
+import { getLoadedData, getResource } from '../../utils';
+import { wrapWithProgress } from '../../utils/utils';
+import { diskModalEnhanced } from '../modals/disk-modal/disk-modal-enhanced';
+import { VMLikeEntityTabProps, VMTabProps } from '../vms/types';
+import { DiskRow } from './disk-row';
+import { FileSystemsList } from './guest-agent-file-systems';
+import { diskSourceFilter } from './table-filters';
+import { StorageBundle } from './types';
+import { diskTableColumnClasses } from './utils';
 
 const getStoragesData = ({
   vmLikeEntity,

@@ -1,35 +1,37 @@
-import * as React from 'react';
 import * as _ from 'lodash';
+import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
-import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
-import { getName, getNamespace } from '@console/shared/src/selectors/common';
+
 import {
   createModalLauncher,
-  ModalTitle,
   ModalBody,
-  ModalSubmitFooter,
   ModalComponentProps,
+  ModalSubmitFooter,
+  ModalTitle,
 } from '@console/internal/components/factory';
-import { apiVersionForModel } from '@console/internal/module/k8s';
+import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
 import {
   useK8sWatchResource,
   WatchK8sResource,
 } from '@console/internal/components/utils/k8s-watch-hook';
-import { VMKind, VMIKind, VMSnapshot } from '../../../types/vm';
-import {
-  VirtualMachineModel,
-  VirtualMachineImportModel,
-  VirtualMachineSnapshotModel,
-} from '../../../models';
-import { getVolumes } from '../../../selectors/vm';
+import { apiVersionForModel } from '@console/internal/module/k8s';
+import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
+import { getName, getNamespace } from '@console/shared/src/selectors/common';
+
 import { useOwnedVolumeReferencedResources } from '../../../hooks/use-owned-volume-referenced-resources';
 import { useVirtualMachineImport } from '../../../hooks/use-virtual-machine-import';
 import { useUpToDateVMLikeEntity } from '../../../hooks/use-vm-like-entity';
 import { deleteVM } from '../../../k8s/requests/vm';
-import { VMIUsersAlert } from './vmi-users-alert';
-import { redirectToList } from './utils';
+import {
+  VirtualMachineImportModel,
+  VirtualMachineModel,
+  VirtualMachineSnapshotModel,
+} from '../../../models';
 import { getVmSnapshotVmName } from '../../../selectors/snapshot/snapshot';
+import { getVolumes } from '../../../selectors/vm';
+import { VMIKind, VMKind, VMSnapshot } from '../../../types/vm';
+import { redirectToList } from './utils';
+import { VMIUsersAlert } from './vmi-users-alert';
 
 export const DeleteVMModal = withHandlePromise((props: DeleteVMModalProps) => {
   const { inProgress, errorMessage, handlePromise, close, cancel, vm, vmi } = props;

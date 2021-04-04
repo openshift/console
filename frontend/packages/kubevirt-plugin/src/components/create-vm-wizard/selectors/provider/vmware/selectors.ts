@@ -1,8 +1,10 @@
 import * as _ from 'lodash';
+
 import { K8sResourceKind } from '@console/internal/module/k8s';
+
+import { getSimpleV2VPRoviderStatus, V2VProviderStatus } from '../../../../../statuses/v2v';
 import { ImportProvidersSettings } from '../../../redux/initial-state/types';
 import { ImportProvidersField, VMImportProvider, VMWareProviderField } from '../../../types';
-import { getSimpleV2VPRoviderStatus, V2VProviderStatus } from '../../../../../statuses/v2v';
 import { getVms } from '../selectors';
 
 export const getVmwareField = (

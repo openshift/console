@@ -1,6 +1,8 @@
 import * as _ from 'lodash';
-import { InternalActionType, UpdateOptions, Validation, ValidationConfig } from '../../types';
-import { OvirtProviderField, VMImportProvider } from '../../../types';
+
+import { asValidationObject, ValidationErrorType } from '@console/shared/src';
+
+import { iGetFieldValue } from '../../../selectors/immutable/field';
 import {
   hasOvirtSettingsChanged,
   iGetOvirtData,
@@ -8,10 +10,10 @@ import {
   iGetOvirtFieldValue,
   isOvirtProvider,
 } from '../../../selectors/immutable/provider/ovirt/selectors';
-import { getValidationUpdate } from '../utils';
+import { OvirtProviderField, VMImportProvider } from '../../../types';
 import { vmWizardInternalActions } from '../../internal-actions';
-import { iGetFieldValue } from '../../../selectors/immutable/field';
-import { asValidationObject, ValidationErrorType } from '@console/shared/src';
+import { InternalActionType, UpdateOptions, Validation, ValidationConfig } from '../../types';
+import { getValidationUpdate } from '../utils';
 
 const validationConfig: ValidationConfig<OvirtProviderField> = {
   [OvirtProviderField.API_URL]: {

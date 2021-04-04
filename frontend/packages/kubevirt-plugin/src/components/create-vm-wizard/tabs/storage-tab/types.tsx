@@ -1,5 +1,5 @@
-import { VMWizardStorage } from '../../types';
 import { StorageSimpleData } from '../../../vm-disks/types';
+import { VMWizardStorage } from '../../types';
 
 export type VMWizardStorageBundle = StorageSimpleData & {
   wizardStorageData: VMWizardStorage;

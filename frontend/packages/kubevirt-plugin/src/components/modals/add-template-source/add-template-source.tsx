@@ -1,41 +1,43 @@
+import { TFunction } from 'i18next';
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { TFunction } from 'i18next';
-import { k8sCreate, StorageClassResourceKind, TemplateKind } from '@console/internal/module/k8s';
-import {
-  ModalComponentProps,
-  ModalTitle,
-  ModalBody,
-  createModalLauncher,
-  ModalFooter,
-} from '@console/internal/components/factory';
-import { Alert, Button, ActionGroup, Stack, StackItem } from '@patternfly/react-core';
-import { useAccessReview2, LoadingBox } from '@console/internal/components/utils';
+
 import { coFetch } from '@console/internal/co-fetch';
+import {
+  createModalLauncher,
+  ModalBody,
+  ModalComponentProps,
+  ModalFooter,
+  ModalTitle,
+} from '@console/internal/components/factory';
+import { LoadingBox, useAccessReview2 } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { StorageClassModel } from '@console/internal/models';
-import {
-  UploadPVCFormStatus,
-  uploadErrorType,
-} from '../../cdi-upload-provider/upload-pvc-form/upload-pvc-form-status';
-import { createUploadPVC } from '../../../k8s/requests/cdi-upload/cdi-upload-requests';
+import { k8sCreate, StorageClassResourceKind, TemplateKind } from '@console/internal/module/k8s';
+import { ActionGroup, Alert, Button, Stack, StackItem } from '@patternfly/react-core';
+
 import {
   TEMPLATE_BASE_IMAGE_NAME_PARAMETER,
   TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER,
 } from '../../../constants';
-import { getParameterValue } from '../../../selectors/selectors';
-import { DataVolumeModel } from '../../../models';
-import { CDIUploadContextProps } from '../../cdi-upload-provider/cdi-upload-provider';
-import { bootFormReducer, initBootFormState } from '../../create-vm/forms/boot-source-form-reducer';
-import { BootSourceForm } from '../../create-vm/forms/boot-source-form';
-import { getRootDataVolume } from '../../../k8s/requests/vm/create/simple-create';
 import { ProvisionSource } from '../../../constants/vm/provision-source';
 import { useErrorTranslation } from '../../../hooks/use-error-translation';
+import { createUploadPVC } from '../../../k8s/requests/cdi-upload/cdi-upload-requests';
+import { getRootDataVolume } from '../../../k8s/requests/vm/create/simple-create';
+import { DataVolumeModel } from '../../../models';
+import { getParameterValue } from '../../../selectors/selectors';
+import { CDIUploadContextProps } from '../../cdi-upload-provider/cdi-upload-provider';
 import {
-  CDI_UPLOAD_URL_BUILDER,
   CDI_BIND_REQUESTED_ANNOTATION,
+  CDI_UPLOAD_URL_BUILDER,
 } from '../../cdi-upload-provider/consts';
 import { uploadErrorMessage } from '../../cdi-upload-provider/upload-pvc-form/upload-pvc-form';
+import {
+  uploadErrorType,
+  UploadPVCFormStatus,
+} from '../../cdi-upload-provider/upload-pvc-form/upload-pvc-form-status';
+import { BootSourceForm } from '../../create-vm/forms/boot-source-form';
+import { bootFormReducer, initBootFormState } from '../../create-vm/forms/boot-source-form-reducer';
 
 const getAction = (t: TFunction, dataSource: string): string => {
   switch (ProvisionSource.fromString(dataSource)) {

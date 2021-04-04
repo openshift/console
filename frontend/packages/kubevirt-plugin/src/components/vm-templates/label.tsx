@@ -1,12 +1,13 @@
 import * as React from 'react';
-import { TemplateKind } from '@console/internal/module/k8s';
-import { Label, Tooltip } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
+import { TemplateKind } from '@console/internal/module/k8s';
+import { Label, Tooltip } from '@patternfly/react-core';
+
 import {
-  getTemplateSupport,
-  getTemplateProvider,
   getTemplateParentProvider,
+  getTemplateProvider,
+  getTemplateSupport,
   isCommonTemplate,
 } from '../../selectors/vm-template/basic';
 

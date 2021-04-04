@@ -1,22 +1,23 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { TableRow, TableData, RowFunction } from '@console/internal/components/factory';
-import { Kebab, ResourceLink } from '@console/internal/components/utils';
-import { TemplateModel, NamespaceModel } from '@console/internal/models';
-import { dimensifyRow } from '@console/shared';
 import { Link } from 'react-router-dom';
 
-import { menuActionsCreator } from '../menu-actions';
-import { TemplateSource } from '../vm-template-source';
-import { getTemplateOSIcon, PinnedIcon } from '../os-icons';
+import { RowFunction, TableData, TableRow } from '@console/internal/components/factory';
+import { Kebab, ResourceLink } from '@console/internal/components/utils';
+import { NamespaceModel, TemplateModel } from '@console/internal/models';
+import { dimensifyRow } from '@console/shared';
+
+import { useCustomizeSourceModal } from '../../../hooks/use-customize-source-modal';
+import { useSupportModal } from '../../../hooks/use-support-modal';
 import { getTemplateName, getTemplateProvider } from '../../../selectors/vm-template/basic';
 import { getTemplateSourceStatus } from '../../../statuses/template/template-source-status';
 import { TemplateItem } from '../../../types/template';
-import { useSupportModal } from '../../../hooks/use-support-modal';
-import { tableColumnClasses } from './utils';
-import { VMTemplateRowProps } from './types';
+import { menuActionsCreator } from '../menu-actions';
+import { getTemplateOSIcon, PinnedIcon } from '../os-icons';
+import { TemplateSource } from '../vm-template-source';
 import RowActions from './RowActions';
-import { useCustomizeSourceModal } from '../../../hooks/use-customize-source-modal';
+import { VMTemplateRowProps } from './types';
+import { tableColumnClasses } from './utils';
 
 import './vm-template-table.scss';
 
