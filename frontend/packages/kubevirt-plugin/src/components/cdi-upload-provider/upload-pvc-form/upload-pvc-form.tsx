@@ -1,67 +1,58 @@
-import * as React from 'react';
 import axios from 'axios';
 import cx from 'classnames';
-import { Helmet } from 'react-helmet';
-import { match } from 'react-router';
-import { Trans, useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
+import * as React from 'react';
+import { Helmet } from 'react-helmet';
+import { Trans, useTranslation } from 'react-i18next';
+import { match } from 'react-router';
+
 import {
-  FileUpload,
-  ActionGroup,
-  Alert,
-  Button,
-  Checkbox,
-  FormSelect,
-  FormSelectOption,
-  Split,
-  SplitItem,
-  SelectOption,
-} from '@patternfly/react-core';
-import {
-  K8sResourceKind,
-  apiVersionForModel,
-  TemplateKind,
-  PersistentVolumeClaimKind,
-  ConfigMapKind,
-  StorageClassResourceKind,
-  K8sVerb,
-} from '@console/internal/module/k8s';
+  dropdownUnits,
+  getAccessModeForProvisioner,
+  provisionerAccessModeMapping,
+} from '@console/internal/components/storage/shared';
 import {
   ButtonBar,
-  RequestSizeInput,
-  history,
-  resourcePath,
   ExternalLink,
+  history,
+  RequestSizeInput,
   ResourceLink,
+  resourcePath,
   useAccessReview2,
   useMultipleAccessReviews,
 } from '@console/internal/components/utils';
 import {
-  provisionerAccessModeMapping,
-  dropdownUnits,
-  getAccessModeForProvisioner,
-} from '@console/internal/components/storage/shared';
-import {
   useK8sWatchResource,
   WatchK8sResource,
 } from '@console/internal/components/utils/k8s-watch-hook';
-import { useBaseImages } from '../../../hooks/use-base-images';
-import { DataVolumeModel } from '../../../models';
-import {
-  createUploadPVC,
-  PVCInitError,
-} from '../../../k8s/requests/cdi-upload/cdi-upload-requests';
-import { CDIUploadContext } from '../cdi-upload-provider';
-import { UploadPVCFormStatus, uploadErrorType } from './upload-pvc-form-status';
 import {
   PersistentVolumeClaimModel,
   StorageClassModel,
   TemplateModel,
 } from '@console/internal/models';
+import {
+  apiVersionForModel,
+  ConfigMapKind,
+  K8sResourceKind,
+  K8sVerb,
+  PersistentVolumeClaimKind,
+  StorageClassResourceKind,
+  TemplateKind,
+} from '@console/internal/module/k8s';
 import { getName, getNamespace } from '@console/shared';
-import { V1alpha1DataVolume } from '../../../types/api';
-import { getTemplateOperatingSystems } from '../../../selectors/vm-template/advanced';
-import { FormSelectPlaceholderOption } from '../../form/form-select-placeholder-option';
+import {
+  ActionGroup,
+  Alert,
+  Button,
+  Checkbox,
+  FileUpload,
+  FormSelect,
+  FormSelectOption,
+  SelectOption,
+  Split,
+  SplitItem,
+} from '@patternfly/react-core';
+
 import {
   AccessMode,
   TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER,
@@ -70,22 +61,34 @@ import {
   TEMPLATE_VM_COMMON_NAMESPACE,
   VolumeMode,
 } from '../../../constants';
-import {
-  CDI_UPLOAD_OS_URL_PARAM,
-  CDI_UPLOAD_SUPPORTED_TYPES_URL,
-  CDI_UPLOAD_URL_BUILDER,
-} from '../consts';
-import { OperatingSystemRecord } from '../../../types';
 import { useStorageClassConfigMap } from '../../../hooks/storage-class-config-map';
-import { FormPFSelect } from '../../form/form-pf-select';
+import { useBaseImages } from '../../../hooks/use-base-images';
+import {
+  createUploadPVC,
+  PVCInitError,
+} from '../../../k8s/requests/cdi-upload/cdi-upload-requests';
+import { DataVolumeModel } from '../../../models';
 import {
   getDefaultSCAccessModes,
   getDefaultSCVolumeMode,
   getDefaultStorageClass,
   isConfigMapContainsScModes,
 } from '../../../selectors/config-map/sc-defaults';
-import { ConfigMapDefaultModesAlert } from '../../Alerts/ConfigMapDefaultModesAlert';
 import { getParameterValue } from '../../../selectors/selectors';
+import { getTemplateOperatingSystems } from '../../../selectors/vm-template/advanced';
+import { OperatingSystemRecord } from '../../../types';
+import { V1alpha1DataVolume } from '../../../types/api';
+import { ConfigMapDefaultModesAlert } from '../../Alerts/ConfigMapDefaultModesAlert';
+import { FormPFSelect } from '../../form/form-pf-select';
+import { FormSelectPlaceholderOption } from '../../form/form-select-placeholder-option';
+import { CDIUploadContext } from '../cdi-upload-provider';
+import {
+  CDI_UPLOAD_OS_URL_PARAM,
+  CDI_UPLOAD_SUPPORTED_TYPES_URL,
+  CDI_UPLOAD_URL_BUILDER,
+} from '../consts';
+import { uploadErrorType, UploadPVCFormStatus } from './upload-pvc-form-status';
+
 import './upload-pvc-form.scss';
 
 const templatesResource: WatchK8sResource = {

@@ -1,10 +1,12 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
+
 import { StatusItem } from '@console/shared/src/components/dashboard/status-card/AlertItem';
+import AlertsBody from '@console/shared/src/components/dashboard/status-card/AlertsBody';
 import { BlueInfoCircleIcon } from '@console/shared/src/components/status';
-import { VMIKind } from '../../../types';
+
 import { getVMIConditionsByType } from '../../../selectors/vmi';
+import { VMIKind } from '../../../types';
 
 // Based on: https://github.com/kubevirt/kubevirt/blob/f71e9c9615a6c36178169d66814586a93ba515b5/staging/src/kubevirt.io/client-go/api/v1/types.go#L337
 const VMI_CONDITION_AGENT_CONNECTED = 'AgentConnected';

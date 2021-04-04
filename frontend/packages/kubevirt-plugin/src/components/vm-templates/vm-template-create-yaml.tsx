@@ -1,28 +1,30 @@
+import { safeLoad } from 'js-yaml';
 /* eslint-disable lines-between-class-members */
 import * as React from 'react';
-import { safeLoad } from 'js-yaml';
-import { TemplateModel } from '@console/internal/models';
-import { connectToPlural } from '@console/internal/kinds';
+
 import { CreateYAMLProps } from '@console/internal/components/create-yaml';
-import { k8sList, K8sResourceKind, TemplateKind } from '@console/internal/module/k8s';
+import { ErrorPage404 } from '@console/internal/components/error';
 import {
-  LoadingBox,
   AsyncComponent,
+  LoadingBox,
   resourcePathFromModel,
 } from '@console/internal/components/utils';
-import { ErrorPage404 } from '@console/internal/components/error';
-import { getNamespace, getName } from '@console/shared';
-import { VMTemplateYAMLTemplates } from '../../models/templates';
-import { VM_TEMPLATE_CREATE_HEADER } from '../../constants/vm-templates';
-import { resolveDefaultVMTemplate } from '../../k8s/requests/vm/create/default-template';
+import { connectToPlural } from '@console/internal/kinds';
+import { TemplateModel } from '@console/internal/models';
+import { k8sList, K8sResourceKind, TemplateKind } from '@console/internal/module/k8s';
+import { getName, getNamespace } from '@console/shared';
+
 import {
   TEMPLATE_FLAVOR_LABEL,
   TEMPLATE_TYPE_BASE,
   TEMPLATE_TYPE_LABEL,
   TEMPLATE_WORKLOAD_LABEL,
 } from '../../constants/vm';
-import { VMTemplateWrapper } from '../../k8s/wrapper/vm/vm-template-wrapper';
+import { VM_TEMPLATE_CREATE_HEADER } from '../../constants/vm-templates';
 import { OSSelection } from '../../constants/vm/default-os-selection';
+import { resolveDefaultVMTemplate } from '../../k8s/requests/vm/create/default-template';
+import { VMTemplateWrapper } from '../../k8s/wrapper/vm/vm-template-wrapper';
+import { VMTemplateYAMLTemplates } from '../../models/templates';
 
 const CreateVMTemplateYAMLConnected = connectToPlural(
   ({ match, kindsInFlight, kindObj }: CreateYAMLProps) => {

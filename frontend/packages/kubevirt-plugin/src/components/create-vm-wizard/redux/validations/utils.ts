@@ -1,11 +1,13 @@
 import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash';
-import { ValidationObject, ValidationErrorType } from '@console/shared';
-import { UpdateOptions, Validation, ValidationConfig } from '../types';
-import { SettingsFieldType } from '../../types';
-import { iGetFieldKey, isFieldRequired } from '../../selectors/immutable/field';
-import { getFieldTitleKey, sortFields } from '../../utils/renderable-field-utils';
+
+import { ValidationErrorType, ValidationObject } from '@console/shared';
+
 import { BinaryUnit } from '../../../form/size-unit-utils';
+import { iGetFieldKey, isFieldRequired } from '../../selectors/immutable/field';
+import { SettingsFieldType } from '../../types';
+import { getFieldTitleKey, sortFields } from '../../utils/renderable-field-utils';
+import { UpdateOptions, Validation, ValidationConfig } from '../types';
 
 export const getValidationUpdate = <FieldType>(
   config: ValidationConfig<FieldType>,

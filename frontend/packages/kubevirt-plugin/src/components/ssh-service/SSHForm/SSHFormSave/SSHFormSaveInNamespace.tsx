@@ -1,6 +1,8 @@
 import * as React from 'react';
-import { Checkbox, Flex } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+
+import { Checkbox, Flex } from '@patternfly/react-core';
+
 import useSSHKeys from '../../../../hooks/use-ssh-keys';
 import SSHPopover from '../../SSHPopover/SSHPopover';
 

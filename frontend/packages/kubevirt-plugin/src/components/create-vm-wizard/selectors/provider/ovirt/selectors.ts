@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
+
 import { ImportProvidersSettings } from '../../../redux/initial-state/types';
-import { ImportProvidersField, VMImportProvider, OvirtProviderField } from '../../../types';
+import { ImportProvidersField, OvirtProviderField, VMImportProvider } from '../../../types';
 
 export const getOvirtField = (
   importSettings: ImportProvidersSettings,

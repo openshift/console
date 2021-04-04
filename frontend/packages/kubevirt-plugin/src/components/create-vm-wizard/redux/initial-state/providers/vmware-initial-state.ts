@@ -1,6 +1,6 @@
+import { V2VProviderStatus } from '../../../../../statuses/v2v';
 import { VMImportProvider, VMWareProviderField } from '../../../types';
 import { asDisabled, asHidden } from '../../../utils/utils';
-import { V2VProviderStatus } from '../../../../../statuses/v2v';
 import { VMwareSettings } from '../types';
 
 export const getVmWareInitialState = (): VMwareSettings => {

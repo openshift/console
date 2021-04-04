@@ -1,8 +1,10 @@
-import * as React from 'react';
 import * as _ from 'lodash';
+import * as React from 'react';
+import { useTranslation } from 'react-i18next';
+
 import { inject } from '@console/internal/components/utils';
 import { ValidationErrorType } from '@console/shared';
-import { getPlaceholderKey, getFieldId, getFieldTitleKey } from '../utils/renderable-field-utils';
+
 import { iGetIn } from '../../../utils/immutable';
 import {
   iGetFieldKey,
@@ -10,8 +12,8 @@ import {
   isFieldDisabled,
   isFieldRequired,
 } from '../selectors/immutable/field';
+import { getFieldId, getFieldTitleKey, getPlaceholderKey } from '../utils/renderable-field-utils';
 import { FormFieldContext } from './form-field-context';
-import { useTranslation } from 'react-i18next';
 
 export enum FormFieldType {
   TEXT = 'TEXT',

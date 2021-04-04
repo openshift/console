@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { VMWizardTab } from '../../types';
+
 import { isStepPending, isStepValid } from '../../selectors/immutable/wizard-selectors';
-import { PendingResults } from './pending-results';
-import { SuccessResults } from './success-results';
+import { VMWizardTab } from '../../types';
 import { ErrorResults } from './error-results';
+import { PendingResults } from './pending-results';
 import { RequestResultsPart } from './request-results-part';
+import { SuccessResults } from './success-results';
 
 import './result-tab.scss';
 

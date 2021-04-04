@@ -1,21 +1,26 @@
+import classNames from 'classnames';
+import * as _ from 'lodash';
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import * as _ from 'lodash';
-import { Link } from 'react-router-dom';
-import { Alert, AlertVariant } from '@patternfly/react-core';
-import { InProgressIcon } from '@patternfly/react-icons';
 import { connect } from 'react-redux';
-import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
+import { Link } from 'react-router-dom';
+
 import { resourcePath } from '@console/internal/components/utils';
 import { DeploymentModel, PodModel } from '@console/internal/models';
+import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import { getName, getNamespace } from '@console/shared/src';
-import classNames from 'classnames';
 import StatusIconAndText from '@console/shared/src/components/status/StatusIconAndText';
-import { prefixedID } from '../../../../../utils';
-import { FormRow } from '../../../../form/form-row';
-import { getPodDeploymentStatus } from '../../../../../statuses/pod-deployment/pod-deployment-status';
+import { Alert, AlertVariant } from '@patternfly/react-core';
+import { InProgressIcon } from '@patternfly/react-icons';
+
 import { PodDeploymentStatus } from '../../../../../statuses/pod-deployment/constants';
+import { getPodDeploymentStatus } from '../../../../../statuses/pod-deployment/pod-deployment-status';
+import { prefixedID } from '../../../../../utils';
+import { iGet, immutableListToShallowJS, toShallowJS } from '../../../../../utils/immutable';
+import { FormRow } from '../../../../form/form-row';
+import { iGetProviderFieldAttribute } from '../../../selectors/immutable/provider/common';
 import { iGetCommonData, iGetLoadedCommonData } from '../../../selectors/immutable/selectors';
+import { getProviderName } from '../../../strings/import-providers';
 import {
   OvirtProviderField,
   OvirtProviderProps,
@@ -23,9 +28,6 @@ import {
   VMWareProviderField,
   VMWareProviderProps,
 } from '../../../types';
-import { iGet, immutableListToShallowJS, toShallowJS } from '../../../../../utils/immutable';
-import { getProviderName } from '../../../strings/import-providers';
-import { iGetProviderFieldAttribute } from '../../../selectors/immutable/provider/common';
 
 const DeploymentLink: React.FC<DeploymentLinkProps> = ({ deployment }) => {
   const name = getName(deployment);

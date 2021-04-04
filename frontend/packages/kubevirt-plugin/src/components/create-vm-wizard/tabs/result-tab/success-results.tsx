@@ -1,6 +1,8 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { CheckIcon } from '@patternfly/react-icons';
+
+import { history } from '@console/internal/components/utils';
 import {
   Button,
   ButtonVariant,
@@ -11,13 +13,13 @@ import {
   EmptyStateVariant,
   Title,
 } from '@patternfly/react-core';
-import { history } from '@console/internal/components/utils';
-import { iGetCommonData } from '../../selectors/immutable/selectors';
-import { VMSettingsField, VMWizardProps } from '../../types';
-import { iGetVmSettingValue } from '../../selectors/immutable/vm-settings';
+import { CheckIcon } from '@patternfly/react-icons';
+
 import { getVMLikeModelDetailPath, getVMLikeModelListPath } from '../../../../utils/utils';
 import { isOvirtProvider } from '../../selectors/immutable/provider/ovirt/selectors';
-import { useTranslation } from 'react-i18next';
+import { iGetCommonData } from '../../selectors/immutable/selectors';
+import { iGetVmSettingValue } from '../../selectors/immutable/vm-settings';
+import { VMSettingsField, VMWizardProps } from '../../types';
 
 export const SuccessResultsComponent: React.FC<SuccessResultsProps> = ({
   isCreateTemplate,

@@ -1,7 +1,7 @@
-import { OvirtSettings } from '../types';
+import { V2VProviderStatus } from '../../../../../statuses/v2v';
 import { OvirtProviderField, VMImportProvider } from '../../../types';
 import { asDisabled, asHidden } from '../../../utils/utils';
-import { V2VProviderStatus } from '../../../../../statuses/v2v';
+import { OvirtSettings } from '../types';
 
 export const getOvirtInitialState = (): OvirtSettings => {
   const hiddenByOvirtEngine = asHidden(true, OvirtProviderField.OVIRT_ENGINE_SECRET_NAME);

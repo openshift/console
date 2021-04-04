@@ -1,18 +1,16 @@
 import * as _ from 'lodash';
-import { alignWithDNS1123, joinGrammaticallyListOfItems, getName } from '@console/shared/src';
-import { InternalActionType, UpdateOptions } from '../../../types';
+
 import {
-  OvirtProviderField,
-  VMSettingsField,
-  VMWizardNetwork,
-  VMWizardNetworkType,
-  VMWizardProps,
-  VMWizardStorage,
-  VMWizardStorageType,
-  OvirtProviderProps,
-} from '../../../../types';
-import { vmWizardInternalActions } from '../../../internal-actions';
+  ConfigMapKind,
+  K8sResourceKind,
+  StorageClassResourceKind,
+} from '@console/internal/module/k8s';
+import { alignWithDNS1123, getName, joinGrammaticallyListOfItems } from '@console/shared/src';
+
+import { OvirtDiskBus } from '../../../../../../constants/v2v-import/ovirt/ovirt-disk-bus';
+import { OvirtNetworkInterfaceModel } from '../../../../../../constants/v2v-import/ovirt/ovirt-network-interface-model';
 import {
+  AccessMode,
   CUSTOM_FLAVOR,
   DiskBus,
   DiskType,
@@ -20,30 +18,34 @@ import {
   NetworkInterfaceType,
   NetworkType,
   VolumeType,
-  AccessMode,
 } from '../../../../../../constants/vm';
-import { NetworkWrapper } from '../../../../../../k8s/wrapper/vm/network-wrapper';
-import { NetworkInterfaceWrapper } from '../../../../../../k8s/wrapper/vm/network-interface-wrapper';
-import { BinaryUnit, convertToHighestUnit } from '../../../../../form/size-unit-utils';
-import { OvirtVM } from '../../../../../../types/vm-import/ovirt/ovirt-vm';
-import { iGetOvirtFieldAttribute } from '../../../../selectors/immutable/provider/ovirt/selectors';
-import {
-  ConfigMapKind,
-  K8sResourceKind,
-  StorageClassResourceKind,
-} from '@console/internal/module/k8s';
 import { DiskWrapper } from '../../../../../../k8s/wrapper/vm/disk-wrapper';
+import { NetworkInterfaceWrapper } from '../../../../../../k8s/wrapper/vm/network-interface-wrapper';
+import { NetworkWrapper } from '../../../../../../k8s/wrapper/vm/network-wrapper';
+import { PersistentVolumeClaimWrapper } from '../../../../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
 import { VolumeWrapper } from '../../../../../../k8s/wrapper/vm/volume-wrapper';
 import {
   getDefaultSCAccessModes,
   getDefaultSCVolumeMode,
 } from '../../../../../../selectors/config-map/sc-defaults';
-import { toShallowJS, immutableListToShallowJS } from '../../../../../../utils/immutable';
-import { iGetLoadedCommonData } from '../../../../selectors/immutable/selectors';
-import { OvirtDiskBus } from '../../../../../../constants/v2v-import/ovirt/ovirt-disk-bus';
-import { OvirtNetworkInterfaceModel } from '../../../../../../constants/v2v-import/ovirt/ovirt-network-interface-model';
+import { OvirtVM } from '../../../../../../types/vm-import/ovirt/ovirt-vm';
+import { immutableListToShallowJS, toShallowJS } from '../../../../../../utils/immutable';
 import { createUniqueNameResolver } from '../../../../../../utils/strings';
-import { PersistentVolumeClaimWrapper } from '../../../../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
+import { BinaryUnit, convertToHighestUnit } from '../../../../../form/size-unit-utils';
+import { iGetOvirtFieldAttribute } from '../../../../selectors/immutable/provider/ovirt/selectors';
+import { iGetLoadedCommonData } from '../../../../selectors/immutable/selectors';
+import {
+  OvirtProviderField,
+  OvirtProviderProps,
+  VMSettingsField,
+  VMWizardNetwork,
+  VMWizardNetworkType,
+  VMWizardProps,
+  VMWizardStorage,
+  VMWizardStorageType,
+} from '../../../../types';
+import { vmWizardInternalActions } from '../../../internal-actions';
+import { InternalActionType, UpdateOptions } from '../../../types';
 
 export const getDisks = (
   vm: OvirtVM,

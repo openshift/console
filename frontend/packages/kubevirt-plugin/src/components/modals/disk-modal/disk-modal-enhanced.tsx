@@ -1,32 +1,34 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Firehose, FirehoseResult } from '@console/internal/components/utils';
+
 import { createModalLauncher, ModalComponentProps } from '@console/internal/components/factory';
-import {
-  k8sPatch,
-  StorageClassResourceKind,
-  PersistentVolumeClaimKind,
-} from '@console/internal/module/k8s';
-import { getName, getNamespace } from '@console/shared/src';
+import { Firehose, FirehoseResult } from '@console/internal/components/utils';
 import {
   NamespaceModel,
   PersistentVolumeClaimModel,
   ProjectModel,
   StorageClassModel,
 } from '@console/internal/models';
-import { getLoadedData } from '../../../utils';
-import { getVMLikeModel } from '../../../selectors/vm';
-import { VMLikeEntityKind } from '../../../types/vmLike';
-import { DiskWrapper } from '../../../k8s/wrapper/vm/disk-wrapper';
-import { VolumeWrapper } from '../../../k8s/wrapper/vm/volume-wrapper';
-import { DataVolumeWrapper } from '../../../k8s/wrapper/vm/data-volume-wrapper';
+import {
+  k8sPatch,
+  PersistentVolumeClaimKind,
+  StorageClassResourceKind,
+} from '@console/internal/module/k8s';
+import { getName, getNamespace } from '@console/shared/src';
+
+import { useStorageClassConfigMapWrapped } from '../../../hooks/storage-class-config-map';
 import { getUpdateDiskPatches } from '../../../k8s/patches/vm/vm-disk-patches';
 import { CombinedDiskFactory } from '../../../k8s/wrapper/vm/combined-disk';
-import { DiskModal } from './disk-modal';
-import { TemplateValidations } from '../../../utils/validations/template/template-validations';
-import { V1Disk, V1Volume, V1alpha1DataVolume } from '../../../types/api';
-import { useStorageClassConfigMapWrapped } from '../../../hooks/storage-class-config-map';
+import { DataVolumeWrapper } from '../../../k8s/wrapper/vm/data-volume-wrapper';
+import { DiskWrapper } from '../../../k8s/wrapper/vm/disk-wrapper';
+import { VolumeWrapper } from '../../../k8s/wrapper/vm/volume-wrapper';
 import { isTemplate } from '../../../selectors/check-type';
+import { getVMLikeModel } from '../../../selectors/vm';
+import { V1alpha1DataVolume, V1Disk, V1Volume } from '../../../types/api';
+import { VMLikeEntityKind } from '../../../types/vmLike';
+import { getLoadedData } from '../../../utils';
+import { TemplateValidations } from '../../../utils/validations/template/template-validations';
+import { DiskModal } from './disk-modal';
 
 const DiskModalFirehoseComponent: React.FC<DiskModalFirehoseComponentProps> = (props) => {
   const {

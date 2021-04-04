@@ -1,9 +1,9 @@
-import * as React from 'react';
-import { Trans, useTranslation } from 'react-i18next';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons';
-import { Tooltip } from '@patternfly/react-core';
 import cn from 'classnames';
 import * as copy from 'copy-to-clipboard';
+import * as React from 'react';
+import { Trans, useTranslation } from 'react-i18next';
+
+import { confirmModal } from '@console/internal/components/modals';
 import { asAccessReview, Kebab, KebabOption } from '@console/internal/components/utils';
 import {
   K8sKind,
@@ -12,34 +12,36 @@ import {
   PodKind,
 } from '@console/internal/module/k8s';
 import { getName, getNamespace, YellowExclamationTriangleIcon } from '@console/shared';
-import { confirmModal } from '@console/internal/components/modals';
-import { VMIKind, VMKind } from '../../types/vm';
+import { Tooltip } from '@patternfly/react-core';
+import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+
+import { StatusGroup } from '../../constants/status-group';
+import useSSHCommand from '../../hooks/use-ssh-command';
+import useSSHService from '../../hooks/use-ssh-service';
+import { restartVM, startVM, stopVM } from '../../k8s/requests/vm';
+import { startVMIMigration } from '../../k8s/requests/vmi';
+import { unpauseVMI } from '../../k8s/requests/vmi/actions';
+import { cancelMigration } from '../../k8s/requests/vmim';
+import { cancelVMImport } from '../../k8s/requests/vmimport';
+import { VMImportWrappper } from '../../k8s/wrapper/vm-import/vm-import-wrapper';
+import { VirtualMachineImportModel, VirtualMachineInstanceMigrationModel } from '../../models';
 import {
   isVMCreated,
   isVMExpectedRunning,
   isVMRunningOrExpectedRunning,
 } from '../../selectors/vm/selectors';
-import { getMigrationVMIName } from '../../selectors/vmi-migration';
-import { VirtualMachineImportModel, VirtualMachineInstanceMigrationModel } from '../../models';
-import { restartVM, startVM, stopVM } from '../../k8s/requests/vm';
-import { startVMIMigration } from '../../k8s/requests/vmi';
-import { cancelMigration } from '../../k8s/requests/vmim';
-import { cloneVMModal } from '../modals/clone-vm-modal';
-import { getVMStatus } from '../../statuses/vm/vm-status';
 import { isVMIPaused } from '../../selectors/vmi';
-import { unpauseVMI } from '../../k8s/requests/vmi/actions';
-import { VMImportKind } from '../../types/vm-import/ovirt/vm-import';
-import { V1alpha1DataVolume } from '../../types/api';
+import { getMigrationVMIName } from '../../selectors/vmi-migration';
 import { VMStatusBundle } from '../../statuses/vm/types';
+import { getVMStatus } from '../../statuses/vm/vm-status';
+import { V1alpha1DataVolume } from '../../types/api';
+import { VMIKind, VMKind } from '../../types/vm';
+import { VMImportKind } from '../../types/vm-import/ovirt/vm-import';
+import { cloneVMModal } from '../modals/clone-vm-modal';
 import { confirmVMIModal } from '../modals/menu-actions-modals/confirm-vmi-modal';
 import { deleteVMModal } from '../modals/menu-actions-modals/delete-vm-modal';
 import { deleteVMIModal } from '../modals/menu-actions-modals/delete-vmi-modal';
-import { VMImportWrappper } from '../../k8s/wrapper/vm-import/vm-import-wrapper';
-import { StatusGroup } from '../../constants/status-group';
-import { cancelVMImport } from '../../k8s/requests/vmimport';
 import { ActionMessage } from './constants';
-import useSSHService from '../../hooks/use-ssh-service';
-import useSSHCommand from '../../hooks/use-ssh-command';
 
 import './menu-actions.scss';
 

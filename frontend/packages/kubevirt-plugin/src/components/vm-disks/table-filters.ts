@@ -1,5 +1,7 @@
 import * as _ from 'lodash';
+
 import { RowFilter } from '@console/internal/components/filter-toolbar';
+
 import { DiskType } from '../../constants/vm/storage';
 
 const typeReducer = (obj) => {

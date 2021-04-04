@@ -1,27 +1,29 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+
+import {
+  PrometheusMultilineUtilizationItem,
+  PrometheusUtilizationItem,
+} from '@console/internal/components/dashboard/dashboards-page/cluster-dashboard/utilization-card';
 import {
   Dropdown,
   humanizeBinaryBytes,
   humanizeCpuCores as humanizeCpuCoresUtil,
 } from '@console/internal/components/utils';
-import { getName, getNamespace, getCreationTimestamp } from '@console/shared';
+import { getCreationTimestamp, getName, getNamespace } from '@console/shared';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
 import DashboardCardTitle from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardTitle';
-import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
 import {
-  PrometheusUtilizationItem,
-  PrometheusMultilineUtilizationItem,
-} from '@console/internal/components/dashboard/dashboards-page/cluster-dashboard/utilization-card';
-import {
-  useMetricDuration,
   Duration,
+  useMetricDuration,
 } from '@console/shared/src/components/dashboard/duration-hook';
+import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
-import { VMDashboardContext } from '../../vms/vm-dashboard-context';
+
 import { findVMIPod } from '../../../selectors/pod/selectors';
-import { getUtilizationQueries, getMultilineUtilizationQueries, VMQueries } from './queries';
+import { VMDashboardContext } from '../../vms/vm-dashboard-context';
+import { getMultilineUtilizationQueries, getUtilizationQueries, VMQueries } from './queries';
 
 // TODO: extend humanizeCpuCores() from @console/internal for the flexibility of space
 const humanizeCpuCores = (v) => {

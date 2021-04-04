@@ -1,6 +1,7 @@
-import { PartialObjectMetadata } from '@console/internal/module/k8s';
 import { CatalogItem } from '@console/dynamic-plugin-sdk';
-import { TEMPLATE_TYPE_BASE, TEMPLATE_TYPE_VM, TEMPLATE_TYPE_LABEL } from '../../../constants';
+import { PartialObjectMetadata } from '@console/internal/module/k8s';
+
+import { TEMPLATE_TYPE_BASE, TEMPLATE_TYPE_LABEL, TEMPLATE_TYPE_VM } from '../../../constants';
 
 // removes all Templates identified as VM templates
 const filter = (item: CatalogItem<PartialObjectMetadata>): boolean => {

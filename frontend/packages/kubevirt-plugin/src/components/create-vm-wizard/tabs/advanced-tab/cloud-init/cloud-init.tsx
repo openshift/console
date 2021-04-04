@@ -1,7 +1,12 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+
+import { confirmModal } from '@console/internal/components/modals';
+import { ExternalLink } from '@console/internal/components/utils';
+import { asValidationObject } from '@console/shared';
 import {
+  Alert,
   AlertVariant,
   Button,
   ButtonVariant,
@@ -11,44 +16,41 @@ import {
   SplitItem,
   TextArea,
   TextInput,
-  Alert,
 } from '@patternfly/react-core';
 import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
-import { confirmModal } from '@console/internal/components/modals';
-import { asValidationObject } from '@console/shared';
-import { ExternalLink } from '@console/internal/components/utils';
-import {
-  CloudInitField,
-  VMWizardStorage,
-  VMWizardStorageType,
-  VMWizardTab,
-  VMWizardProps,
-} from '../../../types';
-import { vmWizardActions } from '../../../redux/actions';
-import { ActionType } from '../../../redux/types';
-import { iGetCloudInitNoCloudStorage } from '../../../selectors/immutable/storage';
-import { VolumeWrapper } from '../../../../../k8s/wrapper/vm/volume-wrapper';
-import { iGet, iGetIn, ihasIn, toJS, toShallowJS } from '../../../../../utils/immutable';
-import { DiskBus, DiskType, VolumeType } from '../../../../../constants/vm/storage';
-import { FormRow } from '../../../../form/form-row';
-import { joinIDs, prefixedID } from '../../../../../utils';
-import { Errors } from '../../../../errors/errors';
+
 import { CLOUDINIT_DISK } from '../../../../../constants/vm';
-import { DiskWrapper } from '../../../../../k8s/wrapper/vm/disk-wrapper';
-import { InlineBooleanRadio } from '../../../../inline-boolean-radio';
-import { iGetCloudInitValue } from '../../../selectors/immutable/cloud-init';
+import { DiskBus, DiskType, VolumeType } from '../../../../../constants/vm/storage';
 import {
   CloudInitDataFormKeys,
   CloudInitDataHelper,
   formAllowedKeys,
 } from '../../../../../k8s/wrapper/vm/cloud-init-data-helper';
+import { DiskWrapper } from '../../../../../k8s/wrapper/vm/disk-wrapper';
+import { VolumeWrapper } from '../../../../../k8s/wrapper/vm/volume-wrapper';
+import { joinIDs, prefixedID } from '../../../../../utils';
+import { iGet, iGetIn, ihasIn, toJS, toShallowJS } from '../../../../../utils/immutable';
+import { Errors } from '../../../../errors/errors';
+import { FormRow } from '../../../../form/form-row';
+import { InlineBooleanRadio } from '../../../../inline-boolean-radio';
+import { vmWizardActions } from '../../../redux/actions';
+import { ActionType } from '../../../redux/types';
+import { getAuthKeyError } from '../../../redux/validations/advanced-tab-validation';
+import { iGetCloudInitValue } from '../../../selectors/immutable/cloud-init';
+import { iGetCommonData } from '../../../selectors/immutable/selectors';
+import { iGetCloudInitNoCloudStorage } from '../../../selectors/immutable/storage';
 import {
   hasStepCreateDisabled,
   hasStepDeleteDisabled,
   hasStepUpdateDisabled,
 } from '../../../selectors/immutable/wizard-selectors';
-import { iGetCommonData } from '../../../selectors/immutable/selectors';
-import { getAuthKeyError } from '../../../redux/validations/advanced-tab-validation';
+import {
+  CloudInitField,
+  VMWizardProps,
+  VMWizardStorage,
+  VMWizardStorageType,
+  VMWizardTab,
+} from '../../../types';
 
 import '../../../create-vm-wizard-footer.scss';
 import './cloud-init.scss';

@@ -1,13 +1,15 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
+
 import {
   createModalLauncher,
-  ModalTitle,
   ModalBody,
-  ModalSubmitFooter,
   ModalComponentProps,
+  ModalSubmitFooter,
+  ModalTitle,
 } from '@console/internal/components/factory';
+import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
+
 import { VMIKind } from '../../../types';
 import { VMIUsersAlert } from './vmi-users-alert';
 

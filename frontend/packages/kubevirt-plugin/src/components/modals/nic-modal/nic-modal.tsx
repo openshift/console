@@ -1,5 +1,15 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+
+import { ModalBody, ModalComponentProps, ModalTitle } from '@console/internal/components/factory';
+import {
+  FirehoseResult,
+  HandlePromiseProps,
+  withHandlePromise,
+} from '@console/internal/components/utils';
+import { K8sResourceKind } from '@console/internal/module/k8s';
+import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
+import { getName, ValidationErrorType } from '@console/shared';
 import {
   Alert,
   AlertVariant,
@@ -9,38 +19,30 @@ import {
   SelectOption,
   TextInput,
 } from '@patternfly/react-core';
-import {
-  FirehoseResult,
-  HandlePromiseProps,
-  withHandlePromise,
-} from '@console/internal/components/utils';
-import { ModalBody, ModalComponentProps, ModalTitle } from '@console/internal/components/factory';
-import { getName, ValidationErrorType } from '@console/shared';
-import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
-import { getLoadedData, getLoadError, isLoaded, prefixedID } from '../../../utils';
-import { validateNIC } from '../../../utils/validations/vm';
-import { isValidationError } from '../../../utils/validations/common';
-import { FormRow } from '../../form/form-row';
-import { ignoreCaseSort } from '../../../utils/sort';
-import {
-  asFormSelectValue,
-  FormSelectPlaceholderOption,
-} from '../../form/form-select-placeholder-option';
+
 import {
   NetworkInterfaceModel,
   NetworkInterfaceType,
   NetworkType,
 } from '../../../constants/vm/network';
+import { useShowErrorToggler } from '../../../hooks/use-show-error-toggler';
 import { NetworkInterfaceWrapper } from '../../../k8s/wrapper/vm/network-interface-wrapper';
 import { NetworkWrapper } from '../../../k8s/wrapper/vm/network-wrapper';
-import { getDialogUIError, getSequenceName } from '../../../utils/strings';
-import { ModalFooter } from '../modal/modal-footer';
-import { useShowErrorToggler } from '../../../hooks/use-show-error-toggler';
 import { UINetworkEditConfig } from '../../../types/ui/nic';
+import { getLoadedData, getLoadError, isLoaded, prefixedID } from '../../../utils';
+import { ignoreCaseSort } from '../../../utils/sort';
+import { getDialogUIError, getSequenceName } from '../../../utils/strings';
 import { isFieldDisabled } from '../../../utils/ui/edit-config';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { isValidationError } from '../../../utils/validations/common';
+import { validateNIC } from '../../../utils/validations/vm';
 import { PendingChangesAlert } from '../../Alerts/PendingChangesAlert';
 import { FormPFSelect } from '../../form/form-pf-select';
+import { FormRow } from '../../form/form-row';
+import {
+  asFormSelectValue,
+  FormSelectPlaceholderOption,
+} from '../../form/form-select-placeholder-option';
+import { ModalFooter } from '../modal/modal-footer';
 
 const getNetworkChoices = (
   nads: K8sResourceKind[],

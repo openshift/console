@@ -1,15 +1,17 @@
+import * as React from 'react';
+import { useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+
+import StatusIconAndText from '@console/shared/src/components/status/StatusIconAndText';
 import { Alert, AlertVariant } from '@patternfly/react-core';
 import { InProgressIcon } from '@patternfly/react-icons';
-import { useTranslation } from 'react-i18next';
-import StatusIconAndText from '@console/shared/src/components/status/StatusIconAndText';
-import * as React from 'react';
-import { connect } from 'react-redux';
+
 import { V2VProviderStatus } from '../../../../../statuses/v2v';
-import { OvirtProviderField, VMImportProvider, VMWareProviderField } from '../../../types';
-import { FormFieldRow } from '../../../form/form-field-row';
 import { iGet } from '../../../../../utils/immutable';
+import { FormFieldRow } from '../../../form/form-field-row';
 import { iGetProviderField } from '../../../selectors/immutable/provider/common';
 import { getProviderEndpointName } from '../../../strings/import-providers';
+import { OvirtProviderField, VMImportProvider, VMWareProviderField } from '../../../types';
 
 type StatusProps = {
   provider: VMImportProvider;

@@ -1,8 +1,10 @@
 import * as React from 'react';
-import { Stack, Spinner } from '@patternfly/react-core';
+
+import { VMIKind, VMKind } from '@console/kubevirt-plugin/src/types';
+import { Spinner, Stack } from '@patternfly/react-core';
+
 import useSSHKeys from '../../../hooks/use-ssh-keys';
 import SSHFormKey from './SSHFormKey/SSHFormKey';
-import { VMKind, VMIKind } from '@console/kubevirt-plugin/src/types';
 
 import './ssh-form.scss';
 

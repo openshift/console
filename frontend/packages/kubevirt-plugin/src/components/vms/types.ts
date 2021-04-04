@@ -4,10 +4,11 @@ import {
   PersistentVolumeClaimKind,
   PodKind,
 } from '@console/internal/module/k8s';
-import { VMIKind, VMKind } from '../../types/vm';
-import { VMGenericLikeEntityKind, VMILikeEntityKind } from '../../types/vmLike';
-import { VMImportKind } from '../../types/vm-import/ovirt/vm-import';
+
 import { V1alpha1DataVolume } from '../../types/api';
+import { VMIKind, VMKind } from '../../types/vm';
+import { VMImportKind } from '../../types/vm-import/ovirt/vm-import';
+import { VMGenericLikeEntityKind, VMILikeEntityKind } from '../../types/vmLike';
 
 type PendingChange = {
   isPendingChange: boolean;

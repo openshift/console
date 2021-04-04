@@ -1,16 +1,17 @@
-import * as React from 'react';
-import { connect } from 'react-redux';
 import classNames from 'classnames';
+import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+
+import { FormFieldReviewMemoRow } from '../../form/form-field-review-row';
+import { getOS } from '../../selectors/combined';
+import { iGetCommonData, iGetLoadedCommonData } from '../../selectors/immutable/selectors';
 import {
   iGetRelevantTemplateSelectors,
   iGetVmSettings,
 } from '../../selectors/immutable/vm-settings';
 import { VMSettingsField, VMWizardProps } from '../../types';
-import { FormFieldReviewMemoRow } from '../../form/form-field-review-row';
-import { iGetCommonData, iGetLoadedCommonData } from '../../selectors/immutable/selectors';
 import { getField, getFieldValue, getVMFlavorData } from './utils';
-import { getOS } from '../../selectors/combined';
 
 import './review-tab.scss';
 

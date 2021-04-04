@@ -1,12 +1,13 @@
+import classNames from 'classnames';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import classNames from 'classnames';
+
 import {
+  ActionGroup,
   Alert,
+  AlertProps,
   Button,
   ButtonVariant,
-  AlertProps,
-  ActionGroup,
   Spinner,
 } from '@patternfly/react-core';
 

@@ -1,27 +1,28 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, AlertActionLink, Stack, StackItem } from '@patternfly/react-core';
-import { ScrollToTopOnMount } from '@console/internal/components/utils/scroll-to-top-on-mount';
-import { SectionHeading } from '@console/internal/components/utils/headings';
-import { history } from '@console/internal/components/utils/router';
-import { useAccessReview, asAccessReview } from '@console/internal/components/utils/rbac';
-import { TemplateKind } from '@console/internal/module/k8s/types';
-import { TemplateModel } from '@console/internal/models';
 
-import {
-  VMTemplateResourceSummary,
-  VMTemplateDetailsList,
-  VMTemplateSchedulingList,
-} from './vm-template-resource';
-import { HashAnchor } from '../hash-anchor/hash-anchor';
-import { TemplateSourceStatus } from '../../statuses/template/types';
+import { SectionHeading } from '@console/internal/components/utils/headings';
+import { asAccessReview, useAccessReview } from '@console/internal/components/utils/rbac';
+import { history } from '@console/internal/components/utils/router';
+import { ScrollToTopOnMount } from '@console/internal/components/utils/scroll-to-top-on-mount';
+import { TemplateModel } from '@console/internal/models';
+import { TemplateKind } from '@console/internal/module/k8s/types';
+import { Alert, AlertActionLink, Stack, StackItem } from '@patternfly/react-core';
+
+import { VMWizardMode, VMWizardName } from '../../constants';
 import {
   getTemplateName,
   getTemplateProvider,
   isCommonTemplate,
 } from '../../selectors/vm-template/basic';
+import { TemplateSourceStatus } from '../../statuses/template/types';
 import { getVMWizardCreateLink } from '../../utils/url';
-import { VMWizardMode, VMWizardName } from '../../constants';
+import { HashAnchor } from '../hash-anchor/hash-anchor';
+import {
+  VMTemplateDetailsList,
+  VMTemplateResourceSummary,
+  VMTemplateSchedulingList,
+} from './vm-template-resource';
 
 export const VMTemplateDetails: React.FC<VMTemplateDetailsProps> = ({
   obj: template,

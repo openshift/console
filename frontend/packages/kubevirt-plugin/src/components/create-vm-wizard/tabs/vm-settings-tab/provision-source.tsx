@@ -1,14 +1,16 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
+
+import { ValidationErrorType } from '@console/shared';
 import { Button, ButtonVariant, SelectOption, Text, TextContent } from '@patternfly/react-core';
+
 import { ProvisionSource } from '../../../../constants/vm/provision-source';
-import { FormFieldRow } from '../../form/form-field-row';
-import { FormField, FormFieldType } from '../../form/form-field';
-import { iGetFieldValue } from '../../selectors/immutable/field';
-import { VMSettingsField } from '../../types';
 import { iGet, iGetIn } from '../../../../utils/immutable';
 import { FormPFSelect } from '../../../form/form-pf-select';
-import { ValidationErrorType } from '@console/shared';
+import { FormField, FormFieldType } from '../../form/form-field';
+import { FormFieldRow } from '../../form/form-field-row';
+import { iGetFieldValue } from '../../selectors/immutable/field';
+import { VMSettingsField } from '../../types';
 
 const ProvisionSourceDiskHelpMsg: React.FC<ProvisionSourceDiskHelpMsgProps> = ({
   provisionSourceValue,

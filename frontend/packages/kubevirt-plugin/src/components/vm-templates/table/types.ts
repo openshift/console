@@ -1,9 +1,9 @@
-import { PersistentVolumeClaimKind, PodKind, TemplateKind } from '@console/internal/module/k8s';
 import { FirehoseResult } from '@console/internal/components/utils/types';
+import { PersistentVolumeClaimKind, PodKind, TemplateKind } from '@console/internal/module/k8s';
 
-import { TemplateItem } from '../../../types/template';
 import { VMIKind, VMKind } from '../../../types';
 import { V1alpha1DataVolume } from '../../../types/api';
+import { TemplateItem } from '../../../types/template';
 
 export type VirtualMachineTemplateBundle = {
   template?: TemplateItem;

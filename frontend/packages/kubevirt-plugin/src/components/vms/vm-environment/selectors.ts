@@ -1,24 +1,26 @@
 import * as _ from 'lodash';
-import { SOURCES, EnvDisk } from './types';
-import { V1Volume, V1Disk } from '../../../types/api';
+
 import {
-  configMapKind,
-  configMapRef,
-  secretRef,
-  secretKind,
-  serviceAccountRef,
-  serviceAccountKind,
-} from './constants';
-import { getRandomChars } from '@console/shared';
-import {
+  ConfigMapKind,
   EnvVarSource,
   ListKind,
-  ConfigMapKind,
   SecretKind,
   ServiceAccountKind,
 } from '@console/internal/module/k8s';
+import { getRandomChars } from '@console/shared';
+
 import { VMWrapper } from '../../../k8s/wrapper/vm/vm-wrapper';
 import { VolumeWrapper } from '../../../k8s/wrapper/vm/volume-wrapper';
+import { V1Disk, V1Volume } from '../../../types/api';
+import {
+  configMapKind,
+  configMapRef,
+  secretKind,
+  secretRef,
+  serviceAccountKind,
+  serviceAccountRef,
+} from './constants';
+import { EnvDisk, SOURCES } from './types';
 
 export const getSerial = (ed: EnvDisk): string => ed[0];
 export const getEnvVarSource = (ed: EnvDisk): EnvVarSource => ed[1];

@@ -1,6 +1,9 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
 import { useTranslation } from 'react-i18next';
+import { RouteComponentProps } from 'react-router';
+
+import { Conditions } from '@console/internal/components/conditions';
+import { DetailsPage } from '@console/internal/components/factory';
 import {
   DetailsItem,
   FirehoseResource,
@@ -12,20 +15,19 @@ import {
   Timestamp,
 } from '@console/internal/components/utils';
 import { getName } from '@console/shared';
-import { Conditions } from '@console/internal/components/conditions';
-import { DetailsPage } from '@console/internal/components/factory';
-import snapshotRestoreModal from '../modals/snapshot-restore-modal/snapshot-restore-modal';
+
+import { VM_DETAIL_SNAPSHOTS } from '../../constants';
 import { VirtualMachineSnapshotModel } from '../../models';
-import { VMRestore, VMSnapshot } from '../../types';
 import {
   getVmRestoreTime,
   getVmSnapshotVmName,
   isVMSnapshotReady,
 } from '../../selectors/snapshot/snapshot';
-import { VMSnapshotStatus } from './vm-snapshot-status';
-import { VM_DETAIL_SNAPSHOTS } from '../../constants';
-import { useMappedVMRestores } from './use-mapped-vm-restores';
+import { VMRestore, VMSnapshot } from '../../types';
 import { descriptionModal } from '../modals';
+import snapshotRestoreModal from '../modals/snapshot-restore-modal/snapshot-restore-modal';
+import { useMappedVMRestores } from './use-mapped-vm-restores';
+import { VMSnapshotStatus } from './vm-snapshot-status';
 
 const { editYaml } = navFactory;
 const { common } = Kebab.factory;

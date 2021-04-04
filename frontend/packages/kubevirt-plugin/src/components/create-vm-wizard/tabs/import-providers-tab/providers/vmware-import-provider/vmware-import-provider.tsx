@@ -1,6 +1,13 @@
-import { connect } from 'react-redux';
 import * as React from 'react';
+import { connect } from 'react-redux';
+
 import { Checkbox, TextInput } from '@patternfly/react-core';
+
+import { iGet, iGetIn } from '../../../../../../utils/immutable';
+import { FormField, FormFieldType } from '../../../../form/form-field';
+import { FormFieldMemoRow } from '../../../../form/form-field-row';
+import { vmWizardActions } from '../../../../redux/actions';
+import { ActionType } from '../../../../redux/types';
 import {
   iGetVMwareData,
   isVMWareProvider,
@@ -10,18 +17,13 @@ import {
   VMWareProviderField,
   VMWareProviderRenderableField,
 } from '../../../../types';
-import { vmWizardActions } from '../../../../redux/actions';
-import { ActionType } from '../../../../redux/types';
-import { FormField, FormFieldType } from '../../../../form/form-field';
-import { FormFieldMemoRow } from '../../../../form/form-field-row';
-import { iGet, iGetIn } from '../../../../../../utils/immutable';
 import { getFieldId } from '../../../../utils/renderable-field-utils';
-import { VMImportProviderControllerStatusRow } from '../vm-import-provider-controller-status-row';
-import { VMImportProviderControllerErrors } from '../vm-import-provider-controller-errors';
-import { VMImportSecrets } from '../vm-import-secrets';
 import { VMImportPassword } from '../vm-import-password';
-import { VMWareVMs } from './vmware-vms';
+import { VMImportProviderControllerErrors } from '../vm-import-provider-controller-errors';
+import { VMImportProviderControllerStatusRow } from '../vm-import-provider-controller-status-row';
 import { VMImportProviderObjectStatus } from '../vm-import-provider-object-status';
+import { VMImportSecrets } from '../vm-import-secrets';
+import { VMWareVMs } from './vmware-vms';
 
 import './vmware-import-provider.scss';
 

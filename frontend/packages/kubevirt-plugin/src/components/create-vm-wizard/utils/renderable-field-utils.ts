@@ -1,17 +1,17 @@
-import {
-  ImportProvidersField,
-  VMSettingsField,
-  RenderableFieldResolver,
-  VMWareProviderField,
-  RenderableField,
-  OvirtProviderField,
-} from '../types';
+import { iGetFieldKey } from '../selectors/immutable/field';
 import {
   helpKeyResolver,
   placeholderKeyResolver,
   titleKeyResolver,
 } from '../strings/renderable-field';
-import { iGetFieldKey } from '../selectors/immutable/field';
+import {
+  ImportProvidersField,
+  OvirtProviderField,
+  RenderableField,
+  RenderableFieldResolver,
+  VMSettingsField,
+  VMWareProviderField,
+} from '../types';
 
 const renderableFieldOrder: { [key in RenderableField]: number } = {
   [ImportProvidersField.PROVIDER]: 0,

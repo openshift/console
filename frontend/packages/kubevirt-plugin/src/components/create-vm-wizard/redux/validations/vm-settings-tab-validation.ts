@@ -1,35 +1,37 @@
 import * as _ from 'lodash';
+
 import {
   asValidationObject,
   ValidationErrorType,
   ValidationObject,
 } from '@console/shared/src/utils/validation';
-import { VMSettingsField, VMWizardProps, VMWizardTab } from '../../types';
-import { hasVmSettingsChanged, iGetVmSettings } from '../../selectors/immutable/vm-settings';
-import { iGetFieldValue } from '../../selectors/immutable/field';
-import { InternalActionType, UpdateOptions, ValidationConfig, Validator } from '../types';
-import { vmWizardInternalActions } from '../internal-actions';
-import { validateVmLikeEntityName } from '../../../../utils/validations/vm';
+
+import { ProvisionSource } from '../../../../constants/vm/provision-source';
+import { UIValidation } from '../../../../types/ui/ui';
 import {
   iGet,
   iGetLoadedData,
   iGetLoadError,
   immutableListToJS,
 } from '../../../../utils/immutable';
+import { isPositiveNumber } from '../../../../utils/validations/common';
+import { TemplateValidations } from '../../../../utils/validations/template/template-validations';
+import { combineIntegerValidationResults } from '../../../../utils/validations/template/utils';
+import { validateVmLikeEntityName } from '../../../../utils/validations/vm';
+import { BinaryUnit, convertToBytes } from '../../../form/size-unit-utils';
+import { iGetFieldValue } from '../../selectors/immutable/field';
 import {
   checkTabValidityChanged,
   iGetCommonData,
   iGetLoadedCommonData,
   immutableListToShallowMetadataJS,
 } from '../../selectors/immutable/selectors';
-import { isPositiveNumber } from '../../../../utils/validations/common';
-import { TemplateValidations } from '../../../../utils/validations/template/template-validations';
-import { combineIntegerValidationResults } from '../../../../utils/validations/template/utils';
-import { getFieldsValidity, getValidationUpdate } from './utils';
+import { hasVmSettingsChanged, iGetVmSettings } from '../../selectors/immutable/vm-settings';
 import { getTemplateValidations } from '../../selectors/template';
-import { BinaryUnit, convertToBytes } from '../../../form/size-unit-utils';
-import { ProvisionSource } from '../../../../constants/vm/provision-source';
-import { UIValidation } from '../../../../types/ui/ui';
+import { VMSettingsField, VMWizardProps, VMWizardTab } from '../../types';
+import { vmWizardInternalActions } from '../internal-actions';
+import { InternalActionType, UpdateOptions, ValidationConfig, Validator } from '../types';
+import { getFieldsValidity, getValidationUpdate } from './utils';
 
 const validateVm: Validator = (field, options) => {
   const { getState, id } = options;

@@ -1,13 +1,14 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Title, Stack, StackItem, Alert, Bullseye, Spinner, Button } from '@patternfly/react-core';
+
 import { ExternalLink, ResourceLink } from '@console/internal/components/utils';
+import { Alert, Bullseye, Button, Spinner, Stack, StackItem, Title } from '@patternfly/react-core';
 
 import { VirtualMachineModel } from '../../../models';
-import { VMStatus } from '../../vm-status/vm-status';
-import { VMKind, VMIKind } from '../../../types';
 import { VMStatusBundle } from '../../../statuses/vm/types';
+import { VMIKind, VMKind } from '../../../types';
 import cancelCustomizationModal from '../../modals/template-customization/CancelCustomizationModal';
+import { VMStatus } from '../../vm-status/vm-status';
 
 import './customize-source.scss';
 

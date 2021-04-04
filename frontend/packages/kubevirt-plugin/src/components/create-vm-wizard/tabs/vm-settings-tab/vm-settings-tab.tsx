@@ -1,15 +1,25 @@
 import * as React from 'react';
-import { Form, SelectOption, TextArea, TextInput } from '@patternfly/react-core';
-import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+
 import { useAccessReview2 } from '@console/internal/components/utils';
-import { StorageClassResourceKind } from '@console/internal/module/k8s';
-import { StorageClassModel } from '@console/internal/models';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { StorageClassModel } from '@console/internal/models';
+import { StorageClassResourceKind } from '@console/internal/module/k8s';
+import { Form, SelectOption, TextArea, TextInput } from '@patternfly/react-core';
+
+import { TemplateSupport } from '../../../../constants/vm-templates/support';
+import { getDefaultStorageClass } from '../../../../selectors/config-map/sc-defaults';
 import { iGet, iGetIn } from '../../../../utils/immutable';
-import { FormFieldMemoRow } from '../../form/form-field-row';
+import { FormPFSelect } from '../../../form/form-pf-select';
 import { FormField, FormFieldType } from '../../form/form-field';
+import { FormFieldMemoRow } from '../../form/form-field-row';
 import { vmWizardActions } from '../../redux/actions';
+import { ActionType } from '../../redux/types';
+import { getInitialData, iGetCommonData } from '../../selectors/immutable/selectors';
+import { iGetProvisionSourceStorage } from '../../selectors/immutable/storage';
+import { iGetVmSettings } from '../../selectors/immutable/vm-settings';
+import { getStepsMetadata } from '../../selectors/immutable/wizard-selectors';
 import {
   VMSettingsField,
   VMSettingsFieldAttribute,
@@ -19,23 +29,15 @@ import {
   VMWizardTab,
   VMWizardTabsMetadata,
 } from '../../types';
-import { iGetVmSettings } from '../../selectors/immutable/vm-settings';
-import { ActionType } from '../../redux/types';
-import { getInitialData, iGetCommonData } from '../../selectors/immutable/selectors';
-import { getStepsMetadata } from '../../selectors/immutable/wizard-selectors';
-import { iGetProvisionSourceStorage } from '../../selectors/immutable/storage';
-import { WorkloadSelect } from './workload-profile';
-import { OS } from './os';
-import { FlavorSelect } from './flavor';
-import { MemoryCPU } from './memory-cpu';
-import { ContainerSource } from './container-source';
-import { ProvisionSourceComponent } from './provision-source';
-import { URLSource } from './url-source';
 import { getFieldId } from '../../utils/renderable-field-utils';
 import { ClonePVCSource } from './clone-pvc-source';
-import { getDefaultStorageClass } from '../../../../selectors/config-map/sc-defaults';
-import { FormPFSelect } from '../../../form/form-pf-select';
-import { TemplateSupport } from '../../../../constants/vm-templates/support';
+import { ContainerSource } from './container-source';
+import { FlavorSelect } from './flavor';
+import { MemoryCPU } from './memory-cpu';
+import { OS } from './os';
+import { ProvisionSourceComponent } from './provision-source';
+import { URLSource } from './url-source';
+import { WorkloadSelect } from './workload-profile';
 
 import '../../create-vm-wizard-footer.scss';
 import './vm-settings-tab.scss';

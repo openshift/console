@@ -1,24 +1,26 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, ButtonVariant, Checkbox, Text, TextVariants } from '@patternfly/react-core';
-import { ModalTitle, ModalBody, ModalComponentProps } from '@console/internal/components/factory';
-import { NodeModel } from '@console/internal/models';
+
+import { ModalBody, ModalComponentProps, ModalTitle } from '@console/internal/components/factory';
 import {
-  withHandlePromise,
-  HandlePromiseProps,
   FirehoseResult,
+  HandlePromiseProps,
   Label,
+  withHandlePromise,
 } from '@console/internal/components/utils';
+import { NodeModel } from '@console/internal/models';
 import { k8sPatch, NodeKind } from '@console/internal/module/k8s';
-import { VMLikeEntityKind } from '../../../../types/vmLike';
-import { getVMLikeModel, isDedicatedCPUPlacement, asVM } from '../../../../selectors/vm';
-import { getDedicatedCpuPatch } from '../../../../k8s/patches/vm/vm-cpu-patches';
-import { getLoadedData, isLoaded, getLoadError } from '../../../../utils';
+import { Button, ButtonVariant, Checkbox, Text, TextVariants } from '@patternfly/react-core';
+
 import { useCollisionChecker } from '../../../../hooks/use-collision-checker';
-import { useNodeQualifier } from '../shared/hooks';
+import { getDedicatedCpuPatch } from '../../../../k8s/patches/vm/vm-cpu-patches';
+import { asVM, getVMLikeModel, isDedicatedCPUPlacement } from '../../../../selectors/vm';
+import { VMLikeEntityKind } from '../../../../types/vmLike';
+import { getLoadedData, getLoadError, isLoaded } from '../../../../utils';
 import { ModalFooter } from '../../modal/modal-footer';
-import { NodeChecker } from '../shared/NodeChecker/node-checker';
 import { DEDICATED_RESOURCES_LABELS } from '../shared/consts';
+import { useNodeQualifier } from '../shared/hooks';
+import { NodeChecker } from '../shared/NodeChecker/node-checker';
 
 import '../shared/scheduling-modals.scss';
 

@@ -1,18 +1,21 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+
 import {
   createModalLauncher,
-  ModalTitle,
   ModalBody,
   ModalComponentProps,
+  ModalTitle,
 } from '@console/internal/components/factory';
+import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
 import { k8sPatch } from '@console/internal/module/k8s';
-import { Checkbox, TextVariants, Text } from '@patternfly/react-core';
-import { withHandlePromise, HandlePromiseProps } from '@console/internal/components/utils';
-import { ModalFooter } from '../../modal/modal-footer';
+import { Checkbox, Text, TextVariants } from '@patternfly/react-core';
+
 import { getEvictionStrategyPatch } from '../../../../k8s/patches/vm/vm-scheduling-patches';
 import { getVMLikeModel } from '../../../../selectors/vm/vmlike';
 import { VMLikeEntityKind } from '../../../../types/vmLike';
+import { ModalFooter } from '../../modal/modal-footer';
+
 import '../shared/scheduling-modals.scss';
 
 const EvictionStrategyModal = withHandlePromise<EvictionStrategyModalWithPromiseProps>((props) => {

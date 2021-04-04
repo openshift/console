@@ -1,13 +1,13 @@
-import { InternalActionType, UpdateOptions } from '../../../types';
+import { deleteV2VvmwareObject } from '../../../../../../k8s/requests/v2v/delete-v2vvmware-object';
 import {
   iGetVMWareField,
   isVMWareProvider,
 } from '../../../../selectors/immutable/provider/vmware/selectors';
-import { VMImportProvider, VMWareProviderField, VMWizardProps } from '../../../../types';
 import { iGetCommonData } from '../../../../selectors/immutable/selectors';
-import { vmWizardInternalActions } from '../../../internal-actions';
-import { deleteV2VvmwareObject } from '../../../../../../k8s/requests/v2v/delete-v2vvmware-object';
+import { VMImportProvider, VMWareProviderField, VMWizardProps } from '../../../../types';
 import { getVmWareInitialState } from '../../../initial-state/providers/vmware-initial-state';
+import { vmWizardInternalActions } from '../../../internal-actions';
+import { InternalActionType, UpdateOptions } from '../../../types';
 
 // should be idempotent and called on every provider change
 export const cleanupVmWareProvider = async (options: UpdateOptions) => {

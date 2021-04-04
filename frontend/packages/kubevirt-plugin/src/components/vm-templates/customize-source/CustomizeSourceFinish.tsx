@@ -1,31 +1,32 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
+import { Prompt } from 'react-router';
+
+import { history } from '@console/internal/components/utils';
+import { k8sKill, TemplateKind } from '@console/internal/module/k8s';
 import {
+  ErrorStatus,
+  GreenCheckCircleIcon,
+  ProgressStatus,
+  SuccessStatus,
+} from '@console/shared/src';
+import {
+  Alert,
   Bullseye,
-  Title,
-  Stack,
-  StackItem,
+  Button,
   Progress,
+  ProgressMeasureLocation,
   ProgressVariant,
   Split,
   SplitItem,
-  Button,
-  Alert,
-  ProgressMeasureLocation,
+  Stack,
+  StackItem,
+  Title,
 } from '@patternfly/react-core';
-import { Prompt } from 'react-router';
-import { useTranslation } from 'react-i18next';
-import {
-  ErrorStatus,
-  SuccessStatus,
-  ProgressStatus,
-  GreenCheckCircleIcon,
-} from '@console/shared/src';
-import { history } from '@console/internal/components/utils';
-import { k8sKill, TemplateKind } from '@console/internal/module/k8s';
 
-import { VMKind } from '../../../types';
 import { createTemplateFromVM, patchVMDisks } from '../../../k8s/requests/vmtemplate/customize';
 import { VirtualMachineModel } from '../../../models';
+import { VMKind } from '../../../types';
 
 type ItemStatusProps = {
   error: boolean;

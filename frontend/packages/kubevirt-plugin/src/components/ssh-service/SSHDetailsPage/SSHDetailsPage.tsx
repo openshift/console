@@ -1,11 +1,13 @@
 import * as React from 'react';
-import SSHModal from '../SSHModal';
-import useSSHService from '../../../hooks/use-ssh-service';
-import { Stack, StackItem, ClipboardCopy, TextVariants, Text } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { VMKind, VMIKind } from '@console/kubevirt-plugin/src/types';
+
+import { VMIKind, VMKind } from '@console/kubevirt-plugin/src/types';
+import { ClipboardCopy, Stack, StackItem, Text, TextVariants } from '@patternfly/react-core';
+
 import useSSHCommand from '../../../hooks/use-ssh-command';
+import useSSHService from '../../../hooks/use-ssh-service';
 import { EditButton } from '../../edit-button';
+import SSHModal from '../SSHModal';
 
 import './ssh-details-page.scss';
 

@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+
 import { GridItem, Text, TextVariants } from '@patternfly/react-core';
+
 import { LabelsList } from '../../../../../LabelsList/labels-list';
 import { AffinityLabel } from '../../types';
 import { AffinityExpressionRow } from './affinity-expression-row';

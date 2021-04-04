@@ -1,26 +1,26 @@
-import {
-  hasVMSettingsValueChanged,
-  iGetRelevantTemplateSelectors,
-} from '../../selectors/immutable/vm-settings';
-import { CloudInitField, VMSettingsField, VMWizardProps, VMWizardStorageType } from '../../types';
-import { InternalActionType, UpdateOptions } from '../types';
-import { iGetCommonData, iGetLoadedCommonData } from '../../selectors/immutable/selectors';
-import {
-  iGetCommonTemplateCloudInit,
-  iGetRelevantTemplate,
-  iGetCommonTemplateDiskBus,
-} from '../../../../selectors/immutable/template/combined';
-import { CLOUDINIT_DISK, DiskType, DiskBus, VolumeType } from '../../../../constants/vm';
-import { vmWizardInternalActions } from '../internal-actions';
+import { CLOUDINIT_DISK, DiskBus, DiskType, VolumeType } from '../../../../constants/vm';
 import {
   CloudInitDataFormKeys,
   CloudInitDataHelper,
   generateCloudInitPassword,
 } from '../../../../k8s/wrapper/vm/cloud-init-data-helper';
-import { iGet, iGetIn, toShallowJS } from '../../../../utils/immutable';
 import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
 import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
+import {
+  iGetCommonTemplateCloudInit,
+  iGetCommonTemplateDiskBus,
+  iGetRelevantTemplate,
+} from '../../../../selectors/immutable/template/combined';
+import { iGet, iGetIn, toShallowJS } from '../../../../utils/immutable';
+import { iGetCommonData, iGetLoadedCommonData } from '../../selectors/immutable/selectors';
 import { iGetStorages } from '../../selectors/immutable/storage';
+import {
+  hasVMSettingsValueChanged,
+  iGetRelevantTemplateSelectors,
+} from '../../selectors/immutable/vm-settings';
+import { CloudInitField, VMSettingsField, VMWizardProps, VMWizardStorageType } from '../../types';
+import { vmWizardInternalActions } from '../internal-actions';
+import { InternalActionType, UpdateOptions } from '../types';
 
 export const commonTemplatesUpdater = ({ id, prevState, dispatch, getState }: UpdateOptions) => {
   const state = getState();

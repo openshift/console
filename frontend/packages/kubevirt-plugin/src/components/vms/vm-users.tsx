@@ -1,17 +1,19 @@
-import * as React from 'react';
 import * as classNames from 'classnames';
-import { useTranslation } from 'react-i18next';
 import { TFunction } from 'i18next';
-import { sortable } from '@patternfly/react-table';
+import * as React from 'react';
+import { useTranslation } from 'react-i18next';
+
+import { Table, TableData, TableRow } from '@console/internal/components/factory';
 import { fromNow } from '@console/internal/components/utils/datetime';
-import { Table, TableRow, TableData } from '@console/internal/components/factory';
 import { Timestamp } from '@console/internal/components/utils/timestamp';
-import { getGuestAgentFieldNotAvailMsg } from '../../utils/guest-agent-strings';
-import { isGuestAgentInstalled } from '../dashboards-page/vm-dashboard/vm-alerts';
+import { sortable } from '@patternfly/react-table';
+
 import { useGuestAgentInfo } from '../../hooks/use-guest-agent-info';
 import { GuestAgentInfoWrapper } from '../../k8s/wrapper/vm/guest-agent-info/guest-agent-info-wrapper';
 import { VMStatusBundle } from '../../statuses/vm/types';
 import { VMIKind } from '../../types';
+import { getGuestAgentFieldNotAvailMsg } from '../../utils/guest-agent-strings';
+import { isGuestAgentInstalled } from '../dashboards-page/vm-dashboard/vm-alerts';
 
 const tableColumnClasses = [
   classNames('col-lg-3', 'col-md-3', 'col-sm-4', 'col-sm-4'),

@@ -1,7 +1,7 @@
+import { getProviders } from '../../provider-definitions';
 import { CommonData, ImportProvidersField } from '../../types';
 import { asHidden, asRequired, IMPORT_PROVIDES_METADATA_ID } from '../../utils/utils';
-import { getProviders } from '../../provider-definitions';
-import { InitialStepStateGetter, ImportProvidersSettings } from './types';
+import { ImportProvidersSettings, InitialStepStateGetter } from './types';
 
 export const getInitialImportProviders = (data: CommonData): ImportProvidersSettings => {
   const {

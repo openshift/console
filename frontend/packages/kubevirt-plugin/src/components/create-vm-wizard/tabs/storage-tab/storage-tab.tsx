@@ -1,6 +1,10 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+
+import { Firehose, FirehoseResult } from '@console/internal/components/utils';
+import { PersistentVolumeClaimModel } from '@console/internal/models';
+import { createLookup, getName } from '@console/shared/src';
 import {
   Bullseye,
   Button,
@@ -12,33 +16,31 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
-import { Firehose, FirehoseResult } from '@console/internal/components/utils';
-import { createLookup, getName } from '@console/shared/src';
-import { PersistentVolumeClaimModel } from '@console/internal/models';
+
+import { DeviceType } from '../../../../constants/vm';
+import { ProvisionSource } from '../../../../constants/vm/provision-source';
+import { CombinedDisk } from '../../../../k8s/wrapper/vm/combined-disk';
+import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
+import { isLoaded } from '../../../../utils';
+import { wrapWithProgress } from '../../../../utils/utils';
+import { diskTableColumnClasses } from '../../../vm-disks/utils';
+import { VMDisksTable } from '../../../vm-disks/vm-disks';
+import { vmWizardActions } from '../../redux/actions';
+import { ActionType } from '../../redux/types';
 import { iGetCommonData } from '../../selectors/immutable/selectors';
+import { iGetProvisionSource } from '../../selectors/immutable/vm-settings';
 import {
   hasStepCreateDisabled,
   hasStepDeleteDisabled,
   hasStepUpdateDisabled,
   isStepLocked,
 } from '../../selectors/immutable/wizard-selectors';
-import { VMWizardProps, VMWizardStorage, VMWizardTab } from '../../types';
-import { VMDisksTable } from '../../../vm-disks/vm-disks';
-import { vmWizardActions } from '../../redux/actions';
-import { ActionType } from '../../redux/types';
-import { iGetProvisionSource } from '../../selectors/immutable/vm-settings';
 import { getStorages } from '../../selectors/selectors';
-import { wrapWithProgress } from '../../../../utils/utils';
-import { diskTableColumnClasses } from '../../../vm-disks/utils';
-import { ProvisionSource } from '../../../../constants/vm/provision-source';
-import { CombinedDisk } from '../../../../k8s/wrapper/vm/combined-disk';
-import { isLoaded } from '../../../../utils';
-import { DeviceType } from '../../../../constants/vm';
-import { VmWizardStorageRow } from './vm-wizard-storage-row';
+import { VMWizardProps, VMWizardStorage, VMWizardTab } from '../../types';
+import { StorageBootSource } from './storage-boot-source';
 import { VMWizardStorageBundle } from './types';
 import { vmWizardStorageModalEnhanced } from './vm-wizard-storage-modal-enhanced';
-import { StorageBootSource } from './storage-boot-source';
-import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
+import { VmWizardStorageRow } from './vm-wizard-storage-row';
 
 import './storage-tab.scss';
 

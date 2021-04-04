@@ -1,5 +1,6 @@
-import { AffinityCondition, AffinityType } from '../affinity-modal/types';
 import { pluralize } from '@console/internal/components/utils';
+
+import { AffinityCondition, AffinityType } from '../affinity-modal/types';
 
 // Node Checker
 const pluralNode = (size) => pluralize(size, 'node', 'nodes', false);

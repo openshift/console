@@ -1,22 +1,26 @@
 import * as React from 'react';
-import { TableData, TableRow, RowFunction } from '@console/internal/components/factory';
+
+import { RowFunction, TableData, TableRow } from '@console/internal/components/factory';
 import {
   asAccessReview,
   Kebab,
   KebabOption,
   LoadingInline,
 } from '@console/internal/components/utils';
-import { DASH, dimensifyRow, getDeletetionTimestamp } from '@console/shared';
 import { TemplateModel } from '@console/internal/models';
-import { deleteDiskModal } from '../modals/delete-disk-modal/delete-disk-modal';
-import { VMLikeEntityKind } from '../../types/vmLike';
-import { asVM, isVMRunningOrExpectedRunning } from '../../selectors/vm';
-import { isVM, isVMI } from '../../selectors/check-type';
+import { DASH, dimensifyRow, getDeletetionTimestamp } from '@console/shared';
+
+import { PENDING_RESTART_LABEL } from '../../constants';
+import { CombinedDisk } from '../../k8s/wrapper/vm/combined-disk';
 import { VirtualMachineModel } from '../../models';
+import { isVM, isVMI } from '../../selectors/check-type';
+import { asVM, isVMRunningOrExpectedRunning } from '../../selectors/vm';
+import { VMLikeEntityKind } from '../../types/vmLike';
+import { validateDisk } from '../../utils/validations/vm/disk';
+import { deleteDiskModal } from '../modals/delete-disk-modal/delete-disk-modal';
+import { diskModalEnhanced } from '../modals/disk-modal/disk-modal-enhanced';
 import { ValidationCell } from '../table/validation-cell';
 import { VMNicRowActionOpts } from '../vm-nics/types';
-import { diskModalEnhanced } from '../modals/disk-modal/disk-modal-enhanced';
-import { CombinedDisk } from '../../k8s/wrapper/vm/combined-disk';
 import {
   StorageBundle,
   StorageSimpleData,
@@ -24,8 +28,6 @@ import {
   VMStorageRowActionOpts,
   VMStorageRowCustomData,
 } from './types';
-import { validateDisk } from '../../utils/validations/vm/disk';
-import { PENDING_RESTART_LABEL } from '../../constants';
 
 const menuActionEdit = (
   disk: CombinedDisk,

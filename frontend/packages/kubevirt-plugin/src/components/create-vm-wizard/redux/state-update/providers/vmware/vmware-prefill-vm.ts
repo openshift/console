@@ -6,10 +6,33 @@
  * The vmwareToKubevirtOsConfigMap is usually created by the web-ui-operator and can be missing.
  */
 import * as _ from 'lodash';
-import { alignWithDNS1123 } from '@console/shared/src';
+
 import { ConfigMapKind, StorageClassResourceKind } from '@console/internal/module/k8s';
-import { InternalActionType, UpdateOptions } from '../../../types';
+import { alignWithDNS1123 } from '@console/shared/src';
+
+import { VMwareFirmware } from '../../../../../../constants/v2v-import/vmware/vmware-firmware';
+import {
+  CUSTOM_FLAVOR,
+  DiskBus,
+  DiskType,
+  NetworkInterfaceModel,
+  NetworkInterfaceType,
+  NetworkType,
+  VolumeType,
+} from '../../../../../../constants/vm';
+import { DiskWrapper } from '../../../../../../k8s/wrapper/vm/disk-wrapper';
+import { NetworkInterfaceWrapper } from '../../../../../../k8s/wrapper/vm/network-interface-wrapper';
+import { NetworkWrapper } from '../../../../../../k8s/wrapper/vm/network-wrapper';
+import { PersistentVolumeClaimWrapper } from '../../../../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
+import { VolumeWrapper } from '../../../../../../k8s/wrapper/vm/volume-wrapper';
+import {
+  getDefaultSCAccessModes,
+  getDefaultSCVolumeMode,
+} from '../../../../../../selectors/config-map/sc-defaults';
+import { toShallowJS } from '../../../../../../utils/immutable';
+import { BinaryUnit, convertToHighestUnit } from '../../../../../form/size-unit-utils';
 import { iGetVMWareFieldAttribute } from '../../../../selectors/immutable/provider/vmware/selectors';
+import { iGetCommonData, iGetLoadedCommonData } from '../../../../selectors/immutable/selectors';
 import {
   VMSettingsField,
   VMWareProviderField,
@@ -20,29 +43,8 @@ import {
   VMWizardStorage,
   VMWizardStorageType,
 } from '../../../../types';
-import { iGetCommonData, iGetLoadedCommonData } from '../../../../selectors/immutable/selectors';
 import { vmWizardInternalActions } from '../../../internal-actions';
-import {
-  CUSTOM_FLAVOR,
-  DiskBus,
-  DiskType,
-  NetworkInterfaceModel,
-  NetworkInterfaceType,
-  NetworkType,
-  VolumeType,
-} from '../../../../../../constants/vm';
-import {
-  getDefaultSCAccessModes,
-  getDefaultSCVolumeMode,
-} from '../../../../../../selectors/config-map/sc-defaults';
-import { toShallowJS } from '../../../../../../utils/immutable';
-import { NetworkWrapper } from '../../../../../../k8s/wrapper/vm/network-wrapper';
-import { NetworkInterfaceWrapper } from '../../../../../../k8s/wrapper/vm/network-interface-wrapper';
-import { DiskWrapper } from '../../../../../../k8s/wrapper/vm/disk-wrapper';
-import { VolumeWrapper } from '../../../../../../k8s/wrapper/vm/volume-wrapper';
-import { PersistentVolumeClaimWrapper } from '../../../../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
-import { BinaryUnit, convertToHighestUnit } from '../../../../../form/size-unit-utils';
-import { VMwareFirmware } from '../../../../../../constants/v2v-import/vmware/vmware-firmware';
+import { InternalActionType, UpdateOptions } from '../../../types';
 
 export const getNics = (parsedVm): VMWizardNetwork[] => {
   const devices = _.get(parsedVm, ['Config', 'Hardware', 'Device']);

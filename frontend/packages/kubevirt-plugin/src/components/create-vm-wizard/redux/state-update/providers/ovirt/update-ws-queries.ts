@@ -1,31 +1,32 @@
 import { DeploymentModel, PodModel, SecretModel } from '@console/internal/models';
-import { InternalActionType, UpdateOptions } from '../../../types';
+import { referenceForModel } from '@console/internal/module/k8s';
+import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
+
 import {
-  ImportProvidersField,
-  VMImportProvider,
-  OvirtProviderProps,
-  VMWizardProps,
-  OvirtProviderField,
-} from '../../../../types';
-import { hasImportProvidersChanged } from '../../../../selectors/immutable/import-providers';
-import { vmWizardInternalActions } from '../../../internal-actions';
-import { iGetCommonData } from '../../../../selectors/immutable/selectors';
+  OVIRT_TYPE_LABEL,
+  V2V_TEMPORARY_LABEL,
+  V2VVMWARE_DEPLOYMENT_NAME,
+} from '../../../../../../constants/v2v';
+import { OVirtProviderModel } from '../../../../../../models';
+import { FirehoseResourceEnhanced } from '../../../../../../types/custom';
 import { iGetIn } from '../../../../../../utils/immutable';
 import { iGetCreateVMWizard } from '../../../../selectors/immutable/common';
+import { hasImportProvidersChanged } from '../../../../selectors/immutable/import-providers';
 import {
   hasOvirtSettingsChanged,
   iGetOvirtField,
   isOvirtProvider,
 } from '../../../../selectors/immutable/provider/ovirt/selectors';
-import { FirehoseResourceEnhanced } from '../../../../../../types/custom';
+import { iGetCommonData } from '../../../../selectors/immutable/selectors';
 import {
-  V2VVMWARE_DEPLOYMENT_NAME,
-  V2V_TEMPORARY_LABEL,
-  OVIRT_TYPE_LABEL,
-} from '../../../../../../constants/v2v';
-import { OVirtProviderModel } from '../../../../../../models';
-import { referenceForModel } from '@console/internal/module/k8s';
-import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
+  ImportProvidersField,
+  OvirtProviderField,
+  OvirtProviderProps,
+  VMImportProvider,
+  VMWizardProps,
+} from '../../../../types';
+import { vmWizardInternalActions } from '../../../internal-actions';
+import { InternalActionType, UpdateOptions } from '../../../types';
 
 type GetQueriesParams = {
   namespace: string;

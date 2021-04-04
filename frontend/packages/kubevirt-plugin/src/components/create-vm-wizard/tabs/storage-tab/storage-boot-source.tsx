@@ -1,15 +1,17 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Form, FormSelect, FormSelectOption } from '@patternfly/react-core';
+
 import { ValidationErrorType } from '@console/shared';
-import { VMWizardStorage } from '../../types';
-import { FormRow } from '../../../form/form-row';
-import { FormSelectPlaceholderOption } from '../../../form/form-select-placeholder-option';
-import { ignoreCaseSort } from '../../../../utils/sort';
-import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
+import { Form, FormSelect, FormSelectOption } from '@patternfly/react-core';
+
+import { DataVolumeSourceType, VolumeType } from '../../../../constants/vm/storage';
 import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';
 import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
-import { DataVolumeSourceType, VolumeType } from '../../../../constants/vm/storage';
+import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
+import { ignoreCaseSort } from '../../../../utils/sort';
+import { FormRow } from '../../../form/form-row';
+import { FormSelectPlaceholderOption } from '../../../form/form-select-placeholder-option';
+import { VMWizardStorage } from '../../types';
 
 const STORAGE_BOOT_SOURCE = 'storage-bootsource';
 

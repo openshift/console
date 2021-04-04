@@ -1,21 +1,23 @@
 import * as React from 'react';
+
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { getName, getNamespace, ProgressStatus } from '@console/shared';
-import { InProgressIcon, ErrorCircleOIcon, BanIcon } from '@patternfly/react-icons';
-import { global_danger_color_100 as dangerColor } from '@patternfly/react-tokens';
 import {
+  Button,
   Popover,
   PopoverPosition,
-  Button,
   Progress,
   ProgressVariant,
+  Spinner,
   Stack,
   StackItem,
-  Spinner,
 } from '@patternfly/react-core';
-import { UPLOAD_STATUS } from './consts';
-import { CDIUploadContext } from './cdi-upload-provider';
+import { BanIcon, ErrorCircleOIcon, InProgressIcon } from '@patternfly/react-icons';
+import { global_danger_color_100 as dangerColor } from '@patternfly/react-tokens';
+
 import { killUploadPVC } from '../../k8s/requests/cdi-upload/cdi-upload-requests';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { CDIUploadContext } from './cdi-upload-provider';
+import { UPLOAD_STATUS } from './consts';
 
 export const getProgressVariant = (status: UPLOAD_STATUS) => {
   switch (status) {

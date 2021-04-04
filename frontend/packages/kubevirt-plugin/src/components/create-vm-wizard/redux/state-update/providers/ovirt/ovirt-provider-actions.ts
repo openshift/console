@@ -1,28 +1,29 @@
-import { OvirtProviderField, VMImportProvider, VMWizardProps } from '../../../../types';
-import { InternalActionType, UpdateOptions } from '../../../types';
-import { iGetCommonData } from '../../../../selectors/immutable/selectors';
+import { getName } from '@console/shared/src';
+
 import { EnhancedK8sMethods } from '../../../../../../k8s/enhancedK8sMethods/enhancedK8sMethods';
 import {
   cleanupAndGetResults,
   errorsFirstSort,
 } from '../../../../../../k8s/enhancedK8sMethods/k8sMethodsUtils';
-import { vmWizardInternalActions } from '../../../internal-actions';
-import { asDisabled, asHidden } from '../../../../utils/utils';
-import { startV2VVMWareController } from '../../../../../../k8s/requests/v2v/start-v2vvmware-controller';
-import { getName } from '@console/shared/src';
-import { deleteOvirtProviderObject } from '../../../../../../k8s/requests/v2v/delete-ovrt-provider-object';
 import {
   createOvirtProviderObject,
   createOvirtProviderObjectWithSecret,
 } from '../../../../../../k8s/requests/v2v/create-ovirt-provider-object';
-import { forceUpdateWSQueries } from './update-ws-queries';
+import { deleteOvirtProviderObject } from '../../../../../../k8s/requests/v2v/delete-ovrt-provider-object';
+import { requestOvirtProviderCRVMDetail } from '../../../../../../k8s/requests/v2v/request-ovirt-provider-vm-detail';
+import { startV2VVMWareController } from '../../../../../../k8s/requests/v2v/start-v2vvmware-controller';
 import { getV2VConnectionName } from '../../../../../../selectors/v2v';
 import { getSimpleV2VPRoviderStatus } from '../../../../../../statuses/v2v';
 import {
   iGetOvirtField,
   iGetOvirtFieldValue,
 } from '../../../../selectors/immutable/provider/ovirt/selectors';
-import { requestOvirtProviderCRVMDetail } from '../../../../../../k8s/requests/v2v/request-ovirt-provider-vm-detail';
+import { iGetCommonData } from '../../../../selectors/immutable/selectors';
+import { OvirtProviderField, VMImportProvider, VMWizardProps } from '../../../../types';
+import { asDisabled, asHidden } from '../../../../utils/utils';
+import { vmWizardInternalActions } from '../../../internal-actions';
+import { InternalActionType, UpdateOptions } from '../../../types';
+import { forceUpdateWSQueries } from './update-ws-queries';
 
 const { info: consoleInfo, warn: consoleWarn, error: consoleError } = console;
 

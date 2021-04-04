@@ -1,15 +1,17 @@
-import { connect } from 'react-redux';
 import * as React from 'react';
-import { FileUpload } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+
 import { ValidationErrorType, ValidationObject } from '@console/shared/src/utils/validation/types';
-import { iGetOvirtField } from '../../../../selectors/immutable/provider/ovirt/selectors';
-import { VMImportProvider, OvirtProviderField } from '../../../../types';
-import { vmWizardActions } from '../../../../redux/actions';
-import { ActionType } from '../../../../redux/types';
+import { FileUpload } from '@patternfly/react-core';
+
 import { iGet } from '../../../../../../utils/immutable';
 import { FormField, FormFieldType } from '../../../../form/form-field';
 import { FormFieldRow } from '../../../../form/form-field-row';
+import { vmWizardActions } from '../../../../redux/actions';
+import { ActionType } from '../../../../redux/types';
+import { iGetOvirtField } from '../../../../selectors/immutable/provider/ovirt/selectors';
+import { OvirtProviderField, VMImportProvider } from '../../../../types';
 import { getFieldId } from '../../../../utils/renderable-field-utils';
 
 const MAX_CERT_SIZE = 10 * 1024 * 1024;

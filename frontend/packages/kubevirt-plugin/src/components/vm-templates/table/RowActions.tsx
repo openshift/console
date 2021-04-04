@@ -1,13 +1,12 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
+
 import { humanizeBinaryBytes } from '@console/internal/components/utils';
 import { TemplateKind } from '@console/internal/module/k8s';
 import { Button, Popover, PopoverPosition, Stack, StackItem } from '@patternfly/react-core';
-import { Link } from 'react-router-dom';
 
-import { selectVM } from '../../../selectors/vm-template/basic';
-import { createVMAction } from '../utils';
-import { TemplateSourceStatus } from '../../../statuses/template/types';
+import { useSupportModal } from '../../../hooks/use-support-modal';
 import {
   getCPU,
   getOperatingSystemName,
@@ -18,8 +17,10 @@ import {
   getTemplateMemory,
   getTemplateSizeRequirementInBytes,
 } from '../../../selectors/vm-template/advanced';
+import { selectVM } from '../../../selectors/vm-template/basic';
+import { TemplateSourceStatus } from '../../../statuses/template/types';
 import { VMTemplateLabel } from '../label';
-import { useSupportModal } from '../../../hooks/use-support-modal';
+import { createVMAction } from '../utils';
 
 import './vm-template-table.scss';
 

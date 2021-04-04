@@ -1,3 +1,5 @@
+import { DeviceType } from '../../../constants/vm';
+import { FirehoseResourceEnhanced } from '../../../types/custom';
 import {
   CloudInitField,
   ImportProvidersField,
@@ -8,10 +10,8 @@ import {
   VMWizardStorage,
   VMWizardTab,
 } from '../types';
-import { DeviceType } from '../../../constants/vm';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ActionBatch, InternalActionType, WizardInternalActionDispatcher } from './types';
-import { FirehoseResourceEnhanced } from '../../../types/custom';
 
 type VMWizardInternalActions = { [key in InternalActionType]: WizardInternalActionDispatcher };
 

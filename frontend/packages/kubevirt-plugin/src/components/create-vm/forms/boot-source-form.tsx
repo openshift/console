@@ -1,34 +1,28 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { PersistentVolumeClaimKind, StorageClassResourceKind } from '@console/internal/module/k8s';
-import {
-  FileUpload,
-  Form,
-  SelectOption,
-  TextInput,
-  Checkbox,
-  ExpandableSection,
-  Popover,
-  PopoverPosition,
-} from '@patternfly/react-core';
-import { HelpIcon } from '@patternfly/react-icons';
-import { PersistentVolumeClaimModel } from '@console/internal/models';
-import { ListDropdown, LoadingInline, RequestSizeInput } from '@console/internal/components/utils';
+
 import {
   dropdownUnits,
   getAccessModeForProvisioner,
   provisionerAccessModeMapping,
 } from '@console/internal/components/storage/shared';
+import { ListDropdown, LoadingInline, RequestSizeInput } from '@console/internal/components/utils';
+import { PersistentVolumeClaimModel } from '@console/internal/models';
+import { PersistentVolumeClaimKind, StorageClassResourceKind } from '@console/internal/module/k8s';
+import {
+  Checkbox,
+  ExpandableSection,
+  FileUpload,
+  Form,
+  Popover,
+  PopoverPosition,
+  SelectOption,
+  TextInput,
+} from '@patternfly/react-core';
+import { HelpIcon } from '@patternfly/react-icons';
 
-import { FormRow } from '../../form/form-row';
-import { ProjectDropdown } from '../../form/project-dropdown';
-import { BootSourceAction, BootSourceState, BOOT_ACTION_TYPE } from './boot-source-form-reducer';
-import { AccessMode, VolumeMode, ANNOTATION_SOURCE_PROVIDER } from '../../../constants';
-import { FormPFSelect } from '../../form/form-pf-select';
-import { preventDefault } from '../../form/utils';
+import { AccessMode, ANNOTATION_SOURCE_PROVIDER, VolumeMode } from '../../../constants';
 import { ProvisionSource } from '../../../constants/vm/provision-source';
-import { URLSourceHelp } from '../../form/helper/url-source-help';
-import { ContainerSourceHelp } from '../../form/helper/container-source-help';
 import { useStorageClassConfigMap } from '../../../hooks/storage-class-config-map';
 import {
   getDefaultSCAccessModes,
@@ -37,9 +31,16 @@ import {
   isConfigMapContainsScModes,
 } from '../../../selectors/config-map/sc-defaults';
 import { getAnnotation } from '../../../selectors/selectors';
-import { getFieldId } from '../../create-vm-wizard/utils/renderable-field-utils';
-import { VMSettingsField } from '../../create-vm-wizard/types';
 import { ConfigMapDefaultModesAlert } from '../../Alerts/ConfigMapDefaultModesAlert';
+import { VMSettingsField } from '../../create-vm-wizard/types';
+import { getFieldId } from '../../create-vm-wizard/utils/renderable-field-utils';
+import { FormPFSelect } from '../../form/form-pf-select';
+import { FormRow } from '../../form/form-row';
+import { ContainerSourceHelp } from '../../form/helper/container-source-help';
+import { URLSourceHelp } from '../../form/helper/url-source-help';
+import { ProjectDropdown } from '../../form/project-dropdown';
+import { preventDefault } from '../../form/utils';
+import { BOOT_ACTION_TYPE, BootSourceAction, BootSourceState } from './boot-source-form-reducer';
 
 type AdvancedSectionProps = {
   state: BootSourceState;

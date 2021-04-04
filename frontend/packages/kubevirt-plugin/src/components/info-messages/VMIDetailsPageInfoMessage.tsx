@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { HintBlock, ExternalLink } from '@console/internal/components/utils';
+
+import { ExternalLink, HintBlock } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { getOwnerReferences } from '@console/shared/src';
+
 import { VirtualMachineInstanceModel, VirtualMachineModel } from '../../models/index';
 import { VMIKind } from '../../types';
 

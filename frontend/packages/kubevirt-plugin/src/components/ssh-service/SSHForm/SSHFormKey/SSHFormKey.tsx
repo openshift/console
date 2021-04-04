@@ -1,15 +1,17 @@
-import * as React from 'react';
-import sshpk from 'sshpk';
 import { isEmpty } from 'lodash';
-import { FileUpload, Flex, FlexItem, Button } from '@patternfly/react-core';
-import { ValidatedOptions } from '../ssh-form-utils';
+import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import useSSHKeys from '../../../../hooks/use-ssh-keys';
-import { sshActions, SSHActionsNames } from '../../redux/actions';
-import SSHFormSaveInNamespace from '../SSHFormSave/SSHFormSaveInNamespace';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
 import { useDispatch } from 'react-redux';
+import sshpk from 'sshpk';
+
+import { Button, FileUpload, Flex, FlexItem } from '@patternfly/react-core';
+
+import useSSHKeys from '../../../../hooks/use-ssh-keys';
+import { sshActions, SSHActionsNames } from '../../redux/actions';
+import { ValidatedOptions } from '../ssh-form-utils';
+import SSHFormSaveInNamespace from '../SSHFormSave/SSHFormSaveInNamespace';
 
 import './ssh-form-key.scss';
 

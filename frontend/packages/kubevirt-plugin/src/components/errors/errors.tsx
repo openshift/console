@@ -1,7 +1,8 @@
-import * as React from 'react';
-import { Alert, AlertVariant, ExpandableSection } from '@patternfly/react-core';
 import * as classNames from 'classnames';
+import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+
+import { Alert, AlertVariant, ExpandableSection } from '@patternfly/react-core';
 
 import './errors.scss';
 

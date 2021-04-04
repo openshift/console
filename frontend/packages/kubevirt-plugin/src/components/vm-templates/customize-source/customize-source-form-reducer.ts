@@ -1,4 +1,5 @@
 import { TemplateKind } from '@console/internal/module/k8s';
+
 import { TemplateSupport } from '../../../constants/vm-templates/support';
 
 type CustomizeSourceFormState = {

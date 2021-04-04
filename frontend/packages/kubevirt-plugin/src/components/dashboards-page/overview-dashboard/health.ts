@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
-import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
+
 import { URLHealthHandler } from '@console/plugin-sdk';
+import { HealthState } from '@console/shared/src/components/dashboard/status-card/states';
 
 export const getKubevirtHealthState: URLHealthHandler<KubevirtHealthResponse> = (
   response,

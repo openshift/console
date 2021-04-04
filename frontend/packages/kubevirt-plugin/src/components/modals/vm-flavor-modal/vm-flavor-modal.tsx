@@ -1,7 +1,13 @@
-import * as React from 'react';
 import * as _ from 'lodash';
+import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Form, FormSelect, FormSelectOption } from '@patternfly/react-core';
+
+import {
+  createModalLauncher,
+  ModalBody,
+  ModalComponentProps,
+  ModalTitle,
+} from '@console/internal/components/factory';
 import {
   Firehose,
   FirehoseResult,
@@ -10,14 +16,16 @@ import {
   withHandlePromise,
 } from '@console/internal/components/utils';
 import { TemplateModel } from '@console/internal/models';
-import {
-  createModalLauncher,
-  ModalBody,
-  ModalComponentProps,
-  ModalTitle,
-} from '@console/internal/components/factory';
 import { k8sPatch, TemplateKind } from '@console/internal/module/k8s';
-import { VMLikeEntityKind } from '../../../types/vmLike';
+import { getName, getNamespace } from '@console/shared';
+import { Form, FormSelect, FormSelectOption } from '@patternfly/react-core';
+
+import { CUSTOM_FLAVOR } from '../../../constants';
+import { useShowErrorToggler } from '../../../hooks/use-show-error-toggler';
+import { getUpdateFlavorPatches } from '../../../k8s/patches/vm/vm-patches';
+import { VMWrapper } from '../../../k8s/wrapper/vm/vm-wrapper';
+import { VMIWrapper } from '../../../k8s/wrapper/vm/vmi-wrapper';
+import { VirtualMachineInstanceModel } from '../../../models';
 import {
   asVM,
   getCPU,
@@ -26,31 +34,25 @@ import {
   getVMLikeModel,
   vCPUCount,
 } from '../../../selectors/vm';
-import { getUpdateFlavorPatches } from '../../../k8s/patches/vm/vm-patches';
-import { CUSTOM_FLAVOR } from '../../../constants';
+import { isCustomFlavor, toUIFlavor } from '../../../selectors/vm-like/flavor';
+import { isFlavorChanged } from '../../../selectors/vm-like/next-run-changes';
+import { getTemplateFlavors } from '../../../selectors/vm-template/advanced';
+import { getVMTemplateNamespacedName } from '../../../selectors/vm-template/selectors';
+import { isVMExpectedRunning } from '../../../selectors/vm/selectors';
+import { VMIKind } from '../../../types/vm';
+import { VMLikeEntityKind } from '../../../types/vmLike';
 import { getLoadedData } from '../../../utils';
+import { flavorSort } from '../../../utils/sort';
+import { getDialogUIError } from '../../../utils/strings';
+import { isValidationError } from '../../../utils/validations/common';
+import { validateFlavor } from '../../../utils/validations/vm/flavor';
+import { ModalPendingChangesAlert } from '../../Alerts/PendingChangesAlert';
+import { FormRow } from '../../form/form-row';
+import { Integer } from '../../form/integer/integer';
 import { SizeUnitFormRow } from '../../form/size-unit-form-row';
 import { BinaryUnit, convertToBytes, stringValueUnitSplit } from '../../form/size-unit-utils';
 import { ModalFooter } from '../modal/modal-footer';
-import { FormRow } from '../../form/form-row';
-import { Integer } from '../../form/integer/integer';
-import { validateFlavor } from '../../../utils/validations/vm/flavor';
-import { isValidationError } from '../../../utils/validations/common';
-import { useShowErrorToggler } from '../../../hooks/use-show-error-toggler';
-import { getDialogUIError } from '../../../utils/strings';
-import { flavorSort } from '../../../utils/sort';
-import { getTemplateFlavors } from '../../../selectors/vm-template/advanced';
-import { getVMTemplateNamespacedName } from '../../../selectors/vm-template/selectors';
-import { toUIFlavor, isCustomFlavor } from '../../../selectors/vm-like/flavor';
-import { ModalPendingChangesAlert } from '../../Alerts/PendingChangesAlert';
-import { getNamespace, getName } from '@console/shared';
-import { VirtualMachineInstanceModel } from '../../../models';
-import { VMIKind } from '../../../types/vm';
 import { saveAndRestartModal } from '../save-and-restart-modal/save-and-restart-modal';
-import { isVMExpectedRunning } from '../../../selectors/vm/selectors';
-import { isFlavorChanged } from '../../../selectors/vm-like/next-run-changes';
-import { VMWrapper } from '../../../k8s/wrapper/vm/vm-wrapper';
-import { VMIWrapper } from '../../../k8s/wrapper/vm/vmi-wrapper';
 
 const getId = (field: string) => `vm-flavor-modal-${field}`;
 

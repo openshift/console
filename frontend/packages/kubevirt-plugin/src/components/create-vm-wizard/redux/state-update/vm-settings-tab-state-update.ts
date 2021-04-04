@@ -1,15 +1,22 @@
 import { FLAGS } from '@console/shared';
+
 import {
-  hasVmSettingsChanged,
-  hasVMSettingsValueChanged,
-  iGetProvisionSource,
-  iGetRelevantTemplateSelectors,
-  iGetVmSettingValue,
-} from '../../selectors/immutable/vm-settings';
-import { VMSettingsField, VMWizardProps, VMWizardStorage } from '../../types';
-import { InternalActionType, UpdateOptions } from '../types';
-import { asDisabled, asHidden, asRequired } from '../../utils/utils';
-import { vmWizardInternalActions } from '../internal-actions';
+  CUSTOM_FLAVOR,
+  TEMPLATE_BASE_IMAGE_NAME_PARAMETER,
+  TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER,
+} from '../../../../constants/vm';
+import { ProvisionSource } from '../../../../constants/vm/provision-source';
+import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';
+import { iGetAnnotation, iGetPrameterValue } from '../../../../selectors/immutable/common';
+import {
+  getITemplateDefaultFlavor,
+  getITemplateDefaultWorkload,
+  iGetDefaultTemplate,
+  iGetRelevantTemplate,
+  iGetTemplateGuestToolsDisk,
+} from '../../../../selectors/immutable/template/combined';
+import { iGetIsLoaded, iGetLoadError, toShallowJS } from '../../../../utils/immutable';
+import { CDI_UPLOAD_POD_ANNOTATION, CDI_UPLOAD_RUNNING } from '../../../cdi-upload-provider/consts';
 import {
   getInitialData,
   iGetCommonData,
@@ -18,28 +25,22 @@ import {
   iGetNamespace,
 } from '../../selectors/immutable/selectors';
 import {
-  iGetDefaultTemplate,
-  iGetRelevantTemplate,
-  getITemplateDefaultFlavor,
-  getITemplateDefaultWorkload,
-  iGetTemplateGuestToolsDisk,
-} from '../../../../selectors/immutable/template/combined';
-import {
-  CUSTOM_FLAVOR,
-  TEMPLATE_BASE_IMAGE_NAME_PARAMETER,
-  TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER,
-} from '../../../../constants/vm';
-import { ProvisionSource } from '../../../../constants/vm/provision-source';
-import { prefillVmTemplateUpdater } from './prefill-vm-template-state-update';
-import { iGetAnnotation, iGetPrameterValue } from '../../../../selectors/immutable/common';
-import { CDI_UPLOAD_POD_ANNOTATION, CDI_UPLOAD_RUNNING } from '../../../cdi-upload-provider/consts';
-import { commonTemplatesUpdater } from './vm-common-templates-updater';
-import { iGetIsLoaded, iGetLoadError, toShallowJS } from '../../../../utils/immutable';
-import {
   hasProvisionStorageChanged,
   iGetProvisionSourceStorage,
 } from '../../selectors/immutable/storage';
-import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';
+import {
+  hasVmSettingsChanged,
+  hasVMSettingsValueChanged,
+  iGetProvisionSource,
+  iGetRelevantTemplateSelectors,
+  iGetVmSettingValue,
+} from '../../selectors/immutable/vm-settings';
+import { VMSettingsField, VMWizardProps, VMWizardStorage } from '../../types';
+import { asDisabled, asHidden, asRequired } from '../../utils/utils';
+import { vmWizardInternalActions } from '../internal-actions';
+import { InternalActionType, UpdateOptions } from '../types';
+import { prefillVmTemplateUpdater } from './prefill-vm-template-state-update';
+import { commonTemplatesUpdater } from './vm-common-templates-updater';
 
 const selectTemplateOnLoadedUpdater = (options: UpdateOptions) => {
   const { id, dispatch, getState } = options;

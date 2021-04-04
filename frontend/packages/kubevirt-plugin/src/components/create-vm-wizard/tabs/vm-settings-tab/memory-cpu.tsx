@@ -1,17 +1,19 @@
 import * as _ from 'lodash';
 import * as React from 'react';
+
 import { Grid, GridItem } from '@patternfly/react-core';
-import { iGetFieldValue, isFieldHidden } from '../../selectors/immutable/field';
-import { FormFieldMemoRow } from '../../form/form-field-row';
-import { FormField, FormFieldType } from '../../form/form-field';
+
 import { Integer } from '../../../form/integer/integer';
-import { VMSettingsField } from '../../types';
 import { SizeUnitFormRow } from '../../../form/size-unit-form-row';
 import {
   BinaryUnit,
   getReasonableUnits,
   stringValueUnitSplit,
 } from '../../../form/size-unit-utils';
+import { FormField, FormFieldType } from '../../form/form-field';
+import { FormFieldMemoRow } from '../../form/form-field-row';
+import { iGetFieldValue, isFieldHidden } from '../../selectors/immutable/field';
+import { VMSettingsField } from '../../types';
 
 import './vm-settings-tab.scss';
 

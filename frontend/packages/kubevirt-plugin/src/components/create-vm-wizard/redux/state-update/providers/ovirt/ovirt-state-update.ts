@@ -1,19 +1,24 @@
 import * as _ from 'lodash';
+
+import { correctVMImportProviderSecretLabels } from '../../../../../../k8s/requests/v2v/correct-vm-import-provider-secret-labels';
+import { NetworkWrapper } from '../../../../../../k8s/wrapper/vm/network-wrapper';
+import { PodDeploymentStatus } from '../../../../../../statuses/pod-deployment/constants';
+import { getSimplePodDeploymentStatus } from '../../../../../../statuses/pod-deployment/pod-deployment-status';
 import {
-  ImportProvidersField,
-  OvirtProviderField,
-  OvirtProviderProps,
-  VM_WIZARD_DIFFICULT_TABS,
-  VMImportProvider,
-  VMSettingsField,
-  VMWizardProps,
-  VMWizardTab,
-  VMWizardNetwork,
-} from '../../../../types';
-import { InternalActionType, UpdateOptions } from '../../../types';
-import { iGetCommonData, iGetLoadedCommonData } from '../../../../selectors/immutable/selectors';
+  getSimpleV2VPRoviderStatus,
+  V2V_PROVIDER_STATUS_ALL_OK,
+  V2VProviderStatus,
+} from '../../../../../../statuses/v2v';
+import { UIValidationType } from '../../../../../../types/ui/ui';
+import {
+  iGet,
+  iGetIn,
+  immutableListToShallowJS,
+  toShallowJS,
+} from '../../../../../../utils/immutable';
+import { iGetCreateVMWizardTabs } from '../../../../selectors/immutable/common';
 import { hasImportProvidersChanged } from '../../../../selectors/immutable/import-providers';
-import { updateExtraWSQueries } from './update-ws-queries';
+import { iGetNetworks } from '../../../../selectors/immutable/networks';
 import {
   hasOvirtSettingsChanged,
   hasOvirtSettingsValueChanged,
@@ -22,33 +27,29 @@ import {
   iGetOvirtFieldValue,
   isOvirtProvider,
 } from '../../../../selectors/immutable/provider/ovirt/selectors';
+import { iGetCommonData, iGetLoadedCommonData } from '../../../../selectors/immutable/selectors';
+import { getLoadedVm } from '../../../../selectors/provider/selectors';
+import {
+  ImportProvidersField,
+  OvirtProviderField,
+  OvirtProviderProps,
+  VM_WIZARD_DIFFICULT_TABS,
+  VMImportProvider,
+  VMSettingsField,
+  VMWizardNetwork,
+  VMWizardProps,
+  VMWizardTab,
+} from '../../../../types';
+import { asDisabled, asHidden, asRequired } from '../../../../utils/utils';
+import { vmWizardInternalActions } from '../../../internal-actions';
+import { InternalActionType, UpdateOptions } from '../../../types';
+import { cleanupOvirtProvider } from './ovirt-cleanup';
+import { prefillUpdateCreator } from './ovirt-prefill-vm';
 import {
   createConnectionObjects,
   startVMImportOperatorWithCleanup,
 } from './ovirt-provider-actions';
-import {
-  iGet,
-  iGetIn,
-  immutableListToShallowJS,
-  toShallowJS,
-} from '../../../../../../utils/immutable';
-import { getSimplePodDeploymentStatus } from '../../../../../../statuses/pod-deployment/pod-deployment-status';
-import { PodDeploymentStatus } from '../../../../../../statuses/pod-deployment/constants';
-import { vmWizardInternalActions } from '../../../internal-actions';
-import { asDisabled, asHidden, asRequired } from '../../../../utils/utils';
-import {
-  getSimpleV2VPRoviderStatus,
-  V2V_PROVIDER_STATUS_ALL_OK,
-  V2VProviderStatus,
-} from '../../../../../../statuses/v2v';
-import { correctVMImportProviderSecretLabels } from '../../../../../../k8s/requests/v2v/correct-vm-import-provider-secret-labels';
-import { getLoadedVm } from '../../../../selectors/provider/selectors';
-import { cleanupOvirtProvider } from './ovirt-cleanup';
-import { iGetCreateVMWizardTabs } from '../../../../selectors/immutable/common';
-import { prefillUpdateCreator } from './ovirt-prefill-vm';
-import { iGetNetworks } from '../../../../selectors/immutable/networks';
-import { NetworkWrapper } from '../../../../../../k8s/wrapper/vm/network-wrapper';
-import { UIValidationType } from '../../../../../../types/ui/ui';
+import { updateExtraWSQueries } from './update-ws-queries';
 
 const startControllerAndCleanup = (options: UpdateOptions) => {
   const { id, dispatch, prevState, getState } = options;

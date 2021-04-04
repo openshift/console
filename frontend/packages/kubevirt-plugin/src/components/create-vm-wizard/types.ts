@@ -1,10 +1,11 @@
 import { ConfigMapKind, PersistentVolumeClaimKind } from '@console/internal/module/k8s';
-import { V1Network, V1NetworkInterface } from '../../types/vm';
-import { IDReferences } from '../../utils/redux/id-reference';
+
+import { V1alpha1DataVolume, V1Disk, V1PersistentVolumeClaim, V1Volume } from '../../types/api';
 import { UINetworkEditConfig, UINetworkInterfaceValidation } from '../../types/ui/nic';
-import { V1Disk, V1PersistentVolumeClaim, V1alpha1DataVolume, V1Volume } from '../../types/api';
 import { UIStorageEditConfig, UIStorageValidation } from '../../types/ui/storage';
 import { VMWizardInitialData } from '../../types/url';
+import { V1Network, V1NetworkInterface } from '../../types/vm';
+import { IDReferences } from '../../utils/redux/id-reference';
 
 export enum VMWizardTab {
   IMPORT_PROVIDERS = 'IMPORT_PROVIDERS',

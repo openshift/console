@@ -1,18 +1,20 @@
-import * as React from 'react';
-import { TFunction } from 'i18next';
-import { useTranslation } from 'react-i18next';
 import * as classNames from 'classnames';
-import { sortable } from '@patternfly/react-table';
+import { TFunction } from 'i18next';
+import * as React from 'react';
+import { useTranslation } from 'react-i18next';
+
+import { Table, TableData, TableRow } from '@console/internal/components/factory';
+import { humanizeBinaryBytes } from '@console/internal/components/utils';
 import { Button, Popover } from '@patternfly/react-core';
 import { QuestionCircleIcon } from '@patternfly/react-icons';
-import { TableRow, TableData, Table } from '@console/internal/components/factory';
-import { humanizeBinaryBytes } from '@console/internal/components/utils';
+import { sortable } from '@patternfly/react-table';
+
 import { useGuestAgentInfo } from '../../hooks/use-guest-agent-info';
 import { GuestAgentInfoWrapper } from '../../k8s/wrapper/vm/guest-agent-info/guest-agent-info-wrapper';
-import { isGuestAgentInstalled } from '../dashboards-page/vm-dashboard/vm-alerts';
-import { VMIKind } from '../../types/vm';
 import { VMStatusBundle } from '../../statuses/vm/types';
+import { VMIKind } from '../../types/vm';
 import { getGuestAgentFieldNotAvailMsg } from '../../utils/guest-agent-strings';
+import { isGuestAgentInstalled } from '../dashboards-page/vm-dashboard/vm-alerts';
 
 import './guest-agent-file-systems.scss';
 

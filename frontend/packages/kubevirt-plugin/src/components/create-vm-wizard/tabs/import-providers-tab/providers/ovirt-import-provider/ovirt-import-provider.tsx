@@ -1,29 +1,31 @@
-import { connect } from 'react-redux';
 import * as React from 'react';
-import { Checkbox, TextInput } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
+
+import { Checkbox, TextInput } from '@patternfly/react-core';
+
+import { iGet } from '../../../../../../utils/immutable';
+import { FormField, FormFieldType } from '../../../../form/form-field';
+import { FormFieldMemoRow } from '../../../../form/form-field-row';
+import { vmWizardActions } from '../../../../redux/actions';
+import { ActionType } from '../../../../redux/types';
 import {
   iGetOvirtData,
   isOvirtProvider,
 } from '../../../../selectors/immutable/provider/ovirt/selectors';
 import {
-  VMImportProvider,
   OvirtProviderField,
   OvirtProviderRenderableField,
+  VMImportProvider,
 } from '../../../../types';
-import { vmWizardActions } from '../../../../redux/actions';
-import { ActionType } from '../../../../redux/types';
-import { iGet } from '../../../../../../utils/immutable';
-import { VMImportProviderControllerStatusRow } from '../vm-import-provider-controller-status-row';
-import { VMImportProviderControllerErrors } from '../vm-import-provider-controller-errors';
-import { VMImportSecrets } from '../vm-import-secrets';
-import { FormField, FormFieldType } from '../../../../form/form-field';
-import { FormFieldMemoRow } from '../../../../form/form-field-row';
 import { getFieldId } from '../../../../utils/renderable-field-utils';
 import { VMImportPassword } from '../vm-import-password';
+import { VMImportProviderControllerErrors } from '../vm-import-provider-controller-errors';
+import { VMImportProviderControllerStatusRow } from '../vm-import-provider-controller-status-row';
 import { VMImportProviderObjectStatus } from '../vm-import-provider-object-status';
-import { OvirtProviderClustersVMs } from './ovirt-provider-clusters-vms';
+import { VMImportSecrets } from '../vm-import-secrets';
 import { OvirtCertificate } from './ovirt-certificate';
+import { OvirtProviderClustersVMs } from './ovirt-provider-clusters-vms';
 
 import './ovirt-import-provider.scss';
 

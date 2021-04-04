@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+
 import { VMSettings } from '../redux/initial-state/types';
 import { VMSettingsField } from '../types';
 

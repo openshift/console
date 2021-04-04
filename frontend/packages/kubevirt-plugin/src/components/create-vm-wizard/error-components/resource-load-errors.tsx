@@ -1,15 +1,17 @@
 import * as _ from 'lodash';
 import { connect } from 'react-redux';
+
+import { TemplateModel } from '@console/internal/models';
+import { K8sKind } from '@console/internal/module/k8s';
 import { AlertVariant } from '@patternfly/react-core';
+
+import { VirtualMachineModel } from '../../../models';
+import { getLoadError, getModelString } from '../../../utils';
 import { iGet, toShallowJS } from '../../../utils/immutable';
 import { Error, Errors } from '../../errors/errors';
-import { CommonDataProp, VMWizardProps } from '../types';
 import { iGetCommonData } from '../selectors/immutable/selectors';
-import { getLoadError, getModelString } from '../../../utils';
-import { K8sKind } from '@console/internal/module/k8s';
-import { TemplateModel } from '@console/internal/models';
-import { VirtualMachineModel } from '../../../models';
 import { getExtraWSQueries } from '../selectors/selectors';
+import { CommonDataProp, VMWizardProps } from '../types';
 
 const asError = ({
   state,

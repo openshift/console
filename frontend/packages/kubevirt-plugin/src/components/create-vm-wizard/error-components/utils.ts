@@ -1,15 +1,17 @@
 import * as _ from 'lodash';
-import { iGetVmSettings } from '../selectors/immutable/vm-settings';
-import { getEmptyRequiredFields, getInvalidFields } from '../redux/validations/utils';
-import { getFieldTitleKey, sortFields } from '../utils/renderable-field-utils';
-import { VMWizardTab } from '../types';
-import { TabTitleKeyResolver } from '../strings/strings';
-import { Error } from './types';
-import { iGetNetworks } from '../selectors/immutable/networks';
-import { iGetIn, toJS } from '../../../utils/immutable';
+
 import { joinGrammaticallyListOfItems } from '@console/shared/src';
+
+import { iGetIn, toJS } from '../../../utils/immutable';
 import { getValidationNameByKey } from '../../../utils/validations/strings';
+import { getEmptyRequiredFields, getInvalidFields } from '../redux/validations/utils';
+import { iGetNetworks } from '../selectors/immutable/networks';
 import { iGetStorages } from '../selectors/immutable/storage';
+import { iGetVmSettings } from '../selectors/immutable/vm-settings';
+import { TabTitleKeyResolver } from '../strings/strings';
+import { VMWizardTab } from '../types';
+import { getFieldTitleKey, sortFields } from '../utils/renderable-field-utils';
+import { Error } from './types';
 
 export const computeVMSettingsErrors = (state, wizardReduxID) => {
   const vmSettingsFields = iGetVmSettings(state, wizardReduxID);

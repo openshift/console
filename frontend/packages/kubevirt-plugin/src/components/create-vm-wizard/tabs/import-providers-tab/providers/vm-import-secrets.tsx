@@ -1,9 +1,17 @@
 import * as React from 'react';
-import { FormSelect, FormSelectOption } from '@patternfly/react-core';
-import { connect } from 'react-redux';
-import { getName, getUID } from '@console/shared/src';
 import { useTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
 
+import { getName, getUID } from '@console/shared/src';
+import { FormSelect, FormSelectOption } from '@patternfly/react-core';
+
+import { iGet, iGetLoadedData, toJS } from '../../../../../utils/immutable';
+import { FormSelectPlaceholderOption } from '../../../../form/form-select-placeholder-option';
+import { FormField, FormFieldType } from '../../../form/form-field';
+import { FormFieldRow } from '../../../form/form-field-row';
+import { vmWizardActions } from '../../../redux/actions';
+import { ActionType } from '../../../redux/types';
+import { iGetProviderField } from '../../../selectors/immutable/provider/common';
 import {
   iGetCommonData,
   iGetUID,
@@ -16,14 +24,7 @@ import {
   VMWareProviderField,
   VMWareProviderProps,
 } from '../../../types';
-import { vmWizardActions } from '../../../redux/actions';
-import { ActionType } from '../../../redux/types';
-import { FormFieldRow } from '../../../form/form-field-row';
-import { FormField, FormFieldType } from '../../../form/form-field';
-import { iGet, iGetLoadedData, toJS } from '../../../../../utils/immutable';
-import { FormSelectPlaceholderOption } from '../../../../form/form-select-placeholder-option';
 import { getPlaceholderKey } from '../../../utils/renderable-field-utils';
-import { iGetProviderField } from '../../../selectors/immutable/provider/common';
 
 const CONNECT_TO_NEW_INSTANCE = 'Connect to New Instance';
 const CONNECT_TO_NEW_INSTANCE_ID = `30e4f40e-7ce1-4c90-98a1-14ef960b8549-${CONNECT_TO_NEW_INSTANCE}`;

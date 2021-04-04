@@ -1,17 +1,19 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { TextArea } from '@patternfly/react-core';
-import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
+
 import {
   createModalLauncher,
-  ModalTitle,
   ModalBody,
-  ModalSubmitFooter,
   ModalComponentProps,
+  ModalSubmitFooter,
+  ModalTitle,
 } from '@console/internal/components/factory';
+import { HandlePromiseProps, withHandlePromise } from '@console/internal/components/utils';
 import { K8sKind, k8sPatch, K8sResourceKind } from '@console/internal/module/k8s';
-import { getDescription } from '../../../selectors/selectors';
+import { TextArea } from '@patternfly/react-core';
+
 import { getUpdateDescriptionPatches } from '../../../k8s/patches/vm/vm-patches';
+import { getDescription } from '../../../selectors/selectors';
 
 // TODO: should be moved under kubevirt-plugin/src/style.scss
 import './_description-modal.scss';

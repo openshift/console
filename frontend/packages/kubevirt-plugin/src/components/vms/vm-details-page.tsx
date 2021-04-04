@@ -1,12 +1,25 @@
+import { TFunction } from 'i18next';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { TFunction } from 'i18next';
-import { navFactory } from '@console/internal/components/utils';
+
 import { DetailsPage } from '@console/internal/components/factory';
+import { navFactory } from '@console/internal/components/utils';
 import { PersistentVolumeClaimModel, PodModel, TemplateModel } from '@console/internal/models';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { useK8sModel } from '@console/shared/src/hooks/useK8sModel';
-import { VMDisksAndFileSystemsPage } from '../vm-disks/vm-disks';
+
+import {
+  VM_DETAIL_CONSOLES_HREF,
+  VM_DETAIL_DETAILS_HREF,
+  VM_DETAIL_DISKS_HREF,
+  VM_DETAIL_NETWORKS_HREF,
+} from '../../constants';
+import {
+  TEMPLATE_TYPE_LABEL,
+  TEMPLATE_TYPE_VM,
+  VM_DETAIL_ENVIRONMENT,
+  VM_DETAIL_SNAPSHOTS,
+} from '../../constants/vm';
 import {
   DataVolumeModel,
   VirtualMachineImportModel,
@@ -16,27 +29,16 @@ import {
   VirtualMachineSnapshotModel,
 } from '../../models';
 import { getResource } from '../../utils';
-import {
-  VM_DETAIL_DETAILS_HREF,
-  VM_DETAIL_DISKS_HREF,
-  VM_DETAIL_NETWORKS_HREF,
-  VM_DETAIL_CONSOLES_HREF,
-} from '../../constants';
-import { VMEvents } from './vm-events';
-import VMConsoleDetailsPage from './vm-console/VMConsoleDetailsPage';
-import { VMDetailsFirehose } from './vm-details';
-import { vmMenuActionsCreator } from './menu-actions';
-import { VMDashboard } from './vm-dashboard';
-import {
-  TEMPLATE_TYPE_LABEL,
-  TEMPLATE_TYPE_VM,
-  VM_DETAIL_ENVIRONMENT,
-  VM_DETAIL_SNAPSHOTS,
-} from '../../constants/vm';
-import { VMEnvironmentFirehose } from './vm-environment/vm-environment-page';
+import { VMDisksAndFileSystemsPage } from '../vm-disks/vm-disks';
 import { VMNics } from '../vm-nics';
-import { PendingChangesWarningFirehose } from './pending-changes-warning';
 import { VMSnapshotsPage } from '../vm-snapshots/vm-snapshots';
+import { vmMenuActionsCreator } from './menu-actions';
+import { PendingChangesWarningFirehose } from './pending-changes-warning';
+import VMConsoleDetailsPage from './vm-console/VMConsoleDetailsPage';
+import { VMDashboard } from './vm-dashboard';
+import { VMDetailsFirehose } from './vm-details';
+import { VMEnvironmentFirehose } from './vm-environment/vm-environment-page';
+import { VMEvents } from './vm-events';
 
 export const breadcrumbsForVMPage = (t: TFunction, match: any) => () => [
   {

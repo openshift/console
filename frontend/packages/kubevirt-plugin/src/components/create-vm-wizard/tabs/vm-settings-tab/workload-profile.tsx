@@ -1,27 +1,29 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+
 import { SelectOption } from '@patternfly/react-core';
-import {
-  iGetLoadedData,
-  immutableListToShallowJS,
-  iGetIsLoaded,
-  iGetLoadError,
-  toShallowJS,
-} from '../../../../utils/immutable';
-import { FormFieldRow } from '../../form/form-field-row';
-import { FormField, FormFieldType } from '../../form/form-field';
+
+import { WorkloadProfile } from '../../../../constants/vm/workload-profile';
+import { getLabelValue } from '../../../../selectors/selectors';
 import {
   getOsDefaultTemplate,
   getWorkloadLabel,
   getWorkloadProfiles,
 } from '../../../../selectors/vm-template/combined-dependent';
+import {
+  iGetIsLoaded,
+  iGetLoadedData,
+  iGetLoadError,
+  immutableListToShallowJS,
+  toShallowJS,
+} from '../../../../utils/immutable';
 import { ignoreCaseSort } from '../../../../utils/sort';
+import { FormPFSelect } from '../../../form/form-pf-select';
+import { FormField, FormFieldType } from '../../form/form-field';
+import { FormFieldRow } from '../../form/form-field-row';
+import { iGetFieldValue } from '../../selectors/immutable/field';
 import { VMSettingsField } from '../../types';
 import { nullOnEmptyChange } from '../../utils/utils';
-import { iGetFieldValue } from '../../selectors/immutable/field';
-import { FormPFSelect } from '../../../form/form-pf-select';
-import { WorkloadProfile } from '../../../../constants/vm/workload-profile';
-import { getLabelValue } from '../../../../selectors/selectors';
 
 export const WorkloadSelect: React.FC<WorkloadProps> = React.memo(
   ({

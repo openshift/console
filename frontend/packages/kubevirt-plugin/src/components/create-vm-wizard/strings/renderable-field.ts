@@ -1,10 +1,10 @@
 import {
   ImportProvidersField,
+  OvirtProviderField,
+  RenderableFieldResolver,
   VMImportProvider,
   VMSettingsField,
-  RenderableFieldResolver,
   VMWareProviderField,
-  OvirtProviderField,
 } from '../types';
 
 export const titleKeyResolver: RenderableFieldResolver = {

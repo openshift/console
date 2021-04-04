@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+
 import { isStepHidden, isStepValid } from '../selectors/immutable/wizard-selectors';
 import { VMWizardTab } from '../types';
 

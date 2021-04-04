@@ -1,13 +1,15 @@
-import * as React from 'react';
 import axios, { Canceler } from 'axios';
+import * as React from 'react';
+
 import {
-  WatchK8sResource,
   useK8sWatchResource,
+  WatchK8sResource,
 } from '@console/internal/components/utils/k8s-watch-hook';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { CDI_UPLOAD_URL_BUILDER, UPLOAD_STATUS } from './consts';
+
 import { CDIConfigModel } from '../../models';
 import { getUploadProxyURL } from '../../selectors/cdi';
+import { CDI_UPLOAD_URL_BUILDER, UPLOAD_STATUS } from './consts';
 
 const resource: WatchK8sResource = {
   kind: CDIConfigModel.kind,

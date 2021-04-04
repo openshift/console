@@ -1,12 +1,14 @@
 import * as React from 'react';
+
+import { RowFunction, TableData, TableRow } from '@console/internal/components/factory';
 import { Kebab, KebabOption, pluralize } from '@console/internal/components/utils';
+import { DASH, dimensifyRow } from '@console/shared';
+
 import { isVMI } from '../../../../../../selectors/check-type';
 import { VMLikeEntityKind } from '../../../../../../types/vmLike';
-import { TableData, TableRow, RowFunction } from '@console/internal/components/factory';
-import { DASH, dimensifyRow } from '@console/shared';
 import { ValidationCell } from '../../../../../table/validation-cell';
-import { AffinityRowData } from '../../types';
 import { AFFINITY_CONDITION_LABELS, AFFINITY_TYPE_LABLES } from '../../../shared/consts';
+import { AffinityRowData } from '../../types';
 
 type AffinityRowCustomData = {
   isDisabled: boolean;

@@ -1,8 +1,8 @@
-import { CommonData, VMWizardNetwork, VMWizardNetworkType } from '../../types';
-import { NetworkInterfaceWrapper } from '../../../../k8s/wrapper/vm/network-interface-wrapper';
 import { NetworkInterfaceModel, NetworkType } from '../../../../constants/vm/network';
+import { NetworkInterfaceWrapper } from '../../../../k8s/wrapper/vm/network-interface-wrapper';
 import { NetworkWrapper } from '../../../../k8s/wrapper/vm/network-wrapper';
 import { getSequenceName } from '../../../../utils/strings';
+import { CommonData, VMWizardNetwork, VMWizardNetworkType } from '../../types';
 import { InitialStepStateGetter } from './types';
 
 export const podNetwork: VMWizardNetwork = {

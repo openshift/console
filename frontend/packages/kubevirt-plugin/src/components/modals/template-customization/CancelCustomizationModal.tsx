@@ -1,15 +1,16 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { k8sKill } from '@console/internal/module/k8s';
-import { HandlePromiseProps, withHandlePromise, history } from '@console/internal/components/utils';
-import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
+
 import {
   createModalLauncher,
-  ModalTitle,
   ModalBody,
-  ModalSubmitFooter,
   ModalComponentProps,
+  ModalSubmitFooter,
+  ModalTitle,
 } from '@console/internal/components/factory';
+import { HandlePromiseProps, history, withHandlePromise } from '@console/internal/components/utils';
+import { k8sKill } from '@console/internal/module/k8s';
+import { YellowExclamationTriangleIcon } from '@console/shared/src/components/status/icons';
 
 import { VirtualMachineModel } from '../../../models';
 import { VMKind } from '../../../types';

@@ -1,27 +1,28 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Stack, StackItem } from '@patternfly/react-core';
-import { getNamespace } from '@console/shared';
-import { K8sKind, TemplateKind } from '@console/internal/module/k8s';
-import { asAccessReview, Kebab, KebabOption } from '@console/internal/components/utils';
 
-import { VMWizardName, VMWizardMode } from '../../constants/vm';
-import { VirtualMachineModel } from '../../models';
-import { getVMWizardCreateLink } from '../../utils/url';
-import { deleteVMTemplateModal } from '../modals/menu-actions-modals/delete-vm-template-modal';
-import { TemplateItem } from '../../types/template';
-import { isCommonTemplate } from '../../selectors/vm-template/basic';
-import { PinnedIcon } from './os-icons';
-import { SupportModalFunction } from '../../hooks/use-support-modal';
+import { asAccessReview, Kebab, KebabOption } from '@console/internal/components/utils';
+import { K8sKind, TemplateKind } from '@console/internal/module/k8s';
+import { getNamespace } from '@console/shared';
+import { Stack, StackItem } from '@patternfly/react-core';
+
+import { VMWizardMode, VMWizardName } from '../../constants/vm';
 import { CustomizeSourceFunction } from '../../hooks/use-customize-source-modal';
+import { SupportModalFunction } from '../../hooks/use-support-modal';
+import { VirtualMachineModel } from '../../models';
+import { isCommonTemplate } from '../../selectors/vm-template/basic';
 import {
-  TemplateSourceStatus,
   isTemplateSourceError,
   SOURCE_TYPE,
+  TemplateSourceStatus,
 } from '../../statuses/template/types';
-import { createVMAction } from './utils';
 import { VMKind } from '../../types';
+import { TemplateItem } from '../../types/template';
+import { getVMWizardCreateLink } from '../../utils/url';
+import { deleteVMTemplateModal } from '../modals/menu-actions-modals/delete-vm-template-modal';
 import deleteVMTCustomizationModal from '../modals/menu-actions-modals/DeleteVMTCustomizationModal';
+import { PinnedIcon } from './os-icons';
+import { createVMAction } from './utils';
 
 type CustomData = {
   togglePin?: (template: TemplateItem) => void;

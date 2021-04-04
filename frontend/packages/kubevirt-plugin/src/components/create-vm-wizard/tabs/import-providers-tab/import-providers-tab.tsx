@@ -1,20 +1,22 @@
 import * as React from 'react';
-import { Form, FormSelect, FormSelectOption } from '@patternfly/react-core';
+import { WithTranslation, withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+
+import { Form, FormSelect, FormSelectOption } from '@patternfly/react-core';
+
 import { iGet, iGetIn, immutableListToShallowJS } from '../../../../utils/immutable';
-import { FormFieldMemoRow } from '../../form/form-field-row';
-import { FormField, FormFieldType } from '../../form/form-field';
 import { FormSelectPlaceholderOption } from '../../../form/form-select-placeholder-option';
+import { FormField, FormFieldType } from '../../form/form-field';
+import { FormFieldMemoRow } from '../../form/form-field-row';
 import { vmWizardActions } from '../../redux/actions';
-import { ImportProviderRenderableField, ImportProvidersField } from '../../types';
 import { ActionType } from '../../redux/types';
-import { getPlaceholderKey } from '../../utils/renderable-field-utils';
-import { VMWareImportProvider } from './providers/vmware-import-provider/vmware-import-provider';
 import { iGetImportProviders } from '../../selectors/immutable/import-providers';
+import { ImportProviderRenderableField, ImportProvidersField } from '../../types';
+import { getPlaceholderKey } from '../../utils/renderable-field-utils';
 import { OvirtImportProvider } from './providers/ovirt-import-provider/ovirt-import-provider';
+import { VMWareImportProvider } from './providers/vmware-import-provider/vmware-import-provider';
 
 import '../../create-vm-wizard-footer.scss';
-import { WithTranslation, withTranslation } from 'react-i18next';
 
 class ImportProvidersTabComponent extends React.Component<ImportProvidersTabComponentProps> {
   getField = (key: ImportProvidersField) => iGet(this.props.importProviders, key);

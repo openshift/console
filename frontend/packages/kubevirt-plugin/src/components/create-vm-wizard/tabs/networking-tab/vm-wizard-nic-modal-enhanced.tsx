@@ -1,17 +1,19 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Firehose, FirehoseResult } from '@console/internal/components/utils';
+
 import { createModalLauncher, ModalComponentProps } from '@console/internal/components/factory';
+import { Firehose, FirehoseResult } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { NetworkAttachmentDefinitionModel } from '@console/network-attachment-definition-plugin';
-import { NetworkWrapper } from '../../../../k8s/wrapper/vm/network-wrapper';
+
 import { NetworkInterfaceWrapper } from '../../../../k8s/wrapper/vm/network-interface-wrapper';
-import { iGetCommonData } from '../../selectors/immutable/selectors';
-import { VMWizardNetwork, VMWizardNetworkType, VMWizardProps } from '../../types';
+import { NetworkWrapper } from '../../../../k8s/wrapper/vm/network-wrapper';
 import { NICModal } from '../../../modals/nic-modal/nic-modal';
 import { vmWizardActions } from '../../redux/actions';
 import { ActionType } from '../../redux/types';
+import { iGetCommonData } from '../../selectors/immutable/selectors';
 import { getNetworks } from '../../selectors/selectors';
+import { VMWizardNetwork, VMWizardNetworkType, VMWizardProps } from '../../types';
 
 const VMWizardNICModal: React.FC<VMWizardNICModalProps> = (props) => {
   const {

@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { VncConsole, constants } from '@patternfly/react-console';
+
+import { constants, VncConsole } from '@patternfly/react-console';
 
 import { getVMIApiPath, getVMISubresourcePath } from '../../../../selectors/vmi';
-import { isConnectionEncrypted } from '../../../../utils/url';
 import { VMIKind } from '../../../../types';
+import { isConnectionEncrypted } from '../../../../utils/url';
 
 const VncConsoleConnector: React.FC<VncConsoleConnectorProps> = ({ vmi }) => (
   // the novnc library requires protocol to be specified so the URL must be absolute - including host:port

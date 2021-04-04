@@ -1,16 +1,17 @@
 import * as React from 'react';
-import { StatusBox } from '@console/internal/components/utils';
-import { RouteComponentProps } from 'react-router';
-import { Alert } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { RouteComponentProps } from 'react-router';
+
+import { StatusBox } from '@console/internal/components/utils';
+import { Alert } from '@patternfly/react-core';
 
 import { TEMPLATE_CUSTOMIZED_ANNOTATION } from '../../../constants';
-import { getVMStatus } from '../../../statuses/vm/vm-status';
-import { isVMIRunning } from '../../../selectors/vmi';
-import CustomizeSourceConsole from './CustomizeSourceConsole';
-import CustomizeSourceStatus from './CustomizeSourceStatus';
-import CustomizeSourceFinish from './CustomizeSourceFinish';
 import { useCustomizeVMTResources } from '../../../hooks/use-customize-vmt-resources';
+import { isVMIRunning } from '../../../selectors/vmi';
+import { getVMStatus } from '../../../statuses/vm/vm-status';
+import CustomizeSourceConsole from './CustomizeSourceConsole';
+import CustomizeSourceFinish from './CustomizeSourceFinish';
+import CustomizeSourceStatus from './CustomizeSourceStatus';
 
 const CustomizeSource: React.FC<RouteComponentProps> = ({ location }) => {
   const { t } = useTranslation();

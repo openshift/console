@@ -1,4 +1,5 @@
 import * as React from 'react';
+
 import { TemplateKind } from '@console/internal/module/k8s';
 import { StarIcon } from '@patternfly/react-icons';
 

@@ -1,24 +1,9 @@
 import * as React from 'react';
+import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router';
-import { Helmet } from 'react-helmet';
-import {
-  ActionGroup,
-  Alert,
-  Button,
-  TextInput,
-  Grid,
-  GridItem,
-  Form,
-  Title,
-  TextArea,
-  SelectVariant,
-  SelectOption,
-  Divider,
-  Stack,
-  StackItem,
-  Checkbox,
-} from '@patternfly/react-core';
+
+import { dropdownUnits } from '@console/internal/components/storage/shared';
 import {
   convertToBaseValue,
   history,
@@ -28,33 +13,49 @@ import {
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { PersistentVolumeClaimModel, TemplateModel } from '@console/internal/models';
 import { PersistentVolumeClaimKind, TemplateKind } from '@console/internal/module/k8s';
-
-import { useBaseImages } from '../../../hooks/use-base-images';
-import { getTemplateSourceStatus } from '../../../statuses/template/template-source-status';
-import { ProjectDropdown } from '../../form/project-dropdown';
-import { FormRow } from '../../form/form-row';
-import { validateVmLikeEntityName } from '../../../utils/validations';
-import { dropdownUnits } from '@console/internal/components/storage/shared';
-import { isTemplateSourceError } from '../../../statuses/template/types';
-import { preventDefault } from '../../form/utils';
-import { VMTemplateWrapper } from '../../../k8s/wrapper/vm/vm-template-wrapper';
-import { CloudInitDataHelper } from '../../../k8s/wrapper/vm/cloud-init-data-helper';
-import { filterTemplates } from '../utils';
 import {
-  TEMPLATE_TYPE_BASE,
-  TEMPLATE_TYPE_VM,
-  TEMPLATE_TYPE_LABEL,
+  ActionGroup,
+  Alert,
+  Button,
+  Checkbox,
+  Divider,
+  Form,
+  Grid,
+  GridItem,
+  SelectOption,
+  SelectVariant,
+  Stack,
+  StackItem,
+  TextArea,
+  TextInput,
+  Title,
+} from '@patternfly/react-core';
+
+import {
   TEMPLATE_PROVIDER_ANNOTATION,
   TEMPLATE_SUPPORT_LEVEL,
+  TEMPLATE_TYPE_BASE,
+  TEMPLATE_TYPE_LABEL,
+  TEMPLATE_TYPE_VM,
 } from '../../../constants';
-import { FormPFSelect } from '../../form/form-pf-select';
-import { getTemplateFlavorData, getTemplateMemory } from '../../../selectors/vm-template/advanced';
-import { getCPU, vCPUCount } from '../../../selectors/vm';
-import { selectVM } from '../../../selectors/vm-template/basic';
-import { createVMForCustomization } from '../../../k8s/requests/vmtemplate/customize';
-import { formReducer, initFormState, FORM_ACTION_TYPE } from './customize-source-form-reducer';
-import { getAnnotation } from '../../../selectors/selectors';
 import { TemplateSupport } from '../../../constants/vm-templates/support';
+import { useBaseImages } from '../../../hooks/use-base-images';
+import { createVMForCustomization } from '../../../k8s/requests/vmtemplate/customize';
+import { CloudInitDataHelper } from '../../../k8s/wrapper/vm/cloud-init-data-helper';
+import { VMTemplateWrapper } from '../../../k8s/wrapper/vm/vm-template-wrapper';
+import { getAnnotation } from '../../../selectors/selectors';
+import { getCPU, vCPUCount } from '../../../selectors/vm';
+import { getTemplateFlavorData, getTemplateMemory } from '../../../selectors/vm-template/advanced';
+import { selectVM } from '../../../selectors/vm-template/basic';
+import { getTemplateSourceStatus } from '../../../statuses/template/template-source-status';
+import { isTemplateSourceError } from '../../../statuses/template/types';
+import { validateVmLikeEntityName } from '../../../utils/validations';
+import { FormPFSelect } from '../../form/form-pf-select';
+import { FormRow } from '../../form/form-row';
+import { ProjectDropdown } from '../../form/project-dropdown';
+import { preventDefault } from '../../form/utils';
+import { filterTemplates } from '../utils';
+import { FORM_ACTION_TYPE, formReducer, initFormState } from './customize-source-form-reducer';
 
 import './customize-source.scss';
 

@@ -1,7 +1,20 @@
 import * as React from 'react';
-import { SelectOption } from '@patternfly/react-core';
-import { ValidationErrorType, asValidationObject } from '@console/shared/src/utils/validation';
 import { useTranslation } from 'react-i18next';
+
+import { asValidationObject, ValidationErrorType } from '@console/shared/src/utils/validation';
+import { SelectOption } from '@patternfly/react-core';
+
+import { CUSTOM_FLAVOR } from '../../../../constants';
+import { Flavor } from '../../../../constants/vm/flavor';
+import { getLabelValue } from '../../../../selectors/selectors';
+import { getFlavor } from '../../../../selectors/vm';
+import { getTemplateFlavorData } from '../../../../selectors/vm-template/advanced';
+import {
+  getFlavorLabel,
+  getFlavors,
+  getOsDefaultTemplate,
+  getWorkloadProfiles,
+} from '../../../../selectors/vm-template/combined-dependent';
 import {
   iGetIsLoaded,
   iGetLoadedData,
@@ -9,24 +22,13 @@ import {
   immutableListToShallowJS,
   toShallowJS,
 } from '../../../../utils/immutable';
-import { FormFieldRow } from '../../form/form-field-row';
-import { FormField, FormFieldType } from '../../form/form-field';
-import {
-  getFlavorLabel,
-  getFlavors,
-  getOsDefaultTemplate,
-  getWorkloadProfiles,
-} from '../../../../selectors/vm-template/combined-dependent';
 import { flavorSort } from '../../../../utils/sort';
-import { VMSettingsField } from '../../types';
-import { iGetFieldValue } from '../../selectors/immutable/field';
-import { nullOnEmptyChange } from '../../utils/utils';
 import { FormPFSelect } from '../../../form/form-pf-select';
-import { Flavor } from '../../../../constants/vm/flavor';
-import { getFlavor } from '../../../../selectors/vm';
-import { getLabelValue } from '../../../../selectors/selectors';
-import { getTemplateFlavorData } from '../../../../selectors/vm-template/advanced';
-import { CUSTOM_FLAVOR } from '../../../../constants';
+import { FormField, FormFieldType } from '../../form/form-field';
+import { FormFieldRow } from '../../form/form-field-row';
+import { iGetFieldValue } from '../../selectors/immutable/field';
+import { VMSettingsField } from '../../types';
+import { nullOnEmptyChange } from '../../utils/utils';
 
 export const FlavorSelect: React.FC<FlavorProps> = React.memo(
   ({

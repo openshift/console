@@ -1,8 +1,10 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
+
+import { ExternalLink } from '@console/internal/components/utils';
 import { Popover, PopoverPosition, Stack, StackItem } from '@patternfly/react-core';
 import { HelpIcon } from '@patternfly/react-icons';
-import { useTranslation } from 'react-i18next';
-import { ExternalLink } from '@console/internal/components/utils';
+
 import { CLOUD_INIT_DOC_LINK } from '../../../../../utils/strings';
 
 export const CloudInitInfoHelper = () => {

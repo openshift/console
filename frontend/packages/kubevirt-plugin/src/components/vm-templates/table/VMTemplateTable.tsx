@@ -1,24 +1,25 @@
+import { TFunction } from 'i18next';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { TFunction } from 'i18next';
-import { Stack, StackItem } from '@patternfly/react-core';
-import { sortable, info } from '@patternfly/react-table';
+
 import { RowFunction, Table } from '@console/internal/components/factory';
-import { dimensifyHeader } from '@console/shared';
 import { FirehoseResult } from '@console/internal/components/utils';
 import { PersistentVolumeClaimKind, PodKind, TemplateKind } from '@console/internal/module/k8s';
+import { dimensifyHeader } from '@console/shared';
+import { Stack, StackItem } from '@patternfly/react-core';
+import { info, sortable } from '@patternfly/react-table';
 
-import { usePinnedTemplates } from '../../../hooks/use-pinned-templates';
 import { useBaseImages } from '../../../hooks/use-base-images';
-import { getTemplateName, getTemplateProvider } from '../../../selectors/vm-template/basic';
-import VMTemplateRow from './VMTemplateRow';
-import VMCustomizeRow from './VMCustomizeRow';
-import { tableColumnClasses } from './utils';
-import { VirtualMachineTemplateBundle } from './types';
-import VMTemplateSupport from '../VMTemplateSupport';
-import { V1alpha1DataVolume } from '../../../types/api';
 import { useNamespace } from '../../../hooks/use-namespace';
+import { usePinnedTemplates } from '../../../hooks/use-pinned-templates';
+import { getTemplateName, getTemplateProvider } from '../../../selectors/vm-template/basic';
 import { VMIKind } from '../../../types';
+import { V1alpha1DataVolume } from '../../../types/api';
+import VMTemplateSupport from '../VMTemplateSupport';
+import { VirtualMachineTemplateBundle } from './types';
+import { tableColumnClasses } from './utils';
+import VMCustomizeRow from './VMCustomizeRow';
+import VMTemplateRow from './VMTemplateRow';
 
 import './vm-template-table.scss';
 

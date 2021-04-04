@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+
 import {
   Bullseye,
   Button,
@@ -12,28 +13,29 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
+
+import { DeviceType } from '../../../../constants/vm';
+import { ProvisionSource } from '../../../../constants/vm/provision-source';
+import { NetworkInterfaceWrapper } from '../../../../k8s/wrapper/vm/network-interface-wrapper';
+import { NetworkWrapper } from '../../../../k8s/wrapper/vm/network-wrapper';
+import { wrapWithProgress } from '../../../../utils/utils';
+import { nicTableColumnClasses } from '../../../vm-nics/utils';
+import { VMNicsTable } from '../../../vm-nics/vm-nics';
+import { vmWizardActions } from '../../redux/actions';
+import { ActionType } from '../../redux/types';
+import { iGetProvisionSource } from '../../selectors/immutable/vm-settings';
 import {
   hasStepCreateDisabled,
   hasStepDeleteDisabled,
   hasStepUpdateDisabled,
   isStepLocked,
 } from '../../selectors/immutable/wizard-selectors';
-import { VMWizardNetwork, VMWizardTab } from '../../types';
-import { VMNicsTable } from '../../../vm-nics/vm-nics';
-import { nicTableColumnClasses } from '../../../vm-nics/utils';
-import { vmWizardActions } from '../../redux/actions';
-import { ActionType } from '../../redux/types';
-import { iGetProvisionSource } from '../../selectors/immutable/vm-settings';
 import { getNetworks } from '../../selectors/selectors';
-import { wrapWithProgress } from '../../../../utils/utils';
-import { ProvisionSource } from '../../../../constants/vm/provision-source';
-import { DeviceType } from '../../../../constants/vm';
+import { VMWizardNetwork, VMWizardTab } from '../../types';
+import { NetworkBootSource } from './network-boot-source';
+import { VMWizardNetworkBundle } from './types';
 import { vmWizardNicModalEnhanced } from './vm-wizard-nic-modal-enhanced';
 import { VMWizardNicRow } from './vm-wizard-nic-row';
-import { VMWizardNetworkBundle } from './types';
-import { NetworkBootSource } from './network-boot-source';
-import { NetworkWrapper } from '../../../../k8s/wrapper/vm/network-wrapper';
-import { NetworkInterfaceWrapper } from '../../../../k8s/wrapper/vm/network-interface-wrapper';
 
 import './networking-tab.scss';
 

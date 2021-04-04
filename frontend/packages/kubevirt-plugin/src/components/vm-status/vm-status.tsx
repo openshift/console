@@ -1,6 +1,27 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
+
+import { ResourceLink, resourcePath } from '@console/internal/components/utils';
+import { history } from '@console/internal/components/utils/router';
+import { PersistentVolumeClaimModel, PodModel } from '@console/internal/models';
 import { PodKind } from '@console/internal/module/k8s';
+import { getName, getNamespace } from '@console/shared/src';
+import GenericStatus from '@console/shared/src/components/status/GenericStatus';
+import {
+  RedExclamationCircleIcon,
+  YellowExclamationTriangleIcon,
+} from '@console/shared/src/components/status/icons';
+import {
+  Button,
+  ButtonVariant,
+  Level,
+  LevelItem,
+  Progress,
+  ProgressSize,
+  Stack,
+  StackItem,
+} from '@patternfly/react-core';
 import {
   HourglassHalfIcon,
   InProgressIcon,
@@ -9,39 +30,20 @@ import {
   SyncAltIcon,
   UnknownIcon,
 } from '@patternfly/react-icons';
-import { getNamespace, getName } from '@console/shared/src';
-import {
-  RedExclamationCircleIcon,
-  YellowExclamationTriangleIcon,
-} from '@console/shared/src/components/status/icons';
-import GenericStatus from '@console/shared/src/components/status/GenericStatus';
-import {
-  Progress,
-  ProgressSize,
-  Button,
-  ButtonVariant,
-  Stack,
-  StackItem,
-  Level,
-  LevelItem,
-} from '@patternfly/react-core';
-import { Link } from 'react-router-dom';
-import { ResourceLink, resourcePath } from '@console/internal/components/utils';
-import { PersistentVolumeClaimModel, PodModel } from '@console/internal/models';
-import { unpauseVMI } from '../../k8s/requests/vmi/actions';
+
 import { VM_DETAIL_EVENTS_HREF } from '../../constants';
-import { VMKind, VMIKind } from '../../types';
-import { getVMLikeModel } from '../../selectors/vm';
-import { VMStatus as VMStatusEnum } from '../../constants/vm/vm-status';
-import { VMILikeEntityKind } from '../../types/vmLike';
-import { VMStatusBundle } from '../../statuses/vm/types';
-import { saveAndRestartModal } from '../modals/save-and-restart-modal/save-and-restart-modal';
-import { history } from '@console/internal/components/utils/router';
-import { getVMTabURL } from '../../utils/url';
-import { VMTabURLEnum } from '../vms/types';
 import { StatusGroup } from '../../constants/status-group';
-import { VMImportWrappper } from '../../k8s/wrapper/vm-import/vm-import-wrapper';
 import { VMImportType } from '../../constants/v2v-import/ovirt/vm-import-type';
+import { VMStatus as VMStatusEnum } from '../../constants/vm/vm-status';
+import { unpauseVMI } from '../../k8s/requests/vmi/actions';
+import { VMImportWrappper } from '../../k8s/wrapper/vm-import/vm-import-wrapper';
+import { getVMLikeModel } from '../../selectors/vm';
+import { VMStatusBundle } from '../../statuses/vm/types';
+import { VMIKind, VMKind } from '../../types';
+import { VMILikeEntityKind } from '../../types/vmLike';
+import { getVMTabURL } from '../../utils/url';
+import { saveAndRestartModal } from '../modals/save-and-restart-modal/save-and-restart-modal';
+import { VMTabURLEnum } from '../vms/types';
 
 import './vm-status.scss';
 

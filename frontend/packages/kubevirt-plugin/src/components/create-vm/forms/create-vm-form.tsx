@@ -1,18 +1,6 @@
 import * as React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import {
-  Alert,
-  Form,
-  TextInput,
-  Checkbox,
-  SelectVariant,
-  SelectOption,
-  Split,
-  SplitItem,
-  Stack,
-  StackItem,
-  ExpandableSection,
-} from '@patternfly/react-core';
+
 import {
   convertToBaseValue,
   humanizeBinaryBytes,
@@ -21,38 +9,51 @@ import {
 } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { BlueInfoCircleIcon, FLAGS, useFlag } from '@console/shared';
+import {
+  Alert,
+  Checkbox,
+  ExpandableSection,
+  Form,
+  SelectOption,
+  SelectVariant,
+  Split,
+  SplitItem,
+  Stack,
+  StackItem,
+  TextInput,
+} from '@patternfly/react-core';
 
+import { ROOT_DISK_INSTALL_NAME } from '../../../constants';
+import { DataVolumeSourceType, DEFAULT_DISK_SIZE } from '../../../constants/vm';
 import { DataVolumeModel, VirtualMachineModel } from '../../../models';
-import { VMKind } from '../../../types';
-import { validateVmLikeEntityName } from '../../../utils/validations';
-import { FormRow } from '../../form/form-row';
-import { ProjectDropdown } from '../../form/project-dropdown';
-import { getTemplateName, selectVM } from '../../../selectors/vm-template/basic';
+import { getCPU, getWorkloadProfile, vCPUCount } from '../../../selectors/vm';
 import {
   getDefaultDiskBus,
   getTemplateFlavorData,
   getTemplateMemory,
   getTemplateSizeRequirementInBytes,
 } from '../../../selectors/vm-template/advanced';
-import { VMSettingsField } from '../../create-vm-wizard/types';
-import { helpKeyResolver } from '../../create-vm-wizard/strings/renderable-field';
-import { FormAction, FormState, FORM_ACTION_TYPE } from './create-vm-form-reducer';
-import { TemplateItem } from '../../../types/template';
+import { getTemplateName, selectVM } from '../../../selectors/vm-template/basic';
 import { isTemplateSourceError, TemplateSourceStatus } from '../../../statuses/template/types';
+import { VMKind } from '../../../types';
+import { TemplateItem } from '../../../types/template';
+import { generateVMName } from '../../../utils/strings';
+import { validateVmLikeEntityName } from '../../../utils/validations';
+import { helpKeyResolver } from '../../create-vm-wizard/strings/renderable-field';
+import { VMSettingsField } from '../../create-vm-wizard/types';
+import { FormPFSelect } from '../../form/form-pf-select';
+import { FormRow } from '../../form/form-row';
+import { ProjectDropdown } from '../../form/project-dropdown';
+import { preventDefault } from '../../form/utils';
+import SSHWizard from '../../ssh-service/SSHWizard/SSHWizard';
 import {
-  SourceDescription,
-  URLSource,
   ContainerSource,
   PVCSource,
+  SourceDescription,
+  URLSource,
 } from '../../vm-templates/vm-template-source';
 import { BootSourceState } from './boot-source-form-reducer';
-import { ROOT_DISK_INSTALL_NAME } from '../../../constants';
-import { getCPU, getWorkloadProfile, vCPUCount } from '../../../selectors/vm';
-import { FormPFSelect } from '../../form/form-pf-select';
-import { preventDefault } from '../../form/utils';
-import { DataVolumeSourceType, DEFAULT_DISK_SIZE } from '../../../constants/vm';
-import { generateVMName } from '../../../utils/strings';
-import SSHWizard from '../../ssh-service/SSHWizard/SSHWizard';
+import { FORM_ACTION_TYPE, FormAction, FormState } from './create-vm-form-reducer';
 
 import './create-vm-form.scss';
 

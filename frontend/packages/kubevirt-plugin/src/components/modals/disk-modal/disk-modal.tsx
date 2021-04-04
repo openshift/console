@@ -1,47 +1,35 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  Form,
-  FormSelect,
-  FormSelectOption,
-  TextInput,
-  ExpandableSection,
-  SelectOption,
-  Stack,
-  StackItem,
-} from '@patternfly/react-core';
+
+import { ModalBody, ModalComponentProps, ModalTitle } from '@console/internal/components/factory';
 import {
   FirehoseResult,
   HandlePromiseProps,
   withHandlePromise,
 } from '@console/internal/components/utils';
-import { ModalBody, ModalComponentProps, ModalTitle } from '@console/internal/components/factory';
 import {
   NamespaceModel,
   PersistentVolumeClaimModel,
   StorageClassModel,
 } from '@console/internal/models';
-import { getName, getAnnotations } from '@console/shared/src';
-import { getLoadedData, isLoaded, prefixedID, resolveDataVolumeName } from '../../../utils';
-import { validateDisk } from '../../../utils/validations/vm';
-import { isValidationError } from '../../../utils/validations/common';
-import { FormRow } from '../../form/form-row';
 import {
-  asFormSelectValue,
-  FormSelectPlaceholderOption,
-} from '../../form/form-select-placeholder-option';
+  ConfigMapKind,
+  PersistentVolumeClaimKind,
+  StorageClassResourceKind,
+} from '@console/internal/module/k8s';
+import { getAnnotations, getName } from '@console/shared/src';
 import {
-  getDefaultSCAccessModes,
-  getDefaultSCVolumeMode,
-  getDefaultStorageClass,
-  isConfigMapContainsScModes,
-} from '../../../selectors/config-map/sc-defaults';
-import { DYNAMIC, getDialogUIError, getSequenceName } from '../../../utils/strings';
-import { ModalFooter } from '../modal/modal-footer';
-import { useShowErrorToggler } from '../../../hooks/use-show-error-toggler';
-import { DiskWrapper } from '../../../k8s/wrapper/vm/disk-wrapper';
-import { DataVolumeWrapper } from '../../../k8s/wrapper/vm/data-volume-wrapper';
-import { VolumeWrapper } from '../../../k8s/wrapper/vm/volume-wrapper';
+  ExpandableSection,
+  Form,
+  FormSelect,
+  FormSelectOption,
+  SelectOption,
+  Stack,
+  StackItem,
+  TextInput,
+} from '@patternfly/react-core';
+
+import { DEFAULT_SC_ANNOTATION } from '../../../constants/sc';
 import {
   AccessMode,
   DataVolumeSourceType,
@@ -50,29 +38,43 @@ import {
   VolumeMode,
   VolumeType,
 } from '../../../constants/vm/storage';
-import { DEFAULT_SC_ANNOTATION } from '../../../constants/sc';
-import { getPvcStorageSize } from '../../../selectors/pvc/selectors';
-import { K8sResourceSelectRow } from '../../form/k8s-resource-select-row';
-import { SizeUnitFormRow } from '../../form/size-unit-form-row';
+import { useShowErrorToggler } from '../../../hooks/use-show-error-toggler';
 import { CombinedDisk } from '../../../k8s/wrapper/vm/combined-disk';
+import { DataVolumeWrapper } from '../../../k8s/wrapper/vm/data-volume-wrapper';
+import { DiskWrapper } from '../../../k8s/wrapper/vm/disk-wrapper';
 import { PersistentVolumeClaimWrapper } from '../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
-import { BinaryUnit, stringValueUnitSplit } from '../../form/size-unit-utils';
-import { StorageUISource } from './storage-ui-source';
-import { TemplateValidations } from '../../../utils/validations/template/template-validations';
+import { VolumeWrapper } from '../../../k8s/wrapper/vm/volume-wrapper';
 import {
-  ConfigMapKind,
-  StorageClassResourceKind,
-  PersistentVolumeClaimKind,
-} from '@console/internal/module/k8s';
+  getDefaultSCAccessModes,
+  getDefaultSCVolumeMode,
+  getDefaultStorageClass,
+  isConfigMapContainsScModes,
+} from '../../../selectors/config-map/sc-defaults';
+import { getPvcStorageSize } from '../../../selectors/pvc/selectors';
 import { UIStorageEditConfig } from '../../../types/ui/storage';
+import { getLoadedData, isLoaded, prefixedID, resolveDataVolumeName } from '../../../utils';
+import { DYNAMIC, getDialogUIError, getSequenceName } from '../../../utils/strings';
 import { isFieldDisabled } from '../../../utils/ui/edit-config';
+import { isValidationError } from '../../../utils/validations/common';
+import { TemplateValidations } from '../../../utils/validations/template/template-validations';
+import { validateDisk } from '../../../utils/validations/vm';
+import { ConfigMapDefaultModesAlert } from '../../Alerts/ConfigMapDefaultModesAlert';
 import { PendingChangesAlert } from '../../Alerts/PendingChangesAlert';
 import { FormPFSelect } from '../../form/form-pf-select';
+import { FormRow } from '../../form/form-row';
+import {
+  asFormSelectValue,
+  FormSelectPlaceholderOption,
+} from '../../form/form-select-placeholder-option';
+import { ContainerSourceHelp } from '../../form/helper/container-source-help';
+import { URLSourceHelp } from '../../form/helper/url-source-help';
+import { K8sResourceSelectRow } from '../../form/k8s-resource-select-row';
+import { SizeUnitFormRow } from '../../form/size-unit-form-row';
+import { BinaryUnit, stringValueUnitSplit } from '../../form/size-unit-utils';
+import { ModalFooter } from '../modal/modal-footer';
+import { StorageUISource } from './storage-ui-source';
 
 import './disk-modal.scss';
-import { URLSourceHelp } from '../../form/helper/url-source-help';
-import { ContainerSourceHelp } from '../../form/helper/container-source-help';
-import { ConfigMapDefaultModesAlert } from '../../Alerts/ConfigMapDefaultModesAlert';
 
 export const DiskModal = withHandlePromise((props: DiskModalProps) => {
   const {
