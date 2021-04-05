@@ -1,6 +1,7 @@
 import { ConfigMapKind } from '@console/internal/module/k8s';
-import { KUBEVIRT_STORAGE_CLASS_DEFAULTS } from '../const';
+
 import { V1alpha1DataVolume } from '../../src/types/api';
+import { KUBEVIRT_STORAGE_CLASS_DEFAULTS } from '../const';
 
 export * from '../../../integration-tests-cypress/support';
 

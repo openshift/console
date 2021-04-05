@@ -1,5 +1,5 @@
-import { virtualization } from '../../view/virtualization';
 import { testName } from '../../support';
+import { virtualization } from '../../view/virtualization';
 import { wizard } from '../../view/wizard';
 
 const TEMPLATE_NAME = 'foo';

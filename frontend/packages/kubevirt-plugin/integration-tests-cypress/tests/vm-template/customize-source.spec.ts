@@ -1,8 +1,8 @@
-import { testName } from '../../support';
-import { virtualization } from '../../view/virtualization';
-import { addSource } from '../../view/add-source';
 import { ProvisionSource } from '../../enums/provisionSource';
+import { testName } from '../../support';
+import { addSource } from '../../view/add-source';
 import { customizeSource, PROVIDER } from '../../view/customize-source';
+import { virtualization } from '../../view/virtualization';
 
 const TEMPLATE = Cypress.env('TEMPLATE_NAME');
 
