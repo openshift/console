@@ -10,6 +10,7 @@ const SSHPopover: React.FC = () => {
   const { t } = useTranslation();
   return (
     <Popover
+      data-test="SSHPopover"
       className="SSHPopover-main"
       maxWidth="20%"
       position={PopoverPosition.right}
