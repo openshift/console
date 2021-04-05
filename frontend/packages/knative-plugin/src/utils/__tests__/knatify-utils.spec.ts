@@ -37,7 +37,7 @@ describe('knatify-utils', () => {
   });
 
   it('getCommonInitialValues should return valid formik common initial values', () => {
-    expect(getCommonInitialValues(ksvcData, 'overlayimage', 'testproject3')).toEqual(
+    expect(getCommonInitialValues(ksvcData, 'testproject3')).toEqual(
       knatifyFormCommonInitailValues,
     );
   });
@@ -55,9 +55,7 @@ describe('knatify-utils', () => {
       build: { env: [], triggers: {}, strategy: '' },
       isSearchingForImage: false,
     };
-    expect(getInitialValuesKnatify(ksvcData, 'overlayimage', 'testproject3', [])).toEqual(
-      knatifyFormInitialVal,
-    );
+    expect(getInitialValuesKnatify(ksvcData, 'testproject3', [])).toEqual(knatifyFormInitialVal);
   });
 
   it('getInitialValuesKnatify should return valid formik initial values with internal regstry and valid IS if image is not in imageStreams', () => {
@@ -73,7 +71,7 @@ describe('knatify-utils', () => {
                 image:
                   'image-registry.openshift-image-registry.svc:5000/testproject3/ruby-ex-git-dc@sha256:731442c798a6afd04c4b2a97c29eb55993df87ee861185b736097ea72959d0bc',
                 ports: [{ containerPort: 8080 }],
-                imagePullPolicy: 'Always',
+                imagePullPolicy: 'Never',
                 resources: {},
               },
             ],
@@ -93,8 +91,8 @@ describe('knatify-utils', () => {
       build: { env: [], triggers: {}, strategy: '' },
       isSearchingForImage: false,
     };
-    expect(
-      getInitialValuesKnatify(mockKsvcData, 'overlayimage', 'testproject3', imageStremsData),
-    ).toEqual(knatifyFormInitialVal);
+    expect(getInitialValuesKnatify(mockKsvcData, 'testproject3', imageStremsData)).toEqual(
+      knatifyFormInitialVal,
+    );
   });
 });

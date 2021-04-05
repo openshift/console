@@ -36,14 +36,18 @@ export const getKnatifyWorkloadData = (obj: K8sResourceKind, relatedHpa?: K8sRes
 
   const healthChecks = getHealthChecksData(obj, 0);
   const { readinessProbe, livenessProbe } = getProbesData(healthChecks, Resources.KnativeService);
-
+  const appName = `ksvc-${name}`;
   const newKnativeDeployResource: K8sResourceKind = {
     kind: ServiceModel.kind,
     apiVersion: `${ServiceModel.apiGroup}/${ServiceModel.apiVersion}`,
     metadata: {
-      name,
+      name: appName,
       namespace,
-      labels,
+      labels: {
+        ...labels,
+        'app.kubernetes.io/instance': appName,
+        'app.kubernetes.io/component': appName,
+      },
       annotations,
     },
     spec: {
@@ -92,22 +96,39 @@ export const getKnatifyWorkloadData = (obj: K8sResourceKind, relatedHpa?: K8sRes
   return newKnativeDeployResource;
 };
 
-export const knatifyResources = (rawFormData: DeployImageFormData): Promise<K8sResourceKind> => {
+export const knatifyResources = (
+  rawFormData: DeployImageFormData,
+  appName: string,
+): Promise<K8sResourceKind> => {
   const formData = ensurePortExists(rawFormData);
   const {
     isi: { image },
   } = formData;
   const imageStreamUrl: string = image?.dockerImageReference ?? '';
-  const knDeploymentResource = getKnativeServiceDepResource(formData, imageStreamUrl);
+  const knDeploymentRes = getKnativeServiceDepResource(
+    formData,
+    imageStreamUrl,
+    undefined,
+    undefined,
+    undefined,
+    formData.annotations,
+  );
+  const knDeploymentResource = {
+    ...knDeploymentRes,
+    metadata: {
+      ...knDeploymentRes.metadata,
+      labels: {
+        ...knDeploymentRes.metadata.labels,
+        ...(!!appName && { 'app.kubernetes.io/name': appName }),
+      },
+    },
+  };
   return k8sCreate(ServiceModel, knDeploymentResource);
 };
 
-export const getCommonInitialValues = (
-  ksvcResourceData: K8sResourceKind,
-  name: string,
-  namespace: string,
-) => {
+export const getCommonInitialValues = (ksvcResourceData: K8sResourceKind, namespace: string) => {
   const appGroupName = ksvcResourceData?.metadata?.labels?.[PART_OF] ?? '';
+  const name = ksvcResourceData?.metadata?.name ?? '';
   const commonInitialValues = {
     name,
     formType: knatify,
@@ -128,6 +149,7 @@ export const getCommonInitialValues = (
     labels: getUserLabels(ksvcResourceData),
     limits: getLimitsDataFromResource(ksvcResourceData),
     healthChecks: getHealthChecksData(ksvcResourceData),
+    annotations: ksvcResourceData?.metadata?.annotations ?? {},
   };
   return commonInitialValues;
 };
@@ -169,11 +191,10 @@ const getInternalImageInitialValues = (
 
 export const getInitialValuesKnatify = (
   ksvcResourceData: K8sResourceKind,
-  appName: string,
   namespace: string,
   imageStreams: K8sResourceKind[],
 ): DeployImageFormData => {
-  const commonValues = getCommonInitialValues(ksvcResourceData, appName, namespace);
+  const commonValues = getCommonInitialValues(ksvcResourceData, namespace);
   const iconValues = getIconInitialValues(ksvcResourceData);
   const internalImageValues = getInternalImageInitialValues(
     ksvcResourceData,

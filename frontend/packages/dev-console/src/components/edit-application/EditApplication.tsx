@@ -100,11 +100,11 @@ const EditApplication: React.FC<EditApplicationProps> = ({
       let allBuilderImages: NormalizedBuilderImages = !_.isEmpty(imageStreamsData)
         ? normalizeBuilderImages(imageStreamsData)
         : {};
-      if (appResources.buildConfig.loaded) {
+      if (appResources.buildConfig.loaded && appResources.buildConfig.data) {
         const {
           name: imageName,
           namespace: imageNs,
-        } = appResources.buildConfig.data.spec?.strategy.sourceStrategy.from;
+        } = appResources.buildConfig.data?.spec?.strategy.sourceStrategy.from;
         const selectedImage = imageName?.split(':')[0];
         const builderImageExists = imageNs === 'openshift' && allBuilderImages?.[selectedImage];
         if (!builderImageExists) {
@@ -134,7 +134,7 @@ const EditApplication: React.FC<EditApplicationProps> = ({
       ignore = true;
     };
   }, [
-    appResources.buildConfig.data.spec,
+    appResources.buildConfig.data,
     appResources.buildConfig.loaded,
     imageStreamsData,
     pageHeading,

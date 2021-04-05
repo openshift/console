@@ -4,9 +4,13 @@ export const ksvcData: K8sResourceKind = {
   kind: 'Service',
   apiVersion: 'serving.knative.dev/v1',
   metadata: {
-    name: 'overlayimage',
+    name: 'ksvc-overlayimage',
     namespace: 'testproject3',
-    labels: { 'app.kubernetes.io/part-of': 'application-3' },
+    labels: {
+      'app.kubernetes.io/component': 'ksvc-overlayimage',
+      'app.kubernetes.io/instance': 'ksvc-overlayimage',
+      'app.kubernetes.io/part-of': 'application-3',
+    },
     annotations: { 'deployment.kubernetes.io/revision': '1' },
   },
   spec: {
@@ -28,7 +32,7 @@ export const ksvcData: K8sResourceKind = {
 };
 
 export const knatifyFormCommonInitailValues = {
-  name: 'overlayimage',
+  name: 'ksvc-overlayimage',
   formType: 'knatify',
   application: { name: 'application-3', selectedKey: 'application-3' },
   project: { name: 'testproject3' },
@@ -54,8 +58,9 @@ export const knatifyFormCommonInitailValues = {
     },
   },
   pipeline: { enabled: false },
-  deployment: { env: [], replicas: 1, triggers: { image: true } },
-  labels: {},
+  deployment: { env: [], replicas: 1, triggers: { image: false } },
+  labels: { 'app.kubernetes.io/component': 'ksvc-overlayimage' },
+  annotations: { 'deployment.kubernetes.io/revision': '1' },
   limits: {
     cpu: {
       request: '',

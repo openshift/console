@@ -5,11 +5,6 @@ import { sampleDeployments } from '@console/shared/src/utils/__tests__/test-reso
 import { EditApplication } from '../modify-application';
 
 describe('modify application edit flow', () => {
-  it('expect EditApplication to return hidden false for knative service without annotations', () => {
-    const editAppData = EditApplication(ServiceModel, knativeServiceObj);
-    expect(editAppData.hidden).toBe(false);
-  });
-
   it('expect EditApplication to return hidden false for knative service with annotations', () => {
     const knativeServiceObjWithAnnoations = {
       ...knativeServiceObj,

@@ -83,6 +83,7 @@ export interface DeployImageFormData {
   serverless?: ServerlessData;
   pipeline?: PipelineData;
   labels: { [name: string]: string };
+  annotations?: { [name: string]: string };
   env?: { [name: string]: string };
   route: RouteData;
   build: BuildData;

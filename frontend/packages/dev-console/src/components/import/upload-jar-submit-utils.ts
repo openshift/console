@@ -4,16 +4,18 @@ import {
   ServiceModel,
   RouteModel,
   BuildConfigModel,
-  ImageStreamModel,
   DeploymentModel,
   DeploymentConfigModel,
 } from '@console/internal/models';
 import { coFetch } from '@console/internal/co-fetch';
 import { getKnativeServiceDepResource } from '@console/knative-plugin/src/utils/create-knative-utils';
 import { ServiceModel as KnServiceModel } from '@console/knative-plugin';
-import { NameValuePair, getResourceLimitsData } from '@console/shared';
-
-import { createProject, createWebhookSecret } from './import-submit-utils';
+import { getRandomChars, NameValuePair, getResourceLimitsData } from '@console/shared';
+import {
+  createOrUpdateImageStream,
+  createProject,
+  createWebhookSecret,
+} from './import-submit-utils';
 import {
   getAppLabels,
   getCommonAnnotations,
@@ -204,42 +206,6 @@ const createOrUpdateDeploymentConfig = (
     : k8sCreate(DeploymentConfigModel, deploymentConfig, dryRun ? dryRunOpt : {});
 };
 
-export const createOrUpdateImageStream = (
-  formData: UploadJarFormData,
-  imageStreamData: K8sResourceKind,
-  dryRun: boolean,
-  imageStreamList: K8sResourceKind[],
-  verb: K8sVerb = 'create',
-  generatedImageStreamName: string = '',
-): Promise<K8sResourceKind> => {
-  const imageStreamFilterData = _.orderBy(imageStreamList, ['metadata.resourceVersion'], ['desc']);
-  const originalImageStream = (imageStreamFilterData.length && imageStreamFilterData[0]) || {};
-  const {
-    name,
-    project: { name: namespace },
-    application: { name: applicationName },
-    labels: userLabels,
-    image: { tag: selectedTag },
-  } = formData;
-  const imageStreamName = imageStreamData && imageStreamData.metadata.name;
-  const defaultLabels = getAppLabels({ name, applicationName, imageStreamName, selectedTag });
-  const defaultAnnotations = { ...getCommonAnnotations() };
-  const newImageStream = {
-    apiVersion: 'image.openshift.io/v1',
-    kind: 'ImageStream',
-    metadata: {
-      name: `${generatedImageStreamName || name}`,
-      namespace,
-      labels: { ...defaultLabels, ...userLabels },
-      annotations: defaultAnnotations,
-    },
-  };
-  const imageStream = mergeData(originalImageStream, newImageStream);
-  return verb === 'update'
-    ? k8sUpdate(ImageStreamModel, imageStream)
-    : k8sCreate(ImageStreamModel, newImageStream, dryRun ? dryRunOpt : {});
-};
-
 export const createOrUpdateBuildConfig = (
   formData: UploadJarFormData,
   imageStream: K8sResourceKind,
@@ -274,11 +240,12 @@ export const createOrUpdateBuildConfig = (
     },
   };
 
+  const buildConfigName = verb === 'update' ? originalBuildConfig?.metadata?.name : name;
   const newBuildConfig = {
     apiVersion: 'build.openshift.io/v1',
     kind: 'BuildConfig',
     metadata: {
-      name,
+      name: buildConfigName,
       namespace,
       labels: { ...defaultLabels, ...userLabels },
       annotations: defaultAnnotations,
@@ -383,14 +350,24 @@ export const createOrUpdateJarFile = async (
   createNewProject && (await createProject(formData.project));
 
   const responses: K8sResourceKind[] = [];
-  const generatedImageStreamName: string = '';
+  let generatedImageStreamName: string = '';
+  const imageStreamList = appResImageStream?.data;
+  if (
+    resources === Resources.KnativeService &&
+    imageStreamList &&
+    imageStreamList.length &&
+    verb === 'update'
+  ) {
+    generatedImageStreamName = `${name}-${getRandomChars()}`;
+  }
 
   const imageStreamResponse = await createOrUpdateImageStream(
     formData,
     imageStream,
     dryRun,
-    appResImageStream?.data,
-    verb,
+    appResources,
+    generatedImageStreamName ? 'create' : verb,
+    generatedImageStreamName,
   );
   responses.push(imageStreamResponse);
 
