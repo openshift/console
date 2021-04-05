@@ -42,8 +42,14 @@ import { MONITORING_DASHBOARDS_DEFAULT_TIMESPAN, Panel } from './types';
 
 const NUM_SAMPLES = 30;
 
-const evaluateTemplate = (s: string, variables: VariablesMap, timespan: number): string => {
-  if (_.isEmpty(s)) {
+const VARIABLE_ALL_OPTION_KEY = 'VARIABLE_ALL_OPTION_KEY';
+
+const evaluateTemplate = (
+  template: string,
+  variables: ImmutableMap<string, Variable>,
+  timespan: number,
+): string => {
+  if (_.isEmpty(template)) {
     return undefined;
   }
 
@@ -54,7 +60,7 @@ const evaluateTemplate = (s: string, variables: VariablesMap, timespan: number):
   // require 2 data points each. Otherwise, there could be gaps in the graph.
   const interval: Variable = { value: `${Math.max(intervalMinutes, 5)}m` };
   const allVariables = {
-    ...variables,
+    ...variables.toJS(),
     __interval: interval,
     // eslint-disable-next-line camelcase
     __rate_interval: interval,
@@ -64,7 +70,7 @@ const evaluateTemplate = (s: string, variables: VariablesMap, timespan: number):
     '__auto_interval_[a-z]+': interval,
   };
 
-  let result = s;
+  let result = template;
   _.each(allVariables, (v, k) => {
     const re = new RegExp(`\\$${k}`, 'g');
     if (result.match(re)) {
@@ -72,7 +78,13 @@ const evaluateTemplate = (s: string, variables: VariablesMap, timespan: number):
         result = undefined;
         return false;
       }
-      result = result.replace(re, v.value || '');
+      const replacement =
+        v.value === VARIABLE_ALL_OPTION_KEY
+          ? // Build a regex that tests for all options. After escaping regex characters, we also
+            // escape '\' characters so that they are seen as literal '\'s by the PromQL parser.
+            `(${v.options.map((s) => _.escapeRegExp(s).replace(/\\/g, '\\\\')).join('|')})`
+          : v.value || '';
+      result = result.replace(re, replacement);
     }
   });
 
@@ -145,13 +157,15 @@ const SingleVariableDropdown: React.FC<SingleVariableDropdownProps> = ({ id, nam
   const timespan = useSelector(({ UI }: RootState) =>
     UI.getIn(['monitoringDashboards', 'timespan']),
   );
-  const { isHidden, options, query, value } = useSelector(({ UI }: RootState) => {
-    const variables = UI.getIn(['monitoringDashboards', 'variables']).toJS();
+  const { includeAll, isHidden, options, query, value } = useSelector(({ UI }: RootState) => {
+    const variables = UI.getIn(['monitoringDashboards', 'variables']);
+    const variable = variables.toJS()[name];
     return {
-      isHidden: variables[name].isHidden,
-      options: variables[name].options,
-      query: evaluateTemplate(variables[name].query, variables, timespan),
-      value: variables[name].value,
+      includeAll: variable.includeAll,
+      isHidden: variable.isHidden,
+      options: variable.options,
+      query: evaluateTemplate(variable.query, variables, timespan),
+      value: variable.value,
     };
   });
 
@@ -202,11 +216,16 @@ const SingleVariableDropdown: React.FC<SingleVariableDropdownProps> = ({ id, nam
     return null;
   }
 
+  const items = includeAll ? { [VARIABLE_ALL_OPTION_KEY]: 'All' } : {};
+  _.each(options, (option) => {
+    items[option] = option;
+  });
+
   return (
     <VariableDropdown
       id={id}
       isError={isError}
-      items={_.zipObject(options, options)}
+      items={items}
       label={name}
       onChange={onChange}
       selectedKey={value}
@@ -386,13 +405,11 @@ const Card: React.FC<CardProps> = ({ panel }) => {
     return null;
   }
 
-  const variablesJS: VariablesMap = variables.toJS();
-
   const rawQueries = _.map(panel.targets, 'expr');
   if (!rawQueries.length) {
     return null;
   }
-  const queries = rawQueries.map((expr) => evaluateTemplate(expr, variablesJS, timespan));
+  const queries = rawQueries.map((expr) => evaluateTemplate(expr, variables, timespan));
   const isLoading = _.some(queries, _.isUndefined);
 
   const panelClassModifier = getPanelClassModifier(panel);
@@ -550,6 +567,7 @@ const MonitoringDashboardsPage: React.FC<MonitoringDashboardsPageProps> = ({ mat
         _.each(data?.templating?.list, (v) => {
           if (v.type === 'query' || v.type === 'interval') {
             allVariables[v.name] = ImmutableMap({
+              includeAll: !!v.includeAll,
               isHidden: v.hide !== 0,
               isLoading: v.type === 'query',
               options: _.map(v.options, 'value'),
@@ -638,6 +656,7 @@ const MonitoringDashboardsPage: React.FC<MonitoringDashboardsPageProps> = ({ mat
 
 type TemplateVariable = {
   hide: number;
+  includeAll: boolean;
   name: string;
   options: { selected: boolean; value: string }[];
   query: string;
@@ -670,8 +689,6 @@ type Variable = {
   query?: string;
   value?: string;
 };
-
-type VariablesMap = { [key: string]: Variable };
 
 type VariableDropdownProps = {
   id: string;

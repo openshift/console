@@ -66,7 +66,7 @@ const theme = getCustomTheme(
 );
 export const colors = theme.line.colorScale;
 
-const formatDate = (date) => getLocaleDate(date, { month: 'short', day: 'numeric' });
+const formatDate = (date: Date) => getLocaleDate(date, { month: 'short', day: 'numeric' });
 
 // Use exponential notation for small or very large numbers to avoid labels with too many characters
 const formatPositiveValue = (v: number): string =>
@@ -255,7 +255,7 @@ const formatLabels = (labels: PrometheusLabels) => {
 
 type GraphSeries = GraphDataPoint[] | null;
 
-const getXDomain = (endTime, span): AxisDomain => [endTime - span, endTime];
+const getXDomain = (endTime: number, span: number): AxisDomain => [endTime - span, endTime];
 
 const Graph: React.FC<GraphProps> = React.memo(
   ({ allSeries, disabledSeries, formatLegendLabel, isStack, span, width, fixedXDomain }) => {
@@ -327,8 +327,8 @@ const Graph: React.FC<GraphProps> = React.memo(
     const xAxisTickShowSeconds = span < xAxisTickCount * ONE_MINUTE;
     const xAxisTickFormat =
       span > parsePrometheusDuration('1d')
-        ? (d) => `${formatDate(d)}\n${twentyFourHourTime(d)}`
-        : (d) => twentyFourHourTime(d, xAxisTickShowSeconds);
+        ? (d: Date) => `${formatDate(d)}\n${twentyFourHourTime(d)}`
+        : (d: Date) => twentyFourHourTime(d, xAxisTickShowSeconds);
 
     const GroupComponent = isStack ? ChartStack : ChartGroup;
     const ChartComponent = isStack ? ChartArea : ChartLine;
@@ -537,7 +537,8 @@ const Loading = () => (
   </div>
 );
 
-const getMaxSamplesForSpan = (span) => _.clamp(Math.round(span / minStep), minSamples, maxSamples);
+const getMaxSamplesForSpan = (span: number) =>
+  _.clamp(Math.round(span / minStep), minSamples, maxSamples);
 
 const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   defaultSamples,
@@ -694,7 +695,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
 
   // Don't poll if an end time was set (because the latest data is not displayed) or if the graph is
   // hidden. Otherwise use a polling interval relative to the graph's timespan.
-  let delay;
+  let delay: number;
   if (endTime || hideGraphs || tickInterval === null) {
     delay = null;
   } else if (tickInterval > 0) {
