@@ -1,5 +1,5 @@
-import { V1NetworkInterface } from '../../../types/vm';
 import { NetworkInterfaceModel, NetworkInterfaceType } from '../../../constants/vm';
+import { V1NetworkInterface } from '../../../types/vm';
 import { ObjectWithTypePropertyWrapper } from '../common/object-with-type-property-wrapper';
 
 type CombinedTypeData = {};

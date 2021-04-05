@@ -1,8 +1,8 @@
-import { K8sResourceWrapper } from '../common/k8s-resource-wrapper';
-import { VMSnapshot } from '../../../types';
 import { VirtualMachineModel, VirtualMachineSnapshotModel } from '../../../models';
-import { K8sInitAddon } from '../common/util/k8s-mixin';
 import { getVmSnapshotVmName } from '../../../selectors/snapshot/snapshot';
+import { VMSnapshot } from '../../../types';
+import { K8sResourceWrapper } from '../common/k8s-resource-wrapper';
+import { K8sInitAddon } from '../common/util/k8s-mixin';
 
 export class VMSnapshotWrapper extends K8sResourceWrapper<VMSnapshot, VMSnapshotWrapper> {
   constructor(snapshot?: VMSnapshot | VMSnapshotWrapper | any, copy = false) {

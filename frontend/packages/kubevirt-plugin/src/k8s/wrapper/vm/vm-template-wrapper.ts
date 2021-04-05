@@ -1,16 +1,17 @@
+import { TemplateModel } from '@console/internal/models';
 /* eslint-disable lines-between-class-members */
 import { TemplateKind } from '@console/internal/module/k8s';
-import { TemplateModel } from '@console/internal/models';
-import { K8sResourceWrapper } from '../common/k8s-resource-wrapper';
-import { VMWrapper } from './vm-wrapper';
-import { selectVM } from '../../../selectors/vm-template/basic';
-import { findHighestKeyBySuffixValue, findKeySuffixValue } from '../../../selectors/utils';
+
 import {
   TEMPLATE_FLAVOR_LABEL,
   TEMPLATE_OS_LABEL,
   TEMPLATE_WORKLOAD_LABEL,
 } from '../../../constants/vm';
+import { findHighestKeyBySuffixValue, findKeySuffixValue } from '../../../selectors/utils';
+import { selectVM } from '../../../selectors/vm-template/basic';
+import { K8sResourceWrapper } from '../common/k8s-resource-wrapper';
 import { K8sInitAddon } from '../common/util/k8s-mixin';
+import { VMWrapper } from './vm-wrapper';
 
 export class VMTemplateWrapper extends K8sResourceWrapper<TemplateKind, VMTemplateWrapper> {
   constructor(template?: TemplateKind | VMTemplateWrapper | any, copy = false) {

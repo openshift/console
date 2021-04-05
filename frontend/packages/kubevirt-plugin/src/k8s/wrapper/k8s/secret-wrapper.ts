@@ -1,6 +1,7 @@
-import { K8sResourceCommon } from '@console/internal/module/k8s';
-import { K8sResourceWrapper } from '../common/k8s-resource-wrapper';
 import { SecretModel } from '@console/internal/models';
+import { K8sResourceCommon } from '@console/internal/module/k8s';
+
+import { K8sResourceWrapper } from '../common/k8s-resource-wrapper';
 import { K8sInitAddon } from '../common/util/k8s-mixin';
 
 export class SecretWrappper extends K8sResourceWrapper<K8sResourceCommon, SecretWrappper> {

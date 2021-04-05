@@ -1,7 +1,8 @@
 import * as _ from 'lodash';
-import { ObjectWithTypePropertyWrapper } from '../common/object-with-type-property-wrapper';
+
+import { DiskBus, DiskType } from '../../../constants/vm/storage';
 import { V1Disk } from '../../../types/api';
-import { DiskType, DiskBus } from '../../../constants/vm/storage';
+import { ObjectWithTypePropertyWrapper } from '../common/object-with-type-property-wrapper';
 
 type CombinedTypeData = {
   bus?: string | DiskBus;

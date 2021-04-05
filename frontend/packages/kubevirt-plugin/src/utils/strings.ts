@@ -1,10 +1,12 @@
 import { TFunction } from 'i18next';
+import { adjectives, animals, uniqueNamesGenerator } from 'unique-names-generator';
+
 import { TemplateKind } from '@console/internal/module/k8s';
-import { uniqueNamesGenerator, animals, adjectives } from 'unique-names-generator';
-import { TEMPLATE_BASE_IMAGE_NAME_PARAMETER } from '../constants';
-import { getTemplateName } from '../selectors/vm-template/basic';
 import { alignWithDNS1123 } from '@console/shared/src/utils/validation/validation';
+
+import { TEMPLATE_BASE_IMAGE_NAME_PARAMETER } from '../constants';
 import { getParameterValue } from '../selectors/selectors';
+import { getTemplateName } from '../selectors/vm-template/basic';
 
 export const COULD_NOT_LOAD_DATA = 'Could not load data';
 

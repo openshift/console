@@ -1,39 +1,41 @@
-import * as React from 'react';
 import * as classNames from 'classnames';
+import * as React from 'react';
+
+import { useAccessReview } from '@console/internal/components/utils';
+import { modelFor, referenceFor } from '@console/internal/module/k8s';
+import {
+  NODE_SHADOW_FILTER_ID,
+  NODE_SHADOW_FILTER_ID_HOVER,
+  NodeShadows,
+} from '@console/topology/src/components/graph-view';
+import SvgBoxedText from '@console/topology/src/components/svg/SvgBoxedText';
+import {
+  getFilterById,
+  SHOW_LABELS_FILTER_ID,
+  useAllowEdgeCreation,
+  useDisplayFilters,
+  useSearchFilter,
+} from '@console/topology/src/filters';
+import { TopologyDataObject } from '@console/topology/src/topology-types';
+import { getResource } from '@console/topology/src/utils';
 import { Tooltip } from '@patternfly/react-core';
 import { VirtualMachineIcon } from '@patternfly/react-icons';
 import {
+  createSvgIdUrl,
   Node,
+  NodeModel,
   observer,
-  WithSelectionProps,
+  RectAnchor,
+  useAnchor,
+  useCombineRefs,
+  useHover,
   WithContextMenuProps,
   WithCreateConnectorProps,
-  WithDragNodeProps,
   WithDndDropProps,
-  useCombineRefs,
-  createSvgIdUrl,
-  useHover,
-  useAnchor,
-  RectAnchor,
-  NodeModel,
+  WithDragNodeProps,
+  WithSelectionProps,
 } from '@patternfly/react-topology';
-import { useAccessReview } from '@console/internal/components/utils';
-import { modelFor, referenceFor } from '@console/internal/module/k8s';
-import SvgBoxedText from '@console/topology/src/components/svg/SvgBoxedText';
-import {
-  NodeShadows,
-  NODE_SHADOW_FILTER_ID_HOVER,
-  NODE_SHADOW_FILTER_ID,
-} from '@console/topology/src/components/graph-view';
-import {
-  useSearchFilter,
-  useDisplayFilters,
-  useAllowEdgeCreation,
-  getFilterById,
-  SHOW_LABELS_FILTER_ID,
-} from '@console/topology/src/filters';
-import { getResource } from '@console/topology/src/utils';
-import { TopologyDataObject } from '@console/topology/src/topology-types';
+
 import { VMStatus } from '../../../constants/vm/vm-status';
 import { VMNodeData } from '../../types';
 

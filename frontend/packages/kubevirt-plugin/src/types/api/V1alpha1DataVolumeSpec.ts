@@ -11,8 +11,8 @@
  * Do not edit the class manually.
  */
 
-import { V1PersistentVolumeClaimSpec } from './V1PersistentVolumeClaimSpec';
 import { V1alpha1DataVolumeSource } from './V1alpha1DataVolumeSource';
+import { V1PersistentVolumeClaimSpec } from './V1PersistentVolumeClaimSpec';
 
 /**
  * DataVolumeSpec defines our specification for a DataVolume type

@@ -1,8 +1,19 @@
 import * as _ from 'lodash';
+
 import { K8sResourceKind, PersistentVolumeClaimKind } from '@console/internal/module/k8s';
 import { createBasicLookup, getName, getNamespace } from '@console/shared';
-import { V1DataVolumeTemplateSpec, VMKind } from '../../types/vm';
-import { generateDataVolumeName, getBasicID } from '../../utils';
+
+import {
+  ANNOTATION_DESCRIPTION,
+  TEMPLATE_OS_NAME_ANNOTATION,
+  TEMPLATE_VM_NAME_LABEL,
+} from '../../constants/vm';
+import {
+  getDataVolumeAccessModes,
+  getDataVolumeStorageClassName,
+  getDataVolumeStorageSize,
+  getDataVolumeVolumeMode,
+} from '../../selectors/dv/selectors';
 import {
   getPvcAccessModes,
   getPvcStorageClassName,
@@ -15,17 +26,8 @@ import {
   getVolumeDataVolumeName,
   getVolumePersistentVolumeClaimName,
 } from '../../selectors/vm';
-import {
-  getDataVolumeAccessModes,
-  getDataVolumeStorageClassName,
-  getDataVolumeStorageSize,
-  getDataVolumeVolumeMode,
-} from '../../selectors/dv/selectors';
-import {
-  ANNOTATION_DESCRIPTION,
-  TEMPLATE_OS_NAME_ANNOTATION,
-  TEMPLATE_VM_NAME_LABEL,
-} from '../../constants/vm';
+import { V1DataVolumeTemplateSpec, VMKind } from '../../types/vm';
+import { generateDataVolumeName, getBasicID } from '../../utils';
 import { VMWrapper } from '../wrapper/vm/vm-wrapper';
 
 export type CloneTo = {

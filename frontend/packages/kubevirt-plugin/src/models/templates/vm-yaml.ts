@@ -1,4 +1,5 @@
 import { Map as ImmutableMap } from 'immutable';
+
 import { VirtualMachineModel } from '..';
 
 export const VirtualMachineYAMLTemplates = ImmutableMap().setIn(

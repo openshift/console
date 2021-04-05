@@ -1,7 +1,8 @@
-import { VMIKind } from '../types';
 import { useURLPoll } from '@console/internal/components/utils/url-poll-hook';
+
 import { isGuestAgentInstalled } from '../components/dashboards-page/vm-dashboard/vm-alerts';
 import { getVMIApiPath, getVMISubresourcePath } from '../selectors/vmi/selectors';
+import { VMIKind } from '../types';
 import { V1VirtualMachineInstanceGuestAgentInfo } from '../types/vmi-guest-data-info/vmi-guest-agent-info';
 
 export const GUEST_AGENT_POLL_DEFAULT_DELAY = 3000; // 3 seconds

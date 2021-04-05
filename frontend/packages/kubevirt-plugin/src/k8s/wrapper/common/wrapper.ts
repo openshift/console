@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
-import { ensurePath } from '../utils/utils';
+
 import { omitEmpty } from '../../../utils/common';
+import { ensurePath } from '../utils/utils';
 
 export abstract class Wrapper<RESOURCE extends {}, SELF extends Wrapper<RESOURCE, SELF>> {
   protected data: RESOURCE;

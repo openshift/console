@@ -1,26 +1,27 @@
 import { K8sResourceCommon, PersistentVolumeClaimKind } from '@console/internal/module/k8s';
+import { getCreationTimestamp } from '@console/shared';
+
 import {
-  TEMPLATE_BASE_IMAGE_NAME_PARAMETER,
-  TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER,
-  VolumeType,
+  ANNOTATION_SOURCE_PROVIDER,
+  BOOT_SOURCE_AVAILABLE,
   DataVolumeSourceType,
   LABEL_CDROM_SOURCE,
-  BOOT_SOURCE_AVAILABLE,
   NetworkType,
-  ANNOTATION_SOURCE_PROVIDER,
+  TEMPLATE_BASE_IMAGE_NAME_PARAMETER,
+  TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER,
   TEMPLATE_PROVIDER_ANNOTATION,
+  VolumeType,
 } from '../../constants';
 import { DataVolumeWrapper } from '../../k8s/wrapper/vm/data-volume-wrapper';
+import { NetworkWrapper } from '../../k8s/wrapper/vm/network-wrapper';
 import { VMTemplateWrapper } from '../../k8s/wrapper/vm/vm-template-wrapper';
 import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
 import { getPvcImportPodName, getPvcUploadPodName } from '../../selectors/pvc/selectors';
 import { getAnnotation, getParameterValue } from '../../selectors/selectors';
 import { isCommonTemplate } from '../../selectors/vm-template/basic';
 import { V1alpha1DataVolume } from '../../types/api';
-import { GetTemplateSourceStatus, SOURCE_TYPE } from './types';
-import { NetworkWrapper } from '../../k8s/wrapper/vm/network-wrapper';
 import { DVStatusType, getDVStatus } from '../dv/dv-status';
-import { getCreationTimestamp } from '@console/shared';
+import { GetTemplateSourceStatus, SOURCE_TYPE } from './types';
 
 const supportedDVSources = [
   DataVolumeSourceType.HTTP,

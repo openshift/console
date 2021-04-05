@@ -1,6 +1,8 @@
-import { k8sKill } from '@console/internal/module/k8s';
-import { V2VVMwareModel } from '../../../models';
 import * as _ from 'lodash';
+
+import { k8sKill } from '@console/internal/module/k8s';
+
+import { V2VVMwareModel } from '../../../models';
 
 export const deleteV2VvmwareObject = async ({
   name,

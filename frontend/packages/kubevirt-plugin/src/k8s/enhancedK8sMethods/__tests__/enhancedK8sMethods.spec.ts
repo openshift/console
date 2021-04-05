@@ -1,11 +1,11 @@
-import { EnhancedK8sMethods } from '../enhancedK8sMethods';
-import { HistoryItem, HistoryType } from '../types';
+import { K8sKind, K8sResourceCommon, Patch } from '@console/internal/module/k8s';
+import { PatchBuilder } from '@console/shared/src/k8s';
 
 import { VirtualMachineModel } from '../../../models';
 import { VMWrapper } from '../../wrapper/vm/vm-wrapper';
-import { PatchBuilder } from '@console/shared/src/k8s';
-import { K8sKind, K8sResourceCommon, Patch } from '@console/internal/module/k8s';
+import { EnhancedK8sMethods } from '../enhancedK8sMethods';
 import { K8sKillError } from '../errors';
+import { HistoryItem, HistoryType } from '../types';
 
 const disableHistoryOpts = { disableHistory: true };
 

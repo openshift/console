@@ -1,9 +1,11 @@
 import * as React from 'react';
-import { useLocalStorage } from './use-local-storage';
-import { TEMPLATE_CUSTOMIZE_SOURCE } from '../constants';
-import customizeSourceModal from '../components/modals/template-customization/CustomizeSourceModal';
+
 import { history } from '@console/internal/components/utils/router';
 import { TemplateKind } from '@console/internal/module/k8s';
+
+import customizeSourceModal from '../components/modals/template-customization/CustomizeSourceModal';
+import { TEMPLATE_CUSTOMIZE_SOURCE } from '../constants';
+import { useLocalStorage } from './use-local-storage';
 import { useNamespace } from './use-namespace';
 
 export type CustomizeSourceFunction = (template: TemplateKind) => void;

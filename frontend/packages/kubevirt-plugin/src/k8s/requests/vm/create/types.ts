@@ -1,12 +1,14 @@
-import { TemplateKind } from '@console/internal/module/k8s';
 import { Map as ImmutableMap } from 'immutable';
-import { EnhancedK8sMethods } from '../../../enhancedK8sMethods/enhancedK8sMethods';
+
+import { TemplateKind } from '@console/internal/module/k8s';
+
 import {
   ImportProvidersSettings,
   VMSettings,
 } from '../../../../components/create-vm-wizard/redux/initial-state/types';
 import { VMWizardNetwork, VMWizardStorage } from '../../../../components/create-vm-wizard/types';
 import { ITemplate } from '../../../../types/template';
+import { EnhancedK8sMethods } from '../../../enhancedK8sMethods/enhancedK8sMethods';
 
 export type CreateVMParams = {
   enhancedK8sMethods: EnhancedK8sMethods;

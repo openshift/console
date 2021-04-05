@@ -1,16 +1,18 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import {
-  ResourceIcon,
-  SimpleTabNav,
-  ActionsMenu,
-  resourcePathFromModel,
-} from '@console/internal/components/utils';
+import { Link } from 'react-router-dom';
+
 import * as UIActions from '@console/internal/actions/ui';
-import { observer } from '@patternfly/react-topology';
+import {
+  ActionsMenu,
+  ResourceIcon,
+  resourcePathFromModel,
+  SimpleTabNav,
+} from '@console/internal/components/utils';
 import { modelFor } from '@console/internal/module/k8s';
 import { getResource } from '@console/topology/src/utils';
+import { observer } from '@patternfly/react-topology';
+
 import { vmActions } from './components/kubevirtComponentFactory';
 import { TopologyVmDetailsPanel } from './TopologyVmDetailsPanel';
 import { TopologyVmResourcesPanel } from './TopologyVmResourcesPanel';

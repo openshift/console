@@ -1,11 +1,13 @@
 import * as _ from 'lodash';
+
 import {
+  asValidationObject,
   getName,
   getNamespace,
-  asValidationObject,
   ValidationErrorType,
   ValidationObject,
 } from '@console/shared';
+
 import { parseURL } from '../url';
 
 export const isValidationError = (validationObject: ValidationObject) =>

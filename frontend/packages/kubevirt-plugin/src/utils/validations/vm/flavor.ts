@@ -1,4 +1,4 @@
-import { ValidationObject, ValidationErrorType, asValidationObject } from '@console/shared/src';
+import { asValidationObject, ValidationErrorType, ValidationObject } from '@console/shared/src';
 
 export const validateFlavor = (
   {

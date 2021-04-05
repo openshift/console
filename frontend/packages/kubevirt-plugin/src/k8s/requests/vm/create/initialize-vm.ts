@@ -1,28 +1,28 @@
-import { VMSettingsField } from '../../../../components/create-vm-wizard/types';
 import {
   asSimpleSettings,
   getFieldValue,
 } from '../../../../components/create-vm-wizard/selectors/vm-settings';
+import { VMSettingsField } from '../../../../components/create-vm-wizard/types';
 import {
   ANNOTATION_FIRST_BOOT,
   ANNOTATION_PXE_INTERFACE,
   VolumeType,
 } from '../../../../constants/vm';
-import { NetworkWrapper } from '../../../wrapper/vm/network-wrapper';
-import { NetworkInterfaceWrapper } from '../../../wrapper/vm/network-interface-wrapper';
-import { VMWrapper } from '../../../wrapper/vm/vm-wrapper';
+import { VM_TEMPLATE_NAME_PARAMETER } from '../../../../constants/vm-templates/constants';
 import { getVolumeCloudInitNoCloud } from '../../../../selectors/vm';
-import { VolumeWrapper } from '../../../wrapper/vm/volume-wrapper';
+import { isCustomFlavor } from '../../../../selectors/vm-like/flavor';
+import { resolveDataVolumeName } from '../../../../utils';
 import {
   CloudInitDataFormKeys,
   CloudInitDataHelper,
 } from '../../../wrapper/vm/cloud-init-data-helper';
 import { DataVolumeWrapper } from '../../../wrapper/vm/data-volume-wrapper';
-import { CreateVMParams } from './types';
-import { isCustomFlavor } from '../../../../selectors/vm-like/flavor';
 import { DiskWrapper } from '../../../wrapper/vm/disk-wrapper';
-import { VM_TEMPLATE_NAME_PARAMETER } from '../../../../constants/vm-templates/constants';
-import { resolveDataVolumeName } from '../../../../utils';
+import { NetworkInterfaceWrapper } from '../../../wrapper/vm/network-interface-wrapper';
+import { NetworkWrapper } from '../../../wrapper/vm/network-wrapper';
+import { VMWrapper } from '../../../wrapper/vm/vm-wrapper';
+import { VolumeWrapper } from '../../../wrapper/vm/volume-wrapper';
+import { CreateVMParams } from './types';
 
 const initializeStorage = (params: CreateVMParams, vm: VMWrapper) => {
   const { vmSettings, storages, isTemplate } = params;

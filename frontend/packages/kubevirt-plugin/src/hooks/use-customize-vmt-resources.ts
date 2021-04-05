@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
-import { PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
-import { PodModel, PersistentVolumeClaimModel } from '@console/internal/models';
 
-import { VirtualMachineModel, VirtualMachineInstanceModel, DataVolumeModel } from '../models';
-import { VMKind, VMIKind } from '../types';
-import { TEMPLATE_VM_NAME_LABEL, CDI_APP_LABEL } from '../constants';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { PersistentVolumeClaimModel, PodModel } from '@console/internal/models';
+import { PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
+
+import { CDI_APP_LABEL, TEMPLATE_VM_NAME_LABEL } from '../constants';
+import { DataVolumeModel, VirtualMachineInstanceModel, VirtualMachineModel } from '../models';
+import { VMIKind, VMKind } from '../types';
 import { V1alpha1DataVolume } from '../types/api';
 
 type CustomizeVMTResourcesResult = {

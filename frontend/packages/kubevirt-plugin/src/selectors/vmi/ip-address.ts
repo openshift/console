@@ -1,4 +1,5 @@
-import { get, uniq, flatMap } from 'lodash';
+import { flatMap, get, uniq } from 'lodash';
+
 import { VMIKind } from '../../types';
 
 export const getVmiIpAddresses = (vmi: VMIKind) =>

@@ -1,13 +1,15 @@
 import * as _ from 'lodash';
+
+import { humanizeBinaryBytes } from '@console/internal/components/utils';
 import {
   asValidationObject,
   joinGrammaticallyListOfItems,
   ValidationErrorType,
 } from '@console/shared/src';
-import { humanizeBinaryBytes } from '@console/internal/components/utils';
+
 import { intervalBracket } from '../../strings';
-import { Interval } from './types';
 import { IntervalValidationResult } from './interval-validation-result';
+import { Interval } from './types';
 
 const humanize = (value: number) =>
   Number.isFinite(value) ? humanizeBinaryBytes(value).string : value;

@@ -1,6 +1,6 @@
-import { DefaultVMLikeEntityParams } from './types';
 import { TemplateKind } from '@console/internal/module/k8s';
-import { VMTemplateWrapper } from '../../../wrapper/vm/vm-template-wrapper';
+
+import { VMSettingsField } from '../../../../components/create-vm-wizard/types';
 import {
   DiskBus,
   DiskType,
@@ -11,20 +11,21 @@ import {
   TEMPLATE_PARAM_VM_NAME_DESC,
   VolumeType,
 } from '../../../../constants/vm';
-import { findHighestKeyBySuffixValue, getValueByPrefix } from '../../../../selectors/utils';
-import { getAnnotations } from '../../../../selectors/selectors';
-import { initializeCommonMetadata, initializeCommonTemplateMetadata } from './common';
-import { VMSettingsField } from '../../../../components/create-vm-wizard/types';
-import { getFlavor, getWorkloadProfile } from '../../../../selectors/vm';
-import { DiskWrapper } from '../../../wrapper/vm/disk-wrapper';
-import { VolumeWrapper } from '../../../wrapper/vm/volume-wrapper';
-import { NetworkInterfaceWrapper } from '../../../wrapper/vm/network-interface-wrapper';
 import { VM_TEMPLATE_NAME_PARAMETER } from '../../../../constants/vm-templates/constants';
+import { getAnnotations } from '../../../../selectors/selectors';
+import { findHighestKeyBySuffixValue, getValueByPrefix } from '../../../../selectors/utils';
+import { getFlavor, getWorkloadProfile } from '../../../../selectors/vm';
 import {
-  CloudInitDataHelper,
   CloudInitDataFormKeys,
+  CloudInitDataHelper,
   generateCloudInitPassword,
 } from '../../../wrapper/vm/cloud-init-data-helper';
+import { DiskWrapper } from '../../../wrapper/vm/disk-wrapper';
+import { NetworkInterfaceWrapper } from '../../../wrapper/vm/network-interface-wrapper';
+import { VMTemplateWrapper } from '../../../wrapper/vm/vm-template-wrapper';
+import { VolumeWrapper } from '../../../wrapper/vm/volume-wrapper';
+import { initializeCommonMetadata, initializeCommonTemplateMetadata } from './common';
+import { DefaultVMLikeEntityParams } from './types';
 
 export const resolveDefaultVMTemplate = (params: DefaultVMLikeEntityParams): TemplateKind => {
   const { commonTemplate, name, namespace, containerImage, baseOSName } = params;

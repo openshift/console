@@ -1,10 +1,12 @@
 import * as React from 'react';
-import { observer } from '@patternfly/react-topology';
-import { PodsOverviewContent } from '@console/internal/components/overview/pods-overview';
+
 import { NetworkingOverview } from '@console/internal/components/overview/networking-overview';
-import { VMNode } from './types';
+import { PodsOverviewContent } from '@console/internal/components/overview/pods-overview';
 import { PodKind } from '@console/internal/module/k8s/types';
+import { observer } from '@patternfly/react-topology';
+
 import { usePodsForVm } from '../utils/usePodsForVm';
+import { VMNode } from './types';
 
 type TopologyVmResourcePanelProps = {
   vmNode: VMNode;

@@ -1,14 +1,15 @@
-/* eslint-disable camelcase, @typescript-eslint/camelcase,no-await-in-loop */
-import { getName, getNamespace } from '@console/shared';
-import { DataVolumeModel, UploadTokenRequestModel } from '@console/kubevirt-plugin/src/models';
-import { V1alpha1DataVolume } from '@console/kubevirt-plugin/src/types/api';
 import {
   apiVersionForModel,
-  K8sResourceKind,
   k8sCreate,
-  k8sKill,
   k8sGet,
+  k8sKill,
+  K8sResourceKind,
 } from '@console/internal/module/k8s';
+import { DataVolumeModel, UploadTokenRequestModel } from '@console/kubevirt-plugin/src/models';
+import { V1alpha1DataVolume } from '@console/kubevirt-plugin/src/types/api';
+/* eslint-disable camelcase, @typescript-eslint/camelcase,no-await-in-loop */
+import { getName, getNamespace } from '@console/shared';
+
 import { CDI_BIND_REQUESTED_ANNOTATION } from '../../../components/cdi-upload-provider/consts';
 import { delay } from '../../../utils/utils';
 

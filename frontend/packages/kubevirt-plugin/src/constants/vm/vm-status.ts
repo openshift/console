@@ -1,10 +1,11 @@
 /* eslint-disable lines-between-class-members,no-underscore-dangle */
 import { ObjectEnum } from '@console/shared/src/constants/object-enum';
-import { V2VVMImportStatus } from '../v2v-import/ovirt/v2v-vm-import-status';
-import { StatusEnum, StatusMetadata } from '../status-enum';
+
 import { getStringEnumValues } from '../../utils/types';
 import { StatusSimpleLabel } from '../status-constants';
+import { StatusEnum, StatusMetadata } from '../status-enum';
 import { StatusGroup } from '../status-group';
+import { V2VVMImportStatus } from '../v2v-import/ovirt/v2v-vm-import-status';
 
 export const VMStatusMigrationPhases = {
   Pending: {

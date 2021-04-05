@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+
 import { ensurePath } from '../utils';
 
 describe('utils ensurePath', () => {

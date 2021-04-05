@@ -1,6 +1,7 @@
-import { DiskBus } from '../../../constants/vm/storage/disk-bus';
+import { asValidationObject, joinGrammaticallyListOfItems } from '@console/shared';
 import { ValidationErrorType, ValidationObject } from '@console/shared/src/utils/validation/types';
-import { joinGrammaticallyListOfItems, asValidationObject } from '@console/shared';
+
+import { DiskBus } from '../../../constants/vm/storage/disk-bus';
 
 export class DiskBusValidationResult {
   allowedBuses: Set<DiskBus>;

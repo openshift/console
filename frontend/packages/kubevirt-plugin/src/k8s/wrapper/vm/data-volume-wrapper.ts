@@ -1,19 +1,20 @@
 import { getOwnerReferences } from '@console/shared/src';
 import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
-import { V1alpha1DataVolume } from '../../../types/api';
+
+import {
+  BinaryUnit,
+  stringValueUnitSplit,
+  toIECUnit,
+} from '../../../components/form/size-unit-utils';
 import { AccessMode, DataVolumeSourceType, VolumeMode } from '../../../constants/vm/storage';
+import { DataVolumeModel } from '../../../models';
 import {
   getDataVolumeAccessModes,
   getDataVolumeStorageClassName,
   getDataVolumeStorageSize,
   getDataVolumeVolumeMode,
 } from '../../../selectors/dv/selectors';
-import {
-  BinaryUnit,
-  stringValueUnitSplit,
-  toIECUnit,
-} from '../../../components/form/size-unit-utils';
-import { DataVolumeModel } from '../../../models';
+import { V1alpha1DataVolume } from '../../../types/api';
 import { K8sResourceObjectWithTypePropertyWrapper } from '../common/k8s-resource-object-with-type-property-wrapper';
 import { K8sInitAddon } from '../common/util/k8s-mixin';
 

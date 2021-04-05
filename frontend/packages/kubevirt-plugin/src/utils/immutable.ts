@@ -1,5 +1,5 @@
-import * as _ from 'lodash';
 import { List } from 'immutable';
+import * as _ from 'lodash';
 
 // ATTENTION: please do not add any new imports here
 //   - it can easily cause cyclic dependencies

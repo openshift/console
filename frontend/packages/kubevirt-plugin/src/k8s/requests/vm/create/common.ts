@@ -1,32 +1,33 @@
 import { TemplateKind } from '@console/internal/module/k8s';
-import { getName, getNamespace, getAnnotations } from '@console/shared/src';
+import { getAnnotations, getName, getNamespace } from '@console/shared/src';
+
 import { VMSettingsField } from '../../../../components/create-vm-wizard/types';
 import {
   ANNOTATION_DESCRIPTION,
-  APP,
+  ANNOTATION_ICON,
   ANNOTATION_VALIDATIONS,
+  APP,
   LABEL_USED_TEMPLATE_NAME,
   LABEL_USED_TEMPLATE_NAMESPACE,
   TEMPLATE_FLAVOR_LABEL,
   TEMPLATE_OS_LABEL,
   TEMPLATE_OS_NAME_ANNOTATION,
+  TEMPLATE_PARENT_PROVIDER_ANNOTATION,
+  TEMPLATE_PARENT_PROVIDER_URL,
+  TEMPLATE_PARENT_SUPPORT_LEVEL,
+  TEMPLATE_PROVIDER_ANNOTATION,
+  TEMPLATE_PROVIDER_URL,
+  TEMPLATE_SUPPORT_LEVEL,
+  TEMPLATE_TYPE_LABEL,
+  TEMPLATE_TYPE_VM,
   TEMPLATE_VM_DOMAIN_LABEL,
   TEMPLATE_VM_NAME_LABEL,
   TEMPLATE_WORKLOAD_LABEL,
-  TEMPLATE_TYPE_LABEL,
-  TEMPLATE_TYPE_VM,
-  ANNOTATION_ICON,
-  TEMPLATE_PROVIDER_ANNOTATION,
-  TEMPLATE_SUPPORT_LEVEL,
-  TEMPLATE_PARENT_PROVIDER_ANNOTATION,
-  TEMPLATE_PARENT_SUPPORT_LEVEL,
-  TEMPLATE_PARENT_PROVIDER_URL,
-  TEMPLATE_PROVIDER_URL,
 } from '../../../../constants/vm';
-import { VMWrapper } from '../../../wrapper/vm/vm-wrapper';
-import { VMTemplateWrapper } from '../../../wrapper/vm/vm-template-wrapper';
-import { isCustomFlavor } from '../../../../selectors/vm-like/flavor';
 import { TemplateSupport } from '../../../../constants/vm-templates/support';
+import { isCustomFlavor } from '../../../../selectors/vm-like/flavor';
+import { VMTemplateWrapper } from '../../../wrapper/vm/vm-template-wrapper';
+import { VMWrapper } from '../../../wrapper/vm/vm-wrapper';
 
 export const initializeCommonMetadata = (
   settings: {

@@ -1,14 +1,16 @@
 import * as React from 'react';
-import { PersistentVolumeClaimModel } from '../../../../public/models/index';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
+import { PersistentVolumeClaimKind } from '@console/internal/module/k8s';
+
+import { PersistentVolumeClaimModel } from '../../../../public/models/index';
+import { vmWizardActions } from '../components/create-vm-wizard/redux/actions';
+import { ActionType } from '../components/create-vm-wizard/redux/types';
 import { getStorages } from '../components/create-vm-wizard/selectors/selectors';
 import { VMWizardStorage } from '../components/create-vm-wizard/types';
-import { ActionType } from '../components/create-vm-wizard/redux/types';
-import { vmWizardActions } from '../components/create-vm-wizard/redux/actions';
-import { PersistentVolumeClaimKind } from '@console/internal/module/k8s';
 
 export const useUpdateStorages = (reduxID) => {
   const dispatch = useDispatch();

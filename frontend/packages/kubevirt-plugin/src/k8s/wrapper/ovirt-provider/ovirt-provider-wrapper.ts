@@ -1,8 +1,9 @@
 import { K8sResourceCommon } from '@console/internal/module/k8s';
-import { K8sResourceWrapper } from '../common/k8s-resource-wrapper';
-import { OVirtProviderModel } from '../../../models';
-import { K8sInitAddon } from '../common/util/k8s-mixin';
+
 import { V2V_TEMPORARY_LABEL } from '../../../constants/v2v';
+import { OVirtProviderModel } from '../../../models';
+import { K8sResourceWrapper } from '../common/k8s-resource-wrapper';
+import { K8sInitAddon } from '../common/util/k8s-mixin';
 
 type InitData = {
   isTemporary?: boolean; // remove this object automatically (by controller)

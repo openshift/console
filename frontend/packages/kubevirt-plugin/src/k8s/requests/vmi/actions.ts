@@ -1,6 +1,7 @@
 import { coFetch } from '@console/internal/co-fetch';
-import { resourceURL, k8sKill, apiVersionForModel } from '@console/internal/module/k8s';
+import { apiVersionForModel, k8sKill, resourceURL } from '@console/internal/module/k8s';
 import { getName, getNamespace } from '@console/shared';
+
 import { VirtualMachineInstanceModel } from '../../../models';
 import { K8sResourceWithModel } from '../../../types/k8s-resource-with-model';
 import { VMIKind } from '../../../types/vm';

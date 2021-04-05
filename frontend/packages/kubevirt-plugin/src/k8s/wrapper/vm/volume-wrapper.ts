@@ -1,20 +1,22 @@
-import { K8sKind } from '@console/internal/module/k8s';
+import * as _ from 'lodash';
+
 import {
   ConfigMapModel,
   PersistentVolumeClaimModel,
   SecretModel,
   ServiceAccountModel,
 } from '@console/internal/models';
-import { ObjectWithTypePropertyWrapper } from '../common/object-with-type-property-wrapper';
-import { V1Volume, V1LocalObjectReference } from '../../../types/api';
+import { K8sKind } from '@console/internal/module/k8s';
+
 import { VolumeType } from '../../../constants/vm/storage';
+import { DataVolumeModel } from '../../../models';
 import {
   getVolumeContainerImage,
   getVolumeDataVolumeName,
   getVolumePersistentVolumeClaimName,
 } from '../../../selectors/vm/volume';
-import { DataVolumeModel } from '../../../models';
-import * as _ from 'lodash';
+import { V1LocalObjectReference, V1Volume } from '../../../types/api';
+import { ObjectWithTypePropertyWrapper } from '../common/object-with-type-property-wrapper';
 
 export type VolumeReferencedObject = {
   name: string;

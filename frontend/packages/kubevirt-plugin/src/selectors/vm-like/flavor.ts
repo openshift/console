@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+
 import { CUSTOM_FLAVOR } from '../../constants/vm';
 
 export const isCustomFlavor = (flavor: string) =>

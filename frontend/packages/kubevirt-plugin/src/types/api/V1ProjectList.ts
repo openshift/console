@@ -11,8 +11,8 @@
  * Do not edit the class manually.
  */
 
-import { V1Project } from './V1Project';
 import { V1ListMeta } from './V1ListMeta';
+import { V1Project } from './V1Project';
 
 /**
  * ProjectList is a list of Project objects.

@@ -1,11 +1,13 @@
 import * as React from 'react';
+
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { getCreationTimestamp, getName, getNamespace } from '@console/shared/src/selectors/common';
-import { VMKind } from '../types/vm';
-import { VMImportKind } from '../types/vm-import/ovirt/vm-import';
-import { VirtualMachineImportModel } from '../models';
+
 import { VMImportWrappper } from '../k8s/wrapper/vm-import/vm-import-wrapper';
 import { VMWrapper } from '../k8s/wrapper/vm/vm-wrapper';
+import { VirtualMachineImportModel } from '../models';
+import { VMKind } from '../types/vm';
+import { VMImportKind } from '../types/vm-import/ovirt/vm-import';
 
 export const useVirtualMachineImport = (vm: VMKind) => {
   const resourceWatch = React.useMemo(() => {

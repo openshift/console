@@ -1,5 +1,6 @@
 import { get, includes } from 'lodash';
-import { PodKind, ContainerStatus, ContainerSpec } from '@console/internal/module/k8s';
+
+import { ContainerSpec, ContainerStatus, PodKind } from '@console/internal/module/k8s';
 
 const failedWaitingContainerReasons = ['ImagePullBackOff', 'ErrImagePull', 'CrashLoopBackOff'];
 const failedTerminationContaineReasons = ['Error'];

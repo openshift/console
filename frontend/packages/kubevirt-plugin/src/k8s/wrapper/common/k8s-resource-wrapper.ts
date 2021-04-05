@@ -1,18 +1,19 @@
+import { K8sKind, K8sResourceCommon, OwnerReference } from '@console/internal/module/k8s';
 /* eslint-disable lines-between-class-members */
 import {
+  getAnnotations,
+  getCreationTimestamp,
+  getLabels,
   getName,
   getNamespace,
-  hasLabel,
-  getLabels,
   getOwnerReferences,
-  getCreationTimestamp,
-  getAnnotations,
+  hasLabel,
 } from '@console/shared/src';
 import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
-import { K8sKind, K8sResourceCommon, OwnerReference } from '@console/internal/module/k8s';
-import { Wrapper } from './wrapper';
+
 import { K8sResourceKindMethods } from '../types/types';
 import { clearRuntimeMetadata, initK8sObject, K8sInitAddon } from './util/k8s-mixin';
+import { Wrapper } from './wrapper';
 
 export abstract class K8sResourceWrapper<
   RESOURCE extends K8sResourceCommon,

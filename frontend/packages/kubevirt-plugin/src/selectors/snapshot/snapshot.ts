@@ -1,4 +1,4 @@
-import { VMSnapshot, VMRestore } from '../../types';
+import { VMRestore, VMSnapshot } from '../../types';
 import { getStatusConditionOfType, isConditionStatusTrue } from '../selectors';
 
 export const getVmSnapshotVmName = (snapshot: VMSnapshot) => snapshot?.spec?.source?.name;

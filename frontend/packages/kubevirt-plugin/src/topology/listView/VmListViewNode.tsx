@@ -1,16 +1,18 @@
 import * as React from 'react';
-import { Node, observer } from '@patternfly/react-topology';
-import { DataListCell } from '@patternfly/react-core';
+
 import {
   CpuCellComponent,
   MemoryCellComponent,
   TopologyListViewNode,
 } from '@console/topology/src/components/list-view';
 import {
+  getPodMetricStats,
   getTopologyResourceObject,
   useOverviewMetrics,
-  getPodMetricStats,
 } from '@console/topology/src/utils';
+import { DataListCell } from '@patternfly/react-core';
+import { Node, observer } from '@patternfly/react-topology';
+
 import { usePodsForVm } from '../../utils/usePodsForVm';
 
 interface VmListViewNodeProps {

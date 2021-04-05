@@ -1,50 +1,37 @@
 import * as _ from 'lodash';
+
 import { K8sResourceKind, PersistentVolumeClaimKind, PodKind } from '@console/internal/module/k8s';
-import { createBasicLookup } from '@console/shared/src/utils/utils';
 import {
+  getDeletetionTimestamp,
   getName,
   getNamespace,
   getOwnerReferences,
-  getDeletetionTimestamp,
 } from '@console/shared/src/selectors/common'; // do not import just from shared - causes cycles
 import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
-import {
-  buildOwnerReference,
-  buildOwnerReferenceForModel,
-  parseNumber,
-  parsePercentage,
-} from '../../utils';
-import {
-  getAnnotationKeySuffix,
-  getStatusConditionOfType,
-  getStatusPhase,
-} from '../../selectors/selectors';
-import {
-  findVMIMigration,
-  getMigrationStatusPhase,
-  isMigrating,
-} from '../../selectors/vmi-migration';
+import { createBasicLookup } from '@console/shared/src/utils/utils';
+
+import { CONVERSION_PROGRESS_ANNOTATION } from '../../constants/v2v';
+import { VMStatus } from '../../constants/vm/vm-status';
+import { VMIPhase } from '../../constants/vmi/phase';
+import { VirtualMachineImportModel } from '../../models';
 import {
   findVMIPod,
   getPodStatusPhase,
   getPVCNametoImporterPodsMapForVM,
 } from '../../selectors/pod/selectors';
-import { findConversionPod, isVMCreated, isVMExpectedRunning } from '../../selectors/vm';
-import { getPodStatus } from '../pod/pod';
 import {
-  POD_PHASE_PENDING,
-  POD_PHASE_SUCEEDED,
-  POD_STATUS_ALL_ERROR,
-  POD_STATUS_ALL_READY,
-  POD_STATUS_NOT_SCHEDULABLE,
-} from '../pod/constants';
-import { VMIKind, VMKind } from '../../types';
+  getAnnotationKeySuffix,
+  getStatusConditionOfType,
+  getStatusPhase,
+} from '../../selectors/selectors';
+import { findConversionPod, isVMCreated, isVMExpectedRunning } from '../../selectors/vm';
+import {
+  findVMIMigration,
+  getMigrationStatusPhase,
+  isMigrating,
+} from '../../selectors/vmi-migration';
 import { isVMIPaused } from '../../selectors/vmi/basic';
-import { VMImportKind } from '../../types/vm-import/ovirt/vm-import';
-import { VirtualMachineImportModel } from '../../models';
-import { getVMImportStatus } from '../vm-import/vm-import-status';
-import { VMStatus } from '../../constants/vm/vm-status';
-import { VMStatusBundle } from './types';
+import { PAUSED_VM_MODAL_MESSAGE } from '../../strings/vm/messages';
 import {
   IMPORT_CDI_PENDING_MESSAGE,
   IMPORTING_CDI_ERROR_MESSAGE,
@@ -54,10 +41,25 @@ import {
   STARTING_MESSAGE,
   VMI_WAITING_MESSAGE,
 } from '../../strings/vm/status';
-import { CONVERSION_PROGRESS_ANNOTATION } from '../../constants/v2v';
+import { VMIKind, VMKind } from '../../types';
 import { V1alpha1DataVolume } from '../../types/api';
-import { VMIPhase } from '../../constants/vmi/phase';
-import { PAUSED_VM_MODAL_MESSAGE } from '../../strings/vm/messages';
+import { VMImportKind } from '../../types/vm-import/ovirt/vm-import';
+import {
+  buildOwnerReference,
+  buildOwnerReferenceForModel,
+  parseNumber,
+  parsePercentage,
+} from '../../utils';
+import {
+  POD_PHASE_PENDING,
+  POD_PHASE_SUCEEDED,
+  POD_STATUS_ALL_ERROR,
+  POD_STATUS_ALL_READY,
+  POD_STATUS_NOT_SCHEDULABLE,
+} from '../pod/constants';
+import { getPodStatus } from '../pod/pod';
+import { getVMImportStatus } from '../vm-import/vm-import-status';
+import { VMStatusBundle } from './types';
 
 const isPaused = (vmi: VMIKind): VMStatusBundle =>
   isVMIPaused(vmi) ? { status: VMStatus.PAUSED, message: PAUSED_VM_MODAL_MESSAGE } : null;

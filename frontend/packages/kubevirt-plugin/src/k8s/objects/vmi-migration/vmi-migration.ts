@@ -1,8 +1,10 @@
 import * as _ from 'lodash';
-import { getName, getNamespace } from '@console/shared';
+
 import { apiVersionForModel, K8sResourceKind } from '@console/internal/module/k8s';
-import { VMIKind } from '../../../types/vm';
+import { getName, getNamespace } from '@console/shared';
+
 import { VirtualMachineInstanceMigrationModel } from '../../../models';
+import { VMIKind } from '../../../types/vm';
 
 /**
  * @deprecated FIXME deprecate in favor of VMIMigrationWrapper

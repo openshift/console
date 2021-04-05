@@ -1,5 +1,5 @@
-import { Wrapper } from '../../common/wrapper';
 import { V1VirtualMachineInstanceGuestOSInfo } from '../../../../types/vmi-guest-data-info/vmi-guest-agent-info';
+import { Wrapper } from '../../common/wrapper';
 
 export class GuestAgentOSInfoWrapper extends Wrapper<
   V1VirtualMachineInstanceGuestOSInfo,

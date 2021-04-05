@@ -1,4 +1,5 @@
 import * as React from 'react';
+
 import { useEventListener } from './use-event-listener';
 
 export const useLocalStorage = (key: string): [string, React.Dispatch<string>] => {

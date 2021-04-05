@@ -1,4 +1,5 @@
 import { makeQuery, makeReduxID } from '@console/internal/components/utils';
+
 import { FirehoseResourceEnhanced } from '../../types/custom';
 
 export type IDReference = string[];

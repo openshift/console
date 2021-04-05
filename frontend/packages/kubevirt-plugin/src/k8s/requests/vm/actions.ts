@@ -1,12 +1,13 @@
+import { coFetch } from '@console/internal/co-fetch';
 import { apiVersionForModel, k8sKill, k8sPatch, resourceURL } from '@console/internal/module/k8s';
 import { getName, getNamespace } from '@console/shared/src';
-import { coFetch } from '@console/internal/co-fetch';
-import { getBootPatch } from '../../patches/vm/vm-boot-patches';
+
 import { VirtualMachineModel } from '../../../models';
-import { VMKind } from '../../../types/vm';
-import { freeOwnedResources } from '../free-owned-resources';
-import { VMImportKind } from '../../../types/vm-import/ovirt/vm-import';
 import { K8sResourceWithModel } from '../../../types/k8s-resource-with-model';
+import { VMKind } from '../../../types/vm';
+import { VMImportKind } from '../../../types/vm-import/ovirt/vm-import';
+import { getBootPatch } from '../../patches/vm/vm-boot-patches';
+import { freeOwnedResources } from '../free-owned-resources';
 import { cancelVMImport } from '../vmimport';
 
 export enum VMActionType {

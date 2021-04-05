@@ -1,25 +1,25 @@
-/* eslint-disable lines-between-class-members */
-import { CPURaw, VMIKind, VMISpec } from '../../../types';
-import { K8sResourceWrapper } from '../common/k8s-resource-wrapper';
-import {
-  getVMIDisks,
-  getVMINetworks,
-  getVMIVolumes,
-  getVMIInterfaces,
-  getVMINodeSelector,
-  getVMITolerations,
-  getVMIAffinity,
-} from '../../../selectors/vmi';
-import { VMILikeMethods } from './types';
-import { findKeySuffixValue } from '../../../selectors/utils';
 import {
   TEMPLATE_FLAVOR_LABEL,
   TEMPLATE_OS_LABEL,
   TEMPLATE_WORKLOAD_LABEL,
 } from '../../../constants/vm';
 import { VirtualMachineInstanceModel } from '../../../models';
+import { findKeySuffixValue } from '../../../selectors/utils';
 import { transformDevices } from '../../../selectors/vm/devices';
+import {
+  getVMIAffinity,
+  getVMIDisks,
+  getVMIInterfaces,
+  getVMINetworks,
+  getVMINodeSelector,
+  getVMITolerations,
+  getVMIVolumes,
+} from '../../../selectors/vmi';
+/* eslint-disable lines-between-class-members */
+import { CPURaw, VMIKind, VMISpec } from '../../../types';
 import { V1Disk, V1Volume } from '../../../types/api';
+import { K8sResourceWrapper } from '../common/k8s-resource-wrapper';
+import { VMILikeMethods } from './types';
 
 export class VMIWrapper extends K8sResourceWrapper<VMIKind, VMIWrapper> implements VMILikeMethods {
   constructor(vmi?: VMIKind | VMIWrapper | any, copy = false) {

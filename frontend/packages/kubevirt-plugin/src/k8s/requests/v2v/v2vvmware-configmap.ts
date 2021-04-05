@@ -1,18 +1,19 @@
 import { ConfigMapModel } from '@console/internal/models';
+import { ConfigMapKind, k8sGet } from '@console/internal/module/k8s';
+import { joinGrammaticallyListOfItems } from '@console/shared';
+
+import { VMImportProvider } from '../../../components/create-vm-wizard/types';
 import {
-  VMWARE_KUBEVIRT_VMWARE_CONFIG_MAP_NAME,
-  VMWARE_KUBEVIRT_VMWARE_CONFIG_MAP_NAMESPACES,
   V2VConfigMapAttribute,
   V2VProviderErrorSpecialUIMessageRequest,
+  VMWARE_KUBEVIRT_VMWARE_CONFIG_MAP_NAME,
+  VMWARE_KUBEVIRT_VMWARE_CONFIG_MAP_NAMESPACES,
 } from '../../../constants/v2v';
-import { ConfigMapKind, k8sGet } from '@console/internal/module/k8s';
 import {
-  getKubevirtV2vVmwareContainerImage,
   getKubevirtV2vConversionContainerImage,
+  getKubevirtV2vVmwareContainerImage,
   getVddkInitContainerImage,
 } from '../../../selectors/v2v';
-import { VMImportProvider } from '../../../components/create-vm-wizard/types';
-import { joinGrammaticallyListOfItems } from '@console/shared';
 import { K8sDetailError } from '../../enhancedK8sMethods/errors';
 
 const { info } = console;

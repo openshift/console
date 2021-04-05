@@ -1,9 +1,11 @@
 import * as React from 'react';
-import { VMIKind, VMKind } from '@console/kubevirt-plugin/src/types';
 import { useLocation } from 'react-router-dom';
-import useSSHSelectors, { useSSHSelectorsResult } from './use-ssh-selectors';
-import useSecret, { useSecretResult } from './use-secret';
+
+import { VMIKind, VMKind } from '@console/kubevirt-plugin/src/types';
+
 import { AUTHORIZED_SSH_KEYS } from '../components/ssh-service/SSHForm/ssh-form-utils';
+import useSecret, { useSecretResult } from './use-secret';
+import useSSHSelectors, { useSSHSelectorsResult } from './use-ssh-selectors';
 
 export type useSSHResult = useSecretResult &
   Omit<useSSHSelectorsResult, 'globalKeys' | 'sshServices'> & { key: string };

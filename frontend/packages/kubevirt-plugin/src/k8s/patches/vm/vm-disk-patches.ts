@@ -1,6 +1,9 @@
-import { getName } from '@console/shared/src';
 import { Patch } from '@console/internal/module/k8s';
+import { getName } from '@console/shared/src';
 import { PatchBuilder } from '@console/shared/src/k8s';
+
+import { toDataVolumeTemplateSpec } from '../../../selectors/dv/selectors';
+import { getSimpleName } from '../../../selectors/utils';
 import {
   getDataVolumeTemplates,
   getDisks,
@@ -8,12 +11,10 @@ import {
   getVolumeDataVolumeName,
   getVolumes,
 } from '../../../selectors/vm';
-import { getVMLikePatches } from '../vm-template';
+import { V1alpha1DataVolume, V1Disk, V1Volume } from '../../../types/api';
 import { VMLikeEntityKind } from '../../../types/vmLike';
-import { getSimpleName } from '../../../selectors/utils';
-import { toDataVolumeTemplateSpec } from '../../../selectors/dv/selectors';
 import { DiskWrapper } from '../../wrapper/vm/disk-wrapper';
-import { V1Volume, V1alpha1DataVolume, V1Disk } from '../../../types/api';
+import { getVMLikePatches } from '../vm-template';
 import { getShiftBootOrderPatches } from './utils';
 
 export const getRemoveDiskPatches = (vmLikeEntity: VMLikeEntityKind, disk: V1Disk): Patch[] => {

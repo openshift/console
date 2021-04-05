@@ -1,6 +1,7 @@
 /* eslint-disable lines-between-class-members */
 import { ObjectEnum } from '@console/shared/src/constants/object-enum';
-import { SelectDropdownObjectEnum, SelectDropdownData } from '../../select-dropdown-object-enum';
+
+import { SelectDropdownData, SelectDropdownObjectEnum } from '../../select-dropdown-object-enum';
 
 export class NetworkInterfaceModel extends SelectDropdownObjectEnum<string> {
   static readonly VIRTIO = new NetworkInterfaceModel(

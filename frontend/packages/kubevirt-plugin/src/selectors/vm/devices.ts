@@ -1,11 +1,12 @@
 import * as _ from 'lodash';
-import { BootableDeviceType, V1NetworkInterface } from '../../types';
-import { DiskWrapper } from '../../k8s/wrapper/vm/disk-wrapper';
+
 import { DeviceType } from '../../constants';
-import { getBootableDisks, getInterfaces, getDisks } from './selectors';
-import { asVM } from './vmlike';
-import { VMLikeEntityKind } from '../../types/vmLike';
+import { DiskWrapper } from '../../k8s/wrapper/vm/disk-wrapper';
+import { BootableDeviceType, V1NetworkInterface } from '../../types';
 import { V1Disk } from '../../types/api';
+import { VMLikeEntityKind } from '../../types/vmLike';
+import { getBootableDisks, getDisks, getInterfaces } from './selectors';
+import { asVM } from './vmlike';
 
 export const getBootDeviceIndex = <D extends V1Disk | V1NetworkInterface>(
   devices: D[],
