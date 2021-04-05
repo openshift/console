@@ -1,16 +1,16 @@
+import { vmFlavorModal } from '../components/modals';
+import { BootOrderModal } from '../components/modals/boot-order-modal';
+import { IsPendingChange, PendingChanges, VMTabEnum, VMTabURLEnum } from '../components/vms/types';
 import { VMWrapper } from '../k8s/wrapper/vm/vm-wrapper';
 import { VMIWrapper } from '../k8s/wrapper/vm/vmi-wrapper';
-import { PendingChanges, IsPendingChange, VMTabURLEnum, VMTabEnum } from '../components/vms/types';
 import {
-  isFlavorChanged,
-  isBootOrderChanged,
   changedDisks,
   changedEnvDisks,
   changedNics,
+  isBootOrderChanged,
+  isFlavorChanged,
 } from '../selectors/vm-like/next-run-changes';
-import { vmFlavorModal } from '../components/modals';
-import { BootOrderModal } from '../components/modals/boot-order-modal';
-import { VMKind, VMIKind } from '../types';
+import { VMIKind, VMKind } from '../types';
 import { getVMTabURL, redirectToTab } from './url';
 
 export const getPendingChanges = (vmWrapper: VMWrapper, vmiWrapper: VMIWrapper): PendingChanges => {

@@ -1,7 +1,8 @@
 import * as React from 'react';
+
 import { TEMPLATE_PIN, TEMPLATE_PIN_PROMOTED } from '../constants';
-import { useLocalStorage } from './use-local-storage';
 import { TemplateItem } from '../types/template';
+import { useLocalStorage } from './use-local-storage';
 
 const isPromoted = (templateItem: TemplateItem): boolean =>
   templateItem.isCommon && templateItem.metadata.name.includes('rhel');

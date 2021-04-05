@@ -1,7 +1,7 @@
-import { CPURaw, V1Network, V1NetworkInterface } from '../../../types/vm';
-import { V1Disk, V1Volume } from '../../../types/api';
-import { K8sResourceKindMethods } from '../types/types';
 import { BootableDeviceType } from '../../../types';
+import { V1Disk, V1Volume } from '../../../types/api';
+import { CPURaw, V1Network, V1NetworkInterface } from '../../../types/vm';
+import { K8sResourceKindMethods } from '../types/types';
 
 export interface VMILikeMethods extends K8sResourceKindMethods {
   getNetworkInterfaces: (defaultValue: V1NetworkInterface[]) => V1NetworkInterface[];

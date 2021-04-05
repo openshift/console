@@ -3,8 +3,9 @@ import {
   ValidationErrorType,
   ValidationObject,
 } from '@console/shared';
-import { validateEntityAlreadyExists } from '../common';
+
 import { UIValidation, UIValidationType } from '../../../types/ui/ui';
+import { validateEntityAlreadyExists } from '../common';
 
 export const validateVmLikeEntityName = (
   value: string,

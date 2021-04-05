@@ -1,22 +1,24 @@
 import { TFunction } from 'i18next';
+
 import { TemplateKind } from '@console/internal/module/k8s';
 import { ANNOTATIONS } from '@console/shared/src/constants/common';
-import { VMKind } from '../../types/vm';
-import { VirtualMachineModel } from '../../models';
-import { getAnnotation } from '../selectors';
+
 import {
-  TEMPLATE_TYPE_LABEL,
-  TEMPLATE_TYPE_BASE,
-  TEMPLATE_TYPE_VM,
-  TEMPLATE_PROVIDER_ANNOTATION,
-  TEMPLATE_SUPPORT_LEVEL,
-  TEMPLATE_PARENT_SUPPORT_LEVEL,
-  TEMPLATE_PARENT_PROVIDER_ANNOTATION,
-  TEMPLATE_PROVIDER_URL,
-  TEMPLATE_PARENT_PROVIDER_URL,
   TEMPLATE_DEPRECATED_ANNOTATION,
+  TEMPLATE_PARENT_PROVIDER_ANNOTATION,
+  TEMPLATE_PARENT_PROVIDER_URL,
+  TEMPLATE_PARENT_SUPPORT_LEVEL,
+  TEMPLATE_PROVIDER_ANNOTATION,
+  TEMPLATE_PROVIDER_URL,
+  TEMPLATE_SUPPORT_LEVEL,
+  TEMPLATE_TYPE_BASE,
+  TEMPLATE_TYPE_LABEL,
+  TEMPLATE_TYPE_VM,
 } from '../../constants';
+import { VirtualMachineModel } from '../../models';
 import { TemplateItem } from '../../types/template';
+import { VMKind } from '../../types/vm';
+import { getAnnotation } from '../selectors';
 
 export const selectVM = (vmTemplate: TemplateKind): VMKind =>
   vmTemplate && vmTemplate.objects

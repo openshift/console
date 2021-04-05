@@ -1,7 +1,8 @@
-import { K8sKind, K8sResourceCommon } from '@console/internal/module/k8s/types';
 import { apiVersionForModel } from '@console/internal/module/k8s/k8s';
-import { ensurePath } from '../../utils/utils';
+import { K8sKind, K8sResourceCommon } from '@console/internal/module/k8s/types';
+
 import { omitEmpty } from '../../../../utils/common';
+import { ensurePath } from '../../utils/utils';
 
 export type K8sInitAddon = {
   name?: string;

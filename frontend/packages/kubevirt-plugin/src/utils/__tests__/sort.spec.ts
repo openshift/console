@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
-import { compareVersions, removeOSDups } from '../sort';
+
 import { OperatingSystemRecord } from '../../types/types';
+import { compareVersions, removeOSDups } from '../sort';
 
 /**
  * Compare two versions: ver1 and ver2

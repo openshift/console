@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
-import { OperatingSystemRecord } from '../types';
+
 import { isCustomFlavor } from '../selectors/vm-like/flavor';
+import { OperatingSystemRecord } from '../types';
 
 const FLAVOR_ORDER = {
   tiny: 0,

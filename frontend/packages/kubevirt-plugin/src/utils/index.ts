@@ -1,22 +1,24 @@
 import * as _ from 'lodash';
+
 import { FirehoseResult } from '@console/internal/components/utils';
+import { NamespaceModel, ProjectModel } from '@console/internal/models';
 import {
   K8sKind,
   K8sResourceKind,
-  OwnerReference,
   MatchExpression,
+  OwnerReference,
 } from '@console/internal/module/k8s';
-import { NamespaceModel, ProjectModel } from '@console/internal/models';
 import {
-  getName,
-  getNamespace,
   getAPIVersion,
   getKind,
+  getName,
+  getNamespace,
   getUID,
 } from '@console/shared/src/selectors';
 import { getRandomChars } from '@console/shared/src/utils/utils';
-import { pluralize } from './strings';
+
 import { VM_TEMPLATE_NAME_PARAMETER } from '../constants';
+import { pluralize } from './strings';
 
 export const getBasicID = <A extends K8sResourceKind = K8sResourceKind>(entity: A) =>
   `${getNamespace(entity)}-${getName(entity)}`;

@@ -1,14 +1,15 @@
 import { ImagePullPolicy } from '@console/internal/module/k8s';
-import { PodWrappper } from '../../../../wrapper/k8s/pod-wrapper';
+
 import {
   CONVERSION_BASE_NAME,
   CONVERSION_GENERATE_NAME,
+  CONVERSION_POD_TEMP_MOUNT_PATH,
   CONVERSION_VDDK_INIT_POD_NAME,
   CONVERSION_VDDK_MOUNT_PATH,
-  CONVERSION_VOLUME_VDDK_NAME,
   CONVERSION_VOLUME_TEMP_NAME,
-  CONVERSION_POD_TEMP_MOUNT_PATH,
+  CONVERSION_VOLUME_VDDK_NAME,
 } from '../../../../../constants/v2v';
+import { PodWrappper } from '../../../../wrapper/k8s/pod-wrapper';
 
 export const buildConversionPod = ({
   vmName,

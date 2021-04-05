@@ -1,4 +1,5 @@
 import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
+
 import { DeploymentStatus, getDeploymentStatus } from '../deployment';
 import { getPodStatus, getSimplePodStatus, POD_STATUS_ALL_ERROR } from '../pod';
 import { PodDeploymentStatus } from './constants';

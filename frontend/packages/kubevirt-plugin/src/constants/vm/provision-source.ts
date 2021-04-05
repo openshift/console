@@ -1,6 +1,10 @@
 /* eslint-disable lines-between-class-members */
 import { getName, getNamespace } from '@console/shared/src';
 import { ObjectEnum } from '@console/shared/src/constants/object-enum';
+
+import { StorageUISource } from '../../components/modals/disk-modal/storage-ui-source';
+import { DataVolumeWrapper } from '../../k8s/wrapper/vm/data-volume-wrapper';
+import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
 import {
   asVM,
   getDataVolumeTemplates,
@@ -10,11 +14,8 @@ import {
   getVolumes,
 } from '../../selectors/vm';
 import { VMLikeEntityKind } from '../../types/vmLike';
-import { StorageUISource } from '../../components/modals/disk-modal/storage-ui-source';
-import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
-import { DataVolumeWrapper } from '../../k8s/wrapper/vm/data-volume-wrapper';
-import { DataVolumeSourceType, VolumeType } from './storage';
 import { SelectDropdownObjectEnum } from '../select-dropdown-object-enum';
+import { DataVolumeSourceType, VolumeType } from './storage';
 
 type ProvisionSourceDetails = {
   type?: ProvisionSource;

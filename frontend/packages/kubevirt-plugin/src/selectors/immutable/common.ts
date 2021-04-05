@@ -1,5 +1,5 @@
-import { iGetIn } from '../../utils/immutable';
 import { ILabels } from '../../types/template';
+import { iGetIn } from '../../utils/immutable';
 
 export const iGetLabels = (obj): ILabels => iGetIn(obj, ['metadata', 'labels']);
 export const iGetCreationTimestamp = (obj): string =>

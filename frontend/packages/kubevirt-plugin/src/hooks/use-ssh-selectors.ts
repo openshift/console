@@ -1,7 +1,8 @@
 import * as React from 'react';
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore: FIXME missing exports due to out-of-sync @types/react-redux version
-import { useDispatch, useSelector, RootStateOrAny } from 'react-redux';
+import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
+
 import { sshActions, SSHActionsNames } from '../components/ssh-service/redux/actions';
 
 export type SSHState = {

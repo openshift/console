@@ -1,7 +1,9 @@
 import * as React from 'react';
+
 import { Node } from '@patternfly/react-topology';
-import { VmListViewNode } from './VmListViewNode';
+
 import { TYPE_VIRTUAL_MACHINE } from '../components/const';
+import { VmListViewNode } from './VmListViewNode';
 
 export const kubevirtListViewNodeComponentFactory = (
   type,

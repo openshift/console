@@ -1,15 +1,17 @@
 import * as React from 'react';
-import { K8sResourceCommon, K8sResourceKind, PodKind } from '@console/internal/module/k8s';
+
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
+import { K8sResourceCommon, K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import {
   getReplicationControllersForResource,
   PodRCData,
   useDebounceCallback,
   useDeepCompareMemoize,
 } from '@console/shared';
-import { VMIKind } from '../types/vm';
-import { findVMIPod } from '../selectors/pod/selectors';
+
 import * as models from '../models';
+import { findVMIPod } from '../selectors/pod/selectors';
+import { VMIKind } from '../types/vm';
 
 export const usePodsForVm = (
   vm: K8sResourceKind,

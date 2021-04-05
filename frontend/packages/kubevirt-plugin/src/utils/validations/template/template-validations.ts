@@ -1,15 +1,17 @@
 /* eslint-disable lines-between-class-members */
 import * as _ from 'lodash';
-import { ObjectEnum } from '@console/shared/src/constants/object-enum';
+
 import { ValidationErrorType } from '@console/shared/src';
+import { ObjectEnum } from '@console/shared/src/constants/object-enum';
+
 import { DiskBus, DiskType } from '../../../constants';
 import { CommonTemplatesValidation } from '../../../types/template';
+import { isSetEqual } from '../../common';
+import { DiskBusValidationResult } from './disk-bus-validation-result';
 import {
   IntervalValidationResult,
   MemoryIntervalValidationResult,
 } from './interval-validation-result';
-import { DiskBusValidationResult } from './disk-bus-validation-result';
-import { isSetEqual } from '../../common';
 
 export class ValidationJSONPath extends ObjectEnum<string> {
   static readonly CPU = new ValidationJSONPath('jsonpath::.spec.domain.cpu.cores');

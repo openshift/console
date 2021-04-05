@@ -1,4 +1,4 @@
-import { CPURaw, CPU } from '../../types';
+import { CPU, CPURaw } from '../../types';
 
 export const DEFAULT_CPU: CPU = { sockets: 1, cores: 1, threads: 1 };
 

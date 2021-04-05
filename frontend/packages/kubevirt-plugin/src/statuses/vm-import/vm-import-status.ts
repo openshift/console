@@ -1,19 +1,21 @@
 import * as _ from 'lodash';
-import { getAnnotations } from '@console/shared/src/selectors/common'; // do not import just from shared - causes cycles
+
 import { K8sResourceCondition } from '@console/internal/module/k8s';
-import { VMImportKind } from '../../types/vm-import/ovirt/vm-import';
-import { parseNumber } from '../../utils';
+import { getAnnotations } from '@console/shared/src/selectors/common'; // do not import just from shared - causes cycles
+
+import { VM_IMPORT_PROGRESS_ANNOTATION } from '../../constants/v2v-import/constants';
+import { V2VVMImportStatus } from '../../constants/v2v-import/ovirt/v2v-vm-import-status';
+import { VMStatus as VMStatusEnum } from '../../constants/vm/vm-status';
+import { VMImportWrappper } from '../../k8s/wrapper/vm-import/vm-import-wrapper';
 import {
   getStatusConditionOfType,
   getStatusConditions,
   isConditionStatusTrue,
 } from '../../selectors/selectors';
-import { VirtualMachineImportConditionType, VMImportStatusBundle } from './types';
-import { VM_IMPORT_PROGRESS_ANNOTATION } from '../../constants/v2v-import/constants';
-import { V2VVMImportStatus } from '../../constants/v2v-import/ovirt/v2v-vm-import-status';
-import { VMImportWrappper } from '../../k8s/wrapper/vm-import/vm-import-wrapper';
-import { VMStatus as VMStatusEnum } from '../../constants/vm/vm-status';
+import { VMImportKind } from '../../types/vm-import/ovirt/vm-import';
+import { parseNumber } from '../../utils';
 import { VMStatusBundle } from '../vm/types';
+import { VirtualMachineImportConditionType, VMImportStatusBundle } from './types';
 
 const isV2VVMImportConversion = (vmImport?: VMImportKind): VMImportStatusBundle => {
   if (!vmImport) {

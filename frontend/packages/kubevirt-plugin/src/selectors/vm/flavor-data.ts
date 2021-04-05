@@ -1,9 +1,10 @@
-import { CPURaw } from '../../types/vm';
-import { vCPUCount } from './cpu';
 import { humanizeBinaryBytes } from '@console/internal/components/utils';
+
 import { convertToBytes } from '../../components/form/size-unit-utils';
-import { toUIFlavorLabel } from '../vm-like/flavor';
 import { CUSTOM_FLAVOR } from '../../constants';
+import { CPURaw } from '../../types/vm';
+import { toUIFlavorLabel } from '../vm-like/flavor';
+import { vCPUCount } from './cpu';
 
 export const humanizeMemory = (memory: string): string => {
   const memoryBase = convertToBytes(memory);

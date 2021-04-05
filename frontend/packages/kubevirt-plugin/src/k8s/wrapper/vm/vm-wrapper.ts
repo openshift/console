@@ -1,31 +1,10 @@
 /* eslint-disable lines-between-class-members */
 import * as _ from 'lodash';
+
 import { getLabels } from '@console/shared/src/selectors/common';
 import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
-import { K8sResourceWrapper } from '../common/k8s-resource-wrapper';
-import {
-  CPURaw,
-  V1DataVolumeTemplateSpec,
-  V1NetworkInterface,
-  VMISpec,
-  VMKind,
-} from '../../../types';
-import {
-  getCloudInitVolume,
-  getDataVolumeTemplates,
-  getDisks,
-  getInterfaces,
-  getNetworks,
-  getVolumes,
-  isDedicatedCPUPlacement,
-  getNodeSelector,
-  getTolerations,
-  getAffinity,
-  getDevices,
-} from '../../../selectors/vm/selectors';
+
 import { VMWizardNetwork, VMWizardStorage } from '../../../components/create-vm-wizard/types';
-import { VMILikeMethods, BootDevice } from './types';
-import { findKeySuffixValue } from '../../../selectors/utils';
 import {
   CLOUD_INIT_CONFIG_DRIVE,
   TEMPLATE_FLAVOR_LABEL,
@@ -33,12 +12,35 @@ import {
   TEMPLATE_WORKLOAD_LABEL,
   VolumeType,
 } from '../../../constants/vm';
-import { VolumeWrapper } from './volume-wrapper';
-import { V1Disk, V1alpha1DataVolume, V1Volume } from '../../../types/api';
 import { VirtualMachineImportModel, VirtualMachineModel } from '../../../models';
-import { buildOwnerReferenceForModel } from '../../../utils';
-import { transformDevices } from '../../../selectors/vm/devices';
 import { toDataVolumeTemplateSpec } from '../../../selectors/dv/selectors';
+import { findKeySuffixValue } from '../../../selectors/utils';
+import { transformDevices } from '../../../selectors/vm/devices';
+import {
+  getAffinity,
+  getCloudInitVolume,
+  getDataVolumeTemplates,
+  getDevices,
+  getDisks,
+  getInterfaces,
+  getNetworks,
+  getNodeSelector,
+  getTolerations,
+  getVolumes,
+  isDedicatedCPUPlacement,
+} from '../../../selectors/vm/selectors';
+import {
+  CPURaw,
+  V1DataVolumeTemplateSpec,
+  V1NetworkInterface,
+  VMISpec,
+  VMKind,
+} from '../../../types';
+import { V1alpha1DataVolume, V1Disk, V1Volume } from '../../../types/api';
+import { buildOwnerReferenceForModel } from '../../../utils';
+import { K8sResourceWrapper } from '../common/k8s-resource-wrapper';
+import { BootDevice, VMILikeMethods } from './types';
+import { VolumeWrapper } from './volume-wrapper';
 
 export class VMWrapper extends K8sResourceWrapper<VMKind, VMWrapper> implements VMILikeMethods {
   constructor(vm?: VMKind | VMWrapper | any, copy = false) {

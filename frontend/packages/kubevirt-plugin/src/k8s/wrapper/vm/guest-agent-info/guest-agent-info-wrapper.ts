@@ -1,8 +1,9 @@
 import * as _ from 'lodash';
+
 import { V1VirtualMachineInstanceGuestAgentInfo } from '../../../../types/vmi-guest-data-info/vmi-guest-agent-info';
 import { Wrapper } from '../../common/wrapper';
-import { GuestAgentOSInfoWrapper } from './guest-agent-os-info-wrapper';
 import { GuestAgentFSInfoWrapper } from './guest-agent-fs-info-wrapper';
+import { GuestAgentOSInfoWrapper } from './guest-agent-os-info-wrapper';
 import { GuestOSUserWrapper } from './guest-os-user-wrapper';
 
 export class GuestAgentInfoWrapper extends Wrapper<

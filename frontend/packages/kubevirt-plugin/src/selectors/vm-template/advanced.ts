@@ -1,28 +1,41 @@
 import * as _ from 'lodash';
+
+import { convertToBaseValue, humanizeBinaryBytes } from '@console/internal/components/utils';
 import { TemplateKind } from '@console/internal/module/k8s';
 import { getLabel, getName } from '@console/shared';
+
+import { BootSourceState } from '../../components/create-vm/forms/boot-source-form-reducer';
+import { stringValueUnitSplit } from '../../components/form/size-unit-utils';
+import { VM_TEMPLATE_NAME_PARAMETER } from '../../constants';
 import {
-  CloudInitDataHelper,
-  CloudInitDataFormKeys,
-} from '../../k8s/wrapper/vm/cloud-init-data-helper';
-import { getAnnotation, getAnnotations, getLabels, getParameterValue } from '../selectors';
-import {
+  DataVolumeSourceType,
+  DEFAULT_DISK_SIZE,
+  DiskBus,
+  LABEL_CDROM_SOURCE,
+  OS_WINDOWS_PREFIX,
+  ROOT_DISK_NAME,
+  TEMPLATE_BASE_IMAGE_NAME_PARAMETER,
+  TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER,
   TEMPLATE_FLAVOR_LABEL,
   TEMPLATE_OS_LABEL,
   TEMPLATE_OS_NAME_ANNOTATION,
   TEMPLATE_TYPE_LABEL,
   TEMPLATE_TYPE_VM,
-  TEMPLATE_WORKLOAD_LABEL,
-  TEMPLATE_BASE_IMAGE_NAME_PARAMETER,
-  TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER,
   TEMPLATE_VERSION_LABEL,
-  LABEL_CDROM_SOURCE,
-  OS_WINDOWS_PREFIX,
-  DiskBus,
-  ROOT_DISK_NAME,
-  DataVolumeSourceType,
-  DEFAULT_DISK_SIZE,
+  TEMPLATE_WORKLOAD_LABEL,
 } from '../../constants/vm';
+import {
+  CloudInitDataFormKeys,
+  CloudInitDataHelper,
+} from '../../k8s/wrapper/vm/cloud-init-data-helper';
+import { DiskWrapper } from '../../k8s/wrapper/vm/disk-wrapper';
+import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
+import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
+import { isTemplateSourceError, TemplateSourceStatus } from '../../statuses/template/types';
+import { compareVersions, removeOSDups } from '../../utils/sort';
+import { getDataVolumeStorageSize } from '../dv/selectors';
+import { getAnnotation, getAnnotations, getLabels, getParameterValue } from '../selectors';
+import { getFlavorData } from '../vm/flavor-data';
 import {
   getCloudInitVolume,
   getCPU,
@@ -30,18 +43,7 @@ import {
   getFlavor,
   getMemory,
 } from '../vm/selectors';
-import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
-import { compareVersions, removeOSDups } from '../../utils/sort';
-import { selectVM, isCommonTemplate } from './basic';
-import { convertToBaseValue, humanizeBinaryBytes } from '@console/internal/components/utils';
-import { isTemplateSourceError, TemplateSourceStatus } from '../../statuses/template/types';
-import { BootSourceState } from '../../components/create-vm/forms/boot-source-form-reducer';
-import { stringValueUnitSplit } from '../../components/form/size-unit-utils';
-import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
-import { DiskWrapper } from '../../k8s/wrapper/vm/disk-wrapper';
-import { getDataVolumeStorageSize } from '../dv/selectors';
-import { getFlavorData } from '../vm/flavor-data';
-import { VM_TEMPLATE_NAME_PARAMETER } from '../../constants';
+import { isCommonTemplate, selectVM } from './basic';
 
 export const getTemplatesWithLabels = (templates: TemplateKind[], labels: string[]) => {
   const requiredLabels = labels.filter((label) => label);

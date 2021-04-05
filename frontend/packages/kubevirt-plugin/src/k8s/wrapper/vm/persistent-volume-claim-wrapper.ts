@@ -1,20 +1,21 @@
-import { V1PersistentVolumeClaim } from '../../../types/api';
+import { PersistentVolumeClaimModel } from '@console/internal/models';
+import { PersistentVolumeClaimKind } from '@console/internal/module/k8s';
+
+import {
+  BinaryUnit,
+  stringValueUnitSplit,
+  toIECUnit,
+} from '../../../components/form/size-unit-utils';
+import { AccessMode, VolumeMode } from '../../../constants/vm/storage';
 import {
   getPvcAccessModes,
   getPvcStorageClassName,
   getPvcStorageSize,
   getPvcVolumeMode,
 } from '../../../selectors/pvc/selectors';
-import {
-  BinaryUnit,
-  stringValueUnitSplit,
-  toIECUnit,
-} from '../../../components/form/size-unit-utils';
+import { V1PersistentVolumeClaim } from '../../../types/api';
 import { K8sResourceWrapper } from '../common/k8s-resource-wrapper';
-import { PersistentVolumeClaimModel } from '@console/internal/models';
 import { K8sInitAddon } from '../common/util/k8s-mixin';
-import { AccessMode, VolumeMode } from '../../../constants/vm/storage';
-import { PersistentVolumeClaimKind } from '@console/internal/module/k8s';
 
 export class PersistentVolumeClaimWrapper extends K8sResourceWrapper<
   V1PersistentVolumeClaim,

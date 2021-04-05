@@ -11,9 +11,9 @@
  * Do not edit the class manually.
  */
 
-import { V1ObjectMeta } from './V1ObjectMeta';
 import { V1alpha1DataVolumeSpec } from './V1alpha1DataVolumeSpec';
 import { V1alpha1DataVolumeStatus } from './V1alpha1DataVolumeStatus';
+import { V1ObjectMeta } from './V1ObjectMeta';
 
 /**
  * DataVolume provides a representation of our data volume +genclient +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object

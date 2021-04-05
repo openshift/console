@@ -1,5 +1,5 @@
-import { iGetIn } from '../../../utils/immutable';
 import { CommonTemplatesValidation, ITemplate } from '../../../types/template';
+import { iGetIn } from '../../../utils/immutable';
 
 export const iGetTemplateValidations = (template: ITemplate): CommonTemplatesValidation[] => {
   const result = iGetIn(template, ['metadata', 'annotations', 'validations']);

@@ -1,13 +1,15 @@
 import * as _ from 'lodash';
+
 import { Patch } from '@console/internal/module/k8s';
 import { PatchBuilder } from '@console/shared/src/k8s';
-import { getDisks, getInterfaces, getNetworks } from '../../../selectors/vm';
-import { getVMLikePatches } from '../vm-template';
-import { VMLikeEntityKind } from '../../../types/vmLike';
-import { V1Network, V1NetworkInterface } from '../../../types/vm';
+
 import { getSimpleName } from '../../../selectors/utils';
-import { NetworkWrapper } from '../../wrapper/vm/network-wrapper';
+import { getDisks, getInterfaces, getNetworks } from '../../../selectors/vm';
+import { V1Network, V1NetworkInterface } from '../../../types/vm';
+import { VMLikeEntityKind } from '../../../types/vmLike';
 import { NetworkInterfaceWrapper } from '../../wrapper/vm/network-interface-wrapper';
+import { NetworkWrapper } from '../../wrapper/vm/network-wrapper';
+import { getVMLikePatches } from '../vm-template';
 import { getShiftBootOrderPatches } from './utils';
 
 export const getRemoveNICPatches = (

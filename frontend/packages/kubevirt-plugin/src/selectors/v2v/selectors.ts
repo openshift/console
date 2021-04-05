@@ -1,5 +1,6 @@
-import { V2VConfigMapAttribute } from '../../constants/v2v';
 import { ConfigMapKind, ImagePullPolicy } from '@console/internal/module/k8s';
+
+import { V2VConfigMapAttribute } from '../../constants/v2v';
 
 export const getV2VConnectionName = (value) => value && value.spec && value.spec.connection;
 

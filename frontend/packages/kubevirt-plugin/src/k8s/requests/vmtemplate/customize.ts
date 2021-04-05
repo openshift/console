@@ -1,42 +1,43 @@
 import * as _ from 'lodash';
-import { ANNOTATIONS, getRandomChars } from '@console/shared/src';
+
 import { TemplateModel } from '@console/internal/models';
 import {
   k8sCreate,
-  TemplateKind,
   k8sPatchByName,
   PersistentVolumeClaimKind,
+  TemplateKind,
 } from '@console/internal/module/k8s';
+import { ANNOTATIONS, getRandomChars } from '@console/shared/src';
 
-import { VMKind } from '../../../types';
-import { VMWrapper } from '../../wrapper/vm/vm-wrapper';
-import { VMTemplateWrapper } from '../../wrapper/vm/vm-template-wrapper';
-import { buildOwnerReference } from '../../../utils';
+import { VMSettingsField } from '../../../components/create-vm-wizard/types';
 import {
+  AccessMode,
   LABEL_USED_TEMPLATE_NAME,
   LABEL_USED_TEMPLATE_NAMESPACE,
   TEMPLATE_BASE_IMAGE_NAME_PARAMETER,
   TEMPLATE_BASE_IMAGE_NAMESPACE_PARAMETER,
-  TEMPLATE_TYPE_LABEL,
-  TEMPLATE_TYPE_VM,
-  AccessMode,
-  VolumeMode,
-  VM_TEMPLATE_NAME_PARAMETER,
-  TEMPLATE_OS_NAME_ANNOTATION,
   TEMPLATE_CUSTOMIZED_ANNOTATION,
-  VM_CUSTOMIZE_LABEL,
+  TEMPLATE_OS_NAME_ANNOTATION,
   TEMPLATE_PROVIDER_ANNOTATION,
   TEMPLATE_SUPPORT_LEVEL,
+  TEMPLATE_TYPE_LABEL,
+  TEMPLATE_TYPE_VM,
+  VM_CUSTOMIZE_LABEL,
+  VM_TEMPLATE_NAME_PARAMETER,
+  VolumeMode,
 } from '../../../constants';
+import { TemplateSupport } from '../../../constants/vm-templates/support';
 import { DataVolumeSourceType } from '../../../constants/vm/storage';
 import { DataVolumeModel, VirtualMachineModel } from '../../../models';
-import { prepareVM } from '../vm/create/simple-create';
-import { TemplateSourceStatus } from '../../../statuses/template/types';
-import { DataVolumeWrapper } from '../../wrapper/vm/data-volume-wrapper';
 import { isCommonTemplate } from '../../../selectors/vm-template/basic';
+import { TemplateSourceStatus } from '../../../statuses/template/types';
+import { VMKind } from '../../../types';
+import { buildOwnerReference } from '../../../utils';
+import { DataVolumeWrapper } from '../../wrapper/vm/data-volume-wrapper';
+import { VMTemplateWrapper } from '../../wrapper/vm/vm-template-wrapper';
+import { VMWrapper } from '../../wrapper/vm/vm-wrapper';
 import { initializeCommonMetadata, initializeCommonTemplateMetadata } from '../vm/create/common';
-import { VMSettingsField } from '../../../components/create-vm-wizard/types';
-import { TemplateSupport } from '../../../constants/vm-templates/support';
+import { prepareVM } from '../vm/create/simple-create';
 
 export const createTemplateFromVM = (vm: VMKind): Promise<TemplateKind> => {
   const template = JSON.parse(

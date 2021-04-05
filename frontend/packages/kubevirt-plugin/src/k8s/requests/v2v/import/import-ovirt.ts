@@ -1,13 +1,15 @@
 /* eslint-disable camelcase, @typescript-eslint/camelcase,no-await-in-loop */
 import * as _ from 'lodash';
+
 import { SecretModel } from '@console/internal/models';
 import { SecretKind } from '@console/internal/module/k8s';
 import { PatchBuilder } from '@console/shared/src/k8s';
 import { compareOwnerReference } from '@console/shared/src/utils/owner-references';
-import { CreateVMParams } from '../../vm/create/types';
-import { ImporterResult } from '../../vm/types';
-import { VMImportWrappper } from '../../../wrapper/vm-import/vm-import-wrapper';
-import { VMImportType } from '../../../../constants/v2v-import/ovirt/vm-import-type';
+
+import {
+  getOvirtAttribute,
+  getOvirtField,
+} from '../../../../components/create-vm-wizard/selectors/provider/ovirt/selectors';
 import { asSimpleSettings } from '../../../../components/create-vm-wizard/selectors/vm-settings';
 import {
   OvirtProviderField,
@@ -16,18 +18,18 @@ import {
   VMWizardStorage,
   VMWizardStorageType,
 } from '../../../../components/create-vm-wizard/types';
-import {
-  getOvirtAttribute,
-  getOvirtField,
-} from '../../../../components/create-vm-wizard/selectors/provider/ovirt/selectors';
-import { NetworkWrapper } from '../../../wrapper/vm/network-wrapper';
+import { VM_IMPORT_PROPAGATE_ANNOTATIONS_ANNOTATION } from '../../../../constants/v2v-import/constants';
+import { VMImportType } from '../../../../constants/v2v-import/ovirt/vm-import-type';
+import { ANNOTATION_DESCRIPTION } from '../../../../constants/vm';
 import { NetworkType } from '../../../../constants/vm/network';
 import { DiskMapping, NetworkMapping } from '../../../../types/vm-import/ovirt/vm-import';
-import { PersistentVolumeClaimWrapper } from '../../../wrapper/vm/persistent-volume-claim-wrapper';
-import { SecretWrappper } from '../../../wrapper/k8s/secret-wrapper';
 import { buildOwnerReference } from '../../../../utils';
-import { VM_IMPORT_PROPAGATE_ANNOTATIONS_ANNOTATION } from '../../../../constants/v2v-import/constants';
-import { ANNOTATION_DESCRIPTION } from '../../../../constants/vm';
+import { SecretWrappper } from '../../../wrapper/k8s/secret-wrapper';
+import { VMImportWrappper } from '../../../wrapper/vm-import/vm-import-wrapper';
+import { NetworkWrapper } from '../../../wrapper/vm/network-wrapper';
+import { PersistentVolumeClaimWrapper } from '../../../wrapper/vm/persistent-volume-claim-wrapper';
+import { CreateVMParams } from '../../vm/create/types';
+import { ImporterResult } from '../../vm/types';
 
 const SUPPORTED_NETWORK_TYPES = new Set([NetworkType.POD, NetworkType.MULTUS]);
 

@@ -1,4 +1,5 @@
 import { Map as ImmutableMap } from 'immutable';
+
 import { TemplateModel } from '@console/internal/models';
 
 export const VMTemplateYAMLTemplates = ImmutableMap().setIn(

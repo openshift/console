@@ -4,17 +4,18 @@ import {
   ValidationErrorType,
   ValidationObject,
 } from '@console/shared';
-import { validateContainer, validateURL } from '../common';
-import { DiskWrapper } from '../../../k8s/wrapper/vm/disk-wrapper';
-import { VolumeWrapper } from '../../../k8s/wrapper/vm/volume-wrapper';
-import { DataVolumeWrapper } from '../../../k8s/wrapper/vm/data-volume-wrapper';
+
 import { StorageUISource } from '../../../components/modals/disk-modal/storage-ui-source';
-import { CombinedDisk } from '../../../k8s/wrapper/vm/combined-disk';
-import { PersistentVolumeClaimWrapper } from '../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
-import { DiskType } from '../../../constants/vm/storage/disk-type';
-import { TemplateValidations } from '../template/template-validations';
-import { UIStorageValidation } from '../../../types/ui/storage';
 import { VolumeType } from '../../../constants';
+import { DiskType } from '../../../constants/vm/storage/disk-type';
+import { CombinedDisk } from '../../../k8s/wrapper/vm/combined-disk';
+import { DataVolumeWrapper } from '../../../k8s/wrapper/vm/data-volume-wrapper';
+import { DiskWrapper } from '../../../k8s/wrapper/vm/disk-wrapper';
+import { PersistentVolumeClaimWrapper } from '../../../k8s/wrapper/vm/persistent-volume-claim-wrapper';
+import { VolumeWrapper } from '../../../k8s/wrapper/vm/volume-wrapper';
+import { UIStorageValidation } from '../../../types/ui/storage';
+import { validateContainer, validateURL } from '../common';
+import { TemplateValidations } from '../template/template-validations';
 
 const validateDiskName = (name: string, usedDiskNames: Set<string>): ValidationObject => {
   let validation = validateDNS1123SubdomainValue(name, {

@@ -1,8 +1,9 @@
 import * as _ from 'lodash';
-import { transformDevices } from '../vm/devices';
-import { getVMIInterfaces, getVMIDisks } from './basic';
-import { VMIKind } from '../../types/vm';
+
 import { BootableDeviceType } from '../../types/types';
+import { VMIKind } from '../../types/vm';
+import { transformDevices } from '../vm/devices';
+import { getVMIDisks, getVMIInterfaces } from './basic';
 
 export const getVMIDevices = (vmi: VMIKind): BootableDeviceType[] => {
   return transformDevices(getVMIDisks(vmi), getVMIInterfaces(vmi));

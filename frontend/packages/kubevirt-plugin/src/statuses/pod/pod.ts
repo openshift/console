@@ -1,26 +1,27 @@
 import { PodKind } from '@console/internal/module/k8s';
+
+import { Status } from '..';
 import {
-  isPodSchedulable,
-  getPodStatusPhase,
-  findPodFalseStatusConditionMessage,
-} from '../../selectors/pod/selectors';
-import {
-  getContainerStatusReason,
   findFailingContainerStatus,
+  getContainerStatusReason,
 } from '../../selectors/pod/container';
 import {
-  POD_STATUS_NOT_SCHEDULABLE,
-  POD_STATUS_CONTAINER_FAILING,
-  POD_STATUS_NOT_READY,
-  POD_STATUS_FAILED,
-  POD_STATUS_CRASHLOOP_BACKOFF,
-  POD_STATUS_PENDING,
-  POD_STATUS_UNKNOWN,
+  findPodFalseStatusConditionMessage,
+  getPodStatusPhase,
+  isPodSchedulable,
+} from '../../selectors/pod/selectors';
+import {
   POD_STATUS_COMPLETED,
+  POD_STATUS_CONTAINER_FAILING,
+  POD_STATUS_CRASHLOOP_BACKOFF,
+  POD_STATUS_FAILED,
+  POD_STATUS_NOT_READY,
+  POD_STATUS_NOT_SCHEDULABLE,
+  POD_STATUS_PENDING,
   POD_STATUS_RUNNING,
   POD_STATUS_SUCCEEDED,
+  POD_STATUS_UNKNOWN,
 } from './constants';
-import { Status } from '..';
 
 const errorStatusMapper = {
   Failed: POD_STATUS_FAILED,

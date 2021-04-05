@@ -3,10 +3,11 @@ import {
   K8sResourceKind,
   PersistentVolumeClaimKind,
 } from '@console/internal/module/k8s';
-import { VMKind } from '../../../types/vm';
+
 import { VirtualMachineModel } from '../../../models';
-import { CloneTo, VMClone } from '../../helpers/vm-clone';
 import { isVMExpectedRunning } from '../../../selectors/vm';
+import { VMKind } from '../../../types/vm';
+import { CloneTo, VMClone } from '../../helpers/vm-clone';
 import { stopVM } from './actions';
 
 type CloneFrom = {

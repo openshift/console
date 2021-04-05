@@ -1,31 +1,33 @@
 import * as React from 'react';
-import { K8sResourceKind, modelFor, referenceFor } from '@console/internal/module/k8s';
+
 import { KebabOption, kebabOptionsToMenu } from '@console/internal/components/utils';
+import { K8sResourceKind, modelFor, referenceFor } from '@console/internal/module/k8s';
+import { ModifyApplication } from '@console/topology/src/actions';
 import {
-  ComponentFactory,
-  GraphElement,
-  withDragNode,
-  withDndDrop,
-  withSelection,
-  Node,
-  withCreateConnector,
-} from '@patternfly/react-topology';
-import {
+  CreateConnector,
+  createConnectorCallback,
+  createMenuItems,
   NodeComponentProps,
   nodeDragSourceSpec,
   nodeDropTargetSpec,
-  createConnectorCallback,
-  CreateConnector,
   withContextMenu,
-  createMenuItems,
 } from '@console/topology/src/components/graph-view';
-import { withEditReviewAccess, getResource } from '@console/topology/src/utils';
 import { TopologyDataObject } from '@console/topology/src/topology-types';
-import { ModifyApplication } from '@console/topology/src/actions';
+import { getResource, withEditReviewAccess } from '@console/topology/src/utils';
+import {
+  ComponentFactory,
+  GraphElement,
+  Node,
+  withCreateConnector,
+  withDndDrop,
+  withDragNode,
+  withSelection,
+} from '@patternfly/react-topology';
+
 import { vmMenuActions } from '../../components/vms/menu-actions';
-import { VmNode } from './nodes/VmNode';
-import { TYPE_VIRTUAL_MACHINE } from './const';
 import { VMNodeData } from '../types';
+import { TYPE_VIRTUAL_MACHINE } from './const';
+import { VmNode } from './nodes/VmNode';
 
 export const vmActions = (
   contextMenuResource: K8sResourceKind,

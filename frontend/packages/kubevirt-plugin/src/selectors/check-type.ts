@@ -1,12 +1,13 @@
-import { K8sResourceCommon, TemplateKind } from '@console/internal/module/k8s';
 import { TemplateModel } from '@console/internal/models';
-import { VMImportKind } from '../types/vm-import/ovirt/vm-import';
-import { VMIKind, VMKind } from '../types/vm';
+import { K8sResourceCommon, TemplateKind } from '@console/internal/module/k8s';
+
 import {
   VirtualMachineImportModel,
   VirtualMachineInstanceModel,
   VirtualMachineModel,
 } from '../models';
+import { VMIKind, VMKind } from '../types/vm';
+import { VMImportKind } from '../types/vm-import/ovirt/vm-import';
 
 export const isVM = (entity: K8sResourceCommon): entity is VMKind =>
   entity?.kind === VirtualMachineModel.kind;

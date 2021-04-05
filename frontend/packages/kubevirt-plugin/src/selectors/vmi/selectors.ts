@@ -1,7 +1,8 @@
 import { getName, getNamespace } from '@console/shared';
+
 import { VirtualMachineInstanceModel } from '../../models';
-import { getConsoleAPIBase } from '../../utils/url';
 import { VMIKind } from '../../types/vm';
+import { getConsoleAPIBase } from '../../utils/url';
 
 export const getVMISubresourcePath = () =>
   `${getConsoleAPIBase()}/apis/subresources.${VirtualMachineInstanceModel.apiGroup}`;

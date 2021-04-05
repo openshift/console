@@ -1,12 +1,17 @@
 import * as _ from 'lodash';
+
 import { getName } from '@console/shared/src/selectors/common';
 import { createBasicLookup } from '@console/shared/src/utils/utils';
+
 import {
   TEMPLATE_FLAVOR_LABEL,
   TEMPLATE_OS_LABEL,
   TEMPLATE_OS_NAME_ANNOTATION,
   TEMPLATE_WORKLOAD_LABEL,
 } from '../../constants/vm';
+import { RunStrategy, StateChangeRequest } from '../../constants/vm/vm';
+import { NetworkWrapper } from '../../k8s/wrapper/vm/network-wrapper';
+import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
 import {
   CPURaw,
   V1DataVolumeTemplateSpec,
@@ -14,20 +19,17 @@ import {
   V1NetworkInterface,
   VMKind,
 } from '../../types';
-import { findKeySuffixValue, getSimpleName, getValueByPrefix } from '../utils';
-import { getAnnotations, getLabels } from '../selectors';
-import { NetworkWrapper } from '../../k8s/wrapper/vm/network-wrapper';
-import { getDataVolumeStorageClassName, getDataVolumeStorageSize } from '../dv/selectors';
 import { V1Disk, V1Volume } from '../../types/api';
+import { Devices } from '../../types/vm/devices';
+import { VMGenericLikeEntityKind } from '../../types/vmLike';
+import { getDataVolumeStorageClassName, getDataVolumeStorageSize } from '../dv/selectors';
+import { getAnnotations, getLabels } from '../selectors';
+import { findKeySuffixValue, getSimpleName, getValueByPrefix } from '../utils';
 import {
   getVolumeCloudInitNoCloud,
   getVolumeContainerImage,
   getVolumePersistentVolumeClaimName,
 } from './volume';
-import { VMGenericLikeEntityKind } from '../../types/vmLike';
-import { RunStrategy, StateChangeRequest } from '../../constants/vm/vm';
-import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
-import { Devices } from '../../types/vm/devices';
 
 export const getMemory = (vm: VMKind) =>
   _.get(vm, 'spec.template.spec.domain.resources.requests.memory');

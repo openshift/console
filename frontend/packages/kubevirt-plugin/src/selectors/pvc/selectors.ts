@@ -1,12 +1,13 @@
 import { PersistentVolumeClaimKind } from '@console/internal/module/k8s';
-import { getStorageSize, getAnnotation } from '../selectors';
+
 import {
-  CDI_UPLOAD_RUNNING,
   CDI_UPLOAD_POD_ANNOTATION,
   CDI_UPLOAD_POD_NAME_ANNOTATION,
+  CDI_UPLOAD_RUNNING,
 } from '../../components/cdi-upload-provider/consts';
 import { CDI_KUBEVIRT_IO, STORAGE_IMPORT_POD_LABEL } from '../../constants';
 import { DataVolumeModel } from '../../models';
+import { getAnnotation, getStorageSize } from '../selectors';
 
 export const getPvcResources = (pvc: PersistentVolumeClaimKind) => pvc?.spec?.resources;
 

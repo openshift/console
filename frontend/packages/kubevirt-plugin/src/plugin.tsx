@@ -1,46 +1,49 @@
-import * as React from 'react';
 import * as _ from 'lodash';
-import { AlertVariant } from '@patternfly/react-core';
+import * as React from 'react';
+
+import { DashboardsStorageCapacityDropdownItem } from '@console/ceph-storage-plugin';
+import { PersistentVolumeClaimModel, PodModel, TemplateModel } from '@console/internal/models';
 import {
-  Plugin,
-  ResourceNSNavItem,
-  ResourceListPage,
-  ResourceDetailsPage,
-  YAMLTemplate,
-  ModelDefinition,
-  RoutePage,
+  ContextProvider,
+  DashboardsInventoryItemGroup,
   DashboardsOverviewHealthURLSubsystem,
   DashboardsOverviewInventoryItem,
-  DashboardsInventoryItemGroup,
-  ReduxReducer,
-  ProjectDashboardInventoryItem,
   DashboardsOverviewResourceActivity,
-  ContextProvider,
-  PVCCreateProp,
+  ModelDefinition,
+  Plugin,
+  ProjectDashboardInventoryItem,
   PVCAlert,
-  PVCStatus,
+  PVCCreateProp,
   PVCDelete,
+  PVCStatus,
+  ReduxReducer,
+  ResourceDetailsPage,
+  ResourceListPage,
+  ResourceNSNavItem,
+  RoutePage,
+  YAMLTemplate,
 } from '@console/plugin-sdk';
-import { DashboardsStorageCapacityDropdownItem } from '@console/ceph-storage-plugin';
-import { TemplateModel, PodModel, PersistentVolumeClaimModel } from '@console/internal/models';
 import { getName } from '@console/shared/src/selectors/common';
-import '@console/internal/i18n.js';
-import * as models from './models';
-import { VMTemplateYAMLTemplates, VirtualMachineYAMLTemplates } from './models/templates';
-import { getKubevirtHealthState } from './components/dashboards-page/overview-dashboard/health';
-import {
-  getVMStatusGroups,
-  VMOffGroupIcon,
-} from './components/dashboards-page/overview-dashboard/inventory';
-import kubevirtReducer from './redux';
-import { diskImportKindMapping } from './components/dashboards-page/overview-dashboard/utils';
-import { TopologyConsumedExtensions, getTopologyPlugin } from './topology/topology-plugin';
+import { AlertVariant } from '@patternfly/react-core';
+
 import {
   CDIUploadContext,
   useCDIUploadHook,
 } from './components/cdi-upload-provider/cdi-upload-provider';
 import { killCDIBoundPVC } from './components/cdi-upload-provider/pvc-delete-extension';
+import { getKubevirtHealthState } from './components/dashboards-page/overview-dashboard/health';
+import {
+  getVMStatusGroups,
+  VMOffGroupIcon,
+} from './components/dashboards-page/overview-dashboard/inventory';
+import { diskImportKindMapping } from './components/dashboards-page/overview-dashboard/utils';
+import * as models from './models';
+import { VirtualMachineYAMLTemplates, VMTemplateYAMLTemplates } from './models/templates';
+import kubevirtReducer from './redux';
 import { isPvcBoundToCDI, isPvcUploading } from './selectors/pvc/selectors';
+import { getTopologyPlugin, TopologyConsumedExtensions } from './topology/topology-plugin';
+
+import '@console/internal/i18n.js';
 import './style.scss';
 
 type ConsumedExtensions =

@@ -1,9 +1,9 @@
+import { isVMI } from '../../../selectors/check-type';
+import { asVM } from '../../../selectors/vm/vmlike';
 import { VMGenericLikeEntityKind } from '../../../types/vmLike';
+import { VMILikeWrapper } from '../types/vmlike';
 import { VMWrapper } from '../vm/vm-wrapper';
 import { VMIWrapper } from '../vm/vmi-wrapper';
-import { asVM } from '../../../selectors/vm/vmlike';
-import { VMILikeWrapper } from '../types/vmlike';
-import { isVMI } from '../../../selectors/check-type';
 
 export const asVMILikeWrapper = (
   vmLikeEntity: VMGenericLikeEntityKind,

@@ -1,6 +1,7 @@
 import { PatchBuilder } from '@console/shared/src/k8s';
-import { EnhancedK8sMethods } from '../../enhancedK8sMethods/enhancedK8sMethods';
+
 import { V2VVMwareModel } from '../../../models';
+import { EnhancedK8sMethods } from '../../enhancedK8sMethods/enhancedK8sMethods';
 
 const { warn } = console;
 

@@ -1,16 +1,18 @@
 import * as _ from 'lodash';
+
 import { K8sResourceKind, Patch, TemplateKind } from '@console/internal/module/k8s';
-import { VMLikeEntityKind } from '../../../types/vmLike';
-import { getAnnotations, getDescription } from '../../../selectors/selectors';
-import { getFlavor, getCPU, getMemory, parseCPU, DEFAULT_CPU } from '../../../selectors/vm';
-import { isTemplate, isVM } from '../../../selectors/check-type';
+import { getLabels } from '@console/shared/src';
+import { PatchBuilder } from '@console/shared/src/k8s';
+
 import { TEMPLATE_FLAVOR_LABEL, TEMPLATE_VM_SIZE_LABEL } from '../../../constants';
-import { getVMLikePatches } from '../vm-template';
+import { isTemplate, isVM } from '../../../selectors/check-type';
+import { getAnnotations, getDescription } from '../../../selectors/selectors';
+import { DEFAULT_CPU, getCPU, getFlavor, getMemory, parseCPU } from '../../../selectors/vm';
+import { isCustomFlavor } from '../../../selectors/vm-like/flavor';
 import { selectVM } from '../../../selectors/vm-template/basic';
 import { CPU, VMITemplate, VMKind } from '../../../types/vm';
-import { PatchBuilder } from '@console/shared/src/k8s';
-import { getLabels } from '@console/shared/src';
-import { isCustomFlavor } from '../../../selectors/vm-like/flavor';
+import { VMLikeEntityKind } from '../../../types/vmLike';
+import { getVMLikePatches } from '../vm-template';
 
 const getDomainPatches = (vm: VMKind): Patch[] => {
   let patch: Patch = null;

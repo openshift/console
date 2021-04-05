@@ -1,8 +1,8 @@
-import { K8sResourceWrapper } from '../common/k8s-resource-wrapper';
-import { VMRestore } from '../../../types';
 import { VirtualMachineModel, VirtualMachineRestoreModel } from '../../../models';
-import { K8sInitAddon } from '../common/util/k8s-mixin';
 import { getVmRestoreVmName } from '../../../selectors/snapshot/snapshot';
+import { VMRestore } from '../../../types';
+import { K8sResourceWrapper } from '../common/k8s-resource-wrapper';
+import { K8sInitAddon } from '../common/util/k8s-mixin';
 
 export class VMRestoreWrapper extends K8sResourceWrapper<VMRestore, VMRestoreWrapper> {
   constructor(snapshot?: VMRestore | VMRestoreWrapper | any, copy = false) {

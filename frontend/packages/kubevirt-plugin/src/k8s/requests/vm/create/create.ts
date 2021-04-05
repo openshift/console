@@ -1,31 +1,31 @@
+import { getOS } from '../../../../components/create-vm-wizard/selectors/combined';
+import { getImportProvidersFieldValue } from '../../../../components/create-vm-wizard/selectors/import-providers';
+import {
+  asSimpleSettings,
+  getFieldValue,
+} from '../../../../components/create-vm-wizard/selectors/vm-settings';
 import {
   ImportProvidersField,
   VMImportProvider,
   VMSettingsField,
 } from '../../../../components/create-vm-wizard/types';
-import {
-  asSimpleSettings,
-  getFieldValue,
-} from '../../../../components/create-vm-wizard/selectors/vm-settings';
-import { VMTemplateWrapper } from '../../../wrapper/vm/vm-template-wrapper';
 import { TEMPLATE_PARAM_VM_NAME, TEMPLATE_PARAM_VM_NAME_DESC } from '../../../../constants/vm';
-import { VMWrapper } from '../../../wrapper/vm/vm-wrapper';
-import { toShallowJS } from '../../../../utils/immutable';
+import { ProcessedTemplatesModel } from '../../../../models/models';
 import { iGetRelevantTemplate } from '../../../../selectors/immutable/template/combined';
-import { CreateVMParams } from './types';
-import { initializeVM } from './initialize-vm';
+import { selectVM } from '../../../../selectors/vm-template/basic';
+import { toShallowJS } from '../../../../utils/immutable';
+import { VMTemplateWrapper } from '../../../wrapper/vm/vm-template-wrapper';
+import { VMWrapper } from '../../../wrapper/vm/vm-wrapper';
+import { importV2VOvirtVm } from '../../v2v/import/import-ovirt';
+import { importV2VVMwareVm } from '../../v2v/import/import-v2vvmware';
+import { ImporterResult, OnVMCreate } from '../types';
 import {
   initializeCommonMetadata,
-  initializeCommonVMMetadata,
   initializeCommonTemplateMetadata,
+  initializeCommonVMMetadata,
 } from './common';
-import { selectVM } from '../../../../selectors/vm-template/basic';
-import { ProcessedTemplatesModel } from '../../../../models/models';
-import { ImporterResult, OnVMCreate } from '../types';
-import { importV2VVMwareVm } from '../../v2v/import/import-v2vvmware';
-import { getImportProvidersFieldValue } from '../../../../components/create-vm-wizard/selectors/import-providers';
-import { importV2VOvirtVm } from '../../v2v/import/import-ovirt';
-import { getOS } from '../../../../components/create-vm-wizard/selectors/combined';
+import { initializeVM } from './initialize-vm';
+import { CreateVMParams } from './types';
 
 export const getInitializedVMTemplate = (params: CreateVMParams) => {
   const { vmSettings, iCommonTemplates, iUserTemplate } = params;

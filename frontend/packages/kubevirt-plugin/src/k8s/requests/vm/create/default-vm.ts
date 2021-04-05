@@ -1,21 +1,22 @@
-import { DefaultVMLikeEntityParams } from './types';
 import { k8sCreate } from '@console/internal/module/k8s';
-import { VMTemplateWrapper } from '../../../wrapper/vm/vm-template-wrapper';
+
+import { VMSettingsField } from '../../../../components/create-vm-wizard/types';
 import {
   TEMPLATE_OS_LABEL,
   TEMPLATE_OS_NAME_ANNOTATION,
   TEMPLATE_PARAM_VM_NAME,
 } from '../../../../constants/vm';
-import { findHighestKeyBySuffixValue, getValueByPrefix } from '../../../../selectors/utils';
-import { getAnnotations } from '../../../../selectors/selectors';
-import { initializeCommonMetadata, initializeCommonVMMetadata } from './common';
-import { VMSettingsField } from '../../../../components/create-vm-wizard/types';
-import { getFlavor, getWorkloadProfile } from '../../../../selectors/vm';
 import { ProcessedTemplatesModel } from '../../../../models/models';
+import { getAnnotations } from '../../../../selectors/selectors';
+import { findHighestKeyBySuffixValue, getValueByPrefix } from '../../../../selectors/utils';
+import { getFlavor, getWorkloadProfile } from '../../../../selectors/vm';
 import { selectVM } from '../../../../selectors/vm-template/basic';
 import { VMKind } from '../../../../types/vm';
-import { resolveDefaultVMTemplate } from './default-template';
+import { VMTemplateWrapper } from '../../../wrapper/vm/vm-template-wrapper';
 import { VMWrapper } from '../../../wrapper/vm/vm-wrapper';
+import { initializeCommonMetadata, initializeCommonVMMetadata } from './common';
+import { resolveDefaultVMTemplate } from './default-template';
+import { DefaultVMLikeEntityParams } from './types';
 
 export const resolveDefaultVM = async (params: DefaultVMLikeEntityParams): Promise<VMKind> => {
   const { commonTemplate, name, namespace, baseOSName } = params;

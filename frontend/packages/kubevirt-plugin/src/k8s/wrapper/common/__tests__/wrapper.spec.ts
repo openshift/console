@@ -1,4 +1,4 @@
-import { TestWrapper, TestData } from './mocks/test-wrapper';
+import { TestData, TestWrapper } from './mocks/test-wrapper';
 
 describe('Wrapper methods', () => {
   let testData: TestData = null;

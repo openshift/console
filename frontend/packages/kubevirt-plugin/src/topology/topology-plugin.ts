@@ -1,12 +1,13 @@
-import { Plugin } from '@console/plugin-sdk';
 import { getExecutableCodeRef } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-utils';
+import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
+import { TemplateModel } from '@console/internal/models';
+import { Plugin } from '@console/plugin-sdk';
 import {
   TopologyComponentFactory,
   TopologyDataModelFactory,
   TopologyDisplayFilters,
 } from '@console/topology/src/extensions';
-import { TemplateModel } from '@console/internal/models';
-import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
+
 import * as models from '../models';
 import {
   getIsKubevirtResource,

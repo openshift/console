@@ -1,7 +1,8 @@
 /* eslint-disable lines-between-class-members */
 import { ObjectEnum } from '@console/shared/src/constants/object-enum';
-import { StatusEnum } from '../../status-enum';
+
 import { StatusSimpleLabel } from '../../status-constants';
+import { StatusEnum } from '../../status-enum';
 import { StatusGroup } from '../../status-group';
 
 export class V2VVMImportStatus extends StatusEnum {

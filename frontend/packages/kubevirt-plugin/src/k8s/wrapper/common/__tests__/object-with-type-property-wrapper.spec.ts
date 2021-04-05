@@ -1,8 +1,9 @@
 import * as _ from 'lodash';
+
 import {
-  SmoothieWrapper,
-  SmoothieType,
   CombinedExclusiveFlavorTypeData,
+  SmoothieType,
+  SmoothieWrapper,
 } from './mocks/smoothie-wrapper';
 
 describe('ObjectWithTypePropertyWrapper methods', () => {

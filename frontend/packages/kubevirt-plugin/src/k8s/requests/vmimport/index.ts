@@ -1,9 +1,10 @@
 import { k8sGet, k8sKill } from '@console/internal/module/k8s';
-import { VirtualMachineImportModel, VirtualMachineModel } from '../../../models';
-import { VMWrapper } from '../../wrapper/vm/vm-wrapper';
 import { getDeletetionTimestamp, getName, getNamespace } from '@console/shared/src';
-import { VMImportKind } from '../../../types/vm-import/ovirt/vm-import';
+
+import { VirtualMachineImportModel, VirtualMachineModel } from '../../../models';
 import { VMKind } from '../../../types/vm';
+import { VMImportKind } from '../../../types/vm-import/ovirt/vm-import';
+import { VMWrapper } from '../../wrapper/vm/vm-wrapper';
 
 export const cancelVMImport = async (vmImport: VMImportKind, vmToRemove?: VMKind) => {
   await k8sKill(VirtualMachineImportModel, vmImport);
