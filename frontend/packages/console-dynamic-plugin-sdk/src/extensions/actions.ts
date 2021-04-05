@@ -1,42 +1,41 @@
 import * as React from 'react';
 import { Extension } from '@console/plugin-sdk/src/typings/base';
-import { CodeRef, EncodedCodeRef, UpdateExtensionProperties } from '../types';
+import { ExtensionDeclaration, CodeRef } from '../types';
 import { ExtensionHook } from '../api/common-types';
 import { AccessReviewResourceAttributes } from './console-types';
 
-namespace ExtensionProperties {
-  export type ActionCreator = {
-    /** ID used to identify the action creator. */
-    id: string;
-    /** The context ID helps to narrow the scope of contributed actions to a particular area of the application. Ex - topology, helm */
-    contextId: string | 'resource';
-    /** A react hook which creates and returns action for the given scope.
-     * If contextId = `resource` then the scope will always be a K8s resource object
-     * */
-    creator: EncodedCodeRef;
-  };
-
-  export type ActionProvider = {
+/** ActionProvider contributes a hook that returns list of action ids for specific context */
+export type ActionProvider = ExtensionDeclaration<
+  'console.action/provider',
+  {
     /** The context ID helps to narrow the scope of contributed actions to a particular area of the application. Ex - topology, helm */
     contextId: string | 'resource';
     /** A react hook which returns action for the given scope.
      * If contextId = `resource` then the scope will always be a K8s resource object
      * */
-    provider: EncodedCodeRef;
-  };
+    provider: CodeRef<ExtensionHook<Action[]>>;
+  }
+>;
 
-  export type ResourceActionProvider = {
+/** ResourceActionProvider contributes a list of action ids for specific resource model */
+export type ResourceActionProvider = ExtensionDeclaration<
+  'console.action/resource-provider',
+  {
     /** The model for which this provider provides actions for. */
     model: {
       group: string;
       version?: string;
       kind?: string;
     };
-    /** The action ids to contribute to */
-    actions: string[];
-  };
+    /** A react hook which returns action for the given resource model */
+    provider: CodeRef<ExtensionHook<Action[]>>;
+  }
+>;
 
-  export type ActionGroup = {
+/** ActionGroup contributes an action group that can also be a submenu */
+export type ActionGroup = ExtensionDeclaration<
+  'console.action/group',
+  {
     /** ID used to identify the action section. */
     id: string;
     /** The label to display in the UI.
@@ -54,71 +53,32 @@ namespace ExtensionProperties {
      * insertBefore takes precedence.
      * */
     insertAfter?: string | string[];
-  };
+  }
+>;
 
-  export type ActionFilter = {
+/** ActionFilter can be used to filter an action */
+export type ActionFilter = ExtensionDeclaration<
+  'console.action/filter',
+  {
     /** The context ID helps to narrow the scope of contributed actions to a particular area of the application. Ex - topology, helm */
     contextId: string | 'resource';
     /** A function which will filter actions based on some conditions.
      * scope: The scope in which actions should be provided for.
      * Note: hook may be required if we want to remove the ModifyCount action from a deployment with HPA
      * */
-    filter: EncodedCodeRef;
-  };
-
-  export type ActionCreatorCodeRefs = {
-    creator: CodeRef<ExtensionHook<Action>>;
-  };
-
-  export type ActionProviderCodeRefs = {
-    provider: CodeRef<ExtensionHook<string[]>>;
-  };
-
-  export type ActionFilterCodeRefs = {
     filter: CodeRef<(scope: any, action: Action) => boolean>;
-  };
-}
-
-export type ActionCreator = Extension<ExtensionProperties.ActionCreator> & {
-  type: 'console.action/creator';
-};
-
-export type ActionProvider = Extension<ExtensionProperties.ActionProvider> & {
-  type: 'console.action/provider';
-};
-
-export type ResourceActionProvider = Extension<ExtensionProperties.ResourceActionProvider> & {
-  type: 'console.action/resource-provider';
-};
-
-export type ActionGroup = Extension<ExtensionProperties.ActionGroup> & {
-  type: 'console.action/group';
-};
-
-export type ActionFilter = Extension<ExtensionProperties.ActionFilter> & {
-  type: 'console.action/filter';
-};
-
-export type ResolvedActionCreator = UpdateExtensionProperties<
-  ActionCreator,
-  ExtensionProperties.ActionCreatorCodeRefs
+  }
 >;
 
-export type ResolvedActionProvider = UpdateExtensionProperties<
-  ActionProvider,
-  ExtensionProperties.ActionProviderCodeRefs
->;
+export type SupportedActionExtensions =
+  | ActionProvider
+  | ResourceActionProvider
+  | ActionGroup
+  | ActionFilter;
 
-export type ResolvedActionFilter = UpdateExtensionProperties<
-  ActionFilter,
-  ExtensionProperties.ActionFilterCodeRefs
->;
+// Type Guards
 
-export const isActionCreator = (e: Extension): e is ResolvedActionCreator => {
-  return e.type === 'console.action/creator';
-};
-
-export const iActionProvider = (e: Extension): e is ResolvedActionProvider => {
+export const isActionProvider = (e: Extension): e is ActionProvider => {
   return e.type === 'console.action/provider';
 };
 
@@ -130,9 +90,11 @@ export const isActionGroup = (e: Extension): e is ActionGroup => {
   return e.type === 'console.action/group';
 };
 
-export const isActionFilter = (e: Extension): e is ResolvedActionFilter => {
+export const isActionFilter = (e: Extension): e is ActionFilter => {
   return e.type === 'console.action/filter';
 };
+
+// Support types
 
 export type Action = {
   /** A unique identifier for this action. */
@@ -142,7 +104,7 @@ export type Action = {
   /** Executable callback or href.
    * External links should automatically provide an external link icon on action.
    * */
-  cta: () => void | { href: string; external?: boolean };
+  cta: (() => void) | { href: string; external?: boolean };
   /** Whether the action is disabled. */
   disabled?: boolean;
   /** The tooltip for this action. */
@@ -163,5 +125,5 @@ export type Action = {
    * */
   insertAfter?: string | string[];
   /** Describes the access check to perform. */
-  accessReview?: AccessReviewResourceAttributes[];
+  accessReview?: AccessReviewResourceAttributes;
 };

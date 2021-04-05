@@ -47,6 +47,8 @@ export type CatalogItemFilter = ExtensionDeclaration<
   }
 >;
 
+export type SupportedCatalogExtensions = CatalogItemType | CatalogItemProvider | CatalogItemFilter;
+
 // Type guards
 
 export const isCatalogItemType = (e: Extension): e is CatalogItemType => {
