@@ -136,7 +136,7 @@ export const CreateOBCPage: React.FC<CreateOBCPageProps> = (props) => {
             {isNoobaa && (
               <div className="form-group">
                 <label className="control-label co-required" htmlFor="obc-name">
-                  {t('ceph-storage-plugin~Bucket Class')}
+                  {t('ceph-storage-plugin~BucketClass')}
                 </label>
                 <Firehose
                   resources={[
@@ -152,7 +152,7 @@ export const CreateOBCPage: React.FC<CreateOBCPageProps> = (props) => {
                     onChange={(sc) => dispatch({ type: 'setBucketClass', name: sc })}
                     dataSelector={['metadata', 'name']}
                     selectedKey={state.bucketClass}
-                    placeholder={t('ceph-storage-plugin~Select Bucket Class')}
+                    placeholder={t('ceph-storage-plugin~Select BucketClass')}
                     dropDownClassName="dropdown--full-width"
                     className="nb-create-obc__bc-dropdown"
                     id="bc-dropdown"

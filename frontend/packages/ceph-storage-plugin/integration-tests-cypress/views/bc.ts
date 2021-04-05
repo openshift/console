@@ -61,7 +61,9 @@ const tierLevelToButton = (level: number, tier: Tier) =>
 
 const setGeneralData = () => {
   // be.visible check added to wait for the page to load
-  cy.byTestID('bucket-class-name').should('be.visible');
+  cy.byTestID('bucket-class-name')
+    .scrollIntoView()
+    .should('be.visible');
   cy.byTestID('bucket-class-name').type(bcName);
   cy.byTestID('bucket-class-description').type(bcDescription);
 };
@@ -115,5 +117,5 @@ export const createBC = (tiers: Tier[]) => {
   setBackingStores(tiers);
   cy.contains('Next').click();
   // Review Page Data Extraction
-  cy.contains('button', 'Create Bucket Class').click();
+  cy.contains('button', 'Create BucketClass').click();
 };

@@ -94,12 +94,12 @@ const BucketClassEditModal = withHandlePromise<
   };
   return (
     <>
-      <ModalTitle>{t('ceph-storage-plugin~Edit Bucket Class Resource')}</ModalTitle>
+      <ModalTitle>{t('ceph-storage-plugin~Edit BucketClass Resource')}</ModalTitle>
       <div className="nb-bc-modal">
         <ModalBody>
           <p className="nb-bc-modal__text">
             {t(
-              'ceph-storage-plugin~Backing Store represents a storage target to be used as the underlying storage for the data in Multicloud Object Gateway buckets.',
+              'ceph-storage-plugin~BackingStore represents a storage target to be used as the underlying storage for the data in Multicloud Object Gateway buckets.',
             )}
           </p>
           <BackingStoreSelection

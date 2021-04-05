@@ -7,17 +7,36 @@ import {
   FormGroup,
   TextArea,
   TextInput,
+  Radio,
+  ValidatedOptions,
+  Tooltip,
 } from '@patternfly/react-core';
 import { ExternalLink } from '@console/internal/components/utils';
+import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
 import { Action, State } from '../state';
+import { bucketClassTypeRadios } from '../../../constants/bucket-class';
+import { validateBucketClassName } from '../../../utils/bucket-class';
+import '../create-bc.scss';
+
+const BucketClassNameToolTip = ({ position, content }) => (
+  <Tooltip position={position} content={content} isContentLeftAligned>
+    <OutlinedQuestionCircleIcon />
+  </Tooltip>
+);
 
 const GeneralPage: React.FC<GeneralPageProps> = ({ dispatch, state }) => {
   const { t } = useTranslation();
 
   const [showHelp, setShowHelp] = React.useState(true);
 
+  const [validated, setValidated] = React.useState<ValidatedOptions>(ValidatedOptions.default);
   const onChange = (value: string) => {
     dispatch({ type: 'setBucketClassName', name: value });
+    if (validateBucketClassName(value)) {
+      setValidated(ValidatedOptions.success);
+    } else {
+      setValidated(ValidatedOptions.error);
+    }
   };
 
   return (
@@ -26,13 +45,13 @@ const GeneralPage: React.FC<GeneralPageProps> = ({ dispatch, state }) => {
         <Alert
           isInline
           variant="info"
-          title={t('ceph-storage-plugin~What is a Bucket Class?')}
+          title={t('ceph-storage-plugin~What is a BucketClass?')}
           className="nb-create-bc-step-page__info"
           actionClose={<AlertActionCloseButton onClose={() => setShowHelp(false)} />}
         >
           <p>
             {t(
-              "ceph-storage-plugin~A Multicloud Object Gateway bucket's data location is determined by a policy called a Bucket Class",
+              'ceph-storage-plugin~A set of policies which would apply to all buckets (OBCs) created with the specific bucket class. These policies include placement, namespace and caching',
             )}
           </p>
           <ExternalLink
@@ -43,10 +62,50 @@ const GeneralPage: React.FC<GeneralPageProps> = ({ dispatch, state }) => {
       )}
       <Form className="nb-create-bc-step-page-form">
         <FormGroup
+          fieldId="bucketclasstype-radio"
+          className="nb-create-bc-step-page-form__element nb-bucket-class-type-form__element"
           isRequired
+          label={t('ceph-storage-plugin~BucketClass type')}
+        >
+          {bucketClassTypeRadios(t).map((radio) => {
+            const checked = radio.value === state.bucketClassType;
+            return (
+              <Radio
+                {...radio}
+                onChange={() => {
+                  dispatch({ type: 'setBucketClassType', value: radio.value });
+                }}
+                checked={checked}
+                className="nb-create-bc-step-page-form__radio"
+                name="bucketclasstype"
+              />
+            );
+          })}
+        </FormGroup>
+        <FormGroup
+          labelIcon={
+            <BucketClassNameToolTip
+              position="top"
+              content={
+                <ul>
+                  <li>{t('ceph-storage-plugin~3-63 chars')}</li>
+                  <li>
+                    {t('ceph-storage-plugin~Starts and ends with lowercase number or letter')}
+                  </li>
+                  <li>
+                    {t(
+                      'ceph-storage-plugin~Only lowercase letters, numbers, non-consecutive periods or hyphens',
+                    )}
+                  </li>
+                  <li>{t('ceph-storage-plugin~Avoid using the form of an IP address')}</li>
+                  <li>{t('ceph-storage-plugin~Globally unique name')}</li>
+                </ul>
+              }
+            />
+          }
           className="nb-create-bc-step-page-form__element"
           fieldId="bucketclassname-input"
-          label={t('ceph-storage-plugin~Bucket Class Name')}
+          label={t('ceph-storage-plugin~BucketClass name')}
           helperText={t(
             'ceph-storage-plugin~A unique name for the bucket class within the project.',
           )}
@@ -58,7 +117,8 @@ const GeneralPage: React.FC<GeneralPageProps> = ({ dispatch, state }) => {
             id="bucketclassname-input"
             value={state.bucketClassName}
             onChange={onChange}
-            aria-label={t('ceph-storage-plugin~Bucket Class Name')}
+            validated={validated}
+            aria-label={t('ceph-storage-plugin~BucketClass Name')}
           />
         </FormGroup>
         <FormGroup

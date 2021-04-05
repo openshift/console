@@ -14,11 +14,11 @@ const CreateBackingStoreFormModal: React.FC<CreateBackingStoreFormModal> = (prop
 
   return (
     <div className="nb-endpoints__modal">
-      <ModalTitle>{t('ceph-storage-plugin~Create new Backing Store')}</ModalTitle>
+      <ModalTitle>{t('ceph-storage-plugin~Create new BackingStore ')}</ModalTitle>
       <ModalBody>
         <p>
           {t(
-            'ceph-storage-plugin~Backing Store represents a storage target to be used as the underlying storage for the data in Multicloud Object Gateway buckets.',
+            'ceph-storage-plugin~BackingStore represents a storage target to be used as the underlying storage for the data in Multicloud Object Gateway buckets.',
           )}
         </p>
         <CreateBackingStoreForm {...props} />

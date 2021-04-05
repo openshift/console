@@ -1,3 +1,5 @@
+import * as _ from 'lodash';
+
 export enum BC_PROVIDERS {
   AWS = 'AWS S3',
   S3 = 'S3 Compatible',
@@ -16,14 +18,6 @@ export const PROVIDERS_NOOBAA_MAP = {
   [BC_PROVIDERS.IBM]: 'ibmCos' as const,
 };
 
-export const BUCKET_LABEL_NOOBAA_MAP = {
-  [BC_PROVIDERS.AWS]: 'targetBucket',
-  [BC_PROVIDERS.S3]: 'targetBucket',
-  [BC_PROVIDERS.AZURE]: 'targetBlobContainer',
-  [BC_PROVIDERS.GCP]: 'targetBucket',
-  [BC_PROVIDERS.IBM]: 'targetBucket',
-};
-
 export const NOOBAA_TYPE_MAP = {
   [BC_PROVIDERS.AWS]: 'aws-s3' as const,
   [BC_PROVIDERS.S3]: 's3-compatible' as const,
@@ -33,18 +27,28 @@ export const NOOBAA_TYPE_MAP = {
   [BC_PROVIDERS.IBM]: 'ibm-cos' as const,
 };
 
-export const NS_PROVIDERS_NOOBAA_MAP = {
-  [BC_PROVIDERS.AWS]: 'awsS3' as const,
-  [BC_PROVIDERS.S3]: 's3Compatible' as const,
-  [BC_PROVIDERS.AZURE]: 'azureBlob' as const,
-  [BC_PROVIDERS.IBM]: 'ibmCos' as const,
-};
+export const NS_PROVIDERS_NOOBAA_MAP = _.pick(
+  PROVIDERS_NOOBAA_MAP,
+  BC_PROVIDERS.AWS,
+  BC_PROVIDERS.S3,
+  BC_PROVIDERS.AZURE,
+  BC_PROVIDERS.IBM,
+);
 
-export const NS_NOOBAA_TYPE_MAP = {
-  [BC_PROVIDERS.AWS]: 'aws-s3' as const,
-  [BC_PROVIDERS.S3]: 's3-compatible' as const,
-  [BC_PROVIDERS.AZURE]: 'azure-blob' as const,
-  [BC_PROVIDERS.IBM]: 'ibm-cos' as const,
+export const NS_NOOBAA_TYPE_MAP = _.pick(
+  NOOBAA_TYPE_MAP,
+  BC_PROVIDERS.AWS,
+  BC_PROVIDERS.S3,
+  BC_PROVIDERS.AZURE,
+  BC_PROVIDERS.IBM,
+);
+
+export const BUCKET_LABEL_NOOBAA_MAP = {
+  [BC_PROVIDERS.AWS]: 'targetBucket',
+  [BC_PROVIDERS.S3]: 'targetBucket',
+  [BC_PROVIDERS.AZURE]: 'targetBlobContainer',
+  [BC_PROVIDERS.GCP]: 'targetBucket',
+  [BC_PROVIDERS.IBM]: 'targetBucket',
 };
 
 export const AWS_REGIONS = [

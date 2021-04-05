@@ -27,13 +27,13 @@ const CreateBackingStoreFormPage: React.FC<CreateBackingStoreFormPageProps> = ({
                 name: 'Openshift Container Storage',
                 path: resourcePathFromModel(ClusterServiceVersionModel, appName, ns),
               },
-              { name: t('ceph-storage-plugin~Create Backing Store'), path: match.url },
+              { name: t('ceph-storage-plugin~Create BackingStore '), path: match.url },
             ]}
           />
         </div>
         <div className="nb-endpoints-page-title">
           <Title size="2xl" headingLevel="h1" className="nb-endpoints-page-title__main">
-            {t('ceph-storage-plugin~Create new Backing Store')}
+            {t('ceph-storage-plugin~Create new BackingStore ')}
           </Title>
           <p className="nb-endpoints-page-title__info">
             {t(
@@ -47,15 +47,15 @@ const CreateBackingStoreFormPage: React.FC<CreateBackingStoreFormPageProps> = ({
           <Alert
             isInline
             variant="info"
-            title={t('ceph-storage-plugin~What is a Backing Store?')}
+            title={t('ceph-storage-plugin~What is a BackingStore ?')}
             actionClose={<AlertActionCloseButton onClose={() => setShowHelp(false)} />}
           >
             {t(
-              'ceph-storage-plugin~A backing store represents a storage target to be used as the underlying storage layer in Multicloud Object Gateway buckets.',
+              'ceph-storage-plugin~A BackingStore represents a storage target to be used as the underlying storage layer in Multicloud Object Gateway buckets.',
             )}
             <br />
             {t(
-              'ceph-storage-plugin~Multiple types of backing stores are supported: AWS S3 S3 Compatible Google Cloud Storage Azure Blob PVC.',
+              'ceph-storage-plugin~Multiple types of BackingStores are supported: AWS S3 S3 Compatible Google Cloud Storage Azure Blob PVC.',
             )}
           </Alert>
         )}

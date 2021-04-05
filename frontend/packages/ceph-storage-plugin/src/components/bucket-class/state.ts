@@ -1,8 +1,13 @@
-import { BackingStoreKind, PlacementPolicy } from '../../types';
+import { BucketClassType, NamespacePolicyType } from '../../constants/bucket-class';
+import { BackingStoreKind, NamespaceStoreKind, PlacementPolicy } from '../../types';
 
 export const initialState = {
   namespace: 'openshift-storage',
   bucketClassName: '',
+  bucketClassType: BucketClassType.STANDARD,
+  namespacePolicyType: NamespacePolicyType.SINGLE,
+  readNamespaceStore: [],
+  writeNamespaceStore: [],
   description: '',
   tier1Policy: PlacementPolicy.Spread,
   tier2Policy: null,
@@ -16,6 +21,10 @@ export type State = {
   namespace: string;
   bucketClassName: string;
   description: string;
+  bucketClassType: BucketClassType;
+  namespacePolicyType: NamespacePolicyType;
+  readNamespaceStore: NamespaceStoreKind[];
+  writeNamespaceStore: NamespaceStoreKind[];
   tier1Policy: PlacementPolicy;
   tier2Policy: PlacementPolicy;
   tier1BackingStore: BackingStoreKind[];
@@ -27,6 +36,10 @@ export type State = {
 export type Action =
   | { type: 'setNamespace'; name: string }
   | { type: 'setBucketClassName'; name: string }
+  | { type: 'setBucketClassType'; value: BucketClassType }
+  | { type: 'setNamespacePolicyType'; value: NamespacePolicyType }
+  | { type: 'setReadNamespaceStore'; value: NamespaceStoreKind[] }
+  | { type: 'setWriteNamespaceStore'; value: NamespaceStoreKind[] }
   | { type: 'setDescription'; value: string }
   | { type: 'setPlacementPolicyTier1'; value: PlacementPolicy }
   | { type: 'setPlacementPolicyTier2'; value: PlacementPolicy }
@@ -41,6 +54,14 @@ export const reducer = (state: State, action: Action) => {
       return Object.assign({}, state, { namespace: action.name });
     case 'setBucketClassName':
       return Object.assign({}, state, { bucketClassName: action.name });
+    case 'setBucketClassType':
+      return Object.assign({}, state, { bucketClassType: action.value });
+    case 'setNamespacePolicyType':
+      return Object.assign({}, state, { namespacePolicyType: action.value });
+    case 'setReadNamespaceStore':
+      return Object.assign({}, state, { readNamespaceStore: action.value });
+    case 'setWriteNamespaceStore':
+      return Object.assign({}, state, { writeNamespaceStore: action.value });
     case 'setDescription':
       return Object.assign({}, state, { description: action.value });
     case 'setPlacementPolicyTier1':

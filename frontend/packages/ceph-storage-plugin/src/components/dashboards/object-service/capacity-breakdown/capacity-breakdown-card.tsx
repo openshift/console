@@ -120,7 +120,7 @@ const BreakdownCard: React.FC = () => {
           },
           {
             id: CapacityBreakdown.Metrics.BC,
-            name: t('ceph-storage-plugin~Bucket Classes'),
+            name: t('ceph-storage-plugin~BucketClasses'),
             disabled: serviceType !== ServiceType.MCG,
           },
         ],

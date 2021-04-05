@@ -4,12 +4,24 @@
   width: 100%;
 }
 
+.nb-create-bc-step-page-form__radio {
+  padding-bottom: var(--pf-global--spacer--md);
+}
 .nb-bc-bs-table__data {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
+.nb-create-bc-step-page-form__dropdown {
+  display: block;
+  height: 20rem;
+}
+
+.nb-create-bc-list--indent {
+  margin-left: var(--pf-global--spacer--lg);
+  width: fit-content;
+}
 .nb-create-bc-step-page-form {
   display: block;
   width: 80%;
@@ -55,6 +67,10 @@
 }
 
 .nb-create-bc-step-page__info {
+  margin-bottom: var(--pf-global--spacer--lg);
+}
+
+.nb-create-bc-step-page--danger {
   margin-bottom: var(--pf-global--spacer--lg);
 }
 

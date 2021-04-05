@@ -21,17 +21,17 @@ const BackingStorePage: React.FC<BackingStorePageProps> = React.memo(
             className="nb-create-bc-step-page__info"
             isInline
             variant="info"
-            title={t('ceph-storage-plugin~What is a Backing Store?')}
+            title={t('ceph-storage-plugin~What is a BackingStore ?')}
             actionClose={<AlertActionCloseButton onClose={() => setShowHelp(false)} />}
           >
             <p>
               {t(
-                'ceph-storage-plugin~Backing Store represents a storage target to be used as the underlying storage for the data in Multicloud Object Gateway buckets.',
+                'ceph-storage-plugin~BackingStore represents a storage target to be used as the underlying storage for the data in Multicloud Object Gateway buckets.',
               )}
             </p>
             <p>
               {t(
-                'ceph-storage-plugin~Multiple types of backing stores are supported: asws-s3 s3-compatiblegoogle-cloud-storage azure-blob obc PVC.',
+                'ceph-storage-plugin~Multiple types of BackingStores are supported: asws-s3 s3-compatible google-cloud-storage azure-blob obc PVC.',
               )}
             </p>
             <ExternalLink

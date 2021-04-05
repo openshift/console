@@ -147,10 +147,10 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
   return (
     <Form className={classNames('nb-endpoints-form', className)} onSubmit={onSubmit}>
       <FormGroup
-        label={t('ceph-storage-plugin~Backing Store name')}
+        label={t('ceph-storage-plugin~BackingStore  Name')}
         fieldId="backingstore-name"
         className="nb-endpoints-form-entry"
-        helperText={t('ceph-storage-plugin~A unique name for the backing store within the project')}
+        helperText={t('ceph-storage-plugin~A unique name for the BackingStore  within the project')}
         isRequired
       >
         <Tooltip
@@ -164,7 +164,7 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
             maxLength={43}
             data-test="backingstore-name"
             placeholder="my-backingstore"
-            aria-label={t('ceph-storage-plugin~Backing Store name')}
+            aria-label={t('ceph-storage-plugin~BackingStore Name')}
           />
         </Tooltip>
       </FormGroup>
@@ -209,7 +209,7 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
       <ButtonBar errorMessage={errorMessage} inProgress={inProgress}>
         <ActionGroup>
           <Button type="submit" data-test="backingstore-create-button" variant="primary">
-            {t('ceph-storage-plugin~Create Backing Store')}
+            {t('ceph-storage-plugin~Create BackingStore')}
           </Button>
           <Button onClick={cancel} variant="secondary">
             {t('ceph-storage-plugin~Cancel')}
