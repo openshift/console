@@ -153,12 +153,12 @@ class ListDropdown_ extends React.Component {
     return (
       <div>
         {Component}
-        {loaded && _.isEmpty(items) && (
+        {loaded && _.isEmpty(items) && (desc || this.props.selectedKeyKind) && (
           <Alert
             isInline
             className="co-alert pf-c-alert--top-margin"
             variant="info"
-            title={`No ${desc} found or defined`}
+            title={`No ${desc || this.props.selectedKeyKind} found`}
           />
         )}
       </div>
