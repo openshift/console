@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { NodeKind } from 'public/module/k8s';
 
 export const SIZE_MAP = {
   '512Gi': 0.5,
@@ -45,8 +46,8 @@ export const verifyNodeOSDMapping = (nodes: number[], osds: number[], osdtree): 
   return filteredOsds.length === 0;
 };
 
-export const isNodeReady = (node): boolean => {
-  const conditions = _.get(node, 'status.conditions', []);
+export const isNodeReady = (node: NodeKind): boolean => {
+  const conditions = node.status?.conditions ?? [];
   const readyState: any = _.find(conditions, { type: 'Ready' });
 
   return readyState && readyState.status === 'True';

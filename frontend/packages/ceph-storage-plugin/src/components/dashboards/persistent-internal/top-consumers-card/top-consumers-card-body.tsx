@@ -10,7 +10,11 @@ import {
   ChartTooltip,
   ChartVoronoiContainer,
 } from '@patternfly/react-charts';
-import { DataPoint, PrometheusResponse } from '@console/internal/components/graphs';
+import {
+  DataPoint,
+  PrometheusResponse,
+  PrometheusResult,
+} from '@console/internal/components/graphs';
 import { humanizeBinaryBytes, LoadingInline } from '@console/internal/components/utils';
 import { twentyFourHourTime } from '@console/internal/components/utils/datetime';
 import { GraphEmpty } from '@console/internal/components/graphs/graph-empty';
@@ -42,7 +46,7 @@ export const TopConsumersBody: React.FC<TopConsumerBodyProps> = React.memo(
     if (!topConsumerStats) {
       return <LoadingInline />;
     }
-    const topConsumerStatsResult = _.get(topConsumerStats, 'data.result', []);
+    const topConsumerStatsResult: PrometheusResult[] = topConsumerStats?.data?.result ?? [];
     if (topConsumerStatsResult.length) {
       const maxCapacityConverted = getMaxCapacity(topConsumerStatsResult);
       const sortedResult = topConsumerStatsResult.sort(sortResources);

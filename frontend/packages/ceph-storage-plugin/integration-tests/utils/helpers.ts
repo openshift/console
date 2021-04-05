@@ -10,7 +10,7 @@ export const checkIfClusterIsReady = async () => {
     const scRes = JSON.parse(
       execSync('kubectl get -o json -n openshift-storage storagecluster').toString(),
     );
-    if (_.get(scRes, 'items[0].status.phase') === 'Ready') {
+    if (scRes?.items?.[0]?.status?.phase === 'Ready') {
       stillLoading = false;
     }
     /* eslint-disable no-await-in-loop */
