@@ -1,7 +1,7 @@
+import { topologyPO } from '@console/dev-console/integration-tests/support/pageObjects';
+import { topologyActions } from './topology-actions-page';
 import { nodeActions, resources } from '@console/dev-console/integration-tests/support/constants';
 import { modal } from '@console/cypress-integration-tests/views/modal';
-import { topologyPO } from '../../pageObjects';
-import { topologyActions } from './topology-actions-page';
 
 export const topologySidePane = {
   verify: () => cy.get(topologyPO.sidePane.dialog).should('be.visible'),
@@ -85,6 +85,7 @@ export const topologySidePane = {
   },
   verifyNumberOfAnnotations: (num: string) => {
     cy.get(topologyPO.sidePane.detailsTab.annotations).should('be.visible');
+    // eslint-disable-next-line promise/catch-or-return
     cy.get(topologyPO.sidePane.editAnnotations).then(($el) => {
       const res = $el.text().split(' ');
       expect(res[0]).toEqual(num);

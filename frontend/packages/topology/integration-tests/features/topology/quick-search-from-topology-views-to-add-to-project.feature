@@ -4,7 +4,7 @@ Feature: Provide quick search from topology/list views to add to project
 
         Background:
             Given user is at developer perspective
-              And user has selected "aut-quick-search" namespace
+              And user has created or selected namespace "aut-topology"
 
 
         @regression

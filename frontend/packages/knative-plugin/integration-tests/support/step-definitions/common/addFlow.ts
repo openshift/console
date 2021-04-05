@@ -2,13 +2,13 @@ import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { gitPage } from '@console/dev-console/integration-tests/support/pages/add-flow/git-page';
 import { navigateTo } from '@console/dev-console/integration-tests/support/pages/app';
 import { addPage } from '@console/dev-console/integration-tests/support/pages/add-flow/add-page';
-import { topologyPage } from '@console/dev-console/integration-tests/support/pages/topology/topology-page';
+import { topologyPage } from '@console/topology/integration-tests/support/pages/topology/topology-page';
 import { addOptions } from '@console/dev-console/integration-tests/support/constants/add';
 import { createGitWorkload } from '@console/dev-console/integration-tests/support/pages/functions/createGitWorkload';
 import { devNavigationMenu } from '@console/dev-console/integration-tests/support/constants/global';
 import { pageTitle } from '@console/dev-console/integration-tests/support/constants/pageTitle';
 import { catalogPage } from '@console/dev-console/integration-tests/support/pages/add-flow/catalog-page';
-import { topologyPO } from '@console/dev-console/integration-tests/support/pageObjects/topology-po';
+import { topologyPO } from '@console/topology/integration-tests/support/page-objects/topology-po';
 
 Given('user is at Add page', () => {
   navigateTo(devNavigationMenu.Add);

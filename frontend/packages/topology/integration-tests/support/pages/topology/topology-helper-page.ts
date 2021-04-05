@@ -1,4 +1,4 @@
-import { topologyPO } from '../../pageObjects';
+import { topologyPO } from '@console/dev-console/integration-tests/support/pageObjects';
 
 export const topologyHelper = {
   search: (name: string) =>

@@ -2,7 +2,7 @@ import { cardTitle, catalogPO } from '../../pageObjects/add-flow-po';
 import { pageTitle } from '../../constants/pageTitle';
 import { addPage } from './add-page';
 import { addOptions, catalogCards, catalogTypes } from '../../constants/add';
-import { topologyHelper } from '../topology/topology-helper-page';
+import { topologyHelper } from '@console/topology/integration-tests/support/pages/topology/topology-helper-page';
 import { helmPO } from '../../pageObjects/helm-po';
 import { app } from '../app';
 

@@ -1,6 +1,10 @@
-import { displayOptions, nodeActions, sideBarTabs } from '../../constants';
-import { topologyPO } from '../../pageObjects';
-import { createHelmRelease } from '../functions/createHelmRelease';
+import {
+  displayOptions,
+  nodeActions,
+  sideBarTabs,
+} from '@console/dev-console/integration-tests/support/constants';
+import { topologyPO } from '@console/dev-console/integration-tests/support/pageObjects';
+import { createHelmRelease } from '@console/dev-console/integration-tests/support/pages/functions/createHelmRelease';
 import { topologyHelper } from './topology-helper-page';
 
 export const topologyPage = {
@@ -72,6 +76,7 @@ export const topologyPage = {
       .should('have.text', status),
   searchHelmRelease: (name: string) => {
     topologyHelper.search(name);
+    // eslint-disable-next-line promise/catch-or-return
     cy.get('[data-kind="node"]').then(($el) => {
       if ($el.find('g.is-filtered').length === 0) {
         createHelmRelease(name);

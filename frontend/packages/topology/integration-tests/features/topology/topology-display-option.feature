@@ -1,14 +1,12 @@
-@topology
+@topology @regression @manual
 Feature: Display options in topology
               As a user, I want to see display options
 
         Background:
-            Given user is at developer perspective
+            Given user has created or selected namespace "aut-topology-displayOptions"
               And user is at Topology page
-              And user has created or selected namespace "aut-topology-displayOptions"
 
 
-        @regression @manual
         Scenario: Display options menu in topology with defaut options: T-07-TC10
             Given user has created deployment, deployment-config and knative-service type resources
              When user clicks on Display Options
