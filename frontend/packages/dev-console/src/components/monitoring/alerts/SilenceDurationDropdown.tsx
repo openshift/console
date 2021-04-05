@@ -15,9 +15,9 @@ import {
   RuleStates,
   SilenceStates,
 } from '@console/internal/components/monitoring/types';
+import { isSilenced } from '@console/internal/components/monitoring/utils';
 import { ALERT_MANAGER_TENANCY_BASE_PATH } from '@console/internal/components/graphs';
 import { monitoringSetRules } from '@console/internal/actions/ui';
-import { isSilenced } from '@console/internal/reducers/monitoring';
 import { refreshNotificationPollers } from '@console/internal/components/notification-drawer';
 import './SilenceDurationDropdown.scss';
 

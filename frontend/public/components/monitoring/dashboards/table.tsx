@@ -17,7 +17,7 @@ import { ColumnStyle, Panel } from './types';
 import { PrometheusResponse } from '../../graphs';
 import { getPrometheusURL, PrometheusEndpoint } from '../../graphs/helpers';
 import { EmptyBox, usePoll, useSafeFetch } from '../../utils';
-import { TablePagination } from '../metrics';
+import TablePagination from '../table-pagination';
 
 type AugmentedColumnStyle = ColumnStyle & {
   className?: string;

@@ -8,8 +8,6 @@ import {
   EmptyStateBody,
   EmptyStateIcon,
   EmptyStateVariant,
-  Pagination,
-  PaginationVariant,
   Switch,
   Title,
 } from '@patternfly/react-core';
@@ -59,6 +57,7 @@ import {
 import { setAllQueryArguments } from '../utils/router';
 import IntervalDropdown from './poll-interval-dropdown';
 import { colors, Error, QueryObj, QueryBrowser } from './query-browser';
+import TablePagination from './table-pagination';
 import { PrometheusAPIError } from './types';
 
 const operators = [
@@ -611,39 +610,6 @@ const queryTableStateToProps = ({ UI }: RootState, { index }) => ({
   query: UI.getIn(['queryBrowser', 'queries', index, 'query']),
   series: UI.getIn(['queryBrowser', 'queries', index, 'series']),
 });
-
-const defaultPaginationOptions = [10, 20, 50, 100, 200, 500].map((n) => ({
-  title: n.toString(),
-  value: n,
-}));
-
-export const TablePagination = ({
-  itemCount,
-  page,
-  perPage,
-  setPage,
-  setPerPage,
-  paginationOptions = defaultPaginationOptions,
-}) => {
-  const onPerPageSelect = (e, v) => {
-    // When changing the number of results per page, keep the start row approximately the same
-    const firstRow = (page - 1) * perPage;
-    setPage(Math.floor(firstRow / v) + 1);
-    setPerPage(v);
-  };
-
-  return (
-    <Pagination
-      itemCount={itemCount}
-      onPerPageSelect={onPerPageSelect}
-      onSetPage={(e, v) => setPage(v)}
-      page={page}
-      perPage={perPage}
-      perPageOptions={paginationOptions}
-      variant={PaginationVariant.bottom}
-    />
-  );
-};
 
 const QueryTable_: React.FC<QueryTableProps> = ({
   index,

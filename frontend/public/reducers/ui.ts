@@ -3,11 +3,11 @@ import { List as ImmutableList, Map as ImmutableMap } from 'immutable';
 
 import { ActionType, UIAction } from '../actions/ui';
 import { ALL_APPLICATIONS_KEY, ALL_NAMESPACES_KEY } from '@console/shared/src/constants';
-import { isSilenced } from '../reducers/monitoring';
 import { getNamespace } from '../components/utils/link';
 import { OverviewSpecialGroup } from '../components/overview/constants';
 import { RootState } from '../redux';
 import { Alert, AlertStates, RuleStates, SilenceStates } from '../components/monitoring/types';
+import { isSilenced } from '../components/monitoring/utils';
 import { MONITORING_DASHBOARDS_DEFAULT_TIMESPAN } from '../components/monitoring/dashboards/types';
 
 export type UIState = ImmutableMap<string, any>;

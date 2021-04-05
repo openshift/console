@@ -39,24 +39,17 @@ import {
   StatefulSetModel,
 } from '../../models';
 import { K8sKind } from '../../module/k8s';
-import {
-  alertDescription,
-  alertingRuleSource,
-  alertSource,
-  alertState,
-  silenceState,
-} from '../../reducers/monitoring';
 import { RootState } from '../../redux';
 import { RowFunction, Table, TableData, TableRow } from '../factory';
 import { FilterToolbar, RowFilter } from '../filter-toolbar';
 import { confirmModal } from '../modals';
 import { PrometheusLabels } from '../graphs';
-import { AlertmanagerYAMLEditorWrapper } from '../monitoring/alert-manager-yaml-editor';
-import { AlertmanagerConfigWrapper } from '../monitoring/alert-manager-config';
-import MonitoringDashboardsPage from '../monitoring/dashboards';
-import { QueryBrowserPage, ToggleGraph } from '../monitoring/metrics';
-import { FormatLegendLabel, QueryBrowser } from '../monitoring/query-browser';
-import { CreateSilence, EditSilence } from '../monitoring/silence-form';
+import { AlertmanagerYAMLEditorWrapper } from './alert-manager-yaml-editor';
+import { AlertmanagerConfigWrapper } from './alert-manager-config';
+import MonitoringDashboardsPage from './dashboards';
+import { QueryBrowserPage, ToggleGraph } from './metrics';
+import { FormatLegendLabel, QueryBrowser } from './query-browser';
+import { CreateSilence, EditSilence } from './silence-form';
 import {
   Alert,
   Alerts,
@@ -71,9 +64,13 @@ import {
   Silence,
   Silences,
   SilenceStates,
-} from '../monitoring/types';
+} from './types';
 import {
+  alertDescription,
+  alertingRuleSource,
   AlertResource,
+  alertSource,
+  alertState,
   alertsToProps,
   alertURL,
   getAlertsAndRules,
@@ -82,8 +79,9 @@ import {
   rulesToProps,
   silenceParamToProps,
   SilenceResource,
+  silenceState,
   silencesToProps,
-} from '../monitoring/utils';
+} from './utils';
 import { refreshNotificationPollers } from '../notification-drawer';
 import { formatPrometheusDuration } from '../utils/datetime';
 import { ActionsMenu } from '../utils/dropdown';
