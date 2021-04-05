@@ -413,7 +413,7 @@ const AppContents: React.FC<{}> = () => {
               exact
               loader={() =>
                 import('./storage/attach-storage' /* webpackChunkName: "attach-storage" */).then(
-                  (m) => m.AttachStorage,
+                  (m) => m.default,
                 )
               }
             />

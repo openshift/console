@@ -1,6 +1,6 @@
 import { K8sResourceKind } from '@console/internal/module/k8s';
 
-type State = {
+export type State = {
   name: string;
   scName: string;
   scProvisioner: string;
@@ -24,7 +24,7 @@ export const defaultState = {
   bucketClass: 'noobaa-default-bucket-class',
 };
 
-type Action =
+export type Action =
   | { type: 'setName'; name: string }
   | { type: 'setStorage'; name: string }
   | { type: 'setProvisioner'; name: string }

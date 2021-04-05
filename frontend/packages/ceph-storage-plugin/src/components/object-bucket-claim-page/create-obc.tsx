@@ -21,16 +21,25 @@ import {
 import { ActionGroup, Button } from '@patternfly/react-core';
 import { getName, ResourceDropdown, isObjectSC } from '@console/shared';
 import { NooBaaObjectBucketClaimModel, NooBaaBucketClassModel } from '../../models';
-import { commonReducer, defaultState } from '../object-bucket-page/state';
+import { commonReducer, defaultState, State, Action } from '../object-bucket-page/state';
 import { OCS_NS, NB_PROVISIONER } from '../../constants';
 import './create-obc.scss';
 
-export const CreateOBCPage: React.FC<CreateOBCPageProps> = (props) => {
-  const { t } = useTranslation();
-  const [state, dispatch] = React.useReducer(commonReducer, defaultState);
+type CreateOBCFormProps = {
+  state: State;
+  dispatch: React.Dispatch<Action>;
+  namespace?: string;
+};
 
-  const namespace = props?.match?.params?.ns;
+export const CreateOBCForm: React.FC<CreateOBCFormProps> = (props) => {
+  const { t } = useTranslation();
+  const { state, dispatch, namespace } = props;
   const isNoobaa = state.scProvisioner?.includes(NB_PROVISIONER);
+
+  const onScChange = (sc) => {
+    dispatch({ type: 'setStorage', name: getName(sc) });
+    dispatch({ type: 'setProvisioner', name: sc?.provisioner });
+  };
 
   React.useEffect(() => {
     const obj: K8sResourceKind = {
@@ -57,7 +66,82 @@ export const CreateOBCPage: React.FC<CreateOBCPageProps> = (props) => {
       obj.spec.additionalConfig = { bucketclass: state.bucketClass };
     }
     dispatch({ type: 'setPayload', payload: obj });
-  }, [namespace, state.name, state.scName, state.bucketClass, isNoobaa]);
+  }, [namespace, state.name, state.scName, state.bucketClass, isNoobaa, dispatch]);
+
+  return (
+    <div>
+      <div className="form-group">
+        <label className="control-label" htmlFor="obc-name">
+          {t('ceph-storage-plugin~ ObjectBucketClaim Name')}
+        </label>
+        <div className="form-group">
+          <input
+            className="pf-c-form-control"
+            type="text"
+            onChange={(e) => dispatch({ type: 'setName', name: e.currentTarget.value.trim() })}
+            value={state.name}
+            placeholder={t('ceph-storage-plugin~my-object-bucket')}
+            aria-describedby="obc-name-help"
+            id="obc-name"
+            data-test="obc-name"
+            name="obcName"
+            pattern="[a-z0-9](?:[-a-z0-9]*[a-z0-9])?"
+          />
+          <p className="help-block" id="obc-name-help">
+            {t('ceph-storage-plugin~If not provided a generic name will be generated.')}
+          </p>
+        </div>
+        <div className="form-group">
+          <StorageClassDropdown
+            onChange={onScChange}
+            required
+            name="storageClass"
+            hideClassName="co-required"
+            filter={isObjectSC}
+            id="sc-dropdown"
+            data-test="sc-dropdown"
+          />
+          <p className="help-block">
+            {t('ceph-storage-plugin~Defines the object-store service and the bucket provisioner.')}
+          </p>
+        </div>
+        {isNoobaa && (
+          <div className="form-group">
+            <label className="control-label co-required" htmlFor="obc-name">
+              {t('ceph-storage-plugin~BucketClass')}
+            </label>
+            <Firehose
+              resources={[
+                {
+                  isList: true,
+                  kind: referenceForModel(NooBaaBucketClassModel),
+                  namespace: OCS_NS,
+                  prop: 'bucketClass',
+                },
+              ]}
+            >
+              <ResourceDropdown
+                onChange={(sc) => dispatch({ type: 'setBucketClass', name: sc })}
+                dataSelector={['metadata', 'name']}
+                selectedKey={state.bucketClass}
+                placeholder={t('ceph-storage-plugin~Select BucketClass')}
+                dropDownClassName="dropdown--full-width"
+                className="nb-create-obc__bc-dropdown"
+                id="bc-dropdown"
+                data-test="bc-dropdown"
+              />
+            </Firehose>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export const CreateOBCPage: React.FC<CreateOBCPageProps> = (props) => {
+  const { t } = useTranslation();
+  const [state, dispatch] = React.useReducer(commonReducer, defaultState);
+  const namespace = props.match.params.ns;
 
   const save = (e: React.FormEvent<EventTarget>) => {
     e.preventDefault();
@@ -73,39 +157,13 @@ export const CreateOBCPage: React.FC<CreateOBCPageProps> = (props) => {
       });
   };
 
-  const onScChange = (sc) => {
-    dispatch({ type: 'setStorage', name: getName(sc) });
-    dispatch({ type: 'setProvisioner', name: sc?.provisioner });
-  };
-
-  const getBucketClassDescription = (resource: K8sResourceKind) => {
-    if (resource.spec?.namespacePolicy) {
-      return t('ceph-storage-plugin~Type: Namespace | Policy: {{policyType}}', {
-        policyType: resource.spec.namespacePolicy.type,
-      });
-    }
-    if (resource.spec?.placementPolicy) {
-      return t('ceph-storage-plugin~Type: Standard | Tiers: {{tiers}}', {
-        tiers: resource.spec.placementPolicy.tiers.length,
-      });
-    }
-    return '';
-  };
-
-  const transformLabel = (resource: K8sResourceKind) => (
-    <span className="co-resource-item__resource-name">
-      {getName(resource)}
-      <div className="text-muted small">{getBucketClassDescription(resource)}</div>
-    </span>
-  );
-
   return (
     <div className="co-m-pane__body co-m-pane__form">
       <Helmet>
-        <title>{t('ceph-storage-plugin~Create Object Bucket Claim')}</title>
+        <title>{t('ceph-storage-plugin~Create ObjectBucketClaim')}</title>
       </Helmet>
       <h1 className="co-m-pane__heading co-m-pane__heading--baseline">
-        <div className="co-m-pane__name">{t('ceph-storage-plugin~Create Object Bucket Claim')}</div>
+        <div className="co-m-pane__name">{t('ceph-storage-plugin~Create ObjectBucketClaim')}</div>
         <div className="co-m-pane__heading-link">
           <Link
             to={`${resourcePathFromModel(NooBaaObjectBucketClaimModel, null, namespace)}/~new`}
@@ -116,75 +174,7 @@ export const CreateOBCPage: React.FC<CreateOBCPageProps> = (props) => {
         </div>
       </h1>
       <form className="co-m-pane__body-group" onSubmit={save}>
-        <div>
-          <div className="form-group">
-            <label className="control-label" htmlFor="obc-name">
-              {t('ceph-storage-plugin~ Object Bucket Claim Name')}
-            </label>
-            <div className="form-group">
-              <input
-                className="pf-c-form-control"
-                type="text"
-                onChange={(e) => dispatch({ type: 'setName', name: e.currentTarget.value.trim() })}
-                value={state.name}
-                placeholder={t('ceph-storage-plugin~my-object-bucket')}
-                aria-describedby="obc-name-help"
-                id="obc-name"
-                data-test="obc-name"
-                name="obcName"
-                pattern="[a-z0-9](?:[-a-z0-9]*[a-z0-9])?"
-              />
-              <p className="help-block" id="obc-name-help">
-                {t('ceph-storage-plugin~If not provided a generic name will be generated.')}
-              </p>
-            </div>
-            <div className="form-group">
-              <StorageClassDropdown
-                onChange={onScChange}
-                required
-                name="storageClass"
-                hideClassName="co-required"
-                filter={isObjectSC}
-                id="sc-dropdown"
-                data-test="sc-dropdown"
-              />
-              <p className="help-block">
-                {t(
-                  'ceph-storage-plugin~Defines the object-store service and the bucket provisioner.',
-                )}
-              </p>
-            </div>
-            {isNoobaa && (
-              <div className="form-group">
-                <label className="control-label co-required" htmlFor="obc-name">
-                  {t('ceph-storage-plugin~BucketClass')}
-                </label>
-                <Firehose
-                  resources={[
-                    {
-                      isList: true,
-                      kind: referenceForModel(NooBaaBucketClassModel),
-                      namespace: OCS_NS,
-                      prop: 'bucketClass',
-                    },
-                  ]}
-                >
-                  <ResourceDropdown
-                    onChange={(sc) => dispatch({ type: 'setBucketClass', name: sc })}
-                    dataSelector={['metadata', 'name']}
-                    selectedKey={state.bucketClass}
-                    transformLabel={transformLabel}
-                    placeholder={t('ceph-storage-plugin~Select BucketClass')}
-                    dropDownClassName="dropdown--full-width"
-                    className="nb-create-obc__bc-dropdown"
-                    id="bc-dropdown"
-                    data-test="bc-dropdown"
-                  />
-                </Firehose>
-              </div>
-            )}
-          </div>
-        </div>
+        <CreateOBCForm state={state} dispatch={dispatch} namespace={namespace} />
         <ButtonBar errorMessage={state.error} inProgress={state.progress}>
           <ActionGroup className="pf-c-form">
             <Button type="submit" variant="primary">
