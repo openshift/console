@@ -149,7 +149,7 @@ export const LogControls: React.FC<LogControlsProps> = ({
         <span aria-hidden="true" className="co-action-divider hidden-xs">
           |
         </span>
-        <a href={currentLogURL} download>
+        <a href={currentLogURL} download={`${resource.metadata.name}-${containerName}.log`}>
           <DownloadIcon className="co-icon-space-r" />
           {t('logs~Download')}
         </a>
