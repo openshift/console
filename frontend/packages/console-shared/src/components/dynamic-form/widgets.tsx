@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Checkbox } from '@patternfly/react-core';
+import { Checkbox, Switch } from '@patternfly/react-core';
 import { WidgetProps } from 'react-jsonschema-form';
 import { NumberSpinner, ListDropdown, Dropdown } from '@console/internal/components/utils';
 import { K8sKind, GroupVersionKind, ImagePullPolicy } from '@console/internal/module/k8s';
@@ -86,6 +86,21 @@ export const CheckboxWidget: React.FC<WidgetProps> = ({
       label={label}
       required={required}
       onChange={(checked) => onChange(checked)}
+    />
+  );
+};
+
+export const SwitchWidget: React.FC<WidgetProps> = ({ value, id, label, onChange, options }) => {
+  const { t } = useTranslation();
+  const { labelOn = t('console-shared~true'), labelOff = t('console-shared~false') } = options;
+  return (
+    <Switch
+      id={id || label}
+      key={id || label}
+      isChecked={_.isNil(value) ? false : value}
+      onChange={(v) => onChange(v)}
+      label={labelOn as string}
+      labelOff={labelOff as string}
     />
   );
 };
@@ -196,6 +211,7 @@ type K8sResourceWidgetProps = WidgetProps & {
 export default {
   BaseInput: TextWidget,
   CheckboxWidget,
+  SwitchWidget,
   ImagePullPolicyWidget,
   K8sResourceWidget,
   NumberWidget,

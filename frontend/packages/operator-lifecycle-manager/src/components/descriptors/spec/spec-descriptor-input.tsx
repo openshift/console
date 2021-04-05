@@ -5,13 +5,13 @@ import {
   PodAffinityField,
   ResourceRequirementsField,
   UpdateStrategyField,
-  BooleanField,
 } from '@console/shared/src/components/dynamic-form/fields';
 import {
   CheckboxWidget,
   ImagePullPolicyWidget,
   NumberWidget,
   PasswordWidget,
+  SwitchWidget,
   TextWidget,
   PodCountWidget,
   SelectWidget,
@@ -23,12 +23,12 @@ export const capabilityFieldMap = Immutable.Map({
   [SpecCapability.podAntiAffinity]: PodAffinityField,
   [SpecCapability.resourceRequirements]: ResourceRequirementsField,
   [SpecCapability.updateStrategy]: UpdateStrategyField,
-  [SpecCapability.booleanSwitch]: BooleanField,
 });
 
 export const capabilityWidgetMap = Immutable.Map({
   [SpecCapability.hidden]: 'hidden',
   [SpecCapability.imagePullPolicy]: ImagePullPolicyWidget,
+  [SpecCapability.booleanSwitch]: SwitchWidget,
   [SpecCapability.checkbox]: CheckboxWidget,
   [SpecCapability.number]: NumberWidget,
   [SpecCapability.password]: PasswordWidget,
