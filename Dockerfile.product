@@ -29,7 +29,7 @@ ENV CHROMEDRIVER_SKIP_DOWNLOAD=true \
     GECKODRIVER_SKIP_DOWNLOAD=true \
     SKIP_SASS_BINARY_DOWNLOAD_FOR_CI=true \
     CYPRESS_INSTALL_BINARY=0 \
-    NPM_CONFIG_TARBALL=$HOME/node-v14.15.0-headers.tar.gz
+    NPM_CONFIG_TARBALL=$HOME/node-v14.16.0-headers.tar.gz
 
 # run the build
 RUN container-entrypoint ./build-frontend.sh
