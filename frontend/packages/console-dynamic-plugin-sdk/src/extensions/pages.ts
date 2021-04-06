@@ -24,16 +24,33 @@ type ResourcePageCommonProps = {
   namespace: string;
 };
 
+type ResourceModel = {
+  model: {
+    apiGroup: string;
+    apiVersion: string;
+    kind: string;
+  };
+};
+
 export type ResourceListPage = ExtensionDeclaration<
   'console.page/resource/list',
-  {
+  ResourceModel & {
     /** The model for which component is related to */
-    model: {
-      apiGroup: string;
-      apiVersion: string;
-      kind: string;
-    };
     component: CodeRef<React.FC<ResourcePageCommonProps>>;
+  }
+>;
+
+export type ResourceDetailsPage = ExtensionDeclaration<
+  'console.page/resource/details',
+  ResourceModel & {
+    component: CodeRef<
+      React.FC<
+        ResourcePageCommonProps & {
+          /* The name of the page */
+          name: string;
+        }
+      >
+    >;
   }
 >;
 
@@ -44,3 +61,6 @@ export const isStandaloneRoutePage = (e: Extension): e is StandaloneRoutePage =>
 
 export const isResourceListPage = (e: Extension): e is ResourceListPage =>
   e.type === 'console.page/resource/list';
+
+export const isResourceDetailsPage = (e: Extension): e is ResourceDetailsPage =>
+  e.type === 'console.page/resource/details';

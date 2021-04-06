@@ -9,5 +9,16 @@
       },
       "component": { "$codeRef": "objectBucketClaims.ObjectBucketClaimsPage" }
     }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "apiVersion": "v1alpha1",
+        "apiGroup": "objectbucket.io",
+        "kind": "ObjectBucketClaim"
+      },
+      "component": { "$codeRef": "objectBucketClaims.ObjectBucketClaimsDetailsPage" }
+    }
   }
 ]

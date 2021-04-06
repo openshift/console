@@ -67,9 +67,13 @@ import {
   VolumeSnapshotClassModel,
   ClusterRoleBindingModel,
 } from '../models';
-import { ResourceListPage as DynamicResourceListPage } from '@console/dynamic-plugin-sdk';
+import {
+  ResourceListPage as DynamicResourceListPage,
+  ResourceDetailsPage as DynamicDetailsPage,
+} from '@console/dynamic-plugin-sdk';
 
-type AllResourcePage = ResourcePage | DynamicResourceListPage;
+type DynamicResourcePage = DynamicResourceListPage | DynamicDetailsPage;
+type AllResourcePage = ResourcePage | DynamicResourcePage;
 
 const addResourcePage = (
   map: ImmutableMap<ResourceMapKey, ResourceMapValue>,
@@ -80,10 +84,10 @@ const addResourcePage = (
     : // Dynamic plugin will have apiVersion, apiGroup and kind so this is safe
       referenceForModel(page.properties.model as K8sKind);
   if (!map.has(key)) {
-    if (page.properties.hasOwnProperty('loader')) {
-      map.set(key, (page as ResourcePage).properties.loader);
+    if (page.type === 'Page/Resource/Details' || page.type === 'Page/Resource/List') {
+      map.set(key, page.properties.loader);
     } else {
-      map.set(key, (page as DynamicResourceListPage).properties.component);
+      map.set(key, page.properties.component);
     }
   }
 };
@@ -342,7 +346,9 @@ export const baseDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
     ).then((m) => m.default),
   );
 
-export const getResourceDetailsPages = (pluginPages: ResourceDetailsPage[] = []) =>
+export const getResourceDetailsPages = (
+  pluginPages: Array<ResourceDetailsPage | DynamicDetailsPage> = [],
+) =>
   ImmutableMap<ResourceMapKey, ResourceMapValue>()
     .merge(baseDetailsPages)
     .withMutations((map) => {

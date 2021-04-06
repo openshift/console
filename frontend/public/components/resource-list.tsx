@@ -19,7 +19,7 @@ import {
 } from '../module/k8s';
 import {
   useExtensions,
-  isResourceDetailsPage,
+  isResourceDetailsPage as isStaticResourceDetailsPage,
   ResourceDetailsPage as ResourceDetailsPageExt,
   isResourceListPage as isStaticResourceListPage,
   ResourceListPage as StaticListPage,
@@ -27,6 +27,8 @@ import {
 import {
   isResourceListPage,
   ResourceListPage as DynamicListPage,
+  isResourceDetailsPage,
+  ResourceDetailsPage as DynamicDetailsPage,
 } from '@console/dynamic-plugin-sdk';
 
 // Parameters can be in pros.params (in URL) or in props.route (attribute of Route tag)
@@ -76,7 +78,10 @@ export const ResourceListPage = connectToPlural(
 );
 
 export const ResourceDetailsPage = connectToPlural((props: ResourceDetailsPageProps) => {
-  const detailsPageExtensions = useExtensions<ResourceDetailsPageExt>(isResourceDetailsPage);
+  const detailsPageExtensions = useExtensions<ResourceDetailsPageExt | DynamicDetailsPage>(
+    isStaticResourceDetailsPage,
+    isResourceDetailsPage,
+  );
   const { name, ns, kindObj, kindsInFlight } = allParams(props);
   const decodedName = decodeURIComponent(name);
 
