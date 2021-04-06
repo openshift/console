@@ -47,7 +47,7 @@ export type TektonWorkspace = {
   description?: string;
   mountPath?: string;
   readOnly?: boolean;
-  // TODO: Support Optional
+  optional?: boolean;
 };
 
 export type TektonResultsRun = {

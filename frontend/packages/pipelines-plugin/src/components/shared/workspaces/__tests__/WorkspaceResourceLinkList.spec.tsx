@@ -6,6 +6,7 @@ import { taskRunWithWorkspaces } from '../../../taskruns/__tests__/taskrun-test-
 import WorkspaceResourceLinkList, {
   WorkspaceResourceLinkListProps,
 } from '../WorkspaceResourceLinkList';
+import VolumeClaimTemplatesLink from '../VolumeClaimTemplateLink';
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');
@@ -113,5 +114,20 @@ describe('WorkspaceResourceLinkList', () => {
     const workspaceText = workspaceResourceListWrapper.find('dd').find('div');
     expect(workspaceText.length).toBe(1); // Should show 3 resourceLinks and 1 simple text
     expect(workspaceText.at(0).text()).toBe(taskRunWithWorkspaces[1].spec.workspaces[3].name);
+  });
+
+  it('Should render Workspace Resource section and VolumeClaimTemplate Resource Section', () => {
+    workspaceResourceListWrapperProps = {
+      workspaces: taskRunWithWorkspaces[3].spec.workspaces,
+      namespace: 'test',
+      ownerResourceName: 'test',
+    };
+    workspaceResourceListWrapper = shallow(
+      <WorkspaceResourceLinkList {...workspaceResourceListWrapperProps} />,
+    );
+
+    const workspaceResources = workspaceResourceListWrapper.find('dd').find(ResourceLink);
+    expect(workspaceResources.length).toBe(3); // Should show 3 resourceLinks and separate VolumeClaimTemplateSection
+    expect(workspaceResourceListWrapper.find(VolumeClaimTemplatesLink).exists()).toBe(true);
   });
 });

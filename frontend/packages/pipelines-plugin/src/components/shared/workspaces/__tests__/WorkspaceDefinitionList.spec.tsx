@@ -36,7 +36,22 @@ describe('WorkspaceDefinitionList', () => {
     const workspaces = workspaceDefinitionListWrapper.find('dd').find('div');
 
     expect(workspaces.length).toBe(3);
-    expect(workspaces.at(0).text()).toBe(pipeline.spec.workspaces[0].name);
+  });
+
+  it('Should show optional for optional workspaces', () => {
+    const { pipeline } = pipelineTestData[PipelineExampleNames.WORKSPACE_PIPELINE];
+    workspaceDefinitionListWrapperProps = {
+      workspaces: pipeline.spec.workspaces,
+    };
+    workspaceDefinitionListWrapper = shallow(
+      <WorkspaceDefinitionList {...workspaceDefinitionListWrapperProps} />,
+    );
+    const workspaces = workspaceDefinitionListWrapper.find('dd').find('div');
+
+    expect(workspaces.length).toBe(3);
+    expect(workspaces.at(0).text()).toBe(
+      `${pipeline.spec.workspaces[0].name} (pipelines-plugin~optional)`,
+    );
     expect(workspaces.at(1).text()).toBe(pipeline.spec.workspaces[1].name);
     expect(workspaces.at(2).text()).toBe(pipeline.spec.workspaces[2].name);
   });

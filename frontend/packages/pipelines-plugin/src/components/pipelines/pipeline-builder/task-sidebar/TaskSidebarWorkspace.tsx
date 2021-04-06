@@ -17,7 +17,7 @@ const TaskSidebarWorkspace: React.FC<TaskSidebarWorkspaceProps> = (props) => {
     availableWorkspaces,
     hasWorkspace,
     name,
-    resourceWorkspace: { name: workspaceName },
+    resourceWorkspace: { name: workspaceName, optional = false },
   } = props;
   const { t } = useTranslation();
   const { setFieldValue } = useFormikContext<PipelineBuilderFormikValues>();
@@ -38,7 +38,7 @@ const TaskSidebarWorkspace: React.FC<TaskSidebarWorkspaceProps> = (props) => {
         }
       }}
       fullWidth
-      required
+      required={!optional}
     />
   );
 };
