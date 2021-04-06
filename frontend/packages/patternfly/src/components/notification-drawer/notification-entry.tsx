@@ -1,7 +1,6 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
 import {
   BlueArrowCircleUpIcon,
   BlueInfoCircleIcon,
@@ -10,6 +9,7 @@ import {
   YellowExclamationTriangleIcon,
 } from '@console/shared';
 import { history, Timestamp } from '@console/internal/components/utils';
+import { Button, ButtonVariant } from '@patternfly/react-core';
 
 export enum NotificationTypes {
   info = 'info',
@@ -35,23 +35,27 @@ const NotificationIcon: React.FC<NotificationIconTypes> = ({ type }) => {
   }
 };
 
-const NotificationAction: React.FC<NotificationActionProps> = ({ onClick, text, path }) => (
-  <div className="pf-c-notification-drawer__header-action">
-    <Link
-      to={path}
-      onClick={(e) => {
-        e.stopPropagation();
-        onClick(e);
-      }}
-    >
-      {text}
-    </Link>
-  </div>
-);
+const NotificationAction: React.FC<NotificationActionProps> = ({ onClick, text }) => {
+  return (
+    <div className="pf-c-notification-drawer__header-action">
+      <Button
+        onClick={(e) => {
+          e.stopPropagation();
+          onClick(e);
+        }}
+        variant={ButtonVariant.link}
+        isInline
+      >
+        {text}
+      </Button>
+    </div>
+  );
+};
 
 const NotificationEntry: React.FC<NotificationEntryProps> = ({
-  actionText,
+  alertAction,
   actionPath,
+  actionText,
   title,
   description,
   isRead = false,
@@ -75,7 +79,10 @@ const NotificationEntry: React.FC<NotificationEntryProps> = ({
         return t('notification-drawer~Info notification:');
     }
   };
-
+  const onClick = () => {
+    toggleNotificationDrawer();
+    alertAction ? alertAction() : history.push(actionPath);
+  };
   return (
     <li
       className={classNames(`pf-c-notification-drawer__list-item pf-m-hoverable pf-m-${type}`, {
@@ -99,12 +106,8 @@ const NotificationEntry: React.FC<NotificationEntryProps> = ({
           <span className="pf-screen-reader">{notificationTypeString(type)}</span>
           {title}
         </h4>
-        {actionText && actionPath && (
-          <NotificationAction
-            text={actionText}
-            path={actionPath}
-            onClick={toggleNotificationDrawer}
-          />
+        {((actionText && actionPath) || alertAction) && (
+          <NotificationAction text={actionText} onClick={onClick} />
         )}
       </div>
       <div className="pf-c-notification-drawer__list-item-description">{description}</div>
@@ -116,6 +119,7 @@ const NotificationEntry: React.FC<NotificationEntryProps> = ({
 };
 
 export type NotificationEntryProps = {
+  alertAction?: () => void;
   actionText?: string;
   actionPath?: string;
   description: React.ReactNode;
@@ -133,8 +137,7 @@ type NotificationIconTypes = {
 
 type NotificationActionProps = {
   onClick: (event: React.MouseEvent<HTMLElement>) => void;
-  text: string;
-  path: string;
+  text?: string;
 };
 
 export default NotificationEntry;

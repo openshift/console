@@ -1,4 +1,5 @@
 {
+  "Troubleshoot": "Troubleshoot",
   "{{replica}} Replication": "{{replica}} Replication",
   "Pool Name": "Pool Name",
   "my-storage-pool": "my-storage-pool",
@@ -475,7 +476,6 @@
   "Persistent Storage": "Persistent Storage",
   "Storage": "Storage",
   "Disks": "Disks",
-  "Troubleshoot": "Troubleshoot",
   "Edit Bucket Class Resources": "Edit Bucket Class Resources",
   "Loading...": "Loading...",
   "Pool {name} creation in progress": "Pool {name} creation in progress",

@@ -1,6 +1,5 @@
 import * as _ from 'lodash';
 import {
-  AlertAction,
   CustomFeatureFlag,
   ModelDefinition,
   ModelFeatureFlag,
@@ -15,7 +14,6 @@ import { detectOCSAttachedDeviceMode, OCS_ATTACHED_DEVICES_FLAG } from './featur
 import * as models from './models';
 
 type ConsumedExtensions =
-  | AlertAction
   | CustomFeatureFlag
   | HorizontalNavTab
   | ModelFeatureFlag

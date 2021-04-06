@@ -1,6 +1,5 @@
 import * as _ from 'lodash';
 import {
-  AlertAction,
   ClusterServiceVersionAction,
   DashboardsCard,
   DashboardsOverviewHealthResourceSubsystem,
@@ -42,12 +41,9 @@ import {
   OCS_FLAG,
   NOOBAA_FLAG,
 } from './features';
-import { getAlertActionPath } from './utils/alert-action-path';
-import { OSD_DOWN_ALERT, OSD_DOWN_AND_OUT_ALERT } from './constants';
 import { getObcStatusGroups } from './components/dashboards/object-service/buckets-card/utils';
 
 type ConsumedExtensions =
-  | AlertAction
   | ModelFeatureFlag
   | HorizontalNavTab
   | ModelDefinition
@@ -442,30 +438,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [OCS_ATTACHED_DEVICES_FLAG, LSO_DEVICE_DISCOVERY],
-    },
-  },
-  {
-    type: 'AlertAction',
-    properties: {
-      alert: OSD_DOWN_ALERT,
-      // t('ceph-storage-plugin~Troubleshoot')
-      text: '%ceph-storage-plugin~Troubleshoot%',
-      path: getAlertActionPath,
-    },
-    flags: {
-      required: [LSO_DEVICE_DISCOVERY, OCS_ATTACHED_DEVICES_FLAG],
-    },
-  },
-  {
-    type: 'AlertAction',
-    properties: {
-      alert: OSD_DOWN_AND_OUT_ALERT,
-      // t('ceph-storage-plugin~Troubleshoot')
-      text: '%ceph-storage-plugin~Troubleshoot%',
-      path: getAlertActionPath,
-    },
-    flags: {
-      required: [LSO_DEVICE_DISCOVERY, OCS_ATTACHED_DEVICES_FLAG],
     },
   },
   // Noobaa Related Plugins

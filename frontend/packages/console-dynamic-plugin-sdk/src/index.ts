@@ -16,3 +16,4 @@ export * from './extensions/pvc';
 export * from './extensions/redux';
 export * from './extensions/resource-metadata';
 export * from './extensions/yaml-templates';
+export * from './extensions/notification-alert';

@@ -66,9 +66,7 @@ const ObjectStorageAlerts = withDashboardResources(
       <AlertsBody error={!_.isEmpty(loadError)}>
         {loaded &&
           alerts.length > 0 &&
-          alerts.map((alert) => (
-            <AlertItem key={alertURL(alert, alert.rule.id)} alert={alert} hideLink />
-          ))}
+          alerts.map((alert) => <AlertItem key={alertURL(alert, alert.rule.id)} alert={alert} />)}
       </AlertsBody>
     );
   },

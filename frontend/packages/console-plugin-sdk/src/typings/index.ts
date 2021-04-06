@@ -18,7 +18,6 @@ export * from './horizontal-nav';
 export * from './providers';
 export * from './pvc';
 export * from './storage-class-params';
-export * from './notification-alerts';
 export * from './guided-tour';
 export * from './post-form-submit';
 export * from './detail-page-bread-crumbs';
