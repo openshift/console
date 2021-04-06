@@ -79,7 +79,7 @@ export const OperandForm: React.FC<OperandFormProps> = ({
             </div>
           )}
         </div>
-        <div className="col-md-8 col-md-pull-4 col-lg-7 col-lg-pull-5">
+        <div className="col-md-8 col-md-pull-4 col-lg-7 col-lg-pull-5 co-create-operand__form--toggle-no-border">
           <DynamicForm
             noValidate
             errors={errors}
