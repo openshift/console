@@ -4,8 +4,10 @@ import {
   K8sResourceCommon,
   NodeKind,
   SecretKind,
+  StorageClassResourceKind,
 } from '@console/internal/module/k8s';
 import { TableProps } from '@console/internal/components/factory';
+
 import { DiskMetadata } from 'packages/local-storage-operator-plugin/src/components/disks-list/types';
 import {
   PROVIDERS_NOOBAA_MAP,
@@ -272,5 +274,11 @@ export type Payload = K8sResourceCommon & {
     type: string;
     ssl: boolean;
     [key: string]: any;
+  };
+};
+
+export type OcsStorageClassKind = StorageClassResourceKind & {
+  parameters: {
+    pool: string;
   };
 };

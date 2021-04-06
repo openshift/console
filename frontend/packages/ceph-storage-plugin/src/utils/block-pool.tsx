@@ -208,3 +208,9 @@ export const checkRequiredValues = (
   volumeType: string,
   isPoolManagementSupported: boolean,
 ): boolean => !poolName || !replicaSize || (isPoolManagementSupported && !volumeType);
+
+export enum FooterPrimaryActions {
+  CREATE = 'Create',
+  DELETE = 'Delete',
+  UPDATE = 'Save',
+}

@@ -32,7 +32,7 @@ export const storagePool = {
     // Make sure the storage pool creation form is open
     modal.modalTitleShouldContain('Create New Block Pool');
     modal.submitShouldBeDisabled();
-    modal.shouldBeOpened();
+    cy.byTestID('modal-cancel-action').should('be.visible');
 
     cy.byTestID('new-pool-name-textbox')
       .clear()
@@ -45,7 +45,7 @@ export const storagePool = {
     cy.byTestID('compression-checkbox').check();
 
     // Create new pool
-    cy.byTestID('modal-create-action')
+    cy.byTestID('modal-confirm-action')
       .last()
       .click();
 
@@ -53,9 +53,7 @@ export const storagePool = {
     storagePool.validate('empty-state-body', poolMessage[poolCreationJobStatus](poolName));
 
     // Close a pool creation form
-    cy.byTestID(confirmAction)
-      .last()
-      .click();
+    cy.byTestID('modal-finish-action').click();
   },
   delete: (poolName: string) => cy.exec(`oc delete CephBlockPool ${poolName} -n ${NS}`),
   verify: (poolName: string, replicaCount: string) => {

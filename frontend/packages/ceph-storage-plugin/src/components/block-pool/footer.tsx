@@ -11,7 +11,7 @@ import { checkRequiredValues, BlockPoolState } from '../../utils/block-pool';
 import './create-block-pool.scss';
 
 export const BlockPoolFooter = (props: BlockPoolFooterProps) => {
-  const { state, cancel, onClick } = props;
+  const { state, cancel, onConfirm } = props;
   const { t } = useTranslation();
 
   const isPoolManagementSupported = useFlag(GUARDED_FEATURES.OCS_POOL_MANAGEMENT);
@@ -23,7 +23,7 @@ export const BlockPoolFooter = (props: BlockPoolFooterProps) => {
           type="button"
           variant="primary"
           data-test-id="pool-submit-action"
-          onClick={onClick}
+          onClick={onConfirm}
           isDisabled={checkRequiredValues(
             state.poolName,
             state.replicaSize,
@@ -49,5 +49,5 @@ export const BlockPoolFooter = (props: BlockPoolFooterProps) => {
 type BlockPoolFooterProps = {
   state: BlockPoolState;
   cancel: () => void;
-  onClick: () => void;
+  onConfirm: () => void;
 };
