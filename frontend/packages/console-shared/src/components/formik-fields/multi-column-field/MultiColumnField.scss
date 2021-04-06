@@ -3,7 +3,10 @@
     position: relative;
     margin-right: var(--pf-global--spacer--lg);
     margin-bottom: var(--pf-global--spacer--md);
-    max-height: var(--pf-global--spacer--xl);
+
+    &--singleLine {
+      max-height: var(--pf-global--spacer--xl);
+    }
   }
   &__header {
     position: relative;
