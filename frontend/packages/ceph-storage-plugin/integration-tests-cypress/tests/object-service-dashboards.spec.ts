@@ -8,8 +8,8 @@ describe('Tests Buckets, Status, Object Storage Efficiency, and Resource Provide
   });
 
   beforeEach(() => {
-    cy.visit('/');
-    cy.byLegacyTestID('horizontal-link-Object Service').click();
+    cy.visit('/ocs-dashboards');
+    cy.byLegacyTestID('horizontal-link-Object').click();
   });
 
   it('Tests Buckets Cards', () => {
@@ -30,15 +30,13 @@ describe('Tests Buckets, Status, Object Storage Efficiency, and Resource Provide
   });
 
   it('Test Status Cards', () => {
-    cy.visit('/');
-
     cy.log('Check if Multi Cloud Gateway is in a healthy state');
-    cy.byTestID('Cluster-health-item-icon').within(() => {
+    cy.byTestID('Object Service-health-item-icon').within(() => {
       cy.byTestID('success-icon');
     });
 
     cy.log('Check if Data Resiliency of MCG is in healthy state');
-    cy.byTestID('Control Plane-health-item-icon').within(() => {
+    cy.byTestID('Data Resiliency-health-item-icon').within(() => {
       cy.byTestID('success-icon');
     });
   });

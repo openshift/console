@@ -6,7 +6,7 @@ describe('Check OCS Dashboards', () => {
     cy.login();
     cy.visit('/');
     cy.install();
-    cy.visit('/dashboards/persistent-storage');
+    cy.visit('/ocs-dashboards');
   });
 
   afterEach(() => {

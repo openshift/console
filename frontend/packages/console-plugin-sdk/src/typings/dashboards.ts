@@ -131,6 +131,9 @@ namespace ExtensionProperties {
     /** The tab's ID which will be used as part of href within dashboards page */
     id: string;
 
+    /** NavSection to which the tab belongs to */
+    navSection: 'home' | 'storage';
+
     /** The tab title */
     title: string;
   }
