@@ -36,3 +36,5 @@ export const getTemplateOSIcon = (template: TemplateKind): string => {
 };
 
 export const PinnedIcon = () => <StarIcon className="kv-pin-icon" />;
+
+export const RemovePinnedIcon = () => <StarIcon className="kv-remove-pin-icon" />;
