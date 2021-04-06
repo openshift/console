@@ -7,18 +7,23 @@
   "scripts": {
     "clean": "rm -rf ./dist",
     "build": "yarn clean && yarn validate && yarn generate",
+    "bundle": "yarn build && yarn tsc && yarn prepare-dist",
     "generate": "yarn generate-schema && yarn generate-doc",
     "generate-schema": "yarn ts-node ./scripts/generate-schema.ts",
     "generate-doc": "yarn ts-node ./scripts/generate-doc.ts",
     "validate": "yarn ts-node ./scripts/validate-extensions.ts",
-    "ts-node": "ts-node -O '{\"module\":\"commonjs\"}'"
+    "ts-node": "ts-node -O '{\"module\":\"commonjs\"}'",
+    "prepare-dist": "yarn ts-node ./scripts/create-pkg.ts && cp ./README.md ./dist && cp ../../../LICENSE ./dist",
+    "publish-sdk": "yarn bundle && yarn publish dist --no-git-tag-version"
+  },
+  "dependencies": {
+    "webpack": "5.0.0-beta.16"
   },
   "devDependencies": {
     "@types/ejs": "3.x",
     "ejs": "3.x",
     "ts-json-schema-generator": "0.89.0",
     "tsutils": "3.x",
-    "typescript": "4.2.x",
-    "webpack": "5.0.0-beta.16"
+    "typescript": "4.2.x"
   }
 }

@@ -7,12 +7,13 @@ import { SchemaValidator } from '../validation/SchemaValidator';
 import { ExtensionValidator } from '../validation/ExtensionValidator';
 import { extensionsFile, pluginManifestFile } from '../constants';
 import { parseJSONC } from '../utils/jsonc';
+import { getSchemaPath } from '../utils/schema';
 
 export const validateExtensionsFileSchema = (
   ext: ConsoleExtensionsJSON,
   description = extensionsFile,
 ) => {
-  const schema = require('../../dist/schema/console-extensions').default;
+  const schema = require(getSchemaPath('console-extensions')).default;
   return new SchemaValidator(description).validate(schema, ext);
 };
 

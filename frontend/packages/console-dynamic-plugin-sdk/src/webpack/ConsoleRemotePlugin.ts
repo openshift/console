@@ -7,12 +7,13 @@ import { ConsolePackageJSON } from '../schema/plugin-package';
 import { SchemaValidator } from '../validation/SchemaValidator';
 import { sharedVendorModules } from '../shared-modules';
 import { remoteEntryFile } from '../constants';
+import { getSchemaPath } from '../utils/schema';
 
 export const validatePackageFileSchema = (
   pkg: ConsolePackageJSON,
   description = 'package.json',
 ) => {
-  const schema = require('../../dist/schema/plugin-package').default;
+  const schema = require(getSchemaPath('plugin-package')).default;
   const validator = new SchemaValidator(description);
 
   if (pkg.consolePlugin) {

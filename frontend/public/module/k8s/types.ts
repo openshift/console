@@ -1,14 +1,15 @@
 import { JSONSchema6 } from 'json-schema';
 import { BadgeType, NodeAddress } from '@console/shared';
-import { EventInvolvedObject } from './event';
 import {
   ObjectReference,
   ObjectMetadata,
   K8sResourceCommon,
   K8sVerb,
   AccessReviewResourceAttributes,
-} from './types-common';
-export * from './types-common';
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { EventInvolvedObject } from './event';
+
+export * from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 
 export type PartialObjectMetadata = {
   apiVersion: string;

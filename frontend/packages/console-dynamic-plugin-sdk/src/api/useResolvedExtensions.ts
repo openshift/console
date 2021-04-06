@@ -1,13 +1,11 @@
 import * as React from 'react';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
 import { mergeExtensionProperties } from '@console/plugin-sdk/src/store';
+import { resolveCodeRefProperties } from '../coderefs/coderef-resolver';
 import {
   Extension,
   ExtensionTypeGuard,
   LoadedExtension,
-} from '@console/plugin-sdk/src/typings/base';
-import { resolveCodeRefProperties } from '../coderefs/coderef-resolver';
-import {
   ResolvedCodeRefProperties,
   ExtensionProperties,
   UpdateExtensionProperties,

@@ -1,8 +1,7 @@
-import { Extension } from '@console/plugin-sdk/src/typings/base';
 import { applyCodeRefSymbol } from '../coderefs/coderef-resolver';
 import { SupportedExtension } from '../schema/console-extensions';
 import { ConsolePluginManifestJSON } from '../schema/plugin-manifest';
-import { RemoteEntryModule, CodeRef, Update } from '../types';
+import { Extension, RemoteEntryModule, CodeRef, Update } from '../types';
 
 export const getPluginManifest = (
   name: string,
