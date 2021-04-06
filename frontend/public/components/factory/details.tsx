@@ -10,10 +10,7 @@ import {
   isDetailPageBreadCrumbs,
   DetailPageBreadCrumbs,
 } from '@console/plugin-sdk';
-import {
-  ResolvedExtension,
-  useResolvedExtensions,
-} from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
+import { ResolvedExtension, useResolvedExtensions } from '@console/dynamic-plugin-sdk';
 import { withFallback } from '@console/shared/src/components/error/error-boundary';
 import {
   Firehose,

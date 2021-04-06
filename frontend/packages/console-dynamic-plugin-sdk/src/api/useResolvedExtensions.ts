@@ -1,17 +1,9 @@
 import * as React from 'react';
 import { useExtensions } from '@console/plugin-sdk/src/api/useExtensions';
-import { mergeExtensionProperties } from '@console/plugin-sdk/src/store';
-import {
-  Extension,
-  ExtensionTypeGuard,
-  LoadedExtension,
-} from '@console/plugin-sdk/src/typings/base';
-import { resolveCodeRefProperties } from '../coderefs/coderef-resolver';
-import {
-  ResolvedCodeRefProperties,
-  ExtensionProperties,
-  UpdateExtensionProperties,
-} from '../types';
+import { Extension, ExtensionTypeGuard } from '@console/plugin-sdk/src/typings/base';
+import { resolveExtension } from '../coderefs/coderef-resolver';
+import { unwrapPromiseSettledResults } from '../utils/promise';
+import { ResolvedExtension } from '../types';
 
 /**
  * React hook for consuming Console extensions with resolved `CodeRef` properties.
@@ -31,7 +23,7 @@ import {
  *
  * ```ts
  * const navItemExtensions = useResolvedExtensions<NavItem>(isNavItem);
- * const perspectiveExtensions = useResolvedExtensions<Perspective>(isPerspective);
+ * const [perspectiveExtensions] = useResolvedExtensions<Perspective>(isPerspective);
  * // process adapted extensions and render your component
  * ```
  *
@@ -43,42 +35,36 @@ import {
  */
 export const useResolvedExtensions = <E extends Extension>(
   ...typeGuards: ExtensionTypeGuard<E>[]
-): [ResolvedExtension<E>[], boolean, any] => {
+): [ResolvedExtension<E>[], boolean, any[]] => {
   const extensions = useExtensions<E>(...typeGuards);
 
   const [resolvedExtensions, setResolvedExtensions] = React.useState<ResolvedExtension<E>[]>([]);
   const [resolved, setResolved] = React.useState<boolean>(false);
-  const [error, setError] = React.useState<any>(undefined);
+  const [errors, setErrors] = React.useState<any[]>([]);
 
   React.useEffect(() => {
     let disposed = false;
 
-    Promise.all(
-      extensions.map(async (e) => {
-        const resolvedProperties = await resolveCodeRefProperties(e);
-        return mergeExtensionProperties(e, resolvedProperties) as ResolvedExtension<E>;
-      }),
-    )
-      .then((result) => {
-        if (!disposed) {
-          setResolvedExtensions(result);
-          setResolved(true);
-        }
-      })
-      .catch((err) => {
-        if (!disposed) {
-          setError(err);
-        }
-      });
+    // eslint-disable-next-line promise/catch-or-return
+    Promise.allSettled(
+      extensions.map((e) => resolveExtension<typeof e, any, ResolvedExtension<E>>(e)),
+    ).then((results) => {
+      if (!disposed) {
+        const [fulfilledValues, rejectedReasons] = unwrapPromiseSettledResults(results);
+        setResolvedExtensions(fulfilledValues);
+        setErrors(rejectedReasons);
+        setResolved(true);
+      }
+    });
 
     return () => {
       disposed = true;
     };
   }, [extensions]);
 
-  return [resolvedExtensions, resolved, error];
+  return React.useMemo(() => [resolvedExtensions, resolved, errors], [
+    resolvedExtensions,
+    resolved,
+    errors,
+  ]);
 };
-
-export type ResolvedExtension<E extends Extension, P = ExtensionProperties<E>> = LoadedExtension<
-  UpdateExtensionProperties<E, ResolvedCodeRefProperties<P>>
->;

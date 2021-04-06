@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Extension } from '@console/plugin-sdk/src/typings/base';
 import { ExtensionDeclaration, CodeRef } from '../types';
-import { ExtensionHook } from '../utils/common';
+import { ExtensionHook } from '../api/common-types';
 
 export type CatalogItemType = ExtensionDeclaration<
   'console.catalog/item-type',

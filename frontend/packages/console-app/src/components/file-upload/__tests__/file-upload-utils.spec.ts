@@ -1,5 +1,4 @@
-import { ResolvedExtension } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
-import { FileUpload } from '@console/dynamic-plugin-sdk/src/extensions/file-upload';
+import { ResolvedExtension, FileUpload } from '@console/dynamic-plugin-sdk';
 import { getFileType, getRequiredFileUploadExtension, isFileSupported } from '../file-upload-utils';
 
 describe('file-upload-utils', () => {
