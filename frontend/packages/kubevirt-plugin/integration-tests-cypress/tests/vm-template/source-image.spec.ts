@@ -35,7 +35,7 @@ describe('test vm template source image', () => {
     virtualization.templates.testSource(TEMPLATE, 'Add source');
   });
 
-  it('ID(CNV-5650) add URL image and delete', () => {
+  xit('ID(CNV-5650) add URL image and delete', () => {
     virtualization.templates.addSource(TEMPLATE);
     addSource.addBootSource(ProvisionSource.URL);
     virtualization.templates.testSource(TEMPLATE, 'Importing');
