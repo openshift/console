@@ -1,6 +1,5 @@
 import { Reducer } from 'redux';
-import { Extension } from '@console/plugin-sdk/src/typings/base';
-import { ExtensionDeclaration, CodeRef } from '../types';
+import { Extension, ExtensionDeclaration, CodeRef } from '../types';
 
 /** Adds new reducer to Console Redux store which operates on `plugins.<scope>` substate. */
 export type ReduxReducer = ExtensionDeclaration<

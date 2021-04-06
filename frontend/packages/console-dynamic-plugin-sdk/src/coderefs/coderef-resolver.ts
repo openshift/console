@@ -1,9 +1,9 @@
 /* eslint-disable no-console */
 
 import * as _ from 'lodash';
-import { Extension } from '@console/plugin-sdk/src/typings/base';
 import { mergeExtensionProperties } from '@console/plugin-sdk/src/store';
 import {
+  Extension,
   RemoteEntryModule,
   EncodedCodeRef,
   CodeRef,

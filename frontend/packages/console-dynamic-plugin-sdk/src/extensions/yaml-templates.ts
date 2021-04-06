@@ -1,5 +1,4 @@
-import { Extension } from '@console/plugin-sdk/src/typings/base';
-import { ExtensionDeclaration } from '../types';
+import { Extension, ExtensionDeclaration } from '../types';
 
 export type YAMLTemplate = ExtensionDeclaration<
   'console.yaml-template',

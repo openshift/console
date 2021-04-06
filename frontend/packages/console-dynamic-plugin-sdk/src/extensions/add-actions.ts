@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { Extension } from '@console/plugin-sdk/src/typings/base';
-import { ExtensionDeclaration, CodeRef } from '../types';
-import { AccessReviewResourceAttributes } from './console-internal-types';
+import { Extension, ExtensionDeclaration, CodeRef } from '../types';
+import { AccessReviewResourceAttributes } from './console-types';
 
 export type AddAction = ExtensionDeclaration<
   'dev-console.add/action',

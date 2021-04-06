@@ -1,5 +1,4 @@
-import { Extension } from '@console/plugin-sdk/src/typings/base';
-import { ExtensionDeclaration } from '../types';
+import { Extension, ExtensionDeclaration } from '../types';
 
 /** Customize the display of models by overriding values retrieved and generated through API discovery. */
 export type ModelMetadata = ExtensionDeclaration<
