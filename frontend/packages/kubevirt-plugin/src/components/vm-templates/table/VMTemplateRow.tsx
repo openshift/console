@@ -75,8 +75,10 @@ const VMTemplateRow: RowFunction<TemplateItem, VMTemplateRowProps> = ({
           detailed
         />
       </TableData>
-      <TableData className={dimensify(true)}>
+      <TableData className={dimensify()}>
         <RowActions template={template} sourceStatus={sourceStatus} namespace={namespace} />
+      </TableData>
+      <TableData className={dimensify(true)}>
         <Kebab
           options={menuActionsCreator(TemplateModel, obj, null, {
             togglePin,
