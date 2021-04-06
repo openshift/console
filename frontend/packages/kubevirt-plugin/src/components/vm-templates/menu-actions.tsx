@@ -21,7 +21,7 @@ import { TemplateItem } from '../../types/template';
 import { getVMWizardCreateLink } from '../../utils/url';
 import { deleteVMTemplateModal } from '../modals/menu-actions-modals/delete-vm-template-modal';
 import deleteVMTCustomizationModal from '../modals/menu-actions-modals/DeleteVMTCustomizationModal';
-import { PinnedIcon } from './os-icons';
+import { RemovePinnedIcon, PinnedIcon } from './os-icons';
 import { createVMAction } from './utils';
 
 type CustomData = {
@@ -129,8 +129,8 @@ const PinTemplateLabel: React.FC<{ pinned: boolean }> = ({ pinned }) => {
   const { t } = useTranslation();
   return (
     <>
-      {pinned ? t('kubevirt-plugin~Unfavorite template') : t('kubevirt-plugin~Favorite template')}
-      <PinnedIcon />
+      {pinned ? t('kubevirt-plugin~Remove favorite') : t('kubevirt-plugin~Favorite template')}
+      {pinned ? <RemovePinnedIcon /> : <PinnedIcon />}
     </>
   );
 };
