@@ -54,6 +54,9 @@ const vmTemplateTableHeader = (showNamespace: boolean, t: TFunction) =>
       {
         title: '',
       },
+      {
+        title: '',
+      },
     ],
     tableColumnClasses(showNamespace),
   );
