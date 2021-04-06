@@ -1,6 +1,7 @@
 import { $, element, by } from 'protractor';
 
-export const importWithWizardButton = $('#wizardImport-link');
+// export const importWithWizardButton = $('#wizardImport-link');
+export const importWithWizardButton = $('[data-test-id="vm-import"]');
 
 // Basic Import Setting tab
 // VMWare

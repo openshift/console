@@ -126,7 +126,7 @@ export class VmwareImportWizard extends ImportWizard {
     await this.processAdvanceStep(config);
 
     // Review
-    await this.processReviewStep(config);
+    // await this.processReviewStep(config);
 
     // Import
     await this.confirmAndCreate();

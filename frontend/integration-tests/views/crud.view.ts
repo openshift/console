@@ -7,7 +7,7 @@ import { appHost, testName, waitForNone } from '../protractor.conf';
 import { waitForCount } from '@console/shared/src/test-utils/utils';
 
 export const createYAMLButton = $('#yaml-create');
-export const createItemButton = $('#item-create');
+export const createItemButton = $('[data-test-id="item-create"]');
 export const createYAMLLink = $('#yaml-link');
 
 export const saveChangesBtn = $('#save-changes');
