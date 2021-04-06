@@ -45,6 +45,7 @@ const FinallyNode: React.FC<FinallyNodeProps> = ({ element }) => {
             width={NODE_WIDTH}
             height={NODE_HEIGHT}
             isFinallyTask
+            isSkipped={pipelineRun?.status?.skippedTasks?.some((t) => t.name === ft.name)}
           />
         </g>
       ))}
