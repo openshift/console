@@ -27,7 +27,7 @@ describe('Create namespace from install operators', () => {
     cy.log('test namespace creation from dropdown');
     cy.visit(`/operatorhub/ns/${testName}`);
     cy.byTestID(operatorSelector).click();
-    cy.byLegacyTestID('operator-install-btn').click({ force: true });
+    cy.byLegacyTestID('operator-install-btn').click();
 
     // configure operator install
     cy.byTestID('Select a Namespace-radio-input').check();

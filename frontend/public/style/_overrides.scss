@@ -512,6 +512,10 @@ button.pf-c-dropdown__menu-item.pf-m-disabled {
   position: absolute !important;
 }
 
+#modal-container.pf-c-backdrop__open {
+  overflow: visible;
+}
+
 .text-muted {
   color: var(--pf-global--Color--200);
 }
