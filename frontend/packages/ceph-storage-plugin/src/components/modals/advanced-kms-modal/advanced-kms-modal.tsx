@@ -148,6 +148,7 @@ export const AdvancedKMSModal = withHandlePromise((props: AdvancedKMSModalProps)
               id="kms-service-backend-path"
               name="kms-service-backend-path"
               placeholder={t('ceph-storage-plugin~path/')}
+              data-test="kms-service-backend-path"
             />
           </FormGroup>
 
