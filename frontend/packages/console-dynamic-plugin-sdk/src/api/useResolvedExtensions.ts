@@ -27,11 +27,13 @@ import { ResolvedExtension } from '../types';
  * // process adapted extensions and render your component
  * ```
  *
- * The hook's result is guaranteed to be referentially stable across re-renders.
+ * The hook's result elements are guaranteed to be referentially stable across re-renders.
  *
  * @param typeGuards Type guard(s) used to narrow the extension instances.
  *
- * @returns List of adapted extension instances with resolved code references.
+ * @returns Tuple containing a list of adapted extension instances with resolved code
+ * references, boolean flag indicating whether the resolution is complete, and a list
+ * of errors detected during the resolution.
  */
 export const useResolvedExtensions = <E extends Extension>(
   ...typeGuards: ExtensionTypeGuard<E>[]
@@ -68,9 +70,5 @@ export const useResolvedExtensions = <E extends Extension>(
     };
   }, [extensions]);
 
-  return React.useMemo(() => [resolvedExtensions, resolved, errors], [
-    resolvedExtensions,
-    resolved,
-    errors,
-  ]);
+  return [resolvedExtensions, resolved, errors];
 };
