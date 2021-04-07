@@ -14,6 +14,9 @@ export const FINALLY_NODE_VERTICAL_SPACING = 20;
 
 export const FINALLY_ADD_LINK_TEXT_HEIGHT = 10;
 export const FINALLY_ADD_LINK_SIZE = 15;
+export const WHEN_EXPRESSSION_DIAMOND_SIZE = 10;
+export const WHEN_EXPRESSION_SPACING = 25;
+
 export enum NodeType {
   TASK_NODE = 'task',
   SPACER_NODE = 'spacer',
@@ -30,6 +33,7 @@ export enum DrawDesign {
 export enum PipelineLayout {
   DAGRE_BUILDER = 'dagre-builder',
   DAGRE_VIEWER = 'dagre-viewer',
+  DAGRE_VIEWER_SPACED = 'dagre-viewer-spaced',
 }
 
 export enum AddNodeDirection {
@@ -67,6 +71,10 @@ const DAGRE_SHARED_PROPS: dagre.GraphLabel = {
 };
 export const DAGRE_VIEWER_PROPS: dagre.GraphLabel = {
   ...DAGRE_SHARED_PROPS,
+};
+export const DAGRE_VIEWER_SPACED_PROPS: dagre.GraphLabel = {
+  ...DAGRE_VIEWER_PROPS,
+  ranksep: NODE_SEPARATION_HORIZONTAL + WHEN_EXPRESSION_SPACING,
 };
 export const DAGRE_BUILDER_PROPS: dagre.GraphLabel = {
   ...DAGRE_SHARED_PROPS,

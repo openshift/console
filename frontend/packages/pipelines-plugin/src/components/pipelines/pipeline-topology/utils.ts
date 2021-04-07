@@ -12,6 +12,8 @@ import {
   DAGRE_VIEWER_PROPS,
   FINALLY_NODE_PADDING,
   FINALLY_NODE_VERTICAL_SPACING,
+  WHEN_EXPRESSION_SPACING,
+  DAGRE_VIEWER_SPACED_PROPS,
 } from './const';
 import {
   PipelineEdgeModel,
@@ -55,7 +57,11 @@ export const createBuilderNode: NodeCreator<BuilderNodeModelData> = createGeneri
 );
 
 export const createFinallyNode = (height): NodeCreator<FinallyNodeModel> =>
-  createGenericNode(NodeType.FINALLY_NODE, NODE_WIDTH + FINALLY_NODE_PADDING * 2, height);
+  createGenericNode(
+    NodeType.FINALLY_NODE,
+    NODE_WIDTH + WHEN_EXPRESSION_SPACING + FINALLY_NODE_PADDING * 2,
+    height,
+  );
 export const createBuilderFinallyNode = (height): NodeCreator<BuilderFinallyNodeModel> =>
   createGenericNode(NodeType.BUILDER_FINALLY_NODE, NODE_WIDTH + FINALLY_NODE_PADDING * 2, height);
 
@@ -304,12 +310,19 @@ export const getTopologyNodesEdges = (
   return { nodes, edges };
 };
 
+export const hasWhenExpression = (pipeline: PipelineKind): boolean => {
+  return [...(pipeline?.spec?.tasks || []), ...(pipeline?.spec?.finally || [])].some(
+    (t: PipelineTask) => t?.when?.length > 0,
+  );
+};
 export const getLayoutData = (layout: PipelineLayout): dagre.GraphLabel => {
   switch (layout) {
     case PipelineLayout.DAGRE_BUILDER:
       return DAGRE_BUILDER_PROPS;
     case PipelineLayout.DAGRE_VIEWER:
       return DAGRE_VIEWER_PROPS;
+    case PipelineLayout.DAGRE_VIEWER_SPACED:
+      return DAGRE_VIEWER_SPACED_PROPS;
     default:
       return null;
   }

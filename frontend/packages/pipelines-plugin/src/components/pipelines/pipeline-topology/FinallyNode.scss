@@ -1,0 +1,9 @@
+.opp-finally-node {
+  fill: var(--pf-global--BackgroundColor--light-100);
+  stroke: var(--pf-global--BorderColor--light-100);
+  &__connector {
+    stroke: var(--pf-global--BorderColor--light-100);
+    fill: none;
+    transform: translate(0, 0.5);
+  }
+}
