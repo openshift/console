@@ -66,6 +66,14 @@ export const PROGRESS_STATUS = (t: TFunction): ProgressStatusProps[] => [
     ),
     className: '',
   },
+  {
+    name: POOL_PROGRESS.NOTALLOWED,
+    icon: LockIcon,
+    desc: t(
+      "ceph-storage-plugin~Pool management tasks are not supported for default pool and Openshift Container Storage's  external mode.",
+    ),
+    className: '',
+  },
 ];
 
 export type ProgressStatusProps = {

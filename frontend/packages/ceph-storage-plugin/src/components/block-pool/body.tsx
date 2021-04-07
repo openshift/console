@@ -57,7 +57,7 @@ export type BlockPoolStatusProps = {
 };
 
 export const BlockPoolBody = (props: BlockPoolBodyPros) => {
-  const { cephCluster, state, dispatch, showPoolStatus } = props;
+  const { cephCluster, state, dispatch, showPoolStatus, isUpdate } = props;
   const { t } = useTranslation();
 
   const isPoolManagementSupported = useFlag(GUARDED_FEATURES.OCS_POOL_MANAGEMENT);
@@ -151,7 +151,7 @@ export const BlockPoolBody = (props: BlockPoolBodyPros) => {
         <>
           <div className="form-group ceph-block-pool-body__input">
             <label className="control-label co-required" htmlFor="pool-name">
-              {t('ceph-storage-plugin~Pool Name')}
+              {t('ceph-storage-plugin~Pool name')}
             </label>
             <input
               className="pf-c-form-control"
@@ -163,17 +163,18 @@ export const BlockPoolBody = (props: BlockPoolBodyPros) => {
                 })
               }
               value={state.poolName}
-              placeholder={t('ceph-storage-plugin~my-storage-pool')}
+              placeholder={t('ceph-storage-plugin~my-block-pool')}
               aria-describedby={t('ceph-storage-plugin~pool-name-help')}
               id="pool-name"
               name="newPoolName"
               data-test="new-pool-name-textbox"
+              disabled={isUpdate}
               required
             />
           </div>
           <div className="form-group ceph-block-pool-body__input">
             <label className="control-label co-required" htmlFor="pool-replica-size">
-              {t('ceph-storage-plugin~Data Protection Policy')}
+              {t('ceph-storage-plugin~Data protection policy')}
             </label>
             <Dropdown
               className="dropdown dropdown--full-width"
@@ -189,7 +190,7 @@ export const BlockPoolBody = (props: BlockPoolBodyPros) => {
                     ? t('ceph-storage-plugin~{{replica}} Replication', {
                         replica: OCS_DEVICE_REPLICA[state.replicaSize],
                       })
-                    : t('ceph-storage-plugin~Select Replication')}
+                    : t('ceph-storage-plugin~Select replication')}
                 </DropdownToggle>
               }
               isOpen={isReplicaOpen}
@@ -201,7 +202,7 @@ export const BlockPoolBody = (props: BlockPoolBodyPros) => {
           {isPoolManagementSupported && (
             <div className="form-group ceph-block-pool-body__input">
               <label className="control-label co-required" htmlFor="pool-volume-type">
-                {t('ceph-storage-plugin~Volume Type')}
+                {t('ceph-storage-plugin~Volume type')}
               </label>
               <Dropdown
                 className="dropdown dropdown--full-width"
@@ -211,6 +212,7 @@ export const BlockPoolBody = (props: BlockPoolBodyPros) => {
                     data-test="volume-type-dropdown"
                     onToggle={() => setVolumeTypeOpen(!isVolumeTypeOpen)}
                     toggleIndicator={CaretDownIcon}
+                    isDisabled={isUpdate}
                   >
                     {state.volumeType.toUpperCase() || t('ceph-storage-plugin~Select volume type')}
                   </DropdownToggle>
@@ -240,7 +242,7 @@ export const BlockPoolBody = (props: BlockPoolBodyPros) => {
                   name="compression-check"
                   data-test="compression-checkbox"
                 />
-                {t('ceph-storage-plugin~Enable Compression')}
+                {t('ceph-storage-plugin~Enable compression')}
               </label>
             </div>
           </div>
@@ -267,4 +269,5 @@ export type BlockPoolBodyPros = {
   state: BlockPoolState;
   showPoolStatus: boolean;
   dispatch: React.Dispatch<BlockPoolAction>;
+  isUpdate?: boolean;
 };
