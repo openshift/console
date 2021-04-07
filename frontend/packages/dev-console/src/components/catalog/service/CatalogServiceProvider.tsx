@@ -72,7 +72,7 @@ const CatalogServiceProvider: React.FC<CatalogServiceProviderProps> = ({
 
   const searchCatalog = React.useCallback(
     (query: string) => {
-      return catalogItems.filter((item) => keywordCompare(query, item));
+      return keywordCompare(query, catalogItems);
     },
     [catalogItems],
   );
