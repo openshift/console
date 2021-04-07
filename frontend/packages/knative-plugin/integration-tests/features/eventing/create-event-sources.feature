@@ -3,10 +3,8 @@ Feature: Create event sources
               As a user, I want to create event sources
 
         Background:
-            Given user has installed eventing operator
-              And user is at developer perspective
-              And user has created or selected namespace "aut-create-knative-event-source"
-              And user has created or selected knative service "nodejs-ex-git"
+            Given user has created or selected namespace "aut-knative"
+              And user has created knative service "kn-event"
               And user is at Event Sources page
 
 
@@ -82,22 +80,22 @@ Feature: Create event sources
               And user enters Resource KIND as "ApiServerSource"
               And user selects "Resource" mode
               And user selects "default" option from Service Account Name field
-              And user selects an "nodejs-ex-git" option from knative service field
+              And user selects an "kn-event" option from knative service field
               And user enters event source name as "api-service-1"
               And user clicks on Create button
              Then user will be redirected to Topology page
-              And ApiServerSource event source "api-service-1" is created and linked to selected knative service "nodejs-ex-git"
+              And ApiServerSource event source "api-service-1" is created and linked to selected knative service "kn-event"
 
 
-        @regression
+        @smoke
         Scenario: Create ContainerSource event source : Kn-10-TC09
              When user selects event source type "Container Source"
               And user selects Create Event Source
               And user enters Container Image as "openshift/hello-openshift"
-              And user selects an "nodejs-ex-git" option from knative service field
+              And user selects an "kn-event" option from knative service field
               And user clicks on Create button
              Then user will be redirected to Topology page
-              And ContainerSource event source "container-source" is created and linked to selected knative service "nodejs-ex-git"
+              And ContainerSource event source "container-source" is created and linked to selected knative service "kn-event"
 
 
         @regression
@@ -105,39 +103,69 @@ Feature: Create event sources
              When user selects event source type "Cron Job Source"
               And user selects Create Event Source
               And user enters schedule as "*/2 * * * *"
-              And user selects an "nodejs-ex-git" option from knative service field
+              And user selects an "kn-event" option from knative service field
               And user clicks on Create button
              Then user will be redirected to Topology page
-              And CronJobSource event source "cron-job-source" is created and linked to selected knative service "nodejs-ex-git"
+              And CronJobSource event source "cron-job-source" is created and linked to selected knative service "kn-event"
 
 
-        @regression
+        @smoke
         Scenario: Create PingSource event source : Kn-10-TC11
              When user selects event source type "Ping Source"
               And user selects Create Event Source
               And user enters schedule as "*/2 * * * *"
-              And user selects an "nodejs-ex-git" option from knative service field
+              And user selects an "kn-event" option from knative service field
               And user clicks on Create button
              Then user will be redirected to Topology page
-              And PingSource event source "ping-source" is created and linked to selected knative service "nodejs-ex-git"
+              And PingSource event source "ping-source" is created and linked to selected knative service "kn-event"
 
 
-        @regression
-        Scenario: Create SinkBinding event source : Kn-10-TC12
+        @smoke
+        Scenario: Create SinkBinding event source linked with knative service : Kn-10-TC12
              When user selects event source type "Sink Binding"
               And user selects Create Event Source
               And user enters Subject apiVersion as "batch/v1"
               And user enters Subject Kind as "job"
-              And user selects an "nodejs-ex-git" option from knative service field
+              And user selects an "kn-event" option from knative service field
+              And user enters Name as "event-sink" in General section
               And user clicks on Create button
              Then user will be redirected to Topology page
-              And SinkBinding event source "sink-binding" is created and linked to selected knative service "nodejs-ex-git"
+              And SinkBinding event source "event-sink" is created and linked to selected knative service "kn-event"
+
+
+        @smoke
+        Scenario: Create SinkBinding event source linked with uri
+             When user selects event source type "Sink Binding"
+              And user selects Create Event Source
+              And user enters Subject apiVersion as "batch/v1"
+              And user enters Subject Kind as "job"
+              And user selects "URI" option under Sink section
+              And user enters uri as "http://cluster.example.com/svc"
+              And user enters Name as "event-uri" in General section
+              And user clicks on Create button
+             Then user will be redirected to Topology page
+              And user will see that event source "event-uri" is sinked with uri "http://cluster.example.com/svc"
 
 
         @regression @manual
         Scenario: Create CamelSource event source : Kn-10-TC13
+            Given user has installed Knative Apache Camelk Integration Operator
+              And user has created or selected namespace "aut-knative"
+              And user has created knative service "kn-event"
+              And user is at Event Sources page
              When user selects event source type "Camel Source"
               And user selects Create Event Source
               And user clicks on Create button
              Then user will be redirected to Topology page
-              And CamelSource event source "camel-source" is created and linked to selected knative service "nodejs-ex-git"
+              And CamelSource event source "camel-source" is created and linked to selected knative service "kn-event"
+
+
+        @regression
+        Scenario: Kamelets on Event Sources page
+            Given user has created Knative Serving and Knative Eventing CR
+              And user has installed Red Hat Integration - Camel K Operator
+              And user has created Integration Platform CR
+              And user has created or selected "aut-test-kamelets" namespace
+              And user is at Developer Catalog page
+             When user clicks on Event Sources
+             Then user will see cards of AWS Kinesis Source, AWS SQS Source, Jira Source, Salesforce Source, Slack Source, Telegram Source

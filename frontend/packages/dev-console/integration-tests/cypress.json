@@ -8,7 +8,7 @@
   "chromeWebSecurity": true,
   "waitForAnimation": true,
   "animationDistanceThreshold": 20,
-  "execTimeout": 90000,
+  "execTimeout": 150000,
   "pageLoadTimeout": 90000,
   "requestTimeout": 15000,
   "responseTimeout": 15000,

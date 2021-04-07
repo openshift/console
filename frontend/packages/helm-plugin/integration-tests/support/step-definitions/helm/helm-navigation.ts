@@ -2,7 +2,6 @@ import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import {
   navigateTo,
   addPage,
-  topologyPage,
   catalogPage,
 } from '@console/dev-console/integration-tests/support/pages';
 import {
@@ -10,7 +9,8 @@ import {
   addOptions,
 } from '@console/dev-console/integration-tests/support/constants';
 import { helmPage, helmDetailsPage } from '../../pages';
-import { catalogPO } from '@console/dev-console/integration-tests/support/pageObjects';
+import { topologyPage } from '@console/topology/integration-tests/support/pages/topology/topology-page';
+import { catalogPO } from '@console/dev-console/integration-tests/support/pageObjects/add-flow-po';
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 
 When('user clicks on the Helm tab', () => {

@@ -3,6 +3,7 @@ import { operators } from '@console/dev-console/integration-tests/support/consta
 import { operatorsPO } from '@console/dev-console/integration-tests/support/pageObjects/operators-po';
 import { detailsPage } from '../../../../../integration-tests-cypress/views/details-page';
 import { projectNameSpace } from '@console/dev-console/integration-tests/support/pages/app';
+import { pageTitle } from '../../constants';
 
 export const createKnativeServing = () => {
   operatorsPage.navigateToInstallOperatorsPage();
@@ -11,10 +12,19 @@ export const createKnativeServing = () => {
   cy.get(operatorsPO.installOperators.knativeServingLink)
     .should('be.visible')
     .click();
-  cy.get(operatorsPO.installOperators.title).should('contain.text', 'Red Hat OpenShift Serverless');
-  cy.byTestID('item-create').click();
-  detailsPage.titleShouldContain('Create Knative Serving');
-  cy.byTestID('create-dynamic-form').click();
+  cy.get(operatorsPO.installOperators.title).should(
+    'contain.text',
+    pageTitle.RedHatOpenShiftServerless,
+  );
+  cy.get('body').then(($body) => {
+    if ($body.find('[role="grid"]').length) {
+      cy.log(`${pageTitle.CreateKnativeServing} already subscribed`);
+    } else {
+      cy.byTestID('item-create').click();
+      detailsPage.titleShouldContain(pageTitle.CreateKnativeServing);
+      cy.byTestID('create-dynamic-form').click();
+    }
+  });
 };
 
 export const createKnativeEventing = () => {
@@ -24,8 +34,17 @@ export const createKnativeEventing = () => {
   cy.get(operatorsPO.installOperators.knativeEventingLink)
     .should('be.visible')
     .click();
-  cy.get(operatorsPO.installOperators.title).should('contain.text', 'Red Hat OpenShift Serverless');
-  cy.byTestID('item-create').click();
-  detailsPage.titleShouldContain('Create Knative Eventing');
-  cy.byTestID('create-dynamic-form').click();
+  cy.get(operatorsPO.installOperators.title).should(
+    'contain.text',
+    pageTitle.RedHatOpenShiftServerless,
+  );
+  cy.get('body').then(($body) => {
+    if ($body.find('[role="grid"]').length) {
+      cy.log(`${pageTitle.CreateKnativeEventing} already subscribed`);
+    } else {
+      cy.byTestID('item-create').click();
+      detailsPage.titleShouldContain(pageTitle.CreateKnativeEventing);
+      cy.byTestID('create-dynamic-form').click();
+    }
+  });
 };

@@ -1,11 +1,14 @@
-import { When, Then } from 'cypress-cucumber-preprocessor/steps';
+import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { nav } from '@console/cypress-integration-tests/views/nav';
 import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
-import {
-  switchPerspective,
-  perspectiveName,
-} from '@console/dev-console/integration-tests/support/constants';
-import { perspective, topologyPage } from '@console/dev-console/integration-tests/support/pages';
+import { switchPerspective, devNavigationMenu } from '../../constants';
+import { perspective, navigateTo } from '../../pages';
+import { topologyPage } from '@console/topology/integration-tests/support/pages/topology';
+
+Given('user is at the Topology page', () => {
+  navigateTo(devNavigationMenu.Topology);
+  topologyPage.verifyTopologyPage();
+});
 
 When('user applies cronjob YAML', () => {
   cy.exec(`oc apply -f testData/yamls/create-cronjob.yaml`);
@@ -14,7 +17,7 @@ When('user applies cronjob YAML', () => {
 Then('user will see cron job with name {string} on topology page', (name: string) => {
   perspective.switchTo(switchPerspective.Developer);
   guidedTour.close();
-  nav.sidenav.switcher.shouldHaveText(perspectiveName.developer);
+  nav.sidenav.switcher.shouldHaveText(switchPerspective.Developer);
   topologyPage.verifyWorkloadInTopologyPage(`${name}`);
 });
 
@@ -25,7 +28,7 @@ When('user applies job YAML', () => {
 Then('user will see job with name {string} on topology page', (name: string) => {
   perspective.switchTo(switchPerspective.Developer);
   guidedTour.close();
-  nav.sidenav.switcher.shouldHaveText(perspectiveName.developer);
+  nav.sidenav.switcher.shouldHaveText(switchPerspective.Developer);
   topologyPage.verifyWorkloadInTopologyPage(`${name}`);
 });
 
@@ -36,6 +39,6 @@ When('user applies pod YAML', () => {
 Then('user will see pod with name {string} on topology page', (name: string) => {
   perspective.switchTo(switchPerspective.Developer);
   guidedTour.close();
-  nav.sidenav.switcher.shouldHaveText(perspectiveName.developer);
+  nav.sidenav.switcher.shouldHaveText(switchPerspective.Developer);
   topologyPage.verifyWorkloadInTopologyPage(`${name}`);
 });

@@ -1,9 +1,9 @@
 import { detailsPage } from '@console/cypress-integration-tests/views/details-page';
 import { nav } from '@console/cypress-integration-tests/views/nav';
-import { devNavigationMenu, switchPerspective, pageTitle } from '../constants';
-import { devNavigationMenuPO } from '../pageObjects';
 import { modal } from '@console/cypress-integration-tests/views/modal';
 import { guidedTour } from '@console/cypress-integration-tests/views/guided-tour';
+import { devNavigationMenu, switchPerspective, pageTitle } from '../constants';
+import { devNavigationMenuPO, formPO, gitPO } from '../pageObjects';
 
 export const app = {
   waitForDocumentLoad: () => {
@@ -20,6 +20,7 @@ export const app = {
     cy.byLegacyTestID('namespace-bar-dropdown').should('be.visible');
   },
 };
+
 export const sidePane = {
   close: () => cy.get('button[aria-label="Close"]').click({ force: true }),
 };
@@ -43,6 +44,7 @@ export const navigateTo = (opt: devNavigationMenu) => {
         .then(() => {
           cy.url().should('include', 'add');
           app.waitForLoad();
+          cy.contains(pageTitle.Add).should('be.visible');
           // Bug: ODC-5119 is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
           // cy.testA11y('Add Page in dev perspective');
         });
@@ -148,19 +150,33 @@ export const projectNameSpace = {
     // Bug: ODC-5129 - is created related to Accessibility violation - Until bug fix, below line is commented to execute the scripts in CI
     // cy.testA11y('Create Project modal');
     cy.byLegacyTestID('dropdown-text-filter').type(projectName);
-    cy.document()
-      .its('readyState')
-      .should('eq', 'complete');
+    cy.get('[data-test-id="namespace-bar-dropdown"] span.pf-c-dropdown__toggle-text')
+      .first()
+      .as('projectNameSpaceDropdown');
+    app.waitForDocumentLoad();
     cy.get('[role="listbox"]').then(($el) => {
       if ($el.find('li[role="option"]').length === 0) {
         cy.byTestDropDownMenu('#CREATE_RESOURCE_ACTION#').click();
-        cy.byTestID('input-name').type(projectName);
+        projectNameSpace.enterProjectName(projectName);
         cy.byTestID('confirm-action').click();
       } else {
-        cy.get(`[id="${projectName}-link"]`).click();
-        cy.document()
-          .its('readyState')
-          .should('eq', 'complete');
+        cy.get('[role="listbox"]')
+          .find('li[role="option"]')
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          .each(($ele, index, $list) => {
+            if ($ele.text() === projectName) {
+              cy.get(`[id="${projectName}-link"]`).click();
+            }
+          });
+        cy.get('@projectNameSpaceDropdown').then(($el1) => {
+          if ($el1.text().includes(projectName)) {
+            cy.get('@projectNameSpaceDropdown').should('contain.text', projectName);
+          } else {
+            cy.byTestDropDownMenu('#CREATE_RESOURCE_ACTION#').click();
+            projectNameSpace.enterProjectName(projectName);
+            cy.byTestID('confirm-action').click();
+          }
+        });
       }
     });
   },
@@ -171,7 +187,22 @@ export const projectNameSpace = {
     cy.get(`[id="${projectName}-link"]`).click();
   },
 
-  verifyMessage: (message: string) => {
-    cy.get('h2').should('contain.text', message);
-  },
+  verifyMessage: (message: string) => cy.get('h2').should('contain.text', message),
+};
+
+export const createForm = {
+  clickOnFormView: () => cy.get(formPO.configureVia.formView).click(),
+  clickOnYAMLView: () => cy.get(formPO.configureVia.yamlView).click(),
+  clickCreate: () =>
+    cy
+      .get(formPO.create)
+      .should('be.enabled')
+      .click(),
+  clickCancel: () =>
+    cy
+      .get(formPO.cancel)
+      .should('be.enabled')
+      .click(),
+  sectionTitleShouldContain: (sectionTitle: string) =>
+    cy.get(gitPO.sectionTitle).should('have.text', sectionTitle),
 };

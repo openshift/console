@@ -1,4 +1,4 @@
-@knative-eventing
+@knative
 Feature: Create event sources
               As a user, I want to create event sources
 
