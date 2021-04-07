@@ -12,8 +12,7 @@ import {
 } from '@console/shared';
 import { EditorType } from '@console/shared/src/components/synced-editor/editor-toggle';
 import { safeJSToYAML } from '@console/shared/src/utils/yaml';
-import { PipelineKind, TaskKind } from '../../../types';
-import { PipelineVisualizationTaskItem } from '../../../utils/pipeline-utils';
+import { PipelineKind, PipelineTask, TaskKind } from '../../../types';
 import { PipelineModel } from '../../../models';
 import { useFormikFetchAndSaveTasks } from './hooks';
 import { removeTaskModal } from './modals';
@@ -65,11 +64,7 @@ const PipelineBuilderForm: React.FC<PipelineBuilderFormProps> = (props) => {
   const statusRef = React.useRef(status);
   statusRef.current = status;
 
-  const onTaskSelection = (
-    task: PipelineVisualizationTaskItem,
-    resource: TaskKind,
-    isFinallyTask: boolean,
-  ) => {
+  const onTaskSelection = (task: PipelineTask, resource: TaskKind, isFinallyTask: boolean) => {
     const builderNodes = isFinallyTask ? formData.finallyTasks : formData.tasks;
     setSelectedTask({
       isFinallyTask,

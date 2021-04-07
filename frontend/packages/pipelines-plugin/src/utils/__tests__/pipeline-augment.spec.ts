@@ -14,8 +14,17 @@ import {
   pipelineRefExists,
   getPipelineFromPipelineRun,
   totalPipelineRunTasks,
+  getResourceModelFromTaskKind,
+  getResourceModelFromBindingKind,
 } from '../pipeline-augment';
-import { ClusterTaskModel, PipelineRunModel, TaskModel, PipelineModel } from '../../models';
+import {
+  ClusterTaskModel,
+  PipelineRunModel,
+  TaskModel,
+  PipelineModel,
+  ClusterTriggerBindingModel,
+  TriggerBindingModel,
+} from '../../models';
 import { testData } from './pipeline-augment-test-data';
 
 const t = (key): TFunction => key;
@@ -394,5 +403,55 @@ describe('Pipelinerun graph to show the executed pipeline structure', () => {
       ...pipelineTestData[PipelineExampleNames.SIMPLE_PIPELINE].pipeline,
       apiVersion: apiVersionForModel(PipelineModel),
     });
+  });
+});
+
+describe('getResourceModelFromTaskKind', () => {
+  it('should handle null', () => {
+    expect(getResourceModelFromTaskKind(null)).toBe(null);
+  });
+
+  it('should be able to find ClusterTaskModel', () => {
+    expect(getResourceModelFromTaskKind('ClusterTask')).toBe(ClusterTaskModel);
+  });
+
+  it('should be able to find TaskModel', () => {
+    expect(getResourceModelFromTaskKind('Task')).toBe(TaskModel);
+  });
+
+  it('should return the TaskModel for undefined', () => {
+    expect(getResourceModelFromTaskKind(undefined)).toBe(TaskModel);
+  });
+
+  it('should return null for any unknown value', () => {
+    expect(getResourceModelFromTaskKind('EmbeddedTask')).toBe(null);
+    expect(getResourceModelFromTaskKind('123%$^&asdf')).toBe(null);
+    expect(getResourceModelFromTaskKind('Nothing special')).toBe(null);
+  });
+});
+
+describe('getResourceModelFromBindingKind', () => {
+  it('should handle null', () => {
+    expect(getResourceModelFromBindingKind(null)).toBe(null);
+  });
+
+  it('should be able to find ClusterTriggerBindingModel', () => {
+    expect(getResourceModelFromBindingKind('ClusterTriggerBinding')).toBe(
+      ClusterTriggerBindingModel,
+    );
+  });
+
+  it('should be able to find TriggerBindingModel', () => {
+    expect(getResourceModelFromBindingKind('TriggerBinding')).toBe(TriggerBindingModel);
+  });
+
+  it('should return TriggerBindingModel for undefined', () => {
+    expect(getResourceModelFromBindingKind(undefined)).toBe(TriggerBindingModel);
+  });
+
+  it('should return null for any unknown value', () => {
+    expect(getResourceModelFromBindingKind('EmbeddedBinding')).toBe(null);
+    expect(getResourceModelFromBindingKind('123%$^&asdf')).toBe(null);
+    expect(getResourceModelFromBindingKind('Nothing special')).toBe(null);
   });
 });

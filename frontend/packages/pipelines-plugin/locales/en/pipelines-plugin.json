@@ -158,7 +158,6 @@
   "Add workspace": "Add workspace",
   "Error loading the tasks.": "Error loading the tasks.",
   "Unable to locate any tasks.": "Unable to locate any tasks.",
-  "This Pipeline cannot be visualized. Pipeline taskSpec is not supported.": "This Pipeline cannot be visualized. Pipeline taskSpec is not supported.",
   "Input resources": "Input resources",
   "Output resources": "Output resources",
   "Display Name": "Display Name",

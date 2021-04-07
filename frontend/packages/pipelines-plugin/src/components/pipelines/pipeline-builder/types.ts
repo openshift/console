@@ -7,7 +7,6 @@ import {
   TaskKind,
   TektonWorkspace,
 } from '../../../types';
-import { PipelineVisualizationTaskItem } from '../../../utils/pipeline-utils';
 import { AddNodeDirection } from '../pipeline-topology/const';
 // eslint-disable-next-line import/no-cycle
 import { UpdateOperationType } from './const';
@@ -67,7 +66,7 @@ export type SelectedBuilderTask = {
 };
 
 export type SelectTaskCallback = (
-  task: PipelineVisualizationTaskItem,
+  task: PipelineTask,
   taskResource: TaskKind,
   isFinallyTask: boolean,
 ) => void;
@@ -86,7 +85,7 @@ type UpdateOperationBaseData = {};
 
 export type UpdateOperationAddData = UpdateOperationBaseData & {
   direction: AddNodeDirection;
-  relatedTask: PipelineVisualizationTaskItem;
+  relatedTask: PipelineTask;
 };
 export type UpdateOperationConvertToTaskData = UpdateOperationBaseData & {
   name: string;

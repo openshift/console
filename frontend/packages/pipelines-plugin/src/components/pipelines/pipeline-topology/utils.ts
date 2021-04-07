@@ -1,11 +1,7 @@
 import * as dagre from 'dagre';
 import * as _ from 'lodash';
-import { PipelineKind, PipelineRunKind } from '../../../types';
-import {
-  getPipelineTasks,
-  getFinallyTasksWithStatus,
-  PipelineVisualizationTaskItem,
-} from '../../../utils/pipeline-utils';
+import { PipelineKind, PipelineRunKind, PipelineTask } from '../../../types';
+import { getPipelineTasks, getFinallyTasksWithStatus } from '../../../utils/pipeline-utils';
 import {
   NODE_HEIGHT,
   NodeType,
@@ -181,7 +177,7 @@ export const handleParallelToParallelNodes = (
 };
 
 export const tasksToNodes = (
-  taskList: PipelineVisualizationTaskItem[],
+  taskList: PipelineTask[],
   pipeline?: PipelineKind,
   pipelineRun?: PipelineRunKind,
 ): PipelineMixedNodeModel[] => {
@@ -197,9 +193,9 @@ export const tasksToNodes = (
 };
 
 export const tasksToBuilderNodes = (
-  taskList: PipelineVisualizationTaskItem[],
-  onAddNode: (task: PipelineVisualizationTaskItem, direction: AddNodeDirection) => void,
-  onNodeSelection: (task: PipelineVisualizationTaskItem) => void,
+  taskList: PipelineTask[],
+  onAddNode: (task: PipelineTask, direction: AddNodeDirection) => void,
+  onNodeSelection: (task: PipelineTask) => void,
   getError: CheckTaskErrorMessage,
   selectedIds: string[],
 ): PipelineMixedNodeModel[] => {
@@ -295,9 +291,7 @@ export const getTopologyNodesEdges = (
   pipeline: PipelineKind,
   pipelineRun?: PipelineRunKind,
 ): { nodes: PipelineMixedNodeModel[]; edges: PipelineEdgeModel[] } => {
-  const taskList: PipelineVisualizationTaskItem[] = _.flatten(
-    getPipelineTasks(pipeline, pipelineRun),
-  );
+  const taskList: PipelineTask[] = _.flatten(getPipelineTasks(pipeline, pipelineRun));
   const taskNodes: PipelineMixedNodeModel[] = tasksToNodes(taskList, pipeline, pipelineRun);
 
   const nodes: PipelineMixedNodeModel[] = connectFinallyTasksToNodes(

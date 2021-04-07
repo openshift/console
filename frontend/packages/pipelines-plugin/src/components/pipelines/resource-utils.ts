@@ -1,5 +1,5 @@
 import { get } from 'lodash';
-import { TaskKind, TektonParam, TektonResource } from '../../types';
+import { TaskKind, TektonParam, TektonResource, TektonResourceGroup } from '../../types';
 
 export type TaskKindAlpha = TaskKind & {
   spec: {
@@ -13,11 +13,6 @@ export type TaskKindAlpha = TaskKind & {
   };
 };
 
-export type InputOutputResources = {
-  inputs?: TektonResource[];
-  outputs?: TektonResource[];
-};
-
 enum PATHS {
   alphaInputResources = 'spec.inputs.resources',
   alphaOutputResources = 'spec.outputs.resources',
@@ -28,7 +23,9 @@ enum PATHS {
   betaParameters = 'spec.params',
 }
 
-export const getTaskResources = (taskResource: TaskKind | TaskKindAlpha): InputOutputResources => {
+export const getTaskResources = (
+  taskResource: TaskKind | TaskKindAlpha,
+): TektonResourceGroup<TektonResource> => {
   const inputs =
     get(taskResource, PATHS.alphaInputResources) || get(taskResource, PATHS.betaInputResources);
   const outputs =

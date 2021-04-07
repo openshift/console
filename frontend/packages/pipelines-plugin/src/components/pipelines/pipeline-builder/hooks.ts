@@ -5,8 +5,7 @@ import { useFormikContext } from 'formik';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { useK8sWatchResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { ClusterTaskModel, TaskModel } from '../../../models';
-import { TaskKind } from '../../../types';
-import { PipelineVisualizationTaskItem } from '../../../utils/pipeline-utils';
+import { PipelineTask, TaskKind } from '../../../types';
 import { AddNodeDirection } from '../pipeline-topology/const';
 import {
   PipelineBuilderTaskNodeModel,
@@ -127,7 +126,7 @@ const useConnectFinally = (
       addNewFinallyListNode,
       finallyTasks: taskGroup.finallyTasks.map((ft, idx) => ({
         ...ft,
-        onTaskSelection: () => onTaskSelection(ft, findTask(taskResources, ft.taskRef), true),
+        onTaskSelection: () => onTaskSelection(ft, findTask(taskResources, ft), true),
         error: getTopLevelErrorMessage(tasksInError)(idx),
         selected: taskGroup.highlightedIds.includes(ft.name),
         disableTooltip: true,
@@ -158,7 +157,7 @@ export const useNodes = (
   const taskGroupRef = React.useRef(taskGroup);
   taskGroupRef.current = taskGroup;
 
-  const onNewListNode = (task: PipelineVisualizationTaskItem, direction: AddNodeDirection) => {
+  const onNewListNode = (task: PipelineTask, direction: AddNodeDirection) => {
     const data: UpdateOperationAddData = { direction, relatedTask: task };
     onUpdateTasks(taskGroupRef.current, { type: UpdateOperationType.ADD_LIST_TASK, data });
   };
@@ -220,8 +219,8 @@ export const useNodes = (
       },
     });
 
-  const invalidTaskList = taskGroup.tasks.filter((task) => !findTask(taskResources, task.taskRef));
-  const validTaskList = taskGroup.tasks.filter((task) => !!findTask(taskResources, task.taskRef));
+  const invalidTaskList = taskGroup.tasks.filter((task) => !findTask(taskResources, task));
+  const validTaskList = taskGroup.tasks.filter((task) => !!findTask(taskResources, task));
 
   const invalidTaskListNodes: PipelineTaskListNodeModel[] = invalidTaskList.map((task) =>
     newInvalidListNode(task.name, task.runAfter),
@@ -231,7 +230,7 @@ export const useNodes = (
       ? tasksToBuilderNodes(
           validTaskList,
           onNewListNode,
-          (task) => onTaskSelection(task, findTask(taskResources, task.taskRef), false),
+          (task) => onTaskSelection(task, findTask(taskResources, task), false),
           getTopLevelErrorMessage(tasksInError.tasks),
           taskGroup.highlightedIds,
         )

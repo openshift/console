@@ -17,7 +17,25 @@ export type TektonTaskSteps = {
   script?: string[];
 };
 
-// Deprecated upstream, workspaces are more desired
+export type TaskResult = {
+  name: string;
+  description?: string;
+};
+
+export type TektonTaskSpec = {
+  steps: TektonTaskSteps[];
+  params?: TektonParam[];
+  resources?: TektonResourceGroup<TektonResource>;
+  results?: TaskResult[];
+  workspaces?: TektonWorkspace[];
+};
+
+export type TektonResourceGroup<ResourceType> = {
+  inputs?: ResourceType[];
+  outputs?: ResourceType[];
+};
+
+/** Deprecated upstream - Workspaces are replacing Resources */
 export type TektonResource = {
   name: string;
   optional?: boolean;
