@@ -13,6 +13,7 @@ import {
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { PersistentVolumeClaimModel, TemplateModel } from '@console/internal/models';
 import { PersistentVolumeClaimKind, TemplateKind } from '@console/internal/module/k8s';
+import { VMKind } from '@console/kubevirt-plugin/src/types';
 import {
   ActionGroup,
   Alert,
@@ -37,12 +38,15 @@ import {
   TEMPLATE_TYPE_BASE,
   TEMPLATE_TYPE_LABEL,
   TEMPLATE_TYPE_VM,
+  VM_CUSTOMIZE_LABEL,
 } from '../../../constants';
 import { TemplateSupport } from '../../../constants/vm-templates/support';
+import { TEMPLATE_CUSTOMIZED_ANNOTATION } from '../../../constants/vm/constants';
 import { useBaseImages } from '../../../hooks/use-base-images';
 import { createVMForCustomization } from '../../../k8s/requests/vmtemplate/customize';
 import { CloudInitDataHelper } from '../../../k8s/wrapper/vm/cloud-init-data-helper';
 import { VMTemplateWrapper } from '../../../k8s/wrapper/vm/vm-template-wrapper';
+import { VirtualMachineModel } from '../../../models/index';
 import { getAnnotation } from '../../../selectors/selectors';
 import { getCPU, vCPUCount } from '../../../selectors/vm';
 import { getTemplateFlavorData, getTemplateMemory } from '../../../selectors/vm-template/advanced';
@@ -86,6 +90,29 @@ const CustomizeSourceForm: React.FC<RouteComponentProps> = ({ location }) => {
       ],
     },
   });
+
+  const [
+    vmWithCustomBootSource,
+    loadvmWithCutomBootSource,
+    vmWithCustomBootSourceError,
+  ] = useK8sWatchResource<VMKind[]>({
+    kind: VirtualMachineModel.kind,
+    isList: true,
+    namespace,
+    selector: {
+      matchLabels: {
+        [VM_CUSTOMIZE_LABEL]: 'true',
+      },
+    },
+  });
+
+  const templatesFromVms = React.useMemo(
+    () =>
+      vmWithCustomBootSource.map(({ metadata }) =>
+        JSON.parse(metadata?.annotations?.[TEMPLATE_CUSTOMIZED_ANNOTATION]),
+      ),
+    [vmWithCustomBootSource],
+  );
 
   const template = React.useMemo(
     () => filterTemplates(templates).find((tmp) => tmp.metadata.name === templateName),
@@ -134,11 +161,16 @@ const CustomizeSourceForm: React.FC<RouteComponentProps> = ({ location }) => {
     pods: [],
   });
 
-  const nameValidation = validateVmLikeEntityName(name, namespace, templates, {
-    // t('kubevirt-plugin~Name is already used by another virtual machine template in this namespace')
-    existsErrorMessage:
-      'kubevirt-plugin~Name is already used by another virtual machine template in this namespace',
-  });
+  const nameValidation = validateVmLikeEntityName(
+    name,
+    namespace,
+    [...templates, ...templatesFromVms],
+    {
+      // t('kubevirt-plugin~Name is already used by another virtual machine template in this namespace')
+      existsErrorMessage:
+        'kubevirt-plugin~Name is already used by another virtual machine template in this namespace',
+    },
+  );
 
   React.useEffect(() => {
     if (selectedTemplate) {
@@ -225,8 +257,8 @@ const CustomizeSourceForm: React.FC<RouteComponentProps> = ({ location }) => {
         <Divider component="div" />
         <GridItem span={6} className="kv-customize-source">
           <StatusBox
-            loaded={loaded && imagesLoaded && pvcsLoaded}
-            loadError={loadError || error || pvcsError}
+            loaded={loaded && imagesLoaded && pvcsLoaded && loadvmWithCutomBootSource}
+            loadError={loadError || error || pvcsError || vmWithCustomBootSourceError}
             data={selectedTemplate}
           >
             <Stack hasGutter className="kv-customize-source__form-body">
