@@ -11,3 +11,14 @@
 See how to setup env variables in Cypress https://docs.cypress.io/guides/guides/environment-variables.html#Setting
 
 
+## Tests subjects
+- You should organize tests by pages and by components as you should test components individually if possible. *.includes files are ignored by cypress. You can nest describe functions of includes files inside a main spec file of the same component/page. The folder structure for tests might look like. 
+
+├ component
+├── test-a.includes.ts
+├── test-b.includes.ts
+├── component.spec.ts
+├ page
+├── test-a.includes.ts
+├── test-b.includes.ts
+├── page.spec.ts

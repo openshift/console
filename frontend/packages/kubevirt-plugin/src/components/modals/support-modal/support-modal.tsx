@@ -26,7 +26,7 @@ const SupportModal: React.FC<SupportModalProps> = ({ onConfirm, close, community
   const { t } = useTranslation();
   const [doNotShow, setDoNotShow] = React.useState(false);
   return (
-    <div className="modal-content">
+    <div className="modal-content" data-test="SupportModal">
       <ModalTitle>
         <BlueInfoCircleIcon className="co-icon-space-r" />
         {t('kubevirt-plugin~Template support')}
