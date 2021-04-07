@@ -45,6 +45,7 @@ export const useResolvedExtensions = <E extends Extension>(
   React.useEffect(() => {
     let disposed = false;
 
+    // The promise returned by Promise.allSettled() never rejects; no need for catch-or-return.
     // eslint-disable-next-line promise/catch-or-return
     Promise.allSettled(
       extensions.map((e) => resolveExtension<typeof e, any, ResolvedExtension<E>>(e)),
@@ -54,6 +55,11 @@ export const useResolvedExtensions = <E extends Extension>(
         setResolvedExtensions(fulfilledValues);
         setErrors(rejectedReasons);
         setResolved(true);
+
+        if (rejectedReasons.length > 0) {
+          // eslint-disable-next-line no-console
+          console.error('Detected errors while resolving Console extensions', rejectedReasons);
+        }
       }
     });
 

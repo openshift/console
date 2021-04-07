@@ -1,5 +1,5 @@
 import { Plugin } from '@console/plugin-sdk';
-import { getExecutableCodeRef } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-utils';
+import { applyCodeRefSymbol } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-resolver';
 import { TopologyDecoratorProvider } from '../../../../../extensions';
 import { TopologyDecoratorQuadrant } from '../../../../../topology-types';
 import {
@@ -16,7 +16,7 @@ export const defaultDecoratorsPlugin: Plugin<TopologyDecoratorProvider> = [
       id: 'edit-decorator',
       priority: 1000,
       quadrant: TopologyDecoratorQuadrant.lowerRight,
-      decorator: getExecutableCodeRef(getEditDecorator),
+      decorator: applyCodeRefSymbol(getEditDecorator),
     },
   },
   {
@@ -25,7 +25,7 @@ export const defaultDecoratorsPlugin: Plugin<TopologyDecoratorProvider> = [
       id: 'url-decorator',
       priority: 1000,
       quadrant: TopologyDecoratorQuadrant.upperRight,
-      decorator: getExecutableCodeRef(getUrlDecorator),
+      decorator: applyCodeRefSymbol(getUrlDecorator),
     },
   },
   {
@@ -34,7 +34,7 @@ export const defaultDecoratorsPlugin: Plugin<TopologyDecoratorProvider> = [
       id: 'build-decorator',
       priority: 1000,
       quadrant: TopologyDecoratorQuadrant.lowerLeft,
-      decorator: getExecutableCodeRef(getBuildDecorator),
+      decorator: applyCodeRefSymbol(getBuildDecorator),
     },
   },
   {
@@ -43,7 +43,7 @@ export const defaultDecoratorsPlugin: Plugin<TopologyDecoratorProvider> = [
       id: 'alerts-decorator',
       priority: 1000,
       quadrant: TopologyDecoratorQuadrant.upperLeft,
-      decorator: getExecutableCodeRef(getAlertsDecorator),
+      decorator: applyCodeRefSymbol(getAlertsDecorator),
     },
   },
 ];
