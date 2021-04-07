@@ -2,3 +2,9 @@
   width: 100%;
   margin-bottom: var(--pf-global--spacer--md);
 }
+
+.kv-create-vm-modal__footer {
+  // --pf-global--ZIndex--xs == 100
+  z-index: calc(var(--pf-global--ZIndex--xs) - 4); 
+  display: block;
+}
