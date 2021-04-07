@@ -14,6 +14,7 @@ import { NooBaaNamespaceStoreModel } from '../../models';
 import { NamespaceStoreKind } from '../../types';
 
 export const NamespaceStoreDropdown: React.FC<NamespaceStoreDropdownProps> = ({
+  id,
   namespace,
   onChange,
   className,
@@ -95,13 +96,14 @@ export const NamespaceStoreDropdown: React.FC<NamespaceStoreDropdownProps> = ({
         isOpen={isOpen}
         dropdownItems={dropdownItems}
         onSelect={() => setOpen(false)}
-        id="noobaa-namespace-store"
+        id={id}
       />
     </div>
   );
 };
 
 type NamespaceStoreDropdownProps = {
+  id: string;
   namespace: string;
   onChange?: (NamespaceStoreKind) => void;
   className?: string;

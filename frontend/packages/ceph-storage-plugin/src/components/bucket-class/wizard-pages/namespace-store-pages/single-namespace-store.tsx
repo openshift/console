@@ -25,6 +25,7 @@ export const SingleNamespaceStorePage: React.FC<SingleNamespaceStoreProps> = Rea
         <Form className="nb-create-bc-step-page-form">
           <FormGroup className="nb-create-bc-step-page-form" fieldId="namespacestore-input">
             <NamespaceStoreDropdown
+              id="namespacestore-input"
               className="nb-create-bc-step-page-form__dropdown"
               namespace={namespace}
               onChange={handleNSStateChange}
