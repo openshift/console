@@ -38,6 +38,7 @@ import * as redhatLogoImg from '../imgs/logos/redhat.svg';
 import { GuidedTourMastheadTrigger } from '@console/app/src/components/tour';
 import { ConsoleLinkModel } from '../models';
 import { languagePreferencesModal } from './modals';
+import { withTelemetry } from '@console/shared/src/hoc';
 
 const SystemStatusButton = ({ statuspageData, className }) => {
   const { t } = useTranslation();
@@ -246,7 +247,7 @@ class MastheadToolbarContents_ extends React.Component {
   }
 
   _launchActions = () => {
-    const { clusterID, consoleLinks, t } = this.props;
+    const { clusterID, consoleLinks, t, fireTelemetryEvent } = this.props;
     const launcherItems = this._getAdditionalLinks(consoleLinks?.data, 'ApplicationMenu');
 
     const sections = [];
@@ -266,7 +267,8 @@ class MastheadToolbarContents_ extends React.Component {
             image: <img src={redhatLogoImg} alt="" />,
             callback: () => {
               fireTelemetryEvent('Launcher Menu Accessed', {
-                item: 'OpenShift Cluster Manager',
+                id: 'OpenShift Cluster Manager',
+                name: 'OpenShift Cluster Manager',
               });
             },
           },
@@ -293,7 +295,8 @@ class MastheadToolbarContents_ extends React.Component {
           image: <img src={_.get(item, 'spec.applicationMenu.imageURL')} alt="" />,
           callback: () => {
             fireTelemetryEvent('Launcher Menu Accessed', {
-              item: _.get(item, 'spec.text'),
+              id: item.metadata.name,
+              name: _.get(item, 'spec.text'),
             });
           },
         });
@@ -304,7 +307,7 @@ class MastheadToolbarContents_ extends React.Component {
   };
 
   _helpActions(additionalHelpActions) {
-    const { flags, cv, t } = this.props;
+    const { flags, cv, t, fireTelemetryEvent } = this.props;
     const helpActions = [];
     const reportBugLink = cv && cv.data ? getReportBugLink(cv.data) : null;
 
@@ -688,7 +691,9 @@ const mastheadToolbarStateToProps = (state) => ({
   canAccessNS: !!state[featureReducerName].get(FLAGS.CAN_GET_NS),
 });
 
-const MastheadToolbarContentsWithTranslation = withTranslation()(MastheadToolbarContents_);
+const MastheadToolbarContentsWithTranslation = withTranslation()(
+  withTelemetry(MastheadToolbarContents_),
+);
 const MastheadToolbarContents = connect(mastheadToolbarStateToProps, {
   drawerToggle: UIActions.notificationDrawerToggleExpanded,
 })(

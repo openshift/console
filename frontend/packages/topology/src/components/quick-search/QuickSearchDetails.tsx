@@ -4,6 +4,7 @@ import { CatalogItem } from '@console/dynamic-plugin-sdk';
 import { Button, ButtonVariant, TextContent, Title } from '@patternfly/react-core';
 import './QuickSearchDetails.scss';
 import { handleCta } from './utils/quick-search-utils';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 
 interface QuickSearchDetailsProps {
   selectedItem: CatalogItem;
@@ -12,6 +13,7 @@ interface QuickSearchDetailsProps {
 
 const QuickSearchDetails: React.FC<QuickSearchDetailsProps> = ({ selectedItem, closeModal }) => {
   const { t } = useTranslation();
+  const fireTelemetryEvent = useTelemetry();
 
   return (
     <div className="odc-quick-search-details">
@@ -25,12 +27,7 @@ const QuickSearchDetails: React.FC<QuickSearchDetailsProps> = ({ selectedItem, c
         variant={ButtonVariant.primary}
         className="odc-quick-search-details__form-button"
         onClick={(e) => {
-          handleCta(e, selectedItem, closeModal);
-          fireTelemetryEvent('Quick Search Used', {
-            id: selectedItem.uid,
-            type: selectedItem.type,
-            name: selectedItem.name,
-          });
+          handleCta(e, selectedItem, closeModal, fireTelemetryEvent);
         }}
       >
         {selectedItem.cta.label}

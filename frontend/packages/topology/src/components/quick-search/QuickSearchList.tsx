@@ -21,6 +21,7 @@ import './QuickSearchList.scss';
 import { CatalogLinkData } from './utils/quick-search-types';
 import { handleCta } from './utils/quick-search-utils';
 import { Link } from 'react-router-dom';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 
 interface QuickSearchListProps {
   listItems: CatalogItem[];
@@ -40,6 +41,7 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
   closeModal,
 }) => {
   const { t } = useTranslation();
+  const fireTelemetryEvent = useTelemetry();
 
   const getIcon = (item: CatalogItem) => {
     const { iconImg, iconClass } = getIconProps(item);
@@ -70,12 +72,7 @@ const QuickSearchList: React.FC<QuickSearchListProps> = ({
               'odc-quick-search-list__item--highlight': item.uid === selectedItemId,
             })}
             onDoubleClick={(e: React.SyntheticEvent) => {
-              handleCta(e, item, closeModal);
-              fireTelemetryEvent('Quick Search Used', {
-                id: item.uid,
-                type: item.type,
-                name: item.name,
-              });
+              handleCta(e, item, closeModal, fireTelemetryEvent);
             }}
           >
             <DataListItemRow className="odc-quick-search-list__item-row">

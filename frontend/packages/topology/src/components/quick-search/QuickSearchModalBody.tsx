@@ -12,6 +12,7 @@ import './QuickSearchButton.scss';
 import './QuickSearchModalBody.scss';
 import { CatalogLinkData, QuickSearchData } from './utils/quick-search-types';
 import { handleCta } from './utils/quick-search-utils';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 
 interface QuickSearchModalBodyProps {
   allCatalogItemsLoaded: boolean;
@@ -35,6 +36,7 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
   const [viewAll, setViewAll] = React.useState<CatalogLinkData[]>(null);
   const listCatalogItems = catalogItems?.slice(0, 5);
   const ref = React.useRef<HTMLDivElement>(null);
+  const fireTelemetryEvent = useTelemetry();
 
   React.useEffect(() => {
     if (searchTerm) {
@@ -88,15 +90,10 @@ const QuickSearchModalBody: React.FC<QuickSearchModalBodyProps> = ({
   const onEnter = React.useCallback(
     (e) => {
       if (selectedItem) {
-        handleCta(e, selectedItem, closeModal);
-        fireTelemetryEvent('Quick Search Used', {
-          id: selectedItem.uid,
-          type: selectedItem.type,
-          name: selectedItem.name,
-        });
+        handleCta(e, selectedItem, closeModal, fireTelemetryEvent);
       }
     },
-    [closeModal, selectedItem],
+    [closeModal, fireTelemetryEvent, selectedItem],
   );
 
   const selectPrevious = React.useCallback(() => {

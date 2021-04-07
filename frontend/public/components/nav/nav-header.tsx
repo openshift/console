@@ -4,6 +4,7 @@ import { CaretDownIcon } from '@patternfly/react-icons';
 import { Perspective, useExtensions, isPerspective } from '@console/plugin-sdk';
 import { history } from '../utils';
 import { useActivePerspective } from '@console/shared';
+import { useTelemetry } from '@console/shared/src/hooks/useTelemetry';
 
 export type NavHeaderProps = {
   onPerspectiveSelected: () => void;
@@ -16,6 +17,7 @@ const NavHeader: React.FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
   const togglePerspectiveOpen = React.useCallback(() => {
     setPerspectiveDropdownOpen(!isPerspectiveDropdownOpen);
   }, [isPerspectiveDropdownOpen]);
+  const fireTelemetryEvent = useTelemetry();
 
   const onPerspectiveSelect = React.useCallback(
     (event: React.MouseEvent<HTMLLinkElement>, perspective: Perspective): void => {
@@ -24,12 +26,14 @@ const NavHeader: React.FC<NavHeaderProps> = ({ onPerspectiveSelected }) => {
         setActivePerspective(perspective.properties.id);
         // Navigate to root and let the default page determine where to go to next
         history.push('/');
+        fireTelemetryEvent('Perspective Changed', {
+          perspective: perspective.properties.id,
+        });
       }
-
       setPerspectiveDropdownOpen(false);
       onPerspectiveSelected && onPerspectiveSelected();
     },
-    [activePerspective, onPerspectiveSelected, setActivePerspective],
+    [activePerspective, fireTelemetryEvent, onPerspectiveSelected, setActivePerspective],
   );
 
   const renderToggle = React.useCallback(

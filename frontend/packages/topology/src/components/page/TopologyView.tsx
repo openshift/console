@@ -103,12 +103,15 @@ export const ConnectedTopologyView: React.FC<ComponentProps> = ({
   const [isQuickSearchOpen, setIsQuickSearchOpen] = React.useState<boolean>(
     !!getQueryArgument('catalogSearch'),
   );
-  const setIsQuickSearchOpenAndFireEvent = React.useCallback((open: boolean) => {
-    if (open) {
-      fireTelemetryEvent('Quick Search Accessed');
-    }
-    setIsQuickSearchOpen(open);
-  }, [fireTelemetryEvent]);
+  const setIsQuickSearchOpenAndFireEvent = React.useCallback(
+    (open: boolean) => {
+      if (open) {
+        fireTelemetryEvent('Quick Search Accessed');
+      }
+      setIsQuickSearchOpen(open);
+    },
+    [fireTelemetryEvent],
+  );
   const appliedFilters = useAppliedDisplayFilters();
   const [displayFilterExtensions, displayFilterExtensionsResolved] = useResolvedExtensions<
     TopologyDisplayFilters

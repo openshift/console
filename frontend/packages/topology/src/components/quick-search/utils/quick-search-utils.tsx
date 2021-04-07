@@ -55,10 +55,20 @@ export const useTransformedQuickStarts = (quickStarts: QuickStart[]): CatalogIte
   );
 };
 
-export const handleCta = (e: React.SyntheticEvent, item: CatalogItem, closeModal: () => void) => {
+export const handleCta = (
+  e: React.SyntheticEvent,
+  item: CatalogItem,
+  closeModal: () => void,
+  fireTelemetryEvent: (event: string, properties?: {}) => void,
+) => {
   e.preventDefault();
   const { href, callback } = item.cta;
   if (callback) {
+    fireTelemetryEvent('Quick Search Used', {
+      id: item.uid,
+      type: item.type,
+      name: item.name,
+    });
     closeModal();
     callback();
     removeQueryArgument('catalogSearch');

@@ -1,5 +1,4 @@
 import { Extension, ExtensionDeclaration, CodeRef } from '../types';
-import { JSONSchema6Object } from 'json-schema';
 
 export type TelemetryListener = ExtensionDeclaration<
   'console.telemetry/listener',
@@ -10,10 +9,7 @@ export type TelemetryListener = ExtensionDeclaration<
 >;
 
 // P should be valid JSON
-export type TelemetryEventListener = <P extends JSONSchema6Object = JSONSchema6Object>(
-  eventType: string,
-  properties?: P,
-) => void;
+export type TelemetryEventListener = <P = any>(eventType: string, properties?: P) => void;
 
 // Type guards
 

@@ -245,12 +245,13 @@ const CaptureTelemetry = React.memo(() => {
 
   // notify of identity change
   const user = useSelector(({ UI }) => UI.get('user'));
-  const clusterId = useSelector(({ UI }) => UI.get('clusterID'));
   React.useEffect(() => {
-    if (user && clusterId) {
-      fireTelemetryEvent('identify', { clusterId, user });
+    if (user.metadata?.uid || user.metadata?.name) {
+      fireTelemetryEvent('identify', { user });
     }
-  }, [clusterId, user, fireTelemetryEvent]);
+    // Only trigger identify event when the user identifier changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user.metadata?.uid || user.metadata?.name, fireTelemetryEvent]);
 
   // notify url change events
   // Debouncing the url change events so that redirects don't fire multiple events.
@@ -269,6 +270,8 @@ const CaptureTelemetry = React.memo(() => {
       }
     });
   }, [fireUrlChangeEvent]);
+
+  return null;
 });
 
 graphQLReady.onReady(() => {

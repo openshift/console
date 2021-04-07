@@ -67,7 +67,11 @@ describe('usePinnedResources', () => {
   it('returns some default pins if there are no other pins defined and the extension has default pins', async () => {
     // Mock empty old data
     useActivePerspectiveMock.mockReturnValue(['dev']);
-    useUserSettingsCompatibilityMock.mockReturnValue([{}, setPinnedResourcesMock, true]);
+    useUserSettingsCompatibilityMock.mockImplementation((configKey, storageKey, defaultPins) => [
+      defaultPins,
+      setPinnedResourcesMock,
+      true,
+    ]);
 
     const { result } = testHook(() => usePinnedResources());
 
