@@ -42,4 +42,12 @@
   max-width: 100px;
 }
 
+.lso-create-lvs__select-nodes {
+// overrides extra space added by `co-m-nav-title`
+  .co-m-nav-title {
+    padding: 0;
+    margin: 0;
+  }
+}
+
 
