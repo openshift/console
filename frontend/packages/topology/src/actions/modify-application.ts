@@ -29,7 +29,6 @@ export const ModifyApplication = (kind: K8sKind, obj: K8sResourceKind): KebabOpt
 export const EditApplication = (model: K8sKind, obj: K8sResourceKind): KebabOption => {
   const annotation = obj?.metadata?.annotations?.['openshift.io/generated-by'];
   const isFromDevfile = obj?.metadata?.annotations?.isFromDevfile;
-  const isFromJarUpload = obj?.metadata?.annotations?.isFromJarUpload;
   return {
     // t('topology~Edit {{applicationName}}')
     labelKey: 'topology~Edit {{applicationName}}',
@@ -38,8 +37,7 @@ export const EditApplication = (model: K8sKind, obj: K8sResourceKind): KebabOpti
     },
     hidden:
       (obj.kind !== KnativeServiceModel.kind && annotation !== 'OpenShiftWebConsole') ||
-      !!isFromDevfile ||
-      !!isFromJarUpload,
+      !!isFromDevfile,
     href: `/edit/ns/${obj.metadata.namespace}?name=${obj.metadata.name}&kind=${obj.kind ||
       model.kind}`,
     accessReview: {

@@ -249,6 +249,7 @@ export const appResources: AppResources = {
         annotations: {
           'app.openshift.io/vcs-ref': 'master',
           'app.openshift.io/vcs-uri': 'https://github.com/divyanshiGupta/nationalparks-py',
+          jarFileName: 'demo-app.jar',
         },
       },
       spec: {
@@ -549,6 +550,9 @@ export const gitImportInitialValues: GitImportFormData = {
   },
   build: {
     env: [],
+    source: {
+      type: 'Git',
+    },
     triggers: { webhook: true, image: true, config: true },
     strategy: 'Source',
   },

@@ -118,6 +118,11 @@ export const defaultData: DeployImageFormData = {
       defaultLimitUnit: 'Mi',
     },
   },
+  fileUpload: {
+    name: 'python',
+    value: '',
+    javaArgs: '',
+  },
   healthChecks: healthChecksProbeInitialData,
 };
 

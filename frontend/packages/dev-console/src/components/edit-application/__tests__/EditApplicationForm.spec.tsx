@@ -11,6 +11,7 @@ import AppSection from '../../import/app/AppSection';
 import AdvancedSection from '../../import/advanced/AdvancedSection';
 import { CreateApplicationFlow } from '../edit-application-utils';
 import EditApplicationForm from '../EditApplicationForm';
+import JarSection from '../../import/jar/section/JarSection';
 
 jest.mock('react-i18next', () => {
   const reactI18next = require.requireActual('react-i18next');
@@ -146,5 +147,18 @@ describe('EditApplicationForm', () => {
     );
     expect(wrapper.find(AppSection).exists()).toBe(true);
     expect(wrapper.find(AdvancedSection).exists()).toBe(true);
+  });
+
+  it('should show JarSection, AppSection, AdvancedSection, for Upload Jar Form', () => {
+    const wrapper = shallow(
+      <EditApplicationForm {...componentProps} createFlowType={CreateApplicationFlow.JarUpload} />,
+    );
+
+    expect(wrapper.find(AppSection).exists()).toBe(true);
+    expect(wrapper.find(JarSection).exists()).toBe(true);
+    expect(wrapper.find(AdvancedSection).exists()).toBe(true);
+    expect(wrapper.find(GitSection).exists()).toBe(false);
+    expect(wrapper.find(IconSection).exists()).toBe(true);
+    expect(wrapper.find(PipelineSection).exists()).toBe(false);
   });
 });
