@@ -25,6 +25,7 @@ const ReviewPage: React.FC<ReviewPageProps> = ({ state }) => {
     hubNamespaceStore,
     cacheBackingStore,
     timeToLive,
+    writeNamespaceStore,
   } = state;
   const { error, isLoading } = state;
   const { t } = useTranslation();
@@ -56,6 +57,16 @@ const ReviewPage: React.FC<ReviewPageProps> = ({ state }) => {
             <span className="text-secondary">{`${timeToLive} ms`}</span>
           </ReviewListBody>
         </>
+      )}
+      {namespacePolicyType === NamespacePolicyType.MULTI && (
+        <ReviewListBody hideIcon>
+          <span>{t('ceph-storage-plugin~Resources ')}</span>&nbsp;
+          <p>{t('ceph-storage-plugin~Selected read namespace stores ')}</p>
+          <StoreCard resources={readNamespaceStore} />
+          <br />
+          <span>{t('ceph-storage-plugin~Selected write namespace store ')}</span>
+          <span className="text-secondary">{getName(writeNamespaceStore[0])}</span>
+        </ReviewListBody>
       )}
     </>
   );

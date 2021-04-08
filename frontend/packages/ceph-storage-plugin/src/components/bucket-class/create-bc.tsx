@@ -22,6 +22,7 @@ import './create-bc.scss';
 import { NamespacePolicyPage } from './wizard-pages/namespace-policy-page';
 import { SingleNamespaceStorePage } from './wizard-pages/namespace-store-pages/single-namespace-store';
 import { CacheNamespaceStorePage } from './wizard-pages/namespace-store-pages/cache-namespace-store';
+import { MultiNamespaceStorePage } from './wizard-pages/namespace-store-pages/multi-namespace-store';
 import { BucketClassType, NamespacePolicyType } from '../../constants/bucket-class';
 import { validateBucketClassName, validateDuration } from '../../utils/bucket-class';
 import { NooBaaBucketClassModel } from '../../models';
@@ -54,6 +55,8 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
         return <SingleNamespaceStorePage state={state} dispatch={dispatch} namespace={ns} />;
       case NamespacePolicyType.CACHE:
         return <CacheNamespaceStorePage state={state} dispatch={dispatch} namespace={ns} />;
+      case NamespacePolicyType.MULTI:
+        return <MultiNamespaceStorePage state={state} dispatch={dispatch} namespace={ns} />;
       default:
         return null;
     }
@@ -98,7 +101,21 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
               namespacePolicy: {
                 type: currentState.namespacePolicyType,
                 single: {
-                  resource: currentState.readNamespaceStore[0]?.metadata?.name,
+                  resource: getName(currentState.readNamespaceStore[0]),
+                },
+              },
+            },
+          };
+          break;
+        case NamespacePolicyType.MULTI:
+          payload = {
+            ...metadata,
+            spec: {
+              namespacePolicy: {
+                type: state.namespacePolicyType,
+                multi: {
+                  writeResource: getName(state.writeNamespaceStore[0]),
+                  readResources: state.readNamespaceStore.map(getName),
                 },
               },
             },
@@ -106,12 +123,7 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
           break;
         case NamespacePolicyType.CACHE:
           payload = {
-            apiVersion: apiVersionForModel(NooBaaBucketClassModel),
-            kind: NooBaaBucketClassModel.kind,
-            metadata: {
-              name: currentState.bucketClassName,
-              namespace: ns,
-            },
+            ...metadata,
             spec: {
               namespacePolicy: {
                 type: currentState.namespacePolicyType,
@@ -119,13 +131,13 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
                   caching: {
                     ttl: currentState.timeToLive,
                   },
-                  hubResource: currentState.hubNamespaceStore?.metadata.name,
+                  hubResource: getName(currentState.hubNamespaceStore),
                 },
               },
               placementPolicy: {
                 tiers: [
                   {
-                    backingStores: [currentState.cacheBackingStore?.metadata.name],
+                    backingStores: [getName(currentState.cacheBackingStore)],
                   },
                 ],
               },
@@ -175,6 +187,9 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
       return (
         !!state.hubNamespaceStore && !!state.cacheBackingStore && validateDuration(state.timeToLive)
       );
+    }
+    if (state.namespacePolicyType === NamespacePolicyType.MULTI) {
+      return state.readNamespaceStore.length >= 1 && state.writeNamespaceStore.length === 1;
     }
     return false;
   };
