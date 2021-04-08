@@ -2,11 +2,15 @@ import { TFunction } from 'i18next';
 
 export const storageClassTooltip = (t: TFunction) =>
   t(
-    'ceph-storage-plugin~The Storage Class will be used to request storage from the underlying infrastructure to create the backing persistent volumes that will be used to provide the OpenShift Container Storage (OCS) service.',
+    'ceph-storage-plugin~The infrastructure storage class used by OpenShift Container Storage to write its data and metadata.',
+  );
+export const attachedDevicesStorageClassTooltip = (t: TFunction) =>
+  t(
+    'ceph-storage-plugin~Infrastructure storage class created by Local Storage Operator and used by OpenShift Container Storage to write its data and metadata.',
   );
 export const requestedCapacityTooltip = (t: TFunction) =>
   t(
-    'ceph-storage-plugin~The backing storage requested will be higher as it will factor in the requested capacity replica factor and fault tolerant costs associated with the requested capacity.',
+    'ceph-storage-plugin~The amount of capacity that would be dynamically allocated on the infrastructure storage class.',
   );
 export const arbiterText = (t: TFunction) =>
   t(

@@ -7,6 +7,7 @@ import { Dropdown } from '@console/internal/components/utils/dropdown';
 import {
   humanizeBinaryBytes,
   humanizeDecimalBytesPerSec,
+  FieldLevelHelp,
 } from '@console/internal/components/utils';
 import UtilizationBody from '@console/shared/src/components/dashboard/utilization-card/UtilizationBody';
 import { ByteDataTypes } from '@console/shared/src/graph-helper/data-utils';
@@ -43,7 +44,14 @@ const UtilizationCard: React.FC = () => {
   return (
     <DashboardCard>
       <DashboardCardHeader>
-        <DashboardCardTitle>{t('ceph-storage-plugin~Utilization')}</DashboardCardTitle>
+        <DashboardCardTitle>
+          {t('ceph-storage-plugin~Utilization')}
+          <FieldLevelHelp>
+            {t(
+              'ceph-storage-plugin~Performance metrics over time showing IOPS, Latency and more. Each metric is a link to a detailed view of this metric.',
+            )}
+          </FieldLevelHelp>
+        </DashboardCardTitle>
         <Dropdown
           items={Duration(t)}
           onChange={setDuration}

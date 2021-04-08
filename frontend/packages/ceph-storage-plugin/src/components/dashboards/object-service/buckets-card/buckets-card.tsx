@@ -9,7 +9,7 @@ import {
   DashboardItemProps,
   withDashboardResources,
 } from '@console/internal/components/dashboard/with-dashboard-resources';
-import { FirehoseResource } from '@console/internal/components/utils';
+import { FieldLevelHelp, FirehoseResource } from '@console/internal/components/utils';
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { PrometheusResponse } from '@console/internal/components/graphs';
 import InventoryItem, {
@@ -99,7 +99,14 @@ const ObjectDashboardBucketsCard: React.FC<DashboardItemProps> = ({
   return (
     <DashboardCard>
       <DashboardCardHeader>
-        <DashboardCardTitle>{t('ceph-storage-plugin~Buckets')}</DashboardCardTitle>
+        <DashboardCardTitle>
+          {t('ceph-storage-plugin~Buckets')}
+          <FieldLevelHelp>
+            {t(
+              'ceph-storage-plugin~The number of buckets managed on Multicloud Object Gateway, Object bucket claims and the object bucket created as a result of object bucket claims on both Multicloud Object Gateway and RGW (if deployed).',
+            )}
+          </FieldLevelHelp>
+        </DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody>
         <InventoryItem

@@ -13,7 +13,7 @@ import {
   Text,
   TextContent,
 } from '@patternfly/react-core';
-import { humanizeBinaryBytes, Dropdown } from '@console/internal/components/utils';
+import { humanizeBinaryBytes, Dropdown, FieldLevelHelp } from '@console/internal/components/utils';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { StorageClassResourceKind, NodeKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { useDeepCompareMemoize } from '@console/shared';
@@ -134,7 +134,19 @@ export const StretchClusterFormGroup: React.FC<StretchClusterFormGroupProps> = (
   }, [dispatch, stretchClusterChecked, zones]);
 
   return (
-    <FormGroup fieldId="arbiter-cluster" label={t('ceph-storage-plugin~Stretch Cluster')}>
+    <FormGroup
+      fieldId="arbiter-cluster"
+      label={
+        <>
+          {t('ceph-storage-plugin~Stretch Cluster')}
+          <FieldLevelHelp>
+            {t(
+              'ceph-storage-plugin~OpenShift Container Storage deployment in two data centers, with an arbiter node to settle quorum decisions.',
+            )}
+          </FieldLevelHelp>
+        </>
+      }
+    >
       <Checkbox
         aria-label={t('ceph-storage-plugin~Enable Arbiter')}
         id="arbiter-cluster"

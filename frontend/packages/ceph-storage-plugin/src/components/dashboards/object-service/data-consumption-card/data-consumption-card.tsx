@@ -16,6 +16,7 @@ import {
   ClusterServiceVersionKind,
 } from '@console/operator-lifecycle-manager';
 import { useFlag } from '@console/shared/src/hooks/flag';
+import { FieldLevelHelp } from '@console/internal/components/utils';
 import { DataConsumptionDropdown } from './data-consumption-card-dropdown';
 import DataConsumptionGraph from './data-consumption-graph';
 import PerformanceGraph from './performance-graph';
@@ -84,7 +85,14 @@ const DataConsumptionCard: React.FC = () => {
   return (
     <DashboardCard>
       <DashboardCardHeader>
-        <DashboardCardTitle>{t('ceph-storage-plugin~Performance')}</DashboardCardTitle>
+        <DashboardCardTitle>
+          {t('ceph-storage-plugin~Performance')}
+          <FieldLevelHelp>
+            {t(
+              'ceph-storage-plugin~Shows an overview of the data consumption per provider or account collected from the day of the entity creation.',
+            )}
+          </FieldLevelHelp>
+        </DashboardCardTitle>
         <DataConsumptionDropdown
           selectedService={serviceType}
           setSelectedService={setServiceType}

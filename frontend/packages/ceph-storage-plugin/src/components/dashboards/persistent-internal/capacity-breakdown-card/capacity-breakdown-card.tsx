@@ -78,7 +78,7 @@ const BreakdownCard: React.FC<DashboardItemProps> = ({
           {t('ceph-storage-plugin~Used Capacity Breakdown')}
           <FieldLevelHelp>
             {t(
-              'ceph-storage-plugin~This card shows the used capacity for usable storage, broken-down by different Kubernetes resources. Usable storage is all the data that can be stored in the system after decreasing the replication policies.',
+              'ceph-storage-plugin~This card shows the used capacity for different Kubernetes resources. The figures shown represent the Usable storage, meaning that data replication is not taken into consideration.',
             )}
           </FieldLevelHelp>
         </DashboardCardTitle>
