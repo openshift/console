@@ -30,5 +30,12 @@
       "provider": { "$codeRef": "fileUploadContext.FileUploadContextProvider" },
       "useValueHook": { "$codeRef": "fileUploadContext.useValuesFileUploadContext" }
     }
+  },
+  {
+    "type": "console.redux-reducer",
+    "properties": {
+      "scope": "console",
+      "reducer": { "$codeRef": "reduxReducer" }
+    }
   }
 ]

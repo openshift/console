@@ -10,7 +10,6 @@ import {
   ModelDefinition,
   Plugin,
   ProjectDashboardInventoryItem,
-  ReduxReducer,
   ResourceDetailsPage,
   ResourceListPage,
   ResourceNSNavItem,
@@ -26,7 +25,6 @@ import {
 import { diskImportKindMapping } from './components/dashboards-page/overview-dashboard/utils';
 import * as models from './models';
 import { VirtualMachineYAMLTemplates, VMTemplateYAMLTemplates } from './models/templates';
-import kubevirtReducer from './redux';
 import { getTopologyPlugin, TopologyConsumedExtensions } from './topology/topology-plugin';
 
 import '@console/internal/i18n.js';
@@ -43,7 +41,6 @@ type ConsumedExtensions =
   | DashboardsOverviewInventoryItem
   | DashboardsInventoryItemGroup
   | DashboardsStorageCapacityDropdownItem
-  | ReduxReducer
   | ProjectDashboardInventoryItem
   | DashboardsOverviewResourceActivity
   | TopologyConsumedExtensions;
@@ -362,16 +359,6 @@ const plugin: Plugin<ConsumedExtensions> = [
         'sum((kube_persistentvolumeclaim_resource_requests_storage_bytes * on (namespace,persistentvolumeclaim) group_right() kube_pod_spec_volumes_persistentvolumeclaims_info{pod !~"virt-launcher-.*"}) * on (namespace,persistentvolumeclaim) group_left(storageclass, provisioner) (kube_persistentvolumeclaim_info * on (storageclass)  group_left(provisioner) kube_storageclass_info {provisioner=~"(.*rbd.csi.ceph.com)|(.*cephfs.csi.ceph.com)|(ceph.rook.io/block)"}))',
       ],
       required: FLAG_KUBEVIRT,
-    },
-  },
-  {
-    type: 'ReduxReducer',
-    properties: {
-      namespace: 'kubevirt',
-      reducer: kubevirtReducer,
-    },
-    flags: {
-      required: [FLAG_KUBEVIRT],
     },
   },
   {

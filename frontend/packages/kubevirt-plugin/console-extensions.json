@@ -60,13 +60,19 @@
       "required": ["KUBEVIRT"]
     }
   },
-
   {
     "type": "console.catalog/item-filter",
     "properties": {
       "catalogId": "dev-catalog",
       "type": "Template",
       "filter": { "$codeRef": "createVM.catalogVMTemplateFilter" }
+    }
+  },
+  {
+    "type": "console.redux-reducer",
+    "properties": {
+      "scope": "kubevirt",
+      "reducer": { "$codeRef": "reduxReducer" }
     },
     "flags": {
       "required": ["KUBEVIRT"]
