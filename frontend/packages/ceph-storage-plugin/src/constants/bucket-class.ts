@@ -3,10 +3,16 @@ import { TFunction } from 'i18next';
 export const bucketClassNameRegex: RegExp = /^[a-z0-9]+[a-z0-9-.]+[a-z0-9]+$/;
 export const consecutivePeriodsAndHyphensRegex: RegExp = /(\.\.)|(--)/g;
 
+export enum TimeUnits {
+  HOUR = 'Hour',
+  MIN = 'Min',
+}
+
 export enum BucketClassType {
   STANDARD = 'Standard',
   NAMESPACE = 'Namespace',
 }
+
 export const bucketClassTypeRadios = (t: TFunction) => [
   {
     id: BucketClassType.STANDARD,

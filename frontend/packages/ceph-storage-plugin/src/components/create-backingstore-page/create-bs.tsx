@@ -147,7 +147,7 @@ const CreateBackingStoreForm: React.FC<CreateBackingStoreFormProps> = withHandle
   return (
     <Form className={classNames('nb-endpoints-form', className)} onSubmit={onSubmit}>
       <FormGroup
-        label={t('ceph-storage-plugin~BackingStore  Name')}
+        label={t('ceph-storage-plugin~BackingStore Name')}
         fieldId="backingstore-name"
         className="nb-endpoints-form-entry"
         helperText={t('ceph-storage-plugin~A unique name for the BackingStore  within the project')}

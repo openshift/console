@@ -21,8 +21,9 @@ import { initialState, reducer, State } from './state';
 import './create-bc.scss';
 import { NamespacePolicyPage } from './wizard-pages/namespace-policy-page';
 import { SingleNamespaceStorePage } from './wizard-pages/namespace-store-pages/single-namespace-store';
+import { CacheNamespaceStorePage } from './wizard-pages/namespace-store-pages/cache-namespace-store';
 import { BucketClassType, NamespacePolicyType } from '../../constants/bucket-class';
-import { validateBucketClassName } from '../../utils/bucket-class';
+import { validateBucketClassName, validateDuration } from '../../utils/bucket-class';
 import { NooBaaBucketClassModel } from '../../models';
 import { PlacementPolicy } from '../../types';
 
@@ -48,10 +49,14 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
   }, [appName, ns]);
 
   const getNamespaceStorePage = () => {
-    if (state.namespacePolicyType === NamespacePolicyType.SINGLE) {
-      return <SingleNamespaceStorePage state={state} dispatch={dispatch} namespace={ns} />;
+    switch (state.namespacePolicyType) {
+      case NamespacePolicyType.SINGLE:
+        return <SingleNamespaceStorePage state={state} dispatch={dispatch} namespace={ns} />;
+      case NamespacePolicyType.CACHE:
+        return <CacheNamespaceStorePage state={state} dispatch={dispatch} namespace={ns} />;
+      default:
+        return null;
     }
-    return null;
   };
 
   const getPayload = (currentState: State) => {
@@ -99,6 +104,34 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
             },
           };
           break;
+        case NamespacePolicyType.CACHE:
+          payload = {
+            apiVersion: apiVersionForModel(NooBaaBucketClassModel),
+            kind: NooBaaBucketClassModel.kind,
+            metadata: {
+              name: currentState.bucketClassName,
+              namespace: ns,
+            },
+            spec: {
+              namespacePolicy: {
+                type: currentState.namespacePolicyType,
+                cache: {
+                  caching: {
+                    ttl: currentState.timeToLive,
+                  },
+                  hubResource: currentState.hubNamespaceStore?.metadata.name,
+                },
+              },
+              placementPolicy: {
+                tiers: [
+                  {
+                    backingStores: [currentState.cacheBackingStore?.metadata.name],
+                  },
+                ],
+              },
+            },
+          };
+          break;
         default:
           return null;
       }
@@ -138,16 +171,20 @@ const CreateBucketClass: React.FC<CreateBCProps> = ({ match }) => {
     if (state.namespacePolicyType === NamespacePolicyType.SINGLE) {
       return state.readNamespaceStore.length === 1 && state.writeNamespaceStore.length === 1;
     }
+    if (state.namespacePolicyType === NamespacePolicyType.CACHE) {
+      return (
+        !!state.hubNamespaceStore && !!state.cacheBackingStore && validateDuration(state.timeToLive)
+      );
+    }
     return false;
   };
 
   const creationConditionsSatisfied = () => {
-    if (state.bucketClassType === BucketClassType.STANDARD) {
-      if (!backingStoreNextConditions()) return false;
-    } else if (!namespaceStoreNextConditions()) return false;
-
-    if (!state.bucketClassName) return false;
-    return true;
+    return (
+      (state.bucketClassType === BucketClassType.STANDARD
+        ? backingStoreNextConditions()
+        : namespaceStoreNextConditions()) && !!state.bucketClassName
+    );
   };
 
   const steps = [

@@ -8,6 +8,9 @@ export const initialState = {
   namespacePolicyType: NamespacePolicyType.SINGLE,
   readNamespaceStore: [],
   writeNamespaceStore: [],
+  hubNamespaceStore: null,
+  cacheBackingStore: null,
+  timeToLive: 3600000,
   description: '',
   tier1Policy: PlacementPolicy.Spread,
   tier2Policy: null,
@@ -25,6 +28,9 @@ export type State = {
   namespacePolicyType: NamespacePolicyType;
   readNamespaceStore: NamespaceStoreKind[];
   writeNamespaceStore: NamespaceStoreKind[];
+  hubNamespaceStore: NamespaceStoreKind;
+  cacheBackingStore: BackingStoreKind;
+  timeToLive: number;
   tier1Policy: PlacementPolicy;
   tier2Policy: PlacementPolicy;
   tier1BackingStore: BackingStoreKind[];
@@ -40,6 +46,9 @@ export type Action =
   | { type: 'setNamespacePolicyType'; value: NamespacePolicyType }
   | { type: 'setReadNamespaceStore'; value: NamespaceStoreKind[] }
   | { type: 'setWriteNamespaceStore'; value: NamespaceStoreKind[] }
+  | { type: 'setHubNamespaceStore'; value: NamespaceStoreKind }
+  | { type: 'setCacheBackingStore'; value: BackingStoreKind }
+  | { type: 'setTimeToLive'; value: number }
   | { type: 'setDescription'; value: string }
   | { type: 'setPlacementPolicyTier1'; value: PlacementPolicy }
   | { type: 'setPlacementPolicyTier2'; value: PlacementPolicy }
@@ -62,6 +71,12 @@ export const reducer = (state: State, action: Action) => {
       return Object.assign({}, state, { readNamespaceStore: action.value });
     case 'setWriteNamespaceStore':
       return Object.assign({}, state, { writeNamespaceStore: action.value });
+    case 'setHubNamespaceStore':
+      return Object.assign({}, state, { hubNamespaceStore: action.value });
+    case 'setCacheBackingStore':
+      return Object.assign({}, state, { cacheBackingStore: action.value });
+    case 'setTimeToLive':
+      return Object.assign({}, state, { timeToLive: action.value });
     case 'setDescription':
       return Object.assign({}, state, { description: action.value });
     case 'setPlacementPolicyTier1':
