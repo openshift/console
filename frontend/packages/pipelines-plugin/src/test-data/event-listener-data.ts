@@ -55,7 +55,7 @@ export const EventlistenerTestData: EventListenerTestData = {
     apiVersion: 'triggers.tekton.dev/v1alpha1',
     kind: 'EventListener',
     metadata: {
-      name: 'listener',
+      name: 'el-listener-ref',
     },
     spec: {
       serviceAccountName: 'trigger-sa',
@@ -66,7 +66,7 @@ export const EventlistenerTestData: EventListenerTestData = {
     apiVersion: 'triggers.tekton.dev/v1alpha1',
     kind: 'EventListener',
     metadata: {
-      name: 'listener',
+      name: 'el-listener-name',
     },
     spec: {
       serviceAccountName: 'trigger-sa',

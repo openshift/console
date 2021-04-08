@@ -42,7 +42,7 @@ const TriggerTemplateSelector: React.FC<TriggerTemplateSelectorProps> = (props) 
       {selection ? (
         <div className="co-break-word odc-trigger-template-selector__confirmationMessage">
           <Trans t={t} ns="pipelines-plugin">
-            Are you sure you want to remove <b>{selection}</b> from <b>{pipeline.metadata.name}</b>?
+            Are you sure you want to remove <b>{{ selection }}</b> from <b>{{ pipelineName }}</b>?
           </Trans>
         </div>
       ) : (

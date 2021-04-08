@@ -167,21 +167,6 @@ export const TriggerTemplateModel: K8sKind = {
   color,
 };
 
-export const TriggerModel: K8sKind = {
-  apiGroup: 'triggers.tekton.dev',
-  apiVersion: 'v1alpha1',
-  label: 'Trigger',
-  plural: 'triggers',
-  abbr: 'T',
-  namespaced: true,
-  kind: 'Trigger',
-  id: 'trigger',
-  labelPlural: 'Triggers',
-  crd: true,
-  badge: BadgeType.TECH,
-  color,
-};
-
 export const EventListenerModel: K8sKind = {
   apiGroup: 'triggers.tekton.dev',
   apiVersion: 'v1alpha1',
