@@ -12,10 +12,10 @@ import {
 import { calculateRadius } from '@console/shared';
 import { RootState } from '@console/internal/redux';
 import { getServiceBindingStatus } from '@console/topology/src/utils';
-import { obsDropTargetSpec } from '@console/topology/src/operators/components/OperatorBackedService';
 import { KafkaConnectionModel } from '../../models';
 import { kafkaIcon } from '../../const';
 import TrapezoidBaseNode from './TrapezoidBaseNode';
+import { obsOrKafkaConnectionDropTargetSpec } from './rhoasComponentUtils';
 
 import './KafkaNode.scss';
 
@@ -25,6 +25,7 @@ interface StateProps {
 
 type KafkaNodeProps = {
   element: Node;
+  tooltipLabel?: string;
 } & WithSelectionProps &
   WithDragNodeProps &
   WithContextMenuProps &
@@ -36,18 +37,22 @@ const KafkaNode: React.FC<KafkaNodeProps> = ({
   selected,
   onSelect,
   serviceBinding,
+  tooltipLabel,
   ...props
 }) => {
   const { width, height } = element.getBounds();
   const size = Math.min(width, height);
   const iconRadius = Math.min(width, height) * 0.25;
   const { radius } = calculateRadius(size);
-  const spec = React.useMemo(() => obsDropTargetSpec(serviceBinding), [serviceBinding]);
+  const spec = React.useMemo(() => obsOrKafkaConnectionDropTargetSpec(serviceBinding), [
+    serviceBinding,
+  ]);
   const [dndDropProps, dndDropRef] = useDndDrop(spec, { element, ...props });
 
   return (
     <TrapezoidBaseNode
       className="KafkaNode"
+      tooltipLabel={tooltipLabel}
       onSelect={onSelect}
       icon={kafkaIcon}
       innerRadius={iconRadius}

@@ -5,6 +5,7 @@ import {
   MockKnativeResources,
   getEventSourceResponse,
   sampleDeploymentsCamelConnector,
+  kafkaConnectionData,
 } from '../../topology/__tests__/topology-knative-test-data';
 import {
   getKnativeServiceData,
@@ -19,10 +20,11 @@ import {
   getSinkUriTopologyEdgeItems,
   isOperatorBackedKnResource,
   isServerlessFunction,
+  getKnSourceKafkaTopologyEdgeItems,
 } from '../../topology/knative-topology-utils';
 import { EdgeType, NodeType } from '../../topology/topology-types';
 import { mockServiceData, mockRevisions } from '../__mocks__/traffic-splitting-utils-mock';
-import { EventSourceCronJobModel } from '../../models';
+import { EventSourceCronJobModel, EventSourceKafkaModel } from '../../models';
 import * as knativefetchutils from '../fetch-dynamic-eventsources-utils';
 import { SERVERLESS_FUNCTION_LABEL } from '../../const';
 
@@ -256,5 +258,71 @@ describe('SinkURI knative topology utils', () => {
     expect(knEventSrcEdge[0].source).toBe('1317f615-9636-11e9-b134-06a61d886b689_1');
     expect(knEventSrcEdge[0].target).toBe('1317f615-9636-11e9-b134-06a61d886b689_1_nodesinkuri');
     expect(knEventSrcEdge[0].type).toBe(EdgeType.EventSource);
+  });
+});
+
+describe('event-source-kafka', () => {
+  const kafkaData = getEventSourceResponse(EventSourceKafkaModel).data[0];
+  const mockKafkaData = {
+    ...kafkaData,
+    spec: {
+      ...kafkaData.spec,
+      bootstrapServers: ['my-first-x--xxx-xx-icyjelhe---wyj---xi.kafka.devshift.org:443'],
+      consumerGroup: 'foobar',
+      net: {
+        sasl: {
+          enable: true,
+          password: {
+            secretKeyRef: {
+              key: 'client-secret',
+              name: 'rh-cloud-services-service-account',
+            },
+          },
+          type: {},
+          user: {
+            secretKeyRef: {
+              key: 'client-id',
+              name: 'rh-cloud-services-service-account',
+            },
+          },
+        },
+        tls: {
+          caCert: {},
+          cert: {},
+          enable: true,
+          key: {},
+        },
+      },
+    },
+  };
+  it('shoud return correct edges', () => {
+    const expectedEdges = [
+      {
+        id: '1317f615-9636-11e9-b134-06a61d886b689_1_85ffdf52-59f5-4120-b2cd-e90c991845e0',
+        type: 'event-source-kafka-link',
+        source: '1317f615-9636-11e9-b134-06a61d886b689_1',
+        target: '85ffdf52-59f5-4120-b2cd-e90c991845e0',
+      },
+    ];
+    const edges = getKnSourceKafkaTopologyEdgeItems(mockKafkaData, kafkaConnectionData);
+    expect(edges).toEqual(expectedEdges);
+  });
+
+  it('should not return any edges', () => {
+    // downcastconst kafkaConnection = _.cloneDeep(getKafkaConnection);
+    const kafkaConnection = {
+      ...kafkaConnectionData,
+      data: [
+        {
+          ...kafkaConnectionData.data[0],
+          status: {
+            bootstrapServerHost: null,
+          },
+        },
+      ],
+    };
+    // kafkaConnection.data[0].status.bootstrapServerHost = null;
+    const edges = getKnSourceKafkaTopologyEdgeItems(mockKafkaData, kafkaConnection);
+    expect(edges).toEqual([]);
   });
 });

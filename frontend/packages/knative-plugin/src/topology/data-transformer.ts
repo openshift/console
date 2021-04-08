@@ -18,6 +18,7 @@ import {
   getDynamicChannelModelRefs,
 } from '../utils/fetch-dynamic-eventsources-utils';
 import { KnativeUtil, NodeType } from './topology-types';
+import { EventSourceKafkaModel } from '../models';
 
 const addKnativeTopologyData = (
   graphModel: Model,
@@ -49,7 +50,16 @@ export const getKnativeTopologyDataModel = (
   const channelResourceProps = getDynamicChannelModelRefs();
   const knativeTopologyGraphModel: Model = { nodes: [], edges: [] };
   const knSvcResources: K8sResourceKind[] = resources?.ksservices?.data ?? [];
-  const knEventSources: K8sResourceKind[] = getKnativeDynamicResources(resources, eventSourceProps);
+  const allKnEventSources: K8sResourceKind[] = getKnativeDynamicResources(
+    resources,
+    eventSourceProps,
+  );
+  const knEventSourcesKafka: K8sResourceKind[] = allKnEventSources.filter(
+    (knEventSource) => knEventSource.kind === EventSourceKafkaModel.kind,
+  );
+  const knEventSources: K8sResourceKind[] = allKnEventSources.filter(
+    (knEventSource) => knEventSource.kind !== EventSourceKafkaModel.kind,
+  );
   const knRevResources: K8sResourceKind[] = resources?.revisions?.data ?? [];
   const knChannelResources: K8sResourceKind[] = getKnativeDynamicResources(
     resources,
@@ -57,13 +67,13 @@ export const getKnativeTopologyDataModel = (
   );
   const knBrokerResources: K8sResourceKind[] = resources?.brokers?.data ?? [];
   const camelKameletBindingResources: K8sResourceKind[] = resources?.kameletbindings?.data ?? [];
-
   const addTopologyData = (KnResources: K8sResourceKind[], type?: string) => {
     addKnativeTopologyData(knativeTopologyGraphModel, KnResources, type, resources, utils);
   };
 
   addTopologyData(knSvcResources, NodeType.KnService);
   addTopologyData(knEventSources, NodeType.EventSource);
+  addTopologyData(knEventSourcesKafka, NodeType.EventSourceKafka);
   addTopologyData(knChannelResources, NodeType.PubSub);
   addTopologyData(knBrokerResources, NodeType.PubSub);
   addTopologyData(camelKameletBindingResources, NodeType.EventSource);

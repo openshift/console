@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
-import { useTranslation } from 'react-i18next';
 import { Tooltip } from '@patternfly/react-core';
 import {
   Node,
@@ -47,6 +46,7 @@ type TrapezoidBaseNodeProps = {
   edgeDragging?: boolean;
   dropTarget?: boolean;
   canDrop?: boolean;
+  tooltipLabel?: string;
 } & WithSelectionProps &
   WithDragNodeProps &
   WithDndDropProps &
@@ -74,8 +74,8 @@ const TrapezoidBaseNode: React.FC<TrapezoidBaseNodeProps> = ({
   onShowCreateConnector,
   onContextMenu,
   contextMenuOpen,
+  tooltipLabel,
 }) => {
-  const { t } = useTranslation();
   const [hover, hoverRef] = useHover();
   const anchorRef = useSvgAnchor();
   const { width, height } = element.getDimensions();
@@ -111,7 +111,7 @@ const TrapezoidBaseNode: React.FC<TrapezoidBaseNodeProps> = ({
 
   return (
     <Tooltip
-      content={t('rhoas-plugin~Create a binding connector')}
+      content={tooltipLabel}
       trigger="manual"
       isVisible={dropTarget && canDrop}
       animationDuration={0}
