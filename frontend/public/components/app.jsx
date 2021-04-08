@@ -7,7 +7,7 @@ import { Provider, useSelector } from 'react-redux';
 import { Route, Router, Switch } from 'react-router-dom';
 // AbortController is not supported in some older browser versions
 import 'abort-controller/polyfill';
-import store from '../redux';
+import store, { applyReduxExtensions } from '../redux';
 import { withTranslation } from 'react-i18next';
 
 import { detectFeatures } from '../actions/features';
@@ -30,6 +30,7 @@ import { useExtensions } from '@console/plugin-sdk';
 import {
   useResolvedExtensions,
   isContextProvider,
+  isReduxReducer,
   isStandaloneRoutePage,
 } from '@console/dynamic-plugin-sdk';
 import { initConsolePlugins } from '@console/dynamic-plugin-sdk/src/runtime/plugin-init';
@@ -212,9 +213,15 @@ class App_ extends React.PureComponent {
 }
 
 const AppWithExtensions = withTranslation()((props) => {
-  const [contextProviderExtensions, resolved] = useResolvedExtensions(isContextProvider);
+  const [reduxReducerExtensions, reducersResolved] = useResolvedExtensions(isReduxReducer);
+  const [contextProviderExtensions, providersResolved] = useResolvedExtensions(isContextProvider);
 
-  return resolved && <App_ contextProviderExtensions={contextProviderExtensions} {...props} />;
+  if (reducersResolved && providersResolved) {
+    applyReduxExtensions(reduxReducerExtensions);
+    return <App_ contextProviderExtensions={contextProviderExtensions} {...props} />;
+  }
+
+  return <LoadingBox />;
 });
 
 initConsolePlugins(pluginStore, store);

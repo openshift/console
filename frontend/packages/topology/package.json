@@ -21,6 +21,9 @@
       "topology": [
         "integration-tests/**/*.scenario.ts"
       ]
+    },
+    "exposedModules": {
+      "reduxReducer": "src/utils/reducer.ts"
     }
   }
 }
