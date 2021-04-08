@@ -79,9 +79,10 @@ export interface ResourceLimitFieldProps extends FieldProps {
 export interface MultiColumnFieldProps extends FieldProps {
   addLabel?: string;
   toolTip?: string;
-  emptyValues: { [name: string]: string };
+  emptyValues: { [name: string]: string | boolean };
   emptyMessage?: string;
   headers: ({ name: string; required: boolean } | string)[];
+  complexFields?: boolean[];
   children: React.ReactNode;
   spans?: gridItemSpanValueShape[];
 }
