@@ -1,5 +1,5 @@
 import { Plugin } from '@console/plugin-sdk';
-import { getExecutableCodeRef } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-utils';
+import { applyCodeRefSymbol } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-resolver';
 import {
   TopologyComponentFactory,
   TopologyDataModelFactory,
@@ -111,14 +111,14 @@ export const topologyPlugin: Plugin<TopologyConsumedExtensions> = [
   {
     type: 'Topology/DisplayFilters',
     properties: {
-      getTopologyFilters: getExecutableCodeRef(getTopologyFilters),
-      applyDisplayOptions: getExecutableCodeRef(applyDisplayOptions),
+      getTopologyFilters: applyCodeRefSymbol(getTopologyFilters),
+      applyDisplayOptions: applyCodeRefSymbol(applyDisplayOptions),
     },
   },
   {
     type: 'Topology/CreateConnector',
     properties: {
-      getCreateConnector: getExecutableCodeRef(getCreateConnector),
+      getCreateConnector: applyCodeRefSymbol(getCreateConnector),
     },
     flags: {
       required: [FLAG_KNATIVE_EVENTING],
@@ -130,7 +130,7 @@ export const topologyPlugin: Plugin<TopologyConsumedExtensions> = [
       id: 'knative-service-route-decorator',
       priority: 100,
       quadrant: TopologyDecoratorQuadrant.upperRight,
-      decorator: getExecutableCodeRef(getServiceRouteDecorator),
+      decorator: applyCodeRefSymbol(getServiceRouteDecorator),
     },
     flags: {
       required: [

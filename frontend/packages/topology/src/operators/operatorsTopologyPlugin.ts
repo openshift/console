@@ -1,5 +1,5 @@
 import { Plugin, PostFormSubmissionAction } from '@console/plugin-sdk';
-import { getExecutableCodeRef } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-utils';
+import { applyCodeRefSymbol } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-resolver';
 import {
   TopologyComponentFactory,
   TopologyDataModelFactory,
@@ -82,7 +82,7 @@ export const operatorsTopologyPlugin: Plugin<OperatorsTopologyConsumedExtensions
   {
     type: 'Topology/CreateConnector',
     properties: {
-      getCreateConnector: getExecutableCodeRef(getCreateConnector),
+      getCreateConnector: applyCodeRefSymbol(getCreateConnector),
     },
     flags: {
       required: [ALLOW_SERVICE_BINDING_FLAG],
@@ -91,8 +91,8 @@ export const operatorsTopologyPlugin: Plugin<OperatorsTopologyConsumedExtensions
   {
     type: 'Topology/DisplayFilters',
     properties: {
-      getTopologyFilters: getExecutableCodeRef(getTopologyFilters),
-      applyDisplayOptions: getExecutableCodeRef(applyDisplayOptions),
+      getTopologyFilters: applyCodeRefSymbol(getTopologyFilters),
+      applyDisplayOptions: applyCodeRefSymbol(applyDisplayOptions),
     },
   },
   {

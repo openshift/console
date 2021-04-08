@@ -8,6 +8,12 @@ import {
   subscribeToExtensions,
   extensionDiffListener,
 } from '@console/plugin-sdk/src/api/subscribeToExtensions';
+import {
+  FeatureFlag as DynamicFeatureFlag,
+  isFeatureFlag as isDynamicFeatureFlag,
+  SetFeatureFlag,
+} from '@console/dynamic-plugin-sdk';
+import { resolveExtension } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-resolver';
 import store from '../redux';
 import { GroupModel, UserModel, VolumeSnapshotContentModel } from '../models';
 import { ClusterVersionKind } from '../module/k8s';
@@ -16,12 +22,6 @@ import { setClusterID, setCreateProjectMessage, setUser } from './common';
 import client, { fetchURL } from '../graphql/client';
 import { SSARQuery } from './features.gql';
 import { SSARQueryType, SSARQueryVariables } from '../../@types/console/generated/graphql-schema';
-import {
-  FeatureFlag as DynamicFeatureFlag,
-  isFeatureFlag as isDynamicFeatureFlag,
-  SetFeatureFlag,
-} from '@console/dynamic-plugin-sdk/src/extensions/feature-flags';
-import { executeReferencedFunction } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-utils';
 
 export enum ActionType {
   SetFlag = 'setFlag',
@@ -266,16 +266,17 @@ const featureFlagController: SetFeatureFlag = (flag, enabled) => {
   store.dispatch(setFlag(flag, enabled));
 };
 
-const processedExtensions: DynamicFeatureFlag[] = [];
-
-// TODO(vojtech): use resolveExtension function from #8224 instead of resolving manually
 subscribeToExtensions<DynamicFeatureFlag>(
   extensionDiffListener((added) => {
     added.forEach((e) => {
-      if (!processedExtensions.includes(e)) {
-        processedExtensions.push(e);
-        executeReferencedFunction(e.properties.handler, featureFlagController);
-      }
+      resolveExtension(e)
+        .then((resolvedExtension) => {
+          resolvedExtension.properties.handler(featureFlagController);
+        })
+        .catch((error) => {
+          // eslint-disable-next-line no-console
+          console.error(error);
+        });
     });
   }),
   isDynamicFeatureFlag,
