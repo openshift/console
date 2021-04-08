@@ -380,6 +380,7 @@ export type PrometheusHealthHandler = (
   responses: { response: PrometheusResponse; error: any }[],
   t?: TFunction,
   additionalResource?: FirehoseResult<K8sResourceKind | K8sResourceKind[]>,
+  infrastructure?: K8sResourceKind,
 ) => SubsystemHealth;
 
 export type ResourceHealthHandler<R extends ResourcesObject> = (

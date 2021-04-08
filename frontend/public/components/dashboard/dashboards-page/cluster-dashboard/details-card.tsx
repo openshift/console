@@ -6,6 +6,7 @@ import {
   FLAGS,
   getInfrastructureAPIURL,
   getInfrastructurePlatform,
+  isSingleNode,
 } from '@console/shared';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
@@ -100,6 +101,7 @@ const mapStateToProps = (state: RootState) => ({
 
 export const DetailsCard_ = connect(mapStateToProps)(
   ({ watchK8sResource, stopWatchK8sResource, openshiftFlag }: DetailsCardProps) => {
+    const { t } = useTranslation();
     const { infrastructure, infrastructureLoaded, infrastructureError } = React.useContext(
       ClusterDashboardContext,
     );
@@ -132,7 +134,6 @@ export const DetailsCard_ = connect(mapStateToProps)(
     const infrastuctureApiUrl = getInfrastructureAPIURL(infrastructure);
 
     const k8sGitVersion = getK8sGitVersion(k8sVersion);
-    const { t } = useTranslation();
 
     return (
       <DashboardCard data-test-id="details-card">
@@ -191,6 +192,15 @@ export const DetailsCard_ = connect(mapStateToProps)(
                 >
                   {cvChannel}
                 </DetailItem>
+                {isSingleNode(infrastructure) && (
+                  <DetailItem
+                    title={t('dashboard~Control plane high availability')}
+                    isLoading={false}
+                    valueClassName="co-select-to-copy"
+                  >
+                    {t('dashboard~No (single master)')}
+                  </DetailItem>
+                )}
               </>
             ) : (
               <DetailItem
