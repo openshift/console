@@ -33,12 +33,6 @@ export const getGatingFlagNames = (extensions: Extension[]): string[] =>
     ..._.flatMap(extensions.map((e) => e.flags.disallowed)),
   ]);
 
-export const mergeExtensionProperties = <E extends Extension>(e: E, properties: {}): E =>
-  Object.freeze({
-    ...e,
-    properties: Object.assign({}, e.properties, properties),
-  });
-
 /**
  * Provides access to Console plugin data.
  *

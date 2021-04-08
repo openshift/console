@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 
 import * as _ from 'lodash';
-import { mergeExtensionProperties } from '@console/plugin-sdk/src/store';
+import { mergeExtensionProperties } from '../utils/store';
 import {
   Extension,
   RemoteEntryModule,

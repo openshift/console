@@ -5,12 +5,12 @@ import {
   getPluginManifest,
   getExecutableCodeRefMock,
 } from '@console/dynamic-plugin-sdk/src/utils/test-utils';
+import { mergeExtensionProperties } from '@console/dynamic-plugin-sdk/src/utils/store';
 import {
   sanitizeExtension,
   augmentExtension,
   isExtensionInUse,
   getGatingFlagNames,
-  mergeExtensionProperties,
   PluginStore,
 } from '../store';
 import { Extension, ModelDefinition } from '../typings';
