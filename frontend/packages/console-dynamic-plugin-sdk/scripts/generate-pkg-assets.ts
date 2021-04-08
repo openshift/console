@@ -24,7 +24,7 @@ const createPackageJson = (packagePath: string) => {
 };
 
 const preparePkgAssets = () => {
-  !fs.existsSync('dist') && fs.mkdirSync(resolvePath('dist'));
+  fs.mkdirSync(resolvePath('dist'), { recursive: true });
   const pkgOutPath = resolvePath('dist/package.json');
   console.log('Generating Console plugin package.json');
   createPackageJson(pkgOutPath);

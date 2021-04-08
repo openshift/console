@@ -59,7 +59,7 @@ Dynamic plugins can expose modules representing additional code to be referenced
 at runtime. A separate [webpack chunk](https://webpack.js.org/guides/code-splitting/) is generated for
 each exposed module. Exposed modules are resolved relative to plugin's webpack `context` option.
 
-See [`ConsolePluginMetadata` type](https://github.com/openshift/console/frontend/packages/console-dynamic-plugin-sdk/src/schema/plugin-package.ts)
+See [`ConsolePluginMetadata` type](/frontend/packages/console-dynamic-plugin-sdk/src/schema/plugin-package.ts)
 for details on the `consolePlugin` object and its schema.
 
 ## `console-extensions.json`
