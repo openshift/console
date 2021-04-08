@@ -4,15 +4,18 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { AlertVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-
+import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
 import { RootState } from '../../redux';
 import { K8sKind, k8sList, referenceForModel, getResourceDescription } from '../../module/k8s';
 import { EmptyBox, ExpandableAlert, Kebab, LoadingBox, resourcePathFromModel } from '../utils';
 import { addIDPItems } from './oauth';
 import { TextFilter } from '../factory';
 import { fuzzyCaseInsensitive } from '../factory/table-filters';
-import { withExtensions, isGlobalConfig, GlobalConfig } from '@console/plugin-sdk';
 import i18next from 'i18next';
+import {
+  ClusterGlobalConfig,
+  isClusterGlobalConfig,
+} from '@console/dynamic-plugin-sdk/src/extensions/cluster-settings';
 
 const stateToProps = (state: RootState) => ({
   configResources: state.k8s.getIn(['RESOURCES', 'configResources']),
@@ -87,7 +90,7 @@ const GlobalConfigPage_: React.FC<GlobalConfigPageProps & GlobalConfigPageExtens
       const flattenedResponses = _.flatten(responses);
       const winnowedResponses = flattenedResponses.map((item) => ({
         model: item.model,
-        uid: item.metadata.uid,
+        id: item.metadata.uid,
         name: item.metadata.name,
         namespace: item.metadata.namespace,
         kind: item.kind,
@@ -98,14 +101,14 @@ const GlobalConfigPage_: React.FC<GlobalConfigPageProps & GlobalConfigPageExtens
           const apiExplorerLink = `/api-resource/cluster/${referenceForModel(item.model)}`;
           const resourceLink = resourcePathFromModel(item.model, item.name, item.namespace);
           return {
-            label: item.kind,
-            id: item.uid,
+            label: item.model.kind,
+            id: item.id,
             description: getResourceDescription(item.model),
             path: resourceLink,
             menuItems: [
-              editYAMLMenuItem(item.kind, resourceLink),
-              viewAPIExplorerMenuItem(item.kind, apiExplorerLink),
-              ...(item.kind === 'OAuth' ? oauthMenuItems : []),
+              editYAMLMenuItem(item.model.kind, resourceLink),
+              viewAPIExplorerMenuItem(item.model.kind, apiExplorerLink),
+              ...(item.model.kind === 'OAuth' ? oauthMenuItems : []),
             ],
           };
         })
@@ -190,14 +193,13 @@ const GlobalConfigPage_: React.FC<GlobalConfigPageProps & GlobalConfigPageExtens
   );
 };
 
-export const GlobalConfigPage = connect(stateToProps)(
-  withExtensions<GlobalConfigPageExtensionProps>({ globalConfigs: isGlobalConfig })(
-    GlobalConfigPage_,
-  ),
-);
+export const GlobalConfigPage = connect(stateToProps)((props) => {
+  const [resolvedExtensions] = useResolvedExtensions<ClusterGlobalConfig>(isClusterGlobalConfig);
+  return <GlobalConfigPage_ globalConfigs={resolvedExtensions} {...props} />;
+});
 
 type GlobalConfigPageExtensionProps = {
-  globalConfigs: GlobalConfig[];
+  globalConfigs: ClusterGlobalConfig[];
 };
 
 type GlobalConfigPageProps = GlobalConfigPageExtensionProps & {

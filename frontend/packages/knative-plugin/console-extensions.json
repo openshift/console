@@ -64,5 +64,21 @@
     "flags": {
       "required": ["FLAG_CAMEL_KAMELETS"]
     }
+  },
+  {
+    "type": "console.global-config",
+    "properties": {
+      "id": "knative-serving",
+      "name": "knative-serving",
+      "model": {
+        "group": "operator.knative.dev",
+        "version": "v1alpha1",
+        "kind": "KnativeServing"
+      },
+      "namespace": "knative-serving"
+    },
+    "flags": {
+      "required": ["FLAG_KNATIVE_SERVING"]
+    }
   }
 ]
