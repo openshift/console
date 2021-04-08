@@ -3,10 +3,11 @@ import * as _ from 'lodash';
 import { Helmet } from 'react-helmet';
 import { match } from 'react-router';
 import { Trans, useTranslation } from 'react-i18next';
-import { ActionGroup, Alert, Button, Checkbox, Popover } from '@patternfly/react-core';
+import { ActionGroup, Alert, Button, Checkbox } from '@patternfly/react-core';
 import {
   Dropdown,
   ExternalLink,
+  FieldLevelHelp,
   Firehose,
   history,
   NsDropdown,
@@ -661,18 +662,10 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
             <>
               <div className="form-group">
                 <fieldset>
-                  <Popover
-                    headerContent={<div>{t('olm~Update channel')}</div>}
-                    bodyContent={
-                      <div>{t('olm~The channel to track and receive the updates from.')}</div>
-                    }
-                  >
-                    <h5 className="co-required co-form-heading__popover">
-                      <Button variant="plain" className="co-form-heading__popover-button">
-                        {t('olm~Update channel')}
-                      </Button>
-                    </h5>
-                  </Popover>
+                  <label className="co-required">{t('olm~Update channel')}</label>
+                  <FieldLevelHelp>
+                    {t('olm~The channel to track and receive the updates from.')}
+                  </FieldLevelHelp>
                   <RadioGroup
                     currentValue={selectedUpdateChannel}
                     items={channels.map((ch) => ({ value: ch.name, title: ch.name }))}
@@ -685,7 +678,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
               </div>
               <div className="form-group">
                 <fieldset>
-                  <h5 className="co-required">{t('olm~Installation mode')}</h5>
+                  <label className="co-required">{t('olm~Installation mode')}</label>
                   <RadioInput
                     onChange={(e) => {
                       setInstallMode(e.target.value);
@@ -725,8 +718,10 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
                   </RadioInput>
                 </fieldset>
               </div>
-              <div className="form-group">
-                <h5 className="co-required">{t('olm~Installed Namespace')}</h5>
+              <div className="form-group form-group--doubled-bottom-margin">
+                <label className="co-required" htmlFor="dropdown-selectbox">
+                  {t('olm~Installed Namespace')}
+                </label>
                 {selectedInstallMode === InstallModeType.InstallModeTypeAllNamespaces &&
                   globalNamespaceInstallMode}
                 {selectedInstallMode === InstallModeType.InstallModeTypeOwnNamespace &&
@@ -734,20 +729,10 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
               </div>
               <div className="form-group">
                 <fieldset>
-                  <Popover
-                    headerContent={<div>{t('olm~Approval strategy')}</div>}
-                    bodyContent={
-                      <div>
-                        {t('olm~The strategy to determine either manual or automatic updates.')}
-                      </div>
-                    }
-                  >
-                    <h5 className="co-required co-form-heading__popover">
-                      <Button variant="plain" className="co-form-heading__popover-button">
-                        {t('olm~Approval strategy')}
-                      </Button>
-                    </h5>
-                  </Popover>
+                  <label className="co-required">{t('olm~Approval strategy')}</label>
+                  <FieldLevelHelp>
+                    {t('olm~The strategy to determine either manual or automatic updates.')}
+                  </FieldLevelHelp>
                   <RadioGroup
                     currentValue={selectedApproval}
                     items={[
