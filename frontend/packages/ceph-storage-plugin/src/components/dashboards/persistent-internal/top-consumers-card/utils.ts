@@ -1,9 +1,13 @@
 import * as _ from 'lodash';
 import { humanizeBinaryBytes } from '@console/internal/components/utils';
-import { PrometheusResponse, DataPoint } from '@console/internal/components/graphs';
+import {
+  PrometheusResult,
+  PrometheusResponse,
+  DataPoint,
+} from '@console/internal/components/graphs';
 
 export const getMetricType: GetMetricType = (resource, metricType) =>
-  _.get(resource, ['metric', metricType], '');
+  resource?.metric?.[metricType] ?? '';
 
 export const getGraphVectorStats: GetStats = (response, metricType, unit) => {
   return response.map((r) => {
@@ -18,10 +22,10 @@ export const getGraphVectorStats: GetStats = (response, metricType, unit) => {
 };
 
 export const sortResources: SortResourcesProps = (a, b) => {
-  const aVal = _.get(a, 'values');
-  const bVal = _.get(b, 'values');
-  const x = _.get(a, ['values', aVal.length - 1, 1]);
-  const y = _.get(b, ['values', bVal.length - 1, 1]);
+  const aVal = a?.values;
+  const bVal = b?.values;
+  const x: number = parseInt(a?.values?.[aVal.length - 1]?.[1], 10);
+  const y: number = parseInt(b?.values?.[bVal.length - 1]?.[1], 10);
   return y - x;
 };
 
@@ -36,9 +40,6 @@ type GetStats = (
   unit?: string,
 ) => DataPoint[][];
 
-type SortResourcesProps = (
-  a: PrometheusResponse['data']['result'],
-  b: PrometheusResponse['data']['result'],
-) => number;
+type SortResourcesProps = (a: PrometheusResult, b: PrometheusResult) => number;
 
 type GetMetricType = (resources: PrometheusMetricResult, metricType: string) => string;

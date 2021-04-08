@@ -1,5 +1,4 @@
 import { execSync } from 'child_process';
-import * as _ from 'lodash';
 import { browser, ExpectedConditions as until } from 'protractor';
 import { click } from '@console/shared/src/test-utils/utils';
 import { isNodeReady } from '@console/shared/src/selectors/node';
@@ -100,10 +99,8 @@ describe('Check add capacity functionality for ocs service', () => {
       expansionObjects.updatedClusterJSON = JSON.parse(
         execSync(`kubectl get -o json -n ${NS} ${KIND} ${expansionObjects.name}`).toString(),
       );
-      expansionObjects.updatedCnt = _.get(
-        expansionObjects.updatedClusterJSON,
-        'spec.storageDeviceSets[0].count',
-      );
+      expansionObjects.updatedCnt =
+        expansionObjects?.updatedClusterJSON?.spec?.storageDeviceSets?.[0]?.count;
     });
 
     it('Newly added capacity should takes into effect at the storage level', () => {
@@ -287,7 +284,7 @@ export type ExpansionObjectsType = {
   clusterJSON: any;
   previousCnt: number;
   updatedCnt: number;
-  updatedClusterJSON: {};
+  updatedClusterJSON: any;
   previousPods: PodType;
   updatedPods: PodType;
   previousOSDTree: { nodes: NodeType[] };

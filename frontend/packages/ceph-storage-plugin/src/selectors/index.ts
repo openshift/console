@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { Alert } from '@console/internal/components/monitoring/types';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sResourceKind, StorageClassResourceKind } from '@console/internal/module/k8s';
 import { FirehoseResult, convertToBaseValue } from '@console/internal/components/utils';
 import { cephStorageProvisioners } from '@console/shared/src/utils';
 import { OCS_OPERATOR } from '../constants';
@@ -23,16 +23,14 @@ export const filterCephAlerts = (alerts: Alert[]): Alert[] => {
 export const getCephPVs = (pvsData: K8sResourceKind[] = []): K8sResourceKind[] =>
   pvsData.filter((pv) => {
     return cephStorageProvisioners.some((provisioner: string) =>
-      _.get(pv, 'metadata.annotations["pv.kubernetes.io/provisioned-by"]', '').includes(
-        provisioner,
-      ),
+      (pv?.metadata?.annotations?.['pv.kubernetes.io/provisioned-by'] ?? '').includes(provisioner),
     );
   });
 
-const getPVStorageClass = (pv: K8sResourceKind) => _.get(pv, 'spec.storageClassName');
+const getPVStorageClass = (pv: K8sResourceKind) => pv?.spec?.storageClassName;
 const getStorageClassName = (pvc: K8sResourceKind) =>
-  _.get(pvc, ['metadata', 'annotations', 'volume.beta.kubernetes.io/storage-class']) ||
-  _.get(pvc, 'spec.storageClassName');
+  pvc?.spec?.storageClassName ||
+  pvc?.metadata?.annotations?.['volume.beta.kubernetes.io/storage-class'];
 const isBound = (pvc: K8sResourceKind) => pvc.status.phase === status.BOUND;
 
 export const getCephPVCs = (
@@ -52,12 +50,12 @@ export const getCephPVCs = (
 };
 
 export const getCephNodes = (nodesData: K8sResourceKind[] = []): K8sResourceKind[] =>
-  nodesData.filter((node) => _.keys(_.get(node, 'metadata.labels')).includes(cephStorageLabel));
+  nodesData.filter((node) => Object.keys(node?.metadata?.labels).includes(cephStorageLabel));
 
-export const getCephSC = (scData: K8sResourceKind[]): K8sResourceKind[] =>
+export const getCephSC = (scData: StorageClassResourceKind[]): K8sResourceKind[] =>
   scData.filter((sc) => {
     return cephStorageProvisioners.some((provisioner: string) =>
-      _.get(sc, 'provisioner', '').includes(provisioner),
+      (sc?.provisioner).includes(provisioner),
     );
   });
 
@@ -65,11 +63,8 @@ export const getOperatorVersion = (operator: K8sResourceKind): string =>
   operator?.status?.installedCSV;
 
 export const getOCSVersion = (items: FirehoseResult): string => {
-  const itemsData: K8sResourceKind[] = _.get(items, 'data');
-  const operator: K8sResourceKind = _.find(
-    itemsData,
-    (item) => _.get(item, 'spec.name') === OCS_OPERATOR,
-  );
+  const itemsData: K8sResourceKind[] = items?.data;
+  const operator: K8sResourceKind = _.find(itemsData, (item) => item?.spec?.name === OCS_OPERATOR);
   return getOperatorVersion(operator);
 };
 
