@@ -125,7 +125,7 @@ const CreateVMWizardFooterComponent: React.FC<CreateVMWizardFooterComponentProps
         const isBackButtonDisabled = isFirstStep || isAnyStepLocked || isLastTabErrorFatal;
 
         return (
-          <footer className={css(styles.wizardFooter)}>
+          <footer className={css(`${styles.wizardFooter} kv-create-vm-modal__footer`)}>
             <Prompt
               key="prompt"
               message={(location) => {
