@@ -16,7 +16,12 @@ import {
 import { Table, ListPage, getFilteredRows } from '@console/internal/components/factory';
 import { ResourceLink } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { getBucketName, getRegion, getBackingStoreType, getBSLabel } from '../../utils';
+import {
+  getBucketName,
+  getRegion,
+  getBackingStoreType,
+  getBSLabel,
+} from '../../utils/noobaa-utils';
 import CreateBackingStoreFormModal from '../create-backingstore-page/create-bs-modal';
 import { NooBaaBackingStoreModel } from '../../models';
 import { BackingStoreKind, PlacementPolicy } from '../../types';

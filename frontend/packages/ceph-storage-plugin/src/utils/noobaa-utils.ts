@@ -6,13 +6,14 @@ import { K8sResourceKind } from '@console/internal/module/k8s/types';
 import { StorageClass } from '@console/internal/components/storage-class-form';
 import { SecretModel } from '@console/internal/models';
 import { getAPIVersion } from '@console/shared/src/selectors/common';
-import { BackingStoreKind, BucketClassKind, PlacementPolicy } from '../types';
+import { BackingStoreKind, BucketClassKind, NamespaceStoreKind, PlacementPolicy } from '../types';
 import { StoreType } from '../constants/common';
 import {
   PROVIDERS_NOOBAA_MAP,
   BUCKET_LABEL_NOOBAA_MAP,
   BC_PROVIDERS,
   AWS_REGIONS,
+  NS_PROVIDERS_NOOBAA_MAP,
 } from '../constants/providers';
 
 export const filterNooBaaAlerts = (alerts: Alert[]): Alert[] =>
@@ -64,6 +65,16 @@ export const getBackingStoreType = (bs: BackingStoreKind): BC_PROVIDERS => {
   return type;
 };
 
+export const getNamespaceStoreType = (ns: NamespaceStoreKind): BC_PROVIDERS => {
+  let type: BC_PROVIDERS = null;
+  Object.entries(NS_PROVIDERS_NOOBAA_MAP).forEach(([k, v]) => {
+    if (ns?.spec?.[v]) {
+      type = k as BC_PROVIDERS;
+    }
+  });
+  return type;
+};
+
 export const getBucketName = (bs: BackingStoreKind): string => {
   const type = getBackingStoreType(bs);
   return bs.spec?.[PROVIDERS_NOOBAA_MAP[type]]?.[BUCKET_LABEL_NOOBAA_MAP[type]];
@@ -72,6 +83,11 @@ export const getBucketName = (bs: BackingStoreKind): string => {
 export const getRegion = (bs: BackingStoreKind): string => {
   const type = getBackingStoreType(bs);
   return bs.spec?.[PROVIDERS_NOOBAA_MAP[type]]?.region;
+};
+
+export const getNSRegion = (ns: NamespaceStoreKind): string => {
+  const type = getNamespaceStoreType(ns);
+  return ns.spec?.[NS_PROVIDERS_NOOBAA_MAP[type]]?.region;
 };
 
 export const getBackingStoreNames = (bc: BucketClassKind, tier: 0 | 1): string[] =>

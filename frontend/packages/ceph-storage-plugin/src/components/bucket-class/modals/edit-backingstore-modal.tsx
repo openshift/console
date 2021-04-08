@@ -18,7 +18,7 @@ import {
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
 import { getName } from '@console/shared';
 import { NooBaaBucketClassModel, NooBaaBackingStoreModel } from '../../../models';
-import { getBackingStoreNames, getBackingStorePolicy } from '../../../utils';
+import { getBackingStoreNames, getBackingStorePolicy } from '../../../utils/noobaa-utils';
 import BackingStoreSelection from '../backingstore-table';
 import {
   BackingStoreKind,

@@ -8,10 +8,12 @@ import {
   DropdownToggle,
 } from '@patternfly/react-core';
 import { useK8sGet } from '@console/internal/components/utils/k8s-get-hook';
+import { getName } from '@console/shared';
 import { ListKind } from 'public/module/k8s';
 import NamespaceStoreModal from './namespace-store-modal';
 import { NooBaaNamespaceStoreModel } from '../../models';
 import { NamespaceStoreKind } from '../../types';
+import { NamespacePolicyType } from '../../constants/bucket-class';
 
 export const NamespaceStoreDropdown: React.FC<NamespaceStoreDropdownProps> = ({
   id,
@@ -19,6 +21,9 @@ export const NamespaceStoreDropdown: React.FC<NamespaceStoreDropdownProps> = ({
   onChange,
   className,
   selectedKey,
+  enabledItems,
+  namespacePolicy,
+  creatorDisabled,
 }) => {
   const { t } = useTranslation();
   const [isOpen, setOpen] = React.useState(false);
@@ -40,37 +45,55 @@ export const NamespaceStoreDropdown: React.FC<NamespaceStoreDropdownProps> = ({
   React.useEffect(() => {
     const nnsDropdownItems = nnsList.reduce(
       (res, nns) => {
+        const name = getName(nns);
         res.push(
           <DropdownItem
             key={nns.metadata.uid}
             component="button"
-            id={nns?.metadata?.name}
+            id={name}
+            isDisabled={
+              namespacePolicy === NamespacePolicyType.MULTI &&
+              !enabledItems.some((itemName) => itemName === name)
+            }
             onClick={handleDropdownChange}
-            data-test={nns?.metadata?.name}
+            data-test={name}
             description={t('ceph-storage-plugin~Provider {{provider}} | Region: {{region}}', {
               provider: nns?.spec?.type,
               region: nns?.spec?.awsS3?.region,
             })}
           >
-            {nns?.metadata?.name}
+            {name}
           </DropdownItem>,
         );
         return res;
       },
-      [
-        <DropdownItem
-          data-test="create-new-namespacestore-button"
-          key="first-item"
-          component="button"
-          onClick={() => NamespaceStoreModal({ namespace })}
-        >
-          {t('ceph-storage-plugin~Create new NamespaceStore ')}
-        </DropdownItem>,
-        <DropdownSeparator key="separator" />,
-      ],
+      creatorDisabled
+        ? []
+        : [
+            <DropdownItem
+              data-test="create-new-namespacestore-button"
+              key="first-item"
+              component="button"
+              onClick={() => NamespaceStoreModal({ namespace })}
+            >
+              {t('ceph-storage-plugin~Create new NamespaceStore ')}
+            </DropdownItem>,
+            <DropdownSeparator key="separator" />,
+          ],
     );
     setDropdownItems(nnsDropdownItems);
-  }, [nnsObj, nnsLoaded, nnsErr, nnsList, t, handleDropdownChange, namespace]);
+  }, [
+    nnsObj,
+    nnsLoaded,
+    nnsErr,
+    nnsList,
+    t,
+    handleDropdownChange,
+    namespace,
+    creatorDisabled,
+    namespacePolicy,
+    enabledItems,
+  ]);
 
   return (
     <div className={className}>
@@ -87,6 +110,7 @@ export const NamespaceStoreDropdown: React.FC<NamespaceStoreDropdownProps> = ({
         toggle={
           <DropdownToggle
             id="nns-dropdown-id"
+            isDisabled={namespacePolicy === NamespacePolicyType.MULTI && enabledItems?.length === 0}
             data-test="nns-dropdown-toggle"
             onToggle={() => setOpen(!isOpen)}
           >
@@ -108,4 +132,7 @@ type NamespaceStoreDropdownProps = {
   onChange?: (NamespaceStoreKind) => void;
   className?: string;
   selectedKey?: string;
+  enabledItems?: string[];
+  namespacePolicy?: NamespacePolicyType;
+  creatorDisabled?: boolean;
 };
