@@ -11,3 +11,4 @@ export * from './redux';
 export * from './resource-metadata';
 export * from './yaml-templates';
 export * from './notification-alert';
+export * from './console-types';

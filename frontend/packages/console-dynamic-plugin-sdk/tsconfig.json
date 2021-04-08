@@ -10,5 +10,5 @@
     "noUnusedLocals": true,
     "skipLibCheck": true
   },
-  "files": ["src/webpack/ConsoleRemotePlugin.ts", "src/extensions/index.ts"]
+  "files": ["src/webpack/ConsoleRemotePlugin.ts", "src/extensions/index.ts", "src/api/api.ts"]
 }

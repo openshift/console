@@ -13,6 +13,7 @@ const createPackageJson = (packagePath: string) => {
   packageJson.exports = {
     '.': './lib/extensions/index.js',
     './webpack': './lib/webpack/ConsoleRemotePlugin.js',
+    './api': './lib/api/api.js',
   };
   packageJson.readme = 'README.md';
   packageJson.peerDependencies = packageJson.dependencies;

@@ -6,11 +6,27 @@ import { Map as ImmutableMap } from 'immutable';
 import { createSelectorCreator, defaultMemoize } from 'reselect';
 import { useDeepCompareMemoize } from '@console/shared/src/hooks/deep-compare-memoize';
 import { usePrevious } from '@console/shared/src/hooks/previous';
+import {
+  UseK8sWatchResource,
+  UseK8sWatchResources,
+  WatchK8sResource,
+} from '@console/dynamic-plugin-sdk/src/api/api-types';
+
 import { makeQuery, makeReduxID } from './k8s-watcher';
 import * as k8sActions from '../../actions/k8s';
-import { K8sResourceCommon, K8sKind, K8sResourceKindReference, Selector } from '../../module/k8s';
+import { K8sKind } from '../../module/k8s';
 import { RootState } from '../../redux';
 import { K8sState } from '../../reducers/k8s';
+
+export {
+  UseK8sWatchResource,
+  WatchK8sResult,
+  ResourcesObject,
+  WatchK8sResults,
+  WatchK8sResultsObject,
+  WatchK8sResource,
+  WatchK8sResources,
+} from '@console/dynamic-plugin-sdk/src/api/api-types';
 
 export class NoModelError extends Error {
   constructor() {
@@ -63,9 +79,7 @@ const useModelsLoaded = (): boolean => {
   return ref.current;
 };
 
-export const useK8sWatchResource = <R extends K8sResourceCommon | K8sResourceCommon[]>(
-  initResource: WatchK8sResource,
-): WatchK8sResult<R> => {
+export const useK8sWatchResource: UseK8sWatchResource = (initResource) => {
   const resource = useDeepCompareMemoize(initResource, true);
   const modelsLoaded = useModelsLoaded();
 
@@ -110,9 +124,7 @@ export const useK8sWatchResource = <R extends K8sResourceCommon | K8sResourceCom
   }, [resource, resourceK8s, modelsLoaded, k8sModel]);
 };
 
-export const useK8sWatchResources = <R extends ResourcesObject>(
-  initResources: WatchK8sResources<R>,
-): WatchK8sResults<R> => {
+export const useK8sWatchResources: UseK8sWatchResources = (initResources) => {
   const resources = useDeepCompareMemoize(initResources, true);
   const modelsLoaded = useModelsLoaded();
 
@@ -202,7 +214,7 @@ export const useK8sWatchResources = <R extends ResourcesObject>(
 
   const resourceK8s = useSelector<RootState, K8sState>(resourceK8sSelector);
 
-  const results = React.useMemo<WatchK8sResults<R>>(
+  const results = React.useMemo(
     () =>
       Object.keys(resources).reduce((acc, key) => {
         if (reduxIDs?.[key].noModel) {
@@ -234,33 +246,3 @@ type GetIDAndDispatch = (
   resource: WatchK8sResource,
   k8sModel: K8sKind,
 ) => { id: string; dispatch: (dispatch: Dispatch, getState: () => RootState) => void };
-
-export type ResourcesObject = { [key: string]: K8sResourceCommon | K8sResourceCommon[] };
-
-export type WatchK8sResult<R extends K8sResourceCommon | K8sResourceCommon[]> = [R, boolean, any];
-
-export type WatchK8sResultsObject<R extends K8sResourceCommon | K8sResourceCommon[]> = {
-  data: R;
-  loaded: boolean;
-  loadError: any;
-};
-
-export type WatchK8sResults<R extends ResourcesObject> = {
-  [k in keyof R]: WatchK8sResultsObject<R[k]>;
-};
-
-export type WatchK8sResources<R extends ResourcesObject> = {
-  [k in keyof R]: WatchK8sResource;
-};
-
-export type WatchK8sResource = {
-  kind: K8sResourceKindReference;
-  name?: string;
-  namespace?: string;
-  isList?: boolean;
-  selector?: Selector;
-  namespaced?: boolean;
-  limit?: number;
-  fieldSelector?: string;
-  optional?: boolean;
-};
