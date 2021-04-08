@@ -103,7 +103,7 @@ export const useValuesForQuickStartContext = (): QuickStartContextValues => {
       });
       setAllQuickStartStates((qs) => ({
         ...qs,
-        [quickStartId]: getDefaultQuickStartState(totalTasks, QuickStartStatus.IN_PROGRESS),
+        [quickStartId]: getDefaultQuickStartState(totalTasks, QuickStartStatus.NOT_STARTED),
       }));
     },
     [setActiveQuickStartID, setAllQuickStartStates],

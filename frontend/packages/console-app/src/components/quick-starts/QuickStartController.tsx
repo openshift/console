@@ -46,12 +46,32 @@ const QuickStartController: React.FC<QuickStartControllerProps> = ({
     [setQuickStartTaskStatus],
   );
 
+  const getQuickStartActiveTask = React.useCallback(() => {
+    let activeTaskNumber = 0;
+    while (
+      activeTaskNumber !== totalTasks &&
+      activeQuickStartState[`taskStatus${activeTaskNumber}`] !== QuickStartTaskStatus.INIT
+    ) {
+      activeTaskNumber++;
+    }
+    return activeTaskNumber;
+  }, [totalTasks, activeQuickStartState]);
+
+  const handleQuickStartContinue = React.useCallback(() => {
+    const activeTaskNumber = getQuickStartActiveTask();
+    setQuickStartTaskNumber(name, activeTaskNumber);
+  }, [getQuickStartActiveTask, setQuickStartTaskNumber, name]);
+
   const handleNext = React.useCallback(() => {
     if (status === QuickStartStatus.COMPLETE && taskNumber === totalTasks)
       return handleQuickStartChange('');
 
+    if (status !== QuickStartStatus.NOT_STARTED && taskNumber === -1) {
+      return handleQuickStartContinue();
+    }
+
     return nextStep(totalTasks);
-  }, [handleQuickStartChange, nextStep, status, taskNumber, totalTasks]);
+  }, [handleQuickStartChange, nextStep, status, taskNumber, totalTasks, handleQuickStartContinue]);
 
   const handleBack = React.useCallback(() => {
     return previousStep();
@@ -83,6 +103,7 @@ const QuickStartController: React.FC<QuickStartControllerProps> = ({
         onNext={handleNext}
         onBack={handleBack}
         footerClass={footerClass}
+        quickStartId={quickStart.metadata.name}
       />
     </>
   );
