@@ -5,6 +5,10 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Tooltip } from '@patternfly/react-core';
 import { createSvgIdUrl, useHover } from '@patternfly/react-topology';
+import {
+  global_BackgroundColor_light_100 as lightBackgroundColor,
+  global_BackgroundColor_200 as greyBackgroundColor,
+} from '@patternfly/react-tokens';
 import { referenceForModel } from '@console/internal/module/k8s';
 import {
   Firehose,
@@ -12,7 +16,9 @@ import {
   truncateMiddle,
 } from '@console/internal/components/utils';
 import { SvgDropShadowFilter } from '@console/topology/src/components/svg';
-import { TektonTaskSpec, PipelineTaskRef, TaskKind } from '../../../../types';
+import { TektonTaskSpec, PipelineTaskRef, TaskKind, WhenExpression } from '../../../../types';
+import { WHEN_EXPRESSSION_DIAMOND_SIZE } from '../../pipeline-topology/const';
+import WhenExpressionDecorator from '../../pipeline-topology/WhenExpressionDecorator';
 import { runStatus, getRunStatusColor } from '../../../../utils/pipeline-augment';
 import { PipelineRunModel, TaskModel, ClusterTaskModel } from '../../../../models';
 import { StatusIcon } from './StatusIcon';
@@ -21,6 +27,14 @@ import { createStepStatus, StepStatus, TaskStatus } from './pipeline-step-utils'
 
 import './PipelineVisualizationTask.scss';
 
+type PipelineVisualizationTask = {
+  name?: string;
+  taskSpec?: TektonTaskSpec;
+  taskRef?: PipelineTaskRef;
+  runAfter?: string[];
+  when?: WhenExpression[];
+  status?: TaskStatus;
+};
 interface TaskProps {
   pipelineRunName?: string;
   name: string;
@@ -36,17 +50,13 @@ interface TaskProps {
   width: number;
   height: number;
   isFinallyTask?: boolean;
+  pipelineTask: PipelineVisualizationTask;
 }
 
 interface PipelineVisualizationTaskProp {
   pipelineRunName?: string;
   namespace: string;
-  task: {
-    name?: string;
-    taskSpec?: TektonTaskSpec;
-    taskRef?: PipelineTaskRef;
-    status?: TaskStatus;
-  };
+  task: PipelineVisualizationTask;
   taskRun?: string;
   pipelineRunStatus?: string;
   disableTooltip?: boolean;
@@ -97,6 +107,7 @@ export const PipelineVisualizationTask: React.FC<PipelineVisualizationTaskProp> 
       width={width}
       height={height}
       isFinallyTask={isFinallyTask}
+      pipelineTask={task}
     />
   );
 
@@ -137,6 +148,7 @@ const TaskComponent: React.FC<TaskProps> = ({
   width,
   height,
   isFinallyTask,
+  pipelineTask,
 }) => {
   const { t } = useTranslation();
   const stepList = task?.data?.spec?.steps || [];
@@ -151,6 +163,11 @@ const TaskComponent: React.FC<TaskProps> = ({
     status?.reason !== runStatus.Pending &&
     status?.reason !== runStatus.Cancelled &&
     !!path;
+  const hasWhenExpression = pipelineTask?.when?.length > 0;
+  const hasRunAfter = pipelineTask?.runAfter?.length > 0;
+  const taskStatusColor = status
+    ? getRunStatusColor(status.reason, t).pftoken.value
+    : getRunStatusColor(runStatus.Cancelled, t).pftoken.value;
 
   const [hover, hoverRef] = useHover();
   const truncatedVisualName = React.useMemo(
@@ -201,9 +218,7 @@ const TaskComponent: React.FC<TaskProps> = ({
             height={30}
             viewBox="-5 -4 20 20"
             style={{
-              color: status
-                ? getRunStatusColor(status.reason, t).pftoken.value
-                : getRunStatusColor(runStatus.Cancelled, t).pftoken.value,
+              color: taskStatusColor,
             }}
           >
             <StatusIcon status={status.reason} disableSpin />
@@ -215,22 +230,42 @@ const TaskComponent: React.FC<TaskProps> = ({
       )}
     </g>
   );
+
+  const taskColor = showStatusState
+    ? taskStatusColor
+    : !isFinallyTask
+    ? greyBackgroundColor.value
+    : lightBackgroundColor.value;
+
   if (!disableVisualizationTooltip) {
     taskPill = (
-      <Tooltip
-        position="bottom"
-        enableFlip={false}
-        content={
-          <PipelineVisualizationStepList
-            isSpecOverview={!isPipelineRun}
-            taskName={visualName}
-            steps={stepStatusList}
-            isFinallyTask={isFinallyTask}
+      <>
+        {hasWhenExpression && (
+          <WhenExpressionDecorator
+            width={WHEN_EXPRESSSION_DIAMOND_SIZE}
+            height={WHEN_EXPRESSSION_DIAMOND_SIZE}
+            stroke={showStatusState ? taskColor : undefined}
+            color={taskColor}
+            appendLine={!hasRunAfter && !isFinallyTask}
+            status={status.reason}
+            enableTooltip
           />
-        }
-      >
-        {taskPill}
-      </Tooltip>
+        )}
+        <Tooltip
+          position="bottom"
+          enableFlip={false}
+          content={
+            <PipelineVisualizationStepList
+              isSpecOverview={!isPipelineRun}
+              taskName={visualName}
+              steps={stepStatusList}
+              isFinallyTask={isFinallyTask}
+            />
+          }
+        >
+          {taskPill}
+        </Tooltip>
+      </>
     );
   }
 

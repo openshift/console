@@ -51,6 +51,7 @@ export const layoutFactory: LayoutFactory = (type: string, graph: Graph) => {
   switch (type) {
     case PipelineLayout.DAGRE_BUILDER:
     case PipelineLayout.DAGRE_VIEWER:
+    case PipelineLayout.DAGRE_VIEWER_SPACED:
       return new DagreLayout(graph, {
         // Hack to get around undesirable defaults
         // TODO: fix this, it's not ideal but it works for now
