@@ -213,7 +213,16 @@ export const NetworkFormGroup: React.FC<NetworkFormGroupProps> = ({
     <>
       <FormGroup
         fieldId="configure-networking"
-        label={t('ceph-storage-plugin~Network')}
+        label={
+          <>
+            {t('ceph-storage-plugin~Network')}
+            <FieldLevelHelp>
+              {t(
+                'ceph-storage-plugin~The default SDN networking uses a single network for all data operations such read/write and also for control plane, such as data replication. Multus allows a network separation between the data operations and the control plane operations.',
+              )}
+            </FieldLevelHelp>
+          </>
+        }
         className="ceph__install-radio--inline"
       >
         <Radio

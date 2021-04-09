@@ -17,7 +17,7 @@ import { NodeModel } from '@console/internal/models';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { getName, useFlag } from '@console/shared';
 import {
-  storageClassTooltip,
+  attachedDevicesStorageClassTooltip,
   OCS_DEVICE_SET_REPLICA,
   MINIMUM_NODES,
   attachDevicesWithArbiter,
@@ -155,7 +155,7 @@ export const StorageAndNodes: React.FC<StorageAndNodesProps> = ({ state, dispatc
       <FormGroup
         fieldId="storage-class-dropdown"
         label={t('ceph-storage-plugin~Storage Class')}
-        labelIcon={<FieldLevelHelp>{storageClassTooltip(t)}</FieldLevelHelp>}
+        labelIcon={<FieldLevelHelp>{attachedDevicesStorageClassTooltip(t)}</FieldLevelHelp>}
       >
         <Grid hasGutter>
           <GridItem span={5}>
