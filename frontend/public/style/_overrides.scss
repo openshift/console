@@ -26,6 +26,13 @@ form.pf-c-form {
   @include co-break-word;
 }
 
+// Override to remove accordion left border and prevent overlap https://bugzilla.redhat.com/show_bug.cgi?id=1942193
+.co-create-operand__form--toggle-no-border {
+  .pf-c-accordion__toggle.pf-m-expanded {
+    --pf-c-accordion__toggle--before--BackgroundColor: transparent;
+  }
+}
+
 // For input & label alignment while using bootstrap with @patternfly/react-catalog-view-extension
 .filter-panel-pf-category-item {
   .pf-c-check {
