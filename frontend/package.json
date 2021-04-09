@@ -314,6 +314,7 @@
     "node": ">=14.x"
   },
   "resolutions": {
+    "hosted-git-info": "^3.0.8",
     "jquery": "3.5.1",
     "lodash-es": "^4.17.21",
     "minimist": "1.2.5",
