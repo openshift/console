@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { Trans, useTranslation } from 'react-i18next';
 import { match as RouteMatch } from 'react-router';
-import { Button } from '@patternfly/react-core';
+import { Button, Text, TextContent } from '@patternfly/react-core';
 import { Modal } from '@console/shared/src/components/modal';
 import { ClusterServiceVersionModel } from '@console/operator-lifecycle-manager/src';
 import { history, resourcePathFromModel } from '@console/internal/components/utils';
@@ -47,7 +47,7 @@ const ExistingClusterModal: React.FC<ExistingClusterModalProps> = ({ match, stor
 
   return (
     <Modal
-      title={t('ceph-storage-plugin~Storage Cluster exists')}
+      title={t('ceph-storage-plugin~StorageCluster exists')}
       titleIconVariant="warning"
       isOpen={isOpen}
       onClose={onClose}
@@ -62,10 +62,11 @@ const ExistingClusterModal: React.FC<ExistingClusterModalProps> = ({ match, stor
         </Button>,
       ]}
     >
-      <Trans t={t} ns="ceph-storage-plugin" i18nKey="clusterExistText">
-        A storage cluster <Link to={storageClusterPath}>{{ clusterName }}</Link> already exists.
-        <br />
-        You cannot create another storage cluster.
+      <Trans t={t} ns="ceph-storage-plugin">
+        <TextContent>
+          A storage cluster <Link to={storageClusterPath}>{{ clusterName }}</Link> already exists.
+          <Text>You cannot create another storage cluster.</Text>
+        </TextContent>
       </Trans>
     </Modal>
   );
