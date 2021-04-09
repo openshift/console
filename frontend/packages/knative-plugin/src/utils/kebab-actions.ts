@@ -3,6 +3,7 @@ import { K8sKind, referenceForModel } from '@console/internal/module/k8s';
 import { KebabAction } from '@console/internal/components/utils';
 import { EditApplication } from '@console/topology/src/actions/modify-application';
 import { AddHealthChecks, EditHealthChecks } from '@console/app/src/actions/modify-health-checks';
+import { EditResourceLimits } from '@console/app/src/actions/edit-resource-limits';
 import { DeploymentConfigModel, DeploymentModel } from '@console/internal/models';
 import { setTrafficDistribution } from '../actions/traffic-splitting';
 import { setKnatify } from '../actions/knatify';
@@ -27,7 +28,13 @@ export const getKebabActionsForKind = (resourceKind: K8sKind): KebabAction[] => 
   const eventSourceModelrefs: string[] = getDynamicEventSourcesModelRefs();
   if (resourceKind) {
     if (referenceForModel(resourceKind) === referenceForModel(ServiceModel)) {
-      menuActions.push(setTrafficDistribution, AddHealthChecks, EditApplication, EditHealthChecks);
+      menuActions.push(
+        setTrafficDistribution,
+        AddHealthChecks,
+        EditApplication,
+        EditHealthChecks,
+        EditResourceLimits,
+      );
     }
     if (
       _.includes(eventSourceModelrefs, referenceForModel(resourceKind)) ||

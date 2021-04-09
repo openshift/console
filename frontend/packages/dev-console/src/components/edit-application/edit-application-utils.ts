@@ -25,6 +25,7 @@ import {
 } from '@console/pipelines-plugin/src/const';
 import { isDockerPipeline } from '@console/pipelines-plugin/src/components/import/pipeline/pipeline-template-utils';
 import { UNASSIGNED_KEY } from '@console/topology/src/const';
+import { getLimitsDataFromResource } from '@console/shared/src';
 import {
   Resources,
   DeploymentData,
@@ -308,34 +309,6 @@ export const getDeploymentData = (resource: K8sResourceKind) => {
   }
 };
 
-export const getLimitsData = (resource: K8sResourceKind) => {
-  const containers = _.get(resource, 'spec.template.spec.containers', []);
-  const resourcesRegEx = /^[0-9]*|[a-zA-Z]*/g;
-  const cpuLimit = _.get(containers[0], 'resources.limits.cpu', '').match(resourcesRegEx);
-  const memoryLimit = _.get(containers[0], 'resources.limits.memory', '').match(resourcesRegEx);
-  const cpuRequest = _.get(containers[0], 'resources.requests.cpu', '').match(resourcesRegEx);
-  const memoryRequest = _.get(containers[0], 'resources.requests.memory', '').match(resourcesRegEx);
-  const limitsData = {
-    cpu: {
-      request: cpuRequest[0],
-      requestUnit: cpuRequest[1] || '',
-      defaultRequestUnit: cpuRequest[1] || '',
-      limit: cpuLimit[0],
-      limitUnit: cpuLimit[1] || '',
-      defaultLimitUnit: cpuLimit[1] || '',
-    },
-    memory: {
-      request: memoryRequest[0],
-      requestUnit: memoryRequest[1] || 'Mi',
-      defaultRequestUnit: memoryRequest[1] || 'Mi',
-      limit: memoryLimit[0],
-      limitUnit: memoryLimit[1] || 'Mi',
-      defaultLimitUnit: memoryLimit[1] || 'Mi',
-    },
-  };
-  return limitsData;
-};
-
 export const getUserLabels = (resource: K8sResourceKind) => {
   const defaultLabels = [
     'app',
@@ -379,7 +352,7 @@ export const getCommonInitialValues = (
     },
     deployment: getDeploymentData(editAppResource),
     labels: getUserLabels(editAppResource),
-    limits: getLimitsData(editAppResource),
+    limits: getLimitsDataFromResource(editAppResource),
     healthChecks: getHealthChecksData(editAppResource),
   };
   return commonInitialValues;

@@ -1,4 +1,5 @@
 {
+  "Edit resource limits": "Edit resource limits",
   "Add Health Checks": "Add Health Checks",
   "Edit Health Checks": "Edit Health Checks",
   "Add HorizontalPodAutoscaler": "Add HorizontalPodAutoscaler",

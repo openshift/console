@@ -27,6 +27,7 @@ import {
   PodControllerOverviewItem,
   OverviewItem,
   ExtPodKind,
+  LimitsData,
 } from '../types';
 import {
   DEPLOYMENT_REVISION_ANNOTATION,
@@ -715,4 +716,65 @@ export const createOverviewItemsForType = (
     }
     return acc;
   }, []);
+};
+
+export const getResourceLimitsData = (limitsData: LimitsData) => ({
+  ...((limitsData.cpu.limit || limitsData.memory.limit) && {
+    limits: {
+      ...(limitsData.cpu.limit && { cpu: `${limitsData.cpu.limit}${limitsData.cpu.limitUnit}` }),
+      ...(limitsData.memory.limit && {
+        memory: `${limitsData.memory.limit}${limitsData.memory.limitUnit}`,
+      }),
+    },
+  }),
+  ...((limitsData.cpu.request || limitsData.memory.request) && {
+    requests: {
+      ...(limitsData.cpu.request && {
+        cpu: `${limitsData.cpu.request}${limitsData.cpu.requestUnit}`,
+      }),
+      ...(limitsData.memory.request && {
+        memory: `${limitsData.memory.request}${limitsData.memory.requestUnit}`,
+      }),
+    },
+  }),
+});
+
+export const getResourceData = (res: string) => {
+  const resourcesRegEx = /^[0-9]*|[a-zA-Z]*/g;
+  return res.match(resourcesRegEx);
+};
+
+export const getLimitsDataFromResource = (resource: K8sResourceKind) => {
+  const containers = resource?.spec?.template?.spec?.containers ?? [];
+
+  const [cpuLimit, cpuLimitUnit] = getResourceData(containers?.[0]?.resources?.limits?.cpu ?? '');
+  const [memoryLimit, memoryLimitUnit] = getResourceData(
+    containers?.[0]?.resources?.limits?.memory ?? '',
+  );
+  const [cpuRequest, cpuRequestUnit] = getResourceData(
+    containers?.[0]?.resources?.requests?.cpu ?? '',
+  );
+  const [memoryRequest, memoryRequestUnit] = getResourceData(
+    containers?.[0]?.resources?.requests?.memory ?? '',
+  );
+
+  const limitsData = {
+    cpu: {
+      request: cpuRequest,
+      requestUnit: cpuRequestUnit || '',
+      defaultRequestUnit: cpuRequestUnit || '',
+      limit: cpuLimit,
+      limitUnit: cpuLimitUnit || '',
+      defaultLimitUnit: cpuLimitUnit || '',
+    },
+    memory: {
+      request: memoryRequest,
+      requestUnit: memoryRequestUnit || 'Mi',
+      defaultRequestUnit: memoryRequestUnit || 'Mi',
+      limit: memoryLimit,
+      limitUnit: memoryLimitUnit || 'Mi',
+      defaultLimitUnit: memoryLimitUnit || 'Mi',
+    },
+  };
+  return limitsData;
 };

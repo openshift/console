@@ -8,7 +8,7 @@ import {
 } from '@console/internal/module/k8s';
 import { HorizontalPodAutoscalerModel } from '@console/internal/models';
 import { baseTemplates } from '@console/internal/models/yaml-templates';
-import { LimitsData } from '../import/import-types';
+import { LimitsData } from '@console/shared/src';
 import { HPAFormValues, SupportedMetricTypes } from './types';
 
 export const VALID_HPA_TARGET_KINDS = ['Deployment', 'DeploymentConfig'];

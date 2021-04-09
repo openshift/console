@@ -26,3 +26,16 @@ export type OverviewItem<T = K8sResourceKind> = {
 };
 
 export type DeploymentStrategy = DEPLOYMENT_STRATEGY.recreate | DEPLOYMENT_STRATEGY.rolling;
+
+export interface ResourceType {
+  request: number | string;
+  requestUnit: string;
+  defaultRequestUnit: string;
+  limit: number | string;
+  limitUnit: string;
+  defaultLimitUnit: string;
+}
+export interface LimitsData {
+  cpu: ResourceType;
+  memory: ResourceType;
+}

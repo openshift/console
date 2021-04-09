@@ -2,6 +2,7 @@ import { ServiceModel } from '@console/internal/models';
 import { EditApplication } from '@console/topology/src/actions';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { AddHealthChecks, EditHealthChecks } from '@console/app/src/actions/modify-health-checks';
+import { EditResourceLimits } from '@console/app/src/actions/edit-resource-limits';
 import { getKebabActionsForKind } from '../kebab-actions';
 import { setTrafficDistribution } from '../../actions/traffic-splitting';
 import { setSinkSource } from '../../actions/sink-source';
@@ -36,6 +37,7 @@ describe('kebab-actions: ', () => {
       AddHealthChecks,
       EditApplication,
       EditHealthChecks,
+      EditResourceLimits,
     ]);
   });
 

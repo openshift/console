@@ -3,7 +3,7 @@ import { K8sResourceKind, ContainerPort } from '@console/internal/module/k8s';
 import { DeploymentModel, DeploymentConfigModel } from '@console/internal/models';
 import { WatchK8sResultsObject } from '@console/internal/components/utils/k8s-watch-hook';
 import { LazyLoader } from '@console/plugin-sdk';
-import { NameValuePair, NameValueFromPair } from '@console/shared';
+import { NameValuePair, NameValueFromPair, LimitsData } from '@console/shared';
 import { ServiceModel } from '@console/knative-plugin/src/models';
 import { PipelineData } from '@console/pipelines-plugin/src/components/import/import-types';
 import { NormalizedBuilderImages } from '../../utils/imagestream-utils';
@@ -297,20 +297,6 @@ export enum InsecureTrafficTypes {
 export enum PassthroughInsecureTrafficTypes {
   None = 'None',
   Redirect = 'Redirect',
-}
-
-export interface LimitsData {
-  cpu: ResourceType;
-  memory: ResourceType;
-}
-
-export interface ResourceType {
-  request: number | string;
-  requestUnit: string;
-  defaultRequestUnit: string;
-  limit: number | string;
-  limitUnit: string;
-  defaultLimitUnit: string;
 }
 
 export interface AutoscaleWindowType {
