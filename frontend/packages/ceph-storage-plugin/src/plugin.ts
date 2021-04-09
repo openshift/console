@@ -16,6 +16,7 @@ import {
   CustomFeatureFlag,
   StorageClassProvisioner,
   ProjectDashboardInventoryItem,
+  HrefNavItem,
   ResourceClusterNavItem,
   ResourceNSNavItem,
   ResourceListPage,
@@ -60,6 +61,7 @@ type ConsumedExtensions =
   | DashboardsOverviewResourceActivity
   | StorageClassProvisioner
   | ProjectDashboardInventoryItem
+  | HrefNavItem
   | ResourceClusterNavItem
   | ResourceNSNavItem
   | ResourceListPage;
@@ -118,8 +120,9 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Dashboards/Tab',
     properties: {
       id: 'persistent-storage',
-      // t('ceph-storage-plugin~Persistent Storage')
-      title: '%ceph-storage-plugin~Persistent Storage%',
+      navSection: 'storage',
+      // t('ceph-storage-plugin~Block and File')
+      title: '%ceph-storage-plugin~Block and File%',
     },
     flags: {
       required: [OCS_CONVERGED_FLAG],
@@ -309,8 +312,9 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Dashboards/Tab',
     properties: {
       id: 'independent-dashboard',
-      // t('ceph-storage-plugin~Persistent Storage')
-      title: '%ceph-storage-plugin~Persistent Storage%',
+      navSection: 'storage',
+      // t('ceph-storage-plugin~Block and File')
+      title: '%ceph-storage-plugin~Block and File%',
     },
     flags: {
       required: [OCS_INDEPENDENT_FLAG],
@@ -506,8 +510,9 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Dashboards/Tab',
     properties: {
       id: 'object-service',
-      // t('ceph-storage-plugin~Object Service')
-      title: '%ceph-storage-plugin~Object Service%',
+      navSection: 'storage',
+      // t('ceph-storage-plugin~Object')
+      title: '%ceph-storage-plugin~Object%',
     },
     flags: {
       required: [NOOBAA_FLAG, OCS_FLAG],
@@ -623,6 +628,32 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [NOOBAA_FLAG],
+    },
+  },
+  {
+    type: 'NavItem/Href',
+    properties: {
+      id: 'ocsdashboards',
+      section: 'storage',
+      insertBefore: 'persistentvolumes',
+      componentProps: {
+        // t('ceph-storage-plugin~Overview')
+        name: '%ceph-storage-plugin~Overview%',
+        href: '/ocs-dashboards',
+      },
+    },
+    flags: {
+      required: [OCS_FLAG],
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      path: `/ocs-dashboards`,
+      loader: () => import('./components/dashboards/ocs-dashboards').then((m) => m.DashboardsPage),
+    },
+    flags: {
+      required: [OCS_FLAG],
     },
   },
   {

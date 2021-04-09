@@ -21,7 +21,10 @@ import {
 } from '@console/plugin-sdk';
 import { RootState } from '../../../redux';
 
-const getCardsOnPosition = (cards: DashboardsCard[], position: GridPosition): GridDashboardCard[] =>
+export const getCardsOnPosition = (
+  cards: DashboardsCard[],
+  position: GridPosition,
+): GridDashboardCard[] =>
   cards
     .filter((c) => c.properties.position === position)
     .map((c) => ({
@@ -29,11 +32,17 @@ const getCardsOnPosition = (cards: DashboardsCard[], position: GridPosition): Gr
       span: c.properties.span,
     }));
 
-const getPluginTabPages = (tabs: DashboardsTab[], cards: DashboardsCard[]): Page[] =>
-  tabs.map((tab) => {
+export const getPluginTabPages = (
+  tabs: DashboardsTab[],
+  cards: DashboardsCard[],
+  navSection: string,
+  firstTabId: string,
+): Page[] => {
+  tabs = tabs.filter((t) => t.properties.navSection === navSection);
+  return tabs.map((tab) => {
     const tabCards = cards.filter((c) => c.properties.tab === tab.properties.id);
     return {
-      href: tab.properties.id,
+      href: tab.properties.id === firstTabId ? '' : tab.properties.id,
       name: tab.properties.title,
       component: () => (
         <Dashboard>
@@ -46,6 +55,7 @@ const getPluginTabPages = (tabs: DashboardsTab[], cards: DashboardsCard[]): Page
       ),
     };
   });
+};
 
 const DashboardsPage_: React.FC<DashboardsPageProps> = ({ match, kindsInFlight, k8sModels }) => {
   const { t } = useTranslation();
@@ -53,10 +63,10 @@ const DashboardsPage_: React.FC<DashboardsPageProps> = ({ match, kindsInFlight, 
   const tabExtensions = useExtensions<DashboardsTab>(isDashboardsTab);
   const cardExtensions = useExtensions<DashboardsCard>(isDashboardsCard);
 
-  const pluginPages = React.useMemo(() => getPluginTabPages(tabExtensions, cardExtensions), [
-    tabExtensions,
-    cardExtensions,
-  ]);
+  const pluginPages = React.useMemo(
+    () => getPluginTabPages(tabExtensions, cardExtensions, 'home', ''),
+    [tabExtensions, cardExtensions],
+  );
 
   const allPages = React.useMemo(
     () => [
@@ -83,14 +93,14 @@ const DashboardsPage_: React.FC<DashboardsPageProps> = ({ match, kindsInFlight, 
   );
 };
 
-const mapStateToProps = (state: RootState) => ({
+export const mapStateToProps = (state: RootState) => ({
   kindsInFlight: state.k8s.getIn(['RESOURCES', 'inFlight']),
   k8sModels: state.k8s.getIn(['RESOURCES', 'models']),
 });
 
 export const DashboardsPage = connect(mapStateToProps)(DashboardsPage_);
 
-type DashboardsPageProps = RouteComponentProps & {
+export type DashboardsPageProps = RouteComponentProps & {
   kindsInFlight: boolean;
   k8sModels: ImmutableMap<string, any>;
 };

@@ -231,6 +231,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Dashboards/Tab',
     properties: {
       id: 'foo-tab',
+      navSection: 'home',
       title: 'Foo',
     },
     flags: {
