@@ -149,15 +149,16 @@ const hasRequiredWorkspaces = (
     // No matching task, can't verify if workspaces are needed
     return true;
   }
+
+  const requiredWorkspaces = task.spec.workspaces?.filter(({ optional }) => !optional) || [];
   const noWorkspaces = !taskWorkspaces || taskWorkspaces.length === 0;
-  const needWorkspaces = task.spec.workspaces?.length > 0;
-  if (noWorkspaces || !needWorkspaces) {
+  const needWorkspaces = requiredWorkspaces?.length > 0;
+  if (noWorkspaces) {
     // If we have no workspaces, we are done; if we need workspaces we fail
     return !needWorkspaces;
   }
-
   const workspaceNames = taskWorkspaces.map(({ name }) => name);
-  return !task.spec.workspaces.some(({ name }) => !workspaceNames.includes(name));
+  return !requiredWorkspaces.some(({ name }) => !workspaceNames.includes(name));
 };
 
 /**

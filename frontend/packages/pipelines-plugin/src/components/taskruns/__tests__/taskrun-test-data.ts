@@ -148,4 +148,77 @@ export const taskRunWithWorkspaces: TaskRunKind[] = [
       timeout: '1h0m0s',
     },
   },
+  {
+    apiVersion: 'tekton.dev/v1beta1',
+    kind: 'TaskRun',
+    metadata: {
+      name: 'sum-three-pipeline-run-second-add-vbr96',
+    },
+    spec: {
+      params: [
+        {
+          name: 'first',
+          value: '20',
+        },
+        {
+          name: 'second',
+          value: '10',
+        },
+      ],
+      workspaces: [],
+      serviceAccountName: 'pipeline',
+      taskRef: {
+        kind: 'Task',
+        name: 'add-task',
+      },
+      timeout: '1h0m0s',
+    },
+  },
+  {
+    apiVersion: 'tekton.dev/v1beta1',
+    kind: 'TaskRun',
+    metadata: {
+      name: 'sum-three-pipeline-run-second-add-vbr96',
+    },
+    spec: {
+      params: [
+        {
+          name: 'first',
+          value: '20',
+        },
+        {
+          name: 'second',
+          value: '10',
+        },
+      ],
+      workspaces: [
+        { name: 'workspace1', persistentVolumeClaim: { claimName: 'claim1' } },
+        { name: 'workspace2', secret: { secretName: 'secret1' } },
+        { name: 'workspac3', configMap: { name: 'configmap1' } },
+        {
+          name: 'ws4',
+          volumeClaimTemplate: {
+            metadata: {
+              creationTimestamp: null,
+            },
+            spec: {
+              accessModes: ['ReadWriteOnce'],
+              resources: {
+                requests: {
+                  storage: '20Mi',
+                },
+              },
+              storageClassName: 'filesystem',
+            },
+          },
+        },
+      ],
+      serviceAccountName: 'pipeline',
+      taskRef: {
+        kind: 'Task',
+        name: 'add-task',
+      },
+      timeout: '1h0m0s',
+    },
+  },
 ];
