@@ -23,6 +23,9 @@
       "ceph-storage": [
         "integration-tests/**/*.scenario.ts"
       ]
+    },
+    "exposedModules": {
+      "alert": "./src/utils/alert-action-path.tsx"
     }
   }
 }

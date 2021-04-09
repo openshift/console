@@ -1,1 +1,24 @@
-[]
+[
+  {
+    "type": "console.alert-action",
+    "properties": {
+      "alert": "CephOSDDiskUnavailable",
+      "text": "%ceph-storage-plugin~Troubleshoot%",
+      "action": { "$codeRef": "alert.getAlertActionPath" }
+    },
+    "flags": {
+      "required": ["LSO_DEVICE_DISCOVERY", "OCS_ATTACHED_DEVICES"]
+    }
+  },
+  {
+    "type": "console.alert-action",
+    "properties": {
+      "alert": "CephOSDDiskUnavailable",
+      "text": "%ceph-storage-plugin~Troubleshoot%",
+      "action": { "$codeRef": "alert.getAlertActionPath" }
+    },
+    "flags": {
+      "required": ["LSO_DEVICE_DISCOVERY", "OCS_ATTACHED_DEVICES"]
+    }
+  }
+]
