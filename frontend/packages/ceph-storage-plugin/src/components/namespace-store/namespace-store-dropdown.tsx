@@ -32,9 +32,9 @@ export const NamespaceStoreDropdown: React.FC<NamespaceStoreDropdownProps> = ({
     null,
     namespace,
   );
-  const [nsName, setNSName] = React.useState(selectedKey || '');
+  const [nsName, setNSName] = React.useState('');
   const [dropdownItems, setDropdownItems] = React.useState([]);
-  const nnsList = nnsLoaded ? nnsObj.items : [];
+  const nnsList = nnsLoaded && !nnsErr ? nnsObj.items : [];
   const handleDropdownChange = React.useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
       setNSName(e.currentTarget.id);
@@ -110,11 +110,14 @@ export const NamespaceStoreDropdown: React.FC<NamespaceStoreDropdownProps> = ({
         toggle={
           <DropdownToggle
             id="nns-dropdown-id"
-            isDisabled={namespacePolicy === NamespacePolicyType.MULTI && enabledItems?.length === 0}
+            isDisabled={
+              !!nnsErr ||
+              (namespacePolicy === NamespacePolicyType.MULTI && enabledItems?.length === 0)
+            }
             data-test="nns-dropdown-toggle"
             onToggle={() => setOpen(!isOpen)}
           >
-            {nsName || t('ceph-storage-plugin~Select a namespace store')}
+            {selectedKey || nsName || t('ceph-storage-plugin~Select a namespace store')}
           </DropdownToggle>
         }
         isOpen={isOpen}

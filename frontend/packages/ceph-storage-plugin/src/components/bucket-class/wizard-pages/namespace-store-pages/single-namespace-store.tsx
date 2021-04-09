@@ -1,19 +1,20 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Form, FormGroup, Title } from '@patternfly/react-core';
+import { getName } from '@console/shared';
 import { Action, State } from '../../state';
 import { NamespaceStoreDropdown } from '../../../namespace-store/namespace-store-dropdown';
 import { NamespaceStoreKind } from '../../../../types';
 
 export const SingleNamespaceStorePage: React.FC<SingleNamespaceStoreProps> = React.memo(
-  ({ dispatch, namespace, state }) => {
+  ({ dispatch, namespace, state, hideCreateNamespaceStore }) => {
     const { t } = useTranslation();
     const handleNSStateChange = (selectedNamespaceStore: NamespaceStoreKind) => {
       dispatch({ type: 'setWriteNamespaceStore', value: [selectedNamespaceStore] });
       dispatch({ type: 'setReadNamespaceStore', value: [selectedNamespaceStore] });
     };
     return (
-      <div className="nb-create-bc-step-page">
+      <div>
         <Title size="xl" headingLevel="h2" className="nb-bc-step-page-form__title">
           {t('ceph-storage-plugin~Read and Write NamespaceStore ')}
         </Title>
@@ -22,14 +23,15 @@ export const SingleNamespaceStorePage: React.FC<SingleNamespaceStoreProps> = Rea
             'ceph-storage-plugin~Select one namespace-store, defines the read and write targets of the namespace bucket',
           )}
         </p>
-        <Form className="nb-create-bc-step-page-form">
+        <Form>
           <FormGroup className="nb-create-bc-step-page-form" fieldId="namespacestore-input">
             <NamespaceStoreDropdown
               id="namespacestore-input"
               className="nb-create-bc-step-page-form__dropdown"
               namespace={namespace}
               onChange={handleNSStateChange}
-              selectedKey={state.readNamespaceStore[0]?.metadata?.name}
+              selectedKey={getName(state.readNamespaceStore[0])}
+              creatorDisabled={hideCreateNamespaceStore}
             />
           </FormGroup>
         </Form>
@@ -42,4 +44,5 @@ type SingleNamespaceStoreProps = {
   dispatch: React.Dispatch<Action>;
   namespace?: string;
   state: State;
+  hideCreateNamespaceStore?: boolean;
 };

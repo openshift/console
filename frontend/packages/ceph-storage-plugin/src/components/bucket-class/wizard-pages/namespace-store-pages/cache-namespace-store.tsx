@@ -8,6 +8,7 @@ import {
   Title,
   ValidatedOptions,
 } from '@patternfly/react-core';
+import { getName } from '@console/shared';
 import { Action, State } from '../../state';
 import { NamespaceStoreDropdown } from '../../../namespace-store/namespace-store-dropdown';
 import { BackingStoreKind, NamespaceStoreKind } from '../../../../types';
@@ -16,7 +17,7 @@ import { TimeDurationDropdown } from '../../../../utils/time-duration-dropdown';
 import { validateDuration, convertToMS } from '../../../../utils/bucket-class';
 
 export const CacheNamespaceStorePage: React.FC<CacheNamespaceStoreProps> = React.memo(
-  ({ dispatch, namespace, state }) => {
+  ({ dispatch, namespace, state, hideCreateNamespaceStore }) => {
     const { t } = useTranslation();
     const [showHelp, setShowHelp] = React.useState(true);
 
@@ -67,9 +68,10 @@ export const CacheNamespaceStorePage: React.FC<CacheNamespaceStoreProps> = React
           >
             <NamespaceStoreDropdown
               id="namespacestore-input"
-              selectedKey={state.hubNamespaceStore?.metadata?.name}
+              selectedKey={getName(state.hubNamespaceStore)}
               namespace={namespace}
               onChange={handleNSStateChange}
+              creatorDisabled={hideCreateNamespaceStore}
             />
           </FormGroup>
 
@@ -87,8 +89,9 @@ export const CacheNamespaceStorePage: React.FC<CacheNamespaceStoreProps> = React
             fieldId="backingstore-input"
           >
             <BackingStoreDropdown
+              creatorDisabled={hideCreateNamespaceStore}
               id="backingstore-input"
-              selectedKey={state.cacheBackingStore?.metadata?.name}
+              selectedKey={getName(state.cacheBackingStore)}
               namespace={namespace}
               onChange={handleBSStateChange}
             />
@@ -124,4 +127,5 @@ type CacheNamespaceStoreProps = {
   dispatch: React.Dispatch<Action>;
   state: State;
   namespace: string;
+  hideCreateNamespaceStore?: boolean;
 };

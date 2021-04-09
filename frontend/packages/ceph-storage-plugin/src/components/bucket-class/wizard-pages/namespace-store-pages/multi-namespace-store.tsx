@@ -10,7 +10,7 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
-import { getName } from '@console/shared';
+import { getName, getUID } from '@console/shared';
 import { NamespaceStoreKind } from '../../../../types';
 import { NamespaceStoreList } from '../../../namespace-store/namespace-store-table';
 import { Action, State } from '../../state';
@@ -18,16 +18,11 @@ import NamespaceStoreModal from '../../../namespace-store/namespace-store-modal'
 import { NamespaceStoreDropdown } from '../../../namespace-store/namespace-store-dropdown';
 
 export const MultiNamespaceStorePage: React.FC<MultiNamespaceStoreProps> = React.memo(
-  ({ state, dispatch, namespace }) => {
+  ({ state, dispatch, namespace, hideCreateNamespaceStore = false }) => {
     const { t } = useTranslation();
     const openModal = () => NamespaceStoreModal({ namespace });
     const [selectedCount, setSelectedCount] = React.useState(state.readNamespaceStore.length);
     const [enabledItems, setEnabledItems] = React.useState([]);
-
-    React.useEffect(() => {
-      dispatch({ type: 'setReadNamespaceStore', value: [] });
-      dispatch({ type: 'setWriteNamespaceStore', value: [] });
-    }, [dispatch]);
 
     React.useEffect(() => {
       const readItems = state.readNamespaceStore.map(getName);
@@ -62,19 +57,24 @@ export const MultiNamespaceStorePage: React.FC<MultiNamespaceStoreProps> = React
               )}
             </p>
           </FlexItem>
-          <FlexItem>
-            <Button
-              variant={ButtonVariant.link}
-              onClick={openModal}
-              className="nb-bc-step-page-form__modal-launcher"
-            >
-              <PlusCircleIcon /> {t('ceph-storage-plugin~Create NamespaceStore')}
-            </Button>
-          </FlexItem>
+          {!hideCreateNamespaceStore && (
+            <FlexItem>
+              <Button
+                variant={ButtonVariant.link}
+                onClick={openModal}
+                className="nb-bc-step-page-form__modal-launcher"
+              >
+                <PlusCircleIcon /> {t('ceph-storage-plugin~Create NamespaceStore')}
+              </Button>
+            </FlexItem>
+          )}
         </Flex>
         <Form className="nb-create-bc-step-page-form">
           <FormGroup className="nb-create-bc-step-page-form" fieldId="namespacestoretable-input">
-            <NamespaceStoreList onSelectNamespaceStore={onSelectNamespaceStoreTable} />
+            <NamespaceStoreList
+              preSelected={state.readNamespaceStore.map(getUID)}
+              onSelectNamespaceStore={onSelectNamespaceStoreTable}
+            />
           </FormGroup>
           <p className="nb-create-bc-step-page-form__element--light-text">
             {t('ceph-storage-plugin~{{nns, number}} namespace store ', {
@@ -112,4 +112,5 @@ type MultiNamespaceStoreProps = {
   state: State;
   dispatch: React.Dispatch<Action>;
   namespace?: string;
+  hideCreateNamespaceStore?: boolean;
 };
