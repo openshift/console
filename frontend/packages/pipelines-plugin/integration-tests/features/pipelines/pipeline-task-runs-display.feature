@@ -58,9 +58,26 @@ Feature: Display task runs page
               And user will see "<workspace_type>" label with "<workspace_name>" Workspace "shared-task-storage" mentioned in the "<resource>" Resources section of Task Run Details page
 
         Examples:
-                  | workspace_type | workspace_name | resource            |
-                  | PVC            | PVC            | Workspace           |
-                  | CM             | Config Map     | Workspace           |
-                  | S              | Secret         | Workspace           |
-                  |                | Empty Directory| Workspace           |
-                  | PVC            | PVC            | VolumeClaimTemplate |
+                  | workspace_type | workspace_name  | resource            |
+                  | PVC            | PVC             | Workspace           |
+                  | CM             | Config Map      | Workspace           |
+                  | S              | Secret          | Workspace           |
+                  |                | Empty Directory | Workspace           |
+                  | PVC            | PVC             | VolumeClaimTemplate |
+
+
+        @regression @to-do
+        Scenario: Task Run results on Task Run details page for passed task run
+            Given pipeline run with passed task run is displayed for "pipeline-tasks-one"
+              And user is on Task Run details page of passed task run
+             When user scrolls to the Task Run results section
+             Then user can see Name and Value column under Task Run results
+
+
+        @regression @to-do
+        Scenario: Task Run results on Task Run details page for failed task run
+            Given pipeline run with failed task run is displayed for "pipeline-tasks-one"
+            # user can use yaml content "sum-and-multiply-pipeline/sum-and-multiply-pipeline.yaml"
+              And user is on Task Run details page of failed task run
+             When user scrolls to the Task Run results section
+             Then user can see message "No Task Run results available due to failure."

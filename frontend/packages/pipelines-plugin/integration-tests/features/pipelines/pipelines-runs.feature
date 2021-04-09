@@ -295,3 +295,55 @@ Feature: Pipeline Runs
               And user clicks on Start
              Then user will be redirected to Pipeline Run Details page
               And user will see PVC Workspace "workspace-ex" mentioned in the VolumeClaimTemplate Resources section of Pipeline Run Details page
+
+
+        @regression, @manual
+        Scenario: Pipeline Run details page with passed pipeline run having finally task
+            Given user has pipeline "pipeline-one" with finally task having passed pipeline run
+              And user is on Pipeline Run details page of passed pipeline run
+             When user hovers over each of the finally task arranged in parallel
+             Then user can see tooltip with task name and Finally task mentioned while hovering on it
+
+
+        @regression, @manual
+        Scenario: Pipeline Run details page with failed pipeline run having finally task
+            Given user has pipeline "pipeline-finally-failed" with three tasks in series and a finally task
+              And user has failed pipeline run for pipeline "pipeline-finally-failed" with third task as failure
+              And user is on Pipeline Run details page of failed pipeline run
+             When user hovers over each of the finally task arranged in parallel with each task as passed
+              And user can see tooltip with task name and Finally task mentioned while hovering on it
+              And user can see failed task before finally task
+
+
+        @regression @to-do
+        Scenario: Pipeline Run results on Pipeline Run details page for passed pipeline run
+            Given user has passed pipeline run for pipeline "new-pipeline"
+              And user is on Pipeline Run details page
+             When user scrolls to the Pipeline Run results section
+             Then user can see Name and Value column under Pipeline Run results
+
+
+        @regression @to-do
+        Scenario: Pipeline Run results on Pipeline Run details page for failed pipeline run
+            Given user has failed pipeline run for pipeline "new-pipeline"
+              And user is on Pipeline Run details page
+             When user scrolls to the Pipeline Run results section
+             Then user can see message "No Pipeline Run results available due to failure."
+
+
+        @regression, @manual
+        Scenario: Pipeline Run details page with passed pipeline run having Conditional task
+            Given user has passed pipeline run having a succeeded Conditional task for pipeline "new-pipeline1"
+              And user is on Pipeline Run details page
+             When user hovers over the diamond before the Conditional task
+             Then user can see tooltip with "When expression was met" mentioned on it
+              And user can see green color associated with the diamond to represent succeeded condition
+
+
+        @regression, @manual
+        Scenario: Pipeline Run details page with passed pipeline run having skipped Conditional task
+            Given user has passed pipeline run having a two Conditional task with one of them being skipped for pipeline "new-pipeline2"
+              And user is on Pipeline Run details page
+             When user hovers over the diamond before the skipped Conditional task
+             Then user can see tooltip with "When expression was not met" mentioned on it
+              And user can see grey color associated with the diamond to represent condition not met
