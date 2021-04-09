@@ -286,6 +286,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'ClusterServiceVersion/Action',
     properties: {
+      id: 'add-capacity',
       kind: 'StorageCluster',
       // t('ceph-storage-plugin~Add Capacity')
       label: '%ceph-storage-plugin~Add Capacity%',
@@ -303,6 +304,26 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       disallowed: [OCS_INDEPENDENT_FLAG],
+    },
+  },
+  {
+    type: 'ClusterServiceVersion/Action',
+    properties: {
+      id: 'edit',
+      kind: models.CephBlockPoolModel.kind,
+      label: '%ceph-storage-plugin~Edit Block Pool%',
+      apiGroup: models.CephBlockPoolModel.apiGroup,
+      callback: (kind, obj) => () => {
+        const props = { kind, blockPoolConfig: obj };
+        import(
+          './components/modals/block-pool-modal/update-block-pool-modal' /* webpackChunkName: "ceph-storage-update-block-pool-modal" */
+        )
+          .then((m) => m.updateBlockPoolModal(props))
+          .catch((e) => {
+            // eslint-disable-next-line no-console
+            console.error('Error loading block Pool Modal', e);
+          });
+      },
     },
   },
   {
@@ -721,6 +742,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'ClusterServiceVersion/Action',
     properties: {
+      id: 'edit-bucket-class-resources',
       kind: models.NooBaaBucketClassModel.kind,
       // t('ceph-storage-plugin~Edit Bucket Class Resources')
       label: '%ceph-storage-plugin~Edit Bucket Class Resources%',
