@@ -796,6 +796,26 @@ const plugin: Plugin<ConsumedExtensions> = [
         ).then((m) => m.default),
     },
   },
+  {
+    type: 'ClusterServiceVersion/Action',
+    properties: {
+      id: 'delete',
+      kind: models.CephBlockPoolModel.kind,
+      label: '%ceph-storage-plugin~Delete Block Pool%',
+      apiGroup: models.CephBlockPoolModel.apiGroup,
+      callback: (kind, obj) => () => {
+        const props = { kind, blockPoolConfig: obj };
+        import(
+          './components/modals/block-pool-modal/delete-block-pool-modal' /* webpackChunkName: "ceph-storage-delete-block-pool-modal" */
+        )
+          .then((m) => m.deleteBlockPoolModal(props))
+          .catch((e) => {
+            // eslint-disable-next-line no-console
+            console.error('Error loading block Pool Modal', e);
+          });
+      },
+    },
+  },
 ];
 
 export default plugin;
