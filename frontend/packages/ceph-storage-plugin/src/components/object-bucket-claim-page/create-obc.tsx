@@ -78,6 +78,27 @@ export const CreateOBCPage: React.FC<CreateOBCPageProps> = (props) => {
     dispatch({ type: 'setProvisioner', name: sc?.provisioner });
   };
 
+  const getBucketClassDescription = (resource: K8sResourceKind) => {
+    if (resource.spec?.namespacePolicy) {
+      return t('ceph-storage-plugin~Type: Namespace | Policy: {{policyType}}', {
+        policyType: resource.spec.namespacePolicy.type,
+      });
+    }
+    if (resource.spec?.placementPolicy) {
+      return t('ceph-storage-plugin~Type: Standard | Tiers: {{tiers}}', {
+        tiers: resource.spec.placementPolicy.tiers.length,
+      });
+    }
+    return '';
+  };
+
+  const transformLabel = (resource: K8sResourceKind) => (
+    <span className="co-resource-item__resource-name">
+      {getName(resource)}
+      <div className="text-muted small">{getBucketClassDescription(resource)}</div>
+    </span>
+  );
+
   return (
     <div className="co-m-pane__body co-m-pane__form">
       <Helmet>
@@ -152,6 +173,7 @@ export const CreateOBCPage: React.FC<CreateOBCPageProps> = (props) => {
                     onChange={(sc) => dispatch({ type: 'setBucketClass', name: sc })}
                     dataSelector={['metadata', 'name']}
                     selectedKey={state.bucketClass}
+                    transformLabel={transformLabel}
                     placeholder={t('ceph-storage-plugin~Select BucketClass')}
                     dropDownClassName="dropdown--full-width"
                     className="nb-create-obc__bc-dropdown"

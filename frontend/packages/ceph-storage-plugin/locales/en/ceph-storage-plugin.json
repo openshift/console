@@ -332,6 +332,8 @@
   "Switch to Credentials": "Switch to Credentials",
   "Access Key Field": "Access Key Field",
   "Secret Key Field": "Secret Key Field",
+  "Type: Namespace | Policy: {{policyType}}": "Type: Namespace | Policy: {{policyType}}",
+  "Type: Standard | Tiers: {{tiers}}": "Type: Standard | Tiers: {{tiers}}",
   "Create Object Bucket Claim": "Create Object Bucket Claim",
   "Edit YAML": "Edit YAML",
   " Object Bucket Claim Name": " Object Bucket Claim Name",
