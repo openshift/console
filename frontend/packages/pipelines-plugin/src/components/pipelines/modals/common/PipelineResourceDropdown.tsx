@@ -2,12 +2,9 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { FormikValues, useField, useFormikContext } from 'formik';
-import { Select, SelectOption } from '@patternfly/react-core';
+import { FormSelectField, FormSelectFieldOptions } from '@console/shared';
 import { referenceForModel } from '@console/internal/module/k8s';
-import {
-  useK8sWatchResource,
-  WatchK8sResource,
-} from '@console/internal/components/utils/k8s-watch-hook';
+import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { LoadingInline } from '@console/internal/components/utils';
 import { PipelineResourceModel } from '../../../../models';
 import { PipelineResourceKind } from '../../../../types';
@@ -20,28 +17,20 @@ type PipelineResourceDropdownProps = {
   filterType: string;
   name: string;
   namespace: string;
-  selectedKey: string;
 };
 
 const PipelineResourceDropdown: React.FC<PipelineResourceDropdownProps> = (props) => {
   const { t } = useTranslation();
-  const { autoSelect, filterType, name, namespace, selectedKey } = props;
+  const { autoSelect, filterType, name, namespace } = props;
 
-  const [isExpanded, setExpanded] = React.useState(false);
   const { setFieldValue, setFieldTouched } = useFormikContext<FormikValues>();
   const [, { touched }] = useField(name);
 
-  const resourceDefinition: WatchK8sResource = React.useMemo(
-    () => ({
-      isList: true,
-      namespace,
-      kind: referenceForModel(PipelineResourceModel),
-    }),
-    [namespace],
-  );
-  const [resources, loaded, error] = useK8sWatchResource<PipelineResourceKind[]>(
-    resourceDefinition,
-  );
+  const [resources, loaded, error] = useK8sWatchResource<PipelineResourceKind[]>({
+    isList: true,
+    namespace,
+    kind: referenceForModel(PipelineResourceModel),
+  });
 
   const availableResources: PipelineResourceKind[] = resources.filter(
     (resource) => resource.spec.type === filterType,
@@ -59,36 +48,39 @@ const PipelineResourceDropdown: React.FC<PipelineResourceDropdownProps> = (props
     }
   }, [canAutoSelect, name, availableResources, setFieldTouched, setFieldValue]);
 
-  const options = [
-    { label: t('pipelines-plugin~Create Pipeline resource'), value: CREATE_PIPELINE_RESOURCE },
-    ...availableResources.map((resource) => {
-      const resourceName = resource.metadata.name;
-      const url = _.find(resource.spec.params, ['name', 'url'])?.value || '';
-      const label = url.trim().length > 0 ? `${url} (${resourceName})` : resourceName;
+  const options: FormSelectFieldOptions<string>[] = [
+    {
+      value: '',
+      label: t('pipelines-plugin~Select Pipeline resource'),
+      isPlaceholder: true,
+      isDisabled: true,
+    },
+    {
+      label: t('pipelines-plugin~Create Pipeline resource'),
+      value: CREATE_PIPELINE_RESOURCE,
+    },
+    ...availableResources.map(
+      (resource): FormSelectFieldOptions => {
+        const resourceName = resource.metadata.name;
+        const url = _.find(resource.spec.params, ['name', 'url'])?.value || '';
+        const label = url.trim().length > 0 ? `${url} (${resourceName})` : resourceName;
 
-      return { label, value: resourceName };
-    }),
+        return { label, value: resourceName };
+      },
+    ),
   ];
 
+  if (!loaded) {
+    return <LoadingInline />;
+  }
+
   return (
-    <Select
+    <FormSelectField
+      name={name}
       className="odc-pipeline-resource-dropdown"
-      selections={selectedKey}
-      isOpen={isExpanded}
-      onToggle={() => setExpanded(!isExpanded)}
-      onSelect={(e, value) => {
-        setFieldValue(name, value);
-        setExpanded(false);
-      }}
-      placeholderText={!loaded ? <LoadingInline /> : t('pipelines-plugin~Select Pipeline resource')}
+      options={options}
       isDisabled={loaded && availableResources.length === 0}
-    >
-      {options.map(({ label, value }) => (
-        <SelectOption key={value} value={value}>
-          {label}
-        </SelectOption>
-      ))}
-    </Select>
+    />
   );
 };
 

@@ -166,7 +166,7 @@ export const convertPipelineToModalData = (
     parameters: params || [],
     resources: (resources || []).map((resource: TektonResource) => ({
       name: resource.name,
-      selection: alwaysCreateResources ? CREATE_PIPELINE_RESOURCE : null,
+      selection: alwaysCreateResources ? CREATE_PIPELINE_RESOURCE : '',
       data: {
         ...initialResourceFormValues[resource.type],
         type: resource.type,

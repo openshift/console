@@ -2,6 +2,7 @@ export { default as CheckboxField } from './CheckboxField';
 export { default as DropdownField } from './DropdownField';
 export { default as DroppableFileInputField } from './DroppableFileInputField';
 export { default as EnvironmentField } from './EnvironmentField';
+export { default as FormSelectField } from './FormSelectField';
 export { default as InputField } from './InputField';
 export { default as MultiColumnField } from './multi-column-field/MultiColumnField';
 export { default as NSDropdownField } from './NSDropdownField';
