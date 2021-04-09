@@ -318,13 +318,16 @@ export const getEventSourceModelsWithAccess = (
 };
 
 export const getBootstrapServers = (kafkaResources: K8sResourceKind[]) => {
-  const servers = [];
-  _.forEach(kafkaResources, (kafka) => {
-    const listeners = kafka?.status?.listeners;
-    _.map(listeners, (l) => {
-      servers.push(..._.split(l?.bootstrapServers, ','));
-    });
-  });
+  const servers = kafkaResources?.reduce((acc, kafka) => {
+    const listners = [
+      ...(kafka?.status?.listeners
+        ? kafka.status.listeners.map((l) => l?.bootstrapServers?.split(','))?.flat()
+        : []),
+      ...(kafka?.status?.bootstrapServerHost ? [kafka.status.bootstrapServerHost] : []),
+    ];
+    acc.push(...listners);
+    return acc;
+  }, []);
   return servers;
 };
 

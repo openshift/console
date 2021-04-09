@@ -1,8 +1,8 @@
 import * as _ from 'lodash';
 import { K8sResourceKind, PodKind, referenceForModel } from '@console/internal/module/k8s';
 import { FirehoseResource } from '@console/internal/components/utils';
-import { KNATIVE_SERVING_LABEL } from '../const';
 import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
+import { KafkaConnectionModel } from '@console/rhoas-plugin/src/models';
 import {
   ServiceModel,
   RevisionModel,
@@ -16,6 +16,7 @@ import {
   CamelIntegrationModel,
   CamelKameletBindingModel,
 } from '../models';
+import { KNATIVE_SERVING_LABEL } from '../const';
 
 export type KnativeItem = {
   revisions?: K8sResourceKind[];
@@ -271,11 +272,17 @@ export const knativeCamelIntegrationsResourceWatchers = (
   };
 };
 
-export const strimziResourcesWatcher = (): WatchK8sResources<any> => {
+export const strimziResourcesWatcher = (namespace: string): WatchK8sResources<any> => {
   const strimziResources = {
     [KafkaModel.plural]: {
       isList: true,
       kind: referenceForModel(KafkaModel),
+      optional: true,
+    },
+    [KafkaConnectionModel.plural]: {
+      isList: true,
+      kind: referenceForModel(KafkaConnectionModel),
+      namespace,
       optional: true,
     },
     [KafkaTopicModel.plural]: {
