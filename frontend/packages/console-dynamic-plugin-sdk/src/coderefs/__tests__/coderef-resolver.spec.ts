@@ -10,6 +10,7 @@ import {
   loadReferencedObject,
   resolveEncodedCodeRefs,
   resolveCodeRefProperties,
+  resolveExtension,
 } from '../coderef-resolver';
 import { EncodedCodeRef, CodeRef } from '../../types';
 import {
@@ -255,5 +256,37 @@ describe('resolveCodeRefProperties', () => {
 
     expect(await resolveCodeRefProperties(extensions[0])).toEqual({ test: true });
     expect(await resolveCodeRefProperties(extensions[1])).toEqual({ baz: 1, qux: 'value' });
+  });
+});
+
+describe('resolveExtension', () => {
+  it('returns an extension with CodeRef functions replaced with referenced objects', async () => {
+    const extensions: Extension[] = [
+      {
+        type: 'Foo',
+        properties: { test: true },
+      },
+      {
+        type: 'Bar',
+        properties: { baz: 1, qux: getExecutableCodeRefMock('value') },
+      },
+    ];
+
+    expect(await resolveExtension(extensions[0])).toEqual({
+      type: 'Foo',
+      properties: { test: true },
+    });
+    expect(await resolveExtension(extensions[1])).toEqual({
+      type: 'Bar',
+      properties: { baz: 1, qux: 'value' },
+    });
+  });
+
+  it('returns a new extension instance', async () => {
+    const testExtension: Extension = { type: 'Foo/Bar', properties: {} };
+    const resolvedExtension = await resolveExtension(testExtension);
+
+    expect(resolvedExtension).not.toBe(testExtension);
+    expect(Object.isFrozen(resolvedExtension)).toBe(true);
   });
 });

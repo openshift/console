@@ -2,8 +2,13 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, Title } from '@patternfly/react-core';
 import { LoadingInline } from '@console/internal/components/utils';
+import { getName } from '@console/shared';
 import { State } from '../state';
-import { ReviewListTitle, ReviewListBody, StoreCard } from '../review-utils';
+import { StoreCard } from '../review-utils';
+import {
+  ReviewListBody,
+  ReviewListTitle,
+} from '../../ocs-install/install-wizard/review-and-create';
 import { NamespacePolicyType, BucketClassType } from '../../../constants/bucket-class';
 
 const ReviewPage: React.FC<ReviewPageProps> = ({ state }) => {
@@ -17,20 +22,50 @@ const ReviewPage: React.FC<ReviewPageProps> = ({ state }) => {
     namespacePolicyType,
     bucketClassType,
     readNamespaceStore,
+    hubNamespaceStore,
+    cacheBackingStore,
+    timeToLive,
+    writeNamespaceStore,
   } = state;
   const { error, isLoading } = state;
   const { t } = useTranslation();
 
   const getReviewForNamespaceStore = () => (
     <>
-      <ReviewListBody>
+      <ReviewListBody hideIcon>
         <span>{t('ceph-storage-plugin~Namespace Policy: ')}</span>&nbsp;
         <span className="text-secondary">{namespacePolicyType}</span>
       </ReviewListBody>
       {namespacePolicyType === NamespacePolicyType.SINGLE && (
-        <ReviewListBody>
+        <ReviewListBody hideIcon>
           <span>{t('ceph-storage-plugin~Read and write NamespaceStore : ')}</span>&nbsp;
           <span className="text-secondary">{readNamespaceStore[0]?.metadata.name}</span>
+        </ReviewListBody>
+      )}
+      {namespacePolicyType === NamespacePolicyType.CACHE && (
+        <>
+          <ReviewListBody hideIcon>
+            <span>{t('ceph-storage-plugin~Hub namespace store: ')}</span>&nbsp;
+            <span className="text-secondary">{getName(hubNamespaceStore)}</span>
+          </ReviewListBody>
+          <ReviewListBody hideIcon>
+            <span>{t('ceph-storage-plugin~Cache backing store: ')}</span>&nbsp;
+            <span className="text-secondary">{getName(cacheBackingStore)}</span>
+          </ReviewListBody>
+          <ReviewListBody hideIcon>
+            <span>{t('ceph-storage-plugin~Time to live: ')}</span>&nbsp;
+            <span className="text-secondary">{`${timeToLive} ms`}</span>
+          </ReviewListBody>
+        </>
+      )}
+      {namespacePolicyType === NamespacePolicyType.MULTI && (
+        <ReviewListBody hideIcon>
+          <span>{t('ceph-storage-plugin~Resources ')}</span>&nbsp;
+          <p>{t('ceph-storage-plugin~Selected read namespace stores ')}</p>
+          <StoreCard resources={readNamespaceStore} />
+          <br />
+          <span>{t('ceph-storage-plugin~Selected write namespace store ')}</span>
+          <span className="text-secondary">{getName(writeNamespaceStore[0])}</span>
         </ReviewListBody>
       )}
     </>
@@ -38,7 +73,7 @@ const ReviewPage: React.FC<ReviewPageProps> = ({ state }) => {
 
   const getReviewForBackingStore = () => (
     <>
-      <ReviewListBody>
+      <ReviewListBody hideIcon>
         <span>{t('ceph-storage-plugin~Placement policy details ')}</span>&nbsp;
         <br />
         <p data-test="tier1">
@@ -50,7 +85,7 @@ const ReviewPage: React.FC<ReviewPageProps> = ({ state }) => {
         <p>{t('ceph-storage-plugin~Selected BackingStores')}</p>
         <StoreCard resources={tier1BackingStore} />
       </ReviewListBody>
-      <ReviewListBody>
+      <ReviewListBody hideIcon>
         {!!tier2Policy && (
           <>
             <p data-test="tier2">
@@ -76,18 +111,18 @@ const ReviewPage: React.FC<ReviewPageProps> = ({ state }) => {
         <ReviewListTitle text={t('ceph-storage-plugin~General')} />
         <br />
         <div className="nb-create-bc-list--indent">
-          <ReviewListBody>
+          <ReviewListBody hideIcon>
             <span>{t('ceph-storage-plugin~BucketClass type: ')}</span>&nbsp;
             <span className="text-secondary">{bucketClassType}</span>
           </ReviewListBody>
-          <ReviewListBody>
+          <ReviewListBody hideIcon>
             <span>{t('ceph-storage-plugin~BucketClass name: ')}</span>&nbsp;
             <span data-test="bc-name" className="text-secondary">
               {bucketClassName}
             </span>
           </ReviewListBody>
           {!!description && (
-            <ReviewListBody>
+            <ReviewListBody hideIcon>
               <span>{t('ceph-storage-plugin~Description: ')}</span>&nbsp;
               <span data-test="bc-desc" className="text-secondary">
                 {description}

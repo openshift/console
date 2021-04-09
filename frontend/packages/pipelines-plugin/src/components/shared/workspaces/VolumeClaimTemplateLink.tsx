@@ -11,14 +11,12 @@ export interface VolumeClaimTemplatesLinkProps {
   namespace: string;
   ownerResourceName: string;
   ownerResourceKind: string;
-  showHeader?: boolean;
 }
 
 const VolumeClaimTemplatesLink: React.FC<VolumeClaimTemplatesLinkProps> = ({
   namespace,
   ownerResourceName,
   ownerResourceKind = PipelineRunModel.kind,
-  showHeader,
 }) => {
   const [pvcResources, loaded, loadError] = useK8sWatchResource<PersistentVolumeClaimKind[]>({
     kind: PersistentVolumeClaimModel.kind,
@@ -34,27 +32,23 @@ const VolumeClaimTemplatesLink: React.FC<VolumeClaimTemplatesLinkProps> = ({
 
   if (!matchedPVCs || matchedPVCs.length === 0) return null;
 
-  const pvcResourceLinks = matchedPVCs.map((pvcResource) => {
-    return (
-      <ResourceLink
-        name={pvcResource.metadata.name}
-        key={pvcResource.metadata.name}
-        namespace={pvcResource.metadata.namespace}
-        kind={PersistentVolumeClaimModel.kind}
-      />
-    );
-  });
-
-  if (showHeader) {
-    return (
-      <dl>
-        <dt>{t('pipelines-plugin~Workspaces')}</dt>
-        <dd>{pvcResourceLinks}</dd>
-      </dl>
-    );
-  }
-
-  return <>{pvcResourceLinks}</>;
+  return (
+    <dl>
+      <dt>{t('pipelines-plugin~VolumeClaimTemplate Resources')}</dt>
+      <dd>
+        {matchedPVCs.map((pvcResource) => {
+          return (
+            <ResourceLink
+              name={pvcResource.metadata.name}
+              key={pvcResource.metadata.name}
+              namespace={pvcResource.metadata.namespace}
+              kind={PersistentVolumeClaimModel.kind}
+            />
+          );
+        })}
+      </dd>
+    </dl>
+  );
 };
 
 export default VolumeClaimTemplatesLink;

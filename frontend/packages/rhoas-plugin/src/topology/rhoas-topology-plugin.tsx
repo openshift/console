@@ -1,7 +1,7 @@
 import { Plugin } from '@console/plugin-sdk';
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { ALLOW_SERVICE_BINDING_FLAG } from '@console/topology/src/const';
-import { getExecutableCodeRef } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-utils';
+import { applyCodeRefSymbol } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-resolver';
 
 import {
   TopologyComponentFactory,
@@ -57,7 +57,7 @@ export const rhoasTopologyPlugin: Plugin<TopologyConsumedExtensions> = [
   {
     type: 'Topology/CreateConnector',
     properties: {
-      getCreateConnector: getExecutableCodeRef(() =>
+      getCreateConnector: applyCodeRefSymbol(() =>
         import('./createConnector' /* webpackChunkName: "rhoas-create-connector" */).then(
           (m) => m.getCreateConnector,
         ),

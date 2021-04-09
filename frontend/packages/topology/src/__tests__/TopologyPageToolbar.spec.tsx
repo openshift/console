@@ -50,7 +50,7 @@ describe('TopologyPageToolbar tests', () => {
     expect(wrapper.find('[data-test-id="topology-view-shortcuts"]').exists()).toBe(true);
   });
 
-  it('should not render view shortcuts button on topology list page toolbar', () => {
+  it('should render view shortcuts button on topology list page toolbar', () => {
     const mockViewChange = jest.fn();
     spyOn(React, 'useContext').and.returnValue({
       isEmptyModel: false,
@@ -59,7 +59,7 @@ describe('TopologyPageToolbar tests', () => {
     const wrapper = shallow(
       <TopologyPageToolbar viewType={TopologyViewType.list} onViewChange={mockViewChange} />,
     );
-    expect(wrapper.find('[data-test-id="topology-view-shortcuts"]').exists()).toBe(false);
+    expect(wrapper.find('[data-test-id="topology-view-shortcuts"]').exists()).toBe(true);
   });
 
   it('should show the topology icon when on topology list page', () => {
@@ -108,8 +108,6 @@ describe('TopologyPageToolbar tests', () => {
       <TopologyPageToolbar viewType={TopologyViewType.graph} onViewChange={mockViewChange} />,
     );
     const switcher = wrapper.find(Button);
-    expect(switcher.exists()).toBe(true);
-    expect(switcher.at(0).props().isDisabled).toBe(true);
     expect(switcher.at(1).props().isDisabled).toBe(true);
   });
 });

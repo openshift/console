@@ -10,7 +10,7 @@ export const NoobaaDataResiliency: React.FC<DataResiliencyProps> = ({ results })
   const { t } = useTranslation();
 
   const eta = getGaugeValue(results[1]);
-  const formattedEta = formatDuration(eta * 1000);
+  const formattedEta = formatDuration(parseInt(eta, 10) * 1000);
 
   return (
     <>

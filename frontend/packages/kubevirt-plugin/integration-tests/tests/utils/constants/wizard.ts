@@ -36,7 +36,7 @@ export const TemplateByName = {
   RHEL6: 'Red Hat Enterprise Linux 6.0+ VM',
   RHEL7: 'Red Hat Enterprise Linux 7.0+ VM',
   RHEL8: 'Red Hat Enterprise Linux 8.0+ VM',
-  FEDORA: 'Fedora 31+ VM',
+  FEDORA: 'Fedora 32+ VM',
   WINDOWS_10: 'Microsoft Windows 10 VM',
 };
 

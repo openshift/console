@@ -11,6 +11,7 @@ import {
 import { coFetch } from '@console/internal/co-fetch';
 import { getKnativeServiceDepResource } from '@console/knative-plugin/src/utils/create-knative-utils';
 import { ServiceModel as KnServiceModel } from '@console/knative-plugin';
+import { NameValuePair } from '@console/shared';
 import { createProject, createWebhookSecret } from './import-submit-utils';
 import {
   getAppLabels,
@@ -42,7 +43,7 @@ export const createOrUpdateDeployment = (
       replicas,
       triggers: { image: imageChange },
     },
-    fileUpload: { javaArgs },
+    fileUpload: { name: fileName, javaArgs },
     labels: userLabels,
     limits: { cpu, memory },
     healthChecks,
@@ -66,6 +67,15 @@ export const createOrUpdateDeployment = (
   const podLabels = getPodLabels(name);
   const templateLabels = getTemplateLabels(originalDeployment);
 
+  const jArgsIndex = env?.findIndex((e) => e.name === 'JAVA_ARGS');
+  if (jArgsIndex !== -1 && javaArgs !== '') {
+    (env[jArgsIndex] as NameValuePair).value = javaArgs;
+  } else if (jArgsIndex !== -1 && javaArgs === '') {
+    env.splice(jArgsIndex, 1);
+  } else {
+    env.push({ name: 'JAVA_ARGS', value: javaArgs });
+  }
+
   const newDeployment = {
     apiVersion: 'apps/v1',
     kind: 'Deployment',
@@ -73,7 +83,7 @@ export const createOrUpdateDeployment = (
       name,
       namespace,
       labels: { ...defaultLabels, ...userLabels },
-      annotations: { ...annotations, isFromJarUpload: 'true' },
+      annotations: { ...annotations, jarFileName: fileName },
     },
     spec: {
       selector: {
@@ -92,7 +102,7 @@ export const createOrUpdateDeployment = (
               name,
               image: `${name}:latest`,
               ports,
-              env: javaArgs ? [...env, { name: 'JAVA_ARGS', value: javaArgs }] : env,
+              env,
               resources: {
                 ...((cpu.limit || memory.limit) && {
                   limits: {
@@ -145,6 +155,15 @@ const createOrUpdateDeploymentConfig = (
   const podLabels = getPodLabels(name);
   const templateLabels = getTemplateLabels(originalDeploymentConfig);
 
+  const jArgsIndex = env?.findIndex((e) => e.name === 'JAVA_ARGS');
+  if (jArgsIndex !== -1 && javaArgs !== '') {
+    (env[jArgsIndex] as NameValuePair).value = javaArgs;
+  } else if (jArgsIndex !== -1 && javaArgs === '') {
+    env.splice(jArgsIndex, 1);
+  } else {
+    env.push({ name: 'JAVA_ARGS', value: javaArgs });
+  }
+
   const newDeploymentConfig = {
     apiVersion: 'apps.openshift.io/v1',
     kind: 'DeploymentConfig',
@@ -152,7 +171,7 @@ const createOrUpdateDeploymentConfig = (
       name,
       namespace,
       labels: { ...defaultLabels, ...userLabels },
-      annotations: { ...getCommonAnnotations(), isFromJarUpload: 'true' },
+      annotations: { ...getCommonAnnotations() },
     },
     spec: {
       selector: podLabels,
@@ -167,7 +186,7 @@ const createOrUpdateDeploymentConfig = (
               name,
               image: `${name}:latest`,
               ports,
-              env: javaArgs ? [...env, { name: 'JAVA_ARGS', value: javaArgs }] : env,
+              env,
               resources: {
                 ...((cpu.limit || memory.limit) && {
                   limits: {
@@ -256,6 +275,7 @@ export const createOrUpdateBuildConfig = (
 ): Promise<K8sResourceKind> => {
   const {
     name,
+    fileUpload: { name: jarFileName },
     project: { name: namespace },
     application: { name: applicationName },
     image: { tag: selectedTag },
@@ -267,7 +287,7 @@ export const createOrUpdateBuildConfig = (
   const imageStreamNamespace = imageStream && imageStream.metadata.namespace;
 
   const defaultLabels = getAppLabels({ name, applicationName, imageStreamName, selectedTag });
-  const defaultAnnotations = { ...getCommonAnnotations() };
+  const defaultAnnotations = { ...getCommonAnnotations(), jarFileName };
   const buildStrategyData = {
     sourceStrategy: {
       env,
@@ -410,6 +430,7 @@ export const createOrUpdateJarFile = async (
 
   buildConfigResponse &&
     !dryRun &&
+    fileValue !== '' &&
     instantiateBinaryBuild(namespace, buildConfigResponse, fileName, fileValue as File);
 
   responses.push(buildConfigResponse);
@@ -444,7 +465,6 @@ export const createOrUpdateJarFile = async (
       undefined,
       annotations,
       editAppResource?.data,
-      formData.fileUpload,
     );
     if (verb === 'update') {
       responses.push(await k8sUpdate(KnServiceModel, knDeploymentResource));

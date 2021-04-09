@@ -74,7 +74,7 @@ const StorageEfficiencyCard: React.FC<DashboardItemProps> = ({
     error: !!poolCapacityRatioResultError || !ratio,
     title: t('ceph-storage-plugin~Compression ratio'),
     infoText: t(
-      'ceph-storage-plugin~The ratio of the data physical stored (after compression) compared to the size of the data received from the client.',
+      'ceph-storage-plugin~OpenShift Container Storage can be configured to use compression. The efficiency rate reflects the actual compression ratio when using such a configuration.',
     ),
     getStats: compressionStats,
   };
@@ -85,7 +85,7 @@ const StorageEfficiencyCard: React.FC<DashboardItemProps> = ({
     error: !!poolSavedResultError || !saved,
     title: t('ceph-storage-plugin~Savings'),
     infoText: t(
-      'ceph-storage-plugin~The amount of physical storage saved after applying compression.',
+      'ceph-storage-plugin~OpenShift Container Storage can be configured to use compression. The savings are calculated to reflect the actual disk space saved when using such a configuration.',
     ),
     getStats: savingStats,
   };

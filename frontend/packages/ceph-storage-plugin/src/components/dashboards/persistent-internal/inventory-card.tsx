@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import * as _ from 'lodash';
 import DashboardCard from '@console/shared/src/components/dashboard/dashboard-card/DashboardCard';
 import DashboardCardBody from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardBody';
 import DashboardCardHeader from '@console/shared/src/components/dashboard/dashboard-card/DashboardCardHeader';
@@ -15,7 +14,7 @@ import {
   getPVCStatusGroups,
   getPVStatusGroups,
 } from '@console/shared/src/components/dashboard/inventory-card/utils';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { K8sResourceKind, StorageClassResourceKind } from '@console/internal/module/k8s';
 import {
   NodeModel,
   PersistentVolumeClaimModel,
@@ -23,6 +22,7 @@ import {
   StorageClassModel,
 } from '@console/internal/models';
 import { ResourceInventoryItem } from '@console/shared/src/components/dashboard/inventory-card/InventoryItem';
+import { getName } from '@console/shared/src/selectors';
 import {
   getCephNodes,
   getCephPVs,
@@ -68,21 +68,21 @@ const InventoryCard: React.FC<DashboardItemProps> = ({
     };
   }, [watchK8sResource, stopWatchK8sResource]);
 
-  const nodesLoaded = _.get(resources.nodes, 'loaded');
-  const nodesLoadError = _.get(resources.nodes, 'loadError');
-  const nodesData = _.get(resources.nodes, 'data', []) as K8sResourceKind[];
+  const nodesLoaded = resources?.nodes?.loaded;
+  const nodesLoadError = resources?.nodes?.loadError;
+  const nodesData = (resources?.nodes?.data ?? []) as K8sResourceKind[];
 
-  const pvcsLoaded = _.get(resources.pvcs, 'loaded');
-  const pvcsLoadError = _.get(resources.pvcs, 'loadError');
-  const pvcsData = _.get(resources.pvcs, 'data', []) as K8sResourceKind[];
+  const pvcsLoaded = resources?.pvcs?.loaded;
+  const pvcsLoadError = resources?.pvcs?.loadError;
+  const pvcsData = (resources?.pvcs?.data ?? []) as K8sResourceKind[];
 
-  const pvsLoaded = _.get(resources.pvs, 'loaded');
-  const pvsLoadError = _.get(resources.pvs, 'loadError');
-  const pvsData = _.get(resources.pvs, 'data', []) as K8sResourceKind[];
+  const pvsLoaded = resources?.pvs?.loaded;
+  const pvsLoadError = resources?.pvs?.loadError;
+  const pvsData = (resources?.pvs?.data ?? []) as K8sResourceKind[];
 
-  const scData = _.get(resources.sc, 'data', []) as K8sResourceKind[];
+  const scData = (resources?.sc?.data ?? []) as StorageClassResourceKind[];
   const filteredCephSC = getCephSC(scData);
-  const filteredSCNames = filteredCephSC.map((sc) => _.get(sc, 'metadata.name'));
+  const filteredSCNames = filteredCephSC.map(getName);
   const ocsNodesHref = `/search?kind=${NodeModel.kind}&q=${cephStorageLabel}`;
 
   return (

@@ -14,7 +14,7 @@ import {
   removeQueryArgument,
   setQueryArgument,
 } from '@console/internal/components/utils';
-import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
+import { useResolvedExtensions } from '@console/dynamic-plugin-sdk';
 import { useAddToProjectAccess } from '@console/dev-console/src/utils/useAddToProjectAccess';
 import { getEventSourceStatus } from '@console/knative-plugin/src/topology/knative-topology-utils';
 import {

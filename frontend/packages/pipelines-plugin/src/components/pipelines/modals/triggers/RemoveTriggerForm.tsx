@@ -13,6 +13,7 @@ type RemoveTriggerFormProps = {
 const RemoveTriggerForm: React.FC<RemoveTriggerFormProps> = (props) => {
   const { t } = useTranslation();
   const { pipeline } = props;
+  const pipelineName = pipeline.metadata.name;
 
   return (
     <Split className="odc-modal-content" hasGutter>
@@ -22,7 +23,7 @@ const RemoveTriggerForm: React.FC<RemoveTriggerFormProps> = (props) => {
       <SplitItem isFilled>
         <p className="co-break-word">
           <Trans t={t} ns="pipelines-plugin">
-            Select the trigger to remove from pipeline <b>{pipeline.metadata.name}</b>.
+            Select the trigger to remove from pipeline <b>{{ pipelineName }}</b>.
           </Trans>
         </p>
         <TriggerTemplateSelector

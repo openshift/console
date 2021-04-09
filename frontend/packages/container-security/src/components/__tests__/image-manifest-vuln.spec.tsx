@@ -6,6 +6,7 @@ import {
   ImageManifestVulnDetails,
   ImageManifestVulnDetailsProps,
   totalCount,
+  highestSeverityIndex,
 } from '../image-manifest-vuln';
 import { fakeVulnFor } from '../../../integration-tests/bad-pods';
 import { Priority, totalFor, vulnPriority } from '../../const';
@@ -29,6 +30,18 @@ describe('totalCount', () => {
     const vuln = fakeVulnFor(Priority.Critical);
     const tCount = totalCount(vuln);
     expect(tCount).toBe(2);
+  });
+});
+
+describe('highestSeverityIndex', () => {
+  it('should return the correct indexes for different priorities', () => {
+    expect(highestSeverityIndex(fakeVulnFor(Priority.Defcon1))).toBe(0);
+    expect(highestSeverityIndex(fakeVulnFor(Priority.Critical))).toBe(1);
+    expect(highestSeverityIndex(fakeVulnFor(Priority.High))).toBe(2);
+    expect(highestSeverityIndex(fakeVulnFor(Priority.Medium))).toBe(3);
+    expect(highestSeverityIndex(fakeVulnFor(Priority.Low))).toBe(4);
+    expect(highestSeverityIndex(fakeVulnFor(Priority.Negligible))).toBe(5);
+    expect(highestSeverityIndex(fakeVulnFor(Priority.Unknown))).toBe(6);
   });
 });
 

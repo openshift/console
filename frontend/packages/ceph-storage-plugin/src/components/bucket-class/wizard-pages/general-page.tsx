@@ -13,10 +13,12 @@ import {
 } from '@patternfly/react-core';
 import { ExternalLink } from '@console/internal/components/utils';
 import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
+import '../create-bc.scss';
+import { useFlag } from '@console/shared';
 import { Action, State } from '../state';
 import { bucketClassTypeRadios } from '../../../constants/bucket-class';
 import { validateBucketClassName } from '../../../utils/bucket-class';
-import '../create-bc.scss';
+import { GUARDED_FEATURES } from '../../../features';
 
 const BucketClassNameToolTip = ({ position, content }) => (
   <Tooltip position={position} content={content} isContentLeftAligned>
@@ -30,6 +32,8 @@ const GeneralPage: React.FC<GeneralPageProps> = ({ dispatch, state }) => {
   const [showHelp, setShowHelp] = React.useState(true);
 
   const [validated, setValidated] = React.useState<ValidatedOptions>(ValidatedOptions.default);
+
+  const isNamespaceStoreSupported = useFlag(GUARDED_FEATURES.OCS_NAMESPACE_STORE);
   const onChange = (value: string) => {
     dispatch({ type: 'setBucketClassName', name: value });
     if (validateBucketClassName(value)) {
@@ -61,27 +65,29 @@ const GeneralPage: React.FC<GeneralPageProps> = ({ dispatch, state }) => {
         </Alert>
       )}
       <Form className="nb-create-bc-step-page-form">
-        <FormGroup
-          fieldId="bucketclasstype-radio"
-          className="nb-create-bc-step-page-form__element nb-bucket-class-type-form__element"
-          isRequired
-          label={t('ceph-storage-plugin~BucketClass type')}
-        >
-          {bucketClassTypeRadios(t).map((radio) => {
-            const checked = radio.value === state.bucketClassType;
-            return (
-              <Radio
-                {...radio}
-                onChange={() => {
-                  dispatch({ type: 'setBucketClassType', value: radio.value });
-                }}
-                checked={checked}
-                className="nb-create-bc-step-page-form__radio"
-                name="bucketclasstype"
-              />
-            );
-          })}
-        </FormGroup>
+        {isNamespaceStoreSupported && (
+          <FormGroup
+            fieldId="bucketclasstype-radio"
+            className="nb-create-bc-step-page-form__element nb-bucket-class-type-form__element"
+            isRequired
+            label={t('ceph-storage-plugin~BucketClass type')}
+          >
+            {bucketClassTypeRadios(t).map((radio) => {
+              const checked = radio.value === state.bucketClassType;
+              return (
+                <Radio
+                  {...radio}
+                  onChange={() => {
+                    dispatch({ type: 'setBucketClassType', value: radio.value });
+                  }}
+                  checked={checked}
+                  className="nb-create-bc-step-page-form__radio"
+                  name="bucketclasstype"
+                />
+              );
+            })}
+          </FormGroup>
+        )}
         <FormGroup
           labelIcon={
             <BucketClassNameToolTip

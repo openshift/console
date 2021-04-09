@@ -125,20 +125,22 @@ export const LocalVolumeSetBody: React.FC<LocalVolumeSetBodyProps> = ({
         </div>
       </FormGroup>
       {state.lvsIsSelectNodes && (
-        <ListPage
-          showTitle={false}
-          kind={NodeModel.kind}
-          ListComponent={NodesTable}
-          customData={{
-            onRowSelected: (selectedNodes: NodeKind[]) => {
-              dispatch({ type: 'setLvsSelectNodes', value: selectedNodes });
-            },
-            filteredNodes: state.lvsAllNodes.map(getName),
-            preSelectedNodes: state.lvsSelectNodes.map(getName),
-            hasOnSelect: true,
-            taintsFilter,
-          }}
-        />
+        <div className="lso-lvd-body__select-nodes">
+          <ListPage
+            showTitle={false}
+            kind={NodeModel.kind}
+            ListComponent={NodesTable}
+            customData={{
+              onRowSelected: (selectedNodes: NodeKind[]) => {
+                dispatch({ type: 'setLvsSelectNodes', value: selectedNodes });
+              },
+              filteredNodes: state.lvsAllNodes.map(getName),
+              preSelectedNodes: state.lvsSelectNodes.map(getName),
+              hasOnSelect: true,
+              taintsFilter,
+            }}
+          />
+        </div>
       )}
       <FormGroup label={t('lso-plugin~Disk Type')} fieldId="create-lvs-disk-type-dropdown">
         <Dropdown

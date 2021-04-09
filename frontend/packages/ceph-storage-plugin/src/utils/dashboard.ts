@@ -1,5 +1,7 @@
-import * as _ from 'lodash';
 import { PrometheusResponse } from '@console/internal/components/graphs';
+
+export const getGaugeValue = (response: PrometheusResponse) =>
+  response?.data?.result?.[0]?.value?.[1];
 
 export const getResiliencyProgress = (results: PrometheusResponse): number => {
   /**
@@ -8,8 +10,6 @@ export const getResiliencyProgress = (results: PrometheusResponse): number => {
    *   - 'NaN'
    *   - undefined
    */
-  const progress: string = _.get(results, 'data.result[0].value[1]');
+  const progress: string = getGaugeValue(results);
   return parseFloat(progress);
 };
-
-export const getGaugeValue = (data: PrometheusResponse) => _.get(data, 'data.result[0].value[1]');

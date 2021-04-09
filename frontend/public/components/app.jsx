@@ -28,7 +28,7 @@ import DetectPerspective from '@console/app/src/components/detect-perspective/De
 import DetectNamespace from '@console/app/src/components/detect-namespace/DetectNamespace';
 import { useExtensions, withExtensions, isContextProvider } from '@console/plugin-sdk';
 import { GuidedTour } from '@console/app/src/components/tour';
-import { isStandaloneRoutePage } from '@console/dynamic-plugin-sdk/src/extensions/pages';
+import { isStandaloneRoutePage } from '@console/dynamic-plugin-sdk';
 import QuickStartDrawer from '@console/app/src/components/quick-starts/QuickStartDrawer';
 import ToastProvider from '@console/shared/src/components/toast/ToastProvider';
 import '../i18n';

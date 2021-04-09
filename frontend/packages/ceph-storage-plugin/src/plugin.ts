@@ -1,6 +1,5 @@
 import * as _ from 'lodash';
 import {
-  AlertAction,
   ClusterServiceVersionAction,
   DashboardsCard,
   DashboardsOverviewHealthResourceSubsystem,
@@ -17,6 +16,7 @@ import {
   CustomFeatureFlag,
   StorageClassProvisioner,
   ProjectDashboardInventoryItem,
+  HrefNavItem,
   ResourceClusterNavItem,
   ResourceNSNavItem,
   ResourceListPage,
@@ -42,12 +42,9 @@ import {
   OCS_FLAG,
   NOOBAA_FLAG,
 } from './features';
-import { getAlertActionPath } from './utils/alert-action-path';
-import { OSD_DOWN_ALERT, OSD_DOWN_AND_OUT_ALERT } from './constants';
 import { getObcStatusGroups } from './components/dashboards/object-service/buckets-card/utils';
 
 type ConsumedExtensions =
-  | AlertAction
   | ModelFeatureFlag
   | HorizontalNavTab
   | ModelDefinition
@@ -64,6 +61,7 @@ type ConsumedExtensions =
   | DashboardsOverviewResourceActivity
   | StorageClassProvisioner
   | ProjectDashboardInventoryItem
+  | HrefNavItem
   | ResourceClusterNavItem
   | ResourceNSNavItem
   | ResourceListPage;
@@ -122,8 +120,9 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Dashboards/Tab',
     properties: {
       id: 'persistent-storage',
-      // t('ceph-storage-plugin~Persistent Storage')
-      title: '%ceph-storage-plugin~Persistent Storage%',
+      navSection: 'storage',
+      // t('ceph-storage-plugin~Block and File')
+      title: '%ceph-storage-plugin~Block and File%',
     },
     flags: {
       required: [OCS_CONVERGED_FLAG],
@@ -313,8 +312,9 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Dashboards/Tab',
     properties: {
       id: 'independent-dashboard',
-      // t('ceph-storage-plugin~Persistent Storage')
-      title: '%ceph-storage-plugin~Persistent Storage%',
+      navSection: 'storage',
+      // t('ceph-storage-plugin~Block and File')
+      title: '%ceph-storage-plugin~Block and File%',
     },
     flags: {
       required: [OCS_INDEPENDENT_FLAG],
@@ -444,30 +444,6 @@ const plugin: Plugin<ConsumedExtensions> = [
       required: [OCS_ATTACHED_DEVICES_FLAG, LSO_DEVICE_DISCOVERY],
     },
   },
-  {
-    type: 'AlertAction',
-    properties: {
-      alert: OSD_DOWN_ALERT,
-      // t('ceph-storage-plugin~Troubleshoot')
-      text: '%ceph-storage-plugin~Troubleshoot%',
-      path: getAlertActionPath,
-    },
-    flags: {
-      required: [LSO_DEVICE_DISCOVERY, OCS_ATTACHED_DEVICES_FLAG],
-    },
-  },
-  {
-    type: 'AlertAction',
-    properties: {
-      alert: OSD_DOWN_AND_OUT_ALERT,
-      // t('ceph-storage-plugin~Troubleshoot')
-      text: '%ceph-storage-plugin~Troubleshoot%',
-      path: getAlertActionPath,
-    },
-    flags: {
-      required: [LSO_DEVICE_DISCOVERY, OCS_ATTACHED_DEVICES_FLAG],
-    },
-  },
   // Noobaa Related Plugins
   {
     type: 'Page/Route',
@@ -534,8 +510,9 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Dashboards/Tab',
     properties: {
       id: 'object-service',
-      // t('ceph-storage-plugin~Object Service')
-      title: '%ceph-storage-plugin~Object Service%',
+      navSection: 'storage',
+      // t('ceph-storage-plugin~Object')
+      title: '%ceph-storage-plugin~Object%',
     },
     flags: {
       required: [NOOBAA_FLAG, OCS_FLAG],
@@ -651,6 +628,32 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
     flags: {
       required: [NOOBAA_FLAG],
+    },
+  },
+  {
+    type: 'NavItem/Href',
+    properties: {
+      id: 'ocsdashboards',
+      section: 'storage',
+      insertBefore: 'persistentvolumes',
+      componentProps: {
+        // t('ceph-storage-plugin~Overview')
+        name: '%ceph-storage-plugin~Overview%',
+        href: '/ocs-dashboards',
+      },
+    },
+    flags: {
+      required: [OCS_FLAG],
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      path: `/ocs-dashboards`,
+      loader: () => import('./components/dashboards/ocs-dashboards').then((m) => m.DashboardsPage),
+    },
+    flags: {
+      required: [OCS_FLAG],
     },
   },
   {

@@ -15,6 +15,9 @@ import { NormalizedBuilderImages } from '../../utils/imagestream-utils';
 import ImageSearchSection from '../import/image-search/ImageSearchSection';
 import { CreateApplicationFlow } from './edit-application-utils';
 import { AppResources } from './edit-application-types';
+import JarSection from '../import/jar/section/JarSection';
+import BuilderImageTagSelector from '../import/builder/BuilderImageTagSelector';
+import FormSection from '../import/section/FormSection';
 
 export interface EditApplicationFormProps {
   createFlowType: string;
@@ -40,9 +43,10 @@ const EditApplicationForm: React.FC<FormikProps<FormikValues> & EditApplicationF
       <PageHeading title={createFlowType} />
       <FlexForm onSubmit={handleSubmit}>
         <FormBody flexLayout>
-          {createFlowType !== CreateApplicationFlow.Container && (
-            <GitSection builderImages={builderImages} />
-          )}
+          {createFlowType !== CreateApplicationFlow.Container &&
+            createFlowType !== CreateApplicationFlow.JarUpload && (
+              <GitSection builderImages={builderImages} />
+            )}
           {createFlowType === CreateApplicationFlow.Git && (
             <BuilderSection
               image={values.image}
@@ -53,15 +57,27 @@ const EditApplicationForm: React.FC<FormikProps<FormikValues> & EditApplicationF
           {createFlowType === CreateApplicationFlow.Dockerfile && (
             <DockerSection buildStrategy={values.build.strategy} />
           )}
+          {createFlowType === CreateApplicationFlow.JarUpload && <JarSection />}
           {createFlowType === CreateApplicationFlow.Container && <ImageSearchSection />}
-          {createFlowType === CreateApplicationFlow.Container && <IconSection />}
-          <AppSection project={values.project} />
-          {createFlowType !== CreateApplicationFlow.Container && (
-            <PipelineSection
-              builderImages={builderImages}
-              existingPipeline={appResources?.pipeline?.data}
-            />
+          {(createFlowType === CreateApplicationFlow.Container ||
+            createFlowType === CreateApplicationFlow.JarUpload) && <IconSection />}
+          {createFlowType === CreateApplicationFlow.JarUpload && builderImages && (
+            <FormSection>
+              <BuilderImageTagSelector
+                selectedBuilderImage={builderImages[values.image.selected]}
+                selectedImageTag={values.image.tag}
+                showImageInfo={false}
+              />
+            </FormSection>
           )}
+          <AppSection project={values.project} />
+          {createFlowType !== CreateApplicationFlow.Container &&
+            createFlowType !== CreateApplicationFlow.JarUpload && (
+              <PipelineSection
+                builderImages={builderImages}
+                existingPipeline={appResources?.pipeline?.data}
+              />
+            )}
           <AdvancedSection values={values} appResources={appResources} />
         </FormBody>
         <FormFooter

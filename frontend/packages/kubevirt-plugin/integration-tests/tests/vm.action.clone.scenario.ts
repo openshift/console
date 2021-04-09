@@ -28,7 +28,6 @@ import {
   VM_BOOTUP_TIMEOUT_SECS,
   VM_IMPORT_TIMEOUT_SECS,
   PAGE_LOAD_TIMEOUT_SECS,
-  CLONED_VM_BOOTUP_TIMEOUT_SECS,
 } from './utils/constants/common';
 import {
   multusNetworkInterface,
@@ -245,15 +244,13 @@ describe('Test clone VM.', () => {
         .setProvisionSource(ProvisionSource.URL)
         .setDisks([rootDisk])
         .setCloudInit(cloudInitCustomScriptConfig)
-        .setWaitForImport(true)
         .setCustomize(true)
-        .setStartOnCreation(false)
+        .setStartOnCreation(true)
         .build();
       await vm.create();
       clonedVM = await vm.clone();
-      await clonedVM.waitForStatus(VM_STATUS.Off, VM_IMPORT_TIMEOUT_SECS);
-      await clonedVM.start();
-    }, CLONED_VM_BOOTUP_TIMEOUT_SECS + VM_IMPORT_TIMEOUT_SECS);
+      await clonedVM.waitForStatus(VM_STATUS.Running, VM_IMPORT_TIMEOUT_SECS);
+    });
 
     afterAll(async () => {
       deleteResources([vm.asResource(), clonedVM.asResource()]);

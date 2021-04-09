@@ -243,9 +243,11 @@ const pipelineSpec: PipelineSpecData = {
     workspaces: [
       {
         name: 'password-vault',
+        optional: true,
       },
       {
         name: 'recipe-store',
+        optional: false,
       },
       {
         name: 'shared-data',

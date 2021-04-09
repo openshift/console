@@ -83,7 +83,7 @@ const StorageEfficiencyCard: React.FC<DashboardItemProps> = ({
     error: !!compressionQueryResultError || !compressionRatio || Number(compressionRatio) === 1,
     title: t('ceph-storage-plugin~Compression ratio'),
     infoText: t(
-      'ceph-storage-plugin~Compression ratio refers to the deduplication and compression process effectiveness.',
+      'ceph-storage-plugin~OpenShift Container Storage can be configured to use compression. The efficiency rate reflects the actual compression ratio when using such a configuration.',
     ),
     getStats: compressionStats,
   };
@@ -95,7 +95,7 @@ const StorageEfficiencyCard: React.FC<DashboardItemProps> = ({
       !!savingsQueryResultError || !!logicalSavingsQueryResultError || !savings || !logicalSize,
     title: t('ceph-storage-plugin~Savings'),
     infoText: t(
-      'ceph-storage-plugin~Savings shows the uncompressed and non-deduped data that would have been stored without those techniques',
+      'ceph-storage-plugin~Savings shows the uncompressed and non-deduped data that would have been stored without those techniques.',
     ),
     getStats: savingStats,
   };

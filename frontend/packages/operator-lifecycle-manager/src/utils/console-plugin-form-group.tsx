@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Button, Popover } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
+import { FieldLevelHelp } from '@console/internal/components/utils';
 import { ConsolePluginWarning } from './console-plugin-warning';
 import { ConsolePluginRadioInputs } from './console-plugin-radio-inputs';
 import { isCatalogSourceTrusted } from '../utils';
@@ -18,22 +18,12 @@ export const ConsolePluginFormGroup: React.FC<ConsolePluginFormGroupProps> = ({
   return (
     <div className="form-group">
       <fieldset>
-        <Popover
-          headerContent={<div>{t('olm~Console plugin', { count: csvPluginsCount })}</div>}
-          bodyContent={
-            <div>
-              {t(
-                'olm~This operator includes a console plugin which provides a custom interface that can be included in the console. The console plugin will prompt for the console to be refreshed once it has been enabled. Make sure you trust this console plugin before enabling.',
-              )}
-            </div>
-          }
-        >
-          <h5 className="co-required co-form-heading__popover">
-            <Button variant="plain" className="co-form-heading__popover-button">
-              {t('olm~Console plugin', { count: csvPluginsCount })}
-            </Button>
-          </h5>
-        </Popover>
+        <label className="co-required">{t('olm~Console plugin', { count: csvPluginsCount })}</label>
+        <FieldLevelHelp>
+          {t(
+            'olm~This operator includes a console plugin which provides a custom interface that can be included in the console. The console plugin will prompt for the console to be refreshed once it has been enabled. Make sure you trust this console plugin before enabling.',
+          )}
+        </FieldLevelHelp>
         {csvPlugins.map((plugin) => (
           <fieldset key={plugin}>
             <div>

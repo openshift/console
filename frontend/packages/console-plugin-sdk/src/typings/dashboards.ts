@@ -131,6 +131,9 @@ namespace ExtensionProperties {
     /** The tab's ID which will be used as part of href within dashboards page */
     id: string;
 
+    /** NavSection to which the tab belongs to */
+    navSection: 'home' | 'storage';
+
     /** The tab title */
     title: string;
   }
@@ -380,6 +383,7 @@ export type PrometheusHealthHandler = (
   responses: { response: PrometheusResponse; error: any }[],
   t?: TFunction,
   additionalResource?: FirehoseResult<K8sResourceKind | K8sResourceKind[]>,
+  infrastructure?: K8sResourceKind,
 ) => SubsystemHealth;
 
 export type ResourceHealthHandler<R extends ResourcesObject> = (

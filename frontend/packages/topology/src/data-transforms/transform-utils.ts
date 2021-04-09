@@ -13,6 +13,7 @@ import { isKnativeServing, OverviewItem } from '@console/shared';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import {
   TYPE_EVENT_SOURCE,
+  TYPE_EVENT_SOURCE_KAFKA,
   TYPE_KNATIVE_REVISION,
 } from '@console/knative-plugin/src/topology/const';
 import { ConnectsToData, edgesFromAnnotations } from '../utils/connector-utils';
@@ -78,7 +79,10 @@ export const createTopologyNodeData = (
       vcsRef: deploymentsAnnotations['app.openshift.io/vcs-ref'],
       builderImage: builderImageIcon || defaultIcon,
       isKnativeResource:
-        type && (type === TYPE_EVENT_SOURCE || type === TYPE_KNATIVE_REVISION)
+        type &&
+        (type === TYPE_EVENT_SOURCE ||
+          type === TYPE_KNATIVE_REVISION ||
+          type === TYPE_EVENT_SOURCE_KAFKA)
           ? true
           : isKnativeServing(resource, 'metadata.labels'),
     },

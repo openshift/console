@@ -10,6 +10,7 @@ import {
   UNEXPECTED_ACTION_ERROR,
   VM_ACTIONS_TIMEOUT_SECS,
   VM_STOP_TIMEOUT_SECS,
+  EXPECT_LOGIN_SCRIPT_PATH,
 } from '../utils/constants/common';
 import * as vmView from '../../views/virtualMachine.view';
 import { nameInput as cloneDialogNameInput } from '../../views/dialogs/cloneVirtualMachineDialog.view';
@@ -27,9 +28,8 @@ export class BaseVirtualMachine extends KubevirtUIResource<VMBuilderData> {
       waitTimeout,
     );
     if (status === VM_STATUS.Running) {
-      execSync(
-        `oc wait --for condition=Ready vmi ${this.name} -n ${this.namespace} --timeout=${waitTimeout}s`,
-      );
+      // wait for the VM to boot up
+      execSync(`expect ${EXPECT_LOGIN_SCRIPT_PATH} ${this.name} ${this.namespace} || true`);
     }
   }
 

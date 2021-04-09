@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { AddAction } from '@console/dynamic-plugin-sdk/src/extensions/add-actions';
+import { AddAction } from '@console/dynamic-plugin-sdk';
 import {
   ModelDefinition,
   ModelFeatureFlag,

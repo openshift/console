@@ -8,6 +8,7 @@ import {
   TYPE_EVENT_PUB_SUB,
   TYPE_EVENT_PUB_SUB_LINK,
   TYPE_KNATIVE_REVISION,
+  TYPE_EVENT_SOURCE_KAFKA,
 } from '../const';
 import { KnativeServiceListViewNode } from './KnativeServiceListViewNode';
 import { SinkUriListViewNode } from './SinkUriListViewNode';
@@ -34,6 +35,7 @@ export const knativeListViewNodeComponentFactory = (
     case TYPE_EVENT_SOURCE:
     case TYPE_EVENT_SOURCE_LINK:
     case TYPE_EVENT_PUB_SUB:
+    case TYPE_EVENT_SOURCE_KAFKA:
       return NoStatusListViewNode;
     default:
       return null;

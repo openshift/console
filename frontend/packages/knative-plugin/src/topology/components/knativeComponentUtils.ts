@@ -1,3 +1,4 @@
+import i18next from 'i18next';
 import { errorModal } from '@console/internal/components/modals';
 import {
   GraphElement,
@@ -23,17 +24,27 @@ import {
   TYPE_EVENT_PUB_SUB,
   TYPE_SINK_URI,
 } from '../const';
-import { createSinkConnection, createSinkPubSubConnection } from '../knative-topology-utils';
+import {
+  createEventSourceKafkaConnection,
+  createSinkConnection,
+  createSinkPubSubConnection,
+} from '../knative-topology-utils';
 import { EventingBrokerModel } from '../../models';
 
 export const MOVE_EV_SRC_CONNECTOR_OPERATION = 'moveeventsourceconnector';
 export const MOVE_PUB_SUB_CONNECTOR_OPERATION = 'movepubsubconnector';
 export const CREATE_PUB_SUB_CONNECTOR_OPERATION = 'createpubsubconnector';
+export const MOVE_EV_SRC_KAFKA_CONNECTOR_OPERATION = 'moveeventsourcekafkaconnector';
+export const CREATE_EV_SRC_KAFKA_CONNECTOR_OPERATION = 'createeventsourcekafkaconnector';
 
 export const nodesEdgeIsDragging = (monitor, props) =>
   monitor.isDragging() &&
   (monitor.getOperation() === CREATE_CONNECTOR_OPERATION ||
     (monitor.getOperation() === CREATE_PUB_SUB_CONNECTOR_OPERATION &&
+      monitor.getItem() === props.element) ||
+    (monitor.getOperation() === CREATE_EV_SRC_KAFKA_CONNECTOR_OPERATION &&
+      monitor.getItem() === props.element) ||
+    (monitor.getOperation() === MOVE_EV_SRC_KAFKA_CONNECTOR_OPERATION &&
       monitor.getItem() === props.element) ||
     (monitor.getOperation() === MOVE_EV_SRC_CONNECTOR_OPERATION &&
       monitor.getItem().getSource()) === props.element);
@@ -62,9 +73,9 @@ export const isEventPubSubDroppable = (source: Node, target: Node) => {
 const getKnativeTooltip = (monitor): string => {
   return monitor.getOperation()?.type === CREATE_PUB_SUB_CONNECTOR_OPERATION
     ? monitor.getItem()?.getData()?.resources.obj.kind === EventingBrokerModel.kind
-      ? 'Add  Trigger'
-      : 'Add Subscription'
-    : 'Move sink to service';
+      ? i18next.t('knative-plugin~Add Trigger')
+      : i18next.t('knative-plugin~Add Subscription')
+    : i18next.t('knative-plugin~Move sink to service');
 };
 export const eventSourceSinkDropTargetSpec: DropTargetSpec<
   Edge,
@@ -158,7 +169,40 @@ export const eventSourceLinkDragSourceSpec = (): DragSourceSpec<
     ) {
       createSinkConnection(props.element.getSource(), dropResult).catch((error) => {
         errorModal({
-          title: 'Error moving event source sink',
+          title: i18next.t('knative-plugin~Error moving event source sink'),
+          error: error.message,
+          showIcon: true,
+        });
+      });
+    }
+  },
+  collect: (monitor) => ({
+    dragging: monitor.isDragging(),
+  }),
+});
+
+export const eventSourceKafkaLinkDragSourceSpec = (): DragSourceSpec<
+  DragObjectWithType,
+  DragSpecOperationType<EditableDragOperationType>,
+  Node,
+  { dragging: boolean },
+  EdgeComponentProps
+> => ({
+  item: { type: EDGE_DRAG_TYPE },
+  operation: { type: MOVE_EV_SRC_KAFKA_CONNECTOR_OPERATION, edit: true },
+  begin: (monitor, props) => {
+    props.element.raise();
+    return props.element;
+  },
+  drag: (event, monitor, props) => {
+    props.element.setEndPoint(event.x, event.y);
+  },
+  end: (dropResult, monitor, props) => {
+    props.element.setEndPoint();
+    if (monitor.didDrop() && dropResult) {
+      createEventSourceKafkaConnection(props.element.getSource(), dropResult).catch((error) => {
+        errorModal({
+          title: i18next.t('knative-plugin~Error moving event source kafka connector'),
           error: error.message,
           showIcon: true,
         });
@@ -195,7 +239,7 @@ export const eventingPubSubLinkDragSourceSpec = (): DragSourceSpec<
     ) {
       createSinkPubSubConnection(props.element, dropResult).catch((error) => {
         errorModal({
-          title: 'Error while sink',
+          title: i18next.t('knative-plugin~Error while sink'),
           error: error.message,
           showIcon: true,
         });

@@ -86,7 +86,9 @@ const EventSourceSection: React.FC<EventSourceSectionProps> = ({
       EventSource = <ApiServerSection title={sectionTitle} fullWidth={fullWidth} />;
       break;
     case EventSources.KafkaSource:
-      EventSource = <KafkaSourceSection title={sectionTitle} fullWidth={fullWidth} />;
+      EventSource = (
+        <KafkaSourceSection title={sectionTitle} fullWidth={fullWidth} namespace={namespace} />
+      );
       break;
     case EventSources.ContainerSource:
       EventSource = <ContainerSourceSection title={sectionTitle} fullWidth={fullWidth} />;

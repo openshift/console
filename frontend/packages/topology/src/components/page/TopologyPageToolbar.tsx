@@ -35,10 +35,14 @@ const TopologyPageToolbar: React.FC<TopologyPageToolbarProps> = observer(
 
     return (
       <>
-        {showGraphView && !isMobile ? (
+        {!isMobile ? (
           <Popover
             aria-label={t('topology~Shortcuts')}
-            bodyContent={getTopologyShortcuts(t, { supportedFileTypes: extensions })}
+            bodyContent={getTopologyShortcuts(t, {
+              supportedFileTypes: extensions,
+              isEmptyModel,
+              viewType,
+            })}
             position="left"
             maxWidth="100vw"
           >
@@ -47,7 +51,6 @@ const TopologyPageToolbar: React.FC<TopologyPageToolbarProps> = observer(
               variant="link"
               className="odc-topology__shortcuts-button"
               icon={<QuestionCircleIcon />}
-              isDisabled={isEmptyModel}
               data-test-id="topology-view-shortcuts"
             >
               {t('topology~View shortcuts')}

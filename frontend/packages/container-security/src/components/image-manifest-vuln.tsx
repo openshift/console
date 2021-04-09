@@ -54,6 +54,9 @@ export const totalCount = (obj: ImageManifestVuln) => {
 export const affectedPodsCount = (obj: ImageManifestVuln) =>
   Object.keys(obj.status.affectedPods).length;
 
+export const highestSeverityIndex = (obj: ImageManifestVuln) =>
+  priorityFor(obj.status.highestSeverity).index;
+
 export const ImageManifestVulnDetails: React.FC<ImageManifestVulnDetailsProps> = (props) => {
   const { t } = useTranslation();
   const total = props.obj.spec.features.reduce((sum, f) => sum + f.vulnerabilities.length, 0);
@@ -254,7 +257,7 @@ export const ImageManifestVulnTableHeader = (t: TFunction) => () => [
   },
   {
     title: t('container-security~Highest severity'),
-    sortField: 'status.highestSeverity',
+    sortFunc: 'highestSeverityOrder',
     transforms: [sortable],
     props: { className: tableColumnClasses[2] },
   },
@@ -301,6 +304,7 @@ export const ImageManifestVulnList: React.FC<ImageManifestVulnListProps> = (prop
       customSorts={{
         totalOrder: totalCount,
         affectedPodsOrder: affectedPodsCount,
+        highestSeverityOrder: highestSeverityIndex,
       }}
       aria-label={t('container-security~Image Manifest Vulnerabilities')}
       Header={ImageManifestVulnTableHeader(t)}
@@ -314,7 +318,7 @@ export const ImageManifestVulnList: React.FC<ImageManifestVulnListProps> = (prop
 export const ImageManifestVulnPage: React.FC<ImageManifestVulnPageProps> = (props) => {
   const { t } = useTranslation();
   const { showTitle = true, hideNameLabelFilters = true } = props;
-  const namespace = props.namespace || props.match.params.ns || props.match.params.name;
+  const namespace = props.namespace || props.match?.params?.ns || props.match?.params?.name;
   return (
     <MultiListPage
       {...props}

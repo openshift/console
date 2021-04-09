@@ -31,9 +31,14 @@ import {
   EmptyStateVariant,
   Title,
 } from '@patternfly/react-core';
-import { isAlertAction, useExtensions, AlertAction } from '@console/plugin-sdk';
 import { usePrevious } from '@console/shared/src/hooks/previous';
-
+import {
+  AlertAction,
+  isAlertAction,
+  useResolvedExtensions,
+  ResolvedExtension,
+} from '@console/dynamic-plugin-sdk';
+import { history } from '@console/internal/components/utils';
 import { coFetchJSON } from '../co-fetch';
 import {
   ClusterUpdate,
@@ -87,15 +92,18 @@ const AlertEmptyState: React.FC<AlertEmptyProps> = ({ drawerToggle }) => {
   );
 };
 
-export const getAlertActions = (actionsExtensions: AlertAction[]) => {
-  const alertActions = new Map().set('AlertmanagerReceiversNotConfigured', {
+export const getAlertActions = (actionsExtensions: ResolvedExtension<AlertAction>[]) => {
+  const alertActions = new Map<
+    string,
+    Omit<ResolvedExtension<AlertAction>['properties'], 'alert'>
+  >().set('AlertmanagerReceiversNotConfigured', {
     text: i18next.t('notification-drawer~Configure'),
-    path: '/monitoring/alertmanagerconfig',
+    action: () => history.push('/monitoring/alertmanagerconfig'),
   });
   actionsExtensions.forEach(({ properties }) =>
     alertActions.set(properties.alert, {
       text: properties.text,
-      path: properties.path,
+      action: properties.action,
     }),
   );
   return alertActions;
@@ -105,7 +113,7 @@ const getAlertNotificationEntries = (
   isLoaded: boolean,
   alertData: Alert[],
   toggleNotificationDrawer: () => void,
-  alertActionExtensions: AlertAction[],
+  alertActionExtensions: ResolvedExtension<AlertAction>[],
   isCritical: boolean,
 ): React.ReactNode[] =>
   isLoaded && !_.isEmpty(alertData)
@@ -113,7 +121,7 @@ const getAlertNotificationEntries = (
         .filter((a) => (isCritical ? criticalCompare(a) : otherAlertCompare(a)))
         .map((alert, i) => {
           const action = getAlertActions(alertActionExtensions).get(alert.rule.name);
-          const alertActionPath = _.isFunction(action?.path) ? action.path(alert) : action?.path;
+
           return (
             <NotificationEntry
               key={`${i}_${alert.activeAt}`}
@@ -128,7 +136,7 @@ const getAlertNotificationEntries = (
               toggleNotificationDrawer={toggleNotificationDrawer}
               targetPath={alertURL(alert, alert.rule.id)}
               actionText={action?.text}
-              actionPath={alertActionPath}
+              alertAction={() => action.action(alert)}
             />
           );
         })
@@ -274,9 +282,15 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
     return () => _.each(pollerTimeouts, clearTimeout);
   }, [t]);
   const [clusterVersionData] = useK8sWatchResource<ClusterVersionKind>(cvResource);
-  const alertActionExtensions = useExtensions<AlertAction>(isAlertAction);
 
   const { data, loaded, loadError } = alerts || {};
+  const alertIds = React.useMemo(() => data?.map((datum) => datum.rule.name) || [], [data]);
+  const [resolvedAlerts] = useResolvedExtensions<AlertAction>(
+    React.useCallback(
+      (e): e is AlertAction => isAlertAction(e) && alertIds.includes(e.properties.alert),
+      [alertIds],
+    ),
+  );
 
   const clusterVersionIsEditable =
     useAccessReview({
@@ -295,14 +309,14 @@ export const ConnectedNotificationDrawer_: React.FC<ConnectedNotificationDrawerP
     true,
     data,
     toggleNotificationDrawer,
-    alertActionExtensions,
+    resolvedAlerts,
     true,
   );
   const otherAlertList: React.ReactNode[] = getAlertNotificationEntries(
     loaded,
     data,
     toggleNotificationDrawer,
-    alertActionExtensions,
+    resolvedAlerts,
     false,
   );
   const [isAlertExpanded, toggleAlertExpanded] = React.useState<boolean>(

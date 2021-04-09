@@ -6,6 +6,7 @@ import {
   TYPE_EVENT_PUB_SUB_LINK,
   TYPE_EVENT_SOURCE_LINK,
   TYPE_REVISION_TRAFFIC,
+  TYPE_KAFKA_CONNECTION_LINK,
 } from '@console/knative-plugin/src/topology/const';
 import KnativeResourceOverviewPage from '@console/knative-plugin/src/components/overview/KnativeResourceOverviewPage';
 import KnativeTopologyEdgePanel from '@console/knative-plugin/src/components/overview/KnativeTopologyEdgePanel';
@@ -74,7 +75,11 @@ export const getSelectedEntityDetails = (selectedEntity: GraphElement) => {
       const itemResources = selectedEntity.getData();
       return <KnativeResourceOverviewPage item={itemResources.resources} />;
     }
-    if ([TYPE_REVISION_TRAFFIC, TYPE_EVENT_SOURCE_LINK].includes(selectedEntity.getType())) {
+    if (
+      [TYPE_REVISION_TRAFFIC, TYPE_EVENT_SOURCE_LINK, TYPE_KAFKA_CONNECTION_LINK].includes(
+        selectedEntity.getType(),
+      )
+    ) {
       return <KnativeTopologyEdgePanel edge={selectedEntity as BaseEdge} />;
     }
     if (selectedEntity.getType() === TYPE_SERVICE_BINDING) {

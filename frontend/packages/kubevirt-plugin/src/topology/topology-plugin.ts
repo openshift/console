@@ -1,4 +1,4 @@
-import { getExecutableCodeRef } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-utils';
+import { applyCodeRefSymbol } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-resolver';
 import { WatchK8sResources } from '@console/internal/components/utils/k8s-watch-hook';
 import { TemplateModel } from '@console/internal/models';
 import { Plugin } from '@console/plugin-sdk';
@@ -69,7 +69,7 @@ export const getTopologyPlugin = (required: string[]): Plugin<TopologyConsumedEx
   {
     type: 'Topology/ComponentFactory',
     properties: {
-      getFactory: getExecutableCodeRef(getKubevirtComponentFactory),
+      getFactory: applyCodeRefSymbol(getKubevirtComponentFactory),
     },
     flags: {
       required,
@@ -82,8 +82,8 @@ export const getTopologyPlugin = (required: string[]): Plugin<TopologyConsumedEx
       priority: 200,
       resources: virtualMachineResourceWatchers,
       workloadKeys: ['virtualmachines'],
-      getDataModel: getExecutableCodeRef(getKubevirtTopologyDataModel),
-      isResourceDepicted: getExecutableCodeRef(getIsKubevirtResource),
+      getDataModel: applyCodeRefSymbol(getKubevirtTopologyDataModel),
+      isResourceDepicted: applyCodeRefSymbol(getIsKubevirtResource),
     },
     flags: {
       required,

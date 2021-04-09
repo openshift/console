@@ -15,6 +15,7 @@ export type PipelineTaskRef = {
 export type PipelineTaskWorkspace = {
   name: string;
   workspace: string;
+  optional?: boolean;
 };
 
 export type PipelineTaskResource = {

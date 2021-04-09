@@ -208,7 +208,7 @@ const AdminNav = () => {
 
       <NavSection id="storage" title={t('public~Storage')} data-quickstart-id="qs-nav-storage">
         <ResourceClusterLink
-          id="networkpolicies"
+          id="persistentvolumes"
           resource="persistentvolumes"
           name={t('public~PersistentVolumes')}
           required={FLAGS.CAN_LIST_PV}

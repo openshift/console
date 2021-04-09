@@ -11,9 +11,13 @@ export const Configure: React.FC<ConfigureProps> = ({ state, dispatch, mode }) =
 
   const { networkType: nwType, publicNetwork, clusterNetwork } = state;
 
-  const setNetworkType = (networkType: NetworkType) =>
+  const setNetworkType = (networkType: NetworkType) => {
     dispatch({ type: ActionType.SET_NETWORK_TYPE, payload: networkType });
-
+    if (networkType === NetworkType.DEFAULT) {
+      dispatch({ type: ActionType.SET_CLUSTER_NETWORK, payload: '' });
+      dispatch({ type: ActionType.SET_PUBLIC_NETWORK, payload: '' });
+    }
+  };
   const setNetwork = (type, payload) =>
     type === 'Cluster'
       ? dispatch({ type: ActionType.SET_CLUSTER_NETWORK, payload })

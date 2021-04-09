@@ -1,5 +1,5 @@
 import { Plugin } from '@console/plugin-sdk';
-import { getExecutableCodeRef } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-utils';
+import { applyCodeRefSymbol } from '@console/dynamic-plugin-sdk/src/coderefs/coderef-resolver';
 import {
   TopologyDecoratorProvider,
   TopologyDataModelFactory,
@@ -33,7 +33,7 @@ export const pipelinesTopologyPlugin: Plugin<PipelineTopologyConsumedExtensions>
       id: 'pipeline-run-decorator',
       priority: 100,
       quadrant: TopologyDecoratorQuadrant.lowerLeft,
-      decorator: getExecutableCodeRef(getPipelineRunDecorator),
+      decorator: applyCodeRefSymbol(getPipelineRunDecorator),
     },
     flags: {
       required: [FLAG_OPENSHIFT_PIPELINE],

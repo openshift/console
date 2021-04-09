@@ -11,7 +11,10 @@ export interface EventListenerDetailsProps {
 
 const EventListenerDetails: React.FC<EventListenerDetailsProps> = ({ obj: eventListener }) => {
   const { t } = useTranslation();
-  const triggers = eventListener.spec.triggers?.filter((trigger) => trigger.template?.name) || [];
+  const triggers =
+    eventListener.spec.triggers?.filter(
+      (trigger) => trigger.template?.ref || trigger.template?.name,
+    ) || [];
   return (
     <div className="co-m-pane__body">
       <SectionHeading text={t('pipelines-plugin~Event Listener details')} />

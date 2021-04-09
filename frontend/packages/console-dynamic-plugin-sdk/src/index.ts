@@ -1,7 +1,6 @@
-// Plugin API types
+// Plugin APIs and types
 export * from './api/useResolvedExtensions';
-
-export * from './utils/common';
+export * from './api/common-types';
 
 // Extension types
 export * from './extensions/add-actions';
@@ -16,3 +15,4 @@ export * from './extensions/pvc';
 export * from './extensions/redux';
 export * from './extensions/resource-metadata';
 export * from './extensions/yaml-templates';
+export * from './extensions/notification-alert';

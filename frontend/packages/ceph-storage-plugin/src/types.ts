@@ -13,6 +13,7 @@ import {
   NS_PROVIDERS_NOOBAA_MAP,
   NS_NOOBAA_TYPE_MAP,
 } from './constants/providers';
+import { NamespacePolicyType } from './constants/bucket-class';
 
 export type SpecProvider = typeof PROVIDERS_NOOBAA_MAP[keyof typeof PROVIDERS_NOOBAA_MAP];
 export type SpecType = typeof NOOBAA_TYPE_MAP[keyof typeof NOOBAA_TYPE_MAP];
@@ -56,6 +57,22 @@ export type BucketClassKind = K8sResourceCommon & {
         backingStores: string[];
         placement: PlacementPolicy;
       }[];
+    };
+    namespacePolicy: {
+      type: NamespacePolicyType;
+      single: {
+        resource: string;
+      };
+      multi: {
+        writeResource: string;
+        readResources: string[];
+      };
+      cache: {
+        caching: {
+          ttl: number;
+        };
+        hubResource: string;
+      };
     };
   };
 };

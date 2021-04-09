@@ -12,8 +12,9 @@ import QuickStartsCatalogCard from '@console/shared/src/components/quick-starts/
 import {
   ResolvedExtension,
   useResolvedExtensions,
-} from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
-import { AddAction, isAddAction } from '@console/dynamic-plugin-sdk/src/extensions/add-actions';
+  AddAction,
+  isAddAction,
+} from '@console/dynamic-plugin-sdk';
 
 const navigateTo = (e: React.SyntheticEvent, url: string) => {
   history.push(url);

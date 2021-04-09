@@ -10,7 +10,21 @@ Feature: Topology chart area
         @smoke
         Scenario: Empty state of topology : T-01-TC01
              When user navigates to Topology page
-             Then user sees Topology page with message on the top "No resources found"
+             Then user sees Topology page with message "No resources found"
+
+
+        @regression @to-do
+        Scenario: Navigate to Add page from Empty state of topology
+            Given user is at the Topology page
+             When user clicks on "Add page" link in the topology page
+             Then user will be redirected too Add page
+
+
+        @regression @todo
+        Scenario: Add to project option in Empty state of topology
+            Given user is at the Topology page
+             When user clicks on "Start building your application" link in the topology page
+             Then user will be able to see Add to project search bar
 
 
         @smoke

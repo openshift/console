@@ -118,6 +118,11 @@ export const defaultData: DeployImageFormData = {
       defaultLimitUnit: 'Mi',
     },
   },
+  fileUpload: {
+    name: 'python',
+    value: '',
+    javaArgs: '',
+  },
   healthChecks: healthChecksProbeInitialData,
 };
 
@@ -623,6 +628,66 @@ export const Kafkas: K8sResourceKind[] = [
         },
       ],
       observedGeneration: 1,
+    },
+  },
+  {
+    apiVersion: 'rhoas.redhat.com/v1alpha1',
+    kind: 'KafkaConnection',
+    metadata: {
+      resourceVersion: '8324966',
+      name: 'ajay-test',
+      uid: 'bc6c508f-0167-48a3-9a13-96f2aeb7aff2',
+      creationTimestamp: '2021-03-30T08:28:59Z',
+      generation: 1,
+      namespace: 'div',
+      finalizers: ['kafkaconnections.rhoas.redhat.com/finalizer'],
+    },
+    spec: {
+      accessTokenSecretName: 'rh-cloud-services-api-accesstoken',
+      credentials: {
+        serviceAccountSecretName: 'rh-cloud-services-service-account',
+      },
+      kafkaId: '1qCXzgiGqva0D5bXIB0Gn9g23Ni',
+    },
+    status: {
+      bootstrapServerHost: 'jai-test--qcxzgigqva-d-bxib-gn-g--ni.kafka.devshift.org:443',
+      conditions: [
+        {
+          lastTransitionGeneration: 1,
+          lastTransitionTime: '2021-03-30T08:29:00.092273Z',
+          message: '',
+          reason: '',
+          status: 'True',
+          type: 'AcccesTokenSecretValid',
+        },
+        {
+          lastTransitionGeneration: 1,
+          lastTransitionTime: '2021-03-30T08:29:00.092277Z',
+          message: '',
+          reason: '',
+          status: 'True',
+          type: 'FoundKafkaById',
+        },
+        {
+          lastTransitionGeneration: 1,
+          lastTransitionTime: '2021-03-30T08:29:00.092278Z',
+          message: '',
+          reason: '',
+          status: 'True',
+          type: 'Finished',
+        },
+      ],
+      message: 'Created',
+      metadata: {
+        cloudUI:
+          'https://cloud.redhat.com/beta/application-services/openshift-streams/kafkas/1qCXzgiGqva0D5bXIB0Gn9g23Ni',
+        provider: 'rhoas',
+        saslMechanism: 'PLAIN',
+        securityProtocol: 'SASL_SSL',
+        type: 'kafka',
+      },
+      serviceAccountSecretName: 'rh-cloud-services-service-account',
+      updated: '2021-03-30T08:29:00.092250Z',
     },
   },
 ];

@@ -60,17 +60,19 @@ export const LocalVolumeDiscoveryBody: React.FC<LocalVolumeDiscoveryBodyProps> =
         </div>
       </FormGroup>
       {showSelectNodes && (
-        <ListPage
-          showTitle={false}
-          kind={NodeModel.kind}
-          ListComponent={NodesTable}
-          customData={{
-            onRowSelected: (selectedNodes: NodeKind[]) => setSelectNodes(selectedNodes),
-            preSelectedNodes: selectNodes.map(getName),
-            hasOnSelect: true,
-            taintsFilter,
-          }}
-        />
+        <div className="lso-lvd-body__select-nodes">
+          <ListPage
+            showTitle={false}
+            kind={NodeModel.kind}
+            ListComponent={NodesTable}
+            customData={{
+              onRowSelected: (selectedNodes: NodeKind[]) => setSelectNodes(selectedNodes),
+              preSelectedNodes: selectNodes.map(getName),
+              hasOnSelect: true,
+              taintsFilter,
+            }}
+          />
+        </div>
       )}
     </>
   );

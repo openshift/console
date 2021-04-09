@@ -1,4 +1,7 @@
 import { Alert } from '@console/internal/components/monitoring/types';
+import { history } from '@console/internal/components/utils';
 
 export const getAlertActionPath = (alertData: Alert) =>
-  `/k8s/cluster/nodes/${alertData.labels.host}/disks?node-disk-name=${alertData.labels.device}`;
+  history.push(
+    `/k8s/cluster/nodes/${alertData.labels.host}/disks?node-disk-name=${alertData.labels.device}`,
+  );

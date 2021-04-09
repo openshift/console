@@ -16,7 +16,11 @@ const WorkspaceDefinitionList: React.FC<WorkspaceDefinitionListProps> = ({ works
       <dt>{t('pipelines-plugin~Workspaces')}</dt>
       <dd>
         {workspaces.map((workspace) => (
-          <div key={workspace.name}>{workspace.name}</div>
+          <div key={workspace.name}>
+            {workspace.optional
+              ? `${workspace.name} (${t('pipelines-plugin~optional')})`
+              : `${workspace.name}`}
+          </div>
         ))}
       </dd>
     </dl>

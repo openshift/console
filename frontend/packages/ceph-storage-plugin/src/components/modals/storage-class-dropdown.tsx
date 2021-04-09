@@ -15,8 +15,8 @@ const ocsProvisioners = [
 const StorageClassDropdown = (props: any) => {
   const scConfig = _.cloneDeep(props);
   /* 'S' of Storage should be Capital as its defined key in resources object */
-  const scLoaded = _.get(scConfig.resources.StorageClass, 'loaded');
-  const scData = _.get(scConfig.resources.StorageClass, 'data', []) as StorageClassResourceKind[];
+  const scLoaded = scConfig?.resources?.StorageClass?.loaded;
+  const scData = (scConfig?.resources?.StorageClass?.data ?? []) as StorageClassResourceKind[];
 
   const filteredSCData = scData.filter((sc: StorageClassResourceKind) =>
     ocsProvisioners.every((provisioner: string) => !sc?.provisioner?.includes(provisioner)),

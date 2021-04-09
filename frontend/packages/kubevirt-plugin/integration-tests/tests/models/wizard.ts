@@ -191,6 +191,7 @@ export class Wizard {
   }
 
   async configureCloudInit(cloudInitOptions: CloudInitConfig) {
+    await click(view.cloud);
     if (cloudInitOptions.useCustomScript) {
       await click(view.cloudInitCustomScriptCheckbox);
       await fillInput(view.customCloudInitScriptTextArea, cloudInitOptions.customScript);
@@ -376,15 +377,11 @@ export class Wizard {
 
       if (workload) {
         await this.selectWorkloadProfile(workload);
-      } else {
-        throw Error('VM Workload not defined');
       }
     }
 
     if (flavor) {
       await this.selectFlavor(flavor);
-    } else {
-      throw Error('VM Flavor not defined');
     }
     await this.next(ignoreWarnings);
   }

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Extension } from '@console/plugin-sdk/src/typings/base';
 import { CodeRef, EncodedCodeRef, UpdateExtensionProperties } from '../types';
-import { ExtensionHook } from '../utils/common';
+import { ExtensionHook } from '../api/common-types';
 import { AccessReviewResourceAttributes } from './console-internal-types';
 
 namespace ExtensionProperties {

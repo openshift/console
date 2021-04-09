@@ -15,12 +15,7 @@ import { Link } from 'react-router-dom';
 import { HashLink } from 'react-router-hash-link';
 import { useTranslation } from 'react-i18next';
 
-import {
-  AddCircleOIcon,
-  OutlinedQuestionCircleIcon,
-  PencilAltIcon,
-  SyncAltIcon,
-} from '@patternfly/react-icons';
+import { AddCircleOIcon, PencilAltIcon, SyncAltIcon } from '@patternfly/react-icons';
 import { removeQueryArgument } from '@console/internal/components/utils/router';
 
 import { ClusterOperatorPage } from './cluster-operator';
@@ -70,6 +65,7 @@ import {
 import {
   EmptyBox,
   ExternalLink,
+  FieldLevelHelp,
   Firehose,
   FirehoseResource,
   HorizontalNav,
@@ -395,23 +391,17 @@ export const ChannelDocLink: React.FC<{}> = () => {
 const ChannelHeader: React.FC<{}> = () => {
   const { t } = useTranslation();
   return (
-    <Popover
-      headerContent={<>{t('cluster-settings~Channel')}</>}
-      bodyContent={
-        <>
-          <p>
-            {t(
-              'cluster-settings~Channels help to control the pace of updates and recommend the appropriate release versions. Update channels are tied to a minor version of OpenShift Container Platform, for example 4.5.',
-            )}
-          </p>
-          <ChannelDocLink />
-        </>
-      }
-    >
-      <Button variant="plain" className="details-item__popover-button">
-        {t('cluster-settings~Channel')}
-      </Button>
-    </Popover>
+    <>
+      {t('cluster-settings~Channel')}
+      <FieldLevelHelp>
+        <p>
+          {t(
+            'cluster-settings~Channels help to control the pace of updates and recommend the appropriate release versions. Update channels are tied to a minor version of OpenShift Container Platform, for example 4.5.',
+          )}
+        </p>
+        <ChannelDocLink />
+      </FieldLevelHelp>
+    </>
   );
 };
 
@@ -542,28 +532,16 @@ export const NodesUpdatesGroup: React.FC<NodesUpdatesGroupProps> = ({
           {name} {NodeModel.labelPlural}
         </Link>
         {name !== 'Master' && (
-          <Popover
-            bodyContent={
-              <>
-                {t(
-                  'cluster-settings~{{name}} {{resource}} may continue to update after the update of Master {{resource}} and {{resource2}} are complete.',
-                  {
-                    name,
-                    resource: NodeModel.labelPlural,
-                    resource2: ClusterOperatorModel.labelPlural,
-                  },
-                )}
-              </>
-            }
-          >
-            <Button
-              variant="plain"
-              aria-label="Help"
-              className="co-help-popover-button co-help-popover-button--space-l"
-            >
-              <OutlinedQuestionCircleIcon />
-            </Button>
-          </Popover>
+          <FieldLevelHelp>
+            {t(
+              'cluster-settings~{{name}} {{resource}} may continue to update after the update of Master {{resource}} and {{resource2}} are complete.',
+              {
+                name,
+                resource: NodeModel.labelPlural,
+                resource2: ClusterOperatorModel.labelPlural,
+              },
+            )}
+          </FieldLevelHelp>
         )}
       </UpdatesType>
       <UpdatesBar>

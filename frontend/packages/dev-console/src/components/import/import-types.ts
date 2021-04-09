@@ -89,6 +89,7 @@ export interface DeployImageFormData {
   deployment: DeploymentData;
   limits: LimitsData;
   healthChecks: HealthChecksData;
+  fileUpload?: FileUploadData;
 }
 
 export type FileUploadData = {
@@ -215,6 +216,7 @@ export interface BuildData {
   };
   env: (NameValuePair | NameValueFromPair)[];
   strategy: string;
+  source?: { type: string };
 }
 
 export interface DeploymentData {

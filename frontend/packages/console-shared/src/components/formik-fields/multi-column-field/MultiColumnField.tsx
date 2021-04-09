@@ -25,6 +25,7 @@ const MultiColumnField: React.FC<MultiColumnFieldProps> = ({
   disableAddRow,
   toolTip,
   spans,
+  complexFields,
 }) => {
   const { values } = useFormikContext<FormikValues>();
   const fieldValue = _.get(values, name, []);
@@ -64,6 +65,7 @@ const MultiColumnField: React.FC<MultiColumnFieldProps> = ({
                   isReadOnly={isReadOnly}
                   disableDeleteRow={disableDeleteRow}
                   spans={fieldSpans}
+                  complexFields={complexFields}
                 >
                   {children}
                 </MultiColumnFieldRow>

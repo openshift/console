@@ -2,7 +2,8 @@
 # usage ./expect-login.sh <vm name> <vm namespace>
 set vm_name [lindex $argv 0]
 set vm_namespace [lindex $argv 1]
-set login_prompt " login: "
+set login_prompt "(login:|Password:)"
+set login_prompt [string trim $login_prompt]
 
 spawn virtctl console $vm_name -n $vm_namespace --timeout 7
 

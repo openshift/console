@@ -1,4 +1,4 @@
-import { Extension } from '@console/plugin-sdk/src/typings/base';
+import { Extension, LoadedExtension } from '@console/plugin-sdk/src/typings/base';
 
 /**
  * Declaration of Console extension type.
@@ -72,4 +72,13 @@ export type UpdateExtensionProperties<
   {
     properties: Update<P, U>;
   }
+>;
+
+/**
+ * Update `CodeRef` properties of extension `E` to the referenced object types.
+ *
+ * This also coerces `E` type to `LoadedExtension` interface for runtime consumption.
+ */
+export type ResolvedExtension<E extends Extension<P>, P = ExtensionProperties<E>> = LoadedExtension<
+  UpdateExtensionProperties<E, ResolvedCodeRefProperties<P>, P>
 >;

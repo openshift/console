@@ -640,6 +640,37 @@ export const getEventSourceResponse = (eventSourceModel: K8sKind): FirehoseResul
   };
 };
 
+export const kafkaConnectionData = {
+  loaded: true,
+  loadError: '',
+  data: [
+    {
+      apiVersion: 'rhoas.redhat.com/v1alpha1',
+      kind: 'KafkaConnection',
+      metadata: {
+        creationTimestamp: '2021-04-08T10:40:48Z',
+        finalizers: ['kafkaconnections.rhoas.redhat.com/finalizer'],
+        name: 'my-first-kafka-instance',
+        namespace: 'testproject3',
+        resourceVersion: '91925',
+        uid: '85ffdf52-59f5-4120-b2cd-e90c991845e0',
+      },
+      spec: {
+        accessTokenSecretName: 'rh-cloud-services-api-accesstoken',
+        credentials: {
+          serviceAccountSecretName: 'rh-cloud-services-service-account',
+        },
+        kafkaId: '1qnH9JJ9icyjeLHe104WYj058xI',
+      },
+      status: {
+        bootstrapServerHost: 'my-first-x--xxx-xx-icyjelhe---wyj---xi.kafka.devshift.org:443',
+        serviceAccountSecretName: 'rh-cloud-services-service-account',
+        updated: '2021-04-08T10:40:51.473911Z',
+      },
+    },
+  ],
+};
+
 export const sampleEventSourceSinkbinding: FirehoseResult = {
   loaded: true,
   loadError: '',

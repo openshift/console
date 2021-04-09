@@ -1,12 +1,21 @@
-import { browser } from 'protractor';
-import { deleteResource, waitForStringInElement } from '@console/shared/src/test-utils/utils';
-import { getDetailActionDropdownOptions } from '@console/shared/src/test-utils/actions.view';
+import { $, browser, ExpectedConditions as until } from 'protractor';
+import {
+  click,
+  deleteResource,
+  waitForStringInElement,
+} from '@console/shared/src/test-utils/utils';
+import {
+  getDetailActionDropdownOptions,
+  detailViewAction,
+} from '@console/shared/src/test-utils/actions.view';
 import { vmDetailNode } from '../views/virtualMachine.view';
+import { confirmButton } from '../views/uiResource.view';
 import {
   VM_BOOTUP_TIMEOUT_SECS,
   VM_MIGRATION_TIMEOUT_SECS,
   VM_IMPORT_TIMEOUT_SECS,
   PAGE_LOAD_TIMEOUT_SECS,
+  STORAGE_CLASS,
 } from './utils/constants/common';
 import { VM_ACTION, VM_STATUS } from './utils/constants/vm';
 import { ProvisionSource } from './utils/constants/enums/provisionSource';
@@ -43,10 +52,21 @@ describe('Test VM Migration', () => {
       expect(await getDetailActionDropdownOptions()).toContain(MIGRATE_VM);
       expect(await getDetailActionDropdownOptions()).not.toContain(CANCEL_MIGRATION);
 
-      await vm.detailViewAction(VM_ACTION.Migrate, false);
-      await vm.waitForStatus(VM_STATUS.Migrating, PAGE_LOAD_TIMEOUT_SECS);
-      expect(await getDetailActionDropdownOptions()).not.toContain(MIGRATE_VM);
-      expect(await getDetailActionDropdownOptions()).toContain(CANCEL_MIGRATION);
+      if (STORAGE_CLASS === 'ocs-storagecluster-ceph-rbd') {
+        await vm.detailViewAction(VM_ACTION.Migrate, false);
+        await vm.waitForStatus(VM_STATUS.Migrating, PAGE_LOAD_TIMEOUT_SECS);
+        expect(await getDetailActionDropdownOptions()).not.toContain(MIGRATE_VM);
+        expect(await getDetailActionDropdownOptions()).toContain(CANCEL_MIGRATION);
+      }
+      if (STORAGE_CLASS === 'hostpath-provisioner') {
+        const errorAlert = $('.pf-c-alert.pf-m-inline.pf-m-danger.co-alert.co-alert--scrollable');
+        await detailViewAction(VM_ACTION.Migrate, false);
+        await click(confirmButton);
+        await browser.wait(until.presenceOf(errorAlert), PAGE_LOAD_TIMEOUT_SECS);
+        expect(await errorAlert.getText()).toContain('all PVCs must be shared');
+        const cancelButton = $('[data-test-id="modal-cancel-action"]');
+        click(cancelButton);
+      }
     },
     VM_BOOT_AND_MIGRATE_TIMEOUT,
   );
@@ -54,15 +74,17 @@ describe('Test VM Migration', () => {
   it(
     'ID(CNV-2133) Migrate already migrated VM',
     async () => {
-      let sourceNode = await vm.getNode();
+      if (STORAGE_CLASS === 'ocs-storagecluster-ceph-rbd') {
+        let sourceNode = await vm.getNode();
 
-      await vm.detailViewAction(VM_ACTION.Migrate);
-      await vm.waitForMigrationComplete(sourceNode, VM_MIGRATION_TIMEOUT_SECS);
-      sourceNode = await vm.getNode();
+        await vm.detailViewAction(VM_ACTION.Migrate);
+        await vm.waitForMigrationComplete(sourceNode, VM_MIGRATION_TIMEOUT_SECS);
+        sourceNode = await vm.getNode();
 
-      await vm.detailViewAction(VM_ACTION.Migrate);
-      await vm.waitForMigrationComplete(sourceNode, VM_MIGRATION_TIMEOUT_SECS);
-      expect(await vm.getStatus()).toEqual(VM_STATUS.Running);
+        await vm.detailViewAction(VM_ACTION.Migrate);
+        await vm.waitForMigrationComplete(sourceNode, VM_MIGRATION_TIMEOUT_SECS);
+        expect(await vm.getStatus()).toEqual(VM_STATUS.Running);
+      }
     },
     VM_BOOT_AND_MIGRATE_TIMEOUT,
   );
@@ -70,18 +92,20 @@ describe('Test VM Migration', () => {
   it(
     'ID(CNV-2132) Cancel ongoing VM migration',
     async () => {
-      const sourceNode = await vm.getNode();
+      if (STORAGE_CLASS === 'ocs-storagecluster-ceph-rbd') {
+        const sourceNode = await vm.getNode();
 
-      // Start migration without waiting for it to finish
-      await vm.detailViewAction(VM_ACTION.Migrate, false);
-      await vm.waitForStatus(VM_STATUS.Migrating, VM_MIGRATION_TIMEOUT_SECS);
+        // Start migration without waiting for it to finish
+        await vm.detailViewAction(VM_ACTION.Migrate, false);
+        await vm.waitForStatus(VM_STATUS.Migrating, VM_MIGRATION_TIMEOUT_SECS);
 
-      await vm.detailViewAction(VM_ACTION.Cancel, false);
-      await vm.waitForStatus(VM_STATUS.Running, VM_BOOT_AND_MIGRATE_TIMEOUT);
-      await browser.wait(
-        waitForStringInElement(vmDetailNode(vm.namespace, vm.name), sourceNode),
-        VM_MIGRATION_TIMEOUT_SECS,
-      );
+        await vm.detailViewAction(VM_ACTION.Cancel, false);
+        await vm.waitForStatus(VM_STATUS.Running, VM_BOOT_AND_MIGRATE_TIMEOUT);
+        await browser.wait(
+          waitForStringInElement(vmDetailNode(vm.namespace, vm.name), sourceNode),
+          VM_MIGRATION_TIMEOUT_SECS,
+        );
+      }
     },
     VM_BOOT_AND_MIGRATE_TIMEOUT,
   );

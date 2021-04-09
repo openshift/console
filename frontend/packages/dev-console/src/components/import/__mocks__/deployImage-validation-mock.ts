@@ -144,6 +144,7 @@ export const mockImageStreamData = {
       'app.kubernetes.io/component': 'test-app',
       'app.kubernetes.io/instance': 'test-app',
       'app.kubernetes.io/part-of': 'mock-app',
+      'app.kubernetes.io/name': 'test-app',
     },
     name: 'test-app',
     namespace: 'mock-project',

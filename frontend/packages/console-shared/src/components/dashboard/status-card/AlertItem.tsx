@@ -1,12 +1,12 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { isAlertAction, useExtensions, AlertAction } from '@console/plugin-sdk';
-import { getAlertActions } from '@console/internal/components/notification-drawer';
+import { Button, ButtonVariant } from '@patternfly/react-core';
 import { Timestamp } from '@console/internal/components/utils/timestamp';
 import { Alert } from '@console/internal/components/monitoring/types';
 import { alertURL } from '@console/internal/components/monitoring/utils';
+import { isAlertAction, AlertAction, useResolvedExtensions } from '@console/dynamic-plugin-sdk';
+import { getAlertActions } from '@console/internal/components/notification-drawer';
 import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '../../status/icons';
 import {
   getAlertSeverity,
@@ -49,20 +49,28 @@ export const StatusItem: React.FC<StatusItemProps> = ({ Icon, timestamp, message
   );
 };
 
-const AlertItem: React.FC<AlertItemProps> = ({ alert, hideLink }) => {
-  const actionsExtensions = useExtensions<AlertAction>(isAlertAction);
-  const action = getAlertActions(actionsExtensions).get(alert.rule.name);
+const AlertItem: React.FC<AlertItemProps> = ({ alert }) => {
   const { t } = useTranslation();
+  const [actionExtensions] = useResolvedExtensions<AlertAction>(
+    React.useCallback(
+      (e): e is AlertAction => isAlertAction(e) && e.properties.alert === alert.rule.name,
+      [alert],
+    ),
+  );
+  const actionObj = getAlertActions(actionExtensions).get(alert.rule.name);
+  const { text, action } = actionObj || {};
   return (
     <StatusItem
       Icon={getSeverityIcon(getAlertSeverity(alert))}
       timestamp={getAlertTime(alert)}
       message={getAlertDescription(alert) || getAlertMessage(alert)}
     >
-      {action ? (
-        <Link to={_.isFunction(action.path) ? action.path(alert) : action.path}>{action.text}</Link>
+      {text && action ? (
+        <Button variant={ButtonVariant.link} onClick={() => action(alert)} isInline>
+          {text}
+        </Button>
       ) : (
-        !hideLink && <Link to={alertURL(alert, alert.rule.id)}>{t('dashboard~View details')}</Link>
+        <Link to={alertURL(alert, alert.rule.id)}>{t('dashboard~View details')}</Link>
       )}
     </StatusItem>
   );
@@ -78,5 +86,4 @@ type StatusItemProps = {
 
 type AlertItemProps = {
   alert: Alert;
-  hideLink?: boolean;
 };

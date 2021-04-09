@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import * as _ from 'lodash';
 import { Select, SelectProps } from '@patternfly/react-core';
 import { humanizeBinaryBytes, FieldLevelHelp } from '@console/internal/components/utils';
 import {
@@ -47,8 +46,8 @@ const BreakdownCard: React.FC<DashboardItemProps> = ({
   const top6MetricsData = getInstantVectorStats(results[0], metric);
   const top5SortedMetricsData = sortInstantVectorStats(top6MetricsData);
   const top5MetricsStats = getStackChartStats(top5SortedMetricsData, humanize);
-  const metricTotal = _.get(results[1], 'data.result[0].value[1]');
-  const cephUsed = _.get(results[2], 'data.result[0].value[1]');
+  const metricTotal: string = results?.[1]?.data?.result?.[0]?.value?.[1];
+  const cephUsed: string = results?.[2]?.data?.result?.[0]?.value?.[1];
 
   const handleMetricsChange: SelectProps['onSelect'] = (_e, breakdown) => {
     setMetricType(breakdown as string);
@@ -78,7 +77,7 @@ const BreakdownCard: React.FC<DashboardItemProps> = ({
           {t('ceph-storage-plugin~Used Capacity Breakdown')}
           <FieldLevelHelp>
             {t(
-              'ceph-storage-plugin~This card shows the used capacity for usable storage, broken-down by different Kubernetes resources. Usable storage is all the data that can be stored in the system after decreasing the replication policies.',
+              'ceph-storage-plugin~This card shows the used capacity for different Kubernetes resources. The figures shown represent the Usable storage, meaning that data replication is not taken into consideration.',
             )}
           </FieldLevelHelp>
         </DashboardCardTitle>
