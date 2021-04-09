@@ -30,22 +30,22 @@ const PipelineParametersForm: React.FC<PipelineParametersFormProps> = ({
   const disableSubmit = !dirty || !_.isEmpty(_.compact(getIn(errors, 'parameters')));
   return (
     <Form onSubmit={handleSubmit}>
-      <div className="co-m-pane__form">
+      <div className="co-m-pane__body">
         <PipelineParameters fieldName="parameters" isReadOnly={!pipelineParameterAccess} />
-        <hr />
-        {pipelineParameterAccess && (
-          <FormFooter
-            handleReset={handleReset}
-            isSubmitting={isSubmitting}
-            errorMessage={status && status.submitError}
-            successMessage={status && !dirty && status.success}
-            disableSubmit={disableSubmit}
-            showAlert={!disableSubmit}
-            submitLabel={t('pipelines-plugin~Save')}
-            resetLabel={t('pipelines-plugin~Reload')}
-          />
-        )}
       </div>
+      {pipelineParameterAccess && (
+        <FormFooter
+          handleReset={handleReset}
+          isSubmitting={isSubmitting}
+          errorMessage={status && status.submitError}
+          successMessage={status && !dirty && status.success}
+          disableSubmit={disableSubmit}
+          showAlert={!disableSubmit}
+          submitLabel={t('pipelines-plugin~Save')}
+          resetLabel={t('pipelines-plugin~Reload')}
+          sticky
+        />
+      )}
     </Form>
   );
 };

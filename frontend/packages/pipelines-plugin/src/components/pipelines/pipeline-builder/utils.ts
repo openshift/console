@@ -318,17 +318,20 @@ export const convertPipelineToBuilderForm = (pipeline: PipelineKind): PipelineBu
 
   const {
     metadata: { name },
-    spec: { params = [], resources = [], workspaces = [], tasks = [] },
+    spec: { params = [], resources = [], workspaces = [], tasks = [], finally: finallyTasks = [] },
   } = pipeline;
 
   return {
     name,
     params,
     resources,
-    workspaces,
+    workspaces: workspaces.map((workspace) => ({
+      ...workspace,
+      optional: !!workspace.optional, // Formik fails to understand "undefined boolean" checkbox values
+    })),
     tasks,
     listTasks: [],
-    finallyTasks: pipeline.spec?.finally ?? [],
+    finallyTasks,
     finallyListTasks: [],
   };
 };

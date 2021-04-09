@@ -7,13 +7,13 @@ import { ResourceLink } from '@console/internal/components/utils';
 import { PipelineRunModel } from '../../../models';
 import { getMatchedPVCs } from '../../../utils/pipeline-utils';
 
-export interface VolumeClaimTemplatesLinkProps {
+export interface VolumeClaimTemplatesSectionProps {
   namespace: string;
   ownerResourceName: string;
-  ownerResourceKind: string;
+  ownerResourceKind?: string;
 }
 
-const VolumeClaimTemplatesLink: React.FC<VolumeClaimTemplatesLinkProps> = ({
+const VolumeClaimTemplatesSection: React.FC<VolumeClaimTemplatesSectionProps> = ({
   namespace,
   ownerResourceName,
   ownerResourceKind = PipelineRunModel.kind,
@@ -33,7 +33,7 @@ const VolumeClaimTemplatesLink: React.FC<VolumeClaimTemplatesLinkProps> = ({
   if (!matchedPVCs || matchedPVCs.length === 0) return null;
 
   return (
-    <dl>
+    <dl data-test-id="volumeClaimTemplate-resources-section">
       <dt>{t('pipelines-plugin~VolumeClaimTemplate Resources')}</dt>
       <dd>
         {matchedPVCs.map((pvcResource) => {
@@ -51,4 +51,4 @@ const VolumeClaimTemplatesLink: React.FC<VolumeClaimTemplatesLinkProps> = ({
   );
 };
 
-export default VolumeClaimTemplatesLink;
+export default VolumeClaimTemplatesSection;

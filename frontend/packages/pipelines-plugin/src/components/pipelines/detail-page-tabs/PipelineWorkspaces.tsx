@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Grid, GridItem } from '@patternfly/react-core';
 import { MultiColumnField } from '@console/shared';
 import OptionalableWorkspace from './OptionalableWorkspace';
 
@@ -19,21 +18,19 @@ const PipelineWorkspaces: React.FC<PipelineWorkspacesParam> = (props) => {
   } = props;
   const emptyMessage = t('pipelines-plugin~No workspaces are associated with this pipeline.');
   return (
-    <Grid span={6}>
-      <GridItem>
-        <MultiColumnField
-          name={fieldName}
-          addLabel={addLabel}
-          headers={[t('pipelines-plugin~Name')]}
-          emptyValues={{ name: '', optional: false }}
-          emptyMessage={emptyMessage}
-          isReadOnly={isReadOnly}
-          complexFields={[true]}
-        >
-          <OptionalableWorkspace />
-        </MultiColumnField>
-      </GridItem>
-    </Grid>
+    <div className="co-m-pane__form">
+      <MultiColumnField
+        name={fieldName}
+        addLabel={addLabel}
+        headers={[t('pipelines-plugin~Name')]}
+        emptyValues={{ name: '', optional: false }}
+        emptyMessage={emptyMessage}
+        isReadOnly={isReadOnly}
+        complexFields={[true]}
+      >
+        <OptionalableWorkspace />
+      </MultiColumnField>
+    </div>
   );
 };
 

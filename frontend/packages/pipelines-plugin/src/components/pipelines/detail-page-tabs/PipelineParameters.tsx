@@ -19,37 +19,39 @@ const PipelineParameters: React.FC<PipelineParametersProps> = (props) => {
   const emptyMessage = t('pipelines-plugin~No parameters are associated with this pipeline.');
 
   return (
-    <MultiColumnField
-      name={fieldName}
-      addLabel={addLabel}
-      headers={[
-        t('pipelines-plugin~Name'),
-        t('pipelines-plugin~Description'),
-        t('pipelines-plugin~Default value'),
-      ]}
-      emptyValues={{ name: '', description: '', default: '' }}
-      emptyMessage={emptyMessage}
-      isReadOnly={isReadOnly}
-    >
-      <InputField
-        name="name"
-        type={TextInputTypes.text}
-        placeholder={t('pipelines-plugin~Name')}
+    <div className="co-m-pane__form">
+      <MultiColumnField
+        name={fieldName}
+        addLabel={addLabel}
+        headers={[
+          t('pipelines-plugin~Name'),
+          t('pipelines-plugin~Description'),
+          t('pipelines-plugin~Default value'),
+        ]}
+        emptyValues={{ name: '', description: '', default: '' }}
+        emptyMessage={emptyMessage}
         isReadOnly={isReadOnly}
-      />
-      <InputField
-        name="description"
-        type={TextInputTypes.text}
-        placeholder={t('pipelines-plugin~Description')}
-        isReadOnly={isReadOnly}
-      />
-      <InputField
-        name="default"
-        type={TextInputTypes.text}
-        placeholder={t('pipelines-plugin~Default value')}
-        isReadOnly={isReadOnly}
-      />
-    </MultiColumnField>
+      >
+        <InputField
+          name="name"
+          type={TextInputTypes.text}
+          placeholder={t('pipelines-plugin~Name')}
+          isReadOnly={isReadOnly}
+        />
+        <InputField
+          name="description"
+          type={TextInputTypes.text}
+          placeholder={t('pipelines-plugin~Description')}
+          isReadOnly={isReadOnly}
+        />
+        <InputField
+          name="default"
+          type={TextInputTypes.text}
+          placeholder={t('pipelines-plugin~Default value')}
+          isReadOnly={isReadOnly}
+        />
+      </MultiColumnField>
+    </div>
   );
 };
 

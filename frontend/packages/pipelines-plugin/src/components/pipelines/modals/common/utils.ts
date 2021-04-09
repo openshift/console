@@ -16,7 +16,11 @@ import {
 import { getPipelineRunParams, getPipelineRunWorkspaces } from '../../../../utils/pipeline-utils';
 import { TektonResourceLabel, VolumeTypes, preferredNameAnnotation } from '../../const';
 import { CREATE_PIPELINE_RESOURCE, initialResourceFormValues } from './const';
-import { CommonPipelineModalFormikValues, PipelineModalFormResource } from './types';
+import {
+  CommonPipelineModalFormikValues,
+  PipelineModalFormResource,
+  PipelineModalFormWorkspace,
+} from './types';
 
 /**
  * Migrates a PipelineRun from one version to another to support auto-upgrades with old (and invalid) PipelineRuns.
@@ -172,11 +176,20 @@ export const convertPipelineToModalData = (
         type: resource.type,
       },
     })),
-    workspaces: (pipeline.spec.workspaces || []).map((workspace: TektonWorkspace) => ({
-      ...workspace,
-      type: preselectPVC ? VolumeTypes.PVC : VolumeTypes.EmptyDirectory,
-      data: preselectPVC ? getDefaultPVC(preselectPVC) : { emptyDir: {} },
-    })),
+    workspaces: (pipeline.spec.workspaces || []).map(
+      (workspace: TektonWorkspace): PipelineModalFormWorkspace => ({
+        ...workspace,
+        ...(preselectPVC
+          ? {
+              type: VolumeTypes.PVC,
+              data: getDefaultPVC(preselectPVC),
+            }
+          : {
+              type: VolumeTypes.EmptyDirectory,
+              data: { emptyDir: {} },
+            }),
+      }),
+    ),
   };
 };
 

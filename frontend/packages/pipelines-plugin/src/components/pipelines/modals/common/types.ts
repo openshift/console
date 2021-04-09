@@ -2,6 +2,7 @@ import { FormikValues } from 'formik';
 import { VolumeTypes } from '../../const';
 import {
   TektonParam,
+  TektonWorkspace,
   VolumeTypeClaim,
   VolumeTypeConfigMaps,
   VolumeTypePVC,
@@ -18,8 +19,7 @@ export type PipelineModalFormResource = {
   };
 };
 
-export type PipelineModalFormWorkspace = {
-  name: string;
+export type PipelineModalFormWorkspace = TektonWorkspace & {
   type: VolumeTypes;
   data:
     | {

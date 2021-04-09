@@ -236,6 +236,8 @@
   "{{resourceName}} results": "{{resourceName}} results",
   "Value": "Value",
   "No {{resourceName}} results available due to failure": "No {{resourceName}} results available due to failure",
+  "Empty Directories": "Empty Directories",
+  "Empty Directory ({{workspaceName}})": "Empty Directory ({{workspaceName}})",
   "VolumeClaimTemplate Resources": "VolumeClaimTemplate Resources",
   "optional": "optional",
   "Workspace Resources": "Workspace Resources",

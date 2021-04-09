@@ -37,22 +37,28 @@ const PipelineResources: React.FC<PipelineResourcesParam> = (props) => {
   ];
 
   return (
-    <MultiColumnField
-      name={fieldName}
-      addLabel={addLabel}
-      headers={[t('pipelines-plugin~Name'), t('pipelines-plugin~Resource type')]}
-      emptyValues={{ name: '', type: '' }}
-      emptyMessage={emptyMessage}
-      isReadOnly={isReadOnly}
-    >
-      <InputField
-        name="name"
-        type={TextInputTypes.text}
-        placeholder={t('pipelines-plugin~Name')}
+    <div className="co-m-pane__form">
+      <MultiColumnField
+        name={fieldName}
+        addLabel={addLabel}
+        headers={[t('pipelines-plugin~Name'), t('pipelines-plugin~Resource type')]}
+        emptyValues={{ name: '', type: '' }}
+        emptyMessage={emptyMessage}
         isReadOnly={isReadOnly}
-      />
-      <FormSelectField name="type" options={pipelineResourceTypeSelections} disabled={isReadOnly} />
-    </MultiColumnField>
+      >
+        <InputField
+          name="name"
+          type={TextInputTypes.text}
+          placeholder={t('pipelines-plugin~Name')}
+          isReadOnly={isReadOnly}
+        />
+        <FormSelectField
+          name="type"
+          options={pipelineResourceTypeSelections}
+          disabled={isReadOnly}
+        />
+      </MultiColumnField>
+    </div>
   );
 };
 
