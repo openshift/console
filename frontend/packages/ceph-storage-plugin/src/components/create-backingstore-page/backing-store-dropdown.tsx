@@ -19,6 +19,7 @@ export const BackingStoreDropdown: React.FC<BackingStoreDropdownProps> = ({
   onChange,
   className,
   selectedKey,
+  creatorDisabled,
 }) => {
   const { t } = useTranslation();
   const [isOpen, setOpen] = React.useState(false);
@@ -27,8 +28,8 @@ export const BackingStoreDropdown: React.FC<BackingStoreDropdownProps> = ({
     null,
     namespace,
   );
-  const [nsName, setNSName] = React.useState(selectedKey || '');
-  const nbsList = nbsLoaded ? nbsObj.items : [];
+  const [nsName, setNSName] = React.useState('');
+  const nbsList = nbsLoaded && !nbsErr ? nbsObj.items : [];
   const handleDropdownChange = React.useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
       setNSName(e.currentTarget.id);
@@ -57,20 +58,22 @@ export const BackingStoreDropdown: React.FC<BackingStoreDropdownProps> = ({
           );
           return res;
         },
-        [
-          <DropdownItem
-            data-test="create-new-backingstore-button"
-            key="first-item"
-            component="button"
-            onClick={() => CreateBackingStoreFormModal({ namespace })}
-          >
-            {t('ceph-storage-plugin~Create new BackingStore ')}
-          </DropdownItem>,
-          <DropdownSeparator key="separator" />,
-        ],
+        !creatorDisabled
+          ? [
+              <DropdownItem
+                data-test="create-new-backingstore-button"
+                key="first-item"
+                component="button"
+                onClick={() => CreateBackingStoreFormModal({ namespace })}
+              >
+                {t('ceph-storage-plugin~Create new BackingStore ')}
+              </DropdownItem>,
+              <DropdownSeparator key="separator" />,
+            ]
+          : [],
       );
     },
-    [t, handleDropdownChange, namespace],
+    [creatorDisabled, t, handleDropdownChange, namespace],
   );
 
   const dropdownItems = getDropdownItems(nbsList);
@@ -92,8 +95,9 @@ export const BackingStoreDropdown: React.FC<BackingStoreDropdownProps> = ({
             id="nbs-dropdown-id"
             data-test="nbs-dropdown-toggle"
             onToggle={() => setOpen(!isOpen)}
+            isDisabled={!!nbsErr}
           >
-            {nsName || t('ceph-storage-plugin~Select a BackingStore')}
+            {selectedKey || nsName || t('ceph-storage-plugin~Select a backing store')}
           </DropdownToggle>
         }
         isOpen={isOpen}
@@ -111,4 +115,5 @@ type BackingStoreDropdownProps = {
   onChange?: (BackingStoreKind) => void;
   className?: string;
   selectedKey?: string;
+  creatorDisabled?: boolean;
 };

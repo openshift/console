@@ -43,6 +43,7 @@ export enum GUARDED_FEATURES {
   OCS_TAINT_NODES = 'OCS_TAINT_NODES',
   OCS_THICK_PROVISION = 'OCS_THICK_PROVISION',
   OCS_POOL_MANAGEMENT = 'OCS_POOL_MANAGEMENT',
+  OCS_NAMESPACE_STORE = 'OCS_NAMESPACE_STORE',
 }
 
 const OCS_FEATURE_FLAGS = {
@@ -54,6 +55,7 @@ const OCS_FEATURE_FLAGS = {
   [GUARDED_FEATURES.OCS_TAINT_NODES]: 'taint-nodes',
   [GUARDED_FEATURES.OCS_THICK_PROVISION]: 'thick-provision',
   [GUARDED_FEATURES.OCS_POOL_MANAGEMENT]: 'pool-management',
+  [GUARDED_FEATURES.OCS_NAMESPACE_STORE]: 'namespace-store',
 };
 
 const handleError = (res: any, flags: string[], dispatch: Dispatch, cb: FeatureDetector) => {
