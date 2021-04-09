@@ -524,8 +524,8 @@ const PodGraphs = requirePrometheus(({ pod }) => {
             byteDataType={ByteDataTypes.BinaryBytes}
             namespace={pod.metadata.namespace}
             query={`sum(container_memory_working_set_bytes{pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}',container='',}) BY (pod, namespace)`}
-            limitQuery={`sum(label_replace(label_replace(kube_pod_resource_limit{resource='cpu',exported_pod='${pod.metadata.name}',exported_namespace='${pod.metadata.namespace}'},'pod','$1','exported_pod','(.+)'),'namespace','$1','exported_namespace','(.+)'))`}
-            requestedQuery={`sum(label_replace(label_replace(kube_pod_resource_request{resource='memory',exported_pod='${pod.metadata.name}',exported_namespace='${pod.metadata.namespace}'},'pod','$1','exported_pod','(.+)'),'namespace','$1','exported_namespace','(.+)')) BY (pod, namespace)`}
+            limitQuery={`sum(kube_pod_resource_limit{resource='memory',pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}'})`}
+            requestedQuery={`sum(kube_pod_resource_request{resource='memory',pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}) BY (pod, namespace)`}
           />
         </div>
         <div className="col-md-12 col-lg-4">
@@ -537,8 +537,8 @@ const PodGraphs = requirePrometheus(({ pod }) => {
             humanize={humanizeCpuCores}
             namespace={pod.metadata.namespace}
             query={`pod:container_cpu_usage:sum{pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}`}
-            limitQuery={`sum(label_replace(label_replace(kube_pod_resource_limit{resource='cpu',exported_pod='${pod.metadata.name}',exported_namespace='${pod.metadata.namespace}'},'pod','$1','exported_pod','(.+)'),'namespace','$1','exported_namespace','(.+)'))`}
-            requestedQuery={`sum(label_replace(label_replace(kube_pod_resource_request{resource='cpu',exported_pod='${pod.metadata.name}',exported_namespace='${pod.metadata.namespace}'},'pod','$1','exported_pod','(.+)'),'namespace','$1','exported_namespace','(.+)')) BY (pod, namespace)`}
+            limitQuery={`sum(kube_pod_resource_limit{resource='cpu',pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}'})`}
+            requestedQuery={`sum(kube_pod_resource_request{resource='cpu',pod='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}) BY (pod, namespace)`}
           />
         </div>
         <div className="col-md-12 col-lg-4">

@@ -23,13 +23,13 @@ const queries = {
     `namespace:container_cpu_usage:sum{namespace='<%= project %>'}`,
   ),
   [ProjectQueries.CPU_REQUESTS]: _.template(
-    `sum(kube_pod_resource_request{resource="cpu", exported_namespace="<%= project %>"}) by (exported_namespace)`,
+    `sum(kube_pod_resource_request{resource="cpu", namespace="<%= project %>"}) by (namespace)`,
   ),
   [ProjectQueries.MEMORY_USAGE]: _.template(
     `sum(container_memory_working_set_bytes{namespace='<%= project %>',container="",pod!=""}) BY (namespace)`,
   ),
   [ProjectQueries.MEMORY_REQUESTS]: _.template(
-    `sum(kube_pod_resource_request{resource="memory", exported_namespace="<%= project %>"}) by (exported_namespace)`,
+    `sum(kube_pod_resource_request{resource="memory", namespace="<%= project %>"}) by (namespace)`,
   ),
   [ProjectQueries.POD_COUNT]: _.template(
     `count(kube_running_pod_ready{namespace='<%= project %>'}) BY (namespace)`,
