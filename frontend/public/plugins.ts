@@ -9,6 +9,7 @@ import {
   loadDynamicPlugin,
   registerPluginEntryCallback,
 } from '@console/dynamic-plugin-sdk/src/runtime/plugin-loader';
+import { exposePluginAPI } from '@console/dynamic-plugin-sdk/src/runtime/plugin-api';
 
 // The '@console/active-plugins' module is generated during a webpack build,
 // so we use dynamic require() instead of the usual static import statement.
@@ -22,6 +23,7 @@ export const pluginStore = new PluginStore(activePlugins);
 export const initConsolePlugins = _.once((reduxStore: Store<RootState>) => {
   initSubscriptionService(pluginStore, reduxStore);
   registerPluginEntryCallback(pluginStore);
+  exposePluginAPI();
 });
 
 const loadPluginFromURL = async (baseURL: string) => {

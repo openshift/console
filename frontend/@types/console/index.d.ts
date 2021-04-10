@@ -54,6 +54,7 @@ declare interface Window {
   loadPluginEntry?: Function;
   loadPluginFromURL?: Function;
   Cypress?: {};
+  api: {};
 }
 
 // From https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-8.html

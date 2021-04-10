@@ -1,6 +1,5 @@
 import { RouteComponentProps } from 'react-router';
-import { Extension } from '@console/plugin-sdk/src/typings/base';
-import { ExtensionDeclaration, CodeRef } from '../types';
+import { Extension, ExtensionDeclaration, CodeRef } from '../types';
 
 /** Adds new standalone page (rendered outside the common page layout) to Console router. */
 export type StandaloneRoutePage = ExtensionDeclaration<

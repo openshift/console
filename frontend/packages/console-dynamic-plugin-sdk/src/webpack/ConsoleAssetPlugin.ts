@@ -12,7 +12,7 @@ export const validateExtensionsFileSchema = (
   ext: ConsoleExtensionsJSON,
   description = extensionsFile,
 ) => {
-  const schema = require('../../dist/schema/console-extensions').default;
+  const schema = require('../../schema/console-extensions').default;
   return new SchemaValidator(description).validate(schema, ext);
 };
 

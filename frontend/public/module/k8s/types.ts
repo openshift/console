@@ -1,14 +1,17 @@
 import { JSONSchema6 } from 'json-schema';
 import { BadgeType, NodeAddress } from '@console/shared';
-import { EventInvolvedObject } from './event';
 import {
   ObjectReference,
   ObjectMetadata,
   K8sResourceCommon,
   K8sVerb,
   AccessReviewResourceAttributes,
-} from './types-common';
-export * from './types-common';
+  Selector,
+  MatchLabels,
+} from '@console/dynamic-plugin-sdk/src/extensions/console-types';
+import { EventInvolvedObject } from './event';
+
+export * from '@console/dynamic-plugin-sdk/src/extensions/console-types';
 
 export type PartialObjectMetadata = {
   apiVersion: string;
@@ -28,22 +31,6 @@ export type K8sResourceCondition = {
   lastTransitionTime?: string;
   reason?: string;
   message?: string;
-};
-
-export type MatchExpression = {
-  key: string;
-  operator: 'Exists' | 'DoesNotExist' | 'In' | 'NotIn' | 'Equals' | 'NotEqual';
-  values?: string[];
-  value?: string;
-};
-
-export type MatchLabels = {
-  [key: string]: string;
-};
-
-export type Selector = {
-  matchLabels?: MatchLabels;
-  matchExpressions?: MatchExpression[];
 };
 
 export type TaintEffect = '' | 'NoSchedule' | 'PreferNoSchedule' | 'NoExecute';
@@ -948,19 +935,6 @@ export type Status = {
   reason: string;
   status: string;
 };
-
-/**
- * GroupVersionKind unambiguously identifies a kind.
- * https://godoc.org/k8s.io/apimachinery/pkg/runtime/schema#GroupVersionKind
- * TODO: Change this to a regex-type if it ever becomes a thing (https://github.com/Microsoft/TypeScript/issues/6579)
- */
-export type GroupVersionKind = string;
-
-/**
- * The canonical, unique identifier for a Kubernetes resource type.
- * Maintains backwards-compatibility with references using the `kind` string field.
- */
-export type K8sResourceKindReference = GroupVersionKind | string;
 
 export type SecretKind = {
   data?: { [key: string]: string };

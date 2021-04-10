@@ -12,7 +12,7 @@ export const validatePackageFileSchema = (
   pkg: ConsolePackageJSON,
   description = 'package.json',
 ) => {
-  const schema = require('../../dist/schema/plugin-package').default;
+  const schema = require('../../schema/plugin-package').default;
   const validator = new SchemaValidator(description);
 
   if (pkg.consolePlugin) {
