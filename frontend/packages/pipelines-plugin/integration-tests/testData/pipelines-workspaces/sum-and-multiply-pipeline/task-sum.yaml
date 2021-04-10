@@ -1,0 +1,26 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: sum
+  annotations:
+    description: |
+      A simple task that sums the two provided integers
+spec:
+  params:
+    - name: a
+      type: string
+      default: "1"
+      description: The first integer
+    - name: b
+      type: string
+      default: "1"
+      description: The second integer
+  results:
+    - name: sum
+      description: The sum of the two provided integers
+  steps:
+    - name: sum
+      image: bash:latest
+      script: |
+        #!/usr/bin/env bash
+        echo -n $(( "$(params.a)" + "$(params.b)" )) | tee $(results.sum.path)

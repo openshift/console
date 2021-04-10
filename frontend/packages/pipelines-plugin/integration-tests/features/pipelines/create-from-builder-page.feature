@@ -130,3 +130,121 @@ Feature: Create the pipeline from builder page
               And user clicks Create button on Pipeline Builder page
              Then user will be redirected to Pipeline Details page with header name "pipeline-workspace"
               And user will see workspace mentioned as "git-opt (optional)" in the Workspaces section of Pipeline Details page
+
+
+        @regression, @manual
+        Scenario: Add finally task node
+            Given user is at Pipeline Builder page
+             When user clicks on Add finally task
+              And user clicks on Select task
+              And user select "git-cli"
+              And user clicks on Add finally task again
+              And user clicks on Select task
+              And user selects "git-clone"
+             Then user sees Add finally task bubble is attached to the Select Task
+              And user sees "git-cli" and "git-clone" tasks in parallel
+              And user sees "Add finally task" option below "git-clone" task
+
+
+        @regression
+        Scenario: Create a pipeline with finally task node
+            Given user is at Pipeline Builder page
+             When user enters pipeline name "pipeline-finally"
+              And user selects the first task as "git-clone"
+              And user clicks on Add finally task
+              And user selects "git-clone" from Select task list
+              And user clicks on Add finally task again
+              And user selects "openshift-client" from Select task list
+              And user clicks on Add finally task again
+              And user selects "kn" from Select task list
+              And user fills task details
+              And user clicks on Create
+             Then user will be redirected to Pipeline Details page with header name "pipeline-finally"
+              And user is able to see finally tasks "git-clone", "openshift-client" and "kn" mentioned under "Finally tasks" section in the Pipeline details page
+
+
+        @regression @to-do
+        Scenario: When expression in the Pipeline Builder
+            Given user is at Pipeline Builder page
+              And user has chain of 3 tasks created in series
+            # user uses yaml content "sum-and-multiply-pipeline/sum-and-multiply-pipeline.yaml"
+             When user clicks on third task
+              And user navigates to When Expressions section
+              And user clicks on Add When Expressions
+             Then user can see a diamond shaped structure appear in front of third task
+              And user can see "Input", "Operator" and "Value" fields in When Expressions section
+              And user can see "Oprator" has values "in" and "notin"
+              And user can see "Add Value", "Add When Expressions" and "Remove When Expressions" options
+
+
+        @regression @to-do
+        Scenario: Start pipeline with When expression in the Pipeline Builder
+            Given user is at Pipeline Builder page
+              And user has named pipeline as "pipeline-when-expression"
+              And user has tasks "git-cli" and "git-clone" in series
+              And user has a finally task as "openshift-client"
+             When user clicks on finally task
+              And user navigates to When Expressions section
+              And user clicks on Add When Expression
+              And user enters the input value as "$(tasks.git-clone.status)"
+              And user chooses the operator value "in" from the dropdown
+              And user enters the value as "Success"
+              And user clicks Create button on Pipeline Builder page
+             Then user will be redirected to Pipeline Details page with header name "pipeline-when-expression"
+              And user will see tooltip saying "When expression" while scrolling over diamond structure before conditional task
+
+
+        @regression @to-do
+        Scenario: Code assistance for referencing params in the Pipeline Builder
+            Given user is at Pipeline Builder page
+             When user selects "git-clone" from Select task list
+              And user enters pipeline name as "pipeline-code-assistance"
+              And user clicks on Add Parameter
+              And user adds Name as "git-url"
+              And user Default value as "https://github.com/sclorg/nodejs-ex.git"
+              And user clicks on Add Workspace and add name as "git-workspace"
+              And user clicks on "git-clone" task node
+              And user enters url under Parameters section "$(params.git-url)"
+              And user adds workspace as "git-workspace"
+              And user clicks on Create
+             Then user will be redirected to Pipeline Details page with header name "pipeline-code-assistance"
+
+
+        @regression @to-do
+        Scenario: Code assistance for referencing workspaces in the Pipeline Builder
+            Given user has applied yaml "configMap-test-motd.yaml"
+            # user uses yaml content "using-optional-workspaces-in-when-expressions-pipelineRun/configMap-test-motd.yaml" in editor
+              And user is at YAML view of Pipeline Builder page
+             When user pastes the "pipelineRun-using-optional-workspaces-in-when-expressions.yaml" code
+            # user uses yaml content "using-optional-workspaces-in-when-expressions-pipelineRun/pipelineRun-using-optional-workspaces-in-when-expressions.yaml"
+              And user clicks on Create
+              And user clicks on Logs tab in PipelineRun details page
+             Then user will be able to see the output in print-motd task task
+
+
+
+        @regression
+        Scenario: Code assistance for referencing Context-based values in the Pipeline Builder
+            Given user is at pipelines page
+             When user clicks on import YAML button
+              And user enters yaml content from yaml file "pipelineRun-using_context_variables.yaml"
+            # user uses yaml content "pipelineRun-using_context_variables.yaml"
+              And user clicks on Create
+              And user clicks on Logs tab in PipelineRun details page
+             Then user will be able to see the TaskRun UID, PipelineRun UID, Task name, TaskRun name, Pipeline name, PipelineRun name
+
+
+        @regression
+        Scenario: Code assistance for referencing Task Results in the Pipeline Builder
+            Given user has imported YAML "task-sum.yaml" and "task-multiply.yaml"
+            # user uses yaml content "sum-and-multiply-pipeline/task-sum.yaml" and "sum-and-multiply-pipeline/task-multiply.yaml" in editor
+              And user is at YAML view of Pipeline Builder page
+             When user enters yaml content from yaml file "sum-and-multiply-pipeline.yaml"
+            # user uses yaml content "sum-and-multiply-pipeline/sum-and-multiply-pipeline.yaml"
+              And user clicks on Create
+              And user clicks on import YAML button
+              And user enters yaml content from yaml file "pipelineRun-sum-and-multiply-pipeline.yaml"
+            # user uses yaml content "sum-and-multiply-pipeline/pipelineRun-sum-and-multiply-pipeline.yaml"
+              And user clicks on Create
+              And user clicks on Logs tab in PipelineRun details page
+             Then user will be able to see the output in sum and multipy task

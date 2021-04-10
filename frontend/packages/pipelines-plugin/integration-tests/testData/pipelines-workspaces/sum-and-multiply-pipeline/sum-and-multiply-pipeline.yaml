@@ -1,0 +1,37 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: sum-and-multiply-pipeline
+spec:
+  params:
+    - name: a
+      type: string
+      default: "1"
+    - name: b
+      type: string
+      default: "1"
+  tasks:
+    - name: sum-inputs
+      taskRef:
+        name: sum
+      params:
+        - name: a
+          value: "$(params.a)"
+        - name: b
+          value: "$(params.b)"
+    - name: multiply-inputs
+      taskRef:
+        name: multiply
+      params:
+        - name: a
+          value: "$(params.a)"
+        - name: b
+          value: "$(params.b)"
+    - name: sum-and-multiply
+      taskRef:
+        name: sum
+      params:
+        - name: a
+          value: "$(tasks.multiply-inputs.results.product)$(tasks.sum-inputs.results.sum)"
+        - name: b
+          value: "$(tasks.multiply-inputs.results.product)$(tasks.sum-inputs.results.sum)"

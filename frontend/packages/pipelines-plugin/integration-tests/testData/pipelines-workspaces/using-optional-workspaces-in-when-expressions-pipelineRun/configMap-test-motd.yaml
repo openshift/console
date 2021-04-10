@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: test-motd
+data:
+  message_1: "Hello, good morning!"
+  message_2: "Hello, good evening!"
