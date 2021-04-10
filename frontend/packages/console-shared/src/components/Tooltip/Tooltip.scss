@@ -1,0 +1,28 @@
+.ocs-tooltip__arrow {
+    height: 10px;
+    width: 10px;
+    transform: rotate(45deg);
+  }
+  .ocs-tooltip[x-placement^='top'] {
+    .ocs-tooltip__arrow {
+      bottom: -5px;
+    }
+  }
+  
+  .ocs-tooltip[x-placement^='bottom'] {
+    .ocs-tooltip__arrow {
+      top: -5px;
+    }
+  }
+  
+  .ocs-tooltip[x-placement^='left'] {
+    .ocs-tooltip__arrow {
+      right: -5px;
+    }
+  }
+  
+  .ocs-tooltip[x-placement^='right'] {
+    .ocs-tooltip__arrow {
+      left: -5px;
+    }
+  }

@@ -6,6 +6,7 @@ import { SyncMarkdownView } from '../../public/components/markdown-view';
 jest.mock('showdown', () => ({
   Converter: class {
     makeHtml = (markdown) => markdown;
+    addExtension = (extension) => extension;
   },
 }));
 
@@ -40,7 +41,9 @@ describe('markdown-view', () => {
     expect(renderExtension).not.toHaveBeenCalled();
 
     // only call renderExtension when extensions are required
-    const v1 = mount(<SyncMarkdownView extensions={['test']} renderExtension={renderExtension} />);
+    const v1 = mount(
+      <SyncMarkdownView extensions={[{ type: '' }]} renderExtension={renderExtension} />,
+    );
 
     act(() => {
       // force call to iframe onLoad
@@ -56,7 +59,7 @@ describe('markdown-view', () => {
     // when inline, call renderExtension with the view ID as the root selector
     renderExtension.mockReset();
     const view = mount(
-      <SyncMarkdownView inline extensions={['test']} renderExtension={renderExtension} />,
+      <SyncMarkdownView inline extensions={[{ type: '' }]} renderExtension={renderExtension} />,
     );
     expect(renderExtension).toHaveBeenCalledWith(
       document,

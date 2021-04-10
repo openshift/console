@@ -1,0 +1,36 @@
+@import '~@patternfly/patternfly/components/ClipboardCopy/clipboard-copy.css';
+@import '~@patternfly/patternfly/components/CodeBlock/code-block.css';
+
+
+.ocs-code-block__pre {
+  /* override the styles applied by showdown while parsing <pre /> */
+  display: flex;
+  border: none;
+  border-radius: none;
+  background-color: transparent;
+  margin: 0;
+  padding: 0;
+}
+
+.ocs-markdown-execute-snippet {
+
+  &__button {
+    & > i.fa-check {
+      display: none;
+    }
+
+    & > i.fa-play {
+      display: inline;
+    }
+
+    &[data-executed] {
+      & > i.fa-check {
+        display: inline;
+      }
+
+      & > i.fa-play {
+        display: none;
+      }
+    }
+  }
+}

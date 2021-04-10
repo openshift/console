@@ -9,16 +9,23 @@ import './_markdown-view.scss';
 
 const tableTags = ['table', 'thead', 'tbody', 'tr', 'th', 'td'];
 
-const markdownConvert = (markdown, extensions?: string[]) => {
-  const unsafeHtml = new Converter({
+type ShowdownExtension = {
+  type: string;
+  regex?: RegExp;
+  replace?: (...args: any[]) => string;
+};
+
+const markdownConvert = (markdown, extensions: ShowdownExtension[]) => {
+  const converter = new Converter({
     tables: true,
     openLinksInNewWindow: true,
     strikethrough: true,
     emoji: true,
-    extensions,
-  }).makeHtml(markdown);
+  });
 
-  return sanitizeHtml(unsafeHtml, {
+  extensions && converter.addExtension(extensions);
+
+  return sanitizeHtml(converter.makeHtml(markdown), {
     allowedTags: [
       'b',
       'i',
@@ -39,11 +46,19 @@ const markdownConvert = (markdown, extensions?: string[]) => {
       'code',
       'pre',
       'button',
+      'span',
+      'div',
       ...tableTags,
     ],
     allowedAttributes: {
-      a: ['href', 'target', 'rel', 'data-*'],
-      button: ['class', 'data-*'],
+      a: ['href', 'target', 'rel'],
+      button: ['class'],
+      i: ['class'],
+      div: ['class'],
+      span: ['class'],
+      pre: ['class'],
+      code: ['class'],
+      '*': ['data-*'],
     },
     allowedSchemes: ['http', 'https', 'mailto'],
     transformTags: {
@@ -57,7 +72,7 @@ type SyncMarkdownProps = {
   emptyMsg?: string;
   exactHeight?: boolean;
   truncateContent?: boolean;
-  extensions?: string[];
+  extensions?: ShowdownExtension[];
   renderExtension?: (contentDocument: HTMLDocument, rootSelector: string) => React.ReactNode;
   inline?: boolean;
 };
