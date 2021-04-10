@@ -3,6 +3,8 @@ import { Extension } from './base';
 
 namespace ExtensionProperties {
   export interface ClusterServiceVersionAction {
+    /** Unique id for this Action */
+    id: string;
     /** the kind this action is for */
     kind: K8sResourceKindReference;
     /** label of action */
@@ -11,6 +13,8 @@ namespace ExtensionProperties {
     apiGroup: string;
     /** action callback */
     callback: (kind: K8sResourceKindReference, obj: any) => () => any;
+    /** Hide the action */
+    hidden?: ((kind: K8sResourceKindReference, obj: any) => boolean) | boolean;
   }
 }
 

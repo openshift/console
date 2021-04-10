@@ -77,13 +77,19 @@ export const getOperandActions = (
       action.properties.kind === kindForReference(ref) &&
       apiGroupForReference(ref) === action.properties.apiGroup,
   );
-  const pluginActions = actions.map((action) => (kind, ocsObj) => ({
-    label: action.properties.label,
-    callback: action.properties.callback(kind, ocsObj),
-  }));
-  return [
-    ...pluginActions,
-    (kind, obj) => {
+  const pluginActions = actions.reduce((acc, action) => {
+    acc[action.properties.id] = (kind, ocsObj) => ({
+      label: action.properties.label,
+      callback: action.properties.callback(kind, ocsObj),
+      hidden:
+        typeof action.properties?.hidden === 'function'
+          ? action.properties?.hidden(kind, ocsObj)
+          : action.properties?.hidden,
+    });
+    return acc;
+  }, {});
+  const defaultActions = {
+    edit: (kind, obj) => {
       const reference = referenceFor(obj);
       const href = kind.namespaced
         ? `/k8s/ns/${obj.metadata.namespace}/${ClusterServiceVersionModel.plural}/${csvName ||
@@ -103,7 +109,7 @@ export const getOperandActions = (
         },
       };
     },
-    (kind, obj) => ({
+    delete: (kind, obj) => ({
       // t('olm~Delete {{item}}')
       labelKey: 'olm~Delete {{item}}',
       labelKind: { item: kind.label },
@@ -124,7 +130,14 @@ export const getOperandActions = (
         verb: 'delete',
       },
     }),
-  ] as KebabAction[];
+  };
+  // In order to keep plugin properties on top
+  const overridenProperties = Object.assign(
+    defaultActions,
+    _.pick(pluginActions, Object.keys(defaultActions)),
+  );
+  const mergedActions = Object.assign({}, pluginActions, overridenProperties);
+  return Object.values(mergedActions) as KebabAction[];
 };
 
 const tableColumnClasses = [
