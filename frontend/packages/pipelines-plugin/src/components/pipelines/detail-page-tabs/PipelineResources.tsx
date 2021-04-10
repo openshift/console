@@ -1,8 +1,13 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { TextInputTypes } from '@patternfly/react-core';
-import { MultiColumnField, InputField, DropdownField } from '@console/shared';
-import { pipelineResourceTypeSelections } from '../const';
+import {
+  MultiColumnField,
+  InputField,
+  FormSelectField,
+  FormSelectFieldOptions,
+} from '@console/shared';
+import { PipelineResourceType } from '../const';
 
 type PipelineResourcesParam = {
   addLabel?: string;
@@ -18,6 +23,19 @@ const PipelineResources: React.FC<PipelineResourcesParam> = (props) => {
     isReadOnly = false,
   } = props;
   const emptyMessage = t('pipelines-plugin~No resources are associated with this pipeline.');
+  const pipelineResourceTypeSelections: FormSelectFieldOptions<PipelineResourceType | ''>[] = [
+    {
+      value: '',
+      label: t('pipelines-plugin~Select resource type'),
+      isDisabled: true,
+      isPlaceholder: true,
+    },
+    { value: PipelineResourceType.git, label: 'Git' },
+    { value: PipelineResourceType.image, label: 'Image' },
+    { value: PipelineResourceType.cluster, label: 'Cluster' },
+    { value: PipelineResourceType.storage, label: 'Storage' },
+  ];
+
   return (
     <MultiColumnField
       name={fieldName}
@@ -33,12 +51,7 @@ const PipelineResources: React.FC<PipelineResourcesParam> = (props) => {
         placeholder={t('pipelines-plugin~Name')}
         isReadOnly={isReadOnly}
       />
-      <DropdownField
-        name="type"
-        items={pipelineResourceTypeSelections}
-        fullWidth
-        disabled={isReadOnly}
-      />
+      <FormSelectField name="type" options={pipelineResourceTypeSelections} disabled={isReadOnly} />
     </MultiColumnField>
   );
 };

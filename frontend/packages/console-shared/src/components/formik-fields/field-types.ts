@@ -63,6 +63,19 @@ export interface DropdownFieldProps extends FieldProps {
   onChange?: (value: string) => void;
 }
 
+export type FormSelectFieldOptions<T = any> = {
+  label: string;
+  value: T;
+  isPlaceholder?: boolean;
+  isDisabled?: boolean;
+};
+
+export type FormSelectFieldProps = FieldProps & {
+  disabled?: boolean;
+  options: FormSelectFieldOptions[];
+  onChange?: (selectedValue: any) => void;
+};
+
 export interface EnvironmentFieldProps extends FieldProps {
   obj?: K8sResourceKind;
   envPath: string[];

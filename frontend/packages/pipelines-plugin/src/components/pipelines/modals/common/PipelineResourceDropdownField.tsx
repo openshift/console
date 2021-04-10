@@ -28,11 +28,10 @@ const PipelineResourceDropdownField: React.FC<PipelineResourceDropdownFieldProps
       <FormGroup fieldId={name} label={label} isRequired>
         <PipelineResourceDropdown
           {...props}
-          autoSelect={selection == null}
+          autoSelect={selection === ''}
           filterType={filterType}
           namespace={namespace}
           name={`${name}.selection`}
-          selectedKey={selection}
         />
       </FormGroup>
 

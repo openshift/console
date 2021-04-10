@@ -19,14 +19,6 @@ export enum PipelineResourceType {
   storage = 'storage',
 }
 
-export const pipelineResourceTypeSelections = {
-  '': 'Select resource type',
-  [PipelineResourceType.git]: 'Git',
-  [PipelineResourceType.image]: 'Image',
-  [PipelineResourceType.cluster]: 'Cluster',
-  [PipelineResourceType.storage]: 'Storage',
-};
-
 export enum VolumeTypes {
   EmptyDirectory = 'emptyDirectory',
   ConfigMap = 'configMap',

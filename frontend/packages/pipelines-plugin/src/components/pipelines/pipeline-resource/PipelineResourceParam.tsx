@@ -4,6 +4,7 @@ import PipelineGitOptions from './PipelineGitOptions';
 import PipelineImageOptions from './PipelineImageOptions';
 import PipelineClusterOptions from './PipelineClusterOptions';
 import PipelineStorageOptions from './PipelineStorageOptions';
+import { PipelineResourceType } from '../const';
 
 export interface PipelineResourceParamProps {
   name: string;
@@ -15,13 +16,13 @@ const PipelineResourceParam: React.FC<PipelineResourceParamProps> = (props) => {
 
   const renderTypeFields = () => {
     switch (type) {
-      case 'git':
+      case PipelineResourceType.git:
         return <PipelineGitOptions prefixName={name} />;
-      case 'image':
+      case PipelineResourceType.image:
         return <PipelineImageOptions prefixName={name} />;
-      case 'cluster':
+      case PipelineResourceType.cluster:
         return <PipelineClusterOptions prefixName={name} />;
-      case 'storage':
+      case PipelineResourceType.storage:
         return <PipelineStorageOptions prefixName={name} />;
       default:
         return null;
