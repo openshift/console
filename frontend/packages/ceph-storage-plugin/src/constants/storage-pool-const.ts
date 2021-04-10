@@ -10,6 +10,7 @@ export enum POOL_PROGRESS {
   TIMEOUT = 'timeout',
   NOTREADY = 'notReady',
   NOTALLOWED = 'notAllowed',
+  BOUNDED = 'bounded',
 }
 
 export const COMPRESSION_ON = 'aggressive';

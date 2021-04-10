@@ -23,6 +23,7 @@ import {
   blockPoolReducer,
   blockPoolInitialState,
   BlockPoolActionType,
+  FooterPrimaryActions,
 } from '../../../utils/block-pool';
 import { POOL_PROGRESS, COMPRESSION_ON } from '../../../constants/storage-pool-const';
 import { CephBlockPoolModel } from '../../../models';
@@ -78,7 +79,7 @@ const UpdateBlockPoolModal = withHandlePromise((props: UpdateBlockPoolModalProps
   }, [blockPoolConfig, cephCluster, populateBlockPoolData]);
 
   // Update block pool
-  const onClick = () => {
+  const updatePool = () => {
     const patch = [
       {
         op: 'replace',
@@ -129,11 +130,10 @@ const UpdateBlockPoolModal = withHandlePromise((props: UpdateBlockPoolModalProps
             <BlockPoolModalFooter
               state={state}
               dispatch={dispatch}
-              onClick={onClick}
+              onSubmit={updatePool}
               cancel={cancel}
               close={close}
-              actionLabel={t('ceph-storage-plugin~Save')}
-              closeLabel={t('ceph-storage-plugin~Close')}
+              primaryAction={FooterPrimaryActions.UPDATE}
             />
           </ModalFooter>
         </>
@@ -150,7 +150,7 @@ const UpdateBlockPoolModal = withHandlePromise((props: UpdateBlockPoolModalProps
 
 type UpdateBlockPoolModalProps = {
   kind?: string;
-  blockPoolConfig?: StoragePoolKind;
+  blockPoolConfig: StoragePoolKind;
 } & HandlePromiseProps &
   ModalComponentProps;
 

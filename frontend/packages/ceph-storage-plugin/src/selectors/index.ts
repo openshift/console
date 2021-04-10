@@ -28,9 +28,10 @@ export const getCephPVs = (pvsData: K8sResourceKind[] = []): K8sResourceKind[] =
   });
 
 const getPVStorageClass = (pv: K8sResourceKind) => pv?.spec?.storageClassName;
-const getStorageClassName = (pvc: K8sResourceKind) =>
+export const getStorageClassName = (pvc: K8sResourceKind) =>
   pvc?.spec?.storageClassName ||
   pvc?.metadata?.annotations?.['volume.beta.kubernetes.io/storage-class'];
+
 const isBound = (pvc: K8sResourceKind) => pvc.status.phase === status.BOUND;
 
 export const getCephPVCs = (

@@ -54,7 +54,7 @@ const CreateBlockPool: React.FC<CreateBlockPoolProps> = ({ match }) => {
   };
 
   // Create new pool
-  const onClick = () => {
+  const createPool = () => {
     if (cephCluster?.status?.phase === POOL_STATE.READY) {
       const poolObj: StoragePoolKind = getPoolKindObj(state);
 
@@ -137,7 +137,7 @@ const CreateBlockPool: React.FC<CreateBlockPoolProps> = ({ match }) => {
               dispatch={dispatch}
               showPoolStatus={false}
             />
-            <BlockPoolFooter state={state} cancel={onClose} onClick={onClick} />
+            <BlockPoolFooter state={state} cancel={onClose} onConfirm={createPool} />
           </>
         ) : (
           <StatusBox

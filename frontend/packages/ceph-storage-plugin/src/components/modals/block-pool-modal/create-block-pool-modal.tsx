@@ -30,6 +30,7 @@ import {
   blockPoolInitialState,
   BlockPoolActionType,
   getPoolKindObj,
+  FooterPrimaryActions,
 } from '../../../utils/block-pool';
 import { BlockPoolBody, BlockPoolStatus } from '../../block-pool/body';
 
@@ -67,6 +68,7 @@ export const CreateBlockPoolModal = withHandlePromise((props: CreateBlockPoolMod
         dispatch({ type: BlockPoolActionType.SET_POOL_STATUS, payload: POOL_PROGRESS.CREATED });
         setIsSubmit(false);
         clearTimeout(timer);
+        onPoolCreation(state.poolName);
       } else if (newPoolLoaded && newPool?.status?.phase === POOL_STATE.FAILED) {
         dispatch({ type: BlockPoolActionType.SET_POOL_STATUS, payload: POOL_PROGRESS.FAILED });
         setIsSubmit(false);
@@ -77,10 +79,10 @@ export const CreateBlockPoolModal = withHandlePromise((props: CreateBlockPoolMod
         clearTimeout(timer);
       }
     }
-  }, [isSubmit, newPool, newPoolLoadError, newPoolLoaded, timer]);
+  }, [isSubmit, newPool, newPoolLoadError, newPoolLoaded, onPoolCreation, state.poolName, timer]);
 
   // Create new pool
-  const onClick = () => {
+  const createPool = () => {
     if (state.poolStatus === '') {
       dispatch({ type: BlockPoolActionType.SET_POOL_STATUS, payload: POOL_PROGRESS.PROGRESS });
       const poolObj: StoragePoolKind = getPoolKindObj(state);
@@ -125,12 +127,10 @@ export const CreateBlockPoolModal = withHandlePromise((props: CreateBlockPoolMod
         <BlockPoolModalFooter
           state={state}
           dispatch={dispatch}
-          onPoolCreation={onPoolCreation}
-          onClick={onClick}
+          onSubmit={createPool}
           cancel={props.cancel}
           close={props.close}
-          actionLabel={t('ceph-storage-plugin~Create')}
-          closeLabel={t('ceph-storage-plugin~Finish')}
+          primaryAction={FooterPrimaryActions.CREATE}
         />
       </ModalFooter>
     </div>
