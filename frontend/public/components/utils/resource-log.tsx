@@ -356,7 +356,7 @@ export const ResourceLog: React.FC<ResourceLogProps> = ({
               open the raw file in another window
             </a>{' '}
             or{' '}
-            <a href={linkURL} download>
+            <a href={linkURL} download={`${resource.metadata.name}-${containerName}.log`}>
               download it
             </a>
             .
