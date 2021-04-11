@@ -510,7 +510,10 @@ export const gitImportInitialValues: GitImportFormData = {
   serverless: serverlessInitialValues,
   pipeline: { enabled: false },
   deployment: { env: [], triggers: { image: true, config: true }, replicas: 1 },
-  labels: {},
+  labels: {
+    'app.kubernetes.io/component': 'nationalparks-py',
+    'app.kubernetes.io/name': 'python',
+  },
   limits: {
     cpu: {
       request: '',
@@ -587,7 +590,7 @@ export const externalImageValues: DeployImageFormData = {
   serverless: serverlessInitialValues,
   pipeline: { enabled: false },
   deployment: { env: [], triggers: { image: true, config: true }, replicas: 1 },
-  labels: {},
+  labels: { 'app.kubernetes.io/component': 'nationalparks-py', 'app.kubernetes.io/name': 'python' },
   limits: {
     cpu: {
       request: '',
@@ -657,7 +660,7 @@ export const internalImageValues: DeployImageFormData = {
   serverless: serverlessInitialValues,
   pipeline: { enabled: false },
   deployment: { env: [], triggers: { image: true, config: true }, replicas: 1 },
-  labels: {},
+  labels: { 'app.kubernetes.io/component': 'nationalparks-py', 'app.kubernetes.io/name': 'python' },
   limits: {
     cpu: {
       request: '',

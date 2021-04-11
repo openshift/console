@@ -267,9 +267,8 @@ export const getDeploymentData = (resource: K8sResourceKind) => {
     replicas: 1,
     triggers: { image: true, config: true },
   };
-  const container = _.find(
-    resource.spec?.template?.spec?.containers,
-    (c) => c.name === resource.metadata.name,
+  const container = resource.spec?.template?.spec?.containers?.find((c) =>
+    [resource.metadata.name, resource.metadata.labels?.['app.kubernetes.io/name']].includes(c.name),
   );
   const env = container?.env ?? [];
   switch (getResourcesType(resource)) {
@@ -313,8 +312,6 @@ export const getUserLabels = (resource: K8sResourceKind) => {
   const defaultLabels = [
     'app',
     'app.kubernetes.io/instance',
-    'app.kubernetes.io/component',
-    'app.kubernetes.io/name',
     'app.openshift.io/runtime',
     'app.kubernetes.io/part-of',
     'app.openshift.io/runtime-version',

@@ -90,6 +90,9 @@ export const getKnativeServiceDepResource = (
         ...defaultLabel,
         ...labels,
         ...(!create && { 'serving.knative.dev/visibility': `cluster-local` }),
+        ...((formData as GitImportFormData).pipeline?.enabled && {
+          'app.kubernetes.io/name': name,
+        }),
       },
       annotations: fileUpload ? { ...annotations, jarFileName: fileUpload.name } : annotations,
     },
@@ -112,7 +115,6 @@ export const getKnativeServiceDepResource = (
             ...(concurrencyutilization && {
               'autoscaling.knative.dev/targetUtilizationPercentage': `${concurrencyutilization}`,
             }),
-            ...annotations,
           },
         },
         spec: {

@@ -14,6 +14,7 @@ import { Resources } from '../import-types';
 import * as submitUtils from '../upload-jar-submit-utils';
 import { nodeJsBuilderImage as buildImage } from './import-submit-utils-data';
 import { uploadJarMockFormData } from '../__mocks__/upload-jar-mock';
+import * as importSubmitUtils from '../import-submit-utils';
 
 const { createOrUpdateDeployment, createOrUpdateJarFile } = submitUtils;
 
@@ -132,7 +133,7 @@ describe('Upload Jar Submit Utils', () => {
       const mockData = _.cloneDeep(uploadJarMockFormData);
       mockData.resources = Resources.KnativeService;
       const imageStreamSpy = jest
-        .spyOn(submitUtils, 'createOrUpdateImageStream')
+        .spyOn(importSubmitUtils, 'createOrUpdateImageStream')
         .mockImplementation(() => ({
           apiVersion: 'image.openshift.io/v1',
           kind: 'ImageStream',

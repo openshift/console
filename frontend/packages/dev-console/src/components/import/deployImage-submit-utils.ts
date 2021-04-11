@@ -47,12 +47,14 @@ export const createOrUpdateImageStream = async (
     isi: { name: isiName, tag },
     labels: userLabels,
   } = formData;
+  const imgStreamName =
+    verb === 'update' && originalImageStream ? originalImageStream.metadata.name : name;
   const defaultLabels = getAppLabels({ name, applicationName });
   const newImageStream = {
     apiVersion: 'image.openshift.io/v1',
     kind: 'ImageStream',
     metadata: {
-      name: `${generatedImageStreamName || name}`,
+      name: `${generatedImageStreamName || imgStreamName}`,
       namespace,
       labels: { ...defaultLabels, ...userLabels },
     },

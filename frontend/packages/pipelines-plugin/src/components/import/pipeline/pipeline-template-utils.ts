@@ -96,6 +96,7 @@ export const createPipelineForImportFlow = async (
     labels: {
       ...template.metadata?.labels,
       'app.kubernetes.io/instance': name,
+      'app.kubernetes.io/name': name,
       ...(!isDockerPipeline(template) && {
         [PIPELINE_RUNTIME_VERSION_LABEL]: tag,
       }),
@@ -160,6 +161,7 @@ export const updatePipelineForImportFlow = async (
         labels: {
           ...template.metadata?.labels,
           'app.kubernetes.io/instance': name,
+          'app.kubernetes.io/name': name,
           ...(!isDockerPipeline(template) && { [PIPELINE_RUNTIME_VERSION_LABEL]: tag }),
         },
       };

@@ -544,6 +544,7 @@ export const getBuildConfigsForResource = (
   if (resource.kind === 'CronJob') {
     return getBuildConfigsForCronJob(resource as CronJobKind, resources);
   }
+  const NAME_LABEL = 'app.kubernetes.io/name';
   const buildConfigs = resources?.buildConfigs?.data;
   const currentNamespace = resource.metadata.namespace;
   const nativeTriggers = resource?.spec?.triggers;
@@ -563,7 +564,8 @@ export const getBuildConfigsForResource = (
         const targetImageName = buildConfig.spec?.output?.to?.name;
         if (
           triggerImageNamespace === targetImageNamespace &&
-          triggerImageName === targetImageName
+          (triggerImageName === targetImageName ||
+            resource.metadata?.labels?.[NAME_LABEL] === buildConfig.metadata?.labels?.[NAME_LABEL])
         ) {
           const builds = getBuildsForResource(buildConfig, resources);
           return [

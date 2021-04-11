@@ -1,99 +1,143 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Firehose, FirehoseResource, LoadingBox } from '@console/internal/components/utils';
-import { ImageStreamModel } from '@console/internal/models';
 import { RouteComponentProps } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
+import { LoadingBox } from '@console/internal/components/utils';
+import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import {
+  useK8sWatchResource,
+  useK8sWatchResources,
+  WatchK8sResults,
+  WatchK8sResultsObject,
+} from '@console/internal/components/utils/k8s-watch-hook';
 import { ServiceModel } from '@console/knative-plugin';
-import { referenceForModel } from '@console/internal/module/k8s';
 import { PipelineModel } from '@console/pipelines-plugin/src/models';
+import { PipelineKind } from '@console/pipelines-plugin/src/types';
 import NamespacedPage, { NamespacedPageVariants } from '../NamespacedPage';
-import EditApplication from './EditApplication';
-import { EditApplicationProps } from './edit-application-types';
+import EditApplicationComponent from './EditApplicationComponent';
 
-const INSTANCE_LABEL = 'app.kubernetes.io/instance';
-const EditApplicationComponentLoader: React.FunctionComponent<EditApplicationProps> = (
-  props: EditApplicationProps,
-) => {
-  const { loaded } = props;
-  return loaded ? <EditApplication {...props} /> : <LoadingBox />;
+type WatchResource = {
+  [key: string]: K8sResourceKind[] | K8sResourceKind | PipelineKind[];
 };
 
-export type ImportPageProps = RouteComponentProps<{ ns?: string }>;
+type EditApplicationPageProps = RouteComponentProps<{ ns?: string }>;
 
-const EditApplicationPage: React.FunctionComponent<ImportPageProps> = ({ match, location }) => {
+const EditApplicationPage: React.FunctionComponent<EditApplicationPageProps> = ({
+  match,
+  location,
+}) => {
   const { t } = useTranslation();
   const namespace = match.params.ns;
   const queryParams = new URLSearchParams(location.search);
   const editAppResourceKind = queryParams.get('kind');
   const appName = queryParams.get('name');
-  const appResources: FirehoseResource[] = [
-    {
-      kind: 'Service',
-      prop: 'service',
-      name: appName,
-      namespace,
-      optional: true,
-    },
-    {
-      kind: 'BuildConfig',
-      prop: 'buildConfig',
-      name: appName,
-      namespace,
-      optional: true,
-    },
-    {
-      kind: referenceForModel(PipelineModel),
-      prop: PipelineModel.id,
-      name: appName,
-      namespace,
-      optional: true,
-    },
-    {
-      kind: 'Route',
-      prop: 'route',
-      name: appName,
-      namespace,
-      optional: true,
-    },
-    {
-      kind: 'ImageStream',
-      prop: 'imageStream',
-      isList: true,
-      namespace,
-      selector: {
-        matchLabels: { [INSTANCE_LABEL]: appName },
-      },
-      optional: true,
-    },
-    {
-      kind: ImageStreamModel.kind,
-      prop: 'imageStreams',
-      isList: true,
-      namespace: 'openshift',
-      optional: true,
-    },
-  ];
   let kind = editAppResourceKind;
   if (kind === ServiceModel.kind) {
     kind = referenceForModel(ServiceModel);
   }
-  appResources.push({
-    kind,
-    prop: 'editAppResource',
-    name: appName,
-    namespace,
-    optional: true,
-  });
+
+  const watchedEditResource = React.useMemo(
+    () => ({
+      kind,
+      name: appName,
+      namespace,
+      optional: true,
+    }),
+    [kind, appName, namespace],
+  );
+
+  const [editResData, isEditResDataLoaded, editResDataLoadError] = useK8sWatchResource<
+    K8sResourceKind
+  >(watchedEditResource);
+
+  const watchedResources = React.useMemo(() => {
+    const NAME_LABEL = 'app.kubernetes.io/name';
+    const nameLabel =
+      isEditResDataLoaded &&
+      !editResDataLoadError &&
+      (editResData?.metadata?.labels?.[NAME_LABEL] || appName);
+    return {
+      service: {
+        kind: 'Service',
+        name: appName,
+        namespace,
+        optional: true,
+      },
+      route: {
+        kind: 'Route',
+        prop: 'route',
+        name: appName,
+        namespace,
+        optional: true,
+      },
+      buildConfig: {
+        kind: 'BuildConfig',
+        isList: true,
+        namespace,
+        selector: {
+          matchLabels: { [NAME_LABEL]: nameLabel },
+        },
+        optional: true,
+      },
+      [PipelineModel.id]: {
+        kind: referenceForModel(PipelineModel),
+        isList: true,
+        namespace,
+        selector: {
+          matchLabels: { [NAME_LABEL]: nameLabel },
+        },
+        optional: true,
+      },
+      imageStream: {
+        kind: 'ImageStream',
+        isList: true,
+        namespace,
+        selector: {
+          matchLabels: { [NAME_LABEL]: nameLabel },
+        },
+        optional: true,
+      },
+      imageStreams: {
+        kind: 'ImageStream',
+        prop: 'imageStreams',
+        isList: true,
+        namespace: 'openshift',
+        optional: true,
+      },
+    };
+  }, [namespace, appName, editResData, isEditResDataLoaded, editResDataLoadError]);
+
+  const resources: WatchK8sResults<WatchResource> = useK8sWatchResources<WatchResource>(
+    watchedResources,
+  );
+
+  const isResourcesLoaded =
+    Object.keys(resources).length > 0 &&
+    Object.values(resources).every((value) => value.loaded || !!value.loadError) &&
+    (isEditResDataLoaded || !!editResDataLoadError);
 
   return (
     <NamespacedPage disabled variant={NamespacedPageVariants.light}>
       <Helmet>
         <title>{t('devconsole~Edit')}</title>
       </Helmet>
-      <Firehose resources={appResources}>
-        <EditApplicationComponentLoader namespace={namespace} appName={appName} />
-      </Firehose>
+      {isResourcesLoaded ? (
+        <EditApplicationComponent
+          namespace={namespace}
+          appName={appName}
+          resources={{
+            ...resources,
+            editAppResource: {
+              data: editResData,
+              loaded: isEditResDataLoaded,
+              loadError: editResDataLoadError,
+            },
+            pipeline: resources.pipeline as WatchK8sResultsObject<PipelineKind[]>,
+          }}
+        />
+      ) : (
+        <LoadingBox />
+      )}
     </NamespacedPage>
   );
 };

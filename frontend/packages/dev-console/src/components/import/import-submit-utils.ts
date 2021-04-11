@@ -68,34 +68,42 @@ export const createProject = (projectData: ProjectData): Promise<K8sResourceKind
 };
 
 export const createOrUpdateImageStream = (
-  formData: GitImportFormData,
+  formData: GitImportFormData | UploadJarFormData,
   imageStreamData: K8sResourceKind,
   dryRun: boolean,
   appResources: AppResources,
   verb: K8sVerb = 'create',
   generatedImageStreamName: string = '',
 ): Promise<K8sResourceKind> => {
-  const imageStreamList = appResources?.imageStream?.data;
-  const imageStreamFilterData = _.orderBy(imageStreamList, ['metadata.resourceVersion'], ['desc']);
-  const originalImageStream = (imageStreamFilterData.length && imageStreamFilterData[0]) || {};
   const {
     name,
     project: { name: namespace },
     application: { name: applicationName },
     labels: userLabels,
-    git: { url: repository, ref },
     image: { tag: selectedTag },
   } = formData;
+  const INSTANCE_LABEL = 'app.kubernetes.io/instance';
+  const repository = (formData as GitImportFormData).git?.url;
+  const ref = (formData as GitImportFormData).git?.ref;
+  const imageStreamList = appResources?.imageStream?.data?.filter(
+    (imgstr) => imgstr.metadata?.labels?.[INSTANCE_LABEL] === name,
+  );
+  const imageStreamFilterData = _.orderBy(imageStreamList, ['metadata.resourceVersion'], ['desc']);
+  const originalImageStream = (imageStreamFilterData.length && imageStreamFilterData[0]) || {};
   const imageStreamName = imageStreamData && imageStreamData.metadata.name;
   const defaultLabels = getAppLabels({ name, applicationName, imageStreamName, selectedTag });
-  const defaultAnnotations = { ...getGitAnnotations(repository, ref), ...getCommonAnnotations() };
+  const defaultAnnotations = {
+    ...(repository && getGitAnnotations(repository, ref)),
+    ...getCommonAnnotations(),
+  };
+  const imgStreamName = generatedImageStreamName || name;
   const newImageStream = {
     apiVersion: 'image.openshift.io/v1',
     kind: 'ImageStream',
     metadata: {
-      name: `${generatedImageStreamName || name}`,
+      name: imgStreamName,
       namespace,
-      labels: { ...defaultLabels, ...userLabels },
+      labels: { ...defaultLabels, ...userLabels, [INSTANCE_LABEL]: imgStreamName },
       annotations: defaultAnnotations,
     },
   };
@@ -191,11 +199,13 @@ export const createOrUpdateBuildConfig = (
     },
   };
 
+  const buildConfigName = verb === 'update' ? originalBuildConfig?.metadata?.name : name;
+
   const newBuildConfig = {
     apiVersion: 'build.openshift.io/v1',
     kind: 'BuildConfig',
     metadata: {
-      name,
+      name: buildConfigName,
       namespace,
       labels: { ...defaultLabels, ...userLabels },
       annotations: defaultAnnotations,
@@ -204,7 +214,7 @@ export const createOrUpdateBuildConfig = (
       output: {
         to: {
           kind: 'ImageStreamTag',
-          name: `${generatedImageStreamName || name}:latest`,
+          name: `${generatedImageStreamName || buildConfigName}:latest`,
         },
       },
       source: {
@@ -397,14 +407,15 @@ export const createOrUpdateDeploymentConfig = (
 
 export const managePipelineResources = async (
   formData: GitImportFormData,
-  appResources: AppResources,
+  pipelineData: PipelineKind,
 ) => {
   const { name, git, pipeline, project, docker, image } = formData;
   let managedPipeline: PipelineKind;
+  const pipelineName = pipelineData?.metadata?.name;
 
-  if (!_.isEmpty(appResources?.pipeline?.data)) {
+  if (!_.isEmpty(pipelineData) && pipelineName === name) {
     managedPipeline = await updatePipelineForImportFlow(
-      appResources?.pipeline?.data,
+      pipelineData,
       pipeline.template,
       name,
       project.name,
@@ -586,7 +597,7 @@ export const createOrUpdateResources = async (
 
   if (pipeline.enabled) {
     if (!dryRun) {
-      await managePipelineResources(formData, appResources);
+      await managePipelineResources(formData, appResources?.pipeline?.data);
     }
   } else {
     responses.push(

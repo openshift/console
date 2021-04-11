@@ -25,6 +25,11 @@ jest.mock('../../../pipelines/modals/common/utils', () => ({
   convertPipelineToModalData: jest.fn(),
 }));
 
+const getDefaultLabel = (name: string) => ({
+  'app.kubernetes.io/instance': name,
+  'app.kubernetes.io/name': name,
+});
+
 beforeEach(() => {
   jest.resetAllMocks();
 });
@@ -86,7 +91,7 @@ describe('createPipelineForImportFlow', () => {
         name: 'an-app',
         namespace: 'a-project',
         labels: {
-          'app.kubernetes.io/instance': 'an-app',
+          ...getDefaultLabel('an-app'),
           [PIPELINE_RUNTIME_LABEL]: 'nodejs',
           [PIPELINE_RUNTIME_VERSION_LABEL]: '14-ubi8',
         },
@@ -131,7 +136,7 @@ describe('createPipelineForImportFlow', () => {
         name: 'an-app',
         namespace: 'a-project',
         labels: {
-          'app.kubernetes.io/instance': 'an-app',
+          ...getDefaultLabel('an-app'),
           [PIPELINE_RUNTIME_VERSION_LABEL]: '14-ubi8',
         },
       },
@@ -184,7 +189,7 @@ describe('createPipelineForImportFlow', () => {
         name: 'an-app',
         namespace: 'a-project',
         labels: {
-          'app.kubernetes.io/instance': 'an-app',
+          ...getDefaultLabel('an-app'),
           [PIPELINE_RUNTIME_VERSION_LABEL]: '14-ubi8',
         },
       },
@@ -241,7 +246,7 @@ describe('createPipelineForImportFlow', () => {
         name: 'an-app',
         namespace: 'a-project',
         labels: {
-          'app.kubernetes.io/instance': 'an-app',
+          ...getDefaultLabel('an-app'),
           [PIPELINE_RUNTIME_VERSION_LABEL]: '14-ubi8',
         },
       },
@@ -299,7 +304,7 @@ describe('createPipelineForImportFlow', () => {
         name: 'an-app',
         namespace: 'a-project',
         labels: {
-          'app.kubernetes.io/instance': 'an-app',
+          ...getDefaultLabel('an-app'),
           [PIPELINE_RUNTIME_VERSION_LABEL]: '14-ubi8',
         },
       },
@@ -481,6 +486,7 @@ describe('updatePipelineForImportFlow', () => {
           [PIPELINE_RUNTIME_LABEL]: 'newImage',
           [PIPELINE_RUNTIME_VERSION_LABEL]: props.image.tag,
           'app.kubernetes.io/instance': 'test',
+          'app.kubernetes.io/name': 'test',
         },
         resourceVersion: 'test',
       },

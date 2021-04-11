@@ -3,10 +3,10 @@ import { Formik, FormikHelpers } from 'formik';
 import { RouteComponentProps } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { k8sGet, K8sResourceKind } from '@console/internal/module/k8s';
 import { BadgeType, getBadgeFromType, useActivePerspective, useRelatedHPA } from '@console/shared';
 import { useExtensions, Perspective, isPerspective } from '@console/plugin-sdk';
-import { ProjectModel } from '@console/internal/models';
+import { ProjectModel, ServiceModel } from '@console/internal/models';
 import { LoadingBox, history, PageHeading } from '@console/internal/components/utils';
 import {
   useK8sWatchResources,
@@ -83,18 +83,33 @@ const CreateKnatifyPage: React.FunctionComponent<CreateKnatifyPageProps> = ({
     Object.values(resources).every((value) => value.loaded || !!value.loadError) &&
     (hpaLoaded || !!hpaError);
 
-  const handleSubmit = (
+  const handleSubmit = async (
     values: DeployImageFormData,
     helpers: FormikHelpers<DeployImageFormData>,
   ) => {
-    return knatifyResources(values)
-      .then(() => {
-        helpers.setStatus({ submitError: '' });
-        handleRedirect(namespace, perspective, perspectiveExtensions);
-      })
-      .catch((err) => {
-        helpers.setStatus({ submitError: err.message });
-      });
+    try {
+      const svcData = await k8sGet(ServiceModel, values.name, values.project.name);
+      if (svcData) {
+        helpers.setStatus({
+          submitError: t(
+            'knative-plugin~There is an existing placeholder Service with name {{name}} in namespace {{namespace}}. Please provide another name',
+            {
+              name: values.name,
+              namespace: values.project.name,
+            },
+          ),
+        });
+      }
+    } catch {
+      knatifyResources(values, appName)
+        .then(() => {
+          helpers.setStatus({ submitError: '' });
+          handleRedirect(namespace, perspective, perspectiveExtensions);
+        })
+        .catch((err) => {
+          helpers.setStatus({ submitError: err.message });
+        });
+    }
   };
 
   return (
@@ -110,7 +125,6 @@ const CreateKnatifyPage: React.FunctionComponent<CreateKnatifyPageProps> = ({
         <Formik
           initialValues={getInitialValuesKnatify(
             getKnatifyWorkloadData(resources?.workloadResource?.data as K8sResourceKind, hpa),
-            appName,
             namespace,
             resources?.imageStream?.data as K8sResourceKind[],
           )}
