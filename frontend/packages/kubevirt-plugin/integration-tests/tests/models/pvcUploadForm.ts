@@ -1,21 +1,23 @@
 /* eslint-disable no-await-in-loop */
 import { browser, ExpectedConditions as until } from 'protractor';
+
+import {
+  inputPVCName,
+  inputPVCSize,
+  sizeUnitsDropdown,
+} from '@console/ceph-storage-plugin/integration-tests/views/pvc.view';
 import {
   createItemButton,
   isLoaded,
   saveChangesBtn,
 } from '@console/internal-integration-tests/views/crud.view';
 import { clickNavLink } from '@console/internal-integration-tests/views/sidenav.view';
-import {
-  inputPVCName,
-  inputPVCSize,
-  sizeUnitsDropdown,
-} from '@console/ceph-storage-plugin/integration-tests/views/pvc.view';
 import { click, fillInput } from '@console/shared/src/test-utils/utils';
-import { selectItemFromDropdown, selectOptionByText } from '../utils/utils';
+
 import * as pvcView from '../../views/pvc.view';
-import { PVCData } from '../types/pvc';
 import { dropDownItem } from '../../views/uiResource.view';
+import { PVCData } from '../types/pvc';
+import { selectItemFromDropdown, selectOptionByText } from '../utils/utils';
 
 export class UploadForm {
   async openForm() {

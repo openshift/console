@@ -1,9 +1,9 @@
 import { InstanceConfig, VMImportConfig } from '../../tests/types/types';
 import {
-  IMPORT_WIZARD_CONN_TO_NEW_INSTANCE,
   IMPORT_WIZARD_CONN_NAME_PREFIX,
+  IMPORT_WIZARD_CONN_TO_NEW_INSTANCE,
 } from '../../tests/utils/constants/common';
-import { Workload, OperatingSystem, Flavor } from '../../tests/utils/constants/wizard';
+import { Flavor, OperatingSystem, Workload } from '../../tests/utils/constants/wizard';
 
 const {
   V2V_VMWARE_INSTANCE_API_URL,

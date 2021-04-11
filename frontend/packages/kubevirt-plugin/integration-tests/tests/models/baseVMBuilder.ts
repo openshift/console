@@ -1,10 +1,11 @@
-import { cloneDeepWithEnum } from '@console/shared/src/constants/object-enum';
-import { Workload, OSIDLookup } from '../utils/constants/wizard';
-import { FlavorConfig, Disk, Network, CloudInitConfig } from '../types/types';
-import { BaseVMBuilderData } from '../types/vm';
 import { K8sKind } from '@console/internal/module/k8s';
-import { getRandStr } from '../utils/utils';
+import { cloneDeepWithEnum } from '@console/shared/src/constants/object-enum';
+
+import { CloudInitConfig, Disk, FlavorConfig, Network } from '../types/types';
+import { BaseVMBuilderData } from '../types/vm';
 import { ProvisionSource } from '../utils/constants/enums/provisionSource';
+import { OSIDLookup, Workload } from '../utils/constants/wizard';
+import { getRandStr } from '../utils/utils';
 
 export abstract class BaseVMBuilder<T extends BaseVMBuilderData> {
   protected model: K8sKind;

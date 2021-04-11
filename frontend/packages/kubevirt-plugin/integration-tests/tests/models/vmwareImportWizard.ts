@@ -1,21 +1,23 @@
 /* eslint-disable no-await-in-loop */
 import { browser, ExpectedConditions as until } from 'protractor';
-import { asyncForEach, click, fillInput } from '@console/shared/src/test-utils/utils';
-import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
-import { selectOptionByText, setCheckboxState } from '../utils/utils';
-import {
-  IMPORT_WIZARD_CONN_TO_NEW_INSTANCE,
-  IMPORT_WIZARD_CONN_NAME_PREFIX,
-  WIZARD_STARTED_IMPORT,
-  PAGE_LOAD_TIMEOUT_SECS,
-} from '../utils/constants/common';
-import * as view from '../../views/importWizard.view';
-import { InstanceConfig, vmwareConfig, VMImportConfig } from '../types/types';
-import { VirtualMachine } from './virtualMachine';
+
 import { testName } from '@console/internal-integration-tests/protractor.conf';
-import * as wizardView from '../../views/wizard.view';
-import { ImportWizard } from './importWizard';
 import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
+import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
+import { asyncForEach, click, fillInput } from '@console/shared/src/test-utils/utils';
+
+import * as view from '../../views/importWizard.view';
+import * as wizardView from '../../views/wizard.view';
+import { InstanceConfig, VMImportConfig, vmwareConfig } from '../types/types';
+import {
+  IMPORT_WIZARD_CONN_NAME_PREFIX,
+  IMPORT_WIZARD_CONN_TO_NEW_INSTANCE,
+  PAGE_LOAD_TIMEOUT_SECS,
+  WIZARD_STARTED_IMPORT,
+} from '../utils/constants/common';
+import { selectOptionByText, setCheckboxState } from '../utils/utils';
+import { ImportWizard } from './importWizard';
+import { VirtualMachine } from './virtualMachine';
 
 export class VmwareImportWizard extends ImportWizard {
   async fillHostname(hostname: string) {

@@ -1,4 +1,5 @@
 import { isEmpty } from 'lodash';
+
 import { K8sKind } from '@console/internal/module/k8s/types';
 
 // Duplicate of apiVersionForModel from '@console/internal/module/k8s/k8s'

@@ -1,32 +1,34 @@
+import { execSync } from 'child_process';
 /* eslint-disable max-nested-callbacks */
 import { isEqual } from 'lodash';
-import { execSync } from 'child_process';
 import { browser, ExpectedConditions as until } from 'protractor';
+
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { resourceTitle } from '@console/internal-integration-tests/views/crud.view';
-import * as detailView from '../views/virtualMachine.view';
-import * as templateView from '../views/template.view';
 import {
+  createResources,
+  deleteResource,
+  deleteResources,
   removeLeakedResources,
   withResource,
-  createResources,
-  deleteResources,
-  deleteResource,
 } from '@console/shared/src/test-utils/utils';
+
+import * as templateView from '../views/template.view';
+import * as detailView from '../views/virtualMachine.view';
+import { flavorConfigs, getTestDataVolume, multusNAD } from './mocks/mocks';
+import { getBasicVMTBuilder, VMTemplatePresets } from './mocks/vmBuilderPresets';
+import { VirtualMachine } from './models/virtualMachine';
+import { VMBuilder } from './models/vmBuilder';
+import { VMTemplateBuilder } from './models/vmtemplateBuilder';
+import { Wizard } from './models/wizard';
 import {
   CNV_25,
   COMMON_TEMPLATES_NAMESPACE,
   VM_BOOTUP_TIMEOUT_SECS,
 } from './utils/constants/common';
-import { multusNAD, getTestDataVolume, flavorConfigs } from './mocks/mocks';
-import { VirtualMachine } from './models/virtualMachine';
-import { TemplateByName } from './utils/constants/wizard';
-import { Wizard } from './models/wizard';
-import { VMT_ACTION } from './utils/constants/vm';
-import { VMTemplateBuilder } from './models/vmtemplateBuilder';
-import { getBasicVMTBuilder, VMTemplatePresets } from './mocks/vmBuilderPresets';
-import { VMBuilder } from './models/vmBuilder';
 import { ProvisionSource } from './utils/constants/enums/provisionSource';
+import { VMT_ACTION } from './utils/constants/vm';
+import { TemplateByName } from './utils/constants/wizard';
 
 describe('Create VM from Template using wizard', () => {
   const leakedResources = new Set<string>();

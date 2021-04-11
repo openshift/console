@@ -1,9 +1,10 @@
-import { K8sKind } from '@console/internal/module/k8s/types';
 import { resourceTitle } from '@console/internal-integration-tests/views/crud.view';
+import { K8sKind } from '@console/internal/module/k8s/types';
 import { click } from '@console/shared/src/test-utils/utils';
-import { getResourceObject } from '../utils/utils';
+
 import * as view from '../../views/uiResource.view';
 import { apiVersionForModel } from '../utils/selectors';
+import { getResourceObject } from '../utils/utils';
 
 export class UIResource {
   readonly name: string;

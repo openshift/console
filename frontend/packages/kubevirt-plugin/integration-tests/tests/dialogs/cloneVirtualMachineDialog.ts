@@ -1,8 +1,10 @@
 import { browser, ExpectedConditions as until } from 'protractor';
+
 import { click, fillInput } from '@console/shared/src/test-utils/utils';
-import { selectOptionByText } from '../utils/utils';
-import { PAGE_LOAD_TIMEOUT_SECS, SEC } from '../utils/constants/common';
+
 import * as view from '../../views/dialogs/cloneVirtualMachineDialog.view';
+import { PAGE_LOAD_TIMEOUT_SECS, SEC } from '../utils/constants/common';
+import { selectOptionByText } from '../utils/utils';
 
 export class CloneVirtualMachineDialog {
   async close() {

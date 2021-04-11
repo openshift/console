@@ -1,5 +1,6 @@
-import { browser, ExpectedConditions as until, Key } from 'protractor';
 import { execSync } from 'child_process';
+import { browser, ExpectedConditions as until, Key } from 'protractor';
+
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import {
   click,
@@ -7,28 +8,29 @@ import {
   deleteResource,
   selectDropdownOptionById,
 } from '@console/shared/src/test-utils/utils';
+
 import {
   consoleTypeSelectorId,
+  openInNewWindow,
+  sendCommandToConsole,
+  serialConnectButton,
+  serialConsole,
   serialDisconnectButton,
   serialResetButton,
-  serialConnectButton,
-  vncSendKeyButton,
-  serialConsole,
-  sendCommandToConsole,
   vncConsole,
-  openInNewWindow,
+  vncSendKeyButton,
 } from '../views/consolesView';
+import { getVMManifest } from './mocks/mocks';
+import { VirtualMachine } from './models/virtualMachine';
 import {
+  EXPECT_LOGIN_SCRIPT_PATH,
+  KUBEVIRT_SCRIPTS_PATH,
   PAGE_LOAD_TIMEOUT_SECS,
   VM_BOOTUP_TIMEOUT_SECS,
   VM_IMPORT_TIMEOUT_SECS,
-  KUBEVIRT_SCRIPTS_PATH,
-  EXPECT_LOGIN_SCRIPT_PATH,
 } from './utils/constants/common';
-import { VM_ACTION, VM_STATUS } from './utils/constants/vm';
-import { VirtualMachine } from './models/virtualMachine';
-import { getVMManifest } from './mocks/mocks';
 import { ProvisionSource } from './utils/constants/enums/provisionSource';
+import { VM_ACTION, VM_STATUS } from './utils/constants/vm';
 
 describe('KubeVirt VM console - VNC/Serial', () => {
   const vmResource = getVMManifest(ProvisionSource.URL, testName, 'cirros-vm');

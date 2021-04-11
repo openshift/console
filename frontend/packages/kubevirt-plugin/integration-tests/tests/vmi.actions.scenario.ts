@@ -1,21 +1,23 @@
 import { browser, ExpectedConditions as until } from 'protractor';
+
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import {
   addLeakableResource,
   createResource,
-  removeLeakedResources,
   removeLeakableResource,
+  removeLeakedResources,
 } from '@console/shared/src/test-utils/utils';
+
+import { vmLinkByName } from '../views/vms.list.view';
 import { getVMIManifest } from './mocks/mocks';
+import { VirtualMachineInstance } from './models/virtualMachineInstance';
 import {
   VM_ACTIONS_TIMEOUT_SECS,
-  VM_IMPORT_TIMEOUT_SECS,
   VM_DELETE_TIMEOUT_SECS,
+  VM_IMPORT_TIMEOUT_SECS,
 } from './utils/constants/common';
-import { VirtualMachineInstance } from './models/virtualMachineInstance';
-import { VM_STATUS, VMI_ACTION } from './utils/constants/vm';
 import { ProvisionSource } from './utils/constants/enums/provisionSource';
-import { vmLinkByName } from '../views/vms.list.view';
+import { VM_STATUS, VMI_ACTION } from './utils/constants/vm';
 
 const waitForVM = async (manifest: any, status: VM_STATUS, resourcesSet: Set<string>) => {
   const vmi = new VirtualMachineInstance(manifest.metadata);

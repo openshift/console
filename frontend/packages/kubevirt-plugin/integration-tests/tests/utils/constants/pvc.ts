@@ -1,7 +1,8 @@
 import { testName } from '@console/internal-integration-tests/protractor.conf';
+
 import { PVCData } from '../../types/pvc';
-import { OperatingSystem } from './wizard';
 import { STORAGE_CLASS } from './common';
+import { OperatingSystem } from './wizard';
 
 export const GOLDEN_OS_IMAGES_NS = 'openshift-virtualization-os-images';
 export enum GOLDEN_OS_PVC_NAME {

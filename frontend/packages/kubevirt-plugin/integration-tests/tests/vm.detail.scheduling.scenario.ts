@@ -1,16 +1,18 @@
 import { browser, ExpectedConditions as until } from 'protractor';
+
 import { testName } from '@console/internal-integration-tests/protractor.conf';
+import { MatchLabels } from '@console/internal/module/k8s';
 import { click, createResource, deleteResource } from '@console/shared/src/test-utils/utils';
-import * as virtualMachineView from '../views/virtualMachine.view';
+
 import * as editAffinityView from '../views/dialogs/editAffinityView';
 import { saveButton } from '../views/kubevirtUIResource.view';
-import { VM_CREATE_AND_EDIT_TIMEOUT_SECS, VM_IMPORT_TIMEOUT_SECS } from './utils/constants/common';
-import { VM_STATUS } from './utils/constants/vm';
-import { VirtualMachine } from './models/virtualMachine';
+import * as virtualMachineView from '../views/virtualMachine.view';
 import { getVMManifest } from './mocks/mocks';
-import { getNodes, getRandStr, labelNode, taintNode } from './utils/utils';
-import { MatchLabels } from '@console/internal/module/k8s';
+import { VirtualMachine } from './models/virtualMachine';
+import { VM_CREATE_AND_EDIT_TIMEOUT_SECS, VM_IMPORT_TIMEOUT_SECS } from './utils/constants/common';
 import { ProvisionSource } from './utils/constants/enums/provisionSource';
+import { VM_STATUS } from './utils/constants/vm';
+import { getNodes, getRandStr, labelNode, taintNode } from './utils/utils';
 
 describe('KubeVirt VM scheduling', () => {
   const testVM = getVMManifest(ProvisionSource.URL, testName, `vm-${getRandStr(5)}`);

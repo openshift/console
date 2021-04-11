@@ -1,15 +1,17 @@
 import { browser, ExpectedConditions as until } from 'protractor';
-import { click } from '@console/shared/src/test-utils/utils';
+
 import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
-import { Flavor, TemplateByName, Workload } from './utils/constants/wizard';
-import { ProvisionSource } from './utils/constants/enums/provisionSource';
-import { DISK_SOURCE, DISK_INTERFACE } from './utils/constants/vm';
-import { Wizard } from './models/wizard';
-import { Disk, FlavorConfig } from './types/types';
-import { getRandStr } from './utils/utils';
+import { click } from '@console/shared/src/test-utils/utils';
+
+import { tableRows } from '../views/kubevirtUIResource.view';
 import * as view from '../views/wizard.view';
 import { DiskDialog } from './dialogs/diskDialog';
-import { tableRows } from '../views/kubevirtUIResource.view';
+import { Wizard } from './models/wizard';
+import { Disk, FlavorConfig } from './types/types';
+import { ProvisionSource } from './utils/constants/enums/provisionSource';
+import { DISK_INTERFACE, DISK_SOURCE } from './utils/constants/vm';
+import { Flavor, TemplateByName, Workload } from './utils/constants/wizard';
+import { getRandStr } from './utils/utils';
 
 describe('Wizard validation', () => {
   const wizard = new Wizard();

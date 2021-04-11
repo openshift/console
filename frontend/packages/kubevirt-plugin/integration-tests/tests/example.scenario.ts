@@ -1,4 +1,5 @@
 import { browser } from 'protractor';
+
 import { appHost, testName } from '@console/internal-integration-tests/protractor.conf';
 import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
 

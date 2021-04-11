@@ -1,26 +1,27 @@
 import { execSync } from 'child_process';
 import { browser } from 'protractor';
-import { isLoaded } from '../../../../integration-tests/views/crud.view';
+
+import { testName } from '@console/internal-integration-tests/protractor.conf';
+import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
 import {
-  removeLeakedResources,
-  withResource,
-  waitForStringInElement,
   createResources,
   deleteResources,
+  removeLeakedResources,
+  waitForStringInElement,
+  withResource,
 } from '@console/shared/src/test-utils/utils';
-import { VirtualMachineModel } from '@console/kubevirt-plugin/src/models';
-import * as view from '../views/wizard.view';
-import { Wizard } from './models/wizard';
-import { testName } from '@console/internal-integration-tests/protractor.conf';
 
+import { isLoaded } from '../../../../integration-tests/views/crud.view';
+import * as view from '../views/wizard.view';
+import { cdGuestTools, getTestDataVolume, multusNAD } from './mocks/mocks';
+import { getBasicVMBuilder, vmPresets } from './mocks/vmBuilderPresets';
+import { VMBuilder } from './models/vmBuilder';
+import { Wizard } from './models/wizard';
 import {
-  VM_BOOTUP_TIMEOUT_SECS,
   CLONE_VM_TIMEOUT_SECS,
   JASMINE_EXTENDED_TIMEOUT_INTERVAL,
+  VM_BOOTUP_TIMEOUT_SECS,
 } from './utils/constants/common';
-import { multusNAD, cdGuestTools, getTestDataVolume } from './mocks/mocks';
-import { vmPresets, getBasicVMBuilder } from './mocks/vmBuilderPresets';
-import { VMBuilder } from './models/vmBuilder';
 import { ProvisionSource } from './utils/constants/enums/provisionSource';
 
 describe('Kubevirt create VM using wizard', () => {

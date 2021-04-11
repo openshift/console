@@ -1,20 +1,22 @@
 import { browser, ExpectedConditions as until } from 'protractor';
-import { listViewAction } from '../views/actions.view';
+
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import {
-  createResource,
-  click,
   addLeakableResource,
+  click,
+  createResource,
   removeLeakedResources,
 } from '@console/shared/src/test-utils/utils';
-import * as editVMSnapshotsView from '../views/vm.snapshots.view';
-import { saveButton } from '../views/kubevirtUIResource.view';
-import { VM_CREATE_AND_EDIT_TIMEOUT_SECS } from './utils/constants/common';
-import { VirtualMachine } from './models/virtualMachine';
-import { getVMManifest } from './mocks/mocks';
-import { getRandStr } from './utils/utils';
+
 import { READY } from '../../src/utils/strings';
+import { listViewAction } from '../views/actions.view';
+import { saveButton } from '../views/kubevirtUIResource.view';
+import * as editVMSnapshotsView from '../views/vm.snapshots.view';
+import { getVMManifest } from './mocks/mocks';
+import { VirtualMachine } from './models/virtualMachine';
+import { VM_CREATE_AND_EDIT_TIMEOUT_SECS } from './utils/constants/common';
 import { ProvisionSource } from './utils/constants/enums/provisionSource';
+import { getRandStr } from './utils/utils';
 
 const TEST_SNAPSHOT = 'test-snapshot';
 

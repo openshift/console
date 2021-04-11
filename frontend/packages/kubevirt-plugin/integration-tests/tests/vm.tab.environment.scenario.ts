@@ -1,20 +1,22 @@
 import { execSync } from 'child_process';
 import { browser, ExpectedConditions as until, Key } from 'protractor';
-import { click, createResources, deleteResources } from '@console/shared/src/test-utils/utils';
+
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { isLoaded } from '@console/internal-integration-tests/views/crud.view';
-import { getVMManifest, getSecret, getConfigMap, getServiceAccount } from './mocks/mocks';
+import { addVariableFrom } from '@console/internal-integration-tests/views/environment.view';
+import { click, createResources, deleteResources } from '@console/shared/src/test-utils/utils';
+
 import { saveButton } from '../views/kubevirtUIResource.view';
 import * as vmEnv from '../views/vm.environment.view';
-import { addVariableFrom } from '@console/internal-integration-tests/views/environment.view';
+import { getConfigMap, getSecret, getServiceAccount, getVMManifest } from './mocks/mocks';
+import { VirtualMachine } from './models/virtualMachine';
 import {
-  PAGE_LOAD_TIMEOUT_SECS,
   KUBEVIRT_SCRIPTS_PATH,
+  PAGE_LOAD_TIMEOUT_SECS,
   VM_BOOTUP_TIMEOUT_SECS,
 } from './utils/constants/common';
-import { VirtualMachine } from './models/virtualMachine';
-import { VM_ACTION } from './utils/constants/vm';
 import { ProvisionSource } from './utils/constants/enums/provisionSource';
+import { VM_ACTION } from './utils/constants/vm';
 
 const environmentExpecScriptPath = `${KUBEVIRT_SCRIPTS_PATH}/expect-vm-env-readable.sh`;
 const configmapName = 'configmap-mock';

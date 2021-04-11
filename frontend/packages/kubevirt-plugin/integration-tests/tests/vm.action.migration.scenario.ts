@@ -1,26 +1,28 @@
 import { $, browser, ExpectedConditions as until } from 'protractor';
+
+import {
+  detailViewAction,
+  getDetailActionDropdownOptions,
+} from '@console/shared/src/test-utils/actions.view';
 import {
   click,
   deleteResource,
   waitForStringInElement,
 } from '@console/shared/src/test-utils/utils';
-import {
-  getDetailActionDropdownOptions,
-  detailViewAction,
-} from '@console/shared/src/test-utils/actions.view';
-import { vmDetailNode } from '../views/virtualMachine.view';
+
 import { confirmButton } from '../views/uiResource.view';
+import { vmDetailNode } from '../views/virtualMachine.view';
+import { getBasicVMBuilder } from './mocks/vmBuilderPresets';
+import { VMBuilder } from './models/vmBuilder';
 import {
-  VM_BOOTUP_TIMEOUT_SECS,
-  VM_MIGRATION_TIMEOUT_SECS,
-  VM_IMPORT_TIMEOUT_SECS,
   PAGE_LOAD_TIMEOUT_SECS,
   STORAGE_CLASS,
+  VM_BOOTUP_TIMEOUT_SECS,
+  VM_IMPORT_TIMEOUT_SECS,
+  VM_MIGRATION_TIMEOUT_SECS,
 } from './utils/constants/common';
-import { VM_ACTION, VM_STATUS } from './utils/constants/vm';
 import { ProvisionSource } from './utils/constants/enums/provisionSource';
-import { VMBuilder } from './models/vmBuilder';
-import { getBasicVMBuilder } from './mocks/vmBuilderPresets';
+import { VM_ACTION, VM_STATUS } from './utils/constants/vm';
 
 describe('Test VM Migration', () => {
   const MIGRATE_VM = 'Migrate Virtual Machine';

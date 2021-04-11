@@ -1,12 +1,14 @@
 import { browser, ExpectedConditions as until } from 'protractor';
-import { click, withResource, removeLeakedResources } from '@console/shared/src/test-utils/utils';
+
+import { click, removeLeakedResources, withResource } from '@console/shared/src/test-utils/utils';
+
 import { isDedicatedCPUPlacement } from '../../src/selectors/vm';
 import * as editDedicatedResourcesView from '../views/dialogs/editDedicatedResourcesView';
-import * as virtualMachineView from '../views/virtualMachine.view';
 import { saveButton } from '../views/kubevirtUIResource.view';
-import { VM_CREATE_AND_EDIT_TIMEOUT_SECS } from './utils/constants/common';
-import { VMBuilder } from './models/vmBuilder';
+import * as virtualMachineView from '../views/virtualMachine.view';
 import { getBasicVMBuilder } from './mocks/vmBuilderPresets';
+import { VMBuilder } from './models/vmBuilder';
+import { VM_CREATE_AND_EDIT_TIMEOUT_SECS } from './utils/constants/common';
 import { ProvisionSource } from './utils/constants/enums/provisionSource';
 
 describe('KubeVirt VM detail - edit Dedicated Resources', () => {

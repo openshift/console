@@ -1,20 +1,22 @@
-import { deepFreeze } from '../utils/utils';
-import { VMBuilder } from '../models/vmBuilder';
 import * as Combinatorics from 'js-combinatorics';
-import { Flavor, Workload, OperatingSystem, TemplateByName } from '../utils/constants/wizard';
-import { VMBuilderDataGenerationConfig, VMBuilderData } from '../types/vm';
+
 import { testName } from '@console/internal-integration-tests/protractor.conf';
+
+import { VirtualMachine } from '../models/virtualMachine';
+import { VirtualMachineTemplate } from '../models/virtualMachineTemplate';
+import { VMBuilder } from '../models/vmBuilder';
+import { VMTemplateBuilder } from '../models/vmtemplateBuilder';
+import { VMBuilderData, VMBuilderDataGenerationConfig } from '../types/vm';
+import { ProvisionSource } from '../utils/constants/enums/provisionSource';
+import { Flavor, OperatingSystem, TemplateByName, Workload } from '../utils/constants/wizard';
+import { deepFreeze } from '../utils/utils';
 import {
-  rootDisk,
-  multusNetworkInterface,
   containerRootDisk,
   flavorConfigs,
   getDiskToCloneFrom,
+  multusNetworkInterface,
+  rootDisk,
 } from './mocks';
-import { VirtualMachine } from '../models/virtualMachine';
-import { VMTemplateBuilder } from '../models/vmtemplateBuilder';
-import { VirtualMachineTemplate } from '../models/virtualMachineTemplate';
-import { ProvisionSource } from '../utils/constants/enums/provisionSource';
 
 /**
  * Generates dictionary of VMBuilders based on baseBuilder, attributes and their values

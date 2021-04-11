@@ -1,14 +1,16 @@
 import { find } from 'lodash';
+
 import {
   createResource,
   deleteResource,
   deleteResources,
 } from '@console/shared/src/test-utils/utils';
-import { TEMPLATE_ACTIONS_TIMEOUT_SECS } from './utils/constants/common';
-import { multusNAD, hddDisk, multusNetworkInterface } from './mocks/mocks';
-import { VMTemplateBuilder } from './models/vmtemplateBuilder';
-import { getBasicVMTBuilder, getBasicVMBuilder } from './mocks/vmBuilderPresets';
+
+import { hddDisk, multusNAD, multusNetworkInterface } from './mocks/mocks';
+import { getBasicVMBuilder, getBasicVMTBuilder } from './mocks/vmBuilderPresets';
 import { VMBuilder } from './models/vmBuilder';
+import { VMTemplateBuilder } from './models/vmtemplateBuilder';
+import { TEMPLATE_ACTIONS_TIMEOUT_SECS } from './utils/constants/common';
 import { ProvisionSource } from './utils/constants/enums/provisionSource';
 
 describe('Test adding/removing discs/nics to/from a VM template', () => {

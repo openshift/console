@@ -1,6 +1,6 @@
-import { BaseVMBuilder } from './baseVMBuilder';
-import { VMBuilderData } from '../types/vm';
 import { VirtualMachineModel } from '../../../src/models/index';
+import { VMBuilderData } from '../types/vm';
+import { BaseVMBuilder } from './baseVMBuilder';
 import { VirtualMachine } from './virtualMachine';
 
 export class VMBuilder extends BaseVMBuilder<VMBuilderData> {

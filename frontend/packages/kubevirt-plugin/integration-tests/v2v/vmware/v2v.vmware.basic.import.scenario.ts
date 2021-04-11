@@ -1,19 +1,20 @@
 import {
+  createResources,
+  deleteResources,
+  removeLeakedResources,
+  withResource,
+} from '@console/shared/src/test-utils/utils';
+
+import { multusNAD, v2vUIDeployment } from '../../tests/mocks/mocks';
+import { VmwareImportWizard } from '../../tests/models/vmwareImportWizard';
+import { V2V_VM_IMPORT_TIMEOUT } from '../../tests/utils/constants/common';
+import { VM_STATUS } from '../../tests/utils/constants/vm';
+import {
   flavorWorkloadConfigs,
   vmwareSecondVMConfig,
   vmwareVMConfig,
   vmwareVMMultiNicConfig,
 } from './v2v.configs';
-import {
-  withResource,
-  createResources,
-  deleteResources,
-  removeLeakedResources,
-} from '@console/shared/src/test-utils/utils';
-import { VmwareImportWizard } from '../../tests/models/vmwareImportWizard';
-import { multusNAD, v2vUIDeployment } from '../../tests/mocks/mocks';
-import { VM_STATUS } from '../../tests/utils/constants/vm';
-import { V2V_VM_IMPORT_TIMEOUT } from '../../tests/utils/constants/common';
 
 describe('Kubevirt migrate VM from VMWare using wizard', () => {
   const leakedResources = new Set<string>();

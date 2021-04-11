@@ -1,28 +1,30 @@
 /* eslint-disable no-await-in-loop */
 import { execSync } from 'child_process';
+import { safeLoad } from 'js-yaml';
 import * as _ from 'lodash';
 import { $, $$, browser, by, ExpectedConditions as until } from 'protractor';
-import { testName, appHost } from '@console/internal-integration-tests/protractor.conf';
-import { safeLoad } from 'js-yaml';
+
+import { appHost, testName } from '@console/internal-integration-tests/protractor.conf';
 import {
   createYAMLButton,
   isLoaded,
-  rowForName,
   resourceTitle,
+  rowForName,
 } from '@console/internal-integration-tests/views/crud.view';
 import { clickNavLink } from '@console/internal-integration-tests/views/sidenav.view';
-import { click } from '@console/shared/src/test-utils/utils';
 import {
+  getEditorContent,
   isLoaded as yamlPageIsLoaded,
   saveButton,
-  getEditorContent,
 } from '@console/internal-integration-tests/views/yaml.view';
-import { STORAGE_CLASS, PAGE_LOAD_TIMEOUT_SECS, SEC } from './constants/common';
-import { NodePortService, Status } from '../types/types';
+import { MatchLabels } from '@console/internal/module/k8s';
+import { click } from '@console/shared/src/test-utils/utils';
+
 import { filterCount } from '../../views/vms.list.view';
 import { createItemButton, createWithYAMLButton } from '../../views/wizard.view';
-import { diskVolumeMode, diskAccessMode } from './constants/vm';
-import { MatchLabels } from '@console/internal/module/k8s';
+import { NodePortService, Status } from '../types/types';
+import { PAGE_LOAD_TIMEOUT_SECS, SEC, STORAGE_CLASS } from './constants/common';
+import { diskAccessMode, diskVolumeMode } from './constants/vm';
 
 export async function setCheckboxState(elem: any, targetState: boolean) {
   const checkboxState = await elem.isSelected();

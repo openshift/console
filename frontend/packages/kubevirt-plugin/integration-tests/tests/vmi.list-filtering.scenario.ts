@@ -1,10 +1,11 @@
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { createResource, deleteResources } from '@console/shared/src/test-utils/utils';
-import { getVMManifest, getVMIManifest } from './mocks/mocks';
-import { VM_STATUS } from './utils/constants/vm';
+
 import { filterCount } from '../views/vms.list.view';
+import { getVMIManifest, getVMManifest } from './mocks/mocks';
 import { VirtualMachineInstance } from './models/virtualMachineInstance';
 import { ProvisionSource } from './utils/constants/enums/provisionSource';
+import { VM_STATUS } from './utils/constants/vm';
 
 const waitForVM = async (manifest: any, status: VM_STATUS) => {
   const vmi = new VirtualMachineInstance(manifest.metadata);

@@ -1,11 +1,12 @@
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { createResource, deleteResource } from '@console/shared/src/test-utils/utils';
-import { getVMManifest } from './mocks/mocks';
-import { STORAGE_CLASS, VM_IMPORT_TIMEOUT_SECS } from './utils/constants/common';
-import { VM_STATUS } from './utils/constants/vm';
-import { VirtualMachine } from './models/virtualMachine';
+
 import { filterCount } from '../views/vms.list.view';
+import { getVMManifest } from './mocks/mocks';
+import { VirtualMachine } from './models/virtualMachine';
+import { STORAGE_CLASS, VM_IMPORT_TIMEOUT_SECS } from './utils/constants/common';
 import { ProvisionSource } from './utils/constants/enums/provisionSource';
+import { VM_STATUS } from './utils/constants/vm';
 
 describe('Test List View Filtering', () => {
   const testVM = getVMManifest(ProvisionSource.URL, testName);

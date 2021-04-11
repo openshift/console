@@ -1,6 +1,6 @@
-import { BaseVMBuilder } from './baseVMBuilder';
-import { VMTemplateBuilderData } from '../types/vm';
 import { TemplateModel } from '../../../../../public/models/index';
+import { VMTemplateBuilderData } from '../types/vm';
+import { BaseVMBuilder } from './baseVMBuilder';
 import { VirtualMachineTemplate } from './virtualMachineTemplate';
 
 export class VMTemplateBuilder extends BaseVMBuilder<VMTemplateBuilderData> {

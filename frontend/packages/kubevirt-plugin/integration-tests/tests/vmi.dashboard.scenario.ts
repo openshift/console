@@ -1,20 +1,21 @@
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import { createResource, deleteResource } from '@console/shared/src/test-utils/utils';
+
 import { VirtualMachineInstanceModel } from '../../src/models';
 import {
+  vmDetailsIPAddress,
   vmDetailsName,
   vmDetailsNamespace,
   vmDetailsNode,
-  vmDetailsIPAddress,
-  vmStatus,
-  vmInventoryNICs,
   vmInventoryDisks,
+  vmInventoryNICs,
+  vmStatus,
 } from '../views/dashboard.view';
 import { getVMIManifest } from './mocks/mocks';
-import { NOT_AVAILABLE } from './utils/constants/common';
 import { VirtualMachineInstance } from './models/virtualMachineInstance';
-import { VM_STATUS } from './utils/constants/vm';
+import { NOT_AVAILABLE } from './utils/constants/common';
 import { ProvisionSource } from './utils/constants/enums/provisionSource';
+import { VM_STATUS } from './utils/constants/vm';
 
 const waitForVM = async (manifest: any, status: VM_STATUS) => {
   const vm = new VirtualMachineInstance(manifest.metadata);

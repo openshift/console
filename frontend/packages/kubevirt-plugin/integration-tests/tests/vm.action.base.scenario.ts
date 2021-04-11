@@ -1,30 +1,32 @@
 import { browser, ExpectedConditions as until } from 'protractor';
+
 import { testName } from '@console/internal-integration-tests/protractor.conf';
 import {
-  textFilter,
   resourceRows,
   resourceRowsPresent,
+  textFilter,
 } from '@console/internal-integration-tests/views/crud.view';
 import {
   addLeakableResource,
-  createResource,
-  removeLeakedResources,
-  removeLeakableResource,
   click,
+  createResource,
+  removeLeakableResource,
+  removeLeakedResources,
 } from '@console/shared/src/test-utils/utils';
-import { getVMManifest } from './mocks/mocks';
-import { pauseVM } from './utils/utils';
-import {
-  VM_BOOTUP_TIMEOUT_SECS,
-  VM_ACTIONS_TIMEOUT_SECS,
-  VM_IMPORT_TIMEOUT_SECS,
-  VM_DELETE_TIMEOUT_SECS,
-} from './utils/constants/common';
-import { VirtualMachine } from './models/virtualMachine';
+
 import { unpauseButton } from '../views/dialogs/editStatusView';
-import { VM_STATUS, VM_ACTION } from './utils/constants/vm';
-import { ProvisionSource } from './utils/constants/enums/provisionSource';
 import { vmLinkByName } from '../views/vms.list.view';
+import { getVMManifest } from './mocks/mocks';
+import { VirtualMachine } from './models/virtualMachine';
+import {
+  VM_ACTIONS_TIMEOUT_SECS,
+  VM_BOOTUP_TIMEOUT_SECS,
+  VM_DELETE_TIMEOUT_SECS,
+  VM_IMPORT_TIMEOUT_SECS,
+} from './utils/constants/common';
+import { ProvisionSource } from './utils/constants/enums/provisionSource';
+import { VM_ACTION, VM_STATUS } from './utils/constants/vm';
+import { pauseVM } from './utils/utils';
 
 describe('Test VM actions', () => {
   const leakedResources = new Set<string>();
