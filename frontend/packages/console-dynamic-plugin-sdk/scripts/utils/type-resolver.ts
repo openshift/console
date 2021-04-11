@@ -21,14 +21,16 @@ type ExtensionPropertyInfo = {
   name: string;
   /** Value type signature, e.g. `CodeRef<() => void>`. */
   valueType: string;
+  /** If `true`, this property has the optional modifier. */
+  optional: boolean;
 } & ContainsJSDoc;
 
 export type ExtensionTypeInfo = {
   /** Name of the extension type, e.g. `Foo`. */
   name: string;
-  /** Console extension `type`, e.g. `console.foo`. */
+  /** Console extension `type` value, e.g. `console.foo`. */
   type: string;
-  /** Console extension `properties`. */
+  /** Console extension `properties` object representation. */
   properties: ExtensionPropertyInfo[];
 } & ContainsJSDoc;
 
@@ -39,10 +41,7 @@ type ConsoleTypeResolver = {
     exitOnErrors?: boolean,
   ) => {
     result: ExtensionTypeInfo[];
-    diagnostics: {
-      errors: string[];
-      warnings: string[];
-    };
+    diagnostics: { errors: string[]; warnings: string[] };
   };
 };
 
@@ -92,6 +91,8 @@ const parseExtensionTypeInfo = (
             ts.TypeFormatFlags.UseAliasDefinedOutsideCurrentScope |
             ts.TypeFormatFlags.UseSingleQuotesForStringLiteralType,
         ),
+        // eslint-disable-next-line no-bitwise
+        optional: !!(p.flags & ts.SymbolFlags.Optional),
         docComments: getJSDocComments(_.head(p.declarations)),
       });
     });

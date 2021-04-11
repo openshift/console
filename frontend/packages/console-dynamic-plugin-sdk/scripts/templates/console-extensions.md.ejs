@@ -17,10 +17,10 @@
 
 ### Properties
 
-| Name | Value Type | Description |
-| ---- | ---------- | ----------- |
+| Name | Value Type | Optional | Description |
+| ---- | ---------- | -------- | ----------- |
 <% e.properties.forEach((p) => { _%>
-| `<%- escapeTableCell(p.name) %>` | `<%- escapeTableCell(p.valueType) %>` | <%- escapeTableCell(printComments(p.docComments)) %> |
+| `<%- p.name %>` | `<%- escapeTableCell(p.valueType) %>` | <%- p.optional ? 'yes' : 'no' %> | <%- escapeTableCell(printComments(p.docComments)) %> |
 <% }); _%>
 
 <% }); _%>
