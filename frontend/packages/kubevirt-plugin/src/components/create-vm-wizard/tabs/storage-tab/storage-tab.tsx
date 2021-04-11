@@ -2,10 +2,12 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 
-import { Firehose, FirehoseResult } from '@console/internal/components/utils';
+import { ExternalLink, Firehose, FirehoseResult } from '@console/internal/components/utils';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
 import { createLookup, getName } from '@console/shared/src';
 import {
+  Alert,
+  AlertVariant,
   Bullseye,
   Button,
   ButtonVariant,
@@ -13,6 +15,8 @@ import {
   EmptyStateVariant,
   Split,
   SplitItem,
+  Stack,
+  StackItem,
   Title,
 } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
@@ -36,11 +40,22 @@ import {
   isStepLocked,
 } from '../../selectors/immutable/wizard-selectors';
 import { getStorages } from '../../selectors/selectors';
-import { VMWizardProps, VMWizardStorage, VMWizardTab } from '../../types';
+import {
+  ImportProvidersField,
+  VMImportProvider,
+  VMWizardProps,
+  VMWizardStorage,
+  VMWizardTab,
+} from '../../types';
 import { StorageBootSource } from './storage-boot-source';
 import { VMWizardStorageBundle } from './types';
 import { vmWizardStorageModalEnhanced } from './vm-wizard-storage-modal-enhanced';
 import { VmWizardStorageRow } from './vm-wizard-storage-row';
+import { iGetImportProvidersValue } from '../../selectors/immutable/import-providers';
+import {
+  STORAGE_CLASS_SUPPORTED_RHV_LINK,
+  STORAGE_CLASS_SUPPORTED_VMWARE_LINK,
+} from '../../../../utils/strings';
 
 import './storage-tab.scss';
 
@@ -89,6 +104,7 @@ const StorageTabFirehose: React.FC<StorageTabFirehoseProps> = ({
   isCreateDisabled,
   isUpdateDisabled,
   isDeleteDisabled,
+  importProvider,
 }) => {
   const { t } = useTranslation();
 
@@ -110,60 +126,86 @@ const StorageTabFirehose: React.FC<StorageTabFirehoseProps> = ({
 
   return (
     <div className="kubevirt-create-vm-modal__storage-tab-container">
-      <Split>
-        <SplitItem isFilled>
-          <Title headingLevel="h5" size="lg">
-            {t('kubevirt-plugin~Disks')}
-          </Title>
-        </SplitItem>
-        {showStorages && !isCreateDisabled && (
-          <SplitItem>
-            <Button {...addButtonProps} variant={ButtonVariant.secondary}>
-              {t('kubevirt-plugin~Add Disk')}
-            </Button>
-          </SplitItem>
+      <Stack hasGutter>
+        {importProvider && (
+          <StackItem>
+            <Alert
+              variant={AlertVariant.warning}
+              isInline
+              title={t('kubevirt-plugin~Supported Storage classes')}
+            >
+              <ExternalLink
+                text={t('kubevirt-plugin~Supported Storage classes for selected provider')}
+                href={
+                  importProvider === VMImportProvider.OVIRT
+                    ? STORAGE_CLASS_SUPPORTED_VMWARE_LINK
+                    : STORAGE_CLASS_SUPPORTED_RHV_LINK
+                }
+              />
+            </Alert>
+          </StackItem>
         )}
-      </Split>
-      {showStorages && (
-        <>
-          <VMDisksTable
-            data={getStoragesData(storages, persistentVolumeClaims)}
-            customData={{
-              isDisabled: isLocked,
-              withProgress,
-              removeStorage,
-              wizardReduxID,
-              isDeleteDisabled,
-              isUpdateDisabled,
-              columnClasses: diskTableColumnClasses,
-            }}
-            Row={VmWizardStorageRow}
-            loaded
-          />
-          {isBootDiskRequired && (
-            <StorageBootSource
-              className="kubevirt-create-vm-modal__storage-tab-boot-select"
-              isDisabled={isLocked}
-              storages={storages}
-              onBootOrderChanged={onBootOrderChanged}
-            />
-          )}
-        </>
-      )}
-      {!showStorages && (
-        <Bullseye>
-          <EmptyState variant={EmptyStateVariant.full}>
-            <Title headingLevel="h5" size="lg">
-              {t('kubevirt-plugin~No disks attached')}
-            </Title>
-            {!isCreateDisabled && (
-              <Button {...addButtonProps} icon={<PlusCircleIcon />} variant={ButtonVariant.link}>
-                {t('kubevirt-plugin~Add Disk')}
-              </Button>
+        <StackItem>
+          <Split>
+            <SplitItem isFilled>
+              <Title headingLevel="h5" size="lg">
+                {t('kubevirt-plugin~Disks')}
+              </Title>
+            </SplitItem>
+            {showStorages && !isCreateDisabled && (
+              <SplitItem>
+                <Button {...addButtonProps} variant={ButtonVariant.secondary}>
+                  {t('kubevirt-plugin~Add Disk')}
+                </Button>
+              </SplitItem>
             )}
-          </EmptyState>
-        </Bullseye>
-      )}
+          </Split>
+          {showStorages && (
+            <>
+              <VMDisksTable
+                data={getStoragesData(storages, persistentVolumeClaims)}
+                customData={{
+                  isDisabled: isLocked,
+                  withProgress,
+                  removeStorage,
+                  wizardReduxID,
+                  isDeleteDisabled,
+                  isUpdateDisabled,
+                  columnClasses: diskTableColumnClasses,
+                }}
+                Row={VmWizardStorageRow}
+                loaded
+              />
+              {isBootDiskRequired && (
+                <StorageBootSource
+                  className="kubevirt-create-vm-modal__storage-tab-boot-select"
+                  isDisabled={isLocked}
+                  storages={storages}
+                  onBootOrderChanged={onBootOrderChanged}
+                />
+              )}
+            </>
+          )}
+          {!showStorages && (
+            <Bullseye>
+              <EmptyState variant={EmptyStateVariant.full}>
+                <Title headingLevel="h5" size="lg">
+                  {t('kubevirt-plugin~No disks attached')}
+                </Title>
+                {!isCreateDisabled && (
+                  <Button
+                    {...addButtonProps}
+                    icon={<PlusCircleIcon />}
+                    variant={ButtonVariant.link}
+                  >
+                    {t('kubevirt-plugin~Add Disk')}
+                  </Button>
+                )}
+              </EmptyState>
+            </Bullseye>
+          )}
+        </StackItem>
+      </Stack>
     </div>
   );
 };
@@ -179,7 +221,8 @@ type StorageTabFirehoseProps = {
   isDeleteDisabled: boolean;
   setTabLocked: (isLocked: boolean) => void;
   onBootOrderChanged: (deviceID: string, bootOrder: number) => void;
-  persistentVolumeClaims: FirehoseResult;
+  persistentVolumeClaims?: FirehoseResult;
+  importProvider?: VMImportProvider;
 };
 
 const StorageTabConnected: React.FC<StorageTabConnectedProps> = ({ namespace, ...rest }) => (
@@ -209,6 +252,7 @@ const stateToProps = (state, { wizardReduxID }) => ({
   isDeleteDisabled: hasStepDeleteDisabled(state, wizardReduxID, VMWizardTab.STORAGE),
   storages: getStorages(state, wizardReduxID),
   isBootDiskRequired: iGetProvisionSource(state, wizardReduxID) !== ProvisionSource.PXE,
+  importProvider: iGetImportProvidersValue(state, wizardReduxID, ImportProvidersField.PROVIDER),
 });
 
 const dispatchToProps = (dispatch, { wizardReduxID }) => ({
