@@ -14,7 +14,7 @@ Feature: Create Application from git form
               And user is at the Topology page
              When user right clicks on topology empty graph
               And user selects "From Devfile" option from Add to Project context menu
-              And user enters Git Repo url "https://github.com/maysunfaisal/node-bulletin-board"
+              And user enters Git Repo url "https://github.com/redhat-developer/devfile-sample"
               And user enters Name as "node-bulletin-board-1"
               And user clicks Create button on Devfile page
              Then user will be redirected to Topology page
@@ -25,7 +25,7 @@ Feature: Create Application from git form
         Scenario: Create the workload from dev file
             Given user is at Add page
               And user is at Import from Devfile page
-             When user enters Git Repo url "https://github.com/maysunfaisal/node-bulletin-board"
+             When user enters Git Repo url "https://github.com/redhat-developer/devfile-sample"
               And user enters Name as "node-bulletin-board"
               And user clicks Create button on Devfile page
              Then user will be redirected to Topology page
