@@ -71,5 +71,15 @@
     "flags": {
       "required": ["KUBEVIRT"]
     }
+  },
+  {
+    "type": "console.context-provider",
+    "properties": {
+      "provider": { "$codeRef": "contextProvider.CDIUploadProvider" },
+      "useValueHook": { "$codeRef": "contextProvider.useCDIUploadHook" }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
   }
 ]

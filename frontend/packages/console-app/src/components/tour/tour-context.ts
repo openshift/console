@@ -71,6 +71,8 @@ export type TourState = {
 
 export const TourContext = createContext<TourContextType>({});
 
+export const TourContextProvider = TourContext.Provider;
+
 const getRequiredFlagsFromTour = (steps: Step[]) =>
   steps.reduce((allFlags, { flags }) => (flags ? union(allFlags, flags) : allFlags), []);
 

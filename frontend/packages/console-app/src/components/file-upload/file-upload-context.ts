@@ -19,6 +19,8 @@ export const FileUploadContext = React.createContext<FileUploadContextType>({
   extensions: [],
 });
 
+export const FileUploadContextProvider = FileUploadContext.Provider;
+
 export const useValuesFileUploadContext = (): FileUploadContextType => {
   const { t } = useTranslation();
   const [fileUploadExtensions, resolved] = useResolvedExtensions<FileUpload>(isFileUpload);

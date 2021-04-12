@@ -17,7 +17,6 @@ import {
   ResourceListPage,
   ResourceClusterNavItem,
   ResourceTabPage,
-  ContextProvider,
 } from '@console/plugin-sdk';
 import {
   ClusterVersionModel,
@@ -48,15 +47,6 @@ import {
 } from './components/dashboards-page/activity';
 import reducer from './redux/reducer';
 import * as models from './models';
-import { TourContext, useTourValuesForContext } from './components/tour/tour-context';
-import {
-  QuickStartContext,
-  useValuesForQuickStartContext,
-} from './components/quick-starts/utils/quick-start-context';
-import {
-  FileUploadContext,
-  useValuesFileUploadContext,
-} from './components/file-upload/file-upload-context';
 
 type ConsumedExtensions =
   | Perspective
@@ -71,8 +61,7 @@ type ConsumedExtensions =
   | ResourceListPage
   | ResourceDetailsPage
   | ResourceClusterNavItem
-  | ResourceTabPage
-  | ContextProvider;
+  | ResourceTabPage;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -281,27 +270,6 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/volume-snapshot/volume-snapshot' /* webpackChunkName: "volume-snapshot-page" */
         ).then((m) => m.VolumeSnapshotPVCPage),
-    },
-  },
-  {
-    type: 'ContextProvider',
-    properties: {
-      Provider: TourContext.Provider,
-      useValueHook: useTourValuesForContext,
-    },
-  },
-  {
-    type: 'ContextProvider',
-    properties: {
-      Provider: QuickStartContext.Provider,
-      useValueHook: useValuesForQuickStartContext,
-    },
-  },
-  {
-    type: 'ContextProvider',
-    properties: {
-      Provider: FileUploadContext.Provider,
-      useValueHook: useValuesFileUploadContext,
     },
   },
 ];
