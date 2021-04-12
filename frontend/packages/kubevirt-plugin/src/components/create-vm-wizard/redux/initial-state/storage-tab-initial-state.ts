@@ -57,9 +57,9 @@ const WINTOOLS_DISK_NAME = 'windows-guest-tools';
 const getContainerStorage = (
   storageClassConfigMap: ConfigMapKind,
   bus = DiskBus.VIRTIO,
+  size = '15Gi',
   diskType = DiskType.DISK,
   url = '',
-  size = '15Gi',
 ): VMWizardStorage => {
   const dataVolumeName = generateDataVolumeName(DUMMY_VM_NAME, ROOT_DISK_NAME);
 
@@ -151,9 +151,9 @@ export const getBaseImageStorage = (
 const getUrlStorage = (
   storageClassConfigMap: ConfigMapKind,
   bus = DiskBus.VIRTIO,
+  size = '15Gi',
   diskType = DiskType.DISK,
   url = '',
-  size = '15Gi',
 ): VMWizardStorage => {
   const dataVolumeName = generateDataVolumeName(DUMMY_VM_NAME, ROOT_DISK_NAME);
 
@@ -269,24 +269,24 @@ export const getNewProvisionSourceStorage = (state: any, id: string): VMWizardSt
       return getUrlStorage(
         storageClassConfigMap,
         diskBus,
+        source.size,
         source.cdRom ? DiskType.CDROM : DiskType.DISK,
         source.url,
-        source.size,
       );
     }
-    return getUrlStorage(storageClassConfigMap, diskBus);
+    return getUrlStorage(storageClassConfigMap, diskBus, source?.size);
   }
   if (provisionSource === ProvisionSource.CONTAINER) {
     if (source?.container) {
       return getContainerStorage(
         storageClassConfigMap,
         diskBus,
+        source.size,
         source.cdRom ? DiskType.CDROM : DiskType.DISK,
         source.container,
-        source.size,
       );
     }
-    return getContainerStorage(storageClassConfigMap, diskBus);
+    return getContainerStorage(storageClassConfigMap, diskBus, source?.size);
   }
   if (provisionSource === ProvisionSource.DISK && !iUserTemplate && cloneCommonBaseDiskImage) {
     const iStorageClassConfigMap = iGetLoadedCommonData(

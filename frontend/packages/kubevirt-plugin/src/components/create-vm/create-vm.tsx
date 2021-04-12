@@ -19,7 +19,7 @@ import {
 } from '@patternfly/react-core';
 import styles from '@patternfly/react-styles/css/components/Wizard/wizard';
 
-import { DataVolumeSourceType, VMWizardMode, VMWizardName } from '../../constants';
+import { DataVolumeSourceType, VMWizardMode, VMWizardName, VolumeType } from '../../constants';
 import { useStorageClassConfigMap } from '../../hooks/storage-class-config-map';
 import { useErrorTranslation } from '../../hooks/use-error-translation';
 import useSSHKeys from '../../hooks/use-ssh-keys';
@@ -44,9 +44,13 @@ import { useVmTemplatesResources } from './hooks/use-vm-templates-resources';
 import { BootSource } from './tabs/boot-source';
 import { ReviewAndCreate } from './tabs/review-create';
 import { SelectTemplate } from './tabs/select-template';
+import { selectVM } from '../../selectors/vm-template/basic';
+import { VMWrapper } from '../../k8s/wrapper/vm/vm-wrapper';
 
 import '../create-vm-wizard/create-vm-wizard.scss';
 import './create-vm.scss';
+import { DataVolumeWrapper } from '../../k8s/wrapper/vm/data-volume-wrapper';
+import { VolumeWrapper } from '../../k8s/wrapper/vm/volume-wrapper';
 
 enum WizardStep {
   TEMPLATE = 'Template',
@@ -224,6 +228,32 @@ export const CreateVM: React.FC<RouteComponentProps> = ({ location }) => {
       }
     }
   }, [loaded, initData, templates, userTemplates, selectedTemplate, t]);
+
+  React.useEffect(() => {
+    const vm = new VMWrapper(selectVM(selectedTemplate?.variants?.[0]));
+    const bootDevice = vm.getBootDevice();
+
+    if (bootDevice?.type === 'disk') {
+      const vol = new VolumeWrapper(
+        vm.getVolumes()?.find((v) => v?.name === bootDevice?.device?.name),
+      );
+      const dv =
+        vol.getType() === VolumeType.DATA_VOLUME &&
+        vm.getDataVolumeTemplates()?.find((d) => d?.metadata?.name === vol?.getDataVolumeName());
+
+      if (dv) {
+        const dvWrapper = new DataVolumeWrapper(dv);
+        const storage = dvWrapper.getSize();
+        bootDispatch({
+          type: BOOT_ACTION_TYPE.SET_SIZE,
+          payload: {
+            value: storage.value,
+            unit: storage.unit,
+          },
+        });
+      }
+    }
+  }, [selectedTemplate]);
 
   let templateIsReady = false;
   let customBootSource = false;
