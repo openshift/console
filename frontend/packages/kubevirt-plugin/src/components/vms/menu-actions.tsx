@@ -16,6 +16,7 @@ import { Tooltip } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
 import { StatusGroup } from '../../constants/status-group';
+import { VMStatus } from '../../constants/vm/vm-status';
 import useSSHCommand from '../../hooks/use-ssh-command';
 import useSSHService from '../../hooks/use-ssh-service';
 import { restartVM, startVM, stopVM } from '../../k8s/requests/vm';
@@ -367,7 +368,11 @@ export const menuActionOpenConsole = (kindObj: K8sKind, vmi: VMIKind): KebabOpti
   };
 };
 
-export const menuActionCopySSHCommand = (kindObj: K8sKind, vm: VMIKind): KebabOption => {
+export const menuActionCopySSHCommand = (
+  kindObj: K8sKind,
+  vm: VMIKind,
+  { vmStatusBundle },
+): KebabOption => {
   let sshCommand = '';
   let isDisabled = false;
   const CopySSHCommand: React.FC = () => {
@@ -376,8 +381,7 @@ export const menuActionCopySSHCommand = (kindObj: K8sKind, vm: VMIKind): KebabOp
     const [showTooltip, setShowToolTip] = React.useState(false);
     const { t } = useTranslation();
     sshCommand = command;
-    isDisabled = !sshServices?.running;
-
+    isDisabled = !sshServices?.running || !(vmStatusBundle?.status === VMStatus.RUNNING);
     return (
       <div
         id="SSHMenuLabel"

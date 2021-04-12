@@ -27,7 +27,11 @@ const SSHDetailsPage: React.FC<SSHDetailsPageProps> = ({ vm }) => {
           <Text component={TextVariants.p} data-test="SSHDetailsPage-user">
             {t('kubevirt-plugin~user: {{user}}', { user })}
           </Text>
-          <ClipboardCopy isReadOnly data-test="SSHDetailsPage-command">
+          <ClipboardCopy
+            isReadOnly
+            data-test="SSHDetailsPage-command"
+            className="SSHDetailsPage-clipboard-command"
+          >
             {sshServices?.running ? command : `ssh ${user}@`}
           </ClipboardCopy>
           {!sshServices?.running && (
