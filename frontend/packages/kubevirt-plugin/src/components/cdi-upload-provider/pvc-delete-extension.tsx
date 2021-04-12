@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import { Alert, AlertVariant } from '@patternfly/react-core';
 import {
   useK8sWatchResource,
   WatchK8sResource,
@@ -43,7 +44,7 @@ export const PVCDeleteAlertExtension: React.FC<{ pvc: PersistentVolumeClaimKind 
   );
 
   return (
-    <>
+    <Alert isInline variant={AlertVariant.warning} title="PVC Delete">
       <p>
         Deleting this PVC will also delete{' '}
         <strong className="co-break-word">{pvc?.metadata?.name}</strong> Data Volume
@@ -56,6 +57,6 @@ export const PVCDeleteAlertExtension: React.FC<{ pvc: PersistentVolumeClaimKind 
           system image. New VMs will not be able to clone this image
         </p>
       )}
-    </>
+    </Alert>
   );
 };

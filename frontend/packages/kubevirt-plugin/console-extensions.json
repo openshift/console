@@ -81,5 +81,57 @@
     "flags": {
       "required": ["KUBEVIRT"]
     }
+  },
+  {
+    "type": "console.page/route/standalone",
+    "properties": {
+      "exact": false,
+      "path": "/standalone/k8s/ns/:ns/virtualmachineinstances/:name/console",
+      "component": { "$codeRef": "standaloneConsole.VMConsolePage" }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.pvc/create-prop",
+    "properties": {
+      "label": "%kubevirt-plugin~With Data upload form%",
+      "path": "~new/upload-form"
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.pvc/alert",
+    "properties": {
+      "alert": { "$codeRef": "pvcAlert.PVCAlertExtension" }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.pvc/status",
+    "properties": {
+      "priority": 10,
+      "predicate": { "$codeRef": "pvcSelectors.isPvcUploading" },
+      "status": { "$codeRef": "pvcStatus.UploadPVCPopover" }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
+  },
+  {
+    "type": "console.pvc/delete",
+    "properties": {
+      "predicate": { "$codeRef": "pvcSelectors.isPvcBoundToCDI" },
+      "onPVCKill": { "$codeRef": "pvcDelete.killCDIBoundPVC" },
+      "alert": { "$codeRef": "pvcDelete.PVCDeleteAlertExtension" }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
+    }
   }
 ]

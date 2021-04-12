@@ -1,16 +1,13 @@
 import * as React from 'react';
-
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { getName, getNamespace } from '@console/shared';
 import { Alert, AlertVariant } from '@patternfly/react-core';
-
-import { CDIUploadContext } from './cdi-upload-provider';
 import { UPLOAD_STATUS } from './consts';
+import { CDIUploadContext } from './cdi-upload-provider';
 
 export const PVCAlertExtension: React.FC<PVCAlertExtension> = ({ pvc }) => {
   const { uploads } = React.useContext(CDIUploadContext);
   const upload = uploads.find(
-    (upl) => upl.pvcName === getName(pvc) && upl.namespace === getNamespace(pvc),
+    (upl) => upl.pvcName === pvc?.metadata?.name && upl.namespace === pvc?.metadata?.namespace,
   );
   const isUploading = upload?.uploadStatus === UPLOAD_STATUS.UPLOADING;
   return (

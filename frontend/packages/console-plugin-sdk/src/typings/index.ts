@@ -15,7 +15,6 @@ export * from './global-configs';
 export * from './clusterserviceversions';
 export * from './reducers';
 export * from './horizontal-nav';
-export * from './pvc';
 export * from './storage-class-params';
 export * from './guided-tour';
 export * from './post-form-submit';
