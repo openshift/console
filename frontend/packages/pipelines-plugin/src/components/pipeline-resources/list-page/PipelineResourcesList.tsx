@@ -10,7 +10,7 @@ const PipelineResourcesList: React.FC = (props) => {
   return (
     <Table
       {...props}
-      aria-label={PipelineResourceModel.labelPlural}
+      aria-label={t(PipelineResourceModel.labelPluralKey)}
       Header={PipelineResourcesHeader(t)}
       Row={PipelineResourcesRow}
       virtualize

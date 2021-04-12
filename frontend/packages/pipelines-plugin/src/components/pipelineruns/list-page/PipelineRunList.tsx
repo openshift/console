@@ -11,7 +11,7 @@ export const PipelineRunList: React.FC = (props) => {
   return (
     <Table
       {...props}
-      aria-label={PipelineRunModel.labelPlural}
+      aria-label={t(PipelineRunModel.labelPluralKey)}
       defaultSortField="status.startTime"
       defaultSortOrder={SortByDirection.desc}
       Header={PipelineRunHeader(t)}

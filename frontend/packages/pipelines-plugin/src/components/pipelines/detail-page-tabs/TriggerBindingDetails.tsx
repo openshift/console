@@ -18,7 +18,7 @@ const TriggerBindingDetails: React.FC<TriggerBindingDetailsProps> = ({ obj: trig
     <div className="co-m-pane__body">
       <SectionHeading
         text={t('pipelines-plugin~{{triggerBindingLabel}} details', {
-          triggerBindingLabel: getResourceModelFromBindingKind(triggerBinding.kind).label,
+          triggerBindingLabel: t(getResourceModelFromBindingKind(triggerBinding.kind).labelKey),
         })}
       />
       <div className="row">

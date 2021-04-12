@@ -15,7 +15,7 @@ const TaskRunDetailsSection: React.FC<TaskRunDetailsSectionProps> = ({ taskRun }
     <>
       <SectionHeading
         text={t('pipelines-plugin~{{taskRunLabel}} details', {
-          taskRunLabel: TaskRunModel.label,
+          taskRunLabel: t(TaskRunModel.labelKey),
         })}
       />
       <div className="row">

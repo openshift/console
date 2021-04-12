@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { PipelineRunKind } from '../../../types';
 import { PipelineRunModel } from '../../../models';
 import { pipelineRunFilterReducer } from '../../../utils/pipeline-filter-reducer';
@@ -11,6 +12,7 @@ export interface PipelineRunDetailsProps {
 }
 
 export const PipelineRunDetails: React.FC<PipelineRunDetailsProps> = ({ obj: pipelineRun }) => {
+  const { t } = useTranslation();
   return (
     <>
       <div className="co-m-pane__body odc-pipeline-run-details">
@@ -21,7 +23,7 @@ export const PipelineRunDetails: React.FC<PipelineRunDetailsProps> = ({ obj: pip
         <div className="co-m-pane__body">
           <ResultsList
             results={pipelineRun.status?.pipelineResults}
-            resourceName={PipelineRunModel.label}
+            resourceName={t(PipelineRunModel.labelKey)}
             status={pipelineRunFilterReducer(pipelineRun)}
           />
         </div>
