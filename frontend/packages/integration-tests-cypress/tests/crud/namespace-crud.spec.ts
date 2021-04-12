@@ -36,7 +36,7 @@ describe('Namespace', () => {
     listPage.clickCreateYAMLbutton();
     modal.shouldBeOpened();
     cy.byTestID('input-name').type(newName);
-    cy.testA11y('Create Namespace modal', '#modal-container');
+    cy.testA11y('Create Namespace modal');
     modal.submit();
     modal.shouldBeClosed();
     cy.url().should('include', `/k8s/cluster/namespaces/${newName}`);
@@ -48,7 +48,7 @@ describe('Namespace', () => {
     listPage.rows.clickKebabAction(newName, 'Delete Namespace');
     modal.shouldBeOpened();
     cy.byTestID('project-name-input').type(newName);
-    cy.testA11y('Delete Namespace modal', '#modal-container');
+    cy.testA11y('Delete Namespace modal');
     modal.submit();
     modal.shouldBeClosed();
     cy.resourceShouldBeDeleted(testName, 'namespaces', newName);

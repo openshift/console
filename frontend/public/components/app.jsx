@@ -152,36 +152,38 @@ class App_ extends React.PureComponent {
       <>
         <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
         <QuickStartDrawer>
-          <ConsoleNotifier location="BannerTop" />
-          <Page
-            header={<Masthead onNavToggle={this._onNavToggle} />}
-            sidebar={
-              <Navigation
-                isNavOpen={isNavOpen}
-                onNavSelect={this._onNavSelect}
-                onPerspectiveSelected={this._onNavSelect}
-              />
-            }
-            skipToContent={
-              <SkipToContent
-                href={`${this.props.location.pathname}${this.props.location.search}#content`}
-              >
-                Skip to Content
-              </SkipToContent>
-            }
-          >
-            <ConnectedNotificationDrawer
-              isDesktop={isDrawerInline}
-              onDrawerChange={this._onNotificationDrawerToggle}
+          <div id="app-content" className="co-m-page__body">
+            <ConsoleNotifier location="BannerTop" />
+            <Page
+              header={<Masthead onNavToggle={this._onNavToggle} />}
+              sidebar={
+                <Navigation
+                  isNavOpen={isNavOpen}
+                  onNavSelect={this._onNavSelect}
+                  onPerspectiveSelected={this._onNavSelect}
+                />
+              }
+              skipToContent={
+                <SkipToContent
+                  href={`${this.props.location.pathname}${this.props.location.search}#content`}
+                >
+                  Skip to Content
+                </SkipToContent>
+              }
             >
-              <AppContents />
-            </ConnectedNotificationDrawer>
-          </Page>
-          <CloudShell />
-          <GuidedTour />
-          <ConsoleNotifier location="BannerBottom" />
+              <ConnectedNotificationDrawer
+                isDesktop={isDrawerInline}
+                onDrawerChange={this._onNotificationDrawerToggle}
+              >
+                <AppContents />
+              </ConnectedNotificationDrawer>
+            </Page>
+            <CloudShell />
+            <GuidedTour />
+            <ConsoleNotifier location="BannerBottom" />
+          </div>
+          <div id="modal-container" role="dialog" aria-modal="true" />
         </QuickStartDrawer>
-        <div id="modal-container" role="dialog" aria-modal="true" />
       </>
     );
 
