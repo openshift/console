@@ -4,7 +4,11 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { AlertVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
-import { useResolvedExtensions } from '@console/dynamic-plugin-sdk/src/api/useResolvedExtensions';
+import {
+  useResolvedExtensions,
+  ClusterGlobalConfig,
+  isClusterGlobalConfig,
+} from '@console/dynamic-plugin-sdk';
 import { RootState } from '../../redux';
 import { K8sKind, k8sList, referenceForModel, getResourceDescription } from '../../module/k8s';
 import { EmptyBox, ExpandableAlert, Kebab, LoadingBox, resourcePathFromModel } from '../utils';
@@ -12,10 +16,6 @@ import { addIDPItems } from './oauth';
 import { TextFilter } from '../factory';
 import { fuzzyCaseInsensitive } from '../factory/table-filters';
 import i18next from 'i18next';
-import {
-  ClusterGlobalConfig,
-  isClusterGlobalConfig,
-} from '@console/dynamic-plugin-sdk/src/extensions/cluster-settings';
 
 const stateToProps = (state: RootState) => ({
   configResources: state.k8s.getIn(['RESOURCES', 'configResources']),

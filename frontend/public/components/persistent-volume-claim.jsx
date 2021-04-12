@@ -8,11 +8,7 @@ import { sortable } from '@patternfly/react-table';
 import { useTranslation } from 'react-i18next';
 import { ChartDonut } from '@patternfly/react-charts';
 import { useExtensions } from '@console/plugin-sdk';
-import {
-  isPVCAlert,
-  isPVCCreateProp,
-  isPVCStatus,
-} from '@console/dynamic-plugin-sdk/src/extensions/pvc';
+import { isPVCAlert, isPVCCreateProp, isPVCStatus } from '@console/dynamic-plugin-sdk';
 import { useResolvedExtensions } from '@console/dynamic-plugin-sdk';
 import {
   Status,
@@ -66,6 +62,7 @@ const menuActions = [
 
 export const PVCStatus = ({ pvc }) => {
   const [pvcStatusExtensions, resolved] = useResolvedExtensions(isPVCStatus);
+
   if (resolved && pvcStatusExtensions.length > 0) {
     const sortedByPriority = pvcStatusExtensions.sort(
       (a, b) => b.properties.priority - a.properties.priority,
@@ -73,11 +70,9 @@ export const PVCStatus = ({ pvc }) => {
     const priorityStatus = sortedByPriority.find((status) => status.properties.predicate(pvc));
     const PriorityStatusComponent = priorityStatus?.properties?.status;
 
-    return PriorityStatusComponent ? (
-      <PriorityStatusComponent pvc={pvc} />
-    ) : (
-      <Status status={pvc.metadata.deletionTimestamp ? 'Terminating' : pvc.status.phase} />
-    );
+    if (PriorityStatusComponent) {
+      return <PriorityStatusComponent pvc={pvc} />;
+    }
   }
 
   return <Status status={pvc.metadata.deletionTimestamp ? 'Terminating' : pvc.status.phase} />;
