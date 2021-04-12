@@ -16,6 +16,9 @@
       "exact": false,
       "path": "/k8s/ns/:ns/virtualmachineinstances/:name/standaloneconsole",
       "component": { "$codeRef": "standaloneConsole" }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
     }
   },
   {
@@ -66,6 +69,9 @@
       "catalogId": "dev-catalog",
       "type": "Template",
       "filter": { "$codeRef": "createVM.catalogVMTemplateFilter" }
+    },
+    "flags": {
+      "required": ["KUBEVIRT"]
     }
   },
   {

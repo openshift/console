@@ -7,9 +7,9 @@
  * The value of extension `type` should be formatted in a way that describes
  * the broader category as well as any specialization(s), for example:
  *
- * - `ModelDefinition`
- * - `Page/Resource/List`
- * - `Dashboards/Overview/Utilization/Item`
+ * - `console.redux-reducer`
+ * - `console.navigation/href`
+ * - `console.page/route/standalone`
  *
  * Each extension may specify `flags` referencing Console feature flags which
  * are required and/or disallowed in order to put this extension into effect.

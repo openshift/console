@@ -120,6 +120,10 @@ export const resolveCodeRefProperties = async <E extends Extension<P>, P = Exten
   const refs = filterExecutableCodeRefProperties(extension.properties);
   const resolvedValues = Object.assign({}, extension.properties);
 
+  if (Object.entries(refs).length === 0) {
+    console.warn(`Extension '${extension.type}' has no code references`);
+  }
+
   await Promise.all(
     Object.entries(refs).map(async ([propName, ref]) => {
       resolvedValues[propName] = await ref();

@@ -209,7 +209,11 @@ class App_ extends React.PureComponent {
 const AppWithExtensions = withTranslation()((props) => {
   const [contextProviderExtensions, resolved] = useResolvedExtensions(isContextProvider);
 
-  return resolved && <App_ contextProviderExtensions={contextProviderExtensions} {...props} />;
+  return resolved ? (
+    <App_ contextProviderExtensions={contextProviderExtensions} {...props} />
+  ) : (
+    <LoadingBox />
+  );
 });
 
 initConsolePlugins(store);
