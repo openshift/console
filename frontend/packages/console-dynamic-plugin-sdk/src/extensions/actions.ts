@@ -4,20 +4,20 @@ import { ExtensionDeclaration, CodeRef } from '../types';
 import { ExtensionHook } from '../api/common-types';
 import { AccessReviewResourceAttributes } from './console-types';
 
-/** ActionProvider contributes a hook that returns list of action ids for specific context */
+/** ActionProvider contributes a hook that returns list of actions for specific context */
 export type ActionProvider = ExtensionDeclaration<
   'console.action/provider',
   {
     /** The context ID helps to narrow the scope of contributed actions to a particular area of the application. Ex - topology, helm */
     contextId: string | 'resource';
-    /** A react hook which returns action for the given scope.
+    /** A react hook which returns actions for the given scope.
      * If contextId = `resource` then the scope will always be a K8s resource object
      * */
     provider: CodeRef<ExtensionHook<Action[]>>;
   }
 >;
 
-/** ResourceActionProvider contributes a list of action ids for specific resource model */
+/** ResourceActionProvider contributes a hook that returns list of actions for specific resource model */
 export type ResourceActionProvider = ExtensionDeclaration<
   'console.action/resource-provider',
   {
@@ -27,7 +27,7 @@ export type ResourceActionProvider = ExtensionDeclaration<
       version?: string;
       kind?: string;
     };
-    /** A react hook which returns action for the given resource model */
+    /** A react hook which returns actions for the given resource model */
     provider: CodeRef<ExtensionHook<Action[]>>;
   }
 >;
