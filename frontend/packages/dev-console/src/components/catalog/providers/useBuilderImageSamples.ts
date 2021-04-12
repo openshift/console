@@ -11,9 +11,12 @@ import {
 import { ANNOTATIONS } from '@console/shared';
 import { prettifyName } from '../../../utils/imagestream-utils';
 
-const normalizeBuilderImages = (builderImageStreams: K8sResourceKind[]): CatalogItem[] => {
+const normalizeBuilderImages = (
+  builderImageStreams: K8sResourceKind[],
+  activeNamespace: string,
+): CatalogItem[] => {
   const normalizedBuilderImages = _.map(builderImageStreams, (imageStream) => {
-    const { uid, name, namespace, annotations } = imageStream.metadata;
+    const { uid, name, namespace: imageStreamNS, annotations } = imageStream.metadata;
     const tag = getMostRecentBuilderTag(imageStream);
     const displayName = annotations?.[ANNOTATIONS.displayName] ?? name;
     const title = displayName && displayName.length < 14 ? displayName : prettifyName(name);
@@ -23,7 +26,7 @@ const normalizeBuilderImages = (builderImageStreams: K8sResourceKind[]): Catalog
     const description = tag?.['annotations']?.['description'] ?? '';
     const provider = annotations?.[ANNOTATIONS.providerDisplayName] ?? '';
     const creationTimestamp = imageStream.metadata?.creationTimestamp;
-    const href = `/samples/ns/${namespace}/${name}/${namespace}`;
+    const href = `/samples/ns/${activeNamespace}/${name}/${imageStreamNS}`;
 
     const item: CatalogItem = {
       uid,
@@ -47,7 +50,7 @@ const normalizeBuilderImages = (builderImageStreams: K8sResourceKind[]): Catalog
   return normalizedBuilderImages;
 };
 
-const useBuilderImageSamples: ExtensionHook<CatalogItem[]> = () => {
+const useBuilderImageSamples: ExtensionHook<CatalogItem[]> = ({ namespace }) => {
   const resourceSelector = {
     isList: true,
     kind: 'ImageStream',
@@ -62,9 +65,10 @@ const useBuilderImageSamples: ExtensionHook<CatalogItem[]> = () => {
     imageStreams,
   ]);
 
-  const normalizedBuilderImages = React.useMemo(() => normalizeBuilderImages(builderImageStreams), [
-    builderImageStreams,
-  ]);
+  const normalizedBuilderImages = React.useMemo(
+    () => normalizeBuilderImages(builderImageStreams, namespace),
+    [builderImageStreams, namespace],
+  );
 
   return [normalizedBuilderImages, loaded, loadedError];
 };
