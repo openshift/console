@@ -5,7 +5,7 @@ import {
   MultiColumnField,
   InputField,
   FormSelectField,
-  FormSelectFieldOptions,
+  FormSelectFieldOption,
 } from '@console/shared';
 import { PipelineResourceType } from '../const';
 
@@ -23,7 +23,7 @@ const PipelineResources: React.FC<PipelineResourcesParam> = (props) => {
     isReadOnly = false,
   } = props;
   const emptyMessage = t('pipelines-plugin~No resources are associated with this pipeline.');
-  const pipelineResourceTypeSelections: FormSelectFieldOptions<PipelineResourceType | ''>[] = [
+  const pipelineResourceTypeSelections: FormSelectFieldOption<PipelineResourceType | ''>[] = [
     {
       value: '',
       label: t('pipelines-plugin~Select resource type'),
@@ -55,7 +55,7 @@ const PipelineResources: React.FC<PipelineResourcesParam> = (props) => {
         <FormSelectField
           name="type"
           options={pipelineResourceTypeSelections}
-          disabled={isReadOnly}
+          isDisabled={isReadOnly}
         />
       </MultiColumnField>
     </div>

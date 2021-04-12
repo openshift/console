@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { DropdownField } from '@console/shared';
+import { FormSelectField, FormSelectFieldOption } from '@console/shared';
 import { TektonWorkspace } from '../../../../types';
 import { PipelineBuilderFormikValues } from '../types';
 
@@ -22,22 +22,32 @@ const TaskSidebarWorkspace: React.FC<TaskSidebarWorkspaceProps> = (props) => {
   const { t } = useTranslation();
   const { setFieldValue } = useFormikContext<PipelineBuilderFormikValues>();
 
+  const dropdownWorkspaces = availableWorkspaces.filter((workspace) => !!workspace.name?.trim());
+
+  const options: FormSelectFieldOption[] = [
+    {
+      label: t('pipelines-plugin~Select workspace...'),
+      value: '',
+      isDisabled: true,
+      isPlaceholder: true,
+    },
+    ...dropdownWorkspaces.map((workspace) => ({
+      value: workspace.name,
+      label: workspace.name,
+    })),
+  ];
+
   return (
-    <DropdownField
+    <FormSelectField
       name={`${name}.workspace`}
       label={workspaceName}
-      title={t('pipelines-plugin~Select workspace...')}
-      disabled={availableWorkspaces.length === 0}
-      items={availableWorkspaces.reduce(
-        (acc, workspace) => ({ ...acc, [workspace.name]: workspace.name }),
-        {},
-      )}
+      isDisabled={dropdownWorkspaces.length === 0}
+      options={options}
       onChange={(selectedWorkspace: string) => {
         if (!hasWorkspace) {
           setFieldValue(name, { name: workspaceName, workspace: selectedWorkspace });
         }
       }}
-      fullWidth
       required={!optional}
     />
   );
