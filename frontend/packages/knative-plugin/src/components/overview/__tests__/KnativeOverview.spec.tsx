@@ -3,10 +3,15 @@ import { shallow } from 'enzyme';
 import * as _ from 'lodash';
 import { PodRing, OverviewItem, usePodScalingAccessStatus } from '@console/shared';
 import { ResourceSummary } from '@console/internal/components/utils';
-import { revisionObj } from '../../../topology/__tests__/topology-knative-test-data';
+import {
+  revisionObj,
+  knativeServiceObj,
+  serverlessFunctionObj,
+} from '../../../topology/__tests__/topology-knative-test-data';
 import { RevisionModel } from '../../../models';
 import KnativeOverview, { KnativeOverviewRevisionPodsRing } from '../KnativeOverview';
 import { usePodsForRevisions } from '../../../utils/usePodsForRevisions';
+import ServerlessFunctionType from '../ServerlessFunctionType';
 
 jest.mock('@console/shared', () => {
   const ActualShared = require.requireActual('@console/shared');
@@ -56,5 +61,15 @@ describe('KnativeOverview', () => {
     const mockItemKindRoute = _.set(_.cloneDeep(item), 'obj.kind', 'Route');
     const wrapper = shallow(<KnativeOverview item={mockItemKindRoute} />);
     expect(wrapper.find(PodRing)).toHaveLength(0);
+  });
+
+  it('should not render ServerlessFunctionType if obj is not a serverless function', () => {
+    const wrapper = shallow(<KnativeOverview item={{ obj: knativeServiceObj }} />);
+    expect(wrapper.find(ServerlessFunctionType).exists()).toBeFalsy();
+  });
+
+  it('should render ServerlessFunctionType if obj is a serverless function', () => {
+    const wrapper = shallow(<KnativeOverview item={{ obj: serverlessFunctionObj }} />);
+    expect(wrapper.find(ServerlessFunctionType).exists()).toBeTruthy();
   });
 });

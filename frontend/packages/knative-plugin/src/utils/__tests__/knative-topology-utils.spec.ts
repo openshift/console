@@ -1,11 +1,14 @@
 import * as _ from 'lodash';
 import * as k8s from '@console/internal/module/k8s';
-import { Node } from '@patternfly/react-topology';
 import {
   MockKnativeResources,
   getEventSourceResponse,
   sampleDeploymentsCamelConnector,
   kafkaConnectionData,
+  sinkUriUid,
+  eventSourceWithSinkUri,
+  sinkUriObj,
+  sinkUriData,
 } from '../../topology/__tests__/topology-knative-test-data';
 import {
   getKnativeServiceData,
@@ -168,26 +171,20 @@ describe('knative topology utils', () => {
     expect(isOperatorbacked).toBe(false);
   });
 
-  it('expect isServerlessFunction to return false if node is undefined', () => {
+  it('expect isServerlessFunction to return false if element is undefined', () => {
     expect(isServerlessFunction(undefined)).toBe(false);
   });
 
-  it('expect isServerlessFunction to return false if a node does not have necessary labels', () => {
-    const sampleKnNode: Node = ({
-      getResource: () => MockKnativeResources.ksservices.data[0],
-    } as any) as Node;
-    expect(isServerlessFunction(sampleKnNode)).toBe(false);
+  it('expect isServerlessFunction to return false if a element does not have necessary labels', () => {
+    expect(isServerlessFunction(MockKnativeResources.ksservices.data[0])).toBe(false);
   });
 
-  it('expect isServerlessFunction to return true if a node has necessary labels', () => {
+  it('expect isServerlessFunction to return results if an element has necessary labels', () => {
     const sampleKnResource: k8s.K8sResourceKind = {
       ...MockKnativeResources.ksservices.data[0],
       metadata: { labels: { [SERVERLESS_FUNCTION_LABEL]: 'true' } },
     };
-    const sampleKnNode: Node = ({
-      getResource: () => sampleKnResource,
-    } as any) as Node;
-    expect(isServerlessFunction(sampleKnNode)).toBe(true);
+    expect(isServerlessFunction(sampleKnResource)).toBe(true);
   });
 });
 
@@ -198,6 +195,30 @@ describe('Knative Topology Utils', () => {
 
   afterAll(() => {
     jest.restoreAllMocks();
+  });
+
+  it('should return rejected promise if source is not provided', () => {
+    return expect(
+      createKnativeEventSourceSink(undefined, MockKnativeResources.ksservices.data[0]),
+    ).rejects.toBeUndefined();
+  });
+
+  it('should return rejected promise if target is not provided', () => {
+    return expect(
+      createKnativeEventSourceSink(
+        getEventSourceResponse(EventSourceCronJobModel).data[0],
+        undefined,
+      ),
+    ).rejects.toBeUndefined();
+  });
+
+  it('should return rejected promise if source equals target', () => {
+    return expect(
+      createKnativeEventSourceSink(
+        MockKnativeResources.ksservices.data[0],
+        MockKnativeResources.ksservices.data[0],
+      ),
+    ).rejects.toBeUndefined();
   });
 
   it('should move sink to the target knServcice', (done) => {
@@ -214,49 +235,35 @@ describe('Knative Topology Utils', () => {
         done();
       });
   });
+
+  it('should sink to the target sinkUri if the target is of type SinkUri', (done) => {
+    createKnativeEventSourceSink(
+      getEventSourceResponse(EventSourceCronJobModel).data[0],
+      sinkUriObj,
+    )
+      .then(({ data }) => {
+        expect(data.spec.sink.uri).toEqual(sinkUriObj.spec?.sinkUri);
+        done();
+      })
+      .catch(() => {
+        done();
+      });
+  });
 });
 
 describe('SinkURI knative topology utils', () => {
-  const sinkUid = '1317f615-9636-11e9-b134-06a61d886b689_1_nodesinkuri';
-  const sinkUri = 'http://overlayimage.testproject3.svc.cluster.local';
-  const resData = {
-    ...getEventSourceResponse(EventSourceCronJobModel).data[0],
-    spec: { sink: { uri: sinkUri } },
-  };
-  const sinkUriObj = {
-    metadata: {
-      uid: sinkUid,
-    },
-    spec: { sinkUri },
-    type: { nodeType: NodeType.SinkUri },
-  };
-  const sinkData = {
-    id: sinkUid,
-    name: 'URI',
-    type: NodeType.SinkUri,
-    resources: {
-      buildConfigs: [],
-      routes: [],
-      services: [],
-      obj: sinkUriObj,
-      eventSources: [resData],
-    },
-    resource: sinkUriObj,
-    data: { sinkUri },
-  };
-
   it('expect getSinkUriTopologyNodeItems to return node data for sinkUri', () => {
-    const knSinkUriNode = getSinkUriTopologyNodeItems(NodeType.SinkUri, sinkUid, sinkData);
+    const knSinkUriNode = getSinkUriTopologyNodeItems(NodeType.SinkUri, sinkUriUid, sinkUriData);
     expect(knSinkUriNode).toBeDefined();
     expect(knSinkUriNode).toHaveLength(1);
   });
 
   it('expect getSinkUriTopologyEdgeItems to return edge data for eventSource and sinkuri', () => {
-    const knEventSrcEdge = getSinkUriTopologyEdgeItems(resData, sinkUid);
+    const knEventSrcEdge = getSinkUriTopologyEdgeItems(eventSourceWithSinkUri, sinkUriUid);
     expect(knEventSrcEdge).toBeDefined();
     expect(knEventSrcEdge).toHaveLength(1);
-    expect(knEventSrcEdge[0].source).toBe('1317f615-9636-11e9-b134-06a61d886b689_1');
-    expect(knEventSrcEdge[0].target).toBe('1317f615-9636-11e9-b134-06a61d886b689_1_nodesinkuri');
+    expect(knEventSrcEdge[0].source).toBe(eventSourceWithSinkUri.metadata?.uid);
+    expect(knEventSrcEdge[0].target).toBe(sinkUriUid);
     expect(knEventSrcEdge[0].type).toBe(EdgeType.EventSource);
   });
 });

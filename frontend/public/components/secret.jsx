@@ -19,6 +19,7 @@ import {
 } from './utils';
 import { SecretType } from './secrets/create-secret';
 import { configureAddSecretToWorkloadModal } from './modals/add-secret-to-workload';
+import { DetailsItem } from './utils/details-item';
 
 export const WebHookSecretKey = 'WebHookSecretKey';
 
@@ -102,6 +103,7 @@ const SecretTableRow = ({ obj: secret, index, key, style }) => {
 
 const SecretDetails = ({ obj: secret }) => {
   const { t } = useTranslation();
+  const { data, type } = secret;
   return (
     <>
       <div className="co-m-pane__body">
@@ -110,10 +112,17 @@ const SecretDetails = ({ obj: secret }) => {
           <div className="col-md-6">
             <ResourceSummary resource={secret} />
           </div>
+          {type && (
+            <div className="col-md-6">
+              <dl data-test-id="resource-type" className="co-m-pane__details">
+                <DetailsItem label={t('public~Type')} obj={secret} path="type" />
+              </dl>
+            </div>
+          )}
         </div>
       </div>
       <div className="co-m-pane__body">
-        <SecretData data={secret.data} type={secret.type} />
+        <SecretData data={data} type={type} />
       </div>
     </>
   );

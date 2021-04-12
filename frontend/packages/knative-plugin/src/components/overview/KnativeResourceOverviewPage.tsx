@@ -23,7 +23,7 @@ import {
 import OverviewDetailsKnativeResourcesTab from './OverviewDetailsKnativeResourcesTab';
 import KnativeOverview from './KnativeOverview';
 import SinkUriResourcesTab from './SinkUriResourcesTab';
-import { NodeType } from '../../topology/topology-types';
+import { URI_KIND } from '../../topology/const';
 
 interface StateProps {
   kindsInFlight?: boolean;
@@ -50,7 +50,7 @@ export const KnativeResourceOverviewPage: React.ComponentType<KnativeResourceOve
   knativeModels,
   kindsInFlight,
 }: KnativeResourceOverviewPageProps) => {
-  if (NodeType.SinkUri === item?.obj?.type?.nodeType) {
+  if (item?.obj?.kind === URI_KIND) {
     return <SinkUriResourcesTab itemData={item} menuAction={editSinkUri} />;
   }
   if (kindsInFlight) {
