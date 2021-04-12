@@ -19,7 +19,7 @@ import {
   CloudServiceAccountRequest,
   CloudServicesRequestModel,
 } from '../models/rhoas';
-import { getFinishedCondition, isResourceStatusSuccessfull } from './conditionHandler';
+import { getFinishedCondition, isResourceStatusSuccessful } from './conditionHandler';
 
 /**
  * Create service account for purpose of supplying connection credentials
@@ -162,7 +162,7 @@ export const createServiceAccountIfNeeded = async (currentNamespace) => {
       const condition = getFinishedCondition(resource);
 
       if (condition) {
-        if (isResourceStatusSuccessfull(resource)) {
+        if (isResourceStatusSuccessful(resource)) {
           return true;
         }
         const errorToLog = condition.message;

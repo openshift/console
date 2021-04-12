@@ -10,10 +10,10 @@ export const getCondition = (request: K8sResourceKind, name: string) => {
 
 export const getFinishedCondition = (request: K8sResourceKind) => getCondition(request, 'Finished');
 
-export const isResourceStatusSuccessfull = (request: K8sResourceKind) => {
+export const isResourceStatusSuccessful = (request: K8sResourceKind) => {
   const condition = getCondition(request, 'Finished');
   return condition?.status === 'True';
 };
 
-export const isAcccesTokenSecretValid = (request: K8sResourceKind) =>
+export const isAccessTokenSecretValid = (request: K8sResourceKind) =>
   getCondition(request, 'AcccesTokenSecretValid')?.status === 'True';

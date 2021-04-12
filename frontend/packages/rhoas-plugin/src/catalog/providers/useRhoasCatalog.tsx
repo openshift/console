@@ -1,23 +1,16 @@
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  Flex,
-  FlexItem,
-  Divider,
-  Label,
-  TextContent,
-  Text,
-  TextVariants,
-} from '@patternfly/react-core';
+import { Flex, FlexItem, Divider, Label, Text, TextVariants } from '@patternfly/react-core';
 import { LockIcon } from '@patternfly/react-icons';
 import { ExtensionHook, CatalogItem } from '@console/dynamic-plugin-sdk';
 import { useK8sWatchResource } from '@console/internal/components/utils/k8s-watch-hook';
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
 import { ServiceToken } from '../../components/access-services/ServicesToken';
-import { ServiceAccountCRName, kafkaIcon, operatorIcon } from '../../const';
+import { ServiceAccountCRName, operatorIcon } from '../../const';
 import { CloudServiceAccountRequest } from '../../models';
-import { isResourceStatusSuccessfull } from '../../utils/conditionHandler';
+import { isResourceStatusSuccessful } from '../../utils/conditionHandler';
 import { CATALOG_TYPE } from '../const';
+import { RHOASServices } from '../catalog-content';
 
 const useRhoasCatalog: ExtensionHook<CatalogItem[]> = ({
   namespace,
@@ -33,7 +26,7 @@ const useRhoasCatalog: ExtensionHook<CatalogItem[]> = ({
   });
 
   const loadedOrError = loaded || errorMsg;
-  const isServiceAccountValid = isResourceStatusSuccessfull(serviceAccount as K8sResourceKind);
+  const isServiceAccountValid = isResourceStatusSuccessful(serviceAccount as K8sResourceKind);
   const services = React.useMemo(() => {
     if (!loaded && !errorMsg) return [];
 
@@ -49,30 +42,20 @@ const useRhoasCatalog: ExtensionHook<CatalogItem[]> = ({
         token = t('rhoas-plugin~Unlocked');
       }
       return (
-        <Flex direction={{ default: 'column' }}>
-          <FlexItem>
-            {t('rhoas-plugin~RHOAS can include Streams for Kafka, Service Registry')}
+        <Flex direction={{ default: 'column' }} className="catalog-tile-pf-body">
+          <FlexItem className="catalog-tile-pf-description">
+            {t(
+              'rhoas-plugin~Red Hat OpenShift Application Services include Red Hat OpenShift API Management and Red Hat OpenShift Streams for Apache Kafka',
+            )}
           </FlexItem>
           <FlexItem>{token}</FlexItem>
         </Flex>
       );
     };
 
-    const serviceKafkaCardDescription = (
-      <TextContent>
-        <Text component={TextVariants.p}>{t('rhoas-plugin~KafkaCardDescription')}</Text>
-      </TextContent>
-    );
-
-    const serviceKafkaCardDetailsDescription = [
-      {
-        value: serviceKafkaCardDescription,
-      },
-    ];
-
     const cloudServicesCardDetailsDescription = [
       {
-        label: t('rhoas-plugin~Access Red Hat Cloud Services with API Token'),
+        label: t('rhoas-plugin~Unlock with API token'),
         value: <ServiceToken namespace={namespace} />,
       },
       {
@@ -80,41 +63,67 @@ const useRhoasCatalog: ExtensionHook<CatalogItem[]> = ({
       },
       {
         label: 'Description',
-        value: t('rhoas-plugin~ManagedServices-card-description'),
+        value: (
+          <Text component={TextVariants.p}>
+            {t(
+              'rhoas-plugin~Red Hat OpenShift Application Services include:\n- Red Hat OpenShift API Management\n- Red Hat OpenShift Streams for Apache Kafka',
+            )}
+          </Text>
+        ),
+      },
+      {
+        value: (
+          <Text component={TextVariants.p}>
+            {t('rhoas-plugin~Cloud Services Card Description')}
+          </Text>
+        ),
       },
     ];
 
     if (isServiceAccountValid) {
-      const serviceKafkaCard: CatalogItem[] = [
-        {
-          name: t('rhoas-plugin~KafkaStreamsService'),
-          type: CATALOG_TYPE,
-          uid: 'streams-1615213269575',
-          description: t('rhoas-plugin~KafkaStreamsServiceDescription'),
-          provider: 'Red Hat',
-          tags: ['kafka'],
-          icon: {
-            url: kafkaIcon,
-          },
-          cta: {
-            label: t('rhoas-plugin~Connect'),
-            href: `/rhoas/ns/${namespace}/kafka`,
-          },
-          details: {
-            descriptions: serviceKafkaCardDetailsDescription,
-          },
+      const rhoasCard: CatalogItem[] = RHOASServices.map(
+        ({
+          serviceName,
+          name,
+          type,
+          uid,
+          description,
+          provider,
+          tags,
+          icon,
+          ctaLabel,
+          details,
+        }) => {
+          return {
+            name,
+            type,
+            uid,
+            description,
+            provider,
+            tags,
+            icon: {
+              url: icon,
+            },
+            cta: {
+              label: ctaLabel,
+              href: `/rhoas/ns/${namespace}/${serviceName}`,
+            },
+            details: {
+              descriptions: [{ value: <Text component={TextVariants.p}>{details}</Text> }],
+            },
+          };
         },
-      ];
-      return serviceKafkaCard;
+      );
+      return rhoasCard;
     }
 
     const cloudServicesCard: CatalogItem[] = [
       {
-        name: t('rhoas-plugin~Red Hat Cloud Services'),
+        name: t('rhoas-plugin~Red Hat OpenShift Application Services'),
         type: CATALOG_TYPE,
         uid: 'services-1615213269575',
         description: tokenStatusFooter(),
-        provider: 'Red Hat',
+        provider: 'Red Hat, Inc.',
         tags: ['kafka'],
         icon: {
           url: operatorIcon,
