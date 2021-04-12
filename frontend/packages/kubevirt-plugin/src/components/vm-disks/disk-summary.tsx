@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { WINTOOLS_CONTAINER_NAMES } from '../../constants';
+import { winToolsContainerNames } from '../../constants/vm/wintools';
 import {
   getContainerImageByDisk,
   getPVCSourceByDisk,
@@ -24,8 +24,8 @@ export const DiskSummary: React.FC<DiskSummaryProps> = ({ disks, vm }) => {
         const url = getURLSourceByDisk(vm, name);
         const nameKey = `kubevirt-disk-summary-disk-title-${name}`;
         let value = '';
-
-        if (_.includes(WINTOOLS_CONTAINER_NAMES, container)) {
+        const containerNames = winToolsContainerNames();
+        if (_.includes(containerNames, container)) {
           value = t('kubevirt-plugin~Windows tools: {{container}}', { container });
         } else if (container) {
           value = t('kubevirt-plugin~Container: {{container}}', { container });

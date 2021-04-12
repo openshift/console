@@ -16,7 +16,8 @@ import { RoleWrappper } from '../../wrapper/k8s/role-wrapper';
 import { ServiceAccountWrappper } from '../../wrapper/k8s/service-account-wrapper';
 import { buildV2VVMwareDeployment } from './objects/v2vvmware-deployment';
 import { buildV2VVMwareRole } from './objects/v2vvmware-role';
-import { getVmwareConfigMap, validateV2VConfigMap } from './v2vvmware-configmap';
+import { getVmwareConfigMap } from './v2vvmware-configmap';
+import { validateV2VConfigMap } from './v2vvmware-configmap-validator';
 
 const { info } = console;
 
