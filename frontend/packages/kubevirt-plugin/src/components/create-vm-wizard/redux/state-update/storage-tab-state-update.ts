@@ -1,5 +1,6 @@
 import { ValidationErrorType } from '@console/shared/src';
 
+import { CLOUDINIT_DISK } from '../../../../constants';
 import { DataVolumeWrapper } from '../../../../k8s/wrapper/vm/data-volume-wrapper';
 import { DiskWrapper } from '../../../../k8s/wrapper/vm/disk-wrapper';
 import { VolumeWrapper } from '../../../../k8s/wrapper/vm/volume-wrapper';
@@ -221,7 +222,10 @@ const initialStorageDiskUpdater = ({ id, prevState, dispatch, getState }: Update
   if (provisionSourceStorage) {
     const removableRootDisk = iGetStorages(state, id)
       ?.toJSON()
-      ?.find((disk) => disk.type === VMWizardStorageType.TEMPLATE);
+      ?.find(
+        (disk) =>
+          disk?.type === VMWizardStorageType.TEMPLATE && disk?.volume?.name !== CLOUDINIT_DISK,
+      );
 
     removableRootDisk &&
       dispatch(
