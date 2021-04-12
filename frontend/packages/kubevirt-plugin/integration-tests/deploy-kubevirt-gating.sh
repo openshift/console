@@ -16,7 +16,10 @@ oc create -f https://github.com/kubevirt/kubevirt/releases/download/$KUBEVIRT_VE
 
 oc create -f https://github.com/kubevirt/kubevirt/releases/download/$KUBEVIRT_VERSION/kubevirt-cr.yaml
 
-oc create -f https://raw.githubusercontent.com/kubevirt/kubevirt.github.io/master/labs/manifests/storage-setup.yml
+# File was deleted upstream, using last known file in github, until a more permanent fix:
+# https://github.com/openshift/console/pull/8608 - will fix this issue.
+# oc create -f https://raw.githubusercontent.com/kubevirt/kubevirt.github.io/master/labs/manifests/storage-setup.yml
+oc create -f https://raw.githubusercontent.com/kubevirt/kubevirt.github.io/f6530b3fe71e8821208cad8fcac165c54a42bd54/labs/manifests/storage-setup.yml
 
 oc create -f https://github.com/kubevirt/containerized-data-importer/releases/download/$CDI_VERSION/cdi-operator.yaml
 
